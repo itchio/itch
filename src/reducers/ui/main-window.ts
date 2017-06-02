@@ -8,6 +8,7 @@ const initialState = {
   id: null,
   focused: false,
   fullscreen: false,
+  maximized: false,
 } as IUIMainWindowState;
 
 export default reducer<IUIMainWindowState>(initialState, (on) => {
@@ -32,5 +33,10 @@ export default reducer<IUIMainWindowState>(initialState, (on) => {
   on(actions.windowFullscreenChanged, (state, action) => {
     const {fullscreen} = action.payload;
     return {...state, fullscreen};
+  });
+
+  on(actions.windowMaximizedChanged, (state, action) => {
+    const {maximized} = action.payload;
+    return {...state, maximized};
   });
 });

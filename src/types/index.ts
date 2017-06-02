@@ -982,8 +982,11 @@ export interface IUIMainWindowState {
     /** true if main window has focus */
     focused: boolean;
 
-    /** true if main window is maximized */
+    /** true if main window is fullscreen */
     fullscreen: boolean;
+
+    /** true if main window is maximized */
+    maximized: boolean;
 }
 
 export interface IUIState {

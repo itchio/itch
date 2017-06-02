@@ -156,6 +156,18 @@ async function createWindow (store: IStore, hidden: boolean) {
     }
   });
 
+  window.on("maximize", (e: any) => {
+    if (!store.getState().ui.mainWindow.maximized) {
+      store.dispatch(actions.windowMaximizedChanged({maximized: true}));
+    }
+  });
+
+  window.on("unmaximize", (e: any) => {
+    if (store.getState().ui.mainWindow.maximized) {
+      store.dispatch(actions.windowMaximizedChanged({maximized: false}));
+    }
+  });
+
   window.on("app-command", (e: any, cmd: AppCommand) => {
     switch (cmd) {
       case "browser-backward":
@@ -296,6 +308,25 @@ async function hideWindow () {
   }
 }
 
+
+async function minimizeWindow () {
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) {
+    window.minimize();
+  }
+}
+
+async function toggleMaximizeWindow () {
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) {
+    if (window.isMaximized()) {
+      window.unmaximize();
+    } else {
+      window.maximize();
+    }
+  }
+}
+
 async function exitFullScreen () {
   const window = BrowserWindow.getFocusedWindow();
   if (window && window.isFullScreen()) {
@@ -412,6 +443,14 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.hideWindow, async (store, action) => {
     hideWindow();
+  });
+
+  watcher.on(actions.minimizeWindow, async (store, action) => {
+    minimizeWindow();
+  });
+
+  watcher.on(actions.toggleMaximizeWindow, async (store, action) => {
+    toggleMaximizeWindow();
   });
 
   watcher.on(actions.triggerBack, async (store, action) => {

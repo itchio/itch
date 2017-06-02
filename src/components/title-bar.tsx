@@ -41,7 +41,7 @@ const emptyObj = {};
 
 export class TitleBar extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
-    const {t, tab, tabData} = this.props;
+    const {t, tab, maximized, tabData} = this.props;
 
     const staticData: ITabData = staticTabData[tab] || emptyObj;
     const label = tabData.webTitle || tabData.label || staticData.label || "";
@@ -53,8 +53,23 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps & I18nP
             <Filler/>
           </DraggableDivInner>
         </DraggableDiv>
-        <IconButton icon="cross" onClick={this.closeClick}/>
+        <IconButton icon="cog" onClick={this.preferencesClick}/>
+        <IconButton icon="minus" onClick={this.minimizeClick}/>
+        <IconButton icon={maximized ? "window-restore" : "window-maximize"} onClick={this.maximizeRestoreClick}/>
+        <IconButton icon="remove" onClick={this.closeClick}/>
       </FiltersContainer>;
+  }
+
+  preferencesClick = () => {
+    this.props.navigate("preferences");
+  }
+
+  minimizeClick = () => {
+    this.props.minimizeWindow({});
+  }
+
+  maximizeRestoreClick = () => {
+    this.props.toggleMaximizeWindow({});
   }
 
   closeClick = () => {
@@ -68,15 +83,23 @@ interface IProps {
 
 interface IDerivedProps {
   tabData: ITabData;
+  maximized: boolean;
 
+  navigate: typeof actions.hideWindow;
   hideWindow: typeof actions.hideWindow;
+  minimizeWindow: typeof actions.minimizeWindow;
+  toggleMaximizeWindow: typeof actions.toggleMaximizeWindow;
 }
 
 export default connect<IProps>(TitleBar, {
   state: () => createStructuredSelector({
     tabData: (state: IAppState, props: IProps) => state.session.tabData[props.tab] || emptyObj,
+    maximized: (state: IAppState) => state.ui.mainWindow.maximized,
   }),
   dispatch: (dispatch) => ({
+    navigate: dispatcher(dispatch, actions.navigate),
     hideWindow: dispatcher(dispatch, actions.hideWindow),
+    minimizeWindow: dispatcher(dispatch, actions.minimizeWindow),
+    toggleMaximizeWindow: dispatcher(dispatch, actions.toggleMaximizeWindow),
   }),
 });

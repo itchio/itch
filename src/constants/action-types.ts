@@ -157,6 +157,11 @@ export interface IWindowFullscreenChangedPayload {
   fullscreen: boolean;
 }
 
+export const WINDOW_MAXIMIZED_CHANGED = "WINDOW_MAXIMIZED_CHANGED";
+export interface IWindowMaximizedChangedPayload {
+  maximized: boolean;
+}
+
 export const WINDOW_BOUNDS_CHANGED = "WINDOW_BOUNDS_CHANGED";
 export interface IWindowBoundsChangedPayload {
   bounds: {
@@ -181,6 +186,12 @@ export interface IFocusWindowPayload {
 
 export const HIDE_WINDOW = "HIDE_WINDOW";
 export interface IHideWindowPayload {}
+
+export const MINIMIZE_WINDOW = "MINIMIZE_WINDOW";
+export interface IMinimizeWindowPayload {}
+
+export const TOGGLE_MAXIMIZE_WINDOW = "TOGGLE_MAXIMIZE_WINDOW";
+export interface IToggleMaximizeWindowPayload {}
 
 export const CLOSE_TAB_OR_AUX_WINDOW = "CLOSE_TAB_OR_AUX_WINDOW";
 export interface ICloseTabOrAuxWindowPayload {}
