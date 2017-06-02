@@ -361,7 +361,7 @@ const makeTitleSelector = (store: IStore) => {
   );
 
   const getID = (state: IAppState) => state.session.navigation.id;
-  const getTabData = (state: IAppState) => state.session.navigation.tabData;
+  const getTabData = (state: IAppState) => state.session.tabData;
 
   return createSelector(
     getID,
