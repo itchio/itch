@@ -4,7 +4,7 @@ import {Action} from "redux-actions";
 import * as Types from "../types";
 import {IProgressInfo} from "../types";
 
-import GameModel from "../db/models/game";
+import Game from "../db/models/game";
 
 import {IQueryList} from "../reactors/querier";
 
@@ -377,7 +377,7 @@ export interface IOpenTabContextMenuPayload {
 export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
 export interface IOpenGameContextMenuPayload {
   /** game to open the context menu of */
-  game: GameModel;
+  game: Game;
 }
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */
@@ -699,7 +699,7 @@ export interface IRecordGameInteractionPayload {}
 export const ABORT_GAME_REQUEST = "ABORT_GAME_REQUEST";
 export interface IAbortGameRequestPayload {
   /** the game we want to force-quit */
-  game: GameModel;
+  game: Game;
 }
 
 export const ABORT_LAST_GAME = "ABORT_LAST_GAME";
@@ -790,7 +790,7 @@ export interface IViewCaveDetailsPayload {
 export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {
   /** the game we want to download */
-  game: GameModel;
+  game: Game;
 
   /** when manually picking which upload to download, the id of the upload the user picked */
   pickedUpload?: number;
@@ -807,11 +807,13 @@ export interface IQueueGamePayload {
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
 export interface IInitiatePurchasePayload {
-  game: GameModel;
+  game: Game;
 }
 
 export const PURCHASE_COMPLETED = "PURCHASE_COMPLETED";
-export interface IPurchaseCompletedPayload {}
+export interface IPurchaseCompletedPayload {
+  game: Game;
+}
 
 export const ENCOURAGE_GENEROSITY = "ENCOURAGE_GENEROSITY";
 export interface IEncourageGenerosityPayload {
