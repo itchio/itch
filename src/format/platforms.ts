@@ -1,5 +1,5 @@
 
-type ItchPlatform = "linux" | "windows" | "osx" | "android";
+export type ItchPlatform = "linux" | "windows" | "osx" | "android";
 
 const itchPlatforms = {
   linux: "GNU/Linux", // not SteamOS

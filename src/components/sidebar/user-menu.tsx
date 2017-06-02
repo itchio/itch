@@ -1,9 +1,11 @@
 
 import * as React from "react";
-import {createSelector} from "reselect";
+import {createStructuredSelector} from "reselect";
 import {connect, I18nProps} from "../connect";
 
 import {IAppState} from "../../types";
+
+import User from "../../db/models/user";
 
 import * as actions from "../../actions";
 import {dispatcher} from "../../constants/action-types";
@@ -16,7 +18,8 @@ import styled from "../styles";
 import Filler from "../basics/filler";
 import Button from "../basics/button";
 
-import Dropdown, {IDropdownItem} from "./dropdown";
+import Dropdown from "./dropdown";
+import {IDropdownItem} from "./dropdown-item";
 import Icon from "../basics/icon";
 
 const UserMenuButton = styled(Button)`
@@ -37,74 +40,70 @@ const UserMenuButton = styled(Button)`
 `;
 
 class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
+  items: IDropdownItem[] = [
+    {
+      icon: "rocket",
+      label: ["sidebar.view_creator_profile"],
+      onClick: () => this.props.viewCreatorProfile({}),
+    },
+    {
+      icon: "fire",
+      label: ["sidebar.view_community_profile"],
+      onClick: () => this.props.viewCommunityProfile({}),
+    },
+    {
+      type: "separator",
+    },
+    {
+      icon: "download",
+      label: ["sidebar.downloads"],
+      onClick: () => this.props.navigate("downloads"),
+    },
+    {
+      icon: "cog",
+      label: ["sidebar.preferences"],
+      onClick: () => this.props.navigate("preferences"),
+    },
+    {
+      type: "separator",
+    },
+    {
+      icon: "repeat",
+      label: ["menu.help.check_for_update"],
+      onClick: () => this.props.checkForSelfUpdate({}),
+    },
+    {
+      icon: "search",
+      label: ["menu.help.search_issue"],
+      onClick: () => this.props.openUrl({url: `${urls.itchRepo}/search?type=Issues`}),
+    },
+    {
+      icon: "bug",
+      label: ["menu.help.report_issue"],
+      onClick: () => this.props.reportIssue({}),
+    },
+    {
+      icon: "lifebuoy",
+      label: ["menu.help.help"],
+      onClick: () => this.props.navigate("url/" + urls.manual),
+    },
+    {
+      type: "separator",
+    },
+    {
+      icon: "shuffle",
+      label: ["menu.account.change_user"],
+      onClick: () => this.props.changeUser({}),
+    },
+    {
+      icon: "exit",
+      label: ["menu.file.quit"],
+      onClick: () => this.props.quit({}),
+    },
+  ];
+
   render () {
-    const {viewCreatorProfile, viewCommunityProfile, changeUser,
-      navigate, quit, reportIssue,
-      openUrl, checkForSelfUpdate} = this.props;
-
-    const items: IDropdownItem[] = [
-      {
-        icon: "rocket",
-        label: ["sidebar.view_creator_profile"],
-        onClick: () => viewCreatorProfile({}),
-      },
-      {
-        icon: "fire",
-        label: ["sidebar.view_community_profile"],
-        onClick: () => viewCommunityProfile({}),
-      },
-      {
-        type: "separator",
-      },
-      {
-        icon: "download",
-        label: ["sidebar.downloads"],
-        onClick: () => navigate("downloads"),
-      },
-      {
-        icon: "cog",
-        label: ["sidebar.preferences"],
-        onClick: () => navigate("preferences"),
-      },
-      {
-        type: "separator",
-      },
-      {
-        icon: "repeat",
-        label: ["menu.help.check_for_update"],
-        onClick: () => checkForSelfUpdate({}),
-      },
-      {
-        icon: "search",
-        label: ["menu.help.search_issue"],
-        onClick: () => openUrl({url: `${urls.itchRepo}/search?type=Issues`}),
-      },
-      {
-        icon: "bug",
-        label: ["menu.help.report_issue"],
-        onClick: () => reportIssue({}),
-      },
-      {
-        icon: "lifebuoy",
-        label: ["menu.help.help"],
-        onClick: () => navigate("url/" + urls.manual),
-      },
-      {
-        type: "separator",
-      },
-      {
-        icon: "shuffle",
-        label: ["menu.account.change_user"],
-        onClick: () => changeUser({}),
-      },
-      {
-        icon: "exit",
-        label: ["menu.file.quit"],
-        onClick: () => quit({}),
-      },
-    ];
-
-    return <Dropdown items={items} inner={this.me()} updown/>;
+    return <Dropdown items={this.items} inner={this.me()} updown/>;
   }
 
   me () {
@@ -113,7 +112,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, v
 
     return <UserMenuButton discreet>
       <img src={coverUrl}/>
-      {username || displayName}
+      {displayName || username}
       <Filler/>
       <Icon icon="triangle-down" classes={["flipper"]}/>
     </UserMenuButton>;
@@ -123,7 +122,10 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, v
 interface IProps {}
 
 interface IDerivedProps {
-  me: ILightUserRecord;
+  me: User;
+  displayName?: string;
+  username: string;
+  coverUrl: string;
 
   viewCreatorProfile: typeof actions.viewCreatorProfile;
   viewCommunityProfile: typeof actions.viewCommunityProfile;
@@ -135,30 +137,10 @@ interface IDerivedProps {
   checkForSelfUpdate: typeof actions.checkForSelfUpdate;
 }
 
-interface ILightUserRecord {
-  displayName?: string;
-  username: string;
-  coverUrl: string;
-}
-
 export default connect<IProps>(UserMenu, {
-  state: () => {
-    const userDefaults: ILightUserRecord = {
-      username: "",
-      coverUrl: defaultImages.avatar,
-    };
-
-    const getMe = (state: IAppState): ILightUserRecord => state.session.credentials.me;
-
-    return createSelector(
-      getMe,
-      (me) => {
-        return {
-          me: { ...userDefaults, ...me },
-        };
-      },
-    );
-  },
+  state: () => createStructuredSelector({
+    me: (state: IAppState) => state.session.credentials.me,
+  }),
   dispatch: (dispatch) => ({
     viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),
     viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),

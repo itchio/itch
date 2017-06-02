@@ -60,12 +60,15 @@ export default function (watcher: Watcher) {
       const key = res.key.key;
       const keyClient = client.withKey(key);
 
+      // login returns a cookie, set it into our web session so that we're
+      // seamlessly logged into the app.
       if (res.cookie) {
         const partition = partitionForUser(String(res.key.userId));
         const session = require("electron").session.fromPartition(partition, {});
         
         for (const name of Object.keys(res.cookie)) {
           const value = res.cookie[name];
+          const epoch = (Date.now() * 0.001);
           await new Promise((resolve, reject) => {
             session.cookies.set({
               name,
@@ -74,7 +77,7 @@ export default function (watcher: Watcher) {
               domain: ".itch.io",
               secure: true,
               httpOnly: true,
-              expirationDate: (Date.now() * 0.001) + YEAR_IN_SECONDS,
+              expirationDate: epoch + YEAR_IN_SECONDS, // have it valid for a year
             }, (error: Error) => {
               if (error) {
                 reject(error);

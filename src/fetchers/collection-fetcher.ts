@@ -1,47 +1,53 @@
 
-import {Fetcher, Outcome, OutcomeState} from "./types";
+import {Fetcher, Outcome} from "./types";
 import db from "../db";
 import Game from "../db/models/game";
 import Collection from "../db/models/collection";
+import getByIds from "../db/get-by-ids";
+
+import {IGameRecordSet} from "../types";
 
 import normalize from "../api/normalize";
 import {collection, game, arrayOf} from "../api/schemas";
 
 import {sortAndFilter} from "./sort-and-filter";
 
-import {indexBy, map, pluck} from "underscore";
+import {indexBy, pluck} from "underscore";
 
 import {pathToId} from "../util/navigation";
+
+const emptyArr = [];
 
 export default class CollectionFetcher extends Fetcher {
 
   async work(): Promise<Outcome> {
-    const path = this.store.getState().session.tabData[this.tabId].path;
+    if (this.hasGames() && !this.warrantsRemote(this.reason)) {
+      const {games, gameIds, gamesCount} = this.tabData();
+      await this.pushGames(games, gameIds, gamesCount);
+      return this.success();
+    }
+
+    const path = this.tabData().path;
     const collectionId = +pathToId(path);
 
     const gameRepo = db.getRepo(Game);
     const collectionRepo = db.getRepo(Collection);
     let localCollection = await collectionRepo.findOneById(collectionId);
-    let localGames = {};
-    let gameIds = [];
-    if (localCollection && localCollection.gameIds) {
-      gameIds = localCollection.gameIds;
-    }
 
-    localGames = await gameRepo.findByIds(localCollection.gameIds);
-    this.push({
-      games: indexBy<Game>(localGames, "id"),
-      gameIds: gameIds,
-      gamesOffset: 0,
-      gamesCount: localCollection.gamesCount,
-      collections: {
-        [collectionId]: localCollection,
-      },
-    });
+    if (localCollection) {
+      this.push({
+        collections: {
+          [collectionId]: localCollection,
+        },
+      });
 
-    const {credentials} = this.store.getState().session;
-    if (!credentials) {
-      throw new Error(`No user credentials yet`);
+      let gameIds: number[] = [];
+      if (localCollection && localCollection.gameIds) {
+        gameIds = localCollection.gameIds;
+      }
+
+      const localGames = await gameRepo.findByIds(localCollection.gameIds);
+      await this.pushGames(indexBy(localGames, "id"), gameIds, localCollection.gamesCount);
     }
 
     let normalized;
@@ -54,6 +60,12 @@ export default class CollectionFetcher extends Fetcher {
     });
     let remoteCollection = normalized.entities.collections[collectionId];
 
+    this.push({
+      collections: {
+        [collectionId]: remoteCollection,
+      },
+    });
+
     const gamesResponse = await this.withApi(async (api) => {
       return await api.collectionGames(collectionId);
     });
@@ -63,23 +75,26 @@ export default class CollectionFetcher extends Fetcher {
     });
 
     const remoteGames = normalized.entities.games;
-    const remoteGameIds = normalized.result.gameIds;
+    const remoteGameIds: number[] = normalized.result.gameIds;
 
-    const games = map(remoteGameIds, (id) => remoteGames[id]);
-    const sortedGames = sortAndFilter(games, this.tabId, this.store);
+    this.pushGames(remoteGames, remoteGameIds, remoteCollection.gamesCount);
+
+    return this.success();
+  }
+
+  hasGames(): boolean {
+    const gameIds = this.tabData().gameIds || emptyArr;
+    return gameIds.length > 0;
+  }
+
+  async pushGames(games: IGameRecordSet, gameIds: number[], gamesCount: number) {
+    const sortedGames = sortAndFilter(getByIds(games, gameIds), this.tabId, this.store);
 
     this.push({
-      games: remoteGames,
+      games: games,
       gameIds: pluck(sortedGames, "id"),
       gamesOffset: 0,
-      gamesCount: remoteCollection.gamesCount,
-      collections: {
-        [collectionId]: remoteCollection,
-      },
+      gamesCount: gamesCount,
     });
-
-    return new Outcome(OutcomeState.Success);
   }
 }
-
-

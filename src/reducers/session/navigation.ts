@@ -1,7 +1,7 @@
 
 import {map, reject, omit, filter} from "underscore";
 
-import {ISessionNavigationState, ITabDataSet, ITabDataSave} from "../../types";
+import {ISessionNavigationState, ITabDataSave} from "../../types";
 
 import * as actions from "../../actions";
 import reducer from "../reducer";
@@ -106,7 +106,7 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     return {
       ...state,
       id,
-    }
+    };
   });
 
   on(actions.moveTab, (state, action) => {
@@ -171,16 +171,11 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     const snapshot = action.payload;
 
     const id = snapshot.current || state.id;
-    const tabData = {} as ITabDataSet;
     const transient = filter(map(snapshot.items, (tab: ITabDataSave) => {
       if (typeof tab !== "object" || !tab.id || !tab.path) {
         return;
       }
 
-      tabData[tab.id] = {
-        ...omit(tab, "id"),
-        restored: true,
-      };
       return tab.id;
     }), (x) => !!x);
 
@@ -190,10 +185,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
       tabs: {
         ...state.tabs,
         transient,
-      },
-      tabData: {
-        ...state.tabData,
-        ...tabData,
       },
     };
   });
