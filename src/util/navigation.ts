@@ -155,15 +155,12 @@ export function makeLabel(id: string, data: ITabData) {
   }
 
   if (data) {
-    const {path} = data;
-    if (path && /^url/.test(path)) {
-      if (data.webTitle) {
-        return data.webTitle;
-      }
-    } else {
-      if (data.label) {
-        return data.label;
-      }
+    if (data.webTitle) {
+      return data.webTitle;
+    }
+
+    if (data.label) {
+      return data.label;
     }
   }
 
