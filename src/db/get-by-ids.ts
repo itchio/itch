@@ -7,7 +7,7 @@ interface IRecordMap<T> {
   [key: string]: T;
 }
 
-export default function getByIds <T> (records: IRecordMap<T>, ids: string[]): T[] {
+export default function getByIds <T> (records: IRecordMap<T>, ids: string[] | number[]): T[] {
   if (size(ids) === 0) {
     return emptyArr;
   }
