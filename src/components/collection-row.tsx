@@ -89,12 +89,7 @@ export class CollectionRow extends React.PureComponent<IProps & IDerivedProps & 
     const {t, allGames, collection} = this.props;
     const {title} = collection;
 
-    let originalGameIds: number[] = emptyArr;    
-    try {
-      originalGameIds = JSON.parse(collection.gameIds);
-    } catch (e) { /* muffin */ }
-
-    const gameIds = originalGameIds.slice(0, 8);
+    const gameIds = (collection.gameIds || emptyArr).slice(0, 8);
     const games = filter(map(gameIds, (gameId) => allGames[gameId]), (x) => !!x);
 
     const gameItems = map(games, (game, index) => {
