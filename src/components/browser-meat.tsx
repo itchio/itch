@@ -468,7 +468,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
           <webview is
             partition={partition}
             plugins="on"
-            preload={getInjectPath("itchio-monkeypatch")}
+            preload={getInjectPath("itchio")}
             src="about:blank"
             ref={(wv) => this.webview = wv}/>}
         </WebviewShell>

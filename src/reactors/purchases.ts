@@ -33,7 +33,7 @@ function makePurchaseWindow (me: IOwnUserRecord, game: Game) {
       /* don't let web code control the OS */
       nodeIntegration: false,
       /* prevent window close, prefill login form, etc. */
-      preload: getInjectPath("itchio-monkeypatch"),
+      preload: getInjectPath("itchio"),
       /* stores browser session in an user_id-specific partition so,
        * in multi-seat installs, users have to log in one time each at least */
       partition,
