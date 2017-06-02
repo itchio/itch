@@ -17,7 +17,7 @@ const ButtonDiv = styled.div`
   transition: all 0.4s;
 
   font-size: ${props => props.theme.fontSizes.baseText};
-  font-weight: normal;
+  font-weight: bold;
   padding: 4px 10px;
 
   border: 1px solid;

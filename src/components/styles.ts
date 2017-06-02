@@ -348,7 +348,7 @@ export const defaultCoverBackground = () => css`
 `;
 
 export const accentTextShadow = () => css`
-  text-shadow: .5px .5px 2px ${props => props.theme.baseBackground};
+  text-shadow: 1px 1px 1px ${props => props.theme.baseBackground};
 `;
 
 export const emptyMeat = () => css`
