@@ -48,14 +48,14 @@ export class DropdownItem extends React.PureComponent<IProps & I18nProps, void> 
 
     const className = type ? `type-${type}` : "";
 
-    return <DropdownItemDiv className={className}>
+    return <DropdownItemDiv className={className} onClick={this.onClick}>
       <Ink/>
       <Icon icon={icon}/>
       {t.format(label)}
     </DropdownItemDiv>;
   }
 
-  onClick () {
+  onClick = () => {
     const {item} = this.props;
     if (item.onClick) {
       item.onClick();
