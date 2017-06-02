@@ -18,6 +18,8 @@ export enum FetchReason {
 
 import rootLogger, {Logger} from "../logger";
 
+const emptyObj = {};
+
 /**
  * Fetches all the data a tab needs to display, except webviews.
  * This can be games, users, etc.
@@ -40,7 +42,7 @@ export class Fetcher {
   retryCount = 0;
 
   hook(store: IStore, tabId: string, reason: FetchReason) {
-    this.logger = rootLogger.child({name: `tab-fetcher:${tabId}`});
+    this.logger = rootLogger.child({name: this.constructor.name});
     this.store = store;
     this.tabId = tabId;
     this.reason = reason;
@@ -82,7 +84,7 @@ export class Fetcher {
     });
   }
 
-  async withApi <T> (cb: (api: AuthenticatedClient) => Promise<T>): T {
+  async withApi <T> (cb: (api: AuthenticatedClient) => Promise<T>): Promise<T> {
     const {credentials} = this.store.getState().session;
     if (!credentials || !credentials.me) {
       this.debug("missing credentials");
@@ -170,7 +172,7 @@ export class Fetcher {
     }
   }
 
-  ensureCredentials (): ICredentials {
+  ensureCredentials(): ICredentials {
     const {credentials} = this.store.getState().session;
     if (!credentials || !credentials.me) {
       this.debug(`missing credentials`);
@@ -178,6 +180,10 @@ export class Fetcher {
     }
 
     return credentials;
+  }
+
+  tabData(): ITabData {
+    return this.store.getState().session.tabData[this.tabId] || emptyObj;
   }
 }
 
