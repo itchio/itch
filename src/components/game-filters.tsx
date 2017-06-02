@@ -96,7 +96,7 @@ const LayoutPickers = styled.section`
 const LayoutPicker = styled.section`
   ${styles.inkContainer()}
 
-  padding: 8px 10px;
+  padding: 10px 10px;
   border-radius: 50%;
   font-size: 90%;
   filter: brightness(60%);
