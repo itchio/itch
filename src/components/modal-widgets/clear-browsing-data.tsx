@@ -12,7 +12,8 @@ import LoadingCircle from "../basics/loading-circle";
 
 import * as electron from "electron";
 
-export class ClearBrowsingData extends React.PureComponent<IProps & IDerivedProps & I18nProps, IClearBrowsingDataState> {
+export class ClearBrowsingData extends
+    React.PureComponent<IProps & IDerivedProps & I18nProps, IClearBrowsingDataState> {
   constructor () {
     super();
     this.state = {

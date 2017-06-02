@@ -2,8 +2,9 @@
 import { createAction } from "redux-actions";
 import { userToTabData, gameToTabData, collectionToTabData } from "../util/navigation";
 
-import { IUserRecord, ICollectionRecord } from "../types";
-import GameModel from "../db/models/game";
+import Game from "../db/models/game";
+import User from "../db/models/user";
+import Collection from "../db/models/collection";
 
 import * as uuid from "uuid";
 
@@ -52,6 +53,9 @@ import {
 
   TAB_PARAMS_CHANGED, ITabParamsChangedPayload,
   TAB_PAGINATION_CHANGED, ITabPaginationChangedPayload,
+
+  ANALYZE_PAGE, IAnalyzePagePayload,
+  OPEN_DEV_TOOLS, IOpenDevToolsPayload,
 } from "../constants/action-types";
 
 const internalNavigate = createAction<INavigatePayload, any>(NAVIGATE);
@@ -70,11 +74,11 @@ export const openTab = (payload: IOpenTabPayload) => {
 export const focusTab = createAction<IFocusTabPayload>(FOCUS_TAB);
 export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);
 
-export const navigateToGame = (game: GameModel, background = false) =>
+export const navigateToGame = (game: Game, background = false) =>
   navigate(`games/${game.id}`, gameToTabData(game), background);
-export const navigateToUser = (user: IUserRecord, background = false) =>
+export const navigateToUser = (user: User, background = false) =>
   navigate(`users/${user.id}`, userToTabData(user), background);
-export const navigateToCollection = (collection: ICollectionRecord, background = false) =>
+export const navigateToCollection = (collection: Collection, background = false) =>
   navigate(`collections/${collection.id}`, collectionToTabData(collection), background);
 
 export const moveTab = createAction<IMoveTabPayload>(MOVE_TAB);
@@ -117,3 +121,6 @@ export const viewCreatorProfile = createAction<IViewCreatorProfilePayload>(VIEW_
 export const viewCommunityProfile = createAction<IViewCommunityProfilePayload>(VIEW_COMMUNITY_PROFILE);
 
 export const tabLoading = createAction<ITabLoadingPayload>(TAB_LOADING);
+
+export const openDevTools = createAction<IOpenDevToolsPayload>(OPEN_DEV_TOOLS);
+export const analyzePage = createAction<IAnalyzePagePayload>(ANALYZE_PAGE);

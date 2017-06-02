@@ -28,7 +28,7 @@ setTimeout(function () {
   const sendMessage = (verb: string, userAttrs = {}) => {
     const attrs = {
       ...userAttrs,
-      tabId: extendedWindow.__itchTabId,
+      tab: extendedWindow.__itchTabId,
     };
 
     const url = `https://itch-internal/${verb}?${querystring.stringify(attrs)}`;

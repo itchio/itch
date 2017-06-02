@@ -27,6 +27,7 @@ import navigation from "./navigation";
 import commons from "./commons";
 import purchases from "./purchases";
 import url from "./url";
+import itchInternal from "./itch-internal";
 
 const watcher = new Watcher();
 
@@ -56,6 +57,7 @@ navigation(watcher);
 commons(watcher);
 purchases(watcher);
 url(watcher);
+itchInternal(watcher);
 
 watcher.validate();
 

@@ -7,6 +7,8 @@ import * as classNames from "classnames";
 
 import * as actions from "../actions";
 
+import watching, {Watcher} from "./watching";
+
 import urlParser from "../util/url";
 import navigation from "../util/navigation";
 import partitionForUser from "../util/partition-for-user";
@@ -14,7 +16,6 @@ import {getInjectPath} from "../os/resources";
 
 import staticTabData from "../constants/static-tab-data";
 
-import * as querystring from "querystring";
 import {uniq, findWhere} from "underscore";
 
 import {IBrowserState, IBrowserControlProperties} from "./browser-state";
@@ -39,6 +40,9 @@ import {transformUrl} from "../util/navigation";
 
 import {IAppState} from "../types";
 import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
+
+import rootLogger from "../logger";
+const logger = rootLogger.child({name: "browser"});
 
 import "electron";
 
@@ -88,9 +92,7 @@ interface IHistoryEntry {
   scrollTop: number;
 }
 
-// updated when switching accounts
-let currentSession: Electron.Session = null;
-
+@watching
 export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   lastNavigationUrl: string;
   lastNavigationTimeStamp: number;
@@ -115,6 +117,23 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
         url: "",
       },
     };
+  }
+
+  subscribe (watcher: Watcher) {
+    watcher.on(actions.openDevTools, async (store, action) => {
+      const {tab} = action.payload;
+      if (tab === this.props.tab) {
+        this.openDevTools();
+      }
+    });
+
+    watcher.on(actions.analyzePage, async (store, action) => {
+      const {tab, url} = action.payload;
+      logger.info(`our tab = ${this.props.tab}, payload tab = ${tab}`);
+      if (tab === this.props.tab) {
+        this.analyzePage(url);
+      }
+    });
   }
 
   updateBrowserState (props = {}) {
@@ -151,10 +170,6 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
 
     this.updateBrowserState({loading: false});
 
-    if (currentSession !== webContents.session) {
-      this.setupItchInternal(webContents.session);
-    }
-
     if (url && url !== "about:blank") {
       this.loadURL(url);
     }
@@ -181,11 +196,10 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
   }
 
   didNavigate = (e: any) => { // TODO: type
-    const {tab} = this.props;
     const {url} = e;
 
     this.updateBrowserState({url});
-    this.analyzePage(tab, url);
+    this.analyzePage(url);
 
     this.updateScrollWatcher(url, this.wentBackOrForward);
     this.wentBackOrForward = false;
@@ -302,48 +316,12 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     return frozen;
   }
 
-  setupItchInternal (session: Electron.Session) {
-    currentSession = session;
-
-    // requests to 'itch-internal' are used to communicate between web content & the app
-    let internalFilter = {
-      urls: ["https://itch-internal/*"],
-    };
-
-    session.webRequest.onBeforeRequest(internalFilter, (details, callback) => {
-      callback({cancel: true});
-
-      let parsed = urlParser.parse(details.url);
-      const {pathname, query} = parsed;
-      const params = querystring.parse(query);
-      const {tab} = params;
-
-      switch (pathname) {
-        case "/open-devtools":
-          const {webview} = this;
-          if (webview && webview.getWebContents() && !webview.getWebContents().isDestroyed()) {
-            webview.getWebContents().openDevTools({mode: "detach"});
-          }
-          break;
-        case "/analyze-page":
-          this.analyzePage(tab, params.url);
-          break;
-        case "/evolve-tab":
-          const {evolveTab} = this.props;
-          evolveTab({id: tab, path: params.path});
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-  analyzePage (tab: string, url: string) {
+  analyzePage (url: string) {
     if (this.isFrozen()) {
       return;
     }
 
-    const {evolveTab} = this.props;
+    const {tab, evolveTab} = this.props;
 
     const xhr = new XMLHttpRequest();
     xhr.responseType = "document";

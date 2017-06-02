@@ -31,8 +31,8 @@ export class UrlMeat extends React.PureComponent<IProps & I18nProps, IState> {
 
     return <BrowserMeat
         url={url}
-        {...(this.props as any)}
         tab={tab} 
+        {...(this.props as any)}
         controls={controls}/>;
   }
 
@@ -54,7 +54,7 @@ export class UrlMeat extends React.PureComponent<IProps & I18nProps, IState> {
             const users = tabData.users || emptyObj;
             const user = users[suffix];
             if (user) {
-              return {url: tabUrl || user.url, controls: "user"};
+              return {url: tabUrl || user.url, controls: "generic"};
             } else {
               return {url: tabUrl, controls: "generic"};
             }

@@ -368,6 +368,17 @@ export interface ITabPaginationChangedPayload {
   pagination: Types.ITabPagination;
 }
 
+export const OPEN_DEV_TOOLS = "OPEN_DEV_TOOLS";
+export interface IOpenDevToolsPayload {
+  tab: string;
+}
+
+export const ANALYZE_PAGE = "ANALYZE_PAGE";
+export interface IAnalyzePagePayload {
+  tab: string;
+  url: string;
+}
+
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
 export interface IOpenTabContextMenuPayload {
   /** id of the tab to open the context menu of */
