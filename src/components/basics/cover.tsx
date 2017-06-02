@@ -44,7 +44,7 @@ class Cover extends React.PureComponent<IProps, void> {
 }
 
 interface IProps {
-  showGifMarker?: boolea;n
+  showGifMarker?: boolean;
   coverUrl: string;
   stillCoverUrl: string;
   hover: boolean;
