@@ -31,7 +31,6 @@ const BrowserContextDiv = styled.div`
   flex-direction: row;
 
   padding: 6px;
-  border-left: 1px solid #3e3e3e;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.16);
   z-index: 50;
   overflow-y: auto;
