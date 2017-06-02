@@ -33,6 +33,10 @@ const NewTabGrid = styled.div`
   flex: 1;
 `;
 
+const Spacer = styled.div`
+  height: 120px;
+`;
+
 const NewTabItem = styled.div`
   ${styles.clickable()}
 
@@ -49,22 +53,32 @@ const NewTabItem = styled.div`
   }
 `;
 
-const ItchLogo = styled.div`
-  width: 100%;
-  height: 130px;
-  margin: 40px 0;
-  background-image: url("./static/images/logos/app-white.svg");
-  background-position: 50% 50%;
-  background-size: auto 70%;
-  background-repeat: no-repeat;
-  opacity: .2;
-`;
-
-  const Title = styled.h2`
+const Title = styled.h2`
   flex-basis: 100%;
   text-align: center;
   padding: 20px 0;
   font-size: ${props => props.theme.fontSizes.huge};
+`;
+
+const UrlContainer = styled.div`
+  position: relative;
+  flex-basis: 100%;
+  margin: 0 40px;
+
+  .browser-address {
+    ${styles.heavyInput()};
+    width: 100%;
+    text-indent: 32px;
+  }
+
+  .icon-earth {
+    position: absolute;
+    left: 19px;
+    bottom: 50%;
+    transform: translateY(55%);
+    font-size: 19px;
+    color: ${props => props.theme.inputPlaceholder};
+  }
 `;
 
 export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
@@ -78,7 +92,8 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
     return <NewTabContainer>
       <NewTabGrid>
         <TitleBar tab={tab}/>
-        <ItchLogo/>
+
+        <Spacer/>
 
         <Title>{t("new_tab.titles.buttons")}</Title>
 
@@ -92,11 +107,11 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
         })}
 
         <Title>{t("new_tab.titles.input")}</Title>
-        <div className="browser-address-container">
+        <UrlContainer>
           <input className="browser-address" autoFocus onKeyUp={this.addressKeyUp}
             placeholder={t("new_tab.titles.browser_placeholder")}/>
           <span className="icon icon-earth"/>
-        </div>
+        </UrlContainer>
       </NewTabGrid>
     </NewTabContainer>;
   }
