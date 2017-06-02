@@ -54,9 +54,9 @@ export function makeLogger (logPath?: string): Logger {
             "color:44e;");
         },
       },
+      level: LOG_LEVEL,
     });
     l.close = () => {/* muffin */ };
-    l.level = LOG_LEVEL;
     return l;
 
   } else {
@@ -107,6 +107,7 @@ export function makeLogger (logPath?: string): Logger {
 
     const l = pinoFactory({
       timestamp: true,
+      level: LOG_LEVEL,
     }, outStream);
     l.close = () => {
       if (streamSpecs.file) {
@@ -118,7 +119,6 @@ export function makeLogger (logPath?: string): Logger {
         }
       }
     };
-    l.level = LOG_LEVEL;
     return l;
   }
 };
