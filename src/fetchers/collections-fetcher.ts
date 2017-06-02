@@ -53,11 +53,10 @@ export default class CollectionsFetcher extends Fetcher {
   }
 
   async remote () {
-    const apiResponse = await this.withApi(async (api) => {
-      return await api.myCollections();
-    });
-    const normalized = normalize(apiResponse, {
-      collections: arrayOf(collection),
+    const normalized = await this.withApi(async (api) => {
+      return normalize(await api.myCollections(), {
+        collections: arrayOf(collection),
+      });
     });
 
     const {collections} = normalized.entities;
