@@ -129,7 +129,6 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
 
     watcher.on(actions.analyzePage, async (store, action) => {
       const {tab, url} = action.payload;
-      logger.info(`our tab = ${this.props.tab}, payload tab = ${tab}`);
       if (tab === this.props.tab) {
         this.analyzePage(url);
       }
