@@ -428,7 +428,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
   }
 
   render () {
-    const {tab, tabPath, tabData, controls, meId} = this.props;
+    const {tab, visible, tabPath, tabData, controls, meId} = this.props;
     const partition = partitionForUser(meId);
 
     const {browserState} = this.state;
@@ -446,6 +446,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
       openDevTools: this.openDevTools,
       loadURL: this.loadUserURL,
       frozen,
+      active: visible,
     };
 
     let context: React.ReactElement<any> = null;

@@ -21,4 +21,5 @@ export interface IBrowserControlProperties {
   openDevTools: () => void;
   loadURL: (url: string) => void;
   frozen: boolean;
+  active: boolean;
 }

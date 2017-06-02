@@ -27,12 +27,11 @@ export class UrlMeat extends React.PureComponent<IProps & I18nProps, IState> {
     }
 
     const {tab} = this.props;
-
     const {url, controls} = this.getUrlAndControls();
 
     return <BrowserMeat
         url={url}
-        {...this.props}
+        {...(this.props as any)}
         tab={tab} 
         controls={controls}/>;
   }
