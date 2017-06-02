@@ -8,40 +8,64 @@ import urls from "../constants/urls";
 import * as actions from "../actions";
 
 import Icon from "./basics/icon";
+import TitleBar from "./title-bar";
 import {IMeatProps} from "./meats/types";
 
 import {transformUrl} from "../util/navigation";
 
 import {dispatcher} from "../constants/action-types";
 
-// TODO: show recommended for you?
-const newTabItems = [
-  {
-    label: ["new_tab.twitter"],
-    icon: "twitter",
-    path: "url/https://twitter.com/search?q=itch.io&src=typd",
-  },
-  {
-    label: ["new_tab.random"],
-    icon: "shuffle",
-    path: "url/" + urls.itchio + "/randomizer",
-  },
-  {
-    label: ["new_tab.on_sale"],
-    icon: "shopping_cart",
-    path: "url/" + urls.itchio + "/games/on-sale",
-  },
-  {
-    label: ["new_tab.top_sellers"],
-    icon: "star",
-    path: "url/" + urls.itchio + "/games/top-sellers",
-  },
-  {
-    label: ["new_tab.community"],
-    icon: "fire",
-    path: "url/" + urls.itchio + "/community",
-  },
-];
+import styled, * as styles from "./styles";
+
+const NewTabContainer = styled.div`
+  ${styles.meat()}
+`;
+
+const NewTabGrid = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  align-content: flex-start;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1;
+`;
+
+const NewTabItem = styled.div`
+  ${styles.clickable()}
+
+  width: auto;
+  flex-grow: 1;
+  padding: 30px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .icon {
+    font-size: 70px;
+    margin-bottom: 25px;
+  }
+`;
+
+const ItchLogo = styled.div`
+  width: 100%;
+  height: 130px;
+  margin: 40px 0;
+  background-image: url("./static/images/logos/app-white.svg");
+  background-position: 50% 50%;
+  background-size: auto 70%;
+  background-repeat: no-repeat;
+  opacity: .2;
+`;
+
+  const Title = styled.h2`
+  flex-basis: 100%;
+  text-align: center;
+  padding: 20px 0;
+  font-size: ${props => props.theme.fontSizes.huge};
+`;
 
 export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   constructor () {
@@ -51,29 +75,30 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
   render () {
     const {t, tab, evolveTab} = this.props;
 
-    return <div className="new-tab-meat">
-      <div className="hub-grid">
-        <div className="itch-logo"/>
+    return <NewTabContainer>
+      <NewTabGrid>
+        <TitleBar tab={tab}/>
+        <ItchLogo/>
 
-        <h2>{t("new_tab.titles.buttons")}</h2>
+        <Title>{t("new_tab.titles.buttons")}</Title>
 
         {map(newTabItems, (item) => {
           const {label, icon, path} = item;
 
-          return <div key={path} className="hub-item new-tab-item" onClick={() => evolveTab({id: tab, path})}>
+          return <NewTabItem key={path} onClick={() => evolveTab({id: tab, path})}>
             <Icon icon={icon}/>
             <span>{t.format(label)}</span>
-          </div>;
+          </NewTabItem>;
         })}
 
-        <h2>{t("new_tab.titles.input")}</h2>
+        <Title>{t("new_tab.titles.input")}</Title>
         <div className="browser-address-container">
           <input className="browser-address" autoFocus onKeyUp={this.addressKeyUp}
             placeholder={t("new_tab.titles.browser_placeholder")}/>
           <span className="icon icon-earth"/>
         </div>
-      </div>
-    </div>;
+      </NewTabGrid>
+    </NewTabContainer>;
   }
 
   addressKeyUp = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -101,3 +126,32 @@ export default connect<IProps>(NewTab, {
     evolveTab: dispatcher(dispatch, actions.evolveTab),
   }),
 });
+
+// TODO: show recommended for you?
+const newTabItems = [
+  {
+    label: ["new_tab.twitter"],
+    icon: "twitter",
+    path: "url/https://twitter.com/search?q=itch.io&src=typd",
+  },
+  {
+    label: ["new_tab.random"],
+    icon: "shuffle",
+    path: "url/" + urls.itchio + "/randomizer",
+  },
+  {
+    label: ["new_tab.on_sale"],
+    icon: "shopping_cart",
+    path: "url/" + urls.itchio + "/games/on-sale",
+  },
+  {
+    label: ["new_tab.top_sellers"],
+    icon: "star",
+    path: "url/" + urls.itchio + "/games/top-sellers",
+  },
+  {
+    label: ["new_tab.devlogs"],
+    icon: "fire",
+    path: "url/" + urls.itchio + "/featured-games-feed?filter=devlogs",
+  },
+];

@@ -145,12 +145,12 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
         ? <BrowserAddressInput
               type="search"
               disabled={frozen}
-              ref={this.onBrowserAddress as any}
+              innerRef={this.onBrowserAddress as any}
               defaultValue={url}
               onKeyUp={this.addressKeyUp}
               onBlur={this.addressBlur}/>
         : <BrowserAddressSpan className={classNames({frozen})}
-              ref={this.onBrowserAddress as any}
+              innerRef={this.onBrowserAddress as any}
               onClick={this.startEditingURL}>
             {url || ""}
           </BrowserAddressSpan>
