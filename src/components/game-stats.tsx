@@ -14,9 +14,9 @@ import Icon from "./basics/icon";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
-import CaveModel from "../db/models/cave";
-import GameModel from "../db/models/game";
-import DownloadKeyModel from "../db/models/download-key";
+import Game from "../db/models/game";
+import {ICaveSummary} from "../db/models/cave";
+import {IDownloadKeySummary} from "../db/models/download-key";
 
 import styled from "./styles";
 
@@ -58,7 +58,7 @@ const GameStatsDiv = styled.div`
 
 export class GameStats extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   render () {
-    const {t, cave, game = {} as GameModel, downloadKey, mdash = true} = this.props;
+    const {t, cave, game = {} as Game, downloadKey, mdash = true} = this.props;
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
 
@@ -116,9 +116,9 @@ export class GameStats extends React.PureComponent<IProps & IDerivedProps & I18n
 }
 
 interface IProps {
-  game: GameModel;
-  downloadKey: DownloadKeyModel;
-  cave: CaveModel;
+  game: Game;
+  downloadKey: IDownloadKeySummary;
+  cave: ICaveSummary;
   mdash?: boolean;
 }
 
