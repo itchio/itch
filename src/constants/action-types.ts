@@ -259,9 +259,11 @@ export interface INewTabPayload {
 
 export const CLOSE_TAB = "CLOSE_TAB";
 export interface ICloseTabPayload {
-  /** If null, close current tab */
   id: string;
 }
+
+export const CLOSE_CURRENT_TAB = "CLOSE_CURRENT_TAB";
+export interface ICloseCurrentTabPayload {}
 
 export const SHOW_PREVIOUS_TAB = "SHOW_PREVIOUS_TAB";
 export interface IShowPreviousTabPayload {}

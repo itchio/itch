@@ -49,7 +49,7 @@ export default reducer<ITabDataSet>(initialState, (on) => {
     return {
       ...state,
       [id]: {...oldData},
-    }
+    };
   });
 
   on(actions.closeTab, (state, action) => {

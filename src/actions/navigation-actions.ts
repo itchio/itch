@@ -17,6 +17,7 @@ import {
   TAB_EVOLVED, ITabEvolvedPayload,
   NEW_TAB, INewTabPayload,
   CLOSE_TAB, ICloseTabPayload,
+  CLOSE_CURRENT_TAB, ICloseCurrentTabPayload,
   CLOSE_ALL_TABS, ICloseAllTabsPayload,
   SHOW_PREVIOUS_TAB, IShowPreviousTabPayload,
   SHOW_NEXT_TAB, IShowNextTabPayload,
@@ -81,6 +82,7 @@ export const evolveTab = createAction<IEvolveTabPayload>(EVOLVE_TAB);
 export const tabEvolved = createAction<ITabEvolvedPayload>(TAB_EVOLVED);
 export const newTab = createAction<INewTabPayload>(NEW_TAB);
 export const closeTab = createAction<ICloseTabPayload>(CLOSE_TAB);
+export const closeCurrentTab = createAction<ICloseCurrentTabPayload>(CLOSE_CURRENT_TAB);
 export const closeAllTabs = createAction<ICloseAllTabsPayload>(CLOSE_ALL_TABS);
 export const showPreviousTab = createAction<IShowPreviousTabPayload>(SHOW_PREVIOUS_TAB);
 export const showNextTab = createAction<IShowNextTabPayload>(SHOW_NEXT_TAB);

@@ -429,7 +429,7 @@ export default function (watcher: Watcher) {
     if (focused) {
       const id = store.getState().ui.mainWindow.id;
       if (focused.id === id) {
-        store.dispatch(actions.closeTab({id: null}));
+        store.dispatch(actions.closeCurrentTab({}));
       } else {
         focused.close();
       }

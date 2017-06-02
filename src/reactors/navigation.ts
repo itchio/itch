@@ -8,6 +8,8 @@ import staticTabData from "../constants/static-tab-data";
 
 import {IAppState, IStore} from "../types";
 
+import {contains} from "underscore";
+
 let pathSelector: (state: IAppState) => void;
 const makePathSelector = (store: IStore) => createSelector(
   (state: IAppState) => state.session.navigation.id,
@@ -79,6 +81,15 @@ export default function (watcher: Watcher) {
 
     // woo !
     for (const id of transient) {
+      store.dispatch(actions.closeTab({id}));
+    }
+  });
+
+  watcher.on(actions.closeCurrentTab, async (store, action) => {
+    const {tabs, id} = store.getState().session.navigation;
+    const {transient} = tabs;
+
+    if (contains(transient, id)) {
       store.dispatch(actions.closeTab({id}));
     }
   });
