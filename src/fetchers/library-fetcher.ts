@@ -12,7 +12,7 @@ import {arrayOf} from "idealizr";
 
 import {pluck, indexBy} from "underscore";
 
-const defaultObj = {} as any;
+const emptyObj = {} as any;
 
 export default class LibraryFetcher extends Fetcher {
 
@@ -36,7 +36,7 @@ export default class LibraryFetcher extends Fetcher {
     const normalized = normalize(apiResponse, {
       owned_keys: arrayOf(downloadKey),
     });
-    const {downloadKeys} = normalized.entities;
+    const downloadKeys = normalized.entities.downloadKeys || emptyObj;
     for (const id of Object.keys(downloadKeys)) {
       downloadKeys[id].ownerId = meId;
     }
@@ -48,7 +48,7 @@ export default class LibraryFetcher extends Fetcher {
   async pushLocal() {
     const {session, commons} = this.store.getState();
 
-    const tabPagination = session.tabPagination[this.tabId] || defaultObj;
+    const tabPagination = session.tabPagination[this.tabId] || emptyObj;
     let {offset = 0, limit = 30} = tabPagination;
 
     const gameRepo = db.getRepo(Game);

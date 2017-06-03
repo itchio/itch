@@ -9,6 +9,8 @@ import {collection, arrayOf} from "../api/schemas";
 
 import {indexBy} from "underscore";
 
+const emptyObj = {};
+
 export default class CollectionsFetcher extends Fetcher {
   constructor () {
     super();
@@ -59,7 +61,7 @@ export default class CollectionsFetcher extends Fetcher {
       });
     });
 
-    const {collections} = normalized.entities;
+    const collections = normalized.entities.collections || emptyObj;
     const meId = this.ensureCredentials().me.id;
     for (const id of Object.keys(collections)) {
       collections[id].userId = meId;
@@ -70,4 +72,3 @@ export default class CollectionsFetcher extends Fetcher {
     });
   }
 }
-
