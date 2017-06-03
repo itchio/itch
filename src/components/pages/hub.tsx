@@ -5,7 +5,7 @@ import Sidebar from "../sidebar";
 import SidebarHandle from "../sidebar-handle";
 import HubContent from "../hub-content";
 
-import styled from "../styles";
+import styled, * as styles from "../styles";
 
 const HubPageDiv = styled.div`
   overflow: hidden;
@@ -16,6 +16,8 @@ const HubPageDiv = styled.div`
   right: 0;
   display: flex;
   flex-direction: row;
+
+  animation: ${styles.animations.fadeIn} .4s ease-in;
 `;
 
 class HubPage extends React.PureComponent<void, void> {
