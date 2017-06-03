@@ -3,7 +3,6 @@ import {Watcher} from "./watcher";
 import {IStore} from "../types";
 
 import db from "../db";
-import {QueryBuilder} from "typeorm";
 import DownloadKeyModel, {IDownloadKeySummary} from "../db/models/download-key";
 import CaveModel, {ICaveSummary} from "../db/models/cave";
 
@@ -19,28 +18,28 @@ const logger = rootLogger.child({name: "commons"});
 
 import {elapsed} from "../format";
 
-let downloadKeyQuery: QueryBuilder<DownloadKeyModel>;
-let cavesQuery: QueryBuilder<CaveModel>;
-
 async function updateCommons (store: IStore) {
   const t1 = Date.now();
 
-  if (!downloadKeyQuery) {
-    downloadKeyQuery = db.getRepo(DownloadKeyModel)
-      .createQueryBuilder("downloadKeys")
-      .select("id as downloadKeys_id, " +
-        "gameId as downloadKeys_gameId, " +
-        "createdAt as downloadKeys_createdAt");
+  const {credentials} = store.getState().session;
+  let meId = -1;
+  if (credentials.me && credentials.me.id) {
+    meId = credentials.me.id;
   }
 
-  if (!cavesQuery) {
-    cavesQuery = db.getRepo(CaveModel)
-      .createQueryBuilder("caves")
-      .select("id as caves_id, " +
-        "gameId as caves_gameId, " +
-        "lastTouched as caves_lastTouched, " +
-        "secondsRun as caves_secondsRun");
-  }
+  const downloadKeyQuery = db.getRepo(DownloadKeyModel)
+    .createQueryBuilder("downloadKeys")
+    .where("ownerId = :meId").addParameters({meId})
+    .select("id as downloadKeys_id, " +
+      "gameId as downloadKeys_gameId, " +
+      "createdAt as downloadKeys_createdAt");
+
+  const cavesQuery = db.getRepo(CaveModel)
+    .createQueryBuilder("caves")
+    .select("id as caves_id, " +
+      "gameId as caves_gameId, " +
+      "lastTouched as caves_lastTouched, " +
+      "secondsRun as caves_secondsRun");
 
   const {downloadKeys, caves} = await bluebird.props({
     downloadKeys: downloadKeyQuery.getMany(),
@@ -59,11 +58,19 @@ async function updateCommons (store: IStore) {
   }));
 
   const t2 = Date.now();
-  logger.info(`Updated commons in ${elapsed(t1, t2)}`)
+  logger.info(`Updated commons in ${elapsed(t1, t2)}`);
 }
 
 export default function (watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
+    await updateCommons(store);
+  });
+
+  watcher.on(actions.loginSucceeded, async (store, action) => {
+    await updateCommons(store);
+  });
+
+  watcher.on(actions.logout, async (store, action) => {
     await updateCommons(store);
   });
 
