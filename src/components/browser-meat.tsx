@@ -41,9 +41,6 @@ import {transformUrl} from "../util/navigation";
 import {IAppState} from "../types";
 import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
 
-import rootLogger from "../logger";
-const logger = rootLogger.child({name: "browser"});
-
 import "electron";
 
 import styled, * as styles from "./styles";
