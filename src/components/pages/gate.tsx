@@ -16,6 +16,8 @@ import Link from "../basics/link";
 import Button from "../basics/button";
 import Filler from "../basics/filler";
 
+import TitleBar from "../title-bar";
+
 import reporter, {IReportIssueOpts} from "../../util/crash-reporter";
 
 import * as actions from "../../actions";
@@ -254,6 +256,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
     const disabled = !!blockingOperation;
 
     return <GateDiv className={classNames({disabled})} data-stage={stage}>
+      <TitleBar tab="login"/>
       <section className="top-filler"/>
       <section className="logo">
         <img src={resolve(__dirname, "../../static/images/logos/app-white.svg")}/>

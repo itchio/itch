@@ -12,6 +12,8 @@ import * as actions from "../actions";
 import {FiltersContainer} from "./game-filters";
 import IconButton from "./basics/icon-button";
 
+import env from "../env";
+
 import styled, * as styles from "./styles";
 
 const DraggableDiv = styled.div`
@@ -44,7 +46,12 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps & I18nP
     const {t, tab, maximized, tabData} = this.props;
 
     const staticData: ITabData = staticTabData[tab] || emptyObj;
-    const label = tabData.webTitle || tabData.label || staticData.label || "";
+    let label = tabData.webTitle || tabData.label || staticData.label || "";
+
+    const loggedIn = tab !== "login";
+    if (!loggedIn) {
+      label = env.appName;
+    }
 
     return <FiltersContainer>
         <DraggableDiv>
@@ -53,7 +60,9 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps & I18nP
             <Filler/>
           </DraggableDivInner>
         </DraggableDiv>
-        <IconButton icon="cog" onClick={this.preferencesClick}/>
+        { loggedIn
+          ? <IconButton icon="cog" onClick={this.preferencesClick}/>
+          : null }
         <IconButton icon="minus" onClick={this.minimizeClick}/>
         <IconButton icon={maximized ? "window-restore" : "window-maximize"} onClick={this.maximizeRestoreClick}/>
         <IconButton icon="remove" onClick={this.closeClick}/>
