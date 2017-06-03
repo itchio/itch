@@ -5,6 +5,8 @@ import * as electron from "electron";
 const app = electron.app || electron.remote.app;
 
 import * as invariant from "invariant";
+import urls from "../constants/urls";
+import * as urlParser from "url";
 
 import {ICaveRecordLocation, IUploadRecord, IPreferencesState} from "../types";
 import {makeLogger, Logger} from "../logger";
@@ -76,7 +78,24 @@ export function downloadPath(upload: IUploadRecord, preferences: IPreferencesSta
 }
 
 export function globalDbPath(): string {
-  return path.join(app.getPath("userData"), "marketdb");
+  let dbName = "local";
+  if (urls.itchio !== urls.originalItchio) {
+    dbName = fsFriendlyHost(urls.itchio);
+  }
+  return path.join(app.getPath("userData"), "marketdb", dbName + ".db");
+}
+
+export function usersPath(): string {
+  let usersPath = path.join(app.getPath("userData"), "users");
+  if (urls.itchio !== urls.originalItchio) {
+    usersPath = path.join(usersPath, fsFriendlyHost(urls.itchio));
+  }
+  return usersPath;
+}
+
+export function fsFriendlyHost(url: string): string {
+  const parsed = urlParser.parse(url);
+  return parsed.host.replace(/[^a-zA-Z0-9\.]/g, "-");
 }
 
 export function preferencesPath(): string {
@@ -97,11 +116,6 @@ export function caveLogPath(caveId: string): string {
 
 export function caveLogger(caveId: string): Logger {
   return makeLogger(caveLogPath(caveId));
-}
-
-export function userDbPath(userId: number): string {
-  invariant(userId, "valid user id");
-  return path.join(app.getPath("userData"), "users", "" + userId, "marketdb");
 }
 
 export function sanitize(file: string): string {

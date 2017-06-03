@@ -1,9 +1,9 @@
 
 import {Watcher} from "./watcher";
 
-import {app} from "electron";
 import sf from "../os/sf";
 import * as ospath from "path";
+import {usersPath} from "../os/paths";
 
 import * as invariant from "invariant";
 import {filter, map, indexBy} from "underscore";
@@ -11,21 +11,20 @@ import {filter, map, indexBy} from "underscore";
 import * as actions from "../actions";
 
 const TOKEN_FILE_NAME = "token.json";
-const USERS_PATH = ospath.join(app.getPath("userData"), "users");
 
 import {IStore} from "../types";
 
 export function getTokenPath (userId: string) {
-  return ospath.join(USERS_PATH, userId, TOKEN_FILE_NAME);
+  return ospath.join(usersPath(), userId, TOKEN_FILE_NAME);
 }
 
 async function loadRememberedSessions (store: IStore) {
   // not using '**', as that would find arbitrarily deep files
-  const tokenFiles = await sf.glob(`*/${TOKEN_FILE_NAME}`, {cwd: USERS_PATH, nodir: true});
+  const tokenFiles = await sf.glob(`*/${TOKEN_FILE_NAME}`, {cwd: usersPath(), nodir: true});
 
   let sessions = await Promise.all(map(tokenFiles, async (tokenFile) => {
     try {
-      const tokenFullPath = ospath.join(USERS_PATH, tokenFile);
+      const tokenFullPath = ospath.join(usersPath(), tokenFile);
       const content = await sf.readFile(tokenFullPath, {encoding: "utf8"});
       return JSON.parse(content);
     } catch (e) {
@@ -52,7 +51,7 @@ async function saveSession (store: IStore, userId: string, record: any) {
     // muffin
   }
 
-  const finalRecord = {...oldRecord, ...record, lastConnected: Date.now()};
+  const finalRecord = {...oldRecord, ...record, lastConnected: Date.now() };
   const content = JSON.stringify(finalRecord);
   await sf.writeFile(tokenPath, content, {encoding: "utf8"});
 

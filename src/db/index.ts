@@ -71,7 +71,7 @@ export class DB {
       name: dbPath,
       driver: {
         type: "sqlite",
-        storage: dbPath + ".db",
+        storage: dbPath,
       },
       logging: {
         logQueries: process.env.ITCH_SQL === "1",
