@@ -11,7 +11,7 @@ import UserModel from "../db/models/user";
 import {
   ICollectionRecord,
   IInstallLocation,
-  ITabData
+  ITabData,
 } from "../types";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
@@ -33,7 +33,7 @@ export async function transformUrl(original: string): Promise<string> {
     return "https://duckduckgo.com/?" + querystring.stringify({ q, kae: "d" });
   };
 
-  if (!parsed.hostname) {
+  if (!parsed.hostname || !parsed.scheme) {
     req = "http://" + original;
     parsed = urlParser.parse(req);
     if (!parsed.hostname) {
