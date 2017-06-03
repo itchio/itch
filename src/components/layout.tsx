@@ -6,6 +6,7 @@ import {connect, I18nProps} from "./connect";
 import GatePage from "./pages/gate";
 import HubPage from "./pages/hub";
 import StatusBar from "./status-bar";
+import NonLocalIndicator from "./non-local-indicator";
 import ReactHint = require("react-hint");
 
 import {IAppState} from "../types";
@@ -99,6 +100,7 @@ class Layout extends React.PureComponent<IProps & IDerivedProps & I18nProps, voi
       <ReactHintContainer>
         <ReactHint/>
       </ReactHintContainer>
+      <NonLocalIndicator/>
     </LayoutContainer>;
   }
 
