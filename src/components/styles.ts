@@ -149,21 +149,76 @@ export const animations = {
 
   enterLeft: keyframes`
     0% {
-      transform: translateX(-100%);
+      opacity: 0;
+      transform: translateX(-20%);
     }
     100% {
+      opacity: 1;
       transform: translateX(0%);
+    }
+  `,
+
+  fixedEnterTop: keyframes`
+    0% {
+      opacity: 0;
+      transform: translateY(-200px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  `,
+
+  fixedEnterBottom: keyframes`
+    0% {
+      opacity: 0;
+      transform: translateY(200px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  `,
+
+  fixedEnterLeft: keyframes`
+    0% {
+      opacity: 0;
+      transform: translateX(-200px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  `,
+
+  fixedEnterRight: keyframes`
+    0% {
+      opacity: 0;
+      transform: translateX(200px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  `,
+
+  fadeIn: keyframes`
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
     }
   `,
 
   enterBottom: keyframes`
     0% {
       opacity: 0;
-      transform: translateY(25%) scaleY(.5);
+      transform: translateY(25%);
     }
     100% {
       opacity: 1;
-      transform: translateY(0%) scaleY(1);
+      transform: translateY(0%);
     }
   `,
 
