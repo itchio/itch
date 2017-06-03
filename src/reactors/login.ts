@@ -9,8 +9,12 @@ import {sortBy} from "underscore";
 
 import {MODAL_RESPONSE} from "../constants/action-types";
 import urls from "../constants/urls";
+import * as urlParser from "url";
 import {promisedModal} from "./modals";
 import {isNetworkError} from "../net/errors";
+
+import rootLogger from "../logger";
+const logger = rootLogger.child({name: "login"});
 
 import {ITwoFactorInputParams} from "../components/modal-widgets/two-factor-input";
 
@@ -70,16 +74,21 @@ export default function (watcher: Watcher) {
           const value = res.cookie[name];
           const epoch = (Date.now() * 0.001);
           await new Promise((resolve, reject) => {
-            session.cookies.set({
+            const parsed = urlParser.parse(urls.itchio);
+            const opts = {
               name,
               value: encodeURIComponent(value),
-              url: "https://itch.io/",
-              domain: ".itch.io",
-              secure: true,
+              url: parsed.protocol + parsed.hostname,
+              domain: "." + parsed.hostname,
+              secure: parsed.protocol === "https:",
               httpOnly: true,
               expirationDate: epoch + YEAR_IN_SECONDS, // have it valid for a year
-            }, (error: Error) => {
+            };
+            logger.debug(`Setting cookie: `, opts);
+            session.cookies.set(opts, (error: Error) => {
               if (error) {
+                logger.error(`Cookie error: `, error);
+                logger.error(`Cookie error stack: `, error.stack);
                 reject(error);
               } else {
                 resolve();
