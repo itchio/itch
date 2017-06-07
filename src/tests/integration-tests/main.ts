@@ -69,6 +69,7 @@ async function beforeEach (t, opts) {
     path: electronBinaryPath as any as string,
     args,
     env: {
+      ITCH_APP_ENV: "test",
       NODE_ENV: "test",
     },
     chromeDriverLogPath: "./tmp/chrome-driver-log.txt",
@@ -136,8 +137,27 @@ test("integration tests", async (t) => {
     }
   };
 
+  let filter = new RegExp("");
+  let state = 0;
+  for (const arg of process.argv) {
+    if (state === 0) {
+      if (arg === "--case") {
+        state = 1;
+      }
+    } else {
+      filter = new RegExp(arg);
+      t.comment(`Only running tests matching ${filter}`);
+      state = 0;
+    }
+  }
+
   // a little wrapper on top of zopf's test
   const spec = function (name, f, opts) {
+    if (!filter.test(name)) {
+      t.comment(`Skipping "${name}"`);
+      return;
+    }
+
     t.case(name, async (t) => {
       const t1 = Date.now();
       let err;
