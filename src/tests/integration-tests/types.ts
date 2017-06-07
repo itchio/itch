@@ -1,6 +1,6 @@
 
 import {Application} from "spectron";
-import {Zopf} from "zopf";
+import "zopf";
 
 export interface ISpecOpts {
   args?: string[];
