@@ -57,7 +57,7 @@ export function connect <TProps> (
         if (b1 !== b2) {
           console.error(component.name, "should use reselect! reduced = ", b1);
         }
-      }
+      };
 
       if (typeof base === "function") {
         return (state: IAppState, props: any) => {
@@ -65,14 +65,14 @@ export function connect <TProps> (
           const b2 = base(state, props);
           compareReduced(b1, b2);
           return augment(state, b1);
-        }
+        };
       } else {
         return (state: IAppState, props: any) => {
           const b1 = opts.state(state, props);
           const b2 = opts.state(state, props);
           compareReduced(b1, b2);
           return augment(state, opts.state(state, props));
-        }
+        };
       }
     } else {
       if (typeof base === "function") {
