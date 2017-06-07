@@ -1,6 +1,16 @@
 
 import {II18nResources} from "../types";
 
+import env from "../env";
+let identity = env.name === "test";
+
+// for unit testing
+export function disableIdentity () {
+  identity = false;
+}
+
+const emptyObj = {};
+
 export interface ILocalizer {
   /** returns the localized version of a string */
   (key: string | string[], variables?: any): string;
@@ -14,44 +24,59 @@ export interface ILocalizer {
 
 export function getT (strings: II18nResources, lang: string) {
   const t: ILocalizer = ((key: string | string[], variables?: any) => {
-    if (!key) {
+    if (identity) {
       return key;
     }
 
-    let langs = [lang];
-    if (lang.length > 2) {
-      langs = [...langs, lang.substring(0, 2)];
-    }
-    
-    langs = [...langs, "en"];
-    const keys = Array.isArray(key) ? key : [key];
-    if (key.length < 1) {
+    if (!key || key.length <= 0) {
       return key;
     }
+
+    const longLocale = lang.length > 2;
+    const keyArray = Array.isArray(key);
 
     let str: string;
-    for (const localeLang of langs) {
-      for (const localeKey of keys) {
-        const lstrings = strings[localeLang] || {};
-        str = lstrings[localeKey];
-        if (str) {
-          break;
+    langLookup: for (let i = 0; i < 3; i++) {
+      let currentLang;
+      if (i === 0) {
+        currentLang = lang;
+      } else if (i === 1) {
+        if (longLocale) {
+          currentLang = lang.substring(0, 2);
+        } else {
+          continue;
         }
+      } else if (i === 2) {
+        currentLang = "en";
       }
 
-      if (str) {
-        break;
+      const currentStrings = strings[currentLang] || emptyObj;
+      if (keyArray) {
+        for (const currentKey of key) {
+          str = currentStrings[currentKey];
+          if (str) {
+            break langLookup;
+          }
+        }
+      } else {
+        str = currentStrings[key as string];
+        if (str) {
+          break langLookup;
+        }
       }
     }
 
     if (!str) {
       // fall back to specified default value, or key name +
       // variables stringified as json
-      let defaultSuffix = "";
-      if (Object.keys(variables || {}).length > 0) {
-        defaultSuffix = ` ${JSON.stringify(variables || {})}`;
+      let defaultValue = (variables || emptyObj).defaultValue;
+      if (!defaultValue) {
+        let defaultSuffix = "";
+        if (Object.keys(variables || emptyObj).length > 0) {
+          defaultSuffix = ` ${JSON.stringify(variables)}`;
+        }
+        defaultValue = `${key}${defaultSuffix}`;
       }
-      let defaultValue = (variables || {}).defaultValue || `${key}${defaultSuffix}`;
       return defaultValue;
     }
 
