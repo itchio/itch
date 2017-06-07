@@ -4,6 +4,8 @@ if (process.type === "renderer") {
 }
 
 import {elapsed} from "../format";
+import {dirname} from "path";
+import sf from "../os/sf";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "db"});
@@ -65,6 +67,12 @@ export class DB {
     logger.info(`connecting to db ${dbPath}`);
     const t1 = Date.now();
     this.dbPath = dbPath;
+
+    try {
+      await sf.mkdir(dirname(this.dbPath));
+    } catch (e) {
+      logger.warn(`could not make db parent directory: ${e.stack}`);
+    }
 
     // sqlite init
     this.conn = await createConnection({
