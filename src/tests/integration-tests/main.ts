@@ -1,10 +1,14 @@
 
 // tslint:disable:no-shadowed-variable
 
-const Application = require('spectron').Application;
-const test = require("zopf");
-const bluebird = require("bluebird");
-const mkdirp = bluebird.promisify(require("mkdirp"));
+import {Application} from "spectron";
+import test = require("zopf");
+import * as bluebird from "bluebird";
+
+import * as mkdirpCallback from "mkdirp";
+const mkdirp = bluebird.promisify(mkdirpCallback);
+
+import runTests from "./tests";
 
 // Lessons learned from messing around with spectron:
 // 
@@ -38,7 +42,7 @@ async function beforeEach (t, opts) {
   t.itch = {
     polling: true,
     exitCode: 0,
-  }
+  };
 
   let specArgs = [];
   if (opts) {
@@ -62,12 +66,13 @@ async function beforeEach (t, opts) {
   }
 
   t.app = new Application({
-    path: electronBinaryPath,
+    path: electronBinaryPath as any as string,
     args,
     env: {
       NODE_ENV: "test",
     },
-  })
+    chromeDriverLogPath: "./tmp/chrome-driver-log.txt",
+  });
   t.comment(`starting app with args ${args.join(" ")}`);
 
   await t.app.start();
@@ -103,7 +108,7 @@ async function pollLogs (t) {
   }
 }
 
-test('integration tests', async (t) => {
+test("integration tests", async (t) => {
   const afterEach = async (t) => {
     t.comment("cleaning up test...");
 
@@ -129,7 +134,7 @@ test('integration tests', async (t) => {
     if (t.itch.exitCode !== 0) {
       throw new Error(`Non-zero exit code ${t.itch.exitCode}`);
     }
-  }
+  };
 
   // a little wrapper on top of zopf's test
   const spec = function (name, f, opts) {
@@ -152,12 +157,13 @@ test('integration tests', async (t) => {
         // this'll make the test fail
         throw err;
       }
-    })
-  }
+    });
+  };
 
-  require("./tests")(spec);
-})
+  runTests(spec);
+});
 
 require("tape").onFinish(() => {
+  // tslint:disable-next-line
   console.log("tape finished!");
 });
