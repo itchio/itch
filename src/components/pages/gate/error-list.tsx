@@ -14,7 +14,7 @@ import {slugify} from "../../../format";
  */
 class ErrorList extends React.PureComponent<IProps & I18nProps, void> {
   render () {
-    const {t, errors, before = "", i18nNamespace} = this.props;
+    const {t, errors, before = "", i18nNamespace, ...restProps} = this.props;
     const prefix = i18nNamespace ? `errors.${i18nNamespace}` : "errors";
 
     if (!errors) {
@@ -23,9 +23,9 @@ class ErrorList extends React.PureComponent<IProps & I18nProps, void> {
 
     const errorArray = Array.isArray(errors) ? errors : [errors];
 
-    return <ul className="form-errors">
+    return <ul className="form-errors" {...restProps}>
       {map(errorArray, (error, key) => {
-        const i18nKey = prefix + "." + slugify(error) + "hehe";
+        const i18nKey = prefix + "." + slugify(error);
         const message = t(i18nKey, {defaultValue: error});
         return <li key={key}>{before}{message}</li>;
       })}
@@ -37,6 +37,7 @@ interface IProps {
   errors: string[];
   before: JSX.Element;
   i18nNamespace: string;
+  id?: string;
 }
 
 export default connect<IProps>(ErrorList);

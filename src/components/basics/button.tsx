@@ -115,6 +115,7 @@ interface IProps {
   label?: string;
   discreet?: boolean;
   fat?: boolean;
+  id?: string;
 }
 
 export default Button;

@@ -268,7 +268,8 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
         <Form onSubmit={this.handleSubmit}>
           <input id="login-username" ref="username" type="text"
             placeholder={t("login.field.username")} autoFocus disabled={disabled}/>
-          <input ref="password" type="password" placeholder={t("login.field.password")} disabled={disabled}
+          <input id="login-password" ref="password" type="password"
+              placeholder={t("login.field.password")} disabled={disabled}
             onKeyDown={this.handleKeyDown}/>
           <section className="actions">
             {this.renderActions()}
@@ -295,7 +296,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
       </section>;
     } else {
       return <section className={classNames("errors", {hasError: !isEmpty(errors)})}>
-        <ErrorList errors={errors} before={<Icon icon="neutral"/>} i18nNamespace="api.login"/>
+        <ErrorList id="login-errors" errors={errors} before={<Icon icon="neutral"/>} i18nNamespace="api.login"/>
       </section>;
     }
   }
@@ -389,7 +390,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
       </div>;
     } else {
       const translatedMessage = t("login.action.login");
-      return <Button fat primary label={translatedMessage} onClick={this.handleSubmit}/>;
+      return <Button id="login-button" fat primary label={translatedMessage} onClick={this.handleSubmit}/>;
     }
   }
 
