@@ -1,6 +1,7 @@
 
 interface MkdirpStatic {
     sync(dir: string): void
+    (dir: string, callback: (err: Error) => void): void;
 }
 
 /**
