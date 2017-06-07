@@ -1,7 +1,7 @@
 
-import {SinonSpy, SinonStub, SinonMock} from "sinon";
-
 declare namespace Zopf {
+  import {SinonSpy, SinonStub, SinonMock} from "sinon";
+
   export interface ITest {
     /**
      * Asserts that a and b are the same (value comparison via deepEqual).
@@ -81,5 +81,7 @@ declare namespace Zopf {
   }
 }
 
-var test: Zopf.ITestStatic;
-export = test;
+declare module 'zopf' {
+  var test: Zopf.ITestStatic;
+  export = test;
+}
