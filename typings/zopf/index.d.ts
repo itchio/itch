@@ -1,8 +1,8 @@
 
-declare module 'zopf' {
-  import {SinonSpy, SinonStub, SinonMock} from "sinon";
+import {SinonSpy, SinonStub, SinonMock} from "sinon";
 
-  interface ITest {
+declare namespace Zopf {
+  export interface ITest {
     /**
      * Asserts that a and b are the same (value comparison via deepEqual).
      * Not to be confused with 'is'
@@ -64,9 +64,14 @@ declare module 'zopf' {
      * Assert that a and b contain the same file paths (they're normalized for comparison)
      */
     samePaths(a: string[], b: string[]): void;
+
+    /**
+     * Print a comment without breaking TAP output
+     */
+    comment(msg: string): void;
   }
 
-  interface ITestStatic {
+  export interface ITestStatic {
     (name: string, cb: (t: ITest) => void): void;
 
     /**
@@ -74,7 +79,7 @@ declare module 'zopf' {
      */
     module<T>(defaultExport: T): T;
   }
-
-  var test: ITestStatic;
-  export = test;
 }
+
+var test: Zopf.ITestStatic;
+export = test;
