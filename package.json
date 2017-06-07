@@ -50,6 +50,7 @@
     "@types/sinon-as-promised": "^4.0.4",
     "@types/tmp": "0.0.31",
     "@types/uuid": "^2.0.29",
+    "@types/webdriverio": "^4.7.0",
     "@types/which": "^1.0.28",
     "babel-core": "^6.24.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
