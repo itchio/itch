@@ -56,11 +56,15 @@ async function beforeEach (t: IIntegrationTest, opts: ISpecOpts) {
 
   const args = [".", ...specArgs];
 
-  try {
-    if (opts.wipePrefix) {
-      await rimraf("./tmp");
+  if (opts.wipePrefix) {
+    try {
+      await rimraf("./tmp/prefix");
+    } catch (e) {
+      t.comment(`While wiping prefix: ${e.message}`);
     }
+  }
 
+  try {
     // with NODE_ENV=test, the app uses that folder
     // to store userData, desktop, home etc.
     // this lets us wipe it, copy it, or do whatever we
@@ -84,7 +88,7 @@ async function beforeEach (t: IIntegrationTest, opts: ISpecOpts) {
     chromeDriverLogPath: "./tmp/chrome-driver-log.txt",
   };
   // not included in typings for some reason;
-  (settings as any).webdriverLogPath = "./tmp/web-driver-logs";
+  // (settings as any).webdriverLogPath = "./tmp/web-driver-logs";
 
   t.app = new Application(settings);
   t.comment(`starting app with args ${args.join(" ")}`);
