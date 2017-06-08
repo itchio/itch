@@ -158,6 +158,10 @@
     "@types/react" "*"
     redux "^3.6.0"
 
+"@types/rimraf@^0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@types/rimraf/-/rimraf-0.0.28.tgz#5562519bc7963caca8abf7f128cae3b594d41d06"
+
 "@types/sinon-as-promised@^4.0.4":
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/@types/sinon-as-promised/-/sinon-as-promised-4.0.6.tgz#400d656d1d10c24ce557e389c036f6ee797edd30"

@@ -44,11 +44,11 @@ const DropdownItemDiv = styled.div`
 export class DropdownItem extends React.PureComponent<IProps & I18nProps, void> {
   render () {
     const {t, item} = this.props;
-    const {label, icon, type} = item;
+    const {label, icon, type, id} = item;
 
     const className = type ? `type-${type}` : "";
 
-    return <DropdownItemDiv className={className} onClick={this.onClick}>
+    return <DropdownItemDiv className={className} onClick={this.onClick} id={id}>
       <Ink/>
       <Icon icon={icon}/>
       {t.format(label)}
@@ -73,6 +73,7 @@ export interface IDropdownItem {
   type?: string;
   label?: ILocalizedString;
   icon?: string;
+  id?: string;
   onClick?: () => void;
 }
 

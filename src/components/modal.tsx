@@ -318,11 +318,13 @@ interface IDefaultButtons {
 
 const DEFAULT_BUTTONS = {
   cancel: {
+    id: "modal-cancel",
     label: ["prompt.action.cancel"],
     action: actions.closeModal({}),
     className: "secondary",
   },
   ok: {
+    id: "modal-ok",
     label: ["prompt.action.ok"],
     action: actions.closeModal({}),
     className: "secondary",
@@ -413,10 +415,11 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps & I18nProp
       <Filler/>
       {map(buttons, (buttonSpec, index) => {
         const button = this.specToButton(buttonSpec);
-        const {label, className = "", icon} = button;
+        const {label, className = "", icon, id} = button;
         let onClick = this.buttonOnClick(button);
 
         return <Button
+          id={id}
           primary={className !== "secondary"}
           discreet
           key={index}

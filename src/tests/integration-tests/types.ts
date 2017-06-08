@@ -4,6 +4,8 @@ import "zopf";
 
 export interface ISpecOpts {
   args?: string[];
+  wipePrefix?: boolean;
+  ownExit?: boolean;
 }
 
 export interface ISpec {
@@ -11,8 +13,18 @@ export interface ISpec {
 }
 
 interface ITestAdditions {
-  ownExit: boolean;
   app: Application;
+  /** used by test runner, don't mess with from tests */
+  itch: {
+    polling: boolean;
+    exitCode: number;
+    pollPromise: Promise<void>;
+  };
 }
 
 export type IIntegrationTest = Zopf.ITest & ITestAdditions;
+
+export const testAccountName = "itch-test-account";
+export const testAccountPassword = process.env.ITCH_TEST_ACCOUNT_PASSWORD;
+
+export const sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));

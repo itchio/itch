@@ -659,6 +659,9 @@ export type IModalAction = Action<any> | Action<any>[];
 export type ModalButtonActionSource = "widget";
 
 export interface IModalButton {
+    /** HTML id for this button */
+    id?: string;
+
     /** icomoon icon to use for button */
     icon?: string;
 

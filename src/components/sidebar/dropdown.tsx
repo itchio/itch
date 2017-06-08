@@ -53,16 +53,19 @@ export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nP
   }
 
   render () {
-    const {items, inner, className, updown = false} = this.props;
+    const {items, inner, className, updown = false, ...restProps} = this.props;
 
     const {open} = this.state;
     const containerClasses = classNames(className, {disabled: items.length === 0});
     const dropdownClasses = classNames({active: open, updown});
 
-    const children = map(
-      items,
-      (item, i) => <DropdownItem key={i} item={item} onClick={this.close}/>,
-    );
+    let children = [];
+    if (open) {
+      children = map(
+        items,
+        (item, i) => <DropdownItem key={i} item={item} onClick={this.close}/>,
+      );
+    }
 
     let innerClasses = "";
     if (updown !== open) { // boolean xor
@@ -79,7 +82,7 @@ export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nP
       {children}
     </DropdownDiv>;
 
-    return <DropdownContainer style={{position: "relative"}} className={containerClasses}>
+    return <DropdownContainer style={{position: "relative"}} className={containerClasses} {...restProps}>
       {updown
         ? [childrenC, innerC]
         : [innerC, childrenC]
@@ -103,6 +106,7 @@ export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nP
 interface IProps {
   inner: React.ReactElement<any>;
   className?: string;
+  id?: string;
   items: IDropdownItem[];
   updown?: boolean;
 }

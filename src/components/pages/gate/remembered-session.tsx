@@ -92,7 +92,7 @@ export class RememberedSession extends React.PureComponent<IProps & IDerivedProp
       forgetSessionRequest({id, username});
     };
 
-    return <RememberedSessionDiv onClick={() => {
+    return <RememberedSessionDiv className="remembered-session" onClick={() => {
         const payload = {username, key, me};
         if (this.props.onLogin) {
           this.props.onLogin(payload);

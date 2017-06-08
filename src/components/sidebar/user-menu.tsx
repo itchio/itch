@@ -98,6 +98,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, v
     {
       icon: "shuffle",
       label: ["menu.account.change_user"],
+      id: "user-menu-change-user",
       onClick: () => this.props.changeUser({}),
     },
     {
@@ -115,7 +116,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, v
     const {me} = this.props;
     const {coverUrl = defaultImages.avatar, username, displayName} = me;
 
-    return <UserMenuButton discreet>
+    return <UserMenuButton id="user-menu" discreet>
       <img src={coverUrl}/>
       {displayName || username}
       {me.developer ? <IconBadge icon="rocket"/> : null}

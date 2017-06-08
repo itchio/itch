@@ -1,12 +1,16 @@
 
 // tslint:disable:no-shadowed-variable
 
-import {Application} from "spectron";
+import {Application, BasicAppSettings} from "spectron";
 import test = require("zopf");
 import * as bluebird from "bluebird";
 
-import * as mkdirpCallback from "mkdirp";
+import mkdirpCallback = require("mkdirp");
 const mkdirp = bluebird.promisify(mkdirpCallback);
+import rimrafCallback = require("rimraf");
+const rimraf = bluebird.promisify(rimrafCallback);
+
+import {ISpec, ISpecOpts, IIntegrationTest} from "./types";
 
 import runTests from "./tests";
 
@@ -36,12 +40,13 @@ const electronBinaryPath = require("electron");
 process.env.ELECTRON_ENABLE_LOGGING = "1";
 
 // Start up the app
-async function beforeEach (t, opts) {
+async function beforeEach (t: IIntegrationTest, opts: ISpecOpts) {
   // `t` is different for each spec, so we use
   // it to store some state.
   t.itch = {
     polling: true,
     exitCode: 0,
+    pollPromise: null,
   };
 
   let specArgs = [];
@@ -52,6 +57,10 @@ async function beforeEach (t, opts) {
   const args = [".", ...specArgs];
 
   try {
+    if (opts.wipePrefix) {
+      await rimraf("./tmp");
+    }
+
     // with NODE_ENV=test, the app uses that folder
     // to store userData, desktop, home etc.
     // this lets us wipe it, copy it, or do whatever we
@@ -65,7 +74,7 @@ async function beforeEach (t, opts) {
     }
   }
 
-  t.app = new Application({
+  const settings: BasicAppSettings = {
     path: electronBinaryPath as any as string,
     args,
     env: {
@@ -73,7 +82,11 @@ async function beforeEach (t, opts) {
       NODE_ENV: "test",
     },
     chromeDriverLogPath: "./tmp/chrome-driver-log.txt",
-  });
+  };
+  // not included in typings for some reason;
+  (settings as any).webdriverLogPath = "./tmp/web-driver-logs";
+
+  t.app = new Application(settings);
   t.comment(`starting app with args ${args.join(" ")}`);
 
   await t.app.start();
@@ -83,7 +96,7 @@ async function beforeEach (t, opts) {
 }
 
 // Continuously fetch the test app's logs.
-async function pollLogs (t) {
+async function pollLogs (t: IIntegrationTest) {
   try {
     while (true) {
       await bluebird.delay(500);
@@ -110,20 +123,20 @@ async function pollLogs (t) {
 }
 
 test("integration tests", async (t) => {
-  const afterEach = async (t) => {
+  const afterEach = async (t: IIntegrationTest, opts: ISpecOpts) => {
     t.comment("cleaning up test...");
 
     if (!(t.app && t.app.isRunning())) {
       return;
     }
 
-    if (t.ownExit) {
+    if (opts.ownExit) {
       t.comment("waiting for test to exit on its own...");
       await t.itch.pollPromise;
     }
 
     t.itch.polling = false;
-    if (!t.ownExit) {
+    if (!opts.ownExit) {
       t.comment("printing the last of logs...");
       await t.itch.pollPromise;
     }
@@ -152,13 +165,13 @@ test("integration tests", async (t) => {
   }
 
   // a little wrapper on top of zopf's test
-  const spec = function (name, f, opts) {
+  const spec: ISpec = function (name, f, opts) {
     if (!filter.test(name)) {
       t.comment(`Skipping "${name}"`);
       return;
     }
 
-    t.case(name, async (t) => {
+    t.case(name, async (t: IIntegrationTest) => {
       const t1 = Date.now();
       let err;
       try {
@@ -168,14 +181,13 @@ test("integration tests", async (t) => {
         t.comment(`In spec, caught ${e}`);
         err = e;
       } finally {
-        await afterEach(t);
+        await afterEach(t, opts);
         const t2 = Date.now();
         t.comment(`Test ran in ${(t2 - t1).toFixed(3)}ms`);
       }
 
       if (err) {
-        // this'll make the test fail
-        throw err;
+        t.notOk(err, err.stack);
       }
     });
   };

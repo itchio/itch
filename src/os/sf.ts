@@ -3,7 +3,6 @@ import * as invariant from "invariant";
 import { promisify, promisifyAll } from "bluebird";
 import * as bluebird from "bluebird";
 
-import {Stats} from "fs";
 import * as fsModule from "fs";
 const baseFs = require("original-fs");
 
@@ -50,28 +49,22 @@ const stubs = {
   "graceful-fs": gracefulFs,
 };
 
-const debugLevel = parseInt(process.env.INCENTIVE_MET, 10) || -1;
-const debug = (level: number, parts: string[]) => {
-  if (debugLevel < level) {
-    return;
-  }
-
-  console.log(`[sf] ${parts.join(" ")}`); // tslint:disable-line:no-console
-};
-
 fs = gracefulFs;
 
 // adds 'xxxAsync' variants of all fs functions, which we'll use
 promisifyAll(fs);
 
-// single function, callback-based, can't specify fs
+// single function, callback-based, doesn't accept fs
 const glob = promisify(proxyquire("glob", stubs) as IGlobStatic);
-
-// single function, callback-based, can't specify fs
-const mkdirp = promisify(proxyquire("mkdirp", stubs) as (path: string, cb: () => any) => void);
 
 // single function, callback-based, doesn't accept fs
 const readChunk = promisify(proxyquire("read-chunk", stubs));
+
+// single function, callback-based, can actually specify fs!
+const mkdirp = promisify(require("mkdirp") as (path: string, opts: any, cb: () => any) => void);
+
+// single function, can actually specify fs!
+const rimraf = promisify(require("rimraf") as (path: string, opts: any, cb: () => any) => void);
 
 // other deps
 import * as path from "path";
@@ -81,8 +74,6 @@ const ignore = [
   // on macOS, trashes exist on dmg volumes but cannot be scandir'd for some reason
   "**/.Trashes/**",
 ];
-
-const concurrency = 8;
 
 /*
  * sf = backward fs, because fs itself is quite backwards
@@ -157,7 +148,7 @@ const self = {
    * Uses mkdirp: https://www.npmjs.com/package/mkdirp
    */
   mkdir: async (dir: string): Promise<void> => {
-    await mkdirp(dir);
+    await mkdirp(dir, {fs: baseFs});
   },
 
   /**
@@ -172,69 +163,7 @@ const self = {
    * Also works on file, don't bother with unlink.
    */
   wipe: async (shelter: string): Promise<void> => {
-    debug(1, ["wipe", shelter]);
-
-    let stats: Stats;
-    try {
-      stats = await self.lstat(shelter);
-    } catch (err) {
-      if (err.code === "ENOENT") {
-        return;
-      }
-      throw err;
-    }
-
-    if (stats.isDirectory()) {
-      const fileOrDirs = await self.glob("**", { cwd: shelter, dot: true, ignore });
-      const dirs: string[] = [];
-      const files: string[] = [];
-
-      for (const fad of fileOrDirs) {
-        const fullFad = path.join(shelter, fad);
-
-        let fStats: Stats;
-        try {
-          fStats = await self.lstat(fullFad);
-        } catch (err) {
-          if (err.code === "ENOENT") {
-            // good!
-            continue;
-          } else {
-            throw err;
-          }
-        }
-
-        if (fStats.isDirectory()) {
-          dirs.push(fad);
-        } else {
-          files.push(fad);
-        }
-      }
-
-      const unlink = async (file: string) => {
-        const fullFile = path.join(shelter, file);
-        await self.unlink(fullFile);
-      };
-      await bluebird.resolve(files).map(unlink, { concurrency });
-
-      // remove deeper dirs first
-      dirs.sort((a, b) => (b.length - a.length));
-
-      // needs to be done in order
-      for (const dir of dirs) {
-        const fullDir = path.join(shelter, dir);
-
-        debug(2, ["rmdir", fullDir]);
-        await self.rmdir(fullDir);
-      }
-
-      debug(1, ["rmdir", shelter]);
-      await self.rmdir(shelter);
-      debug(1, ["wipe", "shelter", `done (removed ${files.length} files & ${dirs.length} directories)`]);
-    } else {
-      debug(1, ["unlink", shelter]);
-      await self.unlink(shelter);
-    }
+    await rimraf(shelter, baseFs);
   },
 
   utimes: async (file: string, atime: number, mtime: number): Promise<void> => {

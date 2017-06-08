@@ -47,7 +47,7 @@ export default function (watcher: Watcher) {
     }
 
     store.dispatch(actions.modalClosed({
-      id: modal.id,
+      id: modal ? modal.id : id,
       action,
     }));
   });

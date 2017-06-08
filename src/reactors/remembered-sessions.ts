@@ -76,6 +76,7 @@ export default function (watcher: Watcher) {
       detail: ["prompt.forget_session.detail"],
       buttons: [
         {
+          id: "modal-forget-session",
           label: ["prompt.forget_session.action"],
           action: actions.forgetSession({id, username}),
           icon: "cross",
