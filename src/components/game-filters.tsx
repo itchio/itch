@@ -153,6 +153,7 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps
       {showBinaryFilters
       ? <TagFilters>
         <Select
+          className="game-filters-input"
           multi={true}
           options={options}
           value={value}
@@ -195,6 +196,8 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps
     const active = (this.props.layout === layout);
 
     return <LayoutPicker active={active}
+      className="layout-picker"
+      data-layout={layout}
       onClick={
       (e) => this.props.updatePreferences({layout})
     }>

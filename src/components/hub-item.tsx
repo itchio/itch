@@ -41,6 +41,8 @@ export class HubItem extends React.PureComponent<IProps & IDerivedProps & I18nPr
     const actionProps = {game, showSecondary: this.state.hover};
 
     return <HubItemDiv
+        className="grid-item"
+        data-game-id={game.id}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
         onContextMenu={this.onContextMenu}>

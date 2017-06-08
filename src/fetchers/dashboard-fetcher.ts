@@ -75,6 +75,7 @@ export default class DashboardFetcher extends Fetcher {
         ...normalized.entities,
         profiles: {
           [meId]: {
+            id: meId,
             myGameIds: remoteGameIds,
           },
         },

@@ -22,7 +22,11 @@ const makePathSelector = (store: IStore) => createSelector(
 
 export default function (watcher: Watcher) {
   watcher.on(actions.clearFilters, async (store, action) => {
-    store.dispatch(actions.updatePreferences({onlyCompatibleGames: false}));
+    store.dispatch(actions.updatePreferences({
+      onlyCompatibleGames: false,
+      onlyInstalledGames: false,
+      onlyOwnedGames: false,
+    }));
   });
 
   watcher.on(actions.navigate, async (store, action) => {

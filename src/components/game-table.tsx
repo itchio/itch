@@ -210,7 +210,7 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
 
     const {title, shortText} = game;
     return <TitleColumnDiv>
-      <TitleDiv>{title}</TitleDiv>
+      <TitleDiv className="game-table-title">{title}</TitleDiv>
       <DescriptionDiv>{shortText}</DescriptionDiv>
     </TitleColumnDiv>;
 }

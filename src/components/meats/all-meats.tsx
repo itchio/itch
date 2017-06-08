@@ -47,7 +47,12 @@ export class AllMeats extends React.PureComponent<IProps & IDerivedProps & I18nP
       {map(tabs, (id) => {
         const data = tabData[id] || {};
         const visible = (id === currentId);
-        return <MeatTab key={id} className={classNames({visible})}>
+        return <MeatTab
+            key={id}
+            data-id={id}
+            data-path={data.path}
+            data-visible={visible}
+            className={classNames("meat-tab", {visible})}>
           <Meat tab={id} tabData={data} visible={visible}/>
         </MeatTab>;
       })}

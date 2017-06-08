@@ -21,6 +21,8 @@ interface IRowRendererParams {
   key: string;
 };
 
+const emptyString = "";
+
 /**
  * Default row renderer for Table.
  */
@@ -66,7 +68,8 @@ export default function defaultRowRenderer (params: IRowRendererParams) {
   return (
     <div
       {...props}
-      className={className}
+      className={`table-item ${className || emptyString}`}
+      data-game-id={rowData ? rowData.id : -1}
       key={key}
       style={style}
     >

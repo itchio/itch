@@ -67,7 +67,8 @@ export default function loginFlow (spec: ISpec) {
 
     t.comment("logging in all over again");
     await loginWithPassword();
+    await client.waitForExist("#user-menu", 5000);
   }, {
     wipePrefix: true,
   });
-}
+};

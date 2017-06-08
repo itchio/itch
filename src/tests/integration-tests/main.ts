@@ -170,6 +170,10 @@ test("integration tests", async (t) => {
 
   // a little wrapper on top of zopf's test
   const spec: ISpec = function (name, f, opts) {
+    if (!opts) {
+      opts = {};
+    }
+
     if (!filter.test(name)) {
       t.comment(`Skipping "${name}"`);
       return;

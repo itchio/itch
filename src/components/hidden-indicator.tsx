@@ -34,6 +34,7 @@ class HiddenIndicator extends React.PureComponent<IProps & IDerivedProps & I18nP
 
     return <HiddenIndicatorDiv>
       <IconButton
+        className="indicator-clear-filters"
         icon="delete"
         hint={t("grid.clear_filters")}
         onClick={() => clearFilters({tab})}/>

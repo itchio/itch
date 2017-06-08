@@ -95,9 +95,10 @@ export function addSortAndFilterToQuery (query: QueryBuilder<Game>, tab: string,
   const prefs = state.preferences;
 
   if (prefs.onlyCompatibleGames) {
-    query.andWhere(`${platformProp} or type === :safType or classification in (:safClass)`);
+    query.andWhere(`(${platformProp} or type = :safType or classification not in (:safClass))`);
     query.addParameters({
-      gameType: "html",
+      safType: "html",
+      safClass: ["game", "tool"],
     });
   }
   
@@ -151,10 +152,10 @@ export function addSortAndFilterToQuery (query: QueryBuilder<Game>, tab: string,
     query.leftJoin(
       DownloadKey,
       "downloadKeys",
-      "downloadKeys" +
+      "downloadKeys.id = (" +
           "select downloadKeys.id from downloadKeys " +
           "where downloadKeys.gameId = games.id " +
-          "and downloadKeys.ownerId = :meId" +
+          "and downloadKeys.ownerId = :meId " +
           "limit 1" +
         ")",
     );
