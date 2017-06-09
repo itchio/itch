@@ -53,7 +53,7 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps & I18nP
       label = env.appName;
     }
 
-    return <FiltersContainer>
+    return <FiltersContainer className="title-bar">
         <DraggableDiv>
           <DraggableDivInner>
             <TitleDiv>{t.format(label)}</TitleDiv>

@@ -27,6 +27,9 @@ test-linux:
     - release/ci-test.js
   except:
     - tags
+  artifacts:
+    paths:
+      - screenshots
 
 test-darwin:
   stage: build
@@ -36,6 +39,9 @@ test-darwin:
     - release/ci-test.js
   except:
     - tags
+  artifacts:
+    paths:
+      - screenshots
 
 test-windows:
   stage: build
@@ -45,6 +51,9 @@ test-windows:
     - release/ci-test.js
   except:
     - tags
+  artifacts:
+    paths:
+      - screenshots
 
 # I18n check
 i18n-check:

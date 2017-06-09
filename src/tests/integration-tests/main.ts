@@ -5,6 +5,8 @@ import {Application, BasicAppSettings} from "spectron";
 import test = require("zopf");
 import * as bluebird from "bluebird";
 
+import * as fs from "fs";
+
 import mkdirpCallback = require("mkdirp");
 const mkdirp = bluebird.promisify(mkdirpCallback);
 import rimrafCallback = require("rimraf");
@@ -15,6 +17,14 @@ import {ISpec, ISpecOpts, IIntegrationTest, sleep, DefaultTimeout} from "./types
 import tape = require("tape");
 
 import runTests from "./tests";
+
+let failureCount = 0;
+
+try {
+  fs.mkdirSync("./screenshots");
+} catch (e) {
+  // eh well.
+}
 
 // Lessons learned from messing around with spectron:
 // 
@@ -223,6 +233,16 @@ test("integration tests", async (t) => {
         await f(t);
       } catch (e) {
         t.comment(`In spec, caught ${e}`);
+        failureCount++;
+
+        try {
+          const screenshotPath = `./screenshots/failure-${failureCount}.png`;
+          const image = await t.app.browserWindow.capturePage();
+          fs.writeFileSync(screenshotPath, image);
+          t.comment(`Saved screenshot to ${screenshotPath}`);
+        } catch (e) {
+          t.comment(`Could not save screenshot: ${e.stack}`);
+        }
         err = e;
       } finally {
         await afterEach(t, opts);

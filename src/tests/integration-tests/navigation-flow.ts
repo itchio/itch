@@ -12,13 +12,13 @@ export default async function navigationFlow (t: IIntegrationTest) {
 
   t.comment("navigating to dashboard");
   await t.safeClick("section[data-path=dashboard]");
-  await client.waitForVisible(".meat-tab[data-id=dashboard] .layout-picker");
+
+  await client.waitForExist(".meat-tab[data-id=dashboard] .layout-picker");
   await t.safeClick(currTab + ".layout-picker[data-layout='grid']");
 
   t.comment("clearing filters if any");
-  const clearFiltersSelector = currTab + ".indicator-clear-filters";
   try {
-    await t.safeClick(clearFiltersSelector);
+    await t.safeClick(currTab + ".indicator-clear-filters");
   } catch (e) {
     // no filters to clear or whatever, it's ok
   }
@@ -43,4 +43,6 @@ export default async function navigationFlow (t: IIntegrationTest) {
   await t.safeClick(currTab + "[role='columnheader'][aria-label='table.column.name']");
   t.comment("ensuring the Z-A sorting is correct");
   await client.waitUntilTextExists(firstTitleSelector, "zzz last");
+  
+  throw new Error(`SYKE`);
 }

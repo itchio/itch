@@ -13,10 +13,11 @@ yarn-error.log
 /app
 /test
 /tests
+/tmp
+/screenshots
 /.tscache
 /.awcache
 *.map
-tmp
 *.tmp.txt
 /butler
 
