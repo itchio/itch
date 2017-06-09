@@ -1,53 +1,46 @@
 
 import {
-  ISpec,
-  sleep,
+  IIntegrationTest,
 } from "./types";
 
 const currTab = ".meat-tab[data-visible=true] ";
 
-export default function loginFlow (spec: ISpec) {
-  spec("navigation flow", async (t) => {
-    const {client} = t.app;
+export default async function navigationFlow (t: IIntegrationTest) {
+  const {client} = t.app;
 
-    await client.waitForExist("#user-menu", 5000);
+  await client.waitForExist("#user-menu");
 
-    t.comment("navigating to dashboard");
-    await client.waitForVisible("section[data-path=dashboard]");
-    await client.click("section[data-path=dashboard]");
+  t.comment("navigating to dashboard");
+  await t.safeClick("section[data-path=dashboard]");
+  await client.waitForVisible(".meat-tab[data-id=dashboard] .layout-picker");
+  await t.safeClick(currTab + ".layout-picker[data-layout='grid']");
 
-    await client.waitForVisible(".meat-tab[data-id=dashboard] .layout-picker");
-    await client.click(currTab + ".layout-picker[data-layout='grid']");
+  t.comment("clearing filters if any");
+  const clearFiltersSelector = currTab + ".indicator-clear-filters";
+  try {
+    await t.safeClick(clearFiltersSelector);
+  } catch (e) {
+    // no filters to clear or whatever, it's ok
+  }
 
-    await sleep(400);
+  t.comment("checking grid is shown");
+  await client.waitForVisible(currTab + ".grid-item");
 
-    t.comment("clearing filters if any");
-    const clearFiltersSelector = currTab + ".indicator-clear-filters";
-    if (await client.isVisible(clearFiltersSelector)) {
-      await client.click(clearFiltersSelector);
-    }
+  t.comment("switching to table layout");
+  await t.safeClick(currTab + ".layout-picker[data-layout='table']");
 
-    t.comment("checking grid is shown");
-    await client.waitForVisible(currTab + ".grid-item", 5000);
+  t.comment("checking table is shown");
+  await client.waitForVisible(currTab + ".table-item");
 
-    t.comment("switching to table layout");
-    await client.click(currTab + ".layout-picker[data-layout='table']");
+  const firstTitleSelector = currTab + ".table-item:first-child .game-table-title";
 
-    t.comment("checking table is shown");
-    await client.waitForVisible(currTab + ".table-item", 5000);
+  t.comment("sorting by name, A-Z");
+  await t.safeClick(currTab + "[role='columnheader'][aria-label='table.column.name']");
+  t.comment("ensuring the A-Z sorting is correct");
+  await client.waitUntilTextExists(firstTitleSelector, "111 first");
 
-    const firstTitleSelector = currTab + ".table-item:first-child .game-table-title";
-
-    t.comment("sorting by name, A-Z");
-    await client.click(currTab + "[role='columnheader'][aria-label='table.column.name']");
-    t.comment("ensuring the A-Z sorting is correct");
-    await client.waitUntilTextExists(firstTitleSelector, "111 first");
-
-    t.comment("sorting by name, Z-A");
-    await client.click(currTab + "[role='columnheader'][aria-label='table.column.name']");
-    t.comment("ensuring the Z-A sorting is correct");
-    await client.waitUntilTextExists(firstTitleSelector, "zzz last");
-
-    await sleep(5000);
-  });
+  t.comment("sorting by name, Z-A");
+  await t.safeClick(currTab + "[role='columnheader'][aria-label='table.column.name']");
+  t.comment("ensuring the Z-A sorting is correct");
+  await client.waitUntilTextExists(firstTitleSelector, "zzz last");
 }

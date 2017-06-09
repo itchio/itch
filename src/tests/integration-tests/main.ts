@@ -10,7 +10,7 @@ const mkdirp = bluebird.promisify(mkdirpCallback);
 import rimrafCallback = require("rimraf");
 const rimraf = bluebird.promisify(rimrafCallback);
 
-import {ISpec, ISpecOpts, IIntegrationTest} from "./types";
+import {ISpec, ISpecOpts, IIntegrationTest, sleep, DefaultTimeout} from "./types";
 
 import tape = require("tape");
 
@@ -148,8 +148,15 @@ test("integration tests", async (t) => {
     }
 
     t.comment("stopping app...");
-    await t.app.stop();
-    t.comment(`app stopped. Exit code ${t.itch.exitCode}`);
+    try {
+      await t.app.stop();
+      t.comment(`app stopped. Exit code ${t.itch.exitCode}`);
+    } catch (e) {
+      t.comment(`could not stop app: ${e.stack}`);
+      t.comment("sorry :( bailing out");
+      process.exit(255);
+      t.itch.exitCode = 255;
+    }
 
     if (t.itch.exitCode !== 0) {
       throw new Error(`Non-zero exit code ${t.itch.exitCode}`);
@@ -183,6 +190,32 @@ test("integration tests", async (t) => {
 
     t.case(name, async (t: IIntegrationTest) => {
       const t1 = Date.now();
+
+      t.safeClick = async (selector) => {
+        const c = t.app.client;
+        await c.waitForExist(selector, DefaultTimeout);
+        let numTries = 5;
+        let err: Error;
+        for (let i = 0; i < numTries; i++) {
+          err = null;
+          try {
+            if (i > 0) {
+              await sleep(400);
+            }
+            await c.click(selector);
+            break;
+          } catch (e) {
+            t.comment(`could not click ${selector}: ${e.stack}`);
+            err = e;
+          }
+        }
+
+        if (err) {
+          t.comment(`While clicking ${selector}`);
+          throw err;
+        }
+      };
+
       let err;
       try {
         await beforeEach(t, opts);
@@ -202,10 +235,21 @@ test("integration tests", async (t) => {
     });
   };
 
-  runTests(spec);
+  spec("it runs unit tests", async (t) => {
+    // muffin
+  }, {
+    ownExit: true,
+    args: ["--run-unit-tests"],
+  });
+
+  spec("it runs integration tests", async (t) => {
+    await runTests(t);
+  }, {
+    wipePrefix: true,
+  });
 });
 
 tape.onFinish(() => {
   // tslint:disable-next-line
-  console.log("tape finished!");
+  console.log("# tape finished!");
 });

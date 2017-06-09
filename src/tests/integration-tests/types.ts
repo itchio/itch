@@ -2,6 +2,8 @@
 import {Application} from "spectron";
 import "zopf";
 
+export const DefaultTimeout = 5000;
+
 export interface ISpecOpts {
   args?: string[];
   wipePrefix?: boolean;
@@ -14,6 +16,9 @@ export interface ISpec {
 
 interface ITestAdditions {
   app: Application;
+
+  safeClick: (selector: string) => Promise<void>;
+
   /** used by test runner, don't mess with from tests */
   itch: {
     polling: boolean;
