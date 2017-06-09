@@ -28,6 +28,7 @@ test-linux:
   except:
     - tags
   artifacts:
+    when: always
     paths:
       - screenshots
 
@@ -40,6 +41,7 @@ test-darwin:
   except:
     - tags
   artifacts:
+    when: always
     paths:
       - screenshots
 
@@ -52,6 +54,7 @@ test-windows:
   except:
     - tags
   artifacts:
+    when: always
     paths:
       - screenshots
 
