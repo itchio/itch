@@ -88,6 +88,7 @@ async function beforeEach (t: IIntegrationTest, opts: ISpecOpts) {
       NODE_ENV: "test",
     },
     chromeDriverLogPath: "./tmp/chrome-driver-log.txt",
+    waitTimeout: DefaultTimeout,
   };
   // not included in typings for some reason;
   // (settings as any).webdriverLogPath = "./tmp/web-driver-logs";
