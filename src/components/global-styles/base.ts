@@ -1,5 +1,18 @@
 
 import {css, theme} from "../styles";
+import env from "../../env";
+
+const hideInk = () => {
+  if (env.name !== "test") {
+    return css``;
+  }
+
+  return css`
+    canvas.ink {
+      display: none !important;
+    }
+  `;
+};
 
 export default css`
   html, body {
@@ -12,4 +25,6 @@ export default css`
     font-family: LatoWeb, sans-serif;
     color: ${theme.baseText};
   }
+
+  ${hideInk()} 
 `;

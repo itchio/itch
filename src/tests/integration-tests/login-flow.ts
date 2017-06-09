@@ -31,7 +31,7 @@ export default function loginFlow (spec: ISpec) {
       await client.waitForExist("#user-menu", 5000);
       await client.click("#user-menu");
       await client.waitForExist("#user-menu-change-user", 5000);
-      await sleep(200);
+      await sleep(400);
       await client.click("#user-menu-change-user");
 
       if (forReal) {
