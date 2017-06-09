@@ -2,7 +2,7 @@
 // tslint:disable:no-shadowed-variable
 
 import test = require("zopf");
-import {getT, disableIdentity} from "../../../localizer";
+import {getT, disableIdentity} from "../../localizer";
 
 disableIdentity();
 

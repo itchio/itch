@@ -24,7 +24,7 @@ require("./boot/fs");
 function main () {
   for (const arg of process.argv) {
     if (arg === "--run-unit-tests") {
-      require("./tests/run-unit-tests");
+      require("./unit-tests/run-unit-tests");
       return;
     }
   }

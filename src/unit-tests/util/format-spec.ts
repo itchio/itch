@@ -2,8 +2,8 @@
 // tslint:disable:no-shadowed-variable
 
 import test = require("zopf");
-import * as format from "../../../format";
-import {ILocalizer} from "../../../localizer";
+import * as format from "../../format";
+import {ILocalizer} from "../../localizer";
 
 test("format", t => {
   t.case("camelify", t => {
