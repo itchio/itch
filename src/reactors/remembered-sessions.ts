@@ -64,7 +64,7 @@ async function saveSession (store: IStore, userId: string, record: any) {
 }
 
 export default function (watcher: Watcher) {
-  watcher.onMount(async (store, action) => {
+  watcher.on(actions.preboot, async (store, action) => {
     await loadRememberedSessions(store);
   });
 
