@@ -132,7 +132,7 @@
   "devDependencies": {
     "benchmark": "^2.1.4",
     "cross-env": "^5.0.0",
-    "electron": "1.7.2",
+    "electron": "1.7.3",
     "electron-compilers": "^5.9.0",
     "electron-rebuild": "^1.5.11",
     "faucet": "0.0.1",
