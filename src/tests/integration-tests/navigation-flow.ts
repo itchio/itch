@@ -43,6 +43,4 @@ export default async function navigationFlow (t: IIntegrationTest) {
   await t.safeClick(currTab + "[role='columnheader'][aria-label='table.column.name']");
   t.comment("ensuring the Z-A sorting is correct");
   await client.waitUntilTextExists(firstTitleSelector, "zzz last");
-  
-  throw new Error(`SYKE`);
 }
