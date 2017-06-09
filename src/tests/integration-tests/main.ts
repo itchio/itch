@@ -12,6 +12,8 @@ const rimraf = bluebird.promisify(rimrafCallback);
 
 import {ISpec, ISpecOpts, IIntegrationTest} from "./types";
 
+import tape = require("tape");
+
 import runTests from "./tests";
 
 // Lessons learned from messing around with spectron:
@@ -203,7 +205,7 @@ test("integration tests", async (t) => {
   runTests(spec);
 });
 
-require("tape").onFinish(() => {
+tape.onFinish(() => {
   // tslint:disable-next-line
   console.log("tape finished!");
 });

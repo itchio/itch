@@ -44,28 +44,22 @@ function autoUpdateDone () {
   const store = require("./store/metal-store").default;
 
   app.on("ready", async function () {
-    const shouldQuit = app.makeSingleInstance((argv, cwd) => {
-      // we only get inside this callback when another instance
-      // is launched - so this executes in the context of the main instance
-      if (env.name === "test") {
-        // if we get this in testing, chromedriver probably
-        // timed out while waiting for a command to execute
-        // remotely - let's clean up & wait for it to try again
+    if (env.name !== "test") {
+      const shouldQuit = app.makeSingleInstance((argv, cwd) => {
+        // we only get inside this callback when another instance
+        // is launched - so this executes in the context of the main instance
+        store.dispatch(actions.processUrlArguments({
+          args: argv,
+        }));
+        store.dispatch(actions.focusWindow({}));
+      });
+
+      if (shouldQuit) {
+        // app.quit() is the source of all our problems,
+        // cf. https://github.com/itchio/itch/issues/202
         app.exit(0);
         return;
       }
-
-      store.dispatch(actions.processUrlArguments({
-        args: argv,
-      }));
-      store.dispatch(actions.focusWindow({}));
-    });
-
-    if (shouldQuit) {
-      // app.quit() is the source of all our problems,
-      // cf. https://github.com/itchio/itch/issues/202
-      app.exit(0);
-      return;
     }
 
     await connectDatabase();
