@@ -111,5 +111,6 @@
     "sidebar.collection": "Gyűjtemények",
     "sidebar.downloads": "Letöltések",
     "sidebar.empty": "Indulás!",
-    "sidebar.preferences": "Beállítások"
+    "sidebar.preferences": "Beállítások",
+    "grid.item.download_java": "Java letöltése"
 }
