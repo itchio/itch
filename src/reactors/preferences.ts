@@ -12,7 +12,7 @@ import {MODAL_RESPONSE} from "../constants/action-types";
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "preferences"});
 
-import {shell} from "electron";
+import {shell, session} from "electron";
 
 import {promisedModal} from "./modals";
 
@@ -84,17 +84,20 @@ export default function (watcher: Watcher) {
 
     const userId = store.getState().session.credentials.me.id;
 
-    const session = require("electron").session;
     const partition = partitionForUser(String(userId));
     const ourSession = session.fromPartition(partition, {});
 
+    logger.debug(`asked to clear browsing data`);
+
     if (action.payload.cache) {
+      logger.debug(`clearing cache for ${partition}`);
       promises.push(new Promise((resolve, reject) => {
         ourSession.clearCache(resolve);
       }));
     }
 
     if (action.payload.cookies) {
+      logger.debug(`clearing cookies for ${partition}`);
       promises.push(new Promise((resolve, reject) => {
         ourSession.clearStorageData({
           storages: ["cookies"],

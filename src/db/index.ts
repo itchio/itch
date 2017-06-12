@@ -28,7 +28,7 @@ import store from "../store/metal-store";
 import * as actions from "../actions";
 
 import {
-  IEntityMap, IEntityRecords,
+  IEntityMap, ITableMap,
   IDBDeleteSpec,
 } from "../types";
 
@@ -77,9 +77,9 @@ export class DB {
   /**
    * Saves all passed entity records. See opts type for disk persistence and other options.
    */
-  async saveAllEntities <T> (entityRecords: IEntityRecords<T>) {
-    for (const tableName of Object.keys(entityRecords.entities)) {
-      const entities: IEntityMap<Object> = entityRecords.entities[tableName];
+  async saveMany (entityTables: ITableMap) {
+    for (const tableName of Object.keys(entityTables)) {
+      const entities: IEntityMap<Object> = entityTables[tableName];
       const entityIds = Object.keys(entities);
 
       const Model = modelMap[tableName];
@@ -128,17 +128,12 @@ export class DB {
   /**
    * Save a single entity to the db, optionally persisting to disk (see ISaveOpts).
    */
-  async saveEntity <T> (tableName: string, id: string, record: Partial<T>): Promise<void> {
-    const Model = modelMap[tableName];
-    if (!Model) {
-      logger.info(`Dunno how to persist ${tableName}, skipping single record`);
-      return;
-    }
-
-    const repo = this.conn.getRepository(Model);
-    const entity = repo.create(record as any);
-    (entity as any).id = id;
-    await repo.persist(entity);
+  async saveOne <T> (tableName: string, id: string, record: Partial<T>): Promise<void> {
+    await this.saveMany({
+      [tableName]: {
+        [id]: record,
+      },
+    });
   }
 
   /**

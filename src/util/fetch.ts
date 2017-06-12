@@ -65,7 +65,7 @@ export async function dashboardGames (credentials: ICredentials) {
     },
   };
   // TODO: get rid of any?
-  await db.saveAllEntities<any>({entities});
+  await db.saveMany<any>({entities});
 
   const goners = difference(oldGameIds, newGameIds);
   if (goners.length > 0) {
@@ -96,7 +96,7 @@ export async function ownedKeys (credentials: ICredentials): Promise<void> {
 
     newKeyIds = [...newKeyIds, ...pluck(response.ownedKeys, "id")];
 
-    await db.saveAllEntities(normalize(response, {
+    await db.saveMany(normalize(response, {
       ownedKeys: arrayOf(downloadKey),
     }));
   }
@@ -130,7 +130,7 @@ export async function collections (credentials: ICredentials): Promise<void> {
     collections: arrayOf(collection),
   });
   const {entities} = normalized;
-  await db.saveAllEntities({entities});
+  await db.saveMany({entities});
 
   const newCollectionIds = pluck(entities.collections, "id");
   const goners = difference(oldCollectionIds, newCollectionIds);
@@ -177,8 +177,8 @@ export async function collectionGames
       gameIds: union(localGameIds, fetchedGameIDs),
     };
 
-    await db.saveEntity("collections", String(collection.id), collection);
-    await db.saveAllEntities(normalized);
+    await db.saveOne("collections", String(collection.id), collection);
+    await db.saveMany(normalized);
     page++;
   }
 
@@ -187,7 +187,7 @@ export async function collectionGames
     ...collection,
     gameIds: fetchedGameIDs,
   };
-  await db.saveEntity("collections", String(collection.id), collection);
+  await db.saveOne("collections", String(collection.id), collection);
 }
 
 interface IGameSearchResults {

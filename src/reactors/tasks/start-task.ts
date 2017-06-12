@@ -25,8 +25,6 @@ let currentTasks = {} as ITaskMap;
 
 export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
   const credentials = store.getState().session.credentials;
-  // FIXME: db
-  const market: any = null;
 
   const id = uuid.v4();
   store.dispatch(actions.taskStarted({id, startedAt: Date.now(), progress: 0, ...taskOpts}));
@@ -42,13 +40,12 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
     const preferences = store.getState().preferences;
     const extendedOpts = {
       ...taskOpts,
-      market,
-      globalMarket: null, // FIXME: db
       credentials,
       preferences,
       logger,
     };
 
+    // FIXME: no late, untyped requires
     const taskRunner = require(`../../tasks/${taskOpts.name}`).default;
 
     logger.info(`Starting ${taskOpts.name} (${id})...`);
@@ -78,6 +75,8 @@ export default function (watcher: Watcher) {
     const task = currentTasks[id];
     if (task && task.emitter) {
       task.emitter.emit("cancel");
+      // TODO: investigate not all tasks are cancellable, deleting
+      // them from currentTasks seems rash
       delete currentTasks[id];
     }
   });

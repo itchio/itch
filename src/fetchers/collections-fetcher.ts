@@ -67,8 +67,6 @@ export default class CollectionsFetcher extends Fetcher {
       collections[id].userId = meId;
     }
 
-    await db.saveAllEntities({
-      entities: normalized.entities,
-    });
+    await db.saveMany(normalized.entities);
   }
 }

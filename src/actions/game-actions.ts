@@ -3,6 +3,7 @@ import {createAction} from "redux-actions";
 
 import {
   QUEUE_GAME, IQueueGamePayload,
+  QUEUE_LAUNCH, IQueueLaunchPayload,
 
   PROBE_CAVE, IProbeCavePayload,
   EXPLORE_CAVE, IExploreCavePayload,
@@ -34,6 +35,7 @@ import {
 } from "../constants/action-types";
 
 export const queueGame = createAction<IQueueGamePayload>(QUEUE_GAME);
+export const queueLaunch = createAction<IQueueLaunchPayload>(QUEUE_LAUNCH);
 
 export const probeCave = createAction<IProbeCavePayload>(PROBE_CAVE);
 export const exploreCave = createAction<IExploreCavePayload>(EXPLORE_CAVE);

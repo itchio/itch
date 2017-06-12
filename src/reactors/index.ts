@@ -28,6 +28,7 @@ import commons from "./commons";
 import purchases from "./purchases";
 import url from "./url";
 import itchInternal from "./itch-internal";
+import tasks from "./tasks";
 
 const watcher = new Watcher();
 
@@ -58,6 +59,7 @@ commons(watcher);
 purchases(watcher);
 url(watcher);
 itchInternal(watcher);
+tasks(watcher);
 
 watcher.validate();
 

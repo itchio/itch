@@ -70,14 +70,12 @@ export default class DashboardFetcher extends Fetcher {
     const remoteGameIds = pluck(normalized.entities.games, "id");
     this.debug(`Fetched ${Object.keys(normalized.entities.games).length} games from API`);
 
-    await db.saveAllEntities({
-      entities: {
-        ...normalized.entities,
-        profiles: {
-          [meId]: {
-            id: meId,
-            myGameIds: remoteGameIds,
-          },
+    await db.saveMany({
+      ...normalized.entities,
+      profiles: {
+        [meId]: {
+          id: meId,
+          myGameIds: remoteGameIds,
         },
       },
     });

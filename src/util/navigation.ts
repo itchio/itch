@@ -33,7 +33,7 @@ export async function transformUrl(original: string): Promise<string> {
     return "https://duckduckgo.com/?" + querystring.stringify({ q, kae: "d" });
   };
 
-  if (!parsed.hostname || !parsed.scheme) {
+  if (!parsed.hostname || !parsed.protocol) {
     req = "http://" + original;
     parsed = urlParser.parse(req);
     if (!parsed.hostname) {

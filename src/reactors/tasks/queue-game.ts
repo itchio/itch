@@ -2,6 +2,10 @@
 import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
+import db from "../../db";
+import Cave from "../../db/models/cave";
+import Game from "../../db/models/game";
+
 import makeUploadButton from "../make-upload-button";
 
 import * as paths from "../../os/paths";
@@ -16,7 +20,7 @@ import {startTask} from "./start-task";
 import {filter, map, where} from "underscore";
 
 import {
-  IStore, IGameRecord, ICaveRecord, IUploadRecord, IDownloadKey,
+  IStore, IUploadRecord, IDownloadKey,
 } from "../../types";
 
 interface IFindUploadResult {
@@ -26,7 +30,7 @@ interface IFindUploadResult {
 
 interface IExtraOpts {}
 
-async function startCave (store: IStore, game: IGameRecord, cave: ICaveRecord, extraOpts: IExtraOpts) {
+async function startCave (store: IStore, game: Game, cave: Cave, extraOpts: IExtraOpts) {
   logger.info(`Starting cave ${cave.id}`);
   await startTask(store, {
     name: "launch",
@@ -42,12 +46,11 @@ export default function (watcher: Watcher) {
     const {game, extraOpts = {}, pickedUpload} = action.payload;
     let {password, secret} = extraOpts;
 
-    // FIXME: db
-    const cave: any = null;
-    // const cave = store.getState().globalMarket.cavesByGameId[game.id];
+    const cave = await db.getRepo(Cave).find();
 
     if (cave) {
       logger.info(`Have a cave for game ${game.id}, launching`);
+      store.dispatch(actions.queueLaunch({cave}));
       await startCave(store, game, cave, extraOpts);
       return;
     }
@@ -55,18 +58,23 @@ export default function (watcher: Watcher) {
     logger.info(`No cave for ${game.id}, attempting install`);
 
     // look for password/secret if any
-    const tabData = store.getState().session.navigation.tabData;
-    let pathStart = "games/${game.id}";
+    const tabData = store.getState().session.tabData;
+    let pathStart = `games/${game.id}`;
+
     for (const id of Object.keys(tabData)) {
       const data = tabData[id];
       if (data.path && data.path.indexOf(pathStart) === 0) {
         const parsed = urlParser.parse(data.path);
-        const query = querystring.parse(parsed.query);
-        if (query.secret) {
-          secret = query.secret;
-        }
-        if (query.password) {
-          password = query.password;
+        try {
+          const query = querystring.parse(parsed.query);
+          if (query.secret) {
+            secret = query.secret;
+          }
+          if (query.password) {
+            password = query.password;
+          }
+        } catch (e) {
+          logger.warn(`Could not parse secret/password: ${e.stack}`);
         }
       }
     }

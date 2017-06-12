@@ -813,18 +813,10 @@ export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {
   /** the game we want to download */
   game: Game;
-
-  /** when manually picking which upload to download, the id of the upload the user picked */
-  pickedUpload?: number;
-
-  /** any extra download options */
-  extraOpts?: {
-    /** for draft pages */
-    password?: string;
-    /** for password-protected pages */
-    secret?: string;
-  };
 }
+
+export const QUEUE_LAUNCH = "QUEUE_LAUNCH";
+export interface IQueueLaunchPayload extends Types.IQueueLaunchOpts {}
 
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";

@@ -40,7 +40,7 @@ export default class LibraryFetcher extends Fetcher {
     for (const id of Object.keys(downloadKeys)) {
       downloadKeys[id].ownerId = meId;
     }
-    await db.saveAllEntities({ entities: normalized.entities });
+    await db.saveMany(normalized.entities);
 
     await this.pushLocal();
   }

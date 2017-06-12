@@ -1,13 +1,14 @@
 
 import {Store} from "redux";
 import {Action} from "redux-actions";
-import {Logger} from "../logger";
 
-import GameModel from "../db/models/game";
-import UserModel from "../db/models/user";
-import CollectionModel from "../db/models/collection";
-import DownloadKeyModel, {IDownloadKeySummary} from "../db/models/download-key";
-import CaveModel, {ICaveSummary} from "../db/models/cave";
+import Game from "../db/models/game";
+import User from "../db/models/user";
+import Collection from "../db/models/collection";
+import DownloadKey, {IDownloadKeySummary} from "../db/models/download-key";
+import Cave, {ICaveSummary} from "../db/models/cave";
+
+export * from "./tasks";
 
 import {PathScheme} from "../os/paths";
 
@@ -120,7 +121,7 @@ export interface IOwnGameRecord extends IGameRecord {
  * using some user-provided query.
  */
 export interface IFilteredGameRecord {
-    game: GameModel;
+    game: Game;
     cave?: ICaveRecord;
     searchScore?: number;
 }
@@ -165,7 +166,7 @@ export interface IUserRecord {
 }
 
 export interface IUserRecordSet {
-    [id: string]: UserModel;
+    [id: string]: User;
 }
 
 export interface ICollectionRecord {
@@ -217,11 +218,11 @@ export interface ITabPagination {
 }
 
 export interface IGameRecordSet {
-    [id: string]: GameModel;
+    [id: string]: Game;
 }
 
 export interface ICollectionRecordSet {
-    [id: string]: CollectionModel;
+    [id: string]: Collection;
 }
 
 export interface ITabData {
@@ -383,7 +384,7 @@ export interface ICaveRecord extends ICaveRecordLocation {
     game: IGameRecord;
 
     /** download key what was used to install this game, if any */
-    downloadKey: DownloadKeyModel;
+    downloadKey: DownloadKey;
 
     /** true if the upload to install was hand-picked */
     handPicked?: boolean;
@@ -490,8 +491,8 @@ export interface IEntityMap <T> {
   [entityId: string]: T;
 }
 
-export interface ITableMap<T> {
-  [table: string]: IEntityMap<T>;
+export interface ITableMap {
+  [table: string]: IEntityMap<any>;
 }
 
 /**
@@ -500,10 +501,6 @@ export interface ITableMap<T> {
  */
 export interface IEntityRefs {
   [table: string]: string[];
-}
-
-export interface IEntityRecords<T> {
-  entities: ITableMap<T>;
 }
 
 /**
@@ -603,11 +600,11 @@ export interface IQueriesState {
     };
 
     cavesByGameId: {
-        [gameId: string]: CaveModel[],
+        [gameId: string]: Cave[],
     };
 
     downloadKeysByGameId: {
-        [gameId: string]: DownloadKeyModel[],
+        [gameId: string]: DownloadKey[],
     };
 }
 
@@ -638,7 +635,7 @@ export interface IGameUpdate {
     recentUploads: IUploadRecord[];
 
     /** key we used to find uploads, and that should be used for downloads */
-    downloadKey: DownloadKeyModel;
+    downloadKey: DownloadKey;
 
     /** true if wharf-enabled upgrade via butler */
     incremental?: boolean;
@@ -743,7 +740,7 @@ export interface IItchAppTabs {
 }
 
 export interface IDownloadKeysMap {
-    [id: string]: DownloadKeyModel;
+    [id: string]: DownloadKey;
 }
 
 export type ProxySource = "os" | "env";
@@ -1128,130 +1125,16 @@ export interface ITasksState {
     finishedTasks: ITask[];
 }
 
+export interface IEnvironment {
+    [key: string]: string;
+}
+
 export interface IUpgradePathItem {
   id: number;
   userVersion?: string;
   updatedAt: string;
   patchSize: number;
 }
-
-type DownloadReason = "install" | "reinstall" | "update" | "revert" | "heal";
-
-export interface IQueueDownloadOpts {
-  /** reason for starting this download */
-  reason: DownloadReason;
-
-  /** order of the download in the download queue */
-  order?: number;
-
-  /** if true, user disambiguated from list of uploads */
-  handPicked?: boolean;
-
-  /** download key used for downloading */
-  downloadKey?: DownloadKeyModel;
-
-  /** existing cave record if we're upgrading */
-  cave?: ICaveRecord;
-
-  /** which game we're downloading */
-  game: IGameRecord;
-
-  /** upload we're downloading */
-  upload: IUploadRecord;
-
-  /** total size of download (size of archive or sum of patch sizes) */
-  totalSize?: number;
-
-  /** where to download archive file, depends on cave location */
-  destPath: string;
-
-  /** true if wharf-enabled update via butler */
-  incremental?: boolean;
-
-  /** patch entries to upgrade to latest via butler */
-  upgradePath?: IUpgradePathItem[];
-
-  /** if true, will attempt to do a heal instead of a simple archive-download or patch-upgrade */
-  heal?: boolean;
-
-  /** for password-protected game pages */
-  password?: string;
-
-  /** for draft game pages */
-  secret?: string;
-}
-
-export type IStartDownloadOpts = IStartTaskOpts & IQueueDownloadOpts;
-
-export interface IEnvironment {
-    [key: string]: string;
-}
-
-export interface IStartTaskOpts {
-  /** the name of the task */
-  name: string;
-
-  /** id of the game this task is for */
-  gameId: number;
-
-  /** the game this task is for */
-  game?: IGameRecord;
-
-  // FIXME: this is a bad way to pass data - type individual task types instead
-
-  // find-upload-specific opts
-  password?: string;
-  secret?: string;
-
-  // install-specific opts
-  reinstall?: boolean;
-  upload?: IUploadRecord;
-  cave?: ICaveRecord;
-  archivePath?: string;
-  destPath?: string;
-  installerName?: string;
-  disableCache?: boolean;
-  onProgress?: (info: any) => void;
-  elevated?: boolean;
-  downloadKey?: DownloadKeyModel;
-  handPicked?: boolean;
-  installLocation?: string;
-  becauseHeal?: boolean;
-
-  // launch-specific opts
-  appPath?: string;
-  manifestActionName?: string;
-  manifestAction?: IManifestAction;
-  env?: IEnvironment;
-  args?: string[];
-  hailMary?: boolean;
-
-  // The following properties are set by start-task
-  credentials?: ICredentials;
-
-  preferences?: IPreferencesState;
-
-  /** cave-specific logger */
-  logger: Logger;
-}
-
-export interface ILaunchOpts extends IStartTaskOpts {
-  store: IStore;
-  manifest?: IManifest;
-  manifestAction?: IManifestAction;
-}
-
-export interface IInternalDownloadOpts {
-  credentials: ICredentials;
-
-  upgradePath?: IUpgradePathItem[];
-
-  cave?: ICaveRecord;
-
-  logger: any;
-}
-
-export type IDownloadOpts = IStartDownloadOpts & IInternalDownloadOpts;
 
 /**
  * A download in progress for the app. Always linked to a game,
@@ -1276,7 +1159,7 @@ export interface IDownloadItem {
      * game record at the time the download started - in case we're downloading
      * something that's not cached locally.
      */
-    game: GameModel;
+    game: Game;
 
     /** order in the download list: can be negative, for reordering */
     order: number;
@@ -1297,10 +1180,7 @@ export interface IDownloadItem {
     handPicked?: boolean;
 
     /** if set, the download key we're using to download a particular upload */
-    downloadKey?: DownloadKeyModel;
-
-    /** initial options passed to download */
-    downloadOpts: IDownloadOpts;
+    downloadKey?: DownloadKey;
 
     /** at how many bytes per second are we downloading right now? */
     bps?: number;

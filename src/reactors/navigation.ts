@@ -8,6 +8,8 @@ import {createSelector} from "reselect";
 
 import {IAppState, IStore} from "../types";
 
+import savePasswordAndSecret from "./navigation/save-password-and-secret";
+
 import {contains} from "underscore";
 
 let pathSelector: (state: IAppState) => void;
@@ -91,6 +93,8 @@ export default function (watcher: Watcher) {
         ...extras,
       },
     }));
+
+    await savePasswordAndSecret(path);
   });
 
   watcher.on(actions.closeAllTabs, async (store, action) => {
