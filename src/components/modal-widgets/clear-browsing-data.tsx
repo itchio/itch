@@ -13,7 +13,7 @@ import LoadingCircle from "../basics/loading-circle";
 import * as electron from "electron";
 
 export class ClearBrowsingData extends
-    React.PureComponent<IProps & IDerivedProps & I18nProps, IClearBrowsingDataState> {
+    React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
     super();
     this.state = {
@@ -34,16 +34,29 @@ export class ClearBrowsingData extends
         fetchedCacheSize: true,
         cacheSize,
       });
-
-      this.onChange();
     });
   }
 
-  onChange () {
+  change (state: Partial<IState>) {
+    const mergedState = {
+      ...this.state,
+      ...state,
+    };
+
     this.props.updatePayload({
-      cache: this.state.clearCache,
-      cookies: this.state.clearCookies,
+      cache: mergedState.clearCache,
+      cookies: mergedState.clearCookies,
     });
+
+    this.setState(mergedState);
+  }
+
+  toggleCache = () => {
+    this.change({clearCache: !this.state.clearCache});
+  }
+
+  toggleCookies = () => {
+    this.change({clearCookies: !this.state.clearCookies});
   }
 
   render () {
@@ -52,11 +65,11 @@ export class ClearBrowsingData extends
 
     return <ModalWidgetDiv>
       <div className="clear-browsing-data-list">
-      <label className={classNames({active: clearCache})}>
+        <label className={classNames({active: clearCache})}>
           <div className="checkbox">
             <input type="checkbox"
                 checked={clearCache}
-                onChange={(e) => { this.setState({clearCache: e.currentTarget.checked}); this.onChange(); }}/>
+                onChange={this.toggleCache}/>
               {t("prompt.clear_browsing_data.category.cache")}
           </div>
           <div className="checkbox-info">
@@ -64,14 +77,13 @@ export class ClearBrowsingData extends
             ? t("prompt.clear_browsing_data.cache_size_used", {size: humanize.fileSize(cacheSize)})
             : [<LoadingCircle progress={0.1}/>, " ", t("prompt.clear_browsing_data.retrieving_cache_size") ]
             }
-            
           </div>
         </label>
         <label className={classNames({active: clearCookies})}>
           <div className="checkbox">
             <input type="checkbox"
               checked={clearCookies}
-              onChange={(e) => { this.setState({clearCookies: e.currentTarget.checked}); this.onChange(); }}/>
+              onChange={this.toggleCookies}/>
                 {t("prompt.clear_browsing_data.category.cookies")}
           </div>
           <div className="checkbox-info">
@@ -91,7 +103,7 @@ interface IDerivedProps {
   userId: number;
 }
 
-interface IClearBrowsingDataState {
+interface IState {
   fetchedCacheSize?: boolean;
   cacheSize?: number;
 
