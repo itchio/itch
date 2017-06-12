@@ -50,7 +50,7 @@ app.on("ready", async () => {
   win.loadURL("about:blank");
 
   const glob = require("bluebird").promisify(require("glob"));
-  const cwd = join(__dirname, "unit-tests");
+  const cwd = join(__dirname);
   console.log(`looking for tests in ${cwd}`);
   let testFiles = await glob("**/*-spec.ts", {cwd});
 
@@ -58,7 +58,7 @@ app.on("ready", async () => {
   let state = 0;
   for (const arg of args) {
     if (state === 2) {
-      testFiles = [arg.replace(/.*src\/tests\/unit-tests\//, "")];
+      testFiles = [arg.replace(/.*src\/unit-tests\//, "")];
       console.log(`Unit test runner only running ${JSON.stringify(testFiles)}`);
       break;
     } else if (state === 1) {
@@ -94,7 +94,7 @@ app.on("ready", async () => {
   for (const testFile of testFiles) {
     const ext = extname(testFile);
     const extless = testFile.slice(0, -(ext.length));
-    const requirePath = `./unit-tests/${extless}`;
+    const requirePath = `./${extless}`;
     require(requirePath);
   }
 });
