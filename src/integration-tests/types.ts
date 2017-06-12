@@ -2,7 +2,7 @@
 import {Application} from "spectron";
 import "zopf";
 
-export const DefaultTimeout = 15000;
+export const DefaultTimeout = 5000;
 
 export interface ISpecOpts {
   args?: string[];
