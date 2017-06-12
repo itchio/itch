@@ -6,8 +6,10 @@ import styled, * as styles from "../styles";
 const LinkSpan = styled.span`
   ${styles.secondaryLink()};
 
-  flex-shrink: 0;
   transition: color 0.4s;
+  flex-shrink: 0.1;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 `;
 
 class Link extends React.PureComponent<IProps, void> {

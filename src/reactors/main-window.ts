@@ -299,6 +299,10 @@ function ensureWindowInsideDisplay (window: Electron.BrowserWindow) {
     logger.debug(`New bounds: ${JSON.stringify(bounds)}`);
     window.setBounds(bounds);
   }
+
+  if (env.name === "test") {
+    logger.info(`Main window is ${bounds.width}x${bounds.height}, at (${bounds.x}, ${bounds.y})`);
+  }
 }
 
 async function hideWindow () {
@@ -307,7 +311,6 @@ async function hideWindow () {
     window.close();
   }
 }
-
 
 async function minimizeWindow () {
   const window = BrowserWindow.getFocusedWindow();

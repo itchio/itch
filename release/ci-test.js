@@ -11,7 +11,7 @@ async function main () {
 
   $(await $.yarn('run compile'));
   if (process.platform === "linux") {
-    $(await $.sh('xvfb-run yarn test'));
+    $(await $.sh('xvfb-run -s "-screen 0 1280x720x24" yarn test'));
   } else {
     $(await $.yarn('test'));
   }

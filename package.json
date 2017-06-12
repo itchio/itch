@@ -154,8 +154,8 @@
   "scripts": {
     "start": "electron . --color --inspect",
     "install": "electron-rebuild",
-    "test": "node ./src/tests/integration-tests/init.js",
     "unit": "electron . --color --interactive --run-unit-tests",
+    "test": "node ./src/integration-tests/init.js",
     "i18n": "node release/ci-i18n-check.js",
     "compile": "cross-env NODE_ENV=production electron-compile --appdir . ./src"
   }

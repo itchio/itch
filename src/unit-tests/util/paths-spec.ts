@@ -3,12 +3,12 @@
 
 import * as ospath from "path";
 import test = require("zopf");
-import * as paths from "../../../os/paths";
+import * as paths from "../../os/paths";
 import {app} from "electron";
 
-import preferencesReducer from "../../../reducers/preferences";
+import preferencesReducer from "../../reducers/preferences";
 
-import {IUploadRecord} from "../../../types";
+import {IUploadRecord} from "../../types";
 
 test("pathmaker", t => {
   t.case("downloadPath", t => {

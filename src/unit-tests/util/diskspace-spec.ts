@@ -2,10 +2,10 @@
 // tslint:disable:no-shadowed-variable
 
 import test = require("zopf");
-import fixture from "../../fixture";
+import fixture from "../fixture";
 
-import diskspace from "../../../os/diskspace";
-import * as os from "../../../os";
+import diskspace from "../../os/diskspace";
+import * as os from "../../os";
 
 test("diskspace", (t) => {
   t.case("df (macOS 10.11)", async (t) => {

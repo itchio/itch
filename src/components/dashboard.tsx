@@ -2,8 +2,6 @@
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
 
-import staticTabData from "../constants/static-tab-data";
-
 import urls from "../constants/urls";
 import * as actions from "../actions";
 

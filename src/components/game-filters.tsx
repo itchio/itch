@@ -39,9 +39,11 @@ const Filler = styled.div`
 const TagFilters = styled.section`
   margin: 4px 0;
 
+  flex-grow: 100;
+
   .Select {
-    width: auto;
-    min-width: 350px;
+    width: 100%;
+    max-width: 500px;
     font-size: 14px;
 
     &.Select--multi {

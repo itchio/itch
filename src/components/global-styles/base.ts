@@ -1,5 +1,32 @@
 
 import {css, theme} from "../styles";
+import env from "../../env";
+
+const testDisables = () => {
+  if (env.name !== "test") {
+    return css``;
+  }
+
+  return css`
+    canvas.ink {
+      display: none !important;
+    }
+
+    * {
+      transition-property: none !important;
+      -o-transition-property: none !important;
+      -moz-transition-property: none !important;
+      -ms-transition-property: none !important;
+      -webkit-transition-property: none !important;
+
+      animation: none !important;
+      -o-animation: none !important;
+      -moz-animation: none !important;
+      -ms-animation: none !important;
+      -webkit-animation: none !important;
+    }
+  `;
+};
 
 export default css`
   html, body {
@@ -12,4 +39,6 @@ export default css`
     font-family: LatoWeb, sans-serif;
     color: ${theme.baseText};
   }
+
+  ${testDisables()} 
 `;

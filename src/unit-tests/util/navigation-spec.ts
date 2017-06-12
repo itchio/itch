@@ -3,7 +3,7 @@
 
 import test = require("zopf");
 
-import * as navigation from "../../../util/navigation";
+import * as navigation from "../../util/navigation";
 
 test("navigation utils", t => {
   t.case("paths", t => {

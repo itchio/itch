@@ -4,11 +4,11 @@
 import * as ospath from "path";
 import test = require("zopf");
 import * as tmp from "tmp";
-import fixture from "../../fixture";
+import fixture from "../fixture";
 
 import {EventEmitter} from "events";
 
-import sf from "../../../os/sf";
+import sf from "../../os/sf";
 
 test("sf", t => {
   t.case("sf.exists", async t => {
