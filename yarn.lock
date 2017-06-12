@@ -2006,7 +2006,7 @@ fast-safe-stringify@^1.0.8, fast-safe-stringify@^1.1.11:
   version "1.1.13"
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-1.1.13.tgz#a01e9cd9c9e491715c98a75a42d5f0bbd107ff76"
 
-faucet@0.0.1:
+faucet@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/faucet/-/faucet-0.0.1.tgz#597dcf1d2189a2c062321b591e8f151ed2039d9c"
   dependencies:

@@ -1,6 +1,12 @@
 // tslint:disable:no-console
 
+let interactive = false;
+
 function exit (exitCode) {
+  if (interactive) {
+    app.exit(exitCode);
+    return;
+  }
   console.log(`this is the magic exit code: ${exitCode}`);
 }
 
@@ -34,23 +40,19 @@ const {join} = require("path");
 
 app.on("ready", async () => {
   const {BrowserWindow} = require("electron");
-  const win = new BrowserWindow({});
+  const win = new BrowserWindow({
+    backgroundColor: "#ff8080",
+  });
   win.setTitle("Running tests...");
+  win.setMenuBarVisibility(false);
+  win.setContentSize(210, 210);
+  win.center();
   win.loadURL("about:blank");
 
   const glob = require("bluebird").promisify(require("glob"));
   const cwd = join(__dirname, "unit-tests");
   console.log(`looking for tests in ${cwd}`);
   let testFiles = await glob("**/*-spec.ts", {cwd});
-
-  const tape = require("tape");
-
-  tape.onFinish((a, b, c) => {
-    const harness = tape.getHarness();
-    harness._results.close();
-    win.setTitle(`Exit code = ${harness._exitCode}`);
-    exit(harness._exitCode);
-  });
 
   const args = process.argv.slice(2);
   let state = 0;
@@ -67,8 +69,25 @@ app.on("ready", async () => {
       if (arg === "--run-unit-tests") {
         state = 1;
       }
+      if (arg === "--interactive") {
+        interactive = true;
+      }
     }
   }
+
+  const tape = require("tape");
+
+  if (interactive) {
+    const faucet = require("faucet");
+    tape.createStream().pipe(faucet()).pipe(process.stdout);
+  }
+
+  tape.onFinish((a, b, c) => {
+    const harness = tape.getHarness();
+    harness._results.close();
+    win.setTitle(`Exit code = ${harness._exitCode}`);
+    exit(harness._exitCode);
+  });
 
   console.log(chalk.blue(`loading ${testFiles.length} test suites`));
 
