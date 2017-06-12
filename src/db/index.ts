@@ -16,13 +16,8 @@ import {
   createConnection,
   Connection, ObjectType, Repository,
 } from "typeorm";
-import GameModel from "./models/game";
-import ExternalGameModel from "./models/external-game";
-import CollectionModel from "./models/collection";
-import DownloadKeyModel from "./models/download-key";
-import CaveModel from "./models/cave";
-import UserModel from "./models/user";
-import ProfileModel from "./models/profile";
+
+import {modelMap} from "./model-map";
 
 import compareRecords from "./compare-records";
 import * as _ from "underscore";
@@ -36,20 +31,6 @@ import {
   IEntityMap, IEntityRecords,
   IDBDeleteSpec,
 } from "../types";
-
-interface IModelMap {
-  [key: string]: Function;
-}
-
-const modelMap: IModelMap = {
-  "games": GameModel,
-  "externalGames": ExternalGameModel,
-  "collections": CollectionModel,
-  "downloadKeys": DownloadKeyModel,
-  "caves": CaveModel,
-  "users": UserModel,
-  "profiles": ProfileModel,
-};
 
 /**
  * DB is a thin abstraction on top of typeorm. Pierce through it at will!
