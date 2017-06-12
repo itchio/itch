@@ -74,6 +74,17 @@ export function pathPrefix(path: string): string {
   return "";
 }
 
+export function pathQuery(path: string): string {
+  const slashIndex = path.indexOf("/");
+  if (slashIndex >= 0) {
+    const questionIndex = path.indexOf("?", slashIndex);
+    if (questionIndex >= 0) {
+      return path.substring(questionIndex + 1);
+    }
+  }
+  return "";
+}
+
 export function pathToIcon(path: string) {
   if (path === "featured") {
     return "itchio";
@@ -191,4 +202,7 @@ export function isAppSupported(url: string) {
   return null;
 }
 
-export default { transformUrl, pathToId, pathPrefix, pathToIcon, gameToTabData, collectionToTabData, isAppSupported };
+export default {
+  transformUrl, pathToId, pathPrefix, pathQuery, pathToIcon,
+  gameToTabData, collectionToTabData, isAppSupported,
+};
