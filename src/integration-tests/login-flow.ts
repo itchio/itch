@@ -28,6 +28,7 @@ export default async function loginFlow (t: IIntegrationTest) {
     await client.setValue("#login-username", testAccountName);
     await client.setValue("#login-password", testAccountPassword);
     await t.safeClick("#login-button");
+    await client.waitForVisible("#user-menu", 20000);
   };
   await loginWithPassword();
 
