@@ -52,12 +52,6 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/deep-equal/-/deep-equal-1.0.0.tgz#9ebeaa73d1fc4791f038a5f1440e0449ea968495"
 
-"@types/electron@^1.4.35":
-  version "1.4.37"
-  resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.4.37.tgz#cfff6958f224842c1742a6e4873ed7135e5f2ff3"
-  dependencies:
-    "@types/node" "*"
-
 "@types/glob@^5.0.30":
   version "5.0.30"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-5.0.30.tgz#1026409c5625a8689074602808d082b2867b8a51"
@@ -79,13 +73,17 @@
   dependencies:
     moment ">=2.14.0"
 
-"@types/node@*", "@types/node@^6.0.45":
+"@types/node@*":
   version "6.0.70"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.70.tgz#f6e04b859205ee3611849921f09819701dbfa5e8"
 
 "@types/node@^7.0.12", "@types/node@^7.0.18":
   version "7.0.18"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.18.tgz#cd67f27d3dc0cfb746f0bdd5e086c4c5d55be173"
+
+"@types/node@^7.0.31":
+  version "7.0.31"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.31.tgz#80ea4d175599b2a00149c29a10a4eb2dff592e86"
 
 "@types/pino@^3.0.1":
   version "3.0.1"
@@ -4495,9 +4493,9 @@ shell-quote@^1.6.0:
     array-reduce "~0.0.0"
     jsonify "~0.0.0"
 
-shoom@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/shoom/-/shoom-1.0.0.tgz#34fa4ba64940773a99c3a8e0f1d9e2de0dc78ea0"
+shoom@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/shoom/-/shoom-1.3.0.tgz#c86670f654ad4e3913ba44f1b18c85e52c7469c5"
   dependencies:
     bindings "^1.2.1"
     nan "^2.5.1"
