@@ -1,11 +1,10 @@
 
-// tslint:disable:no-shadowed-variable
+import suite from "../test-suite";
 
-import * as test from "zopf";
 import {createSelector} from "reselect";
 
-test("reselect", t => {
-  t.case("memoization prevents recompute for === values", t => {
+suite(__filename, s => {
+  s.case("memoization prevents recompute for === values", t => {
     let count = 0;
     const sel = createSelector(
       (obj: any) => obj.a,
@@ -19,7 +18,7 @@ test("reselect", t => {
     t.same(count, 1);
   });
 
-  t.case("memoization prevents recompute for empty objects", t => {
+  s.case("memoization prevents recompute for empty objects", t => {
     let count = 0;
     const sel = createSelector(
       (obj: any) => obj,
@@ -32,7 +31,7 @@ test("reselect", t => {
     t.same(count, 3);
   });
 
-  t.case("memoization prevents recompute for shallow equal objects", t => {
+  s.case("memoization prevents recompute for shallow equal objects", t => {
     let count = 0;
     const sel = createSelector(
       (obj: any) => obj,

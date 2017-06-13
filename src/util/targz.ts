@@ -1,6 +1,6 @@
 
 // going through sf to access Electron's original-fs
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 
 import * as tar from "tar";
 import * as zlib from "zlib";

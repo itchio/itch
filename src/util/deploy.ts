@@ -2,7 +2,7 @@
 import {difference} from "underscore";
 import * as bluebird from "bluebird";
 
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import noop from "./noop";
 import butler from "./butler";
 import {Logger} from "../logger";

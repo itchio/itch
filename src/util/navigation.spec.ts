@@ -1,12 +1,9 @@
 
-// tslint:disable:no-shadowed-variable
+import suite from "../test-suite";
+import * as navigation from "./navigation";
 
-import * as test from "zopf";
-
-import * as navigation from "../../util/navigation";
-
-test("navigation utils", t => {
-  t.case("paths", t => {
+suite(__filename, s => {
+  s.case("paths", t => {
     let path = "games/3";
     t.same(navigation.pathPrefix(path), "games");
     t.same(navigation.pathToId(path), "3");
@@ -31,5 +28,13 @@ test("navigation utils", t => {
     t.same(navigation.pathPrefix(path), "");
     t.same(navigation.pathToId(path), "");
     t.same(navigation.pathQuery(path), "");
+  });
+
+  s.case("transformUrl", async t => {
+    t.same(await navigation.transformUrl("https://itch.io"), "https://itch.io");
+    t.same(await navigation.transformUrl("http://localhost.com:8080/randomizer"),
+      "http://localhost.com:8080/randomizer");
+    t.same(await navigation.transformUrl("kermit plushie"),
+      "https://duckduckgo.com/?q=kermit%20plushie&kae=d");
   });
 });

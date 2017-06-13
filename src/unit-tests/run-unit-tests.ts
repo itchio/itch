@@ -51,14 +51,14 @@ app.on("ready", async () => {
 
   const glob = require("bluebird").promisify(require("glob"));
   const cwd = resolve(__dirname, "..");
-  console.log(`looking for tests in ${cwd}`);
+  console.log(chalk.blue(`looking for tests in ${cwd}`));
   let testFiles = await glob("**/*[\.-]spec.ts", {cwd});
 
   const args = process.argv.slice(2);
   let state = 0;
   for (const arg of args) {
     if (state === 2) {
-      testFiles = [arg.replace(/.*src\/unit-tests\//, "")];
+      testFiles = [arg.replace(/.*src\//, "")];
       console.log(`Unit test runner only running ${JSON.stringify(testFiles)}`);
       break;
     } else if (state === 1) {
@@ -96,5 +96,7 @@ app.on("ready", async () => {
     const extless = testFile.slice(0, -(ext.length));
     const requirePath = `../${extless}`;
     require(requirePath);
+    process.stdout.write(".");
   }
+  console.log("");
 });

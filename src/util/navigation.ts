@@ -16,11 +16,6 @@ import {
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 
-interface IDNSError {
-  code?: number;
-  message: string;
-}
-
 export async function transformUrl(original: string): Promise<string> {
   if (/^about:/.test(original)) {
     return original;
@@ -44,8 +39,11 @@ export async function transformUrl(original: string): Promise<string> {
   return await new Promise<string>((resolve, reject) => {
     dns.lookup(parsed.hostname, (err) => {
       if (err) {
-        const dnsError = err as IDNSError;
-        console.log(`dns error: ${dnsError.code} / ${dnsError.message}`); // tslint:disable-line:no-console
+        if (err.code === "ENOTFOUND") {
+          // that's okay
+        } else {
+          console.log(`dns error: ${err.code} / ${err.message}`); // tslint:disable-line:no-console
+        }
         resolve(searchUrl());
       }
       resolve(req);

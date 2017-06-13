@@ -3,7 +3,7 @@ import * as tmp from "tmp";
 import * as ospath from "path";
 
 import spawn from "../../os/spawn";
-import sf from "../../os/sf";
+import * as sf from "../../os/sf";
 import ibrew from "../ibrew";
 
 import rootLogger from "../../logger";

@@ -1,7 +1,7 @@
 
 import {flatbuffers} from "./flatbuffers";
 
-import sf from "../os/sf";
+import {createWriteStream, createReadStream} from "../os/sf";
 import {ReadStream, WriteStream} from "fs";
 
 interface IBuilderFunc {
@@ -26,10 +26,10 @@ export default class Connection {
   }
 
   async connect () {
-    this.writable = sf.createWriteStream(this.writePath, {
+    this.writable = createWriteStream(this.writePath, {
       defaultEncoding: "binary",
     });
-    this.readable = sf.createReadStream(this.readPath, {
+    this.readable = createReadStream(this.readPath, {
       encoding: "binary",
     });
   }

@@ -5,7 +5,7 @@ if (process.type === "renderer") {
 
 import {elapsed} from "../format";
 import {dirname} from "path";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "db"});

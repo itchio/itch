@@ -1,5 +1,5 @@
 
-import sf from "../../os/sf";
+import * as sf from "../../os/sf";
 import * as paths from "../../os/paths";
 
 import * as bluebird from "bluebird";

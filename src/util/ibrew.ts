@@ -2,7 +2,7 @@
 import * as ospath from "path";
 import {app} from "electron";
 import * as os from "../os";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import spawn from "../os/spawn";
 
 import {partial} from "underscore";

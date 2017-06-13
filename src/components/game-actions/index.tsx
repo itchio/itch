@@ -19,7 +19,7 @@ import {IActionsInfo} from "./types";
 import GameModel from "../../db/models/game";
 import {ICaveSummary} from "../../db/models/cave";
 import {IDownloadKeySummary} from "../../db/models/download-key";
-import getByIds from "../../db/get-by-ids";
+import getByIds from "../../helpers/get-by-ids";
 
 import {
   IAppState,

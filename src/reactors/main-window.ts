@@ -6,7 +6,7 @@ import {createSelector} from "reselect";
 import {makeLabel} from "../util/navigation";
 import env from "../env";
 
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 
 import {darkMineShaft} from "../constants/colors";
 import {app, BrowserWindow} from "electron";

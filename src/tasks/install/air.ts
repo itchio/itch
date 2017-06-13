@@ -2,7 +2,7 @@
 import {EventEmitter} from "events";
 
 import spawn from "../../os/spawn";
-import sf from "../../os/sf";
+import * as sf from "../../os/sf";
 
 import blessing from "./blessing";
 

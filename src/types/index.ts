@@ -1145,6 +1145,9 @@ export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
     /** unique generated id for this download */
     id: string;
 
+    /** reason why this download was started */
+    reason: Tasks.DownloadReason;
+
     /** download progress in a [0, 1] interval */
     progress: number;
 
@@ -1174,6 +1177,9 @@ export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
 
     /** an error that may have occured while downloading */
     err?: string;
+
+    /** for fresh game installs, where to install it */
+    installLocation?: string;
 }
 
 export interface IDownloadSpeedDataPoint {

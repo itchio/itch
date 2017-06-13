@@ -2,7 +2,7 @@
 import {Watcher} from "./watcher";
 
 import {preferencesPath, logPath} from "../os/paths";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import {camelifyObject} from "../format";
 import partitionForUser from "../util/partition-for-user";
 

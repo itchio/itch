@@ -12,7 +12,7 @@ import urls from "../constants/urls";
 
 import crashReporter from "../util/crash-reporter";
 import github, {IGistData} from "../api/github";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import {caveLogPath} from "../os/paths";
 import fetch from "../util/fetch";
 

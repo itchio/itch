@@ -22,14 +22,16 @@ const emptyArr = [];
 export default function groupIdBy (records: IRecordMap | IRecord[], field: string): IGrouped {
   const result: IGrouped = {};
 
-  if (Array.isArray(records)) {
+  if (!records) {
+    // muffin
+  } else if (Array.isArray(records)) {
     for (const record of records) {
       const index = record[field];
       result[index] = [...(result[index] || emptyArr), record.id];
     }
   } else {
     for (const recordKey of Object.keys(records)) {
-      const record = records[recordKey][field];
+      const record = records[recordKey];
       const index = record[field];
       result[index] = [...(result[index] || emptyArr), record.id];
     }

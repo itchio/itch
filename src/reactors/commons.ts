@@ -9,7 +9,7 @@ import {IDownloadKeySummary} from "../db/models/download-key";
 import {ICaveSummary} from "../db/models/cave";
 
 import {indexBy, union, pluck} from "underscore";
-import {groupIdBy} from "../db/group-id-by";
+import groupIdBy from "../helpers/group-id-by";
 
 import * as actions from "../actions";
 

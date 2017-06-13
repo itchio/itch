@@ -4,7 +4,7 @@ import {partial} from "underscore";
 
 import noop from "./noop";
 import spawn from "../os/spawn";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import ibrew from "./ibrew";
 
 import {EventEmitter} from "events";

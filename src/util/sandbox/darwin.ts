@@ -5,7 +5,7 @@ import * as tmp from "tmp";
 import sandboxTemplate from "../../constants/sandbox-policies/macos-template";
 
 import spawn from "../../os/spawn";
-import sf from "../../os/sf";
+import * as sf from "../../os/sf";
 
 import common from "./common";
 

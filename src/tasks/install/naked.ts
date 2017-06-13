@@ -1,7 +1,7 @@
 
 import {EventEmitter} from "events";
 
-import sf from "../../os/sf";
+import * as sf from "../../os/sf";
 import butler from "../../util/butler";
 import * as invariant from "invariant";
 

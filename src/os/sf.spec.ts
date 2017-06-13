@@ -1,27 +1,25 @@
 
-// tslint:disable:no-shadowed-variable
+import suite, {fixture} from "../test-suite";
 
-import * as ospath from "path";
-import * as test from "zopf";
+import {join} from "path";
 import * as tmp from "tmp";
-import fixture from "../fixture";
 
 import {EventEmitter} from "events";
 
-import sf from "../../os/sf";
+import * as sf from "./sf";
 
-test("sf", t => {
-  t.case("sf.exists", async t => {
+suite(__filename, s => {
+  s.case("exists", async t => {
     t.true(await sf.exists(fixture.path("empty")));
     t.false(await sf.exists(fixture.path("a-classic-cake-song")));
   });
 
-  t.case("sf.readFile", async t => {
+  s.case("readFile", async t => {
     t.same(await sf.readFile(fixture.path("txt"), {encoding: "utf8"}),
       "Hello there, just writing a bit of text for the sniffer specs\n");
   });
 
-  t.case("sf.writeFile", async t => {
+  s.case("writeFile", async t => {
     const contents = "What is head may never dye";
     let readContents: string;
     let err: Error;
@@ -42,7 +40,7 @@ test("sf", t => {
     t.same(readContents, contents);
   });
 
-  t.case("sf.appendFile", async t => {
+  s.case("appendFile", async t => {
     const contentsA = "What is head";
     const contentsB = " may never dye";
     let readContents: string;
@@ -65,12 +63,12 @@ test("sf", t => {
     t.same(readContents, contentsA + contentsB);
   });
 
-  t.case("sf.wipe", async t => {
+  s.case("wipe", async t => {
     let err: Error;
     const tmpObj = tmp.dirSync();
 
     const touch = async function (name: string) {
-      const path = ospath.join(tmpObj.name, name);
+      const path = join(tmpObj.name, name);
       await sf.writeFile(path, name, {encoding: "utf8"});
     };
 
@@ -90,21 +88,21 @@ test("sf", t => {
     t.false(await sf.exists(tmpObj.name));
   });
 
-  t.case("sf.promised (resolve 1)", async t => {
+  s.case("promised (resolve 1)", async t => {
     const stream = new EventEmitter();
     const p = sf.promised(stream);
     setTimeout(() => stream.emit("close"), 0);
     await p;
   });
 
-  t.case("sf.promised (resolve 2)", async t => {
+  s.case("promised (resolve 2)", async t => {
     const stream = new EventEmitter();
     const p = sf.promised(stream);
     setTimeout(() => stream.emit("end"), 0);
     await p;
   });
 
-  t.case("sf.promised (rejects)", async t => {
+  s.case("promised (rejects)", async t => {
     const stream = new EventEmitter();
     const p = sf.promised(stream);
     setTimeout(() => stream.emit("error", new Error()), 0);

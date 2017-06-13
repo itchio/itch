@@ -1,7 +1,7 @@
 
 import {Fetcher, Outcome} from "./types";
 import db from "../db";
-import getByIds from "../db/get-by-ids";
+import getByIds from "../helpers/get-by-ids";
 
 import {IGameRecordSet} from "../types";
 

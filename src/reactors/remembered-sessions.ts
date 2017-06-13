@@ -1,7 +1,7 @@
 
 import {Watcher} from "./watcher";
 
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import * as ospath from "path";
 import {usersPath} from "../os/paths";
 

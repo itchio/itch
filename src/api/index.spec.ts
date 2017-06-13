@@ -1,13 +1,11 @@
 
-// tslint:disable:no-shadowed-variable
-
-import * as test from "zopf";
+import suite from "../test-suite";
 import * as sinon from "sinon";
 
-import {IResponse} from "../../net";
-import api, {ApiError} from "../../api";
+import {IResponse} from "../net";
+import api, {ApiError} from ".";
 
-test("api", t => {
+suite(__filename, s => {
   api.rootUrl = "http://example.org/";
 
   const user = api.withKey("key");
@@ -21,25 +19,25 @@ test("api", t => {
 
   const uri = "http://example.org/yo";
 
-  t.case("can GET", async t => {
+  s.case("can GET", async t => {
     const request = t.spy(client, "requestFunc");
     await client.request("get", "yo", {b: 11});
     sinon.assert.calledWith(request, "get", uri, {b: 11});
   });
 
-  t.case("can POST", async t => {
+  s.case("can POST", async t => {
     const request = t.spy(client, "requestFunc");
     await client.request("post", "yo", {b: 22});
     sinon.assert.calledWith(request, "post", uri, {b: 22});
   });
 
-  t.case("can make authenticated request", async t => {
+  s.case("can make authenticated request", async t => {
     const mock = t.mock(client);
     mock.expects("request").withArgs("get", "/key/my-games").resolves({games: []});
     await user.myGames();
   });
 
-  t.case("rejects API errors", async t => {
+  s.case("rejects API errors", async t => {
     const errors = ["foo", "bar", "baz"];
 
     const request = t.stub(client, "requestFunc");
@@ -53,7 +51,7 @@ test("api", t => {
 
   {
     let testAPI = function (endpoint: string, args: any[], expected: any[]) {
-      t.case(`${expected[0].toUpperCase()} ${endpoint}`, async t => {
+      s.case(`${expected[0].toUpperCase()} ${endpoint}`, async t => {
         let spy = t.spy(client, "request");
         await (client as any)[endpoint].apply(client, args);
         sinon.assert.calledWith.apply(sinon.assert, [spy].concat(expected));
@@ -73,7 +71,7 @@ test("api", t => {
 
   {
     let testAPI = function (endpoint: string, args: any[], expected: any[]) {
-      t.case(`${expected[0].toUpperCase()} ${endpoint}`, t => {
+      s.case(`${expected[0].toUpperCase()} ${endpoint}`, t => {
         let spy = t.spy(user, "request");
         (user as any)[endpoint].apply(user, args);
         sinon.assert.calledWith.apply(sinon.assert, [spy].concat(expected));

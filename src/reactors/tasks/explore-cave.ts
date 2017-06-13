@@ -2,7 +2,7 @@
 import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
-import sf from "../../os/sf";
+import * as sf from "../../os/sf";
 import * as paths from "../../os/paths";
 import explorer from "../../os/explorer";
 

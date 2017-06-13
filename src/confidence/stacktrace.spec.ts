@@ -1,19 +1,19 @@
 
-import * as test from "zopf";
+import suite from "../test-suite";
 import {spawn} from "child_process";
 
-test("stacktrace", t => {
-  t.case("setTimeout", async () => {
+suite(__filename, s => {
+  s.case("setTimeout", async () => {
     const cherrypie = async () => {
       await new Promise((resolve, reject) => setTimeout(resolve, 10));
       throw new Error(`after timeout`);
     };
     const binomial = async () => await cherrypie();
     const abacus = async () => await binomial();
-    await checkStack(t, abacus());
+    await checkStack(s, abacus());
   });
 
-  t.case("spawn", async () => {
+  s.case("spawn", async () => {
     const cherrypie = async () => {
       let e: Error;
       const code = await new Promise<number>((resolve, reject) => {
@@ -24,17 +24,17 @@ test("stacktrace", t => {
           resolve(4);
         });
       });
-      t.is(code, 4);
+      s.is(code, 4);
       if (e) {
         throw e;
       }
     };
     const binomial = async () => await cherrypie();
     const abacus = async () => await binomial();
-    await checkStack(t, abacus());
+    await checkStack(s, abacus());
   });
 
-  t.case("after-await", async () => {
+  s.case("after-await", async () => {
     const literallyAnything = async () => null;
     const cherrypie = async () => {
       await literallyAnything();
@@ -42,10 +42,10 @@ test("stacktrace", t => {
     };
     const binomial = async () => await cherrypie();
     const abacus = async () => await binomial();
-    await checkStack(t, abacus());
+    await checkStack(s, abacus());
   });
 
-  t.case("after-await-thrower", async () => {
+  s.case("after-await-thrower", async () => {
     const literallyAnything = async () => null;
     const thrower = async () => { throw new Error("oh no"); };
     const cherrypie = async () => {
@@ -54,7 +54,7 @@ test("stacktrace", t => {
     };
     const binomial = async () => await cherrypie();
     const abacus = async () => await binomial();
-    await checkStack(t, abacus());
+    await checkStack(s, abacus());
   });
 });
 

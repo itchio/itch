@@ -15,7 +15,7 @@ import {isNetworkError} from "../net/errors";
 import {findWhere} from "underscore";
 
 import * as os from "../os";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 
 export interface IReportIssueOpts {
   log?: string;

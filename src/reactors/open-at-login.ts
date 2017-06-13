@@ -3,7 +3,7 @@ import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
 import * as os from "../os";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import * as ospath from "path";
 
 import rootLogger from "../logger";

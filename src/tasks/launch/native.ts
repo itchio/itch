@@ -15,7 +15,7 @@ import * as actions from "../../actions";
 import store from "../../store/metal-store";
 import sandbox from "../../util/sandbox";
 import * as os from "../../os";
-import sf from "../../os/sf";
+import * as sf from "../../os/sf";
 import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
 import butler from "../../util/butler";

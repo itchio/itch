@@ -1,10 +1,9 @@
 
-import * as test from "zopf";
-
+import suite from "../test-suite";
 import getByIds from "./get-by-ids";
 
-test(__filename, T => {
-  T.case("getByIds", async t => {
+suite(__filename, s => {
+  s.case("gets records by IDs, being chill about null values", t => {
     const records = {
       "12": {
         word: "twelve",
@@ -20,5 +19,7 @@ test(__filename, T => {
     t.same(getByIds(null, []), []);
     t.same(getByIds(records, null), []);
     t.same(getByIds(records, []), []);
+    t.same(getByIds(records, ["34"]), [{word: "thirty-four"}]);
+    t.same(getByIds(records, ["56", "1024", "12"]), [{word: "fifty-six"}, {word: "twelve"}]);
   });
 });

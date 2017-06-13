@@ -2,8 +2,8 @@
 import {createStructuredSelector} from "reselect";
 
 import * as invariant from "invariant";
-import {indexBy, groupBy, filter, map, last, omit} from "underscore";
-import groupIdBy from "../db/group-id-by";
+import {indexBy, filter, map, last, omit} from "underscore";
+import groupIdBy from "../helpers/group-id-by";
 
 import {IDownloadsState} from "../types";
 
@@ -49,14 +49,14 @@ const updateSingle = (state: IDownloadsState, record: any) => {
   };
 };
 
-function downloadsExceptForGame (downloads: IDownloadsState["downloads"], gameId: number) {
+function downloadsExceptForGame (downloads: IDownloadsState["items"], gameId: number) {
   return indexBy(
-    filter(downloads, (dl) => dl.gameId !== gameId),
+    filter(downloads, (dl) => dl.game.id !== gameId),
     "id",
   );
 }
 
-function downloadsExceptFinished (downloads: IDownloadsState["downloads"]) {
+function downloadsExceptFinished (downloads: IDownloadsState["items"]) {
   return indexBy(
     filter(downloads, (dl) => !dl.finished),
     "id",

@@ -3,7 +3,7 @@ import {isEmpty} from "underscore";
 import {fileSize} from "humanize-plus";
 import {dirname} from "path";
 
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import {Logger} from "../logger";
 import {request} from "./request";
 

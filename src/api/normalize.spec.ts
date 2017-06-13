@@ -1,13 +1,12 @@
 
 // tslint:disable:no-shadowed-variable
 
-import * as test from "zopf";
+import suite, {fixture} from "../test-suite";
 
-import fixture from "../fixture";
-import {game, Schema, arrayOf} from "../../api/schemas";
-import normalize from "../../api/normalize";
+import {game, Schema, arrayOf} from "./schemas";
+import normalize from "./normalize";
 
-test("normalize", t => {
+suite(__filename, t => {
   let collectionGamesSchema = new Schema("collectionGames");
   collectionGamesSchema.define({
     games: arrayOf(game),

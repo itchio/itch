@@ -5,7 +5,7 @@ import * as ospath from "path";
 const verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === "1");
 
 import noop from "./noop";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import spawn from "../os/spawn";
 import butler from "./butler";
 

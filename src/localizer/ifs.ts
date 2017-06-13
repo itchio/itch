@@ -25,6 +25,6 @@ export async function exists (file: string): Promise<boolean> {
   return true;
 }
 
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 export const writeFile = sf.writeFile;
 export default {readFile, writeFile, exists};

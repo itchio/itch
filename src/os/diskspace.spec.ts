@@ -1,14 +1,11 @@
 
-// tslint:disable:no-shadowed-variable
+import suite, {fixture} from "../test-suite";
 
-import * as test from "zopf";
-import fixture from "../fixture";
+import diskspace from "./diskspace";
+import * as os from "./";
 
-import diskspace from "../../os/diskspace";
-import * as os from "../../os";
-
-test("diskspace", (t) => {
-  t.case("df (macOS 10.11)", async (t) => {
+suite(__filename, s => {
+  s.case("df (macOS 10.11)", async (t) => {
     t.stub(diskspace, "dfRun").resolves(fixture.lines("diskspace", "df-osx-10.11"));
     const out = await diskspace.df();
     t.same(out, {
@@ -20,7 +17,7 @@ test("diskspace", (t) => {
     });
   });
 
-  t.case("df (Ubuntu)", async (t) => {
+  s.case("df (Ubuntu)", async (t) => {
     t.stub(diskspace, "dfRun").resolves(fixture.lines("diskspace", "df-ubuntu-15.10"));
     const out = await diskspace.df();
     t.same(out, {
@@ -38,7 +35,7 @@ test("diskspace", (t) => {
     });
   });
 
-  t.case("df (ArchLinux)", async (t) => {
+  s.case("df (ArchLinux)", async (t) => {
     t.stub(diskspace, "dfRun").resolves(fixture.lines("diskspace", "df-archlinux"));
     const out = await diskspace.df();
     t.same(out, {
@@ -57,7 +54,7 @@ test("diskspace", (t) => {
     });
   });
 
-  t.case("wmic (Windows 10.11)", async (t) => {
+  s.case("wmic (Windows 10.11)", async (t) => {
     t.stub(diskspace, "wmicRun").resolves(fixture.lines("diskspace", "wmic-windows-8.1"));
     const out = await diskspace.wmic();
     t.same(out, {
@@ -70,7 +67,7 @@ test("diskspace", (t) => {
     });
   });
 
-  t.case("letterFor", (t) => {
+  s.case("letterFor", (t) => {
     let letter = diskspace.letterFor("C:\\Users\\amos\\Downloads");
     t.is(letter, "C:", "extracts letter");
 
@@ -87,7 +84,7 @@ test("diskspace", (t) => {
     t.notOk(letter, "doesn\'t extract letters for non-local paths");
   });
 
-  t.case("freeInFolder (unix)", (t) => {
+  s.case("freeInFolder (unix)", (t) => {
     t.stub(os, "platform").returns("linux");
 
     const diskInfo = {
@@ -117,7 +114,7 @@ test("diskspace", (t) => {
     t.is(free, -1, "empty path");
   });
 
-  t.case("freeInFolder (windows)", (t) => {
+  s.case("freeInFolder (windows)", (t) => {
     t.stub(os, "platform").returns("win32");
 
     const diskInfo = {

@@ -3,7 +3,7 @@ import {EventEmitter} from "events";
 
 import * as StreamSearch from "streamsearch";
 import * as os from "../../os";
-import sf from "../../os/sf";
+import * as sf from "../../os/sf";
 import spawn from "../../os/spawn";
 
 import rootLogger from "../../logger";

@@ -4,7 +4,7 @@ import {Logger} from "../logger";
 import {indexBy, filter, map} from "underscore";
 import {basename} from "path";
 
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import {request} from "./request";
 
 export type ChecksumAlgo = "SHA256" | "SHA1";

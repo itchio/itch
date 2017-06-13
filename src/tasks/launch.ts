@@ -24,7 +24,7 @@ import {app, powerSaveBlocker} from "electron";
 
 import api from "../api";
 import * as os from "../os";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import * as paths from "../os/paths";
 import explorer from "../os/explorer";
 import diego from "../os/diego";

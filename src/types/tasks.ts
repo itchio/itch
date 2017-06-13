@@ -1,5 +1,4 @@
 
-import DownloadKey from "../db/models/download-key";
 import Game from "../db/models/game";
 
 import {
@@ -59,7 +58,7 @@ export interface IQueueInstallOpts {
   game: Game;
 
   /** set if we're reinstalling */
-  caveId: number;
+  caveId: string;
 
   /** which upload we're installing */
   upload: IUploadRecord;
@@ -76,7 +75,7 @@ export interface IQueueInstallOpts {
 
 export interface IQueueUninstallOpts {
   /** which cave we're uninstalling */
-  caveId: number;
+  caveId: string;
 }
 
 export interface IQueueLaunchOpts {

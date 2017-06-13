@@ -9,7 +9,7 @@ import {isEmpty, find, filter, reject, partition, map, each} from "underscore";
 
 import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
-import sf from "../../os/sf";
+import * as sf from "../../os/sf";
 import * as os from "../../os";
 import registry from "../../os/win32/registry";
 

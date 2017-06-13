@@ -7,7 +7,7 @@ import * as uuid from "uuid";
 import {Transition} from "./errors";
 
 import * as paths from "../os/paths";
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import {Stats} from "fs";
 
 import rootLogger from "../logger";

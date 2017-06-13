@@ -8,7 +8,7 @@ import {dispatcher, multiDispatcher} from "../constants/action-types";
 import * as actions from "../actions";
 
 import GameModel from "../db/models/game";
-import getByIds from "../db/get-by-ids";
+import getByIds from "../helpers/get-by-ids";
 
 import {
   AutoSizer, Table, Column,

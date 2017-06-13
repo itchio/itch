@@ -1,8 +1,7 @@
 
-// tslint:disable:no-shadowed-variable
+import suite from "../test-suite";
 
 import {createConnection, Entity, Column, PrimaryColumn} from "typeorm";
-import * as test from "zopf";
 import deepEquals = require("deep-equal");
 import * as _ from "underscore";
 
@@ -18,8 +17,8 @@ class Game {
   shortDesc: string;
 }
 
-test("sqlite", t => {
-  t.case("run a few queries", async t => {
+suite(__filename, s => {
+  s.case("run a few queries", async t => {
     const conn = await createConnection({
       driver: {
         type: "sqlite",

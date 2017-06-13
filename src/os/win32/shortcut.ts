@@ -2,7 +2,7 @@
 import {resolve, join, basename} from "path";
 import {app} from "electron";
 import spawn from "../spawn";
-import sf from "../sf";
+import * as sf from "../sf";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({name: "shortcut"});

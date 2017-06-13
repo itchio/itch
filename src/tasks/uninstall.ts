@@ -3,7 +3,7 @@ import {EventEmitter} from "events";
 
 import * as paths from "../os/paths";
 
-import sf from "../os/sf";
+import * as sf from "../os/sf";
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "uninstall"});
 
