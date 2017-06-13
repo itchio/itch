@@ -2,7 +2,6 @@
 import {Fetcher, Outcome} from "./types";
 
 import db from "../db";
-import User from "../db/models/user";
 
 import normalize from "../api/normalize";
 import {user} from "../api/schemas";
@@ -19,9 +18,8 @@ export default class UserFetcher extends Fetcher {
 
     const userId = +pathToId(path);
 
-    const userRepo = db.getRepo(User);
-    let localUser = await userRepo.findOneById(userId);
-    let pushUser = (user: User) => {
+    let localUser = await db.users.findOneById(userId);
+    let pushUser = (user: typeof localUser) => {
       if (user) {
         this.push(userToTabData(user));
       }

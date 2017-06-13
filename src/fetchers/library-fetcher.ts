@@ -1,7 +1,6 @@
 
 import {Fetcher, Outcome} from "./types";
 import db from "../db";
-import Game from "../db/models/game";
 
 import {addSortAndFilterToQuery} from "./sort-and-filter";
 
@@ -51,10 +50,9 @@ export default class LibraryFetcher extends Fetcher {
     const tabPagination = session.tabPagination[this.tabId] || emptyObj;
     let {offset = 0, limit = 30} = tabPagination;
 
-    const gameRepo = db.getRepo(Game);
     const {libraryGameIds} = commons;
 
-    let query = gameRepo.createQueryBuilder("games");
+    let query = db.games.createQueryBuilder("games");
 
     query.where("games.id in (:gameIds)");
     query.addParameters({

@@ -2,8 +2,6 @@
 import {Fetcher, Outcome} from "./types";
 
 import db from "../db";
-import Game from "../db/models/game";
-import Profile from "../db/models/profile";
 
 import normalize from "../api/normalize";
 import {game, arrayOf} from "../api/schemas";
@@ -28,17 +26,14 @@ export default class DashboardFetcher extends Fetcher {
   }
 
   async pushLocal () {
-    const profileRepo = db.getRepo(Profile);
-    const gameRepo = db.getRepo(Game);
-
     const meId = this.ensureCredentials().me.id;    
-    const profile = await profileRepo.findOneById(meId);
+    const profile = await db.profiles.findOneById(meId);
     if (!profile) {
       return;
     }
     const myGameIds = profile.myGameIds || emptyArr;
 
-    let query = gameRepo.createQueryBuilder("games");
+    let query = db.games.createQueryBuilder("games");
 
     query.where("games.id in (:gameIds)");
     query.addParameters({ gameIds: myGameIds });

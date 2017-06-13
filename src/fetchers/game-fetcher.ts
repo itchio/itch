@@ -2,7 +2,6 @@
 import {Fetcher, Outcome} from "./types";
 
 import db from "../db";
-import Game from "../db/models/game";
 
 import normalize from "../api/normalize";
 import {game} from "../api/schemas";
@@ -18,9 +17,8 @@ export default class GameFetcher extends Fetcher {
     const {path} = this.tabData();
     const gameId = +pathToId(path);
 
-    const gameRepo = db.getRepo(Game);
-    let localGame = await gameRepo.findOneById(gameId);
-    let pushGame = (game: Game) => {
+    let localGame = await db.games.findOneById(gameId);
+    let pushGame = (game: typeof localGame) => {
       if (game) {
         this.push(gameToTabData(game));
       }
@@ -30,7 +28,6 @@ export default class GameFetcher extends Fetcher {
     const normalized = await this.withApi(async (api) => {
       return normalize(await api.game(gameId), {game});
     });
-
     pushGame(normalized.entities.games[normalized.result.gameId]);
 
     return this.success();

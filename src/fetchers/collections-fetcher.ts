@@ -1,8 +1,6 @@
 
 import {Fetcher, Outcome} from "./types";
 import db from "../db";
-import Collection from "../db/models/collection";
-import Game from "../db/models/game";
 
 import normalize from "../api/normalize";
 import {collection, arrayOf} from "../api/schemas";
@@ -28,9 +26,7 @@ export default class CollectionsFetcher extends Fetcher {
   }
 
   async pushLocal () {
-    const collectionsRepo = db.getRepo(Collection);
-    const gamesRepo = db.getRepo(Game);
-    const query = collectionsRepo.createQueryBuilder("collections");
+    const query = db.collections.createQueryBuilder("collections");
     query.where("userId = :meId");
     query.addParameters({meId: this.ensureCredentials().me.id});
 
@@ -44,7 +40,7 @@ export default class CollectionsFetcher extends Fetcher {
 
     let localGames = [];
     if (allGameIds.length > 0) {
-      localGames = await gamesRepo.createQueryBuilder("g")
+      localGames = await db.games.createQueryBuilder("g")
         .where("g.id in (:gameIds)")
         .setParameters({gameIds: allGameIds}).getMany();
     }

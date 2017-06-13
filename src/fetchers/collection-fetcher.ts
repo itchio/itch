@@ -1,8 +1,6 @@
 
 import {Fetcher, Outcome} from "./types";
 import db from "../db";
-import Game from "../db/models/game";
-import Collection from "../db/models/collection";
 import getByIds from "../db/get-by-ids";
 
 import {IGameRecordSet} from "../types";
@@ -30,9 +28,7 @@ export default class CollectionFetcher extends Fetcher {
     const path = this.tabData().path;
     const collectionId = +pathToId(path);
 
-    const gameRepo = db.getRepo(Game);
-    const collectionRepo = db.getRepo(Collection);
-    let localCollection = await collectionRepo.findOneById(collectionId);
+    let localCollection = await db.collections.findOneById(collectionId);
 
     if (localCollection) {
       this.push({
@@ -46,7 +42,7 @@ export default class CollectionFetcher extends Fetcher {
         gameIds = localCollection.gameIds;
       }
 
-      const localGames = await gameRepo.findByIds(localCollection.gameIds);
+      const localGames = await db.games.findByIds(localCollection.gameIds);
       await this.pushGames(indexBy(localGames, "id"), gameIds, localCollection.gamesCount);
     }
 
