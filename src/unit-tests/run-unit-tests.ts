@@ -36,7 +36,7 @@ const chalk = require("chalk");
 
 const {app} = require("electron");
 const {extname} = require("path").posix;
-const {join} = require("path");
+const {resolve} = require("path");
 
 app.on("ready", async () => {
   const {BrowserWindow} = require("electron");
@@ -50,9 +50,9 @@ app.on("ready", async () => {
   win.loadURL("about:blank");
 
   const glob = require("bluebird").promisify(require("glob"));
-  const cwd = join(__dirname);
+  const cwd = resolve(__dirname, "..");
   console.log(`looking for tests in ${cwd}`);
-  let testFiles = await glob("**/*-spec.ts", {cwd});
+  let testFiles = await glob("**/*[\.-]spec.ts", {cwd});
 
   const args = process.argv.slice(2);
   let state = 0;
@@ -94,7 +94,7 @@ app.on("ready", async () => {
   for (const testFile of testFiles) {
     const ext = extname(testFile);
     const extless = testFile.slice(0, -(ext.length));
-    const requirePath = `./${extless}`;
+    const requirePath = `../${extless}`;
     require(requirePath);
   }
 });

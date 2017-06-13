@@ -1,5 +1,5 @@
 
-import test = require("zopf");
+import * as test from "zopf";
 import {spawn} from "child_process";
 
 test("stacktrace", t => {

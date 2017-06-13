@@ -2,7 +2,7 @@
 // tslint:disable:no-shadowed-variable
 
 import * as ospath from "path";
-import test = require("zopf");
+import * as test from "zopf";
 import * as tmp from "tmp";
 import fixture from "../fixture";
 

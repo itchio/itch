@@ -2,7 +2,7 @@
 // tslint:disable:no-shadowed-variable
 
 import {createConnection, Entity, Column, PrimaryColumn} from "typeorm";
-import test = require("zopf");
+import * as test from "zopf";
 import deepEquals = require("deep-equal");
 import * as _ from "underscore";
 

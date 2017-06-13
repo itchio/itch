@@ -1,7 +1,7 @@
 
 // tslint:disable:no-shadowed-variable
 
-import test = require("zopf");
+import * as test from "zopf";
 
 import * as navigation from "../../util/navigation";
 

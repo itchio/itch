@@ -1,7 +1,7 @@
 
 // tslint:disable:no-shadowed-variable
 
-import test  = require("zopf");
+import * as test from "zopf";
 
 import fixture from "../fixture";
 import {game, Schema, arrayOf} from "../../api/schemas";

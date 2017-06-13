@@ -2,7 +2,7 @@
 // tslint:disable:no-shadowed-variable
 
 import {Application, BasicAppSettings} from "spectron";
-import test = require("zopf");
+import * as test from "zopf";
 import * as bluebird from "bluebird";
 
 import * as fs from "fs";
