@@ -9,6 +9,7 @@ import DownloadKey, {IDownloadKeySummary} from "../db/models/download-key";
 import Cave, {ICaveSummary} from "../db/models/cave";
 
 export * from "./tasks";
+import * as Tasks from "./tasks";
 
 import {PathScheme} from "../os/paths";
 
@@ -1140,9 +1141,7 @@ export interface IUpgradePathItem {
  * A download in progress for the app. Always linked to a game,
  * sometimes for first install, sometimes for update.
  */
-export interface IDownloadItem {
-    // TODO: dedupe with IDownloadOpts
-
+export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
     /** unique generated id for this download */
     id: string;
 
@@ -1152,29 +1151,11 @@ export interface IDownloadItem {
     /** set when download has been completed */
     finished?: boolean;
 
-    /** id of the game we're downloading */
-    gameId: number;
-
-    /**
-     * game record at the time the download started - in case we're downloading
-     * something that's not cached locally.
-     */
-    game: Game;
-
     /** order in the download list: can be negative, for reordering */
     order: number;
 
-    /** the reason why a download was started */
-    reason: string;
-
     /** whether this is an incremental update (wharf patch) or a full re-download */
     incremental: boolean;
-
-    /** the upload we're downloading */
-    upload: IUploadRecord;
-
-    /** where on disk we're downloading the upload */
-    destPath: string;
 
     /** if true, user chose which to download among a list of compatible uploads */
     handPicked?: boolean;
@@ -1203,32 +1184,20 @@ export type IDownloadSpeeds = IDownloadSpeedDataPoint[];
 
 export interface IDownloadsState {
     /** All the downloads we know about, indexed by their own id */
-    downloads: {
+    items: {
         [id: string]: IDownloadItem;
     };
 
-    /** All the downloads we know about, grouped by the id of the game they're associated to */
-    downloadsByGameId: {
-        [gameId: string]: IDownloadItem[];
+    /** IDs of all the downloads we know about, grouped by the id of the game they're associated to */
+    itemIdsByGameId: {
+        [gameId: string]: string[];
     };
 
-    /** ids of all the downloads finished but not cleared yet */
-    finishedDownloads: string[];
-
-    /** ids of all the downloads, in order */
-    downloadsByOrder: string[];
-
-    /** The download currently being downloaded (if they're not paused) */
-    activeDownload: IDownloadItem;
+    /** true if downloads are currently paused */
+    paused: boolean;
 
     /** Download speeds, in bps, each item represents one second */
     speeds: IDownloadSpeeds;
-
-    /** if true, downloads acts as a queue, doesn't actually download anything until they're started again */
-    downloadsPaused: boolean;
-
-    /** progress of current download in [0, 1] interval */
-    progress: number;
 }
 
 export type OpenAtLoginErrorCause = "no_desktop_file" | "error";

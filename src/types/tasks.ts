@@ -15,8 +15,16 @@ export interface IQueueDownloadOpts {
   /** reason for starting this download */
   reason: DownloadReason;
 
-  /** which game we're downloading */
+  /**
+   * game record at the time the download started - in case we're downloading
+   * something that's not cached locally.
+   */
   game: Game;
+
+  /**    
+   * identifier of the cave this download was started for
+   */
+  caveId?: string;
 
   /** upload we're downloading */
   upload: IUploadRecord;
@@ -24,32 +32,14 @@ export interface IQueueDownloadOpts {
   /** total size of download (size of archive or sum of patch sizes) */
   totalSize?: number;
 
-  /** where to download archive file, depends on cave location */
-  destPath: string;
-
   /** true if wharf-enabled update via butler */
   incremental?: boolean;
 
   /** patch entries to upgrade to latest via butler */
   upgradePath?: IUpgradePathItem[];
 
-  /** order of the download in the download queue */
-  order?: number;
-
   /** if true, user disambiguated from list of uploads */
   handPicked?: boolean;
-
-  /** download key used for downloading */
-  downloadKey?: DownloadKey;
-
-  /** existing cave record if we're upgrading */
-  caveId?: number;
-
-  /** for password-protected game pages */
-  password?: string;
-
-  /** for draft game pages */
-  secret?: string;
 }
 
 export type TaskName = "install" | "uninstall" | "configure" | "launch";
