@@ -1,5 +1,6 @@
 
 import {EventEmitter} from "events";
+import {Shm} from "shoom";
 
 import * as btoa from "btoa";
 import {dirname, basename, join} from "path";
@@ -266,10 +267,9 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
       const components = 4;
       const pitch = contentWidth * components;
 
-      const shoom = require("shoom");
       const shmPath = "capsule_html5.shm";
       const shmSize = pitch * contentHeight;
-      const shm = new shoom.Shm({
+      const shm = new Shm({
         path: shmPath,
         size: shmSize,
       });
