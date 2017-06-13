@@ -42,16 +42,18 @@ async function startCave (store: IStore, game: Game, cave: Cave, extraOpts: IExt
 }
 
 export default function (watcher: Watcher) {
+  watcher.on(actions.queueLaunch, async (store, action) => {
+  });
+
   watcher.on(actions.queueGame, async (store, action) => {
-    const {game, extraOpts = {}, pickedUpload} = action.payload;
-    let {password, secret} = extraOpts;
+    const {game} = action.payload;
 
-    const cave = await db.getRepo(Cave).find();
+    const caves = await db.getRepo(Cave).find({gameId: game.id});
 
-    if (cave) {
-      logger.info(`Have a cave for game ${game.id}, launching`);
-      store.dispatch(actions.queueLaunch({cave}));
-      await startCave(store, game, cave, extraOpts);
+    if (caves.length > 0) {
+      logger.info(`Have ${caves} for game ${game.id}, launching the first one`);
+      const cave = caves[0];
+      store.dispatch(actions.queueLaunch({caveId: cave.id}));
       return;
     }
 

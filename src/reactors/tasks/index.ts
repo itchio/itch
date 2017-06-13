@@ -1,9 +1,6 @@
 
 import {Watcher} from "../watcher";
 
-import startDownload from "./start-download";
-import downloadEnded from "./download-ended";
-
 import startTask from "./start-task";
 import taskEnded from "./task-ended";
 
@@ -21,13 +18,7 @@ import healCave from "./heal-cave";
 import probeCave from "./probe-cave";
 import viewCaveDetails from "./view-cave-details";
 
-import downloadWatcher from "./download-watcher";
-import downloadSpeedWatcher from "./download-speed-watcher";
-
 export default function (watcher: Watcher) {
-  startDownload(watcher);
-  downloadEnded(watcher);
-
   startTask(watcher);
   taskEnded(watcher);
 
@@ -44,7 +35,4 @@ export default function (watcher: Watcher) {
   healCave(watcher);
   probeCave(watcher);
   viewCaveDetails(watcher);
-
-  downloadWatcher(watcher);
-  downloadSpeedWatcher(watcher);
 }

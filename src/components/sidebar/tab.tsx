@@ -66,7 +66,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
     if (id === "downloads") {
       const {downloads} = this.props;
       count = downloads.finishedDownloads.length;
-      progress = downloads.progress;
+      progress = downloads.activeItemProgress;
       const {activeDownload} = downloads;
       if (activeDownload) {
         if (downloads.downloadsPaused) {

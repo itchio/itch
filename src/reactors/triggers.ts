@@ -10,7 +10,7 @@ import {sortBy} from "underscore";
 export default function (watcher: Watcher) {
   watcher.on(actions.triggerMainAction, async (store, action) => {
     const id = store.getState().session.navigation.id;
-    const data = store.getState().session.navigation.tabData[id];
+    const data = store.getState().session.tabData[id];
     if (!data) {
       return;
     }

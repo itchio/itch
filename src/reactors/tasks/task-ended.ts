@@ -51,7 +51,7 @@ export default function (watcher: Watcher) {
     } else if (name === "launch") {
       const {gameId} = taskOpts;
       const state = store.getState();
-      const tab = state.session.navigation.tabData[state.session.navigation.id];
+      const tab = state.session.tabData[state.session.navigation.id];
       logger.info(`game ${gameId} just exited!`);
 
       if (tab && tab.path === `games/${gameId}`) {

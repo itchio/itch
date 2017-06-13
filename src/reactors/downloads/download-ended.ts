@@ -45,6 +45,9 @@ export default function (watcher: Watcher) {
         }
         logger.info(`Download finished, starting ${reason}..`);
 
+        store.dispatch(actions.queueInstall({
+        }));
+
         const taskOpts = {
           name: "install",
           reinstall: (reason as string === "reinstall"),

@@ -16,10 +16,10 @@ import actionForGame from "../util/action-for-game";
 import * as actions from "../actions";
 
 import db from "../db";
-import CaveModel from "../db/models/cave";
-import DownloadKeyModel from "../db/models/download-key";
 
-type IMenuItem = Electron.MenuItemOptions;
+const emptyArr = [];
+
+type IMenuItem = Electron.MenuItemConstructorOptions;
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "context-menu"});
@@ -33,15 +33,14 @@ function openMenu (store: IStore, template: IMenuItem[]) {
   const menu = Menu.buildFromTemplate(clone(template));
   const mainWindowId = store.getState().ui.mainWindow.id;
   const mainWindow = BrowserWindow.fromId(mainWindowId);
-  // FIXME: change when typings are updated
-  (menu.popup as any)(mainWindow, {async: true});
+  menu.popup(mainWindow, {async: true, y: undefined});
 }
 
 export default function (watcher: Watcher) {
   watcher.on(actions.openTabContextMenu, async (store, action) => {
     const {id} = action.payload;
 
-    const data = store.getState().session.navigation.tabData[id];
+    const data = store.getState().session.tabData[id];
     if (!data) {
       logger.warn(`Can't make context menu for non-transient tab ${id}`);
       return;
@@ -66,7 +65,7 @@ export default function (watcher: Watcher) {
 
     const {game} = action.payload;
     const gameId = game.id;
-    const cave = await db.getRepo(CaveModel).findOne({gameId});
+    const cave = await db.caves.findOne({gameId});
     const mainAction = actionForGame(game, cave);
 
     const template: IMenuItem[] = [];
@@ -147,13 +146,15 @@ export default function (watcher: Watcher) {
         });
       }
     } else {
-      const downloadKeyStore = db.getRepo(DownloadKeyModel);
-      const downloadKey = await downloadKeyStore.findOne({gameId: game.id});
+      const downloadKeys = store.getState().commons.downloadKeyIdsByGameId[game.id] || emptyArr;
+      const owned = downloadKeys.length > 0;
+
       const hasMinPrice = game.minPrice > 0;
-      // FIXME: game admins can edit too, but `userId` isn't `meId` in that case
+      const free = !hasMinPrice;
+
       const meId = store.getState().session.credentials.me.id;
       const canEdit = game.userId === meId;
-      const mayDownload = !!(downloadKey || !hasMinPrice || canEdit);
+      const mayDownload = !!((downloadKeys.length > 0) || !hasMinPrice || canEdit);
 
       if (mayDownload) {
         template.push({

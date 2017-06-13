@@ -134,8 +134,8 @@ interface IDerivedProps {
 
 export default connect<IProps>(Downloads, {
   state: createStructuredSelector({
-    items: (state: IAppState) => map(state.downloads.downloadsByOrder, (id) => state.downloads.downloads[id]),
-    finishedItems: (state: IAppState) => map(state.downloads.finishedDownloads, (id) => state.downloads.downloads[id]),
+    items: (state: IAppState) => map(state.downloads.downloadsByOrder, (id) => state.downloads.items[id]),
+    finishedItems: (state: IAppState) => map(state.downloads.finishedDownloads, (id) => state.downloads.items[id]),
   }),
   dispatch: (dispatch) => ({
   clearFinishedDownloads: dispatcher(dispatch, actions.clearFinishedDownloads),

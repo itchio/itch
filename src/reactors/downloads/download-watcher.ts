@@ -54,7 +54,7 @@ async function updateDownloadState (store: IStore) {
       // idle
     }
   }
-  await setProgress(store, downloadsState.progress);
+  await setProgress(store, downloadsState.activeItemProgress);
 }
 
 async function setProgress (store: IStore, alpha: number) {
@@ -80,8 +80,6 @@ async function start (store: IStore, download: IDownloadItem) {
   currentDownload = download;
   currentEmitter = new EventEmitter();
 
-  const downloadOpts = download.downloadOpts;
-
   let error: Error;
   let cancelled = false;
   try {
@@ -91,9 +89,6 @@ async function start (store: IStore, download: IDownloadItem) {
       }
       store.dispatch(actions.downloadProgress({id: download.id, ...ev}));
     }, 250));
-
-    const credentials = store.getState().session.credentials;
-    const extendedOpts = {...opts, ...downloadOpts, credentials};
 
     logger.info("Starting download...");
     await downloadTask(currentEmitter, extendedOpts);
@@ -108,7 +103,9 @@ async function start (store: IStore, download: IDownloadItem) {
     } else {
       const err = error ? error.message || ("" + error) : null;
       logger.info(`Download ended, err: ${err || "<none>"}`);
-      store.dispatch(actions.downloadEnded({id: download.id, err, downloadOpts}));
+
+      const item = store.getState().downloads.items[download.id];
+      store.dispatch(actions.downloadEnded({id: download.id, err, item}));
     }
   }
 }

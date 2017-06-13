@@ -29,6 +29,7 @@ import purchases from "./purchases";
 import url from "./url";
 import itchInternal from "./itch-internal";
 import tasks from "./tasks";
+import downloads from "./downloads";
 
 const watcher = new Watcher();
 
@@ -60,6 +61,7 @@ purchases(watcher);
 url(watcher);
 itchInternal(watcher);
 tasks(watcher);
+downloads(watcher);
 
 watcher.validate();
 

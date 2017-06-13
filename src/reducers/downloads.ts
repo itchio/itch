@@ -1,8 +1,9 @@
 
-import {createSelector, createStructuredSelector} from "reselect";
+import {createStructuredSelector} from "reselect";
 
 import * as invariant from "invariant";
-import {indexBy, groupBy, where, sortBy, pluck, filter, map, first, last, omit} from "underscore";
+import {indexBy, groupBy, filter, map, last, omit} from "underscore";
+import groupIdBy from "../db/group-id-by";
 
 import {IDownloadsState} from "../types";
 
@@ -12,44 +13,25 @@ import * as actions from "../actions";
 
 const SPEED_DATA_POINT_COUNT = 60;
 
-const structSel = createStructuredSelector({
-  downloadsByOrder: (state: IDownloadsState) => (
-    pluck(sortBy(filter(state.downloads, (x) => !x.finished), "order"), "id")
-  ),
-  activeDownload: (state: IDownloadsState) => (
-    first(sortBy(filter(state.downloads, (x) => !x.finished), "order"))
-  ),
-  finishedDownloads: (state: IDownloadsState) => (
-    pluck(sortBy(where(state.downloads, {finished: true}), "order"), "id")
-  ),
-  downloadsByGameId: (state: IDownloadsState) => (
-    groupBy(state.downloads, "gameId")
+const selector = createStructuredSelector({
+  downloadIdsByGameId: (state: IDownloadsState) => (
+    groupIdBy(state.items, "gameId")
   ),
 });
 
-const selector = createSelector(
-  structSel,
-  (fields: IDownloadsState) => {
-    const {activeDownload} = fields;
-    const progress = (activeDownload && activeDownload.progress) || -1;
-
-    return { ...fields, activeDownload, progress };
-  },
-);
-
 const baseInitialState = {
   speeds: map(new Array(SPEED_DATA_POINT_COUNT), (x) => ({ bps: 0 })),
-  downloads: {},
-  downloadsPaused: false,
+  items: {},
+  paused: false,
 };
 const initialState = { ...baseInitialState, ...selector(baseInitialState) };
 
 const updateSingle = (state: IDownloadsState, record: any) => {
-  const {downloads} = state;
+  const {items} = state;
   const {id} = record;
   invariant(id, "valid download id in progress");
 
-  const download = downloads[id];
+  const download = items[id];
   if (!download) {
     // ignore progress messages for inactive downloads
     return state;
@@ -58,7 +40,7 @@ const updateSingle = (state: IDownloadsState, record: any) => {
   return {
     ...state,
     downloads: {
-      ...state.downloads,
+      ...state.items,
       [id]: {
         ...download,
         ...record,
@@ -86,7 +68,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
     const {gameId} = action.payload;
     return {
       ...state,
-      downloads: downloadsExceptForGame(state.downloads, gameId),
+      items: downloadsExceptForGame(state.items, gameId),
     };
   });
 
@@ -96,8 +78,8 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
     invariant(download.id, "valid download id in started");
     return {
       ...state,
-      downloads: {
-        ...downloadsExceptForGame(state.downloads, download.gameId),
+      items: {
+        ...downloadsExceptForGame(state.items, download.gameId),
         [download.id]: download,
       },
     };
@@ -139,21 +121,21 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
 
   on(actions.cancelDownload, (state, action) => {
     const {id} = action.payload;
-    const {downloads} = state;
+    const {items} = state;
 
-    const download = downloads[id];
+    const download = items[id];
     invariant(download, "cancelling valid download");
 
     return {
       ...state,
-      downloads: omit(state.downloads, id),
+      items: omit(state.items, id),
     };
   });
 
   on(actions.clearFinishedDownloads, (state, action) => {
     return {
       ...state,
-      downloads: downloadsExceptFinished(state.downloads),
+      items: downloadsExceptFinished(state.items),
     };
   });
 

@@ -1,28 +1,28 @@
 
 import * as invariant from "invariant";
-
 import * as paths from "../../os/paths";
 import client from "../../api";
 import butler from "../../util/butler";
 
+import rootLogger from "../../logger";
+
 import downloadPatches from "./download-patches";
 
 import {EventEmitter} from "events";
-import {IDownloadOpts} from "../../types";
 
-import store from "../../store/metal-store";
+import {IStore, IDownloadItem} from "../../types";
 
-export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
-  let opts = inOpts;
-  if (opts.cave) {
-    opts = {
-      ...opts,
-      logger: paths.caveLogger(opts.cave.id),
-    };
+export default async function start (store: IStore, item: IDownloadItem, out: EventEmitter) {
+  // TODO: we want to store download/install logs even if the cave never ends
+  // up being valid, for bug reporting purposes.
+
+  let parentLogger = rootLogger;
+  if (item.caveId) {
+    parentLogger = paths.caveLogger(item.caveId);
   }
-  const {logger} = opts;
+  const logger = parentLogger.child({name: `download`});
 
-  if (opts.upgradePath && opts.cave) {
+  if (item.upgradePath && item.cave) {
     logger.info("Got an upgrade path, downloading patches");
 
     return await downloadPatches(out, {
@@ -45,7 +45,6 @@ export default async function start (out: EventEmitter, inOpts: IDownloadOpts) {
     const {game} = opts;
     invariant(game, "startDownload opts must have game");
 
-    // TODO: use manifest URL if available
     const archiveURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "archive", {password, secret});
     const signatureURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "signature", {password, secret});
 
