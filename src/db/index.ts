@@ -14,10 +14,9 @@ import getColumns from "./get-columns";
 
 import {
   createConnection,
-  Connection, ObjectType, Repository,
 } from "typeorm";
 
-import {modelMap} from "./model-map";
+import {modelList, modelMap, RepoContainer} from "./model-map";
 
 import compareRecords from "./compare-records";
 import * as _ from "underscore";
@@ -35,9 +34,7 @@ import {
 /**
  * DB is a thin abstraction on top of typeorm. Pierce through it at will!
  */
-export class DB {
-  conn: Connection;
-
+export class DB extends RepoContainer {
   /** path to the sqlite file on disk */
   dbPath: string;
 
@@ -65,9 +62,11 @@ export class DB {
       logging: {
         logQueries: process.env.ITCH_SQL === "1",
       },
-      entities: Object.keys(modelMap).map((k) => modelMap[k]),
+      entities: modelList,
       autoSchemaSync: true,
     });
+
+    this.setupRepos();
 
     logger.info(`db connection established in ${elapsed(t1, Date.now())}`);
   }
@@ -169,13 +168,6 @@ export class DB {
     }
     const repo = this.conn.getRepository(Model);
     await repo.remove({id});
-  }
-
-  /**
-   * Gets the typeorm repository for a given model
-   */
-  getRepo <T> (model: ObjectType<T>): Repository<T> {
-    return this.conn.getRepository(model);
   }
 
   /**

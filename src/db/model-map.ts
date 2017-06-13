@@ -1,4 +1,6 @@
 
+import {Connection, Repository} from "typeorm";
+
 import Game from "./models/game";
 import ExternalGame from "./models/external-game";
 import Collection from "./models/collection";
@@ -24,3 +26,26 @@ export const modelMap: IModelMap = {
   "gamePasswords": GamePassword,
   "gameSecrets": GameSecret,
 };
+
+export const modelList = Object.keys(modelMap).map((k) => modelMap[k]);
+
+export class RepoContainer {
+  conn: Connection;
+
+  games: Repository<Game>;
+  externalGames: Repository<ExternalGame>;
+  collections: Repository<Collection>;
+  downloadKeys: Repository<DownloadKey>;
+  caves: Repository<Cave>;
+  users: Repository<User>;
+  profiles: Repository<Profile>;
+  gamePasswords: Repository<GamePassword>;
+  gameSecrets: Repository<GameSecret>;
+
+  setupRepos() {
+    for (const key of Object.keys(modelMap)) {
+      const Model = modelMap[key];
+      this[key] = this.conn.getRepository(Model);
+    }
+  }
+}
