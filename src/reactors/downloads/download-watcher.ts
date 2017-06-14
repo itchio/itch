@@ -24,7 +24,7 @@ import {
 
 import {IProgressInfo} from "../../types";
 
-const DOWNLOAD_DELAY = 250;
+const DOWNLOAD_DELAY = 1000;
 
 let currentDownload: IDownloadItem = null;
 let currentEmitter: EventEmitter = null;
@@ -45,6 +45,7 @@ async function updateDownloadState (store: IStore) {
 
   const activeDownload = getActiveDownload(downloadsState);
   if (activeDownload) {
+    await setProgress(store, activeDownload.progress);
     if (!currentDownload || currentDownload.id !== activeDownload.id) {
       logger.info(`${activeDownload.id} is the new active download`);
       start(store, activeDownload);
@@ -52,6 +53,7 @@ async function updateDownloadState (store: IStore) {
       // still downloading currentDownload
     }
   } else {
+    await setProgress(store, -1);
     if (currentDownload) {
       logger.info("Cancelling/clearing out last download");
       cancelCurrent();
@@ -59,7 +61,6 @@ async function updateDownloadState (store: IStore) {
       // idle
     }
   }
-  await setProgress(store, activeDownload.progress);
 }
 
 async function setProgress (store: IStore, alpha: number) {
