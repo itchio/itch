@@ -616,8 +616,8 @@ export interface IDownloadEndedPayload {
   /** the original download options */
   item: Types.IDownloadItem;
 
-  /** path where the download was, well, downloaded */
-  archivePath: string;
+  /** stuff like: where the file was downloaded. */
+  result: Types.IDownloadResult;
 }
 
 export const DOWNLOAD_SPEED_DATAPOINT = "DOWNLOAD_SPEED_DATAPOINT";
