@@ -12,11 +12,14 @@ import {throttle} from "underscore";
 import {BrowserWindow} from "electron";
 
 import {Cancelled} from "../../tasks/errors";
-import downloadTask from "../../tasks/download";
+import performDownload from "./perform-download";
+
+import {getActiveDownload} from "./getters";
 
 import {
   IStore,
   IDownloadItem,
+  IDownloadResult,
 } from "../../types";
 
 import {IProgressInfo} from "../../types";
@@ -26,11 +29,13 @@ const DOWNLOAD_DELAY = 250;
 let currentDownload: IDownloadItem = null;
 let currentEmitter: EventEmitter = null;
 
+// TODO: pause downloads on logout.
+
 async function updateDownloadState (store: IStore) {
   await delay(DOWNLOAD_DELAY);
 
   const downloadsState = store.getState().downloads;
-  if (downloadsState.downloadsPaused) {
+  if (downloadsState.paused) {
     if (currentDownload) {
       cancelCurrent();
     }
@@ -38,7 +43,7 @@ async function updateDownloadState (store: IStore) {
     return;
   }
 
-  const activeDownload = downloadsState.activeDownload;
+  const activeDownload = getActiveDownload(downloadsState);
   if (activeDownload) {
     if (!currentDownload || currentDownload.id !== activeDownload.id) {
       logger.info(`${activeDownload.id} is the new active download`);
@@ -54,7 +59,7 @@ async function updateDownloadState (store: IStore) {
       // idle
     }
   }
-  await setProgress(store, downloadsState.activeItemProgress);
+  await setProgress(store, activeDownload.progress);
 }
 
 async function setProgress (store: IStore, alpha: number) {
@@ -75,23 +80,25 @@ function cancelCurrent () {
   currentDownload = null;
 }
 
-async function start (store: IStore, download: IDownloadItem) {
+async function start (store: IStore, item: IDownloadItem) {
   cancelCurrent();
-  currentDownload = download;
+  currentDownload = item;
   currentEmitter = new EventEmitter();
 
   let error: Error;
   let cancelled = false;
+  let result: IDownloadResult;
+
   try {
     currentEmitter.on("progress", throttle((ev: IProgressInfo) => {
       if (cancelled) {
         return;
       }
-      store.dispatch(actions.downloadProgress({id: download.id, ...ev}));
+      store.dispatch(actions.downloadProgress({id: item.id, ...ev}));
     }, 250));
 
     logger.info("Starting download...");
-    await downloadTask(currentEmitter, extendedOpts);
+    result = await performDownload(store, item, currentEmitter);
   } catch (e) {
     logger.error("Download threw");
     error = e;
@@ -104,8 +111,13 @@ async function start (store: IStore, download: IDownloadItem) {
       const err = error ? error.message || ("" + error) : null;
       logger.info(`Download ended, err: ${err || "<none>"}`);
 
-      const item = store.getState().downloads.items[download.id];
-      store.dispatch(actions.downloadEnded({id: download.id, err, item}));
+      const freshItem = store.getState().downloads.items[item.id];
+      store.dispatch(actions.downloadEnded({
+        id: freshItem.id,
+        err,
+        result,
+        item: freshItem,
+      }));
     }
   }
 }

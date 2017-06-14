@@ -1,5 +1,5 @@
 
-import {DownloadReason, InstallReason} from "../types";
+import {DownloadReason, InstallReason} from "../../types";
 
 export default function (reason: DownloadReason): InstallReason {
   switch (reason) {

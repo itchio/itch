@@ -1,19 +1,31 @@
 
 import {EventEmitter} from "events";
 
+import {Logger} from "../logger";
+
 import butler from "../../util/butler";
 import * as paths from "../../os/paths";
 import client from "../../api";
 
-import {IDownloadOpts, IProgressInfo} from "../../types";
+import {
+  IStore,
+  IProgressInfo,
+  IDownloadItem,
+  IDownloadResult,
+} from "../../types";
 import {IDownloadBuildFileExtras} from "../../types/api";
 
 import store from "../../store/metal-store";
 
-export default async function downloadPatches (out: EventEmitter, opts: IDownloadOpts) {
-  const {cave, totalSize, upgradePath, upload, credentials, downloadKey} = opts;
-  const logger = opts.logger.child({name: "download-patches"});
+export default async function downloadPatches (
+    store: IStore, item: IDownloadItem, out: EventEmitter, parentLogger: Logger): Promise<IDownloadResult> {
+
+  const {cave, totalSize, upgradePath, upload, downloadKey} = item;
+  const logger = parentLogger.child({name: "download-patches"});
   const globalMarket: any = null;
+
+  // TODO: implement `credentialsForGame`
+  const {credentials} = store.getState().session;
 
   const api = client.withKey(credentials.key);
 
@@ -77,4 +89,6 @@ export default async function downloadPatches (out: EventEmitter, opts: IDownloa
 
     byteOffset += entry.patchSize;
   }
+
+  return ;
 }

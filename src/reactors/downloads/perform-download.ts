@@ -12,7 +12,7 @@ import {EventEmitter} from "events";
 
 import {IStore, IDownloadItem} from "../../types";
 
-export default async function start (store: IStore, item: IDownloadItem, out: EventEmitter) {
+export default async function performDownload (store: IStore, item: IDownloadItem, out: EventEmitter) {
   // TODO: we want to store download/install logs even if the cave never ends
   // up being valid, for bug reporting purposes.
 
@@ -22,22 +22,19 @@ export default async function start (store: IStore, item: IDownloadItem, out: Ev
   }
   const logger = parentLogger.child({name: `download`});
 
-  if (item.upgradePath && item.cave) {
+  if (item.upgradePath && item.caveId) {
     logger.info("Got an upgrade path, downloading patches");
 
-    return await downloadPatches(out, {
-      ...opts,
-      cave: opts.cave,
-    });
+    return await downloadPatches(store, item, out, logger);
   }
 
-  const {upload, destPath, downloadKey, credentials, password, secret} = opts;
+  const {upload, destPath, downloadKey, credentials, password, secret} = item;
 
   const api = client.withKey(credentials.key);
 
   const onProgress = (e: any) => out.emit("progress", e);
 
-  if (opts.heal) {
+  if (isHeal(item.reason)) {
     const buildId = upload.buildId;
 
     logger.info(`Downloading wharf-enabled download, build #${buildId}`);
