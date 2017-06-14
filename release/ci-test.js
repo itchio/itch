@@ -5,6 +5,7 @@
 const $ = require('./common')
 
 async function main () {
+  process.env.NODE_ENV = "test";
   await $.showVersions(['yarn']);
 
   $(await $.yarn('install'));
