@@ -196,8 +196,6 @@ interface IProps extends IActionsInfo {
 }
 
 interface IDerivedProps {
-  downloadsPaused: boolean;
-
   queueGame: typeof actions.queueGame;
   showGameUpdate: typeof actions.showGameUpdate;
   initiatePurchase: typeof actions.initiatePurchase;
@@ -206,9 +204,6 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(MainAction, {
-  state: (state) => ({
-    downloadsPaused: state.downloads.downloadsPaused,
-  }),
   dispatch: (dispatch) => ({
     queueGame: dispatcher(dispatch, actions.queueGame),
     showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
