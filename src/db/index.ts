@@ -23,10 +23,10 @@ import * as _ from "underscore";
 
 import {globalDbPath} from "../os/paths";
 
-import store from "../store/metal-store";
 import * as actions from "../actions";
 
 import {
+  IStore,
   IEntityMap, ITableMap,
   IDBDeleteSpec,
 } from "../types";
@@ -38,21 +38,24 @@ export class DB extends RepoContainer {
   /** path to the sqlite file on disk */
   dbPath: string;
 
+  store: IStore;
+
   /**
    * Loads the db from disk.
    */
-  async load (dbPath: string): Promise<void> {
+  async load (store: IStore, dbPath: string): Promise<void> {
     logger.info(`connecting to db ${dbPath}`);
     const t1 = Date.now();
     this.dbPath = dbPath;
 
-    try {
-      await sf.mkdir(dirname(this.dbPath));
-    } catch (e) {
-      logger.warn(`could not make db parent directory: ${e.stack}`);
-    }
+    if (!/^:.*:$/.test(dbPath)) {
+      try {
+        await sf.mkdir(dirname(this.dbPath));
+      } catch (e) {
+        logger.warn(`could not make db parent directory: ${e.stack}`);
+      }
+    } 
 
-    // sqlite init
     this.conn = await createConnection({
       name: dbPath,
       driver: {
@@ -117,7 +120,7 @@ export class DB extends RepoContainer {
       if (rows.length > 0) {
         // TODO: what do we do if this fails?
         await repo.persist(rows);
-        store.dispatch(actions.dbCommit({tableName, updated: _.pluck(rows, "id")}));
+        this.store.dispatch(actions.dbCommit({tableName, updated: _.pluck(rows, "id")}));
       }
       logger.info(`saved ${entityIds.length - numUpToDate}/${entityIds.length}`
         + ` ${tableName}, skipped ${numUpToDate} up-to-date`);
@@ -182,10 +185,10 @@ export class DB extends RepoContainer {
   }
 }
 
-const db = new DB();
+let db = new DB();
 
-export async function connectDatabase() {
-  await db.load(globalDbPath());
+export async function connectDatabase(store: IStore) {
+  await db.load(store, globalDbPath());
 }
 
 export default db;

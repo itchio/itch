@@ -62,7 +62,7 @@ function autoUpdateDone () {
       }
     }
 
-    await connectDatabase();
+    await connectDatabase(store);
 
     if (env.name === "development") {
       const logger = require("./logger").default;
