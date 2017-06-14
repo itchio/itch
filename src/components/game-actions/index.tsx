@@ -26,6 +26,8 @@ import {
   IDownloadItem, ITask, IGameUpdate, IGameUpdatesState,
 } from "../../types";
 
+import {ItchPlatform} from "../../format";
+
 const platform = os.itchPlatform();
 
 import styled from "../styles";
@@ -88,7 +90,7 @@ interface IProps {
 
 interface IDerivedProps extends IActionsInfo {
   animate: boolean;
-  platform: string;
+  platform: ItchPlatform;
   platformCompatible: boolean;
   progress: number;
   cancellable: boolean;
@@ -118,7 +120,8 @@ export default connect<IProps>(GameActions, {
         downloadKeys: (state: IAppState, props: IProps) =>
           getByIds(state.commons.downloadKeys, state.commons.downloadKeyIdsByGameId[props.game.id]),
         tasks: (state: IAppState, props: IProps) => state.tasks.tasksByGameId[props.game.id],
-        downloads: (state: IAppState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],
+        downloads: (state: IAppState, props: IProps) =>
+          getByIds(state.downloads.items, state.downloads.itemIdsByGameId[props.game.id]),
         meId: (state: IAppState, props: IProps) => (state.session.credentials.me || { id: "anonymous" }).id,
         mePress: (state: IAppState, props: IProps) =>
           (state.session.credentials.me || { pressUser: false }).pressUser,
