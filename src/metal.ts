@@ -85,7 +85,7 @@ function autoUpdateDone () {
     store.dispatch(actions.focusWindow({}));
   });
 
-  app.on("fill-finish-launching", () => {
+  app.on("will-finish-launching", () => {
     app.setAppUserModelId(appUserModelId);
   });
 
