@@ -44,6 +44,8 @@ export class DB extends RepoContainer {
    * Loads the db from disk.
    */
   async load (store: IStore, dbPath: string): Promise<void> {
+    this.store = store;
+
     logger.info(`connecting to db ${dbPath}`);
     const t1 = Date.now();
     this.dbPath = dbPath;
