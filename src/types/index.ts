@@ -11,6 +11,8 @@ import Cave, {ICaveSummary} from "../db/models/cave";
 export * from "./tasks";
 import * as Tasks from "./tasks";
 
+export * from "./api";
+
 import {PathScheme} from "../os/paths";
 
 import {SortDirection, SortKey} from "../components/sort-types";

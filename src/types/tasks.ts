@@ -41,6 +41,11 @@ export interface IQueueDownloadOpts {
   handPicked?: boolean;
 }
 
+export interface IDownloadResult {
+  /** where on disk the file was downloaded to */
+  archivePath: string | null;
+}
+
 export type TaskName = "install" | "uninstall" | "configure" | "launch";
 
 export interface IStartTaskOpts {
