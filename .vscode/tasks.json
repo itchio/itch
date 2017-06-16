@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "command": "node_modules\\.bin\\tsc",
+  "isShellCommand": true,
+  "args": ["-w", "-p", ".", "--noEmit", "--skipLibCheck"],
+  "showOutput": "silent",
+  "isBackground": true,
+  "problemMatcher": "$tsc-watch"
+}
