@@ -7,7 +7,7 @@ suite(__filename, s => {
   s.case("cooldown", async t => {
     let counter = 0;
 
-    const cooldown = mkCooldown(200);
+    const cooldown = mkCooldown(400);
     const f = async () => {
       await cooldown();
     };
@@ -18,9 +18,9 @@ suite(__filename, s => {
     }
 
     t.same(counter, 0);
-    await sleep(100);
-    t.same(counter, 1);
     await sleep(200);
+    t.same(counter, 1);
+    await sleep(500);
     t.same(counter, 2);
   });
 });
