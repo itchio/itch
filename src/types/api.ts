@@ -1,4 +1,6 @@
 
+import Game from "../db/models/game";
+
 import {
   IOwnUserRecord,
   IUploadRecord,
@@ -12,7 +14,7 @@ import {
 } from ".";
 
 /** In API responses, the user object is nested - we normalize it later */
-export interface IAPIGame extends IGameRecord {
+export interface IAPIGame extends Game {
   user: IUserRecord;
 }
 

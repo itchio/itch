@@ -9,7 +9,7 @@ import mkcooldown from "./cooldown";
 
 import {contains} from "underscore";
 
-import {IDownloadKey} from "../types";
+import DownloadKey from "../db/models/download-key";
 import {
   ILoginKeyResult,
   IUpgradeResponse,
@@ -131,7 +131,13 @@ export class Client {
   }
 
   async loginWithPassword (username: string, password: string, totpCode?: string): Promise<ILoginWithPasswordResult> {
-    let data = {
+    let data: {
+      username: string;
+      password: string;
+      source: "desktop";
+      totp_code?: string;
+      v: number;
+    } = {
       username: username,
       password: password,
       source: "desktop",
@@ -265,7 +271,7 @@ export class AuthenticatedClient {
   // list uploads
 
   async listUploads (
-      downloadKey: IDownloadKey, gameID: number,
+      downloadKey: DownloadKey, gameID: number,
       extras: IListUploadsExtras = {}): Promise<IListUploadsResponse> {
     // TODO: adjust API to support download_key_id
     if (downloadKey) {
@@ -281,11 +287,11 @@ export class AuthenticatedClient {
 
   // download uploads
 
-  async downloadUpload (downloadKey: IDownloadKey, uploadID: number): Promise<IDownloadUploadResult> {
+  async downloadUpload (downloadKey: DownloadKey, uploadID: number): Promise<IDownloadUploadResult> {
     return await this.request("get", `/upload/${uploadID}/download`, sprinkleDownloadKey(downloadKey, {}));
   }
 
-  downloadUploadURL (downloadKey: IDownloadKey, uploadID: number, extras: IPasswordOrSecret = {}): string {
+  downloadUploadURL (downloadKey: DownloadKey, uploadID: number, extras: IPasswordOrSecret = {}): string {
     return this.itchfsURL(`/upload/${uploadID}/download`, sprinkleDownloadKey(downloadKey, extras));
   }
 
@@ -294,7 +300,7 @@ export class AuthenticatedClient {
   /**
    * List the N most recent builds for a wharf-enabled upload
    */
-  async listBuilds (downloadKey: IDownloadKey, uploadID: number): Promise<IListBuildsResponse> {
+  async listBuilds (downloadKey: DownloadKey, uploadID: number): Promise<IListBuildsResponse> {
     return await this.request("get", `/upload/${uploadID}/builds`, sprinkleDownloadKey(downloadKey, {}), {
       transformers: {builds: ensureArray},
     });
@@ -303,7 +309,7 @@ export class AuthenticatedClient {
   /**
    * Get detailed info for the given build of a given upload
    */
-  async build (downloadKey: IDownloadKey, uploadID: number, buildID: number): Promise<IBuildResponse> {
+  async build (downloadKey: DownloadKey, uploadID: number, buildID: number): Promise<IBuildResponse> {
     return await this.request("get", `/upload/${uploadID}/builds/${buildID}`,
       sprinkleDownloadKey(downloadKey, {}));
   }
@@ -311,7 +317,7 @@ export class AuthenticatedClient {
   /**
    * Return list of patches needed to upgrade to the latest build
    */
-  async findUpgrade (downloadKey: IDownloadKey, uploadID: number, currentBuildID: number): Promise<IUpgradeResponse> {
+  async findUpgrade (downloadKey: DownloadKey, uploadID: number, currentBuildID: number): Promise<IUpgradeResponse> {
     return await this.request("get", `/upload/${uploadID}/upgrade/${currentBuildID}`,
       sprinkleDownloadKey(downloadKey, {v: 2}));
   }
@@ -319,7 +325,7 @@ export class AuthenticatedClient {
   /**
    * Download a given build
    */
-  async downloadBuild (downloadKey: IDownloadKey, uploadID: number, buildID: number): Promise<IDownloadBuildResult> {
+  async downloadBuild (downloadKey: DownloadKey, uploadID: number, buildID: number): Promise<IDownloadBuildResult> {
     return await this.request("get", `/upload/${uploadID}/download/builds/${buildID}`,
       sprinkleDownloadKey(downloadKey, {v: 2}));
   }
@@ -328,7 +334,7 @@ export class AuthenticatedClient {
    * Returns the itchfs URL of a given build
    */
   downloadBuildURL (
-      downloadKey: IDownloadKey, uploadID: number, buildID: number, fileType: BuildFileType,
+      downloadKey: DownloadKey, uploadID: number, buildID: number, fileType: BuildFileType,
       extras: IDownloadBuildFileExtras = {}): string {
     const path = `/upload/${uploadID}/download/builds/${buildID}/${fileType}`;
 
@@ -356,7 +362,7 @@ export function ensureArray (v: any): any[] {
 /**
  * if downloadKey isn't null, add its id to the parameters
  */
-function sprinkleDownloadKey (downloadKey: IDownloadKey | null, params: any): any {
+function sprinkleDownloadKey (downloadKey: DownloadKey | null, params: any): any {
   if (!downloadKey) {
     return params;
   }
