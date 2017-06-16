@@ -11,6 +11,12 @@ declare namespace Zopf {
     same<T>(actual: T, expected: T, msg?: string): void;
 
     /**
+     * Assert that actual and expected have the same elements, although
+     * not necessarily in the same order.
+     */
+    sameSet<T>(actual: T[], expected: T[], msg?: string): void;
+
+    /**
      * Assert that actual === expected with an optional description of the assertion msg.
      */
     is<T>(actual: T, expected: T, msg?: string): void;

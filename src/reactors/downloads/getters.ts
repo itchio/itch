@@ -17,3 +17,7 @@ export function getPendingDownloads (downloads: IDownloadsState): IDownloadItem[
 export function getPendingForGame (downloads: IDownloadsState, gameId: number): IDownloadItem[] {
   return filter(getPendingDownloads(downloads), (i) => i.game && +i.game.id === +gameId);
 }
+
+export function excludeGame (downloads: IDownloadsState, gameId: number): IDownloadItem[] {
+  return filter(downloads.items, (i) => !i.game || +i.game.id !== +gameId);
+}

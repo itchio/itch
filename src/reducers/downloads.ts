@@ -1,11 +1,11 @@
 
 import {createStructuredSelector} from "reselect";
 
-import * as invariant from "invariant";
-import {indexBy, filter, map, last, omit} from "underscore";
+import {indexBy, map, last, omit} from "underscore";
 import groupIdBy from "../helpers/group-id-by";
+import {getPendingDownloads, excludeGame} from "../reactors/downloads/getters";
 
-import {IDownloadsState} from "../types";
+import {IDownloadsState, IDownloadItem} from "../types";
 
 import reducer from "./reducer";
 import derivedReducer from "./derived-reducer";
@@ -29,10 +29,9 @@ const initialState = { ...baseInitialState, ...selector(baseInitialState) };
 const updateSingle = (state: IDownloadsState, record: any) => {
   const {items} = state;
   const {id} = record;
-  invariant(id, "valid download id in progress");
 
-  const download = items[id];
-  if (!download) {
+  const item = items[id];
+  if (!item) {
     // ignore progress messages for inactive downloads
     return state;
   }
@@ -42,25 +41,15 @@ const updateSingle = (state: IDownloadsState, record: any) => {
     downloads: {
       ...state.items,
       [id]: {
-        ...download,
+        ...item,
         ...record,
       },
     },
   };
 };
 
-function downloadsExceptForGame (downloads: IDownloadsState["items"], gameId: number) {
-  return indexBy(
-    filter(downloads, (dl) => dl.game.id !== gameId),
-    "id",
-  );
-}
-
-function downloadsExceptFinished (downloads: IDownloadsState["items"]) {
-  return indexBy(
-    filter(downloads, (dl) => !dl.finished),
-    "id",
-  );
+function index (items: IDownloadItem[]): IDownloadsState["items"] {
+  return indexBy(items, "id");
 }
 
 const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
@@ -68,18 +57,17 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
     const {gameId} = action.payload;
     return {
       ...state,
-      items: downloadsExceptForGame(state.items, gameId),
+      items: index(excludeGame(state, gameId)),
     };
   });
 
   on(actions.downloadStarted, (state, action) => {
     const download = action.payload;
 
-    invariant(download.id, "valid download id in started");
     return {
       ...state,
       items: {
-        ...downloadsExceptForGame(state.items, download.gameId),
+        ...index(excludeGame(state, download.gameId)),
         [download.id]: download,
       },
     };
@@ -123,8 +111,11 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
     const {id} = action.payload;
     const {items} = state;
 
-    const download = items[id];
-    invariant(download, "cancelling valid download");
+    const item = items[id];
+    if (!item) {
+      /** we don't know about it! */
+      return state;
+    }
 
     return {
       ...state,
@@ -135,7 +126,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   on(actions.clearFinishedDownloads, (state, action) => {
     return {
       ...state,
-      items: downloadsExceptFinished(state.items),
+      items: index(getPendingDownloads(state)),
     };
   });
 
@@ -146,7 +137,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
     };
   });
 
-  on(actions.resumeDownloads, (state, action) => {
+  on(actions.resumeDownloads, (state, action): IDownloadsState => {
     return {
       ...state,
       downloadsPaused: false,
