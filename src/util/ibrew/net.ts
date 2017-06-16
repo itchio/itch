@@ -43,7 +43,7 @@ function channel (formulaName: string): string {
 /** fetch latest version number from repo */
 async function getLatestVersion (channel: string): Promise<string> {
   const url = `${channel}/LATEST?${querystring.stringify({t: +new Date()})}`;
-  const res = await request("get", url);
+  const res = await request("get", url, {});
 
   if (res.statusCode !== 200) {
     throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
