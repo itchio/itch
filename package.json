@@ -146,7 +146,7 @@
     "spectron": "3.7.1",
     "tape": "^4.2.1",
     "tslint": "^4.0.2",
-    "typescript": "2.4.0",
+    "typescript": "rc",
     "why-did-you-update": "^0.0.8",
     "zopf": "^5.0.0"
   },
