@@ -4,7 +4,7 @@ const logger = rootLogger.child({name: "sandbox/common"});
 
 import { INeed, ICaretakerSet } from "./types";
 
-export async function tendToNeeds(opts: any, needs: INeed[], caretakers: ICaretakerSet) {
+export async function tendToNeeds(needs: INeed[], caretakers: ICaretakerSet) {
   const errors: Error[] = [];
 
   for (const need of needs) {

@@ -1,6 +1,7 @@
 
 import {Logger} from "../../logger";
-import {IGameRecord} from "../../types";
+
+import Game from "../../db/models/game";
 
 export interface INeed {
     type: string;
@@ -22,7 +23,7 @@ export interface ICheckResult {
 }
 
 export interface IWithinOpts {
-  game: IGameRecord;
+  game: Game;
   appPath: string;
   exePath: string;
   fullExec: string;
@@ -35,4 +36,23 @@ export interface IWithinOpts {
 
 export interface IWithinCbOpts {
   fakeApp: string;
+}
+
+export interface IWithinData {
+  /** absolute path to temporary .app bundle used for sandboxing */
+  fakeApp: string;
+}
+
+export interface IWithinCallback {
+  (data: IWithinCbOpts): void;
+}
+
+export interface IInstallResult {
+  errors: Error[];
+}
+
+export interface ISandbox {
+  check(): Promise<ICheckResult>;
+  install(needs: INeed[]): Promise<IInstallResult>;
+  within(opts: IWithinOpts, cb: IWithinCallback): Promise<void>;
 }
