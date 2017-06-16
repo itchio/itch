@@ -26,7 +26,7 @@ setupShortcuts(store);
 import * as globalStyles from "./components/global-styles";
 globalStyles.inject();
 
-let AppContainer: React.ComponentClass<void> = null;
+let AppContainer: React.ComponentClass<{}> = null;
 try {
   const rhl = require("react-hot-loader");
   AppContainer = rhl.AppContainer;
