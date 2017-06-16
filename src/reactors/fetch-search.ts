@@ -4,8 +4,6 @@ import {Watcher} from "./watcher";
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "fetch-search"});
 
-import fetch from "../util/fetch";
-
 import * as actions from "../actions";
 
 export default function (watcher: Watcher) {
@@ -14,18 +12,12 @@ export default function (watcher: Watcher) {
     store.dispatch(actions.searchStarted({}));
 
     try {
-      const credentials = store.getState().session.credentials;
-      if (!credentials.key) {
-        return;
-      }
-
       if (!query) {
         store.dispatch(actions.searchFetched({query: "", results: null}));
         return;
       }
 
-      const results = await fetch.search(credentials, query);
-      store.dispatch(actions.searchFetched({query, results}));
+      throw new Error(`don't know how to fetch search`);
     } catch (e) {
       // TODO: relay search error (network offline, etc.)
       logger.error(e.message);

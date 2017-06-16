@@ -4,7 +4,6 @@ import {Shm} from "shoom";
 
 import * as btoa from "btoa";
 import {dirname, basename, join} from "path";
-import * as invariant from "invariant";
 import * as querystring from "querystring";
 
 import {BrowserWindow, shell} from "electron";
@@ -15,7 +14,6 @@ import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
 import {getInjectPath} from "../../os/resources";
 import url from "../../util/url";
-import fetch from "../../util/fetch";
 import debugBrowserWindow from "../../util/debug-browser-window";
 
 import Connection from "../../capsule/connection";
@@ -26,7 +24,9 @@ const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
 const WEBGAME_PROTOCOL = "itch-cave";
 
-import {IStartTaskOpts} from "../../types";
+import {
+  ILaunchOpts,
+} from "../../types";
 
 import store from "../../store/metal-store";
 
@@ -66,11 +66,11 @@ async function registerProtocol (opts: IRegisterProtocolOpts) {
   await new Promise((resolve, reject) => {
     caveSession.protocol.registerFileProtocol(WEBGAME_PROTOCOL, (request, callback) => {
       const urlPath = url.parse(request.url).pathname;
+      // FIXME: this is wrong, the path may also be url-encoded, see
+      // https://github.com/itchio/itch/issues/1211
       const filePath = join(fileRoot, urlPath.replace(/^\//, ""));
 
-      callback({
-        path: filePath,
-      });
+      callback(filePath);
     }, (error) => {
       if (error) {
         reject(error);
@@ -93,15 +93,8 @@ async function registerProtocol (opts: IRegisterProtocolOpts) {
   registeredProtocols[partition] = true;
 }
 
-export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
-  const {cave, market, credentials, args, env, logger} = opts;
-  invariant(cave, "launch-html has cave");
-  invariant(market, "launch-html has market");
-  invariant(credentials, "launch-html has credentials");
-  invariant(env, "launch-html has env");
-  invariant(args, "launch-html has args");
-
-  const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
+export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
+  const {cave, game, args, env, logger} = opts;
 
   const appPath = paths.appPath(cave, store.getState().preferences);
   const entryPoint = join(appPath, cave.gamePath);
@@ -114,7 +107,7 @@ export default async function launch (out: EventEmitter, opts: IStartTaskOpts) {
   const partition = `persist:gamesession_${cave.gameId}`;
 
   let win = new BrowserWindow({
-    title: game.title,
+    title: game ? game.title : null,
     icon: `./static/images/tray/${appName}.png`,
     width, height,
     center: true,

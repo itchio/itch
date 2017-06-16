@@ -1,51 +1,58 @@
 
+import {EventEmitter} from "events";
+
 import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
-import {findWhere} from "underscore";
+import db from "../../db";
 
-import {startTask} from "./start-task";
-
-import * as paths from "../../os/paths";
-import fetch from "../../util/fetch";
-
-// FIXME: db
-const globalMarket: any = null;
-const userMarket: any = null;
+import findUploads from "../downloads/find-uploads";
+import getGameCredentials from "../downloads/get-game-credentials";
+import lazyGetGame from "../lazy-get-game";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
     const {caveId} = action.payload;
-    const cave = globalMarket.getEntity("caves", caveId);
+
+    const cave = await db.caves.findOneById(caveId);
     if (!cave) {
       // can't reinstall without a valid cave!
       return;
     }
 
-    const credentials = store.getState().session.credentials;
-    const game = await fetch.gameLazily(userMarket, credentials, cave.gameId);
+    const game = await lazyGetGame(store, cave.gameId);
     if (!game) {
       // no valid game
       return;
     }
 
-    if (!cave.uploadId || !cave.uploads) {
-      // no uploads in cave
+    const gameCredentials = await getGameCredentials(store, game);
+    if (!gameCredentials) {
+      // no credentials
       return;
     }
 
-    const uploadResponse = await startTask(store, {
-      name: "find-upload",
-      gameId: game.id,
-      game: game,
-    });
-    const upload = uploadResponse.result.uploads[0];
+    const out = new EventEmitter();
 
-    if (!upload) {
+    const uploadResponse = await findUploads(out, {
+      game,
+      gameCredentials,
+    });
+    if (!uploadResponse) {
       // couldn't find an upload
       return;
     }
 
+    // FIXME: what if there's several uploads to pick from (but not
+    // the original?)
+    // FIXME: what about trying to maintain the original?
+    const {uploads} = uploadResponse;
+    if (uploads.length < 1) {
+      return;
+    }
+    const upload = uploads[0];
+
+    // FIXME: this is bad.
     const state = store.getState();
     const tasksForGame = state.tasks.tasksByGameId[cave.gameId];
     if (tasksForGame && tasksForGame.length > 0) {
@@ -55,18 +62,10 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    const archivePath = paths.downloadPath(upload, store.getState().preferences);
-
-    const findDownloadKey = () => {
-      return findWhere(userMarket.getEntities("downloadKeys"), {gameId: game.id});
-    };
-
     store.dispatch(actions.queueDownload({
       game,
       upload,
       totalSize: upload.size,
-      destPath: archivePath,
-      downloadKey: cave.downloadKey || findDownloadKey(),
       reason: "reinstall",
     }));
   });

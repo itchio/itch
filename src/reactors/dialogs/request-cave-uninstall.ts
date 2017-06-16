@@ -2,23 +2,23 @@
 import {Watcher} from "../watcher";
 import * as actions from "../../actions";
 
-import * as invariant from "invariant";
+import lazyGetGame from "../lazy-get-game";
 
 import db from "../../db";
-import CaveModel from "../../db/models/cave";
-import fetch from "../../util/fetch";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
     const {caveId} = action.payload;
-    const credentials = store.getState().session.credentials;
 
-    const cave = await db.getRepo(CaveModel).findOneById(caveId);
-    invariant(cave, "cave to uninstall exists");
+    const cave = await db.caves.findOneById(caveId);
+    if (!cave) {
+      return;
+    }
 
-    const game = await fetch.gameLazily(credentials, cave.gameId);
-    invariant(game, "was able to fetch game properly");
-    const {title} = game;
+    const game = await lazyGetGame(store, cave.gameId);
+
+    // FIXME: i18n - plus, that's generally bad
+    const title = game ? game.title : "this";
 
     store.dispatch(actions.openModal({
       title: "",

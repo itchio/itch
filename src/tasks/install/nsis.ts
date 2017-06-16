@@ -4,7 +4,7 @@ import {EventEmitter} from "events";
 import spawn from "../../os/spawn";
 import findUninstallers from "./find-uninstallers";
 
-import {Transition} from "../errors";
+import {Cancelled} from "../errors";
 import blessing from "./blessing";
 import butler from "../../util/butler";
 
@@ -90,8 +90,8 @@ const self = {
       logger.info(`elevate / nsis uninstaller exited with code ${code}`);
 
       if (code !== 0) {
-        const reason = "uninstaller failed, cancelling uninstallation";
-        throw new Transition({to: "idle", reason});
+        logger.error("uninstaller failed, cancelling uninstallation");
+        throw new Cancelled();
       }
     }
   },

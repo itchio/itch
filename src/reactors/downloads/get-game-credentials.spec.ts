@@ -85,28 +85,28 @@ suite(__filename, s => {
       downloadKey: null,
     }, "api key only when game not in press system");
 
-    await db.downloadKeys.persist({
+    const dk190 = await db.downloadKeys.persist(db.downloadKeys.create({
       id: 190,
       gameId: game.id,
       ownerId: credentials19.me.id,
-    } as any);
+    }));
 
-    await db.downloadKeys.persist({
+    const dk750 = await db.downloadKeys.persist(db.downloadKeys.create({
       id: 750,
       gameId: game.id,
       ownerId: credentials75.me.id,
-    } as any);
+    }));
 
     t.same(await getGameCredentials(store, game), {
       apiKey: credentials19.key,
-      downloadKey: 190,
+      downloadKey: dk190,
     }, "prefer current user download key");
 
     state.session.credentials = credentials75;
 
     t.same(await getGameCredentials(store, game), {
       apiKey: credentials75.key,
-      downloadKey: 750,
+      downloadKey: dk750,
     }, "prefer current user download key (bis)");
 
     await db.downloadKeys.remove({
@@ -115,7 +115,7 @@ suite(__filename, s => {
 
     t.same(await getGameCredentials(store, game), {
       apiKey: credentials19.key,
-      downloadKey: 190,
+      downloadKey: dk190,
     }, "will take other user's download key");
 
     delete state.rememberedSessions[credentials19.me.id];

@@ -1,7 +1,4 @@
 
-import * as ospath from "path";
-import * as invariant from "invariant";
-
 import {map} from "underscore";
 import * as shellQuote from "shell-quote";
 import {EventEmitter} from "events";
@@ -12,101 +9,68 @@ import linuxSandboxTemplate from "../../constants/sandbox-policies/linux-templat
 
 import * as actions from "../../actions";
 
-import store from "../../store/metal-store";
 import sandbox from "../../util/sandbox";
 import * as os from "../../os";
 import * as sf from "../../os/sf";
 import spawn from "../../os/spawn";
+import {join, dirname} from "path";
 import * as paths from "../../os/paths";
 import butler from "../../util/butler";
-import fetch from "../../util/fetch";
 import * as icacls from "./icacls";
 
+import expandManifestPath from "./expand-manifest-path";
+
 import {promisedModal} from "../../reactors/modals";
-import {startTask} from "../../reactors/tasks/start-task";
 import {MODAL_RESPONSE} from "../../constants/action-types";
 
-import rootLogger from "../../logger";
+import rootLogger, {devNull} from "../../logger";
 const logger = rootLogger.child({name: "launch/native"});
 
 import {Crash, MissingLibs} from "../errors";
 
-import {IEnvironment, ILaunchOpts, ICaveRecord} from "../../types";
+import {IEnvironment, ILaunchOpts} from "../../types";
+import {ILauncher} from "./types";
 
 const itchPlatform = os.itchPlatform();
 
-export default async function launch (out: EventEmitter, opts: ILaunchOpts): Promise<void> {
-  const {credentials, env = {}} = opts;
-  // FIXME: db
-  const market: any = null;
-  let {cave} = opts;
-  let {args} = opts;
-  invariant(cave, "launch-native has cave");
-  invariant(cave, "launch-native has env");
+const launchNative: ILauncher = async (store, out, opts) => {
+  const {cave, game, hasManifest, manifestAction} = opts;
+  let {args, env} = opts;
+
   logger.info(`cave location: "${cave.installLocation}/${cave.installFolder}"`);
 
-  invariant(credentials, "launch-native has credentials");
+  const state = store.getState();
+  const {preferences} = state;
+  let {isolateApps} = preferences;
 
-  const game = await fetch.gameLazily(market, credentials, cave.gameId, {game: cave.game});
-  invariant(game, "was able to fetch game properly");
-
-  let {isolateApps} = opts.preferences;
-  const appPath = paths.appPath(cave, store.getState().preferences);
+  const appPath = paths.appPath(cave, preferences);
   let exePath: string;
   let isJar = false;
   let console = false;
 
-  const manifestPath = ospath.join(appPath, ".itch.toml");
-  const hasManifest = await sf.exists(manifestPath);
-  if (opts.manifestAction) {
-    const action = opts.manifestAction;
+  if (manifestAction) {
     // sandbox opt-in ?
-    if (action.sandbox) {
+    if (manifestAction.sandbox) {
       isolateApps = true;
     }
 
-    if (action.console) {
+    if (manifestAction.console) {
       console = true;
     }
 
-    logger.info(`manifest action picked: ${JSON.stringify(action, null, 2)}`);
-    const actionPath = action.path;
-    exePath = ospath.join(appPath, actionPath);
+    logger.info(`manifest action picked: ${JSON.stringify(manifestAction, null, 2)}`);
+    exePath = expandManifestPath(appPath, manifestAction.path);
   } else {
     logger.warn("no manifest action picked");
   }
 
   if (!exePath) {
-    const verdict = (cave as any).verdict;
+    // TODO: if no verdict, configure
+    const verdict = cave.verdict;
     if (verdict && verdict.candidates && verdict.candidates.length > 0) {
       const candidate = verdict.candidates[0];
-      exePath = ospath.join(appPath, candidate.path);
+      exePath = join(appPath, candidate.path);
       isJar = candidate.flavor === "jar";
-    }
-  }
-
-  if (!exePath) {
-    // poker failed, maybe paths shifted around?
-    if (opts.hailMary) {
-      // let it fail
-      logger.error("no candidates after poker and reconfiguration, giving up");
-    } else {
-      logger.info("reconfiguring because no candidates");
-      // FIXME: db
-      const globalMarket: any = null;
-      await startTask(store, {
-        name: "configure",
-        gameId: game.id,
-        game,
-        cave,
-        upload: cave.uploads[cave.uploadId],
-      });
-      cave = globalMarket.getEntity("caves", cave.id);
-      return await launch(out, {
-        ...opts,
-        cave,
-        hailMary: true,
-      });
     }
   }
 
@@ -131,7 +95,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
       args = [
         "-jar", exePath, ...args,
       ];
-      cwd = ospath.dirname(exePath);
+      cwd = dirname(exePath);
       exePath = javaPath;
     } catch (e) {
       store.dispatch(actions.openModal({
@@ -195,7 +159,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
       }
     }
 
-    const installRes = await sandbox.install(opts, checkRes.needs);
+    const installRes = await sandbox.install(checkRes.needs);
     if (installRes.errors.length > 0) {
       throw new Error(`error(s) while installing sandbox: ${installRes.errors.join(", ")}`);
     }
@@ -286,7 +250,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
     }
     if (isolateApps) {
       logger.info("generating firejail profile");
-      const sandboxProfilePath = ospath.join(appPath, ".itch", "isolate-app.profile");
+      const sandboxProfilePath = join(appPath, ".itch", "isolate-app.profile");
 
       const sandboxSource = linuxSandboxTemplate;
       await sf.writeFile(sandboxProfilePath, sandboxSource, {encoding: "utf8"});
@@ -300,7 +264,9 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
   } else {
     throw new Error(`unsupported platform: ${os.platform()}`);
   }
-}
+};
+
+export default launchNative;
 
 interface IDoSpawnOpts extends ILaunchOpts {
   /** current working directory for spawning */
@@ -317,7 +283,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
                         opts: IDoSpawnOpts) {
   logger.info(`spawn command: ${fullCommand}`);
 
-  const cwd = opts.cwd || ospath.dirname(exePath);
+  const cwd = opts.cwd || dirname(exePath);
   logger.info(`working directory: ${cwd}`);
 
   let args = shellQuote.parse(fullCommand);
@@ -349,7 +315,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     }
   }
 
-  const tmpPath = ospath.join(cwd, ".itch", "temp");
+  const tmpPath = join(cwd, ".itch", "temp");
   try {
     await sf.mkdir(tmpPath);
     env = {
@@ -370,7 +336,11 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     spawnEmitter = new EventEmitter();
     emitter.once("cancel", async function () {
       logger.warn(`asked to cancel, calling pkill with ${exePath}`);
-      const killRes = await spawn.exec({command: "pkill", args: ["-f", exePath]});
+      const killRes = await spawn.exec({
+        command: "pkill",
+        args: ["-f", exePath],
+        logger: devNull,
+      });
       if (killRes.code !== 0) {
         logger.error(`Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`);
         spawnEmitter.emit("cancel");
@@ -405,10 +375,14 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
       shell,
     },
     inheritStd,
+    logger: devNull,
   });
 
   try {
-    await butler.wipe(tmpPath);
+    await butler.wipe(tmpPath, {
+      emitter,
+      logger: devNull,
+    });
   } catch (e) {
     logger.warn(`could not remove tmp dir: ${e.message}`);
   }

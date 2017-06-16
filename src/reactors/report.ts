@@ -6,7 +6,6 @@ import rootLogger from "../logger";
 const logger = rootLogger.child({name: "report"});
 
 import db from "../db";
-import Cave from "../db/models/cave";
 
 import urls from "../constants/urls";
 
@@ -14,19 +13,22 @@ import crashReporter from "../util/crash-reporter";
 import github, {IGistData} from "../api/github";
 import * as sf from "../os/sf";
 import {caveLogPath} from "../os/paths";
-import fetch from "../util/fetch";
+
+import lazyGetGame from "./lazy-get-game";
+
+// TODO: show dialog when reporting game
 
 export default function (watcher: Watcher) {
   watcher.on(actions.reportCave, async (store, action) => {
     const {caveId} = action.payload;
 
     try {
-      const state = store.getState();
-      const credentials = state.session.credentials;
-      const cave = await db.getRepo(Cave).findOneById(caveId);
+      const cave = await db.caves.findOneById(caveId);
+      if (!cave) { return; }
 
       const logPath = caveLogPath(caveId);
-      const game = await fetch.gameLazily(credentials, cave.gameId);
+      const game = await lazyGetGame(store, cave.gameId);
+      if (!game) { return; }
 
       const gameLog = await sf.readFile(logPath, {encoding: "utf8"});
 

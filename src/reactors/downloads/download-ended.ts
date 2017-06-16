@@ -53,7 +53,7 @@ export default function (watcher: Watcher) {
     const installReason = downloadReasonToInstallReason(item.reason);
     if (installReason) {
       store.dispatch(actions.queueInstall({
-        archivePath: action.payload.archivePath,
+        archivePath: action.payload.result.archivePath,
         caveId: item.caveId,
         game: item.game,
         handPicked: item.handPicked,
@@ -107,7 +107,7 @@ function showReadyNotification(store: IStore, item: IDownloadItem) {
     const message = t(notificationMessage, notificationOptions);
     store.dispatch(actions.notify({
       body: message,
-      onClick: actions.navigateToGame(downloadOpts.game),
+      onClick: actions.navigateToGame(item.game),
     }));
   }
 }

@@ -5,7 +5,7 @@ import spawn from "../../os/spawn";
 import findUninstallers from "./find-uninstallers";
 
 import blessing from "./blessing";
-import {Transition} from "../errors";
+import {Cancelled} from "../errors";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({name: "install/inno"});
@@ -69,8 +69,8 @@ const self = {
       logger.info(`inno uninstaller exited with code ${code}`);
 
       if (code !== 0) {
-        const reason = "uninstaller failed, cancelling uninstallation";
-        throw new Transition({to: "idle", reason});
+        logger.error("uninstaller failed, cancelling uninstallation");
+        throw new Cancelled();
       }
     }
   },

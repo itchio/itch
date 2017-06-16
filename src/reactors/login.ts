@@ -7,10 +7,10 @@ import partitionForUser from "../util/partition-for-user";
 
 import {sortBy} from "underscore";
 
+import {promisedModal} from "./modals";
 import {MODAL_RESPONSE} from "../constants/action-types";
 import urls from "../constants/urls";
 import * as urlParser from "url";
-import {promisedModal} from "./modals";
 import {isNetworkError} from "../net/errors";
 
 import rootLogger from "../logger";
@@ -68,7 +68,7 @@ export default function (watcher: Watcher) {
       // seamlessly logged into the app.
       if (res.cookie) {
         const partition = partitionForUser(String(res.key.userId));
-        const session = require("electron").session.fromPartition(partition, {});
+        const session = require("electron").session.fromPartition(partition, {cache: false});
         
         for (const name of Object.keys(res.cookie)) {
           const value = res.cookie[name];

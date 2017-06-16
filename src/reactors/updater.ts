@@ -1,6 +1,8 @@
 
 import {Watcher} from "./watcher";
 
+import {isNetworkError} from "../net/errors";
+
 import {EventEmitter} from "events";
 import * as humanize from "humanize-plus";
 
@@ -8,9 +10,9 @@ import delay from "./delay";
 
 import * as actions from "../actions";
 
-import fetch from "../util/fetch";
+import lazyGetGame from "./lazy-get-game";
+import getGameCredentials from "./downloads/get-game-credentials";
 import * as paths from "../os/paths";
-import api from "../api";
 
 import {makeLogger} from "../logger";
 const logger = makeLogger(paths.updaterLogPath());
@@ -23,16 +25,16 @@ const DELAY_BETWEEN_GAMES = 25;
 const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;
 const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 
-import findUpload from "../tasks/find-upload";
-import findUpgradePath from "../tasks/find-upgrade-path";
+import findUploads from "./downloads/find-uploads";
+import findUpgradePath from "./downloads/find-upgrade-path";
 
 import * as moment from "moment-timezone";
 
+import Game from "../db/models/game";
+
 import {
   IStore,
-  IGameRecord,
   ICaveRecord,
-  IDownloadKey,
 } from "../types";
 
 interface IUpdateCheckResult {
@@ -40,7 +42,7 @@ interface IUpdateCheckResult {
   err?: Error;
 
   /** might be null if an error happened */
-  game?: IGameRecord;
+  game?: Game;
 
   /** true if the game has an upgrade that can be installed */
   hasUpgrade?: boolean;
@@ -77,10 +79,9 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
     return {hasUpgrade: false};
   }
 
-  const market = getUserMarket();
-  let game: IGameRecord;
+  let game: Game;
   try {
-    game = await fetch.gameLazily(market, credentials, cave.gameId);
+    game = await lazyGetGame(store, cave.gameId);
   } catch (e) {
     logger.error(`Could not fetch game for ${cave.gameId}, skipping (${e.message || e})`);
     return {err: e};
@@ -107,18 +108,14 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
   logger.info(`Looking for updates to ${game.title}...`);
 
   const out = new EventEmitter();
-  const findKey = () => findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: game.id});
-  const taskOpts = {
-    logger,
-    game,
-    gameId: game.id,
-    credentials,
-    downloadKey: cave.downloadKey || findKey(),
-    market,
-  };
 
   try {
-    const {uploads, downloadKey} = await findUpload(out, taskOpts);
+    const gameCredentials = await getGameCredentials(store, game);
+    if (!gameCredentials) {
+      throw new Error("no game credentials");
+    }
+
+    const {uploads} = await findUploads(out, {game, gameCredentials});
 
     if (uploads.length === 0) {
       logger.error(`Can't check for updates for ${game.title}, no uploads.`);
@@ -163,22 +160,26 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
 
           hasUpgrade = true;
 
-          const upgradeOpts = {
-            ...taskOpts,
-            upload,
-            gameId: game.id,
-            currentBuildId: cave.buildId,
-          };
           try {
-            const {upgradePath, totalSize} = await findUpgradePath(out, upgradeOpts);
+            const upgradePathResult = await findUpgradePath(store, out, {
+              currentBuildId: cave.buildId,
+              game,
+              gameCredentials,
+              upload,
+            });
+            if (!upgradePathResult) {
+              throw new Error("no upgrade path found");
+            }
+            const {upgradePath, totalSize} = upgradePathResult;
+
             logger.info(`Got ${upgradePath.length} patches to download, ${humanize.fileSize(totalSize)} total`);
 
             store.dispatch(actions.gameUpdateAvailable({
               caveId: cave.id,
               update: {
                 game,
+                gameCredentials,
                 recentUploads: [upload],
-                downloadKey,
                 incremental: true,
                 upgradePath,
               },
@@ -202,14 +203,14 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
     }
 
     if (recentUploads.length > 1) {
-      logger.info("Multiple recent uploads, asking user to pick");
+      logger.info("Multiple recent uploads, user will have to pick");
 
       store.dispatch(actions.gameUpdateAvailable({
         caveId: cave.id,
         update: {
           game,
+          gameCredentials,
           recentUploads,
-          downloadKey,
         },
       }));
 
@@ -236,17 +237,15 @@ async function _doCheckForGameUpdate (store: IStore, cave: ICaveRecord, inTaskOp
         caveId: cave.id,
         update: {
           game,
+          gameCredentials,
           recentUploads,
-          downloadKey,
         },
       }));
 
       return {...returnVars, hasUpgrade};
     }
   } catch (e) {
-    if (api.hasAPIError(e, "incorrect user for claim")) {
-      logger.warn(`Skipping update check for ${game.title}, download key belongs to other user`);
-    } else if (api.isNetworkError(e)) {
+    if (isNetworkError(e)) {
       logger.warn(`Skipping update check for ${game.title}: we're offline`);
       return {err: new Error(`Network error (${e.code})`)};
     } else {

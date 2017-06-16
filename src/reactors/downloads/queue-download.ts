@@ -39,8 +39,4 @@ export default function (watcher: Watcher) {
       gameId: downloadOpts.game.id,
     });
   });
-
-  watcher.on(actions.retryDownload, async (store, action) => {
-    queueDownload(store, action.payload.downloadOpts);
-  });
 }

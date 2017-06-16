@@ -45,7 +45,7 @@ async function updateDownloadState (store: IStore) {
 
   const activeDownload = getActiveDownload(downloadsState);
   if (activeDownload) {
-    await setProgress(store, activeDownload.progress);
+    await setProgress(store, activeDownload.progress || 0);
     if (!currentDownload || currentDownload.id !== activeDownload.id) {
       logger.info(`${activeDownload.id} is the new active download`);
       start(store, activeDownload);
@@ -109,15 +109,15 @@ async function start (store: IStore, item: IDownloadItem) {
       cancelled = true;
       logger.info("Download cancelled");
     } else {
+      logger.info(`Download ended, err: ${error ? error.stack : null}`);
       const err = error ? error.message || ("" + error) : null;
-      logger.info(`Download ended, err: ${err || "<none>"}`);
 
       const freshItem = store.getState().downloads.items[item.id];
       store.dispatch(actions.downloadEnded({
         id: freshItem.id,
+        item: freshItem,
         err,
         result,
-        item: freshItem,
       }));
     }
   }

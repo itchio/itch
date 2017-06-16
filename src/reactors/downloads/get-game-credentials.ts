@@ -2,16 +2,22 @@
 import db from "../../db";
 import Game from "../../db/models/game";
 import DownloadKey from "../../db/models/download-key";
-import {IStore} from "../../types";
+import {IStore, IGameCredentials} from "../../types";
 
 import {filter, findWhere, first} from "underscore";
 
-export interface IGameCredentials {
-  apiKey: string;
-  downloadKey?: number;
-}
+// TODO: handle passwords & secrets as well.
 
 export default async function getGameCredentials(store: IStore, game: Game): Promise<IGameCredentials> {
+  return await getGameCredentialsInternal(store, game.id, game.inPressSystem);
+}
+
+export async function getGameCredentialsForId(store: IStore, gameId: number): Promise<IGameCredentials> {
+  return await getGameCredentialsInternal(store, gameId, false);
+}
+
+async function getGameCredentialsInternal
+    (store: IStore, gameId: number, inPressSystem: boolean): Promise<IGameCredentials> {
   const state = store.getState();
 
   const currentUserCreds = state.session.credentials;
@@ -20,7 +26,7 @@ export default async function getGameCredentials(store: IStore, game: Game): Pro
     return null;
   }
 
-  if (currentUserCreds.me.pressUser && game.inPressSystem) {
+  if (currentUserCreds.me.pressUser && inPressSystem) {
     // we got full access, look no further!
     return {
       apiKey: currentUserCreds.key,
@@ -30,7 +36,7 @@ export default async function getGameCredentials(store: IStore, game: Game): Pro
 
   // fish for a download key
   const allDownloadKeys = await db.downloadKeys.find({
-    gameId: game.id,
+    gameId,
   });
   
   const sessions = state.rememberedSessions;
@@ -43,11 +49,11 @@ export default async function getGameCredentials(store: IStore, game: Game): Pro
 
   // prefer our key, if we have one
   const currentUserKey = findWhere(downloadKeys, {ownerId: currentUserCreds.me.id});
-  const downloadKey = currentUserKey || first(downloadKeys);
+  const downloadKey = currentUserKey || first(downloadKeys) || null;
   const apiKey = (downloadKey ? sessions[downloadKey.ownerId].key : currentUserCreds.key);
 
   return {
-    downloadKey: downloadKey ? downloadKey.id : null,
+    downloadKey,
     apiKey,
   };
 }

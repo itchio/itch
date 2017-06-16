@@ -1,12 +1,14 @@
 
-import * as invariant from "invariant";
+import db from "../db";
 
 import * as os from "../os";
 import butler from "../util/butler";
 
 import * as paths from "../os/paths";
 import {Logger} from "../logger";
-import {ICaveRecord, IGameRecord, IUploadRecord} from "../types";
+
+import Game from "../db/models/game";
+import Cave from "../db/models/cave";
 
 import {EventEmitter} from "events";
 
@@ -14,29 +16,16 @@ import store from "../store/metal-store";
 
 export interface IConfigureOpts {
   logger: Logger;
-  cave: ICaveRecord;
-  game: IGameRecord;
-  upload: IUploadRecord;
+  cave: Cave;
+  game: Game;
 }
 
 export interface IConfigureResult {
   executables: string[];
 }
 
-export default async function configure(out: EventEmitter, inOpts: IConfigureOpts) {
-  const {cave, upload, game} = inOpts;
-  // FIXME: db
-  const globalMarket: any = null;
-  invariant(cave, "configure has cave");
-  invariant(game, "configure has game");
-  invariant(upload, "configure has upload");
-
-  const logger = paths.caveLogger(cave.id);
-
-  const opts = {
-    ...inOpts,
-    logger,
-  };
+export default async function configure(out: EventEmitter, opts: IConfigureOpts, logger: Logger) {
+  const {cave} = opts;
 
   const appPath = paths.appPath(cave, store.getState().preferences);
   logger.info(`configuring ${appPath}`);
@@ -80,7 +69,7 @@ export default async function configure(out: EventEmitter, inOpts: IConfigureOpt
   });
   logger.info(`verdict =\n${JSON.stringify(verdict, null, 2)}`);
 
-  globalMarket.saveEntity("caves", cave.id, {
+  await db.saveOne("caves", cave.id, {
     installedSize: verdict.totalSize,
     verdict: verdict,
   } as any);

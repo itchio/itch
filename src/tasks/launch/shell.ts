@@ -1,21 +1,23 @@
 
-import * as ospath from "path";
+import {join} from "path";
+import {appPath} from "../../os/paths";
 
 import {shell} from "electron";
 
-import * as paths from "../../os/paths";
-
 import {EventEmitter} from "events";
-import {IStartTaskOpts} from "../../types";
+import {ILaunchOpts} from "../../types";
 
 import store from "../../store/metal-store";
-
-interface ILaunchOpts extends IStartTaskOpts {}
 
 export default async function launch(out: EventEmitter, opts: ILaunchOpts) {
   const {cave, manifestAction} = opts;
 
-  const appPath = paths.appPath(cave, store.getState().preferences);
-  const fullPath = ospath.join(appPath, manifestAction.path);
+  let relativePath = ".";
+  if (manifestAction) {
+    relativePath = manifestAction.path;
+  }
+
+  const {preferences} = store.getState();
+  const fullPath = join(appPath(cave, preferences), relativePath);
   shell.openItem(fullPath);
 }

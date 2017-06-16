@@ -4,24 +4,25 @@ import {sortBy} from "underscore";
 
 import {
   getActiveDownload, getPendingDownloads, getPendingForGame, excludeGame,
+  getFinishedDownloads,
 } from "./getters";
 
 suite(__filename, s => {
-  const noDownloads: any = {};
-  const oneInactive: any = {
+  const noDownloads = {};
+  const oneInactive = {
     "disco": {
       order: 1,
       game: {id: 11},
       finished: true,
     },
   };
-  const oneActive: any = {
+  const oneActive = {
     "disco": {
       order: 21,
       game: {id: 2121},
     },
   };
-  const activeAndInactive: any = {
+  const activeAndInactive = {
     "disco": {
       order: 1,
       game: {id: 11},
@@ -70,5 +71,36 @@ suite(__filename, s => {
       [activeAndInactive.rock, activeAndInactive.disco, activeAndInactive.punk]);
     sameItems(excludeGame({items: activeAndInactive} as any, 11),
       [activeAndInactive.rock, activeAndInactive.punk]);
+  });
+
+  const withFinished = {
+    a: {
+      game: {id: 11},
+      order: 111,
+      finished: true,
+      finishedAt: 2345,
+    },
+    b: {
+      game: {id: 33},
+      order: 333,
+    },
+    c: {
+      game: {id: 55},
+      order: 777,
+      finished: true,
+      finishedAt: 1234,
+    },
+    d: {
+      game: {id: 77},
+      order: 555,
+    },
+  };
+
+  s.case("getFinishedDownloads", t => {
+    t.same(getFinishedDownloads({items: withFinished} as any),
+      [withFinished.a, withFinished.c] as any);
+
+    t.same(getPendingDownloads({items: withFinished} as any),
+      [withFinished.b, withFinished.d] as any);
   });
 });
