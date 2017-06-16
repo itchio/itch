@@ -8,14 +8,14 @@ interface IContextMenuOpts {
   navigate: typeof actions.navigate;
 }
 
-export default function create(wv: Electron.WebViewElement, t: ILocalizer, opts: IContextMenuOpts) {
+export default function create(wv: Electron.WebviewTag, t: ILocalizer, opts: IContextMenuOpts) {
   const wc = wv.getWebContents();
   wc.on("context-menu", (e, props) => {
     const editFlags = props.editFlags;
     const hasText = props.selectionText.trim().length > 0;
     const can = (type: string) => ((editFlags as any)[`can${type}`] as boolean) && hasText;
 
-    let menuTpl: Electron.MenuItemOptions[] = [{
+    let menuTpl: Electron.MenuItemConstructorOptions[] = [{
       type: "separator",
     }, {
       id: "cut",
@@ -91,8 +91,8 @@ export default function create(wv: Electron.WebViewElement, t: ILocalizer, opts:
   });
 }
 
-function delUnusedElements(menuTpl: Electron.MenuItemOptions[]) {
-  let notDeletedPrevEl: Electron.MenuItemOptions;
+function delUnusedElements(menuTpl: Electron.MenuItemConstructorOptions[]) {
+  let notDeletedPrevEl: Electron.MenuItemConstructorOptions;
   return menuTpl.filter((el) => el.visible !== false).filter((el, i, arr) => {
     const toDelete = el.type === "separator" &&
       (!notDeletedPrevEl || i === arr.length - 1 || arr[i + 1].type === "separator");

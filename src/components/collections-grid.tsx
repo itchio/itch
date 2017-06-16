@@ -3,9 +3,10 @@ import * as React from "react";
 import {connect, I18nProps} from "./connect";
 import {createSelector, createStructuredSelector} from "reselect";
 
+import Collection from "../db/models/collection";
 import CollectionRow from "./collection-row";
 
-import {IAppState, ICollectionRecord, ITabData, IGameRecordSet} from "../types";
+import {IAppState, ITabData, IGameRecordSet} from "../types";
 
 import {AutoSizer, Grid} from "react-virtualized";
 
@@ -20,20 +21,16 @@ interface ICellInfo {
   style: React.CSSProperties;
 }
 
-interface ILayoutInfo {
-  columnCount: number;
-  collections: ICollectionRecord[];
-}
-
 const tab = "collections";
 
 const HubCollectionsGrid = styled.div`
   flex-grow: 1;
 `;
 
-const StyledGrid = styled(Grid)`
+// woo typings
+const StyledGrid = (styled(Grid as any)`
   outline: none;
-`;
+`) as any as typeof Grid;
 
 export class CollectionsGrid extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
   constructor () {
@@ -112,7 +109,7 @@ interface IProps {}
 
 interface IDerivedProps {
   games: IGameRecordSet;
-  collections: ICollectionRecord[];
+  collections: Collection[];
   hiddenCount: number;
 }
 

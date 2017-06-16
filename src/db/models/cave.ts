@@ -10,6 +10,8 @@ import {
 } from "../../types";
 import {PathScheme} from "../../os/paths";
 
+import {IConfigureResult} from "../../util/butler";
+
 export interface ICaveSummary {
   id: string;
   gameId: number;
@@ -107,10 +109,6 @@ export default class Cave implements ICaveSummary {
   };
 
   @Column("json", {nullable: true})
-  /** itch.io game info at the time of install */
-  game: IGameRecord;
-
-  @Column("json", {nullable: true})
   /** download key what was used to install this game, if any */
   downloadKey: IDownloadKey;
 
@@ -170,4 +168,7 @@ export default class Cave implements ICaveSummary {
   @Column("int", {nullable: true})
   /** scheme used for computing paths */
   pathScheme: PathScheme;
+
+  @Column("json", {nullable: true})  
+  verdict: IConfigureResult;
 }

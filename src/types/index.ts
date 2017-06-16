@@ -472,6 +472,11 @@ export interface IUploadRecord {
 
     /** when the upload was updated */
     updatedAt: Date;
+
+    pLinux?: boolean;
+    pWindows?: boolean;
+    pOsx?: boolean;
+    pAndroid?: boolean;
 }
 
 export interface IBuildRecord {
@@ -627,18 +632,23 @@ export interface ICommonsState {
     libraryGameIds: string[];
 }
 
+export interface IGameCredentials {
+  apiKey: string;
+  downloadKey?: DownloadKey;
+}
+
 export interface IGameUpdate {
     /** which game an update is available for */
-    game: IGameRecord;
+    game: Game;
+
+    /** key we used to find uploads, and that should be used for downloads */
+    gameCredentials: IGameCredentials;
 
     /**
      * uploads to pick from (fresher than our last install).
      * will hopefully be often of size 1, but not always
      */
     recentUploads: IUploadRecord[];
-
-    /** key we used to find uploads, and that should be used for downloads */
-    downloadKey: DownloadKey;
 
     /** true if wharf-enabled upgrade via butler */
     incremental?: boolean;
@@ -1175,7 +1185,10 @@ export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
     eta?: number;
 
     /** timestamp the download started at */
-    date?: number;
+    startedAt?: number;
+
+    /** timestamp the download finished at */
+    finishedAt?: number;
 
     /** an error that may have occured while downloading */
     err?: string;

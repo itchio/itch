@@ -26,7 +26,7 @@ const baseInitialState = {
 };
 const initialState = { ...baseInitialState, ...selector(baseInitialState) };
 
-const updateSingle = (state: IDownloadsState, record: any) => {
+const updateSingle = (state: IDownloadsState, record: any): IDownloadsState => {
   const {items} = state;
   const {id} = record;
 
@@ -38,7 +38,7 @@ const updateSingle = (state: IDownloadsState, record: any) => {
 
   return {
     ...state,
-    downloads: {
+    items: {
       ...state.items,
       [id]: {
         ...item,
@@ -62,15 +62,24 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   });
 
   on(actions.downloadStarted, (state, action) => {
-    const download = action.payload;
+    const item = action.payload as IDownloadItem;
 
     return {
       ...state,
       items: {
-        ...index(excludeGame(state, download.gameId)),
-        [download.id]: download,
+        ...index(excludeGame(state, item.game.id)),
+        [item.id]: item,
       },
     };
+  });
+
+  on(actions.retryDownload, (state, action) => {
+    const {id} = action.payload;
+
+    return updateSingle(state, {
+      id,
+      finished: false,
+    });
   });
 
   on(actions.downloadProgress, (state, action) => {
@@ -79,8 +88,8 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   });
 
   on(actions.downloadEnded, (state, action) => {
-    const {id, err} = action.payload;
-    return updateSingle(state, {id, finished: true, err});
+    const {id, finishedAt, err} = action.payload;
+    return updateSingle(state, {id, finished: true, finishedAt, err});
   });
 
   on(actions.downloadSpeedDatapoint, (state, action) => {
@@ -140,7 +149,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   on(actions.resumeDownloads, (state, action): IDownloadsState => {
     return {
       ...state,
-      downloadsPaused: false,
+      paused: false,
     };
   });
 });

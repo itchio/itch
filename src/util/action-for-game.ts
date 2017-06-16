@@ -10,6 +10,7 @@ import {ICaveSummary} from "../db/models/cave";
  * starting an executable, serving a web game, etc., and "opening" means showing files
  * in a file explorer.
  */
-export default function actionForGame (game: GameModel, cave: ICaveSummary): ClassificationAction {
+export default function actionForGame (game: GameModel, cave: ICaveSummary | null): ClassificationAction {
+  // FIXME: we're not using the cave at all here - we probably should.
   return classificationActions[game.classification] || "launch";
 }

@@ -1,10 +1,15 @@
 
 import Game from "../db/models/game";
+import Cave from "../db/models/cave";
 
 import {
   IUploadRecord,
   IUpgradePathItem,
+  IManifestAction,
+  IEnvironment,
 } from ".";
+
+import {Logger} from "../logger";
 
 export type DownloadReason = "install" | "reinstall" | "update" | "revert" | "heal";
 
@@ -85,5 +90,16 @@ export interface IQueueUninstallOpts {
 
 export interface IQueueLaunchOpts {
   /** which cave we're launching */
-  caveId: number;
+  caveId: string;
+}
+
+export interface ILaunchOpts {
+  hasManifest: boolean;
+  manifestAction?: IManifestAction;
+
+  env: IEnvironment;
+  args: string[];
+  logger: Logger;
+  cave: Cave;
+  game: Game;
 }

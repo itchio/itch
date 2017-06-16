@@ -207,7 +207,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
 
     if (!active && err) {
       return <div className="controls">
-        <span className="icon icon-repeat" onClick={() => retryDownload({downloadOpts: item.downloadOpts})}></span>
+        <span className="icon icon-repeat" onClick={() => retryDownload({ id })}></span>
       </div>;
     }
 
@@ -296,7 +296,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
       )
       : (first
       ? <div>
-        {t("download.started")} <TimeAgo date={parseDate(date)}/>
+        {t("download.started")} <TimeAgo date={new Date(date)}/>
         {reasonText ? ` — ${reasonText}` : ""}
       </div>
       : t("grid.item.queued")
@@ -379,7 +379,7 @@ const HoverDownloadRow = Hover(DownloadRow);
 export default connect<IProps>(HoverDownloadRow, {
   state: (state) => ({
     speeds: state.downloads.speeds,
-    downloadsPaused: state.downloads.downloadsPaused,
+    downloadsPaused: state.downloads.paused,
     tasksByGameId: state.tasks.tasksByGameId,
   }),
   dispatch: (dispatch) => ({

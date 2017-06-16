@@ -87,6 +87,9 @@ export interface IModalResponsePayload {
 
   /** whether to clear cache */
   cache?: boolean;
+
+  /** manually picked upload for install */
+  pickedUpload?: Types.IUploadRecord;
 }
 
 export const MODAL_NO_RESPONSE = "MODAL_NO_RESPONSE";
@@ -597,7 +600,7 @@ export const QUEUE_DOWNLOAD = "QUEUE_DOWNLOAD";
 export interface IQueueDownloadPayload extends Types.IQueueDownloadOpts {};
 
 export const DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
-export interface IDownloadStartedPayload extends Types.IDownloadItem {};
+export type IDownloadStartedPayload = Partial<Types.IDownloadItem>;
 
 export const DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS";
 export interface IDownloadProgressPayload extends IProgressInfo {
@@ -607,17 +610,20 @@ export interface IDownloadProgressPayload extends IProgressInfo {
 
 export const DOWNLOAD_ENDED = "DOWNLOAD_ENDED";
 export interface IDownloadEndedPayload {
-  /** the download that just ended */
+  /** the id of the download that just ended */
   id: string;
+
+  /** the download that just ended */
+  item: Types.IDownloadItem;
 
   /** an error, if any */
   err: string;
 
-  /** the original download options */
-  item: Types.IDownloadItem;
-
   /** stuff like: where the file was downloaded. */
   result: Types.IDownloadResult;
+
+  /** timestamp when the download finished */
+  finishedAt?: number;
 }
 
 export const DOWNLOAD_SPEED_DATAPOINT = "DOWNLOAD_SPEED_DATAPOINT";
@@ -648,7 +654,7 @@ export interface IResumeDownloadsPayload {}
 
 export const RETRY_DOWNLOAD = "RETRY_DOWNLOAD";
 export interface IRetryDownloadPayload {
-  downloadOpts: Types.IDownloadOpts;
+  id: string;
 }
 
 export const CLEAR_GAME_DOWNLOADS = "CLEAR_GAME_DOWNLOADS";

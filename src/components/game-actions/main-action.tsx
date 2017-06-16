@@ -49,7 +49,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps,
       const {status, statusTask} = this.status(task);
       const realTask = statusTask || task;
 
-      const hasProgress = progress > 0 || realTask === "find-upload" || realTask === "download" ||
+      const hasProgress = progress > 0 || realTask === "download" ||
           realTask === "configure" || realTask === "install";
       if (hasProgress) {
         iconComponent = <LoadingCircle progress={progress}/>;
@@ -112,7 +112,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps,
     let {cave, game, platformCompatible, mayDownload, update} = this.props;
     const {navigate, queueGame, initiatePurchase, abortGameRequest, showGameUpdate} = this.props;
 
-    if (task === "download" || task === "find-upload") {
+    if (task === "download") {
       navigate("downloads");
     } else {
       if (platformCompatible) {
@@ -167,7 +167,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps,
     if (task === "uninstall") {
       res = {status: t("grid.item.uninstalling")};
     }
-    if (task === "download" || task === "find-upload") {
+    if (task === "download") {
       res = {status: t("grid.item.downloading")};
     }
     if (task === "ask-before-install") {

@@ -7,7 +7,6 @@ interface IIconForTasks {
 export default {
   "report": "upload-to-cloud",
   "error": "heart-broken",
-  "find-upload": "stopwatch",
   "download": "download",
   "install": "file-zip",
   "uninstall": "delete",

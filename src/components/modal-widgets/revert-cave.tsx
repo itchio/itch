@@ -4,7 +4,7 @@ import {connect, I18nProps} from "../connect";
 
 import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
 
-import {ICaveRecord} from "../../types";
+import Cave from "../../db/models/cave";
 
 export class RevertCave extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
   refs: {
@@ -46,7 +46,7 @@ export class RevertCave extends React.PureComponent<IProps & IDerivedProps & I18
 }
 
 export interface IRevertCaveParams {
-  currentCave: ICaveRecord;
+  currentCave: Cave;
 }
 
 interface IProps extends IModalWidgetProps {

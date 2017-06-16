@@ -24,11 +24,15 @@ export const queueDownload = createAction<IQueueDownloadPayload>(QUEUE_DOWNLOAD)
 
 const internalDownloadStarted = createAction<IDownloadStartedPayload>(DOWNLOAD_STARTED);
 
-export const downloadStarted = (payload: any) =>
-    internalDownloadStarted({...payload, date: Date.now(), id: uuid.v4() });
+export const downloadStarted = (payload: IDownloadStartedPayload) =>
+    internalDownloadStarted({...payload, startedAt: Date.now(), id: uuid.v4()});
 
 export const downloadProgress = createAction<IDownloadProgressPayload>(DOWNLOAD_PROGRESS);
-export const downloadEnded = createAction<IDownloadEndedPayload>(DOWNLOAD_ENDED);
+
+const internalDownloadEnded = createAction<IDownloadEndedPayload>(DOWNLOAD_ENDED);
+
+export const downloadEnded = (payload: IDownloadEndedPayload) =>
+    internalDownloadEnded({...payload, finishedAt: Date.now()});
 
 export const clearFinishedDownloads = createAction<IClearFinishedDownloadsPayload>(CLEAR_FINISHED_DOWNLOADS);
 export const clearGameDownloads = createAction<IClearGameDownloadsPayload>(CLEAR_GAME_DOWNLOADS);

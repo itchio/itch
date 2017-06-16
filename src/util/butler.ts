@@ -31,9 +31,11 @@ interface IButlerOpts {
 
 type IErrorListener = (err: Error) => void;
 
-interface IParseButlerStatusOpts extends IButlerOpts {
+interface IParseButlerStatusOpts {
   onError: IErrorListener;
   onResult: IResultListener;
+  onProgress?: IProgressListener;
+  logger: Logger;
 }
 
 function parseButlerStatus (opts: IParseButlerStatusOpts, token: string) {
@@ -75,7 +77,7 @@ function parseButlerStatus (opts: IParseButlerStatusOpts, token: string) {
 }
 
 async function butler <T> (opts: IButlerOpts, command: string, commandArgs: string[]): Promise<T> {
-  const {emitter, logger} = opts;
+  const {emitter, logger, onProgress} = opts;
 
   let value: any = null;
   let err = null as Error;
@@ -85,8 +87,9 @@ async function butler <T> (opts: IButlerOpts, command: string, commandArgs: stri
   const onToken = partial(parseButlerStatus, {
     onError: (e: Error) => { err = e; },
     onResult: (result: IButlerResult) => { value = result.value; },
-    ...opts,
-  });
+    onProgress,
+    logger,
+  } as IParseButlerStatusOpts);
   const onErrToken = (line: string) => {
     logger.info(`butler stderr: ${line}`);
   };
@@ -103,7 +106,7 @@ async function butler <T> (opts: IButlerOpts, command: string, commandArgs: stri
     onToken,
     onErrToken,
     emitter,
-    logger: (dumpAllOutput || showDebug) ? opts.logger : null,
+    logger: (dumpAllOutput || showDebug) ? opts.logger : devNull,
   });
 
   if (err) {

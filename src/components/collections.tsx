@@ -3,7 +3,6 @@ import * as React from "react";
 import {connect, I18nProps} from "./connect";
 
 import urls from "../constants/urls";
-import staticTabData from "../constants/static-tab-data";
 import * as actions from "../actions";
 
 // TODO: GameFilters doesn't belong in Collections view

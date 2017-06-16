@@ -101,7 +101,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
   watcher: NodeJS.Timer;
 
   /** the devil incarnate */
-  webview: Electron.WebViewElement;
+  webview: Electron.WebviewTag;
 
   constructor () {
     super();
@@ -279,7 +279,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
 
     // sometimes we get double will-navigate events because life is fun?!
     if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD) {
-      this.with((wv: Electron.WebViewElement) => {
+      this.with((wv: Electron.WebviewTag) => {
         wv.stop();
         wv.loadURL(this.props.url);
       });
@@ -395,7 +395,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
 
     const {tab} = this.props;
     this.webview.addEventListener("dom-ready", () => {
-      this.webview.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tab)})`);
+      this.webview.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tab)})`, false);
     });
 
     this.webview.src = "about:blank";
@@ -451,7 +451,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
     </BrowserMeatContainer>;
   }
 
-  with (cb: (wv: Electron.WebViewElement, wc: Electron.WebContents) => void, opts = {insist: false}) {
+  with (cb: (wv: Electron.WebviewTag, wc: Electron.WebContents) => void, opts = {insist: false}) {
     const {webview} = this;
     if (!webview) {
       return;
@@ -470,7 +470,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps & I1
   }
 
   openDevTools = () => {
-    this.with((wv: Electron.WebViewElement, wc: Electron.WebContents) => wc.openDevTools({mode: "detach"}));
+    this.with((wv: Electron.WebviewTag, wc: Electron.WebContents) => wc.openDevTools({mode: "detach"}));
   }
 
   stop = () => {
