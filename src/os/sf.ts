@@ -138,7 +138,7 @@ export async function writeFile (file: string, contents: string | Buffer, opts?:
 export async function promised (stream: EventEmitter): Promise<any> {
   invariant(typeof stream === "object", "sf.promised has object stream");
 
-  const p = new bluebird((resolve, reject) {
+  const p = new bluebird((resolve, reject) => {
     stream.on("close", resolve);
     stream.on("end", resolve);
     stream.on("error", reject);
