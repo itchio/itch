@@ -115,6 +115,10 @@ export default function (watcher: Watcher) {
     }
   });
 
+  watcher.on(actions.downloadStarted, async (store, action) => {
+    store.dispatch(actions.navigate({id: "downloads", background: true}))
+  });
+
   watcher.onAll(async (store, action) => {
     if (!pathSelector) {
       pathSelector = makePathSelector(store);

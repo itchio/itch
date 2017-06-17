@@ -11,19 +11,26 @@ const DOWNLOAD_SPEED_DELAY = 1000;
 
 import {IStore} from "../../types";
 
+import {getActiveDownload} from "./getters";
+
+const emptyObj: any = {};
+
 async function updateDownloadSpeed (store: IStore) {
   await delay(DOWNLOAD_SPEED_DELAY);
 
-  const downloadsState = store.getState().downloads;
-  const activeDownload = downloadsState.activeDownload;
+  const {downloads} = store.getState();
 
-  let bps = 0;
-
-  if (!downloadsState.downloadsPaused && activeDownload) {
-    bps = activeDownload.bps || 0;
+  if (downloads.paused) {
+    // don't update speeds while downloads are paused.
+    return;
   }
 
-  store.dispatch(actions.downloadSpeedDatapoint({bps}));
+  const activeDownload = getActiveDownload(downloads);
+
+  const {bps = 0} = (activeDownload || emptyObj);
+  store.dispatch(actions.downloadSpeedDatapoint({
+    bps,
+  }));
 }
 
 export default function (watcher: Watcher) {

@@ -6,7 +6,6 @@ import bob, {IRGBColor} from "../renderer-util/bob";
 import {ResponsiveContainer, AreaChart, Area} from "recharts";
 
 import {truncate, downloadProgress} from "../format";
-import {parseDate} from "../api/schemas";
 
 import * as actions from "../actions";
 
@@ -266,7 +265,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
       </div>;
     }
 
-    const {date, reason} = item;
+    const {startedAt, reason} = item;
     let {progress = 0, bps, eta} = item;
 
     if (task) {
@@ -295,10 +294,12 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps & I18nProps
         : t("grid.item.installing")
       )
       : (first
-      ? <div>
-        {t("download.started")} <TimeAgo date={new Date(date)}/>
-        {reasonText ? ` — ${reasonText}` : ""}
-      </div>
+      ? (downloadsPaused
+        ? null
+        : <div>
+          {t("download.started")} <TimeAgo date={new Date(startedAt)}/>
+          {reasonText ? ` — ${reasonText}` : ""}
+        </div>)
       : t("grid.item.queued")
       )}
         <div className="filler"/>

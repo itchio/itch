@@ -58,23 +58,6 @@ export default reducer<ISessionNavigationState>(initialState, (on) => {
     };
   });
 
-  on(actions.downloadStarted, (state, action) => {
-    const {transient} = state.tabs;
-
-    const has = transient.indexOf("downloads") >= 0;
-    if (has) {
-      return state;
-    }
-
-    return {
-      ...state,
-      tabs: {
-        ...state.tabs,
-        transient: [ "downloads", ...transient ],
-      },
-    };
-  });
-
   on(actions.switchPage, (state, action) => {
     const {page} = action.payload;
     return {

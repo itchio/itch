@@ -12,6 +12,9 @@ import {connect, I18nProps} from "../connect";
 import * as actions from "../../actions";
 import {dispatcher} from "../../constants/action-types";
 
+import {size} from "underscore";
+import {getFinishedDownloads, getActiveDownload} from "../../reactors/downloads/getters";
+
 import {
   IAppState,
   ITabData,
@@ -65,11 +68,11 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
 
     if (id === "downloads") {
       const {downloads} = this.props;
-      count = downloads.finishedDownloads.length;
-      progress = downloads.activeItemProgress;
-      const {activeDownload} = downloads;
+      count = size(getFinishedDownloads(downloads));
+      const activeDownload = getActiveDownload(downloads);
       if (activeDownload) {
-        if (downloads.downloadsPaused) {
+        progress = activeDownload.progress;
+        if (downloads.paused) {
           sublabel = ["grid.item.downloads_paused"];
         } else {
           const title = activeDownload.game.title;

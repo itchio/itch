@@ -11,7 +11,7 @@ export default function (watcher: Watcher) {
 
     const {session} = require("electron");
     const partition = partitionForUser(String(userId));
-    const ourSession = session.fromPartition(partition);
+    const ourSession = session.fromPartition(partition, {cache: true});
     await applyProxySettings(ourSession, store.getState().system);
   });
 }

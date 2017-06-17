@@ -24,7 +24,7 @@ import {
 
 import {IProgressInfo} from "../../types";
 
-const DOWNLOAD_DELAY = 1000;
+const DOWNLOAD_WATCHER_INTERVAL = 1000;
 
 let currentDownload: IDownloadItem = null;
 let currentEmitter: EventEmitter = null;
@@ -32,7 +32,7 @@ let currentEmitter: EventEmitter = null;
 // TODO: pause downloads on logout.
 
 async function updateDownloadState (store: IStore) {
-  await delay(DOWNLOAD_DELAY);
+  await delay(DOWNLOAD_WATCHER_INTERVAL);
 
   const downloadsState = store.getState().downloads;
   if (downloadsState.paused) {
@@ -101,7 +101,6 @@ async function start (store: IStore, item: IDownloadItem) {
     logger.info("Starting download...");
     result = await performDownload(store, item, currentEmitter);
   } catch (e) {
-    logger.error("Download threw");
     error = e;
   } finally {
     if (error instanceof Cancelled) {
@@ -109,7 +108,10 @@ async function start (store: IStore, item: IDownloadItem) {
       cancelled = true;
       logger.info("Download cancelled");
     } else {
-      logger.info(`Download ended, err: ${error ? error.stack : null}`);
+      logger.info(`Download ended`);
+      if (error) {
+        logger.error(`Download threw: ${error.stack}`);
+      }
       const err = error ? error.message || ("" + error) : null;
 
       const freshItem = store.getState().downloads.items[item.id];

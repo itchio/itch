@@ -12,6 +12,8 @@ import TitleBar from "./title-bar";
 import {IAppState, IDownloadItem} from "../types";
 import {dispatcher} from "../constants/action-types";
 
+import {getPendingDownloads, getFinishedDownloads} from "../reactors/downloads/getters";
+
 import {IMeatProps} from "./meats/types";
 
 import styled, * as styles from "./styles";
@@ -134,8 +136,8 @@ interface IDerivedProps {
 
 export default connect<IProps>(Downloads, {
   state: createStructuredSelector({
-    items: (state: IAppState) => map(state.downloads.downloadsByOrder, (id) => state.downloads.items[id]),
-    finishedItems: (state: IAppState) => map(state.downloads.finishedDownloads, (id) => state.downloads.items[id]),
+    items: (state: IAppState) => getPendingDownloads(state.downloads),
+    finishedItems: (state: IAppState) => getFinishedDownloads(state.downloads),
   }),
   dispatch: (dispatch) => ({
   clearFinishedDownloads: dispatcher(dispatch, actions.clearFinishedDownloads),

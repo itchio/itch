@@ -142,13 +142,14 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   on(actions.pauseDownloads, (state, action) => {
     return {
       ...state,
-      downloadsPaused: true,
+      paused: true,
     };
   });
 
   on(actions.resumeDownloads, (state, action): IDownloadsState => {
     return {
       ...state,
+      items: index(map(state.items, (i) => ({...i, bps: 0}))),
       paused: false,
     };
   });

@@ -41,7 +41,7 @@ const SearchContainer = styled.section`
 `;
 
 @watching
-class Search extends React.PureComponent<IDerivedProps & I18nProps, void> {
+class Search extends React.PureComponent<IDerivedProps & I18nProps, {}> {
   input: HTMLInputElement;
 
   trigger = debounce(() => {
@@ -150,7 +150,7 @@ interface IDerivedProps {
   searchHighlightOffset: typeof actions.searchHighlightOffset;
 }
 
-export default connect<void>(Search, {
+export default connect<{}>(Search, {
   state: createStructuredSelector({
     loading: (state) => state.session.search.loading,
   }),
