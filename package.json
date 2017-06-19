@@ -148,13 +148,13 @@
     "tslint": "^4.0.2",
     "typescript": "rc",
     "why-did-you-update": "^0.0.8",
-    "zopf": "^5.0.0"
+    "zopf": "6.1.0"
   },
   "scripts": {
     "start": "electron . --color --inspect",
     "install": "electron-rebuild",
-    "unit": "cross-env NODE_ENV=test electron . --color --interactive --run-unit-tests",
-    "test": "node ./src/integration-tests/init.js",
+    "test": "cross-env NODE_ENV=test electron . --color --run-unit-tests",
+    "integration-tests": "cross-env NODE_ENV=test node ./src/integration-tests/init.js",
     "i18n": "node release/ci-i18n-check.js",
     "compile": "cross-env NODE_ENV=production electron-compile --appdir . ./src"
   }

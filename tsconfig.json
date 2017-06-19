@@ -13,6 +13,7 @@
         "skipLibCheck": true
     },
     "exclude": [
+        "app",
         "build",
         "stage",
         "node_modules",

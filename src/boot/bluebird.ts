@@ -1,7 +1,7 @@
 
-import env from "../env";
+// import env from "../env";
 
-require("bluebird").config(env.name !== "production" ? {
-  longStackTraces: true,
-  warnings: true,
-} : {});
+// require("bluebird").config(env.name !== "production" ? {
+//   longStackTraces: true,
+//   warnings: true,
+// } : {});

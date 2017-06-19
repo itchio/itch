@@ -256,13 +256,6 @@ test("integration tests", async (t) => {
     });
   };
 
-  spec("it runs unit tests", async (t) => {
-    // muffin
-  }, {
-    ownExit: true,
-    args: ["--run-unit-tests"],
-  });
-
   spec("it runs integration tests", async (t) => {
     await runTests(t);
   }, {

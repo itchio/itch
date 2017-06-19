@@ -5041,11 +5041,7 @@ typeorm@^0.0.11:
     yargonaut "^1.1.2"
     yargs "^6.6.0"
 
-typescript@>=1.6:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.2.2.tgz#606022508479b55ffa368b58fee963a03dfd7b0c"
-
-typescript@rc:
+typescript@>=1.6, typescript@rc:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.0.tgz#aef5a8d404beba36ad339abf079ddddfffba86dd"
 
@@ -5464,9 +5460,9 @@ zip-stream@^1.1.0:
     lodash "^4.8.0"
     readable-stream "^2.0.0"
 
-zopf@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/zopf/-/zopf-5.0.0.tgz#bb5dee3b7800add9fac351a4a38e4640cf965b8f"
+zopf@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/zopf/-/zopf-6.1.0.tgz#99714399bb84ea300acfb9556a34490e8efa7f47"
   dependencies:
     bluebird "^3.0.0"
     sinon "^1.17.1"
