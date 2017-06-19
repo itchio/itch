@@ -7,6 +7,7 @@ import api, {ApiError} from ".";
 
 suite(__filename, s => {
   api.rootUrl = "http://example.org/";
+  api.cooldown = () => Promise.resolve();
 
   const user = api.withKey("key");
   const client = api;

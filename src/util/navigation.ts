@@ -1,5 +1,6 @@
 
 import urlParser from "./url";
+import {promisify} from "bluebird";
 import * as dns from "dns";
 import * as querystring from "querystring";
 
@@ -16,7 +17,9 @@ import {
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 
-export async function transformUrl(original: string): Promise<string> {
+const defaultLookup = promisify(dns.lookup);
+
+export async function transformUrl(original: string, lookup = defaultLookup): Promise<string> {
   if (/^about:/.test(original)) {
     return original;
   }
@@ -36,19 +39,17 @@ export async function transformUrl(original: string): Promise<string> {
     }
   }
 
-  return await new Promise<string>((resolve, reject) => {
-    dns.lookup(parsed.hostname, (err) => {
-      if (err) {
-        if (err.code === "ENOTFOUND") {
-          // that's okay
-        } else {
-          console.log(`dns error: ${err.code} / ${err.message}`); // tslint:disable-line:no-console
-        }
-        resolve(searchUrl());
-      }
-      resolve(req);
-    });
-  });
+  try {
+    await lookup(parsed.hostname);
+    return req;
+  } catch (err) {
+    if (err.code === "ENOTFOUND") {
+      // that's okay
+    } else {
+      console.log(`dns error: ${err.code} / ${err.message}`); // tslint:disable-line:no-console
+    }
+    return searchUrl();
+  }
 }
 
 export function pathToId(path: string): string {

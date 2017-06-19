@@ -20,5 +20,3 @@ export default reducer<ITabPaginationSet>(initialState, (on) => {
     };
   });
 });
-
-

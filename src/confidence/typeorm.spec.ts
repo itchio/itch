@@ -10,15 +10,18 @@ class Game {
   @PrimaryColumn("int")
   id: number;
 
-  @Column("string", {length: 500})
+  @Column("text")
   title: string;
 
   @Column("text")
   shortDesc: string;
 }
 
+// This test appears slower than it is because typeorm
+// dynamically requires sqlite
 suite(__filename, s => {
   s.case("run a few queries", async t => {
+    const startedAt = Date.now();
     const conn = await createConnection({
       driver: {
         type: "sqlite",
@@ -27,6 +30,8 @@ suite(__filename, s => {
       entities: [Game],
       autoSchemaSync: true,
     });
+    const migratedAt = Date.now();
+    t.comment(`sync'd in ${(migratedAt-startedAt).toFixed(2)}ms`);
 
     const gameRepo = conn.getRepository(Game);
 
@@ -152,4 +157,3 @@ suite(__filename, s => {
     }
   });
 });
-

@@ -40,8 +40,6 @@ const DUMP_API_CALLS = process.env.LET_ME_IN === "1";
 import {makeLogger, devNull} from "../logger";
 const logger = DUMP_API_CALLS ? makeLogger() : devNull;
 
-const cooldown = mkcooldown(130);
-
 type HTTPMethod = "get" | "head" | "post";
 
 interface ITransformerMap {
@@ -67,6 +65,8 @@ export class Client {
   /** http request maker */
   requestFunc: RequestFunc;
 
+  cooldown = mkcooldown(130);
+
   constructor () {
     this.rootUrl = `${urls.itchioApi}/api/1`;
     this.lastRequest = 0;
@@ -87,7 +87,7 @@ export class Client {
 
     const uri = `${this.rootUrl}${path}`;
 
-    await cooldown();
+    await this.cooldown();
     const t2 = Date.now();
 
     const resp = await this.requestFunc(method, uri, data, {});

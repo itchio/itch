@@ -2,6 +2,8 @@
 import suite from "../test-suite";
 import * as navigation from "./navigation";
 
+import * as bluebird from "bluebird";
+
 suite(__filename, s => {
   s.case("paths", t => {
     let path = "games/3";
@@ -31,10 +33,14 @@ suite(__filename, s => {
   });
 
   s.case("transformUrl", async t => {
-    t.same(await navigation.transformUrl("https://itch.io"), "https://itch.io");
-    t.same(await navigation.transformUrl("http://localhost.com:8080/randomizer"),
+    t.same(await navigation.transformUrl("https://itch.io", name => bluebird.resolve("")), "https://itch.io");
+    t.same(await navigation.transformUrl("http://localhost.com:8080/randomizer", name => bluebird.resolve("")),
       "http://localhost.com:8080/randomizer");
-    t.same(await navigation.transformUrl("kermit plushie"),
+    t.same(await navigation.transformUrl("kermit plushie", name => {
+      const e = new Error() as NodeJS.ErrnoException;
+      e.code = "ENOTFOUND";
+      return bluebird.reject(e);
+    }),
       "https://duckduckgo.com/?q=kermit%20plushie&kae=d");
   });
 });
