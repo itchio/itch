@@ -11,8 +11,8 @@ async function main () {
   $(await $.yarn('install'));
 
   if (process.platform === "linux") {
-    $(await $.sh('xvfb-run -s "-screen 0 1280x720x24" yarn test'));
-    $(await $.sh('xvfb-run -s "-screen 0 1280x720x24" yarn integration-tests'));
+    $(await $.sh('xvfb-run -a -s "-screen 0 1280x720x24" yarn test'));
+    $(await $.sh('xvfb-run -a -s "-screen 0 1280x720x24" yarn integration-tests'));
   } else {
     $(await $.yarn('test'));
     $(await $.yarn('integration-tests'));
