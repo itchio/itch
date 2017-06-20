@@ -1,6 +1,5 @@
 
 import {
-  sleep,
   IIntegrationTest,
   testAccountName, testAccountPassword,
 } from "./types";
@@ -13,10 +12,6 @@ export default async function loginFlow (t: IIntegrationTest) {
   await client.setValue("#login-password", "1234");
   await t.safeClick("#login-button");
   await client.waitUntilTextExists("#login-errors", "incorrect_username_or_password");
-
-  // on invalid credentials, the app focuses the password field,
-  // so wait a bit before we try to log in again!
-  await sleep(1000);
 
   if (!testAccountPassword) {
     t.comment("No password in environment, not performing further login tests");

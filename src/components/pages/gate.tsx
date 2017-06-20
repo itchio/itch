@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 import * as React from "react";
 import {connect, I18nProps} from "../connect";
 
-import {isEmpty, map, sortBy} from "underscore";
+import {isEmpty, map, sortBy, size} from "underscore";
 import {resolve} from "path";
 
 import urls from "../../constants/urls";
@@ -237,14 +237,12 @@ const RememberedSessions = styled.div`
 
 @watching
 export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  refs: {
-    username: HTMLInputElement;
-    password: HTMLInputElement;
-  };
+  username: HTMLInputElement;
+  password: HTMLInputElement;
 
   subscribe (watcher: Watcher) {
     watcher.on(actions.loginFailed, async (store, action) => {
-      const {username} = this.refs;
+      const {username} = this;
       if (username) {
         username.value = action.payload.username;
       }
@@ -266,10 +264,13 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
 
       <section className="crux">
         <Form onSubmit={this.handleSubmit}>
-          <input id="login-username" ref="username" type="text"
-            placeholder={t("login.field.username")} autoFocus disabled={disabled}/>
-          <input id="login-password" ref="password" type="password"
-              placeholder={t("login.field.password")} disabled={disabled}
+          <input id="login-username" ref={this.gotUsernameField} type="text"
+            placeholder={t("login.field.username")}
+            onKeyDown={this.handleKeyDown}
+            disabled={disabled}/>
+          <input id="login-password" ref={this.gotPasswordField} type="password"
+            placeholder={t("login.field.password")}
+            disabled={disabled}
             onKeyDown={this.handleKeyDown}/>
           <section className="actions">
             {this.renderActions()}
@@ -401,13 +402,13 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
     } as IReportIssueOpts);
   }
 
-  componentWillReceiveProps (nextProps: IDerivedProps) {
+  componentDidUpdate (prevProps: IDerivedProps) {
     // so very reacty...
-    if (!nextProps.blockingOperation && nextProps.errors && nextProps.errors.length) {
+    if (!this.props.blockingOperation && size(this.props.errors) > 0) {
       this.handleLoginFailure();
     }
 
-    if (this.props.stage === "pick" && nextProps.stage === "login") {
+    if (prevProps.stage === "pick" && this.props.stage === "login") {
       this.handleStoppedPicking();
     }
   }
@@ -419,7 +420,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
   }
 
   handleSubmit = () => {
-    const {username, password} = this.refs;
+    const {username, password} = this;
     this.props.loginWithPassword({
       username: username.value,
       password: password.value,
@@ -427,17 +428,27 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
   }
 
   handleStoppedPicking = () => {
-    const username = this.refs.username;
+    const username = this.username;
     if (username) {
-      setTimeout(() => username.focus(), 200);
+      username.focus();
     }
   }
 
   handleLoginFailure = () => {
-    const {password} = this.refs;
-    if (password) {
-      setTimeout(() => password.focus(), 200);
+    const {username, password} = this;
+    if (username && username.value === "") {
+      username.focus();
+    } else if (password) {
+      password.focus();
     }
+  }
+
+  gotUsernameField = (username) => {
+    this.username = username;
+  }
+
+  gotPasswordField = (password) => {
+    this.password = password;
   }
 
   onStartPicking = () => {
