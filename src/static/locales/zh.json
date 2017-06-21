@@ -389,7 +389,7 @@
     "preferences.advanced.clear_browsing_data": "清除浏览数据",
     "prompt.clear_browsing_data.clear": "清除数据",
     "prompt.clear_browsing_data.category.cache": "缓存图片和文件",
-    "prompt.clear_browsing_data.retrieving_cache_size": "检测缓存大小",
+    "prompt.clear_browsing_data.retrieving_cache_size": "正在检测缓存大小···",
     "prompt.clear_browsing_data.cache_size_used": "缓存占用空间： {{size}}",
     "prompt.clear_browsing_data.category.cookies": "Cookies",
     "prompt.clear_browsing_data.cookies_info": "这将使你从所有使用itch应用登陆过的网站注销。",
