@@ -67,7 +67,7 @@
     "deep-assign": "^2.0.0",
     "deep-equal": "^1.0.1",
     "deep-freeze": "0.0.1",
-    "electron-compile-ftl": "^6.4.3",
+    "electron-compile-ftl": "6.4.4",
     "electron-is-dev": "^0.1.2",
     "eol": "^0.2.0",
     "faucet": "^0.0.1",
@@ -158,7 +158,7 @@
   },
   "scripts": {
     "start": "electron . --color --inspect",
-    "install": "electron-rebuild",
+    "postinstall": "electron-rebuild",
     "test": "cross-env NODE_ENV=test electron . --color --run-unit-tests",
     "upload-coverage": "codecov -f ./coverage/lcov.info",
     "integration-tests": "cross-env NODE_ENV=test node ./src/integration-tests/init.js",
