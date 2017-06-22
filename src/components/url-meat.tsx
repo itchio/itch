@@ -2,6 +2,8 @@
 import * as React from "react";
 import {connect, I18nProps} from "./connect";
 
+import env from "../env";
+
 import {pathPrefix, pathToId} from "../util/navigation";
 import urls from "../constants/urls";
 
@@ -43,7 +45,11 @@ export class UrlMeat extends React.PureComponent<IProps & I18nProps, IState> {
 
     switch (tab) {
       case "featured":
-        return {url: urls.itchio + "/", controls: "generic"};
+        if (env.name === "test") {
+          return {url: "about:blank", controls: "generic"};
+        } else {
+          return {url: urls.itchio + "/", controls: "generic"};
+        }
       default:
         const prefix = pathPrefix(tabPath);
         const suffix = pathToId(tabPath);
