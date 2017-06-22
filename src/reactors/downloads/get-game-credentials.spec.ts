@@ -2,7 +2,7 @@
 import suite from "../../test-suite";
 import * as proxyquire from "proxyquire";
 
-import _getGameCredentials from "./get-game-credentials";
+import _getGameCredentials, * as ggcModule from "./get-game-credentials";
 import {DB} from "../../db";
 
 import {IStore, IAppState} from "../../types";
@@ -19,14 +19,16 @@ const store = {
 
 const db = new DB();
 
-const getGameCredentials = proxyquire("./get-game-credentials", {
+const proxyquired = proxyquire("./get-game-credentials", {
   "../../db": {
     __esModule: true,
     default: db,
   },
   "@global": true,
   "@noCallThru": true,
-}).default as typeof _getGameCredentials;
+});
+const getGameCredentials = proxyquired.default as typeof _getGameCredentials;
+const getGameCredentialsForId = proxyquired.getGameCredentialsForId as typeof ggcModule.getGameCredentialsForId;
 
 suite(__filename, s => {
   s.case("getGameCredentials", async t => {
@@ -124,5 +126,10 @@ suite(__filename, s => {
       apiKey: credentials75.key,
       downloadKey: null,
     }, "won't take other user's download key if we don't have corresponding API key");
+
+    t.same(await getGameCredentialsForId(store, game.id), {
+      apiKey: credentials75.key,
+      downloadKey: null,
+    }, "looks up properly by id alone too");
   });
 });
