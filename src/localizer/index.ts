@@ -1,14 +1,6 @@
 
 import {II18nResources} from "../types";
 
-import env from "../env";
-let identity = env.name === "test";
-
-// for unit testing
-export function disableIdentity () {
-  identity = false;
-}
-
 const emptyObj = {};
 
 export interface ILocalizer {
@@ -24,10 +16,6 @@ export interface ILocalizer {
 
 export function getT (strings: II18nResources, lang: string) {
   const t: ILocalizer = ((key: string | string[], variables?: any) => {
-    if (identity) {
-      return key;
-    }
-
     if (!key || key.length <= 0) {
       return key;
     }

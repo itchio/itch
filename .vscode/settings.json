@@ -17,8 +17,8 @@
     ".tscache": true,
     ".cache": true
   },
-"files.eol": "\n",
-"editor.tabSize": 2,
-"typescript.tsdk": "./node_modules/typescript/lib",
-"gitlens.codeLens.enabled": false
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "coverage-gutters.lcovname": "./coverage/lcov.info"
 }

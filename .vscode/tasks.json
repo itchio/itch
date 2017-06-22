@@ -1,9 +1,22 @@
 {
   "version": "0.1.0",
-  "command": "node_modules\\.bin\\tsc",
-  "isShellCommand": true,
-  "args": ["-w", "-p", ".", "--noEmit", "--skipLibCheck"],
-  "showOutput": "silent",
-  "isBackground": true,
-  "problemMatcher": "$tsc-watch"
+  "tasks": [
+    {
+      "taskName": "compile",
+      "command": "node_modules\\.bin\\tsc",
+      "isShellCommand": true,
+      "args": ["-w", "-p", ".", "--noEmit", "--skipLibCheck"],
+      "showOutput": "silent",
+      "isBackground": true,
+      "problemMatcher": "$tsc-watch"
+    },
+    {
+      "taskName": "test",
+      "command": "yarn",
+      "isShellCommand": true,
+      "args": ["test", "--", "-w"],
+      "showOutput": "silent",
+      "isBackground": true
+    }
+  ]
 }

@@ -1,12 +1,18 @@
 // tslint:disable:no-console
 
+let watching = false;
+
 function exit (exitCode) {
   if (process.env.ITCH_DONT_EXIT === "1") {
     console.log(`Should exit with code ${exitCode}, but asked not to`);
     return;
-  } else {
-    app.exit(exitCode);
   }
+  
+  if (watching) {
+    console.log(`Watching, so not exiting`);
+    return;
+  }
+  app.exit(exitCode);
 }
 
 process.on("uncaughtException", (e: Error) => {
@@ -19,15 +25,11 @@ process.on("unhandledRejection", (reason: string, p: Promise<any>) => {
   exit(129);
 });
 
-import env from "../env";
-env.name = "test";
-process.env.NODE_ENV = "test";
-
 const chalk = require("chalk");
+const bluebird = require("bluebird");
 
 const {app} = require("electron");
-const {extname} = require("path").posix;
-const {resolve} = require("path");
+const path = require("path");
 
 interface IDuration {
   title: string;
@@ -55,17 +57,13 @@ function printDurations (input: IDuration[], legend: string) {
     total += item.duration;
   }
 
-  for (let i = 0; i < 8; i++) {
-    if (i >= durations.length) {
-      break;
-    }
-    const data = durations[i];
+  for (const data of durations) {
     const percent = data.duration * 100 / total;
     let percentColumn = pad(`${percent.toFixed(1)}%`, 8);
     let durationColumn = pad(`${data.duration.toFixed(2)}ms`, 12);
     let msg = `| ${percentColumn}  ${durationColumn}  "${data.title}"`;
     if (data.duration < 200) {
-      console.log(chalk.blue(msg));
+      // don't print
     } else if (data.duration < 1000) {
       console.log(chalk.yellow(msg));
     } else {
@@ -75,17 +73,37 @@ function printDurations (input: IDuration[], legend: string) {
   console.log(chalk.blue(`\\~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/`));
 }
 
-let requireDurations: IDuration[] = [];
+const cwd = process.cwd();
+
+function flush () {
+  Object.keys(require.cache).forEach(function (fname) {
+    if (fname.indexOf("node_modules") === -1) {
+      delete require.cache[fname];
+    }
+
+    const mods = ["tape", "zopf", "typeorm"];
+    mods.forEach(function (mod) {
+      if (fname.indexOf(path.join(cwd, mod) + path.sep) > -1 ||
+        fname.indexOf(path.join(cwd, "node_modules", mod) + path.sep) > -1) {
+        delete require.cache[fname];
+      }
+    });
+  });
+}
 
 app.on("ready", async () => {
-  const glob = require("bluebird").promisify(require("glob"));
-  const cwd = resolve(__dirname, "..");
-  console.log(chalk.blue(`looking for tests in ${cwd}`));
-  let testFiles = await glob("**/*[\.-]spec.ts", {cwd});
+  const glob = bluebird.promisify(require("glob"));
+  const srcDir = path.resolve(__dirname, "..");
+
+  let testFiles = await glob("**/*[\.-]spec.ts", {cwd: srcDir});
 
   const args = process.argv.slice(2);
   let state = 0;
   for (const arg of args) {
+    if (arg === "--watch" || arg === "-w") {
+      watching = true;
+      continue;
+    }
     if (state === 2) {
       testFiles = [arg.replace(/.*src\//, "")];
       console.log(`Unit test runner only running ${JSON.stringify(testFiles)}`);
@@ -101,68 +119,108 @@ app.on("ready", async () => {
     }
   }
 
-  const tape = require("tape");
-  const zopf = require("zopf");
-  const faucet = require("faucet");
-  tape.createStream().pipe(faucet()).pipe(process.stdout);
+  const invoke = async () => {
+    console.log(chalk.blue(`looking for tests in ${srcDir}`));
 
-  let requireStartedAt: number;
-  let testStartedAt: number;
+    const tape = require("tape");
+    const zopf = require("zopf");
+    const faucet = require("faucet");
+    tape.createStream().pipe(faucet()).pipe(process.stdout);
 
-  tape.onFinish(async (a, b, c) => {
-    let finishedAt = Date.now();
+    let requireStartedAt: number;
+    let testStartedAt: number;
 
-    console.log(`\n`);
+    const p = new Promise((resolve, reject) => {
+      tape.onFinish(async () => {
+        let finishedAt = Date.now();
 
-    printDurations(requireDurations, `spent ${(testStartedAt - requireStartedAt).toFixed(2)}ms requiring`);
-    console.log("\n\n");
+        console.log(`\n`);
 
-    printDurations(zopf.testDurations, `spent ${(finishedAt - testStartedAt).toFixed(2)}ms running`);
-    console.log("\n\n");
+        printDurations(zopf.testDurations, `spent ${(finishedAt - testStartedAt).toFixed(2)}ms running`);
+        console.log("\n\n");
 
-    const libCoverage = require("istanbul-lib-coverage");
-    // tslint:disable-next-line
-    let map = libCoverage.createCoverageMap(global["__coverage__"]);
+        const libCoverage = require("istanbul-lib-coverage");
+        // tslint:disable-next-line
+        let map = libCoverage.createCoverageMap(global["__coverage__"]);
 
-    const libSourceMaps = require("istanbul-lib-source-maps");
-    const sourceMapCache = libSourceMaps.createSourceMapStore();
+        const libSourceMaps = require("istanbul-lib-source-maps");
+        const sourceMapCache = libSourceMaps.createSourceMapStore();
 
-    map = sourceMapCache.transformCoverage(map).map;
+        map = sourceMapCache.transformCoverage(map).map;
 
-    const libReport = require("istanbul-lib-report");
-    const context = libReport.createContext({dir: "coverage"});
+        const libReport = require("istanbul-lib-report");
+        const context = libReport.createContext({dir: "coverage"});
 
-    const reports = require("istanbul-reports");
+        const reports = require("istanbul-reports");
 
-    const tree = libReport.summarizers.pkg(map);
+        const tree = libReport.summarizers.pkg(map);
 
-    // print text report to standard output
-    console.log("\n\n");
-    tree.visit(reports.create("text"), context);
-    console.log("\n\n");
+        // print text-lcov report to coverage.lcov file
+        tree.visit(reports.create("lcov"), context);
 
-    // print text-lcov report to coverage.lcov file
-    tree.visit(reports.create("lcov"), context);
+        const harness = tape.getHarness();
+        resolve(harness._exitCode);
+      });
+    });
 
-    const harness = tape.getHarness();
-    exit(harness._exitCode);
-  });
+    console.log(chalk.blue(`loading ${testFiles.length} test suites`));
 
-  console.log(chalk.blue(`loading ${testFiles.length} test suites`));
+    requireStartedAt = Date.now();
 
-  requireStartedAt = Date.now();
+    for (const testFile of testFiles) {
+      const ext = path.posix.extname(testFile);
+      const extless = testFile.slice(0, -(ext.length));
+      const requirePath = `../${extless}`;
+      require(requirePath);
+      process.stdout.write(".");
+    }
+    console.log("");
 
-  for (const testFile of testFiles) {
-    const requireStart = Date.now();
-    const ext = extname(testFile);
-    const extless = testFile.slice(0, -(ext.length));
-    const requirePath = `../${extless}`;
-    require(requirePath);
-    const requireEnd = Date.now();
-    requireDurations.push({title: requirePath, duration: requireEnd - requireStart});
-    process.stdout.write(".");
+    testStartedAt = Date.now();
+    return await p;
+  };
+
+  const debounce = require("debounce-collect");
+  const mutex = require("./mutex").default;
+
+  const report = debounce(mutex(async function () {
+    flush();
+    const exitCode = await invoke();
+    if (!watching) {
+      exit(exitCode);
+    }
+    await bluebird.delay(250);
+    console.log("Watching for changes...");
+  }), 25);
+
+  if (watching) {
+    const chokidar = require("chokidar");
+    const watcher = chokidar.watch(".", {
+      ignored: /[\/\\]\.|node_modules|coverage|tmp|\.git/,
+      persistent: true,
+      ignoreInitial: true,
+    });
+    watcher.on("change", (data) => {
+      console.log("============");
+      console.log("change, reporting!", data);
+      console.log("============");
+      report();
+    });
+    watcher.on("add", (data) => {
+      console.log("============");
+      console.log("add, reporting!", data);
+      console.log("============");
+      report();
+    });
+    watcher.on("unlink", (data) => {
+      console.log("============");
+      console.log("unlink, reporting!", data);
+      console.log("============");
+      report();
+    });
+    console.log("initial report");
+    report();
+  } else {
+    report();
   }
-  console.log("");
-
-  testStartedAt = Date.now();
 });
