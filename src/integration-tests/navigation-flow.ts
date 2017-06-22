@@ -35,12 +35,12 @@ export default async function navigationFlow (t: IIntegrationTest) {
   const firstTitleSelector = currTab + ".table-item:first-child .game-table-title";
 
   t.comment("sorting by name, A-Z");
-  await t.safeClick(currTab + "[role='columnheader'][aria-label='table.column.name']");
+  await t.safeClick(currTab + "[role='columnheader'][aria-label='Name']");
   t.comment("ensuring the A-Z sorting is correct");
   await client.waitUntilTextExists(firstTitleSelector, "111 first");
 
   t.comment("sorting by name, Z-A");
-  await t.safeClick(currTab + "[role='columnheader'][aria-label='table.column.name']");
+  await t.safeClick(currTab + "[role='columnheader'][aria-label='Name']");
   t.comment("ensuring the Z-A sorting is correct");
   await client.waitUntilTextExists(firstTitleSelector, "zzz last");
 }

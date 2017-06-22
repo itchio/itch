@@ -11,7 +11,7 @@ export default async function loginFlow (t: IIntegrationTest) {
   await client.setValue("#login-username", "hello this is an integration test");
   await client.setValue("#login-password", "1234");
   await t.safeClick("#login-button");
-  await client.waitUntilTextExists("#login-errors", "incorrect_username_or_password");
+  await client.waitUntilTextExists("#login-errors", "Incorrect username or password");
 
   if (!testAccountPassword) {
     t.comment("No password in environment, not performing further login tests");
