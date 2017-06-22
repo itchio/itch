@@ -71,10 +71,12 @@ export const glob = promisify(proxyquire("glob", stubs) as IGlobStatic);
 export const readChunk = promisify(proxyquire("read-chunk", stubs));
 
 // single function, callback-based, can actually specify fs!
-export const mkdirp = promisify(require("mkdirp") as (path: string, opts: any, cb: () => any) => void);
+type Mkdirp = (path: string, opts: any) => Promise<void>;
+export const mkdirp: Mkdirp = promisify(require("mkdirp")) as any;
 
 // single function, can actually specify fs!
-const rimraf = promisify(require("rimraf") as (path: string, opts: any, cb: () => any) => void);
+type Rimraf = (path: string, opts: any) => Promise<void>;
+const rimraf: Rimraf = promisify(require("rimraf")) as any;
 
 // other deps
 import * as path from "path";
