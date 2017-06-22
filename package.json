@@ -59,7 +59,7 @@
     "bluebird": "^3.4.0",
     "btoa": "^1.1.2",
     "classnames": "^2.2.5",
-    "cldr-dates-modern": "^31.0.1",
+    "cldr-dates-modern-subset": "^31.0.2",
     "clone": "^1.0.2",
     "colorgram": "^0.1.5",
     "colors": "^1.1.2",

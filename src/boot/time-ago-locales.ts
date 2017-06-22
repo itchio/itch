@@ -11,7 +11,7 @@ for (const locale of locales) {
   total++;
   const name = locale.value.replace(/_/g, "-");
   try {
-    const data = require(`cldr-dates-modern/main/${name}/dateFields.json`);
+    const data = require(`cldr-dates-modern-subset/locales/${name}.json`);
     jta.locale(data);
     numLoaded++;
   } catch (e) {

@@ -1135,9 +1135,9 @@ classnames@2.2.5, classnames@^2.2.3, classnames@^2.2.4, classnames@^2.2.5:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
 
-cldr-dates-modern@^31.0.1:
-  version "31.0.1"
-  resolved "https://registry.yarnpkg.com/cldr-dates-modern/-/cldr-dates-modern-31.0.1.tgz#87eb95a39e07a8bfa6ea9e1c5edfe8c60dbbb4c3"
+cldr-dates-modern-subset@^31.0.2:
+  version "31.0.2"
+  resolved "https://registry.yarnpkg.com/cldr-dates-modern-subset/-/cldr-dates-modern-subset-31.0.2.tgz#554ee6fc71bb3a72997919659c2e5254c19f93cf"
 
 clean-css@^3.1.9:
   version "3.4.27"
