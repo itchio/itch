@@ -44,7 +44,8 @@ export default async function loginFlow (t: IIntegrationTest) {
   t.comment("opening new tab");
   await t.safeClick("#new-tab-icon");
   await t.safeClick("input.browser-address");
-  await client.setValue("input.browser-address", "https://itch.io/login\uE007");
+  await client.setValue("input.browser-address", "https://itch.io/login");
+  await t.safeClick(".meat-tab.visible .go-button");
 
   t.comment("checking that we're redirected to the dashboard");
   await client.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Creator Dashboard", 60 * 1000);
@@ -68,7 +69,8 @@ export default async function loginFlow (t: IIntegrationTest) {
   t.comment("opening new tab");
   await t.safeClick("#new-tab-icon");
   await t.safeClick("input.browser-address");
-  await client.setValue("input.browser-address", "https://itch.io/login\uE007");
+  await client.setValue("input.browser-address", "https://itch.io/login");
+  await t.safeClick(".meat-tab.visible .go-button");
 
   t.comment("checking that we've landed on the login page");
   await client.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Log in", 60 * 1000);

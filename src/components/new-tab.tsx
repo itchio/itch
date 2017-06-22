@@ -7,7 +7,9 @@ import {map} from "underscore";
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
+import Filler from "./basics/filler";
 import Icon from "./basics/icon";
+import Button from "./basics/button";
 import TitleBar from "./title-bar";
 import {IMeatProps} from "./meats/types";
 
@@ -60,10 +62,18 @@ const Title = styled.h2`
   font-size: ${props => props.theme.fontSizes.huge};
 `;
 
+const WebNavContainer = styled.div`
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+`;
+
 const UrlContainer = styled.div`
   position: relative;
-  flex-basis: 100%;
-  margin: 0 40px;
+  flex-grow: 10;
 
   .browser-address {
     ${styles.heavyInput()};
@@ -82,6 +92,8 @@ const UrlContainer = styled.div`
 `;
 
 export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
+  urlField: HTMLInputElement;
+
   constructor () {
     super();
   }
@@ -107,13 +119,28 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
         })}
 
         <Title>{t("new_tab.titles.input")}</Title>
-        <UrlContainer>
-          <input className="browser-address" autoFocus onKeyUp={this.addressKeyUp}
-            placeholder={t("new_tab.titles.browser_placeholder")}/>
-          <span className="icon icon-earth"/>
-        </UrlContainer>
+        <WebNavContainer>
+          <UrlContainer>
+            <input className="browser-address" autoFocus onKeyUp={this.addressKeyUp} ref={this.onUrlField}
+              placeholder={t("new_tab.titles.browser_placeholder")}/>
+            <span className="icon icon-earth"/>
+          </UrlContainer>
+          <Filler/>
+          <Button
+            primary
+            className="go-button"
+            discreet
+            icon="arrow-right"
+            label={t("grid.item.open")}
+            onClick={this.navigate}
+          />
+        </WebNavContainer>
       </NewTabGrid>
     </NewTabContainer>;
+  }
+
+  onUrlField = (urlField: HTMLInputElement) => {
+    this.urlField = urlField;
   }
 
   addressKeyUp = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -122,11 +149,19 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
       if (input.length < 1) {
         return;
       }
-
-      const url = await transformUrl(input);
-      const {tab, evolveTab} = this.props;
-      evolveTab({id: tab, path: `url/${url}`});
+      await this.navigate();
     }
+  }
+
+  navigate = async () => {
+    const {urlField} = this;
+    if (!urlField) {
+      return;
+    }
+
+    const url = await transformUrl(urlField.value);
+    const {tab, evolveTab} = this.props;
+    evolveTab({id: tab, path: `url/${url}`});
   }
 }
 
