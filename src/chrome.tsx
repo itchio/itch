@@ -92,7 +92,11 @@ if (os.platform() === "darwin") {
 }
 
 async function start() {
-  store.dispatch(actions.languageSniffed({lang: navigator.language}));
+  let lang = navigator.language;
+  if (env.name === "test") {
+    lang = "en";
+  }
+  store.dispatch(actions.languageSniffed({lang}));
 
   render(App);
 
