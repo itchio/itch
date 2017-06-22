@@ -16,8 +16,8 @@ let err = (msg: string) => {
 
 if (env.name === "test") {
   err = (msg: string) => {
-    logger.error(msg);
-    logger.error("Bailing out...");
+    console.error(msg);
+    console.error("Bailing out...");
     os.exit(1);
   };
 }
