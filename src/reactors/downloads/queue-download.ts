@@ -8,18 +8,12 @@ import {isEmpty} from "underscore";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({name: "queue-download"});
 
-import {IQueueDownloadOpts} from "../../types";
-
 let orderSeed = 0;
 
 export default function (watcher: Watcher) {
   watcher.on(actions.queueDownload, async (store, action) => {
     const downloadOpts = action.payload;
-    const opts: IQueueDownloadOpts = {
-      ...downloadOpts,
-      name: "download",
-      gameId: downloadOpts.game.id,
-    };
+    const opts = downloadOpts;
 
     const downloadsState = store.getState().downloads;
 
