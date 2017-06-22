@@ -1,6 +1,8 @@
 // tslint:disable:no-console
 
 let watching = false;
+let runConfidenceTests = false;
+let chatty = false;
 
 function exit (exitCode) {
   if (process.env.ITCH_DONT_EXIT === "1") {
@@ -47,9 +49,7 @@ function pad (input: string, minLength: number): string {
 }
 
 function printDurations (input: IDuration[], legend: string) {
-  console.log(chalk.blue(`/~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\`));
-  console.log(chalk.blue(`| ${legend}`));
-  console.log(chalk.blue(`|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|`));
+  console.log(chalk.blue(`${legend}`));
 
   const durations = sortBy(input, "duration").reverse();
   let total = 0;
@@ -61,21 +61,24 @@ function printDurations (input: IDuration[], legend: string) {
     const percent = data.duration * 100 / total;
     let percentColumn = pad(`${percent.toFixed(1)}%`, 8);
     let durationColumn = pad(`${data.duration.toFixed(2)}ms`, 12);
-    let msg = `| ${percentColumn}  ${durationColumn}  "${data.title}"`;
-    if (data.duration < 200) {
+    let msg = `[slow test] ${percentColumn}  ${durationColumn}  "${data.title}"`;
+    if (data.duration < 100) {
       // don't print
-    } else if (data.duration < 1000) {
+    } else if (data.duration < 200) {
+      console.log(chalk.green(msg));
+    } else if (data.duration < 500) {
       console.log(chalk.yellow(msg));
     } else {
       console.log(chalk.red(msg));
     }
   }
-  console.log(chalk.blue(`\\~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/`));
 }
 
 const cwd = process.cwd();
 
 function flush () {
+  process.removeAllListeners("exit");
+
   Object.keys(require.cache).forEach(function (fname) {
     if (fname.indexOf("node_modules") === -1) {
       delete require.cache[fname];
@@ -92,10 +95,10 @@ function flush () {
 }
 
 app.on("ready", async () => {
-  const glob = bluebird.promisify(require("glob"));
+  const glob = require("glob").sync;
   const srcDir = path.resolve(__dirname, "..");
 
-  let testFiles = await glob("**/*[\.-]spec.ts", {cwd: srcDir});
+  let specifiedFiles = [];
 
   const args = process.argv.slice(2);
   let state = 0;
@@ -105,8 +108,8 @@ app.on("ready", async () => {
       continue;
     }
     if (state === 2) {
-      testFiles = [arg.replace(/.*src\//, "")];
-      console.log(`Unit test runner only running ${JSON.stringify(testFiles)}`);
+      specifiedFiles = [arg.replace(/.*src\//, "")];
+      console.log(`Unit test runner only running ${JSON.stringify(specifiedFiles)}`);
       break;
     } else if (state === 1) {
       if (arg === "--test" || arg === "-t") {
@@ -119,13 +122,34 @@ app.on("ready", async () => {
     }
   }
 
-  const invoke = async () => {
-    console.log(chalk.blue(`looking for tests in ${srcDir}`));
+  const tapParser = require("tap-parser");
 
+  const invoke = async () => {
     const tape = require("tape");
     const zopf = require("zopf");
-    const faucet = require("faucet");
-    tape.createStream().pipe(faucet()).pipe(process.stdout);
+    const parser = tapParser(function (results) {
+      // muffin;
+    });
+    parser.on("assert", function (assert) {
+      if (!assert.ok) {
+        console.warn("[failed] " + assert.id + " - " + assert.name);
+        if (assert.diag) {
+          console.warn(assert.diag);
+        }
+      }
+    });
+    tape.createStream().pipe(parser);
+
+    let testFiles = specifiedFiles;
+    if (testFiles.length === 0) {
+      if (chatty) {
+        console.log(chalk.blue(`looking for tests in ${srcDir}`));
+      }  
+      testFiles = glob("**/*[\.-]spec.ts", {cwd: srcDir});
+      if (!runConfidenceTests) {
+        testFiles = testFiles.filter((f) => !/confidence/.test(f));
+      }
+    }
 
     let requireStartedAt: number;
     let testStartedAt: number;
@@ -134,10 +158,8 @@ app.on("ready", async () => {
       tape.onFinish(async () => {
         let finishedAt = Date.now();
 
-        console.log(`\n`);
-
-        printDurations(zopf.testDurations, `spent ${(finishedAt - testStartedAt).toFixed(2)}ms running`);
-        console.log("\n\n");
+        const msg = `finished ${testFiles.length} suites in ${(finishedAt - testStartedAt).toFixed(2)}ms`;
+        printDurations(zopf.testDurations, msg);
 
         const libCoverage = require("istanbul-lib-coverage");
         // tslint:disable-next-line
@@ -163,7 +185,9 @@ app.on("ready", async () => {
       });
     });
 
-    console.log(chalk.blue(`loading ${testFiles.length} test suites`));
+    if (chatty) {
+      console.log(chalk.blue(`loading ${testFiles.length} test suites`));
+    }
 
     requireStartedAt = Date.now();
 
@@ -172,9 +196,13 @@ app.on("ready", async () => {
       const extless = testFile.slice(0, -(ext.length));
       const requirePath = `../${extless}`;
       require(requirePath);
-      process.stdout.write(".");
+      if (chatty) {
+        process.stdout.write(".");
+      }
     }
-    console.log("");
+    if (chatty) {
+      console.log("");
+    }
 
     testStartedAt = Date.now();
     return await p;
@@ -185,12 +213,13 @@ app.on("ready", async () => {
 
   const report = debounce(mutex(async function () {
     flush();
+    console.log("");
     const exitCode = await invoke();
     if (!watching) {
       exit(exitCode);
     }
     await bluebird.delay(250);
-    console.log("Watching for changes...");
+    console.log("watching for changes...");
   }), 25);
 
   if (watching) {
@@ -200,25 +229,9 @@ app.on("ready", async () => {
       persistent: true,
       ignoreInitial: true,
     });
-    watcher.on("change", (data) => {
-      console.log("============");
-      console.log("change, reporting!", data);
-      console.log("============");
-      report();
-    });
-    watcher.on("add", (data) => {
-      console.log("============");
-      console.log("add, reporting!", data);
-      console.log("============");
-      report();
-    });
-    watcher.on("unlink", (data) => {
-      console.log("============");
-      console.log("unlink, reporting!", data);
-      console.log("============");
-      report();
-    });
-    console.log("initial report");
+    watcher.on("change", report);
+    watcher.on("add", report);
+    watcher.on("unlink", report);
     report();
   } else {
     report();
