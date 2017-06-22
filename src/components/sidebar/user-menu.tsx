@@ -67,6 +67,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, v
     {
       icon: "cog",
       label: ["sidebar.preferences"],
+      id: "user-menu-preferences",
       onClick: () => this.props.navigate("preferences"),
     },
     {

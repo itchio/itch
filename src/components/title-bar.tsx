@@ -56,7 +56,7 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps & I18nP
     return <FiltersContainer className="title-bar">
         <DraggableDiv>
           <DraggableDivInner>
-            <TitleDiv>{t.format(label)}</TitleDiv>
+            <TitleDiv className="title-bar-text">{t.format(label)}</TitleDiv>
             <Filler/>
           </DraggableDivInner>
         </DraggableDiv>

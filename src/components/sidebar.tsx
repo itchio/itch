@@ -129,6 +129,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps & I18nProps, IS
             onClick={this.closeAllTabs}
           />
           <IconButton
+            id="new-tab-icon"
             icon="plus"
             hint={t("sidebar.new_tab")}
             onClick={this.newTab}

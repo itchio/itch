@@ -23,7 +23,7 @@ export default async function loginFlow (t: IIntegrationTest) {
     await client.setValue("#login-username", testAccountName);
     await client.setValue("#login-password", testAccountPassword);
     await t.safeClick("#login-button");
-    await client.waitForVisible("#user-menu", 20000);
+    await client.waitForVisible("#user-menu", 20 * 1000);
   };
   await loginWithPassword();
 
@@ -37,6 +37,41 @@ export default async function loginFlow (t: IIntegrationTest) {
       await t.safeClick("#modal-cancel");
     }
   };
+
+  // now kids this is the REAL integration testing you've been talked about
+  t.comment("checking that we're logged in on itch.io too");
+
+  t.comment("opening new tab");
+  await t.safeClick("#new-tab-icon");
+  await t.safeClick("input.browser-address");
+  await client.setValue("input.browser-address", "https://itch.io/login\uE007");
+
+  t.comment("checking that we're redirected to the dashboard");
+  await client.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Creator Dashboard", 20 * 1000);
+
+  t.comment("now clearing cookies");
+  await t.safeClick("#user-menu");
+  await t.safeClick("#user-menu-preferences");
+
+  t.comment("expanding advanced preferences");
+  await client.scroll("#preferences-advanced-section");
+  await t.safeClick("#preferences-advanced-section");
+
+  t.comment("opening clearing browsing data dialog");
+  await client.scroll("#clear-browsing-data-link");
+  await t.safeClick("#clear-browsing-data-link");
+
+  t.comment("clearing cookies");
+  await t.safeClick("#clear-cookies-checkbox");
+  await t.safeClick("#modal-clear-data");
+
+  t.comment("opening new tab");
+  await t.safeClick("#new-tab-icon");
+  await t.safeClick("input.browser-address");
+  await client.setValue("input.browser-address", "https://itch.io/login\uE007");
+
+  t.comment("checking that we've landed on the login page");
+  await client.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Log in", 20 * 1000);
 
   t.comment("doing cancelled logout");
   await logout({forReal: false});

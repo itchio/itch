@@ -406,7 +406,8 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps & I1
         <h2>{t("preferences.install_locations")}</h2>
         {this.installLocationTable()}
 
-        <h2 className="toggle" onClick={(e) => updatePreferences({showAdvanced: !showAdvanced})}>
+        <h2 id="preferences-advanced-section"
+            className="toggle" onClick={(e) => updatePreferences({showAdvanced: !showAdvanced})}>
           <span className={`icon icon-triangle-right turner ${showAdvanced ? "turned" : ""}`}/>
           {" "}
           {t("preferences.advanced")}
@@ -446,7 +447,10 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps & I1
         </span>
       </p>
       <p className="section">
-        <span className="link" onClick={(e) => { e.preventDefault(); clearBrowsingDataRequest({}); }}>
+        <span
+            id="clear-browsing-data-link"
+            className="link"
+            onClick={(e) => { e.preventDefault(); clearBrowsingDataRequest({}); }}>
           {t("preferences.advanced.clear_browsing_data")}
         </span>
       </p>

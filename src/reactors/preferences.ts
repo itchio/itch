@@ -7,20 +7,15 @@ import {camelifyObject} from "../format";
 import partitionForUser from "../util/partition-for-user";
 
 import * as actions from "../actions";
-import {MODAL_RESPONSE} from "../constants/action-types";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({name: "preferences"});
 
 import {shell, session} from "electron";
 
-import {promisedModal} from "./modals";
-
 let saveAtomicInvocations = 0;
 
 import {initialState} from "../reducers/preferences";
-
-import {IClearBrowsingDataParams} from "../components/modal-widgets/clear-browsing-data";
 
 export default function (watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
@@ -52,33 +47,6 @@ export default function (watcher: Watcher) {
     await sf.rename(tmpPath, file);
   });
 
-  watcher.on(actions.clearBrowsingDataRequest, async (store, action) => {
-    const response = await promisedModal(store, {
-      title: ["preferences.advanced.clear_browsing_data"],
-      message: "",
-      widget: "clear-browsing-data",
-      widgetParams: {} as IClearBrowsingDataParams,
-      buttons: [
-        {
-          label: ["prompt.clear_browsing_data.clear"],
-          action: actions.modalResponse({}),
-          actionSource: "widget",
-        },
-        "cancel",
-      ],
-    });
-
-    if (response.type !== MODAL_RESPONSE) {
-      // modal was closed
-      return;
-    }
-
-    store.dispatch(actions.clearBrowsingData({
-      cache: response.payload.cache,
-      cookies: response.payload.cookies,
-    }));
-  });
-
   watcher.on(actions.clearBrowsingData, async (store, action) => {
     const promises: Promise<any>[] = [];
 
@@ -101,6 +69,10 @@ export default function (watcher: Watcher) {
       promises.push(new Promise((resolve, reject) => {
         ourSession.clearStorageData({
           storages: ["cookies"],
+          // for all origins
+          origin: null,
+          // look chromium just clear everything thanks
+          quotas: ["temporary", "persistent", "syncable"],
         }, resolve);
       }));
     }

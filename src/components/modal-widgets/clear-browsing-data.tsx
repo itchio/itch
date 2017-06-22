@@ -68,6 +68,7 @@ export class ClearBrowsingData extends
         <label className={classNames({active: clearCache})}>
           <div className="checkbox">
             <input type="checkbox"
+                id="clear-cache-checkbox"
                 checked={clearCache}
                 onChange={this.toggleCache}/>
               {t("prompt.clear_browsing_data.category.cache")}
@@ -82,6 +83,7 @@ export class ClearBrowsingData extends
         <label className={classNames({active: clearCookies})}>
           <div className="checkbox">
             <input type="checkbox"
+              id="clear-cookies-checkbox"
               checked={clearCookies}
               onChange={this.toggleCookies}/>
                 {t("prompt.clear_browsing_data.category.cookies")}

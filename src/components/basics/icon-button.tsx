@@ -44,6 +44,7 @@ interface IProps {
   icon: string;
   disabled?: boolean;
   className?: string;
+  id?: string;
   hint?: string;
   hintPosition?: "top" | "left" | "right" | "bottom";
 
