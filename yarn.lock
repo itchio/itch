@@ -1812,9 +1812,9 @@ electron-chromedriver@~1.7.0:
     electron-download "^4.1.0"
     extract-zip "^1.6.5"
 
-electron-compile-ftl@6.4.4:
-  version "6.4.4"
-  resolved "https://registry.yarnpkg.com/electron-compile-ftl/-/electron-compile-ftl-6.4.4.tgz#5afad9c7733cb3cebb26b1c941bb023073651065"
+electron-compile-ftl@^6.4.5:
+  version "6.4.5"
+  resolved "https://registry.yarnpkg.com/electron-compile-ftl/-/electron-compile-ftl-6.4.5.tgz#4ff3ec5f8ede567cea4e674170b38925496eb396"
   dependencies:
     "@paulcbetts/mime-types" "^2.1.10"
     "@types/node" "^7.0.12"
@@ -1828,9 +1828,9 @@ electron-compile-ftl@6.4.4:
     spawn-rx "^2.0.3"
     yargs "^4.8.1"
 
-electron-compilers-ftl@^5.9.2:
-  version "5.9.2"
-  resolved "https://registry.yarnpkg.com/electron-compilers-ftl/-/electron-compilers-ftl-5.9.2.tgz#74f4ccf8d0168b3c87eb5db620e762ce806419f4"
+electron-compilers-ftl@^5.9.3:
+  version "5.9.3"
+  resolved "https://registry.yarnpkg.com/electron-compilers-ftl/-/electron-compilers-ftl-5.9.3.tgz#426810b02399f6d685553b6854d88c6b81765208"
   dependencies:
     "@paulcbetts/mime-types" "^2.1.10"
     "@paulcbetts/vueify" "9.4.3"
@@ -2028,6 +2028,10 @@ estraverse@^1.9.1:
 esutils@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.2.tgz#0abf4f1caa5bcb1f7a9d8acc6dea4faaa04bac9b"
+
+events-to-array@^1.0.1:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/events-to-array/-/events-to-array-1.1.2.tgz#2d41f563e1fe400ed4962fe1a4d5c6a7539df7f6"
 
 execa@^0.4.0:
   version "0.4.0"
@@ -2983,7 +2987,7 @@ js-tokens@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.1.tgz#08e9f132484a2c45a30907e9dc4d5567b7f114d7"
 
-js-yaml@~3.7.0:
+js-yaml@^3.2.7, js-yaml@~3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.7.0.tgz#5c967ddd837a9bfdca5f2de84253abe8a1c03b80"
   dependencies:
@@ -4424,7 +4428,7 @@ readable-stream@1.1, readable-stream@~1.1.11, readable-stream@~1.1.9:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-readable-stream@^2.0.0, "readable-stream@^2.0.0 || ^1.1.13", readable-stream@^2.0.2, readable-stream@^2.0.5, readable-stream@^2.1.4, readable-stream@^2.1.5, readable-stream@^2.2.2:
+readable-stream@^2, readable-stream@^2.0.0, "readable-stream@^2.0.0 || ^1.1.13", readable-stream@^2.0.2, readable-stream@^2.0.5, readable-stream@^2.1.4, readable-stream@^2.1.5, readable-stream@^2.2.2:
   version "2.2.9"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.9.tgz#cf78ec6f4a6d1eb43d26488cac97f042e74b7fc8"
   dependencies:
@@ -5206,6 +5210,15 @@ symbol-observable@^1.0.1, symbol-observable@^1.0.2:
 synchronous-promise@^1.0.7:
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/synchronous-promise/-/synchronous-promise-1.0.12.tgz#3421c0ed860a34fe9e46df92831b1270c41e5240"
+
+tap-parser@^5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/tap-parser/-/tap-parser-5.4.0.tgz#6907e89725d7b7fa6ae41ee2c464c3db43188aec"
+  dependencies:
+    events-to-array "^1.0.1"
+    js-yaml "^3.2.7"
+  optionalDependencies:
+    readable-stream "^2"
 
 tap-parser@~0.4.0:
   version "0.4.3"
