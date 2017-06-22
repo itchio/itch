@@ -147,6 +147,10 @@ ${log}
   },
 
   mount: () => {
+    if (env.name === "test") {
+      return;
+    }
+
     const makeHandler = (type: string) => {
       return (e: Error) => {
         if (isNetworkError(e)) {
