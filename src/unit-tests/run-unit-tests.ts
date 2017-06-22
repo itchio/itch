@@ -125,6 +125,8 @@ app.on("ready", async () => {
   const tapParser = require("tap-parser");
 
   const invoke = async () => {
+    // tslint:disable-next-line
+    delete global["__coverage__"];
     const tape = require("tape");
     const zopf = require("zopf");
     const parser = tapParser(function (results) {
