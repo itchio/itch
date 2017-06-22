@@ -17,6 +17,7 @@ async function main () {
     $(await $.yarn('test'));
     $(await $.yarn('integration-tests'));
   }
+  $(await $.yarn('upload-coverage'));
 }
 
 main();

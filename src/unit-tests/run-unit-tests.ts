@@ -109,7 +109,7 @@ app.on("ready", async () => {
   let requireStartedAt: number;
   let testStartedAt: number;
 
-  tape.onFinish((a, b, c) => {
+  tape.onFinish(async (a, b, c) => {
     let finishedAt = Date.now();
 
     console.log(`\n`);
@@ -119,6 +119,30 @@ app.on("ready", async () => {
 
     printDurations(zopf.testDurations, `spent ${(finishedAt - testStartedAt).toFixed(2)}ms running`);
     console.log("\n\n");
+
+    const libCoverage = require("istanbul-lib-coverage");
+    // tslint:disable-next-line
+    let map = libCoverage.createCoverageMap(global["__coverage__"]);
+
+    const libSourceMaps = require("istanbul-lib-source-maps");
+    const sourceMapCache = libSourceMaps.createSourceMapStore();
+
+    map = sourceMapCache.transformCoverage(map).map;
+
+    const libReport = require("istanbul-lib-report");
+    const context = libReport.createContext({dir: "coverage"});
+
+    const reports = require("istanbul-reports");
+
+    const tree = libReport.summarizers.pkg(map);
+
+    // print text report to standard output
+    console.log("\n\n");
+    tree.visit(reports.create("text"), context);
+    console.log("\n\n");
+
+    // print text-lcov report to coverage.lcov file
+    tree.visit(reports.create("lcov"), context);
 
     const harness = tape.getHarness();
     exit(harness._exitCode);

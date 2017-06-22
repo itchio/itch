@@ -1,7 +1,7 @@
 
 // This file is the entry point for the main (browser) process
 
-import {enableLiveReload} from "electron-compile";
+import {enableLiveReload} from "electron-compile-ftl";
 
 import autoUpdater from "./util/auto-updater";
 import {isItchioURL} from "./util/url";
