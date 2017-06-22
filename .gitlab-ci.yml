@@ -31,7 +31,6 @@ test-linux:
     when: always
     paths:
       - screenshots
-      - coverage
 
 test-darwin:
   stage: build
@@ -45,7 +44,6 @@ test-darwin:
     when: always
     paths:
       - screenshots
-      - coverage
 
 test-windows:
   stage: build
@@ -59,7 +57,6 @@ test-windows:
     when: always
     paths:
       - screenshots
-      - coverage
 
 # I18n check
 i18n-check:
