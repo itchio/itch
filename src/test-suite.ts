@@ -53,3 +53,43 @@ export const fixture = {
 export const localizer = {
   format: (x: any[]) => x,
 } as any as ILocalizer;
+
+/** A watcher made for testing reactors */
+import {Watcher} from "./reactors/watcher";
+import {IStore} from "./types";
+import {IAction} from "./constants/action-types";
+import {createStore} from "redux";
+import reducer from "./reducers";
+
+import * as allActions from "./actions";
+export const actions = allActions;
+
+export class TestWatcher extends Watcher {
+  store: IStore;
+  p: Promise<void>;
+
+  constructor () {
+    super();
+    this.store = createStore(reducer, {}) as IStore;
+    const storeDotDispatch = this.store.dispatch;
+    this.store.dispatch = (action: IAction<any>) {
+      storeDotDispatch(action);
+      this.p = this.routeInternal(action);
+    };
+  }
+
+  async dispatch (action: IAction<any>) {
+    this.store.dispatch(action);
+    await this.p;
+    this.p = null;
+  }
+
+  protected async routeInternal (action: IAction<any>) {
+    const reactors = this.reactors[action.type];
+    if (reactors) {
+      for (const reactor of reactors) {
+        await reactor(this.store, action);
+      }
+    }
+  }
+}
