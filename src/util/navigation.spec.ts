@@ -33,14 +33,15 @@ suite(__filename, s => {
   });
 
   s.case("transformUrl", async t => {
-    t.same(await navigation.transformUrl("https://itch.io", name => bluebird.resolve("")), "https://itch.io");
-    t.same(await navigation.transformUrl("http://localhost.com:8080/randomizer", name => bluebird.resolve("")),
+    t.same(await navigation.transformUrl("about:blank"), "about:blank");
+    t.same(await navigation.transformUrl("https://itch.io"), "https://itch.io");
+    t.same(await navigation.transformUrl("itch.io"), "http://itch.io");
+    t.same(await navigation.transformUrl("http://localhost.com:8080/randomizer"),
       "http://localhost.com:8080/randomizer");
-    t.same(await navigation.transformUrl("kermit plushie", name => {
-      const e = new Error() as NodeJS.ErrnoException;
-      e.code = "ENOTFOUND";
-      return bluebird.reject(e);
-    }),
+    t.same(await navigation.transformUrl("kermit plushie"),
       "https://duckduckgo.com/?q=kermit%20plushie&kae=d");
+    t.same(await navigation.transformUrl("?kermit"),
+      "https://duckduckgo.com/?q=kermit&kae=d");
+    t.same(await navigation.transformUrl(""), "https://duckduckgo.com/?q=&kae=d");
   });
 });

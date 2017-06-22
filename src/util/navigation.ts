@@ -1,7 +1,5 @@
 
 import urlParser from "./url";
-import {promisify} from "bluebird";
-import * as dns from "dns";
 import * as querystring from "querystring";
 
 import staticTabData from "../constants/static-tab-data";
@@ -17,39 +15,37 @@ import {
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 
-const defaultLookup = promisify(dns.lookup);
-
-export async function transformUrl(original: string, lookup = defaultLookup): Promise<string> {
+export async function transformUrl(original: string): Promise<string> {
   if (/^about:/.test(original)) {
     return original;
   }
 
   let req = original;
-  let parsed = urlParser.parse(req);
-  const searchUrl = () => {
-    const q = original;
+  const searchUrl = (q: string) => {
     return "https://duckduckgo.com/?" + querystring.stringify({ q, kae: "d" });
   };
 
+  // special search URLs
+  if (/^\?/.test(original)) {
+    return searchUrl(original.substr(1));
+  }
+
+  // spaces and no dots ? smells like a search request
+  if (original.indexOf(" ") !== -1 && original.indexOf(".") === -1) {
+    return searchUrl(original);
+  }
+
+  // add http: if needed
+  let parsed = urlParser.parse(req);
   if (!parsed.hostname || !parsed.protocol) {
     req = "http://" + original;
     parsed = urlParser.parse(req);
     if (!parsed.hostname) {
-      return searchUrl();
+      return searchUrl(original);
     }
   }
 
-  try {
-    await lookup(parsed.hostname);
-    return req;
-  } catch (err) {
-    if (err.code === "ENOTFOUND") {
-      // that's okay
-    } else {
-      console.log(`dns error: ${err.code} / ${err.message}`); // tslint:disable-line:no-console
-    }
-    return searchUrl();
-  }
+  return req;
 }
 
 export function pathToId(path: string): string {
