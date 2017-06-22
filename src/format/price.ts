@@ -15,4 +15,4 @@ export function formatPrice(currency: string, value: number) {
   } else {
     return "???";
   }
-}
+};
