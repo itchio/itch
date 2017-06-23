@@ -8,6 +8,7 @@ import DownloadKey, { IDownloadKeySummary } from "../db/models/download-key";
 import Cave, { ICaveSummary } from "../db/models/cave";
 
 export * from "./tasks";
+export * from "../tasks/errors";
 import * as Tasks from "./tasks";
 
 export * from "./api";
