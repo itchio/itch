@@ -8,50 +8,31 @@ import { createSelector } from "reselect";
 import * as clone from "clone";
 import localizer from "../localizer";
 
+import { IRuntime } from "../os/runtime";
+
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-const macos = process.platform === "darwin";
+import {
+  IStore,
+  IAppState,
+  ISessionCredentialsState,
+  ISystemState,
+} from "../types";
 
-import { IStore, IAppState, II18nState } from "../types";
-
-type IMenuItem = Electron.MenuItemOptions;
+type IMenuItem = Electron.MenuItemConstructorOptions;
 type IMenuTemplate = IMenuItem[];
 
 let refreshSelector: (state: IAppState) => void;
-const makeRefreshSelector = (store: IStore) =>
-  createSelector(
-    (state: IAppState) => state.system,
-    (state: IAppState) => state.session.credentials,
-    (system, credentials) => {
-      setImmediate(() =>
-        store.dispatch(actions.refreshMenu({ system, credentials })),
-      );
-    },
-  );
 
 let applySelector: (state: IAppState) => void;
-const makeApplySelector = (store: IStore) =>
-  createSelector(
-    (state: IAppState) => state.ui.menu.template,
-    (state: IAppState) => state.i18n,
-    (template, i18n) => {
-      setImmediate(() => {
-        // electron gotcha: buildFromTemplate mutates its argument
-        const menu = Menu.buildFromTemplate(
-          clone(fleshOutTemplate(template, i18n, store)),
-        );
-        Menu.setApplicationMenu(menu);
-      });
-    },
-  );
 
 interface IMenuItemPayload {
   role?: string;
   label?: string;
 }
 
-function convertMenuAction(payload: IMenuItemPayload) {
+function convertMenuAction(payload: IMenuItemPayload, runtime: IRuntime) {
   const { role, label } = payload;
 
   switch (role) {
@@ -64,7 +45,7 @@ function convertMenuAction(payload: IMenuItemPayload) {
     case "sidebar.new_tab":
       return actions.newTab({});
     case "menu.file.close_tab":
-      return macos
+      return runtime.platform === "osx"
         ? actions.closeTabOrAuxWindow({})
         : actions.closeCurrentTab({});
     case "menu.file.close_all_tabs":
@@ -79,9 +60,6 @@ function convertMenuAction(payload: IMenuItemPayload) {
       return actions.navigate("downloads");
     case "menu.account.change_user":
       return actions.changeUser({});
-    // TODO: change to proper about tab/window
-    case "menu.help.about":
-      return actions.openUrl({ url: urls.appHomepage });
     case "menu.help.view_terms":
       return actions.openUrl({ url: urls.termsOfService });
     case "menu.help.view_license":
@@ -99,11 +77,12 @@ function convertMenuAction(payload: IMenuItemPayload) {
   }
 }
 
-function fleshOutTemplate(
+export function fleshOutTemplate(
   template: IMenuTemplate,
-  i18n: II18nState,
   store: IStore,
+  runtime: IRuntime,
 ) {
+  const { i18n } = store.getState();
   const t = localizer.getT(i18n.strings, i18n.lang);
 
   const visitNode = (input: IMenuItem) => {
@@ -115,17 +94,12 @@ function fleshOutTemplate(
     const node = clone(input);
 
     node.label = t(label);
-    const menuAction = convertMenuAction({ label, role });
-    if (enabled && menuAction) {
+    if (enabled) {
       node.click = e => {
-        store.dispatch(menuAction);
-      };
-    }
-    if (label === "crash.test") {
-      node.click = function() {
-        setTimeout(function() {
-          throw new Error("crash test!");
-        }, 500);
+        const menuAction = convertMenuAction({ label, role }, runtime);
+        if (menuAction) {
+          store.dispatch(menuAction);
+        }
       };
     }
 
@@ -139,17 +113,252 @@ function fleshOutTemplate(
   return map(template, visitNode);
 }
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, runtime: IRuntime) {
   watcher.onAll(async (store, action) => {
-    const state = store.getState();
+    const currentState = store.getState();
+
     if (!refreshSelector) {
-      refreshSelector = makeRefreshSelector(store);
+      refreshSelector = createSelector(
+        (state: IAppState) => state.system,
+        (state: IAppState) => state.session.credentials,
+        (system, credentials) => {
+          setImmediate(() => {
+            const template = computeMenuTemplate(system, credentials, runtime);
+            store.dispatch(actions.menuChanged({ template }));
+          });
+        },
+      );
     }
-    refreshSelector(state);
+    refreshSelector(currentState);
 
     if (!applySelector) {
-      applySelector = makeApplySelector(store);
+      applySelector = createSelector(
+        (state: IAppState) => state.ui.menu.template,
+        (state: IAppState) => state.i18n,
+        (template, i18n) => {
+          setImmediate(() => {
+            // electron gotcha: buildFromTemplate mutates its argument
+            const fleshed = fleshOutTemplate(template, store, runtime);
+            const menu = Menu.buildFromTemplate(clone(fleshed));
+            Menu.setApplicationMenu(menu);
+          });
+        },
+      );
     }
-    applySelector(state);
+    applySelector(currentState);
   });
+}
+
+function computeMenuTemplate(
+  system: ISystemState,
+  credentials: ISessionCredentialsState,
+  runtime: IRuntime,
+) {
+  const menus = {
+    mainMac: {
+      // no need for a label, it'll always be app name
+      submenu: [
+        {
+          role: "about",
+        },
+        {
+          type: "separator",
+        },
+        {
+          label: "menu.file.preferences",
+          accelerator: "CmdOrCtrl+,",
+        },
+        {
+          type: "separator",
+        },
+        {
+          role: "hide",
+        },
+        {
+          role: "hideothers",
+        },
+        {
+          role: "unhide",
+        },
+        {
+          type: "separator",
+        },
+        {
+          label: "menu.file.quit",
+          accelerator: "CmdOrCtrl+Q",
+        },
+      ],
+    } as IMenuItem,
+
+    file: {
+      label: "menu.file.file",
+      submenu: [
+        {
+          label: "sidebar.new_tab",
+          accelerator: "CmdOrCtrl+T",
+        },
+        {
+          type: "separator",
+        },
+        {
+          label: "menu.file.preferences",
+          accelerator: "CmdOrCtrl+,",
+        },
+        {
+          type: "separator",
+        },
+        {
+          label: "menu.file.close_tab",
+          accelerator: "CmdOrCtrl+W",
+        },
+        {
+          label: "menu.file.close_all_tabs",
+          accelerator: "CmdOrCtrl+Shift+W",
+        },
+        {
+          label: "menu.file.close_window",
+          accelerator: system.macos ? "Cmd+Alt+W" : "Alt+F4",
+        },
+        {
+          label: "menu.file.quit",
+          accelerator: "CmdOrCtrl+Q",
+        },
+      ],
+    } as IMenuItem,
+
+    fileMac: {
+      label: "menu.file.file",
+      submenu: [
+        {
+          label: "sidebar.new_tab",
+          accelerator: "CmdOrCtrl+T",
+        },
+        {
+          type: "separator",
+        },
+        {
+          label: "menu.file.close_tab",
+          accelerator: "CmdOrCtrl+W",
+        },
+        {
+          label: "menu.file.close_all_tabs",
+          accelerator: "CmdOrCtrl+Shift+W",
+        },
+        {
+          label: "menu.file.close_window",
+          accelerator: system.macos ? "Cmd+Alt+W" : "Alt+F4",
+        },
+      ],
+    } as IMenuItem,
+
+    edit: {
+      label: "menu.edit.edit",
+      visible: false,
+      submenu: [
+        {
+          label: "menu.edit.cut",
+          accelerator: "CmdOrCtrl+X",
+          role: "cut",
+        },
+        {
+          label: "menu.edit.copy",
+          accelerator: "CmdOrCtrl+C",
+          role: "copy",
+        },
+        {
+          label: "menu.edit.paste",
+          accelerator: "CmdOrCtrl+V",
+          role: "paste",
+        },
+        {
+          label: "menu.edit.select_all",
+          accelerator: "CmdOrCtrl+A",
+          role: "selectall",
+        },
+      ],
+    } as IMenuItem,
+
+    view: {
+      label: "menu.view.view",
+      submenu: [
+        {
+          label: "menu.view.downloads",
+          accelerator: "CmdOrCtrl+J",
+        },
+      ],
+    } as IMenuItem,
+
+    accountLoggedOut: {
+      label: "menu.account.account",
+      submenu: [
+        {
+          label: "menu.account.not_logged_in",
+          enabled: false,
+        },
+      ],
+    } as IMenuItem,
+
+    account: {
+      label: "menu.account.account",
+      submenu: [
+        {
+          label: "menu.account.change_user",
+        },
+      ],
+    } as IMenuItem,
+
+    help: {
+      label: "menu.help.help",
+      role: "help",
+      submenu: [
+        {
+          label: "menu.help.view_terms",
+        },
+        {
+          label: "menu.help.view_license",
+        },
+        {
+          label: `Version ${system.appVersion}`,
+          enabled: false,
+        },
+        {
+          label: "menu.help.check_for_update",
+        },
+        {
+          type: "separator",
+        },
+        {
+          label: "menu.help.report_issue",
+        },
+        {
+          label: "menu.help.search_issue",
+        },
+        {
+          type: "separator",
+        },
+        {
+          label: "menu.help.release_notes",
+        },
+      ],
+    } as IMenuItem,
+  };
+
+  const template: IMenuItem[] = [];
+  if (runtime.platform === "osx") {
+    template.push(menus.mainMac);
+    template.push(menus.fileMac);
+  } else {
+    template.push(menus.file);
+  }
+  template.push(menus.edit);
+  template.push(menus.view);
+  if (credentials.key) {
+    template.push(menus.account);
+  } else {
+    template.push(menus.accountLoggedOut);
+  }
+
+  template.push(menus.help);
+
+  return template;
 }

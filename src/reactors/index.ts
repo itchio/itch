@@ -32,6 +32,9 @@ import itchInternal from "./itch-internal";
 import tasks from "./tasks";
 import downloads from "./downloads";
 
+import { currentRuntime } from "../os/runtime";
+const runtime = currentRuntime();
+
 export default function getWatcher(db: DB) {
   const watcher = new Watcher();
 
@@ -41,7 +44,7 @@ export default function getWatcher(db: DB) {
   mainWindow(watcher);
   locales(watcher);
   tray(watcher);
-  menu(watcher);
+  menu(watcher, runtime);
   installLocations(watcher);
   selfUpdate(watcher);
   setup(watcher);

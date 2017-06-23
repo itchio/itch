@@ -1,4 +1,5 @@
 import { Action } from "redux-actions";
+import "electron";
 
 import * as Types from "../types";
 import { IProgressInfo } from "../types";
@@ -414,10 +415,9 @@ export interface IUnlockTabPayload {
 }
 
 /* Application menu */
-export const REFRESH_MENU = "REFRESH_MENU";
-export interface IRefreshMenuPayload {
-  system: Types.ISystemState;
-  credentials: Types.ISessionCredentialsState;
+export const MENU_CHANGED = "MENU_CHANGED";
+export interface IMenuChangedPayload {
+  template: Electron.MenuItemConstructorOptions[];
 }
 
 /** Buh-bye */

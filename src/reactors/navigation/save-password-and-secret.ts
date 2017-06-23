@@ -6,9 +6,9 @@ import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "save-password-and-secret" });
 
 import * as querystring from "querystring";
-import db from "../../db";
+import { DB } from "../../db";
 
-export async function doSave(path: string) {
+export async function doSave(path: string, db: DB) {
   const prefix = pathPrefix(path);
   if (prefix !== "games") {
     return;
@@ -36,8 +36,8 @@ export async function doSave(path: string) {
   }
 }
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.evolveTab, async (store, action) => {
-    await doSave(action.payload.path);
+    await doSave(action.payload.path, db);
   });
 }

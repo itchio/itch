@@ -1,9 +1,9 @@
-import * as os from "../../os";
+import { ItchPlatform, itchPlatform, isLinux64, isWin64 } from ".";
 
 export type ItchRuntimeProp = "pOsx" | "pWindows" | "pLinux" | "";
 
 export interface IRuntime {
-  platform: os.ItchPlatform;
+  platform: ItchPlatform;
   is64: boolean;
 }
 
@@ -29,7 +29,7 @@ let cachedRuntime: IRuntime;
 export function currentRuntime(): IRuntime {
   if (!cachedRuntime) {
     cachedRuntime = {
-      platform: os.itchPlatform(),
+      platform: itchPlatform(),
       is64: is64(),
     };
   }
@@ -40,9 +40,9 @@ export function currentRuntime(): IRuntime {
 function is64(): boolean {
   switch (process.platform) {
     case "linux":
-      return os.isLinux64();
+      return isLinux64();
     case "win32": // yeah win32 can be 64, don't @ me
-      return os.isWin64();
+      return isWin64();
     default:
       // we don't ship 32-bit for macOS, so that's an easy one.
       return true;

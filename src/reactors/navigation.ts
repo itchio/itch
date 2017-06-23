@@ -80,7 +80,6 @@ export default function(watcher: Watcher) {
   watcher.on(actions.evolveTab, async (store, action) => {
     const { id, path, extras } = action.payload;
 
-    // TODO: is this something fetchers should take care of?
     store.dispatch(
       actions.tabEvolved({
         id,

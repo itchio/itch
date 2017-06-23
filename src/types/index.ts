@@ -1002,9 +1002,7 @@ export interface II18nState {
 }
 
 export interface IUIMenuState {
-  // TODO: type this, one day, maybe.
-  // maybe electron typings has something for us?
-  template: any;
+  template: Electron.MenuItemConstructorOptions[];
 }
 
 export interface IUIMainWindowState {

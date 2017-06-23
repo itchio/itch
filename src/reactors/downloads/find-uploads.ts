@@ -17,7 +17,7 @@ import {
   runtimeProp,
   runtimeString,
   currentRuntime,
-} from "./runtime";
+} from "../../os/runtime";
 
 export interface IFindUploadOpts {
   game: Game;

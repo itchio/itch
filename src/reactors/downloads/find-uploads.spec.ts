@@ -1,7 +1,7 @@
 import suite from "../../test-suite";
 
 import { narrowDownUploads } from "./find-uploads";
-import { IRuntime } from "./runtime";
+import { IRuntime } from "../../os/runtime";
 
 import Game from "../../db/models/game";
 import { IUploadRecord } from "../../types";
