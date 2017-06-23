@@ -1,8 +1,6 @@
 import suite from "../test-suite";
 import * as navigation from "./navigation";
 
-import * as bluebird from "bluebird";
-
 suite(__filename, s => {
   s.case("paths", t => {
     let path = "games/3";
