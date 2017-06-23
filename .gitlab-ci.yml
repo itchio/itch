@@ -3,7 +3,9 @@ cache:
   # per-job caching (per-branch would be wasteful)
   key: "$CI_JOB_NAME"
   paths:
-    - node_modules
+    - node_modules/sqlite3
+    - node_modules/shoom
+    - node_modules/electron
 
 stages:
   - build # tsc, node-sass etc.
