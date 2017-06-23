@@ -18,4 +18,4 @@ We ship portable archives of itch at <https://github.com/itchio/itch/releases>
 which you should be able to unpack and run without much trouble, provided
 you have the few X and gtk libraries required.
 
-Alternatively, you can always follow the [Getting started](hacking/getting-started.md) guide to run it as if in dev.
+Alternatively, you can always follow the [Getting started](developing/getting-started.md) guide to run it as if in dev.

@@ -28,4 +28,4 @@ The app detects this and lets you send feedback to our [compatibility watchlist]
 
 It might be an app bug, a game bug, or a problem with your system, but regardless,
 we take a look at all reports. In fact, testing that games run well using the app
-is a great way of [helping us](../hacking/help.md)!
+is a great way of [helping us](../developing/help.md)!
