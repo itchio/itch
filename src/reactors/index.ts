@@ -1,4 +1,5 @@
 import { Watcher } from "./watcher";
+import { DB } from "../db";
 
 import fetchers from "./fetchers";
 import preboot from "./preboot";
@@ -30,38 +31,39 @@ import itchInternal from "./itch-internal";
 import tasks from "./tasks";
 import downloads from "./downloads";
 
-const watcher = new Watcher();
+export default function getWatcher(db: DB) {
+  const watcher = new Watcher();
 
-fetchers(watcher);
-preboot(watcher);
-preferences(watcher);
-mainWindow(watcher);
-locales(watcher);
-tray(watcher);
-menu(watcher);
-installLocations(watcher);
-selfUpdate(watcher);
-setup(watcher);
-tabs(watcher);
-triggers(watcher);
-modals(watcher);
-openAtLogin(watcher);
-proxy(watcher);
-login(watcher);
-querier(watcher);
-dialogs(watcher);
-i18n(watcher);
-contextMenu(watcher);
-rememberedSessions(watcher);
-session(watcher);
-navigation(watcher);
-commons(watcher);
-purchases(watcher);
-url(watcher);
-itchInternal(watcher);
-tasks(watcher);
-downloads(watcher);
+  fetchers(watcher);
+  preboot(watcher);
+  preferences(watcher);
+  mainWindow(watcher);
+  locales(watcher);
+  tray(watcher);
+  menu(watcher);
+  installLocations(watcher);
+  selfUpdate(watcher);
+  setup(watcher);
+  tabs(watcher);
+  triggers(watcher);
+  modals(watcher);
+  openAtLogin(watcher);
+  proxy(watcher);
+  login(watcher);
+  querier(watcher);
+  dialogs(watcher);
+  i18n(watcher);
+  contextMenu(watcher);
+  rememberedSessions(watcher);
+  session(watcher);
+  navigation(watcher);
+  commons(watcher);
+  purchases(watcher);
+  url(watcher);
+  itchInternal(watcher);
+  tasks(watcher, db);
+  downloads(watcher);
 
-watcher.validate();
-
-export default watcher;
+  watcher.validate();
+  return watcher;
+}

@@ -1,8 +1,8 @@
-import suite from "../../test-suite";
-import * as proxyquire from "proxyquire";
+import suite, { loadDB } from "../../test-suite";
 
-import _getGameCredentials, * as ggcModule from "./get-game-credentials";
+import getGameCredentials, { getGameCredentialsForId } from "./get-game-credentials";
 import { DB } from "../../db";
+import Context from "../../context";
 
 import { IStore, IAppState } from "../../types";
 
@@ -18,25 +18,16 @@ const store = ({
 
 const db = new DB();
 
-const proxyquired = proxyquire("./get-game-credentials", {
-  "../../db": {
-    __esModule: true,
-    default: db,
-  },
-  "@global": true,
-  "@noCallThru": true,
-});
-const getGameCredentials = proxyquired.default as typeof _getGameCredentials;
-const getGameCredentialsForId = proxyquired.getGameCredentialsForId as typeof ggcModule.getGameCredentialsForId;
-
 suite(__filename, s => {
   s.case("getGameCredentials", async t => {
-    await db.load(store, ":memory:");
+    await loadDB(db, store);
+    const ctx = new Context(store, db);
+
     const game: any = {
       id: 728,
     };
     t.same(
-      await getGameCredentials(store, game),
+      await getGameCredentials(ctx, game),
       null,
       "no credentials when logged out",
     );
@@ -71,7 +62,7 @@ suite(__filename, s => {
     game.inPressSystem = true;
 
     t.same(
-      await getGameCredentials(store, game),
+      await getGameCredentials(ctx, game),
       {
         apiKey: credentials19.key,
         downloadKey: null,
@@ -82,7 +73,7 @@ suite(__filename, s => {
     credentials19.me.pressUser = false;
 
     t.same(
-      await getGameCredentials(store, game),
+      await getGameCredentials(ctx, game),
       {
         apiKey: credentials19.key,
         downloadKey: null,
@@ -94,7 +85,7 @@ suite(__filename, s => {
     game.inPressSystem = false;
 
     t.same(
-      await getGameCredentials(store, game),
+      await getGameCredentials(ctx, game),
       {
         apiKey: credentials19.key,
         downloadKey: null,
@@ -119,7 +110,7 @@ suite(__filename, s => {
     );
 
     t.same(
-      await getGameCredentials(store, game),
+      await getGameCredentials(ctx, game),
       {
         apiKey: credentials19.key,
         downloadKey: dk190,
@@ -130,7 +121,7 @@ suite(__filename, s => {
     state.session.credentials = credentials75;
 
     t.same(
-      await getGameCredentials(store, game),
+      await getGameCredentials(ctx, game),
       {
         apiKey: credentials75.key,
         downloadKey: dk750,
@@ -145,7 +136,7 @@ suite(__filename, s => {
     );
 
     t.same(
-      await getGameCredentials(store, game),
+      await getGameCredentials(ctx, game),
       {
         apiKey: credentials19.key,
         downloadKey: dk190,
@@ -156,7 +147,7 @@ suite(__filename, s => {
     delete state.rememberedSessions[credentials19.me.id];
 
     t.same(
-      await getGameCredentials(store, game),
+      await getGameCredentials(ctx, game),
       {
         apiKey: credentials75.key,
         downloadKey: null,
@@ -165,7 +156,7 @@ suite(__filename, s => {
     );
 
     t.same(
-      await getGameCredentialsForId(store, game.id),
+      await getGameCredentialsForId(ctx, game.id),
       {
         apiKey: credentials75.key,
         downloadKey: null,

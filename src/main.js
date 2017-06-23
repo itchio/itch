@@ -7,7 +7,7 @@ if (env.name === "test") {
 
 if (env.name === "development") {
   global.require = require;
-  setInterval(function () {}, 400);
+  setInterval(function () { }, 400);
 
   global.wait = function (p) {
     p
@@ -21,7 +21,7 @@ require("./boot/sourcemaps");
 require("./boot/bluebird");
 require("./boot/fs");
 
-function main () {
+function main() {
   for (const arg of process.argv) {
     if (arg === "--run-unit-tests") {
       require("./unit-tests/run-unit-tests");

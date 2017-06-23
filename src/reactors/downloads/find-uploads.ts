@@ -36,6 +36,7 @@ export interface IFindUploadResult {
   hadWrongArch: boolean;
 }
 
+// TODO: use context here
 export default async function findUploads(
   out: EventEmitter,
   opts: IFindUploadOpts,

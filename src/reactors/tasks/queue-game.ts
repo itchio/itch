@@ -3,7 +3,8 @@ import { EventEmitter } from "events";
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import db from "../../db";
+import Context from "../../context";
+import { DB } from "../../db";
 
 import makeUploadButton from "../make-upload-button";
 
@@ -20,7 +21,7 @@ import getGameCredentials from "../downloads/get-game-credentials";
 
 import { map } from "underscore";
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueGame, async (store, action) => {
     const { game } = action.payload;
 
@@ -37,7 +38,8 @@ export default function(watcher: Watcher) {
 
     const out = new EventEmitter();
 
-    const gameCredentials = await getGameCredentials(store, game);
+    const ctx = new Context(store, db);
+    const gameCredentials = await getGameCredentials(ctx, game);
     if (!gameCredentials) {
       logger.error(
         `No game credentials for ${game.title} (#${game.id}), bailing out`,

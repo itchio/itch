@@ -12,8 +12,9 @@ import {
 import { electronEnhancer } from "ftl-redux-electron-store";
 
 import route from "../reactors/route";
-import watcher from "../reactors";
+import getWatcher from "../reactors";
 import reducer from "../reducers";
+import db from "../db";
 
 import { IStore } from "../types";
 
@@ -56,6 +57,8 @@ if (beChatty) {
 
   middleware.push(logger);
 }
+
+const watcher = getWatcher(db);
 
 const enhancer = compose(
   electronEnhancer({

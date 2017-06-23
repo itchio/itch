@@ -1,32 +1,32 @@
-import db from "../../db";
+import { IGameCredentials } from "../../types";
 import Game from "../../db/models/game";
 import DownloadKey from "../../db/models/download-key";
-import { IStore, IGameCredentials } from "../../types";
+import Context from "../../context";
 
 import { filter, findWhere, first } from "underscore";
 
 // TODO: handle passwords & secrets as well.
 
 export default async function getGameCredentials(
-  store: IStore,
+  ctx: Context,
   game: Game,
 ): Promise<IGameCredentials> {
-  return await getGameCredentialsInternal(store, game.id, game.inPressSystem);
+  return await getGameCredentialsInternal(ctx, game.id, game.inPressSystem);
 }
 
 export async function getGameCredentialsForId(
-  store: IStore,
+  ctx,
   gameId: number,
 ): Promise<IGameCredentials> {
-  return await getGameCredentialsInternal(store, gameId, false);
+  return await getGameCredentialsInternal(ctx, gameId, false);
 }
 
 async function getGameCredentialsInternal(
-  store: IStore,
+  ctx: Context,
   gameId: number,
   inPressSystem: boolean,
 ): Promise<IGameCredentials> {
-  const state = store.getState();
+  const state = ctx.store.getState();
 
   const currentUserCreds = state.session.credentials;
   if (!currentUserCreds || !currentUserCreds.me) {
@@ -43,7 +43,7 @@ async function getGameCredentialsInternal(
   }
 
   // fish for a download key
-  const allDownloadKeys = await db.downloadKeys.find({
+  const allDownloadKeys = await ctx.db.downloadKeys.find({
     gameId,
   });
 
