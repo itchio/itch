@@ -100,3 +100,16 @@ export class TestWatcher extends Watcher {
     }
   }
 }
+
+import { DB } from "./db";
+
+let oldDB: DB;
+export async function loadDB(db: DB, store: IStore) {
+  if (oldDB) {
+    await oldDB.conn.close();
+    oldDB = null;
+  }
+
+  await db.load(store, ":memory:");
+  oldDB = db;
+}
