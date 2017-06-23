@@ -235,39 +235,10 @@ css blocks.
 
 ## Testing
 
-### Unit tests
+We check the quality of the app's code by two kinds of tests:
 
-All unit tests are run directly within electron, never vanilla node.js.
+  * [Unit Tests](unit-tests.md), which test the code
+  * [Integration Tests](integration-tests.md), which test interactions
 
-Run `npm test` to run unit tests once. Those should be pretty fast.
-The output of unit tests is minimal, it should only become noisy when some
-tests fail. The inspiration comes from [tap-pessimist](https://github.com/clux/tap-pessimist).
-
-Run `npm test -- --watch` to re-use the same electron instance to run
-tests as soon as a source file is changed. If you're running Visual Studio code,
-the `test` task does exactly that.
-
-The unit tests for `a/module.ts` live in `a/module.spec.ts`. This allows
-one to switch quickly between a file and its test, for example using the
-[Toggle Spec plug-in for Visual Studio](https://marketplace.visualstudio.com/items?itemName=simplysh.toggle-spec).
-
-The test harness we use is a spruced-up version of [substack/tape][], named
-[zopf][]. It's basically the same except it integrates with sinon (for mocks/stubs/etc.)
-and groks async tests/cases.
-
-[substack/tape]: https://github.com/substack/tape
-[zopf]: https://github.com/itchio/zopf
-
-### Coverage
-
-Running unit tests collects coverage data in the `coverage/` directory.
-
-Using an lcov-compatible tool, like the [Coverage Gutters for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters)
-allows you to see coverage data directly in your text editor.
-
-The Continuous Integration servers also collect coverage data, then upload it
-to [our codecov page](https://codecov.io/gh/itchio/itch).
-
-### Integration tests
-
-Integration tests https://www.npmjs.com/package/spectron
+Check out the pages linked above to learn more about what their purpose
+is, when and how they're run, and how they're written.
