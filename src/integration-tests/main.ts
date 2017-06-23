@@ -276,7 +276,17 @@ import { execSync } from "child_process";
 
 function kill() {
   if (process.platform === "darwin") {
-    execSync("killall Electron");
+    try {
+      execSync("killall Electron");
+    } catch (e) {
+      if (/No matching processes/.test(e.stack)) {
+        // tslint:disable-next-line
+        console.log("Didn't need to kill app!");
+      } else {
+        // tslint:disable-next-line
+        console.log(`While killing app: ${e.stack}`);
+      }
+    }
   } else {
     // tslint:disable-next-line
     console.log(`Not killing app on platform '${process.platform}'`);
