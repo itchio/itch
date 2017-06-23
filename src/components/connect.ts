@@ -1,17 +1,16 @@
+import { createSelector } from "reselect";
 
-import {createSelector} from "reselect";
+import { connect as reduxConnect } from "react-redux";
+import { ILocalizer, getT } from "../localizer";
 
-import {connect as reduxConnect} from "react-redux";
-import {ILocalizer, getT} from "../localizer";
-
-import {IAppState} from "../types";
-import {IDispatch} from "../constants/action-types";
+import { IAppState } from "../types";
+import { IDispatch } from "../constants/action-types";
 
 const i18nPropsSelector = createSelector(
   (state: IAppState) => state.i18n,
-  (i18n) => {
-    const {lang, strings} = i18n;
-    return {t: getT(strings, lang)};
+  i18n => {
+    const { lang, strings } = i18n;
+    return { t: getT(strings, lang) };
   },
 );
 
@@ -34,16 +33,19 @@ interface IConnectOpts {
 
 const checkSelectors = process.env.ITCH_RESELECT_EVERYTHING === "1";
 
-export function connect <TProps> (
-    component: React.ComponentClass<any>,
-    opts: IConnectOpts = {}): React.ComponentClass<TProps> {
-
-  const augmentedMapStateToProps = (initialState: IAppState, initialProps: any) => {
+export function connect<TProps>(
+  component: React.ComponentClass<any>,
+  opts: IConnectOpts = {},
+): React.ComponentClass<TProps> {
+  const augmentedMapStateToProps = (
+    initialState: IAppState,
+    initialProps: any,
+  ) => {
     const augment = createSelector(
       (state: IAppState, base: any) => i18nPropsSelector(state),
       (state: IAppState, base: any) => base,
       (i18nProps, base) => {
-        return {...base, ...i18nProps};
+        return { ...base, ...i18nProps };
       },
     );
 
@@ -76,9 +78,11 @@ export function connect <TProps> (
       }
     } else {
       if (typeof base === "function") {
-        return (state: IAppState, props: any) => augment(state, base(state, props));
+        return (state: IAppState, props: any) =>
+          augment(state, base(state, props));
       } else {
-        return (state: IAppState, props: any) => augment(state, opts.state(state, props));
+        return (state: IAppState, props: any) =>
+          augment(state, opts.state(state, props));
       }
     }
   };

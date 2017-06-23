@@ -1,33 +1,34 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "download-ended"});
+const logger = rootLogger.child({ name: "download-ended" });
 
-import {omit} from "underscore";
+import { omit } from "underscore";
 
 import localizer from "../../localizer";
 
 import downloadReasonToInstallReason from "./download-reason-to-install-reason";
 
-import {IStore, IDownloadItem} from "../../types";
+import { IStore, IDownloadItem } from "../../types";
 
 const ITCH_INCREMENTAL_ONLY = process.env.ITCH_INCREMENTAL_ONLY === "1";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
-    const {item} = action.payload;
-    let {err} = action.payload;
+    const { item } = action.payload;
+    let { err } = action.payload;
 
-    const {reason, incremental} = item;
+    const { reason, incremental } = item;
     if (err) {
       if (incremental) {
-        logger.warn("Incremental didn\'t work, doing full download");
+        logger.warn("Incremental didn't work, doing full download");
         if (ITCH_INCREMENTAL_ONLY) {
-          store.dispatch(actions.statusMessage({
-            message: "Incremental update failed, see console for details",
-          }));
+          store.dispatch(
+            actions.statusMessage({
+              message: "Incremental update failed, see console for details",
+            }),
+          );
           return;
         }
 
@@ -43,7 +44,7 @@ export default function (watcher: Watcher) {
       }
       return;
     }
-    
+
     if (incremental) {
       // install folder was patched directly, no further steps needed
       return;
@@ -52,23 +53,25 @@ export default function (watcher: Watcher) {
 
     const installReason = downloadReasonToInstallReason(item.reason);
     if (installReason) {
-      store.dispatch(actions.queueInstall({
-        archivePath: action.payload.result.archivePath,
-        caveId: item.caveId,
-        game: item.game,
-        handPicked: item.handPicked,
-        installLocation: item.installLocation,
-        reason: installReason,
-        upload: item.upload,
-      }));
+      store.dispatch(
+        actions.queueInstall({
+          archivePath: action.payload.result.archivePath,
+          caveId: item.caveId,
+          game: item.game,
+          handPicked: item.handPicked,
+          installLocation: item.installLocation,
+          reason: installReason,
+          upload: item.upload,
+        }),
+      );
     }
 
     // FIXME: so, the logic for these notifications should be moved elsewhere,
     // since we can't wait on install finished anymore.
     const showNotif = false;
     if (showNotif) {
-      const prefs = store.getState().preferences || {readyNotification: true};
-      const {readyNotification} = prefs;
+      const prefs = store.getState().preferences || { readyNotification: true };
+      const { readyNotification } = prefs;
 
       if (readyNotification) {
         showReadyNotification(store, item);
@@ -98,16 +101,18 @@ function showReadyNotification(store: IStore, item: IDownloadItem) {
       notificationMessage = "notification.download_healed";
       break;
     default:
-      // make the typescript compiler happy
+    // make the typescript compiler happy
   }
 
   if (notificationMessage) {
     const i18n = store.getState().i18n;
     const t = localizer.getT(i18n.strings, i18n.lang);
     const message = t(notificationMessage, notificationOptions);
-    store.dispatch(actions.notify({
-      body: message,
-      onClick: actions.navigateToGame(item.game),
-    }));
+    store.dispatch(
+      actions.notify({
+        body: message,
+        onClick: actions.navigateToGame(item.game),
+      }),
+    );
   }
 }

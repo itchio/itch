@@ -1,4 +1,3 @@
-
 // going through sf to access Electron's original-fs
 import * as sf from "../os/sf";
 
@@ -10,8 +9,8 @@ interface ITarGzOpts {
   destPath: string;
 }
 
-async function extract (opts: ITarGzOpts) {
-  const {archivePath, destPath} = opts;
+async function extract(opts: ITarGzOpts) {
+  const { archivePath, destPath } = opts;
 
   const untar = tar.Extract(destPath);
   let src = sf.fs.createReadStream(archivePath);
@@ -20,4 +19,4 @@ async function extract (opts: ITarGzOpts) {
   return await sf.promised(untar);
 }
 
-export default {extract};
+export default { extract };

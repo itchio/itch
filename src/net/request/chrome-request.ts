@@ -1,13 +1,9 @@
-
 import * as querystring from "querystring";
 
 import useragent from "../../constants/useragent";
-import {NET_TIMEOUT_MS} from "../../constants/net";
+import { NET_TIMEOUT_MS } from "../../constants/net";
 
-import {
-  HTTPMethod,
-  IRequestOpts, IResponse,
-} from "../types";
+import { HTTPMethod, IRequestOpts, IResponse } from "../types";
 
 import {
   RequestError,
@@ -19,11 +15,12 @@ import {
 import * as bluebird from "bluebird";
 
 // use fetch
-export async function request (
-    method: HTTPMethod,
-    uri: string, 
-    data: any = {},
-    opts: IRequestOpts = {}): Promise<IResponse> {
+export async function request(
+  method: HTTPMethod,
+  uri: string,
+  data: any = {},
+  opts: IRequestOpts = {},
+): Promise<IResponse> {
   let url = uri;
 
   if (method === "get") {
@@ -63,7 +60,8 @@ export async function request (
   ]);
 
   try {
-    const contentTypeHeader = response.headers.get("content-type") || "text/plain";
+    const contentTypeHeader =
+      response.headers.get("content-type") || "text/plain";
     const contentType = /[^;]*/.exec(contentTypeHeader)[0];
 
     let responseBody;
@@ -96,7 +94,7 @@ export async function request (
 // this function's purpose is to transform
 // an error like "Fetch failed" into something
 // that starts with "net::"
-async function safeFetch (uri: string, opts: any): Promise<Response> {
+async function safeFetch(uri: string, opts: any): Promise<Response> {
   try {
     return fetch(uri, opts);
   } catch (e) {
@@ -105,7 +103,7 @@ async function safeFetch (uri: string, opts: any): Promise<Response> {
 }
 
 // this rejects after the globally set timeout
-async function timeout (): Promise<Response> {
+async function timeout(): Promise<Response> {
   await bluebird.delay(NET_TIMEOUT_MS);
   throw new RequestTimeout();
 }

@@ -1,16 +1,15 @@
-
-import {Fetcher, Outcome} from "./types";
+import { Fetcher, Outcome } from "./types";
 import db from "../db";
 
 import normalize from "../api/normalize";
-import {collection, arrayOf} from "../api/schemas";
+import { collection, arrayOf } from "../api/schemas";
 
-import {indexBy} from "underscore";
+import { indexBy } from "underscore";
 
 const emptyObj = {};
 
 export default class CollectionsFetcher extends Fetcher {
-  constructor () {
+  constructor() {
     super();
   }
 
@@ -25,10 +24,10 @@ export default class CollectionsFetcher extends Fetcher {
     return this.success();
   }
 
-  async pushLocal () {
+  async pushLocal() {
     const query = db.collections.createQueryBuilder("collections");
     query.where("userId = :meId");
-    query.addParameters({meId: this.ensureCredentials().me.id});
+    query.addParameters({ meId: this.ensureCredentials().me.id });
 
     const localCollections = await query.getMany();
     let allGameIds: number[] = [];
@@ -40,9 +39,11 @@ export default class CollectionsFetcher extends Fetcher {
 
     let localGames = [];
     if (allGameIds.length > 0) {
-      localGames = await db.games.createQueryBuilder("g")
+      localGames = await db.games
+        .createQueryBuilder("g")
         .where("g.id in (:gameIds)")
-        .setParameters({gameIds: allGameIds}).getMany();
+        .setParameters({ gameIds: allGameIds })
+        .getMany();
     }
     this.push({
       collections: indexBy(localCollections, "id"),
@@ -50,8 +51,8 @@ export default class CollectionsFetcher extends Fetcher {
     });
   }
 
-  async remote () {
-    const normalized = await this.withApi(async (api) => {
+  async remote() {
+    const normalized = await this.withApi(async api => {
       return normalize(await api.myCollections(), {
         collections: arrayOf(collection),
       });

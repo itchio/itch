@@ -1,4 +1,3 @@
-
 import * as path from "path";
 import * as electron from "electron";
 
@@ -8,8 +7,12 @@ import * as invariant from "invariant";
 import urls from "../constants/urls";
 import * as urlParser from "url";
 
-import {ICaveRecordLocation, IUploadRecord, IPreferencesState} from "../types";
-import {makeLogger, Logger} from "../logger";
+import {
+  ICaveRecordLocation,
+  IUploadRecord,
+  IPreferencesState,
+} from "../types";
+import { makeLogger, Logger } from "../logger";
 
 const APPDATA_RE = /^appdata\/(.*)$/;
 
@@ -18,10 +21,17 @@ const APPDATA_RE = /^appdata\/(.*)$/;
  * one install to the other (as opposed to resources)
  */
 
-export function appPath(cave: ICaveRecordLocation, preferences: IPreferencesState) {
+export function appPath(
+  cave: ICaveRecordLocation,
+  preferences: IPreferencesState,
+) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
   // < 18.5.x, everything is installed in an `apps` subfolder
-  const {installLocation, installFolder = cave.id, pathScheme = PathScheme.LEGACY_PER_USER} = cave;
+  const {
+    installLocation,
+    installFolder = cave.id,
+    pathScheme = PathScheme.LEGACY_PER_USER,
+  } = cave;
 
   invariant(typeof installLocation === "string", "valid install location name");
   invariant(typeof installFolder === "string", "valid install folder");
@@ -56,7 +66,10 @@ export function appPath(cave: ICaveRecordLocation, preferences: IPreferencesStat
   }
 }
 
-export function downloadPath(upload: IUploadRecord, preferences: IPreferencesState) {
+export function downloadPath(
+  upload: IUploadRecord,
+  preferences: IPreferencesState,
+) {
   invariant(typeof upload === "object", "valid upload");
   invariant(upload.id, "upload has id");
   invariant(typeof upload.filename === "string", "upload has filename");
@@ -68,9 +81,13 @@ export function downloadPath(upload: IUploadRecord, preferences: IPreferencesSta
     slug = `${slug}-${upload.buildId}`;
   }
 
-  const {installLocations, defaultInstallLocation} = preferences;
+  const { installLocations, defaultInstallLocation } = preferences;
   if (defaultInstallLocation === "appdata") {
-    return path.join(app.getPath("userData"), "downloads", "" + slug + ext.toLowerCase());
+    return path.join(
+      app.getPath("userData"),
+      "downloads",
+      "" + slug + ext.toLowerCase(),
+    );
   } else {
     const location = installLocations[defaultInstallLocation];
     return path.join(location.path, "downloads", "" + slug + ext.toLowerCase());
@@ -111,7 +128,11 @@ export function updaterLogPath(): string {
 }
 
 export function caveLogPath(caveId: string): string {
-  return path.join(app.getPath("userData"), "cave-logs", "cave-" + caveId + ".txt");
+  return path.join(
+    app.getPath("userData"),
+    "cave-logs",
+    "cave-" + caveId + ".txt",
+  );
 }
 
 export function caveLogger(caveId: string): Logger {
@@ -130,4 +151,4 @@ export function sanitize(file: string): string {
 export enum PathScheme {
   LEGACY_PER_USER = 1,
   MODERN_SHARED = 2,
-};
+}

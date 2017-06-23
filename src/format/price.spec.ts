@@ -1,7 +1,6 @@
-
 import suite from "../test-suite";
 
-import {formatPrice} from "./price";
+import { formatPrice } from "./price";
 
 suite(__filename, s => {
   s.case("price", t => {

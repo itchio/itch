@@ -1,10 +1,9 @@
-
 import * as ospath from "path";
 
 import spawn from "../spawn";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "registry"});
+const logger = rootLogger.child({ name: "registry" });
 
 let base = "HKCU\\Software\\Classes\\itchio";
 
@@ -18,55 +17,67 @@ interface IQueryOpts {
 }
 
 let self = {
-  regQuery: async function (key: string, queryOpts: IQueryOpts = {}): Promise<void> {
+  regQuery: async function(
+    key: string,
+    queryOpts: IQueryOpts = {},
+  ): Promise<void> {
     await spawn.assert({
       command: regPath,
       args: ["query", key, "/s"],
-      onToken: queryOpts.quiet ? null : (tok) => logger.info("query: " + tok),
+      onToken: queryOpts.quiet ? null : tok => logger.info("query: " + tok),
     });
   },
 
-  regAddDefault: async function (key: string, value: string): Promise<void> {
+  regAddDefault: async function(key: string, value: string): Promise<void> {
     await spawn.assert({
       command: regPath,
       args: ["add", key, "/ve", "/d", value, "/f"],
     });
   },
 
-  regAddEmpty: async function (key: string, value: string): Promise<void> {
+  regAddEmpty: async function(key: string, value: string): Promise<void> {
     await spawn.assert({
       command: regPath,
       args: ["add", key, "/v", value, "/f"],
     });
   },
 
-  regDeleteAll: async function (key: string): Promise<void> {
+  regDeleteAll: async function(key: string): Promise<void> {
     await spawn.assert({
       command: regPath,
       args: ["delete", key, "/f"],
     });
   },
 
-  install: async function (): Promise<void> {
+  install: async function(): Promise<void> {
     try {
       await self.regAddDefault(base, "URL:itch.io protocol");
       await self.regAddEmpty(base, "URL protocol");
       await self.regAddDefault(`${base}\\DefaultIcon`, "itch.exe");
-      await self.regAddDefault(`${base}\\Shell\\Open\\Command`, `"${process.execPath}" "%1"`);
+      await self.regAddDefault(
+        `${base}\\Shell\\Open\\Command`,
+        `"${process.execPath}" "%1"`,
+      );
     } catch (e) {
-      logger.warn(`Could not register itchio:// as default protocol handler: ${e.stack || e}`);
+      logger.warn(
+        `Could not register itchio:// as default protocol handler: ${e.stack ||
+          e}`,
+      );
     }
   },
 
-  update: async function (): Promise<void> {
+  update: async function(): Promise<void> {
     await self.install();
   },
 
-  uninstall: async function (): Promise<void> {
+  uninstall: async function(): Promise<void> {
     try {
       await self.regDeleteAll(base);
     } catch (e) {
-      logger.warn(`Could not register itchio:// as default protocol handler: ${e.stack || e}`);
+      logger.warn(
+        `Could not register itchio:// as default protocol handler: ${e.stack ||
+          e}`,
+      );
     }
   },
 };

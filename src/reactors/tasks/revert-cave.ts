@@ -1,32 +1,31 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
-import {MODAL_RESPONSE} from "../../constants/action-types";
+import { MODAL_RESPONSE } from "../../constants/action-types";
 
 import db from "../../db";
 
 import * as paths from "../../os/paths";
 
-import {formatDate, DATE_FORMAT} from "../../format";
+import { formatDate, DATE_FORMAT } from "../../format";
 
 import client from "../../api";
 
-import {map, filter} from "underscore";
+import { map, filter } from "underscore";
 
-import {promisedModal} from "../modals";
+import { promisedModal } from "../modals";
 
 import findUpgradePath from "../downloads/find-upgrade-path";
 import getGameCredentials from "../downloads/get-game-credentials";
 import lazyGetGame from "../lazy-get-game";
 
-import {EventEmitter} from "events";
-import {IRevertCaveParams} from "../../components/modal-widgets/revert-cave";
+import { EventEmitter } from "events";
+import { IRevertCaveParams } from "../../components/modal-widgets/revert-cave";
 
 import localizer from "../../localizer";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
-    const {caveId} = action.payload;
+    const { caveId } = action.payload;
     const logger = paths.caveLogger(caveId);
 
     try {
@@ -46,7 +45,7 @@ export default function (watcher: Watcher) {
         logger.error(`Cave isn't wharf-enabled, can't revert: ${caveId}`);
         return;
       }
-      
+
       const upload = cave.uploads[cave.uploadId];
       if (!cave.buildId) {
         logger.error(`No upload in acve, can't revert: ${caveId}`);
@@ -61,11 +60,14 @@ export default function (watcher: Watcher) {
         return;
       }
       const keyClient = client.withKey(credentials.key);
-      const buildsList = await keyClient.listBuilds(gameCredentials.downloadKey, upload.id);
+      const buildsList = await keyClient.listBuilds(
+        gameCredentials.downloadKey,
+        upload.id,
+      );
 
       logger.info(`Builds list:\n${JSON.stringify(buildsList, null, 2)}`);
 
-      const oldBuilds = filter(buildsList.builds, (build) => {
+      const oldBuilds = filter(buildsList.builds, build => {
         return build.id < cave.buildId;
       });
 
@@ -79,7 +81,7 @@ export default function (watcher: Watcher) {
         widgetParams: {
           currentCave: cave,
         } as IRevertCaveParams,
-        bigButtons: map(oldBuilds, (build) => {
+        bigButtons: map(oldBuilds, build => {
           let label = "";
           if (build.userVersion) {
             label = `${build.userVersion}`;
@@ -88,7 +90,11 @@ export default function (watcher: Watcher) {
           }
 
           // TODO: check, I have doubts about this Date constructor
-          label = `${label} — ${formatDate(new Date(build.updatedAt), i18n.lang, DATE_FORMAT)}`;
+          label = `${label} — ${formatDate(
+            new Date(build.updatedAt),
+            i18n.lang,
+            DATE_FORMAT,
+          )}`;
 
           return {
             label,
@@ -128,26 +134,32 @@ export default function (watcher: Watcher) {
         });
       } catch (e) {
         logger.error(`Could not get upgrade path: ${e}`);
-        store.dispatch(actions.statusMessage({
-          message: e.message,
-        }));
+        store.dispatch(
+          actions.statusMessage({
+            message: e.message,
+          }),
+        );
       }
 
-      store.dispatch(actions.statusMessage({
-        message: t("status.reverting", {buildId}),
-      }));
+      store.dispatch(
+        actions.statusMessage({
+          message: t("status.reverting", { buildId }),
+        }),
+      );
 
       const changedUpload = {
         ...upload,
         buildId,
       };
 
-      store.dispatch(actions.queueDownload({
-        caveId: cave.id,
-        game,
-        upload: changedUpload,
-        reason: "revert",
-      }));
+      store.dispatch(
+        actions.queueDownload({
+          caveId: cave.id,
+          game,
+          upload: changedUpload,
+          reason: "revert",
+        }),
+      );
     } finally {
       logger.close();
     }

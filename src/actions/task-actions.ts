@@ -1,12 +1,14 @@
-
-import {createAction} from "redux-actions";
+import { createAction } from "redux-actions";
 
 import {
-  TASK_STARTED, ITaskStartedPayload,
-  TASK_PROGRESS, ITaskProgressPayload,
-  TASK_ENDED, ITaskEndedPayload,
-
-  ABORT_TASK, IAbortTaskPayload,
+  TASK_STARTED,
+  ITaskStartedPayload,
+  TASK_PROGRESS,
+  ITaskProgressPayload,
+  TASK_ENDED,
+  ITaskEndedPayload,
+  ABORT_TASK,
+  IAbortTaskPayload,
 } from "../constants/action-types";
 
 export const taskStarted = createAction<ITaskStartedPayload>(TASK_STARTED);

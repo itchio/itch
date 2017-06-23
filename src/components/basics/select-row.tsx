@@ -1,7 +1,6 @@
-
 import * as React from "react";
 
-import {map} from "underscore";
+import { map } from "underscore";
 
 /**
  * A drop-down you can select from
@@ -11,18 +10,18 @@ class SelectRow extends React.PureComponent<ISelectRowProps, void> {
     input: HTMLInputElement;
   };
 
-  constructor (props: ISelectRowProps) {
+  constructor(props: ISelectRowProps) {
     super(props);
   }
 
   onChange = (event: React.FormEvent<HTMLSelectElement>) => {
-    const {onChange} = this.props;
+    const { onChange } = this.props;
     if (onChange) {
       onChange(event.currentTarget.value);
     }
-  }
+  };
 
-  render () {
+  render() {
     let options = this.props.options;
     let value = this.props.value;
 
@@ -30,14 +29,16 @@ class SelectRow extends React.PureComponent<ISelectRowProps, void> {
       <option value={option.value}>{option.label}</option>,
     );
 
-    return <div className="select-row">
-      <select ref="input" value={value} onChange={this.onChange}>
-        {optionTags}
-      </select>
-    </div>;
+    return (
+      <div className="select-row">
+        <select ref="input" value={value} onChange={this.onChange}>
+          {optionTags}
+        </select>
+      </div>
+    );
   }
 
-  value () {
+  value() {
     return this.refs.input.value;
   }
 }

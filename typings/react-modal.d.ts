@@ -1,8 +1,7 @@
-
 /**
  * Typings for https://github.com/rackt/react-modal
  */
-declare module 'react-modal' {
+declare module "react-modal" {
   import * as React from "react";
 
   class ReactModal extends React.PureComponent<any, any> {

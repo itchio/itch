@@ -1,5 +1,4 @@
-
-import {darken, lighten} from "polished";
+import { darken, lighten } from "polished";
 
 // colors
 
@@ -125,11 +124,11 @@ export interface IThemeProps {
 import * as styledComponents from "styled-components";
 import { ThemedStyledComponentsModule } from "styled-components";
 const {
-    default: styled,
-    css,
-    injectGlobal,
-    keyframes,
-    ThemeProvider,
+  default: styled,
+  css,
+  injectGlobal,
+  keyframes,
+  ThemeProvider,
 } = styledComponents as ThemedStyledComponentsModule<ITheme>;
 
 export default styled;

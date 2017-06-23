@@ -1,7 +1,6 @@
-
 import * as React from "react";
-import {createSelector, createStructuredSelector} from "reselect";
-import {connect, I18nProps} from "./connect";
+import { createSelector, createStructuredSelector } from "reselect";
+import { connect, I18nProps } from "./connect";
 
 import * as path from "path";
 import * as humanize from "humanize-plus";
@@ -21,14 +20,19 @@ import TitleBar from "./title-bar";
 
 import * as actions from "../actions";
 
-import {map, each, filter} from "underscore";
+import { map, each, filter } from "underscore";
 
 import diskspace from "../os/diskspace";
 
-import {IAppState, ILocaleInfo, IPreferencesState, IInstallLocation} from "../types";
-import {dispatcher} from "../constants/action-types";
+import {
+  IAppState,
+  ILocaleInfo,
+  IPreferencesState,
+  IInstallLocation,
+} from "../types";
+import { dispatcher } from "../constants/action-types";
 
-import {IMeatProps} from "./meats/types";
+import { IMeatProps } from "./meats/types";
 
 // TODO: split into smaller components
 
@@ -281,17 +285,30 @@ const PreferencesContentDiv = styled.div`
   }
 `;
 
-export class Preferences extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, tab, lang, sniffedLang = "", downloading, locales} = this.props;
-    const {isolateApps, openAtLogin, openAsHidden, closeToTray,
-       readyNotification, manualGameUpdates, preventDisplaySleep, showAdvanced} = this.props.preferences;
-    const {queueLocaleDownload, updatePreferences} = this.props;
+export class Preferences extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const { t, tab, lang, sniffedLang = "", downloading, locales } = this.props;
+    const {
+      isolateApps,
+      openAtLogin,
+      openAsHidden,
+      closeToTray,
+      readyNotification,
+      manualGameUpdates,
+      preventDisplaySleep,
+      showAdvanced,
+    } = this.props.preferences;
+    const { queueLocaleDownload, updatePreferences } = this.props;
 
-    const options = [{
-      value: "__",
-      label: t("preferences.language.auto", {language: sniffedLang}),
-    }].concat(locales);
+    const options = [
+      {
+        value: "__",
+        label: t("preferences.language.auto", { language: sniffedLang }),
+      },
+    ].concat(locales);
 
     let translateUrl = `${urls.itchTranslationPlatform}/projects/itch/itch`;
     const english = /^en/.test(lang);
@@ -302,194 +319,293 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps & I1
     const badgeLang = lang ? lang.substr(0, 2) : "en";
     const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${badgeLang}/svg-badge.svg`;
 
-    return <PreferencesDiv>
-      <TitleBar tab={tab}/>
-      <PreferencesContentDiv>
-        <h2>{t("preferences.language")}</h2>
-        <div className="language-form">
-          <label className="active">
-            <SelectRow onChange={this.onLanguageChange} options={options} value={lang || "__"}/>
+    return (
+      <PreferencesDiv>
+        <TitleBar tab={tab} />
+        <PreferencesContentDiv>
+          <h2>{t("preferences.language")}</h2>
+          <div className="language-form">
+            <label className="active">
+              <SelectRow
+                onChange={this.onLanguageChange}
+                options={options}
+                value={lang || "__"}
+              />
 
-            {
-              downloading
-              ? <LoadingCircle progress={0.3}/>
-              : <IconButton
-                  icon="repeat"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    queueLocaleDownload({lang});
-                  }}
+              {downloading
+                ? <LoadingCircle progress={0.3} />
+                : <IconButton
+                    icon="repeat"
+                    onClick={e => {
+                      e.preventDefault();
+                      queueLocaleDownload({ lang });
+                    }}
+                  />}
+
+            </label>
+          </div>
+
+          <p className="explanation flex">
+            {t("preferences.language.get_involved", { name: "itch" }) + " "}
+            <a href={translateUrl}>
+              <img className="weblate-badge" src={translationBadgeUrl} />
+            </a>
+          </p>
+
+          <h2>{t("preferences.security")}</h2>
+          <div className="security-form">
+            <label className={classNames({ active: isolateApps })}>
+              <input
+                type="checkbox"
+                checked={isolateApps}
+                onChange={e => {
+                  updatePreferences({ isolateApps: e.currentTarget.checked });
+                }}
+              />
+              <span>
+                {" "}{t("preferences.security.sandbox.title")}{" "}
+              </span>
+              <span data-rh-at="bottom" data-rh={t("label.experimental")}>
+                <Icon
+                  icon="lab-flask"
+                  onClick={(e: React.MouseEvent<any>) => e.preventDefault()}
                 />
-            }
-            
-          </label>
-        </div>
+              </span>
+            </label>
+          </div>
 
-        <p className="explanation flex">
-          {t("preferences.language.get_involved", {name: "itch"}) + " "}
-          <a href={translateUrl}>
-            <img className="weblate-badge" src={translationBadgeUrl}/>
-          </a>
-        </p>
+          <p className="explanation">
+            {t("preferences.security.sandbox.description")}
+            {" "}
+            <a href={urls.sandboxDocs}>
+              {t("docs.learn_more")}
+            </a>
+          </p>
 
-        <h2>{t("preferences.security")}</h2>
-        <div className="security-form">
-          <label className={classNames({active: isolateApps})}>
-            <input type="checkbox" checked={isolateApps} onChange={(e) => {
-              updatePreferences({isolateApps: e.currentTarget.checked});
-            }}/>
-            <span> {t("preferences.security.sandbox.title")} </span>
-            <span data-rh-at="bottom" data-rh={t("label.experimental")}>
-              <Icon icon="lab-flask" onClick={(e: React.MouseEvent<any>) => e.preventDefault()}/>
-            </span>
-          </label>
-        </div>
+          <h2>{t("preferences.behavior")}</h2>
+          <div className="behavior-form">
+            <label className={classNames({ active: openAtLogin })}>
+              <input
+                type="checkbox"
+                checked={openAtLogin}
+                onChange={e => {
+                  updatePreferences({ openAtLogin: e.currentTarget.checked });
+                }}
+              />
+              <span>
+                {" "}{t("preferences.behavior.open_at_login")}{" "}
+              </span>
+            </label>
 
-        <p className="explanation">
-          {t("preferences.security.sandbox.description")}
-          {" "}
-          <a href={urls.sandboxDocs}>
-            {t("docs.learn_more")}
-          </a>
-        </p>
+            <OpenAtLoginError />
 
-        <h2>{t("preferences.behavior")}</h2>
-        <div className="behavior-form">
-          <label className={classNames({active: openAtLogin})}>
-            <input type="checkbox" checked={openAtLogin} onChange={(e) => {
-              updatePreferences({openAtLogin: e.currentTarget.checked});
-            }}/>
-            <span> {t("preferences.behavior.open_at_login")} </span>
-          </label>
+            <label className={classNames({ active: openAsHidden })}>
+              <input
+                type="checkbox"
+                checked={openAsHidden}
+                onChange={e => {
+                  updatePreferences({ openAsHidden: e.currentTarget.checked });
+                }}
+              />
+              <span>
+                {" "}{t("preferences.behavior.open_as_hidden")}{" "}
+              </span>
+            </label>
 
-          <OpenAtLoginError/>
+            <label className={classNames({ active: closeToTray })}>
+              <input
+                type="checkbox"
+                checked={closeToTray}
+                onChange={e => {
+                  updatePreferences({ closeToTray: e.currentTarget.checked });
+                }}
+              />
+              <span>
+                {" "}{t("preferences.behavior.close_to_tray")}{" "}
+              </span>
+            </label>
 
-          <label className={classNames({active: openAsHidden})}>
-            <input type="checkbox" checked={openAsHidden} onChange={(e) => {
-              updatePreferences({openAsHidden: e.currentTarget.checked});
-            }}/>
-            <span> {t("preferences.behavior.open_as_hidden")} </span>
-          </label>
+            <label className={classNames({ active: manualGameUpdates })}>
+              <input
+                type="checkbox"
+                checked={manualGameUpdates}
+                onChange={e => {
+                  updatePreferences({
+                    manualGameUpdates: e.currentTarget.checked,
+                  });
+                }}
+              />
+              <span>
+                {" "}{t("preferences.behavior.manual_game_updates")}{" "}
+              </span>
+            </label>
 
-          <label className={classNames({active: closeToTray})}>
-            <input type="checkbox" checked={closeToTray} onChange={(e) => {
-              updatePreferences({closeToTray: e.currentTarget.checked});
-            }}/>
-            <span> {t("preferences.behavior.close_to_tray")} </span>
-          </label>
+            <label className={classNames({ active: preventDisplaySleep })}>
+              <input
+                type="checkbox"
+                checked={preventDisplaySleep}
+                onChange={e => {
+                  updatePreferences({
+                    preventDisplaySleep: e.currentTarget.checked,
+                  });
+                }}
+              />
+              <span>
+                {" "}{t("preferences.behavior.prevent_display_sleep")}{" "}
+              </span>
+            </label>
+          </div>
 
-          <label className={classNames({active: manualGameUpdates})}>
-            <input type="checkbox" checked={manualGameUpdates} onChange={(e) => {
-              updatePreferences({manualGameUpdates: e.currentTarget.checked});
-            }}/>
-            <span> {t("preferences.behavior.manual_game_updates")} </span>
-          </label>
+          <h2>{t("preferences.notifications")}</h2>
+          <div className="behavior-form">
+            <label className={classNames({ active: readyNotification })}>
+              <input
+                type="checkbox"
+                checked={readyNotification}
+                onChange={e => {
+                  updatePreferences({
+                    readyNotification: e.currentTarget.checked,
+                  });
+                }}
+              />
+              <span>
+                {" "}{t("preferences.notifications.ready_notification")}{" "}
+              </span>
+            </label>
+          </div>
 
-          <label className={classNames({active: preventDisplaySleep})}>
-            <input type="checkbox" checked={preventDisplaySleep} onChange={(e) => {
-              updatePreferences({preventDisplaySleep: e.currentTarget.checked});
-            }}/>
-            <span> {t("preferences.behavior.prevent_display_sleep")} </span>
-          </label>
-        </div>
+          <h2>{t("preferences.install_locations")}</h2>
+          {this.installLocationTable()}
 
-        <h2>{t("preferences.notifications")}</h2>
-        <div className="behavior-form">
-          <label className={classNames({active: readyNotification})}>
-            <input type="checkbox" checked={readyNotification} onChange={(e) => {
-              updatePreferences({readyNotification: e.currentTarget.checked});
-            }}/>
-            <span> {t("preferences.notifications.ready_notification")} </span>
-          </label>
-        </div>
-
-        <h2>{t("preferences.install_locations")}</h2>
-        {this.installLocationTable()}
-
-        <h2 id="preferences-advanced-section"
-            className="toggle" onClick={(e) => updatePreferences({showAdvanced: !showAdvanced})}>
-          <span className={`icon icon-triangle-right turner ${showAdvanced ? "turned" : ""}`}/>
-          {" "}
-          {t("preferences.advanced")}
-        </h2>
-        {showAdvanced
-        ? this.renderAdvanced()
-        : ""}
-      </PreferencesContentDiv>
-    </PreferencesDiv>;
+          <h2
+            id="preferences-advanced-section"
+            className="toggle"
+            onClick={e => updatePreferences({ showAdvanced: !showAdvanced })}
+          >
+            <span
+              className={`icon icon-triangle-right turner ${showAdvanced
+                ? "turned"
+                : ""}`}
+            />
+            {" "}
+            {t("preferences.advanced")}
+          </h2>
+          {showAdvanced ? this.renderAdvanced() : ""}
+        </PreferencesContentDiv>
+      </PreferencesDiv>
+    );
   }
 
-  renderAdvanced () {
-    const {t, appVersion, clearBrowsingDataRequest, updatePreferences, openAppLog} = this.props;
-    const {preferOptimizedPatches} = this.props.preferences;
+  renderAdvanced() {
+    const {
+      t,
+      appVersion,
+      clearBrowsingDataRequest,
+      updatePreferences,
+      openAppLog,
+    } = this.props;
+    const { preferOptimizedPatches } = this.props.preferences;
 
-    return <div className="explanation advanced-form">
-      <p className="section app-version">
-      itch v{appVersion}
-      <span className="button"
-          onClick={() => {
-            const {checkForSelfUpdate} = this.props;
-            checkForSelfUpdate({});
-          }}
-          style={{
-            marginLeft: "10px",
-            borderBottom: "1px solid",
-          }}>
-        Check for update
-      </span>
-      </p>
-      <p>
-        <ProxySettings/>
-      </p>
-      <p className="section">
-        <span className="link" onClick={(e) => { e.preventDefault(); openAppLog({}); }}>
-        {t("preferences.advanced.open_app_log")}
-        </span>
-      </p>
-      <p className="section">
-        <span
+    return (
+      <div className="explanation advanced-form">
+        <p className="section app-version">
+          itch v{appVersion}
+          <span
+            className="button"
+            onClick={() => {
+              const { checkForSelfUpdate } = this.props;
+              checkForSelfUpdate({});
+            }}
+            style={{
+              marginLeft: "10px",
+              borderBottom: "1px solid",
+            }}
+          >
+            Check for update
+          </span>
+        </p>
+        <p>
+          <ProxySettings />
+        </p>
+        <p className="section">
+          <span
+            className="link"
+            onClick={e => {
+              e.preventDefault();
+              openAppLog({});
+            }}
+          >
+            {t("preferences.advanced.open_app_log")}
+          </span>
+        </p>
+        <p className="section">
+          <span
             id="clear-browsing-data-link"
             className="link"
-            onClick={(e) => { e.preventDefault(); clearBrowsingDataRequest({}); }}>
-          {t("preferences.advanced.clear_browsing_data")}
-        </span>
-      </p>
-      <label className={classNames({active: preferOptimizedPatches})}>
-        <input type="checkbox" checked={preferOptimizedPatches} onChange={(e) => {
-          updatePreferences({preferOptimizedPatches: e.currentTarget.checked});
-        }}/>
-        <span>Prefer optimized patches</span>
-        <span data-rh-at="bottom" data-rh={t("label.experimental")}>
-          <Icon icon="lab-flask" onClick={(e: React.MouseEvent<any>) => e.preventDefault()}/>
-        </span>
-      </label>
-    </div>;
+            onClick={e => {
+              e.preventDefault();
+              clearBrowsingDataRequest({});
+            }}
+          >
+            {t("preferences.advanced.clear_browsing_data")}
+          </span>
+        </p>
+        <label className={classNames({ active: preferOptimizedPatches })}>
+          <input
+            type="checkbox"
+            checked={preferOptimizedPatches}
+            onChange={e => {
+              updatePreferences({
+                preferOptimizedPatches: e.currentTarget.checked,
+              });
+            }}
+          />
+          <span>Prefer optimized patches</span>
+          <span data-rh-at="bottom" data-rh={t("label.experimental")}>
+            <Icon
+              icon="lab-flask"
+              onClick={(e: React.MouseEvent<any>) => e.preventDefault()}
+            />
+          </span>
+        </label>
+      </div>
+    );
   }
 
   onLanguageChange = (lang: string) => {
-    const {updatePreferences} = this.props;
+    const { updatePreferences } = this.props;
     if (lang === "__") {
       lang = null;
     }
 
-    updatePreferences({lang});
-  }
+    updatePreferences({ lang });
+  };
 
-  installLocationTable () {
-    const {t, navigate} = this.props;
-    const {addInstallLocationRequest,
-      removeInstallLocationRequest, makeInstallLocationDefault} = this.props;
+  installLocationTable() {
+    const { t, navigate } = this.props;
+    const {
+      addInstallLocationRequest,
+      removeInstallLocationRequest,
+      makeInstallLocationDefault,
+    } = this.props;
 
-    const header = <tr className="header">
-      <td>{t("preferences.install_location.path")}</td>
-      <td>{t("preferences.install_location.used_space")}</td>
-      <td>{t("preferences.install_location.free_space")}</td>
-      <td></td>
-      <td></td>
-    </tr>;
+    const header = (
+      <tr className="header">
+        <td>{t("preferences.install_location.path")}</td>
+        <td>{t("preferences.install_location.used_space")}</td>
+        <td>{t("preferences.install_location.free_space")}</td>
+        <td />
+        <td />
+      </tr>
+    );
 
-    const installLocations = (this.props.installLocations || {}) as IExtendedInstallLocations;
-    const {aliases, defaultLoc = "appdata", locations = []} = installLocations;
+    const installLocations = (this.props.installLocations ||
+      {}) as IExtendedInstallLocations;
+    const {
+      aliases,
+      defaultLoc = "appdata",
+      locations = [],
+    } = installLocations;
 
     // can't delete your last remaining location.
     const severalLocations = locations.length > 0;
@@ -497,62 +613,94 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps & I1
     let rows: JSX.Element[] = [];
     rows.push(header);
 
-    each(locations, (location) => {
-      const {name} = location;
-      const isDefault = (name === defaultLoc);
+    each(locations, location => {
+      const { name } = location;
+      const isDefault = name === defaultLoc;
       const mayDelete = severalLocations && name !== "appdata";
 
-      let {path} = location;
+      let { path } = location;
       for (const alias of aliases) {
         path = path.replace(alias[0], alias[1]);
       }
-      const {size, freeSpace} = location;
+      const { size, freeSpace } = location;
       const rowClasses = classNames({
         ["default"]: isDefault,
       });
 
-      rows.push(<tr className={rowClasses} key={`location-${name}`}>
-        <td className="action path" onClick={(e) => makeInstallLocationDefault({name})}>
-          <div className="default-switch"
+      rows.push(
+        <tr className={rowClasses} key={`location-${name}`}>
+          <td
+            className="action path"
+            onClick={e => makeInstallLocationDefault({ name })}
+          >
+            <div
+              className="default-switch"
               data-rh-at="right"
-              data-rh={t("preferences.install_location." + (isDefault ? "is_default" : "make_default"))}>
-            <span className="single-line">{path}</span>
-            {isDefault
-              ? <span className="single-line default-state">
-                  ({t("preferences.install_location.is_default_short").toLowerCase()})
-                 </span>
-              : null
-            }
-          </div>
-        </td>
-        <td> {humanize.fileSize(size)} </td>
-        <td> {freeSpace > 0 ? humanize.fileSize(freeSpace) : "..."} </td>
-        <td className="action" onClick={(e) => { e.preventDefault(); navigate(`locations/${name}`); }}>
-          <Icon icon="folder-open"/>
-        </td>
+              data-rh={t(
+                "preferences.install_location." +
+                  (isDefault ? "is_default" : "make_default"),
+              )}
+            >
+              <span className="single-line">{path}</span>
+              {isDefault
+                ? <span className="single-line default-state">
+                    ({t(
+                      "preferences.install_location.is_default_short",
+                    ).toLowerCase()})
+                  </span>
+                : null}
+            </div>
+          </td>
+          <td>
+            {" "}{humanize.fileSize(size)}{" "}
+          </td>
+          <td>
+            {" "}{freeSpace > 0 ? humanize.fileSize(freeSpace) : "..."}{" "}
+          </td>
+          <td
+            className="action"
+            onClick={e => {
+              e.preventDefault();
+              navigate(`locations/${name}`);
+            }}
+          >
+            <Icon icon="folder-open" />
+          </td>
 
-        {mayDelete
-          ? <td className="action delete"
+          {mayDelete
+            ? <td
+                className="action delete"
                 data-rh-at="top"
                 data-rh={t("preferences.install_location.delete")}
-              onClick={(e) => removeInstallLocationRequest({name})}>
-            <Icon icon="cross"/>
-          </td>
-          : <td/>
-        }
-      </tr>);
+                onClick={e => removeInstallLocationRequest({ name })}
+              >
+                <Icon icon="cross" />
+              </td>
+            : <td />}
+        </tr>,
+      );
     });
 
-    rows.push(<tr>
-      <td className="action add-new" onClick={(e) => { e.preventDefault(); addInstallLocationRequest({}); }}>
-        <Icon icon="plus"/>
-        {t("preferences.install_location.add")}
-      </td>
-    </tr>);
+    rows.push(
+      <tr>
+        <td
+          className="action add-new"
+          onClick={e => {
+            e.preventDefault();
+            addInstallLocationRequest({});
+          }}
+        >
+          <Icon icon="plus" />
+          {t("preferences.install_location.add")}
+        </td>
+      </tr>,
+    );
 
-    return <table className="install-locations">
-      <tbody>{rows}</tbody>
-    </table>;
+    return (
+      <table className="install-locations">
+        <tbody>{rows}</tbody>
+      </table>
+    );
   }
 }
 
@@ -602,7 +750,8 @@ export default connect<IProps>(Preferences, {
   state: createStructuredSelector({
     appVersion: (state: IAppState) => state.system.appVersion,
     preferences: (state: IAppState) => state.preferences,
-    downloading: (state: IAppState) => Object.keys(state.i18n.downloading).length > 0,
+    downloading: (state: IAppState) =>
+      Object.keys(state.i18n.downloading).length > 0,
     lang: (state: IAppState) => state.i18n.lang,
     locales: (state: IAppState) => state.i18n.locales,
     sniffedLang: (state: IAppState) => state.system.sniffedLanguage,
@@ -624,52 +773,65 @@ export default connect<IProps>(Preferences, {
           },
         };
 
-        const locations = filter(map(locInfos, (locInfo, name) => {
-          if (locInfo.deleted) {
-            return;
-          }
+        const locations = filter(
+          map(locInfos, (locInfo, name) => {
+            if (locInfo.deleted) {
+              return;
+            }
 
-          let itemCount = 0;
-          let size = 0;
+            let itemCount = 0;
+            let size = 0;
 
-          // const isAppData = (name === "appdata");
-          // FIXME: what about caves?
-          // each(caves, (cave) => {
-          //   // TODO: handle per-user appdata ?
-          //   if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
-          //     size += (cave.installedSize || 0);
-          //     itemCount++;
-          //   }
-          // });
+            // const isAppData = (name === "appdata");
+            // FIXME: what about caves?
+            // each(caves, (cave) => {
+            //   // TODO: handle per-user appdata ?
+            //   if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
+            //     size += (cave.installedSize || 0);
+            //     itemCount++;
+            //   }
+            // });
 
-          return {
-            ...locInfo,
-            name,
-            freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
-            itemCount,
-            size,
-          };
-        }), (x) => !!x);
+            return {
+              ...locInfo,
+              name,
+              freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
+              itemCount,
+              size,
+            };
+          }),
+          x => !!x,
+        );
 
         return {
           locations,
-          aliases: [
-            [homePath, "~"],
-          ],
+          aliases: [[homePath, "~"]],
           defaultLoc,
         };
       },
     ),
   }),
-  dispatch: (dispatch) => ({
-    addInstallLocationRequest: dispatcher(dispatch, actions.addInstallLocationRequest),
-    removeInstallLocationRequest: dispatcher(dispatch, actions.removeInstallLocationRequest),
-    makeInstallLocationDefault: dispatcher(dispatch, actions.makeInstallLocationDefault),
+  dispatch: dispatch => ({
+    addInstallLocationRequest: dispatcher(
+      dispatch,
+      actions.addInstallLocationRequest,
+    ),
+    removeInstallLocationRequest: dispatcher(
+      dispatch,
+      actions.removeInstallLocationRequest,
+    ),
+    makeInstallLocationDefault: dispatcher(
+      dispatch,
+      actions.makeInstallLocationDefault,
+    ),
     queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
 
     updatePreferences: dispatcher(dispatch, actions.updatePreferences),
     openAppLog: dispatcher(dispatch, actions.openAppLog),
-    clearBrowsingDataRequest: dispatcher(dispatch, actions.clearBrowsingDataRequest),
+    clearBrowsingDataRequest: dispatcher(
+      dispatch,
+      actions.clearBrowsingDataRequest,
+    ),
     navigate: dispatcher(dispatch, actions.navigate),
     checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
   }),

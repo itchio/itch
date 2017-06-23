@@ -1,9 +1,8 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import client from "../../api";
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "find-upgrade-path"});
+const logger = rootLogger.child({ name: "find-upgrade-path" });
 
 import Game from "../../db/models/game";
 
@@ -24,12 +23,14 @@ interface IFindUpgradePathOpts {
 export interface IFindUpgradePathResult {
   upgradePath: IUpgradePathItem[];
   totalSize: number;
-};
+}
 
-export default async function findUpgradePath (
-    store: IStore, out: EventEmitter, opts: IFindUpgradePathOpts): Promise<IFindUpgradePathResult> {
-
-  const {gameCredentials, upload, currentBuildId} = opts;
+export default async function findUpgradePath(
+  store: IStore,
+  out: EventEmitter,
+  opts: IFindUpgradePathOpts,
+): Promise<IFindUpgradePathResult> {
+  const { gameCredentials, upload, currentBuildId } = opts;
 
   if (!gameCredentials) {
     return null;
@@ -42,7 +43,11 @@ export default async function findUpgradePath (
   } else {
     logger.info("no download key, seeking free/own uploads");
   }
-  const response = await api.findUpgrade(gameCredentials.downloadKey, upload.id, currentBuildId);
+  const response = await api.findUpgrade(
+    gameCredentials.downloadKey,
+    upload.id,
+    currentBuildId,
+  );
 
   let upgradePath = response.upgradePath;
 
@@ -56,5 +61,5 @@ export default async function findUpgradePath (
     totalSize += entry.patchSize;
   }
 
-  return {upgradePath, totalSize};
+  return { upgradePath, totalSize };
 }

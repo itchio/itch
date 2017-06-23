@@ -1,12 +1,11 @@
-
 import Icon from "../basics/icon";
 import Ink = require("react-ink");
 
 import * as React from "react";
 import styled, * as styles from "../styles";
 
-import {connect, I18nProps} from "../connect";
-import {ILocalizedString} from "../../types";
+import { connect, I18nProps } from "../connect";
+import { ILocalizedString } from "../../types";
 
 const DropdownItemDiv = styled.div`
   ${styles.inkContainer()};
@@ -41,27 +40,32 @@ const DropdownItemDiv = styled.div`
   }
 `;
 
-export class DropdownItem extends React.PureComponent<IProps & I18nProps, void> {
-  render () {
-    const {t, item} = this.props;
-    const {label, icon, type, id} = item;
+export class DropdownItem extends React.PureComponent<
+  IProps & I18nProps,
+  void
+> {
+  render() {
+    const { t, item } = this.props;
+    const { label, icon, type, id } = item;
 
     const className = type ? `type-${type}` : "";
 
-    return <DropdownItemDiv className={className} onClick={this.onClick} id={id}>
-      <Ink/>
-      <Icon icon={icon}/>
-      {t.format(label)}
-    </DropdownItemDiv>;
+    return (
+      <DropdownItemDiv className={className} onClick={this.onClick} id={id}>
+        <Ink />
+        <Icon icon={icon} />
+        {t.format(label)}
+      </DropdownItemDiv>
+    );
   }
 
   onClick = () => {
-    const {item} = this.props;
+    const { item } = this.props;
     if (item.onClick) {
       item.onClick();
       this.props.onClick();
     }
-  }
+  };
 }
 
 interface IProps {

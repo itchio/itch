@@ -1,13 +1,12 @@
-
 import * as sf from "../../os/sf";
 import * as paths from "../../os/paths";
 
 import * as bluebird from "bluebird";
 import * as ospath from "path";
 
-export async function cleanOldLogs () {
+export async function cleanOldLogs() {
   const logDir = ospath.dirname(paths.logPath());
-  const allLogs = await sf.glob("*.txt", {cwd: logDir});
+  const allLogs = await sf.glob("*.txt", { cwd: logDir });
 
   const promises: Promise<any>[] = [];
   for (const log of allLogs) {

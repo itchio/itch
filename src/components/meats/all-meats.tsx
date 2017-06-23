@@ -1,15 +1,14 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "../connect";
-import {createSelector, createStructuredSelector} from "reselect";
+import { connect, I18nProps } from "../connect";
+import { createSelector, createStructuredSelector } from "reselect";
 import * as classNames from "classnames";
 
 import Meat from "./meat";
 import SearchResultsBar from "../search-results/search-results-bar";
 
-import {map} from "underscore";
+import { map } from "underscore";
 
-import {IAppState, ITabs, ITabDataSet} from "../../types";
+import { IAppState, ITabs, ITabDataSet } from "../../types";
 
 import styled from "../styles";
 
@@ -39,25 +38,33 @@ const MeatTab = styled.div`
   }
 `;
 
-export class AllMeats extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {tabData, tabs, id: currentId} = this.props;
+export class AllMeats extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const { tabData, tabs, id: currentId } = this.props;
 
-    return <MeatContainer>
-      {map(tabs, (id) => {
-        const data = tabData[id] || {};
-        const visible = (id === currentId);
-        return <MeatTab
-            key={id}
-            data-id={id}
-            data-path={data.path}
-            data-visible={visible}
-            className={classNames("meat-tab", {visible})}>
-          <Meat tab={id} tabData={data} visible={visible}/>
-        </MeatTab>;
-      })}
-      <SearchResultsBar/>
-    </MeatContainer>;
+    return (
+      <MeatContainer>
+        {map(tabs, id => {
+          const data = tabData[id] || {};
+          const visible = id === currentId;
+          return (
+            <MeatTab
+              key={id}
+              data-id={id}
+              data-path={data.path}
+              data-visible={visible}
+              className={classNames("meat-tab", { visible })}
+            >
+              <Meat tab={id} tabData={data} visible={visible} />
+            </MeatTab>
+          );
+        })}
+        <SearchResultsBar />
+      </MeatContainer>
+    );
   }
 }
 

@@ -1,5 +1,4 @@
-
-import {ITabData} from "../../types";
+import { ITabData } from "../../types";
 
 export interface IBaseMeatProps {
   tab: string;

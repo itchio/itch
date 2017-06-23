@@ -1,35 +1,28 @@
-
 if (process.type === "renderer") {
   throw new Error("can't require db from renderer.");
 }
 
-import {elapsed} from "../format";
-import {dirname} from "path";
+import { elapsed } from "../format";
+import { dirname } from "path";
 import * as sf from "../os/sf";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "db"});
+const logger = rootLogger.child({ name: "db" });
 
 import getColumns from "./get-columns";
 
-import {
-  createConnection,
-} from "typeorm";
+import { createConnection } from "typeorm";
 
-import {modelList, modelMap, RepoContainer} from "./model-map";
+import { modelList, modelMap, RepoContainer } from "./model-map";
 
 import compareRecords from "./compare-records";
 import * as _ from "underscore";
 
-import {globalDbPath} from "../os/paths";
+import { globalDbPath } from "../os/paths";
 
 import * as actions from "../actions";
 
-import {
-  IStore,
-  IEntityMap, ITableMap,
-  IDBDeleteSpec,
-} from "../types";
+import { IStore, IEntityMap, ITableMap, IDBDeleteSpec } from "../types";
 
 /**
  * DB is a thin abstraction on top of typeorm. Pierce through it at will!
@@ -43,7 +36,7 @@ export class DB extends RepoContainer {
   /**
    * Loads the db from disk.
    */
-  async load (store: IStore, dbPath: string): Promise<void> {
+  async load(store: IStore, dbPath: string): Promise<void> {
     this.store = store;
 
     logger.info(`connecting to db ${dbPath}`);
@@ -56,7 +49,7 @@ export class DB extends RepoContainer {
       } catch (e) {
         logger.warn(`could not make db parent directory: ${e.stack}`);
       }
-    } 
+    }
 
     this.conn = await createConnection({
       name: dbPath,
@@ -81,14 +74,16 @@ export class DB extends RepoContainer {
   /**
    * Saves all passed entity records. See opts type for disk persistence and other options.
    */
-  async saveMany (entityTables: ITableMap) {
+  async saveMany(entityTables: ITableMap) {
     for (const tableName of Object.keys(entityTables)) {
       const entities: IEntityMap<Object> = entityTables[tableName];
       const entityIds = Object.keys(entities);
 
       const Model = modelMap[tableName];
       if (!Model) {
-        logger.info(`Dunno how to persist ${tableName}, skipping ${entityIds.length} records`);
+        logger.info(
+          `Dunno how to persist ${tableName}, skipping ${entityIds.length} records`,
+        );
         continue;
       }
       const columns = getColumns(Model);
@@ -97,7 +92,7 @@ export class DB extends RepoContainer {
 
       const savedRows = await repo
         .createQueryBuilder("e")
-        .where("e.id in (:entityIds)", {entityIds})
+        .where("e.id in (:entityIds)", { entityIds })
         .getMany();
       const existingEntities = _.indexBy(savedRows, "id");
 
@@ -122,17 +117,25 @@ export class DB extends RepoContainer {
       if (rows.length > 0) {
         // TODO: what do we do if this fails?
         await repo.persist(rows);
-        this.store.dispatch(actions.dbCommit({tableName, updated: _.pluck(rows, "id")}));
+        this.store.dispatch(
+          actions.dbCommit({ tableName, updated: _.pluck(rows, "id") }),
+        );
       }
-      logger.info(`saved ${entityIds.length - numUpToDate}/${entityIds.length}`
-        + ` ${tableName}, skipped ${numUpToDate} up-to-date`);
+      logger.info(
+        `saved ${entityIds.length - numUpToDate}/${entityIds.length}` +
+          ` ${tableName}, skipped ${numUpToDate} up-to-date`,
+      );
     }
   }
 
   /**
    * Save a single entity to the db, optionally persisting to disk (see ISaveOpts).
    */
-  async saveOne <T> (tableName: string, id: string, record: Partial<T>): Promise<void> {
+  async saveOne<T>(
+    tableName: string,
+    id: string,
+    record: Partial<T>,
+  ): Promise<void> {
     await this.saveMany({
       [tableName]: {
         [id]: record,
@@ -143,20 +146,22 @@ export class DB extends RepoContainer {
   /**
    * Delete all referenced entities. See IDeleteOpts for options.
    */
-  async deleteAllEntities (deleteSpec: IDBDeleteSpec) {
+  async deleteAllEntities(deleteSpec: IDBDeleteSpec) {
     for (const tableName of Object.keys(deleteSpec.entities)) {
       const entities = deleteSpec.entities[tableName];
 
       const Model = modelMap[tableName];
       if (!Model) {
-        logger.info(`Dunno how to persist ${tableName}, skipping delete of ${entities.length} items`);
+        logger.info(
+          `Dunno how to persist ${tableName}, skipping delete of ${entities.length} items`,
+        );
         continue;
       }
       const repo = this.conn.getRepository(Model);
 
-      const toRemove = [];      
+      const toRemove = [];
       for (const id of entities) {
-        toRemove.push({id});
+        toRemove.push({ id });
       }
       await repo.remove(toRemove);
     }
@@ -165,20 +170,20 @@ export class DB extends RepoContainer {
   /**
    * Deletes a single entity, optionally from the disk store too, see opts type
    */
-  async deleteEntity (tableName: string, id: string) {
+  async deleteEntity(tableName: string, id: string) {
     const Model = modelMap[tableName];
     if (!Model) {
       logger.info(`Dunno how to persist ${tableName}, skipping single delete`);
       return;
     }
     const repo = this.conn.getRepository(Model);
-    await repo.remove({id});
+    await repo.remove({ id });
   }
 
   /**
    * After closing the DB, no methods may called on it any more.
    */
-  async close () {
+  async close() {
     logger.info(`closing db ${this.dbPath}`);
     const t1 = Date.now();
     await this.conn.close();

@@ -1,8 +1,7 @@
-
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "arch"});
+const logger = rootLogger.child({ name: "arch" });
 
-import {execSync} from "child_process";
+import { execSync } from "child_process";
 
 const WIN64_ARCHES = {
   AMD64: true,
@@ -17,10 +16,12 @@ const WIN64_ARCHES = {
 export function isWin64(): boolean {
   // 64-bit exe on 64-bit windows: PROCESSOR_ARCHITECTURE has the original arch
   // 32-bit exe on 64-bit windows: PROCESSOR_ARCHITECTURE has x86, PROCESSOR_ARCHITEW6432 has the real one
-  return process.arch === "x64" ||
+  return (
+    process.arch === "x64" ||
     WIN64_ARCHES[process.env.PROCESSOR_ARCHITECTURE] ||
-    WIN64_ARCHES[process.env.PROCESSOR_ARCHITEW6432];
-};
+    WIN64_ARCHES[process.env.PROCESSOR_ARCHITEW6432]
+  );
+}
 
 let hasDeterminedLinux64 = false;
 let cachedIsLinux64: boolean;
@@ -34,14 +35,13 @@ export function isLinux64(): boolean {
     hasDeterminedLinux64 = true;
   }
   return cachedIsLinux64;
-
-};
+}
 
 function determineLinux64(): boolean {
   try {
     // weeeeeeeee
     const arch = String(execSync("uname -m")).trim();
-    return (arch === "x86_64");
+    return arch === "x86_64";
   } catch (e) {
     logger.warn(`Could not determine if linux64 via uname: ${e.message}`);
   }
@@ -49,7 +49,7 @@ function determineLinux64(): boolean {
   try {
     // weeeeeeeee
     const arch = String(execSync("arch")).trim();
-    return (arch === "x86_64");
+    return arch === "x86_64";
   } catch (e) {
     logger.warn(`Could not determine if linux64 via arch: ${e.message}`);
   }

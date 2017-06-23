@@ -1,18 +1,17 @@
-
-import {difference} from "underscore";
+import { difference } from "underscore";
 import * as bluebird from "bluebird";
 
 import * as sf from "../os/sf";
 import noop from "./noop";
 import butler from "./butler";
-import {Logger} from "../logger";
+import { Logger } from "../logger";
 
 import * as ospath from "path";
 
-import {IProgressListener} from "../types";
-import {ICaveRecord} from "../types";
+import { IProgressListener } from "../types";
+import { ICaveRecord } from "../types";
 
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 // FIXME: all this can and should be done with a butler command instead.
 // Using a staging folder is overkill and slows down the install process!
@@ -52,8 +51,14 @@ let self = {
    *   - Write receipt with list of files present in stage at deploy time
    *     (that receipt will be used on next deploy)
    */
-  deploy: async function (opts: IDeployOpts): Promise<IDeployResult> {
-    const {stagePath, destPath, onProgress = noop, onSingle = singlenoop, logger} = opts;
+  deploy: async function(opts: IDeployOpts): Promise<IDeployResult> {
+    const {
+      stagePath,
+      destPath,
+      onProgress = noop,
+      onSingle = singlenoop,
+      logger,
+    } = opts;
 
     const stageFiles = await sf.glob("**", {
       cwd: stagePath,
@@ -67,12 +72,12 @@ let self = {
       let res = await onSingle(onlyFile);
       if (res && res.deployed) {
         // onSingle returning true means it's been handled upstraem
-        return {status: "ok"};
+        return { status: "ok" };
       }
     }
 
     const emitter = new EventEmitter();
-    await butler.mkdir(destPath, {emitter, logger});
+    await butler.mkdir(destPath, { emitter, logger });
 
     logger.info(`cleaning up dest path ${destPath}`);
 
@@ -80,16 +85,25 @@ let self = {
     let destFiles = [] as string[];
 
     try {
-      let receiptContents = await sf.readFile(receiptPath, {encoding: "utf8"});
+      let receiptContents = await sf.readFile(receiptPath, {
+        encoding: "utf8",
+      });
       let receipt = JSON.parse(receiptContents);
       destFiles = receipt.files || [];
-      logger.info(`Got receipt for an existing ${destFiles.length}-files install.`);
+      logger.info(
+        `Got receipt for an existing ${destFiles.length}-files install.`,
+      );
     } catch (err) {
       logger.warn(`Could not read receipt: ${err.message}`);
     }
     if (!destFiles.length) {
       logger.info("Globbing for destfiles");
-      destFiles = await sf.glob("**", {cwd: destPath, dot: true, nodir: true, ignore: sf.globIgnore});
+      destFiles = await sf.glob("**", {
+        cwd: destPath,
+        dot: true,
+        nodir: true,
+        ignore: sf.globIgnore,
+      });
     }
 
     logger.info(`dest has ${destFiles.length} potential dinosaurs`);
@@ -97,12 +111,18 @@ let self = {
     const dinosaurs = difference(destFiles, stageFiles);
     if (dinosaurs.length) {
       logger.info(`removing ${dinosaurs.length} dinosaurs in dest`);
-      logger.info(`example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`);
+      logger.info(
+        `example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`,
+      );
 
-      await bluebird.map(dinosaurs, (rel) => {
-        let dinosaur = ospath.join(destPath, rel);
-        return butler.wipe(dinosaur, {emitter, logger});
-      }, {concurrency: 4});
+      await bluebird.map(
+        dinosaurs,
+        rel => {
+          let dinosaur = ospath.join(destPath, rel);
+          return butler.wipe(dinosaur, { emitter, logger });
+        },
+        { concurrency: 4 },
+      );
     } else {
       logger.info("no dinosaurs");
     }
@@ -119,9 +139,9 @@ let self = {
 
     const receiptObject = { cave, files: stageFiles };
     const receiptJson = JSON.stringify(receiptObject, null, 2);
-    await sf.writeFile(receiptPath, receiptJson, {encoding: "utf8"});
+    await sf.writeFile(receiptPath, receiptJson, { encoding: "utf8" });
 
-    return {status: "ok"};
+    return { status: "ok" };
   },
 };
 

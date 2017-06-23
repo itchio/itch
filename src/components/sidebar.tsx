@@ -1,9 +1,8 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect, I18nProps } from "./connect";
 
-import {map} from "underscore";
-import {createStructuredSelector} from "reselect";
+import { map } from "underscore";
+import { createStructuredSelector } from "reselect";
 
 import * as actions from "../actions";
 
@@ -14,13 +13,13 @@ import SidebarTab from "./sidebar/tab";
 import SidebarLogo from "./sidebar/logo";
 import UserMenu from "./sidebar/user-menu";
 
-import {IAppState, IUserRecord} from "../types";
-import {dispatcher} from "../constants/action-types";
+import { IAppState, IUserRecord } from "../types";
+import { dispatcher } from "../constants/action-types";
 
-import {SortableContainer, arrayMove} from "react-sortable-hoc";
+import { SortableContainer, arrayMove } from "react-sortable-hoc";
 
 import styled, * as styles from "./styles";
-import {SidebarSection, SidebarHeading} from "./sidebar/styles";
+import { SidebarSection, SidebarHeading } from "./sidebar/styles";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -65,19 +64,26 @@ const SortableListContainer = styled.div`
 `;
 
 const SortableList = SortableContainer((params: ISortableContainerParams) => {
-  const {sidebarProps, items} = params;
+  const { sidebarProps, items } = params;
   const currentId = sidebarProps.id;
 
-  return <SortableListContainer>
-    {map(items, (id, index) => {
-      const active = (currentId === id);
-      return <SidebarTab key={id} id={id} active={active} index={index} sortable/>;
-    })}
-  </SortableListContainer>;
+  return (
+    <SortableListContainer>
+      {map(items, (id, index) => {
+        const active = currentId === id;
+        return (
+          <SidebarTab key={id} id={id} active={active} index={index} sortable />
+        );
+      })}
+    </SortableListContainer>
+  );
 });
 
-class Sidebar extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
-  constructor (props: IProps & IDerivedProps & I18nProps) {
+class Sidebar extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  IState
+> {
+  constructor(props: IProps & IDerivedProps & I18nProps) {
     super();
     this.state = {
       transient: props.tabs.transient,
@@ -86,68 +92,76 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps & I18nProps, IS
 
   closeAllTabs = () => {
     this.props.closeAllTabs({});
-  }
+  };
 
   newTab = () => {
     this.props.newTab({});
-  }
+  };
 
   onSortEnd = (params: ISortEndParams) => {
-    const {oldIndex, newIndex} = params;
+    const { oldIndex, newIndex } = params;
     this.setState({
       transient: arrayMove(this.state.transient, oldIndex, newIndex),
     });
-    this.props.moveTab({before: oldIndex, after: newIndex});
-  }
+    this.props.moveTab({ before: oldIndex, after: newIndex });
+  };
 
-  render () {
-    const {t, osx, sidebarWidth, fullscreen, id: currentId, tabs} = this.props;
+  render() {
+    const {
+      t,
+      osx,
+      sidebarWidth,
+      fullscreen,
+      id: currentId,
+      tabs,
+    } = this.props;
 
-    return <SidebarDiv width={sidebarWidth}>
-      {(osx && !fullscreen)
-      ? <TitleBarPadder/>
-      : null}
+    return (
+      <SidebarDiv width={sidebarWidth}>
+        {osx && !fullscreen ? <TitleBarPadder /> : null}
 
-      <SidebarLogo/>      
+        <SidebarLogo />
 
-      <SidebarSearch/>
+        <SidebarSearch />
 
-      <SidebarItems>
-        <SidebarSection>
-          <SidebarHeading>{t("sidebar.category.basics")}</SidebarHeading>
-        </SidebarSection>
-        {map(tabs.constant, (id, index) => {
-          return <SidebarTab key={id} id={id} active={currentId === id}/>;
-        })}
+        <SidebarItems>
+          <SidebarSection>
+            <SidebarHeading>{t("sidebar.category.basics")}</SidebarHeading>
+          </SidebarSection>
+          {map(tabs.constant, (id, index) => {
+            return <SidebarTab key={id} id={id} active={currentId === id} />;
+          })}
 
-        <SidebarSection>
-          <SidebarHeading>{t("sidebar.category.tabs")}</SidebarHeading>
-          <Filler/>
-          <IconButton
-            icon="delete"
-            hint={t("sidebar.close_all_tabs")}
-            onClick={this.closeAllTabs}
+          <SidebarSection>
+            <SidebarHeading>{t("sidebar.category.tabs")}</SidebarHeading>
+            <Filler />
+            <IconButton
+              icon="delete"
+              hint={t("sidebar.close_all_tabs")}
+              onClick={this.closeAllTabs}
+            />
+            <IconButton
+              id="new-tab-icon"
+              icon="plus"
+              hint={t("sidebar.new_tab")}
+              onClick={this.newTab}
+            />
+          </SidebarSection>
+
+          <SortableList
+            items={this.state.transient}
+            sidebarProps={this.props}
+            onSortEnd={this.onSortEnd}
+            distance={5}
+            lockAxis="y"
           />
-          <IconButton
-            id="new-tab-icon"
-            icon="plus"
-            hint={t("sidebar.new_tab")}
-            onClick={this.newTab}
-          />
-        </SidebarSection>
+        </SidebarItems>
 
-        <SortableList items={this.state.transient}
-          sidebarProps={this.props}
-          onSortEnd={this.onSortEnd}
-          distance={5}
-          lockAxis="y"
-        />
-      </SidebarItems>
+        <Filler />
 
-      <Filler/>
-
-      <UserMenu/>
-    </SidebarDiv>;
+        <UserMenu />
+      </SidebarDiv>
+    );
   }
 
   componentWillReceiveProps(props: IProps & IDerivedProps & I18nProps) {
@@ -199,7 +213,7 @@ export default connect<IProps>(Sidebar, {
     id: (state: IAppState) => state.session.navigation.id,
     tabs: (state: IAppState) => state.session.navigation.tabs,
   }),
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
     closeAllTabs: dispatcher(dispatch, actions.closeAllTabs),
     moveTab: dispatcher(dispatch, actions.moveTab),

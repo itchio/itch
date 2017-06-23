@@ -1,7 +1,6 @@
+import { platform } from "../os";
 
-import {platform} from "../os";
-
-import {ISandbox} from "./sandbox/types";
+import { ISandbox } from "./sandbox/types";
 import win32Sandbox from "./sandbox/win32";
 import linuxSandbox from "./sandbox/linux";
 import darwinSandbox from "./sandbox/darwin";
@@ -18,7 +17,7 @@ switch (platform()) {
     sandbox = darwinSandbox;
     break;
   default:
-    // muffin;
+  // muffin;
 }
 
 export default sandbox;

@@ -1,14 +1,13 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
 import * as sf from "../../os/sf";
 import * as paths from "../../os/paths";
 import explorer from "../../os/explorer";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.exploreCave, async (store, action) => {
-    const {caveId} = action.payload;
+    const { caveId } = action.payload;
     // FIXME: db
     const market: any = null;
 

@@ -1,14 +1,13 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 
 import * as actions from "../../actions";
-import {MODAL_RESPONSE} from "../../constants/action-types";
+import { MODAL_RESPONSE } from "../../constants/action-types";
 
-import {promisedModal} from "../modals";
+import { promisedModal } from "../modals";
 
-import {IClearBrowsingDataParams} from "../../components/modal-widgets/clear-browsing-data";
+import { IClearBrowsingDataParams } from "../../components/modal-widgets/clear-browsing-data";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.clearBrowsingDataRequest, async (store, action) => {
     const response = await promisedModal(store, {
       title: ["preferences.advanced.clear_browsing_data"],
@@ -31,9 +30,11 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    store.dispatch(actions.clearBrowsingData({
-      cache: response.payload.cache,
-      cookies: response.payload.cookies,
-    }));
+    store.dispatch(
+      actions.clearBrowsingData({
+        cache: response.payload.cache,
+        cookies: response.payload.cookies,
+      }),
+    );
   });
 }

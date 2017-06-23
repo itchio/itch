@@ -1,7 +1,6 @@
-
-import {map} from "underscore";
+import { map } from "underscore";
 import * as shellQuote from "shell-quote";
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 import which from "../../promised/which";
 
 import urls from "../../constants/urls";
@@ -13,35 +12,35 @@ import sandbox from "../../util/sandbox";
 import * as os from "../../os";
 import * as sf from "../../os/sf";
 import spawn from "../../os/spawn";
-import {join, dirname} from "path";
+import { join, dirname } from "path";
 import * as paths from "../../os/paths";
 import butler from "../../util/butler";
 import * as icacls from "./icacls";
 
 import expandManifestPath from "./expand-manifest-path";
 
-import {promisedModal} from "../../reactors/modals";
-import {MODAL_RESPONSE} from "../../constants/action-types";
+import { promisedModal } from "../../reactors/modals";
+import { MODAL_RESPONSE } from "../../constants/action-types";
 
-import rootLogger, {devNull} from "../../logger";
-const logger = rootLogger.child({name: "launch/native"});
+import rootLogger, { devNull } from "../../logger";
+const logger = rootLogger.child({ name: "launch/native" });
 
-import {Crash, MissingLibs} from "../errors";
+import { Crash, MissingLibs } from "../errors";
 
-import {IEnvironment, ILaunchOpts} from "../../types";
-import {ILauncher} from "./types";
+import { IEnvironment, ILaunchOpts } from "../../types";
+import { ILauncher } from "./types";
 
 const itchPlatform = os.itchPlatform();
 
 const launchNative: ILauncher = async (store, out, opts) => {
-  const {cave, game, hasManifest, manifestAction} = opts;
-  let {args, env} = opts;
+  const { cave, game, hasManifest, manifestAction } = opts;
+  let { args, env } = opts;
 
   logger.info(`cave location: "${cave.installLocation}/${cave.installFolder}"`);
 
   const state = store.getState();
-  const {preferences} = state;
-  let {isolateApps} = preferences;
+  const { preferences } = state;
+  let { isolateApps } = preferences;
 
   const appPath = paths.appPath(cave, preferences);
   let exePath: string;
@@ -58,7 +57,9 @@ const launchNative: ILauncher = async (store, out, opts) => {
       console = true;
     }
 
-    logger.info(`manifest action picked: ${JSON.stringify(manifestAction, null, 2)}`);
+    logger.info(
+      `manifest action picked: ${JSON.stringify(manifestAction, null, 2)}`,
+    );
     exePath = expandManifestPath(appPath, manifestAction.path);
   } else {
     logger.warn("no manifest action picked");
@@ -75,7 +76,9 @@ const launchNative: ILauncher = async (store, out, opts) => {
   }
 
   if (!exePath) {
-    const err = new Error(`No executables found (${hasManifest ? "with" : "without"} manifest)`);
+    const err = new Error(
+      `No executables found (${hasManifest ? "with" : "without"} manifest)`,
+    );
     (err as any).reason = ["game.install.no_executables_found"];
     throw err;
   }
@@ -92,36 +95,40 @@ const launchNative: ILauncher = async (store, out, opts) => {
     logger.info("checking existence of system JRE before launching .jar");
     try {
       const javaPath = await which("java");
-      args = [
-        "-jar", exePath, ...args,
-      ];
+      args = ["-jar", exePath, ...args];
       cwd = dirname(exePath);
       exePath = javaPath;
     } catch (e) {
-      store.dispatch(actions.openModal({
-        title: "",
-        message: ["game.install.could_not_launch", {title: game.title}],
-        detail: ["game.install.could_not_launch.missing_jre"],
-        buttons: [
-          {
-            label: ["grid.item.download_java"],
-            icon: "download",
-            action: actions.openUrl({url: urls.javaDownload}),
-          },
-          "cancel",
-        ],
-      }));
+      store.dispatch(
+        actions.openModal({
+          title: "",
+          message: ["game.install.could_not_launch", { title: game.title }],
+          detail: ["game.install.could_not_launch.missing_jre"],
+          buttons: [
+            {
+              label: ["grid.item.download_java"],
+              icon: "download",
+              action: actions.openUrl({ url: urls.javaDownload }),
+            },
+            "cancel",
+          ],
+        }),
+      );
       return;
     }
   }
 
-  logger.info(`executing '${exePath}' on '${itchPlatform}' with args '${args.join(" ")}'`);
+  logger.info(
+    `executing '${exePath}' on '${itchPlatform}' with args '${args.join(" ")}'`,
+  );
   const argString = map(args, spawn.escapePath).join(" ");
 
   if (isolateApps) {
     const checkRes = await sandbox.check();
     if (checkRes.errors.length > 0) {
-      throw new Error(`error(s) while checking for sandbox: ${checkRes.errors.join(", ")}`);
+      throw new Error(
+        `error(s) while checking for sandbox: ${checkRes.errors.join(", ")}`,
+      );
     }
 
     if (checkRes.needs.length > 0) {
@@ -139,12 +146,12 @@ const launchNative: ILauncher = async (store, out, opts) => {
         buttons: [
           {
             label: ["sandbox.setup.proceed"],
-            action: actions.modalResponse({sandboxBlessing: true}),
+            action: actions.modalResponse({ sandboxBlessing: true }),
             icon: "checkmark",
           },
           {
             label: ["docs.learn_more"],
-            action: actions.openUrl({url: learnMoreMap[itchPlatform]}),
+            action: actions.openUrl({ url: learnMoreMap[itchPlatform] }),
             icon: "earth",
             className: "secondary",
           },
@@ -152,7 +159,10 @@ const launchNative: ILauncher = async (store, out, opts) => {
         ],
       });
 
-      if (response.type === MODAL_RESPONSE && response.payload.sandboxBlessing) {
+      if (
+        response.type === MODAL_RESPONSE &&
+        response.payload.sandboxBlessing
+      ) {
         // carry on
       } else {
         return; // cancelled by user
@@ -161,7 +171,9 @@ const launchNative: ILauncher = async (store, out, opts) => {
 
     const installRes = await sandbox.install(checkRes.needs);
     if (installRes.errors.length > 0) {
-      throw new Error(`error(s) while installing sandbox: ${installRes.errors.join(", ")}`);
+      throw new Error(
+        `error(s) while installing sandbox: ${installRes.errors.join(", ")}`,
+      );
     }
   }
 
@@ -198,16 +210,34 @@ const launchNative: ILauncher = async (store, out, opts) => {
         logger: opts.logger,
       };
 
-      await sandbox.within(sandboxOpts, async function ({fakeApp}) {
-        await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, env, out, opts);
+      await sandbox.within(sandboxOpts, async function({ fakeApp }) {
+        await doSpawn(
+          fullExec,
+          `open -W ${spawn.escapePath(fakeApp)}`,
+          env,
+          out,
+          opts,
+        );
       });
     } else {
       logger.info("no app isolation");
 
       if (isBundle) {
-        await doSpawn(fullExec, `open -W ${spawn.escapePath(exePath)} --args ${argString}`, env, out, spawnOpts);
+        await doSpawn(
+          fullExec,
+          `open -W ${spawn.escapePath(exePath)} --args ${argString}`,
+          env,
+          out,
+          spawnOpts,
+        );
       } else {
-        await doSpawn(fullExec, `${spawn.escapePath(exePath)} ${argString}`, env, out, spawnOpts);
+        await doSpawn(
+          fullExec,
+          `${spawn.escapePath(exePath)} ${argString}`,
+          env,
+          out,
+          spawnOpts,
+        );
       }
     }
   } else if (itchPlatform === "windows") {
@@ -229,7 +259,11 @@ const launchNative: ILauncher = async (store, out, opts) => {
       playerUsername = playerUsername.split("\n")[0].trim();
 
       logger.info("app isolation enabled");
-      await icacls.shareWith({logger: opts.logger, sid: playerUsername, path: grantPath});
+      await icacls.shareWith({
+        logger: opts.logger,
+        sid: playerUsername,
+        path: grantPath,
+      });
       cmd = `isolate ${cmd}`;
     } else {
       logger.info("no app isolation");
@@ -240,7 +274,11 @@ const launchNative: ILauncher = async (store, out, opts) => {
     } finally {
       // always unshare, even if something happened
       if (isolateApps) {
-        await icacls.unshareWith({logger: opts.logger, sid: playerUsername, path: grantPath});
+        await icacls.unshareWith({
+          logger: opts.logger,
+          sid: playerUsername,
+          path: grantPath,
+        });
       }
     }
   } else if (itchPlatform === "linux") {
@@ -253,7 +291,9 @@ const launchNative: ILauncher = async (store, out, opts) => {
       const sandboxProfilePath = join(appPath, ".itch", "isolate-app.profile");
 
       const sandboxSource = linuxSandboxTemplate;
-      await sf.writeFile(sandboxProfilePath, sandboxSource, {encoding: "utf8"});
+      await sf.writeFile(sandboxProfilePath, sandboxSource, {
+        encoding: "utf8",
+      });
 
       cmd = `firejail "--profile=${sandboxProfilePath}" -- ${cmd}`;
       await doSpawn(exePath, cmd, env, out, spawnOpts);
@@ -279,8 +319,13 @@ interface IDoSpawnOpts extends ILaunchOpts {
   isolateApps?: boolean;
 }
 
-async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment, emitter: EventEmitter,
-                        opts: IDoSpawnOpts) {
+async function doSpawn(
+  exePath: string,
+  fullCommand: string,
+  env: IEnvironment,
+  emitter: EventEmitter,
+  opts: IDoSpawnOpts,
+) {
   logger.info(`spawn command: ${fullCommand}`);
 
   const cwd = opts.cwd || dirname(exePath);
@@ -291,7 +336,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   let shell: string = null;
 
   let inheritStd = false;
-  const {console} = opts;
+  const { console } = opts;
   if (console) {
     logger.info(`(in console mode)`);
     if (itchPlatform === "windows") {
@@ -303,7 +348,9 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
         };
       } else {
         const consoleCommandItems = [command, ...args];
-        const consoleCommand = consoleCommandItems.map((arg) => `"${arg}"`).join(" ");
+        const consoleCommand = consoleCommandItems
+          .map(arg => `"${arg}"`)
+          .join(" ");
 
         inheritStd = true;
         args = ["/wait", "cmd.exe", "/k", consoleCommand];
@@ -334,7 +381,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   let spawnEmitter = emitter;
   if (itchPlatform === "osx") {
     spawnEmitter = new EventEmitter();
-    emitter.once("cancel", async function () {
+    emitter.once("cancel", async function() {
       logger.warn(`asked to cancel, calling pkill with ${exePath}`);
       const killRes = await spawn.exec({
         command: "pkill",
@@ -342,7 +389,9 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
         logger: devNull,
       });
       if (killRes.code !== 0) {
-        logger.error(`Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`);
+        logger.error(
+          `Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`,
+        );
         spawnEmitter.emit("cancel");
       }
     });
@@ -353,7 +402,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
 
   const capsulerunPath = process.env.CAPSULERUN_PATH;
   if (capsulerunPath) {
-    args = [ "--", command, ...args ];
+    args = ["--", command, ...args];
     command = capsulerunPath;
   }
 
@@ -361,8 +410,8 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     command,
     args,
     emitter: spawnEmitter,
-    onToken: (tok) => logger.info(`out: ${tok}`),
-    onErrToken: (tok) => {
+    onToken: tok => logger.info(`out: ${tok}`),
+    onErrToken: tok => {
       logger.info(`err: ${tok}`);
       const matches = MISSINGLIB_RE.exec(tok);
       if (matches) {
@@ -370,7 +419,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
       }
     },
     opts: {
-      env: {...process.env, ...env},
+      env: { ...process.env, ...env },
       cwd,
       shell,
     },
@@ -390,9 +439,13 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
   if (code !== 0) {
     if (code === 127 && missingLibs.length > 0) {
       let arch = "386";
-      
+
       try {
-        const props = await butler.elfprops({path: exePath, emitter: null, logger: opts.logger});
+        const props = await butler.elfprops({
+          path: exePath,
+          emitter: null,
+          logger: opts.logger,
+        });
         arch = props.arch;
       } catch (e) {
         logger.warn(`could not determine arch for crash message: ${e.message}`);
@@ -404,12 +457,12 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
       });
     } else {
       const error = `process exited with code ${code}`;
-      throw new Crash({error});
+      throw new Crash({ error });
     }
   }
   return "child completed successfully";
 }
 
-function isAppBundle (exePath: string) {
+function isAppBundle(exePath: string) {
   return /\.app\/?$/.test(exePath.toLowerCase());
 }

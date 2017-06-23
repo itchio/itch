@@ -1,13 +1,9 @@
-
 import * as querystring from "querystring";
 
 import useragent from "../../constants/useragent";
-import {NET_PARTITION_NAME, NET_TIMEOUT_MS} from "../../constants/net";
+import { NET_PARTITION_NAME, NET_TIMEOUT_MS } from "../../constants/net";
 
-import {
-  HTTPMethod,
-  IRequestOpts, IResponse,
-} from "../types";
+import { HTTPMethod, IRequestOpts, IResponse } from "../types";
 
 import {
   RequestError,
@@ -17,15 +13,15 @@ import {
   RequestParsingFailure,
 } from "../errors";
 
-import {net} from "electron";
+import { net } from "electron";
 
 // use chromium's net API
-export async function request (
-    method: HTTPMethod,
-    uri: string, 
-    data: any = {},
-    opts: IRequestOpts = {}): Promise<IResponse> {
-
+export async function request(
+  method: HTTPMethod,
+  uri: string,
+  data: any = {},
+  opts: IRequestOpts = {},
+): Promise<IResponse> {
   let url = uri;
 
   if (method === "get") {
@@ -43,7 +39,7 @@ export async function request (
   req.setHeader("user-agent", useragent);
 
   const p = new Promise<IResponse>((resolve, reject) => {
-    req.on("response", (res) => {
+    req.on("response", res => {
       const response = {
         statusCode: res.statusCode,
         status: res.statusMessage,
@@ -61,12 +57,14 @@ export async function request (
         res.pipe(opts.sink);
       } else {
         res.setEncoding("utf8");
-        res.on("data", function (chunk) {
+        res.on("data", function(chunk) {
           text += chunk;
         });
       }
 
-      const contentTypeHeader = (res.headers["content-type"] || ["text/plain"])[0];
+      const contentTypeHeader = (res.headers["content-type"] || [
+        "text/plain",
+      ])[0];
       const contentType = /[^;]*/.exec(contentTypeHeader)[0];
 
       res.on("end", async () => {
@@ -87,7 +85,7 @@ export async function request (
       });
     });
 
-    req.on("error", (error) => {
+    req.on("error", error => {
       reject(new RequestError(error.message));
     });
 
@@ -105,7 +103,7 @@ export async function request (
     req.on("close", () => {
       // no-op
     });
-    
+
     if (!opts.sink) {
       setTimeout(() => {
         reject(new RequestTimeout());

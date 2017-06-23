@@ -1,28 +1,29 @@
+import { Watcher } from "./watcher";
 
-import {Watcher} from "./watcher";
-
-import {preferencesPath, logPath} from "../os/paths";
+import { preferencesPath, logPath } from "../os/paths";
 import * as sf from "../os/sf";
-import {camelifyObject} from "../format";
+import { camelifyObject } from "../format";
 import partitionForUser from "../util/partition-for-user";
 
 import * as actions from "../actions";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "preferences"});
+const logger = rootLogger.child({ name: "preferences" });
 
-import {shell, session} from "electron";
+import { shell, session } from "electron";
 
 let saveAtomicInvocations = 0;
 
-import {initialState} from "../reducers/preferences";
+import { initialState } from "../reducers/preferences";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
     let prefs: any = {};
 
     try {
-      const contents = await sf.readFile(preferencesPath(), {encoding: "utf8"});
+      const contents = await sf.readFile(preferencesPath(), {
+        encoding: "utf8",
+      });
       prefs = camelifyObject(JSON.parse(contents));
       logger.debug("imported preferences: ", prefs);
     } catch (err) {
@@ -34,7 +35,7 @@ export default function (watcher: Watcher) {
     }
 
     store.dispatch(actions.updatePreferences(prefs));
-    store.dispatch(actions.preferencesLoaded({...initialState, ...prefs}));
+    store.dispatch(actions.preferencesLoaded({ ...initialState, ...prefs }));
   });
 
   watcher.on(actions.updatePreferences, async (store, action) => {
@@ -42,8 +43,8 @@ export default function (watcher: Watcher) {
 
     // write prefs atomically
     const file = preferencesPath();
-    const tmpPath = file + ".tmp" + (saveAtomicInvocations++);
-    await sf.writeFile(tmpPath, JSON.stringify(prefs), {encoding: "utf8"});
+    const tmpPath = file + ".tmp" + saveAtomicInvocations++;
+    await sf.writeFile(tmpPath, JSON.stringify(prefs), { encoding: "utf8" });
     await sf.rename(tmpPath, file);
   });
 
@@ -59,32 +60,41 @@ export default function (watcher: Watcher) {
 
     if (action.payload.cache) {
       logger.debug(`clearing cache for ${partition}`);
-      promises.push(new Promise((resolve, reject) => {
-        ourSession.clearCache(resolve);
-      }));
+      promises.push(
+        new Promise((resolve, reject) => {
+          ourSession.clearCache(resolve);
+        }),
+      );
     }
 
     if (action.payload.cookies) {
       logger.debug(`clearing cookies for ${partition}`);
-      promises.push(new Promise((resolve, reject) => {
-        ourSession.clearStorageData({
-          storages: ["cookies"],
-          // for all origins
-          origin: null,
-          // look chromium just clear everything thanks
-          quotas: ["temporary", "persistent", "syncable"],
-        }, resolve);
-      }));
+      promises.push(
+        new Promise((resolve, reject) => {
+          ourSession.clearStorageData(
+            {
+              storages: ["cookies"],
+              // for all origins
+              origin: null,
+              // look chromium just clear everything thanks
+              quotas: ["temporary", "persistent", "syncable"],
+            },
+            resolve,
+          );
+        }),
+      );
     }
 
     await Promise.all(promises);
 
-    store.dispatch(actions.statusMessage({
-      message: ["prompt.clear_browsing_data.notification"],
-    }));
+    store.dispatch(
+      actions.statusMessage({
+        message: ["prompt.clear_browsing_data.notification"],
+      }),
+    );
   });
 
-  watcher.on(actions.openAppLog, async(store, action) => {
+  watcher.on(actions.openAppLog, async (store, action) => {
     const path = logPath();
     logger.info(`Opening app log at ${path}`);
     shell.openItem(path);

@@ -1,17 +1,16 @@
-
-import {ITabDataSet} from "../../types";
+import { ITabDataSet } from "../../types";
 import * as actions from "../../actions";
 import reducer from "../reducer";
 
-import {omit} from "underscore";
+import { omit } from "underscore";
 
 const initialState = {} as ITabDataSet;
 
 const emptyObj = {};
 
-export default reducer<ITabDataSet>(initialState, (on) => {
+export default reducer<ITabDataSet>(initialState, on => {
   on(actions.tabDataFetched, (state, action) => {
-    const {id, data} = action.payload;
+    const { id, data } = action.payload;
     const oldData = state[id];
     if (!oldData) {
       // ignore fresh data for closed tabs
@@ -20,12 +19,12 @@ export default reducer<ITabDataSet>(initialState, (on) => {
 
     return {
       ...state,
-      [id]: {...oldData, ...data},
+      [id]: { ...oldData, ...data },
     };
   });
 
   on(actions.tabEvolved, (state, action) => {
-    const {id, data} = action.payload;
+    const { id, data } = action.payload;
     const oldData = state[id];
     if (!oldData) {
       // ignore fresh data for closed tabs
@@ -34,12 +33,12 @@ export default reducer<ITabDataSet>(initialState, (on) => {
 
     return {
       ...state,
-      [id]: {...oldData, ...data},
+      [id]: { ...oldData, ...data },
     };
   });
 
   on(actions.focusTab, (state, action) => {
-    const {id} = action.payload;
+    const { id } = action.payload;
     const oldData = state[id] || emptyObj;
 
     // when constants tabs are focused, they need
@@ -48,7 +47,7 @@ export default reducer<ITabDataSet>(initialState, (on) => {
     // those.
     return {
       ...state,
-      [id]: {...oldData},
+      [id]: { ...oldData },
     };
   });
 
@@ -57,10 +56,10 @@ export default reducer<ITabDataSet>(initialState, (on) => {
   });
 
   on(actions.openTab, (state, action) => {
-    const {id, data = emptyObj} = action.payload;
+    const { id, data = emptyObj } = action.payload;
     return {
       ...state,
-      [id]: {...data},
+      [id]: { ...data },
     };
   });
 });

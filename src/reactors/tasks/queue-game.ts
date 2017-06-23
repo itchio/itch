@@ -1,36 +1,35 @@
+import { EventEmitter } from "events";
 
-import {EventEmitter} from "events";
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
 import db from "../../db";
 
 import makeUploadButton from "../make-upload-button";
 
-import {promisedModal} from "../modals";
-import {MODAL_RESPONSE} from "../../constants/action-types";
+import { promisedModal } from "../modals";
+import { MODAL_RESPONSE } from "../../constants/action-types";
 
-import {IUploadRecord} from "../../types";
+import { IUploadRecord } from "../../types";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "queue-game"});
+const logger = rootLogger.child({ name: "queue-game" });
 
-import findUploads, {IFindUploadResult} from "../downloads/find-uploads";
+import findUploads, { IFindUploadResult } from "../downloads/find-uploads";
 import getGameCredentials from "../downloads/get-game-credentials";
 
-import {map} from "underscore";
+import { map } from "underscore";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
-    const {game} = action.payload;
+    const { game } = action.payload;
 
-    const caves = await db.caves.find({gameId: game.id});
+    const caves = await db.caves.find({ gameId: game.id });
 
     if (caves.length > 0) {
       logger.info(`Have ${caves} for game ${game.id}, launching the first one`);
       const cave = caves[0];
-      store.dispatch(actions.queueLaunch({caveId: cave.id}));
+      store.dispatch(actions.queueLaunch({ caveId: cave.id }));
       return;
     }
 
@@ -40,7 +39,9 @@ export default function (watcher: Watcher) {
 
     const gameCredentials = await getGameCredentials(store, game);
     if (!gameCredentials) {
-      logger.error(`No game credentials for ${game.title} (#${game.id}), bailing out`);
+      logger.error(
+        `No game credentials for ${game.title} (#${game.id}), bailing out`,
+      );
       return;
     }
 
@@ -51,52 +52,62 @@ export default function (watcher: Watcher) {
         gameCredentials,
       });
     } catch (e) {
-      store.dispatch(actions.openModal({
-        title: ["prompt.install_error.title"],
-        message: ["prompt.install_error.find_upload", { message: e.message }],
-        buttons: [
-          {
-            label: ["game.install.try_again"],
-            icon: "repeat",
-            action: action,
-          },
-          "ok",
-        ],
-      }));
+      store.dispatch(
+        actions.openModal({
+          title: ["prompt.install_error.title"],
+          message: ["prompt.install_error.find_upload", { message: e.message }],
+          buttons: [
+            {
+              label: ["game.install.try_again"],
+              icon: "repeat",
+              action: action,
+            },
+            "ok",
+          ],
+        }),
+      );
       return;
     }
 
-    let {uploads} = uploadResponse;
+    let { uploads } = uploadResponse;
 
     if (uploads.length === 0) {
-      store.dispatch(actions.openModal({
-        title: ["game.install.no_uploads_available.message", { title: game.title }],
-        message: ["game.install.no_uploads_available.message", { title: game.title }],
-        detail: ["game.install.no_uploads_available.detail"],
-        buttons: [
-          {
-            label: ["game.install.try_again"],
-            icon: "repeat",
-            action: action,
-          },
-          "ok",
-        ],
-      }));
+      store.dispatch(
+        actions.openModal({
+          title: [
+            "game.install.no_uploads_available.message",
+            { title: game.title },
+          ],
+          message: [
+            "game.install.no_uploads_available.message",
+            { title: game.title },
+          ],
+          detail: ["game.install.no_uploads_available.detail"],
+          buttons: [
+            {
+              label: ["game.install.try_again"],
+              icon: "repeat",
+              action: action,
+            },
+            "ok",
+          ],
+        }),
+      );
     }
 
-    let upload: IUploadRecord;    
+    let upload: IUploadRecord;
     let handPicked = false;
 
     if (uploads.length === 1) {
       upload = uploads[0];
     } else {
       handPicked = true;
-      const {title} = game;
+      const { title } = game;
       const modalRes = await promisedModal(store, {
-        title: ["pick_install_upload.title", {title}],
-        message: ["pick_install_upload.message", {title}],
+        title: ["pick_install_upload.title", { title }],
+        message: ["pick_install_upload.message", { title }],
         detail: ["pick_install_upload.detail"],
-        bigButtons: map(uploads, (candidate) => {
+        bigButtons: map(uploads, candidate => {
           return {
             ...makeUploadButton(candidate),
             action: actions.modalResponse({
@@ -104,9 +115,7 @@ export default function (watcher: Watcher) {
             }),
           };
         }),
-        buttons: [
-          "cancel",
-        ],
+        buttons: ["cancel"],
       });
 
       if (modalRes.type === MODAL_RESPONSE) {
@@ -117,12 +126,14 @@ export default function (watcher: Watcher) {
       }
     }
 
-    store.dispatch(actions.queueDownload({
-      game,
-      upload,
-      handPicked,
-      totalSize: upload.size,
-      reason: "install",
-    }));
+    store.dispatch(
+      actions.queueDownload({
+        game,
+        upload,
+        handPicked,
+        totalSize: upload.size,
+        reason: "install",
+      }),
+    );
   });
 }

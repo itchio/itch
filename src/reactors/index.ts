@@ -1,5 +1,4 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 
 import fetchers from "./fetchers";
 import preboot from "./preboot";

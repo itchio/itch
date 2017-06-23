@@ -1,14 +1,13 @@
-
 import * as React from "react";
-import {createStructuredSelector} from "reselect";
-import {connect, I18nProps} from "../connect";
+import { createStructuredSelector } from "reselect";
+import { connect, I18nProps } from "../connect";
 
-import {IAppState} from "../../types";
+import { IAppState } from "../../types";
 
 import User from "../../db/models/user";
 
 import * as actions from "../../actions";
-import {dispatcher} from "../../constants/action-types";
+import { dispatcher } from "../../constants/action-types";
 
 import defaultImages from "../../constants/default-images";
 
@@ -19,7 +18,7 @@ import Filler from "../basics/filler";
 import Button from "../basics/button";
 
 import Dropdown from "./dropdown";
-import {IDropdownItem} from "./dropdown-item";
+import { IDropdownItem } from "./dropdown-item";
 import Icon from "../basics/icon";
 
 const IconBadge = styled(Icon)`
@@ -44,7 +43,10 @@ const UserMenuButton = styled(Button)`
   }
 `;
 
-class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
+class UserMenu extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
   items: IDropdownItem[] = [
     {
       icon: "rocket",
@@ -81,7 +83,8 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, v
     {
       icon: "search",
       label: ["menu.help.search_issue"],
-      onClick: () => this.props.openUrl({url: `${urls.itchRepo}/search?type=Issues`}),
+      onClick: () =>
+        this.props.openUrl({ url: `${urls.itchRepo}/search?type=Issues` }),
     },
     {
       icon: "bug",
@@ -109,22 +112,24 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps, v
     },
   ];
 
-  render () {
-    return <Dropdown items={this.items} inner={this.me()} updown/>;
+  render() {
+    return <Dropdown items={this.items} inner={this.me()} updown />;
   }
 
-  me () {
-    const {me} = this.props;
-    const {coverUrl = defaultImages.avatar, username, displayName} = me;
+  me() {
+    const { me } = this.props;
+    const { coverUrl = defaultImages.avatar, username, displayName } = me;
 
-    return <UserMenuButton id="user-menu" discreet>
-      <img src={coverUrl}/>
-      {displayName || username}
-      {me.developer ? <IconBadge icon="rocket"/> : null}
-      {me.pressUser ? <IconBadge icon="newspaper-o"/> : null}
-      <Filler/>
-      <Icon icon="triangle-down" className="flipper"/>
-    </UserMenuButton>;
+    return (
+      <UserMenuButton id="user-menu" discreet>
+        <img src={coverUrl} />
+        {displayName || username}
+        {me.developer ? <IconBadge icon="rocket" /> : null}
+        {me.pressUser ? <IconBadge icon="newspaper-o" /> : null}
+        <Filler />
+        <Icon icon="triangle-down" className="flipper" />
+      </UserMenuButton>
+    );
   }
 }
 
@@ -147,10 +152,11 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(UserMenu, {
-  state: () => createStructuredSelector({
-    me: (state: IAppState) => state.session.credentials.me,
-  }),
-  dispatch: (dispatch) => ({
+  state: () =>
+    createStructuredSelector({
+      me: (state: IAppState) => state.session.credentials.me,
+    }),
+  dispatch: dispatch => ({
     viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),
     viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),
     changeUser: dispatcher(dispatch, actions.changeUser),

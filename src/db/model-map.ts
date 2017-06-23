@@ -1,5 +1,4 @@
-
-import {Connection, Repository} from "typeorm";
+import { Connection, Repository } from "typeorm";
 
 import Game from "./models/game";
 import ExternalGame from "./models/external-game";
@@ -16,18 +15,18 @@ export interface IModelMap {
 }
 
 export const modelMap: IModelMap = {
-  "games": Game,
-  "externalGames": ExternalGame,
-  "collections": Collection,
-  "downloadKeys": DownloadKey,
-  "caves": Cave,
-  "users": User,
-  "profiles": Profile,
-  "gamePasswords": GamePassword,
-  "gameSecrets": GameSecret,
+  games: Game,
+  externalGames: ExternalGame,
+  collections: Collection,
+  downloadKeys: DownloadKey,
+  caves: Cave,
+  users: User,
+  profiles: Profile,
+  gamePasswords: GamePassword,
+  gameSecrets: GameSecret,
 };
 
-export const modelList = Object.keys(modelMap).map((k) => modelMap[k]);
+export const modelList = Object.keys(modelMap).map(k => modelMap[k]);
 
 export class RepoContainer {
   conn: Connection;

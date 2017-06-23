@@ -1,4 +1,3 @@
-
 import Game from "../db/models/game";
 import Cave from "../db/models/cave";
 
@@ -9,9 +8,14 @@ import {
   IEnvironment,
 } from ".";
 
-import {Logger} from "../logger";
+import { Logger } from "../logger";
 
-export type DownloadReason = "install" | "reinstall" | "update" | "revert" | "heal";
+export type DownloadReason =
+  | "install"
+  | "reinstall"
+  | "update"
+  | "revert"
+  | "heal";
 
 export type InstallReason = "install" | "reinstall" | "heal";
 

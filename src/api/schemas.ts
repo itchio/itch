@@ -1,6 +1,5 @@
-
-import {Schema, transform, arrayOf} from "idealizr";
-export {Schema, arrayOf} from "idealizr";
+import { Schema, transform, arrayOf } from "idealizr";
+export { Schema, arrayOf } from "idealizr";
 
 export const game = new Schema("games");
 export const user = new Schema("users");

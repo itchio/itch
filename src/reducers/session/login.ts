@@ -1,5 +1,4 @@
-
-import {ISessionLoginState} from "../../types";
+import { ISessionLoginState } from "../../types";
 import * as actions from "../../actions";
 import reducer from "../reducer";
 
@@ -9,7 +8,7 @@ const initialState = {
   blockingOperation: null,
 } as ISessionLoginState;
 
-export default reducer<ISessionLoginState>(initialState, (on) => {
+export default reducer<ISessionLoginState>(initialState, on => {
   on(actions.attemptLogin, (state, action) => {
     return {
       ...state,
@@ -30,7 +29,7 @@ export default reducer<ISessionLoginState>(initialState, (on) => {
   });
 
   on(actions.loginFailed, (state, action) => {
-    const {errors} = action.payload;
+    const { errors } = action.payload;
     // set picking to false because if we were trying a key login, we probably want
     // to re-enter the password to see if we can obtain a new API token
     return {

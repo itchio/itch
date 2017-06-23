@@ -1,17 +1,14 @@
-
 import * as actions from "../../actions";
 import reducer from "../reducer";
 
-import {IUIMenuState} from "../../types";
-import {
-  IRefreshMenuPayload,
-} from "../../constants/action-types";
+import { IUIMenuState } from "../../types";
+import { IRefreshMenuPayload } from "../../constants/action-types";
 
 const initialState = {
   template: [],
 } as IUIMenuState;
 
-export default reducer<IUIMenuState>(initialState, (on) => {
+export default reducer<IUIMenuState>(initialState, on => {
   on(actions.refreshMenu, (state, action) => {
     return {
       template: computeMenuTemplate(action.payload),
@@ -19,8 +16,8 @@ export default reducer<IUIMenuState>(initialState, (on) => {
   });
 });
 
-function computeMenuTemplate (payload: IRefreshMenuPayload) {
-  const {system, credentials} = payload;
+function computeMenuTemplate(payload: IRefreshMenuPayload) {
+  const { system, credentials } = payload;
   const menus = {
     mainMac: {
       // no need for a label, it'll always be app name
@@ -84,7 +81,7 @@ function computeMenuTemplate (payload: IRefreshMenuPayload) {
         },
         {
           label: "menu.file.close_window",
-          accelerator: (system.macos ? "Cmd+Alt+W" : "Alt+F4"),
+          accelerator: system.macos ? "Cmd+Alt+W" : "Alt+F4",
         },
         {
           label: "menu.file.quit",
@@ -113,7 +110,7 @@ function computeMenuTemplate (payload: IRefreshMenuPayload) {
         },
         {
           label: "menu.file.close_window",
-          accelerator: (system.macos ? "Cmd+Alt+W" : "Alt+F4"),
+          accelerator: system.macos ? "Cmd+Alt+W" : "Alt+F4",
         },
       ],
     },
@@ -211,7 +208,7 @@ function computeMenuTemplate (payload: IRefreshMenuPayload) {
   };
 
   if (process.env.SHOW_ME_CRASHY === "1") {
-    menus.help.submenu.push({label: "crash.test"});
+    menus.help.submenu.push({ label: "crash.test" });
   }
 
   const template = [] as any;

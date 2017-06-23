@@ -1,16 +1,15 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import {getPendingForGame} from "./getters";
-import {isEmpty} from "underscore";
+import { getPendingForGame } from "./getters";
+import { isEmpty } from "underscore";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "queue-download"});
+const logger = rootLogger.child({ name: "queue-download" });
 
 let orderSeed = 0;
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.queueDownload, async (store, action) => {
     const downloadOpts = action.payload;
     const opts = downloadOpts;
@@ -26,9 +25,11 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    store.dispatch(actions.downloadStarted({
-      ...opts,
-      order: orderSeed++,
-    }));
+    store.dispatch(
+      actions.downloadStarted({
+        ...opts,
+        order: orderSeed++,
+      }),
+    );
   });
 }

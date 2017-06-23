@@ -1,12 +1,11 @@
-
-import {Watcher} from "../reactors/watcher";
+import { Watcher } from "../reactors/watcher";
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "fetchers"});
+const logger = rootLogger.child({ name: "fetchers" });
 
 import * as actions from "../actions";
 
-import {Fetcher, FetchReason} from "../fetchers/types";
-import {IStore} from "../types";
+import { Fetcher, FetchReason } from "../fetchers/types";
+import { IStore } from "../types";
 import DashboardFetcher from "../fetchers/dashboard-fetcher";
 import CollectionsFetcher from "../fetchers/collections-fetcher";
 import LibraryFetcher from "../fetchers/library-fetcher";
@@ -15,20 +14,20 @@ import GameFetcher from "../fetchers/game-fetcher";
 import UserFetcher from "../fetchers/user-fetcher";
 import CollectionFetcher from "../fetchers/collection-fetcher";
 
-import {pathPrefix} from "../util/navigation";
+import { pathPrefix } from "../util/navigation";
 
-import {some} from "underscore";
+import { some } from "underscore";
 
 const staticFetchers = {
-  "dashboard": DashboardFetcher,
-  "collections": CollectionsFetcher,
-  "library": LibraryFetcher,
+  dashboard: DashboardFetcher,
+  collections: CollectionsFetcher,
+  library: LibraryFetcher,
 };
 
 const pathFetchers = {
-  "games": GameFetcher,
-  "users": UserFetcher,
-  "collections": CollectionFetcher,
+  games: GameFetcher,
+  users: UserFetcher,
+  collections: CollectionFetcher,
 };
 
 let fetching: {
@@ -39,7 +38,11 @@ let nextFetchReason: {
   [key: string]: FetchReason;
 } = {};
 
-export async function queueFetch (store: IStore, tabId: string, reason: FetchReason) {
+export async function queueFetch(
+  store: IStore,
+  tabId: string,
+  reason: FetchReason,
+) {
   if (fetching[tabId]) {
     nextFetchReason[tabId] = reason;
     return;
@@ -61,7 +64,7 @@ export async function queueFetch (store: IStore, tabId: string, reason: FetchRea
     const nextReason = nextFetchReason[tabId];
     if (nextReason) {
       delete nextFetchReason[tabId];
-      queueFetch(store, tabId, nextReason).catch((err) => {
+      queueFetch(store, tabId, nextReason).catch(err => {
         logger.error(`In queued fetcher: ${err.stack}`);
       });
     }
@@ -81,7 +84,7 @@ function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
     return null;
   }
 
-  const {path} = tabData;
+  const { path } = tabData;
   if (path) {
     const pathBase = pathPrefix(path);
     const pathFetcher = pathFetchers[pathBase];
@@ -93,7 +96,7 @@ function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
   return null;
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
     queueFetch(store, action.payload.id, FetchReason.TabChanged);
@@ -135,7 +138,7 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.updatePreferences, async (store, action) => {
     const prefs = action.payload;
-    if (some(watchedPreferences, (k) => prefs.hasOwnProperty(k))) {
+    if (some(watchedPreferences, k => prefs.hasOwnProperty(k))) {
       const currentTabId = store.getState().session.navigation.id;
       queueFetch(store, currentTabId, FetchReason.TabParamsChanged);
     }

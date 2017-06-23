@@ -1,11 +1,10 @@
-
-import {IStore, ITabData, ICredentials} from "../types";
+import { IStore, ITabData, ICredentials } from "../types";
 
 import * as actions from "../actions";
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
-import client, {AuthenticatedClient} from "../api";
-import {isNetworkError} from "../net/errors";
+import client, { AuthenticatedClient } from "../api";
+import { isNetworkError } from "../net/errors";
 
 export enum FetchReason {
   TabChanged,
@@ -16,7 +15,7 @@ export enum FetchReason {
   TabPaginationChanged,
 }
 
-import rootLogger, {Logger} from "../logger";
+import rootLogger, { Logger } from "../logger";
 
 const emptyObj = {};
 
@@ -42,13 +41,13 @@ export class Fetcher {
   retryCount = 0;
 
   hook(store: IStore, tabId: string, reason: FetchReason) {
-    this.logger = rootLogger.child({name: this.constructor.name});
+    this.logger = rootLogger.child({ name: this.constructor.name });
     this.store = store;
     this.tabId = tabId;
     this.reason = reason;
 
     this.emitter = new EventEmitter();
-    this.emitter.on("abort", () =>  {
+    this.emitter.on("abort", () => {
       this.aborted = true;
     });
 
@@ -57,41 +56,45 @@ export class Fetcher {
 
   start() {
     this.startedAt = Date.now();
-    this.work().then((outcome) => {
-      if (isOutcome(outcome)) {
-        switch (outcome.state) {
-          case OutcomeState.Success:
-            this.emitter.emit("done");
-            break;
-          case OutcomeState.Retry:
-            this.doRetry();
-            break;
-          default:
-            this.logger.info(`Fetcher returned unknown outcome state ${outcome.state}`);
-            this.emitter.emit("done");
-            break;
+    this.work()
+      .then(outcome => {
+        if (isOutcome(outcome)) {
+          switch (outcome.state) {
+            case OutcomeState.Success:
+              this.emitter.emit("done");
+              break;
+            case OutcomeState.Retry:
+              this.doRetry();
+              break;
+            default:
+              this.logger.info(
+                `Fetcher returned unknown outcome state ${outcome.state}`,
+              );
+              this.emitter.emit("done");
+              break;
+          }
+        } else {
+          this.emitter.emit("done");
         }
-      } else {
-        this.emitter.emit("done");
-      }
-    }).catch((e) => {
-      if (e instanceof BrutalRetry) {
-        this.doRetry();
-      } else {
-        this.logger.error(`Error in work:\n${e.stack}`);
-        this.emitter.emit("done");
-      }
-    });
+      })
+      .catch(e => {
+        if (e instanceof BrutalRetry) {
+          this.doRetry();
+        } else {
+          this.logger.error(`Error in work:\n${e.stack}`);
+          this.emitter.emit("done");
+        }
+      });
   }
 
-  async withApi <T> (cb: (api: AuthenticatedClient) => Promise<T>): Promise<T> {
-    const {credentials} = this.store.getState().session;
+  async withApi<T>(cb: (api: AuthenticatedClient) => Promise<T>): Promise<T> {
+    const { credentials } = this.store.getState().session;
     if (!credentials || !credentials.me) {
       this.debug("missing credentials");
       throw new BrutalRetry();
     }
 
-    const {key} = credentials;
+    const { key } = credentials;
     const api = client.withKey(key);
     try {
       return await cb(api);
@@ -106,7 +109,7 @@ export class Fetcher {
   }
 
   doRetry() {
-    this.retryCount++;  
+    this.retryCount++;
     if (this.retryCount > 8) {
       throw new Error(`Too many retries, giving up`);
     } else {
@@ -122,14 +125,14 @@ export class Fetcher {
    * Overriden by sub classes, actual fetch logic goes here
    * Ideally, should listen for "abort" on `this.emitter` and react accordingly
    */
-  async work (): Promise<Outcome> {
+  async work(): Promise<Outcome> {
     throw new Error(`fetchers should override work()!`);
   }
 
   /**
    * Called by work when data is available.
    */
-  push (data: ITabData) {
+  push(data: ITabData) {
     if (this.aborted) {
       return;
     }
@@ -162,7 +165,7 @@ export class Fetcher {
     this.logger.info(msg, ...args);
   }
 
-  warrantsRemote (reason: FetchReason) {
+  warrantsRemote(reason: FetchReason) {
     switch (reason) {
       case FetchReason.TabPaginationChanged:
       case FetchReason.TabParamsChanged:
@@ -173,7 +176,7 @@ export class Fetcher {
   }
 
   ensureCredentials(): ICredentials {
-    const {credentials} = this.store.getState().session;
+    const { credentials } = this.store.getState().session;
     if (!credentials || !credentials.me) {
       this.debug(`missing credentials`);
       throw new BrutalRetry();
@@ -190,7 +193,7 @@ export class Fetcher {
 export enum OutcomeState {
   Success,
   Retry,
-};
+}
 
 export class BrutalRetry extends Error {
   constructor() {
@@ -199,7 +202,7 @@ export class BrutalRetry extends Error {
 }
 
 export class Outcome {
-  constructor (public state: OutcomeState) {
+  constructor(public state: OutcomeState) {
     // muffin
   }
 }

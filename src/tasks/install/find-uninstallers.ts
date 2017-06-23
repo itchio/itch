@@ -1,4 +1,3 @@
-
 import * as sf from "../../os/sf";
 import * as invariant from "invariant";
 
@@ -10,9 +9,9 @@ import * as invariant from "invariant";
 //  * unins001.exe
 const pattern = "**/@(*uninst|uninstall|unins*).exe";
 
-const findUninstallers = async function (destPath: string) {
+const findUninstallers = async function(destPath: string) {
   invariant(destPath, "have a dest path to find uninstallers in");
-  return await sf.glob(pattern, {nodir: true, nocase: true, cwd: destPath});
+  return await sf.glob(pattern, { nodir: true, nocase: true, cwd: destPath });
 };
 
 export default findUninstallers;

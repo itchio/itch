@@ -1,4 +1,3 @@
-
 export function formatPrice(currency: string, value: number) {
   if (currency === "USD") {
     return `$${(value / 100).toFixed(2)}`;
@@ -15,4 +14,4 @@ export function formatPrice(currency: string, value: number) {
   } else {
     return "???";
   }
-};
+}

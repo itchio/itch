@@ -1,5 +1,4 @@
-
-import {ISelfUpdateState} from "../types";
+import { ISelfUpdateState } from "../types";
 import * as actions from "../actions";
 import reducer from "./reducer";
 
@@ -13,7 +12,7 @@ const initialState = {
   error: null,
 } as ISelfUpdateState;
 
-export default reducer<ISelfUpdateState>(initialState, (on) => {
+export default reducer<ISelfUpdateState>(initialState, on => {
   on(actions.checkForSelfUpdate, (state, action) => {
     return {
       ...state,
@@ -22,17 +21,17 @@ export default reducer<ISelfUpdateState>(initialState, (on) => {
   });
 
   on(actions.selfUpdateAvailable, (state, action) => {
-    const {spec, downloading} = action.payload;
+    const { spec, downloading } = action.payload;
 
     return {
       ...state,
       checking: false,
-      ...(downloading ? {downloading: spec} : {available: spec}),
+      ...downloading ? { downloading: spec } : { available: spec },
     };
   });
 
   on(actions.selfUpdateNotAvailable, (state, action) => {
-    const {uptodate} = action.payload;
+    const { uptodate } = action.payload;
 
     return {
       ...state,
@@ -54,7 +53,7 @@ export default reducer<ISelfUpdateState>(initialState, (on) => {
   });
 
   on(actions.selfUpdateDownloaded, (state, action) => {
-    const {downloading} = state;
+    const { downloading } = state;
     return {
       ...state,
       downloaded: downloading,

@@ -1,5 +1,4 @@
-
-import {shell, dialog} from "electron";
+import { shell, dialog } from "electron";
 import * as electron from "electron";
 const app = electron.app || electron.remote.app;
 
@@ -10,9 +9,9 @@ import * as querystring from "querystring";
 
 import platformData from "../constants/platform-data";
 import urls from "../constants/urls";
-import {isNetworkError} from "../net/errors";
+import { isNetworkError } from "../net/errors";
 
-import {findWhere} from "underscore";
+import { findWhere } from "underscore";
 
 import * as os from "../os";
 import * as sf from "../os/sf";
@@ -35,17 +34,21 @@ let self = {
   },
 
   writeCrashLog: async (e: Error) => {
-    const crashFile = path.join(app.getPath("userData"), "crash_logs", `${+new Date()}.txt`);
+    const crashFile = path.join(
+      app.getPath("userData"),
+      "crash_logs",
+      `${+new Date()}.txt`,
+    );
 
     let log = "";
-    log += (e.stack || e.message || e);
+    log += e.stack || e.message || e;
 
     if (os.platform() === "win32") {
       log = log.replace(/\n/g, "\r\n");
     }
-    await sf.writeFile(crashFile, log, {encoding: "utf8"});
+    await sf.writeFile(crashFile, log, { encoding: "utf8" });
 
-    return {log, crashFile};
+    return { log, crashFile };
   },
 
   reportIssue: (opts: IReportIssueOpts) => {
@@ -61,8 +64,7 @@ let self = {
 
     if (typeof log !== "undefined") {
       type = "Feedback";
-      body =
-`Event log:
+      body = `Event log:
 
 \`\`\`
 ${log}
@@ -70,10 +72,12 @@ ${log}
 `;
     }
 
-    const platformEmoji = findWhere(platformData, {platform: os.itchPlatform()}).emoji;
+    const platformEmoji = findWhere(platformData, {
+      platform: os.itchPlatform(),
+    }).emoji;
     const query = querystring.stringify({
       title: `${platformEmoji} ${type} v${app.getVersion()}`,
-      body: (before + body),
+      body: before + body,
     });
     let url = `${repo}/issues/new?${query}`;
     const maxLen = 2000;
@@ -83,7 +87,7 @@ ${log}
     shell.openExternal(url);
   },
 
-  handle: async function (type: string, e: Error) {
+  handle: async function(type: string, e: Error) {
     if (self.catching) {
       // tslint:disable-next-line
       console.log(`While catching: ${e.stack || e}`);
@@ -108,9 +112,11 @@ ${log}
     const t = require("../localizer").getT({}, "en");
 
     const buttons = [
-      t("prompt.crash_reporter.report_issue", {defaultValue: "Report issue"}),
-      t("prompt.crash_reporter.open_crash_log", {defaultValue: "Open crash log"}),
-      t("prompt.action.close", {defaultValue: "Close"}),
+      t("prompt.crash_reporter.report_issue", { defaultValue: "Report issue" }),
+      t("prompt.crash_reporter.open_crash_log", {
+        defaultValue: "Open crash log",
+      }),
+      t("prompt.action.close", { defaultValue: "Close" }),
     ];
     if (env.name === "development") {
       buttons.push("Ignore and continue (dev only)");
@@ -118,17 +124,19 @@ ${log}
     let dialogOpts = {
       type: "error" as "error", // woo typescript is crazy stuff, friendos
       buttons,
-      message: t("prompt.crash_reporter.message", {defaultValue: "The application has crashed"}),
+      message: t("prompt.crash_reporter.message", {
+        defaultValue: "The application has crashed",
+      }),
       detail: t("prompt.crash_reporter.detail", {
         defaultValue: `A crash log was written to ${crashFile}`,
         location: crashFile,
       }),
     };
 
-    await new Promise(async function (resolve, reject) {
+    await new Promise(async function(resolve, reject) {
       let callback = (response: number) => {
         if (response === 0) {
-          self.reportIssue({log});
+          self.reportIssue({ log });
         } else if (response === 1) {
           shell.openItem(crashFile);
         } else if (response === 3) {
@@ -158,15 +166,18 @@ ${log}
           return;
         }
 
-        self.handle(type, e).catch((e2) => {
-          // well, we tried.
-          // tslint:disable-next-line
-          console.log(`Error in crash-reporter (${type})\n${e2.stack}`);
-        }).then(() => {
-          if (type === "uncaughtException") {
-            os.exit(1);
-          }
-        });
+        self
+          .handle(type, e)
+          .catch(e2 => {
+            // well, we tried.
+            // tslint:disable-next-line
+            console.log(`Error in crash-reporter (${type})\n${e2.stack}`);
+          })
+          .then(() => {
+            if (type === "uncaughtException") {
+              os.exit(1);
+            }
+          });
       };
     };
     process.on("uncaughtException", makeHandler("Uncaught exception"));

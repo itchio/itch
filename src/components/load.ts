@@ -1,9 +1,8 @@
-
 let seed = 0;
 
 import * as PropTypes from "prop-types";
-import {IStore} from "../types";
-import {IQueryList} from "../reactors/querier";
+import { IStore } from "../types";
+import { IQueryList } from "../reactors/querier";
 
 import * as actions from "../actions";
 
@@ -19,23 +18,27 @@ interface IWrappedComponent {
   };
 }
 
-export default function (loadSpecs: IQueryFunc = () => []) {
+export default function(loadSpecs: IQueryFunc = () => []) {
   return (constructor: any) => {
     const origContextTypes = constructor.contextTypes || {};
     constructor.contextTypes = {
-        ...origContextTypes,
-        store: PropTypes.shape({
-            subscribe: PropTypes.func.isRequired,
-            dispatch: PropTypes.func.isRequired,
-            getState: PropTypes.func.isRequired,
-        }),
+      ...origContextTypes,
+      store: PropTypes.shape({
+        subscribe: PropTypes.func.isRequired,
+        dispatch: PropTypes.func.isRequired,
+        getState: PropTypes.func.isRequired,
+      }),
     };
 
     let originalDidMount = constructor.prototype.componentDidMount;
-    constructor.prototype.componentDidMount = function (this: IWrappedComponent) {
+    constructor.prototype.componentDidMount = function(
+      this: IWrappedComponent,
+    ) {
       if (!this.context.store) {
-          throw new Error(`Can't set up watching because no `
-          + `store in context. Did you forget to wrap your top-level component in <Provider/> ?`);
+        throw new Error(
+          `Can't set up watching because no ` +
+            `store in context. Did you forget to wrap your top-level component in <Provider/> ?`,
+        );
       }
 
       if (originalDidMount) {
@@ -47,21 +50,27 @@ export default function (loadSpecs: IQueryFunc = () => []) {
       }
 
       const specs = loadSpecs(this.props);
-      this.context.store.dispatch(actions.registerQuery({
-        loadId: this.__load_id,
-        query: specs,
-      }));
+      this.context.store.dispatch(
+        actions.registerQuery({
+          loadId: this.__load_id,
+          query: specs,
+        }),
+      );
     };
 
     let originalWillUnmount = constructor.prototype.componentWillUnmount;
-    constructor.prototype.componentWillUnmount = function (this: IWrappedComponent) {
+    constructor.prototype.componentWillUnmount = function(
+      this: IWrappedComponent,
+    ) {
       if (originalWillUnmount) {
         originalWillUnmount.call(this);
       }
 
-      this.context.store.dispatch(actions.liberateQuery({
-        loadId: this.__load_id,
-      }));
+      this.context.store.dispatch(
+        actions.liberateQuery({
+          loadId: this.__load_id,
+        }),
+      );
     };
   };
 }

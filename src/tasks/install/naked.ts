@@ -1,5 +1,4 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import * as sf from "../../os/sf";
 import butler from "../../util/butler";
@@ -7,11 +6,11 @@ import * as invariant from "invariant";
 
 import * as ospath from "path";
 
-import {IStartTaskOpts} from "../../types";
+import { IStartTaskOpts } from "../../types";
 
 const self = {
-  install: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    const {archivePath, destPath, logger} = opts;
+  install: async function(out: EventEmitter, opts: IStartTaskOpts) {
+    const { archivePath, destPath, logger } = opts;
     invariant(archivePath, "naked has archivePath");
     invariant(destPath, "naked has destPath");
 
@@ -26,8 +25,8 @@ const self = {
     });
   },
 
-  uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    const {destPath, logger} = opts;
+  uninstall: async function(out: EventEmitter, opts: IStartTaskOpts) {
+    const { destPath, logger } = opts;
 
     logger.info(`nuking ${destPath}`);
     await butler.wipe(destPath, {

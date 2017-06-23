@@ -1,11 +1,13 @@
+import { createStructuredSelector } from "reselect";
 
-import {createStructuredSelector} from "reselect";
-
-import {indexBy, map, last, omit} from "underscore";
+import { indexBy, map, last, omit } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
-import {getPendingDownloads, excludeGame} from "../reactors/downloads/getters";
+import {
+  getPendingDownloads,
+  excludeGame,
+} from "../reactors/downloads/getters";
 
-import {IDownloadsState, IDownloadItem} from "../types";
+import { IDownloadsState, IDownloadItem } from "../types";
 
 import reducer from "./reducer";
 import derivedReducer from "./derived-reducer";
@@ -14,21 +16,19 @@ import * as actions from "../actions";
 const SPEED_DATA_POINT_COUNT = 60;
 
 const selector = createStructuredSelector({
-  itemIdsByGameId: (state: IDownloadsState) => (
-    groupIdBy(state.items, "gameId")
-  ),
+  itemIdsByGameId: (state: IDownloadsState) => groupIdBy(state.items, "gameId"),
 });
 
 const baseInitialState = {
-  speeds: map(new Array(SPEED_DATA_POINT_COUNT), (x) => ({ bps: 0 })),
+  speeds: map(new Array(SPEED_DATA_POINT_COUNT), x => ({ bps: 0 })),
   items: {},
   paused: false,
 };
 const initialState = { ...baseInitialState, ...selector(baseInitialState) };
 
 const updateSingle = (state: IDownloadsState, record: any): IDownloadsState => {
-  const {items} = state;
-  const {id} = record;
+  const { items } = state;
+  const { id } = record;
 
   const item = items[id];
   if (!item) {
@@ -48,13 +48,13 @@ const updateSingle = (state: IDownloadsState, record: any): IDownloadsState => {
   };
 };
 
-function index (items: IDownloadItem[]): IDownloadsState["items"] {
+function index(items: IDownloadItem[]): IDownloadsState["items"] {
   return indexBy(items, "id");
 }
 
-const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
+const baseReducer = reducer<IDownloadsState>(initialState, on => {
   on(actions.clearGameDownloads, (state, action) => {
-    const {gameId} = action.payload;
+    const { gameId } = action.payload;
     return {
       ...state,
       items: index(excludeGame(state, gameId)),
@@ -74,7 +74,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   });
 
   on(actions.retryDownload, (state, action) => {
-    const {id} = action.payload;
+    const { id } = action.payload;
 
     return updateSingle(state, {
       id,
@@ -88,12 +88,12 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   });
 
   on(actions.downloadEnded, (state, action) => {
-    const {id, finishedAt, err} = action.payload;
-    return updateSingle(state, {id, finished: true, finishedAt, err});
+    const { id, finishedAt, err } = action.payload;
+    return updateSingle(state, { id, finished: true, finishedAt, err });
   });
 
   on(actions.downloadSpeedDatapoint, (state, action) => {
-    const {payload} = action;
+    const { payload } = action;
 
     return {
       ...state,
@@ -102,8 +102,8 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   });
 
   on(actions.prioritizeDownload, (state, action) => {
-    const {id} = action.payload;
-    const {activeDownload} = selector(state);
+    const { id } = action.payload;
+    const { activeDownload } = selector(state);
 
     if (!activeDownload || activeDownload.id === id) {
       // either no downloads, or only one. nothing to prioritize!
@@ -113,12 +113,12 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
     // don't re-number priorities, just go into the negatives
     const order = activeDownload.order - 1;
 
-    return updateSingle(state, {id, order});
+    return updateSingle(state, { id, order });
   });
 
   on(actions.cancelDownload, (state, action) => {
-    const {id} = action.payload;
-    const {items} = state;
+    const { id } = action.payload;
+    const { items } = state;
 
     const item = items[id];
     if (!item) {
@@ -149,7 +149,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   on(actions.resumeDownloads, (state, action): IDownloadsState => {
     return {
       ...state,
-      items: index(map(state.items, (i) => ({...i, bps: 0}))),
+      items: index(map(state.items, i => ({ ...i, bps: 0 }))),
       paused: false,
     };
   });

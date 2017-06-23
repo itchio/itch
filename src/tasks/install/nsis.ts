@@ -1,26 +1,25 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import spawn from "../../os/spawn";
 import findUninstallers from "./find-uninstallers";
 
-import {Cancelled} from "../errors";
+import { Cancelled } from "../errors";
 import blessing from "./blessing";
 import butler from "../../util/butler";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "install/nsis"});
+const logger = rootLogger.child({ name: "install/nsis" });
 
-import {IStartTaskOpts} from "../../types";
+import { IStartTaskOpts } from "../../types";
 
 // NSIS docs: http://nsis.sourceforge.net/Docs/Chapter3.html
 // When ran without elevate, some NSIS installers will silently fail.
 // So, we run them with elevate all the time.
 
 const self = {
-  install: async function (out: EventEmitter, opts: IStartTaskOpts) {
+  install: async function(out: EventEmitter, opts: IStartTaskOpts) {
     await blessing(out, opts);
-    out.emit("progress", {progress: -1});
+    out.emit("progress", { progress: -1 });
 
     let inst = opts.archivePath;
     const destPath = opts.destPath;
@@ -46,7 +45,7 @@ const self = {
         "/NCRC", // disable CRC-check, we do hash checking ourselves
         `/D=${destPath}`,
       ],
-      onToken: (tok) => logger.info(`${inst}: ${tok}`),
+      onToken: tok => logger.info(`${inst}: ${tok}`),
     });
 
     if (removeAfterUsage) {
@@ -63,8 +62,8 @@ const self = {
     logger.info("elevate/nsis installer completed successfully");
   },
 
-  uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    out.emit("progress", {progress: -1});
+  uninstall: async function(out: EventEmitter, opts: IStartTaskOpts) {
+    out.emit("progress", { progress: -1 });
 
     const destPath = opts.destPath;
     const uninstallers = await findUninstallers(destPath);
@@ -83,7 +82,7 @@ const self = {
           "/S", // run the uninstaller silently
           `_?=${destPath}`, // specify uninstallation path
         ],
-        opts: {cwd: destPath},
+        opts: { cwd: destPath },
         onToken: (tok: string) => logger.info(`${unins}: ${tok}`),
       };
       const code = await spawn(spawnOpts);

@@ -1,5 +1,4 @@
-
-import {ILocalizer} from "../localizer";
+import { ILocalizer } from "../localizer";
 
 import env from "../env";
 
@@ -10,11 +9,17 @@ export function formatDuration(secs: number, t: ILocalizer): string {
   if (secs < 60) {
     return t.format(["duration.minute"]);
   } else if (secs < 3600) {
-    return t.format(["duration.minutes", { x: Math.floor(secs / 60).toFixed() }]);
+    return t.format([
+      "duration.minutes",
+      { x: Math.floor(secs / 60).toFixed() },
+    ]);
   } else if (secs < 3600 * 2) {
     return t.format(["duration.hour"]);
   } else {
-    return t.format(["duration.hours", { x: Math.floor(secs / 3600).toFixed() }]);
+    return t.format([
+      "duration.hours",
+      { x: Math.floor(secs / 3600).toFixed() },
+    ]);
   }
 }
 
@@ -31,7 +36,11 @@ export type MixedDate = Date | string;
  * Format a date for humans in the given locale
  */
 
-export function formatDate(mixedDate: MixedDate, locale: string, format: IDateFormat): string {
+export function formatDate(
+  mixedDate: MixedDate,
+  locale: string,
+  format: IDateFormat,
+): string {
   let date: any;
   if (!mixedDate) {
     return "";
@@ -54,7 +63,10 @@ export function formatDate(mixedDate: MixedDate, locale: string, format: IDateFo
 }
 
 // Get a formatter, cached by format & locale
-function getFormatter(format: IDateFormat, locale: string): Intl.DateTimeFormat {
+function getFormatter(
+  format: IDateFormat,
+  locale: string,
+): Intl.DateTimeFormat {
   let localeCache = formatterCache.get(format.key);
   if (!localeCache) {
     localeCache = new Map<string, Intl.DateTimeFormat>();
@@ -96,6 +108,6 @@ export const FS_DATE_FORMAT: IDateFormat = {
   options: "YYYY.MM.DD-HH.mm.ss",
 };
 
-export function elapsed (t1: number, t2: number) {
+export function elapsed(t1: number, t2: number) {
   return (t2 - t1).toFixed(2) + "ms";
 }

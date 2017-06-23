@@ -1,7 +1,6 @@
+import { EventEmitter } from "events";
 
-import {EventEmitter} from "events";
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
 import db from "../../db";
@@ -10,9 +9,9 @@ import findUploads from "../downloads/find-uploads";
 import getGameCredentials from "../downloads/get-game-credentials";
 import lazyGetGame from "../lazy-get-game";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
-    const {caveId} = action.payload;
+    const { caveId } = action.payload;
 
     const cave = await db.caves.findOneById(caveId);
     if (!cave) {
@@ -46,7 +45,7 @@ export default function (watcher: Watcher) {
     // FIXME: what if there's several uploads to pick from (but not
     // the original?)
     // FIXME: what about trying to maintain the original?
-    const {uploads} = uploadResponse;
+    const { uploads } = uploadResponse;
     if (uploads.length < 1) {
       return;
     }
@@ -56,17 +55,21 @@ export default function (watcher: Watcher) {
     const state = store.getState();
     const tasksForGame = state.tasks.tasksByGameId[cave.gameId];
     if (tasksForGame && tasksForGame.length > 0) {
-      store.dispatch(actions.statusMessage({
-        message: ["status.reinstall.busy", {title: cave.game.title}],
-      }));
+      store.dispatch(
+        actions.statusMessage({
+          message: ["status.reinstall.busy", { title: cave.game.title }],
+        }),
+      );
       return;
     }
 
-    store.dispatch(actions.queueDownload({
-      game,
-      upload,
-      totalSize: upload.size,
-      reason: "reinstall",
-    }));
+    store.dispatch(
+      actions.queueDownload({
+        game,
+        upload,
+        totalSize: upload.size,
+        reason: "reinstall",
+      }),
+    );
   });
 }

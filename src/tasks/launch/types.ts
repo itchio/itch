@@ -1,11 +1,6 @@
+import { EventEmitter } from "events";
 
-import {EventEmitter} from "events";
-
-import {
-  ILaunchOpts,
-  IManifest,
-  IStore,
-} from "../../types";
+import { ILaunchOpts, IManifest, IStore } from "../../types";
 
 export interface ILauncher {
   (store: IStore, out: EventEmitter, opts: ILaunchOpts): Promise<void>;

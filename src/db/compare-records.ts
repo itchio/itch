@@ -1,8 +1,11 @@
-
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "compare-records"});
+const logger = rootLogger.child({ name: "compare-records" });
 
-export default function compareRecords (oldRecord: any, newRecord: any, fields?: Set<string>): boolean {
+export default function compareRecords(
+  oldRecord: any,
+  newRecord: any,
+  fields?: Set<string>,
+): boolean {
   for (const newKey in newRecord) {
     if (fields && !fields.has(newKey)) {
       // we're ignoring this one
@@ -26,9 +29,13 @@ export default function compareRecords (oldRecord: any, newRecord: any, fields?:
       if (newVal instanceof Date) {
         if (oldVal instanceof Date) {
           if (newVal.getTime() !== oldVal.getTime()) {
-            logger.info(`different dates: old ${oldVal.toUTCString()}, new ${newVal.toUTCString()}`);
-            logger.info(`to be precise, old time = ${oldVal.getTime()}, new time = ${newVal.getTime()}`
-              + `, diff = ${newVal.getTime() - oldVal.getTime()}`);
+            logger.info(
+              `different dates: old ${oldVal.toUTCString()}, new ${newVal.toUTCString()}`,
+            );
+            logger.info(
+              `to be precise, old time = ${oldVal.getTime()}, new time = ${newVal.getTime()}` +
+                `, diff = ${newVal.getTime() - oldVal.getTime()}`,
+            );
             return false;
           }
         } else {
@@ -50,4 +57,4 @@ export default function compareRecords (oldRecord: any, newRecord: any, fields?:
   }
 
   return true;
-};
+}

@@ -1,4 +1,3 @@
-
 // tslint:disable:no-console
 
 /*
@@ -20,7 +19,7 @@ interface IExtendedWindow {
 
 const extendedWindow = (window as any) as IExtendedWindow;
 
-setTimeout(function () {
+setTimeout(function() {
   const urlParser = require("../util/url").default;
   const store = require("../store/chrome-store").default;
   const querystring = require("querystring");
@@ -41,7 +40,7 @@ setTimeout(function () {
 
   Object.defineProperty(window, "I", {
     get: () => I,
-    set: (val) => Object.assign(I, val),
+    set: val => Object.assign(I, val),
   });
 
   let BBF: any;
@@ -49,17 +48,21 @@ setTimeout(function () {
   // monkey-patch BaseBuyForm, because it's fun!
   Object.defineProperty(I, "BaseBuyForm", {
     get: () => BBF,
-    set: (val) => {
+    set: val => {
       BBF = val;
-      BBF.prototype.submit_handler = function () {
+      BBF.prototype.submit_handler = function() {
         if (!this.is_valid()) {
           return false;
         }
 
-        const {$} = extendedWindow;
+        const { $ } = extendedWindow;
         const $buttons = $(".checkout_btn, .confirm_vat_btn");
         disable($buttons);
-        $buttons.html($('<span><span class="icon icon-stopwatch itchInjectedSpinner"></span> Loading...</span>'));
+        $buttons.html(
+          $(
+            '<span><span class="icon icon-stopwatch itchInjectedSpinner"></span> Loading...</span>',
+          ),
+        );
         $buttons.not(":eq(0)").hide();
 
         // don't close the window here
@@ -67,14 +70,14 @@ setTimeout(function () {
     },
   });
 
-  function disable ($el: any) {
+  function disable($el: any) {
     $el.prop("disabled", true);
     $el.css("opacity", 0.7);
     $el.css("-webkit-filter", "grayscale(70%)");
   }
 
-  function purchaseInject () {
-    const {$} = extendedWindow;
+  function purchaseInject() {
+    const { $ } = extendedWindow;
     const form = $("form.buy_form_widget");
     form.attr("target", "_self");
 
@@ -96,16 +99,16 @@ setTimeout(function () {
     document.body.appendChild(css);
   }
 
-  function evolveTab (path: string) {
-    sendMessage("evolve-tab", {path});
+  function evolveTab(path: string) {
+    sendMessage("evolve-tab", { path });
   }
 
-  function analyzePage (url: string) {
-    sendMessage("analyze-page", {url});
+  function analyzePage(url: string) {
+    sendMessage("analyze-page", { url });
   }
 
-  function itchInject () {
-    const {$} = extendedWindow;
+  function itchInject() {
+    const { $ } = extendedWindow;
 
     $(".admin_tag_editor_widget").hide();
     $(".above_game_banner").hide();
@@ -145,9 +148,9 @@ setTimeout(function () {
     }
   }
 
-  function loginInject () {
-    const {me} = store.getState().session.credentials;
-    const {$} = extendedWindow;
+  function loginInject() {
+    const { me } = store.getState().session.credentials;
+    const { $ } = extendedWindow;
     const $page = $(".user_login_page");
     const $title = $page.find(".stat_header_widget h2");
     $title.text(`Verify password for ${me.username}`);
@@ -164,8 +167,8 @@ setTimeout(function () {
     $form.find(".buttons .line").css("display", "none");
   }
 
-  function checkoutInject () {
-    const {$} = extendedWindow;
+  function checkoutInject() {
+    const { $ } = extendedWindow;
     $(".close_button").on("click", (e: Event) => {
       window.close();
       e.preventDefault();
@@ -184,7 +187,9 @@ setTimeout(function () {
       return;
     }
 
-    const metaTag = document.querySelector('meta[name="itch:path"]') as HTMLMetaElement;
+    const metaTag = document.querySelector(
+      'meta[name="itch:path"]',
+    ) as HTMLMetaElement;
     if (metaTag) {
       let path = metaTag.content;
       const parsed = urlParser.parse(window.location.href);

@@ -1,2 +1,1 @@
-
 export const LOCALE_DOWNLOAD = "LOCALE_DOWNLOAD";

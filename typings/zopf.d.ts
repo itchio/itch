@@ -1,6 +1,5 @@
-
 declare namespace Zopf {
-  import {SinonSpy, SinonStub, SinonMock} from "sinon";
+  import { SinonSpy, SinonStub, SinonMock } from "sinon";
 
   export interface ITest {
     /**
@@ -87,7 +86,7 @@ declare namespace Zopf {
   }
 }
 
-declare module 'zopf' {
+declare module "zopf" {
   var test: Zopf.ITestStatic;
   export = test;
 }

@@ -1,4 +1,3 @@
-
 interface ITruncateOpts {
   length: number;
 }

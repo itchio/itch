@@ -1,4 +1,3 @@
-
 // This file is the entry point for renderer processes
 
 import "./boot/bluebird";
@@ -10,14 +9,14 @@ import env from "./env";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Provider} from "react-redux";
+import { Provider } from "react-redux";
 
 import store from "./store/chrome-store";
 import * as actions from "./actions";
 
 if (process.env.ITCH_WHY_UPDATE === "1") {
-  const {whyDidYouUpdate} = require("why-did-you-update");
-  whyDidYouUpdate(React, {exclude: [/[^a-zA-Z0-9]/, /^Connect/]});
+  const { whyDidYouUpdate } = require("why-did-you-update");
+  whyDidYouUpdate(React, { exclude: [/[^a-zA-Z0-9]/, /^Connect/] });
 }
 
 import setupShortcuts from "./shortcuts";
@@ -30,22 +29,26 @@ let AppContainer: React.ComponentClass<{}> = null;
 try {
   const rhl = require("react-hot-loader");
   AppContainer = rhl.AppContainer;
-} catch (e) { /* muffin */ }
+} catch (e) {
+  /* muffin */
+}
 
 import * as electron from "electron";
 import App from "./components/app";
 
 let appNode: Element;
 
-function render (RealApp: typeof App) {
+function render(RealApp: typeof App) {
   appNode = document.querySelector("#app");
   let rootComponent: JSX.Element;
   if (AppContainer) {
-    rootComponent = <AppContainer>
-      <RealApp/>
-    </AppContainer>;
+    rootComponent = (
+      <AppContainer>
+        <RealApp />
+      </AppContainer>
+    );
   } else {
-    rootComponent = <RealApp/>;
+    rootComponent = <RealApp />;
   }
   ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
 }
@@ -96,7 +99,7 @@ async function start() {
   if (env.name === "test") {
     lang = "en";
   }
-  store.dispatch(actions.languageSniffed({lang}));
+  store.dispatch(actions.languageSniffed({ lang }));
 
   render(App);
 

@@ -1,7 +1,6 @@
+import { itchPlatform } from "../../os";
 
-import {itchPlatform} from "../../os";
-
-import {join} from "path";
+import { join } from "path";
 
 let appExt = "";
 switch (itchPlatform()) {
@@ -12,10 +11,13 @@ switch (itchPlatform()) {
     appExt = ".exe";
     break;
   default:
-    // muffin;
+  // muffin;
 }
 
-export default function expandManifestPath(installpath: string, manifestPath: string): string {
+export default function expandManifestPath(
+  installpath: string,
+  manifestPath: string,
+): string {
   const relativePath = manifestPath.replace(/{{EXT}}/, appExt);
   return join(installPath, relativePath);
 }

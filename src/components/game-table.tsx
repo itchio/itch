@@ -1,25 +1,27 @@
-
 import * as React from "react";
-import {createStructuredSelector} from "reselect";
+import { createStructuredSelector } from "reselect";
 
-import {connect, I18nProps} from "./connect";
+import { connect, I18nProps } from "./connect";
 
-import {dispatcher, multiDispatcher} from "../constants/action-types";
+import { dispatcher, multiDispatcher } from "../constants/action-types";
 import * as actions from "../actions";
 
 import GameModel from "../db/models/game";
 import getByIds from "../helpers/get-by-ids";
 
 import {
-  AutoSizer, Table, Column,
+  AutoSizer,
+  Table,
+  Column,
   TableCellProps,
-  IndexRange, OverscanIndexRange,
+  IndexRange,
+  OverscanIndexRange,
 } from "react-virtualized";
-import {IOnSortChange, SortDirection, SortKey} from "./sort-types";
+import { IOnSortChange, SortDirection, SortKey } from "./sort-types";
 
-import {ICommonsState} from "../types";
+import { ICommonsState } from "../types";
 
-import gameTableRowRenderer, {IRowHandlerParams} from "./game-table-row-renderer";
+import gameTableRowRenderer, { IRowHandlerParams } from "./game-table-row-renderer";
 
 import TimeAgo from "./basics/time-ago";
 import Cover from "./basics/cover";
@@ -30,12 +32,12 @@ import LastPlayed from "./last-played";
 
 const HoverCover = Hoverable(Cover);
 
-import {whenClickNavigates} from "./when-click-navigates";
+import { whenClickNavigates } from "./when-click-navigates";
 
-import {HubGamesDiv} from "./games";
+import { HubGamesDiv } from "./games";
 import styled, * as styles from "./styles";
-import {css} from "./styles";
-import {darken} from "polished";
+import { css } from "./styles";
+import { darken } from "polished";
 
 interface IRowGetterParams {
   index: number;
@@ -137,7 +139,10 @@ const EmptyDescriptionDiv = styled(DescriptionDiv)`
   background: rgba(255, 255, 255, 0.08);
 `;
 
-class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, IGameTableState> {
+class GameTable extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  IGameTableState
+> {
   constructor() {
     super();
 
@@ -147,7 +152,7 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
   }
 
   onRowClick = (params: IRowHandlerParams) => {
-    const {e} = params;
+    const { e } = params;
     const game = this.rowGetter(params);
     if (!game) {
       return;
@@ -155,211 +160,230 @@ class GameTable extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
 
     const rightButton = 2;
     if (e.button === rightButton) {
-      this.props.openGameContextMenu({game});
+      this.props.openGameContextMenu({ game });
     }
-    whenClickNavigates(e, ({background}) => {
+    whenClickNavigates(e, ({ background }) => {
       this.props.navigateToGame(game, background);
     });
-  }
+  };
 
   // FIXME: find another way to do this
   onScroll = (e: any) => {
     // ignore data when tab's hidden
-    if (e.clientHeight <= 0) { return; }
+    if (e.clientHeight <= 0) {
+      return;
+    }
     this.setState({ scrollTop: e.scrollTop });
-  }
+  };
 
   rowGetter = (params: IRowGetterParams): any => {
-    const {index} = params;
+    const { index } = params;
 
     return this.props.games[index - this.props.gamesOffset];
-  }
+  };
 
   genericDataGetter = (params: ICellDataGetter): any => {
     return params.rowData;
-  }
+  };
 
   coverRenderer = (params: TableCellProps): JSX.Element | string => {
     const game = params.cellData;
     if (!game) {
-      return <Cover
-        showGifMarker={false}
-        hover={false}
-        coverUrl={null}
-        stillCoverUrl={null}
-      />;
+      return (
+        <Cover
+          showGifMarker={false}
+          hover={false}
+          coverUrl={null}
+          stillCoverUrl={null}
+        />
+      );
     }
-    const {coverUrl, stillCoverUrl} = game;
+    const { coverUrl, stillCoverUrl } = game;
 
-    return <HoverCover
-      showGifMarker={false}
-      coverUrl={coverUrl}
-      stillCoverUrl={stillCoverUrl}
-    />;
-  }
+    return (
+      <HoverCover
+        showGifMarker={false}
+        coverUrl={coverUrl}
+        stillCoverUrl={stillCoverUrl}
+      />
+    );
+  };
 
   titleRenderer = (params: TableCellProps): JSX.Element | string => {
     const game = params.cellData;
 
     if (!game) {
-      return <TitleColumnDiv>
-        <EmptyTitleDiv/>
-        <EmptyDescriptionDiv/>
-      </TitleColumnDiv>;
+      return (
+        <TitleColumnDiv>
+          <EmptyTitleDiv />
+          <EmptyDescriptionDiv />
+        </TitleColumnDiv>
+      );
     }
 
-    const {title, shortText} = game;
-    return <TitleColumnDiv>
-      <TitleDiv className="game-table-title">{title}</TitleDiv>
-      <DescriptionDiv>{shortText}</DescriptionDiv>
-    </TitleColumnDiv>;
-}
+    const { title, shortText } = game;
+    return (
+      <TitleColumnDiv>
+        <TitleDiv className="game-table-title">{title}</TitleDiv>
+        <DescriptionDiv>{shortText}</DescriptionDiv>
+      </TitleColumnDiv>
+    );
+  };
 
-publishedAtRenderer = (params: TableCellProps): JSX.Element | string => {
-  const game = params.cellData;
-  if (!game) {
-    return null;
+  publishedAtRenderer = (params: TableCellProps): JSX.Element | string => {
+    const game = params.cellData;
+    if (!game) {
+      return null;
+    }
+    const { publishedAt } = game;
+    if (publishedAt) {
+      return <TimeAgo date={publishedAt} />;
+    } else {
+      return "";
+    }
+  };
+
+  playtimeRenderer = (params: TableCellProps): JSX.Element | string => {
+    const game = params.cellData;
+    if (!game) {
+      return null;
+    }
+
+    const { commons } = this.props;
+    const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+
+    // TODO: pick cave with highest play time
+    const cave = caves.length > 0 ? caves[0] : null;
+
+    if (cave) {
+      return <TotalPlaytime game={game} cave={cave} short={true} />;
+    } else {
+      return null;
+    }
+  };
+
+  lastPlayedRenderer = (params: TableCellProps): JSX.Element | string => {
+    const game = params.cellData;
+    if (!game) {
+      return null;
+    }
+
+    const { commons } = this.props;
+    const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+
+    // TODO: pick cave with highest play time
+    const cave = caves.length > 0 ? caves[0] : null;
+
+    if (cave) {
+      return <LastPlayed game={game} cave={cave} short={true} />;
+    } else {
+      return null;
+    }
+  };
+
+  onRowsRendered = (info: IndexRange & OverscanIndexRange) => {
+    this.props.tabPaginationChanged({
+      id: this.props.tab,
+      pagination: {
+        offset: info.overscanStartIndex,
+        limit: info.overscanStopIndex - info.overscanStartIndex + 1,
+      },
+    });
+  };
+
+  render() {
+    const { tab, hiddenCount } = this.props;
+
+    // the AutoSizer stuff below looks extremely dumb, but it's actually the only
+    // way to make sure AutoSizer re-renders
+    return (
+      <HubGamesDiv>
+        <AutoSizer>
+          {size => this.renderWithSize(size)}
+        </AutoSizer>
+        <HiddenIndicator tab={tab} count={hiddenCount} />
+      </HubGamesDiv>
+    );
   }
-  const {publishedAt} = game;
-  if (publishedAt) {
-    return <TimeAgo date={publishedAt}/>;
-  } else {
-    return "";
-  }
-}
 
-playtimeRenderer = (params: TableCellProps): JSX.Element | string => {
-  const game = params.cellData;
-  if (!game) {
-    return null;
-  }
+  renderWithSize = ({ width, height }) => {
+    const { t } = this.props;
 
-  const {commons} = this.props;
-  const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+    let remainingWidth = width;
+    let coverWidth = 74;
+    remainingWidth -= coverWidth;
 
-  // TODO: pick cave with highest play time
-  const cave = caves.length > 0 ? caves[0] : null;
+    let publishedWidth = 140;
+    remainingWidth -= publishedWidth;
 
-  if (cave) {
-    return <TotalPlaytime game={game} cave={cave} short={true}/>;
-  } else {
-    return null;
-  }
-}
+    let playtimeWidth = 140;
+    remainingWidth -= playtimeWidth;
 
-lastPlayedRenderer = (params: TableCellProps): JSX.Element | string => {
-  const game = params.cellData;
-  if (!game) {
-    return null;
-  }
+    let lastPlayedWidth = 140;
+    remainingWidth -= lastPlayedWidth;
 
-  const {commons} = this.props;
-  const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+    const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
+    const { gamesCount = 0, sortBy, sortDirection } = this.props;
 
-  // TODO: pick cave with highest play time
-  const cave = caves.length > 0 ? caves[0] : null;
+    return (
+      <StyledTable
+        headerHeight={35}
+        height={height}
+        width={width}
+        rowCount={gamesCount}
+        rowHeight={75}
+        rowGetter={this.rowGetter}
+        onRowClick={this.onRowClick}
+        scrollTop={scrollTop}
+        sort={this.props.onSortChange}
+        sortBy={sortBy}
+        sortDirection={sortDirection}
+        rowRenderer={gameTableRowRenderer}
+        onRowsRendered={this.onRowsRendered}
+        overscanRowCount={0}
+      >
+        <Column
+          dataKey="cover"
+          width={coverWidth}
+          cellDataGetter={this.genericDataGetter}
+          cellRenderer={this.coverRenderer}
+          disableSort={true}
+        />
 
-  if (cave) {
-    return <LastPlayed game={game} cave={cave} short={true}/>;
-  } else {
-    return null;
-  }
-}
-
-onRowsRendered = (info: IndexRange & OverscanIndexRange) => {
-  this.props.tabPaginationChanged({
-    id: this.props.tab,
-    pagination: {
-      offset: info.overscanStartIndex,
-      limit: (info.overscanStopIndex - info.overscanStartIndex) + 1,
-    },
-  });
-}
-
-render () {
-  const {tab, hiddenCount} = this.props;
-
-  // the AutoSizer stuff below looks extremely dumb, but it's actually the only
-  // way to make sure AutoSizer re-renders
-  return <HubGamesDiv>
-    <AutoSizer>
-      {(size) => this.renderWithSize(size)}
-    </AutoSizer>
-    <HiddenIndicator tab={tab} count={hiddenCount}/>
-  </HubGamesDiv>;
-}
-
-renderWithSize = ({width, height}) => {
-  const {t} = this.props;
-
-  let remainingWidth = width;
-  let coverWidth = 74;
-  remainingWidth -= coverWidth;
-
-  let publishedWidth = 140;
-  remainingWidth -= publishedWidth;
-
-  let playtimeWidth = 140;
-  remainingWidth -= playtimeWidth;
-
-  let lastPlayedWidth = 140;
-  remainingWidth -= lastPlayedWidth;
-
-  const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
-  const {gamesCount = 0, sortBy, sortDirection} = this.props;
-
-  return <StyledTable
-      headerHeight={35}
-      height={height}
-      width={width}
-      rowCount={gamesCount}
-      rowHeight={75}
-      rowGetter={this.rowGetter}
-      onRowClick={this.onRowClick}
-      scrollTop={scrollTop}
-      sort={this.props.onSortChange}
-      sortBy={sortBy}
-      sortDirection={sortDirection}
-      rowRenderer={gameTableRowRenderer}
-      onRowsRendered={this.onRowsRendered}
-      overscanRowCount={0}
-    >
-    <Column
-      dataKey="cover"
-      width={coverWidth}
-      cellDataGetter={this.genericDataGetter}
-      cellRenderer={this.coverRenderer}
-      disableSort={true}/>
-
-    <Column
-      dataKey="title"
-      label={t("table.column.name")}
-      width={remainingWidth}
-      cellDataGetter={this.genericDataGetter}
-      cellRenderer={this.titleRenderer}/>
-    <Column
-      dataKey="secondsRun"
-      label={t("table.column.play_time")}
-      width={playtimeWidth}
-      className="secondary"
-      cellDataGetter={this.genericDataGetter}
-      cellRenderer={this.playtimeRenderer}/>
-    <Column
-      dataKey="lastTouchedAt"
-      label={t("table.column.last_played")}
-      width={lastPlayedWidth}
-      className="secondary"
-      cellDataGetter={this.genericDataGetter}
-      cellRenderer={this.lastPlayedRenderer}/>
-    <Column
-      dataKey="publishedAt"
-      label={t("table.column.published")}
-      width={publishedWidth}
-      className="secondary"
-      cellDataGetter={this.genericDataGetter}
-      cellRenderer={this.publishedAtRenderer}/>
-    </StyledTable>;
-  }
+        <Column
+          dataKey="title"
+          label={t("table.column.name")}
+          width={remainingWidth}
+          cellDataGetter={this.genericDataGetter}
+          cellRenderer={this.titleRenderer}
+        />
+        <Column
+          dataKey="secondsRun"
+          label={t("table.column.play_time")}
+          width={playtimeWidth}
+          className="secondary"
+          cellDataGetter={this.genericDataGetter}
+          cellRenderer={this.playtimeRenderer}
+        />
+        <Column
+          dataKey="lastTouchedAt"
+          label={t("table.column.last_played")}
+          width={lastPlayedWidth}
+          className="secondary"
+          cellDataGetter={this.genericDataGetter}
+          cellRenderer={this.lastPlayedRenderer}
+        />
+        <Column
+          dataKey="publishedAt"
+          label={t("table.column.published")}
+          width={publishedWidth}
+          className="secondary"
+          cellDataGetter={this.genericDataGetter}
+          cellRenderer={this.publishedAtRenderer}
+        />
+      </StyledTable>
+    );
+  };
 }
 
 interface IProps {
@@ -389,10 +413,11 @@ interface IGameTableState {
 }
 
 export default connect<IProps>(GameTable, {
-  state: () => createStructuredSelector({
-    commons: (state) => state.commons,
-  }),
-  dispatch: (dispatch) => ({
+  state: () =>
+    createStructuredSelector({
+      commons: state => state.commons,
+    }),
+  dispatch: dispatch => ({
     clearFilters: dispatcher(dispatch, actions.clearFilters),
     navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),

@@ -1,4 +1,3 @@
-
 import suite from "../test-suite";
 import getByIds from "./get-by-ids";
 
@@ -19,7 +18,10 @@ suite(__filename, s => {
     t.same(getByIds(null, []), []);
     t.same(getByIds(records, null), []);
     t.same(getByIds(records, []), []);
-    t.same(getByIds(records, ["34"]), [{word: "thirty-four"}]);
-    t.same(getByIds(records, ["56", "1024", "12"]), [{word: "fifty-six"}, {word: "twelve"}]);
+    t.same(getByIds(records, ["34"]), [{ word: "thirty-four" }]);
+    t.same(getByIds(records, ["56", "1024", "12"]), [
+      { word: "fifty-six" },
+      { word: "twelve" },
+    ]);
   });
 });

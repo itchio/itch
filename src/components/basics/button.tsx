@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
 import styled, * as styles from "../styles";
@@ -72,36 +71,34 @@ const Spacer = styled.div`
 class Button extends React.PureComponent<IProps, any> {
   render() {
     const {
-      className, primary, discreet, fat,
-      icon, iconComponent, label, hint, onClick,
+      className,
+      primary,
+      discreet,
+      fat,
+      icon,
+      iconComponent,
+      label,
+      hint,
+      onClick,
       ...restProps,
     } = this.props;
 
-    return <ButtonDiv
+    return (
+      <ButtonDiv
         onClick={onClick}
         data-rh={hint}
         data-rh-at="top"
-        className={classNames(className, {primary, discreet, fat})}
-        {...restProps}>
-      {iconComponent
-      ? iconComponent
-      : (icon
-        ? <Icon icon={icon}/>
-        : null
-      )}
-      {(iconComponent || icon)
-      ? <Spacer/>
-      : null
-      }
-      {icon && label
-      ? " "
-      : null}
-      {label
-      ? <Label>{label}</Label>
-      : null}
-      {this.props.children}
-      <Ink/>
-    </ButtonDiv>;
+        className={classNames(className, { primary, discreet, fat })}
+        {...restProps}
+      >
+        {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
+        {iconComponent || icon ? <Spacer /> : null}
+        {icon && label ? " " : null}
+        {label ? <Label>{label}</Label> : null}
+        {this.props.children}
+        <Ink />
+      </ButtonDiv>
+    );
   }
 }
 

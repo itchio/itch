@@ -1,10 +1,9 @@
-
 import * as React from "react";
 
 class HoverBoard extends React.PureComponent<void, IState> {
   childProps: any;
 
-  constructor () {
+  constructor() {
     super();
 
     this.state = {
@@ -16,7 +15,7 @@ class HoverBoard extends React.PureComponent<void, IState> {
     };
   }
 
-  render () {
+  render() {
     const children = this.props.children as IChildren;
     return children({
       hover: this.state.hover,
@@ -25,12 +24,12 @@ class HoverBoard extends React.PureComponent<void, IState> {
   }
 
   onMouseEnter = () => {
-    this.setState({hover: true});
-  }
+    this.setState({ hover: true });
+  };
 
   onMouseLeave = () => {
-    this.setState({hover: false});
-  }
+    this.setState({ hover: false });
+  };
 }
 
 interface IState {

@@ -1,4 +1,3 @@
-
 import "electron";
 
 interface WebViewProps {

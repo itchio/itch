@@ -1,5 +1,4 @@
-
-import {II18nResources} from "../types";
+import { II18nResources } from "../types";
 
 const emptyObj = {};
 
@@ -14,7 +13,7 @@ export interface ILocalizer {
   format(args: any): string;
 }
 
-export function getT (strings: II18nResources, lang: string) {
+export function getT(strings: II18nResources, lang: string) {
   const t: ILocalizer = ((key: string | string[], variables?: any) => {
     if (!key || key.length <= 0) {
       return key;
@@ -74,7 +73,10 @@ export function getT (strings: II18nResources, lang: string) {
         // TODO: pre-parse strings for performance?
         // also this will leave {{blah}} in strings if they
         // don't have corresponding variables
-        result = result.replace(new RegExp("{{" + varName + "}}", "g"), variables[varName]);
+        result = result.replace(
+          new RegExp("{{" + varName + "}}", "g"),
+          variables[varName],
+        );
       }
       return result;
     } else {
@@ -84,7 +86,7 @@ export function getT (strings: II18nResources, lang: string) {
 
   t.lang = lang;
 
-  t.format = (args) => {
+  t.format = args => {
     if (Array.isArray(args)) {
       return t.apply(null, args);
     } else {

@@ -1,25 +1,24 @@
-
-import {Logger} from "../../logger";
+import { Logger } from "../../logger";
 
 import Game from "../../db/models/game";
 
 export interface INeed {
-    type: string;
-    code?: number;
-    err?: string;
+  type: string;
+  code?: number;
+  err?: string;
 }
 
 export interface ICaretaker {
-    (n: INeed): void;
+  (n: INeed): void;
 }
 
 export interface ICaretakerSet {
-    [key: string]: ICaretaker;
+  [key: string]: ICaretaker;
 }
 
 export interface ICheckResult {
-    needs: INeed[];
-    errors: Error[];
+  needs: INeed[];
+  errors: Error[];
 }
 
 export interface IWithinOpts {

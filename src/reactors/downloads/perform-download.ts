@@ -1,4 +1,3 @@
-
 import * as paths from "../../os/paths";
 import client from "../../api";
 import butler from "../../util/butler";
@@ -10,13 +9,15 @@ import rootLogger from "../../logger";
 import downloadPatches from "./download-patches";
 import getGameCredentials from "./get-game-credentials";
 
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
-import {IStore, IDownloadItem, IDownloadResult} from "../../types";
+import { IStore, IDownloadItem, IDownloadResult } from "../../types";
 
-export default async function performDownload
-    (store: IStore, item: IDownloadItem, out: EventEmitter): Promise<IDownloadResult> {
-
+export default async function performDownload(
+  store: IStore,
+  item: IDownloadItem,
+  out: EventEmitter,
+): Promise<IDownloadResult> {
   // TODO: we want to store download/install logs even if the cave never ends
   // up being valid, for bug reporting purposes.
 
@@ -24,7 +25,7 @@ export default async function performDownload
   if (item.caveId) {
     parentLogger = paths.caveLogger(item.caveId);
   }
-  const logger = parentLogger.child({name: `download`});
+  const logger = parentLogger.child({ name: `download` });
 
   if (item.upgradePath && item.caveId) {
     logger.info("Got an upgrade path, downloading patches");
@@ -32,7 +33,7 @@ export default async function performDownload
     return await downloadPatches(store, item, out, logger);
   }
 
-  const {upload, downloadKey, game, caveId} = item;
+  const { upload, downloadKey, game, caveId } = item;
 
   const gameCredentials = await getGameCredentials(store, game);
   if (!gameCredentials) {
@@ -41,7 +42,7 @@ export default async function performDownload
 
   const api = client.withKey(gameCredentials.apiKey);
 
-  const {preferences} = store.getState();
+  const { preferences } = store.getState();
 
   const onProgress = (e: any) => out.emit("progress", e);
 
@@ -52,8 +53,18 @@ export default async function performDownload
 
     logger.info(`Downloading wharf-enabled download, build #${buildId}`);
 
-    const archiveURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "archive");
-    const signatureURL = api.downloadBuildURL(downloadKey, upload.id, buildId, "signature");
+    const archiveURL = api.downloadBuildURL(
+      downloadKey,
+      upload.id,
+      buildId,
+      "archive",
+    );
+    const signatureURL = api.downloadBuildURL(
+      downloadKey,
+      upload.id,
+      buildId,
+      "signature",
+    );
 
     const cave = await db.caves.findOneById(caveId);
 
@@ -66,7 +77,7 @@ export default async function performDownload
       emitter: out,
       onProgress,
     });
- } else {
+  } else {
     const uploadURL = api.downloadUploadURL(downloadKey, upload.id);
 
     try {
@@ -93,7 +104,7 @@ export default async function performDownload
   };
 }
 
-function isHeal (item: IDownloadItem): boolean {
+function isHeal(item: IDownloadItem): boolean {
   switch (item.reason) {
     case "heal":
     case "revert":

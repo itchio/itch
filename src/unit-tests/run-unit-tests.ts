@@ -4,12 +4,12 @@ let watching = false;
 let runConfidenceTests = false;
 let chatty = false;
 
-function exit (exitCode) {
+function exit(exitCode) {
   if (process.env.ITCH_DONT_EXIT === "1") {
     console.log(`Should exit with code ${exitCode}, but asked not to`);
     return;
   }
-  
+
   if (watching) {
     console.log(`Watching, so not exiting`);
     return;
@@ -30,7 +30,7 @@ process.on("unhandledRejection", (reason: string, p: Promise<any>) => {
 const chalk = require("chalk");
 const bluebird = require("bluebird");
 
-const {app} = require("electron");
+const { app } = require("electron");
 const path = require("path");
 
 interface IDuration {
@@ -38,9 +38,9 @@ interface IDuration {
   duration: number;
 }
 
-const {sortBy} = require("underscore");
+const { sortBy } = require("underscore");
 
-function pad (input: string, minLength: number): string {
+function pad(input: string, minLength: number): string {
   let s = input;
   while (s.length < minLength) {
     s = s + " ";
@@ -48,7 +48,7 @@ function pad (input: string, minLength: number): string {
   return s;
 }
 
-function printDurations (input: IDuration[], legend: string) {
+function printDurations(input: IDuration[], legend: string) {
   console.log(chalk.blue(`${legend}`));
 
   const durations = sortBy(input, "duration").reverse();
@@ -76,18 +76,20 @@ function printDurations (input: IDuration[], legend: string) {
 
 const cwd = process.cwd();
 
-function flush () {
+function flush() {
   process.removeAllListeners("exit");
 
-  Object.keys(require.cache).forEach(function (fname) {
+  Object.keys(require.cache).forEach(function(fname) {
     if (fname.indexOf("node_modules") === -1) {
       delete require.cache[fname];
     }
 
     const mods = ["tape", "zopf", "typeorm"];
-    mods.forEach(function (mod) {
-      if (fname.indexOf(path.join(cwd, mod) + path.sep) > -1 ||
-        fname.indexOf(path.join(cwd, "node_modules", mod) + path.sep) > -1) {
+    mods.forEach(function(mod) {
+      if (
+        fname.indexOf(path.join(cwd, mod) + path.sep) > -1 ||
+        fname.indexOf(path.join(cwd, "node_modules", mod) + path.sep) > -1
+      ) {
         delete require.cache[fname];
       }
     });
@@ -109,7 +111,9 @@ app.on("ready", async () => {
     }
     if (state === 2) {
       specifiedFiles = [arg.replace(/.*src\//, "")];
-      console.log(`Unit test runner only running ${JSON.stringify(specifiedFiles)}`);
+      console.log(
+        `Unit test runner only running ${JSON.stringify(specifiedFiles)}`,
+      );
       break;
     } else if (state === 1) {
       if (arg === "--test" || arg === "-t") {
@@ -129,10 +133,10 @@ app.on("ready", async () => {
     delete global["__coverage__"];
     const tape = require("tape");
     const zopf = require("zopf");
-    const parser = tapParser(function (results) {
+    const parser = tapParser(function(results) {
       // muffin;
     });
-    parser.on("assert", function (assert) {
+    parser.on("assert", function(assert) {
       if (!assert.ok) {
         console.warn("[failed] " + assert.id + " - " + assert.name);
         if (assert.diag) {
@@ -146,10 +150,10 @@ app.on("ready", async () => {
     if (testFiles.length === 0) {
       if (chatty) {
         console.log(chalk.blue(`looking for tests in ${srcDir}`));
-      }  
-      testFiles = glob("**/*[\.-]spec.ts", {cwd: srcDir});
+      }
+      testFiles = glob("**/*[.-]spec.ts", { cwd: srcDir });
       if (!runConfidenceTests) {
-        testFiles = testFiles.filter((f) => !/confidence/.test(f));
+        testFiles = testFiles.filter(f => !/confidence/.test(f));
       }
     }
 
@@ -160,7 +164,8 @@ app.on("ready", async () => {
       tape.onFinish(async () => {
         let finishedAt = Date.now();
 
-        const msg = `finished ${testFiles.length} suites in ${(finishedAt - testStartedAt).toFixed(2)}ms`;
+        const msg = `finished ${testFiles.length} suites in ${(finishedAt -
+          testStartedAt).toFixed(2)}ms`;
         printDurations(zopf.testDurations, msg);
 
         const libCoverage = require("istanbul-lib-coverage");
@@ -173,7 +178,7 @@ app.on("ready", async () => {
         map = sourceMapCache.transformCoverage(map).map;
 
         const libReport = require("istanbul-lib-report");
-        const context = libReport.createContext({dir: "coverage"});
+        const context = libReport.createContext({ dir: "coverage" });
 
         const reports = require("istanbul-reports");
 
@@ -195,7 +200,7 @@ app.on("ready", async () => {
 
     for (const testFile of testFiles) {
       const ext = path.posix.extname(testFile);
-      const extless = testFile.slice(0, -(ext.length));
+      const extless = testFile.slice(0, -ext.length);
       const requirePath = `../${extless}`;
       require(requirePath);
       if (chatty) {
@@ -213,16 +218,19 @@ app.on("ready", async () => {
   const debounce = require("debounce-collect");
   const mutex = require("./mutex").default;
 
-  const report = debounce(mutex(async function () {
-    flush();
-    console.log("");
-    const exitCode = await invoke();
-    if (!watching) {
-      exit(exitCode);
-    }
-    await bluebird.delay(250);
-    console.log("watching for changes...");
-  }), 25);
+  const report = debounce(
+    mutex(async function() {
+      flush();
+      console.log("");
+      const exitCode = await invoke();
+      if (!watching) {
+        exit(exitCode);
+      }
+      await bluebird.delay(250);
+      console.log("watching for changes...");
+    }),
+    25,
+  );
 
   if (watching) {
     const chokidar = require("chokidar");

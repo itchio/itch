@@ -1,19 +1,18 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
-import {createStructuredSelector} from "reselect";
+import { connect, I18nProps } from "./connect";
+import { createStructuredSelector } from "reselect";
 
 import * as actions from "../actions";
 
-import {IAppState, TabLayout} from "../types";
-import {dispatcher} from "../constants/action-types";
+import { IAppState, TabLayout } from "../types";
+import { dispatcher } from "../constants/action-types";
 
 import Ink = require("react-ink");
 import Select = require("react-select");
 import Icon from "./basics/icon";
 
 import styled, * as styles from "./styles";
-import {css} from "./styles";
+import { css } from "./styles";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
@@ -108,16 +107,23 @@ const LayoutPicker = styled.section`
     filter: brightness(80%);
   }
 
-  ${(props: ILayoutPickerProps) => props.active
-  ? css`filter: brightness(100%)`
-  : ""}
+  ${(props: ILayoutPickerProps) =>
+    props.active ? css`filter: brightness(100%)` : ""}
 `;
 
-class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, 
-       onlyCompatible, onlyOwned, onlyInstalled,
-       showBinaryFilters = true, showLayoutPicker = true} = this.props;
+class GameFilters extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const {
+      t,
+      onlyCompatible,
+      onlyOwned,
+      onlyInstalled,
+      showBinaryFilters = true,
+      showLayoutPicker = true,
+    } = this.props;
 
     const compatibleOption = {
       value: "onlyCompatibleGames",
@@ -134,11 +140,7 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps
       label: t("grid.filters.options.installed"),
     };
 
-    const options = [
-        compatibleOption,
-        ownedOption,
-        installedOption,
-    ];
+    const options = [compatibleOption, ownedOption, installedOption];
 
     const value = [];
     if (onlyCompatible) {
@@ -151,61 +153,66 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps & I18nProps
       value.push(installedOption);
     }
 
-    return <FiltersContainer>
-      {showBinaryFilters
-      ? <TagFilters>
-        <Select
-          className="game-filters-input"
-          multi={true}
-          options={options}
-          value={value}
-          autoBlur={true}
-          noResultsText={t("grid.filters.options.no_results")}
-          onChange={(vals: {value: string}[]) => {
-            const prefs = {
-              onlyCompatibleGames: false,
-              onlyInstalledGames: false,
-              onlyOwnedGames: false,
-            } as {
-              [key: string]: boolean;
-            };
+    return (
+      <FiltersContainer>
+        {showBinaryFilters
+          ? <TagFilters>
+              <Select
+                className="game-filters-input"
+                multi={true}
+                options={options}
+                value={value}
+                autoBlur={true}
+                noResultsText={t("grid.filters.options.no_results")}
+                onChange={(vals: { value: string }[]) => {
+                  const prefs = {
+                    onlyCompatibleGames: false,
+                    onlyInstalledGames: false,
+                    onlyOwnedGames: false,
+                  } as {
+                    [key: string]: boolean;
+                  };
 
-            for (const val of vals) {
-              prefs[val.value] = true;
-            }
-            this.props.updatePreferences(prefs);
-          }}
-          placeholder={t("grid.criterion.filter")}/>
-      </TagFilters>
-      : null }
+                  for (const val of vals) {
+                    prefs[val.value] = true;
+                  }
+                  this.props.updatePreferences(prefs);
+                }}
+                placeholder={t("grid.criterion.filter")}
+              />
+            </TagFilters>
+          : null}
 
-      {this.props.children}
-      <Filler/>
-      {showLayoutPicker
-      ? this.renderLayoutPickers()
-      : null}
-    </FiltersContainer>;
+        {this.props.children}
+        <Filler />
+        {showLayoutPicker ? this.renderLayoutPickers() : null}
+      </FiltersContainer>
+    );
   }
 
-  renderLayoutPickers () {
-    return <LayoutPickers>
-      {this.renderLayoutPicker("grid", "grid")}
-      {this.renderLayoutPicker("table", "list")}
-    </LayoutPickers>;
+  renderLayoutPickers() {
+    return (
+      <LayoutPickers>
+        {this.renderLayoutPicker("grid", "grid")}
+        {this.renderLayoutPicker("table", "list")}
+      </LayoutPickers>
+    );
   }
 
-  renderLayoutPicker (layout: TabLayout, icon: string) {
-    const active = (this.props.layout === layout);
+  renderLayoutPicker(layout: TabLayout, icon: string) {
+    const active = this.props.layout === layout;
 
-    return <LayoutPicker active={active}
-      className="layout-picker"
-      data-layout={layout}
-      onClick={
-      (e) => this.props.updatePreferences({layout})
-    }>
-      <Icon icon={icon}/>
-      <Ink/>
-    </LayoutPicker>;
+    return (
+      <LayoutPicker
+        active={active}
+        className="layout-picker"
+        data-layout={layout}
+        onClick={e => this.props.updatePreferences({ layout })}
+      >
+        <Icon icon={icon} />
+        <Ink />
+      </LayoutPicker>
+    );
   }
 }
 
@@ -231,12 +238,13 @@ export default connect<IProps>(GameFilters, {
   state: (initialState, props) => {
     return createStructuredSelector({
       layout: (state: IAppState) => state.preferences.layout,
-      onlyCompatible: (state: IAppState) => state.preferences.onlyCompatibleGames,
+      onlyCompatible: (state: IAppState) =>
+        state.preferences.onlyCompatibleGames,
       onlyOwned: (state: IAppState) => state.preferences.onlyOwnedGames,
       onlyInstalled: (state: IAppState) => state.preferences.onlyInstalledGames,
     });
   },
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     updatePreferences: dispatcher(dispatch, actions.updatePreferences),
   }),
 });

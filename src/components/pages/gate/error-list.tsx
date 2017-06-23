@@ -1,9 +1,8 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "../../connect";
-import {map} from "underscore";
+import { connect, I18nProps } from "../../connect";
+import { map } from "underscore";
 
-import {slugify} from "../../../format";
+import { slugify } from "../../../format";
 
 /**
  * A bunch of errors displayed in a list
@@ -13,23 +12,25 @@ import {slugify} from "../../../format";
  *  - errors.api.login.username_must_be_provided
  */
 class ErrorList extends React.PureComponent<IProps & I18nProps, void> {
-  render () {
-    const {t, errors, before = "", i18nNamespace, ...restProps} = this.props;
+  render() {
+    const { t, errors, before = "", i18nNamespace, ...restProps } = this.props;
     const prefix = i18nNamespace ? `errors.${i18nNamespace}` : "errors";
 
     if (!errors) {
-      return <div/>;
+      return <div />;
     }
 
     const errorArray = Array.isArray(errors) ? errors : [errors];
 
-    return <ul className="form-errors" {...restProps}>
-      {map(errorArray, (error, key) => {
-        const i18nKey = prefix + "." + slugify(error);
-        const message = t(i18nKey, {defaultValue: error});
-        return <li key={key}>{before}{message}</li>;
-      })}
-    </ul>;
+    return (
+      <ul className="form-errors" {...restProps}>
+        {map(errorArray, (error, key) => {
+          const i18nKey = prefix + "." + slugify(error);
+          const message = t(i18nKey, { defaultValue: error });
+          return <li key={key}>{before}{message}</li>;
+        })}
+      </ul>
+    );
   }
 }
 

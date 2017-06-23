@@ -1,11 +1,10 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 import * as actions from "../actions";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "perf"});
+const logger = rootLogger.child({ name: "perf" });
 
-import {elapsed} from "../format";
+import { elapsed } from "../format";
 
 let prebootTime: number;
 let bootTime: number;
@@ -13,7 +12,7 @@ let loginTime: number;
 let pageTime: number;
 let done = false;
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
     prebootTime = Date.now();
   });

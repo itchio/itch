@@ -1,4 +1,3 @@
-
 const originalItchio = "https://itch.io";
 const itchio = process.env.WHEN_IN_ROME || originalItchio;
 const manual = "https://itch.io/docs/itch";

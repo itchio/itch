@@ -1,8 +1,7 @@
-
 import * as actions from "../actions";
 import reducer from "./reducer";
 
-import {ICommonsState} from "../types";
+import { ICommonsState } from "../types";
 
 const initialState: ICommonsState = {
   downloadKeys: {},
@@ -12,7 +11,7 @@ const initialState: ICommonsState = {
   libraryGameIds: [],
 };
 
-export default reducer<ICommonsState>(initialState, (on) => {
+export default reducer<ICommonsState>(initialState, on => {
   // TODO: be much smarter+faster here.
   // this is a good place to dedupe updates if records
   // are deepEqual

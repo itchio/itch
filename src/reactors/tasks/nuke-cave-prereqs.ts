@@ -1,10 +1,9 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.nukeCavePrereqs, async (store, action) => {
-    const {caveId} = action.payload;
+    const { caveId } = action.payload;
     // FIXME: db
     const market: any = null;
 
@@ -13,9 +12,11 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    await market.saveOne("caves", caveId, {installedPrereqs: null});
-    store.dispatch(actions.statusMessage({
-      message: "Prereqs nuked!",
-    }));
+    await market.saveOne("caves", caveId, { installedPrereqs: null });
+    store.dispatch(
+      actions.statusMessage({
+        message: "Prereqs nuked!",
+      }),
+    );
   });
 }

@@ -1,4 +1,3 @@
-
 import * as React from "react";
 
 import Icon from "./icon";
@@ -9,8 +8,8 @@ import taskToIcon from "../../constants/icon-for-tasks";
  * An icon that represents the state of a given task
  */
 class TaskIcon extends React.PureComponent<ITaskIconProps, void> {
-  render () {
-    const {task = "", action = "launch", animate = false} = this.props;
+  render() {
+    const { task = "", action = "launch", animate = false } = this.props;
 
     let icon = taskToIcon[task] || "";
     if (task === "idle") {
@@ -22,7 +21,7 @@ class TaskIcon extends React.PureComponent<ITaskIconProps, void> {
     }
 
     const className = animate ? "scan" : "";
-    return <Icon icon={icon} className={className}/>;
+    return <Icon icon={icon} className={className} />;
   }
 }
 

@@ -1,7 +1,6 @@
-
 import * as React from "react";
-import {createStructuredSelector} from "reselect";
-import {connect, I18nProps} from "./connect";
+import { createStructuredSelector } from "reselect";
+import { connect, I18nProps } from "./connect";
 
 import GatePage from "./pages/gate";
 import HubPage from "./pages/hub";
@@ -9,9 +8,9 @@ import StatusBar from "./status-bar";
 import NonLocalIndicator from "./non-local-indicator";
 import ReactHint = require("react-hint");
 
-import {IAppState} from "../types";
+import { IAppState } from "../types";
 
-import watching, {Watcher} from "./watching";
+import watching, { Watcher } from "./watching";
 import * as actions from "../actions";
 import * as ospath from "path";
 
@@ -66,7 +65,7 @@ const ReactHintContainer = styled.div`
 declare class Notification {
   onclick: () => void;
 
-  constructor(title: string, opts: any)
+  constructor(title: string, opts: any);
 }
 
 /**
@@ -74,11 +73,14 @@ declare class Notification {
  * Also, subscribes to app store to synchronize its state
  */
 @watching
-class Layout extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  subscribe (watcher: Watcher) {
+class Layout extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  subscribe(watcher: Watcher) {
     watcher.on(actions.notifyHtml5, async (store, action) => {
-      const {title, onClick} = action.payload;
-      const opts = {...action.payload.opts};
+      const { title, onClick } = action.payload;
+      const opts = { ...action.payload.opts };
 
       if (opts.icon) {
         opts.icon = ospath.resolve(ospath.join(__dirname, opts.icon));
@@ -93,25 +95,27 @@ class Layout extends React.PureComponent<IProps & IDerivedProps & I18nProps, voi
     });
   }
 
-  render () {
-    return <LayoutContainer>
-      {this.main()}
-      <StatusBar/>
-      <ReactHintContainer>
-        <ReactHint/>
-      </ReactHintContainer>
-      <NonLocalIndicator/>
-    </LayoutContainer>;
+  render() {
+    return (
+      <LayoutContainer>
+        {this.main()}
+        <StatusBar />
+        <ReactHintContainer>
+          <ReactHint />
+        </ReactHintContainer>
+        <NonLocalIndicator />
+      </LayoutContainer>
+    );
   }
 
-  main () {
-    const {page} = this.props;
+  main() {
+    const { page } = this.props;
 
     switch (page) {
       case "gate":
-        return <GatePage/>;
+        return <GatePage />;
       case "hub":
-        return <HubPage/>;
+        return <HubPage />;
       default:
         return <div>Unknown page: {page}</div>;
     }

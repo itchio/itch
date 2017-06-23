@@ -1,7 +1,6 @@
+import { DownloadReason, InstallReason } from "../../types";
 
-import {DownloadReason, InstallReason} from "../../types";
-
-export default function (reason: DownloadReason): InstallReason {
+export default function(reason: DownloadReason): InstallReason {
   switch (reason) {
     case "heal":
       return "heal";
@@ -9,6 +8,7 @@ export default function (reason: DownloadReason): InstallReason {
       return "install";
     case "reinstall":
       return "reinstall";
-    default: return null;
+    default:
+      return null;
   }
 }

@@ -1,5 +1,4 @@
-
-import {combineReducers} from "redux";
+import { combineReducers } from "redux";
 import login from "./login";
 import credentials from "./credentials";
 import navigation from "./navigation";
@@ -10,8 +9,8 @@ import tabData from "./tab-data";
 import tabParams from "./tab-params";
 import tabPagination from "./tab-pagination";
 
-import {Reducer} from "redux";
-import {ISessionState} from "../../types";
+import { Reducer } from "redux";
+import { ISessionState } from "../../types";
 
 const reducers: any = {
   login,

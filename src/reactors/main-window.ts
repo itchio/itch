@@ -1,24 +1,23 @@
+import { Watcher } from "./watcher";
 
-import {Watcher} from "./watcher";
+import { createSelector } from "reselect";
 
-import {createSelector} from "reselect";
-
-import {makeLabel} from "../util/navigation";
+import { makeLabel } from "../util/navigation";
 import env from "../env";
 
 import * as sf from "../os/sf";
 
-import {darkMineShaft} from "../constants/colors";
-import {app, BrowserWindow} from "electron";
+import { darkMineShaft } from "../constants/colors";
+import { app, BrowserWindow } from "electron";
 import config from "../util/config";
-import {getImagePath} from "../os/resources";
+import { getImagePath } from "../os/resources";
 import * as os from "../os";
-import {resolve} from "path";
+import { resolve } from "path";
 import * as invariant from "invariant";
-import {debounce} from "underscore";
+import { debounce } from "underscore";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "main-window"});
+const logger = rootLogger.child({ name: "main-window" });
 
 import localizer from "../localizer";
 import * as actions from "../actions";
@@ -34,9 +33,9 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = os.platform() === "darwin";
 
-import {IAppState, IStore} from "../types";
+import { IAppState, IStore } from "../types";
 
-async function createWindow (store: IStore, hidden: boolean) {
+async function createWindow(store: IStore, hidden: boolean) {
   if (createLock) {
     return;
   }
@@ -50,19 +49,22 @@ async function createWindow (store: IStore, hidden: boolean) {
     height: 720,
     ...userBounds,
   };
-  const {width, height} = bounds;
-  const center = (bounds.x === -1 && bounds.y === -1);
+  const { width, height } = bounds;
+  const center = bounds.x === -1 && bounds.y === -1;
   let iconName = "icon";
   if (process.platform === "win32") {
     iconName = "icon-32";
   }
 
-  const iconPath = getImagePath("window/" + env.appName + "/" + iconName + ".png");
+  const iconPath = getImagePath(
+    "window/" + env.appName + "/" + iconName + ".png",
+  );
 
   let opts: Electron.BrowserWindowConstructorOptions = {
     title: app.getName(),
     icon: iconPath,
-    width, height,
+    width,
+    height,
     center,
     show: false,
     autoHideMenuBar: true,
@@ -93,9 +95,9 @@ async function createWindow (store: IStore, hidden: boolean) {
       return;
     }
 
-    const prefs = store.getState().preferences || {closeToTray: true};
+    const prefs = store.getState().preferences || { closeToTray: true };
 
-    let {closeToTray} = prefs;
+    let { closeToTray } = prefs;
     if (env.name === "test") {
       // always let app close in testing
       closeToTray = false;
@@ -118,16 +120,20 @@ async function createWindow (store: IStore, hidden: boolean) {
     }
 
     if (!prefs.gotMinimizeNotification) {
-      store.dispatch(actions.updatePreferences({
-        gotMinimizeNotification: true,
-      }));
+      store.dispatch(
+        actions.updatePreferences({
+          gotMinimizeNotification: true,
+        }),
+      );
 
       const i18n = store.getState().i18n;
       const t = localizer.getT(i18n.strings, i18n.lang);
-      store.dispatch(actions.notify({
-        title: t("notification.see_you_soon.title"),
-        body: t("notification.see_you_soon.message"),
-      }));
+      store.dispatch(
+        actions.notify({
+          title: t("notification.see_you_soon.title"),
+          body: t("notification.see_you_soon.message"),
+        }),
+      );
     }
 
     // hide, never destroy
@@ -137,34 +143,34 @@ async function createWindow (store: IStore, hidden: boolean) {
   });
 
   window.on("focus", (e: any) => {
-    store.dispatch(actions.windowFocusChanged({focused: true}));
+    store.dispatch(actions.windowFocusChanged({ focused: true }));
   });
 
   window.on("blur", (e: any) => {
-    store.dispatch(actions.windowFocusChanged({focused: false}));
+    store.dispatch(actions.windowFocusChanged({ focused: false }));
   });
 
   window.on("enter-full-screen", (e: any) => {
     if (!store.getState().ui.mainWindow.fullscreen) {
-      store.dispatch(actions.windowFullscreenChanged({fullscreen: true}));
+      store.dispatch(actions.windowFullscreenChanged({ fullscreen: true }));
     }
   });
 
   window.on("leave-full-screen", (e: any) => {
     if (store.getState().ui.mainWindow.fullscreen) {
-      store.dispatch(actions.windowFullscreenChanged({fullscreen: false}));
+      store.dispatch(actions.windowFullscreenChanged({ fullscreen: false }));
     }
   });
 
   window.on("maximize", (e: any) => {
     if (!store.getState().ui.mainWindow.maximized) {
-      store.dispatch(actions.windowMaximizedChanged({maximized: true}));
+      store.dispatch(actions.windowMaximizedChanged({ maximized: true }));
     }
   });
 
   window.on("unmaximize", (e: any) => {
     if (store.getState().ui.mainWindow.maximized) {
-      store.dispatch(actions.windowMaximizedChanged({maximized: false}));
+      store.dispatch(actions.windowMaximizedChanged({ maximized: false }));
     }
   });
 
@@ -177,7 +183,7 @@ async function createWindow (store: IStore, hidden: boolean) {
         store.dispatch(actions.triggerBrowserForward({}));
         break;
       default:
-        // ignore unknown app commands
+      // ignore unknown app commands
     }
   });
 
@@ -186,7 +192,7 @@ async function createWindow (store: IStore, hidden: boolean) {
       return;
     }
     const windowBounds = window.getBounds();
-    store.dispatch(actions.windowBoundsChanged({bounds: windowBounds}));
+    store.dispatch(actions.windowBoundsChanged({ bounds: windowBounds }));
   }, 2000);
 
   window.on("move", (e: any) => {
@@ -230,7 +236,7 @@ async function createWindow (store: IStore, hidden: boolean) {
       store.dispatch(actions.firstWindowReady({}));
     }
 
-    store.dispatch(actions.windowReady({id: window.id}));
+    store.dispatch(actions.windowReady({ id: window.id }));
 
     if (hidden) {
       store.dispatch(actions.bounce({}));
@@ -240,7 +246,7 @@ async function createWindow (store: IStore, hidden: boolean) {
   });
 
   if (parseInt(process.env.DEVTOOLS, 10) > 0) {
-    window.webContents.openDevTools({mode: "detach"});
+    window.webContents.openDevTools({ mode: "detach" });
   }
 
   const rootDir = resolve(__dirname, "..");
@@ -259,11 +265,13 @@ async function createWindow (store: IStore, hidden: boolean) {
  * Make sure the window isn't outside the bounds of the screen,
  * cf. https://github.com/itchio/itch/issues/1051
  */
-function ensureWindowInsideDisplay (window: Electron.BrowserWindow) {
+function ensureWindowInsideDisplay(window: Electron.BrowserWindow) {
   const originalBounds = window.getBounds();
-  logger.debug(`Ensuring ${JSON.stringify(originalBounds)} is inside a display`);
+  logger.debug(
+    `Ensuring ${JSON.stringify(originalBounds)} is inside a display`,
+  );
 
-  const {screen} = require("electron");
+  const { screen } = require("electron");
   const display = screen.getDisplayMatching(originalBounds);
   if (!display) {
     logger.warn(`No display found matching ${JSON.stringify(originalBounds)}`);
@@ -301,25 +309,27 @@ function ensureWindowInsideDisplay (window: Electron.BrowserWindow) {
   }
 
   if (env.name === "test") {
-    logger.info(`Main window is ${bounds.width}x${bounds.height}, at (${bounds.x}, ${bounds.y})`);
+    logger.info(
+      `Main window is ${bounds.width}x${bounds.height}, at (${bounds.x}, ${bounds.y})`,
+    );
   }
 }
 
-async function hideWindow () {
+async function hideWindow() {
   const window = BrowserWindow.getFocusedWindow();
   if (window) {
     window.close();
   }
 }
 
-async function minimizeWindow () {
+async function minimizeWindow() {
   const window = BrowserWindow.getFocusedWindow();
   if (window) {
     window.minimize();
   }
 }
 
-async function toggleMaximizeWindow () {
+async function toggleMaximizeWindow() {
   const window = BrowserWindow.getFocusedWindow();
   if (window) {
     if (window.isMaximized()) {
@@ -330,14 +340,14 @@ async function toggleMaximizeWindow () {
   }
 }
 
-async function exitFullScreen () {
+async function exitFullScreen() {
   const window = BrowserWindow.getFocusedWindow();
   if (window && window.isFullScreen()) {
     window.setFullScreen(false);
   }
 }
 
-function showWindow (window: Electron.BrowserWindow) {
+function showWindow(window: Electron.BrowserWindow) {
   window.show();
   const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
   if (maximized && !macOs) {
@@ -349,7 +359,7 @@ function showWindow (window: Electron.BrowserWindow) {
   }
 }
 
-function ensureMainWindowInsideDisplay (store: IStore) {
+function ensureMainWindowInsideDisplay(store: IStore) {
   const id = store.getState().ui.mainWindow.id;
   if (!id) {
     return;
@@ -367,7 +377,7 @@ function ensureMainWindowInsideDisplay (store: IStore) {
   ensureWindowInsideDisplay(window);
 }
 
-function updateTitle (store: IStore, title: string) {
+function updateTitle(store: IStore, title: string) {
   const id = store.getState().ui.mainWindow.id;
   if (!id) {
     return;
@@ -386,29 +396,20 @@ const makeTitleSelector = (store: IStore) => {
   const getLang = (state: IAppState) => state.i18n.lang;
   const getStrings = (state: IAppState) => state.i18n.strings;
 
-  const getT = createSelector(
-    getLang,
-    getStrings,
-    (lang, strings) => {
-      return localizer.getT(strings, lang);
-    },
-  );
+  const getT = createSelector(getLang, getStrings, (lang, strings) => {
+    return localizer.getT(strings, lang);
+  });
 
   const getID = (state: IAppState) => state.session.navigation.id;
   const getTabData = (state: IAppState) => state.session.tabData;
 
-  return createSelector(
-    getID,
-    getTabData,
-    getT,
-    (id, tabData, t) => {
-      const label = makeLabel(id, tabData);
-      updateTitle(store, t.format(label) + " - itch");
-    },
-  );
+  return createSelector(getID, getTabData, getT, (id, tabData, t) => {
+    const label = makeLabel(id, tabData);
+    updateTitle(store, t.format(label) + " - itch");
+  });
 };
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.onAll(async (store, action) => {
     const state = store.getState();
     if (!titleSelector) {
@@ -419,12 +420,14 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.preferencesLoaded, async (store, action) => {
     const hidden = action.payload.openAsHidden;
-    store.dispatch(actions.focusWindow({hidden}));
+    store.dispatch(actions.focusWindow({ hidden }));
 
-    const {screen} = require("electron");
+    const { screen } = require("electron");
     screen.on("display-added", () => ensureMainWindowInsideDisplay(store));
     screen.on("display-removed", () => ensureMainWindowInsideDisplay(store));
-    screen.on("display-metrics-changed", () => ensureMainWindowInsideDisplay(store));
+    screen.on("display-metrics-changed", () =>
+      ensureMainWindowInsideDisplay(store),
+    );
   });
 
   watcher.on(actions.focusWindow, async (store, action) => {
@@ -462,7 +465,7 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.windowBoundsChanged, async (store, action) => {
     // TODO: this should move to preferences, why are we using config again?
-    const {bounds} = action.payload;
+    const { bounds } = action.payload;
     config.set(BOUNDS_CONFIG_KEY, bounds);
   });
 

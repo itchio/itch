@@ -1,25 +1,28 @@
-
 import Cave from "../../db/models/cave";
 import * as toml from "toml";
 
 import validateManifest from "./validate-manifest";
 
-import {readFile} from "../../os/sf";
-import {appPath} from "../../os/paths";
-import {join} from "path";
-import {IManifest} from "../../types";
+import { readFile } from "../../os/sf";
+import { appPath } from "../../os/paths";
+import { join } from "path";
+import { IManifest } from "../../types";
 
-import {Logger} from "../../logger";
+import { Logger } from "../../logger";
 
-import {IStore} from "../../types";
+import { IStore } from "../../types";
 
-export default async function getManifest(store: IStore, cave: Cave, logger: Logger): Promise<IManifest> {
+export default async function getManifest(
+  store: IStore,
+  cave: Cave,
+  logger: Logger,
+): Promise<IManifest> {
   const cavePath = appPath(cave, store.getState().preferences);
   const manifestPath = join(cavePath, ".itch.toml");
 
-  let contents: string;  
+  let contents: string;
   try {
-    contents = await readFile(manifestPath, {encoding: "utf8"});
+    contents = await readFile(manifestPath, { encoding: "utf8" });
   } catch (e) {
     if (e.code === "ENOENT") {
       // all good

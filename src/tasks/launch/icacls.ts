@@ -1,6 +1,5 @@
-
 import spawn from "../../os/spawn";
-import {Logger} from "../../logger";
+import { Logger } from "../../logger";
 
 interface IIcaclsOptions {
   path: string;
@@ -8,14 +7,18 @@ interface IIcaclsOptions {
   logger: Logger;
 }
 
-async function icacls (opts: IIcaclsOptions, reason: string, args: string[]) {
-  const logger = opts.logger.child({name: "icacls"});
+async function icacls(opts: IIcaclsOptions, reason: string, args: string[]) {
+  const logger = opts.logger.child({ name: "icacls" });
 
   await spawn.assert({
     command: "icacls",
     args,
-    onToken:    (tok) => { logger.info(`[${reason} out] ${tok}`); },
-    onErrToken: (tok) => { logger.info(`[${reason} err] ${tok}`); },
+    onToken: tok => {
+      logger.info(`[${reason} out] ${tok}`);
+    },
+    onErrToken: tok => {
+      logger.info(`[${reason} err] ${tok}`);
+    },
   });
 }
 
@@ -49,7 +52,7 @@ export async function shareWith(opts: IIcaclsOptions) {
 }
 
 export async function unshareWith(opts: IIcaclsOptions) {
-   // this undoes what the new sandbox does (inherited grant on root folder)
+  // this undoes what the new sandbox does (inherited grant on root folder)
   await icacls(opts, "cleanup", [
     opts.path,
     "/remove", // remove any deny (:d) ACL entries for sid

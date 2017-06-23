@@ -1,11 +1,10 @@
+import { Logger } from "../logger";
 
-import {Logger} from "../logger";
-
-import {indexBy, filter, map} from "underscore";
-import {basename} from "path";
+import { indexBy, filter, map } from "underscore";
+import { basename } from "path";
 
 import * as sf from "../os/sf";
-import {request} from "./request";
+import { request } from "./request";
 
 export type ChecksumAlgo = "SHA256" | "SHA1";
 
@@ -16,10 +15,14 @@ export interface IChecksums {
   };
 }
 
-export async function getChecksums (logger: Logger, basePath: string, algo: ChecksumAlgo): Promise<IChecksums> {
+export async function getChecksums(
+  logger: Logger,
+  basePath: string,
+  algo: ChecksumAlgo,
+): Promise<IChecksums> {
   const url = `${basePath}/${algo}SUMS`;
   // bust cloudflare cache
-  const res = await request("get", url, {t: Date.now()});
+  const res = await request("get", url, { t: Date.now() });
 
   if (res.statusCode !== 200) {
     logger.warn(`couldn't get hashes: HTTP ${res.statusCode}, for ${url}`);
@@ -28,18 +31,21 @@ export async function getChecksums (logger: Logger, basePath: string, algo: Chec
 
   const lines = (res.body.toString("utf8") as string).split("\n");
 
-  return indexBy(filter(
-    map(lines, (line) => {
-      const matches = /^(\S+) [ \*](\S+)$/.exec(line);
-      if (matches) {
-        return {
-          hash: matches[1],
-          path: matches[2],
-        };
-      }
-    }),
-    (x) => !!x,
-  ), "path");
+  return indexBy(
+    filter(
+      map(lines, line => {
+        const matches = /^(\S+) [ \*](\S+)$/.exec(line);
+        if (matches) {
+          return {
+            hash: matches[1],
+            path: matches[2],
+          };
+        }
+      }),
+      x => !!x,
+    ),
+    "path",
+  );
 }
 
 interface IEnsureChecksumArgs {
@@ -48,8 +54,11 @@ interface IEnsureChecksumArgs {
   file: string;
 }
 
-export async function ensureChecksum (logger: Logger, args: IEnsureChecksumArgs): Promise<void> {
-  const {algo, file} = args;
+export async function ensureChecksum(
+  logger: Logger,
+  args: IEnsureChecksumArgs,
+): Promise<void> {
+  const { algo, file } = args;
   const name = basename(file);
 
   if (!args.expected) {
@@ -67,7 +76,9 @@ export async function ensureChecksum (logger: Logger, args: IEnsureChecksumArgs)
   logger.info(`${name}:   actual ${algo}: ${actual}`);
 
   if (expected !== actual) {
-    throw new Error(`corrupted file ${name}: expected ${expected}, got ${actual}`);
+    throw new Error(
+      `corrupted file ${name}: expected ${expected}, got ${actual}`,
+    );
   }
   logger.info(`${name}: ${algo} checks out!`);
 }

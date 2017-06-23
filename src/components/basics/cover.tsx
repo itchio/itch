@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import styled, * as styles from "../styles";
 
@@ -17,8 +16,14 @@ const CoverDiv = styled.div`
 `;
 
 class Cover extends React.PureComponent<IProps, void> {
-  render () {
-    const {showGifMarker = true, coverUrl, stillCoverUrl, hover, ...restProps} = this.props;
+  render() {
+    const {
+      showGifMarker = true,
+      coverUrl,
+      stillCoverUrl,
+      hover,
+      ...restProps,
+    } = this.props;
 
     let gif: boolean;
     const coverStyle: React.CSSProperties = {};
@@ -35,11 +40,11 @@ class Cover extends React.PureComponent<IProps, void> {
       }
     }
 
-    return <CoverDiv style={coverStyle} {...restProps}>
-      {gif && showGifMarker
-      ? <GifMarker/>
-      : null}
-    </CoverDiv>;
+    return (
+      <CoverDiv style={coverStyle} {...restProps}>
+        {gif && showGifMarker ? <GifMarker /> : null}
+      </CoverDiv>
+    );
   }
 }
 

@@ -1,20 +1,19 @@
-
-import {Fetcher, Outcome} from "./types";
+import { Fetcher, Outcome } from "./types";
 
 import db from "../db";
 
 import normalize from "../api/normalize";
-import {game} from "../api/schemas";
+import { game } from "../api/schemas";
 
-import {pathToId, gameToTabData} from "../util/navigation";
+import { pathToId, gameToTabData } from "../util/navigation";
 
 export default class GameFetcher extends Fetcher {
-  constructor () {
+  constructor() {
     super();
   }
 
   async work(): Promise<Outcome> {
-    const {path} = this.tabData();
+    const { path } = this.tabData();
     const gameId = +pathToId(path);
 
     let localGame = await db.games.findOneById(gameId);
@@ -25,8 +24,8 @@ export default class GameFetcher extends Fetcher {
     };
     pushGame(localGame);
 
-    const normalized = await this.withApi(async (api) => {
-      return normalize(await api.game(gameId), {game});
+    const normalized = await this.withApi(async api => {
+      return normalize(await api.game(gameId), { game });
     });
     pushGame(normalized.entities.games[normalized.result.gameId]);
 

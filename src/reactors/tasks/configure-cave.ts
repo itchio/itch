@@ -1,15 +1,14 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import {startTask} from "./start-task";
+import { startTask } from "./start-task";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "configure-cave"});
+const logger = rootLogger.child({ name: "configure-cave" });
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.configureCave, async (store, action) => {
-    const {caveId} = action.payload;
+    const { caveId } = action.payload;
     // FIXME: db
     const market: any = null;
 

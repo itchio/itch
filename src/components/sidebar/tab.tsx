@@ -1,19 +1,21 @@
-
 import * as React from "react";
-import {SortableElement} from "react-sortable-hoc";
-import {createStructuredSelector} from "reselect";
+import { SortableElement } from "react-sortable-hoc";
+import { createStructuredSelector } from "reselect";
 
 import * as moment from "moment";
 import Item from "./item";
 
-import {pathToIcon, makeLabel} from "../../util/navigation";
-import {connect, I18nProps} from "../connect";
+import { pathToIcon, makeLabel } from "../../util/navigation";
+import { connect, I18nProps } from "../connect";
 
 import * as actions from "../../actions";
-import {dispatcher} from "../../constants/action-types";
+import { dispatcher } from "../../constants/action-types";
 
-import {size} from "underscore";
-import {getFinishedDownloads, getActiveDownload} from "../../reactors/downloads/getters";
+import { size } from "underscore";
+import {
+  getFinishedDownloads,
+  getActiveDownload,
+} from "../../reactors/downloads/getters";
 
 import {
   IAppState,
@@ -32,34 +34,37 @@ interface ISortableHubSidebarItemProps {
 const emptyObj = {};
 
 const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
-  return <Item {...props.props}/>;
+  return <Item {...props.props} />;
 });
 
-class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
+class Tab extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
   onClick = () => {
-    const {id, navigate} = this.props;
-    navigate({id});
-  }
+    const { id, navigate } = this.props;
+    navigate({ id });
+  };
 
   onClose = () => {
-    const {id, closeTab} = this.props;
-    closeTab({id});
-  }
+    const { id, closeTab } = this.props;
+    closeTab({ id });
+  };
 
   onContextMenu = () => {
-    const {id, openTabContextMenu} = this.props;
-    openTabContextMenu({id});
-  }
+    const { id, openTabContextMenu } = this.props;
+    openTabContextMenu({ id });
+  };
 
-  render () {
-    const {t, id, index, sortable, data, active, loading} = this.props;
+  render() {
+    const { t, id, index, sortable, data, active, loading } = this.props;
 
     const path = data.path || id;
     let iconImage = data.iconImage;
     if (/^url/.test(path)) {
       iconImage = data.webFavicon;
     }
-    
+
     const label = makeLabel(id, data);
     const icon = pathToIcon(path);
     let count = 0;
@@ -67,7 +72,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
     let sublabel: ILocalizedString = null;
 
     if (id === "downloads") {
-      const {downloads} = this.props;
+      const { downloads } = this.props;
       count = size(getFinishedDownloads(downloads));
       const activeDownload = getActiveDownload(downloads);
       if (activeDownload) {
@@ -77,7 +82,10 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
         } else {
           const title = activeDownload.game.title;
           // FIXME: moment.js is absolutely an FPS killer.
-          const duration = moment.duration(activeDownload.eta, "seconds") as any;
+          const duration = moment.duration(
+            activeDownload.eta,
+            "seconds",
+          ) as any;
           // silly typings, durations have locales!
           const humanDuration = duration.locale(t.lang).humanize();
           sublabel = `${title} — ${humanDuration}`;
@@ -86,19 +94,34 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> 
     }
 
     let gameOverride: IGameRecord = null;
-    let {onClick, onClose, onContextMenu} = this;
+    let { onClick, onClose, onContextMenu } = this;
     if (!sortable) {
       onClose = null;
     }
 
-    const props = {id, path, label, icon, iconImage, active,
-      onClick, count, progress, onClose, onContextMenu, data, t,
-      sublabel, gameOverride, loading};
-    
+    const props = {
+      id,
+      path,
+      label,
+      icon,
+      iconImage,
+      active,
+      onClick,
+      count,
+      progress,
+      onClose,
+      onContextMenu,
+      data,
+      t,
+      sublabel,
+      gameOverride,
+      loading,
+    };
+
     if (sortable) {
-      return <SortableItem key={id} index={index} props={props}/>;
+      return <SortableItem key={id} index={index} props={props} />;
     } else {
-      return <Item key={id} {...props}/>;
+      return <Item key={id} {...props} />;
     }
   }
 }
@@ -122,15 +145,15 @@ interface IDerivedProps {
 
 export default connect<IProps>(Tab, {
   state: (initialState, initialProps) => {
-    let {id} = initialProps;
+    let { id } = initialProps;
 
     return createStructuredSelector({
       data: (state: IAppState) => state.session.tabData[id] || emptyObj,
       loading: (state: IAppState) => !!state.session.navigation.loadingTabs[id],
-      downloads: (state: IAppState) => (id === "downloads" && state.downloads),
+      downloads: (state: IAppState) => id === "downloads" && state.downloads,
     });
   },
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
     closeTab: dispatcher(dispatch, actions.closeTab),
     openTabContextMenu: dispatcher(dispatch, actions.openTabContextMenu),

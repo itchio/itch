@@ -1,9 +1,8 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {ILocalizedString, ITabData} from "../../types";
-import {ILocalizer} from "../../localizer";
+import { ILocalizedString, ITabData } from "../../types";
+import { ILocalizer } from "../../localizer";
 
 import Ink = require("react-ink");
 
@@ -13,7 +12,7 @@ import Icon from "../basics/icon";
 import IconButton from "../basics/icon-button";
 
 import styled, * as styles from "../styles";
-import {darken} from "polished";
+import { darken } from "polished";
 
 const ItemHeading = styled.div`
   ${styles.singleLine()};
@@ -56,7 +55,8 @@ export const ItemDiv = styled.section`
 
   &:hover {
     cursor: pointer;
-    background: ${props => darken(0.05, props.theme.sidebarEntryFocusedBackground)};
+    background: ${props =>
+      darken(0.05, props.theme.sidebarEntryFocusedBackground)};
     color: ${props => props.theme.baseText};
 
     .icon-cross {
@@ -114,7 +114,7 @@ const Bubble = styled.span`
 `;
 
 class Item extends React.PureComponent<IProps, IState> {
-  constructor () {
+  constructor() {
     super();
     this.state = {
       fresh: true,
@@ -124,32 +124,41 @@ class Item extends React.PureComponent<IProps, IState> {
   onMouseUp = (e: React.MouseEvent<HTMLElement>) => {
     if (e.button === 1) {
       // middle click
-      const {onClose} = this.props;
+      const { onClose } = this.props;
       if (onClose) {
         onClose();
       }
     } else if (e.button === 0) {
       // left (normal) click
-      const {onClick} = this.props;
+      const { onClick } = this.props;
       if (onClick) {
         onClick();
       }
     }
-  }
+  };
 
   onCloseClick = (e: React.MouseEvent<any>) => {
     e.stopPropagation();
 
-    const {onClose} = this.props;
+    const { onClose } = this.props;
     if (onClose) {
       onClose();
     }
-  }
+  };
 
-  render () {
-    const {t, count, sublabel, progress, id, path, label, active} = this.props;
-    const {fresh} = this.state;
-    const {onClose, onContextMenu} = this.props;
+  render() {
+    const {
+      t,
+      count,
+      sublabel,
+      progress,
+      id,
+      path,
+      label,
+      active,
+    } = this.props;
+    const { fresh } = this.state;
+    const { onClose, onContextMenu } = this.props;
 
     const progressColor = "white";
     const progressStyle = {
@@ -157,42 +166,42 @@ class Item extends React.PureComponent<IProps, IState> {
       backgroundColor: progressColor,
     };
 
-    return <ItemDiv className={classNames({active, fresh})}
+    return (
+      <ItemDiv
+        className={classNames({ active, fresh })}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
         onMouseUp={this.onMouseUp}
         onContextMenu={onContextMenu}
         data-path={path}
-        data-id={id}>
-      <Row>
-        <Ink/>
-        <IconContainer>
-          {this.props.loading
-            ? <LoadingCircle progress={0.3}/>
-            : (this.props.iconImage
-              ? <img className="icon-image" src={this.props.iconImage}/>
-              : <Icon icon={this.props.icon || "tag"}/>)}
-        </IconContainer>
-        <ItemHeading>{t.format(label)}</ItemHeading>
-        {count > 0
-          ? <Bubble>{count}</Bubble>
-          : null
-        }
-        <Filler/>
-        {progress > 0
-        ? <ProgressOuter>
-          <div className="progress-inner" style={progressStyle}/>
-        </ProgressOuter>
-        : null}
-        {onClose
-          ? <IconButton icon="cross" onClick={this.onCloseClick}/>
-          : null
-        }
-      </Row>
-    </ItemDiv>;
+        data-id={id}
+      >
+        <Row>
+          <Ink />
+          <IconContainer>
+            {this.props.loading
+              ? <LoadingCircle progress={0.3} />
+              : this.props.iconImage
+                ? <img className="icon-image" src={this.props.iconImage} />
+                : <Icon icon={this.props.icon || "tag"} />}
+          </IconContainer>
+          <ItemHeading>{t.format(label)}</ItemHeading>
+          {count > 0 ? <Bubble>{count}</Bubble> : null}
+          <Filler />
+          {progress > 0
+            ? <ProgressOuter>
+                <div className="progress-inner" style={progressStyle} />
+              </ProgressOuter>
+            : null}
+          {onClose
+            ? <IconButton icon="cross" onClick={this.onCloseClick} />
+            : null}
+        </Row>
+      </ItemDiv>
+    );
   }
 
-  componentDidMount () {
+  componentDidMount() {
     setTimeout(() => {
       this.setState({ fresh: false });
     }, 400);

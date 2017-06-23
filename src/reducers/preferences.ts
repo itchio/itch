@@ -1,8 +1,7 @@
-
 import * as actions from "../actions";
 import reducer from "./reducer";
 
-import {IPreferencesState} from "../types";
+import { IPreferencesState } from "../types";
 
 const OFFLINE_MODE = process.env.OFFLINE_MODE === "1";
 
@@ -28,7 +27,7 @@ export const initialState = {
   layout: "grid",
 } as IPreferencesState;
 
-export default reducer<IPreferencesState>(initialState, (on) => {
+export default reducer<IPreferencesState>(initialState, on => {
   on(actions.updatePreferences, (state, action) => {
     const record = action.payload;
     return {

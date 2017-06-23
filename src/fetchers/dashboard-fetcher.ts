@@ -1,19 +1,17 @@
-
-import {Fetcher, Outcome} from "./types";
+import { Fetcher, Outcome } from "./types";
 
 import db from "../db";
 
 import normalize from "../api/normalize";
-import {game, arrayOf} from "../api/schemas";
+import { game, arrayOf } from "../api/schemas";
 
-import {addSortAndFilterToQuery} from "./sort-and-filter";
+import { addSortAndFilterToQuery } from "./sort-and-filter";
 
-import {pluck, indexBy} from "underscore";
+import { pluck, indexBy } from "underscore";
 
 const emptyArr = [];
 
 export default class DashboardFetcher extends Fetcher {
-
   async work(): Promise<Outcome> {
     await this.pushLocal();
 
@@ -25,8 +23,8 @@ export default class DashboardFetcher extends Fetcher {
     return this.success();
   }
 
-  async pushLocal () {
-    const meId = this.ensureCredentials().me.id;    
+  async pushLocal() {
+    const meId = this.ensureCredentials().me.id;
     const profile = await db.profiles.findOneById(meId);
     if (!profile) {
       return;
@@ -52,18 +50,20 @@ export default class DashboardFetcher extends Fetcher {
     });
   }
 
-  async remote () {
-    const apiResponse = await this.withApi(async (api) => {
+  async remote() {
+    const apiResponse = await this.withApi(async api => {
       return await api.myGames();
     });
 
     const normalized = normalize(apiResponse, {
       games: arrayOf(game),
     });
-    const meId = this.ensureCredentials().me.id;    
+    const meId = this.ensureCredentials().me.id;
 
     const remoteGameIds = pluck(normalized.entities.games, "id");
-    this.debug(`Fetched ${Object.keys(normalized.entities.games).length} games from API`);
+    this.debug(
+      `Fetched ${Object.keys(normalized.entities.games).length} games from API`,
+    );
 
     await db.saveMany({
       ...normalized.entities,

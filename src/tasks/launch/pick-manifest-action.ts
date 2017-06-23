@@ -1,22 +1,24 @@
-
 import defaultManifestIcons from "../../constants/default-manifest-icons";
 
 import * as actions from "../../actions";
 
 import {
   IStore,
-  IManifest, IManifestAction,
+  IManifest,
+  IManifestAction,
   IModalButtonSpec,
 } from "../../types";
 
-import {each} from "underscore";
+import { each } from "underscore";
 
-import {promisedModal} from "../../reactors/modals";
-import {MODAL_RESPONSE} from "../../constants/action-types";
+import { promisedModal } from "../../reactors/modals";
+import { MODAL_RESPONSE } from "../../constants/action-types";
 
-export default async function pickManifestAction
-    (store: IStore, manifest: IManifest, game: Game): Promise<IManifestAction> {
-
+export default async function pickManifestAction(
+  store: IStore,
+  manifest: IManifest,
+  game: Game,
+): Promise<IManifestAction> {
   const buttons: IModalButtonSpec[] = [];
   const bigButtons: IModalButtonSpec[] = [];
 
@@ -26,7 +28,7 @@ export default async function pickManifestAction
     case 1:
       return manifest.actions[0];
     default:
-      // keep going then
+    // keep going then
   }
 
   let index = 0;
@@ -35,9 +37,13 @@ export default async function pickManifestAction
       throw new Error(`in manifest, action ${i} is missing a name`);
     }
     bigButtons.push({
-      label: [`action.name.${actionOption.name}`, {defaultValue: actionOption.name}],
-      action: actions.modalResponse({manifestActionName: actionOption.name}),
-      icon: actionOption.icon || defaultManifestIcons[actionOption.name] || "star",
+      label: [
+        `action.name.${actionOption.name}`,
+        { defaultValue: actionOption.name },
+      ],
+      action: actions.modalResponse({ manifestActionName: actionOption.name }),
+      icon:
+        actionOption.icon || defaultManifestIcons[actionOption.name] || "star",
       className: `action-${actionOption.name}`,
     });
     index++;
@@ -54,7 +60,9 @@ export default async function pickManifestAction
   });
 
   if (response.type === MODAL_RESPONSE) {
-    return findWhere(manifest.actions, {name: response.payload.manifestActionName});
+    return findWhere(manifest.actions, {
+      name: response.payload.manifestActionName,
+    });
   }
 
   return null;

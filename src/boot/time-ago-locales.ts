@@ -1,9 +1,8 @@
-
 const jta = require("javascript-time-ago");
 const locales = require("../static/locales.json").locales;
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "time-locales"});
+const logger = rootLogger.child({ name: "time-locales" });
 
 let numLoaded = 0;
 let total = 0;

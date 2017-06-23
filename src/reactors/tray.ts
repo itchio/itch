@@ -1,18 +1,17 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 
 import * as os from "../os";
-import {getImagePath} from "../os/resources";
+import { getImagePath } from "../os/resources";
 import localizer from "../localizer";
-import {app, Menu, Tray} from "electron";
+import { app, Menu, Tray } from "electron";
 import env from "../env";
 
-import {createSelector} from "reselect";
+import { createSelector } from "reselect";
 
 import * as actions from "../actions";
 
-import {IStore, IAppState, II18nState} from "../types";
-import {Action} from "redux-actions";
+import { IStore, IAppState, II18nState } from "../types";
+import { Action } from "redux-actions";
 
 type IMenuTemplate = Electron.MenuItemOptions[];
 
@@ -21,7 +20,7 @@ let lastNotificationAction: Action<any>;
 
 let tray: Electron.Tray;
 
-function makeTray (store: IStore) {
+function makeTray(store: IStore) {
   // cf. https://github.com/itchio/itch/issues/462
   // windows still displays a 16x16, whereas
   // some linux DEs don't know what to do with a @x2, etc.
@@ -41,7 +40,7 @@ function makeTray (store: IStore) {
 
   tray = new Tray(iconPath);
   tray.setToolTip("itch.io");
-  tray.on("click", () => store.dispatch(actions.focusWindow({toggle: true})));
+  tray.on("click", () => store.dispatch(actions.focusWindow({ toggle: true })));
   tray.on("double-click", () => store.dispatch(actions.focusWindow({})));
   tray.on("balloon-click", () => {
     if (lastNotificationAction) {
@@ -50,7 +49,7 @@ function makeTray (store: IStore) {
   });
 }
 
-function setMenu (trayMenu: IMenuTemplate, store: IStore) {
+function setMenu(trayMenu: IMenuTemplate, store: IStore) {
   if (os.platform() === "darwin") {
     // don't have a tray icon on macOS, we just live in the dock
     app.dock.setMenu(Menu.buildFromTemplate(trayMenu));
@@ -62,20 +61,20 @@ function setMenu (trayMenu: IMenuTemplate, store: IStore) {
   }
 }
 
-async function go (store: IStore, path: string) {
+async function go(store: IStore, path: string) {
   store.dispatch(actions.focusWindow({}));
   store.dispatch(actions.navigate(path));
 }
 
-function refreshTray (store: IStore, i18n: II18nState) {
+function refreshTray(store: IStore, i18n: II18nState) {
   const t = localizer.getT(i18n.strings, i18n.lang);
   const menuTemplate: IMenuTemplate = [
-    {label: t("sidebar.owned"), click: () => go(store, "library")},
-    {label: t("sidebar.dashboard"), click: () => go(store, "dashboard")},
+    { label: t("sidebar.owned"), click: () => go(store, "library") },
+    { label: t("sidebar.dashboard"), click: () => go(store, "dashboard") },
   ];
 
   if (os.platform() !== "darwin") {
-    menuTemplate.push({type: "separator"});
+    menuTemplate.push({ type: "separator" });
     menuTemplate.push({
       label: t("menu.file.quit"),
       click: () => store.dispatch(actions.quit({})),
@@ -88,22 +87,23 @@ function refreshTray (store: IStore, i18n: II18nState) {
 // (like: make it display recent stuff / maybe the last few tabs)
 
 let traySelector: (state: IAppState, props?: any) => void;
-const makeTraySelector = (store: IStore) => createSelector(
-  (state: IAppState) => state.i18n,
-  (i18n) => {
-    setImmediate(() => {
-      refreshTray(store, i18n);
-    });
-  },
-);
+const makeTraySelector = (store: IStore) =>
+  createSelector(
+    (state: IAppState) => state.i18n,
+    i18n => {
+      setImmediate(() => {
+        refreshTray(store, i18n);
+      });
+    },
+  );
 
 let hasBooted = false;
 
-export function getTray () {
+export function getTray() {
   return tray;
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
     hasBooted = true;
   });

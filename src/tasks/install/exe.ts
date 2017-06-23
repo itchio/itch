@@ -1,5 +1,4 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import * as StreamSearch from "streamsearch";
 import * as os from "../../os";
@@ -7,11 +6,11 @@ import * as sf from "../../os/sf";
 import spawn from "../../os/spawn";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "install/exe"});
+const logger = rootLogger.child({ name: "install/exe" });
 
-import {partial} from "underscore";
+import { partial } from "underscore";
 
-import {IStartTaskOpts, IInstallerCache, InstallerType} from "../../types";
+import { IStartTaskOpts, IInstallerCache, InstallerType } from "../../types";
 
 /** Map search string to installer format */
 interface INeedles {
@@ -21,17 +20,17 @@ interface INeedles {
 let self = {
   validInstallers: ["inno", "nsis", "air"],
 
-  install: async function (out: EventEmitter, opts: IStartTaskOpts) {
+  install: async function(out: EventEmitter, opts: IStartTaskOpts) {
     let installer = await self.findInstaller(opts);
     await installer.install(out, opts);
   },
 
-  uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
+  uninstall: async function(out: EventEmitter, opts: IStartTaskOpts) {
     let installer = await self.findInstaller(opts);
     await installer.uninstall(out, opts);
   },
 
-  findInstaller: async function (opts: IStartTaskOpts) {
+  findInstaller: async function(opts: IStartTaskOpts) {
     if (os.platform() !== "win32") {
       throw new Error("Exe installers are only supported on Windows");
     }
@@ -57,7 +56,7 @@ let self = {
     return require(`./${type}`).default;
   },
 
-  retrieveCachedType: function (opts: IStartTaskOpts) {
+  retrieveCachedType: function(opts: IStartTaskOpts) {
     let cave = opts.cave;
     if (!cave) {
       return;
@@ -76,7 +75,7 @@ let self = {
     return type;
   },
 
-  cacheType: function (opts: IStartTaskOpts, type: InstallerType) {
+  cacheType: function(opts: IStartTaskOpts, type: InstallerType) {
     let cave = opts.cave;
     if (!cave) {
       return;
@@ -87,10 +86,10 @@ let self = {
 
     // FIXME: db
     const globalMarket: any = null;
-    globalMarket.saveEntity("caves", cave.id, {installerExeCache});
+    globalMarket.saveEntity("caves", cave.id, { installerExeCache });
   },
 
-  identify: async function (opts: IStartTaskOpts): Promise<InstallerType> {
+  identify: async function(opts: IStartTaskOpts): Promise<InstallerType> {
     let kind = await self.builtinSniff(opts, self.builtinNeedles);
     if (!kind) {
       kind = await self.externalSniff(opts, self.externalNeedles);
@@ -99,14 +98,22 @@ let self = {
     return kind;
   },
 
-  builtinSniff: async function (opts: IStartTaskOpts, needles: INeedles): Promise<InstallerType> {
-    const {archivePath} = opts;
+  builtinSniff: async function(
+    opts: IStartTaskOpts,
+    needles: INeedles,
+  ): Promise<InstallerType> {
+    const { archivePath } = opts;
     let result: InstallerType = null;
     let searches: any[] = [];
 
     let onInfo = (
-        needle: string, format: InstallerType, isMatch: boolean,
-        data: Buffer, start: number, end: number) => {
+      needle: string,
+      format: InstallerType,
+      isMatch: boolean,
+      data: Buffer,
+      start: number,
+      end: number,
+    ) => {
       if (!isMatch) {
         return;
       }
@@ -121,7 +128,7 @@ let self = {
       searches.push(search);
     }
 
-    const reader = sf.createReadStream(archivePath, {encoding: "binary"});
+    const reader = sf.createReadStream(archivePath, { encoding: "binary" });
     reader.on("data", (buf: Buffer) => {
       for (let search of searches) {
         search.push(buf);
@@ -141,8 +148,11 @@ let self = {
     "META-INF/AIR/application.xml": "air",
   } as INeedles,
 
-  externalSniff: async function (opts: IStartTaskOpts, needles: INeedles): Promise<InstallerType> {
-    const {archivePath} = opts;
+  externalSniff: async function(
+    opts: IStartTaskOpts,
+    needles: INeedles,
+  ): Promise<InstallerType> {
+    const { archivePath } = opts;
 
     let detail: string;
 

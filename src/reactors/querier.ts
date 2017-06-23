@@ -1,12 +1,11 @@
-
-import {Watcher} from "./watcher";
-import {IStore} from "../types";
+import { Watcher } from "./watcher";
+import { IStore } from "../types";
 import * as actions from "../actions";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "querier"});
+const logger = rootLogger.child({ name: "querier" });
 
-import {elapsed} from "../format";
+import { elapsed } from "../format";
 
 export type LoadSource = "cavesByGameId" | "downloadKeysByGameId";
 
@@ -14,9 +13,12 @@ import db from "../db";
 import DownloadKey from "../db/models/download-key";
 import Cave from "../db/models/cave";
 
-import {groupBy} from "underscore";
+import { groupBy } from "underscore";
 
-import {ILiberateQueryPayload, IRegisterQueryPayload} from "../constants/action-types";
+import {
+  ILiberateQueryPayload,
+  IRegisterQueryPayload,
+} from "../constants/action-types";
 
 export interface IQuery {
   source: LoadSource;
@@ -37,11 +39,16 @@ let promise: any;
 let cavesDbTime = 0;
 let keysDbTime = 0;
 
-async function updateCavesByGameId(store: IStore, watcher: Watcher, gameIds: string[]) {
+async function updateCavesByGameId(
+  store: IStore,
+  watcher: Watcher,
+  gameIds: string[],
+) {
   const t1 = Date.now();
-  const caves = await db.getRepo(Cave)
+  const caves = await db
+    .getRepo(Cave)
     .createQueryBuilder("c")
-    .where("c.gameId in (:gameIds)", {gameIds})
+    .where("c.gameId in (:gameIds)", { gameIds })
     .getMany();
   const t2 = Date.now();
   cavesDbTime = t2 - t1;
@@ -49,11 +56,16 @@ async function updateCavesByGameId(store: IStore, watcher: Watcher, gameIds: str
   return groupBy(caves, "gameId");
 }
 
-async function updateDownloadKeysByGameId(store: IStore, watcher: Watcher, gameIds: string[]) {
+async function updateDownloadKeysByGameId(
+  store: IStore,
+  watcher: Watcher,
+  gameIds: string[],
+) {
   const t1 = Date.now();
-  const downloadKeys = await db.getRepo(DownloadKey)
+  const downloadKeys = await db
+    .getRepo(DownloadKey)
     .createQueryBuilder("dk")
-    .where("dk.gameId in (:gameIds)", {gameIds})
+    .where("dk.gameId in (:gameIds)", { gameIds })
     .getMany();
   const t2 = Date.now();
   keysDbTime = t2 - t1;
@@ -66,9 +78,11 @@ async function updateDownloadKeysByGameId(store: IStore, watcher: Watcher, gameI
 function runQueries(store: IStore, watcher: Watcher) {
   if (!timeout) {
     timeout = setTimeout(() => {
-      actuallyRunQueries(store, watcher).catch((error) => {
-        logger.info(`While running queries:`, error);
-      }).then(() => timeout = null);
+      actuallyRunQueries(store, watcher)
+        .catch(error => {
+          logger.info(`While running queries:`, error);
+        })
+        .then(() => (timeout = null));
     }, 50);
   }
 }
@@ -78,11 +92,11 @@ let deleted: ILiberateQueryPayload[] = [];
 
 async function actuallyRunQueries(store: IStore, watcher: Watcher) {
   while (deleted.length > 0) {
-    const {loadId} = deleted.shift();
+    const { loadId } = deleted.shift();
     delete queryRegister[loadId];
   }
   while (added.length > 0) {
-    const {loadId, query} = added.shift();
+    const { loadId, query } = added.shift();
     queryRegister[loadId] = query;
   }
 
@@ -97,7 +111,7 @@ async function actuallyRunQueries(store: IStore, watcher: Watcher) {
 
     for (const loadId of Object.keys(queryRegister)) {
       const queries = queryRegister[loadId];
-      for (const {query, source} of queries) {
+      for (const { query, source } of queries) {
         if (!flattened[source]) {
           flattened[source] = {};
         }
@@ -109,33 +123,49 @@ async function actuallyRunQueries(store: IStore, watcher: Watcher) {
     let cavesByGameId = {};
     if (flattened["cavesByGameId"]) {
       cavesByGameId = await updateCavesByGameId(
-        store, watcher, Object.keys(flattened["cavesByGameId"]));
+        store,
+        watcher,
+        Object.keys(flattened["cavesByGameId"]),
+      );
     }
     const t3 = Date.now();
     let downloadKeysByGameId = {};
     if (flattened["downloadKeysByGameId"]) {
       downloadKeysByGameId = await updateDownloadKeysByGameId(
-         store, watcher, Object.keys(flattened["downloadKeysByGameId"]));
+        store,
+        watcher,
+        Object.keys(flattened["downloadKeysByGameId"]),
+      );
     }
     const t4 = Date.now();
 
-    store.dispatch(actions.fetchedQuery({
-      data: {
-        cavesByGameId,
-        downloadKeysByGameId,
-      },
-    }));
+    store.dispatch(
+      actions.fetchedQuery({
+        data: {
+          cavesByGameId,
+          downloadKeysByGameId,
+        },
+      }),
+    );
     const t5 = Date.now();
-    logger.info(`flatten ${elapsed(t1, t2)}, caves ${elapsed(t2, t3)}, keys ${elapsed(t3, t4)}`
-     + `\ndispatch ${elapsed(t4, t5)}`
-     + `\ncaves db: ${elapsed(0, cavesDbTime)}, keys db: ${elapsed(0, keysDbTime)}ms`);
+    logger.info(
+      `flatten ${elapsed(t1, t2)}, caves ${elapsed(t2, t3)}, keys ${elapsed(
+        t3,
+        t4,
+      )}` +
+        `\ndispatch ${elapsed(t4, t5)}` +
+        `\ncaves db: ${elapsed(0, cavesDbTime)}, keys db: ${elapsed(
+          0,
+          keysDbTime,
+        )}ms`,
+    );
   })();
   await promise;
   promise = null;
 }
 
 // TODO: this looks suspiciously like a reducer, maybe some of it belongs in the state instead?
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.registerQuery, async (store, action) => {
     added.push(action.payload);
     runQueries(store, watcher);

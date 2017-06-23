@@ -1,6 +1,5 @@
-
-import {sep, posix} from "path";
-const {normalize} = posix;
+import { sep, posix } from "path";
+const { normalize } = posix;
 
 // this gives us a unix-style base path
 const basePath = normalize(__dirname.split(sep).join("/") + "/..");
@@ -10,21 +9,21 @@ const basePath = normalize(__dirname.split(sep).join("/") + "/..");
  * and don't usually change, unless updated.
  */
 
-function getPath (resourcePath: string) {
+function getPath(resourcePath: string) {
   return basePath + "/" + resourcePath;
 }
 
-export function getImagePath (path: string): string {
+export function getImagePath(path: string): string {
   const resourcePath = "static/images/" + path;
   return getPath(resourcePath);
 }
 
-export function getLocalePath (path: string): string {
+export function getLocalePath(path: string): string {
   const resourcePath = "static/locales/" + path;
   return getPath(resourcePath);
 }
 
-export function getLocalesConfigPath (): string {
+export function getLocalesConfigPath(): string {
   let resourcePath = "static/locales.json";
   return getPath(resourcePath);
 }

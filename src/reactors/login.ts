@@ -1,28 +1,28 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 import * as actions from "../actions";
 
 import client from "../api";
 import partitionForUser from "../util/partition-for-user";
 
-import {sortBy} from "underscore";
+import { sortBy } from "underscore";
 
-import {promisedModal} from "./modals";
-import {MODAL_RESPONSE} from "../constants/action-types";
+import { promisedModal } from "./modals";
+import { MODAL_RESPONSE } from "../constants/action-types";
 import urls from "../constants/urls";
 import * as urlParser from "url";
-import {isNetworkError} from "../net/errors";
+import { isNetworkError } from "../net/errors";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "login"});
+const logger = rootLogger.child({ name: "login" });
 
-import {ITwoFactorInputParams} from "../components/modal-widgets/two-factor-input";
+import { ITwoFactorInputParams } from "../components/modal-widgets/two-factor-input";
 
-const YEAR_IN_SECONDS = 365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
+const YEAR_IN_SECONDS =
+  365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.loginWithPassword, async (store, action) => {
-    const {username, password} = action.payload;
+    const { username, password } = action.payload;
 
     store.dispatch(actions.attemptLogin({}));
 
@@ -68,11 +68,13 @@ export default function (watcher: Watcher) {
       // seamlessly logged into the app.
       if (res.cookie) {
         const partition = partitionForUser(String(res.key.userId));
-        const session = require("electron").session.fromPartition(partition, {cache: false});
-        
+        const session = require("electron").session.fromPartition(partition, {
+          cache: false,
+        });
+
         for (const name of Object.keys(res.cookie)) {
           const value = res.cookie[name];
-          const epoch = (Date.now() * 0.001);
+          const epoch = Date.now() * 0.001;
           await new Promise((resolve, reject) => {
             const parsed = urlParser.parse(urls.itchio);
             const opts = {
@@ -100,14 +102,16 @@ export default function (watcher: Watcher) {
 
       // validate API key and get user profile in one fell swoop
       const me = (await keyClient.me()).user;
-      store.dispatch(actions.loginSucceeded({key, me}));
+      store.dispatch(actions.loginSucceeded({ key, me }));
     } catch (e) {
-      store.dispatch(actions.loginFailed({username, errors: e.errors || e.stack || e}));
+      store.dispatch(
+        actions.loginFailed({ username, errors: e.errors || e.stack || e }),
+      );
     }
   });
 
   watcher.on(actions.loginWithToken, async (store, action) => {
-    const {username, key} = action.payload;
+    const { username, key } = action.payload;
 
     store.dispatch(actions.attemptLogin({}));
 
@@ -116,25 +120,30 @@ export default function (watcher: Watcher) {
 
       // validate API key and get user profile in one fell swoop
       const me = (await keyClient.me()).user;
-      store.dispatch(actions.loginSucceeded({key, me}));
+      store.dispatch(actions.loginSucceeded({ key, me }));
     } catch (e) {
-      const {me} = action.payload;
+      const { me } = action.payload;
       if (me && isNetworkError(e)) {
         // log in anyway
-        store.dispatch(actions.loginSucceeded({key, me}));
+        store.dispatch(actions.loginSucceeded({ key, me }));
       } else {
-        store.dispatch(actions.loginFailed({username, errors: e.errors || e.stack || e}));
+        store.dispatch(
+          actions.loginFailed({ username, errors: e.errors || e.stack || e }),
+        );
       }
     }
   });
 
   watcher.on(actions.sessionsRemembered, async (store, action) => {
     const rememberedSessions = action.payload;
-    const mostRecentSession = sortBy(rememberedSessions, (x) => -x.lastConnected)[0];
+    const mostRecentSession = sortBy(
+      rememberedSessions,
+      x => -x.lastConnected,
+    )[0];
     if (mostRecentSession) {
-      const {me, key} = mostRecentSession;
-      const {username} = me;
-      store.dispatch(actions.loginWithToken({username, key, me}));
+      const { me, key } = mostRecentSession;
+      const { username } = me;
+      store.dispatch(actions.loginWithToken({ username, key, me }));
     }
   });
 }

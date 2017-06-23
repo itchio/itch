@@ -1,28 +1,27 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import spawn from "../../os/spawn";
 import findUninstallers from "./find-uninstallers";
 
 import blessing from "./blessing";
-import {Cancelled} from "../errors";
+import { Cancelled } from "../errors";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "install/inno"});
+const logger = rootLogger.child({ name: "install/inno" });
 
-import {IStartTaskOpts} from "../../types";
+import { IStartTaskOpts } from "../../types";
 
 // InnoSetup docs: http://www.jrsoftware.org/ishelp/index.php?topic=setupcmdline
 
 const self = {
-  logPath: function (operation: string, installerPath: string) {
+  logPath: function(operation: string, installerPath: string) {
     return `${installerPath}.${operation}.log.txt`;
   },
 
-  install: async function (out: EventEmitter, opts: IStartTaskOpts) {
+  install: async function(out: EventEmitter, opts: IStartTaskOpts) {
     await blessing(out, opts);
 
-    out.emit("progress", {progress: -1});
+    out.emit("progress", { progress: -1 });
 
     const archivePath = opts.archivePath;
     const destPath = opts.destPath;
@@ -44,8 +43,8 @@ const self = {
     logger.info(`inno installer exited with code ${code}`);
   },
 
-  uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    out.emit("progress", {progress: -1});
+  uninstall: async function(out: EventEmitter, opts: IStartTaskOpts) {
+    out.emit("progress", { progress: -1 });
 
     const destPath = opts.destPath;
     const uninstallers = await findUninstallers(destPath);
@@ -62,7 +61,7 @@ const self = {
         args: [
           "/VERYSILENT", // be vewwy vewwy quiet
         ],
-        opts: {cwd: destPath},
+        opts: { cwd: destPath },
         onToken: (tok: string) => logger.info(`${unins}: ${tok}`),
       };
       let code = await spawn(spawnOpts);

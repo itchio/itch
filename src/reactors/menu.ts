@@ -1,10 +1,9 @@
+import { Watcher } from "./watcher";
 
-import {Watcher} from "./watcher";
+import { Menu } from "electron";
 
-import {Menu} from "electron";
-
-import {map} from "underscore";
-import {createSelector} from "reselect";
+import { map } from "underscore";
+import { createSelector } from "reselect";
 
 import * as clone from "clone";
 import localizer from "../localizer";
@@ -14,71 +13,97 @@ import * as actions from "../actions";
 
 const macos = process.platform === "darwin";
 
-import {IStore, IAppState, II18nState} from "../types";
+import { IStore, IAppState, II18nState } from "../types";
 
 type IMenuItem = Electron.MenuItemOptions;
 type IMenuTemplate = IMenuItem[];
 
 let refreshSelector: (state: IAppState) => void;
-const makeRefreshSelector = (store: IStore) => createSelector(
-  (state: IAppState) => state.system,
-  (state: IAppState) => state.session.credentials,
-  (system, credentials) => {
-    setImmediate(() =>
-      store.dispatch(actions.refreshMenu({system, credentials})),
-    );
-  },
-);
+const makeRefreshSelector = (store: IStore) =>
+  createSelector(
+    (state: IAppState) => state.system,
+    (state: IAppState) => state.session.credentials,
+    (system, credentials) => {
+      setImmediate(() =>
+        store.dispatch(actions.refreshMenu({ system, credentials })),
+      );
+    },
+  );
 
 let applySelector: (state: IAppState) => void;
-const makeApplySelector = (store: IStore) => createSelector(
-  (state: IAppState) => state.ui.menu.template,
-  (state: IAppState) => state.i18n,
-  (template, i18n) => {
-    setImmediate(() => {
-      // electron gotcha: buildFromTemplate mutates its argument
-      const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, store)));
-      Menu.setApplicationMenu(menu);
-    });
-  },
-);
+const makeApplySelector = (store: IStore) =>
+  createSelector(
+    (state: IAppState) => state.ui.menu.template,
+    (state: IAppState) => state.i18n,
+    (template, i18n) => {
+      setImmediate(() => {
+        // electron gotcha: buildFromTemplate mutates its argument
+        const menu = Menu.buildFromTemplate(
+          clone(fleshOutTemplate(template, i18n, store)),
+        );
+        Menu.setApplicationMenu(menu);
+      });
+    },
+  );
 
 interface IMenuItemPayload {
   role?: string;
   label?: string;
 }
 
-function convertMenuAction (payload: IMenuItemPayload) {
-  const {role, label} = payload;
+function convertMenuAction(payload: IMenuItemPayload) {
+  const { role, label } = payload;
 
   switch (role) {
-    case "about": return actions.openUrl({url: urls.appHomepage});
+    case "about":
+      return actions.openUrl({ url: urls.appHomepage });
     default: // muffin
   }
 
   switch (label) {
-    case "sidebar.new_tab": return actions.newTab({});
-    case "menu.file.close_tab": return macos ? actions.closeTabOrAuxWindow({}) : actions.closeCurrentTab({});
-    case "menu.file.close_all_tabs": return actions.closeAllTabs({});
-    case "menu.file.close_window": return actions.hideWindow({});
-    case "menu.file.quit": return actions.quitWhenMain({});
-    case "menu.file.preferences": return actions.navigate("preferences");
-    case "menu.view.downloads": return actions.navigate("downloads");
-    case "menu.account.change_user": return actions.changeUser({});
+    case "sidebar.new_tab":
+      return actions.newTab({});
+    case "menu.file.close_tab":
+      return macos
+        ? actions.closeTabOrAuxWindow({})
+        : actions.closeCurrentTab({});
+    case "menu.file.close_all_tabs":
+      return actions.closeAllTabs({});
+    case "menu.file.close_window":
+      return actions.hideWindow({});
+    case "menu.file.quit":
+      return actions.quitWhenMain({});
+    case "menu.file.preferences":
+      return actions.navigate("preferences");
+    case "menu.view.downloads":
+      return actions.navigate("downloads");
+    case "menu.account.change_user":
+      return actions.changeUser({});
     // TODO: change to proper about tab/window
-    case "menu.help.about": return actions.openUrl({url: urls.appHomepage});
-    case "menu.help.view_terms": return actions.openUrl({url: urls.termsOfService});
-    case "menu.help.view_license": return actions.openUrl({url: `${urls.itchRepo}/blob/master/LICENSE`});
-    case "menu.help.check_for_update": return actions.checkForSelfUpdate({});
-    case "menu.help.report_issue": return actions.openUrl({url: `${urls.itchRepo}/issues/new`});
-    case "menu.help.search_issue": return actions.openUrl({url: `${urls.itchRepo}/search?type=Issues`});
-    case "menu.help.release_notes": return actions.openUrl({url: `${urls.itchRepo}/releases`});
+    case "menu.help.about":
+      return actions.openUrl({ url: urls.appHomepage });
+    case "menu.help.view_terms":
+      return actions.openUrl({ url: urls.termsOfService });
+    case "menu.help.view_license":
+      return actions.openUrl({ url: `${urls.itchRepo}/blob/master/LICENSE` });
+    case "menu.help.check_for_update":
+      return actions.checkForSelfUpdate({});
+    case "menu.help.report_issue":
+      return actions.openUrl({ url: `${urls.itchRepo}/issues/new` });
+    case "menu.help.search_issue":
+      return actions.openUrl({ url: `${urls.itchRepo}/search?type=Issues` });
+    case "menu.help.release_notes":
+      return actions.openUrl({ url: `${urls.itchRepo}/releases` });
     default:
       return null;
   }
 }
 
-function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: IStore) {
+function fleshOutTemplate(
+  template: IMenuTemplate,
+  i18n: II18nState,
+  store: IStore,
+) {
   const t = localizer.getT(i18n.strings, i18n.lang);
 
   const visitNode = (input: IMenuItem) => {
@@ -86,18 +111,22 @@ function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: ISt
       return input;
     }
 
-    const {label, role = null, enabled = true} = input;
+    const { label, role = null, enabled = true } = input;
     const node = clone(input);
 
     node.label = t(label);
-    const menuAction = convertMenuAction({label, role});
+    const menuAction = convertMenuAction({ label, role });
     if (enabled && menuAction) {
-      node.click = (e) => {
+      node.click = e => {
         store.dispatch(menuAction);
       };
     }
     if (label === "crash.test") {
-      node.click = function () { setTimeout(function () { throw new Error("crash test!"); }, 500); };
+      node.click = function() {
+        setTimeout(function() {
+          throw new Error("crash test!");
+        }, 500);
+      };
     }
 
     if (node.submenu) {
@@ -110,7 +139,7 @@ function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: ISt
   return map(template, visitNode);
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.onAll(async (store, action) => {
     const state = store.getState();
     if (!refreshSelector) {

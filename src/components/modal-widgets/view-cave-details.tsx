@@ -1,10 +1,9 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "../connect";
+import { connect, I18nProps } from "../connect";
 
-import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
+import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
-import {ICaveRecord} from "../../types";
+import { ICaveRecord } from "../../types";
 
 import colors from "../../constants/colors";
 
@@ -31,17 +30,26 @@ const theme = {
   base0F: "#cc6633",
 };
 
-export class ViewCaveDetails extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
+export class ViewCaveDetails extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
     const params = this.props.modal.widgetParams as IViewCaveDetailsParams;
 
-    return <ModalWidgetDiv>
-      <p>Local cave record:</p>
+    return (
+      <ModalWidgetDiv>
+        <p>Local cave record:</p>
 
-      <div className="json-tree-container">
-        <JSONTree data={params.currentCave} theme={theme} invertTheme={false}/>
-      </div>
-    </ModalWidgetDiv>;
+        <div className="json-tree-container">
+          <JSONTree
+            data={params.currentCave}
+            theme={theme}
+            invertTheme={false}
+          />
+        </div>
+      </ModalWidgetDiv>
+    );
   }
 }
 

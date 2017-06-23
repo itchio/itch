@@ -1,14 +1,13 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
-import GenericSearchResult, {searchResultStyle} from "./generic-search-result";
+import GenericSearchResult, { searchResultStyle } from "./generic-search-result";
 
 import platformData from "../../constants/platform-data";
 
 import isPlatformCompatible from "../../util/is-platform-compatible";
-import {formatPrice} from "../../format";
+import { formatPrice } from "../../format";
 
-import {IGameRecord} from "../../types";
+import { IGameRecord } from "../../types";
 
 import Icon from "../basics/icon";
 import Filler from "../basics/filler";
@@ -52,20 +51,22 @@ const Price = styled.div`
 `;
 
 class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
-  render () {
-    const {game, onClick, chosen} = this.props;
-    const {title, stillCoverUrl, coverUrl} = game;
+  render() {
+    const { game, onClick, chosen } = this.props;
+    const { title, stillCoverUrl, coverUrl } = game;
 
     const platforms: React.ReactElement<any>[] = [];
     let compatible = isPlatformCompatible(game);
 
     if (game.type === "html") {
-      platforms.push(<Icon key="web" hint="web" icon="earth"/>);
+      platforms.push(<Icon key="web" hint="web" icon="earth" />);
     }
 
     for (const p of platformData) {
       if ((game as any)[p.field]) {
-        platforms.push(<Icon key={p.platform} hint={p.platform} icon={p.icon}/>);
+        platforms.push(
+          <Icon key={p.platform} hint={p.platform} icon={p.icon} />,
+        );
       }
     }
 
@@ -74,10 +75,20 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
 
     if (game.minPrice > 0) {
       if (game.sale) {
-        price = <Price>{formatPrice("USD", game.minPrice * (1 - game.sale.rate / 100))}</Price>;
-        originalPrice = <Price className="original">{formatPrice("USD", game.minPrice)}</Price>;
+        price = (
+          <Price>
+            {formatPrice("USD", game.minPrice * (1 - game.sale.rate / 100))}
+          </Price>
+        );
+        originalPrice = (
+          <Price className="original">
+            {formatPrice("USD", game.minPrice)}
+          </Price>
+        );
       } else {
-        price = <span className="price">{formatPrice("USD", game.minPrice)}</span>;
+        price = (
+          <span className="price">{formatPrice("USD", game.minPrice)}</span>
+        );
       }
     }
 
@@ -86,19 +97,25 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
       chosen: chosen,
     });
 
-    return <GameSearchResultDiv className={resultClasses} onClick={onClick} ref="root">
-      <img src={stillCoverUrl || coverUrl}/>
-      <TitleBlock>
-        <Title>{title}</Title>
-        <Filler/>
-        <Platforms>
-          {platforms}
-          <Filler/>
-          {originalPrice}
-          {price}
-        </Platforms>
-      </TitleBlock>
-    </GameSearchResultDiv>;
+    return (
+      <GameSearchResultDiv
+        className={resultClasses}
+        onClick={onClick}
+        ref="root"
+      >
+        <img src={stillCoverUrl || coverUrl} />
+        <TitleBlock>
+          <Title>{title}</Title>
+          <Filler />
+          <Platforms>
+            {platforms}
+            <Filler />
+            {originalPrice}
+            {price}
+          </Platforms>
+        </TitleBlock>
+      </GameSearchResultDiv>
+    );
   }
 
   getNavigateAction() {

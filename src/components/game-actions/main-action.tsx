@@ -1,30 +1,42 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "../connect";
+import { connect, I18nProps } from "../connect";
 
-import {first, find} from "underscore";
+import { first, find } from "underscore";
 
 import TaskIcon from "../basics/task-icon";
 import LoadingCircle from "../basics/loading-circle";
 import Button from "../basics/button";
 
-import {ItchPlatform, formatItchPlatform} from "../../format";
+import { ItchPlatform, formatItchPlatform } from "../../format";
 import * as actions from "../../actions";
 
-import {IActionsInfo} from "./types";
+import { IActionsInfo } from "./types";
 
-import {IGameUpdate, IDownloadItem} from "../../types";
-import {dispatcher} from "../../constants/action-types";
+import { IGameUpdate, IDownloadItem } from "../../types";
+import { dispatcher } from "../../constants/action-types";
 
 interface IStatus {
   status: string;
   statusTask?: string;
 }
 
-class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, platform, platformCompatible, mayDownload,
-      pressDownload, canBeBought, tasks, action, cave, className} = this.props;
+class MainAction extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const {
+      t,
+      platform,
+      platformCompatible,
+      mayDownload,
+      pressDownload,
+      canBeBought,
+      tasks,
+      action,
+      cave,
+      className,
+    } = this.props;
 
     let progress = 0;
     let task: string;
@@ -46,15 +58,18 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps,
     let primary: boolean;
 
     if (task) {
-      const {status, statusTask} = this.status(task);
+      const { status, statusTask } = this.status(task);
       const realTask = statusTask || task;
 
-      const hasProgress = progress > 0 || realTask === "download" ||
-          realTask === "configure" || realTask === "install";
+      const hasProgress =
+        progress > 0 ||
+        realTask === "download" ||
+        realTask === "configure" ||
+        realTask === "install";
       if (hasProgress) {
-        iconComponent = <LoadingCircle progress={progress}/>;
+        iconComponent = <LoadingCircle progress={progress} />;
       } else {
-        iconComponent = <TaskIcon task={realTask} action={action}/>;
+        iconComponent = <TaskIcon task={realTask} action={action} />;
         if (realTask === "idle") {
           primary = true;
         }
@@ -71,64 +86,77 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps,
         }
         primary = true;
       } else {
-        return <span className="state not-platform-compatible">
-          {t("grid.item.not_platform_compatible", {platform: formatItchPlatform(platform)})}
-        </span>;
+        return (
+          <span className="state not-platform-compatible">
+            {t("grid.item.not_platform_compatible", {
+              platform: formatItchPlatform(platform),
+            })}
+          </span>
+        );
       }
     }
 
     const hint = this.hint(task);
 
     if (!label) {
-      return <div/>;
+      return <div />;
     }
 
-    return <Button
-      className={className}
-      icon={icon}
-      discreet
-      iconComponent={iconComponent}
-      label={label}
-      primary={primary}
-      onClick={(e) => this.onClick(e, task)}
-      hint={hint}/>;
+    return (
+      <Button
+        className={className}
+        icon={icon}
+        discreet
+        iconComponent={iconComponent}
+        label={label}
+        primary={primary}
+        onClick={e => this.onClick(e, task)}
+        hint={hint}
+      />
+    );
   }
 
   activeDownload(): IDownloadItem | null {
-    return find(this.props.downloads, (d) => !d.finished);
+    return find(this.props.downloads, d => !d.finished);
   }
 
-  hint (task: string) {
-    const {t} = this.props;
+  hint(task: string) {
+    const { t } = this.props;
 
     if (task === "error") {
       return t("grid.item.report_problem");
     }
   }
 
-  onClick (e: React.MouseEvent<HTMLElement>, task: string) {
+  onClick(e: React.MouseEvent<HTMLElement>, task: string) {
     e.stopPropagation();
 
-    let {cave, game, platformCompatible, mayDownload, update} = this.props;
-    const {navigate, queueGame, initiatePurchase, abortGameRequest, showGameUpdate} = this.props;
+    let { cave, game, platformCompatible, mayDownload, update } = this.props;
+    const {
+      navigate,
+      queueGame,
+      initiatePurchase,
+      abortGameRequest,
+      showGameUpdate,
+    } = this.props;
 
     if (task === "download") {
       navigate("downloads");
     } else {
       if (platformCompatible) {
         if (task === "launch") {
-          abortGameRequest({game});
+          abortGameRequest({ game });
         } else if (!task || task === "idle") {
           if (cave) {
             if (update) {
-              showGameUpdate({caveId: cave.id, update});
+              showGameUpdate({ caveId: cave.id, update });
             } else {
-              queueGame({game});
+              queueGame({ game });
             }
           } else if (mayDownload) {
-            queueGame({game});
+            queueGame({ game });
           } else {
-            initiatePurchase({game});
+            initiatePurchase({ game });
           }
         }
       } else {
@@ -137,44 +165,44 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps & I18nProps,
     }
   }
 
-  status (task: string): IStatus {
-    const {t, action} = this.props;
+  status(task: string): IStatus {
+    const { t, action } = this.props;
 
     if (task === "idle") {
       const update = this.props.update;
       if (update) {
-        return {status: t("grid.item.update"), statusTask: "update"};
+        return { status: t("grid.item.update"), statusTask: "update" };
       }
 
       switch (action) {
         case "open":
-          return {status: t("grid.item.open"), statusTask: "open"};
+          return { status: t("grid.item.open"), statusTask: "open" };
         case "launch":
         default:
-          return {status: t("grid.item.launch")};
+          return { status: t("grid.item.launch") };
       }
     }
 
     if (task === "error" || task === "reporting") {
-      return {status: ""};
+      return { status: "" };
     }
 
     if (task === "launch") {
-      return {status: t("grid.item.running")};
+      return { status: t("grid.item.running") };
     }
 
-    let res: IStatus = {status: t("grid.item.installing")};
+    let res: IStatus = { status: t("grid.item.installing") };
     if (task === "uninstall") {
-      res = {status: t("grid.item.uninstalling")};
+      res = { status: t("grid.item.uninstalling") };
     }
     if (task === "download") {
-      res = {status: t("grid.item.downloading")};
+      res = { status: t("grid.item.downloading") };
     }
     if (task === "ask-before-install") {
-      res = {status: t("grid.item.finalize_installation")};
+      res = { status: t("grid.item.finalize_installation") };
     }
     if (task === "download-queued") {
-      res = {status: t("grid.item.queued")};
+      res = { status: t("grid.item.queued") };
     }
 
     return res;
@@ -204,7 +232,7 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(MainAction, {
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     queueGame: dispatcher(dispatch, actions.queueGame),
     showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
     initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),

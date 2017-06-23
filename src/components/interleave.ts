@@ -1,5 +1,4 @@
-
-import {ILocalizer} from "../localizer";
+import { ILocalizer } from "../localizer";
 
 enum State {
   normal = 1,
@@ -17,14 +16,17 @@ interface IComponents {
   [key: string]: IComponent;
 }
 
-export default function interleave (
-    t: ILocalizer, key: string, components: IComponents,
-    textVars: IVars = {}): IComponent[] {
+export default function interleave(
+  t: ILocalizer,
+  key: string,
+  components: IComponents,
+  textVars: IVars = {},
+): IComponent[] {
   if (typeof textVars === "undefined") {
     textVars = {};
   }
 
-  let vars = {...textVars};
+  let vars = { ...textVars };
   // source string is something like:
   //
   //   'Click {{button}} to do X'
@@ -62,8 +64,9 @@ export default function interleave (
       state = State.expectClose;
     } else if (state === State.expectClose) {
       if (token !== "]]") {
-        let msg = `Expected closing tag at ${i}, got '${token}' instead. ` +
-        `All tokens = ${JSON.stringify(tokens, null, 2)}`;
+        let msg =
+          `Expected closing tag at ${i}, got '${token}' instead. ` +
+          `All tokens = ${JSON.stringify(tokens, null, 2)}`;
         throw new Error(msg);
       }
       state = State.normal;

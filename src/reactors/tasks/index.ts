@@ -1,5 +1,4 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 
 import startTask from "./start-task";
 import taskEnded from "./task-ended";
@@ -18,7 +17,7 @@ import healCave from "./heal-cave";
 import probeCave from "./probe-cave";
 import viewCaveDetails from "./view-cave-details";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   startTask(watcher);
   taskEnded(watcher);
 

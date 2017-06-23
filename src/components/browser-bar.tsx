@@ -1,10 +1,9 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
 
 import BrowserControls from "./browser-controls";
 
-import {IBrowserControlProperties} from "./browser-state";
+import { IBrowserControlProperties } from "./browser-state";
 
 import styled, * as styles from "./styles";
 
@@ -35,7 +34,8 @@ const BrowserBarDiv = styled.div`
        transparent 95%,
        transparent 100%
       );
-    animation: ${styles.animations.loadBorder} 10s cubic-bezier(0, 0, 0, 0.42) infinite;
+    animation: ${styles.animations
+      .loadBorder} 10s cubic-bezier(0, 0, 0, 0.42) infinite;
   }
 
   border-image-slice: 100% 10% 0% 0%;
@@ -47,13 +47,15 @@ const BrowserBarDiv = styled.div`
 `;
 
 export class BrowserBar extends React.PureComponent<IProps, void> {
-  render () {
-    const {browserState} = this.props;
-    const {loading} = browserState;
+  render() {
+    const { browserState } = this.props;
+    const { loading } = browserState;
 
-    return <BrowserBarDiv className={classNames({loading})}>
-      <BrowserControls {...this.props}/>
-    </BrowserBarDiv>;
+    return (
+      <BrowserBarDiv className={classNames({ loading })}>
+        <BrowserControls {...this.props} />
+      </BrowserBarDiv>
+    );
   }
 }
 

@@ -1,24 +1,21 @@
-
-import {createSelector, createStructuredSelector} from "reselect";
+import { createSelector, createStructuredSelector } from "reselect";
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect, I18nProps } from "./connect";
 
-import bob, {IRGBColor} from "../renderer-util/bob";
+import bob, { IRGBColor } from "../renderer-util/bob";
 
 import GameActions from "./game-actions";
 import GameStats from "./game-stats";
-import {pathToId} from "../util/navigation";
+import { pathToId } from "../util/navigation";
 
 import Game from "../db/models/game";
-import {ICaveSummary} from "../db/models/cave";
+import { ICaveSummary } from "../db/models/cave";
 
-import {IDispatch, dispatcher} from "../constants/action-types";
-import {
-  IAppState, IDownloadKey, ITabData,
-} from "../types";
+import { IDispatch, dispatcher } from "../constants/action-types";
+import { IAppState, IDownloadKey, ITabData } from "../types";
 import * as actions from "../actions";
 
-import {IBrowserControlProperties} from "./browser-state";
+import { IBrowserControlProperties } from "./browser-state";
 import GameBrowserContextActions from "./game-browser-context-actions";
 
 import styled from "./styles";
@@ -48,52 +45,63 @@ const GameActionsContainer = styled.div`
   margin-left: 10px;
 `;
 
-export class GameBrowserContext extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
+export class GameBrowserContext extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  IState
+> {
+  constructor() {
     super();
     this.state = {};
   }
 
-  render () {
-    const {game, cave, downloadKey} = this.props;
+  render() {
+    const { game, cave, downloadKey } = this.props;
     if (!game) {
-      return <div/>;
+      return <div />;
     }
 
-    return <BrowserContextDiv
-        onContextMenu={this.onContextMenu}>
-      <GameStats game={game} cave={cave} downloadKey={downloadKey} mdash={true}/>
-      <GameActionsContainer>{this.gameActions()}</GameActionsContainer>
-    </BrowserContextDiv>;
+    return (
+      <BrowserContextDiv onContextMenu={this.onContextMenu}>
+        <GameStats
+          game={game}
+          cave={cave}
+          downloadKey={downloadKey}
+          mdash={true}
+        />
+        <GameActionsContainer>{this.gameActions()}</GameActionsContainer>
+      </BrowserContextDiv>
+    );
   }
 
   onContextMenu = () => {
-    const {game, openGameContextMenu} = this.props;
-    openGameContextMenu({game});
-  }
+    const { game, openGameContextMenu } = this.props;
+    openGameContextMenu({ game });
+  };
 
-  gameActions () {
-    const {game} = this.props;
+  gameActions() {
+    const { game } = this.props;
     if (!game) {
       return null;
     }
 
-    return <GameActions game={game} CustomSecondary={GameBrowserContextActions}/>;
+    return (
+      <GameActions game={game} CustomSecondary={GameBrowserContextActions} />
+    );
   }
 
-  componentWillReceiveProps () {
+  componentWillReceiveProps() {
     this.updateColor();
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.updateColor();
   }
 
-  updateColor () {
-    const {game} = this.props;
+  updateColor() {
+    const { game } = this.props;
     if (game) {
-      bob.extractPalette(game.coverUrl, (palette) => {
-        this.setState({dominantColor: bob.pick(palette)});
+      bob.extractPalette(game.coverUrl, palette => {
+        this.setState({ dominantColor: bob.pick(palette) });
       });
     }
   }
@@ -127,17 +135,14 @@ export default connect<IProps>(GameBrowserContext, {
       tabData: (state: IAppState, props: IProps) => props.tabData,
     });
 
-    return createSelector(
-      marketSelector,
-      (cs: IContextSelectorResult) => {
-        const game = cs.tabData.games[cs.gameId];
-        // TODO: db
-        const downloadKey = null;
-        // TODO: db
-        const cave = null;
-        return { game, downloadKey, cave };
-      },
-    );
+    return createSelector(marketSelector, (cs: IContextSelectorResult) => {
+      const game = cs.tabData.games[cs.gameId];
+      // TODO: db
+      const downloadKey = null;
+      // TODO: db
+      const cave = null;
+      return { game, downloadKey, cave };
+    });
   },
   dispatch: (dispatch: IDispatch) => ({
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),

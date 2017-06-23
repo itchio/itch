@@ -1,13 +1,12 @@
-
 /* Diego is your little diagnostics mercenary! */
 import * as os from ".";
 import spawn from "./spawn";
 
-import {Logger} from "../logger";
+import { Logger } from "../logger";
 
 const promisedDiego = collect();
 
-async function collect () {
+async function collect() {
   let output = "";
 
   const log = (msg: string): void => {
@@ -26,15 +25,19 @@ async function collect () {
 
   log("diego here, looking around");
 
-  const dump = async function (full: string, re = /.*/) {
+  const dump = async function(full: string, re = /.*/) {
     // for our purpose, no need to worry about escaping arguments.
     let args = full.split(" ");
     let command = args.shift();
     try {
       await spawn({
-        command, args, onToken: (tok) => (re.test(tok) && log(tok)),
+        command,
+        args,
+        onToken: tok => re.test(tok) && log(tok),
       });
-    } catch (e) { log(`"${full}" resisted us: ${e.message || "?"}`); }
+    } catch (e) {
+      log(`"${full}" resisted us: ${e.message || "?"}`);
+    }
   };
 
   switch (os.itchPlatform()) {
@@ -73,8 +76,8 @@ interface IDiegoOpts {
 }
 
 const self = {
-  hire: async function (opts: IDiegoOpts): Promise<void> {
-    const logger = opts.logger.child({name: "diego"});
+  hire: async function(opts: IDiegoOpts): Promise<void> {
+    const logger = opts.logger.child({ name: "diego" });
     const output = await promisedDiego; // sic. no parenthesis — called once on startup
     logger.info(output);
   },

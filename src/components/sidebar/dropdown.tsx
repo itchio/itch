@@ -1,12 +1,11 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
-import {map} from "underscore";
+import { map } from "underscore";
 
 import listensToClickOutside = require("react-onclickoutside");
-import {connect, I18nProps} from "../connect";
+import { connect, I18nProps } from "../connect";
 
-import DropdownItem, {IDropdownItem} from "./dropdown-item";
+import DropdownItem, { IDropdownItem } from "./dropdown-item";
 
 import styled, * as styles from "../styles";
 
@@ -46,61 +45,81 @@ const DropdownDiv = styled.div`
   }
 `;
 
-export class Dropdown extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
+export class Dropdown extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  IState
+> {
+  constructor() {
     super();
-    this.state = {open: false};
+    this.state = { open: false };
   }
 
-  render () {
-    const {items, inner, className, updown = false, ...restProps} = this.props;
+  render() {
+    const {
+      items,
+      inner,
+      className,
+      updown = false,
+      ...restProps,
+    } = this.props;
 
-    const {open} = this.state;
-    const containerClasses = classNames(className, {disabled: items.length === 0});
-    const dropdownClasses = classNames({active: open, updown});
+    const { open } = this.state;
+    const containerClasses = classNames(className, {
+      disabled: items.length === 0,
+    });
+    const dropdownClasses = classNames({ active: open, updown });
 
     let children = [];
     if (open) {
-      children = map(
-        items,
-        (item, i) => <DropdownItem key={i} item={item} onClick={this.close}/>,
+      children = map(items, (item, i) =>
+        <DropdownItem key={i} item={item} onClick={this.close} />,
       );
     }
 
     let innerClasses = "";
-    if (updown !== open) { // boolean xor
+    if (updown !== open) {
+      // boolean xor
       innerClasses += "flipped";
     }
 
-    const innerC = <DropdownInnerContainer key="inner"
-      className={innerClasses}
-      onClick={this.toggle}>
+    const innerC = (
+      <DropdownInnerContainer
+        key="inner"
+        className={innerClasses}
+        onClick={this.toggle}
+      >
         {inner}
-    </DropdownInnerContainer>;
+      </DropdownInnerContainer>
+    );
 
-    const childrenC = <DropdownDiv key="children" className={dropdownClasses}>
-      {children}
-    </DropdownDiv>;
+    const childrenC = (
+      <DropdownDiv key="children" className={dropdownClasses}>
+        {children}
+      </DropdownDiv>
+    );
 
-    return <DropdownContainer style={{position: "relative"}} className={containerClasses} {...restProps}>
-      {updown
-        ? [childrenC, innerC]
-        : [innerC, childrenC]
-      }
-    </DropdownContainer>;
+    return (
+      <DropdownContainer
+        style={{ position: "relative" }}
+        className={containerClasses}
+        {...restProps}
+      >
+        {updown ? [childrenC, innerC] : [innerC, childrenC]}
+      </DropdownContainer>
+    );
   }
 
   toggle = () => {
-    this.setState({open: !this.state.open});
-  }
+    this.setState({ open: !this.state.open });
+  };
 
   close = () => {
-    this.setState({open: false});
-  }
+    this.setState({ open: false });
+  };
 
   handleClickOutside = () => {
     this.close();
-  }
+  };
 }
 
 interface IProps {

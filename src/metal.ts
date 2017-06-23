@@ -1,22 +1,21 @@
-
 // This file is the entry point for the main (browser) process
 
-import {enableLiveReload} from "electron-compile-ftl";
+import { enableLiveReload } from "electron-compile-ftl";
 
 import autoUpdater from "./util/auto-updater";
-import {isItchioURL} from "./util/url";
+import { isItchioURL } from "./util/url";
 
 import * as actions from "./actions";
 import env from "./env";
-import {app, protocol, globalShortcut} from "electron";
+import { app, protocol, globalShortcut } from "electron";
 
-import {connectDatabase} from "./db";
+import { connectDatabase } from "./db";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
 // tslint:disable:no-console
 
-async function autoUpdate (autoUpdateDone: () => void) {
+async function autoUpdate(autoUpdateDone: () => void) {
   const quit = await autoUpdater.start();
   if (quit) {
     // squirrel on win32 sometimes requires exiting as early as possible
@@ -30,7 +29,7 @@ autoUpdate(autoUpdateDone); // no need to wait for app.on('ready')
 
 // App lifecycle
 
-function autoUpdateDone () {
+function autoUpdateDone() {
   if (process.env.CAPSULE_LIBRARY_PATH) {
     // disable acceleration when captured by capsule
     app.disableHardwareAcceleration();
@@ -43,14 +42,16 @@ function autoUpdateDone () {
 
   const store = require("./store/metal-store").default;
 
-  app.on("ready", async function () {
+  app.on("ready", async function() {
     if (env.name !== "test") {
       const shouldQuit = app.makeSingleInstance((argv, cwd) => {
         // we only get inside this callback when another instance
         // is launched - so this executes in the context of the main instance
-        store.dispatch(actions.processUrlArguments({
-          args: argv,
-        }));
+        store.dispatch(
+          actions.processUrlArguments({
+            args: argv,
+          }),
+        );
         store.dispatch(actions.focusWindow({}));
       });
 
@@ -67,14 +68,16 @@ function autoUpdateDone () {
     if (env.name === "development") {
       const logger = require("./logger").default;
       logger.info("Enabling hot-module reload!");
-      enableLiveReload({strategy: "react-hmr"});
+      enableLiveReload({ strategy: "react-hmr" });
     }
 
-    store.dispatch(actions.processUrlArguments({
-      args: process.argv,
-    }));
+    store.dispatch(
+      actions.processUrlArguments({
+        args: process.argv,
+      }),
+    );
 
-    globalShortcut.register("Control+Alt+Backspace", function () {
+    globalShortcut.register("Control+Alt+Backspace", function() {
       store.dispatch(actions.abortLastGame({}));
     });
 
@@ -110,7 +113,7 @@ function autoUpdateDone () {
     if (isItchioURL(url)) {
       // macOS will err -600 if we don't
       e.preventDefault();
-      store.dispatch(actions.openUrl({url}));
+      store.dispatch(actions.openUrl({ url }));
     } else {
       console.log(`Ignoring non-itchio url: ${url}`);
     }

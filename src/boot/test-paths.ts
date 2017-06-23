@@ -1,7 +1,6 @@
-
-import {app} from "electron";
-import {resolve} from "path";
-import {sync as mkdirp} from "mkdirp";
+import { app } from "electron";
+import { resolve } from "path";
+import { sync as mkdirp } from "mkdirp";
 
 const electronLocations = [
   "home",
@@ -17,7 +16,7 @@ const electronLocations = [
 ];
 
 // override paths for tests so we know what we're dealing with
-export function setup () {
+export function setup() {
   const base = "./tmp/prefix";
 
   for (const name of electronLocations) {

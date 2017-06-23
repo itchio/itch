@@ -1,11 +1,10 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {connect, I18nProps} from "../connect";
-import {createSelector, createStructuredSelector} from "reselect";
+import { connect, I18nProps } from "../connect";
+import { createSelector, createStructuredSelector } from "reselect";
 
-import {size} from "underscore";
+import { size } from "underscore";
 
 import * as os from "../../os";
 
@@ -15,18 +14,21 @@ import isPlatformCompatible from "../../util/is-platform-compatible";
 import MainAction from "./main-action";
 import SecondaryActions from "./secondary-actions";
 
-import {IActionsInfo} from "./types";
+import { IActionsInfo } from "./types";
 import GameModel from "../../db/models/game";
-import {ICaveSummary} from "../../db/models/cave";
-import {IDownloadKeySummary} from "../../db/models/download-key";
+import { ICaveSummary } from "../../db/models/cave";
+import { IDownloadKeySummary } from "../../db/models/download-key";
 import getByIds from "../../helpers/get-by-ids";
 
 import {
   IAppState,
-  IDownloadItem, ITask, IGameUpdate, IGameUpdatesState,
+  IDownloadItem,
+  ITask,
+  IGameUpdate,
+  IGameUpdatesState,
 } from "../../types";
 
-import {ItchPlatform} from "../../format";
+import { ItchPlatform } from "../../format";
 
 const platform = os.itchPlatform();
 
@@ -52,30 +54,29 @@ const GameActionsDiv = styled.div`
   }
 `;
 
-class GameActions extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {props} = this;
-    const {vertical, showSecondary, CustomSecondary} = this.props;
+class GameActions extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const { props } = this;
+    const { vertical, showSecondary, CustomSecondary } = this.props;
 
     let taskName = "idle";
     if (props.tasks && props.tasks.length > 0) {
       taskName = props.tasks[0].name;
     }
 
-    const classes = classNames({vertical});
+    const classes = classNames({ vertical });
 
-    return <GameActionsDiv className={classes}>
-      <StyledMainAction {...props} className={classNames({vertical})}/>
-      {vertical
-      ? null
-      : <Filler/>}
-      {showSecondary
-        ? <SecondaryActions {...props}/>
-        : ""}
-      {CustomSecondary
-        ? <CustomSecondary {...props}/>
-        : ""}
-    </GameActionsDiv>;
+    return (
+      <GameActionsDiv className={classes}>
+        <StyledMainAction {...props} className={classNames({ vertical })} />
+        {vertical ? null : <Filler />}
+        {showSecondary ? <SecondaryActions {...props} /> : ""}
+        {CustomSecondary ? <CustomSecondary {...props} /> : ""}
+      </GameActionsDiv>
+    );
   }
 }
 
@@ -116,19 +117,39 @@ export default connect<IProps>(GameActions, {
       createStructuredSelector({
         game: (state: IAppState, props: IProps) => props.game,
         caves: (state: IAppState, props: IProps) =>
-          getByIds(state.commons.caves, state.commons.caveIdsByGameId[props.game.id]),
+          getByIds(
+            state.commons.caves,
+            state.commons.caveIdsByGameId[props.game.id],
+          ),
         downloadKeys: (state: IAppState, props: IProps) =>
-          getByIds(state.commons.downloadKeys, state.commons.downloadKeyIdsByGameId[props.game.id]),
-        tasks: (state: IAppState, props: IProps) => state.tasks.tasksByGameId[props.game.id],
+          getByIds(
+            state.commons.downloadKeys,
+            state.commons.downloadKeyIdsByGameId[props.game.id],
+          ),
+        tasks: (state: IAppState, props: IProps) =>
+          state.tasks.tasksByGameId[props.game.id],
         downloads: (state: IAppState, props: IProps) =>
-          getByIds(state.downloads.items, state.downloads.itemIdsByGameId[props.game.id]),
-        meId: (state: IAppState, props: IProps) => (state.session.credentials.me || { id: "anonymous" }).id,
+          getByIds(
+            state.downloads.items,
+            state.downloads.itemIdsByGameId[props.game.id],
+          ),
+        meId: (state: IAppState, props: IProps) =>
+          (state.session.credentials.me || { id: "anonymous" }).id,
         mePress: (state: IAppState, props: IProps) =>
           (state.session.credentials.me || { pressUser: false }).pressUser,
         gameUpdates: (state: IAppState, props: IProps) => state.gameUpdates,
       }),
       (happenings: IHappenings) => {
-        const { game, caves, downloadKeys, tasks, downloads, meId, mePress, gameUpdates } = happenings;
+        const {
+          game,
+          caves,
+          downloadKeys,
+          tasks,
+          downloads,
+          meId,
+          mePress,
+          gameUpdates,
+        } = happenings;
         let cave;
         if (size(caves) > 0) {
           cave = caves[0];
@@ -137,7 +158,9 @@ export default connect<IProps>(GameActions, {
         const animate = false;
         let action = actionForGame(game, cave);
 
-        const platformCompatible = (action === "open" ? true : isPlatformCompatible(game));
+        const platformCompatible = action === "open"
+          ? true
+          : isPlatformCompatible(game);
         const cancellable = false;
 
         let downloadKey;
@@ -153,7 +176,7 @@ export default connect<IProps>(GameActions, {
         let mayDownload = !!(downloadKey || !hasMinPrice || canEdit || hasDemo);
         let pressDownload = false;
         if (!mayDownload) {
-          pressDownload = (game.inPressSystem && mePress);
+          pressDownload = game.inPressSystem && mePress;
           if (pressDownload) {
             mayDownload = true;
           }

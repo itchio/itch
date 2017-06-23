@@ -1,4 +1,3 @@
-
 export * from "./camelify";
 export * from "./platforms";
 export * from "./truncate";

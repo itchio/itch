@@ -1,17 +1,16 @@
-
 import * as humanize from "humanize-plus";
 import * as ospath from "path";
 
-const verbose = (process.env.THE_DEPTHS_OF_THE_SOUL === "1");
+const verbose = process.env.THE_DEPTHS_OF_THE_SOUL === "1";
 
 import noop from "./noop";
 import * as sf from "../os/sf";
 import spawn from "../os/spawn";
 import butler from "./butler";
 
-import {Logger} from "../logger";
-import {IProgressListener} from "../types";
-import {EventEmitter} from "events";
+import { Logger } from "../logger";
+import { IProgressListener } from "../types";
+import { EventEmitter } from "events";
 
 interface ISizeMap {
   [entryName: string]: number;
@@ -35,7 +34,10 @@ interface IEntryDoneListener {
 }
 
 const self = {
-  unarchiverList: async function (logger: Logger, archivePath: string): Promise<IListResult> {
+  unarchiverList: async function(
+    logger: Logger,
+    archivePath: string,
+  ): Promise<IListResult> {
     const sizes = {} as ISizeMap;
     let totalSize = 0;
 
@@ -59,7 +61,7 @@ const self = {
     if (verbose) {
       logger.debug(`${info.lsarContents.length} lsarContent entries`);
     }
-    
+
     for (const entry of info.lsarContents) {
       if (verbose) {
         logger.debug(`${entry.XADFileName} ${entry.XADFileSize}`);
@@ -68,11 +70,15 @@ const self = {
       totalSize += entry.XADFileSize;
     }
 
-    return {sizes, totalSize};
+    return { sizes, totalSize };
   },
 
-  unarchiverExtract: async function (logger: Logger, archivePath: string, destPath: string,
-                                     onItemDone: IEntryDoneListener) {
+  unarchiverExtract: async function(
+    logger: Logger,
+    archivePath: string,
+    destPath: string,
+    onItemDone: IEntryDoneListener,
+  ) {
     let EXTRACT_RE = /^ {2}(.+) {2}\(.+\)\.\.\. OK\.$/;
 
     await sf.mkdir(destPath);
@@ -86,7 +92,8 @@ const self = {
       // The directory to write the contents of the archive to. Defaults to the
       // current directory. If set to a single dash (-), no files will be created,
       // and all data will be output to stdout.
-      "-output-directory", destPath,
+      "-output-directory",
+      destPath,
       // file to unpack
       archivePath,
     ];
@@ -97,7 +104,7 @@ const self = {
       command: "unar",
       args,
       split: "\n",
-      onToken: (token) => {
+      onToken: token => {
         if (verbose) {
           logger.debug(`extract: ${token}`);
         }
@@ -125,36 +132,43 @@ const self = {
     }
   },
 
-  unarchiver: async function (opts: IExtractOpts) {
-    const {archivePath, destPath, onProgress = noop, logger} = opts;
+  unarchiver: async function(opts: IExtractOpts) {
+    const { archivePath, destPath, onProgress = noop, logger } = opts;
 
     let extractedSize = 0;
     let totalSize = 0;
 
     const info = await self.unarchiverList(logger, archivePath);
     totalSize = info.totalSize;
-    logger.info(`archive contains ${Object.keys(info.sizes).length} files, ${humanize.fileSize(totalSize)} total`);
+    logger.info(
+      `archive contains ${Object.keys(info.sizes)
+        .length} files, ${humanize.fileSize(totalSize)} total`,
+    );
 
-    const onEntryDone: IEntryDoneListener = (f) => {
+    const onEntryDone: IEntryDoneListener = f => {
       if (verbose) {
         logger.debug(`progress!: ${f} ${info.sizes[f]}`);
       }
-      extractedSize += (info.sizes[f] || 0);
+      extractedSize += info.sizes[f] || 0;
       const progress = extractedSize / totalSize;
-      onProgress({progress});
+      onProgress({ progress });
     };
     await self.unarchiverExtract(logger, archivePath, destPath, onEntryDone);
   },
 
-  extract: async function (opts: IExtractOpts): Promise<void> {
-    const {archivePath, logger, emitter} = opts;
+  extract: async function(opts: IExtractOpts): Promise<void> {
+    const { archivePath, logger, emitter } = opts;
 
     const hasButler = await butler.sanityCheck();
 
     let useButler = false;
     if (hasButler) {
       try {
-        const fileResult = await butler.file({path: archivePath, logger, emitter});
+        const fileResult = await butler.file({
+          path: archivePath,
+          logger,
+          emitter,
+        });
         if (fileResult.type === "zip") {
           useButler = true;
         } else {

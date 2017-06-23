@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
 
@@ -25,18 +24,26 @@ const IconButtonDiv = styled.div`
 `;
 
 class IconButton extends React.PureComponent<IProps, void> {
-  render () {
-    const {disabled, icon, hint, hintPosition = "top", ...restProps} = this.props;
+  render() {
+    const {
+      disabled,
+      icon,
+      hint,
+      hintPosition = "top",
+      ...restProps,
+    } = this.props;
 
-    return <IconButtonDiv className={classNames({disabled})}
-      data-rh={hint}
-      data-rh-at={hintPosition}
-      {...restProps}>
-        <Icon icon={icon}/>
-        {disabled
-        ? null
-        : <Ink/>}
-    </IconButtonDiv>;
+    return (
+      <IconButtonDiv
+        className={classNames({ disabled })}
+        data-rh={hint}
+        data-rh-at={hintPosition}
+        {...restProps}
+      >
+        <Icon icon={icon} />
+        {disabled ? null : <Ink />}
+      </IconButtonDiv>
+    );
   }
 }
 

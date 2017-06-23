@@ -1,6 +1,5 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "../../connect";
+import { connect, I18nProps } from "../../connect";
 
 import TimeAgo from "../../basics/time-ago";
 import IconButton from "../../basics/icon-button";
@@ -9,8 +8,8 @@ import defaultImages from "../../../constants/default-images";
 
 import * as actions from "../../../actions";
 
-import {IRememberedSession} from "../../../types";
-import {dispatcher} from "../../../constants/action-types";
+import { IRememberedSession } from "../../../types";
+import { dispatcher } from "../../../constants/action-types";
 
 import styled from "../../styles";
 
@@ -81,36 +80,49 @@ const RememberedSessionDiv = styled.div`
   }
 `;
 
-export class RememberedSession extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, session, loginWithToken, forgetSessionRequest} = this.props;
-    const {me, key} = session;
-    const {id, username, displayName, coverUrl = defaultImages.avatar} = me;
+export class RememberedSession extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const { t, session, loginWithToken, forgetSessionRequest } = this.props;
+    const { me, key } = session;
+    const { id, username, displayName, coverUrl = defaultImages.avatar } = me;
 
     const onForget = (e: React.MouseEvent<HTMLElement>) => {
       e.stopPropagation();
-      forgetSessionRequest({id, username});
+      forgetSessionRequest({ id, username });
     };
 
-    return <RememberedSessionDiv className="remembered-session" onClick={() => {
-        const payload = {username, key, me};
-        if (this.props.onLogin) {
-          this.props.onLogin(payload);
-        }
-        loginWithToken(payload);
-      }}>
-      <img className="avatar" src={coverUrl}/>
-      <div className="rest">
-        <p className="username">{displayName || username}</p>
-        <p className="last-connected">
-          {t("login.remembered_session.last_connected")} <TimeAgo date={new Date(session.lastConnected)}/>
-        </p>
-      </div>
-      <div className="filler"/>
-      <span data-rh-at="left" data-rh="Forget this session">
-        <IconButton icon="cross" className="forget-session" onClick={onForget}/>
-      </span>
-    </RememberedSessionDiv>;
+    return (
+      <RememberedSessionDiv
+        className="remembered-session"
+        onClick={() => {
+          const payload = { username, key, me };
+          if (this.props.onLogin) {
+            this.props.onLogin(payload);
+          }
+          loginWithToken(payload);
+        }}
+      >
+        <img className="avatar" src={coverUrl} />
+        <div className="rest">
+          <p className="username">{displayName || username}</p>
+          <p className="last-connected">
+            {t("login.remembered_session.last_connected")}{" "}
+            <TimeAgo date={new Date(session.lastConnected)} />
+          </p>
+        </div>
+        <div className="filler" />
+        <span data-rh-at="left" data-rh="Forget this session">
+          <IconButton
+            icon="cross"
+            className="forget-session"
+            onClick={onForget}
+          />
+        </span>
+      </RememberedSessionDiv>
+    );
   }
 }
 
@@ -125,7 +137,7 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(RememberedSession, {
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     loginWithToken: dispatcher(dispatch, actions.loginWithToken),
     forgetSessionRequest: dispatcher(dispatch, actions.forgetSessionRequest),
   }),

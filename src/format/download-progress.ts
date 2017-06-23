@@ -1,15 +1,14 @@
-
 import * as humanize from "humanize-plus";
 import * as moment from "moment";
 
-import {ILocalizer} from "../localizer";
+import { ILocalizer } from "../localizer";
 
 interface IProgressHolder {
   bps: number;
   eta: number;
 }
 
-function humanDuration (t: ILocalizer, eta: number): string {
+function humanDuration(t: ILocalizer, eta: number): string {
   const duration = moment.duration(eta, "seconds") as any;
   return duration.locale(t.lang).humanize();
 }
@@ -19,10 +18,12 @@ interface IDownloadProgressOpts {
   onlyETA?: boolean;
 }
 
-export function downloadProgress (
-    t: ILocalizer, holder: IProgressHolder,
-    downloadsPaused: boolean, opts = {} as IDownloadProgressOpts): string {
-
+export function downloadProgress(
+  t: ILocalizer,
+  holder: IProgressHolder,
+  downloadsPaused: boolean,
+  opts = {} as IDownloadProgressOpts,
+): string {
   if (downloadsPaused) {
     return t("grid.item.downloads_paused");
   }
@@ -36,4 +37,4 @@ export function downloadProgress (
   }
 
   return `${humanize.fileSize(holder.bps)}/s — ${humanDuration(t, holder.eta)}`;
-};
+}

@@ -1,4 +1,3 @@
-
 interface IRecord {
   id: any;
 }
@@ -19,7 +18,10 @@ const emptyArr = [];
  * This will give:
  *   {"10": [1], "20": [2, 3]}
  */
-export default function groupIdBy (records: IRecordMap | IRecord[], field: string): IGrouped {
+export default function groupIdBy(
+  records: IRecordMap | IRecord[],
+  field: string,
+): IGrouped {
   const result: IGrouped = {};
 
   if (!records) {
@@ -37,4 +39,4 @@ export default function groupIdBy (records: IRecordMap | IRecord[], field: strin
     }
   }
   return result;
-};
+}

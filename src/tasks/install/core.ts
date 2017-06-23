@@ -1,21 +1,20 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import * as invariant from "invariant";
 
-import fnout, {SniffResult} from "fnout";
+import fnout, { SniffResult } from "fnout";
 import butler from "../../util/butler";
 import spawn from "../../os/spawn";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "install/core"});
+const logger = rootLogger.child({ name: "install/core" });
 
-import {IInstallerCache, InstallerType, IStartTaskOpts} from "../../types";
+import { IInstallerCache, InstallerType, IStartTaskOpts } from "../../types";
 
 type InstallOperation = "install" | "uninstall";
 
 class UnhandledFormat extends Error {
-  constructor (archivePath: string) {
+  constructor(archivePath: string) {
     super(`don't know how to handle ${archivePath}`);
   }
 }
@@ -32,63 +31,66 @@ const self = {
 
   installerForExt: {
     // Generic archives
-    "zip": "archive",
-    "gz": "archive",
-    "bz2": "archive",
+    zip: "archive",
+    gz: "archive",
+    bz2: "archive",
     "7z": "archive",
-    "tar": "archive",
-    "xz": "archive",
-    "rar": "archive",
+    tar: "archive",
+    xz: "archive",
+    rar: "archive",
     // Apple disk images (DMG)
-    "dmg": "dmg",
+    dmg: "dmg",
     // Microsoft packages
-    "msi": "msi",
+    msi: "msi",
     // Inno setup, NSIS
-    "exe": "exe",
+    exe: "exe",
     // Books!
-    "pdf": "naked",
+    pdf: "naked",
     // Known naked
-    "jar": "naked",
-    "unitypackage": "naked",
-    "naked": "naked",
+    jar: "naked",
+    unitypackage: "naked",
+    naked: "naked",
     // some html games provide a single raw html file
-    "html": "naked",
+    html: "naked",
   } as IInstallerExtensionMap,
 
-  install: async function (out: EventEmitter, opts: IStartTaskOpts) {
+  install: async function(out: EventEmitter, opts: IStartTaskOpts) {
     return await self.operate(out, opts, "install");
   },
 
-  uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
+  uninstall: async function(out: EventEmitter, opts: IStartTaskOpts) {
     return await self.operate(out, opts, "uninstall");
   },
 
-  cacheType: function (opts: IStartTaskOpts, installerName: InstallerType) {
-    const {cave, upload} = opts;
+  cacheType: function(opts: IStartTaskOpts, installerName: InstallerType) {
+    const { cave, upload } = opts;
     // FIXME: db
     const globalMarket: any = null;
     if (!cave) {
       return;
     }
 
-    invariant(typeof installerName === "string", "cacheType needs string installerName");
+    invariant(
+      typeof installerName === "string",
+      "cacheType needs string installerName",
+    );
     invariant(typeof upload === "object", "cacheType needs object upload");
     invariant(typeof upload.id === "number", "cacheType needs int upload.id");
 
     const installerCache = {} as IInstallerCache;
     installerCache[upload.id] = installerName;
-    globalMarket.saveEntity("caves", cave.id, {installerCache});
+    globalMarket.saveEntity("caves", cave.id, { installerCache });
   },
 
-  retrieveCachedType: function (opts: IStartTaskOpts) {
+  retrieveCachedType: function(opts: IStartTaskOpts) {
     const cave = opts.cave;
     if (!cave) {
       return null;
     }
 
-    const {archivePath} = opts;
+    const { archivePath } = opts;
     if (!archivePath) {
-      logger.warn("no archive available, can\'t retrieve cached type");
+      logger.warn("no archive available, can't retrieve cached type");
       return;
     }
 
@@ -97,17 +99,21 @@ const self = {
     const installerName = installerCache[cave.uploadId];
 
     if (self.validInstallers.indexOf(installerName) === -1) {
-      logger.warn(`invalid installer name stored: ${installerName} - discarding`);
+      logger.warn(
+        `invalid installer name stored: ${installerName} - discarding`,
+      );
       return null;
     }
 
     return installerName;
   },
 
-  sniffType: async function (opts: IStartTaskOpts): Promise<InstallerType> {
-    const {archivePath} = opts;
+  sniffType: async function(opts: IStartTaskOpts): Promise<InstallerType> {
+    const { archivePath } = opts;
     if (!archivePath) {
-      logger.warn('no archive available, unable to sniff type, going with "archive" uninstaller');
+      logger.warn(
+        'no archive available, unable to sniff type, going with "archive" uninstaller',
+      );
       return "archive";
     }
 
@@ -140,19 +146,25 @@ const self = {
         installerName = "archive";
       } else {
         try {
-          const fileResult = await butler.file({path: archivePath});
+          const fileResult = await butler.file({ path: archivePath });
           if (fileResult.type === "zip") {
-            logger.info("butler saves the day! it's a file that ends with a zip");
+            logger.info(
+              "butler saves the day! it's a file that ends with a zip",
+            );
             installerName = "archive";
           } else {
-            throw new Error(`unhandled file type ${fileResult.type || "unknown"}`);
+            throw new Error(
+              `unhandled file type ${fileResult.type || "unknown"}`,
+            );
           }
         } catch (e) {
           if (type.macExecutable || type.linuxExecutable) {
             logger.info("tis an executable, going with naked");
             installerName = "naked";
           } else {
-            throw new UnhandledFormat(`${archivePath} of type ${JSON.stringify(type)}`);
+            throw new UnhandledFormat(
+              `${archivePath} of type ${JSON.stringify(type)}`,
+            );
           }
         }
       }
@@ -164,16 +176,22 @@ const self = {
     return installerName;
   },
 
-  operate: async function (out: EventEmitter, opts: IStartTaskOpts, operation: InstallOperation) {
-    const {archivePath} = opts;
-    let {installerName} = opts;
+  operate: async function(
+    out: EventEmitter,
+    opts: IStartTaskOpts,
+    operation: InstallOperation,
+  ) {
+    const { archivePath } = opts;
+    let { installerName } = opts;
 
     if (!installerName && !opts.disableCache) {
       installerName = self.retrieveCachedType(opts);
     }
 
     if (installerName) {
-      logger.info(`using cached installer type ${installerName} for ${archivePath}`);
+      logger.info(
+        `using cached installer type ${installerName} for ${archivePath}`,
+      );
     } else {
       installerName = await self.sniffType(opts);
     }

@@ -1,24 +1,23 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 import * as actions from "../actions";
 
-import {cleanOldLogs} from "./preboot/clean-old-logs";
+import { cleanOldLogs } from "./preboot/clean-old-logs";
 import xdgMime from "./preboot/xdg-mime";
 import visualElements from "./preboot/visual-elements";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "preboot"});
-const opts = {logger};
+const logger = rootLogger.child({ name: "preboot" });
+const opts = { logger };
 
-import {ProxySource} from "../types";
+import { ProxySource } from "../types";
 
-import {NET_PARTITION_NAME} from "../constants/net";
-import {applyProxySettings} from "../reactors/proxy";
+import { NET_PARTITION_NAME } from "../constants/net";
+import { applyProxySettings } from "../reactors/proxy";
 
 let testProxy = false;
 let proxyTested = false;
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
     try {
       await cleanOldLogs();
@@ -35,44 +34,60 @@ export default function (watcher: Watcher) {
     try {
       await visualElements.createIfNeeded(opts);
     } catch (e) {
-      logger.error(`Could not run visualElements: ${e.stack || e.message || e}`);
+      logger.error(
+        `Could not run visualElements: ${e.stack || e.message || e}`,
+      );
     }
 
     try {
-      const {app} = require("electron");
-      app.on("certificate-error", (ev, webContents, url, error, certificate, callback) => {
-        // do not trust
-        callback(false);
+      const { app } = require("electron");
+      app.on(
+        "certificate-error",
+        (ev, webContents, url, error, certificate, callback) => {
+          // do not trust
+          callback(false);
 
-        logger.error(`Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`);
+          logger.error(
+            `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`,
+          );
 
-        store.dispatch(actions.openModal({
-          title: `Certificate error: ${error}`,
-          message: `There was an error with the certificate for ` +
-          `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
-          `Please check your proxy configuration and try again.`,
-          detail: `If you ignore this error, the rest of the app might not work correctly.`,
-          buttons: [
-            {
-              label: "Ignore and continue",
-              action: actions.closeModal({}),
-              className: "secondary",
-            },
-            {
-              label: ["menu.file.quit"],
-              action: actions.quit({}),
-            },
-          ],
-        }));
-      });
+          store.dispatch(
+            actions.openModal({
+              title: `Certificate error: ${error}`,
+              message:
+                `There was an error with the certificate for ` +
+                  `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
+                  `Please check your proxy configuration and try again.`,
+              detail: `If you ignore this error, the rest of the app might not work correctly.`,
+              buttons: [
+                {
+                  label: "Ignore and continue",
+                  action: actions.closeModal({}),
+                  className: "secondary",
+                },
+                {
+                  label: ["menu.file.quit"],
+                  action: actions.quit({}),
+                },
+              ],
+            }),
+          );
+        },
+      );
       logger.debug(`Set up certificate error handler`);
     } catch (e) {
-      logger.error(`Could not set up certificate error handler: ${e.stack || e.message || e}`);
+      logger.error(
+        `Could not set up certificate error handler: ${e.stack ||
+          e.message ||
+          e}`,
+      );
     }
 
     try {
-      const {session} = require("electron");
-      const netSession = session.fromPartition(NET_PARTITION_NAME, {cache: false});
+      const { session } = require("electron");
+      const netSession = session.fromPartition(NET_PARTITION_NAME, {
+        cache: false,
+      });
 
       const envSettings: string =
         process.env.https_proxy ||
@@ -95,9 +110,12 @@ export default function (watcher: Watcher) {
       } else {
         const electronProxy = await new Promise<string>((resolve, reject) => {
           // resolveProxy accepts strings as well, and URL is not defined here for some reason?
-          session.defaultSession.resolveProxy("https://itch.io" as any, resolve);
+          session.defaultSession.resolveProxy(
+            "https://itch.io" as any,
+            resolve,
+          );
 
-          setTimeout(function () {
+          setTimeout(function() {
             reject(new Error("proxy resolution timed out"));
           }, 5000);
         });
@@ -117,7 +135,9 @@ export default function (watcher: Watcher) {
       store.dispatch(actions.proxySettingsDetected(proxySettings));
       await applyProxySettings(netSession, proxySettings);
     } catch (e) {
-      logger.warn(`Could not detect proxy settings: ${e ? e.message : "unknown error"}`);
+      logger.warn(
+        `Could not detect proxy settings: ${e ? e.message : "unknown error"}`,
+      );
     }
 
     store.dispatch(actions.boot({}));
@@ -133,7 +153,7 @@ export default function (watcher: Watcher) {
     }
     proxyTested = true;
 
-    const {BrowserWindow} = require("electron");
+    const { BrowserWindow } = require("electron");
     const win = new BrowserWindow({ show: false });
 
     win.webContents.on("did-finish-load", () => {
@@ -143,7 +163,9 @@ export default function (watcher: Watcher) {
       logger.warn(`Test page failed to load with proxy!`);
     });
 
-    logger.info(`Testing proxy by loading a page in a hidden browser window...`);
+    logger.info(
+      `Testing proxy by loading a page in a hidden browser window...`,
+    );
     win.loadURL("https://itch.io/country");
 
     setTimeout(() => {

@@ -1,16 +1,15 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
-import {createStructuredSelector} from "reselect";
-import {connect, I18nProps} from "./connect";
+import { createStructuredSelector } from "reselect";
+import { connect, I18nProps } from "./connect";
 
 import * as actions from "../actions";
 
 import Icon from "./basics/icon";
 import LoadingCircle from "./basics/loading-circle";
 
-import {IAppState, ISelfUpdateState, ILocalizedString} from "../types";
-import {dispatcher} from "../constants/action-types";
+import { IAppState, ISelfUpdateState, ILocalizedString } from "../types";
+import { dispatcher } from "../constants/action-types";
 
 import styled from "./styles";
 
@@ -75,15 +74,30 @@ const StatusBarDiv = styled.div`
 /**
  * Displays our current progress when checking for updates, etc.
  */
-class StatusBar extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  constructor () {
+class StatusBar extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  constructor() {
     super();
   }
 
-  render () {
-    const {t, statusMessages, selfUpdate} = this.props;
-    const {dismissStatus, dismissStatusMessage, applySelfUpdateRequest, showAvailableSelfUpdate} = this.props;
-    let {error, uptodate, available, downloading, downloaded, checking} = selfUpdate;
+  render() {
+    const { t, statusMessages, selfUpdate } = this.props;
+    const {
+      dismissStatus,
+      dismissStatusMessage,
+      applySelfUpdateRequest,
+      showAvailableSelfUpdate,
+    } = this.props;
+    let {
+      error,
+      uptodate,
+      available,
+      downloading,
+      downloaded,
+      checking,
+    } = selfUpdate;
 
     let children: JSX.Element[] = [];
     let active = true;
@@ -93,52 +107,52 @@ class StatusBar extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
     if (statusMessages.length > 0) {
       callback = () => dismissStatusMessage({});
       children = [
-        <Icon key="icon" icon="heart-filled"/>,
+        <Icon key="icon" icon="heart-filled" />,
         <span key="message">{t.format(statusMessages[0])}</span>,
-        <Icon key="cross" icon="cross"/>,
+        <Icon key="cross" icon="cross" />,
       ];
     } else if (error) {
       callback = () => dismissStatus({});
       children = [
-        <Icon key="icon" icon="heart-broken"/>,
+        <Icon key="icon" icon="heart-broken" />,
         <span key="message">Update error: {error}</span>,
-        <Icon key="cross" icon="cross"/>,
+        <Icon key="cross" icon="cross" />,
       ];
     } else if (downloaded) {
       callback = () => applySelfUpdateRequest({});
       children = [
-        <Icon key="icon" icon="install"/>,
+        <Icon key="icon" icon="install" />,
         <span key="message">{t("status.downloaded")}</span>,
       ];
     } else if (downloading) {
       busy = true;
       children = [
-        <Icon key="icon" icon="download"/>,
+        <Icon key="icon" icon="download" />,
         <span key="message">{t("status.downloading")}</span>,
       ];
     } else if (available) {
       callback = () => showAvailableSelfUpdate({});
       children = [
-        <Icon key="icon" icon="earth"/>,
+        <Icon key="icon" icon="earth" />,
         <span key="message">{t("status.available")}</span>,
       ];
     } else if (checking) {
       busy = true;
       children = [
-        <LoadingCircle progress={0.3}/>,
+        <LoadingCircle progress={0.3} />,
         <span key="message">{t("status.checking")}</span>,
       ];
     } else if (uptodate) {
       children = [
-        <Icon key="icon" icon="like"/>,
+        <Icon key="icon" icon="like" />,
         <span key="message">{t("status.uptodate")}</span>,
       ];
     } else {
       active = false;
     }
 
-    const classes = classNames({active, busy});
-    const selfUpdateClasses = classNames("self-update", {busy});
+    const classes = classNames({ active, busy });
+    const selfUpdateClasses = classNames("self-update", { busy });
 
     const onClick = () => {
       if (callback) {
@@ -146,13 +160,15 @@ class StatusBar extends React.PureComponent<IProps & IDerivedProps & I18nProps, 
       }
     };
 
-    return <StatusBarDiv className={classes}>
-      <div className="filler"/>
-      <div className={selfUpdateClasses} onClick={onClick}>
-        {children}
-      </div>
-      <div className="filler"/>
-    </StatusBarDiv>;
+    return (
+      <StatusBarDiv className={classes}>
+        <div className="filler" />
+        <div className={selfUpdateClasses} onClick={onClick}>
+          {children}
+        </div>
+        <div className="filler" />
+      </StatusBarDiv>
+    );
   }
 }
 
@@ -173,9 +189,15 @@ export default connect<IProps>(StatusBar, {
     selfUpdate: (state: IAppState) => state.selfUpdate,
     statusMessages: (state: IAppState) => state.status.messages,
   }),
-  dispatch: (dispatch) => ({
-    showAvailableSelfUpdate: dispatcher(dispatch, actions.showAvailableSelfUpdate),
-    applySelfUpdateRequest: dispatcher(dispatch, actions.applySelfUpdateRequest),
+  dispatch: dispatch => ({
+    showAvailableSelfUpdate: dispatcher(
+      dispatch,
+      actions.showAvailableSelfUpdate,
+    ),
+    applySelfUpdateRequest: dispatcher(
+      dispatch,
+      actions.applySelfUpdateRequest,
+    ),
     dismissStatus: dispatcher(dispatch, actions.dismissStatus),
     dismissStatusMessage: dispatcher(dispatch, actions.dismissStatusMessage),
   }),

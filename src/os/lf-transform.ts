@@ -1,4 +1,3 @@
-
 import { Transform } from "stream";
 
 class LFTransform extends Transform {

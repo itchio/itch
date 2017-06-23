@@ -1,7 +1,6 @@
-
 // tslint:disable:no-shadowed-variable
 
-import {Application, BasicAppSettings} from "spectron";
+import { Application, BasicAppSettings } from "spectron";
 import * as test from "zopf";
 import * as bluebird from "bluebird";
 
@@ -12,7 +11,13 @@ const mkdirp = bluebird.promisify(mkdirpCallback);
 import rimrafCallback = require("rimraf");
 const rimraf = bluebird.promisify(rimrafCallback);
 
-import {ISpec, ISpecOpts, IIntegrationTest, sleep, DefaultTimeout} from "./types";
+import {
+  ISpec,
+  ISpecOpts,
+  IIntegrationTest,
+  sleep,
+  DefaultTimeout,
+} from "./types";
 
 import tape = require("tape");
 
@@ -27,8 +32,8 @@ try {
 }
 
 // Lessons learned from messing around with spectron:
-// 
-// chromedriver really needs the app to start up fully - 
+//
+// chromedriver really needs the app to start up fully -
 // it needs a BrowserWindow to connect to.
 //
 // That means we need an uncaught exception handler, and
@@ -52,7 +57,7 @@ const electronBinaryPath = require("electron");
 process.env.ELECTRON_ENABLE_LOGGING = "1";
 
 // Start up the app
-async function beforeEach (t: IIntegrationTest, opts: ISpecOpts) {
+async function beforeEach(t: IIntegrationTest, opts: ISpecOpts) {
   // `t` is different for each spec, so we use
   // it to store some state.
   t.itch = {
@@ -91,7 +96,7 @@ async function beforeEach (t: IIntegrationTest, opts: ISpecOpts) {
   }
 
   const settings: BasicAppSettings = {
-    path: electronBinaryPath as any as string,
+    path: (electronBinaryPath as any) as string,
     args,
     env: {
       ITCH_APP_ENV: "test",
@@ -113,7 +118,7 @@ async function beforeEach (t: IIntegrationTest, opts: ISpecOpts) {
 }
 
 // Continuously fetch the test app's logs.
-async function pollLogs (t: IIntegrationTest) {
+async function pollLogs(t: IIntegrationTest) {
   try {
     while (true) {
       await bluebird.delay(500);
@@ -139,7 +144,7 @@ async function pollLogs (t: IIntegrationTest) {
   }
 }
 
-test("integration tests", async (t) => {
+test("integration tests", async t => {
   const afterEach = async (t: IIntegrationTest, opts: ISpecOpts) => {
     t.comment("cleaning up test...");
 
@@ -189,7 +194,7 @@ test("integration tests", async (t) => {
   }
 
   // a little wrapper on top of zopf's test
-  const spec: ISpec = function (name, f, opts) {
+  const spec: ISpec = function(name, f, opts) {
     if (!opts) {
       opts = {};
     }
@@ -202,7 +207,7 @@ test("integration tests", async (t) => {
     t.case(name, async (t: IIntegrationTest) => {
       const t1 = Date.now();
 
-      t.safeClick = async (selector) => {
+      t.safeClick = async selector => {
         const c = t.app.client;
         await c.waitForExist(selector, DefaultTimeout);
         let numTries = 5;
@@ -256,11 +261,15 @@ test("integration tests", async (t) => {
     });
   };
 
-  spec("it runs integration tests", async (t) => {
-    await runTests(t);
-  }, {
-    wipePrefix: true,
-  });
+  spec(
+    "it runs integration tests",
+    async t => {
+      await runTests(t);
+    },
+    {
+      wipePrefix: true,
+    },
+  );
 });
 
 tape.onFinish(() => {

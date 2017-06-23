@@ -1,30 +1,32 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import subprogress from "../../util/subprogress";
 
 import butler from "../../util/butler";
 import extract from "../../util/extract";
-import deploy, {IDeployOpts} from "../../util/deploy";
+import deploy, { IDeployOpts } from "../../util/deploy";
 
 import core from "./core";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "install/archive"});
+const logger = rootLogger.child({ name: "install/archive" });
 
 import {
-  IStartTaskOpts, IInstallerCache, IProgressInfo, InstallerType,
+  IStartTaskOpts,
+  IInstallerCache,
+  IProgressInfo,
+  InstallerType,
 } from "../../types";
 
 const self = {
-  retrieveCachedType: function (opts: IStartTaskOpts): InstallerType {
-    const {cave} = opts;
+  retrieveCachedType: function(opts: IStartTaskOpts): InstallerType {
+    const { cave } = opts;
     if (!cave) {
       return;
     }
     logger.info(`got cave: ${JSON.stringify(cave, null, 2)}`);
 
-    const {archiveNestedCache = {}} = cave;
+    const { archiveNestedCache = {} } = cave;
     const type = archiveNestedCache[cave.uploadId];
     if (!type) {
       return;
@@ -40,7 +42,7 @@ const self = {
     return type;
   },
 
-  cacheType: function (opts: IStartTaskOpts, type: InstallerType) {
+  cacheType: function(opts: IStartTaskOpts, type: InstallerType) {
     const cave = opts.cave;
     if (!cave) {
       return;
@@ -48,20 +50,20 @@ const self = {
 
     const archiveNestedCache = {} as IInstallerCache;
     archiveNestedCache[cave.uploadId] = type;
-    const {globalMarket} = opts;
-    globalMarket.saveEntity("caves", cave.id, {archiveNestedCache});
+    const { globalMarket } = opts;
+    globalMarket.saveEntity("caves", cave.id, { archiveNestedCache });
   },
 
-  install: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    const {logger, archivePath} = opts;
+  install: async function(out: EventEmitter, opts: IStartTaskOpts) {
+    const { logger, archivePath } = opts;
 
     const onProgress = (ev: IProgressInfo) => out.emit("progress", ev);
     const extractOnProgress = subprogress(onProgress, 0, 0.8);
     const deployOnProgress = subprogress(onProgress, 0.8, 1);
 
     const stagePath = opts.archivePath + "-stage";
-    await butler.wipe(stagePath, {logger, emitter: out});
-    await butler.mkdir(stagePath, {logger, emitter: out});
+    await butler.wipe(stagePath, { logger, emitter: out });
+    await butler.mkdir(stagePath, { logger, emitter: out });
 
     logger.info(`extracting archive '${archivePath}' to '${stagePath}'`);
 
@@ -83,21 +85,21 @@ const self = {
       destPath: opts.destPath,
     };
 
-    deployOpts.onSingle = async function (onlyFile) {
+    deployOpts.onSingle = async function(onlyFile) {
       return await self.handleNested(out, opts, onlyFile);
     };
 
     await deploy.deploy(deployOpts);
 
     logger.info("wiping stage...");
-    await butler.wipe(stagePath, {logger, emitter: out});
+    await butler.wipe(stagePath, { logger, emitter: out });
     logger.info("done wiping stage");
 
-    return {status: "ok"};
+    return { status: "ok" };
   },
 
-  uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    const {logger, destPath} = opts;
+  uninstall: async function(out: EventEmitter, opts: IStartTaskOpts) {
+    const { logger, destPath } = opts;
 
     const installerName = self.retrieveCachedType(opts);
     if (installerName && installerName !== "archive") {
@@ -109,14 +111,18 @@ const self = {
       await core.uninstall(out, coreOpts);
     } else {
       logger.info(`wiping directory ${destPath}`);
-      await butler.wipe(destPath, {logger, emitter: out});
+      await butler.wipe(destPath, { logger, emitter: out });
     }
 
     logger.info("cleaning up cache");
     self.cacheType(opts, null);
   },
 
-  handleNested: async function (out: EventEmitter, opts: IStartTaskOpts, onlyFile: string) {
+  handleNested: async function(
+    out: EventEmitter,
+    opts: IStartTaskOpts,
+    onlyFile: string,
+  ) {
     // zipped installers need love too
     const sniffOpts = {
       ...opts,
@@ -137,7 +143,7 @@ const self = {
     const nestedOpts = { ...opts, ...sniffOpts };
     await core.install(out, nestedOpts);
 
-    return {deployed: true};
+    return { deployed: true };
   },
 };
 

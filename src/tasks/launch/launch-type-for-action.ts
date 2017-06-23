@@ -1,6 +1,5 @@
-
-import {join} from "path";
-import {itchPlatform} from "../../os";
+import { join } from "path";
+import { itchPlatform } from "../../os";
 
 import * as fnout from "fnout";
 
@@ -8,7 +7,10 @@ const platform = itchPlatform();
 
 export type LaunchType = "native" | "html" | "external" | "native" | "shell";
 
-export default async function launchTypeForAction (appPath: string, actionPath: string): LaunchType {
+export default async function launchTypeForAction(
+  appPath: string,
+  actionPath: string,
+): LaunchType {
   if (/\.(app|exe|bat|sh)$/i.test(actionPath)) {
     return "native";
   }
@@ -26,8 +28,10 @@ export default async function launchTypeForAction (appPath: string, actionPath: 
   // TODO: get rid of that
   // (with butler configure, we don't need that anymore)
   const sniffRes = await fnout.path(fullPath);
-  if ((sniffRes.linuxExecutable && platform === "linux") ||
-      (sniffRes.macExecutable && platform === "osx")) {
+  if (
+    (sniffRes.linuxExecutable && platform === "linux") ||
+    (sniffRes.macExecutable && platform === "osx")
+  ) {
     return "native";
   }
 

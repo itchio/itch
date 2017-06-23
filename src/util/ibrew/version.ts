@@ -1,4 +1,3 @@
-
 /* A very small, very bad implementation of versioning */
 
 let self = {

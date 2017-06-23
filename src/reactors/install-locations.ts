@@ -1,13 +1,12 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 
 import * as invariant from "invariant";
 import * as ospath from "path";
 import * as uuid from "uuid";
 
-import {omit, each} from "underscore";
+import { omit, each } from "underscore";
 
-import {createSelector} from "reselect";
+import { createSelector } from "reselect";
 
 import diskspace from "../os/diskspace";
 import explorer from "../os/explorer";
@@ -15,42 +14,51 @@ import localizer from "../localizer";
 
 import * as actions from "../actions";
 
-import {BrowserWindow, dialog} from "electron";
+import { BrowserWindow, dialog } from "electron";
 
-import {IStore, IAppState} from "../types";
-import {IAddInstallLocationPayload} from "../constants/action-types";
+import { IStore, IAppState } from "../types";
+import { IAddInstallLocationPayload } from "../constants/action-types";
 
 let selector: (state: IAppState) => void;
-const makeSelector = (store: IStore) => createSelector(
-  (state: IAppState) => state.preferences.installLocations,
-  (state: IAppState) => state.session.navigation.id,
-  (installLocs, id) => {
-    setImmediate(() => {
-      if (id === "preferences") {
-        store.dispatch(actions.queryFreeSpace({}));
-      }
-    });
-  },
-);
+const makeSelector = (store: IStore) =>
+  createSelector(
+    (state: IAppState) => state.preferences.installLocations,
+    (state: IAppState) => state.session.navigation.id,
+    (installLocs, id) => {
+      setImmediate(() => {
+        if (id === "preferences") {
+          store.dispatch(actions.queryFreeSpace({}));
+        }
+      });
+    },
+  );
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
-    const {name} = action.payload;
-    invariant(typeof name === "string", "default install location name must be a string");
+    const { name } = action.payload;
+    invariant(
+      typeof name === "string",
+      "default install location name must be a string",
+    );
 
-    store.dispatch(actions.updatePreferences({
-      defaultInstallLocation: name,
-    }));
+    store.dispatch(
+      actions.updatePreferences({
+        defaultInstallLocation: name,
+      }),
+    );
   });
 
   watcher.on(actions.removeInstallLocationRequest, async (store, action) => {
-    const {name} = action.payload;
-    invariant(typeof name === "string", "removed install location name must be a string");
+    const { name } = action.payload;
+    invariant(
+      typeof name === "string",
+      "removed install location name must be a string",
+    );
     invariant(name !== "appdata", "cannot remove appdata");
 
     const caves = store.getState().globalMarket.caves;
     let numItems = 0;
-    each(caves, (cave) => {
+    each(caves, cave => {
       if (cave.installLocation === name) {
         numItems++;
       }
@@ -97,7 +105,9 @@ export default function (watcher: Watcher) {
       const dialogOpts = {
         title: t("prompt.install_location_remove.title"),
         message: t("prompt.install_location_remove.message"),
-        detail: t("prompt.install_location_remove.detail", {location: loc.path}),
+        detail: t("prompt.install_location_remove.detail", {
+          location: loc.path,
+        }),
         buttons,
       };
 
@@ -110,32 +120,38 @@ export default function (watcher: Watcher) {
 
       const response = await promise;
       if (response === 0) {
-        store.dispatch(actions.removeInstallLocation({name}));
+        store.dispatch(actions.removeInstallLocation({ name }));
       }
     }
   });
 
   watcher.on(actions.removeInstallLocation, async (store, action) => {
-    const {name} = action.payload;
-    invariant(typeof name === "string", "removed install location name must be a string");
+    const { name } = action.payload;
+    invariant(
+      typeof name === "string",
+      "removed install location name must be a string",
+    );
     invariant(name !== "appdata", "cannot remove appdata");
     const installLocations = store.getState().preferences.installLocations;
-    let defaultInstallLocation = store.getState().preferences.defaultInstallLocation;
+    let defaultInstallLocation = store.getState().preferences
+      .defaultInstallLocation;
 
     if (defaultInstallLocation === name) {
       defaultInstallLocation = "appdata";
     }
 
-    store.dispatch(actions.updatePreferences({
-      defaultInstallLocation,
-      installLocations: {
-        ...installLocations,
-        [name]: {
-          ...installLocations[name],
-          deleted: true,
+    store.dispatch(
+      actions.updatePreferences({
+        defaultInstallLocation,
+        installLocations: {
+          ...installLocations,
+          [name]: {
+            ...installLocations[name],
+            deleted: true,
+          },
         },
-      },
-    }));
+      }),
+    );
   });
 
   watcher.on(actions.addInstallLocationRequest, async (store, action) => {
@@ -151,10 +167,14 @@ export default function (watcher: Watcher) {
     const dialogOpts = {
       title: t("prompt.install_location_add.title"),
       // crazy typescript workaround, avert your eyes
-      properties: ["openDirectory", "createDirectory"] as ("openDirectory" | "createDirectory")[],
+      properties: ["openDirectory", "createDirectory"] as (
+        | "openDirectory"
+        | "createDirectory")[],
     };
 
-    const promise = new Promise<IAddInstallLocationPayload>((resolve, reject) => {
+    const promise = new Promise<
+      IAddInstallLocationPayload
+    >((resolve, reject) => {
       const callback = (response: string[]) => {
         if (!response) {
           return resolve();
@@ -178,17 +198,22 @@ export default function (watcher: Watcher) {
     const loc = action.payload;
     const installLocations = store.getState().preferences.installLocations;
 
-    store.dispatch(actions.updatePreferences({
-      installLocations: {
-        ...installLocations,
-        [loc.name]: omit(loc, "name"),
-      },
-    }));
+    store.dispatch(
+      actions.updatePreferences({
+        installLocations: {
+          ...installLocations,
+          [loc.name]: omit(loc, "name"),
+        },
+      }),
+    );
   });
 
   watcher.on(actions.browseInstallLocation, async (store, action) => {
-    const {name} = action.payload;
-    invariant(typeof name === "string", "browsed install location name is a string");
+    const { name } = action.payload;
+    invariant(
+      typeof name === "string",
+      "browsed install location name is a string",
+    );
 
     if (name === "appdata") {
       const userData = store.getState().system.userDataPath;
@@ -204,11 +229,11 @@ export default function (watcher: Watcher) {
 
   watcher.on(actions.queryFreeSpace, async (store, action) => {
     const diskInfo = await diskspace.diskInfo();
-    store.dispatch(actions.freeSpaceUpdated({diskInfo}));
+    store.dispatch(actions.freeSpaceUpdated({ diskInfo }));
   });
 
   watcher.on(actions.windowFocusChanged, async (store, action) => {
-    const {focused} = action.payload;
+    const { focused } = action.payload;
     if (focused) {
       store.dispatch(actions.queryFreeSpace({}));
     }

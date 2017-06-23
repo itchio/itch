@@ -1,13 +1,10 @@
-
-import {Stats} from "fs";
+import { Stats } from "fs";
 
 export interface IGlobStatic {
   (path: string, opts: any, cb: (err: any, files: string[]) => any): void;
 }
 
-export interface IGlobOpts {
-
-}
+export interface IGlobOpts {}
 
 export interface IReadFileOpts {
   encoding: "utf8" | null;
@@ -40,8 +37,16 @@ export interface IWriteStreamOpts {
 export interface IAsyncFSVariants {
   R_OK: number;
   readFileAsync: (file: string, opts: IReadFileOpts) => Promise<string>;
-  writeFileAsync: (file: string, data: string | Buffer, opts: IWriteFileOpts) => Promise<void>;
-  appendFileAsync: (file: string, data: string | Buffer, opts: IWriteFileOpts) => Promise<void>;
+  writeFileAsync: (
+    file: string,
+    data: string | Buffer,
+    opts: IWriteFileOpts,
+  ) => Promise<void>;
+  appendFileAsync: (
+    file: string,
+    data: string | Buffer,
+    opts: IWriteFileOpts,
+  ) => Promise<void>;
   renameAsync: (oldfile: string, newfile: string) => Promise<void>;
   chmodAsync: (file: string, mode: number) => Promise<void>;
   statAsync: (file: string) => Promise<Stats>;

@@ -1,4 +1,3 @@
-
 import * as tmp from "tmp";
 import * as ospath from "path";
 
@@ -6,12 +5,12 @@ import spawn from "../../os/spawn";
 import * as sf from "../../os/sf";
 import ibrew from "../ibrew";
 
-import rootLogger, {devNull} from "../../logger";
-const logger = rootLogger.child({name: "sandbox/linux"});
+import rootLogger, { devNull } from "../../logger";
+const logger = rootLogger.child({ name: "sandbox/linux" });
 
 import common from "./common";
 
-import {ISandbox, INeed} from "./types";
+import { ISandbox, INeed } from "./types";
 
 interface ISudoRunScriptResult {
   out: string;
@@ -20,7 +19,7 @@ interface ISudoRunScriptResult {
 async function sudoRunScript(lines: string[]): Promise<ISudoRunScriptResult> {
   const contents = lines.join("\n");
   const tmpObjName = tmp.tmpNameSync();
-  await sf.writeFile(tmpObjName, contents, {encoding: "utf8"});
+  await sf.writeFile(tmpObjName, contents, { encoding: "utf8" });
   await sf.chmod(tmpObjName, 0o777);
 
   const res = await spawn.exec({
@@ -38,7 +37,7 @@ async function sudoRunScript(lines: string[]): Promise<ISudoRunScriptResult> {
   return { out: res.out };
 }
 
-const firejailNeed = async function (need) {
+const firejailNeed = async function(need) {
   logger.info(`installing firejail, because ${need.err} (code ${need.code})`);
 
   const firejailBinary = ospath.join(ibrew.binPath(), "firejail");
@@ -78,7 +77,7 @@ const linuxSandbox: ISandbox = {
     return { needs, errors };
   },
 
-  install: async (needs) => {
+  install: async needs => {
     return await common.tendToNeeds(needs, {
       firejail: firejailNeed,
     });

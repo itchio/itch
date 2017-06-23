@@ -1,4 +1,3 @@
-
 import Game from "../db/models/game";
 
 import {
@@ -53,7 +52,7 @@ export interface ILoginWithPasswordResult {
   cookie?: {
     [name: string]: string;
   };
-  
+
   /** set if we tried to log in without totp code */
   totpNeeded?: boolean;
 }

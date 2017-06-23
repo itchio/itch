@@ -1,22 +1,23 @@
+import { EventEmitter } from "events";
 
-import {EventEmitter} from "events";
-
-import {union, where, map, filter, sortBy} from "underscore";
+import { union, where, map, filter, sortBy } from "underscore";
 
 import rootLog from "../../logger";
-const logger = rootLog.child({name: "find-uploads"});
+const logger = rootLog.child({ name: "find-uploads" });
 
 import client from "../../api";
 
 import actionForGame from "../../util/action-for-game";
 
 import Game from "../../db/models/game";
-import {
-  IUploadRecord,
-  IGameCredentials,
-} from "../../types";
+import { IUploadRecord, IGameCredentials } from "../../types";
 
-import {IRuntime, runtimeProp, runtimeString, currentRuntime} from "./runtime";
+import {
+  IRuntime,
+  runtimeProp,
+  runtimeString,
+  currentRuntime,
+} from "./runtime";
 
 export interface IFindUploadOpts {
   game: Game;
@@ -35,30 +36,52 @@ export interface IFindUploadResult {
   hadWrongArch: boolean;
 }
 
-export default async function findUploads (out: EventEmitter, opts: IFindUploadOpts): Promise<IFindUploadResult> {
-  const {game, gameCredentials} = opts;
+export default async function findUploads(
+  out: EventEmitter,
+  opts: IFindUploadOpts,
+): Promise<IFindUploadResult> {
+  const { game, gameCredentials } = opts;
 
   if (!gameCredentials) {
     return;
   }
 
   const api = client.withKey(gameCredentials.apiKey);
-  const {uploads} = await api.listUploads(gameCredentials.downloadKey, game.id);
+  const { uploads } = await api.listUploads(
+    gameCredentials.downloadKey,
+    game.id,
+  );
 
-  const note = `(${gameCredentials.downloadKey ? "with" : "without"} download key)`;
+  const note = `(${gameCredentials.downloadKey
+    ? "with"
+    : "without"} download key)`;
   logger.info(`got a list of ${uploads.length} uploads ${note}`);
 
   return narrowDownUploads(uploads, game, currentRuntime());
 }
 
-export function narrowDownUploads (input: IUploadRecord[], game: Game, runtime: IRuntime): IFindUploadResult {
+export function narrowDownUploads(
+  input: IUploadRecord[],
+  game: Game,
+  runtime: IRuntime,
+): IFindUploadResult {
   if (input.length <= 1) {
-    return { uploads: input, hadUntagged: false, hadWrongFormat: false, hadWrongArch: false };
+    return {
+      uploads: input,
+      hadUntagged: false,
+      hadWrongFormat: false,
+      hadWrongArch: false,
+    };
   }
 
   if (actionForGame(game, null) === "open") {
     // do no filtering at all for asset packs, etc.
-    return { uploads: input, hadUntagged: false, hadWrongFormat: false, hadWrongArch: false };
+    return {
+      uploads: input,
+      hadUntagged: false,
+      hadWrongFormat: false,
+      hadWrongArch: false,
+    };
   }
 
   const taggedUploads = excludeUntagged(input);
@@ -68,7 +91,7 @@ export function narrowDownUploads (input: IUploadRecord[], game: Game, runtime: 
   const formatUploads = excludeWrongFormat(platformUploads);
   const hadWrongFormat = formatUploads.length < platformUploads.length;
 
-  const archUploads = excludeWrongArch(formatUploads, runtime); 
+  const archUploads = excludeWrongArch(formatUploads, runtime);
   const hadWrongArch = archUploads.length < formatUploads.length;
 
   const sortedUploads = sortUploads(map(archUploads, scoreUpload));
@@ -83,26 +106,31 @@ export function narrowDownUploads (input: IUploadRecord[], game: Game, runtime: 
 }
 
 export const excludeUntagged = (uploads: IUploadRecord[]) =>
-  filter(uploads, (u) => u.pLinux || u.pWindows || u.pOsx || u.pAndroid || u.type === "html");
+  filter(
+    uploads,
+    u => u.pLinux || u.pWindows || u.pOsx || u.pAndroid || u.type === "html",
+  );
 
-export const excludeWrongPlatform = (uploads: IUploadRecord[], runtime: IRuntime) =>
+export const excludeWrongPlatform = (
+  uploads: IUploadRecord[],
+  runtime: IRuntime,
+) =>
   union(
-    where(uploads, {[runtimeProp(runtime)]: true}),
-    where(uploads, {type: "html"}),
+    where(uploads, { [runtimeProp(runtime)]: true }),
+    where(uploads, { type: "html" }),
   );
 
 const knownBadFormatRegexp = /\.(rpm|deb|pkg)$/i;
 
 export const excludeWrongFormat = (uploads: IUploadRecord[]) =>
-  filter(uploads, (upload) =>
-    !knownBadFormatRegexp.test(upload.filename));
+  filter(uploads, upload => !knownBadFormatRegexp.test(upload.filename));
 
 interface IScoredUpload {
   upload: IUploadRecord;
   score: number;
 }
 
-export function scoreUpload (upload: IUploadRecord): IScoredUpload {
+export function scoreUpload(upload: IUploadRecord): IScoredUpload {
   let filename = upload.filename.toLowerCase();
   let score = 500;
 
@@ -129,24 +157,24 @@ export function scoreUpload (upload: IUploadRecord): IScoredUpload {
     score -= 500;
   }
 
-  return {upload, score};
+  return { upload, score };
 }
 
 // largest score first
 export const sortUploads = (tuples: IScoredUpload[]) =>
-  map(
-    sortBy(tuples, "score"),
-    (t) => t.upload,
-  ).reverse();
+  map(sortBy(tuples, "score"), t => t.upload).reverse();
 
 const uploadContainsString = (upload: IUploadRecord, needle: string) => {
   return (
-    ((upload.filename || "").indexOf(needle) !== -1) ||
-    ((upload.displayName || "").indexOf(needle) !== -1)
+    (upload.filename || "").indexOf(needle) !== -1 ||
+    (upload.displayName || "").indexOf(needle) !== -1
   );
 };
 
-const anyUploadContainsString = (candidates: IUploadRecord[], needle: string): boolean => {
+const anyUploadContainsString = (
+  candidates: IUploadRecord[],
+  needle: string,
+): boolean => {
   for (const upload of candidates) {
     if (uploadContainsString(upload, needle)) {
       return true;
@@ -155,7 +183,10 @@ const anyUploadContainsString = (candidates: IUploadRecord[], needle: string): b
   return false;
 };
 
-export const excludeWrongArch = (input: IUploadRecord[], runtime: IRuntime): IUploadRecord[] => {
+export const excludeWrongArch = (
+  input: IUploadRecord[],
+  runtime: IRuntime,
+): IUploadRecord[] => {
   if (input.length <= 1) {
     return input;
   }
@@ -163,21 +194,31 @@ export const excludeWrongArch = (input: IUploadRecord[], runtime: IRuntime): IUp
   let uploads = input;
 
   if (runtime.platform === "windows" || runtime.platform === "linux") {
-    logger.info(`Got ${uploads.length} uploads, we're on ${runtimeString(runtime)}, let's sniff architectures`);
+    logger.info(
+      `Got ${uploads.length} uploads, we're on ${runtimeString(
+        runtime,
+      )}, let's sniff architectures`,
+    );
 
     if (runtime.is64) {
       // on 64-bit, if we have 64-bit builds, exclude 32-bit builds
       if (anyUploadContainsString(uploads, "64")) {
-        uploads = filter(uploads, (u) => !uploadContainsString(u, "32"));
+        uploads = filter(uploads, u => !uploadContainsString(u, "32"));
       }
     } else {
       // on 32-bit, if there's a 32-bit build, exclude 64-bit builds
       if (anyUploadContainsString(uploads, "32")) {
-        uploads = filter(uploads, (u) => !uploadContainsString(u, "64"));
+        uploads = filter(uploads, u => !uploadContainsString(u, "64"));
       }
     }
 
-    logger.info(`After runtime sniffing, uploads look like:\n${JSON.stringify(uploads, null, 2)}`);
+    logger.info(
+      `After runtime sniffing, uploads look like:\n${JSON.stringify(
+        uploads,
+        null,
+        2,
+      )}`,
+    );
   }
 
   return uploads;

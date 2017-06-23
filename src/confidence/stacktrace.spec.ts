@@ -1,6 +1,5 @@
-
 import suite from "../test-suite";
-import {spawn} from "child_process";
+import { spawn } from "child_process";
 
 suite(__filename, s => {
   s.case("setTimeout", async () => {
@@ -19,7 +18,7 @@ suite(__filename, s => {
       const code = await new Promise<number>((resolve, reject) => {
         const child = spawn("i do not exist");
         child.on("close", () => resolve(2));
-        child.on("error", (e2) => {
+        child.on("error", e2 => {
           e = e2;
           resolve(4);
         });
@@ -47,7 +46,9 @@ suite(__filename, s => {
 
   s.case("after-await-thrower", async () => {
     const literallyAnything = async () => null;
-    const thrower = async () => { throw new Error("oh no"); };
+    const thrower = async () => {
+      throw new Error("oh no");
+    };
     const cherrypie = async () => {
       await literallyAnything();
       await thrower();

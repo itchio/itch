@@ -1,12 +1,11 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import {startTask} from "./start-task";
+import { startTask } from "./start-task";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.queueCaveUninstall, async (store, action) => {
-    const {caveId} = action.payload;
+    const { caveId } = action.payload;
 
     // FIXME: db
     const globalMarket: any = null;
@@ -19,9 +18,11 @@ export default function (watcher: Watcher) {
     const state = store.getState();
     const tasksForGame = state.tasks.tasksByGameId[cave.gameId];
     if (tasksForGame && tasksForGame.length > 0) {
-      store.dispatch(actions.statusMessage({
-        message: ["status.uninstall.busy", {title: cave.game.title}],
-      }));
+      store.dispatch(
+        actions.statusMessage({
+          message: ["status.uninstall.busy", { title: cave.game.title }],
+        }),
+      );
       return;
     }
 
@@ -31,6 +32,6 @@ export default function (watcher: Watcher) {
       cave,
     });
 
-    store.dispatch(actions.clearGameDownloads({gameId: cave.gameId}));
+    store.dispatch(actions.clearGameDownloads({ gameId: cave.gameId }));
   });
 }

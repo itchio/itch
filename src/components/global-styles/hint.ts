@@ -1,5 +1,4 @@
-
-import {css, theme} from "../styles";
+import { css, theme } from "../styles";
 
 export default css`
   .react-hint-container {

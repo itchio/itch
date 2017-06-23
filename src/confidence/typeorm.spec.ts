@@ -1,20 +1,16 @@
-
 import suite from "../test-suite";
 
-import {createConnection, Entity, Column, PrimaryColumn} from "typeorm";
+import { createConnection, Entity, Column, PrimaryColumn } from "typeorm";
 import deepEquals = require("deep-equal");
 import * as _ from "underscore";
 
 @Entity()
 class Game {
-  @PrimaryColumn("int")
-  id: number;
+  @PrimaryColumn("int") id: number;
 
-  @Column("text")
-  title: string;
+  @Column("text") title: string;
 
-  @Column("text")
-  shortDesc: string;
+  @Column("text") shortDesc: string;
 }
 
 // This test appears slower than it is because typeorm
@@ -31,7 +27,7 @@ suite(__filename, s => {
       autoSchemaSync: true,
     });
     const migratedAt = Date.now();
-    t.comment(`sync'd in ${(migratedAt-startedAt).toFixed(2)}ms`);
+    t.comment(`sync'd in ${(migratedAt - startedAt).toFixed(2)}ms`);
 
     const gameRepo = conn.getRepository(Game);
 
@@ -72,11 +68,12 @@ suite(__filename, s => {
     t.same(fetchedGame.title, "Overland", "title is still the same");
     t.same(fetchedGame.shortDesc, "Good luck");
 
-    fetchedGame = await gameRepo.findOne({title: "Puzzle Puppers"});
+    fetchedGame = await gameRepo.findOne({ title: "Puzzle Puppers" });
     t.ok(fetchedGame);
     t.same(fetchedGame.id, 2);
 
-    const gameQuery = gameRepo.createQueryBuilder("g")
+    const gameQuery = gameRepo
+      .createQueryBuilder("g")
       .where("lower(g.title) LIKE lower(:query)");
 
     const searchGame = async (query: string) =>
@@ -90,40 +87,64 @@ suite(__filename, s => {
     t.ok(fetchedGame);
     t.same(fetchedGame.id, 4);
 
-    const puzzleGamesQuery = gameRepo.createQueryBuilder("g")
-      .where("lower(g.title) LIKE lower(:query) OR lower(g.shortDesc) LIKE lower(:query)")
+    const puzzleGamesQuery = gameRepo
+      .createQueryBuilder("g")
+      .where(
+        "lower(g.title) LIKE lower(:query) OR lower(g.shortDesc) LIKE lower(:query)",
+      )
       .setParameter("query", "%puzzle%")
       .orderBy("g.id", "ASC");
-    
-    let puzzleGames = await puzzleGamesQuery.clone().setOffset(0).setLimit(1).getMany();
+
+    let puzzleGames = await puzzleGamesQuery
+      .clone()
+      .setOffset(0)
+      .setLimit(1)
+      .getMany();
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 1, "fetches first page");
 
-    puzzleGames = await puzzleGamesQuery.clone().setOffset(1).setLimit(1).getMany();
+    puzzleGames = await puzzleGamesQuery
+      .clone()
+      .setOffset(1)
+      .setLimit(1)
+      .getMany();
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 1, "fetches second page");
 
-    puzzleGames = await puzzleGamesQuery.clone().setOffset(2).setLimit(1).getMany();
+    puzzleGames = await puzzleGamesQuery
+      .clone()
+      .setOffset(2)
+      .setLimit(1)
+      .getMany();
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 1, "fetches third page");
 
-    puzzleGames = await puzzleGamesQuery.clone().setOffset(3).setLimit(1).getMany();
+    puzzleGames = await puzzleGamesQuery
+      .clone()
+      .setOffset(3)
+      .setLimit(1)
+      .getMany();
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 0, "fourth page is empty");
 
     let puzzleGamesCount;
-    [puzzleGames, puzzleGamesCount] = await puzzleGamesQuery.clone().setLimit(2).getManyAndCount();
+    [puzzleGames, puzzleGamesCount] = await puzzleGamesQuery
+      .clone()
+      .setLimit(2)
+      .getManyAndCount();
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 2, "finds two games");
     t.same(puzzleGamesCount, 3, "counts three games");
 
-    let specificGames = await gameRepo.createQueryBuilder("g")
-      .where("g.id in (:ids)", {ids: [2, 4, 6]}).getMany();
+    let specificGames = await gameRepo
+      .createQueryBuilder("g")
+      .where("g.id in (:ids)", { ids: [2, 4, 6] })
+      .getMany();
     t.ok(specificGames);
     t.same(specificGames.length, 2, "found both games by id");
-    t.ok(_.find(specificGames, {id: 2}));
-    t.ok(_.find(specificGames, {id: 4}));
-    t.notOk(_.find(specificGames, {id: 6}));
+    t.ok(_.find(specificGames, { id: 2 }));
+    t.ok(_.find(specificGames, { id: 4 }));
+    t.notOk(_.find(specificGames, { id: 6 }));
 
     {
       const game1 = await gameRepo.findOneById(1);
@@ -150,7 +171,7 @@ suite(__filename, s => {
 
     {
       const game1 = await gameRepo.findOneById(1);
-      await gameRepo.remove({id: 1} as any);
+      await gameRepo.remove({ id: 1 } as any);
       const game2 = await gameRepo.findOneById(1);
       t.ok(game1);
       t.notOk(game2);

@@ -1,4 +1,3 @@
-
 import * as os from "../../os";
 
 export type ItchRuntimeProp = "pOsx" | "pWindows" | "pLinux" | "";
@@ -8,7 +7,7 @@ export interface IRuntime {
   is64: boolean;
 }
 
-export function runtimeProp (runtime: IRuntime): string {
+export function runtimeProp(runtime: IRuntime): string {
   switch (runtime.platform) {
     case "osx":
       return "pOsx";
@@ -21,13 +20,13 @@ export function runtimeProp (runtime: IRuntime): string {
   }
 }
 
-export function runtimeString (runtime: IRuntime): string {
+export function runtimeString(runtime: IRuntime): string {
   return `${runtime.is64 ? "64" : "32"}-bit ${runtime.platform}`;
 }
 
 let cachedRuntime: IRuntime;
 
-export function currentRuntime (): IRuntime {
+export function currentRuntime(): IRuntime {
   if (!cachedRuntime) {
     cachedRuntime = {
       platform: os.itchPlatform(),

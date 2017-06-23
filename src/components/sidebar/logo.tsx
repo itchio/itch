@@ -1,23 +1,26 @@
-
 import * as React from "react";
-import {getImagePath} from "../../os/resources";
+import { getImagePath } from "../../os/resources";
 import styled from "../styles";
-import {createStructuredSelector} from "reselect";
+import { createStructuredSelector } from "reselect";
 
-import {connect} from "../connect";
+import { connect } from "../connect";
 
 import * as actions from "../../actions";
-import {dispatcher} from "../../constants/action-types";
+import { dispatcher } from "../../constants/action-types";
 
 class Logo extends React.PureComponent<IDerivedProps, void> {
   render() {
-    const {navigate, appVersion} = this.props;
+    const { navigate, appVersion } = this.props;
 
-    return <LogoDiv
-        onClick={(e) => navigate("featured")}
-        data-rh-at="bottom" data-rh={`itch v${appVersion}`}>
-      <img src={getImagePath("logos/app-white.svg")}/>
-    </LogoDiv>;
+    return (
+      <LogoDiv
+        onClick={e => navigate("featured")}
+        data-rh-at="bottom"
+        data-rh={`itch v${appVersion}`}
+      >
+        <img src={getImagePath("logos/app-white.svg")} />
+      </LogoDiv>
+    );
   }
 }
 
@@ -42,9 +45,9 @@ const LogoDiv = styled.div`
 
 export default connect(Logo, {
   state: createStructuredSelector({
-    appVersion: (state) => state.system.appVersion,
+    appVersion: state => state.system.appVersion,
   }),
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
   }),
 });

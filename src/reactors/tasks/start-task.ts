@@ -1,17 +1,16 @@
+import { Watcher } from "../watcher";
 
-import {Watcher} from "../watcher";
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import * as uuid from "uuid";
 
 import * as actions from "../../actions";
 
-import {throttle} from "underscore";
+import { throttle } from "underscore";
 const PROGRESS_THROTTLE = 50;
 
-import {IStore, IStartTaskOpts} from "../../types";
-import {IProgressInfo} from "../../types";
+import { IStore, IStartTaskOpts } from "../../types";
+import { IProgressInfo } from "../../types";
 
 import logger from "../../logger";
 
@@ -23,19 +22,29 @@ interface ITaskMap {
 
 let currentTasks = {} as ITaskMap;
 
-export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
+export async function startTask(store: IStore, taskOpts: IStartTaskOpts) {
   const credentials = store.getState().session.credentials;
 
   const id = uuid.v4();
-  store.dispatch(actions.taskStarted({id, startedAt: Date.now(), progress: 0, ...taskOpts}));
+  store.dispatch(
+    actions.taskStarted({
+      id,
+      startedAt: Date.now(),
+      progress: 0,
+      ...taskOpts,
+    }),
+  );
 
   let error: Error;
   let result: any;
   try {
     const out = new EventEmitter();
-    out.on("progress", throttle((ev: IProgressInfo) => {
-      store.dispatch(actions.taskProgress({id, ...ev}));
-    }, PROGRESS_THROTTLE));
+    out.on(
+      "progress",
+      throttle((ev: IProgressInfo) => {
+        store.dispatch(actions.taskProgress({ id, ...ev }));
+      }, PROGRESS_THROTTLE),
+    );
 
     const preferences = store.getState().preferences;
     const extendedOpts = {
@@ -55,7 +64,9 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
     result = await taskRunner(out, extendedOpts);
 
     if (result) {
-      logger.info(`${taskOpts.name} ended, result: ${JSON.stringify(result, null, 2)}`);
+      logger.info(
+        `${taskOpts.name} ended, result: ${JSON.stringify(result, null, 2)}`,
+      );
     } else {
       logger.info(`${taskOpts.name} ended, no result`);
     }
@@ -64,14 +75,16 @@ export async function startTask (store: IStore, taskOpts: IStartTaskOpts) {
     error = e.task || e;
   }
 
-  const err = error ? (error.message || ("" + error)) : null;
-  store.dispatch(actions.taskEnded({name: taskOpts.name, id, err, result, taskOpts}));
-  return {err, result};
+  const err = error ? error.message || "" + error : null;
+  store.dispatch(
+    actions.taskEnded({ name: taskOpts.name, id, err, result, taskOpts }),
+  );
+  return { err, result };
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.abortTask, async (store, action) => {
-    const {id} = action.payload;
+    const { id } = action.payload;
     const task = currentTasks[id];
     if (task && task.emitter) {
       task.emitter.emit("cancel");

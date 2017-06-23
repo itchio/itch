@@ -1,4 +1,3 @@
-
 import * as bluebird from "bluebird";
 import * as childProcess from "child_process";
 import * as StreamSplitter from "stream-splitter";
@@ -6,8 +5,8 @@ import LFTransform from "./lf-transform";
 
 import { Cancelled } from "../tasks/errors";
 
-import rootLogger, {Logger} from "../logger";
-const spawnLogger = rootLogger.child({name: "spawn"});
+import rootLogger, { Logger } from "../logger";
+const spawnLogger = rootLogger.child({ name: "spawn" });
 
 import { EventEmitter } from "events";
 
@@ -34,7 +33,7 @@ interface ISpawnOpts {
     /** Environment variables */
     env?: {
       [key: string]: string;
-    },
+    };
     /** Current working directory */
     cwd?: string;
     /** shell that should be used to run a command */
@@ -62,9 +61,15 @@ interface ISpawnInterface {
 
 let spawn: ISpawnInterface;
 
-spawn = async function (opts: ISpawnOpts): Promise<number> {
-  const {emitter, split = "\n", onToken, onErrToken, logger = spawnLogger} = opts;
-  let {command, args = []} = opts;
+spawn = async function(opts: ISpawnOpts): Promise<number> {
+  const {
+    emitter,
+    split = "\n",
+    onToken,
+    onErrToken,
+    logger = spawnLogger,
+  } = opts;
+  let { command, args = [] } = opts;
 
   let stdioOpts = {
     stdio: [
@@ -81,7 +86,7 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
   }
 
   const spawnOpts = {
-    ...(opts.opts || {}),
+    ...opts.opts || {},
     ...stdioOpts,
   };
   logger.debug(`spawning ${command} with args ${args.join(" ")}`);
@@ -91,7 +96,9 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
   let cbErr: Error = null;
 
   if (onToken) {
-    const splitter = child.stdout.pipe(new LFTransform()).pipe(StreamSplitter(split));
+    const splitter = child.stdout
+      .pipe(new LFTransform())
+      .pipe(StreamSplitter(split));
     splitter.encoding = "utf8";
     splitter.on("token", (tok: string) => {
       try {
@@ -103,7 +110,9 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
   }
 
   if (onErrToken) {
-    const splitter = child.stderr.pipe(new LFTransform()).pipe(StreamSplitter(split));
+    const splitter = child.stderr
+      .pipe(new LFTransform())
+      .pipe(StreamSplitter(split));
     splitter.encoding = "utf8";
     splitter.on("token", (tok: string) => {
       try {
@@ -160,28 +169,32 @@ spawn = async function (opts: ISpawnOpts): Promise<number> {
   return code;
 } as any;
 
-spawn.assert = async function (opts: ISpawnOpts): Promise<void> {
+spawn.assert = async function(opts: ISpawnOpts): Promise<void> {
   const code = await spawn(opts);
   if (code !== 0) {
     throw new Error(`spawn ${opts.command} returned code ${code}`);
   }
 };
 
-spawn.exec = async function (opts: ISpawnOpts): Promise<IExecResult> {
+spawn.exec = async function(opts: ISpawnOpts): Promise<IExecResult> {
   let out = "";
   let err = "";
 
-  const {onToken, onErrToken} = opts;
+  const { onToken, onErrToken } = opts;
 
   const actualOpts = {
     ...opts,
     onToken: (tok: string) => {
       out += tok + "\n";
-      if (onToken) { onToken(tok); }
+      if (onToken) {
+        onToken(tok);
+      }
     },
     onErrToken: (tok: string) => {
       err += tok + "\n";
-      if (onErrToken) { onErrToken(tok); }
+      if (onErrToken) {
+        onErrToken(tok);
+      }
     },
   };
 
@@ -189,9 +202,9 @@ spawn.exec = async function (opts: ISpawnOpts): Promise<IExecResult> {
   return { code, out, err };
 };
 
-spawn.getOutput = async function (opts: ISpawnOpts): Promise<string> {
-  const {code, err, out} = await spawn.exec(opts);
-  const {command} = opts;
+spawn.getOutput = async function(opts: ISpawnOpts): Promise<string> {
+  const { code, err, out } = await spawn.exec(opts);
+  const { command } = opts;
 
   if (code !== 0) {
     spawnLogger.info(`${command} failed:\n${err}`);
@@ -201,7 +214,7 @@ spawn.getOutput = async function (opts: ISpawnOpts): Promise<string> {
   return out.trim();
 };
 
-spawn.escapePath = function (arg) {
+spawn.escapePath = function(arg) {
   return `"${arg.replace(/"/g, '\\"')}"`;
 };
 

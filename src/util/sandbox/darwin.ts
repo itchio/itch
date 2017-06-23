@@ -1,4 +1,3 @@
-
 import * as ospath from "path";
 import * as tmp from "tmp";
 
@@ -9,9 +8,9 @@ import * as sf from "../../os/sf";
 
 import common from "./common";
 
-import {ISandbox, INeed} from "./types";
+import { ISandbox, INeed } from "./types";
 
-import {devNull} from "../../logger";
+import { devNull } from "../../logger";
 
 const INVESTIGATE_SANDBOX = process.env.INVESTIGATE_SANDBOX === "1";
 
@@ -32,12 +31,20 @@ const darwinSandbox: ISandbox = {
     return { needs, errors };
   },
 
-  install: async (needs) => {
+  install: async needs => {
     return await common.tendToNeeds(needs, {});
   },
 
   within: async (opts, cb) => {
-    const {appPath, exePath, fullExec, argString, game, isBundle, logger} = opts;
+    const {
+      appPath,
+      exePath,
+      fullExec,
+      argString,
+      game,
+      isBundle,
+      logger,
+    } = opts;
 
     const cwd = opts.cwd || ospath.dirname(fullExec);
 
@@ -48,13 +55,15 @@ const darwinSandbox: ISandbox = {
       command: "activate",
       args: ["--print-library-paths"],
       logger: opts.logger,
-    })).split("\n")[0].trim();
+    }))
+      .split("\n")[0]
+      .trim();
     logger.info(`user library = '${userLibrary}'`);
 
     const sandboxSource = sandboxTemplate
       .replace(/{{USER_LIBRARY}}/g, userLibrary)
       .replace(/{{INSTALL_LOCATION}}/g, appPath);
-    await sf.writeFile(sandboxProfilePath, sandboxSource, {encoding: "utf8"});
+    await sf.writeFile(sandboxProfilePath, sandboxSource, { encoding: "utf8" });
 
     logger.info("creating fake app bundle");
     const workDir = tmp.dirSync();
@@ -74,11 +83,15 @@ const darwinSandbox: ISandbox = {
     await sf.mkdir(ospath.join(fakeApp, "Contents", "MacOS"));
 
     const fakeBinary = ospath.join(fakeApp, "Contents", "MacOS", exeName);
-    await sf.writeFile(fakeBinary,
+    await sf.writeFile(
+      fakeBinary,
       `#!/bin/bash
   cd ${spawn.escapePath(cwd)}
-  sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(fullExec)} ${argString}`,
-    {encoding: "utf8"});
+  sandbox-exec -f ${spawn.escapePath(sandboxProfilePath)} ${spawn.escapePath(
+        fullExec,
+      )} ${argString}`,
+      { encoding: "utf8" },
+    );
     await sf.chmod(fakeBinary, 0o700);
 
     if (isBundle) {
@@ -92,7 +105,8 @@ const darwinSandbox: ISandbox = {
         ospath.join(fakeApp, "Contents", "Info.plist"),
       );
     } else {
-      await sf.writeFile(ospath.join(fakeApp, "Contents", "Info.plist"),
+      await sf.writeFile(
+        ospath.join(fakeApp, "Contents", "Info.plist"),
         `<?xml version="1.0" encoding="UTF-8"?>
   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
   <plist version="1.0">
@@ -100,13 +114,17 @@ const darwinSandbox: ISandbox = {
     <key>CFBundleExecutable</key>
     <string>${exeName}</string>
   </dict>
-  </plist>`, {encoding: "utf8"});
+  </plist>`,
+        { encoding: "utf8" },
+      );
     }
 
     let err: Error;
     try {
       await cb({ fakeApp });
-    } catch (e) { err = e; }
+    } catch (e) {
+      err = e;
+    }
 
     if (INVESTIGATE_SANDBOX) {
       logger.warn("waiting forever for someone to investigate the sandbox");
@@ -120,7 +138,7 @@ const darwinSandbox: ISandbox = {
     if (err) {
       throw err;
     }
-  }
+  },
 };
 
 export default darwinSandbox;

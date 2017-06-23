@@ -1,32 +1,29 @@
-
-import {EventEmitter} from "events";
-import {Shm} from "shoom";
+import { EventEmitter } from "events";
+import { Shm } from "shoom";
 
 import * as btoa from "btoa";
-import {dirname, basename, join} from "path";
+import { dirname, basename, join } from "path";
 import * as querystring from "querystring";
 
-import {BrowserWindow, shell} from "electron";
+import { BrowserWindow, shell } from "electron";
 import appEnv from "../../env";
-const {appName} = appEnv;
+const { appName } = appEnv;
 
 import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
-import {getInjectPath} from "../../os/resources";
+import { getInjectPath } from "../../os/resources";
 import url from "../../util/url";
 import debugBrowserWindow from "../../util/debug-browser-window";
 
 import Connection from "../../capsule/connection";
-import {capsule} from "../../capsule/messages_generated";
-const {messages} = capsule;
+import { capsule } from "../../capsule/messages_generated";
+const { messages } = capsule;
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
 const WEBGAME_PROTOCOL = "itch-cave";
 
-import {
-  ILaunchOpts,
-} from "../../types";
+import { ILaunchOpts } from "../../types";
 
 import store from "../../store/metal-store";
 
@@ -53,35 +50,39 @@ interface IRegisterProtocolOpts {
   fileRoot: string;
 }
 
-async function registerProtocol (opts: IRegisterProtocolOpts) {
-  const {partition, fileRoot} = opts;
-  
+async function registerProtocol(opts: IRegisterProtocolOpts) {
+  const { partition, fileRoot } = opts;
+
   if (registeredProtocols[partition]) {
     return;
   }
 
-  const {session} = require("electron");
-  const caveSession = session.fromPartition(partition, {cache: false});
+  const { session } = require("electron");
+  const caveSession = session.fromPartition(partition, { cache: false });
 
   await new Promise((resolve, reject) => {
-    caveSession.protocol.registerFileProtocol(WEBGAME_PROTOCOL, (request, callback) => {
-      const urlPath = url.parse(request.url).pathname;
-      // FIXME: this is wrong, the path may also be url-encoded, see
-      // https://github.com/itchio/itch/issues/1211
-      const filePath = join(fileRoot, urlPath.replace(/^\//, ""));
+    caveSession.protocol.registerFileProtocol(
+      WEBGAME_PROTOCOL,
+      (request, callback) => {
+        const urlPath = url.parse(request.url).pathname;
+        // FIXME: this is wrong, the path may also be url-encoded, see
+        // https://github.com/itchio/itch/issues/1211
+        const filePath = join(fileRoot, urlPath.replace(/^\//, ""));
 
-      callback(filePath);
-    }, (error) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
+        callback(filePath);
+      },
+      error => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      },
+    );
   });
 
   const handled = await new Promise((resolve, reject) => {
-    caveSession.protocol.isProtocolHandled(WEBGAME_PROTOCOL, (result) => {
+    caveSession.protocol.isProtocolHandled(WEBGAME_PROTOCOL, result => {
       resolve(result);
     });
   });
@@ -93,15 +94,15 @@ async function registerProtocol (opts: IRegisterProtocolOpts) {
   registeredProtocols[partition] = true;
 }
 
-export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
-  const {cave, game, args, env, logger} = opts;
+export default async function launch(out: EventEmitter, opts: ILaunchOpts) {
+  const { cave, game, args, env, logger } = opts;
 
   const appPath = paths.appPath(cave, store.getState().preferences);
   const entryPoint = join(appPath, cave.gamePath);
 
   logger.info(`entry point: ${entryPoint}`);
 
-  const {width, height} = cave.windowSize;
+  const { width, height } = cave.windowSize;
   logger.info(`starting at resolution ${width}x${height}`);
 
   const partition = `persist:gamesession_${cave.gameId}`;
@@ -109,7 +110,8 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
   let win = new BrowserWindow({
     title: game ? game.title : null,
     icon: `./static/images/tray/${appName}.png`,
-    width, height,
+    width,
+    height,
     center: true,
     show: true,
 
@@ -140,7 +142,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
   // open dev tools immediately if requested
   if (process.env.IMMEDIATE_NOSE_DIVE === "1") {
     debugBrowserWindow(`game ${game.title}`, win);
-    win.webContents.openDevTools({mode: "detach"});
+    win.webContents.openDevTools({ mode: "detach" });
   }
 
   // hide menu, cf. https://github.com/itchio/itch/issues/232
@@ -156,39 +158,47 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
   let internalFilter = {
     urls: ["https://itch-internal/*"],
   };
-  win.webContents.session.webRequest.onBeforeRequest({urls: ["itch-cave://*"]}, (details, callback) => {
-    let parsed = url.parse(details.url);
-    // resources in `//` will be loaded using itch-cave, we need to
-    // redirect them to https for it to work - note this only happens with games
-    // that aren't fully offline-mode compliant
-    if (parsed.protocol === "itch-cave:" && parsed.host !== "game.itch") {
-      callback({
-        redirectURL: details.url.replace(/^itch-cave:/, "https:"),
-      });
-    } else {
-      callback({});
-    }
-  });
+  win.webContents.session.webRequest.onBeforeRequest(
+    { urls: ["itch-cave://*"] },
+    (details, callback) => {
+      let parsed = url.parse(details.url);
+      // resources in `//` will be loaded using itch-cave, we need to
+      // redirect them to https for it to work - note this only happens with games
+      // that aren't fully offline-mode compliant
+      if (parsed.protocol === "itch-cave:" && parsed.host !== "game.itch") {
+        callback({
+          redirectURL: details.url.replace(/^itch-cave:/, "https:"),
+        });
+      } else {
+        callback({});
+      }
+    },
+  );
 
   win.webContents.session.webRequest.onBeforeSendHeaders(
-      internalFilter, (details: IBeforeSendHeadersDetails, callback: IBeforeSendHeadersCallback) => {
-    callback({cancel: true});
+    internalFilter,
+    (
+      details: IBeforeSendHeadersDetails,
+      callback: IBeforeSendHeadersCallback,
+    ) => {
+      callback({ cancel: true });
 
-    let parsed = url.parse(details.url);
-    switch (parsed.pathname.replace(/^\//, "")) {
-      case "exit-fullscreen":
-        win.setFullScreen(false);
-        break;
-      case "toggle-fullscreen":
-        win.setFullScreen(!win.isFullScreen());
-        break;
-      case "open-devtools":
-        win.webContents.openDevTools({mode: "detach"});
-        break;
-      default:
-        break;
-    }
-  });
+      let parsed = url.parse(details.url);
+      switch (parsed.pathname.replace(/^\//, "")) {
+        case "exit-fullscreen":
+          win.setFullScreen(false);
+          break;
+        case "toggle-fullscreen":
+          win.setFullScreen(!win.isFullScreen());
+          break;
+        case "open-devtools":
+          win.webContents.openDevTools({ mode: "detach" });
+          break;
+        default:
+          break;
+      }
+    },
+  );
 
   win.webContents.on("new-window", (ev: Event, url: string) => {
     ev.preventDefault();
@@ -199,11 +209,11 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
   let fileRoot = dirname(entryPoint);
   let indexName = basename(entryPoint);
 
-  await registerProtocol({partition, fileRoot});
+  await registerProtocol({ partition, fileRoot });
 
   // nasty hack to pass in the itchObject
   const itchObjectBase64 = btoa(JSON.stringify(itchObject));
-  const query = querystring.stringify({itchObject: itchObjectBase64});
+  const query = querystring.stringify({ itchObject: itchObjectBase64 });
 
   // don't use the HTTP cache, we already have everything on disk!
   const options = {
@@ -220,26 +230,22 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
     logger.info(`Launching capsule...`);
 
     const pipeName = "capsule_html5";
-    connection = new Connection(pipeName);  
+    connection = new Connection(pipeName);
 
     capsulePromise = spawn({
       command: capsulerunPath,
-      args: [
-        "--pipe",
-        pipeName,
-        "--headless",
-      ],
-      onToken: (tok) => {
+      args: ["--pipe", pipeName, "--headless"],
+      onToken: tok => {
         logger.info(`[capsule out] ${tok}`);
       },
-      onErrToken: async (tok) => {
+      onErrToken: async tok => {
         logger.info(`[capsule err] ${tok}`);
       },
       emitter: capsuleEmitter,
       logger: opts.logger,
     });
 
-    capsulePromise.catch((reason) => {
+    capsulePromise.catch(reason => {
       // tslint:disable-next-line
       console.log(`capsule threw an error: ${reason}`);
     });
@@ -268,9 +274,13 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
       });
       shm.create();
 
-      connection.writePacket((builder) => {
-        const offset = messages.VideoSetup.createOffsetVector(builder, [builder.createLong(0, 0)]);
-        const linesize = messages.VideoSetup.createLinesizeVector(builder, [builder.createLong(pitch, 0)]);
+      connection.writePacket(builder => {
+        const offset = messages.VideoSetup.createOffsetVector(builder, [
+          builder.createLong(0, 0),
+        ]);
+        const linesize = messages.VideoSetup.createLinesizeVector(builder, [
+          builder.createLong(pitch, 0),
+        ]);
         const shmemPath = builder.createString(shmPath);
         const shmemSize = builder.createLong(shmSize, 0);
         messages.Shmem.startShmem(builder);
@@ -294,7 +304,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
       });
 
       const wc = win.webContents;
-      wc.beginFrameSubscription(function (frameBuffer) {
+      wc.beginFrameSubscription(function(frameBuffer) {
         shm.write(0, frameBuffer);
         const timestamp = Date.now() * 1000;
 
@@ -302,14 +312,19 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts) {
           wc.endFrameSubscription();
         }
 
-        connection.writePacket((builder) => {
+        connection.writePacket(builder => {
           const frameTimestamp = builder.createLong(timestamp, 0);
           messages.VideoFrameCommitted.startVideoFrameCommitted(builder);
           messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
           messages.VideoFrameCommitted.addIndex(builder, 0);
-          const vfc = messages.VideoFrameCommitted.endVideoFrameCommitted(builder);
+          const vfc = messages.VideoFrameCommitted.endVideoFrameCommitted(
+            builder,
+          );
           messages.Packet.startPacket(builder);
-          messages.Packet.addMessageType(builder, messages.Message.VideoFrameCommitted);
+          messages.Packet.addMessageType(
+            builder,
+            messages.Message.VideoFrameCommitted,
+          );
           messages.Packet.addMessage(builder, vfc);
           const pkt = messages.Packet.endPacket(builder);
           builder.finish(pkt);

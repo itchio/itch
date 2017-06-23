@@ -1,10 +1,9 @@
-
 import * as React from "react";
-import {IBaseMeatProps, IMeatProps} from "./types";
+import { IBaseMeatProps, IMeatProps } from "./types";
 
 import staticTabData from "../../constants/static-tab-data";
 
-import {pathPrefix} from "../../util/navigation";
+import { pathPrefix } from "../../util/navigation";
 
 import Library from "../library";
 import Collections from "../collections";
@@ -19,20 +18,20 @@ import Location from "../location";
 
 export default class Meat extends React.PureComponent<IProps, void> {
   render() {
-    const ConcreteMeat = this.getConcrete();    
+    const ConcreteMeat = this.getConcrete();
 
-    const {tab, tabData = {}} = this.props;
+    const { tab, tabData = {} } = this.props;
     const tabPath = staticTabData[tab] ? tab : tabData.path;
 
     if (ConcreteMeat) {
-      return <ConcreteMeat {...this.props} tabPath={tabPath}/>;
+      return <ConcreteMeat {...this.props} tabPath={tabPath} />;
     } else {
       return <div>?</div>;
     }
   }
 
-  getConcrete(): React.ComponentClass<IMeatProps>  {
-    const {tab, tabData} = this.props;
+  getConcrete(): React.ComponentClass<IMeatProps> {
+    const { tab, tabData } = this.props;
 
     switch (tab) {
       case "featured":
@@ -49,7 +48,7 @@ export default class Meat extends React.PureComponent<IProps, void> {
         return Preferences;
       default:
         if (tabData && tabData.path) {
-          const {path} = tabData;
+          const { path } = tabData;
           const prefix = pathPrefix(path);
           switch (prefix) {
             case "new":

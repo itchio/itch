@@ -1,7 +1,6 @@
-
 import * as React from "react";
 
-import styled, {keyframes} from "../styles";
+import styled, { keyframes } from "../styles";
 
 const turn = keyframes`
   0% { transform: rotateZ(0deg); }
@@ -20,21 +19,29 @@ const CircleContainer = styled.div`
   }
 `;
 
-export default class LoadingCircle extends React.PureComponent<ILoadingCircleProps, void> {
-    render () {
-        const {progress} = this.props;
+export default class LoadingCircle extends React.PureComponent<
+  ILoadingCircleProps,
+  void
+> {
+  render() {
+    const { progress } = this.props;
 
-        return <CircleContainer>
-            <Circle
-                percent={progress > 0 ? progress * 100.0 : 0}
-                trailWidth={3} trailColor="#e0e0e2"
-                strokeWidth={15} strokeColor="white"/>
-        </CircleContainer>;
-    }
+    return (
+      <CircleContainer>
+        <Circle
+          percent={progress > 0 ? progress * 100.0 : 0}
+          trailWidth={3}
+          trailColor="#e0e0e2"
+          strokeWidth={15}
+          strokeColor="white"
+        />
+      </CircleContainer>
+    );
+  }
 }
 
 export interface ILoadingCircleProps {
-    progress: number;
+  progress: number;
 }
 
 // shamelessly stolen, err, adapted, from https://github.com/react-component/progress
@@ -54,7 +61,7 @@ class Circle extends React.PureComponent<ICircleProps, void> {
 
   getPathStyles() {
     const { percent, strokeWidth, gapDegree = 0 } = this.props;
-    const radius = 50 - (strokeWidth / 2);
+    const radius = 50 - strokeWidth / 2;
     let beginPositionX = 0;
     let beginPositionY = -radius;
     let endPositionX = 0;
@@ -66,28 +73,34 @@ class Circle extends React.PureComponent<ICircleProps, void> {
     const trailPathStyle = {
       strokeDasharray: `${len - gapDegree}px ${len}px`,
       strokeDashoffset: `-${gapDegree / 2}px`,
-      transition: "stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s",
+      transition:
+        "stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s",
     };
     const strokePathStyle = {
-      strokeDasharray: `${(percent / 100) * (len - gapDegree)}px ${len}px`,
+      strokeDasharray: `${percent / 100 * (len - gapDegree)}px ${len}px`,
       strokeDashoffset: `-${gapDegree / 2}px`,
-      transition: "stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s",
+      transition:
+        "stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s",
     };
     return { pathString, trailPathStyle, strokePathStyle };
   }
 
   render() {
     const {
-      strokeWidth, trailWidth, strokeColor,
-      trailColor, strokeLinecap, style,
+      strokeWidth,
+      trailWidth,
+      strokeColor,
+      trailColor,
+      strokeLinecap,
+      style,
     } = this.props;
-    const { pathString, trailPathStyle, strokePathStyle } = this.getPathStyles();
+    const {
+      pathString,
+      trailPathStyle,
+      strokePathStyle,
+    } = this.getPathStyles();
     return (
-      <svg
-        className="circle"
-        viewBox="0 0 100 100"
-        style={style}
-      >
+      <svg className="circle" viewBox="0 0 100 100" style={style}>
         <path
           className={`circle-trail`}
           d={pathString}
@@ -103,7 +116,9 @@ class Circle extends React.PureComponent<ICircleProps, void> {
           stroke={strokeColor}
           strokeWidth={strokeWidth}
           fillOpacity="0"
-          ref={(path) => { this.path = path; }}
+          ref={path => {
+            this.path = path;
+          }}
           style={strokePathStyle}
         />
       </svg>
@@ -112,14 +127,14 @@ class Circle extends React.PureComponent<ICircleProps, void> {
 }
 
 interface ICircleProps {
-    percent: number;
-    gapDegree?: number;
-    trailWidth: number;
-    trailColor: string;
-    trailPathStyle?: React.CSSProperties;
-    strokeWidth: number;
-    strokeColor: string;
-    strokeLinecap?: "inherit" | "butt" | "round" | "square";
-    strokePathStyle?: React.CSSProperties;
-    style?: React.CSSProperties;
+  percent: number;
+  gapDegree?: number;
+  trailWidth: number;
+  trailColor: string;
+  trailPathStyle?: React.CSSProperties;
+  strokeWidth: number;
+  strokeColor: string;
+  strokeLinecap?: "inherit" | "butt" | "round" | "square";
+  strokePathStyle?: React.CSSProperties;
+  style?: React.CSSProperties;
 }

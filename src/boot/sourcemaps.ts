@@ -1,4 +1,3 @@
-
 import * as sourcemaps from "source-map-support";
 import env from "../env";
 

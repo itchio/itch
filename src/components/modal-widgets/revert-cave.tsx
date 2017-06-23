@@ -1,40 +1,45 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "../connect";
+import { connect, I18nProps } from "../connect";
 
-import {IModalWidgetProps, ModalWidgetDiv} from "./modal-widget";
+import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
 import Cave from "../../db/models/cave";
 
-export class RevertCave extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
+export class RevertCave extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
   refs: {
     buildId?: HTMLInputElement;
   };
 
-  constructor () {
+  constructor() {
     super();
   }
 
-  render () {
-    const {t} = this.props;
+  render() {
+    const { t } = this.props;
     const params = this.props.modal.widgetParams as IRevertCaveParams;
     const buildId = params.currentCave.buildId;
 
-    return <ModalWidgetDiv>
-      <p>{t("prompt.revert.message", {buildId})}</p>
+    return (
+      <ModalWidgetDiv>
+        <p>{t("prompt.revert.message", { buildId })}</p>
 
-      <input
-        ref="buildId" type="number"
-        onKeyDown={this.onChange}
-        onKeyUp={this.onChange}
-        onChange={this.onChange}
-        autoFocus={true}
+        <input
+          ref="buildId"
+          type="number"
+          onKeyDown={this.onChange}
+          onKeyUp={this.onChange}
+          onChange={this.onChange}
+          autoFocus={true}
         />
-    </ModalWidgetDiv>;
+      </ModalWidgetDiv>
+    );
   }
 
   onChange = () => {
-    const {buildId} = this.refs;
+    const { buildId } = this.refs;
     if (!buildId) {
       return;
     }
@@ -42,7 +47,7 @@ export class RevertCave extends React.PureComponent<IProps & IDerivedProps & I18
     this.props.updatePayload({
       revertBuildId: parseInt(buildId.value, 10),
     });
-  }
+  };
 }
 
 export interface IRevertCaveParams {

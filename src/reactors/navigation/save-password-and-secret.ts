@@ -1,13 +1,12 @@
-
-import {pathPrefix, pathToId, pathQuery} from "../../util/navigation";
+import { pathPrefix, pathToId, pathQuery } from "../../util/navigation";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "save-password-and-secret"});
+const logger = rootLogger.child({ name: "save-password-and-secret" });
 
 import * as querystring from "querystring";
 import db from "../../db";
 
-export default async function savePasswordAndSecret (path: string) {
+export default async function savePasswordAndSecret(path: string) {
   const prefix = pathPrefix(path);
   if (prefix !== "games") {
     return;

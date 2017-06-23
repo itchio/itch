@@ -1,5 +1,4 @@
-
-import {RequestFunc} from "../types";
+import { RequestFunc } from "../types";
 
 let request: RequestFunc;
 
@@ -9,4 +8,4 @@ if (process.type === "renderer") {
   request = require("./metal-request").request;
 }
 
-export {request};
+export { request };

@@ -1,7 +1,6 @@
-
 import suite from "../test-suite";
 
-import {slugify} from "./slugify";
+import { slugify } from "./slugify";
 
 suite(__filename, s => {
   s.case("slugify", t => {

@@ -1,4 +1,3 @@
-
 import * as os from "os";
 
 export * from "./arch";

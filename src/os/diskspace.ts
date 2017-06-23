@@ -1,8 +1,7 @@
-
 import spawn from "./spawn";
 import * as os from ".";
 
-import {ISpaceInfo, IPartInfo, IPartsInfo} from "../types";
+import { ISpaceInfo, IPartInfo, IPartsInfo } from "../types";
 
 /*
  * Heavily based on https://github.com/int0h/npm-hddSpace
@@ -11,7 +10,8 @@ let self = {
   dfRun: async () => {
     const lines = [] as string[];
     const opts = {
-      command: "df", args: ["-kP"],
+      command: "df",
+      args: ["-kP"],
       onToken: (token: string) => lines.push(token),
     };
     await spawn(opts);
@@ -26,17 +26,14 @@ let self = {
 
     resultObj.parts = lines
       .slice(1) // remove header
-      .map((line) => {
+      .map(line => {
         const partInfo = {} as IPartInfo;
         const lineParts = line.split(/[\s]+/g);
         partInfo.mountpoint = lineParts[5];
         partInfo.free = parseInt(lineParts[3], 10) * 1024; // 1k blocks
         partInfo.size = parseInt(lineParts[1], 10) * 1024; // 1k blocks
 
-        if (
-          Number.isNaN(partInfo.free) ||
-          Number.isNaN(partInfo.size)
-        ) {
+        if (Number.isNaN(partInfo.free) || Number.isNaN(partInfo.size)) {
           return null;
         }
 
@@ -45,7 +42,7 @@ let self = {
         }
         return partInfo;
       })
-      .filter((part) => !!part);
+      .filter(part => !!part);
 
     resultObj.total = {
       size: rootPart.size,
@@ -57,7 +54,8 @@ let self = {
   wmicRun: async () => {
     const lines = [] as string[];
     let opts = {
-      command: "wmic", args: ["logicaldisk", "get", "size,freespace,caption"],
+      command: "wmic",
+      args: ["logicaldisk", "get", "size,freespace,caption"],
       onToken: (token: string) => lines.push(token),
     };
     await spawn(opts);
@@ -65,7 +63,7 @@ let self = {
   },
 
   wmicTotal: (parts: IPartInfo[]) => {
-    let initial = {size: 0, free: 0};
+    let initial = { size: 0, free: 0 };
     let f = (total: ISpaceInfo, part: IPartInfo) => {
       total.size += part.size;
       total.free += part.free;
@@ -81,7 +79,7 @@ let self = {
     const resultObj = {} as IPartsInfo;
     resultObj.parts = lines
       .slice(1) // remove header
-      .map((line) => {
+      .map(line => {
         let diskInfo = {} as IPartInfo;
         let lineParts = line.split(/[\s]+/g);
         diskInfo.letter = lineParts[0];
@@ -96,14 +94,14 @@ let self = {
         }
         return diskInfo;
       })
-      .filter((part) => !!part);
+      .filter(part => !!part);
 
     resultObj.total = self.wmicTotal(resultObj.parts);
     return resultObj;
   },
 
   /** Return a list of partitions/disks and information on their free / total space. */
-  diskInfo: async function (): Promise<IPartsInfo> {
+  diskInfo: async function(): Promise<IPartsInfo> {
     if (os.platform() === "win32") {
       return await self.wmic();
     } else {
@@ -112,7 +110,7 @@ let self = {
   },
 
   /** Given a Win32 file path, returns the disk letter on which it is. */
-  letterFor: function (folder: string): string {
+  letterFor: function(folder: string): string {
     let matches = folder.match(/^([A-Za-z]):/);
     if (!matches) {
       matches = folder.match(/^\/([A-Za-z])/);
@@ -126,7 +124,7 @@ let self = {
   },
 
   /**  */
-  freeInFolder: function (diskInfo: IPartsInfo, folder: string): number {
+  freeInFolder: function(diskInfo: IPartsInfo, folder: string): number {
     if (!diskInfo.parts) {
       // incomplete diskinfo
       return -1;

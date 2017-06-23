@@ -1,4 +1,3 @@
-
 import spawn from "./spawn";
 
 interface IAssertPresenceResult {
@@ -8,8 +7,12 @@ interface IAssertPresenceResult {
   parsed: string;
 }
 
-export async function assertPresence
-    (command: string, args: string[], parser: RegExp, extraOpts = {} as any): Promise<IAssertPresenceResult> {
+export async function assertPresence(
+  command: string,
+  args: string[],
+  parser: RegExp,
+  extraOpts = {} as any,
+): Promise<IAssertPresenceResult> {
   let stdout = "";
   let stderr = "";
 
@@ -18,14 +21,20 @@ export async function assertPresence
   const spawnOpts = {
     command,
     args,
-    onToken: (tok: string) => { stdout += "\n" + tok; },
-    onErrToken: (tok: string) => { stderr += "\n" + tok; },
+    onToken: (tok: string) => {
+      stdout += "\n" + tok;
+    },
+    onErrToken: (tok: string) => {
+      stderr += "\n" + tok;
+    },
     opts: extraOpts,
   };
 
   const code = await spawn(spawnOpts);
   if (code !== 0) {
-    throw new Error(`${command} exited with code ${code}\n${stdout}\n${stderr}`);
+    throw new Error(
+      `${command} exited with code ${code}\n${stdout}\n${stderr}`,
+    );
   }
 
   let parsed: string = null;
@@ -37,6 +46,6 @@ export async function assertPresence
   }
 
   return { code, stdout, stderr, parsed };
-};
+}
 
 export default assertPresence;

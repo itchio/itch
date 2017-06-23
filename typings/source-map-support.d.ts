@@ -1,4 +1,3 @@
-
 interface ISourceMapOpts {
   hookRequire: boolean;
 }
@@ -10,7 +9,7 @@ interface SourceMapSupportStatic {
 /**
  * Typings for https://github.com/evanw/node-source-map-support
  */
-declare module 'source-map-support' {
+declare module "source-map-support" {
   var sms: SourceMapSupportStatic;
   export = sms;
 }

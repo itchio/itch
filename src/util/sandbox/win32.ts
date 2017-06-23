@@ -1,10 +1,9 @@
-
 import spawn from "../../os/spawn";
 import common from "./common";
 
-import {devNull} from "../../logger";
+import { devNull } from "../../logger";
 
-import {ISandbox, INeed} from "./types";
+import { ISandbox, INeed } from "./types";
 
 const win32Sandbox: ISandbox = {
   check: async () => {
@@ -27,16 +26,18 @@ const win32Sandbox: ISandbox = {
     return { errors, needs };
   },
 
-  install: async (needs) => {
+  install: async needs => {
     return await common.tendToNeeds(needs, {
-      user: async function () {
+      user: async function() {
         const res = await spawn.exec({
           command: "elevate.exe",
           args: ["isolate.exe", "--setup"],
           logger: devNull,
         });
         if (res.code !== 0) {
-          throw new Error(`setup failed with code ${res.code}. out = ${res.out}, err = ${res.err}`);
+          throw new Error(
+            `setup failed with code ${res.code}. out = ${res.out}, err = ${res.err}`,
+          );
         }
       },
     });

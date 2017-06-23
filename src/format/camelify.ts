@@ -1,7 +1,6 @@
-
-// regexps are generally slow, 
+// regexps are generally slow,
 export function camelify(str: string): string {
-  return str.replace(/_[a-z]/g, (x) => x[1].toUpperCase());
+  return str.replace(/_[a-z]/g, x => x[1].toUpperCase());
 }
 
 export function camelifyObject(obj: any): any {

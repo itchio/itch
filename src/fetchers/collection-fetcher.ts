@@ -1,26 +1,24 @@
-
-import {Fetcher, Outcome} from "./types";
+import { Fetcher, Outcome } from "./types";
 import db from "../db";
 import getByIds from "../helpers/get-by-ids";
 
-import {IGameRecordSet} from "../types";
+import { IGameRecordSet } from "../types";
 
 import normalize from "../api/normalize";
-import {collection, game, arrayOf} from "../api/schemas";
+import { collection, game, arrayOf } from "../api/schemas";
 
-import {sortAndFilter} from "./sort-and-filter";
+import { sortAndFilter } from "./sort-and-filter";
 
-import {indexBy, pluck} from "underscore";
+import { indexBy, pluck } from "underscore";
 
-import {pathToId} from "../util/navigation";
+import { pathToId } from "../util/navigation";
 
 const emptyArr = [];
 
 export default class CollectionFetcher extends Fetcher {
-
   async work(): Promise<Outcome> {
     if (this.hasGames() && !this.warrantsRemote(this.reason)) {
-      const {games, gameIds, gamesCount} = this.tabData();
+      const { games, gameIds, gamesCount } = this.tabData();
       await this.pushGames(games, gameIds, gamesCount);
       return this.success();
     }
@@ -43,11 +41,15 @@ export default class CollectionFetcher extends Fetcher {
       }
 
       const localGames = await db.games.findByIds(localCollection.gameIds);
-      await this.pushGames(indexBy(localGames, "id"), gameIds, localCollection.gamesCount);
+      await this.pushGames(
+        indexBy(localGames, "id"),
+        gameIds,
+        localCollection.gamesCount,
+      );
     }
 
     let normalized;
-    const collResponse = await this.withApi(async (api) => {
+    const collResponse = await this.withApi(async api => {
       return await api.collection(collectionId);
     });
 
@@ -62,7 +64,7 @@ export default class CollectionFetcher extends Fetcher {
       },
     });
 
-    const gamesResponse = await this.withApi(async (api) => {
+    const gamesResponse = await this.withApi(async api => {
       return await api.collectionGames(collectionId);
     });
 
@@ -83,8 +85,16 @@ export default class CollectionFetcher extends Fetcher {
     return gameIds.length > 0;
   }
 
-  async pushGames(games: IGameRecordSet, gameIds: number[], gamesCount: number) {
-    const sortedGames = sortAndFilter(getByIds(games, gameIds), this.tabId, this.store);
+  async pushGames(
+    games: IGameRecordSet,
+    gameIds: number[],
+    gamesCount: number,
+  ) {
+    const sortedGames = sortAndFilter(
+      getByIds(games, gameIds),
+      this.tabId,
+      this.store,
+    );
 
     this.push({
       games: games,

@@ -1,7 +1,11 @@
+export type HTTPMethod = "head" | "get" | "post" | "put" | "patch" | "delete";
 
-export type HTTPMethod = "head" | "get" | "post"  | "put" | "patch" | "delete";
-
-export type RequestFunc = (method: HTTPMethod, uri: string, data: any, opts?: IRequestOpts) => Promise<IResponse>;
+export type RequestFunc = (
+  method: HTTPMethod,
+  uri: string,
+  data: any,
+  opts?: IRequestOpts,
+) => Promise<IResponse>;
 
 export interface IHeaders {
   [key: string]: string[];
@@ -14,7 +18,7 @@ export interface IResponse {
   headers: IHeaders;
 }
 
-import {WriteStream} from "fs";
+import { WriteStream } from "fs";
 
 export interface IRequestCallback {
   (res: IResponse): void;

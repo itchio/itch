@@ -1,4 +1,3 @@
-
 import urlParser from "./url";
 import * as querystring from "querystring";
 
@@ -7,11 +6,7 @@ import staticTabData from "../constants/static-tab-data";
 import GameModel from "../db/models/game";
 import UserModel from "../db/models/user";
 
-import {
-  ICollectionRecord,
-  IInstallLocation,
-  ITabData,
-} from "../types";
+import { ICollectionRecord, IInstallLocation, ITabData } from "../types";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 
@@ -55,7 +50,7 @@ export function pathToId(path: string): string {
     const questionIndex = sub.lastIndexOf("?");
     if (questionIndex === -1) {
       return sub;
-    } 
+    }
     return sub.substring(0, questionIndex);
   }
   return "";
@@ -149,7 +144,10 @@ export function collectionToTabData(collection: ICollectionRecord) {
       [collection.id]: collection,
     },
     label: collection.title,
-    subtitle: ["sidebar.collection.subtitle", { itemCount: collection.gamesCount }],
+    subtitle: [
+      "sidebar.collection.subtitle",
+      { itemCount: collection.gamesCount },
+    ],
   };
 }
 
@@ -179,7 +177,7 @@ export function makeLabel(id: string, data: ITabData) {
 }
 
 export function isAppSupported(url: string) {
-  const {host, pathname} = urlParser.parse(url);
+  const { host, pathname } = urlParser.parse(url);
 
   if (ITCH_HOST_RE.test(host)) {
     const pathItems = pathname.split("/");
@@ -198,6 +196,12 @@ export function isAppSupported(url: string) {
 }
 
 export default {
-  transformUrl, pathToId, pathPrefix, pathQuery, pathToIcon,
-  gameToTabData, collectionToTabData, isAppSupported,
+  transformUrl,
+  pathToId,
+  pathPrefix,
+  pathQuery,
+  pathToIcon,
+  gameToTabData,
+  collectionToTabData,
+  isAppSupported,
 };

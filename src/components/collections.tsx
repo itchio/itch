@@ -1,6 +1,5 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect, I18nProps } from "./connect";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
@@ -8,9 +7,9 @@ import * as actions from "../actions";
 // TODO: GameFilters doesn't belong in Collections view
 import GameFilters from "./game-filters";
 
-import {IMeatProps} from "./meats/types";
+import { IMeatProps } from "./meats/types";
 
-import {dispatcher} from "../constants/action-types";
+import { dispatcher } from "../constants/action-types";
 
 import CollectionsGrid from "./collections-grid";
 import Link from "./basics/link";
@@ -24,20 +23,29 @@ const CollectionsContainer = styled.div`
 
 const tab = "collections";
 
-export class Collections extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, navigate} = this.props;
+export class Collections extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const { t, navigate } = this.props;
 
-    return <CollectionsContainer>
-      <TitleBar tab={tab}/>
-      <GameFilters tab={tab} showBinaryFilters={false} showLayoutPicker={false}>
-        <Link
-          label={t("outlinks.manage_collections")}
-          onClick={(e) => navigate(`url/${urls.myCollections}`)}
-        />
-      </GameFilters>
-      <CollectionsGrid/>
-    </CollectionsContainer>;
+    return (
+      <CollectionsContainer>
+        <TitleBar tab={tab} />
+        <GameFilters
+          tab={tab}
+          showBinaryFilters={false}
+          showLayoutPicker={false}
+        >
+          <Link
+            label={t("outlinks.manage_collections")}
+            onClick={e => navigate(`url/${urls.myCollections}`)}
+          />
+        </GameFilters>
+        <CollectionsGrid />
+      </CollectionsContainer>
+    );
   }
 }
 
@@ -48,7 +56,7 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(Collections, {
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
   }),
 });

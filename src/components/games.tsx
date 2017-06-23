@@ -1,18 +1,17 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
-import {createSelector, createStructuredSelector} from "reselect";
+import { connect, I18nProps } from "./connect";
+import { createSelector, createStructuredSelector } from "reselect";
 
-import {IAppState, TabLayout, ITabParams} from "../types";
+import { IAppState, TabLayout, ITabParams } from "../types";
 import Game from "../db/models/game";
 
 import GameGrid from "./game-grid";
 import GameTable from "./game-table";
 
-import {ISortParams} from "./sort-types";
+import { ISortParams } from "./sort-types";
 
 import * as actions from "../actions";
-import {dispatcher} from "../constants/action-types";
+import { dispatcher } from "../constants/action-types";
 
 import styled from "./styles";
 
@@ -20,10 +19,13 @@ export const HubGamesDiv = styled.div`
   flex-grow: 1;
 `;
 
-class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
+class Games extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
   onSortChange = (sortParams: ISortParams) => {
-    const {params: oldParams, tab} = this.props;
-    let {sortBy, sortDirection} = sortParams;
+    const { params: oldParams, tab } = this.props;
+    let { sortBy, sortDirection } = sortParams;
 
     if (sortBy !== oldParams.sortBy) {
       // sorting by different column
@@ -35,31 +37,45 @@ class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps, void
 
     this.props.tabParamsChanged({
       id: tab,
-      params: {sortBy, sortDirection},
+      params: { sortBy, sortDirection },
     });
-  }
+  };
 
   render() {
-    const {games, gamesCount, gamesOffset, hiddenCount, tab, params, layout} = this.props;
-    const {sortBy, sortDirection} = params;
+    const {
+      games,
+      gamesCount,
+      gamesOffset,
+      hiddenCount,
+      tab,
+      params,
+      layout,
+    } = this.props;
+    const { sortBy, sortDirection } = params;
 
     if (layout === "grid") {
-      return <GameGrid
-        games={games}
-        gamesCount={gamesCount}
-        gamesOffset={gamesOffset}
-        hiddenCount={hiddenCount}
-        tab={tab}/>;
+      return (
+        <GameGrid
+          games={games}
+          gamesCount={gamesCount}
+          gamesOffset={gamesOffset}
+          hiddenCount={hiddenCount}
+          tab={tab}
+        />
+      );
     } else if (layout === "table") {
-      return <GameTable
-        games={games}
-        gamesCount={gamesCount}
-        gamesOffset={gamesOffset}
-        hiddenCount={hiddenCount}
-        tab={tab}
-        sortBy={sortBy}
-        sortDirection={sortDirection}
-        onSortChange={this.onSortChange}/>;
+      return (
+        <GameTable
+          games={games}
+          gamesCount={gamesCount}
+          gamesOffset={gamesOffset}
+          hiddenCount={hiddenCount}
+          tab={tab}
+          sortBy={sortBy}
+          sortDirection={sortDirection}
+          onSortChange={this.onSortChange}
+        />
+      );
     } else {
       return <div>Unknown layout {layout}</div>;
     }
@@ -87,7 +103,7 @@ const emptyArr = [];
 
 export default connect<IProps>(Games, {
   state: (initialState, initialProps) => {
-    const {tab} = initialProps;
+    const { tab } = initialProps;
     return createSelector(
       (state: IAppState) => state.session.tabData[tab] || emptyObj,
       (state: IAppState) => state.session.tabParams[tab] || emptyObj,
@@ -97,7 +113,7 @@ export default connect<IProps>(Games, {
         games: (data, params, layout) => {
           const games = data.games || emptyObj;
           const gameIds = data.gameIds || emptyArr;
-          return gameIds.map((id) => games[id]);
+          return gameIds.map(id => games[id]);
         },
         gamesCount: (data, params, layout) => data.gamesCount || 0,
         gamesOffset: (data, params, layout) => data.gamesOffset || 0,
@@ -107,7 +123,7 @@ export default connect<IProps>(Games, {
       }),
     );
   },
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),
   }),
 });

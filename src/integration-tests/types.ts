@@ -1,5 +1,4 @@
-
-import {Application} from "spectron";
+import { Application } from "spectron";
 import "zopf";
 
 export const DefaultTimeout = 5000;
@@ -11,7 +10,9 @@ export interface ISpecOpts {
 }
 
 export interface ISpec {
-  (name: string, cb: (t: IIntegrationTest) => Promise<void>, opts?: ISpecOpts): void;
+  (name: string, cb: (
+    t: IIntegrationTest,
+  ) => Promise<void>, opts?: ISpecOpts): void;
 }
 
 interface ITestAdditions {
@@ -32,4 +33,5 @@ export type IIntegrationTest = Zopf.ITest & ITestAdditions;
 export const testAccountName = "itch-test-account";
 export const testAccountPassword = process.env.ITCH_TEST_ACCOUNT_PASSWORD;
 
-export const sleep = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
+export const sleep = ms =>
+  new Promise((resolve, reject) => setTimeout(resolve, ms));

@@ -1,5 +1,4 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import noop from "../../util/noop";
 import butler from "../../util/butler";
@@ -11,19 +10,19 @@ import archive from "./archive";
 import * as ospath from "path";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "install/dmg"});
+const logger = rootLogger.child({ name: "install/dmg" });
 
-import {IStartTaskOpts} from "../../types";
+import { IStartTaskOpts } from "../../types";
 
 const HFS_RE = /(\S*)\s*(Apple_HFS)?\s+(.*)\s*$/;
 
 let self = {
-  install: async function (out: EventEmitter, opts: IStartTaskOpts) {
+  install: async function(out: EventEmitter, opts: IStartTaskOpts) {
     let archivePath = opts.archivePath;
     let onProgress = opts.onProgress || noop;
 
     logger.info(`Preparing installation of '${archivePath}'`);
-    onProgress({percent: -1});
+    onProgress({ percent: -1 });
 
     let cdrPath = ospath.resolve(archivePath + ".cdr");
 
@@ -69,7 +68,7 @@ let self = {
         logger.info(`Trying to detach ${cdrPath}...`);
         code = await spawn({
           command: "hdiutil",
-          args: [ "detach", "-force", mountpoint ],
+          args: ["detach", "-force", mountpoint],
         });
       }
     }
@@ -87,12 +86,7 @@ let self = {
 
     code = await spawn({
       command: "hdiutil",
-      args: [
-        "convert",
-        archivePath,
-        "-format", "UDTO",
-        "-o", cdrPath,
-      ],
+      args: ["convert", archivePath, "-format", "UDTO", "-o", cdrPath],
     });
     if (code !== 0) {
       throw new Error(`Failed to convert dmg image, with code ${code}`);
@@ -112,7 +106,7 @@ let self = {
         "-noverify", // no integrity check (we do those ourselves)
         cdrPath,
       ],
-      onToken: (tok) => {
+      onToken: tok => {
         logger.info(`hdiutil attach: ${tok}`);
         let hfsMatches = HFS_RE.exec(tok);
         if (hfsMatches) {
@@ -138,7 +132,7 @@ let self = {
     };
     await deploy.deploy(deployOpts);
 
-    const cleanup = async function () {
+    const cleanup = async function() {
       logger.info(`Detaching cdr file ${cdrPath}`);
       code = await spawn({
         command: "hdiutil",
@@ -160,8 +154,8 @@ let self = {
     cleanup();
   },
 
-  uninstall: async function (out: EventEmitter, opts: IStartTaskOpts) {
-    logger.info("Relying on archive\'s uninstall routine");
+  uninstall: async function(out: EventEmitter, opts: IStartTaskOpts) {
+    logger.info("Relying on archive's uninstall routine");
     await archive.uninstall(out, opts);
   },
 };

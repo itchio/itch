@@ -1,8 +1,7 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect, I18nProps } from "./connect";
 
-import {map} from "underscore";
+import { map } from "underscore";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
@@ -11,11 +10,11 @@ import Filler from "./basics/filler";
 import Icon from "./basics/icon";
 import Button from "./basics/button";
 import TitleBar from "./title-bar";
-import {IMeatProps} from "./meats/types";
+import { IMeatProps } from "./meats/types";
 
-import {transformUrl} from "../util/navigation";
+import { transformUrl } from "../util/navigation";
 
-import {dispatcher} from "../constants/action-types";
+import { dispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
 
@@ -91,57 +90,72 @@ const UrlContainer = styled.div`
   }
 `;
 
-export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
+export class NewTab extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
   urlField: HTMLInputElement;
 
-  constructor () {
+  constructor() {
     super();
   }
 
-  render () {
-    const {t, tab, evolveTab} = this.props;
+  render() {
+    const { t, tab, evolveTab } = this.props;
 
-    return <NewTabContainer>
-      <NewTabGrid>
-        <TitleBar tab={tab}/>
+    return (
+      <NewTabContainer>
+        <NewTabGrid>
+          <TitleBar tab={tab} />
 
-        <Spacer/>
+          <Spacer />
 
-        <Title>{t("new_tab.titles.buttons")}</Title>
+          <Title>{t("new_tab.titles.buttons")}</Title>
 
-        {map(newTabItems, (item) => {
-          const {label, icon, path} = item;
+          {map(newTabItems, item => {
+            const { label, icon, path } = item;
 
-          return <NewTabItem key={path} onClick={() => evolveTab({id: tab, path})}>
-            <Icon icon={icon}/>
-            <span>{t.format(label)}</span>
-          </NewTabItem>;
-        })}
+            return (
+              <NewTabItem
+                key={path}
+                onClick={() => evolveTab({ id: tab, path })}
+              >
+                <Icon icon={icon} />
+                <span>{t.format(label)}</span>
+              </NewTabItem>
+            );
+          })}
 
-        <Title>{t("new_tab.titles.input")}</Title>
-        <WebNavContainer>
-          <UrlContainer>
-            <input className="browser-address" autoFocus onKeyUp={this.addressKeyUp} ref={this.onUrlField}
-              placeholder={t("new_tab.titles.browser_placeholder")}/>
-            <span className="icon icon-earth"/>
-          </UrlContainer>
-          <Filler/>
-          <Button
-            primary
-            className="go-button"
-            discreet
-            icon="arrow-right"
-            label={t("grid.item.open")}
-            onClick={this.navigate}
-          />
-        </WebNavContainer>
-      </NewTabGrid>
-    </NewTabContainer>;
+          <Title>{t("new_tab.titles.input")}</Title>
+          <WebNavContainer>
+            <UrlContainer>
+              <input
+                className="browser-address"
+                autoFocus
+                onKeyUp={this.addressKeyUp}
+                ref={this.onUrlField}
+                placeholder={t("new_tab.titles.browser_placeholder")}
+              />
+              <span className="icon icon-earth" />
+            </UrlContainer>
+            <Filler />
+            <Button
+              primary
+              className="go-button"
+              discreet
+              icon="arrow-right"
+              label={t("grid.item.open")}
+              onClick={this.navigate}
+            />
+          </WebNavContainer>
+        </NewTabGrid>
+      </NewTabContainer>
+    );
   }
 
   onUrlField = (urlField: HTMLInputElement) => {
     this.urlField = urlField;
-  }
+  };
 
   addressKeyUp = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -151,18 +165,18 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps & I18nPro
       }
       await this.navigate();
     }
-  }
+  };
 
   navigate = async () => {
-    const {urlField} = this;
+    const { urlField } = this;
     if (!urlField) {
       return;
     }
 
     const url = await transformUrl(urlField.value);
-    const {tab, evolveTab} = this.props;
-    evolveTab({id: tab, path: `url/${url}`});
-  }
+    const { tab, evolveTab } = this.props;
+    evolveTab({ id: tab, path: `url/${url}` });
+  };
 }
 
 interface IProps extends IMeatProps {}
@@ -172,7 +186,7 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(NewTab, {
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     evolveTab: dispatcher(dispatch, actions.evolveTab),
   }),
 });

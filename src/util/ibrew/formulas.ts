@@ -1,4 +1,3 @@
-
 import * as ospath from "path";
 import * as sf from "../../os/sf";
 
@@ -129,15 +128,16 @@ self.activate = {
 self.firejail = {
   format: "7z",
   osWhitelist: ["linux"],
-  skipUpgradeWhen: async function (opts) {
-    const {binPath} = opts;
+  skipUpgradeWhen: async function(opts) {
+    const { binPath } = opts;
     try {
       const stats = await sf.lstat(ospath.join(binPath, "firejail"));
       if (stats.uid !== 0) {
-        return {reason: "not owned by root"};
+        return { reason: "not owned by root" };
       }
-      if ((stats.mode & 0o4000) === 0) { // tslint:disable-line:no-bitwise
-        return {resason: "not suid"};
+      if ((stats.mode & 0o4000) === 0) {
+        // tslint:disable-line:no-bitwise
+        return { resason: "not suid" };
       }
     } catch (e) {
       if (e.code === "ENOENT") {

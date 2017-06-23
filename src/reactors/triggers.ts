@@ -1,13 +1,12 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 
 import * as actions from "../actions";
 
-import {pathToId} from "../util/navigation";
+import { pathToId } from "../util/navigation";
 
-import {sortBy} from "underscore";
+import { sortBy } from "underscore";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.triggerMainAction, async (store, action) => {
     const id = store.getState().session.navigation.id;
     const data = store.getState().session.tabData[id];
@@ -15,7 +14,7 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    const {path} = data;
+    const { path } = data;
     if (/^games/.test(path)) {
       const gameId = +pathToId(path);
       const game = (data.games || {})[gameId];
@@ -23,7 +22,7 @@ export default function (watcher: Watcher) {
         // FIXME: queueGame doesn't always do the right thing.
         // it'll try installing even if there's no chance you'll be able
         // to download it (for example, if you need to purchase it first)
-        store.dispatch(actions.queueGame({game}));
+        store.dispatch(actions.queueGame({ game }));
       }
     }
   });
@@ -36,11 +35,14 @@ export default function (watcher: Watcher) {
       const picking = store.getState().session.login.picking;
       if (page === "gate" && picking) {
         const rememberedSessions = store.getState().rememberedSessions;
-        const mostRecentSession = sortBy(rememberedSessions, ((x) => -x.lastConnected))[0];
+        const mostRecentSession = sortBy(
+          rememberedSessions,
+          x => -x.lastConnected,
+        )[0];
         if (mostRecentSession) {
-          const {me, key} = mostRecentSession;
-          const {username} = me;
-          store.dispatch(actions.loginWithToken({username, key, me}));
+          const { me, key } = mostRecentSession;
+          const { username } = me;
+          store.dispatch(actions.loginWithToken({ username, key, me }));
         }
       }
       return;

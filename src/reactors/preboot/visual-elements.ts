@@ -1,14 +1,13 @@
-
 import * as os from "../../os";
 import spawn from "../../os/spawn";
 import * as sf from "../../os/sf";
 import shortcut from "../../os/win32/shortcut";
 
-import {app} from "electron";
-import {join, dirname} from "path";
+import { app } from "electron";
+import { join, dirname } from "path";
 
 import rootLogger from "../../logger";
-const logger = rootLogger.child({name: "visual-elements"});
+const logger = rootLogger.child({ name: "visual-elements" });
 
 const getStartMenuVbs = `set sh = WScript.CreateObject("Wscript.Shell")
 startPath = sh.SpecialFolders("StartMenu")
@@ -22,7 +21,7 @@ const visualElementsManifest = `<Application xmlns:xsi="http://www.w3.org/2001/X
 </Application>`;
 
 const self = {
-  async createIfNeeded (opts: any): Promise<void> {
+  async createIfNeeded(opts: any): Promise<void> {
     if (os.platform() !== "win32") {
       return;
     }
@@ -46,13 +45,15 @@ const self = {
     const manifestPath = join(updateDirName, "itch.VisualElementsManifest.xml");
 
     logger.info(`Writing visual elements manifest at ${manifestPath}`);
-    await sf.writeFile(manifestPath, visualElementsManifest, {encoding: "utf8"});
+    await sf.writeFile(manifestPath, visualElementsManifest, {
+      encoding: "utf8",
+    });
 
     logger.debug(`Looking for start menu folder`);
 
     // avert your gaze for a minute...
     const vbsTempPath = join(app.getPath("temp"), "getstart.vbs");
-    await sf.writeFile(vbsTempPath, getStartMenuVbs, {encoding: "utf8"});
+    await sf.writeFile(vbsTempPath, getStartMenuVbs, { encoding: "utf8" });
 
     const out = await spawn.getOutput({
       command: "cscript",
@@ -68,7 +69,9 @@ const self = {
       return;
     }
 
-    const itchLinks = await sf.glob(`${app.getName()}.lnk`, {cwd: startMenuPath});
+    const itchLinks = await sf.glob(`${app.getName()}.lnk`, {
+      cwd: startMenuPath,
+    });
     logger.debug(`Found shortcuts:\n${JSON.stringify(itchLinks, null, 2)}`);
 
     const mtime = Date.now() / 1000;

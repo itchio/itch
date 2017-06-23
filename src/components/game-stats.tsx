@@ -1,13 +1,12 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect, I18nProps } from "./connect";
 
 import interleave from "./interleave";
 
 import platformData from "../constants/platform-data";
 import actionForGame from "../util/action-for-game";
 
-import {formatPrice} from "../format";
+import { formatPrice } from "../format";
 
 import TimeAgo from "./basics/time-ago";
 import Icon from "./basics/icon";
@@ -15,8 +14,8 @@ import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
 import Game from "../db/models/game";
-import {ICaveSummary} from "../db/models/cave";
-import {IDownloadKeySummary} from "../db/models/download-key";
+import { ICaveSummary } from "../db/models/cave";
+import { IDownloadKeySummary } from "../db/models/download-key";
 
 import styled from "./styles";
 
@@ -56,61 +55,79 @@ const GameStatsDiv = styled.div`
   }
 `;
 
-export class GameStats extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, cave, game = {} as Game, downloadKey, mdash = true} = this.props;
+export class GameStats extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const {
+      t,
+      cave,
+      game = {} as Game,
+      downloadKey,
+      mdash = true,
+    } = this.props;
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
 
     if (cave) {
-      return <GameStatsDiv>
-        <TotalPlaytime game={game} cave={cave}/>
-        <LastPlayed game={game} cave={cave}/>
-      </GameStatsDiv>;
+      return (
+        <GameStatsDiv>
+          <TotalPlaytime game={game} cave={cave} />
+          <LastPlayed game={game} cave={cave} />
+        </GameStatsDiv>
+      );
     } else {
       const platforms: JSX.Element[] = [];
       if (classAction === "launch") {
         for (const p of platformData) {
           if ((game as any)[p.field]) {
-            platforms.push(<Icon hint={p.platform} icon={p.icon}/>);
+            platforms.push(<Icon hint={p.platform} icon={p.icon} />);
           }
         }
       }
-      const {minPrice, sale, currency = "USD"} = game;
+      const { minPrice, sale, currency = "USD" } = game;
 
-      return <GameStatsDiv>
-        <div className="total-playtime">
-        {t(`usage_stats.description.${classification}`)}
-        {(platforms.length > 0)
-          ? [" ", interleave(t, "usage_stats.description.platforms", {platforms})]
-          : ""
-        }
-        {mdash ? " — " : <br/>}
-        {downloadKey
-          ? interleave(t, "usage_stats.description.bought_time_ago",
-              {time_ago: <TimeAgo date={downloadKey.createdAt}/>})
-          : (minPrice > 0
-            ? interleave(t, "usage_stats.description.price", {
-              price: (sale ?
-                [
-                  <label className="original-price">
-                    {formatPrice(currency, minPrice)}
-                  </label>,
-                  <label>
-                    {" "}
-                    {formatPrice(currency, minPrice * (1 - sale.rate / 100))}
-                  </label>,
+      return (
+        <GameStatsDiv>
+          <div className="total-playtime">
+            {t(`usage_stats.description.${classification}`)}
+            {platforms.length > 0
+              ? [
+                  " ",
+                  interleave(t, "usage_stats.description.platforms", {
+                    platforms,
+                  }),
                 ]
-              : <label>
-                 {formatPrice(currency, minPrice)}
-                </label>
-              ),
-            })
-            : t("usage_stats.description.free_download")
-          )
-        }
-        </div>
-      </GameStatsDiv>;
+              : ""}
+            {mdash ? " — " : <br />}
+            {downloadKey
+              ? interleave(t, "usage_stats.description.bought_time_ago", {
+                  time_ago: <TimeAgo date={downloadKey.createdAt} />,
+                })
+              : minPrice > 0
+                ? interleave(t, "usage_stats.description.price", {
+                    price: sale
+                      ? [
+                          <label className="original-price">
+                            {formatPrice(currency, minPrice)}
+                          </label>,
+                          <label>
+                            {" "}
+                            {formatPrice(
+                              currency,
+                              minPrice * (1 - sale.rate / 100),
+                            )}
+                          </label>,
+                        ]
+                      : <label>
+                          {formatPrice(currency, minPrice)}
+                        </label>,
+                  })
+                : t("usage_stats.description.free_download")}
+          </div>
+        </GameStatsDiv>
+      );
     }
   }
 }

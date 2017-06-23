@@ -1,4 +1,3 @@
-
 import suite from "../test-suite";
 import * as navigation from "./navigation";
 
@@ -36,12 +35,21 @@ suite(__filename, s => {
     t.same(await navigation.transformUrl("about:blank"), "about:blank");
     t.same(await navigation.transformUrl("https://itch.io"), "https://itch.io");
     t.same(await navigation.transformUrl("itch.io"), "http://itch.io");
-    t.same(await navigation.transformUrl("http://localhost.com:8080/randomizer"),
-      "http://localhost.com:8080/randomizer");
-    t.same(await navigation.transformUrl("kermit plushie"),
-      "https://duckduckgo.com/?q=kermit%20plushie&kae=d");
-    t.same(await navigation.transformUrl("?kermit"),
-      "https://duckduckgo.com/?q=kermit&kae=d");
-    t.same(await navigation.transformUrl(""), "https://duckduckgo.com/?q=&kae=d");
+    t.same(
+      await navigation.transformUrl("http://localhost.com:8080/randomizer"),
+      "http://localhost.com:8080/randomizer",
+    );
+    t.same(
+      await navigation.transformUrl("kermit plushie"),
+      "https://duckduckgo.com/?q=kermit%20plushie&kae=d",
+    );
+    t.same(
+      await navigation.transformUrl("?kermit"),
+      "https://duckduckgo.com/?q=kermit&kae=d",
+    );
+    t.same(
+      await navigation.transformUrl(""),
+      "https://duckduckgo.com/?q=&kae=d",
+    );
   });
 });

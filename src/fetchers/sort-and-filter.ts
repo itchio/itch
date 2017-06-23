@@ -1,25 +1,24 @@
-
 import Game from "../db/models/game";
-import Cave, {ICaveSummary} from "../db/models/cave";
+import Cave, { ICaveSummary } from "../db/models/cave";
 import DownloadKey from "../db/models/download-key";
 
-import {itchPlatform} from "../os";
-import {camelify} from "../format";
+import { itchPlatform } from "../os";
+import { camelify } from "../format";
 
 const platform = itchPlatform();
 const platformProp = camelify("p_" + platform);
 
-import {IStore, ITabParams, ICommonsState} from "../types";
+import { IStore, ITabParams, ICommonsState } from "../types";
 
-import {QueryBuilder} from "typeorm";
+import { QueryBuilder } from "typeorm";
 
 import isPlatformCompatible from "../util/is-platform-compatible";
 
-import {filter, sortBy as sortedBy} from "underscore";
+import { filter, sortBy as sortedBy } from "underscore";
 
 const emptyObj = {};
 
-function getCaveSummary (commons: ICommonsState, game: Game): ICaveSummary {
+function getCaveSummary(commons: ICommonsState, game: Game): ICaveSummary {
   const ids = commons.caveIdsByGameId[game.id];
   if (ids && ids.length > 0) {
     return commons.caves[ids[0]];
@@ -27,20 +26,27 @@ function getCaveSummary (commons: ICommonsState, game: Game): ICaveSummary {
   return null;
 }
 
-export function sortAndFilter (games: Game[], tab: string, store: IStore): Game[] {
+export function sortAndFilter(
+  games: Game[],
+  tab: string,
+  store: IStore,
+): Game[] {
   let set = games;
   const state = store.getState();
   const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
-  const {sortBy, sortDirection = "DESC"} = tabParams;
+  const { sortBy, sortDirection = "DESC" } = tabParams;
   const prefs = state.preferences;
 
-  const hasFilters = prefs.onlyCompatibleGames || prefs.onlyInstalledGames || prefs.onlyOwnedGames;
+  const hasFilters =
+    prefs.onlyCompatibleGames ||
+    prefs.onlyInstalledGames ||
+    prefs.onlyOwnedGames;
 
   if (hasFilters) {
     const installedSet = state.commons.caveIdsByGameId;
     const ownedSet = state.commons.downloadKeyIdsByGameId;
 
-    set = filter(set, (g) => {
+    set = filter(set, g => {
       if (prefs.onlyCompatibleGames && !isPlatformCompatible(g)) {
         return false;
       }
@@ -64,7 +70,7 @@ export function sortAndFilter (games: Game[], tab: string, store: IStore): Game[
         set = sortedBy(set, "publishedAt");
         break;
       case "lastTouched":
-        set = sortedBy(set, (g) => {
+        set = sortedBy(set, g => {
           const cave = getCaveSummary(state.commons, g);
           if (cave) {
             return cave.lastTouched;
@@ -77,7 +83,7 @@ export function sortAndFilter (games: Game[], tab: string, store: IStore): Game[
         set = sortedBy(set, "createdAt");
         break;
       default:
-        // don't sort if we don't know how to
+      // don't sort if we don't know how to
     }
 
     if (sortDirection === "DESC") {
@@ -88,20 +94,26 @@ export function sortAndFilter (games: Game[], tab: string, store: IStore): Game[
   return set;
 }
 
-export function addSortAndFilterToQuery (query: QueryBuilder<Game>, tab: string, store: IStore) {
+export function addSortAndFilterToQuery(
+  query: QueryBuilder<Game>,
+  tab: string,
+  store: IStore,
+) {
   const state = store.getState();
   const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
-  const {sortBy, sortDirection = "DESC"} = tabParams;
+  const { sortBy, sortDirection = "DESC" } = tabParams;
   const prefs = state.preferences;
 
   if (prefs.onlyCompatibleGames) {
-    query.andWhere(`(${platformProp} or type = :safType or classification not in (:safClass))`);
+    query.andWhere(
+      `(${platformProp} or type = :safType or classification not in (:safClass))`,
+    );
     query.addParameters({
       safType: "html",
       safClass: ["game", "tool"],
     });
   }
-  
+
   let joinCave = false;
   let joinDownloadKeys = false;
 
@@ -118,7 +130,10 @@ export function addSortAndFilterToQuery (query: QueryBuilder<Game>, tab: string,
   if (sortBy) {
     switch (sortBy) {
       case "title":
-        query.orderBy("games.title", ("COLLATE NOCASE " + sortDirection) as any);
+        query.orderBy(
+          "games.title",
+          ("COLLATE NOCASE " + sortDirection) as any,
+        );
         break;
       case "publishedAt":
         query.orderBy("games.publishedAt", sortDirection);
@@ -132,7 +147,7 @@ export function addSortAndFilterToQuery (query: QueryBuilder<Game>, tab: string,
         joinCave = true;
         break;
       default:
-        // dunno how to sort, don't do anything
+      // dunno how to sort, don't do anything
     }
   }
 
@@ -141,9 +156,9 @@ export function addSortAndFilterToQuery (query: QueryBuilder<Game>, tab: string,
       Cave,
       "caves",
       "caves.id = (" +
-          "select caves.id from caves " +
-          "where caves.gameId = games.id " +
-          "limit 1" +
+        "select caves.id from caves " +
+        "where caves.gameId = games.id " +
+        "limit 1" +
         ")",
     );
   }
@@ -153,12 +168,12 @@ export function addSortAndFilterToQuery (query: QueryBuilder<Game>, tab: string,
       DownloadKey,
       "downloadKeys",
       "downloadKeys.id = (" +
-          "select downloadKeys.id from downloadKeys " +
-          "where downloadKeys.gameId = games.id " +
-          "and downloadKeys.ownerId = :meId " +
-          "limit 1" +
+        "select downloadKeys.id from downloadKeys " +
+        "where downloadKeys.gameId = games.id " +
+        "and downloadKeys.ownerId = :meId " +
+        "limit 1" +
         ")",
     );
-    query.addParameters({meId: state.session.credentials.me.id});
+    query.addParameters({ meId: state.session.credentials.me.id });
   }
 }

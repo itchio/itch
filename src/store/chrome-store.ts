@@ -1,19 +1,24 @@
-
 if (process.type !== "renderer") {
   throw new Error("chrome store required from metal");
 }
 
-import { createStore, applyMiddleware, compose, GenericStoreEnhancer, Middleware } from "redux";
+import {
+  createStore,
+  applyMiddleware,
+  compose,
+  GenericStoreEnhancer,
+  Middleware,
+} from "redux";
 import { electronEnhancer } from "ftl-redux-electron-store";
 const createLogger = require("redux-logger");
 
 import route from "../reactors/route";
-import {Watcher} from "../reactors/watcher";
+import { Watcher } from "../reactors/watcher";
 import reducer from "../reducers";
 
 const watcher = new Watcher();
 
-import {IChromeStore} from "../types";
+import { IChromeStore } from "../types";
 
 const filter = true;
 const middleware: Middleware[] = [];

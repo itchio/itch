@@ -1,5 +1,4 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import db from "../db";
 
@@ -23,33 +22,30 @@ import notifyCrash from "./launch/notify-crash";
 
 import store from "../store/metal-store";
 
-import {app, powerSaveBlocker} from "electron";
+import { app, powerSaveBlocker } from "electron";
 
 import api from "../api";
 import * as paths from "../os/paths";
 
-import {Logger} from "../logger";
+import { Logger } from "../logger";
 
 import actionForGame from "../util/action-for-game";
 
-import {each} from "underscore";
+import { each } from "underscore";
 
-import {Crash, Cancelled} from "./errors";
+import { Crash, Cancelled } from "./errors";
 
 const emptyObj = {} as any;
 
-import {
-  ILaunchers,
-  IPrepares,
-} from "./launch/types";
+import { ILaunchers, IPrepares } from "./launch/types";
 
-import {
-  IQueueLaunchOpts,
-  IManifestAction, IEnvironment,
-} from "../types";
+import { IQueueLaunchOpts, IManifestAction, IEnvironment } from "../types";
 
-export default async function launch (out: EventEmitter, opts: IQueueLaunchOpts) {
-  const logger = paths.caveLogger(opts.caveId).child({name: "launch"});
+export default async function launch(
+  out: EventEmitter,
+  opts: IQueueLaunchOpts,
+) {
+  const logger = paths.caveLogger(opts.caveId).child({ name: "launch" });
 
   const cave = await db.caves.findOneById(opts.caveId);
   if (!cave) {
@@ -81,16 +77,19 @@ const prepares = {
   native: nativePrepare,
 } as IPrepares;
 
-async function doLaunch (
-      out: EventEmitter, opts: IQueueLaunchOpts, logger: Logger,
-      cave: Cave, game: Game) {
-
+async function doLaunch(
+  out: EventEmitter,
+  opts: IQueueLaunchOpts,
+  logger: Logger,
+  cave: Cave,
+  game: Game,
+) {
   let env: IEnvironment = {};
   let args: string[] = [];
 
   const action = actionForGame(game, cave);
   if (action === "open") {
-    await db.saveOne("caves", cave.id, {lastTouched: Date.now()});
+    await db.saveOne("caves", cave.id, { lastTouched: Date.now() });
     shellLaunch(out, {
       hasManifest: false,
       cave,
@@ -102,9 +101,11 @@ async function doLaunch (
     return;
   }
 
-  logger.info(`itch ${app.getVersion()} launching game ${game.id}: ${game.title}`);
+  logger.info(
+    `itch ${app.getVersion()} launching game ${game.id}: ${game.title}`,
+  );
 
-  const {preferences} = store.getState();
+  const { preferences } = store.getState();
   const appPath = paths.appPath(cave, preferences);
 
   let manifestAction: IManifestAction;
@@ -114,7 +115,7 @@ async function doLaunch (
     manifestAction = await pickManifestAction(store, manifest, game);
   }
 
-  let {launchType} = cave;
+  let { launchType } = cave;
 
   if (manifestAction) {
     launchType = await launchTypeForAction(appPath, manifestAction.path);
@@ -125,7 +126,10 @@ async function doLaunch (
       if (gameCredentials) {
         const client = api.withKey(gameCredentials.apiKey);
         const subkey = await client.subkey(game.id, manifestAction.scope);
-        logger.info(`Got subkey (${subkey.key.length} chars, expires ${subkey.expiresAt})`);
+        logger.info(
+          `Got subkey (${subkey.key
+            .length} chars, expires ${subkey.expiresAt})`,
+        );
         (env as any).ITCHIO_API_KEY = subkey.key;
         (env as any).ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt;
       } else {
@@ -134,7 +138,7 @@ async function doLaunch (
     }
 
     if (manifestAction.args) {
-      each(manifestAction.args, (arg) => {
+      each(manifestAction.args, arg => {
         args.push(arg);
       });
     }
@@ -148,13 +152,13 @@ async function doLaunch (
   const prepare = prepares[launchType];
   if (prepare) {
     logger.info(`launching prepare for ${launchType}`);
-    await prepare(out, {manifest});
+    await prepare(out, { manifest });
   } else {
     logger.info(`no prepare for ${launchType}`);
   }
 
   const startedAt = Date.now();
-  await db.saveOne("caves", cave.id, {lastTouched: startedAt});
+  await db.saveOne("caves", cave.id, { lastTouched: startedAt });
 
   let interval: NodeJS.Timer;
   const UPDATE_PLAYTIME_INTERVAL = 10; // in seconds
@@ -163,9 +167,13 @@ async function doLaunch (
     // FIXME: this belongs in a watcher reactor or something, not here.
     interval = setInterval(async () => {
       const now = Date.now();
-      const previousSecondsRun = (await db.caves.findOneById(cave.id) || emptyObj).secondsRun || 0;
+      const previousSecondsRun =
+        ((await db.caves.findOneById(cave.id)) || emptyObj).secondsRun || 0;
       const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
-      await db.saveOne("caves", cave.id, {secondsRun: newSecondsRun, lastTouched: now});
+      await db.saveOne("caves", cave.id, {
+        secondsRun: newSecondsRun,
+        lastTouched: now,
+      });
     }, UPDATE_PLAYTIME_INTERVAL * 1000);
 
     // FIXME: this belongs in a watcher reactor too
@@ -188,7 +196,9 @@ async function doLaunch (
       const secondsRunning = (Date.now() - startedAt) / 1000;
       if (secondsRunning > 2) {
         // looks like the game actually launched fine!
-        logger.warn(`Game was running for ${secondsRunning} seconds, ignoring: ${e.toString()}`);
+        logger.warn(
+          `Game was running for ${secondsRunning} seconds, ignoring: ${e.toString()}`,
+        );
         return;
       }
     }
@@ -204,6 +214,6 @@ async function doLaunch (
     if (powerSaveBlockerId) {
       powerSaveBlocker.stop(powerSaveBlockerId);
     }
-    await db.saveOne("caves", cave.id, {lastTouched: Date.now()});
+    await db.saveOne("caves", cave.id, { lastTouched: Date.now() });
   }
 }

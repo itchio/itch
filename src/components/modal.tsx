@@ -1,7 +1,6 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
-import {createStructuredSelector} from "reselect";
+import { connect, I18nProps } from "./connect";
+import { createStructuredSelector } from "reselect";
 
 import ReactModal = require("react-modal");
 import Button from "./basics/button";
@@ -12,16 +11,16 @@ import Filler from "./basics/filler";
 import colors from "../constants/colors";
 
 import * as actions from "../actions";
-import {map} from "underscore";
+import { map } from "underscore";
 
-import {IModal, IModalButtonSpec, IModalButton, IModalAction} from "../types";
-import {IModalResponsePayload} from "../constants/action-types";
+import { IModal, IModalButtonSpec, IModalButton, IModalAction } from "../types";
+import { IModalResponsePayload } from "../constants/action-types";
 
-import {IModalWidgetProps} from "./modal-widgets/modal-widget";
+import { IModalWidgetProps } from "./modal-widgets/modal-widget";
 
-import watching, {Watcher} from "./watching";
+import watching, { Watcher } from "./watching";
 import styled, * as styles from "./styles";
-import {stripUnit} from "polished";
+import { stripUnit } from "polished";
 
 type Flavor = "normal" | "big";
 
@@ -332,17 +331,20 @@ const DEFAULT_BUTTONS = {
 } as IDefaultButtons;
 
 @watching
-export class Modal extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
+export class Modal extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  IState
+> {
+  constructor() {
     super();
     this.state = {
       widgetPayload: null,
     };
   }
 
-  subscribe (watcher: Watcher) {
+  subscribe(watcher: Watcher) {
     watcher.on(actions.triggerOk, async (store, action) => {
-      const {modal} = this.props;
+      const { modal } = this.props;
       if (!modal) {
         return;
       }
@@ -357,89 +359,101 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps & I18nProp
     });
   }
 
-  render () {
-    const {t, modal, closeModal} = this.props;
+  render() {
+    const { t, modal, closeModal } = this.props;
 
     if (modal) {
-      const {bigButtons = [], buttons = [], cover, title = "", message = "", detail, widget} = modal;
+      const {
+        bigButtons = [],
+        buttons = [],
+        cover,
+        title = "",
+        message = "",
+        detail,
+        widget,
+      } = modal;
 
-      return <ReactModal isOpen contentLabel="Modal" style={customStyles}>
-        <ModalDiv>
-          <HeaderDiv>
-            <span className="title">{t.format(title)}</span>
-            <Filler/>
-            {modal.unclosable
-              ? null
-              : <IconButton icon="cross" onClick={() => closeModal({})}/>
-            }
-          </HeaderDiv>
+      return (
+        <ReactModal isOpen contentLabel="Modal" style={customStyles}>
+          <ModalDiv>
+            <HeaderDiv>
+              <span className="title">{t.format(title)}</span>
+              <Filler />
+              {modal.unclosable
+                ? null
+                : <IconButton icon="cross" onClick={() => closeModal({})} />}
+            </HeaderDiv>
 
-          { message !== ""
-          ? <div className="body">
-            <div className="message">
-              <div><Markdown source={t.format(message)}/></div>
-              {detail && <div className="secondary"><Markdown source={t.format(detail)}/></div>}
-            </div>
-          </div>
-          : null }
-          
-          {widget
-          ? this.renderWidget(widget, modal)
-          : null}
+            {message !== ""
+              ? <div className="body">
+                  <div className="message">
+                    <div><Markdown source={t.format(message)} /></div>
+                    {detail &&
+                      <div className="secondary">
+                        <Markdown source={t.format(detail)} />
+                      </div>}
+                  </div>
+                </div>
+              : null}
 
-          {bigButtons.length > 0
-          ? <div className="big-wrapper">
-            {cover
-              ? <img className="cover" src={cover}/>
-              : ""}
-            {this.renderButtons(bigButtons, "big")}
-          </div>
-          : null}
+            {widget ? this.renderWidget(widget, modal) : null}
 
-          {this.renderButtons(buttons, "normal")}
-        </ModalDiv>
-      </ReactModal>;
+            {bigButtons.length > 0
+              ? <div className="big-wrapper">
+                  {cover ? <img className="cover" src={cover} /> : ""}
+                  {this.renderButtons(bigButtons, "big")}
+                </div>
+              : null}
+
+            {this.renderButtons(buttons, "normal")}
+          </ModalDiv>
+        </ReactModal>
+      );
     } else {
-      return <div/>;
+      return <div />;
     }
   }
 
-  renderButtons (buttons: IModalButtonSpec[], flavor: Flavor) {
+  renderButtons(buttons: IModalButtonSpec[], flavor: Flavor) {
     if (buttons.length === 0) {
       return null;
     }
 
-    const {t} = this.props;
+    const { t } = this.props;
 
-    return <ButtonsDiv>
-      <Filler/>
-      {map(buttons, (buttonSpec, index) => {
-        const button = this.specToButton(buttonSpec);
-        const {label, className = "", icon, id} = button;
-        let onClick = this.buttonOnClick(button);
+    return (
+      <ButtonsDiv>
+        <Filler />
+        {map(buttons, (buttonSpec, index) => {
+          const button = this.specToButton(buttonSpec);
+          const { label, className = "", icon, id } = button;
+          let onClick = this.buttonOnClick(button);
 
-        return <Button
-          id={id}
-          primary={className !== "secondary"}
-          discreet
-          key={index}
-          onClick={onClick}
-          icon={icon}
-          label={t.format(label)}
-        />;
+          return (
+            <Button
+              id={id}
+              primary={className !== "secondary"}
+              discreet
+              key={index}
+              onClick={onClick}
+              icon={icon}
+              label={t.format(label)}
+            />
+          );
 
-        // TODO: tags
-        /*{tags
+          // TODO: tags
+          /*{tags
           ? map(tags, (tag) => {
             return <span className="tag">{t.format(tag.label)}</span>;
           })
           : null
         }*/
-      })}
-    </ButtonsDiv>;
+        })}
+      </ButtonsDiv>
+    );
   }
 
-  specToButton (buttonSpec: IModalButtonSpec): IModalButton {
+  specToButton(buttonSpec: IModalButtonSpec): IModalButton {
     let button: IModalButton;
     if (typeof buttonSpec === "string") {
       button = DEFAULT_BUTTONS[buttonSpec];
@@ -455,9 +469,9 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps & I18nProp
     return button;
   }
 
-  buttonOnClick (button: IModalButton): () => void {
-    const {dispatch} = this.props;
-    const {action, actionSource} = button;
+  buttonOnClick(button: IModalButton): () => void {
+    const { dispatch } = this.props;
+    const { action, actionSource } = button;
 
     let onClick = () => dispatch(action);
     if (actionSource === "widget") {
@@ -468,7 +482,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps & I18nProp
     return onClick;
   }
 
-  renderWidget (widget: string, modal: IModal): JSX.Element {
+  renderWidget(widget: string, modal: IModal): JSX.Element {
     // this is run in the context of `chrome.js`, so relative to `app`
     try {
       let module = require(`./modal-widgets/${widget}`);
@@ -476,17 +490,17 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps & I18nProp
         throw new Error("new export");
       }
       let Component = module.default as React.ComponentClass<IModalWidgetProps>;
-      return <Component modal={modal} updatePayload={this.updatePayload}/>;
+      return <Component modal={modal} updatePayload={this.updatePayload} />;
     } catch (e) {
       return <div>Missing widget: {widget} — ${e.message}</div>;
     }
   }
 
   updatePayload = (payload: IModalResponsePayload) => {
-    this.setState({widgetPayload: payload});
-  }
+    this.setState({ widgetPayload: payload });
+  };
 
-  componentWillMount () {
+  componentWillMount() {
     ReactModal.setAppElement("body");
   }
 }
@@ -506,11 +520,11 @@ interface IState {
 
 export default connect<IProps>(Modal, {
   state: createStructuredSelector({
-    modal: (state) => state.modals[0],
+    modal: state => state.modals[0],
   }),
   dispatch: (dispatch, props) => ({
     dispatch: (action: IModalAction) => {
-      dispatch(actions.closeModal({action}));
+      dispatch(actions.closeModal({ action }));
     },
     closeModal: () => dispatch(actions.closeModal({})),
   }),

@@ -1,20 +1,19 @@
-
-import {Fetcher, Outcome} from "./types";
+import { Fetcher, Outcome } from "./types";
 
 import db from "../db";
 
 import normalize from "../api/normalize";
-import {user} from "../api/schemas";
+import { user } from "../api/schemas";
 
-import {pathToId, userToTabData} from "../util/navigation";
+import { pathToId, userToTabData } from "../util/navigation";
 
 export default class UserFetcher extends Fetcher {
-  constructor () {
+  constructor() {
     super();
   }
 
   async work(): Promise<Outcome> {
-    const {path} = this.tabData();
+    const { path } = this.tabData();
 
     const userId = +pathToId(path);
 
@@ -26,13 +25,13 @@ export default class UserFetcher extends Fetcher {
     };
     pushUser(localUser);
 
-    const {credentials} = this.store.getState().session;
+    const { credentials } = this.store.getState().session;
     if (!credentials) {
       throw new Error(`No user credentials yet`);
     }
 
-    const normalized = await this.withApi(async (api) => {
-      return normalize(await api.user(userId), {user});
+    const normalized = await this.withApi(async api => {
+      return normalize(await api.user(userId), { user });
     });
 
     pushUser(normalized.entities.users[normalized.result.userId]);
@@ -40,5 +39,3 @@ export default class UserFetcher extends Fetcher {
     return this.success();
   }
 }
-
-

@@ -1,10 +1,9 @@
-
 import * as classNames from "classnames";
 import * as React from "react";
-import {connect, I18nProps} from "../connect";
+import { connect, I18nProps } from "../connect";
 
-import {isEmpty, map, sortBy, size} from "underscore";
-import {resolve} from "path";
+import { isEmpty, map, sortBy, size } from "underscore";
+import { resolve } from "path";
 
 import urls from "../../constants/urls";
 
@@ -18,14 +17,17 @@ import Filler from "../basics/filler";
 
 import TitleBar from "../title-bar";
 
-import reporter, {IReportIssueOpts} from "../../util/crash-reporter";
+import reporter, { IReportIssueOpts } from "../../util/crash-reporter";
 
 import * as actions from "../../actions";
 
-import {ISetupOperation, IRememberedSessionsState} from "../../types";
-import {dispatcher, ILoginWithTokenPayload} from "../../constants/action-types";
+import { ISetupOperation, IRememberedSessionsState } from "../../types";
+import {
+  dispatcher,
+  ILoginWithTokenPayload,
+} from "../../constants/action-types";
 
-import watching, {Watcher} from "../watching";
+import watching, { Watcher } from "../watching";
 
 import styled, * as styles from "../styles";
 
@@ -236,173 +238,230 @@ const RememberedSessions = styled.div`
 `;
 
 @watching
-export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
+export class GatePage extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
   username: HTMLInputElement;
   password: HTMLInputElement;
 
-  subscribe (watcher: Watcher) {
+  subscribe(watcher: Watcher) {
     watcher.on(actions.loginFailed, async (store, action) => {
-      const {username} = this;
+      const { username } = this;
       if (username) {
         username.value = action.payload.username;
       }
     });
   }
 
-  render () {
-    const {t, stage, blockingOperation} = this.props;
+  render() {
+    const { t, stage, blockingOperation } = this.props;
     const disabled = !!blockingOperation;
 
-    return <GateDiv className={classNames({disabled})} data-stage={stage}>
-      <TitleBar tab="login"/>
-      <section className="top-filler"/>
-      <section className="logo">
-        <img src={resolve(__dirname, "../../static/images/logos/app-white.svg")}/>
-      </section>
+    return (
+      <GateDiv className={classNames({ disabled })} data-stage={stage}>
+        <TitleBar tab="login" />
+        <section className="top-filler" />
+        <section className="logo">
+          <img
+            src={resolve(__dirname, "../../static/images/logos/app-white.svg")}
+          />
+        </section>
 
-      {this.errors()}
+        {this.errors()}
 
-      <section className="crux">
-        <Form onSubmit={this.handleSubmit}>
-          <input id="login-username" ref={this.gotUsernameField} type="text"
-            placeholder={t("login.field.username")}
-            onKeyDown={this.handleKeyDown}
-            disabled={disabled}/>
-          <input id="login-password" ref={this.gotPasswordField} type="password"
-            placeholder={t("login.field.password")}
-            disabled={disabled}
-            onKeyDown={this.handleKeyDown}/>
-          <section className="actions">
-            {this.renderActions()}
-          </section>
-        </Form>
-      </section>
+        <section className="crux">
+          <Form onSubmit={this.handleSubmit}>
+            <input
+              id="login-username"
+              ref={this.gotUsernameField}
+              type="text"
+              placeholder={t("login.field.username")}
+              onKeyDown={this.handleKeyDown}
+              disabled={disabled}
+            />
+            <input
+              id="login-password"
+              ref={this.gotPasswordField}
+              type="password"
+              placeholder={t("login.field.password")}
+              disabled={disabled}
+              onKeyDown={this.handleKeyDown}
+            />
+            <section className="actions">
+              {this.renderActions()}
+            </section>
+          </Form>
+        </section>
 
-      {this.links()}
-    </GateDiv>;
+        {this.links()}
+      </GateDiv>
+    );
   }
 
-  errors () {
-    const {t, errors, stage} = this.props;
+  errors() {
+    const { t, errors, stage } = this.props;
 
     if (stage === "pick") {
-      return <section className="errors">
-        <span className="welcome-back">
-          <Filler/>
-          <Icon icon="heart-filled"/>
-          <Spacer/>
-          <span>{t("login.messages.welcome_back")}</span>
-          <Filler/>
-        </span>
-      </section>;
+      return (
+        <section className="errors">
+          <span className="welcome-back">
+            <Filler />
+            <Icon icon="heart-filled" />
+            <Spacer />
+            <span>{t("login.messages.welcome_back")}</span>
+            <Filler />
+          </span>
+        </section>
+      );
     } else {
-      return <section className={classNames("errors", {hasError: !isEmpty(errors)})}>
-        <ErrorList id="login-errors" errors={errors} before={<Icon icon="neutral"/>} i18nNamespace="api.login"/>
-      </section>;
+      return (
+        <section
+          className={classNames("errors", { hasError: !isEmpty(errors) })}
+        >
+          <ErrorList
+            id="login-errors"
+            errors={errors}
+            before={<Icon icon="neutral" />}
+            i18nNamespace="api.login"
+          />
+        </section>
+      );
     }
   }
 
-  links () {
-    const {t, stage, openUrl, loginStopPicking} = this.props;
+  links() {
+    const { t, stage, openUrl, loginStopPicking } = this.props;
 
     if (stage === "pick") {
-      return <section className="links">
-        <Link
-          label={t("login.action.show_form")}
-          onClick={() => loginStopPicking({})}
-        />
-      </section>;
+      return (
+        <section className="links">
+          <Link
+            label={t("login.action.show_form")}
+            onClick={() => loginStopPicking({})}
+          />
+        </section>
+      );
     } else {
-      const {rememberedSessions = {}} = this.props;
+      const { rememberedSessions = {} } = this.props;
       const numSavedSessions = Object.keys(rememberedSessions).length;
 
-      return <section className="links">
-        <Link
-          label={t("login.action.register")}
-          onClick={() => openUrl({url: urls.accountRegister})}
-        />
-        <span>{" · "}</span>
-        <Link
-          label={t("login.action.reset_password")}
-          onClick={() => openUrl({url: urls.accountForgotPassword})}
-        />
-        {numSavedSessions > 0
-        ? [
-          <span key="separator">{" · "}</span>,
+      return (
+        <section className="links">
           <Link
-            key="show-saved-logins"
-            label={t("login.action.show_saved_logins")}
-            onClick={this.onStartPicking}
-          />,
-        ]
-        : ""}
-      </section>;
+            label={t("login.action.register")}
+            onClick={() => openUrl({ url: urls.accountRegister })}
+          />
+          <span>{" · "}</span>
+          <Link
+            label={t("login.action.reset_password")}
+            onClick={() => openUrl({ url: urls.accountForgotPassword })}
+          />
+          {numSavedSessions > 0
+            ? [
+                <span key="separator">{" · "}</span>,
+                <Link
+                  key="show-saved-logins"
+                  label={t("login.action.show_saved_logins")}
+                  onClick={this.onStartPicking}
+                />,
+              ]
+            : ""}
+        </section>
+      );
     }
   }
 
-  renderActions () {
-    const {t, blockingOperation, rememberedSessions = {}, stage, retrySetup} = this.props;
+  renderActions() {
+    const {
+      t,
+      blockingOperation,
+      rememberedSessions = {},
+      stage,
+      retrySetup,
+    } = this.props;
 
     if (stage === "pick") {
       const onLogin = (payload: ILoginWithTokenPayload): any => {
-        const {username} = this.refs;
+        const { username } = this.refs;
         if (username) {
           (username as HTMLInputElement).value = payload.username;
         }
         this.props.loginWithToken(payload);
       };
 
-      return <RememberedSessions>
-        {map(sortBy(rememberedSessions, (x) => -x.lastConnected), (session, userId) =>
-          <RememberedSession key={userId} session={session} onLogin={onLogin}/>,
-        )}
-      </RememberedSessions>;
+      return (
+        <RememberedSessions>
+          {map(
+            sortBy(rememberedSessions, x => -x.lastConnected),
+            (session, userId) =>
+              <RememberedSession
+                key={userId}
+                session={session}
+                onLogin={onLogin}
+              />,
+          )}
+        </RememberedSessions>
+      );
     }
-    
+
     if (blockingOperation) {
-      const {message, icon} = blockingOperation;
+      const { message, icon } = blockingOperation;
       const translatedMessage = t.format(message);
       const hasError = icon === "error";
       let iconElement: JSX.Element;
       if (hasError) {
-        iconElement = <Icon icon={icon}/>;
+        iconElement = <Icon icon={icon} />;
       } else {
-        iconElement = <LoadingCircle progress={0.3}/>;
+        iconElement = <LoadingCircle progress={0.3} />;
       }
 
-      return <div className={classNames("status-container", {error: hasError})}>
-        {iconElement}
-        {translatedMessage}
-        {hasError
-          ? <div className="error-actions">
-              <Button
-                discreet
-                icon="repeat"
-                label={t("login.action.retry_setup")}
-                onClick={() => retrySetup({})}/>
-              <Button
-                discreet
-                icon="bug"
-                label={t("grid.item.report_problem")}
-                onClick={this.onReportBlockingOperation}/>
-            </div>
-          : null
-        }
-      </div>;
+      return (
+        <div className={classNames("status-container", { error: hasError })}>
+          {iconElement}
+          {translatedMessage}
+          {hasError
+            ? <div className="error-actions">
+                <Button
+                  discreet
+                  icon="repeat"
+                  label={t("login.action.retry_setup")}
+                  onClick={() => retrySetup({})}
+                />
+                <Button
+                  discreet
+                  icon="bug"
+                  label={t("grid.item.report_problem")}
+                  onClick={this.onReportBlockingOperation}
+                />
+              </div>
+            : null}
+        </div>
+      );
     } else {
       const translatedMessage = t("login.action.login");
-      return <Button id="login-button" fat primary label={translatedMessage} onClick={this.handleSubmit}/>;
+      return (
+        <Button
+          id="login-button"
+          fat
+          primary
+          label={translatedMessage}
+          onClick={this.handleSubmit}
+        />
+      );
     }
   }
 
-  reportIssue (blockingOperation: ISetupOperation) {
-    reporter.reportIssue({
-      type:  "Trouble in setup",
-      body: blockingOperation.stack,
-    } as IReportIssueOpts);
+  reportIssue(blockingOperation: ISetupOperation) {
+    reporter.reportIssue(
+      {
+        type: "Trouble in setup",
+        body: blockingOperation.stack,
+      } as IReportIssueOpts,
+    );
   }
 
-  componentDidUpdate (prevProps: IDerivedProps) {
+  componentDidUpdate(prevProps: IDerivedProps) {
     // so very reacty...
     if (!this.props.blockingOperation && size(this.props.errors) > 0) {
       this.handleLoginFailure();
@@ -413,54 +472,54 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps & I18nP
     }
   }
 
-  handleKeyDown = (e) => {
+  handleKeyDown = e => {
     if (e.key === "Enter") {
       this.handleSubmit();
     }
-  }
+  };
 
   handleSubmit = () => {
-    const {username, password} = this;
+    const { username, password } = this;
     this.props.loginWithPassword({
       username: username.value,
       password: password.value,
     });
-  }
+  };
 
   handleStoppedPicking = () => {
     const username = this.username;
     if (username) {
       username.focus();
     }
-  }
+  };
 
   handleLoginFailure = () => {
-    const {username, password} = this;
+    const { username, password } = this;
     if (username && username.value === "") {
       username.focus();
     } else if (password) {
       password.focus();
     }
-  }
+  };
 
-  gotUsernameField = (username) => {
+  gotUsernameField = username => {
     this.username = username;
-  }
+  };
 
-  gotPasswordField = (password) => {
+  gotPasswordField = password => {
     this.password = password;
-  }
+  };
 
   onStartPicking = () => {
     this.props.loginStartPicking({});
-  }
+  };
 
   onReportBlockingOperation = () => {
-    const {blockingOperation} = this.props;
+    const { blockingOperation } = this.props;
     if (blockingOperation) {
       this.reportIssue(blockingOperation);
     }
-  }
+  };
 }
 
 interface IProps {}
@@ -486,7 +545,9 @@ export default connect<IProps>(GatePage, {
 
     if (!session.credentials.key) {
       const hasSessions = Object.keys(rememberedSessions).length > 0;
-      const stage = (!login.blockingOperation && hasSessions && login.picking) ? "pick" : "login";
+      const stage = !login.blockingOperation && hasSessions && login.picking
+        ? "pick"
+        : "login";
       return { ...login, stage, rememberedSessions };
     } else if (!state.setup.done) {
       return { stage: "setup", ...state.setup };

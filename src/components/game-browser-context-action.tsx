@@ -1,12 +1,11 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect, I18nProps } from "./connect";
 
 import Button from "./basics/button";
 import Filler from "./basics/filler";
-import {IDispatch} from "../constants/action-types";
+import { IDispatch } from "../constants/action-types";
 
-import {IActionOpts} from "./game-actions/list-secondary-actions";
+import { IActionOpts } from "./game-actions/list-secondary-actions";
 
 import styled from "./styles";
 
@@ -14,25 +13,30 @@ const StyledButton = styled(Button)`
   margin: 4px 0;
 `;
 
-class Action extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, dispatch, opts} = this.props;
-    const {action, icon, hint, label, type = "action"} = opts;
+class Action extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const { t, dispatch, opts } = this.props;
+    const { action, icon, hint, label, type = "action" } = opts;
 
     const textLabel = "" + label;
 
     if (type === "separator") {
-      return <Filler/>;
+      return <Filler />;
     }
 
-    return <StyledButton
-      key={textLabel}
-      discreet
-      icon={icon}
-      hint={hint}
-      onClick={() => dispatch(action)}
-      label={t.format(label)}
-    />;
+    return (
+      <StyledButton
+        key={textLabel}
+        discreet
+        icon={icon}
+        hint={hint}
+        onClick={() => dispatch(action)}
+        label={t.format(label)}
+      />
+    );
   }
 }
 
@@ -45,5 +49,5 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(Action, {
-  dispatch: (dispatch) => ({dispatch}),
+  dispatch: dispatch => ({ dispatch }),
 });

@@ -1,4 +1,3 @@
-
 import suite from "../test-suite";
 
 import mkCooldown from "./cooldown";
@@ -11,7 +10,9 @@ suite(__filename, s => {
     };
     const cooldown = mkCooldown(100, {
       getTime: () => state.time,
-      delay: async (ms: number) => { state.delays.push(ms); },
+      delay: async (ms: number) => {
+        state.delays.push(ms);
+      },
     });
 
     cooldown();
@@ -50,7 +51,7 @@ suite(__filename, s => {
       counter += x;
     };
 
-    await Promise.all([ add(1), add(2), add(4) ]);
+    await Promise.all([add(1), add(2), add(4)]);
     t.same(counter, 1 + 2 + 4);
   });
 });

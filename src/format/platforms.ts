@@ -1,4 +1,3 @@
-
 export type ItchPlatform = "linux" | "windows" | "osx" | "android";
 
 const itchPlatforms = {

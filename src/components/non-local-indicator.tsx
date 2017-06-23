@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import urls from "../constants/urls";
 
@@ -20,11 +19,15 @@ const IndicatorDiv = styled.div`
 `;
 
 export default class NonLocalIndicator extends React.PureComponent<{}, {}> {
-  render () {
+  render() {
     if (urls.itchio === urls.originalItchio) {
       return null;
     }
 
-    return <IndicatorDiv title="itch is running off a private itch.io instance">{urls.itchio}</IndicatorDiv>;
+    return (
+      <IndicatorDiv title="itch is running off a private itch.io instance">
+        {urls.itchio}
+      </IndicatorDiv>
+    );
   }
 }

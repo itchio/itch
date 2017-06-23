@@ -1,7 +1,6 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
-import {createStructuredSelector} from "reselect";
+import { connect, I18nProps } from "./connect";
+import { createStructuredSelector } from "reselect";
 
 import * as actions from "../actions";
 
@@ -9,8 +8,8 @@ import AllMeats from "./meats/all-meats";
 
 let FIRST_EVER_RENDER = true;
 
-import {ICredentials} from "../types";
-import {dispatcher} from "../constants/action-types";
+import { ICredentials } from "../types";
+import { dispatcher } from "../constants/action-types";
 
 import styled from "./styles";
 
@@ -22,15 +21,20 @@ const ContentContainer = styled.div`
   flex-grow: 1;
 `;
 
-export class HubContent extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
+export class HubContent extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
     if (!this.props.credentials) {
-      return <div/>;
+      return <div />;
     }
 
-    return <ContentContainer>
-      <AllMeats/>
-    </ContentContainer>;
+    return (
+      <ContentContainer>
+        <AllMeats />
+      </ContentContainer>
+    );
   }
 
   componentDidMount() {
@@ -51,9 +55,9 @@ interface IDerivedProps {
 
 export default connect<IProps>(HubContent, {
   state: createStructuredSelector({
-    credentials: (state) => state.session.credentials,
+    credentials: state => state.session.credentials,
   }),
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     firstUsefulPage: dispatcher(dispatch, actions.firstUsefulPage),
   }),
 });

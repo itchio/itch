@@ -1,4 +1,3 @@
-
 import * as React from "react";
 
 import Sidebar from "../sidebar";
@@ -21,12 +20,14 @@ const HubPageDiv = styled.div`
 `;
 
 class HubPage extends React.PureComponent<void, void> {
-  render () {
-    return <HubPageDiv>
-      <Sidebar/>
-      <SidebarHandle/>
-      <HubContent/>
-    </HubPageDiv>;
+  render() {
+    return (
+      <HubPageDiv>
+        <Sidebar />
+        <SidebarHandle />
+        <HubContent />
+      </HubPageDiv>
+    );
   }
 }
 

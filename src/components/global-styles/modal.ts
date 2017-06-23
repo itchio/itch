@@ -1,5 +1,4 @@
-
-import {css} from "../styles";
+import { css } from "../styles";
 
 export default css`
 

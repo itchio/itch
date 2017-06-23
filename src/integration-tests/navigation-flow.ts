@@ -1,12 +1,9 @@
-
-import {
-  IIntegrationTest,
-} from "./types";
+import { IIntegrationTest } from "./types";
 
 const currTab = ".meat-tab[data-visible=true] ";
 
-export default async function navigationFlow (t: IIntegrationTest) {
-  const {client} = t.app;
+export default async function navigationFlow(t: IIntegrationTest) {
+  const { client } = t.app;
 
   await client.waitForExist("#user-menu");
 
@@ -32,7 +29,8 @@ export default async function navigationFlow (t: IIntegrationTest) {
   t.comment("checking table is shown");
   await client.waitForVisible(currTab + ".table-item");
 
-  const firstTitleSelector = currTab + ".table-item:first-child .game-table-title";
+  const firstTitleSelector =
+    currTab + ".table-item:first-child .game-table-title";
 
   t.comment("sorting by name, A-Z");
   await t.safeClick(currTab + "[role='columnheader'][aria-label='Name']");

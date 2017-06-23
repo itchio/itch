@@ -1,11 +1,13 @@
-
 /**
  * Typings for https://github.com/recharts/recharts
  */
-declare module 'recharts' {
+declare module "recharts" {
   import * as React from "react";
 
-  export class ResponsiveContainer extends React.PureComponent<IResponsiveContainerProps, any> {}
+  export class ResponsiveContainer extends React.PureComponent<
+    IResponsiveContainerProps,
+    any
+  > {}
 
   export interface IResponsiveContainerProps {
     width?: string | number;
@@ -20,8 +22,8 @@ declare module 'recharts' {
       right?: number;
       left?: number;
       bottom?: number;
-    }
-    data: any; /** whoo, free-form! can't type that. */
+    };
+    data: any /** whoo, free-form! can't type that. */;
   }
 
   export class Area extends React.PureComponent<IAreaProps, any> {}

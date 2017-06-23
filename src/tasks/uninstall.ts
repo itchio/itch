@@ -1,23 +1,22 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import * as paths from "../os/paths";
 
 import * as sf from "../os/sf";
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "uninstall"});
+const logger = rootLogger.child({ name: "uninstall" });
 
 import core from "./install/core";
 
 import store from "../store/metal-store";
 
-const keepArchives = (process.env.REMEMBER_ME_WHEN_IM_GONE === "1");
+const keepArchives = process.env.REMEMBER_ME_WHEN_IM_GONE === "1";
 
-import {IStartTaskOpts, IUploadRecord} from "../types";
-import {IProgressInfo} from "../types";
+import { IStartTaskOpts, IUploadRecord } from "../types";
+import { IProgressInfo } from "../types";
 
-export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
-  const {cave} = opts;
+export default async function start(out: EventEmitter, opts: IStartTaskOpts) {
+  const { cave } = opts;
   // FIXME: db
   const globalMarket: any = null;
 
@@ -25,7 +24,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     out.emit("progress", e);
   };
 
-  const {preferences} = store.getState();
+  const { preferences } = store.getState();
   const destPath = paths.appPath(cave, preferences);
 
   let upload: IUploadRecord = null;
@@ -46,7 +45,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     archivePath,
     destPath,
   };
-  globalMarket.saveEntity("caves", cave.id, {launchable: false, dead: true});
+  globalMarket.saveEntity("caves", cave.id, { launchable: false, dead: true });
 
   try {
     await core.uninstall(out, coreOpts);
@@ -68,5 +67,5 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   }
 
   logger.info(`Imploding cave ${destPath}`);
-  await globalMarket.deleteEntity("caves", cave.id, {wait: true});
+  await globalMarket.deleteEntity("caves", cave.id, { wait: true });
 }

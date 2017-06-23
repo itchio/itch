@@ -1,15 +1,14 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 
 import * as clone from "clone";
 
-import {BrowserWindow, Menu} from "electron";
+import { BrowserWindow, Menu } from "electron";
 
 import localizer from "../localizer";
 
-import {IStore} from "../types";
+import { IStore } from "../types";
 
-import {pathToId} from "../util/navigation";
+import { pathToId } from "../util/navigation";
 
 import actionForGame from "../util/action-for-game";
 
@@ -22,9 +21,9 @@ const emptyArr = [];
 type IMenuItem = Electron.MenuItemConstructorOptions;
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "context-menu"});
+const logger = rootLogger.child({ name: "context-menu" });
 
-function openMenu (store: IStore, template: IMenuItem[]) {
+function openMenu(store: IStore, template: IMenuItem[]) {
   if (template.length === 0) {
     // showing empty context menus would be NSANE!
     return;
@@ -33,12 +32,12 @@ function openMenu (store: IStore, template: IMenuItem[]) {
   const menu = Menu.buildFromTemplate(clone(template));
   const mainWindowId = store.getState().ui.mainWindow.id;
   const mainWindow = BrowserWindow.fromId(mainWindowId);
-  menu.popup(mainWindow, {async: true, y: undefined});
+  menu.popup(mainWindow, { async: true, y: undefined });
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.openTabContextMenu, async (store, action) => {
-    const {id} = action.payload;
+    const { id } = action.payload;
 
     const data = store.getState().session.tabData[id];
     if (!data) {
@@ -46,14 +45,14 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    const {path} = data;
+    const { path } = data;
 
     const template: IMenuItem[] = [];
     if (/^games/.test(path)) {
       const gameId = pathToId(path);
-      const games = (data.games || {});
+      const games = data.games || {};
       const game = games[gameId];
-      store.dispatch(actions.openGameContextMenu({game}));
+      store.dispatch(actions.openGameContextMenu({ game }));
     }
 
     openMenu(store, template);
@@ -63,9 +62,9 @@ export default function (watcher: Watcher) {
     const i18n = store.getState().i18n;
     const t = localizer.getT(i18n.strings, i18n.lang);
 
-    const {game} = action.payload;
+    const { game } = action.payload;
     const gameId = game.id;
-    const cave = await db.caves.findOne({gameId});
+    const cave = await db.caves.findOne({ gameId });
     const mainAction = actionForGame(game, cave);
 
     const template: IMenuItem[] = [];
@@ -80,17 +79,20 @@ export default function (watcher: Watcher) {
 
       template.push({
         label: t(`grid.item.${mainAction}`),
-        click: () => store.dispatch(actions.queueGame({game})),
+        click: () => store.dispatch(actions.queueGame({ game })),
       });
       if (!busy) {
         template.push({
           label: t("grid.item.check_for_update"),
-          click: () => store.dispatch(actions.checkForGameUpdate({caveId: cave.id, noisy: true})),
+          click: () =>
+            store.dispatch(
+              actions.checkForGameUpdate({ caveId: cave.id, noisy: true }),
+            ),
         });
       }
       template.push({
         label: t("grid.item.show_local_files"),
-        click: () => store.dispatch(actions.exploreCave({caveId: cave.id})),
+        click: () => store.dispatch(actions.exploreCave({ caveId: cave.id })),
       });
 
       template.push({ type: "separator" });
@@ -98,22 +100,24 @@ export default function (watcher: Watcher) {
       let advancedItems: IMenuItem[] = [
         {
           label: t("grid.item.open_debug_log"),
-          click: () => store.dispatch(actions.probeCave({caveId: cave.id})),
+          click: () => store.dispatch(actions.probeCave({ caveId: cave.id })),
         },
       ];
 
       if (cave && cave.buildId) {
-        advancedItems = [...advancedItems, 
+        advancedItems = [
+          ...advancedItems,
           {
             type: "separator",
           },
           {
             label: t("grid.item.verify_integrity"),
-            click: () => store.dispatch(actions.healCave({caveId: cave.id})),
+            click: () => store.dispatch(actions.healCave({ caveId: cave.id })),
           },
           {
             label: t("grid.item.revert_to_version"),
-            click: () => store.dispatch(actions.revertCaveRequest({caveId: cave.id})),
+            click: () =>
+              store.dispatch(actions.revertCaveRequest({ caveId: cave.id })),
           },
           {
             type: "separator",
@@ -121,10 +125,12 @@ export default function (watcher: Watcher) {
         ];
       }
 
-      advancedItems = [...advancedItems,
+      advancedItems = [
+        ...advancedItems,
         {
           label: t("grid.item.view_details"),
-          click: () => store.dispatch(actions.viewCaveDetails({caveId: cave.id})),
+          click: () =>
+            store.dispatch(actions.viewCaveDetails({ caveId: cave.id })),
         },
       ];
 
@@ -138,15 +144,18 @@ export default function (watcher: Watcher) {
 
         template.push({
           label: t("prompt.uninstall.reinstall"),
-          click: () => store.dispatch(actions.queueCaveReinstall({caveId: cave.id})),
+          click: () =>
+            store.dispatch(actions.queueCaveReinstall({ caveId: cave.id })),
         });
         template.push({
           label: t("prompt.uninstall.uninstall"),
-          click: () => store.dispatch(actions.queueCaveUninstall({caveId: cave.id})),
+          click: () =>
+            store.dispatch(actions.queueCaveUninstall({ caveId: cave.id })),
         });
       }
     } else {
-      const downloadKeys = store.getState().commons.downloadKeyIdsByGameId[game.id] || emptyArr;
+      const downloadKeys =
+        store.getState().commons.downloadKeyIdsByGameId[game.id] || emptyArr;
       const owned = downloadKeys.length > 0;
 
       const hasMinPrice = game.minPrice > 0;
@@ -154,18 +163,22 @@ export default function (watcher: Watcher) {
 
       const meId = store.getState().session.credentials.me.id;
       const canEdit = game.userId === meId;
-      const mayDownload = !!((downloadKeys.length > 0) || !hasMinPrice || canEdit);
+      const mayDownload = !!(
+        downloadKeys.length > 0 ||
+        !hasMinPrice ||
+        canEdit
+      );
 
       if (mayDownload) {
         template.push({
           label: t("grid.item.install"),
-          click: () => store.dispatch(actions.queueGame({game})),
+          click: () => store.dispatch(actions.queueGame({ game })),
         });
       } else {
         // TODO: use canBeBought
         template.push({
           label: t("grid.item.buy_now"),
-          click: () => store.dispatch(actions.initiatePurchase({game})),
+          click: () => store.dispatch(actions.initiatePurchase({ game })),
         });
       }
     }

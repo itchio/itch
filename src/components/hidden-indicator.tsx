@@ -1,14 +1,13 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect, I18nProps } from "./connect";
 
 import * as actions from "../actions";
-import {dispatcher} from "../constants/action-types";
+import { dispatcher } from "../constants/action-types";
 
 import IconButton from "./basics/icon-button";
 
 import styled from "./styles";
-import {darken} from "polished";
+import { darken } from "polished";
 
 const HiddenIndicatorDiv = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -24,23 +23,29 @@ const HiddenIndicatorDiv = styled.div`
   align-items: center;
 `;
 
-class HiddenIndicator extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, tab, count, clearFilters} = this.props;
+class HiddenIndicator extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const { t, tab, count, clearFilters } = this.props;
 
     if (count === 0) {
       return null;
     }
 
-    return <HiddenIndicatorDiv>
-      <IconButton
-        className="indicator-clear-filters"
-        icon="delete"
-        hint={t("grid.clear_filters")}
-        onClick={() => clearFilters({tab})}/>
-      {" "}
-      {t("grid.hidden_count", {count})}
-    </HiddenIndicatorDiv>;
+    return (
+      <HiddenIndicatorDiv>
+        <IconButton
+          className="indicator-clear-filters"
+          icon="delete"
+          hint={t("grid.clear_filters")}
+          onClick={() => clearFilters({ tab })}
+        />
+        {" "}
+        {t("grid.hidden_count", { count })}
+      </HiddenIndicatorDiv>
+    );
   }
 }
 
@@ -54,7 +59,7 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(HiddenIndicator, {
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     clearFilters: dispatcher(dispatch, actions.clearFilters),
   }),
 });

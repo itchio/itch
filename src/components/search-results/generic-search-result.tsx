@@ -1,13 +1,12 @@
-
 import * as React from "react";
-import {findDOMNode} from "react-dom";
+import { findDOMNode } from "react-dom";
 
 import * as actions from "../../actions";
-import watching, {Watcher} from "../watching";
-import {IAction} from "../../constants/action-types";
+import watching, { Watcher } from "../watching";
+import { IAction } from "../../constants/action-types";
 
 import * as styles from "../styles";
-import {css} from "../styles";
+import { css } from "../styles";
 
 export const searchResultStyle = css`
   flex-shrink: 0;
@@ -76,9 +75,11 @@ interface IGenericSearchResultProps {
 }
 
 @watching
-abstract class GenericSearchResult <Props extends IGenericSearchResultProps, State>
-    extends React.PureComponent<Props, State> {
-  subscribe (watcher: Watcher) {
+abstract class GenericSearchResult<
+  Props extends IGenericSearchResultProps,
+  State
+> extends React.PureComponent<Props, State> {
+  subscribe(watcher: Watcher) {
     watcher.on(actions.triggerOk, async (store, action) => {
       if (this.props.chosen && this.props.active) {
         store.dispatch(this.getNavigateAction());
@@ -93,8 +94,8 @@ abstract class GenericSearchResult <Props extends IGenericSearchResultProps, Sta
       (node as any).scrollIntoViewIfNeeded();
     }
   }
-  
-  abstract getNavigateAction(): IAction<any>
-};
+
+  abstract getNavigateAction(): IAction<any>;
+}
 
 export default GenericSearchResult;

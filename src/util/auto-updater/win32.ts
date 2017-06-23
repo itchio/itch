@@ -1,4 +1,3 @@
-
 import * as bluebird from "bluebird";
 
 import * as os from "../../os";
@@ -7,26 +6,17 @@ import shortcut from "../../os/win32/shortcut";
 
 const self = {
   onInstall: async () => {
-    await bluebird.all([
-      registry.install(),
-      shortcut.install(),
-    ]);
+    await bluebird.all([registry.install(), shortcut.install()]);
     return true;
   },
 
   onUpdate: async () => {
-    await bluebird.all([
-      registry.update(),
-      shortcut.update(),
-    ]);
+    await bluebird.all([registry.update(), shortcut.update()]);
     return true;
   },
 
   onUninstall: async () => {
-    await bluebird.all([
-      registry.uninstall(),
-      shortcut.uninstall(),
-    ]);
+    await bluebird.all([registry.uninstall(), shortcut.uninstall()]);
     return true;
   },
 
@@ -48,7 +38,7 @@ const self = {
       case "--squirrel-obsolete":
         return await self.onObsolete();
       default:
-        // nothing to do
+      // nothing to do
     }
     return false;
   },

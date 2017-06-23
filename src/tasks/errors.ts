@@ -1,10 +1,9 @@
-
 type ItchErrorType = "transition" | "crash" | "cancelled" | "missing-libs";
 
 class ItchError extends Error {
   type: ItchErrorType;
 
-  constructor (type: ItchErrorType) {
+  constructor(type: ItchErrorType) {
     super();
     this.type = type;
   }
@@ -65,10 +64,13 @@ export class MissingLibs extends ItchError {
     super("missing-libs");
     this.arch = opts.arch || "386";
     this.libs = opts.libs || [];
-    this.reason = ["game.install.libraries_missing", {
-      arch: this.prettyArch(this.arch),
-      libraries: this.libs.join(" "),
-    }];
+    this.reason = [
+      "game.install.libraries_missing",
+      {
+        arch: this.prettyArch(this.arch),
+        libraries: this.libs.join(" "),
+      },
+    ];
   }
 
   prettyArch(arch: string): string {

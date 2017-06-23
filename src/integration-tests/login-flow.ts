@@ -1,17 +1,20 @@
-
 import {
   IIntegrationTest,
-  testAccountName, testAccountPassword,
+  testAccountName,
+  testAccountPassword,
 } from "./types";
 
-export default async function loginFlow (t: IIntegrationTest) {
-  const {client} = t.app;
+export default async function loginFlow(t: IIntegrationTest) {
+  const { client } = t.app;
 
   t.comment("logging in with invalid credentials");
   await client.setValue("#login-username", "hello this is an integration test");
   await client.setValue("#login-password", "1234");
   await t.safeClick("#login-button");
-  await client.waitUntilTextExists("#login-errors", "Incorrect username or password");
+  await client.waitUntilTextExists(
+    "#login-errors",
+    "Incorrect username or password",
+  );
 
   if (!testAccountPassword) {
     t.comment("No password in environment, not performing further login tests");
@@ -27,7 +30,7 @@ export default async function loginFlow (t: IIntegrationTest) {
   };
   await loginWithPassword();
 
-  const logout = async ({forReal}) => {
+  const logout = async ({ forReal }) => {
     await t.safeClick("#user-menu");
     await t.safeClick("#user-menu-change-user");
 
@@ -48,7 +51,11 @@ export default async function loginFlow (t: IIntegrationTest) {
   await t.safeClick(".meat-tab.visible .go-button");
 
   t.comment("checking that we're redirected to the dashboard");
-  await client.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Creator Dashboard", 60 * 1000);
+  await client.waitUntilTextExists(
+    ".meat-tab.visible .title-bar-text",
+    "Creator Dashboard",
+    60 * 1000,
+  );
 
   t.comment("now clearing cookies");
   await t.safeClick("#user-menu");
@@ -73,18 +80,22 @@ export default async function loginFlow (t: IIntegrationTest) {
   await t.safeClick(".meat-tab.visible .go-button");
 
   t.comment("checking that we've landed on the login page");
-  await client.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Log in", 60 * 1000);
+  await client.waitUntilTextExists(
+    ".meat-tab.visible .title-bar-text",
+    "Log in",
+    60 * 1000,
+  );
 
   t.comment("doing cancelled logout");
-  await logout({forReal: false});
+  await logout({ forReal: false });
   t.comment("logging out for real");
-  await logout({forReal: true});
+  await logout({ forReal: true });
 
   t.comment("logging back in with remembered sessions");
   await t.safeClick(".remembered-session");
 
   t.comment("logging out for real");
-  await logout({forReal: true});
+  await logout({ forReal: true });
 
   t.comment("forgetting session");
 
@@ -95,4 +106,4 @@ export default async function loginFlow (t: IIntegrationTest) {
 
   t.comment("logging in all over again");
   await loginWithPassword();
-};
+}

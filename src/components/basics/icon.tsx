@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
 
@@ -7,10 +6,10 @@ import * as classNames from "classnames";
  * Peek in the static/fonts/icomoon/ folder to learn more.
  */
 class Icon extends React.PureComponent<IProps, void> {
-  render () {
-    const {icon, className, hint, ...restProps} = this.props;
+  render() {
+    const { icon, className, hint, ...restProps } = this.props;
     if (!icon) {
-      return <span/>;
+      return <span />;
     }
 
     const finalClassName = classNames(className, `icon icon-${icon}`);
@@ -20,7 +19,7 @@ class Icon extends React.PureComponent<IProps, void> {
       hintProps["data-rh-at"] = "top";
     }
 
-    return <span className={finalClassName} {...hintProps} {...restProps}/>;
+    return <span className={finalClassName} {...hintProps} {...restProps} />;
   }
 }
 

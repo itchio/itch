@@ -1,31 +1,30 @@
-
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import * as invariant from "invariant";
 import * as uuid from "uuid";
 
-import {Transition} from "./errors";
+import { Transition } from "./errors";
 
 import * as paths from "../os/paths";
 import * as sf from "../os/sf";
-import {Stats} from "fs";
+import { Stats } from "fs";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "install"});
+const logger = rootLogger.child({ name: "install" });
 
 import core from "./install/core";
-import {findWhere} from "underscore";
+import { findWhere } from "underscore";
 
-import {IStartTaskOpts, IProgressInfo, ICaveRecord, IStore} from "../types";
+import { IStartTaskOpts, IProgressInfo, ICaveRecord, IStore } from "../types";
 
 import store from "../store/metal-store";
 
-function defaultInstallLocation (store: IStore) {
-  const {defaultInstallLocation} = store.getState().preferences;
+function defaultInstallLocation(store: IStore) {
+  const { defaultInstallLocation } = store.getState().preferences;
   return defaultInstallLocation;
 }
 
-export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
+export default async function start(out: EventEmitter, opts: IStartTaskOpts) {
   invariant(opts.credentials, "install must have credentials");
   if (!opts.becauseHeal) {
     invariant(opts.archivePath, "install must have a archivePath");
@@ -33,15 +32,24 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   invariant(opts.game, "install must have a game");
   invariant(opts.upload, "install must have an upload");
 
-  const {credentials, archivePath, downloadKey, game, upload,
-    installLocation = defaultInstallLocation(store), handPicked, becauseHeal} = opts;
+  const {
+    credentials,
+    archivePath,
+    downloadKey,
+    game,
+    upload,
+    installLocation = defaultInstallLocation(store),
+    handPicked,
+    becauseHeal,
+  } = opts;
 
   // FIXME: db
   const globalMarket: any = null;
   const market: any = null;
 
-  const grabCave = () => findWhere(globalMarket.getEntities("caves"), {gameId: game.id});
-  let {cave = grabCave()} = opts;
+  const grabCave = () =>
+    findWhere(globalMarket.getEntities("caves"), { gameId: game.id });
+  let { cave = grabCave() } = opts;
 
   if (!cave) {
     invariant(!opts.reinstall, "need a cave for reinstall");
@@ -53,7 +61,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
       gameId: game.id,
       game,
       uploadId: upload.id,
-      uploads: {[upload.id]: upload},
+      uploads: { [upload.id]: upload },
       installLocation,
       installFolder,
       pathScheme: paths.PathScheme.MODERN_SHARED,
@@ -63,14 +71,14 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     } as ICaveRecord;
 
     if (!opts.reinstall && !becauseHeal) {
-      const installFolderExists = async function () {
+      const installFolderExists = async function() {
         const fullPath = paths.appPath(cave, store.getState().preferences);
         return await sf.exists(fullPath);
       };
 
       let seed = 2;
       // if you need more than 1200 games with the exact same name... you don't.
-      while (await installFolderExists() && seed < 1200) {
+      while ((await installFolderExists()) && seed < 1200) {
         cave.installFolder = `${installFolder} ${seed++}`;
       }
     }
@@ -79,9 +87,14 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
   }
 
   if (cave.buildUserVersion && upload.build && upload.build.userVersion) {
-    logger.info(`upgrading from version ${cave.buildUserVersion} => version ${upload.build.userVersion}`);
+    logger.info(
+      `upgrading from version ${cave.buildUserVersion} => version ${upload.build
+        .userVersion}`,
+    );
   } else {
-    logger.info(`upgrading from build id ${cave.buildId} => build id ${upload.buildId}`);
+    logger.info(
+      `upgrading from build id ${cave.buildId} => build id ${upload.buildId}`,
+    );
   }
 
   market.saveEntity("games", String(game.id), game);
@@ -97,7 +110,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
       archiveStat = await sf.lstat(archivePath);
     } catch (e) {
       logger.warn("archive disappeared, redownloading...");
-      throw new Transition({to: "download", reason: "missing-download"});
+      throw new Transition({ to: "download", reason: "missing-download" });
     }
 
     let imtime = Date.parse(cave.installedArchiveMtime);
@@ -111,7 +124,7 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
       onProgress: (ev: IProgressInfo) => out.emit("progress", ev),
     };
 
-    globalMarket.saveEntity("caves", cave.id, {launchable: false});
+    globalMarket.saveEntity("caves", cave.id, { launchable: false });
     await core.install(out, coreOpts);
   }
 
@@ -130,9 +143,9 @@ export default async function start (out: EventEmitter, opts: IStartTaskOpts) {
     channelName: upload.channelName,
     buildId: upload.buildId,
     buildUserVersion: upload.build && upload.build.userVersion,
-    uploads: {[upload.id]: upload},
+    uploads: { [upload.id]: upload },
     fresh: false,
   });
 
-  return {caveId: cave.id};
+  return { caveId: cave.id };
 }

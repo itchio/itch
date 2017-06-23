@@ -1,15 +1,14 @@
-
 import * as React from "react";
-import {createStructuredSelector} from "reselect";
-import {connect, I18nProps} from "./connect";
+import { createStructuredSelector } from "reselect";
+import { connect, I18nProps } from "./connect";
 
 import staticTabData from "../constants/static-tab-data";
-import {IAppState, ITabData} from "../types";
+import { IAppState, ITabData } from "../types";
 
-import {dispatcher} from "../constants/action-types";
+import { dispatcher } from "../constants/action-types";
 import * as actions from "../actions";
 
-import {FiltersContainer} from "./game-filters";
+import { FiltersContainer } from "./game-filters";
 import IconButton from "./basics/icon-button";
 
 import env from "../env";
@@ -41,9 +40,12 @@ const TitleDiv = styled.div`
 
 const emptyObj = {};
 
-export class TitleBar extends React.PureComponent<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, tab, maximized, tabData} = this.props;
+export class TitleBar extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  void
+> {
+  render() {
+    const { t, tab, maximized, tabData } = this.props;
 
     const staticData: ITabData = staticTabData[tab] || emptyObj;
     let label = tabData.webTitle || tabData.label || staticData.label || "";
@@ -53,37 +55,42 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps & I18nP
       label = env.appName;
     }
 
-    return <FiltersContainer className="title-bar">
+    return (
+      <FiltersContainer className="title-bar">
         <DraggableDiv>
           <DraggableDivInner>
             <TitleDiv className="title-bar-text">{t.format(label)}</TitleDiv>
-            <Filler/>
+            <Filler />
           </DraggableDivInner>
         </DraggableDiv>
-        { loggedIn
-          ? <IconButton icon="cog" onClick={this.preferencesClick}/>
-          : null }
-        <IconButton icon="minus" onClick={this.minimizeClick}/>
-        <IconButton icon={maximized ? "window-restore" : "window-maximize"} onClick={this.maximizeRestoreClick}/>
-        <IconButton icon="remove" onClick={this.closeClick}/>
-      </FiltersContainer>;
+        {loggedIn
+          ? <IconButton icon="cog" onClick={this.preferencesClick} />
+          : null}
+        <IconButton icon="minus" onClick={this.minimizeClick} />
+        <IconButton
+          icon={maximized ? "window-restore" : "window-maximize"}
+          onClick={this.maximizeRestoreClick}
+        />
+        <IconButton icon="remove" onClick={this.closeClick} />
+      </FiltersContainer>
+    );
   }
 
   preferencesClick = () => {
     this.props.navigate("preferences");
-  }
+  };
 
   minimizeClick = () => {
     this.props.minimizeWindow({});
-  }
+  };
 
   maximizeRestoreClick = () => {
     this.props.toggleMaximizeWindow({});
-  }
+  };
 
   closeClick = () => {
     this.props.hideWindow({});
-  }
+  };
 }
 
 interface IProps {
@@ -101,11 +108,13 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(TitleBar, {
-  state: () => createStructuredSelector({
-    tabData: (state: IAppState, props: IProps) => state.session.tabData[props.tab] || emptyObj,
-    maximized: (state: IAppState) => state.ui.mainWindow.maximized,
-  }),
-  dispatch: (dispatch) => ({
+  state: () =>
+    createStructuredSelector({
+      tabData: (state: IAppState, props: IProps) =>
+        state.session.tabData[props.tab] || emptyObj,
+      maximized: (state: IAppState) => state.ui.mainWindow.maximized,
+    }),
+  dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
     hideWindow: dispatcher(dispatch, actions.hideWindow),
     minimizeWindow: dispatcher(dispatch, actions.minimizeWindow),

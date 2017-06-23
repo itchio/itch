@@ -1,21 +1,20 @@
-
 import listensToClickOutside = require("react-onclickoutside");
 import * as React from "react";
 import * as classNames from "classnames";
-import {connect, I18nProps} from "./connect";
+import { connect, I18nProps } from "./connect";
 
 import * as actions from "../actions";
 
-import {ITabData} from "../types";
-import {dispatcher} from "../constants/action-types";
+import { ITabData } from "../types";
+import { dispatcher } from "../constants/action-types";
 
-import watching, {Watcher} from "./watching";
+import watching, { Watcher } from "./watching";
 
 import IconButton from "./basics/icon-button";
 
 import styled, * as styles from "./styles";
-import {css} from "./styles";
-import {darken} from "polished";
+import { css } from "./styles";
+import { darken } from "polished";
 
 const BrowserControlsContainer = styled.div`
   display: flex;
@@ -60,28 +59,31 @@ const BrowserAddressSpan = styled.span`
   }
 `;
 
-function isHTMLInput (el: HTMLElement): el is HTMLInputElement {
+function isHTMLInput(el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
 }
 
 @watching
-export class BrowserControls extends React.PureComponent<IProps & IDerivedProps & I18nProps, IState> {
+export class BrowserControls extends React.PureComponent<
+  IProps & IDerivedProps & I18nProps,
+  IState
+> {
   browserAddress: HTMLInputElement | HTMLElement;
 
-  constructor () {
+  constructor() {
     super();
     this.state = {
       editingURL: false,
     };
   }
 
-  subscribe (watcher: Watcher) {
+  subscribe(watcher: Watcher) {
     watcher.on(actions.triggerLocation, async (store, action) => {
       if (!this.props.active) {
         return;
       }
 
-      const {browserAddress} = this;
+      const { browserAddress } = this;
       if (!browserAddress) {
         return;
       }
@@ -101,7 +103,7 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
         return;
       }
 
-      const {browserAddress} = this;
+      const { browserAddress } = this;
       if (!browserAddress) {
         return;
       }
@@ -127,51 +129,62 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
     });
   }
 
-  render () {
-    const {editingURL} = this.state;
-    const {t, browserState} = this.props;
-    const {canGoBack, canGoForward, loading, url = ""} = browserState;
-    const {goBack, goForward, stop, reload, frozen} = this.props;
+  render() {
+    const { editingURL } = this.state;
+    const { t, browserState } = this.props;
+    const { canGoBack, canGoForward, loading, url = "" } = browserState;
+    const { goBack, goForward, stop, reload, frozen } = this.props;
 
-    return <BrowserControlsContainer>
-      <IconButton icon="arrow-left" disabled={!canGoBack} onClick={goBack}/>
-      <IconButton icon="arrow-right" disabled={!canGoForward} onClick={goForward}/>
-      {
-        loading
-        ? <IconButton icon="cross" onClick={stop}/>
-        : <IconButton icon="repeat" onClick={reload}/>
-      }
-      {editingURL
-        ? <BrowserAddressInput
+    return (
+      <BrowserControlsContainer>
+        <IconButton icon="arrow-left" disabled={!canGoBack} onClick={goBack} />
+        <IconButton
+          icon="arrow-right"
+          disabled={!canGoForward}
+          onClick={goForward}
+        />
+        {loading
+          ? <IconButton icon="cross" onClick={stop} />
+          : <IconButton icon="repeat" onClick={reload} />}
+        {editingURL
+          ? <BrowserAddressInput
               type="search"
               disabled={frozen}
               innerRef={this.onBrowserAddress as any}
               defaultValue={url}
               onKeyUp={this.addressKeyUp}
-              onBlur={this.addressBlur}/>
-        : <BrowserAddressSpan className={classNames({frozen})}
+              onBlur={this.addressBlur}
+            />
+          : <BrowserAddressSpan
+              className={classNames({ frozen })}
               innerRef={this.onBrowserAddress as any}
-              onClick={this.startEditingURL}>
-            {url || ""}
-          </BrowserAddressSpan>
-      }
-      <IconButton hint={t("browser.popout")} hintPosition="bottom" icon="redo" onClick={this.popOutBrowser}/>
-    </BrowserControlsContainer>;
+              onClick={this.startEditingURL}
+            >
+              {url || ""}
+            </BrowserAddressSpan>}
+        <IconButton
+          hint={t("browser.popout")}
+          hintPosition="bottom"
+          icon="redo"
+          onClick={this.popOutBrowser}
+        />
+      </BrowserControlsContainer>
+    );
   }
 
   popOutBrowser = () => {
-    this.props.openUrl({url: this.props.browserState.url});
-  }
+    this.props.openUrl({ url: this.props.browserState.url });
+  };
 
   startEditingURL = () => {
     if (this.props.frozen) {
       return;
     }
-    const {url} = this.props.browserState;
+    const { url } = this.props.browserState;
     if (url && url.length) {
-      this.setState({editingURL: true});
+      this.setState({ editingURL: true });
     }
-  }
+  };
 
   onBrowserAddress = (browserAddress: HTMLElement | HTMLInputElement) => {
     this.browserAddress = browserAddress;
@@ -184,26 +197,26 @@ export class BrowserControls extends React.PureComponent<IProps & IDerivedProps 
       browserAddress.focus();
       browserAddress.select();
     }
-  }
+  };
 
   addressKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const url = e.currentTarget.value;
-      this.setState({editingURL: false});
+      this.setState({ editingURL: false });
       this.props.loadURL(url);
     }
     if (e.key === "Escape") {
-      this.setState({editingURL: false});
+      this.setState({ editingURL: false });
     }
-  }
+  };
 
   addressBlur = () => {
-    this.setState({editingURL: false});
-  }
+    this.setState({ editingURL: false });
+  };
 
   handleClickOutside = () => {
     this.addressBlur();
-  }
+  };
 }
 
 interface IProps {
@@ -236,7 +249,7 @@ interface IState {
 }
 
 export default connect<IProps>(listensToClickOutside(BrowserControls), {
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     openUrl: dispatcher(dispatch, actions.openUrl),
   }),
 });

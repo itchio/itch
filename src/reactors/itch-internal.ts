@@ -1,5 +1,4 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 
 import urlParser from "../util/url";
 import * as querystring from "querystring";
@@ -9,16 +8,19 @@ import partitionForUser from "../util/partition-for-user";
 
 import * as actions from "../actions";
 
-import rootLogger from "../logger"; 
-const logger = rootLogger.child({name: "itch-internal"});
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "itch-internal" });
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
     const userId = action.payload.me.id;
 
     logger.debug("Setting up for user", userId);
 
-    const session = electron.session.fromPartition(partitionForUser(String(userId)), {});
+    const session = electron.session.fromPartition(
+      partitionForUser(String(userId)),
+      {},
+    );
 
     // requests to 'itch-internal' are used to communicate between web content & the app
     const internalFilter = {
@@ -26,31 +28,38 @@ export default function (watcher: Watcher) {
     };
 
     session.webRequest.onBeforeRequest(internalFilter, (details, callback) => {
-      callback({cancel: true});
+      callback({ cancel: true });
 
       let parsed = urlParser.parse(details.url);
-      const {pathname, query} = parsed;
+      const { pathname, query } = parsed;
       const params = querystring.parse(query);
-      const {tab} = params;
+      const { tab } = params;
 
       switch (pathname) {
         case "/open-devtools":
-          store.dispatch(actions.openDevTools({tab}));
-          const {webview} = this;
-          if (webview && webview.getWebContents() && !webview.getWebContents().isDestroyed()) {
-            webview.getWebContents().openDevTools({mode: "detach"});
+          store.dispatch(actions.openDevTools({ tab }));
+          const { webview } = this;
+          if (
+            webview &&
+            webview.getWebContents() &&
+            !webview.getWebContents().isDestroyed()
+          ) {
+            webview.getWebContents().openDevTools({ mode: "detach" });
           }
           break;
         case "/analyze-page":
-          store.dispatch(actions.analyzePage({tab, url: params.url}));
+          store.dispatch(actions.analyzePage({ tab, url: params.url }));
           break;
         case "/evolve-tab":
-          store.dispatch(actions.evolveTab({id: tab, path: params.path}));
+          store.dispatch(actions.evolveTab({ id: tab, path: params.path }));
           break;
         default:
-          logger.warn(`Got unrecognized message via itch-internal: ${pathname}, params`, params);
+          logger.warn(
+            `Got unrecognized message via itch-internal: ${pathname}, params`,
+            params,
+          );
           break;
       }
     });
   });
-};
+}

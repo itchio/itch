@@ -1,10 +1,9 @@
+import suite, { fixture } from "../test-suite";
 
-import suite, {fixture} from "../test-suite";
-
-import {join} from "path";
+import { join } from "path";
 import * as tmp from "tmp";
 
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 import * as sf from "./sf";
 
@@ -15,8 +14,10 @@ suite(__filename, s => {
   });
 
   s.case("readFile", async t => {
-    t.same(await sf.readFile(fixture.path("txt"), {encoding: "utf8"}),
-      "Hello there, just writing a bit of text for the sniffer specs\n");
+    t.same(
+      await sf.readFile(fixture.path("txt"), { encoding: "utf8" }),
+      "Hello there, just writing a bit of text for the sniffer specs\n",
+    );
   });
 
   s.case("writeFile", async t => {
@@ -26,8 +27,8 @@ suite(__filename, s => {
     const tmpObj = tmp.fileSync();
 
     try {
-      await sf.writeFile(tmpObj.name, contents, {encoding: "utf8"});
-      readContents = await sf.readFile(tmpObj.name, {encoding: "utf8"});
+      await sf.writeFile(tmpObj.name, contents, { encoding: "utf8" });
+      readContents = await sf.readFile(tmpObj.name, { encoding: "utf8" });
     } catch (e) {
       err = e;
     } finally {
@@ -48,9 +49,9 @@ suite(__filename, s => {
     const tmpObj = tmp.fileSync();
 
     try {
-      await sf.writeFile(tmpObj.name, contentsA, {encoding: "utf8"});
-      await sf.appendFile(tmpObj.name, contentsB, {encoding: "utf8"});
-      readContents = await sf.readFile(tmpObj.name, {encoding: "utf8"});
+      await sf.writeFile(tmpObj.name, contentsA, { encoding: "utf8" });
+      await sf.appendFile(tmpObj.name, contentsB, { encoding: "utf8" });
+      readContents = await sf.readFile(tmpObj.name, { encoding: "utf8" });
     } catch (e) {
       err = e;
     } finally {
@@ -67,9 +68,9 @@ suite(__filename, s => {
     let err: Error;
     const tmpObj = tmp.dirSync();
 
-    const touch = async function (name: string) {
+    const touch = async function(name: string) {
       const path = join(tmpObj.name, name);
-      await sf.writeFile(path, name, {encoding: "utf8"});
+      await sf.writeFile(path, name, { encoding: "utf8" });
     };
 
     try {

@@ -1,27 +1,24 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 
 import url from "../util/url";
 import enableEventDebugging from "../util/debug-browser-window";
-import {getInjectPath} from "../os/resources";
+import { getInjectPath } from "../os/resources";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({name: "purchases"});
+const logger = rootLogger.child({ name: "purchases" });
 
 import Game from "../db/models/game";
 
-import {
-  IOwnUserRecord,
-} from "../types";
+import { IOwnUserRecord } from "../types";
 
 import * as actions from "../actions";
 
-import {BrowserWindow} from "electron";
+import { BrowserWindow } from "electron";
 
 /**
  * Creates a new browser window to initiate the purchase flow
  */
-function makePurchaseWindow (me: IOwnUserRecord, game: Game) {
+function makePurchaseWindow(me: IOwnUserRecord, game: Game) {
   const partition = `persist:itchio-${me.id}`;
 
   const win = new BrowserWindow({
@@ -59,14 +56,14 @@ interface IUrlOpts {
   port?: number;
 }
 
-function buildLoginAndReturnUrl (returnTo: string): string {
+function buildLoginAndReturnUrl(returnTo: string): string {
   const parsed = url.parse(returnTo);
   const hostname = url.subdomainToDomain(parsed.hostname);
 
   let urlOpts = {
     hostname,
     pathname: "/login",
-    query: {return_to: returnTo},
+    query: { return_to: returnTo },
   } as IUrlOpts;
 
   if (hostname === "itch.io") {
@@ -79,9 +76,9 @@ function buildLoginAndReturnUrl (returnTo: string): string {
   return url.format(urlOpts);
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.initiatePurchase, async (store, action) => {
-    const {game} = action.payload;
+    const { game } = action.payload;
 
     const me = store.getState().session.credentials.me;
     const win = makePurchaseWindow(me, game);
@@ -101,7 +98,7 @@ export default function (watcher: Watcher) {
 
       if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
         // purchase went through!
-        store.dispatch(actions.purchaseCompleted({game}));
+        store.dispatch(actions.purchaseCompleted({ game }));
         win.close();
       } else if (/\/pay\/cancel/.test(parsed.pathname)) {
         // payment was cancelled
@@ -109,7 +106,13 @@ export default function (watcher: Watcher) {
       }
     });
 
-    win.webContents.on("did-get-response-details", async function (e, status, newURL, originalURL, httpResponseCode) {
+    win.webContents.on("did-get-response-details", async function(
+      e,
+      status,
+      newURL,
+      originalURL,
+      httpResponseCode,
+    ) {
       if (httpResponseCode === 404 && newURL === purchaseUrl) {
         logger.debug(`404 not found: ${newURL}`);
         logger.debug("closing because of 404");

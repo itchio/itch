@@ -1,5 +1,4 @@
-
-import {size} from "underscore";
+import { size } from "underscore";
 
 const emptyArr = [];
 
@@ -7,7 +6,10 @@ interface IRecordMap<T> {
   [key: string]: T;
 }
 
-export default function getByIds <T> (records: IRecordMap<T>, ids: string[] | number[]): T[] {
+export default function getByIds<T>(
+  records: IRecordMap<T>,
+  ids: string[] | number[],
+): T[] {
   if (size(ids) === 0) {
     return emptyArr;
   }

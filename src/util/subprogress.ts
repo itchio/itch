@@ -1,5 +1,4 @@
-
-import {IProgressListener} from "../types";
+import { IProgressListener } from "../types";
 
 /**
  * Returns a function that, when called, calls onProgress
@@ -11,15 +10,18 @@ import {IProgressListener} from "../types";
  *   // from 20% to 40%, we do that
  *   await subtask(src, dst, {onProgress: subprogress(onProgress, 0.2, 0.4)})
  */
-export default function subprogress (onProgress: IProgressListener,
-                                     startAlpha: number, endAlpha: number): IProgressListener {
+export default function subprogress(
+  onProgress: IProgressListener,
+  startAlpha: number,
+  endAlpha: number,
+): IProgressListener {
   const spanAlpha = endAlpha - startAlpha;
 
-  return function (e) {
+  return function(e) {
     const innerAlpha = e.progress;
-    const progress = (startAlpha + innerAlpha * spanAlpha);
+    const progress = startAlpha + innerAlpha * spanAlpha;
 
     // TODO: what about bps/eta?
-    onProgress({...e, progress});
+    onProgress({ ...e, progress });
   };
-};
+}
