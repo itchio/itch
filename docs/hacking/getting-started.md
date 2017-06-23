@@ -5,10 +5,8 @@ itch is built in HTML/SCSS/TypeScript and runs inside of Electron. Install the
 following to get started with development:
 
 * Install [node.js][] (7.6 or newer)
-* Install [yarn][]
 
 [node.js]: https://nodejs.org/
-[yarn]: https://yarnpkg.com/en/
 
 Then, clone the <https://github.com/itchio/itch> repository somewhere.
 
@@ -16,7 +14,7 @@ Install the javascript dependencies by running this command from
 within the `itch` directory you've just cloned:
 
 ```bash
-$ yarn
+$ npm install
 ```
 
 > Note:
@@ -27,7 +25,7 @@ $ yarn
 Finally, start the app!
 
 ```bash
-$ yarn start
+$ npm start
 ```
 
 The first run will seem slow, because the compile cache is empty. Subsequent runs
@@ -61,7 +59,7 @@ of checks that React does. If you want to get a feel for how fast the app could 
 without all those extra checks and warnings, you can simply run:
 
 ```bash
-NODE_ENV=production yarn start
+NODE_ENV=production npm start
 ```
 
 Note that, in production, a bunch of developer tools are not available.
@@ -123,7 +121,7 @@ on the looks of a React component.
 
 ### The .cache folder
 
-If you run `yarn compile`, all files will be compiled and put into a cache folder
+If you run `npm run compile`, all files will be compiled and put into a cache folder
 named `.cache`.
 
 This normally happens on the Continuous Integration servers when a new release of
@@ -137,7 +135,7 @@ If you run the app in development (the default) and it detects a `.cache` folder
 will print a warning letting you know that changes won't be picked up (even when
 restarting the app).
 
-> There's really no reason to run `yarn compile` locally. If you see a `.cache`
+> There's really no reason to run `npm run compile` locally. If you see a `.cache`
 > folder, remove it.
 
 In development, the cache folder is somewhere in `$TEMP` or `$TMPDIR` or `/tmp/`.
@@ -241,11 +239,11 @@ css blocks.
 
 All unit tests are run directly within electron, never vanilla node.js.
 
-Run `yarn test` to run unit tests once. Those should be pretty fast.
+Run `npm test` to run unit tests once. Those should be pretty fast.
 The output of unit tests is minimal, it should only become noisy when some
 tests fail. The inspiration comes from [tap-pessimist](https://github.com/clux/tap-pessimist).
 
-Run `yarn test -- --watch` to re-use the same electron instance to run
+Run `npm test -- --watch` to re-use the same electron instance to run
 tests as soon as a source file is changed. If you're running Visual Studio code,
 the `test` task does exactly that.
 
