@@ -143,7 +143,7 @@
     "debounce-collect": "^1.0.2",
     "electron": "1.7.3",
     "electron-compilers-ftl": "^5.9.3",
-    "electron-rebuild": "^1.5.11",
+    "electron-rebuild-ftl": "^1.5.11",
     "husky": "^0.14.0",
     "lint-staged": "^4.0.0",
     "react-addons-perf": "^15.4.2",
