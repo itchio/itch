@@ -144,6 +144,8 @@
     "electron": "1.7.3",
     "electron-compilers-ftl": "^5.9.3",
     "electron-rebuild": "^1.5.11",
+    "husky": "^0.14.0",
+    "lint-staged": "^4.0.0",
     "react-addons-perf": "^15.4.2",
     "react-addons-test-utils": "^15.0.0",
     "react-hot-loader": "^3.0.0-beta.6",
@@ -161,11 +163,18 @@
   },
   "scripts": {
     "start": "electron . --color --inspect",
+    "precommit": "lint-staged",
     "postinstall": "electron-rebuild",
     "test": "cross-env NODE_ENV=test electron . --color --run-unit-tests",
     "upload-coverage": "codecov -f ./coverage/lcov.info",
     "integration-tests": "cross-env NODE_ENV=test node ./src/integration-tests/init.js",
     "i18n": "node release/ci-i18n-check.js",
     "compile": "cross-env NODE_ENV=production electron-compile --appdir . ./src"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --trailing-comma all --write",
+      "git add"
+    ]
   }
 }
