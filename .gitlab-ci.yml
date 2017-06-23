@@ -5,7 +5,6 @@ cache:
   paths:
     - node_modules/sqlite3
     - node_modules/shoom
-    - node_modules/electron
 
 stages:
   - build # tsc, node-sass etc.
