@@ -15,8 +15,6 @@ These environment variables will change the behavior of the app:
     `uname`, `lspci`, `sw_vers`, `wmic`, and `ver` on your system and writing
     the results to a file on your local disk.
   * `CAST_NO_SHADOW=1` — opens devtools for the purchase window
-  * `TRUST_ME_IM_AN_ENGINEER=1` - never show `Buy now` instead of `Install`.
-    Obviously, the backend has to agree with you.
   * `REMEMBER_ME_WHEN_IM_GONE=1` - don't wipe downloads when uninstalling.
     Useful for debugging install/uninstall routines.
   * `THE_DEPTHS_OF_THE_SOUL=1` - print debug info when extracting certain archives

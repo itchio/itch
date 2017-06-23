@@ -36,7 +36,6 @@
   * [How you can help](hacking/help.md)
     * [Getting started with the codebase](hacking/getting-started.md)
     * [Data flow](hacking/data-flow.md)
-    * [Coding style](hacking/coding-style.md)
     * [Environment variables](hacking/environment-variables.md)
     * [Performance hacking](hacking/performance.md)
   * [Behind the scenes](hacking/behind-the-scenes.md)

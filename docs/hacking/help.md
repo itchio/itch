@@ -47,12 +47,8 @@ People contributing insight are a great factor in making the app better for
 everyone, and regularly get a shout-out in our [changelogs](http://github.com/itchio/itch/releases) (displayed for
 in-app on update).
 
-Here are some pointers to get started with the codebase:
-
-  * [Getting started](getting-started.md)
-  * [Data flow](data-flow.md)
-  * [Coding style](coding-style.md)
-  * [Environment variables](environment-variables.md)
+To get your own development copy of the app and running, follow the
+[Getting started](getting-started.md) page.
 
 ## Contribute code
 
