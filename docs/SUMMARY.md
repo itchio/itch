@@ -36,6 +36,8 @@
   * [How you can help](developing/help.md)
     * [Getting started with the codebase](developing/getting-started.md)
     * [Data flow](developing/data-flow.md)
+    * [Unit Tests](developing/unit-tests.md)
+    * [Integration Tests](developing/integration-tests.md)
     * [Environment variables](developing/environment-variables.md)
     * [Performance hacking](developing/performance.md)
   * [Behind the scenes](developing/behind-the-scenes.md)
