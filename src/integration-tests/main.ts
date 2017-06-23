@@ -207,6 +207,32 @@ test("integration tests", async t => {
     t.case(name, async (t: IIntegrationTest) => {
       const t1 = Date.now();
 
+      t.safeScroll = async selector => {
+        const c = t.app.client;
+        await c.waitForExist(selector, DefaultTimeout);
+
+        let numTries = 5;
+        let err: Error;
+        for (let i = 0; i < numTries; i++) {
+          err = null;
+          try {
+            if (i > 0) {
+              await sleep(400);
+            }
+            await c.scroll(selector);
+            break;
+          } catch (e) {
+            t.comment(`could not scroll to ${selector}: ${e.stack}`);
+            err = e;
+          }
+        }
+
+        if (err) {
+          t.comment(`While scrolling ${selector}`);
+          throw err;
+        }
+      }
+
       t.safeClick = async selector => {
         const c = t.app.client;
         await c.waitForExist(selector, DefaultTimeout);

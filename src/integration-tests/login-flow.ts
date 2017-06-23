@@ -62,11 +62,11 @@ export default async function loginFlow(t: IIntegrationTest) {
   await t.safeClick("#user-menu-preferences");
 
   t.comment("expanding advanced preferences");
-  await client.scroll("#preferences-advanced-section");
+  await t.safeScroll("#preferences-advanced-section");
   await t.safeClick("#preferences-advanced-section");
 
   t.comment("opening clearing browsing data dialog");
-  await client.scroll("#clear-browsing-data-link");
+  await t.safeScroll("#clear-browsing-data-link");
   await t.safeClick("#clear-browsing-data-link");
 
   t.comment("clearing cookies");

@@ -18,7 +18,11 @@ export interface ISpec {
 interface ITestAdditions {
   app: Application;
 
+  /** Very insistently try to click on something. Waits for it to appear, retries etc. */
   safeClick: (selector: string) => Promise<void>;
+
+  /** Very insistently try to scroll to something. Waits for it to appear, retries etc. */
+  safeScroll: (selector: string) => Promise<void>;
 
   /** used by test runner, don't mess with from tests */
   itch: {
