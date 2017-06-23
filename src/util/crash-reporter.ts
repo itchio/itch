@@ -12,9 +12,26 @@ import urls from "../constants/urls";
 import { isNetworkError } from "../net/errors";
 
 import { findWhere } from "underscore";
+import { Cancelled } from "../types";
 
 import * as os from "../os";
 import * as sf from "../os/sf";
+
+enum ErrorType {
+  UncaughtException,
+  UnhandledRejection,
+}
+
+function errorTypeString(t: ErrorType): string {
+  switch (t) {
+    case ErrorType.UncaughtException:
+      return "uncaught exception";
+    case ErrorType.UnhandledRejection:
+      return "unhandled rejection";
+    default:
+      return "unknown error type";
+  }
+}
 
 export interface IReportIssueOpts {
   log?: string;
@@ -87,7 +104,7 @@ ${log}
     shell.openExternal(url);
   },
 
-  handle: async function(type: string, e: Error) {
+  handle: async function(type: ErrorType, e: Error) {
     if (self.catching) {
       // tslint:disable-next-line
       console.log(`While catching: ${e.stack || e}`);
@@ -96,7 +113,7 @@ ${log}
     self.catching = true;
 
     // tslint:disable-next-line
-    console.log(`${type}: ${e.stack}`);
+    console.log(`${errorTypeString(type)}: ${e.stack}`);
     let res = await self.writeCrashLog(e);
     let log = res.log;
     let crashFile = res.crashFile;
@@ -133,23 +150,19 @@ ${log}
       }),
     };
 
-    await new Promise(async function(resolve, reject) {
-      let callback = (response: number) => {
-        if (response === 0) {
-          self.reportIssue({ log });
-        } else if (response === 1) {
-          shell.openItem(crashFile);
-        } else if (response === 3) {
-          // ignore and continue
-          return;
-        }
-        os.exit(1);
-      };
+    const response = await new Promise((resolve, reject) =>
+      dialog.showMessageBox(dialogOpts, resolve),
+    );
 
-      // try to show error dialog
-      // supplying defaultValues everywhere in case the i18n system hasn't loaded yet
-      dialog.showMessageBox(dialogOpts, callback);
-    });
+    if (response === 0) {
+      self.reportIssue({ log });
+    } else if (response === 1) {
+      shell.openItem(crashFile);
+    } else if (response === 3) {
+      // ignore and continue
+      return;
+    }
+    os.exit(1);
 
     self.catching = false;
   },
@@ -159,10 +172,15 @@ ${log}
       return;
     }
 
-    const makeHandler = (type: string) => {
+    const makeHandler = (type: ErrorType) => {
       return (e: Error) => {
         if (isNetworkError(e)) {
           console.error(`Uncaught network error: ${e.stack}`);
+          return;
+        }
+
+        if (e instanceof Cancelled) {
+          console.error(`Something was cancelled: ${e.stack}`);
           return;
         }
 
@@ -174,14 +192,14 @@ ${log}
             console.log(`Error in crash-reporter (${type})\n${e2.stack}`);
           })
           .then(() => {
-            if (type === "uncaughtException") {
+            if (type === ErrorType.UncaughtException) {
               os.exit(1);
             }
           });
       };
     };
-    process.on("uncaughtException", makeHandler("Uncaught exception"));
-    process.on("unhandledRejection", makeHandler("Unhandled rejection"));
+    process.on("uncaughtException", makeHandler(ErrorType.UncaughtException));
+    process.on("unhandledRejection", makeHandler(ErrorType.UnhandledRejection));
   },
 };
 
