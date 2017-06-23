@@ -2,11 +2,15 @@ import * as zopf from "zopf";
 import * as fs from "fs";
 import { join, resolve } from "path";
 
+// this loads sqlite3 once, so that the test times are realistic
+import "typeorm";
+
 import { relative } from "path";
 
 import { ILocalizer } from "./localizer";
 
 const basePath = __dirname;
+const emptyArr = [];
 
 interface ISuite {
   case: (name: string, cb: (t: Zopf.ITest) => void | Promise<void>) => void;
@@ -92,9 +96,8 @@ export class TestWatcher extends Watcher {
   }
 
   protected async routeInternal(action: IAction<any>) {
-    const reactors = this.reactors[action.type];
-    if (reactors) {
-      for (const reactor of reactors) {
+    for (const type of [action.type, "_ALL"]) {
+      for (const reactor of this.reactors[type] || emptyArr) {
         await reactor(this.store, action);
       }
     }
@@ -112,4 +115,15 @@ export async function loadDB(db: DB, store: IStore) {
 
   await db.load(store, ":memory:");
   oldDB = db;
+}
+
+/**
+ * Returns a promise that resolves when setImmediate's callback is called
+ * Some parts of the code (reactors for example) use setImmediate to avoid
+ * infinite recursion.
+ */
+export async function immediate() {
+  await new Promise((resolve, reject) => {
+    setImmediate(resolve);
+  });
 }
