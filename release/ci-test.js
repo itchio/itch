@@ -12,11 +12,7 @@ async function main() {
 
   if (process.platform === "linux") {
     $(await $.sh('xvfb-run -a -s "-screen 0 1280x720x24" npm test'));
-    $(
-      await $.sh(
-        'xvfb-run -a -s "-screen 0 1280x720x24" npm run integration-tests',
-      ),
-    );
+    $(await $.sh('xvfb-run -a -s "-screen 0 1280x720x24" npm run integration-tests'));
     $(await $.npm("run upload-coverage"));
   } else {
     $(await $.npm("test"));
