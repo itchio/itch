@@ -136,13 +136,18 @@ app.on("ready", async () => {
     const parser = tapParser(function(results) {
       // muffin;
     });
+    let lastComment = "";
     parser.on("assert", function(assert) {
       if (!assert.ok) {
+        console.warn(chalk.blue(lastComment.trim()));
         console.warn(chalk.red("[failed] " + assert.id + " - " + assert.name));
         if (assert.diag) {
           console.warn(chalk.red(JSON.stringify(assert.diag, null, 2)));
         }
       }
+    });
+    parser.on("comment", function(comment) {
+      lastComment = comment;
     });
     tape.createStream().pipe(parser);
 
