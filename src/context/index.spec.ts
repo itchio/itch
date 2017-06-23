@@ -1,6 +1,5 @@
 import suite from "../test-suite";
 import Context from ".";
-import * as bluebird from "bluebird";
 
 import { DB } from "../db";
 import { IStore, Cancelled } from "../types";
@@ -54,6 +53,7 @@ suite(__filename, s => {
     });
 
     t.is(abortCount, 0, "haven't aborted initially");
+    t.false(c.isDead(), "context is not dead yet");
 
     let ranFirstTask = false;
     let cancelledFirstTask = false;
@@ -66,9 +66,9 @@ suite(__filename, s => {
         },
         work: async () => {
           ranFirstTask = true;
-          while (!c.isDead()) {
-            await bluebird.delay(100);
-          }
+          await new Promise(() => {
+            /* just hang there */
+          });
         },
       })
       .catch(e => {
@@ -87,6 +87,7 @@ suite(__filename, s => {
     allowAbort = true;
     await c.tryAbort();
     t.same(abortCount, 1, "we aborted once");
+    t.true(c.isDead(), "context is dead now");
     await p1;
     t.true(cancelledFirstTask, "first task was cancelled now");
 

@@ -19,12 +19,20 @@ interface IWithStopperOpts<T> {
   work: Work<T>;
 }
 
+const cancelPoisonValue = {};
+
 export default class Context {
   private emitter: EventEmitter = new EventEmitter();
   private stoppers: IStopper[] = [];
   private dead = false;
+  private cancelPromise: Promise<{}>;
+  private resolveCancelPromise: () => void = null;
 
-  constructor(public store: IStore, public db: DB) {}
+  constructor(public store: IStore, public db: DB) {
+    this.cancelPromise = new Promise((resolve, reject) => {
+      this.resolveCancelPromise = resolve;
+    });
+  }
 
   /**
    * Try to abort this whole context. If it can't, it'll throw.
@@ -33,6 +41,8 @@ export default class Context {
     if (this.dead) {
       return;
     }
+
+    this.resolveCancelPromise();
 
     while (this.stoppers.length > 0) {
       const stopper = this.stoppers.pop();
@@ -54,11 +64,11 @@ export default class Context {
 
     this.stoppers.push(opts.stop);
     try {
-      const result = await opts.work();
-      if (this.dead) {
+      const result = await Promise.race([opts.work(), this.cancelPromise]);
+      if (this.dead || result === cancelPoisonValue) {
         throw new Cancelled();
       }
-      return result;
+      return result as T;
     } finally {
       this.stoppers = this.stoppers.filter(c => c !== opts.stop);
     }
