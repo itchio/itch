@@ -894,10 +894,7 @@ export const FOCUS_SEARCH = "FOCUS_SEARCH";
 export interface IFocusSearchPayload {}
 
 export const CLEAR_FILTERS = "CLEAR_FILTERS";
-export interface IClearFiltersPayload {
-  /** id of the tab for which to clear filters */
-  tab: string;
-}
+export interface IClearFiltersPayload {}
 
 export const SEARCH_QUERY_CHANGED = "SEARCH_QUERY_CHANGED";
 export interface ISearchQueryChangedPayload {}
