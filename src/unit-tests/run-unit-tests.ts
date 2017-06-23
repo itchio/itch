@@ -138,9 +138,9 @@ app.on("ready", async () => {
     });
     parser.on("assert", function(assert) {
       if (!assert.ok) {
-        console.warn("[failed] " + assert.id + " - " + assert.name);
+        console.warn(chalk.red("[failed] " + assert.id + " - " + assert.name));
         if (assert.diag) {
-          console.warn(assert.diag);
+          console.warn(chalk.red(JSON.stringify(assert.diag, null, 2)));
         }
       }
     });
