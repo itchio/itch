@@ -125,6 +125,11 @@ export default async function loginFlow(t: IIntegrationTest) {
 }
 ```
 
+Check out these pages for more commands:
+
+  * The [spectron README](https://github.com/electron/spectron)
+  * The [webdriver API docs](http://webdriver.io/api.html)
+
 ### Taming a failing test
 
 When an integration test fails on the CI, it takes a screenshot, and it's
