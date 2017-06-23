@@ -272,7 +272,20 @@ test("integration tests", async t => {
   );
 });
 
+import { execSync } from "child_process";
+
+function kill() {
+  if (process.platform === "darwin") {
+    execSync("killall Electron");
+  } else {
+    // tslint:disable-next-line
+    console.log(`Not killing app on platform '${process.platform}'`);
+  }
+}
+
 tape.onFinish(() => {
   // tslint:disable-next-line
   console.log("# tape finished!");
+
+  kill();
 });
