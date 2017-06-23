@@ -24,6 +24,7 @@ import contextMenu from "./context-menu";
 import rememberedSessions from "./remembered-sessions";
 import session from "./session";
 import navigation from "./navigation";
+import savePasswordAndSecret from "./navigation/save-password-and-secret";
 import commons from "./commons";
 import purchases from "./purchases";
 import url from "./url";
@@ -57,6 +58,7 @@ export default function getWatcher(db: DB) {
   rememberedSessions(watcher);
   session(watcher);
   navigation(watcher);
+  savePasswordAndSecret(watcher, db);
   commons(watcher);
   purchases(watcher);
   url(watcher);

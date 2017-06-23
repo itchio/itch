@@ -5,22 +5,9 @@ import staticTabData from "../constants/static-tab-data";
 
 import { createSelector } from "reselect";
 
-import { IAppState, IStore } from "../types";
-
-import savePasswordAndSecret from "./navigation/save-password-and-secret";
+import { IAppState } from "../types";
 
 import { contains } from "underscore";
-
-let pathSelector: (state: IAppState) => void;
-const makePathSelector = (store: IStore) =>
-  createSelector(
-    (state: IAppState) => state.session.navigation.id,
-    id => {
-      setImmediate(() => {
-        store.dispatch(actions.tabChanged({ id }));
-      });
-    },
-  );
 
 export default function(watcher: Watcher) {
   watcher.on(actions.clearFilters, async (store, action) => {
@@ -103,8 +90,6 @@ export default function(watcher: Watcher) {
         },
       }),
     );
-
-    await savePasswordAndSecret(path);
   });
 
   watcher.on(actions.closeAllTabs, async (store, action) => {
@@ -129,9 +114,10 @@ export default function(watcher: Watcher) {
     store.dispatch(actions.navigate({ id: "downloads", background: true }));
   });
 
+  let pathSelector: (state: IAppState) => void;
+
   watcher.onAll(async (store, action) => {
     if (!pathSelector) {
-      pathSelector = makePathSelector(store);
       pathSelector = createSelector(
         (state: IAppState) => state.session.navigation.id,
         id => {
