@@ -70,7 +70,6 @@
     "electron-compile-ftl": "^6.4.5",
     "electron-is-dev": "^0.1.2",
     "eol": "^0.2.0",
-    "faucet": "^0.0.1",
     "file-type": "^3.0.0",
     "fnout": "^1.1.0",
     "ftl-redux-electron-store": "^1.0.0",
