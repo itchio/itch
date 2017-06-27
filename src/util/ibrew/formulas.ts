@@ -37,7 +37,6 @@ export interface IFormulas {
   dllassert: IFormulaSpec;
   activate: IFormulaSpec;
   firejail: IFormulaSpec;
-  arh: IFormulaSpec;
 
   [formulaName: string]: IFormulaSpec;
 }
@@ -135,9 +134,9 @@ self.firejail = {
       if (stats.uid !== 0) {
         return { reason: "not owned by root" };
       }
+      // tslint:disable-next-line:no-bitwise
       if ((stats.mode & 0o4000) === 0) {
-        // tslint:disable-line:no-bitwise
-        return { resason: "not suid" };
+        return { reason: "not suid" };
       }
     } catch (e) {
       if (e.code === "ENOENT") {
@@ -151,17 +150,6 @@ self.firejail = {
   versionCheck: {
     args: ["--version"],
     parser: /firejail version ([0-9a-z.]*)/,
-  },
-};
-
-/*
- * Adobe runtime helper
- */
-self.arh = {
-  format: "7z",
-  versionCheck: {
-    args: [],
-    parser: /Version ([0-9a-z.]*)/,
   },
 };
 
