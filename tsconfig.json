@@ -3,14 +3,16 @@
         "rootDir": "src",
         "outDir": "app",
         "target": "es2017",
-        "lib": ["dom", "es6"],
+        "lib": [
+            "dom",
+            "es6"
+        ],
         "module": "commonjs",
         "experimentalDecorators": true,
         "noUnusedLocals": true,
         "inlineSourceMap": true,
         "jsx": "react",
-        "allowJs": true,
-        "skipLibCheck": true
+        "allowJs": true
     },
     "exclude": [
         "app",
@@ -20,6 +22,6 @@
         "fixtures",
         "dist",
         "release",
-        "tests"
+        "coverage"
     ]
 }
