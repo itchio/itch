@@ -2,24 +2,28 @@ import spawn from "./spawn";
 import * as os from ".";
 
 import { ISpaceInfo, IPartInfo, IPartsInfo } from "../types";
+import Context from "../context";
+import { devNull } from "../logger";
 
 /*
  * Heavily based on https://github.com/int0h/npm-hddSpace
  */
 let self = {
-  dfRun: async () => {
+  dfRun: async (ctx: Context) => {
     const lines = [] as string[];
     const opts = {
       command: "df",
       args: ["-kP"],
       onToken: (token: string) => lines.push(token),
+      ctx,
+      logger: devNull,
     };
     await spawn(opts);
     return lines;
   },
 
-  df: async (): Promise<IPartsInfo> => {
-    const lines = await self.dfRun();
+  df: async (ctx: Context): Promise<IPartsInfo> => {
+    const lines = await self.dfRun(ctx);
 
     const resultObj = {} as IPartsInfo;
     let rootPart: IPartInfo;
@@ -51,12 +55,14 @@ let self = {
     return resultObj;
   },
 
-  wmicRun: async () => {
+  wmicRun: async (ctx: Context) => {
     const lines = [] as string[];
     let opts = {
       command: "wmic",
       args: ["logicaldisk", "get", "size,freespace,caption"],
       onToken: (token: string) => lines.push(token),
+      ctx,
+      logger: devNull,
     };
     await spawn(opts);
     return lines;
@@ -73,8 +79,8 @@ let self = {
     return parts.reduce(f, initial);
   },
 
-  wmic: async (): Promise<IPartsInfo> => {
-    const lines = await self.wmicRun();
+  wmic: async (ctx: Context): Promise<IPartsInfo> => {
+    const lines = await self.wmicRun(ctx);
 
     const resultObj = {} as IPartsInfo;
     resultObj.parts = lines
@@ -101,11 +107,11 @@ let self = {
   },
 
   /** Return a list of partitions/disks and information on their free / total space. */
-  diskInfo: async function(): Promise<IPartsInfo> {
+  diskInfo: async function(ctx: Context): Promise<IPartsInfo> {
     if (os.platform() === "win32") {
-      return await self.wmic();
+      return await self.wmic(ctx);
     } else {
-      return await self.df();
+      return await self.df(ctx);
     }
   },
 

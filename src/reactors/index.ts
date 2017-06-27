@@ -46,7 +46,7 @@ export default function getWatcher(db: DB) {
   locales(watcher);
   tray(watcher);
   menu(watcher, runtime);
-  installLocations(watcher);
+  installLocations(watcher, db);
   selfUpdate(watcher);
   setup(watcher);
   tabs(watcher);

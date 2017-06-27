@@ -19,6 +19,9 @@ import { BrowserWindow, dialog } from "electron";
 import { IStore, IAppState } from "../types";
 import { IAddInstallLocationPayload } from "../constants/action-types";
 
+import Context from "../context";
+import { DB } from "../db";
+
 let selector: (state: IAppState) => void;
 const makeSelector = (store: IStore) =>
   createSelector(
@@ -33,7 +36,7 @@ const makeSelector = (store: IStore) =>
     },
   );
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
     const { name } = action.payload;
     invariant(
@@ -228,7 +231,8 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.queryFreeSpace, async (store, action) => {
-    const diskInfo = await diskspace.diskInfo();
+    const ctx = new Context(store, db);
+    const diskInfo = await diskspace.diskInfo(ctx);
     store.dispatch(actions.freeSpaceUpdated({ diskInfo }));
   });
 
