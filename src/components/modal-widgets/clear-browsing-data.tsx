@@ -11,6 +11,11 @@ import LoadingCircle from "../basics/loading-circle";
 
 import * as electron from "electron";
 
+// TODO: So maybe this is a good place to clear downloads too
+// I dunno, just a though. Like technically they shouldn't even
+// stay long (should be cleaned up after install etc.)
+// but yeah.
+
 export class ClearBrowsingData extends React.PureComponent<
   IProps & IDerivedProps & I18nProps,
   IState
@@ -28,6 +33,8 @@ export class ClearBrowsingData extends React.PureComponent<
     const { userId } = this.props;
 
     // FIXME: surely we can do that without remote ?
+    // more surely: that surely should just be done in metal
+    // and we should read from store or something
     const ourSession = electron.remote.session.fromPartition(
       partitionForUser(String(userId)),
       {},
