@@ -74,6 +74,16 @@ export default class Context {
     }
   }
 
+  async withSub<T>(f: (sub: Context) => Promise<T>): Promise<T> {
+    const sub = new Context(this.store, this.db);
+    return await this.withStopper({
+      stop: async () => {
+        await sub.tryAbort();
+      },
+      work: () => f(sub),
+    });
+  }
+
   on(ev: "abort", listener: IAbortListener);
   on(ev: "progress", listener: IProgressListener);
 

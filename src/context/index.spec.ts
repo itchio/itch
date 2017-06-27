@@ -71,12 +71,8 @@ suite(__filename, s => {
           });
         },
       })
-      .catch(e => {
-        if (e instanceof Cancelled) {
-          cancelledFirstTask = true;
-        } else {
-          throw e;
-        }
+      .catch(() => {
+        /* muffin */
       });
 
     await t.rejects(c.tryAbort());
@@ -89,7 +85,6 @@ suite(__filename, s => {
     t.same(abortCount, 1, "we aborted once");
     t.true(c.isDead(), "context is dead now");
     await p1;
-    t.true(cancelledFirstTask, "first task was cancelled now");
 
     let ranSecondTask = false;
     let cancelledSecondTask = false;
@@ -115,5 +110,37 @@ suite(__filename, s => {
 
     await c.tryAbort();
     t.same(abortCount, 1, "we aborted only once throughout");
+  });
+
+  s.case("Sub-context work", async t => {
+    const c = new Context(store, db);
+
+    let subRef;
+    let canAbort = false;
+    c
+      .withSub(async sub => {
+        subRef = sub;
+        await sub.withStopper({
+          stop: async () => {
+            if (!canAbort) {
+              throw new Error("can't abort");
+            }
+          },
+          work: async () => {
+            await new Promise(() => {
+              /* muffin */
+            });
+          },
+        });
+      })
+      .catch(() => {
+        // woops
+      });
+
+    await t.rejects(c.tryAbort());
+    canAbort = true;
+    await c.tryAbort();
+    t.true(c.isDead, "parent context is dead");
+    t.true(subRef.isDead, "sub context is dead too");
   });
 });
