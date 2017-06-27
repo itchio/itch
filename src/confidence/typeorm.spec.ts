@@ -1,6 +1,12 @@
 import suite from "../test-suite";
 
-import { createConnection, Entity, Column, PrimaryColumn } from "typeorm";
+import {
+  createConnection,
+  getConnectionManager,
+  Entity,
+  Column,
+  PrimaryColumn,
+} from "typeorm";
 import deepEquals = require("deep-equal");
 import * as _ from "underscore";
 
@@ -18,7 +24,15 @@ class Game {
 suite(__filename, s => {
   s.case("run a few queries", async t => {
     const startedAt = Date.now();
+
+    const name = "default";
+    try {
+      await getConnectionManager().get(name).close();
+    } catch (e) {
+      // something like connection not found or whatever
+    }
     const conn = await createConnection({
+      name,
       driver: {
         type: "sqlite",
         storage: ":memory:",
