@@ -2,21 +2,18 @@ import * as paths from "../../os/paths";
 import client from "../../api";
 import butler from "../../util/butler";
 
-import db from "../../db";
-
 import rootLogger from "../../logger";
 
 import downloadPatches from "./download-patches";
 import getGameCredentials from "./get-game-credentials";
+import isHeal from "./is-heal";
 
-import { EventEmitter } from "events";
-
-import { IStore, IDownloadItem, IDownloadResult } from "../../types";
+import { IDownloadItem, IDownloadResult } from "../../types";
+import Context from "../../context";
 
 export default async function performDownload(
-  store: IStore,
+  ctx: Context,
   item: IDownloadItem,
-  out: EventEmitter,
 ): Promise<IDownloadResult> {
   // TODO: we want to store download/install logs even if the cave never ends
   // up being valid, for bug reporting purposes.
@@ -27,24 +24,22 @@ export default async function performDownload(
   }
   const logger = parentLogger.child({ name: `download` });
 
-  if (item.upgradePath && item.caveId) {
-    logger.info("Got an upgrade path, downloading patches");
-
-    return await downloadPatches(store, item, out, logger);
-  }
-
-  const { upload, downloadKey, game, caveId } = item;
-
-  const gameCredentials = await getGameCredentials(store, game);
+  const gameCredentials = await getGameCredentials(ctx, item.game);
   if (!gameCredentials) {
     throw new Error(`no game credentials, can't download`);
   }
 
+  if (item.upgradePath && item.caveId) {
+    logger.info("Got an upgrade path, downloading patches");
+
+    return await downloadPatches(ctx, item, logger);
+  }
+
+  const { upload, caveId } = item;
+
   const api = client.withKey(gameCredentials.apiKey);
 
   const { preferences } = store.getState();
-
-  const onProgress = (e: any) => out.emit("progress", e);
 
   const archivePath = paths.downloadPath(upload, preferences);
 
@@ -54,40 +49,41 @@ export default async function performDownload(
     logger.info(`Downloading wharf-enabled download, build #${buildId}`);
 
     const archiveURL = api.downloadBuildURL(
-      downloadKey,
+      gameCredentials.downloadKey,
       upload.id,
       buildId,
       "archive",
     );
     const signatureURL = api.downloadBuildURL(
-      downloadKey,
+      gameCredentials.downloadKey,
       upload.id,
       buildId,
       "signature",
     );
 
-    const cave = await db.caves.findOneById(caveId);
+    const cave = await ctx.db.caves.findOneById(caveId);
 
     const fullInstallFolder = paths.appPath(cave, preferences);
     logger.info(`Doing verify+heal to ${fullInstallFolder}`);
 
     await butler.verify(signatureURL, fullInstallFolder, {
+      ctx,
       logger,
       heal: `archive,${archiveURL}`,
-      emitter: out,
-      onProgress,
     });
   } else {
-    const uploadURL = api.downloadUploadURL(downloadKey, upload.id);
+    const uploadURL = api.downloadUploadURL(
+      gameCredentials.downloadKey,
+      upload.id,
+    );
 
     try {
       await butler.cp({
+        ctx,
         src: uploadURL,
         dest: archivePath,
         resume: true,
-        emitter: out,
         logger,
-        onProgress,
       });
     } catch (e) {
       if (e.errors && e.errors[0] === "invalid upload") {
@@ -102,18 +98,4 @@ export default async function performDownload(
   return {
     archivePath,
   };
-}
-
-function isHeal(item: IDownloadItem): boolean {
-  switch (item.reason) {
-    case "heal":
-    case "revert":
-      return true;
-    case "update":
-      if (item.upgradePath) {
-        return true;
-      }
-    default:
-      return false;
-  }
 }

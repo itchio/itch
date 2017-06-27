@@ -1,38 +1,37 @@
-import { EventEmitter } from "events";
-
-import { Logger } from "../logger";
+import { Logger } from "../../logger";
 
 import butler from "../../util/butler";
 import * as paths from "../../os/paths";
 import client from "../../api";
 
-import {
-  IStore,
-  IProgressInfo,
-  IDownloadItem,
-  IDownloadResult,
-} from "../../types";
+import Context from "../../context";
+
+import { IDownloadItem, IDownloadResult, IGameCredentials } from "../../types";
 import { IDownloadBuildFileExtras } from "../../types/api";
 
-import store from "../../store/metal-store";
+interface IDownloadPatchesOpts {
+  ctx: Context;
+  credentials: IGameCredentials;
+  item: IDownloadItem;
+  logger: Logger;
+}
 
 export default async function downloadPatches(
-  store: IStore,
-  item: IDownloadItem,
-  out: EventEmitter,
-  parentLogger: Logger,
+  opts: IDownloadPatchesOpts,
 ): Promise<IDownloadResult> {
-  const { cave, totalSize, upgradePath, upload, downloadKey } = item;
-  const logger = parentLogger.child({ name: "download-patches" });
-  const globalMarket: any = null;
+  const { ctx, credentials, item } = opts;
+  const { caveId, totalSize, upgradePath, upload } = item;
+  const logger = opts.logger.child({ name: "download-patches" });
 
-  // TODO: implement `credentialsForGame`
-  const { credentials } = store.getState().session;
+  const api = client.withKey(credentials.apiKey);
 
-  const api = client.withKey(credentials.key);
+  const cave = await ctx.db.caves.findOneById(caveId);
+  if (!cave) {
+    throw new Error("Can't download patches if we have no cave");
+  }
 
   const patchExtras: IDownloadBuildFileExtras = {};
-  const { preferences } = store.getState();
+  const { preferences } = ctx.store.getState();
   if (preferences.preferOptimizedPatches) {
     patchExtras.prefer_optimized = 1;
   }
@@ -52,49 +51,49 @@ export default async function downloadPatches(
     const cavePath = paths.appPath(cave, preferences);
 
     const patchPath = api.downloadBuildURL(
-      downloadKey,
+      credentials.downloadKey,
       upload.id,
       entry.id,
       "patch",
       patchExtras,
     );
     const signaturePath = api.downloadBuildURL(
-      downloadKey,
+      credentials.downloadKey,
       upload.id,
       entry.id,
       "signature",
     );
     const archivePath = api.downloadBuildURL(
-      downloadKey,
+      credentials.downloadKey,
       upload.id,
       entry.id,
       "archive",
     );
 
-    const applyProgress = (e: IProgressInfo) => {
-      const entryProgress = e.progress;
-      const progress =
-        (byteOffset + entryProgress * entry.patchSize) / totalSize;
-      out.emit("progress", { progress });
-    };
-
     // TODO: if this is interrupted, it has to restart the current patch from the beginning.
     // Maybe httpfile should have some kind of persistence? That's a whole 'nother can of worms though.
 
     logger.info(`Applying ${entry.id} into ${cavePath}`);
-    const butlerOpts = {
-      emitter: out,
-      onProgress: applyProgress,
-      patchPath,
-      signaturePath,
-      outPath: cavePath,
-      archivePath,
-      logger,
-    };
 
-    await butler.apply(butlerOpts);
+    await ctx.withSub(async applyCtx => {
+      applyCtx.on("progress", e => {
+        const entryProgress = e.progress;
+        const progress =
+          (byteOffset + entryProgress * entry.patchSize) / totalSize;
+        ctx.emitProgress({ progress });
+      });
 
-    const caveUpdate = {
+      await butler.apply({
+        ctx: applyCtx,
+        patchPath,
+        signaturePath,
+        outPath: cavePath,
+        archivePath,
+        logger,
+      });
+    });
+
+    await ctx.db.saveOne("caves", cave.id, {
       buildId: entry.id,
       buildUserVersion: entry.userVersion,
       installedArchiveMtime: entry.updatedAt,
@@ -104,13 +103,12 @@ export default async function downloadPatches(
           buildId: entry.id,
         },
       },
-    };
-    await globalMarket.saveEntity("caves", cave.id, caveUpdate, { wait: true });
+    });
 
     logger.info(`Done applying ${entry.id}`);
 
     const progress = (byteOffset + entry.patchSize) / totalSize;
-    out.emit("progress", { progress });
+    ctx.emitProgress({ progress });
 
     byteOffset += entry.patchSize;
   }
