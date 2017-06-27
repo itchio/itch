@@ -1,16 +1,18 @@
-import * as bluebird from "bluebird";
 import * as childProcess from "child_process";
 import * as StreamSplitter from "stream-splitter";
 import LFTransform from "./lf-transform";
 
-import { Cancelled } from "../tasks/errors";
+import { Cancelled } from "../types";
 
 import rootLogger, { Logger } from "../logger";
 const spawnLogger = rootLogger.child({ name: "spawn" });
 
-import { EventEmitter } from "events";
+import Context from "../context";
 
 interface ISpawnOpts {
+  /** Context this should run in */
+  ctx: Context;
+
   /** Command to spawn */
   command: string;
 
@@ -19,9 +21,6 @@ interface ISpawnOpts {
 
   /** Defaults to eol for the current platform ("\r\n" or "\n") */
   split?: string;
-
-  /** If set, spawn listens to this emitter for cancellation */
-  emitter?: EventEmitter;
 
   /** If set, called on each line of stdout */
   onToken?: (token: string) => void;
@@ -62,13 +61,7 @@ interface ISpawnInterface {
 let spawn: ISpawnInterface;
 
 spawn = async function(opts: ISpawnOpts): Promise<number> {
-  const {
-    emitter,
-    split = "\n",
-    onToken,
-    onErrToken,
-    logger = spawnLogger,
-  } = opts;
+  const { ctx, split = "\n", onToken, onErrToken, logger = spawnLogger } = opts;
   let { command, args = [] } = opts;
 
   let stdioOpts = {
@@ -92,7 +85,6 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
   logger.debug(`spawning ${command} with args ${args.join(" ")}`);
 
   const child = childProcess.spawn(command, args, spawnOpts);
-  let cancelled = false;
   let cbErr: Error = null;
 
   if (onToken) {
@@ -123,50 +115,31 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
     });
   }
 
-  const promise = new bluebird((resolve, reject) => {
-    let fakeCode: number;
+  let cancelled = false;
+  return await ctx.withStopper({
+    stop: async () => {
+      child.kill("SIGKILL");
+      cancelled = true;
+    },
+    work: () =>
+      new Promise<number>((resolve, reject) => {
+        child.on("close", (code: number, signal: string) => {
+          if (cbErr) {
+            reject(cbErr);
+          }
 
-    child.on("close", (code: number, signal: string) => {
-      if (!code && fakeCode) {
-        code = fakeCode;
-        signal = null;
-      }
-
-      if (cbErr) {
-        reject(cbErr);
-      }
-      if (cancelled) {
-        reject(new Cancelled());
-      } else {
-        if (code === null && signal) {
-          reject(new Error(`killed by signal ${signal}`));
-        }
-        resolve(code);
-      }
-    });
-    child.on("error", reject);
-
-    if (emitter) {
-      emitter.once("cancel", (e: Error) => {
-        try {
-          cancelled = true;
-          child.kill("SIGKILL");
-        } catch (e) {
-          logger.info(`error while killing ${command}: ${e.stack || e}`);
-        }
-      });
-      emitter.once("fake-close", (e: Error) => {
-        try {
-          child.kill("SIGTERM");
-          fakeCode = (e as any).code;
-        } catch (e) {
-          logger.info(`error while terminating ${command}: ${e.stack || e}`);
-        }
-      });
-    }
+          if (cancelled) {
+            reject(new Cancelled());
+          } else {
+            if (code === null && signal) {
+              reject(new Error(`killed by signal ${signal}`));
+            }
+            resolve(code);
+          }
+        });
+        child.on("error", reject);
+      }),
   });
-  const code = (await promise) as number;
-  return code;
 } as any;
 
 spawn.assert = async function(opts: ISpawnOpts): Promise<void> {
