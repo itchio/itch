@@ -15,7 +15,7 @@ export default async function getGameCredentials(
 }
 
 export async function getGameCredentialsForId(
-  ctx,
+  ctx: Context,
   gameId: number,
 ): Promise<IGameCredentials> {
   return await getGameCredentialsInternal(ctx, gameId, false);

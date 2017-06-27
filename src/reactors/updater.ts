@@ -1,4 +1,6 @@
 import { Watcher } from "./watcher";
+import { DB } from "../../db";
+import Context from "../../context";
 
 import { isNetworkError } from "../net/errors";
 
@@ -49,13 +51,14 @@ interface IUpdateCheckOpts {
 }
 
 async function _doCheckForGameUpdate(
-  store: IStore,
+  ctx: Context,
   cave: ICaveRecord,
   inTaskOpts = {} as IUpdateCheckOpts,
 ): Promise<IUpdateCheckResult> {
   const { noisy = false } = inTaskOpts;
   const returnVars = {} as IUpdateCheckResult;
 
+  const store = ctx.store;
   const state = store.getState();
   const credentials = state.session.credentials;
 
@@ -112,15 +115,13 @@ async function _doCheckForGameUpdate(
 
   logger.info(`Looking for updates to ${game.title}...`);
 
-  const out = new EventEmitter();
-
   try {
     const gameCredentials = await getGameCredentials(store, game);
     if (!gameCredentials) {
       throw new Error("no game credentials");
     }
 
-    const { uploads } = await findUploads(out, { game, gameCredentials });
+    const { uploads } = await findUploads(ctx, { game, gameCredentials });
 
     if (uploads.length === 0) {
       logger.error(`Can't check for updates for ${game.title}, no uploads.`);
@@ -286,12 +287,12 @@ async function _doCheckForGameUpdate(
 }
 
 async function doCheckForGameUpdate(
-  store: IStore,
+  ctx: Context,
   cave: ICaveRecord,
   taskOpts = {} as IUpdateCheckOpts,
 ) {
   try {
-    return await _doCheckForGameUpdate(store, cave, taskOpts);
+    return await _doCheckForGameUpdate(ctx, cave, taskOpts);
   } catch (e) {
     if (e.code && e.code === "ENOTFOUND") {
       logger.warn("Offline, skipping update check");
@@ -303,7 +304,7 @@ async function doCheckForGameUpdate(
 
 let updaterInstalled = false;
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, ctx: Context) {
   watcher.on(actions.sessionReady, async (store, action) => {
     if (updaterInstalled) {
       return;
@@ -320,12 +321,11 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.checkForGameUpdates, async (store, action) => {
-    // FIXME: db
     const caves = {};
 
     for (const caveId of Object.keys(caves)) {
       try {
-        await doCheckForGameUpdate(store, caves[caveId]);
+        await doCheckForGameUpdate(ctx, caves[caveId]);
       } catch (e) {
         logger.error(
           `While checking for cave ${caveId} update: ${e.stack || e}`,
@@ -341,7 +341,6 @@ export default function(watcher: Watcher) {
       logger.info(`Looking for updates for cave ${caveId}`);
     }
 
-    // FIXME: db
     const cave = null;
     if (!cave) {
       logger.warn(`No cave with id ${caveId}, bailing out`);
@@ -349,7 +348,7 @@ export default function(watcher: Watcher) {
     }
 
     try {
-      const result = await doCheckForGameUpdate(store, cave, { noisy });
+      const result = await doCheckForGameUpdate(ctx, cave, { noisy });
       if (noisy) {
         if (result && result.err) {
           store.dispatch(
