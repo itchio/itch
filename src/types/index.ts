@@ -331,24 +331,12 @@ export interface ICaveRecord extends ICaveRecordLocation {
     [uploadId: string]: IUploadRecord;
   };
 
-  /** remembers which installer was used for which upload */
-  installerCache?: IInstallerCache;
-
-  /** remembers which type of exe installer was used for which upload */
-  installerExeCache?: IInstallerCache;
-
-  /** remembers which installer was used for which upload (when the installer is inside an archive) */
-  archiveNestedCache?: IInstallerCache;
-
-  /** Adobe AIR application identifier, if any */
-  airAppid?: string;
-
   /**
-     * identifier of itch.io / wharf build currently installed.
-     * if not set, the associated upload wasn't wharf-enabled at the
-     * time of the install. if set, there's a good chance we can apply
-     * patches instead of fully downloading the new version.
-     */
+   * identifier of itch.io / wharf build currently installed.
+   * if not set, the associated upload wasn't wharf-enabled at the
+   * time of the install. if set, there's a good chance we can apply
+   * patches instead of fully downloading the new version.
+   */
   buildId?: number;
 
   /** user version for wharf build currently installed */

@@ -1,13 +1,12 @@
 import * as ospath from "path";
 import { partial } from "underscore";
 
-import noop from "./noop";
 import spawn from "../os/spawn";
 import * as sf from "../os/sf";
 import ibrew from "./ibrew";
 
 import Context from "../context";
-import { IProgressListener, IProgressInfo, ExeArch } from "../types";
+import { IProgressInfo, ExeArch } from "../types";
 
 import { Logger, devNull } from "../logger";
 

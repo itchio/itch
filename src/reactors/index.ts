@@ -68,7 +68,7 @@ export default function getWatcher(db: DB) {
   url(watcher);
   itchInternal(watcher);
   tasks(watcher, db);
-  downloads(watcher);
+  downloads(watcher, db);
   queueInstall(watcher, db);
 
   watcher.validate();

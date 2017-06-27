@@ -24,8 +24,8 @@ export default function(watcher: Watcher, db: DB) {
 
   queueGame(watcher, db);
 
-  queueCaveReinstall(watcher);
-  queueCaveUninstall(watcher);
+  queueCaveReinstall(watcher, db);
+  queueCaveUninstall(watcher, db);
   implodeCave(watcher);
   exploreCave(watcher);
   abortGame(watcher);

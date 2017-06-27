@@ -574,7 +574,6 @@ export interface ITaskStartedPayload {
   id: string;
   startedAt: number;
   gameId: number;
-  progress: number;
 }
 export const TASK_PROGRESS = "TASK_PROGRESS";
 export interface ITaskProgressPayload extends IProgressInfo {
@@ -585,11 +584,8 @@ export interface ITaskProgressPayload extends IProgressInfo {
 }
 export const TASK_ENDED = "TASK_ENDED";
 export interface ITaskEndedPayload {
-  name: string;
   id: string;
   err: string;
-  result: any;
-  taskOpts: any; // TODO: type better
 }
 
 export const ABORT_TASK = "ABORT_TASK";

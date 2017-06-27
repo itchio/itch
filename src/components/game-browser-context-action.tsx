@@ -10,7 +10,7 @@ import { IActionOpts } from "./game-actions/list-secondary-actions";
 import styled from "./styles";
 
 const StyledButton = styled(Button)`
-  margin: 4px 0;
+  margin: 0 4px;
 `;
 
 class Action extends React.PureComponent<
@@ -19,7 +19,7 @@ class Action extends React.PureComponent<
 > {
   render() {
     const { t, dispatch, opts } = this.props;
-    const { action, icon, hint, label, type = "action" } = opts;
+    const { action, icon, label, type = "action" } = opts;
 
     const textLabel = "" + label;
 

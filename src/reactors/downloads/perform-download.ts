@@ -24,22 +24,22 @@ export default async function performDownload(
   }
   const logger = parentLogger.child({ name: `download` });
 
-  const gameCredentials = await getGameCredentials(ctx, item.game);
-  if (!gameCredentials) {
+  const credentials = await getGameCredentials(ctx, item.game);
+  if (!credentials) {
     throw new Error(`no game credentials, can't download`);
   }
 
   if (item.upgradePath && item.caveId) {
     logger.info("Got an upgrade path, downloading patches");
 
-    return await downloadPatches(ctx, item, logger);
+    return await downloadPatches({ ctx, item, logger, credentials });
   }
 
   const { upload, caveId } = item;
 
-  const api = client.withKey(gameCredentials.apiKey);
+  const api = client.withKey(credentials.apiKey);
 
-  const { preferences } = store.getState();
+  const { preferences } = ctx.store.getState();
 
   const archivePath = paths.downloadPath(upload, preferences);
 
@@ -49,13 +49,13 @@ export default async function performDownload(
     logger.info(`Downloading wharf-enabled download, build #${buildId}`);
 
     const archiveURL = api.downloadBuildURL(
-      gameCredentials.downloadKey,
+      credentials.downloadKey,
       upload.id,
       buildId,
       "archive",
     );
     const signatureURL = api.downloadBuildURL(
-      gameCredentials.downloadKey,
+      credentials.downloadKey,
       upload.id,
       buildId,
       "signature",
@@ -72,10 +72,7 @@ export default async function performDownload(
       heal: `archive,${archiveURL}`,
     });
   } else {
-    const uploadURL = api.downloadUploadURL(
-      gameCredentials.downloadKey,
-      upload.id,
-    );
+    const uploadURL = api.downloadUploadURL(credentials.downloadKey, upload.id);
 
     try {
       await butler.cp({

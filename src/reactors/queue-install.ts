@@ -10,29 +10,35 @@ import { IQueueInstallOpts, IStore } from "../types";
 import * as paths from "../os/paths";
 import * as sf from "../os/sf";
 import { currentRuntime } from "../os/runtime";
+import { Logger } from "../logger";
 
 import { coreInstall } from "./install-managers/core";
+import asTask from "./tasks/as-task";
 
 function defaultInstallLocation(store: IStore) {
   const { defaultInstallLocation } = store.getState().preferences;
   return defaultInstallLocation;
 }
 
-export async function queueInstall(ctx: Context, opts: IQueueInstallOpts) {
+export async function queueInstall(
+  ctx: Context,
+  logger: Logger,
+  opts: IQueueInstallOpts,
+) {
   const installLocation =
     opts.installLocation || defaultInstallLocation(ctx.store);
 
   let cave: Cave;
 
-  const { game, reason } = opts;
+  const { caveId, game, reason } = opts;
 
-  if (opts.caveId) {
-    cave = await ctx.db.caves.findOneById(cave);
+  if (caveId) {
+    cave = await ctx.db.caves.findOneById(caveId);
     if (!cave) {
       throw new Error("Couldn't find cave to operate on");
     }
   } else {
-    if (opts.reason === "reinstall") {
+    if (reason === "reinstall") {
       throw new Error("Can't reinstall without a cave now can we.");
     }
 
@@ -74,7 +80,6 @@ export async function queueInstall(ctx: Context, opts: IQueueInstallOpts) {
   }
 
   const { upload } = opts;
-  const logger = paths.caveLogger(cave.id);
 
   if (cave.buildUserVersion && upload.build && upload.build.userVersion) {
     logger.info(
@@ -95,7 +100,7 @@ export async function queueInstall(ctx: Context, opts: IQueueInstallOpts) {
   let archivePath = paths.downloadPath(upload, prefs);
 
   if (!await sf.exists(archivePath)) {
-    const { caveId, handPicked } = opts;
+    const { handPicked } = opts;
 
     logger.warn("archive disappeared, redownloading...");
     ctx.store.dispatch(
@@ -140,8 +145,6 @@ export async function queueInstall(ctx: Context, opts: IQueueInstallOpts) {
     upload,
     fresh: false,
   });
-
-  return { caveId: cave.id };
 }
 
 import { DB } from "../db";
@@ -149,13 +152,15 @@ import { Watcher } from "./watcher";
 
 export default async function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueInstall, async (store, action) => {
-    // TODO: wrap around something so that it's a task
-    const ctx = new Context(store, db);
-    queueInstall(ctx, action.payload).catch(e => {
-      // if it was wrapped in some task infrastructure we wouldn't
-      // need to catch that then. we're using promise syntax because
-      // we definitely want the dispatch to `finish` before the entire
-      // install process is over
+    const { game, caveId } = action.payload;
+
+    await asTask({
+      name: "install",
+      gameId: game.id,
+      caveId,
+      db,
+      store,
+      work: (ctx, logger) => queueInstall(ctx, logger, action.payload),
     });
   });
 }

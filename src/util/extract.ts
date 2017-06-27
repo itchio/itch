@@ -169,7 +169,7 @@ export async function extract(opts: IExtractOpts): Promise<void> {
         logger,
         ctx,
       });
-      if (fileResult.type === "zip") {
+      if (fileResult && fileResult.type === "zip") {
         useButler = true;
       } else {
         logger.warn(`Recognized by butler but not a zip: ${fileResult.type}`);

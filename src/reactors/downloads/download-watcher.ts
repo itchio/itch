@@ -6,7 +6,6 @@ import delay from "../delay";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "download-watcher" });
 
-import { EventEmitter } from "events";
 import { throttle } from "underscore";
 import { BrowserWindow } from "electron";
 
@@ -15,18 +14,20 @@ import performDownload from "./perform-download";
 
 import { getActiveDownload } from "./getters";
 
+import Context from "../../context";
 import { IStore, IDownloadItem, IDownloadResult } from "../../types";
-
 import { IProgressInfo } from "../../types";
+
+import { DB } from "../../db";
 
 const DOWNLOAD_WATCHER_INTERVAL = 1000;
 
 let currentDownload: IDownloadItem = null;
-let currentEmitter: EventEmitter = null;
+let currentContext: Context = null;
 
 // TODO: pause downloads on logout.
 
-async function updateDownloadState(store: IStore) {
+async function updateDownloadState(store: IStore, db: DB) {
   await delay(DOWNLOAD_WATCHER_INTERVAL);
 
   const downloadsState = store.getState().downloads;
@@ -43,7 +44,7 @@ async function updateDownloadState(store: IStore) {
     await setProgress(store, activeDownload.progress || 0);
     if (!currentDownload || currentDownload.id !== activeDownload.id) {
       logger.info(`${activeDownload.id} is the new active download`);
-      start(store, activeDownload);
+      start(store, db, activeDownload);
     } else {
       // still downloading currentDownload
     }
@@ -69,24 +70,28 @@ async function setProgress(store: IStore, alpha: number) {
 }
 
 function cancelCurrent() {
-  if (currentEmitter) {
-    currentEmitter.emit("cancel");
+  if (!currentContext) {
+    return;
   }
-  currentEmitter = null;
+
+  currentContext.tryAbort().catch(e => {
+    logger.warn(`Could not cancel current download: ${e.stack}`);
+  });
+  currentContext = null;
   currentDownload = null;
 }
 
-async function start(store: IStore, item: IDownloadItem) {
+async function start(store: IStore, db: DB, item: IDownloadItem) {
   cancelCurrent();
   currentDownload = item;
-  currentEmitter = new EventEmitter();
+  currentContext = new Context(store, db);
 
   let error: Error;
   let cancelled = false;
   let result: IDownloadResult;
 
   try {
-    currentEmitter.on(
+    currentContext.on(
       "progress",
       throttle((ev: IProgressInfo) => {
         if (cancelled) {
@@ -97,18 +102,18 @@ async function start(store: IStore, item: IDownloadItem) {
     );
 
     logger.info("Starting download...");
-    result = await performDownload(store, item, currentEmitter);
+    result = await performDownload(currentContext, item);
   } catch (e) {
     error = e;
   } finally {
     if (error instanceof Cancelled) {
-      // all good, but not ended
+      // no error to handle, but don't trigger downloadEnded either
       cancelled = true;
-      logger.info("Download cancelled");
+      logger.info(`Download cancelled for ${item.game.title}`);
     } else {
-      logger.info(`Download ended`);
+      logger.info(`Download for ${item.game.title} ended`);
       if (error) {
-        logger.error(`Download threw: ${error.stack}`);
+        logger.error(`Download for ${item.game.title} threw: ${error.stack}`);
       }
       const err = error ? error.message || "" + error : null;
 
@@ -125,11 +130,11 @@ async function start(store: IStore, item: IDownloadItem) {
   }
 }
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.boot, async (store, action) => {
     while (true) {
       try {
-        await updateDownloadState(store);
+        await updateDownloadState(store, db);
       } catch (e) {
         logger.error(`While updating download state: ${e.stack || e}`);
       }

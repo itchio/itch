@@ -3,13 +3,14 @@ import { EventEmitter } from "events";
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import db from "../../db";
-
 import findUploads from "../downloads/find-uploads";
 import getGameCredentials from "../downloads/get-game-credentials";
 import lazyGetGame from "../lazy-get-game";
 
-export default function(watcher: Watcher) {
+import Context from "../../context";
+import { DB } from "../../db";
+
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
     const { caveId } = action.payload;
 
@@ -19,13 +20,15 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    const game = await lazyGetGame(store, cave.gameId);
+    const ctx = new Context(store, db);
+
+    const game = await lazyGetGame(ctx, cave.gameId);
     if (!game) {
       // no valid game
       return;
     }
 
-    const gameCredentials = await getGameCredentials(store, game);
+    const gameCredentials = await getGameCredentials(ctx, game);
     if (!gameCredentials) {
       // no credentials
       return;
@@ -57,7 +60,7 @@ export default function(watcher: Watcher) {
     if (tasksForGame && tasksForGame.length > 0) {
       store.dispatch(
         actions.statusMessage({
-          message: ["status.reinstall.busy", { title: cave.game.title }],
+          message: ["status.reinstall.busy", { title: game.title }],
         }),
       );
       return;
