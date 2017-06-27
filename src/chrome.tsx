@@ -1,11 +1,22 @@
 // This file is the entry point for renderer processes
 
-import "./boot/bluebird";
-import "./boot/fs";
+import "../os/sf";
+import env from "./env";
+
+if (env.name !== "production") {
+  require("bluebird").config({
+    longStackTraces: true,
+    warnings: true,
+  });
+
+  require("source-map-support").install({
+    hookRequire: true,
+  });
+}
+
 import "./boot/time-ago-locales";
 
 import * as os from "./os";
-import env from "./env";
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
