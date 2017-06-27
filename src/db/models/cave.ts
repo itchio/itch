@@ -1,12 +1,6 @@
 import { Entity, PrimaryColumn, Column, Index } from "typeorm";
 
-import {
-  IUploadRecord,
-  IInstallerCache,
-  IGameRecord,
-  IDownloadKey,
-  LaunchType,
-} from "../../types";
+import { IUploadRecord, IInstallerCache, LaunchType } from "../../types";
 import { PathScheme } from "../../os/paths";
 
 import { IConfigureResult } from "../../util/butler";
@@ -33,15 +27,9 @@ export default class Cave implements ICaveSummary {
   /** external game id this cave contains */
   externalGameId: number;
 
-  @Column("int", { nullable: true })
-  /** identifier of itch.io upload currently installed */
-  uploadId: number;
-
   @Column("json", { nullable: true })
-  /** uploads related to this cave */
-  uploads: {
-    [uploadId: string]: IUploadRecord;
-  };
+  /** itch.io upload currently installed */
+  upload: IUploadRecord;
 
   @Column("json", { nullable: true })
   /** remembers which installer was used for which upload */
@@ -76,13 +64,6 @@ export default class Cave implements ICaveSummary {
   /** "modified file time" of archive last installed */
   installedArchiveMtime?: Date;
 
-  @Column("boolean", { nullable: true })
-  /**
-   * if true, can be launched — if false, may have not finished
-   * installing, may be in the middle of updating, etc.
-   */
-  launchable?: boolean;
-
   @Column("datetime", { nullable: true })
   /** timestamp when that cave was last installed. updates count as install. */
   installedAt?: Date;
@@ -95,33 +76,9 @@ export default class Cave implements ICaveSummary {
   /** number of seconds played/run, as recorded locally */
   secondsRun?: number;
 
-  @Column("json", { nullable: true })
-  /**
-   * info on the user that installed the game in this app instance
-   */
-  installedBy?: {
-    /** itch.io user id */
-    id: number;
-
-    /** itch.io username at the time it was installed (usernames can change) */
-    username: string;
-  };
-
-  @Column("json", { nullable: true })
-  /** download key what was used to install this game, if any */
-  downloadKey: IDownloadKey;
-
   @Column("boolean", { nullable: true })
   /** true if the upload to install was hand-picked */
   handPicked?: boolean;
-
-  @Column("boolean", { nullable: true })
-  /** if true, cave has been deleted */
-  dead?: boolean;
-
-  @Column("boolean", { nullable: true })
-  /** true if the record was created just before installing for the first time */
-  fresh?: boolean;
 
   @Column("json", { nullable: true })
   /** executable files, relative to the game's install folder */
