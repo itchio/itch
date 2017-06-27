@@ -14,6 +14,7 @@
       ],
       "showOutput": "silent",
       "isBackground": true,
+      "isBuildCommand": true,
       "problemMatcher": "$tsc-watch"
     },
     {
@@ -26,7 +27,8 @@
         "-w"
       ],
       "showOutput": "silent",
-      "isBackground": true
+      "isBackground": true,
+      "isTestCommand": true
     }
   ]
 }
