@@ -10,19 +10,24 @@ const logger = rootLogger.child({ name: "sandbox/linux" });
 
 import common from "./common";
 
-import { ISandbox, INeed } from "./types";
+import Context from "../../context";
+import { ISandbox, INeed, ICaretaker } from "./types";
 
 interface ISudoRunScriptResult {
   out: string;
 }
 
-async function sudoRunScript(lines: string[]): Promise<ISudoRunScriptResult> {
+async function sudoRunScript(
+  ctx: Context,
+  lines: string[],
+): Promise<ISudoRunScriptResult> {
   const contents = lines.join("\n");
   const tmpObjName = tmp.tmpNameSync();
   await sf.writeFile(tmpObjName, contents, { encoding: "utf8" });
   await sf.chmod(tmpObjName, 0o777);
 
   const res = await spawn.exec({
+    ctx,
     command: "pkexec",
     args: [tmpObjName],
     logger: devNull,
@@ -37,7 +42,7 @@ async function sudoRunScript(lines: string[]): Promise<ISudoRunScriptResult> {
   return { out: res.out };
 }
 
-const firejailNeed = async function(need) {
+const firejailNeed: ICaretaker = async function(ctx, need) {
   logger.info(`installing firejail, because ${need.err} (code ${need.code})`);
 
   const firejailBinary = ospath.join(ibrew.binPath(), "firejail");
@@ -51,17 +56,18 @@ const firejailNeed = async function(need) {
     lines.push(`chmod u+s ${firejailBinary}`);
 
     logger.info("Making firejail binary setuid");
-    await sudoRunScript(lines);
+    await sudoRunScript(ctx, lines);
   }
 };
 
 const linuxSandbox: ISandbox = {
-  check: async () => {
+  check: async ctx => {
     const needs: INeed[] = [];
     const errors: Error[] = [];
 
     logger.info("Testing firejail");
     const firejailCheck = await spawn.exec({
+      ctx,
       command: "firejail",
       args: ["--noprofile", "--", "whoami"],
       logger: devNull,
@@ -77,8 +83,8 @@ const linuxSandbox: ISandbox = {
     return { needs, errors };
   },
 
-  install: async needs => {
-    return await common.tendToNeeds(needs, {
+  install: async (ctx, needs) => {
+    return await common.tendToNeeds(ctx, needs, {
       firejail: firejailNeed,
     });
   },

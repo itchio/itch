@@ -1,9 +1,14 @@
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "sandbox/common" });
 
+import Context from "../../context";
 import { INeed, ICaretakerSet } from "./types";
 
-export async function tendToNeeds(needs: INeed[], caretakers: ICaretakerSet) {
+export async function tendToNeeds(
+  ctx: Context,
+  needs: INeed[],
+  caretakers: ICaretakerSet,
+) {
   const errors: Error[] = [];
 
   for (const need of needs) {
@@ -15,7 +20,7 @@ export async function tendToNeeds(needs: INeed[], caretakers: ICaretakerSet) {
       );
     } else {
       try {
-        await Promise.resolve(caretaker(need));
+        await Promise.resolve(caretaker(ctx, need));
       } catch (e) {
         logger.info(
           `While tending to need ${JSON.stringify(need)}: ${e.stack || e}`,

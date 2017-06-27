@@ -15,11 +15,12 @@ import { devNull } from "../../logger";
 const INVESTIGATE_SANDBOX = process.env.INVESTIGATE_SANDBOX === "1";
 
 const darwinSandbox: ISandbox = {
-  check: async () => {
+  check: async ctx => {
     const needs: INeed[] = [];
     const errors: Error[] = [];
 
     const seRes = await spawn.exec({
+      ctx,
       command: "sandbox-exec",
       args: ["-n", "no-network", "true"],
       logger: devNull,
@@ -31,11 +32,11 @@ const darwinSandbox: ISandbox = {
     return { needs, errors };
   },
 
-  install: async needs => {
-    return await common.tendToNeeds(needs, {});
+  install: async (ctx, needs) => {
+    return await common.tendToNeeds(ctx, needs, {});
   },
 
-  within: async (opts, cb) => {
+  within: async (ctx, opts, cb) => {
     const {
       appPath,
       exePath,
@@ -52,6 +53,7 @@ const darwinSandbox: ISandbox = {
     const sandboxProfilePath = ospath.join(appPath, ".itch", "isolate-app.sb");
 
     const userLibrary = (await spawn.getOutput({
+      ctx,
       command: "activate",
       args: ["--print-library-paths"],
       logger: opts.logger,

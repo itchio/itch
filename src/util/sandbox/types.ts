@@ -1,4 +1,5 @@
 import { Logger } from "../../logger";
+import Context from "../../context";
 
 import Game from "../../db/models/game";
 
@@ -9,7 +10,7 @@ export interface INeed {
 }
 
 export interface ICaretaker {
-  (n: INeed): void;
+  (ctx: Context, n: INeed): void;
 }
 
 export interface ICaretakerSet {
@@ -51,7 +52,7 @@ export interface IInstallResult {
 }
 
 export interface ISandbox {
-  check(): Promise<ICheckResult>;
-  install(needs: INeed[]): Promise<IInstallResult>;
-  within(opts: IWithinOpts, cb: IWithinCallback): Promise<void>;
+  check(ctx: Context): Promise<ICheckResult>;
+  install(ctx: Context, needs: INeed[]): Promise<IInstallResult>;
+  within(ctx: Context, opts: IWithinOpts, cb: IWithinCallback): Promise<void>;
 }
