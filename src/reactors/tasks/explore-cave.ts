@@ -5,13 +5,13 @@ import * as sf from "../../os/sf";
 import * as paths from "../../os/paths";
 import explorer from "../../os/explorer";
 
-export default function(watcher: Watcher) {
+import { DB } from "../../db";
+
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.exploreCave, async (store, action) => {
     const { caveId } = action.payload;
-    // FIXME: db
-    const market: any = null;
 
-    const cave = market.getEntity("caves", caveId);
+    const cave = await db.caves.findOneById(caveId);
     if (!cave) {
       return;
     }

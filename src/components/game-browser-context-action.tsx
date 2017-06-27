@@ -32,7 +32,6 @@ class Action extends React.PureComponent<
         key={textLabel}
         discreet
         icon={icon}
-        hint={hint}
         onClick={() => dispatch(action)}
         label={t.format(label)}
       />

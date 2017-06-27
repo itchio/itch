@@ -1,6 +1,6 @@
 import { Entity, PrimaryColumn, Column, Index } from "typeorm";
 
-import { IUploadRecord, IInstallerCache, LaunchType } from "../../types";
+import { IUploadRecord, LaunchType } from "../../types";
 import { PathScheme } from "../../os/paths";
 
 import { IConfigureResult } from "../../util/butler";
@@ -30,18 +30,6 @@ export default class Cave implements ICaveSummary {
   @Column("json", { nullable: true })
   /** itch.io upload currently installed */
   upload: IUploadRecord;
-
-  @Column("json", { nullable: true })
-  /** remembers which installer was used for which upload */
-  installerCache?: IInstallerCache;
-
-  @Column("json", { nullable: true })
-  /** remembers which type of exe installer was used for which upload */
-  installerExeCache?: IInstallerCache;
-
-  @Column("json", { nullable: true })
-  /** remembers which installer was used for which upload (when the installer is inside an archive) */
-  archiveNestedCache?: IInstallerCache;
 
   @Column("int", { nullable: true })
   /**

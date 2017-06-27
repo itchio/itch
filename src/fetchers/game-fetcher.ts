@@ -1,6 +1,4 @@
-import { Fetcher, Outcome } from "./types";
-
-import db from "../db";
+import { Fetcher } from "./types";
 
 import normalize from "../api/normalize";
 import { game } from "../api/schemas";
@@ -12,7 +10,8 @@ export default class GameFetcher extends Fetcher {
     super();
   }
 
-  async work(): Promise<Outcome> {
+  async work(): Promise<void> {
+    const { db } = this.ctx;
     const { path } = this.tabData();
     const gameId = +pathToId(path);
 
@@ -28,7 +27,5 @@ export default class GameFetcher extends Fetcher {
       return normalize(await api.game(gameId), { game });
     });
     pushGame(normalized.entities.games[normalized.result.gameId]);
-
-    return this.success();
   }
 }

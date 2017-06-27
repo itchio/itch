@@ -15,6 +15,8 @@ import UserFetcher from "../fetchers/user-fetcher";
 import CollectionFetcher from "../fetchers/collection-fetcher";
 
 import { pathPrefix } from "../util/navigation";
+import Context from "../context";
+import { DB } from "../db";
 
 import { some } from "underscore";
 
@@ -40,6 +42,7 @@ let nextFetchReason: {
 
 export async function queueFetch(
   store: IStore,
+  db: DB,
   tabId: string,
   reason: FetchReason,
 ) {
@@ -56,21 +59,26 @@ export async function queueFetch(
   fetching[tabId] = true;
 
   const fetcher = new fetcherClass();
-  fetcher.hook(store, tabId, reason);
+  const ctx = new Context(store, db);
+  fetcher.hook(ctx, tabId, reason);
 
-  fetcher.emitter.on("done", () => {
-    delete fetching[tabId];
+  fetcher
+    .run()
+    .catch(e => {
+      // well, logging will have to do
+      fetcher.logger.error(`failed: ${e.stack}`);
+    })
+    .then(() => {
+      delete fetching[tabId];
 
-    const nextReason = nextFetchReason[tabId];
-    if (nextReason) {
-      delete nextFetchReason[tabId];
-      queueFetch(store, tabId, nextReason).catch(err => {
-        logger.error(`In queued fetcher: ${err.stack}`);
-      });
-    }
-  });
-
-  fetcher.start();
+      const nextReason = nextFetchReason[tabId];
+      if (nextReason) {
+        delete nextFetchReason[tabId];
+        queueFetch(store, db, tabId, nextReason).catch(err => {
+          logger.error(`In queued fetcher: ${err.stack}`);
+        });
+      }
+    });
 }
 
 function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
@@ -96,37 +104,37 @@ function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
   return null;
 }
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
-    queueFetch(store, action.payload.id, FetchReason.TabChanged);
+    queueFetch(store, db, action.payload.id, FetchReason.TabChanged);
   });
 
   // tab navigated to something else? let's fetch
   watcher.on(actions.tabEvolved, async (store, action) => {
-    queueFetch(store, action.payload.id, FetchReason.TabEvolved);
+    queueFetch(store, db, action.payload.id, FetchReason.TabEvolved);
   });
 
   // tab reloaded by user? let's fetch!
   watcher.on(actions.tabReloaded, async (store, action) => {
-    queueFetch(store, action.payload.id, FetchReason.TabReloaded);
+    queueFetch(store, db, action.payload.id, FetchReason.TabReloaded);
   });
 
   // tab got new params? it's a fetching!
   watcher.on(actions.tabParamsChanged, async (store, action) => {
-    queueFetch(store, action.payload.id, FetchReason.TabParamsChanged);
+    queueFetch(store, db, action.payload.id, FetchReason.TabParamsChanged);
   });
 
   // tab got new pagination? it's a fetching
   watcher.on(actions.tabPaginationChanged, async (store, action) => {
-    queueFetch(store, action.payload.id, FetchReason.TabPaginationChanged);
+    queueFetch(store, db, action.payload.id, FetchReason.TabPaginationChanged);
   });
 
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {
       const currentTabId = store.getState().session.navigation.id;
-      queueFetch(store, currentTabId, FetchReason.WindowFocused);
+      queueFetch(store, db, currentTabId, FetchReason.WindowFocused);
     }
   });
 
@@ -140,7 +148,7 @@ export default function(watcher: Watcher) {
     const prefs = action.payload;
     if (some(watchedPreferences, k => prefs.hasOwnProperty(k))) {
       const currentTabId = store.getState().session.navigation.id;
-      queueFetch(store, currentTabId, FetchReason.TabParamsChanged);
+      queueFetch(store, db, currentTabId, FetchReason.TabParamsChanged);
     }
   });
 }

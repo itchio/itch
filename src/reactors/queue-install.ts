@@ -76,7 +76,7 @@ export async function queueInstall(
     // I think that's why a bunch of folks have empty install folders & can't launch,
     // the install simply didn't happen. Should we even need to persist the cave at this point?
     // my vote is no.
-    await ctx.db.caves.persist(cave);
+    await ctx.db.saveOne("caves", cave.id, cave);
   }
 
   const { upload } = opts;
@@ -137,7 +137,7 @@ export async function queueInstall(
   });
 
   await ctx.db.saveOne("caves", cave.id, {
-    installedAt: Date.now(),
+    installedAt: new Date(),
     uploadId: upload.id,
     channelName: upload.channelName,
     buildId: upload.buildId,

@@ -4,8 +4,10 @@ import Cave from "../db/models/cave";
 import {
   IUploadRecord,
   IUpgradePathItem,
+  IManifest,
   IManifestAction,
   IEnvironment,
+  IRuntime,
 } from ".";
 
 import { Logger } from "../logger";
@@ -98,7 +100,7 @@ export interface IQueueLaunchOpts {
 }
 
 export interface ILaunchOpts {
-  hasManifest: boolean;
+  manifest: IManifest;
   manifestAction?: IManifestAction;
 
   env: IEnvironment;
@@ -106,4 +108,10 @@ export interface ILaunchOpts {
   logger: Logger;
   cave: Cave;
   game: Game;
+
+  runtime: IRuntime;
 }
+
+export type IPrepareOpts = ILaunchOpts;
+
+export type IConfigureOpts = ILaunchOpts;

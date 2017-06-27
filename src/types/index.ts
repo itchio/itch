@@ -8,7 +8,7 @@ import DownloadKey, { IDownloadKeySummary } from "../db/models/download-key";
 import Cave, { ICaveSummary } from "../db/models/cave";
 
 export * from "./tasks";
-export * from "../tasks/errors";
+export * from "./errors";
 import * as Tasks from "./tasks";
 
 export * from "./api";
@@ -349,9 +349,9 @@ export interface ICaveRecord extends ICaveRecordLocation {
   installedArchiveMtime?: Date;
 
   /**
-     * if true, can be launched — if false, may have not finished
-     * installing, may be in the middle of updating, etc.
-     */
+   * if true, can be launched — if false, may have not finished
+   * installing, may be in the middle of updating, etc.
+   */
   launchable?: boolean;
 
   /** timestamp when that cave was last installed. updates count as install. */
@@ -364,8 +364,8 @@ export interface ICaveRecord extends ICaveRecordLocation {
   secondsRun?: number;
 
   /**
-     * info on the user that installed the game in this app instance
-     */
+   * info on the user that installed the game in this app instance
+   */
   installedBy?: {
     /** itch.io user id */
     id: number;
@@ -456,9 +456,9 @@ export interface IUploadRecord {
   type: string;
 
   /**
-     * the size of this upload, in bytes.
-     * for wharf-enabled uploads, it's the latest archive size.
-     */
+   * the size of this upload, in bytes.
+   * for wharf-enabled uploads, it's the latest archive size.
+   */
   size?: number;
 
   /** if true, the upload is a demo and can be downloaded for free */
@@ -556,11 +556,11 @@ export interface IManifest {
 
 export interface IOwnUserRecord extends IUserRecord {
   /**
-     * if set, user owns press account.
-     * note to reader: don't bother faking it locally — the server won't let you download
-     * anything if you don't actually have a press account. Or maybe you're just looking for
-     * fun errors, in which case, go ahead!
-     */
+   * if set, user owns press account.
+   * note to reader: don't bother faking it locally — the server won't let you download
+   * anything if you don't actually have a press account. Or maybe you're just looking for
+   * fun errors, in which case, go ahead!
+   */
   pressUser?: boolean;
 
   /** if set, user has expressed interest in publishing content on itch.io */
@@ -648,9 +648,9 @@ export interface IGameUpdate {
   gameCredentials: IGameCredentials;
 
   /**
-     * uploads to pick from (fresher than our last install).
-     * will hopefully be often of size 1, but not always
-     */
+   * uploads to pick from (fresher than our last install).
+   * will hopefully be often of size 1, but not always
+   */
   recentUploads: IUploadRecord[];
 
   /** true if wharf-enabled upgrade via butler */
@@ -865,9 +865,9 @@ export interface ISessionFoldersState {
 
 export interface ISessionLoginState {
   /**
-     * true if the list of remembered sessions is shown,
-     * false if the username/password form is shown.
-     */
+   * true if the list of remembered sessions is shown,
+   * false if the username/password form is shown.
+   */
   picking: boolean;
 
   errors: string[];

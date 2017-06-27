@@ -1,26 +1,23 @@
 import handleWindowsPrereqs from "./windows-prereqs";
 
-import rootLogger from "../../logger";
-const logger = rootLogger.child({ name: "prepare/native" });
-
-import { EventEmitter } from "events";
-import { ILaunchOpts } from "../../types";
+import Context from "../../context";
+import { IPrepareOpts } from "../../types";
 
 export default async function prepare(
-  out: EventEmitter,
-  opts: ILaunchOpts,
+  ctx: Context,
+  opts: IPrepareOpts,
 ): Promise<void> {
-  const { store, manifest, cave } = opts;
+  const { manifest, cave, game } = opts;
+  const logger = opts.logger.child({ name: "prepare/native" });
 
   if (process.platform === "win32") {
     logger.info(`launching windows-prereqs`);
     try {
-      await handleWindowsPrereqs({
-        store,
+      await handleWindowsPrereqs(ctx, {
         manifest,
-        caveId: cave.id,
-        logger: opts.logger,
-        emitter: out,
+        cave,
+        game,
+        logger,
       });
     } catch (e) {
       logger.error(`Windows prereqs full stack: ${e.stack}`);

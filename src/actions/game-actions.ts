@@ -13,10 +13,6 @@ import {
   IExploreCavePayload,
   REPORT_CAVE,
   IReportCavePayload,
-  CANCEL_CAVE,
-  ICancelCavePayload,
-  IMPLODE_CAVE,
-  IImplodeCavePayload,
   REQUEST_CAVE_UNINSTALL,
   IRequestCaveUninstallPayload,
   QUEUE_CAVE_UNINSTALL,
@@ -64,8 +60,6 @@ export const queueInstall = createAction<IQueueInstallPayload>(QUEUE_INSTALL);
 export const probeCave = createAction<IProbeCavePayload>(PROBE_CAVE);
 export const exploreCave = createAction<IExploreCavePayload>(EXPLORE_CAVE);
 export const reportCave = createAction<IReportCavePayload>(REPORT_CAVE);
-export const cancelCave = createAction<ICancelCavePayload>(CANCEL_CAVE);
-export const implodeCave = createAction<IImplodeCavePayload>(IMPLODE_CAVE);
 export const requestCaveUninstall = createAction<IRequestCaveUninstallPayload>(
   REQUEST_CAVE_UNINSTALL,
 );

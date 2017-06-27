@@ -1,18 +1,18 @@
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-export default function(watcher: Watcher) {
+import { DB } from "../../db";
+
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.nukeCavePrereqs, async (store, action) => {
     const { caveId } = action.payload;
-    // FIXME: db
-    const market: any = null;
 
-    const cave = market.getEntity("caves", caveId);
+    const cave = db.caves.findOneById(caveId);
     if (!cave) {
       return;
     }
 
-    await market.saveOne("caves", caveId, { installedPrereqs: null });
+    await db.saveOne("caves", caveId, { installedPrereqs: null });
     store.dispatch(
       actions.statusMessage({
         message: "Prereqs nuked!",

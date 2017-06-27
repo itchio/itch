@@ -3,11 +3,13 @@ import * as actions from "../../actions";
 
 import * as paths from "../../os/paths";
 
-import { findWhere } from "underscore";
-
 import localizer from "../../localizer";
+import { DB } from "../../db";
+import Context from "../../context";
 
-export default function(watcher: Watcher) {
+import lazyGetGame from "../lazy-get-game";
+
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.healCave, async (store, action) => {
     const i18n = store.getState().i18n;
     const t = localizer.getT(i18n.strings, i18n.lang);
@@ -18,10 +20,7 @@ export default function(watcher: Watcher) {
     };
 
     try {
-      // FIXME: db
-      const globalMarket: any = null;
-
-      const cave = globalMarket.getEntity("caves", caveId);
+      const cave = await db.caves.findOneById(caveId);
       if (!cave) {
         opts.logger.warn(`Cave not found, can't heal: ${caveId}`);
         return;
@@ -32,17 +31,13 @@ export default function(watcher: Watcher) {
         return;
       }
 
-      let upload = cave.uploads[cave.uploadId];
-      upload = {
-        ...upload,
+      const ctx = new Context(store, db);
+      const game = await lazyGetGame(ctx, cave.gameId);
+
+      const upload = {
+        ...cave.upload,
         buildId: cave.buildId,
       };
-
-      const market: any = null;
-
-      const downloadKey =
-        cave.downloadKey ||
-        findWhere(market.getEntities("downloadKeys"), { gameId: cave.game.id });
 
       store.dispatch(
         actions.statusMessage({
@@ -52,13 +47,10 @@ export default function(watcher: Watcher) {
 
       store.dispatch(
         actions.queueDownload({
-          cave: cave,
-          game: cave.game,
+          caveId: cave.id,
+          game,
           upload,
-          downloadKey,
           reason: "heal",
-          destPath: null,
-          heal: true,
         }),
       );
     } finally {

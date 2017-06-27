@@ -9,14 +9,13 @@ const logger = rootLogger.child({ name: "download-watcher" });
 import { throttle } from "underscore";
 import { BrowserWindow } from "electron";
 
-import { Cancelled } from "../../tasks/errors";
 import performDownload from "./perform-download";
 
 import { getActiveDownload } from "./getters";
 
 import Context from "../../context";
 import { IStore, IDownloadItem, IDownloadResult } from "../../types";
-import { IProgressInfo } from "../../types";
+import { IProgressInfo, Cancelled } from "../../types";
 
 import { DB } from "../../db";
 

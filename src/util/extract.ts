@@ -171,11 +171,13 @@ export async function extract(opts: IExtractOpts): Promise<void> {
       });
       if (fileResult && fileResult.type === "zip") {
         useButler = true;
-      } else {
-        logger.warn(`Recognized by butler but not a zip: ${fileResult.type}`);
       }
     } catch (e) {
-      logger.error(`butler choked: ${e.stack}`);
+      if (/not sure/.test(e.message)) {
+        logger.info(`butler didn't recognize '${archivePath}'`);
+      } else {
+        logger.error(`butler choked on '${archivePath}': ${e.stack}`);
+      }
     }
   }
 
@@ -183,9 +185,8 @@ export async function extract(opts: IExtractOpts): Promise<void> {
     logger.info("Using butler to extract zip");
     await butler.unzip(opts);
     return;
-  } else {
-    logger.info("Using unar to extract zip");
   }
 
-  return await unarchiver(opts);
+  logger.info("Using unar to extract zip");
+  await unarchiver(opts);
 }

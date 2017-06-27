@@ -2,21 +2,26 @@ import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
 import { IViewCaveDetailsParams } from "../../components/modal-widgets/view-cave-details";
+import { DB } from "../../db";
+import Context from "../../context";
 
-export default function(watcher: Watcher) {
+import lazyGetGame from "../lazy-get-game";
+
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.viewCaveDetails, async (store, action) => {
     const { caveId } = action.payload;
 
-    // FIXME: db
-    const globalMarket: any = null;
-    const cave = globalMarket.getEntity("caves", caveId);
+    const cave = await db.caves.findOneById(caveId);
     if (!cave) {
       return;
     }
 
+    const ctx = new Context(store, db);
+    const game = await lazyGetGame(ctx, cave.gameId);
+
     store.dispatch(
       actions.openModal({
-        title: `Cave details for ${cave.game.title}`,
+        title: `Cave details for ${game ? game.title : "?"}`,
         message: "",
         widget: "view-cave-details",
         widgetParams: {

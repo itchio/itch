@@ -52,6 +52,9 @@ export async function queueUninstall(
     installLocation: cave.installLocation,
     handPicked: false,
   });
+
+  logger.info(`Uninstall successful, imploding cave`);
+  await ctx.db.deleteEntity("caves", caveId);
 }
 
 export default function(watcher: Watcher, db: DB) {

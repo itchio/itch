@@ -24,6 +24,8 @@ import * as actions from "../actions";
 
 import { IStore, IEntityMap, ITableMap, IDBDeleteSpec } from "../types";
 
+const emptyArr = [];
+
 /**
  * DB is a thin abstraction on top of typeorm. Pierce through it at will!
  */
@@ -106,7 +108,7 @@ export class DB extends RepoContainer {
             numUpToDate++;
             continue;
           }
-          rows.push(repo.merge(entity));
+          rows.push(repo.merge(existingEntity, entity));
         } else {
           existingEntity = repo.create(entity);
           (existingEntity as any).id = id;
@@ -118,7 +120,11 @@ export class DB extends RepoContainer {
         // TODO: what do we do if this fails?
         await repo.persist(rows);
         this.store.dispatch(
-          actions.dbCommit({ tableName, updated: _.pluck(rows, "id") }),
+          actions.dbCommit({
+            tableName,
+            updated: _.pluck(rows, "id"),
+            deleted: emptyArr,
+          }),
         );
       }
       logger.info(
@@ -164,6 +170,14 @@ export class DB extends RepoContainer {
         toRemove.push({ id });
       }
       await repo.remove(toRemove);
+
+      this.store.dispatch(
+        actions.dbCommit({
+          tableName,
+          updated: emptyArr,
+          deleted: toRemove,
+        }),
+      );
     }
   }
 
@@ -178,6 +192,14 @@ export class DB extends RepoContainer {
     }
     const repo = this.conn.getRepository(Model);
     await repo.remove({ id });
+
+    this.store.dispatch(
+      actions.dbCommit({
+        tableName,
+        updated: emptyArr,
+        deleted: [id],
+      }),
+    );
   }
 
   /**

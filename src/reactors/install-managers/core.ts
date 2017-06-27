@@ -105,12 +105,12 @@ export async function coreOperate(
   }
 
   logger.info(
-    `using ${source} install manager ${installerName} for ${archivePath}`,
+    `using ${source} install manager '${installerName}' for ${archivePath}`,
   );
 
   const manager = managers[installerName];
   if (!manager) {
-    logger.error(`No install manager found for ${installerName}`);
+    logger.error(`No install manager found for '${installerName}'`);
     throw new Cancelled("no install manager found");
   }
 

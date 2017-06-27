@@ -28,7 +28,9 @@ export default function(watcher: Watcher, db: DB) {
     const caves = await db.caves.find({ gameId: game.id });
 
     if (caves.length > 0) {
-      logger.info(`Have ${caves} for game ${game.id}, launching the first one`);
+      logger.info(
+        `Have ${caves.length} caves for game ${game.title} (#${game.id}), launching the first one`,
+      );
       const cave = caves[0];
       store.dispatch(actions.queueLaunch({ caveId: cave.id }));
       return;

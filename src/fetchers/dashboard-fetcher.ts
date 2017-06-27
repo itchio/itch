@@ -1,6 +1,4 @@
-import { Fetcher, Outcome } from "./types";
-
-import db from "../db";
+import { Fetcher } from "./types";
 
 import normalize from "../api/normalize";
 import { game, arrayOf } from "../api/schemas";
@@ -12,21 +10,21 @@ import { pluck, indexBy } from "underscore";
 const emptyArr = [];
 
 export default class DashboardFetcher extends Fetcher {
-  async work(): Promise<Outcome> {
+  async work(): Promise<void> {
     await this.pushLocal();
 
     if (this.warrantsRemote(this.reason)) {
       await this.remote();
       await this.pushLocal();
     }
-
-    return this.success();
   }
 
   async pushLocal() {
+    const { db } = this.ctx;
     const meId = this.ensureCredentials().me.id;
     const profile = await db.profiles.findOneById(meId);
     if (!profile) {
+      this.debug(`Could not find a profile for ${meId}`);
       return;
     }
     const myGameIds = profile.myGameIds || emptyArr;
@@ -37,7 +35,7 @@ export default class DashboardFetcher extends Fetcher {
     query.addParameters({ gameIds: myGameIds });
     const totalCount = myGameIds.length;
 
-    addSortAndFilterToQuery(query, this.tabId, this.store);
+    addSortAndFilterToQuery(query, this.tabId, this.ctx.store);
 
     const [games, gamesCount] = await query.getManyAndCount();
 
@@ -51,6 +49,8 @@ export default class DashboardFetcher extends Fetcher {
   }
 
   async remote() {
+    const { db } = this.ctx;
+
     const apiResponse = await this.withApi(async api => {
       return await api.myGames();
     });

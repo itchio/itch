@@ -1,5 +1,4 @@
-import { Fetcher, Outcome } from "./types";
-import db from "../db";
+import { Fetcher } from "./types";
 
 import { addSortAndFilterToQuery } from "./sort-and-filter";
 
@@ -13,15 +12,13 @@ import { pluck, indexBy } from "underscore";
 const emptyObj = {} as any;
 
 export default class LibraryFetcher extends Fetcher {
-  async work(): Promise<Outcome> {
+  async work(): Promise<void> {
     await this.pushLocal();
 
     if (this.warrantsRemote(this.reason)) {
       await this.remote();
       await this.pushLocal();
     }
-
-    return this.success();
   }
 
   async remote() {
@@ -37,13 +34,16 @@ export default class LibraryFetcher extends Fetcher {
     for (const id of Object.keys(downloadKeys)) {
       downloadKeys[id].ownerId = meId;
     }
+
+    const { db } = this.ctx;
     await db.saveMany(normalized.entities);
 
     await this.pushLocal();
   }
 
   async pushLocal() {
-    const { session, commons } = this.store.getState();
+    const { db, store } = this.ctx;
+    const { session, commons } = store.getState();
 
     const tabPagination = session.tabPagination[this.tabId] || emptyObj;
     let { offset = 0, limit = 30 } = tabPagination;
@@ -59,7 +59,7 @@ export default class LibraryFetcher extends Fetcher {
 
     const totalCount = libraryGameIds.length;
 
-    addSortAndFilterToQuery(query, this.tabId, this.store);
+    addSortAndFilterToQuery(query, this.tabId, store);
 
     query.setOffset(offset).setLimit(limit);
 

@@ -2,11 +2,16 @@
 import * as os from ".";
 import spawn from "./spawn";
 
-import { Logger } from "../logger";
+import store from "../store/metal-store";
+import db from "../db";
+
+import { Logger, devNull } from "../logger";
+import Context from "../context";
 
 const promisedDiego = collect();
 
 async function collect() {
+  const ctx = new Context(store, db);
   let output = "";
 
   const log = (msg: string): void => {
@@ -31,6 +36,8 @@ async function collect() {
     let command = args.shift();
     try {
       await spawn({
+        ctx,
+        logger: devNull,
         command,
         args,
         onToken: tok => re.test(tok) && log(tok),

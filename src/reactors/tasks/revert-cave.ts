@@ -2,8 +2,6 @@ import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 
-import db from "../../db";
-
 import * as paths from "../../os/paths";
 
 import { formatDate, DATE_FORMAT } from "../../format";
@@ -22,8 +20,10 @@ import { EventEmitter } from "events";
 import { IRevertCaveParams } from "../../components/modal-widgets/revert-cave";
 
 import localizer from "../../localizer";
+import { DB } from "../../db";
+import Context from "../../context";
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
     const { caveId } = action.payload;
     const logger = paths.caveLogger(caveId);
@@ -35,24 +35,26 @@ export default function(watcher: Watcher) {
         return;
       }
 
+      const ctx = new Context(store, db);
+
       if (!cave) {
         logger.error(`Cave game not found, can't revert: ${cave.gameId}`);
         return;
       }
-      const game = await lazyGetGame(store, cave.gameId);
+      const game = await lazyGetGame(ctx, cave.gameId);
 
       if (!cave.buildId) {
         logger.error(`Cave isn't wharf-enabled, can't revert: ${caveId}`);
         return;
       }
 
-      const upload = cave.uploads[cave.uploadId];
+      const { upload } = cave;
       if (!cave.buildId) {
-        logger.error(`No upload in acve, can't revert: ${caveId}`);
+        logger.error(`No upload in cave, can't revert: ${caveId}`);
         return;
       }
 
-      const gameCredentials = await getGameCredentials(store, game);
+      const gameCredentials = await getGameCredentials(ctx, game);
 
       const credentials = store.getState().session.credentials;
       if (!credentials) {

@@ -1,4 +1,7 @@
 import spawn from "./spawn";
+import Context from "../context";
+
+import { devNull } from "../logger";
 
 interface IAssertPresenceResult {
   code: number;
@@ -8,6 +11,7 @@ interface IAssertPresenceResult {
 }
 
 export async function assertPresence(
+  ctx: Context,
   command: string,
   args: string[],
   parser: RegExp,
@@ -28,6 +32,8 @@ export async function assertPresence(
       stderr += "\n" + tok;
     },
     opts: extraOpts,
+    logger: devNull,
+    ctx,
   };
 
   const code = await spawn(spawnOpts);

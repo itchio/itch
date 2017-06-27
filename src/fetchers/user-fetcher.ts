@@ -1,4 +1,4 @@
-import { Fetcher, Outcome } from "./types";
+import { Fetcher } from "./types";
 
 import db from "../db";
 
@@ -12,7 +12,7 @@ export default class UserFetcher extends Fetcher {
     super();
   }
 
-  async work(): Promise<Outcome> {
+  async work(): Promise<void> {
     const { path } = this.tabData();
 
     const userId = +pathToId(path);
@@ -25,17 +25,10 @@ export default class UserFetcher extends Fetcher {
     };
     pushUser(localUser);
 
-    const { credentials } = this.store.getState().session;
-    if (!credentials) {
-      throw new Error(`No user credentials yet`);
-    }
-
     const normalized = await this.withApi(async api => {
       return normalize(await api.user(userId), { user });
     });
 
     pushUser(normalized.entities.users[normalized.result.userId]);
-
-    return this.success();
   }
 }

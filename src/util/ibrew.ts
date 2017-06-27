@@ -6,9 +6,10 @@ import spawn from "../os/spawn";
 
 import { partial } from "underscore";
 
-import { Logger } from "../logger";
+import { Logger, devNull } from "../logger";
+import Context from "../context";
 
-import extract from "./extract";
+import { extract } from "./extract";
 import targz from "./targz";
 
 import formulas, { IFormulaSpec } from "./ibrew/formulas";
@@ -25,8 +26,6 @@ import {
   IChecksums,
 } from "../net";
 
-import { EventEmitter } from "events";
-
 interface IBrewOpts {
   logger: Logger;
 }
@@ -42,11 +41,13 @@ interface IAugmentedPaths {
 
 interface IFetchOpts {
   logger: Logger;
+  ctx: Context;
   onStatus: (status: string, extra?: any[]) => void;
 }
 
 const self = {
   fetch: async function(opts: IFetchOpts, name: string) {
+    const { ctx } = opts;
     const noop = (): any => null;
     const { onStatus = noop } = opts;
     const logger = opts.logger.child({ name: "ibrew" });
@@ -118,9 +119,9 @@ const self = {
         logger.info(`${name}: installed!`);
       } else if (formula.format === "7z") {
         logger.info(`${name}: extracting ${formula.format} archive`);
-        await extract.extract({
+        await extract({
           logger,
-          emitter: new EventEmitter(),
+          ctx,
           archivePath,
           destPath: self.binPath(),
         });
@@ -144,7 +145,11 @@ const self = {
           `${name}: running sanity check ${JSON.stringify(sanityCheck)}`,
         );
 
-        const sanityRes = await spawn.exec(sanityCheck);
+        const sanityRes = await spawn.exec({
+          ...sanityCheck,
+          ctx,
+          logger: devNull,
+        });
         if (sanityRes.code !== 0) {
           throw new Error(
             `sanity check for ${name} failed with code ${sanityRes.code}` +
@@ -158,7 +163,7 @@ const self = {
     onStatus("stopwatch", ["login.status.dependency_check"]);
     const getLatestVersion = partial(net.getLatestVersion, channel);
 
-    const localVersion = await self.getLocalVersion(name);
+    const localVersion = await self.getLocalVersion(ctx, name);
 
     if (!localVersion) {
       logger.info(`${name}: missing, downloading latest`);
@@ -199,7 +204,7 @@ const self = {
     }
   },
 
-  getLocalVersion: async function(name: string): Promise<string> {
+  getLocalVersion: async function(ctx: Context, name: string): Promise<string> {
     const formula = formulas[name] as IFormulaSpec;
     const { versionCheck = {} } = formula;
 
@@ -215,6 +220,7 @@ const self = {
         };
       }
       const info = await os.assertPresence(
+        ctx,
         command,
         check.args,
         check.parser,

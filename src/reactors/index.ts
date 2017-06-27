@@ -32,6 +32,7 @@ import itchInternal from "./itch-internal";
 import tasks from "./tasks";
 import downloads from "./downloads";
 import queueInstall from "./queue-install";
+import queueLaunch from "./queue-launch";
 
 import { currentRuntime } from "../os/runtime";
 const runtime = currentRuntime();
@@ -39,7 +40,7 @@ const runtime = currentRuntime();
 export default function getWatcher(db: DB) {
   const watcher = new Watcher();
 
-  fetchers(watcher);
+  fetchers(watcher, db);
   preboot(watcher);
   preferences(watcher);
   mainWindow(watcher);
@@ -48,7 +49,7 @@ export default function getWatcher(db: DB) {
   menu(watcher, runtime);
   installLocations(watcher, db);
   selfUpdate(watcher);
-  setup(watcher);
+  setup(watcher, db);
   tabs(watcher);
   triggers(watcher);
   modals(watcher);
@@ -70,6 +71,7 @@ export default function getWatcher(db: DB) {
   tasks(watcher, db);
   downloads(watcher, db);
   queueInstall(watcher, db);
+  queueLaunch(watcher, db);
 
   watcher.validate();
   return watcher;

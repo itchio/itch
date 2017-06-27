@@ -1,4 +1,4 @@
-type ItchErrorType = "transition" | "crash" | "cancelled" | "missing-libs";
+type ItchErrorType = "crash" | "cancelled" | "missing-libs";
 
 class ItchError extends Error {
   type: ItchErrorType;
@@ -10,26 +10,6 @@ class ItchError extends Error {
 
   toString(): string {
     return this.type;
-  }
-}
-
-interface ITransitionOpts {
-  to: string;
-  reason: string;
-}
-
-export class Transition extends ItchError {
-  to: string;
-  reason: string;
-
-  constructor(opts: ITransitionOpts) {
-    super("transition");
-    this.to = opts.to;
-    this.reason = opts.reason;
-  }
-
-  toString() {
-    return `Transition(to ${this.to} because ${this.reason})`;
   }
 }
 

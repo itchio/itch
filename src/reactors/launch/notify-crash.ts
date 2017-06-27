@@ -1,4 +1,7 @@
 import Game from "../../db/models/game";
+import Cave from "../../db/models/cave";
+
+import { IStore } from "../../types";
 
 import { Logger } from "../../logger";
 import diego from "../../os/diego";
@@ -7,14 +10,20 @@ import localizer from "../../localizer";
 
 import * as actions from "../../actions";
 
+type ExtendedError = Error & {
+  reason?: string;
+};
+
 export default async function notifyCrash(
+  store: IStore,
+  cave: Cave,
   game: Game,
-  e: Error,
+  e: ExtendedError,
   logger: Logger,
 ) {
   logger.error(`crashed with ${e.message}`);
-  logger.error(`${e.message || e}`);
-  await diego.hire(opts);
+  logger.error(`${e.stack || e}`);
+  await diego.hire({ logger });
 
   const i18n = store.getState().i18n;
   const t = localizer.getT(i18n.strings, i18n.lang);

@@ -681,17 +681,6 @@ export interface IQueueCaveReinstallPayload {
   caveId: string;
 }
 
-/** Delete cave from local db */
-export const IMPLODE_CAVE = "IMPLODE_CAVE";
-export interface IImplodeCavePayload {
-  /** id of the cave to implode */
-  caveId: string;
-}
-
-/** Deprecated. TODO: remove */
-export const CANCEL_CAVE = "CANCEL_CAVE";
-export interface ICancelCavePayload {}
-
 /** Cave has been deleted from local db */
 export const CAVE_THROWN_INTO_BIT_BUCKET = "CAVE_THROWN_INTO_BIT_BUCKET";
 export interface ICaveThrownIntoBitBucketPayload {}
@@ -1015,10 +1004,6 @@ export interface ILogoutPayload {}
 export const EVAL = "EVAL";
 export interface IEvalPayload {}
 
-/** Sent when app is about to reboot or shutdown */
-export const IMPLODE_APP = "IMPLODE_APP";
-export interface IImplodeAppPayload {}
-
 /** GC unused database entries */
 export const GC_DATABASE = "GC_DATABASE";
 export interface IGcDatabasePayload {}
@@ -1087,6 +1072,7 @@ export const DB_COMMIT = "DB_COMMIT";
 export interface IDbCommitPayload {
   tableName: string;
   updated: string[];
+  deleted: string[];
 }
 
 export const COMMONS_UPDATED = "COMMONS_UPDATED";

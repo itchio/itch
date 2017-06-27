@@ -1,6 +1,5 @@
 import { map } from "underscore";
 import * as shellQuote from "shell-quote";
-import { EventEmitter } from "events";
 import which from "../../promised/which";
 
 import urls from "../../constants/urls";
@@ -14,6 +13,7 @@ import * as sf from "../../os/sf";
 import spawn from "../../os/spawn";
 import { join, dirname } from "path";
 import * as paths from "../../os/paths";
+import Context from "../../context";
 import butler from "../../util/butler";
 import * as icacls from "./icacls";
 
@@ -25,16 +25,19 @@ import { MODAL_RESPONSE } from "../../constants/action-types";
 import rootLogger, { devNull } from "../../logger";
 const logger = rootLogger.child({ name: "launch/native" });
 
-import { Crash, MissingLibs } from "../errors";
-
-import { IEnvironment, ILaunchOpts } from "../../types";
+import { IEnvironment, ILaunchOpts, Crash, MissingLibs } from "../../types";
 import { ILauncher } from "./types";
+
+import configure from "./configure";
 
 const itchPlatform = os.itchPlatform();
 
-const launchNative: ILauncher = async (store, out, opts) => {
-  const { cave, game, hasManifest, manifestAction } = opts;
+const launchNative: ILauncher = async (ctx, opts) => {
+  const { game, manifest, manifestAction } = opts;
+  let { cave } = opts;
+  const hasManifest = !!manifest;
   let { args, env } = opts;
+  const { store } = ctx;
 
   logger.info(`cave location: "${cave.installLocation}/${cave.installFolder}"`);
 
@@ -66,7 +69,11 @@ const launchNative: ILauncher = async (store, out, opts) => {
   }
 
   if (!exePath) {
-    // TODO: if no verdict, configure
+    if (!cave.verdict) {
+      await configure(ctx, opts);
+      cave = await ctx.db.caves.findOneById(cave.id);
+    }
+
     const verdict = cave.verdict;
     if (verdict && verdict.candidates && verdict.candidates.length > 0) {
       const candidate = verdict.candidates[0];
@@ -124,7 +131,7 @@ const launchNative: ILauncher = async (store, out, opts) => {
   const argString = map(args, spawn.escapePath).join(" ");
 
   if (isolateApps) {
-    const checkRes = await sandbox.check();
+    const checkRes = await sandbox.check(ctx);
     if (checkRes.errors.length > 0) {
       throw new Error(
         `error(s) while checking for sandbox: ${checkRes.errors.join(", ")}`,
@@ -169,7 +176,7 @@ const launchNative: ILauncher = async (store, out, opts) => {
       }
     }
 
-    const installRes = await sandbox.install(checkRes.needs);
+    const installRes = await sandbox.install(ctx, checkRes.needs);
     if (installRes.errors.length > 0) {
       throw new Error(
         `error(s) while installing sandbox: ${installRes.errors.join(", ")}`,
@@ -191,6 +198,7 @@ const launchNative: ILauncher = async (store, out, opts) => {
       fullExec = await spawn.getOutput({
         command: "activate",
         args: ["--print-bundle-executable-path", exePath],
+        ctx,
         logger: opts.logger,
       });
     }
@@ -210,12 +218,12 @@ const launchNative: ILauncher = async (store, out, opts) => {
         logger: opts.logger,
       };
 
-      await sandbox.within(sandboxOpts, async function({ fakeApp }) {
+      await sandbox.within(ctx, sandboxOpts, async function({ fakeApp }) {
         await doSpawn(
           fullExec,
           `open -W ${spawn.escapePath(fakeApp)}`,
           env,
-          out,
+          ctx,
           opts,
         );
       });
@@ -227,7 +235,7 @@ const launchNative: ILauncher = async (store, out, opts) => {
           fullExec,
           `open -W ${spawn.escapePath(exePath)} --args ${argString}`,
           env,
-          out,
+          ctx,
           spawnOpts,
         );
       } else {
@@ -235,7 +243,7 @@ const launchNative: ILauncher = async (store, out, opts) => {
           fullExec,
           `${spawn.escapePath(exePath)} ${argString}`,
           env,
-          out,
+          ctx,
           spawnOpts,
         );
       }
@@ -254,6 +262,7 @@ const launchNative: ILauncher = async (store, out, opts) => {
         command: "isolate.exe",
         args: ["--print-itch-player-details"],
         logger: opts.logger,
+        ctx,
       });
 
       playerUsername = playerUsername.split("\n")[0].trim();
@@ -270,7 +279,7 @@ const launchNative: ILauncher = async (store, out, opts) => {
     }
 
     try {
-      await doSpawn(exePath, cmd, env, out, spawnOpts);
+      await doSpawn(exePath, cmd, env, ctx, spawnOpts);
     } finally {
       // always unshare, even if something happened
       if (isolateApps) {
@@ -296,10 +305,10 @@ const launchNative: ILauncher = async (store, out, opts) => {
       });
 
       cmd = `firejail "--profile=${sandboxProfilePath}" -- ${cmd}`;
-      await doSpawn(exePath, cmd, env, out, spawnOpts);
+      await doSpawn(exePath, cmd, env, ctx, spawnOpts);
     } else {
       logger.info("no app isolation");
-      await doSpawn(exePath, cmd, env, out, spawnOpts);
+      await doSpawn(exePath, cmd, env, ctx, spawnOpts);
     }
   } else {
     throw new Error(`unsupported platform: ${os.platform()}`);
@@ -323,7 +332,7 @@ async function doSpawn(
   exePath: string,
   fullCommand: string,
   env: IEnvironment,
-  emitter: EventEmitter,
+  ctx: Context,
   opts: IDoSpawnOpts,
 ) {
   logger.info(`spawn command: ${fullCommand}`);
@@ -378,21 +387,19 @@ async function doSpawn(
   logger.info(`args: ${JSON.stringify(args, null, 2)}`);
   logger.info(`env keys: ${JSON.stringify(Object.keys(env), null, 2)}`);
 
-  let spawnEmitter = emitter;
   if (itchPlatform === "osx") {
-    spawnEmitter = new EventEmitter();
-    emitter.once("cancel", async function() {
+    ctx.on("abort", async function() {
       logger.warn(`asked to cancel, calling pkill with ${exePath}`);
       const killRes = await spawn.exec({
         command: "pkill",
         args: ["-f", exePath],
         logger: devNull,
+        ctx: new Context(ctx.store, ctx.db),
       });
       if (killRes.code !== 0) {
         logger.error(
           `Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`,
         );
-        spawnEmitter.emit("cancel");
       }
     });
   }
@@ -409,7 +416,7 @@ async function doSpawn(
   const code = await spawn({
     command,
     args,
-    emitter: spawnEmitter,
+    ctx,
     onToken: tok => logger.info(`out: ${tok}`),
     onErrToken: tok => {
       logger.info(`err: ${tok}`);
@@ -429,7 +436,7 @@ async function doSpawn(
 
   try {
     await butler.wipe(tmpPath, {
-      emitter,
+      ctx,
       logger: devNull,
     });
   } catch (e) {
@@ -443,7 +450,7 @@ async function doSpawn(
       try {
         const props = await butler.elfprops({
           path: exePath,
-          emitter: null,
+          ctx,
           logger: opts.logger,
         });
         arch = props.arch;

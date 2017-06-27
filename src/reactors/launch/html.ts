@@ -1,4 +1,3 @@
-import { EventEmitter } from "events";
 import { Shm } from "shoom";
 
 import * as btoa from "btoa";
@@ -14,6 +13,8 @@ import * as paths from "../../os/paths";
 import { getInjectPath } from "../../os/resources";
 import url from "../../util/url";
 import debugBrowserWindow from "../../util/debug-browser-window";
+
+import Context from "../../context";
 
 import Connection from "../../capsule/connection";
 import { capsule } from "../../capsule/messages_generated";
@@ -94,7 +95,7 @@ async function registerProtocol(opts: IRegisterProtocolOpts) {
   registeredProtocols[partition] = true;
 }
 
-export default async function launch(out: EventEmitter, opts: ILaunchOpts) {
+export default async function launch(ctx: Context, opts: ILaunchOpts) {
   const { cave, game, args, env, logger } = opts;
 
   const appPath = paths.appPath(cave, store.getState().preferences);
@@ -225,7 +226,7 @@ export default async function launch(out: EventEmitter, opts: ILaunchOpts) {
   let capsulePromise: Promise<number>;
   let connection: Connection;
   const capsulerunPath = process.env.CAPSULERUN_PATH;
-  const capsuleEmitter = new EventEmitter();
+  const capsuleContext = new Context(ctx.store, ctx.db);
   if (capsulerunPath) {
     logger.info(`Launching capsule...`);
 
@@ -241,7 +242,7 @@ export default async function launch(out: EventEmitter, opts: ILaunchOpts) {
       onErrToken: async tok => {
         logger.info(`[capsule err] ${tok}`);
       },
-      emitter: capsuleEmitter,
+      ctx: capsuleContext,
       logger: opts.logger,
     });
 
@@ -346,7 +347,7 @@ export default async function launch(out: EventEmitter, opts: ILaunchOpts) {
       win.webContents.session.clearCache(resolve);
     });
 
-    out.once("cancel", () => {
+    ctx.on("abort", () => {
       win.close();
     });
   });

@@ -1,5 +1,5 @@
-import { writeFile, readFile } from "../os/sf";
-import { join } from "path";
+import { exists, mkdir, writeFile, readFile } from "../os/sf";
+import { join, dirname } from "path";
 
 /**
  * Store and retrieve a .json file in the `.itch` directory
@@ -9,8 +9,16 @@ export default class ItchStorageSlot<T> {
   constructor(private name: string) {}
 
   async save(basePath: string, value: T) {
+    if (!await exists(basePath)) {
+      // silently not saving if the dest folder doesn't exist yet
+      return;
+    }
+
+    const fullPath = this.makePath(basePath);
+    await mkdir(dirname(fullPath));
+
     const contents = JSON.stringify(value);
-    await writeFile(this.makePath(basePath), contents);
+    await writeFile(fullPath, contents);
   }
 
   async load(basePath: string): Promise<T> {
@@ -27,6 +35,6 @@ export default class ItchStorageSlot<T> {
   }
 
   private makePath(basePath: string): string {
-    return join(basePath, this.name);
+    return join(basePath, ".itch", this.name);
   }
 }

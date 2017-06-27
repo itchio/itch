@@ -1,8 +1,7 @@
 import { DB } from "../db";
-import { IStore, IProgressInfo, IProgressListener } from "../types";
+import { IStore, IProgressInfo, IProgressListener, Cancelled } from "../types";
 
 import { EventEmitter } from "events";
-import { Cancelled } from "../tasks/errors";
 
 interface IStopper {
   (): Promise<void>;
@@ -69,6 +68,8 @@ export default class Context {
         throw new Cancelled();
       }
       return result as T;
+    } catch (e) {
+      throw e;
     } finally {
       this.stoppers = this.stoppers.filter(c => c !== opts.stop);
     }

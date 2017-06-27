@@ -69,6 +69,7 @@ export default function(watcher: Watcher, db: DB) {
     store.dispatch(
       actions.queueDownload({
         game,
+        caveId,
         upload,
         totalSize: upload.size,
         reason: "reinstall",

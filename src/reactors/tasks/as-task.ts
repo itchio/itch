@@ -1,7 +1,8 @@
 import * as uuid from "uuid";
 import { throttle } from "underscore";
 
-import { IStore, IProgressInfo, DB, Cancelled } from "../../types";
+import { IStore, IProgressInfo, Cancelled } from "../../types";
+import { DB } from "../../db";
 import Context from "../../context";
 import * as actions from "../../actions";
 
@@ -17,6 +18,12 @@ interface IAsTaskOpts {
   caveId: string;
   work: (ctx: Context, logger: Logger) => Promise<void>;
 }
+
+interface ITaskMap {
+  [id: string]: Context;
+}
+
+let currentTasks = {} as ITaskMap;
 
 type TaskName = "install" | "launch" | "uninstall";
 
@@ -51,6 +58,8 @@ export default async function asTask(opts: IAsTaskOpts) {
     }, 250),
   );
 
+  currentTasks[id] = ctx;
+
   let err: Error;
 
   opts
@@ -59,10 +68,13 @@ export default async function asTask(opts: IAsTaskOpts) {
       err = e;
     })
     .then(() => {
+      delete currentTasks[id];
       if (err) {
-        if (!(err instanceof Cancelled)) {
+        if (err instanceof Cancelled) {
           // all good, but also, don't trigger taskEnded
-          logger.warn(`Task ${name} threw: ${err}`);
+          return;
+        } else {
+          rootLogger.warn(`Task ${name} threw: ${err}`);
         }
       }
 
@@ -74,3 +86,5 @@ export default async function asTask(opts: IAsTaskOpts) {
       );
     });
 }
+
+export const getCurrentTasks = () => currentTasks;

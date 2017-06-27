@@ -1,5 +1,4 @@
-import { Fetcher, Outcome } from "./types";
-import db from "../db";
+import { Fetcher } from "./types";
 
 import normalize from "../api/normalize";
 import { collection, arrayOf } from "../api/schemas";
@@ -13,18 +12,17 @@ export default class CollectionsFetcher extends Fetcher {
     super();
   }
 
-  async work(): Promise<Outcome> {
+  async work(): Promise<void> {
     await this.pushLocal();
 
     if (this.warrantsRemote(this.reason)) {
       await this.remote();
       await this.pushLocal();
     }
-
-    return this.success();
   }
 
   async pushLocal() {
+    const { db } = this.ctx;
     const query = db.collections.createQueryBuilder("collections");
     query.where("userId = :meId");
     query.addParameters({ meId: this.ensureCredentials().me.id });
@@ -52,6 +50,7 @@ export default class CollectionsFetcher extends Fetcher {
   }
 
   async remote() {
+    const { db } = this.ctx;
     const normalized = await this.withApi(async api => {
       return normalize(await api.myCollections(), {
         collections: arrayOf(collection),

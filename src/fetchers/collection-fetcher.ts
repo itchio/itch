@@ -1,5 +1,4 @@
-import { Fetcher, Outcome } from "./types";
-import db from "../db";
+import { Fetcher } from "./types";
 import getByIds from "../helpers/get-by-ids";
 
 import { IGameRecordSet } from "../types";
@@ -16,11 +15,13 @@ import { pathToId } from "../util/navigation";
 const emptyArr = [];
 
 export default class CollectionFetcher extends Fetcher {
-  async work(): Promise<Outcome> {
+  async work(): Promise<void> {
+    const { db } = this.ctx;
+
     if (this.hasGames() && !this.warrantsRemote(this.reason)) {
       const { games, gameIds, gamesCount } = this.tabData();
       await this.pushGames(games, gameIds, gamesCount);
-      return this.success();
+      return;
     }
 
     const path = this.tabData().path;
@@ -76,8 +77,6 @@ export default class CollectionFetcher extends Fetcher {
     const remoteGameIds: number[] = normalized.result.gameIds;
 
     this.pushGames(remoteGames, remoteGameIds, remoteCollection.gamesCount);
-
-    return this.success();
   }
 
   hasGames(): boolean {
@@ -93,7 +92,7 @@ export default class CollectionFetcher extends Fetcher {
     const sortedGames = sortAndFilter(
       getByIds(games, gameIds),
       this.tabId,
-      this.store,
+      this.ctx.store,
     );
 
     this.push({
