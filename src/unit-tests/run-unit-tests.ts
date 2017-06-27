@@ -1,10 +1,11 @@
 // tslint:disable:no-console
 
 let watching = false;
-let runConfidenceTests = false;
+let thorough = false;
 let chatty = false;
 
 function exit(exitCode) {
+  console.log("should exit app with code ", exitCode);
   if (process.env.ITCH_DONT_EXIT === "1") {
     console.log(`Should exit with code ${exitCode}, but asked not to`);
     return;
@@ -52,39 +53,52 @@ function printDurations(input: IDuration[], legend: string) {
   console.log(chalk.blue(`${legend}`));
 
   const durations = sortBy(input, "duration").reverse();
-  let total = 0;
+  let total = 1;
   for (const item of durations) {
     total += item.duration;
   }
 
-  for (const data of durations) {
+  let format = data => {
     const percent = data.duration * 100 / total;
     let percentColumn = pad(`${percent.toFixed(1)}%`, 8);
     let durationColumn = pad(`${data.duration.toFixed(2)}ms`, 12);
-    let msg = `[slow test] ${percentColumn}  ${durationColumn}  "${data.title}"`;
+    return `${percentColumn}  ${durationColumn}  "${data.title}"`;
+  };
+
+  let unprinted = [];
+  for (const data of durations) {
     if (data.duration < 100) {
       // don't print
+      unprinted.push(data);
     } else if (data.duration < 200) {
+      const msg = "[sorta long] " + format(data);
       console.log(chalk.green(msg));
     } else if (data.duration < 500) {
+      const msg = "[   long   ] " + format(data);
       console.log(chalk.yellow(msg));
     } else {
+      const msg = "[ too long ] " + format(data);
       console.log(chalk.red(msg));
     }
+  }
+
+  unprinted = sortBy(unprinted, "duration").reverse();
+  if (unprinted.length > 0) {
+    console.log(chalk.blue(`${format(unprinted[0])}`));
   }
 }
 
 const cwd = process.cwd();
 
 function flush() {
-  process.removeAllListeners("exit");
+  delete global["__coverage__"];
 
   Object.keys(require.cache).forEach(function(fname) {
     if (fname.indexOf("node_modules") === -1) {
       delete require.cache[fname];
     }
 
-    const mods = ["tape", "zopf", "typeorm"];
+    const mods = ["tape", "zopf"];
     mods.forEach(function(mod) {
       if (
         fname.indexOf(path.join(cwd, mod) + path.sep) > -1 ||
@@ -109,6 +123,12 @@ app.on("ready", async () => {
       watching = true;
       continue;
     }
+
+    if (arg === "--thorough") {
+      thorough = true;
+      continue;
+    }
+
     if (state === 2) {
       specifiedFiles = [arg.replace(/.*src\//, "")];
       console.log(
@@ -130,7 +150,6 @@ app.on("ready", async () => {
 
   const invoke = async () => {
     // tslint:disable-next-line
-    delete global["__coverage__"];
     const tape = require("tape");
     const zopf = require("zopf");
     const parser = tapParser(function(results) {
@@ -144,12 +163,19 @@ app.on("ready", async () => {
         if (assert.diag) {
           console.warn(chalk.red(JSON.stringify(assert.diag, null, 2)));
         }
+        if (!thorough) {
+          console.warn(
+            chalk.blue(
+              "re-run with `--thorough` for asynchronous, source-mapped stack traces",
+            ),
+          );
+        }
       }
     });
     parser.on("comment", function(comment) {
       lastComment = comment;
     });
-    tape.createStream().pipe(parser);
+    const harness = tape.getHarness({ exit: false, stream: parser });
 
     let testFiles = specifiedFiles;
     if (testFiles.length === 0) {
@@ -157,7 +183,7 @@ app.on("ready", async () => {
         console.log(chalk.blue(`looking for tests in ${srcDir}`));
       }
       testFiles = glob("**/*[.-]spec.ts", { cwd: srcDir });
-      if (!runConfidenceTests) {
+      if (!thorough) {
         testFiles = testFiles.filter(f => !/confidence/.test(f));
       }
     }
@@ -192,7 +218,6 @@ app.on("ready", async () => {
         // print text-lcov report to coverage.lcov file
         tree.visit(reports.create("lcov"), context);
 
-        const harness = tape.getHarness();
         resolve(harness._exitCode);
       });
     });

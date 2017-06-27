@@ -105,16 +105,20 @@ export class TestWatcher extends Watcher {
 }
 
 import { DB } from "./db";
+import { getConnectionManager } from "typeorm";
 
-let oldDB: DB;
+/**
+ * Loads an in-memory database for testing. Close any other in-memory databases first.
+ */
 export async function loadDB(db: DB, store: IStore) {
-  if (oldDB) {
-    await oldDB.conn.close();
-    oldDB = null;
+  const name = ":memory:";
+  try {
+    await getConnectionManager().get(name).close();
+  } catch (e) {
+    // something like connection not found or whatever
   }
 
-  await db.load(store, ":memory:");
-  oldDB = db;
+  await db.load(store, name);
 }
 
 /**
