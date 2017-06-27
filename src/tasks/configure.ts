@@ -1,5 +1,3 @@
-import db from "../db";
-
 import * as os from "../os";
 import butler from "../util/butler";
 
@@ -9,11 +7,10 @@ import { Logger } from "../logger";
 import Game from "../db/models/game";
 import Cave from "../db/models/cave";
 
-import { EventEmitter } from "events";
-
-import store from "../store/metal-store";
+import Context from "../context";
 
 export interface IConfigureOpts {
+  ctx: Context;
   logger: Logger;
   cave: Cave;
   game: Game;
@@ -23,14 +20,10 @@ export interface IConfigureResult {
   executables: string[];
 }
 
-export default async function configure(
-  out: EventEmitter,
-  opts: IConfigureOpts,
-  logger: Logger,
-) {
-  const { cave } = opts;
+export default async function configure(opts: IConfigureOpts) {
+  const { ctx, cave, logger } = opts;
 
-  const appPath = paths.appPath(cave, store.getState().preferences);
+  const appPath = paths.appPath(cave, ctx.store.getState().preferences);
   logger.info(`configuring ${appPath}`);
 
   let osFilter;
@@ -64,15 +57,15 @@ export default async function configure(
   }
 
   const verdict = await butler.configure({
+    ctx,
     path: appPath,
     osFilter,
     archFilter,
     logger,
-    emitter: out,
   });
   logger.info(`verdict =\n${JSON.stringify(verdict, null, 2)}`);
 
-  await db.saveOne(
+  await ctx.db.saveOne(
     "caves",
     cave.id,
     {
