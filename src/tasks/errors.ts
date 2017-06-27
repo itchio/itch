@@ -91,7 +91,14 @@ export class MissingLibs extends ItchError {
 }
 
 export class Cancelled extends ItchError {
-  constructor(opts: any = {}) {
+  detail: string;
+
+  constructor(detail = "generic cancellation") {
     super("cancelled");
+    this.detail = detail;
+  }
+
+  toString() {
+    return `operation was cancelled: ${this.detail}`;
   }
 }
