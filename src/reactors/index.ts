@@ -31,6 +31,7 @@ import url from "./url";
 import itchInternal from "./itch-internal";
 import tasks from "./tasks";
 import downloads from "./downloads";
+import queueInstall from "./queue-install";
 
 import { currentRuntime } from "../os/runtime";
 const runtime = currentRuntime();
@@ -68,6 +69,7 @@ export default function getWatcher(db: DB) {
   itchInternal(watcher);
   tasks(watcher, db);
   downloads(watcher);
+  queueInstall(watcher, db);
 
   watcher.validate();
   return watcher;
