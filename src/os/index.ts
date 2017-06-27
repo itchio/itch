@@ -4,7 +4,7 @@ export * from "./arch";
 export * from "./assert-presence";
 import env from "../env";
 
-export type ItchPlatform = "osx" | "windows" | "linux" | "unknown";
+import { ItchPlatform } from "../types";
 
 export function platform(): string {
   return process.platform;

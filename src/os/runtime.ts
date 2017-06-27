@@ -1,11 +1,7 @@
-import { ItchPlatform, itchPlatform, isLinux64, isWin64 } from ".";
+import { itchPlatform, isLinux64, isWin64 } from ".";
+import { IRuntime } from "../types";
 
 export type ItchRuntimeProp = "pOsx" | "pWindows" | "pLinux" | "";
-
-export interface IRuntime {
-  platform: ItchPlatform;
-  is64: boolean;
-}
 
 export function runtimeProp(runtime: IRuntime): string {
   switch (runtime.platform) {
