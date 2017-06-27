@@ -1,5 +1,3 @@
-import { EventEmitter } from "events";
-
 import { union, where, map, filter, sortBy } from "underscore";
 
 import rootLog from "../../logger";
@@ -10,6 +8,8 @@ import client from "../../api";
 import actionForGame from "../../util/action-for-game";
 
 import Game from "../../db/models/game";
+import Context from "../../context";
+
 import { IUploadRecord, IGameCredentials } from "../../types";
 
 import {
@@ -36,9 +36,8 @@ export interface IFindUploadResult {
   hadWrongArch: boolean;
 }
 
-// TODO: use context here
 export default async function findUploads(
-  out: EventEmitter,
+  ctx: Context,
   opts: IFindUploadOpts,
 ): Promise<IFindUploadResult> {
   const { game, gameCredentials } = opts;
@@ -58,10 +57,11 @@ export default async function findUploads(
     : "without"} download key)`;
   logger.info(`got a list of ${uploads.length} uploads ${note}`);
 
-  return narrowDownUploads(uploads, game, currentRuntime());
+  return narrowDownUploads(ctx, uploads, game, currentRuntime());
 }
 
 export function narrowDownUploads(
+  ctx: Context,
   input: IUploadRecord[],
   game: Game,
   runtime: IRuntime,

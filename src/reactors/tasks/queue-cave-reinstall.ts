@@ -34,9 +34,7 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    const out = new EventEmitter();
-
-    const uploadResponse = await findUploads(out, {
+    const uploadResponse = await findUploads(ctx, {
       game,
       gameCredentials,
     });

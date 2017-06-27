@@ -1,17 +1,35 @@
-import suite from "../../test-suite";
+import suite, { loadDB } from "../../test-suite";
 
 import { narrowDownUploads } from "./find-uploads";
 import { IRuntime } from "../../os/runtime";
 
+import { DB } from "../../db";
+import Context from "../../context";
+
 import Game from "../../db/models/game";
-import { IUploadRecord } from "../../types";
+import { IUploadRecord, IStore, IAppState } from "../../types";
 
 const asUpload = (x: Partial<IUploadRecord>) => x as IUploadRecord;
 
 // TODO: test more cases
 
+const state = ({
+  session: {
+    credentials: null,
+  },
+} as any) as IAppState;
+
+const store = ({
+  getState: () => state,
+} as any) as IStore;
+
+const db = new DB();
+
 suite(__filename, s => {
-  s.case("narrowDownUploads", t => {
+  s.case("narrowDownUploads", async t => {
+    await loadDB(db, store);
+    const ctx = new Context(store, db);
+
     const game = ({
       id: 123,
       classification: "game",
@@ -23,7 +41,7 @@ suite(__filename, s => {
     };
 
     t.same(
-      narrowDownUploads([], game, linux64),
+      narrowDownUploads(ctx, [], game, linux64),
       {
         hadUntagged: false,
         hadWrongFormat: false,
@@ -35,6 +53,7 @@ suite(__filename, s => {
 
     t.same(
       narrowDownUploads(
+        ctx,
         [
           asUpload({
             pLinux: true,
@@ -66,6 +85,7 @@ suite(__filename, s => {
 
     t.same(
       narrowDownUploads(
+        ctx,
         [
           asUpload({
             filename: "untagged-all-platforms.zip",
@@ -101,7 +121,7 @@ suite(__filename, s => {
     });
 
     t.same(
-      narrowDownUploads([sources, linuxBinary, html], game, linux64),
+      narrowDownUploads(ctx, [sources, linuxBinary, html], game, linux64),
       {
         uploads: [linuxBinary, sources, html],
         hadUntagged: false,
@@ -127,7 +147,12 @@ suite(__filename, s => {
     };
 
     t.same(
-      narrowDownUploads([html, windowsPortable, windowsNaked], game, windows32),
+      narrowDownUploads(
+        ctx,
+        [html, windowsPortable, windowsNaked],
+        game,
+        windows32,
+      ),
       {
         uploads: [windowsPortable, windowsNaked, html],
         hadUntagged: false,
@@ -145,6 +170,7 @@ suite(__filename, s => {
 
     t.same(
       narrowDownUploads(
+        ctx,
         [windowsDemo, windowsPortable, windowsNaked],
         game,
         windows32,

@@ -1,5 +1,3 @@
-import { EventEmitter } from "events";
-
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
@@ -38,8 +36,6 @@ export default function(watcher: Watcher, db: DB) {
 
     logger.info(`No cave for ${game.title} (#${game.id}), attempting install`);
 
-    const out = new EventEmitter();
-
     const ctx = new Context(store, db);
     const gameCredentials = await getGameCredentials(ctx, game);
     if (!gameCredentials) {
@@ -51,7 +47,7 @@ export default function(watcher: Watcher, db: DB) {
 
     let uploadResponse: IFindUploadResult;
     try {
-      uploadResponse = await findUploads(out, {
+      uploadResponse = await findUploads(ctx, {
         game,
         gameCredentials,
       });
