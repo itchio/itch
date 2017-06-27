@@ -6,7 +6,7 @@ import spawn from "../os/spawn";
 import * as sf from "../os/sf";
 import ibrew from "./ibrew";
 
-import { EventEmitter } from "events";
+import Context from "../context";
 import { IProgressListener, IProgressInfo, ExeArch } from "../types";
 
 import { Logger, devNull } from "../logger";
@@ -22,8 +22,7 @@ type IResultListener = (result: IButlerResult) => void;
 
 interface IButlerOpts {
   logger: Logger;
-  emitter: EventEmitter;
-  onProgress?: IProgressListener;
+  ctx: Context;
   onResult?: IResultListener;
   elevate?: boolean;
 }
@@ -33,12 +32,12 @@ type IErrorListener = (err: Error) => void;
 interface IParseButlerStatusOpts {
   onError: IErrorListener;
   onResult: IResultListener;
-  onProgress?: IProgressListener;
+  ctx: Context;
   logger: Logger;
 }
 
 function parseButlerStatus(opts: IParseButlerStatusOpts, token: string) {
-  const { onProgress = noop, onError, onResult, logger } = opts;
+  const { ctx, onError, onResult, logger } = opts;
 
   if (dumpAllOutput) {
     logger.debug(`butler stdout: ${token}`);
@@ -60,7 +59,7 @@ function parseButlerStatus(opts: IParseButlerStatusOpts, token: string) {
       return logger.info(`butler: ${status.message}`);
     }
     case "progress": {
-      return onProgress(status as IProgressInfo);
+      return ctx.emitProgress(status as IProgressInfo);
     }
     case "error": {
       logger.error(`butler error: ${status.message}`);
@@ -80,7 +79,7 @@ async function butler<T>(
   command: string,
   commandArgs: string[],
 ): Promise<T> {
-  const { emitter, logger, onProgress } = opts;
+  const { ctx, logger } = opts;
 
   let value: any = null;
   let err = null as Error;
@@ -96,7 +95,7 @@ async function butler<T>(
       onResult: (result: IButlerResult) => {
         value = result.value;
       },
-      onProgress,
+      ctx,
       logger,
     } as IParseButlerStatusOpts,
   );
@@ -115,7 +114,7 @@ async function butler<T>(
     args,
     onToken,
     onErrToken,
-    emitter,
+    ctx,
     logger: dumpAllOutput || showDebug ? opts.logger : devNull,
   });
 
@@ -352,9 +351,10 @@ async function configure(opts: IConfigureOpts): Promise<IConfigureResult> {
   return await butler<IConfigureResult>(opts, "configure", args);
 }
 
-async function sanityCheck(): Promise<boolean> {
+async function sanityCheck(ctx: Context): Promise<boolean> {
   try {
     await spawn.assert({
+      ctx,
       command: "butler",
       args: ["--version"],
       logger: devNull,
