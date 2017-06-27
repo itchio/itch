@@ -1,6 +1,6 @@
 // This file is the entry point for renderer processes
 
-import "../os/sf";
+import "./os/sf";
 import env from "./env";
 
 if (env.name !== "production") {
