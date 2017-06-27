@@ -12,14 +12,16 @@ export default function mutex(fn) {
       return;
     }
     running = true;
-    process.on("uncaughtException", function(e) {
+    const onUncaught = function(e) {
       console.log("uncaught exception: ", e);
       running = false;
-    });
+    };
+    process.on("uncaughtException", onUncaught);
 
     try {
       return await fn(...args);
     } finally {
+      process.removeListener("uncaughtException", onUncaught);
       running = false;
     }
   };
