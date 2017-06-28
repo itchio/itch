@@ -1,5 +1,9 @@
+import Context from "../context";
 import { Watcher } from "./watcher";
 import * as actions from "../actions";
+
+import store from "../store/metal-store";
+import db from "../db";
 
 import { cleanOldLogs } from "./preboot/clean-old-logs";
 import xdgMime from "./preboot/xdg-mime";
@@ -18,6 +22,7 @@ let testProxy = false;
 let proxyTested = false;
 
 export default function(watcher: Watcher) {
+  const ctx = new Context(store, db);
   watcher.on(actions.preboot, async (store, action) => {
     try {
       await cleanOldLogs();
@@ -26,7 +31,7 @@ export default function(watcher: Watcher) {
     }
 
     try {
-      await xdgMime.registerIfNeeded(opts);
+      await xdgMime.registerIfNeeded(opts, ctx);
     } catch (e) {
       logger.error(`Could not run xdg-mime: ${e.stack || e.message || e}`);
     }
