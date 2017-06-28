@@ -62,6 +62,10 @@ let spawn: ISpawnInterface;
 
 spawn = async function(opts: ISpawnOpts): Promise<number> {
   const { ctx, split = "\n", onToken, onErrToken, logger = spawnLogger } = opts;
+  if (!ctx) {
+    throw new Error("spawn cannot be called with a null context");
+  }
+
   let { command, args = [] } = opts;
 
   let stdioOpts = {
