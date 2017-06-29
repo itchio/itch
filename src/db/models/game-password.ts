@@ -1,10 +1,20 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Model, ColumnType } from "../model";
 
-@Entity("gamePasswords")
-export default class GamePassword {
+type GamePasswordColumns = { [K in keyof IGamePassword]: ColumnType };
+
+export const GamePasswordModel: Model = {
+  table: "gamePasswords",
+  primaryKey: "id",
+  columns: {
+    id: ColumnType.Integer,
+    password: ColumnType.Text,
+  } as GamePasswordColumns,
+};
+
+export interface IGamePassword {
   /** id of the itch.io game this password is for */
-  @PrimaryColumn("int") id: number;
+  id: number;
 
   /** password used to access the (restricted) page */
-  @Column("string") password: string;
+  password: string;
 }

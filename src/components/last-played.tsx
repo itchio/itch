@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect, I18nProps } from "./connect";
 
 import actionForGame from "../util/action-for-game";
-import Game from "../db/models/game";
+import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
 
 import interleave from "./interleave";
@@ -14,24 +14,24 @@ class LastPlayed extends React.PureComponent<
 > {
   render() {
     const { t, game, cave, short = false } = this.props;
-    const { lastTouched = null } = cave || {};
+    const { lastTouchedAt = null } = cave || {};
 
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
-    const xed = classAction === "open"
-      ? "opened"
-      : classification === "game" ? "played" : "used";
+    const xed =
+      classAction === "open"
+        ? "opened"
+        : classification === "game" ? "played" : "used";
 
     return (
       <div className="last-playthrough">
-        {lastTouched
+        {lastTouchedAt
           ? <label>
               {short
-                ? <TimeAgo date={lastTouched} />
+                ? <TimeAgo date={lastTouchedAt} />
                 : interleave(t, `usage_stats.last_${xed}_time_ago`, {
-                    time_ago: <TimeAgo date={lastTouched} />,
+                    time_ago: <TimeAgo date={lastTouchedAt} />,
                   })}
-
             </label>
           : t(`usage_stats.never_${xed}`)}
       </div>
@@ -40,7 +40,7 @@ class LastPlayed extends React.PureComponent<
 }
 
 interface IProps {
-  game: Game;
+  game: IGame;
   cave: ICaveSummary;
   short?: boolean;
 }

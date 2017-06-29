@@ -17,7 +17,7 @@ export default class UserFetcher extends Fetcher {
 
     const userId = +pathToId(path);
 
-    let localUser = await db.users.findOneById(userId);
+    let localUser = db.users.findOneById(userId);
     let pushUser = (user: typeof localUser) => {
       if (user) {
         this.push(userToTabData(user));

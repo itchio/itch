@@ -1,4 +1,5 @@
 import { Fetcher } from "./types";
+import { QueryInterface } from "../db/querier";
 
 import { addSortAndFilterToQuery } from "./sort-and-filter";
 
@@ -36,7 +37,7 @@ export default class LibraryFetcher extends Fetcher {
     }
 
     const { db } = this.ctx;
-    await db.saveMany(normalized.entities);
+    db.saveMany(normalized.entities);
 
     await this.pushLocal();
   }
@@ -50,20 +51,18 @@ export default class LibraryFetcher extends Fetcher {
 
     const { libraryGameIds } = commons;
 
-    let query = db.games.createQueryBuilder("games");
-
-    query.where("games.id in (:gameIds)");
-    query.addParameters({
-      gameIds: libraryGameIds,
-    });
+    let doQuery = (k: QueryInterface) =>
+      addSortAndFilterToQuery(
+        k.whereIn("games.id", libraryGameIds),
+        this.tabId,
+        store,
+      );
 
     const totalCount = libraryGameIds.length;
-
-    addSortAndFilterToQuery(query, this.tabId, store);
-
-    query.setOffset(offset).setLimit(limit);
-
-    const [games, gamesCount] = await query.getManyAndCount();
+    const games = db.games.all(k =>
+      doQuery(k).offset(offset).limit(limit).select("games.*"),
+    );
+    const gamesCount = db.games.count(k => doQuery(k));
 
     this.push({
       games: indexBy(games, "id"),

@@ -7,7 +7,7 @@ export default async function prepare(
   ctx: Context,
   opts: IPrepareOpts,
 ): Promise<void> {
-  const { manifest, cave, game } = opts;
+  const { manifest, cave, game, runtime } = opts;
   const logger = opts.logger.child({ name: "prepare/native" });
 
   if (process.platform === "win32") {
@@ -18,6 +18,7 @@ export default async function prepare(
         cave,
         game,
         logger,
+        runtime,
       });
     } catch (e) {
       logger.error(`Windows prereqs full stack: ${e.stack}`);

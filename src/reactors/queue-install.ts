@@ -4,7 +4,8 @@ import Context from "../context";
 
 import * as actions from "../actions";
 
-import Cave from "../db/models/cave";
+import { ICave } from "../db/models/cave";
+import { toJSONField } from "../db/json-field";
 import { IQueueInstallOpts, IStore } from "../types";
 
 import * as paths from "../os/paths";
@@ -28,12 +29,14 @@ export async function queueInstall(
   const installLocation =
     opts.installLocation || defaultInstallLocation(ctx.store);
 
-  let cave: Cave;
+  let cave: ICave;
 
   const { caveId, game, reason } = opts;
 
+  logger.info(`in queueInstall, game = ${JSON.stringify(game, null, 2)}`);
+
   if (caveId) {
-    cave = await ctx.db.caves.findOneById(caveId);
+    cave = ctx.db.caves.findOneById(caveId);
     if (!cave) {
       throw new Error("Couldn't find cave to operate on");
     }
@@ -46,16 +49,16 @@ export async function queueInstall(
 
     const { handPicked, upload } = opts;
 
-    cave = ctx.db.caves.create({
+    cave = ({
       id: uuid.v4(),
       gameId: game.id,
       game,
-      upload,
+      upload: toJSONField(upload),
       installLocation,
       installFolder,
       pathScheme: paths.PathScheme.MODERN_SHARED,
       handPicked,
-    });
+    } as Partial<ICave>) as ICave;
 
     if (reason === "heal") {
       const { preferences } = ctx.store.getState();
@@ -76,7 +79,7 @@ export async function queueInstall(
     // I think that's why a bunch of folks have empty install folders & can't launch,
     // the install simply didn't happen. Should we even need to persist the cave at this point?
     // my vote is no.
-    await ctx.db.saveOne("caves", cave.id, cave);
+    ctx.db.saveOne("caves", cave.id, cave);
   }
 
   const { upload } = opts;
@@ -92,7 +95,7 @@ export async function queueInstall(
     );
   }
 
-  await ctx.db.saveOne("games", String(game.id), game);
+  ctx.db.saveOne("games", String(game.id), game);
 
   const prefs = ctx.store.getState().preferences;
 
@@ -134,9 +137,10 @@ export async function queueInstall(
     logger,
     destPath,
     archivePath,
+    caveId: cave.id,
   });
 
-  await ctx.db.saveOne("caves", cave.id, {
+  ctx.db.saveOne("caves", cave.id, {
     installedAt: new Date(),
     uploadId: upload.id,
     channelName: upload.channelName,

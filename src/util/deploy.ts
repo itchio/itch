@@ -124,7 +124,7 @@ export default async function deploy(
   });
 
   logger.info("everything copied, writing receipt");
-  const cave = await ctx.db.caves.findOneById(opts.caveId);
+  const cave = ctx.db.caves.findOneById(opts.caveId);
 
   const receiptObject = { cave, files: stageFiles };
   const receiptJson = JSON.stringify(receiptObject, null, 2);

@@ -9,7 +9,7 @@ import makeUploadButton from "../make-upload-button";
 import { promisedModal } from "../modals";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 
-import { IUploadRecord } from "../../types";
+import { IUpload } from "../../types";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "queue-game" });
@@ -23,7 +23,7 @@ export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueGame, async (store, action) => {
     const { game } = action.payload;
 
-    const caves = await db.caves.find({ gameId: game.id });
+    const caves = db.caves.find({ gameId: game.id });
 
     if (caves.length > 0) {
       logger.info(
@@ -95,7 +95,7 @@ export default function(watcher: Watcher, db: DB) {
       );
     }
 
-    let upload: IUploadRecord;
+    let upload: IUpload;
     let handPicked = false;
 
     if (uploads.length === 1) {

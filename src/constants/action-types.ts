@@ -4,7 +4,8 @@ import "electron";
 import * as Types from "../types";
 import { IProgressInfo } from "../types";
 
-import Game from "../db/models/game";
+import { IGame } from "../db/models/game";
+import { IOwnUser } from "../db/models/user";
 
 import { IQueryList } from "../reactors/querier";
 
@@ -93,7 +94,7 @@ export interface IModalResponsePayload {
   cache?: boolean;
 
   /** manually picked upload for install */
-  pickedUpload?: Types.IUploadRecord;
+  pickedUpload?: Types.IUpload;
 }
 
 export const MODAL_NO_RESPONSE = "MODAL_NO_RESPONSE";
@@ -112,7 +113,8 @@ export const SESSION_READY = "SESSION_READY";
 export interface ISessionReadyPayload {}
 
 export const SESSIONS_REMEMBERED = "SESSIONS_REMEMBERED";
-export interface ISessionsRememberedPayload extends Types.IRememberedSessionsState {}
+export interface ISessionsRememberedPayload
+  extends Types.IRememberedSessionsState {}
 
 export const SESSION_UPDATED = "SESSION_UPDATED";
 export interface ISessionUpdatedPayload {
@@ -404,7 +406,7 @@ export interface IOpenTabContextMenuPayload {
 export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
 export interface IOpenGameContextMenuPayload {
   /** game to open the context menu of */
-  game: Game;
+  game: IGame;
 }
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */
@@ -551,7 +553,8 @@ export interface IRemoveInstallLocationRequestPayload {
 }
 
 export const REMOVE_INSTALL_LOCATION = "REMOVE_INSTALL_LOCATION";
-export interface IRemoveInstallLocationPayload extends IRemoveInstallLocationRequestPayload {}
+export interface IRemoveInstallLocationPayload
+  extends IRemoveInstallLocationRequestPayload {}
 
 export const MAKE_INSTALL_LOCATION_DEFAULT = "MAKE_INSTALL_LOCATION_DEFAULT";
 export interface IMakeInstallLocationDefaultPayload {
@@ -717,7 +720,7 @@ export interface IRecordGameInteractionPayload {}
 export const ABORT_GAME_REQUEST = "ABORT_GAME_REQUEST";
 export interface IAbortGameRequestPayload {
   /** the game we want to force-quit */
-  game: Game;
+  game: IGame;
 }
 
 export const ABORT_LAST_GAME = "ABORT_LAST_GAME";
@@ -768,7 +771,7 @@ export interface IQueueGameUpdatePayload {
   update: Types.IGameUpdate;
 
   /** the upload that was picked */
-  upload: Types.IUploadRecord;
+  upload: Types.IUpload;
 
   /** was the upload hand-picked? */
   handPicked?: boolean;
@@ -808,7 +811,7 @@ export interface IViewCaveDetailsPayload {
 export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {
   /** the game we want to download */
-  game: Game;
+  game: IGame;
 }
 
 export const QUEUE_LAUNCH = "QUEUE_LAUNCH";
@@ -820,12 +823,12 @@ export interface IQueueInstallPayload extends Types.IQueueInstallOpts {}
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
 export interface IInitiatePurchasePayload {
-  game: Game;
+  game: IGame;
 }
 
 export const PURCHASE_COMPLETED = "PURCHASE_COMPLETED";
 export interface IPurchaseCompletedPayload {
-  game: Game;
+  game: IGame;
 }
 
 export const ENCOURAGE_GENEROSITY = "ENCOURAGE_GENEROSITY";
@@ -960,7 +963,7 @@ export interface ILoginWithTokenPayload {
   key: string;
 
   /** loginWithToken is used for remembered sessions - we already have user info for those */
-  me: Types.IOwnUserRecord;
+  me: IOwnUser;
 }
 
 /** Wrong login/password or something else */
@@ -981,7 +984,7 @@ export interface ILoginCancelledPayload {}
 export const LOGIN_SUCCEEDED = "LOGIN_SUCCEEDED";
 export interface ILoginSucceededPayload {
   key: string;
-  me: Types.IOwnUserRecord;
+  me: IOwnUser;
 }
 
 /** market available beyond this point */

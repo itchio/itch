@@ -6,10 +6,6 @@ import Context from "../../context";
 
 import { IConfigureOpts } from "../../types";
 
-export interface IConfigureResult {
-  executables: string[];
-}
-
 export default async function configure(ctx: Context, opts: IConfigureOpts) {
   const { cave, logger, runtime } = opts;
 
@@ -55,7 +51,7 @@ export default async function configure(ctx: Context, opts: IConfigureOpts) {
   });
   logger.info(`verdict =\n${JSON.stringify(verdict, null, 2)}`);
 
-  await ctx.db.saveOne("caves", cave.id, {
+  ctx.db.saveOne("caves", cave.id, {
     installedSize: verdict.totalSize,
     verdict: verdict,
   });

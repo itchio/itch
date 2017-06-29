@@ -1,5 +1,3 @@
-import { EventEmitter } from "events";
-
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
@@ -14,7 +12,7 @@ export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
     const { caveId } = action.payload;
 
-    const cave = await db.caves.findOneById(caveId);
+    const cave = db.caves.findOneById(caveId);
     if (!cave) {
       // can't reinstall without a valid cave!
       return;

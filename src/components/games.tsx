@@ -3,7 +3,7 @@ import { connect, I18nProps } from "./connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
 import { IAppState, TabLayout, ITabParams } from "../types";
-import Game from "../db/models/game";
+import { IGame } from "../db/models/game";
 
 import GameGrid from "./game-grid";
 import GameTable from "./game-table";
@@ -15,9 +15,7 @@ import { dispatcher } from "../constants/action-types";
 
 import styled from "./styles";
 
-export const HubGamesDiv = styled.div`
-  flex-grow: 1;
-`;
+export const HubGamesDiv = styled.div`flex-grow: 1;`;
 
 class Games extends React.PureComponent<
   IProps & IDerivedProps & I18nProps,
@@ -77,7 +75,11 @@ class Games extends React.PureComponent<
         />
       );
     } else {
-      return <div>Unknown layout {layout}</div>;
+      return (
+        <div>
+          Unknown layout {layout}
+        </div>
+      );
     }
   }
 }
@@ -87,7 +89,7 @@ interface IProps {
 }
 
 interface IDerivedProps {
-  games: Game[];
+  games: IGame[];
   gamesCount?: number;
   gamesOffset?: number;
   hiddenCount?: number;

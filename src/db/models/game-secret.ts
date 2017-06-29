@@ -1,10 +1,20 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Model, ColumnType } from "../model";
 
-@Entity("gameSecrets")
-export default class GameSecret {
+type GameSecretColumns = { [K in keyof IGameSecret]: ColumnType };
+
+export const GameSecretModel: Model = {
+  table: "gameSecrets",
+  primaryKey: "id",
+  columns: {
+    id: ColumnType.Integer,
+    secret: ColumnType.Text,
+  } as GameSecretColumns,
+};
+
+export interface IGameSecret {
   /** id of the itch.io game this secret is for */
-  @PrimaryColumn("int") id: number;
+  id: number;
 
   /** secret used to access the (draft) page */
-  @Column("string") secret: string;
+  secret: string;
 }

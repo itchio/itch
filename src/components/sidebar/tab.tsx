@@ -17,10 +17,10 @@ import {
   getActiveDownload,
 } from "../../reactors/downloads/getters";
 
+import { IGame } from "../../db/models/game";
 import {
   IAppState,
   ITabData,
-  IGameRecord,
   ILocalizedString,
   IDownloadsState,
 } from "../../types";
@@ -93,7 +93,7 @@ class Tab extends React.PureComponent<
       }
     }
 
-    let gameOverride: IGameRecord = null;
+    let gameOverride: IGame = null;
     let { onClick, onClose, onContextMenu } = this;
     if (!sortable) {
       onClose = null;

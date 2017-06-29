@@ -6,7 +6,7 @@ import * as tmp from "tmp";
 import * as bluebird from "bluebird";
 import {
   isEmpty,
-  find,
+  first,
   filter,
   reject,
   partition,
@@ -14,20 +14,19 @@ import {
   each,
 } from "underscore";
 
-import Cave from "../../db/models/cave";
-import Game from "../../db/models/game";
+import { ICave } from "../../db/models/cave";
+import { IGame } from "../../db/models/game";
 
 import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
 import * as sf from "../../os/sf";
-import * as os from "../../os";
 import registry from "../../os/win32/registry";
 
 import { request, getChecksums, ensureChecksum } from "../../net";
 import butler, { IButlerResult } from "../../util/butler";
 import { Logger } from "../../logger";
 
-import * as ospath from "path";
+import { join } from "path";
 import urls from "../../constants/urls";
 
 import * as actions from "../../actions";
@@ -40,6 +39,7 @@ import {
   IPrereqsState,
   IProgressListener,
   TaskProgressStatus,
+  IRuntime,
 } from "../../types";
 
 import { IAction, IOpenModalPayload } from "../../constants/action-types";
@@ -47,10 +47,11 @@ import { IAction, IOpenModalPayload } from "../../constants/action-types";
 import { IPrereqsStateParams } from "../../components/modal-widgets/prereqs-state";
 
 interface IWindowsPrereqsOpts {
-  cave: Cave;
-  game: Game;
+  cave: ICave;
+  game: IGame;
   manifest: IManifest;
   logger: Logger;
+  runtime: IRuntime;
 }
 
 interface IInstallPlan {
@@ -80,37 +81,38 @@ export default async function handleWindowsPrereqs(
   await handleManifest(ctx, opts);
 }
 
-const WIN32_UE4_RE = /UE4PrereqSetup_x86.exe$/i;
-const WIN64_UE4_RE = /UE4PrereqSetup_x64.exe$/i;
+const WIN32_UE4_RE = "UE4PrereqSetup_x86.exe";
+const WIN64_UE4_RE = "UE4PrereqSetup_x64.exe";
 
 async function handleUE4Prereq(
   ctx: Context,
-  cave: Cave,
+  cave: ICave,
   opts: IWindowsPrereqsOpts,
 ) {
+  // TODO: provide escape hatch for when they absolutely won't install
+
   if (cave.installedUE4Prereq) {
     return;
   }
+
+  const { runtime } = opts;
 
   let openModalAction: IAction<IOpenModalPayload>;
   const { db, store } = ctx;
   const logger = opts.logger.child({ name: "windows-prereqs" });
 
   try {
-    const executables = cave.executables;
-    const setupRE = os.isWin64() ? WIN64_UE4_RE : WIN32_UE4_RE;
-
-    const prereqRelativePath = find(executables, (x: string) =>
-      setupRE.test(x),
-    );
+    const pattern = runtime.is64 ? WIN64_UE4_RE : WIN32_UE4_RE;
+    const prefs = store.getState().preferences;
+    const appPath = paths.appPath(cave, prefs);
+    const candidates = await sf.glob(pattern, { cwd: appPath, nocase: true });
+    const prereqRelativePath = first(candidates);
     if (!prereqRelativePath) {
       // no UE4 prereqs
       return;
     }
 
-    const prefs = store.getState().preferences;
-    const appPath = paths.appPath(cave, prefs);
-    const prereqFullPath = ospath.join(appPath, prereqRelativePath);
+    const prereqFullPath = join(appPath, prereqRelativePath);
 
     let prereqsState: IPrereqsState = {
       tasks: {
@@ -158,7 +160,7 @@ async function handleUE4Prereq(
 
     if (code === 0) {
       logger.info("successfully installed UE4 prereq");
-      await db.saveOne("caves", cave.id, {
+      db.saveOne("caves", cave.id, {
         installedUE4Prereq: true,
       });
     } else {
@@ -244,7 +246,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
       alreadyInstalledPrereqs[task.prereq.name] = true;
     }
     installedPrereqs = { ...installedPrereqs, ...alreadyInstalledPrereqs };
-    await db.saveOne("caves", cave.id, { installedPrereqs });
+    db.saveOne("caves", cave.id, { installedPrereqs });
   }
 
   if (isEmpty(remainingTasks)) {
@@ -344,14 +346,14 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
 
     const installPlanContents = JSON.stringify(installPlan, null, 2);
 
-    const installPlanFullPath = ospath.join(workDir.name, "install_plan.json");
+    const installPlanFullPath = join(workDir.name, "install_plan.json");
     await sf.writeFile(installPlanFullPath, installPlanContents, {
       encoding: "utf8",
     });
 
     logger.info(`Wrote install plan to ${installPlanFullPath}`);
 
-    const stateDirPath = ospath.join(workDir.name, "statedir");
+    const stateDirPath = join(workDir.name, "statedir");
     await sf.mkdir(stateDirPath);
 
     const onButlerResult = (result: IButlerResult) => {
@@ -426,7 +428,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
       nowInstalledPrereqs[task.prereq.name] = true;
     }
     installedPrereqs = { ...installedPrereqs, ...nowInstalledPrereqs };
-    await db.saveOne("caves", cave.id, { installedPrereqs });
+    db.saveOne("caves", cave.id, { installedPrereqs });
   } finally {
     pollState = false;
 
@@ -535,7 +537,7 @@ function getBaseURL(prereq: IManifestPrereq): string {
 }
 
 function getWorkDir(baseWorkDir: string, prereq: IManifestPrereq): string {
-  return ospath.join(baseWorkDir, prereq.name);
+  return join(baseWorkDir, prereq.name);
 }
 
 interface ITaskProgressStatusListener {
@@ -560,7 +562,7 @@ async function fetchDep(
   logger.info(`Downloading prereq ${info.fullName}`);
   const baseUrl = getBaseURL(prereq);
   const archiveUrl = `${baseUrl}/${prereq.name}.7z`;
-  const archivePath = ospath.join(workDir, `${prereq.name}.7z`);
+  const archivePath = join(workDir, `${prereq.name}.7z`);
 
   await butler.cp({
     src: archiveUrl,

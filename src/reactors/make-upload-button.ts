@@ -1,6 +1,6 @@
 import * as humanize from "humanize-plus";
 
-import { IUploadRecord, ILocalizedString, IModalButtonTag } from "../types";
+import { IUpload, ILocalizedString, IModalButtonTag } from "../types";
 
 interface IUploadButton {
   label: ILocalizedString;
@@ -14,7 +14,7 @@ interface IMakeUploadButtonOpts {
 }
 
 export default function makeUploadButton(
-  upload: IUploadRecord,
+  upload: IUpload,
   opts = { showSize: true } as IMakeUploadButtonOpts,
 ): IUploadButton {
   let label = `${upload.displayName || upload.filename}`;

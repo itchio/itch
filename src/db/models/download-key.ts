@@ -1,29 +1,41 @@
-import { Entity, PrimaryColumn, Column, Index } from "typeorm";
+import { Model, ColumnType } from "../model";
+import { DateTimeField } from "../datetime-field";
+
+type DownloadKeyColumns = { [K in keyof IDownloadKey]: ColumnType };
+
+export const DownloadKeyModel: Model = {
+  table: "downloadKeys",
+  primaryKey: "id",
+  columns: {
+    id: ColumnType.Integer,
+
+    gameId: ColumnType.Integer,
+    createdAt: ColumnType.DateTime,
+    updatedAt: ColumnType.DateTime,
+
+    ownerId: ColumnType.Integer,
+  } as DownloadKeyColumns,
+};
 
 export interface IDownloadKeySummary {
   id: number;
   gameId: number;
-  createdAt: Date;
+  createdAt: DateTimeField;
 }
 
-@Entity("downloadKeys")
-@Index("downloadKeysByGameId", (dk: DownloadKey) => [dk.gameId])
-export default class DownloadKey implements IDownloadKeySummary {
+export interface IDownloadKey extends IDownloadKeySummary {
   /** itch.io-generated identifier for the download key */
-  @PrimaryColumn("int") id: number;
+  id: number;
 
   /** itch.io game the download key is for */
-  @Column("int", { nullable: true })
   gameId: number;
 
   /** date the download key was issued on (often: date purchase was completed) */
-  @Column("datetime", { nullable: true })
-  createdAt: Date;
+  createdAt: DateTimeField;
 
   /** not sure to be completely honest */
-  @Column("datetime", { nullable: true })
-  updatedAt: Date;
+  updatedAt: DateTimeField;
 
   /** user the download key belongs to */
-  @Column("int") ownerId: number;
+  ownerId: number;
 }

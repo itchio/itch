@@ -1,6 +1,6 @@
 import { IGameCredentials } from "../../types";
-import Game from "../../db/models/game";
-import DownloadKey from "../../db/models/download-key";
+import { IGame } from "../../db/models/game";
+import { IDownloadKey } from "../../db/models/download-key";
 import Context from "../../context";
 
 import { filter, findWhere, first } from "underscore";
@@ -9,7 +9,7 @@ import { filter, findWhere, first } from "underscore";
 
 export default async function getGameCredentials(
   ctx: Context,
-  game: Game,
+  game: IGame,
 ): Promise<IGameCredentials> {
   return await getGameCredentialsInternal(ctx, game.id, game.inPressSystem);
 }
@@ -43,12 +43,10 @@ async function getGameCredentialsInternal(
   }
 
   // fish for a download key
-  const allDownloadKeys = await ctx.db.downloadKeys.find({
-    gameId,
-  });
+  const allDownloadKeys = ctx.db.downloadKeys.find({ gameId });
 
   const sessions = state.rememberedSessions;
-  const hasValidSession = (k: DownloadKey) => {
+  const hasValidSession = (k: IDownloadKey) => {
     const session = sessions[k.ownerId];
     return !!(session && session.key);
   };

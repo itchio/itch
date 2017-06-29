@@ -1,5 +1,5 @@
-import Game from "../../db/models/game";
-import Cave from "../../db/models/cave";
+import { IGame } from "../../db/models/game";
+import { ICave } from "../../db/models/cave";
 
 import { IStore } from "../../types";
 
@@ -16,8 +16,8 @@ type ExtendedError = Error & {
 
 export default async function notifyCrash(
   store: IStore,
-  cave: Cave,
-  game: Game,
+  cave: IjCave,
+  game: IGame,
   e: ExtendedError,
   logger: Logger,
 ) {

@@ -2,7 +2,6 @@ import { Watcher } from "../watcher";
 
 import * as actions from "../../actions";
 import { MODAL_RESPONSE } from "../../constants/action-types";
-
 import { promisedModal } from "../modals";
 
 import { IClearBrowsingDataParams } from "../../components/modal-widgets/clear-browsing-data";

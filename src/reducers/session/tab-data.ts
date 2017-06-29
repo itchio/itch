@@ -62,4 +62,8 @@ export default reducer<ITabDataSet>(initialState, on => {
       [id]: { ...data },
     };
   });
+
+  on(actions.logout, (state, action) => {
+    return initialState;
+  });
 });

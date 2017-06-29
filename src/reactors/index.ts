@@ -33,6 +33,9 @@ import tasks from "./tasks";
 import downloads from "./downloads";
 import queueInstall from "./queue-install";
 import queueLaunch from "./queue-launch";
+import updater from "./updater";
+import gameUpdates from "./game-updates";
+import report from "./report";
 
 import { currentRuntime } from "../os/runtime";
 const runtime = currentRuntime();
@@ -57,14 +60,14 @@ export default function getWatcher(db: DB) {
   proxy(watcher);
   login(watcher);
   querier(watcher);
-  dialogs(watcher);
+  dialogs(watcher, db);
   i18n(watcher);
   contextMenu(watcher);
   rememberedSessions(watcher);
   session(watcher);
   navigation(watcher);
   savePasswordAndSecret(watcher, db);
-  commons(watcher);
+  commons(watcher, db);
   purchases(watcher);
   url(watcher);
   itchInternal(watcher);
@@ -72,6 +75,9 @@ export default function getWatcher(db: DB) {
   downloads(watcher, db);
   queueInstall(watcher, db);
   queueLaunch(watcher, db);
+  updater(watcher, db);
+  gameUpdates(watcher, db);
+  report(watcher, db);
 
   watcher.validate();
   return watcher;

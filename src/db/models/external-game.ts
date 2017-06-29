@@ -1,22 +1,30 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
-
 import { IGameBase } from "./game";
+import { Model, ColumnType } from "../model";
 
-@Entity("externalGames")
-export default class ExternalGame implements IGameBase {
-  @PrimaryColumn("text")
+type ExternalGameColumns = { [K in keyof IExternalGame]: ColumnType };
+
+export const ExternalGameModel: Model = {
+  table: "externalGames",
+  primaryKey: "id",
+  columns: {
+    id: ColumnType.Text,
+
+    title: ColumnType.Text,
+    shortText: ColumnType.Text,
+    coverUrl: ColumnType.Text,
+  } as ExternalGameColumns,
+};
+
+export interface IExternalGame extends IGameBase {
   /** UUID of the external game, generated locally */
   id: string;
 
-  @Column("text", { nullable: true })
   /** title of the game */
   title: string;
 
-  @Column("text", { nullable: true })
   /** short description of the game */
   shortText: string;
 
-  @Column("text", { nullable: true })
   /** image to show for the game */
   coverUrl: string;
 }

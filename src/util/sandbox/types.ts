@@ -1,7 +1,7 @@
 import { Logger } from "../../logger";
 import Context from "../../context";
 
-import Game from "../../db/models/game";
+import { IGame } from "../../db/models/game";
 
 export interface INeed {
   type: string;
@@ -23,7 +23,7 @@ export interface ICheckResult {
 }
 
 export interface IWithinOpts {
-  game: Game;
+  game: IGame;
   appPath: string;
   exePath: string;
   fullExec: string;

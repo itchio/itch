@@ -1,5 +1,5 @@
 import db from "../db";
-import Game from "../db/models/game";
+import { IGame } from "../db/models/game";
 
 import client from "../api";
 
@@ -9,7 +9,7 @@ import { getGameCredentialsForId } from "./downloads/get-game-credentials";
 export default async function lazyGetGame(
   ctx: Context,
   gameId: number,
-): Promise<Game> {
+): Promise<IGame> {
   const game = db.games.findOneById(gameId);
   if (game) {
     return game;

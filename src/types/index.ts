@@ -1,11 +1,11 @@
 import { Store } from "redux";
 import { Action } from "redux-actions";
 
-import Game from "../db/models/game";
-import User from "../db/models/user";
-import Collection from "../db/models/collection";
-import DownloadKey, { IDownloadKeySummary } from "../db/models/download-key";
-import Cave, { ICaveSummary } from "../db/models/cave";
+import { IGame } from "../db/models/game";
+import { IUser, IOwnUser } from "../db/models/user";
+import { ICollection } from "../db/models/collection";
+import { IDownloadKey, IDownloadKeySummary } from "../db/models/download-key";
+import { ICaveSummary, ICave } from "../db/models/cave";
 
 export * from "./tasks";
 export * from "./errors";
@@ -13,8 +13,6 @@ import * as Tasks from "./tasks";
 
 export * from "./api";
 export * from "../os/runtime";
-
-import { PathScheme } from "../os/paths";
 
 import { SortDirection, SortKey } from "../components/sort-types";
 
@@ -55,87 +53,6 @@ export type LaunchType = "native" | "html" | "external" | "shell";
 export type ClassificationAction = "launch" | "open";
 
 /**
- * Contains information about a game, retrieved via the itch.io API,
- * and saved to the local database.
- */
-export interface IGameRecord {
-  /** itch.io-generated unique identifier */
-  id: number;
-
-  /** address of the game's page on itch.io */
-  url: string;
-
-  /** unique identifier of the developer this game belongs to */
-  userId: number;
-
-  /** human-friendly title (may contain any character) */
-  title: string;
-
-  /** human-friendly short description */
-  shortText: string;
-
-  /** non-GIF cover url */
-  stillCoverUrl?: string;
-
-  /** cover url (might be a GIF) */
-  coverUrl: string;
-
-  /** downloadable game, html game, etc. */
-  type: GameType;
-
-  /** classification: game, tool, comic, etc. */
-  classification: GameClassification;
-
-  /** Only present for HTML5 games, otherwise null */
-  embed?: IGameEmbedInfo;
-
-  /** True if the game has a demo that can be downloaded for free */
-  hasDemo?: boolean;
-
-  /** price of a game, in cents of a dollar */
-  minPrice?: number;
-
-  /** current sale, if any */
-  sale?: IGameSaleInfo;
-
-  /** as of November 7, 2016, this property doesn't exist yet in the API, but a man can dream.. */
-  currency?: string;
-
-  /** if true, this game is downloadable by press users for free */
-  inPressSystem?: boolean;
-
-  /** if true, this game accepts money (donations or purchases) */
-  canBeBought?: boolean;
-
-  /** date the game was published, or empty/null if not published */
-  publishedAt?: string;
-}
-
-/**
- * Extended game record for creators / admins of a game
- */
-export interface IOwnGameRecord extends IGameRecord {
-  /** how many times has the game been downloaded (all time) */
-  downloadsCount: number;
-
-  /** how many times has the game been purchased (all time) */
-  purchasesCount: number;
-
-  /** how many page views has the game gotten (all time) */
-  viewsCount: number;
-}
-
-/**
- * This is used in some components, mostly grids/lists that can be filtered
- * using some user-provided query.
- */
-export interface IFilteredGameRecord {
-  game: Game;
-  cave?: ICaveRecord;
-  searchScore?: number;
-}
-
-/**
  * Sale info
  */
 export interface IGameSaleInfo {
@@ -154,28 +71,8 @@ export interface IGameEmbedInfo {
   fullscreen: boolean;
 }
 
-export interface IUserRecord {
-  /** itch.io-generated unique identifier */
-  id: number;
-
-  /** address of the user's profile on itch.io */
-  url: string;
-
-  /** human-friendly account name (may contain any character) */
-  displayName: string;
-
-  /** used for login, may be changed */
-  username: string;
-
-  /** avatar URL, may be gif */
-  coverUrl: string;
-
-  /** non-GIF avatar */
-  stillCoverUrl?: string;
-}
-
-export interface IUserRecordSet {
-  [id: string]: User;
+export interface IUserSet {
+  [id: string]: IUser;
 }
 
 export interface ICollectionRecord {
@@ -226,12 +123,12 @@ export interface ITabPagination {
   limit?: number;
 }
 
-export interface IGameRecordSet {
-  [id: string]: Game;
+export interface IGameSet {
+  [id: string]: IGame;
 }
 
-export interface ICollectionRecordSet {
-  [id: string]: Collection;
+export interface ICollectionSet {
+  [id: string]: ICollection;
 }
 
 export interface ITabData {
@@ -263,7 +160,7 @@ export interface ITabData {
   timestamp?: number;
 
   /** games in relation to this tab (single game, games in a collection) */
-  games?: IGameRecordSet;
+  games?: IGameSet;
 
   gamesCount?: number;
   gamesOffset?: number;
@@ -274,10 +171,10 @@ export interface ITabData {
   downloadKeys?: IDownloadKeysMap;
 
   /** collections in relation to this tab */
-  collections?: ICollectionRecordSet;
+  collections?: ICollectionSet;
 
   /** users in relation to this tab */
-  users?: IUserRecordSet;
+  users?: IUserSet;
 
   /** error to show for toast tab */
   error?: string;
@@ -304,123 +201,8 @@ export interface ITabDataSave extends ITabData {
   id: string;
 }
 
-export interface ICaveRecordLocation {
-  /* unique GUID generated locally */
-  id?: string;
-
-  /** name of the install location: 'default' or a GUID */
-  installLocation?: string;
-
-  /** name of the install folder in the install location, derived from the game's title */
-  installFolder?: string;
-
-  /** scheme used for computing paths */
-  pathScheme: PathScheme;
-}
-
-/** Describes an installed item, that can be launched or opened */
-export interface ICaveRecord extends ICaveRecordLocation {
-  /* unique GUID generated locally */
-  id: string;
-
-  /** identifier of itch.io upload currently installed */
-  uploadId: number;
-
-  /** uploads related to this cave */
-  uploads: {
-    [uploadId: string]: IUploadRecord;
-  };
-
-  /**
-   * identifier of itch.io / wharf build currently installed.
-   * if not set, the associated upload wasn't wharf-enabled at the
-   * time of the install. if set, there's a good chance we can apply
-   * patches instead of fully downloading the new version.
-   */
-  buildId?: number;
-
-  /** user version for wharf build currently installed */
-  buildUserVersion?: string;
-
-  /** channel name of build currently installed */
-  channelName?: string;
-
-  /** "modified file time" of archive last installed */
-  installedArchiveMtime?: Date;
-
-  /**
-   * if true, can be launched — if false, may have not finished
-   * installing, may be in the middle of updating, etc.
-   */
-  launchable?: boolean;
-
-  /** timestamp when that cave was last installed. updates count as install. */
-  installedAt?: Date;
-
-  /** timestamp when that cave was last opened/played */
-  lastTouched?: Date;
-
-  /** number of seconds played/run, as recorded locally */
-  secondsRun?: number;
-
-  /**
-   * info on the user that installed the game in this app instance
-   */
-  installedBy?: {
-    /** itch.io user id */
-    id: number;
-
-    /** itch.io username at the time it was installed (usernames can change) */
-    username: string;
-  };
-
-  /** itch.io game id this cave contains */
-  gameId: number;
-
-  /** itch.io game info at the time of install */
-  game: IGameRecord;
-
-  /** download key what was used to install this game, if any */
-  downloadKey: DownloadKey;
-
-  /** true if the upload to install was hand-picked */
-  handPicked?: boolean;
-
-  /** if true, cave has been deleted */
-  dead?: boolean;
-
-  /** true if the record was created just before installing for the first time */
-  fresh?: boolean;
-
-  /** executable files, relative to the game's install folder */
-  executables?: string[];
-
-  /** type of launch associated with cave */
-  launchType?: LaunchType;
-
-  /** for launchType = html, location of .html file to open */
-  gamePath?: string;
-
-  /** for launchType = html, the default window size */
-  windowSize?: {
-    width: number;
-    height: number;
-  };
-
-  /** size of installed folder, in bytes */
-  installedSize?: number;
-
-  /** set to true if UE4's prereq setup file was successfully run */
-  installedUE4Prereq?: boolean;
-
-  /** indexed by prereq name (standard, stored in ibrew-like repo), set to true when installed successfully */
-  installedPrereqs?: {
-    [prereqName: string]: boolean;
-  };
-}
-
-export interface ICaveRecordSet {
-  [key: string]: ICaveRecord;
+export interface ICaveSet {
+  [key: string]: ICave;
 }
 
 export type InstallerType =
@@ -433,7 +215,7 @@ export type InstallerType =
   | "naked"
   | "unknown";
 
-export interface IUploadRecord {
+export interface IUpload {
   /** numeric identifier generated by itch.io */
   id: number;
 
@@ -447,7 +229,7 @@ export interface IUploadRecord {
   buildId: number;
 
   /** if this is a wharf-enabled upload, info of the installed build */
-  build: IBuildRecord;
+  build: IBuild;
 
   /** if this is a wharf-enabled upload, which channel it corresponds to */
   channelName: string;
@@ -476,7 +258,7 @@ export interface IUploadRecord {
   pAndroid?: boolean;
 }
 
-export interface IBuildRecord {
+export interface IBuild {
   /** unique itch.io identifier for build */
   id: number;
 
@@ -554,33 +336,9 @@ export interface IManifest {
   prereqs: IManifestPrereq[];
 }
 
-export interface IOwnUserRecord extends IUserRecord {
-  /**
-   * if set, user owns press account.
-   * note to reader: don't bother faking it locally — the server won't let you download
-   * anything if you don't actually have a press account. Or maybe you're just looking for
-   * fun errors, in which case, go ahead!
-   */
-  pressUser?: boolean;
-
-  /** if set, user has expressed interest in publishing content on itch.io */
-  developer?: boolean;
-}
-
-export interface IDownloadKey {
-  /** itch.io-generated identifier for the download key */
-  id: number;
-
-  /** game the download key is for */
-  gameId: number;
-
-  /** date the download key was issued on (often: date purchase was completed) */
-  createdAt: Date;
-}
-
 export interface ICredentials {
   key: string;
-  me: IOwnUserRecord;
+  me: IOwnUser;
 }
 
 /**
@@ -611,11 +369,11 @@ export interface IQueriesState {
   };
 
   cavesByGameId: {
-    [gameId: string]: Cave[];
+    [gameId: string]: ICave[];
   };
 
   downloadKeysByGameId: {
-    [gameId: string]: DownloadKey[];
+    [gameId: string]: IDownloadKey[];
   };
 }
 
@@ -637,12 +395,12 @@ export interface ICommonsState {
 
 export interface IGameCredentials {
   apiKey: string;
-  downloadKey?: DownloadKey;
+  downloadKey?: IDownloadKey;
 }
 
 export interface IGameUpdate {
   /** which game an update is available for */
-  game: Game;
+  game: IGame;
 
   /** key we used to find uploads, and that should be used for downloads */
   gameCredentials: IGameCredentials;
@@ -651,7 +409,7 @@ export interface IGameUpdate {
    * uploads to pick from (fresher than our last install).
    * will hopefully be often of size 1, but not always
    */
-  recentUploads: IUploadRecord[];
+  recentUploads: IUpload[];
 
   /** true if wharf-enabled upgrade via butler */
   incremental?: boolean;
@@ -756,7 +514,7 @@ export interface IItchAppTabs {
 }
 
 export interface IDownloadKeysMap {
-  [id: string]: DownloadKey;
+  [id: string]: IDownloadKey;
 }
 
 export type ProxySource = "os" | "env";
@@ -819,7 +577,7 @@ export interface IRememberedSession {
   key: string;
 
   /** user info */
-  me: IOwnUserRecord;
+  me: IOwnUser;
 
   /** date the user was last active in the app (this install) */
   lastConnected: number;
@@ -855,7 +613,7 @@ export interface ISessionCredentialsState {
   key: string;
 
   /** info on user using the app */
-  me: IOwnUserRecord;
+  me: IOwnUser;
 }
 
 export interface ISessionFoldersState {
@@ -910,7 +668,7 @@ export interface ISearchResults {
     };
     entities: {
       games?: {
-        [id: string]: IGameRecord;
+        [id: string]: IGame;
       };
     };
   };
@@ -921,7 +679,7 @@ export interface ISearchResults {
     };
     entities: {
       users?: {
-        [id: string]: IUserRecord;
+        [id: string]: IUser;
       };
     };
   };
@@ -1343,4 +1101,8 @@ export type ItchPlatform = "osx" | "windows" | "linux" | "unknown";
 export interface IRuntime {
   platform: ItchPlatform;
   is64: boolean;
+}
+
+export interface ISaleInfo {
+  rate: number;
 }

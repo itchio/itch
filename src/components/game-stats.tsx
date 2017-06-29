@@ -13,9 +13,11 @@ import Icon from "./basics/icon";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
-import Game from "../db/models/game";
+import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
 import { IDownloadKeySummary } from "../db/models/download-key";
+import { fromJSONField } from "../db/json-field";
+import { ISaleInfo } from "../types";
 
 import styled from "./styles";
 
@@ -33,7 +35,7 @@ const GameStatsDiv = styled.div`
   }
 
   label {
-    color: #B3B2B7; // FIXME: exceptions bad
+    color: #b3b2b7; // FIXME: exceptions bad
 
     .nice-ago {
       color: ${props => props.theme.secondaryText}; // sigh
@@ -49,7 +51,8 @@ const GameStatsDiv = styled.div`
     margin: 0 3px;
   }
 
-  .total-playtime, .last-playthrough {
+  .total-playtime,
+  .last-playthrough {
     font-size: 14px;
     margin-right: 5px;
   }
@@ -63,7 +66,7 @@ export class GameStats extends React.PureComponent<
     const {
       t,
       cave,
-      game = {} as Game,
+      game = {} as IGame,
       downloadKey,
       mdash = true,
     } = this.props;
@@ -86,7 +89,8 @@ export class GameStats extends React.PureComponent<
           }
         }
       }
-      const { minPrice, sale, currency = "USD" } = game;
+      const { minPrice, currency = "USD" } = game;
+      const sale = fromJSONField<ISaleInfo>(game.sale);
 
       return (
         <GameStatsDiv>
@@ -113,8 +117,7 @@ export class GameStats extends React.PureComponent<
                             {formatPrice(currency, minPrice)}
                           </label>,
                           <label>
-                            {" "}
-                            {formatPrice(
+                            {" "}{formatPrice(
                               currency,
                               minPrice * (1 - sale.rate / 100),
                             )}
@@ -133,7 +136,7 @@ export class GameStats extends React.PureComponent<
 }
 
 interface IProps {
-  game: Game;
+  game: IGame;
   downloadKey: IDownloadKeySummary;
   cave: ICaveSummary;
   mdash?: boolean;

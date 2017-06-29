@@ -2,9 +2,6 @@ import * as zopf from "zopf";
 import * as fs from "fs";
 import { join, resolve } from "path";
 
-// this loads sqlite3 once, so that the test times are realistic
-import "typeorm";
-
 import { relative } from "path";
 
 import { ILocalizer } from "./localizer";
@@ -105,20 +102,17 @@ export class TestWatcher extends Watcher {
 }
 
 import { DB } from "./db";
-import { getConnectionManager } from "typeorm";
 
-/**
- * Loads an in-memory database for testing. Close any other in-memory databases first.
- */
-export async function loadDB(db: DB, store: IStore) {
-  const name = ":memory:";
+export async function withDB(store: IStore, cb: (db: DB) => Promise<void>) {
+  const db = new DB();
   try {
-    await getConnectionManager().get(name).close();
+    await db.load(store, ":memory:");
+    await cb(db);
   } catch (e) {
-    // something like connection not found or whatever
+    throw e;
+  } finally {
+    await db.close();
   }
-
-  await db.load(store, name);
 }
 
 /**

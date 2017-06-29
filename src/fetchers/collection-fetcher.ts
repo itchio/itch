@@ -1,12 +1,13 @@
 import { Fetcher } from "./types";
 import getByIds from "../helpers/get-by-ids";
 
-import { IGameRecordSet } from "../types";
+import { IGameSet } from "../types";
 
 import normalize from "../api/normalize";
 import { collection, game, arrayOf } from "../api/schemas";
 
 import { sortAndFilter } from "./sort-and-filter";
+import { fromJSONField } from "../db/json-field";
 
 import { indexBy, pluck } from "underscore";
 
@@ -27,7 +28,7 @@ export default class CollectionFetcher extends Fetcher {
     const path = this.tabData().path;
     const collectionId = +pathToId(path);
 
-    let localCollection = await db.collections.findOneById(collectionId);
+    let localCollection = db.collections.findOneById(collectionId);
 
     if (localCollection) {
       this.push({
@@ -36,12 +37,15 @@ export default class CollectionFetcher extends Fetcher {
         },
       });
 
-      let gameIds: number[] = [];
+      let gameIds: number[] = emptyArr;
       if (localCollection && localCollection.gameIds) {
-        gameIds = localCollection.gameIds;
+        const localIds = fromJSONField<number[]>(localCollection.gameIds);
+        if (localIds) {
+          gameIds = localIds;
+        }
       }
 
-      const localGames = await db.games.findByIds(localCollection.gameIds);
+      const localGames = db.games.all(k => k.select().whereIn("id", gameIds));
       await this.pushGames(
         indexBy(localGames, "id"),
         gameIds,
@@ -84,11 +88,7 @@ export default class CollectionFetcher extends Fetcher {
     return gameIds.length > 0;
   }
 
-  async pushGames(
-    games: IGameRecordSet,
-    gameIds: number[],
-    gamesCount: number,
-  ) {
+  async pushGames(games: IGameSet, gameIds: number[], gamesCount: number) {
     const sortedGames = sortAndFilter(
       getByIds(games, gameIds),
       this.tabId,

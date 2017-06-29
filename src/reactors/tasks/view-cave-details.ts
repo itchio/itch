@@ -11,7 +11,7 @@ export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.viewCaveDetails, async (store, action) => {
     const { caveId } = action.payload;
 
-    const cave = await db.caves.findOneById(caveId);
+    const cave = db.caves.findOneById(caveId);
     if (!cave) {
       return;
     }

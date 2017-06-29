@@ -1,3 +1,10 @@
+import * as Database from "better-sqlite3";
+import * as hades from "./hades";
+import Querier from "./querier";
+import { runMigrations } from "./migrations";
+
+import { modelMap, RepoContainer } from "./model-map";
+
 if (process.type === "renderer") {
   throw new Error("can't require db from renderer.");
 }
@@ -6,16 +13,9 @@ import { elapsed } from "../format";
 import { dirname } from "path";
 import * as sf from "../os/sf";
 
-import rootLogger from "../logger";
+import rootLogger, { devNull } from "../logger";
 const logger = rootLogger.child({ name: "db" });
 
-import getColumns from "./get-columns";
-
-import { createConnection } from "typeorm";
-
-import { modelList, modelMap, RepoContainer } from "./model-map";
-
-import compareRecords from "./compare-records";
 import * as _ from "underscore";
 
 import { globalDbPath } from "../os/paths";
@@ -24,7 +24,21 @@ import * as actions from "../actions";
 
 import { IStore, IEntityMap, ITableMap, IDBDeleteSpec } from "../types";
 
+const logSqlQueries = process.env.ITCH_SQL === "1";
+const sqlLogger = logSqlQueries ? rootLogger.child({ name: "SQL" }) : devNull;
+
 const emptyArr = [];
+
+export interface IStatement {
+  run(...args: any[]);
+  get(...args: any[]): any;
+  all(...args: any[]): any[];
+}
+
+export interface IConnection {
+  prepare(sql: string): IStatement;
+  close(): void;
+}
 
 /**
  * DB is a thin abstraction on top of typeorm. Pierce through it at will!
@@ -32,8 +46,8 @@ const emptyArr = [];
 export class DB extends RepoContainer {
   /** path to the sqlite file on disk */
   dbPath: string;
-
-  store: IStore;
+  private store: IStore;
+  private conn: IConnection;
 
   /**
    * Loads the db from disk.
@@ -53,20 +67,20 @@ export class DB extends RepoContainer {
       }
     }
 
-    this.conn = await createConnection({
-      name: dbPath,
-      driver: {
-        type: "sqlite",
-        storage: dbPath,
-      },
-      logging: {
-        logQueries: process.env.ITCH_SQL === "1",
-      },
-      entities: modelList,
-      autoSchemaSync: true,
-    });
+    let opts: any = {};
+    let fileName = this.dbPath;
+    if (fileName === ":memory:") {
+      fileName = "memory.db";
+      opts.memory = true;
+    }
+
+    this.conn = new Database(fileName, opts);
+    this.q = new Querier(this);
+
+    // TODO: migrations yada yada
 
     this.setupRepos();
+    await runMigrations(this);
 
     logger.info(`db connection established in ${elapsed(t1, Date.now())}`);
   }
@@ -76,7 +90,7 @@ export class DB extends RepoContainer {
   /**
    * Saves all passed entity records. See opts type for disk persistence and other options.
    */
-  async saveMany(entityTables: ITableMap) {
+  saveMany(entityTables: ITableMap) {
     for (const tableName of Object.keys(entityTables)) {
       const entities: IEntityMap<Object> = entityTables[tableName];
       const entityIds = Object.keys(entities);
@@ -88,48 +102,54 @@ export class DB extends RepoContainer {
         );
         continue;
       }
-      const columns = getColumns(Model);
 
-      const repo = this.conn.getRepository(Model);
+      const oldRecordsList = this.q.all(Model, k =>
+        k.whereIn(Model.primaryKey, entityIds),
+      );
+      const oldRecords = _.indexBy(oldRecordsList, Model.primaryKey);
 
-      const savedRows = await repo
-        .createQueryBuilder("e")
-        .where("e.id in (:entityIds)", { entityIds })
-        .getMany();
-      const existingEntities = _.indexBy(savedRows, "id");
-
-      let rows = [];
       let numUpToDate = 0;
-      for (const id of entityIds) {
-        let entity = entities[id];
-        let existingEntity = existingEntities[id];
-        if (existingEntity) {
-          if (compareRecords(existingEntity, entity, columns)) {
-            numUpToDate++;
-            continue;
+      const updated = [];
+      this.q.withTransaction(() => {
+        for (const id of entityIds) {
+          let newRecord = entities[id];
+          let oldRecord = oldRecords[id];
+          if (oldRecord) {
+            const update = hades.updateFor(oldRecord, newRecord, Model);
+            if (update) {
+              this.q.run(Model, k =>
+                k.where(Model.primaryKey, id).update(update),
+              );
+              updated.push(id);
+            } else {
+              numUpToDate++;
+            }
+          } else {
+            const insert = hades.insertFor(
+              {
+                ...newRecord,
+                [Model.primaryKey]: id,
+              },
+              Model,
+            );
+            this.q.run(Model, k => k.insert(insert));
+            updated.push(id);
           }
-          rows.push(repo.merge(existingEntity, entity));
-        } else {
-          existingEntity = repo.create(entity);
-          (existingEntity as any).id = id;
-          rows.push(existingEntity);
         }
-      }
+      });
 
-      if (rows.length > 0) {
-        // TODO: what do we do if this fails?
-        await repo.persist(rows);
+      if (updated.length > 0) {
         this.store.dispatch(
           actions.dbCommit({
             tableName,
-            updated: _.pluck(rows, "id"),
+            updated,
             deleted: emptyArr,
           }),
         );
       }
       logger.info(
-        `saved ${entityIds.length - numUpToDate}/${entityIds.length}` +
-          ` ${tableName}, skipped ${numUpToDate} up-to-date`,
+        `${entityIds.length -
+          numUpToDate}/${entityIds.length} new/modified ${tableName}`,
       );
     }
   }
@@ -137,12 +157,8 @@ export class DB extends RepoContainer {
   /**
    * Save a single entity to the db, optionally persisting to disk (see ISaveOpts).
    */
-  async saveOne<T>(
-    tableName: string,
-    id: string,
-    record: Partial<T>,
-  ): Promise<void> {
-    await this.saveMany({
+  saveOne<T>(tableName: string, id: string | number, record: Partial<T>): void {
+    this.saveMany({
       [tableName]: {
         [id]: record,
       },
@@ -152,30 +168,25 @@ export class DB extends RepoContainer {
   /**
    * Delete all referenced entities. See IDeleteOpts for options.
    */
-  async deleteAllEntities(deleteSpec: IDBDeleteSpec) {
+  deleteAllEntities(deleteSpec: IDBDeleteSpec) {
     for (const tableName of Object.keys(deleteSpec.entities)) {
-      const entities = deleteSpec.entities[tableName];
+      const ids = deleteSpec.entities[tableName];
 
       const Model = modelMap[tableName];
       if (!Model) {
         logger.info(
-          `Dunno how to persist ${tableName}, skipping delete of ${entities.length} items`,
+          `Dunno how to persist ${tableName}, skipping delete of ${ids.length} items`,
         );
         continue;
       }
-      const repo = this.conn.getRepository(Model);
 
-      const toRemove = [];
-      for (const id of entities) {
-        toRemove.push({ id });
-      }
-      await repo.remove(toRemove);
+      this.q.run(Model, k => k.whereIn(Model.primaryKey, ids).delete());
 
       this.store.dispatch(
         actions.dbCommit({
           tableName,
           updated: emptyArr,
-          deleted: toRemove,
+          deleted: ids,
         }),
       );
     }
@@ -184,14 +195,14 @@ export class DB extends RepoContainer {
   /**
    * Deletes a single entity, optionally from the disk store too, see opts type
    */
-  async deleteEntity(tableName: string, id: string) {
+  deleteEntity(tableName: string, id: string) {
     const Model = modelMap[tableName];
     if (!Model) {
       logger.info(`Dunno how to persist ${tableName}, skipping single delete`);
       return;
     }
-    const repo = this.conn.getRepository(Model);
-    await repo.remove({ id });
+
+    this.q.run(Model, k => k.where({ [Model.primaryKey]: id }).delete());
 
     this.store.dispatch(
       actions.dbCommit({
@@ -208,9 +219,39 @@ export class DB extends RepoContainer {
   async close() {
     logger.info(`closing db ${this.dbPath}`);
     const t1 = Date.now();
-    await this.conn.close();
+    this.conn.close();
     logger.info(`closed db in ${elapsed(t1, Date.now())}`);
     this.dbPath = null;
+  }
+
+  prepare(sql: string): IStatement {
+    if (logSqlQueries) {
+      sqlLogger.warn(sql);
+      const transaction = this.conn.prepare(sql);
+      const originalGet = transaction.get;
+      transaction.get = (...bindings: any[]): any => {
+        sqlLogger.warn(`GET ${JSON.stringify(bindings)}`);
+        return originalGet.call(transaction, bindings);
+      };
+
+      const originalAll = transaction.all;
+      transaction.all = (...bindings: any[]): any[] => {
+        sqlLogger.warn(`ALL ${JSON.stringify(bindings)}`);
+        return originalAll.call(transaction, bindings);
+      };
+
+      const originalRun = transaction.run;
+      transaction.run = (...bindings: any[]) => {
+        sqlLogger.warn(`RUN ${JSON.stringify(bindings)}`);
+        return originalRun.call(transaction, bindings);
+      };
+      return transaction;
+    }
+    return this.conn.prepare(sql);
+  }
+
+  getConnection() {
+    return this.conn;
   }
 }
 

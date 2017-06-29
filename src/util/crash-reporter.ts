@@ -61,7 +61,7 @@ async function writeCrashLog(e: Error) {
   return { log, crashFile };
 }
 
-function reportIssue(opts: IReportIssueOpts) {
+export function reportIssue(opts: IReportIssueOpts) {
   if (typeof opts === "undefined") {
     opts = {};
   }
@@ -186,7 +186,7 @@ function makeHandler(type: ErrorType) {
   };
 }
 
-export default function mountCrashReporter() {
+export function mount() {
   process.on("uncaughtException", makeHandler(ErrorType.UncaughtException));
   process.on("unhandledRejection", makeHandler(ErrorType.UnhandledRejection));
 }

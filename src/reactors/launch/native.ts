@@ -5,6 +5,8 @@ import which from "../../promised/which";
 import urls from "../../constants/urls";
 import linuxSandboxTemplate from "../../constants/sandbox-policies/linux-template";
 
+import { fromJSONField } from "../../db/json-field";
+
 import * as actions from "../../actions";
 
 import sandbox from "../../util/sandbox";
@@ -25,6 +27,7 @@ import { MODAL_RESPONSE } from "../../constants/action-types";
 import rootLogger, { devNull } from "../../logger";
 const logger = rootLogger.child({ name: "launch/native" });
 
+import { IConfigureResult } from "../../util/butler";
 import { IEnvironment, ILaunchOpts, Crash, MissingLibs } from "../../types";
 import { ILauncher } from "./types";
 
@@ -71,10 +74,10 @@ const launchNative: ILauncher = async (ctx, opts) => {
   if (!exePath) {
     if (!cave.verdict) {
       await configure(ctx, opts);
-      cave = await ctx.db.caves.findOneById(cave.id);
+      cave = ctx.db.caves.findOneById(cave.id);
     }
 
-    const verdict = cave.verdict;
+    const verdict = fromJSONField<IConfigureResult>(cave.verdict);
     if (verdict && verdict.candidates && verdict.candidates.length > 0) {
       const candidate = verdict.candidates[0];
       exePath = join(appPath, candidate.path);

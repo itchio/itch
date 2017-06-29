@@ -5,7 +5,6 @@ let thorough = false;
 let chatty = false;
 
 function exit(exitCode) {
-  console.log("should exit app with code ", exitCode);
   if (process.env.ITCH_DONT_EXIT === "1") {
     console.log(`Should exit with code ${exitCode}, but asked not to`);
     return;
@@ -55,18 +54,25 @@ function printDurations(input: IDuration[], legend: string) {
   const durations = sortBy(input, "duration").reverse();
   let total = 1;
   for (const item of durations) {
-    total += item.duration;
+    if (item.duration && !isNaN(item.duration)) {
+      total += item.duration;
+    }
   }
 
   let format = data => {
-    const percent = data.duration * 100 / total;
+    let duration = data.duration || 0;
+    const percent = duration * 100 / total;
     let percentColumn = pad(`${percent.toFixed(1)}%`, 8);
-    let durationColumn = pad(`${data.duration.toFixed(2)}ms`, 12);
+    let durationColumn = pad(`${duration.toFixed(2)}ms`, 12);
     return `${percentColumn}  ${durationColumn}  "${data.title}"`;
   };
 
   let unprinted = [];
   for (const data of durations) {
+    if (!data.duration) {
+      // don't print
+      continue;
+    }
     if (data.duration < 100) {
       // don't print
       unprinted.push(data);
@@ -91,6 +97,7 @@ function printDurations(input: IDuration[], legend: string) {
 const cwd = process.cwd();
 
 function flush() {
+  // tslint:disable-next-line
   delete global["__coverage__"];
 
   Object.keys(require.cache).forEach(function(fname) {
@@ -146,37 +153,89 @@ app.on("ready", async () => {
     }
   }
 
-  const tapParser = require("tap-parser");
-
   const invoke = async () => {
     // tslint:disable-next-line
     const tape = require("tape");
     const zopf = require("zopf");
-    const parser = tapParser(function(results) {
-      // muffin;
-    });
-    let lastComment = "";
-    parser.on("assert", function(assert) {
-      if (!assert.ok) {
-        console.warn(chalk.blue(lastComment.trim()));
-        console.warn(chalk.red("[failed] " + assert.id + " - " + assert.name));
-        if (assert.diag) {
-          console.warn(chalk.red(JSON.stringify(assert.diag, null, 2)));
+
+    const nodeModulesPath = path.resolve(__dirname, "..", "..", "node_modules");
+    const srcPath = path.resolve(__dirname, "..", "..");
+
+    const through = require("through");
+    let lastTest = "";
+
+    const printStack = (stack: string) => {
+      const lines = stack.split(/\r?\n/);
+      const header = lines.shift();
+      console.log("  " + chalk.red(header));
+      let skipping = false;
+      for (const line of lines) {
+        if (/From previous/.test(line)) {
+          console.log(`  ${line}`);
+          continue;
         }
-        if (!thorough) {
-          console.warn(
-            chalk.blue(
-              "re-run with `--thorough` for asynchronous, source-mapped stack traces",
-            ),
-          );
+
+        let formattedLine = line
+          .trim()
+          .replace(/^at\s+/, "")
+          .replace(nodeModulesPath, "@")
+          .replace(srcPath, ".")
+          .replace(/\\/g, "/")
+          .replace(/@\//g, "@");
+        if (/\.\/src|\.ts/.test(formattedLine)) {
+          console.log(chalk.blue("    → " + formattedLine));
+          skipping = false;
+        } else {
+          if (!skipping) {
+            skipping = true;
+            // console.log(chalk.grey("    → " + formattedLine));
+            console.log("      ...");
+          }
         }
       }
-    });
-    parser.on("comment", function(comment) {
-      lastComment = comment;
-    });
-    const harness = tape.getHarness({ exit: false, stream: parser });
+    };
 
+    const indentLines = (numSpaces: number, input: string) => {
+      const lines = (input || "").split("\n");
+      const indent = " ".repeat(numSpaces);
+      return lines.map(l => indent + l).join("\n");
+    };
+
+    const parser = through(function(data) {
+      if (data.type === "assert") {
+        if (!data.ok) {
+          console.log(chalk.red("✘ " + lastTest));
+          if (data.operator === "error") {
+            printStack(data.actual.stack);
+          } else {
+            console.log(chalk.red(`  ${data.name}, operator ${data.operator}`));
+            console.log(
+              `    expected:\n${chalk.blue(
+                indentLines(8, JSON.stringify(data.expected, null, 2)),
+              )}`,
+            );
+            console.log(
+              `    actual  :\n${chalk.blue(
+                indentLines(8, JSON.stringify(data.actual, null, 2)),
+              )}`,
+            );
+            if (data.error) {
+              printStack(data.error.stack);
+            } else {
+              console.log("  at " + chalk.red(data.at));
+            }
+          }
+          console.log("");
+        }
+      } else if (data.type === "test") {
+        lastTest = data.name;
+      }
+    });
+    const harness = tape.getHarness({
+      exit: false,
+      stream: parser,
+      objectMode: true,
+    });
     let testFiles = specifiedFiles;
     if (testFiles.length === 0) {
       if (chatty) {
