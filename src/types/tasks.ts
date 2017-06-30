@@ -1,8 +1,8 @@
-import Game from "../db/models/game";
-import Cave from "../db/models/cave";
+import { IGame } from "../db/models/game";
+import { ICave } from "../db/models/cave";
 
 import {
-  IUploadRecord,
+  IUpload,
   IUpgradePathItem,
   IManifest,
   IManifestAction,
@@ -29,7 +29,7 @@ export interface IQueueDownloadOpts {
    * game record at the time the download started - in case we're downloading
    * something that's not cached locally.
    */
-  game: Game;
+  game: IGame;
 
   /**    
    * identifier of the cave this download was started for
@@ -37,7 +37,7 @@ export interface IQueueDownloadOpts {
   caveId?: string;
 
   /** upload we're downloading */
-  upload: IUploadRecord;
+  upload: IUpload;
 
   /** total size of download (size of archive or sum of patch sizes) */
   totalSize?: number;
@@ -59,25 +59,17 @@ export interface IDownloadResult {
 
 export type TaskName = "install" | "uninstall" | "configure" | "launch";
 
-export interface IStartTaskOpts {
-  /** id of the game this task is for */
-  gameId: number;
-
-  /** the name of the task we're running */
-  name: TaskName;
-}
-
 export interface IQueueInstallOpts {
   reason: InstallReason;
 
   /** the game we're installing */
-  game: Game;
+  game: IGame;
 
   /** set if we're reinstalling */
   caveId: string;
 
   /** which upload we're installing */
-  upload: IUploadRecord;
+  upload: IUpload;
 
   /** true if the upload was hand-picked amongst several options */
   handPicked: boolean;
@@ -106,8 +98,8 @@ export interface ILaunchOpts {
   env: IEnvironment;
   args: string[];
   logger: Logger;
-  cave: Cave;
-  game: Game;
+  cave: ICave;
+  game: IGame;
 
   runtime: IRuntime;
 }

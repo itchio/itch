@@ -16,26 +16,28 @@ import findUpgradePath from "../downloads/find-upgrade-path";
 import getGameCredentials from "../downloads/get-game-credentials";
 import lazyGetGame from "../lazy-get-game";
 
-import { EventEmitter } from "events";
 import { IRevertCaveParams } from "../../components/modal-widgets/revert-cave";
 
 import localizer from "../../localizer";
 import { DB } from "../../db";
+import { fromJSONField } from "../../db/json-field";
 import Context from "../../context";
+
+import { IUpload } from "../../types";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
     const { caveId } = action.payload;
     const logger = paths.caveLogger(caveId);
 
+    const ctx = new Context(store, db);
+
     try {
-      const cave = await db.caves.findOneById(caveId);
+      const cave = db.caves.findOneById(caveId);
       if (!cave) {
         logger.error(`Cave not found, can't revert: ${caveId}`);
         return;
       }
-
-      const ctx = new Context(store, db);
 
       if (!cave) {
         logger.error(`Cave game not found, can't revert: ${cave.gameId}`);
@@ -48,7 +50,7 @@ export default function(watcher: Watcher, db: DB) {
         return;
       }
 
-      const { upload } = cave;
+      const upload = fromJSONField<IUpload>(cave.upload);
       if (!cave.buildId) {
         logger.error(`No upload in cave, can't revert: ${caveId}`);
         return;
@@ -124,11 +126,9 @@ export default function(watcher: Watcher, db: DB) {
 
       const buildId = response.payload.revertBuildId;
 
-      const out = new EventEmitter();
-
       try {
         // this will throw if the buildId isn't in the chain of builds of the current upload
-        await findUpgradePath(store, out, {
+        await findUpgradePath(ctx, {
           currentBuildId: buildId,
           game,
           gameCredentials,

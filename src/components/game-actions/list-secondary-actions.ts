@@ -1,6 +1,6 @@
 import * as actions from "../../actions";
 
-import Game from "../../db/models/game";
+import { IGame } from "../../db/models/game";
 import { ICaveSummary } from "../../db/models/cave";
 
 import {
@@ -34,7 +34,7 @@ function browseAction(caveId: string): IActionOpts {
 }
 
 function purchaseAction(
-  game: Game,
+  game: IGame,
   downloadKey: IDownloadKey,
   t: ILocalizer,
 ): IActionOpts {
@@ -66,7 +66,7 @@ function uninstallAction(caveId: string): IActionOpts {
 }
 
 interface IListSecondaryActionsProps {
-  game: Game;
+  game: IGame;
   cave: ICaveSummary;
   downloadKey: IDownloadKey;
 

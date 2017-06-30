@@ -12,7 +12,7 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    await db.saveOne("caves", caveId, { installedPrereqs: null });
+    db.saveOne("caves", caveId, { installedPrereqs: null });
     store.dispatch(
       actions.statusMessage({
         message: "Prereqs nuked!",

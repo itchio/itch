@@ -25,7 +25,7 @@ export default async function downloadPatches(
 
   const api = client.withKey(credentials.apiKey);
 
-  const cave = await ctx.db.caves.findOneById(caveId);
+  const cave = ctx.db.caves.findOneById(caveId);
   if (!cave) {
     throw new Error("Can't download patches if we have no cave");
   }
@@ -93,15 +93,13 @@ export default async function downloadPatches(
       });
     });
 
-    await ctx.db.saveOne("caves", cave.id, {
+    ctx.db.saveOne("caves", cave.id, {
       buildId: entry.id,
       buildUserVersion: entry.userVersion,
       installedArchiveMtime: entry.updatedAt,
-      uploads: {
-        [upload.id]: {
-          ...upload,
-          buildId: entry.id,
-        },
+      upload: {
+        ...upload,
+        buildId: entry.id,
       },
     });
 

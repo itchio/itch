@@ -75,17 +75,7 @@ export function makeLogger(logPath?: string): Logger {
       forceColor: true,
     });
 
-    if (env.name !== "test") {
-      consoleOut.pipe(process.stdout);
-    } else {
-      // effectively pipe to /dev/null
-      const { Writable } = require("stream");
-      const writable = new Writable();
-      writable._write = (chunk, encoding, cb) => {
-        setImmediate(cb);
-      };
-      consoleOut.pipe(writable);
-    }
+    consoleOut.pipe(process.stdout);
 
     let streamSpecs: {
       consoleOut: Stream;

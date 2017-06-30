@@ -12,14 +12,14 @@ import {
   IQueueInstallOpts,
   IRuntime,
 } from "../../types";
-import Game from "../../db/models/game";
+import { IGame } from "../../db/models/game";
 
 export interface ICoreInstallOpts extends IQueueInstallOpts {
   /** for cancellations, accessing db, etc. */
   ctx: Context;
 
   /** the game we're installing/uninstalling */
-  game: Game;
+  game: IGame;
 
   /** usually goes to a cave logger */
   logger: Logger;

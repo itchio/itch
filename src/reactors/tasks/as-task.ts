@@ -74,7 +74,7 @@ export default async function asTask(opts: IAsTaskOpts) {
           // all good, but also, don't trigger taskEnded
           return;
         } else {
-          rootLogger.warn(`Task ${name} threw: ${err}`);
+          rootLogger.warn(`Task ${name} threw: ${err.stack}`);
         }
       }
 

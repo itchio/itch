@@ -1,14 +1,14 @@
 import { Watcher } from "../reactors/watcher";
+import { DB } from "../db";
+import Context from "../context";
 import * as actions from "../actions";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "report" });
 
-import db from "../db";
-
 import urls from "../constants/urls";
 
-import crashReporter from "../util/crash-reporter";
+import { reportIssue } from "../util/crash-reporter";
 import github, { IGistData } from "../api/github";
 import * as sf from "../os/sf";
 import { caveLogPath } from "../os/paths";
@@ -17,18 +17,19 @@ import lazyGetGame from "./lazy-get-game";
 
 // TODO: show dialog when reporting game
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.reportCave, async (store, action) => {
     const { caveId } = action.payload;
 
     try {
-      const cave = await db.caves.findOneById(caveId);
+      const cave = db.caves.findOneById(caveId);
       if (!cave) {
         return;
       }
 
       const logPath = caveLogPath(caveId);
-      const game = await lazyGetGame(store, cave.gameId);
+      const ctx = new Context(store, db);
+      const game = await lazyGetGame(ctx, cave.gameId);
       if (!game) {
         return;
       }
@@ -50,7 +51,7 @@ export default function(watcher: Watcher) {
 
 :running: Any additional details can go here!`;
 
-      crashReporter.reportIssue({
+      reportIssue({
         type: `${game.title} ↔`,
         repo: urls.watchlistRepo,
         body,

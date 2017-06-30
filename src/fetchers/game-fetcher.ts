@@ -15,7 +15,7 @@ export default class GameFetcher extends Fetcher {
     const { path } = this.tabData();
     const gameId = +pathToId(path);
 
-    let localGame = await db.games.findOneById(gameId);
+    let localGame = db.games.findOneById(gameId);
     let pushGame = (game: typeof localGame) => {
       if (game) {
         this.push(gameToTabData(game));

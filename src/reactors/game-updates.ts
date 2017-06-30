@@ -1,11 +1,12 @@
 import * as actions from "../actions";
 import { Watcher } from "./watcher";
+import { DB } from "../db";
 
 import * as paths from "../os/paths";
 
 import { IQueueDownloadPayload } from "../constants/action-types";
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.gameUpdateAvailable, async (store, action) => {
     const manualGameUpdates: boolean = store.getState().preferences
       .manualGameUpdates;
@@ -29,13 +30,10 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.queueGameUpdate, async (store, action) => {
-    const { update, upload, handPicked } = action.payload;
-    const { game, downloadKey, incremental, upgradePath } = update;
+    const { update, upload, handPicked, caveId } = action.payload;
+    const { game, incremental, upgradePath } = update;
 
     const state = store.getState();
-    // FIXME: db
-    const cave: any = null;
-    // const cave = state.globalMarket.caves[action.payload.caveId];
 
     const destPath = paths.downloadPath(upload, state.preferences);
 
@@ -48,13 +46,11 @@ export default function(watcher: Watcher) {
     }
 
     const downloadOpts = {
-      cave,
+      caveId,
       game,
-      gameId: game.id, // FIXME: why is this needed? we have game!
       upload,
       destPath,
       totalSize,
-      downloadKey,
       incremental,
       upgradePath,
       handPicked,

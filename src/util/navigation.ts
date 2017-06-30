@@ -3,10 +3,11 @@ import * as querystring from "querystring";
 
 import staticTabData from "../constants/static-tab-data";
 
-import GameModel from "../db/models/game";
-import UserModel from "../db/models/user";
+import { IGame } from "../db/models/game";
+import { IUser } from "../db/models/user";
+import { ICollection } from "../db/models/collection";
 
-import { ICollectionRecord, IInstallLocation, ITabData } from "../types";
+import { IInstallLocation, ITabData } from "../types";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 
@@ -112,7 +113,7 @@ export function pathToIcon(path: string) {
   return "earth";
 }
 
-export function gameToTabData(game: GameModel): ITabData {
+export function gameToTabData(game: IGame): ITabData {
   return {
     games: {
       [game.id]: game,
@@ -125,7 +126,7 @@ export function gameToTabData(game: GameModel): ITabData {
   };
 }
 
-export function userToTabData(user: UserModel): ITabData {
+export function userToTabData(user: IUser): ITabData {
   return {
     users: {
       [user.id]: user,
@@ -138,7 +139,7 @@ export function userToTabData(user: UserModel): ITabData {
   };
 }
 
-export function collectionToTabData(collection: ICollectionRecord) {
+export function collectionToTabData(collection: ICollection) {
   return {
     collections: {
       [collection.id]: collection,

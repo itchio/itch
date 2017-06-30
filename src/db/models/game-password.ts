@@ -1,10 +1,24 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Model, ensureExtends, Column } from "../model";
 
-@Entity("gamePasswords")
-export default class GamePassword {
+const GamePasswordModelOriginal = {
+  table: "gamePasswords",
+  primaryKey: "id",
+  columns: {
+    id: Column.Integer,
+    password: Column.Text,
+  },
+};
+
+export const GamePasswordModel: Model = GamePasswordModelOriginal;
+
+type Columns = { [K in keyof typeof GamePasswordModelOriginal.columns]: any };
+ensureExtends<Columns, IGamePassword>();
+ensureExtends<IGamePassword, Columns>();
+
+export interface IGamePassword {
   /** id of the itch.io game this password is for */
-  @PrimaryColumn("int") id: number;
+  id: number;
 
   /** password used to access the (restricted) page */
-  @Column("string") password: string;
+  password: string;
 }

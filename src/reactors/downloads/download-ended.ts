@@ -49,10 +49,10 @@ export default function(watcher: Watcher) {
       // install folder was patched directly, no further steps needed
       return;
     }
-    logger.info(`Download finished, starting ${reason}..`);
 
     const installReason = downloadReasonToInstallReason(item.reason);
     if (installReason) {
+      logger.info(`Download finished, starting ${reason}..`);
       store.dispatch(
         actions.queueInstall({
           archivePath: action.payload.result.archivePath,

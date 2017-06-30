@@ -1,10 +1,25 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Model, ensureExtends, Column } from "../model";
+import { JSONField } from "../json-field";
 
-@Entity("profiles")
-export default class Profile {
+const ProfileModelOriginal = {
+  table: "profiles",
+  primaryKey: "id",
+  columns: {
+    id: Column.Integer,
+
+    myGameIds: Column.JSON,
+  },
+};
+
+export const ProfileModel: Model = ProfileModelOriginal;
+
+type Columns = { [K in keyof typeof ProfileModelOriginal.columns]: any };
+ensureExtends<Columns, IProfile>();
+ensureExtends<IProfile, Columns>();
+
+export interface IProfile {
   /** the itch.io user id associated with this profile */
-  @PrimaryColumn("number") id: number;
+  id: number;
 
-  @Column("json", { nullable: true })
-  myGameIds: number[];
+  myGameIds: JSONField;
 }

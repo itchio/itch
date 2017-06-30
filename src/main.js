@@ -13,6 +13,10 @@ for (const arg of process.argv) {
     }
 }
 
+if (runTests) {
+    process.env.ITCH_LOG_LEVEL = "error";
+}
+
 let quickTests = (runTests && !thorough);
 let beFast = (env.name === "production") || quickTests;
 

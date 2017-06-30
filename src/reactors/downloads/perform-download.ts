@@ -8,6 +8,8 @@ import downloadPatches from "./download-patches";
 import getGameCredentials from "./get-game-credentials";
 import isHeal from "./is-heal";
 
+import { fromJSONField } from "../../db/json-field";
+
 import { IDownloadItem, IDownloadResult } from "../../types";
 import Context from "../../context";
 
@@ -61,7 +63,7 @@ export default async function performDownload(
       "signature",
     );
 
-    const cave = await ctx.db.caves.findOneById(caveId);
+    const cave = ctx.db.caves.findOneById(caveId);
 
     const fullInstallFolder = paths.appPath(cave, preferences);
     logger.info(`Doing verify+heal to ${fullInstallFolder}`);
@@ -70,6 +72,14 @@ export default async function performDownload(
       ctx,
       logger,
       heal: `archive,${archiveURL}`,
+    });
+
+    ctx.db.saveOne("caves", cave.id, {
+      upload: {
+        ...fromJSONField(cave.upload),
+        buildId,
+      },
+      buildId,
     });
   } else {
     const uploadURL = api.downloadUploadURL(credentials.downloadKey, upload.id);

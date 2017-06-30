@@ -1,10 +1,24 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Model, ensureExtends, Column } from "../model";
 
-@Entity("gameSecrets")
-export default class GameSecret {
+const GameSecretModelOriginal = {
+  table: "gameSecrets",
+  primaryKey: "id",
+  columns: {
+    id: Column.Integer,
+    secret: Column.Text,
+  },
+};
+
+type Columns = { [K in keyof typeof GameSecretModelOriginal.columns]: any };
+ensureExtends<Columns, IGameSecret>();
+ensureExtends<IGameSecret, Columns>();
+
+export const GameSecretModel: Model = GameSecretModelOriginal;
+
+export interface IGameSecret {
   /** id of the itch.io game this secret is for */
-  @PrimaryColumn("int") id: number;
+  id: number;
 
   /** secret used to access the (draft) page */
-  @Column("string") secret: string;
+  secret: string;
 }

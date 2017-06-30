@@ -115,7 +115,7 @@ export async function exists(file: string) {
  */
 export async function readFile(
   file: string,
-  opts?: IReadFileOpts,
+  opts: IReadFileOpts,
 ): Promise<string> {
   return await fs.readFileAsync(file, opts);
 }
@@ -140,7 +140,7 @@ export async function appendFile(
 export async function writeFile(
   file: string,
   contents: string | Buffer,
-  opts?: IWriteFileOpts,
+  opts: IWriteFileOpts,
 ): Promise<void> {
   await mkdir(path.dirname(file));
   return await fs.writeFileAsync(file, contents, opts);

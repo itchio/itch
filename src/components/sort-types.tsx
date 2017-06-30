@@ -1,6 +1,6 @@
 export type SortDirection = "ASC" | "DESC";
 
-export type SortKey = "title" | "secondsRun" | "lastTouched" | "publishedAt";
+export type SortKey = "title" | "secondsRun" | "lastTouchedAt" | "publishedAt";
 
 export interface ISortParams {
   sortBy: SortKey;

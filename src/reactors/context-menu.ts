@@ -64,7 +64,7 @@ export default function(watcher: Watcher) {
 
     const { game } = action.payload;
     const gameId = game.id;
-    const cave = await db.caves.findOne({ gameId });
+    const cave = db.caves.findOne({ gameId });
     const mainAction = actionForGame(game, cave);
 
     const template: IMenuItem[] = [];
@@ -163,11 +163,7 @@ export default function(watcher: Watcher) {
 
       const meId = store.getState().session.credentials.me.id;
       const canEdit = game.userId === meId;
-      const mayDownload = !!(
-        downloadKeys.length > 0 ||
-        !hasMinPrice ||
-        canEdit
-      );
+      const mayDownload = !!(owned || free || canEdit);
 
       if (mayDownload) {
         template.push({

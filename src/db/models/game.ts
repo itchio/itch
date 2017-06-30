@@ -1,83 +1,127 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Model, ensureExtends, Column } from "../model";
+import { JSONField } from "../json-field";
+import { DateTimeField } from "../datetime-field";
 
-import {
-  IGameEmbedInfo,
-  IGameSaleInfo,
-  GameType,
-  GameClassification,
-} from "../../types";
+import { GameType, GameClassification } from "../../types";
 
 export interface IGameBase {
   id: number | string;
-  title?: string;
-  shortText?: string;
-  coverUrl?: string;
+  title: string;
+  shortText: string;
+  coverUrl: string;
 }
 
-@Entity("games")
-export default class Game implements IGameBase {
-  @PrimaryColumn("int") id: number;
+type Columns = { [K in keyof typeof GameModelOriginal.columns]: any };
+ensureExtends<Columns, IOwnGame>();
+ensureExtends<IOwnGame, Columns>();
 
-  @Column("text", { nullable: true })
+const GameModelOriginal = {
+  table: "games",
+  primaryKey: "id",
+  columns: {
+    id: Column.Integer,
+
+    url: Column.Text,
+    userId: Column.Integer,
+    title: Column.Text,
+
+    shortText: Column.Text,
+    stillCoverUrl: Column.Text,
+    coverUrl: Column.Text,
+    type: Column.Text,
+    classification: Column.Text,
+    embed: Column.JSON,
+
+    hasDemo: Column.Boolean,
+    minPrice: Column.Integer,
+    sale: Column.JSON,
+    currency: Column.Text,
+    inPressSystem: Column.Boolean,
+    canBeBought: Column.Boolean,
+
+    createdAt: Column.DateTime,
+    publishedAt: Column.DateTime,
+
+    pOsx: Column.Boolean,
+    pWindows: Column.Boolean,
+    pLinux: Column.Boolean,
+    pAndroid: Column.Boolean,
+
+    downloadsCount: Column.Integer,
+    purchasesCount: Column.Integer,
+    viewsCount: Column.Integer,
+  },
+};
+export const GameModel: Model = GameModelOriginal;
+
+export interface IGame {
+  /** itch.io-generated unique identifier */
+  id: number;
+
+  /** address of the game's page on itch.io */
   url: string;
 
-  @Column("int", { nullable: true })
+  /** unique identifier of the developer this game belongs to */
   userId: number;
 
-  @Column("text", { nullable: true })
+  /** human-friendly title (may contain any character) */
   title: string;
 
-  @Column("text", { nullable: true })
+  /** human-friendly short description */
   shortText: string;
 
-  @Column("text", { nullable: true })
+  /** non-GIF cover url */
   stillCoverUrl: string;
 
-  @Column("text", { nullable: true })
+  /** cover url (might be a GIF) */
   coverUrl: string;
 
-  @Column("text", { nullable: true })
+  /** downloadable game, html game, etc. */
   type: GameType;
 
-  @Column("text", { nullable: true })
+  /** classification: game, tool, comic, etc. */
   classification: GameClassification;
 
-  @Column("json", { nullable: true })
-  embed: IGameEmbedInfo;
+  /** Only present for HTML5 games, otherwise null */
+  embed: JSONField;
 
-  @Column("boolean", { nullable: true })
+  /** true if the game has a demo that can be downloaded for free */
   hasDemo: boolean;
 
-  @Column("int", { nullable: true })
+  /** price of a game, in cents of a dollar */
   minPrice: number;
 
-  @Column("json", { nullable: true })
-  sale: IGameSaleInfo;
+  /** current sale, if any */
+  sale: JSONField;
 
-  @Column("text", { nullable: true })
+  /** as of November 7, 2016, this property doesn't exist yet in the API, but a man can dream.. */
   currency: string;
 
-  @Column("boolean", { nullable: true })
+  /** if true, this game is downloadable by press users for free */
   inPressSystem: boolean;
 
-  @Column("boolean", { nullable: true })
+  /** if true, this game accepts money (donations or purchases) */
   canBeBought: boolean;
 
-  @Column("datetime", { nullable: true })
-  createdAt: Date;
+  /** date the game was published, or empty/null if not published */
+  createdAt: DateTimeField;
 
-  @Column("datetime", { nullable: true })
-  publishedAt: Date;
+  /** date the game was published, or empty/null if not published */
+  publishedAt: DateTimeField;
 
-  @Column("boolean", { nullable: true })
   pOsx: boolean;
-
-  @Column("boolean", { nullable: true })
   pWindows: boolean;
-
-  @Column("boolean", { nullable: true })
   pLinux: boolean;
-
-  @Column("boolean", { nullable: true })
   pAndroid: boolean;
+}
+
+export interface IOwnGame extends IGame {
+  /** how many times has the game been downloaded (all time) */
+  downloadsCount: number;
+
+  /** how many times has the game been purchased (all time) */
+  purchasesCount: number;
+
+  /** how many page views has the game gotten (all time) */
+  viewsCount: number;
 }

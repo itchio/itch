@@ -19,7 +19,6 @@
   },
   "files.eol": "\n",
   "editor.tabSize": 2,
-  "editor.formatOnSave": true,
   "typescript.tsdk": "./node_modules/typescript/lib",
   "coverage-gutters.lcovname": "./coverage/lcov.info",
   "prettier.trailingComma": "all",
@@ -27,5 +26,8 @@
   "prettier.typescriptEnable": [
     "typescript",
     "typescriptreact"
-  ]
+  ],
+  "[typescript]": {
+    "editor.formatOnSave": true
+  }
 }

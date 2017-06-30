@@ -1,21 +1,16 @@
-import { EventEmitter } from "events";
+import Context from "../../context";
 
 import client from "../../api";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "find-upgrade-path" });
 
-import Game from "../../db/models/game";
+import { IGame } from "../../db/models/game";
 
-import {
-  IStore,
-  IUploadRecord,
-  IUpgradePathItem,
-  IGameCredentials,
-} from "../../types";
+import { IUpload, IUpgradePathItem, IGameCredentials } from "../../types";
 
 interface IFindUpgradePathOpts {
-  game: Game;
-  upload: IUploadRecord;
+  game: IGame;
+  upload: IUpload;
   currentBuildId: number;
   gameCredentials: IGameCredentials;
 }
@@ -26,8 +21,7 @@ export interface IFindUpgradePathResult {
 }
 
 export default async function findUpgradePath(
-  store: IStore,
-  out: EventEmitter,
+  ctx: Context,
   opts: IFindUpgradePathOpts,
 ): Promise<IFindUpgradePathResult> {
   const { gameCredentials, upload, currentBuildId } = opts;

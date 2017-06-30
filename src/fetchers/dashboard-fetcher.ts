@@ -4,10 +4,13 @@ import normalize from "../api/normalize";
 import { game, arrayOf } from "../api/schemas";
 
 import { addSortAndFilterToQuery } from "./sort-and-filter";
+import { QueryInterface } from "../db/querier";
+import { fromJSONField } from "../db/json-field";
 
 import { pluck, indexBy } from "underscore";
 
 const emptyArr = [];
+const emptyObj = {} as any;
 
 export default class DashboardFetcher extends Fetcher {
   async work(): Promise<void> {
@@ -20,30 +23,37 @@ export default class DashboardFetcher extends Fetcher {
   }
 
   async pushLocal() {
-    const { db } = this.ctx;
+    const { db, store } = this.ctx;
+    const { session } = store.getState();
     const meId = this.ensureCredentials().me.id;
-    const profile = await db.profiles.findOneById(meId);
+    const profile = db.profiles.findOneById(meId);
     if (!profile) {
       this.debug(`Could not find a profile for ${meId}`);
       return;
     }
-    const myGameIds = profile.myGameIds || emptyArr;
+    const myGameIds = fromJSONField<number[]>(profile.myGameIds) || emptyArr;
 
-    let query = db.games.createQueryBuilder("games");
+    const tabPagination = session.tabPagination[this.tabId] || emptyObj;
+    let { offset = 0, limit = 30 } = tabPagination;
 
-    query.where("games.id in (:gameIds)");
-    query.addParameters({ gameIds: myGameIds });
+    let doQuery = (k: QueryInterface) =>
+      addSortAndFilterToQuery(
+        k.whereIn("games.id", myGameIds),
+        this.tabId,
+        store,
+      );
+
     const totalCount = myGameIds.length;
-
-    addSortAndFilterToQuery(query, this.tabId, this.ctx.store);
-
-    const [games, gamesCount] = await query.getManyAndCount();
+    const games = db.games.all(k =>
+      doQuery(k).offset(offset).limit(limit).select("games.*"),
+    );
+    const gamesCount = db.games.count(k => doQuery(k));
 
     this.push({
       games: indexBy(games, "id"),
       gameIds: pluck(games, "id"),
       gamesCount,
-      gamesOffset: 0,
+      gamesOffset: offset,
       hiddenCount: totalCount - gamesCount,
     });
   }
@@ -65,7 +75,7 @@ export default class DashboardFetcher extends Fetcher {
       `Fetched ${Object.keys(normalized.entities.games).length} games from API`,
     );
 
-    await db.saveMany({
+    db.saveMany({
       ...normalized.entities,
       profiles: {
         [meId]: {

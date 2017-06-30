@@ -3,18 +3,20 @@ import * as actions from "../../actions";
 
 import lazyGetGame from "../lazy-get-game";
 
-import db from "../../db";
+import { DB } from "../../db";
+import Context from "../../context";
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
     const { caveId } = action.payload;
 
-    const cave = await db.caves.findOneById(caveId);
+    const cave = db.caves.findOneById(caveId);
     if (!cave) {
       return;
     }
 
-    const game = await lazyGetGame(store, cave.gameId);
+    const ctx = new Context(store, db);
+    const game = await lazyGetGame(ctx, cave.gameId);
 
     // FIXME: i18n - plus, that's generally bad
     const title = game ? game.title : "this";

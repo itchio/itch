@@ -8,11 +8,12 @@ import GameActions from "./game-actions";
 import GameStats from "./game-stats";
 import { pathToId } from "../util/navigation";
 
-import Game from "../db/models/game";
+import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
+import { IDownloadKey } from "../db/models/download-key";
 
 import { IDispatch, dispatcher } from "../constants/action-types";
-import { IAppState, IDownloadKey, ITabData } from "../types";
+import { IAppState, ITabData } from "../types";
 import * as actions from "../actions";
 
 import { IBrowserControlProperties } from "./browser-state";
@@ -68,7 +69,9 @@ export class GameBrowserContext extends React.PureComponent<
           downloadKey={downloadKey}
           mdash={true}
         />
-        <GameActionsContainer>{this.gameActions()}</GameActionsContainer>
+        <GameActionsContainer>
+          {this.gameActions()}
+        </GameActionsContainer>
       </BrowserContextDiv>
     );
   }
@@ -112,7 +115,7 @@ interface IProps extends IBrowserControlProperties {}
 interface IDerivedProps {
   gameId: number;
 
-  game: Game;
+  game: IGame;
   cave?: ICaveSummary;
   downloadKey: IDownloadKey;
 

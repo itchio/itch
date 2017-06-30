@@ -1,10 +1,9 @@
 import { Watcher } from "./watcher";
-import { DB } from "../../db";
-import Context from "../../context";
+import { DB } from "../db";
+import Context from "../context";
 
 import { isNetworkError } from "../net/errors";
 
-import { EventEmitter } from "events";
 import * as humanize from "humanize-plus";
 
 import delay from "./delay";
@@ -29,18 +28,19 @@ const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 import findUploads from "./downloads/find-uploads";
 import findUpgradePath from "./downloads/find-upgrade-path";
 
-import * as moment from "moment-timezone";
+import { IGame } from "../db/models/game";
+import { ICave } from "../db/models/cave";
+import { fromDateTimeField } from "../db/datetime-field";
+import { fromJSONField } from "../db/json-field";
 
-import Game from "../db/models/game";
-
-import { IStore, ICaveRecord } from "../types";
+import { IUpload } from "../types";
 
 interface IUpdateCheckResult {
   /** set if an error occured while looking for a new version of a game */
   err?: Error;
 
   /** might be null if an error happened */
-  game?: Game;
+  game?: IGame;
 
   /** true if the game has an upgrade that can be installed */
   hasUpgrade?: boolean;
@@ -52,7 +52,7 @@ interface IUpdateCheckOpts {
 
 async function _doCheckForGameUpdate(
   ctx: Context,
-  cave: ICaveRecord,
+  cave: ICave,
   inTaskOpts = {} as IUpdateCheckOpts,
 ): Promise<IUpdateCheckResult> {
   const { noisy = false } = inTaskOpts;
@@ -60,32 +60,15 @@ async function _doCheckForGameUpdate(
 
   const store = ctx.store;
   const state = store.getState();
-  const credentials = state.session.credentials;
-
-  const { installedBy } = cave;
-  const { me } = credentials;
-  if (installedBy && me) {
-    if (installedBy.id !== me.id) {
-      logger.warn(
-        `${cave.id} was installed by ${installedBy.username}, we're ${me.username}, skipping check`,
-      );
-      return { hasUpgrade: false };
-    }
-  }
-
-  if (!cave.launchable) {
-    logger.warn(`Cave isn't launchable, skipping: ${cave.id}`);
-    return { hasUpgrade: false };
-  }
 
   if (!cave.gameId) {
     logger.warn(`Cave lacks gameId, skipping: ${cave.id}`);
     return { hasUpgrade: false };
   }
 
-  let game: Game;
+  let game: IGame;
   try {
-    game = await lazyGetGame(store, cave.gameId);
+    game = await lazyGetGame(ctx, cave.gameId);
   } catch (e) {
     logger.error(
       `Could not fetch game for ${cave.gameId}, skipping (${e.message || e})`,
@@ -116,7 +99,7 @@ async function _doCheckForGameUpdate(
   logger.info(`Looking for updates to ${game.title}...`);
 
   try {
-    const gameCredentials = await getGameCredentials(store, game);
+    const gameCredentials = await getGameCredentials(ctx, game);
     if (!gameCredentials) {
       throw new Error("no game credentials");
     }
@@ -128,22 +111,17 @@ async function _doCheckForGameUpdate(
       return { err: new Error("No uploads found") };
     }
 
-    // needed because moment.tz(undefined, "UTC") gives.. the current date!
-    // cf. https://github.com/itchio/itch/issues/977
-    const installedAtTimestamp = cave.installedAt || 0;
+    const installedAt = fromDateTimeField(cave.installedAt) || new Date(0);
+    logger.info(`installed at ${installedAt.toISOString()}`);
 
-    let installedAt = moment.tz(installedAtTimestamp, "UTC");
-    logger.info(`installed at ${installedAt.format()}`);
-    if (!installedAt.isValid()) {
-      installedAt = moment.tz(0, "UTC");
-    }
     const recentUploads = filter(uploads, upload => {
-      const updatedAt = moment.tz(upload.updatedAt, "UTC");
-      const isRecent = updatedAt > installedAt;
+      const updatedAt = fromDateTimeField(upload.updatedAt);
+      logger.info(`upload ${upload.id} updated at ${updatedAt.toISOString()}`);
+      const isRecent = updatedAt.getTime() > installedAt.getTime();
       if (!isRecent) {
         logger.info(
           `Filtering out ${upload.filename} (#${upload.id})` +
-            `, ${updatedAt.format()} is older than ${installedAt.format()}`,
+            `, ${updatedAt.toISOString()} is older than ${installedAt.toISOString()}`,
         );
       }
       return isRecent;
@@ -154,11 +132,13 @@ async function _doCheckForGameUpdate(
 
     let hasUpgrade = false;
 
-    if (cave.uploadId && cave.buildId) {
+    const caveUpload = fromJSONField<IUpload>(cave.upload);
+    const caveUploadId = caveUpload ? caveUpload.id : null;
+    if (caveUploadId && cave.buildId) {
       logger.info(
-        `Looking for new builds of ${game.title}, from build ${cave.buildId} (upload ${cave.uploadId})`,
+        `Looking for new builds of ${game.title}, from build ${cave.buildId} (upload ${caveUploadId})`,
       );
-      const upload = findWhere(uploads, { id: cave.uploadId });
+      const upload = findWhere(uploads, { id: caveUploadId });
       if (!upload || !upload.buildId) {
         logger.warn("Uh oh, our wharf-enabled upload disappeared");
       } else {
@@ -177,7 +157,7 @@ async function _doCheckForGameUpdate(
           hasUpgrade = true;
 
           try {
-            const upgradePathResult = await findUpgradePath(store, out, {
+            const upgradePathResult = await findUpgradePath(ctx, {
               currentBuildId: cave.buildId,
               game,
               gameCredentials,
@@ -244,7 +224,7 @@ async function _doCheckForGameUpdate(
     }
 
     const upload = recentUploads[0];
-    const differentUpload = upload.id !== cave.uploadId;
+    const differentUpload = upload.id !== caveUploadId;
     const wentWharf = upload.buildId && !cave.buildId;
 
     if (hasUpgrade || differentUpload || wentWharf) {
@@ -288,7 +268,7 @@ async function _doCheckForGameUpdate(
 
 async function doCheckForGameUpdate(
   ctx: Context,
-  cave: ICaveRecord,
+  cave: ICave,
   taskOpts = {} as IUpdateCheckOpts,
 ) {
   try {
@@ -304,7 +284,7 @@ async function doCheckForGameUpdate(
 
 let updaterInstalled = false;
 
-export default function(watcher: Watcher, ctx: Context) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.sessionReady, async (store, action) => {
     if (updaterInstalled) {
       return;
@@ -322,6 +302,8 @@ export default function(watcher: Watcher, ctx: Context) {
 
   watcher.on(actions.checkForGameUpdates, async (store, action) => {
     const caves = {};
+
+    const ctx = new Context(store, db);
 
     for (const caveId of Object.keys(caves)) {
       try {
@@ -341,11 +323,13 @@ export default function(watcher: Watcher, ctx: Context) {
       logger.info(`Looking for updates for cave ${caveId}`);
     }
 
-    const cave = null;
+    const cave = db.caves.findOneById(caveId);
     if (!cave) {
       logger.warn(`No cave with id ${caveId}, bailing out`);
       return;
     }
+
+    const ctx = new Context(store, db);
 
     try {
       const result = await doCheckForGameUpdate(ctx, cave, { noisy });

@@ -7,11 +7,8 @@ import * as invariant from "invariant";
 import urls from "../constants/urls";
 import * as urlParser from "url";
 
-import {
-  ICaveRecordLocation,
-  IUploadRecord,
-  IPreferencesState,
-} from "../types";
+import { IUpload, IPreferencesState } from "../types";
+import { ICaveLocation } from "../db/models/cave";
 import { makeLogger, Logger } from "../logger";
 
 const APPDATA_RE = /^appdata\/(.*)$/;
@@ -21,10 +18,7 @@ const APPDATA_RE = /^appdata\/(.*)$/;
  * one install to the other (as opposed to resources)
  */
 
-export function appPath(
-  cave: ICaveRecordLocation,
-  preferences: IPreferencesState,
-) {
+export function appPath(cave: ICaveLocation, preferences: IPreferencesState) {
   // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
   // < 18.5.x, everything is installed in an `apps` subfolder
   const {
@@ -66,10 +60,7 @@ export function appPath(
   }
 }
 
-export function downloadPath(
-  upload: IUploadRecord,
-  preferences: IPreferencesState,
-) {
+export function downloadPath(upload: IUpload, preferences: IPreferencesState) {
   invariant(typeof upload === "object", "valid upload");
   invariant(upload.id, "upload has id");
   invariant(typeof upload.filename === "string", "upload has filename");

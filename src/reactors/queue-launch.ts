@@ -6,8 +6,8 @@ import Context from "../context";
 import { Logger } from "../logger";
 
 import { DB } from "../db";
-import Game from "../db/models/game";
-import Cave from "../db/models/cave";
+import { IGame } from "../db/models/game";
+import { ICave } from "../db/models/cave";
 
 import * as paths from "../os/paths";
 import { currentRuntime } from "../os/runtime";
@@ -48,7 +48,7 @@ export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueLaunch, async (store, action) => {
     const { caveId } = action.payload;
 
-    const cave = await db.caves.findOneById(caveId);
+    const cave = db.caves.findOneById(caveId);
     if (!cave) {
       throw new Error("no such cave");
     }
@@ -93,8 +93,8 @@ const prepares = {
 async function doLaunch(
   ctx: Context,
   logger: Logger,
-  cave: Cave,
-  game: Game,
+  cave: ICave,
+  game: IGame,
   runtime: IRuntime,
 ) {
   let env: IEnvironment = {};
@@ -104,7 +104,7 @@ async function doLaunch(
 
   const action = actionForGame(game, cave);
   if (action === "open") {
-    await db.saveOne("caves", cave.id, { lastTouched: new Date() });
+    db.saveOne("caves", cave.id, { lastTouchedAt: new Date() });
     shellLaunch(ctx, {
       manifest: null,
       cave,
@@ -130,7 +130,8 @@ async function doLaunch(
     manifestAction = await pickManifestAction(store, manifest, game);
   }
 
-  let { launchType } = cave;
+  // TODO: launchType is deprecated
+  let launchType = "native";
 
   if (manifestAction) {
     launchType = await launchTypeForAction(appPath, manifestAction.path);
@@ -181,7 +182,7 @@ async function doLaunch(
   }
 
   const startedAt = new Date();
-  await db.saveOne("caves", cave.id, { lastTouched: startedAt });
+  db.saveOne("caves", cave.id, { lastTouchedAt: startedAt });
 
   let interval: NodeJS.Timer;
   const UPDATE_PLAYTIME_INTERVAL = 10; // in seconds
@@ -190,10 +191,10 @@ async function doLaunch(
     // FIXME: this belongs in a watcher reactor or something, not here.
     interval = setInterval(async () => {
       const now = new Date();
-      const freshCave = await db.caves.findOneById(cave.id);
+      const freshCave = db.caves.findOneById(cave.id);
       const previousSecondsRun = freshCave ? freshCave.secondsRun || 0 : 0;
       const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
-      await db.saveOne("caves", cave.id, {
+      db.saveOne("caves", cave.id, {
         secondsRun: newSecondsRun,
         lastTouched: now,
       });
@@ -238,6 +239,6 @@ async function doLaunch(
     if (powerSaveBlockerId) {
       powerSaveBlocker.stop(powerSaveBlockerId);
     }
-    await db.saveOne("caves", cave.id, { lastTouched: new Date() });
+    db.saveOne("caves", cave.id, { lastTouchedAt: new Date() });
   }
 }

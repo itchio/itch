@@ -5,9 +5,9 @@ import {
   collectionToTabData,
 } from "../util/navigation";
 
-import Game from "../db/models/game";
-import User from "../db/models/user";
-import Collection from "../db/models/collection";
+import { IGame } from "../db/models/game";
+import { IUser } from "../db/models/user";
+import { ICollection } from "../db/models/collection";
 
 import * as uuid from "uuid";
 
@@ -110,12 +110,12 @@ export const openTab = (payload: IOpenTabPayload) => {
 export const focusTab = createAction<IFocusTabPayload>(FOCUS_TAB);
 export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);
 
-export const navigateToGame = (game: Game, background = false) =>
+export const navigateToGame = (game: IGame, background = false) =>
   navigate(`games/${game.id}`, gameToTabData(game), background);
-export const navigateToUser = (user: User, background = false) =>
+export const navigateToUser = (user: IUser, background = false) =>
   navigate(`users/${user.id}`, userToTabData(user), background);
 export const navigateToCollection = (
-  collection: Collection,
+  collection: ICollection,
   background = false,
 ) =>
   navigate(

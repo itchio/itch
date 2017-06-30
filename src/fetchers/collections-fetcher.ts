@@ -3,6 +3,8 @@ import { Fetcher } from "./types";
 import normalize from "../api/normalize";
 import { collection, arrayOf } from "../api/schemas";
 
+import { fromJSONField } from "../db/json-field";
+
 import { indexBy } from "underscore";
 
 const emptyObj = {};
@@ -23,25 +25,20 @@ export default class CollectionsFetcher extends Fetcher {
 
   async pushLocal() {
     const { db } = this.ctx;
-    const query = db.collections.createQueryBuilder("collections");
-    query.where("userId = :meId");
-    query.addParameters({ meId: this.ensureCredentials().me.id });
+    const meId = this.ensureCredentials().me.id;
+    const localCollections = db.collections.find({ userId: meId });
 
-    const localCollections = await query.getMany();
     let allGameIds: number[] = [];
     for (const c of localCollections) {
+      const collectionGameIds = fromJSONField<number[]>(c.gameIds);
       if (c.gameIds) {
-        allGameIds = [...allGameIds, ...c.gameIds];
+        allGameIds = [...allGameIds, ...collectionGameIds];
       }
     }
 
     let localGames = [];
     if (allGameIds.length > 0) {
-      localGames = await db.games
-        .createQueryBuilder("g")
-        .where("g.id in (:gameIds)")
-        .setParameters({ gameIds: allGameIds })
-        .getMany();
+      localGames = db.games.all(k => k.select().whereIn("id", allGameIds));
     }
     this.push({
       collections: indexBy(localCollections, "id"),
@@ -63,6 +60,6 @@ export default class CollectionsFetcher extends Fetcher {
       collections[id].userId = meId;
     }
 
-    await db.saveMany(normalized.entities);
+    db.saveMany(normalized.entities);
   }
 }

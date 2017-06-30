@@ -1,10 +1,13 @@
-import suite, { loadDB } from "../../test-suite";
+import suite, { withDB } from "../../test-suite";
 
-import getGameCredentials, { getGameCredentialsForId } from "./get-game-credentials";
-import { DB } from "../../db";
+import getGameCredentials, {
+  getGameCredentialsForId,
+} from "./get-game-credentials";
 import Context from "../../context";
 
-import { IStore, IAppState } from "../../types";
+import { IStore, ICredentials, IAppState } from "../../types";
+import { IGame } from "../../db/models/game";
+import { IDownloadKey } from "../../db/models/download-key";
 
 const state = ({
   session: {
@@ -14,154 +17,104 @@ const state = ({
 
 const store = ({
   getState: () => state,
+  dispatch: () => null,
 } as any) as IStore;
-
-const db = new DB();
 
 suite(__filename, s => {
   s.case("getGameCredentials", async t => {
-    await loadDB(db, store);
-    const ctx = new Context(store, db);
+    await withDB(store, async db => {
+      const ctx = new Context(store, db);
 
-    const game: any = {
-      id: 728,
-    };
-    t.same(
-      await getGameCredentials(ctx, game),
-      null,
-      "no credentials when logged out",
-    );
+      const game = ({
+        id: 728,
+      } as any) as IGame;
+      let gc = await getGameCredentials(ctx, game);
+      t.same(gc, null, "no credentials when logged out");
 
-    const credentials19 = {
-      key: "api-key-19",
-      me: {
-        id: 19,
-        pressUser: true,
-      } as any,
-    };
+      const c19 = ({
+        key: "api-key-19",
+        me: {
+          id: 19,
+          pressUser: true,
+        } as any,
+      } as any) as ICredentials;
 
-    const credentials75 = {
-      key: "api-key-75",
-      me: {
-        id: 75,
-      } as any,
-    };
+      const c75 = ({
+        key: "api-key-75",
+        me: {
+          id: 75,
+        } as any,
+      } as any) as ICredentials;
 
-    state.session.credentials = credentials19;
+      state.session.credentials = c19;
 
-    state.rememberedSessions = {};
-    state.rememberedSessions[credentials19.me.id] = {
-      ...credentials19,
-      lastConnected: Date.now(),
-    };
-    state.rememberedSessions[credentials75.me.id] = {
-      ...credentials75,
-      lastConnected: Date.now(),
-    };
+      state.rememberedSessions = {};
+      state.rememberedSessions[c19.me.id] = {
+        ...c19,
+        lastConnected: Date.now(),
+      };
+      state.rememberedSessions[c75.me.id] = {
+        ...c75,
+        lastConnected: Date.now(),
+      };
 
-    game.inPressSystem = true;
+      game.inPressSystem = true;
 
-    t.same(
-      await getGameCredentials(ctx, game),
-      {
-        apiKey: credentials19.key,
-        downloadKey: null,
-      },
-      "api key only when press access is allowed",
-    );
+      gc = await getGameCredentials(ctx, game);
+      t.same(gc.apiKey, c19.key, "api key only when press access is allowed");
 
-    credentials19.me.pressUser = false;
+      c19.me.pressUser = false;
 
-    t.same(
-      await getGameCredentials(ctx, game),
-      {
-        apiKey: credentials19.key,
-        downloadKey: null,
-      },
-      "api key only when not a press user",
-    );
+      gc = await getGameCredentials(ctx, game);
+      t.same(gc.apiKey, c19.key, "api key only when not a press user");
 
-    credentials19.me.pressUser = true;
-    game.inPressSystem = false;
+      c19.me.pressUser = true;
+      game.inPressSystem = false;
 
-    t.same(
-      await getGameCredentials(ctx, game),
-      {
-        apiKey: credentials19.key,
-        downloadKey: null,
-      },
-      "api key only when game not in press system",
-    );
+      gc = await getGameCredentials(ctx, game);
+      t.same(gc.apiKey, c19.key, "api key only when game not in press system");
 
-    const dk190 = await db.downloadKeys.persist(
-      db.downloadKeys.create({
+      const dk190 = ({
         id: 190,
         gameId: game.id,
-        ownerId: credentials19.me.id,
-      }),
-    );
+        ownerId: c19.me.id,
+      } as any) as IDownloadKey;
+      db.saveOne("downloadKeys", dk190.id, dk190);
 
-    const dk750 = await db.downloadKeys.persist(
-      db.downloadKeys.create({
+      const dk750 = ({
         id: 750,
         gameId: game.id,
-        ownerId: credentials75.me.id,
-      }),
-    );
+        ownerId: c75.me.id,
+      } as any) as IDownloadKey;
+      db.saveOne("downloadKeys", dk750.id, dk750);
 
-    t.same(
-      await getGameCredentials(ctx, game),
-      {
-        apiKey: credentials19.key,
-        downloadKey: dk190,
-      },
-      "prefer current user download key",
-    );
+      gc = await getGameCredentials(ctx, game);
+      t.same(gc.downloadKey.id, dk190.id, "prefer current user download key 1");
 
-    state.session.credentials = credentials75;
+      state.session.credentials = c75;
 
-    t.same(
-      await getGameCredentials(ctx, game),
-      {
-        apiKey: credentials75.key,
-        downloadKey: dk750,
-      },
-      "prefer current user download key (bis)",
-    );
+      gc = await getGameCredentials(ctx, game);
+      t.same(gc.downloadKey.id, dk750.id, "prefer current user download key 2");
 
-    await db.downloadKeys.remove(
-      {
-        id: 750,
-      } as any,
-    );
+      db.downloadKeys.run(k => k.where({ id: 750 }).delete());
 
-    t.same(
-      await getGameCredentials(ctx, game),
-      {
-        apiKey: credentials19.key,
-        downloadKey: dk190,
-      },
-      "will take other user's download key",
-    );
+      gc = await getGameCredentials(ctx, game);
+      t.same(
+        { api: gc.apiKey, download: gc.downloadKey.id },
+        { api: c19.key, download: dk190.id },
+        "will take other user's download key",
+      );
 
-    delete state.rememberedSessions[credentials19.me.id];
+      delete state.rememberedSessions[c19.me.id];
 
-    t.same(
-      await getGameCredentials(ctx, game),
-      {
-        apiKey: credentials75.key,
-        downloadKey: null,
-      },
-      "won't take other user's download key if we don't have corresponding API key",
-    );
+      gc = await getGameCredentials(ctx, game);
+      t.notOk(
+        gc.downloadKey,
+        "won't take other user's download key if we don't have corresponding API key",
+      );
 
-    t.same(
-      await getGameCredentialsForId(ctx, game.id),
-      {
-        apiKey: credentials75.key,
-        downloadKey: null,
-      },
-      "looks up properly by id alone too",
-    );
+      gc = await getGameCredentialsForId(ctx, game.id);
+      t.same(gc.apiKey, c75.key, "looks up properly by id alone too");
+    });
   });
 });
