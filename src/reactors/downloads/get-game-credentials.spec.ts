@@ -17,6 +17,7 @@ const state = ({
 
 const store = ({
   getState: () => state,
+  dispatch: () => null,
 } as any) as IStore;
 
 suite(__filename, s => {

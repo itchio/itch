@@ -1,4 +1,4 @@
-export enum ColumnType {
+export enum Column {
   Integer = 1,
   Boolean,
   Text,
@@ -7,7 +7,7 @@ export enum ColumnType {
 }
 
 export type Columns = {
-  [key: string]: ColumnType;
+  [key: string]: Column;
 };
 
 export type Model = {
@@ -15,3 +15,8 @@ export type Model = {
   primaryKey: string;
   columns: Columns;
 };
+
+export function ensureExtends<A extends B, B>() {
+  let _: B;
+  _ = null as A;
+}

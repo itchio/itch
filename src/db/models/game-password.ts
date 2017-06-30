@@ -1,15 +1,19 @@
-import { Model, ColumnType } from "../model";
+import { Model, ensureExtends, Column } from "../model";
 
-type GamePasswordColumns = { [K in keyof IGamePassword]: ColumnType };
-
-export const GamePasswordModel: Model = {
+const GamePasswordModelOriginal = {
   table: "gamePasswords",
   primaryKey: "id",
   columns: {
-    id: ColumnType.Integer,
-    password: ColumnType.Text,
-  } as GamePasswordColumns,
+    id: Column.Integer,
+    password: Column.Text,
+  },
 };
+
+export const GamePasswordModel: Model = GamePasswordModelOriginal;
+
+type Columns = { [K in keyof typeof GamePasswordModelOriginal.columns]: any };
+ensureExtends<Columns, IGamePassword>();
+ensureExtends<IGamePassword, Columns>();
 
 export interface IGamePassword {
   /** id of the itch.io game this password is for */

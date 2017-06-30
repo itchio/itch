@@ -1,17 +1,21 @@
-import { Model, ColumnType } from "../model";
+import { Model, ensureExtends, Column } from "../model";
 import { JSONField } from "../json-field";
 
-type ProfileColumns = { [K in keyof IProfile]: ColumnType };
-
-export const ProfileModel: Model = {
+const ProfileModelOriginal = {
   table: "profiles",
   primaryKey: "id",
   columns: {
-    id: ColumnType.Integer,
+    id: Column.Integer,
 
-    myGameIds: ColumnType.JSON,
-  } as ProfileColumns,
+    myGameIds: Column.JSON,
+  },
 };
+
+export const ProfileModel: Model = ProfileModelOriginal;
+
+type Columns = { [K in keyof typeof ProfileModelOriginal.columns]: any };
+ensureExtends<Columns, IProfile>();
+ensureExtends<IProfile, Columns>();
 
 export interface IProfile {
   /** the itch.io user id associated with this profile */

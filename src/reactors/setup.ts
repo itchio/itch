@@ -27,6 +27,13 @@ async function fetch(ctx: Context, name: string) {
 }
 
 async function setup(store: IStore, db: DB) {
+  // TODO: implement lazy dependency install
+  const skipSetup = true;
+  if (skipSetup) {
+    logger.warn("skipping setup");
+    return;
+  }
+
   const ctx = new Context(store, db);
 
   logger.info("setup starting");

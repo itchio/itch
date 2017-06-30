@@ -3,7 +3,7 @@ import * as Database from "better-sqlite3";
 import * as hades from "../db/hades";
 
 import Querier, { QueryBuilder } from "../db/querier";
-import { ColumnType, Model } from "../db/model";
+import { Column, Model } from "../db/model";
 import { toDateTimeField } from "../db/datetime-field";
 import { toJSONField } from "../db/json-field";
 
@@ -13,9 +13,9 @@ const Game: Model = {
   table: "games",
   primaryKey: "id",
   columns: {
-    id: ColumnType.Integer,
-    title: ColumnType.Text,
-    shortDesc: ColumnType.Text,
+    id: Column.Integer,
+    title: Column.Text,
+    shortDesc: Column.Text,
   },
 };
 
@@ -23,9 +23,9 @@ const Jason: Model = {
   table: "jasons",
   primaryKey: "identifier",
   columns: {
-    identifier: ColumnType.Text,
-    timestamp: ColumnType.DateTime,
-    object: ColumnType.JSON,
+    identifier: Column.Text,
+    timestamp: Column.DateTime,
+    object: Column.JSON,
   },
 };
 
@@ -33,7 +33,7 @@ const Noel: Model = {
   table: "noels",
   primaryKey: "id",
   columns: {
-    happy: ColumnType.Boolean,
+    happy: Column.Boolean,
   },
 };
 
@@ -182,11 +182,11 @@ CREATE TABLE noels (
     const object = {
       hello: "world",
     };
-    const timestamp = new Date(1000);
+    const timestamp = new Date("2011-01-20T19:00:00Z");
     const jason = {
       identifier: "1209d-afa-0g9-0na-9sdf09",
       object: toJSONField(object),
-      timestamp: timestamp,
+      timestamp,
     };
 
     q.run(Jason, k => k.insert(hades.insertFor(jason, Jason)));
@@ -196,7 +196,7 @@ CREATE TABLE noels (
       object: {
         hello: "world",
       },
-      timestamp: toDateTimeField(timestamp),
+      timestamp,
     };
 
     const fetchedJason = q.get(Jason, k =>
@@ -216,10 +216,10 @@ CREATE TABLE noels (
 
     newJason = {
       identifier: jason.identifier,
-      timestamp: new Date(1200),
+      timestamp: new Date("2017-01-20T19:00:00Z"),
     };
     up = hades.updateFor(fetchedJason, newJason, Jason);
-    t.same(up, { timestamp: "1970-01-01 01:00:01" });
+    t.same(up, { timestamp: "2017-01-20 19:00:00" });
 
     const noel = {
       id: 1,

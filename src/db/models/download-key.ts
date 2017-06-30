@@ -1,21 +1,25 @@
-import { Model, ColumnType } from "../model";
+import { Model, ensureExtends, Column } from "../model";
 import { DateTimeField } from "../datetime-field";
 
-type DownloadKeyColumns = { [K in keyof IDownloadKey]: ColumnType };
-
-export const DownloadKeyModel: Model = {
+export const DownloadKeyModelOriginal = {
   table: "downloadKeys",
   primaryKey: "id",
   columns: {
-    id: ColumnType.Integer,
+    id: Column.Integer,
 
-    gameId: ColumnType.Integer,
-    createdAt: ColumnType.DateTime,
-    updatedAt: ColumnType.DateTime,
+    gameId: Column.Integer,
+    createdAt: Column.DateTime,
+    updatedAt: Column.DateTime,
 
-    ownerId: ColumnType.Integer,
-  } as DownloadKeyColumns,
+    ownerId: Column.Integer,
+  },
 };
+
+export const DownloadKeyModel: Model = DownloadKeyModelOriginal;
+
+type Columns = { [K in keyof typeof DownloadKeyModelOriginal.columns]: any };
+ensureExtends<Columns, IDownloadKey>();
+ensureExtends<IDownloadKey, Columns>();
 
 export interface IDownloadKeySummary {
   id: number;

@@ -1,4 +1,4 @@
-import { ColumnType, Model } from "./model";
+import { Column, Model } from "./model";
 import { fromDateTimeField, toDateTimeField } from "./datetime-field";
 import { fromJSONField, toJSONField } from "./json-field";
 
@@ -34,16 +34,16 @@ export function updateFor(oldRecord: any, newRecord: any, model: Model): any {
       use = true;
     } else {
       switch (type) {
-        case ColumnType.Integer:
+        case Column.Integer:
           use = parseInt(newValue, 10) !== parseInt(oldValue, 10);
           break;
-        case ColumnType.Boolean:
+        case Column.Boolean:
           use = !!newValue !== !!oldValue;
           break;
-        case ColumnType.Text:
+        case Column.Text:
           use = newValue !== oldValue;
           break;
-        case ColumnType.DateTime: {
+        case Column.DateTime: {
           const lhs = fromDateTimeField(oldValue);
           const rhs = fromDateTimeField(newValue);
           if (!lhs || !rhs) {
@@ -53,7 +53,7 @@ export function updateFor(oldRecord: any, newRecord: any, model: Model): any {
           }
           break;
         }
-        case ColumnType.JSON: {
+        case Column.JSON: {
           const lhs = fromJSONField(oldValue);
           const rhs = fromJSONField(newValue);
           if (!lhs || !rhs) {
@@ -91,13 +91,13 @@ export function insertFor(newRecord: any, model: Model) {
   return result;
 }
 
-export function toDB(newValue: any, type: ColumnType): any {
+export function toDB(newValue: any, type: Column): any {
   switch (type) {
-    case ColumnType.DateTime:
+    case Column.DateTime:
       return toDateTimeField(newValue);
-    case ColumnType.JSON:
+    case Column.JSON:
       return toJSONField(newValue);
-    case ColumnType.Boolean:
+    case Column.Boolean:
       return newValue ? 1 : 0;
     default:
       return newValue;

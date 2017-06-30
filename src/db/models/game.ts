@@ -1,10 +1,8 @@
-import { Model, ColumnType } from "../model";
+import { Model, ensureExtends, Column } from "../model";
 import { JSONField } from "../json-field";
 import { DateTimeField } from "../datetime-field";
 
 import { GameType, GameClassification } from "../../types";
-
-type GameColumns = { [K in keyof IOwnGame]: ColumnType };
 
 export interface IGameBase {
   id: number | string;
@@ -13,43 +11,48 @@ export interface IGameBase {
   coverUrl: string;
 }
 
-export const GameModel: Model = {
+type Columns = { [K in keyof typeof GameModelOriginal.columns]: any };
+ensureExtends<Columns, IOwnGame>();
+ensureExtends<IOwnGame, Columns>();
+
+const GameModelOriginal = {
   table: "games",
   primaryKey: "id",
   columns: {
-    id: ColumnType.Integer,
+    id: Column.Integer,
 
-    url: ColumnType.Text,
-    userId: ColumnType.Integer,
-    title: ColumnType.Text,
+    url: Column.Text,
+    userId: Column.Integer,
+    title: Column.Text,
 
-    shortText: ColumnType.Text,
-    stillCoverUrl: ColumnType.Text,
-    coverUrl: ColumnType.Text,
-    type: ColumnType.Text,
-    classification: ColumnType.Text,
-    embed: ColumnType.JSON,
+    shortText: Column.Text,
+    stillCoverUrl: Column.Text,
+    coverUrl: Column.Text,
+    type: Column.Text,
+    classification: Column.Text,
+    embed: Column.JSON,
 
-    hasDemo: ColumnType.Boolean,
-    minPrice: ColumnType.Integer,
-    sale: ColumnType.JSON,
-    currency: ColumnType.Text,
-    inPressSystem: ColumnType.Boolean,
-    canBeBought: ColumnType.Boolean,
+    hasDemo: Column.Boolean,
+    minPrice: Column.Integer,
+    sale: Column.JSON,
+    currency: Column.Text,
+    inPressSystem: Column.Boolean,
+    canBeBought: Column.Boolean,
 
-    createdAt: ColumnType.DateTime,
-    publishedAt: ColumnType.DateTime,
+    createdAt: Column.DateTime,
+    publishedAt: Column.DateTime,
 
-    pOsx: ColumnType.Boolean,
-    pWindows: ColumnType.Boolean,
-    pLinux: ColumnType.Boolean,
-    pAndroid: ColumnType.Boolean,
+    pOsx: Column.Boolean,
+    pWindows: Column.Boolean,
+    pLinux: Column.Boolean,
+    pAndroid: Column.Boolean,
 
-    downloadsCount: ColumnType.Integer,
-    purchasesCount: ColumnType.Integer,
-    viewsCount: ColumnType.Integer,
-  } as GameColumns,
+    downloadsCount: Column.Integer,
+    purchasesCount: Column.Integer,
+    viewsCount: Column.Integer,
+  },
 };
+export const GameModel: Model = GameModelOriginal;
 
 export interface IGame {
   /** itch.io-generated unique identifier */

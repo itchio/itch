@@ -47,7 +47,7 @@ export class DB extends RepoContainer {
   /** path to the sqlite file on disk */
   dbPath: string;
   private store: IStore;
-  private conn: IConnection;
+  protected conn: IConnection;
 
   /**
    * Loads the db from disk.
@@ -81,6 +81,7 @@ export class DB extends RepoContainer {
 
     this.setupRepos();
     await runMigrations(this);
+    this.checkSchema();
 
     logger.info(`db connection established in ${elapsed(t1, Date.now())}`);
   }

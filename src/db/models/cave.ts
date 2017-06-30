@@ -1,39 +1,43 @@
-import { Model, ColumnType } from "../model";
+import { Model, ensureExtends, Column } from "../model";
 import { JSONField } from "../json-field";
 import { DateTimeField } from "../datetime-field";
 
 import { PathScheme } from "../../os/paths";
 
-type CaveColumns = { [K in keyof ICave]: ColumnType };
-
-export const CaveModel: Model = {
+const CaveModelOriginal = {
   table: "caves",
   primaryKey: "id",
   columns: {
-    id: ColumnType.Integer,
-    gameId: ColumnType.Integer,
-    externalGameId: ColumnType.Integer,
+    id: Column.Text,
+    gameId: Column.Integer,
+    externalGameId: Column.Integer,
 
-    upload: ColumnType.JSON,
-    channelName: ColumnType.Text,
-    buildId: ColumnType.Integer,
-    buildUserVersion: ColumnType.Text,
-    handPicked: ColumnType.Boolean,
+    upload: Column.JSON,
+    channelName: Column.Text,
+    buildId: Column.Integer,
+    buildUserVersion: Column.Text,
+    handPicked: Column.Boolean,
 
-    installedAt: ColumnType.DateTime,
-    lastTouchedAt: ColumnType.DateTime,
-    secondsRun: ColumnType.Integer,
+    installedAt: Column.DateTime,
+    lastTouchedAt: Column.DateTime,
+    secondsRun: Column.Integer,
 
-    verdict: ColumnType.JSON,
-    installedSize: ColumnType.Integer,
-    installedUE4Prereq: ColumnType.Boolean,
-    installedPrereqs: ColumnType.JSON,
+    verdict: Column.JSON,
+    installedSize: Column.Integer,
+    installedUE4Prereq: Column.Boolean,
+    installedPrereqs: Column.JSON,
 
-    installLocation: ColumnType.Text,
-    installFolder: ColumnType.Text,
-    pathScheme: ColumnType.Text,
-  } as CaveColumns,
+    installLocation: Column.Text,
+    installFolder: Column.Text,
+    pathScheme: Column.Integer,
+  },
 };
+
+export const CaveModel: Model = CaveModelOriginal;
+
+type Columns = { [K in keyof typeof CaveModelOriginal.columns]: any };
+ensureExtends<Columns, ICave>();
+ensureExtends<ICave, Columns>();
 
 export interface ICaveSummary {
   id: string;

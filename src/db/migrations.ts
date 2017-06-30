@@ -16,6 +16,7 @@ import { DownloadKeyModel, IDownloadKey } from "./models/download-key";
 import { GamePasswordModel, IGamePassword } from "./models/game-password";
 import { GameSecretModel, IGameSecret } from "./models/game-secret";
 import { ExternalGameModel, IExternalGame } from "./models/external-game";
+import { ProfileModel, IProfile } from "./models/profile";
 
 interface IMigrator {
   db: DB;
@@ -45,7 +46,7 @@ const migrations: IMigrations = {
       t.integer("id").primary();
 
       t.text("url");
-      t.text("userId");
+      t.integer("userId");
       t.text("title");
 
       t.text("shortText");
@@ -82,6 +83,9 @@ const migrations: IMigrations = {
       t.text("url");
       t.text("coverUrl");
       t.text("stillCoverUrl");
+
+      t.boolean("developer");
+      t.boolean("pressUser");
     });
 
     m.createTable<ICollection>(CollectionModel, t => {
@@ -147,6 +151,12 @@ const migrations: IMigrations = {
       t.text("title");
       t.text("shortText");
       t.text("coverUrl");
+    });
+
+    m.createTable<IProfile>(ProfileModel, t => {
+      t.integer("id").primary();
+
+      t.json("myGameIds");
     });
   },
 };
