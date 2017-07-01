@@ -6,7 +6,7 @@ import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "reactors/url" });
 
 import { isItchioURL } from "../util/url";
-import crashReporter from "../util/crash-reporter";
+import { reportIssue } from "../util/crash-reporter";
 import urls from "../constants/urls";
 
 import { shell } from "electron";
@@ -94,7 +94,7 @@ export default function(watcher: Watcher) {
     // a non-null payload
     const { log: issueLog } = action.payload || { log: null };
 
-    crashReporter.reportIssue({
+    reportIssue({
       body: "Dear itch app team, ",
       log: issueLog,
     });

@@ -20,7 +20,10 @@ const baseReducer = reducer<ITasksState>(initialState, on => {
       ...state,
       tasks: {
         ...state.tasks,
-        [task.id]: task,
+        [task.id]: {
+          ...task,
+          progress: 0,
+        },
       },
     };
   });

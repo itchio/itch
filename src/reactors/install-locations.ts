@@ -4,7 +4,7 @@ import * as invariant from "invariant";
 import * as ospath from "path";
 import * as uuid from "uuid";
 
-import { omit, each } from "underscore";
+import { omit } from "underscore";
 
 import { createSelector } from "reselect";
 
@@ -59,13 +59,7 @@ export default function(watcher: Watcher, db: DB) {
     );
     invariant(name !== "appdata", "cannot remove appdata");
 
-    const caves = store.getState().globalMarket.caves;
-    let numItems = 0;
-    each(caves, cave => {
-      if (cave.installLocation === name) {
-        numItems++;
-      }
-    });
+    const numItems = db.caves.count(k => k.where({ installLocation: name }));
 
     const i18n = store.getState().i18n;
     const t = localizer.getT(i18n.strings, i18n.lang);

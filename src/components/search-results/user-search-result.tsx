@@ -1,15 +1,15 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import GenericSearchResult, { searchResultStyle } from "./generic-search-result";
+import GenericSearchResult, {
+  searchResultStyle,
+} from "./generic-search-result";
 import * as actions from "../../actions";
 
-import { IUserRecord } from "../../types";
+import { IUser } from "../../db/models/user";
 import styled from "../styles";
 
 const UserSearchResultDiv = styled.div`
-  ${searchResultStyle}
-
-  img {
+  ${searchResultStyle} img {
     width: 34px;
     height: 34px;
     border-radius: 4px;
@@ -28,7 +28,9 @@ class UserSearchResult extends GenericSearchResult<
       <UserSearchResultDiv onClick={onClick} className={classNames({ chosen })}>
         <img src={stillCoverUrl || coverUrl} />
         <div className="title-block">
-          <h4>{displayName || username}</h4>
+          <h4>
+            {displayName || username}
+          </h4>
         </div>
       </UserSearchResultDiv>
     );
@@ -40,7 +42,7 @@ class UserSearchResult extends GenericSearchResult<
 }
 
 interface IUserSearchResultProps {
-  user: IUserRecord;
+  user: IUser;
   onClick: () => void;
   chosen: boolean;
   active: boolean;

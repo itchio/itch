@@ -1,13 +1,18 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import GenericSearchResult, { searchResultStyle } from "./generic-search-result";
+import GenericSearchResult, {
+  searchResultStyle,
+} from "./generic-search-result";
 
 import platformData from "../../constants/platform-data";
 
 import isPlatformCompatible from "../../util/is-platform-compatible";
 import { formatPrice } from "../../format";
 
-import { IGameRecord } from "../../types";
+import { IGame } from "../../db/models/game";
+import { fromJSONField } from "../../db/json-field";
+
+import { ISaleInfo } from "../../types";
 
 import Icon from "../basics/icon";
 import Filler from "../basics/filler";
@@ -15,9 +20,7 @@ import Filler from "../basics/filler";
 import styled, * as styles from "../styles";
 import * as actions from "../../actions";
 
-const GameSearchResultDiv = styled.div`
-  ${searchResultStyle}
-`;
+const GameSearchResultDiv = styled.div`${searchResultStyle};`;
 
 const Platforms = styled.div`
   display: flex;
@@ -38,9 +41,7 @@ const TitleBlock = styled.div`
   align-items: start;
 `;
 
-const Title = styled.div`
-  ${styles.singleLine()}
-`;
+const Title = styled.div`${styles.singleLine()};`;
 
 const Price = styled.div`
   color: ${props => props.theme.secondaryText};
@@ -73,11 +74,13 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
     let originalPrice: React.ReactElement<any> = null;
     let price: React.ReactElement<any> = null;
 
+    const sale = fromJSONField<ISaleInfo>(game.sale);
+
     if (game.minPrice > 0) {
-      if (game.sale) {
+      if (sale) {
         price = (
           <Price>
-            {formatPrice("USD", game.minPrice * (1 - game.sale.rate / 100))}
+            {formatPrice("USD", game.minPrice * (1 - sale.rate / 100))}
           </Price>
         );
         originalPrice = (
@@ -87,7 +90,9 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
         );
       } else {
         price = (
-          <span className="price">{formatPrice("USD", game.minPrice)}</span>
+          <span className="price">
+            {formatPrice("USD", game.minPrice)}
+          </span>
         );
       }
     }
@@ -105,7 +110,9 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
       >
         <img src={stillCoverUrl || coverUrl} />
         <TitleBlock>
-          <Title>{title}</Title>
+          <Title>
+            {title}
+          </Title>
           <Filler />
           <Platforms>
             {platforms}
@@ -124,7 +131,7 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
 }
 
 interface ISearchResultProps {
-  game: IGameRecord;
+  game: IGame;
   onClick: () => void;
   chosen: boolean;
   active: boolean;

@@ -4,8 +4,10 @@ import { connect } from "./connect";
 import { map } from "underscore";
 import * as actions from "../actions";
 
-import { ICollectionRecordSet } from "../types";
+import { ICollectionSet } from "../types";
 import { dispatcher } from "../constants/action-types";
+
+import { fromJSONField } from "../db/json-field";
 
 export class CollectionGrid extends React.PureComponent<
   IProps & IDerivedProps,
@@ -26,7 +28,7 @@ export class CollectionGrid extends React.PureComponent<
               className="collection-hub-item"
               onClick={() => navigate(`collections/${id}`)}
             >
-              {title} ({(collection.gameIds || []).length})
+              {title} ({fromJSONField<number[]>(collection.gameIds, []).length})
             </div>
           );
         })}
@@ -36,7 +38,7 @@ export class CollectionGrid extends React.PureComponent<
 }
 
 interface IProps {
-  collections: ICollectionRecordSet;
+  collections: ICollectionSet;
 }
 
 interface IDerivedProps {

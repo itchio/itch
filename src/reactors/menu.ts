@@ -8,7 +8,7 @@ import { createSelector } from "reselect";
 import * as clone from "clone";
 import localizer from "../localizer";
 
-import { IRuntime } from "../os/runtime";
+import { IRuntime } from "../types";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";

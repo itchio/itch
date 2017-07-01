@@ -13,7 +13,6 @@ import tasks from "./tasks";
 import downloads from "./downloads";
 import status from "./status";
 import gameUpdates from "./game-updates";
-import queries from "./queries";
 import commons from "./commons";
 
 const reducer = combineReducers({
@@ -30,7 +29,6 @@ const reducer = combineReducers({
   downloads,
   status,
   gameUpdates,
-  queries,
   commons,
 });
 export default reducer;

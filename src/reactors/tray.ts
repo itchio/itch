@@ -13,7 +13,7 @@ import * as actions from "../actions";
 import { IStore, IAppState, II18nState } from "../types";
 import { Action } from "redux-actions";
 
-type IMenuTemplate = Electron.MenuItemOptions[];
+type IMenuTemplate = Electron.MenuItemConstructorOptions[];
 
 // used to glue balloon click with notification callbacks
 let lastNotificationAction: Action<any>;

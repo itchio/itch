@@ -7,13 +7,12 @@ import TitleBar from "./title-bar";
 
 import { IMeatProps } from "./meats/types";
 
-import { IGameRecordSet, ICollectionRecord } from "../types";
+import { ICollection } from "../db/models/collection";
+import { IGameSet } from "../types";
 
 import styled, * as styles from "./styles";
 
-const CollectionDiv = styled.div`
-  ${styles.meat()}
-`;
+const CollectionDiv = styled.div`${styles.meat()};`;
 
 export class Collection extends React.PureComponent<
   IProps & IDerivedProps & I18nProps,
@@ -35,7 +34,7 @@ export class Collection extends React.PureComponent<
 interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
-  tabGames: IGameRecordSet;
-  collection: ICollectionRecord;
+  tabGames: IGameSet;
+  collection: ICollection;
 }
 export default connect<IProps>(Collection);

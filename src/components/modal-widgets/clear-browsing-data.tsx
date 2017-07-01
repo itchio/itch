@@ -37,7 +37,7 @@ export class ClearBrowsingData extends React.PureComponent<
     // and we should read from store or something
     const ourSession = electron.remote.session.fromPartition(
       partitionForUser(String(userId)),
-      {},
+      { cache: true },
     );
 
     ourSession.getCacheSize(cacheSize => {

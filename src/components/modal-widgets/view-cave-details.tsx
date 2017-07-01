@@ -3,7 +3,7 @@ import { connect, I18nProps } from "../connect";
 
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
-import Cave from "../../db/models/cave";
+import { ICave } from "../../db/models/cave";
 
 import colors from "../../constants/colors";
 
@@ -54,7 +54,7 @@ export class ViewCaveDetails extends React.PureComponent<
 }
 
 export interface IViewCaveDetailsParams {
-  currentCave: Cave;
+  currentCave: ICave;
 }
 
 interface IProps extends IModalWidgetProps {

@@ -5,7 +5,7 @@ import { formatDuration } from "../format";
 
 import actionForGame from "../util/action-for-game";
 
-import GameModel from "../db/models/game";
+import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
 
 class TotalPlaytime extends React.PureComponent<
@@ -14,13 +14,14 @@ class TotalPlaytime extends React.PureComponent<
 > {
   render() {
     const { t, game, cave, short = false } = this.props;
-    const { secondsRun = 0 } = cave || {};
+    const { secondsRun = 0 } = (cave || {}) as ICaveSummary;
 
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
-    const xed = classAction === "open"
-      ? "opened"
-      : classification === "game" ? "played" : "used";
+    const xed =
+      classAction === "open"
+        ? "opened"
+        : classification === "game" ? "played" : "used";
 
     if (secondsRun > 0 && classAction === "launch") {
       return (
@@ -42,7 +43,7 @@ class TotalPlaytime extends React.PureComponent<
 }
 
 interface IProps {
-  game: GameModel;
+  game: IGame;
   cave: ICaveSummary;
   short?: boolean;
 }

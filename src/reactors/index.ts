@@ -17,7 +17,6 @@ import modals from "./modals";
 import openAtLogin from "./open-at-login";
 import proxy from "./proxy";
 import login from "./login";
-import querier from "./querier";
 import dialogs from "./dialogs";
 import i18n from "./i18n";
 import contextMenu from "./context-menu";
@@ -59,7 +58,6 @@ export default function getWatcher(db: DB) {
   openAtLogin(watcher);
   proxy(watcher);
   login(watcher);
-  querier(watcher);
   dialogs(watcher, db);
   i18n(watcher);
   contextMenu(watcher);

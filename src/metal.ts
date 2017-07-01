@@ -2,7 +2,7 @@
 
 import { enableLiveReload } from "electron-compile-ftl";
 
-import autoUpdater from "./util/auto-updater";
+import autoUpdaterStart from "./util/auto-updater";
 import { isItchioURL } from "./util/url";
 
 import * as actions from "./actions";
@@ -16,7 +16,7 @@ const appUserModelId = "com.squirrel.itch.itch";
 // tslint:disable:no-console
 
 async function autoUpdate(autoUpdateDone: () => void) {
-  const quit = await autoUpdater.start();
+  const quit = await autoUpdaterStart();
   if (quit) {
     // squirrel on win32 sometimes requires exiting as early as possible
     process.exit(0);

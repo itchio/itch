@@ -1,6 +1,6 @@
 import suite, { TestWatcher, immediate } from "../test-suite";
 import * as actions from "../actions";
-import { IRuntime } from "../os/runtime";
+import { IRuntime } from "../types";
 
 import "electron";
 import menu, { fleshOutTemplate } from "./menu";

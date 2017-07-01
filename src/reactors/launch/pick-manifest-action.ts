@@ -9,15 +9,17 @@ import {
   IModalButtonSpec,
 } from "../../types";
 
-import { each } from "underscore";
+import { IGame } from "../../db/models/game";
 
 import { promisedModal } from "../../reactors/modals";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 
+import { findWhere } from "underscore";
+
 export default async function pickManifestAction(
   store: IStore,
   manifest: IManifest,
-  game: Game,
+  game: IGame,
 ): Promise<IManifestAction> {
   const buttons: IModalButtonSpec[] = [];
   const bigButtons: IModalButtonSpec[] = [];
@@ -34,7 +36,7 @@ export default async function pickManifestAction(
   let index = 0;
   for (const actionOption of manifest.actions) {
     if (!actionOption.name) {
-      throw new Error(`in manifest, action ${i} is missing a name`);
+      throw new Error(`in manifest, action ${index} is missing a name`);
     }
     bigButtons.push({
       label: [

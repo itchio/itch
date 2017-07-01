@@ -6,10 +6,8 @@ import * as bluebird from "bluebird";
 
 import * as fs from "fs";
 
-import mkdirpCallback = require("mkdirp");
-const mkdirp = bluebird.promisify(mkdirpCallback);
-import rimrafCallback = require("rimraf");
-const rimraf = bluebird.promisify(rimrafCallback);
+const mkdirp = require("mkdirp").sync;
+const rimraf = require("rimraf").sync;
 
 import {
   ISpec,
@@ -26,7 +24,7 @@ import runTests from "./tests";
 let failureCount = 0;
 
 try {
-  fs.mkdirSync("./screenshots");
+  mkdirp("./screenshots");
 } catch (e) {
   // eh well.
 }
@@ -75,7 +73,7 @@ async function beforeEach(t: IIntegrationTest, opts: ISpecOpts) {
 
   if (opts.wipePrefix) {
     try {
-      await rimraf("./tmp/prefix");
+      rimraf("./tmp/prefix");
     } catch (e) {
       t.comment(`While wiping prefix: ${e.message}`);
     }
@@ -86,7 +84,7 @@ async function beforeEach(t: IIntegrationTest, opts: ISpecOpts) {
     // to store userData, desktop, home etc.
     // this lets us wipe it, copy it, or do whatever we
     // want to it between tests.
-    await mkdirp("./tmp");
+    mkdirp("./tmp");
   } catch (e) {
     if (e.code === "EEXIST") {
       // ok
@@ -231,7 +229,7 @@ test("integration tests", async t => {
           t.comment(`While scrolling ${selector}`);
           throw err;
         }
-      }
+      };
 
       t.safeClick = async selector => {
         const c = t.app.client;

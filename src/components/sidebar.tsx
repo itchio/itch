@@ -13,8 +13,10 @@ import SidebarTab from "./sidebar/tab";
 import SidebarLogo from "./sidebar/logo";
 import UserMenu from "./sidebar/user-menu";
 
-import { IAppState, IUserRecord } from "../types";
+import { IAppState } from "../types";
 import { dispatcher } from "../constants/action-types";
+
+import { IOwnUser } from "../db/models/user";
 
 import { SortableContainer, arrayMove } from "react-sortable-hoc";
 
@@ -59,9 +61,7 @@ interface ISortableContainerParams {
   sidebarProps: IProps & IDerivedProps & I18nProps;
 }
 
-const SortableListContainer = styled.div`
-  overflow-y: auto;  
-`;
+const SortableListContainer = styled.div`overflow-y: auto;`;
 
 const SortableList = SortableContainer((params: ISortableContainerParams) => {
   const { sidebarProps, items } = params;
@@ -126,14 +126,18 @@ class Sidebar extends React.PureComponent<
 
         <SidebarItems>
           <SidebarSection>
-            <SidebarHeading>{t("sidebar.category.basics")}</SidebarHeading>
+            <SidebarHeading>
+              {t("sidebar.category.basics")}
+            </SidebarHeading>
           </SidebarSection>
           {map(tabs.constant, (id, index) => {
             return <SidebarTab key={id} id={id} active={currentId === id} />;
           })}
 
           <SidebarSection>
-            <SidebarHeading>{t("sidebar.category.tabs")}</SidebarHeading>
+            <SidebarHeading>
+              {t("sidebar.category.tabs")}
+            </SidebarHeading>
             <Filler />
             <IconButton
               icon="delete"
@@ -177,7 +181,7 @@ interface IDerivedProps {
   osx: boolean;
   sidebarWidth: number;
   fullscreen: boolean;
-  me: IUserRecord;
+  me: IOwnUser;
 
   id: string;
   path: string;

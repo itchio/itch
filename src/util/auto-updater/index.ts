@@ -1,3 +1,5 @@
 import { platform } from "../../os";
+import { AutoUpdaterStart } from "./types";
 
-export default require(`./${platform()}`).default;
+const exported: AutoUpdaterStart = require(`./${platform()}`).default;
+export default exported;

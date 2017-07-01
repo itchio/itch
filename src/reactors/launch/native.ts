@@ -271,7 +271,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
       playerUsername = playerUsername.split("\n")[0].trim();
 
       logger.info("app isolation enabled");
-      await icacls.shareWith({
+      await icacls.shareWith(ctx, {
         logger: opts.logger,
         sid: playerUsername,
         path: grantPath,
@@ -286,7 +286,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
     } finally {
       // always unshare, even if something happened
       if (isolateApps) {
-        await icacls.unshareWith({
+        await icacls.unshareWith(ctx, {
           logger: opts.logger,
           sid: playerUsername,
           path: grantPath,

@@ -4,11 +4,14 @@ import diskspace from "./diskspace";
 import * as os from "./";
 
 suite(__filename, s => {
+  // we don't actually need a context since we stub everything
+  const ctx = null;
+
   s.case("df (macOS 10.11)", async t => {
     t
       .stub(diskspace, "dfRun")
       .resolves(fixture.lines("diskspace", "df-osx-10.11"));
-    const out = await diskspace.df();
+    const out = await diskspace.df(ctx);
     t.same(out, {
       parts: [
         { free: 10112122880, mountpoint: "/", size: 249769230336 },
@@ -22,7 +25,7 @@ suite(__filename, s => {
     t
       .stub(diskspace, "dfRun")
       .resolves(fixture.lines("diskspace", "df-ubuntu-15.10"));
-    const out = await diskspace.df();
+    const out = await diskspace.df(ctx);
     t.same(out, {
       parts: [
         { free: 938479616, mountpoint: "/dev", size: 938479616 },
@@ -42,7 +45,7 @@ suite(__filename, s => {
     t
       .stub(diskspace, "dfRun")
       .resolves(fixture.lines("diskspace", "df-archlinux"));
-    const out = await diskspace.df();
+    const out = await diskspace.df(ctx);
     t.same(out, {
       parts: [
         { free: 520163328, mountpoint: "/dev", size: 520163328 },
@@ -63,7 +66,7 @@ suite(__filename, s => {
     t
       .stub(diskspace, "wmicRun")
       .resolves(fixture.lines("diskspace", "wmic-windows-8.1"));
-    const out = await diskspace.wmic();
+    const out = await diskspace.wmic(ctx);
     t.same(out, {
       parts: [
         { free: 41468653568, letter: "C:", size: 128034672640 },

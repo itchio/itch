@@ -4,7 +4,7 @@ import { connect, I18nProps } from "../connect";
 
 import { IAppState } from "../../types";
 
-import User from "../../db/models/user";
+import { IOwnUser } from "../../db/models/user";
 
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
@@ -136,7 +136,7 @@ class UserMenu extends React.PureComponent<
 interface IProps {}
 
 interface IDerivedProps {
-  me: User;
+  me: IOwnUser;
   displayName?: string;
   username: string;
   coverUrl: string;

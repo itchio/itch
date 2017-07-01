@@ -6,7 +6,7 @@ import { connect, I18nProps } from "./connect";
 import { dispatcher, multiDispatcher } from "../constants/action-types";
 import * as actions from "../actions";
 
-import GameModel from "../db/models/game";
+import { IGame } from "../db/models/game";
 import getByIds from "../helpers/get-by-ids";
 
 import {
@@ -21,7 +21,9 @@ import { IOnSortChange, SortDirection, SortKey } from "./sort-types";
 
 import { ICommonsState } from "../types";
 
-import gameTableRowRenderer, { IRowHandlerParams } from "./game-table-row-renderer";
+import gameTableRowRenderer, {
+  IRowHandlerParams,
+} from "./game-table-row-renderer";
 
 import TimeAgo from "./basics/time-ago";
 import Cover from "./basics/cover";
@@ -100,9 +102,7 @@ const StyledTable = styled(Table)`
   }
 `;
 
-const TitleColumnDiv = styled.div`
-  line-height: 1.4;
-`;
+const TitleColumnDiv = styled.div`line-height: 1.4;`;
 
 const titleColumn = () => css`
   max-width: 500px;
@@ -224,8 +224,12 @@ class GameTable extends React.PureComponent<
     const { title, shortText } = game;
     return (
       <TitleColumnDiv>
-        <TitleDiv className="game-table-title">{title}</TitleDiv>
-        <DescriptionDiv>{shortText}</DescriptionDiv>
+        <TitleDiv className="game-table-title">
+          {title}
+        </TitleDiv>
+        <DescriptionDiv>
+          {shortText}
+        </DescriptionDiv>
       </TitleColumnDiv>
     );
   };
@@ -388,7 +392,7 @@ class GameTable extends React.PureComponent<
 
 interface IProps {
   // specified
-  games: GameModel[];
+  games: IGame[];
   gamesCount: number;
   gamesOffset: number;
   hiddenCount: number;

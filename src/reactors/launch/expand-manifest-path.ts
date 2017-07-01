@@ -15,7 +15,7 @@ switch (itchPlatform()) {
 }
 
 export default function expandManifestPath(
-  installpath: string,
+  installPath: string,
   manifestPath: string,
 ): string {
   const relativePath = manifestPath.replace(/{{EXT}}/, appExt);

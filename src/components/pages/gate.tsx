@@ -17,7 +17,7 @@ import Filler from "../basics/filler";
 
 import TitleBar from "../title-bar";
 
-import reporter, { IReportIssueOpts } from "../../util/crash-reporter";
+import { reportIssue, IReportIssueOpts } from "../../util/crash-reporter";
 
 import * as actions from "../../actions";
 
@@ -103,7 +103,8 @@ const GateDiv = styled.div`
     }
   }
 
-  .errors, .actions {
+  .errors,
+  .actions {
     .status-container .icon {
       margin-right: .4em;
       font-size: 120%;
@@ -144,7 +145,8 @@ const GateDiv = styled.div`
   }
 
   &.disabled {
-    form input, .links {
+    form input,
+    .links {
       pointer-events: none;
       opacity: 0;
     }
@@ -158,7 +160,10 @@ const GateDiv = styled.div`
   }
 
   &[data-stage='ready'] {
-    .crux, .links, .actions, .errors {
+    .crux,
+    .links,
+    .actions,
+    .errors {
       pointer-events: none;
       opacity: 0;
     }
@@ -198,9 +203,7 @@ const Form = styled.form`
   position: relative;
 
   input {
-    ${styles.heavyInput()}
-
-    font-size: ${props => props.theme.fontSizes.large};
+    ${styles.heavyInput()} font-size: ${props => props.theme.fontSizes.large};
 
     transform: scale(1.0) rotateZ(0deg);
     transition: all 0.2s;
@@ -309,7 +312,9 @@ export class GatePage extends React.PureComponent<
             <Filler />
             <Icon icon="heart-filled" />
             <Spacer />
-            <span>{t("login.messages.welcome_back")}</span>
+            <span>
+              {t("login.messages.welcome_back")}
+            </span>
             <Filler />
           </span>
         </section>
@@ -352,14 +357,18 @@ export class GatePage extends React.PureComponent<
             label={t("login.action.register")}
             onClick={() => openUrl({ url: urls.accountRegister })}
           />
-          <span>{" · "}</span>
+          <span>
+            {" · "}
+          </span>
           <Link
             label={t("login.action.reset_password")}
             onClick={() => openUrl({ url: urls.accountForgotPassword })}
           />
           {numSavedSessions > 0
             ? [
-                <span key="separator">{" · "}</span>,
+                <span key="separator">
+                  {" · "}
+                </span>,
                 <Link
                   key="show-saved-logins"
                   label={t("login.action.show_saved_logins")}
@@ -453,7 +462,7 @@ export class GatePage extends React.PureComponent<
   }
 
   reportIssue(blockingOperation: ISetupOperation) {
-    reporter.reportIssue(
+    reportIssue(
       {
         type: "Trouble in setup",
         body: blockingOperation.stack,
@@ -545,9 +554,10 @@ export default connect<IProps>(GatePage, {
 
     if (!session.credentials.key) {
       const hasSessions = Object.keys(rememberedSessions).length > 0;
-      const stage = !login.blockingOperation && hasSessions && login.picking
-        ? "pick"
-        : "login";
+      const stage =
+        !login.blockingOperation && hasSessions && login.picking
+          ? "pick"
+          : "login";
       return { ...login, stage, rememberedSessions };
     } else if (!state.setup.done) {
       return { stage: "setup", ...state.setup };

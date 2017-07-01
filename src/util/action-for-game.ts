@@ -1,7 +1,7 @@
 import { ClassificationAction } from "../types";
 import classificationActions from "../constants/classification-actions";
 
-import GameModel from "../db/models/game";
+import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
 
 /**
@@ -10,7 +10,7 @@ import { ICaveSummary } from "../db/models/cave";
  * in a file explorer.
  */
 export default function actionForGame(
-  game: GameModel,
+  game: IGame,
   cave: ICaveSummary | null,
 ): ClassificationAction {
   // FIXME: we're not using the cave at all here - we probably should.

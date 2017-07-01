@@ -6,7 +6,7 @@ interface WebViewProps {
   preload?: string;
   plugins?: string;
   partition?: string;
-  ref?: (wv: Electron.WebViewElement) => void;
+  ref?: (wv: Electron.WebviewTag) => void;
 }
 
 // tslint:disable-next-line

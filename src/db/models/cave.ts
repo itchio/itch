@@ -43,6 +43,7 @@ export interface ICaveSummary {
   id: string;
   gameId: number;
   lastTouchedAt: DateTimeField;
+  secondsRun: number;
 }
 
 export interface ICaveLocation {

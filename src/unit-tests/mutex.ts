@@ -13,7 +13,7 @@ export default function mutex(fn) {
     }
     running = true;
     const onUncaught = function(e) {
-      console.log("uncaught exception: ", e);
+      console.error("in mutex, uncaught exception: ", e.stack);
       running = false;
     };
     process.on("uncaughtException", onUncaught);
@@ -21,7 +21,9 @@ export default function mutex(fn) {
     try {
       return await fn(...args);
     } finally {
-      process.removeListener("uncaughtException", onUncaught);
+      // nodejs typings finally got on("uncaughtException")
+      // but don't have matching removeListener, woo.
+      (process as any).removeListener("uncaughtException", onUncaught);
       running = false;
     }
   };

@@ -1,5 +1,6 @@
 import spawn from "../../os/spawn";
-import { Logger } from "../../logger";
+import { Logger, devNull } from "../../logger";
+import Context from "../../context";
 
 interface IIcaclsOptions {
   path: string;
@@ -7,7 +8,12 @@ interface IIcaclsOptions {
   logger: Logger;
 }
 
-async function icacls(opts: IIcaclsOptions, reason: string, args: string[]) {
+async function icacls(
+  ctx: Context,
+  opts: IIcaclsOptions,
+  reason: string,
+  args: string[],
+) {
   const logger = opts.logger.child({ name: "icacls" });
 
   await spawn.assert({
@@ -19,14 +25,16 @@ async function icacls(opts: IIcaclsOptions, reason: string, args: string[]) {
     onErrToken: tok => {
       logger.info(`[${reason} err] ${tok}`);
     },
+    ctx,
+    logger: devNull,
   });
 }
 
-export async function shareWith(opts: IIcaclsOptions) {
+export async function shareWith(ctx: Context, opts: IIcaclsOptions) {
   // acl cleanup is needed because previous instances of the win32 sandbox
   // would deny all access to all files recursively (and individually) after
   // the sandbox ran, instead of removing ACL entries
-  await icacls(opts, "cleanup", [
+  await icacls(ctx, opts, "cleanup", [
     opts.path,
     "/remove:d", // remove any deny (:d) ACL entries for sid
     opts.sid,
@@ -43,7 +51,7 @@ export async function shareWith(opts: IIcaclsOptions) {
   // as long as we don't specify (NP)
   const perm = "(OI)(CI)F";
 
-  await icacls(opts, "grant", [
+  await icacls(ctx, opts, "grant", [
     opts.path,
     "/grant",
     `${opts.sid}:${perm}`,
@@ -51,9 +59,9 @@ export async function shareWith(opts: IIcaclsOptions) {
   ]);
 }
 
-export async function unshareWith(opts: IIcaclsOptions) {
+export async function unshareWith(ctx: Context, opts: IIcaclsOptions) {
   // this undoes what the new sandbox does (inherited grant on root folder)
-  await icacls(opts, "cleanup", [
+  await icacls(ctx, opts, "cleanup", [
     opts.path,
     "/remove", // remove any deny (:d) ACL entries for sid
     opts.sid,

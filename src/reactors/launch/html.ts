@@ -4,6 +4,8 @@ import * as btoa from "btoa";
 import { dirname, basename, join } from "path";
 import * as querystring from "querystring";
 
+import { where } from "underscore";
+
 import { BrowserWindow, shell } from "electron";
 import appEnv from "../../env";
 const { appName } = appEnv;
@@ -22,88 +24,36 @@ const { messages } = capsule;
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
-const WEBGAME_PROTOCOL = "itch-cave";
-
 import { ILaunchOpts } from "../../types";
 
-import store from "../../store/metal-store";
+import { fromJSONField } from "../../db/json-field";
 
-interface IBeforeSendHeadersDetails {
-  url: string;
-}
-
-interface IBeforeSendHeadersCallbackOpts {
-  cancel: boolean;
-}
-
-interface IBeforeSendHeadersCallback {
-  (opts: IBeforeSendHeadersCallbackOpts): void;
-}
-
-interface IRegisteredProtocols {
-  [key: string]: boolean;
-}
-
-const registeredProtocols: IRegisteredProtocols = {};
-
-interface IRegisterProtocolOpts {
-  partition: string;
-  fileRoot: string;
-}
-
-async function registerProtocol(opts: IRegisterProtocolOpts) {
-  const { partition, fileRoot } = opts;
-
-  if (registeredProtocols[partition]) {
-    return;
-  }
-
-  const { session } = require("electron");
-  const caveSession = session.fromPartition(partition, { cache: false });
-
-  await new Promise((resolve, reject) => {
-    caveSession.protocol.registerFileProtocol(
-      WEBGAME_PROTOCOL,
-      (request, callback) => {
-        const urlPath = url.parse(request.url).pathname;
-        // FIXME: this is wrong, the path may also be url-encoded, see
-        // https://github.com/itchio/itch/issues/1211
-        const filePath = join(fileRoot, urlPath.replace(/^\//, ""));
-
-        callback(filePath);
-      },
-      error => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      },
-    );
-  });
-
-  const handled = await new Promise((resolve, reject) => {
-    caveSession.protocol.isProtocolHandled(WEBGAME_PROTOCOL, result => {
-      resolve(result);
-    });
-  });
-
-  if (!handled) {
-    throw new Error(`could not register custom protocol ${WEBGAME_PROTOCOL}`);
-  }
-
-  registeredProtocols[partition] = true;
-}
+import { registerProtocol, setupItchInternal } from "./html/itch-internal";
+import { IConfigureResult } from "../../util/butler";
 
 export default async function launch(ctx: Context, opts: ILaunchOpts) {
   const { cave, game, args, env, logger } = opts;
+  const { store } = ctx;
 
   const appPath = paths.appPath(cave, store.getState().preferences);
-  const entryPoint = join(appPath, cave.gamePath);
+  const verdict = fromJSONField<IConfigureResult>(cave.verdict);
+  if (!verdict) {
+    throw new Error(`Can't launch HTML game that hasn't been configured`);
+  }
+
+  const htmlCandidates = where(verdict.candidates, { flavor: "html" });
+
+  // FIXME: the whole html launch thingy is messed imho
+  if (htmlCandidates.length === 0) {
+    throw new Error(`Can't launch HTML game, no candidates`);
+  }
+  const candidate = htmlCandidates[0];
+  const entryPoint = join(appPath, candidate.path);
 
   logger.info(`entry point: ${entryPoint}`);
 
-  const { width, height } = cave.windowSize;
+  // TODO: use info from some other column, fall back to game info
+  const { width, height } = { width: 1280, height: 720 };
   logger.info(`starting at resolution ${width}x${height}`);
 
   const partition = `persist:gamesession_${cave.gameId}`;
@@ -155,35 +105,15 @@ export default async function launch(ctx: Context, opts: ILaunchOpts) {
   userAgent = userAgent.replace(/Electron\/[0-9.]+\s/, "");
   win.webContents.setUserAgent(userAgent);
 
-  // requests to 'itch-internal' are used to communicate between web content & the app
-  let internalFilter = {
-    urls: ["https://itch-internal/*"],
-  };
-  win.webContents.session.webRequest.onBeforeRequest(
-    { urls: ["itch-cave://*"] },
-    (details, callback) => {
-      let parsed = url.parse(details.url);
-      // resources in `//` will be loaded using itch-cave, we need to
-      // redirect them to https for it to work - note this only happens with games
-      // that aren't fully offline-mode compliant
-      if (parsed.protocol === "itch-cave:" && parsed.host !== "game.itch") {
-        callback({
-          redirectURL: details.url.replace(/^itch-cave:/, "https:"),
-        });
-      } else {
-        callback({});
-      }
-    },
-  );
+  // serve files
+  let fileRoot = dirname(entryPoint);
+  let indexName = basename(entryPoint);
 
-  win.webContents.session.webRequest.onBeforeSendHeaders(
-    internalFilter,
-    (
-      details: IBeforeSendHeadersDetails,
-      callback: IBeforeSendHeadersCallback,
-    ) => {
-      callback({ cancel: true });
+  await registerProtocol({ partition, fileRoot });
 
+  setupItchInternal({
+    session: win.webContents.session,
+    onRequest: details => {
       let parsed = url.parse(details.url);
       switch (parsed.pathname.replace(/^\//, "")) {
         case "exit-fullscreen":
@@ -199,18 +129,12 @@ export default async function launch(ctx: Context, opts: ILaunchOpts) {
           break;
       }
     },
-  );
+  });
 
   win.webContents.on("new-window", (ev: Event, url: string) => {
     ev.preventDefault();
     shell.openExternal(url);
   });
-
-  // serve files
-  let fileRoot = dirname(entryPoint);
-  let indexName = basename(entryPoint);
-
-  await registerProtocol({ partition, fileRoot });
 
   // nasty hack to pass in the itchObject
   const itchObjectBase64 = btoa(JSON.stringify(itchObject));

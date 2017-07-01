@@ -54,7 +54,7 @@ export default function(watcher: Watcher) {
     const userId = store.getState().session.credentials.me.id;
 
     const partition = partitionForUser(String(userId));
-    const ourSession = session.fromPartition(partition, {});
+    const ourSession = session.fromPartition(partition, { cache: true });
 
     logger.debug(`asked to clear browsing data`);
 

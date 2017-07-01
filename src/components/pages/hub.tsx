@@ -19,7 +19,7 @@ const HubPageDiv = styled.div`
   animation: ${styles.animations.fadeIn} .4s ease-in;
 `;
 
-class HubPage extends React.PureComponent<void, void> {
+class HubPage extends React.PureComponent<{}, void> {
   render() {
     return (
       <HubPageDiv>

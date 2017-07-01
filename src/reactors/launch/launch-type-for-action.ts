@@ -1,7 +1,7 @@
 import { join } from "path";
 import { itchPlatform } from "../../os";
 
-import * as fnout from "fnout";
+import fnout from "fnout";
 
 const platform = itchPlatform();
 
@@ -10,7 +10,7 @@ export type LaunchType = "native" | "html" | "external" | "native" | "shell";
 export default async function launchTypeForAction(
   appPath: string,
   actionPath: string,
-): LaunchType {
+): Promise<LaunchType> {
   if (/\.(app|exe|bat|sh)$/i.test(actionPath)) {
     return "native";
   }

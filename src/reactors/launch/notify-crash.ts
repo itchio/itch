@@ -16,7 +16,7 @@ type ExtendedError = Error & {
 
 export default async function notifyCrash(
   store: IStore,
-  cave: IjCave,
+  cave: ICave,
   game: IGame,
   e: ExtendedError,
   logger: Logger,

@@ -4,7 +4,6 @@ import * as hades from "../db/hades";
 
 import Querier, { QueryBuilder } from "../db/querier";
 import { Column, Model } from "../db/model";
-import { toDateTimeField } from "../db/datetime-field";
 import { toJSONField } from "../db/json-field";
 
 import * as _ from "underscore";

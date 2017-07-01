@@ -1,5 +1,4 @@
 import suite, { TestWatcher, actions, withDB } from "../../test-suite";
-import { DB } from "../../db";
 
 import queueDownload from "./queue-game";
 

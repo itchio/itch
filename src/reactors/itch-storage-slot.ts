@@ -18,12 +18,14 @@ export default class ItchStorageSlot<T> {
     await mkdir(dirname(fullPath));
 
     const contents = JSON.stringify(value);
-    await writeFile(fullPath, contents);
+    await writeFile(fullPath, contents, { encoding: "utf8" });
   }
 
   async load(basePath: string): Promise<T> {
     try {
-      const contents = await readFile(this.makePath(basePath));
+      const contents = await readFile(this.makePath(basePath), {
+        encoding: "utf8",
+      });
       return JSON.parse(contents);
     } catch (e) {
       if (e.code === "ENOENT") {

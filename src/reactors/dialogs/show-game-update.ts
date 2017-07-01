@@ -52,11 +52,11 @@ export default function(watcher: Watcher) {
         message: dialogMessage,
         detail: dialogDetail,
         bigButtons: map(update.recentUploads, upload => {
-          return {
+          const spec: IModalButtonSpec = {
             ...makeUploadButton(upload, { showSize: false }),
             timeAgo: {
               label: ["prompt.updated_ago"],
-              date: Date.parse(upload.updatedAt),
+              date: upload.updatedAt,
             },
             action: actions.queueGameUpdate({
               ...action.payload,
@@ -64,6 +64,7 @@ export default function(watcher: Watcher) {
               handPicked: !single,
             }),
           };
+          return spec;
         }),
         buttons: dialogButtons,
       }),

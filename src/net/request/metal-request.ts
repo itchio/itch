@@ -14,6 +14,10 @@ import {
 } from "../errors";
 
 import { net } from "electron";
+import { Readable } from "stream";
+
+// TODO: revert that when Electron fixes their typings.
+type ActualElectronResponse = Electron.IncomingMessage & Readable;
 
 // use chromium's net API
 export async function request(
@@ -39,7 +43,7 @@ export async function request(
   req.setHeader("user-agent", useragent);
 
   const p = new Promise<IResponse>((resolve, reject) => {
-    req.on("response", res => {
+    req.on("response", (res: ActualElectronResponse) => {
       const response = {
         statusCode: res.statusCode,
         status: res.statusMessage,

@@ -47,7 +47,7 @@ if (REDUX_DEVTOOLS_ENABLED) {
   const DevTools = require("../components/dev-tools").default;
   enhancer = compose(ee, em, DevTools.instrument());
 } else {
-  enhancer = compose(ee, em);
+  enhancer = compose(ee, em) as GenericStoreEnhancer;
 }
 
 const initialState = {};

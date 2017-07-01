@@ -8,7 +8,7 @@ import * as actions from "../actions";
 import HubItem from "./hub-item";
 import HiddenIndicator from "./hidden-indicator";
 
-import GameModel from "../db/models/game";
+import { IGame } from "../db/models/game";
 
 import { AutoSizer, Grid, SectionRenderedParams } from "react-virtualized";
 import { IAutoSizerParams } from "./autosizer-types";
@@ -25,7 +25,7 @@ interface ICellInfo {
 
 interface ILayoutInfo {
   columnCount: number;
-  games: GameModel[];
+  games: IGame[];
 }
 
 const StyledGrid = styled(Grid)`
@@ -121,7 +121,7 @@ class GameGrid extends React.PureComponent<
 }
 
 interface IProps {
-  games: GameModel[];
+  games: IGame[];
   gamesCount: number;
   gamesOffset: number;
   hiddenCount: number;

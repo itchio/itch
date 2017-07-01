@@ -75,24 +75,6 @@ export interface IUserSet {
   [id: string]: IUser;
 }
 
-export interface ICollectionRecord {
-  /** itch.io-generated unique identifier */
-  id: number;
-
-  /** human-friendly title, may contain any character */
-  title: string;
-
-  /** total number of games in collection */
-  gamesCount: number;
-
-  /** identifiers of the games in this collection */
-  gameIds: number[];
-
-  createdAt: Date;
-
-  updatedAt: Date;
-}
-
 export interface IInstallLocationRecord {
   /** UUID or 'default' */
   id: string;

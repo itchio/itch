@@ -20,7 +20,7 @@ import { IGame } from "../../db/models/game";
 import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
 import * as sf from "../../os/sf";
-import registry from "../../os/win32/registry";
+import * as registry from "../../os/win32/registry";
 
 import { request, getChecksums, ensureChecksum } from "../../net";
 import butler, { IButlerResult } from "../../util/butler";
@@ -485,7 +485,7 @@ async function assessDep(
   if (info.registryKeys) {
     for (const registryKey of info.registryKeys) {
       try {
-        await registry.regQuery(registryKey, { quiet: true });
+        await registry.regQuery(ctx, registryKey, { quiet: true });
         hasRegistry = true;
         logger.info(`Found registry key ${registryKey}`);
         break;

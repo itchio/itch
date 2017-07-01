@@ -3,7 +3,7 @@ import { connect, I18nProps } from "../connect";
 
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
-import Cave from "../../db/models/cave";
+import { ICave } from "../../db/models/cave";
 
 export class RevertCave extends React.PureComponent<
   IProps & IDerivedProps & I18nProps,
@@ -24,7 +24,9 @@ export class RevertCave extends React.PureComponent<
 
     return (
       <ModalWidgetDiv>
-        <p>{t("prompt.revert.message", { buildId })}</p>
+        <p>
+          {t("prompt.revert.message", { buildId })}
+        </p>
 
         <input
           ref="buildId"
@@ -51,7 +53,7 @@ export class RevertCave extends React.PureComponent<
 }
 
 export interface IRevertCaveParams {
-  currentCave: Cave;
+  currentCave: ICave;
 }
 
 interface IProps extends IModalWidgetProps {

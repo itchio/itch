@@ -1,4 +1,4 @@
-import Cave from "../../db/models/cave";
+import { ICave } from "../../db/models/cave";
 import * as toml from "toml";
 
 import validateManifest from "./validate-manifest";
@@ -14,7 +14,7 @@ import { IStore } from "../../types";
 
 export default async function getManifest(
   store: IStore,
-  cave: Cave,
+  cave: ICave,
   logger: Logger,
 ): Promise<IManifest> {
   const cavePath = appPath(cave, store.getState().preferences);

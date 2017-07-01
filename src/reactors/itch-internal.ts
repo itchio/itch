@@ -19,7 +19,7 @@ export default function(watcher: Watcher) {
 
     const session = electron.session.fromPartition(
       partitionForUser(String(userId)),
-      {},
+      { cache: true },
     );
 
     // requests to 'itch-internal' are used to communicate between web content & the app

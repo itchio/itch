@@ -37,13 +37,10 @@ export default class CollectionFetcher extends Fetcher {
         },
       });
 
-      let gameIds: number[] = emptyArr;
-      if (localCollection && localCollection.gameIds) {
-        const localIds = fromJSONField<number[]>(localCollection.gameIds);
-        if (localIds) {
-          gameIds = localIds;
-        }
-      }
+      const gameIds = fromJSONField<number[]>(
+        localCollection && localCollection.gameIds,
+        emptyArr,
+      );
 
       const localGames = db.games.all(k => k.select().whereIn("id", gameIds));
       await this.pushGames(

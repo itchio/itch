@@ -15,7 +15,7 @@ import MainAction from "./main-action";
 import SecondaryActions from "./secondary-actions";
 
 import { IActionsInfo } from "./types";
-import GameModel from "../../db/models/game";
+import { IGame } from "../../db/models/game";
 import { ICaveSummary } from "../../db/models/cave";
 import { IDownloadKeySummary } from "../../db/models/download-key";
 import getByIds from "../../helpers/get-by-ids";
@@ -81,7 +81,7 @@ class GameActions extends React.PureComponent<
 }
 
 interface IProps {
-  game: GameModel;
+  game: IGame;
   showSecondary?: boolean;
   CustomSecondary?: typeof React.Component;
   cave?: ICaveSummary;
@@ -100,7 +100,7 @@ interface IDerivedProps extends IActionsInfo {
 }
 
 interface IHappenings {
-  game: GameModel;
+  game: IGame;
   caves: ICaveSummary[];
   downloadKeys: IDownloadKeySummary[];
   tasks: ITask[];
@@ -158,9 +158,8 @@ export default connect<IProps>(GameActions, {
         const animate = false;
         let action = actionForGame(game, cave);
 
-        const platformCompatible = action === "open"
-          ? true
-          : isPlatformCompatible(game);
+        const platformCompatible =
+          action === "open" ? true : isPlatformCompatible(game);
         const cancellable = false;
 
         let downloadKey;

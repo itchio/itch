@@ -2,10 +2,10 @@ import * as React from "react";
 import { connect, I18nProps } from "./connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
-import Collection from "../db/models/collection";
+import { ICollection } from "../db/models/collection";
 import CollectionRow from "./collection-row";
 
-import { IAppState, ITabData, IGameRecordSet } from "../types";
+import { IAppState, ITabData, IGameSet } from "../types";
 
 import { AutoSizer, Grid } from "react-virtualized";
 
@@ -22,9 +22,7 @@ interface ICellInfo {
 
 const tab = "collections";
 
-const HubCollectionsGrid = styled.div`
-  flex-grow: 1;
-`;
+const HubCollectionsGrid = styled.div`flex-grow: 1;`;
 
 // woo typings
 const StyledGrid = (styled(Grid as any)`
@@ -47,7 +45,9 @@ export class CollectionsGrid extends React.PureComponent<
 
     return (
       <HubCollectionsGrid>
-        <AutoSizer>{size => this.renderWithSize(size)}</AutoSizer>
+        <AutoSizer>
+          {size => this.renderWithSize(size)}
+        </AutoSizer>
         {hiddenCount > 0
           ? <div className="hidden-count">
               {t("grid.hidden_count", { count: hiddenCount })}
@@ -120,8 +120,8 @@ export class CollectionsGrid extends React.PureComponent<
 interface IProps {}
 
 interface IDerivedProps {
-  games: IGameRecordSet;
-  collections: Collection[];
+  games: IGameSet;
+  collections: ICollection[];
   hiddenCount: number;
 }
 

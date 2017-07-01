@@ -7,7 +7,7 @@ import * as actions from "../actions";
 import GameActions from "./game-actions";
 import Cover from "./basics/cover";
 
-import GameModel from "../db/models/game";
+import { IGame } from "../db/models/game";
 import { dispatcher, multiDispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
@@ -106,7 +106,7 @@ const UnderCover = styled.div`
 `;
 
 interface IProps {
-  game: GameModel;
+  game: IGame;
   searchScore?: number;
 }
 

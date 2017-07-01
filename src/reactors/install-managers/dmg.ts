@@ -8,7 +8,6 @@ import { resolve } from "path";
 
 import { devNull } from "../../logger";
 
-import { Cancelled } from "../../types";
 import { ICoreInstallOpts, IInstallManager } from "./core";
 
 const HFS_RE = /(\S*)\s*(Apple_HFS)?\s+(.*)\s*$/;

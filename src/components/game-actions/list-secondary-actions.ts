@@ -1,14 +1,10 @@
 import * as actions from "../../actions";
 
 import { IGame } from "../../db/models/game";
+import { IDownloadKey } from "../../db/models/download-key";
 import { ICaveSummary } from "../../db/models/cave";
 
-import {
-  IDownloadKey,
-  ClassificationAction,
-  ILocalizedString,
-  ITask,
-} from "../../types";
+import { ClassificationAction, ILocalizedString, ITask } from "../../types";
 
 import { IAction } from "../../constants/action-types";
 

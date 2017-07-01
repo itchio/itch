@@ -1,16 +1,12 @@
-import GameModel from "../../db/models/game";
-import CaveModel from "../../db/models/cave";
+import { IGame } from "../../db/models/game";
+import { ICave } from "../../db/models/cave";
+import { IDownloadKey } from "../../db/models/download-key";
 
-import {
-  IDownloadKey,
-  ClassificationAction,
-  ITask,
-  IDownloadItem,
-} from "../../types";
+import { ClassificationAction, ITask, IDownloadItem } from "../../types";
 
 export interface IActionsInfo {
-  cave: CaveModel;
-  game: GameModel;
+  cave: ICave;
+  game: IGame;
   downloadKey: IDownloadKey;
 
   action: ClassificationAction;

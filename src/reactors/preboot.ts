@@ -6,12 +6,11 @@ import store from "../store/metal-store";
 import db from "../db";
 
 import { cleanOldLogs } from "./preboot/clean-old-logs";
-import xdgMime from "./preboot/xdg-mime";
-import visualElements from "./preboot/visual-elements";
+import * as xdgMime from "./preboot/xdg-mime";
+import * as visualElements from "./preboot/visual-elements";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "preboot" });
-const opts = { logger };
 
 import { ProxySource } from "../types";
 
@@ -31,13 +30,13 @@ export default function(watcher: Watcher) {
     }
 
     try {
-      await xdgMime.registerIfNeeded(opts, ctx);
+      await xdgMime.registerIfNeeded(ctx, { logger: rootLogger });
     } catch (e) {
       logger.error(`Could not run xdg-mime: ${e.stack || e.message || e}`);
     }
 
     try {
-      await visualElements.createIfNeeded(opts);
+      await visualElements.createIfNeeded(ctx);
     } catch (e) {
       logger.error(
         `Could not run visualElements: ${e.stack || e.message || e}`,
@@ -61,8 +60,8 @@ export default function(watcher: Watcher) {
               title: `Certificate error: ${error}`,
               message:
                 `There was an error with the certificate for ` +
-                  `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
-                  `Please check your proxy configuration and try again.`,
+                `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
+                `Please check your proxy configuration and try again.`,
               detail: `If you ignore this error, the rest of the app might not work correctly.`,
               buttons: [
                 {

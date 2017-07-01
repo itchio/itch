@@ -13,15 +13,14 @@ import TimeAgo from "./basics/time-ago";
 import Ink = require("react-ink");
 import interleave from "./interleave";
 
-import { IGameRecordSet } from "../types";
-import CollectionModel from "../db/models/collection";
+import { IGameSet } from "../types";
+import { ICollection } from "../db/models/collection";
 import { multiDispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
 
 const CollectionRowDiv = styled.div`
-  ${styles.inkContainer()}
-  ${styles.hubItemStyle()};
+  ${styles.inkContainer()} ${styles.hubItemStyle()};
 
   height: 100%;
   display: flex;
@@ -146,8 +145,8 @@ export class CollectionRow extends React.PureComponent<
 }
 
 interface IProps {
-  collection: CollectionModel;
-  allGames: IGameRecordSet;
+  collection: ICollection;
+  allGames: IGameSet;
 }
 
 interface IDerivedProps {
