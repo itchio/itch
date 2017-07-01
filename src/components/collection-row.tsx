@@ -15,6 +15,7 @@ import interleave from "./interleave";
 
 import { IGameSet } from "../types";
 import { ICollection } from "../db/models/collection";
+import { fromJSONField } from "../db/json-field";
 import { multiDispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
@@ -90,7 +91,10 @@ export class CollectionRow extends React.PureComponent<
     const { t, allGames, collection } = this.props;
     const { title } = collection;
 
-    const gameIds = (collection.gameIds || emptyArr).slice(0, 8);
+    const gameIds = fromJSONField<number[]>(collection.gameIds, emptyArr).slice(
+      0,
+      8,
+    );
     const games = filter(map(gameIds, gameId => allGames[gameId]), x => !!x);
 
     const gameItems = map(games, (game, index) => {
