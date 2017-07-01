@@ -99,7 +99,7 @@ export default class CollectionFetcher extends Fetcher {
       games: games,
       gameIds: pluck(sortedGames, "id"),
       gamesOffset: 0,
-      gamesCount: gamesCount,
+      gamesCount: sortedGames.length,
     });
   }
 }
