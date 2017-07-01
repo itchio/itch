@@ -402,9 +402,14 @@ const makeTitleSelector = (store: IStore) => {
 
   const getID = (state: IAppState) => state.session.navigation.id;
   const getTabData = (state: IAppState) => state.session.tabData;
+  const getData = createSelector(
+    getID,
+    getTabData,
+    (id, tabData) => tabData[id],
+  );
 
-  return createSelector(getID, getTabData, getT, (id, tabData, t) => {
-    const label = makeLabel(id, tabData);
+  return createSelector(getID, getData, getT, (id, data, t) => {
+    const label = makeLabel(id, data);
     updateTitle(store, t.format(label) + " - itch");
   });
 };
