@@ -4,6 +4,8 @@ import { connect, I18nProps } from "./connect";
 import bob, { IRGBColor } from "../renderer-util/bob";
 import { ResponsiveContainer, AreaChart, Area } from "recharts";
 
+import * as humanize from "humanize-plus";
+
 import { truncate, downloadProgress } from "../format";
 
 import * as actions from "../actions";
@@ -47,24 +49,32 @@ const DownloadRowDiv = styled.div`
     cursor: pointer;
   }
 
-  &.first, &:hover {
+  &.first,
+  &:hover {
     background-color: ${props => props.theme.explanation};
   }
 
-  .cover, .progress, .controls, .game-title, .timeago {
+  .cover,
+  .progress,
+  .controls,
+  .game-title,
+  .timeago {
     z-index: 4;
   }
 
-  .cover, .progress {
+  .cover,
+  .progress {
     transition: -webkit-filter 1s;
   }
 
   &.dimmed {
-    .cover, .progress {
+    .cover,
+    .progress {
       -webkit-filter: grayscale(100%) brightness(50%);
     }
 
-    .controls, .game-title {
+    .controls,
+    .game-title {
       color: $secondary-text-color;
     }
 
@@ -74,9 +84,7 @@ const DownloadRowDiv = styled.div`
   }
 
   .game-title {
-    ${styles.singleLine()}
-
-    max-width: 500px;
+    ${styles.singleLine()} max-width: 500px;
   }
 
   .timeago {
@@ -105,11 +113,11 @@ const DownloadRowDiv = styled.div`
     }
 
     .progress {
-      ${styles.progress()}
-      margin: 10px 0;
+      ${styles.progress()} margin: 10px 0;
       height: 5px;
 
-      &, .progress-inner {
+      &,
+      .progress-inner {
         border-radius: 5px;
       }
     }
@@ -356,7 +364,9 @@ class DownloadRow extends React.PureComponent<
 
     return (
       <div className="stats-inner">
-        <div className="game-title">{game.title}</div>
+        <div className="game-title">
+          {game.title}
+        </div>
         <div className="progress">
           <div className="progress-inner" style={progressInnerStyle} />
         </div>
@@ -372,6 +382,9 @@ class DownloadRow extends React.PureComponent<
                     {t("download.started")}{" "}
                     <TimeAgo date={new Date(startedAt)} />
                     {reasonText ? ` — ${reasonText}` : ""}
+                    {item.totalSize
+                      ? ` — ${humanize.fileSize(item.totalSize)}`
+                      : ""}
                   </div>
               : t("grid.item.queued")}
           <div className="filler" />

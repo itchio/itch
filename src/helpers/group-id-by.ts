@@ -10,6 +10,10 @@ interface IGrouped {
   [key: string]: string[];
 }
 
+interface IGetter<T> {
+  (x: T): string;
+}
+
 const emptyArr = [];
 
 /**
@@ -18,23 +22,25 @@ const emptyArr = [];
  * This will give:
  *   {"10": [1], "20": [2, 3]}
  */
-export default function groupIdBy(
+export default function groupIdBy<T>(
   records: IRecordMap | IRecord[],
-  field: string,
+  field: string | IGetter<T>,
 ): IGrouped {
   const result: IGrouped = {};
+
+  const getter = typeof field === "string" ? o => o[field] : field;
 
   if (!records) {
     // muffin
   } else if (Array.isArray(records)) {
     for (const record of records) {
-      const index = record[field];
+      const index = getter(record);
       result[index] = [...(result[index] || emptyArr), record.id];
     }
   } else {
     for (const recordKey of Object.keys(records)) {
       const record = records[recordKey];
-      const index = record[field];
+      const index = getter(record);
       result[index] = [...(result[index] || emptyArr), record.id];
     }
   }

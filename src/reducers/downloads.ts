@@ -17,7 +17,8 @@ import * as actions from "../actions";
 const SPEED_DATA_POINT_COUNT = 60;
 
 const selector = createStructuredSelector({
-  itemIdsByGameId: (state: IDownloadsState) => groupIdBy(state.items, "gameId"),
+  itemIdsByGameId: (state: IDownloadsState) =>
+    groupIdBy<IDownloadItem>(state.items, i => String(i.game && i.game.id)),
 });
 
 const baseInitialState = {

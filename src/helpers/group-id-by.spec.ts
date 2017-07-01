@@ -27,6 +27,15 @@ suite(__filename, s => {
     );
 
     t.same(
+      groupIdBy<typeof items[0]>(items, o => String(o.gameId * 10)),
+      {
+        110: [1],
+        440: [4],
+        770: [7, 77],
+      } as any,
+    );
+
+    t.same(
       groupIdBy(items, "id"),
       {
         1: [1],

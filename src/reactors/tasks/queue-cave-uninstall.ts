@@ -6,6 +6,7 @@ import { IQueueCaveUninstallPayload } from "../../constants/action-types";
 import { currentRuntime } from "../../os/runtime";
 
 import * as paths from "../../os/paths";
+import * as sf from "../../os/sf";
 
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
@@ -63,6 +64,9 @@ export async function queueUninstall(
 
     logger.info(`Uninstall successful, imploding cave`);
     ctx.db.deleteEntity("caves", caveId);
+
+    logger.info(`And wiping archive`);
+    await sf.wipe(archivePath);
   } catch (e) {
     const response = await promisedModal(ctx.store, {
       title: ["preferences.advanced.clear_browsing_data"],
