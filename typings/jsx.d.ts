@@ -6,6 +6,7 @@ interface WebViewProps {
   preload?: string;
   plugins?: string;
   partition?: string;
+  sandbox?: boolean;
   ref?: (wv: Electron.WebviewTag) => void;
 }
 

@@ -35,6 +35,8 @@ function autoUpdateDone() {
     app.disableHardwareAcceleration();
   }
 
+  app.enableMixedSandbox();
+
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
   }

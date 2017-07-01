@@ -96,10 +96,9 @@ export default function create(
 			 * We can safely use win in this case as it refers to the window the
 			 * context-menu should open in.
 			 * When this is being called from a webView, we can't use win as this
-			 * would refere to the webView which is not allowed to render a popup menu.
+			 * would refer to the webView which is not allowed to render a popup menu.
 			 */
-      // electron 1.6.2 accepts an opts object - typings aren't up-to-date yet
-      (menu.popup as any)(
+      menu.popup(
         (electron.remote ? electron.remote.getCurrentWindow() : wv) as any,
         { async: true },
       );

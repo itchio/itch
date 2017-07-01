@@ -48,9 +48,7 @@ import "electron";
 
 import styled, * as styles from "./styles";
 
-const BrowserMeatContainer = styled.div`
-  ${styles.meat()}
-`;
+const BrowserMeatContainer = styled.div`${styles.meat()};`;
 
 const BrowserMain = styled.div`
   flex-grow: 1;
@@ -77,7 +75,8 @@ const WebviewShell = styled.div`
     background-repeat: no-repeat;
   }
 
-  &, webview {
+  &,
+  webview {
     display: flex;
     flex: 1 1;
   }
@@ -474,6 +473,7 @@ export class BrowserMeat extends React.PureComponent<
                   preload={getInjectPath("itchio")}
                   src="about:blank"
                   ref={wv => (this.webview = wv)}
+                  sandbox={true}
                 />}
           </WebviewShell>
         </BrowserMain>
