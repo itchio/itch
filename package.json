@@ -142,7 +142,7 @@
     "core-js": "^2.4.1",
     "cross-env": "^5.0.0",
     "debounce-collect": "^1.0.2",
-    "electron": "1.7.3",
+    "electron": "^1.7.4",
     "electron-compilers-ftl": "^5.9.4",
     "electron-rebuild-ftl": "^1.5.11",
     "husky": "^0.14.0",
