@@ -27,7 +27,6 @@ class TimeAgo extends React.PureComponent<IProps & I18nProps, void> {
       return <span />;
     }
 
-    // pass empty title to ReactTimeAgo on purpose so we don't have double tooltip on hover
     return (
       <span>
         <ReactTimeAgo locale={t.lang}>

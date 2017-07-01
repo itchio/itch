@@ -3,6 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { indexBy, map, last, omit } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
 import {
+  getActiveDownload,
   getPendingDownloads,
   excludeGame,
 } from "../reactors/downloads/getters";
@@ -103,7 +104,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
 
   on(actions.prioritizeDownload, (state, action) => {
     const { id } = action.payload;
-    const { activeDownload } = selector(state);
+    const activeDownload = getActiveDownload(state);
 
     if (!activeDownload || activeDownload.id === id) {
       // either no downloads, or only one. nothing to prioritize!
