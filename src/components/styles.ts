@@ -129,7 +129,10 @@ const {
   injectGlobal,
   keyframes,
   ThemeProvider,
-} = styledComponents as ThemedStyledComponentsModule<ITheme>;
+} = (styledComponents as any) as ThemedStyledComponentsModule<ITheme>;
+// this tiny workaround brought to you by
+// this line in the styled-components typings:
+// export const ThemeProvider: ThemeProviderComponent<object>;
 
 export default styled;
 export { css, injectGlobal, keyframes, ThemeProvider };

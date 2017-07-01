@@ -12,6 +12,7 @@ import getByIds from "../helpers/get-by-ids";
 import {
   AutoSizer,
   Table,
+  TableProps,
   Column,
   TableCellProps,
   IndexRange,
@@ -26,13 +27,16 @@ import gameTableRowRenderer, {
 } from "./game-table-row-renderer";
 
 import TimeAgo from "./basics/time-ago";
-import Cover from "./basics/cover";
+import Cover, * as cover from "./basics/cover";
 import Hoverable from "./basics/hover-hoc";
 import HiddenIndicator from "./hidden-indicator";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
-const HoverCover = Hoverable(Cover);
+// nasty workaround there, but hey it makes us happy.
+const HoverCover = Hoverable(Cover) as React.ComponentClass<
+  Partial<cover.IProps>
+>;
 
 import { whenClickNavigates } from "./when-click-navigates";
 
@@ -51,7 +55,7 @@ interface ICellDataGetter {
   rowData: any;
 }
 
-const StyledTable = styled(Table)`
+const StyledTable = (styled(Table as any)`
   font-size: ${props => props.theme.fontSizes.large};
 
   .ReactVirtualized__Grid {
@@ -100,7 +104,7 @@ const StyledTable = styled(Table)`
   .ReactVirtualized__Table__sortableHeaderIcon {
     transform: translateX(50%) scale(2, 2);
   }
-`;
+` as any) as React.ComponentClass<TableProps>;
 
 const TitleColumnDiv = styled.div`line-height: 1.4;`;
 

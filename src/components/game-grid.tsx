@@ -10,11 +10,11 @@ import HiddenIndicator from "./hidden-indicator";
 
 import { IGame } from "../db/models/game";
 
-import { AutoSizer, Grid, SectionRenderedParams } from "react-virtualized";
+import { AutoSizer, SectionRenderedParams } from "react-virtualized";
 import { IAutoSizerParams } from "./autosizer-types";
 
 import { HubGamesDiv } from "./games";
-import styled from "./styles";
+import StyledGrid from "./styled-grid";
 
 interface ICellInfo {
   columnIndex: number;
@@ -27,10 +27,6 @@ interface ILayoutInfo {
   columnCount: number;
   games: IGame[];
 }
-
-const StyledGrid = styled(Grid)`
-  outline: none;
-`;
 
 class GameGrid extends React.PureComponent<
   IProps & IDerivedProps & I18nProps,

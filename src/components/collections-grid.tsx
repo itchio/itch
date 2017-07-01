@@ -7,11 +7,12 @@ import CollectionRow from "./collection-row";
 
 import { IAppState, ITabData, IGameSet } from "../types";
 
-import { AutoSizer, Grid } from "react-virtualized";
+import { AutoSizer } from "react-virtualized";
 
 import { values } from "underscore";
 
 import styled from "./styles";
+import StyledGrid from "./styled-grid";
 
 interface ICellInfo {
   columnIndex: number;
@@ -23,11 +24,6 @@ interface ICellInfo {
 const tab = "collections";
 
 const HubCollectionsGrid = styled.div`flex-grow: 1;`;
-
-// woo typings
-const StyledGrid = (styled(Grid as any)`
-  outline: none;
-` as any) as typeof Grid;
 
 export class CollectionsGrid extends React.PureComponent<
   IProps & IDerivedProps & I18nProps,
