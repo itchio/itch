@@ -14,6 +14,10 @@ import IconButton from "../basics/icon-button";
 import styled, * as styles from "../styles";
 import { darken } from "polished";
 
+const UnshrinkableIconButton = styled(IconButton)`
+  flex-shrink: 0;
+`;
+
 const ItemHeading = styled.div`
   ${styles.singleLine()};
   padding: .2em 0;
@@ -202,7 +206,10 @@ class Item extends React.PureComponent<IProps, IState> {
               </ProgressOuter>
             : null}
           {onClose
-            ? <IconButton icon="cross" onClick={this.onCloseClick} />
+            ? <UnshrinkableIconButton
+                icon="cross"
+                onClick={this.onCloseClick}
+              />
             : null}
         </Row>
       </ItemDiv>
