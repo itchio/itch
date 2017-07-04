@@ -1,4 +1,4 @@
-import { Fetcher } from "./types";
+import { Fetcher, FetchReason } from "./types";
 import { QueryInterface } from "../db/querier";
 
 import { addSortAndFilterToQuery } from "./sort-and-filter";
@@ -8,9 +8,10 @@ import { downloadKey } from "../api/schemas";
 
 import { arrayOf } from "idealizr";
 
-import { pluck, indexBy } from "underscore";
+import { indexBy } from "underscore";
 
 const emptyObj = {} as any;
+const emptyArr = [] as any;
 
 export default class LibraryFetcher extends Fetcher {
   async work(): Promise<void> {
@@ -48,6 +49,7 @@ export default class LibraryFetcher extends Fetcher {
 
     const tabPagination = session.tabPagination[this.tabId] || emptyObj;
     let { offset = 0, limit = 30 } = tabPagination;
+    this.logger.warn(`fetching offset ${offset}, limit ${limit}`);
 
     const { libraryGameIds } = commons;
 
@@ -59,17 +61,34 @@ export default class LibraryFetcher extends Fetcher {
       );
 
     const totalCount = libraryGameIds.length;
-    const games = db.games.all(k =>
+    const range = db.games.all(k =>
       doQuery(k).offset(offset).limit(limit).select("games.*"),
     );
-    const gamesCount = db.games.count(k => doQuery(k));
+
+    const oldData = session.tabData[this.tabId] || emptyObj;
+    const gameIds = [...(oldData.gameIds || emptyArr)];
+
+    if (this.reason === FetchReason.TabPaginationChanged && oldData.gameIds) {
+      gameIds.length = oldData.gameIds.length;
+    } else {
+      gameIds.length = db.games.count(k => doQuery(k));
+    }
+
+    for (let i = 0; i < range.length; i++) {
+      gameIds[i + offset] = range[i].id;
+    }
+
+    const games = {
+      ...oldData.games || emptyObj,
+      ...indexBy(range, "id"),
+    };
 
     this.push({
-      games: indexBy(games, "id"),
-      gameIds: pluck(games, "id"),
-      gamesCount,
-      gamesOffset: offset,
-      hiddenCount: totalCount - gamesCount,
+      games,
+      gameIds,
+      hiddenCount: totalCount - gameIds.length,
+      offset,
+      limit,
     });
   }
 }

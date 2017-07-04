@@ -19,7 +19,27 @@ export default reducer<ITabDataSet>(initialState, on => {
 
     return {
       ...state,
-      [id]: { ...oldData, ...data },
+      [id]: {
+        ...oldData,
+        ...data,
+      },
+    };
+  });
+
+  on(actions.tabParamsChanged, (state, action) => {
+    const { id } = action.payload;
+    const oldData = state[id];
+    if (!oldData) {
+      // ignore fresh data for closed tabs
+      return state;
+    }
+
+    return {
+      ...state,
+      [id]: {
+        ...oldData,
+        gameIds: (oldData.gameIds || []).map(x => undefined),
+      },
     };
   });
 

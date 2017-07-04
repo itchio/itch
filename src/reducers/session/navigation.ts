@@ -115,7 +115,7 @@ export default reducer<ISessionNavigationState>(initialState, on => {
       return state;
     }
 
-    const ids = constant.concat(transient);
+    const ids = [...constant, ...transient];
     const index = ids.indexOf(id);
 
     const newTransient = reject(transient, tabId => tabId === closeId);

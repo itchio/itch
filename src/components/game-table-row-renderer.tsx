@@ -43,11 +43,24 @@ export default function defaultRowRenderer(params: IRowRendererParams) {
 
   if (onRowClick || onRowDoubleClick || onRowMouseOver || onRowMouseOut) {
     if (onRowClick) {
-      // sic.: we'd do the proper thing here and add a field named differently
-      // but then typescript flips it shit and says proprety `onRowMouseUp` doesn't exist.
-      // oh well.
-      props.onMouseUp = (e: React.MouseEvent<any>) =>
+      props.onClick = (e: React.MouseEvent<any>) =>
         onRowClick({ e, index, rowData });
+
+      // `onClick` doesn't get us middle clicks, which we want.
+      props.onMouseDown = (e: React.MouseEvent<any>) => {
+        if (e.button === 1) {
+          e.preventDefault();
+
+          // middle-click
+          onRowClick({ e, index, rowData });
+        }
+      };
+
+      // and this gets us right clicks
+      props.onContextMenu = (e: React.MouseEvent<any>) => {
+        // middle-click
+        onRowClick({ e: { ...e, button: 2 }, index, rowData });
+      };
     }
     if (onRowDoubleClick) {
       props.onDoubleClick = (e: React.MouseEvent<any>) =>
