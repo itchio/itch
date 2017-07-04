@@ -4,6 +4,9 @@ import { DateTimeField } from "../datetime-field";
 
 import { PathScheme } from "../../os/paths";
 
+import { IUpload } from "../../types";
+import { IConfigureResult } from "../../util/butler";
+
 const CaveModelOriginal = {
   table: "caves",
   primaryKey: "id",
@@ -71,7 +74,7 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   externalGameId: number;
 
   /** itch.io upload currently installed */
-  upload: JSONField;
+  upload: JSONField<IUpload>;
 
   /**
    * identifier of itch.io / wharf build currently installed.
@@ -120,5 +123,5 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   pathScheme: PathScheme;
 
   /** result of the configure step */
-  verdict: JSONField;
+  verdict: JSONField<IConfigureResult>;
 }

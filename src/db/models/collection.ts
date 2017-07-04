@@ -42,7 +42,7 @@ export interface ICollection {
   gamesCount: number;
 
   /** the list of identifiers for games that belong to that collection */
-  gameIds: JSONField;
+  gameIds: JSONField<number[]>;
 
   /** the creator of this collection */
   userId: number;

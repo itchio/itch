@@ -10,7 +10,7 @@ import isHeal from "./is-heal";
 
 import { fromJSONField } from "../../db/json-field";
 
-import { IDownloadItem, IDownloadResult } from "../../types";
+import { IDownloadItem, IDownloadResult, IUpload } from "../../types";
 import Context from "../../context";
 
 export default async function performDownload(
@@ -76,7 +76,7 @@ export default async function performDownload(
 
     ctx.db.saveOne("caves", cave.id, {
       upload: {
-        ...fromJSONField(cave.upload),
+        ...fromJSONField<IUpload>(cave.upload),
         buildId,
       },
       buildId,

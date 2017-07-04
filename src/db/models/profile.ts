@@ -21,5 +21,5 @@ export interface IProfile {
   /** the itch.io user id associated with this profile */
   id: number;
 
-  myGameIds: JSONField;
+  myGameIds: JSONField<number[]>;
 }
