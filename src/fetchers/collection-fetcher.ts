@@ -20,8 +20,8 @@ export default class CollectionFetcher extends Fetcher {
     const { db } = this.ctx;
 
     if (this.hasGames() && !this.warrantsRemote(this.reason)) {
-      const { games, gameIds, gamesCount } = this.tabData();
-      await this.pushGames(games, gameIds, gamesCount);
+      const { games, gameIds } = this.tabData();
+      await this.pushGames(games, gameIds);
       return;
     }
 
@@ -43,11 +43,7 @@ export default class CollectionFetcher extends Fetcher {
       );
 
       const localGames = db.games.all(k => k.select().whereIn("id", gameIds));
-      await this.pushGames(
-        indexBy(localGames, "id"),
-        gameIds,
-        localCollection.gamesCount,
-      );
+      await this.pushGames(indexBy(localGames, "id"), gameIds);
     }
 
     let normalized;
@@ -77,7 +73,7 @@ export default class CollectionFetcher extends Fetcher {
     const remoteGames = normalized.entities.games;
     const remoteGameIds: number[] = normalized.result.gameIds;
 
-    this.pushGames(remoteGames, remoteGameIds, remoteCollection.gamesCount);
+    this.pushGames(remoteGames, remoteGameIds);
   }
 
   hasGames(): boolean {
@@ -85,7 +81,7 @@ export default class CollectionFetcher extends Fetcher {
     return gameIds.length > 0;
   }
 
-  async pushGames(games: IGameSet, gameIds: number[], gamesCount: number) {
+  async pushGames(games: IGameSet, gameIds: number[]) {
     const sortedGames = sortAndFilter(
       getByIds(games, gameIds),
       this.tabId,
@@ -95,8 +91,6 @@ export default class CollectionFetcher extends Fetcher {
     this.push({
       games: games,
       gameIds: pluck(sortedGames, "id"),
-      gamesOffset: 0,
-      gamesCount: sortedGames.length,
     });
   }
 }

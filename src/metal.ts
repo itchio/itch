@@ -35,7 +35,12 @@ function autoUpdateDone() {
     app.disableHardwareAcceleration();
   }
 
-  app.enableMixedSandbox();
+  // devtools don't work with mixed sandbox mode -
+  // enable it only in production and only when the
+  // `DEVTOOLS` environment variable is not specified
+  if (env.name === "production" && isNaN(parseInt(process.env.DEVTOOLS, 10))) {
+    app.enableMixedSandbox();
+  }
 
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");

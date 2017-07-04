@@ -2,7 +2,7 @@ import { css } from "../styles";
 
 export default css`
   ::-webkit-scrollbar {
-    width: 10px;
+    width: 16px;
   }
 
   ::-webkit-scrollbar-track {

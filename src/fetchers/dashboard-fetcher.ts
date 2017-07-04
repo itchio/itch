@@ -52,8 +52,6 @@ export default class DashboardFetcher extends Fetcher {
     this.push({
       games: indexBy(games, "id"),
       gameIds: pluck(games, "id"),
-      gamesCount,
-      gamesOffset: offset,
       hiddenCount: totalCount - gamesCount,
     });
   }

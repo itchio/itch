@@ -22,7 +22,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.navigate, async (store, action) => {
     const state = store.getState();
-    const { id } = action.payload;
+    const { id, background } = action.payload;
 
     const { tabData } = state.session;
 
@@ -32,25 +32,31 @@ export default function(watcher: Watcher) {
 
     if (constantTabs.has(id)) {
       // switching to constant tab, that's good
-      store.dispatch(actions.focusTab({ id }));
+      if (!background) {
+        store.dispatch(actions.focusTab({ id }));
+      }
       return;
     }
 
     if (tabData[id]) {
       // switching to existing tab by id - that's fine
-      store.dispatch(actions.focusTab({ id }));
+      if (!background) {
+        store.dispatch(actions.focusTab({ id }));
+      }
       return;
     }
 
     for (const tabId of Object.keys(tabData)) {
       if (tabData[tabId].path === id) {
         // switching by path is cool
-        store.dispatch(actions.focusTab({ id: tabId }));
+        if (!background) {
+          store.dispatch(actions.focusTab({ id: tabId }));
+        }
         return;
       }
     }
 
-    const { data, background } = action.payload;
+    const { data } = action.payload;
 
     // must be a new tab then!
     if (staticTabData[id]) {

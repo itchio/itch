@@ -14,6 +14,10 @@ import IconButton from "../basics/icon-button";
 import styled, * as styles from "../styles";
 import { darken } from "polished";
 
+const UnshrinkableIconButton = styled(IconButton)`
+  flex-shrink: 0;
+`;
+
 const ItemHeading = styled.div`
   ${styles.singleLine()};
   padding: .2em 0;
@@ -87,13 +91,12 @@ const IconContainer = styled.div`
 `;
 
 const ProgressOuter = styled.div`
-  ${styles.progress()}
-
-  width: 60px;
+  ${styles.progress()} width: 60px;
   height: 4px;
   margin: 4px 0 2px 10px;
 
-  &, .progress-inner {
+  &,
+  .progress-inner {
     border-radius: 4px;
   }
 
@@ -121,18 +124,20 @@ class Item extends React.PureComponent<IProps, IState> {
     };
   }
 
+  onClick = (e: React.MouseEvent<HTMLElement>) => {
+    // left (normal) click
+    const { onClick } = this.props;
+    if (onClick) {
+      onClick();
+    }
+  };
+
   onMouseUp = (e: React.MouseEvent<HTMLElement>) => {
     if (e.button === 1) {
       // middle click
       const { onClose } = this.props;
       if (onClose) {
         onClose();
-      }
-    } else if (e.button === 0) {
-      // left (normal) click
-      const { onClick } = this.props;
-      if (onClick) {
-        onClick();
       }
     }
   };
@@ -171,6 +176,7 @@ class Item extends React.PureComponent<IProps, IState> {
         className={classNames({ active, fresh })}
         data-rh-at="bottom"
         data-rh={t.format(sublabel)}
+        onClick={this.onClick}
         onMouseUp={this.onMouseUp}
         onContextMenu={onContextMenu}
         data-path={path}
@@ -185,8 +191,14 @@ class Item extends React.PureComponent<IProps, IState> {
                 ? <img className="icon-image" src={this.props.iconImage} />
                 : <Icon icon={this.props.icon || "tag"} />}
           </IconContainer>
-          <ItemHeading>{t.format(label)}</ItemHeading>
-          {count > 0 ? <Bubble>{count}</Bubble> : null}
+          <ItemHeading>
+            {t.format(label)}
+          </ItemHeading>
+          {count > 0
+            ? <Bubble>
+                {count}
+              </Bubble>
+            : null}
           <Filler />
           {progress > 0
             ? <ProgressOuter>
@@ -194,7 +206,10 @@ class Item extends React.PureComponent<IProps, IState> {
               </ProgressOuter>
             : null}
           {onClose
-            ? <IconButton icon="cross" onClick={this.onCloseClick} />
+            ? <UnshrinkableIconButton
+                icon="cross"
+                onClick={this.onCloseClick}
+              />
             : null}
         </Row>
       </ItemDiv>

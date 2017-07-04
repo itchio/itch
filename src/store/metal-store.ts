@@ -47,12 +47,21 @@ if (beChatty) {
         !/^WINDOW_/.test(action.type) &&
         !/_DB_/.test(action.type) &&
         !/LOCALE_/.test(action.type) &&
-        !/_FETCHED$/.test(action.type) &&
         !/_DATAPOINT$/.test(action.type) &&
         action.type !== "TASK_PROGRESS"
       );
     },
     stateTransformer: (state: any) => "",
+    actionTransformer: (action: any) => {
+      if (/_FETCHED$/.test(action.type)) {
+        return {
+          type: action.type,
+          payload: { redacted: "true" },
+        };
+      } else {
+        return action;
+      }
+    },
   });
 
   middleware.push(logger);

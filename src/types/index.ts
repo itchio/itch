@@ -143,12 +143,12 @@ export interface ITabData {
 
   /** games in relation to this tab (single game, games in a collection) */
   games?: IGameSet;
-
-  gamesCount?: number;
-  gamesOffset?: number;
-  hiddenCount?: number;
-
   gameIds?: number[];
+
+  offset?: number;
+  limit?: number;
+
+  hiddenCount?: number;
 
   downloadKeys?: IDownloadKeysMap;
 

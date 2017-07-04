@@ -6,7 +6,6 @@ import { connect, I18nProps } from "./connect";
 import { dispatcher, multiDispatcher } from "../constants/action-types";
 import * as actions from "../actions";
 
-import { IGame } from "../db/models/game";
 import getByIds from "../helpers/get-by-ids";
 
 import {
@@ -15,12 +14,11 @@ import {
   TableProps,
   Column,
   TableCellProps,
-  IndexRange,
-  OverscanIndexRange,
+  InfiniteLoader,
 } from "react-virtualized";
 import { IOnSortChange, SortDirection, SortKey } from "./sort-types";
 
-import { ICommonsState } from "../types";
+import { ICommonsState, IGameSet } from "../types";
 
 import gameTableRowRenderer, {
   IRowHandlerParams,
@@ -43,7 +41,8 @@ import { whenClickNavigates } from "./when-click-navigates";
 import { HubGamesDiv } from "./games";
 import styled, * as styles from "./styles";
 import { css } from "./styles";
-import { darken } from "polished";
+
+import { Requester } from "./data-request";
 
 interface IRowGetterParams {
   index: number;
@@ -55,56 +54,15 @@ interface ICellDataGetter {
   rowData: any;
 }
 
+import { tableStyles } from "./table-styles";
+
 const StyledTable = (styled(Table as any)`
-  font-size: ${props => props.theme.fontSizes.large};
-
-  .ReactVirtualized__Grid {
-    outline: none;
+  ${tableStyles()}
+` as any) as React.ComponentClass<
+  TableProps & {
+    innerRef?: (c: any) => void;
   }
-
-  .ReactVirtualized__Table__headerRow {
-    text-transform: initial;
-    font-weight: normal;
-    font-size: 90%;
-    background: rgba(0, 0, 0, 0.3);
-  }
-
-  .ReactVirtualized__Table__row,
-  .ReactVirtualized__Table__headerRow {
-    border-left: 2px solid transparent;
-  }
-
-  .ReactVirtualized__Table__row {
-    background-color: ${props => props.theme.meatBackground};
-    outline: 0;
-
-    &:hover {
-      background-color: ${props => darken(0.05, props.theme.meatBackground)};
-      border-color: ${props => props.theme.accent};
-      cursor: pointer;
-    }
-  }
-
-  .ReactVirtualized__Table__sortableHeaderColumn {
-    height: 100%;
-    padding: 12px 0;
-
-    outline: 0;
-  }
-
-  .ReactVirtualized__Table__rowColumn {
-    position: relative;
-
-    &.secondary {
-      font-size: 90%;
-      color: ${props => props.theme.secondaryText};
-    }
-  }
-
-  .ReactVirtualized__Table__sortableHeaderIcon {
-    transform: translateX(50%) scale(2, 2);
-  }
-` as any) as React.ComponentClass<TableProps>;
+>;
 
 const TitleColumnDiv = styled.div`line-height: 1.4;`;
 
@@ -147,12 +105,28 @@ class GameTable extends React.PureComponent<
   IProps & IDerivedProps & I18nProps,
   IGameTableState
 > {
+  infiniteLoader: InfiniteLoader;
+  onRowsRendered: ({ startIndex, stopIndex }) => void;
+  lastStartIndex = 0;
+  lastStopIndex = 0;
+  requester = new Requester();
+
   constructor() {
     super();
 
     this.state = {
       scrollTop: 0,
     };
+  }
+
+  componentDidUpdate(prevProps: IProps & IDerivedProps) {
+    const { offset, limit } = this.props;
+    this.requester.update(offset, limit);
+
+    this.onRowsRendered({
+      startIndex: this.lastStartIndex,
+      stopIndex: this.lastStopIndex,
+    });
   }
 
   onRowClick = (params: IRowHandlerParams) => {
@@ -183,7 +157,7 @@ class GameTable extends React.PureComponent<
   rowGetter = (params: IRowGetterParams): any => {
     const { index } = params;
 
-    return this.props.games[index - this.props.gamesOffset];
+    return this.props.games[this.props.gameIds[index]];
   };
 
   genericDataGetter = (params: ICellDataGetter): any => {
@@ -289,16 +263,6 @@ class GameTable extends React.PureComponent<
     }
   };
 
-  onRowsRendered = (info: IndexRange & OverscanIndexRange) => {
-    this.props.tabPaginationChanged({
-      id: this.props.tab,
-      pagination: {
-        offset: info.overscanStartIndex,
-        limit: info.overscanStopIndex - info.overscanStartIndex + 1,
-      },
-    });
-  };
-
   render() {
     const { tab, hiddenCount } = this.props;
 
@@ -313,6 +277,23 @@ class GameTable extends React.PureComponent<
       </HubGamesDiv>
     );
   }
+
+  isRowLoaded = ({ index }) => {
+    return !!this.props.games[this.props.gameIds[index]];
+  };
+
+  loadMoreRows = ({ startIndex, stopIndex }): Promise<void> => {
+    const offset = startIndex;
+    const limit = stopIndex + 1 - startIndex;
+    this.props.tabPaginationChanged({
+      id: this.props.tab,
+      pagination: {
+        offset,
+        limit,
+      },
+    });
+    return this.requester.add(offset, limit);
+  };
 
   renderWithSize = ({ width, height }) => {
     const { t } = this.props;
@@ -331,74 +312,96 @@ class GameTable extends React.PureComponent<
     remainingWidth -= lastPlayedWidth;
 
     const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
-    const { gamesCount = 0, sortBy, sortDirection } = this.props;
+    const { sortBy, sortDirection, gameIds } = this.props;
+    const gamesCount = gameIds.length;
 
     return (
-      <StyledTable
-        headerHeight={35}
-        height={height}
-        width={width}
+      <InfiniteLoader
+        ref={il => {
+          this.infiniteLoader = il;
+        }}
+        isRowLoaded={this.isRowLoaded}
+        loadMoreRows={this.loadMoreRows}
         rowCount={gamesCount}
-        rowHeight={75}
-        rowGetter={this.rowGetter}
-        onRowClick={this.onRowClick}
-        scrollTop={scrollTop}
-        sort={this.props.onSortChange}
-        sortBy={sortBy}
-        sortDirection={sortDirection}
-        rowRenderer={gameTableRowRenderer}
-        onRowsRendered={this.onRowsRendered}
-        overscanRowCount={0}
+        minimumBatchSize={40}
       >
-        <Column
-          dataKey="cover"
-          width={coverWidth}
-          cellDataGetter={this.genericDataGetter}
-          cellRenderer={this.coverRenderer}
-          disableSort={true}
-        />
+        {({ registerChild, onRowsRendered }) => {
+          this.onRowsRendered = onRowsRendered;
+          return (
+            <StyledTable
+              innerRef={registerChild}
+              headerHeight={35}
+              height={height}
+              width={width}
+              rowCount={gamesCount}
+              rowHeight={75}
+              rowGetter={this.rowGetter}
+              onRowClick={this.onRowClick}
+              scrollTop={scrollTop}
+              sort={this.props.onSortChange}
+              sortBy={sortBy}
+              sortDirection={sortDirection}
+              rowRenderer={gameTableRowRenderer}
+              onRowsRendered={data => {
+                onRowsRendered(data);
+                this.lastStartIndex = data.startIndex;
+                this.lastStopIndex = data.stopIndex;
+              }}
+              overscanRowCount={0}
+            >
+              <Column
+                dataKey="cover"
+                width={coverWidth}
+                cellDataGetter={this.genericDataGetter}
+                cellRenderer={this.coverRenderer}
+                disableSort={true}
+              />
 
-        <Column
-          dataKey="title"
-          label={t("table.column.name")}
-          width={remainingWidth}
-          cellDataGetter={this.genericDataGetter}
-          cellRenderer={this.titleRenderer}
-        />
-        <Column
-          dataKey="secondsRun"
-          label={t("table.column.play_time")}
-          width={playtimeWidth}
-          className="secondary"
-          cellDataGetter={this.genericDataGetter}
-          cellRenderer={this.playtimeRenderer}
-        />
-        <Column
-          dataKey="lastTouchedAt"
-          label={t("table.column.last_played")}
-          width={lastPlayedWidth}
-          className="secondary"
-          cellDataGetter={this.genericDataGetter}
-          cellRenderer={this.lastPlayedRenderer}
-        />
-        <Column
-          dataKey="publishedAt"
-          label={t("table.column.published")}
-          width={publishedWidth}
-          className="secondary"
-          cellDataGetter={this.genericDataGetter}
-          cellRenderer={this.publishedAtRenderer}
-        />
-      </StyledTable>
+              <Column
+                dataKey="title"
+                label={t("table.column.name")}
+                width={remainingWidth}
+                cellDataGetter={this.genericDataGetter}
+                cellRenderer={this.titleRenderer}
+              />
+              <Column
+                dataKey="secondsRun"
+                label={t("table.column.play_time")}
+                width={playtimeWidth}
+                className="secondary"
+                cellDataGetter={this.genericDataGetter}
+                cellRenderer={this.playtimeRenderer}
+              />
+              <Column
+                dataKey="lastTouchedAt"
+                label={t("table.column.last_played")}
+                width={lastPlayedWidth}
+                className="secondary"
+                cellDataGetter={this.genericDataGetter}
+                cellRenderer={this.lastPlayedRenderer}
+              />
+              <Column
+                dataKey="publishedAt"
+                label={t("table.column.published")}
+                width={publishedWidth}
+                className="secondary"
+                cellDataGetter={this.genericDataGetter}
+                cellRenderer={this.publishedAtRenderer}
+              />
+            </StyledTable>
+          );
+        }}
+      </InfiniteLoader>
     );
   };
 }
 
 interface IProps {
   // specified
-  games: IGame[];
-  gamesCount: number;
-  gamesOffset: number;
+  games: IGameSet;
+  gameIds: number[];
+  offset: number;
+  limit: number;
   hiddenCount: number;
   tab: string;
 

@@ -2,8 +2,7 @@ import * as React from "react";
 import { connect, I18nProps } from "./connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
-import { IAppState, TabLayout, ITabParams } from "../types";
-import { IGame } from "../db/models/game";
+import { IAppState, TabLayout, ITabParams, ITabData, IGameSet } from "../types";
 
 import GameGrid from "./game-grid";
 import GameTable from "./game-table";
@@ -41,9 +40,10 @@ class Games extends React.PureComponent<
 
   render() {
     const {
-      games,
-      gamesCount,
-      gamesOffset,
+      games = {},
+      gameIds = [],
+      offset,
+      limit,
       hiddenCount,
       tab,
       params,
@@ -55,8 +55,9 @@ class Games extends React.PureComponent<
       return (
         <GameGrid
           games={games}
-          gamesCount={gamesCount}
-          gamesOffset={gamesOffset}
+          gameIds={gameIds}
+          offset={offset}
+          limit={limit}
           hiddenCount={hiddenCount}
           tab={tab}
         />
@@ -65,8 +66,9 @@ class Games extends React.PureComponent<
       return (
         <GameTable
           games={games}
-          gamesCount={gamesCount}
-          gamesOffset={gamesOffset}
+          gameIds={gameIds}
+          offset={offset}
+          limit={limit}
           hiddenCount={hiddenCount}
           tab={tab}
           sortBy={sortBy}
@@ -89,9 +91,10 @@ interface IProps {
 }
 
 interface IDerivedProps {
-  games: IGame[];
-  gamesCount?: number;
-  gamesOffset?: number;
+  games: IGameSet;
+  gameIds: number[];
+  offset: number;
+  limit: number;
   hiddenCount?: number;
 
   layout: TabLayout;
@@ -101,7 +104,6 @@ interface IDerivedProps {
 }
 
 const emptyObj = {};
-const emptyArr = [];
 
 export default connect<IProps>(Games, {
   state: (initialState, initialProps) => {
@@ -111,17 +113,13 @@ export default connect<IProps>(Games, {
       (state: IAppState) => state.session.tabParams[tab] || emptyObj,
       (state: IAppState) => state.preferences.layout,
       createStructuredSelector({
-        // FIXME: this doesn't memoize like you think it would
-        games: (data, params, layout) => {
-          const games = data.games || emptyObj;
-          const gameIds = data.gameIds || emptyArr;
-          return gameIds.map(id => games[id]);
-        },
-        gamesCount: (data, params, layout) => data.gamesCount || 0,
-        gamesOffset: (data, params, layout) => data.gamesOffset || 0,
-        hiddenCount: (data, params, layout) => data.hiddenCount || 0,
-        layout: (data, params, layout) => layout,
-        params: (data, params, layout) => params,
+        gameIds: (data: ITabData, params, layout) => data.gameIds,
+        games: (data: ITabData, params, layout) => data.games,
+        offset: (data: ITabData, params, layout) => data.offset,
+        limit: (data: ITabData, params, layout) => data.limit,
+        hiddenCount: (data: ITabData, params, layout) => data.hiddenCount || 0,
+        layout: (data: ITabData, params, layout) => layout,
+        params: (data: ITabData, params, layout) => params,
       }),
     );
   },
