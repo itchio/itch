@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Main Process",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/src/main.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                "."
+            ],
+            "env": {},
+            "console": "integratedTerminal",
+            "sourceMaps": true,
+            "protocol": "inspector"
+        },
+        {
+            "name": "Renderer Process",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/src/main.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                ".",
+                "--remote-debugging-port=9222"
+            ],
+            "env": {},
+            "console": "integratedTerminal",
+            "sourceMaps": false,
+            "protocol": "inspector",
+            "port": 9222
+        }
+    ]
+}
