@@ -46,7 +46,7 @@ export default function defaultRowRenderer(params: IRowRendererParams) {
       // sic.: we'd do the proper thing here and add a field named differently
       // but then typescript flips it shit and says proprety `onRowMouseUp` doesn't exist.
       // oh well.
-      props.onMouseDown = (e: React.MouseEvent<any>) =>
+      props.onMouseUp = (e: React.MouseEvent<any>) =>
         onRowClick({ e, index, rowData });
     }
     if (onRowDoubleClick) {
