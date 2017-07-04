@@ -102,6 +102,7 @@ const UnderCover = styled.div`
     padding: .4em 0;
     margin: 0 0 4px 0;
     text-shadow: 0 0 1px ${props => props.theme.inputTextShadow};
+    max-width: 100%;
   }
 `;
 
