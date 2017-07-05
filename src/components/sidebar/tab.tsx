@@ -43,7 +43,6 @@ class Tab extends React.PureComponent<
 > {
   onClick = () => {
     const { id, navigate } = this.props;
-    console.log("onclick", id);
     navigate({ id });
   };
 
