@@ -24,7 +24,8 @@ export default class GameFetcher extends Fetcher {
     pushGame(localGame);
 
     const normalized = await this.withApi(async api => {
-      return normalize(await api.game(gameId), { game });
+      const apiGame = await api.game(gameId);
+      return normalize(apiGame, { game });
     });
     pushGame(normalized.entities.games[normalized.result.gameId]);
   }
