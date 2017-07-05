@@ -10,6 +10,6 @@ suite(__filename, s => {
     t.same(formatPrice("GBP", 1000), "£10.00");
     t.same(formatPrice("EUR", 2000), "20.00 €");
     t.same(formatPrice("JPY", 1500), "¥1500.00");
-    t.same(formatPrice("BLORGONS", 100), "???");
+    t.same(formatPrice("BLORGONS", 100), "$1.00");
   });
 });
