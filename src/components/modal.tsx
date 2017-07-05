@@ -4,6 +4,7 @@ import { createStructuredSelector } from "reselect";
 
 import ReactModal = require("react-modal");
 import Button from "./basics/button";
+import RowButton, { Tag } from "./basics/row-button";
 import IconButton from "./basics/icon-button";
 import Markdown from "./basics/markdown";
 import Filler from "./basics/filler";
@@ -95,7 +96,12 @@ const ModalDiv = styled.div`
       max-height: 380px;
       -webkit-user-select: initial;
 
-      h1, h2, h3, h4, h5, h6 {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
         margin-bottom: .4em;
         font-size: ${props => stripUnit(props.theme.fontSizes.baseText) + 2}px;
         font-weight: bold;
@@ -113,7 +119,7 @@ const ModalDiv = styled.div`
       p img {
         max-width: 100%;
       }
-      
+
       code {
         font-family: monospace;
       }
@@ -139,16 +145,18 @@ const ModalDiv = styled.div`
     padding: 10px 20px;
     flex-grow: 1;
 
-    input[type=number], input[type=text], input[type=password] {
+    input[type=number],
+    input[type=text],
+    input[type=password] {
       @include heavy-input;
       width: 100%;
     }
 
     input[type=number] {
-      &::-webkit-inner-spin-button, 
-      &::-webkit-outer-spin-button { 
-        -webkit-appearance: none; 
-        margin: 0; 
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
       }
     }
 
@@ -254,7 +262,8 @@ const ModalDiv = styled.div`
           -webkit-filter: brightness(110%);
         }
 
-        &, &.secondary {
+        &,
+        &.secondary {
           display: flex;
           align-items: center;
           margin: 8px 0;
@@ -307,6 +316,18 @@ const ButtonsDiv = styled.div`
 
   & > * {
     margin-left: 8px;
+  }
+`;
+
+const BigButtonsDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: 100%;
+  justify-content: stretch;
+
+  & > * {
+    margin-bottom: 12px;
   }
 `;
 
@@ -377,7 +398,9 @@ export class Modal extends React.PureComponent<
         <ReactModal isOpen contentLabel="Modal" style={customStyles}>
           <ModalDiv>
             <HeaderDiv>
-              <span className="title">{t.format(title)}</span>
+              <span className="title">
+                {t.format(title)}
+              </span>
               <Filler />
               {modal.unclosable
                 ? null
@@ -387,7 +410,9 @@ export class Modal extends React.PureComponent<
             {message !== ""
               ? <div className="body">
                   <div className="message">
-                    <div><Markdown source={t.format(message)} /></div>
+                    <div>
+                      <Markdown source={t.format(message)} />
+                    </div>
                     {detail &&
                       <div className="secondary">
                         <Markdown source={t.format(detail)} />
@@ -419,6 +444,52 @@ export class Modal extends React.PureComponent<
       return null;
     }
 
+    switch (flavor) {
+      case "big":
+        return this.renderBigButtons(buttons);
+      case "normal":
+        return this.renderNormalButtons(buttons);
+      default:
+        return <div>?</div>;
+    }
+  }
+
+  renderBigButtons(buttons: IModalButtonSpec[]) {
+    const { t } = this.props;
+
+    return (
+      <BigButtonsDiv>
+        {map(buttons, (buttonSpec, index) => {
+          const button = this.specToButton(buttonSpec);
+          const { label, className = "", icon, id, tags } = button;
+          let onClick = this.buttonOnClick(button);
+
+          return (
+            <RowButton
+              id={id}
+              className={className}
+              key={index}
+              icon={icon}
+              onClick={onClick}
+              label={t.format(label)}
+            >
+              {tags
+                ? map(tags, tag => {
+                    return (
+                      <Tag>
+                        {t.format(tag.label)}
+                      </Tag>
+                    );
+                  })
+                : null}
+            </RowButton>
+          );
+        })}
+      </BigButtonsDiv>
+    );
+  }
+
+  renderNormalButtons(buttons: IModalButtonSpec[]) {
     const { t } = this.props;
 
     return (
@@ -440,14 +511,6 @@ export class Modal extends React.PureComponent<
               label={t.format(label)}
             />
           );
-
-          // TODO: tags
-          /*{tags
-          ? map(tags, (tag) => {
-            return <span className="tag">{t.format(tag.label)}</span>;
-          })
-          : null
-        }*/
         })}
       </ButtonsDiv>
     );
@@ -492,7 +555,11 @@ export class Modal extends React.PureComponent<
       let Component = module.default as React.ComponentClass<IModalWidgetProps>;
       return <Component modal={modal} updatePayload={this.updatePayload} />;
     } catch (e) {
-      return <div>Missing widget: {widget} — ${e.message}</div>;
+      return (
+        <div>
+          Missing widget: {widget} — ${e.message}
+        </div>
+      );
     }
   }
 
