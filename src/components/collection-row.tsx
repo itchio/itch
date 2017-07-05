@@ -20,6 +20,11 @@ import { multiDispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
 
+const CoverDiv = styled.div`
+  background-size: cover;
+  background-position: 50% 50%;
+`;
+
 const CollectionRowDiv = styled.div`
   ${styles.inkContainer()} ${styles.hubItemStyle()};
 
@@ -103,7 +108,7 @@ export class CollectionRow extends React.PureComponent<
       if (coverUrl) {
         style.backgroundImage = `url('${coverUrl}')`;
       }
-      return <div key={index} className="cover" style={style} />;
+      return <CoverDiv key={index} className="cover" style={style} />;
     });
 
     const cols: JSX.Element[] = [];
