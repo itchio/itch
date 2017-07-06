@@ -311,7 +311,7 @@
     "sandbox.setup.linux.message": "Pour pouvoir vous protéger avec le bac à sable itch.io, un script de mise en place doit être exécuté en tant que super-utilisateur.",
     "sandbox.setup.linux.detail": "Après avoir choisi 'Continuer', un dialogue apparaitra, vous demandant votre mot de passe. Ceci n'est nécessaire que pour la première utilisation du bac à sable ou sa mise à jour et votre mot de passe n'est pas retenu par l'appli itch.",
     "prompt.action.force_close": "Fermer le programme",
-    "prompt.abort_game.title": "Fermeture forcée d'un programme",
+    "prompt.abort_game.title": "Forcer la fermeture du programme ?",
     "prompt.abort_game.message": "Voulez-vous forcer {{title}} à se fermer ?",
     "sidebar.close_all_tabs": "Fermer tous les onglets",
     "sidebar.itchio": "Votre portail sur l'univers du jeu indé",
