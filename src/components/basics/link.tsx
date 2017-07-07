@@ -25,7 +25,7 @@ class Link extends React.PureComponent<IProps> {
 
 class IProps {
   onClick?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
-  label?: string;
+  label?: string | JSX.Element;
 }
 
 export default Link;

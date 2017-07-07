@@ -334,13 +334,13 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   links() {
-    const { intl, stage, openUrl, loginStopPicking } = this.props;
+    const { stage, openUrl, loginStopPicking } = this.props;
 
     if (stage === "pick") {
       return (
         <section className="links">
           <Link
-            label={formatString(intl, ["login.action.show_form"])}
+            label={format(["login.action.show_form"])}
             onClick={() => loginStopPicking({})}
           />
         </section>
@@ -352,14 +352,14 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
       return (
         <section className="links">
           <Link
-            label={formatString(intl, ["login.action.register"])}
+            label={format(["login.action.register"])}
             onClick={() => openUrl({ url: urls.accountRegister })}
           />
           <span>
             {" · "}
           </span>
           <Link
-            label={formatString(intl, ["login.action.reset_password"])}
+            label={format(["login.action.reset_password"])}
             onClick={() => openUrl({ url: urls.accountForgotPassword })}
           />
           {numSavedSessions > 0
@@ -369,7 +369,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
                 </span>,
                 <Link
                   key="show-saved-logins"
-                  label={formatString(intl, ["login.action.show_saved_logins"])}
+                  label={format(["login.action.show_saved_logins"])}
                   onClick={this.onStartPicking}
                 />,
               ]
@@ -432,13 +432,13 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
                 <Button
                   discreet
                   icon="repeat"
-                  label={formatString(intl, ["login.action.retry_setup"])}
+                  label={format(["login.action.retry_setup"])}
                   onClick={() => retrySetup({})}
                 />
                 <Button
                   discreet
                   icon="bug"
-                  label={formatString(intl, ["grid.item.report_problem"])}
+                  label={format(["grid.item.report_problem"])}
                   onClick={this.onReportBlockingOperation}
                 />
               </div>
