@@ -4,6 +4,10 @@ import Layout from "./layout";
 import Modal from "./modal";
 
 import { ThemeProvider, theme } from "./styles";
+import { IntlProvider } from "react-intl";
+import { IAppState } from "../types";
+import { connect } from "./connect";
+import { createStructuredSelector } from "reselect";
 
 const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === "1";
 
@@ -13,16 +17,75 @@ if (REDUX_DEVTOOLS_ENABLED) {
   devTools = <DevTools />;
 }
 
-export default class App extends React.PureComponent<{}, void> {
+class App extends React.PureComponent<IDerivedProps, IState> {
+  constructor() {
+    super();
+    this.state = {
+      localeVersion: 1,
+      locale: "en",
+      messages: {},
+    };
+  }
+
   render() {
+    const { localeVersion, locale, messages } = this.state;
     return (
-      <ThemeProvider theme={theme}>
-        <div>
-          <Layout />
-          <Modal />
-          {devTools}
-        </div>
-      </ThemeProvider>
+      <IntlProvider key={localeVersion} locale={locale} messages={messages}>
+        <ThemeProvider theme={theme}>
+          <div>
+            <Layout />
+            <Modal />
+            {devTools}
+          </div>
+        </ThemeProvider>
+      </IntlProvider>
     );
   }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.locale !== this.props.locale ||
+      prevProps.messages !== this.props.messages ||
+      prevProps.messages !== this.props.messages
+    ) {
+      this.setState({
+        localeVersion: this.state.localeVersion + 1,
+        messages: {
+          ...this.props.fallbackMessages,
+          ...this.props.messages,
+        },
+      });
+    }
+  }
 }
+
+interface IState {
+  localeVersion: number;
+  locale: string;
+  messages: {
+    [id: string]: string;
+  };
+}
+
+interface IDerivedProps {
+  locale: string;
+  messages: {
+    [id: string]: string;
+  };
+  fallbackMessages: {
+    [id: string]: string;
+  };
+}
+
+const emptyObj = {};
+
+export default connect<{}>(App, {
+  state: createStructuredSelector({
+    locale: (state: IAppState) => state.i18n.lang,
+    messages: (state: IAppState) => {
+      const { strings, lang } = state.i18n;
+      return strings[lang] || strings[lang.substring(0, 2)] || emptyObj;
+    },
+    fallbackMessages: (state: IAppState) => state.i18n.strings.en || emptyObj,
+  }),
+});

@@ -22,8 +22,7 @@ const ContentContainer = styled.div`
 `;
 
 export class HubContent extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     if (!this.props.credentials) {

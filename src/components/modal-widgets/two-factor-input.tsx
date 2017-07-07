@@ -4,8 +4,7 @@ import { connect, I18nProps } from "../connect";
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
 export class TwoFactorInput extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   refs: {
     totpInput?: HTMLInputElement;
@@ -22,9 +21,15 @@ export class TwoFactorInput extends React.PureComponent<
 
     return (
       <ModalWidgetDiv>
-        <p><strong>{t("login.two_factor.as_user", { username })}</strong></p>
+        <p>
+          <strong>
+            {t("login.two_factor.as_user", { username })}
+          </strong>
+        </p>
 
-        <p>{t("login.two_factor.enter_code")}</p>
+        <p>
+          {t("login.two_factor.enter_code")}
+        </p>
 
         <input
           placeholder={t("login.two_factor.verification_code_label")}

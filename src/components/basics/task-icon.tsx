@@ -7,7 +7,7 @@ import taskToIcon from "../../constants/icon-for-tasks";
 /**
  * An icon that represents the state of a given task
  */
-class TaskIcon extends React.PureComponent<ITaskIconProps, void> {
+class TaskIcon extends React.PureComponent<ITaskIconProps> {
   render() {
     const { task = "", action = "launch", animate = false } = this.props;
 

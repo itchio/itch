@@ -28,9 +28,7 @@ const DraggableDivInner = styled.div`
   align-self: center;
 `;
 
-const Filler = styled.div`
-  flex: 1 1;
-`;
+const Filler = styled.div`flex: 1 1;`;
 
 const TitleDiv = styled.div`
   ${styles.singleLine()};
@@ -41,8 +39,7 @@ const TitleDiv = styled.div`
 const emptyObj = {};
 
 export class TitleBar extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, tab, maximized, tabData } = this.props;
@@ -59,7 +56,9 @@ export class TitleBar extends React.PureComponent<
       <FiltersContainer className="title-bar">
         <DraggableDiv>
           <DraggableDivInner>
-            <TitleDiv className="title-bar-text">{t.format(label)}</TitleDiv>
+            <TitleDiv className="title-bar-text">
+              {t.format(label)}
+            </TitleDiv>
             <Filler />
           </DraggableDivInner>
         </DraggableDiv>

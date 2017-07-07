@@ -17,15 +17,12 @@ import TitleBar from "./title-bar";
 
 import styled, * as styles from "./styles";
 
-const CollectionsContainer = styled.div`
-  ${styles.meat()}
-`;
+const CollectionsContainer = styled.div`${styles.meat()};`;
 
 const tab = "collections";
 
 export class Collections extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, navigate } = this.props;

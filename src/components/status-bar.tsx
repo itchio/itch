@@ -75,8 +75,7 @@ const StatusBarDiv = styled.div`
  * Displays our current progress when checking for updates, etc.
  */
 class StatusBar extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   constructor() {
     super();
@@ -108,44 +107,58 @@ class StatusBar extends React.PureComponent<
       callback = () => dismissStatusMessage({});
       children = [
         <Icon key="icon" icon="heart-filled" />,
-        <span key="message">{t.format(statusMessages[0])}</span>,
+        <span key="message">
+          {t.format(statusMessages[0])}
+        </span>,
         <Icon key="cross" icon="cross" />,
       ];
     } else if (error) {
       callback = () => dismissStatus({});
       children = [
         <Icon key="icon" icon="heart-broken" />,
-        <span key="message">Update error: {error}</span>,
+        <span key="message">
+          Update error: {error}
+        </span>,
         <Icon key="cross" icon="cross" />,
       ];
     } else if (downloaded) {
       callback = () => applySelfUpdateRequest({});
       children = [
         <Icon key="icon" icon="install" />,
-        <span key="message">{t("status.downloaded")}</span>,
+        <span key="message">
+          {t("status.downloaded")}
+        </span>,
       ];
     } else if (downloading) {
       busy = true;
       children = [
         <Icon key="icon" icon="download" />,
-        <span key="message">{t("status.downloading")}</span>,
+        <span key="message">
+          {t("status.downloading")}
+        </span>,
       ];
     } else if (available) {
       callback = () => showAvailableSelfUpdate({});
       children = [
         <Icon key="icon" icon="earth" />,
-        <span key="message">{t("status.available")}</span>,
+        <span key="message">
+          {t("status.available")}
+        </span>,
       ];
     } else if (checking) {
       busy = true;
       children = [
         <LoadingCircle progress={0.3} />,
-        <span key="message">{t("status.checking")}</span>,
+        <span key="message">
+          {t("status.checking")}
+        </span>,
       ];
     } else if (uptodate) {
       children = [
         <Icon key="icon" icon="like" />,
-        <span key="message">{t("status.uptodate")}</span>,
+        <span key="message">
+          {t("status.uptodate")}
+        </span>,
       ];
     } else {
       active = false;

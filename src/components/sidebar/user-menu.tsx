@@ -43,10 +43,7 @@ const UserMenuButton = styled(Button)`
   }
 `;
 
-class UserMenu extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
-> {
+class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
   items: IDropdownItem[] = [
     {
       icon: "rocket",

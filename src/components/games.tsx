@@ -16,10 +16,7 @@ import styled from "./styles";
 
 export const HubGamesDiv = styled.div`flex-grow: 1;`;
 
-class Games extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
-> {
+class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
   onSortChange = (sortParams: ISortParams) => {
     const { params: oldParams, tab } = this.props;
     let { sortBy, sortDirection } = sortParams;

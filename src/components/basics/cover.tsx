@@ -15,7 +15,7 @@ const CoverDiv = styled.div`
   }
 `;
 
-class Cover extends React.PureComponent<IProps, void> {
+class Cover extends React.PureComponent<IProps> {
   render() {
     const {
       showGifMarker = true,

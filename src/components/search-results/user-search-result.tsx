@@ -16,10 +16,7 @@ const UserSearchResultDiv = styled.div`
   }
 `;
 
-class UserSearchResult extends GenericSearchResult<
-  IUserSearchResultProps,
-  void
-> {
+class UserSearchResult extends GenericSearchResult<IUserSearchResultProps> {
   render() {
     const { user, onClick, chosen } = this.props;
     const { displayName, username, stillCoverUrl, coverUrl } = user;

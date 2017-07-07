@@ -8,11 +8,9 @@ import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
 
-const LibraryContainer = styled.div`
-  ${styles.meat()}
-`;
+const LibraryContainer = styled.div`${styles.meat()};`;
 
-export default class Library extends React.PureComponent<IProps, void> {
+export default class Library extends React.PureComponent<IProps> {
   render() {
     const { tab } = this.props;
 

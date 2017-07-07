@@ -5,7 +5,7 @@ import * as classNames from "classnames";
  * An icon from the icomoon font.
  * Peek in the static/fonts/icomoon/ folder to learn more.
  */
-class Icon extends React.PureComponent<IProps, void> {
+class Icon extends React.PureComponent<IProps> {
   render() {
     const { icon, className, hint, ...restProps } = this.props;
     if (!icon) {

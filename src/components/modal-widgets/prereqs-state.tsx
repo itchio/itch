@@ -12,20 +12,25 @@ import LoadingCircle from "../basics/loading-circle";
 import { IAppState, ITask, IPrereqsState } from "../../types";
 
 export class PrereqsState extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, prereqsState } = this.props;
     const params = this.props.modal.widgetParams as IPrereqsStateParams;
 
     if (!prereqsState) {
-      return <ModalWidgetDiv>{t("setup.status.preparing")}</ModalWidgetDiv>;
+      return (
+        <ModalWidgetDiv>
+          {t("setup.status.preparing")}
+        </ModalWidgetDiv>
+      );
     }
 
     return (
       <ModalWidgetDiv>
-        <p>{t("prereq.explanation", { title: params.gameTitle })}</p>
+        <p>
+          {t("prereq.explanation", { title: params.gameTitle })}
+        </p>
 
         <ul className="prereqs-rows">
           {map(prereqsState.tasks, (v, k) => {

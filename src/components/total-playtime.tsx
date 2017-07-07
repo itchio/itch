@@ -9,8 +9,7 @@ import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
 
 class TotalPlaytime extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, game, cave, short = false } = this.props;

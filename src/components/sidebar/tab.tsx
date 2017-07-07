@@ -37,10 +37,7 @@ const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
   return <Item {...props.props} />;
 });
 
-class Tab extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
-> {
+class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
   onClick = () => {
     const { id, navigate } = this.props;
     navigate({ id });
@@ -112,7 +109,6 @@ class Tab extends React.PureComponent<
       onClose,
       onContextMenu,
       data,
-      t,
       sublabel,
       gameOverride,
       loading,

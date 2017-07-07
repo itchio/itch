@@ -14,7 +14,7 @@ const GifMarkerSpan = styled.span`
   opacity: .8;
 `;
 
-class GifMarker extends React.PureComponent<{}, void> {
+class GifMarker extends React.PureComponent {
   render() {
     return <GifMarkerSpan>GIF</GifMarkerSpan>;
   }

@@ -3,7 +3,7 @@ import { connect, I18nProps } from "../connect";
 
 import ReactTimeAgo from "react-time-ago";
 
-class TimeAgo extends React.PureComponent<IProps & I18nProps, void> {
+class TimeAgo extends React.PureComponent<IProps & I18nProps> {
   render() {
     const { t } = this.props;
     let { date } = this.props;

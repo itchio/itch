@@ -30,7 +30,7 @@ const DropdownItemDiv = styled.div`
   }
 
   &.type-info {
-    color: #6D6D6D;
+    color: #6d6d6d;
   }
 
   &.type-separator {
@@ -40,10 +40,7 @@ const DropdownItemDiv = styled.div`
   }
 `;
 
-export class DropdownItem extends React.PureComponent<
-  IProps & I18nProps,
-  void
-> {
+export class DropdownItem extends React.PureComponent<IProps & I18nProps> {
   render() {
     const { t, item } = this.props;
     const { label, icon, type, id } = item;

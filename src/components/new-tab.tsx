@@ -18,9 +18,7 @@ import { dispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
 
-const NewTabContainer = styled.div`
-  ${styles.meat()}
-`;
+const NewTabContainer = styled.div`${styles.meat()};`;
 
 const NewTabGrid = styled.div`
   display: flex;
@@ -34,14 +32,10 @@ const NewTabGrid = styled.div`
   flex: 1;
 `;
 
-const Spacer = styled.div`
-  height: 120px;
-`;
+const Spacer = styled.div`height: 120px;`;
 
 const NewTabItem = styled.div`
-  ${styles.clickable()}
-
-  width: auto;
+  ${styles.clickable()} width: auto;
   flex-grow: 1;
   padding: 30px 10px;
   display: flex;
@@ -91,8 +85,7 @@ const UrlContainer = styled.div`
 `;
 
 export class NewTab extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   urlField: HTMLInputElement;
 
@@ -110,7 +103,9 @@ export class NewTab extends React.PureComponent<
 
           <Spacer />
 
-          <Title>{t("new_tab.titles.buttons")}</Title>
+          <Title>
+            {t("new_tab.titles.buttons")}
+          </Title>
 
           {map(newTabItems, item => {
             const { label, icon, path } = item;
@@ -121,12 +116,16 @@ export class NewTab extends React.PureComponent<
                 onClick={() => evolveTab({ id: tab, path })}
               >
                 <Icon icon={icon} />
-                <span>{t.format(label)}</span>
+                <span>
+                  {t.format(label)}
+                </span>
               </NewTabItem>
             );
           })}
 
-          <Title>{t("new_tab.titles.input")}</Title>
+          <Title>
+            {t("new_tab.titles.input")}
+          </Title>
           <WebNavContainer>
             <UrlContainer>
               <input

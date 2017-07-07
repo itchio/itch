@@ -89,8 +89,7 @@ const CollectionRowDiv = styled.div`
 const emptyArr = [];
 
 export class CollectionRow extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, allGames, collection } = this.props;

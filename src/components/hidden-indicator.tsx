@@ -24,8 +24,7 @@ const HiddenIndicatorDiv = styled.div`
 `;
 
 class HiddenIndicator extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, tab, count, clearFilters } = this.props;
@@ -41,8 +40,7 @@ class HiddenIndicator extends React.PureComponent<
           icon="delete"
           hint={t("grid.clear_filters")}
           onClick={() => clearFilters({ tab })}
-        />
-        {" "}
+        />{" "}
         {t("grid.hidden_count", { count })}
       </HiddenIndicatorDiv>
     );

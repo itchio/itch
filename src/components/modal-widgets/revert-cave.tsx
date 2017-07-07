@@ -6,8 +6,7 @@ import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 import { ICave } from "../../db/models/cave";
 
 export class RevertCave extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   refs: {
     buildId?: HTMLInputElement;

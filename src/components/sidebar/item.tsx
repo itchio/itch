@@ -1,8 +1,9 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
+import format from "../format";
+
 import { ILocalizedString, ITabData } from "../../types";
-import { ILocalizer } from "../../localizer";
 
 import Ink = require("react-ink");
 
@@ -152,16 +153,7 @@ class Item extends React.PureComponent<IProps, IState> {
   };
 
   render() {
-    const {
-      t,
-      count,
-      sublabel,
-      progress,
-      id,
-      path,
-      label,
-      active,
-    } = this.props;
+    const { count, sublabel, progress, id, path, label, active } = this.props;
     const { fresh } = this.state;
     const { onClose, onContextMenu } = this.props;
 
@@ -175,7 +167,7 @@ class Item extends React.PureComponent<IProps, IState> {
       <ItemDiv
         className={classNames({ active, fresh })}
         data-rh-at="bottom"
-        data-rh={t.format(sublabel)}
+        data-rh={format(sublabel)}
         onClick={this.onClick}
         onMouseUp={this.onMouseUp}
         onContextMenu={onContextMenu}
@@ -192,7 +184,7 @@ class Item extends React.PureComponent<IProps, IState> {
                 : <Icon icon={this.props.icon || "tag"} />}
           </IconContainer>
           <ItemHeading>
-            {t.format(label)}
+            {format(label)}
           </ItemHeading>
           {count > 0
             ? <Bubble>
@@ -241,8 +233,6 @@ interface IProps {
   onContextMenu: () => void;
   onClose?: () => void;
   data?: ITabData;
-
-  t: ILocalizer;
 }
 
 interface IState {

@@ -13,10 +13,7 @@ const StyledButton = styled(Button)`
   margin: 0 4px;
 `;
 
-class Action extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
-> {
+class Action extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
   render() {
     const { t, dispatch, opts } = this.props;
     const { action, icon, label, type = "action" } = opts;

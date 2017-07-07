@@ -16,7 +16,7 @@ import Browser from "../url-meat";
 import NewTab from "../new-tab";
 import Location from "../location";
 
-export default class Meat extends React.PureComponent<IProps, void> {
+export default class Meat extends React.PureComponent<IProps> {
   render() {
     const ConcreteMeat = this.getConcrete();
 

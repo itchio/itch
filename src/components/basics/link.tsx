@@ -11,7 +11,7 @@ const LinkSpan = styled.span`
   text-overflow: ellipsis;
 `;
 
-class Link extends React.PureComponent<IProps, void> {
+class Link extends React.PureComponent<IProps> {
   render() {
     const { label, ...restProps } = this.props;
 

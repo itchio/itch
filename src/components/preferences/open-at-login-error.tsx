@@ -10,8 +10,7 @@ import { IAppState, IOpenAtLoginError } from "../../types";
 import interleave, { IComponent } from "../interleave";
 
 class OpenAtLoginError extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, openAtLoginError } = this.props;
@@ -41,7 +40,11 @@ class OpenAtLoginError extends React.PureComponent<
         <p className="explanation drop-down" style={{ marginBottom: "15px" }}>
           <Icon icon="warning" />{" "}
           {interleave(t, "preferences.behavior.open_at_login.error", {
-            cause: <span>{cause}</span>,
+            cause: (
+              <span>
+                {cause}
+              </span>
+            ),
           })}
         </p>
       );

@@ -59,8 +59,7 @@ const GameStatsDiv = styled.div`
 `;
 
 export class GameStats extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const {

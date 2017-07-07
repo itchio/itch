@@ -38,9 +38,7 @@ import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
 
-const PreferencesDiv = styled.div`
-  ${styles.meat()}
-`;
+const PreferencesDiv = styled.div`${styles.meat()};`;
 
 const PreferencesContentDiv = styled.div`
   overflow-y: auto;
@@ -49,7 +47,8 @@ const PreferencesContentDiv = styled.div`
 
   color: ${props => props.theme.baseText};
 
-  .heading, h2 {
+  .heading,
+  h2 {
     font-size: 18px;
   }
 
@@ -108,7 +107,11 @@ const PreferencesContentDiv = styled.div`
     }
   }
 
-  .security-form, .behavior-form, .notifications-form, .language-form, .advanced-form {
+  .security-form,
+  .behavior-form,
+  .notifications-form,
+  .language-form,
+  .advanced-form {
     flex-shrink: 0;
 
     label {
@@ -118,9 +121,7 @@ const PreferencesContentDiv = styled.div`
       display: flex;
       align-items: center;
 
-      ${styles.prefChunk()}
-
-      &.active {
+      ${styles.prefChunk()} &.active {
         ${styles.prefChunkActive()};
       }
 
@@ -162,13 +163,15 @@ const PreferencesContentDiv = styled.div`
       display: flex;
       flex-shrink: 0;
 
-      a, .link {
+      a,
+      .link {
         margin-left: 8px;
         display: flex;
       }
     }
 
-    a, .link {
+    a,
+    .link {
       text-decoration: underline;
       color: #ececec;
 
@@ -187,7 +190,7 @@ const PreferencesContentDiv = styled.div`
     }
 
     a {
-      color: #87A7C3;
+      color: #87a7c3;
       text-decoration: none;
     }
   }
@@ -270,7 +273,12 @@ const PreferencesContentDiv = styled.div`
         -webkit-filter: brightness(70%);
       }
 
-      .icon-plus, .icon-refresh, .icon-stopwatch, .icon-folder, .icon-star, .icon-star2 {
+      .icon-plus,
+      .icon-refresh,
+      .icon-stopwatch,
+      .icon-folder,
+      .icon-star,
+      .icon-star2 {
         font-size: 80%;
         margin-right: 8px;
       }
@@ -286,8 +294,7 @@ const PreferencesContentDiv = styled.div`
 `;
 
 export class Preferences extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, tab, lang, sniffedLang = "", downloading, locales } = this.props;
@@ -323,7 +330,9 @@ export class Preferences extends React.PureComponent<
       <PreferencesDiv>
         <TitleBar tab={tab} />
         <PreferencesContentDiv>
-          <h2>{t("preferences.language")}</h2>
+          <h2>
+            {t("preferences.language")}
+          </h2>
           <div className="language-form">
             <label className="active">
               <SelectRow
@@ -341,7 +350,6 @@ export class Preferences extends React.PureComponent<
                       queueLocaleDownload({ lang });
                     }}
                   />}
-
             </label>
           </div>
 
@@ -352,7 +360,9 @@ export class Preferences extends React.PureComponent<
             </a>
           </p>
 
-          <h2>{t("preferences.security")}</h2>
+          <h2>
+            {t("preferences.security")}
+          </h2>
           <div className="security-form">
             <label className={classNames({ active: isolateApps })}>
               <input
@@ -375,14 +385,13 @@ export class Preferences extends React.PureComponent<
           </div>
 
           <p className="explanation">
-            {t("preferences.security.sandbox.description")}
-            {" "}
-            <a href={urls.sandboxDocs}>
-              {t("docs.learn_more")}
-            </a>
+            {t("preferences.security.sandbox.description")}{" "}
+            <a href={urls.sandboxDocs}>{t("docs.learn_more")}</a>
           </p>
 
-          <h2>{t("preferences.behavior")}</h2>
+          <h2>
+            {t("preferences.behavior")}
+          </h2>
           <div className="behavior-form">
             <label className={classNames({ active: openAtLogin })}>
               <input
@@ -456,7 +465,9 @@ export class Preferences extends React.PureComponent<
             </label>
           </div>
 
-          <h2>{t("preferences.notifications")}</h2>
+          <h2>
+            {t("preferences.notifications")}
+          </h2>
           <div className="behavior-form">
             <label className={classNames({ active: readyNotification })}>
               <input
@@ -474,7 +485,9 @@ export class Preferences extends React.PureComponent<
             </label>
           </div>
 
-          <h2>{t("preferences.install_locations")}</h2>
+          <h2>
+            {t("preferences.install_locations")}
+          </h2>
           {this.installLocationTable()}
 
           <h2
@@ -486,8 +499,7 @@ export class Preferences extends React.PureComponent<
               className={`icon icon-triangle-right turner ${showAdvanced
                 ? "turned"
                 : ""}`}
-            />
-            {" "}
+            />{" "}
             {t("preferences.advanced")}
           </h2>
           {showAdvanced ? this.renderAdvanced() : ""}
@@ -590,10 +602,16 @@ export class Preferences extends React.PureComponent<
     } = this.props;
 
     const header = (
-      <tr className="header">
-        <td>{t("preferences.install_location.path")}</td>
-        <td>{t("preferences.install_location.used_space")}</td>
-        <td>{t("preferences.install_location.free_space")}</td>
+      <tr key="header" className="header">
+        <td>
+          {t("preferences.install_location.path")}
+        </td>
+        <td>
+          {t("preferences.install_location.used_space")}
+        </td>
+        <td>
+          {t("preferences.install_location.free_space")}
+        </td>
         <td />
         <td />
       </tr>
@@ -641,7 +659,9 @@ export class Preferences extends React.PureComponent<
                   (isDefault ? "is_default" : "make_default"),
               )}
             >
-              <span className="single-line">{path}</span>
+              <span className="single-line">
+                {path}
+              </span>
               {isDefault
                 ? <span className="single-line default-state">
                     ({t(
@@ -682,7 +702,7 @@ export class Preferences extends React.PureComponent<
     });
 
     rows.push(
-      <tr>
+      <tr key="add-new">
         <td
           className="action add-new"
           onClick={e => {
@@ -698,7 +718,9 @@ export class Preferences extends React.PureComponent<
 
     return (
       <table className="install-locations">
-        <tbody>{rows}</tbody>
+        <tbody>
+          {rows}
+        </tbody>
       </table>
     );
   }

@@ -12,8 +12,7 @@ import GameFilters from "./game-filters";
 import { dispatcher } from "../constants/action-types";
 
 export class Location extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, tab, browseInstallLocation } = this.props;

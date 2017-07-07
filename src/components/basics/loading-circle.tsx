@@ -20,8 +20,7 @@ const CircleContainer = styled.div`
 `;
 
 export default class LoadingCircle extends React.PureComponent<
-  ILoadingCircleProps,
-  void
+  ILoadingCircleProps
 > {
   render() {
     const { progress } = this.props;
@@ -46,7 +45,7 @@ export interface ILoadingCircleProps {
 
 // shamelessly stolen, err, adapted, from https://github.com/react-component/progress
 
-class Circle extends React.PureComponent<ICircleProps, void> {
+class Circle extends React.PureComponent<ICircleProps> {
   path: SVGPathElement;
   prevTimeStamp: number;
 

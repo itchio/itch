@@ -15,8 +15,7 @@ import styled, * as styles from "./styles";
 const CollectionDiv = styled.div`${styles.meat()};`;
 
 export class Collection extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { tab } = this.props;

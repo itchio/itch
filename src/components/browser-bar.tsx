@@ -19,23 +19,23 @@ const BrowserBarDiv = styled.div`
   border-width: 0;
   border-bottom-width: 2px;
   border-image-source: repeating-linear-gradient(
-     to right,
-     #353535 0,
-     #353535 95%,
-     transparent 95%,
-     transparent 100%
+    to right,
+    #353535 0,
+    #353535 95%,
+    transparent 95%,
+    transparent 100%
   );
 
   &.loading {
     border-image-source: repeating-linear-gradient(
-       to right,
-       ${props => props.theme.lightAccent} 0,
-       ${props => props.theme.lightAccent} 95%,
-       transparent 95%,
-       transparent 100%
-      );
-    animation: ${styles.animations
-      .loadBorder} 10s cubic-bezier(0, 0, 0, 0.42) infinite;
+      to right,
+      ${props => props.theme.lightAccent} 0,
+      ${props => props.theme.lightAccent} 95%,
+      transparent 95%,
+      transparent 100%
+    );
+    animation: ${styles.animations.loadBorder} 10s cubic-bezier(0, 0, 0, 0.42)
+      infinite;
   }
 
   border-image-slice: 100% 10% 0% 0%;
@@ -46,7 +46,7 @@ const BrowserBarDiv = styled.div`
   align-items: center;
 `;
 
-export class BrowserBar extends React.PureComponent<IProps, void> {
+export class BrowserBar extends React.PureComponent<IProps> {
   render() {
     const { browserState } = this.props;
     const { loading } = browserState;

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
@@ -30,10 +30,7 @@ const theme = {
   base0F: "#cc6633",
 };
 
-export class ViewCaveDetails extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
-> {
+export class ViewCaveDetails extends React.PureComponent<IProps> {
   render() {
     const params = this.props.modal.widgetParams as IViewCaveDetailsParams;
 
@@ -60,7 +57,5 @@ export interface IViewCaveDetailsParams {
 interface IProps extends IModalWidgetProps {
   params: IViewCaveDetailsParams;
 }
-
-interface IDerivedProps {}
 
 export default connect<IProps>(ViewCaveDetails);

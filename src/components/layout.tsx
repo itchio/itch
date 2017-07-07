@@ -29,7 +29,8 @@ const LayoutContainer = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 2px;
 
-  &, input {
+  &,
+  input {
     font-family: LatoWeb, sans-serif;
   }
 `;
@@ -73,10 +74,7 @@ declare class Notification {
  * Also, subscribes to app store to synchronize its state
  */
 @watching
-class Layout extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
-> {
+class Layout extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
   subscribe(watcher: Watcher) {
     watcher.on(actions.notifyHtml5, async (store, action) => {
       const { title, onClick } = action.payload;
@@ -117,7 +115,11 @@ class Layout extends React.PureComponent<
       case "hub":
         return <HubPage />;
       default:
-        return <div>Unknown page: {page}</div>;
+        return (
+          <div>
+            Unknown page: {page}
+          </div>
+        );
     }
   }
 }

@@ -5,7 +5,7 @@ import { map } from "underscore";
 /**
  * A drop-down you can select from
  */
-class SelectRow extends React.PureComponent<ISelectRowProps, void> {
+class SelectRow extends React.PureComponent<ISelectRowProps> {
   refs: {
     input: HTMLInputElement;
   };
@@ -26,7 +26,9 @@ class SelectRow extends React.PureComponent<ISelectRowProps, void> {
     let value = this.props.value;
 
     const optionTags = map(options, (option, index) =>
-      <option value={option.value}>{option.label}</option>,
+      <option key={index} value={option.value}>
+        {option.label}
+      </option>,
     );
 
     return (

@@ -6,7 +6,7 @@ import * as emojify from "../../format/emojify";
 
 import urls from "../../constants/urls";
 
-export default class Markdown extends React.PureComponent<IGFMProps, void> {
+export default class Markdown extends React.PureComponent<IGFMProps> {
   render() {
     return <div dangerouslySetInnerHTML={this.renderHTML()} />;
   }

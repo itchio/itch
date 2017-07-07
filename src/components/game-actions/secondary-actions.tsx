@@ -19,8 +19,7 @@ const SecondaryActionsDiv = styled.div`
 `;
 
 class SecondaryActions extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { items, error } = listSecondaryActions(this.props);

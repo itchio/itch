@@ -20,9 +20,7 @@ import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
 
-const DownloadsDiv = styled.div`
-  ${styles.meat()}
-`;
+const DownloadsDiv = styled.div`${styles.meat()};`;
 
 const DownloadsContentDiv = styled.div`
   overflow-y: auto;
@@ -42,7 +40,7 @@ const DownloadsContentDiv = styled.div`
 
     .clear {
       margin-left: 8px;
-      ${styles.clickable()}
+      ${styles.clickable()};
     }
   }
 
@@ -59,8 +57,7 @@ const EmptyState = styled.div`
 `;
 
 class Downloads extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   constructor() {
     super();
@@ -72,7 +69,9 @@ class Downloads extends React.PureComponent<
     return (
       <DownloadsDiv>
         <TitleBar tab={tab} />
-        <DownloadsContentDiv>{this.renderContents()}</DownloadsContentDiv>
+        <DownloadsContentDiv>
+          {this.renderContents()}
+        </DownloadsContentDiv>
       </DownloadsDiv>
     );
   }
@@ -97,7 +96,9 @@ class Downloads extends React.PureComponent<
       <DownloadsContentDiv>
         {firstItem
           ? <div className="section-bar">
-              <h2>{t("status.downloads.category.active")}</h2>
+              <h2>
+                {t("status.downloads.category.active")}
+              </h2>
             </div>
           : ""}
 
@@ -107,7 +108,9 @@ class Downloads extends React.PureComponent<
 
         {queuedItems.length > 0
           ? <div className="section-bar">
-              <h2>{t("status.downloads.category.queued")}</h2>
+              <h2>
+                {t("status.downloads.category.queued")}
+              </h2>
             </div>
           : ""}
         {queuedItems.length > 0

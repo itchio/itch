@@ -8,11 +8,8 @@ import styled, * as styles from "../styles";
 
 const IconButtonDiv = styled.div`
   display: inline-block;
-  ${styles.inkContainer()}
-  ${styles.iconButton()}
-  ${styles.clickable()}
-
-  font-size: ${props => props.theme.fontSizes.baseText};
+  ${styles.inkContainer()} ${styles.iconButton()} ${styles.clickable()} font-size: ${props =>
+      props.theme.fontSizes.baseText};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,7 +20,7 @@ const IconButtonDiv = styled.div`
   }
 `;
 
-class IconButton extends React.PureComponent<IProps, void> {
+class IconButton extends React.PureComponent<IProps> {
   render() {
     const {
       disabled,

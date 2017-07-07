@@ -31,9 +31,7 @@ export const FiltersContainer = styled.section`
   min-height: 40px;
 `;
 
-const Filler = styled.div`
-  flex-grow: 1;
-`;
+const Filler = styled.div`flex-grow: 1;`;
 
 const TagFilters = styled.section`
   margin: 4px 0;
@@ -50,7 +48,8 @@ const TagFilters = styled.section`
         background-color: rgba(97, 97, 97, 0.7);
         color: #d8d8d8;
 
-        &, .Select-value-icon {
+        &,
+        .Select-value-icon {
           border-color: transparent;
         }
 
@@ -63,9 +62,10 @@ const TagFilters = styled.section`
           font-size: 18px;
           padding: 1px 3px 0px 5px;
 
-          &:hover, &:focus {
+          &:hover,
+          &:focus {
             color: white;
-            background-color: rgba(97, 97, 97, 0.5)
+            background-color: rgba(97, 97, 97, 0.5);
           }
         }
       }
@@ -90,14 +90,10 @@ const TagFilters = styled.section`
   }
 `;
 
-const LayoutPickers = styled.section`
-  display: flex;
-`;
+const LayoutPickers = styled.section`display: flex;`;
 
 const LayoutPicker = styled.section`
-  ${styles.inkContainer()}
-
-  padding: 10px 10px;
+  ${styles.inkContainer()} padding: 10px 10px;
   border-radius: 50%;
   font-size: 90%;
   filter: brightness(60%);
@@ -108,12 +104,11 @@ const LayoutPicker = styled.section`
   }
 
   ${(props: ILayoutPickerProps) =>
-    props.active ? css`filter: brightness(100%)` : ""}
+    props.active ? css`filter: brightness(100%)` : ""};
 `;
 
 class GameFilters extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const {

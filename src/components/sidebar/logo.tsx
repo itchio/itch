@@ -8,7 +8,7 @@ import { connect } from "../connect";
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
 
-class Logo extends React.PureComponent<IDerivedProps, void> {
+class Logo extends React.PureComponent<IDerivedProps> {
   render() {
     const { navigate, appVersion } = this.props;
 

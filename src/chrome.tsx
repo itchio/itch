@@ -61,7 +61,12 @@ function render(RealApp: typeof App) {
   } else {
     rootComponent = <RealApp />;
   }
-  ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
+  ReactDOM.render(
+    <Provider store={store}>
+      {rootComponent}
+    </Provider>,
+    appNode,
+  );
 }
 
 if (env.name === "test") {

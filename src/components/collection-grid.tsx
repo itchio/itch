@@ -10,8 +10,7 @@ import { dispatcher } from "../constants/action-types";
 import { fromJSONField } from "../db/json-field";
 
 export class CollectionGrid extends React.PureComponent<
-  IProps & IDerivedProps,
-  void
+  IProps & IDerivedProps
 > {
   render() {
     const { collections } = this.props;

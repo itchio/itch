@@ -51,7 +51,7 @@ const Price = styled.div`
   }
 `;
 
-class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
+class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
   render() {
     const { game, onClick, chosen } = this.props;
     const { title, stillCoverUrl, coverUrl } = game;

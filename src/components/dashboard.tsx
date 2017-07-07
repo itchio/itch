@@ -14,13 +14,10 @@ import { dispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
 
-const DashboardContainer = styled.div`
-  ${styles.meat()}
-`;
+const DashboardContainer = styled.div`${styles.meat()};`;
 
 export class Dashboard extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, tab, navigate } = this.props;

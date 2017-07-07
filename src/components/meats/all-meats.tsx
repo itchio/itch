@@ -39,8 +39,7 @@ const MeatTab = styled.div`
 `;
 
 export class AllMeats extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { tabData, tabs, id: currentId } = this.props;

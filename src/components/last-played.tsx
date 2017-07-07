@@ -9,8 +9,7 @@ import interleave from "./interleave";
 import TimeAgo from "./basics/time-ago";
 
 class LastPlayed extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  void
+  IProps & IDerivedProps & I18nProps
 > {
   render() {
     const { t, game, cave, short = false } = this.props;
