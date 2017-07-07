@@ -301,6 +301,8 @@
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Published on {{pubDate}}.",
     "prompt.self_update_ready.message": "Choose '{{restart}}' to apply the update immediately.\n\nIf you don't, the update will be active the next time the app is restarted.",
     "prompt.self_update_ready.title": "An update has been downloaded and installed",
+    "prompt.uninstall_error.title": "Uninstall error",
+    "prompt.uninstall_error.message": "The uninstall failed. Remove the entry anyway?",
     "prompt.uninstall.cancel": "Cancel",
     "prompt.uninstall.message": "Are you sure you want to uninstall {{title}}?",
     "prompt.uninstall.reinstall": "Re-install",

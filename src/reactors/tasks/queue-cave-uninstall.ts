@@ -69,8 +69,8 @@ export async function queueUninstall(
     await sf.wipe(archivePath);
   } catch (e) {
     const response = await promisedModal(ctx.store, {
-      title: ["preferences.advanced.clear_browsing_data"],
-      message: `The uninstall failed. Remove the entry anyway?`,
+      title: ["prompt.uninstall_error.title"],
+      message: ["prompt.uninstall_error.message"],
       buttons: [
         {
           label: ["prompt.action.ok"],
