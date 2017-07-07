@@ -2,11 +2,10 @@ import * as React from "react";
 import { SortableElement } from "react-sortable-hoc";
 import { createStructuredSelector } from "reselect";
 
-import * as moment from "moment";
 import Item from "./item";
 
 import { pathToIcon, makeLabel } from "../../util/navigation";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
@@ -25,6 +24,9 @@ import {
   IDownloadsState,
 } from "../../types";
 
+import { injectIntl, InjectedIntl } from "react-intl";
+import { formatDurationAsMessage } from "../../format/datetime";
+
 interface ISortableHubSidebarItemProps {
   props: any & {
     id: string;
@@ -37,7 +39,7 @@ const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
   return <Item {...props.props} />;
 });
 
-class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
+class Tab extends React.PureComponent<IProps & IDerivedProps> {
   onClick = () => {
     const { id, navigate } = this.props;
     navigate({ id });
@@ -54,7 +56,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
   };
 
   render() {
-    const { t, id, index, sortable, data, active, loading } = this.props;
+    const { id, index, sortable, data, active, loading } = this.props;
 
     const path = data.path || id;
     let iconImage = data.iconImage;
@@ -78,13 +80,10 @@ class Tab extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
           sublabel = ["grid.item.downloads_paused"];
         } else {
           const title = activeDownload.game.title;
-          // FIXME: moment.js is absolutely an FPS killer.
-          const duration = moment.duration(
-            activeDownload.eta,
-            "seconds",
-          ) as any;
-          // silly typings, durations have locales!
-          const humanDuration = duration.locale(t.lang).humanize();
+          const { intl } = this.props;
+          const humanDuration = intl.formatMessage(
+            formatDurationAsMessage(activeDownload.eta),
+          );
           sublabel = `${title} — ${humanDuration}`;
         }
       }
@@ -137,9 +136,11 @@ interface IDerivedProps {
   navigate: typeof actions.navigate;
   closeTab: typeof actions.closeTab;
   openTabContextMenu: typeof actions.openTabContextMenu;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(Tab, {
+export default connect<IProps>(injectIntl(Tab), {
   state: (initialState, initialProps) => {
     let { id } = initialProps;
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import * as actions from "../actions";
 
@@ -20,7 +20,7 @@ const HandleDiv = styled.div`
 `;
 
 class SidebarHandle extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   constructor() {

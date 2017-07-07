@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import staticTabData from "../constants/static-tab-data";
 import { IAppState, ITabData } from "../types";
@@ -14,6 +14,8 @@ import IconButton from "./basics/icon-button";
 import env from "../env";
 
 import styled, * as styles from "./styles";
+
+import format from "./format";
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
@@ -38,11 +40,9 @@ const TitleDiv = styled.div`
 
 const emptyObj = {};
 
-export class TitleBar extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t, tab, maximized, tabData } = this.props;
+    const { tab, maximized, tabData } = this.props;
 
     const staticData: ITabData = staticTabData[tab] || emptyObj;
     let label = tabData.webTitle || tabData.label || staticData.label || "";
@@ -57,7 +57,7 @@ export class TitleBar extends React.PureComponent<
         <DraggableDiv>
           <DraggableDivInner>
             <TitleDiv className="title-bar-text">
-              {t.format(label)}
+              {format(label)}
             </TitleDiv>
             <Filler />
           </DraggableDivInner>

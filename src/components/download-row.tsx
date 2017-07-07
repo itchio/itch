@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 import bob, { IRGBColor } from "../renderer-util/bob";
 import { ResponsiveContainer, AreaChart, Area } from "recharts";
 
@@ -140,10 +140,7 @@ const Controls = styled.div`
   padding-left: 8px;
 `;
 
-class DownloadRow extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  IState
-> {
+class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
   constructor() {
     super();
     this.state = {};
@@ -397,7 +394,7 @@ class DownloadRow extends React.PureComponent<
                 : null
               : (first || task) && eta && bps
                 ? <span>
-                    {downloadProgress(t, { eta, bps }, downloadsPaused)}
+                    {downloadProgress({ eta, bps }, downloadsPaused)}
                   </span>
                 : null}
           </div>

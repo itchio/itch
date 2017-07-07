@@ -1,11 +1,12 @@
 import * as React from "react";
-import { connect, I18nProps } from "../connect";
 
 import ReactTimeAgo from "react-time-ago";
 
-class TimeAgo extends React.PureComponent<IProps & I18nProps> {
+import { injectIntl, InjectedIntl } from "react-intl";
+
+class TimeAgo extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t } = this.props;
+    const { intl } = this.props;
     let { date } = this.props;
 
     if (!date) {
@@ -29,7 +30,7 @@ class TimeAgo extends React.PureComponent<IProps & I18nProps> {
 
     return (
       <span>
-        <ReactTimeAgo locale={t.lang}>
+        <ReactTimeAgo locale={intl.locale}>
           {date}
         </ReactTimeAgo>
       </span>
@@ -41,4 +42,8 @@ interface IProps {
   date: Date | string;
 }
 
-export default connect<IProps>(TimeAgo);
+interface IDerivedProps {
+  intl: InjectedIntl;
+}
+
+export default injectIntl<IProps>(TimeAgo);

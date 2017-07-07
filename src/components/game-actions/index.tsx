@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
 import { size } from "underscore";
@@ -54,9 +54,7 @@ const GameActionsDiv = styled.div`
   }
 `;
 
-class GameActions extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+class GameActions extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { props } = this;
     const { vertical, showSecondary, CustomSecondary } = this.props;

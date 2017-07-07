@@ -1,4 +1,4 @@
-import { ILocalizer } from "../localizer";
+import { InjectedIntl } from "react-intl";
 
 enum State {
   normal = 1,
@@ -17,7 +17,7 @@ interface IComponents {
 }
 
 export default function interleave(
-  t: ILocalizer,
+  intl: InjectedIntl,
   key: string,
   components: IComponents,
   textVars: IVars = {},
@@ -42,7 +42,10 @@ export default function interleave(
   }
 
   const result: IComponent[] = [];
-  const translated = t(key, vars);
+
+  // FIXME: actually, react-intl supports interpolating components, so
+  // we don't need that file at all!
+  const translated = intl.formatMessage({ id: key }, vars);
   // example: ["Click on ", "[[", "report", "]]", " or ", "[[", "probe", "]]", ""]
   const tokens = translated.split(/(\[\[|\]\])/);
 

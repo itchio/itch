@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 import { createSelector, createStructuredSelector } from "reselect";
 import * as classNames from "classnames";
 
@@ -38,9 +38,7 @@ const MeatTab = styled.div`
   }
 `;
 
-export class AllMeats extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tabData, tabs, id: currentId } = this.props;
 

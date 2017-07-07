@@ -17,9 +17,24 @@ export const localesConfigLoaded = createAction<ILocalesConfigLoadedPayload>(
 export const queueLocaleDownload = createAction<IQueueLocaleDownloadPayload>(
   QUEUE_LOCALE_DOWNLOAD,
 );
+
 export const localeDownloadStarted = createAction<
   ILocaleDownloadStartedPayload
 >(LOCALE_DOWNLOAD_STARTED);
-export const localeDownloadEnded = createAction<ILocaleDownloadEndedPayload>(
+const internalLocaleDownloadEnded = createAction<ILocaleDownloadEndedPayload>(
   LOCALE_DOWNLOAD_ENDED,
 );
+
+const emptyObj = {};
+
+export const localeDownloadEnded = (payload: ILocaleDownloadEndedPayload) => {
+  const resources = {};
+  for (const key of Object.keys(payload.resources || emptyObj)) {
+    const value = payload.resources[key];
+    resources[key] = value.replace(/{{/g, "{").replace(/}}/g, "}");
+  }
+  return internalLocaleDownloadEnded({
+    lang: payload.lang,
+    resources,
+  });
+};

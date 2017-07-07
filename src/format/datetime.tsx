@@ -1,25 +1,30 @@
-import { ILocalizer } from "../localizer";
+import * as React from "react";
+import { FormattedMessage } from "react-intl";
 
 import env from "../env";
 
 /**
  * Return an input suitable for t.format() for a duration.
  */
-export function formatDuration(secs: number, t: ILocalizer): string {
+export function formatDuration(secs: number): JSX.Element {
+  return <FormattedMessage {...formatDurationAsMessage(secs)} />;
+}
+
+export function formatDurationAsMessage(secs: number): FormattedMessage.Props {
   if (secs < 60) {
-    return t.format(["duration.minute"]);
+    return { id: "duration.minute" };
   } else if (secs < 3600) {
-    return t.format([
-      "duration.minutes",
-      { x: Math.floor(secs / 60).toFixed() },
-    ]);
+    return {
+      id: "duration.minutes",
+      values: { x: Math.floor(secs / 60).toFixed() },
+    };
   } else if (secs < 3600 * 2) {
-    return t.format(["duration.hour"]);
+    return { id: "duration.hour" };
   } else {
-    return t.format([
-      "duration.hours",
-      { x: Math.floor(secs / 3600).toFixed() },
-    ]);
+    return {
+      id: "duration.hours",
+      values: { x: Math.floor(secs / 3600).toFixed() },
+    };
   }
 }
 

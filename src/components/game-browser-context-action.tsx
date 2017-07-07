@@ -1,5 +1,7 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
+
+import { formatString } from "./format";
 
 import Button from "./basics/button";
 import Filler from "./basics/filler";
@@ -8,14 +10,15 @@ import { IDispatch } from "../constants/action-types";
 import { IActionOpts } from "./game-actions/list-secondary-actions";
 
 import styled from "./styles";
+import { InjectedIntl, injectIntl } from "react-intl";
 
 const StyledButton = styled(Button)`
   margin: 0 4px;
 `;
 
-class Action extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
+class Action extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t, dispatch, opts } = this.props;
+    const { intl, dispatch, opts } = this.props;
     const { action, icon, label, type = "action" } = opts;
 
     const textLabel = "" + label;
@@ -30,7 +33,7 @@ class Action extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
         discreet
         icon={icon}
         onClick={() => dispatch(action)}
-        label={t.format(label)}
+        label={formatString(intl, label)}
       />
     );
   }
@@ -42,8 +45,9 @@ interface IProps {
 
 interface IDerivedProps {
   dispatch: IDispatch;
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(Action, {
+export default connect<IProps>(injectIntl(Action), {
   dispatch: dispatch => ({ dispatch }),
 });

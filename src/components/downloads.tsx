@@ -1,6 +1,8 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
+
+import format from "./format";
 
 import { map, first, rest } from "underscore";
 import * as actions from "../actions";
@@ -19,6 +21,7 @@ import {
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 const DownloadsDiv = styled.div`${styles.meat()};`;
 
@@ -56,9 +59,7 @@ const EmptyState = styled.div`
   margin: 20px;
 `;
 
-class Downloads extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+class Downloads extends React.PureComponent<IProps & IDerivedProps> {
   constructor() {
     super();
   }
@@ -77,14 +78,14 @@ class Downloads extends React.PureComponent<
   }
 
   renderContents() {
-    const { t, items, finishedItems } = this.props;
+    const { items, finishedItems, intl } = this.props;
     const { clearFinishedDownloads } = this.props;
 
     const hasItems = items.length + finishedItems.length > 0;
     if (!hasItems) {
       return (
         <EmptyState>
-          {t("status.downloads.no_active_downloads")}
+          {format(["status.downloads.no_active_downloads"])}
         </EmptyState>
       );
     }
@@ -97,7 +98,7 @@ class Downloads extends React.PureComponent<
         {firstItem
           ? <div className="section-bar">
               <h2>
-                {t("status.downloads.category.active")}
+                {format(["status.downloads.category.active"])}
               </h2>
             </div>
           : ""}
@@ -109,7 +110,7 @@ class Downloads extends React.PureComponent<
         {queuedItems.length > 0
           ? <div className="section-bar">
               <h2>
-                {t("status.downloads.category.queued")}
+                {format(["status.downloads.category.queued"])}
               </h2>
             </div>
           : ""}
@@ -123,12 +124,14 @@ class Downloads extends React.PureComponent<
           ? [
               <div className="section-bar">
                 <h2 className="finished-header">
-                  {t("status.downloads.category.finished")}
+                  {format(["status.downloads.category.finished"])}
                 </h2>
                 <span
                   className="clear"
                   data-rh-at="right"
-                  data-rh={t("status.downloads.clear_all_finished")}
+                  data-rh={intl.formatMessage({
+                    id: "status.downloads.clear_all_finished",
+                  })}
                   onClick={() => clearFinishedDownloads({})}
                 >
                   <span className="icon icon-delete" />
@@ -152,9 +155,10 @@ interface IDerivedProps {
   finishedItems: IDownloadItem[];
 
   clearFinishedDownloads: typeof actions.clearFinishedDownloads;
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(Downloads, {
+export default connect<IProps>(injectIntl(Downloads), {
   state: createStructuredSelector({
     items: (state: IAppState) => getPendingDownloads(state.downloads),
     finishedItems: (state: IAppState) => getFinishedDownloads(state.downloads),

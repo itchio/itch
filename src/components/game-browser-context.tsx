@@ -1,6 +1,6 @@
 import { createSelector, createStructuredSelector } from "reselect";
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import bob, { IRGBColor } from "../renderer-util/bob";
 
@@ -47,7 +47,7 @@ const GameActionsContainer = styled.div`
 `;
 
 export class GameBrowserContext extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   constructor() {

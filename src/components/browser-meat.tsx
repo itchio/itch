@@ -1,6 +1,8 @@
 import { createStructuredSelector } from "reselect";
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
+
+import { injectIntl, InjectedIntl } from "react-intl";
 
 import * as classNames from "classnames";
 
@@ -93,7 +95,7 @@ interface IHistoryEntry {
 
 @watching
 export class BrowserMeat extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   lastNavigationUrl: string;
@@ -399,7 +401,7 @@ export class BrowserMeat extends React.PureComponent<
       this.webview.addEventListener("new-window", this.newWindow);
       this.domReady();
 
-      createContextMenu(this.webview, this.props.t, {
+      createContextMenu(this.webview, this.props.intl, {
         navigate: this.props.navigate,
       });
 
@@ -580,13 +582,15 @@ interface IDerivedProps {
   tabDataFetched: typeof actions.tabDataFetched;
   tabReloaded: typeof actions.tabReloaded;
   tabLoading: typeof actions.tabLoading;
+
+  intl: InjectedIntl;
 }
 
 interface IState {
   browserState: IBrowserState;
 }
 
-export default connect<IProps>(BrowserMeat, {
+export default connect<IProps>(injectIntl(BrowserMeat), {
   state: createStructuredSelector({
     meId: (state: IAppState) =>
       (state.session.credentials.me || { id: "anonymous" }).id,

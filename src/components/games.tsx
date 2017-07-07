@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
 import { IAppState, TabLayout, ITabParams, ITabData, IGameSet } from "../types";
@@ -16,7 +16,7 @@ import styled from "./styles";
 
 export const HubGamesDiv = styled.div`flex-grow: 1;`;
 
-class Games extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
+class Games extends React.PureComponent<IProps & IDerivedProps> {
   onSortChange = (sortParams: ISortParams) => {
     const { params: oldParams, tab } = this.props;
     let { sortBy, sortDirection } = sortParams;

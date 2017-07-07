@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 import { map } from "underscore";
 
 import listensToClickOutside = require("react-onclickoutside");
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import DropdownItem, { IDropdownItem } from "./dropdown-item";
 
@@ -46,7 +46,7 @@ const DropdownDiv = styled.div`
 `;
 
 export class Dropdown extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   constructor() {

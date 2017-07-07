@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createSelector, createStructuredSelector } from "reselect";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import { findWhere, map } from "underscore";
 
@@ -11,17 +11,17 @@ import LoadingCircle from "../basics/loading-circle";
 
 import { IAppState, ITask, IPrereqsState } from "../../types";
 
-export class PrereqsState extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+import format from "../format";
+
+export class PrereqsState extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t, prereqsState } = this.props;
+    const { prereqsState } = this.props;
     const params = this.props.modal.widgetParams as IPrereqsStateParams;
 
     if (!prereqsState) {
       return (
         <ModalWidgetDiv>
-          {t("setup.status.preparing")}
+          {format(["setup.status.preparing"])}
         </ModalWidgetDiv>
       );
     }
@@ -29,7 +29,7 @@ export class PrereqsState extends React.PureComponent<
     return (
       <ModalWidgetDiv>
         <p>
-          {t("prereq.explanation", { title: params.gameTitle })}
+          {format(["prereq.explanation", { title: params.gameTitle }])}
         </p>
 
         <ul className="prereqs-rows">
@@ -49,8 +49,8 @@ export class PrereqsState extends React.PureComponent<
                   </div>
                   <div className="task-status">
                     {v.status === "downloading" && v.progress
-                      ? downloadProgress(t, v, false)
-                      : t(`prereq.status.${v.status}`)}
+                      ? downloadProgress(v, false)
+                      : format([`prereq.status.${v.status}`])}
                   </div>
                 </div>
               </li>

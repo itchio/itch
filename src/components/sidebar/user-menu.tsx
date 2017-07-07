@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import { IAppState } from "../../types";
 
@@ -43,7 +43,7 @@ const UserMenuButton = styled(Button)`
   }
 `;
 
-class UserMenu extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
+class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
   items: IDropdownItem[] = [
     {
       icon: "rocket",

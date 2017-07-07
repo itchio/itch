@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
 import * as actions from "../actions";
@@ -21,9 +21,7 @@ const ContentContainer = styled.div`
   flex-grow: 1;
 `;
 
-export class HubContent extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class HubContent extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     if (!this.props.credentials) {
       return <div />;

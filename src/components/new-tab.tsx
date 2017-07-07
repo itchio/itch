@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import { map } from "underscore";
 
@@ -17,6 +17,9 @@ import { transformUrl } from "../util/navigation";
 import { dispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
+
+import { injectIntl, InjectedIntl } from "react-intl";
+import format, { formatString } from "./format";
 
 const NewTabContainer = styled.div`${styles.meat()};`;
 
@@ -84,9 +87,7 @@ const UrlContainer = styled.div`
   }
 `;
 
-export class NewTab extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class NewTab extends React.PureComponent<IProps & IDerivedProps> {
   urlField: HTMLInputElement;
 
   constructor() {
@@ -94,7 +95,7 @@ export class NewTab extends React.PureComponent<
   }
 
   render() {
-    const { t, tab, evolveTab } = this.props;
+    const { intl, tab, evolveTab } = this.props;
 
     return (
       <NewTabContainer>
@@ -104,7 +105,7 @@ export class NewTab extends React.PureComponent<
           <Spacer />
 
           <Title>
-            {t("new_tab.titles.buttons")}
+            {format(["new_tab.titles.buttons"])}
           </Title>
 
           {map(newTabItems, item => {
@@ -117,14 +118,14 @@ export class NewTab extends React.PureComponent<
               >
                 <Icon icon={icon} />
                 <span>
-                  {t.format(label)}
+                  {format(label)}
                 </span>
               </NewTabItem>
             );
           })}
 
           <Title>
-            {t("new_tab.titles.input")}
+            {format(["new_tab.titles.input"])}
           </Title>
           <WebNavContainer>
             <UrlContainer>
@@ -133,7 +134,9 @@ export class NewTab extends React.PureComponent<
                 autoFocus
                 onKeyUp={this.addressKeyUp}
                 ref={this.onUrlField}
-                placeholder={t("new_tab.titles.browser_placeholder")}
+                placeholder={formatString(intl, [
+                  "new_tab.titles.browser_placeholder",
+                ])}
               />
               <span className="icon icon-earth" />
             </UrlContainer>
@@ -143,7 +146,7 @@ export class NewTab extends React.PureComponent<
               className="go-button"
               discreet
               icon="arrow-right"
-              label={t("grid.item.open")}
+              label={format("grid.item.open")}
               onClick={this.navigate}
             />
           </WebNavContainer>
@@ -182,9 +185,11 @@ interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
   evolveTab: typeof actions.evolveTab;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(NewTab, {
+export default connect<IProps>(injectIntl(NewTab), {
   dispatch: dispatch => ({
     evolveTab: dispatcher(dispatch, actions.evolveTab),
   }),

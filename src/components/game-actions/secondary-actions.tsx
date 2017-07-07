@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 import IconButton from "../basics/icon-button";
 
 import listSecondaryActions, { IActionOpts } from "./list-secondary-actions";
@@ -12,15 +12,16 @@ import { IActionsInfo } from "./types";
 
 import styled from "../styles";
 
+import { injectIntl, InjectedIntl } from "react-intl";
+import { formatString } from "../format";
+
 const SecondaryActionsDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
 `;
 
-class SecondaryActions extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+class SecondaryActions extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { items, error } = listSecondaryActions(this.props);
 
@@ -32,7 +33,7 @@ class SecondaryActions extends React.PureComponent<
   }
 
   action = (opts: IActionOpts) => {
-    const { t, dispatch } = this.props;
+    const { intl, dispatch } = this.props;
     const { action, label, icon, type = "action", classes = [] } = opts;
 
     if (type === "info" || type === "separator" || type === "secondary") {
@@ -48,7 +49,7 @@ class SecondaryActions extends React.PureComponent<
         key={key}
         className={actionClasses}
         onClick={() => dispatch(action)}
-        hint={t.format(label)}
+        hint={formatString(intl, label)}
       />
     );
   };
@@ -58,8 +59,9 @@ interface IProps extends IActionsInfo {}
 
 interface IDerivedProps {
   dispatch: IDispatch;
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(SecondaryActions, {
+export default connect<IProps>(injectIntl(SecondaryActions), {
   dispatch: dispatch => ({ dispatch }),
 });

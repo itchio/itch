@@ -118,6 +118,8 @@ const Bubble = styled.span`
 `;
 
 class Item extends React.PureComponent<IProps, IState> {
+  freshTimeout: NodeJS.Timer;
+
   constructor() {
     super();
     this.state = {
@@ -209,9 +211,13 @@ class Item extends React.PureComponent<IProps, IState> {
   }
 
   componentDidMount() {
-    setTimeout(() => {
+    this.freshTimeout = setTimeout(() => {
       this.setState({ fresh: false });
     }, 400);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.freshTimeout);
   }
 }
 

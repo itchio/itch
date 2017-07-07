@@ -1,13 +1,13 @@
 import * as React from "react";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
 import { ICave } from "../../db/models/cave";
 
-export class RevertCave extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+import format from "../format";
+
+export class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
   refs: {
     buildId?: HTMLInputElement;
   };
@@ -17,14 +17,13 @@ export class RevertCave extends React.PureComponent<
   }
 
   render() {
-    const { t } = this.props;
     const params = this.props.modal.widgetParams as IRevertCaveParams;
     const buildId = params.currentCave.buildId;
 
     return (
       <ModalWidgetDiv>
         <p>
-          {t("prompt.revert.message", { buildId })}
+          {format(["prompt.revert.message", { buildId }])}
         </p>
 
         <input

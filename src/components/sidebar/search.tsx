@@ -7,10 +7,13 @@ import styled, * as styles from "../styles";
 
 import watching, { Watcher } from "../watching";
 
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
+
+import { injectIntl, InjectedIntl } from "react-intl";
+import { formatString } from "../format";
 
 const SearchContainer = styled.section`
   position: relative;
@@ -22,9 +25,7 @@ const SearchContainer = styled.section`
   }
 
   input[type=search] {
-    ${styles.searchInput()}
-
-    width: 100%;
+    ${styles.searchInput()} width: 100%;
     margin-left: 4px;
     text-indent: 16px;
     padding: 6px 10px 5px 9px;
@@ -33,14 +34,12 @@ const SearchContainer = styled.section`
   }
 
   .icon-search {
-    ${styles.searchIcon()}
-
-    left: 20px;
+    ${styles.searchIcon()} left: 20px;
   }
 `;
 
 @watching
-class Search extends React.PureComponent<IDerivedProps & I18nProps, {}> {
+class Search extends React.PureComponent<IDerivedProps> {
   input: HTMLInputElement;
 
   trigger = debounce(() => {
@@ -124,7 +123,7 @@ class Search extends React.PureComponent<IDerivedProps & I18nProps, {}> {
   }
 
   render() {
-    const { t, loading } = this.props;
+    const { intl, loading } = this.props;
 
     return (
       <SearchContainer className={classNames({ loading })}>
@@ -132,7 +131,7 @@ class Search extends React.PureComponent<IDerivedProps & I18nProps, {}> {
           id="search"
           ref={input => (this.input = input)}
           type="search"
-          placeholder={t("search.placeholder") + "..."}
+          placeholder={formatString(intl, ["search.placeholder"]) + "..."}
           onKeyDown={this.onKeyDown}
           onKeyUp={this.onKeyUp}
           onChange={this.onChange}
@@ -152,9 +151,11 @@ interface IDerivedProps {
   focusSearch: typeof actions.focusSearch;
   closeSearch: typeof actions.closeSearch;
   searchHighlightOffset: typeof actions.searchHighlightOffset;
+
+  intl: InjectedIntl;
 }
 
-export default connect<{}>(Search, {
+export default connect<{}>(injectIntl(Search), {
   state: createStructuredSelector({
     loading: state => state.session.search.loading,
   }),

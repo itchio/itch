@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
 
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import { dispatcher, multiDispatcher } from "../constants/action-types";
 import * as actions from "../actions";
@@ -44,6 +44,8 @@ import { css } from "./styles";
 
 import { Requester } from "./data-request";
 
+import { formatString } from "./format";
+
 interface IRowGetterParams {
   index: number;
 }
@@ -55,6 +57,7 @@ interface ICellDataGetter {
 }
 
 import { tableStyles } from "./table-styles";
+import { InjectedIntl, injectIntl } from "react-intl";
 
 const StyledTable = (styled(Table as any)`
   ${tableStyles()}
@@ -102,7 +105,7 @@ const EmptyDescriptionDiv = styled(DescriptionDiv)`
 `;
 
 class GameTable extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IGameTableState
 > {
   infiniteLoader: InfiniteLoader;
@@ -296,8 +299,6 @@ class GameTable extends React.PureComponent<
   };
 
   renderWithSize = ({ width, height }) => {
-    const { t } = this.props;
-
     let remainingWidth = width;
     let coverWidth = 74;
     remainingWidth -= coverWidth;
@@ -314,6 +315,8 @@ class GameTable extends React.PureComponent<
     const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
     const { sortBy, sortDirection, gameIds } = this.props;
     const gamesCount = gameIds.length;
+
+    const { intl } = this.props;
 
     return (
       <InfiniteLoader
@@ -359,14 +362,14 @@ class GameTable extends React.PureComponent<
 
               <Column
                 dataKey="title"
-                label={t("table.column.name")}
+                label={formatString(intl, ["table.column.name"])}
                 width={remainingWidth}
                 cellDataGetter={this.genericDataGetter}
                 cellRenderer={this.titleRenderer}
               />
               <Column
                 dataKey="secondsRun"
-                label={t("table.column.play_time")}
+                label={formatString(intl, ["table.column.play_time"])}
                 width={playtimeWidth}
                 className="secondary"
                 cellDataGetter={this.genericDataGetter}
@@ -374,7 +377,7 @@ class GameTable extends React.PureComponent<
               />
               <Column
                 dataKey="lastTouchedAt"
-                label={t("table.column.last_played")}
+                label={formatString(intl, ["table.column.last_played"])}
                 width={lastPlayedWidth}
                 className="secondary"
                 cellDataGetter={this.genericDataGetter}
@@ -382,7 +385,7 @@ class GameTable extends React.PureComponent<
               />
               <Column
                 dataKey="publishedAt"
-                label={t("table.column.published")}
+                label={formatString(intl, ["table.column.published"])}
                 width={publishedWidth}
                 className="secondary"
                 cellDataGetter={this.genericDataGetter}
@@ -417,13 +420,15 @@ interface IDerivedProps {
   navigateToGame: typeof actions.navigateToGame;
   openGameContextMenu: typeof actions.openGameContextMenu;
   tabPaginationChanged: typeof actions.tabPaginationChanged;
+
+  intl: InjectedIntl;
 }
 
 interface IGameTableState {
   scrollTop?: number;
 }
 
-export default connect<IProps>(GameTable, {
+export default connect<IProps>(injectIntl(GameTable), {
   state: () =>
     createStructuredSelector({
       commons: state => state.commons,

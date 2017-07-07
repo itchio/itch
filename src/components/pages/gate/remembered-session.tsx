@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "../../connect";
+import { connect } from "../../connect";
 
 import TimeAgo from "../../basics/time-ago";
 import IconButton from "../../basics/icon-button";
@@ -12,6 +12,8 @@ import { IRememberedSession } from "../../../types";
 import { dispatcher } from "../../../constants/action-types";
 
 import styled from "../../styles";
+
+import format from "../../format";
 
 const RememberedSessionDiv = styled.div`
   flex-shrink: 0;
@@ -81,10 +83,10 @@ const RememberedSessionDiv = styled.div`
 `;
 
 export class RememberedSession extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
+  IProps & IDerivedProps
 > {
   render() {
-    const { t, session, loginWithToken, forgetSessionRequest } = this.props;
+    const { session, loginWithToken, forgetSessionRequest } = this.props;
     const { me, key } = session;
     const { id, username, displayName, coverUrl = defaultImages.avatar } = me;
 
@@ -110,7 +112,7 @@ export class RememberedSession extends React.PureComponent<
             {displayName || username}
           </p>
           <p className="last-connected">
-            {t("login.remembered_session.last_connected")}{" "}
+            {format(["login.remembered_session.last_connected"])}{" "}
             <TimeAgo date={new Date(session.lastConnected)} />
           </p>
         </div>

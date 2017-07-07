@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import * as actions from "../actions";
 
@@ -8,13 +8,12 @@ import { IMeatProps } from "./meats/types";
 
 import { dispatcher } from "../constants/action-types";
 
+import format from "./format";
+
 /**
  * Unapologetically and heavily inspired from Google Chrome's "stuff went wrong" tab
  */
-export class Toast extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  IState
-> {
+export class Toast extends React.PureComponent<IProps & IDerivedProps, IState> {
   constructor() {
     super();
     this.state = {
@@ -44,27 +43,35 @@ export class Toast extends React.PureComponent<
   };
 
   render() {
-    const { t, tabData = {} } = this.props;
+    const { tabData = {} } = this.props;
 
     return (
       <div className="toast-meat">
         <Icon icon="heart-broken" className="leader" />
-        <h2>{t("toast.title")}</h2>
+        <h2>
+          {format(["toast.title"])}
+        </h2>
 
-        <p>{t("toast.message")} {t("toast.call_to_action")}</p>
+        <p>
+          {format(["toast.message"])} {format(["toast.call_to_action"])}
+        </p>
 
         <div className="button" onClick={this.reload}>
-          <Icon icon="repeat" /> {t("toast.actions.reload")}
+          <Icon icon="repeat" /> {format(["toast.actions.reload"])}
         </div>
 
         <span className="link" onClick={this.toggleExpand}>
-          {t("toast.actions.learn_more")}
+          {format(["toast.actions.learn_more"])}
         </span>
 
-        {this.state.expanded ? <p className="error">{tabData.error}</p> : ""}
+        {this.state.expanded
+          ? <p className="error">
+              {tabData.error}
+            </p>
+          : ""}
 
         <span className="link" onClick={this.sendFeedback}>
-          {t("toast.actions.report")}
+          {format(["toast.actions.report"])}
         </span>
       </div>
     );

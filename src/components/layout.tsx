@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import GatePage from "./pages/gate";
 import HubPage from "./pages/hub";
@@ -74,7 +74,7 @@ declare class Notification {
  * Also, subscribes to app store to synchronize its state
  */
 @watching
-class Layout extends React.PureComponent<IProps & IDerivedProps & I18nProps> {
+class Layout extends React.PureComponent<IProps & IDerivedProps> {
   subscribe(watcher: Watcher) {
     watcher.on(actions.notifyHtml5, async (store, action) => {
       const { title, onClick } = action.payload;

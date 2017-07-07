@@ -1,10 +1,12 @@
 import * as React from "react";
-import { connect, I18nProps } from "../connect";
+
+import format, { formatString } from "../format";
+import { InjectedIntl, injectIntl } from "react-intl";
 
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
 export class TwoFactorInput extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
+  IProps & IDerivedProps
 > {
   refs: {
     totpInput?: HTMLInputElement;
@@ -15,24 +17,26 @@ export class TwoFactorInput extends React.PureComponent<
   }
 
   render() {
-    const { t } = this.props;
     const params = this.props.modal.widgetParams as ITwoFactorInputParams;
     const { username } = params;
+    const { intl } = this.props;
 
     return (
       <ModalWidgetDiv>
         <p>
           <strong>
-            {t("login.two_factor.as_user", { username })}
+            {format(["login.two_factor.as_user", { username }])}
           </strong>
         </p>
 
         <p>
-          {t("login.two_factor.enter_code")}
+          {format(["login.two_factor.enter_code"])}
         </p>
 
         <input
-          placeholder={t("login.two_factor.verification_code_label")}
+          placeholder={formatString(intl, [
+            "login.two_factor.verification_code_label",
+          ])}
           ref="totpInput"
           type="number"
           onKeyDown={this.onChange}
@@ -64,6 +68,8 @@ interface IProps extends IModalWidgetProps {
   params: ITwoFactorInputParams;
 }
 
-interface IDerivedProps {}
+interface IDerivedProps {
+  intl: InjectedIntl;
+}
 
-export default connect<IProps>(TwoFactorInput);
+export default injectIntl(TwoFactorInput);

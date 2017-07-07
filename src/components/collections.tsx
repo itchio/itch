@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
@@ -16,16 +16,15 @@ import Link from "./basics/link";
 import TitleBar from "./title-bar";
 
 import styled, * as styles from "./styles";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 const CollectionsContainer = styled.div`${styles.meat()};`;
 
 const tab = "collections";
 
-export class Collections extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class Collections extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t, navigate } = this.props;
+    const { intl, navigate } = this.props;
 
     return (
       <CollectionsContainer>
@@ -36,7 +35,7 @@ export class Collections extends React.PureComponent<
           showLayoutPicker={false}
         >
           <Link
-            label={t("outlinks.manage_collections")}
+            label={intl.formatMessage({ id: "outlinks.manage_collections" })}
             onClick={e => navigate(`url/${urls.myCollections}`)}
           />
         </GameFilters>
@@ -50,9 +49,10 @@ interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
   navigate: typeof actions.navigate;
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(Collections, {
+export default connect<IProps>(injectIntl(Collections), {
   dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
   }),

@@ -1,7 +1,8 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
 
 import interleave from "./interleave";
+
+import format from "./format";
 
 import platformData from "../constants/platform-data";
 import actionForGame from "../util/action-for-game";
@@ -20,6 +21,7 @@ import { fromJSONField } from "../db/json-field";
 import { ISaleInfo } from "../types";
 
 import styled from "./styles";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 const GameStatsDiv = styled.div`
   display: flex;
@@ -58,16 +60,14 @@ const GameStatsDiv = styled.div`
   }
 `;
 
-export class GameStats extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class GameStats extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const {
-      t,
       cave,
       game = {} as IGame,
       downloadKey,
       mdash = true,
+      intl,
     } = this.props;
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
@@ -84,7 +84,9 @@ export class GameStats extends React.PureComponent<
       if (classAction === "launch") {
         for (const p of platformData) {
           if ((game as any)[p.field]) {
-            platforms.push(<Icon hint={p.platform} icon={p.icon} />);
+            platforms.push(
+              <Icon key={p.icon} hint={p.platform} icon={p.icon} />,
+            );
           }
         }
       }
@@ -94,28 +96,31 @@ export class GameStats extends React.PureComponent<
       return (
         <GameStatsDiv>
           <div className="total-playtime">
-            {t(`usage_stats.description.${classification}`)}
+            {format([`usage_stats.description.${classification}`])}
             {platforms.length > 0
               ? [
                   " ",
-                  interleave(t, "usage_stats.description.platforms", {
+                  interleave(intl, "usage_stats.description.platforms", {
                     platforms,
                   }),
                 ]
               : ""}
             {mdash ? " — " : <br />}
             {downloadKey
-              ? interleave(t, "usage_stats.description.bought_time_ago", {
+              ? interleave(intl, "usage_stats.description.bought_time_ago", {
                   time_ago: <TimeAgo date={downloadKey.createdAt} />,
                 })
               : minPrice > 0
-                ? interleave(t, "usage_stats.description.price", {
+                ? interleave(intl, "usage_stats.description.price", {
                     price: sale
                       ? [
-                          <label className="original-price">
+                          <label
+                            key="original-price"
+                            className="original-price"
+                          >
                             {formatPrice(currency, minPrice)}
                           </label>,
-                          <label>
+                          <label key="discounted-price">
                             {" "}{formatPrice(
                               currency,
                               minPrice * (1 - sale.rate / 100),
@@ -126,7 +131,7 @@ export class GameStats extends React.PureComponent<
                           {formatPrice(currency, minPrice)}
                         </label>,
                   })
-                : t("usage_stats.description.free_download")}
+                : format(["usage_stats.description.free_download"])}
           </div>
         </GameStatsDiv>
       );
@@ -141,6 +146,8 @@ interface IProps {
   mdash?: boolean;
 }
 
-interface IDerivedProps {}
+interface IDerivedProps {
+  intl: InjectedIntl;
+}
 
-export default connect<IProps>(GameStats);
+export default injectIntl(GameStats);

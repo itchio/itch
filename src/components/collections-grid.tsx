@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
 import { ICollection } from "../db/models/collection";
@@ -13,6 +13,7 @@ import { values } from "underscore";
 
 import styled from "./styles";
 import StyledGrid from "./styled-grid";
+import { InjectedIntl, injectIntl } from "react-intl";
 
 interface ICellInfo {
   columnIndex: number;
@@ -26,7 +27,7 @@ const tab = "collections";
 const HubCollectionsGrid = styled.div`flex-grow: 1;`;
 
 export class CollectionsGrid extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   constructor() {
@@ -37,7 +38,7 @@ export class CollectionsGrid extends React.PureComponent<
   }
 
   render() {
-    const { t, hiddenCount } = this.props;
+    const { intl, hiddenCount } = this.props;
 
     return (
       <HubCollectionsGrid>
@@ -46,7 +47,10 @@ export class CollectionsGrid extends React.PureComponent<
         </AutoSizer>
         {hiddenCount > 0
           ? <div className="hidden-count">
-              {t("grid.hidden_count", { count: hiddenCount })}
+              {intl.formatMessage(
+                { id: "grid.hidden_count" },
+                { count: hiddenCount },
+              )}
             </div>
           : ""}
       </HubCollectionsGrid>
@@ -119,6 +123,7 @@ interface IDerivedProps {
   games: IGameSet;
   collections: ICollection[];
   hiddenCount: number;
+  intl: InjectedIntl;
 }
 
 interface IState {
@@ -127,7 +132,7 @@ interface IState {
 
 const emptyObj = {};
 
-export default connect<IProps>(CollectionsGrid, {
+export default connect<IProps>(injectIntl(CollectionsGrid), {
   state: createSelector(
     (state: IAppState) => state.session.tabData[tab] || emptyObj,
     createStructuredSelector({

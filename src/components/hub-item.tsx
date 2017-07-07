@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import { whenClickNavigates } from "./when-click-navigates";
 
@@ -13,7 +13,7 @@ import { dispatcher, multiDispatcher } from "../constants/action-types";
 import styled, * as styles from "./styles";
 
 export class HubItem extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   constructor() {

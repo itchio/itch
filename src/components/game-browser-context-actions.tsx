@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import { map } from "underscore";
 
@@ -18,6 +18,7 @@ const GENEROSITY_TIMEOUT = 1000;
 import delay from "../reactors/delay";
 
 import styled from "./styles";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 const ActionsDiv = styled.div`
   flex-grow: 1;
@@ -33,7 +34,7 @@ const ActionsDiv = styled.div`
  */
 @watching
 class GameBrowserContextActions extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   constructor() {
@@ -74,12 +75,13 @@ interface IProps extends IActionsInfo {}
 
 interface IDerivedProps {
   dispatch: IDispatch;
+  intl: InjectedIntl;
 }
 
 interface IState {
   encouragingGenerosity: boolean;
 }
 
-export default connect<IProps>(GameBrowserContextActions, {
+export default connect<IProps>(injectIntl(GameBrowserContextActions), {
   dispatch: dispatch => ({ dispatch }),
 });

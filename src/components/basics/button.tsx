@@ -107,7 +107,7 @@ interface IProps {
   hint?: string;
   icon?: string;
   iconComponent?: JSX.Element;
-  label?: string;
+  label?: JSX.Element | string;
   discreet?: boolean;
   fat?: boolean;
   id?: string;

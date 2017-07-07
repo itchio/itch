@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import { dispatcher } from "../constants/action-types";
 import * as actions from "../actions";
@@ -34,10 +34,7 @@ interface ILayoutInfo {
   columnCount: number;
 }
 
-class GameGrid extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  IState
-> {
+class GameGrid extends React.PureComponent<IProps & IDerivedProps, IState> {
   infiniteLoader: InfiniteLoader;
   onRowsRendered: ({ startIndex, stopIndex }) => void;
   lastStartIndex = 0;

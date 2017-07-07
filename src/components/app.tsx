@@ -42,20 +42,28 @@ class App extends React.PureComponent<IDerivedProps, IState> {
     );
   }
 
-  componentDidUpdate(prevProps) {
+  componentWillMount() {
+    this.updateMessages(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
     if (
-      prevProps.locale !== this.props.locale ||
-      prevProps.messages !== this.props.messages ||
-      prevProps.messages !== this.props.messages
+      nextProps.locale !== this.props.locale ||
+      nextProps.messages !== this.props.messages ||
+      nextProps.fallbackMessages !== this.props.fallbackMessages
     ) {
-      this.setState({
-        localeVersion: this.state.localeVersion + 1,
-        messages: {
-          ...this.props.fallbackMessages,
-          ...this.props.messages,
-        },
-      });
+      this.updateMessages(nextProps);
     }
+  }
+
+  updateMessages(nextProps: IDerivedProps) {
+    this.setState({
+      localeVersion: this.state.localeVersion + 1,
+      messages: {
+        ...nextProps.fallbackMessages,
+        ...nextProps.messages,
+      },
+    });
   }
 }
 

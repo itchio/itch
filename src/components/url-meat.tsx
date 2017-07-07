@@ -1,5 +1,4 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
 
 import env from "../env";
 
@@ -13,8 +12,8 @@ import * as querystring from "querystring";
 
 const emptyObj = {};
 
-export class UrlMeat extends React.PureComponent<IProps & I18nProps, IState> {
-  constructor(props: IProps & I18nProps) {
+export default class UrlMeat extends React.PureComponent<IProps, IState> {
+  constructor(props: IProps) {
     super();
     this.state = {
       active: props.visible || !props.tabData.restored,
@@ -103,5 +102,3 @@ interface IProps extends IMeatProps {}
 interface IState {
   active: boolean;
 }
-
-export default connect<IProps>(UrlMeat);

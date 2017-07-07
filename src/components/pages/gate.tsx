@@ -1,6 +1,6 @@
 import * as classNames from "classnames";
 import * as React from "react";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import { isEmpty, map, sortBy, size } from "underscore";
 import { resolve } from "path";
@@ -26,6 +26,9 @@ import {
   dispatcher,
   ILoginWithTokenPayload,
 } from "../../constants/action-types";
+
+import format, { formatString } from "../format";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 import watching, { Watcher } from "../watching";
 
@@ -241,9 +244,7 @@ const RememberedSessions = styled.div`
 `;
 
 @watching
-export class GatePage extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
   username: HTMLInputElement;
   password: HTMLInputElement;
 
@@ -257,7 +258,7 @@ export class GatePage extends React.PureComponent<
   }
 
   render() {
-    const { t, stage, blockingOperation } = this.props;
+    const { intl, stage, blockingOperation } = this.props;
     const disabled = !!blockingOperation;
 
     return (
@@ -278,7 +279,7 @@ export class GatePage extends React.PureComponent<
               id="login-username"
               ref={this.gotUsernameField}
               type="text"
-              placeholder={t("login.field.username")}
+              placeholder={formatString(intl, ["login.field.username"])}
               onKeyDown={this.handleKeyDown}
               disabled={disabled}
             />
@@ -286,7 +287,7 @@ export class GatePage extends React.PureComponent<
               id="login-password"
               ref={this.gotPasswordField}
               type="password"
-              placeholder={t("login.field.password")}
+              placeholder={formatString(intl, ["login.field.password"])}
               disabled={disabled}
               onKeyDown={this.handleKeyDown}
             />
@@ -302,7 +303,7 @@ export class GatePage extends React.PureComponent<
   }
 
   errors() {
-    const { t, errors, stage } = this.props;
+    const { errors, stage } = this.props;
 
     if (stage === "pick") {
       return (
@@ -311,9 +312,7 @@ export class GatePage extends React.PureComponent<
             <Filler />
             <Icon icon="heart-filled" />
             <Spacer />
-            <span>
-              {t("login.messages.welcome_back")}
-            </span>
+            {format(["login.messages.welcome_back"])}
             <Filler />
           </span>
         </section>
@@ -335,13 +334,13 @@ export class GatePage extends React.PureComponent<
   }
 
   links() {
-    const { t, stage, openUrl, loginStopPicking } = this.props;
+    const { intl, stage, openUrl, loginStopPicking } = this.props;
 
     if (stage === "pick") {
       return (
         <section className="links">
           <Link
-            label={t("login.action.show_form")}
+            label={formatString(intl, ["login.action.show_form"])}
             onClick={() => loginStopPicking({})}
           />
         </section>
@@ -353,14 +352,14 @@ export class GatePage extends React.PureComponent<
       return (
         <section className="links">
           <Link
-            label={t("login.action.register")}
+            label={formatString(intl, ["login.action.register"])}
             onClick={() => openUrl({ url: urls.accountRegister })}
           />
           <span>
             {" · "}
           </span>
           <Link
-            label={t("login.action.reset_password")}
+            label={formatString(intl, ["login.action.reset_password"])}
             onClick={() => openUrl({ url: urls.accountForgotPassword })}
           />
           {numSavedSessions > 0
@@ -370,7 +369,7 @@ export class GatePage extends React.PureComponent<
                 </span>,
                 <Link
                   key="show-saved-logins"
-                  label={t("login.action.show_saved_logins")}
+                  label={formatString(intl, ["login.action.show_saved_logins"])}
                   onClick={this.onStartPicking}
                 />,
               ]
@@ -382,7 +381,7 @@ export class GatePage extends React.PureComponent<
 
   renderActions() {
     const {
-      t,
+      intl,
       blockingOperation,
       rememberedSessions = {},
       stage,
@@ -415,7 +414,7 @@ export class GatePage extends React.PureComponent<
 
     if (blockingOperation) {
       const { message, icon } = blockingOperation;
-      const translatedMessage = t.format(message);
+      const translatedMessage = formatString(intl, message);
       const hasError = icon === "error";
       let iconElement: JSX.Element;
       if (hasError) {
@@ -433,13 +432,13 @@ export class GatePage extends React.PureComponent<
                 <Button
                   discreet
                   icon="repeat"
-                  label={t("login.action.retry_setup")}
+                  label={formatString(intl, ["login.action.retry_setup"])}
                   onClick={() => retrySetup({})}
                 />
                 <Button
                   discreet
                   icon="bug"
-                  label={t("grid.item.report_problem")}
+                  label={formatString(intl, ["grid.item.report_problem"])}
                   onClick={this.onReportBlockingOperation}
                 />
               </div>
@@ -447,7 +446,7 @@ export class GatePage extends React.PureComponent<
         </div>
       );
     } else {
-      const translatedMessage = t("login.action.login");
+      const translatedMessage = formatString(intl, ["login.action.login"]);
       return (
         <Button
           id="login-button"
@@ -544,9 +543,11 @@ interface IDerivedProps {
   forgetSessionRequest: typeof actions.forgetSessionRequest;
   retrySetup: typeof actions.retrySetup;
   openUrl: typeof actions.openUrl;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(GatePage, {
+export default connect<IProps>(injectIntl(GatePage), {
   state: (state): Partial<IDerivedProps> => {
     const { rememberedSessions, session } = state;
     const { login } = session;

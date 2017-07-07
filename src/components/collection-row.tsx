@@ -1,6 +1,7 @@
 import * as React from "react";
 
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
+import format from "./format";
 
 import { map, each, filter } from "underscore";
 
@@ -19,6 +20,7 @@ import { fromJSONField } from "../db/json-field";
 import { multiDispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
+import { InjectedIntl, injectIntl } from "react-intl";
 
 const CoverDiv = styled.div`
   background-size: cover;
@@ -88,11 +90,9 @@ const CollectionRowDiv = styled.div`
 
 const emptyArr = [];
 
-export class CollectionRow extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class CollectionRow extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t, allGames, collection } = this.props;
+    const { allGames, collection, intl } = this.props;
     const { title } = collection;
 
     const gameIds = fromJSONField<number[]>(collection.gameIds, emptyArr).slice(
@@ -131,11 +131,11 @@ export class CollectionRow extends React.PureComponent<
         <section className="info">
           <Icon icon="tag" />
           <span className="total">
-            {t("sidebar.collection.subtitle", { itemCount })}
+            {format(["sidebar.collection.subtitle", { itemCount }])}
           </span>
           <span className="spacer" />
           <Icon icon="history" />
-          {interleave(t, "collection_grid.item.updated_at", {
+          {interleave(intl, "collection_grid.item.updated_at", {
             time_ago: <TimeAgo key="timeago" date={collection.updatedAt} />,
           })}
         </section>
@@ -159,9 +159,11 @@ interface IProps {
 
 interface IDerivedProps {
   navigateToCollection: typeof actions.navigateToCollection;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(CollectionRow, {
+export default connect<IProps>(injectIntl(CollectionRow), {
   dispatch: dispatch => ({
     navigateToCollection: multiDispatcher(
       dispatch,

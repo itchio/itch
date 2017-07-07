@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
@@ -11,13 +11,15 @@ import LoadingCircle from "../basics/loading-circle";
 
 import * as electron from "electron";
 
+import format from "../format";
+
 // TODO: So maybe this is a good place to clear downloads too
 // I dunno, just a though. Like technically they shouldn't even
 // stay long (should be cleaned up after install etc.)
 // but yeah.
 
 export class ClearBrowsingData extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   constructor() {
@@ -71,7 +73,6 @@ export class ClearBrowsingData extends React.PureComponent<
   };
 
   render() {
-    const { t } = this.props;
     const {
       fetchedCacheSize,
       cacheSize,
@@ -90,17 +91,22 @@ export class ClearBrowsingData extends React.PureComponent<
                 checked={clearCache}
                 onChange={this.toggleCache}
               />
-              {t("prompt.clear_browsing_data.category.cache")}
+              {format(["prompt.clear_browsing_data.category.cache"])}
             </div>
             <div className="checkbox-info">
               {fetchedCacheSize
-                ? t("prompt.clear_browsing_data.cache_size_used", {
-                    size: humanize.fileSize(cacheSize),
-                  })
+                ? format([
+                    "prompt.clear_browsing_data.cache_size_used",
+                    {
+                      size: humanize.fileSize(cacheSize),
+                    },
+                  ])
                 : [
                     <LoadingCircle progress={0.1} />,
                     " ",
-                    t("prompt.clear_browsing_data.retrieving_cache_size"),
+                    format([
+                      "prompt.clear_browsing_data.retrieving_cache_size",
+                    ]),
                   ]}
             </div>
           </label>
@@ -112,10 +118,10 @@ export class ClearBrowsingData extends React.PureComponent<
                 checked={clearCookies}
                 onChange={this.toggleCookies}
               />
-              {t("prompt.clear_browsing_data.category.cookies")}
+              {format(["prompt.clear_browsing_data.category.cookies"])}
             </div>
             <div className="checkbox-info">
-              {t("prompt.clear_browsing_data.cookies_info")}
+              {format(["prompt.clear_browsing_data.cookies_info"])}
             </div>
           </label>
         </div>

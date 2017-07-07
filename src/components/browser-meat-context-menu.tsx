@@ -1,7 +1,7 @@
 import * as electron from "electron";
 
 import * as actions from "../actions";
-import { ILocalizer } from "../localizer";
+import { InjectedIntl } from "react-intl";
 
 interface IContextMenuOpts {
   navigate: typeof actions.navigate;
@@ -9,7 +9,7 @@ interface IContextMenuOpts {
 
 export default function create(
   wv: Electron.WebviewTag,
-  t: ILocalizer,
+  intl: InjectedIntl,
   opts: IContextMenuOpts,
 ) {
   const wc = wv.getWebContents();
@@ -25,7 +25,7 @@ export default function create(
       },
       {
         id: "cut",
-        label: t("web.context_menu.cut"),
+        label: intl.formatMessage({ id: "web.context_menu.cut" }),
         // needed because of macOS limitation:
         // https://github.com/electron/electron/issues/5860
         role: can("Cut") ? "cut" : null,
@@ -34,14 +34,14 @@ export default function create(
       },
       {
         id: "copy",
-        label: t("web.context_menu.copy"),
+        label: intl.formatMessage({ id: "web.context_menu.copy" }),
         role: can("Copy") ? "copy" : null,
         enabled: can("Copy"),
         visible: props.isEditable || hasText,
       },
       {
         id: "paste",
-        label: t("web.context_menu.paste"),
+        label: intl.formatMessage({ id: "web.context_menu.paste" }),
         role: editFlags.canPaste ? "paste" : null,
         enabled: editFlags.canPaste,
         visible: props.isEditable,
@@ -58,7 +58,7 @@ export default function create(
         },
         {
           id: "openInNewTab",
-          label: t("web.context_menu.open_in_new_tab"),
+          label: intl.formatMessage({ id: "web.context_menu.open_in_new_tab" }),
           click() {
             opts.navigate("url/" + props.linkURL, {}, /* background */ true);
           },
@@ -68,7 +68,7 @@ export default function create(
         },
         {
           id: "copyLink",
-          label: t("web.context_menu.copy_link"),
+          label: intl.formatMessage({ id: "web.context_menu.copy_link" }),
           click() {
             if (process.platform === "darwin") {
               electron.clipboard.writeBookmark(props.linkText, props.linkURL);

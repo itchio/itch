@@ -1,25 +1,25 @@
 import * as React from "react";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 
 import urls from "../../constants/urls";
 
-class ProxySettings extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+import format from "../format";
+
+class ProxySettings extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t, proxy, proxySource } = this.props;
+    const { proxy, proxySource } = this.props;
 
     return (
       <span className="proxy-settings">
-        {t("preferences.proxy_server_address")}
+        {format(["preferences.proxy_server_address"])}
         {proxy
           ? <span className="value" data-rh-at="right" data-rh={proxySource}>
               {proxy}
             </span>
           : <span className="value">
-              {t("preferences.proxy_server_source.direct")}
+              {format(["preferences.proxy_server_source.direct"])}
             </span>}{" "}
-        <a href={urls.proxyDocs}>{t("docs.learn_more")}</a>
+        <a href={urls.proxyDocs}>{format(["docs.learn_more"])}</a>
       </span>
     );
   }

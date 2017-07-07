@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 import { createStructuredSelector } from "reselect";
 
 import { each } from "underscore";
@@ -20,6 +20,8 @@ import Filler from "../basics/filler";
 
 import { stripUnit } from "polished";
 import styled from "../styles";
+
+import format from "../format";
 
 const ResultsContainer = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -99,7 +101,7 @@ const NoResults = styled.p`
 `;
 
 export class SearchResultBar extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   constructor() {
@@ -110,7 +112,7 @@ export class SearchResultBar extends React.PureComponent<
   }
 
   render() {
-    const { t, query, open, results } = this.props;
+    const { query, open, results } = this.props;
     if (!open) {
       return null;
     }
@@ -125,14 +127,19 @@ export class SearchResultBar extends React.PureComponent<
     return (
       <ResultsContainer className={classNames({ open })}>
         <Header>
-          <h2>{t("search.results.title", { query: query || "" })}</h2>
+          <h2>
+            {format(["search.results.title", { query: query || "" }])}
+          </h2>
           <Filler />
           <IconButton icon="cross" onClick={() => closeSearch({})} />
         </Header>
         {this.resultsGrid(results)}
         <Footer>
           <Filler />
-          <Button label={t("search.open_as_tab")} onClick={() => openAsTab()} />
+          <Button
+            label={format(["search.open_as_tab"])}
+            onClick={() => openAsTab()}
+          />
           <Filler />
         </Footer>
       </ResultsContainer>
@@ -151,17 +158,17 @@ export class SearchResultBar extends React.PureComponent<
     const hasLocalResults = fuseResults.length > 0;
 
     if (!(hasRemoteResults || hasLocalResults)) {
-      const { t } = this.props;
-
       return (
         <ResultList>
-          <NoResults>{t("search.empty.no_results")}</NoResults>
+          <NoResults>
+            {format(["search.empty.no_results"])}
+          </NoResults>
         </ResultList>
       );
     }
 
     const items: React.ReactElement<any>[] = [];
-    const { navigateToGame, navigateToUser, closeSearch, t } = this.props;
+    const { navigateToGame, navigateToUser, closeSearch } = this.props;
 
     const { gameResults, userResults } =
       results ||
@@ -181,7 +188,11 @@ export class SearchResultBar extends React.PureComponent<
     let index = 0;
 
     if (fuseResults.length > 0) {
-      items.push(<Category>{t("search.results.local")}</Category>);
+      items.push(
+        <Category>
+          {format(["search.results.local"])}
+        </Category>,
+      );
       each(fuseResults.slice(0, 5), result => {
         const game = result.item;
         items.push(
@@ -201,7 +212,11 @@ export class SearchResultBar extends React.PureComponent<
 
     const { userIds } = userResults.result;
     if (userIds.length > 0) {
-      items.push(<Category>{t("search.results.creators")}</Category>);
+      items.push(
+        <Category>
+          {format(["search.results.creators"])}
+        </Category>,
+      );
       each(userResults.result.userIds, userId => {
         const user = users[userId];
         items.push(
@@ -221,7 +236,11 @@ export class SearchResultBar extends React.PureComponent<
 
     const { gameIds } = gameResults.result;
     if (gameIds.length > 0) {
-      items.push(<Category>{t("search.results.games")}</Category>);
+      items.push(
+        <Category>
+          {format(["search.results.games"])}
+        </Category>,
+      );
       each(gameResults.result.gameIds, gameId => {
         const game = games[gameId];
         items.push(

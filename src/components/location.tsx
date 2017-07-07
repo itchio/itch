@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import * as actions from "../actions";
 import { pathToId } from "../util/navigation";
@@ -10,12 +10,11 @@ import Games from "./games";
 import GameFilters from "./game-filters";
 
 import { dispatcher } from "../constants/action-types";
+import format from "./format";
 
-export class Location extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class Location extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t, tab, browseInstallLocation } = this.props;
+    const { tab, browseInstallLocation } = this.props;
 
     const locationName = pathToId(tab);
 
@@ -26,7 +25,7 @@ export class Location extends React.PureComponent<
             className="link"
             onClick={e => browseInstallLocation({ name: locationName })}
           >
-            {t("grid.item.show_local_files")}
+            {format(["grid.item.show_local_files"])}
           </span>
         </GameFilters>
 

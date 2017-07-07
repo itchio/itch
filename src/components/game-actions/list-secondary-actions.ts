@@ -8,7 +8,7 @@ import { ClassificationAction, ILocalizedString, ITask } from "../../types";
 
 import { IAction } from "../../constants/action-types";
 
-import { ILocalizer } from "../../localizer";
+import { InjectedIntl } from "react-intl";
 
 export type ActionType = "secondary" | "separator" | "info";
 
@@ -32,7 +32,7 @@ function browseAction(caveId: string): IActionOpts {
 function purchaseAction(
   game: IGame,
   downloadKey: IDownloadKey,
-  t: ILocalizer,
+  intl: InjectedIntl,
 ): IActionOpts {
   const donate = game.minPrice === 0;
 
@@ -73,7 +73,7 @@ interface IListSecondaryActionsProps {
 
   tasks: ITask[];
 
-  t: ILocalizer;
+  intl: InjectedIntl;
 }
 
 export default function listSecondaryActions(
@@ -87,7 +87,7 @@ export default function listSecondaryActions(
     downloadKey,
     action,
     tasks,
-    t,
+    intl,
   } = props;
   let error = false;
 
@@ -96,7 +96,7 @@ export default function listSecondaryActions(
   if (cave) {
     // No errors
     if (canBeBought) {
-      items.push(purchaseAction(game, downloadKey, t));
+      items.push(purchaseAction(game, downloadKey, intl));
     }
 
     items.push({
@@ -129,7 +129,7 @@ export default function listSecondaryActions(
     const mainIsPurchase = !mayDownload && hasMinPrice && canBeBought;
 
     if (!mainIsPurchase && canBeBought) {
-      items.push(purchaseAction(game, downloadKey, t));
+      items.push(purchaseAction(game, downloadKey, intl));
     }
 
     items.push({

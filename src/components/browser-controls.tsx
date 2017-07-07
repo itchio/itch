@@ -1,9 +1,11 @@
 import listensToClickOutside = require("react-onclickoutside");
 import * as React from "react";
 import * as classNames from "classnames";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import * as actions from "../actions";
+
+import { injectIntl, InjectedIntl } from "react-intl";
 
 import { ITabData } from "../types";
 import { dispatcher } from "../constants/action-types";
@@ -44,17 +46,13 @@ const browserAddressStyle = css`
 `;
 
 const BrowserAddressInput = styled.input`
-  ${browserAddressStyle}
-
-  text-shadow: 0 0 1px transparent;
+  ${browserAddressStyle} text-shadow: 0 0 1px transparent;
   color: ${props => props.theme.sidebarBackground};
   background: white;
 `;
 
 const BrowserAddressSpan = styled.span`
-  ${browserAddressStyle}
-
-  &.frozen {
+  ${browserAddressStyle} &.frozen {
     cursor: not-allowed;
   }
 `;
@@ -65,7 +63,7 @@ function isHTMLInput(el: HTMLElement): el is HTMLInputElement {
 
 @watching
 export class BrowserControls extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
+  IProps & IDerivedProps,
   IState
 > {
   browserAddress: HTMLInputElement | HTMLElement;
@@ -131,7 +129,7 @@ export class BrowserControls extends React.PureComponent<
 
   render() {
     const { editingURL } = this.state;
-    const { t, browserState } = this.props;
+    const { browserState } = this.props;
     const { canGoBack, canGoForward, loading, url = "" } = browserState;
     const { goBack, goForward, stop, reload, frozen } = this.props;
 
@@ -163,7 +161,7 @@ export class BrowserControls extends React.PureComponent<
               {url || ""}
             </BrowserAddressSpan>}
         <IconButton
-          hint={t("browser.popout")}
+          hint={this.props.intl.formatMessage({ id: "browser.popout" })}
           hintPosition="bottom"
           icon="redo"
           onClick={this.popOutBrowser}
@@ -242,14 +240,18 @@ interface IProps {
 interface IDerivedProps {
   /** open URL in external browser */
   openUrl: typeof actions.openUrl;
+  intl: InjectedIntl;
 }
 
 interface IState {
   editingURL: boolean;
 }
 
-export default connect<IProps>(listensToClickOutside(BrowserControls), {
-  dispatch: dispatch => ({
-    openUrl: dispatcher(dispatch, actions.openUrl),
-  }),
-});
+export default connect<IProps>(
+  injectIntl(listensToClickOutside(BrowserControls)),
+  {
+    dispatch: dispatch => ({
+      openUrl: dispatcher(dispatch, actions.openUrl),
+    }),
+  },
+);

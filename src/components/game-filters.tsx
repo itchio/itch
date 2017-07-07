@@ -1,8 +1,10 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
 import * as actions from "../actions";
+
+import { formatString } from "./format";
 
 import { IAppState, TabLayout } from "../types";
 import { dispatcher } from "../constants/action-types";
@@ -13,6 +15,7 @@ import Icon from "./basics/icon";
 
 import styled, * as styles from "./styles";
 import { css } from "./styles";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
@@ -107,32 +110,30 @@ const LayoutPicker = styled.section`
     props.active ? css`filter: brightness(100%)` : ""};
 `;
 
-class GameFilters extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const {
-      t,
       onlyCompatible,
       onlyOwned,
       onlyInstalled,
       showBinaryFilters = true,
       showLayoutPicker = true,
+      intl,
     } = this.props;
 
     const compatibleOption = {
       value: "onlyCompatibleGames",
-      label: t("grid.filters.options.compatible"),
+      label: formatString(intl, ["grid.filters.options.compatible"]),
     };
 
     const ownedOption = {
       value: "onlyOwnedGames",
-      label: t("grid.filters.options.owned"),
+      label: formatString(intl, ["grid.filters.options.owned"]),
     };
 
     const installedOption = {
       value: "onlyInstalledGames",
-      label: t("grid.filters.options.installed"),
+      label: formatString(intl, ["grid.filters.options.installed"]),
     };
 
     const options = [compatibleOption, ownedOption, installedOption];
@@ -158,7 +159,9 @@ class GameFilters extends React.PureComponent<
                 options={options}
                 value={value}
                 autoBlur={true}
-                noResultsText={t("grid.filters.options.no_results")}
+                noResultsText={formatString(intl, [
+                  "grid.filters.options.no_results",
+                ])}
                 onChange={(vals: { value: string }[]) => {
                   const prefs = {
                     onlyCompatibleGames: false,
@@ -173,7 +176,7 @@ class GameFilters extends React.PureComponent<
                   }
                   this.props.updatePreferences(prefs);
                 }}
-                placeholder={t("grid.criterion.filter")}
+                placeholder={formatString(intl, ["grid.criterion.filter"])}
               />
             </TagFilters>
           : null}
@@ -227,9 +230,11 @@ interface IDerivedProps {
   onlyInstalled: boolean;
 
   updatePreferences: typeof actions.updatePreferences;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(GameFilters, {
+export default connect<IProps>(injectIntl(GameFilters), {
   state: (initialState, props) => {
     return createStructuredSelector({
       layout: (state: IAppState) => state.preferences.layout,

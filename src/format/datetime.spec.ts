@@ -1,19 +1,19 @@
-import suite, { localizer } from "../test-suite";
+import suite from "../test-suite";
 
-import { formatDuration, formatDate, DATE_FORMAT } from "./datetime";
+import { formatDurationAsMessage, formatDate, DATE_FORMAT } from "./datetime";
 
 suite(__filename, s => {
   s.case("seconds", t => {
-    t.same<any>(formatDuration(38, localizer), ["duration.minute"]);
-    t.same<any>(formatDuration(123, localizer), [
-      "duration.minutes",
-      { x: "2" },
-    ]);
-    t.same<any>(formatDuration(3800, localizer), ["duration.hour"]);
-    t.same<any>(formatDuration(3600 * 4 + 120, localizer), [
-      "duration.hours",
-      { x: "4" },
-    ]);
+    t.same(formatDurationAsMessage(38), { id: "duration.minute" });
+    t.same(formatDurationAsMessage(123), {
+      id: "duration.minutes",
+      values: { x: "2" },
+    });
+    t.same(formatDurationAsMessage(3800), { id: "duration.hour" });
+    t.same(formatDurationAsMessage(3600 * 4 + 120), {
+      id: "duration.hours",
+      values: { x: "4" },
+    });
   });
 
   s.case("formatDate", t => {

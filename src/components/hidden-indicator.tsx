@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import * as actions from "../actions";
 import { dispatcher } from "../constants/action-types";
@@ -8,6 +8,9 @@ import IconButton from "./basics/icon-button";
 
 import styled from "./styles";
 import { darken } from "polished";
+
+import format, { formatString } from "./format";
+import { InjectedIntl, injectIntl } from "react-intl";
 
 const HiddenIndicatorDiv = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -23,11 +26,9 @@ const HiddenIndicatorDiv = styled.div`
   align-items: center;
 `;
 
-class HiddenIndicator extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+class HiddenIndicator extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t, tab, count, clearFilters } = this.props;
+    const { intl, tab, count, clearFilters } = this.props;
 
     if (count === 0) {
       return null;
@@ -38,10 +39,10 @@ class HiddenIndicator extends React.PureComponent<
         <IconButton
           className="indicator-clear-filters"
           icon="delete"
-          hint={t("grid.clear_filters")}
+          hint={formatString(intl, ["grid.clear_filters"])}
           onClick={() => clearFilters({ tab })}
         />{" "}
-        {t("grid.hidden_count", { count })}
+        {format(["grid.hidden_count", { count }])}
       </HiddenIndicatorDiv>
     );
   }
@@ -54,9 +55,11 @@ interface IProps {
 
 interface IDerivedProps {
   clearFilters: typeof actions.clearFilters;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(HiddenIndicator, {
+export default connect<IProps>(injectIntl(HiddenIndicator), {
   dispatch: dispatch => ({
     clearFilters: dispatcher(dispatch, actions.clearFilters),
   }),

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createSelector, createStructuredSelector } from "reselect";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import * as path from "path";
 import * as humanize from "humanize-plus";
@@ -24,6 +24,9 @@ import { map, each, filter } from "underscore";
 
 import diskspace from "../os/diskspace";
 
+import { injectIntl, InjectedIntl } from "react-intl";
+import format, { formatString } from "./format";
+
 import {
   IAppState,
   ILocaleInfo,
@@ -34,7 +37,10 @@ import { dispatcher } from "../constants/action-types";
 
 import { IMeatProps } from "./meats/types";
 
-// TODO: split into smaller components
+// TODO: split me up! before you go go
+// don't let me tangle up like a yo yo
+// split me up! before you go go
+// refactor me toniiiiiiiiiiiiiight
 
 import styled, * as styles from "./styles";
 
@@ -293,11 +299,16 @@ const PreferencesContentDiv = styled.div`
   }
 `;
 
-export class Preferences extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { t, tab, lang, sniffedLang = "", downloading, locales } = this.props;
+    const {
+      intl,
+      tab,
+      lang,
+      sniffedLang = "",
+      downloading,
+      locales,
+    } = this.props;
     const {
       isolateApps,
       openAtLogin,
@@ -313,7 +324,10 @@ export class Preferences extends React.PureComponent<
     const options = [
       {
         value: "__",
-        label: t("preferences.language.auto", { language: sniffedLang }),
+        label: formatString(intl, [
+          "preferences.language.auto",
+          { language: sniffedLang },
+        ]),
       },
     ].concat(locales);
 
@@ -331,7 +345,7 @@ export class Preferences extends React.PureComponent<
         <TitleBar tab={tab} />
         <PreferencesContentDiv>
           <h2>
-            {t("preferences.language")}
+            {format(["preferences.language"])}
           </h2>
           <div className="language-form">
             <label className="active">
@@ -354,14 +368,17 @@ export class Preferences extends React.PureComponent<
           </div>
 
           <p className="explanation flex">
-            {t("preferences.language.get_involved", { name: "itch" }) + " "}
+            {format([
+              "preferences.language.get_involved",
+              { name: "itch" },
+            ])}{" "}
             <a href={translateUrl}>
               <img className="weblate-badge" src={translationBadgeUrl} />
             </a>
           </p>
 
           <h2>
-            {t("preferences.security")}
+            {format(["preferences.security"])}
           </h2>
           <div className="security-form">
             <label className={classNames({ active: isolateApps })}>
@@ -373,9 +390,12 @@ export class Preferences extends React.PureComponent<
                 }}
               />
               <span>
-                {" "}{t("preferences.security.sandbox.title")}{" "}
+                {" "}{format(["preferences.security.sandbox.title"])}{" "}
               </span>
-              <span data-rh-at="bottom" data-rh={t("label.experimental")}>
+              <span
+                data-rh-at="bottom"
+                data-rh={formatString(intl, ["label.experimental"])}
+              >
                 <Icon
                   icon="lab-flask"
                   onClick={(e: React.MouseEvent<any>) => e.preventDefault()}
@@ -385,12 +405,12 @@ export class Preferences extends React.PureComponent<
           </div>
 
           <p className="explanation">
-            {t("preferences.security.sandbox.description")}{" "}
-            <a href={urls.sandboxDocs}>{t("docs.learn_more")}</a>
+            {format(["preferences.security.sandbox.description"])}{" "}
+            <a href={urls.sandboxDocs}>{format(["docs.learn_more"])}</a>
           </p>
 
           <h2>
-            {t("preferences.behavior")}
+            {format(["preferences.behavior"])}
           </h2>
           <div className="behavior-form">
             <label className={classNames({ active: openAtLogin })}>
@@ -402,7 +422,7 @@ export class Preferences extends React.PureComponent<
                 }}
               />
               <span>
-                {" "}{t("preferences.behavior.open_at_login")}{" "}
+                {" "}{format(["preferences.behavior.open_at_login"])}{" "}
               </span>
             </label>
 
@@ -417,7 +437,7 @@ export class Preferences extends React.PureComponent<
                 }}
               />
               <span>
-                {" "}{t("preferences.behavior.open_as_hidden")}{" "}
+                {" "}{format(["preferences.behavior.open_as_hidden"])}{" "}
               </span>
             </label>
 
@@ -430,7 +450,7 @@ export class Preferences extends React.PureComponent<
                 }}
               />
               <span>
-                {" "}{t("preferences.behavior.close_to_tray")}{" "}
+                {" "}{format(["preferences.behavior.close_to_tray"])}{" "}
               </span>
             </label>
 
@@ -445,7 +465,7 @@ export class Preferences extends React.PureComponent<
                 }}
               />
               <span>
-                {" "}{t("preferences.behavior.manual_game_updates")}{" "}
+                {" "}{format(["preferences.behavior.manual_game_updates"])}{" "}
               </span>
             </label>
 
@@ -460,13 +480,15 @@ export class Preferences extends React.PureComponent<
                 }}
               />
               <span>
-                {" "}{t("preferences.behavior.prevent_display_sleep")}{" "}
+                {" "}{format([
+                  "preferences.behavior.prevent_display_sleep",
+                ])}{" "}
               </span>
             </label>
           </div>
 
           <h2>
-            {t("preferences.notifications")}
+            {format(["preferences.notifications"])}
           </h2>
           <div className="behavior-form">
             <label className={classNames({ active: readyNotification })}>
@@ -480,13 +502,15 @@ export class Preferences extends React.PureComponent<
                 }}
               />
               <span>
-                {" "}{t("preferences.notifications.ready_notification")}{" "}
+                {" "}{format([
+                  "preferences.notifications.ready_notification",
+                ])}{" "}
               </span>
             </label>
           </div>
 
           <h2>
-            {t("preferences.install_locations")}
+            {format(["preferences.install_locations"])}
           </h2>
           {this.installLocationTable()}
 
@@ -500,7 +524,7 @@ export class Preferences extends React.PureComponent<
                 ? "turned"
                 : ""}`}
             />{" "}
-            {t("preferences.advanced")}
+            {format(["preferences.advanced"])}
           </h2>
           {showAdvanced ? this.renderAdvanced() : ""}
         </PreferencesContentDiv>
@@ -510,11 +534,11 @@ export class Preferences extends React.PureComponent<
 
   renderAdvanced() {
     const {
-      t,
       appVersion,
       clearBrowsingDataRequest,
       updatePreferences,
       openAppLog,
+      intl,
     } = this.props;
     const { preferOptimizedPatches } = this.props.preferences;
 
@@ -547,7 +571,7 @@ export class Preferences extends React.PureComponent<
               openAppLog({});
             }}
           >
-            {t("preferences.advanced.open_app_log")}
+            {format(["preferences.advanced.open_app_log"])}
           </span>
         </p>
         <p className="section">
@@ -559,7 +583,7 @@ export class Preferences extends React.PureComponent<
               clearBrowsingDataRequest({});
             }}
           >
-            {t("preferences.advanced.clear_browsing_data")}
+            {format(["preferences.advanced.clear_browsing_data"])}
           </span>
         </p>
         <label className={classNames({ active: preferOptimizedPatches })}>
@@ -573,7 +597,10 @@ export class Preferences extends React.PureComponent<
             }}
           />
           <span>Prefer optimized patches</span>
-          <span data-rh-at="bottom" data-rh={t("label.experimental")}>
+          <span
+            data-rh-at="bottom"
+            data-rh={formatString(intl, ["label.experimental"])}
+          >
             <Icon
               icon="lab-flask"
               onClick={(e: React.MouseEvent<any>) => e.preventDefault()}
@@ -594,23 +621,24 @@ export class Preferences extends React.PureComponent<
   };
 
   installLocationTable() {
-    const { t, navigate } = this.props;
+    const { navigate } = this.props;
     const {
       addInstallLocationRequest,
       removeInstallLocationRequest,
       makeInstallLocationDefault,
+      intl,
     } = this.props;
 
     const header = (
       <tr key="header" className="header">
         <td>
-          {t("preferences.install_location.path")}
+          {format(["preferences.install_location.path"])}
         </td>
         <td>
-          {t("preferences.install_location.used_space")}
+          {format(["preferences.install_location.used_space"])}
         </td>
         <td>
-          {t("preferences.install_location.free_space")}
+          {format(["preferences.install_location.free_space"])}
         </td>
         <td />
         <td />
@@ -654,19 +682,19 @@ export class Preferences extends React.PureComponent<
             <div
               className="default-switch"
               data-rh-at="right"
-              data-rh={t(
+              data-rh={formatString(intl, [
                 "preferences.install_location." +
                   (isDefault ? "is_default" : "make_default"),
-              )}
+              ])}
             >
               <span className="single-line">
                 {path}
               </span>
               {isDefault
                 ? <span className="single-line default-state">
-                    ({t(
+                    ({formatString(intl, [
                       "preferences.install_location.is_default_short",
-                    ).toLowerCase()})
+                    ]).toLowerCase()})
                   </span>
                 : null}
             </div>
@@ -691,7 +719,9 @@ export class Preferences extends React.PureComponent<
             ? <td
                 className="action delete"
                 data-rh-at="top"
-                data-rh={t("preferences.install_location.delete")}
+                data-rh={formatString(intl, [
+                  "preferences.install_location.delete",
+                ])}
                 onClick={e => removeInstallLocationRequest({ name })}
               >
                 <Icon icon="cross" />
@@ -711,7 +741,7 @@ export class Preferences extends React.PureComponent<
           }}
         >
           <Icon icon="plus" />
-          {t("preferences.install_location.add")}
+          {format(["preferences.install_location.add"])}
         </td>
       </tr>,
     );
@@ -766,9 +796,11 @@ interface IDerivedProps {
   clearBrowsingDataRequest: typeof actions.clearBrowsingDataRequest;
   navigate: typeof actions.navigate;
   checkForSelfUpdate: typeof actions.checkForSelfUpdate;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(Preferences, {
+export default connect<IProps>(injectIntl(Preferences), {
   state: createStructuredSelector({
     appVersion: (state: IAppState) => state.system.appVersion,
     preferences: (state: IAppState) => state.preferences,

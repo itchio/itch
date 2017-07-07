@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 import { createStructuredSelector } from "reselect";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import * as actions from "../actions";
 
@@ -10,6 +10,8 @@ import LoadingCircle from "./basics/loading-circle";
 
 import { IAppState, ISelfUpdateState, ILocalizedString } from "../types";
 import { dispatcher } from "../constants/action-types";
+
+import format from "./format";
 
 import styled from "./styles";
 
@@ -74,15 +76,13 @@ const StatusBarDiv = styled.div`
 /**
  * Displays our current progress when checking for updates, etc.
  */
-class StatusBar extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+class StatusBar extends React.PureComponent<IProps & IDerivedProps> {
   constructor() {
     super();
   }
 
   render() {
-    const { t, statusMessages, selfUpdate } = this.props;
+    const { statusMessages, selfUpdate } = this.props;
     const {
       dismissStatus,
       dismissStatusMessage,
@@ -108,7 +108,7 @@ class StatusBar extends React.PureComponent<
       children = [
         <Icon key="icon" icon="heart-filled" />,
         <span key="message">
-          {t.format(statusMessages[0])}
+          {format(statusMessages[0])}
         </span>,
         <Icon key="cross" icon="cross" />,
       ];
@@ -126,7 +126,7 @@ class StatusBar extends React.PureComponent<
       children = [
         <Icon key="icon" icon="install" />,
         <span key="message">
-          {t("status.downloaded")}
+          {format(["status.downloaded"])}
         </span>,
       ];
     } else if (downloading) {
@@ -134,7 +134,7 @@ class StatusBar extends React.PureComponent<
       children = [
         <Icon key="icon" icon="download" />,
         <span key="message">
-          {t("status.downloading")}
+          {format(["status.downloading"])}
         </span>,
       ];
     } else if (available) {
@@ -142,7 +142,7 @@ class StatusBar extends React.PureComponent<
       children = [
         <Icon key="icon" icon="earth" />,
         <span key="message">
-          {t("status.available")}
+          {format(["status.available"])}
         </span>,
       ];
     } else if (checking) {
@@ -150,14 +150,14 @@ class StatusBar extends React.PureComponent<
       children = [
         <LoadingCircle progress={0.3} />,
         <span key="message">
-          {t("status.checking")}
+          {format(["status.checking"])}
         </span>,
       ];
     } else if (uptodate) {
       children = [
         <Icon key="icon" icon="like" />,
         <span key="message">
-          {t("status.uptodate")}
+          {format(["status.uptodate"])}
         </span>,
       ];
     } else {

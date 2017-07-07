@@ -1,5 +1,7 @@
 import * as React from "react";
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
+
+import { injectIntl, InjectedIntl } from "react-intl";
 
 import { first, find } from "underscore";
 
@@ -20,12 +22,9 @@ interface IStatus {
   statusTask?: string;
 }
 
-class MainAction extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps
-> {
+class MainAction extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const {
-      t,
       platform,
       platformCompatible,
       mayDownload,
@@ -56,6 +55,8 @@ class MainAction extends React.PureComponent<
     let label: string;
     let primary: boolean;
 
+    const { intl } = this.props;
+
     if (task) {
       const { status, statusTask } = this.status(task);
       const realTask = statusTask || task;
@@ -78,18 +79,23 @@ class MainAction extends React.PureComponent<
       if (platformCompatible) {
         if (mayDownload) {
           icon = "install";
-          label = t("grid.item." + (pressDownload ? "review" : "install"));
+          label = intl.formatMessage({
+            id: "grid.item." + (pressDownload ? "review" : "install"),
+          });
         } else if (canBeBought) {
           icon = "shopping_cart";
-          label = t("grid.item.buy_now");
+          label = intl.formatMessage({ id: "grid.item.buy_now" });
         }
         primary = true;
       } else {
         return (
           <span className="state not-platform-compatible">
-            {t("grid.item.not_platform_compatible", {
-              platform: formatItchPlatform(platform),
-            })}
+            {intl.formatMessage(
+              { id: "grid.item.not_platform_compatible" },
+              {
+                platform: formatItchPlatform(platform),
+              },
+            )}
           </span>
         );
       }
@@ -120,10 +126,10 @@ class MainAction extends React.PureComponent<
   }
 
   hint(task: string) {
-    const { t } = this.props;
+    const { intl } = this.props;
 
     if (task === "error") {
-      return t("grid.item.report_problem");
+      return intl.formatMessage({ id: "grid.item.report_problem" });
     }
   }
 
@@ -165,20 +171,26 @@ class MainAction extends React.PureComponent<
   }
 
   status(task: string): IStatus {
-    const { t, action } = this.props;
+    const { intl, action } = this.props;
 
     if (task === "idle") {
       const update = this.props.update;
       if (update) {
-        return { status: t("grid.item.update"), statusTask: "update" };
+        return {
+          status: intl.formatMessage({ id: "grid.item.update" }),
+          statusTask: "update",
+        };
       }
 
       switch (action) {
         case "open":
-          return { status: t("grid.item.open"), statusTask: "open" };
+          return {
+            status: intl.formatMessage({ id: "grid.item.open" }),
+            statusTask: "open",
+          };
         case "launch":
         default:
-          return { status: t("grid.item.launch") };
+          return { status: intl.formatMessage({ id: "grid.item.launch" }) };
       }
     }
 
@@ -187,21 +199,25 @@ class MainAction extends React.PureComponent<
     }
 
     if (task === "launch") {
-      return { status: t("grid.item.running") };
+      return { status: intl.formatMessage({ id: "grid.item.running" }) };
     }
 
-    let res: IStatus = { status: t("grid.item.installing") };
+    let res: IStatus = {
+      status: intl.formatMessage({ id: "grid.item.installing" }),
+    };
     if (task === "uninstall") {
-      res = { status: t("grid.item.uninstalling") };
+      res = { status: intl.formatMessage({ id: "grid.item.uninstalling" }) };
     }
     if (task === "download") {
-      res = { status: t("grid.item.downloading") };
+      res = { status: intl.formatMessage({ id: "grid.item.downloading" }) };
     }
     if (task === "ask-before-install") {
-      res = { status: t("grid.item.finalize_installation") };
+      res = {
+        status: intl.formatMessage({ id: "grid.item.finalize_installation" }),
+      };
     }
     if (task === "download-queued") {
-      res = { status: t("grid.item.queued") };
+      res = { status: intl.formatMessage({ id: "grid.item.queued" }) };
     }
 
     return res;
@@ -228,9 +244,11 @@ interface IDerivedProps {
   initiatePurchase: typeof actions.initiatePurchase;
   abortGameRequest: typeof actions.abortGameRequest;
   navigate: typeof actions.navigate;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(MainAction, {
+export default connect<IProps>(injectIntl(MainAction), {
   dispatch: dispatch => ({
     queueGame: dispatcher(dispatch, actions.queueGame),
     showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 
 import { map } from "underscore";
 import { createStructuredSelector } from "reselect";
@@ -22,6 +22,9 @@ import { SortableContainer, arrayMove } from "react-sortable-hoc";
 
 import styled, * as styles from "./styles";
 import { SidebarSection, SidebarHeading } from "./sidebar/styles";
+
+import format, { formatString } from "./format";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -58,7 +61,7 @@ interface ISortEndParams {
 
 interface ISortableContainerParams {
   items: string[];
-  sidebarProps: IProps & IDerivedProps & I18nProps;
+  sidebarProps: IProps & IDerivedProps;
 }
 
 const SortableListContainer = styled.div`overflow-y: auto;`;
@@ -79,11 +82,8 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
   );
 });
 
-class Sidebar extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  IState
-> {
-  constructor(props: IProps & IDerivedProps & I18nProps) {
+class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
+  constructor(props: IProps & IDerivedProps) {
     super();
     this.state = {
       transient: props.tabs.transient,
@@ -108,7 +108,7 @@ class Sidebar extends React.PureComponent<
 
   render() {
     const {
-      t,
+      intl,
       osx,
       sidebarWidth,
       fullscreen,
@@ -127,7 +127,7 @@ class Sidebar extends React.PureComponent<
         <SidebarItems>
           <SidebarSection>
             <SidebarHeading>
-              {t("sidebar.category.basics")}
+              {format(["sidebar.category.basics"])}
             </SidebarHeading>
           </SidebarSection>
           {map(tabs.constant, (id, index) => {
@@ -136,18 +136,18 @@ class Sidebar extends React.PureComponent<
 
           <SidebarSection>
             <SidebarHeading>
-              {t("sidebar.category.tabs")}
+              {format(["sidebar.category.tabs"])}
             </SidebarHeading>
             <Filler />
             <IconButton
               icon="delete"
-              hint={t("sidebar.close_all_tabs")}
+              hint={formatString(intl, ["sidebar.close_all_tabs"])}
               onClick={this.closeAllTabs}
             />
             <IconButton
               id="new-tab-icon"
               icon="plus"
-              hint={t("sidebar.new_tab")}
+              hint={formatString(intl, ["sidebar.new_tab"])}
               onClick={this.newTab}
             />
           </SidebarSection>
@@ -168,7 +168,7 @@ class Sidebar extends React.PureComponent<
     );
   }
 
-  componentWillReceiveProps(props: IProps & IDerivedProps & I18nProps) {
+  componentWillReceiveProps(props: IProps & IDerivedProps) {
     this.setState({
       transient: props.tabs.transient,
     });
@@ -201,13 +201,15 @@ interface IDerivedProps {
   checkForSelfUpdate: typeof actions.checkForSelfUpdate;
 
   quit: typeof actions.quit;
+
+  intl: InjectedIntl;
 }
 
 interface IState {
   transient: string[];
 }
 
-export default connect<IProps>(Sidebar, {
+export default connect<IProps>(injectIntl(Sidebar), {
   state: createStructuredSelector({
     appVersion: (state: IAppState) => state.system.appVersion,
     osx: (state: IAppState) => state.system.osx,

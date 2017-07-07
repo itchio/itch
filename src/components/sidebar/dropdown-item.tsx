@@ -4,8 +4,10 @@ import Ink = require("react-ink");
 import * as React from "react";
 import styled, * as styles from "../styles";
 
-import { connect, I18nProps } from "../connect";
+import { connect } from "../connect";
 import { ILocalizedString } from "../../types";
+
+import format from "../format";
 
 const DropdownItemDiv = styled.div`
   ${styles.inkContainer()};
@@ -40,9 +42,9 @@ const DropdownItemDiv = styled.div`
   }
 `;
 
-export class DropdownItem extends React.PureComponent<IProps & I18nProps> {
+export class DropdownItem extends React.PureComponent<IProps> {
   render() {
-    const { t, item } = this.props;
+    const { item } = this.props;
     const { label, icon, type, id } = item;
 
     const className = type ? `type-${type}` : "";
@@ -51,7 +53,7 @@ export class DropdownItem extends React.PureComponent<IProps & I18nProps> {
       <DropdownItemDiv className={className} onClick={this.onClick} id={id}>
         <Ink />
         <Icon icon={icon} />
-        {t.format(label)}
+        {format(label)}
       </DropdownItemDiv>
     );
   }

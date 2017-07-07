@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, I18nProps } from "./connect";
+import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
 import ReactModal = require("react-modal");
@@ -22,6 +22,9 @@ import { IModalWidgetProps } from "./modal-widgets/modal-widget";
 import watching, { Watcher } from "./watching";
 import styled, * as styles from "./styles";
 import { stripUnit } from "polished";
+
+import format, { formatString } from "./format";
+import { InjectedIntl, injectIntl } from "react-intl";
 
 type Flavor = "normal" | "big";
 
@@ -352,10 +355,7 @@ const DEFAULT_BUTTONS = {
 } as IDefaultButtons;
 
 @watching
-export class Modal extends React.PureComponent<
-  IProps & IDerivedProps & I18nProps,
-  IState
-> {
+export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   constructor() {
     super();
     this.state = {
@@ -381,7 +381,7 @@ export class Modal extends React.PureComponent<
   }
 
   render() {
-    const { t, modal, closeModal } = this.props;
+    const { modal, closeModal, intl } = this.props;
 
     if (modal) {
       const {
@@ -399,7 +399,7 @@ export class Modal extends React.PureComponent<
           <ModalDiv>
             <HeaderDiv>
               <span className="title">
-                {t.format(title)}
+                {format(title)}
               </span>
               <Filler />
               {modal.unclosable
@@ -411,11 +411,11 @@ export class Modal extends React.PureComponent<
               ? <div className="body">
                   <div className="message">
                     <div>
-                      <Markdown source={t.format(message)} />
+                      <Markdown source={formatString(intl, message)} />
                     </div>
                     {detail &&
                       <div className="secondary">
-                        <Markdown source={t.format(detail)} />
+                        <Markdown source={formatString(intl, detail)} />
                       </div>}
                   </div>
                 </div>
@@ -455,8 +455,6 @@ export class Modal extends React.PureComponent<
   }
 
   renderBigButtons(buttons: IModalButtonSpec[]) {
-    const { t } = this.props;
-
     return (
       <BigButtonsDiv>
         {map(buttons, (buttonSpec, index) => {
@@ -470,14 +468,14 @@ export class Modal extends React.PureComponent<
               className={className}
               key={index}
               icon={icon}
+              label={format(label)}
               onClick={onClick}
-              label={t.format(label)}
             >
               {tags
                 ? map(tags, tag => {
                     return (
                       <Tag>
-                        {t.format(tag.label)}
+                        {format(tag.label)}
                       </Tag>
                     );
                   })
@@ -490,8 +488,6 @@ export class Modal extends React.PureComponent<
   }
 
   renderNormalButtons(buttons: IModalButtonSpec[]) {
-    const { t } = this.props;
-
     return (
       <ButtonsDiv>
         <Filler />
@@ -508,7 +504,7 @@ export class Modal extends React.PureComponent<
               key={index}
               onClick={onClick}
               icon={icon}
-              label={t.format(label)}
+              label={format(label)}
             />
           );
         })}
@@ -579,13 +575,15 @@ interface IDerivedProps {
 
   closeModal: typeof actions.closeModal;
   dispatch: (action: IModalAction) => void;
+
+  intl: InjectedIntl;
 }
 
 interface IState {
   widgetPayload?: IModalResponsePayload;
 }
 
-export default connect<IProps>(Modal, {
+export default connect<IProps>(injectIntl(Modal), {
   state: createStructuredSelector({
     modal: state => state.modals[0],
   }),
