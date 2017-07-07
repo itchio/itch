@@ -4,8 +4,6 @@ import GenericSearchResult, {
   searchResultStyle,
 } from "./generic-search-result";
 
-import platformData from "../../constants/platform-data";
-
 import isPlatformCompatible from "../../util/is-platform-compatible";
 import { formatPrice } from "../../format";
 
@@ -14,7 +12,7 @@ import { fromJSONField } from "../../db/json-field";
 
 import { ISaleInfo } from "../../types";
 
-import Icon from "../basics/icon";
+import PlatformIcons from "../basics/platform-icons";
 import Filler from "../basics/filler";
 
 import styled, * as styles from "../styles";
@@ -56,21 +54,7 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
     const { game, onClick, chosen } = this.props;
     const { title, stillCoverUrl, coverUrl } = game;
 
-    const platforms: React.ReactElement<any>[] = [];
     let compatible = isPlatformCompatible(game);
-
-    if (game.type === "html") {
-      platforms.push(<Icon key="web" hint="web" icon="earth" />);
-    }
-
-    for (const p of platformData) {
-      if ((game as any)[p.field]) {
-        platforms.push(
-          <Icon key={p.platform} hint={p.platform} icon={p.icon} />,
-        );
-      }
-    }
-
     let originalPrice: React.ReactElement<any> = null;
     let price: React.ReactElement<any> = null;
 
@@ -115,7 +99,7 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
           </Title>
           <Filler />
           <Platforms>
-            {platforms}
+            <PlatformIcons target={game} />
             <Filler />
             {originalPrice}
             {price}

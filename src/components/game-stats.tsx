@@ -1,16 +1,14 @@
 import * as React from "react";
 
-import interleave from "./interleave";
-
 import format from "./format";
 
-import platformData from "../constants/platform-data";
+import { hasPlatforms } from "../constants/platform-data";
 import actionForGame from "../util/action-for-game";
 
 import { formatPrice } from "../format";
 
 import TimeAgo from "./basics/time-ago";
-import Icon from "./basics/icon";
+import PlatformIcons from "./basics/platform-icons";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
@@ -21,7 +19,6 @@ import { fromJSONField } from "../db/json-field";
 import { ISaleInfo } from "../types";
 
 import styled from "./styles";
-import { injectIntl, InjectedIntl } from "react-intl";
 
 const GameStatsDiv = styled.div`
   display: flex;
@@ -60,15 +57,11 @@ const GameStatsDiv = styled.div`
   }
 `;
 
-export class GameStats extends React.PureComponent<IProps & IDerivedProps> {
+export default class GameStats extends React.PureComponent<
+  IProps & IDerivedProps
+> {
   render() {
-    const {
-      cave,
-      game = {} as IGame,
-      downloadKey,
-      mdash = true,
-      intl,
-    } = this.props;
+    const { cave, game = {} as IGame, downloadKey, mdash = true } = this.props;
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
 
@@ -80,57 +73,57 @@ export class GameStats extends React.PureComponent<IProps & IDerivedProps> {
         </GameStatsDiv>
       );
     } else {
-      const platforms: JSX.Element[] = [];
-      if (classAction === "launch") {
-        for (const p of platformData) {
-          if ((game as any)[p.field]) {
-            platforms.push(
-              <Icon key={p.icon} hint={p.platform} icon={p.icon} />,
-            );
-          }
-        }
-      }
       const { minPrice, currency = "USD" } = game;
       const sale = fromJSONField<ISaleInfo>(game.sale);
+      const showPlatforms = classAction === "launch" && hasPlatforms(game);
 
+      // TODO: anything but this, please, I'm begging you
       return (
         <GameStatsDiv>
           <div className="total-playtime">
             {format([`usage_stats.description.${classification}`])}
-            {platforms.length > 0
-              ? [
-                  " ",
-                  interleave(intl, "usage_stats.description.platforms", {
-                    platforms,
-                  }),
-                ]
-              : ""}
+            {showPlatforms
+              ? <span>
+                  {" "}{format([
+                    "usage_stats.description.platforms",
+                    {
+                      platforms: <PlatformIcons target={game} />,
+                    },
+                  ])}
+                </span>
+              : null}
             {mdash ? " — " : <br />}
             {downloadKey
-              ? interleave(intl, "usage_stats.description.bought_time_ago", {
-                  time_ago: <TimeAgo date={downloadKey.createdAt} />,
-                })
+              ? format([
+                  "usage_stats.description.bought_time_ago",
+                  {
+                    time_ago: <TimeAgo date={downloadKey.createdAt} />,
+                  },
+                ])
               : minPrice > 0
-                ? interleave(intl, "usage_stats.description.price", {
-                    price: sale
-                      ? [
-                          <label
-                            key="original-price"
-                            className="original-price"
-                          >
+                ? format([
+                    "usage_stats.description.price",
+                    {
+                      price: sale
+                        ? [
+                            <label
+                              key="original-price"
+                              className="original-price"
+                            >
+                              {formatPrice(currency, minPrice)}
+                            </label>,
+                            <label key="discounted-price">
+                              {" "}{formatPrice(
+                                currency,
+                                minPrice * (1 - sale.rate / 100),
+                              )}
+                            </label>,
+                          ]
+                        : <label>
                             {formatPrice(currency, minPrice)}
                           </label>,
-                          <label key="discounted-price">
-                            {" "}{formatPrice(
-                              currency,
-                              minPrice * (1 - sale.rate / 100),
-                            )}
-                          </label>,
-                        ]
-                      : <label>
-                          {formatPrice(currency, minPrice)}
-                        </label>,
-                  })
+                    },
+                  ])
                 : format(["usage_stats.description.free_download"])}
           </div>
         </GameStatsDiv>
@@ -146,8 +139,4 @@ interface IProps {
   mdash?: boolean;
 }
 
-interface IDerivedProps {
-  intl: InjectedIntl;
-}
-
-export default injectIntl(GameStats);
+interface IDerivedProps {}

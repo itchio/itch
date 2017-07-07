@@ -12,7 +12,6 @@ import * as actions from "../actions";
 import Icon from "./basics/icon";
 import TimeAgo from "./basics/time-ago";
 import Ink = require("react-ink");
-import interleave from "./interleave";
 
 import { IGameSet } from "../types";
 import { ICollection } from "../db/models/collection";
@@ -20,7 +19,6 @@ import { fromJSONField } from "../db/json-field";
 import { multiDispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
-import { InjectedIntl, injectIntl } from "react-intl";
 
 const CoverDiv = styled.div`
   background-size: cover;
@@ -92,7 +90,7 @@ const emptyArr = [];
 
 export class CollectionRow extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { allGames, collection, intl } = this.props;
+    const { allGames, collection } = this.props;
     const { title } = collection;
 
     const gameIds = fromJSONField<number[]>(collection.gameIds, emptyArr).slice(
@@ -135,9 +133,12 @@ export class CollectionRow extends React.PureComponent<IProps & IDerivedProps> {
           </span>
           <span className="spacer" />
           <Icon icon="history" />
-          {interleave(intl, "collection_grid.item.updated_at", {
-            time_ago: <TimeAgo key="timeago" date={collection.updatedAt} />,
-          })}
+          {format([
+            "collection_grid.item.updated_at",
+            {
+              time_ago: <TimeAgo key="timeago" date={collection.updatedAt} />,
+            },
+          ])}
         </section>
         <Ink />
       </CollectionRowDiv>
@@ -159,11 +160,9 @@ interface IProps {
 
 interface IDerivedProps {
   navigateToCollection: typeof actions.navigateToCollection;
-
-  intl: InjectedIntl;
 }
 
-export default connect<IProps>(injectIntl(CollectionRow), {
+export default connect<IProps>(CollectionRow, {
   dispatch: dispatch => ({
     navigateToCollection: multiDispatcher(
       dispatch,

@@ -11,9 +11,9 @@ import platformData from "../constants/platform-data";
 import urls from "../constants/urls";
 import { isNetworkError } from "../net/errors";
 
-import { findWhere } from "underscore";
 import { Cancelled } from "../types";
 
+import { currentRuntime, runtimeProp } from "../os/runtime";
 import * as os from "../os";
 import * as sf from "../os/sf";
 
@@ -82,9 +82,7 @@ ${log}
 `;
   }
 
-  const platformEmoji = findWhere(platformData, {
-    platform: os.itchPlatform(),
-  }).emoji;
+  const platformEmoji = platformData[runtimeProp(currentRuntime())].emoji;
   const query = querystring.stringify({
     title: `${platformEmoji} ${type} v${app.getVersion()}`,
     body: before + body,

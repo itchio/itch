@@ -6,13 +6,13 @@ import actionForGame from "../util/action-for-game";
 import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
 
-import interleave from "./interleave";
 import TimeAgo from "./basics/time-ago";
-import { injectIntl, InjectedIntl } from "react-intl";
 
-class LastPlayed extends React.PureComponent<IProps & IDerivedProps> {
+export default class LastPlayed extends React.PureComponent<
+  IProps & IDerivedProps
+> {
   render() {
-    const { intl, game, cave, short = false } = this.props;
+    const { game, cave, short = false } = this.props;
     const { lastTouchedAt = null } = cave || {};
 
     const classification = game.classification || "game";
@@ -28,9 +28,12 @@ class LastPlayed extends React.PureComponent<IProps & IDerivedProps> {
           ? <label>
               {short
                 ? <TimeAgo date={lastTouchedAt} />
-                : interleave(intl, `usage_stats.last_${xed}_time_ago`, {
-                    time_ago: <TimeAgo date={lastTouchedAt} />,
-                  })}
+                : format([
+                    `usage_stats.last_${xed}_time_ago`,
+                    {
+                      time_ago: <TimeAgo date={lastTouchedAt} />,
+                    },
+                  ])}
             </label>
           : format([`usage_stats.never_${xed}`])}
       </div>
@@ -44,8 +47,4 @@ interface IProps {
   short?: boolean;
 }
 
-interface IDerivedProps {
-  intl: InjectedIntl;
-}
-
-export default injectIntl(LastPlayed);
+interface IDerivedProps {}
