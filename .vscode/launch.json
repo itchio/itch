@@ -19,6 +19,25 @@
             "protocol": "inspector"
         },
         {
+            "name": "Main Process (Local Instance)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/src/main.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                "."
+            ],
+            "env": {
+                "WHEN_IN_ROME": "http://localhost.com:8080"
+            },
+            "console": "integratedTerminal",
+            "sourceMaps": true,
+            "protocol": "inspector"
+        },
+        {
             "name": "Renderer Process",
             "type": "node",
             "request": "launch",
@@ -32,6 +51,27 @@
                 "--remote-debugging-port=9222"
             ],
             "env": {},
+            "console": "integratedTerminal",
+            "sourceMaps": false,
+            "protocol": "inspector",
+            "port": 9222
+        },
+        {
+            "name": "Renderer Process (Local Instance)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/src/main.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                ".",
+                "--remote-debugging-port=9222"
+            ],
+            "env": {
+                "WHEN_IN_ROME": "http://localhost.com:8080"
+            },
             "console": "integratedTerminal",
             "sourceMaps": false,
             "protocol": "inspector",
