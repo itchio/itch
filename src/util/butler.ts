@@ -9,6 +9,7 @@ import Context from "../context";
 import { IProgressInfo, ExeArch } from "../types";
 
 import { Logger, devNull } from "../logger";
+import urls from "../constants/urls";
 
 const showDebug = process.env.MY_BUTLER_IS_MY_FRIEND === "1";
 const dumpAllOutput = process.env.MY_BUTLER_IS_MY_ENEMY === "1";
@@ -83,7 +84,7 @@ async function butler<T>(
   let value: any = null;
   let err = null as Error;
 
-  let args = ["--json", command, ...commandArgs];
+  let args = ["--address", urls.itchio, "--json", command, ...commandArgs];
 
   const onToken = partial(
     parseButlerStatus,
