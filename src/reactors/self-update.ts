@@ -4,7 +4,7 @@ import { app } from "electron";
 import * as os from "../os";
 import { request } from "../net/request";
 import { isNetworkError } from "../net/errors";
-import { getT } from "../localizer";
+import { t } from "../format";
 
 import delay from "./delay";
 
@@ -36,15 +36,17 @@ const CHECK_FOR_SELF_UPDATES =
 
 async function returnsZero(cmd: string) {
   return new Promise((resolve, reject) => {
-    require(
-      "child_process",
-    ).exec(cmd, {}, (err: any, stdout: string, stderr: string) => {
-      if (err) {
-        resolve(false);
-      } else {
-        resolve(true);
-      }
-    });
+    require("child_process").exec(
+      cmd,
+      {},
+      (err: any, stdout: string, stderr: string) => {
+        if (err) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      },
+    );
   });
 }
 
@@ -180,7 +182,7 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.applySelfUpdateRequest, async (store, action) => {
-    const { strings, lang } = store.getState().i18n;
+    const i18n = store.getState().i18n;
     const spec = store.getState().selfUpdate.downloaded;
     if (!spec) {
       logger.warn(
@@ -190,7 +192,6 @@ export default function(watcher: Watcher) {
     }
 
     const pubDate = new Date(Date.parse(spec.pub_date));
-    const t = getT(strings, lang);
 
     store.dispatch(
       actions.openModal({
@@ -198,14 +199,14 @@ export default function(watcher: Watcher) {
         message: [
           "prompt.self_update_ready.message",
           {
-            restart: t("prompt.self_update_ready.action.restart"),
+            restart: t(i18n, ["prompt.self_update_ready.action.restart"]),
           },
         ],
         detail: [
           "prompt.self_update_ready.detail",
           {
             notes: spec.notes,
-            pubDate: formatDate(pubDate, lang, DATE_FORMAT),
+            pubDate: formatDate(pubDate, i18n.lang, DATE_FORMAT),
           },
         ],
         buttons: [

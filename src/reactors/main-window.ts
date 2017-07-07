@@ -19,7 +19,7 @@ import { debounce } from "underscore";
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "main-window" });
 
-import localizer from "../localizer";
+import { t } from "../format";
 import * as actions from "../actions";
 
 let createLock = false;
@@ -127,11 +127,10 @@ async function createWindow(store: IStore, hidden: boolean) {
       );
 
       const i18n = store.getState().i18n;
-      const t = localizer.getT(i18n.strings, i18n.lang);
       store.dispatch(
         actions.notify({
-          title: t("notification.see_you_soon.title"),
-          body: t("notification.see_you_soon.message"),
+          title: t(i18n, ["notification.see_you_soon.title"]),
+          body: t(i18n, ["notification.see_you_soon.message"]),
         }),
       );
     }
@@ -393,12 +392,7 @@ function updateTitle(store: IStore, title: string) {
 
 let titleSelector: (state: IAppState) => void;
 const makeTitleSelector = (store: IStore) => {
-  const getLang = (state: IAppState) => state.i18n.lang;
-  const getStrings = (state: IAppState) => state.i18n.strings;
-
-  const getT = createSelector(getLang, getStrings, (lang, strings) => {
-    return localizer.getT(strings, lang);
-  });
+  const getI18n = (state: IAppState) => state.i18n;
 
   const getID = (state: IAppState) => state.session.navigation.id;
   const getTabData = (state: IAppState) => state.session.tabData;
@@ -408,9 +402,9 @@ const makeTitleSelector = (store: IStore) => {
     (id, tabData) => tabData[id],
   );
 
-  return createSelector(getID, getData, getT, (id, data, t) => {
+  return createSelector(getID, getData, getI18n, (id, data, i18n) => {
     const label = makeLabel(id, data);
-    updateTitle(store, t.format(label) + " - itch");
+    updateTitle(store, t(i18n, label) + " - itch");
   });
 };
 

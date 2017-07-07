@@ -14,7 +14,13 @@ import format from "../../format";
  */
 class ErrorList extends React.PureComponent<IProps> {
   render() {
-    const { errors, before = "", i18nNamespace, ...restProps } = this.props;
+    const {
+      errors,
+      before = "",
+      i18nNamespace,
+      dispatch,
+      ...restProps,
+    } = this.props;
     const prefix = i18nNamespace ? `errors.${i18nNamespace}` : "errors";
 
     if (!errors) {
@@ -45,6 +51,7 @@ interface IProps {
   before: JSX.Element;
   i18nNamespace: string;
   id?: string;
+  dispatch?: string;
 }
 
 export default connect<IProps>(ErrorList);

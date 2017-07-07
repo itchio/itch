@@ -1,7 +1,7 @@
 import { Watcher } from "./watcher";
 
 import { join } from "path";
-import ifs from "../localizer/ifs";
+import ifs from "../os/ifs";
 
 import { getLocalesConfigPath, getLocalePath } from "../os/resources";
 import { request } from "../net/request";

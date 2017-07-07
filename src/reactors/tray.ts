@@ -2,7 +2,7 @@ import { Watcher } from "./watcher";
 
 import * as os from "../os";
 import { getImagePath } from "../os/resources";
-import localizer from "../localizer";
+import { t } from "../format";
 import { app, Menu, Tray } from "electron";
 import env from "../env";
 
@@ -67,16 +67,18 @@ async function go(store: IStore, path: string) {
 }
 
 function refreshTray(store: IStore, i18n: II18nState) {
-  const t = localizer.getT(i18n.strings, i18n.lang);
   const menuTemplate: IMenuTemplate = [
-    { label: t("sidebar.owned"), click: () => go(store, "library") },
-    { label: t("sidebar.dashboard"), click: () => go(store, "dashboard") },
+    { label: t(i18n, ["sidebar.owned"]), click: () => go(store, "library") },
+    {
+      label: t(i18n, ["sidebar.dashboard"]),
+      click: () => go(store, "dashboard"),
+    },
   ];
 
   if (os.platform() !== "darwin") {
     menuTemplate.push({ type: "separator" });
     menuTemplate.push({
-      label: t("menu.file.quit"),
+      label: t(i18n, ["menu.file.quit"]),
       click: () => store.dispatch(actions.quit({})),
     });
   }

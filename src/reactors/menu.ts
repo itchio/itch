@@ -6,7 +6,7 @@ import { map } from "underscore";
 import { createSelector } from "reselect";
 
 import * as clone from "clone";
-import localizer from "../localizer";
+import { t } from "../format";
 
 import { IRuntime } from "../types";
 
@@ -83,7 +83,6 @@ export function fleshOutTemplate(
   runtime: IRuntime,
 ) {
   const { i18n } = store.getState();
-  const t = localizer.getT(i18n.strings, i18n.lang);
 
   const visitNode = (input: IMenuItem) => {
     if (input.type === "separator") {
@@ -93,7 +92,7 @@ export function fleshOutTemplate(
     const { label, role = null, enabled = true } = input;
     const node = clone(input);
 
-    node.label = t(label);
+    node.label = t(i18n, [label]);
     if (enabled) {
       node.click = e => {
         const menuAction = convertMenuAction({ label, role }, runtime);

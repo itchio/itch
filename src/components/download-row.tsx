@@ -18,9 +18,11 @@ import GameActions from "./game-actions";
 
 import { IDownloadSpeeds, IDownloadItem, ITask } from "../types";
 import { dispatcher } from "../constants/action-types";
-import { ILocalizer } from "../localizer";
 
 import styled, * as styles from "./styles";
+
+import format, { formatString } from "./format";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -245,7 +247,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   controls() {
     const {
-      t,
+      intl,
       active,
       first,
       item,
@@ -277,7 +279,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
           <IconButton
             icon="delete"
             hintPosition="left"
-            hint={t("status.downloads.clear_finished")}
+            hint={formatString(intl, ["status.downloads.clear_finished"])}
             onClick={() => cancelDownload({ id })}
           />
         </div>
@@ -294,13 +296,13 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
               />
             : <IconButton icon="pause" onClick={() => pauseDownloads({})} />
           : <IconButton
-              hint={t("grid.item.prioritize_download")}
+              hint={formatString(intl, ["grid.item.prioritize_download"])}
               icon="caret-up"
               onClick={() => prioritizeDownload({ id })}
             />}
         <IconButton
           hintPosition="left"
-          hint={t("grid.item.cancel_download")}
+          hint={formatString(intl, ["grid.item.cancel_download"])}
           icon="cross"
           onClick={() => cancelDownload({ id })}
         />
@@ -309,14 +311,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   progress() {
-    const {
-      t,
-      first,
-      active,
-      item,
-      downloadsPaused,
-      tasksByGameId,
-    } = this.props;
+    const { first, active, item, downloadsPaused, tasksByGameId } = this.props;
     const { err } = item;
 
     const { game } = item;
@@ -326,7 +321,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
       if (err) {
         return (
           <div className="error-message">
-            {t("status.downloads.download_error")}
+            {format(["status.downloads.download_error"])}
             <div className="timeago" data-rh-at="top" data-rh={err}>
               {truncate(err, { length: 60 })}
             </div>
@@ -357,7 +352,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
       progressInnerStyle.backgroundColor = bob.toCSS(dominantColor);
     }
 
-    const reasonText = this.reasonText(reason);
+    const reasonText = this.formattedReason(reason);
 
     return (
       <div className="stats-inner">
@@ -370,26 +365,31 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
         <div className="timeago">
           {task
             ? task.name === "launch"
-              ? t("grid.item.running")
-              : t("grid.item.installing")
+              ? format(["grid.item.running"])
+              : format(["grid.item.installing"])
             : first
               ? downloadsPaused
                 ? null
                 : <div>
-                    {t("download.started")}{" "}
+                    {format(["download.started"])}{" "}
                     <TimeAgo date={new Date(startedAt)} />
-                    {reasonText ? ` — ${reasonText}` : ""}
+                    {reasonText
+                      ? <span>
+                          {" — "}
+                          {reasonText}
+                        </span>
+                      : ""}
                     {item.totalSize
                       ? ` — ${humanize.fileSize(item.totalSize)}`
                       : ""}
                   </div>
-              : t("grid.item.queued")}
+              : format(["grid.item.queued"])}
           <div className="filler" />
           <div>
             {downloadsPaused
               ? first
                 ? <div className="paused">
-                    {t("grid.item.downloads_paused")}
+                    {format(["grid.item.downloads_paused"])}
                   </div>
                 : null
               : (first || task) && eta && bps
@@ -403,20 +403,18 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
     );
   }
 
-  reasonText(reason: string) {
-    const { t } = this.props;
-
+  formattedReason(reason: string) {
     switch (reason) {
       case "update":
-        return t("download.reason.update");
+        return format(["download.reason.update"]);
       case "reinstall":
-        return t("download.reason.reinstall");
+        return format(["download.reason.reinstall"]);
       case "revert":
-        return t("download.reason.revert");
+        return format(["download.reason.revert"]);
       case "heal":
-        return t("download.reason.heal");
+        return format(["download.reason.heal"]);
       default:
-        return "";
+        return null;
     }
   }
 
@@ -446,8 +444,6 @@ interface IDerivedProps {
     [gameId: string]: ITask[];
   };
 
-  t: ILocalizer;
-
   navigateToGame: typeof actions.navigateToGame;
   prioritizeDownload: typeof actions.prioritizeDownload;
   pauseDownloads: typeof actions.pauseDownloads;
@@ -455,6 +451,8 @@ interface IDerivedProps {
   retryDownload: typeof actions.retryDownload;
   cancelDownload: typeof actions.cancelDownload;
   openGameContextMenu: typeof actions.openGameContextMenu;
+
+  intl: InjectedIntl;
 }
 
 interface IState {
@@ -463,7 +461,7 @@ interface IState {
 
 const HoverDownloadRow = Hover(DownloadRow);
 
-export default connect<IProps>(HoverDownloadRow, {
+export default connect<IProps>(injectIntl(HoverDownloadRow), {
   state: state => ({
     speeds: state.downloads.speeds,
     downloadsPaused: state.downloads.paused,

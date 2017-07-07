@@ -6,7 +6,7 @@ import { IStore } from "../../types";
 import { Logger } from "../../logger";
 import diego from "../../os/diego";
 
-import localizer from "../../localizer";
+import { t } from "../../format";
 
 import * as actions from "../../actions";
 
@@ -26,12 +26,11 @@ export default async function notifyCrash(
   await diego.hire({ logger });
 
   const i18n = store.getState().i18n;
-  const t = localizer.getT(i18n.strings, i18n.lang);
 
   let errorMessage = String(e);
   if (e.reason) {
     if (Array.isArray(e.reason)) {
-      errorMessage = t.format(e.reason);
+      errorMessage = t(i18n, e.reason);
     } else {
       errorMessage = String(e.reason);
     }

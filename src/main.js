@@ -37,7 +37,7 @@ if (!beFast) {
 // monkey-patch a few things
 require("./os/sf");
 
-if (env.name === "production") {
+if (env.name !== "test") {
     require("./util/crash-reporter").mount();
 }
 

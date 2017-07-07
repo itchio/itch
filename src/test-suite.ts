@@ -4,8 +4,6 @@ import { join, resolve } from "path";
 
 import { relative } from "path";
 
-import { ILocalizer } from "./localizer";
-
 const basePath = __dirname;
 const emptyArr = [];
 
@@ -54,13 +52,6 @@ export const fixture = {
     return fixture.json(`api/${spec}`);
   },
 };
-
-/**
- * A dummy localizer that just returns the identity
- */
-export const localizer = ({
-  format: (x: any[]) => x,
-} as any) as ILocalizer;
 
 /** A watcher made for testing reactors */
 import { Watcher } from "./reactors/watcher";

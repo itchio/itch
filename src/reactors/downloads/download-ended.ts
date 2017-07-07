@@ -6,7 +6,7 @@ const logger = rootLogger.child({ name: "download-ended" });
 
 import { omit } from "underscore";
 
-import localizer from "../../localizer";
+import { t } from "../../format";
 
 import downloadReasonToInstallReason from "./download-reason-to-install-reason";
 
@@ -106,8 +106,7 @@ function showReadyNotification(store: IStore, item: IDownloadItem) {
 
   if (notificationMessage) {
     const i18n = store.getState().i18n;
-    const t = localizer.getT(i18n.strings, i18n.lang);
-    const message = t(notificationMessage, notificationOptions);
+    const message = t(i18n, [notificationMessage, notificationOptions]);
     store.dispatch(
       actions.notify({
         body: message,

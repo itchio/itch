@@ -18,7 +18,7 @@ import lazyGetGame from "../lazy-get-game";
 
 import { IRevertCaveParams } from "../../components/modal-widgets/revert-cave";
 
-import localizer from "../../localizer";
+import { t } from "../../format";
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
 import Context from "../../context";
@@ -76,10 +76,9 @@ export default function(watcher: Watcher, db: DB) {
       });
 
       const i18n = store.getState().i18n;
-      const t = localizer.getT(i18n.strings, i18n.lang);
 
       const response = await promisedModal(store, {
-        title: t("prompt.revert.title"),
+        title: t(i18n, ["prompt.revert.title"]),
         message: "",
         widget: "revert-cave",
         widgetParams: {
@@ -110,7 +109,7 @@ export default function(watcher: Watcher, db: DB) {
         }),
         buttons: [
           {
-            label: t("prompt.revert.action.revert"),
+            label: t(i18n, ["prompt.revert.action.revert"]),
             icon: "checkmark",
             action: actions.modalResponse({}),
             actionSource: "widget",
@@ -145,7 +144,7 @@ export default function(watcher: Watcher, db: DB) {
 
       store.dispatch(
         actions.statusMessage({
-          message: t("status.reverting", { buildId }),
+          message: t(i18n, ["status.reverting", { buildId }]),
         }),
       );
 

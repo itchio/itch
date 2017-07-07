@@ -101,13 +101,12 @@ export class ClearBrowsingData extends React.PureComponent<
                       size: humanize.fileSize(cacheSize),
                     },
                   ])
-                : [
-                    <LoadingCircle progress={0.1} />,
-                    " ",
-                    format([
+                : <span>
+                    <LoadingCircle progress={0.1} />{" "}
+                    {format([
                       "prompt.clear_browsing_data.retrieving_cache_size",
-                    ]),
-                  ]}
+                    ])},
+                  </span>}
             </div>
           </label>
           <label className={classNames({ active: clearCookies })}>

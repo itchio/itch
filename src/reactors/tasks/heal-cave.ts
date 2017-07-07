@@ -3,7 +3,7 @@ import * as actions from "../../actions";
 
 import * as paths from "../../os/paths";
 
-import localizer from "../../localizer";
+import { t } from "../../format";
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
 import Context from "../../context";
@@ -15,7 +15,6 @@ import lazyGetGame from "../lazy-get-game";
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.healCave, async (store, action) => {
     const i18n = store.getState().i18n;
-    const t = localizer.getT(i18n.strings, i18n.lang);
 
     const { caveId } = action.payload;
     const opts = {
@@ -44,7 +43,7 @@ export default function(watcher: Watcher, db: DB) {
 
       store.dispatch(
         actions.statusMessage({
-          message: t("status.healing"),
+          message: t(i18n, ["status.healing"]),
         }),
       );
 

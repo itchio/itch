@@ -3,8 +3,7 @@ import { Watcher } from "./watcher";
 import * as clone from "clone";
 
 import { BrowserWindow, Menu } from "electron";
-
-import localizer from "../localizer";
+import { t } from "../format";
 
 import { IStore } from "../types";
 
@@ -60,7 +59,6 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.openGameContextMenu, async (store, action) => {
     const i18n = store.getState().i18n;
-    const t = localizer.getT(i18n.strings, i18n.lang);
 
     const { game } = action.payload;
     const gameId = game.id;
@@ -78,12 +76,12 @@ export default function(watcher: Watcher) {
       }
 
       template.push({
-        label: t(`grid.item.${mainAction}`),
+        label: t(i18n, [`grid.item.${mainAction}`]),
         click: () => store.dispatch(actions.queueGame({ game })),
       });
       if (!busy) {
         template.push({
-          label: t("grid.item.check_for_update"),
+          label: t(i18n, ["grid.item.check_for_update"]),
           click: () =>
             store.dispatch(
               actions.checkForGameUpdate({ caveId: cave.id, noisy: true }),
@@ -91,7 +89,7 @@ export default function(watcher: Watcher) {
         });
       }
       template.push({
-        label: t("grid.item.show_local_files"),
+        label: t(i18n, ["grid.item.show_local_files"]),
         click: () => store.dispatch(actions.exploreCave({ caveId: cave.id })),
       });
 
@@ -99,7 +97,7 @@ export default function(watcher: Watcher) {
 
       let advancedItems: IMenuItem[] = [
         {
-          label: t("grid.item.open_debug_log"),
+          label: t(i18n, ["grid.item.open_debug_log"]),
           click: () => store.dispatch(actions.probeCave({ caveId: cave.id })),
         },
       ];
@@ -111,11 +109,11 @@ export default function(watcher: Watcher) {
             type: "separator",
           },
           {
-            label: t("grid.item.verify_integrity"),
+            label: t(i18n, ["grid.item.verify_integrity"]),
             click: () => store.dispatch(actions.healCave({ caveId: cave.id })),
           },
           {
-            label: t("grid.item.revert_to_version"),
+            label: t(i18n, ["grid.item.revert_to_version"]),
             click: () =>
               store.dispatch(actions.revertCaveRequest({ caveId: cave.id })),
           },
@@ -128,14 +126,14 @@ export default function(watcher: Watcher) {
       advancedItems = [
         ...advancedItems,
         {
-          label: t("grid.item.view_details"),
+          label: t(i18n, ["grid.item.view_details"]),
           click: () =>
             store.dispatch(actions.viewCaveDetails({ caveId: cave.id })),
         },
       ];
 
       template.push({
-        label: t("grid.item.advanced"),
+        label: t(i18n, ["grid.item.advanced"]),
         submenu: advancedItems,
       });
 
@@ -143,12 +141,12 @@ export default function(watcher: Watcher) {
         template.push({ type: "separator" });
 
         template.push({
-          label: t("prompt.uninstall.reinstall"),
+          label: t(i18n, ["prompt.uninstall.reinstall"]),
           click: () =>
             store.dispatch(actions.queueCaveReinstall({ caveId: cave.id })),
         });
         template.push({
-          label: t("prompt.uninstall.uninstall"),
+          label: t(i18n, ["prompt.uninstall.uninstall"]),
           click: () =>
             store.dispatch(actions.queueCaveUninstall({ caveId: cave.id })),
         });
@@ -167,13 +165,13 @@ export default function(watcher: Watcher) {
 
       if (mayDownload) {
         template.push({
-          label: t("grid.item.install"),
+          label: t(i18n, ["grid.item.install"]),
           click: () => store.dispatch(actions.queueGame({ game })),
         });
       } else {
         // TODO: use canBeBought
         template.push({
-          label: t("grid.item.buy_now"),
+          label: t(i18n, ["grid.item.buy_now"]),
           click: () => store.dispatch(actions.initiatePurchase({ game })),
         });
       }

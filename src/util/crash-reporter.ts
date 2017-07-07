@@ -17,6 +17,8 @@ import { currentRuntime, runtimeProp } from "../os/runtime";
 import * as os from "../os";
 import * as sf from "../os/sf";
 
+import { t } from "../format/t";
+
 enum ErrorType {
   UncaughtException,
   UnhandledRejection,
@@ -116,15 +118,21 @@ async function handle(type: ErrorType, e: Error) {
     return;
   }
 
-  // TODO: something better
-  const t = require("../localizer").getT({}, "en");
+  const store = require("../store/metal-store").default;
+  const i18n = store.getState().i18n;
 
   const buttons = [
-    t("prompt.crash_reporter.report_issue", { defaultValue: "Report issue" }),
-    t("prompt.crash_reporter.open_crash_log", {
-      defaultValue: "Open crash log",
-    }),
-    t("prompt.action.close", { defaultValue: "Close" }),
+    t(i18n, [
+      "prompt.crash_reporter.report_issue",
+      { defaultValue: "Report issue" },
+    ]),
+    t(i18n, [
+      "prompt.crash_reporter.open_crash_log",
+      {
+        defaultValue: "Open crash log",
+      },
+    ]),
+    t(i18n, ["prompt.action.close", { defaultValue: "Close" }]),
   ];
   if (env.name === "development") {
     buttons.push("Ignore and continue (dev only)");
@@ -132,13 +140,19 @@ async function handle(type: ErrorType, e: Error) {
   let dialogOpts = {
     type: "error" as "error", // woo typescript is crazy stuff, friendos
     buttons,
-    message: t("prompt.crash_reporter.message", {
-      defaultValue: "The application has crashed",
-    }),
-    detail: t("prompt.crash_reporter.detail", {
-      defaultValue: `A crash log was written to ${crashFile}`,
-      location: crashFile,
-    }),
+    message: t(i18n, [
+      "prompt.crash_reporter.message",
+      {
+        defaultValue: "The application has crashed",
+      },
+    ]),
+    detail: t(i18n, [
+      "prompt.crash_reporter.detail",
+      {
+        defaultValue: `A crash log was written to ${crashFile}`,
+        location: crashFile,
+      },
+    ]),
   };
 
   const response = await new Promise((resolve, reject) =>

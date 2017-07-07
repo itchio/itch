@@ -10,7 +10,7 @@ import { createSelector } from "reselect";
 
 import diskspace from "../os/diskspace";
 import explorer from "../os/explorer";
-import localizer from "../localizer";
+import { t } from "../format";
 
 import * as actions from "../actions";
 
@@ -62,18 +62,18 @@ export default function(watcher: Watcher, db: DB) {
     const numItems = db.caves.count(k => k.where({ installLocation: name }));
 
     const i18n = store.getState().i18n;
-    const t = localizer.getT(i18n.strings, i18n.lang);
 
+    // TODO: use a modal instead
     if (numItems > 0) {
       const buttons = [
-        t("prompt.install_location_not_empty.show_contents"),
-        t("prompt.action.ok"),
+        t(i18n, ["prompt.install_location_not_empty.show_contents"]),
+        t(i18n, ["prompt.action.ok"]),
       ];
 
       const dialogOpts = {
-        title: t("prompt.install_location_not_empty.title"),
-        message: t("prompt.install_location_not_empty.message"),
-        detail: t("prompt.install_location_not_empty.detail"),
+        title: t(i18n, ["prompt.install_location_not_empty.title"]),
+        message: t(i18n, ["prompt.install_location_not_empty.message"]),
+        detail: t(i18n, ["prompt.install_location_not_empty.detail"]),
         buttons,
       };
 
@@ -95,16 +95,19 @@ export default function(watcher: Watcher, db: DB) {
       const loc = store.getState().preferences.installLocations[name];
 
       const buttons = [
-        t("prompt.action.confirm_removal"),
-        t("prompt.action.cancel"),
+        t(i18n, ["prompt.action.confirm_removal"]),
+        t(i18n, ["prompt.action.cancel"]),
       ];
 
       const dialogOpts = {
-        title: t("prompt.install_location_remove.title"),
-        message: t("prompt.install_location_remove.message"),
-        detail: t("prompt.install_location_remove.detail", {
-          location: loc.path,
-        }),
+        title: t(i18n, ["prompt.install_location_remove.title"]),
+        message: t(i18n, ["prompt.install_location_remove.message"]),
+        detail: t(i18n, [
+          "prompt.install_location_remove.detail",
+          {
+            location: loc.path,
+          },
+        ]),
         buttons,
       };
 
@@ -153,7 +156,6 @@ export default function(watcher: Watcher, db: DB) {
 
   watcher.on(actions.addInstallLocationRequest, async (store, action) => {
     const i18n = store.getState().i18n;
-    const t = localizer.getT(i18n.strings, i18n.lang);
     const windowId = store.getState().ui.mainWindow.id;
     const window = BrowserWindow.fromId(windowId);
 
@@ -162,7 +164,7 @@ export default function(watcher: Watcher, db: DB) {
     }
 
     const dialogOpts = {
-      title: t("prompt.install_location_add.title"),
+      title: t(i18n, ["prompt.install_location_add.title"]),
       // crazy typescript workaround, avert your eyes
       properties: ["openDirectory", "createDirectory"] as (
         | "openDirectory"

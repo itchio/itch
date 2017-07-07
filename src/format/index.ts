@@ -5,3 +5,4 @@ export * from "./slugify";
 export * from "./datetime";
 export * from "./price";
 export * from "./download-progress";
+export * from "./t";
