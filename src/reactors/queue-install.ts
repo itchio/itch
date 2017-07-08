@@ -45,7 +45,12 @@ export async function queueInstall(
       throw new Error("Can't reinstall without a cave now can we.");
     }
 
-    let installFolder = paths.sanitize(game.title);
+    let installFolder = paths.sanitize(game.title).trim();
+    // TODO: might be a good idea to grab the slug instead, but we don't get it
+    // in the game object. should maybe just extract from the url?
+    if (installFolder === "") {
+      installFolder = "game-" + game.id;
+    }
 
     const { handPicked, upload } = opts;
 
