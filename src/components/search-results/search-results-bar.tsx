@@ -15,7 +15,6 @@ import GameSearchResult from "./game-search-result";
 import UserSearchResult from "./user-search-result";
 
 import Button from "../basics/button";
-import IconButton from "../basics/icon-button";
 import Filler from "../basics/filler";
 
 import { stripUnit } from "polished";
@@ -131,7 +130,6 @@ export class SearchResultBar extends React.PureComponent<
             {format(["search.results.title", { query: query || "" }])}
           </h2>
           <Filler />
-          <IconButton icon="cross" onClick={() => closeSearch({})} />
         </Header>
         {this.resultsGrid(results)}
         <Footer>

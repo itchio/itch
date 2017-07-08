@@ -894,7 +894,7 @@ export interface ISearchPayload {
 export const SEARCH_FETCHED = "SEARCH_FETCHED";
 export interface ISearchFetchedPayload {
   query: string;
-  results: any;
+  results: Types.ISearchResults;
 }
 
 export const SEARCH_STARTED = "SEARCH_STARTED";

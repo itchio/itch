@@ -35,6 +35,7 @@ import queueLaunch from "./queue-launch";
 import updater from "./updater";
 import gameUpdates from "./game-updates";
 import report from "./report";
+import fetchSearch from "./fetch-search";
 
 import { currentRuntime } from "../os/runtime";
 const runtime = currentRuntime();
@@ -76,6 +77,7 @@ export default function getWatcher(db: DB) {
   updater(watcher, db);
   gameUpdates(watcher, db);
   report(watcher, db);
+  fetchSearch(watcher, db);
 
   watcher.validate();
   return watcher;

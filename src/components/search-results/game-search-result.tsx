@@ -24,10 +24,10 @@ const Platforms = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
 
-  .icon {
-    margin-right: 8px;
-  }
+const StyledPlatformIcons = styled(PlatformIcons)`
+  margin-right: 16px;
 `;
 
 const TitleBlock = styled.div`
@@ -74,9 +74,9 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
         );
       } else {
         price = (
-          <span className="price">
+          <Price>
             {formatPrice("USD", game.minPrice)}
-          </span>
+          </Price>
         );
       }
     }
@@ -99,7 +99,7 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
           </Title>
           <Filler />
           <Platforms>
-            <PlatformIcons target={game} />
+            <StyledPlatformIcons target={game} />
             <Filler />
             {originalPrice}
             {price}

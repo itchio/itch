@@ -92,7 +92,7 @@ const HubItemDiv = styled.div`
 const UnderCover = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: stretch;
 
   padding: 0.5em 0.5em 0.25em 0.5em;
 

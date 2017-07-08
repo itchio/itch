@@ -10,7 +10,7 @@ import { map } from "underscore";
 import { IDispatch } from "../../constants/action-types";
 import { IActionsInfo } from "./types";
 
-import styled from "../styles";
+import styled, * as styles from "../styles";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatString } from "../format";
@@ -19,6 +19,8 @@ const SecondaryActionsDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  animation: ${styles.animations.fadeIn} .1s ease-in;
 `;
 
 class SecondaryActions extends React.PureComponent<IProps & IDerivedProps> {
