@@ -13,6 +13,7 @@
     "array-type": [false],
     "arrow-parens": false,
     "object-literal-key-quotes": [false],
-    "semicolon": ["always", "ignore-bound-class-methods"]
+    "semicolon": ["always", "ignore-bound-class-methods"],
+    "whitespace": [false]
   }
 }
