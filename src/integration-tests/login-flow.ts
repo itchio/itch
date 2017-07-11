@@ -8,8 +8,8 @@ export default async function loginFlow(t: IIntegrationTest) {
   const { client } = t.app;
 
   t.comment("logging in with invalid credentials");
-  await client.setValue("#login-username", "hello this is an integration test");
-  await client.setValue("#login-password", "1234");
+  await client.setValue("#login-username", "c93e730d");
+  await client.setValue("#login-password", "553b6a59");
   await t.safeClick("#login-button");
   await client.waitUntilTextExists(
     "#login-errors",
