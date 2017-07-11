@@ -4,7 +4,7 @@ import Querier from "./querier";
 import { RepoContainer, modelMap } from "./repository";
 
 import { dirname } from "path";
-import * as sf from "../os/sf";
+import { sync as mkdirp } from "mkdirp";
 
 import { indexBy } from "underscore";
 import * as actions from "../actions";
@@ -54,7 +54,7 @@ export class DB extends RepoContainer {
 
     if (!/^:.*:$/.test(dbPath)) {
       try {
-        await sf.mkdir(dirname(this.dbPath));
+        mkdirp(dirname(this.dbPath));
       } catch (e) {
         logger.warn(`could not make db parent directory: ${e.stack}`);
       }
@@ -204,7 +204,7 @@ export class DB extends RepoContainer {
   /**
    * After closing the DB, no methods may called on it anymore.
    */
-  async close() {
+  close() {
     this.conn.close();
     this.dbPath = null;
   }

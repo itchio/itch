@@ -93,16 +93,20 @@ export class TestWatcher extends Watcher {
 }
 
 import { DB } from "./db";
+import { modelMap } from "./db/repository";
+import { checkSchema, fixSchema } from "./db/migrator";
 
 export async function withDB(store: IStore, cb: (db: DB) => Promise<void>) {
   const db = new DB();
   try {
-    await db.load(store, ":memory:");
+    db.load(store, ":memory:");
+    const q = db.getQuerier();
+    fixSchema(q, checkSchema(q, modelMap));
     await cb(db);
   } catch (e) {
     throw e;
   } finally {
-    await db.close();
+    db.close();
   }
 }
 

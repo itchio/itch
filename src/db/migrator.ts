@@ -1,12 +1,12 @@
 import * as Knex from "knex";
-import { knex } from "./querier";
-import { Model, Column } from "./model";
-import Querier from "./querier";
+
 import { DB } from ".";
+import Querier, { knex } from "./querier";
+import { Model, Column } from "./model";
+import { Logger } from "../logger";
+import { toDateTimeField } from "./datetime-field";
 
 import { sortBy, indexBy, pluck, filter } from "underscore";
-
-import { toDateTimeField } from "./datetime-field";
 
 interface IMigrator {
   db: DB;
@@ -14,7 +14,7 @@ interface IMigrator {
 }
 
 interface IMigration {
-  (m: IMigrator): void;
+  (m: IMigrator): Promise<void>;
 }
 
 export interface IMigrations {
@@ -35,7 +35,11 @@ type RealSchemaBuilder = Knex.SchemaBuilder & {
 };
 
 const migrationsTable = "__itch_migrations";
-export function runMigrations(q: Querier, migrations: IMigrations) {
+export async function runMigrations(
+  q: Querier,
+  migrations: IMigrations,
+  logger: Logger,
+) {
   ensureMigrationsTable(q);
   const pending = pendingMigrations(q, migrations);
 
@@ -55,11 +59,15 @@ export function runMigrations(q: Querier, migrations: IMigrations) {
   };
 
   for (const id of pending) {
-    q.withTransaction(() => {
-      const migration = migrations[id];
-      migration(migrator);
-      markMigrated(q, id);
-    });
+    try {
+      await q.withTransactionAsync(async () => {
+        const migration = migrations[id];
+        await migration(migrator);
+        markMigrated(q, id);
+      });
+    } catch (e) {
+      logger.error(`migration ${id} failed: ${e.stack}`);
+    }
   }
 }
 

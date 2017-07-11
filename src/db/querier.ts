@@ -23,6 +23,17 @@ export default class Querier {
     }
   }
 
+  async withTransactionAsync(cb: () => Promise<void>) {
+    this.db.prepare("BEGIN").run();
+    try {
+      await cb();
+      this.db.prepare("COMMIT").run();
+    } catch (e) {
+      this.db.prepare("ROLLBACK").run();
+      throw e;
+    }
+  }
+
   get(model: Model, cb: KnexCb): any {
     const sql = cb(knex(model.table)).toSQL();
     return this.db.prepare(sql.sql).get(...sql.bindings);
