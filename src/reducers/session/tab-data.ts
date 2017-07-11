@@ -6,7 +6,7 @@ import { omit } from "underscore";
 
 const initialState = {} as ITabDataSet;
 
-const emptyObj = {};
+const emptyObj = {} as any;
 
 export default reducer<ITabDataSet>(initialState, on => {
   on(actions.tabDataFetched, (state, action) => {
@@ -44,17 +44,26 @@ export default reducer<ITabDataSet>(initialState, on => {
   });
 
   on(actions.tabEvolved, (state, action) => {
-    const { id, data } = action.payload;
+    const { id, data = emptyObj } = action.payload;
     const oldData = state[id];
     if (!oldData) {
       // ignore fresh data for closed tabs
       return state;
     }
 
-    return {
-      ...state,
-      [id]: { ...oldData, ...data },
-    };
+    if (oldData.path === data.path) {
+      // merge old & new data
+      return {
+        ...state,
+        [id]: { ...oldData, ...data },
+      };
+    } else {
+      // if the path changed, discard old data
+      return {
+        ...state,
+        [id]: data,
+      };
+    }
   });
 
   on(actions.focusTab, (state, action) => {
