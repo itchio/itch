@@ -3,7 +3,10 @@
   "tasks": [
     {
       "taskName": "compile",
-      "command": "node_modules\\.bin\\tsc",
+      "command": "node_modules/.bin/tsc",
+      "windows":{
+        "command": "node_modules\\.bin\\tsc",
+      },
       "isShellCommand": true,
       "args": [
         "-w",
