@@ -243,7 +243,8 @@ app.on("ready", async () => {
       }
       testFiles = glob("**/*[.-]spec.ts", { cwd: srcDir });
       if (!thorough) {
-        testFiles = testFiles.filter(f => !/confidence/.test(f));
+        // exclude files containing slow.spec if not during a thorough run
+        testFiles = testFiles.filter(f => !/slow\.spec/.test(f));
       }
     }
 
