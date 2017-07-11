@@ -1,13 +1,3 @@
-import * as Knex from "knex";
-
-import { Model } from "./model";
-import { knex } from "./querier";
-import { DB } from ".";
-
-import { sortBy, indexBy } from "underscore";
-
-import { toDateTimeField } from "./datetime-field";
-
 import { GameModel, IOwnGame } from "./models/game";
 import { UserModel, IOwnUser } from "./models/user";
 import { CollectionModel, ICollection } from "./models/collection";
@@ -18,30 +8,11 @@ import { GameSecretModel, IGameSecret } from "./models/game-secret";
 import { ExternalGameModel, IExternalGame } from "./models/external-game";
 import { ProfileModel, IProfile } from "./models/profile";
 
-interface IMigrator {
-  db: DB;
-  createTable: <T>(model: Model, cb: (t: ITableBuilder<T>) => void) => void;
-}
-
-interface IMigration {
-  (m: IMigrator): void;
-}
-
-interface IMigrations {
-  [key: number]: IMigration;
-}
-
-interface ITableBuilder<T> {
-  integer(name: keyof T): Knex.ColumnBuilder;
-  text(name: keyof T): Knex.ColumnBuilder;
-  json(name: keyof T): Knex.ColumnBuilder;
-  boolean(name: keyof T): Knex.ColumnBuilder;
-  dateTime(name: keyof T): Knex.ColumnBuilder;
-}
+import { IMigrations } from "./migrator";
 
 // stolen from lapis, yay
-const migrations: IMigrations = {
-  1498742676: async m => {
+export default <IMigrations>{
+  1498742676: m => {
     m.createTable<IOwnGame>(GameModel, t => {
       t.integer("id").primary();
 
@@ -160,84 +131,3 @@ const migrations: IMigrations = {
     });
   },
 };
-
-// Knex typings forgot about this lil' important part
-type RealSchemaBuilder = Knex.SchemaBuilder & {
-  toSQL(): Knex.Sql[];
-};
-
-const migrationsTable = "__itch_migrations";
-export async function runMigrations(db: DB) {
-  let run = (sql: Knex.Sql) => {
-    db.prepare(sql.sql).run(...sql.bindings);
-  };
-
-  let runAll = (sqls: Knex.Sql[]) => {
-    for (const sql of sqls) {
-      run(sql);
-    }
-  };
-
-  let all = (sql: Knex.Sql): any[] => {
-    return db.prepare(sql.sql).all(...sql.bindings);
-  };
-
-  runAll(
-    (knex.schema.createTableIfNotExists(migrationsTable, function(
-      this: Knex.TableBuilder,
-    ) {
-      this.integer("id");
-      this.dateTime("migratedAt");
-    }) as RealSchemaBuilder).toSQL(),
-  );
-
-  const doneMigrations = all(knex(migrationsTable).select().toSQL());
-  const doneById = indexBy(doneMigrations, "id");
-
-  // all migration ids
-  let ids = Object.keys(migrations);
-  // sorted by ids (which are timestamps)
-  ids = sortBy(ids, x => x);
-
-  const todo = [];
-  for (const id of ids) {
-    if (!doneById[id]) {
-      todo.push(id);
-    }
-  }
-
-  if (todo.length === 0) {
-    return;
-  }
-
-  const migrator: IMigrator = {
-    createTable: (model: Model, cb) => {
-      runAll(
-        (knex.schema.createTable(model.table, function(this) {
-          cb(this);
-        }) as RealSchemaBuilder).toSQL(),
-      );
-    },
-    db,
-  };
-
-  for (const id of todo) {
-    db.prepare("BEGIN").run();
-    try {
-      const migration = migrations[id];
-      await migration(migrator);
-      run(
-        knex(migrationsTable)
-          .insert({
-            id,
-            migratedAt: toDateTimeField(new Date()),
-          })
-          .toSQL(),
-      );
-      db.prepare("COMMIT").run();
-    } catch (e) {
-      db.prepare("ROLLBACK").run();
-      throw e;
-    }
-  }
-}

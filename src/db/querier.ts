@@ -37,4 +37,22 @@ export default class Querier {
     const sql = cb(knex(model.table)).toSQL();
     this.db.prepare(sql.sql).run(...sql.bindings);
   }
+
+  runSql(sql: Knex.Sql): void {
+    this.db.prepare(sql.sql).run(...sql.bindings);
+  }
+
+  runManySql(sqls: Knex.Sql[]): void {
+    for (const sql of sqls) {
+      this.runSql(sql);
+    }
+  }
+
+  allSql(sql: Knex.Sql): any[] {
+    return this.db.prepare(sql.sql).all(...sql.bindings);
+  }
+
+  getDB(): DB {
+    return this.db;
+  }
 }
