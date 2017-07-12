@@ -726,7 +726,7 @@ export interface II18nState {
 }
 
 export interface IUIMenuState {
-  template: Electron.MenuItemConstructorOptions[];
+  template: IMenuItem[];
 }
 
 export interface IUIMainWindowState {
@@ -1088,3 +1088,9 @@ export interface IRuntime {
 export interface ISaleInfo {
   rate: number;
 }
+
+export interface IMenuItem extends Electron.MenuItemConstructorOptions {
+  localizedLabel?: any[];
+  submenu?: IMenuItem[];
+}
+export type IMenuTemplate = IMenuItem[];

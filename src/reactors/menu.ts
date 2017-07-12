@@ -8,20 +8,12 @@ import { createSelector } from "reselect";
 import * as clone from "clone";
 import { t } from "../format";
 
-import { IRuntime } from "../types";
+import { IRuntime, ILocalizedString, IMenuItem, IMenuTemplate } from "../types";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-import {
-  IStore,
-  IAppState,
-  ISessionCredentialsState,
-  ISystemState,
-} from "../types";
-
-type IMenuItem = Electron.MenuItemConstructorOptions;
-type IMenuTemplate = IMenuItem[];
+import { IStore, IAppState, ISessionCredentialsState } from "../types";
 
 let refreshSelector: (state: IAppState) => void;
 
@@ -29,7 +21,7 @@ let applySelector: (state: IAppState) => void;
 
 interface IMenuItemPayload {
   role?: string;
-  label?: string;
+  label?: ILocalizedString;
 }
 
 function convertMenuAction(payload: IMenuItemPayload, runtime: IRuntime) {
@@ -41,7 +33,9 @@ function convertMenuAction(payload: IMenuItemPayload, runtime: IRuntime) {
     default: // muffin
   }
 
-  switch (label) {
+  const labelString = Array.isArray(label) ? label[0] : label;
+
+  switch (labelString) {
     case "sidebar.new_tab":
       return actions.newTab({});
     case "menu.file.close_tab":
@@ -90,9 +84,11 @@ export function fleshOutTemplate(
     }
 
     const { label, role = null, enabled = true } = input;
-    const node = clone(input);
+    const node = clone(input) as Electron.MenuItemConstructorOptions;
 
-    node.label = t(i18n, [label]);
+    if (input.localizedLabel) {
+      node.label = t(i18n, input.localizedLabel);
+    }
     if (enabled) {
       node.click = e => {
         const menuAction = convertMenuAction({ label, role }, runtime);
@@ -122,7 +118,11 @@ export default function(watcher: Watcher, runtime: IRuntime) {
         (state: IAppState) => state.session.credentials,
         (system, credentials) => {
           setImmediate(() => {
-            const template = computeMenuTemplate(system, credentials, runtime);
+            const template = computeMenuTemplate(
+              system.appVersion,
+              credentials,
+              runtime,
+            );
             store.dispatch(actions.menuChanged({ template }));
           });
         },
@@ -148,12 +148,23 @@ export default function(watcher: Watcher, runtime: IRuntime) {
   });
 }
 
+interface IAllTemplates {
+  mainMac: IMenuItem;
+  file: IMenuItem;
+  fileMac: IMenuItem;
+  edit: IMenuItem;
+  view: IMenuItem;
+  accountLoggedOut: IMenuItem;
+  account: IMenuItem;
+  help: IMenuItem;
+}
+
 function computeMenuTemplate(
-  system: ISystemState,
+  appVersion: string,
   credentials: ISessionCredentialsState,
   runtime: IRuntime,
 ) {
-  const menus = {
+  const menus: IAllTemplates = {
     mainMac: {
       // no need for a label, it'll always be app name
       submenu: [
@@ -164,7 +175,7 @@ function computeMenuTemplate(
           type: "separator",
         },
         {
-          label: "menu.file.preferences",
+          localizedLabel: ["menu.file.preferences"],
           accelerator: "CmdOrCtrl+,",
         },
         {
@@ -183,166 +194,166 @@ function computeMenuTemplate(
           type: "separator",
         },
         {
-          label: "menu.file.quit",
+          localizedLabel: ["menu.file.quit"],
           accelerator: "CmdOrCtrl+Q",
         },
       ],
-    } as IMenuItem,
+    },
 
     file: {
-      label: "menu.file.file",
+      localizedLabel: ["menu.file.file"],
       submenu: [
         {
-          label: "sidebar.new_tab",
+          localizedLabel: ["sidebar.new_tab"],
           accelerator: "CmdOrCtrl+T",
         },
         {
           type: "separator",
         },
         {
-          label: "menu.file.preferences",
+          localizedLabel: ["menu.file.preferences"],
           accelerator: "CmdOrCtrl+,",
         },
         {
           type: "separator",
         },
         {
-          label: "menu.file.close_tab",
+          localizedLabel: ["menu.file.close_tab"],
           accelerator: "CmdOrCtrl+W",
         },
         {
-          label: "menu.file.close_all_tabs",
+          localizedLabel: ["menu.file.close_all_tabs"],
           accelerator: "CmdOrCtrl+Shift+W",
         },
         {
-          label: "menu.file.close_window",
-          accelerator: system.macos ? "Cmd+Alt+W" : "Alt+F4",
+          localizedLabel: ["menu.file.close_window"],
+          accelerator: runtime.platform === "osx" ? "Cmd+Alt+W" : "Alt+F4",
         },
         {
-          label: "menu.file.quit",
+          localizedLabel: ["menu.file.quit"],
           accelerator: "CmdOrCtrl+Q",
         },
       ],
-    } as IMenuItem,
+    },
 
     fileMac: {
-      label: "menu.file.file",
+      localizedLabel: ["menu.file.file"],
       submenu: [
         {
-          label: "sidebar.new_tab",
+          localizedLabel: ["sidebar.new_tab"],
           accelerator: "CmdOrCtrl+T",
         },
         {
           type: "separator",
         },
         {
-          label: "menu.file.close_tab",
+          localizedLabel: ["menu.file.close_tab"],
           accelerator: "CmdOrCtrl+W",
         },
         {
-          label: "menu.file.close_all_tabs",
+          localizedLabel: ["menu.file.close_all_tabs"],
           accelerator: "CmdOrCtrl+Shift+W",
         },
         {
-          label: "menu.file.close_window",
-          accelerator: system.macos ? "Cmd+Alt+W" : "Alt+F4",
+          localizedLabel: ["menu.file.close_window"],
+          accelerator: runtime.platform === "osx" ? "Cmd+Alt+W" : "Alt+F4",
         },
       ],
-    } as IMenuItem,
+    },
 
     edit: {
-      label: "menu.edit.edit",
+      localizedLabel: ["menu.edit.edit"],
       visible: false,
       submenu: [
         {
-          label: "menu.edit.cut",
+          localizedLabel: ["menu.edit.cut"],
           accelerator: "CmdOrCtrl+X",
           role: "cut",
         },
         {
-          label: "menu.edit.copy",
+          localizedLabel: ["menu.edit.copy"],
           accelerator: "CmdOrCtrl+C",
           role: "copy",
         },
         {
-          label: "menu.edit.paste",
+          localizedLabel: ["menu.edit.paste"],
           accelerator: "CmdOrCtrl+V",
           role: "paste",
         },
         {
-          label: "menu.edit.select_all",
+          localizedLabel: ["menu.edit.select_all"],
           accelerator: "CmdOrCtrl+A",
           role: "selectall",
         },
       ],
-    } as IMenuItem,
+    },
 
     view: {
-      label: "menu.view.view",
+      localizedLabel: ["menu.view.view"],
       submenu: [
         {
-          label: "menu.view.downloads",
+          localizedLabel: ["menu.view.downloads"],
           accelerator: "CmdOrCtrl+J",
         },
       ],
-    } as IMenuItem,
+    },
 
     accountLoggedOut: {
-      label: "menu.account.account",
+      localizedLabel: ["menu.account.account"],
       submenu: [
         {
-          label: "menu.account.not_logged_in",
+          localizedLabel: ["menu.account.not_logged_in"],
           enabled: false,
         },
       ],
-    } as IMenuItem,
+    },
 
     account: {
-      label: "menu.account.account",
+      localizedLabel: ["menu.account.account"],
       submenu: [
         {
-          label: "menu.account.change_user",
+          localizedLabel: ["menu.account.change_user"],
         },
       ],
-    } as IMenuItem,
+    },
 
     help: {
-      label: "menu.help.help",
+      localizedLabel: ["menu.help.help"],
       role: "help",
       submenu: [
         {
-          label: "menu.help.view_terms",
+          localizedLabel: ["menu.help.view_terms"],
         },
         {
-          label: "menu.help.view_license",
+          localizedLabel: ["menu.help.view_license"],
         },
         {
-          label: `Version ${system.appVersion}`,
+          label: `Version ${appVersion}`,
           enabled: false,
         },
         {
-          label: "menu.help.check_for_update",
+          localizedLabel: ["menu.help.check_for_update"],
         },
         {
           type: "separator",
         },
         {
-          label: "menu.help.report_issue",
+          localizedLabel: ["menu.help.report_issue"],
         },
         {
-          label: "menu.help.search_issue",
+          localizedLabel: ["menu.help.search_issue"],
         },
         {
           type: "separator",
         },
         {
-          label: "menu.help.release_notes",
+          localizedLabel: ["menu.help.release_notes"],
         },
       ],
-    } as IMenuItem,
+    },
   };
 
-  const template: IMenuItem[] = [];
+  const template: IMenuTemplate = [];
   if (runtime.platform === "osx") {
     template.push(menus.mainMac);
     template.push(menus.fileMac);
