@@ -1,8 +1,11 @@
-
-import {Action} from "redux-actions";
+import { Action } from "redux-actions";
+import "electron";
 
 import * as Types from "../types";
-import {IProgressInfo} from "../types";
+import { IProgressInfo } from "../types";
+
+import { IGame } from "../db/models/game";
+import { IOwnUser } from "../db/models/user";
 
 export type IAction<T> = Action<T>;
 
@@ -10,7 +13,10 @@ export interface IDispatch {
   (action: IAction<any>): void;
 }
 
-export function dispatcher <T> (dispatch: IDispatch, actionCreator: (payload: T) => IAction<T>) {
+export function dispatcher<T>(
+  dispatch: IDispatch,
+  actionCreator: (payload: T) => IAction<T>,
+) {
   return (payload: T) => {
     const action = actionCreator(payload);
     dispatch(action);
@@ -18,9 +24,10 @@ export function dispatcher <T> (dispatch: IDispatch, actionCreator: (payload: T)
   };
 }
 
-export function multiDispatcher <T> (
-    dispatch: IDispatch,
-    actionCreator: (...args: any[]) => IAction<T>) {
+export function multiDispatcher<T>(
+  dispatch: IDispatch,
+  actionCreator: (...args: any[]) => IAction<T>,
+) {
   return (...args: any[]) => dispatch(actionCreator(...args));
 }
 
@@ -83,21 +90,22 @@ export interface IModalResponsePayload {
 
   /** whether to clear cache */
   cache?: boolean;
+
+  /** manually picked upload for install */
+  pickedUpload?: Types.IUpload;
 }
 
 export const MODAL_NO_RESPONSE = "MODAL_NO_RESPONSE";
-export interface IModalNoResponsePayload {
-
-}
+export interface IModalNoResponsePayload {}
 
 export const SETUP_STATUS = "SETUP_STATUS";
-export interface ISetupStatusPayload extends Types.ISetupOperation {};
+export interface ISetupStatusPayload extends Types.ISetupOperation {}
 
 export const SETUP_DONE = "SETUP_DONE";
-export interface ISetupDonePayload {};
+export interface ISetupDonePayload {}
 
 export const RETRY_SETUP = "RETRY_SETUP";
-export interface IRetrySetupPayload {};
+export interface IRetrySetupPayload {}
 
 export const SESSION_READY = "SESSION_READY";
 export interface ISessionReadyPayload {}
@@ -109,7 +117,7 @@ export const SESSION_UPDATED = "SESSION_UPDATED";
 export interface ISessionUpdatedPayload {
   /** the session to update (user id) */
   id: string;
-  
+
   /** new/updated fields (can't delete fields) */
   record: Types.IRememberedSession;
 }
@@ -131,33 +139,6 @@ export interface IStartOnboardingPayload {}
 export const EXIT_ONBOARDING = "EXIT_ONBOARDING";
 export interface IExitOnboardingPayload {}
 
-export const GLOBAL_DB_COMMIT = "GLOBAL_DB_COMMIT";
-export const GLOBAL_DB_READY = "GLOBAL_DB_READY";
-export const GLOBAL_DB_CLOSED = "GLOBAL_DB_CLOSED";
-
-export const USER_DB_COMMIT = "USER_DB_COMMIT";
-export const USER_DB_READY = "USER_DB_READY";
-export const USER_DB_CLOSED = "USER_DB_CLOSED";
-
-export interface IDbReadyPayload {}
-export interface IDbCommitPayload {
-  updated: Types.IEntityMap<any>;
-  deleted: Types.IEntityRefs;
-  initial: boolean;
-}
-export interface IDbClosedPayload {}
-
-/* Background stuff */
-export const DISMISS_HISTORY_ITEM = "DISMISS_HISTORY_ITEM";
-export interface IDismissHistoryItemPayload {
-  /** the item to dismiss */
-  id: string;
-}
-export const QUEUE_HISTORY_ITEM = "QUEUE_HISTORY_ITEM";
-export interface IQueueHistoryItemPayload extends Types.IHistoryItem {};
-export const HISTORY_READ = "HISTORY_READ";
-export interface IHistoryReadPayload {};
-
 /* Main window events */
 export const FIRST_WINDOW_READY = "FIRST_WINDOW_READY";
 export interface IFirstWindowReadyPayload {}
@@ -178,6 +159,11 @@ export interface IWindowFocusChangedPayload {
 export const WINDOW_FULLSCREEN_CHANGED = "WINDOW_FULLSCREEN_CHANGED";
 export interface IWindowFullscreenChangedPayload {
   fullscreen: boolean;
+}
+
+export const WINDOW_MAXIMIZED_CHANGED = "WINDOW_MAXIMIZED_CHANGED";
+export interface IWindowMaximizedChangedPayload {
+  maximized: boolean;
 }
 
 export const WINDOW_BOUNDS_CHANGED = "WINDOW_BOUNDS_CHANGED";
@@ -205,6 +191,12 @@ export interface IFocusWindowPayload {
 export const HIDE_WINDOW = "HIDE_WINDOW";
 export interface IHideWindowPayload {}
 
+export const MINIMIZE_WINDOW = "MINIMIZE_WINDOW";
+export interface IMinimizeWindowPayload {}
+
+export const TOGGLE_MAXIMIZE_WINDOW = "TOGGLE_MAXIMIZE_WINDOW";
+export interface IToggleMaximizeWindowPayload {}
+
 export const CLOSE_TAB_OR_AUX_WINDOW = "CLOSE_TAB_OR_AUX_WINDOW";
 export interface ICloseTabOrAuxWindowPayload {}
 
@@ -212,16 +204,29 @@ export const CLOSE_ALL_TABS = "CLOSE_ALL_TABS";
 export interface ICloseAllTabsPayload {}
 
 /* Navigation */
-export const NAVIGATE = "NAVIGATE";
-export interface INavigatePayload {
-  /** tab to navigate to */
-  id: string;
+
+export const OPEN_TAB = "OPEN_TAB";
+export interface IOpenTabPayload {
+  /** the id of the new tab to open (generated) */
+  id?: string;
 
   /** any data we already known about the tab */
   data: Types.ITabData;
 
   /** whether to open a new tab in the background */
   background: boolean;
+}
+
+export const NAVIGATE = "NAVIGATE";
+export interface INavigatePayload extends IOpenTabPayload {
+  /** tab to navigate to */
+  id: string;
+}
+
+export const FOCUS_TAB = "FOCUS_TAB";
+export interface IFocusTabPayload {
+  /** the id of the new tab */
+  id: string;
 }
 
 export const FOCUS_NTH_TAB = "FOCUS_NTH_TAB";
@@ -263,15 +268,15 @@ export interface ITabEvolvedPayload {
 }
 
 export const NEW_TAB = "NEW_TAB";
-export interface INewTabPayload {
-
-}
+export interface INewTabPayload {}
 
 export const CLOSE_TAB = "CLOSE_TAB";
 export interface ICloseTabPayload {
-  /** If null, close current tab */
   id: string;
 }
+
+export const CLOSE_CURRENT_TAB = "CLOSE_CURRENT_TAB";
+export interface ICloseCurrentTabPayload {}
 
 export const SHOW_PREVIOUS_TAB = "SHOW_PREVIOUS_TAB";
 export interface IShowPreviousTabPayload {}
@@ -282,11 +287,16 @@ export interface IShowNextTabPayload {}
 export const SWITCH_PAGE = "SWITCH_PAGE";
 export interface ISwitchPagePayload {
   page: string;
-};
+}
 
 export const OPEN_URL = "OPEN_URL";
 export interface IOpenUrlPayload {
   url: string;
+}
+
+export const PROCESS_URL_ARGUMENTS = "PROCESS_URL_ARGUMENTS";
+export interface IProcessUrlArgumentsPayload {
+  args: string[];
 }
 
 export const REPORT_ISSUE = "REPORT_ISSUE";
@@ -317,6 +327,12 @@ export interface ITriggerBackPayload {}
 export const TRIGGER_LOCATION = "TRIGGER_LOCATION";
 export interface ITriggerLocationPayload {}
 
+export const TRIGGER_BROWSER_BACK = "TRIGGER_BROWSER_BACK";
+export interface ITriggerBrowserBackPayload {}
+
+export const TRIGGER_BROWSER_FORWARD = "TRIGGER_BROWSER_FORWARD";
+export interface ITriggerBrowserForwardPayload {}
+
 export const TOGGLE_MINI_SIDEBAR = "TOGGLE_MINI_SIDEBAR";
 export interface IToggleMiniSidebarPayload {}
 
@@ -345,9 +361,37 @@ export interface ITabDataFetchedPayload {
 
   /** the data we fetched */
   data: Types.ITabData;
+}
 
-  /** when we started fetching it */
-  timestamp: number;
+export const TAB_PARAMS_CHANGED = "TAB_PARAMS_CHANGED";
+export interface ITabParamsChangedPayload {
+  /** tab for which the params are changing */
+  id: string;
+
+  /** the params that changed (deep partial) */
+
+  params: Types.ITabParams;
+}
+
+export const TAB_PAGINATION_CHANGED = "TAB_PAGINATION_CHANGED";
+export interface ITabPaginationChangedPayload {
+  /** tab for which the pagination is changing */
+  id: string;
+
+  /** the pagination that changed (deep partial) */
+
+  pagination: Types.ITabPagination;
+}
+
+export const OPEN_DEV_TOOLS = "OPEN_DEV_TOOLS";
+export interface IOpenDevToolsPayload {
+  tab: string;
+}
+
+export const ANALYZE_PAGE = "ANALYZE_PAGE";
+export interface IAnalyzePagePayload {
+  tab: string;
+  url: string;
 }
 
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
@@ -359,7 +403,7 @@ export interface IOpenTabContextMenuPayload {
 export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
 export interface IOpenGameContextMenuPayload {
   /** game to open the context menu of */
-  game: Types.IGameRecord;
+  game: IGame;
 }
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */
@@ -370,10 +414,9 @@ export interface IUnlockTabPayload {
 }
 
 /* Application menu */
-export const REFRESH_MENU = "REFRESH_MENU";
-export interface IRefreshMenuPayload {
-  system: Types.ISystemState;
-  credentials: Types.ISessionCredentialsState;
+export const MENU_CHANGED = "MENU_CHANGED";
+export interface IMenuChangedPayload {
+  template: Types.IMenuItem[];
 }
 
 /** Buh-bye */
@@ -394,10 +437,10 @@ export interface IQuitAndInstallPayload {}
 
 /* Self updates */
 export const CHECK_FOR_SELF_UPDATE = "CHECK_FOR_SELF_UPDATE";
-export interface ICheckForSelfUpdatePayload {};
+export interface ICheckForSelfUpdatePayload {}
 
 export const CHECKING_FOR_SELF_UPDATE = "CHECKING_FOR_SELF_UPDATE";
-export interface ICheckingForSelfUpdatePayload {};
+export interface ICheckingForSelfUpdatePayload {}
 
 export const SELF_UPDATE_AVAILABLE = "SELF_UPDATE_AVAILABLE";
 export interface ISelfUpdateAvailablePayload {
@@ -406,7 +449,7 @@ export interface ISelfUpdateAvailablePayload {
 
   /** whether the self-update is being immediately downloaded */
   downloading: boolean;
-};
+}
 
 export const SELF_UPDATE_NOT_AVAILABLE = "SELF_UPDATE_NOT_AVAILABLE";
 export interface ISelfUpdateNotAvailablePayload {
@@ -415,7 +458,7 @@ export interface ISelfUpdateNotAvailablePayload {
    * we were offline and couldn't check (that doesn't count as an error)
    */
   uptodate: boolean;
-};
+}
 
 export const SELF_UPDATE_ERROR = "SELF_UPDATE_ERROR";
 export interface ISelfUpdateErrorPayload {
@@ -424,30 +467,30 @@ export interface ISelfUpdateErrorPayload {
 }
 
 export const SELF_UPDATE_DOWNLOADED = "SELF_UPDATE_DOWNLOADED";
-export interface ISelfUpdateDownloadedPayload {};
+export interface ISelfUpdateDownloadedPayload {}
 
 export const SHOW_AVAILABLE_SELF_UPDATE = "SHOW_AVAILABLE_SELF_UPDATE";
-export interface IShowAvailableSelfUpdatePayload {};
+export interface IShowAvailableSelfUpdatePayload {}
 
 export const APPLY_SELF_UPDATE = "APPLY_SELF_UPDATE";
-export interface IApplySelfUpdatePayload {};
+export interface IApplySelfUpdatePayload {}
 
 export const APPLY_SELF_UPDATE_REQUEST = "APPLY_SELF_UPDATE_REQUEST";
-export interface IApplySelfUpdateRequestPayload {};
+export interface IApplySelfUpdateRequestPayload {}
 
 export const SNOOZE_SELF_UPDATE = "SNOOZE_SELF_UPDATE";
-export interface ISnoozeSelfUpdatePayload {};
+export interface ISnoozeSelfUpdatePayload {}
 
 export const DISMISS_STATUS = "DISMISS_STATUS";
-export interface IDismissStatusPayload {};
+export interface IDismissStatusPayload {}
 
 export const STATUS_MESSAGE = "STATUS_MESSAGE";
 export interface IStatusMessagePayload {
   message: Types.ILocalizedString;
-};
+}
 
 export const DISMISS_STATUS_MESSAGE = "DISMISS_STATUS_MESSAGE";
-export interface IDismissStatusMessagePayload {};
+export interface IDismissStatusMessagePayload {}
 
 export const ENABLE_BONUS = "ENABLE_BONUS";
 export interface IEnableBonusPayload {
@@ -462,23 +505,23 @@ export interface IDisableBonusPayload {
 export const LOCALES_CONFIG_LOADED = "LOCALES_CONFIG_LOADED";
 export interface ILocalesConfigLoadedPayload {
   strings: Types.II18nResources;
-};
+}
 
 export const QUEUE_LOCALE_DOWNLOAD = "QUEUE_LOCALE_DOWNLOAD";
 export interface IQueueLocaleDownloadPayload {
   lang: string;
-};
+}
 
 export const LOCALE_DOWNLOAD_STARTED = "LOCALE_DOWNLOAD_STARTED";
 export interface ILocaleDownloadStartedPayload {
   lang: string;
-};
+}
 
 export const LOCALE_DOWNLOAD_ENDED = "LOCALE_DOWNLOAD_ENDED";
 export interface ILocaleDownloadEndedPayload {
   lang: string;
   resources: any;
-};
+}
 
 /* Install locations */
 export const BROWSE_INSTALL_LOCATION = "BROWSE_INSTALL_LOCATION";
@@ -499,7 +542,8 @@ export interface IAddInstallLocationPayload {
   path: string;
 }
 
-export const REMOVE_INSTALL_LOCATION_REQUEST = "REMOVE_INSTALL_LOCATION_REQUEST";
+export const REMOVE_INSTALL_LOCATION_REQUEST =
+  "REMOVE_INSTALL_LOCATION_REQUEST";
 export interface IRemoveInstallLocationRequestPayload {
   /** name of the install location to remove */
   name: string;
@@ -515,12 +559,12 @@ export interface IMakeInstallLocationDefaultPayload {
 }
 
 export const QUERY_FREE_SPACE = "QUERY_FREE_SPACE";
-export interface IQueryFreeSpacePayload {};
+export interface IQueryFreeSpacePayload {}
 
 export const FREE_SPACE_UPDATED = "FREE_SPACE_UPDATED";
 export interface IFreeSpaceUpdatedPayload {
   diskInfo: Types.IPartsInfo;
-};
+}
 
 /* Tasks */
 export const TASK_STARTED = "TASK_STARTED";
@@ -529,52 +573,54 @@ export interface ITaskStartedPayload {
   id: string;
   startedAt: number;
   gameId: number;
-  progress: number;
-};
+}
 export const TASK_PROGRESS = "TASK_PROGRESS";
 export interface ITaskProgressPayload extends IProgressInfo {
   /** the task this progress info is for */
   id: string;
 
   prereqsState?: Types.IPrereqsState;
-};
+}
 export const TASK_ENDED = "TASK_ENDED";
 export interface ITaskEndedPayload {
-  name: string;
   id: string;
   err: string;
-  result: any;
-  taskOpts: any; // TODO: type better
-};
+}
 
 export const ABORT_TASK = "ABORT_TASK";
 export interface IAbortTaskPayload {
   id: string;
-};
+}
 
 /* Downloads */
 export const QUEUE_DOWNLOAD = "QUEUE_DOWNLOAD";
-export interface IQueueDownloadPayload extends Types.IQueueDownloadOpts {};
+export interface IQueueDownloadPayload extends Types.IQueueDownloadOpts {}
 
 export const DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
-export interface IDownloadStartedPayload extends Types.IDownloadItem {};
+export type IDownloadStartedPayload = Partial<Types.IDownloadItem>;
 
 export const DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS";
 export interface IDownloadProgressPayload extends IProgressInfo {
   /** the download in progress */
   id: string;
-};
+}
 
 export const DOWNLOAD_ENDED = "DOWNLOAD_ENDED";
 export interface IDownloadEndedPayload {
-  /** the download that just ended */
+  /** the id of the download that just ended */
   id: string;
+
+  /** the download that just ended */
+  item: Types.IDownloadItem;
 
   /** an error, if any */
   err: string;
 
-  /** the original download options */
-  downloadOpts: Types.IDownloadOpts;
+  /** stuff like: where the file was downloaded. */
+  result: Types.IDownloadResult;
+
+  /** timestamp when the download finished */
+  finishedAt?: number;
 }
 
 export const DOWNLOAD_SPEED_DATAPOINT = "DOWNLOAD_SPEED_DATAPOINT";
@@ -605,7 +651,7 @@ export interface IResumeDownloadsPayload {}
 
 export const RETRY_DOWNLOAD = "RETRY_DOWNLOAD";
 export interface IRetryDownloadPayload {
-  downloadOpts: Types.IDownloadOpts;
+  id: string;
 }
 
 export const CLEAR_GAME_DOWNLOADS = "CLEAR_GAME_DOWNLOADS";
@@ -633,17 +679,6 @@ export interface IQueueCaveReinstallPayload {
   /** id of the cave to reinstall */
   caveId: string;
 }
-
-/** Delete cave from local db */
-export const IMPLODE_CAVE = "IMPLODE_CAVE";
-export interface IImplodeCavePayload {
-  /** id of the cave to implode */
-  caveId: string;
-}
-
-/** Deprecated. TODO: remove */
-export const CANCEL_CAVE = "CANCEL_CAVE";
-export interface ICancelCavePayload {}
 
 /** Cave has been deleted from local db */
 export const CAVE_THROWN_INTO_BIT_BUCKET = "CAVE_THROWN_INTO_BIT_BUCKET";
@@ -681,7 +716,7 @@ export interface IRecordGameInteractionPayload {}
 export const ABORT_GAME_REQUEST = "ABORT_GAME_REQUEST";
 export interface IAbortGameRequestPayload {
   /** the game we want to force-quit */
-  game: Types.IGameRecord;
+  game: IGame;
 }
 
 export const ABORT_LAST_GAME = "ABORT_LAST_GAME";
@@ -732,7 +767,7 @@ export interface IQueueGameUpdatePayload {
   update: Types.IGameUpdate;
 
   /** the upload that was picked */
-  upload: Types.IUploadRecord;
+  upload: Types.IUpload;
 
   /** was the upload hand-picked? */
   handPicked?: boolean;
@@ -772,28 +807,25 @@ export interface IViewCaveDetailsPayload {
 export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {
   /** the game we want to download */
-  game: Types.IGameRecord;
-
-  /** when manually picking which upload to download, the id of the upload the user picked */
-  pickedUpload?: number;
-
-  /** any extra download options */
-  extraOpts?: {
-    /** for draft pages */
-    password?: string;
-    /** for password-protected pages */
-    secret?: string;
-  };
+  game: IGame;
 }
+
+export const QUEUE_LAUNCH = "QUEUE_LAUNCH";
+export interface IQueueLaunchPayload extends Types.IQueueLaunchOpts {}
+
+export const QUEUE_INSTALL = "QUEUE_INSTALL";
+export interface IQueueInstallPayload extends Types.IQueueInstallOpts {}
 
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
 export interface IInitiatePurchasePayload {
-  game: Types.IGameRecord;
+  game: IGame;
 }
 
 export const PURCHASE_COMPLETED = "PURCHASE_COMPLETED";
-export interface IPurchaseCompletedPayload {}
+export interface IPurchaseCompletedPayload {
+  game: IGame;
+}
 
 export const ENCOURAGE_GENEROSITY = "ENCOURAGE_GENEROSITY";
 export interface IEncourageGenerosityPayload {
@@ -802,11 +834,6 @@ export interface IEncourageGenerosityPayload {
 
   /** how hard should we encourage generosity? */
   level: Types.GenerosityLevel;
-}
-
-export const INITIATE_SHARE = "INITIATE_SHARE";
-export interface IInitiateSharePayload {
-  url: string;
 }
 
 /** macOS-only, bounce dock */
@@ -848,54 +875,40 @@ export interface INotifyHtml5Payload {
 
 /** Search */
 export const FOCUS_SEARCH = "FOCUS_SEARCH";
-export interface IFocusSearchPayload {};
-
-export const FOCUS_FILTER = "FOCUS_FILTER";
-export interface IFocusFilterPayload {};
+export interface IFocusSearchPayload {}
 
 export const CLEAR_FILTERS = "CLEAR_FILTERS";
-export interface IClearFiltersPayload {
-  /** id of the tab for which to clear filters */
-  tab: string;
-};
+export interface IClearFiltersPayload {}
 
 export const SEARCH_QUERY_CHANGED = "SEARCH_QUERY_CHANGED";
-export interface ISearchQueryChangedPayload {};
+export interface ISearchQueryChangedPayload {}
 
 export const SEARCH = "SEARCH";
 export interface ISearchPayload {
   /** the term to search for */
   query: string;
-};
+}
 
 export const SEARCH_FETCHED = "SEARCH_FETCHED";
 export interface ISearchFetchedPayload {
   query: string;
-  results: any;
-};
+  results: Types.ISearchResults;
+}
 
 export const SEARCH_STARTED = "SEARCH_STARTED";
-export interface ISearchStartedPayload {};
+export interface ISearchStartedPayload {}
 
 export const SEARCH_FINISHED = "SEARCH_FINISHED";
-export interface ISearchFinishedPayload {};
+export interface ISearchFinishedPayload {}
 
 export const CLOSE_SEARCH = "CLOSE_SEARCH";
-export interface ICloseSearchPayload {};
+export interface ICloseSearchPayload {}
 
 export const SEARCH_HIGHLIGHT_OFFSET = "SEARCH_HIGHLIGHT_OFFSET";
 export interface ISearchHighlightOffsetPayload {
   /** search highlight offset */
   offset: number;
-};
-
-export const FILTER_CHANGED = "FILTER_CHANGED";
-export interface IFilterChangedPayload {
-  /** which tab is being filtered */
-  tab: string;
-  /** text by which a tab is being filtered */
-  query: string;
-};
+}
 
 /** Data retrieval */
 export const FETCH_COLLECTION_GAMES = "FETCH_COLLECTION_GAMES";
@@ -906,15 +919,18 @@ export const COLLECTION_GAMES_FETCHED = "COLLECTION_GAMES_FETCHED";
 export interface ICollectionGamesFetchedPayload {
   /** The collection whose games were just fetched */
   collectionId: number;
+
+  /** timestamp of when the collection was fetched */
+  fetchedAt: number;
 }
 
 /** Start picking from a list of remembered sessions */
 export const LOGIN_START_PICKING = "LOGIN_START_PICKING";
-export interface ILoginStartPickingPayload {};
+export interface ILoginStartPickingPayload {}
 
 /** Go back to username/password form to add new login */
 export const LOGIN_STOP_PICKING = "LOGIN_STOP_PICKING";
-export interface ILoginStopPickingPayload {};
+export interface ILoginStopPickingPayload {}
 
 /** Any login attempt (cached or not) */
 export const ATTEMPT_LOGIN = "ATTEMPT_LOGIN";
@@ -943,7 +959,7 @@ export interface ILoginWithTokenPayload {
   key: string;
 
   /** loginWithToken is used for remembered sessions - we already have user info for those */
-  me: Types.IOwnUserRecord;
+  me: IOwnUser;
 }
 
 /** Wrong login/password or something else */
@@ -964,7 +980,7 @@ export interface ILoginCancelledPayload {}
 export const LOGIN_SUCCEEDED = "LOGIN_SUCCEEDED";
 export interface ILoginSucceededPayload {
   key: string;
-  me: Types.IOwnUserRecord;
+  me: IOwnUser;
 }
 
 /** market available beyond this point */
@@ -987,20 +1003,16 @@ export interface ILogoutPayload {}
 export const EVAL = "EVAL";
 export interface IEvalPayload {}
 
-/** Sent when app is about to reboot or shutdown */
-export const IMPLODE_APP = "IMPLODE_APP";
-export interface IImplodeAppPayload {}
-
 /** GC unused database entries */
 export const GC_DATABASE = "GC_DATABASE";
 export interface IGcDatabasePayload {}
 
 /* Preferences */
 export const UPDATE_PREFERENCES = "UPDATE_PREFERENCES";
-export interface IUpdatePreferencesPayload extends Types.IPreferencesState {};
+export interface IUpdatePreferencesPayload extends Types.IPreferencesState {}
 
 export const PREFERENCES_LOADED = "PREFERENCES_LOADED";
-export interface IPreferencesLoadedPayload extends Types.IPreferencesState {};
+export interface IPreferencesLoadedPayload extends Types.IPreferencesState {}
 
 export const CLEAR_BROWSING_DATA_REQUEST = "CLEAR_BROWSING_DATA_REQUEST";
 export interface IClearBrowsingDataRequestPayload {}
@@ -1034,3 +1046,13 @@ export interface IProxySettingsDetectedPayload {
   proxy: string;
   source: Types.ProxySource;
 }
+
+export const DB_COMMIT = "DB_COMMIT";
+export interface IDbCommitPayload {
+  tableName: string;
+  updated: string[];
+  deleted: string[];
+}
+
+export const COMMONS_UPDATED = "COMMONS_UPDATED";
+export type ICommonsUpdatedPayload = Partial<Types.ICommonsState>;

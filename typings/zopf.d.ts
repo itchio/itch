@@ -1,44 +1,49 @@
+declare namespace Zopf {
+  import { SinonSpy, SinonStub, SinonMock } from "sinon";
 
-declare module 'zopf' {
-  import {SinonSpy, SinonStub, SinonMock} from "sinon";
-
-  interface ITest {
+  export interface ITest {
     /**
-     * Asserts that a and b are the same (value comparison via deepEqual).
-     * Not to be confused with 'is'
+     * Assert that actual and expected have the same structure and nested values
+     * using node's deepEqual() algorithm with strict comparisons (===) on leaf
+     * nodes and an optional description of the assertion msg.
      */
-    same<T>(a: T, b: T, label?: string): void;
-
-    /**
-     * Asserts that "a is b" (===)
-     * Not to be confused with 'same'
-     */
-    is<T>(a: T, b: T, label?: string): void;
+    same<T>(actual: T, expected: T, msg?: string): void;
 
     /**
-     * Asserts that x is truthy.
+     * Assert that actual and expected have the same elements, although
+     * not necessarily in the same order.
      */
-    true(x: any, label?: string): void;
+    sameSet<T>(actual: T[], expected: T[], msg?: string): void;
 
     /**
-     * Asserts that x is truthy.
+     * Assert that actual === expected with an optional description of the assertion msg.
      */
-    ok(x: any, label?: string): void;
+    is<T>(actual: T, expected: T, msg?: string): void;
 
     /**
-     * Asserts that x is falsey.
+     * Assert that value is truthy with an optional description of the assertion msg.
      */
-    false(x: any, label?: string): void;
+    true(x: any, msg?: string): void;
 
     /**
-     * Asserts that x is falsey.
+     * Assert that value is truthy with an optional description of the assertion msg.
      */
-    notOk(x: any, label?: string): void;
+    ok(x: any, msg?: string): void;
+
+    /**
+     * Assert that value is falsy with an optional description of the assertion msg.
+     */
+    false(value: any, msg?: string): void;
+
+    /**
+     * Assert that value is falsy with an optional description of the assertion msg.
+     */
+    notOk(value: any, msg?: string): void;
 
     /**
      * Asserts that the Promise p rejects.
      */
-    rejects(p: Promise<any>): void;
+    rejects(promise: Promise<any>): void;
 
     /**
      * Create a new named testcase.
@@ -63,10 +68,15 @@ declare module 'zopf' {
     /**
      * Assert that a and b contain the same file paths (they're normalized for comparison)
      */
-    samePaths(a: string[], b: string[]): void;
+    samePaths(actual: string[], expected: string[]): void;
+
+    /**
+     * Print a comment without breaking TAP output
+     */
+    comment(msg: string): void;
   }
 
-  interface ITestStatic {
+  export interface ITestStatic {
     (name: string, cb: (t: ITest) => void): void;
 
     /**
@@ -74,7 +84,9 @@ declare module 'zopf' {
      */
     module<T>(defaultExport: T): T;
   }
+}
 
-  var test: ITestStatic;
+declare module "zopf" {
+  var test: Zopf.ITestStatic;
   export = test;
 }

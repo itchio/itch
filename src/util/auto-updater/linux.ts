@@ -1,4 +1,4 @@
+import { AutoUpdaterStart } from "./types";
 
-export default {
-  start: async () => false,
-};
+const start: AutoUpdaterStart = async () => false;
+export default start;

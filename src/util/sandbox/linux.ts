@@ -1,73 +1,37 @@
-
 import * as tmp from "tmp";
 import * as ospath from "path";
 
-import spawn from "../spawn";
-import sf from "../sf";
+import spawn from "../../os/spawn";
+import * as sf from "../../os/sf";
 import ibrew from "../ibrew";
 
-import mklog from "../log";
-const log = mklog("sandbox/linux");
+import rootLogger, { devNull } from "../../logger";
+const logger = rootLogger.child({ name: "sandbox/linux" });
 
 import common from "./common";
 
-import { ICheckResult, INeed } from "./types";
-
-export async function check(opts: any): Promise<ICheckResult> {
-  const needs: INeed[] = [];
-  const errors: Error[] = [];
-
-  log(opts, "Testing firejail");
-  const firejailCheck = await spawn.exec({ command: "firejail", args: ["--noprofile", "--", "whoami"] });
-  if (firejailCheck.code !== 0) {
-    needs.push({
-      type: "firejail",
-      code: firejailCheck.code,
-      err: firejailCheck.err,
-    });
-  }
-
-  return { needs, errors };
-}
-
-export async function install(opts: any, needs: INeed[]) {
-  return await common.tendToNeeds(opts, needs, {
-    firejail: async function (need) {
-      log(opts, `installing firejail, because ${need.err} (code ${need.code})`);
-
-      const firejailBinary = ospath.join(ibrew.binPath(), "firejail");
-      const firejailBinaryExists = await sf.exists(firejailBinary);
-      if (!firejailBinaryExists) {
-        throw new Error("firejail binary missing");
-      } else {
-        const lines: string[] = [];
-        lines.push("#!/bin/bash -xe");
-        lines.push(`chown root:root ${firejailBinary}`);
-        lines.push(`chmod u+s ${firejailBinary}`);
-
-        log(opts, "Making firejail binary setuid");
-        await sudoRunScript(lines);
-      }
-    },
-  });
-}
-
-export async function uninstall(opts: any) {
-  const errors: Error[] = [];
-  return { errors };
-}
+import Context from "../../context";
+import { ISandbox, INeed, ICaretaker } from "./types";
 
 interface ISudoRunScriptResult {
   out: string;
 }
 
-async function sudoRunScript(lines: string[]): Promise<ISudoRunScriptResult> {
+async function sudoRunScript(
+  ctx: Context,
+  lines: string[],
+): Promise<ISudoRunScriptResult> {
   const contents = lines.join("\n");
   const tmpObjName = tmp.tmpNameSync();
-  await sf.writeFile(tmpObjName, contents, {encoding: "utf8"});
+  await sf.writeFile(tmpObjName, contents, { encoding: "utf8" });
   await sf.chmod(tmpObjName, 0o777);
 
-  const res = await spawn.exec({ command: "pkexec", args: [tmpObjName] });
+  const res = await spawn.exec({
+    ctx,
+    command: "pkexec",
+    args: [tmpObjName],
+    logger: devNull,
+  });
 
   await sf.wipe(tmpObjName);
 
@@ -78,4 +42,56 @@ async function sudoRunScript(lines: string[]): Promise<ISudoRunScriptResult> {
   return { out: res.out };
 }
 
-export default { check, install, uninstall };
+const firejailNeed: ICaretaker = async function(ctx, need) {
+  logger.info(`installing firejail, because ${need.err} (code ${need.code})`);
+
+  const firejailBinary = ospath.join(ibrew.binPath(), "firejail");
+  const firejailBinaryExists = await sf.exists(firejailBinary);
+  if (!firejailBinaryExists) {
+    throw new Error("firejail binary missing");
+  } else {
+    const lines: string[] = [];
+    lines.push("#!/bin/bash -xe");
+    lines.push(`chown root:root ${firejailBinary}`);
+    lines.push(`chmod u+s ${firejailBinary}`);
+
+    logger.info("Making firejail binary setuid");
+    await sudoRunScript(ctx, lines);
+  }
+};
+
+const linuxSandbox: ISandbox = {
+  check: async ctx => {
+    const needs: INeed[] = [];
+    const errors: Error[] = [];
+
+    logger.info("Testing firejail");
+    const firejailCheck = await spawn.exec({
+      ctx,
+      command: "firejail",
+      args: ["--noprofile", "--", "whoami"],
+      logger: devNull,
+    });
+    if (firejailCheck.code !== 0) {
+      needs.push({
+        type: "firejail",
+        code: firejailCheck.code,
+        err: firejailCheck.err,
+      });
+    }
+
+    return { needs, errors };
+  },
+
+  install: async (ctx, needs) => {
+    return await common.tendToNeeds(ctx, needs, {
+      firejail: firejailNeed,
+    });
+  },
+
+  within: async (opts, cb) => {
+    throw new Error("sandbox.within: stub on linux");
+  },
+};
+
+export default linuxSandbox;

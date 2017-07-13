@@ -1,20 +1,15 @@
-
 import urlParser from "./url";
-import * as dns from "dns";
 import * as querystring from "querystring";
 
 import staticTabData from "../constants/static-tab-data";
 
-import { IGameRecord, IUserRecord, ICollectionRecord,
-  IInstallLocation, ITabData, ITabDataSet } from "../types";
+import { IGame } from "../db/models/game";
+import { IUser } from "../db/models/user";
+import { ICollection } from "../db/models/collection";
+
+import { IInstallLocation, ITabData } from "../types";
 
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
-const ID_RE = /^[^\/]+\/([^\?]*)/;
-
-interface IDNSError {
-  code?: number;
-  message: string;
-}
 
 export async function transformUrl(original: string): Promise<string> {
   if (/^about:/.test(original)) {
@@ -22,38 +17,63 @@ export async function transformUrl(original: string): Promise<string> {
   }
 
   let req = original;
-  let parsed = urlParser.parse(req);
-  const searchUrl = () => {
-    const q = original;
+  const searchUrl = (q: string) => {
     return "https://duckduckgo.com/?" + querystring.stringify({ q, kae: "d" });
   };
 
-  if (!parsed.hostname) {
+  // special search URLs
+  if (/^\?/.test(original)) {
+    return searchUrl(original.substr(1));
+  }
+
+  // spaces and no dots ? smells like a search request
+  if (original.indexOf(" ") !== -1 && original.indexOf(".") === -1) {
+    return searchUrl(original);
+  }
+
+  // add http: if needed
+  let parsed = urlParser.parse(req);
+  if (!parsed.hostname || !parsed.protocol) {
     req = "http://" + original;
     parsed = urlParser.parse(req);
     if (!parsed.hostname) {
-      return searchUrl();
+      return searchUrl(original);
     }
   }
 
-  return await new Promise<string>((resolve, reject) => {
-    dns.lookup(parsed.hostname, (err) => {
-      if (err) {
-        const dnsError = err as IDNSError;
-        console.log(`dns error: ${dnsError.code} / ${dnsError.message}`); // tslint:disable-line:no-console
-        resolve(searchUrl());
-      }
-      resolve(req);
-    });
-  });
+  return req;
 }
 
 export function pathToId(path: string): string {
-  const matches = ID_RE.exec(path);
-  if (!matches) {
-    throw new Error(`Could not extract id from path: ${JSON.stringify(path)}`);
+  const slashIndex = path.indexOf("/");
+  if (slashIndex >= 0) {
+    const sub = path.substring(slashIndex + 1);
+    const questionIndex = sub.lastIndexOf("?");
+    if (questionIndex === -1) {
+      return sub;
+    }
+    return sub.substring(0, questionIndex);
   }
-  return matches[1];
+  return "";
+}
+
+export function pathPrefix(path: string): string {
+  const slashIndex = path.indexOf("/");
+  if (slashIndex >= 0) {
+    return path.substring(0, slashIndex);
+  }
+  return "";
+}
+
+export function pathQuery(path: string): string {
+  const slashIndex = path.indexOf("/");
+  if (slashIndex >= 0) {
+    const questionIndex = path.indexOf("?", slashIndex);
+    if (questionIndex >= 0) {
+      return path.substring(questionIndex + 1);
+    }
+  }
+  return "";
 }
 
 export function pathToIcon(path: string) {
@@ -68,9 +88,6 @@ export function pathToIcon(path: string) {
   }
   if (path === "preferences") {
     return "cog";
-  }
-  if (path === "history") {
-    return "history";
   }
   if (path === "downloads") {
     return "download";
@@ -96,7 +113,7 @@ export function pathToIcon(path: string) {
   return "earth";
 }
 
-export function gameToTabData(game: IGameRecord): ITabData {
+export function gameToTabData(game: IGame): ITabData {
   return {
     games: {
       [game.id]: game,
@@ -109,7 +126,7 @@ export function gameToTabData(game: IGameRecord): ITabData {
   };
 }
 
-export function userToTabData(user: IUserRecord) {
+export function userToTabData(user: IUser): ITabData {
   return {
     users: {
       [user.id]: user,
@@ -122,13 +139,16 @@ export function userToTabData(user: IUserRecord) {
   };
 }
 
-export function collectionToTabData(collection: ICollectionRecord) {
+export function collectionToTabData(collection: ICollection) {
   return {
     collections: {
       [collection.id]: collection,
     },
     label: collection.title,
-    subtitle: ["sidebar.collection.subtitle", { itemCount: collection.gamesCount }],
+    subtitle: [
+      "sidebar.collection.subtitle",
+      { itemCount: collection.gamesCount },
+    ],
   };
 }
 
@@ -138,27 +158,19 @@ export function locationToTabData(location: IInstallLocation) {
   };
 }
 
-export function makeLabel(id: string, tabData: ITabDataSet) {
+export function makeLabel(id: string, data: ITabData) {
   const staticData = staticTabData[id];
   if (staticData) {
     return staticData.label;
   }
 
-  if (!tabData) {
-    tabData = {} as ITabDataSet;
-  }
-
-  const data = tabData[id];
   if (data) {
-    const {path} = data;
-    if (path && /^url/.test(path)) {
-      if (data.webTitle) {
-        return data.webTitle;
-      }
-    } else {
-      if (data.label) {
-        return data.label;
-      }
+    if (data.webTitle) {
+      return data.webTitle;
+    }
+
+    if (data.label) {
+      return data.label;
     }
   }
 
@@ -166,7 +178,7 @@ export function makeLabel(id: string, tabData: ITabDataSet) {
 }
 
 export function isAppSupported(url: string) {
-  const {host, pathname} = urlParser.parse(url);
+  const { host, pathname } = urlParser.parse(url);
 
   if (ITCH_HOST_RE.test(host)) {
     const pathItems = pathname.split("/");
@@ -184,4 +196,13 @@ export function isAppSupported(url: string) {
   return null;
 }
 
-export default { transformUrl, pathToId, pathToIcon, gameToTabData, collectionToTabData, isAppSupported };
+export default {
+  transformUrl,
+  pathToId,
+  pathPrefix,
+  pathQuery,
+  pathToIcon,
+  gameToTabData,
+  collectionToTabData,
+  isAppSupported,
+};

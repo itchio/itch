@@ -1,21 +1,30 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect } from "./connect";
+import { createStructuredSelector } from "reselect";
 
 import ReactModal = require("react-modal");
-import GFM from "./gfm";
+import Button from "./basics/button";
+import RowButton, { Tag } from "./basics/row-button";
+import IconButton from "./basics/icon-button";
+import Markdown from "./basics/markdown";
+import Filler from "./basics/filler";
 
 import colors from "../constants/colors";
 
 import * as actions from "../actions";
-import {map} from "underscore";
+import { map } from "underscore";
 
-import {IModal, IModalButtonSpec, IModalButton, IModalAction} from "../types";
-import {IModalResponsePayload} from "../constants/action-types";
+import { IModal, IModalButtonSpec, IModalButton, IModalAction } from "../types";
+import { IModalResponsePayload } from "../constants/action-types";
 
-import {IModalWidgetProps} from "./modal-widgets/modal-widget";
+import { IModalWidgetProps } from "./modal-widgets/modal-widget";
 
-import watching, {Watcher} from "./watching";
+import watching, { Watcher } from "./watching";
+import styled, * as styles from "./styles";
+import { stripUnit } from "polished";
+
+import format, { formatString } from "./format";
+import { InjectedIntl, injectIntl } from "react-intl";
 
 type Flavor = "normal" | "big";
 
@@ -42,6 +51,289 @@ const customStyles = {
   },
 };
 
+const ModalDiv = styled.div`
+  min-width: 200px;
+  min-height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .big-wrapper {
+    display: flex;
+    flex-direction: row;
+
+    .cover {
+      flex: 1 0;
+      height: auto;
+      width: 190px;
+      align-self: flex-start;
+      margin-left: 20px;
+    }
+
+    .buttons {
+      flex-grow: 1;
+    }
+  }
+
+  .body {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+    line-height: 1.6;
+
+    ul {
+      list-style-type: disc;
+      margin-bottom: 1.5em;
+
+      li {
+        margin-left: 1.5em;
+      }
+    }
+
+    .message {
+      padding: 0 20px;
+      overflow-y: auto;
+      max-height: 380px;
+      -webkit-user-select: initial;
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin-bottom: .4em;
+        font-size: ${props => stripUnit(props.theme.fontSizes.baseText) + 2}px;
+        font-weight: bold;
+      }
+
+      a {
+        color: darken($ivory, 5%);
+
+        &:hover {
+          color: $ivory;
+          cursor: pointer;
+        }
+      }
+
+      p img {
+        max-width: 100%;
+      }
+
+      code {
+        font-family: monospace;
+      }
+
+      .secondary {
+        color: ${props => props.theme.secondaryText};
+      }
+    }
+
+    p {
+      line-height: 1.4;
+      margin: 8px 0;
+    }
+
+    .icon {
+      margin-top: 8px;
+      margin-right: 12px;
+      font-size: 48px;
+    }
+  }
+
+  .modal-widget {
+    padding: 10px 20px;
+    flex-grow: 1;
+
+    input[type=number],
+    input[type=text],
+    input[type=password] {
+      @include heavy-input;
+      width: 100%;
+    }
+
+    input[type=number] {
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    strong {
+      font-weight: bold;
+    }
+
+    p {
+      line-height: 1.4;
+      margin: 8px 0;
+    }
+
+    .json-tree-container {
+      width: 100%;
+      height: 350px;
+      overflow-y: auto;
+    }
+
+    .prereqs-rows {
+      display: flex;
+      flex: 0 1;
+      flex-direction: column;
+      align-content: flex-start;
+    }
+
+    .prereqs-row {
+      display: flex;
+      flex: 0 1;
+      flex-direction: row;
+      align-items: center;
+      margin: 14px 0;
+      margin-left: 10px;
+
+      .task-status {
+        margin-top: 5px;
+        font-size: 80%;
+        color: $secondary-text-color;
+      }
+    }
+
+    .clear-browsing-data-list {
+      label {
+        display: block;
+        border-left: 3px solid $pref-border-color;
+        padding: 5px 0;
+        padding-left: 5px;
+        margin: 3px 0;
+        margin-bottom: 10px;
+        transition: 0.2s border ease-in-out;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        &.active {
+          border-color: $accent-color;
+        }
+      }
+
+      .checkbox {
+        margin: 0;
+        display: flex;
+        align-items: center;
+
+        input[type=checkbox] {
+          margin-right: 10px;
+        }
+      }
+
+      .checkbox-info {
+        margin: 0;
+        margin-top: 5px;
+        margin-left: 5px;
+        font-size: 90%;
+        color: $secondary-text-color;
+      }
+    }
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+
+    &.flavor-big {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 8px 20px;
+      max-height: 300px;
+      overflow-y: auto;
+
+      .button {
+        transition: -webkit-filter 0.2s;
+        font-weight: bold;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.58);
+
+        &:not(.action-play) {
+          -webkit-filter: grayscale(100%) brightness(70%);
+        }
+
+        &:hover {
+          -webkit-filter: brightness(110%);
+        }
+
+        &,
+        &.secondary {
+          display: flex;
+          align-items: center;
+          margin: 8px 0;
+          font-size: 16px;
+          padding: 14px 14px;
+        }
+
+        .tag {
+          margin: 0 0 0 7px;
+          font-size: 80%;
+          padding: 5px 4px;
+          border-radius: 4px;
+          background: #fffff0;
+          color: $button-background-color;
+          text-shadow: none;
+        }
+
+        .icon {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+`;
+
+const HeaderDiv = styled.div`
+  background: ${props => props.theme.sidebarBackground};
+  padding: 8px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .title {
+    color: ${props => props.theme.secondaryText};
+    font-size: ${props => props.theme.fontSizes.large};
+  }
+
+  .close-modal {
+    font-size: 20px;
+    ${styles.secondaryLink()};
+  }
+`;
+
+const ButtonsDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 20px;
+
+  & > * {
+    margin-left: 8px;
+  }
+`;
+
+const BigButtonsDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: 100%;
+  justify-content: stretch;
+
+  & > * {
+    margin-bottom: 12px;
+  }
+`;
+
 interface IDefaultButtons {
   [key: string]: IModalButton;
   cancel: IModalButton;
@@ -49,11 +341,13 @@ interface IDefaultButtons {
 
 const DEFAULT_BUTTONS = {
   cancel: {
+    id: "modal-cancel",
     label: ["prompt.action.cancel"],
     action: actions.closeModal({}),
     className: "secondary",
   },
   ok: {
+    id: "modal-ok",
     label: ["prompt.action.ok"],
     action: actions.closeModal({}),
     className: "secondary",
@@ -61,18 +355,17 @@ const DEFAULT_BUTTONS = {
 } as IDefaultButtons;
 
 @watching
-export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
+export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
+  constructor() {
     super();
     this.state = {
       widgetPayload: null,
     };
-    this.updatePayload = this.updatePayload.bind(this);
   }
 
-  subscribe (watcher: Watcher) {
+  subscribe(watcher: Watcher) {
     watcher.on(actions.triggerOk, async (store, action) => {
-      const modal = this.props.modals[0];
+      const { modal } = this.props;
       if (!modal) {
         return;
       }
@@ -87,84 +380,139 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
     });
   }
 
-  render () {
-    const {t, modals = [], closeModal} = this.props;
-
-    const modal = modals[0];
+  render() {
+    const { modal, closeModal, intl } = this.props;
 
     if (modal) {
-      const {bigButtons = [], buttons = [], cover, title = "", message = "", detail, widget} = modal;
+      const {
+        bigButtons = [],
+        buttons = [],
+        cover,
+        title = "",
+        message = "",
+        detail,
+        widget,
+      } = modal;
 
-      return <ReactModal isOpen style={customStyles}>
-        <div className="modal">
-          <div className="header">
-            <h2>{t.format(title)}</h2>
-            <div className="filler"/>
-            {modal.unclosable
-              ? null
-              : <span className="icon icon-cross close-modal" onClick={() => closeModal({})}/>
-            }
-          </div>
+      return (
+        <ReactModal isOpen contentLabel="Modal" style={customStyles}>
+          <ModalDiv>
+            <HeaderDiv>
+              <span className="title">
+                {format(title)}
+              </span>
+              <Filler />
+              {modal.unclosable
+                ? null
+                : <IconButton icon="cross" onClick={() => closeModal({})} />}
+            </HeaderDiv>
 
-          { message !== ""
-          ? <div className="body">
-            <div className="message">
-              <div><GFM source={t.format(message)}/></div>
-              {detail && <div className="secondary"><GFM source={t.format(detail)}/></div>}
-            </div>
-          </div>
-          : null }
-          
-          {widget
-          ? this.renderWidget(widget, modal)
-          : null}
+            {message !== ""
+              ? <div className="body">
+                  <div className="message">
+                    <div>
+                      <Markdown source={formatString(intl, message)} />
+                    </div>
+                    {detail &&
+                      <div className="secondary">
+                        <Markdown source={formatString(intl, detail)} />
+                      </div>}
+                  </div>
+                </div>
+              : null}
 
-          {bigButtons.length > 0
-          ? <div className="big-wrapper">
-            {cover
-              ? <img className="cover" src={cover}/>
-              : ""}
-            {this.renderButtons(bigButtons, "big")}
-          </div>
-          : null}
+            {widget ? this.renderWidget(widget, modal) : null}
 
-          {this.renderButtons(buttons, "normal")}
-        </div>
-      </ReactModal>;
+            {bigButtons.length > 0
+              ? <div className="big-wrapper">
+                  {cover ? <img className="cover" src={cover} /> : ""}
+                  {this.renderButtons(bigButtons, "big")}
+                </div>
+              : null}
+
+            {this.renderButtons(buttons, "normal")}
+          </ModalDiv>
+        </ReactModal>
+      );
     } else {
-      return <div/>;
+      return <div />;
     }
   }
 
-  renderButtons (buttons: IModalButtonSpec[], flavor: Flavor) {
+  renderButtons(buttons: IModalButtonSpec[], flavor: Flavor) {
     if (buttons.length === 0) {
       return null;
     }
 
-    const {t} = this.props;
-
-    return <div className={`buttons flavor-${flavor}`}>
-      <div className="filler"/>
-      {map(buttons, (buttonSpec, index) => {
-        const button = this.specToButton(buttonSpec);
-        const {label, className = "", icon, tags} = button;
-        let onClick = this.buttonOnClick(button);
-
-        return <div className={`button ${className}`} key={index} onClick={onClick}>
-        {icon ? <span className={`icon icon-${icon}`}/> : null}
-        {t.format(label)}
-        {tags
-          ? map(tags, (tag) => {
-            return <span className="tag">{t.format(tag.label)}</span>;
-          })
-          : null
-        }
-        </div>;
-      })}
-    </div>;
+    switch (flavor) {
+      case "big":
+        return this.renderBigButtons(buttons);
+      case "normal":
+        return this.renderNormalButtons(buttons);
+      default:
+        return <div>?</div>;
+    }
   }
 
-  specToButton (buttonSpec: IModalButtonSpec): IModalButton {
+  renderBigButtons(buttons: IModalButtonSpec[]) {
+    return (
+      <BigButtonsDiv>
+        {map(buttons, (buttonSpec, index) => {
+          const button = this.specToButton(buttonSpec);
+          const { label, className = "", icon, id, tags } = button;
+          let onClick = this.buttonOnClick(button);
+
+          return (
+            <RowButton
+              id={id}
+              className={className}
+              key={index}
+              icon={icon}
+              label={format(label)}
+              onClick={onClick}
+            >
+              {tags
+                ? map(tags, tag => {
+                    return (
+                      <Tag>
+                        {format(tag.label)}
+                      </Tag>
+                    );
+                  })
+                : null}
+            </RowButton>
+          );
+        })}
+      </BigButtonsDiv>
+    );
+  }
+
+  renderNormalButtons(buttons: IModalButtonSpec[]) {
+    return (
+      <ButtonsDiv>
+        <Filler />
+        {map(buttons, (buttonSpec, index) => {
+          const button = this.specToButton(buttonSpec);
+          const { label, className = "", icon, id } = button;
+          let onClick = this.buttonOnClick(button);
+
+          return (
+            <Button
+              id={id}
+              primary={className !== "secondary"}
+              discreet
+              key={index}
+              onClick={onClick}
+              icon={icon}
+              label={format(label)}
+            />
+          );
+        })}
+      </ButtonsDiv>
+    );
+  }
+
+  specToButton(buttonSpec: IModalButtonSpec): IModalButton {
     let button: IModalButton;
     if (typeof buttonSpec === "string") {
       button = DEFAULT_BUTTONS[buttonSpec];
@@ -180,9 +528,9 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
     return button;
   }
 
-  buttonOnClick (button: IModalButton): () => void {
-    const {dispatch} = this.props;
-    const {action, actionSource} = button;
+  buttonOnClick(button: IModalButton): () => void {
+    const { dispatch } = this.props;
+    const { action, actionSource } = button;
 
     let onClick = () => dispatch(action);
     if (actionSource === "widget") {
@@ -193,7 +541,7 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
     return onClick;
   }
 
-  renderWidget (widget: string, modal: IModal): JSX.Element {
+  renderWidget(widget: string, modal: IModal): JSX.Element {
     // this is run in the context of `chrome.js`, so relative to `app`
     try {
       let module = require(`./modal-widgets/${widget}`);
@@ -201,17 +549,21 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
         throw new Error("new export");
       }
       let Component = module.default as React.ComponentClass<IModalWidgetProps>;
-      return <Component modal={modal} updatePayload={this.updatePayload}/>;
+      return <Component modal={modal} updatePayload={this.updatePayload} />;
     } catch (e) {
-      return <div>Missing widget: {widget} — ${e.message}</div>;
+      return (
+        <div>
+          Missing widget: {widget} — ${e.message}
+        </div>
+      );
     }
   }
 
-  updatePayload (payload: IModalResponsePayload) {
-    this.setState({widgetPayload: payload});
-  }
+  updatePayload = (payload: IModalResponsePayload) => {
+    this.setState({ widgetPayload: payload });
+  };
 
-  componentWillMount () {
+  componentWillMount() {
     ReactModal.setAppElement("body");
   }
 }
@@ -219,23 +571,25 @@ export class Modal extends React.Component<IProps & IDerivedProps & I18nProps, I
 interface IProps {}
 
 interface IDerivedProps {
-  modals: IModal[];
+  modal: IModal;
 
   closeModal: typeof actions.closeModal;
   dispatch: (action: IModalAction) => void;
+
+  intl: InjectedIntl;
 }
 
 interface IState {
   widgetPayload?: IModalResponsePayload;
 }
 
-export default connect<IProps>(Modal, {
-  state: (state) => ({
-    modals: state.modals,
+export default connect<IProps>(injectIntl(Modal), {
+  state: createStructuredSelector({
+    modal: state => state.modals[0],
   }),
   dispatch: (dispatch, props) => ({
     dispatch: (action: IModalAction) => {
-      dispatch(actions.closeModal({action}));
+      dispatch(actions.closeModal({ action }));
     },
     closeModal: () => dispatch(actions.closeModal({})),
   }),

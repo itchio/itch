@@ -1,19 +1,13 @@
+import { IGame, IOwnGame } from "../db/models/game";
+import { IUser, IOwnUser } from "../db/models/user";
+import { IDownloadKey } from "../db/models/download-key";
+import { ICollection } from "../db/models/collection";
 
-import {
-  IOwnUserRecord,
-  IUploadRecord,
-  IUpgradePathItem,
-  IOwnGameRecord,
-  IGameRecord,
-  IUserRecord,
-  IDownloadKey,
-  ICollectionRecord,
-  IBuildRecord,
-} from ".";
+import { IUpload, IUpgradePathItem, IBuild } from ".";
 
 /** In API responses, the user object is nested - we normalize it later */
-export interface IAPIGame extends IGameRecord {
-  user: IUserRecord;
+export interface IAPIGame extends IGame {
+  user: IUser;
 }
 
 export interface IAPIKey {
@@ -37,8 +31,8 @@ export interface IAPIKey {
 }
 
 export interface IMeResult {
-  /** extended user info, see IOwnUserRecord */
-  user: IOwnUserRecord;
+  /** extended user info */
+  user: IOwnUser;
 }
 
 export type ILoginKeyResult = IMeResult;
@@ -51,7 +45,7 @@ export interface ILoginWithPasswordResult {
   cookie?: {
     [name: string]: string;
   };
-  
+
   /** set if we tried to log in without totp code */
   totpNeeded?: boolean;
 }
@@ -62,11 +56,11 @@ export interface IUpgradeResponse {
 }
 
 export interface IListUploadsResponse {
-  uploads: IUploadRecord[];
+  uploads: IUpload[];
 }
 
 export interface IMyGamesResult {
-  games: IOwnGameRecord[];
+  games: IOwnGame[];
 }
 
 export interface IOwnDownloadKey extends IDownloadKey {
@@ -84,15 +78,15 @@ export interface IGameResult {
 export type BuildFileType = "archive" | "patch" | "manifest" | "signature";
 
 export interface ICollectionResult {
-  collection: ICollectionRecord;
+  collection: ICollection;
 }
 
 export interface IMyCollectionsResult {
-  collections: ICollectionRecord[];
+  collections: ICollection[];
 }
 
 export interface IUserResult {
-  user: IUserRecord;
+  user: IUser;
 }
 
 export interface ICollectionGamesResult {
@@ -106,7 +100,7 @@ export interface ICollectionGamesResult {
   perPage: number;
 
   /** games on current page */
-  games: IGameRecord[];
+  games: IGame[];
 }
 
 export interface ISearchGamesResult {
@@ -134,7 +128,7 @@ export interface ISearchUsersResult {
   perPage: number;
 
   /** users on current page */
-  users: IUserRecord[];
+  users: IUser[];
 }
 
 export interface IDownloadUploadResult {
@@ -143,11 +137,11 @@ export interface IDownloadUploadResult {
 }
 
 export interface IListBuildsResponse {
-  builds: IBuildRecord[];
+  builds: IBuild[];
 }
 
 export interface IBuildResponse {
-  build: IBuildRecord;
+  build: IBuild;
 }
 
 export type IDownloadBuildResult = IDownloadUploadResult;

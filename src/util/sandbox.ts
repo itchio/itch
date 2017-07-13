@@ -1,27 +1,23 @@
+import { platform } from "../os";
 
-import os from "./os";
+import { ISandbox } from "./sandbox/types";
+import win32Sandbox from "./sandbox/win32";
+import linuxSandbox from "./sandbox/linux";
+import darwinSandbox from "./sandbox/darwin";
 
-// TODO: better typing?
-import {IStartTaskOpts} from "../types";
-import {IWithinOpts, IWithinCbOpts, ICheckResult, INeed} from "./sandbox/types";
-
-export interface IWithinData {
-  /** absolute path to temporary .app bundle used for sandboxing */
-  fakeApp: string;
+let sandbox: ISandbox;
+switch (platform()) {
+  case "win32":
+    sandbox = win32Sandbox;
+    break;
+  case "linux":
+    sandbox = linuxSandbox;
+    break;
+  case "darwin":
+    sandbox = darwinSandbox;
+    break;
+  default:
+  // muffin;
 }
 
-export interface IWithinCallback {
-  (data: IWithinCbOpts): void;
-}
-
-export interface IInstallResult {
-  errors: Error[];
-}
-
-export interface ISandbox {
-  check(): Promise<ICheckResult>;
-  install(opts: IStartTaskOpts, needs: INeed[]): Promise<IInstallResult>;
-  within(opts: IWithinOpts, cb: IWithinCallback): void;
-}
-
-export default require(`./sandbox/${os.platform()}`) as ISandbox;
+export default sandbox;

@@ -1,19 +1,19 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
-import {createSelector} from "reselect";
-import Fuse  = require("fuse.js");
+import { connect } from "./connect";
+import { createSelector, createStructuredSelector } from "reselect";
 
-import {sortBy} from "underscore";
+import { ICollection } from "../db/models/collection";
+import CollectionRow from "./collection-row";
 
-import CollectionHubItem from "./collection-hub-item";
+import { IAppState, ITabData, IGameSet } from "../types";
 
-import {IAppState, ICollectionRecord} from "../types";
+import { AutoSizer } from "react-virtualized";
 
-import {AutoSizer, Grid} from "react-virtualized";
-import {IAutoSizerParams} from "./autosizer-types";
+import { values } from "underscore";
 
-const recency = (x: ICollectionRecord) => x.updatedAt ? -(new Date(x.updatedAt)) : 0;
+import styled from "./styles";
+import StyledGrid from "./styled-grid";
+import { InjectedIntl, injectIntl } from "react-intl";
 
 interface ICellInfo {
   columnIndex: number;
@@ -22,130 +22,124 @@ interface ICellInfo {
   style: React.CSSProperties;
 }
 
-interface ILayoutInfo {
-  columnCount: number;
-  collections: ICollectionRecord[];
-}
+const tab = "collections";
 
-export class CollectionsGrid extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
+const HubCollectionsGrid = styled.div`flex-grow: 1;`;
+
+export class CollectionsGrid extends React.PureComponent<
+  IProps & IDerivedProps,
+  IState
+> {
+  constructor() {
     super();
     this.state = {
       scrollTop: 0,
     };
-    this.cellRenderer = this.cellRenderer.bind(this);
   }
 
-  render () {
-    const {t, collections, hiddenCount} = this.props;
+  render() {
+    const { intl, hiddenCount } = this.props;
 
-    return <div className="hub-collections-grid">
+    return (
+      <HubCollectionsGrid>
         <AutoSizer>
-        {({width, height}: IAutoSizerParams) => {
-          const columnCount = 1;
-          const rowCount = Math.ceil(collections.length / columnCount);
-          const columnWidth = ((width - 10) / columnCount);
-          const rowHeight = 260;
-          const scrollTop = height === 0 ? 0 : this.state.scrollTop;
-
-          return <Grid
-            ref="grid"
-            cellRenderer={this.cellRenderer.bind(this, {collections, columnCount})}
-            width={width}
-            height={height}
-            columnWidth={columnWidth}
-            columnCount={columnCount}
-            rowCount={rowCount}
-            rowHeight={rowHeight}
-            overscanRowCount={2}
-            onScroll={(e: any) => {
-              // ignore when tab's hidden
-              if (e.clientHeight === 0) { return; }
-              this.setState({scrollTop: e.scrollTop});
-            }}
-            scrollTop={scrollTop}
-            scrollPositionChangeReason="requested"
-          />;
-        }}
+          {size => this.renderWithSize(size)}
         </AutoSizer>
         {hiddenCount > 0
-        ? <div className="hidden-count">
-          {t("grid.hidden_count", {count: hiddenCount})}
-        </div>
-    : ""}
-    </div>;
+          ? <div className="hidden-count">
+              {intl.formatMessage(
+                { id: "grid.hidden_count" },
+                { count: hiddenCount },
+              )}
+            </div>
+          : ""}
+      </HubCollectionsGrid>
+    );
   }
 
-  cellRenderer(layout: ILayoutInfo, cell: ICellInfo): JSX.Element {
-    const collectionIndex = (cell.rowIndex * layout.columnCount) + cell.columnIndex;
-    const record = layout.collections[collectionIndex];
+  renderWithSize = ({ width, height }) => {
+    const { collections } = this.props;
+    const columnCount = 1;
+    const rowCount = Math.ceil(collections.length / columnCount);
+    const columnWidth = (width - 10) / columnCount;
+    const rowHeight = 260;
+    const scrollTop = height === 0 ? 0 : this.state.scrollTop;
+
+    return (
+      <StyledGrid
+        ref="grid"
+        cellRenderer={this.cellRenderer}
+        width={width}
+        height={height}
+        columnWidth={columnWidth}
+        columnCount={columnCount}
+        rowCount={rowCount}
+        rowHeight={rowHeight}
+        overscanRowCount={2}
+        onScroll={(e: any) => {
+          // ignore when tab's hidden
+          if (e.clientHeight === 0) {
+            return;
+          }
+          this.setState({ scrollTop: e.scrollTop });
+        }}
+        scrollTop={scrollTop}
+        scrollPositionChangeReason="requested"
+      />
+    );
+  };
+
+  cellRenderer = (cell: ICellInfo): JSX.Element => {
+    const { collections } = this.props;
+    const columnCount = 1;
+
+    const games = this.props.games;
+    const collectionIndex = cell.rowIndex * columnCount + cell.columnIndex;
+    const record = collections[collectionIndex];
 
     const style = cell.style;
     style.padding = "10px";
-    if (cell.columnIndex < layout.columnCount - 1) {
+    if (cell.columnIndex < columnCount - 1) {
       style.marginRight = "10px";
     }
 
-    return <div key={cell.key} style={cell.style}>
-      {
-        record
-        ? <CollectionHubItem key={record.id} collection={record}/>
-        : null
-      }
-    </div>;
-  }
+    return (
+      <div key={cell.key} style={cell.style}>
+        {record
+          ? <CollectionRow
+              key={record.id}
+              collection={record}
+              allGames={games}
+            />
+          : null}
+      </div>
+    );
+  };
 }
 
 interface IProps {}
 
 interface IDerivedProps {
-  collections: ICollectionRecord[];
+  games: IGameSet;
+  collections: ICollection[];
   hiddenCount: number;
+  intl: InjectedIntl;
 }
 
 interface IState {
   scrollTop?: number;
 }
 
-export default connect<IProps>(CollectionsGrid, {
-  state: () => {
-    const getCollections = (state: IAppState, props: IProps) => state.market.collections || {};
-    const getFilterQuery = (state: IAppState, props: IProps) => state.session.navigation.filters.collections;
+const emptyObj = {};
 
-    const getSortedCollections = createSelector(
-      getCollections,
-      (collections) => {
-        return sortBy(collections, recency);
-      },
-    );
-
-    const fuse = new Fuse([], {
-      keys: [
-        { name: "title", weight: 1.0 },
-      ],
-      threshold: 0.4,
-    });
-
-    const getFilteredCollections = createSelector(
-      getSortedCollections,
-      getFilterQuery,
-      (sortedCollections, filterQuery) => {
-        if (filterQuery) {
-          fuse.set(sortedCollections);
-          const filteredCollections = fuse.search(filterQuery);
-          return {
-            collections: filteredCollections,
-            hiddenCount: sortedCollections.length - filteredCollections.length,
-          };
-        } else {
-          return {
-            collections: sortedCollections,
-            hiddenCount: 0,
-          };
-        }
-      },
-    );
-
-    return getFilteredCollections;
-  },
+export default connect<IProps>(injectIntl(CollectionsGrid), {
+  state: createSelector(
+    (state: IAppState) => state.session.tabData[tab] || emptyObj,
+    createStructuredSelector({
+      games: (tabData: ITabData) => tabData.games || emptyObj,
+      collections: (tabData: ITabData) =>
+        values(tabData.collections || emptyObj),
+      hiddenCount: (tabData: ITabData) => 0,
+    }),
+  ),
 });

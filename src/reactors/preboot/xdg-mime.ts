@@ -1,48 +1,56 @@
+import Context from "../../context";
+import { platform } from "../../os";
+import spawn from "../../os/spawn";
 
-import os from "../../util/os";
-import spawn from "../../util/spawn";
-import mklog from "../../util/log";
-const log = mklog("xdg-mime");
+import { Logger } from "../../logger";
 
-const self = {
-  mimeType: "x-scheme-handler/itchio",
+interface IXdgMimeOpts {
+  logger: Logger;
+}
 
-  async query (opts: any): Promise<number> {
-    let logger = opts.logger;
-    log(opts, "querying default handler for itchio:// protocol");
-    return await spawn({
-      command: "xdg-mime",
-      args: ["query", "default", self.mimeType],
-      onToken: (tok) => log(opts, "query: " + tok),
-      logger,
-    });
-  },
+const mimeType = "x-scheme-handler/itchio";
 
-  async setDefault (opts: any): Promise<void> {
-    let logger = opts.logger;
-    log(opts, "registering self as default handler for itchio:// protocol");
-    return await spawn.assert({
-      command: "xdg-mime",
-      args: ["default", "io.itch.itch.desktop", self.mimeType],
-      onToken: (tok) => log(opts, "set_default: " + tok),
-      logger,
-    });
-  },
+export async function query(ctx: Context, opts: IXdgMimeOpts): Promise<number> {
+  const logger = opts.logger.child({ name: "xdg-mime" });
+  logger.info("querying default handler for itchio:// protocol");
+  return await spawn({
+    command: "xdg-mime",
+    args: ["query", "default", mimeType],
+    onToken: tok => logger.info("query: " + tok),
+    ctx: ctx,
+    logger,
+  });
+}
 
-  // lets us handle the itchio:// URL scheme on linux / freedesktop
-  async registerIfNeeded (opts: any): Promise<void> {
-    if (os.platform() !== "linux") {
-      return;
-    }
+export async function setDefault(
+  ctx: Context,
+  opts: IXdgMimeOpts,
+): Promise<void> {
+  const logger = opts.logger.child({ name: "xdg-mime" });
+  logger.info("registering self as default handler for itchio:// protocol");
+  return await spawn.assert({
+    command: "xdg-mime",
+    args: ["default", "io.itch.itch.desktop", mimeType],
+    onToken: tok => logger.info("set_default: " + tok),
+    ctx: ctx,
+    logger,
+  });
+}
 
-    try {
-      await self.setDefault(opts);
-      await self.query(opts);
-    } catch (e) {
-      log(opts, `Couldn't register xdg mime-type handler: ${e.stack || e}`);
-    }
-  },
+// lets us handle the itchio:// URL scheme on linux / freedesktop
+export async function registerIfNeeded(
+  ctx: Context,
+  opts: IXdgMimeOpts,
+): Promise<void> {
+  if (platform() !== "linux") {
+    return;
+  }
 
-};
-
-export default self;
+  try {
+    await setDefault(ctx, opts);
+    await query(ctx, opts);
+  } catch (e) {
+    const logger = opts.logger.child({ name: "xdg-mime" });
+    logger.error(`Couldn't register handler: ${e.stack || e}`);
+  }
+}

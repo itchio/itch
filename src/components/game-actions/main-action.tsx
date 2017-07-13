@@ -1,133 +1,167 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "../connect";
-import * as classNames from "classnames";
+import { connect } from "../connect";
 
-import Icon from "../icon";
-import TaskIcon from "../task-icon";
+import { injectIntl, InjectedIntl } from "react-intl";
 
-import format from "../../util/format";
-import downloadProgress from "../../util/download-progress";
+import { first, find } from "underscore";
 
+import TaskIcon from "../basics/task-icon";
+import LoadingCircle from "../basics/loading-circle";
+import Button from "../basics/button";
+
+import { ItchPlatform, formatItchPlatform } from "../../format";
 import * as actions from "../../actions";
 
-import {IActionsInfo} from "./types";
+import { IActionsInfo } from "./types";
 
-import {IDownloadItem, ICaveRecord, IGameUpdate} from "../../types";
-import {dispatcher} from "../../constants/action-types";
-
-import Ink = require("react-ink");
-import LoadingCircle from "../loading-circle";
+import { IGameUpdate, IDownloadItem } from "../../types";
+import { dispatcher } from "../../constants/action-types";
 
 interface IStatus {
   status: string;
   statusTask?: string;
-  hint?: string;
 }
 
-class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, cancellable, platform, platformCompatible, mayDownload,
-      pressDownload, canBeBought, progress, task, action, animate, cave} = this.props;
+class MainAction extends React.PureComponent<IProps & IDerivedProps> {
+  render() {
+    const {
+      platform,
+      platformCompatible,
+      mayDownload,
+      pressDownload,
+      canBeBought,
+      tasks,
+      action,
+      cave,
+      className,
+    } = this.props;
 
-    let child: React.ReactElement<any> | null = null;
+    let progress = 0;
+    let task: string;
+    const activeDownload = this.activeDownload();
+    const firstTask = first(tasks);
+    if (activeDownload) {
+      task = "download";
+      progress = activeDownload.progress;
+    } else if (firstTask) {
+      task = firstTask.name;
+      progress = firstTask.progress;
+    } else if (cave) {
+      task = "idle";
+    }
+
+    let icon: string;
+    let iconComponent: JSX.Element;
+    let label: string;
+    let primary: boolean;
+
+    const { intl } = this.props;
+
     if (task) {
-      const {status, hint, statusTask} = this.status();
-      const classes = classNames("state", "normal-state");
-
+      const { status, statusTask } = this.status(task);
       const realTask = statusTask || task;
 
-      child = <span className={classes} data-rh-at="top" data-rh={hint}>
-        { (
-            progress > 0 || realTask === "find-upload" || realTask === "download" ||
-            realTask === "configure" || realTask === "install")
-          ? <LoadingCircle progress={progress}/>
-          : <TaskIcon task={realTask} animate={animate} action={action}/>
+      const hasProgress =
+        progress > 0 ||
+        realTask === "download" ||
+        realTask === "configure" ||
+        realTask === "install";
+      if (hasProgress) {
+        iconComponent = <LoadingCircle progress={progress} />;
+      } else {
+        iconComponent = <TaskIcon task={realTask} action={action} />;
+        if (realTask === "idle") {
+          primary = true;
         }
-        {status}
-        {cancellable
-        ? <span className="cancel-cross">
-          <Icon icon="cross"/>
-        </span>
-        : ""}
-      </span>;
+      }
+      label = status;
     } else {
       if (platformCompatible) {
         if (mayDownload) {
-          child = <span className="state">
-            <Icon icon="install"/>
-            {t("grid.item." + (pressDownload ? "review" : "install"))}
-          </span>;
+          icon = "install";
+          label = intl.formatMessage({
+            id: "grid.item." + (pressDownload ? "review" : "install"),
+          });
         } else if (canBeBought) {
-          child = <span className="state">
-            <Icon icon="shopping_cart"/>
-            {t("grid.item.buy_now")}
-          </span>;
+          icon = "shopping_cart";
+          label = intl.formatMessage({ id: "grid.item.buy_now" });
         }
+        primary = true;
       } else {
-        return <span className="state not-platform-compatible">
-          {t("grid.item.not_platform_compatible", {platform: format.itchPlatform(platform)})}
-        </span>;
+        return (
+          <span className="state not-platform-compatible">
+            {intl.formatMessage(
+              { id: "grid.item.not_platform_compatible" },
+              {
+                platform: formatItchPlatform(platform),
+              },
+            )}
+          </span>
+        );
       }
     }
 
-    let style: React.CSSProperties = {
-      position: "relative",
-    };
-    let branded = false;
+    const hint = this.hint(task);
 
-    const hint = this.hint();
-
-    const buttonClasses = classNames("main-action", {
-      "buy-now": (platformCompatible && !mayDownload && canBeBought && !cave),
-      branded,
-    });
-    const button = <div style={style}
-        className={buttonClasses}
-        onClick={(e) => this.onClick(e)}
-        data-rh={hint} data-rh-at="top">
-      <Ink/>
-      {child}
-    </div>;
-
-    if (!child) {
-      return <div/>;
+    if (!label) {
+      return <div />;
     }
 
-    return button;
+    return (
+      <Button
+        className={className}
+        icon={icon}
+        discreet
+        iconComponent={iconComponent}
+        label={label}
+        primary={primary}
+        onClick={e => this.onClick(e, task)}
+        hint={hint}
+      />
+    );
   }
 
-  hint () {
-    const {t, task} = this.props;
+  activeDownload(): IDownloadItem | null {
+    return find(this.props.downloads, d => !d.finished);
+  }
+
+  hint(task: string) {
+    const { intl } = this.props;
 
     if (task === "error") {
-      return t("grid.item.report_problem");
+      return intl.formatMessage({ id: "grid.item.report_problem" });
     }
   }
 
-  onClick (e: React.MouseEvent<HTMLElement>) {
+  onClick(e: React.MouseEvent<HTMLElement>, task: string) {
     e.stopPropagation();
 
-    let {task, cave, game, platformCompatible, mayDownload, update} = this.props;
-    const {navigate, queueGame, initiatePurchase, abortGameRequest, showGameUpdate} = this.props;
+    let { cave, game, platformCompatible, mayDownload, update } = this.props;
+    const {
+      navigate,
+      queueGame,
+      initiatePurchase,
+      abortGameRequest,
+      showGameUpdate,
+    } = this.props;
 
-    if (task === "download" || task === "find-upload") {
+    if (task === "download") {
       navigate("downloads");
     } else {
       if (platformCompatible) {
         if (task === "launch") {
-          abortGameRequest({game});
+          abortGameRequest({ game });
         } else if (!task || task === "idle") {
           if (cave) {
             if (update) {
-              showGameUpdate({caveId: cave.id, update});
+              showGameUpdate({ caveId: cave.id, update });
             } else {
-              queueGame({game});
+              queueGame({ game });
             }
           } else if (mayDownload) {
-            queueGame({game});
+            queueGame({ game });
           } else {
-            initiatePurchase({game});
+            initiatePurchase({ game });
           }
         }
       } else {
@@ -136,53 +170,54 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
     }
   }
 
-  status (): IStatus {
-    const {t, task, action} = this.props;
+  status(task: string): IStatus {
+    const { intl, action } = this.props;
 
     if (task === "idle") {
       const update = this.props.update;
       if (update) {
-        return {status: t("grid.item.update"), statusTask: "update"};
+        return {
+          status: intl.formatMessage({ id: "grid.item.update" }),
+          statusTask: "update",
+        };
       }
 
       switch (action) {
         case "open":
-          return {status: t("grid.item.open"), statusTask: "open"};
+          return {
+            status: intl.formatMessage({ id: "grid.item.open" }),
+            statusTask: "open",
+          };
         case "launch":
         default:
-          return {status: t("grid.item.launch")};
+          return { status: intl.formatMessage({ id: "grid.item.launch" }) };
       }
     }
 
     if (task === "error" || task === "reporting") {
-      return {status: ""};
+      return { status: "" };
     }
 
     if (task === "launch") {
-      return {status: t("grid.item.running")};
+      return { status: intl.formatMessage({ id: "grid.item.running" }) };
     }
 
-    let res: IStatus = {status: t("grid.item.installing")};
+    let res: IStatus = {
+      status: intl.formatMessage({ id: "grid.item.installing" }),
+    };
     if (task === "uninstall") {
-      res = {status: t("grid.item.uninstalling")};
+      res = { status: intl.formatMessage({ id: "grid.item.uninstalling" }) };
     }
-    if (task === "download" || task === "find-upload") {
-      const downloadItem = this.props.downloadsByGameId[this.props.game.id];
-      if (downloadItem && downloadItem.eta && downloadItem.bps) {
-        const {eta, bps} = downloadItem;
-        res = {
-          status: t("grid.item.downloading"),
-          hint: downloadProgress(t, {eta, bps}, this.props.downloadsPaused, {}),
-        };
-      } else {
-        res = {status: t("grid.item.downloading")};
-      }
+    if (task === "download") {
+      res = { status: intl.formatMessage({ id: "grid.item.downloading" }) };
     }
     if (task === "ask-before-install") {
-      res = {status: t("grid.item.finalize_installation")};
+      res = {
+        status: intl.formatMessage({ id: "grid.item.finalize_installation" }),
+      };
     }
     if (task === "download-queued") {
-      res = {status: t("grid.item.queued")};
+      res = { status: intl.formatMessage({ id: "grid.item.queued" }) };
     }
 
     return res;
@@ -192,36 +227,29 @@ class MainAction extends React.Component<IProps & IDerivedProps & I18nProps, voi
 interface IProps extends IActionsInfo {
   /** whether or not to animate the main action's icon (to indicate something's going on) */
   animate: boolean;
-  platform: string;
+  platform: ItchPlatform;
   platformCompatible: boolean;
   progress: number;
   cancellable: boolean;
 
   pressDownload: boolean;
 
-  cave: ICaveRecord;
   update: IGameUpdate;
+  className?: string;
 }
 
 interface IDerivedProps {
-  downloadsByGameId: {
-    [gameId: string]: IDownloadItem;
-  };
-  downloadsPaused: boolean;
-
   queueGame: typeof actions.queueGame;
   showGameUpdate: typeof actions.showGameUpdate;
   initiatePurchase: typeof actions.initiatePurchase;
   abortGameRequest: typeof actions.abortGameRequest;
   navigate: typeof actions.navigate;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(MainAction, {
-  state: (state) => ({
-    downloadsByGameId: state.downloads.downloadsByGameId,
-    downloadsPaused: state.downloads.downloadsPaused,
-  }),
-  dispatch: (dispatch) => ({
+export default connect<IProps>(injectIntl(MainAction), {
+  dispatch: dispatch => ({
     queueGame: dispatcher(dispatch, actions.queueGame),
     showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
     initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),

@@ -1,26 +1,22 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import {getGlobalMarket} from "../market";
-import {log, opts} from "./log";
+import { DB } from "../../db";
 
-import {ICaveRecord} from "../../types";
-
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.nukeCavePrereqs, async (store, action) => {
-    const {caveId} = action.payload;
-    const market = getGlobalMarket();
+    const { caveId } = action.payload;
 
-    const cave = market.getEntity<ICaveRecord>("caves", caveId);
+    const cave = db.caves.findOneById(caveId);
     if (!cave) {
-      log(opts, `Cave not found, can't nuke prereqs: ${caveId}`);
       return;
     }
 
-    await market.saveEntity("caves", caveId, {installedPrereqs: null});
-    store.dispatch(actions.statusMessage({
-      message: "Prereqs nuked!",
-    }));
+    db.saveOne("caves", caveId, { installedPrereqs: null });
+    store.dispatch(
+      actions.statusMessage({
+        message: "Prereqs nuked!",
+      }),
+    );
   });
 }

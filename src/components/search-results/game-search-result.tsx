@@ -1,72 +1,121 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
-import GenericSearchResult from "./generic-search-result";
-
-import platformData from "../../constants/platform-data";
+import GenericSearchResult, {
+  searchResultStyle,
+} from "./generic-search-result";
 
 import isPlatformCompatible from "../../util/is-platform-compatible";
-import format from "../../util/format";
+import { formatPrice } from "../../format";
 
-import {IGameRecord} from "../../types";
+import { IGame } from "../../db/models/game";
+import { fromJSONField } from "../../db/json-field";
 
-import Icon from "../icon";
+import { ISaleInfo } from "../../types";
 
-class GameSearchResult extends GenericSearchResult<ISearchResultProps, void> {
-  render () {
-    const {game, onClick, chosen} = this.props;
-    const {title, stillCoverUrl, coverUrl} = game;
+import PlatformIcons from "../basics/platform-icons";
+import Filler from "../basics/filler";
 
-    const platforms: React.ReactElement<any>[] = [];
+import styled, * as styles from "../styles";
+import * as actions from "../../actions";
+
+const GameSearchResultDiv = styled.div`${searchResultStyle};`;
+
+const Platforms = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const StyledPlatformIcons = styled(PlatformIcons)`
+  margin-right: 16px;
+`;
+
+const TitleBlock = styled.div`
+  padding: 8px 12px;
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+`;
+
+const Title = styled.div`${styles.singleLine()};`;
+
+const Price = styled.div`
+  color: ${props => props.theme.secondaryText};
+
+  &.original {
+    text-decoration: line-through;
+  }
+`;
+
+class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
+  render() {
+    const { game, onClick, chosen } = this.props;
+    const { title, stillCoverUrl, coverUrl } = game;
+
     let compatible = isPlatformCompatible(game);
-
-    if (game.type === "html") {
-      platforms.push(<Icon hint="web" icon="earth"/>);
-    }
-
-    for (const p of platformData) {
-      if ((game as any)[p.field]) {
-        platforms.push(<Icon hint={p.platform} icon={p.icon}/>);
-      }
-    }
-
     let originalPrice: React.ReactElement<any> = null;
     let price: React.ReactElement<any> = null;
 
+    const sale = fromJSONField<ISaleInfo>(game.sale);
+
     if (game.minPrice > 0) {
-      if (game.sale) {
-        price = <span className="price"> {format.price("USD", game.minPrice * (1 - game.sale.rate / 100))}</span>;
-        originalPrice = <span className="price original">{format.price("USD", game.minPrice)}</span>;
+      if (sale) {
+        price = (
+          <Price>
+            {formatPrice("USD", game.minPrice * (1 - sale.rate / 100))}
+          </Price>
+        );
+        originalPrice = (
+          <Price className="original">
+            {formatPrice("USD", game.minPrice)}
+          </Price>
+        );
       } else {
-        price = <span className="price">{format.price("USD", game.minPrice)}</span>;
+        price = (
+          <Price>
+            {formatPrice("USD", game.minPrice)}
+          </Price>
+        );
       }
     }
 
-    const resultClasses = classNames("search-result", {
+    const resultClasses = classNames({
       ["not-platform-compatible"]: !compatible,
       chosen: chosen,
     });
 
-    return <div className={resultClasses} onClick={onClick} ref="root">
-      <img src={stillCoverUrl || coverUrl}/>
-      <div className="title-block">
-        <h4>{title}</h4>
-        <span className="platforms">
-          {platforms}
-          {originalPrice}
-          {price}
-        </span>
-      </div>
-    </div>;
+    return (
+      <GameSearchResultDiv
+        className={resultClasses}
+        onClick={onClick}
+        ref="root"
+      >
+        <img src={stillCoverUrl || coverUrl} />
+        <TitleBlock>
+          <Title>
+            {title}
+          </Title>
+          <Filler />
+          <Platforms>
+            <StyledPlatformIcons target={game} />
+            <Filler />
+            {originalPrice}
+            {price}
+          </Platforms>
+        </TitleBlock>
+      </GameSearchResultDiv>
+    );
   }
 
-  getPath(): string {
-    return `games/${this.props.game.id}`;
+  getNavigateAction() {
+    return actions.navigateToGame(this.props.game);
   }
 }
 
 interface ISearchResultProps {
-  game: IGameRecord;
+  game: IGame;
   onClick: () => void;
   chosen: boolean;
   active: boolean;

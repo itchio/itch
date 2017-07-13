@@ -14,11 +14,23 @@
     "coverage": true,
     "build": true,
     "dist": true,
-    "fixtures": true,
     ".tscache": true,
     ".cache": true
   },
-"files.eol": "\n",
-"editor.tabSize": 2,
-"typescript.tsdk": "./node_modules/typescript/lib"
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "coverage-gutters.lcovname": "./coverage/lcov.info",
+  "prettier.trailingComma": "all",
+  "prettier.javascriptEnable": [],
+  "prettier.typescriptEnable": [
+    "typescript",
+    "typescriptreact"
+  ],
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true
+  }
 }

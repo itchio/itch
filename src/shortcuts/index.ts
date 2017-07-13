@@ -1,35 +1,35 @@
-
 import * as actions from "../actions";
 
 import * as Combokeys from "combokeys-ftl";
 import * as hookGlobalBind from "combokeys-ftl/plugins/global-bind";
 
-import {IStore} from "../types";
+import { IStore } from "../types";
 
 const combo = new Combokeys(document.documentElement);
 hookGlobalBind(combo);
 
-import {remote} from "electron";
+import { remote } from "electron";
 
-import os from "../util/os";
-const osx = os.itchPlatform() === "osx";
+const macos = process.platform === "darwin";
 
-function openDevTools () {
+function openDevTools() {
   const win = remote.getCurrentWindow();
-  win.webContents.openDevTools({mode: "detach"});
+  win.webContents.openDevTools({ mode: "detach" });
 }
 
-export default function setupShortcuts (store: IStore) {
+export default function setupShortcuts(store: IStore) {
   // dev shortcuts
-  combo.bindGlobal(["shift+f12", "ctrl+shift+c", "command+shift+c"], openDevTools);
-  combo.bindGlobal(["shift+f5", "shift+command+r"], () => window.location.reload());
+  combo.bindGlobal(
+    ["shift+f12", "ctrl+shift+c", "command+shift+c"],
+    openDevTools,
+  );
+  combo.bindGlobal(["shift+f5", "shift+command+r"], () =>
+    window.location.reload(),
+  );
 
   // user shortcuts
   combo.bindGlobal(["ctrl+f", "command+f"], () => {
     store.dispatch(actions.focusSearch({}));
-  });
-  combo.bindGlobal(["ctrl+shift+f", "command+shift+f"], () => {
-    store.dispatch(actions.focusFilter({}));
   });
 
   combo.bindGlobal(["ctrl+tab", "ctrl+pagedown"], () => {
@@ -56,11 +56,11 @@ export default function setupShortcuts (store: IStore) {
     store.dispatch(actions.triggerBack({}));
   });
 
-  const prefix = osx ? "command" : "ctrl";
+  const prefix = macos ? "command" : "ctrl";
 
   for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
     combo.bindGlobal([`${prefix}+${i}`], () => {
-      store.dispatch(actions.focusNthTab({index: i}));
+      store.dispatch(actions.focusNthTab({ index: i }));
     });
   }
 }

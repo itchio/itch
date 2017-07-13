@@ -1,85 +1,90 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
-import {MODAL_RESPONSE} from "../../constants/action-types";
+import { MODAL_RESPONSE } from "../../constants/action-types";
 
-import {getUserMarket, getGlobalMarket} from "../market";
-import pathmaker from "../../util/pathmaker";
-import mklog from "../../util/log";
-const log = mklog("revert-cave");
+import * as paths from "../../os/paths";
 
-import format, {DATE_FORMAT} from "../../util/format";
+import { formatDate, DATE_FORMAT } from "../../format";
 
-import client from "../../util/api";
+import client from "../../api";
 
-import {ICaveRecord, IDownloadKey} from "../../types";
-import {map, filter, findWhere} from "underscore";
+import { map, filter } from "underscore";
 
-import {promisedModal} from "../modals";
+import { promisedModal } from "../modals";
 
-import findUpgradePath from "../../tasks/find-upgrade-path";
-import {EventEmitter} from "events";
-import {IRevertCaveParams} from "../../components/modal-widgets/revert-cave";
+import findUpgradePath from "../downloads/find-upgrade-path";
+import getGameCredentials from "../downloads/get-game-credentials";
+import lazyGetGame from "../lazy-get-game";
 
-import localizer from "../../localizer";
+import { IRevertCaveParams } from "../../components/modal-widgets/revert-cave";
 
-export default function (watcher: Watcher) {
+import { t } from "../../format";
+import { DB } from "../../db";
+import { fromJSONField } from "../../db/json-field";
+import Context from "../../context";
+
+import { IUpload } from "../../types";
+
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
-    const {caveId} = action.payload;
-    const logger = pathmaker.caveLogger(caveId);
-    const opts = {
-      logger,
-    };
+    const { caveId } = action.payload;
+    const logger = paths.caveLogger(caveId);
+
+    const ctx = new Context(store, db);
 
     try {
-      const globalMarket = getGlobalMarket();
-
-      const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
+      const cave = db.caves.findOneById(caveId);
       if (!cave) {
-        log(opts, `Cave not found, can't revert: ${caveId}`);
+        logger.error(`Cave not found, can't revert: ${caveId}`);
         return;
       }
 
-      if (!cave.buildId) {
-        log(opts, `Cave isn't wharf-enabled, can't revert: ${caveId}`);
+      if (!cave) {
+        logger.error(`Cave game not found, can't revert: ${cave.gameId}`);
         return;
       }
-      
-      const upload = cave.uploads[cave.uploadId];
+      const game = await lazyGetGame(ctx, cave.gameId);
+
       if (!cave.buildId) {
-        log(opts, `No upload in acve, can't revert: ${caveId}`);
+        logger.error(`Cave isn't wharf-enabled, can't revert: ${caveId}`);
         return;
       }
 
-      const market = getUserMarket();
-      const downloadKey = cave.downloadKey ||
-        findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: cave.game.id});
+      const upload = fromJSONField<IUpload>(cave.upload);
+      if (!cave.buildId) {
+        logger.error(`No upload in cave, can't revert: ${caveId}`);
+        return;
+      }
+
+      const gameCredentials = await getGameCredentials(ctx, game);
 
       const credentials = store.getState().session.credentials;
       if (!credentials) {
-        log(opts, `No credentials, cannot revert to build`);
+        logger.error(`No credentials, cannot revert to build`);
         return;
       }
       const keyClient = client.withKey(credentials.key);
-      const buildsList = await keyClient.listBuilds(downloadKey, upload.id);
+      const buildsList = await keyClient.listBuilds(
+        gameCredentials.downloadKey,
+        upload.id,
+      );
 
-      log(opts, `Builds list:\n${JSON.stringify(buildsList, null, 2)}`);
+      logger.info(`Builds list:\n${JSON.stringify(buildsList, null, 2)}`);
 
-      const oldBuilds = filter(buildsList.builds, (build) => {
+      const oldBuilds = filter(buildsList.builds, build => {
         return build.id < cave.buildId;
       });
 
       const i18n = store.getState().i18n;
-      const t = localizer.getT(i18n.strings, i18n.lang);
 
       const response = await promisedModal(store, {
-        title: t("prompt.revert.title"),
+        title: t(i18n, ["prompt.revert.title"]),
         message: "",
         widget: "revert-cave",
         widgetParams: {
           currentCave: cave,
         } as IRevertCaveParams,
-        bigButtons: map(oldBuilds, (build) => {
+        bigButtons: map(oldBuilds, build => {
           let label = "";
           if (build.userVersion) {
             label = `${build.userVersion}`;
@@ -87,7 +92,12 @@ export default function (watcher: Watcher) {
             label = `#${build.id}`;
           }
 
-          label = `${label} — ${format.date(Date.parse(build.updatedAt), DATE_FORMAT, i18n.lang)}`;
+          // TODO: check, I have doubts about this Date constructor
+          label = `${label} — ${formatDate(
+            new Date(build.updatedAt),
+            i18n.lang,
+            DATE_FORMAT,
+          )}`;
 
           return {
             label,
@@ -99,7 +109,7 @@ export default function (watcher: Watcher) {
         }),
         buttons: [
           {
-            label: t("prompt.revert.action.revert"),
+            label: t(i18n, ["prompt.revert.action.revert"]),
             icon: "checkmark",
             action: actions.modalResponse({}),
             actionSource: "widget",
@@ -115,44 +125,42 @@ export default function (watcher: Watcher) {
 
       const buildId = response.payload.revertBuildId;
 
-      const upgradeOpts = {
-        market,
-        credentials,
-        upload,
-        gameId: cave.game.id,
-        currentBuildId: buildId,
-        downloadKey,
-      };
-      const out = new EventEmitter();
-
       try {
         // this will throw if the buildId isn't in the chain of builds of the current upload
-        await findUpgradePath(out, upgradeOpts);
+        await findUpgradePath(ctx, {
+          currentBuildId: buildId,
+          game,
+          gameCredentials,
+          upload,
+        });
       } catch (e) {
-        log(opts, `Could not get upgrade path: ${e}`);
-        store.dispatch(actions.statusMessage({
-          message: e.message,
-        }));
+        logger.error(`Could not get upgrade path: ${e}`);
+        store.dispatch(
+          actions.statusMessage({
+            message: e.message,
+          }),
+        );
       }
 
-      store.dispatch(actions.statusMessage({
-        message: t("status.reverting", {buildId}),
-      }));
+      store.dispatch(
+        actions.statusMessage({
+          message: t(i18n, ["status.reverting", { buildId }]),
+        }),
+      );
 
       const changedUpload = {
         ...upload,
         buildId,
       };
 
-      store.dispatch(actions.queueDownload({
-        cave: cave,
-        game: cave.game,
-        upload: changedUpload,
-        downloadKey,
-        reason: "revert",
-        destPath: null,
-        heal: true,
-      }));
+      store.dispatch(
+        actions.queueDownload({
+          caveId: cave.id,
+          game,
+          upload: changedUpload,
+          reason: "revert",
+        }),
+      );
     } finally {
       logger.close();
     }

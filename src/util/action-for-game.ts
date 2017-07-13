@@ -1,16 +1,18 @@
-
-import {IGameRecord, ICaveRecord, ClassificationAction} from "../types";
+import { ClassificationAction } from "../types";
 import classificationActions from "../constants/classification-actions";
+
+import { IGame } from "../db/models/game";
+import { ICaveSummary } from "../db/models/cave";
 
 /**
  * Returns whether a game can be "launched" or "opened", where "launching" means
  * starting an executable, serving a web game, etc., and "opening" means showing files
  * in a file explorer.
  */
-export default function actionForGame (game: IGameRecord, cave: ICaveRecord): ClassificationAction {
-  if (cave != null && cave.launchType === "html") {
-    return "launch";
-  }
-
+export default function actionForGame(
+  game: IGame,
+  cave: ICaveSummary | null,
+): ClassificationAction {
+  // FIXME: we're not using the cave at all here - we probably should.
   return classificationActions[game.classification] || "launch";
 }

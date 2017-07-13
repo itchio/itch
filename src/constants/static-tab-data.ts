@@ -1,5 +1,4 @@
-
-import {ITabData} from "../types";
+import { ITabData } from "../types";
 
 interface IBaseTabData extends ITabData {
   id?: string;
@@ -12,17 +11,18 @@ interface IBaseTabDataSet {
   collections: IBaseTabData;
   library: IBaseTabData;
   preferences: IBaseTabData;
-  history: IBaseTabData;
   downloads: IBaseTabData;
 }
 
 const baseData = {
   featured: { label: "itch.io", subtitle: ["sidebar.itchio"] },
-  dashboard: { label: ["sidebar.dashboard"], subtitle: ["sidebar.dashboard_subtitle"] },
+  dashboard: {
+    label: ["sidebar.dashboard"],
+    subtitle: ["sidebar.dashboard_subtitle"],
+  },
   collections: { label: ["sidebar.collections"] },
   library: { label: ["sidebar.owned"], subtitle: ["sidebar.owned_subtitle"] },
   preferences: { label: ["sidebar.preferences"] },
-  history: { label: ["sidebar.history"] },
   downloads: { label: ["sidebar.downloads"] },
 } as IBaseTabDataSet;
 

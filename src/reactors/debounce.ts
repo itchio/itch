@@ -1,30 +1,31 @@
-
 const chatty = process.env.IAMA_JELLO_AMA === "1";
 
 // tslint:disable:no-console
 
 export class CancelError extends Error {
-  constructor () {
+  constructor() {
     super("");
   }
 
-  toString () {
+  toString() {
     return `CancelError: ${this.message}`;
   }
 }
 
-function debounce<Arg1, T> (
-    f: (arg1: Arg1) => Promise<T>,
-    ms: number): (arg1: Arg1) => Promise<T>;
+function debounce<Arg1, T>(
+  f: (arg1: Arg1) => Promise<T>,
+  ms: number,
+): (arg1: Arg1) => Promise<T>;
 
-function debounce<Arg1, Arg2, T> (
-    f: (arg1: Arg1, arg2: Arg2) => Promise<T>,
-    ms: number): (arg1: Arg1, arg2: Arg2) => Promise<T>;
+function debounce<Arg1, Arg2, T>(
+  f: (arg1: Arg1, arg2: Arg2) => Promise<T>,
+  ms: number,
+): (arg1: Arg1, arg2: Arg2) => Promise<T>;
 
-function debounce <T> (f: (...args: any[]) => Promise<T>, ms: number) {
+function debounce<T>(f: (...args: any[]) => Promise<T>, ms: number) {
   let rejectOther: (err: Error) => void;
 
-  return async function (...args: any[]) {
+  return async function(...args: any[]) {
     if (chatty) {
       console.log(`launching ${f}`);
     }

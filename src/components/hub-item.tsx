@@ -1,91 +1,113 @@
-
 import * as React from "react";
-import * as classNames from "classnames";
-import {connect, I18nProps} from "./connect";
+import { connect } from "./connect";
 
-import {whenClickNavigates} from "./when-click-navigates";
+import { whenClickNavigates } from "./when-click-navigates";
 
 import * as actions from "../actions";
 import GameActions from "./game-actions";
+import Cover from "./basics/cover";
 
-import {IGameRecord, ICaveRecord} from "../types";
-import {dispatcher, multiDispatcher} from "../constants/action-types";
+import { IGame } from "../db/models/game";
+import { dispatcher, multiDispatcher } from "../constants/action-types";
 
-export class HubItem extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
+import styled, * as styles from "./styles";
+
+export class HubItem extends React.PureComponent<
+  IProps & IDerivedProps,
+  IState
+> {
+  constructor() {
     super();
     this.state = {
       hover: false,
     };
   }
 
-  onContextMenu () {
-    const {game, openGameContextMenu} = this.props;
-    openGameContextMenu({game});
-  }
+  onContextMenu = () => {
+    const { game, openGameContextMenu } = this.props;
+    openGameContextMenu({ game });
+  };
 
-  onMouseDown (e: React.MouseEvent<any>) {
-    const {game, navigateToGame} = this.props;
-    whenClickNavigates(e, ({background}) => {
+  onMouseDown = (e: React.MouseEvent<any>) => {
+    const { game, navigateToGame } = this.props;
+    whenClickNavigates(e, ({ background }) => {
       navigateToGame(game, background);
     });
+  };
+
+  render() {
+    const { game } = this.props;
+    const { hover } = this.state;
+    const { title, coverUrl, stillCoverUrl } = game;
+
+    const actionProps = { game, showSecondary: this.state.hover };
+
+    return (
+      <HubItemDiv
+        className="grid-item"
+        data-game-id={game.id}
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+        onContextMenu={this.onContextMenu}
+      >
+        <Cover
+          coverUrl={coverUrl}
+          stillCoverUrl={stillCoverUrl}
+          hover={hover}
+          onClick={this.onMouseDown}
+        />
+
+        <UnderCover>
+          <section className="title">
+            {title}
+          </section>
+
+          <GameActions {...actionProps} />
+        </UnderCover>
+      </HubItemDiv>
+    );
   }
 
-  render () {
-    const {game, searchScore, cave} = this.props;
-    const {title, coverUrl, stillCoverUrl} = game;
+  onMouseEnter = () => {
+    this.setState({ hover: true });
+  };
 
-    let gif: boolean;
-    const coverStyle: React.CSSProperties = {};
-    if (coverUrl) {
-      if (this.state.hover) {
-        coverStyle.backgroundImage = `url('${coverUrl}')`;
-      } else {
-        if (stillCoverUrl) {
-          gif = true;
-          coverStyle.backgroundImage = `url('${stillCoverUrl}')`;
-        } else {
-          coverStyle.backgroundImage = `url('${coverUrl}')`;
-        }
-      }
-    }
-
-    const actionProps = {game, showSecondary: this.state.hover, cave};
-    const itemClasses = classNames("hub-item", {dull: (searchScore && searchScore > 0.2)});
-
-    return <div className={itemClasses}
-        onMouseEnter={this.onMouseEnter.bind(this)}
-        onMouseLeave={this.onMouseLeave.bind(this)}
-        onContextMenu={this.onContextMenu.bind(this)}>
-      {gif
-        ? <span className="gif-marker">gif</span>
-        : ""
-      }
-      <section className="cover" style={coverStyle}
-        onMouseDown={this.onMouseDown.bind(this)}/>
-
-      <section className="undercover">
-        <section className="title">
-          {title}
-        </section>
-
-        <GameActions {...actionProps}/>
-      </section>
-    </div>;
-  }
-
-  onMouseEnter () {
-    this.setState({hover: true});
-  }
-
-  onMouseLeave () {
-    this.setState({hover: false});
-  }
+  onMouseLeave = () => {
+    this.setState({ hover: false });
+  };
 }
 
+const HubItemDiv = styled.div`
+  ${styles.inkContainer()};
+  ${styles.hubItemStyle()};
+  margin: .5em;
+  cursor: default;
+
+  &.dull {
+    -webkit-filter: grayscale(95%);
+    opacity: .4;
+  }
+`;
+
+const UnderCover = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  padding: 0.5em 0.5em 0.25em 0.5em;
+
+  .title {
+    ${styles.singleLine()};
+    font-size: ${styles.fontSizes.large};
+    padding: .4em 0;
+    margin: 0 0 4px 0;
+    text-shadow: 0 0 1px ${props => props.theme.inputTextShadow};
+    max-width: 100%;
+  }
+`;
+
 interface IProps {
-  game: IGameRecord;
-  cave?: ICaveRecord;
+  game: IGame;
   searchScore?: number;
 }
 
@@ -100,7 +122,7 @@ interface IState {
 }
 
 export default connect<IProps>(HubItem, {
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
   }),

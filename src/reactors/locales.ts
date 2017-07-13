@@ -1,45 +1,41 @@
+import { Watcher } from "./watcher";
 
-import {Watcher} from "./watcher";
+import { join } from "path";
+import ifs from "../os/ifs";
 
-import {join} from "path";
-import ifs from "../localizer/ifs";
-
-import {getLocalesConfigPath, getLocalePath} from "../util/resources";
-import net from "../util/net";
+import { getLocalesConfigPath, getLocalePath } from "../os/resources";
+import { request } from "../net/request";
 import urls from "../constants/urls";
-import {app} from "electron";
-import * as env from "../env";
+import { app } from "electron";
+import env from "../env";
 
 import delay from "../reactors/delay";
 
-const upgradesEnabled = (env.name === "production") || (process.env.DID_I_STUTTER === "1");
+const upgradesEnabled =
+  env.name === "production" || process.env.DID_I_STUTTER === "1";
 
 const remoteDir = join(app.getPath("userData"), "locales");
 const localesConfigPath = getLocalesConfigPath();
 
-import {IStore, II18nResources} from "../types";
+import { IStore, II18nResources } from "../types";
 
-import logger from "../logger";
-import mklog from "../util/log";
-const log = mklog("locales");
-const opts = {logger};
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "locales" });
 
 import * as actions from "../actions";
 
-function canonicalFileName (lang: string): string {
-  try {
-    return getLocalePath(`${lang}.json`);
-  } catch (e) {
-    // this looks bad, but it's actually what we want
-    return null;
-  }
+function canonicalFileName(lang: string): string {
+  return getLocalePath(`${lang}.json`);
 }
 
-function remoteFileName (lang: string): string {
+function remoteFileName(lang: string): string {
   return join(remoteDir, `${lang}.json`);
 }
 
-async function doDownloadLocale (lang: string, resources: II18nResources): Promise<II18nResources> {
+async function doDownloadLocale(
+  lang: string,
+  resources: II18nResources,
+): Promise<II18nResources> {
   const local = canonicalFileName(lang);
   if (!local) {
     // try stripping region
@@ -49,11 +45,14 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
   const remote = remoteFileName(lang);
   const uri = `${urls.remoteLocalePath}/${lang}.json`;
 
-  log(opts, `Downloading fresh locale file from ${uri}`);
-  const resp = await net.request("get", uri, {}, {format: "json"});
+  logger.debug(`Downloading fresh locale file from ${uri}`);
+  const resp = await request("get", uri, {}, { format: "json" });
 
-  log(opts, `HTTP GET ${uri}: ${resp.statusCode}`);
-  if (resp.statusCode !== 200) {
+  logger.debug(`HTTP GET ${uri}: ${resp.statusCode}`);
+  if (resp.statusCode === 404) {
+    // no such locale, alrighty then.
+    return;
+  } else if (resp.statusCode !== 200) {
     throw new Error("Locale update server is down, try again later");
   }
 
@@ -63,19 +62,21 @@ async function doDownloadLocale (lang: string, resources: II18nResources): Promi
   };
 
   try {
-    log(opts, `Saving fresh ${lang} locale to ${remote}`);
+    logger.debug(`Saving fresh ${lang} locale to ${remote}`);
     const payload = JSON.stringify(finalResources, null, 2);
-    await ifs.writeFile(remote, payload, {encoding: "utf8"});
+    await ifs.writeFile(remote, payload, { encoding: "utf8" });
   } catch (e) {
-    log(opts, `Could not save locale to ${remote}: ${e.stack || e.message || e}`);
+    logger.warn(
+      `Could not save locale to ${remote}: ${e.stack || e.message || e}`,
+    );
   }
 
   return finalResources;
 }
 
-async function loadLocale (store: IStore, lang: string) {
+async function loadLocale(store: IStore, lang: string) {
   let local = canonicalFileName(lang);
-  if (!local) {
+  if (!await ifs.exists(local)) {
     // try stripping region
     lang = lang.substring(0, 2);
     local = canonicalFileName(lang);
@@ -84,9 +85,13 @@ async function loadLocale (store: IStore, lang: string) {
   try {
     const payload = await ifs.readFile(local);
     const resources = JSON.parse(payload);
-    store.dispatch(actions.localeDownloadEnded({lang, resources}));
+    store.dispatch(actions.localeDownloadEnded({ lang, resources }));
   } catch (e) {
-    log(opts, `Failed to load locale from ${local}: ${e.stack}`);
+    if (e.code === "ENOENT") {
+      logger.warn(`No such locale ${local}`);
+    } else {
+      logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
+    }
   }
 
   const remote = remoteFileName(lang);
@@ -100,16 +105,16 @@ async function loadLocale (store: IStore, lang: string) {
 
     if (payload) {
       const resources = JSON.parse(payload);
-      store.dispatch(actions.localeDownloadEnded({lang, resources}));
+      store.dispatch(actions.localeDownloadEnded({ lang, resources }));
     }
   } catch (e) {
-    log(opts, `Failed to load locale from ${local}: ${e.stack}`);
+    logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
   }
 
-  store.dispatch(actions.queueLocaleDownload({lang}));
+  store.dispatch(actions.queueLocaleDownload({ lang }));
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
     // load initial locales
     const configPayload = await ifs.readFile(localesConfigPath);
@@ -120,10 +125,12 @@ export default function (watcher: Watcher) {
   });
 
   watcher.on(actions.queueLocaleDownload, async (store, action) => {
-    let {lang} = action.payload;
+    let { lang } = action.payload;
 
     if (!upgradesEnabled) {
-      log(opts, `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`);
+      logger.info(
+        `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`,
+      );
       return;
     }
 
@@ -132,27 +139,24 @@ export default function (watcher: Watcher) {
       return;
     }
 
-    store.dispatch(actions.localeDownloadStarted({lang}));
+    store.dispatch(actions.localeDownloadStarted({ lang }));
 
-    log(opts, `Waiting a bit before downloading ${lang} locale...`);
+    // FIXME: this happens twice - it shouldn't
+    logger.debug(`Waiting a bit before downloading ${lang} locale...`);
     await delay(1000);
 
     let resources = {};
     try {
       resources = await doDownloadLocale(lang, resources);
     } catch (e) {
-      log(opts, `Failed downloading locale for ${lang}: ${e.message}`);
-      store.dispatch(actions.queueHistoryItem({
-        label: ["i18n.failed_downloading_locales", {lang}],
-        detail: e.stack || e,
-      }));
+      logger.warn(`Failed downloading locale for ${lang}: ${e.message}`);
     } finally {
-      store.dispatch(actions.localeDownloadEnded({lang, resources}));
+      store.dispatch(actions.localeDownloadEnded({ lang, resources }));
     }
   });
 
   watcher.on(actions.languageChanged, async (store, action) => {
-    const {lang} = action.payload;
+    const { lang } = action.payload;
 
     await loadLocale(store, lang);
   });

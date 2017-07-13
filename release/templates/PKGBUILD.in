@@ -28,8 +28,7 @@ prepare() {
   export PYTHON=/usr/bin/python2
 
   # Get dependencies
-  # (npm3's progress indicator is notoriously slow, disable)
-  npm install --no-progress --quiet
+  npm install
 }
 
 build() {

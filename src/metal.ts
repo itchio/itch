@@ -1,25 +1,22 @@
-
 // This file is the entry point for the main (browser) process
 
-import "./boot/sourcemaps";
-import "./boot/bluebird";
-import "./boot/crash";
-import "./boot/env";
-import "./boot/fs";
+import { enableLiveReload } from "electron-compile-ftl";
 
-import {enableLiveReload} from "electron-compile-ftl";
-
-import autoUpdater from "./util/auto-updater";
-import {isItchioURL} from "./util/url";
+import autoUpdaterStart from "./util/auto-updater";
+import { isItchioURL } from "./util/url";
 
 import * as actions from "./actions";
+import env from "./env";
+import { app, protocol, globalShortcut } from "electron";
+
+import { connectDatabase } from "./db";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
 // tslint:disable:no-console
 
-async function autoUpdate (autoUpdateDone: () => void) {
-  const quit = await autoUpdater.start();
+async function autoUpdate(autoUpdateDone: () => void) {
+  const quit = await autoUpdaterStart();
   if (quit) {
     // squirrel on win32 sometimes requires exiting as early as possible
     process.exit(0);
@@ -32,8 +29,18 @@ autoUpdate(autoUpdateDone); // no need to wait for app.on('ready')
 
 // App lifecycle
 
-function autoUpdateDone () {
-  const {protocol, app, globalShortcut} = require("electron");
+function autoUpdateDone() {
+  if (process.env.CAPSULE_LIBRARY_PATH) {
+    // disable acceleration when captured by capsule
+    app.disableHardwareAcceleration();
+  }
+
+  // devtools don't work with mixed sandbox mode -
+  // enable it only in production and only when the
+  // `DEVTOOLS` environment variable is not specified
+  if (env.name === "production" && isNaN(parseInt(process.env.DEVTOOLS, 10))) {
+    app.enableMixedSandbox();
+  }
 
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
@@ -42,36 +49,53 @@ function autoUpdateDone () {
 
   const store = require("./store/metal-store").default;
 
-  app.on("ready", async function () {
-    const shouldQuit = app.makeSingleInstance((argv, cwd) => {
-      // we only get inside this callback when another instance
-      // is launched - so this executes in the context of the main instance
-      handleUrls(argv);
-      store.dispatch(actions.focusWindow({}));
-    });
+  app.on("ready", async function() {
+    if (env.name !== "test") {
+      const shouldQuit = app.makeSingleInstance((argv, cwd) => {
+        // we only get inside this callback when another instance
+        // is launched - so this executes in the context of the main instance
+        store.dispatch(
+          actions.processUrlArguments({
+            args: argv,
+          }),
+        );
+        store.dispatch(actions.focusWindow({}));
+      });
 
-    if (shouldQuit) {
-      // app.quit() is the source of all our problems,
-      // cf. https://github.com/itchio/itch/issues/202
-      process.exit(0);
-      return;
+      if (shouldQuit) {
+        // app.quit() is the source of all our problems,
+        // cf. https://github.com/itchio/itch/issues/202
+        app.exit(0);
+        return;
+      }
     }
-    handleUrls(process.argv);
 
-    enableLiveReload({strategy: "react-hmr"});
+    await connectDatabase(store);
 
-    store.dispatch(actions.preboot({}));
+    if (env.name === "development") {
+      const logger = require("./logger").default;
+      logger.info("Enabling hot-module reload!");
+      enableLiveReload({ strategy: "react-hmr" });
+    }
 
-    globalShortcut.register("Control+Alt+Backspace", function () {
+    store.dispatch(
+      actions.processUrlArguments({
+        args: process.argv,
+      }),
+    );
+
+    globalShortcut.register("Control+Alt+Backspace", function() {
       store.dispatch(actions.abortLastGame({}));
     });
+
+    store.dispatch(actions.preboot({}));
   });
 
   app.on("activate", () => {
     store.dispatch(actions.focusWindow({}));
   });
 
-  app.on("fill-finish-launching", () => {
+  app.on("will-finish-launching", () => {
     app.setAppUserModelId(appUserModelId);
   });
 
@@ -93,30 +117,12 @@ function autoUpdateDone () {
 
   // macOS (Info.pList)
   app.on("open-url", (e: Event, url: string) => {
-    console.log(`Processing 1 url`);
-
     if (isItchioURL(url)) {
       // macOS will err -600 if we don't
       e.preventDefault();
-      store.dispatch(actions.openUrl({url}));
+      store.dispatch(actions.openUrl({ url }));
     } else {
       console.log(`Ignoring non-itchio url: ${url}`);
     }
   });
-
-  // URL handling
-
-  function handleUrls (argv: string[]) {
-    console.log(`Processing ${argv.length} potential urls`);
-
-    // Windows (reg.exe), Linux (XDG)
-    argv.forEach((arg) => {
-      // XXX should we limit to one url at most ?
-      if (isItchioURL(arg)) {
-        store.dispatch(actions.openUrl({url: arg}));
-      } else {
-        console.log(`Ignoring non-itchio url: ${arg}`);
-      }
-    });
-  }
 }

@@ -1,9 +1,8 @@
-
-import {omit} from "underscore";
+import { omit } from "underscore";
 import * as actions from "../actions";
 import reducer from "./reducer";
 
-import {II18nState} from "../types";
+import { II18nState } from "../types";
 
 const initialState = {
   lang: "en",
@@ -15,14 +14,14 @@ const initialState = {
   locales: [],
 } as II18nState;
 
-export default reducer<II18nState>(initialState, (on) => {
+export default reducer<II18nState>(initialState, on => {
   on(actions.localesConfigLoaded, (state, action) => {
     const config = action.payload;
     return { ...state, ...config };
   });
 
   on(actions.queueLocaleDownload, (state, action) => {
-    const {lang} = action.payload;
+    const { lang } = action.payload;
     return {
       ...state,
       queued: { ...state.queued, [lang]: true },
@@ -30,7 +29,7 @@ export default reducer<II18nState>(initialState, (on) => {
   });
 
   on(actions.localeDownloadStarted, (state, action) => {
-    const {lang} = action.payload;
+    const { lang } = action.payload;
     return {
       ...state,
       queued: omit(state.downloading, lang),
@@ -39,7 +38,7 @@ export default reducer<II18nState>(initialState, (on) => {
   });
 
   on(actions.localeDownloadEnded, (state, action) => {
-    const {lang, resources} = action.payload;
+    const { lang, resources } = action.payload;
     return {
       ...state,
       downloading: omit(state.downloading, lang),
@@ -54,7 +53,7 @@ export default reducer<II18nState>(initialState, (on) => {
   });
 
   on(actions.languageChanged, (state, action) => {
-    const {lang} = action.payload;
+    const { lang } = action.payload;
     return {
       ...state,
       lang,

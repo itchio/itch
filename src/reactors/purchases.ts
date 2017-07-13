@@ -1,29 +1,23 @@
-
-import {Watcher} from "./watcher";
-
-import {findWhere} from "underscore";
+import { Watcher } from "./watcher";
 
 import url from "../util/url";
 import enableEventDebugging from "../util/debug-browser-window";
-import injectPath from "../util/inject-path";
+import { getInjectPath } from "../os/resources";
 
-// So this isn't great, but it's not terrible either — we need some
-// kind of renderer-side debug/logging system at some point.
-// tslint:disable:no-console
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "purchases" });
 
-import {
-  IOwnUserRecord,
-  IGameRecord,
-} from "../types";
+import { IGame } from "../db/models/game";
+import { IOwnUser } from "../db/models/user";
 
 import * as actions from "../actions";
 
-import {BrowserWindow} from "electron";
+import { BrowserWindow } from "electron";
 
 /**
  * Creates a new browser window to initiate the purchase flow
  */
-function makePurchaseWindow (me: IOwnUserRecord, game: IGameRecord) {
+function makePurchaseWindow(me: IOwnUser, game: IGame) {
   const partition = `persist:itchio-${me.id}`;
 
   const win = new BrowserWindow({
@@ -35,7 +29,7 @@ function makePurchaseWindow (me: IOwnUserRecord, game: IGameRecord) {
       /* don't let web code control the OS */
       nodeIntegration: false,
       /* prevent window close, prefill login form, etc. */
-      preload: injectPath("itchio-monkeypatch"),
+      preload: getInjectPath("itchio"),
       /* stores browser session in an user_id-specific partition so,
        * in multi-seat installs, users have to log in one time each at least */
       partition,
@@ -61,14 +55,14 @@ interface IUrlOpts {
   port?: number;
 }
 
-function buildLoginAndReturnUrl (returnTo: string): string {
+function buildLoginAndReturnUrl(returnTo: string): string {
   const parsed = url.parse(returnTo);
   const hostname = url.subdomainToDomain(parsed.hostname);
 
   let urlOpts = {
     hostname,
     pathname: "/login",
-    query: {return_to: returnTo},
+    query: { return_to: returnTo },
   } as IUrlOpts;
 
   if (hostname === "itch.io") {
@@ -81,14 +75,11 @@ function buildLoginAndReturnUrl (returnTo: string): string {
   return url.format(urlOpts);
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.initiatePurchase, async (store, action) => {
-    const {game} = action.payload;
+    const { game } = action.payload;
 
     const me = store.getState().session.credentials.me;
-
-    const downloadKeys = store.getState().market.downloadKeys;
-    const key = findWhere(downloadKeys, {gameId: game.id});
     const win = makePurchaseWindow(me, game);
 
     if (process.env.CAST_NO_SHADOW === "1") {
@@ -98,7 +89,7 @@ export default function (watcher: Watcher) {
 
     const purchaseUrl = game.url + "/purchase";
     const loginPurchaseUrl = buildLoginAndReturnUrl(purchaseUrl);
-    console.log("partition login purchase url = ", loginPurchaseUrl);
+    logger.debug("partition login purchase url = ", loginPurchaseUrl);
 
     // FIXME: that's probably not the best event
     win.webContents.on("did-get-redirect-request", (e, oldURL, newURL) => {
@@ -106,7 +97,7 @@ export default function (watcher: Watcher) {
 
       if (/^.*\/download\/[a-zA-Z0-9]*$/.test(parsed.pathname)) {
         // purchase went through!
-        store.dispatch(actions.purchaseCompleted({game, hadKey: !!key}));
+        store.dispatch(actions.purchaseCompleted({ game }));
         win.close();
       } else if (/\/pay\/cancel/.test(parsed.pathname)) {
         // payment was cancelled
@@ -114,10 +105,16 @@ export default function (watcher: Watcher) {
       }
     });
 
-    win.webContents.on("did-get-response-details", async function (e, status, newURL, originalURL, httpResponseCode) {
+    win.webContents.on("did-get-response-details", async function(
+      e,
+      status,
+      newURL,
+      originalURL,
+      httpResponseCode,
+    ) {
       if (httpResponseCode === 404 && newURL === purchaseUrl) {
-        console.log(`404 not found: ${newURL}`);
-        console.log("closing because of 404");
+        logger.debug(`404 not found: ${newURL}`);
+        logger.debug("closing because of 404");
         win.close();
       }
     });

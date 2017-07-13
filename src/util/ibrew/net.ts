@@ -1,20 +1,16 @@
-
 import urls from "../../constants/urls";
 
 import * as querystring from "querystring";
 
-import os from "../os";
+import * as os from "../../os";
 import version from "./version";
 
-import net, {ChecksumAlgo} from "../../util/net";
+import { request, ChecksumAlgo } from "../../net";
 
-const CHECKSUM_ALGOS: ChecksumAlgo[] = [
-  "SHA256",
-  "SHA1",
-];
+const CHECKSUM_ALGOS: ChecksumAlgo[] = ["SHA256", "SHA1"];
 
 /** platform in go format */
-function goos (): string {
+function goos(): string {
   let result = os.platform();
   if (result === "win32") {
     return "windows";
@@ -23,7 +19,7 @@ function goos (): string {
 }
 
 /** arch in go format */
-function goarch () {
+function goarch() {
   let result = os.arch();
   if (result === "x64") {
     return "amd64";
@@ -35,15 +31,15 @@ function goarch () {
 }
 
 /** build channel URL */
-function channel (formulaName: string): string {
+function channel(formulaName: string): string {
   let osArch = `${goos()}-${goarch()}`;
   return `${urls.ibrewRepo}/${formulaName}/${osArch}`;
 }
 
 /** fetch latest version number from repo */
-async function getLatestVersion (channel: string): Promise<string> {
-  const url = `${channel}/LATEST?${querystring.stringify({t: +new Date()})}`;
-  const res = await net.request("get", url);
+async function getLatestVersion(channel: string): Promise<string> {
+  const url = `${channel}/LATEST?${querystring.stringify({ t: +new Date() })}`;
+  const res = await request("get", url, {});
 
   if (res.statusCode !== 200) {
     throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
@@ -53,4 +49,4 @@ async function getLatestVersion (channel: string): Promise<string> {
   return version.normalize(v);
 }
 
-export default {getLatestVersion, channel, goos, goarch, CHECKSUM_ALGOS};
+export default { getLatestVersion, channel, goos, goarch, CHECKSUM_ALGOS };

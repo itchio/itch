@@ -1,27 +1,21 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import sf from "../../util/sf";
-import pathmaker from "../../util/pathmaker";
-import explorer from "../../util/explorer";
+import * as sf from "../../os/sf";
+import * as paths from "../../os/paths";
+import explorer from "../../os/explorer";
 
-import {getGlobalMarket} from "../market";
-import {log, opts} from "./log";
+import { DB } from "../../db";
 
-import {ICaveRecord} from "../../types";
-
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.exploreCave, async (store, action) => {
-    const {caveId} = action.payload;
-    const market = getGlobalMarket();
+    const { caveId } = action.payload;
 
-    const cave = market.getEntity<ICaveRecord>("caves", caveId);
+    const cave = db.caves.findOneById(caveId);
     if (!cave) {
-      log(opts, `Cave not found, can't explore: ${caveId}`);
       return;
     }
-    const appPath = pathmaker.appPath(cave, store.getState().preferences);
+    const appPath = paths.appPath(cave, store.getState().preferences);
 
     const exists = await sf.exists(appPath);
     if (exists) {

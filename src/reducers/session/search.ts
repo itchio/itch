@@ -1,12 +1,11 @@
-
 import SearchExamples from "../../constants/search-examples";
 
-import {ISessionSearchState} from "../../types";
+import { ISessionSearchState } from "../../types";
 
 import * as actions from "../../actions";
 import reducer from "../reducer";
 
-function randomExampleIndex () {
+function randomExampleIndex() {
   return Math.floor(Math.random() * (SearchExamples.length - 1));
 }
 
@@ -22,7 +21,7 @@ const initialState = {
   results: null,
 } as ISessionSearchState;
 
-export default reducer<ISessionSearchState>(initialState, (on) => {
+export default reducer<ISessionSearchState>(initialState, on => {
   on(actions.search, (state, action) => {
     const typedQuery = action.payload.query;
     if (!typedQuery) {
@@ -37,7 +36,7 @@ export default reducer<ISessionSearchState>(initialState, (on) => {
   });
 
   on(actions.searchHighlightOffset, (state, action) => {
-    const {offset} = action.payload;
+    const { offset } = action.payload;
     return {
       ...state,
       highlight: state.highlight + offset,
@@ -45,7 +44,7 @@ export default reducer<ISessionSearchState>(initialState, (on) => {
   });
 
   on(actions.searchFetched, (state, action) => {
-    const {query, results} = action.payload;
+    const { query, results } = action.payload;
     const example = SearchExamples[randomExampleIndex()];
     return {
       ...state,
@@ -56,18 +55,18 @@ export default reducer<ISessionSearchState>(initialState, (on) => {
   });
 
   on(actions.searchStarted, (state, action) => {
-    return {...state, loading: true};
+    return { ...state, loading: true };
   });
 
   on(actions.searchFinished, (state, action) => {
-    return {...state, loading: false};
+    return { ...state, loading: false };
   });
 
   on(actions.focusSearch, (state, action) => {
-    return {...state, open: true};
+    return { ...state, open: true };
   });
 
   on(actions.closeSearch, (state, action) => {
-    return {...state, open: false};
+    return { ...state, open: false };
   });
 });

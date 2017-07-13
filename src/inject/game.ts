@@ -1,9 +1,9 @@
-
 // tslint:disable:no-console
 
 import * as querystring from "querystring";
 import * as urlParser from "url";
 
+// only load outside of electron
 const sendMessage = (action: string) => {
   const url = `https://itch-internal/${action}`;
   const xhr = new XMLHttpRequest();
@@ -34,9 +34,8 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
     default:
       break;
   }
-})
-
-; (function () {
+});
+(function() {
   try {
     const url = urlParser.parse(window.location.href);
     console.log("Parsed url: ", url);
@@ -50,11 +49,11 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
   }
 })();
 
-window.addEventListener("DOMContentLoaded", (e) => {
+window.addEventListener("DOMContentLoaded", e => {
   const gm4 = document.querySelectorAll("div.gm4html5_div_class");
   const emscripten = document.querySelectorAll("canvas.emscripten");
   if (gm4.length + emscripten.length === 0) {
-    console.log("Didn\'t detect emscripten or gm4, not trying to fit to window");
+    console.log("Didn't detect emscripten or gm4, not trying to fit to window");
     return;
   }
 
@@ -66,11 +65,11 @@ window.addEventListener("DOMContentLoaded", (e) => {
 
   const canvases = document.getElementsByTagName("canvas");
   if (canvases.length !== 1) {
-    console.log("Didn\'t find exactly 1 canvas, not trying to fit to window");
+    console.log("Didn't find exactly 1 canvas, not trying to fit to window");
   }
   const canvas = canvases[0];
 
-  const refitCanvas = function () {
+  const refitCanvas = function() {
     if (window.innerHeight > 0) {
       document.body.style.overflow = "hidden";
       canvas.style.zIndex = "1000";

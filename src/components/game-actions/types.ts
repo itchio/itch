@@ -1,14 +1,19 @@
+import { IGame } from "../../db/models/game";
+import { ICave } from "../../db/models/cave";
+import { IDownloadKey } from "../../db/models/download-key";
 
-import {ICaveRecord, IGameRecord, IDownloadKey, ClassificationAction} from "../../types";
+import { ClassificationAction, ITask, IDownloadItem } from "../../types";
 
 export interface IActionsInfo {
-  cave: ICaveRecord;
-  game: IGameRecord;
-  task: string;
+  cave: ICave;
+  game: IGame;
   downloadKey: IDownloadKey;
-  
+
   action: ClassificationAction;
 
   mayDownload: boolean;
   canBeBought: boolean;
+
+  tasks: ITask[];
+  downloads: IDownloadItem[];
 }

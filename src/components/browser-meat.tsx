@@ -1,24 +1,30 @@
-
-import {createStructuredSelector} from "reselect";
+import { createStructuredSelector } from "reselect";
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect } from "./connect";
+
+import { injectIntl, InjectedIntl } from "react-intl";
 
 import * as classNames from "classnames";
 
 import * as actions from "../actions";
 
+import watching, { Watcher } from "./watching";
+
 import urlParser from "../util/url";
 import navigation from "../util/navigation";
 import partitionForUser from "../util/partition-for-user";
-import injectPath from "../util/inject-path";
+import { getInjectPath } from "../os/resources";
 
 import staticTabData from "../constants/static-tab-data";
 
-import * as querystring from "querystring";
-import {uniq, findWhere} from "underscore";
+import { uniq, findWhere } from "underscore";
 
-import {IBrowserState, IBrowserControlProperties} from "./browser-state";
+import { IBrowserState, IBrowserControlProperties } from "./browser-state";
 import createContextMenu from "./browser-meat-context-menu";
+
+import { IMeatProps } from "./meats/types";
+
+import TitleBar from "./title-bar";
 
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
@@ -31,36 +37,80 @@ import BrowserBar from "./browser-bar";
 
 import GameBrowserContext from "./game-browser-context";
 
-import {transformUrl} from "../util/navigation";
+import { transformUrl } from "../util/navigation";
 
-import {ITabData, IAppState} from "../types";
-import {IDispatch, dispatcher, multiDispatcher} from "../constants/action-types";
+import { IAppState } from "../types";
+import {
+  IDispatch,
+  dispatcher,
+  multiDispatcher,
+} from "../constants/action-types";
 
 import "electron";
+
+import styled, * as styles from "./styles";
+
+const BrowserMeatContainer = styled.div`${styles.meat()};`;
+
+const BrowserMain = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+`;
+
+export const BrowserContextContainer = styled.div`
+  flex-basis: 240px;
+  background: $sidebar-background-color;
+
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+`;
+
+const WebviewShell = styled.div`
+  background: white;
+
+  &.fresh {
+    background-color: #292727;
+    background-image: url("./static/images/logos/app-white.svg");
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+  }
+
+  &,
+  webview {
+    display: flex;
+    flex: 1 1;
+  }
+
+  webview {
+    margin-right: -1px;
+  }
+`;
 
 interface IHistoryEntry {
   url: string;
   scrollTop: number;
 }
 
-// updated when switching accounts
-let currentSession: Electron.Session = null;
-
-export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nProps, IBrowserMeatState> {
-  refs: {
-    webviewShell: Element;
-  };
-
+@watching
+export class BrowserMeat extends React.PureComponent<
+  IProps & IDerivedProps,
+  IState
+> {
   lastNavigationUrl: string;
   lastNavigationTimeStamp: number;
+
+  scrollHistory: IHistoryEntry[] = [];
+  wentBackOrForward = false;
 
   /** polls scrollTop */
   watcher: NodeJS.Timer;
 
   /** the devil incarnate */
-  webview: Electron.WebViewElement;
+  webview: Electron.WebviewTag;
 
-  constructor () {
+  constructor() {
     super();
     this.state = {
       browserState: {
@@ -70,18 +120,32 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
         loading: true,
         url: "",
       },
-      scrollHistory: [],
-      wentBackOrForward: false,
     };
   }
 
-  updateBrowserState (props = {}) {
-    const {webview} = this;
+  subscribe(watcher: Watcher) {
+    watcher.on(actions.openDevTools, async (store, action) => {
+      const { tab } = action.payload;
+      if (tab === this.props.tab) {
+        this.openDevTools();
+      }
+    });
+
+    watcher.on(actions.analyzePage, async (store, action) => {
+      const { tab, url } = action.payload;
+      if (tab === this.props.tab) {
+        this.analyzePage(url);
+      }
+    });
+  }
+
+  updateBrowserState(props = {}) {
+    const { webview } = this;
     if (!webview) {
       return;
     }
     if (!webview.partition || webview.partition === "") {
-      console.warn(`${this.props.tabId}: webview has empty partition`);
+      console.warn(`${this.props.tab}: webview has empty partition`);
     }
 
     const browserState = {
@@ -91,12 +155,12 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
       ...props,
     };
 
-    this.setState({browserState});
+    this.setState({ browserState });
   }
 
-  domReady () {
-    const {url} = this.props;
-    const {webview} = this;
+  domReady() {
+    const { url } = this.props;
+    const { webview } = this;
 
     const webContents = webview.getWebContents();
     if (!webContents || webContents.isDestroyed()) {
@@ -104,74 +168,78 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
     }
 
     if (SHOW_DEVTOOLS) {
-      webContents.openDevTools({mode: "detach"});
+      webContents.openDevTools({ mode: "detach" });
     }
 
-    this.updateBrowserState({loading: false});
-
-    if (currentSession !== webContents.session) {
-      this.setupItchInternal(webContents.session);
-    }
+    this.updateBrowserState({ loading: false });
 
     if (url && url !== "about:blank") {
       this.loadURL(url);
     }
   }
 
-  didStartLoading () {
-    this.props.tabLoading({id: this.props.tabId, loading: true});
-    this.updateBrowserState({loading: true});
-  }
+  didStartLoading = () => {
+    this.props.tabLoading({ id: this.props.tab, loading: true });
+    this.updateBrowserState({ loading: true });
+  };
 
-  didStopLoading () {
-    this.props.tabLoading({id: this.props.tabId, loading: false});
-    this.updateBrowserState({loading: false});
-  }
+  didStopLoading = () => {
+    this.props.tabLoading({ id: this.props.tab, loading: false });
+    this.updateBrowserState({ loading: false });
+  };
 
-  pageTitleUpdated (e: any) { // TODO: type
-    const {tabId, tabDataFetched} = this.props;
-    tabDataFetched({id: tabId, data: {webTitle: e.title}, timestamp: Date.now()});
-  }
+  pageTitleUpdated = (e: any) => {
+    // TODO: type
+    const { tab, tabDataFetched } = this.props;
+    tabDataFetched({ id: tab, data: { webTitle: e.title } });
+  };
 
-  pageFaviconUpdated (e: any) { // TODO: type
-    const {tabId, tabDataFetched} = this.props;
-    tabDataFetched({id: tabId, data: {webFavicon: e.favicons[0]}, timestamp: Date.now()});
-  }
+  pageFaviconUpdated = (e: any) => {
+    // TODO: type
+    const { tab, tabDataFetched } = this.props;
+    tabDataFetched({ id: tab, data: { webFavicon: e.favicons[0] } });
+  };
 
-  didNavigate (e: any) { // TODO: type
-    const {tabId} = this.props;
-    const {url} = e;
+  didNavigate = (e: any) => {
+    // TODO: type
+    const { url } = e;
 
-    this.updateBrowserState({url});
-    this.analyzePage(tabId, url);
+    this.updateBrowserState({ url });
+    this.analyzePage(url);
 
-    this.updateScrollWatcher(url, this.state.wentBackOrForward);
-    this.setState({
-      wentBackOrForward: false,
-    });
-  }
+    this.updateScrollWatcher(url, this.wentBackOrForward);
+    this.wentBackOrForward = false;
+  };
 
-  updateScrollWatcher (url: string, restore: boolean) {
+  updateScrollWatcher(url: string, restore: boolean) {
     if (this.watcher) {
       clearInterval(this.watcher);
     }
 
     const installWatcher = () => {
-      this.watcher = setInterval(() => {
+      this.watcher = (setInterval(() => {
         if (!this.webview) {
           return;
         }
-        this.webview.executeJavaScript("document.body.scrollTop", false, (scrollTop) => {
-          if (this.webview.src !== url) {
-            // disregarding scrollTop, we have navigated
-          } else {
-            this.registerScrollTop(url, scrollTop);
-          }
-        });
-      }, 700) as any as NodeJS.Timer;
+        this.webview.executeJavaScript(
+          "document.body.scrollTop",
+          false,
+          scrollTop => {
+            if (!this.webview) {
+              // nothing to see here yet
+              return;
+            }
+            if (this.webview.src !== url) {
+              // disregarding scrollTop, we have navigated
+            } else {
+              this.registerScrollTop(url, scrollTop);
+            }
+          },
+        );
+      }, 700) as any) as NodeJS.Timer;
     };
 
-    const scrollHistoryItem = findWhere(this.state.scrollHistory, {url});
+    const scrollHistoryItem = findWhere(this.scrollHistory, { url });
     if (restore && scrollHistoryItem && scrollHistoryItem.scrollTop > 0) {
       const oldScrollTop = scrollHistoryItem.scrollTop;
       let count = 0;
@@ -182,7 +250,7 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
         }
 
         const code = `(function () { document.body.scrollTop = ${oldScrollTop}; return document.body.scrollTop })()`;
-        this.webview.executeJavaScript(code, false, (scrollTop) => {
+        this.webview.executeJavaScript(code, false, scrollTop => {
           if (Math.abs(scrollTop - oldScrollTop) > 20) {
             if (count < 40) {
               setTimeout(tryRestoringScroll, 250);
@@ -201,32 +269,35 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
     }
   }
 
-  registerScrollTop (url: string, scrollTop: number) {
-    const previousItem = findWhere(this.state.scrollHistory, {url});
+  registerScrollTop(url: string, scrollTop: number) {
+    const previousItem = findWhere(this.scrollHistory, { url });
     if (previousItem && previousItem.scrollTop === scrollTop) {
       // don't wake up react
       return;
     }
 
-    const inputHistory = [
-      { url, scrollTop },
-      ...this.state.scrollHistory,
-    ];
-    const scrollHistory = uniq(inputHistory, (x: IHistoryEntry) => x.url).slice(0, SCROLL_HISTORY_SIZE);
-    this.setState({scrollHistory});
+    const inputHistory = [{ url, scrollTop }, ...this.scrollHistory];
+    this.scrollHistory = uniq(inputHistory, (x: IHistoryEntry) => x.url).slice(
+      0,
+      SCROLL_HISTORY_SIZE,
+    );
   }
 
-  willNavigate (e: any) { // TODO: type
+  willNavigate = (e: any) => {
+    // TODO: type
     if (!this.isFrozen()) {
       return;
     }
 
-    const {navigate} = this.props;
-    const {url} = e;
+    const { navigate } = this.props;
+    const { url } = e;
 
     // sometimes we get double will-navigate events because life is fun?!
-    if (this.lastNavigationUrl === url && e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD) {
-      this.with((wv: Electron.WebViewElement) => {
+    if (
+      this.lastNavigationUrl === url &&
+      e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD
+    ) {
+      this.with((wv: Electron.WebviewTag) => {
         wv.stop();
         wv.loadURL(this.props.url);
       });
@@ -239,68 +310,33 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
 
     // our own little preventDefault
     // cf. https://github.com/electron/electron/issues/1378
-    this.with((wv) => {
+    this.with(wv => {
       wv.stop();
       wv.loadURL(this.props.url);
     });
-  }
+  };
 
-  newWindow (e: any) { // TODO: type
-    const {navigate} = this.props;
-    const {url} = e;
+  newWindow = (e: any) => {
+    // TODO: type
+    const { navigate } = this.props;
+    const { url } = e;
 
-    const background = (e.disposition === "background-tab");
+    const background = e.disposition === "background-tab";
     navigate("url/" + url, {}, background);
-  }
+  };
 
-  isFrozen () {
-    const {tabId} = this.props;
-    const frozen = !!staticTabData[tabId] || !tabId;
+  isFrozen() {
+    const { tab } = this.props;
+    const frozen = !!staticTabData[tab] || !tab;
     return frozen;
   }
 
-  setupItchInternal (session: Electron.Session) {
-    currentSession = session;
-
-    // requests to 'itch-internal' are used to communicate between web content & the app
-    let internalFilter = {
-      urls: ["https://itch-internal/*"],
-    };
-
-    session.webRequest.onBeforeRequest(internalFilter, (details, callback) => {
-      callback({cancel: true});
-
-      let parsed = urlParser.parse(details.url);
-      const {pathname, query} = parsed;
-      const params = querystring.parse(query);
-      const {tabId} = params;
-
-      switch (pathname) {
-        case "/open-devtools":
-          const {webview} = this;
-          if (webview && webview.getWebContents() && !webview.getWebContents().isDestroyed()) {
-            webview.getWebContents().openDevTools({mode: "detach"});
-          }
-          break;
-        case "/analyze-page":
-          this.analyzePage(tabId, params.url);
-          break;
-        case "/evolve-tab":
-          const {evolveTab} = this.props;
-          evolveTab({id: tabId, path: params.path});
-          break;
-        default:
-          break;
-      }
-    });
-  }
-
-  analyzePage (tabId: string, url: string) {
+  analyzePage(url: string) {
     if (this.isFrozen()) {
       return;
     }
 
-    const {evolveTab} = this.props;
+    const { tab, evolveTab } = this.props;
 
     const xhr = new XMLHttpRequest();
     xhr.responseType = "document";
@@ -318,9 +354,9 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
         if (parsed.search) {
           newPath += parsed.search;
         }
-        evolveTab({id: tabId, path: newPath});
+        evolveTab({ id: tab, path: newPath });
       } else {
-        evolveTab({id: tabId, path: `url/${url}`});
+        evolveTab({ id: tab, path: `url/${url}` });
       }
     };
     xhr.open("GET", url);
@@ -330,9 +366,9 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
     xhr.send();
   }
 
-  componentWillReceiveProps (nextProps: IProps) {
+  componentWillReceiveProps(nextProps: IProps) {
     if (nextProps.url) {
-      const {webview} = this;
+      const { webview } = this;
       if (!webview) {
         return;
       }
@@ -343,103 +379,116 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
     }
   }
 
-  componentDidMount () {
-    const webviewShell = this.refs.webviewShell;
-
+  componentDidMount() {
     if (DONT_SHOW_WEBVIEWS) {
       return;
     }
 
-    // cf. https://github.com/electron/electron/issues/6046
-    webviewShell.innerHTML = "<webview/>";
-    // woo please sign my cast
-    const wv = (webviewShell.querySelector("webview") as any) as Electron.WebViewElement;
-    this.webview = wv;
-
-    const {meId} = this.props;
-    const partition = partitionForUser(meId);
-
-    wv.partition = partition;
-    wv.plugins = "on";
-    wv.preload = injectPath("itchio-monkeypatch");
-
     const callbackSetup = () => {
-      wv.addEventListener("did-start-loading", this.didStartLoading.bind(this));
-      wv.addEventListener("did-stop-loading", this.didStopLoading.bind(this));
-      wv.addEventListener("will-navigate", this.willNavigate.bind(this));
-      wv.addEventListener("did-navigate", this.didNavigate.bind(this));
-      wv.addEventListener("did-navigate-in-page", this.didNavigate.bind(this));
-      wv.addEventListener("page-title-updated", this.pageTitleUpdated.bind(this));
-      wv.addEventListener("page-favicon-updated", this.pageFaviconUpdated.bind(this));
-      wv.addEventListener("new-window", this.newWindow.bind(this));
+      this.webview.addEventListener("did-start-loading", this.didStartLoading);
+      this.webview.addEventListener("did-stop-loading", this.didStopLoading);
+      this.webview.addEventListener("will-navigate", this.willNavigate);
+      this.webview.addEventListener("did-navigate", this.didNavigate);
+      this.webview.addEventListener("did-navigate-in-page", this.didNavigate);
+      this.webview.addEventListener(
+        "page-title-updated",
+        this.pageTitleUpdated,
+      );
+      this.webview.addEventListener(
+        "page-favicon-updated",
+        this.pageFaviconUpdated,
+      );
+      this.webview.addEventListener("new-window", this.newWindow);
       this.domReady();
 
-      createContextMenu(wv, {
+      createContextMenu(this.webview, this.props.intl, {
         navigate: this.props.navigate,
       });
 
       // otherwise, back button is active and brings us back to 'about:blank'
-      wv.clearHistory();
-      wv.removeEventListener("dom-ready", callbackSetup);
+      this.webview.clearHistory();
+      this.webview.removeEventListener("dom-ready", callbackSetup);
 
-      wv.addEventListener("did-stop-loading", (e) => {
-        if (wv.src === "about:blank") {
+      this.webview.addEventListener("did-stop-loading", e => {
+        if (this.webview.src === "about:blank") {
           return;
         }
-        this.updateBrowserState({firstLoad: false});
+        this.updateBrowserState({ firstLoad: false });
       });
     };
-    wv.addEventListener("dom-ready", callbackSetup);
+    this.webview.addEventListener("dom-ready", callbackSetup);
 
-    const {tabId} = this.props;
-    wv.addEventListener("dom-ready", () => {
-      wv.executeJavaScript(`window.__itchInit && window.__itchInit(${JSON.stringify(tabId)})`);
+    const { tab } = this.props;
+    this.webview.addEventListener("dom-ready", () => {
+      this.webview.executeJavaScript(
+        `window.__itchInit && window.__itchInit(${JSON.stringify(tab)})`,
+        false,
+      );
     });
 
-    wv.src = "about:blank";
+    this.webview.src = "about:blank";
   }
 
-  render () {
-    const {tabId, tabData, tabPath, controls, active} = this.props;
+  render() {
+    const { tab, visible, tabPath, tabData, controls, meId } = this.props;
+    const partition = partitionForUser(meId);
 
-    const {browserState} = this.state;
+    const { browserState } = this.state;
 
     const frozen = this.isFrozen();
     const controlProps: IBrowserControlProperties = {
-      tabId,
+      tab,
       tabPath,
       tabData,
       browserState,
-      goBack: this.goBack.bind(this),
-      goForward: this.goForward.bind(this),
-      stop: this.stop.bind(this),
-      reload: this.reload.bind(this),
-      openDevTools: this.openDevTools.bind(this),
-      loadURL: this.loadUserURL.bind(this),
+      goBack: this.goBack,
+      goForward: this.goForward,
+      stop: this.stop,
+      reload: this.reload,
+      openDevTools: this.openDevTools,
+      loadURL: this.loadUserURL,
       frozen,
-      active,
+      active: visible,
     };
 
     let context: React.ReactElement<any> = null;
     if (controls === "game") {
-      context = <GameBrowserContext {...controlProps}/>;
+      context = <GameBrowserContext {...controlProps} />;
     }
 
-    const shellClasses = classNames("webview-shell", {
-      ["first-load"]: this.state.browserState.firstLoad,
+    const shellClasses = classNames({
+      fresh: this.state.browserState.firstLoad,
     });
 
-    return <div className="browser-meat">
-      <BrowserBar {...controlProps}/>
-      <div className="browser-main">
-        <div className={shellClasses} ref="webviewShell"></div>
+    return (
+      <BrowserMeatContainer>
+        <TitleBar tab={tab} />
+        <BrowserBar {...controlProps} />
+        <BrowserMain>
+          <WebviewShell className={shellClasses}>
+            {DONT_SHOW_WEBVIEWS
+              ? null
+              : <webview
+                  is
+                  partition={partition}
+                  plugins="on"
+                  preload={getInjectPath("itchio")}
+                  src="about:blank"
+                  ref={wv => (this.webview = wv)}
+                  sandbox={true}
+                />}
+          </WebviewShell>
+        </BrowserMain>
         {context}
-      </div>
-    </div>;
+      </BrowserMeatContainer>
+    );
   }
 
-  with (cb: (wv: Electron.WebViewElement, wc: Electron.WebContents) => void, opts = {insist: false}) {
-    const {webview} = this;
+  with(
+    cb: (wv: Electron.WebviewTag, wc: Electron.WebContents) => void,
+    opts = { insist: false },
+  ) {
+    const { webview } = this;
     if (!webview) {
       return;
     }
@@ -456,76 +505,70 @@ export class BrowserMeat extends React.Component<IProps & IDerivedProps & I18nPr
     cb(webview, webContents);
   }
 
-  openDevTools () {
-    this.with((wv: Electron.WebViewElement, wc: Electron.WebContents) => wc.openDevTools({mode: "detach"}));
-  }
+  openDevTools = () => {
+    this.with((wv: Electron.WebviewTag, wc: Electron.WebContents) =>
+      wc.openDevTools({ mode: "detach" }),
+    );
+  };
 
-  stop () {
-    this.with((wv) => wv.stop());
-  }
+  stop = () => {
+    this.with(wv => wv.stop());
+  };
 
-  reload () {
-    this.with((wv) => {
+  reload = () => {
+    this.with(wv => {
       wv.reload();
     });
-    const {tabId, tabReloaded} = this.props;
-    tabReloaded({id: tabId});
-  }
+    const { tab, tabReloaded } = this.props;
+    tabReloaded({ id: tab });
+  };
 
-  goBack () {
-    this.with((wv) => {
+  goBack = () => {
+    this.with(wv => {
       if (!wv.canGoBack()) {
         return;
       }
-      this.setState({
-        wentBackOrForward: true,
-      });
+      this.wentBackOrForward = true;
       wv.goBack();
     });
-  }
+  };
 
-  goForward () {
-    this.with((wv) => {
+  goForward = () => {
+    this.with(wv => {
       if (!wv.canGoForward()) {
         return;
       }
-      this.setState({
-        wentBackOrForward: true,
-      });
+      this.wentBackOrForward = true;
       wv.goForward();
     });
-  }
+  };
 
-  async loadUserURL (input: string) {
+  loadUserURL = async (input: string) => {
     const url = await transformUrl(input);
     await this.loadURL(url);
-  }
+  };
 
-  async loadURL (url: string) {
-    const {navigate} = this.props;
+  async loadURL(url: string) {
+    const { navigate } = this.props;
 
     if (navigation.isAppSupported(url) && this.isFrozen()) {
       navigate(`url/${url}`);
     } else {
-      const browserState = {...this.state.browserState, url};
-      this.setState({browserState});
+      const browserState = { ...this.state.browserState, url };
+      this.setState({ browserState });
 
-      const {webview} = this;
-      if (webview) {
+      const { webview } = this;
+      if (webview && webview.getWebContents()) {
         webview.loadURL(url);
       }
     }
   }
 }
 
-export type ControlsType = "generic" | "game" | "user";
+export type ControlsType = "generic" | "game";
 
-interface IProps {
-  active: boolean;
+interface IProps extends IMeatProps {
   url: string;
-  tabPath: string;
-  tabData: ITabData;
-  tabId: string;
   controls: ControlsType;
 }
 
@@ -539,21 +582,18 @@ interface IDerivedProps {
   tabDataFetched: typeof actions.tabDataFetched;
   tabReloaded: typeof actions.tabReloaded;
   tabLoading: typeof actions.tabLoading;
+
+  intl: InjectedIntl;
 }
 
-interface IBrowserMeatState {
-  // FIXME: currently we're using '?' everywhere because @types/react is dumb
-  // and doesn't account for `setState` making a shallow merge, not a set
-  // (so the types can lack properties)
-  // TODO: regularly check if it's been fixed.
-  browserState?: IBrowserState;
-  scrollHistory?: IHistoryEntry[];
-  wentBackOrForward?: boolean;
+interface IState {
+  browserState: IBrowserState;
 }
 
-export default connect<IProps>(BrowserMeat, {
+export default connect<IProps>(injectIntl(BrowserMeat), {
   state: createStructuredSelector({
-    meId: (state: IAppState) => (state.session.credentials.me || { id: "anonymous" }).id,
+    meId: (state: IAppState) =>
+      (state.session.credentials.me || { id: "anonymous" }).id,
     proxy: (state: IAppState) => state.system.proxy,
     proxySource: (state: IAppState) => state.system.proxySource,
   }),

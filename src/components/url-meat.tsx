@@ -1,70 +1,89 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
 
-import {pathToId} from "../util/navigation";
-import urlParser from "../util/url";
+import env from "../env";
+
+import { pathPrefix, pathToId } from "../util/navigation";
 import urls from "../constants/urls";
 
-import BrowserMeat, {ControlsType} from "./browser-meat";
+import { IMeatProps } from "./meats/types";
+
+import BrowserMeat, { ControlsType } from "./browser-meat";
 import * as querystring from "querystring";
 
-import {ITabData} from "../types";
+const emptyObj = {};
 
-export class UrlMeat extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
-  constructor (props: IProps & IDerivedProps & I18nProps) {
+export default class UrlMeat extends React.PureComponent<IProps, IState> {
+  constructor(props: IProps) {
     super();
     this.state = {
       active: props.visible || !props.tabData.restored,
     };
   }
 
-  render () {
-    const {path, tabData = {}, tabId, visible} = this.props;
-    const {active} = this.state;
-
-    let url = tabData.url || "about:blank";
-    let controls: ControlsType = "generic";
-
-    if (/^url/.test(path)) {
-      url = path.replace(/^url\//, "");
-    } else if (/^games/.test(path)) {
-      const gameId = +pathToId(path);
-      const game = (tabData.games || {})[gameId];
-      if (game) {
-        url = game.url;
-        const parsed = urlParser.parse(url);
-        if (parsed.search) {
-          url += parsed.search;
-        }
-        controls = "game";
-      }
-    } else if (/^users/.test(path)) {
-      const userId = +pathToId(path);
-      const user = (tabData.users || {})[userId];
-      if (user) {
-        url = user.url;
-        controls = "user";
-      }
-    } else if (/^collection/.test(path)) {
-      const collectionId = +pathToId(path);
-      url = urls.itchio + "/c/" + collectionId + "/x";
-    } else if (/^search/.test(path)) {
-      const q = pathToId(path);
-      url = urls.itchio + "/search?" + querystring.stringify({q});
-    } else if (/^featured/.test(path)) {
-      url = urls.itchio + "/";
-    }
-
+  render() {
+    const { active } = this.state;
     if (!active) {
       return null;
     }
 
-    return <BrowserMeat key={tabId} url={url} tabId={tabId} tabPath={path}
-      tabData={tabData} controls={controls} active={visible}/>;
+    const { tab } = this.props;
+    const { url, controls } = this.getUrlAndControls();
+
+    return (
+      <BrowserMeat
+        url={url}
+        tab={tab}
+        {...this.props as any}
+        controls={controls}
+      />
+    );
   }
 
-  componentWillReceiveProps (props: IProps) {
+  getUrlAndControls(): IUrlAndControls {
+    const { tab, tabData, tabPath } = this.props;
+
+    const tabUrl = tabData.url;
+
+    switch (tab) {
+      case "featured":
+        if (env.name === "test") {
+          return { url: "about:blank", controls: "generic" };
+        } else {
+          return { url: urls.itchio + "/", controls: "generic" };
+        }
+      default:
+        const prefix = pathPrefix(tabPath);
+        const suffix = pathToId(tabPath);
+        switch (prefix) {
+          case "url":
+            return { url: suffix, controls: "generic" };
+          case "users":
+            const users = tabData.users || emptyObj;
+            const user = users[suffix];
+            if (user) {
+              return { url: tabUrl || user.url, controls: "generic" };
+            } else {
+              return { url: tabUrl, controls: "generic" };
+            }
+          case "games":
+            const games = tabData.games || emptyObj;
+            const game = games[suffix];
+            if (game) {
+              return { url: tabUrl || game.url, controls: "game" };
+            } else {
+              return { url: tabUrl, controls: "generic" };
+            }
+          case "search":
+            const url =
+              urls.itchio + "/search?" + querystring.stringify({ q: suffix });
+            return { url, controls: "generic" };
+          default:
+            return { url: tabUrl || "about:blank", controls: "generic" };
+        }
+    }
+  }
+
+  componentWillReceiveProps(props: IProps) {
     if (props.visible && !this.state.active) {
       this.setState({
         active: true,
@@ -73,22 +92,13 @@ export class UrlMeat extends React.Component<IProps & IDerivedProps & I18nProps,
   }
 }
 
-interface IProps {
-  visible: boolean;
-  path: string;
-  tabId: string;
+interface IUrlAndControls {
+  url: string;
+  controls: ControlsType;
 }
 
-interface IDerivedProps {
-  tabData: ITabData;
-}
+interface IProps extends IMeatProps {}
 
 interface IState {
   active: boolean;
 }
-
-export default connect<IProps>(UrlMeat, {
-  state: (state, props) => ({
-    tabData: state.session.navigation.tabData[props.tabId],
-  }),
-});

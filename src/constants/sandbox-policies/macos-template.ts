@@ -1,4 +1,3 @@
-
 // This templates generates a sandbox policy file suitable for
 // running relatively-untrusted apps via itch.
 

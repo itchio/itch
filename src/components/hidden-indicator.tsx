@@ -1,28 +1,50 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+import { connect } from "./connect";
 
 import * as actions from "../actions";
-import {dispatcher} from "../constants/action-types";
+import { dispatcher } from "../constants/action-types";
 
-import Icon from "./icon";
+import IconButton from "./basics/icon-button";
 
-class HiddenIndicator extends React.Component<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, tab, count, clearFilters} = this.props;
+import styled from "./styles";
+import { darken } from "polished";
+
+import format, { formatString } from "./format";
+import { InjectedIntl, injectIntl } from "react-intl";
+
+const HiddenIndicatorDiv = styled.div`
+  background: ${props => props.theme.meatBackground};
+  box-shadow: 0 0 2px 0 ${props => darken(0.2, props.theme.meatBackground)};
+  border-radius: 4px 0 0 0;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  padding: 8px;
+  color: ${props => props.theme.secondaryText};
+
+  display: flex;
+  align-items: center;
+`;
+
+class HiddenIndicator extends React.PureComponent<IProps & IDerivedProps> {
+  render() {
+    const { intl, tab, count, clearFilters } = this.props;
 
     if (count === 0) {
       return null;
     }
 
-    return <div className="hidden-count">
-      {t("grid.hidden_count", {count})}
-      {" "}
-      <span className="clear-filters" data-rh-at="top" data-rh={t("grid.clear_filters")}
-          onClick={() => clearFilters({tab})}>
-        <Icon icon="delete"/>
-      </span>
-    </div>;
+    return (
+      <HiddenIndicatorDiv>
+        <IconButton
+          className="indicator-clear-filters"
+          icon="delete"
+          hint={formatString(intl, ["grid.clear_filters"])}
+          onClick={() => clearFilters({ tab })}
+        />{" "}
+        {format(["grid.hidden_count", { count }])}
+      </HiddenIndicatorDiv>
+    );
   }
 }
 
@@ -33,10 +55,12 @@ interface IProps {
 
 interface IDerivedProps {
   clearFilters: typeof actions.clearFilters;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(HiddenIndicator, {
-  dispatch: (dispatch) => ({
+export default connect<IProps>(injectIntl(HiddenIndicator), {
+  dispatch: dispatch => ({
     clearFilters: dispatcher(dispatch, actions.clearFilters),
   }),
 });

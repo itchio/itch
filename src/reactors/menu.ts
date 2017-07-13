@@ -1,105 +1,101 @@
+import { Watcher } from "./watcher";
 
-import {Watcher} from "./watcher";
+import { Menu } from "electron";
 
-import {Menu} from "electron";
-
-import {map} from "underscore";
-import {createSelector} from "reselect";
+import { map } from "underscore";
+import { createSelector } from "reselect";
 
 import * as clone from "clone";
-import localizer from "../localizer";
+import { t } from "../format";
+
+import { IRuntime, ILocalizedString, IMenuItem, IMenuTemplate } from "../types";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-import os from "../util/os";
-const macos = os.itchPlatform() === "osx";
-
-import {IStore, IAppState, II18nState} from "../types";
-
-type IMenuItem = Electron.MenuItemOptions;
-type IMenuTemplate = IMenuItem[];
+import { IStore, IAppState, ISessionCredentialsState } from "../types";
 
 let refreshSelector: (state: IAppState) => void;
-const makeRefreshSelector = (store: IStore) => createSelector(
-  (state: IAppState) => state.system,
-  (state: IAppState) => state.session.credentials,
-  (system, credentials) => {
-    setImmediate(() =>
-      store.dispatch(actions.refreshMenu({system, credentials})),
-    );
-  },
-);
 
 let applySelector: (state: IAppState) => void;
-const makeApplySelector = (store: IStore) => createSelector(
-  (state: IAppState) => state.ui.menu.template,
-  (state: IAppState) => state.i18n,
-  (template, i18n) => {
-    setImmediate(() => {
-      // electron gotcha: buildFromTemplate mutates its argument
-      const menu = Menu.buildFromTemplate(clone(fleshOutTemplate(template, i18n, store)));
-      Menu.setApplicationMenu(menu);
-    });
-  },
-);
 
 interface IMenuItemPayload {
   role?: string;
-  label?: string;
+  localizedLabel?: ILocalizedString;
 }
 
-function convertMenuAction (payload: IMenuItemPayload) {
-  const {role, label} = payload;
+function convertMenuAction(payload: IMenuItemPayload, runtime: IRuntime) {
+  const { role, localizedLabel } = payload;
 
   switch (role) {
-    case "about": return actions.openUrl({url: urls.appHomepage});
+    case "about":
+      return actions.openUrl({ url: urls.appHomepage });
     default: // muffin
   }
 
-  switch (label) {
-    case "sidebar.new_tab": return actions.newTab({});
-    case "menu.file.close_tab": return macos ? actions.closeTabOrAuxWindow({}) : actions.closeTab({id: null});
-    case "menu.file.close_all_tabs": return actions.closeAllTabs({});
-    case "menu.file.close_window": return actions.hideWindow({});
-    case "menu.file.quit": return actions.quitWhenMain({});
-    case "menu.file.preferences": return actions.navigate("preferences");
-    case "menu.view.downloads": return actions.navigate("downloads");
-    case "menu.view.history": return actions.navigate("history");
-    case "menu.account.change_user": return actions.changeUser({});
-    // TODO: change to proper about tab/window
-    case "menu.help.about": return actions.openUrl({url: urls.appHomepage});
-    case "menu.help.view_terms": return actions.openUrl({url: urls.termsOfService});
-    case "menu.help.view_license": return actions.openUrl({url: `${urls.itchRepo}/blob/master/LICENSE`});
-    case "menu.help.check_for_update": return actions.checkForSelfUpdate({});
-    case "menu.help.report_issue": return actions.openUrl({url: `${urls.itchRepo}/issues/new`});
-    case "menu.help.search_issue": return actions.openUrl({url: `${urls.itchRepo}/search?type=Issues`});
-    case "menu.help.release_notes": return actions.openUrl({url: `${urls.itchRepo}/releases`});
+  const labelString = localizedLabel ? localizedLabel[0] : null;
+
+  switch (labelString) {
+    case "sidebar.new_tab":
+      return actions.newTab({});
+    case "menu.file.close_tab":
+      return runtime.platform === "osx"
+        ? actions.closeTabOrAuxWindow({})
+        : actions.closeCurrentTab({});
+    case "menu.file.close_all_tabs":
+      return actions.closeAllTabs({});
+    case "menu.file.close_window":
+      return actions.hideWindow({});
+    case "menu.file.quit":
+      return actions.quitWhenMain({});
+    case "menu.file.preferences":
+      return actions.navigate("preferences");
+    case "menu.view.downloads":
+      return actions.navigate("downloads");
+    case "menu.account.change_user":
+      return actions.changeUser({});
+    case "menu.help.view_terms":
+      return actions.openUrl({ url: urls.termsOfService });
+    case "menu.help.view_license":
+      return actions.openUrl({ url: `${urls.itchRepo}/blob/master/LICENSE` });
+    case "menu.help.check_for_update":
+      return actions.checkForSelfUpdate({});
+    case "menu.help.report_issue":
+      return actions.openUrl({ url: `${urls.itchRepo}/issues/new` });
+    case "menu.help.search_issue":
+      return actions.openUrl({ url: `${urls.itchRepo}/search?type=Issues` });
+    case "menu.help.release_notes":
+      return actions.openUrl({ url: `${urls.itchRepo}/releases` });
     default:
       return null;
   }
 }
 
-function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: IStore) {
-  const t = localizer.getT(i18n.strings, i18n.lang);
+export function fleshOutTemplate(
+  template: IMenuTemplate,
+  store: IStore,
+  runtime: IRuntime,
+) {
+  const { i18n } = store.getState();
 
   const visitNode = (input: IMenuItem) => {
     if (input.type === "separator") {
       return input;
     }
 
-    const {label, role = null, enabled = true} = input;
-    const node = clone(input);
+    const { localizedLabel, role = null, enabled = true } = input;
+    const node = clone(input) as Electron.MenuItemConstructorOptions;
 
-    node.label = t(label);
-    const menuAction = convertMenuAction({label, role});
-    if (enabled && menuAction) {
-      node.click = (e) => {
-        store.dispatch(menuAction);
-      };
+    if (localizedLabel) {
+      node.label = t(i18n, localizedLabel);
     }
-    if (label === "crash.test") {
-      node.click = function () { setTimeout(function () { throw new Error("crash test!"); }, 500); };
+    if (enabled) {
+      node.click = e => {
+        const menuAction = convertMenuAction({ localizedLabel, role }, runtime);
+        if (menuAction) {
+          store.dispatch(menuAction);
+        }
+      };
     }
 
     if (node.submenu) {
@@ -112,17 +108,271 @@ function fleshOutTemplate (template: IMenuTemplate, i18n: II18nState, store: ISt
   return map(template, visitNode);
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher, runtime: IRuntime) {
   watcher.onAll(async (store, action) => {
-    const state = store.getState();
+    const currentState = store.getState();
+
     if (!refreshSelector) {
-      refreshSelector = makeRefreshSelector(store);
+      refreshSelector = createSelector(
+        (state: IAppState) => state.system,
+        (state: IAppState) => state.session.credentials,
+        (system, credentials) => {
+          const template = computeMenuTemplate(
+            system.appVersion,
+            credentials,
+            runtime,
+          );
+          setImmediate(() => {
+            try {
+              store.dispatch(actions.menuChanged({ template }));
+            } catch (e) {
+              console.error(`Couldn't dispatch new menu: ${e}`);
+            }
+          });
+        },
+      );
     }
-    refreshSelector(state);
+    refreshSelector(currentState);
 
     if (!applySelector) {
-      applySelector = makeApplySelector(store);
+      applySelector = createSelector(
+        (state: IAppState) => state.ui.menu.template,
+        (state: IAppState) => state.i18n,
+        (template, i18n) => {
+          setImmediate(() => {
+            // electron gotcha: buildFromTemplate mutates its argument
+            const fleshed = fleshOutTemplate(template, store, runtime);
+            const menu = Menu.buildFromTemplate(clone(fleshed));
+            Menu.setApplicationMenu(menu);
+          });
+        },
+      );
     }
-    applySelector(state);
+    applySelector(currentState);
   });
+}
+
+interface IAllTemplates {
+  mainMac: IMenuItem;
+  file: IMenuItem;
+  fileMac: IMenuItem;
+  edit: IMenuItem;
+  view: IMenuItem;
+  accountLoggedOut: IMenuItem;
+  account: IMenuItem;
+  help: IMenuItem;
+}
+
+function computeMenuTemplate(
+  appVersion: string,
+  credentials: ISessionCredentialsState,
+  runtime: IRuntime,
+) {
+  const menus: IAllTemplates = {
+    mainMac: {
+      // no need for a label, it'll always be app name
+      submenu: [
+        {
+          role: "about",
+        },
+        {
+          type: "separator",
+        },
+        {
+          localizedLabel: ["menu.file.preferences"],
+          accelerator: "CmdOrCtrl+,",
+        },
+        {
+          type: "separator",
+        },
+        {
+          role: "hide",
+        },
+        {
+          role: "hideothers",
+        },
+        {
+          role: "unhide",
+        },
+        {
+          type: "separator",
+        },
+        {
+          localizedLabel: ["menu.file.quit"],
+          accelerator: "CmdOrCtrl+Q",
+        },
+      ],
+    },
+
+    file: {
+      localizedLabel: ["menu.file.file"],
+      submenu: [
+        {
+          localizedLabel: ["sidebar.new_tab"],
+          accelerator: "CmdOrCtrl+T",
+        },
+        {
+          type: "separator",
+        },
+        {
+          localizedLabel: ["menu.file.preferences"],
+          accelerator: "CmdOrCtrl+,",
+        },
+        {
+          type: "separator",
+        },
+        {
+          localizedLabel: ["menu.file.close_tab"],
+          accelerator: "CmdOrCtrl+W",
+        },
+        {
+          localizedLabel: ["menu.file.close_all_tabs"],
+          accelerator: "CmdOrCtrl+Shift+W",
+        },
+        {
+          localizedLabel: ["menu.file.close_window"],
+          accelerator: runtime.platform === "osx" ? "Cmd+Alt+W" : "Alt+F4",
+        },
+        {
+          localizedLabel: ["menu.file.quit"],
+          accelerator: "CmdOrCtrl+Q",
+        },
+      ],
+    },
+
+    fileMac: {
+      localizedLabel: ["menu.file.file"],
+      submenu: [
+        {
+          localizedLabel: ["sidebar.new_tab"],
+          accelerator: "CmdOrCtrl+T",
+        },
+        {
+          type: "separator",
+        },
+        {
+          localizedLabel: ["menu.file.close_tab"],
+          accelerator: "CmdOrCtrl+W",
+        },
+        {
+          localizedLabel: ["menu.file.close_all_tabs"],
+          accelerator: "CmdOrCtrl+Shift+W",
+        },
+        {
+          localizedLabel: ["menu.file.close_window"],
+          accelerator: runtime.platform === "osx" ? "Cmd+Alt+W" : "Alt+F4",
+        },
+      ],
+    },
+
+    edit: {
+      localizedLabel: ["menu.edit.edit"],
+      visible: false,
+      submenu: [
+        {
+          localizedLabel: ["menu.edit.cut"],
+          accelerator: "CmdOrCtrl+X",
+          role: "cut",
+        },
+        {
+          localizedLabel: ["menu.edit.copy"],
+          accelerator: "CmdOrCtrl+C",
+          role: "copy",
+        },
+        {
+          localizedLabel: ["menu.edit.paste"],
+          accelerator: "CmdOrCtrl+V",
+          role: "paste",
+        },
+        {
+          localizedLabel: ["menu.edit.select_all"],
+          accelerator: "CmdOrCtrl+A",
+          role: "selectall",
+        },
+      ],
+    },
+
+    view: {
+      localizedLabel: ["menu.view.view"],
+      submenu: [
+        {
+          localizedLabel: ["menu.view.downloads"],
+          accelerator: "CmdOrCtrl+J",
+        },
+      ],
+    },
+
+    accountLoggedOut: {
+      localizedLabel: ["menu.account.account"],
+      submenu: [
+        {
+          localizedLabel: ["menu.account.not_logged_in"],
+          enabled: false,
+        },
+      ],
+    },
+
+    account: {
+      localizedLabel: ["menu.account.account"],
+      submenu: [
+        {
+          localizedLabel: ["menu.account.change_user"],
+        },
+      ],
+    },
+
+    help: {
+      localizedLabel: ["menu.help.help"],
+      role: "help",
+      submenu: [
+        {
+          localizedLabel: ["menu.help.view_terms"],
+        },
+        {
+          localizedLabel: ["menu.help.view_license"],
+        },
+        {
+          label: `Version ${appVersion}`,
+          enabled: false,
+        },
+        {
+          localizedLabel: ["menu.help.check_for_update"],
+        },
+        {
+          type: "separator",
+        },
+        {
+          localizedLabel: ["menu.help.report_issue"],
+        },
+        {
+          localizedLabel: ["menu.help.search_issue"],
+        },
+        {
+          type: "separator",
+        },
+        {
+          localizedLabel: ["menu.help.release_notes"],
+        },
+      ],
+    },
+  };
+
+  const template: IMenuTemplate = [];
+  if (runtime.platform === "osx") {
+    template.push(menus.mainMac);
+    template.push(menus.fileMac);
+  } else {
+    template.push(menus.file);
+  }
+  template.push(menus.edit);
+  template.push(menus.view);
+  if (credentials.key) {
+    template.push(menus.account);
+  } else {
+    template.push(menus.accountLoggedOut);
+  }
+
+  template.push(menus.help);
+
+  return template;
 }

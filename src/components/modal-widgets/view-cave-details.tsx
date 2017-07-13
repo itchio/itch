@@ -1,10 +1,9 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "../connect";
+import { connect } from "../connect";
 
-import {IModalWidgetProps} from "./modal-widget";
+import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
-import {ICaveRecord} from "../../types";
+import { ICave } from "../../db/models/cave";
 
 import colors from "../../constants/colors";
 
@@ -31,28 +30,32 @@ const theme = {
   base0F: "#cc6633",
 };
 
-export class ViewCaveDetails extends React.Component<IProps & IDerivedProps & I18nProps, void> {
-  render () {
+export class ViewCaveDetails extends React.PureComponent<IProps> {
+  render() {
     const params = this.props.modal.widgetParams as IViewCaveDetailsParams;
 
-    return <div className="modal-widget">
-      <p>Local cave record:</p>
+    return (
+      <ModalWidgetDiv>
+        <p>Local cave record:</p>
 
-      <div className="json-tree-container">
-        <JSONTree data={params.currentCave} theme={theme} invertTheme={false}/>
-      </div>
-    </div>;
+        <div className="json-tree-container">
+          <JSONTree
+            data={params.currentCave}
+            theme={theme}
+            invertTheme={false}
+          />
+        </div>
+      </ModalWidgetDiv>
+    );
   }
 }
 
 export interface IViewCaveDetailsParams {
-  currentCave: ICaveRecord;
+  currentCave: ICave;
 }
 
 interface IProps extends IModalWidgetProps {
   params: IViewCaveDetailsParams;
 }
-
-interface IDerivedProps {}
 
 export default connect<IProps>(ViewCaveDetails);

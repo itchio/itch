@@ -1,10 +1,4 @@
 
-cache:
-  # per-job caching (per-branch would be wasteful)
-  key: "$CI_BUILD_NAME"
-  paths:
-    - node_modules
-
 stages:
   - build # tsc, node-sass etc.
   - package # .rpm, .deb, .dmg., .zip
@@ -19,7 +13,6 @@ book:
     - npm install babel-cli babel-preset-es2017
     - node_modules/.bin/babel-node --presets es2017 --only 'release/*' release/ci-book.js
 
-# Unit tests
 test-linux:
   stage: build
   tags:
@@ -28,6 +21,36 @@ test-linux:
     - release/ci-test.js
   except:
     - tags
+  artifacts:
+    when: always
+    paths:
+      - screenshots
+
+test-darwin:
+  stage: build
+  tags:
+    - darwin
+  script:
+    - release/ci-test.js
+  except:
+    - tags
+  artifacts:
+    when: always
+    paths:
+      - screenshots
+
+test-windows:
+  stage: build
+  tags:
+    - windows
+  script:
+    - release/ci-test.js
+  except:
+    - tags
+  artifacts:
+    when: always
+    paths:
+      - screenshots
 
 # I18n check
 i18n-check:

@@ -1,5 +1,4 @@
-
-import {ISessionCredentialsState} from "../../types";
+import { ISessionCredentialsState } from "../../types";
 import * as actions from "../../actions";
 import reducer from "../reducer";
 
@@ -8,9 +7,9 @@ const initialState = {
   me: null,
 } as ISessionCredentialsState;
 
-export default reducer<ISessionCredentialsState>(initialState, (on) => {
+export default reducer<ISessionCredentialsState>(initialState, on => {
   on(actions.loginSucceeded, (state, action) => {
-    const {key, me} = action.payload;
+    const { key, me } = action.payload;
     return {
       ...state,
       key,

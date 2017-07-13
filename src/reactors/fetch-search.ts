@@ -1,36 +1,66 @@
+import { Watcher } from "./watcher";
+import { DB } from "../db";
+import { knex } from "../db/querier";
 
-import {Watcher} from "./watcher";
-
-import mklog from "../util/log";
-const log = mklog("reactors/fetch");
-import {opts} from "../logger";
-
-import fetch from "../util/fetch";
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "fetch-search" });
 
 import * as actions from "../actions";
+import { indexBy, pluck } from "underscore";
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.search, async (store, action) => {
     const query: string = action.payload.query;
     store.dispatch(actions.searchStarted({}));
 
     try {
-      const credentials = store.getState().session.credentials;
-      if (!credentials.key) {
-        log(opts, "Not logged in, can\'t search");
-        return;
-      }
-
       if (!query) {
-        log(opts, "Clearing query");
-        store.dispatch(actions.searchFetched({query: "", results: null}));
+        store.dispatch(actions.searchFetched({ query: "", results: null }));
         return;
       }
 
-      const results = await fetch.search(credentials, query);
-      store.dispatch(actions.searchFetched({query, results}));
+      const equalTerm = query.toLowerCase();
+      const containsTerm = `%${equalTerm}%`;
+      const startTerm = `${equalTerm}%`;
+      const localGames = db.games.all(k =>
+        k
+          .where(knex.raw("lower(title) like ?", containsTerm))
+          .orWhere(knex.raw("lower(shortText) like ?", containsTerm))
+          .orderByRaw("lower(title) = ? DESC, lower(title) like ? DESC", [
+            equalTerm,
+            startTerm,
+          ])
+          .limit(5),
+      );
+      logger.info(
+        `local games results: ${JSON.stringify(localGames, null, 2)}`,
+      );
+      store.dispatch(
+        actions.searchFetched({
+          query,
+          results: {
+            gameResults: {
+              entities: {
+                games: indexBy(localGames, "id"),
+              },
+              result: {
+                gameIds: pluck(localGames, "id"),
+              },
+            },
+            userResults: {
+              entities: {
+                users: {},
+              },
+              result: {
+                userIds: [],
+              },
+            },
+          },
+        }),
+      );
     } catch (e) {
       // TODO: relay search error (network offline, etc.)
+      logger.error(e.stack);
     } finally {
       store.dispatch(actions.searchFinished({}));
     }

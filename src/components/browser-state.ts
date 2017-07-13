@@ -1,5 +1,4 @@
-
-import {ITabData} from "../types";
+import { ITabData } from "../types";
 
 export interface IBrowserState {
   canGoBack: boolean;
@@ -10,7 +9,7 @@ export interface IBrowserState {
 }
 
 export interface IBrowserControlProperties {
-  tabId: string;
+  tab: string;
   tabPath: string;
   tabData: ITabData;
   browserState: IBrowserState;

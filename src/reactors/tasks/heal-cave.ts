@@ -1,68 +1,62 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import {getUserMarket, getGlobalMarket} from "../market";
-import pathmaker from "../../util/pathmaker";
-import mklog from "../../util/log";
-const log = mklog("revert-cave");
+import * as paths from "../../os/paths";
 
-import {ICaveRecord, IDownloadKey} from "../../types";
-import {findWhere} from "underscore";
+import { t } from "../../format";
+import { DB } from "../../db";
+import { fromJSONField } from "../../db/json-field";
+import Context from "../../context";
 
-import localizer from "../../localizer";
+import { IUpload } from "../../types";
 
-export default function (watcher: Watcher) {
+import lazyGetGame from "../lazy-get-game";
+
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.healCave, async (store, action) => {
     const i18n = store.getState().i18n;
-    const t = localizer.getT(i18n.strings, i18n.lang);
 
-    const {caveId} = action.payload;
-    const logger = pathmaker.caveLogger(caveId);
+    const { caveId } = action.payload;
     const opts = {
-      logger,
+      logger: paths.caveLogger(caveId),
     };
 
     try {
-      const globalMarket = getGlobalMarket();
-
-      const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
+      const cave = db.caves.findOneById(caveId);
       if (!cave) {
-        log(opts, `Cave not found, can't heal: ${caveId}`);
+        opts.logger.warn(`Cave not found, can't heal: ${caveId}`);
         return;
       }
 
       if (!cave.buildId) {
-        log(opts, `Cave isn't wharf-enabled, can't heal: ${caveId}`);
+        opts.logger.warn(`Cave isn't wharf-enabled, can't heal: ${caveId}`);
         return;
       }
 
-      let upload = cave.uploads[cave.uploadId];
-      upload = {
-        ...upload,
+      const ctx = new Context(store, db);
+      const game = await lazyGetGame(ctx, cave.gameId);
+
+      const upload = {
+        ...fromJSONField<IUpload>(cave.upload),
         buildId: cave.buildId,
       };
 
-      const market = getUserMarket();
+      store.dispatch(
+        actions.statusMessage({
+          message: t(i18n, ["status.healing"]),
+        }),
+      );
 
-      const downloadKey = cave.downloadKey ||
-        findWhere(market.getEntities<IDownloadKey>("downloadKeys"), {gameId: cave.game.id});
-
-      store.dispatch(actions.statusMessage({
-        message: t("status.healing"),
-      }));
-
-      store.dispatch(actions.queueDownload({
-        cave: cave,
-        game: cave.game,
-        upload,
-        downloadKey,
-        reason: "heal",
-        destPath: null,
-        heal: true,
-      }));
+      store.dispatch(
+        actions.queueDownload({
+          caveId: cave.id,
+          game,
+          upload,
+          reason: "heal",
+        }),
+      );
     } finally {
-      logger.close();
+      opts.logger.close();
     }
   });
 }

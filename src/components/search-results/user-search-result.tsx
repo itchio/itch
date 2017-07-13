@@ -1,34 +1,45 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
-import GenericSearchResult from "./generic-search-result";
+import GenericSearchResult, {
+  searchResultStyle,
+} from "./generic-search-result";
+import * as actions from "../../actions";
 
-import {IUserRecord} from "../../types";
+import { IUser } from "../../db/models/user";
+import styled from "../styles";
 
-class UserSearchResult extends GenericSearchResult<IUserSearchResultProps, void> {
-  render () {
-    const {user, onClick, chosen} = this.props;
-    const {displayName, username, stillCoverUrl, coverUrl} = user;
+const UserSearchResultDiv = styled.div`
+  ${searchResultStyle} img {
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
+  }
+`;
 
-    const resultClasses = classNames("search-result", "user-search-result", {
-      chosen,
-    });
+class UserSearchResult extends GenericSearchResult<IUserSearchResultProps> {
+  render() {
+    const { user, onClick, chosen } = this.props;
+    const { displayName, username, stillCoverUrl, coverUrl } = user;
 
-    return <div className={resultClasses} onClick={onClick}>
-      <img src={stillCoverUrl || coverUrl}/>
-      <div className="title-block">
-        <h4>{displayName || username}</h4>
-      </div>
-    </div>;
+    return (
+      <UserSearchResultDiv onClick={onClick} className={classNames({ chosen })}>
+        <img src={stillCoverUrl || coverUrl} />
+        <div className="title-block">
+          <h4>
+            {displayName || username}
+          </h4>
+        </div>
+      </UserSearchResultDiv>
+    );
   }
 
-  getPath(): string {
-    return `users/${this.props.user.id}`;
+  getNavigateAction() {
+    return actions.navigateToUser(this.props.user);
   }
 }
 
 interface IUserSearchResultProps {
-  user: IUserRecord;
+  user: IUser;
   onClick: () => void;
   chosen: boolean;
   active: boolean;

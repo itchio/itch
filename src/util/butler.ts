@@ -1,40 +1,53 @@
-
 import * as ospath from "path";
-import {partial} from "underscore";
+import { partial } from "underscore";
 
-import noop from "./noop";
-import spawn from "./spawn";
-import sf from "./sf";
+import spawn from "../os/spawn";
+import * as sf from "../os/sf";
 import ibrew from "./ibrew";
 
-import {EventEmitter} from "events";
-import {IProgressListener, IProgressInfo, ExeArch} from "../types";
+import Context from "../context";
+import { IProgressInfo, ExeArch } from "../types";
 
-import mklog, {Logger} from "./log";
-const log = mklog("butler");
+import { Logger, devNull } from "../logger";
+import urls from "../constants/urls";
 
-const showDebug = (process.env.MY_BUTLER_IS_MY_FRIEND === "1");
-const dumpAllOutput = (process.env.MY_BUTLER_IS_MY_ENEMY === "1");
+const showDebug = process.env.MY_BUTLER_IS_MY_FRIEND === "1";
+const dumpAllOutput = process.env.MY_BUTLER_IS_MY_ENEMY === "1";
 
-interface IButlerOpts {
-   emitter: EventEmitter;
-   onProgress?: IProgressListener;
-   logger?: Logger;
-   elevate?: boolean;
+export interface IButlerResult extends IButlerOpts {
+  value: any;
 }
 
-function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, token: string) {
-  const {onProgress = noop} = opts;
+type IResultListener = (result: IButlerResult) => void;
+
+interface IButlerOpts {
+  logger: Logger;
+  ctx: Context;
+  onResult?: IResultListener;
+  elevate?: boolean;
+}
+
+type IErrorListener = (err: Error) => void;
+
+interface IParseButlerStatusOpts {
+  onError: IErrorListener;
+  onResult: IResultListener;
+  ctx: Context;
+  logger: Logger;
+}
+
+function parseButlerStatus(opts: IParseButlerStatusOpts, token: string) {
+  const { ctx, onError, onResult, logger } = opts;
 
   if (dumpAllOutput) {
-    console.log(`butler stdout: ${token}`); // tslint:disable-line:no-console
+    logger.debug(`butler stdout: ${token}`);
   }
 
   let status: any;
   try {
     status = JSON.parse(token);
   } catch (err) {
-    log(opts, `Couldn't parse line of butler output: ${token}`);
+    logger.warn(`Couldn't parse line of butler output: ${token}`);
     return;
   }
 
@@ -43,34 +56,51 @@ function parseButlerStatus (opts: IButlerOpts, onerror: (err: Error) => void, to
       if (!showDebug && status.level === "debug") {
         return;
       }
-      return log(opts, `butler: ${status.message}`);
+      return logger.info(`butler: ${status.message}`);
     }
     case "progress": {
-      return onProgress(status as IProgressInfo);
+      return ctx.emitProgress(status as IProgressInfo);
     }
     case "error": {
-      log(opts, `butler error: ${status.message}`);
-      return onerror(new Error(status.message));
+      logger.error(`butler error: ${status.message}`);
+      return onError(new Error(status.message));
     }
     case "result": {
-      opts.emitter.emit("result", status);
+      onResult(status);
       return;
     }
     default:
-      // muffin
+    // muffin
   }
 }
 
-async function butler (opts: IButlerOpts, command: string, commandArgs: string[]): Promise<void> {
-  const {emitter} = opts;
-  const onerror = (e: Error) => { err = e; };
+async function butler<T>(
+  opts: IButlerOpts,
+  command: string,
+  commandArgs: string[],
+): Promise<T> {
+  const { ctx, logger } = opts;
+
+  let value: any = null;
   let err = null as Error;
 
-  let args = [ "--json", command, ...commandArgs ];
+  let args = ["--address", urls.itchio, "--json", command, ...commandArgs];
 
-  const onToken = partial(parseButlerStatus, opts, onerror);
+  const onToken = partial(
+    parseButlerStatus,
+    {
+      onError: (e: Error) => {
+        err = e;
+      },
+      onResult: (result: IButlerResult) => {
+        value = result.value;
+      },
+      ctx,
+      logger,
+    } as IParseButlerStatusOpts,
+  );
   const onErrToken = (line: string) => {
-    log(opts, `butler stderr: ${line}`);
+    logger.info(`butler stderr: ${line}`);
   };
 
   let realCommand = "butler";
@@ -84,8 +114,8 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
     args,
     onToken,
     onErrToken,
-    emitter,
-    logger: (dumpAllOutput || showDebug) ? opts.logger : null,
+    ctx,
+    logger: dumpAllOutput || showDebug ? opts.logger : devNull,
   });
 
   if (err) {
@@ -95,41 +125,15 @@ async function butler (opts: IButlerOpts, command: string, commandArgs: string[]
   if (code !== 0) {
     throw new Error(`butler exited with error code ${code}`);
   }
-}
-
-interface ISizeofOpts {
-  path: string;
-}
-
-interface IButlerResult {
-  value: any;
-}
-
-async function sizeof (opts: ISizeofOpts): Promise<any> {
-  const {path} = opts;
-  const args = [path];
-
-  let value: any;
-
-  const emitter = new EventEmitter();
-  emitter.on("result", (result: IButlerResult) => {
-    value = result.value;
-  });
-
-  const butlerOpts = {
-    emitter,
-  };
-
-  await butler(butlerOpts, "sizeof", args);
 
   return value;
 }
 
-interface IFileOpts {
+interface IFileOpts extends IButlerOpts {
   path: string;
 }
 
-interface IFileResult {
+interface IFileResult extends IButlerOpts {
   type?: string;
   numFiles?: number;
   numDirs?: number;
@@ -137,24 +141,10 @@ interface IFileResult {
   uncompressedSize?: number;
 }
 
-async function file (opts: IFileOpts): Promise<IFileResult> {
-  const {path} = opts;
+async function file(opts: IFileOpts): Promise<IFileResult> {
+  const { path } = opts;
   const args = [path];
-
-  let value: IFileResult = {};
-
-  const emitter = new EventEmitter();
-  emitter.on("result", (result: IButlerResult) => {
-    value = result.value;
-  });
-
-  const butlerOpts = {
-    emitter,
-  };
-
-  await butler(butlerOpts, "file", args);
-
-  return value;
+  return await butler<IFileResult>(opts, "file", args);
 }
 
 interface ICpOpts extends IButlerOpts {
@@ -164,8 +154,8 @@ interface ICpOpts extends IButlerOpts {
 }
 
 /* Copy file ${src} to ${dest} */
-async function cp (opts: ICpOpts) {
-  const {src, dest} = opts;
+async function cp(opts: ICpOpts) {
+  const { src, dest } = opts;
   const args = [src, dest];
   if (opts.resume) {
     args.push("--resume");
@@ -180,8 +170,8 @@ interface IDlOpts extends IButlerOpts {
 }
 
 /* Downloads file at ${url} to ${dest} */
-async function dl (opts: IDlOpts) {
-  const {url, dest} = opts;
+async function dl(opts: IDlOpts) {
+  const { url, dest } = opts;
   const args = [url, dest];
 
   await sf.mkdir(ospath.dirname(dest));
@@ -196,8 +186,8 @@ interface IApplyOpts extends IButlerOpts {
 }
 
 /* Apply a wharf patch at ${patchPath} in-place into ${outPath}, while checking with ${signaturePath} */
-async function apply (opts: IApplyOpts) {
-  const {patchPath, outPath, signaturePath} = opts;
+async function apply(opts: IApplyOpts) {
+  const { patchPath, outPath, signaturePath } = opts;
   let args = [patchPath, "--inplace", outPath, "--signature", signaturePath];
 
   if (opts.archivePath) {
@@ -213,8 +203,8 @@ interface IUntarOpts extends IButlerOpts {
 }
 
 /* Extracts tar archive ${archivePath} into directory ${destPath} */
-async function untar (opts: IUntarOpts) {
-  const {archivePath, destPath} = opts;
+async function untar(opts: IUntarOpts) {
+  const { archivePath, destPath } = opts;
   const args = [archivePath, "-d", destPath];
 
   return await butler(opts, "untar", args);
@@ -226,27 +216,27 @@ interface IUnzipOpts extends IButlerOpts {
 }
 
 /* Extracts zip archive ${archivePath} into directory ${destPath} */
-async function unzip (opts: IUnzipOpts) {
-  const {archivePath, destPath} = opts;
+async function unzip(opts: IUnzipOpts) {
+  const { archivePath, destPath } = opts;
   const args = [archivePath, "-d", destPath];
 
   return await butler(opts, "unzip", args);
 }
 
 /* rm -rf ${path} */
-async function wipe (path: string, opts = {} as IButlerOpts) {
+async function wipe(path: string, opts: IButlerOpts) {
   const args = [path];
   return await butler(opts, "wipe", args);
 }
 
 /* mkdir -p ${path} */
-async function mkdir (path: string, opts = {} as IButlerOpts) {
+async function mkdir(path: string, opts: IButlerOpts) {
   const args = [path];
   return await butler(opts, "mkdir", args);
 }
 
 /* rsync -a ${src} ${dst} */
-async function ditto (src: string, dst: string, opts = {} as IButlerOpts) {
+async function ditto(src: string, dst: string, opts: IButlerOpts) {
   const args = [src, dst];
   return await butler(opts, "ditto", args);
 }
@@ -256,9 +246,9 @@ interface IVerifyOpts extends IButlerOpts {
 }
 
 /* Verifies ${dir} against ${signature}, heals against opts.heal if given */
-async function verify (signature: string, dir: string, opts = {} as IVerifyOpts) {
+async function verify(signature: string, dir: string, opts: IVerifyOpts) {
   const args = [signature, dir];
-  const {heal} = opts;
+  const { heal } = opts;
   if (heal) {
     args.push("--heal");
     args.push(heal);
@@ -271,9 +261,12 @@ interface IInstallPrereqsOpts extends IButlerOpts {
 }
 
 /* Installs prerequisites as specified by ${planPath} */
-async function installPrereqs (planPath: string, opts = {} as IInstallPrereqsOpts) {
+async function installPrereqs(
+  planPath: string,
+  opts = {} as IInstallPrereqsOpts,
+) {
   let args = [planPath];
-  const {pipe} = opts;
+  const { pipe } = opts;
   if (pipe) {
     args.push("--pipe");
     args.push(pipe);
@@ -294,24 +287,10 @@ export interface IExePropsResult {
   arch?: ExeArch;
 }
 
-async function exeprops (opts: IExePropsOpts): Promise<IExePropsResult> {
-  const {path} = opts;
+async function exeprops(opts: IExePropsOpts): Promise<IExePropsResult> {
+  const { path } = opts;
   const args = [path];
-
-  let value: IExePropsResult;
-
-  const emitter = new EventEmitter();
-  emitter.on("result", (result: IButlerResult) => {
-    value = result.value;
-  });
-
-  const butlerOpts = {
-    emitter,
-  };
-
-  await butler(butlerOpts, "exeprops", args);
-
-  return value;
+  return await butler<IExePropsResult>(opts, "exeprops", args);
 }
 
 interface IElfPropsOpts extends IButlerOpts {
@@ -322,33 +301,26 @@ export interface IElfPropsResult {
   arch?: ExeArch;
 }
 
-async function elfprops (opts: IElfPropsOpts): Promise<IElfPropsResult> {
-  const {path} = opts;
+async function elfprops(opts: IElfPropsOpts): Promise<IElfPropsResult> {
+  const { path } = opts;
   const args = [path];
-
-  let value: IElfPropsResult;
-
-  const emitter = new EventEmitter();
-  emitter.on("result", (result: IButlerResult) => {
-    value = result.value;
-  });
-
-  const butlerOpts = {
-    emitter,
-  };
-
-  await butler(butlerOpts, "elfprops", args);
-
-  return value;
+  return await butler<IElfPropsResult>(opts, "elfprops", args);
 }
 
-export interface IConfigureResult extends IButlerOpts {
+export interface IConfigureResult {
   basePath: string;
   totalSize: number;
   candidates?: ICandidate[];
 }
 
-export type Flavor = "linux" | "macos" | "windows" | "script" | "jar" | "html" | "love";
+export type Flavor =
+  | "linux"
+  | "macos"
+  | "windows"
+  | "script"
+  | "jar"
+  | "html"
+  | "love";
 
 export type Arch = "386" | "amd64";
 
@@ -365,8 +337,8 @@ export interface IConfigureOpts extends IButlerOpts {
   archFilter?: string;
 }
 
-async function configure (opts: IConfigureOpts): Promise<IConfigureResult> {
-  const {path} = opts;
+async function configure(opts: IConfigureOpts): Promise<IConfigureResult> {
+  const { path, logger } = opts;
   let args = [path];
   if (opts.osFilter) {
     args = [...args, "--os-filter", opts.osFilter];
@@ -375,28 +347,17 @@ async function configure (opts: IConfigureOpts): Promise<IConfigureResult> {
     args = [...args, "--arch-filter", opts.archFilter];
   }
 
-  let value: IConfigureResult;
-
-  const emitter = new EventEmitter();
-  emitter.on("result", (result: IButlerResult) => {
-    value = result.value;
-  });
-
-  const butlerOpts = {
-    emitter,
-  };
-
-  log(opts, `Launching butler with args: ${JSON.stringify(args)}`);
-  await butler(butlerOpts, "configure", args);
-
-  return value;
+  logger.info(`launching butler with args: ${JSON.stringify(args)}`);
+  return await butler<IConfigureResult>(opts, "configure", args);
 }
 
-async function sanityCheck (): Promise<boolean> {
+async function sanityCheck(ctx: Context): Promise<boolean> {
   try {
     await spawn.assert({
+      ctx,
       command: "butler",
       args: ["--version"],
+      logger: devNull,
     });
     return true;
   } catch (err) {
@@ -405,7 +366,19 @@ async function sanityCheck (): Promise<boolean> {
 }
 
 export default {
-  cp, dl, apply, untar, unzip, wipe, mkdir, ditto, verify,
-  sizeof, file, installPrereqs, sanityCheck, exeprops, elfprops,
+  cp,
+  dl,
+  apply,
+  untar,
+  unzip,
+  wipe,
+  mkdir,
+  ditto,
+  verify,
+  file,
+  installPrereqs,
+  sanityCheck,
+  exeprops,
+  elfprops,
   configure,
 };

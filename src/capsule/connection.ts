@@ -1,12 +1,11 @@
+import { flatbuffers } from "./flatbuffers";
 
-import {flatbuffers} from "./flatbuffers";
-
-import sf from "../util/sf";
-import {ReadStream, WriteStream} from "fs";
+import { createWriteStream, createReadStream } from "../os/sf";
+import { ReadStream, WriteStream } from "fs";
 
 interface IBuilderFunc {
   (builder: flatbuffers.Builder): void;
-};
+}
 
 export default class Connection {
   closed: boolean;
@@ -15,7 +14,7 @@ export default class Connection {
   readable: ReadStream;
   writable: WriteStream;
 
-  constructor (pipeName: string) {
+  constructor(pipeName: string) {
     let prefix = "/tmp/";
     if (process.platform === "win32") {
       prefix = "\\\\.\\pipe\\";
@@ -25,11 +24,11 @@ export default class Connection {
     this.closed = false;
   }
 
-  async connect () {
-    this.writable = sf.createWriteStream(this.writePath, {
+  async connect() {
+    this.writable = createWriteStream(this.writePath, {
       defaultEncoding: "binary",
     });
-    this.readable = sf.createReadStream(this.readPath, {
+    this.readable = createReadStream(this.readPath, {
       encoding: "binary",
     });
   }
