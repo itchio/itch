@@ -1,14 +1,29 @@
 
 # Distributing Windows builds
 
-The Windows ecosystem is — to be perfectly honest — a beautiful mess, but it is
-an easy target for game developers.
-
 ## Common game engines (Unity, etc.)
 
 Game engines like Unity take care of everything. Their export is usually a folder
-that you can just zip up and upload to itch.io, the app will install and run them,
-no questions asked.
+that you can push with [butler][], or zip up and upload via the itch.io dashboard.
+
+The app will install and run those without any issues.
+
+## Ship a portable build
+
+Instead of shipping an installer (`MyGame_setup.exe` or `MyGame.msi`), consider simply
+shipping a .zip archive of your game.
+
+Better yet, use [butler](https://itch.io/docs/butler/) to push your release folder
+directly. It'll take care of compression and patching for you.
+
+For a longer explanation of why portable builds matter, read the [Single files](https://itch.io/docs/butler/single-files.html) page
+of the butler documentation.
+
+## Prerequisites (Visual C++, .NET, XNA)
+
+If your game depends the Visual C++ Runtime, the .NET Framework, the XNA Framework
+or so, please look at the [Prerequisites](../prereqs/README.md) feature of the itch app - it can install
+those for your players before the first launc of your game.
 
 ## Don't bother with 64-bit builds
 
@@ -17,40 +32,17 @@ be some technical reasons for your game to require a 64-bit binary, in which cas
 reading this page is probably a waste of your time and you should just apply the
 knowledge you already have.
 
-## Avoid installers
-
-Installers are useful for applications that require special setup steps or
-integration into the system, like services, or administrative software, or
-system-wide utilities.
-
-However, games are usually self-contained experiences that can live entirely
-in user-owned folders without messing with the system itself. Hence, in *most cases*,
-installers are superfluous and should be avoided
-
-Instead, a simple .zip archive containing the executable, its assets, and the
-required DLLs (see the `Dependency hell` section below) should be enough for both
-a human (Windows has had built-in .zip support for a while) and the itch app.
-
-The exception, of course, is some dependencies which come in the form of
-redistributables, such as the .NET Framework, the Visual C++ Runtime, etc.
-
-Since the app has no built-in mechanism to install those *yet*, it is reasonable
-to distribute an installer for those reasons, for the time being.
-
-*Reminder: those are suggestions for best compatibility. Do what you want, it's your game.*
+## Supported installer types
 
 Some installers allow *silent installation*. In this case, the itch app detects
 them and tries to silently install to the [install location][] specified by the
 user.
 
-In particular, those installers are supported:
+In particular, these installers are supported:
 
   * InnoSetup installers
   * NSIS installers
-  * Adobe Air installers (with [caveats][air-issues])
-  * Some InstallShield self-extracting archives
-
-[air-issues]: https://github.com/itchio/itch/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+adobe+air
+  * InstallShield self-extracting archives (some versions)
 
 Uninstalling games from the app will also attempt to run the uninstaller properly,
 but if it fails, will resort to wiping the installation folder, which the user
@@ -71,9 +63,7 @@ its runtime.
 
 [depends]: http://www.dependencywalker.com/
 
-## Special mentions of the jury
-
-Some libraries have well-known gotchas: an incomplete list follows.
+## Libraries with known gotchas
 
 ### OpenAL
 
