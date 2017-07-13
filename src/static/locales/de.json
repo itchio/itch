@@ -425,5 +425,6 @@
     "web.context_menu.copy": "Kopieren",
     "web.context_menu.paste": "Einfügen",
     "web.context_menu.open_in_new_tab": "In neuem Tab öffnen",
-    "web.context_menu.copy_link": "Link kopieren"
+    "web.context_menu.copy_link": "Link kopieren",
+    "game.install.libraries_missing": "Einige benötigte {{arch}}  Bibliotheken fehlen: {{libraries}}"
 }

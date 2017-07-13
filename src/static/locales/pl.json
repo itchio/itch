@@ -416,5 +416,6 @@
     "table.column.name": "Nazwa",
     "table.column.play_time": "Czas gry",
     "table.column.last_played": "Ostatnio grano",
-    "table.column.published": "Opublikowano"
+    "table.column.published": "Opublikowano",
+    "game.install.libraries_missing": "Brakuje wymaganych {{arch}} bibliotek: {{libraries}}"
 }
