@@ -49,4 +49,25 @@ suite(__filename, s => {
     sel({ ...model });
     t.same(count, 3);
   });
+
+  s.case(
+    "memoization prevents recompute when input selectors results are ===",
+    t => {
+      let count = 0;
+      const sel = createSelector(
+        (obj: any) => obj.i18n,
+        (obj: any) => obj.session.credentials,
+        a => {
+          count++;
+        },
+      );
+      t.same(count, 0);
+      let model = { i18n: {}, session: { credentials: {} }, somethingElse: 2 };
+      sel(model);
+      model = { ...model, somethingElse: 5 };
+      sel(model);
+      model = { ...model, somethingElse: 9 };
+      t.same(count, 1);
+    },
+  );
 });

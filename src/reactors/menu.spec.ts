@@ -1,10 +1,10 @@
 import suite, { TestWatcher, immediate } from "../test-suite";
 import * as actions from "../actions";
-import { IRuntime } from "../types";
+import { IRuntime, IMenuTemplate } from "../types";
 
 import "electron";
 import menu, { fleshOutTemplate } from "./menu";
-import { findWhere } from "underscore";
+import { find, findWhere } from "underscore";
 
 suite(__filename, s => {
   s.case("builds the menu", async t => {
@@ -15,8 +15,11 @@ suite(__filename, s => {
     };
     menu(w, winRuntime);
 
+    let findMenu = (template: IMenuTemplate, name: string) =>
+      find(template, x => x.localizedLabel && x.localizedLabel[0] === name);
+
     // fire a dummy action so the menu updates
-    await w.dispatch(
+    await w.dispatchAndWaitImmediate(
       actions.localeDownloadEnded({
         lang: "en",
         resources: {
@@ -24,23 +27,21 @@ suite(__filename, s => {
         },
       }),
     );
-    await immediate();
 
     let template = w.store.getState().ui.menu.template;
-    let account = findWhere(template, { label: "menu.account.account" });
-    t.same(account.submenu[0].label, "menu.account.not_logged_in");
+    let account = findMenu(template, "menu.account.account");
+    t.same(account.submenu[0].localizedLabel, ["menu.account.not_logged_in"]);
 
-    await w.dispatch(
+    await w.dispatchAndWaitImmediate(
       actions.loginSucceeded({
         key: "hello",
         me: {} as any,
       }),
     );
-    await immediate();
 
     template = w.store.getState().ui.menu.template;
-    account = findWhere(template, { label: "menu.account.account" });
-    t.same(account.submenu[0].label, "menu.account.change_user");
+    account = findMenu(template, "menu.account.account");
+    t.same(account.submenu[0].localizedLabel, ["menu.account.change_user"]);
 
     let changeUserDispatched = false;
     w.on(actions.changeUser, async () => {
@@ -48,9 +49,7 @@ suite(__filename, s => {
     });
 
     let fleshed = fleshOutTemplate(template, w.store, winRuntime);
-    let accountItem = findWhere(fleshed, {
-      label: "menu.account.account",
-    });
+    const accountItem = findWhere(fleshed, { label: "menu.account.account" });
     accountItem.submenu[0].click();
     t.true(changeUserDispatched);
 
@@ -59,7 +58,7 @@ suite(__filename, s => {
     });
     t.ok(helpItem, "menu items are translated in english");
 
-    await w.dispatch(
+    await w.dispatchAndWaitImmediate(
       actions.localeDownloadEnded({
         lang: "fr",
         resources: {
@@ -67,12 +66,11 @@ suite(__filename, s => {
         },
       }),
     );
-    await w.dispatch(
+    await w.dispatchAndWaitImmediate(
       actions.languageChanged({
         lang: "fr-FR",
       }),
     );
-    await immediate();
 
     fleshed = fleshOutTemplate(template, w.store, winRuntime);
     helpItem = findWhere(fleshed, {

@@ -21,11 +21,11 @@ let applySelector: (state: IAppState) => void;
 
 interface IMenuItemPayload {
   role?: string;
-  label?: ILocalizedString;
+  localizedLabel?: ILocalizedString;
 }
 
 function convertMenuAction(payload: IMenuItemPayload, runtime: IRuntime) {
-  const { role, label } = payload;
+  const { role, localizedLabel } = payload;
 
   switch (role) {
     case "about":
@@ -33,7 +33,7 @@ function convertMenuAction(payload: IMenuItemPayload, runtime: IRuntime) {
     default: // muffin
   }
 
-  const labelString = Array.isArray(label) ? label[0] : label;
+  const labelString = localizedLabel ? localizedLabel[0] : null;
 
   switch (labelString) {
     case "sidebar.new_tab":
@@ -83,15 +83,15 @@ export function fleshOutTemplate(
       return input;
     }
 
-    const { label, role = null, enabled = true } = input;
+    const { localizedLabel, role = null, enabled = true } = input;
     const node = clone(input) as Electron.MenuItemConstructorOptions;
 
-    if (input.localizedLabel) {
-      node.label = t(i18n, input.localizedLabel);
+    if (localizedLabel) {
+      node.label = t(i18n, localizedLabel);
     }
     if (enabled) {
       node.click = e => {
-        const menuAction = convertMenuAction({ label, role }, runtime);
+        const menuAction = convertMenuAction({ localizedLabel, role }, runtime);
         if (menuAction) {
           store.dispatch(menuAction);
         }
@@ -117,13 +117,17 @@ export default function(watcher: Watcher, runtime: IRuntime) {
         (state: IAppState) => state.system,
         (state: IAppState) => state.session.credentials,
         (system, credentials) => {
+          const template = computeMenuTemplate(
+            system.appVersion,
+            credentials,
+            runtime,
+          );
           setImmediate(() => {
-            const template = computeMenuTemplate(
-              system.appVersion,
-              credentials,
-              runtime,
-            );
-            store.dispatch(actions.menuChanged({ template }));
+            try {
+              store.dispatch(actions.menuChanged({ template }));
+            } catch (e) {
+              console.error(`Couldn't dispatch new menu: ${e}`);
+            }
           });
         },
       );
