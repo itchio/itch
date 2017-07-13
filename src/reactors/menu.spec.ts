@@ -1,4 +1,4 @@
-import suite, { TestWatcher, immediate } from "../test-suite";
+import suite, { TestWatcher } from "../test-suite";
 import * as actions from "../actions";
 import { IRuntime, IMenuTemplate } from "../types";
 
