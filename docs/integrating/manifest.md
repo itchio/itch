@@ -42,29 +42,7 @@ both to humans and computers alike.
 itch can ensure a certain number of prerequisites / redistributables are installed before
 your app is launched.
 
-Any number of prerequisites can be listed in an array named `prereqs`:
-
-```
-[[prereqs]]
-name = "vcredist-2010-x86"
-
-[[prereqs]]
-name = "xna-4.0"
-```
-
-These are completely optional - they're not required for your manifest file to be valid.
-
-The list of valid names is as follows:
-
-  * `vcredist-2010-x86`: Microsoft Visual C++ 2010 Redistributable (x86)
-  * `vcredist-2010-x64`: Microsoft Visual C++ 2010 Redistributable (x64)
-  * `vcredist-2015-x86`: Microsoft Visual C++ 2015 Update 3 Redistributable (x86)
-  * `vcredist-2015-x64`: Microsoft Visual C++ 2015 Update 3 Redistributable (x64)
-
-If your game needs a prerequisite not on the list, please [open an issue](https://github.com/itchio/itch/issues/new)
-so we can add it to our repository.
-
-Prerequisites are not tied to any particular actions — they'll be checked on any .exe launch.
+Read the [prerequisites documentation](./prereqs/README.md) to get started.
 
 ## Actions
 

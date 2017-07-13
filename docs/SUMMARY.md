@@ -30,6 +30,10 @@
     * [Web builds](integrating/platforms/web.md)
   * [How updates work](integrating/updates.md)
   * [App manifests](integrating/manifest.md)
+  * [Prerequisites](integrating/prereqs/README.md)
+    * [Visual C++ Runtime](integrating/prereqs/vc.md)
+    * [.NET Framework](integrating/prereqs/dotnet.md)
+    * [XNA Framework](integrating/prereqs/xna.md)
   * [API integration](integrating/api/README.md)
 
 * [Contributor guide](developing/README.md)
