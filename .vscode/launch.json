@@ -76,6 +76,25 @@
             "sourceMaps": false,
             "protocol": "inspector",
             "port": 9222
+        },
+        {
+            "name": "Unit Tests",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/src/main.js",
+            "stopOnEntry": false,
+            "args": ["--run-unit-tests", "--thorough"],
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                "."
+            ],
+            "env": {
+                "NODE_ENV": "test"
+            },
+            "console": "integratedTerminal",
+            "sourceMaps": true,
+            "protocol": "inspector"
         }
     ]
 }
