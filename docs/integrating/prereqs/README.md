@@ -19,7 +19,7 @@ path = "Game.exe"
 Each prerequisite you want just needs its own `[[prereqs]]` entry. For example, if
 your game depends on XNA 4.0 and Visual C++ 2010, you could ship the following manifest:
 
-```
+```toml
 [[actions]]
 name = "play"
 path = "Game.exe"
