@@ -12,10 +12,11 @@ npm-debug.log
 /app
 /test
 /tests
+/tmp
+/screenshots
 /.tscache
 /.awcache
 *.map
-tmp
 *.tmp.txt
 /butler
 
@@ -40,13 +41,6 @@ tmp
 /packages
 /*.app
 /*.dmg
-
-# ruby-specific stuff
-/.bundle
-/vendor/bundle
-
-# updated locales stuff
-/app/static/locales/*.remote.json
 
 # OS-specific junk
 .DS_Store

@@ -1,111 +1,112 @@
-
-import {createSelector, createStructuredSelector} from "reselect";
+import { createSelector, createStructuredSelector } from "reselect";
 import * as React from "react";
-import * as classNames from "classnames";
-import {connect, I18nProps} from "./connect";
+import { connect } from "./connect";
 
-import bob, {IRGBColor} from "../renderer-util/bob";
+import bob, { IRGBColor } from "../renderer-util/bob";
 
 import GameActions from "./game-actions";
 import GameStats from "./game-stats";
-import {pathToId} from "../util/navigation";
+import { pathToId } from "../util/navigation";
 
-import {findWhere} from "underscore";
+import { IGame } from "../db/models/game";
+import { ICaveSummary } from "../db/models/cave";
+import { IDownloadKey } from "../db/models/download-key";
 
-import {IDispatch, dispatcher} from "../constants/action-types";
-import {
-  IAppState, IGameRecord, ICaveRecord, IDownloadKey, ITabData,
-  IUserMarketState, IGlobalMarketState,
-} from "../types";
+import { IDispatch, dispatcher } from "../constants/action-types";
+import { IAppState, ITabData } from "../types";
 import * as actions from "../actions";
 
-import {IBrowserControlProperties} from "./browser-state";
+import { IBrowserControlProperties } from "./browser-state";
 import GameBrowserContextActions from "./game-browser-context-actions";
 
-export class GameBrowserContext extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
+import styled from "./styles";
+
+const BrowserContextDiv = styled.div`
+  background: ${props => props.theme.sidebarBackground};
+
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+
+  padding: 6px;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.16);
+  z-index: 50;
+  overflow-y: auto;
+  overflow-x: hidden;
+`;
+
+const GameActionsContainer = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-direction: row;
+  padding-right: 0;
+  height: auto;
+  align-items: stretch;
+  margin-left: 10px;
+`;
+
+export class GameBrowserContext extends React.PureComponent<
+  IProps & IDerivedProps,
+  IState
+> {
+  constructor() {
     super();
-    this.state = {
-      hover: false,
-    };
+    this.state = {};
   }
 
-  onContextMenu () {
-    const {game, openGameContextMenu} = this.props;
-    openGameContextMenu({game});
-  }
-
-  render () {
-    const barStyle = {};
-
-    const {browserState, game} = this.props;
-    const {loading} = browserState;
-    const barClasses = classNames("browser-context", "game-browser-context", {loading});
-
-    const {coverUrl, stillCoverUrl} = game;
-
-    // FIXME: DRY — duplicate code from HubItem
-    let gif: boolean;
-    const coverStyle = {} as React.CSSProperties;
-    if (coverUrl) {
-      if (this.state.hover) {
-        coverStyle.backgroundImage = `url('${coverUrl}')`;
-      } else {
-        if (stillCoverUrl) {
-          gif = true;
-          coverStyle.backgroundImage = `url('${stillCoverUrl}')`;
-        } else {
-          coverStyle.backgroundImage = `url('${coverUrl}')`;
-        }
-      }
+  render() {
+    const { game, cave, downloadKey } = this.props;
+    if (!game) {
+      return <div />;
     }
 
-    return <div className={barClasses} style={barStyle} onContextMenu={this.onContextMenu.bind(this)}>
-      <div className="cover" style={coverStyle}
-        onMouseEnter={this.onMouseEnter.bind(this)}
-        onMouseLeave={this.onMouseLeave.bind(this)}>
-      {gif
-        ? <span className="gif-marker">gif</span>
-        : ""
-      }
-      </div>
-      <GameStats game={game} mdash={false}/>
-      {this.gameActions()}
-    </div>;
+    return (
+      <BrowserContextDiv onContextMenu={this.onContextMenu}>
+        <GameStats
+          game={game}
+          cave={cave}
+          downloadKey={downloadKey}
+          mdash={true}
+        />
+        <GameActionsContainer>
+          {this.gameActions()}
+        </GameActionsContainer>
+      </BrowserContextDiv>
+    );
   }
 
-  gameActions () {
-    const {game} = this.props;
+  onContextMenu = () => {
+    const { game, openGameContextMenu } = this.props;
+    openGameContextMenu({ game });
+  };
+
+  gameActions() {
+    const { game } = this.props;
     if (!game) {
       return null;
     }
 
-    return <GameActions game={game} CustomSecondary={GameBrowserContextActions}/>;
+    return (
+      <GameActions game={game} CustomSecondary={GameBrowserContextActions} />
+    );
   }
 
-  componentWillReceiveProps () {
+  componentWillReceiveProps() {
     this.updateColor();
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.updateColor();
   }
 
-  updateColor () {
-    const {game} = this.props;
+  updateColor() {
+    const { game } = this.props;
     if (game) {
-      bob.extractPalette(game.coverUrl, (palette) => {
-        this.setState({dominantColor: bob.pick(palette)});
+      bob.extractPalette(game.coverUrl, palette => {
+        this.setState({ dominantColor: bob.pick(palette) });
       });
     }
-  }
-
-  onMouseEnter () {
-    this.setState({hover: true});
-  }
-
-  onMouseLeave () {
-    this.setState({hover: false});
   }
 }
 
@@ -114,53 +115,37 @@ interface IProps extends IBrowserControlProperties {}
 interface IDerivedProps {
   gameId: number;
 
-  game: IGameRecord;
-  cave?: ICaveRecord;
+  game: IGame;
+  cave?: ICaveSummary;
   downloadKey: IDownloadKey;
 
   openGameContextMenu: typeof actions.openGameContextMenu;
 }
 
-// optional everything because react typings is overzealous
-// TODO: check if still needed
 interface IState {
-  hover?: boolean;
   dominantColor?: IRGBColor;
 }
 
 interface IContextSelectorResult {
   gameId: number;
-  globalMarket: IGlobalMarketState;
-  userMarket: IUserMarketState;
   tabData: ITabData;
-}
-
-interface IGamesHolder {
-  games?: {
-    [gameId: string]: IGameRecord;
-  };
 }
 
 export default connect<IProps>(GameBrowserContext, {
   state: () => {
     const marketSelector = createStructuredSelector({
       gameId: (state: IAppState, props: IProps) => +pathToId(props.tabPath),
-      userMarket: (state: IAppState, props: IProps) => state.market,
-      globalMarket: (state: IAppState, props: IProps) => state.globalMarket,
       tabData: (state: IAppState, props: IProps) => props.tabData,
     });
 
-    return createSelector(
-      marketSelector,
-      (cs: IContextSelectorResult) => {
-        const getGame = (market: IGamesHolder) => ((market || {}).games || {})[cs.gameId];
-        const game = getGame(cs.userMarket) || getGame(cs.tabData);
-        const keys = (cs.userMarket || {} as IUserMarketState).downloadKeys || {};
-        const downloadKey = findWhere(keys, { gameId: cs.gameId });
-        const cave = cs.globalMarket.cavesByGameId[cs.gameId];
-        return { game, downloadKey, cave };
-      },
-    );
+    return createSelector(marketSelector, (cs: IContextSelectorResult) => {
+      const game = cs.tabData.games[cs.gameId];
+      // TODO: db
+      const downloadKey = null;
+      // TODO: db
+      const cave = null;
+      return { game, downloadKey, cave };
+    });
   },
   dispatch: (dispatch: IDispatch) => ({
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),

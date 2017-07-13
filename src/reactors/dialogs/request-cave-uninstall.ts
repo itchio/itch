@@ -1,47 +1,44 @@
-
-import {Watcher} from "../watcher";
+import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import * as invariant from "invariant";
+import lazyGetGame from "../lazy-get-game";
 
-import fetch from "../../util/fetch";
+import { DB } from "../../db";
+import Context from "../../context";
 
-import {ICaveRecord} from "../../types";
-
-// ¯\_(ツ)_/¯
-// TODO: use market state instead
-import {getGlobalMarket, getUserMarket} from "../../reactors/market";
-
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
-    const {caveId} = action.payload;
-    const credentials = store.getState().session.credentials;
-    const globalMarket = getGlobalMarket();
-    const userMarket = getUserMarket();
+    const { caveId } = action.payload;
 
-    const cave = globalMarket.getEntity<ICaveRecord>("caves", caveId);
-    invariant(cave, "cave to uninstall exists");
+    const cave = db.caves.findOneById(caveId);
+    if (!cave) {
+      return;
+    }
 
-    const game = await fetch.gameLazily(userMarket, credentials, cave.gameId, {game: cave.game});
-    invariant(game, "was able to fetch game properly");
-    const {title} = game;
+    const ctx = new Context(store, db);
+    const game = await lazyGetGame(ctx, cave.gameId);
 
-    store.dispatch(actions.openModal({
-      title: "",
-      message: ["prompt.uninstall.message", {title}],
-      buttons: [
-        {
-          label: ["prompt.uninstall.uninstall"],
-          action: actions.queueCaveUninstall({caveId}),
-          icon: "uninstall",
-        },
-        {
-          label: ["prompt.uninstall.reinstall"],
-          action: actions.queueCaveReinstall({caveId}),
-          icon: "repeat",
-        },
-        "cancel",
-      ],
-    }));
+    // FIXME: i18n - plus, that's generally bad
+    const title = game ? game.title : "this";
+
+    store.dispatch(
+      actions.openModal({
+        title: "",
+        message: ["prompt.uninstall.message", { title }],
+        buttons: [
+          {
+            label: ["prompt.uninstall.uninstall"],
+            action: actions.queueCaveUninstall({ caveId }),
+            icon: "uninstall",
+          },
+          {
+            label: ["prompt.uninstall.reinstall"],
+            action: actions.queueCaveReinstall({ caveId }),
+            icon: "repeat",
+          },
+          "cancel",
+        ],
+      }),
+    );
   });
 }

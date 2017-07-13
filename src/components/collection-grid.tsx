@@ -1,32 +1,43 @@
-
 import * as React from "react";
-import {connect} from "./connect";
+import { connect } from "./connect";
 
-import {map} from "underscore";
+import { map } from "underscore";
 import * as actions from "../actions";
 
-import {ICollectionRecordSet} from "../types";
-import {dispatcher} from "../constants/action-types";
+import { ICollectionSet } from "../types";
+import { dispatcher } from "../constants/action-types";
 
-export class CollectionGrid extends React.Component<IProps & IDerivedProps, void> {
-  render () {
-    const {collections} = this.props;
-    const {navigate} = this.props;
+import { fromJSONField } from "../db/json-field";
 
-    return <div>
-      {map(collections, (collection) => {
-        const {id, title} = collection;
+export class CollectionGrid extends React.PureComponent<
+  IProps & IDerivedProps
+> {
+  render() {
+    const { collections } = this.props;
+    const { navigate } = this.props;
 
-        return <div key={id} className="collection-hub-item" onClick={() => navigate(`collections/${id}`)}>
-          {title} ({(collection.gameIds || []).length})
-        </div>;
-      })}
-    </div>;
+    return (
+      <div>
+        {map(collections, collection => {
+          const { id, title } = collection;
+
+          return (
+            <div
+              key={id}
+              className="collection-hub-item"
+              onClick={() => navigate(`collections/${id}`)}
+            >
+              {title} ({fromJSONField<number[]>(collection.gameIds, []).length})
+            </div>
+          );
+        })}
+      </div>
+    );
   }
 }
 
 interface IProps {
-  collections: ICollectionRecordSet;
+  collections: ICollectionSet;
 }
 
 interface IDerivedProps {
@@ -34,7 +45,7 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(CollectionGrid, {
-  dispatch: (dispatch) => ({
+  dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
   }),
 });

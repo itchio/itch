@@ -1,68 +1,76 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 
 import * as bluebird from "bluebird";
 import ibrew from "../util/ibrew";
 
-import {map} from "underscore";
+import { map } from "underscore";
 
-import {
-  IStore,
-  ILocalizedString,
-} from "../types";
+import { IStore, ILocalizedString } from "../types";
+import { DB } from "../db";
+import Context from "../context";
 
 import * as actions from "../actions";
 
-import mklog from "../util/log";
-const log = mklog("reactors/setup");
-import logger, {opts} from "../logger";
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "setup" });
 
-async function fetch (store: IStore, name: string) {
+async function fetch(ctx: Context, name: string) {
   const opts = {
+    ctx,
     logger,
     onStatus: (icon: string, message: ILocalizedString) => {
-      store.dispatch(actions.setupStatus({icon, message}));
+      ctx.store.dispatch(actions.setupStatus({ icon, message }));
     },
   };
 
   await ibrew.fetch(opts, name);
 }
 
-async function setup (store: IStore) {
-  log(opts, "setup starting");
-  await fetch(store, "unarchiver");
-  log(opts, "unarchiver done");
-  await bluebird.all(map([
-    "butler",
-    "elevate",
-    "isolate",
-    "activate",
-    "firejail",
-    "dllassert",
-  ], async (name) => await fetch(store, name)));
-  log(opts, "all deps done");
+async function setup(store: IStore, db: DB) {
+  // TODO: implement lazy dependency install
+  const skipSetup = true;
+  if (skipSetup) {
+    logger.warn("skipping setup");
+    return;
+  }
+
+  const ctx = new Context(store, db);
+
+  logger.info("setup starting");
+  await fetch(ctx, "unarchiver");
+  logger.info("unarchiver done");
+  await bluebird.all(
+    map(
+      ["butler", "elevate", "isolate", "activate", "firejail", "dllassert"],
+      async name => await fetch(ctx, name),
+    ),
+  );
+  logger.info("all deps done");
   store.dispatch(actions.setupDone({}));
 }
 
-async function doSetup (store: IStore) {
+async function doSetup(store: IStore, db: DB) {
   try {
-    await setup(store);
+    await setup(store, db);
   } catch (e) {
-    const err = e.ibrew || e;
-    log(opts, "setup got error: ", err);
-    store.dispatch(actions.setupStatus({
-      icon: "error",
-      message: ["login.status.setup_failure", {error: (err.message || "" + err)}],
-    }));
+    logger.error("setup got error: ", e.stack);
+
+    store.dispatch(
+      actions.setupStatus({
+        icon: "error",
+        message: ["login.status.setup_failure", { error: e.message || "" + e }],
+        stack: e.stack,
+      }),
+    );
   }
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.boot, async (store, action) => {
-    await doSetup(store);
+    await doSetup(store, db);
   });
 
   watcher.on(actions.retrySetup, async (store, action) => {
-    await doSetup(store);
+    await doSetup(store, db);
   });
 }

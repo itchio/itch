@@ -4,13 +4,21 @@
   },
   "text/typescript": {
     "target": "es2017",
-    "lib": ["dom", "dom.iterable", "scripthost", "es6"],
+    "lib": ["dom", "es6"],
     "module": "commonjs",
-    "noImplicitAny": true,
     "experimentalDecorators": true,
     "noUnusedLocals": true,
-    "sourceMap": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
     "jsx": "react",
-    "noEmitOnError": true
+    "allowJs": true,
+    "skipLibCheck": true,
+    "coverage": {
+      "exclude": ["**/*.spec.ts"]
+    },
+    "babel": {
+      "presets": ["async-to-bluebird"],
+      "plugins": ["transform-es2015-modules-commonjs"]
+    }
   }
 }

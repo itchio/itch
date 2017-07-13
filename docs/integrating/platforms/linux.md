@@ -240,7 +240,7 @@ that you can rent for about 5 dollars a month. If you release new versions of yo
 game often, it might be interesting for you to set up some sort of Continuous Deployment
 infrastructure
 
-See how [we deploy itch continuously](../../hacking/continuous-deployment.md) for an example!
+See how [we deploy itch continuously](../../developing/continuous-deployment.md) for an example!
 
 ### 3. Get testers!
 

@@ -1,6 +1,5 @@
-
 import * as ospath from "path";
-import sf from "../sf";
+import * as sf from "../../os/sf";
 
 export interface ISkipUpgradeWhenOpts {
   binPath: string;
@@ -38,7 +37,6 @@ export interface IFormulas {
   dllassert: IFormulaSpec;
   activate: IFormulaSpec;
   firejail: IFormulaSpec;
-  arh: IFormulaSpec;
 
   [formulaName: string]: IFormulaSpec;
 }
@@ -129,15 +127,16 @@ self.activate = {
 self.firejail = {
   format: "7z",
   osWhitelist: ["linux"],
-  skipUpgradeWhen: async function (opts) {
-    const {binPath} = opts;
+  skipUpgradeWhen: async function(opts) {
+    const { binPath } = opts;
     try {
       const stats = await sf.lstat(ospath.join(binPath, "firejail"));
       if (stats.uid !== 0) {
-        return {reason: "not owned by root"};
+        return { reason: "not owned by root" };
       }
-      if ((stats.mode & 0o4000) === 0) { // tslint:disable-line:no-bitwise
-        return {resason: "not suid"};
+      // tslint:disable-next-line:no-bitwise
+      if ((stats.mode & 0o4000) === 0) {
+        return { reason: "not suid" };
       }
     } catch (e) {
       if (e.code === "ENOENT") {
@@ -151,17 +150,6 @@ self.firejail = {
   versionCheck: {
     args: ["--version"],
     parser: /firejail version ([0-9a-z.]*)/,
-  },
-};
-
-/*
- * Adobe runtime helper
- */
-self.arh = {
-  format: "7z",
-  versionCheck: {
-    args: [],
-    parser: /Version ([0-9a-z.]*)/,
   },
 };
 

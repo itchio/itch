@@ -1,9 +1,8 @@
+import { createStructuredSelector } from "reselect";
 
-import {createStructuredSelector} from "reselect";
+import { groupBy, omit } from "underscore";
 
-import {groupBy, omit} from "underscore";
-
-import {ITasksState} from "../types";
+import { ITasksState } from "../types";
 
 import * as actions from "../actions";
 import derivedReducer from "./derived-reducer";
@@ -14,21 +13,24 @@ const initialState = {
   finishedTasks: [],
 } as ITasksState;
 
-const baseReducer = reducer<ITasksState>(initialState, (on) => {
+const baseReducer = reducer<ITasksState>(initialState, on => {
   on(actions.taskStarted, (state, action) => {
     const task = action.payload;
     return {
       ...state,
       tasks: {
         ...state.tasks,
-        [task.id]: task,
+        [task.id]: {
+          ...task,
+          progress: 0,
+        },
       },
     };
   });
 
   on(actions.taskProgress, (state, action) => {
     const record = action.payload;
-    const {id} = record;
+    const { id } = record;
 
     const task = state.tasks[id];
     if (!task) {
@@ -48,15 +50,12 @@ const baseReducer = reducer<ITasksState>(initialState, (on) => {
   });
 
   on(actions.taskEnded, (state, action) => {
-    const {id} = action.payload;
+    const { id } = action.payload;
 
     return {
       ...state,
       tasks: omit(state.tasks, id),
-      finishedTasks: [
-        state.tasks[id],
-        ...state.finishedTasks,
-      ],
+      finishedTasks: [state.tasks[id], ...state.finishedTasks],
     };
   });
 });

@@ -1,41 +1,45 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "../connect";
+import { connect } from "../connect";
 
-import {IModalWidgetProps} from "./modal-widget";
+import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
-import {ICaveRecord} from "../../types";
+import { ICave } from "../../db/models/cave";
 
-export class RevertCave extends React.Component<IProps & IDerivedProps & I18nProps, void> {
+import format from "../format";
+
+export class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
   refs: {
     buildId?: HTMLInputElement;
   };
 
-  constructor () {
+  constructor() {
     super();
-    this.onChange = this.onChange.bind(this);
   }
 
-  render () {
-    const {t} = this.props;
+  render() {
     const params = this.props.modal.widgetParams as IRevertCaveParams;
     const buildId = params.currentCave.buildId;
 
-    return <div className="modal-widget">
-      <p>{t("prompt.revert.message", {buildId})}</p>
+    return (
+      <ModalWidgetDiv>
+        <p>
+          {format(["prompt.revert.message", { buildId }])}
+        </p>
 
-      <input
-        ref="buildId" type="number"
-        onKeyDown={this.onChange}
-        onKeyUp={this.onChange}
-        onChange={this.onChange}
-        autoFocus={true}
+        <input
+          ref="buildId"
+          type="number"
+          onKeyDown={this.onChange}
+          onKeyUp={this.onChange}
+          onChange={this.onChange}
+          autoFocus={true}
         />
-    </div>;
+      </ModalWidgetDiv>
+    );
   }
 
-  onChange () {
-    const {buildId} = this.refs;
+  onChange = () => {
+    const { buildId } = this.refs;
     if (!buildId) {
       return;
     }
@@ -43,11 +47,11 @@ export class RevertCave extends React.Component<IProps & IDerivedProps & I18nPro
     this.props.updatePayload({
       revertBuildId: parseInt(buildId.value, 10),
     });
-  }
+  };
 }
 
 export interface IRevertCaveParams {
-  currentCave: ICaveRecord;
+  currentCave: ICave;
 }
 
 interface IProps extends IModalWidgetProps {

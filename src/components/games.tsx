@@ -1,35 +1,27 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
-import {createSelector} from "reselect";
-import Fuse = require("fuse.js");
+import { connect } from "./connect";
+import { createSelector, createStructuredSelector } from "reselect";
 
-import {IAppState, IFilteredGameRecord, IGameRecord, TabLayout} from "../types";
-
-import {map, filter} from "underscore";
-
-import isPlatformCompatible from "../util/is-platform-compatible";
+import { IAppState, TabLayout, ITabParams, ITabData, IGameSet } from "../types";
 
 import GameGrid from "./game-grid";
 import GameTable from "./game-table";
 
-import {ISortParams, SortDirectionType} from "./sort-types";
+import { ISortParams } from "./sort-types";
 
-class Games extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
-    super();
-    this.state = {
-      sortBy: null,
-      sortDirection: null,
-    };
+import * as actions from "../actions";
+import { dispatcher } from "../constants/action-types";
 
-    this.onSortChange = this.onSortChange.bind(this);
-  }
+import styled from "./styles";
 
-  onSortChange(params: ISortParams) {
-    let {sortBy, sortDirection} = params;
+export const HubGamesDiv = styled.div`flex-grow: 1;`;
 
-    if (sortBy !== this.state.sortBy) {
+class Games extends React.PureComponent<IProps & IDerivedProps> {
+  onSortChange = (sortParams: ISortParams) => {
+    const { params: oldParams, tab } = this.props;
+    let { sortBy, sortDirection } = sortParams;
+
+    if (sortBy !== oldParams.sortBy) {
       // sorting by different column
       if (sortBy === "secondsRun" || sortBy === "lastTouchedAt") {
         // default to desc for these, which makes the most sense
@@ -37,126 +29,98 @@ class Games extends React.Component<IProps & IDerivedProps & I18nProps, IState> 
       }
     }
 
-    this.setState({sortBy, sortDirection});
-  }
+    this.props.tabParamsChanged({
+      id: tab,
+      params: { sortBy, sortDirection },
+    });
+  };
 
   render() {
-    const {filteredGames, hiddenCount, tab, layout} = this.props;
-    const {sortBy, sortDirection} = this.state;
+    const {
+      games = {},
+      gameIds = [],
+      offset,
+      limit,
+      hiddenCount,
+      tab,
+      params,
+      layout,
+    } = this.props;
+    const { sortBy, sortDirection } = params;
 
     if (layout === "grid") {
-      return <GameGrid
-        games={filteredGames}
-        hiddenCount={hiddenCount}
-        tab={tab}/>;
+      return (
+        <GameGrid
+          games={games}
+          gameIds={gameIds}
+          offset={offset}
+          limit={limit}
+          hiddenCount={hiddenCount}
+          tab={tab}
+        />
+      );
     } else if (layout === "table") {
-      return <GameTable
-        games={filteredGames}
-        hiddenCount={hiddenCount}
-        tab={tab}
-        sortBy={sortBy}
-        sortDirection={sortDirection}
-        onSortChange={this.onSortChange}/>;
+      return (
+        <GameTable
+          games={games}
+          gameIds={gameIds}
+          offset={offset}
+          limit={limit}
+          hiddenCount={hiddenCount}
+          tab={tab}
+          sortBy={sortBy}
+          sortDirection={sortDirection}
+          onSortChange={this.onSortChange}
+        />
+      );
     } else {
-      return <div>Unknown layout {layout}</div>;
+      return (
+        <div>
+          Unknown layout {layout}
+        </div>
+      );
     }
   }
 }
 
 interface IProps {
   tab: string;
-  games: IGameRecord[];
 }
 
 interface IDerivedProps {
+  games: IGameSet;
+  gameIds: number[];
+  offset: number;
+  limit: number;
+  hiddenCount?: number;
+
   layout: TabLayout;
-  filteredGames: IFilteredGameRecord[];
-  hiddenCount: number;
+  params: ITabParams;
+
+  tabParamsChanged: typeof actions.tabParamsChanged;
 }
 
-interface IState {
-  sortBy?: string;
-  sortDirection?: SortDirectionType;
-}
+const emptyObj = {};
 
 export default connect<IProps>(Games, {
-  state: () => {
-    // TODO: that seems a bit excessively long
-    const getLayout = (state: IAppState, props: IProps) => state.preferences.layout;
-    const getOnlyCompatible = (state: IAppState, props: IProps) =>
-      state.preferences.onlyCompatibleGames;
-    const getOnlyOwned = (state: IAppState, props: IProps) =>
-      state.preferences.onlyOwnedGames;
-    const getOnlyInstalled = (state: IAppState, props: IProps) =>
-      state.preferences.onlyInstalledGames;
-    const getFilterQuery = (state: IAppState, props: IProps) =>
-      state.session.navigation.filters[props.tab] || "";
-    const getGames = (state: IAppState, props: IProps) =>
-      props.games;
-    const getCavesByGameId = (state: IAppState, props: IProps) =>
-      state.globalMarket.cavesByGameId;
-    const getDownloadKeysByGameId = (state: IAppState, props: IProps) =>
-      state.market.downloadKeysByGameId;
-
-    const fuse: Fuse<IGameRecord> = new Fuse([], {
-      keys: [
-        { name: "title", weight: 0.8 },
-        { name: "shortText", weight: 0.4 },
-      ],
-      threshold: 0.1,
-      include: ["score"],
-    });
-
-    const getFilteredGames = createSelector(
-      getGames,
-      getCavesByGameId,
-      getDownloadKeysByGameId,
-      getFilterQuery,
-      getOnlyCompatible,
-      getOnlyOwned,
-      getOnlyInstalled,
-      (games, cavesByGameId, downloadKeysByGameId, filterQuery, onlyCompatible, onlyOwned, onlyInstalled) => {
-        let filteredGames: IFilteredGameRecord[];
-        if (filterQuery.length > 0) {
-          fuse.set(games);
-          const results = fuse.search(filterQuery);
-          filteredGames = map(results, (result): IFilteredGameRecord => ({
-            game: result.item,
-            cave: cavesByGameId[result.item.id],
-            searchScore: result.score,
-          }));
-        } else {
-          filteredGames = map<IGameRecord, IFilteredGameRecord>(games, (game) => ({
-            game,
-            cave: cavesByGameId[game.id],
-          }));
-        }
-
-        if (onlyCompatible) {
-          filteredGames = filter(filteredGames, (record) => isPlatformCompatible(record.game));
-        }
-
-        if (onlyInstalled) {
-          filteredGames = filter(filteredGames, (record) => !!record.cave);
-        }
-
-        if (onlyOwned) {
-          filteredGames = filter(filteredGames, (record) => !!downloadKeysByGameId[record.game.id]);
-        }
-
-        return filteredGames;
-      },
-    );
-
+  state: (initialState, initialProps) => {
+    const { tab } = initialProps;
     return createSelector(
-      getLayout,
-      getGames,
-      getFilteredGames,
-      (layout, games, filteredGames) => ({
-        layout,
-        filteredGames,
-        hiddenCount: games.length - filteredGames.length,
+      (state: IAppState) => state.session.tabData[tab] || emptyObj,
+      (state: IAppState) => state.session.tabParams[tab] || emptyObj,
+      (state: IAppState) => state.preferences.layout,
+      createStructuredSelector({
+        gameIds: (data: ITabData, params, layout) => data.gameIds,
+        games: (data: ITabData, params, layout) => data.games,
+        offset: (data: ITabData, params, layout) => data.offset,
+        limit: (data: ITabData, params, layout) => data.limit,
+        hiddenCount: (data: ITabData, params, layout) => data.hiddenCount || 0,
+        layout: (data: ITabData, params, layout) => layout,
+        params: (data: ITabData, params, layout) => params,
       }),
     );
   },
+  dispatch: dispatch => ({
+    tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),
+  }),
 });

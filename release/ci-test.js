@@ -2,19 +2,23 @@
 
 // compile typescript code and run unit tests
 
-const $ = require('./common')
+const $ = require("./common");
 
-async function main () {
-  await $.showVersions(['yarn']);
+async function main() {
+  process.env.NODE_ENV = "test";
+  await $.showVersions(["npm"]);
 
-  $(await $.yarn('install'));
+  $(await $.npm("install"));
 
-  process.env.ELECTRON_ENABLE_LOGGING = '1';
+  $(await $.npm("run ts-check"));
 
   if (process.platform === "linux") {
-    $(await $.sh('xvfb-run yarn test'));
+    $(await $.sh('xvfb-run -a -s "-screen 0 1280x720x24" npm test -- --thorough'));
+    $(await $.sh('xvfb-run -a -s "-screen 0 1280x720x24" npm run integration-tests'));
+    $(await $.npm("run upload-coverage"));
   } else {
-    $(await $.sh('yarn test'));
+    $(await $.npm("test -- --thorough"));
+    $(await $.npm("run integration-tests"));
   }
 }
 

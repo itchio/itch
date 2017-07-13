@@ -1,18 +1,14 @@
-
-import {findWhere} from "underscore";
-
 import * as actions from "../../actions";
-import format, {DATE_FORMAT} from "../../util/format";
-import store from "../../store/chrome-store";
 
-import {
-  IGameRecord, ICaveRecord, IDownloadKey, ClassificationAction,
-  ILocalizedString,
-} from "../../types";
+import { IGame } from "../../db/models/game";
+import { IDownloadKey } from "../../db/models/download-key";
+import { ICaveSummary } from "../../db/models/cave";
 
-import {IAction} from "../../constants/action-types";
+import { ClassificationAction, ILocalizedString, ITask } from "../../types";
 
-import {ILocalizer} from "../../localizer";
+import { IAction } from "../../constants/action-types";
+
+import { InjectedIntl } from "react-intl";
 
 export type ActionType = "secondary" | "separator" | "info";
 
@@ -22,62 +18,52 @@ export interface IActionOpts {
   icon?: string;
   action?: IAction<any>;
   classes?: string[];
-  hint?: string;
 }
 
-function browseAction (caveId: string): IActionOpts {
+function browseAction(caveId: string): IActionOpts {
   return {
     type: "secondary",
     label: ["grid.item.show_local_files"],
     icon: "folder-open",
-    action: actions.exploreCave({caveId}),
+    action: actions.exploreCave({ caveId }),
   };
 }
 
-function purchaseAction (game: IGameRecord, downloadKey: IDownloadKey, t: ILocalizer): IActionOpts {
-  const donate = (game.minPrice === 0);
-  const againSuffix = downloadKey ? "_again" : "";
-  const hint = downloadKey ? format.date(downloadKey.createdAt, DATE_FORMAT, t.lang) : null;
+function purchaseAction(
+  game: IGame,
+  downloadKey: IDownloadKey,
+  intl: InjectedIntl,
+): IActionOpts {
+  const donate = game.minPrice === 0;
 
   if (donate) {
     return {
-      label: ["grid.item.donate" + againSuffix],
+      label: ["grid.item.donate"],
       icon: "heart-filled",
-      action: actions.initiatePurchase({game}),
+      action: actions.initiatePurchase({ game }),
       classes: ["generous"],
-      hint,
     };
   } else {
     return {
-      label: ["grid.item.buy_now" + againSuffix],
+      label: ["grid.item.buy_now"],
       icon: "shopping_cart",
-      action: actions.initiatePurchase({game}),
+      action: actions.initiatePurchase({ game }),
       classes: ["generous"],
-      hint,
     };
   }
 }
 
-function shareAction (game: IGameRecord): IActionOpts {
-  return {
-    label: ["grid.item.share"],
-    icon: "share",
-    classes: ["generous"],
-    action: actions.initiateShare({url: game.url}),
-  };
-}
-
-function uninstallAction (caveId: string): IActionOpts {
+function uninstallAction(caveId: string): IActionOpts {
   return {
     label: ["grid.item.uninstall"],
     icon: "uninstall",
-    action: actions.requestCaveUninstall({caveId}),
+    action: actions.requestCaveUninstall({ caveId }),
   };
 }
 
 interface IListSecondaryActionsProps {
-  game: IGameRecord;
-  cave: ICaveRecord;
+  game: IGame;
+  cave: ICaveSummary;
   downloadKey: IDownloadKey;
 
   mayDownload: boolean;
@@ -85,11 +71,24 @@ interface IListSecondaryActionsProps {
 
   action: ClassificationAction;
 
-  t: ILocalizer;
+  tasks: ITask[];
+
+  intl: InjectedIntl;
 }
 
-export default function listSecondaryActions (props: IListSecondaryActionsProps) {
-  const {game, cave, mayDownload, canBeBought, downloadKey, action, t} = props;
+export default function listSecondaryActions(
+  props: IListSecondaryActionsProps,
+) {
+  const {
+    game,
+    cave,
+    mayDownload,
+    canBeBought,
+    downloadKey,
+    action,
+    tasks,
+    intl,
+  } = props;
   let error = false;
 
   const items: IActionOpts[] = [];
@@ -97,9 +96,8 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
   if (cave) {
     // No errors
     if (canBeBought) {
-      items.push(purchaseAction(game, downloadKey, t));
+      items.push(purchaseAction(game, downloadKey, intl));
     }
-    items.push(shareAction(game));
 
     items.push({
       type: "separator",
@@ -109,43 +107,9 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
       items.push(browseAction(cave.id));
     }
 
-    let version = "";
-    if (cave.buildUserVersion) {
-      version = `${cave.buildUserVersion}`;
-    } else if (cave.buildId) {
-      version = `#${cave.buildId}`;
-    }
-
-    const upload = findWhere(cave.uploads, {id: cave.uploadId});
-    if (upload && upload.displayName) {
-      version += ` (${upload.displayName})`;
-    } else if (cave.channelName) {
-      version += ` (${cave.channelName})`;
-    } else if (cave.uploadId) {
-      version += ` #${cave.uploadId}`;
-    }
-
-    // FIXME: this will display the wrong date for builds
-    let mtime: any = cave.installedArchiveMtime;
-    if (typeof mtime === "string") {
-      // FIXME: this is a crude workaround for moment.js warnings
-      mtime = new Date(mtime);
-    }
-    const hint = `${format.date(mtime, DATE_FORMAT, t.lang)}`;
-
-    items.push({
-      type: "info",
-      icon: "checkmark",
-      label: ["grid.item.version", {version}],
-      hint: hint,
-      action: actions.copyToClipboard({text: `game ${game.id}, version ${version}`}),
-    });
-
     let busy = false;
 
-    const state = store.getState();
-    const tasksForGame = state.tasks.tasksByGameId[game.id];
-    if (tasksForGame && tasksForGame.length > 0) {
+    if (tasks && tasks.length > 0) {
       busy = true;
     }
 
@@ -154,7 +118,7 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
         type: "secondary",
         icon: "repeat",
         label: ["grid.item.check_for_update"],
-        action: actions.checkForGameUpdate({caveId: cave.id, noisy: true}),
+        action: actions.checkForGameUpdate({ caveId: cave.id, noisy: true }),
       });
 
       items.push(uninstallAction(cave.id));
@@ -165,15 +129,13 @@ export default function listSecondaryActions (props: IListSecondaryActionsProps)
     const mainIsPurchase = !mayDownload && hasMinPrice && canBeBought;
 
     if (!mainIsPurchase && canBeBought) {
-      items.push(purchaseAction(game, downloadKey, t));
+      items.push(purchaseAction(game, downloadKey, intl));
     }
-
-    items.push(shareAction(game));
 
     items.push({
       type: "separator",
     });
   }
 
-  return {error, items};
+  return { error, items };
 }

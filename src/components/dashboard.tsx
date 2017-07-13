@@ -1,68 +1,50 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
-import {createStructuredSelector} from "reselect";
-import * as classNames from "classnames";
+import { connect } from "./connect";
 
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
+import Link from "./basics/link";
 import Games from "./games";
 import GameFilters from "./game-filters";
-import {map} from "underscore";
+import TitleBar from "./title-bar";
+import { IMeatProps } from "./meats/types";
 
-import {IAppState, IGameRecordSet, IItchAppProfile, IItchAppProfileMyGames} from "../types";
-import {dispatcher} from "../constants/action-types";
+import { dispatcher } from "../constants/action-types";
 
-export class Dashboard extends React.Component<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, allGames, myGameIds, navigate} = this.props;
+import styled, * as styles from "./styles";
+import { injectIntl, InjectedIntl } from "react-intl";
 
-    const games = map(myGameIds, (id) => allGames[id]);
+const DashboardContainer = styled.div`${styles.meat()};`;
 
-    let sectionCount = 0;
-    if (games.length > 0) {
-      sectionCount++;
-    }
+export class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
+  render() {
+    const { intl, tab, navigate } = this.props;
 
-    const showHeaders = (sectionCount > 1);
-    const headerClasses = classNames("", {shown: showHeaders});
-
-    const tab = "dashboard";
-
-    return <div className="dashboard-meat">
-      <h2 className={headerClasses}>{t("sidebar.dashboard")}</h2>
-      <GameFilters tab={tab}>
-        <span className="link" onClick={(e) => navigate(`url/${urls.dashboard}`)}>
-          {t("outlinks.open_dashboard")}
-        </span>
-      </GameFilters>
-      <Games tab={tab} games={games}/>
-    </div>;
+    return (
+      <DashboardContainer>
+        <TitleBar tab={tab} />
+        <GameFilters tab={tab}>
+          <Link
+            label={intl.formatMessage({ id: "outlinks.open_dashboard" })}
+            onClick={e => navigate(`url/${urls.dashboard}`)}
+          />
+        </GameFilters>
+        <Games tab={tab} />
+      </DashboardContainer>
+    );
   }
 }
 
-interface IProps {}
+interface IProps extends IMeatProps {}
 
 interface IDerivedProps {
-  allGames: IGameRecordSet;
-  myGameIds: string[];
-
   navigate: typeof actions.navigate;
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(Dashboard, {
-  state: createStructuredSelector({
-    allGames: (state: IAppState) => state.market.games,
-    myGameIds: (state: IAppState) => ((
-      (
-        state.market.itchAppProfile ||
-        {} as IItchAppProfile
-      ).myGames ||
-      {} as IItchAppProfileMyGames
-    ).ids || []),
-  }),
-  dispatch: (dispatch) => ({
+export default connect<IProps>(injectIntl(Dashboard), {
+  dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
   }),
 });

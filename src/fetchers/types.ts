@@ -1,0 +1,178 @@
+import { ITabData, ICredentials } from "../types";
+import * as bluebird from "bluebird";
+
+import * as actions from "../actions";
+
+import client, { AuthenticatedClient } from "../api";
+import { isNetworkError } from "../net/errors";
+
+import Context from "../context";
+
+export enum FetchReason {
+  TabChanged,
+  TabEvolved,
+  TabReloaded,
+  WindowFocused,
+  TabParamsChanged,
+  TabPaginationChanged,
+}
+
+import rootLogger, { Logger } from "../logger";
+
+const emptyObj = {};
+
+/**
+ * Fetches all the data a tab needs to display, except webviews.
+ * This can be games, users, etc.
+ * Should return info from local DB as soon as possible, and fresh data from
+ * API afterwards.
+ */
+export class Fetcher {
+  ctx: Context;
+  tabId: string;
+  reason: FetchReason;
+  aborted = false;
+
+  startedAt: number;
+
+  logger?: Logger;
+
+  prevData?: ITabData;
+
+  retryCount = 0;
+
+  hook(ctx: Context, tabId: string, reason: FetchReason) {
+    this.logger = rootLogger.child({ name: this.constructor.name });
+    this.ctx = ctx;
+    this.tabId = tabId;
+    this.reason = reason;
+
+    this.prevData = ctx.store.getState().session.tabData[tabId];
+  }
+
+  async run() {
+    this.startedAt = Date.now();
+
+    let shouldRetry = true;
+    while (shouldRetry) {
+      shouldRetry = false;
+
+      try {
+        await this.work();
+      } catch (e) {
+        if (e instanceof Retry) {
+          shouldRetry = true;
+        } else {
+          this.logger.error(`Non-retriable error in work:\n${e.stack}`);
+          return;
+        }
+      }
+
+      if (shouldRetry) {
+        this.retryCount++;
+        if (this.retryCount > 8) {
+          this.logger.error(`Too many retries, giving up`);
+          return;
+        } else {
+          let sleepTime = 100 * Math.pow(2, this.retryCount);
+          this.logger.info(`Sleeping ${sleepTime}ms then retrying...`);
+          await bluebird.delay(sleepTime);
+        }
+      }
+    }
+  }
+
+  async withApi<T>(cb: (api: AuthenticatedClient) => Promise<T>): Promise<T> {
+    const { credentials } = this.ctx.store.getState().session;
+    if (!credentials || !credentials.me) {
+      this.debug("missing credentials");
+      throw new Retry();
+    }
+
+    const { key } = credentials;
+    const api = client.withKey(key);
+    try {
+      return await cb(api);
+    } catch (e) {
+      this.logger.error(`API error:`, e);
+      if (isNetworkError(e)) {
+        throw new Retry();
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  async doRetry() {
+    this.retryCount++;
+    if (this.retryCount > 8) {
+      throw new Error(`Too many retries, giving up`);
+    } else {
+      let sleepTime = 100 * Math.pow(2, this.retryCount);
+      this.logger.info(`Sleeping ${sleepTime}ms then retrying...`);
+      await bluebird.delay(sleepTime);
+      await this.run();
+    }
+  }
+
+  /**
+   * Overriden by sub classes, actual fetch logic goes here
+   * Ideally, should listen for "abort" on `this.emitter` and react accordingly
+   */
+  async work(): Promise<void> {
+    throw new Error(`fetchers should override work()!`);
+  }
+
+  /**
+   * Called by work when data is available.
+   */
+  push(data: ITabData) {
+    if (this.ctx.isDead()) {
+      return;
+    }
+
+    const action = actions.tabDataFetched({
+      id: this.tabId,
+      data,
+    });
+    this.ctx.store.dispatch(action);
+  }
+
+  retry(why: string) {
+    throw new Retry(why);
+  }
+
+  debug(msg: string, ...args: any[]) {
+    this.logger.info(msg, ...args);
+  }
+
+  warrantsRemote(reason: FetchReason) {
+    switch (reason) {
+      case FetchReason.TabPaginationChanged:
+      case FetchReason.TabParamsChanged:
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  ensureCredentials(): ICredentials {
+    const { credentials } = this.ctx.store.getState().session;
+    if (!credentials || !credentials.me) {
+      this.debug(`missing credentials`);
+      throw new Retry();
+    }
+
+    return credentials;
+  }
+
+  tabData(): ITabData {
+    return this.ctx.store.getState().session.tabData[this.tabId] || emptyObj;
+  }
+}
+
+export class Retry extends Error {
+  constructor(detail = "no details") {
+    super(`Retry: ${detail}`);
+  }
+}

@@ -1,14 +1,27 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
+
+import { connect } from "./connect";
+
+import { dispatcher } from "../constants/action-types";
+import * as actions from "../actions";
 
 import HubItem from "./hub-item";
 import HiddenIndicator from "./hidden-indicator";
 
-import {IFilteredGameRecord} from "../types";
+import { IGameSet } from "../types";
 
-import {AutoSizer, Grid} from "react-virtualized";
-import {IAutoSizerParams} from "./autosizer-types";
+import {
+  AutoSizer,
+  SectionRenderedParams,
+  InfiniteLoader,
+} from "react-virtualized";
+
+import { IAutoSizerParams } from "./autosizer-types";
+
+import { Requester } from "./data-request";
+
+import { HubGamesDiv } from "./games";
+import StyledGrid from "./styled-grid";
 
 interface ICellInfo {
   columnIndex: number;
@@ -19,57 +32,116 @@ interface ICellInfo {
 
 interface ILayoutInfo {
   columnCount: number;
-  games: IFilteredGameRecord[];
 }
 
-class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IState> {
-  constructor () {
+class GameGrid extends React.PureComponent<IProps & IDerivedProps, IState> {
+  infiniteLoader: InfiniteLoader;
+  onRowsRendered: ({ startIndex, stopIndex }) => void;
+  lastStartIndex = 0;
+  lastStopIndex = 0;
+  requester = new Requester();
+
+  constructor() {
     super();
     this.state = {
       scrollTop: 0,
     };
-    this.cellRenderer = this.cellRenderer.bind(this);
   }
 
-  render () {
-    const {games, hiddenCount, tab} = this.props;
+  onSectionRendered = (info: SectionRenderedParams) => {
+    const columnCount = info.columnStopIndex + 1;
+    const offset = info.rowStartIndex * columnCount;
+    const limit = (1 + info.rowStopIndex - info.rowStartIndex) * columnCount;
 
-    return <div className="hub-games hub-game-grid">
-      <AutoSizer>
-      {({width, height}: IAutoSizerParams) => {
-        const columnCount = Math.floor(width / 280);
-        const rowCount = Math.ceil(games.length / columnCount);
-        const columnWidth = ((width - 10) / columnCount);
-        const rowHeight = columnWidth * 1.12;
-        const scrollTop = height === 0 ? 0 : this.state.scrollTop;
+    this.props.tabPaginationChanged({
+      id: this.props.tab,
+      pagination: {
+        offset,
+        limit,
+      },
+    });
+  };
 
-        return <Grid
-          ref="grid"
-          cellRenderer={this.cellRenderer.bind(this, {games, columnCount})}
-          width={width}
-          height={height}
-          columnWidth={columnWidth}
-          columnCount={columnCount}
-          rowCount={rowCount}
-          rowHeight={rowHeight}
-          overscanRowCount={10}
-          onScroll={(e: any) => {
-            // ignore data when tab's hidden
-            if (e.clientHeight <= 0) { return; }
-            this.setState({ scrollTop: e.scrollTop });
+  render() {
+    const { gameIds, hiddenCount, tab } = this.props;
+    const gamesCount = gameIds.length;
+
+    return (
+      <HubGamesDiv>
+        <AutoSizer>
+          {({ width, height }: IAutoSizerParams) => {
+            const columnCount = Math.floor(width / 280);
+            const rowCount = Math.ceil(gamesCount / columnCount);
+            const columnWidth = (width - 16) / columnCount;
+            const rowHeight = columnWidth * 1.12;
+            const scrollTop = height === 0 ? 0 : this.state.scrollTop;
+
+            return (
+              <InfiniteLoader
+                ref={il => {
+                  this.infiniteLoader = il;
+                }}
+                isRowLoaded={this.isRowLoaded}
+                loadMoreRows={this.loadMoreRows}
+                rowCount={gamesCount}
+                minimumBatchSize={40}
+              >
+                {({ registerChild, onRowsRendered }) => {
+                  this.onRowsRendered = onRowsRendered;
+                  return (
+                    <StyledGrid
+                      cellRenderer={this.cellRenderer.bind(this, {
+                        columnCount,
+                      })}
+                      width={width}
+                      height={height}
+                      columnWidth={columnWidth}
+                      columnCount={columnCount}
+                      rowCount={rowCount}
+                      rowHeight={rowHeight}
+                      overscanRowCount={3}
+                      onSectionRendered={this.onSectionRendered}
+                      onScroll={(e: any) => {
+                        // ignore data when tab's hidden
+                        if (e.clientHeight <= 0) {
+                          return;
+                        }
+                        this.setState({ scrollTop: e.scrollTop });
+                      }}
+                      scrollTop={scrollTop}
+                      scrollPositionChangeReason="requested"
+                    />
+                  );
+                }}
+              </InfiniteLoader>
+            );
           }}
-          scrollTop={scrollTop}
-          scrollPositionChangeReason="requested"
-        />;
-      }}
-      </AutoSizer>
-      <HiddenIndicator count={hiddenCount} tab={tab}/>
-    </div>;
+        </AutoSizer>
+        <HiddenIndicator count={hiddenCount} tab={tab} />
+      </HubGamesDiv>
+    );
   }
+
+  isRowLoaded = ({ index }) => {
+    return !!this.props.games[this.props.gameIds[index]];
+  };
+
+  loadMoreRows = ({ startIndex, stopIndex }): Promise<void> => {
+    const offset = startIndex;
+    const limit = stopIndex + 1 - startIndex;
+    this.props.tabPaginationChanged({
+      id: this.props.tab,
+      pagination: {
+        offset,
+        limit,
+      },
+    });
+    return this.requester.add(offset, limit);
+  };
 
   cellRenderer(layout: ILayoutInfo, cell: ICellInfo): JSX.Element {
-    const gameIndex = (cell.rowIndex * layout.columnCount) + cell.columnIndex;
-    const record = layout.games[gameIndex];
+    const gameIndex = cell.rowIndex * layout.columnCount + cell.columnIndex;
+    const game = this.props.games[this.props.gameIds[gameIndex]];
 
     const style = cell.style;
     style.padding = "10px";
@@ -77,30 +149,33 @@ class GameGrid extends React.Component<IProps & IDerivedProps & I18nProps, IStat
       style.marginRight = "10px";
     }
 
-    return <div key={cell.key} style={cell.style}>
-      {
-        record
-        ? <HubItem
-            key={`game-${record.game.id}`}
-            game={record.game}
-            cave={record.cave}
-            searchScore={record.searchScore}/>
-        : null
-      }
-    </div>;
+    return (
+      <div key={cell.key} style={cell.style}>
+        {game ? <HubItem key={`game-${game.id}`} game={game} /> : null}
+      </div>
+    );
   }
 }
 
 interface IProps {
-  games: IFilteredGameRecord[];
+  games: IGameSet;
+  gameIds: number[];
+  offset: number;
+  limit: number;
   hiddenCount: number;
   tab: string;
 }
 
-interface IDerivedProps {}
+interface IDerivedProps {
+  tabPaginationChanged: typeof actions.tabPaginationChanged;
+}
 
 interface IState {
   scrollTop: 0;
 }
 
-export default connect<IProps>(GameGrid);
+export default connect<IProps>(GameGrid, {
+  dispatch: dispatch => ({
+    tabPaginationChanged: dispatcher(dispatch, actions.tabPaginationChanged),
+  }),
+});

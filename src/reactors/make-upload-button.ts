@@ -1,11 +1,6 @@
-
 import * as humanize from "humanize-plus";
 
-import {
-  IUploadRecord,
-  ILocalizedString,
-  IModalButtonTag,
-} from "../types";
+import { IUpload, ILocalizedString, IModalButtonTag } from "../types";
 
 interface IUploadButton {
   label: ILocalizedString;
@@ -18,8 +13,10 @@ interface IMakeUploadButtonOpts {
   showSize?: boolean;
 }
 
-export default function makeUploadButton (
-    upload: IUploadRecord, opts = {showSize: true} as IMakeUploadButtonOpts): IUploadButton {
+export default function makeUploadButton(
+  upload: IUpload,
+  opts = { showSize: true } as IMakeUploadButtonOpts,
+): IUploadButton {
   let label = `${upload.displayName || upload.filename}`;
   let tags: IModalButtonTag[] = [];
 
@@ -37,5 +34,5 @@ export default function makeUploadButton (
 
   const icon = "download";
 
-  return {label, tags, icon};
+  return { label, tags, icon };
 }

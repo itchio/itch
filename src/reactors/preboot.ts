@@ -1,79 +1,97 @@
-
-import {Watcher} from "./watcher";
+import Context from "../context";
+import { Watcher } from "./watcher";
 import * as actions from "../actions";
 
-import {cleanOldLogs} from "./preboot/clean-old-logs";
-import xdgMime from "./preboot/xdg-mime";
-import visualElements from "./preboot/visual-elements";
+import store from "../store/metal-store";
+import db from "../db";
 
-import {opts} from "../logger";
-import mklog from "../util/log";
-const log = mklog("preboot");
+import { cleanOldLogs } from "./preboot/clean-old-logs";
+import * as xdgMime from "./preboot/xdg-mime";
+import * as visualElements from "./preboot/visual-elements";
 
-import {ProxySource} from "../types";
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "preboot" });
 
-import {NET_PARTITION_NAME} from "../util/net";
+import { ProxySource } from "../types";
 
-import {applyProxySettings} from "../reactors/proxy";
+import { NET_PARTITION_NAME } from "../constants/net";
+import { applyProxySettings } from "../reactors/proxy";
 
 let testProxy = false;
 let proxyTested = false;
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
+  const ctx = new Context(store, db);
   watcher.on(actions.preboot, async (store, action) => {
     try {
       await cleanOldLogs();
     } catch (e) {
-      log(opts, `Could not clean old logs: ${e.stack || e.message || e}`);
+      logger.error(`Could not clean old logs: ${e.stack || e.message || e}`);
     }
 
     try {
-      await xdgMime.registerIfNeeded(opts);
+      await xdgMime.registerIfNeeded(ctx, { logger: rootLogger });
     } catch (e) {
-      log(opts, `Could not run xdg-mime: ${e.stack || e.message || e}`);
+      logger.error(`Could not run xdg-mime: ${e.stack || e.message || e}`);
     }
 
     try {
-      await visualElements.createIfNeeded(opts);
+      await visualElements.createIfNeeded(ctx);
     } catch (e) {
-      log(opts, `Could not run visualElements: ${e.stack || e.message || e}`);
+      logger.error(
+        `Could not run visualElements: ${e.stack || e.message || e}`,
+      );
     }
 
     try {
-      const {app} = require("electron");
-      app.on("certificate-error", (ev, webContents, url, error, certificate, callback) => {
-        // do not trust
-        callback(false);
+      const { app } = require("electron");
+      app.on(
+        "certificate-error",
+        (ev, webContents, url, error, certificate, callback) => {
+          // do not trust
+          callback(false);
 
-        log(opts, `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`);
+          logger.error(
+            `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`,
+          );
 
-        store.dispatch(actions.openModal({
-          title: `Certificate error: ${error}`,
-          message: `There was an error with the certificate for ` +
-          `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
-          `Please check your proxy configuration and try again.`,
-          detail: `If you ignore this error, the rest of the app might not work correctly.`,
-          buttons: [
-            {
-              label: "Ignore and continue",
-              action: actions.closeModal({}),
-              className: "secondary",
-            },
-            {
-              label: ["menu.file.quit"],
-              action: actions.quit({}),
-            },
-          ],
-        }));
+          store.dispatch(
+            actions.openModal({
+              title: `Certificate error: ${error}`,
+              message:
+                `There was an error with the certificate for ` +
+                `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
+                `Please check your proxy configuration and try again.`,
+              detail: `If you ignore this error, the rest of the app might not work correctly.`,
+              buttons: [
+                {
+                  label: "Ignore and continue",
+                  action: actions.closeModal({}),
+                  className: "secondary",
+                },
+                {
+                  label: ["menu.file.quit"],
+                  action: actions.quit({}),
+                },
+              ],
+            }),
+          );
+        },
+      );
+      logger.debug(`Set up certificate error handler`);
+    } catch (e) {
+      logger.error(
+        `Could not set up certificate error handler: ${e.stack ||
+          e.message ||
+          e}`,
+      );
+    }
+
+    try {
+      const { session } = require("electron");
+      const netSession = session.fromPartition(NET_PARTITION_NAME, {
+        cache: false,
       });
-      log(opts, `Set up certificate error handler`);
-    } catch (e) {
-      log(opts, `Could not set up certificate error handler: ${e.stack || e.message || e}`);
-    }
-
-    try {
-      const {session} = require("electron");
-      const netSession = session.fromPartition(NET_PARTITION_NAME, {cache: false});
 
       const envSettings: string =
         process.env.https_proxy ||
@@ -87,7 +105,7 @@ export default function (watcher: Watcher) {
       };
 
       if (envSettings) {
-        log(opts, `Got proxy settings from environment: ${envSettings}`);
+        logger.info(`Got proxy settings from environment: ${envSettings}`);
         proxySettings = {
           proxy: envSettings,
           source: "env",
@@ -96,15 +114,18 @@ export default function (watcher: Watcher) {
       } else {
         const electronProxy = await new Promise<string>((resolve, reject) => {
           // resolveProxy accepts strings as well, and URL is not defined here for some reason?
-          session.defaultSession.resolveProxy("https://itch.io" as any, resolve);
+          session.defaultSession.resolveProxy(
+            "https://itch.io" as any,
+            resolve,
+          );
 
-          setTimeout(function () {
+          setTimeout(function() {
             reject(new Error("proxy resolution timed out"));
-          }, 1000);
+          }, 5000);
         });
 
         if (/PROXY /.test(electronProxy)) {
-          log(opts, `Got proxy settings: '${electronProxy}'`);
+          logger.info(`Got proxy settings: '${electronProxy}'`);
           const proxy = electronProxy.replace(/PROXY /, "");
           proxySettings = {
             proxy,
@@ -112,22 +133,18 @@ export default function (watcher: Watcher) {
           };
           testProxy = true;
         } else {
-          log(opts, `No proxy detected`);
+          logger.info(`No proxy detected`);
         }
       }
       store.dispatch(actions.proxySettingsDetected(proxySettings));
       await applyProxySettings(netSession, proxySettings);
     } catch (e) {
-      log(opts, `Could not detect proxy settings: ${e ? e.message : "unknown error"}`);
+      logger.warn(
+        `Could not detect proxy settings: ${e ? e.message : "unknown error"}`,
+      );
     }
 
     store.dispatch(actions.boot({}));
-
-    // print various machine specs, see docs/
-    const diego = require("../util/diego").default;
-    setTimeout(function () {
-      diego.hire(opts);
-    }, 3000);
   });
 
   watcher.on(actions.attemptLogin, async (store, action) => {
@@ -140,17 +157,19 @@ export default function (watcher: Watcher) {
     }
     proxyTested = true;
 
-    const {BrowserWindow} = require("electron");
+    const { BrowserWindow } = require("electron");
     const win = new BrowserWindow({ show: false });
 
     win.webContents.on("did-finish-load", () => {
-      log(opts, `Test page loaded with proxy successfully!`);
+      logger.info(`Test page loaded with proxy successfully!`);
     });
     win.webContents.on("did-fail-load", () => {
-      log(opts, `Test page failed to load with proxy!`);
+      logger.warn(`Test page failed to load with proxy!`);
     });
 
-    log(opts, `Testing proxy by loading a page in a hidden browser window...`);
+    logger.info(
+      `Testing proxy by loading a page in a hidden browser window...`,
+    );
     win.loadURL("https://itch.io/country");
 
     setTimeout(() => {

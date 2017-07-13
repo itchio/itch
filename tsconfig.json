@@ -1,21 +1,25 @@
 {
-    "compilerOptions": {
-        "rootDir": "src",
-        "outDir": "app",
-        "target": "es2017",
-        "lib": ["dom", "dom.iterable", "scripthost", "es6"],
-        "module": "commonjs",
-        "noImplicitAny": true,
-        "experimentalDecorators": true,
-        "noUnusedLocals": true,
-        "sourceMap": true,
-        "jsx": "react"
-    },
-    "exclude": [
-        "build",
-        "stage",
-        "node_modules",
-        "fixtures",
-        "dist"
-    ]
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "app",
+    "target": "es2017",
+    "lib": ["dom", "es6", "es2015"],
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noUnusedLocals": true,
+    "inlineSourceMap": true,
+    "jsx": "react",
+    "allowJs": true
+  },
+  "exclude": [
+    "app",
+    "build",
+    "stage",
+    "node_modules",
+    "fixtures",
+    "dist",
+    "release",
+    "coverage"
+  ]
 }

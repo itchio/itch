@@ -1,10 +1,14 @@
+import { createStructuredSelector } from "reselect";
 
-import {createSelector, createStructuredSelector} from "reselect";
+import { indexBy, map, last, omit } from "underscore";
+import groupIdBy from "../helpers/group-id-by";
+import {
+  getActiveDownload,
+  getPendingDownloads,
+  excludeGame,
+} from "../reactors/downloads/getters";
 
-import * as invariant from "invariant";
-import {indexBy, where, sortBy, pluck, filter, map, first, last, omit} from "underscore";
-
-import {IDownloadsState} from "../types";
+import { IDownloadsState, IDownloadItem } from "../types";
 
 import reducer from "./reducer";
 import derivedReducer from "./derived-reducer";
@@ -12,95 +16,72 @@ import * as actions from "../actions";
 
 const SPEED_DATA_POINT_COUNT = 60;
 
-const structSel = createStructuredSelector({
-  downloadsByOrder: (state: IDownloadsState) => (
-    pluck(sortBy(filter(state.downloads, (x) => !x.finished), "order"), "id")
-  ),
-  activeDownload: (state: IDownloadsState) => (
-    first(sortBy(filter(state.downloads, (x) => !x.finished), "order"))
-  ),
-  finishedDownloads: (state: IDownloadsState) => (
-    pluck(sortBy(where(state.downloads, {finished: true}), "order"), "id")
-  ),
-  downloadsByGameId: (state: IDownloadsState) => (
-    indexBy(state.downloads, "gameId")
-  ),
+const selector = createStructuredSelector({
+  itemIdsByGameId: (state: IDownloadsState) =>
+    groupIdBy<IDownloadItem>(state.items, i => String(i.game && i.game.id)),
 });
 
-const selector = createSelector(
-  structSel,
-  (fields: IDownloadsState) => {
-    const {activeDownload} = fields;
-    const progress = (activeDownload && activeDownload.progress) || -1;
-
-    return { ...fields, activeDownload, progress };
-  },
-);
-
 const baseInitialState = {
-  speeds: map(new Array(SPEED_DATA_POINT_COUNT), (x) => ({ bps: 0 })),
-  downloads: {},
-  downloadsPaused: false,
+  speeds: map(new Array(SPEED_DATA_POINT_COUNT), x => ({ bps: 0 })),
+  items: {},
+  paused: false,
 };
 const initialState = { ...baseInitialState, ...selector(baseInitialState) };
 
-const updateSingle = (state: IDownloadsState, record: any) => {
-  const {downloads} = state;
-  const {id} = record;
-  invariant(id, "valid download id in progress");
+const updateSingle = (state: IDownloadsState, record: any): IDownloadsState => {
+  const { items } = state;
+  const { id } = record;
 
-  const download = downloads[id];
-  if (!download) {
+  const item = items[id];
+  if (!item) {
     // ignore progress messages for inactive downloads
     return state;
   }
 
   return {
     ...state,
-    downloads: {
-      ...state.downloads,
+    items: {
+      ...state.items,
       [id]: {
-        ...download,
+        ...item,
         ...record,
       },
     },
   };
 };
 
-function downloadsExceptForGame (downloads: IDownloadsState["downloads"], gameId: number) {
-  return indexBy(
-    filter(downloads, (dl) => dl.gameId !== gameId),
-    "id",
-  );
+function index(items: IDownloadItem[]): IDownloadsState["items"] {
+  return indexBy(items, "id");
 }
 
-function downloadsExceptFinished (downloads: IDownloadsState["downloads"]) {
-  return indexBy(
-    filter(downloads, (dl) => !dl.finished),
-    "id",
-  );
-}
-
-const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
+const baseReducer = reducer<IDownloadsState>(initialState, on => {
   on(actions.clearGameDownloads, (state, action) => {
-    const {gameId} = action.payload;
+    const { gameId } = action.payload;
     return {
       ...state,
-      downloads: downloadsExceptForGame(state.downloads, gameId),
+      items: index(excludeGame(state, gameId)),
     };
   });
 
   on(actions.downloadStarted, (state, action) => {
-    const download = action.payload;
+    const item = action.payload as IDownloadItem;
 
-    invariant(download.id, "valid download id in started");
     return {
       ...state,
-      downloads: {
-        ...downloadsExceptForGame(state.downloads, download.gameId),
-        [download.id]: download,
+      items: {
+        ...index(excludeGame(state, item.game.id)),
+        [item.id]: item,
       },
     };
+  });
+
+  on(actions.retryDownload, (state, action) => {
+    const { id } = action.payload;
+
+    return updateSingle(state, {
+      id,
+      finished: false,
+    });
   });
 
   on(actions.downloadProgress, (state, action) => {
@@ -109,12 +90,12 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   });
 
   on(actions.downloadEnded, (state, action) => {
-    const {id, err} = action.payload;
-    return updateSingle(state, {id, finished: true, err});
+    const { id, finishedAt, err } = action.payload;
+    return updateSingle(state, { id, finished: true, finishedAt, err });
   });
 
   on(actions.downloadSpeedDatapoint, (state, action) => {
-    const {payload} = action;
+    const { payload } = action;
 
     return {
       ...state,
@@ -123,8 +104,8 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
   });
 
   on(actions.prioritizeDownload, (state, action) => {
-    const {id} = action.payload;
-    const {activeDownload} = selector(state);
+    const { id } = action.payload;
+    const activeDownload = getActiveDownload(state);
 
     if (!activeDownload || activeDownload.id === id) {
       // either no downloads, or only one. nothing to prioritize!
@@ -134,40 +115,44 @@ const baseReducer = reducer<IDownloadsState>(initialState, (on) => {
     // don't re-number priorities, just go into the negatives
     const order = activeDownload.order - 1;
 
-    return updateSingle(state, {id, order});
+    return updateSingle(state, { id, order });
   });
 
   on(actions.cancelDownload, (state, action) => {
-    const {id} = action.payload;
-    const {downloads} = state;
+    const { id } = action.payload;
+    const { items } = state;
 
-    const download = downloads[id];
-    invariant(download, "cancelling valid download");
+    const item = items[id];
+    if (!item) {
+      /** we don't know about it! */
+      return state;
+    }
 
     return {
       ...state,
-      downloads: omit(state.downloads, id),
+      items: omit(state.items, id),
     };
   });
 
   on(actions.clearFinishedDownloads, (state, action) => {
     return {
       ...state,
-      downloads: downloadsExceptFinished(state.downloads),
+      items: index(getPendingDownloads(state)),
     };
   });
 
   on(actions.pauseDownloads, (state, action) => {
     return {
       ...state,
-      downloadsPaused: true,
+      paused: true,
     };
   });
 
-  on(actions.resumeDownloads, (state, action) => {
+  on(actions.resumeDownloads, (state, action): IDownloadsState => {
     return {
       ...state,
-      downloadsPaused: false,
+      items: index(map(state.items, i => ({ ...i, bps: 0 }))),
+      paused: false,
     };
   });
 });

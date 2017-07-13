@@ -1,5 +1,4 @@
-
-import {ClassificationAction} from "../types";
+import { ClassificationAction } from "../types";
 
 export interface IClassificationActions {
   [key: string]: ClassificationAction;

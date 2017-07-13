@@ -1,46 +1,50 @@
-
 import * as React from "react";
-import {connect, I18nProps} from "./connect";
 
-import interleave from "./interleave";
+import format from "./format";
 
 import actionForGame from "../util/action-for-game";
+import { IGame } from "../db/models/game";
+import { ICaveSummary } from "../db/models/cave";
 
-import NiceAgo from "./nice-ago";
+import TimeAgo from "./basics/time-ago";
 
-import {IGameRecord, ICaveRecord} from "../types";
-
-class LastPlayed extends React.Component<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {t, game, cave, short = false} = this.props;
-    const {lastTouched = 0} = (cave || {});
+export default class LastPlayed extends React.PureComponent<
+  IProps & IDerivedProps
+> {
+  render() {
+    const { game, cave, short = false } = this.props;
+    const { lastTouchedAt = null } = cave || {};
 
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
-    const xed = classAction === "open" ? "opened" : ((classification === "game") ? "played" : "used");
-    const lastTouchedDate = new Date(lastTouched);
+    const xed =
+      classAction === "open"
+        ? "opened"
+        : classification === "game" ? "played" : "used";
 
-    return <div className="last-playthrough">
-      {lastTouched > 0
-        ? <label>
-          {short
-            ? <NiceAgo date={lastTouchedDate}/>
-            : interleave(t, `usage_stats.last_${xed}_time_ago`, {time_ago: <NiceAgo date={lastTouchedDate}/>})
-          }
-            
-          </label>
-        : t(`usage_stats.never_${xed}`)
-      }
-    </div>;
+    return (
+      <div className="last-playthrough">
+        {lastTouchedAt
+          ? <label>
+              {short
+                ? <TimeAgo date={lastTouchedAt} />
+                : format([
+                    `usage_stats.last_${xed}_time_ago`,
+                    {
+                      time_ago: <TimeAgo date={lastTouchedAt} />,
+                    },
+                  ])}
+            </label>
+          : format([`usage_stats.never_${xed}`])}
+      </div>
+    );
   }
 }
 
 interface IProps {
-  game: IGameRecord;
-  cave: ICaveRecord;
+  game: IGame;
+  cave: ICaveSummary;
   short?: boolean;
 }
 
 interface IDerivedProps {}
-
-export default connect<IProps>(LastPlayed);

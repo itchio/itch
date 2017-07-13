@@ -1,15 +1,14 @@
-
-import {Watcher} from "./watcher";
+import { Watcher } from "./watcher";
 
 import * as uuid from "uuid";
 
 import * as actions from "../actions";
 
-import {IStore} from "../types";
+import { IStore } from "../types";
 
-async function applyTabOffset (store: IStore, offset: number) {
-  const {id, tabs} = store.getState().session.navigation;
-  const {constant, transient} = tabs;
+async function applyTabOffset(store: IStore, offset: number) {
+  const { id, tabs } = store.getState().session.navigation;
+  const { constant, transient } = tabs;
 
   const ids = constant.concat(transient);
   const numTabs = ids.length;
@@ -23,7 +22,7 @@ async function applyTabOffset (store: IStore, offset: number) {
   store.dispatch(actions.navigate(newId));
 }
 
-export default function (watcher: Watcher) {
+export default function(watcher: Watcher) {
   watcher.on(actions.newTab, async (store, action) => {
     store.dispatch(actions.navigate("new/" + uuid.v4()));
   });

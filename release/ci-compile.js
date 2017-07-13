@@ -2,38 +2,43 @@
 
 // compile itch for production environemnts
 
-const $ = require('./common')
-const bluebird = require('bluebird');
-const humanize = require('humanize-plus');
+const $ = require("./common");
+const humanize = require("humanize-plus");
 
-async function main () {
+async function main() {
   $.say(`Preparing to compile ${$.appName()} ${$.buildVersion()}`);
 
-  await $.showVersions(['yarn', 'node']);
+  await $.showVersions(["npm", "node"]);
 
-  $(await $.yarn('install'));
+  $(await $.npm("install"));
 
-  $.say('Wiping dist...');
-  $(await $.sh('rm -rf dist'));
+  $.say("Wiping dist...");
+  $(await $.sh("rm -rf dist"));
 
-  $.say('Compiling sources...');
-  $(await $.sh('npm run -s build-metal-prod'))
-  $(await $.sh('npm run -s build-chrome-prod'))
+  $.say("Compiling sources...");
+  $(await $.sh("npm run compile"));
 
-  $.say('Generating custom package.json...')
-  const pkg = JSON.parse(await $.readFile('package.json'));
-  for (const field of ['name', 'productName', 'desktopName']) {
+  $.say("Creating dist...");
+  $(await $.sh("mkdir dist"));
+
+  $.say("Moving sources and cache...");
+  $(await $.sh("cp -rf src dist/"));
+  $(await $.sh("mv .cache dist/.cache"));
+
+  $.say("Generating custom package.json...");
+  const pkg = JSON.parse(await $.readFile("package.json"));
+  for (const field of ["name", "productName", "desktopName"]) {
     pkg[field] = $.appName();
   }
   pkg.version = $.buildVersion();
   const pkgContents = JSON.stringify(pkg, null, 2);
   await $.writeFile(`dist/package.json`, pkgContents);
 
-  $.say('Compressing dist...')
-  $(await $.sh('tar cf dist.tar dist'))
+  $.say("Compressing dist...");
+  $(await $.sh("tar cf dist.tar dist"));
 
-  const stats = await $.lstat('dist.tar');
-  $.say(`dist.tar is ${humanize.fileSize(stats.size)}`)
+  const stats = await $.lstat("dist.tar");
+  $.say(`dist.tar is ${humanize.fileSize(stats.size)}`);
 }
 
 main();

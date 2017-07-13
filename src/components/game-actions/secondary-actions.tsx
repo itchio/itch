@@ -1,30 +1,42 @@
-
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {connect, I18nProps} from "../connect";
-import Icon from "../icon";
+import { connect } from "../connect";
+import IconButton from "../basics/icon-button";
 
-import listSecondaryActions, {IActionOpts} from "./list-secondary-actions";
-import {map} from "underscore";
+import listSecondaryActions, { IActionOpts } from "./list-secondary-actions";
+import { map } from "underscore";
 
-import {IDispatch} from "../../constants/action-types";
-import {IActionsInfo} from "./types";
+import { IDispatch } from "../../constants/action-types";
+import { IActionsInfo } from "./types";
 
-import Ink = require("react-ink");
+import styled, * as styles from "../styles";
 
-class SecondaryActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {items, error} = listSecondaryActions(this.props);
+import { injectIntl, InjectedIntl } from "react-intl";
+import { formatString } from "../format";
 
-    return <div className={classNames("cave-actions", {error})}>
-      {map(items, this.action.bind(this))}
-    </div>;
+const SecondaryActionsDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  animation: ${styles.animations.fadeIn} .1s ease-in;
+`;
+
+class SecondaryActions extends React.PureComponent<IProps & IDerivedProps> {
+  render() {
+    const { items, error } = listSecondaryActions(this.props);
+
+    return (
+      <SecondaryActionsDiv className={classNames("cave-actions", { error })}>
+        {map(items, this.action)}
+      </SecondaryActionsDiv>
+    );
   }
 
-  action (opts: IActionOpts) {
-    const {t, dispatch} = this.props;
-    const {action, label, icon, type = "action", classes = []} = opts;
+  action = (opts: IActionOpts) => {
+    const { intl, dispatch } = this.props;
+    const { action, label, icon, type = "action", classes = [] } = opts;
 
     if (type === "info" || type === "separator" || type === "secondary") {
       return;
@@ -33,25 +45,25 @@ class SecondaryActions extends React.Component<IProps & IDerivedProps & I18nProp
     const key = "" + label;
 
     const actionClasses = classNames("secondary-action", classes);
-    return <span
+    return (
+      <IconButton
+        icon={icon}
         key={key}
         className={actionClasses}
         onClick={() => dispatch(action)}
-        data-rh-at="top"
-        data-rh={t.format(label)}>
-      <Ink/>
-      <Icon icon={icon}/>
-    </span>;
-  }
+        hint={formatString(intl, label)}
+      />
+    );
+  };
 }
 
-interface IProps extends IActionsInfo {
-}
+interface IProps extends IActionsInfo {}
 
 interface IDerivedProps {
   dispatch: IDispatch;
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(SecondaryActions, {
-  dispatch: (dispatch) => ({ dispatch }),
+export default connect<IProps>(injectIntl(SecondaryActions), {
+  dispatch: dispatch => ({ dispatch }),
 });

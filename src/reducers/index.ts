@@ -1,10 +1,6 @@
+import { combineReducers } from "redux";
 
-import {combineReducers} from "redux";
-
-import history from "./history";
 import modals from "./modals";
-import globalMarket from "./global-market";
-import market from "./market";
 import system from "./system";
 import setup from "./setup";
 import rememberedSessions from "./remembered-sessions";
@@ -17,12 +13,10 @@ import tasks from "./tasks";
 import downloads from "./downloads";
 import status from "./status";
 import gameUpdates from "./game-updates";
+import commons from "./commons";
 
 const reducer = combineReducers({
-  history,
   modals,
-  globalMarket,
-  market,
   system,
   setup,
   rememberedSessions,
@@ -35,5 +29,6 @@ const reducer = combineReducers({
   downloads,
   status,
   gameUpdates,
+  commons,
 });
 export default reducer;

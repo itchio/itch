@@ -1,27 +1,30 @@
-
 import * as ospath from "path";
-import {app} from "electron";
-import os from "./os";
+import { app } from "electron";
+import * as os from "../os";
+import * as sf from "../os/sf";
+import spawn from "../os/spawn";
 
-import {partial} from "underscore";
+import { partial } from "underscore";
 
-import {Logger} from "./log";
-import mklog from "./log";
-const log = mklog("ibrew");
-import extract from "./extract";
+import { Logger, devNull } from "../logger";
+import Context from "../context";
+
+import { extract } from "./extract";
 import targz from "./targz";
-import sf from "./sf";
-import spawn from "./spawn";
 
-import formulas, {IFormulaSpec} from "./ibrew/formulas";
-import {IVersionCheck} from "./ibrew/formulas";
+import formulas, { IFormulaSpec } from "./ibrew/formulas";
+import { IVersionCheck } from "./ibrew/formulas";
 
 import version from "./ibrew/version";
 
 import net from "./ibrew/net";
-import {downloadToFile, getChecksums, ensureChecksum, ChecksumAlgo, IChecksums} from "./net";
-
-import {EventEmitter} from "events";
+import {
+  downloadToFile,
+  getChecksums,
+  ensureChecksum,
+  ChecksumAlgo,
+  IChecksums,
+} from "../net";
 
 interface IBrewOpts {
   logger: Logger;
@@ -38,13 +41,16 @@ interface IAugmentedPaths {
 
 interface IFetchOpts {
   logger: Logger;
+  ctx: Context;
   onStatus: (status: string, extra?: any[]) => void;
 }
 
 const self = {
-  fetch: async function (opts: IFetchOpts, name: string) {
+  fetch: async function(opts: IFetchOpts, name: string) {
+    const { ctx } = opts;
     const noop = (): any => null;
-    const {onStatus = noop} = opts;
+    const { onStatus = noop } = opts;
+    const logger = opts.logger.child({ name: "ibrew" });
 
     const formula = formulas[name];
     if (!formula) {
@@ -64,87 +70,103 @@ const self = {
         binPath: self.binPath(),
       });
       if (reason) {
-        log(opts, `${name}: skipping upgrade check (${JSON.stringify(reason)})`);
+        logger.warn(
+          `${name}: skipping upgrade check (${JSON.stringify(reason)})`,
+        );
         return;
       }
     }
 
     const channel = net.channel(name);
 
-    const downloadVersion = async function (v: string) {
+    const downloadVersion = async function(v: string) {
       const archiveName = self.archiveName(name);
       const archivePath = ospath.join(self.binPath(), archiveName);
       const archiveUrl = `${channel}/v${v}/${archiveName}`;
-      onStatus("download", ["login.status.dependency_install", {name, version: v}]);
-      log(opts, `${name}: downloading '${v}' from ${archiveUrl}`);
+      onStatus("download", [
+        "login.status.dependency_install",
+        { name, version: v },
+      ]);
+      logger.info(`fetching ${name}@${v} from ${archiveUrl}`);
 
-      await downloadToFile(opts, archiveUrl, archivePath);
+      await downloadToFile(opts.logger, archiveUrl, archivePath);
 
       let algo: ChecksumAlgo;
       let sums: IChecksums;
 
       for (algo of net.CHECKSUM_ALGOS) {
         try {
-          sums = await getChecksums(opts, `${channel}/v${v}`, algo);
+          sums = await getChecksums(opts.logger, `${channel}/v${v}`, algo);
           break;
         } catch (e) {
-          log(opts, `${name}: couldn't get ${algo} hashes (${e.message || "" + e})`);
+          logger.warn(
+            `${name}: couldn't get ${algo} hashes (${e.message || "" + e})`,
+          );
         }
       }
 
       if (sums && sums[archiveName]) {
-        await ensureChecksum(opts, {
+        await ensureChecksum(opts.logger, {
           algo,
           expected: sums[archiveName].hash,
           file: archivePath,
         });
       } else {
-        log(opts, `${name}: no hashes found, skipping integrity check`);
+        logger.warn(`${name}: no hashes found, skipping integrity check`);
       }
 
       if (formula.format === "executable") {
-        log(opts, `${name}: installed!`);
+        logger.info(`${name}: installed!`);
       } else if (formula.format === "7z") {
-        log(opts, `${name}: extracting ${formula.format} archive`);
-        await extract.extract({
-          emitter: new EventEmitter(),
+        logger.info(`${name}: extracting ${formula.format} archive`);
+        await extract({
+          logger,
+          ctx,
           archivePath,
           destPath: self.binPath(),
         });
-        log(opts, `${name}: cleaning up ${formula.format} archive`);
+        logger.info(`${name}: cleaning up ${formula.format} archive`);
         await sf.wipe(archivePath);
       } else if (formula.format === "tar.gz") {
-        log(opts, `${name}: extracting ${formula.format} archive`);
+        logger.info(`${name}: extracting ${formula.format} archive`);
         await targz.extract({
           archivePath,
           destPath: self.binPath(),
         });
-        log(opts, `${name}: cleaning up ${formula.format} arhcive`);
+        logger.info(`${name}: cleaning up ${formula.format} arhcive`);
         await sf.wipe(archivePath);
       } else {
         throw new Error(`unsupported ibrew formula format: ${formula.format}`);
       }
 
-      const {sanityCheck} = formula;
+      const { sanityCheck } = formula;
       if (sanityCheck) {
-        log(opts, `${name}: running sanity check ${JSON.stringify(sanityCheck)}`);
+        logger.info(
+          `${name}: running sanity check ${JSON.stringify(sanityCheck)}`,
+        );
 
-        const sanityRes = await spawn.exec(sanityCheck);
+        const sanityRes = await spawn.exec({
+          ...sanityCheck,
+          ctx,
+          logger: devNull,
+        });
         if (sanityRes.code !== 0) {
-          throw new Error(`sanity check for ${name} failed with code ${sanityRes.code}` +
-            `, out = ${sanityRes.out}, err = ${sanityRes.err}`);
+          throw new Error(
+            `sanity check for ${name} failed with code ${sanityRes.code}` +
+              `, out = ${sanityRes.out}, err = ${sanityRes.err}`,
+          );
         }
       }
-      log(opts, `${name}: installed!`);
+      logger.info(`${name}: installed!`);
     };
 
     onStatus("stopwatch", ["login.status.dependency_check"]);
     const getLatestVersion = partial(net.getLatestVersion, channel);
 
-    const localVersion = await self.getLocalVersion(name);
+    const localVersion = await self.getLocalVersion(ctx, name);
 
     if (!localVersion) {
-      log(opts, `${name}: missing, downloading latest`);
+      logger.info(`${name}: missing, downloading latest`);
       const latestVersion = await getLatestVersion();
       return await downloadVersion(latestVersion);
     }
@@ -153,17 +175,18 @@ const self = {
     try {
       latestVersion = await getLatestVersion();
     } catch (err) {
-      log(opts, `${name}: cannot get latest version, skipping: ${err.message || err}`);
+      logger.warn(
+        `${name}: cannot get latest version, skipping: ${err.message || err}`,
+      );
       return;
     }
 
-    if (version.equal(localVersion, latestVersion) ||
-        localVersion === "head") {
-      log(opts, `${name}: have latest (${localVersion})`);
+    if (version.equal(localVersion, latestVersion) || localVersion === "head") {
+      logger.info(`✔ ${name}@${localVersion} is up-to-date`);
       return;
     }
 
-    log(opts, `${name}: upgrading '${localVersion}' => '${latestVersion}'`);
+    logger.info(`▲ upgrading ${name}@${localVersion} to ${latestVersion}`);
     await downloadVersion(latestVersion);
   },
 
@@ -181,11 +204,11 @@ const self = {
     }
   },
 
-  getLocalVersion: async function (name: string): Promise<string> {
+  getLocalVersion: async function(ctx: Context, name: string): Promise<string> {
     const formula = formulas[name] as IFormulaSpec;
-    const {versionCheck = {}} = formula;
+    const { versionCheck = {} } = formula;
 
-    const check: IVersionCheck = {...defaultVersionCheck, ...versionCheck};
+    const check: IVersionCheck = { ...defaultVersionCheck, ...versionCheck };
 
     try {
       const command = check.command ? check.command : name;
@@ -196,7 +219,13 @@ const self = {
           PATH: this.binPath(),
         };
       }
-      const info = await os.assertPresence(command, check.args, check.parser, extraOpts);
+      const info = await os.assertPresence(
+        ctx,
+        command,
+        check.args,
+        check.parser,
+        extraOpts,
+      );
       return version.normalize(info.parsed);
     } catch (err) {
       console.log(`[ibrew] While checking version for ${name}: ${err.message}`); // tslint:disable-line:no-console
@@ -208,11 +237,12 @@ const self = {
 
   binPath: () => ospath.join(app.getPath("userData"), "bin"),
 
-  ext: () => (os.platform() === "win32") ? ".exe" : "",
+  ext: () => (os.platform() === "win32" ? ".exe" : ""),
 
   augmentedPaths: {} as IAugmentedPaths,
 
-  augmentPath: function (opts: IBrewOpts, subfolder: string): string {
+  augmentPath: function(opts: IBrewOpts, subfolder: string): string {
+    const { logger } = opts;
     let binPath = self.binPath();
     if (subfolder) {
       binPath = ospath.join(binPath, subfolder);
@@ -221,7 +251,7 @@ const self = {
       return;
     }
     self.augmentedPaths[binPath] = true;
-    log(opts, `Augmenting $PATH: ${binPath}`);
+    logger.debug(`Augmenting $PATH: ${binPath}`);
 
     process.env.PATH = `${binPath}${ospath.delimiter}${process.env.PATH}`;
     return binPath;

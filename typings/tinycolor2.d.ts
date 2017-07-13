@@ -1,4 +1,3 @@
-
 interface HSLColor {
   h: number;
   s: number;
@@ -22,7 +21,7 @@ interface TinyColorStatic {
 /**
  * Typings for https://bgrins.github.com/TinyColor
  */
-declare module 'tinycolor2' {
+declare module "tinycolor2" {
   var tc: TinyColorStatic;
   export = tc;
 }

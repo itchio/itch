@@ -1,4 +1,3 @@
-
 interface IManifestIcons {
   [key: string]: string;
 }

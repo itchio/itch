@@ -1,0 +1,37 @@
+{
+  "version": "0.1.0",
+  "tasks": [
+    {
+      "taskName": "compile",
+      "command": "node_modules/.bin/tsc",
+      "windows":{
+        "command": "node_modules\\.bin\\tsc",
+      },
+      "isShellCommand": true,
+      "args": [
+        "-w",
+        "-p",
+        ".",
+        "--noEmit",
+        "--skipLibCheck"
+      ],
+      "showOutput": "silent",
+      "isBackground": true,
+      "isBuildCommand": true,
+      "problemMatcher": "$tsc-watch"
+    },
+    {
+      "taskName": "test",
+      "command": "npm",
+      "isShellCommand": true,
+      "args": [
+        "test",
+        "--",
+        "-w"
+      ],
+      "showOutput": "silent",
+      "isBackground": true,
+      "isTestCommand": true
+    }
+  ]
+}

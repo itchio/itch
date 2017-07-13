@@ -1,15 +1,12 @@
-
-import {} from "redux-actions";
-
 import * as React from "react";
 import * as classNames from "classnames";
 
-import {connect, I18nProps} from "../connect";
-import {createSelector, createStructuredSelector} from "reselect";
+import { connect } from "../connect";
+import { createSelector, createStructuredSelector } from "reselect";
 
-import {findWhere, first} from "underscore";
+import { size } from "underscore";
 
-import os from "../../util/os";
+import * as os from "../../os";
 
 import actionForGame from "../../util/action-for-game";
 import isPlatformCompatible from "../../util/is-platform-compatible";
@@ -17,64 +14,94 @@ import isPlatformCompatible from "../../util/is-platform-compatible";
 import MainAction from "./main-action";
 import SecondaryActions from "./secondary-actions";
 
-import {IActionsInfo} from "./types";
+import { IActionsInfo } from "./types";
+import { IGame } from "../../db/models/game";
+import { ICaveSummary } from "../../db/models/cave";
+import { IDownloadKeySummary } from "../../db/models/download-key";
+import getByIds from "../../helpers/get-by-ids";
+
 import {
-  IAppState, IGameRecord, ICaveRecord, IDownloadKey,
-  IDownloadItem, ITask, IGameUpdate, IGameUpdatesState,
+  IAppState,
+  IDownloadItem,
+  ITask,
+  IGameUpdate,
+  IGameUpdatesState,
 } from "../../types";
+
+import { ItchPlatform } from "../../format";
 
 const platform = os.itchPlatform();
 
-class GameActions extends React.Component<IProps & IDerivedProps & I18nProps, void> {
-  render () {
-    const {props} = this;
-    const {showSecondary, CustomSecondary} = props;
+import styled from "../styles";
+import Filler from "../basics/filler";
 
-    const classes = classNames("game-actions", `action-${props.action}`, `task-${props.task}`, {
-      incompatible: !props.platformCompatible,
-      uninstalled: !props.cave,
-    });
-
-    return <div className={classes}>
-      <MainAction {...props}/>
-      {showSecondary
-        ? <SecondaryActions {...props}/>
-        : ""}
-      {CustomSecondary
-        ? <CustomSecondary {...props}/>
-        : ""}
-    </div>;
+const StyledMainAction = styled(MainAction)`
+  &.vertical {
+    width: 100%;
   }
+`;
 
+const GameActionsDiv = styled.div`
+  min-height: 3em;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  flex-grow: 1;
+
+  &.vertical {
+    flex-direction: column;
+    align-items: stretch;
+  }
+`;
+
+class GameActions extends React.PureComponent<IProps & IDerivedProps> {
+  render() {
+    const { props } = this;
+    const { vertical, showSecondary, CustomSecondary } = this.props;
+
+    let taskName = "idle";
+    if (props.tasks && props.tasks.length > 0) {
+      taskName = props.tasks[0].name;
+    }
+
+    const classes = classNames({ vertical });
+
+    return (
+      <GameActionsDiv className={classes}>
+        <StyledMainAction {...props} className={classNames({ vertical })} />
+        {vertical ? null : <Filler />}
+        {showSecondary ? <SecondaryActions {...props} /> : ""}
+        {CustomSecondary ? <CustomSecondary {...props} /> : ""}
+      </GameActionsDiv>
+    );
+  }
 }
 
 interface IProps {
-  game: IGameRecord;
+  game: IGame;
   showSecondary?: boolean;
   CustomSecondary?: typeof React.Component;
-  /** if not specified, will be looked up from game */
-  cave?: ICaveRecord;
+  cave?: ICaveSummary;
+
+  vertical?: boolean;
 }
 
 interface IDerivedProps extends IActionsInfo {
   animate: boolean;
-  platform: string;
+  platform: ItchPlatform;
   platformCompatible: boolean;
   progress: number;
   cancellable: boolean;
-  cave: ICaveRecord;
   pressDownload: boolean;
   update: IGameUpdate;
 }
 
 interface IHappenings {
-  game: IGameRecord;
-  cave: ICaveRecord;
-  downloadKeys: {
-    [id: string]: IDownloadKey;
-  };
-  task: ITask;
-  download: IDownloadItem;
+  game: IGame;
+  caves: ICaveSummary[];
+  downloadKeys: IDownloadKeySummary[];
+  tasks: ITask[];
+  downloads: IDownloadItem[];
   meId: number;
   mePress: boolean;
   gameUpdates: IGameUpdatesState;
@@ -86,39 +113,71 @@ export default connect<IProps>(GameActions, {
     const selector = createSelector(
       createStructuredSelector({
         game: (state: IAppState, props: IProps) => props.game,
-        cave: (state: IAppState, props: IProps) => props.cave || state.globalMarket.cavesByGameId[props.game.id],
-        downloadKeys: (state: IAppState, props: IProps) => state.market.downloadKeys,
-        task: (state: IAppState, props: IProps) => first(state.tasks.tasksByGameId[props.game.id]),
-        download: (state: IAppState, props: IProps) => state.downloads.downloadsByGameId[props.game.id],
-        meId: (state: IAppState, props: IProps) => (state.session.credentials.me || { id: "anonymous" }).id,
+        caves: (state: IAppState, props: IProps) =>
+          getByIds(
+            state.commons.caves,
+            state.commons.caveIdsByGameId[props.game.id],
+          ),
+        downloadKeys: (state: IAppState, props: IProps) =>
+          getByIds(
+            state.commons.downloadKeys,
+            state.commons.downloadKeyIdsByGameId[props.game.id],
+          ),
+        tasks: (state: IAppState, props: IProps) =>
+          state.tasks.tasksByGameId[props.game.id],
+        downloads: (state: IAppState, props: IProps) =>
+          getByIds(
+            state.downloads.items,
+            state.downloads.itemIdsByGameId[props.game.id],
+          ),
+        meId: (state: IAppState, props: IProps) =>
+          (state.session.credentials.me || { id: "anonymous" }).id,
         mePress: (state: IAppState, props: IProps) =>
           (state.session.credentials.me || { pressUser: false }).pressUser,
         gameUpdates: (state: IAppState, props: IProps) => state.gameUpdates,
       }),
       (happenings: IHappenings) => {
-        const { game, cave, downloadKeys, task, download, meId, mePress, gameUpdates } = happenings;
+        const {
+          game,
+          caves,
+          downloadKeys,
+          tasks,
+          downloads,
+          meId,
+          mePress,
+          gameUpdates,
+        } = happenings;
+        let cave;
+        if (size(caves) > 0) {
+          cave = caves[0];
+        }
 
         const animate = false;
         let action = actionForGame(game, cave);
 
-        const platformCompatible = (action === "open" ? true : isPlatformCompatible(game));
+        const platformCompatible =
+          action === "open" ? true : isPlatformCompatible(game);
         const cancellable = false;
-        const downloadKey = findWhere(downloadKeys, { gameId: game.id });
+
+        let downloadKey;
+        if (size(downloadKeys) > 0) {
+          // TODO: ignore revoked ones
+          downloadKey = downloadKeys[0];
+        }
         const hasMinPrice = game.minPrice > 0;
         const hasDemo = game.hasDemo;
+
         // FIXME game admins
         const canEdit = game.userId === meId;
         let mayDownload = !!(downloadKey || !hasMinPrice || canEdit || hasDemo);
         let pressDownload = false;
         if (!mayDownload) {
-          pressDownload = (game.inPressSystem && mePress);
+          pressDownload = game.inPressSystem && mePress;
           if (pressDownload) {
             mayDownload = true;
           }
         }
         const canBeBought = game.canBeBought;
-
-        const downloading = download && !download.finished;
 
         let update: IGameUpdate;
         if (cave) {
@@ -137,8 +196,8 @@ export default connect<IProps>(GameActions, {
           platform,
           platformCompatible,
           action,
-          task: (task ? task.name : (downloading ? "download" : (cave ? "idle" : null))),
-          progress: (task ? task.progress : (downloading ? download.progress : 0)),
+          downloads,
+          tasks,
         };
       },
     );

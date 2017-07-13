@@ -1,47 +1,79 @@
+import { IStore, Cancelled } from "../types";
+import { IAction } from "../constants/action-types";
 
-import {IStore} from "../types";
-import {IAction} from "../constants/action-types";
+import { Watcher } from "./watcher";
 
-import {Watcher} from "./watcher";
-import {each} from "underscore";
+import env from "../env";
+import * as os from "../os";
 
-import {opts} from "../logger";
-import mklog from "../util/log";
-const log = mklog("reactors");
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "route" });
 
-// TODO: make this a higher-order function
-export default function route (watcher: Watcher, store: IStore, action: IAction<any>) {
-  each(watcher.reactors[action.type], async (reactor) => {
+let printError = (msg: string) => {
+  logger.error(msg);
+};
+
+if (env.name === "test") {
+  printError = (msg: string) => {
+    console.error(msg);
+    console.error("Bailing out...");
+    os.exit(1);
+  };
+}
+
+const emptyArr = [];
+
+function err(e: Error, action: IAction<any>) {
+  if (e instanceof Cancelled) {
+    console.warn(`reactor for ${action.type} was cancelled`);
+  } else {
+    printError(
+      `while reacting to ${(action || { type: "?" }).type}: ${e.stack || e}`,
+    );
+  }
+}
+
+export default async function route(
+  watcher: Watcher,
+  store: IStore,
+  action: IAction<any>,
+) {
+  setTimeout(() => {
     try {
-      await reactor(store, action);
-    } catch (e) {
-      log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
-    }
-  });
-
-  each(watcher.reactors._ALL, async (reactor) => {
-    try {
-      await reactor(store, action);
-    } catch (e) {
-      log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
-    }
-  });
-
-  each(watcher.subs, (sub) => {
-    each(sub.reactors[action.type], async (reactor) => {
-      try {
-        await reactor(store, action);
-      } catch (e) {
-        log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+      for (const r of watcher.reactors[action.type] || emptyArr) {
+        r(store, action).catch(e => {
+          err(e, action);
+        });
       }
-    });
 
-    each(sub.reactors._ALL, async (reactor) => {
-      try {
-        await reactor(store, action);
-      } catch (e) {
-        log(opts, `while reacting to ${(action || {type: "?"}).type}: ${e.stack || e}`);
+      for (const r of watcher.reactors._ALL || emptyArr) {
+        r(store, action).catch(e => {
+          err(e, action);
+        });
       }
-    });
-  });
+
+      for (const sub of watcher.subs) {
+        if (!sub) {
+          continue;
+        }
+
+        for (const r of sub.reactors[action.type] || emptyArr) {
+          r(store, action).catch(e => {
+            err(e, action);
+          });
+        }
+
+        for (const r of sub.reactors._ALL || emptyArr) {
+          r(store, action).catch(e => {
+            err(e, action);
+          });
+        }
+      }
+    } catch (e) {
+      const e2 = new Error(
+        `Could not route action, original stack:\n${e.stack}`,
+      );
+      err(e2, action);
+    }
+  }, 0);
 }

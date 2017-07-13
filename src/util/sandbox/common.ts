@@ -1,22 +1,30 @@
+import rootLogger from "../../logger";
+const logger = rootLogger.child({ name: "sandbox/common" });
 
-import mklog from "../log";
-const log = mklog("sandbox/common");
-
+import Context from "../../context";
 import { INeed, ICaretakerSet } from "./types";
 
-export async function tendToNeeds(opts: any, needs: INeed[], caretakers: ICaretakerSet) {
+export async function tendToNeeds(
+  ctx: Context,
+  needs: INeed[],
+  caretakers: ICaretakerSet,
+) {
   const errors: Error[] = [];
 
   for (const need of needs) {
-    log(opts, `tending to need ${JSON.stringify(need)}`);
+    logger.info(`tending to need ${JSON.stringify(need)}`);
     const caretaker = caretakers[need.type];
     if (!caretaker) {
-      errors.push(new Error(`don't know how to fulfill need ${JSON.stringify(need)}`));
+      errors.push(
+        new Error(`don't know how to fulfill need ${JSON.stringify(need)}`),
+      );
     } else {
       try {
-        await Promise.resolve(caretaker(need));
+        await Promise.resolve(caretaker(ctx, need));
       } catch (e) {
-        log(opts, `While tending to need ${JSON.stringify(need)}: ${e.stack || e}`);
+        logger.info(
+          `While tending to need ${JSON.stringify(need)}: ${e.stack || e}`,
+        );
         errors.push(e);
       }
     }

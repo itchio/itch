@@ -28,7 +28,7 @@ possible with your report. If you can, please include:
 ## Submitting Pull Requests
 
 * Include screenshots and animated GIFs in your pull request whenever possible.
-* Follow the [coding style defined in docs](/docs/hacking/coding-style.md).
+* Follow the [coding style defined in docs](/docs/developing/coding-style.md).
 * Write documentation in [Markdown](https://daringfireball.net/projects/markdown).
 * Use short, present tense commit messages. See [Commit Message Styleguide](#git-commit-messages).
 

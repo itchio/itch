@@ -1,9 +1,8 @@
-
-import {IStatusState} from "../types";
+import { IStatusState } from "../types";
 import * as actions from "../actions";
 import reducer from "./reducer";
 
-import {rest, omit} from "underscore";
+import { rest, omit } from "underscore";
 
 const initialState = {
   messages: [],
@@ -11,16 +10,13 @@ const initialState = {
   openAtLoginError: null,
 } as IStatusState;
 
-export default reducer<IStatusState>(initialState, (on) => {
+export default reducer<IStatusState>(initialState, on => {
   on(actions.statusMessage, (state, action) => {
-    const {message} = action.payload;
+    const { message } = action.payload;
 
     return {
       ...state,
-      messages: [
-        message,
-        ...state.messages,
-      ],
+      messages: [message, ...state.messages],
     };
   });
 
@@ -32,7 +28,7 @@ export default reducer<IStatusState>(initialState, (on) => {
   });
 
   on(actions.enableBonus, (state, action) => {
-    const {name} = action.payload;
+    const { name } = action.payload;
 
     return {
       ...state,
@@ -44,7 +40,7 @@ export default reducer<IStatusState>(initialState, (on) => {
   });
 
   on(actions.disableBonus, (state, action) => {
-    const {name} = action.payload;
+    const { name } = action.payload;
 
     return {
       ...state,
