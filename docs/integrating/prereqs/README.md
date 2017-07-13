@@ -42,5 +42,8 @@ Each category of prerequisite has its own page:
   * [.NET Framework](./dotnet.md)
   * [XNA Framework](./xna.md)
 
-If your game needs a prerequisite that's not on the list, please [open an issue](https://github.com/itchio/itch/issues/new)
-so we can add it to our repository.
+If your game needs a prerequisite that's not on the list, please [open an
+issue](https://github.com/itchio/itch/issues/new) so we can add it to our
+repository. Please consult the list of [requested
+prerequisites](https://github.com/itchio/itch/labels/prereqs) first to avoid
+opening duplicate requests!
