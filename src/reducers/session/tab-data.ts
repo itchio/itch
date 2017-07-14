@@ -1,5 +1,6 @@
 import { ITabDataSet } from "../../types";
 import * as actions from "../../actions";
+import { pathPrefix } from "../../util/navigation";
 import reducer from "../reducer";
 
 import { omit } from "underscore";
@@ -51,7 +52,7 @@ export default reducer<ITabDataSet>(initialState, on => {
       return state;
     }
 
-    if (oldData.path === data.path) {
+    if (pathPrefix(oldData.path) === pathPrefix(data.path)) {
       // merge old & new data
       return {
         ...state,
