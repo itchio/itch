@@ -80,3 +80,6 @@ It'll work out of the box for everyone, it supports fun stuff like [HRTF][] out-
 and tinkerers can always swap it for their favorite OpenAL implementation!
 
 [HRTF]: https://en.wikipedia.org/wiki/Head-related_transfer_function
+
+[butler]: https://itch.io/docs/butler/
+[install location]: ../../using/install-locations.md
