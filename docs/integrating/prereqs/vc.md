@@ -8,6 +8,11 @@ The following versions of the Visual C++ Runtime are available:
   * `vc-redist-2010-x86`: Microsoft Visual C++ 2010 Redistributable (x86)
   * `vc-redist-2010-x64`: Microsoft Visual C++ 2010 Redistributable (x64)
 
+## 2013
+
+  * `vc-redist-2013-x86`: Microsoft Visual C++ 2013 (x86)
+  * `vc-redist-2013-x64`: Microsoft Visual C++ 2013 (x64)
+
 ## 2015
 
   * `vc-redist-2015-x86`: Microsoft Visual C++ 2015 Redistributable Update 3 (x86)
