@@ -19,11 +19,12 @@ directly. It'll take care of compression and patching for you.
 For a longer explanation of why portable builds matter, read the [Single files](https://itch.io/docs/butler/single-files.html) page
 of the butler documentation.
 
-## Prerequisites (Visual C++, .NET, XNA)
+## Prerequisites (Visual C++, .NET, XNA, DirectX)
 
-If your game depends the Visual C++ Runtime, the .NET Framework, the XNA Framework
-or so, please look at the [Prerequisites](../prereqs/README.md) feature of the itch app - it can install
-those for your players before the first launc of your game.
+If your game depends the Visual C++ Runtime, the .NET Framework, the XNA
+Framework, DirectX or so, please look at the
+[Prerequisites](../prereqs/README.md) feature of the itch app - it can
+install those for your players before the first launc of your game.
 
 ## Don't bother with 64-bit builds
 

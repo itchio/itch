@@ -41,6 +41,7 @@ Each category of prerequisite has its own page:
   * [Visual C++ Runtime](./vc.md)
   * [.NET Framework](./dotnet.md)
   * [XNA Framework](./xna.md)
+  * [DirectX](./dx.md)
 
 If your game needs a prerequisite that's not on the list, please [open an
 issue](https://github.com/itchio/itch/issues/new) so we can add it to our
