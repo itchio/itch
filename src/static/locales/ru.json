@@ -440,5 +440,6 @@
     "login.action.retry_setup": "Повторить установку",
     "prompt.uninstall_error.title": "Ошибка удаления",
     "prompt.uninstall_error.message": "Удаление завершилось с ошибкой. Убрать из списка всё равно?",
-    "new_tab.devlogs": "Дневники разработчиков"
+    "new_tab.devlogs": "Дневники разработчиков",
+    "prompt.action.continue": "Продолжить"
 }
