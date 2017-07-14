@@ -105,20 +105,20 @@ export default class GameStats extends React.PureComponent<
                     "usage_stats.description.price",
                     {
                       price: sale
-                        ? [
+                        ? <span>
                             <label
                               key="original-price"
                               className="original-price"
                             >
                               {formatPrice(currency, minPrice)}
-                            </label>,
+                            </label>
                             <label key="discounted-price">
                               {" "}{formatPrice(
                                 currency,
                                 minPrice * (1 - sale.rate / 100),
                               )}
-                            </label>,
-                          ]
+                            </label>
+                          </span>
                         : <label>
                             {formatPrice(currency, minPrice)}
                           </label>,
