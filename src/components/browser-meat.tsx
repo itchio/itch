@@ -186,6 +186,7 @@ export class BrowserMeat extends React.PureComponent<
   didStopLoading = () => {
     this.props.tabLoading({ id: this.props.tab, loading: false });
     this.updateBrowserState({ loading: false });
+    this.analyzePage(this.state.browserState.url);
   };
 
   pageTitleUpdated = (e: any) => {
@@ -205,7 +206,6 @@ export class BrowserMeat extends React.PureComponent<
     const { url } = e;
 
     this.updateBrowserState({ url });
-    this.analyzePage(url);
 
     this.updateScrollWatcher(url, this.wentBackOrForward);
     this.wentBackOrForward = false;
@@ -336,34 +336,31 @@ export class BrowserMeat extends React.PureComponent<
       return;
     }
 
-    const { tab, evolveTab } = this.props;
+    const { webview } = this;
+    if (!webview) {
+      return;
+    }
 
-    const xhr = new XMLHttpRequest();
-    xhr.responseType = "document";
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState !== 4) {
-        return;
-      }
-      if (!xhr.responseXML) {
-        return;
-      }
-      const meta = xhr.responseXML.querySelector('meta[name="itch:path"]');
-      if (meta) {
-        let newPath = meta.getAttribute("content");
-        const parsed = urlParser.parse(url);
-        if (parsed.search) {
-          newPath += parsed.search;
+    webview.executeJavaScript(
+      "(function () { " +
+        "var el = document.querySelector('meta[name=\"itch:path\"]'); " +
+        "if (!el) { return null; } " +
+        'return el.getAttribute("content"); ' +
+        "})()",
+      false /* user gesture */,
+      newPath => {
+        const { tab, evolveTab } = this.props;
+        if (newPath) {
+          const parsed = urlParser.parse(url);
+          if (parsed.search) {
+            newPath += parsed.search;
+          }
+          evolveTab({ id: tab, path: newPath });
+        } else {
+          evolveTab({ id: tab, path: `url/${url}` });
         }
-        evolveTab({ id: tab, path: newPath });
-      } else {
-        evolveTab({ id: tab, path: `url/${url}` });
-      }
-    };
-    xhr.open("GET", url);
-
-    // itch.io pages don't have CORS, but this code doesn't run in
-    // a webview so CSP doesn't apply to us.
-    xhr.send();
+      },
+    );
   }
 
   componentWillReceiveProps(nextProps: IProps) {
