@@ -439,5 +439,6 @@
     "preferences.behavior.prevent_display_sleep": "Предотвращать выключение экрана во время игры",
     "login.action.retry_setup": "Повторить установку",
     "prompt.uninstall_error.title": "Ошибка удаления",
-    "prompt.uninstall_error.message": "Удаление завершилось с ошибкой. Убрать из списка всё равно?"
+    "prompt.uninstall_error.message": "Удаление завершилось с ошибкой. Убрать из списка всё равно?",
+    "new_tab.devlogs": "Дневники разработчиков"
 }
