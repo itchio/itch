@@ -420,5 +420,9 @@
     "web.context_menu.open_in_new_tab": "Отваряне в нов раздел",
     "web.context_menu.copy_link": "Копиране на връзката",
     "game.install.libraries_missing": "Липсват някои необходими библиотеки за {{arch}}: {{libraries}}",
-    "preferences.behavior.prevent_display_sleep": "Предотвратяване на приспиването на екрана по време на игра"
+    "preferences.behavior.prevent_display_sleep": "Предотвратяване на приспиването на екрана по време на игра",
+    "login.action.retry_setup": "Повтаряне на установката",
+    "new_tab.devlogs": "Журнали за разработчиците",
+    "prompt.uninstall_error.title": "Грешка при деинсталиране",
+    "prompt.uninstall_error.message": "Деинсталирането завърши неуспешно. Искате ли да премахнете този елемент изцяло?"
 }
