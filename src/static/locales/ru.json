@@ -436,5 +436,8 @@
     "web.context_menu.open_in_new_tab": "Открыть в новой вкладке",
     "web.context_menu.copy_link": "Копировать ссылку",
     "game.install.libraries_missing": "Не хватает кое-каких {{arch}} библиотек: {{libraries}}",
-    "preferences.behavior.prevent_display_sleep": "Предотвращать выключение экрана во время игры"
+    "preferences.behavior.prevent_display_sleep": "Предотвращать выключение экрана во время игры",
+    "login.action.retry_setup": "Повторить установку",
+    "prompt.uninstall_error.title": "Ошибка удаления",
+    "prompt.uninstall_error.message": "Удаление завершилось с ошибкой. Убрать из списка всё равно?"
 }
