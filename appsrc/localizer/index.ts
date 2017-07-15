@@ -14,6 +14,10 @@ export interface ILocalizer {
 
 export function getT (strings: II18nResources, lang: string) {
   const t: ILocalizer = ((key: string | string[], variables?: any) => {
+    if (!key) {
+      return key;
+    }
+
     let langs = [lang];
     if (lang.length > 2) {
       langs = [...langs, lang.substring(0, 2)];
