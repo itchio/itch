@@ -27,6 +27,9 @@ prepare() {
 
   export PYTHON=/usr/bin/python2
 
+  # Try to work around https://github.com/npm/npm/issues/17781
+  npm install -g npm@5.2.0
+
   # Get dependencies
   # (npm3's progress indicator is notoriously slow, disable)
   npm install --no-progress --quiet
