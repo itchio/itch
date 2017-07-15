@@ -11,7 +11,7 @@ import {EventEmitter} from "events";
 import fixture from "../fixture";
 
 import mklog from "../../util/log";
-const logger = new mklog.Logger({sinks: {console: true}});
+const logger = new mklog.Logger({sinks: {console: false}});
 const opts = {id: "kalamazoo", logger};
 
 test("configure", (t) => {
