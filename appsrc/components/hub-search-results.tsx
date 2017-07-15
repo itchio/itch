@@ -54,7 +54,7 @@ abstract class GenericSearchResult <Props extends IGenericSearchResultProps, Sta
   abstract getPath(): string
 }
 
-export class SearchResult extends GenericSearchResult<ISearchResultProps, void> {
+export class SearchResult extends GenericSearchResult<ISearchResultProps, {}> {
   render () {
     const {game, onClick, chosen} = this.props;
     const {title, stillCoverUrl, coverUrl} = game;
@@ -106,7 +106,7 @@ interface ISearchResultProps {
   active: boolean;
 }
 
-export class UserSearchResult extends GenericSearchResult<IUserSearchResultProps, void> {
+export class UserSearchResult extends GenericSearchResult<IUserSearchResultProps, {}> {
   render () {
     const {user, onClick, chosen} = this.props;
     const {displayName, username, stillCoverUrl, coverUrl} = user;

@@ -11,7 +11,7 @@ import {IState, IOpenAtLoginError} from "../../types";
 import {ILocalizer} from "../../localizer";
 import interleave, {IComponent} from "../interleave";
 
-class OpenAtLoginError extends React.Component<IOpenAtLoginErrorProps, void> {
+class OpenAtLoginError extends React.Component<IOpenAtLoginErrorProps> {
   render () {
     const {t, openAtLoginError} = this.props;
 

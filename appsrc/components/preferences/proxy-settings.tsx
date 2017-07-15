@@ -8,7 +8,7 @@ import {ILocalizer} from "../../localizer";
 
 import {IState} from "../../types";
 
-class ProxySettings extends React.Component<IProxySettingsProps, void> {
+class ProxySettings extends React.Component<IProxySettingsProps> {
   render () {
     const {t, proxy, proxySource} = this.props;
 

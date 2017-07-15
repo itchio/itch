@@ -26,7 +26,7 @@ import {
 
 const platform = os.itchPlatform();
 
-class GameActions extends React.Component<IGameActionsProps, void> {
+class GameActions extends React.Component<IGameActionsProps> {
   render () {
     const {props} = this;
     const {showSecondary, CustomSecondary} = props;

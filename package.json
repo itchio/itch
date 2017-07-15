@@ -99,7 +99,6 @@
     "reselect": "^2.5.2",
     "shell-quote": "^1.6.0",
     "shoom": "1.0.0",
-    "sinon": "^1.17.6",
     "source-map-support": "^0.4.0",
     "stream-splitter": "^0.3.2",
     "streamsearch": "^0.1.2",
@@ -130,12 +129,11 @@
     "redux-devtools-dock-monitor": "^1.1.1",
     "redux-devtools-filter-actions": "^1.1.1",
     "redux-devtools-log-monitor": "^1.0.11",
-    "sinon": "^1.17.1",
     "skin-deep": "^0.16.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.2.1",
     "tslint": "^4.0.2",
-    "typescript": "^2.2.1",
+    "typescript": "^2.3.4",
     "zopf": "^4.5.0"
   },
   "scripts": {

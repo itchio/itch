@@ -17,7 +17,7 @@ import {ILocalizer} from "../localizer";
 /**
  * Displays our current progress when checking for updates, etc.
  */
-class StatusBar extends React.Component<IStatusBarProps, void> {
+class StatusBar extends React.Component<IStatusBarProps> {
   constructor () {
     super();
   }

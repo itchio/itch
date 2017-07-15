@@ -12,7 +12,7 @@ import {IState, ICredentials} from "../types";
 import {ILocalizer} from "../localizer";
 import {IDispatch, dispatcher} from "../constants/action-types";
 
-export class HubContent extends React.Component<IHubContentProps, void> {
+export class HubContent extends React.Component<IHubContentProps> {
   render () {
     if (!this.props.credentials) {
       return <div/>;

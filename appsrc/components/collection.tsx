@@ -20,7 +20,7 @@ import {
 import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
-export class Collection extends React.Component<ICollectionProps, void> {
+export class Collection extends React.Component<ICollectionProps> {
   render () {
     const {t, allGames, tabGames, tabPath, collection, initiateShare} = this.props;
 

@@ -15,7 +15,7 @@ import {IState, IGameRecordSet, IItchAppProfile, IItchAppProfileMyGames} from ".
 import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
-export class Dashboard extends React.Component<IDashboardProps, void> {
+export class Dashboard extends React.Component<IDashboardProps> {
   render () {
     const {t, allGames, myGameIds, navigate} = this.props;
 

@@ -15,7 +15,7 @@ import {IState, ICaveRecordSet, IGameRecordSet, IInstallLocation, IDownloadKey} 
 import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
-export class Location extends React.Component<ILocationProps, void> {
+export class Location extends React.Component<ILocationProps> {
   render () {
     const {t, locationName, userDataPath, locations, caves, allGames, browseInstallLocation} = this.props;
 

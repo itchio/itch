@@ -10,7 +10,7 @@ import {ILocalizer} from "../localizer";
 
 import {IGameRecord, ICaveRecord} from "../types";
 
-class TotalPlaytime extends React.Component<ITotalPlaytimeProps, void> {
+class TotalPlaytime extends React.Component<ITotalPlaytimeProps> {
   render () {
     const {t, game, cave, short = false} = this.props;
     const {secondsRun = 0} = (cave || {});

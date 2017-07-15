@@ -26,7 +26,7 @@ interface IStatus {
   hint?: string;
 }
 
-class MainAction extends React.Component<IMainActionProps, void> {
+class MainAction extends React.Component<IMainActionProps> {
   render () {
     const {t, cancellable, platform, platformCompatible, mayDownload,
       pressDownload, canBeBought, progress, task, action, animate} = this.props;

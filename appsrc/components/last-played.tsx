@@ -12,7 +12,7 @@ import {ILocalizer} from "../localizer";
 
 import {IGameRecord, ICaveRecord} from "../types";
 
-class LastPlayed extends React.Component<ILastPlayedProps, void> {
+class LastPlayed extends React.Component<ILastPlayedProps> {
   render () {
     const {t, game, cave, short = false} = this.props;
     const {lastTouched = 0} = (cave || {});

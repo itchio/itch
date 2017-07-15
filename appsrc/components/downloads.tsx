@@ -12,7 +12,7 @@ import {IState, IDownloadItem} from "../types";
 import {IDispatch, dispatcher} from "../constants/action-types";
 import {ILocalizer} from "../localizer";
 
-class Downloads extends React.Component<IDownloadsProps, void> {
+class Downloads extends React.Component<IDownloadsProps> {
   constructor () {
     super();
   }

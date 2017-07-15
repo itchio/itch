@@ -6,7 +6,7 @@ import BrowserControls from "./browser-controls";
 
 import {IBrowserState} from "./browser-state";
 
-export class BrowserBar extends React.Component<IBrowserBarProps, void> {
+export class BrowserBar extends React.Component<IBrowserBarProps> {
   render () {
     const {browserState} = this.props;
     const {loading} = browserState;

@@ -10,7 +10,7 @@ import {ILocalizer} from "../localizer";
 import {IActionOpts} from "./game-actions/list-secondary-actions";
 import Ink = require("react-ink");
 
-class GameBrowserContextAction extends React.Component<IGameBrowserContextAction, void> {
+class GameBrowserContextAction extends React.Component<IGameBrowserContextAction> {
   render () {
     const {t, dispatch, opts} = this.props;
     const {action, icon, hint, label, type = "action", classes = []} = opts;

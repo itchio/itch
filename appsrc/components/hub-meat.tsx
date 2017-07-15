@@ -23,7 +23,7 @@ import {sortBy, map} from "underscore";
 
 import {IState, ITabs, ITabDataSet, ITabData} from "../types";
 
-export class HubMeat extends React.Component<IHubMeatProps, void> {
+export class HubMeat extends React.Component<IHubMeatProps> {
   render () {
     const {tabData, tabs, id: currentId} = this.props;
 

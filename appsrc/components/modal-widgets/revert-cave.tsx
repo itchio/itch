@@ -8,7 +8,7 @@ import {ICaveRecord} from "../../types";
 
 import {ILocalizer} from "../../localizer";
 
-export class RevertCave extends React.Component<IRevertCaveProps, void> {
+export class RevertCave extends React.Component<IRevertCaveProps> {
   refs: {
     buildId?: HTMLInputElement;
   };

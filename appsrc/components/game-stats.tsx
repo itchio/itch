@@ -23,7 +23,7 @@ import {
   IGameRecord, ICaveRecord, IDownloadKey,
 } from "../types";
 
-export class GameStats extends React.Component<IGameStatsProps, void> {
+export class GameStats extends React.Component<IGameStatsProps> {
   render () {
     const {t, cave, game = {} as IGameRecord, downloadKey, mdash = true} = this.props;
     const classification = game.classification || "game";

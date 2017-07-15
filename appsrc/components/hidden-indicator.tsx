@@ -10,7 +10,7 @@ import {ILocalizer} from "../localizer";
 
 import Icon from "./icon";
 
-class HiddenIndicator extends React.Component<IHiddenIndicatorProps, void> {
+class HiddenIndicator extends React.Component<IHiddenIndicatorProps> {
   render () {
     const {t, tab, count, clearFilters} = this.props;
 

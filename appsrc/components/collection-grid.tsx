@@ -8,7 +8,7 @@ import * as actions from "../actions";
 import {ICollectionRecordSet} from "../types";
 import {IDispatch, dispatcher} from "../constants/action-types";
 
-export class CollectionGrid extends React.Component<ICollectionGridProps, void> {
+export class CollectionGrid extends React.Component<ICollectionGridProps> {
   render () {
     const {collections} = this.props;
     const {navigate} = this.props;

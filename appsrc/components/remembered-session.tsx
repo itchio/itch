@@ -12,7 +12,7 @@ import {IRememberedSession} from "../types";
 import {ILocalizer} from "../localizer";
 import {IDispatch, dispatcher} from "../constants/action-types";
 
-export class RememberedSession extends React.Component<IRememberedSessionProps, void> {
+export class RememberedSession extends React.Component<IRememberedSessionProps> {
   render () {
     const {t, session, loginWithToken, forgetSessionRequest} = this.props;
     const {me, key} = session;

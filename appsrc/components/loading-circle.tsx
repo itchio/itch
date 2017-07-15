@@ -2,7 +2,7 @@
 import * as React from "react";
 import {Circle} from "rc-progress";
 
-export default class LoadingCircle extends React.Component<ILoadingCircleProps, void> {
+export default class LoadingCircle extends React.Component<ILoadingCircleProps> {
     render () {
         const {progress} = this.props;
 

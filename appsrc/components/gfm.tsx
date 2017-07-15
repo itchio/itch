@@ -15,7 +15,7 @@ const emojify = require("../util/emojify") as IEmojify;
 
 import urls from "../constants/urls";
 
-export class GFM extends React.Component<IGFMProps, void> {
+export class GFM extends React.Component<IGFMProps> {
 
   render () {
     return <div dangerouslySetInnerHTML={this.renderHTML()}/>;

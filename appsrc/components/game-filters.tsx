@@ -19,7 +19,7 @@ import Select = require("react-select");
 import Icon from "./icon";
 
 @watching
-class GameFilters extends React.Component<IGameFiltersProps, void> {
+class GameFilters extends React.Component<IGameFiltersProps> {
   refs: {
     search: HTMLInputElement;
   };

@@ -10,7 +10,7 @@ import {pathToId} from "../util/navigation";
 import {IBrowserState} from "./browser-state";
 import {IState, IUserRecord, ITabData, IUserMarketState, IUserRecordSet} from "../types";
 
-export class UserBrowserBar extends React.Component<IUserBrowserBarProps, void> {
+export class UserBrowserBar extends React.Component<IUserBrowserBarProps> {
   render () {
     const {browserState} = this.props;
     const {loading} = browserState;

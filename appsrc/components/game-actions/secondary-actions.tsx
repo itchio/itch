@@ -14,7 +14,7 @@ import {IActionsInfo} from "./types";
 
 import Ink = require("react-ink");
 
-class SecondaryActions extends React.Component<ISecondaryActionsProps, void> {
+class SecondaryActions extends React.Component<ISecondaryActionsProps> {
   render () {
     const {items, error} = listSecondaryActions(this.props);
 

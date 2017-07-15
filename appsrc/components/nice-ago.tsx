@@ -22,7 +22,7 @@ function momentBridge (t: ILocalizer) {
   };
 }
 
-export class NiceAgo extends React.Component<INiceAgoProps, void> {
+export class NiceAgo extends React.Component<INiceAgoProps> {
   render () {
     const {t, date} = this.props;
 

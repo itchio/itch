@@ -36,7 +36,7 @@ function getAppLogPath () {
 
 // TODO: split into smaller components
 
-export class Preferences extends React.Component<IPreferencesProps, void> {
+export class Preferences extends React.Component<IPreferencesProps> {
   render () {
     const {t, lang, sniffedLang = "", downloading, locales} = this.props;
     const {isolateApps, openAtLogin, openAsHidden, closeToTray,

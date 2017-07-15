@@ -18,7 +18,7 @@ import {
 
 import {ILocalizer} from "../../localizer";
 
-export class PrereqsState extends React.Component<IPrereqsStateProps, void> {
+export class PrereqsState extends React.Component<IPrereqsStateProps> {
     render() {
         const {t, prereqsState} = this.props;
         const params = this.props.modal.widgetParams as IPrereqsStateParams;

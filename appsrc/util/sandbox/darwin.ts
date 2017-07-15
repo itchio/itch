@@ -119,7 +119,7 @@ export async function install(opts: any, needs: INeed[]) {
 }
 
 export async function uninstall(opts: any) {
-  return { errors: [] };
+  return { errors: [] as any[] };
 }
 
 export default { check, install, uninstall, within };

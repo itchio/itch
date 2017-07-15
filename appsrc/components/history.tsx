@@ -14,7 +14,7 @@ import {ILocalizer} from "../localizer";
 import {IState, IHistoryItem, IHistoryItemOption} from "../types";
 import {IDispatch} from "../constants/action-types";
 
-class History extends React.Component<IHistoryProps, void> {
+class History extends React.Component<IHistoryProps> {
   render () {
     const {t, pickOption, items} = this.props;
 

@@ -1,7 +1,7 @@
 
 import test = require("zopf");
 
-const noop = async () => null;
+const noop = async () => { /* muffin */ };
 function mkcooldown () {
   return noop;
 }

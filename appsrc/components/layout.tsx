@@ -25,7 +25,7 @@ declare class Notification {
  * Also, subscribes to app store to synchronize its state
  */
 @watching
-class Layout extends React.Component<ILayoutProps, void> {
+class Layout extends React.Component<ILayoutProps> {
   subscribe (watcher: Watcher) {
     watcher.on(actions.notifyHtml5, async (store, action) => {
       const {title, onClick} = action.payload;

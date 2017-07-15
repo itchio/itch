@@ -6,7 +6,7 @@ import {IModalWidgetProps} from "./modal-widget";
 
 import {ILocalizer} from "../../localizer";
 
-export class TwoFactorInput extends React.Component<ITwoFactorInputProps, void> {
+export class TwoFactorInput extends React.Component<ITwoFactorInputProps> {
   refs: {
     totpInput?: HTMLInputElement;
   };

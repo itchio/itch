@@ -20,7 +20,7 @@ import interleave from "./interleave";
 import {IState, ICollectionRecord, IGameRecordSet, IUserMarketState} from "../types";
 import {IDispatch, dispatcher} from "../constants/action-types";
 
-export class CollectionHubItem extends React.Component<ICollectionHubItemProps, void> {
+export class CollectionHubItem extends React.Component<ICollectionHubItemProps> {
   render () {
     const {t, allGames, collection} = this.props;
     const {navigateToCollection} = this.props;

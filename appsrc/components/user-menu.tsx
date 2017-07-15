@@ -15,7 +15,7 @@ import Icon from "./icon";
 
 import urls from "../constants/urls";
 
-class UserMenu extends React.Component<IUserMenuProps, void> {
+class UserMenu extends React.Component<IUserMenuProps> {
   render () {
     const {viewCreatorProfile, viewCommunityProfile, changeUser,
       navigate, quit, reportIssue,

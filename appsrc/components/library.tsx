@@ -18,7 +18,7 @@ function recency (cave: ICaveRecord): number {
   return 0;
 };
 
-export class Library extends React.Component<ILibraryProps, void> {
+export class Library extends React.Component<ILibraryProps> {
   render () {
     const {caves, recordGames, downloadKeys} = this.props;
 

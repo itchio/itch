@@ -13,7 +13,7 @@ import {ILocalizer} from "../localizer";
 
 import CollectionsGrid from "./collections-grid";
 
-export class Collections extends React.Component<ICollectionsProps, void> {
+export class Collections extends React.Component<ICollectionsProps> {
   render () {
     const {t, navigate} = this.props;
 

@@ -21,7 +21,7 @@ import {ILocalizer} from "../localizer";
 import watching, {Watcher} from "./watching";
 
 @watching
-export class GatePage extends React.Component<IGatePageProps, void> {
+export class GatePage extends React.Component<IGatePageProps> {
   refs: {
     username: HTMLInputElement;
     password: HTMLInputElement;

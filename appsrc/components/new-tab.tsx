@@ -45,7 +45,7 @@ const newTabItems = [
   },
 ];
 
-export class NewTab extends React.Component<INewTabProps, void> {
+export class NewTab extends React.Component<INewTabProps> {
   constructor () {
     super();
 

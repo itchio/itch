@@ -19,7 +19,7 @@ const HALLOWEEN_WHITELIST = {
  * An icon from the icomoon font.
  * Peek in the static/fonts/icomoon/ folder to learn more.
  */
-class Icon extends React.Component<IIconProps, void> {
+class Icon extends React.Component<IIconProps> {
   render () {
     const {icon, classes, halloween} = this.props;
     if (!icon) {
