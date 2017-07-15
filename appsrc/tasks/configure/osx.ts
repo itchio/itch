@@ -3,7 +3,8 @@
 // macOS, for consistency with the itch.io API
 
 import * as bluebird from "bluebird";
-import * as ospath from "path";
+import * as pathModule from "path";
+const ospath = pathModule.posix;
 import sf from "../../util/sf";
 
 import mklog from "../../util/log";
@@ -18,6 +19,7 @@ export async function configure(opts: IConfigureOpts, cavePath: string): Promise
 
   const examineBundle = async (res: string) => {
     const pathElements = res.split(ospath.sep);
+    log(opts, `path elements: ${JSON.stringify(pathElements)}`);
     let currentElements: string[] = [];
     for (const element of pathElements) {
       if (element === "__MACOSX") {
@@ -43,9 +45,9 @@ export async function configure(opts: IConfigureOpts, cavePath: string): Promise
       }
     }
 
-    const valid = await isValidAppBundle(ospath.join(cavePath, res));
-    if (!valid) {
-      log(opts, `Skipping ${res}, looks invalid (no Info.plist or something)`);
+    const checkRes = await checkAppBundle(ospath.join(cavePath, res));
+    if (!checkRes.valid) {
+      log(opts, `Skipping ${res}, not a valid app bundle: ${checkRes.reason}`);
       return;
     }
 
@@ -74,11 +76,11 @@ interface IAppBundleResult {
   reason: string;
 }
 
-export async function isValidAppBundle(appBundlePath: string): Promise<IAppBundleResult> {
+export async function checkAppBundle(appBundlePath: string): Promise<IAppBundleResult> {
     const plistPath = ospath.join(appBundlePath, "Contents", "Info.plist");
 
     if (!(await sf.exists(plistPath))) {
-      return {valid: false, reason: "No Info.pList"};
+      return {valid: false, reason: "Missing Info.pList"};
     }
 
     return {valid: true, reason: "Looks good"};

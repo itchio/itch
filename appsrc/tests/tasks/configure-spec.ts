@@ -11,7 +11,7 @@ import {EventEmitter} from "events";
 import fixture from "../fixture";
 
 import mklog from "../../util/log";
-const logger = new mklog.Logger({sinks: {console: false}});
+const logger = new mklog.Logger({sinks: {console: true}});
 const opts = {id: "kalamazoo", logger};
 
 test("configure", (t) => {
@@ -75,6 +75,7 @@ test("configure (each platform)", (t) => {
   const sf = test.module({
     "chmod": () => Promise.resolve(),
     "lstat": originalSf.lstat,
+    "exists": originalSf.exists,
     "glob": originalSf.glob,
     "@global": true,
   });
@@ -102,6 +103,16 @@ test("configure (each platform)", (t) => {
     const res = await osx.configure(opts, osxPath);
     const names = [
       "Some Grand Game.app/",
+    ];
+    t.samePaths(res.executables, names);
+  });
+
+  const osxGhostPath = fixture.path("configure/osx-ghost");
+
+  t.case("osx ignores invalid app bundles", async function (t) {
+    const res = await osx.configure(opts, osxGhostPath);
+    const names = [
+      "Awesome Stuff.app/",
     ];
     t.samePaths(res.executables, names);
   });

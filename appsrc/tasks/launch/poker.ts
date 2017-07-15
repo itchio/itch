@@ -8,7 +8,7 @@ import sf from "../../util/sf";
 import butler, {IExePropsResult, IElfPropsResult} from "../../util/butler";
 import os from "../../util/os";
 
-import {isAppBundle, isValidAppBundle} from "../configure/osx";
+import {isAppBundle, checkAppBundle} from "../configure/osx";
 
 import {filter, map, sortBy} from "underscore";
 
@@ -140,8 +140,9 @@ async function computeWeight (opts: IStartTaskOpts, appPath: string,
     }
 
     if (isAppBundle(exePath)) {
-      if (!(await isValidAppBundle(exePath))) {
-        log(opts, `skipping, not a valid app bundle: ${exePath}`);
+      const checkRes = await checkAppBundle(exePath);
+      if (!checkRes.valid) {
+        log(opts, `skipping, ${checkRes.reason}: ${exePath}`);
         return;
       }
     }
