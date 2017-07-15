@@ -196,6 +196,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
     cwd,
     console,
     isolateApps,
+    appPath,
   };
 
   let fullExec = exePath;
@@ -225,7 +226,7 @@ export default async function launch (out: EventEmitter, opts: ILaunchOpts): Pro
       };
 
       await sandbox.within(sandboxOpts, async function ({fakeApp}) {
-        await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, env, out, opts);
+        await doSpawn(fullExec, `open -W ${spawn.escapePath(fakeApp)}`, env, out, spawnOpts);
       });
     } else {
       log(opts, "no app isolation");
@@ -301,6 +302,8 @@ interface IDoSpawnOpts extends ILaunchOpts {
 
   /** app isolation is enabled */
   isolateApps?: boolean;
+
+  appPath: string;
 }
 
 async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment, emitter: EventEmitter,
@@ -339,7 +342,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     }
   }
 
-  const tmpPath = ospath.join(cwd, ".itch", "temp");
+  const tmpPath = ospath.join(opts.appPath, ".itch", "temp");
   try {
     await sf.mkdir(tmpPath);
     env = {
@@ -349,6 +352,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     };
   } catch (e) {
     log(opts, `could not make custom temp path: ${e.message}`);
+    log(opts, `(no matter, let's continue)`);
   }
 
   log(opts, `command: ${command}`);
@@ -401,6 +405,7 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     await butler.wipe(tmpPath);
   } catch (e) {
     log(opts, `could not remove tmp dir: ${e.message}`);
+    log(opts, `(no matter, let's continue)`);
   }
 
   if (code !== 0) {
