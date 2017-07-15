@@ -11,7 +11,7 @@ url="https://github.com/itchio/{{CI_APPNAME}}"
 license=('MIT')
 
 depends=('alsa-lib' 'libnotify' 'nss' 'gconf' 'gtk2' 'libxtst' 'desktop-file-utils' 'gtk-update-icon-cache' 'libxss')
-makedepends=('nodejs' 'nodejs-grunt-cli' 'npm' 'python2' 'gcc')
+makedepends=('nodejs' 'nodejs-grunt-cli' 'npm>=5.2.0' 'python2' 'gcc')
 options=('!strip')
 install="{{CI_APPNAME}}.install"
 
