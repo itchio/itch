@@ -8,6 +8,8 @@ import sf from "../../util/sf";
 import butler, {IExePropsResult, IElfPropsResult} from "../../util/butler";
 import os from "../../util/os";
 
+import {isAppBundle, isValidAppBundle} from "../configure/osx";
+
 import {filter, map, sortBy} from "underscore";
 
 import mklog from "../../util/log";
@@ -132,7 +134,15 @@ async function computeWeight (opts: IStartTaskOpts, appPath: string,
     } catch (err) {
       if (err.code === "ENOENT") {
         // entering the ultra hat dimension
-        log(opts, `candidate disappeared: ${exePath}`);
+        log(opts, `skipping, no longer on disk: ${exePath}`);
+        return;
+      }
+    }
+
+    if (isAppBundle(exePath)) {
+      if (!(await isValidAppBundle(exePath))) {
+        log(opts, `skipping, not a valid app bundle: ${exePath}`);
+        return;
       }
     }
 

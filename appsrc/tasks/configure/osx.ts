@@ -6,6 +6,9 @@ import * as bluebird from "bluebird";
 import * as ospath from "path";
 import sf from "../../util/sf";
 
+import mklog from "../../util/log";
+const log = mklog("configure/osx");
+
 import { IConfigureOpts, IConfigureResult, fixExecs } from "./common";
 
 export async function configure(opts: IConfigureOpts, cavePath: string): Promise<IConfigureResult> {
@@ -13,15 +16,13 @@ export async function configure(opts: IConfigureOpts, cavePath: string): Promise
 
   const globRes = await sf.glob("**/*.app/", { cwd: cavePath });
 
-  for (const res of globRes) {
-    let skip = false;
-
+  const examineBundle = async (res: string) => {
     const pathElements = res.split(ospath.sep);
     let currentElements: string[] = [];
     for (const element of pathElements) {
       if (element === "__MACOSX") {
-        skip = true;
-        break;
+        log(opts, `Skipping ${res}, it contains __MACOSX`);
+        return;
       }
 
       currentElements = [...currentElements, element];
@@ -29,22 +30,31 @@ export async function configure(opts: IConfigureOpts, cavePath: string): Promise
       try {
         const stats = await sf.lstat(path);
         if (stats.isSymbolicLink()) {
-          skip = true;
-          break;
+          log(opts, `Skipping ${res}, ${path} is a symlink`);
+          return;
         }
       } catch (e) {
         if (e.code === "ENOENT" || e.code === "EPERM") {
-          skip = true;
-          break;
+          log(opts, `Skipping ${res}, ${path} did not exist or wasn't readable for us`);
+          return;
         } else {
           throw e;
         }
       }
     }
 
-    if (!skip) {
-      bundles.push(res + "/");
+    const valid = await isValidAppBundle(ospath.join(cavePath, res));
+    if (!valid) {
+      log(opts, `Skipping ${res}, looks invalid (no Info.plist or something)`);
+      return;
     }
+
+    log(opts, `${res}: Looks like the real thing!`);
+    bundles.push(res + "/");
+  };
+
+  for (const res of globRes) {
+    await examineBundle(res);
   }
 
   if (bundles.length) {
@@ -57,4 +67,23 @@ export async function configure(opts: IConfigureOpts, cavePath: string): Promise
   // script / binary - try it the linux way
   const fixResult = await fixExecs(opts, "macExecutable", cavePath);
   return { executables: fixResult.executables };
+}
+
+interface IAppBundleResult {
+  valid: boolean;
+  reason: string;
+}
+
+export async function isValidAppBundle(appBundlePath: string): Promise<IAppBundleResult> {
+    const plistPath = ospath.join(appBundlePath, "Contents", "Info.plist");
+
+    if (!(await sf.exists(plistPath))) {
+      return {valid: false, reason: "No Info.pList"};
+    }
+
+    return {valid: true, reason: "Looks good"};
+}
+
+export function isAppBundle (exePath: string) {
+  return /\.app\/?$/.test(exePath.toLowerCase());
 }

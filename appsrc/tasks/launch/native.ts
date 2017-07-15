@@ -28,6 +28,8 @@ import {promisedModal} from "../../reactors/modals";
 import {startTask} from "../../reactors/tasks/start-task";
 import {MODAL_RESPONSE} from "../../constants/action-types";
 
+import {isAppBundle} from "../configure/osx";
+
 import mklog from "../../util/log";
 const log = mklog("launch/native");
 
@@ -422,8 +424,4 @@ async function doSpawn (exePath: string, fullCommand: string, env: IEnvironment,
     }
   }
   return "child completed successfully";
-}
-
-function isAppBundle (exePath: string) {
-  return /\.app\/?$/.test(exePath.toLowerCase());
 }
