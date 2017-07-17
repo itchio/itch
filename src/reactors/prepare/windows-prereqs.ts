@@ -23,7 +23,7 @@ import * as sf from "../../os/sf";
 import * as registry from "../../os/win32/registry";
 
 import { request, getChecksums, ensureChecksum } from "../../net";
-import butler, { IButlerResult } from "../../util/butler";
+import butler from "../../util/butler";
 import { Logger } from "../../logger";
 
 import { join } from "path";
@@ -64,7 +64,15 @@ interface IInstallPlanItem {
   info: IRedistInfo;
 }
 
-interface IButlerPrereqResult {
+interface IButlerPrereqMessage {
+  type: "state" | "log";
+}
+
+interface IButlerPrereqLogEntry extends IButlerPrereqMessage {
+  message: string;
+}
+
+interface IButlerPrereqResult extends IButlerPrereqMessage {
   name: string;
   status: TaskProgressStatus;
 }
@@ -356,28 +364,14 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
     const stateDirPath = join(workDir.name, "statedir");
     await sf.mkdir(stateDirPath);
 
-    const onButlerResult = (result: IButlerResult) => {
-      const value = result.value as IButlerPrereqResult;
-
-      prereqsState = {
-        ...prereqsState,
-        tasks: {
-          ...prereqsState.tasks,
-          [value.name]: {
-            ...prereqsState.tasks[value.name],
-            status: value.status,
-          },
-        },
-      };
-      sendProgress();
-    };
-
     logger.info("Installing all prereqs via butler...");
 
     const namedPipeName = `butler-windows-prereqs-${Date.now().toFixed(0)}`;
     const namedPipePath = "\\\\.\\pipe\\" + namedPipeName;
 
     logger.info(`Listening to status updates on ${namedPipePath}`);
+
+    const butlerLogger = logger.child({ name: "butler-prereqs" });
 
     const server = osnet.createServer(function(stream) {
       const splitter = stream
@@ -386,26 +380,32 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
       splitter.encoding = "utf8";
       splitter.on("token", (token: string) => {
         try {
-          let status: any;
+          let msg: IButlerPrereqMessage;
           try {
-            status = JSON.parse(token);
+            msg = JSON.parse(token);
           } catch (err) {
             logger.warn(`Couldn't parse line of butler output: ${token}`);
             return;
           }
 
-          if (status.name && status.status) {
-            prereqsState = {
-              ...prereqsState,
-              tasks: {
-                ...prereqsState.tasks,
-                [status.name]: {
-                  ...prereqsState.tasks[status.name],
-                  status: status.status as TaskProgressStatus,
+          if (msg.type === "state") {
+            const butlerState = msg as IButlerPrereqResult;
+            if (butlerState.name && butlerState.status) {
+              prereqsState = {
+                ...prereqsState,
+                tasks: {
+                  ...prereqsState.tasks,
+                  [butlerState.name]: {
+                    ...prereqsState.tasks[butlerState.name],
+                    status: butlerState.status as TaskProgressStatus,
+                  },
                 },
-              },
-            };
-            sendProgress();
+              };
+              sendProgress();
+            }
+          } else if (msg.type === "log") {
+            const butlerLogEntry = msg as IButlerPrereqLogEntry;
+            butlerLogger.info(butlerLogEntry.message);
           }
         } catch (e) {
           logger.warn(`Could not parse status update: ${e.stack}`);
@@ -418,7 +418,6 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
       pipe: namedPipePath,
       ctx,
       logger,
-      onResult: onButlerResult,
     });
 
     const nowInstalledPrereqs = {} as {
