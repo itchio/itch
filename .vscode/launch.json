@@ -2,43 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Main Process",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceRoot}/src/main.js",
-            "stopOnEntry": false,
-            "args": [],
-            "cwd": "${workspaceRoot}",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "runtimeArgs": [
-                "."
-            ],
-            "env": {},
-            "console": "integratedTerminal",
-            "sourceMaps": true,
-            "protocol": "inspector"
-        },
-        {
-            "name": "Main Process (Local Instance)",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceRoot}/src/main.js",
-            "stopOnEntry": false,
-            "args": [],
-            "cwd": "${workspaceRoot}",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "runtimeArgs": [
-                "."
-            ],
-            "env": {
-                "WHEN_IN_ROME": "http://localhost.com:8080"
-            },
-            "console": "integratedTerminal",
-            "sourceMaps": true,
-            "protocol": "inspector"
-        },
-        {
-            "name": "Renderer Process",
+            "name": "Main (prod)",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/src/main.js",
@@ -52,12 +16,11 @@
             ],
             "env": {},
             "console": "integratedTerminal",
-            "sourceMaps": false,
-            "protocol": "inspector",
-            "port": 9222
+            "sourceMaps": true,
+            "protocol": "inspector"
         },
         {
-            "name": "Renderer Process (Local Instance)",
+            "name": "Main (dev)",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/src/main.js",
@@ -73,9 +36,16 @@
                 "WHEN_IN_ROME": "http://localhost.com:8080"
             },
             "console": "integratedTerminal",
-            "sourceMaps": false,
+            "sourceMaps": true,
+            "protocol": "inspector"
+        },
+        {
+            "name": "Renderer",
+            "type": "node",
+            "request": "attach",
             "protocol": "inspector",
-            "port": 9222
+            "port": 9222,
+            "timeout": 30000
         },
         {
             "name": "Unit Tests",
@@ -95,6 +65,22 @@
             "console": "integratedTerminal",
             "sourceMaps": true,
             "protocol": "inspector"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Itch app (prod)",
+            "configurations": [
+                "Main (prod)",
+                "Renderer"
+            ]
+        },
+        {
+            "name": "Itch app (dev)",
+            "configurations": [
+                "Main (dev)",
+                "Renderer"
+            ]
         }
     ]
 }
