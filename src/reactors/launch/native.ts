@@ -192,6 +192,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
     cwd,
     console,
     isolateApps,
+    appPath,
   };
 
   let fullExec = exePath;
@@ -227,7 +228,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
           `open -W ${spawn.escapePath(fakeApp)}`,
           env,
           ctx,
-          opts,
+          spawnOpts,
         );
       });
     } else {
@@ -329,6 +330,9 @@ interface IDoSpawnOpts extends ILaunchOpts {
 
   /** app isolation is enabled */
   isolateApps?: boolean;
+
+  /** root of the install folder */
+  appPath: string;
 }
 
 async function doSpawn(
@@ -339,6 +343,7 @@ async function doSpawn(
   opts: IDoSpawnOpts,
 ) {
   logger.info(`spawn command: ${fullCommand}`);
+  const { appPath } = opts;
 
   const cwd = opts.cwd || dirname(exePath);
   logger.info(`working directory: ${cwd}`);
@@ -374,7 +379,7 @@ async function doSpawn(
     }
   }
 
-  const tmpPath = join(cwd, ".itch", "temp");
+  const tmpPath = join(appPath, ".itch", "temp");
   try {
     await sf.mkdir(tmpPath);
     env = {
@@ -383,7 +388,8 @@ async function doSpawn(
       TEMP: tmpPath,
     };
   } catch (e) {
-    logger.info(`could not make custom temp path: ${e.message}`);
+    logger.warn(`could not make temporary directory: ${e.message}`);
+    logger.warn(`(no matter, let's continue)`);
   }
 
   logger.info(`command: ${command}`);
@@ -443,7 +449,8 @@ async function doSpawn(
       logger: devNull,
     });
   } catch (e) {
-    logger.warn(`could not remove tmp dir: ${e.message}`);
+    logger.warn(`could not wipe temporary directory: ${e.message}`);
+    logger.warn(`(no matter, let's continue)`);
   }
 
   if (code !== 0) {
