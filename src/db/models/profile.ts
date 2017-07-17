@@ -1,4 +1,5 @@
 import { Model, ensureExtends, Column } from "../model";
+import { IItchAppTabs } from "../../types";
 import { JSONField } from "../json-field";
 
 const ProfileModelOriginal = {
@@ -8,6 +9,7 @@ const ProfileModelOriginal = {
     id: Column.Integer,
 
     myGameIds: Column.JSON,
+    openTabs: Column.JSON,
   },
 };
 
@@ -22,4 +24,5 @@ export interface IProfile {
   id: number;
 
   myGameIds: JSONField<number[]>;
+  openTabs: JSONField<IItchAppTabs>;
 }

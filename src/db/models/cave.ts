@@ -4,7 +4,7 @@ import { DateTimeField } from "../datetime-field";
 
 import { PathScheme } from "../../os/paths";
 
-import { IUpload } from "../../types";
+import { IUpload, InstallerType } from "../../types";
 import { IConfigureResult } from "../../util/butler";
 
 const CaveModelOriginal = {
@@ -32,6 +32,7 @@ const CaveModelOriginal = {
 
     installLocation: Column.Text,
     installFolder: Column.Text,
+    installerType: Column.Text,
     pathScheme: Column.Integer,
   },
 };
@@ -109,15 +110,18 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   installedUE4Prereq: boolean;
 
   /** indexed by prereq name (standard, stored in ibrew-like repo), set to true when installed successfully */
-  installedPrereqs: {
+  installedPrereqs: JSONField<{
     [prereqName: string]: boolean;
-  };
+  }>;
 
   /** name of the install location: 'default' or a GUID */
   installLocation: string;
 
   /** name of the install folder in the install location, derived from the game's title */
   installFolder: string;
+
+  /** type of the method used to install/uninstall the game */
+  installerType: InstallerType;
 
   /** scheme used for computing paths */
   pathScheme: PathScheme;

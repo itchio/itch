@@ -8,8 +8,9 @@ import { toDateTimeField } from "./datetime-field";
 
 import { sortBy, indexBy, pluck, filter } from "underscore";
 
-interface IMigrator {
+export interface IMigrator {
   db: DB;
+  logger: Logger;
   createTable: <T>(model: Model, cb: (t: ITableBuilder<T>) => void) => void;
 }
 
@@ -56,15 +57,14 @@ export async function runMigrations(
       );
     },
     db: q.getDB(),
+    logger,
   };
 
   for (const id of pending) {
     try {
-      await q.withTransactionAsync(async () => {
-        const migration = migrations[id];
-        await migration(migrator);
-        markMigrated(q, id);
-      });
+      const migration = migrations[id];
+      await migration(migrator);
+      markMigrated(q, id);
     } catch (e) {
       logger.error(`migration ${id} failed: ${e.stack}`);
     }
