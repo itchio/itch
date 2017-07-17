@@ -43,5 +43,5 @@ export default async function getManifest(
 
   validateManifest(manifest, logger);
 
-  return null;
+  return manifest;
 }
