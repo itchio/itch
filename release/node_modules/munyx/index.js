@@ -423,7 +423,7 @@ $.md5 = async function (path) {
 }
 
 $.winstallerPath = function (arch) {
-  return `/c/jenkins/workspace/${$.appName()}-installers-${arch}`
+  return `C:\\jenkins\\workspace\\${$.appName()}-installers-${arch}`
 }
 
 $.leftPad = function (input, len, filler) {
