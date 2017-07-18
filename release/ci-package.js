@@ -125,7 +125,7 @@ async function ciPackage(argsIn) {
   if (os === "windows") {
     packages.push("electron-winstaller@2.5.2");
   }
-  $(await $.npm(`install ${packages.join(" ")}`));
+  $(await $.npm(`install --no-save ${packages.join(" ")}`));
 
   const darwin = require("./package/darwin");
   const windows = require("./package/windows");
