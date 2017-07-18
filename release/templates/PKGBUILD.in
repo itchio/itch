@@ -41,10 +41,9 @@ build() {
   release/ci-package.js --build-only linux "${_ITCH_ARCH}"
 }
 
-check() {
-  # tests are run with electron and, trust me, you don't
-  # want this in your PKGBUILD
-}
+# about the absence of check():
+# tests are run with electron and, trust me, you don't
+# want this in your PKGBUILD
 
 package() {
   cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
