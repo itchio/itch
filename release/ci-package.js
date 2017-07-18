@@ -132,7 +132,7 @@ async function ciPackage(argsIn) {
   const linux = require("./package/linux");
 
   const electronPackager = bluebird.promisify(require("electron-packager"));
-  const electronRebuild = require("electron-rebuild").default;
+  const electronRebuild = require("electron-rebuild-ftl").default;
 
   $.say("Packaging with binary release...");
   const electronConfigKey = `${os}-${archInfo.electronArch}`;
