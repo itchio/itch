@@ -98,15 +98,23 @@ export class TestWatcher extends Watcher {
 }
 
 import { DB } from "./db";
-import { modelMap } from "./db/repository";
+import { modelMap, IModelMap } from "./db/repository";
 import { checkSchema, fixSchema } from "./db/migrator";
 
 export async function withDB(store: IStore, cb: (db: DB) => Promise<void>) {
-  const db = new DB();
+  await withCustomDB(store, modelMap, cb);
+}
+
+export async function withCustomDB(
+  store: IStore,
+  customMap: IModelMap,
+  cb: (db: DB) => Promise<void>,
+) {
+  const db = new DB(customMap);
   try {
     db.load(store, ":memory:");
     const q = db.getQuerier();
-    fixSchema(q, checkSchema(q, modelMap));
+    fixSchema(q, checkSchema(q, customMap));
     await cb(db);
   } catch (e) {
     throw e;

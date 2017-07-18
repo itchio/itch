@@ -13,6 +13,10 @@ export function fromJSONField<T>(source: JSONField<T>, fallback: T = null): T {
 }
 
 export function toJSONField<T>(source: T): JSONField<T> {
+  if (!source) {
+    return null;
+  }
+
   if (typeof source === "string") {
     return source;
   }

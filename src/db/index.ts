@@ -14,7 +14,7 @@ import { globalDbPath } from "../os/paths";
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "db" });
 
-let db = new DB();
+let db = new DB(modelMap);
 
 export async function connectDatabase(store: IStore) {
   const dbPath = globalDbPath();

@@ -92,6 +92,10 @@ export function insertFor(newRecord: any, model: Model) {
 }
 
 export function toDB(newValue: any, type: Column): any {
+  if (typeof newValue === "undefined") {
+    return null;
+  }
+
   switch (type) {
     case Column.DateTime:
       return toDateTimeField(newValue);

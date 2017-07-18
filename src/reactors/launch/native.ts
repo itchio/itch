@@ -71,14 +71,19 @@ const launchNative: ILauncher = async (ctx, opts) => {
     logger.warn("no manifest action picked");
   }
 
+  const verdictHasCandidates = (verdict: IConfigureResult) =>
+    verdict && verdict.candidates && verdict.candidates.length > 0;
+
   if (!exePath) {
-    if (!cave.verdict) {
+    let verdict = fromJSONField<IConfigureResult>(cave.verdict);
+    if (!verdictHasCandidates(verdict)) {
       await configure(ctx, opts);
       cave = ctx.db.caves.findOneById(cave.id);
+      verdict = fromJSONField<IConfigureResult>(cave.verdict);
     }
 
-    const verdict = fromJSONField<IConfigureResult>(cave.verdict);
-    if (verdict && verdict.candidates && verdict.candidates.length > 0) {
+    if (verdictHasCandidates(verdict)) {
+      // TODO: ask to pick ?
       const candidate = verdict.candidates[0];
       exePath = join(appPath, candidate.path);
       isJar = candidate.flavor === "jar";

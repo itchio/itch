@@ -1,7 +1,7 @@
 import * as Database from "better-sqlite3";
 import * as hades from "./hades";
 import Querier from "./querier";
-import { RepoContainer, modelMap } from "./repository";
+import { RepoContainer, IModelMap } from "./repository";
 
 import { dirname } from "path";
 import { sync as mkdirp } from "mkdirp";
@@ -39,6 +39,10 @@ export class DB extends RepoContainer {
   protected q: Querier;
   private conn: IConnection;
   private store: IStore;
+
+  constructor(public modelMap: IModelMap) {
+    super();
+  }
 
   /**
    * Loads the db from disk.
@@ -83,7 +87,7 @@ export class DB extends RepoContainer {
       const entities: IEntityMap<Object> = entityTables[tableName];
       const entityIds = Object.keys(entities);
 
-      const Model = modelMap[tableName];
+      const Model = this.modelMap[tableName];
       if (!Model) {
         logger.info(
           `Dunno how to persist ${tableName}, skipping ${entityIds.length} records`,
@@ -160,7 +164,7 @@ export class DB extends RepoContainer {
     for (const tableName of Object.keys(deleteSpec.entities)) {
       const ids = deleteSpec.entities[tableName];
 
-      const Model = modelMap[tableName];
+      const Model = this.modelMap[tableName];
       if (!Model) {
         logger.info(
           `Dunno how to persist ${tableName}, skipping delete of ${ids.length} items`,
@@ -184,7 +188,7 @@ export class DB extends RepoContainer {
    * Deletes a single entity, optionally from the disk store too, see opts type
    */
   deleteEntity(tableName: string, id: string) {
-    const Model = modelMap[tableName];
+    const Model = this.modelMap[tableName];
     if (!Model) {
       logger.info(`Dunno how to persist ${tableName}, skipping single delete`);
       return;
