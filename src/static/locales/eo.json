@@ -430,5 +430,7 @@
     "game.install.libraries_missing": "Kelkaj bibliotekoj por {{arch}} mankas: {{libraries}}",
     "preferences.behavior.prevent_display_sleep": "Malebligi al la ekrano dormeti dum ludado",
     "login.action.retry_setup": "Ripeti la agordadon",
-    "new_tab.devlogs": "Programistaj protokolojn"
+    "new_tab.devlogs": "Programistaj protokolojn",
+    "prompt.uninstall_error.title": "Malinstala eraro",
+    "prompt.uninstall_error.message": "La malinstalado estis malsukcesa. Ĉu vi volas forigi la elementon de la listo?"
 }
