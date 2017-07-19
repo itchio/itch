@@ -16,6 +16,10 @@ import styled from "./styles";
 
 export const HubGamesDiv = styled.div`flex-grow: 1;`;
 
+function isColumnDescDefault(sortBy: string): boolean {
+  return sortBy === "secondsRun" || sortBy === "lastTouchedAt";
+}
+
 class Games extends React.PureComponent<IProps & IDerivedProps> {
   onSortChange = (sortParams: ISortParams) => {
     const { params: oldParams, tab } = this.props;
@@ -23,9 +27,20 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
 
     if (sortBy !== oldParams.sortBy) {
       // sorting by different column
-      if (sortBy === "secondsRun" || sortBy === "lastTouchedAt") {
+      if (isColumnDescDefault(sortBy)) {
         // default to desc for these, which makes the most sense
         sortDirection = "DESC";
+      }
+    } else {
+      // if we've circled back to the same sort, clear sort
+      if (isColumnDescDefault(sortBy)) {
+        if (sortDirection === "DESC") {
+          sortBy = null;
+        }
+      } else {
+        if (sortDirection === "ASC") {
+          sortBy = null;
+        }
       }
     }
 
