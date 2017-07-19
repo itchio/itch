@@ -1,5 +1,5 @@
 import * as ospath from "path";
-import { partial } from "underscore";
+import { partial, first } from "underscore";
 
 import spawn from "../os/spawn";
 import * as sf from "../os/sf";
@@ -316,8 +316,10 @@ export interface IConfigureResult {
 export type Flavor =
   | "linux"
   | "macos"
+  | "app-macos"
   | "windows"
   | "script"
+  | "windows-script"
   | "jar"
   | "html"
   | "love";
@@ -326,9 +328,17 @@ export type Arch = "386" | "amd64";
 
 export interface ICandidate {
   path: string;
+  depth: number;
   flavor: Flavor;
   arch?: Arch;
   size: number;
+  windowsInfo?: {
+    gui?: boolean;
+    installerType?: string;
+  };
+  scriptInfo?: {
+    interpreter?: string;
+  };
 }
 
 export interface IConfigureOpts extends IButlerOpts {
@@ -349,6 +359,15 @@ async function configure(opts: IConfigureOpts): Promise<IConfigureResult> {
 
   logger.info(`launching butler with args: ${JSON.stringify(args)}`);
   return await butler<IConfigureResult>(opts, "configure", args);
+}
+
+async function configureSingle(opts: IConfigureOpts): Promise<ICandidate> {
+  const result = await configure(opts);
+  if (result) {
+    return first(result.candidates);
+  }
+
+  return null;
 }
 
 async function sanityCheck(ctx: Context): Promise<boolean> {
@@ -381,4 +400,5 @@ export default {
   exeprops,
   elfprops,
   configure,
+  configureSingle,
 };

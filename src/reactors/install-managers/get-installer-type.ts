@@ -1,4 +1,3 @@
-import fnout, { SniffResult } from "fnout";
 import { Logger, devNull } from "../../logger";
 import Context from "../../context";
 
@@ -6,8 +5,6 @@ import spawn from "../../os/spawn";
 import butler from "../../util/butler";
 
 import { InstallerType, IRuntime } from "../../types";
-
-import getExeInstallerType from "./get-exe-installer-type";
 
 interface IGetInstallerTypeOpts {
   ctx: Context;
@@ -17,7 +14,7 @@ interface IGetInstallerTypeOpts {
 }
 
 const installerForExt: {
-  [ext: string]: InstallerType | "exe";
+  [ext: string]: InstallerType;
 } = {
   // Generic archives
   zip: "archive",
@@ -31,8 +28,6 @@ const installerForExt: {
   dmg: "dmg",
   // Microsoft packages
   msi: "msi",
-  // Inno setup, NSIS
-  exe: "exe",
   // Books!
   pdf: "naked",
   // Known naked
@@ -42,6 +37,16 @@ const installerForExt: {
   // some html games provide a single raw html file
   html: "naked",
 };
+
+const EXT_RE = /\.([0-9a-z]+)$/i;
+
+function getExtension(path: string) {
+  const matches = EXT_RE.exec(path);
+  if (matches && matches[1]) {
+    return matches[1].toLowerCase();
+  }
+  return null;
+}
 
 export default async function getInstallerType(
   opts: IGetInstallerTypeOpts,
@@ -53,43 +58,71 @@ export default async function getInstallerType(
     return "unknown";
   }
 
-  let type: SniffResult;
-  if (/.(jar|unitypackage)$/i.test(target)) {
-    logger.info(`known naked type for ${target}`);
-    type = {
-      ext: "naked",
-    };
-  }
+  const ext = getExtension(target);
 
-  if (!type) {
-    type = await fnout.path(target);
-    logger.info(`sniffed type ${JSON.stringify(type)} for ${target}`);
-  }
-
-  if (!type) {
-    logger.error(`fnout had nothing to say about ${target}`);
-    return "unknown";
-  }
-
-  const { runtime } = opts;
-  let installerName =
-    installerForExt[type.ext] || (await seeWhatSticks(type, opts));
-
-  if (installerName === "exe") {
-    // exes need to be further classified
-    installerName = await getExeInstallerType({
-      ctx,
+  let installerName = installerForExt[ext];
+  if (!installerName) {
+    const candidate = await butler.configureSingle({
+      path: target,
       logger,
-      target,
-      runtime,
+      ctx,
     });
+
+    if (candidate) {
+      switch (candidate.flavor) {
+        case "windows":
+          if (
+            candidate &&
+            candidate.windowsInfo &&
+            candidate.windowsInfo.installerType
+          ) {
+            installerName = candidate.windowsInfo
+              .installerType as InstallerType;
+            logger.info(
+              `${target}: windows installer of type ${installerName}`,
+            );
+          } else {
+            installerName = "naked";
+            logger.info(
+              `${target}: native windows executable, but not an installer`,
+            );
+          }
+          break;
+        case "macos":
+          installerName = "naked";
+          logger.info(`${target}: native macOS executable`);
+          break;
+        case "linux":
+          installerName = "naked";
+          logger.info(`${target}: native linux executable`);
+          break;
+        case "script":
+          installerName = "naked";
+          logger.info(`${target}: script`);
+          if (candidate.scriptInfo && candidate.scriptInfo.interpreter) {
+            logger.info(
+              `...with interpreter ${candidate.scriptInfo.interpreter}`,
+            );
+          }
+          break;
+        case "windows-script":
+          installerName = "naked";
+          logger.info(`${target}: windows script`);
+          break;
+        default:
+          logger.warn(
+            `${target}: no extension and not an executable, seeing what sticks`,
+          );
+          installerName = await seeWhatSticks(opts);
+          break;
+      }
+    }
   }
 
   return installerName;
 }
 
 async function seeWhatSticks(
-  type: SniffResult,
   opts: IGetInstallerTypeOpts,
 ): Promise<InstallerType> {
   const { ctx, logger, target } = opts;
@@ -119,11 +152,6 @@ async function seeWhatSticks(
       }
     } catch (e) {
       logger.warn(`while sniffing with butler: ${e.stack}`);
-    }
-
-    if (type.macExecutable || type.linuxExecutable) {
-      logger.info("tis an executable, going with naked");
-      return "naked";
     }
 
     return "unknown";

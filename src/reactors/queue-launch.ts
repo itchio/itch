@@ -134,7 +134,7 @@ async function doLaunch(
   let launchType = "native";
 
   if (manifestAction) {
-    launchType = await launchTypeForAction(appPath, manifestAction.path);
+    launchType = await launchTypeForAction(ctx, appPath, manifestAction.path);
 
     if (manifestAction.scope) {
       logger.info(`Requesting subkey with scope: ${manifestAction.scope}`);
