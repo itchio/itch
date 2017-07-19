@@ -441,5 +441,6 @@
     "prompt.uninstall_error.title": "Ошибка удаления",
     "prompt.uninstall_error.message": "Удаление завершилось с ошибкой. Убрать из списка всё равно?",
     "new_tab.devlogs": "Дневники разработчиков",
-    "prompt.action.continue": "Продолжить"
+    "prompt.action.continue": "Продолжить",
+    "grid.item.status.installed": "Установлено"
 }
