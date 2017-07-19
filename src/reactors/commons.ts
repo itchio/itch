@@ -37,7 +37,7 @@ function updateDownloadKeys(store: IStore, db: DB): IDownloadKeySummary[] {
     }),
   );
 
-  logger.info(`cached ${downloadKeys.length} download keys`);
+  logger.debug(`cached ${downloadKeys.length} download keys`);
 
   return downloadKeys;
 }
@@ -54,7 +54,7 @@ function updateCaves(store: IStore, db: DB): ICaveSummary[] {
     }),
   );
 
-  logger.info(`cached ${caves.length} caves`);
+  logger.debug(`cached ${caves.length} caves`);
 
   return caves;
 }
