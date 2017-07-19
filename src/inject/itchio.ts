@@ -21,7 +21,6 @@ const extendedWindow = (window as any) as IExtendedWindow;
 
 setTimeout(function() {
   const urlParser = require("../util/url").default;
-  const store = require("../store/chrome-store").default;
   const querystring = require("querystring");
 
   const sendMessage = (verb: string, userAttrs = {}) => {
@@ -146,25 +145,6 @@ setTimeout(function() {
         }
       }, 1000);
     }
-  }
-
-  function loginInject() {
-    const { me } = store.getState().session.credentials;
-    const { $ } = extendedWindow;
-    const $page = $(".user_login_page");
-    const $title = $page.find(".stat_header_widget h2");
-    $title.text(`Verify password for ${me.username}`);
-
-    const $form = $page.find(".form");
-
-    const $username = $form.find("input[name=username]");
-    $username.val(me.username);
-    $username.closest(".input_row").css("display", "none");
-
-    const $password = $form.find("input[name=password]");
-    $password.focus();
-
-    $form.find(".buttons .line").css("display", "none");
   }
 
   function checkoutInject() {
