@@ -226,7 +226,7 @@ $.gcp = async function (args) {
 // manage github assets
 $.gothub = async function (args) {
   process.env.GITHUB_USER = 'itchio'
-  process.env.GITHUB_REPO = $.app_name()
+  process.env.GITHUB_REPO = $.appName()
   return await $.sh(`gothub ${args}`)
 }
 
@@ -420,10 +420,6 @@ $.findAllFiles = async function (path) {
 $.md5 = async function (path) {
   const buf = await fs.readFileAsync(path, {encoding: null})
   return crypto.createHash('md5').update(buf).digest('hex')
-}
-
-$.winstallerPath = function (arch) {
-  return `C:\\jenkins\\workspace\\${$.appName()}-installers-${arch}`
 }
 
 $.leftPad = function (input, len, filler) {
