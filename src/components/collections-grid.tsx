@@ -61,7 +61,7 @@ export class CollectionsGrid extends React.PureComponent<
     const { collections } = this.props;
     const columnCount = 1;
     const rowCount = Math.ceil(collections.length / columnCount);
-    const columnWidth = (width - 10) / columnCount;
+    const columnWidth = (width - 16) / columnCount;
     const rowHeight = 260;
     const scrollTop = height === 0 ? 0 : this.state.scrollTop;
 
