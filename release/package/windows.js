@@ -26,7 +26,8 @@ module.exports = {
 
   package: async function (arch, buildPath) {
     $.say('Creating installer + nupkg full/delta files')
-    $(await $.sh(`mkdir -p ${$.winstallerPath(arch)}`))
+    const installerPath = winstallerPath(arch);
+    $(await $.sh(`mkdir -p ${installerPath}`))
     const appName = $.appName();
     const appVersion = $.buildVersion()
     const outDir = join('build', 'v' + appVersion)
@@ -36,7 +37,6 @@ module.exports = {
     const installerGifPath = 'release/images/installer.gif'
     const electronInstaller = require('electron-winstaller')
 
-    const installerPath = winstallerPath(arch);
     const electronInstallerOpts = {
       authors: companyName,
       exe: appName + '.exe',
