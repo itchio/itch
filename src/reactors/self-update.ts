@@ -66,7 +66,8 @@ async function getFeedURL() {
   const base = urls.updateServers[env.channel];
   const platform = (await augmentedPlatform()) + "_" + os.arch();
   const version = app.getVersion();
-  return `${base}/update/${platform}/${version}`;
+  const tagSuffix = env.channel === "canary" ? "-canary" : "";
+  return `${base}/update/${platform}/${version}${tagSuffix}`;
 }
 
 export default function(watcher: Watcher) {
