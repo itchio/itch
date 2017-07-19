@@ -19,6 +19,8 @@ import Context from "../../context";
 import butler from "../../util/butler";
 import * as icacls from "./icacls";
 
+import html from "./html";
+
 import expandManifestPath from "./expand-manifest-path";
 
 import { promisedModal } from "../../reactors/modals";
@@ -102,7 +104,15 @@ const launchNative: ILauncher = async (ctx, opts) => {
       // TODO: ask to pick ?
       const candidate = verdict.candidates[0];
       exePath = join(appPath, candidate.path);
-      isJar = candidate.flavor === "jar";
+      switch (candidate.flavor) {
+        case "html":
+          return html(ctx, opts);
+        case "jar":
+          isJar = true;
+          break;
+        default:
+        // muffin
+      }
     }
   }
 

@@ -130,7 +130,6 @@ async function doLaunch(
     manifestAction = await pickManifestAction(store, manifest, game);
   }
 
-  // TODO: launchType is deprecated
   let launchType = "native";
 
   if (manifestAction) {
@@ -156,9 +155,6 @@ async function doLaunch(
     args = [...args, ...(manifestAction.args || emptyArr)];
   }
 
-  if (!launchType) {
-    launchType = "native";
-  }
   const launcher = launchers[launchType];
   if (!launcher) {
     throw new Error(`Unsupported launch type '${launchType}'`);

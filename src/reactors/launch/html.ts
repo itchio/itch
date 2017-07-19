@@ -6,6 +6,8 @@ import * as querystring from "querystring";
 
 import { where } from "underscore";
 
+import configure from "./configure";
+
 import { BrowserWindow, shell } from "electron";
 import appEnv from "../../env";
 const { appName } = appEnv;
@@ -24,21 +26,24 @@ const { messages } = capsule;
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
-import { ILaunchOpts } from "../../types";
-
 import { fromJSONField } from "../../db/json-field";
 
 import { registerProtocol, setupItchInternal } from "./html/itch-internal";
 import { IConfigureResult } from "../../util/butler";
 
-export default async function launch(ctx: Context, opts: ILaunchOpts) {
-  const { cave, game, args, env, logger } = opts;
+import { ILauncher } from "./types";
+
+const launch: ILauncher = async (ctx, opts) => {
+  const { game, args, env, logger } = opts;
+  let { cave } = opts;
   const { store } = ctx;
 
   const appPath = paths.appPath(cave, store.getState().preferences);
-  const verdict = fromJSONField<IConfigureResult>(cave.verdict);
+  let verdict = fromJSONField<IConfigureResult>(cave.verdict);
   if (!verdict) {
-    throw new Error(`Can't launch HTML game that hasn't been configured`);
+    await configure(ctx, opts);
+    cave = ctx.db.caves.findOneById(cave.id);
+    verdict = fromJSONField<IConfigureResult>(cave.verdict);
   }
 
   const htmlCandidates = where(verdict.candidates, { flavor: "html" });
@@ -275,4 +280,6 @@ export default async function launch(ctx: Context, opts: ILaunchOpts) {
       win.close();
     });
   });
-}
+};
+
+export default launch;
