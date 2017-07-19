@@ -146,7 +146,7 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps> {
               className="go-button"
               discreet
               icon="arrow-right"
-              label={format("grid.item.open")}
+              label={format(["grid.item.open"])}
               onClick={this.navigate}
             />
           </WebNavContainer>
