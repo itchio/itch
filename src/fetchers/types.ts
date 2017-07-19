@@ -1,10 +1,14 @@
-import { ITabData, ICredentials } from "../types";
+import { ITabData, ITabPagination, ICredentials } from "../types";
 import * as bluebird from "bluebird";
+import { indexBy, pluck } from "underscore";
 
 import * as actions from "../actions";
 
 import client, { AuthenticatedClient } from "../api";
 import { isNetworkError } from "../net/errors";
+
+import { sortAndFilter } from "./sort-and-filter";
+import { IGame } from "../db/models/game";
 
 import Context from "../context";
 
@@ -19,7 +23,8 @@ export enum FetchReason {
 
 import rootLogger, { Logger } from "../logger";
 
-const emptyObj = {};
+const emptyObj = {} as any;
+const emptyArr = [];
 
 /**
  * Fetches all the data a tab needs to display, except webviews.
@@ -48,6 +53,10 @@ export class Fetcher {
     this.reason = reason;
 
     this.prevData = ctx.store.getState().session.tabData[tabId];
+
+    this.logger.debug(
+      `fetching ${this.tabData().path} for reason ${FetchReason[reason]}`,
+    );
   }
 
   async run() {
@@ -167,8 +176,83 @@ export class Fetcher {
   }
 
   tabData(): ITabData {
-    return this.ctx.store.getState().session.tabData[this.tabId] || emptyObj;
+    return (
+      this.ctx.store.getState().session.tabData[this.tabId] ||
+      (emptyObj as ITabData)
+    );
   }
+
+  tabPagination(): ITabPagination {
+    const { offset = 0, limit = 30 } =
+      this.ctx.store.getState().session.tabPagination[this.tabId] || emptyObj;
+    return { offset, limit };
+  }
+
+  needCount(): ITabData {
+    const { gameIds } = this.tabData();
+    if (gameIds && gameIds.length) {
+      return false;
+    }
+  }
+
+  pushAllGames(games: IGame[], opts: IPushAllGameOpts = {}) {
+    const fullRange = this.sortAndFilter(games);
+
+    const { offset, limit } = this.tabPagination();
+
+    const gameIds = pluck(games, "id");
+    const totalCount = opts.totalCount || gameIds.length;
+    gameIds.length = totalCount;
+
+    this.push({
+      offset,
+      limit,
+      games: indexBy(games, "id"),
+      gameIds,
+      hiddenCount: fullRange.length - games.length,
+    });
+  }
+
+  pushGames({ offset, limit, getFilteredCount, totalCount, range }) {
+    const oldData = this.tabData();
+    const gameIds = [...(oldData.gameIds || emptyArr)];
+
+    if (this.reason === FetchReason.TabPaginationChanged && oldData.gameIds) {
+      gameIds.length = oldData.gameIds.length;
+    } else {
+      gameIds.length = getFilteredCount();
+    }
+
+    this.logger.debug(
+      `pushing games ${offset}-${offset +
+        limit} / ${gameIds.length}, total ${totalCount}`,
+    );
+
+    for (let i = 0; i < range.length; i++) {
+      gameIds[i + offset] = range[i].id;
+    }
+
+    const games = {
+      ...oldData.games || emptyObj,
+      ...indexBy(range, "id"),
+    };
+
+    this.push({
+      offset,
+      limit,
+      games,
+      gameIds,
+      hiddenCount: totalCount - gameIds.length,
+    });
+  }
+
+  sortAndFilter(input: IGame[]): IGame[] {
+    return sortAndFilter(input, this.tabId, this.ctx.store);
+  }
+}
+
+interface IPushAllGameOpts {
+  totalCount?: number;
 }
 
 export class Retry extends Error {

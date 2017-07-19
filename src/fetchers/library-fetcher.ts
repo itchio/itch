@@ -1,4 +1,4 @@
-import { Fetcher, FetchReason } from "./types";
+import { Fetcher } from "./types";
 import { QueryInterface } from "../db/querier";
 
 import { addSortAndFilterToQuery } from "./sort-and-filter";
@@ -8,10 +8,7 @@ import { downloadKey } from "../api/schemas";
 
 import { arrayOf } from "idealizr";
 
-import { indexBy } from "underscore";
-
 const emptyObj = {} as any;
-const emptyArr = [] as any;
 
 export default class LibraryFetcher extends Fetcher {
   async work(): Promise<void> {
@@ -45,11 +42,9 @@ export default class LibraryFetcher extends Fetcher {
 
   async pushLocal() {
     const { db, store } = this.ctx;
-    const { session, commons } = store.getState();
+    const { commons } = store.getState();
 
-    const tabPagination = session.tabPagination[this.tabId] || emptyObj;
-    let { offset = 0, limit = 30 } = tabPagination;
-    this.logger.warn(`fetching offset ${offset}, limit ${limit}`);
+    const { offset, limit } = this.tabPagination();
 
     const { libraryGameIds } = commons;
 
@@ -60,35 +55,14 @@ export default class LibraryFetcher extends Fetcher {
         store,
       );
 
-    const totalCount = libraryGameIds.length;
-    const range = db.games.all(k =>
-      doQuery(k).offset(offset).limit(limit).select("games.*"),
-    );
-
-    const oldData = session.tabData[this.tabId] || emptyObj;
-    const gameIds = [...(oldData.gameIds || emptyArr)];
-
-    if (this.reason === FetchReason.TabPaginationChanged && oldData.gameIds) {
-      gameIds.length = oldData.gameIds.length;
-    } else {
-      gameIds.length = db.games.count(k => doQuery(k));
-    }
-
-    for (let i = 0; i < range.length; i++) {
-      gameIds[i + offset] = range[i].id;
-    }
-
-    const games = {
-      ...oldData.games || emptyObj,
-      ...indexBy(range, "id"),
-    };
-
-    this.push({
-      games,
-      gameIds,
-      hiddenCount: totalCount - gameIds.length,
+    this.pushGames({
       offset,
       limit,
+      range: db.games.all(k =>
+        doQuery(k).offset(offset).limit(limit).select("games.*"),
+      ),
+      totalCount: libraryGameIds.length,
+      getFilteredCount: () => db.games.count(k => doQuery(k)),
     });
   }
 }

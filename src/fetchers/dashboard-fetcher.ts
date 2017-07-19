@@ -7,10 +7,9 @@ import { addSortAndFilterToQuery } from "./sort-and-filter";
 import { QueryInterface } from "../db/querier";
 import { fromJSONField } from "../db/json-field";
 
-import { pluck, indexBy } from "underscore";
+import { pluck } from "underscore";
 
 const emptyArr = [];
-const emptyObj = {} as any;
 
 export default class DashboardFetcher extends Fetcher {
   async work(): Promise<void> {
@@ -24,7 +23,6 @@ export default class DashboardFetcher extends Fetcher {
 
   async pushLocal() {
     const { db, store } = this.ctx;
-    const { session } = store.getState();
     const meId = this.ensureCredentials().me.id;
     const profile = db.profiles.findOneById(meId);
     if (!profile) {
@@ -33,8 +31,7 @@ export default class DashboardFetcher extends Fetcher {
     }
     const myGameIds = fromJSONField<number[]>(profile.myGameIds) || emptyArr;
 
-    const tabPagination = session.tabPagination[this.tabId] || emptyObj;
-    let { offset = 0, limit = 30 } = tabPagination;
+    const { offset, limit } = this.tabPagination();
 
     let doQuery = (k: QueryInterface) =>
       addSortAndFilterToQuery(
@@ -43,16 +40,14 @@ export default class DashboardFetcher extends Fetcher {
         store,
       );
 
-    const totalCount = myGameIds.length;
-    const games = db.games.all(k =>
-      doQuery(k).offset(offset).limit(limit).select("games.*"),
-    );
-    const gamesCount = db.games.count(k => doQuery(k));
-
-    this.push({
-      games: indexBy(games, "id"),
-      gameIds: pluck(games, "id"),
-      hiddenCount: totalCount - gamesCount,
+    this.pushGames({
+      offset,
+      limit,
+      totalCount: myGameIds.length,
+      range: db.games.all(k =>
+        doQuery(k).offset(offset).limit(limit).select("games.*"),
+      ),
+      getFilteredCount: () => db.games.count(k => doQuery(k)),
     });
   }
 

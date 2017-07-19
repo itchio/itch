@@ -1,15 +1,13 @@
 import { Fetcher } from "./types";
 import getByIds from "../helpers/get-by-ids";
+import { indexBy } from "underscore";
 
-import { IGameSet } from "../types";
+import { IGame } from "../db/models/game";
 
 import normalize from "../api/normalize";
 import { collection, game, arrayOf } from "../api/schemas";
 
-import { sortAndFilter } from "./sort-and-filter";
 import { fromJSONField } from "../db/json-field";
-
-import { indexBy, pluck } from "underscore";
 
 import { pathToId } from "../util/navigation";
 
@@ -21,7 +19,7 @@ export default class CollectionFetcher extends Fetcher {
 
     if (this.hasGames() && !this.warrantsRemote(this.reason)) {
       const { games, gameIds } = this.tabData();
-      await this.pushGames(games, gameIds);
+      this.pushAllGames(getByIds(games, gameIds));
       return;
     }
 
@@ -43,7 +41,11 @@ export default class CollectionFetcher extends Fetcher {
       );
 
       const localGames = db.games.all(k => k.select().whereIn("id", gameIds));
-      await this.pushGames(indexBy(localGames, "id"), gameIds);
+      const orderedLocalGames = getByIds(indexBy(localGames, "id"), gameIds);
+
+      this.pushAllGames(orderedLocalGames, {
+        totalCount: localCollection.gamesCount,
+      });
     }
 
     let normalized;
@@ -72,25 +74,11 @@ export default class CollectionFetcher extends Fetcher {
 
     const remoteGames = normalized.entities.games;
     const remoteGameIds: number[] = normalized.result.gameIds;
-
-    this.pushGames(remoteGames, remoteGameIds);
+    this.pushAllGames(getByIds<IGame>(remoteGames, remoteGameIds));
   }
 
   hasGames(): boolean {
     const gameIds = this.tabData().gameIds || emptyArr;
     return gameIds.length > 0;
-  }
-
-  async pushGames(games: IGameSet, gameIds: number[]) {
-    const sortedGames = sortAndFilter(
-      getByIds(games, gameIds),
-      this.tabId,
-      this.ctx.store,
-    );
-
-    this.push({
-      games: games,
-      gameIds: pluck(sortedGames, "id"),
-    });
   }
 }
