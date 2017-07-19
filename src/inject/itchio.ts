@@ -192,9 +192,6 @@ setTimeout(function() {
       case "purchase":
         purchaseInject();
         break;
-      case "login":
-        loginInject();
-        break;
       default:
         if (firstToken === "checkout") {
           checkoutInject();
