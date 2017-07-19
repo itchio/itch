@@ -106,6 +106,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
       exePath = join(appPath, candidate.path);
       switch (candidate.flavor) {
         case "html":
+          logger.info(`${candidate.path}: is html, deferring to html launch`);
           return html(ctx, opts);
         case "jar":
           isJar = true;
