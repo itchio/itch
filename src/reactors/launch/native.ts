@@ -76,7 +76,23 @@ const launchNative: ILauncher = async (ctx, opts) => {
 
   if (!exePath) {
     let verdict = fromJSONField<IConfigureResult>(cave.verdict);
-    if (!verdictHasCandidates(verdict)) {
+    let shouldReconfigure = false;
+    if (verdictHasCandidates(verdict)) {
+      const candidate = verdict.candidates[0];
+      const candidateAbsolutePath = join(appPath, candidate.path);
+      if (!await sf.exists(candidateAbsolutePath)) {
+        logger.warn(
+          "has existing candidate but it disappeared, reconfiguring...",
+        );
+        logger.warn(`note: the culprit was ${candidateAbsolutePath}`);
+        shouldReconfigure = true;
+      }
+    } else {
+      logger.warn("has existing verdict but no candidates, reconfiguring...");
+      shouldReconfigure = true;
+    }
+
+    if (shouldReconfigure) {
       await configure(ctx, opts);
       cave = ctx.db.caves.findOneById(cave.id);
       verdict = fromJSONField<IConfigureResult>(cave.verdict);
