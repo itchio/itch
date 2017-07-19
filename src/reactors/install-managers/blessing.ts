@@ -21,7 +21,7 @@ export default async function getBlessing(
     detail: "Only accept if you trust this content.",
     buttons: [
       {
-        label: ["prompt.action.ok"],
+        label: ["prompt.action.continue"],
         id: "modal-clear-data",
         action: actions.modalResponse({}),
       },

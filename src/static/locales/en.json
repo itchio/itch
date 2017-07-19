@@ -232,6 +232,7 @@
     "prompt.action.confirm_removal": "Proceed with removal",
     "prompt.action.install": "Install",
     "prompt.action.ok": "Ok",
+    "prompt.action.continue": "Continue",
     "prompt.action.force_close": "Force close",
     "prompt.additional_purchase.detail": "...but you could still buy a copy for a friend!\n\nDo you want to make another purchase?",
     "prompt.additional_purchase.message": "You already own a copy of {{title}}.",

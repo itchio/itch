@@ -345,6 +345,7 @@ export interface IConfigureOpts extends IButlerOpts {
   path: string;
   osFilter?: string;
   archFilter?: string;
+  noFilter?: boolean;
 }
 
 async function configure(opts: IConfigureOpts): Promise<IConfigureResult> {
@@ -355,6 +356,9 @@ async function configure(opts: IConfigureOpts): Promise<IConfigureResult> {
   }
   if (opts.archFilter) {
     args = [...args, "--arch-filter", opts.archFilter];
+  }
+  if (opts.noFilter) {
+    args = [...args, "--no-filter"];
   }
 
   logger.info(`launching butler with args: ${JSON.stringify(args)}`);

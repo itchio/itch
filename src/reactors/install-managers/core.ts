@@ -60,12 +60,16 @@ import naked from "./naked";
 import archive from "./archive";
 import msi from "./msi";
 import dmg from "./dmg";
+import nsis from "./nsis";
+import inno from "./inno";
 
 const managers: IInstallManagers = {
   naked,
   archive,
   msi,
   dmg,
+  nsis,
+  inno,
 };
 
 export async function coreInstall(opts: ICoreInstallOpts) {

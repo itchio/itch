@@ -87,7 +87,7 @@ async function uninstall(opts: ICoreInstallOpts) {
   ctx.emitProgress({ progress: -1 });
 
   const { destPath } = opts;
-  const uninstallers = await findUninstallers(destPath);
+  const uninstallers = await findUninstallers(ctx, logger, destPath, "nsis");
 
   if (uninstallers.length === 0) {
     // FIXME: we should have better options here
