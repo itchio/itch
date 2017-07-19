@@ -10,7 +10,14 @@ export function formatDuration(secs: number): JSX.Element {
   return <FormattedMessage {...formatDurationAsMessage(secs)} />;
 }
 
-export function formatDurationAsMessage(secs: number): FormattedMessage.Props {
+interface IFormattedDuration {
+  id: string;
+  values?: {
+    [key: string]: string;
+  };
+}
+
+export function formatDurationAsMessage(secs: number): IFormattedDuration {
   if (secs < 60) {
     return { id: "duration.minute" };
   } else if (secs < 3600) {

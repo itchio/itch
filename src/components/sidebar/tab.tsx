@@ -77,12 +77,17 @@ class Tab extends React.PureComponent<IProps & IDerivedProps> {
       if (activeDownload) {
         progress = activeDownload.progress;
         if (downloads.paused) {
-          sublabel = ["grid.item.downloads_paused"];
-        } else {
+          const { intl } = this.props;
+          sublabel = intl.formatMessage({ id: "grid.item.downloads_paused" });
+        } else if (activeDownload.eta) {
           const title = activeDownload.game.title;
           const { intl } = this.props;
+          const formatted = formatDurationAsMessage(activeDownload.eta);
           const humanDuration = intl.formatMessage(
-            formatDurationAsMessage(activeDownload.eta),
+            {
+              id: formatted.id,
+            },
+            formatted.values,
           );
           sublabel = `${title} — ${humanDuration}`;
         }
