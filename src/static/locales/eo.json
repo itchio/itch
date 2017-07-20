@@ -432,5 +432,6 @@
     "login.action.retry_setup": "Ripeti la agordadon",
     "new_tab.devlogs": "Programistaj protokolojn",
     "prompt.uninstall_error.title": "Malinstala eraro",
-    "prompt.uninstall_error.message": "La malinstalado estis malsukcesa. Ĉu vi volas forigi la elementon de la listo?"
+    "prompt.uninstall_error.message": "La malinstalado estis malsukcesa. Ĉu vi volas forigi la elementon de la listo?",
+    "prompt.action.continue": "Daŭrigi"
 }
