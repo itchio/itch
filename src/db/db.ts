@@ -139,10 +139,13 @@ export class DB extends RepoContainer {
           }),
         );
       }
-      logger.info(
-        `${entityIds.length -
-          numUpToDate}/${entityIds.length} new/modified ${tableName}`,
-      );
+
+      if (numUpToDate < entityIds.length) {
+        logger.debug(
+          `${entityIds.length -
+            numUpToDate}/${entityIds.length} new/modified ${tableName}`,
+        );
+      }
     }
   }
 

@@ -38,6 +38,9 @@ export class Fetcher {
   reason: FetchReason;
   aborted = false;
 
+  offset: number;
+  limit: number;
+
   startedAt: number;
 
   logger?: Logger;
@@ -54,9 +57,17 @@ export class Fetcher {
 
     this.prevData = ctx.store.getState().session.tabData[tabId];
 
+    const data = this.tabPagination();
+    this.offset = data.offset;
+    this.limit = data.limit;
     this.logger.debug(
-      `fetching ${this.tabData().path} for reason ${FetchReason[reason]}`,
+      `fetching ${this.tabName()} because ${FetchReason[reason]}, off ${this
+        .offset} limit ${this.limit}`,
     );
+  }
+
+  tabName(): string {
+    return this.tabData().path || this.tabId;
   }
 
   async run() {
@@ -188,7 +199,7 @@ export class Fetcher {
     return { offset, limit };
   }
 
-  needCount(): ITabData {
+  needCount(): boolean {
     const { gameIds } = this.tabData();
     if (gameIds && gameIds.length) {
       return false;
@@ -213,7 +224,8 @@ export class Fetcher {
     });
   }
 
-  pushGames({ offset, limit, getFilteredCount, totalCount, range }) {
+  pushGames({ getFilteredCount, totalCount, range }) {
+    const { offset, limit } = this;
     const oldData = this.tabData();
     const gameIds = [...(oldData.gameIds || emptyArr)];
 

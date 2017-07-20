@@ -47,6 +47,9 @@ export async function queueFetch(
   reason: FetchReason,
 ) {
   if (fetching[tabId]) {
+    logger.debug(
+      `for ${tabId}, queueing next fetch reason ${FetchReason[reason]}`,
+    );
     nextFetchReason[tabId] = reason;
     return;
   }
@@ -74,6 +77,7 @@ export async function queueFetch(
       const nextReason = nextFetchReason[tabId];
       if (nextReason) {
         delete nextFetchReason[tabId];
+        logger.debug(`now doing nextReason ${nextReason}`);
         queueFetch(store, db, tabId, nextReason).catch(err => {
           logger.error(`In queued fetcher: ${err.stack}`);
         });

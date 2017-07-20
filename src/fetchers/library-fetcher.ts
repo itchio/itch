@@ -44,7 +44,7 @@ export default class LibraryFetcher extends Fetcher {
     const { db, store } = this.ctx;
     const { commons } = store.getState();
 
-    const { offset, limit } = this.tabPagination();
+    const { offset, limit } = this;
 
     const { libraryGameIds } = commons;
 
@@ -56,8 +56,6 @@ export default class LibraryFetcher extends Fetcher {
       );
 
     this.pushGames({
-      offset,
-      limit,
       range: db.games.all(k =>
         doQuery(k).offset(offset).limit(limit).select("games.*"),
       ),

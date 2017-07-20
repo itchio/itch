@@ -31,7 +31,7 @@ export default class DashboardFetcher extends Fetcher {
     }
     const myGameIds = fromJSONField<number[]>(profile.myGameIds) || emptyArr;
 
-    const { offset, limit } = this.tabPagination();
+    const { offset, limit } = this;
 
     let doQuery = (k: QueryInterface) =>
       addSortAndFilterToQuery(
@@ -41,8 +41,6 @@ export default class DashboardFetcher extends Fetcher {
       );
 
     this.pushGames({
-      offset,
-      limit,
       totalCount: myGameIds.length,
       range: db.games.all(k =>
         doQuery(k).offset(offset).limit(limit).select("games.*"),
