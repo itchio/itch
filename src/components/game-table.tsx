@@ -20,11 +20,10 @@ import { IOnSortChange, SortDirection, SortKey } from "./sort-types";
 
 import { ICommonsState, IGameSet } from "../types";
 
-import gameTableRowRenderer, {
-  IRowHandlerParams,
-} from "./game-table-row-renderer";
+import gameTableRowRenderer, { IRowHandlerParams } from "./game-table-row-renderer";
 
 import TimeAgo from "./basics/time-ago";
+import Icon from "./basics/icon";
 import Cover, * as cover from "./basics/cover";
 import Hoverable from "./basics/hover-hoc";
 import HiddenIndicator from "./hidden-indicator";
@@ -266,6 +265,27 @@ class GameTable extends React.PureComponent<
     }
   };
 
+  installStatusRenderer = (params: TableCellProps): JSX.Element | string => {
+    const game = params.cellData;
+    if (!game) {
+      return null;
+    }
+
+    const { commons } = this.props;
+    const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+
+    // TODO: pick cave with highest play time
+    const cave = caves.length > 0 ? caves[0] : null;
+
+    if (cave) {
+      const { intl } = this.props;
+      const hint = intl.formatMessage({ id: "grid.item.status.installed" });
+      return <Icon icon="star" hint={hint} />;
+    } else {
+      return null;
+    }
+  };
+
   render() {
     const { tab, hiddenCount } = this.props;
 
@@ -311,6 +331,9 @@ class GameTable extends React.PureComponent<
 
     let lastPlayedWidth = 140;
     remainingWidth -= lastPlayedWidth;
+
+    let installStatusWidth = 20;
+    remainingWidth -= installStatusWidth;
 
     const scrollTop = height <= 0 ? 0 : this.state.scrollTop;
     const { sortBy, sortDirection, gameIds } = this.props;
@@ -390,6 +413,14 @@ class GameTable extends React.PureComponent<
                 className="secondary"
                 cellDataGetter={this.genericDataGetter}
                 cellRenderer={this.publishedAtRenderer}
+              />
+              <Column
+                dataKey="installStatus"
+                label={" "}
+                width={installStatusWidth}
+                className="secondary"
+                cellDataGetter={this.genericDataGetter}
+                cellRenderer={this.installStatusRenderer}
               />
             </StyledTable>
           );
