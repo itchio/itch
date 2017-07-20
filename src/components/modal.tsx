@@ -6,6 +6,7 @@ import ReactModal = require("react-modal");
 import Button from "./basics/button";
 import RowButton, { Tag } from "./basics/row-button";
 import IconButton from "./basics/icon-button";
+import Icon from "./basics/icon";
 import Markdown from "./basics/markdown";
 import Filler from "./basics/filler";
 
@@ -475,7 +476,8 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
                 ? map(tags, tag => {
                     return (
                       <Tag>
-                        {format(tag.label)}
+                        {tag.icon ? <Icon icon={tag.icon} /> : null}
+                        {tag.label ? format(tag.label) : null}
                       </Tag>
                     );
                   })

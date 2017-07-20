@@ -1,5 +1,7 @@
 import * as humanize from "humanize-plus";
 
+import platformData from "../constants/platform-data";
+
 import { IUpload, ILocalizedString, IModalButtonTag } from "../types";
 
 interface IUploadButton {
@@ -30,6 +32,20 @@ export default function makeUploadButton(
     tags.push({
       label: ["pick_update_upload.tags.demo"],
     });
+  }
+
+  if (upload.type === "html") {
+    tags.push({
+      icon: "earth",
+    });
+  }
+
+  for (const prop of Object.keys(platformData)) {
+    if ((upload as any)[prop]) {
+      tags.push({
+        icon: platformData[prop].icon,
+      });
+    }
   }
 
   const icon = "download";

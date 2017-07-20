@@ -435,7 +435,8 @@ export interface IModalButton {
 }
 
 export interface IModalButtonTag {
-  label: ILocalizedString;
+  label?: ILocalizedString;
+  icon?: string;
 }
 
 export function isModalButton(object: any): object is IModalButton {
