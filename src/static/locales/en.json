@@ -74,6 +74,7 @@
     "grid.item.uninstall": "Uninstall",
     "grid.item.uninstalling": "Uninstalling…",
     "grid.item.version": "Version {{version}}",
+    "grid.item.status.installed": "Installed",
     "table.column.name": "Name",
     "table.column.play_time": "Play time",
     "table.column.last_played": "Last played",
