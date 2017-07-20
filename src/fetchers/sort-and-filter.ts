@@ -145,6 +145,15 @@ export function addSortAndFilterToQuery(
       default:
       // dunno how to sort, don't do anything
     }
+  } else {
+    // see https://github.com/itchio/itch/issues/1352
+    if (tab === "library") {
+      query = query.orderByRaw(
+        `coalesce(caves.installedAt, downloadKeys.createdAt) DESC`,
+      );
+      joinCave = true;
+      joinDownloadKeys = true;
+    }
   }
 
   if (joinCave) {
