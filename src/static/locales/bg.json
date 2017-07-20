@@ -425,5 +425,6 @@
     "new_tab.devlogs": "Журнали за разработчиците",
     "prompt.uninstall_error.title": "Грешка при деинсталиране",
     "prompt.uninstall_error.message": "Деинсталирането завърши неуспешно. Искате ли да премахнете този елемент въпреки това?",
-    "prompt.action.continue": "Продължаване"
+    "prompt.action.continue": "Продължаване",
+    "grid.item.status.installed": "Инсталирано"
 }
