@@ -435,5 +435,11 @@
     "web.context_menu.open_in_new_tab": "Ouvrir dans un nouvel onglet",
     "web.context_menu.copy_link": "Copier le lien",
     "game.install.libraries_missing": "Des bibliothèques {{arch}} requises sont manquantes: {{libraries}}",
-    "preferences.behavior.prevent_display_sleep": "Empêcher la mise en veille de l'écran pendant le jeu"
+    "preferences.behavior.prevent_display_sleep": "Empêcher la mise en veille de l'écran pendant le jeu",
+    "grid.item.status.installed": "Installé",
+    "login.action.retry_setup": "Réessayer la configuration",
+    "new_tab.devlogs": "Journaux développeurs",
+    "prompt.action.continue": "Continuer",
+    "prompt.uninstall_error.title": "Erreur de désinstallation",
+    "prompt.uninstall_error.message": "La désinstallation a échouée. Quand même supprimer l'entrée ?"
 }
