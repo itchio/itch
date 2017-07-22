@@ -302,7 +302,7 @@
     "menu.help.about": "A propos",
     "notification.purchase_complete.just_bought": "Vous venez d'acheter {{title}} !",
     "notification.purchase_complete.just_donated": "Vous venez de faire un don à {{title}} !",
-    "notification.purchase_complete.may_install_now": "Vous pouvez l'installer dès maintenant.",
+    "notification.purchase_complete.may_install_now": "Vous pouvez l'installer dès maintenant!",
     "notification.purchase_complete.thanks_for_support": "Merci de votre soutien !",
     "sandbox.setup.title": "Mise en place du bac à sable",
     "sandbox.setup.proceed": "Continuer",
@@ -438,7 +438,7 @@
     "preferences.behavior.prevent_display_sleep": "Empêcher la mise en veille de l'écran pendant le jeu",
     "grid.item.status.installed": "Installé",
     "login.action.retry_setup": "Réessayer la configuration",
-    "new_tab.devlogs": "Journaux développeurs",
+    "new_tab.devlogs": "Registre des développeurs",
     "prompt.action.continue": "Continuer",
     "prompt.uninstall_error.title": "Erreur de désinstallation",
     "prompt.uninstall_error.message": "La désinstallation a échouée. Quand même supprimer l'entrée ?"
