@@ -9,6 +9,7 @@ import IconButton from "./basics/icon-button";
 import Icon from "./basics/icon";
 import Markdown from "./basics/markdown";
 import Filler from "./basics/filler";
+import TimeAgo from "./basics/time-ago";
 
 import colors from "../constants/colors";
 
@@ -293,6 +294,18 @@ const ModalDiv = styled.div`
   }
 `;
 
+const BigButtonContent = styled.div`
+  flex: 1 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const BigButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: .3em .1em;
+`;
+
 const HeaderDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
   padding: 8px;
@@ -460,28 +473,41 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
       <BigButtonsDiv>
         {map(buttons, (buttonSpec, index) => {
           const button = this.specToButton(buttonSpec);
-          const { label, className = "", icon, id, tags } = button;
+          const { label, className = "", icon, id, tags, timeAgo } = button;
           let onClick = this.buttonOnClick(button);
 
           return (
             <RowButton
               id={id}
+              ink={false}
               className={className}
               key={index}
               icon={icon}
-              label={format(label)}
               onClick={onClick}
             >
-              {tags
-                ? map(tags, tag => {
-                    return (
-                      <Tag>
-                        {tag.icon ? <Icon icon={tag.icon} /> : null}
-                        {tag.label ? format(tag.label) : null}
+              <BigButtonContent>
+                <BigButtonRow>
+                  {format(label)}
+                </BigButtonRow>
+
+                <BigButtonRow>
+                  {tags
+                    ? map(tags, tag => {
+                        return (
+                          <Tag>
+                            {tag.icon ? <Icon icon={tag.icon} /> : null}
+                            {tag.label ? format(tag.label) : null}
+                          </Tag>
+                        );
+                      })
+                    : null}
+                  {timeAgo
+                    ? <Tag>
+                        <TimeAgo date={timeAgo.date} />
                       </Tag>
-                    );
-                  })
-                : null}
+                    : null}
+                </BigButtonRow>
+              </BigButtonContent>
             </RowButton>
           );
         })}

@@ -7,6 +7,8 @@ import { ICollection } from "../db/models/collection";
 import { IDownloadKey, IDownloadKeySummary } from "../db/models/download-key";
 import { ICaveSummary, ICave } from "../db/models/cave";
 
+import { DateTimeField } from "../db/datetime-field";
+
 export * from "./tasks";
 export * from "./errors";
 import * as Tasks from "./tasks";
@@ -432,6 +434,10 @@ export interface IModalButton {
 
   /** Tags to tack after label */
   tags?: IModalButtonTag[];
+
+  timeAgo?: {
+    date: DateTimeField;
+  };
 }
 
 export interface IModalButtonTag {
@@ -1022,7 +1028,7 @@ export interface IProgressListener {
 
 export interface IPrereqsState {
   tasks: {
-    [key: string]: ITaskProgressState;
+    [prereqName: string]: ITaskProgressState;
   };
 }
 
@@ -1033,6 +1039,7 @@ export interface ITaskProgressState {
   progress: number;
   eta: number;
   bps: number;
+  prereqsState?: IPrereqsState;
 }
 
 export type TaskProgressStatus =

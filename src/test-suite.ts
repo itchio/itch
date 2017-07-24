@@ -71,9 +71,10 @@ export class TestWatcher extends Watcher {
     super();
     this.store = createStore(reducer, {}) as IStore;
     const storeDotDispatch = this.store.dispatch;
-    this.store.dispatch = (action: IAction<any>) => {
+    this.store.dispatch = <A extends IAction<any>>(action: A): A => {
       storeDotDispatch(action);
       this.p = this.routeInternal(action);
+      return action;
     };
   }
 

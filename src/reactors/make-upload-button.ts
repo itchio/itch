@@ -1,6 +1,7 @@
 import * as humanize from "humanize-plus";
 
 import platformData from "../constants/platform-data";
+import { DateTimeField, toDateTimeField } from "../db/datetime-field";
 
 import { IUpload, ILocalizedString, IModalButtonTag } from "../types";
 
@@ -8,6 +9,9 @@ interface IUploadButton {
   label: ILocalizedString;
   tags: IModalButtonTag[];
   icon: string;
+  timeAgo: {
+    date: DateTimeField;
+  };
 }
 
 interface IMakeUploadButtonOpts {
@@ -48,7 +52,11 @@ export default function makeUploadButton(
     }
   }
 
+  const timeAgo = {
+    date: toDateTimeField(upload.updatedAt),
+  };
+
   const icon = "download";
 
-  return { label, tags, icon };
+  return { label, tags, icon, timeAgo };
 }

@@ -25,9 +25,13 @@ async function install(opts: ICoreInstallOpts) {
 
   logger.info(`extracted all files ${archivePath} into staging area`);
 
+  const { caveId } = opts;
+
   // TODO: use sub-context for progress [0.8, 1]
   await deploy({
-    ...opts,
+    ctx,
+    caveId,
+    logger,
     stagePath,
     destPath: opts.destPath,
     onSingle: async onlyFile => await handleNested(opts, onlyFile),

@@ -115,11 +115,6 @@ export const DATE_FORMAT: IDateFormat = {
   },
 };
 
-export const FS_DATE_FORMAT: IDateFormat = {
-  key: 2,
-  options: "YYYY.MM.DD-HH.mm.ss",
-};
-
 export function elapsed(t1: number, t2: number) {
   return (t2 - t1).toFixed(2) + "ms";
 }

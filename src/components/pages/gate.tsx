@@ -558,9 +558,11 @@ export default connect<IProps>(injectIntl(GatePage), {
         !login.blockingOperation && hasSessions && login.picking
           ? "pick"
           : "login";
-      return { ...login, stage, rememberedSessions };
+      const { picking, ...stateProps } = login;
+      return { ...stateProps, stage, rememberedSessions };
     } else if (!state.setup.done) {
-      return { stage: "setup", ...state.setup };
+      const { done, ...stateProps } = state.setup;
+      return { stage: "setup", ...stateProps };
     } else {
       return { stage: "ready", errors: [], blockingOperation: null };
     }
