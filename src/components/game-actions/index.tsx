@@ -80,7 +80,7 @@ class GameActions extends React.PureComponent<IProps & IDerivedProps> {
 interface IProps {
   game: IGame;
   showSecondary?: boolean;
-  CustomSecondary?: typeof React.Component;
+  CustomSecondary?: React.ComponentClass<any>;
   cave?: ICaveSummary;
 
   vertical?: boolean;

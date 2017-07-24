@@ -70,7 +70,7 @@ export const colors = {
 
   dropdownBackground: lighten(0.15, baseColors.codGray),
 
-  secondaryText: baseColors.silverChalice,
+  secondaryText: lighten(0.1, baseColors.silverChalice),
   secondaryTextHover: baseColors.ivory,
 
   ternaryText: baseColors.zambezi,

@@ -54,10 +54,6 @@ export default function(watcher: Watcher) {
         bigButtons: map(update.recentUploads, upload => {
           const spec: IModalButtonSpec = {
             ...makeUploadButton(upload, { showSize: false }),
-            timeAgo: {
-              label: ["prompt.updated_ago"],
-              date: upload.updatedAt,
-            },
             action: actions.queueGameUpdate({
               ...action.payload,
               upload,

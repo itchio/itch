@@ -14,7 +14,7 @@ const RowButtonDiv = styled.div`
 
   font-size: ${props => props.theme.fontSizes.baseText};
   font-weight: bold;
-  padding: 16px 16px;
+  padding: 8px 16px;
 
   border: 1px solid;
   border-width: 4px 1px 1px 1px;
@@ -26,8 +26,8 @@ const RowButtonDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
 
   &:hover {
-    background: ${props => props.theme.accent};
-    border-color: ${props => props.theme.lightAccent};
+    background: ${props => lighten(0.15, props.theme.breadBackground)};
+    border-color: ${props => lighten(0.2, props.theme.inputBorder)};
     color: ${props => props.theme.secondaryTextHover};
 
     box-shadow: 0 0 8px ${props => props.theme.inputBoxShadow};
@@ -65,6 +65,7 @@ class RowButton extends React.PureComponent<IProps, any> {
       label,
       hint,
       onClick,
+      ink = true,
       ...restProps,
     } = this.props;
 
@@ -85,7 +86,7 @@ class RowButton extends React.PureComponent<IProps, any> {
             </Label>
           : null}
         {this.props.children}
-        <Ink />
+        {ink ? <Ink /> : null}
       </RowButtonDiv>
     );
   }
@@ -99,19 +100,21 @@ interface IProps {
   iconComponent?: JSX.Element;
   label?: JSX.Element | string;
   id?: string;
+  ink?: boolean;
 }
 
 export default RowButton;
 
 const TagDiv = styled.div`
-  background: ${props => props.theme.baseText};
-  color: ${props => props.theme.baseBackground};
+  color: ${props => props.theme.secondaryText};
   text-shadow: none;
 
-  margin-left: 8px;
-
   font-size: 80%;
-  padding: 4px;
+  padding-right: 8px;
+  &:last-child {
+    padding-right: 0;
+  }
+
   border-radius: ${props => props.theme.borderRadii.explanation};
 `;
 

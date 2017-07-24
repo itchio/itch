@@ -3,6 +3,7 @@ import * as React from "react";
 import ReactTimeAgo from "react-time-ago";
 
 import { injectIntl, InjectedIntl } from "react-intl";
+import { formatDate, DATE_FORMAT } from "../../format/datetime";
 
 class TimeAgo extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -29,7 +30,7 @@ class TimeAgo extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     return (
-      <span>
+      <span data-rh={formatDate(date, intl.locale, DATE_FORMAT)}>
         <ReactTimeAgo locale={intl.locale}>
           {date}
         </ReactTimeAgo>
