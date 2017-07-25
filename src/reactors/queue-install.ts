@@ -65,7 +65,8 @@ export async function queueInstall(
       handPicked,
     } as Partial<ICave>) as ICave;
 
-    if (reason === "heal") {
+    if (reason === "install") {
+      // make sure install folders don't clash, for fresh installs
       const { preferences } = ctx.store.getState();
       const installFolderExists = async function() {
         const fullPath = paths.appPath(cave, preferences);
