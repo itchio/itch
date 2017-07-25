@@ -146,7 +146,7 @@
     "prompt.crash_reporter.message": "L'application a planté",
     "prompt.crash_reporter.open_crash_log": "Ouvrir le rapport d'erreur",
     "prompt.crash_reporter.report_issue": "Envoyer un rapport",
-    "prompt.deb_policy.detail": "itch peut installer des applications GNU/Linux seulement dans leur version \"portable\".",
+    "prompt.deb_policy.detail": "itch peut installer des applications Linux seulement dans leur version \"portable\".",
     "prompt.deb_policy.message": "{{title}} utilise le format de paquet .deb, et ne peut être installé avec itch faute d'être empaqueté à nouveau.",
     "prompt.deb_policy.title": "Les paquets APT ne sont pas comptatibles avec itch",
     "prompt.forget_session.action": "Oublier cette session",
