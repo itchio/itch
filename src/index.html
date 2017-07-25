@@ -7,14 +7,69 @@
     // works around some silly typescript/chrome interaction
     window.exports = {};
   </script>
-  <script defer src="chrome.tsx"></script>
+  <style>
+  body.loading {
+    overflow: hidden;
+  }
+
+  body.loading #logo {
+    background-image: url(./static/images/logos/app-white.svg);
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+
+  @keyframes bolt-load {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  #bolt {
+    height: 2px;
+    position: absolute;
+    left: -100%;
+    right: -100%;
+    top: 40px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0));
+    animation-name: bolt-load;
+    animation-duration: 3s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  #draggable {
+    background-color: #1d1c1c;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 40px;
+    -webkit-app-region: drag;
+  }
+  </style>
+  <script async defer src="chrome.tsx"></script> 
   <link rel="stylesheet" href="../node_modules/react-hint/css/index.css"/>
   <link rel="stylesheet" href="../node_modules/react-virtualized/styles.css"/>
   <link rel="stylesheet" href="../node_modules/react-select/dist/react-select.css"/>
   <link rel="stylesheet" href="./static/fonts/lato/latofonts.css"/>
   <link rel="stylesheet" href="./static/fonts/icomoon/style.css"/>
 </head>
-<body>
-  <div id="app"></div>
+<body class="loading">
+  <div id="app">
+    <div id="draggable"></div>
+    <div id="logo"></div>
+    <div id="bolt"></div>
+  </div>
 </body>
 </html>

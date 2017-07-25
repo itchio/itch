@@ -50,7 +50,9 @@ import App from "./components/app";
 let appNode: Element;
 
 function render(RealApp: typeof App) {
+  document.querySelector("body").classList.remove("loading");
   appNode = document.querySelector("#app");
+
   let rootComponent: JSX.Element;
   if (AppContainer) {
     rootComponent = (
