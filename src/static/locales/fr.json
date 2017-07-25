@@ -437,7 +437,7 @@
     "game.install.libraries_missing": "Des bibliothèques {{arch}} requises sont manquantes : {{libraries}}",
     "preferences.behavior.prevent_display_sleep": "Empêcher la mise en veille de l'écran pendant le jeu",
     "grid.item.status.installed": "Installé",
-    "login.action.retry_setup": "Réessayer la configuration",
+    "login.action.retry_setup": "Réessayez l'installation",
     "new_tab.devlogs": "Registre des développeurs",
     "prompt.action.continue": "Continuer",
     "prompt.uninstall_error.title": "Erreur de désinstallation",
