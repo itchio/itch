@@ -3,8 +3,10 @@ import * as uuid from "uuid";
 import Context from "../context";
 
 import * as actions from "../actions";
+import * as url from "url";
 
 import { ICave } from "../db/models/cave";
+import { IGame } from "../db/models/game";
 import { toJSONField } from "../db/json-field";
 import { IQueueInstallOpts, IStore } from "../types";
 
@@ -33,24 +35,23 @@ export async function queueInstall(
 
   const { caveId, game, reason } = opts;
 
-  logger.info(`in queueInstall, game = ${JSON.stringify(game, null, 2)}`);
+  logger.info(`Doing ${reason} for game:\n${JSON.stringify(game, null, 2)}`);
+
+  let freshInstall = false;
 
   if (caveId) {
     cave = ctx.db.caves.findOneById(caveId);
     if (!cave) {
-      throw new Error("Couldn't find cave to operate on");
+      throw new Error(`Couldn't find cave to ${reason}`);
     }
   } else {
     if (reason === "reinstall") {
-      throw new Error("Can't reinstall without a cave now can we.");
+      throw new Error(`Asked to ${reason}, but no cave found`);
     }
 
-    let installFolder = paths.sanitize(game.title).trim();
-    // TODO: might be a good idea to grab the slug instead, but we don't get it
-    // in the game object. should maybe just extract from the url?
-    if (installFolder === "") {
-      installFolder = "game-" + game.id;
-    }
+    freshInstall = true;
+
+    let installFolder = installFolderName(game);
 
     const { handPicked, upload } = opts;
 
@@ -66,18 +67,7 @@ export async function queueInstall(
     } as Partial<ICave>) as ICave;
 
     if (reason === "install") {
-      // make sure install folders don't clash, for fresh installs
-      const { preferences } = ctx.store.getState();
-      const installFolderExists = async function() {
-        const fullPath = paths.appPath(cave, preferences);
-        return await sf.exists(fullPath);
-      };
-
-      let seed = 2;
-      // if you need more than 1200 games with the exact same name... you don't.
-      while ((await installFolderExists()) && seed < 1200) {
-        cave.installFolder = `${installFolder} ${seed++}`;
-      }
+      await ensureUniqueInstallLocation(ctx, cave);
     }
 
     // TODO: take a good long think about this - what happens if the install stops
@@ -88,73 +78,153 @@ export async function queueInstall(
     ctx.db.saveOne("caves", cave.id, cave);
   }
 
-  const { upload } = opts;
+  try {
+    const { upload } = opts;
 
-  if (cave.buildUserVersion && upload.build && upload.build.userVersion) {
+    const versionName = (buildId: number, buildUserVersion: string) => {
+      if (buildUserVersion) {
+        return `${buildUserVersion} (#${buildId})`;
+      } else if (buildId) {
+        return `#{buildId}`;
+      } else {
+        return "<not versioned>";
+      }
+    };
+
+    if (!freshInstall) {
+      logger.info(
+        `← old version: ${versionName(cave.buildId, cave.buildUserVersion)}`,
+      );
+    }
     logger.info(
-      `upgrading from version ${cave.buildUserVersion} => version ${upload.build
-        .userVersion}`,
+      `→ new version: ${versionName(
+        upload.buildId,
+        upload.build && upload.build.userVersion,
+      )}`,
     );
-  } else {
-    logger.info(
-      `upgrading from build id ${cave.buildId} => build id ${upload.buildId}`,
-    );
+
+    ctx.db.saveOne("games", String(game.id), game);
+
+    const prefs = ctx.store.getState().preferences;
+
+    let destPath = paths.appPath(cave, prefs);
+    let archivePath = paths.downloadPath(upload, prefs);
+
+    if (!await sf.exists(archivePath)) {
+      const { handPicked } = opts;
+
+      logger.warn("archive disappeared, redownloading...");
+      ctx.store.dispatch(
+        actions.queueDownload({
+          caveId,
+          game,
+          handPicked,
+          upload,
+          totalSize: upload.size,
+          incremental: false,
+          reason: "install",
+          upgradePath: null,
+        }),
+      );
+      return;
+    }
+
+    // TODO: check available disk space
+    // have a check at download too, why not.
+
+    // TODO: also, if we do run into `ENOSPC`,
+    // show a dialog or something. And offer some help
+    // will ya, there's people with tiny tiny SSDs!
+
+    const runtime = currentRuntime();
+
+    await coreInstall({
+      ...opts,
+      ctx,
+      runtime,
+      logger,
+      destPath,
+      archivePath,
+      caveId: cave.id,
+    });
+
+    ctx.db.saveOne("caves", cave.id, {
+      installedAt: new Date(),
+      uploadId: upload.id,
+      channelName: upload.channelName,
+      buildId: upload.buildId,
+      buildUserVersion: upload.build && upload.build.userVersion,
+      upload,
+    });
+  } catch (e) {
+    logger.error(`when doing ${reason} for ${game.title}:\n ${e.stack}`);
+
+    if (freshInstall) {
+      logger.info(`was fresh install, imploding cave`);
+      ctx.db.deleteEntity("caves", cave.id);
+    }
+
+    throw e;
+  }
+}
+
+const slugRegexp = /^\/[^\/]+/;
+
+/** Gives a human-readable install folder name, given a game */
+export function installFolderName(game: IGame) {
+  if (!game) {
+    throw new Error(`No game provided to installFolderName`);
   }
 
-  ctx.db.saveOne("games", String(game.id), game);
+  return installFolderNameFromSlug(game) || installFolderNameFromId(game);
+}
 
-  const prefs = ctx.store.getState().preferences;
-
-  let destPath = paths.appPath(cave, prefs);
-  let archivePath = paths.downloadPath(upload, prefs);
-
-  if (!await sf.exists(archivePath)) {
-    const { handPicked } = opts;
-
-    logger.warn("archive disappeared, redownloading...");
-    ctx.store.dispatch(
-      actions.queueDownload({
-        caveId,
-        game,
-        handPicked,
-        upload,
-        totalSize: upload.size,
-        incremental: false,
-        reason: "install",
-        upgradePath: null,
-      }),
-    );
-    return;
+function installFolderNameFromSlug(game: IGame) {
+  if (typeof game.url !== "string") {
+    return null;
   }
 
-  // TODO: check available disk space
-  // have a check at download too, why not.
+  let parsed: url.Url;
+  try {
+    // url.parse may throw, in rare occasions
+    // https://nodejs.org/docs/latest/api/url.html
+    parsed = url.parse(game.url);
+  } catch (e) {
+    return null;
+  }
 
-  // TODO: also, if we do run into `ENOSPC`,
-  // show a dialog or something. And offer some help
-  // will ya, there's people with tiny tiny SSDs!
+  const matches = slugRegexp.exec(parsed.pathname);
+  if (!matches) {
+    return null;
+  }
 
-  const runtime = currentRuntime();
+  const slug = matches[0];
+  if (!slug) {
+    return null;
+  }
 
-  await coreInstall({
-    ...opts,
-    ctx,
-    runtime,
-    logger,
-    destPath,
-    archivePath,
-    caveId: cave.id,
-  });
+  return slug;
+}
 
-  ctx.db.saveOne("caves", cave.id, {
-    installedAt: new Date(),
-    uploadId: upload.id,
-    channelName: upload.channelName,
-    buildId: upload.buildId,
-    buildUserVersion: upload.build && upload.build.userVersion,
-    upload,
-    fresh: false,
-  });
+function installFolderNameFromId(game: IGame) {
+  return `game-${game.id}`;
+}
+
+/** Modifies.installFolder until it no longer exists on disk */
+async function ensureUniqueInstallLocation(ctx: Context, cave: ICave) {
+  let { installFolder } = cave;
+
+  const { preferences } = ctx.store.getState();
+  const installFolderExists = async function() {
+    const fullPath = paths.appPath(cave, preferences);
+    return await sf.exists(fullPath);
+  };
+
+  let seed = 2;
+  // if you need more than 1200 games with the exact same name... you don't.
+  while ((await installFolderExists()) && seed < 1200) {
+    cave.installFolder = `${installFolder}-${seed++}`;
+  }
 }
 
 import { DB } from "../db";
