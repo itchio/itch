@@ -176,7 +176,7 @@
     "prompt.payments_disabled.message": "Malheureusement, les créateurs de {{title}} n'acceptent pas de contribution financière pour ce titre.",
     "prompt.payments_disabled.open_web_page": "Ouvrir la page web",
     "prompt.payments_disabled.title": "Paiement désactivé",
-    "prompt.rpm_policy.detail": "itch peut installer des applications GNU/Linux seulement dans leur version \"portable\".",
+    "prompt.rpm_policy.detail": "itch peut installer des applications Linux seulement dans leur version \"portable\".",
     "prompt.rpm_policy.message": "{{title}} utilise le format de paquet .rpm, et ne peut être installé avec itch faute d'être empaqueté à nouveau.",
     "prompt.rpm_policy.title": "Les paquets YUM ne sont pas compatibles avec itch",
     "prompt.self_update.action.dismiss": "Fermer",
