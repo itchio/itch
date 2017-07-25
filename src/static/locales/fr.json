@@ -336,7 +336,7 @@
     "preferences.behavior.close_to_tray": "Envoyer l'application en tâche de fond quand la fenêtre se ferme",
     "pick_install_upload.title": "Plusieurs téléchargements sont disponibles pour {{title}}",
     "pick_install_upload.message": "Quel fichier souhaitez-vous télécharger pour {{title}} ?",
-    "pick_install_upload.detail": "Nous vous redemanderons dès de nouveaux téléchargements seront disponibles.",
+    "pick_install_upload.detail": "Nous vous redemanderons dès que de nouveaux téléchargements seront disponibles.",
     "pick_update_upload.title": "De nouveaux téléchargements sont disponibles pour {{title}}",
     "pick_update_upload.message": "Vers quel fichier souhaitez-vous mettre à jour {{title}} ?",
     "pick_update_upload.detail": "Nous demandons car vous aviez choisi à la main lors de l'installation.",
