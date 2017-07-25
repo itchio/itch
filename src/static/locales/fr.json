@@ -110,7 +110,7 @@
     "onboarding.owned.title_warm_welcome": "Vous voilà !",
     "preferences.security": "Sécurité & vie privée",
     "preferences.security.sandbox.title": "Activer le bac à sable",
-    "preferences.security.sandbox.description": "Le bac à sable itch.io permet l'exécution des jeux dans un environnement isolé, les privant ainsi de l'accès à vos données personnelles et de la possibilité d'altérer votre système. Bien qu'imparfaite, cette mesure de protection très efficace.",
+    "preferences.security.sandbox.description": "Le bac à sable itch.io permet l'exécution des jeux dans un environnement isolé, les privant ainsi de l'accès à vos données personnelles et de la possibilité d'altérer votre système. Bien qu'imparfaite, cette mesure de protection est très efficace.",
     "preferences.security.sandbox.learn_more": "En savoir plus sur le bac à sable",
     "preferences.install_location.add": "Ajouter un emplacement",
     "preferences.install_location.browse": "Ouvrir ce dossier dans l'explorateur de fichier",
