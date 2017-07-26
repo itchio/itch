@@ -157,6 +157,7 @@
     "spectron": "3.7.1",
     "tap-out": "^2.0.0",
     "tape": "^4.2.1",
+    "time-require": "^0.1.2",
     "tslint": "^4.0.2",
     "typescript": "^2.4.2",
     "why-did-you-update": "^0.0.8",

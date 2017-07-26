@@ -1,5 +1,9 @@
 // This file is the entry point for renderer processes
 
+if (process.env.ITCH_TIME_REQUIRE === "2") {
+  require("time-require");
+}
+
 import "./os/sf";
 import env from "./env";
 
@@ -50,6 +54,12 @@ import App from "./components/app";
 let appNode: Element;
 
 function render(RealApp: typeof App) {
+  if (process.env.ITCH_TIME_REQUIRE === "2") {
+    console.log("Time require finished, quitting!");
+    process.emit("exit", 0);
+    store.dispatch(actions.quit({}));
+  }
+
   document.querySelector("body").classList.remove("loading");
   appNode = document.querySelector("#app");
 

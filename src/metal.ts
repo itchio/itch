@@ -38,7 +38,7 @@ function autoUpdateDone() {
   // devtools don't work with mixed sandbox mode -
   // enable it only in production and only when the
   // `DEVTOOLS` environment variable is not specified
-  if (env.name === "production" && isNaN(parseInt(process.env.DEVTOOLS, 10))) {
+  if (env.name === "production") {
     app.enableMixedSandbox();
   }
 
@@ -87,6 +87,11 @@ function autoUpdateDone() {
     globalShortcut.register("Control+Alt+Backspace", function() {
       store.dispatch(actions.abortLastGame({}));
     });
+
+    if (process.env.ITCH_TIME_REQUIRE === "1") {
+      store.dispatch(actions.quit({}));
+      return;
+    }
 
     store.dispatch(actions.preboot({}));
   });
