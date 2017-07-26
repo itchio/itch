@@ -351,6 +351,8 @@ export function importGlobalMarket(
 
         lastTouchedAt: toDateTimeField(caveIn.lastTouchedAt),
         secondsRun: parseInt(caveIn.secondsRun, 10),
+
+        msiProductId: null,
       };
 
       merge(out, "caves", caveOut.id, caveOut);
