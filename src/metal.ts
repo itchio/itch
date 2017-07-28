@@ -1,5 +1,11 @@
 // This file is the entry point for the main (browser) process
 
+let rt;
+if (process.env.ITCH_TIME_REQUIRE === "1") {
+  rt = require("require-times")([".js", ".ts", ".tsx"]);
+  rt.start();
+}
+
 import { enableLiveReload } from "electron-compile-ftl";
 
 import autoUpdaterStart from "./util/auto-updater";
@@ -88,9 +94,8 @@ function autoUpdateDone() {
       store.dispatch(actions.abortLastGame({}));
     });
 
-    if (process.env.ITCH_TIME_REQUIRE === "1") {
-      store.dispatch(actions.quit({}));
-      return;
+    if (rt) {
+      rt.end();
     }
 
     store.dispatch(actions.preboot({}));

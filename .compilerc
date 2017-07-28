@@ -18,7 +18,7 @@
     },
     "babel": {
       "presets": ["async-to-bluebird"],
-      "plugins": ["transform-es2015-modules-commonjs"]
+      "plugins": ["transform-es2015-modules-commonjs", "transform-require-on-use"]
     }
   }
 }

@@ -1,7 +1,9 @@
 // This file is the entry point for renderer processes
 
+let rt;
 if (process.env.ITCH_TIME_REQUIRE === "2") {
-  require("time-require");
+  rt = require("require-times")([".js", ".ts", ".tsx"]);
+  rt.start();
 }
 
 import "./os/sf";
@@ -54,10 +56,9 @@ import App from "./components/app";
 let appNode: Element;
 
 function render(RealApp: typeof App) {
-  if (process.env.ITCH_TIME_REQUIRE === "2") {
-    console.log("Time require finished, quitting!");
-    process.emit("exit", 0);
-    store.dispatch(actions.quit({}));
+  if (rt) {
+    rt.end();
+    rt = null;
   }
 
   document.querySelector("body").classList.remove("loading");
