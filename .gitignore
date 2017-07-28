@@ -42,5 +42,9 @@ npm-debug.log
 /*.app
 /*.dmg
 
+# integration tests temp
+.chromedriver
+*.log.txt
+
 # OS-specific junk
 .DS_Store
