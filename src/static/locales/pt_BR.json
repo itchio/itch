@@ -334,5 +334,7 @@
     "grid.item.verify_integrity": "Verificar integridade",
     "grid.item.view_details": "Ver detalhes...",
     "table.column.name": "Nome",
-    "download.reason.revert": "voltar para uma versão anterior"
+    "download.reason.revert": "voltar para uma versão anterior",
+    "grid.filters.options.owned": "Possuído",
+    "grid.criterion.only_compatible": "Incompatível"
 }
