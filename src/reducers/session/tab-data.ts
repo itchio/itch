@@ -3,6 +3,9 @@ import * as actions from "../../actions";
 import { pathPrefix } from "../../util/navigation";
 import reducer from "../reducer";
 
+import rootLogger from "../../logger";
+const logger = rootLogger.child({ name: "reducers/tab-data" });
+
 import { omit } from "underscore";
 
 const initialState = {} as ITabDataSet;
@@ -16,6 +19,7 @@ export default reducer<ITabDataSet>(initialState, on => {
     const oldData = state[id];
     if (!oldData) {
       // ignore fresh data for closed tabs
+      logger.debug(`tabDataFetched, ignoring fresh data for ${id}`);
       return state;
     }
 
@@ -33,6 +37,7 @@ export default reducer<ITabDataSet>(initialState, on => {
     const oldData = state[id];
     if (!oldData) {
       // ignore fresh data for closed tabs
+      logger.debug(`tabParamsChanged, ignoring fresh data for ${id}`);
       return state;
     }
 
@@ -49,6 +54,7 @@ export default reducer<ITabDataSet>(initialState, on => {
   // this clears gameIds way too often, let's fix that
   on(actions.updatePreferences, (state, action) => {
     const nextState = {};
+    logger.debug(`clearing all fetched data, preferences changed`);
     for (const id of Object.keys(state)) {
       const oldData = state[id];
       nextState[id] = {
@@ -63,6 +69,7 @@ export default reducer<ITabDataSet>(initialState, on => {
   on(actions.tabEvolved, (state, action) => {
     const { id, data = emptyObj } = action.payload;
     const oldData = state[id];
+    logger.debug(`${id} / ${oldData.path} evolved`);
     if (!oldData) {
       // ignore fresh data for closed tabs
       return state;
