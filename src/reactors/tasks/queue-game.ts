@@ -69,7 +69,7 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    let { uploads } = uploadResponse;
+    const { uploads } = uploadResponse;
 
     if (uploads.length === 0) {
       store.dispatch(

@@ -180,6 +180,39 @@ suite(__filename, s => {
         },
         "penalize demos",
       );
+
+      const windows64: IRuntime = {
+        platform: "windows",
+        is64: true,
+      };
+
+      const loveWin = asUpload({
+        pWindows: true,
+        filename: "win32.zip",
+      });
+
+      const loveMac = asUpload({
+        pOsx: true,
+        filename: "mac64.zip",
+      });
+
+      const loveAll = asUpload({
+        pWindows: true,
+        pOsx: true,
+        pLinux: true,
+        filename: "universal.zip",
+      });
+
+      t.same(
+        narrowDownUploads(ctx, [loveWin, loveMac, loveAll], game, windows64),
+        {
+          uploads: [loveAll, loveWin],
+          hadUntagged: false,
+          hadWrongFormat: false,
+          hadWrongArch: false,
+        },
+        "penalize demos",
+      );
     });
   });
 });
