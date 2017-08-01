@@ -5,6 +5,7 @@ import { Stream, Writable } from "stream";
 import env from "../env";
 
 const LOG_LEVEL = process.env.ITCH_LOG_LEVEL || ("info" as Level);
+const NO_STDOUT = process.env.ITCH_NO_STDOUT === "1";
 
 // tslint:disable-next-line
 export interface Logger extends PinoLogger {
@@ -78,11 +79,13 @@ export function makeLogger(logPath?: string): Logger {
     consoleOut.pipe(process.stdout);
 
     let streamSpecs: {
-      consoleOut: Stream;
+      consoleOut?: Stream;
       file?: Writable;
-    } = {
-      consoleOut,
-    };
+    } = {};
+
+    if (!NO_STDOUT) {
+      streamSpecs.consoleOut = consoleOut;
+    }
 
     if (logPath) {
       let hasDir = true;
@@ -101,11 +104,16 @@ export function makeLogger(logPath?: string): Logger {
       }
 
       if (hasDir) {
-        streamSpecs.file = stream({
-          file: logPath,
-          size: "2M",
-          keep: 5,
-        });
+        if (NO_STDOUT) {
+          streamSpecs.file = pretty({ forceColor: true });
+          streamSpecs.file.pipe(fs.createWriteStream(logPath));
+        } else {
+          streamSpecs.file = stream({
+            file: logPath,
+            size: "2M",
+            keep: 5,
+          });
+        }
       }
     }
 
@@ -141,7 +149,7 @@ if (process.type === "browser") {
   const { app } = require("electron");
   defaultLogger.info(
     `${env.appName} ${app.getVersion()} on electron ${process.versions
-      .electron}`,
+      .electron} in ${env.name}`,
   );
 }
 
