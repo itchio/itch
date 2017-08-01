@@ -1,34 +1,33 @@
 package main
 
 import (
-	"archive/zip"
-	"bytes"
 	"context"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 
-	goselenium "github.com/fasterthanlime/go-selenium"
+	gs "github.com/fasterthanlime/go-selenium"
 	"github.com/go-errors/errors"
-	"github.com/itchio/butler/comm"
 	"github.com/onsi/gocleanup"
 )
 
 const chromeDriverVersion = "2.27"
+
+type CleanupFunc func()
 
 type runner struct {
 	cwd                string
 	chromeDriverExe    string
 	chromeDriverCmd    *exec.Cmd
 	chromeDriverCancel context.CancelFunc
+	driver             gs.WebDriver
+	prefix             string
+	cleanup            CleanupFunc
+	testStart          time.Time
 }
 
 func (r *runner) logf(format string, args ...interface{}) {
@@ -39,8 +38,13 @@ func main() {
 	must(doMain())
 }
 
+var r *runner
+
 func doMain() error {
-	r := &runner{}
+	r = &runner{
+		prefix: "tmp",
+	}
+	must(os.RemoveAll(r.prefix))
 
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -60,14 +64,15 @@ func doMain() error {
 
 	must(r.chromeDriverCmd.Start())
 
-	cleanupChromeDriver := func() {
+	r.cleanup = func() {
 		r.logf("Cleaning up chrome driver...")
+		r.driver.CloseWindow()
 		chromeDriverCancel()
 		r.chromeDriverCmd.Wait()
 	}
 
-	defer cleanupChromeDriver()
-	gocleanup.Register(cleanupChromeDriver)
+	defer r.cleanup()
+	gocleanup.Register(r.cleanup)
 
 	appPath := cwd
 	binaryPathBytes, err := exec.Command("node", "-e", "console.log(require('electron'))").Output()
@@ -80,8 +85,8 @@ func doMain() error {
 	r.logf("Using electron: %s", relativeBinaryPath)
 
 	// Create capabilities, driver etc.
-	capabilities := goselenium.Capabilities{}
-	capabilities.SetBrowser(goselenium.ChromeBrowser())
+	capabilities := gs.Capabilities{}
+	capabilities.SetBrowser(gs.ChromeBrowser())
 	co := capabilities.ChromeOptions()
 	co.SetBinary(binaryPath)
 	co.SetArgs([]string{
@@ -91,164 +96,49 @@ func doMain() error {
 
 	startTime := time.Now()
 
-	driver, err := goselenium.NewSeleniumWebDriver(fmt.Sprintf("http://localhost:%d", chromeDriverPort), capabilities)
+	driver, err := gs.NewSeleniumWebDriver(fmt.Sprintf("http://localhost:%d", chromeDriverPort), capabilities)
 	if err != nil {
 		return errors.Wrap(err, 0)
 	}
+
+	r.driver = driver
 
 	_, err = driver.CreateSession()
 	if err != nil {
 		return errors.Wrap(err, 0)
 	}
 
-	// Delete the session once this function is completed.
-	defer driver.DeleteSession()
-
-	var el goselenium.Element
-
 	r.logf("Hey cool, we're in the app!")
 	r.logf("it started in %s", time.Since(startTime))
 
-	time.Sleep(2 * time.Second)
-	r.logf("Navigating to dashboard")
-	el, err = driver.FindElement(goselenium.ByCSSSelector("section[data-path=dashboard]"))
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
+	r.testStart = time.Now()
 
-	_, err = el.Click()
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
+	// Delete the session once this function is completed.
+	defer driver.DeleteSession()
 
-	time.Sleep(2 * time.Second)
-	r.logf("Navigating to library")
-	el, err = driver.FindElement(goselenium.ByCSSSelector("section[data-path=library]"))
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
+	loginFlow(r)
 
-	_, err = el.Click()
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-
-	time.Sleep(1 * time.Second)
-	r.logf("Well, bye!")
-
+	log.Printf("Succeeded in %s", time.Since(r.testStart))
 	return nil
 }
 
 func must(err error) {
 	if err != nil {
+		log.Println("Fatal error:")
 		switch err := err.(type) {
 		case *errors.Error:
-			comm.Die(err.ErrorStack())
+			log.Println(err.ErrorStack())
 		default:
-			comm.Die(err.Error())
+			log.Println(err.Error())
+		}
+
+		if r != nil {
+			log.Printf("Failed in %s", time.Since(r.testStart))
+
+			if r.cleanup != nil {
+				r.cleanup()
+				os.Exit(1)
+			}
 		}
 	}
-}
-
-func downloadChromeDriver(r *runner) error {
-	driverCache := filepath.Join(r.cwd, ".chromedriver")
-	ext := ".exe"
-	if runtime.GOOS != "windows" {
-		ext = ""
-	}
-	driverExe := filepath.Join(driverCache, "chromedriver"+ext)
-	r.chromeDriverExe = driverExe
-
-	hasChromeDriver := true
-
-	_, err := os.Lstat(driverExe)
-	if err != nil {
-		if os.IsNotExist(err) {
-			hasChromeDriver = false
-		} else {
-			return errors.Wrap(err, 0)
-		}
-	}
-
-	if hasChromeDriver {
-		r.logf("Found cached copy of chromedriver, using it")
-		return nil
-	}
-
-	r.logf("Downloading chromedriver %s...", chromeDriverVersion)
-	err = os.MkdirAll(driverCache, 0755)
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-
-	url := chromeDriverURL()
-
-	req, err := http.Get(url)
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-
-	if req.StatusCode != 200 {
-		err = fmt.Errorf("Got HTTP %d when trying to download %s", req.StatusCode, url)
-		return err
-	}
-
-	defer req.Body.Close()
-
-	buf, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-
-	r.logf("Extracting chromedriver...")
-	zf, err := zip.NewReader(bytes.NewReader(buf), int64(len(buf)))
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-
-	for _, f := range zf.File {
-		err = func(f *zip.File) error {
-			r, err := f.Open()
-			if err != nil {
-				return errors.Wrap(err, 0)
-			}
-			defer r.Close()
-
-			name := filepath.Join(driverCache, f.Name)
-			mode := f.FileInfo().Mode()
-			flags := os.O_WRONLY | os.O_CREATE | os.O_TRUNC
-			w, err := os.OpenFile(name, flags, mode)
-			if err != nil {
-				return errors.Wrap(err, 0)
-			}
-			defer w.Close()
-
-			_, err = io.Copy(w, r)
-			if err != nil {
-				return errors.Wrap(err, 0)
-			}
-
-			return nil
-		}(f)
-
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-	}
-
-	return nil
-}
-
-func chromeDriverURL() string {
-	archString := ""
-	switch runtime.GOOS {
-	case "windows":
-		archString = "win32"
-	case "darwin":
-		archString = "mac64"
-	case "linux":
-		archString = "linux64"
-	}
-
-	return fmt.Sprintf("https://chromedriver.storage.googleapis.com/%s/chromedriver_%s.zip", chromeDriverVersion, archString)
 }
