@@ -66,3 +66,16 @@ places you can look for testers:
 
   * The [itch.io community forums](https://itch.io/community)
   * The [itch.io chat](https://itch.io/chat)
+
+## A note about page types
+
+The [itch.io](https://itch.io) website lets you pick between several
+project types.
+
+The app does platform filtering, configuration and launching
+for the types `game` and `tool`. All other types, including `assets`, 
+`game_mod`, `physical_game`, `soundtrack`, `comic`, `book`, and `other`
+are just treated like a folder that it lets the user open.
+
+If you're wondering why the app is giving you the choice to download
+something that isn't tagged for your platform, that's why.
