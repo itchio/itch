@@ -12,6 +12,7 @@ import (
 
 	gs "github.com/fasterthanlime/go-selenium"
 	"github.com/go-errors/errors"
+	"github.com/hpcloud/tail"
 	"github.com/onsi/gocleanup"
 )
 
@@ -41,6 +42,8 @@ func main() {
 var r *runner
 
 func doMain() error {
+	bootTime := time.Now()
+
 	r = &runner{
 		prefix: "tmp",
 	}
@@ -60,7 +63,21 @@ func doMain() error {
 	r.chromeDriverCmd = exec.CommandContext(chromeDriverCtx, r.chromeDriverExe, fmt.Sprintf("--port=%d", chromeDriverPort), fmt.Sprintf("--log-path=%s", chromeDriverLogPath))
 	env := os.Environ()
 	env = append(env, "NODE_ENV=test")
+	env = append(env, "ITCH_LOG_LEVEL=debug")
+	env = append(env, "ITCH_NO_STDOUT=1")
 	r.chromeDriverCmd.Env = env
+
+	go func() {
+		t, err := tail.TailFile(filepath.Join(cwd, r.prefix, "prefix", "userData", "logs", "itch.txt"), tail.Config{
+			Follow: true,
+			Poll:   true,
+		})
+		must(err)
+
+		for line := range t.Lines {
+			fmt.Println(line.Text)
+		}
+	}()
 
 	must(r.chromeDriverCmd.Start())
 
@@ -96,7 +113,7 @@ func doMain() error {
 
 	startTime := time.Now()
 
-	driver, err := gs.NewSeleniumWebDriver(fmt.Sprintf("http://localhost:%d", chromeDriverPort), capabilities)
+	driver, err := gs.NewSeleniumWebDriver(fmt.Sprintf("http://127.0.0.1:%d", chromeDriverPort), capabilities)
 	if err != nil {
 		return errors.Wrap(err, 0)
 	}
@@ -117,8 +134,10 @@ func doMain() error {
 	defer driver.DeleteSession()
 
 	loginFlow(r)
+	navigationFlow(r)
 
 	log.Printf("Succeeded in %s", time.Since(r.testStart))
+	log.Printf("Total time %s", time.Since(bootTime))
 	return nil
 }
 

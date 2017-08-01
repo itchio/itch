@@ -48,3 +48,6 @@ npm-debug.log
 
 # OS-specific junk
 .DS_Store
+
+# golang-specific stuff
+/gopath

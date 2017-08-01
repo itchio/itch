@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -17,7 +18,17 @@ const SLEEP = 100 * time.Millisecond
 // something happens
 const TIMEOUT = 15 * time.Second
 
+// LOG_PERF can be set to true if one wants to log all requests
+const LOG_PERF = false
+
 func (r *runner) setValue(selector string, value string) error {
+	if LOG_PERF {
+		startTime := time.Now()
+		defer func() {
+			log.Printf("setValue ran in %s", time.Since(startTime))
+		}()
+	}
+
 	d := r.driver
 
 	err := r.waitForVisible(selector)
@@ -45,9 +56,27 @@ func (r *runner) setValue(selector string, value string) error {
 }
 
 func (r *runner) click(selector string) error {
+	if LOG_PERF {
+		startTime := time.Now()
+		defer func() {
+			log.Printf("click ran in %s", time.Since(startTime))
+		}()
+	}
+
+	return r.clickWithTimeout(selector, TIMEOUT)
+}
+
+func (r *runner) clickWithTimeout(selector string, timeout time.Duration) error {
+	if LOG_PERF {
+		startTime := time.Now()
+		defer func() {
+			log.Printf("clickWithTimeout ran in %s", time.Since(startTime))
+		}()
+	}
+
 	d := r.driver
 
-	err := r.waitForVisible(selector)
+	err := r.waitForVisibleWithTimeout(selector, timeout)
 	if err != nil {
 		return errors.Wrap(err, 0)
 	}
@@ -67,6 +96,13 @@ func (r *runner) click(selector string) error {
 }
 
 func (r *runner) moveTo(selector string) error {
+	if LOG_PERF {
+		startTime := time.Now()
+		defer func() {
+			log.Printf("moveTo ran in %s", time.Since(startTime))
+		}()
+	}
+
 	d := r.driver
 
 	err := r.waitForVisible(selector)
@@ -89,6 +125,24 @@ func (r *runner) moveTo(selector string) error {
 }
 
 func (r *runner) waitUntilTextExists(selector string, value string) error {
+	if LOG_PERF {
+		startTime := time.Now()
+		defer func() {
+			log.Printf("waitUntilTextExists ran in %s", time.Since(startTime))
+		}()
+	}
+
+	return r.waitUntilTextExistsWithTimeout(selector, value, TIMEOUT)
+}
+
+func (r *runner) waitUntilTextExistsWithTimeout(selector string, value string, timeout time.Duration) error {
+	if LOG_PERF {
+		startTime := time.Now()
+		defer func() {
+			log.Printf("waitUntilTextExistsWithTimeout ran in %s", time.Since(startTime))
+		}()
+	}
+
 	d := r.driver
 
 	err := r.waitForVisible(selector)
@@ -109,7 +163,7 @@ func (r *runner) waitUntilTextExists(selector string, value string) error {
 		}
 
 		return strings.Contains(text.Text, value)
-	}, TIMEOUT, SLEEP)
+	}, timeout, SLEEP)
 	if !found {
 		return errors.Wrap(fmt.Errorf("timed out waiting for %s to have text '%s'", selector, value), 0)
 	}
@@ -118,6 +172,24 @@ func (r *runner) waitUntilTextExists(selector string, value string) error {
 }
 
 func (r *runner) waitForVisible(selector string) error {
+	if LOG_PERF {
+		startTime := time.Now()
+		defer func() {
+			log.Printf("waitForVisible ran in %s", time.Since(startTime))
+		}()
+	}
+
+	return r.waitForVisibleWithTimeout(selector, TIMEOUT)
+}
+
+func (r *runner) waitForVisibleWithTimeout(selector string, timeout time.Duration) error {
+	if LOG_PERF {
+		startTime := time.Now()
+		defer func() {
+			log.Printf("waitForVisibleWithTimeout ran in %s", time.Since(startTime))
+		}()
+	}
+
 	d := r.driver
 
 	by := gs.ByCSSSelector(selector)
@@ -134,7 +206,8 @@ func (r *runner) waitForVisible(selector string) error {
 		}
 
 		return res.Displayed
-	}, TIMEOUT, SLEEP)
+	}, timeout, SLEEP)
+
 	if !found {
 		return errors.Wrap(fmt.Errorf("timed out waiting for %s to be visible", selector), 0)
 	}
