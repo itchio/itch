@@ -3,12 +3,10 @@ import * as classNames from "classnames";
 import styled, * as styles from "../styles";
 
 import Icon from "./icon";
-const Ink = require("react-ink");
 
 const Label = styled.div`${styles.singleLine()};`;
 
 const ButtonDiv = styled.div`
-  ${styles.inkContainer()};
   ${styles.singleLine()};
 
   font-size: ${props => props.theme.fontSizes.baseText};
@@ -94,7 +92,6 @@ class Button extends React.PureComponent<IProps, any> {
             </Label>
           : null}
         {this.props.children}
-        <Ink />
       </ButtonDiv>
     );
   }

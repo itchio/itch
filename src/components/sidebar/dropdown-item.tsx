@@ -1,5 +1,4 @@
 import Icon from "../basics/icon";
-import Ink = require("react-ink");
 
 import * as React from "react";
 import styled, * as styles from "../styles";
@@ -10,7 +9,6 @@ import { ILocalizedString } from "../../types";
 import format from "../format";
 
 const DropdownItemDiv = styled.div`
-  ${styles.inkContainer()};
   ${styles.accentTextShadow()};
 
   border-radius: 1px;
@@ -51,7 +49,6 @@ export class DropdownItem extends React.PureComponent<IProps> {
 
     return (
       <DropdownItemDiv className={className} onClick={this.onClick} id={id}>
-        <Ink />
         <Icon icon={icon} />
         {format(label)}
       </DropdownItemDiv>

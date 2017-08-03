@@ -11,7 +11,6 @@ import * as actions from "../actions";
 
 import Icon from "./basics/icon";
 import TimeAgo from "./basics/time-ago";
-import Ink = require("react-ink");
 
 import { IGameSet } from "../types";
 import { ICollection } from "../db/models/collection";
@@ -26,7 +25,7 @@ const CoverDiv = styled.div`
 `;
 
 const CollectionRowDiv = styled.div`
-  ${styles.inkContainer()} ${styles.hubItemStyle()};
+  ${styles.hubItemStyle()};
 
   height: 100%;
   display: flex;
@@ -140,7 +139,6 @@ export class CollectionRow extends React.PureComponent<IProps & IDerivedProps> {
             },
           ])}
         </section>
-        <Ink />
       </CollectionRowDiv>
     );
   }

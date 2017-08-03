@@ -2,14 +2,14 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import Icon from "./icon";
-const Ink = require("react-ink");
 
 import styled, * as styles from "../styles";
 
 const IconButtonDiv = styled.div`
   display: inline-block;
-  ${styles.inkContainer()} ${styles.iconButton()} ${styles.clickable()} font-size: ${props =>
-      props.theme.fontSizes.baseText};
+  ${styles.iconButton()};
+  ${styles.clickable()};
+  font-size: ${props => props.theme.fontSizes.baseText};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,7 +38,6 @@ class IconButton extends React.PureComponent<IProps> {
         {...restProps}
       >
         <Icon icon={icon} />
-        {disabled ? null : <Ink />}
       </IconButtonDiv>
     );
   }

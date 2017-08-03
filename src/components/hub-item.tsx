@@ -78,7 +78,6 @@ export class HubItem extends React.PureComponent<
 }
 
 const HubItemDiv = styled.div`
-  ${styles.inkContainer()};
   ${styles.hubItemStyle()};
   margin: .5em;
   cursor: default;

@@ -9,7 +9,6 @@ import { formatString } from "./format";
 import { IAppState, TabLayout } from "../types";
 import { dispatcher } from "../constants/action-types";
 
-import Ink = require("react-ink");
 import Select = require("react-select");
 import Icon from "./basics/icon";
 
@@ -96,7 +95,7 @@ const TagFilters = styled.section`
 const LayoutPickers = styled.section`display: flex;`;
 
 const LayoutPicker = styled.section`
-  ${styles.inkContainer()} padding: 10px 10px;
+  padding: 10px;
   border-radius: 50%;
   font-size: 90%;
   filter: brightness(60%);
@@ -208,7 +207,6 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
         onClick={e => this.props.updatePreferences({ layout })}
       >
         <Icon icon={icon} />
-        <Ink />
       </LayoutPicker>
     );
   }

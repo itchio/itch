@@ -4,12 +4,10 @@ import styled, * as styles from "../styles";
 import { lighten } from "polished";
 
 import Icon from "./icon";
-const Ink = require("react-ink");
 
 const Label = styled.div`${styles.singleLine()};`;
 
 const RowButtonDiv = styled.div`
-  ${styles.inkContainer()};
   ${styles.singleLine()};
 
   font-size: ${props => props.theme.fontSizes.baseText};
@@ -86,7 +84,6 @@ class RowButton extends React.PureComponent<IProps, any> {
             </Label>
           : null}
         {this.props.children}
-        {ink ? <Ink /> : null}
       </RowButtonDiv>
     );
   }

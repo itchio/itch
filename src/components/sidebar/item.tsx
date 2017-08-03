@@ -5,8 +5,6 @@ import format from "../format";
 
 import { ILocalizedString, ITabData } from "../../types";
 
-import Ink = require("react-ink");
-
 import Filler from "../basics/filler";
 import LoadingCircle from "../basics/loading-circle";
 import Icon from "../basics/icon";
@@ -177,7 +175,6 @@ class Item extends React.PureComponent<IProps, IState> {
         data-id={id}
       >
         <Row>
-          <Ink />
           <IconContainer>
             {this.props.loading
               ? <LoadingCircle progress={0.3} />

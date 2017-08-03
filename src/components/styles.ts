@@ -238,10 +238,6 @@ export const animations = {
 
 // mixins
 
-export const inkContainer = () => css`
-  position: relative;
-`;
-
 export const heavyInput = () => css`
   font-size: ${props => props.theme.fontSizes.baseText};
   padding: 12px 10px 9px 10px;
@@ -297,7 +293,6 @@ export const searchIcon = () => css`
 `;
 
 export const iconButton = () => css`
-  ${inkContainer()};
   border-radius: 50%;
   width: 30px;
   height: 30px;
