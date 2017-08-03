@@ -57,6 +57,14 @@ export function pathToId(path: string): string {
   return "";
 }
 
+export function pathSuffix(path: string): string {
+  const slashIndex = path.indexOf("/");
+  if (slashIndex >= 0) {
+    return path.substring(slashIndex + 1);
+  }
+  return "";
+}
+
 export function pathPrefix(path: string): string {
   const slashIndex = path.indexOf("/");
   if (slashIndex >= 0) {

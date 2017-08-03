@@ -2,7 +2,7 @@ import * as React from "react";
 
 import env from "../env";
 
-import { pathPrefix, pathToId } from "../util/navigation";
+import { pathPrefix, pathSuffix, pathToId } from "../util/navigation";
 import urls from "../constants/urls";
 
 import { IMeatProps } from "./meats/types";
@@ -53,13 +53,13 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
         }
       default:
         const prefix = pathPrefix(tabPath);
-        const suffix = pathToId(tabPath);
+        const id = pathToId(tabPath);
         switch (prefix) {
           case "url":
-            return { url: suffix, controls: "generic" };
+            return { url: pathSuffix(tabPath), controls: "generic" };
           case "users":
             const users = tabData.users || emptyObj;
-            const user = users[suffix];
+            const user = users[id];
             if (user) {
               return { url: tabUrl || user.url, controls: "generic" };
             } else {
@@ -67,7 +67,7 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
             }
           case "games":
             const games = tabData.games || emptyObj;
-            const game = games[suffix];
+            const game = games[id];
             if (game) {
               return { url: tabUrl || game.url, controls: "game" };
             } else {
@@ -75,7 +75,7 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
             }
           case "search":
             const url =
-              urls.itchio + "/search?" + querystring.stringify({ q: suffix });
+              urls.itchio + "/search?" + querystring.stringify({ q: id });
             return { url, controls: "generic" };
           default:
             return { url: tabUrl || "about:blank", controls: "generic" };
