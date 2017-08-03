@@ -95,15 +95,14 @@ export function sortAndFilter(
 
 export function addSortAndFilterToQuery(
   select: squel.Select,
+  expr: squel.Expression,
   tab: string,
   store: IStore,
-): squel.Expression {
+): squel.Select {
   const state = store.getState();
   const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
   const { sortBy, sortDirection = "DESC" } = tabParams;
   const prefs = state.preferences;
-
-  const expr = squel.expr();
 
   if (prefs.onlyCompatibleGames) {
     expr.and(
@@ -164,13 +163,18 @@ export function addSortAndFilterToQuery(
     // FIXME: submit typing fixes to squel
     select.left_join(
       CaveModel.table,
-      "caves.id = ?",
-      (squel
-        .select()
-        .field("caves.id")
-        .from("caves")
-        .where("caves.gameId = games.id")
-        .limit(1) as any) as squel.Expression,
+      null,
+      squel
+        .expr()
+        .and(
+          "caves.id = ?",
+          squel
+            .select()
+            .field("caves.id")
+            .from("caves")
+            .where("caves.gameId = games.id")
+            .limit(1),
+        ),
     );
   }
 
@@ -179,20 +183,26 @@ export function addSortAndFilterToQuery(
     const meId = state.session.credentials.me.id;
     select.left_join(
       DownloadKeyModel.table,
-      "downloadKeys.id = ?",
-      (squel
-        .select()
-        .field("downloadKeys.id")
-        .from("downloadKeys")
-        .where(
+      null,
+      squel
+        .expr()
+        .and(
+          "downloadKeys.id = ?",
           squel
-            .expr()
-            .and("downloadKeys.gameId = games.id")
-            .and("downloadKeys.ownerId = ?", meId),
-        )
-        .limit(1) as any) as squel.Expression,
+            .select()
+            .field("downloadKeys.id")
+            .from("downloadKeys")
+            .where(
+              squel
+                .expr()
+                .and("downloadKeys.gameId = games.id")
+                .and("downloadKeys.ownerId = ?", meId),
+            )
+            .limit(1) as any,
+        ),
     );
   }
 
-  return expr;
+  select.where(expr);
+  return select;
 }

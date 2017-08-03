@@ -32,11 +32,11 @@ export default class DashboardFetcher extends Fetcher {
     const myGameIds = fromJSONField<number[]>(profile.myGameIds) || emptyArr;
 
     let doQuery = (k: squel.Select) =>
-      k.where(
-        squel
-          .expr()
-          .and(addSortAndFilterToQuery(k, this.tabId, store))
-          .and("games.id in ?", myGameIds),
+      addSortAndFilterToQuery(
+        k,
+        squel.expr().and("games.id in ?", myGameIds),
+        this.tabId,
+        store,
       );
 
     this.pushGames({

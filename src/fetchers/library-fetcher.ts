@@ -47,11 +47,11 @@ export default class LibraryFetcher extends Fetcher {
     const { libraryGameIds } = commons;
 
     let doQuery = (k: squel.Select) =>
-      k.where(
-        squel
-          .expr()
-          .and("games.id in ?", libraryGameIds)
-          .and(addSortAndFilterToQuery(k, this.tabId, store)),
+      addSortAndFilterToQuery(
+        k,
+        squel.expr().and("games.id in ?", libraryGameIds),
+        this.tabId,
+        store,
       );
 
     this.pushGames({
