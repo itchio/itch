@@ -1,33 +1,59 @@
-import { randomBytes } from "crypto";
+let rng: () => Uint8Array;
 
-// avert your eyes tslint, this isn't for you
-// tslint:disable
+// tslint:disable:no-bitwise
 
-/**
- * Generates an uuid v4 (random)
- * taken from https://gist.github.com/jed/982883
- */
-function b(
-  a?, // placeholder
-) {
-  return a // if the placeholder was passed, return
-    ? // a random number from 0 to 15
-      (a ^ // unless b is 8,
-        ((randomBytes(1)[0] % // in which case
-          16) >> // a random number from
-          (a / 4))) // 8 to 11
-        .toString(16) // in hexadecimal
-    : // or otherwise a concatenated string:
-      (([1e7] as any) + // 10000000 +
-      -1e3 + // -1000 +
-      -4e3 + // -4000 +
-      -8e3 + // -80000000 +
-        -1e11) // -100000000000,
-        .replace(
-          // replacing
-          /[018]/g, // zeroes, ones, and eights with
-          b, // random hex digits
-        );
+if (process.type === "browser") {
+  const crypto = require("crypto");
+  rng = () => crypto.randomBytes(16);
+} else {
+  rng = () => {
+    const rnds8 = new Uint8Array(16);
+    window.crypto.getRandomValues(rnds8);
+    return rnds8;
+  };
 }
 
-export default b;
+export default function v4() {
+  const rnds = rng();
+
+  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+
+  return bytesToUuid(rnds);
+}
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+const bth = [];
+for (let i = 0; i < 256; ++i) {
+  bth[i] = (i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf) {
+  let i = 0;
+  return (
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    "-" +
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    "-" +
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    "-" +
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    "-" +
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    bth[buf[i++]] +
+    bth[buf[i++]]
+  );
+}
