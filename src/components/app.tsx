@@ -59,6 +59,7 @@ class App extends React.PureComponent<IDerivedProps, IState> {
   updateMessages(nextProps: IDerivedProps) {
     this.setState({
       localeVersion: this.state.localeVersion + 1,
+      locale: nextProps.locale,
       messages: {
         ...nextProps.fallbackMessages,
         ...nextProps.messages,
