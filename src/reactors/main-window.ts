@@ -71,6 +71,9 @@ async function createWindow(store: IStore, hidden: boolean) {
     backgroundColor: darkMineShaft,
     titleBarStyle: "hidden",
     frame: false,
+    webPreferences: {
+      blinkFeatures: "ResizeObserver",
+    },
   };
   const window = new BrowserWindow(opts);
 

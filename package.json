@@ -161,7 +161,6 @@
     "tape": "^4.2.1",
     "tslint": "^4.0.2",
     "typescript": "^2.4.2",
-    "why-did-you-update": "^0.0.8",
     "zopf": "6.1.0"
   },
   "scripts": {

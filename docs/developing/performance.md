@@ -20,9 +20,6 @@ Perf.printWasted(); // or whatever else
   twice with exactly the same inputs, and if they return objects that aren't ===, it prints an error
   to the console. This helps spotting connected components that aren't using memoized selectors (reselect) yet.
 
-  * `ITCH_WHY_UPDATE=1` will enable [why-did-you-update](https://github.com/garbles/why-did-you-update). It's
-  quite verbose.
-
   * `ITCH_DONT_SHOW_WEBVIEWS=1` will avoid creating any `<webview/>` elements, which lets you measure more
   accurately how much RAM the app is using.
 

@@ -44,8 +44,6 @@ export default class LibraryFetcher extends Fetcher {
     const { db, store } = this.ctx;
     const { commons } = store.getState();
 
-    const { offset, limit } = this;
-
     const { libraryGameIds } = commons;
 
     let doQuery = (k: QueryInterface) =>
@@ -56,9 +54,7 @@ export default class LibraryFetcher extends Fetcher {
       );
 
     this.pushGames({
-      range: db.games.all(k =>
-        doQuery(k).offset(offset).limit(limit).select("games.*"),
-      ),
+      range: db.games.all(k => doQuery(k).select("games.*")),
       totalCount: libraryGameIds.length,
       getFilteredCount: () => db.games.count(k => doQuery(k)),
     });

@@ -10,8 +10,8 @@ export interface IHoverProps {
   onMouseLeave?: React.EventHandler<React.MouseEvent<any>>;
 }
 
-export default function<P>(
-  WrappedComponent: React.ComponentClass<P & IHoverProps>,
+export default function<P extends IHoverProps>(
+  WrappedComponent: React.ComponentClass<P>,
 ): React.ComponentClass<P> {
   return class extends React.PureComponent<P, IHoverState> {
     constructor() {

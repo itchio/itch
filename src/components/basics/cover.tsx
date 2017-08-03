@@ -2,6 +2,7 @@ import * as React from "react";
 import styled, * as styles from "../styles";
 
 import GifMarker from "./gif-marker";
+import { IHoverProps } from "./hover-hoc";
 
 const CoverDiv = styled.div`
   ${styles.defaultCoverBackground()};
@@ -48,14 +49,11 @@ class Cover extends React.PureComponent<IProps> {
   }
 }
 
-export interface IProps {
+export interface IProps extends IHoverProps {
   showGifMarker?: boolean;
   coverUrl: string;
   stillCoverUrl: string;
-  hover: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
-  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
-  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
   onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
 }
 

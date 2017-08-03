@@ -11,7 +11,6 @@ import { omit } from "underscore";
 const initialState = {} as ITabDataSet;
 
 const emptyObj = {} as any;
-const emptyArr = [] as any[];
 
 export default reducer<ITabDataSet>(initialState, on => {
   on(actions.tabDataFetched, (state, action) => {
@@ -32,48 +31,14 @@ export default reducer<ITabDataSet>(initialState, on => {
     };
   });
 
-  on(actions.tabParamsChanged, (state, action) => {
-    const { id } = action.payload;
-    const oldData = state[id];
-    if (!oldData) {
-      // ignore fresh data for closed tabs
-      logger.debug(`tabParamsChanged, ignoring fresh data for ${id}`);
-      return state;
-    }
-
-    return {
-      ...state,
-      [id]: {
-        ...oldData,
-        gameIds: (oldData.gameIds || emptyArr).map(x => undefined),
-      },
-    };
-  });
-
-  // FIXME: so, yeah, filters don't belong in preferences at all
-  // this clears gameIds way too often, let's fix that
-  on(actions.updatePreferences, (state, action) => {
-    const nextState = {};
-    logger.debug(`clearing all fetched data, preferences changed`);
-    for (const id of Object.keys(state)) {
-      const oldData = state[id];
-      nextState[id] = {
-        ...oldData,
-        gameIds: (oldData.gameIds || emptyArr).map(x => undefined),
-      };
-    }
-
-    return nextState;
-  });
-
   on(actions.tabEvolved, (state, action) => {
     const { id, data = emptyObj } = action.payload;
     const oldData = state[id];
-    logger.debug(`${id} / ${oldData.path} evolved`);
     if (!oldData) {
       // ignore fresh data for closed tabs
       return state;
     }
+    logger.debug(`${id} / ${oldData.path} evolved`);
 
     if (pathPrefix(oldData.path) === pathPrefix(data.path)) {
       // merge old & new data

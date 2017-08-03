@@ -18,7 +18,7 @@ interface IFormattedDuration {
 }
 
 export function formatDurationAsMessage(secs: number): IFormattedDuration {
-  if (secs < 60) {
+  if (secs < 120) {
     return { id: "duration.minute" };
   } else if (secs < 3600) {
     return {

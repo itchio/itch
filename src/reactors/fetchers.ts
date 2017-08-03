@@ -129,11 +129,6 @@ export default function(watcher: Watcher, db: DB) {
     queueFetch(store, db, action.payload.id, FetchReason.TabParamsChanged);
   });
 
-  // tab got new pagination? it's a fetching
-  watcher.on(actions.tabPaginationChanged, async (store, action) => {
-    queueFetch(store, db, action.payload.id, FetchReason.TabPaginationChanged);
-  });
-
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {

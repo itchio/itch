@@ -1,4 +1,4 @@
-import { ITabData, ITabPagination, ICredentials } from "../types";
+import { ITabData, ICredentials } from "../types";
 import * as bluebird from "bluebird";
 import { indexBy, pluck } from "underscore";
 
@@ -18,13 +18,11 @@ export enum FetchReason {
   TabReloaded,
   WindowFocused,
   TabParamsChanged,
-  TabPaginationChanged,
 }
 
 import rootLogger, { Logger } from "../logger";
 
 const emptyObj = {} as any;
-const emptyArr = [];
 
 /**
  * Fetches all the data a tab needs to display, except webviews.
@@ -37,9 +35,6 @@ export class Fetcher {
   tabId: string;
   reason: FetchReason;
   aborted = false;
-
-  offset: number;
-  limit: number;
 
   startedAt: number;
 
@@ -57,12 +52,8 @@ export class Fetcher {
 
     this.prevData = ctx.store.getState().session.tabData[tabId];
 
-    const data = this.tabPagination();
-    this.offset = data.offset;
-    this.limit = data.limit;
     this.logger.debug(
-      `fetching ${this.tabName()} because ${FetchReason[reason]}, off ${this
-        .offset} limit ${this.limit}`,
+      `fetching ${this.tabName()} because ${FetchReason[reason]}`,
     );
   }
 
@@ -168,7 +159,6 @@ export class Fetcher {
 
   warrantsRemote(reason: FetchReason) {
     switch (reason) {
-      case FetchReason.TabPaginationChanged:
       case FetchReason.TabParamsChanged:
         return false;
       default:
@@ -193,12 +183,6 @@ export class Fetcher {
     );
   }
 
-  tabPagination(): ITabPagination {
-    const { offset = 0, limit = 30 } =
-      this.ctx.store.getState().session.tabPagination[this.tabId] || emptyObj;
-    return { offset, limit };
-  }
-
   needCount(): boolean {
     const { gameIds } = this.tabData();
     if (gameIds && gameIds.length) {
@@ -206,52 +190,32 @@ export class Fetcher {
     }
   }
 
-  pushAllGames(games: IGame[], opts: IPushAllGameOpts = {}) {
-    const fullRange = this.sortAndFilter(games);
-
-    const { offset, limit } = this.tabPagination();
+  pushAllGames(input: IGame[], opts: IPushAllGameOpts = {}) {
+    const games = this.sortAndFilter(input);
+    this.logger.debug(
+      `Pushing games, ${input.length} => (sort+filter) => ${games.length}`,
+    );
 
     const gameIds = pluck(games, "id");
-    const totalCount = opts.totalCount || gameIds.length;
+    const totalCount = opts.totalCount || input.length;
     gameIds.length = totalCount;
 
     this.push({
-      offset,
-      limit,
       games: indexBy(games, "id"),
       gameIds,
-      hiddenCount: fullRange.length - games.length,
+      hiddenCount: input.length - games.length,
     });
   }
 
-  pushGames({ getFilteredCount, totalCount, range }) {
-    const { offset, limit } = this;
-    const oldData = this.tabData();
-    const gameIds = [...(oldData.gameIds || emptyArr)];
+  pushGames(opts: IPushGamesOpts) {
+    const { range, totalCount } = opts;
 
-    if (this.reason === FetchReason.TabPaginationChanged && oldData.gameIds) {
-      gameIds.length = oldData.gameIds.length;
-    } else {
-      gameIds.length = getFilteredCount();
-    }
-
-    this.logger.debug(
-      `pushing games ${offset}-${offset +
-        limit} / ${gameIds.length}, total ${totalCount}`,
-    );
-
-    for (let i = 0; i < range.length; i++) {
-      gameIds[i + offset] = range[i].id;
-    }
-
+    const gameIds = pluck(range, "id");
     const games = {
-      ...oldData.games || emptyObj,
       ...indexBy(range, "id"),
     };
 
     this.push({
-      offset,
-      limit,
       games,
       gameIds,
       hiddenCount: totalCount - gameIds.length,
@@ -261,6 +225,12 @@ export class Fetcher {
   sortAndFilter(input: IGame[]): IGame[] {
     return sortAndFilter(input, this.tabId, this.ctx.store);
   }
+}
+
+interface IPushGamesOpts {
+  getFilteredCount: () => number;
+  totalCount: number;
+  range: IGame[];
 }
 
 interface IPushAllGameOpts {

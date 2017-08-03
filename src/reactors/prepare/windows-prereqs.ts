@@ -447,7 +447,7 @@ function pendingPrereqs(
   opts: IWindowsPrereqsOpts,
   prereqs: IManifestPrereq[],
 ): IManifestPrereq[] {
-  const { installedPrereqs } = opts.cave;
+  const installedPrereqs = opts.cave.installedPrereqs || {};
 
   return reject(prereqs, prereq => installedPrereqs[prereq.name]);
 }

@@ -31,8 +31,6 @@ export default class DashboardFetcher extends Fetcher {
     }
     const myGameIds = fromJSONField<number[]>(profile.myGameIds) || emptyArr;
 
-    const { offset, limit } = this;
-
     let doQuery = (k: QueryInterface) =>
       addSortAndFilterToQuery(
         k.whereIn("games.id", myGameIds),
@@ -42,9 +40,7 @@ export default class DashboardFetcher extends Fetcher {
 
     this.pushGames({
       totalCount: myGameIds.length,
-      range: db.games.all(k =>
-        doQuery(k).offset(offset).limit(limit).select("games.*"),
-      ),
+      range: db.games.all(k => doQuery(k).select("games.*")),
       getFilteredCount: () => db.games.count(k => doQuery(k)),
     });
   }

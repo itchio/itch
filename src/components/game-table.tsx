@@ -20,20 +20,20 @@ import { IOnSortChange, SortDirection, SortKey } from "./sort-types";
 
 import { ICommonsState, IGameSet } from "../types";
 
-import gameTableRowRenderer, { IRowHandlerParams } from "./game-table-row-renderer";
+import gameTableRowRenderer, {
+  IRowHandlerParams,
+} from "./game-table-row-renderer";
 
 import TimeAgo from "./basics/time-ago";
 import Icon from "./basics/icon";
-import Cover, * as cover from "./basics/cover";
+import Cover from "./basics/cover";
 import Hoverable from "./basics/hover-hoc";
 import HiddenIndicator from "./hidden-indicator";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
 // nasty workaround there, but hey it makes us happy.
-const HoverCover = Hoverable(Cover) as React.ComponentClass<
-  Partial<cover.IProps>
->;
+const HoverCover = Hoverable(Cover);
 
 import { whenClickNavigates } from "./when-click-navigates";
 
