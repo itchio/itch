@@ -3,6 +3,7 @@
 let watching = false;
 let thorough = false;
 let chatty = false;
+let hangAround = false;
 
 function exit(exitCode) {
   if (process.env.ITCH_DONT_EXIT === "1") {
@@ -133,6 +134,11 @@ app.on("ready", async () => {
 
     if (arg === "--thorough") {
       thorough = true;
+      continue;
+    }
+
+    if (arg === "--hang-around") {
+      hangAround = true;
       continue;
     }
 
@@ -314,7 +320,11 @@ app.on("ready", async () => {
       console.log("");
       const exitCode = await invoke();
       if (!watching) {
-        exit(exitCode);
+        if (hangAround) {
+          console.log("Hanging around...");
+        } else {
+          exit(exitCode);
+        }
       }
       await bluebird.delay(250);
       console.log("watching for changes...");

@@ -1,4 +1,4 @@
-import { knex } from "../db/querier";
+import * as squel from "squel";
 import { IGame } from "../db/models/game";
 import { CaveModel, ICaveSummary } from "../db/models/cave";
 import { DownloadKeyModel } from "../db/models/download-key";
@@ -10,8 +10,6 @@ const platform = itchPlatform();
 const platformProp = camelify("p_" + platform);
 
 import { IStore, ITabParams, ICommonsState } from "../types";
-
-import { QueryBuilder } from "../db/querier";
 
 import isPlatformCompatible from "../util/is-platform-compatible";
 
@@ -96,50 +94,55 @@ export function sortAndFilter(
 }
 
 export function addSortAndFilterToQuery(
-  query: QueryBuilder,
+  select: squel.Select,
   tab: string,
   store: IStore,
-): QueryBuilder {
+): squel.Expression {
   const state = store.getState();
   const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
   const { sortBy, sortDirection = "DESC" } = tabParams;
   const prefs = state.preferences;
 
+  const expr = squel.expr();
+
   if (prefs.onlyCompatibleGames) {
-    query = query.andWhere(function(this) {
-      this.where(knex.raw(platformProp))
-        .orWhere({ type: "html" })
-        .orWhereIn("classification", ["game", "tool"]);
-    });
+    expr.and(
+      squel
+        .expr()
+        .or(platformProp)
+        .or("type = ?", "html")
+        .or("classification in ?", ["game", "tool"]),
+    );
   }
 
   let joinCave = false;
   let joinDownloadKeys = false;
 
   if (prefs.onlyInstalledGames) {
-    query = query.andWhere(knex.raw("caves.id is not null"));
+    expr.and("caves.id is not null");
     joinCave = true;
   }
 
   if (prefs.onlyOwnedGames) {
-    query = query.andWhere(knex.raw("downloadKeys.id is not null"));
+    expr.and("downloadKeys.id is not null");
     joinDownloadKeys = true;
   }
 
   if (sortBy) {
     switch (sortBy) {
       case "title":
-        query = query.orderByRaw(`games.title COLLATE NOCASE ${sortDirection}`);
+        // TODO: COLLATE NOCASE
+        select.order("games.title", sortDirection === "ASC");
         break;
       case "publishedAt":
-        query = query.orderBy("games.publishedAt", sortDirection);
+        select.order("games.publishedAt", sortDirection === "ASC");
         break;
       case "secondsRun":
-        query = query.orderBy("caves.secondsRun", sortDirection);
+        select.order("caves.secondsRun", sortDirection === "ASC");
         joinCave = true;
         break;
       case "lastTouchedAt":
-        query = query.orderBy("caves.lastTouchedAt", sortDirection);
+        select.order("caves.lastTouchedAt", sortDirection === "ASC");
         joinCave = true;
         break;
       default:
@@ -148,8 +151,9 @@ export function addSortAndFilterToQuery(
   } else {
     // see https://github.com/itchio/itch/issues/1352
     if (tab === "library") {
-      query = query.orderByRaw(
-        `coalesce(caves.installedAt, downloadKeys.createdAt) DESC`,
+      select.order(
+        "coalesce(caves.installedAt, downloadKeys.createdAt)",
+        false /* DESC */,
       );
       joinCave = true;
       joinDownloadKeys = true;
@@ -157,34 +161,38 @@ export function addSortAndFilterToQuery(
   }
 
   if (joinCave) {
-    query.leftJoin(CaveModel.table, function(this) {
-      this.on(
-        knex.raw(
-          "caves.id = (" +
-            "select caves.id from caves " +
-            "where caves.gameId = games.id " +
-            "limit 1" +
-            ")",
-        ),
-      );
-    });
+    // FIXME: submit typing fixes to squel
+    select.left_join(
+      CaveModel.table,
+      "caves.id = ?",
+      (squel
+        .select()
+        .field("caves.id")
+        .from("caves")
+        .where("caves.gameId = games.id")
+        .limit(1) as any) as squel.Expression,
+    );
   }
 
   if (joinDownloadKeys) {
+    // FIXME: submit typing fixes to squel (bis)
     const meId = state.session.credentials.me.id;
-    query.leftJoin(DownloadKeyModel.table, function(this) {
-      this.on(
-        knex.raw(
-          "downloadKeys.id = (" +
-            "select downloadKeys.id from downloadKeys " +
-            "where downloadKeys.gameId = games.id " +
-            `and downloadKeys.ownerId = ${meId} ` +
-            "limit 1" +
-            ")",
-        ),
-      );
-    });
+    select.left_join(
+      DownloadKeyModel.table,
+      "downloadKeys.id = ?",
+      (squel
+        .select()
+        .field("downloadKeys.id")
+        .from("downloadKeys")
+        .where(
+          squel
+            .expr()
+            .and("downloadKeys.gameId = games.id")
+            .and("downloadKeys.ownerId = ?", meId),
+        )
+        .limit(1) as any) as squel.Expression,
+    );
   }
 
-  return query;
+  return expr;
 }

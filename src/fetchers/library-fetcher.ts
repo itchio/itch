@@ -1,5 +1,5 @@
 import { Fetcher } from "./types";
-import { QueryInterface } from "../db/querier";
+import * as squel from "squel";
 
 import { addSortAndFilterToQuery } from "./sort-and-filter";
 
@@ -46,15 +46,16 @@ export default class LibraryFetcher extends Fetcher {
 
     const { libraryGameIds } = commons;
 
-    let doQuery = (k: QueryInterface) =>
-      addSortAndFilterToQuery(
-        k.whereIn("games.id", libraryGameIds),
-        this.tabId,
-        store,
+    let doQuery = (k: squel.Select) =>
+      k.where(
+        squel
+          .expr()
+          .and("games.id in ?", libraryGameIds)
+          .and(addSortAndFilterToQuery(k, this.tabId, store)),
       );
 
     this.pushGames({
-      range: db.games.all(k => doQuery(k).select("games.*")),
+      range: db.games.all(k => doQuery(k).field("games.*")),
       totalCount: libraryGameIds.length,
       getFilteredCount: () => db.games.count(k => doQuery(k)),
     });

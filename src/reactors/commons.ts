@@ -26,8 +26,8 @@ function updateDownloadKeys(store: IStore, db: DB): IDownloadKeySummary[] {
 
   const downloadKeys = db.downloadKeys.all(k =>
     k
-      .select(["id", "gameId", "createdAt"])
-      .where({ ownerId: credentials.me.id }),
+      .fields(["id", "gameId", "createdAt"])
+      .where("ownerId = ?", credentials.me.id),
   );
 
   store.dispatch(
@@ -44,7 +44,7 @@ function updateDownloadKeys(store: IStore, db: DB): IDownloadKeySummary[] {
 
 function updateCaves(store: IStore, db: DB): ICaveSummary[] {
   const caves = db.caves.all(k =>
-    k.select(["id", "gameId", "lastTouchedAt", "secondsRun"]),
+    k.fields(["id", "gameId", "lastTouchedAt", "secondsRun"]),
   );
 
   store.dispatch(

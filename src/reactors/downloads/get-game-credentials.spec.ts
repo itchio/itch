@@ -96,7 +96,7 @@ suite(__filename, s => {
       gc = await getGameCredentials(ctx, game);
       t.same(gc.downloadKey.id, dk750.id, "prefer current user download key 2");
 
-      db.downloadKeys.run(k => k.where({ id: 750 }).delete());
+      db.downloadKeys.delete(k => k.where("id = ?", 750));
 
       gc = await getGameCredentials(ctx, game);
       t.same(

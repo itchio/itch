@@ -1,6 +1,6 @@
 import { Watcher } from "./watcher";
 import { DB } from "../db";
-import { knex } from "../db/querier";
+import * as squel from "squel";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "fetch-search" });
@@ -24,12 +24,14 @@ export default function(watcher: Watcher, db: DB) {
       const startTerm = `${equalTerm}%`;
       const localGames = db.games.all(k =>
         k
-          .where(knex.raw("lower(title) like ?", containsTerm))
-          .orWhere(knex.raw("lower(shortText) like ?", containsTerm))
-          .orderByRaw("lower(title) = ? DESC, lower(title) like ? DESC", [
-            equalTerm,
-            startTerm,
-          ])
+          .where(
+            squel
+              .expr()
+              .or("lower(title) like ?", containsTerm)
+              .or("lower(shortText) like ?", containsTerm),
+          )
+          .order("lower(title) = ?", true /* DESC */, equalTerm)
+          .order("lower(title) like ?", true /* DESC */, startTerm)
           .limit(5),
       );
       logger.info(

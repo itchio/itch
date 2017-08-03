@@ -96,7 +96,7 @@ export class DB extends RepoContainer {
       }
 
       const oldRecordsList = this.q.all(Model, k =>
-        k.whereIn(Model.primaryKey, entityIds),
+        k.where(`${Model.primaryKey} in ?`, entityIds),
       );
       const oldRecords = indexBy(oldRecordsList, Model.primaryKey);
 
@@ -109,8 +109,8 @@ export class DB extends RepoContainer {
           if (oldRecord) {
             const update = hades.updateFor(oldRecord, newRecord, Model);
             if (update) {
-              this.q.run(Model, k =>
-                k.where(Model.primaryKey, id).update(update),
+              this.q.update(Model, k =>
+                k.where(Model.primaryKey, id).setFields(update),
               );
               updated.push(id);
             } else {
@@ -124,7 +124,7 @@ export class DB extends RepoContainer {
               },
               Model,
             );
-            this.q.run(Model, k => k.insert(insert));
+            this.q.insert(Model, k => k.setFields(insert));
             updated.push(id);
           }
         }
@@ -175,7 +175,7 @@ export class DB extends RepoContainer {
         continue;
       }
 
-      this.q.run(Model, k => k.whereIn(Model.primaryKey, ids).delete());
+      this.q.delete(Model, k => k.where(`${Model.primaryKey} in ?`, ids));
 
       this.store.dispatch(
         actions.dbCommit({
@@ -197,7 +197,7 @@ export class DB extends RepoContainer {
       return;
     }
 
-    this.q.run(Model, k => k.where({ [Model.primaryKey]: id }).delete());
+    this.q.delete(Model, k => k.where(`${Model.primaryKey} = ?`, id));
 
     this.store.dispatch(
       actions.dbCommit({

@@ -1,7 +1,7 @@
-import * as Knex from "knex";
+import * as squel from "squel";
 
 import { DB } from ".";
-import Querier, { knex } from "./querier";
+import Querier from "./querier";
 import { Model, Column } from "./model";
 import { Logger } from "../logger";
 import { toDateTimeField } from "./datetime-field";
@@ -11,7 +11,6 @@ import { sortBy, indexBy, pluck, filter } from "underscore";
 export interface IMigrator {
   db: DB;
   logger: Logger;
-  createTable: <T>(model: Model, cb: (t: ITableBuilder<T>) => void) => void;
 }
 
 interface IMigration {
@@ -21,19 +20,6 @@ interface IMigration {
 export interface IMigrations {
   [key: number]: IMigration;
 }
-
-interface ITableBuilder<T> {
-  integer(name: keyof T): Knex.ColumnBuilder;
-  text(name: keyof T): Knex.ColumnBuilder;
-  json(name: keyof T): Knex.ColumnBuilder;
-  boolean(name: keyof T): Knex.ColumnBuilder;
-  dateTime(name: keyof T): Knex.ColumnBuilder;
-}
-
-// Knex typings forgot about this lil' important part
-type RealSchemaBuilder = Knex.SchemaBuilder & {
-  toSQL(): Knex.Sql[];
-};
 
 const migrationsTable = "__itch_migrations";
 export async function runMigrations(
@@ -49,13 +35,6 @@ export async function runMigrations(
   }
 
   const migrator: IMigrator = {
-    createTable: (model: Model, cb) => {
-      q.runManySql(
-        (knex.schema.createTable(model.table, function(this) {
-          cb(this);
-        }) as RealSchemaBuilder).toSQL(),
-      );
-    },
     db: q.getDB(),
     logger,
   };
@@ -72,18 +51,21 @@ export async function runMigrations(
 }
 
 function ensureMigrationsTable(q: Querier) {
-  q.runManySql(
-    (knex.schema.createTableIfNotExists(migrationsTable, function(
-      this: Knex.TableBuilder,
-    ) {
-      this.integer("id");
-      this.dateTime("migratedAt");
-    }) as RealSchemaBuilder).toSQL(),
-  );
+  q.runSql({
+    text: `
+    CREATE TABLE IF NOT EXISTS ${migrationsTable} (
+      id INTEGER PRIMARY KEY,
+      migratedAt DATETIME
+    )
+    `,
+    values: [],
+  });
 }
 
 function pendingMigrations(q: Querier, migrations: IMigrations): string[] {
-  const doneMigrations = q.allSql(knex(migrationsTable).select().toSQL());
+  const doneMigrations = q.allSql(
+    squel.select().from(migrationsTable).toParam(),
+  );
   const doneById = indexBy(doneMigrations, "id");
 
   // all migration ids
@@ -103,12 +85,14 @@ function pendingMigrations(q: Querier, migrations: IMigrations): string[] {
 
 function markMigrated(q: Querier, id: string) {
   q.runSql(
-    knex(migrationsTable)
-      .insert({
+    squel
+      .insert()
+      .into(migrationsTable)
+      .setFields({
         id,
         migratedAt: toDateTimeField(new Date()),
       })
-      .toSQL(),
+      .toParam(),
   );
 }
 
@@ -250,17 +234,20 @@ export function fixSchema(q: Querier, checkResult: ICheckSchemaResult) {
 }
 
 function createTableForModel(q: Querier, model: Model) {
-  q.runManySql(
-    (knex.schema.createTable(model.table, function(this: Knex.TableBuilder) {
-      for (const columnName of Object.keys(model.columns)) {
+  q.runSql({
+    text: `
+    CREATE TABLE ${model.table} (
+    ${Object.keys(model.columns)
+      .map(columnName => {
         const columnType = model.columns[columnName];
-        const col = this.specificType(columnName, sqliteColumnType(columnType));
-        if (columnName === model.primaryKey) {
-          col.primary();
-        }
-      }
-    }) as RealSchemaBuilder).toSQL(),
-  );
+        const primary = columnName === model.primaryKey ? " PRIMARY KEY" : "";
+        return `${columnName} ${sqliteColumnType(columnType)}${primary}`;
+      })
+      .join(",")}
+    )
+    `,
+    values: [],
+  });
 }
 
 function sqliteColumnType(columnType: Column): string {

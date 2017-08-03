@@ -38,7 +38,7 @@ export default class CollectionsFetcher extends Fetcher {
 
     let localGames = [];
     if (allGameIds.length > 0) {
-      localGames = db.games.all(k => k.select().whereIn("id", allGameIds));
+      localGames = db.games.all(k => k.where("id in ?", allGameIds));
     }
     this.push({
       collections: indexBy(localCollections, "id"),

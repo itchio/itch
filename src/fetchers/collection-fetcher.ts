@@ -40,7 +40,7 @@ export default class CollectionFetcher extends Fetcher {
         emptyArr,
       );
 
-      const localGames = db.games.all(k => k.select().whereIn("id", gameIds));
+      const localGames = db.games.all(k => k.where("id in ?", gameIds));
       const orderedLocalGames = getByIds(indexBy(localGames, "id"), gameIds);
 
       this.pushAllGames(orderedLocalGames, {

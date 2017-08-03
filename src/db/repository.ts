@@ -1,4 +1,5 @@
-import Querier, { KnexCb } from "./querier";
+import Querier, { SelectCb, DeleteCb, UpdateCb } from "./querier";
+import * as squel from "squel";
 
 import { Model } from "./model";
 
@@ -32,35 +33,46 @@ interface IConditions {
   [key: string]: any;
 }
 
+function doWhere(k: squel.Select, conditions: IConditions): squel.Select {
+  const keys = Object.keys(conditions);
+  const string = keys.map(k => `${k} = ?`).join(" AND ");
+  const values = keys.map(k => conditions[k]);
+  return k.where(string, ...values);
+}
+
 class Repository<T> {
   constructor(private model: Model, private q: Querier) {}
 
-  get(cb: KnexCb): T | null {
+  get(cb: SelectCb): T | null {
     return this.q.get(this.model, cb);
   }
 
-  count(cb: KnexCb): number {
-    return this.q.get(this.model, k => cb(k).count())["count(*)"];
+  count(cb: SelectCb): number {
+    return this.q.get(this.model, k => cb(k)).field("count(*)")["count(*)"];
   }
 
-  all(cb: KnexCb): T[] {
+  all(cb: SelectCb): T[] {
     return this.q.all(this.model, cb);
   }
 
-  run(cb: KnexCb): void {
-    this.q.run(this.model, cb);
+  delete(cb: DeleteCb): void {
+    return this.q.delete(this.model, cb);
+  }
+
+  update(cb: UpdateCb): void {
+    return this.q.update(this.model, cb);
   }
 
   findOneById(id: any): T {
-    return this.get(k => k.select().where({ [this.model.primaryKey]: id }));
+    return this.get(k => k.where(`${this.model.primaryKey} = ?`, id));
   }
 
   findOne(conditions: IConditions): T {
-    return this.get(k => k.select().where(conditions));
+    return this.get(k => doWhere(k, conditions));
   }
 
   find(conditions: IConditions): T[] {
-    return this.all(k => k.select().where(conditions));
+    return this.all(k => doWhere(k, conditions));
   }
 }
 

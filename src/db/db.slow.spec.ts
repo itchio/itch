@@ -42,18 +42,18 @@ suite(__filename, s => {
         cells: allCells,
       });
 
-      t.same(q.get(Cell, k => k.select().where({ id: 1 })).note, "one");
-      t.same(q.get(Cell, k => k.select().where({ id: 2 })).note, "two");
-      t.same(q.get(Cell, k => k.select().where({ id: 3 })).note, "three");
+      t.same(q.get(Cell, k => k.where("id = ?", 1)).note, "one");
+      t.same(q.get(Cell, k => k.where("id = ?", 2)).note, "two");
+      t.same(q.get(Cell, k => k.where("id = ?", 3)).note, "three");
 
       // nothing gets updated
       db.saveMany({
         cells: allCells,
       });
 
-      t.same(q.get(Cell, k => k.select().where({ id: 1 })).note, "one");
-      t.same(q.get(Cell, k => k.select().where({ id: 2 })).note, "two");
-      t.same(q.get(Cell, k => k.select().where({ id: 3 })).note, "three");
+      t.same(q.get(Cell, k => k.where("id = ?", 1)).note, "one");
+      t.same(q.get(Cell, k => k.where("id = ?", 2)).note, "two");
+      t.same(q.get(Cell, k => k.where("id = ?", 3)).note, "three");
 
       // only one record gets updated
 
@@ -63,7 +63,7 @@ suite(__filename, s => {
         cells: allCells,
       });
 
-      t.same(q.get(Cell, k => k.where({ id: 3 })).note, "tres");
+      t.same(q.get(Cell, k => k.where("id = ?", 3)).note, "tres");
 
       // record has keys set to the value undefind
 

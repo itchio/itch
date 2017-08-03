@@ -59,7 +59,7 @@ export default function(watcher: Watcher, db: DB) {
     );
     invariant(name !== "appdata", "cannot remove appdata");
 
-    const numItems = db.caves.count(k => k.where({ installLocation: name }));
+    const numItems = db.caves.count(k => k.where("installLocation = ?", name));
 
     const i18n = store.getState().i18n;
 

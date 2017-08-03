@@ -2,7 +2,8 @@ import suite from "../test-suite";
 import * as Database from "better-sqlite3";
 import * as hades from "../db/hades";
 
-import Querier, { QueryBuilder } from "../db/querier";
+import Querier from "../db/querier";
+import * as squel from "squel";
 import { Column, Model } from "../db/model";
 import { toJSONField } from "../db/json-field";
 
@@ -81,14 +82,14 @@ CREATE TABLE noels (
 
     q.withTransaction(() => {
       for (const data of gameData) {
-        q.run(Game, k => k.insert(hades.insertFor(data, Game)));
+        q.insert(Game, k => k.setFields(hades.insertFor(data, Game)));
       }
     });
 
-    let allGames = q.all(Game, k => k.select());
+    let allGames = q.all(Game);
     t.is(allGames.length, gameData.length);
 
-    let fetchedGame = q.get(Game, k => k.select().where({ id: 1 }));
+    let fetchedGame = q.get(Game, k => k.where("id = ?", 1));
     t.ok(fetchedGame);
 
     t.same(fetchedGame.title, "Overland");
@@ -103,23 +104,19 @@ CREATE TABLE noels (
       shortDesc: "Good luck",
     });
 
-    q.run(Game, k => k.where({ id: updateGame.id }).update(diff));
+    q.update(Game, k => k.where("id = ?", updateGame.id).setFields(diff));
 
-    fetchedGame = q.get(Game, k => k.select().where({ id: 1 }));
+    fetchedGame = q.get(Game, k => k.where("id = ?", 1));
     t.ok(fetchedGame);
     t.same(fetchedGame.title, "Overland", "title is still the same");
     t.same(fetchedGame.shortDesc, "Good luck", "desc was updated");
 
-    fetchedGame = q.get(Game, k =>
-      k.select().where({ title: "Puzzle Puppers" }),
-    );
+    fetchedGame = q.get(Game, k => k.where("title = ?", "Puzzle Puppers"));
     t.ok(fetchedGame);
     t.same(fetchedGame.id, 2);
 
     const searchGame = (query: string) =>
-      q.get(Game, k =>
-        k.select().whereRaw("LOWER(title) LIKE LOWER(?)", [`%${query}%`]),
-      );
+      q.get(Game, k => k.where("LOWER(title) LIKE LOWER(?)", `%${query}%`));
 
     fetchedGame = searchGame("puzzle");
     t.ok(fetchedGame);
@@ -129,41 +126,45 @@ CREATE TABLE noels (
     t.ok(fetchedGame);
     t.same(fetchedGame.id, 4);
 
-    const puzzleQuery = (k: QueryBuilder, offset: number, limit: number) => {
+    const puzzleQuery = (k: squel.Select, offset: number, limit: number) => {
       const arg = `%puzzle%`;
       return k
-        .whereRaw("LOWER(title) LIKE LOWER(?)", [arg])
-        .orWhereRaw("LOWER(shortDesc) LIKE LOWER(?)", [arg])
+        .where(
+          squel
+            .expr()
+            .or("LOWER(title) LIKE LOWER(?)", arg)
+            .or("LOWER(shortDesc) LIKE LOWER(?)", arg),
+        )
         .offset(offset)
         .limit(limit);
     };
 
-    let puzzleGames = q.all(Game, k => puzzleQuery(k.select(), 0, 1));
+    let puzzleGames = q.all(Game, k => puzzleQuery(k, 0, 1));
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 1, "fetches first page");
 
-    puzzleGames = q.all(Game, k => puzzleQuery(k.select(), 1, 1));
+    puzzleGames = q.all(Game, k => puzzleQuery(k, 1, 1));
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 1, "fetches second page");
 
-    puzzleGames = q.all(Game, k => puzzleQuery(k.select(), 2, 1));
+    puzzleGames = q.all(Game, k => puzzleQuery(k, 2, 1));
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 1, "fetches third page");
 
-    puzzleGames = q.all(Game, k => puzzleQuery(k.select(), 3, 1));
+    puzzleGames = q.all(Game, k => puzzleQuery(k, 3, 1));
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 0, "fourth page is empty");
 
     let puzzleGamesCount;
     [puzzleGames, puzzleGamesCount] = [
-      q.all(Game, k => puzzleQuery(k.select(), 0, 2)),
-      q.get(Game, k => puzzleQuery(k.count(), 0, 2))["count(*)"],
+      q.all(Game, k => puzzleQuery(k, 0, 2)),
+      q.get(Game, k => puzzleQuery(k, 0, 2).field("count(*)"))["count(*)"],
     ];
     t.ok(puzzleGames);
     t.same(puzzleGames.length, 2, "finds two games");
     t.same(puzzleGamesCount, 3, "counts three games");
 
-    let specificGames = q.all(Game, k => k.whereIn("id", [2, 4, 12]));
+    let specificGames = q.all(Game, k => k.where("id in ?", [2, 4, 12]));
     t.ok(specificGames);
     t.same(specificGames.length, 2, "found both games by id");
     t.ok(_.find(specificGames, { id: 2 }));
@@ -171,9 +172,9 @@ CREATE TABLE noels (
     t.notOk(_.find(specificGames, { id: 6 }));
 
     {
-      const game1 = q.get(Game, k => k.where({ id: 1 }));
-      q.run(Game, k => k.where({ id: 1 }).delete());
-      const game2 = q.get(Game, k => k.where({ id: 1 }));
+      const game1 = q.get(Game, k => k.where("id = ?", 1));
+      q.delete(Game, k => k.where("id = ?", 1));
+      const game2 = q.get(Game, k => k.where("id = ?", 1));
       t.ok(game1);
       t.notOk(game2);
     }
@@ -188,7 +189,7 @@ CREATE TABLE noels (
       timestamp,
     };
 
-    q.run(Jason, k => k.insert(hades.insertFor(jason, Jason)));
+    q.insert(Jason, k => k.setFields(hades.insertFor(jason, Jason)));
 
     let newJason: any = {
       ...jason,
@@ -199,7 +200,7 @@ CREATE TABLE noels (
     };
 
     const fetchedJason = q.get(Jason, k =>
-      k.where({ identifier: jason.identifier }),
+      k.where("identifier = ?", jason.identifier),
     );
     let up = hades.updateFor(fetchedJason, newJason, Jason);
     t.same(up, null);
@@ -224,9 +225,9 @@ CREATE TABLE noels (
       id: 1,
       happy: true,
     };
-    q.run(Noel, k => k.insert(hades.insertFor(noel, Noel)));
+    q.insert(Noel, k => k.setFields(hades.insertFor(noel, Noel)));
 
-    const fetchedNoel = q.get(Noel, k => k.where({ id: 1 }));
+    const fetchedNoel = q.get(Noel, k => k.where("id = ?", 1));
     t.same(fetchedNoel, {
       id: 1,
       happy: 1,

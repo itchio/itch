@@ -87,7 +87,6 @@
     "istanbul-reports": "^1.1.1",
     "javascript-time-ago": "^0.4.9",
     "keymirror": "~0.1.0",
-    "knex": "^0.13.0",
     "logrotate-stream": "^0.2.5",
     "marked-extra": "^0.2.6",
     "mkdirp": "^0.5.1",

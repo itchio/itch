@@ -1,10 +1,10 @@
 import { Fetcher } from "./types";
+import * as squel from "squel";
 
 import normalize from "../api/normalize";
 import { game, arrayOf } from "../api/schemas";
 
 import { addSortAndFilterToQuery } from "./sort-and-filter";
-import { QueryInterface } from "../db/querier";
 import { fromJSONField } from "../db/json-field";
 
 import { pluck } from "underscore";
@@ -31,16 +31,17 @@ export default class DashboardFetcher extends Fetcher {
     }
     const myGameIds = fromJSONField<number[]>(profile.myGameIds) || emptyArr;
 
-    let doQuery = (k: QueryInterface) =>
-      addSortAndFilterToQuery(
-        k.whereIn("games.id", myGameIds),
-        this.tabId,
-        store,
+    let doQuery = (k: squel.Select) =>
+      k.where(
+        squel
+          .expr()
+          .and(addSortAndFilterToQuery(k, this.tabId, store))
+          .and("games.id in ?", myGameIds),
       );
 
     this.pushGames({
       totalCount: myGameIds.length,
-      range: db.games.all(k => doQuery(k).select("games.*")),
+      range: db.games.all(k => doQuery(k).field("games.*")),
       getFilteredCount: () => db.games.count(k => doQuery(k)),
     });
   }
