@@ -19,8 +19,6 @@ if (env.name !== "production") {
   });
 }
 
-import "./boot/time-ago-locales";
-
 import * as os from "./os";
 
 import * as React from "react";

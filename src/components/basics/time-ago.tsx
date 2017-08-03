@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import ReactTimeAgo from "react-time-ago";
+import { FormattedRelative } from "react-intl";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDate, DATE_FORMAT } from "../../format/datetime";
@@ -31,9 +31,7 @@ class TimeAgo extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <span data-rh={formatDate(date, intl.locale, DATE_FORMAT)}>
-        <ReactTimeAgo locale={intl.locale}>
-          {date}
-        </ReactTimeAgo>
+        <FormattedRelative value={date} />
       </span>
     );
   }
@@ -47,4 +45,4 @@ interface IDerivedProps {
   intl: InjectedIntl;
 }
 
-export default injectIntl<IProps>(TimeAgo);
+export default injectIntl(TimeAgo);
