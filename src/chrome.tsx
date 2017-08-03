@@ -37,11 +37,13 @@ import * as globalStyles from "./components/global-styles";
 globalStyles.inject();
 
 let AppContainer: React.ComponentClass<{}> = null;
-try {
-  const rhl = require("react-hot-loader");
-  AppContainer = rhl.AppContainer;
-} catch (e) {
-  /* muffin */
+if (env.name === "development") {
+  try {
+    const rhl = require("react-hot-loader");
+    AppContainer = rhl.AppContainer;
+  } catch (e) {
+    /* muffin */
+  }
 }
 
 import * as electron from "electron";
