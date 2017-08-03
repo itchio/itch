@@ -1,6 +1,8 @@
 import * as Knex from "knex";
 export const knex = Knex({ client: "sqlite3", useNullAsDefault: true });
 
+import "squel";
+
 export type QueryBuilder = Knex.QueryBuilder;
 export type QueryInterface = Knex.QueryInterface;
 
