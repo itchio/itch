@@ -16,7 +16,10 @@ import (
 	"github.com/onsi/gocleanup"
 )
 
+const testAccountName = "itch-test-account"
 const chromeDriverVersion = "2.27"
+
+var testAccountPassword = os.Getenv("ITCH_TEST_ACCOUNT_PASSWORD")
 
 type CleanupFunc func()
 
@@ -133,8 +136,9 @@ func doMain() error {
 	// Delete the session once this function is completed.
 	defer driver.DeleteSession()
 
-	loginFlow(r)
+	prepareFlow(r)
 	navigationFlow(r)
+	loginFlow(r)
 
 	log.Printf("Succeeded in %s", time.Since(r.testStart))
 	log.Printf("Total time %s", time.Since(bootTime))

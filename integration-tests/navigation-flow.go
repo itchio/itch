@@ -23,17 +23,17 @@ func navigationFlow(r *runner) {
 	must(r.click(currTab + ".layout-picker[data-layout='table']"))
 
 	r.logf("checking table is shown")
-	must(r.waitForVisible(currTab + ".table-item"))
+	must(r.waitForVisible(currTab + ".table--row"))
 
-	const firstTitleSelector = currTab + ".table-item:first-child .game-table-title"
+	const firstTitleSelector = currTab + ".table--row .title--name"
 
 	r.logf("sorting by name, A-Z")
-	must(r.click(currTab + "[role='columnheader'][aria-label='Name']"))
+	must(r.click(currTab + ".row--header.row--title"))
 	r.logf("ensuring the A-Z sorting is correct")
 	must(r.waitUntilTextExists(firstTitleSelector, "111 first"))
 
 	r.logf("sorting by name, Z-A")
-	must(r.click(currTab + "[role='columnheader'][aria-label='Name']"))
+	must(r.click(currTab + ".row--header.row--title"))
 	r.logf("ensuring the Z-A sorting is correct")
 	must(r.waitUntilTextExists(firstTitleSelector, "zzz last"))
 }
