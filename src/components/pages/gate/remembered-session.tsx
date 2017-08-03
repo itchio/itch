@@ -50,14 +50,6 @@ const RememberedSessionDiv = styled.div`
     flex-grow: 8;
   }
 
-  .forget-session {
-    visibility: hidden;
-  }
-
-  &:hover .forget-session {
-    visibility: visible;
-  }
-
   .username {
     color: ${props => props.theme.baseText};
     font-size: ${props => props.theme.fontSizes.huge};

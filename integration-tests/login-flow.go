@@ -23,7 +23,6 @@ func loginFlow(r *runner) {
 
 	r.logf("forgetting session")
 	must(r.waitForVisible(".remembered-session"))
-	must(r.moveTo(".remembered-session"))
 	must(r.click(".remembered-session .forget-session"))
 	must(r.click("#modal-forget-session"))
 
