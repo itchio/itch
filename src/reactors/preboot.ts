@@ -17,131 +17,117 @@ import { ProxySource } from "../types";
 import { NET_PARTITION_NAME } from "../constants/net";
 import { applyProxySettings } from "../reactors/proxy";
 
+import { elapsed } from "../format/datetime";
+
 let testProxy = false;
 let proxyTested = false;
 
 export default function(watcher: Watcher) {
   const ctx = new Context(store, db);
   watcher.on(actions.preboot, async (store, action) => {
+    let t1 = Date.now();
     try {
-      await cleanOldLogs();
-    } catch (e) {
-      logger.error(`Could not clean old logs: ${e.stack || e.message || e}`);
-    }
+      try {
+        await cleanOldLogs();
+      } catch (e) {
+        logger.error(`Could not clean old logs: ${e.stack || e.message || e}`);
+      }
 
-    try {
-      await xdgMime.registerIfNeeded(ctx, { logger: rootLogger });
-    } catch (e) {
-      logger.error(`Could not run xdg-mime: ${e.stack || e.message || e}`);
-    }
+      try {
+        await xdgMime.registerIfNeeded(ctx, { logger: rootLogger });
+      } catch (e) {
+        logger.error(`Could not run xdg-mime: ${e.stack || e.message || e}`);
+      }
 
-    try {
-      await visualElements.createIfNeeded(ctx);
-    } catch (e) {
-      logger.error(
-        `Could not run visualElements: ${e.stack || e.message || e}`,
-      );
-    }
+      try {
+        await visualElements.createIfNeeded(ctx);
+      } catch (e) {
+        logger.error(
+          `Could not run visualElements: ${e.stack || e.message || e}`,
+        );
+      }
 
-    try {
-      const { app } = require("electron");
-      app.on(
-        "certificate-error",
-        (ev, webContents, url, error, certificate, callback) => {
-          // do not trust
-          callback(false);
+      try {
+        const { app } = require("electron");
+        app.on(
+          "certificate-error",
+          (ev, webContents, url, error, certificate, callback) => {
+            // do not trust
+            callback(false);
 
-          logger.error(
-            `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`,
-          );
+            logger.error(
+              `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`,
+            );
 
-          store.dispatch(
-            actions.openModal({
-              title: `Certificate error: ${error}`,
-              message:
-                `There was an error with the certificate for ` +
-                `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
-                `Please check your proxy configuration and try again.`,
-              detail: `If you ignore this error, the rest of the app might not work correctly.`,
-              buttons: [
-                {
-                  label: "Ignore and continue",
-                  action: actions.closeModal({}),
-                  className: "secondary",
-                },
-                {
-                  label: ["menu.file.quit"],
-                  action: actions.quit({}),
-                },
-              ],
-            }),
-          );
-        },
-      );
-      logger.debug(`Set up certificate error handler`);
-    } catch (e) {
-      logger.error(
-        `Could not set up certificate error handler: ${e.stack ||
-          e.message ||
-          e}`,
-      );
-    }
+            store.dispatch(
+              actions.openModal({
+                title: `Certificate error: ${error}`,
+                message:
+                  `There was an error with the certificate for ` +
+                  `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
+                  `Please check your proxy configuration and try again.`,
+                detail: `If you ignore this error, the rest of the app might not work correctly.`,
+                buttons: [
+                  {
+                    label: "Ignore and continue",
+                    action: actions.closeModal({}),
+                    className: "secondary",
+                  },
+                  {
+                    label: ["menu.file.quit"],
+                    action: actions.quit({}),
+                  },
+                ],
+              }),
+            );
+          },
+        );
+        logger.debug(`Set up certificate error handler`);
+      } catch (e) {
+        logger.error(
+          `Could not set up certificate error handler: ${e.stack ||
+            e.message ||
+            e}`,
+        );
+      }
 
-    try {
-      const { session } = require("electron");
-      const netSession = session.fromPartition(NET_PARTITION_NAME, {
-        cache: false,
-      });
-
-      const envSettings: string =
-        process.env.https_proxy ||
-        process.env.HTTPS_PROXY ||
-        process.env.http_proxy ||
-        process.env.HTTP_PROXY;
-
-      let proxySettings = {
-        proxy: null as string,
-        source: null as ProxySource,
-      };
-
-      if (envSettings) {
-        logger.info(`Got proxy settings from environment: ${envSettings}`);
-        proxySettings = {
-          proxy: envSettings,
-          source: "env",
-        };
-        testProxy = true;
-      } else {
-        const electronProxy = await new Promise<string>((resolve, reject) => {
-          // resolveProxy accepts strings as well, and URL is not defined here for some reason?
-          session.defaultSession.resolveProxy(
-            "https://itch.io" as any,
-            resolve,
-          );
-
-          setTimeout(function() {
-            reject(new Error("proxy resolution timed out"));
-          }, 5000);
+      try {
+        const { session } = require("electron");
+        const netSession = session.fromPartition(NET_PARTITION_NAME, {
+          cache: false,
         });
 
-        if (/PROXY /.test(electronProxy)) {
-          logger.info(`Got proxy settings: '${electronProxy}'`);
-          const proxy = electronProxy.replace(/PROXY /, "");
+        const envSettings: string =
+          process.env.https_proxy ||
+          process.env.HTTPS_PROXY ||
+          process.env.http_proxy ||
+          process.env.HTTP_PROXY;
+
+        let proxySettings = {
+          proxy: null as string,
+          source: "os" as ProxySource,
+        };
+
+        if (envSettings) {
+          logger.info(`Got proxy settings from environment: ${envSettings}`);
           proxySettings = {
-            proxy,
-            source: "os",
+            proxy: envSettings,
+            source: "env",
           };
           testProxy = true;
-        } else {
-          logger.info(`No proxy detected`);
+          store.dispatch(actions.proxySettingsDetected(proxySettings));
+          await applyProxySettings(netSession, proxySettings);
         }
+      } catch (e) {
+        logger.warn(
+          `Could not detect proxy settings: ${e ? e.message : "unknown error"}`,
+        );
       }
-      store.dispatch(actions.proxySettingsDetected(proxySettings));
-      await applyProxySettings(netSession, proxySettings);
     } catch (e) {
-      logger.warn(
-        `Could not detect proxy settings: ${e ? e.message : "unknown error"}`,
-      );
+      throw e;
+    } finally {
+      const t2 = Date.now();
+      logger.info(`preboot ran in ${elapsed(t1, t2)}`);
     }
 
     store.dispatch(actions.boot({}));
