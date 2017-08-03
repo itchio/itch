@@ -1,12 +1,11 @@
 import * as invariant from "invariant";
-import { promisify, promisifyAll } from "bluebird";
+import { promisify } from "bluebird";
 import * as bluebird from "bluebird";
 
-import * as fsModule from "fs";
-const baseFs = require("original-fs");
+import * as fs from "fs";
+import * as path from "path";
 
 import {
-  IAsyncFSVariants,
   IFSError,
   IGlobStatic,
   IReadFileOpts,
@@ -27,34 +26,6 @@ import {
  */
 
 import { EventEmitter } from "events";
-import * as proxyquire from "proxyquire";
-
-const gracefulFsStubs = {
-  fs: {
-    ...baseFs,
-    "@global": true /* Work with transitive imports */,
-    "@noCallThru": true /* Don't even require/hit electron fs */,
-    disableGlob: true /* Don't ever use globs with rimraf */,
-  },
-};
-
-// graceful-fs fixes a few things https://www.npmjs.com/package/graceful-fs
-// notably, EMFILE, EPERM, etc.
-export const fs = ({
-  ...proxyquire("graceful-fs", gracefulFsStubs),
-  "@global": true /* Work with transitive imports */,
-  "@noCallThru": true /* Don't even require/hit electron fs */,
-} as any) as typeof fsModule & IAsyncFSVariants;
-
-// adds 'xxxAsync' variants of all fs functions, which we'll use
-promisifyAll(fs);
-
-// when proxyquired modules load, they'll require what we give
-// them instead of
-const stubs = {
-  fs: fs,
-  "graceful-fs": fs,
-};
 
 /**
  * Promised version of isaacs' little globber
@@ -62,32 +33,57 @@ const stubs = {
  * 
  * (single function, callback-based, doesn't accept fs)
  */
-export const glob = promisify(proxyquire("glob", stubs) as IGlobStatic);
+export const glob = promisify(require("glob") as IGlobStatic);
 
-/**
- * Promised version of readChunk
- * https://www.npmjs.com/package/read-chunk
- * 
- * single function, callback-based, doesn't accept fs
- */
-export const readChunk = promisify(proxyquire("read-chunk", stubs));
-
-// single function, callback-based, can actually specify fs!
-type Mkdirp = (path: string, opts: any) => Promise<void>;
+type Mkdirp = (path: string, opts?: any) => Promise<void>;
 export const mkdirp: Mkdirp = promisify(require("mkdirp")) as any;
 
-// single function, can actually specify fs!
-type Rimraf = (path: string, opts: any) => Promise<void>;
+type Rimraf = (path: string, opts?: any) => Promise<void>;
 const rimraf: Rimraf = promisify(require("rimraf")) as any;
-
-// other deps
-import * as path from "path";
 
 // global ignore patterns
 export const globIgnore = [
   // on macOS, trashes exist on dmg volumes but cannot be scandir'd for some reason
   "**/.Trashes/**",
 ];
+
+export const nodeReadFile = (bluebird.promisify(
+  fs.readFile,
+) as any) as typeof readFile;
+export const nodeWriteFile = (bluebird.promisify(
+  fs.writeFile,
+) as any) as typeof writeFile;
+export const nodeAppendFile = (bluebird.promisify(
+  fs.appendFile,
+) as any) as typeof appendFile;
+
+export const utimes = (bluebird.promisify(fs.utimes) as any) as (
+  path: string,
+  atime: number,
+  mtime: number,
+) => Promise<void>;
+export const chmod = (bluebird.promisify(fs.chmod) as any) as (
+  path: string,
+  mode: number,
+) => Promise<void>;
+export const stat = bluebird.promisify(fs.stat);
+export const lstat = bluebird.promisify(fs.lstat);
+export const readlink = bluebird.promisify(fs.readlink);
+export const symlink = (bluebird.promisify(fs.symlink) as any) as (
+  srcpath: string,
+  dstpath: string,
+) => Promise<void>;
+export const rename = (bluebird.promisify(fs.rename) as any) as (
+  oldpath: string,
+  newpath: string,
+) => Promise<void>;
+export const rmdir = bluebird.promisify(fs.rmdir);
+export const unlink = (bluebird.promisify(fs.unlink) as any) as (
+  file: string,
+) => Promise<void>;
+
+export const createReadStream = fs.createReadStream.bind(fs);
+export const createWriteStream = fs.createWriteStream.bind(fs);
 
 /**
  * Returns true if file exists, false if ENOENT, throws if other error
@@ -106,7 +102,7 @@ export async function exists(file: string) {
       }
     };
 
-    fs.access(file, fs.R_OK, callback);
+    fs.access(file, fs.constants.R_OK, callback);
   });
 }
 
@@ -117,7 +113,7 @@ export async function readFile(
   file: string,
   opts: IReadFileOpts,
 ): Promise<string> {
-  return await fs.readFileAsync(file, opts);
+  return await nodeReadFile(file, opts);
 }
 
 /**
@@ -130,7 +126,7 @@ export async function appendFile(
   opts?: IWriteFileOpts,
 ): Promise<void> {
   await mkdir(path.dirname(file));
-  return await fs.appendFileAsync(file, contents, opts);
+  return await nodeAppendFile(file, contents, opts);
 }
 
 /**
@@ -143,7 +139,7 @@ export async function writeFile(
   opts: IWriteFileOpts,
 ): Promise<void> {
   await mkdir(path.dirname(file));
-  return await fs.writeFileAsync(file, contents, opts);
+  return await nodeWriteFile(file, contents, opts);
 }
 
 /**
@@ -169,14 +165,7 @@ export async function promised(stream: EventEmitter): Promise<any> {
  * Uses mkdirp: https://www.npmjs.com/package/mkdirp
  */
 export async function mkdir(dir: string): Promise<void> {
-  await mkdirp(dir, { fs: baseFs });
-}
-
-/**
- * Rename oldPath into newPath, throws if it can't
- */
-export async function rename(oldPath: string, newPath: string): Promise<void> {
-  return await fs.renameAsync(oldPath, newPath);
+  await mkdirp(dir);
 }
 
 /**
@@ -184,24 +173,5 @@ export async function rename(oldPath: string, newPath: string): Promise<void> {
  * Also works on file, don't bother with unlink.
  */
 export async function wipe(shelter: string): Promise<void> {
-  await rimraf(shelter, baseFs);
+  await rimraf(shelter);
 }
-
-export async function utimes(
-  file: string,
-  atime: number,
-  mtime: number,
-): Promise<void> {
-  await fs.utimesAsync(file, atime, mtime);
-}
-
-export const createReadStream = fs.createReadStream.bind(fs);
-export const createWriteStream = fs.createWriteStream.bind(fs);
-
-export const chmod = fs.chmodAsync.bind(fs);
-export const stat = fs.statAsync.bind(fs);
-export const lstat = fs.lstatAsync.bind(fs);
-export const readlink = fs.readlinkAsync.bind(fs);
-export const symlink = fs.symlinkAsync.bind(fs);
-export const rmdir = fs.rmdirAsync.bind(fs);
-export const unlink = fs.unlinkAsync.bind(fs);

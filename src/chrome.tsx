@@ -6,7 +6,6 @@ if (process.env.ITCH_TIME_REQUIRE === "2") {
   rt.start();
 }
 
-import "./os/sf";
 import env from "./env";
 
 if (env.name !== "production") {
