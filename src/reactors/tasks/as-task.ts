@@ -1,4 +1,4 @@
-import * as uuid from "uuid";
+import uuid from "../../util/uuid";
 import { throttle } from "underscore";
 
 import { IStore, IProgressInfo, Cancelled } from "../../types";
@@ -28,7 +28,7 @@ let currentTasks = {} as ITaskMap;
 type TaskName = "install" | "launch" | "uninstall";
 
 export default async function asTask(opts: IAsTaskOpts) {
-  const id = uuid.v4();
+  const id = uuid();
 
   const { store, db, name, gameId, caveId } = opts;
 

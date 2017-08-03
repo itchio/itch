@@ -1,4 +1,4 @@
-import * as uuid from "uuid";
+import uuid from "../util/uuid";
 
 import Context from "../context";
 
@@ -56,7 +56,7 @@ export async function queueInstall(
     const { handPicked, upload } = opts;
 
     cave = ({
-      id: uuid.v4(),
+      id: uuid(),
       gameId: game.id,
       game,
       upload: toJSONField(upload),

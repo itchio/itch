@@ -1,5 +1,5 @@
 import { createAction } from "redux-actions";
-import * as uuid from "uuid";
+import uuid from "../util/uuid";
 
 import {
   QUEUE_DOWNLOAD,
@@ -37,7 +37,7 @@ const internalDownloadStarted = createAction<IDownloadStartedPayload>(
 );
 
 export const downloadStarted = (payload: IDownloadStartedPayload) =>
-  internalDownloadStarted({ ...payload, startedAt: Date.now(), id: uuid.v4() });
+  internalDownloadStarted({ ...payload, startedAt: Date.now(), id: uuid() });
 
 export const downloadProgress = createAction<IDownloadProgressPayload>(
   DOWNLOAD_PROGRESS,

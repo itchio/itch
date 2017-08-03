@@ -9,7 +9,7 @@ import { IGame } from "../db/models/game";
 import { IUser } from "../db/models/user";
 import { ICollection } from "../db/models/collection";
 
-import * as uuid from "uuid";
+import uuid from "../util/uuid";
 
 import {
   NAVIGATE,
@@ -105,7 +105,7 @@ export const navigate = (id: any, data = {}, background = false) => {
 
 export const internalOpenTab = createAction<IOpenTabPayload>(OPEN_TAB);
 export const openTab = (payload: IOpenTabPayload) => {
-  return internalOpenTab({ ...payload, id: uuid.v4() });
+  return internalOpenTab({ ...payload, id: uuid() });
 };
 export const focusTab = createAction<IFocusTabPayload>(FOCUS_TAB);
 export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);

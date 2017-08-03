@@ -1,6 +1,6 @@
 import { Watcher } from "./watcher";
 
-import * as uuid from "uuid";
+import uuid from "../util/uuid";
 
 import * as actions from "../actions";
 
@@ -24,7 +24,7 @@ async function applyTabOffset(store: IStore, offset: number) {
 
 export default function(watcher: Watcher) {
   watcher.on(actions.newTab, async (store, action) => {
-    store.dispatch(actions.navigate("new/" + uuid.v4()));
+    store.dispatch(actions.navigate("new/" + uuid()));
   });
 
   watcher.on(actions.focusNthTab, async (store, action) => {

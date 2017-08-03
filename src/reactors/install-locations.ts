@@ -2,7 +2,7 @@ import { Watcher } from "./watcher";
 
 import * as invariant from "invariant";
 import * as ospath from "path";
-import * as uuid from "uuid";
+import uuid from "../util/uuid";
 
 import { omit } from "underscore";
 
@@ -180,7 +180,7 @@ export default function(watcher: Watcher, db: DB) {
         }
 
         return resolve({
-          name: uuid.v4(),
+          name: uuid(),
           path: response[0],
         });
       };
