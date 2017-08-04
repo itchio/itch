@@ -73,7 +73,7 @@
     "electron-is-dev": "^0.1.2",
     "eol": "^0.2.0",
     "file-type": "^3.0.0",
-    "ftl-redux-electron-store": "^1.0.0",
+    "ftl-redux-electron-store": "^1.2.0",
     "fuse.js": "2.2.0",
     "glob": "^7.0.3",
     "humanize-plus": "^1.8.2",
