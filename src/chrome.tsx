@@ -124,7 +124,17 @@ async function start() {
   }
   store.dispatch(actions.languageSniffed({ lang }));
 
+  let perf: any;
+  if (process.env.ITCH_REACT_PERF === "1") {
+    perf = require("react-addons-perf");
+    perf.start();
+  }
   render(App);
+  if (perf) {
+    perf.stop();
+    (window as any).perf = perf;
+    console.log(`Perf available as window.perf, enjoy!`);
+  }
 
   if ((module as any).hot) {
     (module as any).hot.accept(() => {
