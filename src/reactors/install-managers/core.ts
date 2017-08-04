@@ -1,6 +1,7 @@
 import getInstallerType from "./get-installer-type";
 
 import ItchStorageSlot from "../itch-storage-slot";
+import * as path from "path";
 
 import Context from "../../context";
 
@@ -85,7 +86,8 @@ export async function coreOperate(
   operation: InstallOperation,
   specifiedInstallerName?: InstallerType,
 ) {
-  const { ctx, archivePath, logger, runtime } = opts;
+  const { ctx, archivePath, runtime } = opts;
+  const logger = opts.logger.child({ name: "install/core" });
 
   let source = "";
   let installerName: InstallerType;
@@ -93,7 +95,12 @@ export async function coreOperate(
     source = "specified";
     installerName = specifiedInstallerName;
   } else {
-    const info = await installInfoSlot.load(opts.destPath);
+    let info: IInstallInfo;
+    // when reinstalling, we do want to sniff again
+    if (opts.reason !== "reinstall") {
+      await installInfoSlot.load(opts.destPath);
+    }
+
     if (info) {
       installerName = info.installerName;
       source = "cached";
@@ -109,7 +116,9 @@ export async function coreOperate(
   }
 
   logger.info(
-    `using ${source} install manager '${installerName}' for ${archivePath}`,
+    `using ${source} installer '${installerName}' for ${path.basename(
+      archivePath,
+    )}`,
   );
 
   const manager = managers[installerName];
@@ -120,4 +129,9 @@ export async function coreOperate(
 
   await installInfoSlot.save(opts.destPath, { installerName });
   await manager[operation](opts);
+
+  if (opts.reason === "reinstall") {
+    logger.info(`Was reinstall, clearing verdict`);
+    ctx.db.saveOne("caves", opts.caveId, { verdict: null });
+  }
 }
