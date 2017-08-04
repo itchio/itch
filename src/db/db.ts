@@ -110,7 +110,7 @@ export class DB extends RepoContainer {
             const update = hades.updateFor(oldRecord, newRecord, Model);
             if (update) {
               this.q.update(Model, k =>
-                k.where(Model.primaryKey, id).setFields(update),
+                k.where(`${Model.primaryKey} = ?`, id).setFields(update),
               );
               updated.push(id);
             } else {
