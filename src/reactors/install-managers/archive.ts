@@ -15,26 +15,40 @@ async function install(opts: ICoreInstallOpts) {
 
   logger.info(`extracting archive '${archivePath}' to '${stagePath}'`);
 
-  // TODO: use sub-context for progress [0, 0.8]
-  await extract({
-    ctx,
-    archivePath: opts.archivePath,
-    destPath: stagePath,
-    logger,
+  await ctx.withSub(async subCtx => {
+    subCtx.on("progress", pi =>
+      ctx.emitProgress({
+        ...pi,
+        progress: pi.progress * 0.8,
+      }),
+    );
+    await extract({
+      ctx: subCtx,
+      archivePath: opts.archivePath,
+      destPath: stagePath,
+      logger,
+    });
   });
 
   logger.info(`extracted all files ${archivePath} into staging area`);
 
   const { caveId } = opts;
 
-  // TODO: use sub-context for progress [0.8, 1]
-  await deploy({
-    ctx,
-    caveId,
-    logger,
-    stagePath,
-    destPath: opts.destPath,
-    onSingle: async onlyFile => await handleNested(opts, onlyFile),
+  await ctx.withSub(async subCtx => {
+    subCtx.on("progress", pi =>
+      ctx.emitProgress({
+        ...pi,
+        progress: 0.8 + pi.progress * 0.2,
+      }),
+    );
+    await deploy({
+      ctx: subCtx,
+      caveId,
+      logger,
+      stagePath,
+      destPath: opts.destPath,
+      onSingle: async onlyFile => await handleNested(opts, onlyFile),
+    });
   });
 
   logger.info("wiping stage...");
