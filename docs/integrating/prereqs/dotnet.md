@@ -1,8 +1,9 @@
 
 # .NET Framework
 
-  * `net-4.5.2`: Microsoft .NET Framework 4.5.2
+  * `net-4.6.2`: Microsoft .NET Framework 4.6.2
   * `net-4.6`: Microsoft .NET Framework 4.6
+  * `net-4.5.2`: Microsoft .NET Framework 4.5.2
 
 The page [.NET Framework Versions and Dependencies](https://msdn.microsoft.com/en-us/library/bb822049(v=vs.110).aspx) - covers the difference between various versions extensively.
 
