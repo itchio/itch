@@ -13,7 +13,7 @@ import sandbox from "../../util/sandbox";
 import * as os from "../../os";
 import * as sf from "../../os/sf";
 import spawn from "../../os/spawn";
-import { join, dirname } from "path";
+import { join, dirname, basename } from "path";
 import * as paths from "../../os/paths";
 import Context from "../../context";
 import butler from "../../util/butler";
@@ -101,6 +101,8 @@ const launchNative: ILauncher = async (ctx, opts) => {
     }
 
     if (verdictHasCandidates(verdict)) {
+      logger.info(`verdict has ${verdict.candidates.length} candidates`);
+
       // TODO: ask to pick ?
       const candidate = verdict.candidates[0];
       exePath = join(appPath, candidate.path);
@@ -161,7 +163,9 @@ const launchNative: ILauncher = async (ctx, opts) => {
   }
 
   logger.info(
-    `executing '${exePath}' on '${itchPlatform}' with args '${args.join(" ")}'`,
+    `executing '${basename(
+      exePath,
+    )}' on '${itchPlatform}' with args '${args.join(" ")}'`,
   );
   const argString = map(args, spawn.escapePath).join(" ");
 

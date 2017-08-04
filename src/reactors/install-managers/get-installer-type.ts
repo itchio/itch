@@ -1,6 +1,8 @@
 import { Logger, devNull } from "../../logger";
 import Context from "../../context";
 
+import * as path from "path";
+
 import spawn from "../../os/spawn";
 import butler from "../../util/butler";
 
@@ -58,13 +60,15 @@ export default async function getInstallerType(
     return "unknown";
   }
 
+  const name = path.basename(target);
+
   const ext = getExtension(target);
 
   let installerName = installerForExt[ext];
   if (!installerName) {
     const candidate = await butler.configureSingle({
       path: target,
-      logger,
+      logger: devNull,
       ctx,
     });
 
@@ -78,27 +82,25 @@ export default async function getInstallerType(
           ) {
             installerName = candidate.windowsInfo
               .installerType as InstallerType;
-            logger.info(
-              `${target}: windows installer of type ${installerName}`,
-            );
+            logger.info(`${name}: windows installer of type ${installerName}`);
           } else {
             installerName = "naked";
             logger.info(
-              `${target}: native windows executable, but not an installer`,
+              `${name}: native windows executable, but not an installer`,
             );
           }
           break;
         case "macos":
           installerName = "naked";
-          logger.info(`${target}: native macOS executable`);
+          logger.info(`${name}: native macOS executable`);
           break;
         case "linux":
           installerName = "naked";
-          logger.info(`${target}: native linux executable`);
+          logger.info(`${name}: native linux executable`);
           break;
         case "script":
           installerName = "naked";
-          logger.info(`${target}: script`);
+          logger.info(`${name}: script`);
           if (candidate.scriptInfo && candidate.scriptInfo.interpreter) {
             logger.info(
               `...with interpreter ${candidate.scriptInfo.interpreter}`,
@@ -107,11 +109,11 @@ export default async function getInstallerType(
           break;
         case "windows-script":
           installerName = "naked";
-          logger.info(`${target}: windows script`);
+          logger.info(`${name}: windows script`);
           break;
         default:
           logger.warn(
-            `${target}: no extension and not an executable, seeing what sticks`,
+            `${name}: no extension and not an executable, seeing what sticks`,
           );
           installerName = await seeWhatSticks(opts);
           break;

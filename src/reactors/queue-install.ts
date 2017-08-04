@@ -25,9 +25,11 @@ function defaultInstallLocation(store: IStore) {
 
 export async function queueInstall(
   ctx: Context,
-  logger: Logger,
+  parentLogger: Logger,
   opts: IQueueInstallOpts,
 ) {
+  const logger = parentLogger.child({ name: "queue-install" });
+
   const installLocation =
     opts.installLocation || defaultInstallLocation(ctx.store);
 
@@ -35,7 +37,7 @@ export async function queueInstall(
 
   const { caveId, game, reason } = opts;
 
-  logger.info(`Doing ${reason} for game:\n${JSON.stringify(game, null, 2)}`);
+  logger.info(`Doing ${reason} for game ${game.title} (#${game.id})`);
 
   let freshInstall = false;
 

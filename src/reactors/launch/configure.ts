@@ -1,13 +1,16 @@
 import butler from "../../util/butler";
 
 import * as paths from "../../os/paths";
+import { devNull } from "../../logger";
 
 import Context from "../../context";
+import { formatVerdict } from "../../format/verdict";
 
 import { IConfigureOpts } from "../../types";
 
 export default async function configure(ctx: Context, opts: IConfigureOpts) {
-  const { cave, logger, runtime } = opts;
+  const { cave, runtime } = opts;
+  const logger = opts.logger.child({ name: "configure" });
 
   const appPath = paths.appPath(cave, ctx.store.getState().preferences);
   logger.info(`configuring ${appPath}`);
@@ -47,9 +50,9 @@ export default async function configure(ctx: Context, opts: IConfigureOpts) {
     path: appPath,
     osFilter,
     archFilter,
-    logger,
+    logger: devNull,
   });
-  logger.info(`verdict =\n${JSON.stringify(verdict, null, 2)}`);
+  logger.info(`Final verdict:\n${formatVerdict(verdict)}`);
 
   ctx.db.saveOne("caves", cave.id, {
     installedSize: verdict.totalSize,

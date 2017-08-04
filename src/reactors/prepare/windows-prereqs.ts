@@ -81,8 +81,12 @@ import { extract } from "../../util/extract";
 
 export default async function handleWindowsPrereqs(
   ctx: Context,
-  opts: IWindowsPrereqsOpts,
+  inOpts: IWindowsPrereqsOpts,
 ) {
+  const opts = {
+    ...inOpts,
+    logger: inOpts.logger.child({ name: "windows-prereqs" }),
+  };
   const { cave } = opts;
 
   await handleUE4Prereq(ctx, cave, opts);
