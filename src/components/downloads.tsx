@@ -79,7 +79,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   renderContents() {
-    const { items, finishedItems, intl } = this.props;
+    const { items, finishedItems } = this.props;
     const { clearFinishedDownloads } = this.props;
 
     const hasItems = items.length + finishedItems.length > 0;
@@ -149,10 +149,9 @@ interface IDerivedProps {
   finishedItems: IDownloadItem[];
 
   clearFinishedDownloads: typeof actions.clearFinishedDownloads;
-  intl: InjectedIntl;
 }
 
-export default connect<IProps>(injectIntl(Downloads), {
+export default connect<IProps>(Downloads, {
   state: createStructuredSelector({
     items: (state: IAppState) => getPendingDownloads(state.downloads),
     finishedItems: (state: IAppState) => getFinishedDownloads(state.downloads),
