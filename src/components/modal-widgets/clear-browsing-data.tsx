@@ -5,13 +5,13 @@ import { connect } from "../connect";
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
 import partitionForUser from "../../util/partition-for-user";
-import * as humanize from "humanize-plus";
 
 import LoadingCircle from "../basics/loading-circle";
 
 import * as electron from "electron";
 
 import format from "../format";
+import { fileSize } from "../../format/filesize";
 
 // TODO: So maybe this is a good place to clear downloads too
 // I dunno, just a though. Like technically they shouldn't even
@@ -98,7 +98,7 @@ export class ClearBrowsingData extends React.PureComponent<
                 ? format([
                     "prompt.clear_browsing_data.cache_size_used",
                     {
-                      size: humanize.fileSize(cacheSize),
+                      size: fileSize(cacheSize),
                     },
                   ])
                 : <span>

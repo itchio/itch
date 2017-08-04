@@ -4,8 +4,6 @@ import Context from "../context";
 
 import { isNetworkError } from "../net/errors";
 
-import * as humanize from "humanize-plus";
-
 import delay from "./delay";
 
 import * as actions from "../actions";
@@ -34,6 +32,8 @@ import { fromDateTimeField } from "../db/datetime-field";
 import { fromJSONField } from "../db/json-field";
 
 import { IUpload } from "../types";
+
+import { fileSize } from "../format/filesize";
 
 interface IUpdateCheckResult {
   /** set if an error occured while looking for a new version of a game */
@@ -169,7 +169,7 @@ async function _doCheckForGameUpdate(
             const { upgradePath, totalSize } = upgradePathResult;
 
             logger.info(
-              `Got ${upgradePath.length} patches to download, ${humanize.fileSize(
+              `Got ${upgradePath.length} patches to download, ${fileSize(
                 totalSize,
               )} total`,
             );

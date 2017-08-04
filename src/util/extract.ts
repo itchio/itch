@@ -1,10 +1,10 @@
-import * as humanize from "humanize-plus";
 import * as ospath from "path";
 
 const verbose = process.env.THE_DEPTHS_OF_THE_SOUL === "1";
 
 import * as sf from "../os/sf";
 import spawn from "../os/spawn";
+import { fileSize } from "../format/filesize";
 import butler from "./butler";
 
 import Context from "../context";
@@ -141,8 +141,9 @@ export async function unarchiver(opts: IExtractOpts) {
   const info = await unarchiverList(ctx, logger, archivePath);
   totalSize = info.totalSize;
   logger.info(
-    `archive contains ${Object.keys(info.sizes)
-      .length} files, ${humanize.fileSize(totalSize)} total`,
+    `archive contains ${Object.keys(info.sizes).length} files, ${fileSize(
+      totalSize,
+    )} total`,
   );
 
   const onEntryDone: IEntryDoneListener = f => {

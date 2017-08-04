@@ -1,8 +1,8 @@
 import * as React from "react";
-import * as humanize from "humanize-plus";
 
 import format from "../components/format";
 import { formatDuration } from "./datetime";
+import { fileSize } from "./filesize";
 
 interface IProgressHolder {
   bps: number;
@@ -24,7 +24,7 @@ export function downloadProgress(
   }
 
   if (opts.onlyBPS) {
-    return `${humanize.fileSize(holder.bps)}/s`;
+    return `${fileSize(holder.bps)}/s`;
   }
 
   if (opts.onlyETA) {
@@ -33,7 +33,7 @@ export function downloadProgress(
 
   return (
     <span>
-      {humanize.fileSize(holder.bps)}
+      {fileSize(holder.bps)}
       {"/s — "}
       {formatDuration(holder.eta)}
     </span>

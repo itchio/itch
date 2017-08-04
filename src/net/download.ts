@@ -1,8 +1,8 @@
 import { isEmpty } from "underscore";
-import { fileSize } from "humanize-plus";
 import { dirname } from "path";
 
 import * as sf from "../os/sf";
+import { fileSize } from "../format/filesize";
 import { Logger } from "../logger";
 import { request } from "./request";
 

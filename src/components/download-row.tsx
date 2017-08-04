@@ -4,9 +4,7 @@ import { connect } from "./connect";
 import bob, { IRGBColor } from "../renderer-util/bob";
 import { ResponsiveContainer, AreaChart, Area } from "recharts";
 
-import * as humanize from "humanize-plus";
-
-import { truncate, downloadProgress } from "../format";
+import { truncate, downloadProgress, fileSize } from "../format";
 
 import * as actions from "../actions";
 
@@ -379,9 +377,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
                           {reasonText}
                         </span>
                       : ""}
-                    {item.totalSize
-                      ? ` — ${humanize.fileSize(item.totalSize)}`
-                      : ""}
+                    {item.totalSize ? ` — ${fileSize(item.totalSize)}` : ""}
                   </div>
               : format(["grid.item.queued"])}
           <div className="filler" />

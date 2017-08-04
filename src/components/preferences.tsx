@@ -3,7 +3,6 @@ import { createSelector, createStructuredSelector } from "reselect";
 import { connect } from "./connect";
 
 import * as path from "path";
-import * as humanize from "humanize-plus";
 import * as classNames from "classnames";
 
 import urls from "../constants/urls";
@@ -23,6 +22,8 @@ import * as actions from "../actions";
 import { map, each, filter } from "underscore";
 
 import diskspace from "../os/diskspace";
+
+import { fileSize } from "../format/filesize";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import format, { formatString } from "./format";
@@ -700,10 +701,10 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             </div>
           </td>
           <td>
-            {" "}{humanize.fileSize(size)}{" "}
+            {" "}{fileSize(size)}{" "}
           </td>
           <td>
-            {" "}{freeSpace > 0 ? humanize.fileSize(freeSpace) : "..."}{" "}
+            {" "}{freeSpace > 0 ? fileSize(freeSpace) : "..."}{" "}
           </td>
           <td
             className="action"

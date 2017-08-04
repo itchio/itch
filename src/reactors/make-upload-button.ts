@@ -1,4 +1,4 @@
-import * as humanize from "humanize-plus";
+import { fileSize } from "../format/filesize";
 
 import platformData from "../constants/platform-data";
 import { DateTimeField, toDateTimeField } from "../db/datetime-field";
@@ -28,7 +28,7 @@ export default function makeUploadButton(
 
   if (upload.size > 0 && opts.showSize) {
     tags.push({
-      label: `${humanize.fileSize(upload.size)}`,
+      label: `${fileSize(upload.size)}`,
     });
   }
 
