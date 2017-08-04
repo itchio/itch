@@ -54,8 +54,6 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
     const {
       games = {},
       gameIds = [],
-      offset,
-      limit,
       hiddenCount,
       tab,
       params,
@@ -68,8 +66,6 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
         <GameGrid
           games={games}
           gameIds={gameIds}
-          offset={offset}
-          limit={limit}
           hiddenCount={hiddenCount}
           tab={tab}
         />
@@ -79,8 +75,6 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
         <GameTable
           games={games}
           gameIds={gameIds}
-          offset={offset}
-          limit={limit}
           hiddenCount={hiddenCount}
           tab={tab}
           sortBy={sortBy}
@@ -105,8 +99,6 @@ interface IProps {
 interface IDerivedProps {
   games: IGameSet;
   gameIds: number[];
-  offset: number;
-  limit: number;
   hiddenCount?: number;
 
   layout: TabLayout;
@@ -127,8 +119,6 @@ export default connect<IProps>(Games, {
       createStructuredSelector({
         gameIds: (data: ITabData, params, layout) => data.gameIds,
         games: (data: ITabData, params, layout) => data.games,
-        offset: (data: ITabData, params, layout) => data.offset,
-        limit: (data: ITabData, params, layout) => data.limit,
         hiddenCount: (data: ITabData, params, layout) => data.hiddenCount || 0,
         layout: (data: ITabData, params, layout) => layout,
         params: (data: ITabData, params, layout) => params,

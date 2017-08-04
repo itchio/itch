@@ -160,8 +160,6 @@ class GameGrid extends React.PureComponent<IProps & IDerivedProps, IState> {
 interface IProps {
   games: IGameSet;
   gameIds: number[];
-  offset: number;
-  limit: number;
   hiddenCount: number;
   tab: string;
 }
