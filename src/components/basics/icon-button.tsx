@@ -18,11 +18,18 @@ const IconButtonDiv = styled.div`
     opacity: 0.2;
     pointer: disabled;
   }
+
+  &.big {
+    font-size: ${props => props.theme.fontSizes.huge};
+    width: 42px;
+    height: 42px;
+  }
 `;
 
 class IconButton extends React.PureComponent<IProps> {
   render() {
     const {
+      big,
       disabled,
       icon,
       hint,
@@ -32,7 +39,7 @@ class IconButton extends React.PureComponent<IProps> {
 
     return (
       <IconButtonDiv
-        className={classNames({ disabled })}
+        className={classNames({ disabled, big })}
         data-rh={hint}
         data-rh-at={hintPosition}
         {...restProps}
@@ -52,6 +59,7 @@ interface IProps {
   hintPosition?: "top" | "left" | "right" | "bottom";
 
   onClick?: any;
+  big?: boolean;
 }
 
 export default IconButton;

@@ -62,6 +62,10 @@ const DownloadRowDiv = styled.div`
     z-index: 4;
   }
 
+  .game-title {
+    font-weight: bold;
+  }
+
   .cover,
   .progress {
     transition: -webkit-filter 1s;
@@ -69,7 +73,8 @@ const DownloadRowDiv = styled.div`
 
   &.dimmed {
     .cover,
-    .progress {
+    .progress,
+    .timeago {
       -webkit-filter: grayscale(100%) brightness(50%);
     }
 
@@ -275,6 +280,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
       return (
         <div className="controls">
           <IconButton
+            big
             icon="delete"
             hintPosition="left"
             hint={formatString(intl, ["status.downloads.clear_finished"])}
@@ -289,16 +295,19 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
         {first
           ? downloadsPaused
             ? <IconButton
+                big
                 icon="triangle-right"
                 onClick={() => resumeDownloads({})}
               />
-            : <IconButton icon="pause" onClick={() => pauseDownloads({})} />
+            : <IconButton big icon="pause" onClick={() => pauseDownloads({})} />
           : <IconButton
+              big
               hint={formatString(intl, ["grid.item.prioritize_download"])}
               icon="caret-up"
               onClick={() => prioritizeDownload({ id })}
             />}
         <IconButton
+          big
           hintPosition="left"
           hint={formatString(intl, ["grid.item.cancel_download"])}
           icon="cross"

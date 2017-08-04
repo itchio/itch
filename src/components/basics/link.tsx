@@ -13,11 +13,12 @@ const LinkSpan = styled.span`
 
 class Link extends React.PureComponent<IProps> {
   render() {
-    const { label, ...restProps } = this.props;
+    const { label, children, ...restProps } = this.props;
 
     return (
       <LinkSpan {...restProps}>
         {label}
+        {children}
       </LinkSpan>
     );
   }
@@ -26,6 +27,7 @@ class Link extends React.PureComponent<IProps> {
 class IProps {
   onClick?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
   label?: string | JSX.Element;
+  children?: string | JSX.Element | JSX.Element[];
 }
 
 export default Link;
