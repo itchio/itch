@@ -28,7 +28,6 @@ import TitleBar from "./title-bar";
 
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
-const WILL_NAVIGATE_GRACE_PERIOD = 3000;
 
 // human short-term memory = between 7 and 13 items
 const SCROLL_HISTORY_SIZE = 50;
@@ -283,39 +282,6 @@ export class BrowserMeat extends React.PureComponent<
     );
   }
 
-  willNavigate = (e: any) => {
-    // TODO: type
-    if (!this.isFrozen()) {
-      return;
-    }
-
-    const { navigate } = this.props;
-    const { url } = e;
-
-    // sometimes we get double will-navigate events because life is fun?!
-    if (
-      this.lastNavigationUrl === url &&
-      e.timeStamp - this.lastNavigationTimeStamp < WILL_NAVIGATE_GRACE_PERIOD
-    ) {
-      this.with((wv: Electron.WebviewTag) => {
-        wv.stop();
-        wv.loadURL(this.props.url);
-      });
-      return;
-    }
-    this.lastNavigationUrl = url;
-    this.lastNavigationTimeStamp = e.timeStamp;
-
-    navigate(`url/${url}`);
-
-    // our own little preventDefault
-    // cf. https://github.com/electron/electron/issues/1378
-    this.with(wv => {
-      wv.stop();
-      wv.loadURL(this.props.url);
-    });
-  };
-
   newWindow = (e: any) => {
     // TODO: type
     const { navigate } = this.props;
@@ -384,7 +350,6 @@ export class BrowserMeat extends React.PureComponent<
     const callbackSetup = () => {
       this.webview.addEventListener("did-start-loading", this.didStartLoading);
       this.webview.addEventListener("did-stop-loading", this.didStopLoading);
-      this.webview.addEventListener("will-navigate", this.willNavigate);
       this.webview.addEventListener("did-navigate", this.didNavigate);
       this.webview.addEventListener("did-navigate-in-page", this.didNavigate);
       this.webview.addEventListener(
@@ -471,7 +436,7 @@ export class BrowserMeat extends React.PureComponent<
                   plugins="on"
                   preload={getInjectPath("itchio")}
                   src="about:blank"
-                  ref={wv => (this.webview = wv)}
+                  ref={this.gotWebview}
                   sandbox={true}
                 />}
           </WebviewShell>
@@ -501,6 +466,21 @@ export class BrowserMeat extends React.PureComponent<
 
     cb(webview, webContents);
   }
+
+  gotWebview = (wv: Electron.WebviewTag) => {
+    this.webview = wv;
+    if (!wv) {
+      // react function refs get called with null sometimes
+      return;
+    }
+
+    const { tabGotWebContents, tab } = this.props;
+
+    wv.addEventListener("dom-ready", () => {
+      const wc = wv.getWebContents();
+      tabGotWebContents({ tab, webContentsId: wc.id });
+    });
+  };
 
   openDevTools = () => {
     this.with((wv: Electron.WebviewTag, wc: Electron.WebContents) =>
@@ -579,6 +559,7 @@ interface IDerivedProps {
   tabDataFetched: typeof actions.tabDataFetched;
   tabReloaded: typeof actions.tabReloaded;
   tabLoading: typeof actions.tabLoading;
+  tabGotWebContents: typeof actions.tabGotWebContents;
 
   intl: InjectedIntl;
 }
@@ -600,5 +581,6 @@ export default connect<IProps>(injectIntl(BrowserMeat), {
     tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
     tabReloaded: dispatcher(dispatch, actions.tabReloaded),
     tabLoading: dispatcher(dispatch, actions.tabLoading),
+    tabGotWebContents: dispatcher(dispatch, actions.tabGotWebContents),
   }),
 });

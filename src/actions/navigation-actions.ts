@@ -92,6 +92,8 @@ import {
   IAnalyzePagePayload,
   OPEN_DEV_TOOLS,
   IOpenDevToolsPayload,
+  TAB_GOT_WEB_CONTENTS,
+  ITabGotWebContentsPayload,
 } from "../constants/action-types";
 
 const internalNavigate = createAction<INavigatePayload, any>(NAVIGATE);
@@ -196,6 +198,9 @@ export const viewCommunityProfile = createAction<IViewCommunityProfilePayload>(
 );
 
 export const tabLoading = createAction<ITabLoadingPayload>(TAB_LOADING);
+export const tabGotWebContents = createAction<ITabGotWebContentsPayload>(
+  TAB_GOT_WEB_CONTENTS,
+);
 
 export const openDevTools = createAction<IOpenDevToolsPayload>(OPEN_DEV_TOOLS);
 export const analyzePage = createAction<IAnalyzePagePayload>(ANALYZE_PAGE);

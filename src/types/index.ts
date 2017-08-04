@@ -147,9 +147,6 @@ export interface ITabData {
   games?: IGameSet;
   gameIds?: number[];
 
-  offset?: number;
-  limit?: number;
-
   hiddenCount?: number;
 
   downloadKeys?: IDownloadKeysMap;
@@ -177,8 +174,7 @@ export interface ITabData {
   /** true if the tab was restored as part of session */
   restored?: boolean;
 
-  lastOffset?: number;
-  lastLimit?: number;
+  webContentsId?: number;
 }
 
 export interface ITabDataSave extends ITabData {

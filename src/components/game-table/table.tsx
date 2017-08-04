@@ -190,8 +190,6 @@ interface IProps extends IDimensionsProps {
   // specified
   games: IGameSet;
   gameIds: number[];
-  offset: number;
-  limit: number;
   hiddenCount: number;
   tab: string;
 

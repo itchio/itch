@@ -81,6 +81,19 @@ export default reducer<ITabDataSet>(initialState, on => {
     };
   });
 
+  on(actions.tabGotWebContents, (state, action) => {
+    const { tab, webContentsId } = action.payload;
+    const oldData = state[tab];
+
+    return {
+      ...state,
+      [tab]: {
+        ...oldData || emptyObj,
+        webContentsId,
+      },
+    };
+  });
+
   on(actions.logout, (state, action) => {
     return initialState;
   });

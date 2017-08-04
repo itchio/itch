@@ -111,7 +111,8 @@ export const SESSION_READY = "SESSION_READY";
 export interface ISessionReadyPayload {}
 
 export const SESSIONS_REMEMBERED = "SESSIONS_REMEMBERED";
-export interface ISessionsRememberedPayload extends Types.IRememberedSessionsState {}
+export interface ISessionsRememberedPayload
+  extends Types.IRememberedSessionsState {}
 
 export const SESSION_UPDATED = "SESSION_UPDATED";
 export interface ISessionUpdatedPayload {
@@ -550,7 +551,8 @@ export interface IRemoveInstallLocationRequestPayload {
 }
 
 export const REMOVE_INSTALL_LOCATION = "REMOVE_INSTALL_LOCATION";
-export interface IRemoveInstallLocationPayload extends IRemoveInstallLocationRequestPayload {}
+export interface IRemoveInstallLocationPayload
+  extends IRemoveInstallLocationRequestPayload {}
 
 export const MAKE_INSTALL_LOCATION_DEFAULT = "MAKE_INSTALL_LOCATION_DEFAULT";
 export interface IMakeInstallLocationDefaultPayload {
@@ -1036,6 +1038,12 @@ export const TAB_LOADING = "TAB_LOADING";
 export interface ITabLoadingPayload {
   id: string;
   loading: boolean;
+}
+
+export const TAB_GOT_WEB_CONTENTS = "TAB_GOT_WEB_CONTENTS";
+export interface ITabGotWebContentsPayload {
+  tab: string;
+  webContentsId: number;
 }
 
 export const OPEN_AT_LOGIN_ERROR = "OPEN_AT_LOGIN_ERROR";
