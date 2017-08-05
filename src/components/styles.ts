@@ -329,7 +329,7 @@ export const progress = () => css`
 
   .progress-inner {
     position: absolute;
-    transition: width .3s;
+    transition: width .51s linear;
     left: 0;
     top: 0;
     bottom: 0;

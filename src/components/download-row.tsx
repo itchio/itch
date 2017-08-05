@@ -118,7 +118,8 @@ const DownloadRowDiv = styled.div`
     }
 
     .progress {
-      ${styles.progress()} margin: 10px 0;
+      ${styles.progress()};
+      margin: 10px 0;
       height: 5px;
 
       &,
