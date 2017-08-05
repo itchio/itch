@@ -1,6 +1,5 @@
 import * as childProcess from "child_process";
-import * as StreamSplitter from "stream-splitter";
-import LFTransform from "./lf-transform";
+import * as split2 from "split2";
 
 import { Cancelled } from "../types";
 
@@ -61,7 +60,7 @@ interface ISpawnInterface {
 let spawn: ISpawnInterface;
 
 spawn = async function(opts: ISpawnOpts): Promise<number> {
-  const { ctx, split = "\n", onToken, onErrToken, logger = spawnLogger } = opts;
+  const { ctx, split, onToken, onErrToken, logger = spawnLogger } = opts;
   if (!ctx) {
     throw new Error("spawn cannot be called with a null context");
   }
@@ -92,11 +91,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
   let cbErr: Error = null;
 
   if (onToken) {
-    const splitter = child.stdout
-      .pipe(new LFTransform())
-      .pipe(StreamSplitter(split));
-    splitter.encoding = "utf8";
-    splitter.on("token", (tok: string) => {
+    child.stdout.pipe(split2(split)).on("data", (tok: string) => {
       try {
         onToken(tok);
       } catch (err) {
@@ -106,11 +101,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
   }
 
   if (onErrToken) {
-    const splitter = child.stderr
-      .pipe(new LFTransform())
-      .pipe(StreamSplitter(split));
-    splitter.encoding = "utf8";
-    splitter.on("token", (tok: string) => {
+    child.stderr.pipe(split2()).on("data", (tok: string) => {
       try {
         onErrToken(tok);
       } catch (err) {

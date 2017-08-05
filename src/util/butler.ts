@@ -20,7 +20,7 @@ export interface IButlerResult extends IButlerOpts {
 
 type IResultListener = (result: IButlerResult) => void;
 
-interface IButlerOpts {
+export interface IButlerOpts {
   logger: Logger;
   ctx: Context;
   onResult?: IResultListener;
@@ -94,6 +94,9 @@ async function butler<T>(
       },
       onResult: (result: IButlerResult) => {
         value = result.value;
+        if (opts.onResult) {
+          opts.onResult(result);
+        }
       },
       ctx,
       logger,
@@ -210,7 +213,7 @@ async function untar(opts: IUntarOpts) {
   return await butler(opts, "untar", args);
 }
 
-interface IUnzipOpts extends IButlerOpts {
+export interface IUnzipOpts extends IButlerOpts {
   archivePath: string;
   destPath: string;
 }
