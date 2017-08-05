@@ -20,7 +20,7 @@ interface IListResult extends IExtractResult {
 }
 
 export interface IExtractResult {
-  paths: string[];
+  files: string[];
 }
 
 interface IExtractOpts {
@@ -41,7 +41,7 @@ export async function unarchiverList(
 ): Promise<IListResult> {
   const sizes = {} as ISizeMap;
   let totalSize = 0;
-  const paths = [];
+  const files = [];
 
   const contents = await spawn.getOutput({
     ctx,
@@ -70,12 +70,12 @@ export async function unarchiverList(
       logger.debug(`${entry.XADFileName} ${entry.XADFileSize}`);
     }
     const normalizedPath = ospath.normalize(entry.XADFileName);
-    paths.push(normalizedPath);
+    files.push(normalizedPath);
     sizes[normalizedPath] = entry.XADFileSize;
     totalSize += entry.XADFileSize;
   }
 
-  return { sizes, totalSize, paths };
+  return { sizes, totalSize, files };
 }
 
 export async function unarchiverExtract(
@@ -162,7 +162,7 @@ export async function unarchiver(opts: IExtractOpts): Promise<IExtractResult> {
     ctx.emitProgress({ progress });
   };
   await unarchiverExtract(ctx, logger, archivePath, destPath, onEntryDone);
-  return { paths: info.paths };
+  return { files: info.files };
 }
 
 export async function extract(opts: IExtractOpts): Promise<IExtractResult> {
@@ -192,22 +192,12 @@ export async function extract(opts: IExtractOpts): Promise<IExtractResult> {
 
   if (useButler) {
     logger.info("Using butler to extract zip");
-    const paths = [];
-    const butlerOpts: IUnzipOpts = {
+    return await butler.unzip({
       ctx,
       logger,
       archivePath,
       destPath,
-      onResult: (res: IButlerResult) => {
-        // TODO: type, maybe move some of that logic over to unzip ?
-        const val = res.value;
-        if (val.type === "extracted") {
-          paths.push(val.path);
-        }
-      },
-    };
-    await butler.unzip(butlerOpts);
-    return { paths };
+    });
   }
 
   logger.info("Using unar to extract zip");

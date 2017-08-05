@@ -19,11 +19,13 @@ export interface IButlerResult extends IButlerOpts {
 }
 
 type IResultListener = (result: IButlerResult) => void;
+type IValueListener = (value: any) => void;
 
 export interface IButlerOpts {
   logger: Logger;
   ctx: Context;
   onResult?: IResultListener;
+  onValue?: IValueListener;
   elevate?: boolean;
 }
 
@@ -96,6 +98,9 @@ async function butler<T>(
         value = result.value;
         if (opts.onResult) {
           opts.onResult(result);
+        }
+        if (opts.onValue) {
+          opts.onValue(value);
         }
       },
       ctx,
@@ -218,18 +223,86 @@ export interface IUnzipOpts extends IButlerOpts {
   destPath: string;
 }
 
+export interface IUnzipResult {
+  files: string[];
+}
+
+interface IUnzipValue {
+  type: "entry";
+  path: string;
+}
+
 /* Extracts zip archive ${archivePath} into directory ${destPath} */
-async function unzip(opts: IUnzipOpts) {
+async function unzip(opts: IUnzipOpts): Promise<IUnzipResult> {
   const { archivePath, destPath } = opts;
   const args = [archivePath, "-d", destPath];
 
-  return await butler(opts, "unzip", args);
+  const files = [];
+  if (!opts.onValue) {
+    opts = {
+      ...opts,
+      onValue: (val: IUnzipValue) => {
+        if (val.type === "entry") {
+          files.push(val.path);
+        }
+      },
+    };
+  }
+
+  await butler(opts, "unzip", args);
+  return { files };
+}
+
+interface IWalkOpts extends IButlerOpts {
+  dir: string;
+}
+
+export interface IWalkResult {
+  files: string[];
+}
+
+interface IWalkValue {
+  type: "entry";
+  path: string;
+}
+
+/* Lists all files contained in a folder */
+async function walk(opts: IWalkOpts): Promise<IWalkResult> {
+  const { dir } = opts;
+  const args = [dir];
+
+  const files = [];
+  if (!opts.onValue) {
+    opts = {
+      ...opts,
+      onValue: (val: IWalkValue) => {
+        if (val.type === "entry") {
+          files.push(val.path);
+        }
+      },
+    };
+  }
+
+  await butler(opts, "walk", args);
+  return { files };
 }
 
 /* rm -rf ${path} */
 async function wipe(path: string, opts: IButlerOpts) {
   const args = [path];
   return await butler(opts, "wipe", args);
+}
+
+interface ICleanOpts extends IButlerOpts {
+  planPath: string;
+}
+
+/* Apply a clean plan (remove a list of files) */
+async function clean(opts: ICleanOpts) {
+  const { planPath } = opts;
+  const args = [planPath];
+
+  await butler(opts, "clean", args);
 }
 
 /* mkdir -p ${path} */
@@ -402,6 +475,8 @@ export default {
   ditto,
   verify,
   file,
+  walk,
+  clean,
   installPrereqs,
   sanityCheck,
   exeprops,
