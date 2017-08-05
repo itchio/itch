@@ -15,14 +15,14 @@ async function install(opts: ICoreInstallOpts) {
 
   logger.info(`extracting archive '${archivePath}' to '${stagePath}'`);
 
-  await ctx.withSub(async subCtx => {
+  const extractResult = await ctx.withSub(async subCtx => {
     subCtx.on("progress", pi =>
       ctx.emitProgress({
         ...pi,
         progress: pi.progress * 0.8,
       }),
     );
-    await extract({
+    return await extract({
       ctx: subCtx,
       archivePath: opts.archivePath,
       destPath: stagePath,
@@ -31,6 +31,10 @@ async function install(opts: ICoreInstallOpts) {
   });
 
   logger.info(`extracted all files ${archivePath} into staging area`);
+  logger.info(`seen ${extractResult.paths.length} paths, like:`);
+  for (let i = 0; i < Math.min(5, extractResult.paths.length); i++) {
+    logger.info(`- ${extractResult.paths[i]}`);
+  }
 
   const { caveId } = opts;
 

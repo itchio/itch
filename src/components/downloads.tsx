@@ -22,7 +22,6 @@ import {
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
-import { injectIntl, InjectedIntl } from "react-intl";
 
 const DownloadsDiv = styled.div`${styles.meat()};`;
 

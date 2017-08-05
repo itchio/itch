@@ -1,6 +1,5 @@
 import * as osnet from "net";
-import * as StreamSplitter from "stream-splitter";
-import LFTransform from "../../os/lf-transform";
+import * as split2 from "split2";
 
 import * as tmp from "tmp";
 import * as bluebird from "bluebird";
@@ -378,11 +377,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
     const butlerLogger = logger.child({ name: "butler-prereqs" });
 
     const server = osnet.createServer(function(stream) {
-      const splitter = stream
-        .pipe(new LFTransform())
-        .pipe(StreamSplitter("\n"));
-      splitter.encoding = "utf8";
-      splitter.on("token", (token: string) => {
+      stream.pipe(split2()).on("data", (token: string) => {
         try {
           let msg: IButlerPrereqMessage;
           try {
