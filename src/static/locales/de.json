@@ -129,7 +129,7 @@
     "prompt.no_compatible_version.message": "Wir konnten {{title}} für {{platform}} nicht finden.",
     "prompt.no_compatible_version.title": "{{title}} auf {{platform}}",
     "prompt.packaging_policy.learn_more": "Mehr erfahren",
-    "prompt.payments_disabled.detail": "Vielleicht findest du ja einen Weg, den Entwickler anders zu unterstützen.",
+    "prompt.payments_disabled.detail": "Vielleicht kannst du einen anderen Weg finden, um sie zu unterstützen?",
     "prompt.payments_disabled.message": "Leider akzeptiert der Entwickler von {{title}} keine Zahlungen für dieses Produkt.",
     "prompt.payments_disabled.open_web_page": "Webseite öffnen",
     "prompt.payments_disabled.title": "Zahlungen deaktiviert",
@@ -427,5 +427,6 @@
     "web.context_menu.open_in_new_tab": "In neuem Tab öffnen",
     "web.context_menu.copy_link": "Link kopieren",
     "game.install.libraries_missing": "Einige benötigte {{arch}}  Bibliotheken fehlen: {{libraries}}",
-    "new_tab.devlogs": "Entwickler-Protokolle"
+    "new_tab.devlogs": "Entwickler-Protokolle",
+    "preferences.behavior.prevent_display_sleep": "Bildschirmabschaltung während des Spielens verhindern"
 }
