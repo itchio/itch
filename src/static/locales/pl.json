@@ -417,5 +417,6 @@
     "table.column.play_time": "Czas gry",
     "table.column.last_played": "Ostatnio grano",
     "table.column.published": "Opublikowano",
-    "game.install.libraries_missing": "Brakuje wymaganych {{arch}} bibliotek: {{libraries}}"
+    "game.install.libraries_missing": "Brakuje wymaganych {{arch}} bibliotek: {{libraries}}",
+    "grid.filters.options.no_results": "Nie znaleziono rezultatów"
 }
