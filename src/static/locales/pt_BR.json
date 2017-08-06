@@ -337,5 +337,6 @@
     "download.reason.revert": "voltar para uma versão anterior",
     "grid.filters.options.owned": "Possuído",
     "grid.criterion.only_compatible": "Incompatível",
-    "prompt.uninstall_error.message": "A instalação falhou. Remover entrada mesmo assim?"
+    "prompt.uninstall_error.message": "A instalação falhou. Remover entrada mesmo assim?",
+    "grid.item.revert_to_version": "Reverter para versão..."
 }
