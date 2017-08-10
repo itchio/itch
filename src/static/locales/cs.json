@@ -381,5 +381,8 @@
     "setup.status.done": "Vše hotovo!",
     "setup.status.notification": "Instalace proběhla dobře, {{app_name}} se nyní spouští!",
     "setup.error_dialog.title": "Něco se pokazilo",
-    "game.install.libraries_missing": "Některé požadované {{arch}} knihovny chybí: {{libraries}}"
+    "game.install.libraries_missing": "Některé požadované {{arch}} knihovny chybí: {{libraries}}",
+    "grid.criterion.search": "Hledat...",
+    "grid.filters.options.compatible": "Kompatibilní",
+    "grid.filters.options.no_results": "Nenalezeny žádné výsledky"
 }
