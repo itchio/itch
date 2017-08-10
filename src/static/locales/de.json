@@ -428,5 +428,6 @@
     "web.context_menu.copy_link": "Link kopieren",
     "game.install.libraries_missing": "Einige benötigte {{arch}}  Bibliotheken fehlen: {{libraries}}",
     "new_tab.devlogs": "Entwickler-Protokolle",
-    "preferences.behavior.prevent_display_sleep": "Bildschirmabschaltung während des Spielens verhindern"
+    "preferences.behavior.prevent_display_sleep": "Bildschirmabschaltung während des Spielens verhindern",
+    "grid.item.status.installed": "Installiert"
 }
