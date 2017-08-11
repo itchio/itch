@@ -33,6 +33,7 @@ class ErrorList extends React.PureComponent<IProps> {
       <ul className="form-errors" {...restProps}>
         {map(errorArray, (error, key) => {
           const i18nKey = prefix + "." + slugify(error);
+          console.log(`passing defaultMessage ${error}`);
           const message = format([i18nKey, { defaultValue: error }]);
           return (
             <li key={key}>

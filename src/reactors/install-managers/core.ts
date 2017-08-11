@@ -48,8 +48,12 @@ interface IInstallInfo {
 }
 const installInfoSlot = new ItchStorageSlot<IInstallInfo>("install-info");
 
+export interface IInstallResult {
+  files: string[];
+}
+
 export interface IInstallManager {
-  install: (opts: ICoreInstallOpts) => Promise<void>;
+  install: (opts: ICoreInstallOpts) => Promise<IInstallResult>;
   uninstall: (opts: ICoreInstallOpts) => Promise<void>;
 }
 

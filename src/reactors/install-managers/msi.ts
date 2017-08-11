@@ -12,6 +12,14 @@ function getArgs(operation: string, msiPath: string, targetPath: string) {
   return ["--msiexec", operation, msiPath, targetPath, logPath];
 }
 
+// TODO: new plan for installers:
+// - start deploying
+// - move current folder to a temp location (1 rename)
+// - install to right location
+// - merge files that weren't in the manifest
+// ALSO: we shouldn't be walking if we don't have a manifest
+// yet, otherwise we'll definitely remove save games!
+
 async function install(opts: ICoreInstallOpts): Promise<void> {
   const { ctx, runtime } = opts;
   ctx.emitProgress({ progress: -1 });

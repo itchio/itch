@@ -7,7 +7,7 @@ import { ICave } from "../db/models/cave";
 import { readFile, writeFile, unlink, mkdir } from "../os/sf";
 import butler from "../util/butler";
 
-import { difference, reject, uniq } from "underscore";
+import { difference, reject } from "underscore";
 
 export interface IDeployOpts {
   ctx: Context;
@@ -37,14 +37,17 @@ export default async function deploy(inOpts: IDeployOpts, task: IDeployTask) {
   await mkdir(opts.destPath);
 
   const receipt = await getReceipt(opts);
-  const oldFiles = receipt ? receipt.files : await walkDir(opts);
+  // if we didn't have a receipt, we can't know for sure which files are ghost,
+  // so we just don't wipe anything
+  const oldFiles = receipt ? receipt.files : [];
 
   const taskResult = await task();
   const newFiles = taskResult.files;
 
+  // this gives us files that were in oldFiles but aren't in newFiles anymore
   let ghostFiles = difference(oldFiles, newFiles);
+
   // we want to keep anything in `.itch.`
-  // (that's not a problem if we had a receipt, but better safe than sorry)
   ghostFiles = reject(ghostFiles, x => dirname(x) === ".itch");
 
   if (ghostFiles.length > 0) {
