@@ -31,6 +31,12 @@ export interface IReceipt {
    * Which installer was used to install something
    */
   installerName: InstallerType;
+
+  /**
+   * For MSI installers, the `product code` so we know what
+   * to uninstall
+   */
+  msiProductCode?: string;
 }
 
 export interface IReceiptOpts {

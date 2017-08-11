@@ -32,7 +32,7 @@ export interface IGhostBusterOpts {
  * in the new install. Since we don't want to keep old, unnecessary files
  * (that aren't angels) around, we just remove them.
  * 
- * See also: switcheroo
+ * See also: save-angels
  */
 export default async function bustGhost(inOpts: IGhostBusterOpts) {
   const opts = {

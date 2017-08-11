@@ -9,6 +9,10 @@ interface IWalkDirOpts {
   destPath: string;
 }
 
+/**
+ * Uses butler's walk command to find all files (and symlinks) in a directory,
+ * recursively.
+ */
 export default async function walkDir(opts: IWalkDirOpts): Promise<string[]> {
   const { ctx, logger, destPath } = opts;
 

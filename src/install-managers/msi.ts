@@ -1,5 +1,4 @@
-import spawn from "../../os/spawn";
-import getBlessing from "./blessing";
+import spawn from "../os/spawn";
 
 import {
   IInstallOpts,
@@ -7,73 +6,72 @@ import {
   IUninstallOpts,
   IUninstallResult,
   IInstallManager,
-} from "./core";
+} from "./common/core";
 
-import switcheroo from "./switcheroo";
+import getBlessing from "./common/get-blessing";
+import saveAngels from "./common/save-angels";
 
-interface IElevatedOpts {
-  /** if truthy, run as admin */
-  elevated?: boolean;
-}
+import { findWhere } from "underscore";
 
-function getLogPath(msiPath: string) {
-  return `${msiPath}.log.txt`;
-}
+import butler, {
+  IWindowsInstallerError,
+  IMsiInstallOpts,
+} from "../util/butler";
 
-function getArgs(operation: string, msiPath: string, targetPath: string) {
-  const logPath = getLogPath(msiPath);
+async function install(opts: IInstallOpts): Promise<IInstallResult> {
+  const { ctx, logger, runtime } = opts;
+  if (runtime.platform !== "windows") {
+    throw new Error("MSI installers are only supported on Windows");
+  }
 
-  return ["--msiexec", operation, msiPath, targetPath, logPath];
-}
+  const msiInfo = await butler.msiInfo({ ctx, logger, file: opts.archivePath });
 
-// TODO: use butler msi facilities here
-
-// TODO: new plan for installers:
-// - start deploying
-// - move current folder to a temp location (1 rename)
-// - install to right location
-// - merge files that weren't in the manifest
-// ALSO: we shouldn't be walking if we don't have a manifest
-// yet, otherwise we'll definitely remove save games!
-
-async function install(
-  inOpts: IInstallOpts & IElevatedOpts,
-): Promise<IInstallResult> {
-  await switcheroo(inOpts, async opts => {
-    const { ctx, runtime } = opts;
+  const result = await saveAngels(opts, async () => {
     ctx.emitProgress({ progress: -1 });
-
-    if (runtime.platform !== "windows") {
-      throw new Error("MSI installers are only supported on Windows");
-    }
-
-    const { archivePath, destPath, logger, elevated } = opts;
-
-    const msiCmd = elevated ? "--elevated-install" : "--install";
-
-    if (elevated) {
-      await getBlessing(opts, "install");
-    }
-
-    const code = await spawn({
-      command: "elevate.exe",
-      args: getArgs(msiCmd, archivePath, destPath),
-      onToken: token => logger.info(token),
-      onErrToken: token => logger.warn(token),
+    let errors: IWindowsInstallerError[];
+    let butlerOpts: IMsiInstallOpts = {
       ctx,
       logger,
-    });
+      file: opts.archivePath,
+      target: opts.destPath,
+      onValue: value => {
+        if (value.type === "windowsInstallerError") {
+          errors.push(value.value);
+        }
+      },
+    };
 
-    if (code !== 0) {
-      if (code === 1603 && !elevated) {
-        logger.warn("msi installer exited with 1603, retrying elevated");
-        return await install({ ...opts, elevated: true });
-      }
-      throw new Error(`msi installer exited with code ${code}`);
+    let succeeded = false;
+    try {
+      await butler.msiInstall(butlerOpts);
+      succeeded = true;
+    } catch (e) {
+      logger.warn(`During unprivileged MSI install: ${e.stack}`);
     }
 
-    logger.info("msi installer completed successfully");
+    if (!succeeded && findWhere(errors, { code: 1925 })) {
+      /**
+       * 1925 = You do not have sufficient privileges to complete
+       * this installation for all users of the machine. Log on as
+       * administrator and then retry this installation.
+       */
+
+      errors = [];
+      butlerOpts = {
+        ...butlerOpts,
+        elevate: true,
+      };
+
+      await butler.msiInstall(butlerOpts);
+    }
   });
+
+  return {
+    files: result.files,
+    receiptOut: {
+      msiProductCode: msiInfo.productCode,
+    },
+  };
 }
 
 export async function uninstall(

@@ -26,7 +26,6 @@ const CaveModelOriginal = {
     secondsRun: Column.Integer,
 
     verdict: Column.JSON,
-    msiProductId: Column.Text,
     installedSize: Column.Integer,
     installedUE4Prereq: Column.Boolean,
     installedPrereqs: Column.JSON,

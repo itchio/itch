@@ -58,7 +58,8 @@ export interface IUninstallOpts extends ICoreOpts {
 
 export interface IInstallResult {
   files: string[];
-  caveOut: Partial<ICave>;
+  caveOut?: Partial<ICave>;
+  receiptOut?: Partial<IReceipt>;
 }
 
 export interface IUninstallResult {
@@ -136,6 +137,7 @@ export async function coreInstall(opts: IInstallOpts): Promise<void> {
     cave,
     files: result.files,
     installerName,
+    ...result.receiptOut || {},
   });
 
   logger.info(`Committing game & cave to db`);
