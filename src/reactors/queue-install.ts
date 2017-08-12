@@ -5,7 +5,7 @@ import Context from "../context";
 import * as actions from "../actions";
 import * as url from "url";
 
-import { ICave } from "../db/models/cave";
+import { ICave, ICaveLocation } from "../db/models/cave";
 import { IGame } from "../db/models/game";
 import { toJSONField } from "../db/json-field";
 import { IQueueInstallOpts, IStore } from "../types";
@@ -15,7 +15,7 @@ import * as sf from "../os/sf";
 import { currentRuntime } from "../os/runtime";
 import { Logger } from "../logger";
 
-import { coreInstall } from "./install-managers/core";
+import { coreInstall } from "../install-managers/common/core";
 import asTask from "./tasks/as-task";
 
 function defaultInstallLocation(store: IStore) {
@@ -33,17 +33,16 @@ export async function queueInstall(
   const installLocation =
     opts.installLocation || defaultInstallLocation(ctx.store);
 
-  let cave: ICave;
-
   const { caveId, game, reason } = opts;
 
   logger.info(`Doing ${reason} for game ${game.title} (#${game.id})`);
 
   let freshInstall = false;
+  let caveIn: Partial<ICave> & ICaveLocation;
 
   if (caveId) {
-    cave = ctx.db.caves.findOneById(caveId);
-    if (!cave) {
+    caveIn = ctx.db.caves.findOneById(caveId);
+    if (!caveIn) {
       throw new Error(`Couldn't find cave to ${reason}`);
     }
   } else {
@@ -57,27 +56,19 @@ export async function queueInstall(
 
     const { handPicked, upload } = opts;
 
-    cave = ({
+    caveIn = {
       id: uuid(),
       gameId: game.id,
-      game,
       upload: toJSONField(upload),
       installLocation,
       installFolder,
       pathScheme: paths.PathScheme.MODERN_SHARED,
       handPicked,
-    } as Partial<ICave>) as ICave;
+    };
 
     if (reason === "install") {
-      await ensureUniqueInstallLocation(ctx, cave);
+      await ensureUniqueInstallLocation(ctx, caveIn);
     }
-
-    // TODO: take a good long think about this - what happens if the install stops
-    // halfway through? the `fresh` field was there for that originally, but now it's not.
-    // I think that's why a bunch of folks have empty install folders & can't launch,
-    // the install simply didn't happen. Should we even need to persist the cave at this point?
-    // my vote is no.
-    ctx.db.saveOne("caves", cave.id, cave);
   }
 
   try {
@@ -95,7 +86,10 @@ export async function queueInstall(
 
     if (!freshInstall) {
       logger.info(
-        `← old version: ${versionName(cave.buildId, cave.buildUserVersion)}`,
+        `← old version: ${versionName(
+          caveIn.buildId,
+          caveIn.buildUserVersion,
+        )}`,
       );
     }
     logger.info(
@@ -105,16 +99,16 @@ export async function queueInstall(
       )}`,
     );
 
-    ctx.db.saveOne("games", String(game.id), game);
-
     const prefs = ctx.store.getState().preferences;
-
-    let destPath = paths.appPath(cave, prefs);
+    let destPath = paths.appPath(caveIn, prefs);
     let archivePath = paths.downloadPath(upload, prefs);
 
     if (!await sf.exists(archivePath)) {
       const { handPicked } = opts;
 
+      // FIXME: so, this is almost definitely not what we want
+      // why is the reason hardcoded to 'install' ?
+      // what about reinstalls, heals, uninstalls?
       logger.warn("archive disappeared, redownloading...");
       ctx.store.dispatch(
         actions.queueDownload({
@@ -141,31 +135,19 @@ export async function queueInstall(
     const runtime = currentRuntime();
 
     await coreInstall({
-      ...opts,
       ctx,
       runtime,
       logger,
+      game,
+      reason,
+
       destPath,
       archivePath,
-      caveId: cave.id,
-    });
-
-    ctx.db.saveOne("caves", cave.id, {
-      installedAt: new Date(),
-      uploadId: upload.id,
-      channelName: upload.channelName,
-      buildId: upload.buildId,
-      buildUserVersion: upload.build && upload.build.userVersion,
       upload,
+      caveIn: caveIn as ICave, // FIXME: poor style
     });
   } catch (e) {
     logger.error(`when doing ${reason} for ${game.title}:\n ${e.stack}`);
-
-    if (freshInstall) {
-      logger.info(`was fresh install, imploding cave`);
-      ctx.db.deleteEntity("caves", cave.id);
-    }
-
     throw e;
   }
 }
@@ -213,7 +195,7 @@ function installFolderNameFromId(game: IGame) {
 }
 
 /** Modifies.installFolder until it no longer exists on disk */
-async function ensureUniqueInstallLocation(ctx: Context, cave: ICave) {
+async function ensureUniqueInstallLocation(ctx: Context, cave: ICaveLocation) {
   let { installFolder } = cave;
 
   const { preferences } = ctx.store.getState();

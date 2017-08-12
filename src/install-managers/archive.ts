@@ -4,8 +4,10 @@ import deploy2, { IDeployOpts } from "../../util/deploy2";
 
 import { elapsed } from "../../format/datetime";
 
-import { coreOperate, ICoreInstallOpts, IInstallManager } from "./core";
+import { IInstallManager } from "./core";
 import getInstallerType from "./get-installer-type";
+
+import cullGhosts from "./cull-ghosts";
 
 async function install(opts: ICoreInstallOpts) {
   const { ctx, archivePath, destPath, caveId } = opts;
