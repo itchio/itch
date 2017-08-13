@@ -128,7 +128,4 @@ export interface ICave extends ICaveSummary, ICaveLocation {
 
   /** result of the configure step */
   verdict: JSONField<IConfigureResult>;
-
-  /** if the game was installed via an MSI package, its Product ID */
-  msiProductId: string;
 }

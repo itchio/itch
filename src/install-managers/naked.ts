@@ -1,33 +1,41 @@
-import * as sf from "../../os/sf";
-import butler from "../../util/butler";
+import * as sf from "../os/sf";
+import butler from "../util/butler";
 import { join, basename } from "path";
 
-import { IInstallManager, ICoreInstallOpts } from "./core";
+import {
+  IInstallManager,
+  IInstallOpts,
+  IInstallResult,
+  IUninstallOpts,
+  IUninstallResult,
+} from "./common/core";
 
-export async function install(opts: ICoreInstallOpts) {
+export async function install(opts: IInstallOpts): Promise<IInstallResult> {
   const { ctx, archivePath, destPath } = opts;
   const logger = opts.logger.child({ name: "naked/install" });
 
+  const archiveBaseName = basename(archivePath);
+
   await sf.mkdir(destPath);
 
-  const destFilePath = join(destPath, basename(archivePath));
-  logger.info(`copying ${archivePath} to ${destFilePath}`);
+  const destFilePath = join(destPath, archiveBaseName);
+  logger.info(`Copying ${archiveBaseName}`);
 
   await butler.ditto(archivePath, destFilePath, {
     ctx,
     logger,
   });
+
+  const files = [archiveBaseName];
+  return { files };
 }
 
-export async function uninstall(opts: ICoreInstallOpts) {
-  const { ctx, destPath } = opts;
+export async function uninstall(
+  opts: IUninstallOpts,
+): Promise<IUninstallResult> {
   const logger = opts.logger.child({ name: "naked/uninstall" });
-
-  logger.info(`nuking ${destPath}`);
-  await butler.wipe(destPath, {
-    ctx,
-    logger,
-  });
+  logger.info(`Nothing to do`);
+  return {};
 }
 
 const manager: IInstallManager = { install, uninstall };

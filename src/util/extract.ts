@@ -5,7 +5,7 @@ const verbose = process.env.THE_DEPTHS_OF_THE_SOUL === "1";
 import * as sf from "../os/sf";
 import spawn from "../os/spawn";
 import { fileSize } from "../format/filesize";
-import butler, { IButlerResult, IUnzipOpts } from "./butler";
+import butler from "./butler";
 
 import Context from "../context";
 import { Logger } from "../logger";
