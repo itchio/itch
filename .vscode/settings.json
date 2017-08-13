@@ -15,7 +15,8 @@
     "build": true,
     "dist": true,
     ".tscache": true,
-    ".cache": true
+    ".cache": true,
+    "gopath": true
   },
   "files.eol": "\n",
   "editor.tabSize": 2,
@@ -32,5 +33,5 @@
   },
   "[typescriptreact]": {
     "editor.formatOnSave": true
-  }
+  },
 }

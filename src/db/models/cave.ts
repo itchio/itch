@@ -26,7 +26,6 @@ const CaveModelOriginal = {
     secondsRun: Column.Integer,
 
     verdict: Column.JSON,
-    msiProductId: Column.Text,
     installedSize: Column.Integer,
     installedUE4Prereq: Column.Boolean,
     installedPrereqs: Column.JSON,
@@ -129,7 +128,4 @@ export interface ICave extends ICaveSummary, ICaveLocation {
 
   /** result of the configure step */
   verdict: JSONField<IConfigureResult>;
-
-  /** if the game was installed via an MSI package, its Product ID */
-  msiProductId: string;
 }

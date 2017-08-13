@@ -1,13 +1,13 @@
 import * as actions from "../../actions";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 
-import { promisedModal } from "../modals";
+import { promisedModal } from "../../reactors/modals";
 import { Cancelled } from "../../types";
 
-import { ICoreInstallOpts } from "./core";
+import { ICoreOpts } from "./core";
 
 export default async function getBlessing(
-  opts: ICoreInstallOpts,
+  opts: ICoreOpts,
   operation: "install" | "uninstall",
 ) {
   const { ctx, game } = opts;
@@ -15,7 +15,7 @@ export default async function getBlessing(
   const { title } = game;
 
   const response = await promisedModal(store, {
-    title: ["preferences.advanced.clear_browsing_data"],
+    title: "",
     // FIXME: i18n
     message: `Administrator privileges are required to ${operation} ${title}.`,
     detail: "Only accept if you trust this content.",

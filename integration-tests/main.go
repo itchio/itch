@@ -47,6 +47,10 @@ var r *runner
 func doMain() error {
 	bootTime := time.Now()
 
+	if testAccountPassword == "" {
+		return errors.New("password not given via environment, stopping here")
+	}
+
 	r = &runner{
 		prefix: "tmp",
 	}

@@ -450,6 +450,67 @@ async function configureSingle(opts: IConfigureOpts): Promise<ICandidate> {
   return null;
 }
 
+interface IMsiInfoOpts extends IButlerOpts {
+  /** Which msi file to probe for infos */
+  file: string;
+}
+
+interface IMsiInfoResult {
+  /** An UUID associated with the product this MSI installs */
+  productCode: string;
+
+  /**
+   * Absent: The product is installed for a different user.
+   * Advertised: The product is advertised but not installed.
+   * Default: The product is installed for the current user.
+   * InvalidArg: An invalid parameter was passed to the function.
+   * Unknown: The product is neither advertised nor installed
+   * See https://msdn.microsoft.com/en-us/library/windows/desktop/aa370363(v=vs.85).aspx
+   */
+  installState: string;
+}
+
+async function msiInfo(opts: IMsiInfoOpts): Promise<IMsiInfoResult> {
+  const { file } = opts;
+  return await butler<IMsiInfoResult>(opts, "msi-info", [file]);
+}
+
+export interface IMsiInstallOpts extends IButlerOpts {
+  /** Which msi file to install */
+  file: string;
+
+  /** Where the MSI should be installed. Specifying this attempts an unprivileged install */
+  target: string;
+}
+
+export interface IWindowsInstallerError {
+  /** See https://msdn.microsoft.com/en-us/library/windows/desktop/aa372835(v=vs.85).aspx */
+  code: number;
+
+  /** Textual description, might be localized? */
+  text: string;
+}
+
+async function msiInstall(opts: IMsiInstallOpts) {
+  const { file, target } = opts;
+
+  let args = [file];
+  if (target) {
+    args = ["--target", opts.target, ...args];
+  }
+
+  await butler(opts, "msi-install", args);
+}
+
+export interface IMsiUninstallOpts extends IButlerOpts {
+  productCode: string;
+}
+
+async function msiUninstall(opts: IMsiUninstallOpts) {
+  const { productCode } = opts;
+  await butler(opts, "msi-uninstall", [productCode]);
+}
+
 async function sanityCheck(ctx: Context): Promise<boolean> {
   try {
     await spawn.assert({
@@ -477,6 +538,9 @@ export default {
   file,
   walk,
   clean,
+  msiInfo,
+  msiInstall,
+  msiUninstall,
   installPrereqs,
   sanityCheck,
   exeprops,

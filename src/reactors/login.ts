@@ -80,7 +80,7 @@ export default function(watcher: Watcher) {
             const opts = {
               name,
               value: encodeURIComponent(value),
-              url: parsed.protocol + parsed.hostname,
+              url: `${parsed.protocol}//${parsed.hostname}`,
               domain: "." + parsed.hostname,
               secure: parsed.protocol === "https:",
               httpOnly: true,

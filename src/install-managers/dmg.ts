@@ -1,24 +1,29 @@
-import butler from "../../util/butler";
-import deploy from "../../util/deploy";
-import spawn from "../../os/spawn";
-
-import archive from "./archive";
+import butler from "../util/butler";
+import spawn from "../os/spawn";
 
 import { resolve } from "path";
 
-import { devNull } from "../../logger";
+import rootLogger, { devNull } from "../logger";
 
-import { ICoreInstallOpts, IInstallManager } from "./core";
+import {
+  IInstallManager,
+  IInstallOpts,
+  IInstallResult,
+  IUninstallOpts,
+  IUninstallResult,
+} from "./common/core";
+import bustGhosts from "./common/bust-ghosts";
 
 const HFS_RE = /(\S*)\s*(Apple_HFS)?\s+(.*)\s*$/;
 
-async function install(opts: ICoreInstallOpts) {
+async function install(opts: IInstallOpts): Promise<IInstallResult> {
   const { ctx, archivePath } = opts;
   const logger = opts.logger.child({ name: "install/dmg" });
 
   logger.info(`Preparing installation of '${archivePath}'`);
   ctx.emitProgress({ progress: -1 });
 
+  // TODO: abstract away the cdr stuff
   const cdrPath = resolve(archivePath + ".cdr");
 
   let infoEntries: string[][] = [];
@@ -133,15 +138,28 @@ async function install(opts: ICoreInstallOpts) {
     throw new Error("Failed to mount image (no mountpoint)");
   }
 
-  await deploy({
+  const files = [];
+  const { destPath } = opts;
+
+  await butler.ditto(mountpoint, destPath, {
     ctx,
-    caveId: opts.caveId,
-    destPath: opts.destPath,
-    stagePath: mountpoint,
+    logger,
+    onValue: val => {
+      if (val.type === "entry") {
+        files.push(val.path);
+      }
+    },
+  });
+
+  await bustGhosts({
+    ctx,
+    logger,
+    destPath,
+    newFiles: files,
   });
 
   const cleanup = async function() {
-    logger.info(`Detaching cdr file ${cdrPath}`);
+    rootLogger.info(`Detaching cdr file ${cdrPath}`);
     code = await spawn({
       command: "hdiutil",
       args: [
@@ -156,7 +174,7 @@ async function install(opts: ICoreInstallOpts) {
       throw new Error(`Failed to mount image, with code ${code}`);
     }
 
-    logger.info(`Removing cdr file ${cdrPath}`);
+    rootLogger.info(`Removing cdr file ${cdrPath}`);
     await butler.wipe(cdrPath, {
       ctx,
       logger: devNull,
@@ -164,11 +182,17 @@ async function install(opts: ICoreInstallOpts) {
   };
 
   logger.info("Launching cleanup asynchronously...");
-  cleanup();
+  cleanup().catch(e => {
+    rootLogger.info(`DMG cleanup error: ${e.stack}`);
+  });
+
+  return { files };
 }
 
-async function uninstall(opts: ICoreInstallOpts) {
-  await archive.uninstall(opts);
+async function uninstall(opts: IUninstallOpts): Promise<IUninstallResult> {
+  const logger = opts.logger;
+  logger.info("Nothing to do");
+  return {};
 }
 
 const manager: IInstallManager = { install, uninstall };

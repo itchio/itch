@@ -3,7 +3,12 @@ import { FormattedMessage, InjectedIntl } from "react-intl";
 
 export default function format(input: any): JSX.Element | string {
   if (Array.isArray(input)) {
-    return <FormattedMessage id={input[0]} values={input[1]} />;
+    const id = input[0];
+    const valuesIn = input[1] || {};
+    const { defaultValue = null, ...values } = valuesIn;
+    return (
+      <FormattedMessage id={id} values={values} defaultMessage={defaultValue} />
+    );
   } else {
     return input;
   }
