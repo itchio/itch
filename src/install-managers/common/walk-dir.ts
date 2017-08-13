@@ -3,6 +3,9 @@ import butler from "../../util/butler";
 import { Logger } from "../../logger";
 import Context from "../../context";
 
+import { dirname } from "path";
+import { reject } from "underscore";
+
 interface IWalkDirOpts {
   logger: Logger;
   ctx: Context;
@@ -21,5 +24,8 @@ export default async function walkDir(opts: IWalkDirOpts): Promise<string[]> {
     logger,
     dir: destPath,
   });
-  return res.files;
+
+  const files = reject(res.files, f => dirname(f) === ".itch");
+
+  return files;
 }
