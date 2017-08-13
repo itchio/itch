@@ -200,6 +200,6 @@ export async function extract(opts: IExtractOpts): Promise<IExtractResult> {
     });
   }
 
-  logger.info("Using unar to extract zip");
+  logger.info("Using unar to extract archive");
   return await unarchiver(opts);
 }
