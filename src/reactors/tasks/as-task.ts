@@ -33,8 +33,10 @@ export default async function asTask(opts: IAsTaskOpts) {
   const { store, db, name, gameId, caveId } = opts;
 
   let logger: Logger;
+  let isCaveLogger = false;
   if (caveId) {
     logger = caveLogger(caveId);
+    isCaveLogger = true;
   } else {
     // FIXME: WELL ACTUALLY it should be a custom logger
     // so we can copy it to the cave's log afterwards.
@@ -69,6 +71,16 @@ export default async function asTask(opts: IAsTaskOpts) {
     })
     .then(() => {
       delete currentTasks[id];
+      if (isCaveLogger) {
+        try {
+          // FIXME either pino or multiwriter eat the last line here
+          // why?
+          logger.close();
+        } catch (e) {
+          rootLogger.warn(`Couldn't close logger: ${e.stack}`);
+        }
+      }
+
       if (err) {
         if (err instanceof Cancelled) {
           // all good, but also, don't trigger taskEnded
