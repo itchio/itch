@@ -15,7 +15,7 @@ export default async function getBlessing(
   const { title } = game;
 
   const response = await promisedModal(store, {
-    title: ["preferences.advanced.clear_browsing_data"],
+    title: "",
     // FIXME: i18n
     message: `Administrator privileges are required to ${operation} ${title}.`,
     detail: "Only accept if you trust this content.",
