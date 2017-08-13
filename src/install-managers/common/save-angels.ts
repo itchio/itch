@@ -1,4 +1,3 @@
-import { IInstallResult } from "./core";
 import * as sf from "../../os/sf";
 
 import { Logger } from "../../logger";
@@ -68,6 +67,7 @@ export default async function saveAngels<T extends IAngelSaviorOpts>(
 
   try {
     await f();
+    logger.info(`Inner task successful`);
   } catch (e) {
     logger.warn(`Installation failed, rolling back to previous version`);
     await sf.wipe(destPath);

@@ -109,6 +109,8 @@ export async function queueInstall(
       // FIXME: so, this is almost definitely not what we want
       // why is the reason hardcoded to 'install' ?
       // what about reinstalls, heals, uninstalls?
+      // FIXME: (bis) we don't need the archive to uninstall everything
+      // we want to keep the download folder clean
       logger.warn("archive disappeared, redownloading...");
       ctx.store.dispatch(
         actions.queueDownload({

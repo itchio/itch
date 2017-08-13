@@ -37,15 +37,16 @@ export interface ICoreOpts {
   /** where to install the item */
   destPath: string;
 
+  /** the game we're installing/uninstalling */
+  game: IGame;
+
+  /** the upload we're installing from */
   upload: IUpload;
 }
 
 export interface IInstallOpts extends ICoreOpts {
   /** the reason or rather action we're doing (fresh install, re-install etc.) */
   reason: InstallReason;
-
-  /** the game we're installing/uninstalling */
-  game: IGame;
 
   /** The existing cave object, if any */
   caveIn?: ICave;
@@ -54,6 +55,9 @@ export interface IInstallOpts extends ICoreOpts {
 export interface IUninstallOpts extends ICoreOpts {
   // the cave to uninstall
   cave: ICave;
+
+  // the receipt at the time the uninstall was started, if any
+  receiptIn?: IReceipt;
 }
 
 export interface IInstallResult {
@@ -95,6 +99,7 @@ interface IPrepareResult {
   source: string;
   installerName: InstallerType;
   manager: IInstallManager;
+  receipt: IReceipt;
 }
 
 interface IPrepareOpts {
@@ -148,10 +153,10 @@ export async function coreInstall(opts: IInstallOpts): Promise<void> {
 export async function coreUninstall(opts: IUninstallOpts) {
   const logger = opts.logger.child({ name: "uninstall" });
 
-  const { manager, source, installerName } = await prepare(opts, {});
+  const { manager, source, installerName, receipt } = await prepare(opts, {});
   logger.info(`Uninstalling with ${installerName} (${source})`);
 
-  await manager.uninstall({ ...opts, logger });
+  await manager.uninstall({ ...opts, logger, receiptIn: receipt });
 }
 
 async function prepare(
@@ -163,6 +168,7 @@ async function prepare(
 
   let source = "";
   let installerName: InstallerType;
+  const receipt = await readReceipt(opts);
 
   if (specifiedInstallerName) {
     source = "specified";
@@ -174,7 +180,7 @@ async function prepare(
       receipt = await readReceipt(opts);
     }
 
-    if (receipt) {
+    if (!forceSniff && receipt && receipt.installerName) {
       installerName = receipt.installerName;
       source = "cached";
     } else {
@@ -200,5 +206,5 @@ async function prepare(
     throw new Cancelled("no install manager found");
   }
 
-  return { source, installerName, manager };
+  return { source, installerName, manager, receipt };
 }

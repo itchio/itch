@@ -6,13 +6,14 @@ import { IQueueCaveUninstallPayload } from "../../constants/action-types";
 import { currentRuntime } from "../../os/runtime";
 
 import * as paths from "../../os/paths";
-import * as sf from "../../os/sf";
 
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
 import { IUpload } from "../../types";
 
-import { coreUninstall } from "../install-managers/core";
+import { coreUninstall } from "../../install-managers/common/core";
+
+import butler from "../../util/butler";
 
 import { MODAL_RESPONSE } from "../../constants/action-types";
 import { promisedModal } from "../modals";
@@ -32,42 +33,36 @@ export async function queueUninstall(
     throw new Error("Couldn't find cave to operate on");
   }
 
+  let doCleanup = false;
+  const runtime = currentRuntime();
+  const upload = fromJSONField<IUpload>(cave.upload);
+
+  const prefs = ctx.store.getState().preferences;
+  const destPath = paths.appPath(cave, prefs);
+  const archivePath = paths.downloadPath(upload, prefs);
+
   try {
     const game = await lazyGetGame(ctx, cave.gameId);
     if (!game) {
       throw new Error("Couldn't find game to operate on");
     }
 
-    const runtime = currentRuntime();
-    const upload = fromJSONField<IUpload>(cave.upload);
-
-    const prefs = ctx.store.getState().preferences;
-    const destPath = paths.appPath(cave, prefs);
-    const archivePath = paths.downloadPath(upload, prefs);
-
-    // FIXME: so I think everyone agrees that coreInstall and coreUninstall
-    // should have some shared props but uhhh we shouldn't need to specify all
-    // of those, that just makes no sense.
     await coreUninstall({
-      reason: "install", // FIXME: wtf
       ctx,
       runtime,
       logger,
       destPath,
       archivePath,
       game,
-      caveId,
+      cave,
       upload,
-      installLocation: cave.installLocation,
-      handPicked: false,
     });
 
-    logger.info(`Uninstall successful, imploding cave`);
-    ctx.db.deleteEntity("caves", caveId);
-
-    logger.info(`And wiping archive`);
-    await sf.wipe(archivePath);
+    logger.info(`Uninstall successful`);
+    doCleanup = true;
   } catch (e) {
+    logger.error(`Uninstall failed: ${e.stack}`);
+
     const response = await promisedModal(ctx.store, {
       title: ["prompt.uninstall_error.title"],
       message: ["prompt.uninstall_error.message"],
@@ -85,8 +80,19 @@ export async function queueUninstall(
       return;
     }
 
-    logger.info(`Uninstall unsuccessful, but imploding cave anyway`);
+    logger.info(`User asked for listing to be removed anyway`);
+    doCleanup = true;
+  }
+
+  if (doCleanup) {
+    logger.info(`Imploding cave...`);
     ctx.db.deleteEntity("caves", caveId);
+
+    logger.info(`Wiping archive...`);
+    await butler.wipe(archivePath, { ctx, logger });
+
+    logger.info(`Wiping install folder...`);
+    await butler.wipe(destPath, { ctx, logger });
   }
 }
 

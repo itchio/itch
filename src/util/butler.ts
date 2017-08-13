@@ -502,7 +502,7 @@ async function msiInstall(opts: IMsiInstallOpts) {
   await butler(opts, "msi-install", args);
 }
 
-interface IMsiUninstallOpts extends IButlerOpts {
+export interface IMsiUninstallOpts extends IButlerOpts {
   productCode: string;
 }
 
