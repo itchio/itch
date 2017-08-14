@@ -341,5 +341,5 @@
     "grid.item.revert_to_version": "Reverter para versão...",
     "download.reason.heal": "para verificar e reparar",
     "game.install.libraries_missing": "Algo necessário {{arch}} da biblioteca está faltando: {{libraries}}",
-    "grid.criterion.search": "Procurar..."
+    "grid.criterion.search": "Pesquisar..."
 }
