@@ -9,7 +9,7 @@ import * as paths from "../../os/paths";
 
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
-import { IUpload } from "../../types";
+import { IUpload, Cancelled } from "../../types";
 
 import { coreUninstall } from "../../install-managers/common/core";
 
@@ -61,6 +61,11 @@ export async function queueUninstall(
     logger.info(`Uninstall successful`);
     doCleanup = true;
   } catch (e) {
+    if (e instanceof Cancelled) {
+      logger.info(`Uninstall cancelled`);
+      return;
+    }
+
     logger.error(`Uninstall failed: ${e.stack}`);
 
     const response = await promisedModal(ctx.store, {

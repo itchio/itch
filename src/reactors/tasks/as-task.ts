@@ -83,8 +83,7 @@ export default async function asTask(opts: IAsTaskOpts) {
 
       if (err) {
         if (err instanceof Cancelled) {
-          // all good, but also, don't trigger taskEnded
-          return;
+          rootLogger.warn(`Task ${name} cancelled`);
         } else {
           rootLogger.warn(`Task ${name} threw: ${err.stack}`);
         }
