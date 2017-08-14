@@ -1,6 +1,3 @@
-import * as osnet from "net";
-import * as split2 from "split2";
-
 import * as tmp from "tmp";
 import * as bluebird from "bluebird";
 import {
@@ -65,10 +62,6 @@ interface IInstallPlanItem {
 
 interface IButlerPrereqMessage {
   type: "state" | "log";
-}
-
-interface IButlerPrereqLogEntry extends IButlerPrereqMessage {
-  message: string;
 }
 
 interface IButlerPrereqResult extends IButlerPrereqMessage {
@@ -369,54 +362,28 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
 
     logger.info("Installing all prereqs via butler...");
 
-    const namedPipeName = `butler-windows-prereqs-${Date.now().toFixed(0)}`;
-    const namedPipePath = "\\\\.\\pipe\\" + namedPipeName;
-
-    logger.info(`Listening to status updates on ${namedPipePath}`);
-
-    const butlerLogger = logger.child({ name: "butler-prereqs" });
-
-    const server = osnet.createServer(function(stream) {
-      stream.pipe(split2()).on("data", (token: string) => {
-        try {
-          let msg: IButlerPrereqMessage;
-          try {
-            msg = JSON.parse(token);
-          } catch (err) {
-            logger.warn(`Couldn't parse line of butler output: ${token}`);
-            return;
-          }
-
-          if (msg.type === "state") {
-            const butlerState = msg as IButlerPrereqResult;
-            if (butlerState.name && butlerState.status) {
-              prereqsState = {
-                ...prereqsState,
-                tasks: {
-                  ...prereqsState.tasks,
-                  [butlerState.name]: {
-                    ...prereqsState.tasks[butlerState.name],
-                    status: butlerState.status as TaskProgressStatus,
-                  },
-                },
-              };
-              sendProgress();
-            }
-          } else if (msg.type === "log") {
-            const butlerLogEntry = msg as IButlerPrereqLogEntry;
-            butlerLogger.info(butlerLogEntry.message);
-          }
-        } catch (e) {
-          logger.warn(`Could not parse status update: ${e.stack}`);
-        }
-      });
-    });
-    server.listen(namedPipePath);
-
     await butler.installPrereqs(installPlanFullPath, {
-      pipe: namedPipePath,
       ctx,
       logger,
+      elevate: true,
+      onValue: msg => {
+        if (msg.type === "state") {
+          const butlerState = msg as IButlerPrereqResult;
+          if (butlerState.name && butlerState.status) {
+            prereqsState = {
+              ...prereqsState,
+              tasks: {
+                ...prereqsState.tasks,
+                [butlerState.name]: {
+                  ...prereqsState.tasks[butlerState.name],
+                  status: butlerState.status as TaskProgressStatus,
+                },
+              },
+            };
+            sendProgress();
+          }
+        }
+      },
     });
 
     const nowInstalledPrereqs = {} as {
@@ -536,11 +503,15 @@ async function fetchDep(
   const archiveUrl = `${baseUrl}/${prereq.name}.7z`;
   const archivePath = join(workDir, `${prereq.name}.7z`);
 
-  await butler.cp({
-    src: archiveUrl,
-    dest: archivePath,
-    logger,
-    ctx,
+  await ctx.withSub(async subCtx => {
+    subCtx.on("progress", info => onProgress(info));
+
+    await butler.cp({
+      src: archiveUrl,
+      dest: archivePath,
+      logger,
+      ctx: subCtx,
+    });
   });
 
   onStatus("extracting");
