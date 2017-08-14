@@ -493,36 +493,10 @@ async function assessDep(
     }
   }
 
-  let hasValidLibraries = false;
-
-  if (hasRegistry) {
-    if (info.dlls) {
-      const dllassert = `dllassert${info.arch === "amd64" ? "64" : "32"}`;
-      hasValidLibraries = true;
-      for (const dll of info.dlls) {
-        const code = await spawn({
-          command: dllassert,
-          args: [dll],
-          logger,
-          ctx,
-        });
-        if (code !== 0) {
-          logger.warn(`Could not assert dll ${dll}`);
-          hasValidLibraries = false;
-        }
-      }
-    } else {
-      logger.info(
-        `Traces of packages already found, no DLLs to test, assuming good!`,
-      );
-      hasValidLibraries = true;
-    }
-  }
-
   return {
     prereq,
     info,
-    alreadyInstalled: hasValidLibraries,
+    alreadyInstalled: hasRegistry,
   };
 }
 

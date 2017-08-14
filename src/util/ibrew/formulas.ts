@@ -79,35 +79,12 @@ self.butler = {
 };
 
 /**
- * privilege elevation:
- * https://github.com/itchio/elevate
- */
-self.elevate = {
-  format: "7z",
-  osWhitelist: ["windows"],
-};
-
-/**
  * unprivileged user management:
  * https://github.com/itchio/isolate
  */
 self.isolate = {
   format: "7z",
   osWhitelist: ["windows"],
-};
-
-/**
- * ensuring a DLL is present:
- * https://github.com/itchio/dllassert
- */
-self.dllassert = {
-  format: "7z",
-  osWhitelist: ["windows"],
-  subfolder: "dllassert",
-  versionCheck: {
-    command: "dllassert32",
-    args: ["-V"],
-  },
 };
 
 /**
