@@ -34,9 +34,6 @@ export default function(watcher: Watcher, db: DB) {
           .order("lower(title) like ?", true /* DESC */, startTerm)
           .limit(5),
       );
-      logger.info(
-        `local games results: ${JSON.stringify(localGames, null, 2)}`,
-      );
       store.dispatch(
         actions.searchFetched({
           query,
