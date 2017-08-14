@@ -8,7 +8,7 @@ import * as url from "url";
 import { ICave, ICaveLocation } from "../db/models/cave";
 import { IGame } from "../db/models/game";
 import { toJSONField } from "../db/json-field";
-import { IQueueInstallOpts, IStore } from "../types";
+import { IQueueInstallOpts, IStore, Cancelled } from "../types";
 
 import * as paths from "../os/paths";
 import * as sf from "../os/sf";
@@ -149,7 +149,11 @@ export async function queueInstall(
       caveIn: caveIn as ICave, // FIXME: poor style
     });
   } catch (e) {
-    logger.error(`when doing ${reason} for ${game.title}:\n ${e.stack}`);
+    if (e instanceof Cancelled) {
+      logger.error(`Cancelled ${reason} for ${game.title}: ${e.message}`);
+    } else {
+      logger.error(`when doing ${reason} for ${game.title}:\n ${e.stack}`);
+    }
     throw e;
   }
 }
