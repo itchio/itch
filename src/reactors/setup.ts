@@ -41,7 +41,7 @@ async function setup(store: IStore, db: DB) {
   logger.info("unarchiver done");
   await bluebird.all(
     map(
-      ["butler", "elevate", "isolate", "activate", "firejail", "dllassert"],
+      ["butler", "isolate", "activate", "firejail", "dllassert"],
       async name => await fetch(ctx, name),
     ),
   );

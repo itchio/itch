@@ -2,6 +2,8 @@ import spawn from "../os/spawn";
 
 import butler from "../util/butler";
 
+import { join } from "path";
+
 import { devNull } from "../logger";
 import {
   IInstallManager,
@@ -59,8 +61,10 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
     }
 
     const code = await spawn({
-      command: "elevate.exe",
+      command: "butler.exe",
       args: [
+        "elevate",
+        "--",
         installerPath,
         "/S", // run the installer silently
         "/NCRC", // disable CRC-check, we do hash checking ourselves
@@ -112,9 +116,11 @@ async function uninstall(opts: IUninstallOpts): Promise<IUninstallResult> {
   const unins = uninstallers[0];
   logger.info(`running nsis uninstaller ${unins}`);
   const code = await spawn({
-    command: "elevate.exe",
+    command: "butler.exe",
     args: [
-      unins,
+      "elevate",
+      "--",
+      join(destPath, unins),
       "/S", // run the uninstaller silently
       `_?=${destPath}`, // specify uninstallation path
     ],

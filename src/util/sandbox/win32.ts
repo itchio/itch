@@ -8,8 +8,8 @@ import { ISandbox, INeed, ICaretaker } from "./types";
 const userNeed: ICaretaker = async (ctx, need) => {
   const res = await spawn.exec({
     ctx,
-    command: "elevate.exe",
-    args: ["isolate.exe", "--setup"],
+    command: "butler",
+    args: ["elevate", "--", "isolate.exe", "--setup"],
     logger: devNull,
   });
   if (res.code !== 0) {

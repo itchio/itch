@@ -53,23 +53,11 @@ Building your own version is as simple as running:
 go get -v github.com/itchio/butler
 ```
 
-(assuming you have Go 1.6+ installed on your system)
+(assuming you have Go 1.7+ installed on your system)
 
 You can drop your custom build of butler in the directories described in the
 [Directories](#directories) section of this page — if it reports version `head`,
 itch will not attempt to update it.
-
-### elevate ![](https://img.shields.io/badge/platform-windows-708090.svg)
-
-elevate is a homemade (itch.io-made) command-line tool. Its purpose is to allow
-launching external processes (such as game installers) with elevated privileges,
-by asking the user permission with an [UAC prompt][].
-
-[UAC prompt]: https://en.wikipedia.org/wiki/User_Account_Control
-
-Its source code is available here, for you to audit, debug, and improve at will:
-
-  * <https://github.com/itchio/elevate>
 
 ### activate ![](https://img.shields.io/badge/platform-macOS-708090.svg)
 

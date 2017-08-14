@@ -3,7 +3,6 @@ import { partial, first } from "underscore";
 
 import spawn from "../os/spawn";
 import * as sf from "../os/sf";
-import ibrew from "./ibrew";
 
 import Context from "../context";
 import { IProgressInfo, ExeArch } from "../types";
@@ -111,14 +110,12 @@ async function butler<T>(
     logger.info(`butler stderr: ${line}`);
   };
 
-  let realCommand = "butler";
   if (opts.elevate) {
-    args = [ospath.join(ibrew.binPath(), "butler.exe"), ...args];
-    realCommand = "elevate";
+    args = ["--elevate", ...args];
   }
 
   const code = await spawn({
-    command: realCommand,
+    command: "butler",
     args,
     onToken,
     onErrToken,
