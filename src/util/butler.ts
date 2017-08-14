@@ -339,17 +339,8 @@ async function installPrereqs(
   opts = {} as IInstallPrereqsOpts,
 ) {
   let args = [planPath];
-  const { pipe } = opts;
-  if (pipe) {
-    args.push("--pipe");
-    args.push(pipe);
-  }
 
-  const realOpts = {
-    ...opts,
-    elevate: true,
-  };
-  return await butler(realOpts, "install-prereqs", args);
+  return await butler(opts, "install-prereqs", args);
 }
 
 interface IExePropsOpts extends IButlerOpts {
