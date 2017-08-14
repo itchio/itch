@@ -67,7 +67,9 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
         realTask === "configure" ||
         realTask === "install";
       if (hasProgress) {
-        iconComponent = <LoadingCircle progress={progress} />;
+        iconComponent = (
+          <LoadingCircle progress={progress > 0 ? progress : 0.1} />
+        );
       } else {
         iconComponent = <TaskIcon task={realTask} action={action} />;
         if (realTask === "idle") {
