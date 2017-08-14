@@ -7,6 +7,7 @@ import rootLogger, { Logger } from "../logger";
 const spawnLogger = rootLogger.child({ name: "spawn" });
 
 import Context from "../context";
+import { formatExitCode } from "../format/exit-code";
 
 interface ISpawnOpts {
   /** Context this should run in */
@@ -140,7 +141,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
 spawn.assert = async function(opts: ISpawnOpts): Promise<void> {
   const code = await spawn(opts);
   if (code !== 0) {
-    throw new Error(`spawn ${opts.command} returned code ${code}`);
+    throw new Error(`spawn ${opts.command} exit code: ${formatExitCode(code)}`);
   }
 };
 
@@ -176,7 +177,7 @@ spawn.getOutput = async function(opts: ISpawnOpts): Promise<string> {
 
   if (code !== 0) {
     spawnLogger.info(`${command} failed:\n${err}`);
-    throw new Error(`${command} failed with code ${code}`);
+    throw new Error(`${command} failed with code ${formatExitCode(code)}`);
   }
 
   return out.trim();

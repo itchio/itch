@@ -6,4 +6,5 @@ export * from "./datetime";
 export * from "./price";
 export * from "./download-progress";
 export * from "./filesize";
+export * from "./exit-code";
 export * from "./t";

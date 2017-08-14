@@ -2,6 +2,7 @@ import spawn from "./spawn";
 import Context from "../context";
 
 import { devNull } from "../logger";
+import { formatExitCode } from "../format/exit-code";
 
 interface IAssertPresenceResult {
   code: number;
@@ -39,7 +40,9 @@ export async function assertPresence(
   const code = await spawn(spawnOpts);
   if (code !== 0) {
     throw new Error(
-      `${command} exited with code ${code}\n${stdout}\n${stderr}`,
+      `${command} exited with code ${formatExitCode(
+        code,
+      )}\n${stdout}\n${stderr}`,
     );
   }
 

@@ -10,6 +10,7 @@ import {
 
 import findUninstallers from "./common/find-uninstallers";
 import saveAngels from "./common/save-angels";
+import { formatExitCode } from "../format/exit-code";
 
 // InnoSetup docs: http://www.jrsoftware.org/ishelp/index.php?topic=setupcmdline
 
@@ -42,7 +43,7 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
     });
 
     if (code != 0) {
-      throw new Error(`inno installer return error code ${code}`);
+      throw new Error(`InnoSetup installer exit code: ${formatExitCode(code)}`);
     }
   });
 
@@ -78,7 +79,7 @@ async function uninstall(opts: IUninstallOpts): Promise<IUninstallResult> {
   });
 
   if (code !== 0) {
-    throw new Error(`InnoSetup Uninstaller returned error ${code}`);
+    throw new Error(`InnoSetup uninstaller exit code: ${formatExitCode(code)}`);
   }
 
   return {};

@@ -9,6 +9,7 @@ import { IProgressInfo, ExeArch } from "../types";
 
 import { Logger, devNull } from "../logger";
 import urls from "../constants/urls";
+import { formatExitCode } from "../format/exit-code";
 
 const showDebug = process.env.MY_BUTLER_IS_MY_FRIEND === "1";
 const dumpAllOutput = process.env.MY_BUTLER_IS_MY_ENEMY === "1";
@@ -128,7 +129,7 @@ async function butler<T>(
   }
 
   if (code !== 0) {
-    throw new Error(`butler exited with error code ${code}`);
+    throw new Error(`butler exit code ${formatExitCode(code)}`);
   }
 
   return value;

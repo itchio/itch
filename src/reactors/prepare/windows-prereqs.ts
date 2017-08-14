@@ -70,6 +70,7 @@ interface IButlerPrereqResult extends IButlerPrereqMessage {
 }
 
 import { extract } from "../../util/extract";
+import { formatExitCode } from "../../format/exit-code";
 
 export default async function handleWindowsPrereqs(
   ctx: Context,
@@ -168,7 +169,9 @@ async function handleUE4Prereq(
         installedUE4Prereq: true,
       });
     } else {
-      logger.error(`couldn't install UE4 prereq (exit code ${code})`);
+      logger.error(
+        `couldn't install UE4 prereq, exit code ${formatExitCode(code)}`,
+      );
     }
   } catch (e) {
     logger.error(

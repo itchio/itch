@@ -26,6 +26,8 @@ import expandManifestPath from "./expand-manifest-path";
 import { promisedModal } from "../../reactors/modals";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 
+import { formatExitCode } from "../../format/exit-code";
+
 import rootLogger, { devNull } from "../../logger";
 const logger = rootLogger.child({ name: "launch/native" });
 
@@ -509,7 +511,7 @@ async function doSpawn(
         libs: missingLibs,
       });
     } else {
-      const error = `process exited with code ${code}`;
+      const error = `Process exited with code ${formatExitCode(code)}`;
       throw new Crash({ error });
     }
   }

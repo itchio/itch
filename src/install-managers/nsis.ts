@@ -16,6 +16,7 @@ import {
 import getBlessing from "./common/get-blessing";
 import findUninstallers from "./common/find-uninstallers";
 import saveAngels from "./common/save-angels";
+import { formatExitCode } from "../format/exit-code";
 
 // NSIS docs: http://nsis.sourceforge.net/Docs/Chapter3.html
 // When ran without elevate, some NSIS installers will silently fail.
@@ -86,7 +87,7 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
     if (code !== 0) {
       // TODO: standardize those errors so we can have dialogs for them
       // and have them be reported.
-      throw new Error(`NSIS Installer returned error ${code}`);
+      throw new Error(`NSIS Installer exit code: ${formatExitCode(code)}`);
     }
 
     logger.info("elevate/nsis installer completed successfully");
@@ -129,10 +130,9 @@ async function uninstall(opts: IUninstallOpts): Promise<IUninstallResult> {
     ctx,
     logger,
   });
-  logger.info(`elevate / nsis uninstaller exited with code ${code}`);
 
   if (code !== 0) {
-    throw new Error(`NSIS Uninstaller returned error ${code}`);
+    throw new Error(`NSIS Uninstaller exit code: ${formatExitCode(code)}`);
   }
 
   return {};

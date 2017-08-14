@@ -13,6 +13,7 @@ import {
   IUninstallResult,
 } from "./common/core";
 import bustGhosts from "./common/bust-ghosts";
+import { formatExitCode } from "../format/exit-code";
 
 const HFS_RE = /(\S*)\s*(Apple_HFS)?\s+(.*)\s*$/;
 
@@ -38,7 +39,7 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
     logger: devNull,
   });
   if (code !== 0) {
-    throw new Error(`hdiutil info failed with code ${code}`);
+    throw new Error(`hdiutil info failed with code ${formatExitCode(code)}`);
   }
 
   for (const entry of infoEntries) {
@@ -75,7 +76,9 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
         logger: devNull,
       });
       if (code !== 0) {
-        throw new Error(`hdiutil detach failed with code ${code}`);
+        throw new Error(
+          `hdiutil detach failed with code ${formatExitCode(code)}`,
+        );
       }
     }
   }
@@ -101,7 +104,7 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
     logger,
   });
   if (code !== 0) {
-    throw new Error(`hdiutil convert failed with code ${code}`);
+    throw new Error(`hdiutil convert failed with code ${formatExitCode(code)}`);
   }
 
   logger.info(`Attaching cdr file ${cdrPath}`);
@@ -131,7 +134,7 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
     logger: devNull,
   });
   if (code !== 0) {
-    throw new Error(`Failed to mount image, with code ${code}`);
+    throw new Error(`Failed to mount image, with code ${formatExitCode(code)}`);
   }
 
   if (!mountpoint) {
@@ -171,7 +174,9 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
       logger: devNull,
     });
     if (code !== 0) {
-      throw new Error(`Failed to mount image, with code ${code}`);
+      throw new Error(
+        `Failed to mount image, with code ${formatExitCode(code)}`,
+      );
     }
 
     rootLogger.info(`Removing cdr file ${cdrPath}`);
