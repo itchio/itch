@@ -71,8 +71,14 @@ export async function unarchiverList(
     }
     const normalizedPath = ospath.normalize(entry.XADFileName);
     files.push(normalizedPath);
-    sizes[normalizedPath] = entry.XADFileSize;
-    totalSize += entry.XADFileSize;
+
+    let size = +entry.XADFileSize;
+    if (isNaN(size)) {
+      size = 0;
+    }
+
+    sizes[normalizedPath] = size;
+    totalSize += size;
   }
 
   return { sizes, totalSize, files };

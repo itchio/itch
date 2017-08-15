@@ -4,7 +4,7 @@ import { createSelector, createStructuredSelector } from "reselect";
 
 import { IAppState, TabLayout, ITabParams, ITabData, IGameSet } from "../types";
 
-import GameGrid from "./game-grid";
+import GameGrid from "./game-grid/grid";
 import GameTable from "./game-table/table";
 
 import { ISortParams } from "./sort-types";

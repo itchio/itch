@@ -1,14 +1,14 @@
 import * as React from "react";
 
-import { connect } from "./connect";
+import { connect } from "../connect";
 
-import { dispatcher } from "../constants/action-types";
-import * as actions from "../actions";
+import { dispatcher } from "../../constants/action-types";
+import * as actions from "../../actions";
 
-import HubItem from "./hub-item";
-import HiddenIndicator from "./hidden-indicator";
+import HubItem from "../hub-item";
+import HiddenIndicator from "../hidden-indicator";
 
-import { IGameSet } from "../types";
+import { IGameSet } from "../../types";
 
 import {
   AutoSizer,
@@ -16,12 +16,12 @@ import {
   InfiniteLoader,
 } from "react-virtualized";
 
-import { IAutoSizerParams } from "./autosizer-types";
+import { IAutoSizerParams } from "../autosizer-types";
 
-import { Requester } from "./data-request";
+import { Requester } from "../data-request";
 
-import { HubGamesDiv } from "./games";
-import StyledGrid from "./styled-grid";
+import { HubGamesDiv } from "../games";
+import StyledGrid from "../styled-grid";
 
 interface ICellInfo {
   columnIndex: number;

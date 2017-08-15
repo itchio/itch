@@ -55,6 +55,7 @@ export interface IProps extends IHoverProps {
   stillCoverUrl: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
+  className?: string;
 }
 
 export default Cover;
