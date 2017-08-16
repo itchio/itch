@@ -110,7 +110,7 @@ function showReadyNotification(store: IStore, item: IDownloadItem) {
     store.dispatch(
       actions.notify({
         body: message,
-        onClick: actions.navigateToGame(item.game),
+        onClick: actions.navigateToGame({ game: item.game }),
       }),
     );
   }

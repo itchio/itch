@@ -13,22 +13,15 @@ export interface IDispatch {
   (action: IAction<any>): void;
 }
 
-export function dispatcher<T>(
+export function dispatcher<T, U>(
   dispatch: IDispatch,
-  actionCreator: (payload: T) => IAction<T>,
+  actionCreator: (payload: T) => IAction<U>,
 ) {
   return (payload: T) => {
     const action = actionCreator(payload);
     dispatch(action);
     return action;
   };
-}
-
-export function multiDispatcher<T>(
-  dispatch: IDispatch,
-  actionCreator: (...args: any[]) => IAction<T>,
-) {
-  return (...args: any[]) => dispatch(actionCreator(...args));
 }
 
 // run upgrade operations
@@ -212,10 +205,10 @@ export interface IOpenTabPayload {
   tab?: string;
 
   /** any data we already known about the tab */
-  data: Types.ITabData;
+  data?: Types.ITabData;
 
   /** whether to open a new tab in the background */
-  background: boolean;
+  background?: boolean;
 }
 
 export const NAVIGATE = "NAVIGATE";

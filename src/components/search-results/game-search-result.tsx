@@ -110,7 +110,8 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
   }
 
   getNavigateAction() {
-    return actions.navigateToGame(this.props.game);
+    const { game } = this.props;
+    return actions.navigateToGame({ game });
   }
 }
 

@@ -17,7 +17,7 @@ export default function(watcher: Watcher) {
     const wc = webContents.fromId(webContentsId);
     wc.on("will-navigate", (ev, url) => {
       ev.preventDefault();
-      store.dispatch(actions.navigate(`url/${url}`));
+      store.dispatch(actions.navigate({ tab: `url/${url}` }));
     });
   });
 }

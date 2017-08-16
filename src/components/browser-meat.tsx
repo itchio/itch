@@ -39,11 +39,7 @@ import GameBrowserContext from "./game-browser-context";
 import { transformUrl } from "../util/navigation";
 
 import { IAppState } from "../types";
-import {
-  IDispatch,
-  dispatcher,
-  multiDispatcher,
-} from "../constants/action-types";
+import { IDispatch, dispatcher } from "../constants/action-types";
 
 import "electron";
 
@@ -283,12 +279,11 @@ export class BrowserMeat extends React.PureComponent<
   }
 
   newWindow = (e: any) => {
-    // TODO: type
     const { navigate } = this.props;
     const { url } = e;
 
     const background = e.disposition === "background-tab";
-    navigate("url/" + url, {}, background);
+    navigate({ tab: "url/" + url, background });
   };
 
   isFrozen() {
@@ -529,7 +524,7 @@ export class BrowserMeat extends React.PureComponent<
     const { navigate } = this.props;
 
     if (navigation.isAppSupported(url) && this.isFrozen()) {
-      navigate(`url/${url}`);
+      navigate({ tab: `url/${url}` });
     } else {
       const browserState = { ...this.state.browserState, url };
       this.setState({ browserState });
@@ -576,7 +571,7 @@ export default connect<IProps>(injectIntl(BrowserMeat), {
     proxySource: (state: IAppState) => state.system.proxySource,
   }),
   dispatch: (dispatch: IDispatch) => ({
-    navigate: multiDispatcher(dispatch, actions.navigate),
+    navigate: dispatcher(dispatch, actions.navigate),
     evolveTab: dispatcher(dispatch, actions.evolveTab),
     tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
     tabReloaded: dispatcher(dispatch, actions.tabReloaded),

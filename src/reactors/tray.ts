@@ -63,7 +63,7 @@ function setMenu(trayMenu: IMenuTemplate, store: IStore) {
 
 async function go(store: IStore, path: string) {
   store.dispatch(actions.focusWindow({}));
-  store.dispatch(actions.navigate(path));
+  store.dispatch(actions.navigate({ tab: path }));
 }
 
 function refreshTray(store: IStore, i18n: II18nState) {

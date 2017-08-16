@@ -36,7 +36,7 @@ export class Collections extends React.PureComponent<IProps & IDerivedProps> {
         >
           <Link
             label={intl.formatMessage({ id: "outlinks.manage_collections" })}
-            onClick={e => navigate(`url/${urls.myCollections}`)}
+            onClick={e => navigate({ tab: `url/${urls.myCollections}` })}
           />
         </GameFilters>
         <CollectionsGrid />

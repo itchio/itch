@@ -710,7 +710,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             className="action"
             onClick={e => {
               e.preventDefault();
-              navigate(`locations/${name}`);
+              navigate({ tab: `locations/${name}` });
             }}
           >
             <Icon icon="folder-open" />

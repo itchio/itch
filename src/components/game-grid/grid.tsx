@@ -3,7 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { connect } from "../connect";
 
-import { dispatcher, multiDispatcher } from "../../constants/action-types";
+import { dispatcher } from "../../constants/action-types";
 import * as actions from "../../actions";
 
 import { first } from "underscore";
@@ -106,7 +106,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     if (this.isCoverClick(ev)) {
       this.eventToGame(ev, game => {
-        this.props.navigateToGame(game);
+        this.props.navigateToGame({ game });
       });
     }
   };
@@ -172,7 +172,7 @@ export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
     }),
   dispatch: dispatch => ({
     clearFilters: dispatcher(dispatch, actions.clearFilters),
-    navigateToGame: multiDispatcher(dispatch, actions.navigateToGame),
+    navigateToGame: dispatcher(dispatch, actions.navigateToGame),
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
     tabPaginationChanged: dispatcher(dispatch, actions.tabPaginationChanged),
   }),

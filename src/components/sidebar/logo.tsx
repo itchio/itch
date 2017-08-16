@@ -14,7 +14,7 @@ class Logo extends React.PureComponent<IDerivedProps> {
 
     return (
       <LogoDiv
-        onClick={e => navigate("featured")}
+        onClick={e => navigate({ tab: "featured" })}
         data-rh-at="bottom"
         data-rh={`itch v${appVersion}`}
       >
@@ -36,6 +36,7 @@ const LogoDiv = styled.div`
   -webkit-app-region: drag;
 
   margin-top: 10px;
+  height: 69px;
 
   img {
     width: 120px;

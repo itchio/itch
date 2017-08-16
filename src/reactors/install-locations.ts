@@ -86,7 +86,7 @@ export default function(watcher: Watcher, db: DB) {
 
       const response = await promise;
       if (response === 0) {
-        store.dispatch(actions.navigate(`locations/${name}`));
+        store.dispatch(actions.navigate({ tab: `locations/${name}` }));
       }
       return;
     }

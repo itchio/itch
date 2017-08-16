@@ -11,7 +11,7 @@ import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import { GridContainerDiv, GridDiv } from "./grid-styles";
 import CollectionRow from "./row";
 import * as actions from "../../actions";
-import { multiDispatcher } from "../../constants/action-types";
+import { dispatcher } from "../../constants/action-types";
 import { whenClickNavigates } from "../when-click-navigates";
 
 const tab = "collections";
@@ -82,7 +82,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
     whenClickNavigates(ev, ({ background }) => {
       this.eventToCollection(ev, collection => {
         const { navigateToCollection } = this.props;
-        navigateToCollection(collection, background);
+        navigateToCollection({ collection, background });
       });
     });
   };
@@ -140,9 +140,6 @@ export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
     }),
   ),
   dispatch: dispatch => ({
-    navigateToCollection: multiDispatcher(
-      dispatch,
-      actions.navigateToCollection,
-    ),
+    navigateToCollection: dispatcher(dispatch, actions.navigateToCollection),
   }),
 });

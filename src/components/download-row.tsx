@@ -21,6 +21,7 @@ import styled, * as styles from "./styles";
 
 import format, { formatString } from "./format";
 import { injectIntl, InjectedIntl } from "react-intl";
+import doesEventMeanBackground from "./when-click-navigates";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -160,7 +161,8 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   onNavigate = () => {
     const { item, navigateToGame } = this.props;
-    navigateToGame(item.game);
+    const { game } = item;
+    navigateToGame({ game });
   };
 
   render() {
@@ -239,7 +241,8 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
           hover={hover}
           coverUrl={coverUrl}
           stillCoverUrl={stillCoverUrl}
-          onClick={() => navigateToGame(game)}
+          onClick={ev =>
+            navigateToGame({ game, background: doesEventMeanBackground(ev) })}
         />
         <div className="stats" onClick={onStatsClick}>
           {this.progress()}

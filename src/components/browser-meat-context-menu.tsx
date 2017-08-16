@@ -60,7 +60,7 @@ export default function create(
           id: "openInNewTab",
           label: intl.formatMessage({ id: "web.context_menu.open_in_new_tab" }),
           click() {
-            opts.navigate("url/" + props.linkURL, {}, /* background */ true);
+            opts.navigate({ tab: "url/" + props.linkURL, background: true });
           },
         },
         {

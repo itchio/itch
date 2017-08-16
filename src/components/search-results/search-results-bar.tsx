@@ -120,7 +120,7 @@ export class SearchResultBar extends React.PureComponent<
 
     const openAsTab = () => {
       closeSearch({});
-      navigate(`search/${query}`);
+      navigate({ tab: `search/${query}` });
     };
 
     return (
@@ -224,7 +224,7 @@ export class SearchResultBar extends React.PureComponent<
             chosen={index++ === highlight}
             active={active}
             onClick={() => {
-              navigateToUser(user);
+              navigateToUser({ user });
               closeSearch({});
             }}
           />,
@@ -248,7 +248,7 @@ export class SearchResultBar extends React.PureComponent<
             chosen={index++ === highlight}
             active={active}
             onClick={() => {
-              navigateToGame(game);
+              navigateToGame({ game });
               closeSearch({});
             }}
           />,

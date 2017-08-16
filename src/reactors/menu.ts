@@ -49,9 +49,9 @@ function convertMenuAction(payload: IMenuItemPayload, runtime: IRuntime) {
     case "menu.file.quit":
       return actions.quitWhenMain({});
     case "menu.file.preferences":
-      return actions.navigate("preferences");
+      return actions.navigate({ tab: "preferences" });
     case "menu.view.downloads":
-      return actions.navigate("downloads");
+      return actions.navigate({ tab: "downloads" });
     case "menu.account.change_user":
       return actions.changeUser({});
     case "menu.help.view_terms":

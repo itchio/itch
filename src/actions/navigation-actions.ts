@@ -96,35 +96,48 @@ import {
   ITabGotWebContentsPayload,
 } from "../constants/action-types";
 
-const internalNavigate = createAction<INavigatePayload, any>(NAVIGATE);
-export const navigate = (tab: any, data = {}, background = false) => {
-  if (typeof tab === "object") {
-    return internalNavigate(tab);
-  } else {
-    return internalNavigate({ tab, data, background });
-  }
-};
+export const navigate = createAction<INavigatePayload>(NAVIGATE);
 
 export const internalOpenTab = createAction<IOpenTabPayload>(OPEN_TAB);
 export const openTab = (payload: IOpenTabPayload) => {
   return internalOpenTab({ ...payload, tab: uuid() });
 };
+
 export const focusTab = createAction<IFocusTabPayload>(FOCUS_TAB);
 export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);
 
-export const navigateToGame = (game: IGame, background = false) =>
-  navigate(`games/${game.id}`, gameToTabData(game), background);
-export const navigateToUser = (user: IUser, background = false) =>
-  navigate(`users/${user.id}`, userToTabData(user), background);
-export const navigateToCollection = (
-  collection: ICollection,
-  background = false,
-) =>
-  navigate(
-    `collections/${collection.id}`,
-    collectionToTabData(collection),
-    background,
-  );
+interface INavigateToGamePayload {
+  game: IGame;
+  background?: boolean;
+}
+export const navigateToGame = (payload: INavigateToGamePayload) =>
+  navigate({
+    tab: `games/${payload.game.id}`,
+    data: gameToTabData(payload.game),
+    background: payload.background,
+  });
+
+interface INavigateToUserPayload {
+  user: IUser;
+  background?: boolean;
+}
+export const navigateToUser = (payload: INavigateToUserPayload) =>
+  navigate({
+    tab: `users/${payload.user.id}`,
+    data: userToTabData(payload.user),
+    background: payload.background,
+  });
+
+interface INavigateToCollectionPayload {
+  collection: ICollection;
+  background?: boolean;
+}
+export const navigateToCollection = (payload: INavigateToCollectionPayload) =>
+  navigate({
+    tab: `collections/${payload.collection.id}`,
+    data: collectionToTabData(payload.collection),
+    background: payload.background,
+  });
 
 export const moveTab = createAction<IMoveTabPayload>(MOVE_TAB);
 export const evolveTab = createAction<IEvolveTabPayload>(EVOLVE_TAB);

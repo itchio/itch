@@ -116,7 +116,7 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.downloadStarted, async (store, action) => {
-    store.dispatch(actions.navigate({ id: "downloads", background: true }));
+    store.dispatch(actions.navigate({ tab: "downloads", background: true }));
   });
 
   let pathSelector: (state: IAppState) => void;

@@ -148,7 +148,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
     } = this.props;
 
     if (task === "download") {
-      navigate("downloads");
+      navigate({ tab: "downloads" });
     } else {
       if (platformCompatible) {
         if (task === "launch") {

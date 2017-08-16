@@ -61,13 +61,13 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
     {
       icon: "download",
       label: ["sidebar.downloads"],
-      onClick: () => this.props.navigate("downloads"),
+      onClick: () => this.props.navigate({ tab: "downloads" }),
     },
     {
       icon: "cog",
       label: ["sidebar.preferences"],
       id: "user-menu-preferences",
-      onClick: () => this.props.navigate("preferences"),
+      onClick: () => this.props.navigate({ tab: "preferences" }),
     },
     {
       type: "separator",
@@ -91,7 +91,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
     {
       icon: "lifebuoy",
       label: ["menu.help.help"],
-      onClick: () => this.props.navigate("url/" + urls.manual),
+      onClick: () => this.props.navigate({ tab: "url/" + urls.manual }),
     },
     {
       type: "separator",
@@ -110,6 +110,10 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
   ];
 
   render() {
+    if (!this.props.me) {
+      return null; // cf. #1405
+    }
+
     return <Dropdown items={this.items} inner={this.me()} updown />;
   }
 

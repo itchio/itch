@@ -34,7 +34,8 @@ class UserSearchResult extends GenericSearchResult<IUserSearchResultProps> {
   }
 
   getNavigateAction() {
-    return actions.navigateToUser(this.props.user);
+    const { user } = this.props;
+    return actions.navigateToUser({ user });
   }
 }
 
