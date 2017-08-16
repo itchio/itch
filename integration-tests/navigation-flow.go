@@ -17,7 +17,7 @@ func navigationFlow(r *runner) {
 	r.clickWithTimeout(currTab+".indicator-clear-filters", 1*time.Second)
 
 	r.logf("checking grid is shown")
-	must(r.waitForVisible(currTab + ".grid-item"))
+	must(r.waitForVisible(currTab + ".grid--cell"))
 
 	r.logf("switching to table layout")
 	must(r.click(currTab + ".layout-picker[data-layout='table']"))
