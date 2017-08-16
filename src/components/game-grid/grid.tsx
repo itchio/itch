@@ -10,7 +10,6 @@ import { first } from "underscore";
 
 import getByIds from "../../helpers/get-by-ids";
 import { IGameSet, ICommonsState } from "../../types";
-import { IOnSortChange, SortDirection, SortKey } from "../sort-types";
 
 import Cell from "./cell";
 import { GridContainerDiv, GridDiv } from "./grid-styles";
@@ -153,10 +152,6 @@ interface IProps extends IDimensionsProps {
   gameIds: number[];
   hiddenCount: number;
   tab: string;
-
-  sortBy: SortKey;
-  sortDirection?: SortDirection;
-  onSortChange: IOnSortChange;
 }
 
 interface IDerivedProps {

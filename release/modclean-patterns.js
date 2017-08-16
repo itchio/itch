@@ -197,7 +197,6 @@ module.exports = {
     "recharts/es6",
     "recharts/src",
     "styled-components/src",
-    "react-virtualized/dist/es",
     "knex/src",
   ],
 

@@ -102,7 +102,6 @@
     "react-select": "^1.0.0-rc.2",
     "react-sortable-hoc": "^0.4.12",
     "react-timeago-titlefix": "3.1.1-fix1",
-    "react-virtualized": "^9.7.6",
     "recharts": "^0.15.1",
     "redux": "^3.6.0",
     "redux-actions": "^0.9.1",
