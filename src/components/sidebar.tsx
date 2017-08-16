@@ -75,7 +75,13 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
       {map(items, (id, index) => {
         const active = currentId === id;
         return (
-          <SidebarTab key={id} id={id} active={active} index={index} sortable />
+          <SidebarTab
+            key={id}
+            tab={id}
+            active={active}
+            index={index}
+            sortable
+          />
         );
       })}
     </SortableListContainer>
@@ -131,7 +137,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
             </SidebarHeading>
           </SidebarSection>
           {map(tabs.constant, (id, index) => {
-            return <SidebarTab key={id} id={id} active={currentId === id} />;
+            return <SidebarTab key={id} tab={id} active={currentId === id} />;
           })}
 
           <SidebarSection>
@@ -216,7 +222,7 @@ export default connect<IProps>(injectIntl(Sidebar), {
     fullscreen: (state: IAppState) => state.ui.mainWindow.fullscreen,
     sidebarWidth: (state: IAppState) => state.preferences.sidebarWidth || 240,
     me: (state: IAppState) => state.session.credentials.me,
-    id: (state: IAppState) => state.session.navigation.id,
+    id: (state: IAppState) => state.session.navigation.tab,
     tabs: (state: IAppState) => state.session.navigation.tabs,
   }),
   dispatch: dispatch => ({

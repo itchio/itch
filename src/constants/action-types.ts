@@ -209,7 +209,7 @@ export interface ICloseAllTabsPayload {}
 export const OPEN_TAB = "OPEN_TAB";
 export interface IOpenTabPayload {
   /** the id of the new tab to open (generated) */
-  id?: string;
+  tab?: string;
 
   /** any data we already known about the tab */
   data: Types.ITabData;
@@ -221,13 +221,13 @@ export interface IOpenTabPayload {
 export const NAVIGATE = "NAVIGATE";
 export interface INavigatePayload extends IOpenTabPayload {
   /** tab to navigate to */
-  id: string;
+  tab: string;
 }
 
 export const FOCUS_TAB = "FOCUS_TAB";
 export interface IFocusTabPayload {
   /** the id of the new tab */
-  id: string;
+  tab: string;
 }
 
 export const FOCUS_NTH_TAB = "FOCUS_NTH_TAB";
@@ -247,7 +247,7 @@ export interface IMoveTabPayload {
 export const EVOLVE_TAB = "EVOLVE_TAB";
 export interface IEvolveTabPayload {
   /** the tab to evolve */
-  id: string;
+  tab: string;
 
   /** the tab's new path */
   path: string;
@@ -262,7 +262,7 @@ export interface IEvolveTabPayload {
 export const TAB_EVOLVED = "TAB_EVOLVED";
 export interface ITabEvolvedPayload {
   /** the tab that evolved (maybe went from a boring web tab to a game tab) */
-  id: string;
+  tab: string;
 
   /** the new data we got on it */
   data: Types.ITabData;
@@ -273,7 +273,7 @@ export interface INewTabPayload {}
 
 export const CLOSE_TAB = "CLOSE_TAB";
 export interface ICloseTabPayload {
-  id: string;
+  tab: string;
 }
 
 export const CLOSE_CURRENT_TAB = "CLOSE_CURRENT_TAB";
@@ -340,13 +340,13 @@ export interface IToggleMiniSidebarPayload {}
 export const TAB_RELOADED = "TAB_RELOADED";
 export interface ITabReloadedPayload {
   /** the tab that just reloaded */
-  id: string;
+  tab: string;
 }
 
 export const TAB_CHANGED = "TAB_CHANGED";
 export interface ITabChangedPayload {
   /** the newly active tab */
-  id: string;
+  tab: string;
 }
 
 export const TABS_CHANGED = "TABS_CHANGED";
@@ -358,7 +358,7 @@ export interface ITabsRestoredPayload extends Types.IItchAppTabs {}
 export const TAB_DATA_FETCHED = "TAB_DATA_FETCHED";
 export interface ITabDataFetchedPayload {
   /** tab for which we fetched data */
-  id: string;
+  tab: string;
 
   /** the data we fetched */
   data: Types.ITabData;
@@ -367,7 +367,7 @@ export interface ITabDataFetchedPayload {
 export const TAB_PARAMS_CHANGED = "TAB_PARAMS_CHANGED";
 export interface ITabParamsChangedPayload {
   /** tab for which the params are changing */
-  id: string;
+  tab: string;
 
   /** the params that changed (deep partial) */
 
@@ -377,7 +377,7 @@ export interface ITabParamsChangedPayload {
 export const TAB_PAGINATION_CHANGED = "TAB_PAGINATION_CHANGED";
 export interface ITabPaginationChangedPayload {
   /** tab for which the pagination is changing */
-  id: string;
+  tab: string;
 
   /** the pagination that changed (deep partial) */
 
@@ -398,7 +398,7 @@ export interface IAnalyzePagePayload {
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
 export interface IOpenTabContextMenuPayload {
   /** id of the tab to open the context menu of */
-  id: string;
+  tab: string;
 }
 
 export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
@@ -1036,7 +1036,7 @@ export interface IViewCommunityProfilePayload {}
 
 export const TAB_LOADING = "TAB_LOADING";
 export interface ITabLoadingPayload {
-  id: string;
+  tab: string;
   loading: boolean;
 }
 

@@ -114,7 +114,7 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps> {
             return (
               <NewTabItem
                 key={path}
-                onClick={() => evolveTab({ id: tab, path })}
+                onClick={() => evolveTab({ tab: tab, path })}
               >
                 <Icon icon={icon} />
                 <span>
@@ -177,7 +177,7 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps> {
 
     const url = await transformUrl(urlField.value);
     const { tab, evolveTab } = this.props;
-    evolveTab({ id: tab, path: `url/${url}` });
+    evolveTab({ tab: tab, path: `url/${url}` });
   };
 }
 

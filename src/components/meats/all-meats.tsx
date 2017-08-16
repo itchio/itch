@@ -84,7 +84,7 @@ const allTabsSelector = createSelector(
 
 export default connect<IProps>(AllMeats, {
   state: createStructuredSelector({
-    id: (state: IAppState) => state.session.navigation.id,
+    id: (state: IAppState) => state.session.navigation.tab,
     tabs: (state: IAppState) => allTabsSelector(state),
     tabData: (state: IAppState) => state.session.tabData,
   }),

@@ -36,11 +36,11 @@ function openMenu(store: IStore, template: IMenuItem[]) {
 
 export default function(watcher: Watcher) {
   watcher.on(actions.openTabContextMenu, async (store, action) => {
-    const { id } = action.payload;
+    const { tab } = action.payload;
 
-    const data = store.getState().session.tabData[id];
+    const data = store.getState().session.tabData[tab];
     if (!data) {
-      logger.warn(`Can't make context menu for non-transient tab ${id}`);
+      logger.warn(`Can't make context menu for non-transient tab ${tab}`);
       return;
     }
 

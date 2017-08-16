@@ -178,12 +178,12 @@ export class BrowserMeat extends React.PureComponent<
   }
 
   didStartLoading = () => {
-    this.props.tabLoading({ id: this.props.tab, loading: true });
+    this.props.tabLoading({ tab: this.props.tab, loading: true });
     this.updateBrowserState({ loading: true });
   };
 
   didStopLoading = () => {
-    this.props.tabLoading({ id: this.props.tab, loading: false });
+    this.props.tabLoading({ tab: this.props.tab, loading: false });
     this.updateBrowserState({ loading: false });
     this.analyzePage(this.state.browserState.url);
   };
@@ -191,13 +191,13 @@ export class BrowserMeat extends React.PureComponent<
   pageTitleUpdated = (e: any) => {
     // TODO: type
     const { tab, tabDataFetched } = this.props;
-    tabDataFetched({ id: tab, data: { webTitle: e.title } });
+    tabDataFetched({ tab: tab, data: { webTitle: e.title } });
   };
 
   pageFaviconUpdated = (e: any) => {
     // TODO: type
     const { tab, tabDataFetched } = this.props;
-    tabDataFetched({ id: tab, data: { webFavicon: e.favicons[0] } });
+    tabDataFetched({ tab: tab, data: { webFavicon: e.favicons[0] } });
   };
 
   didNavigate = (e: any) => {
@@ -321,9 +321,9 @@ export class BrowserMeat extends React.PureComponent<
           if (parsed.search) {
             newPath += parsed.search;
           }
-          evolveTab({ id: tab, path: newPath });
+          evolveTab({ tab: tab, path: newPath });
         } else {
-          evolveTab({ id: tab, path: `url/${url}` });
+          evolveTab({ tab: tab, path: `url/${url}` });
         }
       },
     );
@@ -497,7 +497,7 @@ export class BrowserMeat extends React.PureComponent<
       wv.reload();
     });
     const { tab, tabReloaded } = this.props;
-    tabReloaded({ id: tab });
+    tabReloaded({ tab: tab });
   };
 
   goBack = () => {

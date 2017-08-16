@@ -22,7 +22,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.navigate, async (store, action) => {
     const state = store.getState();
-    const { id, background } = action.payload;
+    const { tab, background } = action.payload;
 
     const { tabData } = state.session;
 
@@ -30,27 +30,27 @@ export default function(watcher: Watcher) {
       state.session.navigation.tabs.constant,
     );
 
-    if (constantTabs.has(id)) {
+    if (constantTabs.has(tab)) {
       // switching to constant tab, that's good
       if (!background) {
-        store.dispatch(actions.focusTab({ id }));
+        store.dispatch(actions.focusTab({ tab }));
       }
       return;
     }
 
-    if (tabData[id]) {
+    if (tabData[tab]) {
       // switching to existing tab by id - that's fine
       if (!background) {
-        store.dispatch(actions.focusTab({ id }));
+        store.dispatch(actions.focusTab({ tab }));
       }
       return;
     }
 
     for (const tabId of Object.keys(tabData)) {
-      if (tabData[tabId].path === id) {
+      if (tabData[tabId].path === tab) {
         // switching by path is cool
         if (!background) {
-          store.dispatch(actions.focusTab({ id: tabId }));
+          store.dispatch(actions.focusTab({ tab: tabId }));
         }
         return;
       }
@@ -59,13 +59,13 @@ export default function(watcher: Watcher) {
     const { data } = action.payload;
 
     // must be a new tab then!
-    if (staticTabData[id]) {
+    if (staticTabData[tab]) {
       store.dispatch(
         actions.internalOpenTab({
-          id,
+          tab,
           background,
           data: {
-            path: id,
+            path: tab,
             ...data,
           },
         }),
@@ -75,7 +75,7 @@ export default function(watcher: Watcher) {
         actions.openTab({
           background,
           data: {
-            path: id,
+            path: tab,
             ...data,
           },
         }),
@@ -84,11 +84,11 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.evolveTab, async (store, action) => {
-    const { id, path, extras } = action.payload;
+    const { tab, path, extras } = action.payload;
 
     store.dispatch(
       actions.tabEvolved({
-        id,
+        tab,
         data: {
           path,
           ...extras,
@@ -101,17 +101,17 @@ export default function(watcher: Watcher) {
     const { transient } = store.getState().session.navigation.tabs;
 
     // woo !
-    for (const id of transient) {
-      store.dispatch(actions.closeTab({ id }));
+    for (const tab of transient) {
+      store.dispatch(actions.closeTab({ tab }));
     }
   });
 
   watcher.on(actions.closeCurrentTab, async (store, action) => {
-    const { tabs, id } = store.getState().session.navigation;
+    const { tabs, tab } = store.getState().session.navigation;
     const { transient } = tabs;
 
-    if (contains(transient, id)) {
-      store.dispatch(actions.closeTab({ id }));
+    if (contains(transient, tab)) {
+      store.dispatch(actions.closeTab({ tab }));
     }
   });
 
@@ -124,10 +124,10 @@ export default function(watcher: Watcher) {
   watcher.onAll(async (store, action) => {
     if (!pathSelector) {
       pathSelector = createSelector(
-        (state: IAppState) => state.session.navigation.id,
-        id => {
+        (state: IAppState) => state.session.navigation.tab,
+        tab => {
           setImmediate(() => {
-            store.dispatch(actions.tabChanged({ id }));
+            store.dispatch(actions.tabChanged({ tab }));
           });
         },
       );

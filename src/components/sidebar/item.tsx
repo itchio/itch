@@ -153,7 +153,7 @@ class Item extends React.PureComponent<IProps, IState> {
   };
 
   render() {
-    const { count, sublabel, progress, id, path, label, active } = this.props;
+    const { count, sublabel, progress, tab, path, label, active } = this.props;
     const { fresh } = this.state;
     const { onClose, onContextMenu } = this.props;
 
@@ -172,7 +172,7 @@ class Item extends React.PureComponent<IProps, IState> {
         onMouseUp={this.onMouseUp}
         onContextMenu={onContextMenu}
         data-path={path}
-        data-id={id}
+        data-id={tab}
       >
         <Row>
           <IconContainer>
@@ -220,7 +220,7 @@ class Item extends React.PureComponent<IProps, IState> {
 
 interface IProps {
   path: string;
-  id: string;
+  tab: string;
   label: ILocalizedString;
   active: boolean;
   count?: number;

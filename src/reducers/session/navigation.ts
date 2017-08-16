@@ -17,43 +17,43 @@ const initialState = {
   },
   loadingTabs: {},
   lastConstant: "featured",
-  id: "featured",
+  tab: "featured",
 } as ISessionNavigationState;
 
 export default reducer<ISessionNavigationState>(initialState, on => {
   on(actions.tabLoading, (state, action) => {
-    const { id, loading } = action.payload;
+    const { tab, loading } = action.payload;
     if (loading) {
       return {
         ...state,
         loadingTabs: {
           ...state.loadingTabs,
-          [id]: true,
+          [tab]: true,
         },
       };
     } else {
       return {
         ...state,
-        loadingTabs: omit(state.loadingTabs, id),
+        loadingTabs: omit(state.loadingTabs, tab),
       };
     }
   });
 
   on(actions.tabChanged, (state, action) => {
     const { constant } = state.tabs;
-    const { id } = action.payload;
+    const { tab } = action.payload;
 
-    if (!id) {
+    if (!tab) {
       return state;
     }
 
-    if (constant.indexOf(id) === -1) {
+    if (constant.indexOf(tab) === -1) {
       return state;
     }
 
     return {
       ...state,
-      lastConstant: id,
+      lastConstant: tab,
     };
   });
 
@@ -66,25 +66,25 @@ export default reducer<ISessionNavigationState>(initialState, on => {
   });
 
   on(actions.openTab, (state, action) => {
-    const { id, background } = action.payload;
+    const { tab, background } = action.payload;
     const { constant, transient } = state.tabs;
 
     return {
       ...state,
-      id: background ? state.id : id,
+      tab: background ? state.tab : tab,
       tabs: {
         constant,
-        transient: [id, ...transient],
+        transient: [tab, ...transient],
       },
     };
   });
 
   on(actions.focusTab, (state, action) => {
-    const { id } = action.payload;
+    const { tab } = action.payload;
 
     return {
       ...state,
-      id,
+      tab,
     };
   });
 
@@ -106,8 +106,8 @@ export default reducer<ISessionNavigationState>(initialState, on => {
   });
 
   on(actions.closeTab, (state, action) => {
-    const { id, tabs } = state;
-    const closeId = action.payload.id || id;
+    const { tab, tabs } = state;
+    const closeId = action.payload.tab || tab;
     const { constant, transient } = tabs;
 
     if (constant.indexOf(closeId) !== -1) {
@@ -116,12 +116,12 @@ export default reducer<ISessionNavigationState>(initialState, on => {
     }
 
     const ids = [...constant, ...transient];
-    const index = ids.indexOf(id);
+    const index = ids.indexOf(tab);
 
     const newTransient = reject(transient, tabId => tabId === closeId);
 
-    let newId = id;
-    if (id === closeId) {
+    let newId = tab;
+    if (tab === closeId) {
       const newIds = [...constant, ...newTransient];
 
       let nextIndex = index;
@@ -138,7 +138,7 @@ export default reducer<ISessionNavigationState>(initialState, on => {
 
     return {
       ...state,
-      id: newId,
+      tab: newId,
       tabs: {
         ...state.tabs,
         transient: newTransient,
@@ -149,7 +149,7 @@ export default reducer<ISessionNavigationState>(initialState, on => {
   on(actions.tabsRestored, (state, action) => {
     const snapshot = action.payload;
 
-    const id = snapshot.current || state.id;
+    const tab = snapshot.current || state.tab;
     const transient = filter(
       map(snapshot.items, (tab: ITabDataSave) => {
         if (typeof tab !== "object" || !tab.id || !tab.path) {
@@ -163,7 +163,7 @@ export default reducer<ISessionNavigationState>(initialState, on => {
 
     return {
       ...state,
-      id,
+      tab,
       tabs: {
         ...state.tabs,
         transient,

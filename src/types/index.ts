@@ -639,7 +639,7 @@ export interface ISessionNavigationState {
   page: string;
 
   /** current tab id */
-  id: string;
+  tab: string;
 
   /** last constant tab visited */
   lastConstant: string;

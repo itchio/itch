@@ -43,7 +43,7 @@ suite(__filename, s => {
       "doesn't queue download more than once",
     );
     t.same(
-      w.store.getState().session.navigation.id,
+      w.store.getState().session.navigation.tab,
       "downloads",
       "..but switches to downloads tab",
     );

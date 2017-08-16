@@ -29,7 +29,7 @@ import { formatDurationAsMessage } from "../../format/datetime";
 
 interface ISortableHubSidebarItemProps {
   props: any & {
-    id: string;
+    tab: string;
   };
 }
 
@@ -41,36 +41,36 @@ const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
 
 class Tab extends React.PureComponent<IProps & IDerivedProps> {
   onClick = () => {
-    const { id, navigate } = this.props;
-    navigate({ id });
+    const { tab, navigate } = this.props;
+    navigate({ tab });
   };
 
   onClose = () => {
-    const { id, closeTab } = this.props;
-    closeTab({ id });
+    const { tab, closeTab } = this.props;
+    closeTab({ tab });
   };
 
   onContextMenu = () => {
-    const { id, openTabContextMenu } = this.props;
-    openTabContextMenu({ id });
+    const { tab, openTabContextMenu } = this.props;
+    openTabContextMenu({ tab });
   };
 
   render() {
-    const { id, index, sortable, data, active, loading } = this.props;
+    const { tab, index, sortable, data, active, loading } = this.props;
 
-    const path = data.path || id;
+    const path = data.path || tab;
     let iconImage = data.iconImage;
     if (/^url/.test(path)) {
       iconImage = data.webFavicon;
     }
 
-    const label = makeLabel(id, data);
+    const label = makeLabel(tab, data);
     const icon = pathToIcon(path);
     let count = 0;
     let progress = 0;
     let sublabel: ILocalizedString = null;
 
-    if (id === "downloads") {
+    if (tab === "downloads") {
       const { downloads } = this.props;
       count = size(getFinishedDownloads(downloads));
       const activeDownload = getActiveDownload(downloads);
@@ -101,7 +101,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     const props = {
-      id,
+      tab,
       path,
       label,
       icon,
@@ -119,15 +119,15 @@ class Tab extends React.PureComponent<IProps & IDerivedProps> {
     };
 
     if (sortable) {
-      return <SortableItem key={id} index={index} props={props} />;
+      return <SortableItem key={tab} index={index} props={props} />;
     } else {
-      return <Item key={id} {...props} />;
+      return <Item key={tab} {...props} />;
     }
   }
 }
 
 interface IProps {
-  id: string;
+  tab: string;
   index?: number;
   active: boolean;
   sortable?: boolean;

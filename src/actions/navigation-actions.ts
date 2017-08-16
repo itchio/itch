@@ -97,17 +97,17 @@ import {
 } from "../constants/action-types";
 
 const internalNavigate = createAction<INavigatePayload, any>(NAVIGATE);
-export const navigate = (id: any, data = {}, background = false) => {
-  if (typeof id === "object") {
-    return internalNavigate(id);
+export const navigate = (tab: any, data = {}, background = false) => {
+  if (typeof tab === "object") {
+    return internalNavigate(tab);
   } else {
-    return internalNavigate({ id, data, background });
+    return internalNavigate({ tab, data, background });
   }
 };
 
 export const internalOpenTab = createAction<IOpenTabPayload>(OPEN_TAB);
 export const openTab = (payload: IOpenTabPayload) => {
-  return internalOpenTab({ ...payload, id: uuid() });
+  return internalOpenTab({ ...payload, tab: uuid() });
 };
 export const focusTab = createAction<IFocusTabPayload>(FOCUS_TAB);
 export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);

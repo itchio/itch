@@ -143,7 +143,7 @@ export class Fetcher {
     }
 
     const action = actions.tabDataFetched({
-      id: this.tabId,
+      tab: this.tabId,
       data,
     });
     this.ctx.store.dispatch(action);

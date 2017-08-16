@@ -26,7 +26,7 @@ let selector: (state: IAppState) => void;
 const makeSelector = (store: IStore) =>
   createSelector(
     (state: IAppState) => state.preferences.installLocations,
-    (state: IAppState) => state.session.navigation.id,
+    (state: IAppState) => state.session.navigation.tab,
     (installLocs, id) => {
       setImmediate(() => {
         if (id === "preferences") {
@@ -240,7 +240,7 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.taskEnded, async (store, action) => {
-    const id = store.getState().session.navigation.id;
+    const id = store.getState().session.navigation.tab;
     if (id === "preferences") {
       store.dispatch(actions.queryFreeSpace({}));
     }

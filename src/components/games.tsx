@@ -45,7 +45,7 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     this.props.tabParamsChanged({
-      id: tab,
+      tab: tab,
       params: { sortBy, sortDirection },
     });
   };

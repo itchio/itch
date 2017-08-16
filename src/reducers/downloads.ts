@@ -91,7 +91,13 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
 
   on(actions.downloadEnded, (state, action) => {
     const { id, finishedAt, err } = action.payload;
-    return updateSingle(state, { id, finished: true, finishedAt, err });
+    return updateSingle(state, {
+      id,
+      finished: true,
+      finishedAt,
+      progress: {},
+      err,
+    });
   });
 
   on(actions.downloadSpeedDatapoint, (state, action) => {

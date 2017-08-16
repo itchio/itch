@@ -7,13 +7,13 @@ import * as actions from "../actions";
 import { IStore } from "../types";
 
 async function applyTabOffset(store: IStore, offset: number) {
-  const { id, tabs } = store.getState().session.navigation;
+  const { tab, tabs } = store.getState().session.navigation;
   const { constant, transient } = tabs;
 
   const ids = constant.concat(transient);
   const numTabs = ids.length;
 
-  const index = ids.indexOf(id);
+  const index = ids.indexOf(tab);
 
   // adding numPaths takes care of negative wrapping too!
   const newIndex = (index + offset + numTabs) % numTabs;

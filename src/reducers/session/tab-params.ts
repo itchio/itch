@@ -8,12 +8,12 @@ const emptyObj = {};
 
 export default reducer<ITabParamsSet>(initialState, on => {
   on(actions.tabParamsChanged, (state, action) => {
-    const { id, params } = action.payload;
+    const { tab, params } = action.payload;
 
     return {
       ...state,
-      [id]: {
-        ...state[id] || emptyObj,
+      [tab]: {
+        ...state[tab] || emptyObj,
         ...params,
       },
     };

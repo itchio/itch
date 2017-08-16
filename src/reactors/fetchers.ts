@@ -111,28 +111,28 @@ function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
 export default function(watcher: Watcher, db: DB) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
-    queueFetch(store, db, action.payload.id, FetchReason.TabChanged);
+    queueFetch(store, db, action.payload.tab, FetchReason.TabChanged);
   });
 
   // tab navigated to something else? let's fetch
   watcher.on(actions.tabEvolved, async (store, action) => {
-    queueFetch(store, db, action.payload.id, FetchReason.TabEvolved);
+    queueFetch(store, db, action.payload.tab, FetchReason.TabEvolved);
   });
 
   // tab reloaded by user? let's fetch!
   watcher.on(actions.tabReloaded, async (store, action) => {
-    queueFetch(store, db, action.payload.id, FetchReason.TabReloaded);
+    queueFetch(store, db, action.payload.tab, FetchReason.TabReloaded);
   });
 
   // tab got new params? it's a fetching!
   watcher.on(actions.tabParamsChanged, async (store, action) => {
-    queueFetch(store, db, action.payload.id, FetchReason.TabParamsChanged);
+    queueFetch(store, db, action.payload.tab, FetchReason.TabParamsChanged);
   });
 
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {
-      const currentTabId = store.getState().session.navigation.id;
+      const currentTabId = store.getState().session.navigation.tab;
       queueFetch(store, db, currentTabId, FetchReason.WindowFocused);
     }
   });
@@ -146,7 +146,7 @@ export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.updatePreferences, async (store, action) => {
     const prefs = action.payload;
     if (some(watchedPreferences, k => prefs.hasOwnProperty(k))) {
-      const currentTabId = store.getState().session.navigation.id;
+      const currentTabId = store.getState().session.navigation.tab;
       queueFetch(store, db, currentTabId, FetchReason.TabParamsChanged);
     }
   });

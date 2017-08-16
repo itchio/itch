@@ -51,7 +51,7 @@ export default function(watcher: Watcher) {
           store.dispatch(actions.analyzePage({ tab, url: params.url }));
           break;
         case "/evolve-tab":
-          store.dispatch(actions.evolveTab({ id: tab, path: params.path }));
+          store.dispatch(actions.evolveTab({ tab: tab, path: params.path }));
           break;
         default:
           logger.warn(

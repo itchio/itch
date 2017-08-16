@@ -8,12 +8,12 @@ const emptyObj = {};
 
 export default reducer<ITabPaginationSet>(initialState, on => {
   on(actions.tabPaginationChanged, (state, action) => {
-    const { id, pagination } = action.payload;
+    const { tab, pagination } = action.payload;
 
     return {
       ...state,
-      [id]: {
-        ...state[id] || emptyObj,
+      [tab]: {
+        ...state[tab] || emptyObj,
         ...pagination,
       },
     };
