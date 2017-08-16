@@ -87,7 +87,7 @@ const CollectionRowDiv = styled.div`
 
 const emptyArr = [];
 
-export class CollectionRow extends React.PureComponent<IProps & IDerivedProps> {
+export class CollectionRow extends React.PureComponent<IProps> {
   render() {
     const { allGames, collection } = this.props;
     const { title } = collection;
@@ -142,13 +142,6 @@ export class CollectionRow extends React.PureComponent<IProps & IDerivedProps> {
       </CollectionRowDiv>
     );
   }
-
-  onMouseDown = (e: React.MouseEvent<any>) => {
-    const { navigateToCollection, collection } = this.props;
-    whenClickNavigates(e, ({ background }) => {
-      navigateToCollection(collection, background);
-    });
-  };
 }
 
 interface IProps {

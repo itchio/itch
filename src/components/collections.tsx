@@ -11,7 +11,7 @@ import { IMeatProps } from "./meats/types";
 
 import { dispatcher } from "../constants/action-types";
 
-import CollectionsGrid from "./collections-grid";
+import CollectionsGrid from "./collections-grid/grid";
 import Link from "./basics/link";
 import TitleBar from "./title-bar";
 

@@ -21,7 +21,7 @@ declare class ResizeObserver {
   disconnect();
 }
 
-export default function<P extends IDimensionsProps>(
+export default function injectDimensions<P extends IDimensionsProps>(
   WrappedComponent: React.ComponentClass<P>,
 ): React.ComponentClass<P> {
   return class extends React.PureComponent<P, IDimensionsState> {
