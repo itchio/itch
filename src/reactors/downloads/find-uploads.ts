@@ -61,15 +61,6 @@ export function narrowDownUploads(
   game: IGame,
   runtime: IRuntime,
 ): IFindUploadResult {
-  if (input.length <= 1) {
-    return {
-      uploads: input,
-      hadUntagged: false,
-      hadWrongFormat: false,
-      hadWrongArch: false,
-    };
-  }
-
   if (actionForGame(game, null) === "open") {
     // do no filtering at all for asset packs, etc.
     return {

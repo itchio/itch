@@ -7,6 +7,7 @@ import Context from "../../context";
 
 import { IGame } from "../../db/models/game";
 import { IUpload, IStore, IAppState } from "../../types";
+import { fromDateTimeField } from "../../db/datetime-field";
 
 const asUpload = (x: Partial<IUpload>) => x as IUpload;
 
@@ -212,6 +213,31 @@ suite(__filename, s => {
           hadWrongArch: false,
         },
         "penalize demos",
+      );
+
+      const justSource = asUpload({
+        filename: "the-choice.7z",
+        updatedAt: fromDateTimeField("2016-03-16 17:24:09"),
+        size: 27136622,
+        id: 173693,
+        pOsx: false,
+        createdAt: fromDateTimeField("2016-03-16 17:19:52"),
+        pWindows: false,
+        pAndroid: false,
+        pLinux: false,
+        type: "default",
+        demo: false,
+      });
+
+      t.same(
+        narrowDownUploads(ctx, [justSource], game, windows64),
+        {
+          uploads: [],
+          hadUntagged: true,
+          hadWrongFormat: false,
+          hadWrongArch: false,
+        },
+        "don't go with untagged",
       );
     });
   });

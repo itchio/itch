@@ -74,10 +74,7 @@ export default function(watcher: Watcher, db: DB) {
     if (uploads.length === 0) {
       store.dispatch(
         actions.openModal({
-          title: [
-            "game.install.no_uploads_available.message",
-            { title: game.title },
-          ],
+          title: "",
           message: [
             "game.install.no_uploads_available.message",
             { title: game.title },
@@ -93,6 +90,7 @@ export default function(watcher: Watcher, db: DB) {
           ],
         }),
       );
+      return;
     }
 
     let upload: IUpload;
