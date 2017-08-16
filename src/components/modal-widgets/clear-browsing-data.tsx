@@ -80,6 +80,9 @@ export class ClearBrowsingData extends React.PureComponent<
       clearCookies,
     } = this.state;
 
+    // chrome sometimes return negative values (-2 B)
+    const shownCacheSize = cacheSize < 0 ? 0 : cacheSize;
+
     return (
       <ModalWidgetDiv>
         <div className="clear-browsing-data-list">
@@ -98,7 +101,7 @@ export class ClearBrowsingData extends React.PureComponent<
                 ? format([
                     "prompt.clear_browsing_data.cache_size_used",
                     {
-                      size: fileSize(cacheSize),
+                      size: fileSize(shownCacheSize),
                     },
                   ])
                 : <span>
