@@ -4,16 +4,28 @@ import styled, * as styles from "../styles";
 import GifMarker from "./gif-marker";
 import { IHoverProps } from "./hover-hoc";
 
+import RandomSvg from "./random-svg";
+
 const CoverDiv = styled.div`
   ${styles.defaultCoverBackground()};
+
   position: relative;
-  background-size: cover;
-  background-position: 50% 50%;
   padding-bottom: 80%;
+  overflow: hidden;
 
   &:hover {
     cursor: pointer;
   }
+`;
+
+const CoverImg = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
 `;
 
 class Cover extends React.PureComponent<IProps> {
@@ -27,23 +39,25 @@ class Cover extends React.PureComponent<IProps> {
     } = this.props;
 
     let gif: boolean;
-    const coverStyle: React.CSSProperties = {};
+    let url: string;
+
     if (coverUrl) {
       if (hover) {
-        coverStyle.backgroundImage = `url('${coverUrl}')`;
+        url = coverUrl;
       } else {
         if (stillCoverUrl) {
           gif = true;
-          coverStyle.backgroundImage = `url('${stillCoverUrl}')`;
+          url = stillCoverUrl;
         } else {
-          coverStyle.backgroundImage = `url('${coverUrl}')`;
+          url = coverUrl;
         }
       }
     }
 
     return (
-      <CoverDiv style={coverStyle} {...restProps}>
+      <CoverDiv {...restProps}>
         {gif && showGifMarker ? <GifMarker /> : null}
+        {url ? <CoverImg src={url} /> : <RandomSvg />}
       </CoverDiv>
     );
   }

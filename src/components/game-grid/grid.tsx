@@ -121,7 +121,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   isCoverClick(ev: React.MouseEvent<HTMLElement>): boolean {
     let target = ev.target as HTMLElement;
     while (target && !target.classList.contains("grid--cell")) {
-      if (target.classList.contains("grid--cover")) {
+      if (target.classList.contains("cell--cover")) {
         return true;
       }
       target = target.parentElement;
