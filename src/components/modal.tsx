@@ -490,23 +490,25 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
                   {format(label)}
                 </BigButtonRow>
 
-                <BigButtonRow>
-                  {tags
-                    ? map(tags, tag => {
-                        return (
-                          <Tag>
-                            {tag.icon ? <Icon icon={tag.icon} /> : null}
-                            {tag.label ? format(tag.label) : null}
+                {tags || timeAgo
+                  ? <BigButtonRow>
+                      {tags
+                        ? map(tags, tag => {
+                            return (
+                              <Tag>
+                                {tag.icon ? <Icon icon={tag.icon} /> : null}
+                                {tag.label ? format(tag.label) : null}
+                              </Tag>
+                            );
+                          })
+                        : null}
+                      {timeAgo
+                        ? <Tag>
+                            <TimeAgo date={timeAgo.date} />
                           </Tag>
-                        );
-                      })
-                    : null}
-                  {timeAgo
-                    ? <Tag>
-                        <TimeAgo date={timeAgo.date} />
-                      </Tag>
-                    : null}
-                </BigButtonRow>
+                        : null}
+                    </BigButtonRow>
+                  : null}
               </BigButtonContent>
             </RowButton>
           );
