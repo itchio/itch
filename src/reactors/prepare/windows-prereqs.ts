@@ -2,12 +2,12 @@ import * as tmp from "tmp";
 import * as bluebird from "bluebird";
 import {
   isEmpty,
-  first,
   filter,
   reject,
   partition,
   map,
   each,
+  find,
 } from "underscore";
 
 import { ICave } from "../../db/models/cave";
@@ -22,7 +22,7 @@ import { request, getChecksums, ensureChecksum } from "../../net";
 import butler from "../../util/butler";
 import { Logger } from "../../logger";
 
-import { join } from "path";
+import { join, basename } from "path";
 import urls from "../../constants/urls";
 
 import * as actions from "../../actions";
@@ -110,14 +110,24 @@ async function handleUE4Prereq(
     const pattern = runtime.is64 ? WIN64_UE4_RE : WIN32_UE4_RE;
     const prefs = store.getState().preferences;
     const appPath = paths.appPath(cave, prefs);
-    const candidates = await sf.glob(pattern, { cwd: appPath, nocase: true });
-    const prereqRelativePath = first(candidates);
-    if (!prereqRelativePath) {
+
+    const verdict = await butler.configure({
+      ctx,
+      logger,
+      noFilter: true,
+      path: appPath,
+    });
+
+    const prereqExe = find(
+      verdict.candidates,
+      c => pattern == basename(c.path),
+    );
+    if (!prereqExe) {
       // no UE4 prereqs
       return;
     }
 
-    const prereqFullPath = join(appPath, prereqRelativePath);
+    const prereqFullPath = join(appPath, prereqExe.path);
 
     let prereqsState: IPrereqsState = {
       tasks: {
