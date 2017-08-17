@@ -132,9 +132,14 @@ export default function(watcher: Watcher, db: DB) {
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {
-      const currentTabId = store.getState().session.navigation.tab;
-      queueFetch(store, db, currentTabId, FetchReason.WindowFocused);
+      const currentTab = store.getState().session.navigation.tab;
+      queueFetch(store, db, currentTab, FetchReason.WindowFocused);
     }
+  });
+
+  watcher.on(actions.commonsUpdated, async (store, action) => {
+    const currentTab = store.getState().session.navigation.tab;
+    queueFetch(store, db, currentTab, FetchReason.WindowFocused);
   });
 
   const watchedPreferences = [
