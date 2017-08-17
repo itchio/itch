@@ -6,6 +6,8 @@
 [![codecov](https://codecov.io/gh/itchio/itch/branch/master/graph/badge.svg)](https://codecov.io/gh/itchio/itch)
 [![Translation status](https://weblate.itch.ovh/widgets/itch/-/svg-badge.svg)](https://weblate.itch.ovh/engage/itch/?utm_source=widget)
 
+![Built with ♥️](https://forthebadge.com/images/featured/featured-built-with-love.svg)
+
 The goal of this project is to give you a desktop application that you can
 download and run games from [itch.io](http://itch.io) with. Additionally you
 should be able to update games and get notified when games are updated. The
