@@ -8,10 +8,11 @@ const GifMarkerSpan = styled.span`
   background: #333333;
   color: rgba(253, 253, 253, 0.74);
   font-size: 12px;
-  padding: 2px 4px;
+  padding: 4px;
   border-radius: 2px;
   font-weight: bold;
   opacity: .8;
+  z-index: 2;
 `;
 
 class GifMarker extends React.PureComponent {
