@@ -34,4 +34,10 @@
   "[typescriptreact]": {
     "editor.formatOnSave": true
   },
+  "TodoParser": {
+    "only": ["src/"],
+    "showInProblems": true,
+    "markers": ["FIXME", "TODO", "XXX"],
+    "folderExclude": ["node_modules"]
+  }
 }
