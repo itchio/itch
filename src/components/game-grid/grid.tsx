@@ -41,10 +41,12 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
       (width - 2 * globalMargin - sidebarCushion) / numColumns;
     const rowHeight = columnWidth * 0.8 + underCoverCushion;
 
+    const outerRowHeight = rowHeight + interiorMargin;
+
     const overscan = 1;
-    const numVisibleRows = height / rowHeight;
-    let startRow = Math.floor(scrollTop / rowHeight);
-    let endRow = startRow + numVisibleRows + 1;
+    const numVisibleRows = height / outerRowHeight;
+    let startRow = Math.floor(scrollTop / outerRowHeight);
+    let endRow = Math.ceil(startRow + numVisibleRows + 1);
 
     startRow = Math.max(0, startRow - overscan);
     endRow = Math.min(numRows, endRow + overscan);

@@ -95,9 +95,10 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
     const { collections, games, scrollTop, height } = this.props;
 
     const overscan = 1;
-    const numVisibleRows = height / rowHeight;
-    let startRow = Math.floor(scrollTop / rowHeight);
-    let endRow = startRow + numVisibleRows + 1;
+    const outerRowHeight = rowHeight + interiorPadding;
+    const numVisibleRows = height / outerRowHeight;
+    let startRow = Math.floor(scrollTop / outerRowHeight);
+    let endRow = Math.ceil(startRow + numVisibleRows + 1);
 
     startRow = Math.max(0, startRow - overscan);
     endRow = Math.min(collections.length, endRow + overscan);
