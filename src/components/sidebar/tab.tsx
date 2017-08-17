@@ -147,12 +147,13 @@ interface IDerivedProps {
 
 export default connect<IProps>(injectIntl(Tab), {
   state: (initialState, initialProps) => {
-    let { id } = initialProps;
+    let { tab } = initialProps;
 
     return createStructuredSelector({
-      data: (state: IAppState) => state.session.tabData[id] || emptyObj,
-      loading: (state: IAppState) => !!state.session.navigation.loadingTabs[id],
-      downloads: (state: IAppState) => id === "downloads" && state.downloads,
+      data: (state: IAppState) => state.session.tabData[tab] || emptyObj,
+      loading: (state: IAppState) =>
+        !!state.session.navigation.loadingTabs[tab],
+      downloads: (state: IAppState) => tab === "downloads" && state.downloads,
     });
   },
   dispatch: dispatch => ({

@@ -68,16 +68,16 @@ const SortableListContainer = styled.div`overflow-y: auto;`;
 
 const SortableList = SortableContainer((params: ISortableContainerParams) => {
   const { sidebarProps, items } = params;
-  const currentId = sidebarProps.id;
+  const currentTab = sidebarProps.tab;
 
   return (
     <SortableListContainer>
-      {map(items, (id, index) => {
-        const active = currentId === id;
+      {map(items, (tab, index) => {
+        const active = currentTab === tab;
         return (
           <SidebarTab
-            key={id}
-            tab={id}
+            key={tab}
+            tab={tab}
             active={active}
             index={index}
             sortable
@@ -118,7 +118,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
       osx,
       sidebarWidth,
       fullscreen,
-      id: currentId,
+      tab: currentId,
       tabs,
     } = this.props;
 
@@ -189,7 +189,7 @@ interface IDerivedProps {
   fullscreen: boolean;
   me: IOwnUser;
 
-  id: string;
+  tab: string;
   path: string;
   tabs: {
     constant: string[];
@@ -222,7 +222,7 @@ export default connect<IProps>(injectIntl(Sidebar), {
     fullscreen: (state: IAppState) => state.ui.mainWindow.fullscreen,
     sidebarWidth: (state: IAppState) => state.preferences.sidebarWidth || 240,
     me: (state: IAppState) => state.session.credentials.me,
-    id: (state: IAppState) => state.session.navigation.tab,
+    tab: (state: IAppState) => state.session.navigation.tab,
     tabs: (state: IAppState) => state.session.navigation.tabs,
   }),
   dispatch: dispatch => ({
