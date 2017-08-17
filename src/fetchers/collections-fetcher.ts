@@ -5,11 +5,10 @@ import { collection, arrayOf } from "../api/schemas";
 
 import { fromJSONField } from "../db/json-field";
 
-import { indexBy, pluck } from "underscore";
+import { indexBy } from "underscore";
+import { GAMES_SHOWN_PER_COLLECTION } from "./constants";
 
 const emptyObj = {};
-
-export const GAMES_SHOWN_PER_COLLECTION = 8;
 
 export default class CollectionsFetcher extends Fetcher {
   constructor() {

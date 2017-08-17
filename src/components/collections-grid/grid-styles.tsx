@@ -3,6 +3,7 @@ import styled, * as styles from "../styles";
 
 interface IGridSizes {
   rowHeight: number;
+  frescoHeight: number;
   globalPadding: number;
 }
 
@@ -27,7 +28,10 @@ export const GridContainerDiv = styled(StylableDiv)`
   overflow: hidden;
 
   .grid--row {
-    ${styles.hubItemStyle()};
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    background: ${props => props.theme.sidebarBackground};
+    border: 1px solid #191919;
 
     margin: 0 ${props => props.sizes.globalPadding}px;
 
@@ -38,17 +42,16 @@ export const GridContainerDiv = styled(StylableDiv)`
     height: ${props => props.sizes.rowHeight}px;
     display: flex;
     flex-direction: column;
-    filter: brightness(80%);
 
     &:hover {
-      filter: brightness(100%);
       cursor: pointer;
     }
 
     .title {
-      padding: 12px 6px 6px 8px;
+      padding: 18px 12px;
+      padding-bottom: 8px;
       flex-shrink: 0;
-      font-size: 18px;
+      font-size: ${props => props.theme.fontSizes.huge};
       font-weight: bold;
       margin-bottom: 0;
     }
@@ -59,21 +62,26 @@ export const GridContainerDiv = styled(StylableDiv)`
       flex-grow: 1;
       overflow-x: hidden;
       position: relative;
-
-      padding: 5px;
+      height: ${props => props.sizes.frescoHeight}px;
+      align-items: center;
+      padding: 5px 12px;
     }
 
     .fresco--cover {
-      width: ${props => (props.sizes.rowHeight - 60) / 0.8}px;
-      margin-right: 7px;
+      width: ${props => props.sizes.frescoHeight / 0.79}px;
+      height: ${props => props.sizes.frescoHeight}px;
+      margin-right: 12px;
       flex-shrink: 0;
       padding-bottom: 0;
       object-fit: cover;
+
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
     }
 
     .info {
       flex-shrink: 0;
-      padding: 6px;
+      padding: 6px 12px;
       color: ${props => props.theme.secondaryText};
 
       display: flex;
@@ -84,7 +92,7 @@ export const GridContainerDiv = styled(StylableDiv)`
       }
 
       .spacer {
-        flex-grow: 1;
+        flex-basis: 10px;
       }
 
       .nice-ago {

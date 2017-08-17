@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as classNames from "classnames";
 
 import styled, { keyframes } from "../styles";
 
@@ -10,6 +11,10 @@ const turn = keyframes`
 const CircleContainer = styled.div`
   display: inline;
   margin-right: 8px;
+
+  &.bare {
+    margin-right: 0;
+  }
 
   svg {
     width: 14px;
@@ -23,10 +28,10 @@ export default class LoadingCircle extends React.PureComponent<
   ILoadingCircleProps
 > {
   render() {
-    const { progress } = this.props;
+    const { progress, bare } = this.props;
 
     return (
-      <CircleContainer>
+      <CircleContainer className={classNames({ bare })}>
         <Circle
           percent={progress > 0 ? progress * 100.0 : 0}
           trailWidth={3}
@@ -41,6 +46,7 @@ export default class LoadingCircle extends React.PureComponent<
 
 export interface ILoadingCircleProps {
   progress: number;
+  bare?: boolean;
 }
 
 // shamelessly stolen, err, adapted, from https://github.com/react-component/progress

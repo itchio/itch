@@ -6,12 +6,17 @@ import { map, each, filter } from "underscore";
 
 import Icon from "../basics/icon";
 import TimeAgo from "../basics/time-ago";
+import Cover from "../basics/cover";
+import Hoverable from "../basics/hover-hoc";
 
 import { IGameSet } from "../../types";
 import { ICollection } from "../../db/models/collection";
 import { fromJSONField } from "../../db/json-field";
+import { GAMES_SHOWN_PER_COLLECTION } from "../../fetchers/constants";
 
 const emptyArr = [];
+
+const HoverCover = Hoverable(Cover);
 
 export default class CollectionRow extends React.PureComponent<IProps> {
   render() {
@@ -20,13 +25,20 @@ export default class CollectionRow extends React.PureComponent<IProps> {
 
     const gameIds = fromJSONField<number[]>(collection.gameIds, emptyArr).slice(
       0,
-      8,
+      GAMES_SHOWN_PER_COLLECTION,
     );
     const games = filter(map(gameIds, gameId => allGames[gameId]), x => !!x);
 
     const gameItems = map(games, (game, index) => {
-      const coverUrl = game.stillCoverUrl || game.coverUrl;
-      return <img className="fresco--cover" key={index} src={coverUrl} />;
+      const { coverUrl, stillCoverUrl } = game;
+      return (
+        <HoverCover
+          key={game.id}
+          className="fresco--cover"
+          coverUrl={coverUrl}
+          stillCoverUrl={stillCoverUrl}
+        />
+      );
     });
 
     const cols: JSX.Element[] = [];
@@ -52,9 +64,6 @@ export default class CollectionRow extends React.PureComponent<IProps> {
         <section className="title">
           {title}
         </section>
-        <section className="fresco">
-          {cols}
-        </section>
         <section className="info">
           <Icon icon="tag" />
           <span className="total">
@@ -68,6 +77,9 @@ export default class CollectionRow extends React.PureComponent<IProps> {
               time_ago: <TimeAgo key="timeago" date={collection.updatedAt} />,
             },
           ])}
+        </section>
+        <section className="fresco">
+          {cols}
         </section>
       </div>
     );

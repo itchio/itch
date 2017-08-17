@@ -23,8 +23,9 @@ const tab = "collections";
 const emptyObj = {};
 const emptyArr = [] as any[];
 
-const rowHeight = 220;
-const interiorPadding = 10;
+const rowHeight = 240;
+const frescoHeight = 140;
+const interiorPadding = 20;
 const globalPadding = 20;
 
 class Grid extends React.PureComponent<IProps & IDerivedProps> {
@@ -34,7 +35,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
     const numCollections = collectionIds.length;
     const contentHeight = numCollections * rowHeight;
 
-    const sizes = { rowHeight, globalPadding };
+    const sizes = { rowHeight, frescoHeight, globalPadding };
 
     return (
       <GridContainerDiv sizes={sizes}>

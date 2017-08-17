@@ -5,12 +5,13 @@ import GifMarker from "./gif-marker";
 import { IHoverProps } from "./hover-hoc";
 
 import RandomSvg from "./random-svg";
+import LoadingCircle from "./loading-circle";
 
 const CoverDiv = styled.div`
   ${styles.defaultCoverBackground()};
 
   position: relative;
-  padding-bottom: 80%;
+  padding-bottom: 79%;
   overflow: hidden;
 
   &:hover {
@@ -18,7 +19,26 @@ const CoverDiv = styled.div`
   }
 `;
 
-const CoverImg = styled.img`
+class Image extends React.PureComponent<IImageProps> {
+  render() {
+    const { onLoadStart, onLoadEnd, ...restProps } = this.props;
+    return <img {...restProps} onLoad={onLoadEnd} />;
+  }
+
+  componentWillReceiveProps(nextProps: IImageProps) {
+    if (nextProps.src !== this.props.src) {
+      this.props.onLoadStart();
+    }
+  }
+}
+
+interface IImageProps {
+  src?: string;
+  onLoadStart: () => void;
+  onLoadEnd: () => void;
+}
+
+const StyledImage = styled(Image)`
   position: absolute;
   top: 0;
   left: 0;
@@ -28,7 +48,12 @@ const CoverImg = styled.img`
   object-fit: cover;
 `;
 
-class Cover extends React.PureComponent<IProps> {
+class Cover extends React.PureComponent<IProps, IState> {
+  constructor() {
+    super();
+    this.state = { loading: false };
+  }
+
   render() {
     const {
       showGifMarker = true,
@@ -57,10 +82,31 @@ class Cover extends React.PureComponent<IProps> {
     return (
       <CoverDiv {...restProps}>
         {gif && showGifMarker ? <GifMarker /> : null}
-        {url ? <CoverImg src={url} /> : <RandomSvg />}
+        {url
+          ? <StyledImage
+              src={url}
+              onLoadStart={this.onLoadStart}
+              onLoadEnd={this.onLoadEnd}
+            />
+          : <RandomSvg />}
+        {hover && this.state.loading
+          ? <GifMarker label={<LoadingCircle progress={0.3} bare />} />
+          : null}
       </CoverDiv>
     );
   }
+
+  onLoadStart = () => {
+    this.setState({ loading: true });
+  };
+
+  onLoadEnd = () => {
+    this.setState({ loading: false });
+  };
+}
+
+interface IState {
+  loading: boolean;
 }
 
 export interface IProps extends IHoverProps {
