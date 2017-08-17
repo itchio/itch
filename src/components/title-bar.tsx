@@ -8,7 +8,7 @@ import { IAppState, ITabData } from "../types";
 import { dispatcher } from "../constants/action-types";
 import * as actions from "../actions";
 
-import { FiltersContainer } from "./game-filters";
+import { FiltersContainer } from "./filters-container";
 import IconButton from "./basics/icon-button";
 
 import env from "../env";

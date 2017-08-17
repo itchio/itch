@@ -4,8 +4,7 @@ import { connect } from "./connect";
 import urls from "../constants/urls";
 import * as actions from "../actions";
 
-// TODO: GameFilters doesn't belong in Collections view
-import GameFilters from "./game-filters";
+import { FiltersContainer } from "./filters-container";
 
 import { IMeatProps } from "./meats/types";
 
@@ -13,6 +12,7 @@ import { dispatcher } from "../constants/action-types";
 
 import CollectionsGrid from "./collections-grid/grid";
 import Link from "./basics/link";
+import Filler from "./basics/filler";
 import TitleBar from "./title-bar";
 
 import styled, * as styles from "./styles";
@@ -29,16 +29,13 @@ export class Collections extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <CollectionsContainer>
         <TitleBar tab={tab} />
-        <GameFilters
-          tab={tab}
-          showBinaryFilters={false}
-          showLayoutPicker={false}
-        >
+        <FiltersContainer>
           <Link
             label={intl.formatMessage({ id: "outlinks.manage_collections" })}
             onClick={e => navigate({ tab: `url/${urls.myCollections}` })}
           />
-        </GameFilters>
+          <Filler />
+        </FiltersContainer>
         <CollectionsGrid />
       </CollectionsContainer>
     );

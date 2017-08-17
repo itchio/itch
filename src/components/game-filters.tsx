@@ -11,29 +11,17 @@ import { dispatcher } from "../constants/action-types";
 
 import Select = require("react-select");
 import Icon from "./basics/icon";
+import Filler from "./basics/filler";
 
 import styled, * as styles from "./styles";
 import { css } from "./styles";
 import { injectIntl, InjectedIntl } from "react-intl";
+import { FiltersContainer } from "./filters-container";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
   active?: boolean;
 }
-
-export const FiltersContainer = styled.section`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  background: ${props => props.theme.breadBackground};
-  box-shadow: 0 4px 8px -4px ${props => props.theme.breadBackground};
-  flex-shrink: 0;
-  padding-left: 10px;
-  padding-right: 4px;
-  min-height: 40px;
-`;
-
-const Filler = styled.div`flex-grow: 1;`;
 
 const TagFilters = styled.section`
   margin: 4px 0;
