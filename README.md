@@ -1,11 +1,10 @@
 # itch [![](https://nuts.itch.zone/badge)](https://github.com/itchio/itch/releases/latest)
 
 ![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
+![Built with love](https://img.shields.io/badge/built%20with-%E2%9D%A4-FF8080.svg)
 [![Build Status](https://git.itch.ovh/itchio/itch/badges/master/build.svg)](https://git.itch.ovh/itchio/itch/builds)
 [![codecov](https://codecov.io/gh/itchio/itch/branch/master/graph/badge.svg)](https://codecov.io/gh/itchio/itch)
 [![Translation status](https://weblate.itch.ovh/widgets/itch/-/svg-badge.svg)](https://weblate.itch.ovh/engage/itch/?utm_source=widget)
-![Built with love](https://img.shields.io/badge/built%20with-%E2%9D%A4-FF8080.svg)
 
 The goal of this project is to give you a desktop application that you can
 download and run games from [itch.io](http://itch.io) with. Additionally you
