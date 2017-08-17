@@ -9,6 +9,7 @@ const ProfileModelOriginal = {
     id: Column.Integer,
 
     myGameIds: Column.JSON,
+    myCollectionIds: Column.JSON,
     openTabs: Column.JSON,
   },
 };
@@ -24,5 +25,6 @@ export interface IProfile {
   id: number;
 
   myGameIds: JSONField<number[]>;
+  myCollectionIds: JSONField<number[]>;
   openTabs: JSONField<IItchAppTabs>;
 }

@@ -153,6 +153,7 @@ export interface ITabData {
 
   /** collections in relation to this tab */
   collections?: ICollectionSet;
+  collectionIds?: number[];
 
   /** users in relation to this tab */
   users?: IUserSet;

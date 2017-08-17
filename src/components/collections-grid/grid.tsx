@@ -2,9 +2,14 @@ import * as React from "react";
 import { InjectedIntl, injectIntl } from "react-intl";
 import { createSelector, createStructuredSelector } from "reselect";
 import { connect } from "../connect";
-import { values, findWhere } from "underscore";
+import { findWhere } from "underscore";
 
-import { IGameSet, IAppState, ITabData } from "../../types/index";
+import {
+  IGameSet,
+  IAppState,
+  ITabData,
+  ICollectionSet,
+} from "../../types/index";
 import { ICollection } from "../../db/models/collection";
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 
@@ -16,20 +21,17 @@ import { whenClickNavigates } from "../when-click-navigates";
 
 const tab = "collections";
 const emptyObj = {};
+const emptyArr = [] as any[];
 
 const rowHeight = 220;
 const interiorPadding = 10;
 const globalPadding = 20;
 
-// TODO:
-// change to work from `collectionIds` so we can
-// maintain the API order
-
 class Grid extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { collections } = this.props;
+    const { collectionIds } = this.props;
 
-    const numCollections = collections.length;
+    const numCollections = collectionIds.length;
     const contentHeight = numCollections * rowHeight;
 
     const sizes = { rowHeight, globalPadding };
@@ -92,7 +94,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   renderCollections(): JSX.Element[] {
-    const { collections, games, scrollTop, height } = this.props;
+    const { collectionIds, collections, games, scrollTop, height } = this.props;
 
     const overscan = 1;
     const outerRowHeight = rowHeight + interiorPadding;
@@ -101,12 +103,17 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
     let endRow = Math.ceil(startRow + numVisibleRows + 1);
 
     startRow = Math.max(0, startRow - overscan);
-    endRow = Math.min(collections.length, endRow + overscan);
+    endRow = Math.min(collectionIds.length, endRow + overscan);
 
-    return collections.slice(startRow, endRow).map((collection, index) => {
+    return collectionIds.slice(startRow, endRow).map((id, index) => {
+      const collection = collections[id];
+      if (!collection) {
+        return null;
+      }
+
       return (
         <CollectionRow
-          key={collection.id}
+          key={id}
           collection={collection}
           allGames={games}
           index={index + startRow}
@@ -123,7 +130,8 @@ interface IProps extends IDimensionsProps {}
 
 interface IDerivedProps {
   games: IGameSet;
-  collections: ICollection[];
+  collectionIds: number[];
+  collections: ICollectionSet;
   hiddenCount: number;
   intl: InjectedIntl;
 
@@ -135,8 +143,8 @@ export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
     (state: IAppState) => state.session.tabData[tab] || emptyObj,
     createStructuredSelector({
       games: (tabData: ITabData) => tabData.games || emptyObj,
-      collections: (tabData: ITabData) =>
-        values(tabData.collections || emptyObj),
+      collectionIds: (tabData: ITabData) => tabData.collectionIds || emptyArr,
+      collections: (tabData: ITabData) => tabData.collections || emptyObj,
       hiddenCount: (tabData: ITabData) => 0,
     }),
   ),

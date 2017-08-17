@@ -5,9 +5,11 @@ import { collection, arrayOf } from "../api/schemas";
 
 import { fromJSONField } from "../db/json-field";
 
-import { indexBy } from "underscore";
+import { indexBy, pluck } from "underscore";
 
 const emptyObj = {};
+
+export const GAMES_SHOWN_PER_COLLECTION = 8;
 
 export default class CollectionsFetcher extends Fetcher {
   constructor() {
@@ -26,14 +28,27 @@ export default class CollectionsFetcher extends Fetcher {
   async pushLocal() {
     const { db } = this.ctx;
     const meId = this.ensureCredentials().me.id;
-    const localCollections = db.collections.find({ userId: meId });
+
+    const profile = db.profiles.findOneById(meId);
+    if (!profile) {
+      return;
+    }
+
+    const localCollectionIds = fromJSONField<number[]>(
+      profile.myCollectionIds,
+      [],
+    );
+    const localCollections = db.collections.all(k =>
+      k.where("id in ?", localCollectionIds),
+    );
 
     let allGameIds: number[] = [];
     for (const c of localCollections) {
-      const collectionGameIds = fromJSONField<number[]>(c.gameIds);
-      if (c.gameIds) {
-        allGameIds = [...allGameIds, ...collectionGameIds];
-      }
+      const collectionGameIds = fromJSONField<number[]>(c.gameIds, []);
+      allGameIds = [
+        ...allGameIds,
+        ...collectionGameIds.slice(0, GAMES_SHOWN_PER_COLLECTION),
+      ];
     }
 
     let localGames = [];
@@ -42,6 +57,7 @@ export default class CollectionsFetcher extends Fetcher {
     }
     this.push({
       collections: indexBy(localCollections, "id"),
+      collectionIds: localCollectionIds,
       games: indexBy(localGames, "id"),
     });
   }
@@ -61,5 +77,8 @@ export default class CollectionsFetcher extends Fetcher {
     }
 
     db.saveMany(normalized.entities);
+
+    const { collectionIds } = normalized.result;
+    db.saveOne("profiles", meId, { myCollectionIds: collectionIds });
   }
 }
