@@ -13,7 +13,9 @@
             "runtimeArgs": [
                 "."
             ],
-            "env": {},
+            "env": {
+                "ITCH_LOG_LEVEL": "debug"
+            },
             "console": "integratedTerminal",
             "sourceMaps": true,
             "protocol": "inspector"
@@ -31,7 +33,8 @@
                 "."
             ],
             "env": {
-                "WHEN_IN_ROME": "http://localhost.com:8080"
+                "WHEN_IN_ROME": "http://localhost.com:8080",
+                "ITCH_LOG_LEVEL": "debug"
             },
             "console": "integratedTerminal",
             "sourceMaps": true,
@@ -50,7 +53,9 @@
                 ".",
                 "--remote-debugging-port=9222"
             ],
-            "env": {},
+            "env": {
+                "ITCH_LOG_LEVEL": "debug"
+            },
             "console": "integratedTerminal",
             "sourceMaps": false,
             "protocol": "inspector",
@@ -70,6 +75,7 @@
                 "--remote-debugging-port=9222"
             ],
             "env": {
+                "ITCH_LOG_LEVEL": "debug",
                 "WHEN_IN_ROME": "http://localhost.com:8080"
             },
             "console": "integratedTerminal",
