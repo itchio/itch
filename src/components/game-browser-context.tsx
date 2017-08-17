@@ -13,13 +13,16 @@ import { ICaveSummary } from "../db/models/cave";
 import { IDownloadKey } from "../db/models/download-key";
 
 import { IDispatch, dispatcher } from "../constants/action-types";
-import { IAppState, ITabData } from "../types";
+import { IAppState, ITabData, ICommonsState } from "../types";
 import * as actions from "../actions";
 
 import { IBrowserControlProperties } from "./browser-state";
 import GameBrowserContextActions from "./game-browser-context-actions";
 
 import styled from "./styles";
+import getByIds from "../helpers/get-by-ids";
+
+import { first } from "underscore";
 
 const BrowserContextDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -129,6 +132,7 @@ interface IState {
 interface IContextSelectorResult {
   gameId: number;
   tabData: ITabData;
+  commons: ICommonsState;
 }
 
 export default connect<IProps>(GameBrowserContext, {
@@ -136,14 +140,24 @@ export default connect<IProps>(GameBrowserContext, {
     const marketSelector = createStructuredSelector({
       gameId: (state: IAppState, props: IProps) => +pathToId(props.tabPath),
       tabData: (state: IAppState, props: IProps) => props.tabData,
+      commons: (state: IAppState, props: IProps) => state.commons,
     });
 
     return createSelector(marketSelector, (cs: IContextSelectorResult) => {
       const game = cs.tabData.games[cs.gameId];
-      // TODO: db
-      const downloadKey = null;
-      // TODO: db
-      const cave = null;
+
+      const downloadKeys = getByIds(
+        cs.commons.downloadKeys,
+        cs.commons.downloadKeyIdsByGameId[cs.gameId],
+      );
+      const downloadKey = first(downloadKeys);
+
+      const caves = getByIds(
+        cs.commons.caves,
+        cs.commons.caveIdsByGameId[cs.gameId],
+      );
+      const cave = first(caves);
+
       return { game, downloadKey, cave };
     });
   },
