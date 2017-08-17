@@ -17,6 +17,7 @@ import styled, * as styles from "./styles";
 import { css } from "./styles";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { FiltersContainer } from "./filters-container";
+import Link from "./basics/link";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
@@ -27,6 +28,9 @@ const TagFilters = styled.section`
   margin: 4px 0;
 
   flex-grow: 100;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
   .Select {
     width: 100%;
@@ -165,6 +169,19 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
                 }}
                 placeholder={formatString(intl, ["grid.criterion.filter"])}
               />
+              <Link
+                className="game-filters--clear"
+                onClick={() => {
+                  const prefs = {
+                    onlyCompatibleGames: false,
+                    onlyInstalledGames: false,
+                    onlyOwnedGames: false,
+                  };
+                  this.props.updatePreferences(prefs);
+                }}
+              >
+                Clear filters
+              </Link>
             </TagFilters>
           : null}
 

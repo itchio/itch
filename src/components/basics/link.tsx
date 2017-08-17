@@ -11,7 +11,7 @@ const LinkSpan = styled.span`
   text-overflow: ellipsis;
 `;
 
-class Link extends React.PureComponent<IProps> {
+export default class Link extends React.PureComponent<IProps> {
   render() {
     const { label, children, ...restProps } = this.props;
 
@@ -28,6 +28,5 @@ class IProps {
   onClick?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
   label?: string | JSX.Element;
   children?: string | JSX.Element | JSX.Element[];
+  className?: string;
 }
-
-export default Link;

@@ -1,7 +1,5 @@
 package main
 
-import "time"
-
 const currTab = ".meat-tab[data-visible=true] "
 
 func navigationFlow(r *runner) {
@@ -14,7 +12,7 @@ func navigationFlow(r *runner) {
 	must(r.click(currTab + ".layout-picker[data-layout='grid']"))
 
 	r.logf("clearing filters if any")
-	r.clickWithTimeout(currTab+".indicator-clear-filters", 1*time.Second)
+	must(r.click(currTab + ".game-filters--clear"))
 
 	r.logf("checking grid is shown")
 	must(r.waitForVisible(currTab + ".grid--cell"))
