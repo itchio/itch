@@ -1,8 +1,6 @@
 import * as childProcess from "child_process";
 import * as split2 from "split2";
 
-import { Cancelled } from "../types";
-
 import rootLogger, { Logger } from "../logger";
 const spawnLogger = rootLogger.child({ name: "spawn" });
 
