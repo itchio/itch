@@ -1,7 +1,7 @@
 import { IGame } from "../../db/models/game";
 import { ICave } from "../../db/models/cave";
 
-import { IStore } from "../../types";
+import { IStore, Cancelled } from "../../types";
 
 import { Logger } from "../../logger";
 import diego from "../../os/diego";
@@ -21,7 +21,12 @@ export default async function notifyCrash(
   e: ExtendedError,
   logger: Logger,
 ) {
-  logger.error(`crashed with ${e.message}`);
+  if (e instanceof Cancelled) {
+    // well, don't notify that.
+    return;
+  }
+
+  logger.error(`Crashed with ${e.message}`);
   logger.error(`${e.stack || e}`);
   await diego.hire({ logger });
 

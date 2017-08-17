@@ -26,6 +26,7 @@ export default class Context {
   private dead = false;
   private cancelPromise: Promise<{}>;
   private resolveCancelPromise: () => void = null;
+  private taskId: string = null;
 
   constructor(public store: IStore, public db: DB) {
     this.cancelPromise = new Promise((resolve, reject) => {
@@ -41,14 +42,19 @@ export default class Context {
       return;
     }
 
-    this.resolveCancelPromise();
+    this.dead = true;
 
     while (this.stoppers.length > 0) {
       const stopper = this.stoppers.pop();
-      await stopper();
+      try {
+        await stopper();
+      } catch (e) {
+        this.dead = false;
+        throw e;
+      }
     }
 
-    this.dead = true;
+    this.resolveCancelPromise();
     this.emitter.emit("abort");
   }
 
@@ -75,13 +81,26 @@ export default class Context {
     }
   }
 
+  registerTaskId(taskId: string) {
+    this.taskId = taskId;
+  }
+
+  getTaskId(): string {
+    return this.taskId;
+  }
+
   async withSub<T>(f: (sub: Context) => Promise<T>): Promise<T> {
     const sub = new Context(this.store, this.db);
+    if (this.taskId) {
+      sub.registerTaskId(this.taskId);
+    }
     return await this.withStopper({
       stop: async () => {
         await sub.tryAbort();
       },
-      work: () => f(sub),
+      work: async () => {
+        return await f(sub);
+      },
     });
   }
 

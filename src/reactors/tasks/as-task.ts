@@ -53,6 +53,7 @@ export default async function asTask(opts: IAsTaskOpts) {
   );
 
   const ctx = new Context(store, db);
+  ctx.registerTaskId(id);
   ctx.on(
     "progress",
     throttle((ev: IProgressInfo) => {
@@ -73,8 +74,7 @@ export default async function asTask(opts: IAsTaskOpts) {
       delete currentTasks[id];
       if (isCaveLogger) {
         try {
-          // FIXME either pino or multiwriter eat the last line here
-          // why?
+          // FIXME: either pino or multiwriter eat the last line here. why?
           logger.close();
         } catch (e) {
           rootLogger.warn(`Couldn't close logger: ${e.stack}`);

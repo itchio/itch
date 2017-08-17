@@ -114,6 +114,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
   let cancelled = false;
   return await ctx.withStopper({
     stop: async () => {
+      logger.debug(`Context aborting, killing ${command}`);
       child.kill("SIGKILL");
       cancelled = true;
     },
@@ -125,7 +126,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
           }
 
           if (cancelled) {
-            reject(new Cancelled());
+            return;
           } else {
             if (code === null && signal) {
               reject(new Error(`killed by signal ${signal}`));

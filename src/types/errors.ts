@@ -76,9 +76,6 @@ export class Cancelled extends ItchError {
   constructor(detail = "generic cancellation") {
     super("cancelled");
     this.detail = detail;
-  }
-
-  toString() {
-    return `operation was cancelled: ${this.detail}`;
+    this.message = `operation was cancelled: ${this.detail}`;
   }
 }

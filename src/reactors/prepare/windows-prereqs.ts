@@ -71,6 +71,7 @@ interface IButlerPrereqResult extends IButlerPrereqMessage {
 
 import { extract } from "../../util/extract";
 import { formatExitCode } from "../../format/exit-code";
+import { fromJSONField } from "../../db/json-field";
 
 export default async function handleWindowsPrereqs(
   ctx: Context,
@@ -155,7 +156,14 @@ async function handleUE4Prereq(
         gameId: String(cave.gameId),
         gameTitle: game.title,
       } as IPrereqsStateParams,
-      buttons: [],
+      buttons: [
+        {
+          id: "modal-cancel",
+          label: ["prompt.action.cancel"],
+          action: actions.abortTask({ id: ctx.getTaskId() }),
+          className: "secondary",
+        },
+      ],
       unclosable: true,
     });
     store.dispatch(openModalAction);
@@ -244,7 +252,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
   const { cave } = opts;
   const { db } = ctx;
 
-  let installedPrereqs = cave.installedPrereqs || {};
+  let installedPrereqs = fromJSONField(cave.installedPrereqs, {});
 
   let [alreadyInstalledTasks, remainingTasks] = partition(
     tasks,
@@ -314,7 +322,14 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
         gameId: String(cave.gameId),
         gameTitle: game.title,
       } as IPrereqsStateParams,
-      buttons: [],
+      buttons: [
+        {
+          id: "modal-cancel",
+          label: ["prompt.action.cancel"],
+          action: actions.abortTask({ id: ctx.getTaskId() }),
+          className: "secondary",
+        },
+      ],
       unclosable: true,
     });
 
@@ -426,7 +441,7 @@ function pendingPrereqs(
   opts: IWindowsPrereqsOpts,
   prereqs: IManifestPrereq[],
 ): IManifestPrereq[] {
-  const installedPrereqs = opts.cave.installedPrereqs || {};
+  const installedPrereqs = fromJSONField(opts.cave.installedPrereqs, {});
 
   return reject(prereqs, prereq => installedPrereqs[prereq.name]);
 }
