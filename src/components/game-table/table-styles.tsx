@@ -75,12 +75,12 @@ export const TableContainerDiv = styled(StylableDiv)`
 
   .table--row {
     position: absolute;
+    transition: transform 0.2s, border-color 0.2s;
 
     height: ${rowHeight}px;
     overflow: hidden;
 
     font-size: ${props => props.theme.fontSizes.large};
-    transition: border-color 0.2s;
 
     &:hover {
       background-color: ${props => darken(0.05, props.theme.meatBackground)};

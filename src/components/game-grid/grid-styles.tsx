@@ -28,6 +28,7 @@ export const GridContainerDiv = styled(StylableDiv)`
 
   .grid--cell {
     position: absolute;
+    transition: transform 0.2s;
 
     width: ${props => props.sizes.columnWidth}px;
     height: ${props => props.sizes.rowHeight}px;
