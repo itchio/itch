@@ -215,7 +215,7 @@ export class AuthenticatedClient {
    * Retrieve games ones create or is a game admin for.
    */
   async myGames(data: any = {}): Promise<IMyGamesResult> {
-    // TODO: paging, for the prolific game dev.
+    // this endpoint is not paginated
     return await this.request("get", "/my-games", data, {
       keepSnakeCase: true,
       transformers: { games: ensureArray },
