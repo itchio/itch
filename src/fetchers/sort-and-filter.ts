@@ -110,7 +110,7 @@ export function addSortAndFilterToQuery(
         .expr()
         .or(platformProp)
         .or("type = ?", "html")
-        .or("classification in ?", ["game", "tool"]),
+        .or("classification not in ?", ["game", "tool"]),
     );
   }
 
