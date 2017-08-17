@@ -1,7 +1,7 @@
-import { join } from "path";
 import butler from "../../util/butler";
 import { devNull } from "../../logger";
 import Context from "../../context";
+import expandManifestPath from "./expand-manifest-path";
 
 export type LaunchType = "native" | "html" | "external" | "native" | "shell";
 
@@ -10,19 +10,11 @@ export default async function launchTypeForAction(
   appPath: string,
   actionPath: string,
 ): Promise<LaunchType> {
-  if (/\.(app|exe|bat|sh)$/i.test(actionPath)) {
-    return "native";
-  }
-
-  if (/\.html?$/i.test(actionPath)) {
-    return "html";
-  }
-
   if (/^https?:/i.test(actionPath)) {
     return "external";
   }
 
-  const fullPath = join(appPath, actionPath);
+  const fullPath = expandManifestPath(appPath, actionPath);
 
   const confRes = await butler.configureSingle({
     path: fullPath,
@@ -40,6 +32,8 @@ export default async function launchTypeForAction(
     case "linux":
     case "app-macos":
       return "native";
+    case "html":
+      return "html";
     default:
       return "shell";
   }
