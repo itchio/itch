@@ -236,6 +236,7 @@ export function importUserMarkets(
   const profileOut: IProfile = {
     id: userId,
     myGameIds: toJSONField(null),
+    myCollectionIds: toJSONField(null),
     openTabs: toJSONField(null),
   };
 

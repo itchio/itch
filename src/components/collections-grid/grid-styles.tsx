@@ -1,5 +1,5 @@
 import * as React from "react";
-import styled, * as styles from "../styles";
+import styled from "../styles";
 
 interface IGridSizes {
   rowHeight: number;

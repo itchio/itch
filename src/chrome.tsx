@@ -26,7 +26,6 @@ import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
 import store from "./store/chrome-store";
-import * as actions from "./actions";
 
 import setupShortcuts from "./shortcuts";
 setupShortcuts(store);
