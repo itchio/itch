@@ -36,6 +36,10 @@ let fetching: {
   [key: string]: boolean;
 } = {};
 
+let lastFetcher: {
+  [key: string]: any;
+} = {};
+
 let nextFetchReason: {
   [key: string]: FetchReason;
 } = {};
@@ -43,27 +47,32 @@ let nextFetchReason: {
 export async function queueFetch(
   store: IStore,
   db: DB,
-  tabId: string,
+  tab: string,
   reason: FetchReason,
 ) {
-  if (fetching[tabId]) {
+  if (fetching[tab]) {
     logger.debug(
-      `for ${tabId}, queueing next fetch reason ${FetchReason[reason]}`,
+      `for ${tab}, queueing next fetch reason ${FetchReason[reason]}`,
     );
-    nextFetchReason[tabId] = reason;
+    nextFetchReason[tab] = reason;
     return;
   }
 
-  const fetcherClass = getFetcherClass(store, tabId);
+  const fetcherClass = getFetcherClass(store, tab);
   if (!fetcherClass) {
     return;
   }
 
-  fetching[tabId] = true;
+  if (lastFetcher[tab] !== fetcherClass) {
+    // TODO: ask fetcher to clean what it fetched
+  }
+  lastFetcher[tab] = fetcherClass;
+
+  fetching[tab] = true;
 
   const fetcher = new fetcherClass();
   const ctx = new Context(store, db);
-  fetcher.hook(ctx, tabId, reason);
+  fetcher.hook(ctx, tab, reason);
 
   fetcher
     .run()
@@ -72,13 +81,13 @@ export async function queueFetch(
       fetcher.logger.error(`failed: ${e.stack}`);
     })
     .then(() => {
-      delete fetching[tabId];
+      delete fetching[tab];
 
-      const nextReason = nextFetchReason[tabId];
+      const nextReason = nextFetchReason[tab];
       if (nextReason) {
-        delete nextFetchReason[tabId];
+        delete nextFetchReason[tab];
         logger.debug(`now doing nextReason ${nextReason}`);
-        queueFetch(store, db, tabId, nextReason).catch(err => {
+        queueFetch(store, db, tab, nextReason).catch(err => {
           logger.error(`In queued fetcher: ${err.stack}`);
         });
       }

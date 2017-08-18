@@ -39,10 +39,6 @@ export const ItemDiv = styled.section`
 
   position: relative;
 
-  &.fresh {
-    animation: ${styles.animations.enterLeft} .3s ease-out;
-  }
-
   &.active {
     .icon-cross {
       opacity: 1;
@@ -126,6 +122,14 @@ class Item extends React.PureComponent<IProps, IState> {
   }
 
   onClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (e.shiftKey && e.ctrlKey) {
+      const { onExplore, tab } = this.props;
+      if (onExplore) {
+        onExplore(tab);
+        return;
+      }
+    }
+
     // left (normal) click
     const { onClick } = this.props;
     if (onClick) {
@@ -235,6 +239,7 @@ interface IProps {
   onClick?: () => void;
   onContextMenu: () => void;
   onClose?: () => void;
+  onExplore?: (tabId: string) => void;
   data?: ITabData;
 }
 

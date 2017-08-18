@@ -8,9 +8,9 @@ import * as actions from "../actions";
 
 import Filler from "./basics/filler";
 import IconButton from "./basics/icon-button";
-import SidebarSearch from "./sidebar/search";
-import SidebarTab from "./sidebar/tab";
-import SidebarLogo from "./sidebar/logo";
+import Search from "./sidebar/search";
+import Tab from "./sidebar/tab";
+import Logo from "./sidebar/logo";
 import UserMenu from "./sidebar/user-menu";
 
 import { IAppState } from "../types";
@@ -75,13 +75,7 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
       {map(items, (tab, index) => {
         const active = currentTab === tab;
         return (
-          <SidebarTab
-            key={tab}
-            tab={tab}
-            active={active}
-            index={index}
-            sortable
-          />
+          <Tab key={tab} tab={tab} active={active} index={index} sortable />
         );
       })}
     </SortableListContainer>
@@ -126,9 +120,9 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
       <SidebarDiv width={sidebarWidth}>
         {osx && !fullscreen ? <TitleBarPadder /> : null}
 
-        <SidebarLogo />
+        <Logo />
 
-        <SidebarSearch />
+        <Search />
 
         <SidebarItems>
           <SidebarSection>
@@ -137,7 +131,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
             </SidebarHeading>
           </SidebarSection>
           {map(tabs.constant, (id, index) => {
-            return <SidebarTab key={id} tab={id} active={currentId === id} />;
+            return <Tab key={id} tab={id} active={currentId === id} />;
           })}
 
           <SidebarSection>

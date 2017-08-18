@@ -10,11 +10,12 @@ import { dispatcher } from "../../constants/action-types";
 
 class Logo extends React.PureComponent<IDerivedProps> {
   render() {
-    const { navigate, appVersion } = this.props;
+    const { appVersion } = this.props;
 
     return (
       <LogoDiv
-        onClick={e => navigate({ tab: "featured" })}
+        className="logo-div"
+        onClick={this.onClick}
         data-rh-at="bottom"
         data-rh={`itch v${appVersion}`}
       >
@@ -22,18 +23,35 @@ class Logo extends React.PureComponent<IDerivedProps> {
       </LogoDiv>
     );
   }
+
+  onClick = (e: React.MouseEvent<any>) => {
+    console.log("hi");
+    if (e.shiftKey && e.ctrlKey) {
+      const { openModal } = this.props;
+      openModal({
+        title: "Secret options",
+        message: "",
+        widget: "secret-settings",
+        widgetParams: {},
+      });
+      return;
+    }
+
+    const { navigate } = this.props;
+    navigate({ tab: "featured" });
+  };
 }
 
 interface IDerivedProps {
   appVersion: string;
 
   navigate: typeof actions.navigate;
+  openModal: typeof actions.openModal;
 }
 
 const LogoDiv = styled.div`
   text-align: center;
   cursor: pointer;
-  -webkit-app-region: drag;
 
   margin-top: 10px;
   height: 69px;
@@ -50,5 +68,6 @@ export default connect(Logo, {
   }),
   dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
+    openModal: dispatcher(dispatch, actions.openModal),
   }),
 });

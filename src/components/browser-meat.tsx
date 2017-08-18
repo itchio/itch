@@ -38,7 +38,7 @@ import GameBrowserContext from "./game-browser-context";
 
 import { transformUrl } from "../util/navigation";
 
-import { IAppState } from "../types";
+import { IAppState, ITabData } from "../types";
 import { IDispatch, dispatcher } from "../constants/action-types";
 
 import "electron";
@@ -115,6 +115,10 @@ export class BrowserMeat extends React.PureComponent<
         loading: true,
         url: "",
       },
+      webData: {
+        webTitle: "",
+        webFavicon: null,
+      },
     };
   }
 
@@ -184,24 +188,32 @@ export class BrowserMeat extends React.PureComponent<
     this.analyzePage(this.state.browserState.url);
   };
 
+  // TODO: type
   pageTitleUpdated = (e: any) => {
-    // TODO: type
-    const { tab, tabDataFetched } = this.props;
-    tabDataFetched({ tab: tab, data: { webTitle: e.title } });
+    this.pushWebData({ webTitle: e.title });
   };
 
+  // TODO: type
   pageFaviconUpdated = (e: any) => {
-    // TODO: type
-    const { tab, tabDataFetched } = this.props;
-    tabDataFetched({ tab: tab, data: { webFavicon: e.favicons[0] } });
+    this.pushWebData({ webFavicon: e.favicons[0] });
   };
 
+  pushWebData(data: Partial<ITabData>) {
+    const { tab, tabDataFetched } = this.props;
+    tabDataFetched({ tab: tab, data });
+    this.setState({
+      webData: {
+        ...this.state.webData,
+        ...data,
+      },
+    });
+  }
+
+  // TODO: type
   didNavigate = (e: any) => {
-    // TODO: type
     const { url } = e;
 
     this.updateBrowserState({ url });
-
     this.updateScrollWatcher(url, this.wentBackOrForward);
     this.wentBackOrForward = false;
   };
@@ -316,9 +328,13 @@ export class BrowserMeat extends React.PureComponent<
           if (parsed.search) {
             newPath += parsed.search;
           }
-          evolveTab({ tab: tab, path: newPath });
+          evolveTab({ tab: tab, path: newPath, extras: this.state.webData });
         } else {
-          evolveTab({ tab: tab, path: `url/${url}` });
+          evolveTab({
+            tab: tab,
+            path: `url/${url}`,
+            extras: this.state.webData,
+          });
         }
       },
     );
@@ -561,6 +577,7 @@ interface IDerivedProps {
 
 interface IState {
   browserState: IBrowserState;
+  webData: Partial<ITabData>;
 }
 
 export default connect<IProps>(injectIntl(BrowserMeat), {

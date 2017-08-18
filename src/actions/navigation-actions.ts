@@ -94,6 +94,8 @@ import {
   IOpenDevToolsPayload,
   TAB_GOT_WEB_CONTENTS,
   ITabGotWebContentsPayload,
+  CLEAN_TAB_DATA,
+  ICleanTabDataPayload,
 } from "../constants/action-types";
 
 export const navigate = createAction<INavigatePayload>(NAVIGATE);
@@ -141,6 +143,7 @@ export const navigateToCollection = (payload: INavigateToCollectionPayload) =>
 
 export const moveTab = createAction<IMoveTabPayload>(MOVE_TAB);
 export const evolveTab = createAction<IEvolveTabPayload>(EVOLVE_TAB);
+export const cleanTabData = createAction<ICleanTabDataPayload>(CLEAN_TAB_DATA);
 export const tabEvolved = createAction<ITabEvolvedPayload>(TAB_EVOLVED);
 export const newTab = createAction<INewTabPayload>(NEW_TAB);
 export const closeTab = createAction<ICloseTabPayload>(CLOSE_TAB);

@@ -23,14 +23,18 @@ import { IChromeStore } from "../types";
 const filter = true;
 const middleware: Middleware[] = [];
 
-const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === "1";
+let reduxLoggingEnabled = () => store.getState().status.reduxLoggingEnabled;
 
-if (REDUX_DEVTOOLS_ENABLED) {
-  const logger = createLogger({
-    predicate: (getState: () => any, action: any) => !action.MONITOR_ACTION,
-  });
-  middleware.push(logger);
-}
+import shouldLogAction from "./should-log-action";
+
+const logger = createLogger({
+  predicate: (getState: () => any, action: any) => {
+    if (!reduxLoggingEnabled()) return false;
+    return shouldLogAction(action);
+  },
+  diff: true,
+});
+middleware.push(logger);
 
 const ee = electronEnhancer({
   filter,
@@ -43,12 +47,7 @@ const em = applyMiddleware(...middleware);
 
 let enhancer: GenericStoreEnhancer;
 
-if (REDUX_DEVTOOLS_ENABLED) {
-  const DevTools = require("../components/dev-tools").default;
-  enhancer = compose(ee, em, DevTools.instrument()) as GenericStoreEnhancer;
-} else {
-  enhancer = compose(ee, em) as GenericStoreEnhancer;
-}
+enhancer = compose(ee, em) as GenericStoreEnhancer;
 
 const initialState = {};
 const store = createStore(reducer, initialState, enhancer) as IChromeStore;

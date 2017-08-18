@@ -19,6 +19,8 @@ import {
   IOpenAtLoginErrorPayload,
   PROXY_SETTINGS_DETECTED,
   IProxySettingsDetectedPayload,
+  ISetReduxLoggingEnabledPayload,
+  SET_REDUX_LOGGING_ENABLED,
 } from "../constants/action-types";
 
 export const languageSniffed = createAction<ILanguageSniffedPayload>(
@@ -47,6 +49,11 @@ export const clearBrowsingData = createAction<IClearBrowsingDataPayload>(
 export const openAtLoginError = createAction<IOpenAtLoginErrorPayload>(
   OPEN_AT_LOGIN_ERROR,
 );
+
+export const setReduxLoggingEnabled = createAction<
+  ISetReduxLoggingEnabledPayload
+>(SET_REDUX_LOGGING_ENABLED);
+
 export const proxySettingsDetected = createAction<
   IProxySettingsDetectedPayload
 >(PROXY_SETTINGS_DETECTED);

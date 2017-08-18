@@ -972,9 +972,8 @@ export interface IOpenAtLoginError {
 
 export interface IStatusState {
   messages: ILocalizedString[];
-  /** app easter eggs, enabled throughout some periods */
-  bonuses: {};
   openAtLoginError: IOpenAtLoginError;
+  reduxLoggingEnabled: boolean;
 }
 
 // i18n

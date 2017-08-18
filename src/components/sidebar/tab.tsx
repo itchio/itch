@@ -39,7 +39,7 @@ const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
   return <Item {...props.props} />;
 });
 
-class Tab extends React.PureComponent<IProps & IDerivedProps> {
+class TabBase extends React.PureComponent<IProps & IDerivedProps> {
   onClick = () => {
     const { tab, navigate } = this.props;
     navigate({ tab });
@@ -57,6 +57,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps> {
 
   render() {
     const { tab, index, sortable, data, active, loading } = this.props;
+    const { onExplore } = this;
 
     const path = data.path || tab;
     let iconImage = data.iconImage;
@@ -112,6 +113,7 @@ class Tab extends React.PureComponent<IProps & IDerivedProps> {
       progress,
       onClose,
       onContextMenu,
+      onExplore,
       data,
       sublabel,
       gameOverride,
@@ -124,6 +126,17 @@ class Tab extends React.PureComponent<IProps & IDerivedProps> {
       return <Item key={tab} {...props} />;
     }
   }
+
+  onExplore = (tab: string) => {
+    this.props.openModal({
+      title: "Tab data",
+      message: "",
+      widget: "explore-json",
+      widgetParams: {
+        data: this.props.data,
+      },
+    });
+  };
 }
 
 interface IProps {
@@ -140,12 +153,13 @@ interface IDerivedProps {
 
   navigate: typeof actions.navigate;
   closeTab: typeof actions.closeTab;
+  openModal: typeof actions.openModal;
   openTabContextMenu: typeof actions.openTabContextMenu;
 
   intl: InjectedIntl;
 }
 
-export default connect<IProps>(injectIntl(Tab), {
+const Tab = connect<IProps>(injectIntl(TabBase), {
   state: (initialState, initialProps) => {
     let { tab } = initialProps;
 
@@ -159,6 +173,9 @@ export default connect<IProps>(injectIntl(Tab), {
   dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
     closeTab: dispatcher(dispatch, actions.closeTab),
+    openModal: dispatcher(dispatch, actions.openModal),
     openTabContextMenu: dispatcher(dispatch, actions.openTabContextMenu),
   }),
 });
+
+export default Tab;

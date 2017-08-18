@@ -16,6 +16,8 @@ import getWatcher from "../reactors";
 import reducer from "../reducers";
 import db from "../db";
 
+import shouldLogAction from "./should-log-action";
+
 import { IStore } from "../types";
 
 const crashGetter = (store: Store<any>) => (next: (action: any) => any) => (
@@ -42,14 +44,7 @@ if (beChatty) {
   const createLogger = require("redux-cli-logger").default;
   const logger = createLogger({
     predicate: (getState: () => any, action: any) => {
-      return (
-        !action.MONITOR_ACTION &&
-        !/^WINDOW_/.test(action.type) &&
-        !/_DB_/.test(action.type) &&
-        !/LOCALE_/.test(action.type) &&
-        !/_DATAPOINT$/.test(action.type) &&
-        action.type !== "TASK_PROGRESS"
-      );
+      return shouldLogAction(action);
     },
     stateTransformer: (state: any) => "",
     actionTransformer: (action: any) => {

@@ -252,6 +252,12 @@ export interface IEvolveTabPayload {
   quick?: boolean;
 }
 
+export const CLEAN_TAB_DATA = "CLEAN_TAB_DATA";
+export interface ICleanTabDataPayload {
+  /** the tab to clean */
+  tab: string;
+}
+
 export const TAB_EVOLVED = "TAB_EVOLVED";
 export interface ITabEvolvedPayload {
   /** the tab that evolved (maybe went from a boring web tab to a game tab) */
@@ -1041,6 +1047,11 @@ export interface ITabGotWebContentsPayload {
 
 export const OPEN_AT_LOGIN_ERROR = "OPEN_AT_LOGIN_ERROR";
 export interface IOpenAtLoginErrorPayload extends Types.IOpenAtLoginError {}
+
+export const SET_REDUX_LOGGING_ENABLED = "SET_REDUX_LOGGING_ENABLED";
+export interface ISetReduxLoggingEnabledPayload {
+  enabled: boolean;
+}
 
 export const PROXY_SETTINGS_DETECTED = "PROXY_SETTINGS_DETECTED";
 export interface IProxySettingsDetectedPayload {

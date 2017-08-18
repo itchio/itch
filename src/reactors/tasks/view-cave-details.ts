@@ -1,7 +1,7 @@
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import { IViewCaveDetailsParams } from "../../components/modal-widgets/view-cave-details";
+import { IExploreJsonParams } from "../../components/modal-widgets/explore-json";
 import { DB } from "../../db";
 import { CaveModel } from "../../db/models/cave";
 import expandFields from "../../db/expand-fields";
@@ -25,11 +25,11 @@ export default function(watcher: Watcher, db: DB) {
     store.dispatch(
       actions.openModal({
         title: `Cave details for ${game ? game.title : "?"}`,
-        message: "",
-        widget: "view-cave-details",
+        message: "Local cave data:",
+        widget: "explore-json",
         widgetParams: {
-          currentCave: cave,
-        } as IViewCaveDetailsParams,
+          data: cave,
+        } as IExploreJsonParams,
         buttons: [
           {
             label: ["prompt.action.ok"],

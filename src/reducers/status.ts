@@ -2,12 +2,12 @@ import { IStatusState } from "../types";
 import * as actions from "../actions";
 import reducer from "./reducer";
 
-import { rest, omit } from "underscore";
+import { rest } from "underscore";
 
 const initialState = {
   messages: [],
-  bonuses: {},
   openAtLoginError: null,
+  reduxLoggingEnabled: false,
 } as IStatusState;
 
 export default reducer<IStatusState>(initialState, on => {
@@ -27,32 +27,19 @@ export default reducer<IStatusState>(initialState, on => {
     };
   });
 
-  on(actions.enableBonus, (state, action) => {
-    const { name } = action.payload;
-
-    return {
-      ...state,
-      bonuses: {
-        ...state.bonuses,
-        [name]: true,
-      },
-    };
-  });
-
-  on(actions.disableBonus, (state, action) => {
-    const { name } = action.payload;
-
-    return {
-      ...state,
-      bonuses: omit(state.bonuses, name),
-    };
-  });
-
   on(actions.openAtLoginError, (state, action) => {
     const error = action.payload;
     return {
       ...state,
       openAtLoginError: error,
+    };
+  });
+
+  on(actions.setReduxLoggingEnabled, (state, action) => {
+    const { enabled } = action.payload;
+    return {
+      ...state,
+      reduxLoggingEnabled: enabled,
     };
   });
 });

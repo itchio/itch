@@ -9,6 +9,9 @@ import { ICollection } from "../db/models/collection";
 
 import { IInstallLocation, ITabData } from "../types";
 
+import getByIds from "../helpers/get-by-ids";
+import { first } from "underscore";
+
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 
 export async function transformUrl(original: string): Promise<string> {
@@ -173,6 +176,30 @@ export function makeLabel(id: string, data: ITabData) {
   }
 
   if (data) {
+    if (data.path) {
+      const prefix = pathPrefix(data.path);
+      switch (prefix) {
+        case "games": {
+          const game = getGame(data);
+          if (game) {
+            return game.title;
+          }
+        }
+        case "users": {
+          const user = getUser(data);
+          if (user) {
+            return user.displayName || user.username;
+          }
+        }
+        case "collections": {
+          const collection = getCollection(data);
+          if (collection) {
+            return collection.title;
+          }
+        }
+      }
+    }
+
     if (data.webTitle) {
       return data.webTitle;
     }
@@ -202,6 +229,30 @@ export function isAppSupported(url: string) {
   }
 
   return null;
+}
+
+export function getGame(tabData: ITabData): IGame {
+  const { path, games } = tabData;
+  if (!(path && games)) {
+    return null;
+  }
+  return games[pathToId(path)];
+}
+
+export function getUser(tabData: ITabData): IUser {
+  const { path, users } = tabData;
+  if (!(path && users)) {
+    return null;
+  }
+  return users[pathToId(path)];
+}
+
+export function getCollection(tabData: ITabData): ICollection {
+  const { path, collections } = tabData;
+  if (!(path && collections)) {
+    return null;
+  }
+  return collections[pathToId(path)];
 }
 
 export default {

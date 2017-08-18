@@ -38,21 +38,12 @@ export default reducer<ITabDataSet>(initialState, on => {
       // ignore fresh data for closed tabs
       return state;
     }
-    logger.debug(`${tab} / ${oldData.path} evolved`);
 
-    if (pathPrefix(oldData.path) === pathPrefix(data.path)) {
-      // merge old & new data
-      return {
-        ...state,
-        [tab]: { ...oldData, ...data },
-      };
-    } else {
-      // if the path changed, discard old data
-      return {
-        ...state,
-        [tab]: data,
-      };
-    }
+    // merge old & new data
+    return {
+      ...state,
+      [tab]: { ...oldData, ...data },
+    };
   });
 
   on(actions.focusTab, (state, action) => {
