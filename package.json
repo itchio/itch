@@ -69,7 +69,7 @@
     "deep-assign": "^2.0.0",
     "deep-equal": "^1.0.1",
     "deep-freeze": "0.0.1",
-    "electron-compile-ftl": "^6.4.6",
+    "electron-compile-ftl": "^6.4.7",
     "electron-is-dev": "^0.1.2",
     "eol": "^0.2.0",
     "file-type": "^3.0.0",

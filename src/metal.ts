@@ -6,13 +6,18 @@ if (process.env.ITCH_TIME_REQUIRE === "1") {
   rt.start();
 }
 
+import env from "./env";
 import { enableLiveReload } from "electron-compile-ftl";
+if (env.name === "development") {
+  const logger = require("./logger").default;
+  logger.info("Enabling hot-module reload!");
+  enableLiveReload({ strategy: "react-hmr", blacklist: ["db", "store"] });
+}
 
 import autoUpdaterStart from "./util/auto-updater";
 import { isItchioURL } from "./util/url";
 
 import * as actions from "./actions";
-import env from "./env";
 import { app, protocol, globalShortcut } from "electron";
 
 import { connectDatabase } from "./db";
@@ -78,12 +83,6 @@ function autoUpdateDone() {
 
     await connectDatabase(store);
 
-    if (env.name === "development") {
-      const logger = require("./logger").default;
-      logger.info("Enabling hot-module reload!");
-      enableLiveReload({ strategy: "react-hmr" });
-    }
-
     store.dispatch(
       actions.processUrlArguments({
         args: process.argv,
@@ -97,6 +96,8 @@ function autoUpdateDone() {
     if (rt) {
       rt.end();
     }
+
+    store.dispatch(actions.languageSniffed({ lang: app.getLocale() }));
 
     store.dispatch(actions.preboot({}));
   });

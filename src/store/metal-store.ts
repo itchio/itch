@@ -67,7 +67,7 @@ if (beChatty) {
   middleware.push(logger);
 }
 
-const watcher = getWatcher(db);
+let watcher = getWatcher(db);
 
 const enhancer = compose(
   electronEnhancer({
@@ -81,5 +81,11 @@ const enhancer = compose(
 const initialState = {};
 const store = createStore(reducer, initialState, enhancer) as IStore;
 route(watcher, store, { type: "__MOUNT", payload: null });
+
+(module as any).hot.accept(() => {
+  console.warn(`Refreshing all reactors...`);
+  const _getWatcher = require("../reactors").default;
+  watcher = _getWatcher(db);
+});
 
 export default store;

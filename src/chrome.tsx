@@ -118,12 +118,6 @@ if (os.platform() === "darwin") {
 }
 
 async function start() {
-  let lang = navigator.language;
-  if (env.name === "test") {
-    lang = "en";
-  }
-  store.dispatch(actions.languageSniffed({ lang }));
-
   let perf: any;
   if (process.env.ITCH_REACT_PERF === "1") {
     perf = require("react-addons-perf");
