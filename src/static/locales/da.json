@@ -279,5 +279,13 @@
     "search.results.local": "Lokale",
     "search.results.games": "Spil",
     "search.results.creators": "Skabere",
-    "action.name.manual": "Brugermanual"
+    "action.name.manual": "Brugermanual",
+    "action.name.forums": "Diskussioner",
+    "grid.item.view_details": "Se detaljer...",
+    "grid.item.revert_to_version": "Rul tilbage til version...",
+    "grid.item.verify_integrity": "Verificer integritet",
+    "grid.item.update": "Opdater",
+    "game.install.could_not_launch.missing_jre": "Der kræves en Java version der ikke blev fundet på dit system",
+    "grid.criterion.search": "Søg...",
+    "grid.criterion.only_compatible": "Kun kompatible"
 }
