@@ -129,8 +129,8 @@ async function start() {
     console.log(`Perf available as window.perf, enjoy!`);
   }
 
-  if ((module as any).hot) {
-    (module as any).hot.accept(() => {
+  if (module.hot) {
+    module.hot.accept(() => {
       const NextApp = require("./components/app").default;
       render(NextApp);
     });

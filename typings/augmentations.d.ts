@@ -17,4 +17,9 @@ declare global {
       "webview": WebViewProps;
     }
   }
+  interface NodeModule {
+    hot?: {
+      accept: (cb: () => void) => void;
+    };
+  }
 }

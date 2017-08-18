@@ -82,10 +82,12 @@ const initialState = {};
 const store = createStore(reducer, initialState, enhancer) as IStore;
 route(watcher, store, { type: "__MOUNT", payload: null });
 
-(module as any).hot.accept(() => {
-  console.warn(`Refreshing all reactors...`);
-  const _getWatcher = require("../reactors").default;
-  watcher = _getWatcher(db);
-});
+if (module.hot) {
+  module.hot.accept(() => {
+    console.warn(`Refreshing all reactors...`);
+    const _getWatcher = require("../reactors").default;
+    watcher = _getWatcher(db);
+  });
+}
 
 export default store;

@@ -147,13 +147,13 @@ export class SearchResultBar extends React.PureComponent<
   resultsGrid(results: ISearchResults) {
     const { highlight } = this.props;
     const active = this.props.open;
-    const fuseResults = [];
+    const localResults = [];
 
     const hasRemoteResults =
       results &&
       (results.gameResults.result.gameIds.length > 0 ||
         results.userResults.result.userIds.length > 0);
-    const hasLocalResults = fuseResults.length > 0;
+    const hasLocalResults = localResults.length > 0;
 
     if (!(hasRemoteResults || hasLocalResults)) {
       return (
@@ -185,13 +185,13 @@ export class SearchResultBar extends React.PureComponent<
 
     let index = 0;
 
-    if (fuseResults.length > 0) {
+    if (localResults.length > 0) {
       items.push(
         <Category>
           {format(["search.results.local"])}
         </Category>,
       );
-      each(fuseResults.slice(0, 5), result => {
+      each(localResults.slice(0, 5), result => {
         const game = result.item;
         items.push(
           <GameSearchResult
