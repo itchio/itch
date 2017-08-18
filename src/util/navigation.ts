@@ -9,9 +9,6 @@ import { ICollection } from "../db/models/collection";
 
 import { IInstallLocation, ITabData } from "../types";
 
-import getByIds from "../helpers/get-by-ids";
-import { first } from "underscore";
-
 const ITCH_HOST_RE = /^([^.]+)\.(itch\.io|localhost\.com:8080)$/;
 
 export async function transformUrl(original: string): Promise<string> {

@@ -1,6 +1,5 @@
 import { ITabDataSet } from "../../types";
 import * as actions from "../../actions";
-import { pathPrefix } from "../../util/navigation";
 import reducer from "../reducer";
 
 import rootLogger from "../../logger";
