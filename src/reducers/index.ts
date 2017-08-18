@@ -1,34 +1,16 @@
-import { combineReducers } from "redux";
+import allInitial from "./all";
+import { IAction } from "../constants/action-types";
+import { IAppState } from "../types/index";
 
-import modals from "./modals";
-import system from "./system";
-import setup from "./setup";
-import rememberedSessions from "./remembered-sessions";
-import session from "./session";
-import i18n from "./i18n";
-import ui from "./ui";
-import selfUpdate from "./self-update";
-import preferences from "./preferences";
-import tasks from "./tasks";
-import downloads from "./downloads";
-import status from "./status";
-import gameUpdates from "./game-updates";
-import commons from "./commons";
+let all = allInitial;
 
-const reducer = combineReducers({
-  modals,
-  system,
-  setup,
-  rememberedSessions,
-  session,
-  i18n,
-  ui,
-  selfUpdate,
-  preferences,
-  tasks,
-  downloads,
-  status,
-  gameUpdates,
-  commons,
-});
-export default reducer;
+if (module.hot) {
+  module.hot.accept(() => {
+    console.log(`Refreshing reducers...`);
+    all = require("./all").default;
+  });
+}
+
+export default function reduce(state: IAppState, action: IAction<any>) {
+  return all(state, action);
+}
