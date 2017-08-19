@@ -7,7 +7,6 @@ import Context from "../../context";
 
 import { IGame } from "../../db/models/game";
 import { IUpload, IStore, IAppState } from "../../types";
-import { fromDateTimeField } from "../../db/datetime-field";
 
 const asUpload = (x: Partial<IUpload>) => x as IUpload;
 
@@ -215,22 +214,12 @@ suite(__filename, s => {
         "penalize demos",
       );
 
-      const justSource = asUpload({
+      const untaggedUpload = asUpload({
         filename: "the-choice.7z",
-        updatedAt: fromDateTimeField("2016-03-16 17:24:09"),
-        size: 27136622,
-        id: 173693,
-        pOsx: false,
-        createdAt: fromDateTimeField("2016-03-16 17:19:52"),
-        pWindows: false,
-        pAndroid: false,
-        pLinux: false,
-        type: "default",
-        demo: false,
       });
 
       t.same(
-        narrowDownUploads(ctx, [justSource], game, windows64),
+        narrowDownUploads(ctx, [untaggedUpload], game, windows64),
         {
           uploads: [],
           hadUntagged: true,
@@ -238,6 +227,48 @@ suite(__filename, s => {
           hadWrongArch: false,
         },
         "don't go with untagged",
+      );
+
+      const debUpload = asUpload({
+        filename: "blob.deb",
+        pLinux: true,
+      });
+
+      const rpmUpload = asUpload({
+        filename: "blob.rpm",
+        pLinux: true,
+      });
+
+      t.same(
+        narrowDownUploads(ctx, [debUpload, rpmUpload], game, linux64),
+        {
+          uploads: [],
+          hadUntagged: false,
+          hadWrongFormat: true,
+          hadWrongArch: false,
+        },
+        "blacklist .deb & .rpm files",
+      );
+
+      const pkgUpload = asUpload({
+        filename: "super-mac-game.pkg",
+        pOsx: true,
+      });
+
+      const mac64: IRuntime = {
+        platform: "osx",
+        is64: true,
+      };
+
+      t.same(
+        narrowDownUploads(ctx, [pkgUpload], game, mac64),
+        {
+          uploads: [],
+          hadUntagged: false,
+          hadWrongFormat: true,
+          hadWrongArch: false,
+        },
+        "blacklist .pkg files",
       );
     });
   });
