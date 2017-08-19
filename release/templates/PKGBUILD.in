@@ -49,7 +49,7 @@ package() {
   cd "${srcdir}/itch-${pkgver}{{CI_SUFFIX}}"
 
   install -d "${pkgdir}/usr/lib/{{CI_APPNAME}}"
-  cp -a "build/v${pkgver}{{CI_SUFFIX}}/{{CI_APPNAME}}-linux-${_ELECTRON_ARCH}/." "${pkgdir}/usr/lib/{{CI_APPNAME}}"
+  cp -a "build/v${pkgver}/{{CI_APPNAME}}-linux-${_ELECTRON_ARCH}/." "${pkgdir}/usr/lib/{{CI_APPNAME}}"
 
   install -d "${pkgdir}/usr/share/applications"
   install -Dm644 linux-extras/io.itch.{{CI_APPNAME}}.desktop "${pkgdir}/usr/share/applications/{{CI_APPNAME}}.desktop"
