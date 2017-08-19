@@ -1,6 +1,6 @@
 import { logPath } from "../os/paths";
 import { Logger as PinoLogger, Level } from "pino";
-import { Stream, Writable } from "stream";
+import { Stream } from "stream";
 
 import env from "../env";
 

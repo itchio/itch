@@ -9,8 +9,6 @@ import urls from "../constants/urls";
 import { app } from "electron";
 import env from "../env";
 
-import delay from "../reactors/delay";
-
 const upgradesEnabled =
   env.name === "production" || process.env.DID_I_STUTTER === "1";
 
