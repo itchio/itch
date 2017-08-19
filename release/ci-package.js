@@ -53,8 +53,8 @@ async function ciPackage(argsIn) {
   $(await $.sh("tar xf dist.tar"));
 
   const electronVersion = JSON.parse(
-    await $.readFile("node_modules/electron/package.json"),
-  ).version;
+    await $.readFile("package.json"),
+  ).devDependencies.electron.replace(/^\^/, "");
   $.say(`Using electron ${electronVersion}`);
 
   const appName = $.appName();
