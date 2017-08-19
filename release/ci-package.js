@@ -52,6 +52,9 @@ async function ciPackage(argsIn) {
   $(await $.sh("rm -rf dist"));
   $(await $.sh("tar xf dist.tar"));
 
+  $.say(`Installing dependencies...`);
+  $(await $.npm("install"));
+
   const electronVersion = JSON.parse(
     await $.readFile("package.json"),
   ).devDependencies.electron.replace(/^\^/, "");
