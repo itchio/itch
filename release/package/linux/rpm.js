@@ -1,20 +1,20 @@
-
-const $ = require('../../common')
-const base = require('./base')
+const $ = require("../../common");
+const base = require("./base");
 
 module.exports = {
-  packageRpm: async function (arch, buildPath) {
+  packageRpm: async function(arch, buildPath) {
     // RPM package
-    const rpmArch = $.toRpmArch(arch)
-    $(await $.gemDep('fpm', 'fpm'))
+    const rpmArch = $.toRpmArch(arch);
+    $(await $.gemDep("fpm", "fpm"));
 
-    $.say('Preparing stage2')
-    const stage2Path = 'rpm-stage'
-    await base.prepareStage2(buildPath, stage2Path)
+    $.say("Preparing stage2");
+    const stage2Path = "rpm-stage";
+    await base.prepareStage2(buildPath, stage2Path);
 
-    const distroFiles = '.=/'
+    const distroFiles = ".=/";
 
-    $(await $.sh(`fpm --force \
+    $(
+      await $.sh(`fpm --force \
       -C ${stage2Path} -s dir -t rpm \
       --rpm-compression xz \
       --name "${$.appName()}" \
@@ -31,8 +31,9 @@ module.exports = {
       -d "libappindicator" \
       -d "libXScrnSaver" \
     ${distroFiles}
-    `))
+    `)
+    );
 
-    $(await $.sh('cp *.rpm packages/'))
-  }
-}
+    $(await $.sh("cp *.rpm packages/"));
+  },
+};

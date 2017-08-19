@@ -19,15 +19,16 @@ try {
   process.exit(1);
 }
 
-const doGlob = (pattern) => glob.sync(pattern, {cwd: modulesDir, dot: true, nocase: true});
+const doGlob = pattern =>
+  glob.sync(pattern, { cwd: modulesDir, dot: true, nocase: true });
 
 let killList = [];
 
-const bigComboPattern = `**/@(${patterns.comboPatterns.join("|")})`
-killList = [...killList, ...doGlob(bigComboPattern)]
+const bigComboPattern = `**/@(${patterns.comboPatterns.join("|")})`;
+killList = [...killList, ...doGlob(bigComboPattern)];
 
 for (const fullPattern of patterns.fullPatterns) {
-  killList = [...killList, ...doGlob(fullPattern)]
+  killList = [...killList, ...doGlob(fullPattern)];
 }
 
 console.log(`Removing ${killList.length} files & folders`);

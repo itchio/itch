@@ -3,9 +3,7 @@
 // generate itch package for various platforms
 
 const ospath = require("path");
-
 const $ = require("./common");
-
 const bluebird = require("bluebird");
 
 async function ciPackage(argsIn) {
@@ -23,27 +21,25 @@ async function ciPackage(argsIn) {
   }
 
   if (args.length !== 2) {
-    throw new Error(
-      `ci-package expects two arguments, not ${args.length}. (got: ${args.join(
-        ", ",
-      )})`,
-    );
+    const got = args.join(" ::: ");
+    const msg = `ci-package expects two arguments, got ${got}`;
+    throw new Error(msg);
   }
   const [os, arch] = args;
 
   if (!$.OSES[os]) {
-    throw new Error(
-      `invalid os ${os}, must be one of ${Object.keys($.OSES).join(", ")}`,
-    );
+    const msg = `invalid os ${os}, must be in ${Object.keys($.OSES).join(
+      " ::: "
+    )}`;
+    throw new Error(msg);
   }
 
   const archInfo = $.ARCHES[arch];
   if (!archInfo) {
-    throw new Error(
-      `invalid arch ${arch}, must be one of ${Object.keys($.ARCHES).join(
-        ", ",
-      )}`,
-    );
+    const msg = `invalid arch ${arch}, must be in ${Object.keys($.ARCHES).join(
+      " ::: "
+    )}`;
+    throw new Error(msg);
   }
 
   $.say(`Packaging ${$.appName()} for ${os}-${arch}`);
@@ -56,7 +52,7 @@ async function ciPackage(argsIn) {
   $(await $.npm("install"));
 
   const electronVersion = JSON.parse(
-    await $.readFile("package.json"),
+    await $.readFile("package.json")
   ).devDependencies.electron.replace(/^\^/, "");
   $.say(`Using electron ${electronVersion}`);
 
@@ -129,7 +125,7 @@ async function ciPackage(argsIn) {
   await $.showVersions(["npm", "node"]);
   await $.cd("dist", async () => {
     $(await $.npm("install --production"));
-  })
+  });
 
   const darwin = require("./package/darwin");
   const windows = require("./package/windows");
@@ -140,13 +136,13 @@ async function ciPackage(argsIn) {
 
   $.say("Packaging with binary release...");
   let wd = process.cwd();
-  const toUnixPath = (s) => {
+  const toUnixPath = s => {
     if (process.platform === "win32") {
       return s.replace(/\\/g, "/");
     } else {
       return s;
     }
-  }
+  };
 
   const electronConfigKey = `${os}-${archInfo.electronArch}`;
   const electronFinalOptions = Object.assign(
@@ -166,7 +162,9 @@ async function ciPackage(argsIn) {
           $.say("Cleaning modules...");
           try {
             await $.cd(buildPath, async function() {
-              await $.sh(`${toUnixPath(ospath.join(wd, "release", "modclean.js"))} .`);
+              await $.sh(
+                `${toUnixPath(ospath.join(wd, "release", "modclean.js"))} .`
+              );
             });
           } catch (err) {
             $.say(`While cleaning:\n${err.stack}`);
@@ -176,7 +174,7 @@ async function ciPackage(argsIn) {
           callback();
         },
       ],
-    },
+    }
   );
   const appPaths = await $.measure("electron package + rebuild", async () => {
     return await electronPackager(electronFinalOptions);
@@ -222,11 +220,10 @@ async function ciPackage(argsIn) {
     const butlerTarget = `fasterthanlime/${$.appName()}`;
     $.say("Pushing to itch.io...");
     let pushPath = buildPath;
-    $(
-      await $.sh(
-        `./butler push ${artifactPath} ${butlerTarget}:${butlerChannel} --userversion=${$.buildVersion()}`,
-      ),
-    );
+    let butlerCmd = `./butler push ${artifactPath}`;
+    butlerCmd += `${butlerTarget}:${butlerChannel}`;
+    butlerCmd += ` --userversion=${$.buildVersion()}`;
+    $(await $.sh(butlerCmd));
   }
 
   switch (os) {

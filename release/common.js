@@ -1,7 +1,7 @@
 // base functions useful throughout CI scripts
 
-const $ = require('munyx')
+const $ = require("munyx");
 
-$.benchmark = true
+$.benchmark = true;
 
-module.exports = $
+module.exports = $;

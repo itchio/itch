@@ -199,5 +199,5 @@ module.exports = {
     "knex/src",
   ],
 
-  ignore: []
+  ignore: [],
 };

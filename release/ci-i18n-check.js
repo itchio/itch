@@ -8,7 +8,9 @@ const fs = bluebird.promisifyAll(require("fs"));
 const glob = bluebird.promisify(require("glob"));
 
 async function main() {
-  const localesContents = await fs.readFileAsync("src/static/locales/en.json", {encoding: "utf8"});
+  const localesContents = await fs.readFileAsync("src/static/locales/en.json", {
+    encoding: "utf8",
+  });
   const strings = JSON.parse(localesContents);
   console.log("[info] en.json is valid json");
 
@@ -18,12 +20,12 @@ async function main() {
   const inputFiles = await glob("src/**/*.@(ts|tsx)");
   const used = {};
 
-  await bluebird.map(inputFiles, async (inputFile) => {
-    const contents = await fs.readFileAsync(inputFile, {encoding: "utf8"});
+  await bluebird.map(inputFiles, async inputFile => {
+    const contents = await fs.readFileAsync(inputFile, { encoding: "utf8" });
     // look for t("hello") or t("hello", ...)
     const re = /[^a-zA-Z]t\(\"([a-z_\.]+)\"(\)|,)/g;
     let matches;
-    while (matches = re.exec(contents)) {
+    while ((matches = re.exec(contents))) {
       numberUsed++;
       const key = matches[1];
       used[key] = true;
