@@ -220,9 +220,7 @@ async function ciPackage(argsIn) {
     const butlerTarget = `fasterthanlime/${$.appName()}`;
     $.say("Pushing to itch.io...");
     let pushPath = buildPath;
-    let butlerCmd = `./butler push ${artifactPath}`;
-    butlerCmd += `${butlerTarget}:${butlerChannel}`;
-    butlerCmd += ` --userversion=${$.buildVersion()}`;
+    let butlerCmd = `./butler push ${artifactPath} ${butlerTarget}:${butlerChannel} --userversion=${$.buildVersion()}`;
     $(await $.sh(butlerCmd));
   }
 
