@@ -186,7 +186,6 @@ module.exports = {
     "react-intl/dist",
     "react-modal/dist",
     "react-redux/dist",
-    "react-select/dist",
     "redux/dist",
     "redux-logger/dist",
     "reselect/dist",
