@@ -510,6 +510,7 @@ export interface ILocalesConfigLoadedPayload {
 export const QUEUE_LOCALE_DOWNLOAD = "QUEUE_LOCALE_DOWNLOAD";
 export interface IQueueLocaleDownloadPayload {
   lang: string;
+  implicit?: boolean;
 }
 
 export const LOCALE_DOWNLOAD_STARTED = "LOCALE_DOWNLOAD_STARTED";

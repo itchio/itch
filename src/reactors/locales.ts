@@ -35,7 +35,17 @@ function remoteFileName(lang: string): string {
 async function doDownloadLocale(
   lang: string,
   resources: II18nResources,
+  { implicit }: { implicit: boolean },
 ): Promise<II18nResources> {
+  if (!upgradesEnabled) {
+    if (!implicit) {
+      logger.debug(
+        `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`,
+      );
+    }
+    return {};
+  }
+
   const local = canonicalFileName(lang);
   if (!local) {
     // try stripping region
@@ -111,7 +121,7 @@ async function loadLocale(store: IStore, lang: string) {
     logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
   }
 
-  store.dispatch(actions.queueLocaleDownload({ lang }));
+  store.dispatch(actions.queueLocaleDownload({ lang, implicit: true }));
 }
 
 export default function(watcher: Watcher) {
@@ -124,36 +134,29 @@ export default function(watcher: Watcher) {
     await loadLocale(store, "en");
   });
 
-  watcher.on(actions.queueLocaleDownload, async (store, action) => {
-    let { lang } = action.payload;
+  watcher.onDebounced(
+    actions.queueLocaleDownload,
+    2000,
+    async (store, action) => {
+      let { lang, implicit } = action.payload;
 
-    if (!upgradesEnabled) {
-      logger.info(
-        `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`,
-      );
-      return;
-    }
+      const downloading = store.getState().i18n.downloading;
+      if (downloading[lang]) {
+        return;
+      }
 
-    const downloading = store.getState().i18n.downloading;
-    if (downloading[lang]) {
-      return;
-    }
+      store.dispatch(actions.localeDownloadStarted({ lang }));
 
-    store.dispatch(actions.localeDownloadStarted({ lang }));
-
-    // FIXME: this happens twice - it shouldn't
-    logger.debug(`Waiting a bit before downloading ${lang} locale...`);
-    await delay(1000);
-
-    let resources = {};
-    try {
-      resources = await doDownloadLocale(lang, resources);
-    } catch (e) {
-      logger.warn(`Failed downloading locale for ${lang}: ${e.message}`);
-    } finally {
-      store.dispatch(actions.localeDownloadEnded({ lang, resources }));
-    }
-  });
+      let resources = {};
+      try {
+        resources = await doDownloadLocale(lang, resources, { implicit });
+      } catch (e) {
+        logger.warn(`Failed downloading locale for ${lang}: ${e.message}`);
+      } finally {
+        store.dispatch(actions.localeDownloadEnded({ lang, resources }));
+      }
+    },
+  );
 
   watcher.on(actions.languageChanged, async (store, action) => {
     const { lang } = action.payload;
