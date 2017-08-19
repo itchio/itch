@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
 import { connect } from "./connect";
+import * as classNames from "classnames";
 
 import staticTabData from "../constants/static-tab-data";
 import { IAppState, ITabData } from "../types";
@@ -22,6 +23,10 @@ const DraggableDiv = styled.div`
   flex: 1 1;
   display: flex;
   align-self: stretch;
+
+  &.dimmed {
+    opacity: 0.2;
+  }
 `;
 
 const DraggableDivInner = styled.div`
@@ -42,7 +47,7 @@ const emptyObj = {};
 
 export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, maximized, tabData } = this.props;
+    const { tab, maximized, focused, tabData } = this.props;
 
     const staticData: ITabData = staticTabData[tab] || emptyObj;
     let label = tabData.webTitle || tabData.label || staticData.label || "";
@@ -54,7 +59,7 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <FiltersContainer className="title-bar">
-        <DraggableDiv>
+        <DraggableDiv className={classNames({ dimmed: !focused })}>
           <DraggableDivInner>
             <TitleDiv className="title-bar-text">
               {format(label)}
@@ -112,6 +117,7 @@ export default connect<IProps>(TitleBar, {
       tabData: (state: IAppState, props: IProps) =>
         state.session.tabData[props.tab] || emptyObj,
       maximized: (state: IAppState) => state.ui.mainWindow.maximized,
+      focused: (state: IAppState) => state.ui.mainWindow.focused,
     }),
   dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),

@@ -2,19 +2,21 @@ import * as React from "react";
 import { getImagePath } from "../../os/resources";
 import styled from "../styles";
 import { createStructuredSelector } from "reselect";
+import * as classNames from "classnames";
 
 import { connect } from "../connect";
 
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
+import { IAppState } from "../../types/index";
 
 class Logo extends React.PureComponent<IDerivedProps> {
   render() {
-    const { appVersion } = this.props;
+    const { appVersion, focused } = this.props;
 
     return (
       <LogoDiv
-        className="logo-div"
+        className={classNames("logo-div", { dimmed: !focused })}
         onClick={this.onClick}
         data-rh-at="bottom"
         data-rh={`itch v${appVersion}`}
@@ -44,6 +46,7 @@ class Logo extends React.PureComponent<IDerivedProps> {
 
 interface IDerivedProps {
   appVersion: string;
+  focused: boolean;
 
   navigate: typeof actions.navigate;
   openModal: typeof actions.openModal;
@@ -60,11 +63,16 @@ const LogoDiv = styled.div`
     width: 120px;
     margin: 10px 0;
   }
+
+  &.dimmed {
+    opacity: 0.2;
+  }
 `;
 
 export default connect(Logo, {
   state: createStructuredSelector({
-    appVersion: state => state.system.appVersion,
+    appVersion: (state: IAppState) => state.system.appVersion,
+    focused: (state: IAppState) => state.ui.mainWindow.focused,
   }),
   dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
