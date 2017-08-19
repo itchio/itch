@@ -81,7 +81,7 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   preferencesClick = () => {
-    this.props.navigate("preferences");
+    this.props.navigate({ tab: "preferences" });
   };
 
   minimizeClick = () => {
@@ -106,7 +106,7 @@ interface IDerivedProps {
   maximized: boolean;
   focused: boolean;
 
-  navigate: typeof actions.hideWindow;
+  navigate: typeof actions.navigate;
   hideWindow: typeof actions.hideWindow;
   minimizeWindow: typeof actions.minimizeWindow;
   toggleMaximizeWindow: typeof actions.toggleMaximizeWindow;
