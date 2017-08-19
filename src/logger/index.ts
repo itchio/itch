@@ -129,13 +129,11 @@ export function makeLogger(logPath?: string): Logger {
       outStream,
     );
     l.close = () => {
-      if (streamSpecs.file) {
-        try {
-          streamSpecs.file.end();
-        } catch (err) {
-          // tslint:disable-next-line
-          console.log(`Could not close file sink: ${err.stack || err.message}`);
-        }
+      try {
+        outStream.end();
+      } catch (err) {
+        // tslint:disable-next-line
+        console.log(`Could not close file sink: ${err.stack || err.message}`);
       }
     };
     return l;
