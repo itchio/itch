@@ -156,7 +156,6 @@ package-windows-386:
 # ArchLinux user repository
 package-aur:
   stage: package
-  allow_failure: true
   tags:
     - archlinux
   only:
