@@ -156,7 +156,7 @@
   "scripts": {
     "start": "electron . --color --inspect",
     "precommit": "lint-staged",
-    "postinstall": "electron-rebuild",
+    "postinstall": "node src/commands/electron-rebuild-maybe.js",
     "test": "cross-env NODE_ENV=test electron . --color --run-unit-tests",
     "integration-tests": "node release/ci-integration-tests.js",
     "upload-coverage": "codecov -f ./coverage/lcov.info",

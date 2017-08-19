@@ -1,14 +1,23 @@
+#!/usr/bin/env node
+
 const patterns = require("./modclean-patterns");
+const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
 const rimraf = require("rimraf");
 
-const cwd = process.cwd();
-if (path.basename(cwd) !== "itch") {
-  throw new Error(`Refusing to clean non-itch project: ${cwd}`);
+if (process.argv.length < 2) {
+  throw new Error(`Usage: modclean.js DIR`);
 }
-
-const modulesDir = path.join(cwd, "node_modules");
+const workingDir = path.resolve(process.argv[process.argv.length - 1]);
+const modulesDir = path.join(workingDir, "node_modules");
+console.log(`Cleaning module dir: ${modulesDir}`);
+try {
+  let stats = fs.statSync(modulesDir);
+} catch (e) {
+  console.log(`Could not stat module dir: ${e.message}`);
+  process.exit(1);
+}
 
 const doGlob = (pattern) => glob.sync(pattern, {cwd: modulesDir, dot: true, nocase: true});
 

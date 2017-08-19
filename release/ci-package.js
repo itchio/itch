@@ -49,14 +49,8 @@ async function ciPackage(argsIn) {
   $.say(`Packaging ${$.appName()} for ${os}-${arch}`);
 
   $.say("Decompressing dist...");
+  $(await $.sh("rm -rf dist"));
   $(await $.sh("tar xf dist.tar"));
-
-  $.say("Installing modules...");
-  await $.showVersions(["npm", "node"]);
-  $(await $.npm("install"));
-
-  $.say("Copying modules...");
-  $(await $.sh("cp -rf node_modules dist/"));
 
   const electronVersion = JSON.parse(
     await $.readFile("node_modules/electron/package.json"),
@@ -79,6 +73,7 @@ async function ciPackage(argsIn) {
     electronVersion,
     appVersion,
     asar: true,
+    prune: false, // we do it ourselves
     overwrite: true,
     out: outDir,
   };
@@ -127,6 +122,12 @@ async function ciPackage(argsIn) {
   }
   $(await $.npm(`install --no-save ${packages.join(" ")}`));
 
+  $.say("Installing production modules...");
+  await $.showVersions(["npm", "node"]);
+  await $.cd("dist", async () => {
+    $(await $.npm("install --production"));
+  })
+
   const darwin = require("./package/darwin");
   const windows = require("./package/windows");
   const linux = require("./package/linux");
@@ -135,6 +136,15 @@ async function ciPackage(argsIn) {
   const electronRebuild = require("electron-rebuild-ftl").default;
 
   $.say("Packaging with binary release...");
+  let wd = process.cwd();
+  const toUnixPath = (s) => {
+    if (process.platform === "win32") {
+      return s.replace(/\\/g, "/");
+    } else {
+      return s;
+    }
+  }
+
   const electronConfigKey = `${os}-${archInfo.electronArch}`;
   const electronFinalOptions = Object.assign(
     {},
@@ -142,21 +152,21 @@ async function ciPackage(argsIn) {
     {
       afterCopy: [
         async (buildPath, electronVersion, platform, arch, callback) => {
-          $.say("Pruning dev packages");
-          try {
-            await $.cd(buildPath, async function() {
-              await $.npm("prune");
-            });
-          } catch (err) {
-            $.say(`While pruning dev packages:\n${err.stack}`);
-            callback(err);
-          }
-
           $.say("Rebuilding native dependencies...");
           try {
             await electronRebuild(buildPath, electronVersion, arch, [], true);
           } catch (err) {
             $.say(`While building native deps:\n${err.stack}`);
+            callback(err);
+          }
+
+          $.say("Cleaning modules...");
+          try {
+            await $.cd(buildPath, async function() {
+              await $.sh(`${toUnixPath(ospath.join(wd, "release", "modclean.js"))} .`);
+            });
+          } catch (err) {
+            $.say(`While cleaning:\n${err.stack}`);
             callback(err);
           }
 
