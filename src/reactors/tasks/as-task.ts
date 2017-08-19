@@ -74,7 +74,6 @@ export default async function asTask(opts: IAsTaskOpts) {
       delete currentTasks[id];
       if (isCaveLogger) {
         try {
-          // FIXME: either pino or multiwriter eat the last line here. why?
           logger.close();
         } catch (e) {
           rootLogger.warn(`Couldn't close logger: ${e.stack}`);

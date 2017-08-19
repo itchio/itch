@@ -85,6 +85,7 @@
     "logrotate-stream": "^0.2.5",
     "marked-extra": "^0.2.6",
     "mkdirp": "^0.5.1",
+    "multi-write-stream": "^2.0.1",
     "multiwriter": "^0.1.0",
     "pino": "^4.5.2",
     "polished": "^1.0.3",

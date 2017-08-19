@@ -66,7 +66,7 @@ export function makeLogger(logPath?: string): Logger {
     };
     return l;
   } else {
-    const multiwriter = require("multiwriter");
+    const multi = require("multi-write-stream");
     const fs = require("fs");
     const path = require("path");
     const stream = require("logrotate-stream");
@@ -78,13 +78,10 @@ export function makeLogger(logPath?: string): Logger {
 
     consoleOut.pipe(process.stdout);
 
-    let streamSpecs: {
-      consoleOut?: Stream;
-      file?: Writable;
-    } = {};
+    let streamOutputs = [];
 
     if (!NO_STDOUT) {
-      streamSpecs.consoleOut = consoleOut;
+      streamOutputs.push(consoleOut);
     }
 
     if (logPath) {
@@ -105,19 +102,21 @@ export function makeLogger(logPath?: string): Logger {
 
       if (hasDir) {
         if (NO_STDOUT) {
-          streamSpecs.file = pretty({ forceColor: true });
-          streamSpecs.file.pipe(fs.createWriteStream(logPath));
+          const file = pretty({ forceColor: true });
+          file.pipe(fs.createWriteStream(logPath));
+          streamOutputs.push(file);
         } else {
-          streamSpecs.file = stream({
+          const file = stream({
             file: logPath,
             size: "2M",
             keep: 5,
           });
+          streamOutputs.push(file);
         }
       }
     }
 
-    const outStream = multiwriter.create(streamSpecs);
+    const outStream = multi(streamOutputs);
     if (!pinoFactory) {
       pinoFactory = require("pino");
     }
