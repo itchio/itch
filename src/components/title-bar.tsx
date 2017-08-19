@@ -104,6 +104,7 @@ interface IProps {
 interface IDerivedProps {
   tabData: ITabData;
   maximized: boolean;
+  focused: boolean;
 
   navigate: typeof actions.hideWindow;
   hideWindow: typeof actions.hideWindow;
