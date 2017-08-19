@@ -707,10 +707,6 @@ export interface IReportCavePayload {
   caveId: string;
 }
 
-/** Can't install .deb, .rpm, etc. */
-export const SHOW_PACKAGING_POLICY = "SHOW_PACKAGING_POLICY";
-export interface IShowPackagingPolicyPayload {}
-
 /** A game has been interacted with! */
 export const RECORD_GAME_INTERACTION = "RECORD_GAME_INTERACTION";
 export interface IRecordGameInteractionPayload {}
