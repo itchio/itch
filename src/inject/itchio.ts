@@ -9,7 +9,7 @@
  * Our own little twist on `window`, with a few more fields
  */
 interface IExtendedWindow {
-  // yes, we have jQuery on itch.io — what is this, 2009 ?
+  // jQuery
   $: any;
   // global namespace for itch.io JavaScript
   I: any;
