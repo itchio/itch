@@ -60,6 +60,7 @@ class Cover extends React.PureComponent<IProps, IState> {
       coverUrl,
       stillCoverUrl,
       hover,
+      gameId,
       ...restProps,
     } = this.props;
 
@@ -88,7 +89,7 @@ class Cover extends React.PureComponent<IProps, IState> {
               onLoadStart={this.onLoadStart}
               onLoadEnd={this.onLoadEnd}
             />
-          : <RandomSvg />}
+          : <RandomSvg seed={gameId} />}
         {hover && this.state.loading
           ? <GifMarker label={<LoadingCircle progress={0.3} bare />} />
           : null}
@@ -116,6 +117,7 @@ export interface IProps extends IHoverProps {
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
   className?: string;
+  gameId?: number;
 }
 
 export default Cover;

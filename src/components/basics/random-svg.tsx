@@ -12,20 +12,33 @@ const TriDiv = styled.div`
   height: 200%;
 `;
 
-export default class RandomSvg extends React.PureComponent<any> {
+interface IProps extends IHoverProps {
+  seed?: number;
+}
+
+export default class RandomSvg extends React.PureComponent<IProps> {
   render() {
-    const { ...restProps } = this.props;
+    let { seed, ...restProps } = this.props;
 
-    const greenVal = Math.round(80 + Math.random() * 120).toString(16);
-    const blueVal = Math.round(80 + Math.random() * 120).toString(16);
-    let varyVal = Math.floor(Math.random() * 3);
+    const random = function() {
+      if (seed === null) {
+        return Math.random();
+      }
+      let n = Math.sin(seed) * 10000;
+      seed++;
+      return n - Math.floor(n);
+    };
 
-    const width = 250 + Math.random() * 80;
+    const greenVal = Math.round(80 + random() * 120).toString(16);
+    const blueVal = Math.round(80 + random() * 120).toString(16);
+    let varyVal = Math.floor(random() * 3);
+
+    const width = 250 + random() * 80;
     const colorGenerator = function(path) {
-      const random = 32;
+      const variance = 32;
       const ratio = path.x * path.y / (path.cols * path.lines);
       const code = Math.floor(
-        255 - ratio * (255 - random) - Math.random() * random,
+        255 - ratio * (255 - variance) - random() * variance,
       ).toString(16);
 
       // + "3344" looked good

@@ -37,6 +37,7 @@ export default class CollectionRow extends React.PureComponent<IProps> {
           className="fresco--cover"
           coverUrl={coverUrl}
           stillCoverUrl={stillCoverUrl}
+          gameId={game.id}
         />
       );
     });
