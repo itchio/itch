@@ -12,7 +12,7 @@ const TriDiv = styled.div`
   height: 200%;
 `;
 
-interface IProps extends IHoverProps {
+interface IProps {
   seed?: number;
 }
 
