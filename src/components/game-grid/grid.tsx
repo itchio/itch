@@ -16,6 +16,7 @@ import { GridContainerDiv, GridDiv } from "./grid-styles";
 
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import { IGame } from "../../db/models/game";
+import doesEventMeanBackground from "../when-click-navigates";
 
 const globalMargin = 20;
 const sidebarCushion = 5;
@@ -108,7 +109,10 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     if (this.isCoverClick(ev)) {
       this.eventToGame(ev, game => {
-        this.props.navigateToGame({ game });
+        this.props.navigateToGame({
+          game,
+          background: doesEventMeanBackground(ev),
+        });
       });
     }
   };
