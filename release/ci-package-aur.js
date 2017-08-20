@@ -63,7 +63,7 @@ async function ciPackageAur() {
     $(await $.sh("makepkg --syncdeps --force --needed --noconfirm"));
 
     $.say("Validating built package...");
-    const unameM = await $.getOutput("uname -m").trim();
+    const unameM = (await $.getOutput("uname -m")).trim();
     $(await $.sh(`namcap "${$.appName()}-${ver}-${rel}-${unameM}.pkg.tar.xz"`));
 
     $.say("Updating .SRCINFO...");
