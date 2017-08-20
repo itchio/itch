@@ -98,20 +98,11 @@ setTimeout(function() {
     document.body.appendChild(css);
   }
 
-  function evolveTab(path: string) {
-    sendMessage("evolve-tab", { path });
-  }
-
-  function analyzePage(url: string) {
-    sendMessage("analyze-page", { url });
-  }
-
   function itchInject() {
     const { $ } = extendedWindow;
 
     $(".admin_tag_editor_widget").hide();
     $(".above_game_banner").hide();
-    // $('.header_widget').hide()
 
     {
       const $page = $(".view_game_page");
@@ -125,10 +116,8 @@ setTimeout(function() {
     {
       const $page = $(".index_page");
       if ($page.length) {
-        // $page.find('.index_sidebar').remove()
         $page.find(".anon_intro").remove();
         $page.find(".app_banner").remove();
-        // $page.find('.main_column').css('margin', 0)
       }
     }
 
@@ -140,7 +129,8 @@ setTimeout(function() {
 
         if (iframe && oldURL !== iframe.src) {
           console.log("iframe changed URL!", iframe.src);
-          analyzePage(iframe.src);
+          const url = iframe.src;
+          sendMessage("analyze-page", { url, iframe: true });
           oldURL = iframe.src;
         }
       }, 1000);
@@ -165,20 +155,6 @@ setTimeout(function() {
       // don't inject anything on non-itch pages
       console.log("not an itch page, bailing out", host);
       return;
-    }
-
-    const metaTag = document.querySelector(
-      'meta[name="itch:path"]',
-    ) as HTMLMetaElement;
-    if (metaTag) {
-      let path = metaTag.content;
-      const parsed = urlParser.parse(window.location.href);
-      if (parsed.search) {
-        path += parsed.search;
-      }
-      evolveTab(path);
-    } else {
-      analyzePage(window.location.href);
     }
 
     console.log("injecting itch js");

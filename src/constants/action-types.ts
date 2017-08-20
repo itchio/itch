@@ -390,8 +390,14 @@ export interface IOpenDevToolsPayload {
 
 export const ANALYZE_PAGE = "ANALYZE_PAGE";
 export interface IAnalyzePagePayload {
+  /** Which tab we're analyzing the page for */
   tab: string;
+
+  /** The url we're supposed to analyze */
   url: string;
+
+  /** Are we analyzing an iframe or the main page? */
+  iframe: boolean;
 }
 
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";

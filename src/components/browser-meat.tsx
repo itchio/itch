@@ -131,9 +131,10 @@ export class BrowserMeat extends React.PureComponent<
     });
 
     watcher.on(actions.analyzePage, async (store, action) => {
-      const { tab, url } = action.payload;
+      console.debug(`Got analyzePage, payload = `, action.payload);
+      const { tab, url, iframe } = action.payload;
       if (tab === this.props.tab) {
-        this.analyzePage(url);
+        this.analyzePage({ url, iframe });
       }
     });
   }
@@ -185,7 +186,8 @@ export class BrowserMeat extends React.PureComponent<
   didStopLoading = () => {
     this.props.tabLoading({ tab: this.props.tab, loading: false });
     this.updateBrowserState({ loading: false });
-    this.analyzePage(this.state.browserState.url);
+    const { url } = this.state.browserState;
+    this.analyzePage({ url, iframe: false });
   };
 
   // TODO: type
@@ -304,40 +306,68 @@ export class BrowserMeat extends React.PureComponent<
     return frozen;
   }
 
-  analyzePage(url: string) {
+  analyzePage({ url, iframe }: { url: string; iframe: boolean }) {
+    console.debug(`Analyzing ${url}, iframe? ${iframe}`);
     if (this.isFrozen()) {
+      console.debug(`Is frozen, won't analyze`);
       return;
     }
 
     const { webview } = this;
     if (!webview) {
+      console.debug(`No webview, won't analyze`);
       return;
     }
 
-    webview.executeJavaScript(
-      "(function () { " +
-        "var el = document.querySelector('meta[name=\"itch:path\"]'); " +
-        "if (!el) { return null; } " +
-        'return el.getAttribute("content"); ' +
-        "})()",
-      false /* user gesture */,
-      newPath => {
-        const { tab, evolveTab } = this.props;
-        if (newPath) {
-          const parsed = urlParser.parse(url);
-          if (parsed.search) {
-            newPath += parsed.search;
-          }
-          evolveTab({ tab: tab, path: newPath, extras: this.state.webData });
-        } else {
-          evolveTab({
-            tab: tab,
-            path: `url/${url}`,
-            extras: this.state.webData,
-          });
+    const onNewPath = newPath => {
+      const { tab, evolveTab } = this.props;
+      if (newPath) {
+        const parsed = urlParser.parse(url);
+        if (parsed.search) {
+          newPath += parsed.search;
         }
-      },
-    );
+        evolveTab({ tab: tab, path: newPath, extras: this.state.webData });
+      } else {
+        evolveTab({
+          tab: tab,
+          path: `url/${url}`,
+          extras: this.state.webData,
+        });
+      }
+    };
+
+    if (iframe) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("get", url);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          const xml = xhr.responseXML;
+          if (!xml) {
+            return;
+          }
+
+          const el = xml.querySelector('meta[name="itch:path"]');
+          if (!el) {
+            return;
+          }
+
+          onNewPath(el.getAttribute("content"));
+        }
+      };
+      xhr.send();
+      console.debug(`Sent xhr for ${url}`);
+    } else {
+      console.debug(`Executing javascript on page`);
+      webview.executeJavaScript(
+        "(function () { " +
+          "var el = document.querySelector('meta[name=\"itch:path\"]'); " +
+          "if (!el) { return null; } " +
+          'return el.getAttribute("content"); ' +
+          "})()",
+        false /* user gesture */,
+        onNewPath,
+      );
+    }
   }
 
   componentWillReceiveProps(nextProps: IProps) {

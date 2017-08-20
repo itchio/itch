@@ -35,6 +35,8 @@ export default function(watcher: Watcher) {
       const params = querystring.parse(query);
       const { tab } = params;
 
+      logger.debug(`Got itch-internal request ${pathname}?${query} for ${tab}`);
+
       switch (pathname) {
         case "/open-devtools":
           store.dispatch(actions.openDevTools({ tab }));
@@ -48,7 +50,13 @@ export default function(watcher: Watcher) {
           }
           break;
         case "/analyze-page":
-          store.dispatch(actions.analyzePage({ tab, url: params.url }));
+          const a = actions.analyzePage({
+            tab,
+            url: params.url,
+            iframe: params.iframe,
+          });
+          logger.info(`Dispatching action: ${JSON.stringify(a, null, 2)}`);
+          store.dispatch(a);
           break;
         case "/evolve-tab":
           store.dispatch(actions.evolveTab({ tab: tab, path: params.path }));
