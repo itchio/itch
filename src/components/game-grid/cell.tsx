@@ -38,6 +38,7 @@ export default class Cell extends React.Component<IProps> {
           showGifMarker={true}
           coverUrl={coverUrl}
           stillCoverUrl={stillCoverUrl}
+          gameId={game.id}
         />
         <div className="cell--undercover">
           <div className="cell--title">

@@ -241,6 +241,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
           hover={hover}
           coverUrl={coverUrl}
           stillCoverUrl={stillCoverUrl}
+          gameId={game.id}
           onClick={ev =>
             navigateToGame({ game, background: doesEventMeanBackground(ev) })}
         />

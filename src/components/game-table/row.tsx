@@ -37,6 +37,7 @@ export default pure(function Row(props: IProps) {
           showGifMarker={false}
           coverUrl={coverUrl}
           stillCoverUrl={stillCoverUrl}
+          gameId={game.id}
         />
       </div>
       <div className="row--title">
