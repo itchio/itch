@@ -315,26 +315,22 @@ export interface IHandleItchioUrlPayload {
   uri: string;
 }
 
-export const TRIGGER_MAIN_ACTION = "TRIGGER_MAIN_ACTION";
-export interface ITriggerMainActionPayload {}
+export const TRIGGER = "TRIGGER";
+export interface ITriggerPayload {
+  /** if null, applies to current tab */
+  tab?: string;
 
-export const TRIGGER_OK = "TRIGGER_OK";
-export interface ITriggerOkPayload {}
-
-export const TRIGGER_BACK = "TRIGGER_BACK";
-export interface ITriggerBackPayload {}
-
-export const TRIGGER_LOCATION = "TRIGGER_LOCATION";
-export interface ITriggerLocationPayload {}
-
-export const TRIGGER_BROWSER_BACK = "TRIGGER_BROWSER_BACK";
-export interface ITriggerBrowserBackPayload {}
-
-export const TRIGGER_BROWSER_FORWARD = "TRIGGER_BROWSER_FORWARD";
-export interface ITriggerBrowserForwardPayload {}
-
-export const TOGGLE_MINI_SIDEBAR = "TOGGLE_MINI_SIDEBAR";
-export interface IToggleMiniSidebarPayload {}
+  command:
+    | "main"
+    | "ok"
+    | "back"
+    | "goBack"
+    | "goForward"
+    | "location"
+    | "reload"
+    | "stop"
+    | "focusLocation";
+}
 
 export const TAB_RELOADED = "TAB_RELOADED";
 export interface ITabReloadedPayload {
@@ -361,6 +357,9 @@ export interface ITabDataFetchedPayload {
 
   /** the data we fetched */
   data: Types.ITabData;
+
+  /** if true, deep merge with previous state instead of shallow merging */
+  shallow?: boolean;
 }
 
 export const TAB_PARAMS_CHANGED = "TAB_PARAMS_CHANGED";

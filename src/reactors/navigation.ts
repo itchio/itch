@@ -9,6 +9,9 @@ import { IAppState } from "../types";
 
 import { contains } from "underscore";
 
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "reactors/navigation" });
+
 export default function(watcher: Watcher) {
   watcher.on(actions.clearFilters, async (store, action) => {
     store.dispatch(
@@ -23,49 +26,45 @@ export default function(watcher: Watcher) {
   watcher.on(actions.navigate, async (store, action) => {
     const state = store.getState();
     const { tab, background } = action.payload;
+    logger.debug(`Navigating to ${tab} ${background ? "(in background)" : ""}`);
 
     const { tabData } = state.session;
 
-    const constantTabs = new Set<string>(
-      state.session.navigation.tabs.constant,
-    );
+    const { tabs } = state.session.navigation;
+    const constantTabs = new Set(tabs.constant);
+    const transientTabs = new Set(tabs.transient);
 
-    if (constantTabs.has(tab)) {
-      // switching to constant tab, that's good
+    if (constantTabs.has(tab) || transientTabs.has(tab)) {
+      // switching to constant or transient tab by id, that's good
       if (!background) {
         store.dispatch(actions.focusTab({ tab }));
       }
       return;
     }
 
-    if (tabData[tab]) {
-      // switching to existing tab by id - that's fine
-      if (!background) {
-        store.dispatch(actions.focusTab({ tab }));
-      }
-      return;
-    }
-
-    for (const tabId of Object.keys(tabData)) {
-      if (tabData[tabId].path === tab) {
+    for (const existingTab of tabs.transient) {
+      const td = tabData[existingTab];
+      if (td && td.path === tab) {
         // switching by path is cool
         if (!background) {
-          store.dispatch(actions.focusTab({ tab: tabId }));
+          store.dispatch(actions.focusTab({ tab: existingTab }));
         }
         return;
       }
     }
 
     const { data } = action.payload;
+    const staticData = staticTabData[tab];
 
     // must be a new tab then!
-    if (staticTabData[tab]) {
+    if (staticData) {
+      const { label, ...staticDataExceptId } = staticData;
       store.dispatch(
         actions.internalOpenTab({
           tab,
           background,
           data: {
-            path: tab,
+            ...staticDataExceptId,
             ...data,
           },
         }),

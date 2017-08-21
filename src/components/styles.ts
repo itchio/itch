@@ -93,7 +93,7 @@ export const colors = {
 
 export const fontSizes = {
   sidebar: "14px",
-  baseText: "14px",
+  baseText: "15px",
   modal: "18px",
   large: "16px",
   huge: "20px",

@@ -378,19 +378,21 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   subscribe(watcher: Watcher) {
-    watcher.on(actions.triggerOk, async (store, action) => {
-      const { modal } = this.props;
-      if (!modal) {
-        return;
-      }
+    watcher.on(actions.trigger, async (store, action) => {
+      if (action.payload.command === "ok") {
+        const { modal } = this.props;
+        if (!modal) {
+          return;
+        }
 
-      const mainButton = (modal.bigButtons || modal.buttons || [])[0];
-      if (!mainButton) {
-        return;
-      }
+        const mainButton = (modal.bigButtons || modal.buttons || ea)[0];
+        if (!mainButton) {
+          return;
+        }
 
-      const onClick = this.buttonOnClick(this.specToButton(mainButton));
-      onClick();
+        const onClick = this.buttonOnClick(this.specToButton(mainButton));
+        onClick();
+      }
     });
   }
 
@@ -624,3 +626,5 @@ export default connect<IProps>(injectIntl(Modal), {
     closeModal: () => dispatch(actions.closeModal({})),
   }),
 });
+
+const ea = [];

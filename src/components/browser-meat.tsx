@@ -4,41 +4,24 @@ import { connect } from "./connect";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 
-import * as classNames from "classnames";
-
 import * as actions from "../actions";
 
-import watching, { Watcher } from "./watching";
-
-import urlParser from "../util/url";
-import navigation from "../util/navigation";
 import partitionForUser from "../util/partition-for-user";
 import { getInjectPath } from "../os/resources";
 
 import staticTabData from "../constants/static-tab-data";
-
-import { uniq, findWhere } from "underscore";
-
-import { IBrowserState, IBrowserControlProperties } from "./browser-state";
-import createContextMenu from "./browser-meat-context-menu";
 
 import { IMeatProps } from "./meats/types";
 
 import TitleBar from "./title-bar";
 
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
-const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
-
-// human short-term memory = between 7 and 13 items
-const SCROLL_HISTORY_SIZE = 50;
 
 import BrowserBar from "./browser-bar";
 
 import GameBrowserContext from "./game-browser-context";
 
-import { transformUrl } from "../util/navigation";
-
-import { IAppState, ITabData } from "../types";
+import { IAppState } from "../types";
 import { IDispatch, dispatcher } from "../constants/action-types";
 
 import "electron";
@@ -83,392 +66,28 @@ const WebviewShell = styled.div`
   }
 `;
 
-interface IHistoryEntry {
-  url: string;
-  scrollTop: number;
-}
-
-@watching
-export class BrowserMeat extends React.PureComponent<
-  IProps & IDerivedProps,
-  IState
-> {
-  lastNavigationUrl: string;
-  lastNavigationTimeStamp: number;
-
-  scrollHistory: IHistoryEntry[] = [];
-  wentBackOrForward = false;
-
-  /** polls scrollTop */
-  watcher: NodeJS.Timer;
-
-  /** the devil incarnate */
-  webview: Electron.WebviewTag;
-
-  constructor() {
-    super();
-    this.state = {
-      browserState: {
-        canGoBack: false,
-        canGoForward: false,
-        firstLoad: true,
-        loading: true,
-        url: "",
-      },
-      webData: {
-        webTitle: "",
-        webFavicon: null,
-      },
-    };
-  }
-
-  subscribe(watcher: Watcher) {
-    watcher.on(actions.openDevTools, async (store, action) => {
-      const { tab } = action.payload;
-      if (tab === this.props.tab) {
-        this.openDevTools();
-      }
-    });
-
-    watcher.on(actions.analyzePage, async (store, action) => {
-      console.debug(`Got analyzePage, payload = `, action.payload);
-      const { tab, url, iframe } = action.payload;
-      if (tab === this.props.tab) {
-        this.analyzePage({ url, iframe });
-      }
-    });
-  }
-
-  updateBrowserState(props = {}) {
-    const { webview } = this;
-    if (!webview) {
-      return;
-    }
-    if (!webview.partition || webview.partition === "") {
-      console.warn(`${this.props.tab}: webview has empty partition`);
-    }
-
-    const browserState = {
-      ...this.state.browserState,
-      canGoBack: webview.canGoBack(),
-      canGoForward: webview.canGoForward(),
-      ...props,
-    };
-
-    this.setState({ browserState });
-  }
-
-  domReady() {
-    const { url } = this.props;
-    const { webview } = this;
-
-    const webContents = webview.getWebContents();
-    if (!webContents || webContents.isDestroyed()) {
-      return;
-    }
-
-    if (SHOW_DEVTOOLS) {
-      webContents.openDevTools({ mode: "detach" });
-    }
-
-    this.updateBrowserState({ loading: false });
-
-    if (url && url !== "about:blank") {
-      this.loadURL(url);
-    }
-  }
-
-  didStartLoading = () => {
-    this.props.tabLoading({ tab: this.props.tab, loading: true });
-    this.updateBrowserState({ loading: true });
-  };
-
-  didStopLoading = () => {
-    this.props.tabLoading({ tab: this.props.tab, loading: false });
-    this.updateBrowserState({ loading: false });
-    const { url } = this.state.browserState;
-    this.analyzePage({ url, iframe: false });
-  };
-
-  // TODO: type
-  pageTitleUpdated = (e: any) => {
-    this.pushWebData({ webTitle: e.title });
-  };
-
-  // TODO: type
-  pageFaviconUpdated = (e: any) => {
-    this.pushWebData({ webFavicon: e.favicons[0] });
-  };
-
-  pushWebData(data: Partial<ITabData>) {
-    const { tab, tabDataFetched } = this.props;
-    tabDataFetched({ tab: tab, data });
-    this.setState({
-      webData: {
-        ...this.state.webData,
-        ...data,
-      },
-    });
-  }
-
-  // TODO: type
-  didNavigate = (e: any) => {
-    const { url } = e;
-
-    this.updateBrowserState({ url });
-    this.updateScrollWatcher(url, this.wentBackOrForward);
-    this.wentBackOrForward = false;
-  };
-
-  updateScrollWatcher(url: string, restore: boolean) {
-    if (this.watcher) {
-      clearInterval(this.watcher);
-    }
-
-    const installWatcher = () => {
-      this.watcher = (setInterval(() => {
-        if (!this.webview) {
-          return;
-        }
-        this.webview.executeJavaScript(
-          "document.body.scrollTop",
-          false,
-          scrollTop => {
-            if (!this.webview) {
-              // nothing to see here yet
-              return;
-            }
-            if (this.webview.src !== url) {
-              // disregarding scrollTop, we have navigated
-            } else {
-              this.registerScrollTop(url, scrollTop);
-            }
-          },
-        );
-      }, 700) as any) as NodeJS.Timer;
-    };
-
-    const scrollHistoryItem = findWhere(this.scrollHistory, { url });
-    if (restore && scrollHistoryItem && scrollHistoryItem.scrollTop > 0) {
-      const oldScrollTop = scrollHistoryItem.scrollTop;
-      let count = 0;
-      const tryRestoringScroll = () => {
-        count++;
-        if (!this.webview) {
-          return;
-        }
-
-        const code = `(function () { document.body.scrollTop = ${oldScrollTop}; return document.body.scrollTop })()`;
-        this.webview.executeJavaScript(code, false, scrollTop => {
-          if (Math.abs(scrollTop - oldScrollTop) > 20) {
-            if (count < 40) {
-              setTimeout(tryRestoringScroll, 250);
-            } else {
-              installWatcher();
-            }
-          } else {
-            installWatcher();
-          }
-        });
-      };
-      // calling executeJavaScript from 'did-navigate' will noop
-      setTimeout(tryRestoringScroll, 400);
-    } else {
-      installWatcher();
-    }
-  }
-
-  registerScrollTop(url: string, scrollTop: number) {
-    const previousItem = findWhere(this.scrollHistory, { url });
-    if (previousItem && previousItem.scrollTop === scrollTop) {
-      // don't wake up react
-      return;
-    }
-
-    const inputHistory = [{ url, scrollTop }, ...this.scrollHistory];
-    this.scrollHistory = uniq(inputHistory, (x: IHistoryEntry) => x.url).slice(
-      0,
-      SCROLL_HISTORY_SIZE,
-    );
-  }
-
-  newWindow = (e: any) => {
-    const { navigate } = this.props;
-    const { url } = e;
-
-    const background = e.disposition === "background-tab";
-    navigate({ tab: "url/" + url, background });
-  };
-
+export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
   isFrozen() {
     const { tab } = this.props;
     const frozen = !!staticTabData[tab] || !tab;
     return frozen;
   }
 
-  analyzePage({ url, iframe }: { url: string; iframe: boolean }) {
-    console.debug(`Analyzing ${url}, iframe? ${iframe}`);
-    if (this.isFrozen()) {
-      console.debug(`Is frozen, won't analyze`);
-      return;
-    }
-
-    const { webview } = this;
-    if (!webview) {
-      console.debug(`No webview, won't analyze`);
-      return;
-    }
-
-    const onNewPath = newPath => {
-      const { tab, evolveTab } = this.props;
-      if (newPath) {
-        const parsed = urlParser.parse(url);
-        if (parsed.search) {
-          newPath += parsed.search;
-        }
-        evolveTab({ tab: tab, path: newPath, extras: this.state.webData });
-      } else {
-        evolveTab({
-          tab: tab,
-          path: `url/${url}`,
-          extras: this.state.webData,
-        });
-      }
-    };
-
-    if (iframe) {
-      var xhr = new XMLHttpRequest();
-      xhr.open("get", url);
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          const xml = xhr.responseXML;
-          if (!xml) {
-            return;
-          }
-
-          const el = xml.querySelector('meta[name="itch:path"]');
-          if (!el) {
-            return;
-          }
-
-          onNewPath(el.getAttribute("content"));
-        }
-      };
-      xhr.send();
-      console.debug(`Sent xhr for ${url}`);
-    } else {
-      console.debug(`Executing javascript on page`);
-      webview.executeJavaScript(
-        "(function () { " +
-          "var el = document.querySelector('meta[name=\"itch:path\"]'); " +
-          "if (!el) { return null; } " +
-          'return el.getAttribute("content"); ' +
-          "})()",
-        false /* user gesture */,
-        onNewPath,
-      );
-    }
-  }
-
-  componentWillReceiveProps(nextProps: IProps) {
-    if (nextProps.url) {
-      const { webview } = this;
-      if (!webview) {
-        return;
-      }
-      if (webview.src === "" || webview.src === "about:blank") {
-        // we didn't have a proper url but now do
-        this.loadURL(nextProps.url);
-      }
-    }
-  }
-
-  componentDidMount() {
-    if (DONT_SHOW_WEBVIEWS) {
-      return;
-    }
-
-    const callbackSetup = () => {
-      this.webview.addEventListener("did-start-loading", this.didStartLoading);
-      this.webview.addEventListener("did-stop-loading", this.didStopLoading);
-      this.webview.addEventListener("did-navigate", this.didNavigate);
-      this.webview.addEventListener("did-navigate-in-page", this.didNavigate);
-      this.webview.addEventListener(
-        "page-title-updated",
-        this.pageTitleUpdated,
-      );
-      this.webview.addEventListener(
-        "page-favicon-updated",
-        this.pageFaviconUpdated,
-      );
-      this.webview.addEventListener("new-window", this.newWindow);
-      this.domReady();
-
-      createContextMenu(this.webview, this.props.intl, {
-        navigate: this.props.navigate,
-      });
-
-      // otherwise, back button is active and brings us back to 'about:blank'
-      this.webview.clearHistory();
-      this.webview.removeEventListener("dom-ready", callbackSetup);
-
-      this.webview.addEventListener("did-stop-loading", e => {
-        if (this.webview.src === "about:blank") {
-          return;
-        }
-        this.updateBrowserState({ firstLoad: false });
-      });
-    };
-    this.webview.addEventListener("dom-ready", callbackSetup);
-
-    const { tab } = this.props;
-    this.webview.addEventListener("dom-ready", () => {
-      this.webview.executeJavaScript(
-        `window.__itchInit && window.__itchInit(${JSON.stringify(tab)})`,
-        false,
-      );
-    });
-
-    this.webview.src = "about:blank";
-  }
-
   render() {
-    const { tab, visible, tabPath, tabData, controls, meId } = this.props;
+    const { tab, tabData, url, controls, meId } = this.props;
     const partition = partitionForUser(meId);
-
-    const { browserState } = this.state;
-
-    const frozen = this.isFrozen();
-    const controlProps: IBrowserControlProperties = {
-      tab,
-      tabPath,
-      tabData,
-      browserState,
-      goBack: this.goBack,
-      goForward: this.goForward,
-      stop: this.stop,
-      reload: this.reload,
-      openDevTools: this.openDevTools,
-      loadURL: this.loadUserURL,
-      frozen,
-      active: visible,
-    };
 
     let context: React.ReactElement<any> = null;
     if (controls === "game") {
-      context = <GameBrowserContext {...controlProps} />;
+      context = <GameBrowserContext tab={tab} tabData={tabData} url={url} />;
     }
-
-    const shellClasses = classNames({
-      fresh: this.state.browserState.firstLoad,
-    });
 
     return (
       <BrowserMeatContainer>
         <TitleBar tab={tab} />
-        <BrowserBar {...controlProps} />
+        <BrowserBar tab={tab} tabData={tabData} url={url} />
         <BrowserMain>
-          <WebviewShell className={shellClasses}>
+          <WebviewShell>
             {DONT_SHOW_WEBVIEWS
               ? null
               : <webview
@@ -476,7 +95,7 @@ export class BrowserMeat extends React.PureComponent<
                   partition={partition}
                   plugins="on"
                   preload={getInjectPath("itchio")}
-                  src="about:blank"
+                  src={url}
                   ref={this.gotWebview}
                   sandbox={true}
                 />}
@@ -487,100 +106,38 @@ export class BrowserMeat extends React.PureComponent<
     );
   }
 
-  with(
-    cb: (wv: Electron.WebviewTag, wc: Electron.WebContents) => void,
-    opts = { insist: false },
-  ) {
-    const { webview } = this;
-    if (!webview) {
-      return;
-    }
-
-    const webContents = webview.getWebContents();
-    if (!webContents) {
-      return;
-    }
-
-    if (webContents.isDestroyed()) {
-      return;
-    }
-
-    cb(webview, webContents);
-  }
-
+  /**
+   * Register our webcontents with the metal side so
+   * it can control it
+   */
+  private _wv: Electron.WebviewTag;
   gotWebview = (wv: Electron.WebviewTag) => {
-    this.webview = wv;
+    // react function refs get called with null sometimes
     if (!wv) {
-      // react function refs get called with null sometimes
       return;
     }
 
-    const { tabGotWebContents, tab } = this.props;
-
-    wv.addEventListener("dom-ready", () => {
-      const wc = wv.getWebContents();
-      tabGotWebContents({ tab, webContentsId: wc.id });
-    });
-  };
-
-  openDevTools = () => {
-    this.with((wv: Electron.WebviewTag, wc: Electron.WebContents) =>
-      wc.openDevTools({ mode: "detach" }),
-    );
-  };
-
-  stop = () => {
-    this.with(wv => wv.stop());
-  };
-
-  reload = () => {
-    this.with(wv => {
-      wv.reload();
-    });
-    const { tab, tabReloaded } = this.props;
-    tabReloaded({ tab: tab });
-  };
-
-  goBack = () => {
-    this.with(wv => {
-      if (!wv.canGoBack()) {
-        return;
-      }
-      this.wentBackOrForward = true;
-      wv.goBack();
-    });
-  };
-
-  goForward = () => {
-    this.with(wv => {
-      if (!wv.canGoForward()) {
-        return;
-      }
-      this.wentBackOrForward = true;
-      wv.goForward();
-    });
-  };
-
-  loadUserURL = async (input: string) => {
-    const url = await transformUrl(input);
-    await this.loadURL(url);
-  };
-
-  async loadURL(url: string) {
-    const { navigate } = this.props;
-
-    if (navigation.isAppSupported(url) && this.isFrozen()) {
-      navigate({ tab: `url/${url}` });
-    } else {
-      const browserState = { ...this.state.browserState, url };
-      this.setState({ browserState });
-
-      const { webview } = this;
-      if (webview && webview.getWebContents()) {
-        webview.loadURL(url);
-      }
+    if (wv === this._wv) {
+      return;
     }
-  }
+    this._wv = wv;
+    const { tabDataFetched, tabGotWebContents, tab } = this.props;
+    tabDataFetched({
+      tab,
+      data: { web: { url: wv.src, loading: true } },
+    });
+
+    let onDomReady = () => {
+      tabGotWebContents({ tab, webContentsId: wv.getWebContents().id });
+      wv.removeEventListener("dom-ready", onDomReady);
+    };
+    wv.addEventListener("dom-ready", onDomReady);
+
+    // FIXME: switch to webcontents event when it.. starts working?
+    wv.addEventListener("page-title-updated", ev => {
+      tabDataFetched({ tab, data: { web: { title: ev.title } } });
+    });
+  };
 }
 
 export type ControlsType = "generic" | "game";
@@ -603,11 +160,6 @@ interface IDerivedProps {
   tabGotWebContents: typeof actions.tabGotWebContents;
 
   intl: InjectedIntl;
-}
-
-interface IState {
-  browserState: IBrowserState;
-  webData: Partial<ITabData>;
 }
 
 export default connect<IProps>(injectIntl(BrowserMeat), {

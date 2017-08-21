@@ -66,18 +66,6 @@ import {
   ICopyToClipboardPayload,
   HANDLE_ITCHIO_URL,
   IHandleItchioUrlPayload,
-  TRIGGER_MAIN_ACTION,
-  ITriggerMainActionPayload,
-  TRIGGER_OK,
-  ITriggerOkPayload,
-  TRIGGER_BACK,
-  ITriggerBackPayload,
-  TRIGGER_LOCATION,
-  ITriggerLocationPayload,
-  TRIGGER_BROWSER_BACK,
-  ITriggerBrowserBackPayload,
-  TRIGGER_BROWSER_FORWARD,
-  ITriggerBrowserForwardPayload,
   VIEW_CREATOR_PROFILE,
   IViewCreatorProfilePayload,
   VIEW_COMMUNITY_PROFILE,
@@ -96,6 +84,8 @@ import {
   ITabGotWebContentsPayload,
   CLEAN_TAB_DATA,
   ICleanTabDataPayload,
+  ITriggerPayload,
+  TRIGGER,
 } from "../constants/action-types";
 
 export const navigate = createAction<INavigatePayload>(NAVIGATE);
@@ -191,20 +181,8 @@ export const copyToClipboard = createAction<ICopyToClipboardPayload>(
 export const handleItchioUrl = createAction<IHandleItchioUrlPayload>(
   HANDLE_ITCHIO_URL,
 );
-export const triggerMainAction = createAction<ITriggerMainActionPayload>(
-  TRIGGER_MAIN_ACTION,
-);
-export const triggerOk = createAction<ITriggerOkPayload>(TRIGGER_OK);
-export const triggerBack = createAction<ITriggerBackPayload>(TRIGGER_BACK);
-export const triggerLocation = createAction<ITriggerLocationPayload>(
-  TRIGGER_LOCATION,
-);
-export const triggerBrowserBack = createAction<ITriggerBrowserBackPayload>(
-  TRIGGER_BROWSER_BACK,
-);
-export const triggerBrowserForward = createAction<
-  ITriggerBrowserForwardPayload
->(TRIGGER_BROWSER_FORWARD);
+
+export const trigger = createAction<ITriggerPayload>(TRIGGER);
 
 export const viewCreatorProfile = createAction<IViewCreatorProfilePayload>(
   VIEW_CREATOR_PROFILE,

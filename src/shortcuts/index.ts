@@ -40,20 +40,24 @@ export default function setupShortcuts(store: IStore) {
     store.dispatch(actions.showPreviousTab({}));
   });
 
+  combo.bindGlobal(["f5", "ctrl+r", "command+r"], () => {
+    store.dispatch(actions.trigger({ command: "reload" }));
+  });
+
   combo.bindGlobal(["enter"], () => {
-    store.dispatch(actions.triggerOk({}));
+    store.dispatch(actions.trigger({ command: "ok" }));
   });
 
   combo.bindGlobal(["ctrl+enter", "command+enter"], () => {
-    store.dispatch(actions.triggerMainAction({}));
+    store.dispatch(actions.trigger({ command: "main" }));
   });
 
   combo.bindGlobal(["ctrl+l", "command+l"], () => {
-    store.dispatch(actions.triggerLocation({}));
+    store.dispatch(actions.trigger({ command: "location" }));
   });
 
   combo.bindGlobal(["escape"], () => {
-    store.dispatch(actions.triggerBack({}));
+    store.dispatch(actions.trigger({ command: "back" }));
   });
 
   const prefix = macos ? "command" : "ctrl";

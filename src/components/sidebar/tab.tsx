@@ -4,7 +4,6 @@ import { createStructuredSelector } from "reselect";
 
 import Item from "./item";
 
-import { pathToIcon, makeLabel } from "../../util/navigation";
 import { connect } from "../connect";
 
 import * as actions from "../../actions";
@@ -26,6 +25,7 @@ import {
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDurationAsMessage } from "../../format/datetime";
+import { Space } from "../../helpers/space";
 
 interface ISortableHubSidebarItemProps {
   props: any & {
@@ -33,7 +33,7 @@ interface ISortableHubSidebarItemProps {
   };
 }
 
-const emptyObj = {};
+const eo: any = {};
 
 const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
   return <Item {...props.props} />;
@@ -56,17 +56,20 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   render() {
-    const { tab, index, sortable, data, active, loading } = this.props;
+    const { tab, index, sortable, data, active } = this.props;
     const { onExplore } = this;
 
+    const sp = new Space(data);
+    let loading = this.props.loading || sp.web().loading;
     const path = data.path || tab;
-    let iconImage = data.iconImage;
-    if (/^url/.test(path)) {
-      iconImage = data.webFavicon;
+
+    let iconImage = sp.image();
+    if (sp.prefix === "url") {
+      iconImage = (data.web || eo).favicon;
     }
 
-    const label = makeLabel(tab, data);
-    const icon = pathToIcon(path);
+    const label = sp.label();
+    const icon = sp.icon();
     let count = 0;
     let progress = 0;
     let sublabel: ILocalizedString = null;
@@ -164,7 +167,7 @@ const Tab = connect<IProps>(injectIntl(TabBase), {
     let { tab } = initialProps;
 
     return createStructuredSelector({
-      data: (state: IAppState) => state.session.tabData[tab] || emptyObj,
+      data: (state: IAppState) => state.session.tabData[tab] || eo,
       loading: (state: IAppState) =>
         !!state.session.navigation.loadingTabs[tab],
       downloads: (state: IAppState) => tab === "downloads" && state.downloads,

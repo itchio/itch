@@ -14,23 +14,11 @@ import GameFetcher from "../fetchers/game-fetcher";
 import UserFetcher from "../fetchers/user-fetcher";
 import CollectionFetcher from "../fetchers/collection-fetcher";
 
-import { pathPrefix } from "../util/navigation";
 import Context from "../context";
 import { DB } from "../db";
 
 import { some } from "underscore";
-
-const staticFetchers = {
-  dashboard: DashboardFetcher,
-  collections: CollectionsFetcher,
-  library: LibraryFetcher,
-};
-
-const pathFetchers = {
-  games: GameFetcher,
-  users: UserFetcher,
-  collections: CollectionFetcher,
-};
+import { Space } from "../helpers/space";
 
 let fetching: {
   [key: string]: boolean;
@@ -94,27 +82,30 @@ export async function queueFetch(
     });
 }
 
-function getFetcherClass(store: IStore, tabId: string): typeof Fetcher {
-  let staticFetcher = staticFetchers[tabId];
-  if (staticFetcher) {
-    return staticFetcher;
-  }
+function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
+  const sp = Space.for(store, tab);
 
-  const tabData = store.getState().session.tabData[tabId];
-  if (!tabData) {
-    return null;
-  }
-
-  const { path } = tabData;
-  if (path) {
-    const pathBase = pathPrefix(path);
-    const pathFetcher = pathFetchers[pathBase];
-    if (pathFetcher) {
-      return pathFetcher;
+  switch (sp.prefix) {
+    case "dashboard":
+      return DashboardFetcher;
+    case "collections": {
+      if (sp.suffix) {
+        return CollectionFetcher;
+      } else {
+        return CollectionsFetcher;
+      }
     }
+    case "dashboard":
+      return DashboardFetcher;
+    case "library":
+      return LibraryFetcher;
+    case "games":
+      return GameFetcher;
+    case "users":
+      return UserFetcher;
+    case "collections":
+      return CollectionFetcher;
   }
-
-  return null;
 }
 
 export default function(watcher: Watcher, db: DB) {

@@ -23,7 +23,6 @@ import contextMenu from "./context-menu";
 import rememberedSessions from "./remembered-sessions";
 import session from "./session";
 import navigation from "./navigation";
-import savePasswordAndSecret from "./navigation/save-password-and-secret";
 import commons from "./commons";
 import purchases from "./purchases";
 import url from "./url";
@@ -66,7 +65,6 @@ export default function getWatcher(db: DB) {
   rememberedSessions(watcher);
   session(watcher);
   navigation(watcher);
-  savePasswordAndSecret(watcher, db);
   commons(watcher, db);
   purchases(watcher);
   url(watcher);
@@ -79,7 +77,7 @@ export default function getWatcher(db: DB) {
   gameUpdates(watcher, db);
   report(watcher, db);
   fetchSearch(watcher, db);
-  webContents(watcher);
+  webContents(watcher, db);
 
   watcher.validate();
   return watcher;

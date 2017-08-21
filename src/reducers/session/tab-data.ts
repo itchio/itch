@@ -1,4 +1,4 @@
-import { ITabDataSet } from "../../types";
+import { ITabDataSet, ITabData } from "../../types";
 import * as actions from "../../actions";
 import reducer from "../reducer";
 
@@ -7,13 +7,41 @@ const logger = rootLogger.child({ name: "reducers/tab-data" });
 
 import { omit } from "underscore";
 
-const initialState = {} as ITabDataSet;
+import staticTabData from "../../constants/static-tab-data";
+
+const initialState = {
+  ...staticTabData,
+} as ITabDataSet;
 
 const emptyObj = {} as any;
 
+let deepFields = ["users", "games", "collections", "web", "toast"];
+
+function merge(
+  a: ITabData,
+  b: ITabData,
+  { shallow }: { shallow: boolean },
+): ITabData {
+  if (shallow) {
+    return { ...a, ...b };
+  }
+
+  const res = {
+    ...a,
+    ...b,
+  };
+  for (const df of deepFields) {
+    res[df] = {
+      ...a[df] || emptyObj,
+      ...b[df] || emptyObj,
+    };
+  }
+  return res;
+}
+
 export default reducer<ITabDataSet>(initialState, on => {
   on(actions.tabDataFetched, (state, action) => {
-    const { tab, data } = action.payload;
+    const { tab, data, shallow } = action.payload;
     const oldData = state[tab];
     if (!oldData) {
       // ignore fresh data for closed tabs
@@ -23,10 +51,7 @@ export default reducer<ITabDataSet>(initialState, on => {
 
     return {
       ...state,
-      [tab]: {
-        ...oldData,
-        ...data,
-      },
+      [tab]: merge(oldData, data, { shallow }),
     };
   });
 
@@ -41,7 +66,7 @@ export default reducer<ITabDataSet>(initialState, on => {
     // merge old & new data
     return {
       ...state,
-      [tab]: { ...oldData, ...data },
+      [tab]: merge(oldData, data, { shallow: false }),
     };
   });
 
@@ -65,9 +90,10 @@ export default reducer<ITabDataSet>(initialState, on => {
 
   on(actions.openTab, (state, action) => {
     const { tab, data = emptyObj } = action.payload;
+    const staticData = staticTabData[tab] || emptyObj;
     return {
       ...state,
-      [tab]: { ...data },
+      [tab]: { ...data, ...staticData },
     };
   });
 

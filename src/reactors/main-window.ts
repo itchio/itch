@@ -2,7 +2,6 @@ import { Watcher } from "./watcher";
 
 import { createSelector } from "reselect";
 
-import { makeLabel } from "../util/navigation";
 import env from "../env";
 
 import * as sf from "../os/sf";
@@ -34,6 +33,7 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 const macOs = os.platform() === "darwin";
 
 import { IAppState, IStore } from "../types";
+import { Space } from "../helpers/space";
 
 async function createWindow(store: IStore, hidden: boolean) {
   if (createLock) {
@@ -179,10 +179,10 @@ async function createWindow(store: IStore, hidden: boolean) {
   window.on("app-command", (e: any, cmd: AppCommand) => {
     switch (cmd) {
       case "browser-backward":
-        store.dispatch(actions.triggerBrowserBack({}));
+        store.dispatch(actions.trigger({ command: "goBack" }));
         break;
       case "browser-forward":
-        store.dispatch(actions.triggerBrowserForward({}));
+        store.dispatch(actions.trigger({ command: "goForward" }));
         break;
       default:
       // ignore unknown app commands
@@ -406,7 +406,8 @@ const makeTitleSelector = (store: IStore) => {
   );
 
   return createSelector(getID, getData, getI18n, (id, data, i18n) => {
-    const label = makeLabel(id, data);
+    const label = new Space(data).label();
+    // TODO: memoize that
     updateTitle(store, t(i18n, label) + " - itch");
   });
 };
@@ -461,8 +462,11 @@ export default function(watcher: Watcher) {
     toggleMaximizeWindow();
   });
 
-  watcher.on(actions.triggerBack, async (store, action) => {
-    exitFullScreen();
+  watcher.on(actions.trigger, async (store, action) => {
+    const { command } = action.payload;
+    if (command === "back") {
+      exitFullScreen();
+    }
   });
 
   watcher.on(actions.windowBoundsChanged, async (store, action) => {

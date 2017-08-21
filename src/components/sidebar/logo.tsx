@@ -27,7 +27,6 @@ class Logo extends React.PureComponent<IDerivedProps> {
   }
 
   onClick = (e: React.MouseEvent<any>) => {
-    console.log("hi");
     if (e.shiftKey && e.ctrlKey) {
       const { openModal } = this.props;
       openModal({

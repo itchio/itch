@@ -5,7 +5,7 @@ import db from "../db";
 import normalize from "../api/normalize";
 import { user } from "../api/schemas";
 
-import { pathToId, userToTabData } from "../util/navigation";
+import { userToTabData } from "../util/navigation";
 
 export default class UserFetcher extends Fetcher {
   constructor() {
@@ -13,9 +13,7 @@ export default class UserFetcher extends Fetcher {
   }
 
   async work(): Promise<void> {
-    const { path } = this.tabData();
-
-    const userId = +pathToId(path);
+    const userId = this.space().numericId();
 
     let localUser = db.users.findOneById(userId);
     let pushUser = (user: typeof localUser) => {

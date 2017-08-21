@@ -20,8 +20,8 @@ import { dispatcher } from "../../constants/action-types";
 import { whenClickNavigates } from "../when-click-navigates";
 
 const tab = "collections";
-const emptyObj = {};
-const emptyArr = [] as any[];
+const eo: any = {};
+const ea = [] as any[];
 
 const rowHeight = 240;
 const frescoHeight = 140;
@@ -141,11 +141,12 @@ interface IDerivedProps {
 
 export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
   state: createSelector(
-    (state: IAppState) => state.session.tabData[tab] || emptyObj,
+    (state: IAppState) => state.session.tabData[tab] || eo,
     createStructuredSelector({
-      games: (tabData: ITabData) => tabData.games || emptyObj,
-      collectionIds: (tabData: ITabData) => tabData.collectionIds || emptyArr,
-      collections: (tabData: ITabData) => tabData.collections || emptyObj,
+      games: (tabData: ITabData) => (tabData.games || eo).set || eo,
+      collectionIds: (tabData: ITabData) =>
+        (tabData.collections || eo).ids || ea,
+      collections: (tabData: ITabData) => (tabData.collections || eo).set || eo,
       hiddenCount: (tabData: ITabData) => 0,
     }),
   ),

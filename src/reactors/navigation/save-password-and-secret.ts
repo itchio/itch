@@ -1,22 +1,18 @@
-import { pathPrefix, pathToId, pathQuery } from "../../util/navigation";
-import { Watcher } from "../watcher";
-import * as actions from "../../actions";
-
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "save-password-and-secret" });
 
 import * as querystring from "querystring";
 import { DB } from "../../db";
+import { Space } from "../../helpers/space";
 
-export function doSave(path: string, db: DB) {
-  const prefix = pathPrefix(path);
-  if (prefix !== "games") {
+export function doSave(path: string, query: string, db: DB) {
+  const sp = new Space({ path });
+
+  if (sp.prefix !== "games") {
     return;
   }
 
-  const gameId = pathToId(path);
-
-  const query = pathQuery(path);
+  const gameId = sp.numericId();
   const parsed = querystring.parse(query);
 
   if (parsed.password) {
@@ -34,10 +30,4 @@ export function doSave(path: string, db: DB) {
       secret: parsed.secret,
     });
   }
-}
-
-export default function(watcher: Watcher, db: DB) {
-  watcher.on(actions.evolveTab, async (store, action) => {
-    doSave(action.payload.path, db);
-  });
 }

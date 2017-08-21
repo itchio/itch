@@ -3,7 +3,6 @@ import { createStructuredSelector } from "reselect";
 import { connect } from "./connect";
 import * as classNames from "classnames";
 
-import staticTabData from "../constants/static-tab-data";
 import { IAppState, ITabData } from "../types";
 
 import { dispatcher } from "../constants/action-types";
@@ -17,6 +16,7 @@ import env from "../env";
 import styled, * as styles from "./styles";
 
 import format from "./format";
+import { Space } from "../helpers/space";
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
@@ -49,8 +49,8 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tab, maximized, focused, tabData } = this.props;
 
-    const staticData: ITabData = staticTabData[tab] || emptyObj;
-    let label = tabData.webTitle || tabData.label || staticData.label || "";
+    const sp = new Space(tabData);
+    let label = sp.label();
 
     const loggedIn = tab !== "login";
     if (!loggedIn) {

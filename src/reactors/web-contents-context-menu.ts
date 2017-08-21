@@ -1,18 +1,25 @@
 import * as electron from "electron";
 
 import * as actions from "../actions";
-import { InjectedIntl } from "react-intl";
+import { IStore } from "../types/index";
 
-interface IContextMenuOpts {
-  navigate: typeof actions.navigate;
-}
+import IntlMessageFormat = require("intl-messageformat");
 
-export default function create(
-  wv: Electron.WebviewTag,
-  intl: InjectedIntl,
-  opts: IContextMenuOpts,
-) {
-  const wc = wv.getWebContents();
+const emptyObj: any = {};
+
+export default function create(wc: Electron.WebContents, store: IStore) {
+  const intl = {
+    formatMessage: ({ id }: { id: string }, values = {}): string => {
+      const { i18n } = store.getState();
+      const strings =
+        i18n.strings[i18n.lang] ||
+        i18n.strings[i18n.lang.substring(0, 2)] ||
+        emptyObj;
+      const msg = new IntlMessageFormat(strings[id], i18n.lang);
+      return msg.format(values);
+    },
+  };
+
   wc.on("context-menu", (e, props) => {
     const editFlags = props.editFlags;
     const hasText = props.selectionText.trim().length > 0;
@@ -60,7 +67,12 @@ export default function create(
           id: "openInNewTab",
           label: intl.formatMessage({ id: "web.context_menu.open_in_new_tab" }),
           click() {
-            opts.navigate({ tab: "url/" + props.linkURL, background: true });
+            store.dispatch(
+              actions.navigate({
+                tab: "url/" + props.linkURL,
+                background: true,
+              }),
+            );
           },
         },
         {
@@ -91,17 +103,9 @@ export default function create(
       const menu = (electron.Menu || electron.remote.Menu)
         .buildFromTemplate(menuTpl as any);
 
-      /*
-			 * When electron.remote is not available this runs in the browser process.
-			 * We can safely use win in this case as it refers to the window the
-			 * context-menu should open in.
-			 * When this is being called from a webView, we can't use win as this
-			 * would refer to the webView which is not allowed to render a popup menu.
-			 */
-      menu.popup(
-        (electron.remote ? electron.remote.getCurrentWindow() : wv) as any,
-        { async: true },
-      );
+      menu.popup(electron.BrowserWindow.getFocusedWindow(), {
+        async: true,
+      });
     }
   });
 }

@@ -107,19 +107,20 @@ interface IDerivedProps {
   tabParamsChanged: typeof actions.tabParamsChanged;
 }
 
-const emptyObj = {};
+const eo: any = {};
+const ea: any[] = [];
 
 export default connect<IProps>(Games, {
   state: (initialState, initialProps) => {
     const { tab } = initialProps;
     return createSelector(
-      (state: IAppState) => state.session.tabData[tab] || emptyObj,
-      (state: IAppState) => state.session.tabParams[tab] || emptyObj,
+      (state: IAppState) => state.session.tabData[tab] || eo,
+      (state: IAppState) => state.session.tabParams[tab] || eo,
       (state: IAppState) => state.preferences.layout,
       createStructuredSelector({
-        gameIds: (data: ITabData, params, layout) => data.gameIds,
-        games: (data: ITabData, params, layout) => data.games,
-        hiddenCount: (data: ITabData, params, layout) => data.hiddenCount || 0,
+        gameIds: (data: ITabData, params, layout) =>
+          (data.games || eo).ids || ea,
+        games: (data: ITabData, params, layout) => (data.games || eo).set || eo,
         layout: (data: ITabData, params, layout) => layout,
         params: (data: ITabData, params, layout) => params,
       }),

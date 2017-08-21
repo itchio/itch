@@ -2,15 +2,13 @@ import * as React from "react";
 
 import env from "../env";
 
-import { pathPrefix, pathSuffix, pathToId } from "../util/navigation";
 import urls from "../constants/urls";
 
 import { IMeatProps } from "./meats/types";
 
 import BrowserMeat, { ControlsType } from "./browser-meat";
 import * as querystring from "querystring";
-
-const emptyObj = {};
+import { Space } from "../helpers/space";
 
 export default class UrlMeat extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
@@ -40,46 +38,40 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
   }
 
   getUrlAndControls(): IUrlAndControls {
-    const { tab, tabData, tabPath } = this.props;
+    const { tabData } = this.props;
 
-    const tabUrl = tabData.url;
+    const sp = new Space(tabData);
+    const tabUrl = sp.web().url;
 
-    switch (tab) {
+    switch (sp.prefix) {
       case "featured":
         if (env.name === "test") {
           return { url: "about:blank", controls: "generic" };
         } else {
           return { url: urls.itchio + "/", controls: "generic" };
         }
-      default:
-        const prefix = pathPrefix(tabPath);
-        const id = pathToId(tabPath);
-        switch (prefix) {
-          case "url":
-            return { url: pathSuffix(tabPath), controls: "generic" };
-          case "users":
-            const users = tabData.users || emptyObj;
-            const user = users[id];
-            if (user) {
-              return { url: tabUrl || user.url, controls: "generic" };
-            } else {
-              return { url: tabUrl, controls: "generic" };
-            }
-          case "games":
-            const games = tabData.games || emptyObj;
-            const game = games[id];
-            if (game) {
-              return { url: tabUrl || game.url, controls: "game" };
-            } else {
-              return { url: tabUrl, controls: "generic" };
-            }
-          case "search":
-            const url =
-              urls.itchio + "/search?" + querystring.stringify({ q: id });
-            return { url, controls: "generic" };
-          default:
-            return { url: tabUrl || "about:blank", controls: "generic" };
+      case "url":
+        return { url: sp.suffix, controls: "generic" };
+      case "users":
+        const user = sp.user();
+        if (user) {
+          return { url: tabUrl || user.url, controls: "generic" };
+        } else {
+          return { url: tabUrl, controls: "generic" };
         }
+      case "games":
+        const game = sp.game();
+        if (game) {
+          return { url: tabUrl || game.url, controls: "game" };
+        } else {
+          return { url: tabUrl, controls: "generic" };
+        }
+      case "search":
+        const url =
+          urls.itchio + "/search?" + querystring.stringify({ q: sp.suffix });
+        return { url, controls: "generic" };
+      default:
+        return { url: tabUrl || "about:blank", controls: "generic" };
     }
   }
 

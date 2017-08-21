@@ -1,7 +1,7 @@
-import { ITabData } from "../types";
+import { ITabData, ILocalizedString } from "../types";
 
-interface IBaseTabData extends ITabData {
-  id?: string;
+export interface IBaseTabData extends ITabData {
+  label?: ILocalizedString;
 }
 
 interface IBaseTabDataSet {
@@ -15,19 +15,15 @@ interface IBaseTabDataSet {
 }
 
 const baseData = {
-  featured: { label: "itch.io", subtitle: ["sidebar.itchio"] },
-  dashboard: {
-    label: ["sidebar.dashboard"],
-    subtitle: ["sidebar.dashboard_subtitle"],
-  },
+  featured: { label: "itch.io" },
+  dashboard: { label: ["sidebar.dashboard"] },
   collections: { label: ["sidebar.collections"] },
-  library: { label: ["sidebar.owned"], subtitle: ["sidebar.owned_subtitle"] },
+  library: { label: ["sidebar.owned"] },
   preferences: { label: ["sidebar.preferences"] },
   downloads: { label: ["sidebar.downloads"] },
 } as IBaseTabDataSet;
 
 for (const key of Object.keys(baseData)) {
-  baseData[key].id = key;
   baseData[key].path = key;
 }
 

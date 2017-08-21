@@ -11,12 +11,13 @@ const ButtonDiv = styled.div`
 
   font-size: ${props => props.theme.fontSizes.baseText};
   font-weight: bold;
-  padding: 4px 10px;
+  padding: 4px 10px 3px 10px;
 
   border: 1px solid;
   border-width: 4px 1px 1px 1px;
-  border-radius: 4px;
+  border-radius: 3px;
   box-shadow: 0 1px 3px ${props => props.theme.inputBoxShadow};
+  text-shadow: 0px 1px rgba(0, 0, 0, 0.4);
 
   color: ${props => props.theme.baseText};
   min-height: 38px;

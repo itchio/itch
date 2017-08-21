@@ -175,7 +175,7 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps> {
       return;
     }
 
-    const url = await transformUrl(urlField.value);
+    const url = transformUrl(urlField.value);
     const { tab, evolveTab } = this.props;
     evolveTab({ tab: tab, path: `url/${url}` });
   };

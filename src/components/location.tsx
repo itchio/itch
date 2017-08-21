@@ -2,7 +2,6 @@ import * as React from "react";
 import { connect } from "./connect";
 
 import * as actions from "../actions";
-import { pathToId } from "../util/navigation";
 
 import { IMeatProps } from "./meats/types";
 
@@ -11,12 +10,13 @@ import GameFilters from "./game-filters";
 
 import { dispatcher } from "../constants/action-types";
 import format from "./format";
+import { Space } from "../helpers/space";
 
 export class Location extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, browseInstallLocation } = this.props;
+    const { tab, tabData, browseInstallLocation } = this.props;
 
-    const locationName = pathToId(tab);
+    const locationName = new Space(tabData).suffix;
 
     return (
       <div className="location-meat">

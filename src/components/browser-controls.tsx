@@ -7,16 +7,19 @@ import * as actions from "../actions";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 
-import { ITabData } from "../types";
-import { dispatcher } from "../constants/action-types";
-
-import watching, { Watcher } from "./watching";
+import { ITabWeb } from "../types";
+import { dispatcher, ITriggerPayload } from "../constants/action-types";
 
 import IconButton from "./basics/icon-button";
 
 import styled, * as styles from "./styles";
 import { css } from "./styles";
 import { darken } from "polished";
+import { Space } from "../helpers/space";
+import { IBrowserControlProps } from "./browser-state";
+import { transformUrl } from "../util/navigation";
+
+const HTTPS_RE = /^https:\/\//;
 
 const BrowserControlsContainer = styled.div`
   display: flex;
@@ -33,14 +36,14 @@ const browserAddressStyle = css`
   line-height: 30px;
   margin: 0 6px;
   color: $base-text-color;
-  border: 2px solid ${props => darken(0.2, props.theme.secondaryText)};
+  border: 2px solid ${props => darken(0.4, props.theme.secondaryText)};
   background: #353535;
   box-shadow: 0 0 2px #000000;
   text-shadow: 0 0 1px black;
   padding: 0 8px;
   border-radius: 2px;
   flex-grow: 1;
-  max-width: 300px;
+  max-width: 480px;
 
   transition: all 0.4s;
 `;
@@ -55,96 +58,59 @@ const BrowserAddressSpan = styled.span`
   ${browserAddressStyle} &.frozen {
     cursor: not-allowed;
   }
+
+  .security-theater-bit {
+    color: rgb(138, 175, 115);
+  }
 `;
 
 function isHTMLInput(el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
 }
 
-@watching
 export class BrowserControls extends React.PureComponent<
-  IProps & IDerivedProps,
-  IState
+  IProps & IDerivedProps
 > {
   browserAddress: HTMLInputElement | HTMLElement;
 
-  constructor() {
-    super();
-    this.state = {
-      editingURL: false,
-    };
+  triggerForTab(command: ITriggerPayload["command"]) {
+    const { trigger, tab } = this.props;
+    trigger({ tab, command });
   }
 
-  subscribe(watcher: Watcher) {
-    watcher.on(actions.triggerLocation, async (store, action) => {
-      if (!this.props.active) {
-        return;
-      }
-
-      const { browserAddress } = this;
-      if (!browserAddress) {
-        return;
-      }
-
-      if (isHTMLInput(browserAddress)) {
-        // already editing url, just select existing text
-        browserAddress.focus();
-        browserAddress.select();
-      } else {
-        // not editing url yet, no time like the present
-        this.startEditingURL();
-      }
-    });
-
-    watcher.on(actions.triggerBack, async (store, action) => {
-      if (!this.props.active) {
-        return;
-      }
-
-      const { browserAddress } = this;
-      if (!browserAddress) {
-        return;
-      }
-
-      browserAddress.blur();
-    });
-
-    watcher.on(actions.triggerBrowserBack, async (store, action) => {
-      if (store.getState().modals.length > 0) {
-        // ignore browser back if there's modals shown
-      }
-      if (this.props.browserState.canGoBack) {
-        this.props.goBack();
-      }
-    });
-    watcher.on(actions.triggerBrowserForward, async (store, action) => {
-      if (store.getState().modals.length > 0) {
-        // ignore browser forward if there's modals shown
-      }
-      if (this.props.browserState.canGoForward) {
-        this.props.goForward();
-      }
-    });
-  }
+  // event handlers
+  goBack = () => this.triggerForTab("goBack");
+  goForward = () => this.triggerForTab("goForward");
+  stop = () => this.triggerForTab("stop");
+  reload = () => this.triggerForTab("reload");
 
   render() {
-    const { editingURL } = this.state;
-    const { browserState } = this.props;
-    const { canGoBack, canGoForward, loading, url = "" } = browserState;
-    const { goBack, goForward, stop, reload, frozen } = this.props;
+    const { tabData } = this.props;
+    let url = this.props.url || "";
+    const sp = new Space(tabData);
+    let { loading, canGoBack, canGoForward, editingAddress } = sp.web();
+
+    const frozen = sp.isFrozen();
+    if (frozen) {
+      editingAddress = false;
+    }
 
     return (
       <BrowserControlsContainer>
-        <IconButton icon="arrow-left" disabled={!canGoBack} onClick={goBack} />
+        <IconButton
+          icon="arrow-left"
+          disabled={!canGoBack}
+          onClick={this.goBack}
+        />
         <IconButton
           icon="arrow-right"
           disabled={!canGoForward}
-          onClick={goForward}
+          onClick={this.goForward}
         />
         {loading
-          ? <IconButton icon="cross" onClick={stop} />
-          : <IconButton icon="repeat" onClick={reload} />}
-        {editingURL
+          ? <IconButton icon="cross" onClick={this.stop} />
+          : <IconButton icon="repeat" onClick={this.reload} />}
+        {editingAddress
           ? <BrowserAddressInput
               type="search"
               disabled={frozen}
@@ -155,10 +121,17 @@ export class BrowserControls extends React.PureComponent<
             />
           : <BrowserAddressSpan
               className={classNames({ frozen })}
-              innerRef={this.onBrowserAddress as any}
-              onClick={this.startEditingURL}
+              innerRef={this.onBrowserAddress}
+              onClick={this.startEditingAddress}
             >
-              {url || ""}
+              {HTTPS_RE.test(url)
+                ? <span>
+                    <span className="security-theater-bit">
+                      {"https://"}
+                    </span>
+                    {url.replace(HTTPS_RE, "")}
+                  </span>
+                : url}
             </BrowserAddressSpan>}
         <IconButton
           hint={this.props.intl.formatMessage({ id: "browser.popout" })}
@@ -171,17 +144,7 @@ export class BrowserControls extends React.PureComponent<
   }
 
   popOutBrowser = () => {
-    this.props.openUrl({ url: this.props.browserState.url });
-  };
-
-  startEditingURL = () => {
-    if (this.props.frozen) {
-      return;
-    }
-    const { url } = this.props.browserState;
-    if (url && url.length) {
-      this.setState({ editingURL: true });
-    }
+    this.props.openUrl({ url: this.props.url });
   };
 
   onBrowserAddress = (browserAddress: HTMLElement | HTMLInputElement) => {
@@ -199,52 +162,47 @@ export class BrowserControls extends React.PureComponent<
 
   addressKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      const url = e.currentTarget.value;
-      this.setState({ editingURL: false });
-      this.props.loadURL(url);
-    }
-    if (e.key === "Escape") {
-      this.setState({ editingURL: false });
+      const input = e.currentTarget.value;
+      const url = transformUrl(input);
+
+      const { tab, evolveTab } = this.props;
+      evolveTab({
+        tab,
+        path: `url/${url}`,
+      });
+      this.pushWeb({ editingAddress: false });
+    } else if (e.key === "Escape") {
+      this.pushWeb({ editingAddress: false });
     }
   };
 
-  addressBlur = () => {
-    this.setState({ editingURL: false });
+  startEditingAddress = () => {
+    this.pushWeb({ editingAddress: true });
   };
+
+  addressBlur = () => {
+    this.pushWeb({ editingAddress: false });
+  };
+
+  pushWeb(web: Partial<ITabWeb>) {
+    const { tabDataFetched, tab } = this.props;
+    tabDataFetched({ tab, data: { web } });
+  }
 
   handleClickOutside = () => {
     this.addressBlur();
   };
 }
 
-interface IProps {
-  browserState: {
-    url: string;
-    loading: boolean;
-    canGoBack: boolean;
-    canGoForward: boolean;
-  };
-
-  active: boolean;
-  tabPath: string;
-  tabData: ITabData;
-  frozen: boolean;
-
-  goBack: () => void;
-  goForward: () => void;
-  stop: () => void;
-  reload: () => void;
-  loadURL: (url: string) => void;
-}
+interface IProps extends IBrowserControlProps {}
 
 interface IDerivedProps {
-  /** open URL in external browser */
   openUrl: typeof actions.openUrl;
-  intl: InjectedIntl;
-}
+  trigger: typeof actions.trigger;
+  evolveTab: typeof actions.evolveTab;
+  tabDataFetched: typeof actions.tabDataFetched;
 
-interface IState {
-  editingURL: boolean;
+  intl: InjectedIntl;
 }
 
 export default connect<IProps>(
@@ -252,6 +210,9 @@ export default connect<IProps>(
   {
     dispatch: dispatch => ({
       openUrl: dispatcher(dispatch, actions.openUrl),
+      trigger: dispatcher(dispatch, actions.trigger),
+      evolveTab: dispatcher(dispatch, actions.evolveTab),
+      tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
     }),
   },
 );

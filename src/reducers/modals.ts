@@ -10,7 +10,7 @@ const initialState: IModalsState = [];
 export default reducer<IModalsState>(initialState, on => {
   on(actions.openModal, (state, action) => {
     const modal = action.payload;
-    return [...state, modal];
+    return [modal, ...state];
   });
 
   on(actions.modalClosed, (state, action) => {

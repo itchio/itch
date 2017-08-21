@@ -115,9 +115,11 @@ class Search extends React.PureComponent<IDerivedProps> {
       }
     });
 
-    watcher.on(actions.triggerBack, async (store, action) => {
-      if (this.input) {
-        this.input.blur();
+    watcher.on(actions.trigger, async (store, action) => {
+      if (action.payload.command === "back") {
+        if (this.input) {
+          this.input.blur();
+        }
       }
     });
   }

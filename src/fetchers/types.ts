@@ -21,8 +21,7 @@ export enum FetchReason {
 }
 
 import rootLogger, { Logger } from "../logger";
-
-const emptyObj = {} as any;
+import { Space } from "../helpers/space";
 
 /**
  * Fetches all the data a tab needs to display, except webviews.
@@ -37,10 +36,7 @@ export class Fetcher {
   aborted = false;
 
   startedAt: number;
-
   logger?: Logger;
-
-  prevData?: ITabData;
 
   retryCount = 0;
 
@@ -50,15 +46,13 @@ export class Fetcher {
     this.tabId = tabId;
     this.reason = reason;
 
-    this.prevData = ctx.store.getState().session.tabData[tabId];
-
     this.logger.debug(
       `fetching ${this.tabName()} because ${FetchReason[reason]}`,
     );
   }
 
   tabName(): string {
-    return this.tabData().path || this.tabId;
+    return this.space().path();
   }
 
   async run() {
@@ -176,18 +170,12 @@ export class Fetcher {
     return credentials;
   }
 
-  tabData(): ITabData {
-    return (
-      this.ctx.store.getState().session.tabData[this.tabId] ||
-      (emptyObj as ITabData)
-    );
-  }
-
-  needCount(): boolean {
-    const { gameIds } = this.tabData();
-    if (gameIds && gameIds.length) {
-      return false;
+  private _space: Space;
+  space(): Space {
+    if (!this._space) {
+      this._space = Space.for(this.ctx.store, this.tabId);
     }
+    return this._space;
   }
 
   pushAllGames(input: IGame[], opts: IPushAllGameOpts = {}) {
@@ -201,24 +189,23 @@ export class Fetcher {
     gameIds.length = totalCount;
 
     this.push({
-      games: indexBy(games, "id"),
-      gameIds,
-      hiddenCount: input.length - games.length,
+      games: {
+        set: indexBy(games, "id"),
+        ids: gameIds,
+        hiddenCount: input.length - games.length,
+      },
     });
   }
 
   pushGames(opts: IPushGamesOpts) {
     const { range, totalCount } = opts;
 
-    const gameIds = pluck(range, "id");
-    const games = {
-      ...indexBy(range, "id"),
-    };
-
     this.push({
-      games,
-      gameIds,
-      hiddenCount: totalCount - gameIds.length,
+      games: {
+        set: indexBy(range, "id"),
+        ids: pluck(range, "id"),
+        hiddenCount: totalCount - range.length,
+      },
     });
   }
 

@@ -10,6 +10,8 @@ import { dispatcher } from "../constants/action-types";
 
 import format from "./format";
 
+const eo: any = {};
+
 /**
  * Unapologetically and heavily inspired from Google Chrome's "stuff went wrong" tab
  */
@@ -29,7 +31,7 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   sendFeedback = () => {
     const { reportIssue, tabData } = this.props;
-    const { error, stack } = tabData;
+    const { error, stack } = tabData.toast || eo;
 
     reportIssue({ log: error + "\n\nstack:\n" + stack });
   };
@@ -66,7 +68,7 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps, IState> {
 
         {this.state.expanded
           ? <p className="error">
-              {tabData.error}
+              {(tabData.toast || eo).error}
             </p>
           : ""}
 

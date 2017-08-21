@@ -9,35 +9,29 @@ import { collection, game, arrayOf } from "../api/schemas";
 
 import { fromJSONField } from "../db/json-field";
 
-import { pathToId } from "../util/navigation";
-
-const emptyArr = [];
+const ea = [];
 
 export default class CollectionFetcher extends Fetcher {
   async work(): Promise<void> {
     const { db } = this.ctx;
 
-    if (this.hasGames() && !this.warrantsRemote(this.reason)) {
-      const { games, gameIds } = this.tabData();
-      this.pushAllGames(getByIds(games, gameIds));
-      return;
-    }
+    // FIXME: we need a way to filter items without re-fetching from remote
+    // but the previous way to do it was broken
 
-    const path = this.tabData().path;
-    const collectionId = +pathToId(path);
-
+    const collectionId = this.space().numericId();
     let localCollection = db.collections.findOneById(collectionId);
 
     if (localCollection) {
       this.push({
         collections: {
-          [collectionId]: localCollection,
+          set: { [collectionId]: localCollection },
+          ids: [collectionId],
         },
       });
 
       const gameIds = fromJSONField<number[]>(
         localCollection && localCollection.gameIds,
-        emptyArr,
+        ea,
       );
 
       const localGames = db.games.all(k => k.where("id in ?", gameIds));
@@ -60,7 +54,8 @@ export default class CollectionFetcher extends Fetcher {
 
     this.push({
       collections: {
-        [collectionId]: remoteCollection,
+        set: { [collectionId]: remoteCollection },
+        ids: [collectionId],
       },
     });
 
@@ -75,10 +70,5 @@ export default class CollectionFetcher extends Fetcher {
     const remoteGames = normalized.entities.games;
     const remoteGameIds: number[] = normalized.result.gameIds;
     this.pushAllGames(getByIds<IGame>(remoteGames, remoteGameIds));
-  }
-
-  hasGames(): boolean {
-    const gameIds = this.tabData().gameIds || emptyArr;
-    return gameIds.length > 0;
   }
 }

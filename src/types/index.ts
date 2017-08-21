@@ -14,6 +14,8 @@ export * from "./errors";
 import * as Tasks from "./tasks";
 
 export * from "./api";
+export * from "./tab-data";
+import * as TabDataTypes from "./tab-data";
 export * from "../os/runtime";
 
 import { SortDirection, SortKey } from "../components/sort-types";
@@ -85,10 +87,6 @@ export interface IInstallLocationRecord {
   path?: string;
 }
 
-export interface ITabDataSet {
-  [key: string]: ITabData;
-}
-
 export interface ITabParamsSet {
   [key: string]: ITabParams;
 }
@@ -113,73 +111,6 @@ export interface IGameSet {
 
 export interface ICollectionSet {
   [id: string]: ICollection;
-}
-
-export interface ITabData {
-  /** path of tab, something like `collections/:id`, etc. */
-  path?: string;
-
-  /** title of web page displayed by tab, if any */
-  webTitle?: string;
-
-  /** name of tab as shown in sidebar */
-  label?: ILocalizedString;
-
-  /** subtitle shown under label when tab is shown */
-  subtitle?: ILocalizedString;
-
-  /** image to show before label when tab is shown */
-  image?: string;
-
-  /** do we have enough duplicate image properties already? */
-  iconImage?: string;
-
-  /** look ma, more images */
-  webFavicon?: string;
-
-  /** special CSS class applied to image shown in tab */
-  imageClass?: string;
-
-  /** time at which data for this tab was last fetched */
-  timestamp?: number;
-
-  /** games in relation to this tab (single game, games in a collection) */
-  games?: IGameSet;
-  gameIds?: number[];
-
-  hiddenCount?: number;
-
-  downloadKeys?: IDownloadKeysMap;
-
-  /** collections in relation to this tab */
-  collections?: ICollectionSet;
-  collectionIds?: number[];
-
-  /** users in relation to this tab */
-  users?: IUserSet;
-
-  /** error to show for toast tab */
-  error?: string;
-
-  /** stack trace to show for toast tab */
-  stack?: string;
-
-  /** if this is a web tab, the url of the page we're showing */
-  url?: string;
-
-  /** query string associated with tab */
-  query?: {
-    [key: string]: string;
-  };
-
-  /** true if the tab was restored as part of session */
-  restored?: boolean;
-
-  webContentsId?: number;
-}
-
-export interface ITabDataSave extends ITabData {
-  id: string;
 }
 
 export interface ICaveSet {
@@ -496,7 +427,7 @@ export interface IItchAppTabs {
   current: string;
 
   /** list of transient tabs when the snapshot was taken */
-  items: ITabDataSave[];
+  items: TabDataTypes.ITabDataSave[];
 }
 
 export interface IDownloadKeysMap {
@@ -582,7 +513,7 @@ export interface ISessionState {
   navigation: ISessionNavigationState;
   search: ISessionSearchState;
 
-  tabData: ITabDataSet;
+  tabData: TabDataTypes.ITabDataSet;
   tabParams: ITabParamsSet;
   tabPagination: ITabPaginationSet;
 }

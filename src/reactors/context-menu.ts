@@ -7,8 +7,6 @@ import { t } from "../format";
 
 import { IStore } from "../types";
 
-import { pathToId } from "../util/navigation";
-
 import actionForGame from "../util/action-for-game";
 
 import * as actions from "../actions";
@@ -19,8 +17,7 @@ const emptyArr = [];
 
 type IMenuItem = Electron.MenuItemConstructorOptions;
 
-import rootLogger from "../logger";
-const logger = rootLogger.child({ name: "context-menu" });
+import { Space } from "../helpers/space";
 
 function openMenu(store: IStore, template: IMenuItem[]) {
   if (template.length === 0) {
@@ -31,30 +28,20 @@ function openMenu(store: IStore, template: IMenuItem[]) {
   const menu = Menu.buildFromTemplate(clone(template));
   const mainWindowId = store.getState().ui.mainWindow.id;
   const mainWindow = BrowserWindow.fromId(mainWindowId);
-  menu.popup(mainWindow, { async: true, y: undefined });
+  menu.popup(mainWindow, { async: true });
 }
 
 export default function(watcher: Watcher) {
   watcher.on(actions.openTabContextMenu, async (store, action) => {
     const { tab } = action.payload;
 
-    const data = store.getState().session.tabData[tab];
-    if (!data) {
-      logger.warn(`Can't make context menu for non-transient tab ${tab}`);
-      return;
+    const sp = Space.for(store, tab);
+    if (sp.prefix === "games") {
+      const game = sp.game();
+      if (game) {
+        store.dispatch(actions.openGameContextMenu({ game }));
+      }
     }
-
-    const { path } = data;
-
-    const template: IMenuItem[] = [];
-    if (/^games/.test(path)) {
-      const gameId = pathToId(path);
-      const games = data.games || {};
-      const game = games[gameId];
-      store.dispatch(actions.openGameContextMenu({ game }));
-    }
-
-    openMenu(store, template);
   });
 
   watcher.on(actions.openGameContextMenu, async (store, action) => {

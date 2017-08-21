@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 
 import BrowserControls from "./browser-controls";
 
-import { IBrowserControlProperties } from "./browser-state";
+import { IBrowserControlProps } from "./browser-state";
 
 import styled, * as styles from "./styles";
 
@@ -46,10 +46,12 @@ const BrowserBarDiv = styled.div`
   align-items: center;
 `;
 
-export class BrowserBar extends React.PureComponent<IProps> {
+const eo: any = {};
+
+export default class BrowserBar extends React.PureComponent<IProps> {
   render() {
-    const { browserState } = this.props;
-    const { loading } = browserState;
+    const { tabData } = this.props;
+    const { loading } = tabData.web || eo;
 
     return (
       <BrowserBarDiv className={classNames({ loading })}>
@@ -59,6 +61,4 @@ export class BrowserBar extends React.PureComponent<IProps> {
   }
 }
 
-interface IProps extends IBrowserControlProperties {}
-
-export default BrowserBar;
+interface IProps extends IBrowserControlProps {}

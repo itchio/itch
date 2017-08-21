@@ -1,0 +1,32 @@
+
+@font-face {
+    font-family: 'LatoWeb';
+    src: url('assets/lato-bold.woff2') format('woff2'); /* Modern Browsers */
+    font-style: normal;
+    font-weight: bold;
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'LatoWeb';
+    src: url('assets/lato-bolditalic.woff2') format('woff2'); /* Modern Browsers */
+    font-style: italic;
+    font-weight: bold;
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'LatoWeb';
+    src: url('assets/lato-italic.woff2') format('woff2'); /* Modern Browsers */
+    font-style: italic;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'LatoWeb';
+    src: url('assets/lato-regular.woff2') format('woff2'); /* Modern Browsers */
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}

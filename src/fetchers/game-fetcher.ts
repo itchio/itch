@@ -3,7 +3,7 @@ import { Fetcher } from "./types";
 import normalize from "../api/normalize";
 import { game } from "../api/schemas";
 
-import { pathToId, gameToTabData } from "../util/navigation";
+import { gameToTabData } from "../util/navigation";
 
 export default class GameFetcher extends Fetcher {
   constructor() {
@@ -12,8 +12,7 @@ export default class GameFetcher extends Fetcher {
 
   async work(): Promise<void> {
     const { db } = this.ctx;
-    const { path } = this.tabData();
-    const gameId = +pathToId(path);
+    const gameId = this.space().numericId();
 
     let localGame = db.games.findOneById(gameId);
     let pushGame = (game: typeof localGame) => {

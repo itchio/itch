@@ -6,7 +6,6 @@ import bob, { IRGBColor } from "../renderer-util/bob";
 
 import GameActions from "./game-actions";
 import GameStats from "./game-stats";
-import { pathToId } from "../util/navigation";
 
 import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
@@ -16,13 +15,14 @@ import { IDispatch, dispatcher } from "../constants/action-types";
 import { IAppState, ITabData, ICommonsState } from "../types";
 import * as actions from "../actions";
 
-import { IBrowserControlProperties } from "./browser-state";
+import { IBrowserControlProps } from "./browser-state";
 import GameBrowserContextActions from "./game-browser-context-actions";
 
 import styled from "./styles";
 import getByIds from "../helpers/get-by-ids";
 
 import { first } from "underscore";
+import { Space } from "../helpers/space";
 
 const BrowserContextDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -113,7 +113,7 @@ export class GameBrowserContext extends React.PureComponent<
   }
 }
 
-interface IProps extends IBrowserControlProperties {}
+interface IProps extends IBrowserControlProps {}
 
 interface IDerivedProps {
   gameId: number;
@@ -130,7 +130,6 @@ interface IState {
 }
 
 interface IContextSelectorResult {
-  gameId: number;
   tabData: ITabData;
   commons: ICommonsState;
 }
@@ -138,23 +137,26 @@ interface IContextSelectorResult {
 export default connect<IProps>(GameBrowserContext, {
   state: () => {
     const marketSelector = createStructuredSelector({
-      gameId: (state: IAppState, props: IProps) => +pathToId(props.tabPath),
       tabData: (state: IAppState, props: IProps) => props.tabData,
       commons: (state: IAppState, props: IProps) => state.commons,
     });
 
     return createSelector(marketSelector, (cs: IContextSelectorResult) => {
-      const game = cs.tabData.games[cs.gameId];
+      const game = new Space(cs.tabData).game();
+      if (!game) {
+        return {};
+      }
 
+      // TODO: DRY out a few places that do the same thing
       const downloadKeys = getByIds(
         cs.commons.downloadKeys,
-        cs.commons.downloadKeyIdsByGameId[cs.gameId],
+        cs.commons.downloadKeyIdsByGameId[game.id],
       );
       const downloadKey = first(downloadKeys);
 
       const caves = getByIds(
         cs.commons.caves,
-        cs.commons.caveIdsByGameId[cs.gameId],
+        cs.commons.caveIdsByGameId[game.id],
       );
       const cave = first(caves);
 
