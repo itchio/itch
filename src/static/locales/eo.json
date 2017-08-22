@@ -434,5 +434,7 @@
     "prompt.uninstall_error.title": "Malinstala eraro",
     "prompt.uninstall_error.message": "La malinstalado estis malsukcesa. Ĉu vi volas forigi la elementon de la listo?",
     "prompt.action.continue": "Daŭrigi",
-    "grid.item.status.installed": "Instalita"
+    "grid.item.status.installed": "Instalita",
+    "collection.summary": "Kolekto da {{itemCount}} aĵoj",
+    "grid.item.not_compatible": "Nedisponebla por ĉi tiu sistemo"
 }
