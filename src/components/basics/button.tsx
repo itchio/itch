@@ -52,8 +52,8 @@ const ButtonDiv = styled.div`
     min-width: 160px;
     justify-content: center;
     font-size: ${props => props.theme.fontSizes.larger};
-    padding-top: 14px;
-    padding-bottom: 10px;
+    padding-top: 16px;
+    padding-bottom: 12px;
     font-weight: normal;
   }
 

@@ -19,7 +19,7 @@ type IMenuItem = Electron.MenuItemConstructorOptions;
 
 import { Space } from "../helpers/space";
 
-function openMenu(store: IStore, template: IMenuItem[]) {
+function openMenu(store: IStore, template: IMenuItem[], x: number, y: number) {
   if (template.length === 0) {
     // showing empty context menus would be NSANE!
     return;
@@ -28,7 +28,7 @@ function openMenu(store: IStore, template: IMenuItem[]) {
   const menu = Menu.buildFromTemplate(clone(template));
   const mainWindowId = store.getState().ui.mainWindow.id;
   const mainWindow = BrowserWindow.fromId(mainWindowId);
-  menu.popup(mainWindow, { async: true });
+  menu.popup(mainWindow, { async: true, x, y });
 }
 
 export default function(watcher: Watcher) {
@@ -104,20 +104,8 @@ export default function(watcher: Watcher) {
             click: () =>
               store.dispatch(actions.revertCaveRequest({ caveId: cave.id })),
           },
-          {
-            type: "separator",
-          },
         ];
       }
-
-      advancedItems = [
-        ...advancedItems,
-        {
-          label: t(i18n, ["grid.item.view_details"]),
-          click: () =>
-            store.dispatch(actions.viewCaveDetails({ caveId: cave.id })),
-        },
-      ];
 
       template.push({
         label: t(i18n, ["grid.item.advanced"]),
@@ -164,6 +152,7 @@ export default function(watcher: Watcher) {
       }
     }
 
-    openMenu(store, template);
+    const { x, y } = action.payload;
+    openMenu(store, template, x, y);
   });
 }

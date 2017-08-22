@@ -93,6 +93,13 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
     const { game, status } = this.props;
     const { operation, update, cave } = status;
 
+    if (e.shiftKey && e.ctrlKey) {
+      if (cave) {
+        this.props.viewCaveDetails({ caveId: cave.id });
+      }
+      return;
+    }
+
     if (operation) {
       if (operation.type === OperationType.Download) {
         this.props.navigate({ tab: "downloads" });
@@ -126,6 +133,7 @@ interface IDerivedProps {
   initiatePurchase: typeof actions.initiatePurchase;
   abortGameRequest: typeof actions.abortGameRequest;
   navigate: typeof actions.navigate;
+  viewCaveDetails: typeof actions.viewCaveDetails;
 }
 
 export default connect<IProps>(injectIntl(MainAction), {
@@ -135,5 +143,6 @@ export default connect<IProps>(injectIntl(MainAction), {
     initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),
     abortGameRequest: dispatcher(dispatch, actions.abortGameRequest),
     navigate: dispatcher(dispatch, actions.navigate),
+    viewCaveDetails: dispatcher(dispatch, actions.viewCaveDetails),
   }),
 });

@@ -1,12 +1,10 @@
 import * as React from "react";
 import { connect } from "./connect";
 
-import bob, { IRGBColor } from "../renderer-util/bob";
-
 import MainAction from "./game-actions/main-action";
 import GameStats from "./game-stats";
 import Filler from "./basics/filler";
-import Button from "./basics/button";
+import IconButton from "./basics/icon-button";
 
 import { IGame } from "../db/models/game";
 
@@ -36,11 +34,11 @@ const BrowserContextDiv = styled.div`
   padding: 10px;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.16);
   z-index: 50;
+  align-items: center;
 `;
 
 export class GameBrowserContext extends React.PureComponent<
-  IProps & IDerivedProps,
-  IState
+  IProps & IDerivedProps
 > {
   constructor() {
     super();
@@ -59,32 +57,20 @@ export class GameBrowserContext extends React.PureComponent<
         <Spacer />
         <GameStats game={game} status={status} />
         <Filler />
-        <Button discreet label="..." onClick={this.onContextMenu} />
+        <IconButton
+          huge
+          emphasized
+          icon="more_vert"
+          onClick={this.onContextMenu}
+        />
       </BrowserContextDiv>
     );
   }
 
-  onContextMenu = () => {
+  onContextMenu = (ev: React.MouseEvent<any>) => {
     const { game, openGameContextMenu } = this.props;
-    openGameContextMenu({ game });
+    openGameContextMenu({ game, x: ev.pageX, y: ev.pageY });
   };
-
-  componentWillReceiveProps() {
-    this.updateColor();
-  }
-
-  componentDidMount() {
-    this.updateColor();
-  }
-
-  updateColor() {
-    const { game } = this.props;
-    if (game) {
-      bob.extractPalette(game.coverUrl, palette => {
-        this.setState({ dominantColor: bob.pick(palette) });
-      });
-    }
-  }
 }
 
 interface IProps extends IBrowserControlProps {}
@@ -94,10 +80,6 @@ interface IDerivedProps {
   status: IGameStatus;
 
   openGameContextMenu: typeof actions.openGameContextMenu;
-}
-
-interface IState {
-  dominantColor?: IRGBColor;
 }
 
 export default connect<IProps>(GameBrowserContext, {

@@ -98,6 +98,7 @@ export const fontSizes = {
   large: "16px",
   larger: "18px",
   huge: "20px",
+  huger: "26px",
 };
 
 export const borderRadii = {
@@ -291,16 +292,6 @@ export const searchIcon = () => css`
   font-size: 14px;
   color: ${props => props.theme.secondaryText};
   pointer-events: none;
-`;
-
-export const iconButton = () => css`
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-
-  &:hover {
-    color: ${props => props.theme.secondaryTextHover}
-  }
 `;
 
 export const clickable = () => css`

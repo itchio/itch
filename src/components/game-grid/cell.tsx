@@ -6,7 +6,7 @@ import { InjectedIntl } from "react-intl";
 import Hoverable from "../basics/hover-hoc";
 import Filler from "../basics/filler";
 import Cover from "../basics/cover";
-import Button from "../basics/button";
+import IconButton from "../basics/icon-button";
 
 const HoverCover = Hoverable(Cover);
 
@@ -53,16 +53,21 @@ class Cell extends React.Component<IProps & IDerivedProps> {
           <div className="cell--actions">
             <MainAction game={game} status={status} />
             <Filler />
-            <Button discreet label="..." onClick={this.onMoreClick} />
+            <IconButton
+              big
+              icon="more_vert"
+              onClick={this.onMoreClick}
+              emphasized
+            />
           </div>
         </div>
       </div>
     );
   }
 
-  onMoreClick = () => {
+  onMoreClick = (ev: React.MouseEvent<any>) => {
     const { game, openGameContextMenu } = this.props;
-    openGameContextMenu({ game });
+    openGameContextMenu({ game, x: ev.pageX, y: ev.pageY });
   };
 }
 

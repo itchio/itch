@@ -409,6 +409,9 @@ export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
 export interface IOpenGameContextMenuPayload {
   /** game to open the context menu of */
   game: IGame;
+
+  x?: number;
+  y?: number;
 }
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */
