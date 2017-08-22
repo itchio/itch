@@ -134,7 +134,7 @@
     "grid.item.show_local_files": "Показать файлы",
     "preferences.security": "Безопасность и приватность",
     "prompt.self_update_ready.message": "Мы применим обновление при следующем запуске приложения.\n\nВыберите '{{restart}}', чтобы обновиться немедленно.",
-    "new_tab.random": "Показать что-нибудь случайное",
+    "new_tab.random": "Случайные игры",
     "sidebar.category.tabs": "Закладки",
     "game.install.no_uploads_available.message": "'{{title}}' не имеет файлов, совместимых с вашей системой, так что мы ничего не установили.",
     "usage_stats.description.tool": "Инструмент",
