@@ -4,11 +4,12 @@ import { ICaveSummary } from "../../db/models/cave";
 import { InjectedIntl } from "react-intl";
 
 import Hoverable from "../basics/hover-hoc";
+import Filler from "../basics/filler";
 import Cover from "../basics/cover";
 
 const HoverCover = Hoverable(Cover);
 
-import GameActions from "../game-actions";
+import MainAction from "../game-actions/main-action";
 
 export default class Cell extends React.Component<IProps> {
   render() {
@@ -29,8 +30,6 @@ export default class Cell extends React.Component<IProps> {
         row * (rowHeight + interiorMargin)}px)`,
     };
 
-    const actionProps = { game, showSecondary: false };
-
     return (
       <div className="grid--cell" style={style} data-game-id={game.id}>
         <HoverCover
@@ -44,7 +43,10 @@ export default class Cell extends React.Component<IProps> {
           <div className="cell--title">
             {game.title}
           </div>
-          <GameActions {...actionProps} />
+          <div className="cell--actions">
+            <MainAction game={game} />
+            <Filler />
+          </div>
         </div>
       </div>
     );

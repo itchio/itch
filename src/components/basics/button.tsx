@@ -48,6 +48,15 @@ const ButtonDiv = styled.div`
     padding: 16px 80px;
   }
 
+  &.wide {
+    min-width: 160px;
+    justify-content: center;
+    font-size: ${props => props.theme.fontSizes.larger};
+    padding-top: 14px;
+    padding-bottom: 10px;
+    font-weight: normal;
+  }
+
   background-color: #2b2b2b;
   border-color: #444;
 
@@ -72,6 +81,7 @@ class Button extends React.PureComponent<IProps, any> {
       iconComponent,
       label,
       hint,
+      wide,
       onClick,
       ...restProps,
     } = this.props;
@@ -81,7 +91,7 @@ class Button extends React.PureComponent<IProps, any> {
         onClick={onClick}
         data-rh={hint}
         data-rh-at="top"
-        className={classNames(className, { primary, discreet, fat })}
+        className={classNames(className, { primary, discreet, wide, fat })}
         {...restProps}
       >
         {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
@@ -107,6 +117,7 @@ interface IProps {
   iconComponent?: JSX.Element;
   label?: JSX.Element | string;
   discreet?: boolean;
+  wide?: boolean;
   fat?: boolean;
   id?: string;
 }

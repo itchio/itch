@@ -4,8 +4,10 @@ import { connect } from "./connect";
 
 import bob, { IRGBColor } from "../renderer-util/bob";
 
-import GameActions from "./game-actions";
+import MainAction from "./game-actions/main-action";
 import GameStats from "./game-stats";
+import Filler from "./basics/filler";
+import Button from "./basics/button";
 
 import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
@@ -16,7 +18,6 @@ import { IAppState, ITabData, ICommonsState } from "../types";
 import * as actions from "../actions";
 
 import { IBrowserControlProps } from "./browser-state";
-import GameBrowserContextActions from "./game-browser-context-actions";
 
 import styled from "./styles";
 import getByIds from "../helpers/get-by-ids";
@@ -31,22 +32,9 @@ const BrowserContextDiv = styled.div`
   justify-content: center;
   flex-direction: row;
 
-  padding: 6px;
+  padding: 10px;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.16);
   z-index: 50;
-  overflow-y: auto;
-  overflow-x: hidden;
-`;
-
-const GameActionsContainer = styled.div`
-  display: flex;
-  flex-shrink: 0;
-  flex-grow: 0;
-  flex-direction: row;
-  padding-right: 0;
-  height: auto;
-  align-items: stretch;
-  margin-left: 10px;
 `;
 
 export class GameBrowserContext extends React.PureComponent<
@@ -66,15 +54,10 @@ export class GameBrowserContext extends React.PureComponent<
 
     return (
       <BrowserContextDiv onContextMenu={this.onContextMenu}>
-        <GameStats
-          game={game}
-          cave={cave}
-          downloadKey={downloadKey}
-          mdash={true}
-        />
-        <GameActionsContainer>
-          {this.gameActions()}
-        </GameActionsContainer>
+        <MainAction game={game} wide />
+        <GameStats game={game} cave={cave} downloadKey={downloadKey} />
+        <Filler />
+        <Button discreet label="..." />
       </BrowserContextDiv>
     );
   }
@@ -83,17 +66,6 @@ export class GameBrowserContext extends React.PureComponent<
     const { game, openGameContextMenu } = this.props;
     openGameContextMenu({ game });
   };
-
-  gameActions() {
-    const { game } = this.props;
-    if (!game) {
-      return null;
-    }
-
-    return (
-      <GameActions game={game} CustomSecondary={GameBrowserContextActions} />
-    );
-  }
 
   componentWillReceiveProps() {
     this.updateColor();

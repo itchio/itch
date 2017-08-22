@@ -68,7 +68,7 @@ export default class CollectionRow extends React.PureComponent<IProps> {
         <section className="info">
           <Icon icon="tag" />
           <span className="total">
-            {format(["sidebar.collection.subtitle", { itemCount }])}
+            {format(["collection.summary", { itemCount }])}
           </span>
           <span className="spacer" />
           <Icon icon="history" />

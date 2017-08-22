@@ -9,9 +9,10 @@ import { indexBy, union, pluck } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
 
 import * as actions from "../actions";
-import { debounce } from "underscore";
+import { debounce, object } from "underscore";
 
 import rootLogger from "../logger";
+import { fromJSONField } from "../db/json-field";
 const logger = rootLogger.child({ name: "commons" });
 
 const emptyArr = [];
@@ -59,9 +60,24 @@ function updateCaves(store: IStore, db: DB): ICaveSummary[] {
   return caves;
 }
 
+function updateMyGameIds(store: IStore, db: DB) {
+  const { credentials } = store.getState().session;
+
+  const hasMeId = credentials.me && credentials.me.id;
+  if (!hasMeId) {
+    return;
+  }
+
+  const profile = db.profiles.findOneById(credentials.me.id);
+  const myGameIds = fromJSONField<number[]>(profile.myGameIds, emptyArr);
+  const myGameIdsSet = object(myGameIds, myGameIds.map(() => true));
+  store.dispatch(actions.commonsUpdated({ myGameIdsSet }));
+}
+
 function updateCommonsNow(store: IStore, db: DB) {
   const downloadKeys = updateDownloadKeys(store, db);
   const caves = updateCaves(store, db);
+  updateMyGameIds(store, db);
 
   const libraryGameIds = union(
     pluck(downloadKeys, "gameId"),

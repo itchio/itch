@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as classNames from "classnames";
 
 import { connect } from "../connect";
 import { createSelector, createStructuredSelector } from "reselect";
@@ -47,29 +46,22 @@ const GameActionsDiv = styled.div`
   align-items: center;
   flex-direction: row;
   flex-grow: 1;
-
-  &.vertical {
-    flex-direction: column;
-    align-items: stretch;
-  }
 `;
 
 class GameActions extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { props } = this;
-    const { vertical, showSecondary, CustomSecondary } = this.props;
+    const { showSecondary, CustomSecondary } = this.props;
 
     let taskName = "idle";
     if (props.tasks && props.tasks.length > 0) {
       taskName = props.tasks[0].name;
     }
 
-    const classes = classNames({ vertical });
-
     return (
-      <GameActionsDiv className={classes}>
-        <StyledMainAction {...props} className={classNames({ vertical })} />
-        {vertical ? null : <Filler />}
+      <GameActionsDiv>
+        <StyledMainAction {...props} />
+        <Filler />
         {showSecondary ? <SecondaryActions {...props} /> : ""}
         {CustomSecondary ? <CustomSecondary {...props} /> : ""}
       </GameActionsDiv>

@@ -50,6 +50,12 @@ export const GridContainerDiv = styled(StylableDiv)`
     font-size: ${props => props.theme.fontSizes.large};
   }
 
+  .cell--actions {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: row;
+  }
+
   .cell--undercover {
     margin: 8px 12px;
   }

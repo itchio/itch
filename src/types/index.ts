@@ -296,13 +296,19 @@ export interface ICommonsState {
   downloadKeyIdsByGameId: {
     [gameId: string]: string[];
   };
+
   caves: {
     [caveId: string]: ICaveSummary;
   };
   caveIdsByGameId: {
     [gameId: string]: string[];
   };
-  libraryGameIds: string[];
+
+  /** games we can edit or have keys for */
+  libraryGameIds: number[];
+  myGameIdsSet: {
+    [gameId: string]: boolean;
+  };
 }
 
 export interface IGameCredentials {
@@ -445,8 +451,11 @@ export interface IProxySettings {
 }
 
 export interface ISystemState {
-  /** version string, for example '19.0.0' */
+  /** version string, for example '25.0.0' */
   appVersion: string;
+
+  /** the platform string, in itch format */
+  platform: string;
 
   /** true if running on macOS */
   osx: boolean;

@@ -9,6 +9,7 @@ import { ISystemState } from "../types";
 
 const initialState = {
   appVersion: app.getVersion(),
+  platform: os.itchPlatform(),
   osx: os.platform() === "darwin",
   macos: os.platform() === "darwin",
   windows: os.platform() === "win32",

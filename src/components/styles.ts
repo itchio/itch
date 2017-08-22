@@ -96,6 +96,7 @@ export const fontSizes = {
   baseText: "15px",
   modal: "18px",
   large: "16px",
+  larger: "18px",
   huge: "20px",
 };
 

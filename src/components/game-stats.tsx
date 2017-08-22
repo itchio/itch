@@ -23,18 +23,18 @@ import styled from "./styles";
 const GameStatsDiv = styled.div`
   display: flex;
   flex-direction: column;
-  font-size: 14px;
+  font-size: ${props => props.theme.fontSizes.baseText};
   color: ${props => props.theme.secondaryText};
-  padding: 16px 0;
   line-height: 1.8;
   flex-shrink: 0;
+  justify-content: flex-end;
 
   div {
     margin-right: 12px;
   }
 
   label {
-    color: #b3b2b7; // FIXME: exceptions bad
+    color: #fff;
 
     .nice-ago {
       color: ${props => props.theme.secondaryText}; // sigh
@@ -46,13 +46,23 @@ const GameStatsDiv = styled.div`
     }
   }
 
+  .total-playtime {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .total-playtime--platforms {
+    margin-left: 4px;
+  }
+
   .total-playtime .icon {
     margin: 0 3px;
   }
 
   .total-playtime,
   .last-playthrough {
-    font-size: 14px;
+    font-size: ${props => props.theme.fontSizes.baseText};
     margin-right: 5px;
   }
 `;
@@ -61,7 +71,7 @@ export default class GameStats extends React.PureComponent<
   IProps & IDerivedProps
 > {
   render() {
-    const { cave, game = {} as IGame, downloadKey, mdash = true } = this.props;
+    const { cave, game = {} as IGame, downloadKey } = this.props;
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
 
@@ -81,50 +91,58 @@ export default class GameStats extends React.PureComponent<
       return (
         <GameStatsDiv>
           <div className="total-playtime">
-            {format([`usage_stats.description.${classification}`])}
-            {showPlatforms
-              ? <span>
-                  {" "}{format([
-                    "usage_stats.description.platforms",
-                    {
-                      platforms: <PlatformIcons target={game} />,
-                    },
-                  ])}
-                </span>
-              : null}
-            {mdash ? " — " : <br />}
-            {downloadKey
-              ? format([
-                  "usage_stats.description.bought_time_ago",
-                  {
-                    time_ago: <TimeAgo date={downloadKey.createdAt} />,
-                  },
-                ])
-              : minPrice > 0
+            <div className="total-playtime--line">
+              {format([`usage_stats.description.${classification}`])}
+              {showPlatforms
+                ? <span>
+                    {" "}{format([
+                      "usage_stats.description.platforms",
+                      {
+                        platforms: (
+                          <PlatformIcons
+                            className="total-playtime--platforms"
+                            target={game}
+                          />
+                        ),
+                      },
+                    ])}
+                  </span>
+                : null}
+            </div>
+            <div className="total-playtime--line">
+              {downloadKey
                 ? format([
-                    "usage_stats.description.price",
+                    "usage_stats.description.bought_time_ago",
                     {
-                      price: sale
-                        ? <span>
-                            <label
-                              key="original-price"
-                              className="original-price"
-                            >
-                              {formatPrice(currency, minPrice)}
-                            </label>
-                            <label key="discounted-price">
-                              {" "}{formatPrice(
-                                currency,
-                                minPrice * (1 - sale.rate / 100),
-                              )}
-                            </label>
-                          </span>
-                        : <label>
-                            {formatPrice(currency, minPrice)}
-                          </label>,
+                      time_ago: <TimeAgo date={downloadKey.createdAt} />,
                     },
                   ])
-                : format(["usage_stats.description.free_download"])}
+                : minPrice > 0
+                  ? format([
+                      "usage_stats.description.price",
+                      {
+                        price: sale
+                          ? <span>
+                              <label
+                                key="original-price"
+                                className="original-price"
+                              >
+                                {formatPrice(currency, minPrice)}
+                              </label>
+                              <label key="discounted-price">
+                                {" "}{formatPrice(
+                                  currency,
+                                  minPrice * (1 - sale.rate / 100),
+                                )}
+                              </label>
+                            </span>
+                          : <label>
+                              {formatPrice(currency, minPrice)}
+                            </label>,
+                      },
+                    ])
+                  : format(["usage_stats.description.free_download"])}
+            </div>
           </div>
         </GameStatsDiv>
       );
