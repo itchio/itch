@@ -1,4 +1,3 @@
-import { createSelector, createStructuredSelector } from "reselect";
 import * as React from "react";
 import { connect } from "./connect";
 
@@ -10,20 +9,22 @@ import Filler from "./basics/filler";
 import Button from "./basics/button";
 
 import { IGame } from "../db/models/game";
-import { ICaveSummary } from "../db/models/cave";
-import { IDownloadKey } from "../db/models/download-key";
 
 import { IDispatch, dispatcher } from "../constants/action-types";
-import { IAppState, ITabData, ICommonsState } from "../types";
+import { IAppState } from "../types";
 import * as actions from "../actions";
 
 import { IBrowserControlProps } from "./browser-state";
 
 import styled from "./styles";
-import getByIds from "../helpers/get-by-ids";
 
-import { first } from "underscore";
 import { Space } from "../helpers/space";
+import getGameStatus, { IGameStatus } from "../helpers/get-game-status";
+
+const Spacer = styled.div`
+  flex-basis: 10px;
+  flex-shrink: 0;
+`;
 
 const BrowserContextDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -47,17 +48,18 @@ export class GameBrowserContext extends React.PureComponent<
   }
 
   render() {
-    const { game, cave, downloadKey } = this.props;
+    const { game, status } = this.props;
     if (!game) {
       return <div />;
     }
 
     return (
       <BrowserContextDiv onContextMenu={this.onContextMenu}>
-        <MainAction game={game} wide />
-        <GameStats game={game} cave={cave} downloadKey={downloadKey} />
+        <MainAction game={game} status={status} wide />
+        <Spacer />
+        <GameStats game={game} status={status} />
         <Filler />
-        <Button discreet label="..." />
+        <Button discreet label="..." onClick={this.onContextMenu} />
       </BrowserContextDiv>
     );
   }
@@ -88,11 +90,8 @@ export class GameBrowserContext extends React.PureComponent<
 interface IProps extends IBrowserControlProps {}
 
 interface IDerivedProps {
-  gameId: number;
-
   game: IGame;
-  cave?: ICaveSummary;
-  downloadKey: IDownloadKey;
+  status: IGameStatus;
 
   openGameContextMenu: typeof actions.openGameContextMenu;
 }
@@ -101,39 +100,17 @@ interface IState {
   dominantColor?: IRGBColor;
 }
 
-interface IContextSelectorResult {
-  tabData: ITabData;
-  commons: ICommonsState;
-}
-
 export default connect<IProps>(GameBrowserContext, {
-  state: () => {
-    const marketSelector = createStructuredSelector({
-      tabData: (state: IAppState, props: IProps) => props.tabData,
-      commons: (state: IAppState, props: IProps) => state.commons,
-    });
+  state: (rs: IAppState, props: IProps) => {
+    const game = Space.from(rs, props.tab).game();
+    if (!game) {
+      return {};
+    }
 
-    return createSelector(marketSelector, (cs: IContextSelectorResult) => {
-      const game = new Space(cs.tabData).game();
-      if (!game) {
-        return {};
-      }
-
-      // TODO: DRY out a few places that do the same thing
-      const downloadKeys = getByIds(
-        cs.commons.downloadKeys,
-        cs.commons.downloadKeyIdsByGameId[game.id],
-      );
-      const downloadKey = first(downloadKeys);
-
-      const caves = getByIds(
-        cs.commons.caves,
-        cs.commons.caveIdsByGameId[game.id],
-      );
-      const cave = first(caves);
-
-      return { game, downloadKey, cave };
-    });
+    return {
+      game,
+      status: getGameStatus(rs, game),
+    };
   },
   dispatch: (dispatch: IDispatch) => ({
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),

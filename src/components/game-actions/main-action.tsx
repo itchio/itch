@@ -8,28 +8,25 @@ import Button from "../basics/button";
 
 import * as actions from "../../actions";
 
-import { IAppState } from "../../types";
 import { dispatcher } from "../../constants/action-types";
-import getCommons, {
-  ICommonsForGame,
+import {
+  IGameStatus,
   OperationType,
   Access,
-} from "./get-commons";
+} from "../../helpers/get-game-status";
 import { IGame } from "../../db/models/game";
 import format from "../format";
+import actionForGame from "../../util/action-for-game";
 
 class MainAction extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { cave, access, operation, compatible } = this.props;
+    const { cave, access, operation, compatible, update } = this.props.status;
 
     let iconComponent: JSX.Element;
     let label: string | JSX.Element;
     let primary = false;
 
-    if (cave) {
-      label = format(["grid.item.launch"]);
-      primary = true;
-    } else if (operation) {
+    if (operation) {
       const { type, progress } = operation;
       iconComponent = (
         <LoadingCircle progress={progress > 0 ? progress : 0.1} />
@@ -39,10 +36,19 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
         label = format(["grid.item.downloading"]);
       } else if (type === OperationType.Task) {
         const { name } = operation;
-        if (name === "install") {
+        if (name === "launch") {
+          label = format(["grid.item.running"]);
+          iconComponent = null;
+        } else {
           label = format(["grid.item.installing"]);
         }
-        label = format(["grid.item.installing"]);
+      }
+    } else if (cave) {
+      if (update) {
+        label = format(["grid.item.update"]);
+      } else {
+        label = format([`grid.item.${actionForGame(this.props.game, cave)}`]);
+        primary = true;
       }
     } else {
       if (compatible) {
@@ -55,6 +61,8 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
           access === Access.Edit
         ) {
           label = format(["grid.item.install"]);
+        } else {
+          label = format(["grid.item.buy_now"]);
         }
       } else {
         label = format(["grid.item.not_compatible"]);
@@ -68,6 +76,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
     const { className, wide } = this.props;
     return (
       <Button
+        onClick={this.onClick}
         className={className}
         wide={wide}
         discreet
@@ -77,14 +86,37 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
       />
     );
   }
+
+  onClick = (e: React.MouseEvent<any>) => {
+    e.stopPropagation();
+
+    const { game, status } = this.props;
+    const { operation, update, cave } = status;
+
+    if (operation) {
+      if (operation.type === OperationType.Download) {
+        this.props.navigate({ tab: "downloads" });
+      } else if (operation.type === OperationType.Task) {
+        if (operation.name === "launch") {
+          this.props.abortGameRequest({ game });
+        }
+      }
+    } else if (cave && update) {
+      this.props.showGameUpdate({ caveId: cave.id, update });
+    } else {
+      this.props.queueGame({ game });
+    }
+  };
 }
 
 interface IProps {
   game: IGame;
+  status: IGameStatus;
+
   wide?: boolean;
 }
 
-interface IDerivedProps extends ICommonsForGame {
+interface IDerivedProps {
   className?: string;
 
   intl: InjectedIntl;
@@ -97,9 +129,6 @@ interface IDerivedProps extends ICommonsForGame {
 }
 
 export default connect<IProps>(injectIntl(MainAction), {
-  state: (rs: IAppState, props: IProps) => {
-    return getCommons(rs, props.game);
-  },
   dispatch: dispatch => ({
     queueGame: dispatcher(dispatch, actions.queueGame),
     showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),

@@ -1,15 +1,15 @@
-import { IDownloadKeySummary } from "../../db/models/download-key";
-import { ICaveSummary } from "../../db/models/cave";
-import { IAppState, IGameUpdate } from "../../types/index";
+import { IDownloadKeySummary } from "../db/models/download-key";
+import { ICaveSummary } from "../db/models/cave";
+import { IAppState, IGameUpdate } from "../types/index";
 
 import { first, isEmpty } from "underscore";
-import getByIds from "../../helpers/get-by-ids";
-import { IGame } from "../../db/models/game";
+import getByIds from "./get-by-ids";
+import { IGame } from "../db/models/game";
 import {
   getPendingForGame,
   getActiveDownload,
-} from "../../reactors/downloads/getters";
-import isPlatformCompatible from "../../util/is-platform-compatible";
+} from "../reactors/downloads/getters";
+import isPlatformCompatible from "../util/is-platform-compatible";
 
 /**
  * What type of access we have to the game - do we own it,
@@ -68,7 +68,7 @@ interface IOperation {
   progress: number;
 }
 
-export interface ICommonsForGame {
+export interface IGameStatus {
   downloadKeys: IDownloadKeySummary[];
   downloadKey: IDownloadKeySummary;
   caves: ICaveSummary[];
@@ -79,10 +79,7 @@ export interface ICommonsForGame {
   compatible: boolean;
 }
 
-export default function getCommons(
-  rs: IAppState,
-  game: IGame,
-): ICommonsForGame {
+export default function getGameStatus(rs: IAppState, game: IGame): IGameStatus {
   const { commons, session, tasks, downloads } = rs;
   const { credentials } = session;
 

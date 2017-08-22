@@ -12,9 +12,9 @@ import TimeAgo from "./basics/time-ago";
 import IconButton from "./basics/icon-button";
 import Hover, { IHoverProps } from "./basics/hover-hoc";
 import Cover from "./basics/cover";
-import GameActions from "./game-actions";
+import MainAction from "./game-actions/main-action";
 
-import { IDownloadSpeeds, IDownloadItem, ITask } from "../types";
+import { IDownloadSpeeds, IDownloadItem, ITask, IAppState } from "../types";
 import { dispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
@@ -22,6 +22,7 @@ import styled, * as styles from "./styles";
 import format, { formatString } from "./format";
 import { injectIntl, InjectedIntl } from "react-intl";
 import doesEventMeanBackground from "./when-click-navigates";
+import getGameStatus, { IGameStatus } from "../helpers/get-game-status";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -128,6 +129,12 @@ const DownloadRowDiv = styled.div`
         border-radius: 5px;
       }
     }
+  }
+
+  .stats--control {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 `;
 
@@ -342,9 +349,9 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
       }
 
       return (
-        <div>
+        <div className="stats--control">
           {game.title}
-          <GameActions game={game} />
+          <MainAction game={game} status={this.props.status} />
         </div>
       );
     }
@@ -447,6 +454,7 @@ interface IProps extends IHoverProps {
 }
 
 interface IDerivedProps {
+  status: IGameStatus;
   speeds: IDownloadSpeeds;
 
   downloadsPaused: boolean;
@@ -472,11 +480,16 @@ interface IState {
 const HoverDownloadRow = Hover(DownloadRow);
 
 export default connect<IProps>(injectIntl(HoverDownloadRow), {
-  state: state => ({
-    speeds: state.downloads.speeds,
-    downloadsPaused: state.downloads.paused,
-    tasksByGameId: state.tasks.tasksByGameId,
-  }),
+  state: (rs: IAppState, props: IProps) => {
+    const game = props.item.game;
+
+    return {
+      speeds: rs.downloads.speeds,
+      downloadsPaused: rs.downloads.paused,
+      tasksByGameId: rs.tasks.tasksByGameId,
+      status: getGameStatus(rs, game),
+    };
+  },
   dispatch: dispatch => ({
     navigateToGame: dispatcher(dispatch, actions.navigateToGame),
     prioritizeDownload: dispatcher(dispatch, actions.prioritizeDownload),

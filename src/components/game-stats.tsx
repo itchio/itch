@@ -13,12 +13,11 @@ import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
 import { IGame } from "../db/models/game";
-import { ICaveSummary } from "../db/models/cave";
-import { IDownloadKeySummary } from "../db/models/download-key";
 import { fromJSONField } from "../db/json-field";
 import { ISaleInfo } from "../types";
 
 import styled from "./styles";
+import { IGameStatus } from "../helpers/get-game-status";
 
 const GameStatsDiv = styled.div`
   display: flex;
@@ -67,12 +66,12 @@ const GameStatsDiv = styled.div`
   }
 `;
 
-export default class GameStats extends React.PureComponent<
-  IProps & IDerivedProps
-> {
+export default class GameStats extends React.PureComponent<IProps> {
   render() {
-    const { cave, game = {} as IGame, downloadKey } = this.props;
+    const { game, status } = this.props;
     const classification = game.classification || "game";
+
+    const { cave, downloadKey } = status;
     const classAction = actionForGame(game, cave);
 
     if (cave) {
@@ -87,7 +86,7 @@ export default class GameStats extends React.PureComponent<
       const sale = fromJSONField<ISaleInfo>(game.sale);
       const showPlatforms = classAction === "launch" && hasPlatforms(game);
 
-      // TODO: anything but this, please, I'm begging you
+      // TODO: break down into components, or functions at the very least
       return (
         <GameStatsDiv>
           <div className="total-playtime">
@@ -152,9 +151,5 @@ export default class GameStats extends React.PureComponent<
 
 interface IProps {
   game: IGame;
-  downloadKey: IDownloadKeySummary;
-  cave: ICaveSummary;
-  mdash?: boolean;
+  status: IGameStatus;
 }
-
-interface IDerivedProps {}

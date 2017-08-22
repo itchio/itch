@@ -2,7 +2,7 @@
 const env = require("./env").default;
 
 let runTests = false;
-let thorough = false;
+let thorough = true;
 
 for (const arg of process.argv) {
     if (arg === "--run-unit-tests") {
@@ -10,6 +10,9 @@ for (const arg of process.argv) {
     }
     if (arg === "--thorough") {
         thorough = true;
+    }
+    if (arg === "--shallow") {
+        thorough = false;
     }
 }
 

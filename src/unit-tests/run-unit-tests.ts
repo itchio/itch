@@ -1,7 +1,7 @@
 // tslint:disable:no-console
 
 let watching = false;
-let thorough = false;
+let thorough = true;
 let chatty = false;
 let hangAround = false;
 
@@ -134,6 +134,11 @@ app.on("ready", async () => {
 
     if (arg === "--thorough") {
       thorough = true;
+      continue;
+    }
+
+    if (arg === "--shallow") {
+      thorough = false;
       continue;
     }
 

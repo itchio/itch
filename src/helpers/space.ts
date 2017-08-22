@@ -2,7 +2,7 @@ import { ITabData, ITabWeb } from "../types/tab-data";
 import { IGame } from "../db/models/game";
 import { ICollection } from "../db/models/collection";
 import { IUser } from "../db/models/user";
-import { ILocalizedString, IStore } from "../types/index";
+import { ILocalizedString, IStore, IAppState } from "../types/index";
 
 import staticTabData, { IBaseTabData } from "../constants/static-tab-data";
 
@@ -41,6 +41,10 @@ export class Space {
 
   static for(store: IStore, tab: string): Space {
     return new Space(store.getState().session.tabData[tab]);
+  }
+
+  static from(state: IAppState, tab: string): Space {
+    return new Space(state.session.tabData[tab]);
   }
 
   path(): string {
