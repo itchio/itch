@@ -84,6 +84,7 @@
     "keymirror": "~0.1.0",
     "logrotate-stream": "^0.2.5",
     "marked-extra": "^0.2.6",
+    "memory-streams": "^0.1.2",
     "mkdirp": "^0.5.1",
     "multi-write-stream": "^2.0.1",
     "pino": "^4.5.2",
@@ -165,7 +166,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "prettier --trailing-comma all --write",
+      "prettier --parser typescript --trailing-comma es5 --write",
       "git add"
     ]
   }
