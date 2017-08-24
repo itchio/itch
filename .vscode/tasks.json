@@ -27,12 +27,12 @@
       "args": [
         "test",
         "--",
-        "--shallow",
         "-w"
       ],
       "showOutput": "silent",
       "isBackground": true,
-      "isTestCommand": true
+      "isTestCommand": true,
+      "problemMatcher": "$tsc"
     }
   ]
 }
