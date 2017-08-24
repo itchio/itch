@@ -1,7 +1,7 @@
 export type DateTimeField = string;
 
 export function fromDateTimeField(input: any): Date {
-  if (!input) {
+  if (input === null || input === undefined) {
     return null;
   }
 
@@ -10,43 +10,28 @@ export function fromDateTimeField(input: any): Date {
   if (type === "number") {
     d = new Date(input);
   } else if (type === "string") {
-    d = new Date(input + "+0");
+    // we support two string formats:
+    if (input.lastIndexOf("Z") === input.length - 1) {
+      // "2006-01-02T15:04:05Z" (ISO-8601)
+      d = new Date(input);
+    } else {
+      // "2006-01-02 15:04:05'
+      d = new Date(input + "+0");
+    }
   } else if (input instanceof Date) {
     d = input;
   } else {
     // invalid dates = null;
-  }
-  if (d) {
-    d.setMilliseconds(0);
   }
   return d;
 }
 
 export function toDateTimeField(input: any): DateTimeField {
   const value = fromDateTimeField(input);
-  if (!value) {
+  if (value === null) {
     return null;
   }
 
-  return (
-    formatZerolessValue(value.getUTCFullYear()) +
-    "-" +
-    formatZerolessValue(value.getUTCMonth() + 1) +
-    "-" +
-    formatZerolessValue(value.getUTCDate()) +
-    " " +
-    formatZerolessValue(value.getUTCHours()) +
-    ":" +
-    formatZerolessValue(value.getUTCMinutes()) +
-    ":" +
-    formatZerolessValue(value.getUTCSeconds())
-  );
-}
-
-function formatZerolessValue(value: number): string {
-  if (value < 10) {
-    return "0" + value;
-  }
-
-  return String(value);
+  // "2006-01-02T15:04:05Z" (ISO-8601)
+  return value.toISOString();
 }

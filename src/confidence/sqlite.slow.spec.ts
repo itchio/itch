@@ -219,7 +219,7 @@ CREATE TABLE noels (
       timestamp: new Date("2017-01-20T19:00:00Z"),
     };
     up = hades.updateFor(fetchedJason, newJason, Jason);
-    t.same(up, { timestamp: "2017-01-20 19:00:00" });
+    t.same(up, { timestamp: "2017-01-20T19:00:00.000Z" });
 
     const noel = {
       id: 1,
