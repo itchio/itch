@@ -341,5 +341,14 @@
     "grid.item.revert_to_version": "Reverter para versão...",
     "download.reason.heal": "para verificar e reparar",
     "game.install.libraries_missing": "Algo necessário {{arch}} da biblioteca está faltando: {{libraries}}",
-    "grid.criterion.search": "Pesquisar..."
+    "grid.criterion.search": "Pesquisar...",
+    "prereq.explanation": "Alguns pacotes precisam ser instalados para {{title}} funcionar corretamente",
+    "prereq.status.downloading": "Baixando...",
+    "prereq.status.extracting": "Extraindo...",
+    "prereq.status.ready": "Pronto para instalar",
+    "prereq.status.done": "Concluído!",
+    "notification.download_installed": "{{title}} foi instalado!",
+    "notification.download_updated": "{{title}} foi atualizado!",
+    "grid.filters.options.compatible": "Compatível",
+    "sandbox.setup.windows.message": "Para jogar games no itch.io modo sandbox, é preciso fazer uma configuração como Administrador, apenas desta vez."
 }
