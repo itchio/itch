@@ -13,7 +13,7 @@ import defaultImages from "../../constants/default-images";
 
 import urls from "../../constants/urls";
 
-import styled from "../styles";
+import styled, * as styles from "../styles";
 import Filler from "../basics/filler";
 import Button from "../basics/button";
 
@@ -40,6 +40,17 @@ const UserMenuButton = styled(Button)`
     width: 32px;
     margin-right: 8px;
     border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  span {
+    flex-shrink: 1;
+    ${styles.singleLine()};
+  }
+
+  .flipper {
+    margin-left: 4px;
+    flex-shrink: 0;
   }
 `;
 
@@ -124,9 +135,11 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <UserMenuButton id="user-menu" discreet>
         <img src={coverUrl} />
-        {displayName || username}
-        {me.developer ? <IconBadge icon="rocket" /> : null}
-        {me.pressUser ? <IconBadge icon="newspaper-o" /> : null}
+        <span>
+          {displayName || username}
+          {me.developer ? <IconBadge icon="rocket" /> : null}
+          {me.pressUser ? <IconBadge icon="newspaper-o" /> : null}
+        </span>
         <Filler />
         <Icon icon="triangle-down" className="flipper" />
       </UserMenuButton>
