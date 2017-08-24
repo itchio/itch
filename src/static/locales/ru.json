@@ -447,5 +447,6 @@
     "grid.item.not_compatible": "Недоступно на этой платформе",
     "prompt.blessing.message": "Для {{operation}} {{title}} необходимы привилегии администратора",
     "prompt.blessing.detail": "Продолжайте, только если вы доверяете автору.",
-    "status.cancelled.message": "Операция была отменена."
+    "status.cancelled.message": "Операция была отменена.",
+    "prompt.install_error.message": "Установка завершилась с ошибкой."
 }
