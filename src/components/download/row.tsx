@@ -1,28 +1,28 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import { connect } from "./connect";
-import bob, { IRGBColor } from "../renderer-util/bob";
-import { ResponsiveContainer, AreaChart, Area } from "recharts";
+import { connect } from "../connect";
+import bob, { IRGBColor } from "../../renderer-util/bob";
+import Chart from "./chart";
 
-import { truncate, downloadProgress, fileSize } from "../format";
+import { truncate, downloadProgress, fileSize } from "../../format";
 
-import * as actions from "../actions";
+import * as actions from "../../actions";
 
-import TimeAgo from "./basics/time-ago";
-import IconButton from "./basics/icon-button";
-import Hover, { IHoverProps } from "./basics/hover-hoc";
-import Cover from "./basics/cover";
-import MainAction from "./game-actions/main-action";
+import TimeAgo from "../basics/time-ago";
+import IconButton from "../basics/icon-button";
+import Hover, { IHoverProps } from "../basics/hover-hoc";
+import Cover from "../basics/cover";
+import MainAction from "../game-actions/main-action";
 
-import { IDownloadSpeeds, IDownloadItem, ITask, IAppState } from "../types";
-import { dispatcher } from "../constants/action-types";
+import { IDownloadSpeeds, IDownloadItem, ITask, IAppState } from "../../types";
+import { dispatcher } from "../../constants/action-types";
 
-import styled, * as styles from "./styles";
+import styled, * as styles from "../styles";
 
-import format, { formatString } from "./format";
+import format, { formatString } from "../format";
 import { injectIntl, InjectedIntl } from "react-intl";
-import doesEventMeanBackground from "./when-click-navigates";
-import getGameStatus, { IGameStatus } from "../helpers/get-game-status";
+import doesEventMeanBackground from "../when-click-navigates";
+import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -189,8 +189,6 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
       finished: !active,
     });
 
-    const gradientColor = "rgb(158, 150, 131)";
-
     const { hover, onMouseEnter, onMouseLeave } = this.props;
 
     return (
@@ -200,49 +198,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        {first
-          ? <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={speeds}
-                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient
-                    id="downloadGradient"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor={gradientColor}
-                      stopOpacity={0.2}
-                    />
-                    <stop
-                      offset="50%"
-                      stopColor={gradientColor}
-                      stopOpacity={0.2}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor={gradientColor}
-                      stopOpacity={0.1}
-                    />
-                  </linearGradient>
-                </defs>
-                <Area
-                  type="monotone"
-                  curve={false}
-                  dot={false}
-                  isAnimationActive={false}
-                  dataKey="bps"
-                  fill="url(#downloadGradient)"
-                  fillOpacity={1.0}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          : ""}
+        {first ? <Chart data={speeds} /> : null}
 
         <StyledCover
           hover={hover}

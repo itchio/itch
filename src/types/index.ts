@@ -873,11 +873,9 @@ export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
   installLocation?: string;
 }
 
-export interface IDownloadSpeedDataPoint {
-  bps: number;
-}
+export type DownloadSpeedDataPoint = number;
 
-export type IDownloadSpeeds = IDownloadSpeedDataPoint[];
+export type IDownloadSpeeds = DownloadSpeedDataPoint[];
 
 export interface IDownloadsState {
   /** All the downloads we know about, indexed by their own id */

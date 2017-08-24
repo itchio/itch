@@ -8,7 +8,7 @@ import { map, first, rest } from "underscore";
 import * as actions from "../actions";
 
 import Link from "./basics/link";
-import DownloadRow from "./download-row";
+import Row from "./download/row";
 import TitleBar from "./title-bar";
 
 import { IAppState, IDownloadItem } from "../types";
@@ -104,7 +104,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
           : ""}
 
         {firstItem
-          ? <DownloadRow key={firstItem.id} item={firstItem} first active />
+          ? <Row key={firstItem.id} item={firstItem} first active />
           : ""}
 
         {queuedItems.length > 0
@@ -116,7 +116,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
           : ""}
         {queuedItems.length > 0
           ? map(queuedItems, (item, i) =>
-              <DownloadRow key={item.id} item={item} active />,
+              <Row key={item.id} item={item} active />,
             )
           : ""}
 
@@ -131,9 +131,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
                 </Link>
               </div>,
             ].concat(
-              map(finishedItems, item =>
-                <DownloadRow key={item.id} item={item} />,
-              ),
+              map(finishedItems, item => <Row key={item.id} item={item} />),
             )
           : ""}
       </DownloadsContentDiv>

@@ -22,7 +22,7 @@ const selector = createStructuredSelector({
 });
 
 const baseInitialState = {
-  speeds: map(new Array(SPEED_DATA_POINT_COUNT), x => ({ bps: 0 })),
+  speeds: map(new Array(SPEED_DATA_POINT_COUNT), x => 0),
   items: {},
   paused: false,
 };
@@ -101,11 +101,11 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
   });
 
   on(actions.downloadSpeedDatapoint, (state, action) => {
-    const { payload } = action;
+    const { bps } = action.payload;
 
     return {
       ...state,
-      speeds: last([...state.speeds, payload], SPEED_DATA_POINT_COUNT),
+      speeds: last([...state.speeds, bps], SPEED_DATA_POINT_COUNT),
     };
   });
 
