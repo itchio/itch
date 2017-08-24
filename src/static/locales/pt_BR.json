@@ -349,5 +349,6 @@
     "prereq.status.done": "Concluído!",
     "notification.download_installed": "{{title}} foi instalado!",
     "notification.download_updated": "{{title}} foi atualizado!",
-    "grid.filters.options.compatible": "Compatível"
+    "grid.filters.options.compatible": "Compatível",
+    "sandbox.setup.windows.message": "Para jogar games no itch.io modo sandbox, é preciso fazer uma configuração como Administrador, apenas desta vez."
 }
