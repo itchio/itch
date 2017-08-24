@@ -32,7 +32,17 @@
       "showOutput": "silent",
       "isBackground": true,
       "isTestCommand": true,
-      "problemMatcher": "$tsc"
+      "problemMatcher": {
+        "owner": "typescript",
+        "fileLocation": ["relative", "${workspaceRoot}"],
+        "pattern": {
+          "regexp": "^✘ ([^\\:]+)\\:([^\\:]+)\\:([^\\:]+)\\: (.+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "message": 4
+        }
+      }
     }
   ]
 }

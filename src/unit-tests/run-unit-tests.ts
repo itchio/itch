@@ -180,14 +180,17 @@ app.on("ready", async () => {
     const through = require("through");
     let lastTest = "";
 
-    const printStack = (stack: string) => {
+    const printStack = (stack: string, message: string) => {
       const lines = stack.split(/\r?\n/);
-      const header = lines.shift();
-      console.log("  " + chalk.red(header));
+      let header = lines.shift();
       let skipping = false;
+      let firstLine = null;
+      const formattedLines = [];
+      formattedLines.push(chalk.red(header));
+
       for (const line of lines) {
         if (/From previous/.test(line)) {
-          console.log(`  ${line}`);
+          formattedLines.push(`  ${line}`);
           continue;
         }
 
@@ -199,15 +202,26 @@ app.on("ready", async () => {
           .replace(/\\/g, "/")
           .replace(/@\//g, "@");
         if (/\.\/src|\.ts/.test(formattedLine)) {
-          console.log(chalk.blue("    → " + formattedLine));
+          if (!firstLine) {
+            const matches = /\((.+)\)/.exec(formattedLine);
+            if (matches) {
+              firstLine = chalk.red(`✘ ${matches[1]}: ${message}`);
+            }
+          }
+          formattedLines.push(chalk.blue("    → " + formattedLine));
           skipping = false;
         } else {
           if (!skipping) {
             skipping = true;
-            // console.log(chalk.grey("    → " + formattedLine));
-            console.log("      ...");
+            // formattedLines.push(chalk.grey("    → " + formattedLine));
+            formattedLines.push("      ...");
           }
         }
+      }
+
+      console.log(firstLine);
+      for (const formattedLine of formattedLines) {
+        console.log(formattedLine);
       }
     };
 
@@ -220,10 +234,23 @@ app.on("ready", async () => {
     const parser = through(function(data) {
       if (data.type === "assert") {
         if (!data.ok) {
-          console.log(chalk.red("✘ " + lastTest));
-          if (data.operator === "error") {
-            printStack(data.actual.stack);
-          } else {
+          // TODO: re-handle data.at
+          const stack =
+            data.operator === "error"
+              ? data.actual.stack
+              : data.error ? data.error.stack : [];
+
+          let singleLineMessage = ``;
+          if (data.operator !== "error") {
+            singleLineMessage += chalk.red(`${data.name} (${data.operator})`);
+            singleLineMessage += ": wanted ";
+            singleLineMessage += chalk.blue(`${JSON.stringify(data.expected)}`);
+            singleLineMessage += ", got ";
+            singleLineMessage += chalk.blue(`${JSON.stringify(data.actual)}`);
+          }
+          printStack(stack, singleLineMessage);
+
+          if (data.operator !== "error") {
             console.log(chalk.red(`  ${data.name}, operator ${data.operator}`));
             console.log(
               `    expected:\n${chalk.blue(
@@ -235,11 +262,6 @@ app.on("ready", async () => {
                 indentLines(8, JSON.stringify(data.actual, null, 2)),
               )}`,
             );
-            if (data.error) {
-              printStack(data.error.stack);
-            } else {
-              console.log("  at " + chalk.red(data.at));
-            }
           }
           console.log("");
         }
