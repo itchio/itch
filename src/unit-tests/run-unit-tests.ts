@@ -102,10 +102,15 @@ function flush() {
   delete global["__coverage__"];
 
   Object.keys(require.cache).forEach(function(fname) {
+    // unload everything that's *not* in node_modules
     if (fname.indexOf("node_modules") === -1) {
-      delete require.cache[fname];
+      // ... except the logger
+      if (fname.indexOf("logger/index") === -1) {
+        delete require.cache[fname];
+      }
     }
 
+    // unload tape and zopf from node_modules
     const mods = ["tape", "zopf"];
     mods.forEach(function(mod) {
       if (
