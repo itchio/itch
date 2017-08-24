@@ -49,7 +49,7 @@ export default async function asTask(opts: IAsTaskOpts) {
       name,
       gameId,
       startedAt: Date.now(),
-    }),
+    })
   );
 
   const ctx = new Context(store, db);
@@ -58,7 +58,7 @@ export default async function asTask(opts: IAsTaskOpts) {
     "progress",
     throttle((ev: IProgressInfo) => {
       store.dispatch(actions.taskProgress({ id, ...ev }));
-    }, 250),
+    }, 250)
   );
 
   currentTasks[id] = ctx;
@@ -92,7 +92,7 @@ export default async function asTask(opts: IAsTaskOpts) {
         actions.taskEnded({
           id,
           err: err ? `${err}` : null,
-        }),
+        })
       );
     });
 }

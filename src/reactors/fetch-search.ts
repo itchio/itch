@@ -28,11 +28,11 @@ export default function(watcher: Watcher, db: DB) {
             squel
               .expr()
               .or("lower(title) like ?", containsTerm)
-              .or("lower(shortText) like ?", containsTerm),
+              .or("lower(shortText) like ?", containsTerm)
           )
           .order("lower(title) = ?", true /* DESC */, equalTerm)
           .order("lower(title) like ?", true /* DESC */, startTerm)
-          .limit(5),
+          .limit(5)
       );
       store.dispatch(
         actions.searchFetched({
@@ -55,7 +55,7 @@ export default function(watcher: Watcher, db: DB) {
               },
             },
           },
-        }),
+        })
       );
     } catch (e) {
       // TODO: relay search error (network offline, etc.)

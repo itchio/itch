@@ -15,8 +15,8 @@ export default function suite(filename: string, cb: (s: ISuite) => void) {
   if (!fs.existsSync(filename)) {
     throw new Error(
       `incorrect usage of suite() - should pass __filename, got ${JSON.stringify(
-        filename,
-      )}`,
+        filename
+      )}`
     );
   }
 
@@ -109,7 +109,7 @@ export async function withDB(store: IStore, cb: (db: DB) => Promise<void>) {
 export async function withCustomDB(
   store: IStore,
   customMap: IModelMap,
-  cb: (db: DB) => Promise<void>,
+  cb: (db: DB) => Promise<void>
 ) {
   const db = new DB(customMap);
   try {

@@ -8,7 +8,7 @@ import { ICoreOpts } from "./core";
 
 export default async function getBlessing(
   opts: ICoreOpts,
-  operation: "install" | "uninstall",
+  operation: "install" | "uninstall"
 ) {
   const { ctx, game } = opts;
   const { store } = ctx;

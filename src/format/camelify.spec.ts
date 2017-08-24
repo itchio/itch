@@ -26,7 +26,7 @@ suite(__filename, s => {
           displayName: "waffles",
         },
         alreadyDone: ["dont_touch_me"],
-      },
+      }
     );
   });
 });

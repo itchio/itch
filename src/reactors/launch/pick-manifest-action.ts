@@ -19,7 +19,7 @@ import { findWhere } from "underscore";
 export default async function pickManifestAction(
   store: IStore,
   manifest: IManifest,
-  game: IGame,
+  game: IGame
 ): Promise<IManifestAction> {
   const buttons: IModalButtonSpec[] = [];
   const bigButtons: IModalButtonSpec[] = [];

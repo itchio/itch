@@ -45,7 +45,7 @@ async function returnsZero(cmd: string) {
         } else {
           resolve(true);
         }
-      },
+      }
     );
   });
 }
@@ -103,7 +103,7 @@ export default function(watcher: Watcher) {
     autoUpdater.setFeedURL(feedUrl);
 
     autoUpdater.on("checking-for-update", () =>
-      store.dispatch(actions.checkingForSelfUpdate({})),
+      store.dispatch(actions.checkingForSelfUpdate({}))
     );
     autoUpdater.on(
       "update-downloaded",
@@ -111,12 +111,12 @@ export default function(watcher: Watcher) {
         logger.info(`update downloaded, release name: '${releaseName}'`);
         logger.info(`release notes: \n'${releaseNotes}'`);
         store.dispatch(actions.selfUpdateDownloaded(releaseName));
-      },
+      }
     );
 
     setTimeout(
       () => store.dispatch(actions.checkForSelfUpdate({})),
-      QUIET_TIME,
+      QUIET_TIME
     );
 
     while (true) {
@@ -143,7 +143,7 @@ export default function(watcher: Watcher) {
 
         if (autoUpdater && !hadErrors && downloadSelfUpdates && !linux) {
           store.dispatch(
-            actions.selfUpdateAvailable({ spec: resp.body, downloading: true }),
+            actions.selfUpdateAvailable({ spec: resp.body, downloading: true })
           );
           autoUpdater.checkForUpdates();
         } else {
@@ -151,7 +151,7 @@ export default function(watcher: Watcher) {
             actions.selfUpdateAvailable({
               spec: resp.body,
               downloading: false,
-            }),
+            })
           );
         }
       } else if (resp.statusCode === 204) {
@@ -162,13 +162,13 @@ export default function(watcher: Watcher) {
         store.dispatch(
           actions.selfUpdateError({
             message: `While trying to reach update server: ${resp.status}`,
-          }),
+          })
         );
       }
     } catch (e) {
       if (isNetworkError(e)) {
         logger.warn(
-          "Seems like we have no network connectivity, skipping self-update check",
+          "Seems like we have no network connectivity, skipping self-update check"
         );
         store.dispatch(actions.selfUpdateNotAvailable({ uptodate: false }));
       } else {
@@ -176,7 +176,7 @@ export default function(watcher: Watcher) {
         store.dispatch(
           actions.selfUpdateError({
             message: `While trying to reach update server: ${e.message || e}`,
-          }),
+          })
         );
       }
     }
@@ -187,7 +187,7 @@ export default function(watcher: Watcher) {
     const spec = store.getState().selfUpdate.downloaded;
     if (!spec) {
       logger.warn(
-        "Asked to apply update, but nothing downloaded? bailing out...",
+        "Asked to apply update, but nothing downloaded? bailing out..."
       );
       return;
     }
@@ -222,7 +222,7 @@ export default function(watcher: Watcher) {
             className: "secondary",
           },
         ],
-      }),
+      })
     );
   });
 
@@ -288,7 +288,7 @@ export default function(watcher: Watcher) {
             className: "secondary",
           },
         ],
-      }),
+      })
     );
   });
 }

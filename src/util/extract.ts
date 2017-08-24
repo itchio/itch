@@ -37,7 +37,7 @@ interface IEntryDoneListener {
 export async function unarchiverList(
   ctx: Context,
   logger: Logger,
-  archivePath: string,
+  archivePath: string
 ): Promise<IListResult> {
   const sizes = {} as ISizeMap;
   let totalSize = 0;
@@ -89,7 +89,7 @@ export async function unarchiverExtract(
   logger: Logger,
   archivePath: string,
   destPath: string,
-  onItemDone: IEntryDoneListener,
+  onItemDone: IEntryDoneListener
 ) {
   let EXTRACT_RE = /^ {2}(.+) {2}\(.+\)\.\.\. OK\.$/;
 
@@ -155,8 +155,8 @@ export async function unarchiver(opts: IExtractOpts): Promise<IExtractResult> {
   totalSize = info.totalSize;
   logger.info(
     `archive contains ${Object.keys(info.sizes).length} files, ${fileSize(
-      totalSize,
-    )} total`,
+      totalSize
+    )} total`
   );
 
   const onEntryDone: IEntryDoneListener = f => {

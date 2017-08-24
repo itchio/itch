@@ -27,7 +27,7 @@ function isFrozen(tab: string): boolean {
 function withWebContents(
   store: IStore,
   tab: string,
-  cb: (wc: Electron.WebContents) => any,
+  cb: (wc: Electron.WebContents) => any
 ) {
   const data = store.getState().session.tabData[tab];
   if (!data) {
@@ -70,7 +70,7 @@ export default function(watcher: Watcher, db: DB) {
           data: {
             web,
           },
-        }),
+        })
       );
     };
     pushWeb({ webContentsId, loading: wc.isLoading() });
@@ -112,7 +112,7 @@ export default function(watcher: Watcher, db: DB) {
       logger.debug(`did-finish-load (on), executing injected js`);
       wc.executeJavaScript(
         `window.__itchInit && window.__itchInit(${JSON.stringify(tab)})`,
-        false,
+        false
       );
     });
 
@@ -131,7 +131,7 @@ export default function(watcher: Watcher, db: DB) {
           tab,
           url: wc.getURL(),
           iframe: false,
-        }),
+        })
       );
     });
 
@@ -151,7 +151,7 @@ export default function(watcher: Watcher, db: DB) {
       (ev, url, frameName, disposition, options, additionalFeatures) => {
         const background = disposition === "background-tab";
         store.dispatch(actions.navigate({ tab: `url/${url}`, background }));
-      },
+      }
     );
   });
 
@@ -171,7 +171,7 @@ export default function(watcher: Watcher, db: DB) {
             actions.evolveTab({
               tab: tab,
               path: newPath,
-            }),
+            })
           );
 
           const parsed = urlParser.parse(url);
@@ -183,7 +183,7 @@ export default function(watcher: Watcher, db: DB) {
             actions.evolveTab({
               tab: tab,
               path: `url/${url}`,
-            }),
+            })
           );
         }
       };
@@ -222,7 +222,7 @@ export default function(watcher: Watcher, db: DB) {
             data: {
               web,
             },
-          }),
+          })
         );
       };
 

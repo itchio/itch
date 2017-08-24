@@ -28,14 +28,14 @@ function updateDownloadKeys(store: IStore, db: DB): IDownloadKeySummary[] {
   const downloadKeys = db.downloadKeys.all(k =>
     k
       .fields(["id", "gameId", "createdAt"])
-      .where("ownerId = ?", credentials.me.id),
+      .where("ownerId = ?", credentials.me.id)
   );
 
   store.dispatch(
     actions.commonsUpdated({
       downloadKeys: indexBy(downloadKeys, "id"),
       downloadKeyIdsByGameId: groupIdBy(downloadKeys, "gameId"),
-    }),
+    })
   );
 
   logger.debug(`cached ${downloadKeys.length} download keys`);
@@ -45,14 +45,14 @@ function updateDownloadKeys(store: IStore, db: DB): IDownloadKeySummary[] {
 
 function updateCaves(store: IStore, db: DB): ICaveSummary[] {
   const caves = db.caves.all(k =>
-    k.fields(["id", "gameId", "lastTouchedAt", "secondsRun"]),
+    k.fields(["id", "gameId", "lastTouchedAt", "secondsRun"])
   );
 
   store.dispatch(
     actions.commonsUpdated({
       caves: indexBy(caves, "id"),
       caveIdsByGameId: groupIdBy(caves, "gameId"),
-    }),
+    })
   );
 
   logger.debug(`cached ${caves.length} caves`);
@@ -85,13 +85,13 @@ function updateCommonsNow(store: IStore, db: DB) {
 
   const libraryGameIds = union(
     pluck(downloadKeys, "gameId"),
-    pluck(caves, "gameId"),
+    pluck(caves, "gameId")
   );
 
   store.dispatch(
     actions.commonsUpdated({
       libraryGameIds,
-    }),
+    })
   );
 }
 

@@ -8,7 +8,7 @@ import { getGameCredentialsForId } from "./downloads/get-game-credentials";
 
 export default async function lazyGetGame(
   ctx: Context,
-  gameId: number,
+  gameId: number
 ): Promise<IGame> {
   const game = db.games.findOneById(gameId);
   if (game) {

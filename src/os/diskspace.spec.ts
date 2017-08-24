@@ -114,7 +114,7 @@ suite(__filename, s => {
 
     free = diskspace.freeInFolder(
       diskInfo,
-      "/media/usb1/Diego el Rey del juego/Juegos de Itch",
+      "/media/usb1/Diego el Rey del juego/Juegos de Itch"
     );
     t.is(free, 111, "on usb disk");
 
@@ -145,7 +145,7 @@ suite(__filename, s => {
 
     free = diskspace.freeInFolder(
       diskInfo,
-      "D:\\Tomorrow\\we\\dine\\it's\\swell",
+      "D:\\Tomorrow\\we\\dine\\it's\\swell"
     );
     t.is(free, 222, "on D:");
 

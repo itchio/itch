@@ -248,12 +248,12 @@ const launch: ILauncher = async (ctx, opts) => {
           messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
           messages.VideoFrameCommitted.addIndex(builder, 0);
           const vfc = messages.VideoFrameCommitted.endVideoFrameCommitted(
-            builder,
+            builder
           );
           messages.Packet.startPacket(builder);
           messages.Packet.addMessageType(
             builder,
-            messages.Message.VideoFrameCommitted,
+            messages.Message.VideoFrameCommitted
           );
           messages.Packet.addMessage(builder, vfc);
           const pkt = messages.Packet.endPacket(builder);

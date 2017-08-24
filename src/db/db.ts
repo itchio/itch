@@ -90,13 +90,13 @@ export class DB extends RepoContainer {
       const Model = this.modelMap[tableName];
       if (!Model) {
         logger.info(
-          `Dunno how to persist ${tableName}, skipping ${entityIds.length} records`,
+          `Dunno how to persist ${tableName}, skipping ${entityIds.length} records`
         );
         continue;
       }
 
       const oldRecordsList = this.q.all(Model, k =>
-        k.where(`${Model.primaryKey} in ?`, entityIds),
+        k.where(`${Model.primaryKey} in ?`, entityIds)
       );
       const oldRecords = indexBy(oldRecordsList, Model.primaryKey);
 
@@ -110,7 +110,7 @@ export class DB extends RepoContainer {
             const update = hades.updateFor(oldRecord, newRecord, Model);
             if (update) {
               this.q.update(Model, k =>
-                k.where(`${Model.primaryKey} = ?`, id).setFields(update),
+                k.where(`${Model.primaryKey} = ?`, id).setFields(update)
               );
               updated.push(id);
             } else {
@@ -122,7 +122,7 @@ export class DB extends RepoContainer {
                 ...newRecord,
                 [Model.primaryKey]: id,
               },
-              Model,
+              Model
             );
             this.q.insert(Model, k => k.setFields(insert));
             updated.push(id);
@@ -136,14 +136,14 @@ export class DB extends RepoContainer {
             tableName,
             updated,
             deleted: emptyArr,
-          }),
+          })
         );
       }
 
       if (numUpToDate < entityIds.length) {
         logger.debug(
           `${entityIds.length -
-            numUpToDate}/${entityIds.length} new/modified ${tableName}`,
+            numUpToDate}/${entityIds.length} new/modified ${tableName}`
         );
       }
     }
@@ -170,7 +170,7 @@ export class DB extends RepoContainer {
       const Model = this.modelMap[tableName];
       if (!Model) {
         logger.info(
-          `Dunno how to persist ${tableName}, skipping delete of ${ids.length} items`,
+          `Dunno how to persist ${tableName}, skipping delete of ${ids.length} items`
         );
         continue;
       }
@@ -182,7 +182,7 @@ export class DB extends RepoContainer {
           tableName,
           updated: emptyArr,
           deleted: ids,
-        }),
+        })
       );
     }
   }
@@ -204,7 +204,7 @@ export class DB extends RepoContainer {
         tableName,
         updated: emptyArr,
         deleted: [id],
-      }),
+      })
     );
   }
 

@@ -43,7 +43,7 @@ export default function(watcher: Watcher) {
         await visualElements.createIfNeeded(ctx);
       } catch (e) {
         logger.error(
-          `Could not run visualElements: ${e.stack || e.message || e}`,
+          `Could not run visualElements: ${e.stack || e.message || e}`
         );
       }
 
@@ -56,7 +56,7 @@ export default function(watcher: Watcher) {
             callback(false);
 
             logger.error(
-              `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`,
+              `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`
             );
 
             store.dispatch(
@@ -78,16 +78,16 @@ export default function(watcher: Watcher) {
                     action: actions.quit({}),
                   },
                 ],
-              }),
+              })
             );
-          },
+          }
         );
         logger.debug(`Set up certificate error handler`);
       } catch (e) {
         logger.error(
           `Could not set up certificate error handler: ${e.stack ||
             e.message ||
-            e}`,
+            e}`
         );
       }
 
@@ -120,7 +120,7 @@ export default function(watcher: Watcher) {
         }
       } catch (e) {
         logger.warn(
-          `Could not detect proxy settings: ${e ? e.message : "unknown error"}`,
+          `Could not detect proxy settings: ${e ? e.message : "unknown error"}`
         );
       }
     } catch (e) {
@@ -154,7 +154,7 @@ export default function(watcher: Watcher) {
     });
 
     logger.info(
-      `Testing proxy by loading a page in a hidden browser window...`,
+      `Testing proxy by loading a page in a hidden browser window...`
     );
     win.loadURL("https://itch.io/country");
 

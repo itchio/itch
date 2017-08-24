@@ -19,7 +19,7 @@ export async function request(
   method: HTTPMethod,
   uri: string,
   data: any = {},
-  opts: IRequestOpts = {},
+  opts: IRequestOpts = {}
 ): Promise<IResponse> {
   let url = uri;
 

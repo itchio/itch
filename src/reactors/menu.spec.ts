@@ -25,7 +25,7 @@ suite(__filename, s => {
         resources: {
           "menu.help.help": "Help",
         },
-      }),
+      })
     );
 
     let template = w.store.getState().ui.menu.template;
@@ -36,7 +36,7 @@ suite(__filename, s => {
       actions.loginSucceeded({
         key: "hello",
         me: {} as any,
-      }),
+      })
     );
 
     template = w.store.getState().ui.menu.template;
@@ -64,12 +64,12 @@ suite(__filename, s => {
         resources: {
           "menu.help.help": "Aide",
         },
-      }),
+      })
     );
     await w.dispatchAndWaitImmediate(
       actions.languageChanged({
         lang: "fr-FR",
-      }),
+      })
     );
 
     fleshed = fleshOutTemplate(template, w.store, winRuntime);

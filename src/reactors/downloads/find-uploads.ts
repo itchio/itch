@@ -33,7 +33,7 @@ export interface IFindUploadResult {
 
 export default async function findUploads(
   ctx: Context,
-  opts: IFindUploadOpts,
+  opts: IFindUploadOpts
 ): Promise<IFindUploadResult> {
   const { game, gameCredentials } = opts;
 
@@ -44,7 +44,7 @@ export default async function findUploads(
   const api = client.withKey(gameCredentials.apiKey);
   const { uploads } = await api.listUploads(
     gameCredentials.downloadKey,
-    game.id,
+    game.id
   );
 
   const note = `(${gameCredentials.downloadKey
@@ -59,7 +59,7 @@ export function narrowDownUploads(
   ctx: Context,
   input: IUpload[],
   game: IGame,
-  runtime: IRuntime,
+  runtime: IRuntime
 ): IFindUploadResult {
   if (actionForGame(game, null) === "open") {
     // do no filtering at all for asset packs, etc.
@@ -95,13 +95,13 @@ export function narrowDownUploads(
 export const excludeUntagged = (uploads: IUpload[]) =>
   filter(
     uploads,
-    u => u.pLinux || u.pWindows || u.pOsx || u.pAndroid || u.type === "html",
+    u => u.pLinux || u.pWindows || u.pOsx || u.pAndroid || u.type === "html"
   );
 
 export const excludeWrongPlatform = (uploads: IUpload[], runtime: IRuntime) =>
   union(
     where(uploads, { [runtimeProp(runtime)]: true }),
-    where(uploads, { type: "html" }),
+    where(uploads, { type: "html" })
   );
 
 const knownBadFormatRegexp = /\.(rpm|deb|pkg)$/i;
@@ -157,7 +157,7 @@ const uploadContainsString = (upload: IUpload, needle: string) => {
 
 const anyUploadContainsString = (
   candidates: IUpload[],
-  needle: string,
+  needle: string
 ): boolean => {
   for (const upload of candidates) {
     if (uploadContainsString(upload, needle)) {
@@ -169,7 +169,7 @@ const anyUploadContainsString = (
 
 export const excludeWrongArch = (
   input: IUpload[],
-  runtime: IRuntime,
+  runtime: IRuntime
 ): IUpload[] => {
   if (input.length <= 1) {
     return input;
@@ -180,8 +180,8 @@ export const excludeWrongArch = (
   if (runtime.platform === "windows" || runtime.platform === "linux") {
     logger.info(
       `Got ${uploads.length} uploads, we're on ${runtimeString(
-        runtime,
-      )}, let's sniff architectures`,
+        runtime
+      )}, let's sniff architectures`
     );
 
     if (runtime.is64) {
@@ -200,8 +200,8 @@ export const excludeWrongArch = (
       `After runtime sniffing, uploads look like:\n${JSON.stringify(
         uploads,
         null,
-        2,
-      )}`,
+        2
+      )}`
     );
   }
 

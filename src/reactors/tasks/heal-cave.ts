@@ -44,7 +44,7 @@ export default function(watcher: Watcher, db: DB) {
       store.dispatch(
         actions.statusMessage({
           message: t(i18n, ["status.healing"]),
-        }),
+        })
       );
 
       store.dispatch(
@@ -53,7 +53,7 @@ export default function(watcher: Watcher, db: DB) {
           game,
           upload,
           reason: "heal",
-        }),
+        })
       );
     } finally {
       opts.logger.close();

@@ -14,10 +14,10 @@ interface IActionReducers<State> {
 }
 
 interface IRegisterReducer<State> {
-  <Payload>(actionCreator: IActionCreator<Payload>, reducer: IActionReducer<
-    State,
-    Payload
-  >): void;
+  <Payload>(
+    actionCreator: IActionCreator<Payload>,
+    reducer: IActionReducer<State, Payload>
+  ): void;
 }
 
 interface IActionHandlerCallback<State> {
@@ -26,20 +26,25 @@ interface IActionHandlerCallback<State> {
 
 export default function reducer<State>(
   initialState: State,
-  cb: IActionHandlerCallback<State>,
+  cb: IActionHandlerCallback<State>
 ): Reducer<State, State> {
   const actionReducers: IActionReducers<State> = {};
 
-  cb(<
-    Payload
-  >(actionCreator: IActionCreator<Payload>, reducer: IActionReducer<State, Payload>) => {
-    const sampleAction = actionCreator({} as any);
-    if (actionReducers[sampleAction.type]) {
-      throw new Error(`reducing same action type twice: ${sampleAction.type}`);
-    }
+  cb(
+    <Payload>(
+      actionCreator: IActionCreator<Payload>,
+      reducer: IActionReducer<State, Payload>
+    ) => {
+      const sampleAction = actionCreator({} as any);
+      if (actionReducers[sampleAction.type]) {
+        throw new Error(
+          `reducing same action type twice: ${sampleAction.type}`
+        );
+      }
 
-    actionReducers[sampleAction.type] = reducer;
-  });
+      actionReducers[sampleAction.type] = reducer;
+    }
+  );
 
   return handleActions<State, State>(actionReducers, initialState);
 }

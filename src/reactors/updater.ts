@@ -53,7 +53,7 @@ interface IUpdateCheckOpts {
 async function _doCheckForGameUpdate(
   ctx: Context,
   cave: ICave,
-  inTaskOpts = {} as IUpdateCheckOpts,
+  inTaskOpts = {} as IUpdateCheckOpts
 ): Promise<IUpdateCheckResult> {
   const { noisy = false } = inTaskOpts;
   const returnVars = {} as IUpdateCheckResult;
@@ -71,7 +71,7 @@ async function _doCheckForGameUpdate(
     game = await lazyGetGame(ctx, cave.gameId);
   } catch (e) {
     logger.error(
-      `Could not fetch game for ${cave.gameId}, skipping (${e.message || e})`,
+      `Could not fetch game for ${cave.gameId}, skipping (${e.message || e})`
     );
     return { err: e };
   }
@@ -80,7 +80,7 @@ async function _doCheckForGameUpdate(
 
   if (!game) {
     logger.warn(
-      `Can't check for updates for ${game.title}, not visible by current user?`,
+      `Can't check for updates for ${game.title}, not visible by current user?`
     );
     return returnVars;
   }
@@ -121,13 +121,13 @@ async function _doCheckForGameUpdate(
       if (!isRecent) {
         logger.info(
           `Filtering out ${upload.filename} (#${upload.id})` +
-            `, ${updatedAt.toISOString()} is older than ${installedAt.toISOString()}`,
+            `, ${updatedAt.toISOString()} is older than ${installedAt.toISOString()}`
         );
       }
       return isRecent;
     });
     logger.info(
-      `${uploads.length} available uploads, ${recentUploads.length} are more recent`,
+      `${uploads.length} available uploads, ${recentUploads.length} are more recent`
     );
 
     let hasUpgrade = false;
@@ -136,7 +136,7 @@ async function _doCheckForGameUpdate(
     const caveUploadId = caveUpload ? caveUpload.id : null;
     if (caveUploadId && cave.buildId) {
       logger.info(
-        `Looking for new builds of ${game.title}, from build ${cave.buildId} (upload ${caveUploadId})`,
+        `Looking for new builds of ${game.title}, from build ${cave.buildId} (upload ${caveUploadId})`
       );
       const upload = findWhere(uploads, { id: caveUploadId });
       if (!upload || !upload.buildId) {
@@ -144,13 +144,13 @@ async function _doCheckForGameUpdate(
       } else {
         if (upload.buildId !== cave.buildId) {
           logger.info(
-            `Got new build available: ${upload.buildId} > ${cave.buildId}`,
+            `Got new build available: ${upload.buildId} > ${cave.buildId}`
           );
           if (noisy) {
             store.dispatch(
               actions.statusMessage({
                 message: ["status.game_update.found", { title: game.title }],
-              }),
+              })
             );
           }
 
@@ -170,8 +170,8 @@ async function _doCheckForGameUpdate(
 
             logger.info(
               `Got ${upgradePath.length} patches to download, ${fileSize(
-                totalSize,
-              )} total`,
+                totalSize
+              )} total`
             );
 
             store.dispatch(
@@ -184,7 +184,7 @@ async function _doCheckForGameUpdate(
                   incremental: true,
                   upgradePath,
                 },
-              }),
+              })
             );
 
             return { ...returnVars, hasUpgrade };
@@ -194,7 +194,7 @@ async function _doCheckForGameUpdate(
           }
         } else {
           logger.info(
-            `Newest upload has same buildId ${upload.buildId}, disregarding`,
+            `Newest upload has same buildId ${upload.buildId}, disregarding`
           );
           return returnVars;
         }
@@ -217,7 +217,7 @@ async function _doCheckForGameUpdate(
             gameCredentials,
             recentUploads,
           },
-        }),
+        })
       );
 
       return { ...returnVars, hasUpgrade: true };
@@ -247,7 +247,7 @@ async function _doCheckForGameUpdate(
             gameCredentials,
             recentUploads,
           },
-        }),
+        })
       );
 
       return { ...returnVars, hasUpgrade };
@@ -269,7 +269,7 @@ async function _doCheckForGameUpdate(
 async function doCheckForGameUpdate(
   ctx: Context,
   cave: ICave,
-  taskOpts = {} as IUpdateCheckOpts,
+  taskOpts = {} as IUpdateCheckOpts
 ) {
   try {
     return await _doCheckForGameUpdate(ctx, cave, taskOpts);
@@ -295,7 +295,7 @@ export default function(watcher: Watcher, db: DB) {
       logger.info("Regularly scheduled check for game updates...");
       store.dispatch(actions.checkForGameUpdates({}));
       await delay(
-        DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE,
+        DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE
       );
     }
   });
@@ -310,7 +310,7 @@ export default function(watcher: Watcher, db: DB) {
         await doCheckForGameUpdate(ctx, caves[caveId]);
       } catch (e) {
         logger.error(
-          `While checking for cave ${caveId} update: ${e.stack || e}`,
+          `While checking for cave ${caveId} update: ${e.stack || e}`
         );
       }
       await delay(DELAY_BETWEEN_GAMES);
@@ -338,7 +338,7 @@ export default function(watcher: Watcher, db: DB) {
           store.dispatch(
             actions.statusMessage({
               message: ["status.game_update.check_failed", { err: result.err }],
-            }),
+            })
           );
         } else if (result && result.hasUpgrade) {
           if (result.game) {
@@ -348,7 +348,7 @@ export default function(watcher: Watcher, db: DB) {
                   "status.game_update.found",
                   { title: result.game.title },
                 ],
-              }),
+              })
             );
           }
         } else if (result && result.game) {
@@ -358,7 +358,7 @@ export default function(watcher: Watcher, db: DB) {
                 "status.game_update.not_found",
                 { title: result.game.title },
               ],
-            }),
+            })
           );
         }
       }
@@ -368,7 +368,7 @@ export default function(watcher: Watcher, db: DB) {
         store.dispatch(
           actions.statusMessage({
             message: ["status.game_update.check_failed", { err: e }],
-          }),
+          })
         );
       }
     } finally {

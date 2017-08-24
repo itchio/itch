@@ -23,8 +23,8 @@ export async function createGist(data: IGistData) {
     `Could not create gist: HTTP ${resp.statusCode}, ${JSON.stringify(
       resp.body,
       null,
-      2,
-    )}`,
+      2
+    )}`
   );
 }
 

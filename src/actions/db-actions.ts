@@ -9,5 +9,5 @@ import {
 
 export const dbCommit = createAction<IDbCommitPayload>(DB_COMMIT);
 export const commonsUpdated = createAction<ICommonsUpdatedPayload>(
-  COMMONS_UPDATED,
+  COMMONS_UPDATED
 );

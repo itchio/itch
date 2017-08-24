@@ -32,7 +32,7 @@ function browseAction(caveId: string): IActionOpts {
 function purchaseAction(
   game: IGame,
   downloadKey: IDownloadKey,
-  intl: InjectedIntl,
+  intl: InjectedIntl
 ): IActionOpts {
   const donate = game.minPrice === 0;
 
@@ -77,7 +77,7 @@ interface IListSecondaryActionsProps {
 }
 
 export default function listSecondaryActions(
-  props: IListSecondaryActionsProps,
+  props: IListSecondaryActionsProps
 ) {
   const {
     game,

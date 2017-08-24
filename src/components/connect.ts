@@ -18,7 +18,7 @@ interface IConnectOpts {
 
 export function connect<TProps>(
   component: React.ComponentClass<any>,
-  opts: IConnectOpts = {},
+  opts: IConnectOpts = {}
 ): React.ComponentClass<TProps> {
   return reduxConnect(opts.state, opts.dispatch)(component);
 }

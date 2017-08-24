@@ -12,7 +12,7 @@ function enableEventDebugging(prefix: string, win: any) {
   events.split(" ").forEach(ev => {
     win.on(ev, (e: any, deets: any) => {
       logger.debug(
-        `${prefix} window event: ${ev}, ${JSON.stringify(deets, null, 2)}`,
+        `${prefix} window event: ${ev}, ${JSON.stringify(deets, null, 2)}`
       );
     });
   });
@@ -24,7 +24,7 @@ function enableEventDebugging(prefix: string, win: any) {
   cevents.split(" ").forEach(ev => {
     win.webContents.on(ev, (e: any, ...args: any[]) => {
       logger.debug(
-        `${prefix} webcontents event: ${ev}, ${JSON.stringify(args, null, 2)}`,
+        `${prefix} webcontents event: ${ev}, ${JSON.stringify(args, null, 2)}`
       );
     });
   });

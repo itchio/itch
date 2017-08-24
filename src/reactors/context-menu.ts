@@ -71,7 +71,7 @@ export default function(watcher: Watcher) {
           label: t(i18n, ["grid.item.check_for_update"]),
           click: () =>
             store.dispatch(
-              actions.checkForGameUpdate({ caveId: cave.id, noisy: true }),
+              actions.checkForGameUpdate({ caveId: cave.id, noisy: true })
             ),
         });
       }

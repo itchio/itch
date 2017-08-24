@@ -110,7 +110,7 @@ export default function(watcher: Watcher) {
       status,
       newURL,
       originalURL,
-      httpResponseCode,
+      httpResponseCode
     ) {
       if (httpResponseCode === 404 && newURL === purchaseUrl) {
         logger.debug(`404 not found: ${newURL}`);

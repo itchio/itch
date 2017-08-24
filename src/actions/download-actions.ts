@@ -29,22 +29,22 @@ import {
 } from "../constants/action-types";
 
 export const queueDownload = createAction<IQueueDownloadPayload>(
-  QUEUE_DOWNLOAD,
+  QUEUE_DOWNLOAD
 );
 
 const internalDownloadStarted = createAction<IDownloadStartedPayload>(
-  DOWNLOAD_STARTED,
+  DOWNLOAD_STARTED
 );
 
 export const downloadStarted = (payload: IDownloadStartedPayload) =>
   internalDownloadStarted({ ...payload, startedAt: Date.now(), id: uuid() });
 
 export const downloadProgress = createAction<IDownloadProgressPayload>(
-  DOWNLOAD_PROGRESS,
+  DOWNLOAD_PROGRESS
 );
 
 const internalDownloadEnded = createAction<IDownloadEndedPayload>(
-  DOWNLOAD_ENDED,
+  DOWNLOAD_ENDED
 );
 
 export const downloadEnded = (payload: IDownloadEndedPayload) =>
@@ -54,23 +54,23 @@ export const clearFinishedDownloads = createAction<
   IClearFinishedDownloadsPayload
 >(CLEAR_FINISHED_DOWNLOADS);
 export const clearGameDownloads = createAction<IClearGameDownloadsPayload>(
-  CLEAR_GAME_DOWNLOADS,
+  CLEAR_GAME_DOWNLOADS
 );
 
 export const prioritizeDownload = createAction<IPrioritizeDownloadPayload>(
-  PRIORITIZE_DOWNLOAD,
+  PRIORITIZE_DOWNLOAD
 );
 export const cancelDownload = createAction<ICancelDownloadPayload>(
-  CANCEL_DOWNLOAD,
+  CANCEL_DOWNLOAD
 );
 export const pauseDownloads = createAction<IPauseDownloadsPayload>(
-  PAUSE_DOWNLOADS,
+  PAUSE_DOWNLOADS
 );
 export const resumeDownloads = createAction<IResumeDownloadsPayload>(
-  RESUME_DOWNLOADS,
+  RESUME_DOWNLOADS
 );
 export const retryDownload = createAction<IRetryDownloadPayload>(
-  RETRY_DOWNLOAD,
+  RETRY_DOWNLOAD
 );
 
 export const downloadSpeedDatapoint = createAction<

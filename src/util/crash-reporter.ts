@@ -49,7 +49,7 @@ async function writeCrashLog(e: Error) {
   const crashFile = path.join(
     app.getPath("userData"),
     "crash_logs",
-    `${+new Date()}.txt`,
+    `${+new Date()}.txt`
   );
 
   let log = "";
@@ -156,7 +156,7 @@ async function handle(type: ErrorType, e: Error) {
   };
 
   const response = await new Promise((resolve, reject) =>
-    dialog.showMessageBox(dialogOpts, resolve),
+    dialog.showMessageBox(dialogOpts, resolve)
   );
 
   if (response === 0) {

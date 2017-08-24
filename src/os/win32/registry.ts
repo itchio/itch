@@ -21,7 +21,7 @@ interface IQueryOpts {
 export async function regQuery(
   ctx: Context,
   key: string,
-  queryOpts: IQueryOpts = {},
+  queryOpts: IQueryOpts = {}
 ): Promise<void> {
   await spawn.assert({
     command: regPath,
@@ -35,7 +35,7 @@ export async function regQuery(
 export async function regAddDefault(
   ctx: Context,
   key: string,
-  value: string,
+  value: string
 ): Promise<void> {
   await spawn.assert({
     command: regPath,
@@ -48,7 +48,7 @@ export async function regAddDefault(
 export async function regAddEmpty(
   ctx: Context,
   key: string,
-  value: string,
+  value: string
 ): Promise<void> {
   await spawn.assert({
     command: regPath,
@@ -75,12 +75,12 @@ export async function install(ctx: Context): Promise<void> {
     await regAddDefault(
       ctx,
       `${base}\\Shell\\Open\\Command`,
-      `"${process.execPath}" "%1"`,
+      `"${process.execPath}" "%1"`
     );
   } catch (e) {
     logger.warn(
       `Could not register itchio:// as default protocol handler: ${e.stack ||
-        e}`,
+        e}`
     );
   }
 }
@@ -97,7 +97,7 @@ export async function uninstall(ctx: Context): Promise<void> {
   } catch (e) {
     logger.warn(
       `Could not register itchio:// as default protocol handler: ${e.stack ||
-        e}`,
+        e}`
     );
   }
 }

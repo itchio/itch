@@ -5,7 +5,7 @@ import { IPrepareOpts } from "../../types";
 
 export default async function prepare(
   ctx: Context,
-  opts: IPrepareOpts,
+  opts: IPrepareOpts
 ): Promise<void> {
   const { manifest, cave, game, runtime } = opts;
   const logger = opts.logger.child({ name: "prepare/native" });

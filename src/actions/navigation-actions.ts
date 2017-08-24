@@ -138,11 +138,11 @@ export const tabEvolved = createAction<ITabEvolvedPayload>(TAB_EVOLVED);
 export const newTab = createAction<INewTabPayload>(NEW_TAB);
 export const closeTab = createAction<ICloseTabPayload>(CLOSE_TAB);
 export const closeCurrentTab = createAction<ICloseCurrentTabPayload>(
-  CLOSE_CURRENT_TAB,
+  CLOSE_CURRENT_TAB
 );
 export const closeAllTabs = createAction<ICloseAllTabsPayload>(CLOSE_ALL_TABS);
 export const showPreviousTab = createAction<IShowPreviousTabPayload>(
-  SHOW_PREVIOUS_TAB,
+  SHOW_PREVIOUS_TAB
 );
 export const showNextTab = createAction<IShowNextTabPayload>(SHOW_NEXT_TAB);
 export const switchPage = createAction<ISwitchPagePayload>(SWITCH_PAGE);
@@ -152,48 +152,48 @@ export const tabChanged = createAction<ITabChangedPayload>(TAB_CHANGED);
 export const tabsChanged = createAction<ITabsChangedPayload>(TABS_CHANGED);
 export const tabsRestored = createAction<ITabsRestoredPayload>(TABS_RESTORED);
 export const tabDataFetched = createAction<ITabDataFetchedPayload>(
-  TAB_DATA_FETCHED,
+  TAB_DATA_FETCHED
 );
 
 export const tabParamsChanged = createAction<ITabParamsChangedPayload>(
-  TAB_PARAMS_CHANGED,
+  TAB_PARAMS_CHANGED
 );
 export const tabPaginationChanged = createAction<ITabPaginationChangedPayload>(
-  TAB_PAGINATION_CHANGED,
+  TAB_PAGINATION_CHANGED
 );
 
 export const openTabContextMenu = createAction<IOpenTabContextMenuPayload>(
-  OPEN_TAB_CONTEXT_MENU,
+  OPEN_TAB_CONTEXT_MENU
 );
 export const openGameContextMenu = createAction<IOpenGameContextMenuPayload>(
-  OPEN_GAME_CONTEXT_MENU,
+  OPEN_GAME_CONTEXT_MENU
 );
 export const unlockTab = createAction<IUnlockTabPayload>(UNLOCK_TAB);
 
 export const openUrl = createAction<IOpenUrlPayload>(OPEN_URL);
 export const processUrlArguments = createAction<IProcessUrlArgumentsPayload>(
-  PROCESS_URL_ARGUMENTS,
+  PROCESS_URL_ARGUMENTS
 );
 export const reportIssue = createAction<IReportIssuePayload>(REPORT_ISSUE);
 export const copyToClipboard = createAction<ICopyToClipboardPayload>(
-  COPY_TO_CLIPBOARD,
+  COPY_TO_CLIPBOARD
 );
 export const handleItchioUrl = createAction<IHandleItchioUrlPayload>(
-  HANDLE_ITCHIO_URL,
+  HANDLE_ITCHIO_URL
 );
 
 export const trigger = createAction<ITriggerPayload>(TRIGGER);
 
 export const viewCreatorProfile = createAction<IViewCreatorProfilePayload>(
-  VIEW_CREATOR_PROFILE,
+  VIEW_CREATOR_PROFILE
 );
 export const viewCommunityProfile = createAction<IViewCommunityProfilePayload>(
-  VIEW_COMMUNITY_PROFILE,
+  VIEW_COMMUNITY_PROFILE
 );
 
 export const tabLoading = createAction<ITabLoadingPayload>(TAB_LOADING);
 export const tabGotWebContents = createAction<ITabGotWebContentsPayload>(
-  TAB_GOT_WEB_CONTENTS,
+  TAB_GOT_WEB_CONTENTS
 );
 
 export const openDevTools = createAction<IOpenDevToolsPayload>(OPEN_DEV_TOOLS);

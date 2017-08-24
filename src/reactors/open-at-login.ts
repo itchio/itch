@@ -15,10 +15,10 @@ import { IStore, IPreferencesState } from "../types";
 async function updateOpenAtLoginState(
   store: IStore,
   openAtLogin: boolean,
-  openAsHidden: boolean,
+  openAsHidden: boolean
 ) {
   logger.debug(
-    `Updating login item settings, open=${openAtLogin}, hidden=${openAsHidden}`,
+    `Updating login item settings, open=${openAtLogin}, hidden=${openAsHidden}`
   );
 
   const app = require("electron").app;
@@ -31,7 +31,7 @@ async function updateOpenAtLoginState(
     const desktopFileName = `io.itch.${app.getName()}.desktop`;
     const desktopFilePath = ospath.join(
       "/usr/share/applications",
-      desktopFileName,
+      desktopFileName
     );
     const autostartFilePath = ospath.join(configHome, desktopFileName);
 
@@ -41,7 +41,7 @@ async function updateOpenAtLoginState(
       try {
         if (!await sf.exists(desktopFilePath)) {
           store.dispatch(
-            actions.openAtLoginError({ cause: "no_desktop_file" }),
+            actions.openAtLoginError({ cause: "no_desktop_file" })
           );
           return;
         }
@@ -62,10 +62,10 @@ async function updateOpenAtLoginState(
         });
       } catch (err) {
         logger.error(
-          `Error while symlinking ${autostartFilePath}: ${err.message}`,
+          `Error while symlinking ${autostartFilePath}: ${err.message}`
         );
         store.dispatch(
-          actions.openAtLoginError({ cause: "error", message: err.message }),
+          actions.openAtLoginError({ cause: "error", message: err.message })
         );
         return;
       }
@@ -77,7 +77,7 @@ async function updateOpenAtLoginState(
           // not even there, good!
         } else {
           logger.error(
-            `Error while unlinking ${autostartFilePath}: ${err.message}`,
+            `Error while unlinking ${autostartFilePath}: ${err.message}`
           );
           return;
         }
@@ -102,7 +102,7 @@ function getSelector(store: IStore) {
       (prefs: IPreferencesState) => prefs.openAsHidden,
       (openAtLogin: boolean, openAsHidden: boolean) => {
         updateOpenAtLoginState(store, openAtLogin, openAsHidden);
-      },
+      }
     );
   }
 

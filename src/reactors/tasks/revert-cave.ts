@@ -69,7 +69,7 @@ export default function(watcher: Watcher, db: DB) {
         const keyClient = client.withKey(credentials.key);
         const buildsList = await keyClient.listBuilds(
           gameCredentials.downloadKey,
-          upload.id,
+          upload.id
         );
 
         logger.info(`Builds list:\n${JSON.stringify(buildsList, null, 2)}`);
@@ -99,7 +99,7 @@ export default function(watcher: Watcher, db: DB) {
             label = `${label} — ${formatDate(
               new Date(build.updatedAt),
               i18n.lang,
-              DATE_FORMAT,
+              DATE_FORMAT
             )}`;
 
             return {
@@ -141,14 +141,14 @@ export default function(watcher: Watcher, db: DB) {
           store.dispatch(
             actions.statusMessage({
               message: e.message,
-            }),
+            })
           );
         }
 
         store.dispatch(
           actions.statusMessage({
             message: t(i18n, ["status.reverting", { buildId }]),
-          }),
+          })
         );
 
         const changedUpload = {
@@ -162,7 +162,7 @@ export default function(watcher: Watcher, db: DB) {
             game,
             upload: changedUpload,
             reason: "revert",
-          }),
+          })
         );
       },
     });

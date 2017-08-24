@@ -11,7 +11,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.statusMessage({
         message: ["status.copied_to_clipboard"],
-      }),
+      })
     );
   });
 }

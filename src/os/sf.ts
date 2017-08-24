@@ -48,38 +48,38 @@ export const globIgnore = [
 ];
 
 export const nodeReadFile = (bluebird.promisify(
-  fs.readFile,
+  fs.readFile
 ) as any) as typeof readFile;
 export const nodeWriteFile = (bluebird.promisify(
-  fs.writeFile,
+  fs.writeFile
 ) as any) as typeof writeFile;
 export const nodeAppendFile = (bluebird.promisify(
-  fs.appendFile,
+  fs.appendFile
 ) as any) as typeof appendFile;
 
 export const utimes = (bluebird.promisify(fs.utimes) as any) as (
   path: string,
   atime: number,
-  mtime: number,
+  mtime: number
 ) => Promise<void>;
 export const chmod = (bluebird.promisify(fs.chmod) as any) as (
   path: string,
-  mode: number,
+  mode: number
 ) => Promise<void>;
 export const stat = bluebird.promisify(fs.stat);
 export const lstat = bluebird.promisify(fs.lstat);
 export const readlink = bluebird.promisify(fs.readlink);
 export const symlink = (bluebird.promisify(fs.symlink) as any) as (
   srcpath: string,
-  dstpath: string,
+  dstpath: string
 ) => Promise<void>;
 export const rename = (bluebird.promisify(fs.rename) as any) as (
   oldpath: string,
-  newpath: string,
+  newpath: string
 ) => Promise<void>;
 export const rmdir = bluebird.promisify(fs.rmdir);
 export const unlink = (bluebird.promisify(fs.unlink) as any) as (
-  file: string,
+  file: string
 ) => Promise<void>;
 
 export const createReadStream = fs.createReadStream.bind(fs);
@@ -111,7 +111,7 @@ export async function exists(file: string) {
  */
 export async function readFile(
   file: string,
-  opts: IReadFileOpts,
+  opts: IReadFileOpts
 ): Promise<string> {
   return await nodeReadFile(file, opts);
 }
@@ -123,7 +123,7 @@ export async function readFile(
 export async function appendFile(
   file: string,
   contents: string | Buffer,
-  opts?: IWriteFileOpts,
+  opts?: IWriteFileOpts
 ): Promise<void> {
   await mkdir(path.dirname(file));
   return await nodeAppendFile(file, contents, opts);
@@ -136,7 +136,7 @@ export async function appendFile(
 export async function writeFile(
   file: string,
   contents: string | Buffer,
-  opts: IWriteFileOpts,
+  opts: IWriteFileOpts
 ): Promise<void> {
   await mkdir(path.dirname(file));
   return await nodeWriteFile(file, contents, opts);

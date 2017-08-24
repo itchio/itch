@@ -33,12 +33,12 @@ function remoteFileName(lang: string): string {
 async function doDownloadLocale(
   lang: string,
   resources: II18nResources,
-  { implicit }: { implicit: boolean },
+  { implicit }: { implicit: boolean }
 ): Promise<II18nResources> {
   if (!upgradesEnabled) {
     if (!implicit) {
       logger.debug(
-        `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`,
+        `Not downloading locale (${lang}) in development, export DID_I_STUTTER=1 to override`
       );
     }
     return {};
@@ -75,7 +75,7 @@ async function doDownloadLocale(
     await ifs.writeFile(remote, payload, { encoding: "utf8" });
   } catch (e) {
     logger.warn(
-      `Could not save locale to ${remote}: ${e.stack || e.message || e}`,
+      `Could not save locale to ${remote}: ${e.stack || e.message || e}`
     );
   }
 
@@ -153,7 +153,7 @@ export default function(watcher: Watcher) {
       } finally {
         store.dispatch(actions.localeDownloadEnded({ lang, resources }));
       }
-    },
+    }
   );
 
   watcher.on(actions.languageChanged, async (store, action) => {

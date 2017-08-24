@@ -47,7 +47,7 @@ let singlenoop: ISingleListener = async (onlyFile: string) => {
  *     (that receipt will be used on next deploy)
  */
 export default async function deploy(
-  opts: IDeployOpts,
+  opts: IDeployOpts
 ): Promise<IDeployResult> {
   const { ctx, stagePath, destPath, onSingle = singlenoop, logger } = opts;
 
@@ -81,7 +81,7 @@ export default async function deploy(
     let receipt = JSON.parse(receiptContents);
     destFiles = receipt.files || [];
     logger.info(
-      `Got receipt for an existing ${destFiles.length}-files install.`,
+      `Got receipt for an existing ${destFiles.length}-files install.`
     );
   } catch (err) {
     logger.warn(`Could not read receipt: ${err.message}`);
@@ -102,7 +102,7 @@ export default async function deploy(
   if (dinosaurs.length) {
     logger.info(`removing ${dinosaurs.length} dinosaurs in dest`);
     logger.info(
-      `example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`,
+      `example dinosaurs: ${JSON.stringify(dinosaurs.slice(0, 10), null, 2)}`
     );
 
     await bluebird.map(
@@ -111,7 +111,7 @@ export default async function deploy(
         let dinosaur = ospath.join(destPath, rel);
         return butler.wipe(dinosaur, { ctx, logger });
       },
-      { concurrency: 4 },
+      { concurrency: 4 }
     );
   } else {
     logger.info("no dinosaurs");

@@ -55,7 +55,7 @@ export function makeLogger(logPath?: string): Logger {
               msg,
             levelColors[level],
             "color:black;",
-            "color:44e;",
+            "color:44e;"
           );
         },
       },
@@ -94,7 +94,7 @@ export function makeLogger(logPath?: string): Logger {
         } else {
           // tslint:disable-next-line
           console.log(
-            `Could not create file sink: ${err.stack || err.message}`,
+            `Could not create file sink: ${err.stack || err.message}`
           );
           hasDir = false;
         }
@@ -126,7 +126,7 @@ export function makeLogger(logPath?: string): Logger {
         timestamp: true,
         level: LOG_LEVEL,
       },
-      outStream,
+      outStream
     );
     l.close = () => {
       try {
@@ -146,7 +146,7 @@ if (process.type === "browser") {
   const { app } = require("electron");
   defaultLogger.info(
     `${env.appName} ${app.getVersion()} on electron ${process.versions
-      .electron} in ${env.name}`,
+      .electron} in ${env.name}`
   );
 }
 

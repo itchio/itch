@@ -30,22 +30,22 @@ import {
 } from "../constants/action-types";
 
 export const checkForSelfUpdate = createAction<ICheckForSelfUpdatePayload>(
-  CHECK_FOR_SELF_UPDATE,
+  CHECK_FOR_SELF_UPDATE
 );
 export const checkingForSelfUpdate = createAction<
   ICheckingForSelfUpdatePayload
 >(CHECKING_FOR_SELF_UPDATE);
 export const selfUpdateAvailable = createAction<ISelfUpdateAvailablePayload>(
-  SELF_UPDATE_AVAILABLE,
+  SELF_UPDATE_AVAILABLE
 );
 export const selfUpdateNotAvailable = createAction<
   ISelfUpdateNotAvailablePayload
 >(SELF_UPDATE_NOT_AVAILABLE);
 export const selfUpdateError = createAction<ISelfUpdateErrorPayload>(
-  SELF_UPDATE_ERROR,
+  SELF_UPDATE_ERROR
 );
 export const selfUpdateDownloaded = createAction<ISelfUpdateDownloadedPayload>(
-  SELF_UPDATE_DOWNLOADED,
+  SELF_UPDATE_DOWNLOADED
 );
 export const showAvailableSelfUpdate = createAction<
   IShowAvailableSelfUpdatePayload
@@ -54,18 +54,18 @@ export const applySelfUpdateRequest = createAction<
   IApplySelfUpdateRequestPayload
 >(APPLY_SELF_UPDATE_REQUEST);
 export const applySelfUpdate = createAction<IApplySelfUpdatePayload>(
-  APPLY_SELF_UPDATE,
+  APPLY_SELF_UPDATE
 );
 export const snoozeSelfUpdate = createAction<ISnoozeSelfUpdatePayload>(
-  SNOOZE_SELF_UPDATE,
+  SNOOZE_SELF_UPDATE
 );
 export const dismissStatus = createAction<IDismissStatusPayload>(
-  DISMISS_STATUS,
+  DISMISS_STATUS
 );
 
 export const statusMessage = createAction<IStatusMessagePayload>(
-  STATUS_MESSAGE,
+  STATUS_MESSAGE
 );
 export const dismissStatusMessage = createAction<IDismissStatusMessagePayload>(
-  DISMISS_STATUS_MESSAGE,
+  DISMISS_STATUS_MESSAGE
 );

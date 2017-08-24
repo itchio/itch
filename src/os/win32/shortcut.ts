@@ -41,13 +41,13 @@ export async function update(ctx: Context): Promise<void> {
 
   if (await sf.exists(shortcutPath)) {
     logger.info(
-      `Shortcut at ${shortcutPath} still exists, letting Squirrel do its thing`,
+      `Shortcut at ${shortcutPath} still exists, letting Squirrel do its thing`
     );
   } else {
     // shortcut was deleted by user, remove it after Squirrel recreates it
     removeDesktopShortcut = true;
     logger.info(
-      `Shortcut at ${shortcutPath} has been deleted, preparing to re-delete`,
+      `Shortcut at ${shortcutPath} has been deleted, preparing to re-delete`
     );
   }
 

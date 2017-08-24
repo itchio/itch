@@ -30,14 +30,14 @@ import {
 } from "../constants/action-types";
 
 export const firstWindowReady = createAction<IFirstWindowReadyPayload>(
-  FIRST_WINDOW_READY,
+  FIRST_WINDOW_READY
 );
 export const windowReady = createAction<IWindowReadyPayload>(WINDOW_READY);
 export const windowDestroyed = createAction<IWindowDestroyedPayload>(
-  WINDOW_DESTROYED,
+  WINDOW_DESTROYED
 );
 export const windowFocusChanged = createAction<IWindowFocusChangedPayload>(
-  WINDOW_FOCUS_CHANGED,
+  WINDOW_FOCUS_CHANGED
 );
 export const windowFullscreenChanged = createAction<
   IWindowFullscreenChangedPayload
@@ -46,17 +46,17 @@ export const windowMaximizedChanged = createAction<
   IWindowMaximizedChangedPayload
 >(WINDOW_MAXIMIZED_CHANGED);
 export const windowBoundsChanged = createAction<IWindowBoundsChangedPayload>(
-  WINDOW_BOUNDS_CHANGED,
+  WINDOW_BOUNDS_CHANGED
 );
 export const createWindow = createAction<ICreateWindowPayload>(CREATE_WINDOW);
 export const focusWindow = createAction<IFocusWindowPayload>(FOCUS_WINDOW);
 export const hideWindow = createAction<IHideWindowPayload>(HIDE_WINDOW);
 export const toggleMaximizeWindow = createAction<IToggleMaximizeWindowPayload>(
-  TOGGLE_MAXIMIZE_WINDOW,
+  TOGGLE_MAXIMIZE_WINDOW
 );
 export const minimizeWindow = createAction<IMinimizeWindowPayload>(
-  MINIMIZE_WINDOW,
+  MINIMIZE_WINDOW
 );
 export const closeTabOrAuxWindow = createAction<ICloseTabOrAuxWindowPayload>(
-  CLOSE_TAB_OR_AUX_WINDOW,
+  CLOSE_TAB_OR_AUX_WINDOW
 );

@@ -8,7 +8,7 @@ const findUninstallers = async function(
   ctx: Context,
   logger: Logger,
   destPath: string,
-  installerType: "inno" | "nsis",
+  installerType: "inno" | "nsis"
 ): Promise<string[]> {
   const confRes = await butler.configure({
     ctx,

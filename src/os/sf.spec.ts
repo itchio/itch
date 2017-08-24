@@ -16,7 +16,7 @@ suite(__filename, s => {
   s.case("readFile", async t => {
     t.same(
       await sf.readFile(fixture.path("txt"), { encoding: "utf8" }),
-      "Hello there, just writing a bit of text for the sniffer specs\n",
+      "Hello there, just writing a bit of text for the sniffer specs\n"
     );
   });
 

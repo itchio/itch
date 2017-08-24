@@ -34,7 +34,7 @@ suite(__filename, s => {
           credentials,
           item,
           logger: devNull,
-        }),
+        })
       );
     });
   });

@@ -31,7 +31,7 @@ import { difference } from "underscore";
  */
 export default async function saveAngels<T extends IAngelSaviorOpts>(
   opts: T,
-  f: () => Promise<any>,
+  f: () => Promise<any>
 ): Promise<IAngelSaviorResult> {
   const { ctx, destPath } = opts;
   const logger = opts.logger.child({ name: "save-angels" });
@@ -87,7 +87,7 @@ export default async function saveAngels<T extends IAngelSaviorOpts>(
         `Saving ${angels.length} angels like: ${angels
           .slice(0, 4)
           .map(x => basename(x))
-          .join(", ")}`,
+          .join(", ")}`
       );
       await performAngelRedemption(opts, previousPath, angels);
     } else {
@@ -104,7 +104,7 @@ export default async function saveAngels<T extends IAngelSaviorOpts>(
 async function performAngelRedemption(
   opts: IAngelSaviorOpts,
   previousPath: string,
-  angels: string[],
+  angels: string[]
 ) {
   const { destPath } = opts;
 

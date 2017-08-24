@@ -18,7 +18,7 @@ export interface IChecksums {
 export async function getChecksums(
   logger: Logger,
   basePath: string,
-  algo: ChecksumAlgo,
+  algo: ChecksumAlgo
 ): Promise<IChecksums> {
   const url = `${basePath}/${algo}SUMS`;
   // bust cloudflare cache
@@ -42,9 +42,9 @@ export async function getChecksums(
           };
         }
       }),
-      x => !!x,
+      x => !!x
     ),
-    "path",
+    "path"
   );
 }
 
@@ -56,7 +56,7 @@ interface IEnsureChecksumArgs {
 
 export async function ensureChecksum(
   logger: Logger,
-  args: IEnsureChecksumArgs,
+  args: IEnsureChecksumArgs
 ): Promise<void> {
   const { algo, file } = args;
   const name = basename(file);
@@ -77,7 +77,7 @@ export async function ensureChecksum(
 
   if (expected !== actual) {
     throw new Error(
-      `corrupted file ${name}: expected ${expected}, got ${actual}`,
+      `corrupted file ${name}: expected ${expected}, got ${actual}`
     );
   }
   logger.info(`${name}: ${algo} checks out!`);

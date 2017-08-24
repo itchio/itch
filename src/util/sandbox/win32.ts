@@ -14,7 +14,7 @@ const userNeed: ICaretaker = async (ctx, need) => {
   });
   if (res.code !== 0) {
     throw new Error(
-      `setup failed with code ${res.code}. out = ${res.out}, err = ${res.err}`,
+      `setup failed with code ${res.code}. out = ${res.out}, err = ${res.err}`
     );
   }
 };

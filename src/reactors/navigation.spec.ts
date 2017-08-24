@@ -86,7 +86,7 @@ suite(__filename, s => {
     t.same(data()[tab].path, "url/https://itch.io");
 
     await w.dispatch(
-      actions.evolveTab({ tab, path: "url/https://itch.io/login" }),
+      actions.evolveTab({ tab, path: "url/https://itch.io/login" })
     );
     t.same(data()[tab].path, "url/https://itch.io/login", "evolves a tab");
   });

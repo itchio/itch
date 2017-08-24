@@ -33,7 +33,7 @@ const makeSelector = (store: IStore) =>
           store.dispatch(actions.queryFreeSpace({}));
         }
       });
-    },
+    }
   );
 
 export default function(watcher: Watcher, db: DB) {
@@ -41,13 +41,13 @@ export default function(watcher: Watcher, db: DB) {
     const { name } = action.payload;
     invariant(
       typeof name === "string",
-      "default install location name must be a string",
+      "default install location name must be a string"
     );
 
     store.dispatch(
       actions.updatePreferences({
         defaultInstallLocation: name,
-      }),
+      })
     );
   });
 
@@ -55,7 +55,7 @@ export default function(watcher: Watcher, db: DB) {
     const { name } = action.payload;
     invariant(
       typeof name === "string",
-      "removed install location name must be a string",
+      "removed install location name must be a string"
     );
     invariant(name !== "appdata", "cannot remove appdata");
 
@@ -129,7 +129,7 @@ export default function(watcher: Watcher, db: DB) {
     const { name } = action.payload;
     invariant(
       typeof name === "string",
-      "removed install location name must be a string",
+      "removed install location name must be a string"
     );
     invariant(name !== "appdata", "cannot remove appdata");
     const installLocations = store.getState().preferences.installLocations;
@@ -150,7 +150,7 @@ export default function(watcher: Watcher, db: DB) {
             deleted: true,
           },
         },
-      }),
+      })
     );
   });
 
@@ -203,7 +203,7 @@ export default function(watcher: Watcher, db: DB) {
           ...installLocations,
           [loc.name]: omit(loc, "name"),
         },
-      }),
+      })
     );
   });
 
@@ -211,7 +211,7 @@ export default function(watcher: Watcher, db: DB) {
     const { name } = action.payload;
     invariant(
       typeof name === "string",
-      "browsed install location name is a string",
+      "browsed install location name is a string"
     );
 
     if (name === "appdata") {

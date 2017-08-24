@@ -24,30 +24,30 @@ import {
 } from "../constants/action-types";
 
 export const languageSniffed = createAction<ILanguageSniffedPayload>(
-  LANGUAGE_SNIFFED,
+  LANGUAGE_SNIFFED
 );
 export const languageChanged = createAction<ILanguageChangedPayload>(
-  LANGUAGE_CHANGED,
+  LANGUAGE_CHANGED
 );
 
 export const openAppLog = createAction<IOpenAppLogPayload>(OPEN_APP_LOG);
 
 export const updatePreferences = createAction<IUpdatePreferencesPayload>(
-  UPDATE_PREFERENCES,
+  UPDATE_PREFERENCES
 );
 export const preferencesLoaded = createAction<IPreferencesLoadedPayload>(
-  PREFERENCES_LOADED,
+  PREFERENCES_LOADED
 );
 
 export const clearBrowsingDataRequest = createAction<
   IClearBrowsingDataRequestPayload
 >(CLEAR_BROWSING_DATA_REQUEST);
 export const clearBrowsingData = createAction<IClearBrowsingDataPayload>(
-  CLEAR_BROWSING_DATA,
+  CLEAR_BROWSING_DATA
 );
 
 export const openAtLoginError = createAction<IOpenAtLoginErrorPayload>(
-  OPEN_AT_LOGIN_ERROR,
+  OPEN_AT_LOGIN_ERROR
 );
 
 export const setReduxLoggingEnabled = createAction<

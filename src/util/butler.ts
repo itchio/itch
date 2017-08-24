@@ -79,7 +79,7 @@ function parseButlerStatus(opts: IParseButlerStatusOpts, token: string) {
 async function butler<T>(
   opts: IButlerOpts,
   command: string,
-  commandArgs: string[],
+  commandArgs: string[]
 ): Promise<T> {
   const { ctx, logger } = opts;
 
@@ -105,7 +105,7 @@ async function butler<T>(
       },
       ctx,
       logger,
-    } as IParseButlerStatusOpts,
+    } as IParseButlerStatusOpts
   );
   const onErrToken = (line: string) => {
     logger.info(`butler stderr: ${line}`);
@@ -337,7 +337,7 @@ interface IInstallPrereqsOpts extends IButlerOpts {
 /* Installs prerequisites as specified by ${planPath} */
 async function installPrereqs(
   planPath: string,
-  opts = {} as IInstallPrereqsOpts,
+  opts = {} as IInstallPrereqsOpts
 ) {
   let args = [planPath];
 

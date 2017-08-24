@@ -21,12 +21,12 @@ import shouldLogAction from "./should-log-action";
 import { IStore } from "../types";
 
 const crashGetter = (store: Store<any>) => (next: (action: any) => any) => (
-  action: any,
+  action: any
 ) => {
   try {
     if (action && !action.type) {
       throw new Error(
-        `refusing to dispatch action with null type: ${JSON.stringify(action)}`,
+        `refusing to dispatch action with null type: ${JSON.stringify(action)}`
       );
     }
     return next(action);
@@ -70,7 +70,7 @@ const enhancer = compose(
       route(watcher, store, action);
     },
   }),
-  applyMiddleware(...middleware),
+  applyMiddleware(...middleware)
 ) as GenericStoreEnhancer;
 
 const initialState = {};

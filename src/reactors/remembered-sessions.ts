@@ -33,7 +33,7 @@ async function loadRememberedSessions(store: IStore) {
       } catch (e) {
         console.log(`Skipping ${tokenFile}: ${e.message}`); // tslint:disable-line:no-console
       }
-    }),
+    })
   );
   sessions = filter(sessions, s => !!s);
 
@@ -88,7 +88,7 @@ export default function(watcher: Watcher) {
           },
           "cancel",
         ],
-      }),
+      })
     );
   });
 

@@ -158,7 +158,7 @@ export default reducer<ISessionNavigationState>(initialState, on => {
 
         return tab.id;
       }),
-      x => !!x,
+      x => !!x
     );
 
     return {

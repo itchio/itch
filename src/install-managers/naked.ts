@@ -31,7 +31,7 @@ export async function install(opts: IInstallOpts): Promise<IInstallResult> {
 }
 
 export async function uninstall(
-  opts: IUninstallOpts,
+  opts: IUninstallOpts
 ): Promise<IUninstallResult> {
   const logger = opts.logger.child({ name: "naked/uninstall" });
   logger.info(`Nothing to do`);

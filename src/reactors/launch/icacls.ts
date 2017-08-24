@@ -12,7 +12,7 @@ async function icacls(
   ctx: Context,
   opts: IIcaclsOptions,
   reason: string,
-  args: string[],
+  args: string[]
 ) {
   const logger = opts.logger.child({ name: "icacls" });
 

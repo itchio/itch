@@ -38,7 +38,7 @@ export default function(watcher: Watcher, db: DB) {
           },
           "cancel",
         ],
-      }),
+      })
     );
   });
 }

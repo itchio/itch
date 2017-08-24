@@ -21,10 +21,10 @@ export default function setupShortcuts(store: IStore) {
   // dev shortcuts
   combo.bindGlobal(
     ["shift+f12", "ctrl+shift+c", "command+shift+c"],
-    openDevTools,
+    openDevTools
   );
   combo.bindGlobal(["shift+f5", "shift+command+r"], () =>
-    window.location.reload(),
+    window.location.reload()
   );
 
   // user shortcuts

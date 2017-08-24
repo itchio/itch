@@ -4,7 +4,7 @@ export type RequestFunc = (
   method: HTTPMethod,
   uri: string,
   data: any,
-  opts?: IRequestOpts,
+  opts?: IRequestOpts
 ) => Promise<IResponse>;
 
 export interface IHeaders {

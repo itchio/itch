@@ -155,7 +155,7 @@ app.on("ready", async () => {
     if (state === 2) {
       specifiedFiles = [arg.replace(/.*src\//, "")];
       console.log(
-        `Unit test runner only running ${JSON.stringify(specifiedFiles)}`,
+        `Unit test runner only running ${JSON.stringify(specifiedFiles)}`
       );
       break;
     } else if (state === 1) {
@@ -254,13 +254,13 @@ app.on("ready", async () => {
             console.log(chalk.red(`  ${data.name}, operator ${data.operator}`));
             console.log(
               `    expected:\n${chalk.blue(
-                indentLines(8, JSON.stringify(data.expected, null, 2)),
-              )}`,
+                indentLines(8, JSON.stringify(data.expected, null, 2))
+              )}`
             );
             console.log(
               `    actual  :\n${chalk.blue(
-                indentLines(8, JSON.stringify(data.actual, null, 2)),
-              )}`,
+                indentLines(8, JSON.stringify(data.actual, null, 2))
+              )}`
             );
           }
           console.log("");
@@ -361,7 +361,7 @@ app.on("ready", async () => {
       await bluebird.delay(250);
       console.log("watching for changes...");
     }),
-    25,
+    25
   );
 
   if (watching) {

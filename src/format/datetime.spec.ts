@@ -22,17 +22,17 @@ suite(__filename, s => {
     t.same(formatDate(null, "en", DATE_FORMAT), "");
     t.same(
       formatDate("1994-04-03 11:47:21 +0", "en", DATE_FORMAT),
-      "April 3, 1994, 11:47:21",
+      "April 3, 1994, 11:47:21"
     );
     t.same(formatDate(21 as any, "en", DATE_FORMAT), "Ø");
     t.same(formatDate(new Date("haha"), "en", DATE_FORMAT), "Ø");
     t.same(
       formatDate(new Date("1994-04-03 11:47:21 +0"), "en", DATE_FORMAT),
-      refString,
+      refString
     );
     t.same(
       formatDate(new Date("1994-04-03 11:47:21 +0"), "en-US", DATE_FORMAT),
-      refString,
+      refString
     );
   });
 });

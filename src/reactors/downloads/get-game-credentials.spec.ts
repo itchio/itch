@@ -102,7 +102,7 @@ suite(__filename, s => {
       t.same(
         { api: gc.apiKey, download: gc.downloadKey.id },
         { api: c19.key, download: dk190.id },
-        "will take other user's download key",
+        "will take other user's download key"
       );
 
       delete state.rememberedSessions[c19.me.id];
@@ -110,7 +110,7 @@ suite(__filename, s => {
       gc = await getGameCredentials(ctx, game);
       t.notOk(
         gc.downloadKey,
-        "won't take other user's download key if we don't have corresponding API key",
+        "won't take other user's download key if we don't have corresponding API key"
       );
 
       gc = await getGameCredentialsForId(ctx, game.id);

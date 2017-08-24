@@ -40,7 +40,7 @@ export default function validateManifest(manifest: IManifest, logger: Logger) {
   for (const requiredField of MANIFEST_REQUIRED_FIELDS) {
     if (typeof (manifest as any)[requiredField] === "undefined") {
       throw new Error(
-        `in manifest, required field '${requiredField}' is missing`,
+        `in manifest, required field '${requiredField}' is missing`
       );
     }
   }
@@ -51,7 +51,7 @@ export default function validateManifest(manifest: IManifest, logger: Logger) {
     for (const field of Object.keys(action)) {
       if (ACTION_VALID_FIELDS.indexOf(field) === -1) {
         logger.warn(
-          `in manifest action ${denomination}, unknown field '${field}' found`,
+          `in manifest action ${denomination}, unknown field '${field}' found`
         );
       }
     }
@@ -59,7 +59,7 @@ export default function validateManifest(manifest: IManifest, logger: Logger) {
     for (const requiredField of ACTION_REQUIRED_FIELDS) {
       if (typeof (action as any)[requiredField] === "undefined") {
         throw new Error(
-          `in manifest action ${denomination}, required field '${requiredField}' is missing`,
+          `in manifest action ${denomination}, required field '${requiredField}' is missing`
         );
       }
     }
@@ -71,7 +71,7 @@ export default function validateManifest(manifest: IManifest, logger: Logger) {
     for (const field of Object.keys(prereq)) {
       if (PREREQ_VALID_FIELDS.indexOf(field) === -1) {
         logger.warn(
-          `in manifest prereq ${denomination}, unknown field '${field}' found`,
+          `in manifest prereq ${denomination}, unknown field '${field}' found`
         );
       }
     }
@@ -79,7 +79,7 @@ export default function validateManifest(manifest: IManifest, logger: Logger) {
     for (const requiredField of PREREQ_REQUIRED_FIELDS) {
       if (typeof (prereq as any)[requiredField] === "undefined") {
         throw new Error(
-          `in manifest prereq ${denomination}, required field '${requiredField}' is missing`,
+          `in manifest prereq ${denomination}, required field '${requiredField}' is missing`
         );
       }
     }

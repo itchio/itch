@@ -478,7 +478,7 @@ export namespace flatbuffers {
     addFieldInt64(
       voffset: number,
       value: flatbuffers.Long,
-      defaultValue: flatbuffers.Long,
+      defaultValue: flatbuffers.Long
     ) {
       if (this.force_defaults || !value.equals(defaultValue)) {
         this.addInt64(value);
@@ -518,7 +518,7 @@ export namespace flatbuffers {
     addFieldOffset(
       voffset: number,
       value: flatbuffers.Offset,
-      defaultValue: flatbuffers.Offset,
+      defaultValue: flatbuffers.Offset
     ) {
       if (this.force_defaults || value != defaultValue) {
         this.addOffset(value);
@@ -536,7 +536,7 @@ export namespace flatbuffers {
     addFieldStruct(
       voffset: number,
       value: flatbuffers.Offset,
-      defaultValue: flatbuffers.Offset,
+      defaultValue: flatbuffers.Offset
     ) {
       if (value != defaultValue) {
         this.nested(value);
@@ -564,7 +564,7 @@ export namespace flatbuffers {
     notNested() {
       if (this.isNested) {
         throw new Error(
-          "FlatBuffers: object serialization must not be nested.",
+          "FlatBuffers: object serialization must not be nested."
         );
       }
     }
@@ -695,7 +695,7 @@ export namespace flatbuffers {
         // Point table to current vtable.
         this.bb.writeInt32(
           this.bb.capacity() - vtableloc,
-          this.offset() - vtableloc,
+          this.offset() - vtableloc
         );
       }
 
@@ -716,7 +716,7 @@ export namespace flatbuffers {
         if (file_identifier.length != FILE_IDENTIFIER_LENGTH) {
           throw new Error(
             "FlatBuffers: file identifier must be length " +
-              FILE_IDENTIFIER_LENGTH,
+              FILE_IDENTIFIER_LENGTH
           );
         }
         for (var i = FILE_IDENTIFIER_LENGTH - 1; i >= 0; i--) {
@@ -815,7 +815,7 @@ export namespace flatbuffers {
               } else {
                 utf8.push(
                   ((codePoint >> 18) & 0x07) | 0xf0,
-                  ((codePoint >> 12) & 0x3f) | 0x80,
+                  ((codePoint >> 12) & 0x3f) | 0x80
                 );
               }
               utf8.push(((codePoint >> 6) & 0x3f) | 0x80);
@@ -981,7 +981,7 @@ export namespace flatbuffers {
     readInt64(offset: number): flatbuffers.Long {
       return new flatbuffers.Long(
         this.readInt32(offset),
-        this.readInt32(offset + 4),
+        this.readInt32(offset + 4)
       );
     }
 
@@ -992,7 +992,7 @@ export namespace flatbuffers {
     readUint64(offset: number): flatbuffers.Long {
       return new flatbuffers.Long(
         this.readUint32(offset),
-        this.readUint32(offset + 4),
+        this.readUint32(offset + 4)
       );
     }
 
@@ -1146,7 +1146,7 @@ export namespace flatbuffers {
     __string(offset: number): string;
     __string(
       offset: number,
-      optionalEncoding: flatbuffers.Encoding,
+      optionalEncoding: flatbuffers.Encoding
     ): string | Uint8Array;
     __string(offset: number, optionalEncoding?: Encoding): string | Uint8Array {
       offset += this.readInt32(offset);
@@ -1194,7 +1194,7 @@ export namespace flatbuffers {
           codePoint -= 0x10000;
           result += String.fromCharCode(
             (codePoint >> 10) + 0xd800,
-            (codePoint & ((1 << 10) - 1)) + 0xdc00,
+            (codePoint & ((1 << 10) - 1)) + 0xdc00
           );
         }
       }
@@ -1239,7 +1239,7 @@ export namespace flatbuffers {
       if (ident.length != FILE_IDENTIFIER_LENGTH) {
         throw new Error(
           "FlatBuffers: file identifier must be length " +
-            FILE_IDENTIFIER_LENGTH,
+            FILE_IDENTIFIER_LENGTH
         );
       }
       for (var i = 0; i < FILE_IDENTIFIER_LENGTH; i++) {

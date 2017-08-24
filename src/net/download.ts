@@ -12,7 +12,7 @@ import { request } from "./request";
 export async function downloadToFile(
   logger: Logger,
   url: string,
-  file: string,
+  file: string
 ) {
   const dir = dirname(file);
   try {
@@ -41,15 +41,15 @@ export async function downloadToFile(
           totalSize = parseInt(contentLengthHeader[0], 10);
         }
       },
-    },
+    }
   );
   await sf.promised(sink);
 
   const stats = await sf.lstat(file);
   logger.info(
     `downloaded ${fileSize(stats.size)} / ${fileSize(
-      totalSize,
-    )} (${stats.size} bytes)`,
+      totalSize
+    )} (${stats.size} bytes)`
   );
 
   if (totalSize !== 0 && stats.size !== totalSize) {

@@ -59,8 +59,8 @@ setTimeout(function() {
         disable($buttons);
         $buttons.html(
           $(
-            '<span><span class="icon icon-stopwatch itchInjectedSpinner"></span> Loading...</span>',
-          ),
+            '<span><span class="icon icon-stopwatch itchInjectedSpinner"></span> Loading...</span>'
+          )
         );
         $buttons.not(":eq(0)").hide();
 

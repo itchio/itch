@@ -13,7 +13,7 @@ interface INavigationClickHandler {
 
 export function whenClickNavigates(
   e: MouseEvent<any>,
-  f: INavigationClickHandler,
+  f: INavigationClickHandler
 ) {
   // when left click or middle-click
   if (e.button === 0 || e.button === 1) {

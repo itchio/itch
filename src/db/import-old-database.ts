@@ -111,7 +111,7 @@ interface IObjectMap {
 function readAllRecords(
   opts: IImportOpts,
   marketPath: string,
-  tableName: string,
+  tableName: string
 ): IObjectMap {
   const tableDir = join(marketPath, tableName);
   const ids = glob.sync("*", { cwd: tableDir });
@@ -131,7 +131,7 @@ function readAllRecords(
   }
 
   logger.info(
-    `Read ${Object.keys(ids).length} ${tableName} from ${marketPath}`,
+    `Read ${Object.keys(ids).length} ${tableName} from ${marketPath}`
   );
 
   return res;
@@ -141,7 +141,7 @@ export function importUserMarkets(
   opts: IImportOpts,
   out: IImportResult,
   marketPath: string,
-  userId: number,
+  userId: number
 ) {
   const games = readAllRecords(opts, marketPath, "games");
   for (const id of Object.keys(games)) {
@@ -258,7 +258,7 @@ export function importUserMarkets(
 export function importGlobalMarket(
   opts: IImportOpts,
   out: IImportResult,
-  marketPath: string,
+  marketPath: string
 ) {
   const { logger } = opts;
 

@@ -8,8 +8,8 @@ import {
 } from "../constants/action-types";
 
 export const startOnboarding = createAction<IStartOnboardingPayload>(
-  START_ONBOARDING,
+  START_ONBOARDING
 );
 export const exitOnboarding = createAction<IExitOnboardingPayload>(
-  EXIT_ONBOARDING,
+  EXIT_ONBOARDING
 );

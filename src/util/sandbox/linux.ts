@@ -19,7 +19,7 @@ interface ISudoRunScriptResult {
 
 async function sudoRunScript(
   ctx: Context,
-  lines: string[],
+  lines: string[]
 ): Promise<ISudoRunScriptResult> {
   const contents = lines.join("\n");
   const tmpObjName = tmp.tmpNameSync();

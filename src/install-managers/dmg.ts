@@ -77,7 +77,7 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
       });
       if (code !== 0) {
         throw new Error(
-          `hdiutil detach failed with code ${formatExitCode(code)}`,
+          `hdiutil detach failed with code ${formatExitCode(code)}`
         );
       }
     }
@@ -175,7 +175,7 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
     });
     if (code !== 0) {
       throw new Error(
-        `Failed to mount image, with code ${formatExitCode(code)}`,
+        `Failed to mount image, with code ${formatExitCode(code)}`
       );
     }
 

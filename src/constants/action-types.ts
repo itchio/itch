@@ -15,7 +15,7 @@ export interface IDispatch {
 
 export function dispatcher<T, U>(
   dispatch: IDispatch,
-  actionCreator: (payload: T) => IAction<U>,
+  actionCreator: (payload: T) => IAction<U>
 ) {
   return (payload: T) => {
     const action = actionCreator(payload);

@@ -12,17 +12,17 @@ import {
 } from "../constants/action-types";
 
 export const localesConfigLoaded = createAction<ILocalesConfigLoadedPayload>(
-  LOCALES_CONFIG_LOADED,
+  LOCALES_CONFIG_LOADED
 );
 export const queueLocaleDownload = createAction<IQueueLocaleDownloadPayload>(
-  QUEUE_LOCALE_DOWNLOAD,
+  QUEUE_LOCALE_DOWNLOAD
 );
 
 export const localeDownloadStarted = createAction<
   ILocaleDownloadStartedPayload
 >(LOCALE_DOWNLOAD_STARTED);
 const internalLocaleDownloadEnded = createAction<ILocaleDownloadEndedPayload>(
-  LOCALE_DOWNLOAD_ENDED,
+  LOCALE_DOWNLOAD_ENDED
 );
 
 const emptyObj = {};

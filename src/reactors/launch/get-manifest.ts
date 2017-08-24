@@ -15,7 +15,7 @@ import { IStore } from "../../types";
 export default async function getManifest(
   store: IStore,
   cave: ICave,
-  logger: Logger,
+  logger: Logger
 ): Promise<IManifest> {
   const cavePath = appPath(cave, store.getState().preferences);
   const manifestPath = join(cavePath, ".itch.toml");

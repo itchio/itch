@@ -25,19 +25,19 @@ export const focusSearch = createAction<IFocusSearchPayload>(FOCUS_SEARCH);
 export const clearFilters = createAction<IClearFiltersPayload>(CLEAR_FILTERS);
 export const search = createAction<ISearchPayload>(SEARCH);
 export const searchQueryChanged = createAction<ISearchQueryChangedPayload>(
-  SEARCH_QUERY_CHANGED,
+  SEARCH_QUERY_CHANGED
 );
 export const searchFetched = createAction<ISearchFetchedPayload>(
-  SEARCH_FETCHED,
+  SEARCH_FETCHED
 );
 
 // ugh
 // TODO: de-ugh
 export const searchStarted = createAction<ISearchStartedPayload>(
-  SEARCH_STARTED,
+  SEARCH_STARTED
 );
 export const searchFinished = createAction<ISearchFinishedPayload>(
-  SEARCH_FINISHED,
+  SEARCH_FINISHED
 );
 
 export const closeSearch = createAction<ICloseSearchPayload>(CLOSE_SEARCH);

@@ -9,7 +9,7 @@ suite(__filename, s => {
       truncate("hello my friend this is a Nigerian prince and I", {
         length: 10,
       }),
-      "hello m...",
+      "hello m..."
     );
   });
 });

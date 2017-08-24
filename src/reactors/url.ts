@@ -87,7 +87,7 @@ export default function(watcher: Watcher) {
     const host = urlParser.parse(url).hostname;
     const slug = /^[^.]+/.exec(host);
     store.dispatch(
-      actions.navigate({ tab: "url/" + `${urls.itchio}/profile/${slug}` }),
+      actions.navigate({ tab: "url/" + `${urls.itchio}/profile/${slug}` })
     );
   });
 

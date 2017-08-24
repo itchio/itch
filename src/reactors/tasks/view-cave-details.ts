@@ -46,7 +46,7 @@ export default function(watcher: Watcher, db: DB) {
             className: "secondary",
           },
         ],
-      }),
+      })
     );
   });
 }

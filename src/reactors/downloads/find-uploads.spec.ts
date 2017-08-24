@@ -45,7 +45,7 @@ suite(__filename, s => {
           hadWrongArch: false,
           uploads: [],
         },
-        "empty is empty",
+        "empty is empty"
       );
 
       t.same(
@@ -62,7 +62,7 @@ suite(__filename, s => {
             }),
           ],
           game,
-          linux64,
+          linux64
         ),
         {
           uploads: [],
@@ -70,7 +70,7 @@ suite(__filename, s => {
           hadWrongFormat: true,
           hadWrongArch: false,
         },
-        "exclude deb/rpm, flag it",
+        "exclude deb/rpm, flag it"
       );
 
       const love = asUpload({
@@ -90,7 +90,7 @@ suite(__filename, s => {
             love,
           ],
           game,
-          linux64,
+          linux64
         ),
         {
           uploads: [love],
@@ -98,7 +98,7 @@ suite(__filename, s => {
           hadWrongFormat: false,
           hadWrongArch: false,
         },
-        "exclude untagged, flag it",
+        "exclude untagged, flag it"
       );
 
       const sources = asUpload({
@@ -125,7 +125,7 @@ suite(__filename, s => {
           hadWrongFormat: false,
           hadWrongArch: false,
         },
-        "prefer linux binary",
+        "prefer linux binary"
       );
 
       const windowsNaked = asUpload({
@@ -148,7 +148,7 @@ suite(__filename, s => {
           ctx,
           [html, windowsPortable, windowsNaked],
           game,
-          windows32,
+          windows32
         ),
         {
           uploads: [windowsPortable, windowsNaked, html],
@@ -156,7 +156,7 @@ suite(__filename, s => {
           hadWrongFormat: false,
           hadWrongArch: false,
         },
-        "prefer windows portable, then naked",
+        "prefer windows portable, then naked"
       );
 
       const windowsDemo = asUpload({
@@ -170,7 +170,7 @@ suite(__filename, s => {
           ctx,
           [windowsDemo, windowsPortable, windowsNaked],
           game,
-          windows32,
+          windows32
         ),
         {
           uploads: [windowsPortable, windowsNaked, windowsDemo],
@@ -178,7 +178,7 @@ suite(__filename, s => {
           hadWrongFormat: false,
           hadWrongArch: false,
         },
-        "penalize demos",
+        "penalize demos"
       );
 
       const windows64: IRuntime = {
@@ -211,7 +211,7 @@ suite(__filename, s => {
           hadWrongFormat: false,
           hadWrongArch: false,
         },
-        "penalize demos",
+        "penalize demos"
       );
 
       const untaggedUpload = asUpload({
@@ -226,7 +226,7 @@ suite(__filename, s => {
           hadWrongFormat: false,
           hadWrongArch: false,
         },
-        "don't go with untagged",
+        "don't go with untagged"
       );
 
       const debUpload = asUpload({
@@ -247,7 +247,7 @@ suite(__filename, s => {
           hadWrongFormat: true,
           hadWrongArch: false,
         },
-        "blacklist .deb & .rpm files",
+        "blacklist .deb & .rpm files"
       );
 
       const pkgUpload = asUpload({
@@ -268,7 +268,7 @@ suite(__filename, s => {
           hadWrongFormat: true,
           hadWrongArch: false,
         },
-        "blacklist .pkg files",
+        "blacklist .pkg files"
       );
     });
   });

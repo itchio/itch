@@ -17,7 +17,7 @@ interface IDownloadPatchesOpts {
 }
 
 export default async function downloadPatches(
-  opts: IDownloadPatchesOpts,
+  opts: IDownloadPatchesOpts
 ): Promise<IDownloadResult> {
   const { ctx, credentials, item } = opts;
   const { caveId, totalSize, upgradePath, upload } = item;
@@ -41,8 +41,8 @@ export default async function downloadPatches(
     `Downloading ${upgradePath.length} patches, extras: ${JSON.stringify(
       patchExtras,
       null,
-      2,
-    )})`,
+      2
+    )})`
   );
 
   for (const entry of upgradePath) {
@@ -55,19 +55,19 @@ export default async function downloadPatches(
       upload.id,
       entry.id,
       "patch",
-      patchExtras,
+      patchExtras
     );
     const signaturePath = api.downloadBuildURL(
       credentials.downloadKey,
       upload.id,
       entry.id,
-      "signature",
+      "signature"
     );
     const archivePath = api.downloadBuildURL(
       credentials.downloadKey,
       upload.id,
       entry.id,
-      "archive",
+      "archive"
     );
 
     // TODO: if this is interrupted, it has to restart the current patch from the beginning.

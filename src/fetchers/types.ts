@@ -47,7 +47,7 @@ export class Fetcher {
     this.reason = reason;
 
     this.logger.debug(
-      `fetching ${this.tabName()} because ${FetchReason[reason]}`,
+      `fetching ${this.tabName()} because ${FetchReason[reason]}`
     );
   }
 
@@ -181,7 +181,7 @@ export class Fetcher {
   pushAllGames(input: IGame[], opts: IPushAllGameOpts = {}) {
     const games = this.sortAndFilter(input);
     this.logger.debug(
-      `Pushing games, ${input.length} => (sort+filter) => ${games.length}`,
+      `Pushing games, ${input.length} => (sort+filter) => ${games.length}`
     );
 
     const gameIds = pluck(games, "id");

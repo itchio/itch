@@ -19,7 +19,7 @@ export default function(watcher: Watcher) {
         onlyCompatibleGames: false,
         onlyInstalledGames: false,
         onlyOwnedGames: false,
-      }),
+      })
     );
   });
 
@@ -67,7 +67,7 @@ export default function(watcher: Watcher) {
             ...staticDataExceptId,
             ...data,
           },
-        }),
+        })
       );
     } else {
       store.dispatch(
@@ -77,7 +77,7 @@ export default function(watcher: Watcher) {
             path: tab,
             ...data,
           },
-        }),
+        })
       );
     }
   });
@@ -92,7 +92,7 @@ export default function(watcher: Watcher) {
           path,
           ...extras,
         },
-      }),
+      })
     );
   });
 
@@ -128,7 +128,7 @@ export default function(watcher: Watcher) {
           setImmediate(() => {
             store.dispatch(actions.tabChanged({ tab }));
           });
-        },
+        }
       );
     }
     pathSelector(store.getState());

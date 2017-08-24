@@ -13,7 +13,7 @@ import { IProgressListener } from "../types";
 export default function subprogress(
   onProgress: IProgressListener,
   startAlpha: number,
-  endAlpha: number,
+  endAlpha: number
 ): IProgressListener {
   const spanAlpha = endAlpha - startAlpha;
 

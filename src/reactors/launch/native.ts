@@ -68,7 +68,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
     }
 
     logger.info(
-      `manifest action picked: ${JSON.stringify(manifestAction, null, 2)}`,
+      `manifest action picked: ${JSON.stringify(manifestAction, null, 2)}`
     );
     exePath = expandManifestPath(appPath, manifestAction.path);
   } else {
@@ -86,7 +86,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
       const candidateAbsolutePath = join(appPath, candidate.path);
       if (!await sf.exists(candidateAbsolutePath)) {
         logger.warn(
-          "has existing candidate but it disappeared, reconfiguring...",
+          "has existing candidate but it disappeared, reconfiguring..."
         );
         logger.warn(`note: the culprit was ${candidateAbsolutePath}`);
         shouldReconfigure = true;
@@ -123,7 +123,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
 
   if (!exePath) {
     const err = new Error(
-      `No executables found (${hasManifest ? "with" : "without"} manifest)`,
+      `No executables found (${hasManifest ? "with" : "without"} manifest)`
     );
     (err as any).reason = ["game.install.no_executables_found"];
     throw err;
@@ -158,7 +158,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
             },
             "cancel",
           ],
-        }),
+        })
       );
       return;
     }
@@ -166,8 +166,8 @@ const launchNative: ILauncher = async (ctx, opts) => {
 
   logger.info(
     `executing '${basename(
-      exePath,
-    )}' on '${itchPlatform}' with args '${args.join(" ")}'`,
+      exePath
+    )}' on '${itchPlatform}' with args '${args.join(" ")}'`
   );
   const argString = map(args, spawn.escapePath).join(" ");
 
@@ -175,7 +175,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
     const checkRes = await sandbox.check(ctx);
     if (checkRes.errors.length > 0) {
       throw new Error(
-        `error(s) while checking for sandbox: ${checkRes.errors.join(", ")}`,
+        `error(s) while checking for sandbox: ${checkRes.errors.join(", ")}`
       );
     }
 
@@ -220,7 +220,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
     const installRes = await sandbox.install(ctx, checkRes.needs);
     if (installRes.errors.length > 0) {
       throw new Error(
-        `error(s) while installing sandbox: ${installRes.errors.join(", ")}`,
+        `error(s) while installing sandbox: ${installRes.errors.join(", ")}`
       );
     }
   }
@@ -266,7 +266,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
           `open -W ${spawn.escapePath(fakeApp)}`,
           env,
           ctx,
-          spawnOpts,
+          spawnOpts
         );
       });
     } else {
@@ -278,7 +278,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
           `open -W ${spawn.escapePath(exePath)} --args ${argString}`,
           env,
           ctx,
-          spawnOpts,
+          spawnOpts
         );
       } else {
         await doSpawn(
@@ -286,7 +286,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
           `${spawn.escapePath(exePath)} ${argString}`,
           env,
           ctx,
-          spawnOpts,
+          spawnOpts
         );
       }
     }
@@ -378,7 +378,7 @@ async function doSpawn(
   fullCommand: string,
   env: IEnvironment,
   ctx: Context,
-  opts: IDoSpawnOpts,
+  opts: IDoSpawnOpts
 ) {
   logger.info(`spawn command: ${fullCommand}`);
   const { appPath } = opts;
@@ -445,7 +445,7 @@ async function doSpawn(
       });
       if (killRes.code !== 0) {
         logger.error(
-          `Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`,
+          `Failed to kill with code ${killRes.code}, out = ${killRes.out}, err = ${killRes.err}`
         );
       }
     });

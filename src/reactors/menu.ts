@@ -74,7 +74,7 @@ function convertMenuAction(payload: IMenuItemPayload, runtime: IRuntime) {
 export function fleshOutTemplate(
   template: IMenuTemplate,
   store: IStore,
-  runtime: IRuntime,
+  runtime: IRuntime
 ) {
   const { i18n } = store.getState();
 
@@ -120,7 +120,7 @@ export default function(watcher: Watcher, runtime: IRuntime) {
           const template = computeMenuTemplate(
             system.appVersion,
             credentials,
-            runtime,
+            runtime
           );
           setImmediate(() => {
             try {
@@ -129,7 +129,7 @@ export default function(watcher: Watcher, runtime: IRuntime) {
               console.error(`Couldn't dispatch new menu: ${e}`);
             }
           });
-        },
+        }
       );
     }
     refreshSelector(currentState);
@@ -145,7 +145,7 @@ export default function(watcher: Watcher, runtime: IRuntime) {
             const menu = Menu.buildFromTemplate(clone(fleshed));
             Menu.setApplicationMenu(menu);
           });
-        },
+        }
       );
     }
     applySelector(currentState);
@@ -166,7 +166,7 @@ interface IAllTemplates {
 function computeMenuTemplate(
   appVersion: string,
   credentials: ISessionCredentialsState,
-  runtime: IRuntime,
+  runtime: IRuntime
 ) {
   const menus: IAllTemplates = {
     mainMac: {

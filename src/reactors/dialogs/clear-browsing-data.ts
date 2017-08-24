@@ -33,7 +33,7 @@ export default function(watcher: Watcher) {
       actions.clearBrowsingData({
         cache: response.payload.cache,
         cookies: response.payload.cookies,
-      }),
+      })
     );
   });
 }

@@ -133,7 +133,7 @@ CREATE TABLE noels (
           squel
             .expr()
             .or("LOWER(title) LIKE LOWER(?)", arg)
-            .or("LOWER(shortDesc) LIKE LOWER(?)", arg),
+            .or("LOWER(shortDesc) LIKE LOWER(?)", arg)
         )
         .offset(offset)
         .limit(limit);
@@ -200,7 +200,7 @@ CREATE TABLE noels (
     };
 
     const fetchedJason = q.get(Jason, k =>
-      k.where("identifier = ?", jason.identifier),
+      k.where("identifier = ?", jason.identifier)
     );
     let up = hades.updateFor(fetchedJason, newJason, Jason);
     t.same(up, null);

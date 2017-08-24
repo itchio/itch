@@ -24,7 +24,7 @@ const emptyArr = [];
  */
 export default function groupIdBy<T>(
   records: IRecordMap | IRecord[],
-  field: string | IGetter<T>,
+  field: string | IGetter<T>
 ): IGrouped {
   const result: IGrouped = {};
 

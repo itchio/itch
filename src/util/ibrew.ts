@@ -71,7 +71,7 @@ const self = {
       });
       if (reason) {
         logger.warn(
-          `${name}: skipping upgrade check (${JSON.stringify(reason)})`,
+          `${name}: skipping upgrade check (${JSON.stringify(reason)})`
         );
         return;
       }
@@ -100,7 +100,7 @@ const self = {
           break;
         } catch (e) {
           logger.warn(
-            `${name}: couldn't get ${algo} hashes (${e.message || "" + e})`,
+            `${name}: couldn't get ${algo} hashes (${e.message || "" + e})`
           );
         }
       }
@@ -142,7 +142,7 @@ const self = {
       const { sanityCheck } = formula;
       if (sanityCheck) {
         logger.info(
-          `${name}: running sanity check ${JSON.stringify(sanityCheck)}`,
+          `${name}: running sanity check ${JSON.stringify(sanityCheck)}`
         );
 
         const sanityRes = await spawn.exec({
@@ -153,7 +153,7 @@ const self = {
         if (sanityRes.code !== 0) {
           throw new Error(
             `sanity check for ${name} failed with code ${sanityRes.code}` +
-              `, out = ${sanityRes.out}, err = ${sanityRes.err}`,
+              `, out = ${sanityRes.out}, err = ${sanityRes.err}`
           );
         }
       }
@@ -176,7 +176,7 @@ const self = {
       latestVersion = await getLatestVersion();
     } catch (err) {
       logger.warn(
-        `${name}: cannot get latest version, skipping: ${err.message || err}`,
+        `${name}: cannot get latest version, skipping: ${err.message || err}`
       );
       return;
     }
@@ -224,7 +224,7 @@ const self = {
         command,
         check.args,
         check.parser,
-        extraOpts,
+        extraOpts
       );
       return version.normalize(info.parsed);
     } catch (err) {

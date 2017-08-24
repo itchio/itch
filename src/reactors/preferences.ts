@@ -63,7 +63,7 @@ export default function(watcher: Watcher) {
       promises.push(
         new Promise((resolve, reject) => {
           ourSession.clearCache(resolve);
-        }),
+        })
       );
     }
 
@@ -79,9 +79,9 @@ export default function(watcher: Watcher) {
               // look chromium just clear everything thanks
               quotas: ["temporary", "persistent", "syncable"],
             },
-            resolve,
+            resolve
           );
-        }),
+        })
       );
     }
 
@@ -90,7 +90,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.statusMessage({
         message: ["prompt.clear_browsing_data.notification"],
-      }),
+      })
     );
   });
 

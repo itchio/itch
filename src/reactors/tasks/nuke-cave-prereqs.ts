@@ -16,7 +16,7 @@ export default function(watcher: Watcher, db: DB) {
     store.dispatch(
       actions.statusMessage({
         message: "Prereqs nuked!",
-      }),
+      })
     );
   });
 }

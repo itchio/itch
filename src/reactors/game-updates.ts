@@ -25,7 +25,7 @@ export default function(watcher: Watcher, db: DB) {
       actions.queueGameUpdate({
         ...action.payload,
         upload: recentUploads[0],
-      }),
+      })
     );
   });
 

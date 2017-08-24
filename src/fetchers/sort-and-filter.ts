@@ -28,7 +28,7 @@ function getCaveSummary(commons: ICommonsState, game: IGame): ICaveSummary {
 export function sortAndFilter(
   games: IGame[],
   tab: string,
-  store: IStore,
+  store: IStore
 ): IGame[] {
   let set = games;
   const state = store.getState();
@@ -97,7 +97,7 @@ export function addSortAndFilterToQuery(
   select: squel.Select,
   expr: squel.Expression,
   tab: string,
-  store: IStore,
+  store: IStore
 ): squel.Select {
   const state = store.getState();
   const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
@@ -110,7 +110,7 @@ export function addSortAndFilterToQuery(
         .expr()
         .or(platformProp)
         .or("type = ?", "html")
-        .or("classification not in ?", ["game", "tool"]),
+        .or("classification not in ?", ["game", "tool"])
     );
   }
 
@@ -152,7 +152,7 @@ export function addSortAndFilterToQuery(
     if (tab === "library") {
       select.order(
         "coalesce(caves.installedAt, downloadKeys.createdAt)",
-        false /* DESC */,
+        false /* DESC */
       );
       joinCave = true;
       joinDownloadKeys = true;
@@ -173,8 +173,8 @@ export function addSortAndFilterToQuery(
             .field("caves.id")
             .from("caves")
             .where("caves.gameId = games.id")
-            .limit(1),
-        ),
+            .limit(1)
+        )
     );
   }
 
@@ -196,10 +196,10 @@ export function addSortAndFilterToQuery(
               squel
                 .expr()
                 .and("downloadKeys.gameId = games.id")
-                .and("downloadKeys.ownerId = ?", meId),
+                .and("downloadKeys.ownerId = ?", meId)
             )
-            .limit(1) as any,
-        ),
+            .limit(1) as any
+        )
     );
   }
 

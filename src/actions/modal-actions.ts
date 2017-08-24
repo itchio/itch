@@ -21,8 +21,8 @@ export const openModal = (payload = {} as IOpenModalPayload) =>
 export const closeModal = createAction<ICloseModalPayload>(CLOSE_MODAL);
 export const modalClosed = createAction<IModalClosedPayload>(MODAL_CLOSED);
 export const modalResponse = createAction<IModalResponsePayload>(
-  MODAL_RESPONSE,
+  MODAL_RESPONSE
 );
 export const modalNoResponse = createAction<IModalNoResponsePayload>(
-  MODAL_NO_RESPONSE,
+  MODAL_NO_RESPONSE
 );

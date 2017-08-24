@@ -9,14 +9,14 @@ import { filter, findWhere, first } from "underscore";
 
 export default async function getGameCredentials(
   ctx: Context,
-  game: IGame,
+  game: IGame
 ): Promise<IGameCredentials> {
   return await getGameCredentialsInternal(ctx, game.id, game.inPressSystem);
 }
 
 export async function getGameCredentialsForId(
   ctx: Context,
-  gameId: number,
+  gameId: number
 ): Promise<IGameCredentials> {
   return await getGameCredentialsInternal(ctx, gameId, false);
 }
@@ -24,7 +24,7 @@ export async function getGameCredentialsForId(
 async function getGameCredentialsInternal(
   ctx: Context,
   gameId: number,
-  inPressSystem: boolean,
+  inPressSystem: boolean
 ): Promise<IGameCredentials> {
   const state = ctx.store.getState();
 

@@ -35,7 +35,7 @@ export default function(watcher: Watcher) {
             const rememberedSessions = store.getState().rememberedSessions;
             const mostRecentSession = sortBy(
               rememberedSessions,
-              x => -x.lastConnected,
+              x => -x.lastConnected
             )[0];
             if (mostRecentSession) {
               const { me, key } = mostRecentSession;

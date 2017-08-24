@@ -29,7 +29,7 @@ export default function(watcher: Watcher) {
       actions.downloadStarted({
         ...opts,
         order: orderSeed++,
-      }),
+      })
     );
   });
 }

@@ -56,7 +56,7 @@ suite(__filename, s => {
     t.same(getActiveDownload({ items: oneActive } as any), oneActive.disco);
     t.same(
       getActiveDownload({ items: activeAndInactive } as any),
-      activeAndInactive.rock,
+      activeAndInactive.rock
     );
   });
 
@@ -115,12 +115,12 @@ suite(__filename, s => {
   s.case("getFinishedDownloads", t => {
     t.same(
       getFinishedDownloads({ items: withFinished } as any),
-      [withFinished.a, withFinished.c] as any,
+      [withFinished.a, withFinished.c] as any
     );
 
     t.same(
       getPendingDownloads({ items: withFinished } as any),
-      [withFinished.b, withFinished.d] as any,
+      [withFinished.b, withFinished.d] as any
     );
   });
 });

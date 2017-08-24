@@ -15,14 +15,14 @@ import {
 
 export const sessionReady = createAction<ISessionReadyPayload>(SESSION_READY);
 export const sessionsRemembered = createAction<ISessionsRememberedPayload>(
-  SESSIONS_REMEMBERED,
+  SESSIONS_REMEMBERED
 );
 export const sessionUpdated = createAction<ISessionUpdatedPayload>(
-  SESSION_UPDATED,
+  SESSION_UPDATED
 );
 export const forgetSessionRequest = createAction<IForgetSessionRequestPayload>(
-  FORGET_SESSION_REQUEST,
+  FORGET_SESSION_REQUEST
 );
 export const forgetSession = createAction<IForgetSessionPayload>(
-  FORGET_SESSION,
+  FORGET_SESSION
 );

@@ -14,12 +14,12 @@ export class CancelError extends Error {
 
 function debounce<Arg1, T>(
   f: (arg1: Arg1) => Promise<T>,
-  ms: number,
+  ms: number
 ): (arg1: Arg1) => Promise<T>;
 
 function debounce<Arg1, Arg2, T>(
   f: (arg1: Arg1, arg2: Arg2) => Promise<T>,
-  ms: number,
+  ms: number
 ): (arg1: Arg1, arg2: Arg2) => Promise<T>;
 
 function debounce<T>(f: (...args: any[]) => Promise<T>, ms: number) {

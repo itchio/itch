@@ -51,7 +51,7 @@ function getExtension(path: string) {
 }
 
 export default async function getInstallerType(
-  opts: IGetInstallerTypeOpts,
+  opts: IGetInstallerTypeOpts
 ): Promise<InstallerType> {
   const { ctx, logger, target } = opts;
 
@@ -86,7 +86,7 @@ export default async function getInstallerType(
           } else {
             installerName = "naked";
             logger.info(
-              `${name}: native windows executable, but not an installer`,
+              `${name}: native windows executable, but not an installer`
             );
           }
           break;
@@ -103,7 +103,7 @@ export default async function getInstallerType(
           logger.info(`${name}: script`);
           if (candidate.scriptInfo && candidate.scriptInfo.interpreter) {
             logger.info(
-              `...with interpreter ${candidate.scriptInfo.interpreter}`,
+              `...with interpreter ${candidate.scriptInfo.interpreter}`
             );
           }
           break;
@@ -113,7 +113,7 @@ export default async function getInstallerType(
           break;
         default:
           logger.warn(
-            `${name}: no extension and not an executable, seeing what sticks`,
+            `${name}: no extension and not an executable, seeing what sticks`
           );
           installerName = await seeWhatSticks(opts);
           break;
@@ -125,7 +125,7 @@ export default async function getInstallerType(
 }
 
 async function seeWhatSticks(
-  opts: IGetInstallerTypeOpts,
+  opts: IGetInstallerTypeOpts
 ): Promise<InstallerType> {
   const { ctx, logger, target } = opts;
 

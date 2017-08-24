@@ -16,7 +16,7 @@ export async function assertPresence(
   command: string,
   args: string[],
   parser: RegExp,
-  extraOpts = {} as any,
+  extraOpts = {} as any
 ): Promise<IAssertPresenceResult> {
   let stdout = "";
   let stderr = "";
@@ -41,8 +41,8 @@ export async function assertPresence(
   if (code !== 0) {
     throw new Error(
       `${command} exited with code ${formatExitCode(
-        code,
-      )}\n${stdout}\n${stderr}`,
+        code
+      )}\n${stdout}\n${stderr}`
     );
   }
 

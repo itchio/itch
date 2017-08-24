@@ -27,7 +27,7 @@ export default function(watcher: Watcher, db: DB) {
 
     if (caves.length > 0) {
       logger.info(
-        `Have ${caves.length} caves for game ${game.title} (#${game.id}), launching the first one`,
+        `Have ${caves.length} caves for game ${game.title} (#${game.id}), launching the first one`
       );
       const cave = caves[0];
       store.dispatch(actions.queueLaunch({ caveId: cave.id }));
@@ -40,7 +40,7 @@ export default function(watcher: Watcher, db: DB) {
     const gameCredentials = await getGameCredentials(ctx, game);
     if (!gameCredentials) {
       logger.error(
-        `No game credentials for ${game.title} (#${game.id}), bailing out`,
+        `No game credentials for ${game.title} (#${game.id}), bailing out`
       );
       return;
     }
@@ -64,7 +64,7 @@ export default function(watcher: Watcher, db: DB) {
             },
             "ok",
           ],
-        }),
+        })
       );
       return;
     }
@@ -88,7 +88,7 @@ export default function(watcher: Watcher, db: DB) {
             },
             "ok",
           ],
-        }),
+        })
       );
       return;
     }
@@ -131,7 +131,7 @@ export default function(watcher: Watcher, db: DB) {
         handPicked,
         totalSize: upload.size,
         reason: "install",
-      }),
+      })
     );
   });
 }

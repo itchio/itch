@@ -54,7 +54,7 @@ export async function registerProtocol(opts: IRegisterProtocolOpts) {
         } else {
           resolve();
         }
-      },
+      }
     );
   });
 
@@ -100,17 +100,17 @@ export function setupItchInternal(opts: ItchInternalOpts) {
       } else {
         callback({});
       }
-    },
+    }
   );
 
   session.webRequest.onBeforeSendHeaders(
     internalFilter,
     (
       details: IBeforeSendHeadersDetails,
-      callback: IBeforeSendHeadersCallback,
+      callback: IBeforeSendHeadersCallback
     ) => {
       callback({ cancel: true });
       opts.onRequest(details);
-    },
+    }
   );
 }

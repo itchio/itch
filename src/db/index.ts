@@ -31,15 +31,15 @@ export async function connectDatabase(store: IStore) {
     if (toCreate.length) {
       logger.info(
         `creating missing tables: ${JSON.stringify(
-          toCreate.map(m => m.model.table),
-        )}`,
+          toCreate.map(m => m.model.table)
+        )}`
       );
     }
     if (toSync.length) {
       logger.info(
         `syncing mistyped tables: ${JSON.stringify(
-          toSync.map(m => m.model.table),
-        )}`,
+          toSync.map(m => m.model.table)
+        )}`
       );
     }
   }

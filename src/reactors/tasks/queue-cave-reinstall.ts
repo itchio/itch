@@ -57,7 +57,7 @@ export default function(watcher: Watcher, db: DB) {
       store.dispatch(
         actions.statusMessage({
           message: ["status.reinstall.busy", { title: game.title }],
-        }),
+        })
       );
       return;
     }
@@ -69,7 +69,7 @@ export default function(watcher: Watcher, db: DB) {
         upload,
         totalSize: upload.size,
         reason: "reinstall",
-      }),
+      })
     );
   });
 }

@@ -42,8 +42,8 @@ async function setup(store: IStore, db: DB) {
   await bluebird.all(
     map(
       ["butler", "isolate", "activate", "firejail"],
-      async name => await fetch(ctx, name),
-    ),
+      async name => await fetch(ctx, name)
+    )
   );
   logger.info("all deps done");
   store.dispatch(actions.setupDone({}));
@@ -60,7 +60,7 @@ async function doSetup(store: IStore, db: DB) {
         icon: "error",
         message: ["login.status.setup_failure", { error: e.message || "" + e }],
         stack: e.stack,
-      }),
+      })
     );
   }
 }

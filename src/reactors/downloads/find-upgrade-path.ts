@@ -22,7 +22,7 @@ export interface IFindUpgradePathResult {
 
 export default async function findUpgradePath(
   ctx: Context,
-  opts: IFindUpgradePathOpts,
+  opts: IFindUpgradePathOpts
 ): Promise<IFindUpgradePathResult> {
   const { gameCredentials, upload, currentBuildId } = opts;
 
@@ -40,7 +40,7 @@ export default async function findUpgradePath(
   const response = await api.findUpgrade(
     gameCredentials.downloadKey,
     upload.id,
-    currentBuildId,
+    currentBuildId
   );
 
   let upgradePath = response.upgradePath;

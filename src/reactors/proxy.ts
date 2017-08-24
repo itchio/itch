@@ -32,7 +32,7 @@ interface IAcceptsProxyConfig {
 
 export async function applyProxySettings(
   session: IAcceptsProxyConfig,
-  system: IProxySettings,
+  system: IProxySettings
 ) {
   if (process.env.ITCH_EMULATE_OFFLINE === "1") {
     session.enableNetworkEmulation({
@@ -54,7 +54,7 @@ export async function applyProxySettings(
         proxyRules,
         proxyBypassRules: null,
       },
-      resolve,
+      resolve
     );
 
     setTimeout(function() {

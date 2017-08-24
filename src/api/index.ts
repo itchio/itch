@@ -81,7 +81,7 @@ export class Client {
     method: HTTPMethod,
     path: string,
     data: any = {},
-    requestOpts: IAPIRequestOpts = {},
+    requestOpts: IAPIRequestOpts = {}
   ): Promise<any> {
     const t1 = Date.now();
 
@@ -97,7 +97,7 @@ export class Client {
     const shortPath = path.replace(/^\/[^\/]*\//, "");
     logger.info(
       `${t2 - t1}ms wait, ${t3 -
-        t2}ms http, ${method} ${shortPath} with ${JSON.stringify(data)}`,
+        t2}ms http, ${method} ${shortPath} with ${JSON.stringify(data)}`
     );
 
     if (resp.statusCode !== 200) {
@@ -136,7 +136,7 @@ export class Client {
   async loginWithPassword(
     username: string,
     password: string,
-    totpCode?: string,
+    totpCode?: string
   ): Promise<ILoginWithPasswordResult> {
     let data: {
       username: string;
@@ -205,7 +205,7 @@ export class AuthenticatedClient {
     method: HTTPMethod,
     path: string,
     data: any = {},
-    requestOpts: IAPIRequestOpts = {},
+    requestOpts: IAPIRequestOpts = {}
   ): Promise<any> {
     const url = `/${this.key}${path}`;
     return await this.client.request(method, url, data, requestOpts);
@@ -247,13 +247,13 @@ export class AuthenticatedClient {
       {
         keepSnakeCase: true,
         transformers: { collections: ensureArray },
-      },
+      }
     );
   }
 
   async game(
     gameID: number,
-    gameExtras: IGameExtras = {},
+    gameExtras: IGameExtras = {}
   ): Promise<IGameResult> {
     return await this.request("get", `/game/${gameID}`, gameExtras);
   }
@@ -268,7 +268,7 @@ export class AuthenticatedClient {
 
   async collectionGames(
     collectionID: number,
-    page = 1,
+    page = 1
   ): Promise<ICollectionGamesResult> {
     return await this.request("get", `/collection/${collectionID}/games`, {
       page,
@@ -283,7 +283,7 @@ export class AuthenticatedClient {
       {
         keepSnakeCase: true,
         transformers: { games: ensureArray },
-      },
+      }
     );
   }
 
@@ -295,7 +295,7 @@ export class AuthenticatedClient {
       {
         keepSnakeCase: true,
         transformers: { users: ensureArray },
-      },
+      }
     );
   }
 
@@ -304,7 +304,7 @@ export class AuthenticatedClient {
   async listUploads(
     downloadKey: IDownloadKey,
     gameID: number,
-    extras: IListUploadsExtras = {},
+    extras: IListUploadsExtras = {}
   ): Promise<IListUploadsResponse> {
     // TODO: adjust API to support download_key_id
     if (downloadKey) {
@@ -314,7 +314,7 @@ export class AuthenticatedClient {
         extras,
         {
           transformers: { uploads: ensureArray },
-        },
+        }
       );
     } else {
       return await this.request("get", `/game/${gameID}/uploads`, extras, {
@@ -327,23 +327,23 @@ export class AuthenticatedClient {
 
   async downloadUpload(
     downloadKey: IDownloadKey,
-    uploadID: number,
+    uploadID: number
   ): Promise<IDownloadUploadResult> {
     return await this.request(
       "get",
       `/upload/${uploadID}/download`,
-      sprinkleDownloadKey(downloadKey, {}),
+      sprinkleDownloadKey(downloadKey, {})
     );
   }
 
   downloadUploadURL(
     downloadKey: IDownloadKey,
     uploadID: number,
-    extras: IPasswordOrSecret = {},
+    extras: IPasswordOrSecret = {}
   ): string {
     return this.itchfsURL(
       `/upload/${uploadID}/download`,
-      sprinkleDownloadKey(downloadKey, extras),
+      sprinkleDownloadKey(downloadKey, extras)
     );
   }
 
@@ -354,7 +354,7 @@ export class AuthenticatedClient {
    */
   async listBuilds(
     downloadKey: IDownloadKey,
-    uploadID: number,
+    uploadID: number
   ): Promise<IListBuildsResponse> {
     return await this.request(
       "get",
@@ -362,7 +362,7 @@ export class AuthenticatedClient {
       sprinkleDownloadKey(downloadKey, {}),
       {
         transformers: { builds: ensureArray },
-      },
+      }
     );
   }
 
@@ -372,12 +372,12 @@ export class AuthenticatedClient {
   async build(
     downloadKey: IDownloadKey,
     uploadID: number,
-    buildID: number,
+    buildID: number
   ): Promise<IBuildResponse> {
     return await this.request(
       "get",
       `/upload/${uploadID}/builds/${buildID}`,
-      sprinkleDownloadKey(downloadKey, {}),
+      sprinkleDownloadKey(downloadKey, {})
     );
   }
 
@@ -387,12 +387,12 @@ export class AuthenticatedClient {
   async findUpgrade(
     downloadKey: IDownloadKey,
     uploadID: number,
-    currentBuildID: number,
+    currentBuildID: number
   ): Promise<IUpgradeResponse> {
     return await this.request(
       "get",
       `/upload/${uploadID}/upgrade/${currentBuildID}`,
-      sprinkleDownloadKey(downloadKey, { v: 2 }),
+      sprinkleDownloadKey(downloadKey, { v: 2 })
     );
   }
 
@@ -402,12 +402,12 @@ export class AuthenticatedClient {
   async downloadBuild(
     downloadKey: IDownloadKey,
     uploadID: number,
-    buildID: number,
+    buildID: number
   ): Promise<IDownloadBuildResult> {
     return await this.request(
       "get",
       `/upload/${uploadID}/download/builds/${buildID}`,
-      sprinkleDownloadKey(downloadKey, { v: 2 }),
+      sprinkleDownloadKey(downloadKey, { v: 2 })
     );
   }
 
@@ -419,7 +419,7 @@ export class AuthenticatedClient {
     uploadID: number,
     buildID: number,
     fileType: BuildFileType,
-    extras: IDownloadBuildFileExtras = {},
+    extras: IDownloadBuildFileExtras = {}
   ): string {
     const path = `/upload/${uploadID}/download/builds/${buildID}/${fileType}`;
 
@@ -452,7 +452,7 @@ export function ensureArray(v: any): any[] {
  */
 function sprinkleDownloadKey(
   downloadKey: IDownloadKey | null,
-  params: any,
+  params: any
 ): any {
   if (!downloadKey) {
     return params;

@@ -31,7 +31,7 @@ export default class CollectionFetcher extends Fetcher {
 
       const gameIds = fromJSONField<number[]>(
         localCollection && localCollection.gameIds,
-        ea,
+        ea
       );
 
       const localGames = db.games.all(k => k.where("id in ?", gameIds));

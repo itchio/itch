@@ -105,7 +105,7 @@ export default function(watcher: Watcher) {
       store.dispatch(actions.loginSucceeded({ key, me }));
     } catch (e) {
       store.dispatch(
-        actions.loginFailed({ username, errors: e.errors || e.stack || e }),
+        actions.loginFailed({ username, errors: e.errors || e.stack || e })
       );
     }
   });
@@ -128,7 +128,7 @@ export default function(watcher: Watcher) {
         store.dispatch(actions.loginSucceeded({ key, me }));
       } else {
         store.dispatch(
-          actions.loginFailed({ username, errors: e.errors || e.stack || e }),
+          actions.loginFailed({ username, errors: e.errors || e.stack || e })
         );
       }
     }
@@ -138,7 +138,7 @@ export default function(watcher: Watcher) {
     const rememberedSessions = action.payload;
     const mostRecentSession = sortBy(
       rememberedSessions,
-      x => -x.lastConnected,
+      x => -x.lastConnected
     )[0];
     if (mostRecentSession) {
       const { me, key } = mostRecentSession;

@@ -30,7 +30,7 @@ async function updateDownloadSpeed(store: IStore) {
   store.dispatch(
     actions.downloadSpeedDatapoint({
       bps,
-    }),
+    })
   );
 }
 

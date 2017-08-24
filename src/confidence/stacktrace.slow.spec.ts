@@ -68,7 +68,7 @@ async function checkStack(
   promise: Promise<any>,
   aLine: number,
   bLine: number,
-  cLine: number,
+  cLine: number
 ) {
   let threw = false;
   try {

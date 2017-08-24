@@ -8,7 +8,7 @@ interface IRecordMap<T> {
 
 export default function getByIds<T>(
   records: IRecordMap<T>,
-  ids: string[] | number[],
+  ids: string[] | number[]
 ): T[] {
   if (size(ids) === 0) {
     return emptyArr;

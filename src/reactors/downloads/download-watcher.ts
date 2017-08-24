@@ -97,7 +97,7 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
           return;
         }
         store.dispatch(actions.downloadProgress({ id: item.id, ...ev }));
-      }, 250),
+      }, 250)
     );
 
     logger.info("Starting download...");
@@ -123,7 +123,7 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
           item: freshItem,
           err,
           result,
-        }),
+        })
       );
     }
   }

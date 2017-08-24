@@ -19,7 +19,7 @@ export default async function notifyCrash(
   cave: ICave,
   game: IGame,
   e: ExtendedError,
-  logger: Logger,
+  logger: Logger
 ) {
   if (e instanceof Cancelled) {
     // well, don't notify that.
@@ -60,6 +60,6 @@ export default async function notifyCrash(
         },
         "cancel",
       ],
-    }),
+    })
   );
 }

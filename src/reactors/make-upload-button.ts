@@ -21,7 +21,7 @@ interface IMakeUploadButtonOpts {
 
 export default function makeUploadButton(
   upload: IUpload,
-  opts = { showSize: true } as IMakeUploadButtonOpts,
+  opts = { showSize: true } as IMakeUploadButtonOpts
 ): IUploadButton {
   let label = `${upload.displayName || upload.filename}`;
   let tags: IModalButtonTag[] = [];

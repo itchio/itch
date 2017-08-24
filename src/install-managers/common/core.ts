@@ -161,7 +161,7 @@ export async function coreUninstall(opts: IUninstallOpts) {
 
 async function prepare(
   opts: ICoreOpts,
-  prepOpts: IPrepareOpts,
+  prepOpts: IPrepareOpts
 ): Promise<IPrepareResult> {
   const { ctx, logger, runtime, archivePath } = opts;
   const { specifiedInstallerName, forceSniff } = prepOpts;
@@ -196,8 +196,8 @@ async function prepare(
 
   logger.info(
     `using ${source} installer '${installerName}' for ${path.basename(
-      archivePath,
-    )}`,
+      archivePath
+    )}`
   );
 
   const manager = managers[installerName];

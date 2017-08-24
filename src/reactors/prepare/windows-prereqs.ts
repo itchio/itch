@@ -75,7 +75,7 @@ import { fromJSONField } from "../../db/json-field";
 
 export default async function handleWindowsPrereqs(
   ctx: Context,
-  inOpts: IWindowsPrereqsOpts,
+  inOpts: IWindowsPrereqsOpts
 ) {
   const opts = {
     ...inOpts,
@@ -93,7 +93,7 @@ const WIN64_UE4_RE = "UE4PrereqSetup_x64.exe";
 async function handleUE4Prereq(
   ctx: Context,
   cave: ICave,
-  opts: IWindowsPrereqsOpts,
+  opts: IWindowsPrereqsOpts
 ) {
   // TODO: provide escape hatch for when they absolutely won't install
 
@@ -121,7 +121,7 @@ async function handleUE4Prereq(
 
     const prereqExe = find(
       verdict.candidates,
-      c => pattern == basename(c.path),
+      c => pattern == basename(c.path)
     );
     if (!prereqExe) {
       // no UE4 prereqs
@@ -188,12 +188,12 @@ async function handleUE4Prereq(
       });
     } else {
       logger.error(
-        `couldn't install UE4 prereq, exit code ${formatExitCode(code)}`,
+        `couldn't install UE4 prereq, exit code ${formatExitCode(code)}`
       );
     }
   } catch (e) {
     logger.error(
-      `error while launching UE4 prereq for ${cave.id}: ${e.stack || e}`,
+      `error while launching UE4 prereq for ${cave.id}: ${e.stack || e}`
     );
   } finally {
     if (openModalAction) {
@@ -242,7 +242,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
   }
 
   logger.info(
-    `Assessing prereqs ${prereqs.map(prereq => prereq.name).join(", ")}`,
+    `Assessing prereqs ${prereqs.map(prereq => prereq.name).join(", ")}`
   );
 
   let tasks = await bluebird.map(prereqs, async function(prereq) {
@@ -256,13 +256,13 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
 
   let [alreadyInstalledTasks, remainingTasks] = partition(
     tasks,
-    task => task.alreadyInstalled,
+    task => task.alreadyInstalled
   );
   if (!isEmpty(alreadyInstalledTasks)) {
     logger.info(
       `Already installed: ${alreadyInstalledTasks
         .map(task => task.prereq.name)
-        .join(", ")}`,
+        .join(", ")}`
     );
     const alreadyInstalledPrereqs = {} as {
       [key: string]: boolean;
@@ -280,7 +280,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
   logger.info(
     `Remaining tasks: ${remainingTasks
       .map(task => task.prereq.name)
-      .join(", ")}`,
+      .join(", ")}`
   );
 
   const workDir = tmp.dirSync();
@@ -363,7 +363,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
         };
         // FIXME: use sub-context for progress here
         await fetchDep(ctx, logger, task, workDir.name, onProgress, onStatus);
-      }),
+      })
     );
 
     const installPlan: IInstallPlan = {
@@ -439,7 +439,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
 
 function pendingPrereqs(
   opts: IWindowsPrereqsOpts,
-  prereqs: IManifestPrereq[],
+  prereqs: IManifestPrereq[]
 ): IManifestPrereq[] {
   const installedPrereqs = fromJSONField(opts.cave.installedPrereqs, {});
 
@@ -453,7 +453,7 @@ function pendingPrereqs(
 async function assessDep(
   ctx: Context,
   opts: IWindowsPrereqsOpts,
-  prereq: IManifestPrereq,
+  prereq: IManifestPrereq
 ): Promise<IPrereqTask> {
   const { logger } = opts;
   const infoUrl = `${getBaseURL(prereq)}/info.json`;
@@ -463,11 +463,11 @@ async function assessDep(
     "get",
     infoUrl,
     { t: Date.now() },
-    { format: "json" },
+    { format: "json" }
   );
   if (infoRes.statusCode !== 200) {
     throw new Error(
-      `Could not install prerequisite ${prereq.name}: server replied with HTTP ${infoRes.statusCode}`,
+      `Could not install prerequisite ${prereq.name}: server replied with HTTP ${infoRes.statusCode}`
     );
   }
 
@@ -517,7 +517,7 @@ async function fetchDep(
   task: IPrereqTask,
   baseWorkDir: string,
   onProgress: IProgressListener,
-  onStatus: ITaskProgressStatusListener,
+  onStatus: ITaskProgressStatusListener
 ) {
   const { prereq, info } = task;
 

@@ -57,7 +57,7 @@ async function createWindow(store: IStore, hidden: boolean) {
   }
 
   const iconPath = getImagePath(
-    "window/" + env.appName + "/" + iconName + ".png",
+    "window/" + env.appName + "/" + iconName + ".png"
   );
 
   let opts: Electron.BrowserWindowConstructorOptions = {
@@ -126,7 +126,7 @@ async function createWindow(store: IStore, hidden: boolean) {
       store.dispatch(
         actions.updatePreferences({
           gotMinimizeNotification: true,
-        }),
+        })
       );
 
       const i18n = store.getState().i18n;
@@ -134,7 +134,7 @@ async function createWindow(store: IStore, hidden: boolean) {
         actions.notify({
           title: t(i18n, ["notification.see_you_soon.title"]),
           body: t(i18n, ["notification.see_you_soon.message"]),
-        }),
+        })
       );
     }
 
@@ -270,7 +270,7 @@ async function createWindow(store: IStore, hidden: boolean) {
 function ensureWindowInsideDisplay(window: Electron.BrowserWindow) {
   const originalBounds = window.getBounds();
   logger.debug(
-    `Ensuring ${JSON.stringify(originalBounds)} is inside a display`,
+    `Ensuring ${JSON.stringify(originalBounds)} is inside a display`
   );
 
   const { screen } = require("electron");
@@ -312,7 +312,7 @@ function ensureWindowInsideDisplay(window: Electron.BrowserWindow) {
 
   if (env.name === "test") {
     logger.info(
-      `Main window is ${bounds.width}x${bounds.height}, at (${bounds.x}, ${bounds.y})`,
+      `Main window is ${bounds.width}x${bounds.height}, at (${bounds.x}, ${bounds.y})`
     );
   }
 }
@@ -402,7 +402,7 @@ const makeTitleSelector = (store: IStore) => {
   const getData = createSelector(
     getID,
     getTabData,
-    (id, tabData) => tabData[id],
+    (id, tabData) => tabData[id]
   );
 
   return createSelector(getID, getData, getI18n, (id, data, i18n) => {
@@ -429,7 +429,7 @@ export default function(watcher: Watcher) {
     screen.on("display-added", () => ensureMainWindowInsideDisplay(store));
     screen.on("display-removed", () => ensureMainWindowInsideDisplay(store));
     screen.on("display-metrics-changed", () =>
-      ensureMainWindowInsideDisplay(store),
+      ensureMainWindowInsideDisplay(store)
     );
   });
 

@@ -9,7 +9,7 @@ suite(__filename, s => {
       (obj: any) => obj.a,
       a => {
         count++;
-      },
+      }
     );
     t.same(count, 0);
     let obj = { a: 3 };
@@ -25,7 +25,7 @@ suite(__filename, s => {
       (obj: any) => obj,
       a => {
         count++;
-      },
+      }
     );
     t.same(count, 0);
     sel({});
@@ -40,7 +40,7 @@ suite(__filename, s => {
       (obj: any) => obj,
       a => {
         count++;
-      },
+      }
     );
     t.same(count, 0);
     let model = { a: 1, b: 2 };
@@ -59,7 +59,7 @@ suite(__filename, s => {
         (obj: any) => obj.session.credentials,
         a => {
           count++;
-        },
+        }
       );
       t.same(count, 0);
       let model = { i18n: {}, session: { credentials: {} }, somethingElse: 2 };
@@ -68,6 +68,6 @@ suite(__filename, s => {
       sel(model);
       model = { ...model, somethingElse: 9 };
       t.same(count, 1);
-    },
+    }
   );
 });

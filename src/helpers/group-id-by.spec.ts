@@ -23,7 +23,7 @@ suite(__filename, s => {
         11: [1],
         44: [4],
         77: [7, 77],
-      } as any,
+      } as any
     );
 
     t.same(
@@ -32,7 +32,7 @@ suite(__filename, s => {
         110: [1],
         440: [4],
         770: [7, 77],
-      } as any,
+      } as any
     );
 
     t.same(
@@ -42,7 +42,7 @@ suite(__filename, s => {
         4: [4],
         7: [7],
         77: [77],
-      } as any,
+      } as any
     );
 
     const itemMap = indexBy(items, "id");
@@ -53,7 +53,7 @@ suite(__filename, s => {
         11: [1],
         44: [4],
         77: [7, 77],
-      } as any,
+      } as any
     );
 
     t.same(
@@ -63,7 +63,7 @@ suite(__filename, s => {
         4: [4],
         7: [7],
         77: [77],
-      } as any,
+      } as any
     );
   });
 });

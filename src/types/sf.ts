@@ -40,12 +40,12 @@ export interface IAsyncFSVariants {
   writeFileAsync: (
     file: string,
     data: string | Buffer,
-    opts: IWriteFileOpts,
+    opts: IWriteFileOpts
   ) => Promise<void>;
   appendFileAsync: (
     file: string,
     data: string | Buffer,
-    opts: IWriteFileOpts,
+    opts: IWriteFileOpts
   ) => Promise<void>;
   renameAsync: (oldfile: string, newfile: string) => Promise<void>;
   chmodAsync: (file: string, mode: number) => Promise<void>;

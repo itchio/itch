@@ -13,7 +13,7 @@ import * as PropTypes from "prop-types";
 export default function(constructor: Function) {
   if (!constructor.prototype.subscribe) {
     throw new Error(
-      `Component ${constructor.name} is missing subscribe method (watching decorator)`,
+      `Component ${constructor.name} is missing subscribe method (watching decorator)`
     );
   }
 
@@ -32,7 +32,7 @@ export default function(constructor: Function) {
     if (!this.context.store) {
       throw new Error(
         `Can't set up watching because no ` +
-          `store in context. Did you forget to wrap your top-level component in <Provider/> ?`,
+          `store in context. Did you forget to wrap your top-level component in <Provider/> ?`
       );
     }
 
@@ -50,7 +50,7 @@ export default function(constructor: Function) {
     if (!this.context.store) {
       throw new Error(
         `Can't tear down watching because no ` +
-          `store in context. Did you forget to wrap your top-level component in <Provider/> ?`,
+          `store in context. Did you forget to wrap your top-level component in <Provider/> ?`
       );
     }
 

@@ -63,7 +63,7 @@ export default function(watcher: Watcher) {
           return spec;
         }),
         buttons: dialogButtons,
-      }),
+      })
     );
   });
 }

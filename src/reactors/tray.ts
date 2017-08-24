@@ -96,7 +96,7 @@ const makeTraySelector = (store: IStore) =>
       setImmediate(() => {
         refreshTray(store, i18n);
       });
-    },
+    }
   );
 
 let hasBooted = false;

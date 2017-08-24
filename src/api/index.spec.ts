@@ -66,7 +66,7 @@ suite(__filename, s => {
     testAPI(
       "loginKey",
       ["foobar"],
-      ["get", "/foobar/me", { source: "desktop" }],
+      ["get", "/foobar/me", { source: "desktop" }]
     );
 
     testAPI(
@@ -76,7 +76,7 @@ suite(__filename, s => {
         "post",
         "/login",
         { username: "foo", password: "bar", source: "desktop", v: 2 },
-      ],
+      ]
     );
   }
 
@@ -96,7 +96,7 @@ suite(__filename, s => {
     testAPI(
       "collectionGames",
       [1708],
-      ["get", "/collection/1708/games", { page: 1 }],
+      ["get", "/collection/1708/games", { page: 1 }]
     );
     testAPI("searchGames", ["baz"], ["get", "/search/games", { query: "baz" }]);
     testAPI("searchUsers", ["baz"], ["get", "/search/users", { query: "baz" }]);
@@ -104,13 +104,13 @@ suite(__filename, s => {
     testAPI(
       "downloadUpload",
       [{ id: "foobar" }, 99],
-      ["get", "/upload/99/download", { download_key_id: "foobar" }],
+      ["get", "/upload/99/download", { download_key_id: "foobar" }]
     );
     testAPI("listUploads", [null, 33], ["get", "/game/33/uploads"]);
     testAPI(
       "listUploads",
       [{ id: "foobar" }, 33],
-      ["get", "/download-key/foobar/uploads"],
+      ["get", "/download-key/foobar/uploads"]
     );
   }
 });

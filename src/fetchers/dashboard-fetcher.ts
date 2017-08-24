@@ -36,7 +36,7 @@ export default class DashboardFetcher extends Fetcher {
         k,
         squel.expr().and("games.id in ?", myGameIds),
         this.tabId,
-        store,
+        store
       );
 
     this.pushGames({
@@ -60,7 +60,7 @@ export default class DashboardFetcher extends Fetcher {
 
     const remoteGameIds = pluck(normalized.entities.games, "id");
     this.debug(
-      `Fetched ${Object.keys(normalized.entities.games).length} games from API`,
+      `Fetched ${Object.keys(normalized.entities.games).length} games from API`
     );
 
     db.saveMany({

@@ -85,7 +85,7 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
 }
 
 export async function uninstall(
-  opts: IUninstallOpts,
+  opts: IUninstallOpts
 ): Promise<IUninstallResult> {
   const { ctx, runtime, receiptIn } = opts;
   const logger = opts.logger.child({ name: "msi-uninstall" });

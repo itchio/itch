@@ -35,10 +35,10 @@ export default class CollectionsFetcher extends Fetcher {
 
     const localCollectionIds = fromJSONField<number[]>(
       profile.myCollectionIds,
-      [],
+      []
     );
     const localCollections = db.collections.all(k =>
-      k.where("id in ?", localCollectionIds),
+      k.where("id in ?", localCollectionIds)
     );
 
     let allGameIds: number[] = [];

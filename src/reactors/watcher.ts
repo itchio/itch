@@ -46,7 +46,7 @@ export class Watcher {
    */
   on<T>(
     actionCreator: (payload: T) => IAction<T>,
-    reactor: (store: IStore, action: IAction<T>) => Promise<void>,
+    reactor: (store: IStore, action: IAction<T>) => Promise<void>
   ) {
     // create a dummy action to get the type
     const type = actionCreator(({} as any) as T).type;
@@ -56,7 +56,7 @@ export class Watcher {
   onDebounced<T>(
     actionCreator: (payload: T) => IAction<T>,
     ms: number,
-    reactor: (store: IStore, action: IAction<T>) => Promise<void>,
+    reactor: (store: IStore, action: IAction<T>) => Promise<void>
   ) {
     // create a dummy action to get the type
     const type = actionCreator(({} as any) as T).type;

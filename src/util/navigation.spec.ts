@@ -8,15 +8,15 @@ suite(__filename, s => {
     t.same(navigation.transformUrl("itch.io"), "http://itch.io");
     t.same(
       navigation.transformUrl("http://localhost.com:8080/randomizer"),
-      "http://localhost.com:8080/randomizer",
+      "http://localhost.com:8080/randomizer"
     );
     t.same(
       navigation.transformUrl("kermit plushie"),
-      "https://duckduckgo.com/?q=kermit%20plushie&kae=d",
+      "https://duckduckgo.com/?q=kermit%20plushie&kae=d"
     );
     t.same(
       navigation.transformUrl("?kermit"),
-      "https://duckduckgo.com/?q=kermit&kae=d",
+      "https://duckduckgo.com/?q=kermit&kae=d"
     );
     t.same(navigation.transformUrl(""), "https://duckduckgo.com/?q=&kae=d");
   });

@@ -24,7 +24,7 @@ import lazyGetGame from "../lazy-get-game";
 export async function queueUninstall(
   ctx: Context,
   logger: Logger,
-  opts: IQueueCaveUninstallPayload,
+  opts: IQueueCaveUninstallPayload
 ) {
   const { caveId } = opts;
 
@@ -122,7 +122,7 @@ export default function(watcher: Watcher, db: DB) {
             "status.uninstall.busy",
             { title: game ? game.title : "<?>" },
           ],
-        }),
+        })
       );
       return;
     }

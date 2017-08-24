@@ -36,11 +36,11 @@ export async function queueFetch(
   store: IStore,
   db: DB,
   tab: string,
-  reason: FetchReason,
+  reason: FetchReason
 ) {
   if (fetching[tab]) {
     logger.debug(
-      `for ${tab}, queueing next fetch reason ${FetchReason[reason]}`,
+      `for ${tab}, queueing next fetch reason ${FetchReason[reason]}`
     );
     nextFetchReason[tab] = reason;
     return;

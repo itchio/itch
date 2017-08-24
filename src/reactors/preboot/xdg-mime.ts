@@ -24,7 +24,7 @@ export async function query(ctx: Context, opts: IXdgMimeOpts): Promise<number> {
 
 export async function setDefault(
   ctx: Context,
-  opts: IXdgMimeOpts,
+  opts: IXdgMimeOpts
 ): Promise<void> {
   const logger = opts.logger.child({ name: "xdg-mime" });
   logger.info("registering self as default handler for itchio:// protocol");
@@ -40,7 +40,7 @@ export async function setDefault(
 // lets us handle the itchio:// URL scheme on linux / freedesktop
 export async function registerIfNeeded(
   ctx: Context,
-  opts: IXdgMimeOpts,
+  opts: IXdgMimeOpts
 ): Promise<void> {
   if (platform() !== "linux") {
     return;

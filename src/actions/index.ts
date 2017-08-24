@@ -31,7 +31,7 @@ import {
 } from "../constants/action-types";
 
 export const fetchCollectionGames = createAction<IFetchCollectionGamesPayload>(
-  FETCH_COLLECTION_GAMES,
+  FETCH_COLLECTION_GAMES
 );
 export const collectionGamesFetched = createAction<
   ICollectionGamesFetchedPayload

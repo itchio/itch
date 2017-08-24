@@ -16,7 +16,7 @@ export default reducer<ISessionFoldersState>(initialState, on => {
     const libraryDir = ospath.join(
       app.getPath("userData"),
       "users",
-      "" + me.id,
+      "" + me.id
     );
     return { ...state, libraryDir };
   });

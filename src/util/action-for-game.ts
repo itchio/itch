@@ -11,7 +11,7 @@ import { ICaveSummary } from "../db/models/cave";
  */
 export default function actionForGame(
   game: IGame,
-  cave: ICaveSummary | null,
+  cave: ICaveSummary | null
 ): ClassificationAction {
   // FIXME: we're not using the cave at all here - we probably should.
   return classificationActions[game.classification] || "launch";

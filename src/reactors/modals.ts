@@ -53,7 +53,7 @@ export default function(watcher: Watcher) {
       actions.modalClosed({
         id: modal ? modal.id : id,
         action,
-      }),
+      })
     );
   });
 

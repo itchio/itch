@@ -86,7 +86,7 @@ export default function getGameStatus(rs: IAppState, game: IGame): IGameStatus {
   let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
   let downloadKeys = getByIds(
     commons.downloadKeys,
-    commons.downloadKeyIdsByGameId[game.id],
+    commons.downloadKeyIdsByGameId[game.id]
   );
 
   const cave = first(caves);

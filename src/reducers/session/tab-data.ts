@@ -20,7 +20,7 @@ let deepFields = ["users", "games", "collections", "web", "toast"];
 function merge(
   a: ITabData,
   b: ITabData,
-  { shallow }: { shallow: boolean },
+  { shallow }: { shallow: boolean }
 ): ITabData {
   if (shallow) {
     return { ...a, ...b };

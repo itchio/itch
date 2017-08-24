@@ -28,7 +28,7 @@ function err(e: Error, action: IAction<any>) {
     console.warn(`reactor for ${action.type} was cancelled`);
   } else {
     printError(
-      `while reacting to ${(action || { type: "?" }).type}: ${e.stack || e}`,
+      `while reacting to ${(action || { type: "?" }).type}: ${e.stack || e}`
     );
   }
 }
@@ -36,7 +36,7 @@ function err(e: Error, action: IAction<any>) {
 export default async function route(
   watcher: Watcher,
   store: IStore,
-  action: IAction<any>,
+  action: IAction<any>
 ) {
   setTimeout(() => {
     try {
@@ -71,7 +71,7 @@ export default async function route(
       }
     } catch (e) {
       const e2 = new Error(
-        `Could not route action, original stack:\n${e.stack}`,
+        `Could not route action, original stack:\n${e.stack}`
       );
       err(e2, action);
     }

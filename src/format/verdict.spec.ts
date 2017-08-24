@@ -37,7 +37,7 @@ suite(__filename, s => {
         "| 2.2 MiB C:\\Users\\prince\\AppData\\Roaming\\itch\\apps\\inno",
         "|-- 572 KiB WinVNC.exe windows-386 win(gui)",
         "|-- 372 KiB vncviewer.exe windows-386 win(gui)",
-      ].join("\n"),
+      ].join("\n")
     );
   });
 });

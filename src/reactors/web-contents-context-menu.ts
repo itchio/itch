@@ -71,7 +71,7 @@ export default function create(wc: Electron.WebContents, store: IStore) {
               actions.navigate({
                 tab: "url/" + props.linkURL,
                 background: true,
-              }),
+              })
             );
           },
         },

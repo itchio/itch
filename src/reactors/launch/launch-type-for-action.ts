@@ -8,7 +8,7 @@ export type LaunchType = "native" | "html" | "external" | "native" | "shell";
 export default async function launchTypeForAction(
   ctx: Context,
   appPath: string,
-  actionPath: string,
+  actionPath: string
 ): Promise<LaunchType> {
   if (/^https?:/i.test(actionPath)) {
     return "external";

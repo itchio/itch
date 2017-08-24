@@ -95,7 +95,7 @@ async function doLaunch(
   logger: Logger,
   cave: ICave,
   game: IGame,
-  runtime: IRuntime,
+  runtime: IRuntime
 ) {
   let env: IEnvironment = {};
   let args: string[] = [];
@@ -142,8 +142,7 @@ async function doLaunch(
         const client = api.withKey(gameCredentials.apiKey);
         const subkey = await client.subkey(game.id, manifestAction.scope);
         logger.info(
-          `Got subkey (${subkey.key
-            .length} chars, expires ${subkey.expiresAt})`,
+          `Got subkey (${subkey.key.length} chars, expires ${subkey.expiresAt})`
         );
         (env as any).ITCHIO_API_KEY = subkey.key;
         (env as any).ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt;
@@ -218,7 +217,7 @@ async function doLaunch(
       if (secondsRunning > 2) {
         // looks like the game actually launched fine!
         logger.warn(
-          `Game was running for ${secondsRunning} seconds, ignoring: ${e.toString()}`,
+          `Game was running for ${secondsRunning} seconds, ignoring: ${e.toString()}`
         );
         return;
       }

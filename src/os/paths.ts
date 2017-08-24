@@ -77,7 +77,7 @@ export function downloadPath(upload: IUpload, preferences: IPreferencesState) {
     return path.join(
       app.getPath("userData"),
       "downloads",
-      "" + slug + ext.toLowerCase(),
+      "" + slug + ext.toLowerCase()
     );
   } else {
     const location = installLocations[defaultInstallLocation];
@@ -122,7 +122,7 @@ export function caveLogPath(caveId: string): string {
   return path.join(
     app.getPath("userData"),
     "cave-logs",
-    "cave-" + caveId + ".txt",
+    "cave-" + caveId + ".txt"
   );
 }
 

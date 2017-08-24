@@ -25,7 +25,7 @@ const migrationsTable = "__itch_migrations";
 export async function runMigrations(
   q: Querier,
   migrations: IMigrations,
-  logger: Logger,
+  logger: Logger
 ) {
   ensureMigrationsTable(q);
   const pending = pendingMigrations(q, migrations);
@@ -64,7 +64,7 @@ function ensureMigrationsTable(q: Querier) {
 
 function pendingMigrations(q: Querier, migrations: IMigrations): string[] {
   const doneMigrations = q.allSql(
-    squel.select().from(migrationsTable).toParam(),
+    squel.select().from(migrationsTable).toParam()
   );
   const doneById = indexBy(doneMigrations, "id");
 
@@ -92,7 +92,7 @@ function markMigrated(q: Querier, id: string) {
         id,
         migratedAt: toDateTimeField(new Date()),
       })
-      .toParam(),
+      .toParam()
   );
 }
 
@@ -135,7 +135,7 @@ export function hasSchemaErrors(res: ICheckSchemaResult) {
  */
 export function checkSchema(
   q: Querier,
-  modelMap: IModelMap,
+  modelMap: IModelMap
 ): ICheckSchemaResult {
   const result: ICheckSchemaResult = {
     toCreate: [],
@@ -146,7 +146,7 @@ export function checkSchema(
     const model = modelMap[table];
     if (table !== model.table) {
       throw new Error(
-        `Internal inconsistency: modelMap key is ${table}, model table is ${model.table}`,
+        `Internal inconsistency: modelMap key is ${table}, model table is ${model.table}`
       );
     }
 
@@ -189,7 +189,7 @@ export function checkSchema(
     if (hadIncorrectColumns) {
       // we don't care about columns that disappeared
       const existingColumns = filter(pluck(dbColumns, "name"), columnName =>
-        model.columns.hasOwnProperty(columnName),
+        model.columns.hasOwnProperty(columnName)
       );
       result.toSync.push({ model, existingColumns });
     }
@@ -221,8 +221,8 @@ export function fixSchema(q: Querier, checkResult: ICheckSchemaResult) {
       conn
         .prepare(
           `insert into ${model.table} (${existingColumns.join(
-            ", ",
-          )}) select ${existingColumns.join(", ")} from ${tempName}`,
+            ", "
+          )}) select ${existingColumns.join(", ")} from ${tempName}`
         )
         .run();
 

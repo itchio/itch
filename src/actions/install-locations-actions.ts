@@ -26,7 +26,7 @@ export const addInstallLocationRequest = createAction<
   IAddInstallLocationRequestPayload
 >(ADD_INSTALL_LOCATION_REQUEST);
 export const addInstallLocation = createAction<IAddInstallLocationPayload>(
-  ADD_INSTALL_LOCATION,
+  ADD_INSTALL_LOCATION
 );
 export const removeInstallLocationRequest = createAction<
   IRemoveInstallLocationRequestPayload
@@ -38,8 +38,8 @@ export const makeInstallLocationDefault = createAction<
   IMakeInstallLocationDefaultPayload
 >(MAKE_INSTALL_LOCATION_DEFAULT);
 export const queryFreeSpace = createAction<IQueryFreeSpacePayload>(
-  QUERY_FREE_SPACE,
+  QUERY_FREE_SPACE
 );
 export const freeSpaceUpdated = createAction<IFreeSpaceUpdatedPayload>(
-  FREE_SPACE_UPDATED,
+  FREE_SPACE_UPDATED
 );

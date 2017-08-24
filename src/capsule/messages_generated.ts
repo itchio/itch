@@ -96,7 +96,7 @@ export namespace capsule.messages {
  */
     static addMessageType(
       builder: flatbuffers.Builder,
-      messageType: capsule.messages.Message,
+      messageType: capsule.messages.Message
     ) {
       builder.addFieldInt8(0, messageType, capsule.messages.Message.NONE);
     }
@@ -107,7 +107,7 @@ export namespace capsule.messages {
  */
     static addMessage(
       builder: flatbuffers.Builder,
-      messageOffset: flatbuffers.Offset,
+      messageOffset: flatbuffers.Offset
     ) {
       builder.addFieldOffset(1, messageOffset, 0);
     }
@@ -127,7 +127,7 @@ export namespace capsule.messages {
  */
     static finishPacketBuffer(
       builder: flatbuffers.Builder,
-      offset: flatbuffers.Offset,
+      offset: flatbuffers.Offset
     ) {
       builder.finish(offset);
     }
@@ -165,7 +165,7 @@ export namespace capsule.messages {
  */
     static getRootAsHotkeyPressed(
       bb: flatbuffers.ByteBuffer,
-      obj?: HotkeyPressed,
+      obj?: HotkeyPressed
     ): HotkeyPressed {
       return (obj || new HotkeyPressed())
         .__init(bb.readInt32(bb.position()) + bb.position(), bb);
@@ -220,7 +220,7 @@ export namespace capsule.messages {
  */
     static getRootAsCaptureStart(
       bb: flatbuffers.ByteBuffer,
-      obj?: CaptureStart,
+      obj?: CaptureStart
     ): CaptureStart {
       return (obj || new CaptureStart())
         .__init(bb.readInt32(bb.position()) + bb.position(), bb);
@@ -279,7 +279,7 @@ export namespace capsule.messages {
  */
     static addGpuColorConv(
       builder: flatbuffers.Builder,
-      gpuColorConv: boolean,
+      gpuColorConv: boolean
     ) {
       builder.addFieldInt8(2, +gpuColorConv, +false);
     }
@@ -326,7 +326,7 @@ export namespace capsule.messages {
  */
     static getRootAsCaptureStop(
       bb: flatbuffers.ByteBuffer,
-      obj?: CaptureStop,
+      obj?: CaptureStop
     ): CaptureStop {
       return (obj || new CaptureStop())
         .__init(bb.readInt32(bb.position()) + bb.position(), bb);
@@ -381,7 +381,7 @@ export namespace capsule.messages {
  */
     static getRootAsVideoSetup(
       bb: flatbuffers.ByteBuffer,
-      obj?: VideoSetup,
+      obj?: VideoSetup
     ): VideoSetup {
       return (obj || new VideoSetup())
         .__init(bb.readInt32(bb.position()) + bb.position(), bb);
@@ -500,7 +500,7 @@ export namespace capsule.messages {
  */
     static addPixFmt(
       builder: flatbuffers.Builder,
-      pixFmt: capsule.messages.PixFmt,
+      pixFmt: capsule.messages.PixFmt
     ) {
       builder.addFieldInt32(2, pixFmt, capsule.messages.PixFmt.UNKNOWN);
     }
@@ -519,7 +519,7 @@ export namespace capsule.messages {
  */
     static addOffset(
       builder: flatbuffers.Builder,
-      offsetOffset: flatbuffers.Offset,
+      offsetOffset: flatbuffers.Offset
     ) {
       builder.addFieldOffset(4, offsetOffset, 0);
     }
@@ -531,7 +531,7 @@ export namespace capsule.messages {
  */
     static createOffsetVector(
       builder: flatbuffers.Builder,
-      data: flatbuffers.Long[],
+      data: flatbuffers.Long[]
     ): flatbuffers.Offset {
       if (!data) {
         return null;
@@ -557,7 +557,7 @@ export namespace capsule.messages {
  */
     static addLinesize(
       builder: flatbuffers.Builder,
-      linesizeOffset: flatbuffers.Offset,
+      linesizeOffset: flatbuffers.Offset
     ) {
       builder.addFieldOffset(5, linesizeOffset, 0);
     }
@@ -569,7 +569,7 @@ export namespace capsule.messages {
  */
     static createLinesizeVector(
       builder: flatbuffers.Builder,
-      data: flatbuffers.Long[],
+      data: flatbuffers.Long[]
     ): flatbuffers.Offset {
       if (!data) {
         return null;
@@ -595,7 +595,7 @@ export namespace capsule.messages {
  */
     static addShmem(
       builder: flatbuffers.Builder,
-      shmemOffset: flatbuffers.Offset,
+      shmemOffset: flatbuffers.Offset
     ) {
       builder.addFieldOffset(6, shmemOffset, 0);
     }
@@ -681,7 +681,7 @@ export namespace capsule.messages {
  */
     static addPath(
       builder: flatbuffers.Builder,
-      pathOffset: flatbuffers.Offset,
+      pathOffset: flatbuffers.Offset
     ) {
       builder.addFieldOffset(0, pathOffset, 0);
     }
@@ -736,7 +736,7 @@ export namespace capsule.messages {
  */
     static getRootAsVideoFrameCommitted(
       bb: flatbuffers.ByteBuffer,
-      obj?: VideoFrameCommitted,
+      obj?: VideoFrameCommitted
     ): VideoFrameCommitted {
       return (obj || new VideoFrameCommitted())
         .__init(bb.readInt32(bb.position()) + bb.position(), bb);
@@ -773,7 +773,7 @@ export namespace capsule.messages {
  */
     static addTimestamp(
       builder: flatbuffers.Builder,
-      timestamp: flatbuffers.Long,
+      timestamp: flatbuffers.Long
     ) {
       builder.addFieldInt64(0, timestamp, builder.createLong(0, 0));
     }
@@ -791,7 +791,7 @@ export namespace capsule.messages {
  * @returns {flatbuffers.Offset}
  */
     static endVideoFrameCommitted(
-      builder: flatbuffers.Builder,
+      builder: flatbuffers.Builder
     ): flatbuffers.Offset {
       var offset = builder.endObject();
       return offset;
@@ -830,7 +830,7 @@ export namespace capsule.messages {
  */
     static getRootAsVideoFrameProcessed(
       bb: flatbuffers.ByteBuffer,
-      obj?: VideoFrameProcessed,
+      obj?: VideoFrameProcessed
     ): VideoFrameProcessed {
       return (obj || new VideoFrameProcessed())
         .__init(bb.readInt32(bb.position()) + bb.position(), bb);
@@ -864,7 +864,7 @@ export namespace capsule.messages {
  * @returns {flatbuffers.Offset}
  */
     static endVideoFrameProcessed(
-      builder: flatbuffers.Builder,
+      builder: flatbuffers.Builder
     ): flatbuffers.Offset {
       var offset = builder.endObject();
       return offset;

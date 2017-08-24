@@ -51,7 +51,7 @@ export default class LibraryFetcher extends Fetcher {
         k,
         squel.expr().and("games.id in ?", libraryGameIds),
         this.tabId,
-        store,
+        store
       );
 
     this.pushGames({

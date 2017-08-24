@@ -12,7 +12,7 @@ suite(__filename, s => {
     t.same(
       Object.keys(w.store.getState().downloads.items).length,
       0,
-      "starts off with no downloads",
+      "starts off with no downloads"
     );
 
     await t.rejects(w.dispatch(actions.queueDownload({} as null)));
@@ -33,19 +33,19 @@ suite(__filename, s => {
     t.same(
       Object.keys(w.store.getState().downloads.items).length,
       1,
-      "queues downloads",
+      "queues downloads"
     );
 
     await w.dispatch(queueAction);
     t.same(
       Object.keys(w.store.getState().downloads.items).length,
       1,
-      "doesn't queue download more than once",
+      "doesn't queue download more than once"
     );
     t.same(
       w.store.getState().session.navigation.tab,
       "downloads",
-      "..but switches to downloads tab",
+      "..but switches to downloads tab"
     );
   });
 });

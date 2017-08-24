@@ -71,7 +71,7 @@ function autoUpdateDone() {
         store.dispatch(
           actions.processUrlArguments({
             args: argv,
-          }),
+          })
         );
         store.dispatch(actions.focusWindow({}));
       });
@@ -89,7 +89,7 @@ function autoUpdateDone() {
     store.dispatch(
       actions.processUrlArguments({
         args: process.argv,
-      }),
+      })
     );
 
     globalShortcut.register("Control+Alt+Backspace", function() {

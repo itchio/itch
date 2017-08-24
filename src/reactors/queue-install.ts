@@ -26,7 +26,7 @@ function defaultInstallLocation(store: IStore) {
 export async function queueInstall(
   ctx: Context,
   parentLogger: Logger,
-  opts: IQueueInstallOpts,
+  opts: IQueueInstallOpts
 ) {
   const logger = parentLogger.child({ name: "queue-install" });
 
@@ -86,17 +86,14 @@ export async function queueInstall(
 
     if (!freshInstall) {
       logger.info(
-        `← old version: ${versionName(
-          caveIn.buildId,
-          caveIn.buildUserVersion,
-        )}`,
+        `← old version: ${versionName(caveIn.buildId, caveIn.buildUserVersion)}`
       );
     }
     logger.info(
       `→ new version: ${versionName(
         upload.buildId,
-        upload.build && upload.build.userVersion,
-      )}`,
+        upload.build && upload.build.userVersion
+      )}`
     );
 
     const prefs = ctx.store.getState().preferences;
@@ -122,7 +119,7 @@ export async function queueInstall(
           incremental: false,
           reason: "install",
           upgradePath: null,
-        }),
+        })
       );
       return;
     }
@@ -152,7 +149,7 @@ export async function queueInstall(
     if (e instanceof Cancelled) {
       logger.error(`Cancelled ${reason} for ${game.title}: ${e.message}`);
       ctx.store.dispatch(
-        actions.statusMessage({ message: ["status.cancelled.message"] }),
+        actions.statusMessage({ message: ["status.cancelled.message"] })
       );
     } else {
       logger.error(`when doing ${reason} for ${game.title}:\n ${e.stack}`);

@@ -27,7 +27,7 @@ export default function(watcher: Watcher) {
           store.dispatch(
             actions.statusMessage({
               message: "Incremental update failed, see console for details",
-            }),
+            })
           );
           return;
         }
@@ -62,7 +62,7 @@ export default function(watcher: Watcher) {
           installLocation: item.installLocation,
           reason: installReason,
           upload: item.upload,
-        }),
+        })
       );
     }
 
@@ -111,7 +111,7 @@ function showReadyNotification(store: IStore, item: IDownloadItem) {
       actions.notify({
         body: message,
         onClick: actions.navigateToGame({ game: item.game }),
-      }),
+      })
     );
   }
 }

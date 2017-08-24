@@ -15,7 +15,7 @@ import Context from "../../context";
 
 export default async function performDownload(
   ctx: Context,
-  item: IDownloadItem,
+  item: IDownloadItem
 ): Promise<IDownloadResult> {
   // TODO: we want to store download/install logs even if the cave never ends
   // up being valid, for bug reporting purposes.
@@ -54,13 +54,13 @@ export default async function performDownload(
       credentials.downloadKey,
       upload.id,
       buildId,
-      "archive",
+      "archive"
     );
     const signatureURL = api.downloadBuildURL(
       credentials.downloadKey,
       upload.id,
       buildId,
-      "signature",
+      "signature"
     );
 
     const cave = ctx.db.caves.findOneById(caveId);

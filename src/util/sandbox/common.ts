@@ -7,7 +7,7 @@ import { INeed, ICaretakerSet } from "./types";
 export async function tendToNeeds(
   ctx: Context,
   needs: INeed[],
-  caretakers: ICaretakerSet,
+  caretakers: ICaretakerSet
 ) {
   const errors: Error[] = [];
 
@@ -16,14 +16,14 @@ export async function tendToNeeds(
     const caretaker = caretakers[need.type];
     if (!caretaker) {
       errors.push(
-        new Error(`don't know how to fulfill need ${JSON.stringify(need)}`),
+        new Error(`don't know how to fulfill need ${JSON.stringify(need)}`)
       );
     } else {
       try {
         await Promise.resolve(caretaker(ctx, need));
       } catch (e) {
         logger.info(
-          `While tending to need ${JSON.stringify(need)}: ${e.stack || e}`,
+          `While tending to need ${JSON.stringify(need)}: ${e.stack || e}`
         );
         errors.push(e);
       }

@@ -28,7 +28,7 @@ import {
 export const preboot = createAction<IPrebootPayload>(PREBOOT);
 export const boot = createAction<IBootPayload>(BOOT);
 export const firstUsefulPage = createAction<IFirstUsefulPagePayload>(
-  FIRST_USEFUL_PAGE,
+  FIRST_USEFUL_PAGE
 );
 
 export const setupStatus = createAction<ISetupStatusPayload>(SETUP_STATUS);
@@ -39,8 +39,8 @@ export const prepareQuit = createAction<IPrepareQuitPayload>(PREPARE_QUIT);
 export const quitWhenMain = createAction<IQuitWhenMainPayload>(QUIT_WHEN_MAIN);
 export const quit = createAction<IQuitPayload>(QUIT);
 export const quitElectronApp = createAction<IQuitElectronAppPayload>(
-  QUIT_ELECTRON_APP,
+  QUIT_ELECTRON_APP
 );
 export const quitAndInstall = createAction<IQuitAndInstallPayload>(
-  QUIT_AND_INSTALL,
+  QUIT_AND_INSTALL
 );

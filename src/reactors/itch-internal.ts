@@ -19,7 +19,7 @@ export default function(watcher: Watcher) {
 
     const session = electron.session.fromPartition(
       partitionForUser(String(userId)),
-      { cache: true },
+      { cache: true }
     );
 
     // requests to 'itch-internal' are used to communicate between web content & the app
@@ -64,7 +64,7 @@ export default function(watcher: Watcher) {
         default:
           logger.warn(
             `Got unrecognized message via itch-internal: ${pathname}, params`,
-            params,
+            params
           );
           break;
       }
