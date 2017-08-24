@@ -348,5 +348,6 @@
     "prereq.status.ready": "Pronto para instalar",
     "prereq.status.done": "Concluído!",
     "notification.download_installed": "{{title}} foi instalado!",
-    "notification.download_updated": "{{title}} foi atualizado!"
+    "notification.download_updated": "{{title}} foi atualizado!",
+    "grid.filters.options.compatible": "Compatível"
 }
