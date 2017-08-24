@@ -444,5 +444,8 @@
     "prompt.action.continue": "Продолжить",
     "grid.item.status.installed": "Установлено",
     "collection.summary": "Коллекция из {{itemCount}} приложений",
-    "grid.item.not_compatible": "Недоступно на этой платформе"
+    "grid.item.not_compatible": "Недоступно на этой платформе",
+    "prompt.blessing.message": "Для {{operation}} {{title}} необходимы привилегии администратора",
+    "prompt.blessing.detail": "Продолжайте, только если вы доверяете автору.",
+    "status.cancelled.message": "Операция была отменена."
 }
