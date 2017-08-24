@@ -16,9 +16,8 @@ export default async function getBlessing(
 
   const response = await promisedModal(store, {
     title: "",
-    // FIXME: i18n
-    message: `Administrator privileges are required to ${operation} ${title}.`,
-    detail: "Only accept if you trust this content.",
+    message: ["prompt.blessing.message", { operation, title }],
+    detail: ["prompt.blessing.detail"],
     buttons: [
       {
         label: ["prompt.action.continue"],

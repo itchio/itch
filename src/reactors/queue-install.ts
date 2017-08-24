@@ -151,6 +151,9 @@ export async function queueInstall(
   } catch (e) {
     if (e instanceof Cancelled) {
       logger.error(`Cancelled ${reason} for ${game.title}: ${e.message}`);
+      ctx.store.dispatch(
+        actions.statusMessage({ message: ["status.cancelled.message"] }),
+      );
     } else {
       logger.error(`when doing ${reason} for ${game.title}:\n ${e.stack}`);
     }

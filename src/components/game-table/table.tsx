@@ -11,7 +11,7 @@ import { IGame } from "../../db/models/game";
 import { first } from "underscore";
 
 import getByIds from "../../helpers/get-by-ids";
-import { IGameSet, ICommonsState } from "../../types";
+import { IGameSet, ICommonsState, ILocalizedString } from "../../types";
 import { IOnSortChange, SortDirection, SortKey } from "../sort-types";
 
 import Row from "./row";
@@ -19,6 +19,7 @@ import doesEventMeanBackground from "../when-click-navigates";
 import { TableContainerDiv, TableDiv } from "./table-styles";
 
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
+import format from "../format";
 
 const rowHeight = 70;
 const rightMargin = 10;
@@ -115,15 +116,27 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <div className="table--header">
         <div className="row--cover row--header" />
-        {this.renderHeader("Name", "row--title", "title")}
-        {this.renderHeader("Play time", "row--playtime", "secondsRun")}
-        {this.renderHeader("Last played", "row--last-played", "lastTouchedAt")}
-        {this.renderHeader("Published", "row--published", "publishedAt")}
+        {this.renderHeader(["table.column.name"], "row--title", "title")}
+        {this.renderHeader(
+          ["table.column.play_time"],
+          "row--playtime",
+          "secondsRun",
+        )}
+        {this.renderHeader(
+          ["table.column.last_played"],
+          "row--last-played",
+          "lastTouchedAt",
+        )}
+        {this.renderHeader(
+          ["table.column.published"],
+          "row--published",
+          "publishedAt",
+        )}
       </div>
     );
   }
 
-  renderHeader(label: string, className: string, prop: string) {
+  renderHeader(label: ILocalizedString, className: string, prop: string) {
     const { sortBy, sortDirection } = this.props;
 
     return (
@@ -140,7 +153,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
           });
         }}
       >
-        {label}
+        {format(label)}
         {sortBy === prop
           ? <span>
               <span className="header--spacer" />
