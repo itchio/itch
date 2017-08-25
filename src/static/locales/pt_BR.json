@@ -355,5 +355,6 @@
     "sidebar.loading": "Carregando...",
     "sidebar.close_all_tabs": "Fechar todas as abas",
     "status.reverting": "Revertendo para {{buildId}}...",
-    "setup.tooltip.location": "Clique para mudar o local de instalação"
+    "setup.tooltip.location": "Clique para mudar o local de instalação",
+    "sandbox.setup.proceed": "Prosseguir"
 }
