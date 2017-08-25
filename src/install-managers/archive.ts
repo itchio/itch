@@ -27,12 +27,6 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
   const endTime = Date.now();
   logger.info(`extracted in ${elapsed(startTime, endTime)}`);
 
-  logger.debug(`a debug message`);
-  logger.warn(`this one's a warning`);
-  logger.error(`ooh, an error, starting to get serious`);
-  logger.fatal(`this is a fatal error, we don't use them really`);
-  throw new Error("This is a test error to show off the dialog");
-
   return {
     files: newFiles,
   };
