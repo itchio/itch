@@ -43,7 +43,6 @@
     "@types/react-json-tree": "^0.6.2",
     "@types/react-redux": "^4.4.32",
     "@types/react-select": "^1.0.40",
-    "@types/react-virtualized": "^9.7.0",
     "@types/redux-devtools": "^3.0.34",
     "@types/redux-devtools-dock-monitor": "^1.1.29",
     "@types/redux-devtools-log-monitor": "^1.0.29",
