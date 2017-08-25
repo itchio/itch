@@ -365,15 +365,9 @@ app.on("ready", async () => {
   );
 
   if (watching) {
-    const chokidar = require("chokidar");
-    const watcher = chokidar.watch(".", {
-      ignored: /[\/\\]\.|node_modules|coverage|tmp|\.git/,
-      persistent: true,
-      ignoreInitial: true,
-    });
-    watcher.on("change", report);
-    watcher.on("add", report);
-    watcher.on("unlink", report);
+    const { Gaze } = require("gaze");
+    const watcher = new Gaze("./src/**/*");
+    watcher.on("all", report);
     report();
   } else {
     report();
