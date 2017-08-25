@@ -166,7 +166,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "prettier --no-verify --trailing-comma es5 --write",
+      "prettier --trailing-comma es5 --write",
       "git add"
     ]
   }
