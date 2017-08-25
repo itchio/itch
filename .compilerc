@@ -1,24 +1,69 @@
 {
-  "application/javascript": {
-    "passthrough": true
-  },
-  "text/typescript": {
-    "target": "es2017",
-    "lib": ["dom", "es6"],
-    "module": "commonjs",
-    "experimentalDecorators": true,
-    "noUnusedLocals": true,
-    "inlineSourceMap": true,
-    "inlineSources": true,
-    "jsx": "react",
-    "allowJs": true,
-    "skipLibCheck": true,
-    "coverage": {
-      "exclude": ["**/*.spec.ts"]
+  "env": {
+    "development": {
+      "application/javascript": {
+        "passthrough": true
+      },
+      "text/typescript": {
+        "target": "es2017",
+        "lib": ["dom", "es6"],
+        "module": "commonjs",
+        "noUnusedLocals": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "jsx": "react",
+        "allowJs": true,
+        "skipLibCheck": true,
+        "coverage": {
+          "exclude": ["**/*.spec.ts"]
+        },
+        "babel": {
+          "presets": ["async-to-bluebird"],
+          "plugins": ["transform-es2015-modules-commonjs", "transform-require-on-use"]
+        }
+      }
     },
-    "babel": {
-      "presets": ["async-to-bluebird"],
-      "plugins": ["transform-es2015-modules-commonjs", "transform-require-on-use"]
+    "test": {
+      "application/javascript": {
+        "passthrough": true
+      },
+      "text/typescript": {
+        "target": "es2017",
+        "lib": ["dom", "es6"],
+        "module": "commonjs",
+        "noUnusedLocals": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "jsx": "react",
+        "allowJs": true,
+        "skipLibCheck": true,
+        "coverage": {
+          "exclude": ["**/*.spec.ts"]
+        },
+        "babel": {
+          "presets": ["async-to-bluebird"],
+          "plugins": ["transform-es2015-modules-commonjs", "transform-require-on-use"]
+        }
+      }
+    },
+    "production": {
+      "application/javascript": {
+        "passthrough": true
+      },
+      "text/typescript": {
+        "target": "es2017",
+        "lib": ["dom", "es6"],
+        "module": "commonjs",
+        "noUnusedLocals": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "jsx": "react",
+        "allowJs": true,
+        "skipLibCheck": true,
+        "babel": {
+          "plugins": ["transform-es2015-modules-commonjs", "transform-require-on-use"]
+        }
+      }
     }
   }
 }

@@ -62,36 +62,36 @@ export default async function asTask(opts: IAsTaskOpts) {
 
   const { work, onError } = opts;
 
-  work(ctx, logger)
-    .catch(e => {
-      err = e;
+  try {
+    await work(ctx, logger);
+  } catch (e) {
+    err = e;
+  }
+
+  delete currentTasks[id];
+  try {
+    logger.close();
+  } catch (e) {
+    rootLogger.warn(`Couldn't close logger: ${e.stack}`);
+  }
+
+  if (err) {
+    if (err instanceof Cancelled) {
+      rootLogger.warn(`Task ${name} cancelled`);
+    } else {
+      rootLogger.warn(`Task ${name} threw: ${err.stack}`);
+      if (onError) {
+        onError(err, memlog ? memlog.toString() : "(No log)");
+      }
+    }
+  }
+
+  store.dispatch(
+    actions.taskEnded({
+      id,
+      err: err ? `${err}` : null,
     })
-    .then(() => {
-      delete currentTasks[id];
-      try {
-        logger.close();
-      } catch (e) {
-        rootLogger.warn(`Couldn't close logger: ${e.stack}`);
-      }
-
-      if (err) {
-        if (err instanceof Cancelled) {
-          rootLogger.warn(`Task ${name} cancelled`);
-        } else {
-          rootLogger.warn(`Task ${name} threw: ${err.stack}`);
-          if (onError) {
-            onError(err, memlog ? memlog.toString() : "(No log)");
-          }
-        }
-      }
-
-      store.dispatch(
-        actions.taskEnded({
-          id,
-          err: err ? `${err}` : null,
-        })
-      );
-    });
+  );
 }
 
 export const getCurrentTasks = () => currentTasks;

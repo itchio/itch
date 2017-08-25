@@ -95,7 +95,7 @@ function updateCommonsNow(store: IStore, db: DB) {
   );
 }
 
-const updateCommons = debounce(updateCommonsNow, 500);
+const updateCommons = debounce(updateCommonsNow, 500, true);
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.preboot, async (store, action) => {
