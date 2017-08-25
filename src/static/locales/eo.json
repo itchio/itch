@@ -436,5 +436,9 @@
     "prompt.action.continue": "Daŭrigi",
     "grid.item.status.installed": "Instalita",
     "collection.summary": "Kolekto da {{itemCount}} aĵoj",
-    "grid.item.not_compatible": "Nedisponebla por ĉi tiu sistemo"
+    "grid.item.not_compatible": "Nedisponebla por ĉi tiu sistemo",
+    "prompt.blessing.message": "Por {{operation}} „{{title}}“ oni devas esti administratoro",
+    "prompt.blessing.detail": "Daŭrigu nur se vi fidas la kreanton.",
+    "prompt.install_error.message": "La instalado malsukcesis.",
+    "status.cancelled.message": "La ago estis haltita."
 }
