@@ -129,7 +129,6 @@
     "babel-plugin-transform-require-on-use": "^2.1.0",
     "benchmark": "^2.1.4",
     "codecov": "^2.2.0",
-    "core-js": "^2.4.1",
     "cross-env": "^5.0.0",
     "debounce-collect": "^1.0.2",
     "electron": "^1.7.5",
