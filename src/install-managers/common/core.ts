@@ -148,13 +148,7 @@ export async function coreInstall(opts: IInstallOpts): Promise<void> {
   logger.info(`Committing game & cave to db`);
   ctx.db.saveOne("games", String(game.id), game);
   ctx.db.saveOne("caves", cave.id, cave);
-
-  // logger.debug(`Waiting a bit for commons to pick up...`);
-  // await bluebird.delay(1000);
-  // logger.debug(`Done waiting!`);
 }
-
-import * as bluebird from "bluebird";
 
 export async function coreUninstall(opts: IUninstallOpts) {
   const logger = opts.logger.child({ name: "uninstall" });
