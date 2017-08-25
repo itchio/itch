@@ -13,10 +13,6 @@ if (env.name !== "production") {
     longStackTraces: true,
     warnings: true,
   });
-
-  require("source-map-support").install({
-    hookRequire: true,
-  });
 }
 
 import * as os from "./os";
