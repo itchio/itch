@@ -1,15 +1,14 @@
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 import Context from "../../context";
-import { Logger } from "../../logger";
-import { IQueueCaveUninstallPayload } from "../../constants/action-types";
+import rootLogger, { Logger } from "../../logger";
 import { currentRuntime } from "../../os/runtime";
 
 import * as paths from "../../os/paths";
 
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
-import { IUpload, Cancelled } from "../../types";
+import { IUpload } from "../../types";
 
 import { coreUninstall } from "../../install-managers/common/core";
 
@@ -20,85 +19,37 @@ import { promisedModal } from "../modals";
 
 import asTask from "./as-task";
 import lazyGetGame from "../lazy-get-game";
+import { ICave } from "../../db/models/cave";
 
 export async function queueUninstall(
   ctx: Context,
   logger: Logger,
-  opts: IQueueCaveUninstallPayload
+  {
+    cave,
+    destPath,
+    archivePath,
+    upload,
+  }: { cave: ICave; destPath: string; archivePath: string; upload: IUpload }
 ) {
-  const { caveId } = opts;
-
-  const cave = ctx.db.caves.findOneById(caveId);
-  if (!cave) {
-    throw new Error("Couldn't find cave to operate on");
-  }
-
-  let doCleanup = false;
   const runtime = currentRuntime();
-  const upload = fromJSONField<IUpload>(cave.upload);
 
-  const prefs = ctx.store.getState().preferences;
-  const destPath = paths.appPath(cave, prefs);
-  const archivePath = paths.downloadPath(upload, prefs);
-
-  try {
-    const game = await lazyGetGame(ctx, cave.gameId);
-    if (!game) {
-      throw new Error("Couldn't find game to operate on");
-    }
-
-    await coreUninstall({
-      ctx,
-      runtime,
-      logger,
-      destPath,
-      archivePath,
-      game,
-      cave,
-      upload,
-    });
-
-    logger.info(`Uninstall successful`);
-    doCleanup = true;
-  } catch (e) {
-    if (e instanceof Cancelled) {
-      logger.info(`Uninstall cancelled`);
-      return;
-    }
-
-    logger.error(`Uninstall failed: ${e.stack}`);
-
-    const response = await promisedModal(ctx.store, {
-      title: ["prompt.uninstall_error.title"],
-      message: ["prompt.uninstall_error.message"],
-      buttons: [
-        {
-          label: ["prompt.action.ok"],
-          action: actions.modalResponse({}),
-        },
-        "cancel",
-      ],
-    });
-
-    if (response.type !== MODAL_RESPONSE) {
-      // modal was closed
-      return;
-    }
-
-    logger.info(`User asked for listing to be removed anyway`);
-    doCleanup = true;
+  const game = await lazyGetGame(ctx, cave.gameId);
+  if (!game) {
+    throw new Error("Couldn't find game to operate on");
   }
 
-  if (doCleanup) {
-    logger.info(`Imploding cave...`);
-    ctx.db.deleteEntity("caves", caveId);
+  await coreUninstall({
+    ctx,
+    runtime,
+    logger,
+    destPath,
+    archivePath,
+    game,
+    cave,
+    upload,
+  });
 
-    logger.info(`Wiping archive...`);
-    await butler.wipe(archivePath, { ctx, logger });
-
-    logger.info(`Wiping install folder...`);
-    await butler.wipe(destPath, { ctx, logger });
-  }
+  logger.info(`Uninstall successful`);
 }
 
 export default function(watcher: Watcher, db: DB) {
@@ -127,15 +78,66 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
+    const prefs = store.getState().preferences;
+    const upload = fromJSONField<IUpload>(cave.upload);
+    const destPath = paths.appPath(cave, prefs);
+    const archivePath = paths.downloadPath(upload, prefs);
+
+    let doCleanup = false;
+
     await asTask({
       name: "uninstall",
       gameId: game.id,
-      caveId,
       db,
       store,
-      work: (ctx, logger) => queueUninstall(ctx, logger, action.payload),
+      work: async (ctx, logger) => {
+        await queueUninstall(ctx, logger, {
+          cave,
+          destPath,
+          archivePath,
+          upload,
+        });
+        store.dispatch(actions.clearGameDownloads({ gameId: cave.gameId }));
+        doCleanup = true;
+      },
+      onError: async (err, log) => {
+        const response = await promisedModal(store, {
+          title: ["prompt.uninstall_error.title"],
+          message: ["prompt.uninstall_error.message"],
+          widget: "show-error",
+          widgetParams: {
+            errorStack: err.stack,
+            log,
+          },
+          buttons: [
+            {
+              label: ["prompt.action.ok"],
+              action: actions.modalResponse({}),
+            },
+            "cancel",
+          ],
+        });
+
+        if (response.type !== MODAL_RESPONSE) {
+          // modal was closed
+          return;
+        }
+        doCleanup = true;
+      },
     });
 
-    store.dispatch(actions.clearGameDownloads({ gameId: cave.gameId }));
+    if (doCleanup) {
+      const logger = rootLogger;
+      const ctx = new Context(store, db);
+
+      logger.info(`Imploding cave...`);
+      db.deleteEntity("caves", cave.id);
+
+      logger.info(`Wiping archive...`);
+      await butler.wipe(archivePath, { ctx, logger });
+
+      logger.info(`Wiping install folder...`);
+      await butler.wipe(destPath, { ctx, logger });
+    }
   });
 }

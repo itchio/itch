@@ -37,7 +37,7 @@ import {
 
 const DUMP_API_CALLS = process.env.LET_ME_IN === "1";
 import { makeLogger, devNull } from "../logger";
-const logger = DUMP_API_CALLS ? makeLogger() : devNull;
+const logger = DUMP_API_CALLS ? makeLogger({}) : devNull;
 
 type HTTPMethod = "get" | "head" | "post";
 

@@ -1,22 +1,25 @@
 import uuid from "../../util/uuid";
 import { throttle } from "underscore";
+import * as memory from "memory-streams";
 
 import { IStore, IProgressInfo, Cancelled } from "../../types";
 import { DB } from "../../db";
 import Context from "../../context";
 import * as actions from "../../actions";
 
-import { caveLogger } from "../../os/paths";
-import rootLogger, { Logger } from "../../logger";
+import rootLogger, { Logger, makeLogger } from "../../logger";
 
 interface IAsTaskOpts {
   store: IStore;
   db: DB;
   name: TaskName;
   gameId: number;
-  // non-optional on purpose, think before passing null here
-  caveId: string;
+
+  /** Where the task actually performs its duty */
   work: (ctx: Context, logger: Logger) => Promise<void>;
+
+  /** Called with the thrown error & the logs so far if set */
+  onError?: (error: Error, log: string) => Promise<void>;
 }
 
 interface ITaskMap {
@@ -30,18 +33,10 @@ type TaskName = "install" | "launch" | "uninstall";
 export default async function asTask(opts: IAsTaskOpts) {
   const id = uuid();
 
-  const { store, db, name, gameId, caveId } = opts;
+  const { store, db, name, gameId } = opts;
 
-  let logger: Logger;
-  let isCaveLogger = false;
-  if (caveId) {
-    logger = caveLogger(caveId);
-    isCaveLogger = true;
-  } else {
-    // FIXME: WELL ACTUALLY it should be a custom logger
-    // so we can copy it to the cave's log afterwards.
-    logger = rootLogger;
-  }
+  const memlog = new memory.WritableStream();
+  const logger = makeLogger({ customOut: memlog });
 
   store.dispatch(
     actions.taskStarted({
@@ -65,19 +60,18 @@ export default async function asTask(opts: IAsTaskOpts) {
 
   let err: Error;
 
-  opts
-    .work(ctx, logger)
+  const { work, onError } = opts;
+
+  work(ctx, logger)
     .catch(e => {
       err = e;
     })
     .then(() => {
       delete currentTasks[id];
-      if (isCaveLogger) {
-        try {
-          logger.close();
-        } catch (e) {
-          rootLogger.warn(`Couldn't close logger: ${e.stack}`);
-        }
+      try {
+        logger.close();
+      } catch (e) {
+        rootLogger.warn(`Couldn't close logger: ${e.stack}`);
       }
 
       if (err) {
@@ -85,6 +79,9 @@ export default async function asTask(opts: IAsTaskOpts) {
           rootLogger.warn(`Task ${name} cancelled`);
         } else {
           rootLogger.warn(`Task ${name} threw: ${err.stack}`);
+          if (onError) {
+            onError(err, memlog ? memlog.toString() : "(No log)");
+          }
         }
       }
 

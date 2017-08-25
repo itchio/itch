@@ -44,7 +44,6 @@ export default function(watcher: Watcher, db: DB) {
       store,
       db,
       name: "install",
-      caveId,
       gameId: cave.gameId,
       work: async (ctx, logger) => {
         const game = await lazyGetGame(ctx, cave.gameId);

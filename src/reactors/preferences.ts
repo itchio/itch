@@ -1,6 +1,6 @@
 import { Watcher } from "./watcher";
 
-import { preferencesPath, logPath } from "../os/paths";
+import { preferencesPath, mainLogPath } from "../os/paths";
 import * as sf from "../os/sf";
 import { camelifyObject } from "../format";
 import partitionForUser from "../util/partition-for-user";
@@ -95,7 +95,7 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.openAppLog, async (store, action) => {
-    const path = logPath();
+    const path = mainLogPath();
     logger.info(`Opening app log at ${path}`);
     shell.openItem(path);
   });

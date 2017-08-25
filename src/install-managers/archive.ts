@@ -25,7 +25,13 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
   await bustGhosts({ ctx, logger, destPath, newFiles });
 
   const endTime = Date.now();
-  logger.info(`Extracted in ${elapsed(startTime, endTime)}`);
+  logger.info(`extracted in ${elapsed(startTime, endTime)}`);
+
+  logger.debug(`a debug message`);
+  logger.warn(`this one's a warning`);
+  logger.error(`ooh, an error, starting to get serious`);
+  logger.fatal(`this is a fatal error, we don't use them really`);
+  throw new Error("This is a test error to show off the dialog");
 
   return {
     files: newFiles,
@@ -34,7 +40,8 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
 
 async function uninstall(opts: IUninstallOpts): Promise<IUninstallResult> {
   const logger = opts.logger.child({ name: "archive/uninstall" });
-  logger.info(`Nothing to do`);
+  logger.info(`nothing to do`);
+
   return {};
 }
 

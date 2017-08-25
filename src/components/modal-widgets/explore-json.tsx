@@ -1,5 +1,4 @@
 import * as React from "react";
-import { connect } from "../connect";
 
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
@@ -28,5 +27,3 @@ export interface IExploreJsonParams {
 interface IProps extends IModalWidgetProps {
   params: IExploreJsonParams;
 }
-
-export default connect<IProps>(ExploreJson);

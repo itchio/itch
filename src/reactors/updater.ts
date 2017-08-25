@@ -13,7 +13,7 @@ import getGameCredentials from "./downloads/get-game-credentials";
 import * as paths from "../os/paths";
 
 import { makeLogger } from "../logger";
-const logger = makeLogger(paths.updaterLogPath());
+const logger = makeLogger({ logPath: paths.updaterLogPath() });
 
 import { findWhere, filter } from "underscore";
 

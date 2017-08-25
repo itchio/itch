@@ -5,7 +5,7 @@ import * as bluebird from "bluebird";
 import * as ospath from "path";
 
 export async function cleanOldLogs() {
-  const logDir = ospath.dirname(paths.logPath());
+  const logDir = ospath.dirname(paths.mainLogPath());
   const allLogs = await sf.glob("*.txt", { cwd: logDir });
 
   const promises: Promise<any>[] = [];

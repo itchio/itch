@@ -110,7 +110,7 @@ export function preferencesPath(): string {
   return path.join(app.getPath("userData"), "preferences.json");
 }
 
-export function logPath(): string {
+export function mainLogPath(): string {
   return path.join(app.getPath("userData"), "logs", "itch.txt");
 }
 
@@ -127,7 +127,7 @@ export function caveLogPath(caveId: string): string {
 }
 
 export function caveLogger(caveId: string): Logger {
-  return makeLogger(caveLogPath(caveId));
+  return makeLogger({ logPath: caveLogPath(caveId) });
 }
 
 export function sanitize(file: string): string {

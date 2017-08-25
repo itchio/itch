@@ -57,7 +57,6 @@ export default function(watcher: Watcher, db: DB) {
 
     asTask({
       name: "launch",
-      caveId,
       gameId: cave.gameId,
       store,
       db,

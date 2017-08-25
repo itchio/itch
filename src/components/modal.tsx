@@ -38,7 +38,7 @@ const customStyles = {
     top: "50%",
     left: "50%",
     minWidth: "50%",
-    maxWidth: "70%",
+    maxWidth: "90%",
     maxHeight: "80%",
     right: "auto",
     bottom: "auto",

@@ -1,4 +1,4 @@
-import { logPath } from "../os/paths";
+import { mainLogPath } from "../os/paths";
 import { Logger as PinoLogger, Level } from "pino";
 import { Stream } from "stream";
 
@@ -35,7 +35,13 @@ const levelColors = {
   10: "color:grey;",
 };
 
-export function makeLogger(logPath?: string): Logger {
+export function makeLogger({
+  logPath,
+  customOut,
+}: {
+  logPath?: string;
+  customOut?: NodeJS.WritableStream;
+}): Logger {
   if (process.type === "renderer") {
     if (!pinoFactory) {
       pinoFactory = require("pino/browser");
@@ -116,6 +122,10 @@ export function makeLogger(logPath?: string): Logger {
       }
     }
 
+    if (customOut) {
+      streamOutputs.push(customOut);
+    }
+
     const outStream = multi(streamOutputs);
     if (!pinoFactory) {
       pinoFactory = require("pino");
@@ -140,7 +150,7 @@ export function makeLogger(logPath?: string): Logger {
   }
 }
 
-const defaultLogger = makeLogger(logPath());
+const defaultLogger = makeLogger({ logPath: mainLogPath() });
 
 if (process.type === "browser") {
   const { app } = require("electron");

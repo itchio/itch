@@ -151,8 +151,6 @@ export async function queueInstall(
       ctx.store.dispatch(
         actions.statusMessage({ message: ["status.cancelled.message"] })
       );
-    } else {
-      logger.error(`when doing ${reason} for ${game.title}:\n ${e.stack}`);
     }
     throw e;
   }
@@ -219,18 +217,36 @@ async function ensureUniqueInstallLocation(ctx: Context, cave: ICaveLocation) {
 
 import { DB } from "../db";
 import { Watcher } from "./watcher";
+import { promisedModal } from "./modals";
 
 export default async function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueInstall, async (store, action) => {
-    const { game, caveId } = action.payload;
+    const { game } = action.payload;
 
     await asTask({
       name: "install",
       gameId: game.id,
-      caveId,
       db,
       store,
       work: (ctx, logger) => queueInstall(ctx, logger, action.payload),
+      onError: async (err, log) => {
+        await promisedModal(store, {
+          title: ["prompt.install_error.title"],
+          message: ["prompt.install_error.message"],
+          widget: "show-error",
+          widgetParams: {
+            errorStack: err.stack,
+            log,
+          },
+          buttons: [
+            {
+              label: ["prompt.action.ok"],
+              action: actions.modalResponse({}),
+            },
+            "cancel",
+          ],
+        });
+      },
     });
   });
 }
