@@ -67,7 +67,6 @@
     "combokeys-ftl": "^2.4.4-npmgate1",
     "deep-assign": "^2.0.0",
     "deep-equal": "^1.0.1",
-    "deep-freeze": "0.0.1",
     "electron-compile-ftl": "^6.4.9",
     "electron-is-dev": "^0.1.2",
     "file-type": "^3.0.0",
