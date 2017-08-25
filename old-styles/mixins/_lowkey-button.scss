@@ -1,8 +1,0 @@
-
-@mixin lowkey-button {
-  @include heavy-button;
-  @include discreet-button;
-
-  font-size: $base-text-size;
-  padding: 4px 8px;
-}
