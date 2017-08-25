@@ -27,8 +27,6 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
   const endTime = Date.now();
   logger.info(`extracted in ${elapsed(startTime, endTime)}`);
 
-  throw new Error("woops");
-
   return {
     files: newFiles,
   };
