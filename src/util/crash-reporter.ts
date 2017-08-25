@@ -99,20 +99,17 @@ ${log}
 
 async function handle(type: ErrorType, e: Error) {
   if (catching) {
-    // tslint:disable-next-line
     console.log(`While catching: ${e.stack || e}`);
     return;
   }
   catching = true;
 
-  // tslint:disable-next-line
   console.log(`${errorTypeString(type)}: ${e.stack}`);
   let res = await writeCrashLog(e);
   let log = res.log;
   let crashFile = res.crashFile;
 
   if (env.name === "test") {
-    // tslint:disable-next-line
     console.log(`Crash log written to ${res.crashFile}, bailing out`);
     os.exit(1);
     return;
@@ -187,7 +184,6 @@ function makeHandler(type: ErrorType) {
     handle(type, e)
       .catch(e2 => {
         // well, we tried.
-        // tslint:disable-next-line
         console.log(`Error in crash-reporter (${type})\n${e2.stack}`);
       })
       .then(() => {

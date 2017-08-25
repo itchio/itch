@@ -1,5 +1,3 @@
-// tslint:disable:no-console
-
 import { Watcher } from "../reactors/watcher";
 export { Watcher } from "../reactors/watcher";
 

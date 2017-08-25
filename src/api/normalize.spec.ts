@@ -1,5 +1,3 @@
-// tslint:disable:no-shadowed-variable
-
 import suite, { fixture } from "../test-suite";
 
 import { game, Schema, arrayOf } from "./schemas";

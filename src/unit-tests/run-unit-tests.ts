@@ -1,5 +1,3 @@
-// tslint:disable:no-console
-
 let watching = false;
 let thorough = true;
 let chatty = false;
@@ -98,7 +96,6 @@ function printDurations(input: IDuration[], legend: string) {
 const cwd = process.cwd();
 
 function flush() {
-  // tslint:disable-next-line
   delete global["__coverage__"];
 
   Object.keys(require.cache).forEach(function(fname) {
@@ -170,7 +167,6 @@ app.on("ready", async () => {
   }
 
   const invoke = async () => {
-    // tslint:disable-next-line
     const tape = require("tape");
     const zopf = require("zopf");
 
@@ -298,7 +294,6 @@ app.on("ready", async () => {
         printDurations(zopf.testDurations, msg);
 
         const libCoverage = require("istanbul-lib-coverage");
-        // tslint:disable-next-line
         let map = libCoverage.createCoverageMap(global["__coverage__"]);
 
         const libSourceMaps = require("istanbul-lib-source-maps");

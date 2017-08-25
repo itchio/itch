@@ -27,8 +27,6 @@ import { connectDatabase } from "./db";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
-// tslint:disable:no-console
-
 async function autoUpdate(autoUpdateDone: () => void) {
   const quit = await autoUpdaterStart();
   if (quit) {

@@ -7,7 +7,6 @@ import modal from "./modal";
 import { injectGlobal } from "../styles";
 
 export function inject() {
-  // tslint:disable-next-line
   injectGlobal`
     ${reset}
     ${base}

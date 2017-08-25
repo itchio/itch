@@ -115,7 +115,6 @@ async function checkStack(
       !seen.bLine ||
       !seen.cLine
     ) {
-      // tslint:disable-next-line
       console.log(`Offensive stack trace:\n${e.stack}`);
     }
     t.true(seen.a, "stack trace contains abacus");

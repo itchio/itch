@@ -57,7 +57,6 @@ suite(__filename, s => {
 
       // only one record gets updated
 
-      // tslint:disable-next-line
       allCells["3"].note = "tres";
       db.saveMany({
         cells: allCells,
@@ -67,7 +66,6 @@ suite(__filename, s => {
 
       // record has keys set to the value undefind
 
-      // tslint:disable-next-line
       allCells["3"].timestamp = undefined;
       allCells["3"].object = undefined;
       db.saveMany({

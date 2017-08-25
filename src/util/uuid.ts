@@ -1,7 +1,5 @@
 let rng: () => Uint8Array;
 
-// tslint:disable:no-bitwise
-
 if (process.type === "browser") {
   const crypto = require("crypto");
   rng = () => crypto.randomBytes(16);

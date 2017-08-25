@@ -7,7 +7,6 @@ import env from "../env";
 const LOG_LEVEL = process.env.ITCH_LOG_LEVEL || ("info" as Level);
 const NO_STDOUT = process.env.ITCH_NO_STDOUT === "1";
 
-// tslint:disable-next-line
 export interface Logger extends PinoLogger {
   close();
   child(props: { name: string }): Logger;
@@ -50,7 +49,6 @@ export function makeLogger({
       browser: {
         write: (opts: any) => {
           const { name, level, msg } = opts;
-          // tslint:disable-next-line
           console.log(
             "%c " +
               levels[level] +
@@ -98,7 +96,6 @@ export function makeLogger({
         if ((err as any).code === "EEXIST") {
           // good
         } else {
-          // tslint:disable-next-line
           console.log(
             `Could not create file sink: ${err.stack || err.message}`
           );
@@ -142,7 +139,6 @@ export function makeLogger({
       try {
         outStream.end();
       } catch (err) {
-        // tslint:disable-next-line
         console.log(`Could not close file sink: ${err.stack || err.message}`);
       }
     };

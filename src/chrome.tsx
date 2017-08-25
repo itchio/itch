@@ -71,7 +71,7 @@ function render(RealApp: typeof App) {
     <Provider store={store}>
       {rootComponent}
     </Provider>,
-    appNode,
+    appNode
   );
 }
 
@@ -111,7 +111,6 @@ if (os.platform() === "darwin") {
   try {
     electron.webFrame.setVisualZoomLevelLimits(1, 1);
   } catch (e) {
-    // tslint:disable-next-line:no-console
     console.log(`couldn't disable two-finger zoom: ${e.stack || e}`);
   }
 }

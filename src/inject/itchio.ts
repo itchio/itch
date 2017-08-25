@@ -1,5 +1,3 @@
-// tslint:disable:no-console
-
 /*
  * This code is injected into all webviews — it patches a few itch.io things
  * to make them friendlier to the app, like the login form, the purchase form, etc.

@@ -58,7 +58,6 @@ export function cliArgs(): string[] {
 
 export function exit(exitCode: number) {
   if (env.name === "test") {
-    // tslint:disable-next-line
     console.log(`this is the magic exit code: ${exitCode}`);
   } else {
     const electron = require("electron");

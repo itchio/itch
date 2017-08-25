@@ -31,7 +31,6 @@ const crashGetter = (store: Store<any>) => (next: (action: any) => any) => (
     }
     return next(action);
   } catch (e) {
-    /* tslint:disable:no-console */
     console.log(`Uncaught redux: for action ${action.type}: ${e.stack}`);
   }
 };

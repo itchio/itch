@@ -228,7 +228,7 @@ const self = {
       );
       return version.normalize(info.parsed);
     } catch (err) {
-      console.log(`[ibrew] While checking version for ${name}: ${err.message}`); // tslint:disable-line:no-console
+      console.log(`[ibrew] While checking version for ${name}: ${err.message}`);
 
       // not present
       return null;

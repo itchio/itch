@@ -10,7 +10,6 @@ interface WebViewProps {
   ref?: (wv: Electron.WebviewTag) => void;
 }
 
-// tslint:disable-next-line
 declare global {
   namespace JSX {
     interface IntrinsicElements {

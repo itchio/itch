@@ -1,5 +1,3 @@
-// tslint:disable:no-console
-
 import * as querystring from "querystring";
 import * as urlParser from "url";
 

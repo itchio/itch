@@ -4,8 +4,6 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.1
 
-// tslint:disable
-
 declare module "react-sortable-hoc" {
   import React = require("react");
 
@@ -34,7 +32,7 @@ declare module "react-sortable-hoc" {
   export type SortEndHandler = (sort: SortEnd, event: SortEvent) => void;
 
   export type ContainerGetter = (
-    element: React.ReactElement<any>,
+    element: React.ReactElement<any>
   ) => HTMLElement;
 
   export interface SortableContainerProps {
@@ -73,22 +71,22 @@ declare module "react-sortable-hoc" {
 
   export function SortableContainer<P>(
     wrappedComponent: WrappedComponent<P>,
-    config?: Config,
+    config?: Config
   ): React.ComponentClass<P & SortableContainerProps>;
 
   export function SortableElement<P>(
     wrappedComponent: WrappedComponent<P>,
-    config?: Config,
+    config?: Config
   ): React.ComponentClass<P & SortableElementProps>;
 
   export function SortableHandle<P>(
     wrappedComponent: WrappedComponent<P>,
-    config?: Config,
+    config?: Config
   ): React.ComponentClass<P>;
 
   export function arrayMove<T>(
     collection: Array<T>,
     previousIndex: number,
-    newIndex: number,
+    newIndex: number
   ): Array<T>;
 }

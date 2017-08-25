@@ -31,7 +31,7 @@ async function loadRememberedSessions(store: IStore) {
         const content = await sf.readFile(tokenFullPath, { encoding: "utf8" });
         return JSON.parse(content);
       } catch (e) {
-        console.log(`Skipping ${tokenFile}: ${e.message}`); // tslint:disable-line:no-console
+        console.log(`Skipping ${tokenFile}: ${e.message}`);
       }
     })
   );

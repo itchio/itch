@@ -8,8 +8,6 @@ import * as colorgram from "colorgram";
 import * as tinycolor from "tinycolor2";
 import { sortBy, filter } from "underscore";
 
-// tslint:disable:no-console
-
 const width = 400;
 const PRINT_COLORS = !!process.env.IAMA_RAINBOW_AMA;
 

@@ -111,7 +111,6 @@ self.firejail = {
       if (stats.uid !== 0) {
         return { reason: "not owned by root" };
       }
-      // tslint:disable-next-line:no-bitwise
       if ((stats.mode & 0o4000) === 0) {
         return { reason: "not suid" };
       }

@@ -176,7 +176,6 @@ const launch: ILauncher = async (ctx, opts) => {
     });
 
     capsulePromise.catch(reason => {
-      // tslint:disable-next-line
       console.log(`capsule threw an error: ${reason}`);
     });
 
