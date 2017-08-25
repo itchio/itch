@@ -81,7 +81,6 @@
     "istanbul-lib-report": "^1.1.1",
     "istanbul-lib-source-maps": "^1.2.1",
     "istanbul-reports": "^1.1.1",
-    "keymirror": "~0.1.0",
     "logrotate-stream": "^0.2.5",
     "marked-extra": "^0.2.6",
     "memory-streams": "^0.1.2",
