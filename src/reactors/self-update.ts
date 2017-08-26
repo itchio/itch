@@ -291,4 +291,18 @@ export default function(watcher: Watcher) {
       })
     );
   });
+
+  watcher.on(actions.viewChangelog, async (store, action) => {
+    const updateServer = urls.updateServers[env.channel];
+    const uri = `${updateServer}/notes`;
+    const resp = await request("get", uri, {});
+
+    store.dispatch(
+      actions.openModal({
+        title: "",
+        message: "Changelog",
+        detail: resp.body,
+      })
+    );
+  });
 }

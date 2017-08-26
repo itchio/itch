@@ -100,6 +100,11 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
       onClick: () => this.props.reportIssue({}),
     },
     {
+      icon: "newspaper-o",
+      label: "View changelog",
+      onClick: () => this.props.viewChangelog({}),
+    },
+    {
       icon: "lifebuoy",
       label: ["menu.help.help"],
       onClick: () => this.props.navigate({ tab: "url/" + urls.manual }),
@@ -163,6 +168,7 @@ interface IDerivedProps {
   reportIssue: typeof actions.reportIssue;
   openUrl: typeof actions.openUrl;
   checkForSelfUpdate: typeof actions.checkForSelfUpdate;
+  viewChangelog: typeof actions.viewChangelog;
 }
 
 export default connect<IProps>(UserMenu, {
@@ -179,5 +185,6 @@ export default connect<IProps>(UserMenu, {
     reportIssue: dispatcher(dispatch, actions.reportIssue),
     openUrl: dispatcher(dispatch, actions.openUrl),
     checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
+    viewChangelog: dispatcher(dispatch, actions.viewChangelog),
   }),
 });

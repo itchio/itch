@@ -1,8 +1,6 @@
 import * as React from "react";
 import * as marked from "marked-extra";
-
-// emojify is generated but pure js, one reason the extrajs/ folder exists
-import * as emojify from "../../format/emojify";
+import { toImage } from "emojione";
 
 import urls from "../../constants/urls";
 
@@ -14,10 +12,7 @@ export default class Markdown extends React.PureComponent<IGFMProps> {
   renderHTML() {
     const { source } = this.props;
 
-    const emojified = emojify.replace(
-      source,
-      (emoji, name) => `<span class='emoji emoji-${name}'></span>`,
-    );
+    const emojified = toImage(source);
     const autolinked = autolink(emojified);
     const sanitized = sanitize(autolinked);
 
@@ -38,7 +33,7 @@ interface IGFMProps {
 const autolink = (src: string) => {
   return src.replace(
     /#([0-9]+)/g,
-    (match, p1) => `[${match}](${urls.itchRepo}/issues/${p1})`,
+    (match, p1) => `[${match}](${urls.itchRepo}/issues/${p1})`
   );
 };
 

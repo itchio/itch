@@ -304,6 +304,9 @@ export interface IReportIssuePayload {
   log?: string;
 }
 
+export const VIEW_CHANGELOG = "VIEW_CHANGELOG";
+export interface IViewChangelogPayload {}
+
 export const COPY_TO_CLIPBOARD = "COPY_TO_CLIPBOARD";
 export interface ICopyToClipboardPayload {
   text: string;

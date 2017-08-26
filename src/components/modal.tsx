@@ -98,7 +98,7 @@ const ModalDiv = styled.div`
     .message {
       padding: 0 20px;
       overflow-y: auto;
-      max-height: 380px;
+      max-height: 460px;
       -webkit-user-select: initial;
 
       h1,

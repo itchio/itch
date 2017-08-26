@@ -39,5 +39,14 @@ export default css`
     color: ${theme.baseText};
   }
 
+  img.emojione {
+    width: 20px;
+    margin-bottom: -4px;
+  }
+
+  a {
+    color: ${theme.accent};
+  }
+
   ${testDisables()} 
 `;

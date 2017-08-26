@@ -86,6 +86,8 @@ import {
   ICleanTabDataPayload,
   ITriggerPayload,
   TRIGGER,
+  IViewChangelogPayload,
+  VIEW_CHANGELOG,
 } from "../constants/action-types";
 
 export const navigate = createAction<INavigatePayload>(NAVIGATE);
@@ -177,6 +179,9 @@ export const processUrlArguments = createAction<IProcessUrlArgumentsPayload>(
 export const reportIssue = createAction<IReportIssuePayload>(REPORT_ISSUE);
 export const copyToClipboard = createAction<ICopyToClipboardPayload>(
   COPY_TO_CLIPBOARD
+);
+export const viewChangelog = createAction<IViewChangelogPayload>(
+  VIEW_CHANGELOG
 );
 export const handleItchioUrl = createAction<IHandleItchioUrlPayload>(
   HANDLE_ITCHIO_URL

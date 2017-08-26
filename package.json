@@ -24,6 +24,7 @@
   "main": "src/init.js",
   "license": "MIT",
   "dependencies": {
+    "@types/emojione": "^2.2.2",
     "better-sqlite3": "^3.1.1",
     "bluebird": "^3.4.0",
     "btoa": "^1.1.2",
@@ -36,6 +37,7 @@
     "deep-equal": "^1.0.1",
     "electron-compile-ftl": "^6.4.9",
     "electron-is-dev": "^0.1.2",
+    "emojione": "^3.1.2",
     "ftl-redux-electron-store": "^1.2.0",
     "glob": "^7.0.3",
     "idealizr": "^2.1.0",
