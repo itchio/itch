@@ -37,7 +37,7 @@ export async function createIfNeeded(ctx: Context): Promise<void> {
     if (e.code === "ENOENT") {
       logger.debug(`Skipping visual elements, squirrel not found`);
     } else {
-      logger.warn("Couldn't find squirrel", e.stack);
+      logger.warn(`Couldn't find squirrel ${e.stack}`);
     }
     return;
   }

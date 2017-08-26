@@ -86,11 +86,10 @@ export default function(watcher: Watcher) {
               httpOnly: true,
               expirationDate: epoch + YEAR_IN_SECONDS, // have it valid for a year
             };
-            logger.debug(`Setting cookie: `, opts);
+            logger.debug(`Setting cookie: ${JSON.stringify(opts)}`);
             session.cookies.set(opts, (error: Error) => {
               if (error) {
-                logger.error(`Cookie error: `, error);
-                logger.error(`Cookie error stack: `, error.stack);
+                logger.error(`Cookie error: ${JSON.stringify(error)}`);
                 reject(error);
               } else {
                 resolve();

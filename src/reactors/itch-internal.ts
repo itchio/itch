@@ -15,7 +15,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
     const userId = action.payload.me.id;
 
-    logger.debug("Setting up for user", userId);
+    logger.debug(`Setting up for user ${userId}`);
 
     const session = electron.session.fromPartition(
       partitionForUser(String(userId)),
@@ -63,8 +63,9 @@ export default function(watcher: Watcher) {
           break;
         default:
           logger.warn(
-            `Got unrecognized message via itch-internal: ${pathname}, params`,
-            params
+            `Got unrecognized message via itch-internal: ${pathname}, params ${JSON.stringify(
+              params
+            )}`
           );
           break;
       }

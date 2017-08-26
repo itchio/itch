@@ -1,4 +1,4 @@
-import { ILogEntry } from "./index";
+import { ILogEntry, levels } from "./index";
 
 const levelColors = {
   default: "color:black;",

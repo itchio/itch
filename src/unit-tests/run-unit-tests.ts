@@ -3,6 +3,8 @@ let thorough = true;
 let chatty = false;
 let hangAround = false;
 
+require("../logger").default.setLevel("silent");
+
 function exit(exitCode) {
   if (process.env.ITCH_DONT_EXIT === "1") {
     console.log(`Should exit with code ${exitCode}, but asked not to`);
@@ -102,7 +104,7 @@ function flush() {
     // unload everything that's *not* in node_modules
     if (fname.indexOf("node_modules") === -1) {
       // ... except the logger
-      if (fname.indexOf("logger/index") === -1) {
+      if (fname.indexOf("logger") === -1) {
         delete require.cache[fname];
       }
     }

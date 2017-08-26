@@ -24,7 +24,8 @@ let quickTests = (runTests && !thorough);
 let beFast = (env.name === "production") || quickTests;
 
 if (!beFast) {
-    console.log("Enabling slow but detailed stack traces");
+    const logger = require("./logger").default;
+    logger.info("Enabling slow but detailed stack traces");
     require("bluebird").config(
         {
             longStackTraces: true,
@@ -36,9 +37,6 @@ if (!beFast) {
         hookRequire: true,
     });
 }
-
-// monkey-patch a few things
-require("./os/sf");
 
 if (env.name !== "test") {
     require("./util/crash-reporter").mount();

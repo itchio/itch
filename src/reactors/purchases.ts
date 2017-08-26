@@ -89,7 +89,7 @@ export default function(watcher: Watcher) {
 
     const purchaseUrl = game.url + "/purchase";
     const loginPurchaseUrl = buildLoginAndReturnUrl(purchaseUrl);
-    logger.debug("partition login purchase url = ", loginPurchaseUrl);
+    logger.debug(`partition login purchase url = ${loginPurchaseUrl}`);
 
     // FIXME: that's probably not the best event
     win.webContents.on("did-get-redirect-request", (e, oldURL, newURL) => {

@@ -25,7 +25,7 @@ export default function(watcher: Watcher) {
         encoding: "utf8",
       });
       prefs = camelifyObject(JSON.parse(contents));
-      logger.debug("imported preferences: ", prefs);
+      logger.debug(`imported preferences: ${JSON.stringify(prefs)}`);
     } catch (err) {
       if (err.code === "ENOENT") {
         logger.info(`no preferences yet. fresh start!`);

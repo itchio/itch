@@ -99,7 +99,7 @@ export class Fetcher {
     try {
       return await cb(api);
     } catch (e) {
-      this.logger.error(`API error:`, e);
+      this.logger.error(`API error: ${e.stack}`);
       if (isNetworkError(e)) {
         throw new Retry();
       } else {

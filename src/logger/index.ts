@@ -1,7 +1,5 @@
 import { mainLogPath } from "../os/paths";
 
-import env from "../env";
-
 import browserWrite from "./browser-write";
 import consoleWrite from "./console-write";
 
@@ -13,13 +11,24 @@ const multi = require("multi-write-stream");
 const LOG_LEVEL = (process.env.ITCH_LOG_LEVEL || "info") as Level;
 const NO_STDOUT = process.env.ITCH_NO_STDOUT === "1";
 
-export type Level = "error" | "warn" | "info" | "debug";
+export type Level = "silent" | "error" | "warn" | "info" | "debug";
 
 const levelNumbers = {
+  silent: 100,
   error: 50,
   warn: 40,
   info: 30,
   debug: 20,
+};
+
+export const levels = {
+  default: "USERLVL",
+  60: "FATAL",
+  50: "ERROR",
+  40: "WARN",
+  30: "INFO",
+  20: "DEBUG",
+  10: "TRACE",
 };
 
 export interface ILogEntry {
@@ -89,8 +98,15 @@ export class Logger {
     return l;
   }
 
+  setLevel(level: Level) {
+    this._level = level;
+    this._levelNumber = levelNumbers[level];
+  }
+
   private log(level: number, msg: string) {
-    this._write({ time: Date.now(), level, msg, name: this._name });
+    if (level >= this._levelNumber) {
+      this._write({ time: Date.now(), level, msg, name: this._name });
+    }
   }
 }
 
@@ -170,14 +186,6 @@ export function makeLogger({
 }
 
 const defaultLogger = makeLogger({ logPath: mainLogPath() });
-
-if (process.type === "browser") {
-  const { app } = require("electron");
-  defaultLogger.info(
-    `${env.appName} ${app.getVersion()} on electron ${process.versions
-      .electron} in ${env.name}`
-  );
-}
 
 export const devNull = new Logger({
   write: () => {

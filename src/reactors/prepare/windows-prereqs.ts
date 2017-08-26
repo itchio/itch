@@ -432,7 +432,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
     try {
       await butler.wipe(workDir.name, { ctx, logger });
     } catch (e) {
-      logger.warn(`Couldn't wipe: ${e}`, e);
+      logger.warn(`Couldn't wipe: ${e.stack}`);
     }
   }
 }

@@ -7,9 +7,10 @@ if (process.env.ITCH_TIME_REQUIRE === "1") {
 }
 
 import env from "./env";
+import logger from "./logger";
 import { enableLiveReload } from "electron-compile-ftl";
+
 if (env.name === "development") {
-  const logger = require("./logger").default;
   logger.info("Enabling hot-module reload!");
   enableLiveReload({
     strategy: "react-hmr",
@@ -22,6 +23,11 @@ import { isItchioURL } from "./util/url";
 
 import * as actions from "./actions";
 import { app, protocol, globalShortcut } from "electron";
+
+logger.info(
+  `${env.appName} ${app.getVersion()} on electron ${process.versions
+    .electron} in ${env.name}`
+);
 
 import { connectDatabase } from "./db";
 

@@ -53,7 +53,7 @@ async function doSetup(store: IStore, db: DB) {
   try {
     await setup(store, db);
   } catch (e) {
-    logger.error("setup got error: ", e.stack);
+    logger.error(`setup got error: ${e.stack}`);
 
     store.dispatch(
       actions.setupStatus({

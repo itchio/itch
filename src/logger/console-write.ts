@@ -1,16 +1,6 @@
-import { ILogEntry } from "./index";
+import { ILogEntry, levels } from "./index";
 const chalkModule = require("chalk");
 const chalk = new chalkModule.constructor({ enabled: true });
-
-const levels = {
-  default: "USERLVL",
-  60: "FATAL",
-  50: "ERROR",
-  40: "WARN",
-  30: "INFO",
-  20: "DEBUG",
-  10: "TRACE",
-};
 
 const levelColors = {
   default: chalk.white,
