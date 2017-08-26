@@ -1,38 +1,98 @@
 import { mainLogPath } from "../os/paths";
-import { Logger as PinoLogger, Level } from "pino";
-import { Stream } from "stream";
 
 import env from "../env";
 
-const LOG_LEVEL = process.env.ITCH_LOG_LEVEL || ("info" as Level);
+import browserWrite from "./browser-write";
+import consoleWrite from "./console-write";
+
+import * as fs from "fs";
+import * as path from "path";
+import * as stream from "logrotate-stream";
+const multi = require("multi-write-stream");
+
+const LOG_LEVEL = (process.env.ITCH_LOG_LEVEL || "info") as Level;
 const NO_STDOUT = process.env.ITCH_NO_STDOUT === "1";
 
-export interface Logger extends PinoLogger {
-  close();
-  child(props: { name: string }): Logger;
+export type Level = "error" | "warn" | "info" | "debug";
+
+const levelNumbers = {
+  error: 50,
+  warn: 40,
+  info: 30,
+  debug: 20,
+};
+
+export interface ILogEntry {
+  time: number;
+  level: number;
+  msg: string;
+  name?: string;
 }
 
-let pinoFactory: (opts?: any, stream?: Stream) => Logger;
+type IWrite = (entry: ILogEntry) => void;
+type IClose = () => void;
 
-const levels = {
-  default: "USERLVL",
-  60: "FATAL",
-  50: "ERROR",
-  40: "WARN",
-  30: "INFO",
-  20: "DEBUG",
-  10: "TRACE",
-};
+export class Logger {
+  private _name: string;
+  private _write: IWrite;
+  private _close: IClose;
+  private _level: Level;
+  private _levelNumber: number;
 
-const levelColors = {
-  default: "color:black;",
-  60: "background-color:red;",
-  50: "color:red;",
-  40: "color:yellow;",
-  30: "color:green;",
-  20: "color:blue;",
-  10: "color:grey;",
-};
+  constructor({
+    write,
+    close,
+    name = undefined,
+    level = "info",
+  }: {
+    write: IWrite;
+    close?: IClose;
+    name?: string;
+    level?: Level;
+  }) {
+    this._name = name;
+    this._write = write;
+    this._close = close;
+    this._level = level;
+    this._levelNumber = levelNumbers[level];
+  }
+
+  debug(msg: string) {
+    this.log(levelNumbers.debug, msg);
+  }
+
+  info(msg: string) {
+    this.log(levelNumbers.info, msg);
+  }
+
+  warn(msg: string) {
+    this.log(levelNumbers.warn, msg);
+  }
+
+  error(msg: string) {
+    this.log(levelNumbers.error, msg);
+  }
+
+  close() {
+    if (this._close) {
+      this._close();
+    }
+  }
+
+  child({ name }: { name: string }): Logger {
+    const l = new Logger({
+      write: this._write,
+      close: this._close,
+      level: this._level,
+      name,
+    });
+    return l;
+  }
+
+  private log(level: number, msg: string) {
+    this._write({ time: Date.now(), level, msg, name: this._name });
+  }
+}
 
 export function makeLogger({
   logPath,
@@ -42,50 +102,16 @@ export function makeLogger({
   customOut?: NodeJS.WritableStream;
 }): Logger {
   if (process.type === "renderer") {
-    if (!pinoFactory) {
-      pinoFactory = require("pino/browser");
-    }
-    const l = pinoFactory({
-      browser: {
-        write: (opts: any) => {
-          const { name, level, msg } = opts;
-          console.log(
-            "%c " +
-              levels[level] +
-              " %c" +
-              (name ? "(" + name + ")" : "") +
-              ":" +
-              " %c" +
-              msg,
-            levelColors[level],
-            "color:black;",
-            "color:44e;"
-          );
-        },
-      },
+    return new Logger({
+      write: browserWrite,
       level: LOG_LEVEL,
     });
-    l.close = () => {
-      /* muffin */
-    };
-    return l;
   } else {
-    const multi = require("multi-write-stream");
-    const fs = require("fs");
-    const path = require("path");
-    const stream = require("logrotate-stream");
-    const pretty = require("./pretty");
-
-    let consoleOut = pretty({
-      forceColor: true,
-    });
-
-    consoleOut.pipe(process.stdout);
-
+    let consoleOut: NodeJS.WritableStream;
     let streamOutputs = [];
 
     if (!NO_STDOUT) {
-      streamOutputs.push(consoleOut);
+      consoleOut = process.stdout;
     }
 
     if (logPath) {
@@ -105,9 +131,7 @@ export function makeLogger({
 
       if (hasDir) {
         if (NO_STDOUT) {
-          const file = pretty({ forceColor: true });
-          file.pipe(fs.createWriteStream(logPath));
-          streamOutputs.push(file);
+          consoleOut = fs.createWriteStream(logPath);
         } else {
           const file = stream({
             file: logPath,
@@ -124,25 +148,24 @@ export function makeLogger({
     }
 
     const outStream = multi(streamOutputs);
-    if (!pinoFactory) {
-      pinoFactory = require("pino");
-    }
 
-    const l = pinoFactory(
-      {
-        timestamp: true,
-        level: LOG_LEVEL,
+    return new Logger({
+      write: entry => {
+        outStream.write(JSON.stringify(entry));
+        outStream.write("\n");
+
+        if (consoleOut) {
+          consoleWrite(entry, consoleOut);
+        }
       },
-      outStream
-    );
-    l.close = () => {
-      try {
-        outStream.end();
-      } catch (err) {
-        console.log(`Could not close file sink: ${err.stack || err.message}`);
-      }
-    };
-    return l;
+      close: () => {
+        try {
+          outStream.end();
+        } catch (err) {
+          console.log(`Could not close file sink: ${err.stack || err.message}`);
+        }
+      },
+    });
   }
 }
 
@@ -156,43 +179,10 @@ if (process.type === "browser") {
   );
 }
 
-export const devNull: Logger = new class {
-  level: Level = "silent";
-  levelVal = 0;
-  levels = {
-    values: {},
-    labels: {},
-  };
-  LOG_VERSION = 0;
-  stdSerializers = null;
-
-  child() {
-    return this;
-  }
-  on(ev: any, list: any) {
+export const devNull = new Logger({
+  write: () => {
     /* muffin */
-  }
-  fatal(...args: any[]) {
-    /* muffin */
-  }
-  error(...args: any[]) {
-    /* muffin */
-  }
-  warn(...args: any[]) {
-    /* muffin */
-  }
-  info(...args: any[]) {
-    /* muffin */
-  }
-  debug(...args: any[]) {
-    /* muffin */
-  }
-  trace(...args: any[]) {
-    /* muffin */
-  }
-  close() {
-    /* muffin */
-  }
-}();
+  },
+});
 
 export default defaultLogger;

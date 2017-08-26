@@ -95,8 +95,8 @@ export default class Log extends React.PureComponent<IProps> {
               );
             } else {
               return (
-                <tr colSpan={numColumns}>
-                  <td>
+                <tr>
+                  <td colSpan={numColumns}>
                     {x}
                   </td>
                 </tr>
