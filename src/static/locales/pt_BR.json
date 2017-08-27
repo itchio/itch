@@ -359,5 +359,6 @@
     "sandbox.setup.proceed": "Prosseguir",
     "web.context_menu.copy_link": "Copiar link",
     "setup.status.notification": "Instalado sem erros, {{app_name}} está iniciando!",
-    "setup.action.install": "Instale agora"
+    "setup.action.install": "Instale agora",
+    "setup.window.welcome": "Bem vindo ao instalador de {{app_name}}! Pegue uma bebida, escolha o local de instalação e prossiga. "
 }
