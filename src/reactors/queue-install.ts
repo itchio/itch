@@ -156,7 +156,7 @@ export async function queueInstall(
   }
 }
 
-const slugRegexp = /^\/[^\/]+/;
+const slugRegexp = /^\/([^\/]+)/;
 
 /** Gives a human-readable install folder name, given a game */
 export function installFolderName(game: IGame) {
@@ -186,7 +186,7 @@ function installFolderNameFromSlug(game: IGame) {
     return null;
   }
 
-  const slug = matches[0];
+  const slug = matches[1];
   if (!slug) {
     return null;
   }
