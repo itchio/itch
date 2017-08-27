@@ -8,7 +8,7 @@ import * as url from "url";
 import { ICave, ICaveLocation } from "../db/models/cave";
 import { IGame } from "../db/models/game";
 import { toJSONField } from "../db/json-field";
-import { IQueueInstallOpts, IStore, Cancelled } from "../types";
+import { IQueueInstallOpts, IStore, Cancelled, isCancelled } from "../types";
 
 import * as paths from "../os/paths";
 import * as sf from "../os/sf";
@@ -146,7 +146,7 @@ export async function queueInstall(
       caveIn: caveIn as ICave, // FIXME: poor style
     });
   } catch (e) {
-    if (e instanceof Cancelled) {
+    if (isCancelled(e)) {
       logger.error(`Cancelled ${reason} for ${game.title}: ${e.message}`);
       ctx.store.dispatch(
         actions.statusMessage({ message: ["status.cancelled.message"] })

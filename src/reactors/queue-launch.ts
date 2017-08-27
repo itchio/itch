@@ -38,6 +38,7 @@ import {
   Crash,
   IManifestAction,
   IRuntime,
+  isCancelled,
 } from "../types";
 
 import { powerSaveBlocker } from "electron";
@@ -226,7 +227,7 @@ async function doLaunch(
       }
     }
 
-    if (e instanceof Cancelled) {
+    if (isCancelled(e)) {
       // all good then
       return;
     }

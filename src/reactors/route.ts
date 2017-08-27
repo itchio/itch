@@ -1,4 +1,4 @@
-import { IStore, Cancelled } from "../types";
+import { IStore, Cancelled, isCancelled } from "../types";
 import { IAction } from "../constants/action-types";
 
 import { Watcher } from "./watcher";
@@ -24,7 +24,7 @@ if (env.name === "test") {
 const emptyArr = [];
 
 function err(e: Error, action: IAction<any>) {
-  if (e instanceof Cancelled) {
+  if (isCancelled(e)) {
     console.warn(`reactor for ${action.type} was cancelled`);
   } else {
     printError(

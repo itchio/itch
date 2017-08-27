@@ -15,7 +15,7 @@ import { getActiveDownload } from "./getters";
 
 import Context from "../../context";
 import { IStore, IDownloadItem, IDownloadResult } from "../../types";
-import { IProgressInfo, Cancelled } from "../../types";
+import { IProgressInfo, Cancelled, isCancelled } from "../../types";
 
 import { DB } from "../../db";
 
@@ -105,7 +105,7 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
   } catch (e) {
     error = e;
   } finally {
-    if (error instanceof Cancelled) {
+    if (isCancelled(error)) {
       // no error to handle, but don't trigger downloadEnded either
       cancelled = true;
       logger.info(`Download cancelled for ${item.game.title}`);

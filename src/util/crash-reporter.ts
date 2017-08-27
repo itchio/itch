@@ -11,7 +11,7 @@ import platformData from "../constants/platform-data";
 import urls from "../constants/urls";
 import { isNetworkError } from "../net/errors";
 
-import { Cancelled } from "../types";
+import { Cancelled, isCancelled } from "../types";
 
 import { currentRuntime, runtimeProp } from "../os/runtime";
 import * as os from "../os";
@@ -176,7 +176,7 @@ function makeHandler(type: ErrorType) {
       return;
     }
 
-    if (e instanceof Cancelled) {
+    if (isCancelled(e)) {
       console.error(`Something was cancelled: ${e.stack}`);
       return;
     }

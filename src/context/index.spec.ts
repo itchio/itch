@@ -2,7 +2,7 @@ import suite from "../test-suite";
 import Context from ".";
 
 import { DB } from "../db";
-import { IStore, Cancelled } from "../types";
+import { IStore, Cancelled, isCancelled } from "../types";
 
 const db = {} as DB;
 const store = {} as IStore;
@@ -97,7 +97,7 @@ suite(__filename, s => {
         },
       })
       .catch(e => {
-        if (e instanceof Cancelled) {
+        if (isCancelled(e)) {
           cancelledSecondTask = true;
         } else {
           throw e;

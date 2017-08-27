@@ -95,7 +95,9 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
       id,
       finished: true,
       finishedAt,
-      progress: {},
+      progress: 0,
+      eta: 0,
+      bps: 0,
       err,
     });
   });

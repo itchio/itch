@@ -1,7 +1,7 @@
 import { IGame } from "../../db/models/game";
 import { ICave } from "../../db/models/cave";
 
-import { IStore, Cancelled } from "../../types";
+import { IStore, Cancelled, isCancelled } from "../../types";
 
 import { Logger } from "../../logger";
 import diego from "../../os/diego";
@@ -21,7 +21,7 @@ export default async function notifyCrash(
   e: ExtendedError,
   logger: Logger
 ) {
-  if (e instanceof Cancelled) {
+  if (isCancelled(e)) {
     // well, don't notify that.
     return;
   }

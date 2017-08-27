@@ -1,15 +1,12 @@
-type ItchErrorType = "crash" | "cancelled" | "missing-libs";
+type ItchErrorCode = "ITCH_ECRASH" | "ITCH_ECANCELLED" | "ITCH_EMISSINGLIBS";
 
 class ItchError extends Error {
-  type: ItchErrorType;
-
-  constructor(type: ItchErrorType) {
+  constructor(public code: ItchErrorCode) {
     super();
-    this.type = type;
   }
 
   toString(): string {
-    return this.type;
+    return this.code;
   }
 }
 
@@ -21,7 +18,7 @@ export class Crash extends ItchError {
   error: string;
 
   constructor(opts: ICrashOpts) {
-    super("crash");
+    super("ITCH_ECRASH");
     this.error = opts.error;
   }
 
@@ -41,7 +38,7 @@ export class MissingLibs extends ItchError {
   reason: any[];
 
   constructor(opts: IMissingLibsOpts) {
-    super("missing-libs");
+    super("ITCH_EMISSINGLIBS");
     this.arch = opts.arch || "386";
     this.libs = opts.libs || [];
     this.reason = [
@@ -74,8 +71,13 @@ export class Cancelled extends ItchError {
   detail: string;
 
   constructor(detail = "generic cancellation") {
-    super("cancelled");
+    super("ITCH_ECANCELLED");
     this.detail = detail;
     this.message = `operation was cancelled: ${this.detail}`;
   }
+}
+
+export function isCancelled(e: any): boolean {
+  let ie = e as ItchError;
+  return ie && ie.code === "ITCH_ECANCELLED";
 }
