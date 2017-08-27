@@ -448,5 +448,11 @@
     "prompt.blessing.message": "Для {{operation}} {{title}} необходимы привилегии администратора",
     "prompt.blessing.detail": "Продолжайте, только если вы доверяете автору.",
     "status.cancelled.message": "Операция была отменена.",
-    "prompt.install_error.message": "Установка завершилась с ошибкой."
+    "prompt.install_error.message": "Установка завершилась с ошибкой.",
+    "download.outcome.installed": "установлено",
+    "download.outcome.updated": "обновлено до последней версии",
+    "download.outcome.reinstalled": "переустановлено",
+    "download.outcome.reverted": "откачено до ранней версии",
+    "download.outcome.healed": "проверено и восстановлено",
+    "status.downloads.category.recent_activity": "Последняя активность"
 }
