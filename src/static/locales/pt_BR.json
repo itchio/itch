@@ -356,5 +356,8 @@
     "sidebar.close_all_tabs": "Fechar todas as abas",
     "status.reverting": "Revertendo para {{buildId}}...",
     "setup.tooltip.location": "Clique para mudar o local de instalação",
-    "sandbox.setup.proceed": "Prosseguir"
+    "sandbox.setup.proceed": "Prosseguir",
+    "web.context_menu.copy_link": "Copiar link",
+    "setup.status.notification": "Instalado sem erros, {{app_name}} está iniciando!",
+    "setup.action.install": "Instale agora"
 }
