@@ -400,7 +400,8 @@ export interface IModal {
   detail?: ILocalizedString;
 
   /** an image to show prominently in the modal */
-  cover?: string;
+  stillCoverUrl?: string;
+  coverUrl?: string;
 
   /** main buttons (in list format) */
   bigButtons?: IModalButtonSpec[];

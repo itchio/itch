@@ -7,6 +7,7 @@ import {
   IManifest,
   IManifestAction,
   IModalButtonSpec,
+  Cancelled,
 } from "../../types";
 
 import { IGame } from "../../db/models/game";
@@ -55,7 +56,8 @@ export default async function pickManifestAction(
 
   const response = await promisedModal(store, {
     title: game.title,
-    cover: game.stillCoverUrl || game.coverUrl,
+    stillCoverUrl: game.stillCoverUrl,
+    coverUrl: game.coverUrl,
     message: "",
     bigButtons,
     buttons,

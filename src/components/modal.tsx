@@ -10,6 +10,9 @@ import Icon from "./basics/icon";
 import Markdown from "./basics/markdown";
 import Filler from "./basics/filler";
 import TimeAgo from "./basics/time-ago";
+import Cover from "./basics/cover";
+import Hoverable from "./basics/hover-hoc";
+const HoverCover = Hoverable(Cover);
 
 import colors from "../constants/colors";
 
@@ -65,12 +68,16 @@ const ModalDiv = styled.div`
     display: flex;
     flex-direction: row;
 
+    .cover-container,
     .cover {
+      width: 230px;
+    }
+
+    .cover-container {
       flex: 1 0;
-      height: auto;
-      width: 190px;
       align-self: flex-start;
       margin-left: 20px;
+      margin-top: 20px;
     }
 
     .buttons {
@@ -403,7 +410,8 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
       const {
         bigButtons = [],
         buttons = [],
-        cover,
+        stillCoverUrl,
+        coverUrl,
         title = "",
         message = "",
         detail,
@@ -441,7 +449,15 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
             {bigButtons.length > 0
               ? <div className="big-wrapper">
-                  {cover ? <img className="cover" src={cover} /> : ""}
+                  {stillCoverUrl || coverUrl
+                    ? <div className="cover-container">
+                        <HoverCover
+                          className="cover"
+                          coverUrl={coverUrl}
+                          stillCoverUrl={stillCoverUrl}
+                        />
+                      </div>
+                    : ""}
                   {this.renderButtons(bigButtons, "big")}
                 </div>
               : null}
