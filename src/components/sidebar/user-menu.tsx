@@ -101,7 +101,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
     },
     {
       icon: "newspaper-o",
-      label: "View changelog",
+      label: ["menu.help.release_notes"],
       onClick: () => this.props.viewChangelog({}),
     },
     {

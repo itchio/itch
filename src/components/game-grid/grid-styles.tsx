@@ -43,8 +43,9 @@ export const GridContainerDiv = styled(StylableDiv)`
     border: 1px solid #191919;
 
     &.pristine {
-      border: 1px solid ${props => props.theme.accent};
-      background: #3c2c2c;
+      .cell--title {
+        font-weight: bold;
+      }
     }
   }
 
@@ -53,6 +54,17 @@ export const GridContainerDiv = styled(StylableDiv)`
     line-height: 1.6;
 
     font-size: ${props => props.theme.fontSizes.large};
+  }
+
+  .bubble {
+    background: rgba(255, 255, 255, .9);
+    color: black;
+    border-radius: 4px;
+    padding: 2px;
+    text-transform: lowercase;
+    font-weight: normal;
+    font-size: 90%;
+    margin-left: 4px;
   }
 
   .cell--actions {

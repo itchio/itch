@@ -48,6 +48,7 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
           className="cell--cover"
           showGifMarker={true}
           coverUrl={coverUrl}
+          ribbon={pristine}
           stillCoverUrl={stillCoverUrl}
           gameId={game.id}
         />
@@ -56,10 +57,15 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
             {game.title}
           </div>
           <div className="cell--actions">
-            <MainAction game={game} status={status} />
+            <MainAction
+              className="cell-main-action"
+              game={game}
+              status={status}
+            />
             <Filler />
             <IconButton
               big
+              className="cell-main-action"
               icon="more_vert"
               onClick={this.onMoreClick}
               emphasized

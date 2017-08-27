@@ -139,11 +139,10 @@ interface IProps {
   status: IGameStatus;
 
   wide?: boolean;
+  className?: string;
 }
 
 interface IDerivedProps {
-  className?: string;
-
   intl: InjectedIntl;
 
   queueGame: typeof actions.queueGame;

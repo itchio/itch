@@ -47,6 +47,7 @@ const IconButtonDiv = styled.div`
 class IconButton extends React.PureComponent<IProps> {
   render() {
     const {
+      className,
       big,
       huge,
       emphasized,
@@ -59,7 +60,7 @@ class IconButton extends React.PureComponent<IProps> {
 
     return (
       <IconButtonDiv
-        className={classNames({ disabled, big, huge, emphasized })}
+        className={classNames(className, { disabled, big, huge, emphasized })}
         data-rh={hint}
         data-rh-at={hintPosition}
         {...restProps}
