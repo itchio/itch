@@ -18,7 +18,7 @@ import { connect } from "../connect";
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
 
-class Cell extends React.Component<IProps & IDerivedProps> {
+class Cell extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { game, status } = this.props;
 
