@@ -2,7 +2,7 @@ import suite from "../test-suite";
 import Context from ".";
 
 import { DB } from "../db";
-import { IStore, Cancelled, isCancelled } from "../types";
+import { IStore, isCancelled } from "../types";
 
 const db = {} as DB;
 const store = {} as IStore;

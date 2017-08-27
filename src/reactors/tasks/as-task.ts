@@ -2,7 +2,7 @@ import uuid from "../../util/uuid";
 import { throttle } from "underscore";
 import * as memory from "memory-streams";
 
-import { IStore, IProgressInfo, Cancelled, isCancelled } from "../../types";
+import { IStore, IProgressInfo, isCancelled } from "../../types";
 import { DB } from "../../db";
 import Context from "../../context";
 import * as actions from "../../actions";

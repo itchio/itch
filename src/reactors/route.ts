@@ -1,4 +1,4 @@
-import { IStore, Cancelled, isCancelled } from "../types";
+import { IStore, isCancelled } from "../types";
 import { IAction } from "../constants/action-types";
 
 import { Watcher } from "./watcher";

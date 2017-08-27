@@ -1,7 +1,7 @@
 import { IGame } from "../../db/models/game";
 import { ICave } from "../../db/models/cave";
 
-import { IStore, Cancelled, isCancelled } from "../../types";
+import { IStore, isCancelled } from "../../types";
 
 import { Logger } from "../../logger";
 import diego from "../../os/diego";

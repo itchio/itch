@@ -8,7 +8,7 @@ import * as url from "url";
 import { ICave, ICaveLocation } from "../db/models/cave";
 import { IGame } from "../db/models/game";
 import { toJSONField } from "../db/json-field";
-import { IQueueInstallOpts, IStore, Cancelled, isCancelled } from "../types";
+import { IQueueInstallOpts, IStore, isCancelled } from "../types";
 
 import * as paths from "../os/paths";
 import * as sf from "../os/sf";

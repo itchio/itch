@@ -15,7 +15,7 @@ import { getActiveDownload } from "./getters";
 
 import Context from "../../context";
 import { IStore, IDownloadItem, IDownloadResult } from "../../types";
-import { IProgressInfo, Cancelled, isCancelled } from "../../types";
+import { IProgressInfo, isCancelled } from "../../types";
 
 import { DB } from "../../db";
 

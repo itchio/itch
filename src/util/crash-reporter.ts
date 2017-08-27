@@ -11,7 +11,7 @@ import platformData from "../constants/platform-data";
 import urls from "../constants/urls";
 import { isNetworkError } from "../net/errors";
 
-import { Cancelled, isCancelled } from "../types";
+import { isCancelled } from "../types";
 
 import { currentRuntime, runtimeProp } from "../os/runtime";
 import * as os from "../os";

@@ -34,7 +34,6 @@ import actionForGame from "../util/action-for-game";
 import { ILaunchers, IPrepares } from "./launch/types";
 import {
   IEnvironment,
-  Cancelled,
   Crash,
   IManifestAction,
   IRuntime,
