@@ -300,7 +300,7 @@ export default function(watcher: Watcher) {
 
     store.dispatch(
       actions.openModal({
-        title: "",
+        title: ["menu.help.release_notes"],
         message: "Changelog",
         detail: resp.body,
       })
