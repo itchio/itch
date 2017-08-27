@@ -31,7 +31,7 @@ const MeatTab = styled.div`
   right: 0;
   left: 0;
   bottom: 0;
-  transform: translateY(-500%);
+  transform: translateY(-100%);
 
   &.visible {
     transform: translateY(0);
@@ -79,7 +79,7 @@ interface IDerivedProps {
 
 const allTabsSelector = createSelector(
   (state: IAppState) => state.session.navigation.tabs,
-  (tabs: ITabs) => [...tabs.constant, ...tabs.transient].sort(),
+  (tabs: ITabs) => [...tabs.constant, ...tabs.transient].sort()
 );
 
 export default connect<IProps>(AllMeats, {
