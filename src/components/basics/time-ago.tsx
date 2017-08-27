@@ -1,7 +1,5 @@
 import * as React from "react";
 
-import Icon from "./icon";
-
 import { FormattedRelative } from "react-intl";
 
 import { injectIntl, InjectedIntl } from "react-intl";
@@ -10,7 +8,7 @@ import { fromDateTimeField } from "../../db/datetime-field";
 
 class TimeAgo extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { intl } = this.props;
+    const { intl, className } = this.props;
     let { date } = this.props;
 
     const dateObject = fromDateTimeField(date);
@@ -24,7 +22,10 @@ class TimeAgo extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     return (
-      <span data-rh={formatDate(dateObject, intl.locale, DATE_FORMAT)}>
+      <span
+        className={className}
+        data-rh={formatDate(dateObject, intl.locale, DATE_FORMAT)}
+      >
         <FormattedRelative value={dateObject} />
       </span>
     );
@@ -33,6 +34,7 @@ class TimeAgo extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {
   date: MixedDate;
+  className?: string;
 }
 
 interface IDerivedProps {
