@@ -41,6 +41,11 @@ export const GridContainerDiv = styled(StylableDiv)`
 
     background: #232222;
     border: 1px solid #191919;
+
+    &.pristine {
+      border: 1px solid ${props => props.theme.accent};
+      background: #3c2c2c;
+    }
   }
 
   .cell--title {

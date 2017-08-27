@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as classNames from "classnames";
 import { IGame } from "../../db/models/game";
 import { ICaveSummary } from "../../db/models/cave";
 import { InjectedIntl } from "react-intl";
@@ -17,10 +18,11 @@ import { connect } from "../connect";
 
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
+import isCavePristine from "../../helpers/is-cave-pristine";
 
 class Cell extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { game, status } = this.props;
+    const { game, cave, status } = this.props;
 
     const {
       column,
@@ -37,8 +39,11 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
         row * (rowHeight + interiorMargin)}px)`,
     };
 
+    const pristine = cave && isCavePristine(cave);
+    const className = classNames("grid--cell", { pristine });
+
     return (
-      <div className="grid--cell" style={style} data-game-id={game.id}>
+      <div className={className} style={style} data-game-id={game.id}>
         <HoverCover
           className="cell--cover"
           showGifMarker={true}
