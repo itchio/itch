@@ -350,7 +350,7 @@ export function importGlobalMarket(
         installedSize: caveIn.installedSize,
         installedUE4Prereq: caveIn.installedUE4Prereq,
 
-        lastTouchedAt: toDateTimeField(caveIn.lastTouchedAt),
+        lastTouchedAt: toDateTimeField(caveIn.lastTouched),
         secondsRun: parseInt(caveIn.secondsRun, 10),
       };
 

@@ -24,6 +24,7 @@ import { fromJSONField } from "../../db/json-field";
 import { IUpload } from "../../types";
 
 import asTask from "./as-task";
+import { fromDateTimeField } from "../../db/datetime-field";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
@@ -94,9 +95,8 @@ export default function(watcher: Watcher, db: DB) {
               label = `#${build.id}`;
             }
 
-            // TODO: check, I have doubts about this Date constructor
             label = `${label} — ${formatDate(
-              new Date(build.updatedAt),
+              fromDateTimeField(build.updatedAt),
               i18n.lang,
               DATE_FORMAT
             )}`;

@@ -16,6 +16,7 @@ const logger = rootLogger.child({ name: "self-update" });
 import { formatDate, DATE_FORMAT } from "../format/datetime";
 
 import * as actions from "../actions";
+import { fromDateTimeField } from "../db/datetime-field";
 
 const linux = os.itchPlatform() === "linux";
 
@@ -192,7 +193,7 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    const pubDate = new Date(Date.parse(spec.pub_date));
+    const pubDate = fromDateTimeField(spec.pub_date);
 
     store.dispatch(
       actions.openModal({

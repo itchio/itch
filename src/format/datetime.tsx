@@ -42,32 +42,22 @@ interface IDateFormat {
 
 const formatterCache = new Map<number, Map<string, Intl.DateTimeFormat>>();
 
-export type MixedDate = Date | string;
+export type MixedDate = Date | string | number;
 
 /**
  * Format a date for humans in the given locale
  */
 
 export function formatDate(
-  mixedDate: MixedDate,
+  date: Date,
   locale: string,
-  format: IDateFormat,
+  format: IDateFormat
 ): string {
-  let date: any;
-  if (!mixedDate) {
+  if (!date) {
     return "";
   }
 
-  const type = typeof mixedDate;
-  if (type === "string") {
-    date = new Date(mixedDate as string);
-  } else if (type === "object") {
-    date = mixedDate;
-  } else {
-    return "Ø";
-  }
-
-  if (!(date as any).getTime || isNaN((date as any).getTime())) {
+  if (!date.getTime || isNaN(date.getTime())) {
     return "Ø";
   }
 
@@ -77,7 +67,7 @@ export function formatDate(
 // Get a formatter, cached by format & locale
 function getFormatter(
   format: IDateFormat,
-  locale: string,
+  locale: string
 ): Intl.DateTimeFormat {
   let localeCache = formatterCache.get(format.key);
   if (!localeCache) {

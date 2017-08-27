@@ -3,42 +3,34 @@ import * as React from "react";
 import { FormattedRelative } from "react-intl";
 
 import { injectIntl, InjectedIntl } from "react-intl";
-import { formatDate, DATE_FORMAT } from "../../format/datetime";
+import { formatDate, DATE_FORMAT, MixedDate } from "../../format/datetime";
+import { fromDateTimeField } from "../../db/datetime-field";
 
 class TimeAgo extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { intl } = this.props;
     let { date } = this.props;
 
-    if (!date) {
+    const dateObject = fromDateTimeField(date);
+    if (!dateObject) {
       return <span />;
     }
 
-    const type = typeof date;
-    if (type === "string") {
-      date = new Date(date as string);
-    } else if (type === "object") {
-      // already good
-    } else {
-      console.warn("TimeAgo wasn't passed a date: ", date);
-      return <span />;
-    }
-
-    if (!(date as any).getTime || isNaN((date as any).getTime())) {
+    if (!dateObject.getTime || isNaN(dateObject.getTime())) {
       console.warn("TimeAgo was passed an invalid date: ", this.props.date);
       return <span />;
     }
 
     return (
-      <span data-rh={formatDate(date, intl.locale, DATE_FORMAT)}>
-        <FormattedRelative value={date} />
+      <span data-rh={formatDate(dateObject, intl.locale, DATE_FORMAT)}>
+        <FormattedRelative value={dateObject} />
       </span>
     );
   }
 }
 
 interface IProps {
-  date: Date | string;
+  date: MixedDate;
 }
 
 interface IDerivedProps {

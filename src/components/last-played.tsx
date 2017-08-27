@@ -7,7 +7,6 @@ import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
 
 import TimeAgo from "./basics/time-ago";
-import { fromDateTimeField } from "../db/datetime-field";
 
 export default class LastPlayed extends React.PureComponent<
   IProps & IDerivedProps
@@ -28,13 +27,11 @@ export default class LastPlayed extends React.PureComponent<
         {lastTouchedAt
           ? <label>
               {short
-                ? <TimeAgo date={fromDateTimeField(lastTouchedAt)} />
+                ? <TimeAgo date={lastTouchedAt} />
                 : format([
                     `usage_stats.last_${xed}_time_ago`,
                     {
-                      time_ago: (
-                        <TimeAgo date={fromDateTimeField(lastTouchedAt)} />
-                      ),
+                      time_ago: <TimeAgo date={lastTouchedAt} />,
                     },
                   ])}
             </label>
