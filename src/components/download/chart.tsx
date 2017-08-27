@@ -28,7 +28,7 @@ class Chart extends React.PureComponent<IProps & IDerivedProps> {
     const { data } = this.props;
     let clipPathId = "clipPath" + Date.now();
 
-    let max = 0;
+    let max = 10; // enforce a minimum so we don't get NaNs
     for (const point of data) {
       if (point > max) {
         max = point;
