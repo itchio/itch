@@ -127,6 +127,10 @@ async function doLaunch(
 
   if (manifest) {
     manifestAction = await pickManifestAction(store, manifest, game);
+    if (!manifestAction) {
+      logger.info(`No manifest action picked, cancelling`);
+      return;
+    }
   }
 
   let launchType = "native";
