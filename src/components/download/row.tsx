@@ -294,7 +294,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   progress() {
     const { first, active, item, downloadsPaused, tasksByGameId } = this.props;
-    const { err, game, startedAt, reason } = item;
+    const { err, game, startedAt, finishedAt, reason } = item;
     const task = (tasksByGameId[game.id] || [])[0];
 
     if (!active && !task) {
@@ -319,7 +319,8 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
                   {" — "}
                   {outcomeText}
                 </span>
-              : null}
+              : null}{" "}
+            <TimeAgo className="control--reason" date={finishedAt} />
           </div>
           <MainAction game={game} status={this.props.status} />
         </div>
@@ -387,6 +388,8 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   formattedReason(reason: string) {
     switch (reason) {
+      case "install":
+        return format(["download.reason.install"]);
       case "update":
         return format(["download.reason.update"]);
       case "reinstall":
@@ -402,6 +405,8 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   formattedOutcome(reason: string) {
     switch (reason) {
+      case "install":
+        return format(["download.outcome.installed"]);
       case "update":
         return format(["download.outcome.updated"]);
       case "reinstall":
