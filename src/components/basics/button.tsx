@@ -51,9 +51,11 @@ const ButtonDiv = styled.div`
   &.wide {
     min-width: 160px;
     justify-content: center;
-    font-size: ${props => props.theme.fontSizes.larger};
+    font-size: ${props => props.theme.fontSizes.large};
     padding-top: 16px;
     padding-bottom: 12px;
+    padding-left: 20px;
+    padding-right: 20px;
     font-weight: normal;
   }
 
@@ -68,6 +70,10 @@ const ButtonDiv = styled.div`
 const Spacer = styled.div`
   min-width: 8px;
   flex-shrink: 0;
+
+  &.wide {
+    min-width: 12px;
+  }
 `;
 
 class Button extends React.PureComponent<IProps, any> {
@@ -95,7 +101,9 @@ class Button extends React.PureComponent<IProps, any> {
         {...restProps}
       >
         {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
-        {iconComponent || icon ? <Spacer /> : null}
+        {iconComponent || icon
+          ? <Spacer className={classNames({ wide })} />
+          : null}
         {icon && label ? " " : null}
         {label
           ? <Label>

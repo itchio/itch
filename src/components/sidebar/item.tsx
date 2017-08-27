@@ -170,7 +170,7 @@ class Item extends React.PureComponent<IProps, IState> {
     return (
       <ItemDiv
         className={classNames({ active, fresh })}
-        data-rh-at="bottom"
+        data-rh-at="right"
         data-rh={format(sublabel)}
         onClick={this.onClick}
         onMouseUp={this.onMouseUp}

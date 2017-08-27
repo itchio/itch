@@ -33,7 +33,7 @@ const DownloadsContentDiv = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin: 20px 0 10px 10px;
+    margin: 20px 0 20px 10px;
     flex-shrink: 0;
 
     h2 {

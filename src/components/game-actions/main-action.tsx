@@ -4,6 +4,7 @@ import { connect } from "../connect";
 import { injectIntl, InjectedIntl } from "react-intl";
 
 import LoadingCircle from "../basics/loading-circle";
+import Icon from "../basics/icon";
 import Button from "../basics/button";
 
 import * as actions from "../../actions";
@@ -20,6 +21,7 @@ import actionForGame from "../../util/action-for-game";
 
 class MainAction extends React.PureComponent<IProps & IDerivedProps> {
   render() {
+    const { wide } = this.props;
     const { cave, access, operation, compatible, update } = this.props.status;
 
     let iconComponent: JSX.Element;
@@ -28,12 +30,28 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
 
     if (operation) {
       const { type, progress } = operation;
-      iconComponent = (
-        <LoadingCircle progress={progress > 0 ? progress : 0.1} />
-      );
+      if (operation.paused) {
+        iconComponent = <Icon icon="stopwatch" />;
+      } else if (!operation.active) {
+        iconComponent = <Icon icon="stopwatch" />;
+      } else {
+        iconComponent = (
+          <LoadingCircle
+            bare
+            wide={wide}
+            progress={progress > 0 ? progress : 0.1}
+          />
+        );
+      }
 
       if (type === OperationType.Download) {
-        label = format(["grid.item.downloading"]);
+        if (operation.paused) {
+          label = format(["grid.item.downloads_paused"]);
+        } else if (operation.active) {
+          label = format(["grid.item.downloading"]);
+        } else {
+          label = format(["grid.item.queued"]);
+        }
       } else if (type === OperationType.Task) {
         const { name } = operation;
         if (name === "launch") {
@@ -73,7 +91,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
       return <div />;
     }
 
-    const { className, wide } = this.props;
+    const { className } = this.props;
     return (
       <Button
         onClick={this.onClick}

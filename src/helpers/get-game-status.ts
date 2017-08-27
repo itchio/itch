@@ -65,6 +65,7 @@ interface IOperation {
   name?: string;
   reason?: string;
   active: boolean;
+  paused: boolean;
   progress: number;
 }
 
@@ -123,6 +124,7 @@ export default function getGameStatus(rs: IAppState, game: IGame): IGameStatus {
       type: OperationType.Download,
       reason: download.reason,
       active: download.id === activeDownload.id,
+      paused: rs.downloads.paused,
       progress: download.progress,
     };
   } else {
@@ -132,6 +134,7 @@ export default function getGameStatus(rs: IAppState, game: IGame): IGameStatus {
         type: OperationType.Task,
         name: task.name,
         active: true,
+        paused: false,
         progress: task.progress,
       };
     }

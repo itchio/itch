@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as classNames from "classnames";
 import { connect } from "../connect";
-import bob, { IRGBColor } from "../../renderer-util/bob";
 import Chart from "./chart";
 
 import { truncate, downloadProgress, fileSize } from "../../format";
@@ -18,6 +17,7 @@ import { IDownloadSpeeds, IDownloadItem, ITask, IAppState } from "../../types";
 import { dispatcher } from "../../constants/action-types";
 
 import styled, * as styles from "../styles";
+import { darken } from "polished";
 
 import format, { formatString } from "../format";
 import { injectIntl, InjectedIntl } from "react-intl";
@@ -39,22 +39,14 @@ const DownloadRowDiv = styled.div`
 
   border: 1px solid transparent;
 
-  .recharts-responsive-container {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
-
   &.finished {
     cursor: pointer;
-    background-image: linear-gradient(20deg, #3a3131 20%, #985353);
-    border: 1px solid #8a5656;
-    box-shadow: 0 0 0 1px #8c5353;
   }
 
+  background-color: ${props => darken(0.05, props.theme.explanation)};
+
   &.first,
+  &.finished,
   &:hover {
     background-color: ${props => props.theme.explanation};
   }
@@ -69,7 +61,7 @@ const DownloadRowDiv = styled.div`
 
   .controls {
     &.small {
-      align-self: flex-end;
+      align-self: flex-start;
     }
   }
 
@@ -150,6 +142,11 @@ const DownloadRowDiv = styled.div`
     padding-bottom: .5em;
     font-weight: bold;
   }
+
+  .control--reason {
+    font-weight: normal;
+    color: ${props => props.theme.secondaryText};
+  }
 `;
 
 const StyledCover = styled(Cover)`
@@ -168,7 +165,7 @@ const Controls = styled.div`
   padding-left: 8px;
 `;
 
-class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
+class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   constructor() {
     super();
     this.state = {};
@@ -259,7 +256,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
       return (
         <div className="controls small">
           <IconButton
-            icon="delete"
+            icon="cross"
             hintPosition="left"
             hint={formatString(intl, ["status.downloads.clear_finished"])}
             onClick={() => cancelDownload({ id })}
@@ -297,9 +294,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   progress() {
     const { first, active, item, downloadsPaused, tasksByGameId } = this.props;
-    const { err } = item;
-
-    const { game } = item;
+    const { err, game, startedAt, reason } = item;
     const task = (tasksByGameId[game.id] || [])[0];
 
     if (!active && !task) {
@@ -314,17 +309,23 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
         );
       }
 
+      const outcomeText = this.formattedOutcome(reason);
       return (
         <div className="stats--control">
           <div className="control--title">
             {game.title}
+            {outcomeText
+              ? <span className="control--reason">
+                  {" — "}
+                  {outcomeText}
+                </span>
+              : null}
           </div>
           <MainAction game={game} status={this.props.status} />
         </div>
       );
     }
 
-    const { startedAt, reason } = item;
     let { progress = 0, bps, eta } = item;
 
     if (task) {
@@ -334,10 +335,6 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
     const progressInnerStyle: React.CSSProperties = {
       width: progress * 100 + "%",
     };
-    const { dominantColor } = this.state;
-    if (dominantColor) {
-      progressInnerStyle.backgroundColor = bob.toCSS(dominantColor);
-    }
 
     const reasonText = this.formattedReason(reason);
 
@@ -403,14 +400,19 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
     }
   }
 
-  componentDidMount() {
-    const { item } = this.props;
-    const { game } = item;
-    const { coverUrl } = game;
-
-    bob.extractPalette(coverUrl, palette => {
-      this.setState({ dominantColor: bob.pick(palette) });
-    });
+  formattedOutcome(reason: string) {
+    switch (reason) {
+      case "update":
+        return format(["download.outcome.updated"]);
+      case "reinstall":
+        return format(["download.outcome.reinstalled"]);
+      case "revert":
+        return format(["download.outcome.reverted"]);
+      case "heal":
+        return format(["download.outcome.healed"]);
+      default:
+        return null;
+    }
   }
 }
 
@@ -439,10 +441,6 @@ interface IDerivedProps {
   openGameContextMenu: typeof actions.openGameContextMenu;
 
   intl: InjectedIntl;
-}
-
-interface IState {
-  dominantColor?: IRGBColor;
 }
 
 const HoverDownloadRow = Hover(DownloadRow);

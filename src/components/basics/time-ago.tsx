@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import Icon from "./icon";
+
 import { FormattedRelative } from "react-intl";
 
 import { injectIntl, InjectedIntl } from "react-intl";
