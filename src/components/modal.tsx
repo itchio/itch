@@ -457,7 +457,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
                           stillCoverUrl={stillCoverUrl}
                         />
                       </div>
-                    : ""}
+                    : null}
                   {this.renderButtons(bigButtons, "big")}
                 </div>
               : null}
