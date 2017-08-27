@@ -5,7 +5,7 @@ import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 import JSONTree from "react-json-tree";
 import theme from "./json-tree-theme";
 
-export class ExploreJson extends React.PureComponent<IProps> {
+export default class ExploreJson extends React.PureComponent<IProps> {
   render() {
     const params = this.props.modal.widgetParams as IExploreJsonParams;
     const { data } = params;
