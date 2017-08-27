@@ -579,6 +579,9 @@ export interface IFreeSpaceUpdatedPayload {
   diskInfo: Types.IPartsInfo;
 }
 
+export const RELOAD_LOCALES = "RELOAD_LOCALES";
+export interface IReloadLocalesPayload {}
+
 /* Tasks */
 export const TASK_STARTED = "TASK_STARTED";
 export interface ITaskStartedPayload {

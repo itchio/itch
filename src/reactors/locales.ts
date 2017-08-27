@@ -161,4 +161,11 @@ export default function(watcher: Watcher) {
 
     await loadLocale(store, lang);
   });
+
+  watcher.on(actions.reloadLocales, async (store, action) => {
+    const { lang } = store.getState().i18n;
+    logger.info(`Reloading locales...`);
+
+    await loadLocale(store, lang);
+  });
 }

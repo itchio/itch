@@ -63,6 +63,13 @@ export class SecretSettings extends React.PureComponent<
           <Button
             className="control"
             primary={true}
+            icon="repeat"
+            onClick={this.onReloadLocales}
+            label="Reload locales"
+          />
+          <Button
+            className="control"
+            primary={true}
             icon="bug"
             onClick={this.onViewAppState}
             label="View app state"
@@ -74,6 +81,10 @@ export class SecretSettings extends React.PureComponent<
 
   onReload = () => {
     window.location.reload();
+  };
+
+  onReloadLocales = () => {
+    this.props.reloadLocales({});
   };
 
   onViewAppState = () => {
@@ -107,6 +118,7 @@ interface IDerivedProps {
 
   setReduxLoggingEnabled: typeof actions.setReduxLoggingEnabled;
   openModal: typeof actions.openModal;
+  reloadLocales: typeof actions.reloadLocales;
 }
 
 export default connect<IProps>(SecretSettings, {
@@ -116,8 +128,9 @@ export default connect<IProps>(SecretSettings, {
   dispatch: dispatch => ({
     setReduxLoggingEnabled: dispatcher(
       dispatch,
-      actions.setReduxLoggingEnabled,
+      actions.setReduxLoggingEnabled
     ),
     openModal: dispatcher(dispatch, actions.openModal),
+    reloadLocales: dispatcher(dispatch, actions.reloadLocales),
   }),
 });
