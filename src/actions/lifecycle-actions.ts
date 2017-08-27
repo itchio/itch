@@ -23,6 +23,8 @@ import {
   IQuitElectronAppPayload,
   QUIT_AND_INSTALL,
   IQuitAndInstallPayload,
+  RELOAD_LOCALES,
+  IReloadLocalesPayload,
 } from "../constants/action-types";
 
 export const preboot = createAction<IPrebootPayload>(PREBOOT);
@@ -43,4 +45,8 @@ export const quitElectronApp = createAction<IQuitElectronAppPayload>(
 );
 export const quitAndInstall = createAction<IQuitAndInstallPayload>(
   QUIT_AND_INSTALL
+);
+
+export const reloadLocales = createAction<IReloadLocalesPayload>(
+  RELOAD_LOCALES
 );
