@@ -354,6 +354,7 @@
     "status.downloading": "Downloading update…",
     "status.downloads.category.active": "Active download",
     "status.downloads.category.finished": "Finished downloads",
+    "status.downloads.category.recent_activity": "Recent activity",
     "status.downloads.category.queued": "Queued downloads",
     "status.downloads.clear_all_finished": "Clear all",
     "status.downloads.clear_finished": "Clear",

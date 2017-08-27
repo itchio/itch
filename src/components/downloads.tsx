@@ -116,7 +116,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
           : ""}
         {queuedItems.length > 0
           ? map(queuedItems, (item, i) =>
-              <Row key={item.id} item={item} active />,
+              <Row key={item.id} item={item} active />
             )
           : ""}
 
@@ -124,14 +124,14 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
           ? [
               <div key="finished-header" className="section-bar">
                 <h2 className="finished-header">
-                  {format(["status.downloads.category.finished"])}
+                  {format(["status.downloads.category.recent_activity"])}
                 </h2>
                 <Link onClick={() => clearFinishedDownloads({})}>
                   {format(["status.downloads.clear_all_finished"])}
                 </Link>
               </div>,
             ].concat(
-              map(finishedItems, item => <Row key={item.id} item={item} />),
+              map(finishedItems, item => <Row key={item.id} item={item} />)
             )
           : ""}
       </DownloadsContentDiv>
@@ -156,7 +156,7 @@ export default connect<IProps>(Downloads, {
   dispatch: dispatch => ({
     clearFinishedDownloads: dispatcher(
       dispatch,
-      actions.clearFinishedDownloads,
+      actions.clearFinishedDownloads
     ),
   }),
 });

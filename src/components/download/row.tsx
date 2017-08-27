@@ -49,6 +49,9 @@ const DownloadRowDiv = styled.div`
 
   &.finished {
     cursor: pointer;
+    background-image: linear-gradient(20deg, #3a3131 20%, #985353);
+    border: 1px solid #8a5656;
+    box-shadow: 0 0 0 1px #8c5353;
   }
 
   &.first,
@@ -62,6 +65,12 @@ const DownloadRowDiv = styled.div`
   .game-title,
   .timeago {
     z-index: 4;
+  }
+
+  .controls {
+    &.small {
+      align-self: flex-end;
+    }
   }
 
   .game-title {
@@ -136,6 +145,11 @@ const DownloadRowDiv = styled.div`
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .control--title {
+    padding-bottom: .5em;
+    font-weight: bold;
+  }
 `;
 
 const StyledCover = styled(Cover)`
@@ -160,10 +174,10 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
     this.state = {};
   }
 
-  onCoverContextMenu = () => {
+  onCoverContextMenu = (ev: React.MouseEvent<any>) => {
     const { item, openGameContextMenu } = this.props;
     const { game } = item;
-    openGameContextMenu({ game });
+    openGameContextMenu({ game, x: ev.pageX, y: ev.pageY });
   };
 
   onNavigate = () => {
@@ -235,20 +249,16 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
 
     if (!active && err) {
       return (
-        <div className="controls">
-          <span
-            className="icon icon-repeat"
-            onClick={() => retryDownload({ id })}
-          />
+        <div className="controls small">
+          <IconButton icon="repeat" onClick={() => retryDownload({ id })} />
         </div>
       );
     }
 
     if (!active) {
       return (
-        <div className="controls">
+        <div className="controls small">
           <IconButton
-            big
             icon="delete"
             hintPosition="left"
             hint={formatString(intl, ["status.downloads.clear_finished"])}
@@ -306,7 +316,9 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps, IState> {
 
       return (
         <div className="stats--control">
-          {game.title}
+          <div className="control--title">
+            {game.title}
+          </div>
           <MainAction game={game} status={this.props.status} />
         </div>
       );
