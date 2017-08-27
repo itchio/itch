@@ -105,7 +105,7 @@ export class RememberedSession extends React.PureComponent<
           </p>
           <p className="last-connected">
             {format(["login.remembered_session.last_connected"])}{" "}
-            <TimeAgo date={new Date(session.lastConnected)} />
+            <TimeAgo date={session.lastConnected} />
           </p>
         </div>
         <div className="filler" />
