@@ -67,7 +67,6 @@ class Chart extends React.PureComponent<IProps & IDerivedProps> {
             <path
               d={pathString}
               fill="url(#downloadGradient)"
-              fill-opacity={1}
               height={height}
               width={width}
               stroke="none"
