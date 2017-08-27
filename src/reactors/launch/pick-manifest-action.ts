@@ -7,7 +7,6 @@ import {
   IManifest,
   IManifestAction,
   IModalButtonSpec,
-  Cancelled,
 } from "../../types";
 
 import { IGame } from "../../db/models/game";
