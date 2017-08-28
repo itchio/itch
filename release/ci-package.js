@@ -80,7 +80,7 @@ async function ciPackage(argsIn) {
   const electronWindowsOptions = Object.assign({}, electronSharedOptions, {
     platform: "win32",
     icon: icoPath,
-    "version-string": {
+    win32metadata: {
       CompanyName: companyName,
       LegalCopyright: "MIT license, (c) itch corp.",
       FileDescription: appName,
@@ -98,8 +98,8 @@ async function ciPackage(argsIn) {
       platform: "darwin",
       arch: "x64",
       icon: icnsPath,
-      "app-bundle-id": "io." + appName + ".mac",
-      "app-category-type": "public.app-category.games",
+      appBundleId: "io." + appName + ".mac",
+      appCategoryType: "public.app-category.games",
       protocols: [{ name: "itch.io", schemes: [appName + "io"] }],
     }),
     "linux-ia32": Object.assign({}, electronSharedOptions, {
@@ -115,9 +115,9 @@ async function ciPackage(argsIn) {
   $(await $.sh("mkdir -p packages"));
 
   $.say("Installing electron packaging tools...");
-  packages = ["electron-packager@8.6.0"];
+  packages = ["electron-packager@9.0.0"];
   if (os === "windows") {
-    packages.push("electron-winstaller@2.5.2");
+    packages.push("electron-winstaller@2.6.3");
   }
   $(await $.npm(`install --no-save ${packages.join(" ")}`));
 
