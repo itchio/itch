@@ -43,8 +43,8 @@ export default function(watcher: Watcher) {
               store.dispatch(actions.loginWithToken({ username, key, me }));
             }
           }
-          return;
         }
+        break;
       }
 
       case "back": {
