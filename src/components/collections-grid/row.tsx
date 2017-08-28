@@ -25,7 +25,7 @@ export default class CollectionRow extends React.PureComponent<IProps> {
 
     const gameIds = fromJSONField<number[]>(collection.gameIds, emptyArr).slice(
       0,
-      GAMES_SHOWN_PER_COLLECTION,
+      GAMES_SHOWN_PER_COLLECTION
     );
     const games = filter(map(gameIds, gameId => allGames[gameId]), x => !!x);
 
@@ -51,9 +51,11 @@ export default class CollectionRow extends React.PureComponent<IProps> {
 
     const { index, rowHeight, interiorPadding, globalPadding } = this.props;
 
+    const translateY = Math.round(
+      globalPadding + index * (rowHeight + interiorPadding)
+    );
     const style: React.CSSProperties = {
-      transform: `translateY(${globalPadding +
-        index * (rowHeight + interiorPadding)}px)`,
+      transform: `translateY(${translateY}px)`,
     };
 
     return (

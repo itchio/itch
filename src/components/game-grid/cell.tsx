@@ -33,10 +33,14 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
       globalMargin,
     } = this.props;
     const { stillCoverUrl, coverUrl } = game;
+
+    // round numbers to avoid blurry text
+    const translateX = Math.round(column * (columnWidth + interiorMargin));
+    const translateY = Math.round(
+      globalMargin + row * (rowHeight + interiorMargin)
+    );
     const style = {
-      transform: `translate(${column *
-        (columnWidth + interiorMargin)}px, ${globalMargin +
-        row * (rowHeight + interiorMargin)}px)`,
+      transform: `translate(${translateX}px, ${translateY}px)`,
     };
 
     const pristine = cave && isCavePristine(cave);

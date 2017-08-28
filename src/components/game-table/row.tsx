@@ -19,7 +19,8 @@ export default pure(function Row(props: IProps) {
   const { game, cave, index, rowHeight } = props;
 
   const { stillCoverUrl, coverUrl, publishedAt } = game;
-  const style = { transform: `translateY(${index * rowHeight}px)` };
+  const translateY = Math.round(index * rowHeight);
+  const style = { transform: `translateY(${translateY}px)` };
 
   const renderInstallStatus = () => {
     if (cave) {
