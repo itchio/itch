@@ -1,4 +1,5 @@
 import { createStructuredSelector } from "reselect";
+import * as classNames from "classnames";
 import * as React from "react";
 import { connect } from "./connect";
 
@@ -75,6 +76,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
 
   render() {
     const { tab, tabData, url, controls, meId } = this.props;
+    const fresh = !(tabData.web && tabData.web.webContentsId);
     const partition = partitionForUser(meId);
 
     let context: React.ReactElement<any> = null;
@@ -87,7 +89,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
         <TitleBar tab={tab} />
         <BrowserBar tab={tab} tabData={tabData} url={url} />
         <BrowserMain>
-          <WebviewShell>
+          <WebviewShell className={classNames({ fresh })}>
             {DONT_SHOW_WEBVIEWS
               ? null
               : <webview
