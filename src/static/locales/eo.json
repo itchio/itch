@@ -440,5 +440,12 @@
     "prompt.blessing.message": "Por {{operation}} „{{title}}“ oni devas esti administratoro",
     "prompt.blessing.detail": "Daŭrigu nur se vi fidas la kreanton.",
     "prompt.install_error.message": "La instalado malsukcesis.",
-    "status.cancelled.message": "La ago estis haltita."
+    "status.cancelled.message": "La ago estis haltita.",
+    "download.reason.install": "— instalado",
+    "download.outcome.installed": "instalita",
+    "download.outcome.updated": "ĝisdatigita ĝis la lasta versio",
+    "download.outcome.reinstalled": "reinstalita",
+    "download.outcome.reverted": "revenigita al antaŭa versio",
+    "download.outcome.healed": "kontrolita kaj riparita",
+    "status.downloads.category.recent_activity": "Lastatempa agado"
 }

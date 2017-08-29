@@ -432,5 +432,12 @@
     "prompt.blessing.message": "За {{operation}} на „{{title}}“ са нужни администраторски правомощия",
     "prompt.blessing.detail": "Продължете само ако вярвате на автора.",
     "prompt.install_error.message": "Инсталирането беше неуспешно.",
-    "status.cancelled.message": "Операцията беше отменена."
+    "status.cancelled.message": "Операцията беше отменена.",
+    "download.reason.install": "— инсталиране",
+    "download.outcome.installed": "инсталирано",
+    "download.outcome.updated": "обновено до последната версия",
+    "download.outcome.reinstalled": "преинсталирано",
+    "download.outcome.reverted": "върнато към предишна версия",
+    "download.outcome.healed": "проверено и поправено",
+    "status.downloads.category.recent_activity": "Скорошна дейност"
 }
