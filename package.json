@@ -113,7 +113,7 @@
     "cross-env": "^5.0.0",
     "debounce-collect": "^1.0.2",
     "electron": "^1.7.5",
-    "electron-compilers-ftl": "^5.9.4",
+    "electron-compilers-ftl": "^5.9.5",
     "electron-rebuild-ftl": "^1.5.11",
     "gaze": "^1.1.2",
     "husky": "^0.14.0",
