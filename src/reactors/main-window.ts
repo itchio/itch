@@ -13,6 +13,7 @@ import { getImagePath } from "../os/resources";
 import * as os from "../os";
 import { resolve } from "path";
 import * as invariant from "invariant";
+import * as bluebird from "bluebird";
 import { debounce } from "underscore";
 
 import rootLogger from "../logger";
@@ -22,7 +23,6 @@ import { t } from "../format";
 import * as actions from "../actions";
 
 let createLock = false;
-let quitting = false;
 let firstWindow = true;
 
 type AppCommand = "browser-backward" | "browser-forward";
@@ -92,7 +92,7 @@ async function createWindow(store: IStore, hidden: boolean) {
 
   window.on("close", (e: any) => {
     logger.debug("Main window being closed");
-    if (quitting) {
+    if (store.getState().system.quitting) {
       logger.debug("Quitting, letting main window close");
       // alright alright you get to close
       return;
@@ -470,7 +470,6 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.windowBoundsChanged, async (store, action) => {
-    // TODO: this should move to preferences, why are we using config again?
     const { bounds } = action.payload;
     config.set(BOUNDS_CONFIG_KEY, bounds);
   });
@@ -504,18 +503,15 @@ export default function(watcher: Watcher) {
     app.quit();
   });
 
-  watcher.on(actions.prepareQuit, async (store, action) => {
-    quitting = true;
-  });
-
   watcher.on(actions.quit, async (store, action) => {
-    quitting = true;
+    store.dispatch(actions.prepareQuit({}));
     store.dispatch(actions.quitElectronApp({}));
   });
 
   watcher.on(actions.quitAndInstall, async (store, action) => {
-    quitting = true;
+    store.dispatch(actions.prepareQuit({}));
     logger.info("Handing off to Squirrel for self-update");
+    await bluebird.delay(1000);
     require("electron").autoUpdater.quitAndInstall();
   });
 }

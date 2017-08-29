@@ -485,6 +485,12 @@ export interface ISystemState {
 
   /** if non-null, where the proxy settings come from */
   proxySource?: ProxySource;
+
+  /** true if we're done booting */
+  booted?: boolean;
+
+  /** true if we're about to quit */
+  quitting?: boolean;
 }
 
 export interface ISetupOperation {

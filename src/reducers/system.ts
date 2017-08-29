@@ -26,6 +26,8 @@ const initialState = {
   },
   proxy: null,
   proxySource: null,
+  booted: false,
+  quitting: false,
 } as ISystemState;
 
 export default reducer<ISystemState>(initialState, on => {
@@ -51,6 +53,13 @@ export default reducer<ISystemState>(initialState, on => {
       ...state,
       proxy,
       proxySource: source,
+    };
+  });
+
+  on(actions.prepareQuit, (state, action) => {
+    return {
+      ...state,
+      quitting: true,
     };
   });
 });

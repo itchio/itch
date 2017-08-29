@@ -118,7 +118,6 @@ function autoUpdateDone() {
   });
 
   app.on("before-quit", (e: Event) => {
-    console.log(`Got before-quit!`);
     store.dispatch(actions.prepareQuit({}));
   });
 
