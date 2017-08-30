@@ -173,7 +173,7 @@ export class Fetcher {
   private _space: Space;
   space(): Space {
     if (!this._space) {
-      this._space = Space.for(this.ctx.store, this.tabId);
+      this._space = Space.fromStore(this.ctx.store, this.tabId);
     }
     return this._space;
   }

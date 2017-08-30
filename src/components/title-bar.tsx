@@ -49,7 +49,7 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tab, maximized, focused, tabData } = this.props;
 
-    const sp = new Space(tabData);
+    const sp = Space.fromData(tabData);
     let label = sp.label();
 
     const loggedIn = tab !== "login";

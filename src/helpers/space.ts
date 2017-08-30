@@ -5,9 +5,16 @@ import { IUser } from "../db/models/user";
 import { ILocalizedString, IStore, IAppState } from "../types/index";
 
 import staticTabData, { IBaseTabData } from "../constants/static-tab-data";
+import memoize from "lru-memoize";
 
 // Empty Object
 const eo = {} as any;
+
+const kSpaceCacheSize = 100;
+
+export const spaceFromData = memoize(kSpaceCacheSize, (a, b) => a === b, true)(
+  (dataIn: ITabData) => new Space(dataIn)
+);
 
 /**
  * A Space gives structured info about a tab.
@@ -39,12 +46,16 @@ export class Space {
     }
   }
 
-  static for(store: IStore, tab: string): Space {
-    return new Space(store.getState().session.tabData[tab]);
+  static fromStore(store: IStore, tab: string): Space {
+    return spaceFromData(store.getState().session.tabData[tab]);
   }
 
-  static from(state: IAppState, tab: string): Space {
-    return new Space(state.session.tabData[tab]);
+  static fromState(state: IAppState, tab: string): Space {
+    return spaceFromData(state.session.tabData[tab]);
+  }
+
+  static fromData(data: ITabData): Space {
+    return spaceFromData(data);
   }
 
   path(): string {

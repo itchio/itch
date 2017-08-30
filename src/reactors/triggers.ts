@@ -9,7 +9,10 @@ export default function(watcher: Watcher) {
   watcher.on(actions.trigger, async (store, action) => {
     const { command, tab } = action.payload;
 
-    const sp = Space.for(store, tab || store.getState().session.navigation.tab);
+    const sp = Space.fromStore(
+      store,
+      tab || store.getState().session.navigation.tab
+    );
     const modals = store.getState().modals;
     const [modal] = modals;
 

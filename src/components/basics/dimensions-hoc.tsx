@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { throttle } from "underscore";
+import getDisplayName from "./get-display-name";
 
 interface IDimensionsState {
   width: number;
@@ -22,9 +23,10 @@ declare class ResizeObserver {
 }
 
 export default function injectDimensions<P extends IDimensionsProps>(
-  WrappedComponent: React.ComponentClass<P>,
+  WrappedComponent: React.ComponentClass<P>
 ): React.ComponentClass<P> {
   return class extends React.PureComponent<P, IDimensionsState> {
+    static displayName = `Dimensions(${getDisplayName(WrappedComponent)})`;
     ro: ResizeObserver;
     onScroll: any;
 
@@ -58,8 +60,8 @@ export default function injectDimensions<P extends IDimensionsProps>(
               });
             },
             45,
-            { leading: false },
-          ),
+            { leading: false }
+          )
         );
       }
     };

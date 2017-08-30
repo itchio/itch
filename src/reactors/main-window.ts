@@ -406,7 +406,7 @@ const makeTitleSelector = (store: IStore) => {
   );
 
   return createSelector(getID, getData, getI18n, (id, data, i18n) => {
-    const label = new Space(data).label();
+    const label = Space.fromData(data).label();
     // TODO: memoize that
     updateTitle(store, t(i18n, label) + " - itch");
   });

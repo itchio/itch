@@ -32,7 +32,7 @@ export default class Meat extends React.PureComponent<IProps> {
   getConcrete(): React.ComponentClass<IMeatProps> {
     const { tabData } = this.props;
 
-    const sp = new Space(tabData);
+    const sp = Space.fromData(tabData);
     switch (sp.prefix) {
       case "featured":
         return Browser;

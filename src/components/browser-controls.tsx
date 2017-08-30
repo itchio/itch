@@ -87,7 +87,7 @@ export class BrowserControls extends React.PureComponent<
   render() {
     const { tabData } = this.props;
     let url = this.props.url || "";
-    const sp = new Space(tabData);
+    const sp = Space.fromData(tabData);
     let { loading, canGoBack, canGoForward, editingAddress } = sp.web();
 
     const frozen = sp.isFrozen();
@@ -214,5 +214,5 @@ export default connect<IProps>(
       evolveTab: dispatcher(dispatch, actions.evolveTab),
       tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
     }),
-  },
+  }
 );

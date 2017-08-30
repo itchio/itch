@@ -107,6 +107,14 @@ function autoUpdateDone() {
     store.dispatch(actions.languageSniffed({ lang: app.getLocale() }));
 
     store.dispatch(actions.preboot({}));
+
+    setInterval(() => {
+      try {
+        store.dispatch(actions.tick({}));
+      } catch (e) {
+        logger.error(`While dispatching tick: ${e.stack}`);
+      }
+    }, 1000 /* each second */);
   });
 
   app.on("activate", () => {

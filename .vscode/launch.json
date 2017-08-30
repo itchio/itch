@@ -14,7 +14,29 @@
                 "."
             ],
             "env": {
-                "ITCH_LOG_LEVEL": "debug"
+                "ITCH_LOG_LEVEL": "debug",
+                "ITCH_REACT_FRUGAL": "0"
+            },
+            "console": "integratedTerminal",
+            "sourceMaps": true,
+            "protocol": "inspector"
+        },
+        {
+            "name": "Main Process (Review purity of components)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/src/main.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                "."
+            ],
+            "env": {
+                "ITCH_LOG_LEVEL": "debug",
+                "ITCH_REACT_FRUGAL": "1",
+                "DEVTOOLS": "1"
             },
             "console": "integratedTerminal",
             "sourceMaps": true,

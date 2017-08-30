@@ -1,24 +1,27 @@
 import { IDownloadsState, IDownloadItem } from "../../types";
 
 import { first, filter, sortBy } from "underscore";
+import memoize from "lru-memoize";
 
-export function getActiveDownload(downloads: IDownloadsState): IDownloadItem {
+export const getActiveDownload = memoize(1)(function(
+  downloads: IDownloadsState
+): IDownloadItem {
   return first(getPendingDownloads(downloads));
-}
+});
 
-export function getPendingDownloads(
+export const getPendingDownloads = memoize(1)(function(
   downloads: IDownloadsState
 ): IDownloadItem[] {
   const pending = filter(downloads.items, i => !i.finished);
   return sortBy(pending, "order");
-}
+});
 
-export function getFinishedDownloads(
+export const getFinishedDownloads = memoize(1)(function(
   downloads: IDownloadsState
 ): IDownloadItem[] {
   const pending = filter(downloads.items, i => i.finished);
   return sortBy(pending, "finishedAt").reverse();
-}
+});
 
 export function getPendingForGame(
   downloads: IDownloadsState,

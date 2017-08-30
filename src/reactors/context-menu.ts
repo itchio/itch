@@ -35,7 +35,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.openTabContextMenu, async (store, action) => {
     const { tab } = action.payload;
 
-    const sp = Space.for(store, tab);
+    const sp = Space.fromStore(store, tab);
     if (sp.prefix === "games") {
       const game = sp.game();
       if (game) {

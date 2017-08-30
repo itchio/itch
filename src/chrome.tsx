@@ -35,7 +35,20 @@ if (env.name === "development") {
     const rhl = require("react-hot-loader");
     AppContainer = rhl.AppContainer;
   } catch (e) {
-    /* muffin */
+    console.error(`Could not enable react-hot-loader:`, e);
+  }
+
+  if (process.env.ITCH_REACT_FRUGAL === "1") {
+    try {
+      const frugal = require("react-frugal").default;
+      frugal(React, ReactDOM, {
+        exclude: [
+          /(styled\.|(Connect|Styled|InjectIntl|Hoverable|Dimension)\()/,
+        ],
+      });
+    } catch (e) {
+      console.error(`Could not enable react-frugal:`, e);
+    }
   }
 }
 

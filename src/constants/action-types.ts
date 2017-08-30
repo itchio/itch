@@ -32,6 +32,10 @@ export interface IPrebootPayload {}
 export const BOOT = "BOOT";
 export interface IBootPayload {}
 
+// emitted every second
+export const TICK = "TICK";
+export interface ITickPayload {}
+
 export const FIRST_USEFUL_PAGE = "FIRST_USEFUL_PAGE";
 export interface IFirstUsefulPagePayload {}
 

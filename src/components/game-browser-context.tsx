@@ -84,7 +84,7 @@ interface IDerivedProps {
 
 export default connect<IProps>(GameBrowserContext, {
   state: (rs: IAppState, props: IProps) => {
-    const game = Space.from(rs, props.tab).game();
+    const game = Space.fromState(rs, props.tab).game();
     if (!game) {
       return {};
     }

@@ -35,13 +35,11 @@ async function updateDownloadSpeed(store: IStore) {
 }
 
 export default function(watcher: Watcher) {
-  watcher.on(actions.boot, async (store, action) => {
-    while (true) {
-      try {
-        await updateDownloadSpeed(store);
-      } catch (e) {
-        logger.error(`While updating download speed: ${e.stack || e}`);
-      }
+  watcher.on(actions.tick, async (store, action) => {
+    try {
+      await updateDownloadSpeed(store);
+    } catch (e) {
+      logger.error(`While updating download speed: ${e.stack || e}`);
     }
   });
 }

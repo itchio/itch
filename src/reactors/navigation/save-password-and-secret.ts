@@ -6,7 +6,7 @@ import { DB } from "../../db";
 import { Space } from "../../helpers/space";
 
 export function doSave(path: string, query: string, db: DB) {
-  const sp = new Space({ path });
+  const sp = Space.fromData({ path });
 
   if (sp.prefix !== "games") {
     return;

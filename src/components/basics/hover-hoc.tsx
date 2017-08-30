@@ -1,4 +1,5 @@
 import * as React from "react";
+import getDisplayName from "./get-display-name";
 
 interface IHoverState {
   hover: boolean;
@@ -11,9 +12,11 @@ export interface IHoverProps {
 }
 
 export default function<P extends IHoverProps>(
-  WrappedComponent: React.ComponentClass<P>,
+  WrappedComponent: React.ComponentClass<P>
 ): React.ComponentClass<P> {
   return class extends React.PureComponent<P, IHoverState> {
+    static displayName = `Hoverable(${getDisplayName(WrappedComponent)})`;
+
     constructor() {
       super();
       this.state = {

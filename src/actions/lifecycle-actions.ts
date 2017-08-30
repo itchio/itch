@@ -25,10 +25,13 @@ import {
   IQuitAndInstallPayload,
   RELOAD_LOCALES,
   IReloadLocalesPayload,
+  ITickPayload,
+  TICK,
 } from "../constants/action-types";
 
 export const preboot = createAction<IPrebootPayload>(PREBOOT);
 export const boot = createAction<IBootPayload>(BOOT);
+export const tick = createAction<ITickPayload>(TICK);
 export const firstUsefulPage = createAction<IFirstUsefulPagePayload>(
   FIRST_USEFUL_PAGE
 );

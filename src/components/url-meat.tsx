@@ -40,7 +40,7 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
   getUrlAndControls(): IUrlAndControls {
     const { tabData } = this.props;
 
-    const sp = new Space(tabData);
+    const sp = Space.fromData(tabData);
     const tabUrl = sp.web().url;
 
     switch (sp.prefix) {

@@ -123,7 +123,7 @@ export default connect<IProps>(Games, {
         games: (data: ITabData, params, layout) => (data.games || eo).set || eo,
         layout: (data: ITabData, params, layout) => layout,
         params: (data: ITabData, params, layout) => params,
-      }),
+      })
     );
   },
   dispatch: dispatch => ({

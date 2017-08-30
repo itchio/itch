@@ -16,7 +16,7 @@ export class Location extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tab, tabData, browseInstallLocation } = this.props;
 
-    const locationName = new Space(tabData).suffix;
+    const locationName = Space.fromData(tabData).suffix;
 
     return (
       <div className="location-meat">

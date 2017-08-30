@@ -83,7 +83,7 @@ export async function queueFetch(
 }
 
 function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
-  const sp = Space.for(store, tab);
+  const sp = Space.fromStore(store, tab);
 
   switch (sp.prefix) {
     case "dashboard":

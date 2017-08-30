@@ -1,8 +1,8 @@
 import { IDownloadKeySummary } from "../db/models/download-key";
 import { ICaveSummary } from "../db/models/cave";
-import { IAppState, IGameUpdate } from "../types/index";
+import { IAppState, IGameUpdate, ITask, IDownloadItem } from "../types/index";
 
-import { first, isEmpty } from "underscore";
+import { first } from "underscore";
 import getByIds from "./get-by-ids";
 import { IGame } from "../db/models/game";
 import {
@@ -10,6 +10,7 @@ import {
   getActiveDownload,
 } from "../reactors/downloads/getters";
 import isPlatformCompatible from "../util/is-platform-compatible";
+import memoize from "lru-memoize";
 
 /**
  * What type of access we have to the game - do we own it,
@@ -70,9 +71,7 @@ interface IOperation {
 }
 
 export interface IGameStatus {
-  downloadKeys: IDownloadKeySummary[];
   downloadKey: IDownloadKeySummary;
-  caves: ICaveSummary[];
   cave: ICaveSummary;
   access: Access;
   operation: IOperation;
@@ -93,6 +92,46 @@ export default function getGameStatus(rs: IAppState, game: IGame): IGameStatus {
   const cave = first(caves);
   const downloadKey = first(downloadKeys);
 
+  const pressUser = credentials.me.pressUser;
+  const task = first(tasks.tasksByGameId[game.id]);
+  const download = first(getPendingForGame(downloads, game.id));
+  let isActiveDownload = false;
+  let areDownloadsPaused = false;
+  if (download) {
+    const activeDownload = getActiveDownload(downloads);
+    isActiveDownload = download.id === activeDownload.id;
+    areDownloadsPaused = downloads.paused;
+  }
+
+  let update: IGameUpdate;
+  if (cave) {
+    update = rs.gameUpdates.updates[cave.id];
+  }
+
+  return realGetGameStatus(
+    game,
+    cave,
+    downloadKey,
+    pressUser,
+    task,
+    download,
+    update,
+    isActiveDownload,
+    areDownloadsPaused
+  );
+}
+
+function rawGetGameStatus(
+  game: IGame,
+  cave: ICaveSummary,
+  downloadKey: IDownloadKeySummary,
+  pressUser: boolean,
+  task: ITask,
+  download: IDownloadItem,
+  update: IGameUpdate,
+  isDownloadActive,
+  areDownloadsPaused
+): IGameStatus {
   let access = Access.None;
   if (!(game.minPrice > 0)) {
     if (game.canBeBought) {
@@ -102,53 +141,41 @@ export default function getGameStatus(rs: IAppState, game: IGame): IGameStatus {
     }
   } else {
     // game has minimum price
-    if (isEmpty(downloadKeys)) {
+    if (downloadKey) {
+      // we have download keys
+      access = Access.Key;
+    } else {
       // we have no download keys
-      if (game.inPressSystem && credentials.me.pressUser) {
+      if (game.inPressSystem && pressUser) {
         access = Access.Press;
       } else {
         // we have
       }
-    } else {
-      // we have download keys
-      access = Access.Key;
     }
   }
 
   let operation: IOperation = null;
 
-  const download = first(getPendingForGame(downloads, game.id));
   if (download) {
-    const activeDownload = getActiveDownload(downloads);
     operation = {
       type: OperationType.Download,
       reason: download.reason,
-      active: download.id === activeDownload.id,
-      paused: rs.downloads.paused,
+      active: isDownloadActive,
+      paused: areDownloadsPaused,
       progress: download.progress,
     };
-  } else {
-    const task = first(tasks.tasksByGameId[game.id]);
-    if (task) {
-      operation = {
-        type: OperationType.Task,
-        name: task.name,
-        active: true,
-        paused: false,
-        progress: task.progress,
-      };
-    }
-  }
-
-  let update: IGameUpdate;
-  if (cave) {
-    update = rs.gameUpdates.updates[cave.id];
+  } else if (task) {
+    operation = {
+      type: OperationType.Task,
+      name: task.name,
+      active: true,
+      paused: false,
+      progress: task.progress,
+    };
   }
 
   const compatible = isPlatformCompatible(game);
   return {
-    caves,
-    downloadKeys,
     cave,
     downloadKey,
     access,
@@ -157,3 +184,6 @@ export default function getGameStatus(rs: IAppState, game: IGame): IGameStatus {
     compatible,
   };
 }
+const realGetGameStatus = memoize(300, (a, b) => a === b, true)(
+  rawGetGameStatus
+);

@@ -59,7 +59,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
     const { tab, index, sortable, data, active } = this.props;
     const { onExplore } = this;
 
-    const sp = new Space(data);
+    const sp = Space.fromData(data);
     let loading = this.props.loading || sp.web().loading;
     const path = data.path || tab;
 
@@ -91,7 +91,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
             {
               id: formatted.id,
             },
-            formatted.values,
+            formatted.values
           );
           sublabel = `${title} — ${humanDuration}`;
         }
