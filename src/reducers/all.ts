@@ -14,6 +14,7 @@ import downloads from "./downloads";
 import status from "./status";
 import gameUpdates from "./game-updates";
 import commons from "./commons";
+import systemTasks from "./system-tasks";
 
 const reducer = combineReducers({
   modals,
@@ -30,5 +31,6 @@ const reducer = combineReducers({
   status,
   gameUpdates,
   commons,
+  systemTasks,
 });
 export default reducer;

@@ -1,8 +1,6 @@
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import delay from "../delay";
-
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "download-watcher" });
 
@@ -19,16 +17,12 @@ import { IProgressInfo, isCancelled } from "../../types";
 
 import { DB } from "../../db";
 
-const DOWNLOAD_WATCHER_INTERVAL = 1000;
-
 let currentDownload: IDownloadItem = null;
 let currentContext: Context = null;
 
 // TODO: pause downloads on logout.
 
 async function updateDownloadState(store: IStore, db: DB) {
-  await delay(DOWNLOAD_WATCHER_INTERVAL);
-
   const downloadsState = store.getState().downloads;
   if (downloadsState.paused) {
     if (currentDownload) {
@@ -130,13 +124,11 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
 }
 
 export default function(watcher: Watcher, db: DB) {
-  watcher.on(actions.boot, async (store, action) => {
-    while (true) {
-      try {
-        await updateDownloadState(store, db);
-      } catch (e) {
-        logger.error(`While updating download state: ${e.stack || e}`);
-      }
+  watcher.on(actions.tick, async (store, action) => {
+    try {
+      await updateDownloadState(store, db);
+    } catch (e) {
+      logger.error(`While updating download state: ${e.stack || e}`);
     }
   });
 }

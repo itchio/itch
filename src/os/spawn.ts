@@ -4,12 +4,12 @@ import * as split2 from "split2";
 import rootLogger, { Logger } from "../logger";
 const spawnLogger = rootLogger.child({ name: "spawn" });
 
-import Context from "../context";
+import { MinimalContext } from "../context";
 import { formatExitCode } from "../format/exit-code";
 
 interface ISpawnOpts {
   /** Context this should run in */
-  ctx: Context;
+  ctx: MinimalContext;
 
   /** Command to spawn */
   command: string;

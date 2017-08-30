@@ -1,7 +1,8 @@
 import { Watcher } from "./watcher";
 
-import { app } from "electron";
+import { app, autoUpdater } from "electron";
 import * as os from "../os";
+import spawn from "../os/spawn";
 import { request } from "../net/request";
 import { isNetworkError } from "../net/errors";
 import { t } from "../format";
@@ -11,17 +12,18 @@ import delay from "./delay";
 import env from "../env";
 import urls from "../constants/urls";
 
-import rootLogger from "../logger";
+import rootLogger, { devNull } from "../logger";
 const logger = rootLogger.child({ name: "self-update" });
 import { formatDate, DATE_FORMAT } from "../format/datetime";
 
 import * as actions from "../actions";
 import { fromDateTimeField } from "../db/datetime-field";
+import memoize from "lru-memoize";
+import { MinimalContext } from "../context/index";
 
 const linux = os.itchPlatform() === "linux";
 
 let hadErrors = false;
-let autoUpdater: any;
 
 // 2 hours, * 60 = minutes, * 60 = seconds, * 1000 = millis
 const UPDATE_INTERVAL = 2 * 60 * 60 * 1000;
@@ -30,38 +32,38 @@ const UPDATE_INTERVAL_WIGGLE = 0.2 * 60 * 60 * 1000;
 // 5 seconds, * 1000 = millis
 const DISMISS_TIME = 5 * 1000;
 
-const QUIET_TIME = 2 * 1000;
-
 const CHECK_FOR_SELF_UPDATES =
   env.name === "production" || process.env.UP_TO_SCRATCH === "1";
 
-async function returnsZero(cmd: string) {
-  return new Promise((resolve, reject) => {
-    require("child_process").exec(
-      cmd,
-      {},
-      (err: any, stdout: string, stderr: string) => {
-        if (err) {
-          resolve(false);
-        } else {
-          resolve(true);
-        }
-      }
-    );
-  });
+/**
+ * Resolves to true if the command returns 0, resolves to false otherwise
+ */
+async function runs(command: string, args: string[]): Promise<boolean> {
+  try {
+    await spawn.assert({
+      command,
+      args,
+      ctx: new MinimalContext(),
+      logger: devNull,
+    });
+    return true;
+  } catch (e) {
+    /* muffin */
+  }
+  return false;
 }
 
-async function augmentedPlatform() {
+const augmentedPlatform = memoize(1)(async () => {
   let platform = os.platform();
   if (platform === "linux") {
-    if (await returnsZero("/usr/bin/rpm -q -f /usr/bin/rpm")) {
+    if (await runs("/usr/bin/rpm", ["-q", "-f", "/usr/bin/rpm"])) {
       platform = "rpm";
-    } else if (await returnsZero("/usr/bin/dpkg --search /usr/bin/dpkg")) {
+    } else if (await runs("/usr/bin/dpkg", ["--search", "/usr/bin/dpkg"])) {
       platform = "deb";
     }
   }
   return platform;
-}
+});
 
 async function getFeedURL() {
   const base = urls.updateServers[env.channel];
@@ -78,24 +80,22 @@ export default function(watcher: Watcher) {
     }
 
     try {
-      autoUpdater = require("electron").autoUpdater;
-      autoUpdater.on("error", (ev: any, err: string) => {
+      autoUpdater.on("error", (err: Error) => {
         hadErrors = true;
         const environmentSetManually = !!process.env.NODE_ENV;
         if (
-          /^Could not get code signature/.test(err) &&
+          /^Could not get code signature/.test(err.message) &&
           (env.name === "development" || environmentSetManually)
         ) {
           // electron-prebuilt isn't signed, we know you can't work Squirrel.mac, don't worry
           logger.info("Ignoring Squirrel.mac complaint");
         } else {
-          store.dispatch(actions.selfUpdateError({ message: err }));
+          store.dispatch(actions.selfUpdateError({ message: err.message }));
         }
       });
       logger.info("Installed!");
     } catch (e) {
       logger.error(`While installing: ${e.message}`);
-      autoUpdater = null;
       return;
     }
 
@@ -114,20 +114,24 @@ export default function(watcher: Watcher) {
         store.dispatch(actions.selfUpdateDownloaded(releaseName));
       }
     );
+  });
 
-    setTimeout(
-      () => store.dispatch(actions.checkForSelfUpdate({})),
-      QUIET_TIME
+  watcher.on(actions.tick, async (store, action) => {
+    const { nextSelfUpdateCheck } = store.getState().systemTasks;
+
+    if (Date.now() < nextSelfUpdateCheck) {
+      // not our time!
+      return;
+    }
+
+    const sleepTime = UPDATE_INTERVAL + Math.random() + UPDATE_INTERVAL_WIGGLE;
+    store.dispatch(
+      actions.scheduleSystemTask({
+        nextSelfUpdateCheck: Date.now() + sleepTime,
+      })
     );
 
-    while (true) {
-      try {
-        await delay(UPDATE_INTERVAL + Math.random() + UPDATE_INTERVAL_WIGGLE);
-        store.dispatch(actions.checkForSelfUpdate({}));
-      } catch (e) {
-        logger.error(`While doing regularly self-update check: ${e}`);
-      }
-    }
+    store.dispatch(actions.checkForSelfUpdate({}));
   });
 
   watcher.on(actions.checkForSelfUpdate, async (store, action) => {

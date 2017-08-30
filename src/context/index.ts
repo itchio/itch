@@ -20,7 +20,7 @@ interface IWithStopperOpts<T> {
 
 const cancelPoisonValue = {};
 
-export default class Context {
+export class MinimalContext {
   private emitter: EventEmitter = new EventEmitter();
   private stoppers: IStopper[] = [];
   private dead = false;
@@ -28,10 +28,14 @@ export default class Context {
   private resolveCancelPromise: () => void = null;
   private taskId: string = null;
 
-  constructor(public store: IStore, public db: DB) {
+  constructor() {
     this.cancelPromise = new Promise((resolve, reject) => {
       this.resolveCancelPromise = resolve;
     });
+  }
+
+  clone(): MinimalContext {
+    return new MinimalContext();
   }
 
   /**
@@ -89,8 +93,8 @@ export default class Context {
     return this.taskId;
   }
 
-  async withSub<T>(f: (sub: Context) => Promise<T>): Promise<T> {
-    const sub = new Context(this.store, this.db);
+  async withSub<T>(f: (sub: MinimalContext) => Promise<T>): Promise<T> {
+    const sub = this.clone();
     if (this.taskId) {
       sub.registerTaskId(this.taskId);
     }
@@ -117,5 +121,15 @@ export default class Context {
 
   isDead(): boolean {
     return this.dead;
+  }
+}
+
+export default class Context extends MinimalContext {
+  constructor(public store: IStore, public db: DB) {
+    super();
+  }
+
+  clone(): Context {
+    return new Context(this.store, this.db);
   }
 }

@@ -282,22 +282,24 @@ async function doCheckForGameUpdate(
   }
 }
 
-let updaterInstalled = false;
-
 export default function(watcher: Watcher, db: DB) {
-  watcher.on(actions.sessionReady, async (store, action) => {
-    if (updaterInstalled) {
+  watcher.on(actions.tick, async (store, action) => {
+    const { nextGameUpdateCheck } = store.getState().systemTasks;
+    if (Date.now() <= nextGameUpdateCheck) {
+      // it's not our time... yet!
       return;
     }
-    updaterInstalled = true;
 
-    while (true) {
-      logger.info("Regularly scheduled check for game updates...");
-      store.dispatch(actions.checkForGameUpdates({}));
-      await delay(
-        DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE
-      );
-    }
+    const sleepTime =
+      DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE;
+    store.dispatch(
+      actions.scheduleSystemTask({
+        nextGameUpdateCheck: Date.now() + sleepTime,
+      })
+    );
+
+    logger.info("Regularly scheduled check for game updates...");
+    store.dispatch(actions.checkForGameUpdates({}));
   });
 
   watcher.on(actions.checkForGameUpdates, async (store, action) => {

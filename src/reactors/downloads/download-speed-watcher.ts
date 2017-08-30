@@ -1,12 +1,8 @@
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import delay from "../delay";
-
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "download-speed-watcher" });
-
-const DOWNLOAD_SPEED_DELAY = 1000;
 
 import { IStore } from "../../types";
 
@@ -15,8 +11,6 @@ import { getActiveDownload } from "./getters";
 const emptyObj: any = {};
 
 async function updateDownloadSpeed(store: IStore) {
-  await delay(DOWNLOAD_SPEED_DELAY);
-
   const { downloads } = store.getState();
 
   if (downloads.paused) {

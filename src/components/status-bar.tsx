@@ -148,7 +148,7 @@ class StatusBar extends React.PureComponent<IProps & IDerivedProps> {
     } else if (checking) {
       busy = true;
       children = [
-        <LoadingCircle progress={0.3} />,
+        <LoadingCircle key="progress" progress={0.3} />,
         <span key="message">
           {format(["status.checking"])}
         </span>,
@@ -205,11 +205,11 @@ export default connect<IProps>(StatusBar, {
   dispatch: dispatch => ({
     showAvailableSelfUpdate: dispatcher(
       dispatch,
-      actions.showAvailableSelfUpdate,
+      actions.showAvailableSelfUpdate
     ),
     applySelfUpdateRequest: dispatcher(
       dispatch,
-      actions.applySelfUpdateRequest,
+      actions.applySelfUpdateRequest
     ),
     dismissStatus: dispatcher(dispatch, actions.dismissStatus),
     dismissStatusMessage: dispatcher(dispatch, actions.dismissStatusMessage),

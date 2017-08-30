@@ -511,7 +511,6 @@ export default function(watcher: Watcher) {
   watcher.on(actions.quitAndInstall, async (store, action) => {
     store.dispatch(actions.prepareQuit({}));
     logger.info("Handing off to Squirrel for self-update");
-    await bluebird.delay(1000);
     require("electron").autoUpdater.quitAndInstall();
   });
 }

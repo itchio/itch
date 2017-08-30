@@ -27,6 +27,8 @@ import {
   IReloadLocalesPayload,
   ITickPayload,
   TICK,
+  IScheduleSystemTaskPayload,
+  SCHEDULE_SYSTEM_TASK,
 } from "../constants/action-types";
 
 export const preboot = createAction<IPrebootPayload>(PREBOOT);
@@ -52,4 +54,8 @@ export const quitAndInstall = createAction<IQuitAndInstallPayload>(
 
 export const reloadLocales = createAction<IReloadLocalesPayload>(
   RELOAD_LOCALES
+);
+
+export const scheduleSystemTask = createAction<IScheduleSystemTaskPayload>(
+  SCHEDULE_SYSTEM_TASK
 );

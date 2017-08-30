@@ -273,6 +273,7 @@ export interface IAppState {
   queries: IQueriesState;
   /** commonly-needed subset of DB rows available in a compact & performance-friendly format */
   commons: ICommonsState;
+  systemTasks: ISystemTasksState;
 }
 
 export interface IQueriesState {
@@ -491,6 +492,14 @@ export interface ISystemState {
 
   /** true if we're about to quit */
   quitting?: boolean;
+}
+
+export interface ISystemTasksState {
+  /** timestamp for next self update check (milliseconds since epoch) */
+  nextSelfUpdateCheck: number;
+
+  /** timestamp for next game update check (milliseconds since epoch) */
+  nextGameUpdateCheck: number;
 }
 
 export interface ISetupOperation {

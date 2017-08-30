@@ -28,6 +28,8 @@ const initialState = {
   proxySource: null,
   booted: false,
   quitting: false,
+  nextSelfUpdateCheck: Date.now() + 60 * 1000,
+  nextGameUpdateCheck: Date.now() + 30 * 1000,
 } as ISystemState;
 
 export default reducer<ISystemState>(initialState, on => {

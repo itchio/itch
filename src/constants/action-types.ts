@@ -36,6 +36,10 @@ export interface IBootPayload {}
 export const TICK = "TICK";
 export interface ITickPayload {}
 
+export const SCHEDULE_SYSTEM_TASK = "SCHEDULE_SYSTEM_TASK";
+export interface IScheduleSystemTaskPayload
+  extends Partial<Types.ISystemTasksState> {}
+
 export const FIRST_USEFUL_PAGE = "FIRST_USEFUL_PAGE";
 export interface IFirstUsefulPagePayload {}
 
