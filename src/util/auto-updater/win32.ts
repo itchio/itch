@@ -6,8 +6,8 @@ import * as shortcut from "../../os/win32/shortcut";
 
 import { AutoUpdaterStart } from "./types";
 
-import Context from "../../context";
-const ctx = new Context(null, null);
+import { MinimalContext } from "../../context";
+const ctx = new MinimalContext();
 
 async function onInstall() {
   await bluebird.all([registry.install(ctx), shortcut.install(ctx)]);

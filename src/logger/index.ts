@@ -185,7 +185,10 @@ export function makeLogger({
   }
 }
 
-const defaultLogger = makeLogger({ logPath: mainLogPath() });
+const defaultLogger =
+  process.type === "browser"
+    ? makeLogger({ logPath: mainLogPath() }) // log 'metal' process to file
+    : makeLogger({}); // don't log browser process to file
 
 export const devNull = new Logger({
   write: () => {

@@ -21,7 +21,7 @@ suite(__filename, s => {
         } as any) as IUpload,
         preferences
       ),
-      join(userData, "downloads", "1990.tar.gz")
+      join(userData, "downloads", "1990", "voices.tar.gz")
     );
     t.same(
       paths.downloadPath(
@@ -31,7 +31,7 @@ suite(__filename, s => {
         } as any) as IUpload,
         preferences
       ),
-      join(userData, "downloads", "1997.tar.bz2")
+      join(userData, "downloads", "1997", "FACES OF WRATH.TAR.BZ2")
     );
     t.same(
       paths.downloadPath(
@@ -41,7 +41,7 @@ suite(__filename, s => {
         } as any) as IUpload,
         preferences
       ),
-      join(userData, "downloads", "1990.zip")
+      join(userData, "downloads", "1990", "2019.07.21.zip")
     );
     t.same(
       paths.downloadPath(
@@ -51,7 +51,7 @@ suite(__filename, s => {
         } as any) as IUpload,
         preferences
       ),
-      join(userData, "downloads", "1994")
+      join(userData, "downloads", "1994", "the-elusive-extless-file")
     );
   });
 });

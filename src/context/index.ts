@@ -93,8 +93,11 @@ export class MinimalContext {
     return this.taskId;
   }
 
-  async withSub<T>(f: (sub: MinimalContext) => Promise<T>): Promise<T> {
-    const sub = this.clone();
+  async withSub<T, U extends MinimalContext>(
+    this: U,
+    f: (sub: U) => Promise<T>
+  ): Promise<T> {
+    const sub = this.clone() as U;
     if (this.taskId) {
       sub.registerTaskId(this.taskId);
     }

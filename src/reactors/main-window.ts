@@ -13,7 +13,6 @@ import { getImagePath } from "../os/resources";
 import * as os from "../os";
 import { resolve } from "path";
 import * as invariant from "invariant";
-import * as bluebird from "bluebird";
 import { debounce } from "underscore";
 
 import rootLogger from "../logger";

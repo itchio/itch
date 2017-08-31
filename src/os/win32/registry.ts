@@ -5,7 +5,7 @@ import spawn from "../spawn";
 import rootLogger, { devNull } from "../../logger";
 const logger = rootLogger.child({ name: "registry" });
 
-import Context from "../../context";
+import { MinimalContext } from "../../context";
 
 let base = "HKCU\\Software\\Classes\\itchio";
 
@@ -19,7 +19,7 @@ interface IQueryOpts {
 }
 
 export async function regQuery(
-  ctx: Context,
+  ctx: MinimalContext,
   key: string,
   queryOpts: IQueryOpts = {}
 ): Promise<void> {
@@ -33,7 +33,7 @@ export async function regQuery(
 }
 
 export async function regAddDefault(
-  ctx: Context,
+  ctx: MinimalContext,
   key: string,
   value: string
 ): Promise<void> {
@@ -46,7 +46,7 @@ export async function regAddDefault(
 }
 
 export async function regAddEmpty(
-  ctx: Context,
+  ctx: MinimalContext,
   key: string,
   value: string
 ): Promise<void> {
@@ -58,7 +58,10 @@ export async function regAddEmpty(
   });
 }
 
-export async function regDeleteAll(ctx: Context, key: string): Promise<void> {
+export async function regDeleteAll(
+  ctx: MinimalContext,
+  key: string
+): Promise<void> {
   await spawn.assert({
     command: regPath,
     args: ["delete", key, "/f"],
@@ -67,7 +70,7 @@ export async function regDeleteAll(ctx: Context, key: string): Promise<void> {
   });
 }
 
-export async function install(ctx: Context): Promise<void> {
+export async function install(ctx: MinimalContext): Promise<void> {
   try {
     await regAddDefault(ctx, base, "URL:itch.io protocol");
     await regAddEmpty(ctx, base, "URL protocol");
@@ -85,13 +88,13 @@ export async function install(ctx: Context): Promise<void> {
   }
 }
 
-export async function update(ctx: Context): Promise<void> {
+export async function update(ctx: MinimalContext): Promise<void> {
   // TODO: maybe don't go writing to the registry if everything's
   // there, mhhhh ?
   await install(ctx);
 }
 
-export async function uninstall(ctx: Context): Promise<void> {
+export async function uninstall(ctx: MinimalContext): Promise<void> {
   try {
     await regDeleteAll(ctx, base);
   } catch (e) {

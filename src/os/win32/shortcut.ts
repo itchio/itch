@@ -3,7 +3,7 @@ import { app } from "electron";
 import spawn from "../spawn";
 import * as sf from "../sf";
 
-import Context from "../../context";
+import { MinimalContext } from "../../context";
 
 import rootLogger, { devNull } from "../../logger";
 const logger = rootLogger.child({ name: "shortcut" });
@@ -13,7 +13,10 @@ const rootFolder = resolve(appFolder, "..");
 export const updateExePath = join(rootFolder, "Update.exe");
 const exeName = basename(process.execPath);
 
-export async function updateRun(ctx: Context, args: string[]): Promise<void> {
+export async function updateRun(
+  ctx: MinimalContext,
+  args: string[]
+): Promise<void> {
   logger.info(`Update.exe located at = ${updateExePath}`);
   try {
     await spawn.assert({
@@ -27,11 +30,13 @@ export async function updateRun(ctx: Context, args: string[]): Promise<void> {
   }
 }
 
-export async function createOrUpdateShortcut(ctx: Context): Promise<void> {
+export async function createOrUpdateShortcut(
+  ctx: MinimalContext
+): Promise<void> {
   await updateRun(ctx, ["--createShortcut", exeName]);
 }
 
-export async function update(ctx: Context): Promise<void> {
+export async function update(ctx: MinimalContext): Promise<void> {
   const desktopPath = app.getPath("desktop");
   const shortcutPath = join(desktopPath, "itch.lnk");
 
@@ -63,7 +68,7 @@ export async function update(ctx: Context): Promise<void> {
   }
 }
 
-export async function install(ctx: Context): Promise<void> {
+export async function install(ctx: MinimalContext): Promise<void> {
   logger.info("Creating shortcut with squirrel");
   try {
     await createOrUpdateShortcut(ctx);
@@ -72,7 +77,7 @@ export async function install(ctx: Context): Promise<void> {
   }
 }
 
-export async function uninstall(ctx: Context): Promise<void> {
+export async function uninstall(ctx: MinimalContext): Promise<void> {
   logger.info("Removing shortcut with squirrel");
   try {
     await updateRun(ctx, ["--removeShortcut", exeName]);
