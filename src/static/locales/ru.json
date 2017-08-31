@@ -454,5 +454,8 @@
     "download.outcome.reinstalled": "переустановлено",
     "download.outcome.reverted": "откачено до ранней версии",
     "download.outcome.healed": "проверено и восстановлено",
-    "status.downloads.category.recent_activity": "Последняя активность"
+    "status.downloads.category.recent_activity": "Последняя активность",
+    "game.install.could_not_launch.message": "Сообщение об ошибке: {{errorMessage}}",
+    "menu.file.close_other_tabs": "Закрыть другие закладки",
+    "menu.file.close_tabs_below": "Закрыть закладки ниже"
 }
