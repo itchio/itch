@@ -30,59 +30,22 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
   ctx.emitProgress({ progress: -1 });
 
   const result = await saveAngels(opts, async () => {
-    let removeAfterUsage = false;
-
     const { archivePath, destPath } = opts;
-    let installerPath = archivePath;
-
-    /*
-     * FIXME: change downloads directory structure, instead of having:
-     * - downloads/
-     *   - 123.zip
-     *   - 456
-     * 
-     * let's have:
-     * - downloads/
-     *   - 123/
-     *     - Complete filename.zip
-     *   - 456/
-     *     - Another file.exe
-     * 
-     * and then we won't need that at all.
-     */
-    if (!/\.exe$/i.test(installerPath)) {
-      // copy to temporary file, otherwise windows will refuse to open them
-      // cf. https://github.com/itchio/itch/issues/322
-      installerPath += ".exe";
-      await butler.ditto(opts.archivePath, installerPath, {
-        ctx,
-        logger: devNull,
-      });
-      removeAfterUsage = true;
-    }
 
     const code = await spawn({
       command: "butler.exe",
       args: [
         "elevate",
         "--",
-        installerPath,
+        archivePath,
         "/S", // run the installer silently
         "/NCRC", // disable CRC-check, we do hash checking ourselves
         `/D=${destPath}`,
       ],
-      onToken: tok => logger.info(`${installerPath}: ${tok}`),
+      onToken: tok => logger.info(`${archivePath}: ${tok}`),
       ctx,
       logger,
     });
-
-    // FIXME: remove that too then
-    if (removeAfterUsage) {
-      await butler.wipe(installerPath, {
-        ctx,
-        logger: devNull,
-      });
-    }
 
     if (code !== 0) {
       // TODO: standardize those errors so we can have dialogs for them
