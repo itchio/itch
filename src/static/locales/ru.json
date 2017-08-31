@@ -302,7 +302,7 @@
     "sandbox.setup.linux.detail": "После нажатия на кнопку \"Установить\" введите ваш пароль пользователя. Это необходимо только для первого запуска или обновления песочницы; itch не запоминает ваш пароль.",
     "sidebar.close_all_tabs": "Закрыть все закладки",
     "action.name.forums": "Форумы",
-    "game.install.could_not_launch.detail": "Последнее, что мы видели: {{error}}",
+    "game.install.could_not_launch.detail": "Отправление отчёта об ошибке поможет нам её исправить!",
     "grid.criterion.only_compatible": "Только совместимые",
     "grid.hidden_count": "+ {{count}} приложений отфильтровано",
     "grid.criterion.filter": "Фильтр…",
