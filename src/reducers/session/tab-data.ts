@@ -85,7 +85,12 @@ export default reducer<ITabDataSet>(initialState, on => {
   });
 
   on(actions.closeTab, (state, action) => {
-    return omit(state, action.payload.tab);
+    const { tab } = action.payload;
+    if (staticTabData[tab]) {
+      // never clear tabData for static tabs tabs
+      return state;
+    }
+    return omit(state, tab);
   });
 
   on(actions.openTab, (state, action) => {

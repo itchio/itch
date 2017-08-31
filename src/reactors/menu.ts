@@ -1,112 +1,19 @@
 import { Watcher } from "./watcher";
 
-import { Menu } from "electron";
+import { Menu, BrowserWindow } from "electron";
 
-import { map } from "underscore";
 import { createSelector } from "reselect";
 
-import * as clone from "clone";
-import { t } from "../format";
+import { IRuntime, IMenuItem, IMenuTemplate } from "../types";
 
-import { IRuntime, ILocalizedString, IMenuItem, IMenuTemplate } from "../types";
-
-import urls from "../constants/urls";
 import * as actions from "../actions";
 
-import { IStore, IAppState, ISessionCredentialsState } from "../types";
+import { IAppState, ISessionCredentialsState } from "../types";
+import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 
 let refreshSelector: (state: IAppState) => void;
 
 let applySelector: (state: IAppState) => void;
-
-interface IMenuItemPayload {
-  role?: string;
-  localizedLabel?: ILocalizedString;
-}
-
-function convertMenuAction(payload: IMenuItemPayload, runtime: IRuntime) {
-  const { role, localizedLabel } = payload;
-
-  switch (role) {
-    case "about":
-      return actions.openUrl({ url: urls.appHomepage });
-    default: // muffin
-  }
-
-  const labelString = localizedLabel ? localizedLabel[0] : null;
-
-  switch (labelString) {
-    case "sidebar.new_tab":
-      return actions.newTab({});
-    case "menu.file.close_tab":
-      return runtime.platform === "osx"
-        ? actions.closeTabOrAuxWindow({})
-        : actions.closeCurrentTab({});
-    case "menu.file.close_all_tabs":
-      return actions.closeAllTabs({});
-    case "menu.file.close_window":
-      return actions.hideWindow({});
-    case "menu.file.quit":
-      return actions.quitWhenMain({});
-    case "menu.file.preferences":
-      return actions.navigate({ tab: "preferences" });
-    case "menu.view.downloads":
-      return actions.navigate({ tab: "downloads" });
-    case "menu.account.change_user":
-      return actions.changeUser({});
-    case "menu.help.view_terms":
-      return actions.openUrl({ url: urls.termsOfService });
-    case "menu.help.view_license":
-      return actions.openUrl({ url: `${urls.itchRepo}/blob/master/LICENSE` });
-    case "menu.help.check_for_update":
-      return actions.checkForSelfUpdate({});
-    case "menu.help.report_issue":
-      return actions.openUrl({ url: `${urls.itchRepo}/issues/new` });
-    case "menu.help.search_issue":
-      return actions.openUrl({ url: `${urls.itchRepo}/search?type=Issues` });
-    case "menu.help.release_notes":
-      return actions.openUrl({ url: `${urls.itchRepo}/releases` });
-    default:
-      return null;
-  }
-}
-
-export function fleshOutTemplate(
-  template: IMenuTemplate,
-  store: IStore,
-  runtime: IRuntime
-) {
-  const { i18n } = store.getState();
-
-  const visitNode = (input: IMenuItem) => {
-    if (input.type === "separator") {
-      return input;
-    }
-
-    const { localizedLabel, role = null, enabled = true } = input;
-    const node = clone(input) as Electron.MenuItemConstructorOptions;
-
-    if (localizedLabel) {
-      node.label = t(i18n, localizedLabel);
-    }
-    if (enabled) {
-      node.click = e => {
-        const menuAction = convertMenuAction({ localizedLabel, role }, runtime);
-        if (menuAction) {
-          store.dispatch(menuAction);
-        }
-      };
-    }
-
-    if (node.submenu) {
-      node.submenu = map(node.submenu as IMenuItem[], visitNode);
-    }
-
-    return node;
-  };
-
-  return map(template, visitNode);
-}
 
 export default function(watcher: Watcher, runtime: IRuntime) {
   watcher.onAll(async (store, action) => {
@@ -140,10 +47,23 @@ export default function(watcher: Watcher, runtime: IRuntime) {
         (state: IAppState) => state.i18n,
         (template, i18n) => {
           setImmediate(() => {
-            // electron gotcha: buildFromTemplate mutates its argument
-            const fleshed = fleshOutTemplate(template, store, runtime);
-            const menu = Menu.buildFromTemplate(clone(fleshed));
-            Menu.setApplicationMenu(menu);
+            const fleshed = fleshOutTemplate(store, runtime, template);
+            const menu = Menu.buildFromTemplate(fleshed);
+            const rs = store.getState();
+            const mainWindowId = rs.ui.mainWindow.id;
+
+            if (rs.system.macos) {
+              Menu.setApplicationMenu(menu);
+            } else {
+              if (mainWindowId) {
+                // we can't use setApplicationMenu on windows & linux because
+                // it'll set it for all windows (including launched games)
+                const win = BrowserWindow.fromId(mainWindowId);
+                if (win) {
+                  win.setMenu(menu);
+                }
+              }
+            }
           });
         }
       );

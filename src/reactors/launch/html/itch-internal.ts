@@ -1,5 +1,6 @@
 import { join } from "path";
 import url from "../../../util/url";
+import registeredProtocols from "./registered-protocols";
 
 const WEBGAME_PROTOCOL = "itch-cave";
 
@@ -14,12 +15,6 @@ export interface IBeforeSendHeadersCallbackOpts {
 export interface IBeforeSendHeadersCallback {
   (opts: IBeforeSendHeadersCallbackOpts): void;
 }
-
-export interface IRegisteredProtocols {
-  [key: string]: boolean;
-}
-
-const registeredProtocols: IRegisteredProtocols = {};
 
 export interface IRegisterProtocolOpts {
   partition: string;

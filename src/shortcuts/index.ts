@@ -8,21 +8,13 @@ import { IStore } from "../types";
 const combo = new Combokeys(document.documentElement);
 hookGlobalBind(combo);
 
-import { remote } from "electron";
-
 const macos = process.platform === "darwin";
-
-function openDevTools() {
-  const win = remote.getCurrentWindow();
-  win.webContents.openDevTools({ mode: "detach" });
-}
 
 export default function setupShortcuts(store: IStore) {
   // dev shortcuts
-  combo.bindGlobal(
-    ["shift+f12", "ctrl+shift+c", "command+shift+c"],
-    openDevTools
-  );
+  combo.bindGlobal(["shift+f12", "ctrl+shift+c", "command+shift+c"], () => {
+    store.dispatch(actions.openDevTools({ forApp: true }));
+  });
   combo.bindGlobal(["shift+f5", "shift+command+r"], () =>
     window.location.reload()
   );

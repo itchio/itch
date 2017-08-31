@@ -1,7 +1,7 @@
 import * as actions from "../actions";
 import { Watcher } from "./watcher";
 
-import { webContents } from "electron";
+import { webContents, BrowserWindow } from "electron";
 
 import staticTabData from "../constants/static-tab-data";
 
@@ -253,5 +253,20 @@ export default function(watcher: Watcher, db: DB) {
         }
       }
     });
+  });
+
+  watcher.on(actions.openDevTools, async (store, action) => {
+    const { forApp } = action.payload;
+    if (forApp) {
+      const bw = BrowserWindow.getFocusedWindow();
+      if (bw && bw.webContents) {
+        bw.webContents.openDevTools({ mode: "detach" });
+      }
+    } else {
+      const { tab } = store.getState().session.navigation;
+      withWebContents(store, tab, wc => {
+        wc.openDevTools({ mode: "bottom" });
+      });
+    }
   });
 }

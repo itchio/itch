@@ -205,6 +205,18 @@ export interface ICloseTabOrAuxWindowPayload {}
 export const CLOSE_ALL_TABS = "CLOSE_ALL_TABS";
 export interface ICloseAllTabsPayload {}
 
+export const CLOSE_OTHER_TABS = "CLOSE_OTHER_TABS";
+export interface ICloseOtherTabsPayload {
+  /** the only transient tab that'll be left */
+  tab: string;
+}
+
+export const CLOSE_TABS_BELOW = "CLOSE_TABS_BELOW";
+export interface ICloseTabsBelowPayload {
+  /** the tab after which all tabs will be closed */
+  tab: string;
+}
+
 /* Navigation */
 
 export const OPEN_TAB = "OPEN_TAB";
@@ -395,7 +407,7 @@ export interface ITabPaginationChangedPayload {
 
 export const OPEN_DEV_TOOLS = "OPEN_DEV_TOOLS";
 export interface IOpenDevToolsPayload {
-  tab: string;
+  forApp: boolean;
 }
 
 export const ANALYZE_PAGE = "ANALYZE_PAGE";
@@ -410,19 +422,21 @@ export interface IAnalyzePagePayload {
   iframe: boolean;
 }
 
+export interface IOpenContextMenuBase {
+  pageX?: number;
+  pageY?: number;
+}
+
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
-export interface IOpenTabContextMenuPayload {
+export interface IOpenTabContextMenuPayload extends IOpenContextMenuBase {
   /** id of the tab to open the context menu of */
   tab: string;
 }
 
 export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
-export interface IOpenGameContextMenuPayload {
+export interface IOpenGameContextMenuPayload extends IOpenContextMenuBase {
   /** game to open the context menu of */
   game: IGame;
-
-  x?: number;
-  y?: number;
 }
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */

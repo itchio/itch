@@ -88,6 +88,10 @@ import {
   TRIGGER,
   IViewChangelogPayload,
   VIEW_CHANGELOG,
+  ICloseOtherTabsPayload,
+  ICloseTabsBelowPayload,
+  CLOSE_OTHER_TABS,
+  CLOSE_TABS_BELOW,
 } from "../constants/action-types";
 
 export const navigate = createAction<INavigatePayload>(NAVIGATE);
@@ -143,6 +147,12 @@ export const closeCurrentTab = createAction<ICloseCurrentTabPayload>(
   CLOSE_CURRENT_TAB
 );
 export const closeAllTabs = createAction<ICloseAllTabsPayload>(CLOSE_ALL_TABS);
+export const closeOtherTabs = createAction<ICloseOtherTabsPayload>(
+  CLOSE_OTHER_TABS
+);
+export const closeTabsBelow = createAction<ICloseTabsBelowPayload>(
+  CLOSE_TABS_BELOW
+);
 export const showPreviousTab = createAction<IShowPreviousTabPayload>(
   SHOW_PREVIOUS_TAB
 );

@@ -237,7 +237,7 @@ interface IProps {
   loading: boolean;
 
   onClick?: () => void;
-  onContextMenu: () => void;
+  onContextMenu: (ev: React.MouseEvent<any>) => void;
   onClose?: () => void;
   onExplore?: (tabId: string) => void;
   data?: ITabData;

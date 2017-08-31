@@ -1048,7 +1048,7 @@ export interface ISaleInfo {
 }
 
 export interface IMenuItem extends Electron.MenuItemConstructorOptions {
-  localizedLabel?: any[];
+  localizedLabel?: ILocalizedString;
   submenu?: IMenuItem[];
 }
 export type IMenuTemplate = IMenuItem[];

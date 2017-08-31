@@ -99,9 +99,14 @@ export class SecretSettings extends React.PureComponent<
   };
 
   toggleReduxLogging = () => {
+    const enabled = !this.props.status.reduxLoggingEnabled;
     this.props.setReduxLoggingEnabled({
-      enabled: !this.props.status.reduxLoggingEnabled,
+      enabled,
     });
+
+    if (enabled) {
+      this.props.openDevTools({ forApp: true });
+    }
   };
 }
 
@@ -119,6 +124,7 @@ interface IDerivedProps {
   setReduxLoggingEnabled: typeof actions.setReduxLoggingEnabled;
   openModal: typeof actions.openModal;
   reloadLocales: typeof actions.reloadLocales;
+  openDevTools: typeof actions.openDevTools;
 }
 
 export default connect<IProps>(SecretSettings, {
@@ -132,5 +138,6 @@ export default connect<IProps>(SecretSettings, {
     ),
     openModal: dispatcher(dispatch, actions.openModal),
     reloadLocales: dispatcher(dispatch, actions.reloadLocales),
+    openDevTools: dispatcher(dispatch, actions.openDevTools),
   }),
 });

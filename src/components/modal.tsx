@@ -452,6 +452,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
                   {stillCoverUrl || coverUrl
                     ? <div className="cover-container">
                         <HoverCover
+                          gameId={0}
                           className="cover"
                           coverUrl={coverUrl}
                           stillCoverUrl={stillCoverUrl}

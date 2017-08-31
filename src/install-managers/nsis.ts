@@ -1,10 +1,7 @@
 import spawn from "../os/spawn";
 
-import butler from "../util/butler";
-
 import { join } from "path";
 
-import { devNull } from "../logger";
 import {
   IInstallManager,
   IInstallOpts,

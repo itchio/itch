@@ -23,7 +23,7 @@ export class Crash extends ItchError {
   }
 
   toString() {
-    return `application crashed. ${this.error || ""}`;
+    return `Application crashed. ${this.error || ""}`;
   }
 }
 
@@ -73,7 +73,7 @@ export class Cancelled extends ItchError {
   constructor(detail = "generic cancellation") {
     super("ITCH_ECANCELLED");
     this.detail = detail;
-    this.message = `operation was cancelled: ${this.detail}`;
+    this.message = `Operation was cancelled: ${this.detail}`;
   }
 }
 

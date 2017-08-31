@@ -105,6 +105,34 @@ export default function(watcher: Watcher) {
     }
   });
 
+  watcher.on(actions.closeOtherTabs, async (store, action) => {
+    const safeTab = action.payload.tab;
+    const { transient } = store.getState().session.navigation.tabs;
+
+    // woo !
+    for (const tab of transient) {
+      if (tab !== safeTab) {
+        store.dispatch(actions.closeTab({ tab }));
+      }
+    }
+  });
+
+  watcher.on(actions.closeTabsBelow, async (store, action) => {
+    const markerTab = action.payload.tab;
+    const { transient } = store.getState().session.navigation.tabs;
+
+    // woo !
+    let closing = false;
+    for (const tab of transient) {
+      if (closing) {
+        store.dispatch(actions.closeTab({ tab }));
+      } else if (tab === markerTab) {
+        // will start closing after this one
+        closing = true;
+      }
+    }
+  });
+
   watcher.on(actions.closeCurrentTab, async (store, action) => {
     const { tabs, tab } = store.getState().session.navigation;
     const { transient } = tabs;

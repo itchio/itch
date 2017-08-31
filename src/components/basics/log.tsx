@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import styled from "../styles";
+import { FormattedTime } from "react-intl";
 
 // time, module, message
 const numColumns = 3;
@@ -30,6 +31,7 @@ const LogTable = styled.table`
     padding-left: 0;
     line-height: 1.4;
     color: ${props => props.theme.secondaryText};
+    font-size: ${props => props.theme.fontSizes.smaller};
 
     &.fatal {
       background: #cd3131;
@@ -52,8 +54,16 @@ const LogTable = styled.table`
       color: #357ac6;
     }
 
-    &.timecol {
+    &.timecol,
+    &.modcol {
       white-space: nowrap;
+    }
+
+    &.msgcol {
+      white-space: pre-wrap;
+    }
+
+    &.timecol {
       color: ${props => props.theme.ternaryText};
     }
   }
@@ -76,19 +86,20 @@ export default class Log extends React.PureComponent<IProps> {
         <tbody>
           {entries.map(x => {
             if (x.msg) {
+              // TODO: show date jumps
               return (
                 <tr>
                   <td className="timecol">
-                    {new Date(x.time).toISOString()}
+                    <FormattedTime value={x.time} />
                   </td>
-                  <td>
+                  <td className="modcol">
                     {x.name
                       ? <span>
                           {x.name}
                         </span>
                       : null}
                   </td>
-                  <td className={levels[x.level]}>
+                  <td className={levels[x.level] + " msgcol"}>
                     {x.msg}
                   </td>
                 </tr>

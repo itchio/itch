@@ -14,7 +14,13 @@ if (env.name === "development") {
   logger.info("Enabling hot-module reload!");
   enableLiveReload({
     strategy: "react-hmr",
-    blacklist: ["db", "store", "logger"],
+    blacklist: [
+      "db",
+      "store",
+      "logger",
+      "modal-resolves",
+      "registered-protocols",
+    ],
   });
 }
 

@@ -37,37 +37,24 @@ export default function(watcher: Watcher) {
 
       logger.debug(`Got itch-internal request ${pathname}?${query} for ${tab}`);
 
-      switch (pathname) {
-        case "/open-devtools":
-          store.dispatch(actions.openDevTools({ tab }));
-          const { webview } = this;
-          if (
-            webview &&
-            webview.getWebContents() &&
-            !webview.getWebContents().isDestroyed()
-          ) {
-            webview.getWebContents().openDevTools({ mode: "detach" });
-          }
-          break;
-        case "/analyze-page":
-          const a = actions.analyzePage({
+      if (pathname === "/open-devtools") {
+        store.dispatch(actions.openDevTools({ forApp: false }));
+      } else if (pathname === "/analyze-page") {
+        store.dispatch(
+          actions.analyzePage({
             tab,
             url: params.url,
             iframe: params.iframe,
-          });
-          logger.info(`Dispatching action: ${JSON.stringify(a, null, 2)}`);
-          store.dispatch(a);
-          break;
-        case "/evolve-tab":
-          store.dispatch(actions.evolveTab({ tab: tab, path: params.path }));
-          break;
-        default:
-          logger.warn(
-            `Got unrecognized message via itch-internal: ${pathname}, params ${JSON.stringify(
-              params
-            )}`
-          );
-          break;
+          })
+        );
+      } else if (pathname === "/evolve-tab") {
+        store.dispatch(actions.evolveTab({ tab: tab, path: params.path }));
+      } else {
+        logger.warn(
+          `Got unrecognized message via itch-internal: ${pathname}, params ${JSON.stringify(
+            params
+          )}`
+        );
       }
     });
   });

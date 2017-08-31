@@ -10,13 +10,10 @@ import {
   IModalResponsePayload,
 } from "../constants/action-types";
 
+import modalResolves from "./modal-resolves";
+
 // look, so this probably breaks the spirit of redux, not denying it,
 // but also, redux has a pretty strong will, I'm sure it'll recover.
-
-interface IModalResolveMap {
-  [modalId: string]: (action: any) => void;
-}
-const modalResolves: IModalResolveMap = {};
 
 export function promisedModal(store: IStore, payload: IOpenModalPayload) {
   const modalAction = actions.openModal(payload);

@@ -47,6 +47,7 @@ export class Logger {
   private _close: IClose;
   private _level: Level;
   private _levelNumber: number;
+  private closed: boolean;
 
   constructor({
     write,
@@ -83,6 +84,7 @@ export class Logger {
   }
 
   close() {
+    this.closed = true;
     if (this._close) {
       this._close();
     }
@@ -104,6 +106,10 @@ export class Logger {
   }
 
   private log(level: number, msg: string) {
+    if (this.closed) {
+      return;
+    }
+
     if (level >= this._levelNumber) {
       this._write({ time: Date.now(), level, msg, name: this._name });
     }

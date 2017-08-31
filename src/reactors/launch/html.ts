@@ -4,13 +4,11 @@ import * as btoa from "btoa";
 import { dirname, basename, join } from "path";
 import * as querystring from "querystring";
 
-import { where } from "underscore";
+import { where, isEmpty } from "underscore";
 
 import configure from "./configure";
 
 import { BrowserWindow, shell } from "electron";
-import appEnv from "../../env";
-const { appName } = appEnv;
 
 import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
@@ -29,7 +27,7 @@ const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 import { fromJSONField } from "../../db/json-field";
 
 import { registerProtocol, setupItchInternal } from "./html/itch-internal";
-import { IConfigureResult } from "../../util/butler";
+import { IConfigureResult, ICandidate } from "../../util/butler";
 
 import { ILauncher } from "./types";
 
@@ -40,16 +38,21 @@ const launch: ILauncher = async (ctx, opts) => {
 
   const appPath = paths.appPath(cave, store.getState().preferences);
   let verdict = fromJSONField<IConfigureResult>(cave.verdict);
-  if (!verdict) {
-    await configure(ctx, opts);
-    cave = ctx.db.caves.findOneById(cave.id);
-    verdict = fromJSONField<IConfigureResult>(cave.verdict);
+
+  let htmlCandidates: ICandidate[] = [];
+  let grabCandidates = () => {
+    if (!verdict) {
+      return false;
+    }
+    htmlCandidates = where(verdict.candidates, { flavor: "html" });
+    return !isEmpty(htmlCandidates);
+  };
+
+  if (!grabCandidates()) {
+    verdict = await configure(ctx, opts);
   }
 
-  const htmlCandidates = where(verdict.candidates, { flavor: "html" });
-
-  // FIXME: the whole html launch thingy is messed imho
-  if (htmlCandidates.length === 0) {
+  if (!grabCandidates()) {
     throw new Error(`Can't launch HTML game, no candidates`);
   }
   const candidate = htmlCandidates[0];
@@ -63,9 +66,9 @@ const launch: ILauncher = async (ctx, opts) => {
 
   const partition = `persist:gamesession_${cave.gameId}`;
 
+  // TODO: show game icon as, well, the window's icon
   let win = new BrowserWindow({
     title: game ? game.title : null,
-    icon: `./static/images/tray/${appName}.png`,
     width,
     height,
     center: true,
@@ -100,9 +103,6 @@ const launch: ILauncher = async (ctx, opts) => {
     debugBrowserWindow(`game ${game.title}`, win);
     win.webContents.openDevTools({ mode: "detach" });
   }
-
-  // hide menu, cf. https://github.com/itchio/itch/issues/232
-  win.setMenuBarVisibility(false);
   win.setMenu(null);
 
   // strip 'Electron' from user agent so some web games stop being confused

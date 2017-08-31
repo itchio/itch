@@ -21,6 +21,7 @@ const ButtonDiv = styled.div`
 
   color: ${props => props.theme.baseText};
   min-height: 38px;
+  min-width: 7em;
 
   &:hover {
     box-shadow: 0 0 8px ${props => props.theme.inputBoxShadow};
@@ -65,6 +66,7 @@ const ButtonDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
 `;
 
 const Spacer = styled.div`

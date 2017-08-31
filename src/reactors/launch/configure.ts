@@ -1,4 +1,4 @@
-import butler from "../../util/butler";
+import butler, { IConfigureResult } from "../../util/butler";
 
 import * as paths from "../../os/paths";
 import { devNull } from "../../logger";
@@ -8,7 +8,10 @@ import { formatVerdict } from "../../format/verdict";
 
 import { IConfigureOpts } from "../../types";
 
-export default async function configure(ctx: Context, opts: IConfigureOpts) {
+export default async function configure(
+  ctx: Context,
+  opts: IConfigureOpts
+): Promise<IConfigureResult> {
   const { cave, runtime } = opts;
   const logger = opts.logger.child({ name: "configure" });
 
@@ -58,4 +61,6 @@ export default async function configure(ctx: Context, opts: IConfigureOpts) {
     installedSize: verdict.totalSize,
     verdict: verdict,
   });
+
+  return verdict;
 }

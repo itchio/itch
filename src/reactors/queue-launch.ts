@@ -27,7 +27,6 @@ import externalLaunch from "./launch/external";
 import getManifest from "./launch/get-manifest";
 import pickManifestAction from "./launch/pick-manifest-action";
 import launchTypeForAction from "./launch/launch-type-for-action";
-import notifyCrash from "./launch/notify-crash";
 
 import actionForGame from "../util/action-for-game";
 
@@ -41,6 +40,8 @@ import {
 } from "../types";
 
 import { powerSaveBlocker } from "electron";
+import { promisedModal } from "./modals";
+import { t } from "../format/t";
 
 const emptyArr = [];
 
@@ -55,24 +56,54 @@ export default function(watcher: Watcher, db: DB) {
 
     const runtime = currentRuntime();
 
+    let game: IGame;
+
     asTask({
       name: "launch",
       gameId: cave.gameId,
       store,
       db,
       work: async (ctx, logger) => {
-        const game = await lazyGetGame(ctx, cave.gameId);
+        game = await lazyGetGame(ctx, cave.gameId);
         if (!game) {
           throw new Error("no such game");
         }
 
-        try {
-          return await doLaunch(ctx, logger, cave, game, runtime);
-        } catch (e) {
-          await notifyCrash(store, cave, game, e, logger);
-        } finally {
-          logger.close();
+        return await doLaunch(ctx, logger, cave, game, runtime);
+      },
+      onError: async (e: any, log) => {
+        let title = game ? game.title : "<missing game>";
+        const i18n = store.getState().i18n;
+
+        let errorMessage = String(e);
+        if (e.reason) {
+          if (Array.isArray(e.reason)) {
+            errorMessage = t(i18n, e.reason);
+          } else {
+            errorMessage = String(e.reason);
+          }
         }
+
+        await promisedModal(store, {
+          title: ["game.install.could_not_launch", { title }],
+          message: [
+            "game.install.could_not_launch.message",
+            { title, errorMessage },
+          ],
+          detail: ["game.install.could_not_launch.detail"],
+          widget: "show-error",
+          widgetParams: {
+            errorStack: e.stack,
+            log,
+          },
+          buttons: [
+            {
+              label: ["prompt.action.ok"],
+              action: actions.modalResponse({}),
+            },
+            "cancel",
+          ],
+        });
       },
     });
   });
@@ -203,6 +234,7 @@ async function doLaunch(
       powerSaveBlockerId = powerSaveBlocker.start("prevent-display-sleep");
     }
 
+    ctx.emitProgress({ progress: 1 });
     await launcher(ctx, {
       cave,
       game,
@@ -214,7 +246,13 @@ async function doLaunch(
       runtime,
     });
   } catch (e) {
-    logger.error(`error while launching ${cave.id}: ${e.message || e}`);
+    if (isCancelled(e)) {
+      // all good then
+      return;
+    }
+    logger.error(`Fatal error: ${e.message || String(e)}`);
+
+    // FIXME: don't use instanceof ever
     if (e instanceof Crash) {
       const secondsRunning = (Date.now() - +startedAt) / 1000;
       if (secondsRunning > 2) {
@@ -224,11 +262,6 @@ async function doLaunch(
         );
         return;
       }
-    }
-
-    if (isCancelled(e)) {
-      // all good then
-      return;
     }
 
     throw e;

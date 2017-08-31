@@ -56,7 +56,6 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
         const { name } = operation;
         if (name === "launch") {
           label = format(["grid.item.running"]);
-          iconComponent = null;
         } else {
           label = format(["grid.item.installing"]);
         }
@@ -109,7 +108,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
     e.stopPropagation();
 
     const { game, status } = this.props;
-    const { operation, update, cave } = status;
+    const { operation, update, cave, access } = status;
 
     if (e.shiftKey && e.ctrlKey) {
       if (cave) {
@@ -126,10 +125,18 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
           this.props.abortGameRequest({ game });
         }
       }
-    } else if (cave && update) {
-      this.props.showGameUpdate({ caveId: cave.id, update });
+    } else if (cave) {
+      if (update) {
+        this.props.showGameUpdate({ caveId: cave.id, update });
+      } else {
+        this.props.queueGame({ game });
+      }
     } else {
-      this.props.queueGame({ game });
+      if (access === Access.None) {
+        this.props.initiatePurchase({ game });
+      } else {
+        this.props.queueGame({ game });
+      }
     }
   };
 }

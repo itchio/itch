@@ -61,7 +61,7 @@ export default function getWatcher(db: DB) {
   login(watcher);
   dialogs(watcher, db);
   i18n(watcher);
-  contextMenu(watcher);
+  contextMenu(watcher, db);
   rememberedSessions(watcher);
   session(watcher);
   navigation(watcher);

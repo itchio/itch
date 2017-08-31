@@ -3,8 +3,9 @@ import * as actions from "../actions";
 import { IRuntime, IMenuTemplate } from "../types";
 
 import "electron";
-import menu, { fleshOutTemplate } from "./menu";
+import menu from "./menu";
 import { find, findWhere } from "underscore";
+import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 
 suite(__filename, s => {
   s.case("builds the menu", async t => {
@@ -48,7 +49,7 @@ suite(__filename, s => {
       changeUserDispatched = true;
     });
 
-    let fleshed = fleshOutTemplate(template, w.store, winRuntime);
+    let fleshed = fleshOutTemplate(w.store, winRuntime, template);
     const accountItem = findWhere(fleshed, { label: "menu.account.account" });
     accountItem.submenu[0].click();
     t.true(changeUserDispatched);
@@ -72,7 +73,7 @@ suite(__filename, s => {
       })
     );
 
-    fleshed = fleshOutTemplate(template, w.store, winRuntime);
+    fleshed = fleshOutTemplate(w.store, winRuntime, template);
     helpItem = findWhere(fleshed, {
       label: "Aide",
     });
@@ -102,7 +103,7 @@ suite(__filename, s => {
       platform: "osx",
       is64: true,
     };
-    fleshed = fleshOutTemplate(template, w.store, macRuntime);
+    fleshed = fleshOutTemplate(w.store, macRuntime, template);
     visitAll();
   });
 });
