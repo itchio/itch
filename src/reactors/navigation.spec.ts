@@ -1,4 +1,4 @@
-import suite, { TestWatcher, actions, immediate } from "../test-suite";
+import suite, { TestWatcher, actions } from "../test-suite";
 
 import navigation from "./navigation";
 
