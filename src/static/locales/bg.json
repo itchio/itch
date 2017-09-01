@@ -246,7 +246,7 @@
     "duration.hour": "час",
     "duration.hours": "{{x}} часа",
     "duration.minute": "по-малко от минута",
-    "game.install.could_not_launch.detail": "Последните данни бяха: {{error}}",
+    "game.install.could_not_launch.detail": "Изпращането на доклад е най-добрият начин да се уверите, че това ще бъде оправено!",
     "game.install.no_html_index_found": "Не е открит HTML-файл „index“",
     "game.install.no_uploads_available.detail": "Може би заглавието все още не е съвместимо с Вашата система или с приложението на Итч!",
     "game.install.no_uploads_available.message": "Не бяха открити съвместими файлове за сваляне на „{{title}}“, така че заглавието не беше инсталирано.",

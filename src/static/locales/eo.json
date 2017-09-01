@@ -300,7 +300,7 @@
     "download.reason.reinstall": "— reinstalado",
     "download.reason.revert": "— revenigo al antaŭa versio",
     "download.reason.heal": "— kontrolo kaj riparo",
-    "game.install.could_not_launch.detail": "Ĝiaj lastaj vortoj estis: {{error}}",
+    "game.install.could_not_launch.detail": "Sendi raporton al ni estas la plej bona metodo, ke oni certigu al si, ke ĉi tiu estos riparita!",
     "game.install.could_not_launch.missing_jre": "Ĝi bezonas Java, kiu ne estis trovita en via sistemo.",
     "grid.criterion.filter": "Filtrado…",
     "grid.criterion.only_compatible": "Nur kongruaj",
