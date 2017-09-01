@@ -42,7 +42,7 @@
     "menu.edit.edit": "Redakti",
     "menu.edit.paste": "Alglui",
     "menu.edit.select_all": "Elekti ĉion",
-    "menu.file.close_window": "Fermi la Fenestron",
+    "menu.file.close_window": "Fermi la fenestron",
     "menu.file.file": "Dosiero",
     "menu.file.preferences": "Agordoj…",
     "menu.file.quit": "Foriri",
@@ -168,8 +168,8 @@
     "login.action.show_saved_logins": "Konservitaj kontoj",
     "login.messages.welcome_back": "Rebonvenon!",
     "login.remembered_session.last_connected": "Laste konektita",
-    "menu.file.close_tab": "Fermi la Folion",
-    "menu.file.close_all_tabs": "Fermi Ĉiujn Foliojn",
+    "menu.file.close_tab": "Fermi la folion",
+    "menu.file.close_all_tabs": "Fermi ĉiujn foliojn",
     "menu.view.downloads": "Elŝutoj",
     "menu.view.history": "Historio",
     "menu.view.mini_sidebar": "Flankstrieto",
@@ -447,5 +447,8 @@
     "download.outcome.reinstalled": "reinstalita",
     "download.outcome.reverted": "revenigita al antaŭa versio",
     "download.outcome.healed": "kontrolita kaj riparita",
-    "status.downloads.category.recent_activity": "Lastatempa agado"
+    "status.downloads.category.recent_activity": "Lastatempa agado",
+    "game.install.could_not_launch.message": "La mesaĝo, kiun ni ricevis, estis: {{errorMessage}}",
+    "menu.file.close_other_tabs": "Fermi la aliajn foliojn",
+    "menu.file.close_tabs_below": "Fermi la subajn foliojn"
 }
