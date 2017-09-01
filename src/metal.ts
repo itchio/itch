@@ -20,6 +20,7 @@ if (env.name === "development") {
       "logger",
       "modal-resolves",
       "registered-protocols",
+      "get-tray",
     ],
   });
 }

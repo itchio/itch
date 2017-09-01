@@ -51,7 +51,6 @@ enhancer = compose(ee, em) as GenericStoreEnhancer;
 
 const initialState = {};
 const store = createStore(reducer, initialState, enhancer) as IChromeStore;
-route(watcher, store, { type: "__MOUNT", payload: null });
 
 store.watcher = watcher;
 

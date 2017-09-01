@@ -74,7 +74,6 @@ const enhancer = compose(
 
 const initialState = {};
 const store = createStore(reducer, initialState, enhancer) as IStore;
-route(watcher, store, { type: "__MOUNT", payload: null });
 
 if (module.hot) {
   module.hot.accept(() => {

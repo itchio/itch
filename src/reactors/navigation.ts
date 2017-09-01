@@ -146,19 +146,11 @@ export default function(watcher: Watcher) {
     store.dispatch(actions.navigate({ tab: "downloads", background: true }));
   });
 
-  let pathSelector: (state: IAppState) => void;
-
-  watcher.onAll(async (store, action) => {
-    if (!pathSelector) {
-      pathSelector = createSelector(
-        (state: IAppState) => state.session.navigation.tab,
-        tab => {
-          setImmediate(() => {
-            store.dispatch(actions.tabChanged({ tab }));
-          });
-        }
-      );
-    }
-    pathSelector(store.getState());
+  watcher.onStateChange({
+    makeSelector: (store, schedule) =>
+      createSelector(
+        (rs: IAppState) => rs.session.navigation.tab,
+        tab => schedule.dispatch(actions.tabChanged({ tab }))
+      ),
   });
 }

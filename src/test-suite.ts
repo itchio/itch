@@ -86,11 +86,12 @@ export class TestWatcher extends Watcher {
 
   async dispatchAndWaitImmediate(action: IAction<any>) {
     await this.dispatch(action);
+    await this.dispatch(actions.tick({}));
     await immediate();
   }
 
   protected async routeInternal(action: IAction<any>) {
-    for (const type of [action.type, "_ALL"]) {
+    for (const type of [action.type]) {
       for (const reactor of this.reactors[type] || emptyArr) {
         await reactor(this.store, action);
       }

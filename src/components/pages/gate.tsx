@@ -406,7 +406,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
                 key={userId}
                 session={session}
                 onLogin={onLogin}
-              />,
+              />
           )}
         </RememberedSessions>
       );
@@ -464,7 +464,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
       {
         type: "Trouble in setup",
         body: blockingOperation.stack,
-      } as IReportIssueOpts,
+      } as IReportIssueOpts
     );
   }
 

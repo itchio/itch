@@ -16,25 +16,11 @@ import * as actions from "../actions";
 
 import { BrowserWindow, dialog } from "electron";
 
-import { IStore, IAppState } from "../types";
+import { IAppState } from "../types";
 import { IAddInstallLocationPayload } from "../constants/action-types";
 
 import Context from "../context";
 import { DB } from "../db";
-
-let selector: (state: IAppState) => void;
-const makeSelector = (store: IStore) =>
-  createSelector(
-    (state: IAppState) => state.preferences.installLocations,
-    (state: IAppState) => state.session.navigation.tab,
-    (installLocs, id) => {
-      setImmediate(() => {
-        if (id === "preferences") {
-          store.dispatch(actions.queryFreeSpace({}));
-        }
-      });
-    }
-  );
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
@@ -246,10 +232,16 @@ export default function(watcher: Watcher, db: DB) {
     }
   });
 
-  watcher.onAll(async (store, action) => {
-    if (!selector) {
-      selector = makeSelector(store);
-    }
-    selector(store.getState());
+  watcher.onStateChange({
+    makeSelector: (store, schedule) =>
+      createSelector(
+        (rs: IAppState) => rs.preferences.installLocations,
+        (rs: IAppState) => rs.session.navigation.tab,
+        (installLocs, id) => {
+          if (id === "preferences") {
+            schedule(() => store.dispatch(actions.queryFreeSpace({})));
+          }
+        }
+      ),
   });
 }

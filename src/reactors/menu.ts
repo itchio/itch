@@ -6,69 +6,37 @@ import { createSelector } from "reselect";
 
 import { IRuntime, IMenuItem, IMenuTemplate } from "../types";
 
-import * as actions from "../actions";
-
 import { IAppState, ISessionCredentialsState } from "../types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
-
-let refreshSelector: (state: IAppState) => void;
-
-let applySelector: (state: IAppState) => void;
+import memoize from "lru-memoize";
+import { actions } from "../test-suite";
 
 export default function(watcher: Watcher, runtime: IRuntime) {
-  watcher.onAll(async (store, action) => {
-    const currentState = store.getState();
-
-    if (!refreshSelector) {
-      refreshSelector = createSelector(
-        (state: IAppState) => state.system,
-        (state: IAppState) => state.session.credentials,
-        (system, credentials) => {
+  watcher.onStateChange({
+    makeSelector: (store, schedule) =>
+      createSelector(
+        (rs: IAppState) => rs.system,
+        (rs: IAppState) => rs.session.credentials,
+        (rs: IAppState) => rs.i18n,
+        (system, credentials, i18n) => {
           const template = computeMenuTemplate(
             system.appVersion,
             credentials,
             runtime
           );
-          setImmediate(() => {
-            try {
-              store.dispatch(actions.menuChanged({ template }));
-            } catch (e) {
-              console.error(`Couldn't dispatch new menu: ${e}`);
-            }
-          });
-        }
-      );
-    }
-    refreshSelector(currentState);
 
-    if (!applySelector) {
-      applySelector = createSelector(
-        (state: IAppState) => state.ui.menu.template,
-        (state: IAppState) => state.i18n,
-        (template, i18n) => {
-          setImmediate(() => {
-            const fleshed = fleshOutTemplate(store, runtime, template);
-            const menu = Menu.buildFromTemplate(fleshed);
-            const rs = store.getState();
-            const mainWindowId = rs.ui.mainWindow.id;
+          const rs = store.getState();
+          const oldTemplate = store.getState().ui.menu.template;
+          if (oldTemplate === template) {
+            return;
+          }
+          schedule.dispatch(actions.menuChanged({ template }));
 
-            if (rs.system.macos) {
-              Menu.setApplicationMenu(menu);
-            } else {
-              if (mainWindowId) {
-                // we can't use setApplicationMenu on windows & linux because
-                // it'll set it for all windows (including launched games)
-                const win = BrowserWindow.fromId(mainWindowId);
-                if (win) {
-                  win.setMenu(menu);
-                }
-              }
-            }
-          });
+          const fleshed = fleshOutTemplate(store, runtime, template);
+          const menu = Menu.buildFromTemplate(fleshed);
+          setItchAppMenu(rs, menu);
         }
-      );
-    }
-    applySelector(currentState);
+      ),
   });
 }
 
@@ -83,7 +51,7 @@ interface IAllTemplates {
   help: IMenuItem;
 }
 
-function computeMenuTemplate(
+const computeMenuTemplate = memoize(1)(function(
   appVersion: string,
   credentials: ISessionCredentialsState,
   runtime: IRuntime
@@ -295,4 +263,20 @@ function computeMenuTemplate(
   template.push(menus.help);
 
   return template;
+});
+
+function setItchAppMenu(rs: IAppState, menu: Electron.Menu) {
+  const mainWindowId = rs.ui.mainWindow.id;
+  if (rs.system.macos) {
+    Menu.setApplicationMenu(menu);
+  } else {
+    if (mainWindowId) {
+      // we can't use setApplicationMenu on windows & linux because
+      // it'll set it for all windows (including launched games)
+      const win = BrowserWindow.fromId(mainWindowId);
+      if (win) {
+        win.setMenu(menu);
+      }
+    }
+  }
 }

@@ -2,27 +2,20 @@ import { Watcher } from "./watcher";
 import { createSelector } from "reselect";
 
 import { languageChanged } from "../actions";
+import { IAppState } from "../types";
 
-import { IStore, IAppState } from "../types";
-
-const makeSelector = (store: IStore) =>
-  createSelector(
-    (state: IAppState) => state.system.sniffedLanguage,
-    (state: IAppState) => state.preferences.lang,
-    (systemLang, prefLang) => {
-      const lang = prefLang || systemLang || "en";
-      setImmediate(() => {
-        store.dispatch(languageChanged({ lang }));
-      });
-    }
-  );
-let selector: (state: IAppState) => void;
+const fallbackLang = "en";
 
 export default function(watcher: Watcher) {
-  watcher.onAll(async (store, action) => {
-    if (!selector) {
-      selector = makeSelector(store);
-    }
-    selector(store.getState());
+  watcher.onStateChange({
+    makeSelector: (store, schedule) =>
+      createSelector(
+        (rs: IAppState) => rs.system.sniffedLanguage,
+        (rs: IAppState) => rs.preferences.lang,
+        (sniffedLang, preferenceLang) => {
+          const lang = preferenceLang || sniffedLang || fallbackLang;
+          schedule(() => store.dispatch(languageChanged({ lang })));
+        }
+      ),
   });
 }
