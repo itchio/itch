@@ -9,7 +9,7 @@ import IconButton from "./basics/icon-button";
 import { IGame } from "../db/models/game";
 
 import { IDispatch, dispatcher } from "../constants/action-types";
-import { IAppState } from "../types";
+import { IRootState } from "../types";
 import * as actions from "../actions";
 
 import { IBrowserControlProps } from "./browser-state";
@@ -83,7 +83,7 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(GameBrowserContext, {
-  state: (rs: IAppState, props: IProps) => {
+  state: (rs: IRootState, props: IProps) => {
     const game = Space.fromState(rs, props.tab).game();
     if (!game) {
       return {};

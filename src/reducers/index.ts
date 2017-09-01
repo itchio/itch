@@ -1,6 +1,6 @@
 import allInitial from "./all";
 import { IAction } from "../constants/action-types";
-import { IAppState } from "../types/index";
+import { IRootState } from "../types/index";
 
 let all = allInitial;
 
@@ -11,6 +11,6 @@ if (module.hot) {
   });
 }
 
-export default function reduce(state: IAppState, action: IAction<any>) {
-  return all(state, action);
+export default function reduce(rs: IRootState, action: IAction<any>) {
+  return all(rs, action);
 }

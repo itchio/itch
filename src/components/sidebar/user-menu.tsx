@@ -2,7 +2,7 @@ import * as React from "react";
 import { createStructuredSelector } from "reselect";
 import { connect } from "../connect";
 
-import { IAppState } from "../../types";
+import { IRootState } from "../../types";
 
 import { IOwnUser } from "../../db/models/user";
 
@@ -174,7 +174,7 @@ interface IDerivedProps {
 export default connect<IProps>(UserMenu, {
   state: () =>
     createStructuredSelector({
-      me: (state: IAppState) => state.session.credentials.me,
+      me: (rs: IRootState) => rs.session.credentials.me,
     }),
   dispatch: dispatch => ({
     viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),

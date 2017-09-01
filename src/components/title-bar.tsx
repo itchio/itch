@@ -3,7 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { connect } from "./connect";
 import * as classNames from "classnames";
 
-import { IAppState, ITabData } from "../types";
+import { IRootState, ITabData } from "../types";
 
 import { dispatcher } from "../constants/action-types";
 import * as actions from "../actions";
@@ -115,10 +115,10 @@ interface IDerivedProps {
 export default connect<IProps>(TitleBar, {
   state: () =>
     createStructuredSelector({
-      tabData: (state: IAppState, props: IProps) =>
-        state.session.tabData[props.tab] || emptyObj,
-      maximized: (state: IAppState) => state.ui.mainWindow.maximized,
-      focused: (state: IAppState) => state.ui.mainWindow.focused,
+      tabData: (rs: IRootState, props: IProps) =>
+        rs.session.tabData[props.tab] || emptyObj,
+      maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
+      focused: (rs: IRootState) => rs.ui.mainWindow.focused,
     }),
   dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),

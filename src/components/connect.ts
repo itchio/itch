@@ -1,10 +1,10 @@
 import { connect as reduxConnect } from "react-redux";
 
-import { IAppState } from "../types";
+import { IRootState } from "../types";
 import { IDispatch } from "../constants/action-types";
 
 interface IStateMapper {
-  (state: IAppState, props: any): any;
+  (rs: IRootState, props: any): any;
 }
 
 interface IDispatchMapper {

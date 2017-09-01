@@ -8,7 +8,7 @@ import SearchResultsBar from "../search-results/search-results-bar";
 
 import { map } from "underscore";
 
-import { IAppState, ITabs, ITabDataSet } from "../../types";
+import { IRootState, ITabs, ITabDataSet } from "../../types";
 
 import styled from "../styles";
 
@@ -78,14 +78,14 @@ interface IDerivedProps {
 }
 
 const allTabsSelector = createSelector(
-  (state: IAppState) => state.session.navigation.tabs,
+  (rs: IRootState) => rs.session.navigation.tabs,
   (tabs: ITabs) => [...tabs.constant, ...tabs.transient].sort()
 );
 
 export default connect<IProps>(AllMeats, {
   state: createStructuredSelector({
-    id: (state: IAppState) => state.session.navigation.tab,
-    tabs: (state: IAppState) => allTabsSelector(state),
-    tabData: (state: IAppState) => state.session.tabData,
+    id: (rs: IRootState) => rs.session.navigation.tab,
+    tabs: (rs: IRootState) => allTabsSelector(rs),
+    tabData: (rs: IRootState) => rs.session.tabData,
   }),
 });

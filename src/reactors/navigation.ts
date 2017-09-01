@@ -5,7 +5,7 @@ import staticTabData from "../constants/static-tab-data";
 
 import { createSelector } from "reselect";
 
-import { IAppState } from "../types";
+import { IRootState } from "../types";
 
 import { contains } from "underscore";
 
@@ -149,7 +149,7 @@ export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) =>
       createSelector(
-        (rs: IAppState) => rs.session.navigation.tab,
+        (rs: IRootState) => rs.session.navigation.tab,
         tab => schedule.dispatch(actions.tabChanged({ tab }))
       ),
   });

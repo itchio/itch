@@ -17,7 +17,7 @@ import {
 
 import { IGame } from "../../db/models/game";
 import {
-  IAppState,
+  IRootState,
   ITabData,
   ILocalizedString,
   IDownloadsState,
@@ -167,10 +167,9 @@ const Tab = connect<IProps>(injectIntl(TabBase), {
     let { tab } = initialProps;
 
     return createStructuredSelector({
-      data: (state: IAppState) => state.session.tabData[tab] || eo,
-      loading: (state: IAppState) =>
-        !!state.session.navigation.loadingTabs[tab],
-      downloads: (state: IAppState) => tab === "downloads" && state.downloads,
+      data: (rs: IRootState) => rs.session.tabData[tab] || eo,
+      loading: (rs: IRootState) => !!rs.session.navigation.loadingTabs[tab],
+      downloads: (rs: IRootState) => tab === "downloads" && rs.downloads,
     });
   },
   dispatch: dispatch => ({

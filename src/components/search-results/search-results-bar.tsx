@@ -8,7 +8,7 @@ import { each } from "underscore";
 
 import * as actions from "../../actions";
 
-import { IAppState, ISearchResults } from "../../types";
+import { IRootState, ISearchResults } from "../../types";
 import { dispatcher } from "../../constants/action-types";
 
 import GameSearchResult from "./game-search-result";
@@ -189,7 +189,7 @@ export class SearchResultBar extends React.PureComponent<
       items.push(
         <Category>
           {format(["search.results.local"])}
-        </Category>,
+        </Category>
       );
       each(localResults.slice(0, 5), result => {
         const game = result.item;
@@ -203,7 +203,7 @@ export class SearchResultBar extends React.PureComponent<
               navigateToGame(game);
               closeSearch({});
             }}
-          />,
+          />
         );
       });
     }
@@ -213,7 +213,7 @@ export class SearchResultBar extends React.PureComponent<
       items.push(
         <Category>
           {format(["search.results.creators"])}
-        </Category>,
+        </Category>
       );
       each(userResults.result.userIds, userId => {
         const user = users[userId];
@@ -227,7 +227,7 @@ export class SearchResultBar extends React.PureComponent<
               navigateToUser({ user });
               closeSearch({});
             }}
-          />,
+          />
         );
       });
     }
@@ -237,7 +237,7 @@ export class SearchResultBar extends React.PureComponent<
       items.push(
         <Category>
           {format(["search.results.games"])}
-        </Category>,
+        </Category>
       );
       each(gameResults.result.gameIds, gameId => {
         const game = games[gameId];
@@ -251,7 +251,7 @@ export class SearchResultBar extends React.PureComponent<
               navigateToGame({ game });
               closeSearch({});
             }}
-          />,
+          />
         );
       });
     }
@@ -284,10 +284,10 @@ interface IState {
 
 export default connect<IProps>(SearchResultBar, {
   state: createStructuredSelector({
-    open: (state: IAppState) => state.session.search.open,
-    highlight: (state: IAppState) => state.session.search.highlight,
-    query: (state: IAppState) => state.session.search.query,
-    results: (state: IAppState) => state.session.search.results,
+    open: (rs: IRootState) => rs.session.search.open,
+    highlight: (rs: IRootState) => rs.session.search.highlight,
+    query: (rs: IRootState) => rs.session.search.query,
+    results: (rs: IRootState) => rs.session.search.results,
   }),
   dispatch: dispatch => ({
     closeSearch: dispatcher(dispatch, actions.closeSearch),

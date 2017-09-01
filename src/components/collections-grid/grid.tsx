@@ -6,7 +6,7 @@ import { findWhere } from "underscore";
 
 import {
   IGameSet,
-  IAppState,
+  IRootState,
   ITabData,
   ICollectionSet,
 } from "../../types/index";
@@ -59,7 +59,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
 
   eventToCollection(
     ev: React.MouseEvent<HTMLElement>,
-    cb: (collection: ICollection) => void,
+    cb: (collection: ICollection) => void
   ) {
     let target = ev.target as HTMLElement;
     while (target && !target.classList.contains("grid--row")) {
@@ -141,14 +141,14 @@ interface IDerivedProps {
 
 export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
   state: createSelector(
-    (state: IAppState) => state.session.tabData[tab] || eo,
+    (rs: IRootState) => rs.session.tabData[tab] || eo,
     createStructuredSelector({
       games: (tabData: ITabData) => (tabData.games || eo).set || eo,
       collectionIds: (tabData: ITabData) =>
         (tabData.collections || eo).ids || ea,
       collections: (tabData: ITabData) => (tabData.collections || eo).set || eo,
       hiddenCount: (tabData: ITabData) => 0,
-    }),
+    })
   ),
   dispatch: dispatch => ({
     navigateToCollection: dispatcher(dispatch, actions.navigateToCollection),

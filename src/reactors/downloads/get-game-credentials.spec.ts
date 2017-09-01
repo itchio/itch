@@ -5,7 +5,7 @@ import getGameCredentials, {
 } from "./get-game-credentials";
 import Context from "../../context";
 
-import { IStore, ICredentials, IAppState } from "../../types";
+import { IStore, ICredentials, IRootState } from "../../types";
 import { IGame } from "../../db/models/game";
 import { IDownloadKey } from "../../db/models/download-key";
 
@@ -13,7 +13,7 @@ const state = ({
   session: {
     credentials: null,
   },
-} as any) as IAppState;
+} as any) as IRootState;
 
 const store = ({
   getState: () => state,

@@ -11,7 +11,7 @@ import Link from "./basics/link";
 import Row from "./download/row";
 import TitleBar from "./title-bar";
 
-import { IAppState, IDownloadItem } from "../types";
+import { IRootState, IDownloadItem } from "../types";
 import { dispatcher } from "../constants/action-types";
 
 import {
@@ -150,8 +150,8 @@ interface IDerivedProps {
 
 export default connect<IProps>(Downloads, {
   state: createStructuredSelector({
-    items: (state: IAppState) => getPendingDownloads(state.downloads),
-    finishedItems: (state: IAppState) => getFinishedDownloads(state.downloads),
+    items: (rs: IRootState) => getPendingDownloads(rs.downloads),
+    finishedItems: (rs: IRootState) => getFinishedDownloads(rs.downloads),
   }),
   dispatch: dispatch => ({
     clearFinishedDownloads: dispatcher(

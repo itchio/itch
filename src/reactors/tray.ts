@@ -10,7 +10,7 @@ import { getTray, rememberNotificationAction } from "./get-tray";
 
 import {
   IStore,
-  IAppState,
+  IRootState,
   II18nState,
   currentRuntime,
   IMenuTemplate,
@@ -64,7 +64,7 @@ export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) =>
       createSelector(
-        (state: IAppState) => state.i18n,
+        (rs: IRootState) => rs.i18n,
         i18n => {
           schedule(() => refreshTray(store, i18n));
         }

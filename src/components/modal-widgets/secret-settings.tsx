@@ -6,7 +6,7 @@ import chromeStore from "../../store/chrome-store";
 
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
-import { IAppState } from "../../types/index";
+import { IRootState } from "../../types/index";
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
 
@@ -119,7 +119,7 @@ interface IProps extends IModalWidgetProps {
 }
 
 interface IDerivedProps {
-  status: IAppState["status"];
+  status: IRootState["status"];
 
   setReduxLoggingEnabled: typeof actions.setReduxLoggingEnabled;
   openModal: typeof actions.openModal;
@@ -128,8 +128,8 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(SecretSettings, {
-  state: (state: IAppState) => ({
-    status: state.status,
+  state: (rs: IRootState) => ({
+    status: rs.status,
   }),
   dispatch: dispatch => ({
     setReduxLoggingEnabled: dispatcher(

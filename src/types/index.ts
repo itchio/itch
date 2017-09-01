@@ -20,7 +20,7 @@ export * from "../os/runtime";
 
 import { SortDirection, SortKey } from "../components/sort-types";
 
-export interface IStore extends Store<IAppState> {}
+export interface IStore extends Store<IRootState> {}
 
 interface IWatcher {
   addSub(sub: IWatcher): void;
@@ -256,7 +256,7 @@ export interface ICredentials {
 /**
  * The entire application state, following the redux philosophy
  */
-export interface IAppState {
+export interface IRootState {
   modals: IModalsState;
   system: ISystemState;
   setup: ISetupState;

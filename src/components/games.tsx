@@ -2,7 +2,13 @@ import * as React from "react";
 import { connect } from "./connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
-import { IAppState, TabLayout, ITabParams, ITabData, IGameSet } from "../types";
+import {
+  IRootState,
+  TabLayout,
+  ITabParams,
+  ITabData,
+  IGameSet,
+} from "../types";
 
 import GameGrid from "./game-grid/grid";
 import GameTable from "./game-table/table";
@@ -114,9 +120,9 @@ export default connect<IProps>(Games, {
   state: (initialState, initialProps) => {
     const { tab } = initialProps;
     return createSelector(
-      (state: IAppState) => state.session.tabData[tab] || eo,
-      (state: IAppState) => state.session.tabParams[tab] || eo,
-      (state: IAppState) => state.preferences.layout,
+      (rs: IRootState) => rs.session.tabData[tab] || eo,
+      (rs: IRootState) => rs.session.tabParams[tab] || eo,
+      (rs: IRootState) => rs.preferences.layout,
       createStructuredSelector({
         gameIds: (data: ITabData, params, layout) =>
           (data.games || eo).ids || ea,

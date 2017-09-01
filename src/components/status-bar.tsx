@@ -8,7 +8,7 @@ import * as actions from "../actions";
 import Icon from "./basics/icon";
 import LoadingCircle from "./basics/loading-circle";
 
-import { IAppState, ISelfUpdateState, ILocalizedString } from "../types";
+import { IRootState, ISelfUpdateState, ILocalizedString } from "../types";
 import { dispatcher } from "../constants/action-types";
 
 import format from "./format";
@@ -199,8 +199,8 @@ interface IDerivedProps {
 
 export default connect<IProps>(StatusBar, {
   state: createStructuredSelector({
-    selfUpdate: (state: IAppState) => state.selfUpdate,
-    statusMessages: (state: IAppState) => state.status.messages,
+    selfUpdate: (rs: IRootState) => rs.selfUpdate,
+    statusMessages: (rs: IRootState) => rs.status.messages,
   }),
   dispatch: dispatch => ({
     showAvailableSelfUpdate: dispatcher(

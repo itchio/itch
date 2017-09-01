@@ -22,7 +22,7 @@ import BrowserBar from "./browser-bar";
 
 import GameBrowserContext from "./game-browser-context";
 
-import { IAppState } from "../types";
+import { IRootState } from "../types";
 import { IDispatch, dispatcher } from "../constants/action-types";
 
 import "electron";
@@ -166,10 +166,10 @@ interface IDerivedProps {
 
 export default connect<IProps>(injectIntl(BrowserMeat), {
   state: createStructuredSelector({
-    meId: (state: IAppState) =>
-      (state.session.credentials.me || { id: "anonymous" }).id,
-    proxy: (state: IAppState) => state.system.proxy,
-    proxySource: (state: IAppState) => state.system.proxySource,
+    meId: (rs: IRootState) =>
+      (rs.session.credentials.me || { id: "anonymous" }).id,
+    proxy: (rs: IRootState) => rs.system.proxy,
+    proxySource: (rs: IRootState) => rs.system.proxySource,
   }),
   dispatch: (dispatch: IDispatch) => ({
     navigate: dispatcher(dispatch, actions.navigate),

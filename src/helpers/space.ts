@@ -2,7 +2,7 @@ import { ITabData, ITabWeb } from "../types/tab-data";
 import { IGame } from "../db/models/game";
 import { ICollection } from "../db/models/collection";
 import { IUser } from "../db/models/user";
-import { ILocalizedString, IStore, IAppState } from "../types/index";
+import { ILocalizedString, IStore, IRootState } from "../types/index";
 
 import staticTabData, { IBaseTabData } from "../constants/static-tab-data";
 import memoize from "lru-memoize";
@@ -50,8 +50,8 @@ export class Space {
     return spaceFromData(store.getState().session.tabData[tab]);
   }
 
-  static fromState(state: IAppState, tab: string): Space {
-    return spaceFromData(state.session.tabData[tab]);
+  static fromState(rs: IRootState, tab: string): Space {
+    return spaceFromData(rs.session.tabData[tab]);
   }
 
   static fromData(data: ITabData): Space {

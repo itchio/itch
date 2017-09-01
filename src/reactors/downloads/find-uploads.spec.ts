@@ -6,7 +6,7 @@ import { IRuntime } from "../../types";
 import Context from "../../context";
 
 import { IGame } from "../../db/models/game";
-import { IUpload, IStore, IAppState } from "../../types";
+import { IUpload, IStore, IRootState } from "../../types";
 
 const asUpload = (x: Partial<IUpload>) => x as IUpload;
 
@@ -16,7 +16,7 @@ const state = ({
   session: {
     credentials: null,
   },
-} as any) as IAppState;
+} as any) as IRootState;
 
 const store = ({
   getState: () => state,

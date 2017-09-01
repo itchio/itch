@@ -8,7 +8,7 @@ import StatusBar from "./status-bar";
 import NonLocalIndicator from "./non-local-indicator";
 import ReactHint = require("react-hint");
 
-import { IAppState } from "../types";
+import { IRootState } from "../types";
 
 import watching, { Watcher } from "./watching";
 import * as actions from "../actions";
@@ -132,6 +132,6 @@ interface IDerivedProps {
 
 export default connect<IProps>(Layout, {
   state: createStructuredSelector({
-    page: (state: IAppState) => state.session.navigation.page,
+    page: (rs: IRootState) => rs.session.navigation.page,
   }),
 });

@@ -6,7 +6,7 @@ import * as actions from "../actions";
 
 import { formatString } from "./format";
 
-import { IAppState, TabLayout } from "../types";
+import { IRootState, TabLayout } from "../types";
 import { dispatcher } from "../constants/action-types";
 
 import Select = require("react-select");
@@ -240,11 +240,10 @@ interface IDerivedProps {
 export default connect<IProps>(injectIntl(GameFilters), {
   state: (initialState, props) => {
     return createStructuredSelector({
-      layout: (state: IAppState) => state.preferences.layout,
-      onlyCompatible: (state: IAppState) =>
-        state.preferences.onlyCompatibleGames,
-      onlyOwned: (state: IAppState) => state.preferences.onlyOwnedGames,
-      onlyInstalled: (state: IAppState) => state.preferences.onlyInstalledGames,
+      layout: (rs: IRootState) => rs.preferences.layout,
+      onlyCompatible: (rs: IRootState) => rs.preferences.onlyCompatibleGames,
+      onlyOwned: (rs: IRootState) => rs.preferences.onlyOwnedGames,
+      onlyInstalled: (rs: IRootState) => rs.preferences.onlyInstalledGames,
     });
   },
   dispatch: dispatch => ({

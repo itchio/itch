@@ -13,7 +13,7 @@ import Hover, { IHoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
 import MainAction from "../game-actions/main-action";
 
-import { IDownloadSpeeds, IDownloadItem, ITask, IAppState } from "../../types";
+import { IDownloadSpeeds, IDownloadItem, ITask, IRootState } from "../../types";
 import { dispatcher } from "../../constants/action-types";
 
 import styled, * as styles from "../styles";
@@ -451,7 +451,7 @@ interface IDerivedProps {
 const HoverDownloadRow = Hover(DownloadRow);
 
 export default connect<IProps>(injectIntl(HoverDownloadRow), {
-  state: (rs: IAppState, props: IProps) => {
+  state: (rs: IRootState, props: IProps) => {
     const game = props.item.game;
 
     return {

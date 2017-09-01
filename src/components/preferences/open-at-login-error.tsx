@@ -8,7 +8,7 @@ import Icon from "../basics/icon";
 
 import format from "../format";
 
-import { IAppState, IOpenAtLoginError } from "../../types";
+import { IRootState, IOpenAtLoginError } from "../../types";
 
 class OpenAtLoginError extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -63,6 +63,6 @@ interface IDerivedProps {
 
 export default connect<IProps>(OpenAtLoginError, {
   state: createStructuredSelector({
-    openAtLoginError: (state: IAppState) => state.status.openAtLoginError,
+    openAtLoginError: (rs: IRootState) => rs.status.openAtLoginError,
   }),
 });

@@ -6,7 +6,7 @@ import { createSelector } from "reselect";
 
 import { IRuntime, IMenuItem, IMenuTemplate } from "../types";
 
-import { IAppState, ISessionCredentialsState } from "../types";
+import { IRootState, ISessionCredentialsState } from "../types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 import memoize from "lru-memoize";
 import { actions } from "../test-suite";
@@ -15,9 +15,9 @@ export default function(watcher: Watcher, runtime: IRuntime) {
   watcher.onStateChange({
     makeSelector: (store, schedule) =>
       createSelector(
-        (rs: IAppState) => rs.system,
-        (rs: IAppState) => rs.session.credentials,
-        (rs: IAppState) => rs.i18n,
+        (rs: IRootState) => rs.system,
+        (rs: IRootState) => rs.session.credentials,
+        (rs: IRootState) => rs.i18n,
         (system, credentials, i18n) => {
           const template = computeMenuTemplate(
             system.appVersion,
@@ -265,7 +265,7 @@ const computeMenuTemplate = memoize(1)(function(
   return template;
 });
 
-function setItchAppMenu(rs: IAppState, menu: Electron.Menu) {
+function setItchAppMenu(rs: IRootState, menu: Electron.Menu) {
   const mainWindowId = rs.ui.mainWindow.id;
   if (rs.system.macos) {
     Menu.setApplicationMenu(menu);

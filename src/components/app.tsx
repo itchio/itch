@@ -5,7 +5,7 @@ import Modal from "./modal";
 
 import { ThemeProvider, theme } from "./styles";
 import { IntlProvider } from "react-intl";
-import { IAppState } from "../types";
+import { IRootState } from "../types";
 import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
@@ -90,11 +90,11 @@ const emptyObj = {};
 
 export default connect<{}>(App, {
   state: createStructuredSelector({
-    locale: (state: IAppState) => state.i18n.lang,
-    messages: (state: IAppState) => {
-      const { strings, lang } = state.i18n;
+    locale: (rs: IRootState) => rs.i18n.lang,
+    messages: (rs: IRootState) => {
+      const { strings, lang } = rs.i18n;
       return strings[lang] || strings[lang.substring(0, 2)] || emptyObj;
     },
-    fallbackMessages: (state: IAppState) => state.i18n.strings.en || emptyObj,
+    fallbackMessages: (rs: IRootState) => rs.i18n.strings.en || emptyObj,
   }),
 });

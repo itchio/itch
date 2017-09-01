@@ -1,6 +1,6 @@
 import { IDownloadKeySummary } from "../db/models/download-key";
 import { ICaveSummary } from "../db/models/cave";
-import { IAppState, IGameUpdate, ITask, IDownloadItem } from "../types/index";
+import { IRootState, IGameUpdate, ITask, IDownloadItem } from "../types/index";
 
 import { first } from "underscore";
 import getByIds from "./get-by-ids";
@@ -79,7 +79,10 @@ export interface IGameStatus {
   compatible: boolean;
 }
 
-export default function getGameStatus(rs: IAppState, game: IGame): IGameStatus {
+export default function getGameStatus(
+  rs: IRootState,
+  game: IGame
+): IGameStatus {
   const { commons, session, tasks, downloads } = rs;
   const { credentials } = session;
 

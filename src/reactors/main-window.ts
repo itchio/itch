@@ -31,7 +31,7 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = os.platform() === "darwin";
 
-import { IAppState, IStore } from "../types";
+import { IRootState, IStore } from "../types";
 import { Space } from "../helpers/space";
 
 async function createWindow(store: IStore, hidden: boolean) {
@@ -395,9 +395,9 @@ function updateTitle(store: IStore, title: string) {
 export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) => {
-      const getI18n = (rs: IAppState) => rs.i18n;
-      const getID = (rs: IAppState) => rs.session.navigation.tab;
-      const getTabData = (rs: IAppState) => rs.session.tabData;
+      const getI18n = (rs: IRootState) => rs.i18n;
+      const getID = (rs: IRootState) => rs.session.navigation.tab;
+      const getTabData = (rs: IRootState) => rs.session.tabData;
 
       const getSpace = createSelector(getID, getTabData, (id, tabData) =>
         Space.fromData(tabData[id])

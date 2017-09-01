@@ -13,7 +13,7 @@ import Tab from "./sidebar/tab";
 import Logo from "./sidebar/logo";
 import UserMenu from "./sidebar/user-menu";
 
-import { IAppState } from "../types";
+import { IRootState } from "../types";
 import { dispatcher } from "../constants/action-types";
 
 import { IOwnUser } from "../db/models/user";
@@ -211,13 +211,13 @@ interface IState {
 
 export default connect<IProps>(injectIntl(Sidebar), {
   state: createStructuredSelector({
-    appVersion: (state: IAppState) => state.system.appVersion,
-    osx: (state: IAppState) => state.system.osx,
-    fullscreen: (state: IAppState) => state.ui.mainWindow.fullscreen,
-    sidebarWidth: (state: IAppState) => state.preferences.sidebarWidth || 240,
-    me: (state: IAppState) => state.session.credentials.me,
-    tab: (state: IAppState) => state.session.navigation.tab,
-    tabs: (state: IAppState) => state.session.navigation.tabs,
+    appVersion: (rs: IRootState) => rs.system.appVersion,
+    osx: (rs: IRootState) => rs.system.osx,
+    fullscreen: (rs: IRootState) => rs.ui.mainWindow.fullscreen,
+    sidebarWidth: (rs: IRootState) => rs.preferences.sidebarWidth || 240,
+    me: (rs: IRootState) => rs.session.credentials.me,
+    tab: (rs: IRootState) => rs.session.navigation.tab,
+    tabs: (rs: IRootState) => rs.session.navigation.tabs,
   }),
   dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),

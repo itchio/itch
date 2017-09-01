@@ -16,7 +16,7 @@ import * as actions from "../actions";
 
 import { BrowserWindow, dialog } from "electron";
 
-import { IAppState } from "../types";
+import { IRootState } from "../types";
 import { IAddInstallLocationPayload } from "../constants/action-types";
 
 import Context from "../context";
@@ -235,11 +235,11 @@ export default function(watcher: Watcher, db: DB) {
   watcher.onStateChange({
     makeSelector: (store, schedule) =>
       createSelector(
-        (rs: IAppState) => rs.preferences.installLocations,
-        (rs: IAppState) => rs.session.navigation.tab,
+        (rs: IRootState) => rs.preferences.installLocations,
+        (rs: IRootState) => rs.session.navigation.tab,
         (installLocs, id) => {
           if (id === "preferences") {
-            schedule(() => store.dispatch(actions.queryFreeSpace({})));
+            schedule.dispatch(actions.queryFreeSpace({}));
           }
         }
       ),

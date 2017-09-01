@@ -29,7 +29,7 @@ import { injectIntl, InjectedIntl } from "react-intl";
 import format, { formatString } from "./format";
 
 import {
-  IAppState,
+  IRootState,
   ILocaleInfo,
   IPreferencesState,
   IInstallLocation,
@@ -728,7 +728,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 <Icon icon="cross" />
               </td>
             : <td />}
-        </tr>,
+        </tr>
       );
     });
 
@@ -744,7 +744,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           <Icon icon="plus" />
           {format(["preferences.install_location.add"])}
         </td>
-      </tr>,
+      </tr>
     );
 
     return (
@@ -803,19 +803,19 @@ interface IDerivedProps {
 
 export default connect<IProps>(injectIntl(Preferences), {
   state: createStructuredSelector({
-    appVersion: (state: IAppState) => state.system.appVersion,
-    preferences: (state: IAppState) => state.preferences,
-    downloading: (state: IAppState) =>
-      Object.keys(state.i18n.downloading).length > 0,
-    lang: (state: IAppState) => state.i18n.lang,
-    locales: (state: IAppState) => state.i18n.locales,
-    sniffedLang: (state: IAppState) => state.system.sniffedLanguage,
+    appVersion: (rs: IRootState) => rs.system.appVersion,
+    preferences: (rs: IRootState) => rs.preferences,
+    downloading: (rs: IRootState) =>
+      Object.keys(rs.i18n.downloading).length > 0,
+    lang: (rs: IRootState) => rs.i18n.lang,
+    locales: (rs: IRootState) => rs.i18n.locales,
+    sniffedLang: (rs: IRootState) => rs.system.sniffedLanguage,
     installLocations: createSelector(
-      (state: IAppState) => state.preferences.installLocations,
-      (state: IAppState) => state.preferences.defaultInstallLocation,
-      (state: IAppState) => state.system.homePath,
-      (state: IAppState) => state.system.userDataPath,
-      (state: IAppState) => state.system.diskInfo,
+      (rs: IRootState) => rs.preferences.installLocations,
+      (rs: IRootState) => rs.preferences.defaultInstallLocation,
+      (rs: IRootState) => rs.system.homePath,
+      (rs: IRootState) => rs.system.userDataPath,
+      (rs: IRootState) => rs.system.diskInfo,
       (locInfos, defaultLoc, homePath, userDataPath, diskInfo) => {
         if (!locInfos) {
           return {};
@@ -855,7 +855,7 @@ export default connect<IProps>(injectIntl(Preferences), {
               size,
             };
           }),
-          x => !!x,
+          x => !!x
         );
 
         return {
@@ -863,21 +863,21 @@ export default connect<IProps>(injectIntl(Preferences), {
           aliases: [[homePath, "~"]],
           defaultLoc,
         };
-      },
+      }
     ),
   }),
   dispatch: dispatch => ({
     addInstallLocationRequest: dispatcher(
       dispatch,
-      actions.addInstallLocationRequest,
+      actions.addInstallLocationRequest
     ),
     removeInstallLocationRequest: dispatcher(
       dispatch,
-      actions.removeInstallLocationRequest,
+      actions.removeInstallLocationRequest
     ),
     makeInstallLocationDefault: dispatcher(
       dispatch,
-      actions.makeInstallLocationDefault,
+      actions.makeInstallLocationDefault
     ),
     queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
 
@@ -885,7 +885,7 @@ export default connect<IProps>(injectIntl(Preferences), {
     openAppLog: dispatcher(dispatch, actions.openAppLog),
     clearBrowsingDataRequest: dispatcher(
       dispatch,
-      actions.clearBrowsingDataRequest,
+      actions.clearBrowsingDataRequest
     ),
     navigate: dispatcher(dispatch, actions.navigate),
     checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),

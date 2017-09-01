@@ -13,7 +13,7 @@ const HoverCover = Hoverable(Cover);
 
 import MainAction from "../game-actions/main-action";
 import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
-import { IAppState } from "../../types/index";
+import { IRootState } from "../../types/index";
 import { connect } from "../connect";
 
 import * as actions from "../../actions";
@@ -108,7 +108,7 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(Cell, {
-  state: (rs: IAppState, props: IProps) => ({
+  state: (rs: IRootState, props: IProps) => ({
     status: getGameStatus(rs, props.game),
   }),
   dispatch: dispatch => ({

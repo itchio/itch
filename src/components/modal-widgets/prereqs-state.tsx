@@ -9,7 +9,7 @@ import { downloadProgress } from "../../format";
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 import LoadingCircle from "../basics/loading-circle";
 
-import { IAppState, ITask, IPrereqsState } from "../../types";
+import { IRootState, ITask, IPrereqsState } from "../../types";
 
 import format from "../format";
 
@@ -80,9 +80,9 @@ interface IStructuredSelectorResult {
 export default connect<IProps>(PrereqsState, {
   state: () => {
     const selector = createStructuredSelector({
-      tasks: (state: IAppState, props: IProps) => {
+      tasks: (rs: IRootState, props: IProps) => {
         const params = props.modal.widgetParams as IPrereqsStateParams;
-        const tasks = state.tasks.tasksByGameId[params.gameId];
+        const tasks = rs.tasks.tasksByGameId[params.gameId];
         return tasks;
       },
     });

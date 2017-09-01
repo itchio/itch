@@ -8,7 +8,7 @@ import { connect } from "../connect";
 
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
-import { IAppState } from "../../types/index";
+import { IRootState } from "../../types/index";
 
 class Logo extends React.PureComponent<IDerivedProps> {
   render() {
@@ -70,8 +70,8 @@ const LogoDiv = styled.div`
 
 export default connect(Logo, {
   state: createStructuredSelector({
-    appVersion: (state: IAppState) => state.system.appVersion,
-    focused: (state: IAppState) => state.ui.mainWindow.focused,
+    appVersion: (rs: IRootState) => rs.system.appVersion,
+    focused: (rs: IRootState) => rs.ui.mainWindow.focused,
   }),
   dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
