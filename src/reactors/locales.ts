@@ -102,21 +102,23 @@ async function loadLocale(store: IStore, lang: string) {
     }
   }
 
-  const remote = remoteFileName(lang);
-  try {
-    let payload: string;
+  if (upgradesEnabled) {
+    const remote = remoteFileName(lang);
     try {
-      payload = await ifs.readFile(remote);
-    } catch (e) {
-      // no updated version of the locale available
-    }
+      let payload: string;
+      try {
+        payload = await ifs.readFile(remote);
+      } catch (e) {
+        // no updated version of the locale available
+      }
 
-    if (payload) {
-      const resources = JSON.parse(payload);
-      store.dispatch(actions.localeDownloadEnded({ lang, resources }));
+      if (payload) {
+        const resources = JSON.parse(payload);
+        store.dispatch(actions.localeDownloadEnded({ lang, resources }));
+      }
+    } catch (e) {
+      logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
     }
-  } catch (e) {
-    logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
   }
 
   store.dispatch(actions.queueLocaleDownload({ lang, implicit: true }));
