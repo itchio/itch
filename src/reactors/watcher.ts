@@ -1,4 +1,4 @@
-import { IStore } from "../types";
+import { IStore, IAppState } from "../types";
 import { IAction } from "../constants/action-types";
 import * as actionTypes from "../constants/action-types";
 
@@ -6,9 +6,19 @@ import { each } from "underscore";
 
 import debounce from "./debounce";
 
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "watcher" });
+
 export interface IReactor<T> {
   (store: IStore, action: IAction<T>): Promise<void>;
 }
+
+interface Schedule {
+  (f: () => void): void;
+  dispatch?: (a: IAction<any>) => void;
+}
+type Selector = (rs: IAppState) => void;
+type SelectorMaker = (store: IStore, schedule: Schedule) => Selector;
 
 /**
  * Allows reacting to certain actions being dispatched
@@ -16,8 +26,6 @@ export interface IReactor<T> {
 export class Watcher {
   reactors: {
     [key: string]: IReactor<any>[];
-    _ALL?: IReactor<any>[];
-    _MOUNT?: IReactor<any>[];
   };
 
   subs: Watcher[];
@@ -28,17 +36,43 @@ export class Watcher {
   }
 
   /**
-   * Registers a reactor for all action types, ever
+   * Registers a lazily-created reselect selector that will be called
+   * on every tick if the state has changed since the last tick
    */
-  onAll(reactor: (store: IStore, action: IAction<any>) => Promise<void>) {
-    this.addWatcher("_ALL", reactor);
-  }
+  onStateChange({ makeSelector }: { makeSelector: SelectorMaker }) {
+    let oldRs: IAppState = null;
+    let selector: Selector;
 
-  /**
-   * Registers a reactor for when this watcher is mounted
-   */
-  onMount(reactor: (store: IStore, action: IAction<void>) => Promise<void>) {
-    this.addWatcher("__MOUNT", reactor);
+    const actionName = "TICK";
+    this.addWatcher(actionName, async (store, action) => {
+      let rs = store.getState();
+      if (rs === oldRs) {
+        return;
+      }
+      oldRs = rs;
+
+      if (!selector) {
+        const schedule: Schedule = f => {
+          setImmediate(() => {
+            try {
+              f();
+            } catch (e) {
+              logger.error(`In scheduled stateChange: ${e.stack}`);
+            }
+          });
+        };
+        schedule.dispatch = (action: IAction<any>) => {
+          schedule(() => store.dispatch(action));
+        };
+        selector = makeSelector(store, schedule);
+      }
+
+      try {
+        selector(rs);
+      } catch (e) {
+        logger.error(`In state selector: ${e.stack}`);
+      }
+    });
   }
 
   /**
@@ -65,9 +99,6 @@ export class Watcher {
 
   validate() {
     each(Object.keys(this.reactors), key => {
-      if (key === "_ALL" || key === "__MOUNT") {
-        return;
-      }
       if (!actionTypes.hasOwnProperty(key)) {
         throw new Error(`trying to react to unknown action type ${key}`);
       }

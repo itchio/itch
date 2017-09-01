@@ -1,65 +1,37 @@
 import { Watcher } from "./watcher";
 
 import * as os from "../os";
-import { getImagePath } from "../os/resources";
-import { t } from "../format";
-import { app, Menu, Tray } from "electron";
-import env from "../env";
+import { app, Menu } from "electron";
 
 import { createSelector } from "reselect";
 
 import * as actions from "../actions";
+import { getTray, rememberNotificationAction } from "./get-tray";
 
-import { IStore, IAppState, II18nState } from "../types";
-import { Action } from "redux-actions";
+import {
+  IStore,
+  IAppState,
+  II18nState,
+  currentRuntime,
+  IMenuTemplate,
+} from "../types";
+import { fleshOutTemplate } from "./context-menu/flesh-out-template";
+import memoize from "lru-memoize";
 
-type IMenuTemplate = Electron.MenuItemConstructorOptions[];
+const setTrayMenu = memoize(1, (a, b) => a === b, true)(function(
+  template: IMenuTemplate,
+  store: IStore
+) {
+  const fleshedOut = fleshOutTemplate(store, currentRuntime(), template);
+  const menu = Menu.buildFromTemplate(fleshedOut);
 
-// used to glue balloon click with notification callbacks
-let lastNotificationAction: Action<any>;
-
-let tray: Electron.Tray;
-
-function makeTray(store: IStore) {
-  // cf. https://github.com/itchio/itch/issues/462
-  // windows still displays a 16x16, whereas
-  // some linux DEs don't know what to do with a @x2, etc.
-  let suffix = "";
-  if (os.platform() !== "linux") {
-    suffix = "-small";
-  }
-
-  let base = "white";
-  if (os.platform() === "win32" && !/^10\./.test(os.release())) {
-    // windows older than 10 get the old colorful tray icon
-    base = env.appName;
-  }
-
-  const iconName = `${base}${suffix}.png`;
-  const iconPath = getImagePath("tray/" + iconName);
-
-  tray = new Tray(iconPath);
-  tray.setToolTip("itch.io");
-  tray.on("click", () => store.dispatch(actions.focusWindow({ toggle: true })));
-  tray.on("double-click", () => store.dispatch(actions.focusWindow({})));
-  tray.on("balloon-click", () => {
-    if (lastNotificationAction) {
-      store.dispatch(lastNotificationAction);
-    }
-  });
-}
-
-function setMenu(trayMenu: IMenuTemplate, store: IStore) {
   if (os.platform() === "darwin") {
     // don't have a tray icon on macOS, we just live in the dock
-    app.dock.setMenu(Menu.buildFromTemplate(trayMenu));
+    app.dock.setMenu(menu);
   } else {
-    if (!tray) {
-      makeTray(store);
-    }
-    tray.setContextMenu(Menu.buildFromTemplate(trayMenu));
+    getTray(store).setContextMenu(menu);
   }
-}
+});
 
 async function go(store: IStore, path: string) {
   store.dispatch(actions.focusWindow({}));
@@ -67,10 +39,13 @@ async function go(store: IStore, path: string) {
 }
 
 function refreshTray(store: IStore, i18n: II18nState) {
+  // TODO: make the tray a lot more useful? that'd be good.
+  // (like: make it display recent stuff / maybe the last few tabs)
+
   const menuTemplate: IMenuTemplate = [
-    { label: t(i18n, ["sidebar.owned"]), click: () => go(store, "library") },
+    { localizedLabel: ["sidebar.owned"], click: () => go(store, "library") },
     {
-      label: t(i18n, ["sidebar.dashboard"]),
+      localizedLabel: ["sidebar.dashboard"],
       click: () => go(store, "dashboard"),
     },
   ];
@@ -78,49 +53,26 @@ function refreshTray(store: IStore, i18n: II18nState) {
   if (os.platform() !== "darwin") {
     menuTemplate.push({ type: "separator" });
     menuTemplate.push({
-      label: t(i18n, ["menu.file.quit"]),
+      localizedLabel: ["menu.file.quit"],
       click: () => store.dispatch(actions.quit({})),
     });
   }
-  setMenu(menuTemplate, store);
-}
-
-// TODO: make the tray a lot more useful? that'd be good.
-// (like: make it display recent stuff / maybe the last few tabs)
-
-let traySelector: (state: IAppState, props?: any) => void;
-const makeTraySelector = (store: IStore) =>
-  createSelector(
-    (state: IAppState) => state.i18n,
-    i18n => {
-      setImmediate(() => {
-        refreshTray(store, i18n);
-      });
-    }
-  );
-
-let hasBooted = false;
-
-export function getTray() {
-  return tray;
+  setTrayMenu(menuTemplate, store);
 }
 
 export default function(watcher: Watcher) {
-  watcher.on(actions.boot, async (store, action) => {
-    hasBooted = true;
-  });
-
-  watcher.onAll(async (store, action) => {
-    if (!hasBooted) {
-      return;
-    }
-    if (!traySelector) {
-      traySelector = makeTraySelector(store);
-    }
-    traySelector(store.getState());
+  watcher.onStateChange({
+    makeSelector: (store, schedule) =>
+      createSelector(
+        (state: IAppState) => state.i18n,
+        i18n => {
+          schedule(() => refreshTray(store, i18n));
+        }
+      ),
   });
 
   watcher.on(actions.notify, async (store, action) => {
-    lastNotificationAction = action.payload.onClick;
+    const { onClick } = action.payload;
+    rememberNotificationAction(onClick);
   });
 }

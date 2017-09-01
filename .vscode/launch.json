@@ -15,7 +15,9 @@
             ],
             "env": {
                 "ITCH_LOG_LEVEL": "debug",
-                "ITCH_REACT_FRUGAL": "0"
+                "ITCH_REACT_FRUGAL": "0",
+                "NODE_ENV": "development",
+                "DEVTOOLS": "0"
             },
             "console": "integratedTerminal",
             "sourceMaps": true,

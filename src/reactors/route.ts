@@ -46,24 +46,12 @@ export default async function route(
         });
       }
 
-      for (const r of watcher.reactors._ALL || emptyArr) {
-        r(store, action).catch(e => {
-          err(e, action);
-        });
-      }
-
       for (const sub of watcher.subs) {
         if (!sub) {
           continue;
         }
 
         for (const r of sub.reactors[action.type] || emptyArr) {
-          r(store, action).catch(e => {
-            err(e, action);
-          });
-        }
-
-        for (const r of sub.reactors._ALL || emptyArr) {
           r(store, action).catch(e => {
             err(e, action);
           });

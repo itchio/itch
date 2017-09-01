@@ -392,32 +392,21 @@ function updateTitle(store: IStore, title: string) {
   window.setTitle(title);
 }
 
-let titleSelector: (state: IAppState) => void;
-const makeTitleSelector = (store: IStore) => {
-  const getI18n = (state: IAppState) => state.i18n;
-
-  const getID = (state: IAppState) => state.session.navigation.tab;
-  const getTabData = (state: IAppState) => state.session.tabData;
-  const getData = createSelector(
-    getID,
-    getTabData,
-    (id, tabData) => tabData[id]
-  );
-
-  return createSelector(getID, getData, getI18n, (id, data, i18n) => {
-    const label = Space.fromData(data).label();
-    // TODO: memoize that
-    updateTitle(store, t(i18n, label) + " - itch");
-  });
-};
-
 export default function(watcher: Watcher) {
-  watcher.onAll(async (store, action) => {
-    const state = store.getState();
-    if (!titleSelector) {
-      titleSelector = makeTitleSelector(store);
-    }
-    titleSelector(state);
+  watcher.onStateChange({
+    makeSelector: (store, schedule) => {
+      const getI18n = (rs: IAppState) => rs.i18n;
+      const getID = (rs: IAppState) => rs.session.navigation.tab;
+      const getTabData = (rs: IAppState) => rs.session.tabData;
+
+      const getSpace = createSelector(getID, getTabData, (id, tabData) =>
+        Space.fromData(tabData[id])
+      );
+
+      return createSelector(getI18n, getSpace, (i18n, sp) => {
+        updateTitle(store, t(i18n, sp.label()) + " - itch");
+      });
+    },
   });
 
   watcher.on(actions.preferencesLoaded, async (store, action) => {

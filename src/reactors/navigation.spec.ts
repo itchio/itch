@@ -36,8 +36,7 @@ suite(__filename, s => {
     w.on(actions.tabChanged, async () => {
       tabChanged = true;
     });
-    await w.dispatch(actions.navigate({ tab: "library" }));
-    await immediate();
+    await w.dispatchAndWaitImmediate(actions.navigate({ tab: "library" }));
     t.true(tabChanged);
   });
 
