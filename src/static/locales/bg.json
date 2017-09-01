@@ -439,5 +439,8 @@
     "download.outcome.reinstalled": "преинсталирано",
     "download.outcome.reverted": "върнато към предишна версия",
     "download.outcome.healed": "проверено и поправено",
-    "status.downloads.category.recent_activity": "Скорошна дейност"
+    "status.downloads.category.recent_activity": "Скорошна дейност",
+    "game.install.could_not_launch.message": "Съобщението, което получихме, беше: {{errorMessage}}",
+    "menu.file.close_other_tabs": "Затваряне на другите раздели",
+    "menu.file.close_tabs_below": "Затваряне на долните раздели"
 }
