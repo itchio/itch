@@ -8,7 +8,13 @@ import * as url from "url";
 import { ICave, ICaveLocation } from "../db/models/cave";
 import { IGame } from "../db/models/game";
 import { toJSONField } from "../db/json-field";
-import { IQueueInstallOpts, IStore, isCancelled } from "../types";
+import {
+  IQueueInstallOpts,
+  IStore,
+  isCancelled,
+  InstallReason,
+  ILocalizedString,
+} from "../types";
 
 import * as paths from "../os/paths";
 import * as sf from "../os/sf";
@@ -133,7 +139,7 @@ export async function queueInstall(
 
     const runtime = currentRuntime();
 
-    await coreInstall({
+    const caveOut = await coreInstall({
       ctx,
       runtime,
       logger,
@@ -145,6 +151,8 @@ export async function queueInstall(
       upload,
       caveIn: caveIn as ICave, // FIXME: poor style
     });
+
+    showReadyNotification(ctx.store, game, reason, caveOut);
   } catch (e) {
     if (isCancelled(e)) {
       logger.error(`Cancelled ${reason} for ${game.title}: ${e.message}`);
@@ -218,6 +226,7 @@ async function ensureUniqueInstallLocation(ctx: Context, cave: ICaveLocation) {
 import { DB } from "../db";
 import { Watcher } from "./watcher";
 import { promisedModal } from "./modals";
+import { t } from "../format/index";
 
 export default async function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueInstall, async (store, action) => {
@@ -249,4 +258,43 @@ export default async function(watcher: Watcher, db: DB) {
       },
     });
   });
+}
+
+function showReadyNotification(
+  store: IStore,
+  game: IGame,
+  reason: InstallReason,
+  cave: ICave
+) {
+  const rs = store.getState();
+
+  const { readyNotification = true } = rs.preferences;
+  if (!readyNotification) {
+    return;
+  }
+
+  let message: ILocalizedString;
+  const { title } = game;
+
+  if (reason === "install" || reason === "reinstall") {
+    message = ["notification.download_installed", { title }];
+  } else if (reason === "update") {
+    message = ["notification.download_updated", { title }];
+  } else if (reason === "revert") {
+    const version = cave.buildUserVersion || `#${cave.buildId}`;
+    message = ["notification.download_reverted", { title, version }];
+  } else if (reason === "heal") {
+    message = ["notification.download_healed", { title }];
+  }
+
+  if (message) {
+    const { i18n } = rs;
+    const body = t(i18n, message);
+    store.dispatch(
+      actions.notify({
+        body,
+        onClick: actions.navigate({ tab: "downloads" }),
+      })
+    );
+  }
 }

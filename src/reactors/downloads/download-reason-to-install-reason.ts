@@ -6,6 +6,8 @@ export default function(reason: DownloadReason): InstallReason {
       return "heal";
     case "install":
       return "install";
+    case "update":
+      return "update";
     case "reinstall":
       return "reinstall";
     default:

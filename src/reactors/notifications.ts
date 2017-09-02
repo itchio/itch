@@ -1,12 +1,15 @@
 import { Watcher } from "./watcher";
 
-import { app, BrowserWindow } from "electron";
+import { app, Notification, nativeImage } from "electron";
 import * as os from "../os";
 
 import * as actions from "../actions";
 import env from "../env";
 
 import delay from "./delay";
+
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "notifications" });
 
 const AUTODISMISS_DELAY = 5000;
 
@@ -30,11 +33,23 @@ export default function(watcher: Watcher) {
       onClick,
     } = action.payload;
 
-    const id = store.getState().ui.mainWindow.id;
-    const window = BrowserWindow.fromId(id);
-    if (window && !window.isDestroyed() && !window.webContents.isDestroyed()) {
-      const opts = { body, icon };
-      store.dispatch(actions.notifyHtml5({ title, opts, onClick }));
+    if (Notification.isSupported()) {
+      const n = new Notification({
+        title,
+        subtitle: null,
+        body,
+        icon: icon ? nativeImage.createFromPath(icon) : null,
+        actions: null,
+      });
+      if (onClick) {
+        n.on("click", e => {
+          store.dispatch(actions.focusWindow({}));
+          store.dispatch(onClick);
+        });
+      }
+      n.show();
+    } else {
+      logger.warn(`Cannot show notification: ${body}`);
     }
   });
 

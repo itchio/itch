@@ -19,7 +19,12 @@ export type DownloadReason =
   | "revert"
   | "heal";
 
-export type InstallReason = "install" | "reinstall" | "heal";
+export type InstallReason =
+  | "install"
+  | "reinstall"
+  | "update"
+  | "revert"
+  | "heal";
 
 export interface IQueueDownloadOpts {
   /** reason for starting this download */

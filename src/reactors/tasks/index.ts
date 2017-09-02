@@ -2,7 +2,6 @@ import { Watcher } from "../watcher";
 import { DB } from "../../db";
 
 import abortTask from "./abort-task";
-import taskEnded from "./task-ended";
 
 import queueGame from "./queue-game";
 
@@ -18,7 +17,6 @@ import viewCaveDetails from "./view-cave-details";
 
 export default function(watcher: Watcher, db: DB) {
   abortTask(watcher);
-  taskEnded(watcher);
 
   queueGame(watcher, db);
 

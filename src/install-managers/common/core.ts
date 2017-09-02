@@ -107,7 +107,7 @@ interface IPrepareOpts {
   specifiedInstallerName?: InstallerType;
 }
 
-export async function coreInstall(opts: IInstallOpts): Promise<void> {
+export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
   const { reason } = opts;
   const logger = opts.logger.child({ name: "install" });
 
@@ -132,8 +132,8 @@ export async function coreInstall(opts: IInstallOpts): Promise<void> {
     ...result.caveOut,
   };
 
-  if (reason === "reinstall") {
-    logger.info(`Was reinstall, clearing verdict`);
+  if (reason !== "install") {
+    logger.info(`Not first install (${reason}), clearing verdict`);
     cave.verdict = null;
   }
 
@@ -148,6 +148,7 @@ export async function coreInstall(opts: IInstallOpts): Promise<void> {
   logger.info(`Committing game & cave to db`);
   ctx.db.saveOne("games", String(game.id), game);
   ctx.db.saveOne("caves", cave.id, cave);
+  return cave;
 }
 
 export async function coreUninstall(opts: IUninstallOpts) {

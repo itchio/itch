@@ -36,6 +36,7 @@ import gameUpdates from "./game-updates";
 import report from "./report";
 import fetchSearch from "./fetch-search";
 import webContents from "./web-contents";
+import notifications from "./notifications";
 
 import { currentRuntime } from "../os/runtime";
 const runtime = currentRuntime();
@@ -78,6 +79,7 @@ export default function getWatcher(db: DB) {
   report(watcher, db);
   fetchSearch(watcher, db);
   webContents(watcher, db);
+  notifications(watcher);
 
   watcher.validate();
   return watcher;

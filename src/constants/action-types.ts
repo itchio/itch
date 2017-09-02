@@ -887,24 +887,7 @@ export interface INotifyPayload {
   icon?: string;
 
   /** action to dispatch if notification is clicked */
-  onClick?: Action<any>;
-}
-
-export const NOTIFY_HTML5 = "NOTIFY_HTML5";
-export interface INotifyHtml5Payload {
-  /** notification title */
-  title: string;
-
-  opts: {
-    /** notification icon */
-    icon?: string;
-
-    /** main notification text */
-    body?: string;
-  };
-
-  /** action to dispatch if notification is clicked */
-  onClick: Action<any>;
+  onClick?: IAction<any>;
 }
 
 /** Search */

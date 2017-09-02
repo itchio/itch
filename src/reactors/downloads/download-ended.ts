@@ -6,11 +6,7 @@ const logger = rootLogger.child({ name: "download-ended" });
 
 import { omit } from "underscore";
 
-import { t } from "../../format";
-
 import downloadReasonToInstallReason from "./download-reason-to-install-reason";
-
-import { IStore, IDownloadItem } from "../../types";
 
 const ITCH_INCREMENTAL_ONLY = process.env.ITCH_INCREMENTAL_ONLY === "1";
 
@@ -65,53 +61,5 @@ export default function(watcher: Watcher) {
         })
       );
     }
-
-    // FIXME: so, the logic for these notifications should be moved elsewhere,
-    // since we can't wait on install finished anymore.
-    const showNotif = false;
-    if (showNotif) {
-      const prefs = store.getState().preferences || { readyNotification: true };
-      const { readyNotification } = prefs;
-
-      if (readyNotification) {
-        showReadyNotification(store, item);
-      }
-    }
   });
-}
-
-function showReadyNotification(store: IStore, item: IDownloadItem) {
-  let notificationMessage: string = null;
-  let notificationOptions: any = {
-    title: item.game.title,
-  };
-
-  switch (item.reason) {
-    case "install":
-      notificationMessage = "notification.download_installed";
-      break;
-    case "update":
-      notificationMessage = "notification.download_updated";
-      break;
-    case "revert":
-      notificationMessage = "notification.download_reverted";
-      notificationOptions.version = `#${item.upload.buildId}`;
-      break;
-    case "heal":
-      notificationMessage = "notification.download_healed";
-      break;
-    default:
-    // make the typescript compiler happy
-  }
-
-  if (notificationMessage) {
-    const i18n = store.getState().i18n;
-    const message = t(i18n, [notificationMessage, notificationOptions]);
-    store.dispatch(
-      actions.notify({
-        body: message,
-        onClick: actions.navigateToGame({ game: item.game }),
-      })
-    );
-  }
 }

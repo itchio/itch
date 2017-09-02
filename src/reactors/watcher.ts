@@ -1,4 +1,4 @@
-import { IStore, IAppState } from "../types";
+import { IStore, IRootState } from "../types";
 import { IAction } from "../constants/action-types";
 import * as actionTypes from "../constants/action-types";
 
@@ -17,7 +17,7 @@ interface Schedule {
   (f: () => void): void;
   dispatch?: (a: IAction<any>) => void;
 }
-type Selector = (rs: IAppState) => void;
+type Selector = (rs: IRootState) => void;
 type SelectorMaker = (store: IStore, schedule: Schedule) => Selector;
 
 /**
