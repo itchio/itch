@@ -4,6 +4,10 @@
 Since we encourage developers to ship [portable builds](../platforms/windows.md), the app supports
 installing frameworks or libraries your game might depend on.
 
+Here's how it looks for users:
+
+![](./user-flow.gif)
+
 ## Adding prereqs to the manifest
 
 The simplest possible manifest would look something like
