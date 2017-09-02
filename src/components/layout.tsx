@@ -59,12 +59,6 @@ const ReactHintContainer = styled.div`
   }
 `;
 
-declare class Notification {
-  onclick: () => void;
-
-  constructor(title: string, opts: any);
-}
-
 /**
  * Top-level component in the app, decides which page to show
  * Also, subscribes to app store to synchronize its state

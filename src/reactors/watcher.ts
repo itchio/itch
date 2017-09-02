@@ -40,7 +40,7 @@ export class Watcher {
    * on every tick if the state has changed since the last tick
    */
   onStateChange({ makeSelector }: { makeSelector: SelectorMaker }) {
-    let oldRs: IAppState = null;
+    let oldRs: IRootState = null;
     let selector: Selector;
 
     const actionName = "TICK";
