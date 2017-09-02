@@ -1,6 +1,6 @@
-export type JSONField<T> = string;
+export type JSONField = string;
 
-export function fromJSONField<T>(source: JSONField<T>, fallback: T = null): T {
+export function fromJSONField<T>(source: JSONField, fallback: T = null): T {
   if (source === null || source === undefined) {
     return fallback;
   }
@@ -22,7 +22,7 @@ export function fromJSONField<T>(source: JSONField<T>, fallback: T = null): T {
   }
 }
 
-export function toJSONField<T>(source: T): JSONField<T> {
+export function toJSONField<T>(source: T): JSONField {
   if (source === null || source === undefined) {
     return null;
   }
