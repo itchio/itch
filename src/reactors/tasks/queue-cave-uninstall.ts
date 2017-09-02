@@ -79,7 +79,7 @@ export default function(watcher: Watcher, db: DB) {
     }
 
     const prefs = store.getState().preferences;
-    const upload = fromJSONField<IUpload>(cave.upload);
+    const upload = fromJSONField(cave.upload);
     const destPath = paths.appPath(cave, prefs);
     const archivePath = paths.downloadPath(upload, prefs);
 

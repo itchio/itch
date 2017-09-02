@@ -14,7 +14,6 @@ import LastPlayed from "./last-played";
 
 import { IGame } from "../db/models/game";
 import { fromJSONField } from "../db/json-field";
-import { ISaleInfo } from "../types";
 
 import styled from "./styles";
 import { IGameStatus } from "../helpers/get-game-status";
@@ -83,7 +82,7 @@ export default class GameStats extends React.PureComponent<IProps> {
       );
     } else {
       const { minPrice, currency = "USD" } = game;
-      const sale = fromJSONField<ISaleInfo>(game.sale);
+      const sale = fromJSONField(game.sale);
       const showPlatforms = classAction === "launch" && hasPlatforms(game);
 
       // TODO: break down into components, or functions at the very least
@@ -92,55 +91,56 @@ export default class GameStats extends React.PureComponent<IProps> {
           <div className="total-playtime">
             <div className="total-playtime--line">
               {format([`usage_stats.description.${classification}`])}
-              {showPlatforms
-                ? <span>
-                    {" "}{format([
-                      "usage_stats.description.platforms",
-                      {
-                        platforms: (
-                          <PlatformIcons
-                            className="total-playtime--platforms"
-                            target={game}
-                          />
-                        ),
-                      },
-                    ])}
-                  </span>
-                : null}
+              {showPlatforms ? (
+                <span>
+                  {" "}
+                  {format([
+                    "usage_stats.description.platforms",
+                    {
+                      platforms: (
+                        <PlatformIcons
+                          className="total-playtime--platforms"
+                          target={game}
+                        />
+                      ),
+                    },
+                  ])}
+                </span>
+              ) : null}
             </div>
             <div className="total-playtime--line">
-              {downloadKey
-                ? format([
-                    "usage_stats.description.bought_time_ago",
-                    {
-                      time_ago: <TimeAgo date={downloadKey.createdAt} />,
-                    },
-                  ])
-                : minPrice > 0
-                  ? format([
-                      "usage_stats.description.price",
-                      {
-                        price: sale
-                          ? <span>
-                              <label
-                                key="original-price"
-                                className="original-price"
-                              >
-                                {formatPrice(currency, minPrice)}
-                              </label>
-                              <label key="discounted-price">
-                                {" "}{formatPrice(
-                                  currency,
-                                  minPrice * (1 - sale.rate / 100),
-                                )}
-                              </label>
-                            </span>
-                          : <label>
-                              {formatPrice(currency, minPrice)}
-                            </label>,
-                      },
-                    ])
-                  : format(["usage_stats.description.free_download"])}
+              {downloadKey ? (
+                format([
+                  "usage_stats.description.bought_time_ago",
+                  {
+                    time_ago: <TimeAgo date={downloadKey.createdAt} />,
+                  },
+                ])
+              ) : minPrice > 0 ? (
+                format([
+                  "usage_stats.description.price",
+                  {
+                    price: sale ? (
+                      <span>
+                        <label key="original-price" className="original-price">
+                          {formatPrice(currency, minPrice)}
+                        </label>
+                        <label key="discounted-price">
+                          {" "}
+                          {formatPrice(
+                            currency,
+                            minPrice * (1 - sale.rate / 100)
+                          )}
+                        </label>
+                      </span>
+                    ) : (
+                      <label>{formatPrice(currency, minPrice)}</label>
+                    ),
+                  },
+                ])
+              ) : (
+                format(["usage_stats.description.free_download"])
+              )}
             </div>
           </div>
         </GameStatsDiv>

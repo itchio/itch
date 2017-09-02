@@ -23,7 +23,7 @@ export default class CollectionRow extends React.PureComponent<IProps> {
     const { allGames, collection } = this.props;
     const { title } = collection;
 
-    const gameIds = fromJSONField<number[]>(collection.gameIds, emptyArr).slice(
+    const gameIds = fromJSONField(collection.gameIds, emptyArr).slice(
       0,
       GAMES_SHOWN_PER_COLLECTION
     );
@@ -64,9 +64,7 @@ export default class CollectionRow extends React.PureComponent<IProps> {
         className="grid--row"
         style={style}
       >
-        <section className="title">
-          {title}
-        </section>
+        <section className="title">{title}</section>
         <section className="info">
           <Icon icon="tag" />
           <span className="total">
@@ -81,9 +79,7 @@ export default class CollectionRow extends React.PureComponent<IProps> {
             },
           ])}
         </section>
-        <section className="fresco">
-          {cols}
-        </section>
+        <section className="fresco">{cols}</section>
       </div>
     );
   }

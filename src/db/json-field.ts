@@ -1,6 +1,10 @@
-export type JSONField<T> = string;
+// pretty dumb workaround to make typescript@2.5.2 happy :o
+export type JSONField<T> = string | T;
 
-export function fromJSONField<T>(source: JSONField<T>, fallback: T = null): T {
+export function fromJSONField<T, U extends T>(
+  source: JSONField<T>,
+  fallback: U = null
+): T {
   if (source === null || source === undefined) {
     return fallback;
   }
@@ -15,7 +19,7 @@ export function fromJSONField<T>(source: JSONField<T>, fallback: T = null): T {
   }
 
   try {
-    const result = JSON.parse(source);
+    const result = JSON.parse(source as string);
     return result ? result : fallback;
   } catch (e) {
     return fallback;

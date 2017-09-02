@@ -79,7 +79,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
     verdict && verdict.candidates && verdict.candidates.length > 0;
 
   if (!exePath) {
-    let verdict = fromJSONField<IConfigureResult>(cave.verdict);
+    let verdict = fromJSONField(cave.verdict);
     let shouldReconfigure = false;
     if (verdictHasCandidates(verdict)) {
       const candidate = verdict.candidates[0];
@@ -99,7 +99,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
     if (shouldReconfigure) {
       await configure(ctx, opts);
       cave = ctx.db.caves.findOneById(cave.id);
-      verdict = fromJSONField<IConfigureResult>(cave.verdict);
+      verdict = fromJSONField(cave.verdict);
     }
 
     if (verdictHasCandidates(verdict)) {

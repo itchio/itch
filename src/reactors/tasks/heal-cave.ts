@@ -8,8 +8,6 @@ import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
 import Context from "../../context";
 
-import { IUpload } from "../../types";
-
 import lazyGetGame from "../lazy-get-game";
 
 export default function(watcher: Watcher, db: DB) {
@@ -37,7 +35,7 @@ export default function(watcher: Watcher, db: DB) {
       const game = await lazyGetGame(ctx, cave.gameId);
 
       const upload = {
-        ...fromJSONField<IUpload>(cave.upload),
+        ...fromJSONField(cave.upload),
         buildId: cave.buildId,
       };
 

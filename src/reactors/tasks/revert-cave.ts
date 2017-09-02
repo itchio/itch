@@ -21,8 +21,6 @@ import { t } from "../../format";
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
 
-import { IUpload } from "../../types";
-
 import asTask from "./as-task";
 import { fromDateTimeField } from "../../db/datetime-field";
 
@@ -53,7 +51,7 @@ export default function(watcher: Watcher, db: DB) {
           return;
         }
 
-        const upload = fromJSONField<IUpload>(cave.upload);
+        const upload = fromJSONField(cave.upload);
         if (!cave.buildId) {
           logger.error(`No upload in cave, can't revert: ${caveId}`);
           return;

@@ -9,6 +9,7 @@ import { indexBy } from "underscore";
 import { GAMES_SHOWN_PER_COLLECTION } from "./constants";
 
 const emptyObj = {};
+const ea: any[] = [];
 
 export default class CollectionsFetcher extends Fetcher {
   constructor() {
@@ -33,17 +34,14 @@ export default class CollectionsFetcher extends Fetcher {
       return;
     }
 
-    const localCollectionIds = fromJSONField<number[]>(
-      profile.myCollectionIds,
-      []
-    );
+    const localCollectionIds = fromJSONField(profile.myCollectionIds, ea);
     const localCollections = db.collections.all(k =>
       k.where("id in ?", localCollectionIds)
     );
 
     let allGameIds: number[] = [];
     for (const c of localCollections) {
-      const collectionGameIds = fromJSONField<number[]>(c.gameIds, []);
+      const collectionGameIds = fromJSONField(c.gameIds, []);
       allGameIds = [
         ...allGameIds,
         ...collectionGameIds.slice(0, GAMES_SHOWN_PER_COLLECTION),

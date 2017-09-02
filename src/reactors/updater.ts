@@ -33,8 +33,6 @@ import { ICave } from "../db/models/cave";
 import { fromDateTimeField } from "../db/datetime-field";
 import { fromJSONField } from "../db/json-field";
 
-import { IUpload } from "../types";
-
 import { fileSize } from "../format/filesize";
 
 interface IUpdateCheckResult {
@@ -134,7 +132,7 @@ async function _doCheckForGameUpdate(
 
     let hasUpgrade = false;
 
-    const caveUpload = fromJSONField<IUpload>(cave.upload);
+    const caveUpload = fromJSONField(cave.upload);
     const caveUploadId = caveUpload ? caveUpload.id : null;
     if (caveUploadId && cave.buildId) {
       logger.info(

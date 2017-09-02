@@ -27,7 +27,7 @@ const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 import { fromJSONField } from "../../db/json-field";
 
 import { registerProtocol, setupItchInternal } from "./html/itch-internal";
-import { IConfigureResult, ICandidate } from "../../util/butler";
+import { ICandidate } from "../../util/butler";
 
 import { ILauncher } from "./types";
 
@@ -37,7 +37,7 @@ const launch: ILauncher = async (ctx, opts) => {
   const { store } = ctx;
 
   const appPath = paths.appPath(cave, store.getState().preferences);
-  let verdict = fromJSONField<IConfigureResult>(cave.verdict);
+  let verdict = fromJSONField(cave.verdict);
 
   let htmlCandidates: ICandidate[] = [];
   let grabCandidates = () => {

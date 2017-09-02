@@ -10,8 +10,6 @@ import { formatPrice } from "../../format";
 import { IGame } from "../../db/models/game";
 import { fromJSONField } from "../../db/json-field";
 
-import { ISaleInfo } from "../../types";
-
 import PlatformIcons from "../basics/platform-icons";
 import Filler from "../basics/filler";
 
@@ -26,9 +24,7 @@ const Platforms = styled.div`
   align-items: center;
 `;
 
-const StyledPlatformIcons = styled(PlatformIcons)`
-  margin-right: 16px;
-`;
+const StyledPlatformIcons = styled(PlatformIcons)`margin-right: 16px;`;
 
 const TitleBlock = styled.div`
   padding: 8px 12px;
@@ -58,7 +54,7 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
     let originalPrice: React.ReactElement<any> = null;
     let price: React.ReactElement<any> = null;
 
-    const sale = fromJSONField<ISaleInfo>(game.sale);
+    const sale = fromJSONField(game.sale);
 
     if (game.minPrice > 0) {
       if (sale) {
@@ -73,11 +69,7 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
           </Price>
         );
       } else {
-        price = (
-          <Price>
-            {formatPrice("USD", game.minPrice)}
-          </Price>
-        );
+        price = <Price>{formatPrice("USD", game.minPrice)}</Price>;
       }
     }
 
@@ -94,9 +86,7 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
       >
         <img src={stillCoverUrl || coverUrl} />
         <TitleBlock>
-          <Title>
-            {title}
-          </Title>
+          <Title>{title}</Title>
           <Filler />
           <Platforms>
             <StyledPlatformIcons target={game} />

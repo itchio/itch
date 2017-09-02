@@ -9,7 +9,7 @@ import { fromJSONField } from "../db/json-field";
 
 import { pluck } from "underscore";
 
-const emptyArr = [];
+const ea = [];
 
 export default class DashboardFetcher extends Fetcher {
   async work(): Promise<void> {
@@ -29,7 +29,7 @@ export default class DashboardFetcher extends Fetcher {
       this.debug(`Could not find a profile for ${meId}`);
       return;
     }
-    const myGameIds = fromJSONField<number[]>(profile.myGameIds) || emptyArr;
+    const myGameIds = fromJSONField(profile.myGameIds, ea);
 
     let doQuery = (k: squel.Select) =>
       addSortAndFilterToQuery(

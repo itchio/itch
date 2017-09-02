@@ -1043,10 +1043,6 @@ export interface IRuntime {
   is64: boolean;
 }
 
-export interface ISaleInfo {
-  rate: number;
-}
-
 export interface IMenuItem extends Electron.MenuItemConstructorOptions {
   localizedLabel?: ILocalizedString;
   submenu?: IMenuItem[];

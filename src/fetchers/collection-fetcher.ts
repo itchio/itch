@@ -29,7 +29,7 @@ export default class CollectionFetcher extends Fetcher {
         },
       });
 
-      const gameIds = fromJSONField<number[]>(
+      const gameIds = fromJSONField(
         localCollection && localCollection.gameIds,
         ea
       );

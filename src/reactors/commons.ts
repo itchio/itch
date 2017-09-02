@@ -73,7 +73,7 @@ function updateMyGameIds(store: IStore, db: DB) {
     return;
   }
 
-  const myGameIds = fromJSONField<number[]>(profile.myGameIds, emptyArr);
+  const myGameIds = fromJSONField(profile.myGameIds, emptyArr);
   const myGameIdsSet = object(myGameIds, myGameIds.map(() => true)) as any;
   store.dispatch(actions.commonsUpdated({ myGameIdsSet }));
 }
