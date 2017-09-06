@@ -10,7 +10,7 @@ import {
   getActiveDownload,
 } from "../reactors/downloads/getters";
 import isPlatformCompatible from "../util/is-platform-compatible";
-import memoize from "lru-memoize";
+import memoize from "../util/lru-memoize";
 
 /**
  * What type of access we have to the game - do we own it,
@@ -187,6 +187,4 @@ function rawGetGameStatus(
     compatible,
   };
 }
-const realGetGameStatus = memoize(300, (a, b) => a === b, true)(
-  rawGetGameStatus
-);
+const realGetGameStatus = memoize(300, rawGetGameStatus);

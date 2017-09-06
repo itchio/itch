@@ -18,7 +18,7 @@ import { formatDate, DATE_FORMAT } from "../format/datetime";
 
 import * as actions from "../actions";
 import { fromDateTimeField } from "../db/datetime-field";
-import memoize from "lru-memoize";
+import memoize from "../util/lru-memoize";
 import { MinimalContext } from "../context/index";
 
 const linux = os.itchPlatform() === "linux";
@@ -53,7 +53,7 @@ async function runs(command: string, args: string[]): Promise<boolean> {
   return false;
 }
 
-const augmentedPlatform = memoize(1)(async () => {
+const augmentedPlatform = memoize(1, async () => {
   let platform = os.platform();
   if (platform === "linux") {
     if (await runs("/usr/bin/rpm", ["-q", "-f", "/usr/bin/rpm"])) {

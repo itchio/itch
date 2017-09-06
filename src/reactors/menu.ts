@@ -8,7 +8,7 @@ import { IRuntime, IMenuItem, IMenuTemplate } from "../types";
 
 import { IRootState, ISessionCredentialsState } from "../types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
-import memoize from "lru-memoize";
+import memoize from "../util/lru-memoize";
 import { actions } from "../test-suite";
 
 export default function(watcher: Watcher, runtime: IRuntime) {
@@ -51,7 +51,7 @@ interface IAllTemplates {
   help: IMenuItem;
 }
 
-const computeMenuTemplate = memoize(1)(function(
+const computeMenuTemplate = memoize(1, function(
   appVersion: string,
   credentials: ISessionCredentialsState,
   runtime: IRuntime
