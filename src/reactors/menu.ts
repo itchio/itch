@@ -8,35 +8,31 @@ import { IRuntime, IMenuItem, IMenuTemplate } from "../types";
 
 import { IRootState, ISessionCredentialsState } from "../types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
-import memoize from "../util/lru-memoize";
 import { actions } from "../test-suite";
 
 export default function(watcher: Watcher, runtime: IRuntime) {
   watcher.onStateChange({
-    makeSelector: (store, schedule) =>
-      createSelector(
-        (rs: IRootState) => rs.system,
+    makeSelector: (store, schedule) => {
+      let templateSelector = createSelector(
+        (rs: IRootState) => rs.system.appVersion,
         (rs: IRootState) => rs.session.credentials,
+        (appVersion, credentials) => {
+          return computeMenuTemplate(appVersion, credentials, runtime);
+        }
+      );
+
+      return createSelector(
+        templateSelector,
         (rs: IRootState) => rs.i18n,
-        (system, credentials, i18n) => {
-          const template = computeMenuTemplate(
-            system.appVersion,
-            credentials,
-            runtime
-          );
-
-          const rs = store.getState();
-          const oldTemplate = store.getState().ui.menu.template;
-          if (oldTemplate === template) {
-            return;
-          }
+        (rs: IRootState) => rs.ui.mainWindow.id,
+        (template, i18n, mainWindowId) => {
           schedule.dispatch(actions.menuChanged({ template }));
-
           const fleshed = fleshOutTemplate(store, runtime, template);
           const menu = Menu.buildFromTemplate(fleshed);
-          setItchAppMenu(rs, menu);
+          setItchAppMenu(mainWindowId, runtime, menu);
         }
-      ),
+      );
+    },
   });
 }
 
@@ -51,7 +47,7 @@ interface IAllTemplates {
   help: IMenuItem;
 }
 
-const computeMenuTemplate = memoize(1, function(
+function computeMenuTemplate(
   appVersion: string,
   credentials: ISessionCredentialsState,
   runtime: IRuntime
@@ -263,11 +259,14 @@ const computeMenuTemplate = memoize(1, function(
   template.push(menus.help);
 
   return template;
-});
+}
 
-function setItchAppMenu(rs: IRootState, menu: Electron.Menu) {
-  const mainWindowId = rs.ui.mainWindow.id;
-  if (rs.system.macos) {
+function setItchAppMenu(
+  mainWindowId: number,
+  runtime: IRuntime,
+  menu: Electron.Menu
+) {
+  if (runtime.platform === "osx") {
     Menu.setApplicationMenu(menu);
   } else {
     if (mainWindowId) {
