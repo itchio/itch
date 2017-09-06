@@ -40,7 +40,7 @@ interface IDateFormat {
   options: Intl.DateTimeFormatOptions;
 }
 
-const formatterCache = new Map<number, Map<string, Intl.DateTimeFormat>>();
+const cacheByFormat = new Map<number, Map<string, Intl.DateTimeFormat>>();
 
 export type MixedDate = Date | string | number;
 
@@ -65,17 +65,17 @@ export function formatDate(
 }
 
 // Get a formatter, cached by format & locale
-function getFormatter(
+export function getFormatter(
   format: IDateFormat,
   locale: string
 ): Intl.DateTimeFormat {
-  let localeCache = formatterCache.get(format.key);
-  if (!localeCache) {
-    localeCache = new Map<string, Intl.DateTimeFormat>();
-    formatterCache.set(format.key, localeCache);
+  let cacheByLocale = cacheByFormat.get(format.key);
+  if (!cacheByLocale) {
+    cacheByLocale = new Map<string, Intl.DateTimeFormat>();
+    cacheByFormat.set(format.key, cacheByLocale);
   }
 
-  let formatter = localeCache.get(locale);
+  let formatter = cacheByLocale.get(locale);
   if (!formatter) {
     let locales = [locale];
     let stripped = locale.replace(/-.*$/, "");
@@ -88,6 +88,7 @@ function getFormatter(
       (format.options as any).timeZone = "UTC";
     }
     formatter = new Intl.DateTimeFormat(locales, format.options);
+    cacheByLocale.set(locale, formatter);
   }
   return formatter;
 }

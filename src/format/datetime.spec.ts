@@ -1,6 +1,11 @@
 import suite from "../test-suite";
 
-import { formatDurationAsMessage, formatDate, DATE_FORMAT } from "./datetime";
+import {
+  formatDurationAsMessage,
+  formatDate,
+  getFormatter,
+  DATE_FORMAT,
+} from "./datetime";
 import { fromDateTimeField } from "../db/datetime-field";
 
 suite(__filename, s => {
@@ -38,5 +43,11 @@ suite(__filename, s => {
       formatDate(new Date("1994-04-03 11:47:21 +0"), "en-US", DATE_FORMAT),
       refString
     );
+  });
+
+  s.case("getFormatter", t => {
+    const f1 = getFormatter(DATE_FORMAT, "en-US");
+    const f2 = getFormatter(DATE_FORMAT, "en-US");
+    t.is(f1, f2, "should re-use cached formatter");
   });
 });
