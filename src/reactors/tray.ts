@@ -16,9 +16,9 @@ import {
   IMenuTemplate,
 } from "../types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
-import memoize from "lru-memoize";
+import memoize from "../util/lru-memoize";
 
-const setTrayMenu = memoize(1, (a, b) => a === b, true)(function(
+const setTrayMenu = memoize(1, function(
   template: IMenuTemplate,
   store: IStore
 ) {

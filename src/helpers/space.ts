@@ -5,14 +5,13 @@ import { IUser } from "../db/models/user";
 import { ILocalizedString, IStore, IRootState } from "../types/index";
 
 import staticTabData, { IBaseTabData } from "../constants/static-tab-data";
-import memoize from "lru-memoize";
+import memoize from "../util/lru-memoize";
 
 // Empty Object
 const eo = {} as any;
 
-const kSpaceCacheSize = 100;
-
-export const spaceFromData = memoize(kSpaceCacheSize, (a, b) => a === b, true)(
+export const spaceFromData = memoize(
+  100,
   (dataIn: ITabData) => new Space(dataIn)
 );
 
