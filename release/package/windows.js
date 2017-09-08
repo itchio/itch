@@ -45,7 +45,7 @@ module.exports = {
       title: appName,
       // sic. it's really itch.ico, even for kitch
       iconUrl:
-        "http://raw.githubusercontent.com/itchio/itch/master/release/images/" +
+        "https://github.com/itchio/itch/raw/master/release/images/" +
         appName +
         "-icons/itch.ico",
       loadingGif: installerGifPath,
