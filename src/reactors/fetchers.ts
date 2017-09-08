@@ -13,6 +13,7 @@ import LibraryFetcher from "../fetchers/library-fetcher";
 import GameFetcher from "../fetchers/game-fetcher";
 import UserFetcher from "../fetchers/user-fetcher";
 import CollectionFetcher from "../fetchers/collection-fetcher";
+import LocationFetcher from "../fetchers/location-fetcher";
 
 import Context from "../context";
 import { DB } from "../db";
@@ -105,6 +106,8 @@ function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
       return UserFetcher;
     case "collections":
       return CollectionFetcher;
+    case "locations":
+      return LocationFetcher;
   }
 }
 

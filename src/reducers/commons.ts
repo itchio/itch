@@ -10,6 +10,7 @@ const initialState: ICommonsState = {
   caveIdsByGameId: {},
   libraryGameIds: [],
   myGameIdsSet: {},
+  locationSizes: {},
 };
 
 export default reducer<ICommonsState>(initialState, on => {

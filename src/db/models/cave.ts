@@ -48,6 +48,7 @@ export interface ICaveSummary {
   gameId: number;
   lastTouchedAt: DateTimeField;
   secondsRun: number;
+  installedSize: number;
 }
 
 export interface ICaveLocation {

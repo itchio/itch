@@ -9,17 +9,21 @@ interface ITabUsers {
   set: IUserSet;
 }
 
-interface ITabGames {
+export interface ITabGames {
   /** games in relation to this tab (single game, games in a collection) */
   set: IGameSet;
   ids: number[];
   hiddenCount?: number;
 }
 
-interface ITabCollections {
+export interface ITabCollections {
   /** games in relation to this tab (single game, games in a collection) */
   set: ICollectionSet;
   ids: number[];
+}
+
+export interface ITabLocation {
+  path: string;
 }
 
 export interface ITabWeb {
@@ -35,7 +39,7 @@ export interface ITabWeb {
   loading?: boolean;
 }
 
-interface ITabToast {
+export interface ITabToast {
   /** error to show for toast tab */
   error?: string;
 
@@ -55,6 +59,7 @@ export interface ITabData {
   collections?: ITabCollections;
   web?: ITabWeb;
   toast?: ITabToast;
+  location?: ITabLocation;
 }
 
 export interface ITabDataSave extends ITabData {

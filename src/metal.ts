@@ -21,6 +21,7 @@ if (env.name === "development") {
       "modal-resolves",
       "registered-protocols",
       "get-tray",
+      "download-watcher-state",
     ],
   });
 }

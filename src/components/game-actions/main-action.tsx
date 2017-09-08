@@ -6,6 +6,7 @@ import { injectIntl, InjectedIntl } from "react-intl";
 import LoadingCircle from "../basics/loading-circle";
 import Icon from "../basics/icon";
 import Button from "../basics/button";
+import IconButton from "../basics/icon-button";
 
 import * as actions from "../../actions";
 
@@ -16,8 +17,9 @@ import {
   Access,
 } from "../../helpers/get-game-status";
 import { IGame } from "../../db/models/game";
-import format from "../format";
+import format, { formatString } from "../format";
 import actionForGame from "../../util/action-for-game";
+import { ILocalizedString } from "../../types/index";
 
 class MainAction extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -25,7 +27,8 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
     const { cave, access, operation, compatible, update } = this.props.status;
 
     let iconComponent: JSX.Element;
-    let label: string | JSX.Element;
+    let icon: string;
+    let label: ILocalizedString;
     let primary = false;
 
     if (operation) {
@@ -46,51 +49,80 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
 
       if (type === OperationType.Download) {
         if (operation.paused) {
-          label = format(["grid.item.downloads_paused"]);
+          label = ["grid.item.downloads_paused"];
         } else if (operation.active) {
-          label = format(["grid.item.downloading"]);
+          label = ["grid.item.downloading"];
         } else {
-          label = format(["grid.item.queued"]);
+          label = ["grid.item.queued"];
         }
       } else if (type === OperationType.Task) {
         const { name } = operation;
         if (name === "launch") {
-          label = format(["grid.item.running"]);
+          label = ["grid.item.running"];
         } else {
-          label = format(["grid.item.installing"]);
+          label = ["grid.item.installing"];
         }
       }
     } else if (cave) {
       if (update) {
-        label = format(["grid.item.update"]);
+        label = ["grid.item.update"];
+        icon = "star";
       } else {
-        label = format([`grid.item.${actionForGame(this.props.game, cave)}`]);
+        const action = actionForGame(this.props.game, cave);
+        label = [`grid.item.${action}`];
+
+        if (action === "open") {
+          icon = "folder-open";
+        } else {
+          icon = "rocket";
+        }
         primary = true;
       }
     } else {
       if (compatible) {
         if (access === Access.Demo || access === Access.Press) {
-          label = format(["grid.item.review"]);
+          label = ["grid.item.review"];
+          icon = "install";
         } else if (
           access === Access.Pwyw ||
           access === Access.Free ||
           access === Access.Key ||
           access === Access.Edit
         ) {
-          label = format(["grid.item.install"]);
+          label = ["grid.item.install"];
+          icon = "install";
         } else {
-          label = format(["grid.item.buy_now"]);
+          label = ["grid.item.buy_now"];
+          icon = "shopping_cart";
         }
       } else {
-        label = format(["grid.item.not_compatible"]);
+        label = ["grid.item.not_compatible"];
+        icon = "neutral";
       }
     }
 
     if (!label) {
-      return <div />;
+      return null;
     }
 
-    const { className } = this.props;
+    const { iconOnly, className, intl } = this.props;
+    if (iconOnly) {
+      if (!iconComponent) {
+        if (icon) {
+          iconComponent = <Icon icon={icon} />;
+        }
+      }
+      return (
+        <IconButton
+          onClick={this.onClick}
+          className={className}
+          icon={iconComponent}
+          hint={label ? formatString(intl, label) : null}
+          hintPosition="left"
+        />
+      );
+    }
+
     return (
       <Button
         onClick={this.onClick}
@@ -98,7 +130,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
         wide={wide}
         discreet
         iconComponent={iconComponent}
-        label={label}
+        label={format(label)}
         primary={primary}
       />
     );
@@ -147,6 +179,7 @@ interface IProps {
 
   wide?: boolean;
   className?: string;
+  iconOnly?: boolean;
 }
 
 interface IDerivedProps {

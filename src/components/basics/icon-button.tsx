@@ -65,14 +65,14 @@ class IconButton extends React.PureComponent<IProps> {
         data-rh-at={hintPosition}
         {...restProps}
       >
-        <Icon icon={icon} />
+        {typeof icon === "string" ? <Icon icon={icon} /> : icon}
       </IconButtonDiv>
     );
   }
 }
 
 interface IProps {
-  icon: string;
+  icon: string | JSX.Element;
   disabled?: boolean;
   className?: string;
   id?: string;

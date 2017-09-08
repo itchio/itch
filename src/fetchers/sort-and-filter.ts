@@ -79,7 +79,24 @@ export function sortAndFilter(
         });
         break;
       case "secondsRun":
-        set = sortedBy(set, "createdAt");
+        set = sortedBy(set, g => {
+          const cave = getCaveSummary(state.commons, g);
+          if (cave) {
+            return cave.secondsRun;
+          } else {
+            return 0;
+          }
+        });
+        break;
+      case "installedSize":
+        set = sortedBy(set, g => {
+          const cave = getCaveSummary(state.commons, g);
+          if (cave) {
+            return cave.installedSize;
+          } else {
+            return 0;
+          }
+        });
         break;
       default:
       // don't sort if we don't know how to
@@ -144,6 +161,10 @@ export function addSortAndFilterToQuery(
         select.order("caves.lastTouchedAt", sortDirection === "ASC");
         joinCave = true;
         break;
+      case "installedSize":
+        select.order("caves.installedSize", sortDirection === "ASC");
+        joinCave = true;
+        break;
       default:
       // dunno how to sort, don't do anything
     }
@@ -164,17 +185,15 @@ export function addSortAndFilterToQuery(
     select.left_join(
       CaveModel.table,
       null,
-      squel
-        .expr()
-        .and(
-          "caves.id = ?",
-          squel
-            .select()
-            .field("caves.id")
-            .from("caves")
-            .where("caves.gameId = games.id")
-            .limit(1)
-        )
+      squel.expr().and(
+        "caves.id = ?",
+        squel
+          .select()
+          .field("caves.id")
+          .from("caves")
+          .where("caves.gameId = games.id")
+          .limit(1)
+      )
     );
   }
 
@@ -184,22 +203,17 @@ export function addSortAndFilterToQuery(
     select.left_join(
       DownloadKeyModel.table,
       null,
-      squel
-        .expr()
-        .and(
-          "downloadKeys.id = ?",
+      squel.expr().and("downloadKeys.id = ?", squel
+        .select()
+        .field("downloadKeys.id")
+        .from("downloadKeys")
+        .where(
           squel
-            .select()
-            .field("downloadKeys.id")
-            .from("downloadKeys")
-            .where(
-              squel
-                .expr()
-                .and("downloadKeys.gameId = games.id")
-                .and("downloadKeys.ownerId = ?", meId)
-            )
-            .limit(1) as any
+            .expr()
+            .and("downloadKeys.gameId = games.id")
+            .and("downloadKeys.ownerId = ?", meId)
         )
+        .limit(1) as any)
     );
   }
 

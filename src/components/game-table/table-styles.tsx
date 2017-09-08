@@ -9,7 +9,7 @@ const titleSection = () => css`
 `;
 
 const column = () => css`
-  padding: .1em .1em;
+  padding: 0.1em 0.1em;
   height: 100%;
   overflow: hidden;
 
@@ -28,13 +28,14 @@ const dateColumn = () => css`
   }
 `;
 
-interface ITableSizes {
-  coverWidth: number;
-  publishedWidth: number;
-  playtimeWidth: number;
-  lastPlayedWidth: number;
-  installStatusWidth: number;
-  titleWidth: number;
+export interface ITableSizes {
+  cover: number;
+  title: number;
+  "play-time": number;
+  "last-played": number;
+  "installed-size": number;
+  published: number;
+  "install-status": number;
 }
 
 interface ITableProps {
@@ -44,11 +45,7 @@ interface ITableProps {
 
 const StylableDiv = (props: ITableProps) => {
   const { sizes, children, ...restProps } = props;
-  return (
-    <div {...restProps}>
-      {children}
-    </div>
-  );
+  return <div {...restProps}>{children}</div>;
 };
 
 const rowHeight = 70;
@@ -63,7 +60,7 @@ export const TableContainerDiv = styled(StylableDiv)`
   .table--header {
     display: flex;
     flex-direction: row;
-    padding: .25em;
+    padding: 0.25em;
     border-left: 2px solid transparent;
   }
 
@@ -101,43 +98,49 @@ export const TableContainerDiv = styled(StylableDiv)`
 
   .header--spacer {
     display: inline-block;
-    width: .5em;
+    width: 0.5em;
     height: 1px;
   }
 
   .row--cover {
     align-self: center;
     overflow: hidden;
-    width: ${props => props.sizes.coverWidth}px;
-    padding-right: .6em;
+    width: ${props => props.sizes.cover}px;
+    padding-right: 0.6em;
   }
 
   .row--title {
     ${column()};
-    width: ${props => props.sizes.titleWidth}px;
+    width: ${props => props.sizes.title}px;
   }
 
-  .row--playtime {
+  .row--play-time {
     ${column()};
     ${dateColumn()};
-    width: ${props => props.sizes.playtimeWidth}px;
+    width: ${props => props.sizes["play-time"]}px;
   }
 
   .row--last-played {
     ${column()};
     ${dateColumn()};
-    width: ${props => props.sizes.lastPlayedWidth}px;
+    width: ${props => props.sizes["last-played"]}px;
   }
 
   .row--published {
     ${column()};
     ${dateColumn()};
-    width: ${props => props.sizes.publishedWidth}px;
+    width: ${props => props.sizes["published"]}px;
+  }
+
+  .row--installed-size {
+    ${column()};
+    ${dateColumn()};
+    width: ${props => props.sizes["installed-size"]}px;
   }
 
   .row--install-status {
     ${column()};
-    width: ${props => props.sizes.installStatusWidth}px;
+    width: ${props => props.sizes["install-status"]}px;
 
     &:not(.row--status) {
       font-size: 80%;
@@ -149,7 +152,7 @@ export const TableContainerDiv = styled(StylableDiv)`
     ${styles.singleLine()};
 
     font-weight: bold;
-    margin-bottom: .25em;
+    margin-bottom: 0.25em;
   }
 
   .title--description {

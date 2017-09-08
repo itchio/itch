@@ -33,6 +33,7 @@ const DraggableDivInner = styled.div`
   flex: 1 1;
   display: flex;
   align-self: center;
+  align-items: center;
 `;
 
 const Filler = styled.div`flex: 1 1;`;
@@ -47,7 +48,7 @@ const emptyObj = {};
 
 export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, maximized, focused, tabData } = this.props;
+    const { tab, maximized, focused, tabData, inner = null } = this.props;
 
     const sp = Space.fromData(tabData);
     let label = sp.label();
@@ -61,15 +62,14 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
       <FiltersContainer className="title-bar">
         <DraggableDiv className={classNames({ dimmed: !focused })}>
           <DraggableDivInner>
-            <TitleDiv className="title-bar-text">
-              {format(label)}
-            </TitleDiv>
+            <TitleDiv className="title-bar-text">{format(label)}</TitleDiv>
+            {inner}
             <Filler />
           </DraggableDivInner>
         </DraggableDiv>
-        {loggedIn
-          ? <IconButton icon="cog" onClick={this.preferencesClick} />
-          : null}
+        {loggedIn ? (
+          <IconButton icon="cog" onClick={this.preferencesClick} />
+        ) : null}
         <IconButton icon="minus" onClick={this.minimizeClick} />
         <IconButton
           icon={maximized ? "window-restore" : "window-maximize"}
@@ -99,6 +99,7 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {
   tab: string;
+  inner?: JSX.Element | JSX.Element[];
 }
 
 interface IDerivedProps {

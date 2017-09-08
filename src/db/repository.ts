@@ -48,7 +48,7 @@ class Repository<T> {
   }
 
   count(cb: SelectCb): number {
-    return this.q.get(this.model, k => cb(k)).field("count(*)")["count(*)"];
+    return this.q.get(this.model, k => cb(k).field("count(*)"))["count(*)"];
   }
 
   all(cb: SelectCb): T[] {
