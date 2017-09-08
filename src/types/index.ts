@@ -310,6 +310,11 @@ export interface ICommonsState {
   myGameIdsSet: {
     [gameId: string]: boolean;
   };
+
+  /** size on disk (in bytes) of each install location */
+  locationSizes: {
+    [id: string]: number;
+  };
 }
 
 export interface IGameCredentials {

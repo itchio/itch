@@ -49,31 +49,21 @@ export default function(watcher: Watcher, db: DB) {
 
     const i18n = store.getState().i18n;
 
-    // TODO: use a modal instead
     if (numItems > 0) {
-      const buttons = [
-        t(i18n, ["prompt.install_location_not_empty.show_contents"]),
-        t(i18n, ["prompt.action.ok"]),
-      ];
-
-      const dialogOpts = {
-        title: t(i18n, ["prompt.install_location_not_empty.title"]),
-        message: t(i18n, ["prompt.install_location_not_empty.message"]),
-        detail: t(i18n, ["prompt.install_location_not_empty.detail"]),
-        buttons,
-      };
-
-      const promise = new Promise((resolve, reject) => {
-        const callback = (response: number) => {
-          resolve(response);
-        };
-        dialog.showMessageBox(dialogOpts, callback);
-      });
-
-      const response = await promise;
-      if (response === 0) {
-        store.dispatch(actions.navigate({ tab: `locations/${name}` }));
-      }
+      store.dispatch(
+        actions.openModal({
+          title: ["prompt.install_location_not_empty.title"],
+          message: ["prompt.install_location_not_empty.message"],
+          detail: ["prompt.install_location_not_empty.detail"],
+          buttons: [
+            {
+              label: ["prompt.install_location_not_empty.show_contents"],
+              action: actions.navigate({ tab: `locations/${name}` }),
+            },
+            "cancel",
+          ],
+        })
+      );
       return;
     }
 

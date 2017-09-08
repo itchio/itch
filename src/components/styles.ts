@@ -92,6 +92,7 @@ export const colors = {
 };
 
 export const fontSizes = {
+  small: "12px",
   sidebar: "14px",
   smaller: "14px",
   baseText: "15px",
@@ -270,14 +271,14 @@ export const heavyInput = () => css`
 export const searchInput = () => css`
   border: 2px solid #404040;
   border-radius: 4px 2px 4px 2px;
-  background-color: #2D2B2B;
+  background-color: #2d2b2b;
   color: ${props => props.theme.secondaryTextHover};
 
   ::-webkit-input-placeholder {
     color: ${props => props.theme.inputPlaceholder};
   }
 
-  box-shadow: 0 0 2px #1B1919;
+  box-shadow: 0 0 2px #1b1919;
   width: 200px;
   text-indent: 18px;
   padding: 6px 10px 5px 9px;
@@ -322,17 +323,18 @@ export const progress = () => css`
 
   .progress-inner {
     position: absolute;
-    transition: width .51s linear;
+    transition: width 0.51s linear;
     left: 0;
     top: 0;
     bottom: 0;
     background-color: ${props => props.theme.accent};
     background-image: -webkit-repeating-linear-gradient(
-    -60deg,
-    ${downloadProgressColorInA} 0,
-    ${downloadProgressColorInA} 4px,
-    ${downloadProgressColorInB} 4px,
-    ${downloadProgressColorInB} 8px);
+      -60deg,
+      ${downloadProgressColorInA} 0,
+      ${downloadProgressColorInA} 4px,
+      ${downloadProgressColorInB} 4px,
+      ${downloadProgressColorInB} 8px
+    );
   }
 `;
 
@@ -340,8 +342,8 @@ export const horizontalScan = () => css`
   background: -webkit-linear-gradient(
     left,
     ${props => props.theme.secondaryTextHover} 0%
-    ${props => props.theme.secondaryTextHover} 50%
-    ${props => props.theme.secondaryText} 50%
+      ${props => props.theme.secondaryTextHover} 50%
+      ${props => props.theme.secondaryText} 50%
   );
   background-size: 200% 100%;
   animation: horizontal-scan 2s infinite;
@@ -381,9 +383,7 @@ export const thumbnailStyle = () => css`
 `;
 
 export const hubItemStyle = () => css`
-  ${thumbnailStyle()}
-
-  background: #232222;
+  ${thumbnailStyle()} background: #232222;
   border: 1px solid #191919;
   transition: all 0.4s;
 `;

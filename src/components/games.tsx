@@ -2,16 +2,10 @@ import * as React from "react";
 import { connect } from "./connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
-import {
-  IRootState,
-  TabLayout,
-  ITabParams,
-  ITabData,
-  IGameSet,
-} from "../types";
+import { IRootState, TabLayout, ITabParams, IGameSet } from "../types";
 
 import GameGrid from "./game-grid/grid";
-import GameTable from "./game-table/table";
+import GameTable, { GameColumn } from "./game-table/table";
 
 import { ISortParams } from "./sort-types";
 
@@ -19,6 +13,7 @@ import * as actions from "../actions";
 import { dispatcher } from "../constants/action-types";
 
 import styled from "./styles";
+import { Space } from "../helpers/space";
 
 export const HubGamesDiv = styled.div`flex-grow: 1;`;
 
@@ -63,11 +58,14 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
       hiddenCount,
       tab,
       params,
-      layout,
+      prefLayout,
+      forcedLayout,
+      columns,
     } = this.props;
     const { sortBy, sortDirection } = params;
 
-    if (layout === "grid") {
+    let shownLayout = forcedLayout || prefLayout;
+    if (shownLayout === "grid") {
       return (
         <GameGrid
           games={games}
@@ -76,9 +74,10 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
           tab={tab}
         />
       );
-    } else if (layout === "table") {
+    } else if (shownLayout === "table") {
       return (
         <GameTable
+          columns={columns}
           games={games}
           gameIds={gameIds}
           hiddenCount={hiddenCount}
@@ -89,17 +88,15 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
         />
       );
     } else {
-      return (
-        <div>
-          Unknown layout {layout}
-        </div>
-      );
+      return <div>Unknown layout {prefLayout}</div>;
     }
   }
 }
 
 interface IProps {
   tab: string;
+  forcedLayout?: TabLayout;
+  columns?: GameColumn[];
 }
 
 interface IDerivedProps {
@@ -107,7 +104,7 @@ interface IDerivedProps {
   gameIds: number[];
   hiddenCount?: number;
 
-  layout: TabLayout;
+  prefLayout: TabLayout;
   params: ITabParams;
 
   tabParamsChanged: typeof actions.tabParamsChanged;
@@ -120,15 +117,14 @@ export default connect<IProps>(Games, {
   state: (initialState, initialProps) => {
     const { tab } = initialProps;
     return createSelector(
-      (rs: IRootState) => rs.session.tabData[tab] || eo,
+      (rs: IRootState) => Space.fromData(rs.session.tabData[tab] || eo),
       (rs: IRootState) => rs.session.tabParams[tab] || eo,
       (rs: IRootState) => rs.preferences.layout,
       createStructuredSelector({
-        gameIds: (data: ITabData, params, layout) =>
-          (data.games || eo).ids || ea,
-        games: (data: ITabData, params, layout) => (data.games || eo).set || eo,
-        layout: (data: ITabData, params, layout) => layout,
-        params: (data: ITabData, params, layout) => params,
+        gameIds: (sp: Space, params, prefLayout) => sp.games().ids || ea,
+        games: (sp: Space, params, prefLayout) => sp.games().set || eo,
+        prefLayout: (sp: Space, params, prefLayout) => prefLayout,
+        params: (sp: Space, params, prefLayout) => params,
       })
     );
   },

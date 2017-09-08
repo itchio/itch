@@ -328,7 +328,7 @@ export function importGlobalMarket(
         upload: toJSONField(upload),
         handPicked: caveIn.handPicked,
 
-        installLocation: caveIn.installLocation,
+        installLocation: caveIn.installLocation || "appdata",
         installFolder: caveIn.installFolder,
         installerType,
         pathScheme: caveIn.pathScheme,

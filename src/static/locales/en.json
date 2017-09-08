@@ -71,6 +71,9 @@
     "grid.item.revert_to_version": "Revert to version...",
     "grid.item.view_details": "View details...",
     "grid.item.show_local_files": "Show local files",
+    "grid.item.open_file_location.windows": "Open folder in explorer",
+    "grid.item.open_file_location.linux": "Show in file manager",
+    "grid.item.open_file_location.osx": "Show in Finder",
     "grid.item.probe": "Examine cause of failure",
     "grid.item.donate": "Tip the creator",
     "grid.item.donate_again": "Tip the creator again!",
@@ -85,6 +88,7 @@
     "grid.item.version": "Version {{version}}",
     "grid.item.status.installed": "Installed",
     "table.column.name": "Name",
+    "table.column.installed_size": "Size",
     "table.column.play_time": "Play time",
     "table.column.last_played": "Last played",
     "table.column.published": "Published",
@@ -201,6 +205,7 @@
     "preferences.install_location.add": "Add location",
     "preferences.install_location.delete": "Remove this install location and uninstall its contents",
     "preferences.install_location.free_space": "Free space",
+    "preferences.install_location.navigate": "View the contents of this location in new tab",
     "preferences.install_location.is_default_short": "Default",
     "preferences.install_location.make_default_short": "Make default",
     "preferences.install_location.is_default": "New items will install to this location by default.",
@@ -419,5 +424,6 @@
     "web.context_menu.copy": "Copy",
     "web.context_menu.paste": "Paste",
     "web.context_menu.open_in_new_tab": "Open in new tab",
-    "web.context_menu.copy_link": "Copy link"
+    "web.context_menu.copy_link": "Copy link",
+    "install_location.property.size_on_disk": "{{size}} on disk"
 }

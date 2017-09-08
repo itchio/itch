@@ -1,4 +1,4 @@
-import { ITabData, ITabWeb } from "../types/tab-data";
+import { ITabData, ITabWeb, ITabLocation, ITabGames } from "../types/tab-data";
 import { IGame } from "../db/models/game";
 import { ICollection } from "../db/models/collection";
 import { IUser } from "../db/models/user";
@@ -70,19 +70,27 @@ export class Space {
   }
 
   game(): IGame {
-    return ((this.data.games || eo).set || eo)[this.numericId()];
+    return (this.games().set || eo)[this.numericId()] || eo;
+  }
+
+  games(): ITabGames {
+    return this.data.games || eo;
   }
 
   collection(): ICollection {
-    return ((this.data.collections || eo).set || eo)[this.numericId()];
+    return ((this.data.collections || eo).set || eo)[this.numericId()] || eo;
   }
 
   user(): IUser {
-    return ((this.data.users || eo).set || eo)[this.numericId()];
+    return ((this.data.users || eo).set || eo)[this.numericId()] || eo;
   }
 
   web(): ITabWeb {
     return this.data.web || eo;
+  }
+
+  location(): ITabLocation {
+    return this.data.location || eo;
   }
 
   icon(): string {
@@ -92,7 +100,7 @@ export class Space {
   image(): string {
     switch (this.prefix) {
       case "games": {
-        const g = this.game() || eo;
+        const g = this.game();
         return g.stillCoverUrl || g.coverUrl;
       }
       case "users": {
@@ -116,20 +124,23 @@ export class Space {
 
     switch (this.prefix) {
       case "games": {
-        return (this.game() || eo).title || fallback;
+        return this.game().title || fallback;
       }
       case "users": {
-        const u = this.user() || eo;
+        const u = this.user();
         return u.displayName || u.username || fallback;
       }
       case "collections": {
-        return (this.collection() || eo).title || fallback;
+        return this.collection().title || fallback;
       }
       case "url": {
-        return (this.web() || eo).title || fallback;
+        return this.web().title || fallback;
       }
       case "new": {
         return ["sidebar.new_tab"];
+      }
+      case "locations": {
+        return this.location().path || fallback;
       }
     }
     return fallback;

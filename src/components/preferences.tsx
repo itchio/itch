@@ -106,7 +106,7 @@ const PreferencesContentDiv = styled.div`
 
   .buttons {
     float: right;
-    opacity: .7;
+    opacity: 0.7;
 
     &:hover {
       opacity: 1;
@@ -132,7 +132,7 @@ const PreferencesContentDiv = styled.div`
         ${styles.prefChunkActive()};
       }
 
-      input[type=checkbox] {
+      input[type="checkbox"] {
         margin-right: 8px;
       }
     }
@@ -150,6 +150,10 @@ const PreferencesContentDiv = styled.div`
         margin-top: 0;
       }
     }
+
+    .button:hover {
+      cursor: pointer;
+    }
   }
 
   .explanation {
@@ -163,7 +167,7 @@ const PreferencesContentDiv = styled.div`
     line-height: 1.6;
 
     &.drop-down {
-      animation: soft-drop .8s;
+      animation: soft-drop 0.8s;
     }
 
     &.flex {
@@ -297,6 +301,13 @@ const PreferencesContentDiv = styled.div`
         cursor: pointer;
       }
     }
+
+    .icon-action {
+      padding-left: 0;
+      padding-right: 0;
+
+      text-align: center;
+    }
   }
 `;
 
@@ -345,9 +356,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
       <PreferencesDiv>
         <TitleBar tab={tab} />
         <PreferencesContentDiv>
-          <h2>
-            {format(["preferences.language"])}
-          </h2>
+          <h2>{format(["preferences.language"])}</h2>
           <div className="language-form">
             <label className="active">
               <SelectRow
@@ -356,15 +365,17 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 value={lang || "__"}
               />
 
-              {downloading
-                ? <LoadingCircle progress={0.3} />
-                : <IconButton
-                    icon="repeat"
-                    onClick={e => {
-                      e.preventDefault();
-                      queueLocaleDownload({ lang });
-                    }}
-                  />}
+              {downloading ? (
+                <LoadingCircle progress={0.3} />
+              ) : (
+                <IconButton
+                  icon="repeat"
+                  onClick={e => {
+                    e.preventDefault();
+                    queueLocaleDownload({ lang });
+                  }}
+                />
+              )}
             </label>
           </div>
 
@@ -378,9 +389,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             </a>
           </p>
 
-          <h2>
-            {format(["preferences.security"])}
-          </h2>
+          <h2>{format(["preferences.security"])}</h2>
           <div className="security-form">
             <label className={classNames({ active: isolateApps })}>
               <input
@@ -390,9 +399,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                   updatePreferences({ isolateApps: e.currentTarget.checked });
                 }}
               />
-              <span>
-                {" "}{format(["preferences.security.sandbox.title"])}{" "}
-              </span>
+              <span> {format(["preferences.security.sandbox.title"])} </span>
               <span
                 data-rh-at="bottom"
                 data-rh={formatString(intl, ["label.experimental"])}
@@ -410,9 +417,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             <a href={urls.sandboxDocs}>{format(["docs.learn_more"])}</a>
           </p>
 
-          <h2>
-            {format(["preferences.behavior"])}
-          </h2>
+          <h2>{format(["preferences.behavior"])}</h2>
           <div className="behavior-form">
             <label className={classNames({ active: openAtLogin })}>
               <input
@@ -422,9 +427,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                   updatePreferences({ openAtLogin: e.currentTarget.checked });
                 }}
               />
-              <span>
-                {" "}{format(["preferences.behavior.open_at_login"])}{" "}
-              </span>
+              <span> {format(["preferences.behavior.open_at_login"])} </span>
             </label>
 
             <OpenAtLoginError />
@@ -437,9 +440,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                   updatePreferences({ openAsHidden: e.currentTarget.checked });
                 }}
               />
-              <span>
-                {" "}{format(["preferences.behavior.open_as_hidden"])}{" "}
-              </span>
+              <span> {format(["preferences.behavior.open_as_hidden"])} </span>
             </label>
 
             <label className={classNames({ active: closeToTray })}>
@@ -450,9 +451,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                   updatePreferences({ closeToTray: e.currentTarget.checked });
                 }}
               />
-              <span>
-                {" "}{format(["preferences.behavior.close_to_tray"])}{" "}
-              </span>
+              <span> {format(["preferences.behavior.close_to_tray"])} </span>
             </label>
 
             <label className={classNames({ active: manualGameUpdates })}>
@@ -466,7 +465,8 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 }}
               />
               <span>
-                {" "}{format(["preferences.behavior.manual_game_updates"])}{" "}
+                {" "}
+                {format(["preferences.behavior.manual_game_updates"])}{" "}
               </span>
             </label>
 
@@ -481,16 +481,13 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 }}
               />
               <span>
-                {" "}{format([
-                  "preferences.behavior.prevent_display_sleep",
-                ])}{" "}
+                {" "}
+                {format(["preferences.behavior.prevent_display_sleep"])}{" "}
               </span>
             </label>
           </div>
 
-          <h2>
-            {format(["preferences.notifications"])}
-          </h2>
+          <h2>{format(["preferences.notifications"])}</h2>
           <div className="behavior-form">
             <label className={classNames({ active: readyNotification })}>
               <input
@@ -503,16 +500,13 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 }}
               />
               <span>
-                {" "}{format([
-                  "preferences.notifications.ready_notification",
-                ])}{" "}
+                {" "}
+                {format(["preferences.notifications.ready_notification"])}{" "}
               </span>
             </label>
           </div>
 
-          <h2>
-            {format(["preferences.install_locations"])}
-          </h2>
+          <h2>{format(["preferences.install_locations"])}</h2>
           {this.installLocationTable()}
 
           <h2
@@ -632,15 +626,9 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
 
     const header = (
       <tr key="header" className="header">
-        <td>
-          {format(["preferences.install_location.path"])}
-        </td>
-        <td>
-          {format(["preferences.install_location.used_space"])}
-        </td>
-        <td>
-          {format(["preferences.install_location.free_space"])}
-        </td>
+        <td>{format(["preferences.install_location.path"])}</td>
+        <td>{format(["preferences.install_location.used_space"])}</td>
+        <td>{format(["preferences.install_location.free_space"])}</td>
         <td />
         <td />
       </tr>
@@ -688,46 +676,46 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                   (isDefault ? "is_default" : "make_default"),
               ])}
             >
-              <span className="single-line">
-                {path}
-              </span>
-              {isDefault
-                ? <span className="single-line default-state">
-                    ({formatString(intl, [
-                      "preferences.install_location.is_default_short",
-                    ]).toLowerCase()})
-                  </span>
-                : null}
+              <span className="single-line">{path}</span>
+              {isDefault ? (
+                <span className="single-line default-state">
+                  ({formatString(intl, [
+                    "preferences.install_location.is_default_short",
+                  ]).toLowerCase()})
+                </span>
+              ) : null}
             </div>
           </td>
-          <td>
-            {" "}{fileSize(size)}{" "}
-          </td>
-          <td>
-            {" "}{freeSpace > 0 ? fileSize(freeSpace) : "..."}{" "}
-          </td>
+          <td> {fileSize(size)} </td>
+          <td> {freeSpace > 0 ? fileSize(freeSpace) : "..."} </td>
           <td
-            className="action"
+            className="action icon-action"
+            data-rh-at="top"
+            data-rh={formatString(intl, [
+              "preferences.install_location.navigate",
+            ])}
             onClick={e => {
               e.preventDefault();
               navigate({ tab: `locations/${name}` });
             }}
           >
-            <Icon icon="folder-open" />
+            <Icon icon="arrow-right" />
           </td>
 
-          {mayDelete
-            ? <td
-                className="action delete"
-                data-rh-at="top"
-                data-rh={formatString(intl, [
-                  "preferences.install_location.delete",
-                ])}
-                onClick={e => removeInstallLocationRequest({ name })}
-              >
-                <Icon icon="cross" />
-              </td>
-            : <td />}
+          {mayDelete ? (
+            <td
+              className="action icon-action delete"
+              data-rh-at="top"
+              data-rh={formatString(intl, [
+                "preferences.install_location.delete",
+              ])}
+              onClick={e => removeInstallLocationRequest({ name })}
+            >
+              <Icon icon="cross" />
+            </td>
+          ) : (
+            <td />
+          )}
         </tr>
       );
     });
@@ -749,9 +737,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <table className="install-locations">
-        <tbody>
-          {rows}
-        </tbody>
+        <tbody>{rows}</tbody>
       </table>
     );
   }
@@ -816,7 +802,15 @@ export default connect<IProps>(injectIntl(Preferences), {
       (rs: IRootState) => rs.system.homePath,
       (rs: IRootState) => rs.system.userDataPath,
       (rs: IRootState) => rs.system.diskInfo,
-      (locInfos, defaultLoc, homePath, userDataPath, diskInfo) => {
+      (rs: IRootState) => rs.commons.locationSizes,
+      (
+        locInfos,
+        defaultLoc,
+        homePath,
+        userDataPath,
+        diskInfo,
+        locationSizes
+      ) => {
         if (!locInfos) {
           return {};
         }
@@ -834,24 +828,12 @@ export default connect<IProps>(injectIntl(Preferences), {
               return;
             }
 
-            let itemCount = 0;
-            let size = 0;
-
-            // const isAppData = (name === "appdata");
-            // FIXME: what about caves?
-            // each(caves, (cave) => {
-            //   // TODO: handle per-user appdata ?
-            //   if (cave.installLocation === name || (isAppData && !cave.installLocation)) {
-            //     size += (cave.installedSize || 0);
-            //     itemCount++;
-            //   }
-            // });
+            const size = locationSizes[name] || 0;
 
             return {
               ...locInfo,
               name,
               freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
-              itemCount,
               size,
             };
           }),

@@ -16,7 +16,7 @@ import { IOnSortChange, SortDirection, SortKey } from "../sort-types";
 
 import Row from "./row";
 import doesEventMeanBackground from "../when-click-navigates";
-import { TableContainerDiv, TableDiv } from "./table-styles";
+import { TableContainerDiv, TableDiv, ITableSizes } from "./table-styles";
 
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import format from "../format";
@@ -24,43 +24,90 @@ import format from "../format";
 const rowHeight = 70;
 const rightMargin = 10;
 
+export enum GameColumn {
+  Cover = "cover",
+  Title = "title",
+  PlayTime = "play-time",
+  LastPlayed = "last-played",
+  InstalledSize = "installed-size",
+  Published = "published",
+  InstallStatus = "install-status",
+}
+
+interface GameColumnData {
+  name: string;
+  label?: ILocalizedString;
+  sortKey?: SortKey;
+  width: number;
+  flexBasis?: number;
+}
+
+export const columnData: {
+  [key: string]: GameColumnData;
+} = {
+  [GameColumn.Cover]: {
+    name: GameColumn.Cover,
+    width: 83,
+  },
+  [GameColumn.Title]: {
+    name: GameColumn.Title,
+    label: ["table.column.name"],
+    sortKey: "title",
+    width: 0,
+    flexBasis: 1,
+  },
+  [GameColumn.PlayTime]: {
+    name: GameColumn.PlayTime,
+    label: ["table.column.play_time"],
+    sortKey: "secondsRun",
+    width: 140,
+  },
+  [GameColumn.LastPlayed]: {
+    name: GameColumn.LastPlayed,
+    label: ["table.column.last_played"],
+    sortKey: "lastTouchedAt",
+    width: 140,
+  },
+  [GameColumn.InstalledSize]: {
+    name: GameColumn.InstalledSize,
+    label: ["table.column.installed_size"],
+    sortKey: "installedSize",
+    width: 80,
+  },
+  [GameColumn.Published]: {
+    name: GameColumn.Published,
+    label: ["table.column.published"],
+    sortKey: "publishedAt",
+    width: 140,
+  },
+  [GameColumn.InstallStatus]: {
+    name: GameColumn.InstallStatus,
+    width: 40,
+  },
+};
+
+export const defaultGameColumns = [
+  GameColumn.Cover,
+  GameColumn.Title,
+  GameColumn.PlayTime,
+  GameColumn.LastPlayed,
+  GameColumn.InstallStatus,
+];
+
 class Table extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    let remainingWidth = this.props.width - rightMargin;
-    let coverWidth = 83;
-    remainingWidth -= coverWidth;
-
-    let publishedWidth = 140;
-    remainingWidth -= publishedWidth;
-
-    let playtimeWidth = 140;
-    remainingWidth -= playtimeWidth;
-
-    let lastPlayedWidth = 140;
-    remainingWidth -= lastPlayedWidth;
-
-    let installStatusWidth = 20;
-    remainingWidth -= installStatusWidth;
-
-    const titleWidth = remainingWidth;
-
+    const { columns = defaultGameColumns } = this.props;
+    const sizes = this.computeSizes(columns);
     const numGames = this.props.gameIds.length;
     const contentHeight = numGames * rowHeight;
 
     const tableProps = {
-      sizes: {
-        coverWidth,
-        publishedWidth,
-        playtimeWidth,
-        lastPlayedWidth,
-        installStatusWidth,
-        titleWidth,
-      },
+      sizes,
     };
 
     return (
       <TableContainerDiv {...tableProps}>
-        {this.renderHeaders()}
+        {this.renderHeaders(columns)}
         <TableDiv
           innerRef={this.props.divRef}
           onClick={this.onClick}
@@ -77,6 +124,45 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
         </TableDiv>
       </TableContainerDiv>
     );
+  }
+
+  computeSizes(columns: GameColumn[]): ITableSizes {
+    const sizes: ITableSizes = {
+      cover: 0,
+      title: 0,
+      "play-time": 0,
+      "last-played": 0,
+      "installed-size": 0,
+      published: 0,
+      "install-status": 0,
+    };
+
+    let rest: GameColumn[] = [];
+    let remainingWidth = this.props.width - rightMargin;
+
+    for (const c of columns) {
+      const gcd = columnData[c];
+      if (gcd.flexBasis) {
+        rest.push(c);
+        continue;
+      }
+
+      sizes[gcd.name] = gcd.width;
+      remainingWidth -= gcd.width;
+    }
+
+    let totalWeight = 0;
+    for (const c of rest) {
+      const gcd = columnData[c];
+      totalWeight += gcd.flexBasis;
+    }
+
+    for (const c of rest) {
+      const gcd = columnData[c];
+      sizes[gcd.name] = gcd.flexBasis / totalWeight * remainingWidth;
+    }
+
+    return sizes;
   }
 
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
@@ -112,64 +198,66 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
     }
   }
 
-  renderHeaders() {
+  renderHeaders(columns: GameColumn[]) {
     return (
       <div className="table--header">
-        <div className="row--cover row--header" />
-        {this.renderHeader(["table.column.name"], "row--title", "title")}
-        {this.renderHeader(
-          ["table.column.play_time"],
-          "row--playtime",
-          "secondsRun",
-        )}
-        {this.renderHeader(
-          ["table.column.last_played"],
-          "row--last-played",
-          "lastTouchedAt",
-        )}
-        {this.renderHeader(
-          ["table.column.published"],
-          "row--published",
-          "publishedAt",
-        )}
+        {columns.map(c => this.renderHeader(columnData[c]))}
       </div>
     );
   }
 
-  renderHeader(label: ILocalizedString, className: string, prop: string) {
+  renderHeader(gcd: GameColumnData) {
     const { sortBy, sortDirection } = this.props;
+    const { sortKey, name, label } = gcd;
+    let className = `row--${name}`;
+
+    let onClick: (ev: React.MouseEvent<any>) => void;
+    if (sortKey) {
+      onClick = () => {
+        let dir =
+          sortBy === sortKey
+            ? sortDirection === "ASC" ? "DESC" : "ASC"
+            : "ASC";
+        this.props.onSortChange({
+          sortBy: sortKey,
+          sortDirection: dir as "ASC" | "DESC",
+        });
+      };
+    }
 
     return (
       <div
+        key={gcd.name}
         className={`row--header ${className}`}
-        onClick={() => {
-          let dir =
-            sortBy === prop
-              ? sortDirection === "ASC" ? "DESC" : "ASC"
-              : "ASC";
-          this.props.onSortChange({
-            sortBy: prop as any,
-            sortDirection: dir as "ASC" | "DESC",
-          });
-        }}
+        onClick={onClick}
       >
-        {format(label)}
-        {sortBy === prop
-          ? <span>
-              <span className="header--spacer" />
+        {label ? format(label) : null}
+        {sortBy === sortKey ? (
+          <span>
+            <span className="header--spacer" />
+            {sortKey ? (
               <span
                 className={`header--icon ${sortDirection === "ASC"
                   ? "icon-caret-up"
                   : "icon-caret-down"}`}
               />
-            </span>
-          : null}
+            ) : null}
+          </span>
+        ) : null}
       </div>
     );
   }
 
   renderGames() {
-    const { games, gameIds, commons, scrollTop, height, intl } = this.props;
+    const {
+      games,
+      gameIds,
+      columns = defaultGameColumns,
+      commons,
+      scrollTop,
+      height,
+      intl,
+    } = this.props;
 
     const overscan = 1;
     const numVisibleRows = height / rowHeight;
@@ -191,6 +279,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
       return (
         <Row
           key={game.id}
+          columns={columns}
           game={game}
           cave={cave}
           intl={intl}
@@ -208,6 +297,8 @@ interface IProps extends IDimensionsProps {
   gameIds: number[];
   hiddenCount: number;
   tab: string;
+
+  columns?: GameColumn[];
 
   sortBy: SortKey;
   sortDirection?: SortDirection;

@@ -45,7 +45,7 @@ function updateDownloadKeys(store: IStore, db: DB): IDownloadKeySummary[] {
 
 function updateCaves(store: IStore, db: DB): ICaveSummary[] {
   const caves = db.caves.all(k =>
-    k.fields(["id", "gameId", "lastTouchedAt", "secondsRun"])
+    k.fields(["id", "gameId", "lastTouchedAt", "secondsRun", "installedSize"])
   );
 
   store.dispatch(
@@ -78,6 +78,27 @@ function updateMyGameIds(store: IStore, db: DB) {
   store.dispatch(actions.commonsUpdated({ myGameIdsSet }));
 }
 
+function updateLocationSizes(store: IStore, db: DB) {
+  let locationSizes = {};
+  const sizeRows = (db.caves.all(k =>
+    k
+      .field("sum(coalesce(installedSize, 0)) as size, installLocation")
+      .group("installLocation")
+  ) as any) as {
+    installLocation: string;
+    size: number;
+  }[];
+  for (const os of sizeRows) {
+    locationSizes[os.installLocation] = os.size;
+  }
+
+  store.dispatch(
+    actions.commonsUpdated({
+      locationSizes,
+    })
+  );
+}
+
 function updateCommonsNow(store: IStore, db: DB) {
   const downloadKeys = updateDownloadKeys(store, db);
   const caves = updateCaves(store, db);
@@ -93,6 +114,8 @@ function updateCommonsNow(store: IStore, db: DB) {
       libraryGameIds,
     })
   );
+
+  updateLocationSizes(store, db);
 }
 
 const updateCommons = debounce(updateCommonsNow, 500, true);
