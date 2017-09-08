@@ -400,5 +400,12 @@
     "web.context_menu.paste": "Pegar",
     "web.context_menu.copy_link": "Copiar enlace",
     "grid.item.view_details": "Ver detalles...",
-    "collection_grid.item.updated_at": "Ultima actualización {{time_ago}}"
+    "collection_grid.item.updated_at": "Ultima actualización {{time_ago}}",
+    "login.two_factor.title": "Verificación en dos pasos",
+    "login.two_factor.as_user": "Iniciando sesión como {{username}}",
+    "login.two_factor.enter_code": "Por favor, introduzca el código de verificación para continuar el inicio de sesión.",
+    "prereq.explanation": "Algunos paquetes necesitan ser instalados una vez para que {{title}} funcione correctamente.",
+    "prereq.status.installing": "Instalando... (esto podría tardar unos minutos)",
+    "prereq.status.done": "¡Hecho!",
+    "notification.download_healed": "¡{{title}} verificado y reparado!"
 }
