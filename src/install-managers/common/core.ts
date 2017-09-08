@@ -85,6 +85,7 @@ import msi from "../msi";
 import dmg from "../dmg";
 import nsis from "../nsis";
 import inno from "../inno";
+import configure from "../../reactors/launch/configure";
 
 const managers: IInstallManagers = {
   naked,
@@ -108,7 +109,7 @@ interface IPrepareOpts {
 }
 
 export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
-  const { reason } = opts;
+  const { reason, runtime } = opts;
   const logger = opts.logger.child({ name: "install" });
 
   const prepOpts = {
@@ -148,6 +149,14 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
   logger.info(`Committing game & cave to db`);
   ctx.db.saveOne("games", String(game.id), game);
   ctx.db.saveOne("caves", cave.id, cave);
+
+  await configure(ctx, {
+    game,
+    cave,
+    logger,
+    runtime,
+  });
+
   return cave;
 }
 

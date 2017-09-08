@@ -111,4 +111,11 @@ export interface ILaunchOpts {
 
 export type IPrepareOpts = ILaunchOpts;
 
-export type IConfigureOpts = ILaunchOpts;
+export interface IConfigureOpts {
+  cave: ICave;
+  game: IGame;
+
+  logger: Logger;
+
+  runtime: IRuntime;
+}

@@ -9,7 +9,7 @@ import { indexBy, union, pluck } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
 
 import * as actions from "../actions";
-import { debounce, object } from "underscore";
+import { throttle, object } from "underscore";
 
 import rootLogger from "../logger";
 import { fromJSONField } from "../db/json-field";
@@ -118,7 +118,7 @@ function updateCommonsNow(store: IStore, db: DB) {
   updateLocationSizes(store, db);
 }
 
-const updateCommons = debounce(updateCommonsNow, 500, true);
+const updateCommons = throttle(updateCommonsNow, 500);
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.preboot, async (store, action) => {
