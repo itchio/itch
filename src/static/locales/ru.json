@@ -457,5 +457,11 @@
     "status.downloads.category.recent_activity": "Последняя активность",
     "game.install.could_not_launch.message": "Сообщение об ошибке: {{errorMessage}}",
     "menu.file.close_other_tabs": "Закрыть другие закладки",
-    "menu.file.close_tabs_below": "Закрыть закладки ниже"
+    "menu.file.close_tabs_below": "Закрыть закладки ниже",
+    "grid.item.open_file_location.windows": "Открыть папку в Проводнике",
+    "grid.item.open_file_location.linux": "Показать в файловом менеджере",
+    "grid.item.open_file_location.osx": "Показать в Finder",
+    "table.column.installed_size": "Размер",
+    "preferences.install_location.navigate": "Показать содержимое папки в новой закладке",
+    "install_location.property.size_on_disk": "{{size}} на диске"
 }
