@@ -450,5 +450,11 @@
     "status.downloads.category.recent_activity": "Lastatempa agado",
     "game.install.could_not_launch.message": "La mesaĝo, kiun ni ricevis, estis: {{errorMessage}}",
     "menu.file.close_other_tabs": "Fermi la aliajn foliojn",
-    "menu.file.close_tabs_below": "Fermi la subajn foliojn"
+    "menu.file.close_tabs_below": "Fermi la subajn foliojn",
+    "grid.item.open_file_location.windows": "Montri la dosierujon",
+    "grid.item.open_file_location.linux": "Montri en la dosieradministrilo",
+    "grid.item.open_file_location.osx": "Montri en „Finder“",
+    "table.column.installed_size": "Grando",
+    "preferences.install_location.navigate": "Vidi la enhavojn de ĉi tiu loko en nova folio",
+    "install_location.property.size_on_disk": "{{size}} en la disko"
 }

@@ -442,5 +442,11 @@
     "status.downloads.category.recent_activity": "Скорошна дейност",
     "game.install.could_not_launch.message": "Съобщението, което получихме, беше: {{errorMessage}}",
     "menu.file.close_other_tabs": "Затваряне на другите раздели",
-    "menu.file.close_tabs_below": "Затваряне на долните раздели"
+    "menu.file.close_tabs_below": "Затваряне на долните раздели",
+    "grid.item.open_file_location.windows": "Отваряне на папката",
+    "grid.item.open_file_location.linux": "Показване във файловия мениджър",
+    "grid.item.open_file_location.osx": "Показване във „Finder“",
+    "table.column.installed_size": "Размер",
+    "preferences.install_location.navigate": "Преглед на съдържанието на това местоположение в нов раздел",
+    "install_location.property.size_on_disk": "{{size}} на диска"
 }
