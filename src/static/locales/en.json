@@ -83,6 +83,7 @@
     "grid.item.retry": "Try to download / install / launch this item again",
     "grid.item.running": "Running…",
     "grid.item.uninstall": "Uninstall",
+    "grid.item.uninstall_request": "Uninstall or re-install…",
     "grid.item.uninstalling": "Uninstalling…",
     "grid.item.version": "Version {{version}}",
     "grid.item.status.installed": "Installed",
