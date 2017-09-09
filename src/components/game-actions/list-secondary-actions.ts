@@ -9,6 +9,7 @@ import { ClassificationAction, ILocalizedString, ITask } from "../../types";
 import { IAction } from "../../constants/action-types";
 
 import { InjectedIntl } from "react-intl";
+import { showInExplorerString } from "../../format/show-in-explorer";
 
 export type ActionType = "secondary" | "separator" | "info";
 
@@ -23,7 +24,7 @@ export interface IActionOpts {
 function browseAction(caveId: string): IActionOpts {
   return {
     type: "secondary",
-    label: ["grid.item.show_local_files"],
+    label: showInExplorerString(),
     icon: "folder-open",
     action: actions.exploreCave({ caveId }),
   };
