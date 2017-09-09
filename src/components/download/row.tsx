@@ -13,13 +13,7 @@ import Hover, { IHoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
 import MainAction from "../game-actions/main-action";
 
-import {
-  IDownloadSpeeds,
-  IDownloadItem,
-  ITask,
-  IRootState,
-  ILocalizedString,
-} from "../../types";
+import { IDownloadSpeeds, IDownloadItem, ITask, IRootState } from "../../types";
 import { dispatcher } from "../../constants/action-types";
 
 import styled, * as styles from "../styles";
@@ -33,6 +27,11 @@ import getGameStatus, {
   IOperation,
   OperationType,
 } from "../../helpers/get-game-status";
+import {
+  formatReason,
+  formatOutcome,
+  formatOperation,
+} from "../../format/operation";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -320,7 +319,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
         );
       }
 
-      const outcomeText = this.formattedOutcome(reason);
+      const outcomeText = formatOutcome(reason);
       return (
         <div className="stats--control">
           <div className="control--title">
@@ -328,7 +327,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
             {outcomeText ? (
               <span className="control--reason">
                 {" — "}
-                {outcomeText}
+                {format(outcomeText)}
               </span>
             ) : null}{" "}
             <TimeAgo className="control--reason" date={finishedAt} />
@@ -388,7 +387,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   formatOperation(op: IOperation): string | JSX.Element {
     if (op.type === OperationType.Download) {
       const { item } = this.props;
-      const reasonText = this.formattedReason(op.reason);
+      const reasonText = formatReason(op.reason);
       return (
         <span>
           {format(["download.started"])}{" "}
@@ -396,7 +395,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
           {reasonText ? (
             <span>
               {" — "}
-              {reasonText}
+              {format(reasonText)}
             </span>
           ) : (
             ""
@@ -406,50 +405,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       );
     }
 
-    let label: ILocalizedString;
-    if (op.name === "launch") {
-      label = ["grid.item.running"];
-    } else if (op.name === "uninstall") {
-      label = ["grid.item.uninstalling"];
-    } else {
-      label = ["grid.item.installing"];
-    }
-
-    return format(label);
-  }
-
-  formattedReason(reason: string) {
-    switch (reason) {
-      case "install":
-        return format(["download.reason.install"]);
-      case "update":
-        return format(["download.reason.update"]);
-      case "reinstall":
-        return format(["download.reason.reinstall"]);
-      case "revert":
-        return format(["download.reason.revert"]);
-      case "heal":
-        return format(["download.reason.heal"]);
-      default:
-        return null;
-    }
-  }
-
-  formattedOutcome(reason: string) {
-    switch (reason) {
-      case "install":
-        return format(["download.outcome.installed"]);
-      case "update":
-        return format(["download.outcome.updated"]);
-      case "reinstall":
-        return format(["download.outcome.reinstalled"]);
-      case "revert":
-        return format(["download.outcome.reverted"]);
-      case "heal":
-        return format(["download.outcome.healed"]);
-      default:
-        return null;
-    }
+    return format(formatOperation(op));
   }
 }
 

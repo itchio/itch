@@ -10,6 +10,7 @@ import { IGame } from "../../db/models/game";
 import actionForGame from "../../util/action-for-game";
 import Context from "../../context";
 import { showInExplorerString } from "../../format/show-in-explorer";
+import { formatOperation } from "../../format/operation";
 
 export function concatTemplates(
   a: IMenuTemplate,
@@ -75,27 +76,49 @@ export function closeTabControls(ctx: Context, tab: string): IMenuTemplate {
 
 export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
   const { store, db } = ctx;
-  const template: IMenuTemplate = [];
+  let template: IMenuTemplate = [];
 
   const status = getGameStatus(store.getState(), game);
   const { cave, operation } = status;
 
   const mainAction = actionForGame(game, cave);
 
+  let statusItems: IMenuTemplate = [];
+
   if (cave) {
     let busy = false;
 
     if (operation) {
       busy = true;
+
+      const localizedLabel = formatOperation(operation);
+      if (operation.name === "launch") {
+        statusItems.push({
+          localizedLabel,
+          submenu: [
+            {
+              localizedLabel: ["prompt.action.force_close"],
+              click: () => store.dispatch(actions.abortGameRequest({ game })),
+            },
+          ],
+        });
+      } else {
+        statusItems.push({
+          localizedLabel,
+          enabled: false,
+        });
+      }
+    } else {
+      statusItems.push({
+        localizedLabel: [`grid.item.${mainAction}`],
+        click: () => store.dispatch(actions.queueGame({ game })),
+      });
     }
 
-    template.push({
-      localizedLabel: [`grid.item.${mainAction}`],
-      click: () => store.dispatch(actions.queueGame({ game })),
-    });
+    let updateAndLocalItems: IMenuTemplate = [];
 
     if (!busy) {
-      template.push({
+      updateAndLocalItems.push({
         localizedLabel: ["grid.item.check_for_update"],
         click: () =>
           store.dispatch(
@@ -104,29 +127,20 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
       });
     }
 
-    template.push({
+    updateAndLocalItems.push({
       localizedLabel: showInExplorerString(),
       click: () => store.dispatch(actions.exploreCave({ caveId: cave.id })),
     });
 
-    template.push({ type: "separator" });
+    template = concatTemplates(template, updateAndLocalItems);
 
-    let advancedItems: IMenuTemplate = [
-      {
-        localizedLabel: ["grid.item.open_debug_log"],
-        click: () => store.dispatch(actions.probeCave({ caveId: cave.id })),
-      },
-    ];
+    let advancedItems: IMenuTemplate = [];
 
     const buildInfo = db.caves.get(k =>
       k.fields(["buildId"]).where("id = ?", cave.id)
     );
     if (buildInfo && buildInfo.buildId) {
-      advancedItems = [
-        ...advancedItems,
-        {
-          type: "separator",
-        },
+      advancedItems = concatTemplates(advancedItems, [
         {
           localizedLabel: ["grid.item.verify_integrity"],
           click: () => store.dispatch(actions.healCave({ caveId: cave.id })),
@@ -136,32 +150,33 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
           click: () =>
             store.dispatch(actions.revertCaveRequest({ caveId: cave.id })),
         },
-      ];
+      ]);
     }
 
-    template.push({
-      localizedLabel: ["grid.item.advanced"],
-      submenu: advancedItems,
-    });
+    if (advancedItems.length > 0) {
+      template = concatTemplates(template, [
+        {
+          localizedLabel: ["grid.item.advanced"],
+          submenu: advancedItems,
+        },
+      ]);
+    }
+
+    let uninstallReinstallItems: IMenuTemplate = [];
 
     if (!busy) {
-      template.push({ type: "separator" });
-
-      template.push({
-        localizedLabel: ["prompt.uninstall.reinstall"],
+      uninstallReinstallItems.push({
+        localizedLabel: ["grid.item.uninstall_request"],
         click: () =>
-          store.dispatch(actions.queueCaveReinstall({ caveId: cave.id })),
-      });
-      template.push({
-        localizedLabel: ["prompt.uninstall.uninstall"],
-        click: () =>
-          store.dispatch(actions.queueCaveUninstall({ caveId: cave.id })),
+          store.dispatch(actions.requestCaveUninstall({ caveId: cave.id })),
       });
     }
+
+    template = concatTemplates(template, uninstallReinstallItems);
   } else {
     if (operation) {
       if (operation.type === OperationType.Download) {
-        template.push({
+        statusItems.push({
           localizedLabel: ["grid.item.downloading"],
           click: () => store.dispatch(actions.navigate({ tab: "downloads" })),
         });
@@ -171,7 +186,7 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
     } else {
       if (status.access === Access.None) {
         if (game.canBeBought) {
-          template.push({
+          statusItems.push({
             localizedLabel: ["grid.item.buy_now"],
             click: () => store.dispatch(actions.initiatePurchase({ game })),
           });
@@ -180,13 +195,16 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
         }
       } else {
         // we have any kind of access
-        template.push({
+        statusItems.push({
           localizedLabel: ["grid.item.install"],
           click: () => store.dispatch(actions.queueGame({ game })),
         });
       }
     }
   }
+
+  // prepend status items
+  template = concatTemplates(statusItems, template);
 
   return template;
 }
