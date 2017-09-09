@@ -430,5 +430,6 @@
     "new_tab.devlogs": "Entwickler-Protokolle",
     "preferences.behavior.prevent_display_sleep": "Bildschirmabschaltung während des Spielens verhindern",
     "grid.item.status.installed": "Installiert",
-    "prompt.action.continue": "Weiter"
+    "prompt.action.continue": "Weiter",
+    "prompt.uninstall_error.title": "Fehler bei der Deinstallation"
 }
