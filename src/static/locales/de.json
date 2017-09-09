@@ -429,5 +429,6 @@
     "game.install.libraries_missing": "Einige benötigte {{arch}}  Bibliotheken fehlen: {{libraries}}",
     "new_tab.devlogs": "Entwickler-Protokolle",
     "preferences.behavior.prevent_display_sleep": "Bildschirmabschaltung während des Spielens verhindern",
-    "grid.item.status.installed": "Installiert"
+    "grid.item.status.installed": "Installiert",
+    "prompt.action.continue": "Weiter"
 }
