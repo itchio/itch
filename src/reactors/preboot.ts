@@ -6,6 +6,7 @@ import store from "../store/metal-store";
 import db from "../db";
 
 import { cleanOldLogs } from "./preboot/clean-old-logs";
+import { cleanDownloadFolders } from "./preboot/clean-download-folders";
 import * as xdgMime from "./preboot/xdg-mime";
 import * as visualElements from "./preboot/visual-elements";
 
@@ -18,6 +19,7 @@ import { NET_PARTITION_NAME } from "../constants/net";
 import { applyProxySettings } from "../reactors/proxy";
 
 import { elapsed } from "../format/datetime";
+import loadPreferences from "./preboot/load-preferences";
 
 let testProxy = false;
 let proxyTested = false;
@@ -25,25 +27,15 @@ let proxyTested = false;
 export default function(watcher: Watcher) {
   const ctx = new Context(store, db);
   watcher.on(actions.preboot, async (store, action) => {
+    let dispatchedBoot = false;
+
     let t1 = Date.now();
     try {
       try {
-        await cleanOldLogs();
-      } catch (e) {
-        logger.error(`Could not clean old logs: ${e.stack || e.message || e}`);
-      }
-
-      try {
-        await xdgMime.registerIfNeeded(ctx, { logger: rootLogger });
-      } catch (e) {
-        logger.error(`Could not run xdg-mime: ${e.stack || e.message || e}`);
-      }
-
-      try {
-        await visualElements.createIfNeeded(ctx);
+        await loadPreferences(store);
       } catch (e) {
         logger.error(
-          `Could not run visualElements: ${e.stack || e.message || e}`
+          `Could not load preferences: ${e.stack || e.message || e}`
         );
       }
 
@@ -123,6 +115,37 @@ export default function(watcher: Watcher) {
           `Could not detect proxy settings: ${e ? e.message : "unknown error"}`
         );
       }
+
+      store.dispatch(actions.boot({}));
+      dispatchedBoot = true;
+
+      try {
+        await cleanOldLogs();
+      } catch (e) {
+        logger.error(`Could not clean old logs: ${e.stack || e.message || e}`);
+      }
+
+      try {
+        await cleanDownloadFolders();
+      } catch (e) {
+        logger.error(
+          `Could not clean download folders: ${e.stack || e.message || e}`
+        );
+      }
+
+      try {
+        await xdgMime.registerIfNeeded(ctx, { logger: rootLogger });
+      } catch (e) {
+        logger.error(`Could not run xdg-mime: ${e.stack || e.message || e}`);
+      }
+
+      try {
+        await visualElements.createIfNeeded(ctx);
+      } catch (e) {
+        logger.error(
+          `Could not run visualElements: ${e.stack || e.message || e}`
+        );
+      }
     } catch (e) {
       throw e;
     } finally {
@@ -130,7 +153,9 @@ export default function(watcher: Watcher) {
       logger.info(`preboot ran in ${elapsed(t1, t2)}`);
     }
 
-    store.dispatch(actions.boot({}));
+    if (!dispatchedBoot) {
+      store.dispatch(actions.boot({}));
+    }
   });
 
   watcher.on(actions.attemptLogin, async (store, action) => {

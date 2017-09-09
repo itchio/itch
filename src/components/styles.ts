@@ -144,6 +144,15 @@ export { css, injectGlobal, keyframes, ThemeProvider };
 // animations
 
 export const animations = {
+  horizontalIndeterminate: keyframes`
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(300%);
+    }
+  `,
+
   horizontalScan: keyframes`
     0% {
       background-position: 0em 0;

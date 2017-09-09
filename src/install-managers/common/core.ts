@@ -1,12 +1,11 @@
 import getInstallerType from "./get-installer-type";
 
-import * as path from "path";
-
 import { ICave } from "../../db/models/cave";
 import { toJSONField } from "../../db/json-field";
 import { toDateTimeField } from "../../db/datetime-field";
 
 import Context from "../../context";
+import butler from "../../util/butler";
 
 import { Logger } from "../../logger";
 
@@ -31,9 +30,6 @@ export interface ICoreOpts {
   /** which runtime to install for */
   runtime: IRuntime;
 
-  /** from what source to install the item */
-  archivePath: string;
-
   /** where to install the item */
   destPath: string;
 
@@ -45,6 +41,12 @@ export interface ICoreOpts {
 }
 
 export interface IInstallOpts extends ICoreOpts {
+  /** from what source to install the item */
+  downloadFolderPath: string;
+
+  /** from what source to install the item */
+  archivePath: string;
+
   /** the reason or rather action we're doing (fresh install, re-install etc.) */
   reason: InstallReason;
 
@@ -122,7 +124,7 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
 
   const result = await manager.install({ ...opts, logger });
 
-  const { ctx, game, upload, caveIn } = opts;
+  const { ctx, game, upload, caveIn, downloadFolderPath } = opts;
   const cave: ICave = {
     ...caveIn,
     installedAt: toDateTimeField(new Date()),
@@ -150,11 +152,18 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
   ctx.db.saveOne("games", String(game.id), game);
   ctx.db.saveOne("caves", cave.id, cave);
 
+  logger.info(`Configuring...`);
   await configure(ctx, {
     game,
     cave,
     logger,
     runtime,
+  });
+
+  logger.info(`Wiping download folder...`);
+  await butler.wipe(downloadFolderPath, {
+    ctx,
+    logger,
   });
 
   return cave;
@@ -173,7 +182,7 @@ async function prepare(
   opts: ICoreOpts,
   prepOpts: IPrepareOpts
 ): Promise<IPrepareResult> {
-  const { ctx, logger, runtime, archivePath } = opts;
+  const { ctx, logger, runtime } = opts;
   const { specifiedInstallerName, forceSniff } = prepOpts;
 
   let source = "";
@@ -194,21 +203,26 @@ async function prepare(
       installerName = receipt.installerName;
       source = "cached";
     } else {
-      installerName = await getInstallerType({
-        ctx,
-        logger,
-        target: archivePath,
-        runtime,
-      });
-      source = "sniffed";
+      let installOpts = (opts as any) as IInstallOpts;
+      if (installOpts.archivePath) {
+        installerName = await getInstallerType({
+          ctx,
+          logger,
+          target: installOpts.archivePath,
+          runtime,
+        });
+        source = "sniffed";
+      } else {
+        logger.info(
+          `Doesn't have archive path, doesn't have cached, defaulting to 'archive'`
+        );
+        installerName = "archive";
+        source = "fallback";
+      }
     }
   }
 
-  logger.info(
-    `using ${source} installer '${installerName}' for ${path.basename(
-      archivePath
-    )}`
-  );
+  logger.info(`using ${source} installer '${installerName}'`);
 
   const manager = managers[installerName];
   if (!manager) {

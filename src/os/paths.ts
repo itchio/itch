@@ -53,6 +53,17 @@ export function appPath(cave: ICaveLocation, preferences: IPreferencesState) {
   }
 }
 
+export function downloadBasePath(
+  installLocation: string,
+  preferences: IPreferencesState
+): string {
+  if (installLocation === "appdata") {
+    return join(app.getPath("userData"), "downloads");
+  }
+  const location = preferences.installLocations[installLocation];
+  return join(location.path, "downloads");
+}
+
 export function downloadFolderPath(
   upload: IUpload,
   preferences: IPreferencesState
@@ -62,13 +73,10 @@ export function downloadFolderPath(
     slug = `${slug}-${upload.buildId}`;
   }
 
-  const { installLocations, defaultInstallLocation } = preferences;
-  if (defaultInstallLocation === "appdata") {
-    return join(app.getPath("userData"), "downloads", slug);
-  } else {
-    const location = installLocations[defaultInstallLocation];
-    return join(location.path, "downloads", slug);
-  }
+  return join(
+    downloadBasePath(preferences.defaultInstallLocation, preferences),
+    slug
+  );
 }
 
 export function downloadPath(upload: IUpload, preferences: IPreferencesState) {

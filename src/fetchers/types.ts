@@ -58,6 +58,17 @@ export class Fetcher {
   async run() {
     this.startedAt = Date.now();
 
+    const { session } = this.ctx.store.getState();
+    if (
+      !session ||
+      !session.credentials ||
+      !session.credentials.me ||
+      !session.credentials.me.id
+    ) {
+      this.logger.info(`No credentials yet, skipping`);
+      return;
+    }
+
     let shouldRetry = true;
     while (shouldRetry) {
       shouldRetry = false;

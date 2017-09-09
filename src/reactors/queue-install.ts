@@ -105,15 +105,11 @@ export async function queueInstall(
     const prefs = ctx.store.getState().preferences;
     let destPath = paths.appPath(caveIn, prefs);
     let archivePath = paths.downloadPath(upload, prefs);
+    let downloadFolderPath = paths.downloadFolderPath(upload, prefs);
 
     if (!await sf.exists(archivePath)) {
       const { handPicked } = opts;
 
-      // FIXME: so, this is almost definitely not what we want
-      // why is the reason hardcoded to 'install' ?
-      // what about reinstalls, heals, uninstalls?
-      // FIXME: (bis) we don't need the archive to uninstall everything
-      // we want to keep the download folder clean
       logger.warn("archive disappeared, redownloading...");
       ctx.store.dispatch(
         actions.queueDownload({
@@ -123,7 +119,7 @@ export async function queueInstall(
           upload,
           totalSize: upload.size,
           incremental: false,
-          reason: "install",
+          reason,
           upgradePath: null,
         })
       );
@@ -148,6 +144,7 @@ export async function queueInstall(
 
       destPath,
       archivePath,
+      downloadFolderPath,
       upload,
       caveIn: caveIn as ICave, // FIXME: poor style
     });

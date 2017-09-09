@@ -180,6 +180,7 @@ export function makeLogger({
           consoleWrite(entry, consoleOut);
         }
       },
+      level: LOG_LEVEL,
       close: () => {
         try {
           outStream.end();

@@ -41,7 +41,7 @@ export default class LoadingCircle extends React.PureComponent<
     return (
       <CircleContainer className={classNames({ bare, wide })}>
         <Circle
-          percent={progress > 0 ? progress * 100.0 : 0}
+          percent={progress > 0 ? progress * 100.0 : 100 / 3}
           trailWidth={3}
           trailColor="#e0e0e2"
           strokeWidth={15}

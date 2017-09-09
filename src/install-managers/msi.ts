@@ -94,8 +94,6 @@ export async function uninstall(
     throw new Error("MSI files are only supported on Windows");
   }
 
-  const { archivePath } = opts;
-
   let productCode: string;
   if (receiptIn && receiptIn.msiProductCode) {
     productCode = receiptIn.msiProductCode;
@@ -104,7 +102,9 @@ export async function uninstall(
   if (!productCode) {
     // FIXME: when we make archivePath optional for uninstalls,
     // this is where we'd ask for it
-    productCode = archivePath;
+    throw new Error(
+      `Can't uninstall because we don't know the MSI productCode and have no archive path`
+    );
   }
 
   ctx.emitProgress({ progress: -1 });

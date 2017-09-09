@@ -24,12 +24,7 @@ import { ICave } from "../../db/models/cave";
 export async function queueUninstall(
   ctx: Context,
   logger: Logger,
-  {
-    cave,
-    destPath,
-    archivePath,
-    upload,
-  }: { cave: ICave; destPath: string; archivePath: string; upload: IUpload }
+  { cave, destPath, upload }: { cave: ICave; destPath: string; upload: IUpload }
 ) {
   const runtime = currentRuntime();
 
@@ -43,7 +38,6 @@ export async function queueUninstall(
     runtime,
     logger,
     destPath,
-    archivePath,
     game,
     cave,
     upload,
@@ -81,7 +75,6 @@ export default function(watcher: Watcher, db: DB) {
     const prefs = store.getState().preferences;
     const upload = fromJSONField(cave.upload);
     const destPath = paths.appPath(cave, prefs);
-    const archivePath = paths.downloadPath(upload, prefs);
 
     let doCleanup = false;
 
@@ -94,7 +87,6 @@ export default function(watcher: Watcher, db: DB) {
         await queueUninstall(ctx, logger, {
           cave,
           destPath,
-          archivePath,
           upload,
         });
         store.dispatch(actions.clearGameDownloads({ gameId: cave.gameId }));
@@ -132,9 +124,6 @@ export default function(watcher: Watcher, db: DB) {
 
       logger.info(`Imploding cave...`);
       db.deleteEntity("caves", cave.id);
-
-      logger.info(`Wiping archive...`);
-      await butler.wipe(archivePath, { ctx, logger });
 
       logger.info(`Wiping install folder...`);
       await butler.wipe(destPath, { ctx, logger });

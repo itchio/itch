@@ -84,7 +84,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
     ...opts.opts || {},
     ...stdioOpts,
   };
-  logger.debug(`spawning ${command} with args ${args.join(" ")}`);
+  logger.debug(`spawning ${command} :: ${args.join(" ::: ")}`);
 
   const child = childProcess.spawn(command, args, spawnOpts);
   let cbErr: Error = null;

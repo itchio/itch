@@ -4,7 +4,7 @@ import { partial, first } from "underscore";
 import spawn from "../os/spawn";
 import * as sf from "../os/sf";
 
-import Context from "../context";
+import { MinimalContext } from "../context";
 import { IProgressInfo, ExeArch } from "../types";
 
 import { Logger, devNull } from "../logger";
@@ -23,7 +23,7 @@ type IValueListener = (value: any) => void;
 
 export interface IButlerOpts {
   logger: Logger;
-  ctx: Context;
+  ctx: MinimalContext;
   onResult?: IResultListener;
   onValue?: IValueListener;
   elevate?: boolean;
@@ -34,7 +34,7 @@ type IErrorListener = (err: Error) => void;
 interface IParseButlerStatusOpts {
   onError: IErrorListener;
   onResult: IResultListener;
-  ctx: Context;
+  ctx: MinimalContext;
   logger: Logger;
 }
 
@@ -88,25 +88,22 @@ async function butler<T>(
 
   let args = ["--address", urls.itchio, "--json", command, ...commandArgs];
 
-  const onToken = partial(
-    parseButlerStatus,
-    {
-      onError: (e: Error) => {
-        err = e;
-      },
-      onResult: (result: IButlerResult) => {
-        value = result.value;
-        if (opts.onResult) {
-          opts.onResult(result);
-        }
-        if (opts.onValue) {
-          opts.onValue(value);
-        }
-      },
-      ctx,
-      logger,
-    } as IParseButlerStatusOpts
-  );
+  const onToken = partial(parseButlerStatus, {
+    onError: (e: Error) => {
+      err = e;
+    },
+    onResult: (result: IButlerResult) => {
+      value = result.value;
+      if (opts.onResult) {
+        opts.onResult(result);
+      }
+      if (opts.onValue) {
+        opts.onValue(value);
+      }
+    },
+    ctx,
+    logger,
+  } as IParseButlerStatusOpts);
   const onErrToken = (line: string) => {
     logger.info(`butler stderr: ${line}`);
   };
@@ -500,7 +497,7 @@ async function msiUninstall(opts: IMsiUninstallOpts) {
   await butler(opts, "msi-uninstall", [productCode]);
 }
 
-async function sanityCheck(ctx: Context): Promise<boolean> {
+async function sanityCheck(ctx: MinimalContext): Promise<boolean> {
   try {
     await spawn.assert({
       ctx,

@@ -2,7 +2,6 @@ import { Watcher } from "./watcher";
 
 import { preferencesPath, mainLogPath } from "../os/paths";
 import * as sf from "../os/sf";
-import { camelifyObject } from "../format";
 import partitionForUser from "../util/partition-for-user";
 
 import * as actions from "../actions";
@@ -14,30 +13,7 @@ import { shell, session } from "electron";
 
 let saveAtomicInvocations = 0;
 
-import { initialState } from "../reducers/preferences";
-
 export default function(watcher: Watcher) {
-  watcher.on(actions.boot, async (store, action) => {
-    let prefs: any = {};
-
-    try {
-      const contents = await sf.readFile(preferencesPath(), {
-        encoding: "utf8",
-      });
-      prefs = camelifyObject(JSON.parse(contents));
-      logger.debug(`imported preferences: ${JSON.stringify(prefs)}`);
-    } catch (err) {
-      if (err.code === "ENOENT") {
-        logger.info(`no preferences yet. fresh start!`);
-      } else {
-        logger.warn(`while importing preferences: ${err.stack}`);
-      }
-    }
-
-    store.dispatch(actions.updatePreferences(prefs));
-    store.dispatch(actions.preferencesLoaded({ ...initialState, ...prefs }));
-  });
-
   watcher.on(actions.updatePreferences, async (store, action) => {
     const prefs = store.getState().preferences;
 

@@ -2,7 +2,7 @@ import uuid from "../../util/uuid";
 import { throttle } from "underscore";
 import * as memory from "memory-streams";
 
-import { IStore, IProgressInfo, isCancelled } from "../../types";
+import { IStore, IProgressInfo, isCancelled, TaskName } from "../../types";
 import { DB } from "../../db";
 import Context from "../../context";
 import * as actions from "../../actions";
@@ -27,8 +27,6 @@ interface ITaskMap {
 }
 
 let currentTasks = {} as ITaskMap;
-
-type TaskName = "install" | "launch" | "uninstall";
 
 export default async function asTask(opts: IAsTaskOpts) {
   const id = uuid();
@@ -81,7 +79,7 @@ export default async function asTask(opts: IAsTaskOpts) {
     } else {
       rootLogger.warn(`Task ${name} threw: ${err.stack}`);
       if (onError) {
-        onError(err, memlog ? memlog.toString() : "(No log)");
+        await onError(err, memlog ? memlog.toString() : "(No log)");
       }
     }
   }

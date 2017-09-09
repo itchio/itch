@@ -41,7 +41,7 @@ const Spacer = styled.div`
 `;
 
 const GateDiv = styled.div`
-  animation: drop-down .3s ease-in;
+  animation: drop-down 0.3s ease-in;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -109,14 +109,14 @@ const GateDiv = styled.div`
   .errors,
   .actions {
     .status-container .icon {
-      margin-right: .4em;
+      margin-right: 0.4em;
       font-size: 120%;
       vertical-align: middle;
     }
   }
 
   .crux {
-    flex-grow: .2;
+    flex-grow: 0.2;
     display: flex;
     flex-direction: column;
     align-self: stretch;
@@ -142,7 +142,7 @@ const GateDiv = styled.div`
   .links {
     flex-grow: 1;
     font-size: 16px;
-    transition: 0 .2s;
+    transition: 0 0.2s;
     margin: 1em 0;
     color: $swiss-coffee;
   }
@@ -155,14 +155,14 @@ const GateDiv = styled.div`
     }
   }
 
-  &[data-stage='pick'] {
+  &[data-stage="pick"] {
     form input {
       pointer-events: none;
       opacity: 0;
     }
   }
 
-  &[data-stage='ready'] {
+  &[data-stage="ready"] {
     .crux,
     .links,
     .actions,
@@ -208,7 +208,7 @@ const Form = styled.form`
   input {
     ${styles.heavyInput()} font-size: ${props => props.theme.fontSizes.large};
 
-    transform: scale(1.0) rotateZ(0deg);
+    transform: scale(1) rotateZ(0deg);
     transition: all 0.2s;
 
     &[disabled] {
@@ -217,21 +217,21 @@ const Form = styled.form`
     }
   }
 
-  input[type='text']:focus {
+  input[type="text"]:focus {
     transform: scale(1.08) rotateZ(0.5deg);
   }
 
-  input[type='password']:focus {
+  input[type="password"]:focus {
     transform: scale(1.07) rotateZ(-0.3deg);
   }
 
-  input[type='submit']:focus {
+  input[type="submit"]:focus {
     transform: scale(1.06) rotateZ(0deg);
   }
 `;
 
 const RememberedSessions = styled.div`
-  animation: fade-in .2s;
+  animation: fade-in 0.2s;
 
   display: flex;
   flex-direction: column;
@@ -291,9 +291,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
               disabled={disabled}
               onKeyDown={this.handleKeyDown}
             />
-            <section className="actions">
-              {this.renderActions()}
-            </section>
+            <section className="actions">{this.renderActions()}</section>
           </Form>
         </section>
 
@@ -355,25 +353,23 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
             label={format(["login.action.register"])}
             onClick={() => openUrl({ url: urls.accountRegister })}
           />
-          <span>
-            {" · "}
-          </span>
+          <span>{" · "}</span>
           <Link
             label={format(["login.action.reset_password"])}
             onClick={() => openUrl({ url: urls.accountForgotPassword })}
           />
-          {numSavedSessions > 0
-            ? [
-                <span key="separator">
-                  {" · "}
-                </span>,
-                <Link
-                  key="show-saved-logins"
-                  label={format(["login.action.show_saved_logins"])}
-                  onClick={this.onStartPicking}
-                />,
-              ]
-            : ""}
+          {numSavedSessions > 0 ? (
+            [
+              <span key="separator">{" · "}</span>,
+              <Link
+                key="show-saved-logins"
+                label={format(["login.action.show_saved_logins"])}
+                onClick={this.onStartPicking}
+              />,
+            ]
+          ) : (
+            ""
+          )}
         </section>
       );
     }
@@ -401,12 +397,13 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
         <RememberedSessions>
           {map(
             sortBy(rememberedSessions, x => -x.lastConnected),
-            (session, userId) =>
+            (session, userId) => (
               <RememberedSession
                 key={userId}
                 session={session}
                 onLogin={onLogin}
               />
+            )
           )}
         </RememberedSessions>
       );
@@ -420,29 +417,29 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
       if (hasError) {
         iconElement = <Icon icon={icon} />;
       } else {
-        iconElement = <LoadingCircle progress={0.3} />;
+        iconElement = <LoadingCircle progress={-1} />;
       }
 
       return (
         <div className={classNames("status-container", { error: hasError })}>
           {iconElement}
           {translatedMessage}
-          {hasError
-            ? <div className="error-actions">
-                <Button
-                  discreet
-                  icon="repeat"
-                  label={format(["login.action.retry_setup"])}
-                  onClick={() => retrySetup({})}
-                />
-                <Button
-                  discreet
-                  icon="bug"
-                  label={format(["grid.item.report_problem"])}
-                  onClick={this.onReportBlockingOperation}
-                />
-              </div>
-            : null}
+          {hasError ? (
+            <div className="error-actions">
+              <Button
+                discreet
+                icon="repeat"
+                label={format(["login.action.retry_setup"])}
+                onClick={() => retrySetup({})}
+              />
+              <Button
+                discreet
+                icon="bug"
+                label={format(["grid.item.report_problem"])}
+                onClick={this.onReportBlockingOperation}
+              />
+            </div>
+          ) : null}
         </div>
       );
     } else {
@@ -460,12 +457,10 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   reportIssue(blockingOperation: ISetupOperation) {
-    reportIssue(
-      {
-        type: "Trouble in setup",
-        body: blockingOperation.stack,
-      } as IReportIssueOpts
-    );
+    reportIssue({
+      type: "Trouble in setup",
+      body: blockingOperation.stack,
+    } as IReportIssueOpts);
   }
 
   componentDidUpdate(prevProps: IDerivedProps) {

@@ -181,7 +181,6 @@ export function addSortAndFilterToQuery(
   }
 
   if (joinCave) {
-    // FIXME: submit typing fixes to squel
     select.left_join(
       CaveModel.table,
       null,
@@ -198,22 +197,24 @@ export function addSortAndFilterToQuery(
   }
 
   if (joinDownloadKeys) {
-    // FIXME: submit typing fixes to squel (bis)
     const meId = state.session.credentials.me.id;
     select.left_join(
       DownloadKeyModel.table,
       null,
-      squel.expr().and("downloadKeys.id = ?", squel
-        .select()
-        .field("downloadKeys.id")
-        .from("downloadKeys")
-        .where(
-          squel
-            .expr()
-            .and("downloadKeys.gameId = games.id")
-            .and("downloadKeys.ownerId = ?", meId)
-        )
-        .limit(1) as any)
+      squel.expr().and(
+        "downloadKeys.id = ?",
+        squel
+          .select()
+          .field("downloadKeys.id")
+          .from("downloadKeys")
+          .where(
+            squel
+              .expr()
+              .and("downloadKeys.gameId = games.id")
+              .and("downloadKeys.ownerId = ?", meId)
+          )
+          .limit(1)
+      )
     );
   }
 

@@ -13,7 +13,13 @@ import Hover, { IHoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
 import MainAction from "../game-actions/main-action";
 
-import { IDownloadSpeeds, IDownloadItem, ITask, IRootState } from "../../types";
+import {
+  IDownloadSpeeds,
+  IDownloadItem,
+  ITask,
+  IRootState,
+  ILocalizedString,
+} from "../../types";
 import { dispatcher } from "../../constants/action-types";
 
 import styled, * as styles from "../styles";
@@ -22,7 +28,11 @@ import { darken } from "polished";
 import format, { formatString } from "../format";
 import { injectIntl, InjectedIntl } from "react-intl";
 import doesEventMeanBackground from "../when-click-navigates";
-import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
+import getGameStatus, {
+  IGameStatus,
+  IOperation,
+  OperationType,
+} from "../../helpers/get-game-status";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -124,10 +134,16 @@ const DownloadRowDiv = styled.div`
       ${styles.progress()};
       margin: 10px 0;
       height: 5px;
+      overflow: hidden;
 
       &,
       .progress-inner {
         border-radius: 5px;
+      }
+
+      .progress-inner.indeterminate {
+        animation: ${styles.animations.horizontalIndeterminate} 2.4s ease-in-out
+          infinite;
       }
     }
   }
@@ -139,7 +155,7 @@ const DownloadRowDiv = styled.div`
   }
 
   .control--title {
-    padding-bottom: .5em;
+    padding-bottom: 0.5em;
     font-weight: bold;
   }
 
@@ -228,14 +244,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   controls() {
-    const {
-      intl,
-      active,
-      first,
-      item,
-      retryDownload,
-      downloadsPaused,
-    } = this.props;
+    const { intl, first, item, retryDownload, status } = this.props;
     const {
       resumeDownloads,
       pauseDownloads,
@@ -244,7 +253,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     } = this.props;
     const { id, err } = item;
 
-    if (!active && err) {
+    if (!status.operation && err) {
       return (
         <div className="controls small">
           <IconButton icon="repeat" onClick={() => retryDownload({ id })} />
@@ -252,7 +261,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       );
     }
 
-    if (!active) {
+    if (!status.operation) {
       return (
         <div className="controls small">
           <IconButton
@@ -267,20 +276,22 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <Controls>
-        {first
-          ? downloadsPaused
-            ? <IconButton
-                big
-                icon="triangle-right"
-                onClick={() => resumeDownloads({})}
-              />
-            : <IconButton big icon="pause" onClick={() => pauseDownloads({})} />
-          : <IconButton
-              big
-              hint={formatString(intl, ["grid.item.prioritize_download"])}
-              icon="caret-up"
-              onClick={() => prioritizeDownload({ id })}
-            />}
+        {first ? status.operation.paused ? (
+          <IconButton
+            big
+            icon="triangle-right"
+            onClick={() => resumeDownloads({})}
+          />
+        ) : (
+          <IconButton big icon="pause" onClick={() => pauseDownloads({})} />
+        ) : (
+          <IconButton
+            big
+            hint={formatString(intl, ["grid.item.prioritize_download"])}
+            icon="caret-up"
+            onClick={() => prioritizeDownload({ id })}
+          />
+        )}
         <IconButton
           big
           hintPosition="left"
@@ -293,11 +304,11 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   progress() {
-    const { first, active, item, downloadsPaused, tasksByGameId } = this.props;
-    const { err, game, startedAt, finishedAt, reason } = item;
-    const task = (tasksByGameId[game.id] || [])[0];
+    const { first, active, item, status } = this.props;
+    const { err, game, finishedAt, reason } = item;
+    const { operation } = status;
 
-    if (!active && !task) {
+    if (!active && !operation) {
       if (err) {
         return (
           <div className="error-message">
@@ -314,76 +325,97 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
         <div className="stats--control">
           <div className="control--title">
             {game.title}
-            {outcomeText
-              ? <span className="control--reason">
-                  {" — "}
-                  {outcomeText}
-                </span>
-              : null}{" "}
+            {outcomeText ? (
+              <span className="control--reason">
+                {" — "}
+                {outcomeText}
+              </span>
+            ) : null}{" "}
             <TimeAgo className="control--reason" date={finishedAt} />
           </div>
-          <MainAction game={game} status={this.props.status} />
+          <MainAction game={game} status={status} />
         </div>
       );
     }
 
-    let { progress = 0, bps, eta } = item;
+    const { progress = 0, bps, eta } = status.operation;
 
-    if (task) {
-      progress = task.progress;
+    const progressInnerStyle: React.CSSProperties = {};
+    if (progress > 0) {
+      progressInnerStyle.width = `${progress * 100}%`;
+    } else {
+      progressInnerStyle.width = `${100 / 3}%`;
     }
-
-    const progressInnerStyle: React.CSSProperties = {
-      width: progress * 100 + "%",
-    };
-
-    const reasonText = this.formattedReason(reason);
 
     return (
       <div className="stats-inner">
-        <div className="game-title">
-          {game.title}
-        </div>
+        <div className="game-title">{game.title}</div>
         <div className="progress">
-          <div className="progress-inner" style={progressInnerStyle} />
+          <div
+            className={classNames("progress-inner", {
+              indeterminate: !(progress > 0),
+            })}
+            style={progressInnerStyle}
+          />
         </div>
         <div className="timeago">
-          {task
-            ? task.name === "launch"
-              ? format(["grid.item.running"])
-              : format(["grid.item.installing"])
-            : first
-              ? downloadsPaused
-                ? null
-                : <div>
-                    {format(["download.started"])}{" "}
-                    <TimeAgo date={new Date(startedAt)} />
-                    {reasonText
-                      ? <span>
-                          {" — "}
-                          {reasonText}
-                        </span>
-                      : ""}
-                    {item.totalSize ? ` — ${fileSize(item.totalSize)}` : ""}
-                  </div>
-              : format(["grid.item.queued"])}
+          {this.formatTimeAgo()}
           <div className="filler" />
           <div>
-            {downloadsPaused
-              ? first
-                ? <div className="paused">
-                    {format(["grid.item.downloads_paused"])}
-                  </div>
-                : null
-              : (first || task) && eta && bps
-                ? <span>
-                    {downloadProgress({ eta, bps }, downloadsPaused)}
-                  </span>
-                : null}
+            {operation.paused ? first ? (
+              <div className="paused">
+                {format(["grid.item.downloads_paused"])}
+              </div>
+            ) : null : (first || operation) && eta && bps ? (
+              <span>{downloadProgress({ eta, bps }, operation.paused)}</span>
+            ) : null}
           </div>
         </div>
       </div>
     );
+  }
+  formatTimeAgo() {
+    const { status } = this.props;
+    const { operation } = status;
+
+    if (operation.paused) {
+      return format(["grid.item.queued"]);
+    }
+
+    return <div>{this.formatOperation(operation)}</div>;
+  }
+
+  formatOperation(op: IOperation): string | JSX.Element {
+    if (op.type === OperationType.Download) {
+      const { item } = this.props;
+      const reasonText = this.formattedReason(op.reason);
+      return (
+        <span>
+          {format(["download.started"])}{" "}
+          <TimeAgo date={new Date(item.startedAt)} />
+          {reasonText ? (
+            <span>
+              {" — "}
+              {reasonText}
+            </span>
+          ) : (
+            ""
+          )}
+          {item.totalSize ? ` — ${fileSize(item.totalSize)}` : ""}
+        </span>
+      );
+    }
+
+    let label: ILocalizedString;
+    if (op.name === "launch") {
+      label = ["grid.item.running"];
+    } else if (op.name === "uninstall") {
+      label = ["grid.item.uninstalling"];
+    } else {
+      label = ["grid.item.installing"];
+    }
+
+    return format(label);
   }
 
   formattedReason(reason: string) {
@@ -456,7 +488,6 @@ export default connect<IProps>(injectIntl(HoverDownloadRow), {
 
     return {
       speeds: rs.downloads.speeds,
-      downloadsPaused: rs.downloads.paused,
       tasksByGameId: rs.tasks.tasksByGameId,
       status: getGameStatus(rs, game),
     };

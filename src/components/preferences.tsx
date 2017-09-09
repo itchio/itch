@@ -366,7 +366,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
               />
 
               {downloading ? (
-                <LoadingCircle progress={0.3} />
+                <LoadingCircle progress={-1} />
               ) : (
                 <IconButton
                   icon="repeat"

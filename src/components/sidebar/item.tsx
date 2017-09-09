@@ -13,13 +13,11 @@ import IconButton from "../basics/icon-button";
 import styled, * as styles from "../styles";
 import { darken } from "polished";
 
-const UnshrinkableIconButton = styled(IconButton)`
-  flex-shrink: 0;
-`;
+const UnshrinkableIconButton = styled(IconButton)`flex-shrink: 0;`;
 
 const ItemHeading = styled.div`
   ${styles.singleLine()};
-  padding: .2em 0;
+  padding: 0.2em 0;
 `;
 
 export const ItemDiv = styled.section`
@@ -180,32 +178,25 @@ class Item extends React.PureComponent<IProps, IState> {
       >
         <Row>
           <IconContainer>
-            {this.props.loading
-              ? <LoadingCircle progress={0.3} />
-              : this.props.iconImage
-                ? <img className="icon-image" src={this.props.iconImage} />
-                : <Icon icon={this.props.icon || "tag"} />}
+            {this.props.loading ? (
+              <LoadingCircle progress={-1} />
+            ) : this.props.iconImage ? (
+              <img className="icon-image" src={this.props.iconImage} />
+            ) : (
+              <Icon icon={this.props.icon || "tag"} />
+            )}
           </IconContainer>
-          <ItemHeading>
-            {format(label)}
-          </ItemHeading>
-          {count > 0
-            ? <Bubble>
-                {count}
-              </Bubble>
-            : null}
+          <ItemHeading>{format(label)}</ItemHeading>
+          {count > 0 ? <Bubble>{count}</Bubble> : null}
           <Filler />
-          {progress > 0
-            ? <ProgressOuter>
-                <div className="progress-inner" style={progressStyle} />
-              </ProgressOuter>
-            : null}
-          {onClose
-            ? <UnshrinkableIconButton
-                icon="cross"
-                onClick={this.onCloseClick}
-              />
-            : null}
+          {progress > 0 ? (
+            <ProgressOuter>
+              <div className="progress-inner" style={progressStyle} />
+            </ProgressOuter>
+          ) : null}
+          {onClose ? (
+            <UnshrinkableIconButton icon="cross" onClick={this.onCloseClick} />
+          ) : null}
         </Row>
       </ItemDiv>
     );

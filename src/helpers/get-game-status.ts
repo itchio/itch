@@ -11,6 +11,7 @@ import {
 } from "../reactors/downloads/getters";
 import isPlatformCompatible from "../util/is-platform-compatible";
 import memoize from "../util/lru-memoize";
+import { TaskName, DownloadReason } from "../types/tasks";
 
 /**
  * What type of access we have to the game - do we own it,
@@ -61,13 +62,15 @@ export enum OperationType {
   Task,
 }
 
-interface IOperation {
+export interface IOperation {
   type: OperationType;
-  name?: string;
-  reason?: string;
+  name?: TaskName;
+  reason?: DownloadReason;
   active: boolean;
   paused: boolean;
   progress: number;
+  bps?: number;
+  eta?: number;
 }
 
 export interface IGameStatus {
@@ -159,21 +162,25 @@ function rawGetGameStatus(
 
   let operation: IOperation = null;
 
-  if (download) {
-    operation = {
-      type: OperationType.Download,
-      reason: download.reason,
-      active: isDownloadActive,
-      paused: areDownloadsPaused,
-      progress: download.progress,
-    };
-  } else if (task) {
+  if (task) {
     operation = {
       type: OperationType.Task,
       name: task.name,
       active: true,
       paused: false,
       progress: task.progress,
+      eta: task.eta,
+      bps: task.bps,
+    };
+  } else if (download) {
+    operation = {
+      type: OperationType.Download,
+      reason: download.reason,
+      active: isDownloadActive,
+      paused: areDownloadsPaused,
+      progress: download.progress,
+      eta: download.eta,
+      bps: download.bps,
     };
   }
 

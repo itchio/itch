@@ -19,6 +19,27 @@ import { formatExitCode } from "../format/exit-code";
 // When ran without elevate, some NSIS installers will silently fail.
 // So, we run them with elevate all the time.
 
+/**
+ * Returns an array of arguments that will make an NSIS installer or uninstaller happy
+ * 
+ * The docs say to "not wrap the argument in double quotes" but what they really mean is
+ * just pass it as separate arguments (due to how f*cked argument parsing is)
+ * 
+ * So this takes `/D=`, `C:\Itch Games\something` and returns
+ * [`/D=C:\Itch`, `Games\something`]
+ * 
+ * @param prefix something like `/D=` or `_?=` probably
+ * @param path a path, may contain spaces, may not
+ */
+function getSeriouslyMisdesignedNsisPathArguments(
+  prefix: string,
+  path: string
+) {
+  const tokens = path.split(" ");
+  tokens[0] = `${prefix}${tokens[0]}`;
+  return tokens;
+}
+
 async function install(opts: IInstallOpts): Promise<IInstallResult> {
   const { ctx } = opts;
   const logger = opts.logger.child({ name: "nsis/install" });
@@ -37,7 +58,7 @@ async function install(opts: IInstallOpts): Promise<IInstallResult> {
         archivePath,
         "/S", // run the installer silently
         "/NCRC", // disable CRC-check, we do hash checking ourselves
-        `/D=${destPath}`,
+        ...getSeriouslyMisdesignedNsisPathArguments("/D=", destPath),
       ],
       onToken: tok => logger.info(`${archivePath}: ${tok}`),
       ctx,
@@ -83,7 +104,8 @@ async function uninstall(opts: IUninstallOpts): Promise<IUninstallResult> {
       "--",
       join(destPath, unins),
       "/S", // run the uninstaller silently
-      `_?=${destPath}`, // specify uninstallation path
+      // specify uninstallation path
+      ...getSeriouslyMisdesignedNsisPathArguments("_?=", destPath),
     ],
     opts: { cwd: destPath },
     onToken: (tok: string) => logger.info(`${unins}: ${tok}`),

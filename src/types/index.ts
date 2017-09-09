@@ -812,7 +812,7 @@ export interface ITask {
   id: string;
 
   /** name of the task: install, uninstall, etc. */
-  name: string;
+  name: Tasks.TaskName;
 
   /** progress in the [0, 1] interval */
   progress: number;

@@ -9,6 +9,7 @@ import getGameStatus, {
 import { IGame } from "../../db/models/game";
 import actionForGame from "../../util/action-for-game";
 import Context from "../../context";
+import { showInExplorerString } from "../../format/show-in-explorer";
 
 export function concatTemplates(
   a: IMenuTemplate,
@@ -104,7 +105,7 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
     }
 
     template.push({
-      localizedLabel: ["grid.item.show_local_files"],
+      localizedLabel: showInExplorerString(),
       click: () => store.dispatch(actions.exploreCave({ caveId: cave.id })),
     });
 

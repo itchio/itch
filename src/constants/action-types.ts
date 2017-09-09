@@ -607,7 +607,7 @@ export interface IReloadLocalesPayload {}
 /* Tasks */
 export const TASK_STARTED = "TASK_STARTED";
 export interface ITaskStartedPayload {
-  name: string;
+  name: Types.TaskName;
   id: string;
   startedAt: number;
   gameId: number;
