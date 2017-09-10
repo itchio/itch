@@ -431,5 +431,7 @@
     "preferences.behavior.prevent_display_sleep": "Bildschirmabschaltung während des Spielens verhindern",
     "grid.item.status.installed": "Installiert",
     "prompt.action.continue": "Weiter",
-    "prompt.uninstall_error.title": "Fehler bei der Deinstallation"
+    "prompt.uninstall_error.title": "Fehler bei der Deinstallation",
+    "download.outcome.updated": "wurde auf die neueste Version aktualisiert",
+    "download.outcome.installed": "installiert"
 }
