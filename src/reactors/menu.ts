@@ -63,6 +63,13 @@ function computeMenuTemplate(
           type: "separator",
         },
         {
+          role: "services",
+          submenu: [],
+        },
+        {
+          type: "separator",
+        },
+        {
           localizedLabel: ["menu.file.preferences"],
           accelerator: "CmdOrCtrl+,",
         },
