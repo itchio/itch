@@ -456,5 +456,6 @@
     "grid.item.open_file_location.osx": "Montri en „Finder“",
     "table.column.installed_size": "Grando",
     "preferences.install_location.navigate": "Vidi la enhavojn de ĉi tiu loko en nova folio",
-    "install_location.property.size_on_disk": "{{size}} en la disko"
+    "install_location.property.size_on_disk": "{{size}} en la disko",
+    "grid.item.uninstall_request": "Malinstali aŭ reinstali…"
 }

@@ -448,5 +448,6 @@
     "grid.item.open_file_location.osx": "Показване във „Finder“",
     "table.column.installed_size": "Размер",
     "preferences.install_location.navigate": "Преглед на съдържанието на това местоположение в нов раздел",
-    "install_location.property.size_on_disk": "{{size}} на диска"
+    "install_location.property.size_on_disk": "{{size}} на диска",
+    "grid.item.uninstall_request": "Деинсталиране или преинсталиране…"
 }
