@@ -433,5 +433,6 @@
     "prompt.action.continue": "Weiter",
     "prompt.uninstall_error.title": "Fehler bei der Deinstallation",
     "download.outcome.updated": "wurde auf die neueste Version aktualisiert",
-    "download.outcome.installed": "installiert"
+    "download.outcome.installed": "installiert",
+    "prompt.uninstall_error.message": "Deinstallation fehlgeschlagen. Eintrag trotzdem entfernen?"
 }
