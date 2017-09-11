@@ -98,7 +98,7 @@ const LayoutPicker = styled.section`
   }
 
   ${(props: ILayoutPickerProps) =>
-    props.active ? css`filter: brightness(100%)` : ""};
+    props.active ? css`filter: brightness(100%);` : ""};
 `;
 
 class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
@@ -142,48 +142,48 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <FiltersContainer>
-        {showBinaryFilters
-          ? <TagFilters>
-              <Select
-                className="game-filters-input"
-                multi={true}
-                options={options}
-                value={value}
-                autoBlur={true}
-                noResultsText={formatString(intl, [
-                  "grid.filters.options.no_results",
-                ])}
-                onChange={(vals: { value: string }[]) => {
-                  const prefs = {
-                    onlyCompatibleGames: false,
-                    onlyInstalledGames: false,
-                    onlyOwnedGames: false,
-                  } as {
-                    [key: string]: boolean;
-                  };
+        {showBinaryFilters ? (
+          <TagFilters>
+            <Select
+              className="game-filters-input"
+              multi={true}
+              options={options}
+              value={value}
+              autoBlur={true}
+              noResultsText={formatString(intl, [
+                "grid.filters.options.no_results",
+              ])}
+              onChange={(vals: { value: string }[]) => {
+                const prefs = {
+                  onlyCompatibleGames: false,
+                  onlyInstalledGames: false,
+                  onlyOwnedGames: false,
+                } as {
+                  [key: string]: boolean;
+                };
 
-                  for (const val of vals) {
-                    prefs[val.value] = true;
-                  }
-                  this.props.updatePreferences(prefs);
-                }}
-                placeholder={formatString(intl, ["grid.criterion.filter"])}
-              />
-              <Link
-                className="game-filters--clear"
-                onClick={() => {
-                  const prefs = {
-                    onlyCompatibleGames: false,
-                    onlyInstalledGames: false,
-                    onlyOwnedGames: false,
-                  };
-                  this.props.updatePreferences(prefs);
-                }}
-              >
-                Clear filters
-              </Link>
-            </TagFilters>
-          : null}
+                for (const val of vals) {
+                  prefs[val.value] = true;
+                }
+                this.props.updatePreferences(prefs);
+              }}
+              placeholder={formatString(intl, ["grid.criterion.filter"])}
+            />
+            <Link
+              className="game-filters--clear"
+              onClick={() => {
+                const prefs = {
+                  onlyCompatibleGames: false,
+                  onlyInstalledGames: false,
+                  onlyOwnedGames: false,
+                };
+                this.props.updatePreferences(prefs);
+              }}
+            >
+              Clear filters
+            </Link>
+          </TagFilters>
+        ) : null}
 
         {this.props.children}
         <Filler />

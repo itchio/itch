@@ -6,6 +6,7 @@ import GatePage from "./pages/gate";
 import HubPage from "./pages/hub";
 import StatusBar from "./status-bar";
 import NonLocalIndicator from "./non-local-indicator";
+import ContextMenuHandler from "./context-menu-handler";
 import ReactHint = require("react-hint");
 
 import { IRootState } from "../types";
@@ -73,6 +74,7 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
           <ReactHint />
         </ReactHintContainer>
         <NonLocalIndicator />
+        <ContextMenuHandler />
       </LayoutContainer>
     );
   }
@@ -86,11 +88,7 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
       case "hub":
         return <HubPage />;
       default:
-        return (
-          <div>
-            Unknown page: {page}
-          </div>
-        );
+        return <div>Unknown page: {page}</div>;
     }
   }
 }

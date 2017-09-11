@@ -41,7 +41,7 @@ const DropdownDiv = styled.div`
 
   &.active {
     visibility: visible;
-    animation: ${styles.animations.enterBottom} ease-in 0.2s;
+    animation: ${styles.animations.fadeIn} ease-in 0.2s;
   }
 `;
 
@@ -71,9 +71,9 @@ export class Dropdown extends React.PureComponent<
 
     let children = [];
     if (open) {
-      children = map(items, (item, i) =>
-        <DropdownItem key={i} item={item} onClick={this.close} />,
-      );
+      children = map(items, (item, i) => (
+        <DropdownItem key={i} item={item} onClick={this.close} />
+      ));
     }
 
     let innerClasses = "";

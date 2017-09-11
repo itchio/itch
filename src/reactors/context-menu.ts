@@ -1,8 +1,6 @@
 import { Watcher } from "./watcher";
 
-import { BrowserWindow, Menu } from "electron";
-
-import { IStore, IMenuTemplate, currentRuntime } from "../types";
+import { IStore, IMenuTemplate } from "../types";
 
 import * as actions from "../actions";
 
@@ -10,7 +8,6 @@ import { DB } from "../db";
 
 import { Space } from "../helpers/space";
 import { IOpenContextMenuBase } from "../constants/action-types";
-import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 import {
   gameControls,
   newTabControls,
@@ -29,12 +26,7 @@ function openMenu(
     return;
   }
 
-  const menu = Menu.buildFromTemplate(
-    fleshOutTemplate(store, currentRuntime(), template)
-  );
-  const mainWindowId = store.getState().ui.mainWindow.id;
-  const mainWindow = BrowserWindow.fromId(mainWindowId);
-  menu.popup(mainWindow, { async: true, x: pageX, y: pageY });
+  store.dispatch(actions.popupContextMenu({ template, x: pageX, y: pageY }));
 }
 
 export default function(watcher: Watcher, db: DB) {

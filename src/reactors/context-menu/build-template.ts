@@ -28,15 +28,11 @@ export function concatTemplates(
 }
 
 export function newTabControls(ctx: Context, tab: string): IMenuTemplate {
-  const { store } = ctx;
-
   return [
     {
       localizedLabel: ["menu.file.new_tab"],
       accelerator: "CmdOrCtrl+T",
-      click: () => {
-        store.dispatch(actions.newTab({}));
-      },
+      action: actions.newTab({}),
     },
   ];
 }
@@ -52,23 +48,17 @@ export function closeTabControls(ctx: Context, tab: string): IMenuTemplate {
     {
       localizedLabel: ["menu.file.close_tab"],
       accelerator: "CmdOrCtrl+W",
-      click: () => {
-        store.dispatch(actions.closeTab({ tab }));
-      },
+      action: actions.closeTab({ tab }),
       enabled: !isEssential,
     },
     {
       localizedLabel: ["menu.file.close_other_tabs"],
-      click: () => {
-        store.dispatch(actions.closeOtherTabs({ tab }));
-      },
+      action: actions.closeOtherTabs({ tab }),
       enabled: !isEssential,
     },
     {
       localizedLabel: ["menu.file.close_tabs_below"],
-      click: () => {
-        store.dispatch(actions.closeTabsBelow({ tab }));
-      },
+      action: actions.closeTabsBelow({ tab }),
       enabled: !isEssential,
     },
   ];
@@ -98,7 +88,7 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
           submenu: [
             {
               localizedLabel: ["prompt.action.force_close"],
-              click: () => store.dispatch(actions.abortGameRequest({ game })),
+              action: actions.abortGameRequest({ game }),
             },
           ],
         });
@@ -111,7 +101,7 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
     } else {
       statusItems.push({
         localizedLabel: [`grid.item.${mainAction}`],
-        click: () => store.dispatch(actions.queueGame({ game })),
+        action: actions.queueGame({ game }),
       });
     }
 
@@ -120,16 +110,13 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
     if (!busy) {
       updateAndLocalItems.push({
         localizedLabel: ["grid.item.check_for_update"],
-        click: () =>
-          store.dispatch(
-            actions.checkForGameUpdate({ caveId: cave.id, noisy: true })
-          ),
+        action: actions.checkForGameUpdate({ caveId: cave.id, noisy: true }),
       });
     }
 
     updateAndLocalItems.push({
       localizedLabel: showInExplorerString(),
-      click: () => store.dispatch(actions.exploreCave({ caveId: cave.id })),
+      action: actions.exploreCave({ caveId: cave.id }),
     });
 
     template = concatTemplates(template, updateAndLocalItems);
@@ -143,12 +130,11 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
       advancedItems = concatTemplates(advancedItems, [
         {
           localizedLabel: ["grid.item.verify_integrity"],
-          click: () => store.dispatch(actions.healCave({ caveId: cave.id })),
+          action: actions.healCave({ caveId: cave.id }),
         },
         {
           localizedLabel: ["grid.item.revert_to_version"],
-          click: () =>
-            store.dispatch(actions.revertCaveRequest({ caveId: cave.id })),
+          action: actions.revertCaveRequest({ caveId: cave.id }),
         },
       ]);
     }
@@ -166,9 +152,9 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
 
     if (!busy) {
       uninstallReinstallItems.push({
+        id: "context--grid-item-uninstall-request",
         localizedLabel: ["grid.item.uninstall_request"],
-        click: () =>
-          store.dispatch(actions.requestCaveUninstall({ caveId: cave.id })),
+        action: actions.requestCaveUninstall({ caveId: cave.id }),
       });
     }
 
@@ -178,7 +164,7 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
       if (operation.type === OperationType.Download) {
         statusItems.push({
           localizedLabel: ["grid.item.downloading"],
-          click: () => store.dispatch(actions.navigate({ tab: "downloads" })),
+          action: actions.navigate({ tab: "downloads" }),
         });
       } else {
         // uhh and we have no cave you say? that's weird
@@ -188,7 +174,7 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
         if (game.canBeBought) {
           statusItems.push({
             localizedLabel: ["grid.item.buy_now"],
-            click: () => store.dispatch(actions.initiatePurchase({ game })),
+            action: actions.initiatePurchase({ game }),
           });
         } else {
           // welp
@@ -197,7 +183,7 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
         // we have any kind of access
         statusItems.push({
           localizedLabel: ["grid.item.install"],
-          click: () => store.dispatch(actions.queueGame({ game })),
+          action: actions.queueGame({ game }),
         });
       }
     }
