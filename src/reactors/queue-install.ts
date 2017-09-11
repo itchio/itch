@@ -21,7 +21,7 @@ import * as sf from "../os/sf";
 import { currentRuntime } from "../os/runtime";
 import { Logger } from "../logger";
 
-import { coreInstall } from "../install-managers/common/core";
+import { coreInstall, isInPlace } from "../install-managers/common/core";
 import asTask from "./tasks/as-task";
 
 function defaultInstallLocation(store: IStore) {
@@ -107,7 +107,9 @@ export async function queueInstall(
     let archivePath = paths.downloadPath(upload, prefs);
     let downloadFolderPath = paths.downloadFolderPath(upload, prefs);
 
-    if (!await sf.exists(archivePath)) {
+    const inPlace = isInPlace(opts);
+
+    if (!await sf.exists(archivePath) && !inPlace) {
       const { handPicked } = opts;
 
       logger.warn("archive disappeared, redownloading...");

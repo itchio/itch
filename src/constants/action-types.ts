@@ -2,7 +2,7 @@ import { Action } from "redux-actions";
 import "electron";
 
 import * as Types from "../types";
-import { IProgressInfo } from "../types";
+import { IProgressInfo, IMenuTemplate } from "../types";
 
 import { IGame } from "../db/models/game";
 import { IOwnUser } from "../db/models/user";
@@ -438,6 +438,16 @@ export interface IOpenGameContextMenuPayload extends IOpenContextMenuBase {
   /** game to open the context menu of */
   game: IGame;
 }
+
+export const POPUP_CONTEXT_MENU = "POPUP_CONTEXT_MENU";
+export interface IPopupContextMenuPayload {
+  x: number;
+  y: number;
+  template: IMenuTemplate;
+}
+
+export const CLOSE_CONTEXT_MENU = "CLOSE_CONTEXT_MENU";
+export interface ICloseContextMenuPayload {}
 
 /** show a constant tab hidden for some users (press, dashboard, etc.) */
 export const UNLOCK_TAB = "UNLOCK_TAB";

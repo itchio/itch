@@ -114,43 +114,57 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
   const { reason, runtime } = opts;
   const logger = opts.logger.child({ name: "install" });
 
-  const prepOpts = {
-    // when reinstalling, we do want to sniff again
-    forceSniff: opts.reason === "reinstall",
-  };
-
-  const { manager, source, installerName } = await prepare(opts, prepOpts);
-  logger.info(`Installing (${reason}) with ${installerName} (${source})`);
-
-  const result = await manager.install({ ...opts, logger });
-
   const { ctx, game, upload, caveIn, downloadFolderPath } = opts;
-  const cave: ICave = {
-    ...caveIn,
-    installedAt: toDateTimeField(new Date()),
-    channelName: upload.channelName,
-    buildId: upload.buildId,
-    buildUserVersion: upload.build && upload.build.userVersion,
-    upload: toJSONField(upload),
-    ...result.caveOut,
-  };
 
-  if (reason !== "install") {
-    logger.info(`Not first install (${reason}), clearing verdict`);
-    cave.verdict = null;
+  const inPlace = isInPlace(opts);
+  let cave: ICave;
+
+  if (inPlace) {
+    cave = caveIn;
+  } else {
+    const prepOpts = {
+      // when reinstalling, we do want to sniff again
+      forceSniff: opts.reason === "reinstall",
+    };
+
+    const { manager, source, installerName } = await prepare(opts, prepOpts);
+    logger.info(`Installing (${reason}) with ${installerName} (${source})`);
+
+    const result = await manager.install({ ...opts, logger });
+
+    cave = {
+      ...caveIn,
+      installedAt: toDateTimeField(new Date()),
+      channelName: upload.channelName,
+      buildId: upload.buildId,
+      buildUserVersion: upload.build && upload.build.userVersion,
+      upload: toJSONField(upload),
+      ...result.caveOut,
+    };
+
+    if (reason !== "install") {
+      logger.info(`Not first install (${reason}), clearing verdict`);
+      cave.verdict = null;
+    }
+
+    logger.info(`Writing receipt...`);
+    await writeReceipt(opts, {
+      cave,
+      files: result.files,
+      installerName,
+      ...result.receiptOut || {},
+    });
+
+    logger.info(`Committing game & cave to db`);
+    ctx.db.saveOne("games", String(game.id), game);
+    ctx.db.saveOne("caves", cave.id, cave);
+
+    logger.info(`Wiping download folder...`);
+    await butler.wipe(downloadFolderPath, {
+      ctx,
+      logger,
+    });
   }
-
-  logger.info(`Writing receipt...`);
-  await writeReceipt(opts, {
-    cave,
-    files: result.files,
-    installerName,
-    ...result.receiptOut || {},
-  });
-
-  logger.info(`Committing game & cave to db`);
-  ctx.db.saveOne("games", String(game.id), game);
-  ctx.db.saveOne("caves", cave.id, cave);
 
   logger.info(`Configuring...`);
   await configure(ctx, {
@@ -158,12 +172,6 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
     cave,
     logger,
     runtime,
-  });
-
-  logger.info(`Wiping download folder...`);
-  await butler.wipe(downloadFolderPath, {
-    ctx,
-    logger,
   });
 
   return cave;
@@ -231,4 +239,13 @@ async function prepare(
   }
 
   return { source, installerName, manager, receipt };
+}
+
+interface IInPlaceOpts {
+  reason: InstallReason;
+}
+
+export function isInPlace(opts: IInPlaceOpts): boolean {
+  const { reason } = opts;
+  return reason === "heal" || reason === "revert";
 }

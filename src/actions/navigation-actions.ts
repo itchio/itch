@@ -92,6 +92,10 @@ import {
   ICloseTabsBelowPayload,
   CLOSE_OTHER_TABS,
   CLOSE_TABS_BELOW,
+  POPUP_CONTEXT_MENU,
+  IPopupContextMenuPayload,
+  ICloseContextMenuPayload,
+  CLOSE_CONTEXT_MENU,
 } from "../constants/action-types";
 
 export const navigate = createAction<INavigatePayload>(NAVIGATE);
@@ -180,6 +184,14 @@ export const openTabContextMenu = createAction<IOpenTabContextMenuPayload>(
 export const openGameContextMenu = createAction<IOpenGameContextMenuPayload>(
   OPEN_GAME_CONTEXT_MENU
 );
+
+export const popupContextMenu = createAction<IPopupContextMenuPayload>(
+  POPUP_CONTEXT_MENU
+);
+export const closeContextMenu = createAction<ICloseContextMenuPayload>(
+  CLOSE_CONTEXT_MENU
+);
+
 export const unlockTab = createAction<IUnlockTabPayload>(UNLOCK_TAB);
 
 export const openUrl = createAction<IOpenUrlPayload>(OPEN_URL);

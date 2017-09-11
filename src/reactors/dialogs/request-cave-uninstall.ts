@@ -28,11 +28,13 @@ export default function(watcher: Watcher, db: DB) {
         buttons: [
           {
             label: ["prompt.uninstall.uninstall"],
+            id: "modal-uninstall",
             action: actions.queueCaveUninstall({ caveId }),
             icon: "uninstall",
           },
           {
             label: ["prompt.uninstall.reinstall"],
+            id: "modal-reinstall",
             action: actions.queueCaveReinstall({ caveId }),
             icon: "repeat",
           },

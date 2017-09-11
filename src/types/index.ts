@@ -691,7 +691,7 @@ export interface II18nState {
 }
 
 export interface IUIMenuState {
-  template: IMenuItem[];
+  template: IMenuTemplate;
 }
 
 export interface IUIMainWindowState {
@@ -708,9 +708,19 @@ export interface IUIMainWindowState {
   maximized: boolean;
 }
 
+export interface IUIContextMenuState {
+  open: boolean;
+  data: {
+    template: IMenuTemplate;
+    x: number;
+    y: number;
+  };
+}
+
 export interface IUIState {
   menu: IUIMenuState;
   mainWindow: IUIMainWindowState;
+  contextMenu: IUIContextMenuState;
 }
 
 export interface ISelfUpdate {
@@ -1050,6 +1060,8 @@ export interface IRuntime {
 
 export interface IMenuItem extends Electron.MenuItemConstructorOptions {
   localizedLabel?: ILocalizedString;
+  action?: Action<any>;
   submenu?: IMenuItem[];
+  id?: string;
 }
 export type IMenuTemplate = IMenuItem[];

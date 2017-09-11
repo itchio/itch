@@ -135,9 +135,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
           })}
 
           <SidebarSection>
-            <SidebarHeading>
-              {format(["sidebar.category.tabs"])}
-            </SidebarHeading>
+            <SidebarHeading>{format(["sidebar.category.tabs"])}</SidebarHeading>
             <Filler />
             <IconButton
               icon="delete"

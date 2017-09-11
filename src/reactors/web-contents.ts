@@ -214,7 +214,6 @@ export default function(watcher: Watcher, db: DB) {
     logger.debug(`Got command ${command} for tab ${tab}`);
 
     withWebContents(store, tab, wc => {
-      logger.debug(`...in trigger, got wc`);
       let pushWeb = (web: Partial<ITabWeb>) => {
         store.dispatch(
           actions.tabDataFetched({
