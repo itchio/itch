@@ -5,19 +5,19 @@ import { IUIContextMenuState } from "../../types/index";
 const initialState: IUIContextMenuState = {
   open: false,
   data: {
-    x: 0,
-    y: 0,
+    clientX: 0,
+    clientY: 0,
     template: [],
   },
 };
 
 export default reducer<IUIContextMenuState>(initialState, on => {
   on(actions.popupContextMenu, (state, action) => {
-    const { x, y, template } = action.payload;
+    const { clientX, clientY, template } = action.payload;
 
     return {
       ...state,
-      data: { x, y, template },
+      data: { clientX, clientY, template },
       open: true,
     };
   });

@@ -189,7 +189,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   onCoverContextMenu = (ev: React.MouseEvent<any>) => {
     const { item, openGameContextMenu } = this.props;
     const { game } = item;
-    openGameContextMenu({ game, pageX: ev.pageX, pageY: ev.pageY });
+    openGameContextMenu({ game, clientX: ev.clientX, clientY: ev.pageY });
   };
 
   onNavigate = () => {

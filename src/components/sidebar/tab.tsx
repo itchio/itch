@@ -52,7 +52,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
 
   onContextMenu = (ev: React.MouseEvent<any>) => {
     const { tab, openTabContextMenu } = this.props;
-    openTabContextMenu({ tab, pageX: ev.pageX, pageY: ev.pageY });
+    openTabContextMenu({ tab, clientX: ev.clientX, clientY: ev.pageY });
   };
 
   render() {

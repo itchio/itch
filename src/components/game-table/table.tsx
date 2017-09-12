@@ -176,7 +176,11 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
 
   onContextMenu = (ev: React.MouseEvent<HTMLDivElement>) => {
     this.eventToGame(ev, game => {
-      this.props.openGameContextMenu({ game });
+      this.props.openGameContextMenu({
+        game,
+        clientX: ev.clientX,
+        clientY: ev.pageY,
+      });
     });
   };
 

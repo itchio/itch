@@ -122,8 +122,8 @@ class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
 
     if (props.open && !this.menu.state.isVisible) {
       this.trigger.handleContextClick({
-        clientX: props.data.x,
-        clientY: props.data.y,
+        clientX: props.data.clientX,
+        clientY: props.data.clientY,
         preventDefault: noop,
         stopPropagation: noop,
       });

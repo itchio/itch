@@ -19,14 +19,16 @@ import Context from "../context/index";
 function openMenu(
   store: IStore,
   template: IMenuTemplate,
-  { pageX = null, pageY = null }: IOpenContextMenuBase
+  { clientX = null, clientY = null }: IOpenContextMenuBase
 ) {
   if (template.length === 0) {
     // don't show empty context menus
     return;
   }
 
-  store.dispatch(actions.popupContextMenu({ template, x: pageX, y: pageY }));
+  store.dispatch(
+    actions.popupContextMenu({ template, clientX: clientX, clientY: clientY })
+  );
 }
 
 export default function(watcher: Watcher, db: DB) {
@@ -46,8 +48,8 @@ export default function(watcher: Watcher, db: DB) {
     }
 
     template = concatTemplates(template, closeTabControls(ctx, tab));
-    const { pageX, pageY } = action.payload;
-    openMenu(store, template, { pageX, pageY });
+    const { clientX, clientY } = action.payload;
+    openMenu(store, template, { clientX, clientY });
   });
 
   watcher.on(actions.openGameContextMenu, async (store, action) => {
@@ -55,7 +57,7 @@ export default function(watcher: Watcher, db: DB) {
     const ctx = new Context(store, db);
     const template = gameControls(ctx, game);
 
-    const { pageX, pageY } = action.payload;
-    openMenu(store, template, { pageX, pageY });
+    const { clientX, clientY } = action.payload;
+    openMenu(store, template, { clientX, clientY });
   });
 }

@@ -423,8 +423,8 @@ export interface IAnalyzePagePayload {
 }
 
 export interface IOpenContextMenuBase {
-  pageX?: number;
-  pageY?: number;
+  clientX: number;
+  clientY: number;
 }
 
 export const OPEN_TAB_CONTEXT_MENU = "OPEN_TAB_CONTEXT_MENU";
@@ -441,8 +441,8 @@ export interface IOpenGameContextMenuPayload extends IOpenContextMenuBase {
 
 export const POPUP_CONTEXT_MENU = "POPUP_CONTEXT_MENU";
 export interface IPopupContextMenuPayload {
-  x: number;
-  y: number;
+  clientX: number;
+  clientY: number;
   template: IMenuTemplate;
 }
 

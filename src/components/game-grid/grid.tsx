@@ -60,7 +60,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
         if (game) {
           const caves = getByIds(
             commons.caves,
-            commons.caveIdsByGameId[game.id],
+            commons.caveIdsByGameId[game.id]
           );
           const cave = first(caves);
 
@@ -76,7 +76,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
               rowHeight={rowHeight}
               row={row}
               column={column}
-            />,
+            />
           );
         }
       }
@@ -119,7 +119,11 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
 
   onContextMenu = (ev: React.MouseEvent<HTMLDivElement>) => {
     this.eventToGame(ev, game => {
-      this.props.openGameContextMenu({ game });
+      this.props.openGameContextMenu({
+        game,
+        clientX: ev.clientX,
+        clientY: ev.pageY,
+      });
     });
   };
 

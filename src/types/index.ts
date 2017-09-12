@@ -712,8 +712,8 @@ export interface IUIContextMenuState {
   open: boolean;
   data: {
     template: IMenuTemplate;
-    x: number;
-    y: number;
+    clientX: number;
+    clientY: number;
   };
 }
 

@@ -69,7 +69,7 @@ export class GameBrowserContext extends React.PureComponent<
 
   onContextMenu = (ev: React.MouseEvent<any>) => {
     const { game, openGameContextMenu } = this.props;
-    openGameContextMenu({ game, pageX: ev.pageX, pageY: ev.pageY });
+    openGameContextMenu({ game, clientX: ev.clientX, clientY: ev.pageY });
   };
 }
 

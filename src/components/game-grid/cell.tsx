@@ -57,9 +57,7 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
           gameId={game.id}
         />
         <div className="cell--undercover">
-          <div className="cell--title">
-            {game.title}
-          </div>
+          <div className="cell--title">{game.title}</div>
           <div className="cell--actions">
             <MainAction
               className="cell-main-action"
@@ -82,7 +80,7 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
 
   onMoreClick = (ev: React.MouseEvent<any>) => {
     const { game, openGameContextMenu } = this.props;
-    openGameContextMenu({ game, pageX: ev.pageX, pageY: ev.pageY });
+    openGameContextMenu({ game, clientX: ev.clientX, clientY: ev.pageY });
   };
 }
 
