@@ -21,7 +21,7 @@
     "grid.item.developer": "Twórca",
     "grid.item.downloading": "Pobieranie…",
     "grid.item.finalize_installation": "Sfinalizuj instalację",
-    "grid.item.install": "Instaluj",
+    "grid.item.install": "Zainstaluj",
     "grid.item.installing": "Trwa instalowanie…",
     "grid.item.launch": "Uruchom",
     "grid.item.not_platform_compatible": "Niedostępne na {{platform}}",
