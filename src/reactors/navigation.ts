@@ -10,6 +10,8 @@ import { IRootState } from "../types";
 import { contains } from "underscore";
 
 import rootLogger from "../logger";
+import { Space } from "../helpers/space";
+import { shell } from "electron";
 const logger = rootLogger.child({ name: "reactors/navigation" });
 
 export default function(watcher: Watcher) {
@@ -24,13 +26,20 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.navigate, async (store, action) => {
-    const state = store.getState();
+    const rs = store.getState();
     const { tab, background } = action.payload;
     logger.debug(`Navigating to ${tab} ${background ? "(in background)" : ""}`);
 
-    const { tabData } = state.session;
+    const sp = Space.fromData({ path: tab });
+    if (sp.prefix === "url" && /mailto:/.test(sp.suffix)) {
+      logger.debug(`Is mailto link, opening as external and skipping tab open`);
+      shell.openExternal(sp.suffix);
+      return;
+    }
 
-    const { tabs } = state.session.navigation;
+    const { tabData } = rs.session;
+
+    const { tabs } = rs.session.navigation;
     const constantTabs = new Set(tabs.constant);
     const transientTabs = new Set(tabs.transient);
 
