@@ -6,11 +6,11 @@ export default css`
     min-width: 160px;
     padding: 5px 0;
     margin: 2px 0 0;
-    font-size: 14px;
+    font-size: 13px;
     text-align: left;
-    background-color: ${baseColors.swissCoffee};
+    background-color: ${lighten(0.15, baseColors.swissCoffee)};
     background-clip: padding-box;
-    border: 1px solid ${lighten(0.05, baseColors.swissCoffee)};
+    border: 1px solid ${darken(0.05, baseColors.swissCoffee)};
     box-shadow: 0 0 2px ${darken(0.05, baseColors.swissCoffee)};
     border-radius: 1px;
     outline: none;
@@ -30,7 +30,7 @@ export default css`
     font-weight: 400;
     line-height: 1.5;
     color: ${darken(0.2, baseColors.codGray)};
-    text-shadow: 1px 1px 1px ${baseColors.swissCoffee};
+    text-shadow: 1px 1px 1px ${lighten(0.05, baseColors.swissCoffee)};
     text-align: inherit;
     white-space: nowrap;
     background: 0 0;
@@ -42,10 +42,16 @@ export default css`
     }
   }
 
+  .react-contextmenu-item .accelerator {
+    color: ${lighten(0.4, baseColors.codGray)};
+    float: right;
+    padding-left: 8px;
+  }
+
   .react-contextmenu-item.react-contextmenu-item--active,
   .react-contextmenu-item.react-contextmenu-item--selected {
     cursor: pointer;
-    background-color: ${darken(0.1, baseColors.swissCoffee)};
+    background-color: ${lighten(0.07, baseColors.swissCoffee)};
   }
 
   .react-contextmenu-item.react-contextmenu-item--disabled,
