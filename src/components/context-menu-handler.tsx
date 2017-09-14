@@ -51,7 +51,7 @@ class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
     return (
       <div>
         <ContextMenuTrigger id={menuId} ref={this.gotTrigger}>
-          {null}
+          {""}
         </ContextMenuTrigger>
 
         <ContextMenu
@@ -66,6 +66,34 @@ class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
     );
   }
 
+  formatAccelerator(accelerator: Electron.Accelerator): JSX.Element {
+    if (!accelerator) {
+      return null;
+    }
+
+    const { macos } = this.props;
+    const tokens = accelerator.split("+").map(t => {
+      if (t === "CmdOrCtrl") {
+        return macos ? "⌘" : "Ctrl";
+      } else if (macos) {
+        if (t === "Cmd") {
+          return "⌘";
+        } else if (t === "Shift") {
+          return "⇧";
+        } else if (t === "Ctrl") {
+          return "⌃";
+        } else if (t === "Alt") {
+          return "⌥";
+        }
+      }
+      return t;
+    });
+
+    const output = tokens.join(macos ? "" : "+");
+
+    return <span className="accelerator">{output}</span>;
+  }
+
   renderItems(template: IMenuTemplate): JSX.Element[] {
     return template.map((item, index) => {
       const key = String(index);
@@ -73,6 +101,8 @@ class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
       const divider = item.type === "separator";
       const { enabled = true, id } = item;
       const disabled = !enabled;
+      const accelerator = this.formatAccelerator(item.accelerator);
+
       let onClick: (ev: React.MouseEvent<any>) => void = null;
       if (item.action) {
         onClick = () => {
@@ -94,7 +124,10 @@ class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
             disabled={disabled}
             onClick={onClick}
           >
-            {id ? <span id={id}>{label}</span> : label}
+            <span id={id}>
+              {label}
+              {accelerator}
+            </span>
           </MenuItem>
         );
       }
@@ -154,6 +187,7 @@ class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
 interface IDerivedProps {
   open: boolean;
   data: IUIContextMenuState["data"];
+  macos: boolean;
 
   closeContextMenu: typeof actions.closeContextMenu;
   dispatch: (action: Action<any>) => void;
@@ -163,7 +197,8 @@ export default connect<{}>(ContextMenuHandler, {
   state: createSelector(
     (rs: IRootState) => rs.ui.contextMenu.open,
     (rs: IRootState) => rs.ui.contextMenu.data,
-    (open, data) => ({ open, data })
+    (rs: IRootState) => rs.system.macos,
+    (open, data, macos) => ({ open, data, macos })
   ),
   dispatch: dispatch => ({
     closeContextMenu: dispatcher(dispatch, actions.closeContextMenu),
