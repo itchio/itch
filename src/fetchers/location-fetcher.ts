@@ -1,4 +1,4 @@
-import { Fetcher } from "./types";
+import { Fetcher } from "./fetcher";
 
 export default class LocationFetcher extends Fetcher {
   async work(): Promise<void> {

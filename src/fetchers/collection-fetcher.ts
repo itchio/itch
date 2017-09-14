@@ -1,4 +1,4 @@
-import { Fetcher } from "./types";
+import { Fetcher } from "./fetcher";
 import getByIds from "../helpers/get-by-ids";
 import { indexBy } from "underscore";
 

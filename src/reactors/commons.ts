@@ -9,10 +9,11 @@ import { indexBy, union, pluck } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
 
 import * as actions from "../actions";
-import { throttle, object } from "underscore";
+import { throttle, object, isEqual } from "underscore";
 
 import rootLogger from "../logger";
 import { fromJSONField } from "../db/json-field";
+import { ICommonsUpdatedPayload } from "../constants/action-types";
 const logger = rootLogger.child({ name: "commons" });
 
 const emptyArr = [];
@@ -31,12 +32,10 @@ function updateDownloadKeys(store: IStore, db: DB): IDownloadKeySummary[] {
       .where("ownerId = ?", credentials.me.id)
   );
 
-  store.dispatch(
-    actions.commonsUpdated({
-      downloadKeys: indexBy(downloadKeys, "id"),
-      downloadKeyIdsByGameId: groupIdBy(downloadKeys, "gameId"),
-    })
-  );
+  push(store, {
+    downloadKeys: indexBy(downloadKeys, "id"),
+    downloadKeyIdsByGameId: groupIdBy(downloadKeys, "gameId"),
+  });
 
   logger.debug(`cached ${downloadKeys.length} download keys`);
 
@@ -48,12 +47,10 @@ function updateCaves(store: IStore, db: DB): ICaveSummary[] {
     k.fields(["id", "gameId", "lastTouchedAt", "secondsRun", "installedSize"])
   );
 
-  store.dispatch(
-    actions.commonsUpdated({
-      caves: indexBy(caves, "id"),
-      caveIdsByGameId: groupIdBy(caves, "gameId"),
-    })
-  );
+  push(store, {
+    caves: indexBy(caves, "id"),
+    caveIdsByGameId: groupIdBy(caves, "gameId"),
+  });
 
   logger.debug(`cached ${caves.length} caves`);
 
@@ -75,7 +72,7 @@ function updateMyGameIds(store: IStore, db: DB) {
 
   const myGameIds = fromJSONField(profile.myGameIds, emptyArr);
   const myGameIdsSet = object(myGameIds, myGameIds.map(() => true)) as any;
-  store.dispatch(actions.commonsUpdated({ myGameIdsSet }));
+  push(store, { myGameIdsSet });
 }
 
 function updateLocationSizes(store: IStore, db: DB) {
@@ -92,11 +89,9 @@ function updateLocationSizes(store: IStore, db: DB) {
     locationSizes[os.installLocation] = os.size;
   }
 
-  store.dispatch(
-    actions.commonsUpdated({
-      locationSizes,
-    })
-  );
+  push(store, {
+    locationSizes,
+  });
 }
 
 function updateCommonsNow(store: IStore, db: DB) {
@@ -109,11 +104,9 @@ function updateCommonsNow(store: IStore, db: DB) {
     pluck(caves, "gameId")
   );
 
-  store.dispatch(
-    actions.commonsUpdated({
-      libraryGameIds,
-    })
-  );
+  push(store, {
+    libraryGameIds,
+  });
 
   updateLocationSizes(store, db);
 }
@@ -143,4 +136,20 @@ export default function(watcher: Watcher, db: DB) {
       updateCommons(store, db);
     }
   });
+}
+
+function push(store: IStore, next: ICommonsUpdatedPayload) {
+  const prev = store.getState().commons;
+
+  let hasDifferences = false;
+  for (const k of Object.keys(next)) {
+    if (!isEqual(prev[k], next[k])) {
+      hasDifferences = true;
+      break;
+    }
+  }
+
+  if (hasDifferences) {
+    store.dispatch(actions.commonsUpdated(next));
+  }
 }

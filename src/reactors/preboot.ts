@@ -108,8 +108,8 @@ export default function(watcher: Watcher) {
           };
           testProxy = true;
           store.dispatch(actions.proxySettingsDetected(proxySettings));
-          await applyProxySettings(netSession, proxySettings);
         }
+        await applyProxySettings(netSession, proxySettings);
       } catch (e) {
         logger.warn(
           `Could not detect proxy settings: ${e ? e.message : "unknown error"}`

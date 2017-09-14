@@ -1,4 +1,4 @@
-import { Fetcher } from "./types";
+import { Fetcher } from "./fetcher";
 import * as squel from "squel";
 
 import normalize from "../api/normalize";

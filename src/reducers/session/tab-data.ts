@@ -1,11 +1,11 @@
-import { ITabDataSet, ITabData } from "../../types";
+import { ITabDataSet, ITabData, ITabDataSave } from "../../types";
 import * as actions from "../../actions";
 import reducer from "../reducer";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "reducers/tab-data" });
 
-import { omit } from "underscore";
+import { omit, each } from "underscore";
 
 import staticTabData from "../../constants/static-tab-data";
 
@@ -117,5 +117,32 @@ export default reducer<ITabDataSet>(initialState, on => {
 
   on(actions.logout, (state, action) => {
     return initialState;
+  });
+
+  on(actions.tabsRestored, (state, action) => {
+    const snapshot = action.payload;
+
+    let s = state;
+
+    each(snapshot.items, (tab: ITabDataSave) => {
+      if (typeof tab !== "object") {
+        return;
+      }
+
+      const { id, ...data } = tab;
+      if (!id) {
+        return;
+      }
+
+      s = {
+        ...s,
+        [tab.id]: {
+          ...data,
+          restored: true,
+        },
+      };
+    });
+
+    return s;
   });
 });

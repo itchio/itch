@@ -1,4 +1,4 @@
-import { ITabData, ICredentials } from "../types";
+import { ITabData, ICredentials, Retry, isRetry } from "../types";
 import * as bluebird from "bluebird";
 import { indexBy, pluck } from "underscore";
 
@@ -18,6 +18,7 @@ export enum FetchReason {
   TabReloaded,
   WindowFocused,
   TabParamsChanged,
+  CommonsChanged,
 }
 
 import rootLogger, { Logger } from "../logger";
@@ -41,14 +42,16 @@ export class Fetcher {
   retryCount = 0;
 
   hook(ctx: Context, tabId: string, reason: FetchReason) {
-    this.logger = rootLogger.child({ name: this.constructor.name });
     this.ctx = ctx;
     this.tabId = tabId;
     this.reason = reason;
 
-    this.logger.debug(
-      `fetching ${this.tabName()} because ${FetchReason[reason]}`
-    );
+    const sp = this.space();
+    this.logger = rootLogger.child({
+      name: `${this.constructor.name} :: ${sp.path()}`,
+    });
+
+    this.logger.debug(`fetching (${FetchReason[reason]})`);
   }
 
   tabName(): string {
@@ -69,29 +72,33 @@ export class Fetcher {
       return;
     }
 
-    let shouldRetry = true;
-    while (shouldRetry) {
-      shouldRetry = false;
+    let retriableError: Error;
+    let first = true;
+    while (first || retriableError) {
+      first = false;
+      retriableError = null;
 
       try {
         await this.work();
       } catch (e) {
-        if (e instanceof Retry) {
-          shouldRetry = true;
+        if (isRetry(e)) {
+          retriableError = e;
         } else {
           this.logger.error(`Non-retriable error in work:\n${e.stack}`);
           return;
         }
       }
 
-      if (shouldRetry) {
+      if (retriableError) {
         this.retryCount++;
         if (this.retryCount > 8) {
-          this.logger.error(`Too many retries, giving up`);
+          this.logger.error(
+            `Too many retries, giving up: ${retriableError.stack}`
+          );
           return;
         } else {
           let sleepTime = 100 * Math.pow(2, this.retryCount);
-          this.logger.info(`Sleeping ${sleepTime}ms then retrying...`);
+          this.logger.debug(`${retriableError} (${sleepTime}ms)`);
           await bluebird.delay(sleepTime);
         }
       }
@@ -99,35 +106,17 @@ export class Fetcher {
   }
 
   async withApi<T>(cb: (api: AuthenticatedClient) => Promise<T>): Promise<T> {
-    const { credentials } = this.ctx.store.getState().session;
-    if (!credentials || !credentials.me) {
-      this.debug("missing credentials");
-      throw new Retry();
-    }
-
-    const { key } = credentials;
+    const { key } = this.ensureCredentials();
     const api = client.withKey(key);
     try {
       return await cb(api);
     } catch (e) {
-      this.logger.error(`API error: ${e.stack}`);
       if (isNetworkError(e)) {
-        throw new Retry();
+        this.retry(e.message);
       } else {
+        this.logger.error(`API error: ${e.stack}`);
         throw e;
       }
-    }
-  }
-
-  async doRetry() {
-    this.retryCount++;
-    if (this.retryCount > 8) {
-      throw new Error(`Too many retries, giving up`);
-    } else {
-      let sleepTime = 100 * Math.pow(2, this.retryCount);
-      this.logger.info(`Sleeping ${sleepTime}ms then retrying...`);
-      await bluebird.delay(sleepTime);
-      await this.run();
     }
   }
 
@@ -174,8 +163,7 @@ export class Fetcher {
   ensureCredentials(): ICredentials {
     const { credentials } = this.ctx.store.getState().session;
     if (!credentials || !credentials.me) {
-      this.debug(`missing credentials`);
-      throw new Retry();
+      this.retry("missing credentials");
     }
 
     return credentials;
@@ -233,10 +221,4 @@ interface IPushGamesOpts {
 
 interface IPushAllGameOpts {
   totalCount?: number;
-}
-
-export class Retry extends Error {
-  constructor(detail = "no details") {
-    super(`Retry: ${detail}`);
-  }
 }

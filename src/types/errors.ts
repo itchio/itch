@@ -1,6 +1,10 @@
-type ItchErrorCode = "ITCH_ECRASH" | "ITCH_ECANCELLED" | "ITCH_EMISSINGLIBS";
+type ItchErrorCode =
+  | "ITCH_ECRASH"
+  | "ITCH_ECANCELLED"
+  | "ITCH_EMISSINGLIBS"
+  | "ITCH_ERETRY";
 
-class ItchError extends Error {
+export class ItchError extends Error {
   constructor(public code: ItchErrorCode) {
     super();
   }
@@ -80,4 +84,20 @@ export class Cancelled extends ItchError {
 export function isCancelled(e: any): boolean {
   let ie = e as ItchError;
   return ie && ie.code === "ITCH_ECANCELLED";
+}
+
+export class Retry extends ItchError {
+  constructor(detail: string) {
+    super("ITCH_ERETRY");
+    this.message = `Retry: ${detail}`;
+  }
+
+  toString() {
+    return this.message;
+  }
+}
+
+export function isRetry(e: any): boolean {
+  let ie = e as ItchError;
+  return ie && ie.code === "ITCH_ERETRY";
 }

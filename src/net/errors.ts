@@ -13,7 +13,7 @@ export function isNetworkError(e: Error) {
 
 export class RequestError extends Error {
   constructor(message: string) {
-    super("net::REQUEST_ERROR::" + message);
+    super(message.indexOf("net::") == 0 ? message : "net::REQUEST_ERROR::");
   }
 }
 

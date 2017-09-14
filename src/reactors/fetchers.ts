@@ -4,7 +4,7 @@ const logger = rootLogger.child({ name: "fetchers" });
 
 import * as actions from "../actions";
 
-import { Fetcher, FetchReason } from "../fetchers/types";
+import { Fetcher, FetchReason } from "../fetchers/fetcher";
 import { IStore } from "../types";
 import DashboardFetcher from "../fetchers/dashboard-fetcher";
 import CollectionsFetcher from "../fetchers/collections-fetcher";
@@ -40,9 +40,6 @@ export async function queueFetch(
   reason: FetchReason
 ) {
   if (fetching[tab]) {
-    logger.debug(
-      `for ${tab}, queueing next fetch reason ${FetchReason[reason]}`
-    );
     nextFetchReason[tab] = reason;
     return;
   }
@@ -75,7 +72,6 @@ export async function queueFetch(
       const nextReason = nextFetchReason[tab];
       if (nextReason) {
         delete nextFetchReason[tab];
-        logger.debug(`now doing nextReason ${nextReason}`);
         queueFetch(store, db, tab, nextReason).catch(err => {
           logger.error(`In queued fetcher: ${err.stack}`);
         });
@@ -142,7 +138,7 @@ export default function(watcher: Watcher, db: DB) {
 
   watcher.on(actions.commonsUpdated, async (store, action) => {
     const currentTab = store.getState().session.navigation.tab;
-    queueFetch(store, db, currentTab, FetchReason.WindowFocused);
+    queueFetch(store, db, currentTab, FetchReason.CommonsChanged);
   });
 
   const watchedPreferences = [

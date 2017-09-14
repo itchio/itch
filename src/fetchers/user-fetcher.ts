@@ -1,4 +1,4 @@
-import { Fetcher } from "./types";
+import { Fetcher } from "./fetcher";
 
 import db from "../db";
 

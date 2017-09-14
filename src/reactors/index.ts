@@ -23,6 +23,7 @@ import contextMenu from "./context-menu";
 import rememberedSessions from "./remembered-sessions";
 import session from "./session";
 import navigation from "./navigation";
+import tabSave from "./tab-save";
 import commons from "./commons";
 import purchases from "./purchases";
 import url from "./url";
@@ -66,6 +67,7 @@ export default function getWatcher(db: DB) {
   rememberedSessions(watcher);
   session(watcher);
   navigation(watcher);
+  tabSave(watcher, db);
   commons(watcher, db);
   purchases(watcher);
   url(watcher);

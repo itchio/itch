@@ -1,4 +1,4 @@
-import { Fetcher } from "./types";
+import { Fetcher } from "./fetcher";
 
 import normalize from "../api/normalize";
 import { collection, arrayOf } from "../api/schemas";

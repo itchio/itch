@@ -4,10 +4,9 @@ import { Watcher } from "./watcher";
 import staticTabData from "../constants/static-tab-data";
 
 import { createSelector } from "reselect";
+import { contains } from "underscore";
 
 import { IRootState } from "../types";
-
-import { contains } from "underscore";
 
 import rootLogger from "../logger";
 import { Space } from "../helpers/space";
@@ -160,6 +159,16 @@ export default function(watcher: Watcher) {
       createSelector(
         (rs: IRootState) => rs.session.navigation.tab,
         tab => schedule.dispatch(actions.tabChanged({ tab }))
+      ),
+  });
+
+  watcher.onStateChange({
+    makeSelector: (store, schedule) =>
+      createSelector(
+        (rs: IRootState) => rs.session.navigation.tabs,
+        (rs: IRootState) => rs.session.tabData,
+        (rs: IRootState) => rs.session.navigation.tab,
+        (tabs, tabData, tab) => schedule.dispatch(actions.tabsChanged({}))
       ),
   });
 }
