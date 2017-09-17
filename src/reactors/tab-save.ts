@@ -13,6 +13,9 @@ const eo: any = {};
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.tabsChanged, async (store, action) => {
     const { navigation, tabData, credentials } = store.getState().session;
+    if (!credentials) {
+      return;
+    }
     const { tab, tabs } = navigation;
     const meId = credentials.me.id;
     const items: ITabDataSave[] = map(tabs.transient, id => {
@@ -30,6 +33,9 @@ export default function(watcher: Watcher, db: DB) {
 
   watcher.on(actions.loginSucceeded, async (store, action) => {
     const { credentials } = store.getState().session;
+    if (!credentials) {
+      return;
+    }
     const meId = credentials.me.id;
 
     const profile = db.profiles.findOneById(meId);
