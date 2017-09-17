@@ -4,20 +4,19 @@ import { createStructuredSelector } from "reselect";
 
 import * as actions from "../actions";
 
-import { formatString } from "./format";
+import format from "./format";
 
 import { IRootState, TabLayout } from "../types";
 import { dispatcher } from "../constants/action-types";
 
-import Select = require("react-select");
 import Icon from "./basics/icon";
 import Filler from "./basics/filler";
 
 import styled, * as styles from "./styles";
 import { css } from "./styles";
-import { injectIntl, InjectedIntl } from "react-intl";
 import { FiltersContainer } from "./filters-container";
 import Link from "./basics/link";
+import Criterion from "./basics/criterion";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
@@ -32,55 +31,9 @@ const TagFilters = styled.section`
   flex-direction: row;
   align-items: center;
 
-  .Select {
-    width: 100%;
-    max-width: 500px;
-    font-size: 14px;
-
-    &.Select--multi {
-      .Select-value {
-        background-color: rgba(97, 97, 97, 0.7);
-        color: #d8d8d8;
-
-        &,
-        .Select-value-icon {
-          border-color: transparent;
-        }
-
-        .Select-value-label {
-          font-size: 14px;
-          line-height: 1.6;
-        }
-
-        .Select-value-icon {
-          font-size: 18px;
-          padding: 1px 3px 0px 5px;
-
-          &:hover,
-          &:focus {
-            color: white;
-            background-color: rgba(97, 97, 97, 0.5);
-          }
-        }
-      }
-
-      .Select-input input {
-        color: white;
-        margin-top: 5px;
-      }
-
-      .Select-control {
-        height: 40px;
-
-        background: none !important;
-        border: none !important;
-        box-shadow: none !important;
-
-        .Select-placeholder {
-          line-height: 40px;
-        }
-      }
-    }
+  .spacer {
+    width: 10px;
+    height: 1;
   }
 `;
 
@@ -103,85 +56,45 @@ const LayoutPicker = styled.section`
 
 class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const {
-      onlyCompatible,
-      onlyOwned,
-      onlyInstalled,
-      showBinaryFilters = true,
-      showLayoutPicker = true,
-      intl,
-    } = this.props;
-
-    const compatibleOption = {
-      value: "onlyCompatibleGames",
-      label: formatString(intl, ["grid.filters.options.compatible"]),
-    };
-
-    const ownedOption = {
-      value: "onlyOwnedGames",
-      label: formatString(intl, ["grid.filters.options.owned"]),
-    };
-
-    const installedOption = {
-      value: "onlyInstalledGames",
-      label: formatString(intl, ["grid.filters.options.installed"]),
-    };
-
-    const options = [compatibleOption, ownedOption, installedOption];
-
-    const value = [];
-    if (onlyCompatible) {
-      value.push(compatibleOption);
-    }
-    if (onlyOwned) {
-      value.push(ownedOption);
-    }
-    if (onlyInstalled) {
-      value.push(installedOption);
-    }
+    const { showBinaryFilters = true, showLayoutPicker = true } = this.props;
 
     return (
       <FiltersContainer>
         {showBinaryFilters ? (
           <TagFilters>
-            <Select
-              className="game-filters-input"
-              multi={true}
-              options={options}
-              value={value}
-              autoBlur={true}
-              noResultsText={formatString(intl, [
-                "grid.filters.options.no_results",
-              ])}
-              onChange={(vals: { value: string }[]) => {
-                const prefs = {
-                  onlyCompatibleGames: false,
-                  onlyInstalledGames: false,
-                  onlyOwnedGames: false,
-                } as {
-                  [key: string]: boolean;
-                };
+            {format(["grid.criterion.filter_by"])}
+            <div className="spacer" />
+            {this.renderCriterion(
+              "onlyCompatibleGames",
+              format(["grid.filters.options.compatible"])
+            )}
+            {this.renderCriterion(
+              "onlyOwnedGames",
+              format(["grid.filters.options.owned"])
+            )}
+            {this.renderCriterion(
+              "onlyInstalledGames",
+              format(["grid.filters.options.installed"])
+            )}
+            <div className="spacer" />
 
-                for (const val of vals) {
-                  prefs[val.value] = true;
-                }
-                this.props.updatePreferences(prefs);
-              }}
-              placeholder={formatString(intl, ["grid.criterion.filter"])}
-            />
-            <Link
-              className="game-filters--clear"
-              onClick={() => {
-                const prefs = {
-                  onlyCompatibleGames: false,
-                  onlyInstalledGames: false,
-                  onlyOwnedGames: false,
-                };
-                this.props.updatePreferences(prefs);
-              }}
-            >
-              Clear filters
-            </Link>
+            {this.props.onlyCompatibleGames ||
+            this.props.onlyOwnedGames ||
+            this.props.onlyInstalledGames ? (
+              <Link
+                className="game-filters--clear"
+                onClick={() => {
+                  const prefs = {
+                    onlyCompatibleGames: false,
+                    onlyInstalledGames: false,
+                    onlyOwnedGames: false,
+                  };
+                  this.props.updatePreferences(prefs);
+                }}
+              >
+                {format(["grid.clear_filters"])}
+              </Link>
+            ) : null}
           </TagFilters>
         ) : null}
 
@@ -189,6 +102,16 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
         <Filler />
         {showLayoutPicker ? this.renderLayoutPickers() : null}
       </FiltersContainer>
+    );
+  }
+
+  renderCriterion(key: string, label: string | JSX.Element) {
+    return (
+      <Criterion
+        label={label}
+        checked={this.props[key]}
+        onChange={checked => this.props.updatePreferences({ [key]: checked })}
+      />
     );
   }
 
@@ -228,22 +151,21 @@ interface IProps {
 
 interface IDerivedProps {
   layout: TabLayout;
-  onlyCompatible: boolean;
-  onlyOwned: boolean;
-  onlyInstalled: boolean;
+  onlyCompatibleGames: boolean;
+  onlyOwnedGames: boolean;
+  onlyInstalledGames: boolean;
 
   updatePreferences: typeof actions.updatePreferences;
-
-  intl: InjectedIntl;
 }
 
-export default connect<IProps>(injectIntl(GameFilters), {
+export default connect<IProps>(GameFilters, {
   state: (initialState, props) => {
     return createStructuredSelector({
       layout: (rs: IRootState) => rs.preferences.layout,
-      onlyCompatible: (rs: IRootState) => rs.preferences.onlyCompatibleGames,
-      onlyOwned: (rs: IRootState) => rs.preferences.onlyOwnedGames,
-      onlyInstalled: (rs: IRootState) => rs.preferences.onlyInstalledGames,
+      onlyCompatibleGames: (rs: IRootState) =>
+        rs.preferences.onlyCompatibleGames,
+      onlyOwnedGames: (rs: IRootState) => rs.preferences.onlyOwnedGames,
+      onlyInstalledGames: (rs: IRootState) => rs.preferences.onlyInstalledGames,
     });
   },
   dispatch: dispatch => ({
