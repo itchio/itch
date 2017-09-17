@@ -39,6 +39,7 @@
     "game.install.visit_web_page": "Visit web page",
     "grid.criterion.search": "Search...",
     "grid.criterion.filter": "Filter...",
+    "grid.criterion.filter_by": "Filter by: ",
     "grid.criterion.only_compatible": "Only compatible",
     "grid.filters.options.compatible": "Compatible",
     "grid.filters.options.installed": "Installed",
