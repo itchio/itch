@@ -449,5 +449,6 @@
     "table.column.installed_size": "Размер",
     "preferences.install_location.navigate": "Преглед на съдържанието на това местоположение в нов раздел",
     "install_location.property.size_on_disk": "{{size}} на диска",
-    "grid.item.uninstall_request": "Деинсталиране или преинсталиране…"
+    "grid.item.uninstall_request": "Деинсталиране или преинсталиране…",
+    "grid.criterion.filter_by": "Филтриране по: "
 }

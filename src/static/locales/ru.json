@@ -464,5 +464,6 @@
     "table.column.installed_size": "Размер",
     "preferences.install_location.navigate": "Показать содержимое папки в новой закладке",
     "install_location.property.size_on_disk": "{{size}} на диске",
-    "grid.item.uninstall_request": "Удалить или переустановить…"
+    "grid.item.uninstall_request": "Удалить или переустановить…",
+    "grid.criterion.filter_by": "Фильтр: "
 }
