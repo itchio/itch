@@ -50,7 +50,7 @@ export default class LibraryFetcher extends Fetcher {
       addSortAndFilterToQuery(
         k,
         squel.expr().and("games.id in ?", libraryGameIds),
-        this.tabId,
+        this.tab,
         store
       );
 

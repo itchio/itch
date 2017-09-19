@@ -4,7 +4,7 @@ import { indexBy, pluck } from "underscore";
 
 import * as actions from "../actions";
 
-import client, { AuthenticatedClient } from "../api";
+import defaultApiClient, { AuthenticatedClient, Client } from "../api";
 import { isNetworkError } from "../net/errors";
 
 import { sortAndFilter } from "./sort-and-filter";
@@ -24,6 +24,10 @@ export enum FetchReason {
 import rootLogger, { Logger } from "../logger";
 import { Space } from "../helpers/space";
 
+interface OptionalFetcherParams {
+  apiClient?: Client;
+}
+
 /**
  * Fetches all the data a tab needs to display, except webviews.
  * This can be games, users, etc.
@@ -32,19 +36,26 @@ import { Space } from "../helpers/space";
  */
 export class Fetcher {
   ctx: Context;
-  tabId: string;
+  tab: string;
   reason: FetchReason;
   aborted = false;
 
   startedAt: number;
   logger?: Logger;
+  apiClient: Client;
 
   retryCount = 0;
 
-  hook(ctx: Context, tabId: string, reason: FetchReason) {
+  hook(
+    ctx: Context,
+    tab: string,
+    reason: FetchReason,
+    params: OptionalFetcherParams = {}
+  ) {
     this.ctx = ctx;
-    this.tabId = tabId;
+    this.tab = tab;
     this.reason = reason;
+    this.apiClient = params.apiClient || defaultApiClient;
 
     const sp = this.space();
     this.logger = rootLogger.child({
@@ -107,7 +118,7 @@ export class Fetcher {
 
   async withApi<T>(cb: (api: AuthenticatedClient) => Promise<T>): Promise<T> {
     const { key } = this.ensureCredentials();
-    const api = client.withKey(key);
+    const api = this.apiClient.withKey(key);
     try {
       return await cb(api);
     } catch (e) {
@@ -136,10 +147,11 @@ export class Fetcher {
       return;
     }
 
-    const action = actions.tabDataFetched({
-      tab: this.tabId,
+    const payload = {
+      tab: this.tab,
       data,
-    });
+    };
+    const action = actions.tabDataFetched(payload);
     this.ctx.store.dispatch(action);
   }
 
@@ -172,7 +184,7 @@ export class Fetcher {
   private _space: Space;
   space(): Space {
     if (!this._space) {
-      this._space = Space.fromStore(this.ctx.store, this.tabId);
+      this._space = Space.fromStore(this.ctx.store, this.tab);
     }
     return this._space;
   }
@@ -209,7 +221,7 @@ export class Fetcher {
   }
 
   sortAndFilter(input: IGame[]): IGame[] {
-    return sortAndFilter(input, this.tabId, this.ctx.store);
+    return sortAndFilter(input, this.tab, this.ctx.store);
   }
 }
 

@@ -35,7 +35,7 @@ export default class DashboardFetcher extends Fetcher {
       addSortAndFilterToQuery(
         k,
         squel.expr().and("games.id in ?", myGameIds),
-        this.tabId,
+        this.tab,
         store
       );
 

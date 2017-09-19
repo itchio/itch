@@ -113,7 +113,7 @@
             "request": "launch",
             "program": "${workspaceRoot}/src/main.js",
             "stopOnEntry": false,
-            "args": ["--run-unit-tests", "--thorough"],
+            "args": ["--run-unit-tests"],
             "cwd": "${workspaceRoot}",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "runtimeArgs": [

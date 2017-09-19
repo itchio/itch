@@ -6,11 +6,6 @@ let hangAround = false;
 require("../logger").default.setLevel("silent");
 
 function exit(exitCode) {
-  if (process.env.ITCH_DONT_EXIT === "1") {
-    console.log(`Should exit with code ${exitCode}, but asked not to`);
-    return;
-  }
-
   if (watching) {
     console.log(`Watching, so not exiting`);
     return;
@@ -91,7 +86,7 @@ function printDurations(input: IDuration[], legend: string) {
 
   unprinted = sortBy(unprinted, "duration").reverse();
   if (unprinted.length > 0) {
-    console.log(chalk.blue(`${format(unprinted[0])}`));
+    console.log("[    ok    ] " + chalk.blue(`${format(unprinted[0])}`));
   }
 }
 
@@ -152,7 +147,7 @@ app.on("ready", async () => {
     }
 
     if (state === 2) {
-      specifiedFiles = [arg.replace(/.*src\//, "")];
+      specifiedFiles = [arg.replace(/\\/g, "/").replace(/.*src\//, "")];
       console.log(
         `Unit test runner only running ${JSON.stringify(specifiedFiles)}`
       );
@@ -171,12 +166,24 @@ app.on("ready", async () => {
   const invoke = async () => {
     const tape = require("tape");
     const zopf = require("zopf");
+    const env = require("../env").default;
+    env.unitTests = true;
 
     const nodeModulesPath = path.resolve(__dirname, "..", "..", "node_modules");
     const srcPath = path.resolve(__dirname, "..", "..");
 
     const through = require("through");
     let lastTest = "";
+
+    const formatLine = (line: string) => {
+      return line
+        .trim()
+        .replace(/^at\s+/, "")
+        .replace(nodeModulesPath, "@")
+        .replace(srcPath, ".")
+        .replace(/\\/g, "/")
+        .replace(/@\//g, "@");
+    };
 
     const printStack = (stack: string, message: string) => {
       const lines = stack.split(/\r?\n/);
@@ -186,24 +193,41 @@ app.on("ready", async () => {
       const formattedLines = [];
       formattedLines.push(chalk.red(header));
 
-      for (const line of lines) {
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
         if (/From previous/.test(line)) {
           formattedLines.push(`  ${line}`);
           continue;
         }
 
-        let formattedLine = line
-          .trim()
-          .replace(/^at\s+/, "")
-          .replace(nodeModulesPath, "@")
-          .replace(srcPath, ".")
-          .replace(/\\/g, "/")
-          .replace(/@\//g, "@");
+        let formattedLine = formatLine(line);
         if (/\.\/src|\.ts/.test(formattedLine)) {
+          console.log("formattedLine: ", formattedLine);
           if (!firstLine) {
-            const matches = /\((.+)\)/.exec(formattedLine);
-            if (matches) {
-              firstLine = chalk.red(`✘ ${matches[1]}: ${message}`);
+            // this matches all .ts and .tsx files in `./src` (which we get
+            // even on windows because of `formatLine`) in the format:
+            // `./src/fetchers/game-fetcher/spec.ts:85:9`
+            const matches = /(\.\/src.+\.tsx?:[0-9]+:[0-9]+)/.exec(
+              formattedLine
+            );
+            if (matches && /\.spec\.ts/.test(matches[1])) {
+              let location = matches[1];
+              let fileName = location.split(":")[0];
+              if (i + 1 < lines.length) {
+                let nextFormattedLine = formatLine(lines[i + 1]);
+                // has same file name, doesn't have parentheses
+                if (
+                  nextFormattedLine.indexOf(fileName) !== -1 &&
+                  nextFormattedLine.indexOf("(") === -1
+                ) {
+                  // sometimes bluebird generates stack traces with something like:
+                  //   → runGameFetcher (./src/fetchers/game-fetcher.spec.ts:45:42)
+                  //   → ./src/fetchers/game-fetcher.spec.ts:29:13
+                  // in that case, the first line/column pair is wrong, the second one is right
+                  location = nextFormattedLine;
+                }
+              }
+              firstLine = chalk.red(`✘ ${location}: ${message}`);
             }
           }
           formattedLines.push(chalk.blue("    → " + formattedLine));
@@ -211,7 +235,6 @@ app.on("ready", async () => {
         } else {
           if (!skipping) {
             skipping = true;
-            // formattedLines.push(chalk.grey("    → " + formattedLine));
             formattedLines.push("      ...");
           }
         }
@@ -233,18 +256,32 @@ app.on("ready", async () => {
       if (data.type === "assert") {
         if (!data.ok) {
           // TODO: re-handle data.at
-          const stack =
-            data.operator === "error"
-              ? data.actual.stack
-              : data.error ? data.error.stack : [];
+          let stack;
+          if (data.operator === "error") {
+            stack = data.actual.stack;
+          } else if (data.operator === "fail") {
+            stack = data.name.stack;
+          } else if (data.error) {
+            stack = data.error.stack;
+          } else {
+            stack = [];
+          }
 
           let singleLineMessage = ``;
           if (data.operator !== "error") {
             singleLineMessage += chalk.red(`${data.name} (${data.operator})`);
-            singleLineMessage += ": wanted ";
-            singleLineMessage += chalk.blue(`${JSON.stringify(data.expected)}`);
-            singleLineMessage += ", got ";
-            singleLineMessage += chalk.blue(`${JSON.stringify(data.actual)}`);
+
+            if (
+              typeof data.expected !== "undefined" ||
+              typeof data.actual !== "undefined"
+            ) {
+              singleLineMessage += ": wanted ";
+              singleLineMessage += chalk.blue(
+                `${JSON.stringify(data.expected)}`
+              );
+              singleLineMessage += ", got ";
+              singleLineMessage += chalk.blue(`${JSON.stringify(data.actual)}`);
+            }
           }
           printStack(stack, singleLineMessage);
 
@@ -313,6 +350,16 @@ app.on("ready", async () => {
         // print text-lcov report to coverage.lcov file
         tree.visit(reports.create("lcov"), context);
 
+        let finishedCoverageAt = Date.now();
+        console.log(
+          `coverage took ${(finishedCoverageAt - finishedAt).toFixed(2)}ms`
+        );
+
+        if (harness._exitCode === 0) {
+          console.log(chalk.green("[ OK ]"));
+        } else {
+          console.log(chalk.red("[FAIL]"));
+        }
         resolve(harness._exitCode);
       });
     });
@@ -353,6 +400,7 @@ app.on("ready", async () => {
           console.log("Hanging around...");
         } else {
           exit(exitCode);
+          return;
         }
       }
       await bluebird.delay(250);

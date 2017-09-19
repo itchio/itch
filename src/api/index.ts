@@ -74,7 +74,7 @@ export class Client {
 
   /**
    * Make a `method` http request to `path`, passing `data` as parameters (GET, POST body, etc.)
-   * `transformers` contain functions that change the result. Before transformers are run
+   * `transformers` contaie functions that change the result. Before transformers are run
    * the response is camelified.
    */
   async request(

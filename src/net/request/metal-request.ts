@@ -13,6 +13,8 @@ import {
   RequestParsingFailure,
 } from "../errors";
 
+import env from "../../env";
+
 import { net } from "electron";
 import { Readable } from "stream";
 
@@ -27,6 +29,9 @@ export async function request(
   opts: IRequestOpts = {}
 ): Promise<IResponse> {
   let url = uri;
+  if (env.unitTests) {
+    throw new Error(`refusing to do API request in unit test`);
+  }
 
   if (method === "get") {
     const query = querystring.stringify(data);

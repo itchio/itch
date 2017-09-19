@@ -8,4 +8,5 @@ export default {
     (isDev ? "development" : "production"),
   channel: isCanary ? "canary" : "stable",
   appName: isCanary ? "kitch" : "itch",
+  unitTests: false,
 };
