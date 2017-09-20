@@ -19,14 +19,11 @@ import Icon from "../basics/icon";
 import IconButton from "../basics/icon-button";
 import Filler from "../basics/filler";
 
-import { stripUnit, darken } from "polished";
+import { stripUnit } from "polished";
 import styled from "../styles";
 
 import format from "../format";
-import {
-  hasSearchResults,
-  excludeIncompatibleSearchResults,
-} from "../../reactors/search/search-helpers";
+import { hasSearchResults } from "../../reactors/search/search-helpers";
 import LoadingCircle from "../basics/loading-circle";
 import { filtersContainerHeight } from "../filters-container";
 
