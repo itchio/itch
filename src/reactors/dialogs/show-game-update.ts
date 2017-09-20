@@ -39,7 +39,7 @@ export default function(watcher: Watcher) {
     }
 
     dialogButtons.push({
-      icon: "rocket",
+      icon: "play",
       label: ["pick_update_upload.buttons.just_launch"],
       action: actions.queueGame({ game }),
       className: "secondary",

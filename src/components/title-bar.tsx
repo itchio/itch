@@ -8,7 +8,7 @@ import { IRootState, ITabData } from "../types";
 import { dispatcher } from "../constants/action-types";
 import * as actions from "../actions";
 
-import { FiltersContainer } from "./filters-container";
+import { FiltersContainer, filtersContainerHeight } from "./filters-container";
 import IconButton from "./basics/icon-button";
 
 import env from "../env";
@@ -17,6 +17,10 @@ import styled, * as styles from "./styles";
 
 import format from "./format";
 import { Space } from "../helpers/space";
+
+const TitleFiltersContainer = styled(FiltersContainer)`
+  max-height: ${filtersContainerHeight}px;
+`;
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
@@ -59,7 +63,7 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     return (
-      <FiltersContainer className="title-bar">
+      <TitleFiltersContainer className="title-bar">
         <DraggableDiv className={classNames({ dimmed: !focused })}>
           <DraggableDivInner>
             <TitleDiv className="title-bar-text">{format(label)}</TitleDiv>
@@ -76,7 +80,7 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
           onClick={this.maximizeRestoreClick}
         />
         <IconButton icon="remove" onClick={this.closeClick} />
-      </FiltersContainer>
+      </TitleFiltersContainer>
     );
   }
 

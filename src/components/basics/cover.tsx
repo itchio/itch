@@ -1,18 +1,22 @@
 import * as React from "react";
-import styled, * as styles from "../styles";
+import styled from "../styles";
 
 import GifMarker from "./gif-marker";
 import { IHoverProps } from "./hover-hoc";
 
 import RandomSvg from "./random-svg";
 import LoadingCircle from "./loading-circle";
+import * as classNames from "classnames";
 
 const CoverDiv = styled.div`
-  ${styles.defaultCoverBackground()};
-
   position: relative;
   padding-bottom: 79%;
   overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.05);
+
+  &.square {
+    padding-bottom: 100%;
+  }
 
   &:hover {
     cursor: pointer;
@@ -76,6 +80,8 @@ class Cover extends React.PureComponent<IProps, IState> {
       hover,
       gameId,
       ribbon,
+      square,
+      className,
       ...restProps,
     } = this.props;
 
@@ -96,19 +102,21 @@ class Cover extends React.PureComponent<IProps, IState> {
     }
 
     return (
-      <CoverDiv {...restProps}>
+      <CoverDiv {...restProps} className={classNames(className, { square })}>
         {gif && showGifMarker ? <GifMarker /> : null}
         {ribbon ? <Ribbon /> : null}
-        {url
-          ? <StyledImage
-              src={url}
-              onLoadStart={this.onLoadStart}
-              onLoadEnd={this.onLoadEnd}
-            />
-          : <RandomSvg seed={gameId} />}
-        {hover && this.state.loading
-          ? <GifMarker label={<LoadingCircle progress={0.3} bare />} />
-          : null}
+        {url ? (
+          <StyledImage
+            src={url}
+            onLoadStart={this.onLoadStart}
+            onLoadEnd={this.onLoadEnd}
+          />
+        ) : (
+          <RandomSvg seed={gameId} />
+        )}
+        {hover && this.state.loading ? (
+          <GifMarker label={<LoadingCircle progress={0.3} bare />} />
+        ) : null}
       </CoverDiv>
     );
   }
@@ -135,6 +143,7 @@ export interface IProps extends IHoverProps {
   className?: string;
   gameId: number;
   ribbon?: boolean;
+  square?: boolean;
 }
 
 export default Cover;

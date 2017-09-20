@@ -935,6 +935,7 @@ export const SEARCH_HIGHLIGHT_OFFSET = "SEARCH_HIGHLIGHT_OFFSET";
 export interface ISearchHighlightOffsetPayload {
   /** search highlight offset */
   offset: number;
+  relative: boolean;
 }
 
 /** Data retrieval */

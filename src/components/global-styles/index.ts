@@ -3,7 +3,6 @@ import base from "./base";
 import scroll from "./scroll";
 import hint from "./hint";
 import modal from "./modal";
-import contextMenu from "./context-menu";
 
 import { injectGlobal } from "../styles";
 
@@ -14,6 +13,5 @@ export function inject() {
     ${scroll}
     ${hint}
     ${modal}
-    ${contextMenu}
   `;
 }

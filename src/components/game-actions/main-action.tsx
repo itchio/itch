@@ -74,7 +74,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
         if (action === "open") {
           icon = "folder-open";
         } else {
-          icon = "rocket";
+          icon = "play";
         }
         primary = true;
       }

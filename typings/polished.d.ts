@@ -3,6 +3,7 @@ interface PolishedStatic {
 
   lighten(amount: number, color: string): string;
   darken(amount: number, color: string): string;
+  transparentize(amount: number, color: string): string;
 }
 
 /**

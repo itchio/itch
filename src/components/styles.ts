@@ -1,4 +1,4 @@
-import { darken, lighten } from "polished";
+import { darken, lighten, transparentize } from "polished";
 
 // colors
 
@@ -66,7 +66,7 @@ export const colors = {
 
   sidebarBackground: darken(0.02, baseColors.codGray),
   sidebarBorder: baseColors.lightMineShaft,
-  sidebarEntryFocusedBackground: lighten(0.1, baseColors.codGray),
+  sidebarEntryFocusedBackground: lighten(0.05, baseColors.codGray),
 
   dropdownBackground: lighten(0.15, baseColors.codGray),
 
@@ -89,6 +89,9 @@ export const colors = {
   tooltipText: baseColors.codGray,
 
   prefBorder: baseColors.zambezi,
+
+  priceNormal: "#70f1c9",
+  priceSale: "#ffd700",
 };
 
 export const fontSizes = {
@@ -108,13 +111,14 @@ export const borderRadii = {
 };
 
 export const widths = {
-  searchSidebar: "400px",
+  searchSidebar: "500px",
   handle: "8px",
   gridItem: "235px",
 };
 
 export const theme = {
   ...colors,
+  baseColors,
   fontSizes,
   borderRadii,
   widths,
@@ -418,4 +422,10 @@ export const prefChunk = () => css`
 
 export const prefChunkActive = () => css`
   border-left: 3px solid ${props => props.theme.accent};
+`;
+
+export const metaColors = (color: string) => css`
+  border: 1px solid ${transparentize(0.2, color)};
+  background: ${transparentize(0.8, color)};
+  color: ${color};
 `;

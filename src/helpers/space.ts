@@ -154,7 +154,7 @@ export class Space {
 // maps tab prefixes to icomoon icons
 let iconForPrefix: { [key: string]: string } = {
   featured: "itchio",
-  dashboard: "rocket",
+  dashboard: "archive",
   library: "heart-filled",
   preferences: "cog",
   downloads: "download",

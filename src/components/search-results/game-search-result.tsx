@@ -1,33 +1,82 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import GenericSearchResult, {
-  searchResultStyle,
-} from "./generic-search-result";
+import GenericSearchResult from "./generic-search-result";
 
 import isPlatformCompatible from "../../util/is-platform-compatible";
-import { formatPrice } from "../../format";
+import { formatPrice, applySale } from "../../format";
 
 import { IGame } from "../../db/models/game";
 import { fromJSONField } from "../../db/json-field";
 
-import PlatformIcons from "../basics/platform-icons";
+import Hoverable from "../basics/hover-hoc";
 import Filler from "../basics/filler";
+import Cover from "../basics/cover";
+const HoverCover = Hoverable(Cover);
 
 import styled, * as styles from "../styles";
 import * as actions from "../../actions";
+import PlatformIcons from "../basics/platform-icons";
+import { connect } from "../connect";
+import { dispatcher } from "../../constants/action-types";
 
-const GameSearchResultDiv = styled.div`${searchResultStyle};`;
+const StyledPlatformIcons = styled(PlatformIcons)`
+  -webkit-filter: brightness(90%);
 
-const Platforms = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  .icon {
+    text-shadow: 1px 1px 1px #000000;
+  }
 `;
 
-const StyledPlatformIcons = styled(PlatformIcons)`margin-right: 16px;`;
+const GameSearchResultDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 10px 20px;
+  margin: 6px 0;
+  box-shadow: 0 0 8px rgba(40, 40, 40, 0.3);
+  flex-shrink: 0;
+
+  border-left: 2px solid transparent;
+  background-color: ${props => props.theme.sidebarEntryFocusedBackground};
+
+  margin-right: 10px;
+  border-radius: 0 4px 4px 0;
+
+  &.chosen {
+    border-color: ${props => props.theme.accent};
+    cursor: pointer;
+  }
+
+  .vertical-section {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+
+    &.title {
+      align-items: center;
+    }
+
+    &.rest {
+      margin: 6px 0;
+    }
+  }
+
+  .cover-container {
+    flex-shrink: 0;
+    width: ${80 * 1.0}px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+    .cover {
+      width: 100%;
+    }
+  }
+`;
 
 const TitleBlock = styled.div`
-  padding: 8px 12px;
+  padding: 0 12px;
   flex-grow: 1;
 
   display: flex;
@@ -35,42 +84,58 @@ const TitleBlock = styled.div`
   align-items: start;
 `;
 
-const Title = styled.div`${styles.singleLine()};`;
+const ShortText = styled.div`
+  margin-bottom: 6px;
+  line-height: 1.6;
+  color: ${props => props.theme.secondaryText};
+`;
+
+const Title = styled.div`
+  ${styles.singleLine()};
+
+  font-size: ${props => props.theme.fontSizes.large};
+  line-height: 1.4;
+  padding-bottom: 0.4em;
+`;
 
 const Price = styled.div`
-  color: ${props => props.theme.secondaryText};
+  margin-left: 10px;
 
-  &.original {
-    text-decoration: line-through;
+  text-transform: uppercase;
+
+  padding: 3px 4px 2px 3px;
+  border-radius: 2px;
+
+  font-size: ${props => props.theme.fontSizes.smaller};
+
+  ${props => styles.metaColors(props.theme.priceNormal)};
+
+  &.onsale {
+    ${props => styles.metaColors(props.theme.priceSale)};
   }
 `;
 
-class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
+class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
   render() {
     const { game, onClick, chosen } = this.props;
     const { title, stillCoverUrl, coverUrl } = game;
 
     let compatible = isPlatformCompatible(game);
-    let originalPrice: React.ReactElement<any> = null;
     let price: React.ReactElement<any> = null;
 
     const sale = fromJSONField(game.sale);
 
     if (game.minPrice > 0) {
-      if (sale) {
-        price = (
-          <Price>
-            {formatPrice("USD", game.minPrice * (1 - sale.rate / 100))}
-          </Price>
-        );
-        originalPrice = (
-          <Price className="original">
-            {formatPrice("USD", game.minPrice)}
-          </Price>
-        );
-      } else {
-        price = <Price>{formatPrice("USD", game.minPrice)}</Price>;
-      }
+      let bestPrice = applySale(game.minPrice, sale);
+      // bundles will have a 0% rate for example
+      const onsale = !!(sale && sale.rate !== 0);
+
+      // FIXME: hardcoding 'USD' is wrong
+      price = (
+        <Price className={classNames({ onsale })}>
+          {formatPrice("USD", bestPrice)}
+        </Price>
+      );
     }
 
     const resultClasses = classNames({
@@ -81,20 +146,31 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
     return (
       <GameSearchResultDiv
         className={resultClasses}
+        onMouseEnter={this.onMouseEnter}
         onClick={onClick}
+        onContextMenu={this.onContextMenu}
         ref="root"
       >
-        <img src={stillCoverUrl || coverUrl} />
-        <TitleBlock>
+        <div className="vertical-section title">
           <Title>{title}</Title>
           <Filler />
-          <Platforms>
-            <StyledPlatformIcons target={game} />
-            <Filler />
-            {originalPrice}
-            {price}
-          </Platforms>
-        </TitleBlock>
+          <StyledPlatformIcons target={game} />
+          {price}
+        </div>
+        <div className="vertical-section rest">
+          <div className="cover-container">
+            <HoverCover
+              className="cover"
+              gameId={game.id}
+              coverUrl={coverUrl}
+              stillCoverUrl={stillCoverUrl}
+              showGifMarker
+            />
+          </div>
+          <TitleBlock>
+            <ShortText>{game.shortText}</ShortText>
+          </TitleBlock>
+        </div>
       </GameSearchResultDiv>
     );
   }
@@ -103,13 +179,40 @@ class GameSearchResult extends GenericSearchResult<ISearchResultProps> {
     const { game } = this.props;
     return actions.navigateToGame({ game });
   }
+
+  onMouseEnter = () => {
+    this.props.searchHighlightOffset({
+      offset: this.props.index,
+      relative: false,
+    });
+  };
+
+  onContextMenu = (ev: React.MouseEvent<any>) => {
+    const { game } = this.props;
+    this.props.openGameContextMenu({
+      game,
+      clientX: ev.clientX,
+      clientY: ev.clientY,
+    });
+  };
 }
 
-interface ISearchResultProps {
+interface IProps {
   game: IGame;
   onClick: () => void;
   chosen: boolean;
   active: boolean;
+  index: number;
 }
 
-export default GameSearchResult;
+interface IDerivedProps {
+  searchHighlightOffset: typeof actions.searchHighlightOffset;
+  openGameContextMenu: typeof actions.openGameContextMenu;
+}
+
+export default connect<IProps>(GameSearchResult, {
+  dispatch: dispatch => ({
+    searchHighlightOffset: dispatcher(dispatch, actions.searchHighlightOffset),
+    openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
+  }),
+});

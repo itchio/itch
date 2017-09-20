@@ -1,3 +1,5 @@
+import { IGameSaleInfo } from "../types/index";
+
 export function formatPrice(currency: string, value: number) {
   if (currency === "CAD") {
     return `CAD $${(value / 100).toFixed(2)}`;
@@ -13,4 +15,14 @@ export function formatPrice(currency: string, value: number) {
     // default to dollarydoos
     return `$${(value / 100).toFixed(2)}`;
   }
+}
+
+export function applySale(price: number, sale: IGameSaleInfo) {
+  if (sale && sale.rate !== 0) {
+    // rate is [0,100], we want [0.0,1.0]
+    let floatRate = sale.rate / 100;
+    return price * (1 - floatRate);
+  }
+
+  return price;
 }

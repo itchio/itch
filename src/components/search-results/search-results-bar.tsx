@@ -4,9 +4,10 @@ import * as classNames from "classnames";
 import { connect } from "../connect";
 import { createStructuredSelector } from "reselect";
 
-import { each } from "underscore";
+import { each, isEmpty } from "underscore";
 
 import * as actions from "../../actions";
+import watching, { Watcher } from "../watching";
 
 import { IRootState, ISearchResults } from "../../types";
 import { dispatcher } from "../../constants/action-types";
@@ -14,26 +15,33 @@ import { dispatcher } from "../../constants/action-types";
 import GameSearchResult from "./game-search-result";
 import UserSearchResult from "./user-search-result";
 
-import Button from "../basics/button";
+import Icon from "../basics/icon";
+import IconButton from "../basics/icon-button";
 import Filler from "../basics/filler";
 
-import { stripUnit } from "polished";
+import { stripUnit, darken } from "polished";
 import styled from "../styles";
 
 import format from "../format";
+import {
+  hasSearchResults,
+  excludeIncompatibleSearchResults,
+} from "../../reactors/search/search-helpers";
+import LoadingCircle from "../basics/loading-circle";
+import { filtersContainerHeight } from "../filters-container";
 
 const ResultsContainer = styled.div`
   background: ${props => props.theme.sidebarBackground};
   border-right: 1px solid ${props => props.theme.sidebarBorder};
   border-bottom: 1px solid ${props => props.theme.sidebarBorder};
-  opacity: 0.0;
+  opacity: 0;
   z-index: 40;
 
   width: ${props => props.theme.widths.searchSidebar};
 
   position: absolute;
   left: ${props => -stripUnit(props.theme.widths.searchSidebar) - 30}px;
-  top: 0;
+  top: ${filtersContainerHeight}px;
   bottom: 0;
   box-shadow: 0 0 30px ${props => props.theme.sidebarBackground};
   border-radius: 0 0 0 2px;
@@ -44,28 +52,28 @@ const ResultsContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  padding: 8px 12px;
-
   &.open {
     left: 0;
-    opacity: 1.0;
+    opacity: 1;
   }
 `;
 
-const Category = styled.div`
-  padding: 8px;
-  margin: 8px 0;
-  box-shadow: 0 0 8px #171717;
-  font-size: ${props => props.theme.fontSizes.large};
-  text-align: center;
+const UserRow = styled.div`
+  display: flex;
+  flex-direction: row;
   flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+
+  height: 48px;
 `;
 
 const ResultList = styled.div`
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
 
   flex-grow: 1;
 
@@ -79,26 +87,31 @@ const Header = styled.div`
 
   flex-shrink: 0;
 
-  margin-bottom: 8px;
-
+  padding: 12px 16px;
+  background: ${props => props.theme.accent};
+  color: white;
   font-size: ${props => props.theme.fontSizes.large};
 `;
 
-const Footer = styled.div`
-  flex-shrink: 0;
+const IconContainer = styled.div`
+  width: 1.5em;
+  height: 1.5em;
+
   display: flex;
-  padding: 15px;
-  box-shadow: 0 0 20px ${props => props.theme.sidebarBackground};
+  align-items: center;
+  justify-content: center;
+
+  margin-right: 4px;
 `;
 
 const NoResults = styled.p`
   font-size: ${props => props.theme.fontSizes.large};
   text-align: center;
   background-color: #2b2a2a;
-  padding: 12px 8px;
-  border-radius: 4px;
+  padding: 24px 8px;
 `;
 
+@watching
 export class SearchResultBar extends React.PureComponent<
   IProps & IDerivedProps,
   IState
@@ -111,117 +124,81 @@ export class SearchResultBar extends React.PureComponent<
   }
 
   render() {
-    const { query, open, results } = this.props;
+    const { query, open, results, example } = this.props;
     if (!open) {
       return null;
     }
 
-    const { closeSearch, navigate } = this.props;
-
-    const openAsTab = () => {
-      closeSearch({});
-      navigate({ tab: `search/${query}` });
-    };
+    const { loading } = this.props;
 
     return (
       <ResultsContainer className={classNames({ open })}>
         <Header>
+          <IconContainer>
+            {loading ? <LoadingCircle progress={-1} /> : <Icon icon="search" />}
+          </IconContainer>
           <h2>
-            {format(["search.results.title", { query: query || "" }])}
+            {query && query != "" ? (
+              format(["search.results.title", { query }])
+            ) : (
+              format(["search.empty.tagline", { example }])
+            )}
           </h2>
           <Filler />
+          <IconButton icon="arrow-right" onClick={this.onOpenAsTab} />
         </Header>
         {this.resultsGrid(results)}
-        <Footer>
-          <Filler />
-          <Button
-            label={format(["search.open_as_tab"])}
-            onClick={() => openAsTab()}
-          />
-          <Filler />
-        </Footer>
       </ResultsContainer>
     );
   }
 
+  resultList: Element;
+  onResultList = el => {
+    this.resultList = el;
+  };
+
+  onOpenAsTab = () => {
+    this.props.closeSearch({});
+    this.props.navigate({ tab: `search/${this.props.query}` });
+  };
+
+  subscribe(watcher: Watcher) {
+    watcher.on(actions.searchFetched, async (store, action) => {
+      if (this.resultList) {
+        this.resultList.scrollTop = 0;
+      }
+    });
+  }
+
   resultsGrid(results: ISearchResults) {
-    const { highlight } = this.props;
+    const { highlight, query } = this.props;
     const active = this.props.open;
-    const localResults = [];
-
-    const hasRemoteResults =
-      results &&
-      (results.gameResults.result.gameIds.length > 0 ||
-        results.userResults.result.userIds.length > 0);
-    const hasLocalResults = localResults.length > 0;
-
-    if (!(hasRemoteResults || hasLocalResults)) {
-      return (
-        <ResultList>
-          <NoResults>
-            {format(["search.empty.no_results"])}
-          </NoResults>
-        </ResultList>
-      );
+    if (!hasSearchResults(results)) {
+      if (query && query != "") {
+        return (
+          <ResultList ref={this.onResultList}>
+            <NoResults>{format(["search.empty.no_results"])}</NoResults>
+          </ResultList>
+        );
+      } else {
+        return null;
+      }
     }
 
     const items: React.ReactElement<any>[] = [];
     const { navigateToGame, navigateToUser, closeSearch } = this.props;
 
-    const { gameResults, userResults } =
-      results ||
-      ({
-        gameResults: {
-          result: { gameIds: [] },
-          entities: {},
-        },
-        userResults: {
-          result: { userIds: [] },
-          entities: [],
-        },
-      } as ISearchResults);
-    const { games } = gameResults.entities;
-    const { users } = userResults.entities;
+    const { users, games } = results;
 
-    let index = 0;
-
-    if (localResults.length > 0) {
-      items.push(
-        <Category>
-          {format(["search.results.local"])}
-        </Category>
-      );
-      each(localResults.slice(0, 5), result => {
-        const game = result.item;
-        items.push(
-          <GameSearchResult
-            key={`game-${game.id}`}
-            game={game}
-            chosen={index++ === highlight}
-            active={active}
-            onClick={() => {
-              navigateToGame(game);
-              closeSearch({});
-            }}
-          />
-        );
-      });
-    }
-
-    const { userIds } = userResults.result;
-    if (userIds.length > 0) {
-      items.push(
-        <Category>
-          {format(["search.results.creators"])}
-        </Category>
-      );
-      each(userResults.result.userIds, userId => {
-        const user = users[userId];
-        items.push(
+    let userItems = [];
+    if (users && !isEmpty(users.ids)) {
+      each(users.ids, userId => {
+        const user = users.set[userId];
+        userItems.push(
           <UserSearchResult
             key={`user-${userId}`}
             user={user}
-            chosen={index++ === highlight}
+            chosen={false}
             active={active}
             onClick={() => {
               navigateToUser({ user });
@@ -231,21 +208,18 @@ export class SearchResultBar extends React.PureComponent<
         );
       });
     }
+    items.push(<UserRow>{userItems}</UserRow>);
 
-    const { gameIds } = gameResults.result;
-    if (gameIds.length > 0) {
-      items.push(
-        <Category>
-          {format(["search.results.games"])}
-        </Category>
-      );
-      each(gameResults.result.gameIds, gameId => {
-        const game = games[gameId];
+    let index = 0;
+    if (games && !isEmpty(games.ids)) {
+      each(games.ids, gameId => {
+        const game = games.set[gameId];
         items.push(
           <GameSearchResult
             key={`game-${gameId}`}
             game={game}
-            chosen={index++ === highlight}
+            index={index}
+            chosen={index === highlight}
             active={active}
             onClick={() => {
               navigateToGame({ game });
@@ -253,14 +227,11 @@ export class SearchResultBar extends React.PureComponent<
             }}
           />
         );
+        index++;
       });
     }
 
-    return (
-      <ResultList>
-        {items}
-      </ResultList>
-    );
+    return <ResultList>{items}</ResultList>;
   }
 }
 
@@ -268,9 +239,11 @@ interface IProps {}
 
 interface IDerivedProps {
   open: boolean;
+  loading: boolean;
   highlight: number;
   query: string;
   results: ISearchResults;
+  example: string;
 
   closeSearch: typeof actions.closeSearch;
   navigate: typeof actions.navigate;
@@ -285,9 +258,11 @@ interface IState {
 export default connect<IProps>(SearchResultBar, {
   state: createStructuredSelector({
     open: (rs: IRootState) => rs.session.search.open,
+    loading: (rs: IRootState) => rs.session.search.loading,
     highlight: (rs: IRootState) => rs.session.search.highlight,
     query: (rs: IRootState) => rs.session.search.query,
     results: (rs: IRootState) => rs.session.search.results,
+    example: (rs: IRootState) => rs.session.search.example,
   }),
   dispatch: dispatch => ({
     closeSearch: dispatcher(dispatch, actions.closeSearch),

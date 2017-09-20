@@ -1,18 +1,21 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import GenericSearchResult, {
-  searchResultStyle,
-} from "./generic-search-result";
+import GenericSearchResult from "./generic-search-result";
 import * as actions from "../../actions";
+
+import Cover from "../basics/cover";
 
 import { IUser } from "../../db/models/user";
 import styled from "../styles";
 
 const UserSearchResultDiv = styled.div`
-  ${searchResultStyle} img {
-    width: 34px;
-    height: 34px;
-    border-radius: 4px;
+  &:hover {
+    cursor: pointer;
+  }
+  margin: 0 6px;
+
+  .cover {
+    width: 32px;
   }
 `;
 
@@ -23,12 +26,16 @@ class UserSearchResult extends GenericSearchResult<IUserSearchResultProps> {
 
     return (
       <UserSearchResultDiv onClick={onClick} className={classNames({ chosen })}>
-        <img src={stillCoverUrl || coverUrl} />
-        <div className="title-block">
-          <h4>
-            {displayName || username}
-          </h4>
-        </div>
+        <Cover
+          className="cover"
+          showGifMarker={false}
+          coverUrl={coverUrl}
+          stillCoverUrl={stillCoverUrl}
+          gameId={user.id}
+          square
+          data-rh={displayName || username}
+          data-rh-at="bottom"
+        />
       </UserSearchResultDiv>
     );
   }

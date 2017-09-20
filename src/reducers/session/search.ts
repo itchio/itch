@@ -4,6 +4,7 @@ import { ISessionSearchState } from "../../types";
 
 import * as actions from "../../actions";
 import reducer from "../reducer";
+import { isEmpty } from "underscore";
 
 function randomExampleIndex() {
   return Math.floor(Math.random() * (SearchExamples.length - 1));
@@ -36,10 +37,31 @@ export default reducer<ISessionSearchState>(initialState, on => {
   });
 
   on(actions.searchHighlightOffset, (state, action) => {
-    const { offset } = action.payload;
+    const { offset, relative } = action.payload;
+    let highlight = offset;
+    if (relative) {
+      highlight = state.highlight + offset;
+    }
+
+    let numGames = 0;
+    if (
+      state.results &&
+      state.results.games &&
+      !isEmpty(state.results.games.ids)
+    ) {
+      numGames = state.results.games.ids.length;
+    }
+
+    if (highlight < 0) {
+      highlight = numGames - 1;
+    }
+    if (highlight >= numGames) {
+      highlight = 0;
+    }
+
     return {
       ...state,
-      highlight: state.highlight + offset,
+      highlight,
     };
   });
 

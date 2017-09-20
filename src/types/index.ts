@@ -608,27 +608,14 @@ export interface ISessionNavigationState {
 }
 
 export interface ISearchResults {
-  // TODO: make sane
-  gameResults: {
-    result: {
-      gameIds: string[];
-    };
-    entities: {
-      games?: {
-        [id: string]: IGame;
-      };
-    };
+  games?: {
+    ids: number[];
+    set: IGameSet;
   };
 
-  userResults: {
-    result: {
-      userIds: string[];
-    };
-    entities: {
-      users?: {
-        [id: string]: IUser;
-      };
-    };
+  users?: {
+    ids: number[];
+    set: IUserSet;
   };
 }
 

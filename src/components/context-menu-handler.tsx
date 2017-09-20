@@ -7,6 +7,8 @@ import {
   IMenuTemplate,
 } from "../types/index";
 
+import styled from "./styles";
+
 import {
   ContextMenu,
   MenuItem,
@@ -19,6 +21,7 @@ import format from "./format";
 import * as actions from "../actions";
 import { dispatcher } from "../constants/action-types";
 import { Action } from "redux-actions";
+import { lighten } from "polished";
 
 const menuId = "itch_context_menu";
 
@@ -43,13 +46,95 @@ interface ITriggerComponent {
   handleContextClick: (ev: ITriggerEvent) => void;
 }
 
+const ContextMenuHandlerDiv = styled.div`
+  .react-contextmenu {
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    background-color: ${props => lighten(0.05, props.theme.sidebarBackground)};
+    background-clip: padding-box;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    outline: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 250ms ease !important;
+    z-index: 9000;
+  }
+
+  .react-contextmenu.react-contextmenu--visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .react-contextmenu-item {
+    padding: 4px 28px 4px 32px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: ${props => props.theme.baseText};
+    text-align: inherit;
+    white-space: nowrap;
+    background: 0 0;
+    border: 0;
+    cursor: pointer;
+
+    &:focus {
+      outline: 0;
+    }
+  }
+
+  .react-contextmenu-item .accelerator {
+    color: ${props => lighten(0.4, props.theme.baseColors.codGray)};
+    float: right;
+    padding-left: 8px;
+  }
+
+  .react-contextmenu-item.react-contextmenu-item--active,
+  .react-contextmenu-item.react-contextmenu-item--selected {
+    cursor: pointer;
+    background-color: ${props => lighten(0.1, props.theme.sidebarBackground)};
+  }
+
+  .react-contextmenu-item.react-contextmenu-item--disabled,
+  .react-contextmenu-item.react-contextmenu-item--disabled:hover {
+    color: ${props => props.theme.baseColors.silverChalice};
+    background-color: transparent;
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  .react-contextmenu-item--divider {
+    margin-bottom: 3px;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: inherit;
+  }
+
+  .react-contextmenu-item.react-contextmenu-submenu {
+    padding: 0;
+  }
+
+  .react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item {
+    padding-right: 30px;
+  }
+
+  .react-contextmenu-item.react-contextmenu-submenu
+    > .react-contextmenu-item:after {
+    content: "▶";
+    display: inline-block;
+    position: absolute;
+    right: 7px;
+  }
+`;
+
 class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
   trigger?: ITriggerComponent;
   menu?: IMenuComponent;
 
   render() {
     return (
-      <div>
+      <ContextMenuHandlerDiv>
         <ContextMenuTrigger id={menuId} ref={this.gotTrigger}>
           {""}
         </ContextMenuTrigger>
@@ -62,7 +147,7 @@ class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
         >
           {this.renderItems(this.props.data.template)}
         </ContextMenu>
-      </div>
+      </ContextMenuHandlerDiv>
     );
   }
 

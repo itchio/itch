@@ -35,7 +35,7 @@ import queueLaunch from "./queue-launch";
 import updater from "./updater";
 import gameUpdates from "./game-updates";
 import report from "./report";
-import fetchSearch from "./fetch-search";
+import search from "./search";
 import webContents from "./web-contents";
 import notifications from "./notifications";
 
@@ -79,7 +79,7 @@ export default function getWatcher(db: DB) {
   updater(watcher, db);
   gameUpdates(watcher, db);
   report(watcher, db);
-  fetchSearch(watcher, db);
+  search(watcher, db);
   webContents(watcher, db);
   notifications(watcher);
 

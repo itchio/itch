@@ -16,7 +16,7 @@ class TaskIcon extends React.PureComponent<ITaskIconProps> {
       if (action === "open") {
         icon = "folder-open";
       } else {
-        icon = "rocket";
+        icon = "play";
       }
     }
 

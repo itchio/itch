@@ -8,7 +8,7 @@ import styled from "../styles";
 
 const PlatformIconsDiv = styled.span`
   .icon {
-    margin-left: 6px;
+    margin-left: 8px;
 
     &:first-child {
       margin-left: 0;
@@ -36,12 +36,21 @@ interface IIconProps {
 export default class PlatformIcons extends React.PureComponent<IProps> {
   render() {
     const { target, ...restProps } = this.props;
+    if (
+      !target.pWindows &&
+      !target.pLinux &&
+      !target.pOsx &&
+      target.type !== "html"
+    ) {
+      return null;
+    }
+
     return (
       <PlatformIconsDiv {...restProps}>
         <PlatformIcon field="pWindows" target={target} />
         <PlatformIcon field="pOsx" target={target} />
         <PlatformIcon field="pLinux" target={target} />
-        {target.type === "html" ? <Icon icon="earth" hint="web" /> : null}
+        {target.type === "html" ? <Icon icon="html5" hint="web" /> : null}
       </PlatformIconsDiv>
     );
   }
