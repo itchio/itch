@@ -12,6 +12,7 @@ export default function(watcher: Watcher) {
         buttons: [
           {
             label: ["prompt.action.force_close"],
+            id: "modal-force-close",
             action: actions.abortGame({ gameId: game.id }),
             icon: "cross",
           },

@@ -60,8 +60,14 @@ const launch: ILauncher = async (ctx, opts) => {
 
   logger.info(`entry point: ${entryPoint}`);
 
-  // TODO: use info from some other column, fall back to game info
-  const { width, height } = { width: 1280, height: 720 };
+  let { width, height } = { width: 1280, height: 720 };
+
+  const embed = fromJSONField(game.embed);
+  if (embed && embed.width && embed.height) {
+    width = embed.width;
+    height = embed.height;
+  }
+
   logger.info(`starting at resolution ${width}x${height}`);
 
   const partition = `persist:gamesession_${cave.gameId}`;

@@ -72,6 +72,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
     {
       icon: "download",
       label: ["sidebar.downloads"],
+      id: "user-menu-downloads",
       onClick: () => this.props.navigate({ tab: "downloads" }),
     },
     {

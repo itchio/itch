@@ -132,7 +132,7 @@ export class SearchResultBar extends React.PureComponent<
     const { loading } = this.props;
 
     return (
-      <ResultsContainer className={classNames({ open })}>
+      <ResultsContainer className={classNames("results-container", { open })}>
         <Header>
           <IconContainer>
             {loading ? <LoadingCircle progress={-1} /> : <Icon icon="search" />}
@@ -208,7 +208,7 @@ export class SearchResultBar extends React.PureComponent<
         );
       });
     }
-    items.push(<UserRow>{userItems}</UserRow>);
+    items.push(<UserRow key="user-row">{userItems}</UserRow>);
 
     let index = 0;
     if (games && !isEmpty(games.ids)) {

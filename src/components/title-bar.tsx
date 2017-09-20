@@ -72,7 +72,11 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
           </DraggableDivInner>
         </DraggableDiv>
         {loggedIn ? (
-          <IconButton icon="cog" onClick={this.preferencesClick} />
+          <IconButton
+            id="preferences-top-button"
+            icon="cog"
+            onClick={this.preferencesClick}
+          />
         ) : null}
         <IconButton icon="minus" onClick={this.minimizeClick} />
         <IconButton

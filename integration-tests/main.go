@@ -142,6 +142,7 @@ func doMain() error {
 
 	prepareFlow(r)
 	navigationFlow(r)
+	installFlow(r)
 	loginFlow(r)
 
 	log.Printf("Succeeded in %s", time.Since(r.testStart))

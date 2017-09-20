@@ -65,11 +65,9 @@ func loginFlow(r *runner) {
 	must(r.click("#user-menu-preferences"))
 
 	r.logf("expanding advanced preferences")
-	// must(t.safeScroll("#preferences-advanced-section");
 	must(r.click("#preferences-advanced-section"))
 
 	r.logf("opening clearing browsing data dialog")
-	// must(t.safeScroll("#clear-browsing-data-link");
 	must(r.click("#clear-browsing-data-link"))
 
 	r.logf("clearing cookies")
@@ -88,6 +86,11 @@ func loginFlow(r *runner) {
 		"Log in",
 	))
 
+	r.logf("opening downloads tab")
+	must(r.click("#user-menu"))
+	must(r.click("#user-menu-downloads"))
+	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Downloads"))
+
 	r.logf("doing cancelled logout")
 	logout(false)
 	r.logf("logging out for real")
@@ -96,6 +99,11 @@ func loginFlow(r *runner) {
 	r.logf("logging back in with remembered sessions")
 	must(r.click(".remembered-session"))
 	must(r.waitForVisible("#user-menu"))
+
+	r.logf("making sure preferences tab was restored")
+	must(r.waitForVisible("#sidebar section[data-path='preferences']"))
+	r.logf("making sure downloads tab was restored and is currently visible")
+	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Downloads"))
 
 	r.logf("logging out for real")
 	logout(true)

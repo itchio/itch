@@ -209,7 +209,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       onStatsClick = this.onNavigate;
     }
 
-    const itemClasses = classNames({
+    const itemClasses = classNames("download-row-item", {
       first,
       dimmed: active && !first,
       finished: !active,
@@ -220,6 +220,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <DownloadRowDiv
         className={itemClasses}
+        data-game-id={item.game.id}
         onContextMenu={this.onCoverContextMenu}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}

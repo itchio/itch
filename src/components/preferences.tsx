@@ -658,7 +658,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
         path = path.replace(alias[0], alias[1]);
       }
       const { size, freeSpace } = location;
-      const rowClasses = classNames({
+      const rowClasses = classNames("install-location-row", {
         ["default"]: isDefault,
       });
 
@@ -689,7 +689,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           <td> {fileSize(size)} </td>
           <td> {freeSpace > 0 ? fileSize(freeSpace) : "..."} </td>
           <td
-            className="action icon-action"
+            className="action icon-action install-location-navigate"
             data-rh-at="top"
             data-rh={formatString(intl, [
               "preferences.install_location.navigate",

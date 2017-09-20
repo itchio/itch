@@ -117,7 +117,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
     } = this.props;
 
     return (
-      <SidebarDiv width={sidebarWidth}>
+      <SidebarDiv id="sidebar" width={sidebarWidth}>
         {osx && !fullscreen ? <TitleBarPadder /> : null}
 
         <Logo />
@@ -139,6 +139,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
             <Filler />
             <IconButton
               icon="delete"
+              id="sidebar-close-all-tabs"
               hint={formatString(intl, ["sidebar.close_all_tabs"])}
               onClick={this.closeAllTabs}
             />

@@ -20,7 +20,7 @@ const ItemHeading = styled.div`
   padding: 0.2em 0;
 `;
 
-export const ItemDiv = styled.section`
+export const ItemSection = styled.section`
   background: ${props => props.theme.sidebarBackground};
   font-size: 14px;
   border-radius: 0 4px 4px 0;
@@ -166,7 +166,7 @@ class Item extends React.PureComponent<IProps, IState> {
     };
 
     return (
-      <ItemDiv
+      <ItemSection
         className={classNames({ active, fresh })}
         data-rh-at="right"
         data-rh={format(sublabel)}
@@ -198,7 +198,7 @@ class Item extends React.PureComponent<IProps, IState> {
             <UnshrinkableIconButton icon="cross" onClick={this.onCloseClick} />
           ) : null}
         </Row>
-      </ItemDiv>
+      </ItemSection>
     );
   }
 

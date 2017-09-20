@@ -6,7 +6,7 @@ func navigationFlow(r *runner) {
 	must(r.waitForVisible("#user-menu"))
 
 	r.logf("navigating to dashboard")
-	must(r.click("section[data-path=dashboard]"))
+	must(r.click("#sidebar section[data-path='dashboard']"))
 
 	must(r.waitForVisible(".meat-tab[data-id=dashboard] .layout-picker"))
 	must(r.click(currTab + ".layout-picker[data-layout='grid']"))

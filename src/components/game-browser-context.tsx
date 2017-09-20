@@ -58,6 +58,7 @@ export class GameBrowserContext extends React.PureComponent<
         <GameStats game={game} status={status} />
         <Filler />
         <IconButton
+          className="more-actions"
           huge
           emphasized
           icon="more_vert"

@@ -70,9 +70,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <DownloadsDiv>
         <TitleBar tab={tab} />
-        <DownloadsContentDiv>
-          {this.renderContents()}
-        </DownloadsContentDiv>
+        <DownloadsContentDiv>{this.renderContents()}</DownloadsContentDiv>
       </DownloadsDiv>
     );
   }
@@ -84,7 +82,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     const hasItems = items.length + finishedItems.length > 0;
     if (!hasItems) {
       return (
-        <EmptyState>
+        <EmptyState className="no-active-downloads">
           {format(["status.downloads.no_active_downloads"])}
         </EmptyState>
       );
@@ -95,45 +93,54 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <DownloadsContentDiv>
-        {firstItem
-          ? <div className="section-bar">
-              <h2>
-                {format(["status.downloads.category.active"])}
+        {firstItem ? (
+          <div className="section-bar">
+            <h2>{format(["status.downloads.category.active"])}</h2>
+          </div>
+        ) : (
+          ""
+        )}
+
+        {firstItem ? (
+          <Row key={firstItem.id} item={firstItem} first active />
+        ) : (
+          ""
+        )}
+
+        {queuedItems.length > 0 ? (
+          <div className="section-bar">
+            <h2>{format(["status.downloads.category.queued"])}</h2>
+          </div>
+        ) : (
+          ""
+        )}
+        {queuedItems.length > 0 ? (
+          map(queuedItems, (item, i) => (
+            <Row key={item.id} item={item} active />
+          ))
+        ) : (
+          ""
+        )}
+
+        {finishedItems.length > 0 ? (
+          [
+            <div key="finished-header" className="section-bar">
+              <h2 className="finished-header">
+                {format(["status.downloads.category.recent_activity"])}
               </h2>
-            </div>
-          : ""}
-
-        {firstItem
-          ? <Row key={firstItem.id} item={firstItem} first active />
-          : ""}
-
-        {queuedItems.length > 0
-          ? <div className="section-bar">
-              <h2>
-                {format(["status.downloads.category.queued"])}
-              </h2>
-            </div>
-          : ""}
-        {queuedItems.length > 0
-          ? map(queuedItems, (item, i) =>
-              <Row key={item.id} item={item} active />
-            )
-          : ""}
-
-        {finishedItems.length > 0
-          ? [
-              <div key="finished-header" className="section-bar">
-                <h2 className="finished-header">
-                  {format(["status.downloads.category.recent_activity"])}
-                </h2>
-                <Link onClick={() => clearFinishedDownloads({})}>
-                  {format(["status.downloads.clear_all_finished"])}
-                </Link>
-              </div>,
-            ].concat(
-              map(finishedItems, item => <Row key={item.id} item={item} />)
-            )
-          : ""}
+              <Link
+                className="downloads-clear-all"
+                onClick={() => clearFinishedDownloads({})}
+              >
+                {format(["status.downloads.clear_all_finished"])}
+              </Link>
+            </div>,
+          ].concat(
+            map(finishedItems, item => <Row key={item.id} item={item} />)
+          )
+        ) : (
+          ""
+        )}
       </DownloadsContentDiv>
     );
   }

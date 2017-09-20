@@ -20,6 +20,7 @@ import { IGame } from "../../db/models/game";
 import format, { formatString } from "../format";
 import actionForGame from "../../util/action-for-game";
 import { ILocalizedString } from "../../types/index";
+import * as classNames from "classnames";
 
 class MainAction extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -115,7 +116,8 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
       return (
         <IconButton
           onClick={this.onClick}
-          className={className}
+          className={classNames(className, "main-action")}
+          data-game-id={this.props.game.id}
           icon={iconComponent}
           hint={label ? formatString(intl, label) : null}
           hintPosition="left"
@@ -126,12 +128,13 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <Button
         onClick={this.onClick}
-        className={className}
+        className={classNames(className, "main-action")}
         wide={wide}
         discreet
         iconComponent={iconComponent}
         label={format(label)}
         primary={primary}
+        data-game-id={this.props.game.id}
       />
     );
   }

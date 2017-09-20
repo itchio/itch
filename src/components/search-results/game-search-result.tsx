@@ -138,7 +138,7 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
       );
     }
 
-    const resultClasses = classNames({
+    const resultClasses = classNames("game-search-result", {
       ["not-platform-compatible"]: !compatible,
       chosen: chosen,
     });
@@ -149,6 +149,7 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
         onMouseEnter={this.onMouseEnter}
         onClick={onClick}
         onContextMenu={this.onContextMenu}
+        data-game-id={game.id}
         ref="root"
       >
         <div className="vertical-section title">

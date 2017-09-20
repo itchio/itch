@@ -121,7 +121,7 @@ class Search extends React.PureComponent<IDerivedProps> {
       <SearchContainer>
         <input
           id="search"
-          ref={input => (this.input = input)}
+          ref={this.gotInput}
           type="search"
           placeholder={formatString(intl, ["search.placeholder"]) + "..."}
           onKeyDown={this.onKeyDown}
@@ -133,6 +133,10 @@ class Search extends React.PureComponent<IDerivedProps> {
       </SearchContainer>
     );
   }
+
+  gotInput = input => {
+    this.input = input;
+  };
 }
 
 interface IDerivedProps {

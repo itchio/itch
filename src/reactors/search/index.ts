@@ -98,13 +98,13 @@ export default function(watcher: Watcher, db: DB) {
       };
 
       try {
-        await doRemoteSearch(store, query, push);
+        push(doLocalSearch(db, query));
       } catch (e) {
         logger.error(e.stack);
       }
 
       try {
-        push(doLocalSearch(db, query));
+        await doRemoteSearch(store, query, push);
       } catch (e) {
         logger.error(e.stack);
       }
