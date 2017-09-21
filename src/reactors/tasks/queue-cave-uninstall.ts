@@ -142,6 +142,7 @@ export default function(watcher: Watcher, db: DB) {
             buttons: [
               {
                 label: ["prompt.uninstall_error.action_permissions"],
+                icon: "security",
                 action: actions.modalResponse({}),
               },
               "cancel",

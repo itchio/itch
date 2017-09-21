@@ -70,8 +70,10 @@ export default async function saveAngels<T extends IAngelSaviorOpts>(
     logger.info(`Inner task successful`);
   } catch (e) {
     logger.warn(`Installation failed, rolling back to previous version`);
-    await sf.wipe(destPath);
-    await sf.rename(previousPath, destPath);
+    if (needSwitcheroo) {
+      await sf.wipe(destPath);
+      await sf.rename(previousPath, destPath);
+    }
     throw e;
   }
 

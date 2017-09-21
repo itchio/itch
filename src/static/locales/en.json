@@ -288,7 +288,7 @@
     "prompt.install_location_remove.detail": "Any items installed at {{location}} will be uninstalled.",
     "prompt.install_location_remove.message": "Are you sure you want to remove this location?",
     "prompt.install_location_remove.title": "Removing an install location",
-    "prompt.blessing.message": "Administrator privileges are required to {{operation}} {{title}}",
+    "prompt.blessing.message": "Administrator privileges are required for managing {{title}}",
     "prompt.blessing.detail": "Proceed only if you trust the author.",
     "prompt.last_remaining_install_location.content": "This is the last remaining install location, and it cannot be removed until another is added first.",
     "prompt.last_remaining_install_location.title": "Cannot remove install location",

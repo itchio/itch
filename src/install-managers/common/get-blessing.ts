@@ -15,12 +15,15 @@ export default async function getBlessing(
   const { title } = game;
 
   const response = await promisedModal(store, {
-    title: "",
-    message: ["prompt.blessing.message", { operation, title }],
+    title: [
+      operation === "install" ? "grid.item.install" : "grid.item.uninstall",
+    ],
+    message: ["prompt.blessing.message", { title }],
     detail: ["prompt.blessing.detail"],
     buttons: [
       {
         label: ["prompt.action.continue"],
+        icon: "security",
         id: "modal-clear-data",
         action: actions.modalResponse({}),
       },

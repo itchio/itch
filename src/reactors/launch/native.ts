@@ -195,7 +195,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
           {
             label: ["sandbox.setup.proceed"],
             action: actions.modalResponse({ sandboxBlessing: true }),
-            icon: "checkmark",
+            icon: "security",
           },
           {
             label: ["docs.learn_more"],
@@ -481,6 +481,7 @@ async function doSpawn(
     logger: devNull,
   });
 
+  ctx.emitProgress({ progress: -1 });
   try {
     await butler.wipe(tmpPath, {
       ctx,
