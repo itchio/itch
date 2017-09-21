@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${workspaceRoot}/src/main.js",
             "stopOnEntry": false,
-            "args": [],
+            "args": ["--color"],
             "cwd": "${workspaceRoot}",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "runtimeArgs": [
