@@ -429,7 +429,7 @@
     "grid.item.status.installed": "Инсталирано",
     "collection.summary": "Колекция от {{itemCount}} неща",
     "grid.item.not_compatible": "Недостъпно на тази система",
-    "prompt.blessing.message": "За {{operation}} на „{{title}}“ са нужни администраторски правомощия",
+    "prompt.blessing.message": "За да извършвате действия с „{{title}}“ са Ви нужни администраторски правомощия",
     "prompt.blessing.detail": "Продължете само ако вярвате на автора.",
     "prompt.install_error.message": "Инсталирането беше неуспешно.",
     "status.cancelled.message": "Операцията беше отменена.",
