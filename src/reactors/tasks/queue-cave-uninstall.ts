@@ -126,7 +126,38 @@ export default function(watcher: Watcher, db: DB) {
       db.deleteEntity("caves", cave.id);
 
       logger.info(`Wiping install folder...`);
-      await butler.wipe(destPath, { ctx, logger });
+      try {
+        await butler.wipe(destPath, { ctx, logger });
+      } catch (e) {
+        const onWindows = currentRuntime().platform === "windows";
+        const shouldSuggestAdminWipe = onWindows && /Access is denied/.test(e);
+
+        if (shouldSuggestAdminWipe) {
+          const response = await promisedModal(store, {
+            title: ["prompt.uninstall_error.title"],
+            message: [
+              "prompt.uninstall_error.message_permissions",
+              { title: game.title },
+            ],
+            buttons: [
+              {
+                label: ["prompt.uninstall_error.action_permissions"],
+                action: actions.modalResponse({}),
+              },
+              "cancel",
+            ],
+          });
+          if (response.type !== MODAL_RESPONSE) {
+            // modal was closed
+            return;
+          }
+
+          await butler.wipe(destPath, { ctx, logger, elevate: true });
+          logger.info(`Admin wipe succeeded!`);
+        } else {
+          throw e;
+        }
+      }
     }
   });
 }

@@ -5,7 +5,7 @@ import * as actions from "../../actions";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "abort-task" });
 
-import { getCurrentTasks } from "./as-task";
+import { getCurrentTasks } from "./as-task-persistent-state";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.abortTask, async (store, action) => {

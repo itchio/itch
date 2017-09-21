@@ -114,7 +114,7 @@ const ModalDiv = styled.div`
       h4,
       h5,
       h6 {
-        margin-bottom: .4em;
+        margin-bottom: 0.4em;
         font-size: ${props => stripUnit(props.theme.fontSizes.baseText) + 2}px;
         font-weight: bold;
       }
@@ -157,14 +157,14 @@ const ModalDiv = styled.div`
     padding: 10px 20px;
     flex-grow: 1;
 
-    input[type=number],
-    input[type=text],
-    input[type=password] {
+    input[type="number"],
+    input[type="text"],
+    input[type="password"] {
       @include heavy-input;
       width: 100%;
     }
 
-    input[type=number] {
+    input[type="number"] {
       &::-webkit-inner-spin-button,
       &::-webkit-outer-spin-button {
         -webkit-appearance: none;
@@ -233,7 +233,7 @@ const ModalDiv = styled.div`
         display: flex;
         align-items: center;
 
-        input[type=checkbox] {
+        input[type="checkbox"] {
           margin-right: 10px;
         }
       }
@@ -310,7 +310,7 @@ const BigButtonContent = styled.div`
 const BigButtonRow = styled.div`
   display: flex;
   flex-direction: row;
-  margin: .3em .1em;
+  margin: 0.3em 0.1em;
 `;
 
 const HeaderDiv = styled.div`
@@ -357,13 +357,21 @@ const BigButtonsDiv = styled.div`
 
 interface IDefaultButtons {
   [key: string]: IModalButton;
+  ok: IModalButton;
   cancel: IModalButton;
+  nevermind: IModalButton;
 }
 
 const DEFAULT_BUTTONS = {
   cancel: {
     id: "modal-cancel",
     label: ["prompt.action.cancel"],
+    action: actions.closeModal({}),
+    className: "secondary",
+  },
+  nevermind: {
+    id: "modal-cancel",
+    label: ["prompt.action.nevermind"],
     action: actions.closeModal({}),
     className: "secondary",
   },
@@ -410,8 +418,6 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
       const {
         bigButtons = [],
         buttons = [],
-        stillCoverUrl,
-        coverUrl,
         title = "",
         message = "",
         detail,
@@ -422,46 +428,36 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
         <ReactModal isOpen contentLabel="Modal" style={customStyles}>
           <ModalDiv>
             <HeaderDiv>
-              <span className="title">
-                {format(title)}
-              </span>
+              <span className="title">{format(title)}</span>
               <Filler />
-              {modal.unclosable
-                ? null
-                : <IconButton icon="cross" onClick={() => closeModal({})} />}
+              {modal.unclosable ? null : (
+                <IconButton icon="cross" onClick={() => closeModal({})} />
+              )}
             </HeaderDiv>
 
-            {message !== ""
-              ? <div className="body">
-                  <div className="message">
-                    <div>
-                      <Markdown source={formatString(intl, message)} />
-                    </div>
-                    {detail &&
-                      <div className="secondary">
-                        <Markdown source={formatString(intl, detail)} />
-                      </div>}
+            {message !== "" ? (
+              <div className="body">
+                <div className="message">
+                  <div>
+                    <Markdown source={formatString(intl, message)} />
                   </div>
+                  {detail && (
+                    <div className="secondary">
+                      <Markdown source={formatString(intl, detail)} />
+                    </div>
+                  )}
                 </div>
-              : null}
+              </div>
+            ) : null}
 
             {widget ? this.renderWidget(widget, modal) : null}
 
-            {bigButtons.length > 0
-              ? <div className="big-wrapper">
-                  {stillCoverUrl || coverUrl
-                    ? <div className="cover-container">
-                        <HoverCover
-                          gameId={0}
-                          className="cover"
-                          coverUrl={coverUrl}
-                          stillCoverUrl={stillCoverUrl}
-                        />
-                      </div>
-                    : null}
-                  {this.renderButtons(bigButtons, "big")}
-                </div>
-              : null}
+            {bigButtons.length > 0 ? (
+              <div className="big-wrapper">
+                {this.renderCover(modal)}
+                {this.renderButtons(bigButtons, "big")}
+              </div>
+            ) : null}
 
             {this.renderButtons(buttons, "normal")}
           </ModalDiv>
@@ -470,6 +466,25 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
     } else {
       return <div />;
     }
+  }
+
+  renderCover(modal: IModal): JSX.Element {
+    const { coverUrl, stillCoverUrl } = modal;
+
+    if (!(stillCoverUrl || coverUrl)) {
+      return null;
+    }
+
+    return (
+      <div className="cover-container">
+        <HoverCover
+          gameId={0}
+          className="cover"
+          coverUrl={coverUrl}
+          stillCoverUrl={stillCoverUrl}
+        />
+      </div>
+    );
   }
 
   renderButtons(buttons: IModalButtonSpec[], flavor: Flavor) {
@@ -505,29 +520,27 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
               onClick={onClick}
             >
               <BigButtonContent>
-                <BigButtonRow>
-                  {format(label)}
-                </BigButtonRow>
+                <BigButtonRow>{format(label)}</BigButtonRow>
 
-                {tags || timeAgo
-                  ? <BigButtonRow>
-                      {tags
-                        ? map(tags, tag => {
-                            return (
-                              <Tag>
-                                {tag.icon ? <Icon icon={tag.icon} /> : null}
-                                {tag.label ? format(tag.label) : null}
-                              </Tag>
-                            );
-                          })
-                        : null}
-                      {timeAgo
-                        ? <Tag>
-                            <TimeAgo date={timeAgo.date} />
+                {tags || timeAgo ? (
+                  <BigButtonRow>
+                    {tags ? (
+                      map(tags, tag => {
+                        return (
+                          <Tag>
+                            {tag.icon ? <Icon icon={tag.icon} /> : null}
+                            {tag.label ? format(tag.label) : null}
                           </Tag>
-                        : null}
-                    </BigButtonRow>
-                  : null}
+                        );
+                      })
+                    ) : null}
+                    {timeAgo ? (
+                      <Tag>
+                        <TimeAgo date={timeAgo.date} />
+                      </Tag>
+                    ) : null}
+                  </BigButtonRow>
+                ) : null}
               </BigButtonContent>
             </RowButton>
           );

@@ -16,14 +16,12 @@ import { IStore, IDownloadItem, IDownloadResult } from "../../types";
 import { IProgressInfo, isCancelled } from "../../types";
 
 import { DB } from "../../db";
-import s from "./download-watcher-state";
-
-// TODO: pause downloads on logout.
+import watcherState from "./download-watcher-persistent-state";
 
 async function updateDownloadState(store: IStore, db: DB) {
   const downloadsState = store.getState().downloads;
   if (downloadsState.paused) {
-    if (s.currentDownload) {
+    if (watcherState.currentDownload) {
       cancelCurrent();
     }
     await setProgress(store, -1);
@@ -33,7 +31,10 @@ async function updateDownloadState(store: IStore, db: DB) {
   const activeDownload = getActiveDownload(downloadsState);
   if (activeDownload) {
     await setProgress(store, activeDownload.progress || 0);
-    if (!s.currentDownload || s.currentDownload.id !== activeDownload.id) {
+    if (
+      !watcherState.currentDownload ||
+      watcherState.currentDownload.id !== activeDownload.id
+    ) {
       logger.info(`${activeDownload.id} is the new active download`);
       start(store, db, activeDownload);
     } else {
@@ -41,7 +42,7 @@ async function updateDownloadState(store: IStore, db: DB) {
     }
   } else {
     await setProgress(store, -1);
-    if (s.currentDownload) {
+    if (watcherState.currentDownload) {
       logger.info("Cancelling/clearing out last download");
       cancelCurrent();
     } else {
@@ -61,28 +62,28 @@ async function setProgress(store: IStore, alpha: number) {
 }
 
 function cancelCurrent() {
-  if (!s.currentContext) {
+  if (!watcherState.currentContext) {
     return;
   }
 
-  s.currentContext.tryAbort().catch(e => {
+  watcherState.currentContext.tryAbort().catch(e => {
     logger.warn(`Could not cancel current download: ${e.stack}`);
   });
-  s.currentContext = null;
-  s.currentDownload = null;
+  watcherState.currentContext = null;
+  watcherState.currentDownload = null;
 }
 
 async function start(store: IStore, db: DB, item: IDownloadItem) {
   cancelCurrent();
-  s.currentDownload = item;
-  s.currentContext = new Context(store, db);
+  watcherState.currentDownload = item;
+  watcherState.currentContext = new Context(store, db);
 
   let error: Error;
   let cancelled = false;
   let result: IDownloadResult;
 
   try {
-    s.currentContext.on(
+    watcherState.currentContext.on(
       "progress",
       throttle((ev: IProgressInfo) => {
         if (cancelled) {
@@ -93,7 +94,7 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
     );
 
     logger.info("Starting download...");
-    result = await performDownload(s.currentContext, item);
+    result = await performDownload(watcherState.currentContext, item);
   } catch (e) {
     error = e;
   } finally {

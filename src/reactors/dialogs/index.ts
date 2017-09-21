@@ -3,14 +3,16 @@ import { DB } from "../../db";
 
 import changeUser from "./change-user";
 import requestCaveUninstall from "./request-cave-uninstall";
-import abortGameRequest from "./abort-game-request";
+import forceCloseGameRequest from "./force-close-game-request";
 import showGameUpdate from "./show-game-update";
 import clearBrowsingData from "./clear-browsing-data";
+import discardDownloadRequest from "./discard-download-request";
 
 export default function(watcher: Watcher, db: DB) {
   changeUser(watcher);
   requestCaveUninstall(watcher, db);
-  abortGameRequest(watcher);
+  forceCloseGameRequest(watcher);
   showGameUpdate(watcher);
   clearBrowsingData(watcher);
+  discardDownloadRequest(watcher);
 }

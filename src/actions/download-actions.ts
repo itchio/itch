@@ -16,8 +16,10 @@ import {
   IClearGameDownloadsPayload,
   PRIORITIZE_DOWNLOAD,
   IPrioritizeDownloadPayload,
-  CANCEL_DOWNLOAD,
-  ICancelDownloadPayload,
+  DISCARD_DOWNLOAD,
+  IDiscardDownloadPayload,
+  DISCARD_DOWNLOAD_REQUEST,
+  IDiscardDownloadRequestPayload,
   PAUSE_DOWNLOADS,
   IPauseDownloadsPayload,
   RESUME_DOWNLOADS,
@@ -60,8 +62,11 @@ export const clearGameDownloads = createAction<IClearGameDownloadsPayload>(
 export const prioritizeDownload = createAction<IPrioritizeDownloadPayload>(
   PRIORITIZE_DOWNLOAD
 );
-export const cancelDownload = createAction<ICancelDownloadPayload>(
-  CANCEL_DOWNLOAD
+export const discardDownloadRequest = createAction<
+  IDiscardDownloadRequestPayload
+>(DISCARD_DOWNLOAD_REQUEST);
+export const discardDownload = createAction<IDiscardDownloadPayload>(
+  DISCARD_DOWNLOAD
 );
 export const pauseDownloads = createAction<IPauseDownloadsPayload>(
   PAUSE_DOWNLOADS

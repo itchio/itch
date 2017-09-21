@@ -192,27 +192,28 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     openGameContextMenu({ game, clientX: ev.clientX, clientY: ev.pageY });
   };
 
-  onNavigate = () => {
+  onNavigate = (ev: React.MouseEvent<any>) => {
     const { item, navigateToGame } = this.props;
     const { game } = item;
-    navigateToGame({ game });
+    const background = doesEventMeanBackground(ev);
+    navigateToGame({ game, background });
   };
 
   render() {
-    const { first, active, item, navigateToGame, speeds } = this.props;
+    const { first, finished, item, speeds } = this.props;
 
     const { game } = item;
     const { coverUrl, stillCoverUrl } = game;
 
-    let onStatsClick = (): void => null;
-    if (!active) {
+    let onStatsClick = (ev: React.MouseEvent<any>): void => null;
+    if (finished) {
       onStatsClick = this.onNavigate;
     }
 
     const itemClasses = classNames("download-row-item", {
       first,
-      dimmed: active && !first,
-      finished: !active,
+      dimmed: !finished && !first,
+      finished,
     });
 
     const { hover, onMouseEnter, onMouseLeave } = this.props;
@@ -232,8 +233,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
           coverUrl={coverUrl}
           stillCoverUrl={stillCoverUrl}
           gameId={game.id}
-          onClick={ev =>
-            navigateToGame({ game, background: doesEventMeanBackground(ev) })}
+          onClick={this.onNavigate}
         />
         <div className="stats" onClick={onStatsClick}>
           {this.progress()}
@@ -243,20 +243,37 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
+  onDiscard = () => {
+    const { id } = this.props.item;
+    this.props.discardDownloadRequest({ id });
+  };
+
+  onPrioritize = () => {
+    const { id } = this.props.item;
+    this.props.prioritizeDownload({ id });
+  };
+
+  onRetry = () => {
+    const { id } = this.props.item;
+    this.props.retryDownload({ id });
+  };
+
+  onResume = () => {
+    this.props.resumeDownloads({});
+  };
+
+  onPause = () => {
+    this.props.pauseDownloads({});
+  };
+
   controls() {
-    const { intl, first, item, retryDownload, status } = this.props;
-    const {
-      resumeDownloads,
-      pauseDownloads,
-      prioritizeDownload,
-      cancelDownload,
-    } = this.props;
-    const { id, err } = item;
+    const { intl, first, item, status } = this.props;
+    const { err } = item;
 
     if (!status.operation && err) {
       return (
         <div className="controls small">
-          <IconButton icon="repeat" onClick={() => retryDownload({ id })} />
+          <IconButton icon="repeat" onClick={this.onRetry} />
         </div>
       );
     }
@@ -268,7 +285,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
             icon="cross"
             hintPosition="left"
             hint={formatString(intl, ["status.downloads.clear_finished"])}
-            onClick={() => cancelDownload({ id })}
+            onClick={this.onDiscard}
           />
         </div>
       );
@@ -277,38 +294,34 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <Controls>
         {first ? status.operation.paused ? (
-          <IconButton
-            big
-            icon="triangle-right"
-            onClick={() => resumeDownloads({})}
-          />
+          <IconButton big icon="triangle-right" onClick={this.onResume} />
         ) : (
-          <IconButton big icon="pause" onClick={() => pauseDownloads({})} />
+          <IconButton big icon="pause" onClick={this.onPause} />
         ) : (
           <IconButton
             big
             hint={formatString(intl, ["grid.item.prioritize_download"])}
             icon="caret-up"
-            onClick={() => prioritizeDownload({ id })}
+            onClick={this.onPrioritize}
           />
         )}
         <IconButton
           big
           hintPosition="left"
-          hint={formatString(intl, ["grid.item.cancel_download"])}
+          hint={formatString(intl, ["grid.item.discard_download"])}
           icon="cross"
-          onClick={() => cancelDownload({ id })}
+          onClick={this.onDiscard}
         />
       </Controls>
     );
   }
 
   progress() {
-    const { first, active, item, status } = this.props;
+    const { first, finished, item, status } = this.props;
     const { err, game, finishedAt, reason } = item;
     const { operation } = status;
 
-    if (!active && !operation) {
+    if (finished && !operation) {
       if (err) {
         return (
           <div className="error-message">
@@ -347,13 +360,17 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       progressInnerStyle.width = `${100 / 3}%`;
     }
 
+    const positiveProgress = progress > 0;
+    const hasNonDownloadTask =
+      operation && operation.type !== OperationType.Download;
+
     return (
       <div className="stats-inner">
         <div className="game-title">{game.title}</div>
         <div className="progress">
           <div
             className={classNames("progress-inner", {
-              indeterminate: !(progress > 0),
+              indeterminate: (first || hasNonDownloadTask) && !positiveProgress,
             })}
             style={progressInnerStyle}
           />
@@ -413,7 +430,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 interface IProps extends IHoverProps {
   // TODO: first really means active, active really means !finished
   first?: boolean;
-  active?: boolean;
+  finished?: boolean;
   item: IDownloadItem;
 }
 
@@ -431,7 +448,7 @@ interface IDerivedProps {
   pauseDownloads: typeof actions.pauseDownloads;
   resumeDownloads: typeof actions.resumeDownloads;
   retryDownload: typeof actions.retryDownload;
-  cancelDownload: typeof actions.cancelDownload;
+  discardDownloadRequest: typeof actions.discardDownloadRequest;
   openGameContextMenu: typeof actions.openGameContextMenu;
 
   intl: InjectedIntl;
@@ -455,7 +472,10 @@ export default connect<IProps>(injectIntl(HoverDownloadRow), {
     pauseDownloads: dispatcher(dispatch, actions.pauseDownloads),
     resumeDownloads: dispatcher(dispatch, actions.resumeDownloads),
     retryDownload: dispatcher(dispatch, actions.retryDownload),
-    cancelDownload: dispatcher(dispatch, actions.cancelDownload),
+    discardDownloadRequest: dispatcher(
+      dispatch,
+      actions.discardDownloadRequest
+    ),
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
   }),
 });

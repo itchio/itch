@@ -8,6 +8,7 @@ import Context from "../../context";
 import * as actions from "../../actions";
 
 import rootLogger, { Logger, makeLogger } from "../../logger";
+import { getCurrentTasks } from "./as-task-persistent-state";
 
 interface IAsTaskOpts {
   store: IStore;
@@ -21,12 +22,6 @@ interface IAsTaskOpts {
   /** Called with the thrown error & the logs so far if set */
   onError?: (error: Error, log: string) => Promise<void>;
 }
-
-interface ITaskMap {
-  [id: string]: Context;
-}
-
-let currentTasks = {} as ITaskMap;
 
 export default async function asTask(opts: IAsTaskOpts) {
   const id = uuid();
@@ -54,7 +49,7 @@ export default async function asTask(opts: IAsTaskOpts) {
     }, 250)
   );
 
-  currentTasks[id] = ctx;
+  getCurrentTasks()[id] = ctx;
 
   let err: Error;
 
@@ -66,7 +61,7 @@ export default async function asTask(opts: IAsTaskOpts) {
     err = e;
   }
 
-  delete currentTasks[id];
+  delete getCurrentTasks()[id];
   try {
     logger.close();
   } catch (e) {
@@ -91,5 +86,3 @@ export default async function asTask(opts: IAsTaskOpts) {
     })
   );
 }
-
-export const getCurrentTasks = () => currentTasks;

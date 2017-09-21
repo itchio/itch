@@ -686,10 +686,14 @@ export interface IPrioritizeDownloadPayload {
   id: string;
 }
 
-export const CANCEL_DOWNLOAD = "CANCEL_DOWNLOAD";
-export interface ICancelDownloadPayload {
+export const DISCARD_DOWNLOAD = "DISCARD_DOWNLOAD";
+export interface IDiscardDownloadPayload {
   id: string;
 }
+
+export const DISCARD_DOWNLOAD_REQUEST = "DISCARD_DOWNLOAD_REQUEST";
+export interface IDiscardDownloadRequestPayload
+  extends IDiscardDownloadPayload {}
 
 export const PAUSE_DOWNLOADS = "PAUSE_DOWNLOADS";
 export interface IPauseDownloadsPayload {}
@@ -757,17 +761,17 @@ export interface IReportCavePayload {
 export const RECORD_GAME_INTERACTION = "RECORD_GAME_INTERACTION";
 export interface IRecordGameInteractionPayload {}
 
-export const ABORT_GAME_REQUEST = "ABORT_GAME_REQUEST";
-export interface IAbortGameRequestPayload {
+export const FORCE_CLOSE_GAME_REQUEST = "FORCE_CLOSE_GAME_REQUEST";
+export interface IForceCloseGameRequestPayload {
   /** the game we want to force-quit */
   game: IGame;
 }
 
-export const ABORT_LAST_GAME = "ABORT_LAST_GAME";
-export interface IAbortLastGamePayload {}
+export const FORCE_CLOSE_LAST_GAME = "FORCE_CLOSE_LAST_GAME";
+export interface IForceCloseLastGamePayload {}
 
-export const ABORT_GAME = "ABORT_GAME";
-export interface IAbortGamePayload {
+export const FORCE_CLOSE_GAME = "FORCE_CLOSE_GAME";
+export interface IForceCloseGamePayload {
   /** the id of the game we want to force-quit */
   gameId: number;
 }

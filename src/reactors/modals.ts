@@ -10,7 +10,7 @@ import {
   IModalResponsePayload,
 } from "../constants/action-types";
 
-import modalResolves from "./modal-resolves";
+import modalResolves from "./modals-persistent-state";
 
 // look, so this probably breaks the spirit of redux, not denying it,
 // but also, redux has a pretty strong will, I'm sure it'll recover.

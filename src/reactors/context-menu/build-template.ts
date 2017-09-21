@@ -88,7 +88,7 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
           submenu: [
             {
               localizedLabel: ["prompt.action.force_close"],
-              action: actions.abortGameRequest({ game }),
+              action: actions.forceCloseGameRequest({ game }),
             },
           ],
         });

@@ -390,7 +390,7 @@ export function isModalButton(object: any): object is IModalButton {
 }
 
 // FIXME: that's naughty - just make static buttons be constants instead, that works.
-export type IModalButtonSpec = IModalButton | "ok" | "cancel";
+export type IModalButtonSpec = IModalButton | "ok" | "cancel" | "nevermind";
 
 export interface IModal {
   /** generated identifier for this modal */

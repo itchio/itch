@@ -25,12 +25,12 @@ import {
   IPurchaseCompletedPayload,
   ENCOURAGE_GENEROSITY,
   IEncourageGenerosityPayload,
-  ABORT_GAME_REQUEST,
-  IAbortGameRequestPayload,
-  ABORT_LAST_GAME,
-  IAbortLastGamePayload,
-  ABORT_GAME,
-  IAbortGamePayload,
+  FORCE_CLOSE_GAME_REQUEST,
+  IForceCloseGameRequestPayload,
+  FORCE_CLOSE_LAST_GAME,
+  IForceCloseLastGamePayload,
+  FORCE_CLOSE_GAME,
+  IForceCloseGamePayload,
   CHECK_FOR_GAME_UPDATE,
   ICheckForGameUpdatePayload,
   CHECK_FOR_GAME_UPDATES,
@@ -79,13 +79,15 @@ export const purchaseCompleted = createAction<IPurchaseCompletedPayload>(
   PURCHASE_COMPLETED
 );
 
-export const abortGameRequest = createAction<IAbortGameRequestPayload>(
-  ABORT_GAME_REQUEST
+export const forceCloseGameRequest = createAction<
+  IForceCloseGameRequestPayload
+>(FORCE_CLOSE_GAME_REQUEST);
+export const forceCloseLastGame = createAction<IForceCloseLastGamePayload>(
+  FORCE_CLOSE_LAST_GAME
 );
-export const abortLastGame = createAction<IAbortLastGamePayload>(
-  ABORT_LAST_GAME
+export const forceCloseGame = createAction<IForceCloseGamePayload>(
+  FORCE_CLOSE_GAME
 );
-export const abortGame = createAction<IAbortGamePayload>(ABORT_GAME);
 
 export const checkForGameUpdate = createAction<ICheckForGameUpdatePayload>(
   CHECK_FOR_GAME_UPDATE

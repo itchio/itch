@@ -4,7 +4,7 @@ import * as actions from "../../actions";
 import { sortBy } from "underscore";
 
 export default function(watcher: Watcher) {
-  watcher.on(actions.abortLastGame, async (store, action) => {
+  watcher.on(actions.forceCloseLastGame, async (store, action) => {
     const tasks = sortBy(store.getState().tasks.tasks, "startedAt");
 
     if (tasks.length > 0) {
@@ -13,7 +13,7 @@ export default function(watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.abortGame, async (store, action) => {
+  watcher.on(actions.forceCloseGame, async (store, action) => {
     const { gameId } = action.payload;
 
     const { tasks } = store.getState().tasks;

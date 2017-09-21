@@ -6,7 +6,7 @@ import { app, Menu } from "electron";
 import { createSelector } from "reselect";
 
 import * as actions from "../actions";
-import { getTray, rememberNotificationAction } from "./get-tray";
+import { getTray, rememberNotificationAction } from "./tray-persistent-state";
 
 import {
   IStore,

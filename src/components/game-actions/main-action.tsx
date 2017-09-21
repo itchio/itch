@@ -191,7 +191,7 @@ interface IDerivedProps {
   queueGame: typeof actions.queueGame;
   showGameUpdate: typeof actions.showGameUpdate;
   initiatePurchase: typeof actions.initiatePurchase;
-  abortGameRequest: typeof actions.abortGameRequest;
+  abortGameRequest: typeof actions.forceCloseGameRequest;
   navigate: typeof actions.navigate;
   viewCaveDetails: typeof actions.viewCaveDetails;
 }
@@ -201,7 +201,7 @@ export default connect<IProps>(injectIntl(MainAction), {
     queueGame: dispatcher(dispatch, actions.queueGame),
     showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
     initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),
-    abortGameRequest: dispatcher(dispatch, actions.abortGameRequest),
+    abortGameRequest: dispatcher(dispatch, actions.forceCloseGameRequest),
     navigate: dispatcher(dispatch, actions.navigate),
     viewCaveDetails: dispatcher(dispatch, actions.viewCaveDetails),
   }),

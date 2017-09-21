@@ -101,11 +101,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
           ""
         )}
 
-        {firstItem ? (
-          <Row key={firstItem.id} item={firstItem} first active />
-        ) : (
-          ""
-        )}
+        {firstItem ? <Row key={firstItem.id} item={firstItem} first /> : ""}
 
         {queuedItems.length > 0 ? (
           <div className="section-bar">
@@ -115,9 +111,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
           ""
         )}
         {queuedItems.length > 0 ? (
-          map(queuedItems, (item, i) => (
-            <Row key={item.id} item={item} active />
-          ))
+          map(queuedItems, (item, i) => <Row key={item.id} item={item} />)
         ) : (
           ""
         )}
@@ -136,7 +130,9 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
               </Link>
             </div>,
           ].concat(
-            map(finishedItems, item => <Row key={item.id} item={item} />)
+            map(finishedItems, item => (
+              <Row key={item.id} item={item} finished />
+            ))
           )
         ) : (
           ""

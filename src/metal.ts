@@ -14,15 +14,7 @@ if (env.name === "development") {
   logger.info("Enabling hot-module reload!");
   enableLiveReload({
     strategy: "react-hmr",
-    blacklist: [
-      "db",
-      "store",
-      "logger",
-      "modal-resolves",
-      "registered-protocols",
-      "get-tray",
-      "download-watcher-state",
-    ],
+    blacklist: ["db", "store", "logger", "persistent-state"],
   });
 }
 
@@ -105,7 +97,7 @@ function autoUpdateDone() {
     );
 
     globalShortcut.register("Control+Alt+Backspace", function() {
-      store.dispatch(actions.abortLastGame({}));
+      store.dispatch(actions.forceCloseLastGame({}));
     });
 
     if (rt) {
