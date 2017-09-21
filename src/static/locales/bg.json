@@ -450,5 +450,12 @@
     "preferences.install_location.navigate": "Преглед на съдържанието на това местоположение в нов раздел",
     "install_location.property.size_on_disk": "{{size}} на диска",
     "grid.item.uninstall_request": "Деинсталиране или преинсталиране…",
-    "grid.criterion.filter_by": "Филтриране по: "
+    "grid.criterion.filter_by": "Филтриране по: ",
+    "grid.item.discard_download": "Отказване на свалянето",
+    "prompt.action.nevermind": "Няма значение",
+    "prompt.discard_download.message": "Наистина ли искате да се откажете от свалянето на „{{title}}“?",
+    "prompt.discard_download.detail": "Можете да повторите инсталацията когато решите, но тя ще започне отначало.",
+    "prompt.discard_download.action": "Отказване на свалянето",
+    "prompt.uninstall_error.message_permissions": "Някои от файловете на „{{title}}“ не могат да бъдат изтрити. Искате ли да опитате отново като администратор?",
+    "prompt.uninstall_error.action_permissions": "Премахване като администратор"
 }
