@@ -33,4 +33,14 @@ export default class GameFetcher extends Fetcher {
       db.saveMany(normalized.entities);
     }
   }
+
+  clean() {
+    this.push(
+      {
+        users: null,
+        games: null,
+      },
+      { shallow: true }
+    );
+  }
 }

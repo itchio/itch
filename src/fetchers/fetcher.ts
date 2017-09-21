@@ -142,7 +142,7 @@ export class Fetcher {
   /**
    * Called by work when data is available.
    */
-  push(data: ITabData) {
+  push(data: ITabData, { shallow }: { shallow: boolean } = { shallow: false }) {
     if (this.ctx.isDead()) {
       return;
     }
@@ -150,6 +150,7 @@ export class Fetcher {
     const payload = {
       tab: this.tab,
       data,
+      shallow,
     };
     const action = actions.tabDataFetched(payload);
     this.ctx.store.dispatch(action);
@@ -222,6 +223,10 @@ export class Fetcher {
 
   sortAndFilter(input: IGame[]): IGame[] {
     return sortAndFilter(input, this.tab, this.ctx.store);
+  }
+
+  clean() {
+    this.logger.warn(`clean(): stub!`);
   }
 }
 

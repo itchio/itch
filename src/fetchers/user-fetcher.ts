@@ -29,4 +29,13 @@ export default class UserFetcher extends Fetcher {
 
     pushUser(normalized.entities.users[normalized.result.userId]);
   }
+
+  clean() {
+    this.push(
+      {
+        users: null,
+      },
+      { shallow: true }
+    );
+  }
 }

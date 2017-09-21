@@ -80,4 +80,15 @@ export default class CollectionFetcher extends Fetcher {
     const remoteGameIds: number[] = normalized.result.gameIds;
     this.pushAllGames(getByIds<IGame>(remoteGames, remoteGameIds));
   }
+
+  clean() {
+    this.push(
+      {
+        collections: null,
+        users: null,
+        games: null,
+      },
+      { shallow: true }
+    );
+  }
 }

@@ -18,14 +18,14 @@ import LocationFetcher from "../fetchers/location-fetcher";
 import Context from "../context";
 import { DB } from "../db";
 
-import { some } from "underscore";
+import { some, throttle, union } from "underscore";
 import { Space } from "../helpers/space";
 
 let fetching: {
   [key: string]: boolean;
 } = {};
 
-let lastFetcher: {
+let lastFetchers: {
   [key: string]: any;
 } = {};
 
@@ -49,14 +49,23 @@ export async function queueFetch(
     return;
   }
 
-  if (lastFetcher[tab] !== fetcherClass) {
-    // TODO: ask fetcher to clean what it fetched
+  const lastFetcher = lastFetchers[tab];
+  if (lastFetcher && lastFetcher.constructor !== fetcherClass) {
+    try {
+      lastFetcher.clean();
+      delete lastFetchers[tab];
+    } catch (e) {
+      logger.warn(
+        `While cleaning ${lastFetcher.constructor
+          .name} => ${fetcherClass.name} for ${tab}: ${e.stack}`
+      );
+    }
   }
-  lastFetcher[tab] = fetcherClass;
 
   fetching[tab] = true;
 
   const fetcher = new fetcherClass();
+  lastFetchers[tab] = fetcher;
   const ctx = new Context(store, db);
   fetcher.hook(ctx, tab, reason);
 
@@ -107,10 +116,45 @@ function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
   }
 }
 
+const queueCleanup = throttle((store: IStore) => {
+  const validKeys = new Set(Object.keys(store.getState().session.tabData));
+
+  const allKeys = union(
+    Object.keys(lastFetchers),
+    Object.keys(nextFetchReason),
+    Object.keys(fetching)
+  );
+  for (const k of allKeys) {
+    if (!validKeys.has(k)) {
+      logger.debug(`Cleaning up ${k}`);
+      delete lastFetchers[k];
+      delete fetching[k];
+      delete nextFetchReason[k];
+    }
+  }
+}, 3000 /* space out cleanups */);
+
 export default function(watcher: Watcher, db: DB) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
-    queueFetch(store, db, action.payload.tab, FetchReason.TabChanged);
+    const { tab } = action.payload;
+    // if we just focused a tab, it shouldn't be marked 'restored' anymore
+    const tabData = store.getState().session.tabData[tab];
+    if (tabData && tabData.restored) {
+      store.dispatch(
+        actions.tabDataFetched({
+          tab,
+          data: { restored: false },
+          shallow: true,
+        })
+      );
+    }
+
+    queueFetch(store, db, tab, FetchReason.TabChanged);
+  });
+
+  watcher.on(actions.tabsChanged, async (store, action) => {
+    queueCleanup(store);
   });
 
   // tab navigated to something else? let's fetch
