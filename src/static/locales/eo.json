@@ -437,7 +437,7 @@
     "grid.item.status.installed": "Instalita",
     "collection.summary": "Kolekto da {{itemCount}} aĵoj",
     "grid.item.not_compatible": "Nedisponebla por ĉi tiu sistemo",
-    "prompt.blessing.message": "Por {{operation}} „{{title}}“ oni devas esti administratoro",
+    "prompt.blessing.message": "Por administri „{{title}}“ oni devas esti administranto",
     "prompt.blessing.detail": "Daŭrigu nur se vi fidas la kreanton.",
     "prompt.install_error.message": "La instalado malsukcesis.",
     "status.cancelled.message": "La ago estis haltita.",
@@ -458,5 +458,12 @@
     "preferences.install_location.navigate": "Vidi la enhavojn de ĉi tiu loko en nova folio",
     "install_location.property.size_on_disk": "{{size}} en la disko",
     "grid.item.uninstall_request": "Malinstali aŭ reinstali…",
-    "grid.criterion.filter_by": "Filtri laŭ: "
+    "grid.criterion.filter_by": "Filtri laŭ: ",
+    "grid.item.discard_download": "Ĉesigi la elŝutadon",
+    "prompt.action.nevermind": "Ne gravas",
+    "prompt.discard_download.message": "Ĉu vi certe volas ĉesigi la elŝutadon de „{{title}}“?",
+    "prompt.discard_download.detail": "Vi povos denove instali ĝin kiam ajn vi volas, sed la instalado komenciĝos dekomence.",
+    "prompt.discard_download.action": "Ĉesigi la instaladon",
+    "prompt.uninstall_error.message_permissions": "Iuj dosieroj de „{{title}}“ ne povas esti forigitaj. Ĉu vi volas denove provi kiel administranto?",
+    "prompt.uninstall_error.action_permissions": "Forigi kiel administranto"
 }
