@@ -158,12 +158,6 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
     logger.info(`Committing game & cave to db`);
     ctx.db.saveOne("games", String(game.id), game);
     ctx.db.saveOne("caves", cave.id, cave);
-
-    logger.info(`Wiping download folder...`);
-    await butler.wipe(downloadFolderPath, {
-      ctx,
-      logger,
-    });
   }
 
   logger.info(`Configuring...`);

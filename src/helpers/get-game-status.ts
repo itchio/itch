@@ -65,6 +65,7 @@ export enum OperationType {
 export interface IOperation {
   type: OperationType;
   name?: TaskName;
+  id?: string;
   reason?: DownloadReason;
   active: boolean;
   paused: boolean;
@@ -175,6 +176,7 @@ function rawGetGameStatus(
   } else if (download) {
     operation = {
       type: OperationType.Download,
+      id: download.id,
       reason: download.reason,
       active: isDownloadActive,
       paused: areDownloadsPaused,

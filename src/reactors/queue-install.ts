@@ -43,6 +43,7 @@ export async function queueInstall(
 
   logger.info(`Doing ${reason} for game ${game.title} (#${game.id})`);
 
+  const { handPicked, upload } = opts;
   let freshInstall = false;
   let caveIn: Partial<ICave> & ICaveLocation;
 
@@ -59,8 +60,6 @@ export async function queueInstall(
     freshInstall = true;
 
     let installFolder = installFolderName(game);
-
-    const { handPicked, upload } = opts;
 
     caveIn = {
       id: uuid(),
@@ -160,6 +159,12 @@ export async function queueInstall(
       );
     }
     throw e;
+  } finally {
+    await wipeDownloadFolder({
+      logger,
+      preferences: ctx.store.getState().preferences,
+      upload,
+    });
   }
 }
 
@@ -226,6 +231,7 @@ import { DB } from "../db";
 import { Watcher } from "./watcher";
 import { promisedModal } from "./modals";
 import { t } from "../format/index";
+import { wipeDownloadFolder } from "./downloads/wipe-download-folder";
 
 export default async function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueInstall, async (store, action) => {

@@ -16,6 +16,8 @@ const ButtonDiv = styled.div`
   border: 1px solid;
   border-width: 4px 1px 1px 1px;
   border-radius: 3px;
+  background-color: #393938;
+  border-color: #424242;
   box-shadow: 0 1px 3px ${props => props.theme.inputBoxShadow};
   text-shadow: 0px 1px rgba(0, 0, 0, 0.4);
 
@@ -33,7 +35,7 @@ const ButtonDiv = styled.div`
   }
 
   &.primary {
-    background: ${props => props.theme.accent};
+    background-color: ${props => props.theme.accent};
     border-color: ${props => props.theme.lightAccent};
   }
 
@@ -59,9 +61,6 @@ const ButtonDiv = styled.div`
     padding-right: 20px;
     font-weight: normal;
   }
-
-  background-color: #2b2b2b;
-  border-color: #444;
 
   display: flex;
   flex-direction: row;
@@ -103,15 +102,11 @@ class Button extends React.PureComponent<IProps, any> {
         {...restProps}
       >
         {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
-        {iconComponent || icon
-          ? <Spacer className={classNames({ wide })} />
-          : null}
+        {iconComponent || icon ? (
+          <Spacer className={classNames({ wide })} />
+        ) : null}
         {icon && label ? " " : null}
-        {label
-          ? <Label>
-              {label}
-            </Label>
-          : null}
+        {label ? <Label>{label}</Label> : null}
         {this.props.children}
       </ButtonDiv>
     );

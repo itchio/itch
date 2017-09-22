@@ -17,7 +17,7 @@ const HoverCover = Hoverable(Cover);
 import colors from "../constants/colors";
 
 import * as actions from "../actions";
-import { map } from "underscore";
+import { map, isEmpty, filter } from "underscore";
 
 import { IModal, IModalButtonSpec, IModalButton, IModalAction } from "../types";
 import { IModalResponsePayload } from "../constants/action-types";
@@ -30,6 +30,7 @@ import { stripUnit } from "polished";
 
 import format, { formatString } from "./format";
 import { InjectedIntl, injectIntl } from "react-intl";
+import { specToButton } from "../helpers/spec-to-button";
 
 type Flavor = "normal" | "big";
 
@@ -355,34 +356,6 @@ const BigButtonsDiv = styled.div`
   }
 `;
 
-interface IDefaultButtons {
-  [key: string]: IModalButton;
-  ok: IModalButton;
-  cancel: IModalButton;
-  nevermind: IModalButton;
-}
-
-const DEFAULT_BUTTONS = {
-  cancel: {
-    id: "modal-cancel",
-    label: ["prompt.action.cancel"],
-    action: actions.closeModal({}),
-    className: "secondary",
-  },
-  nevermind: {
-    id: "modal-cancel",
-    label: ["prompt.action.nevermind"],
-    action: actions.closeModal({}),
-    className: "secondary",
-  },
-  ok: {
-    id: "modal-ok",
-    label: ["prompt.action.ok"],
-    action: actions.closeModal({}),
-    className: "secondary",
-  },
-} as IDefaultButtons;
-
 @watching
 export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   constructor() {
@@ -400,13 +373,23 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
           return;
         }
 
-        const mainButton = (modal.bigButtons || modal.buttons || ea)[0];
-        if (!mainButton) {
+        if (modal.bigButtons && !isEmpty(modal.bigButtons)) {
+          // 'ok' does nothing when there's big buttons
           return;
         }
 
-        const onClick = this.buttonOnClick(this.specToButton(mainButton));
-        onClick();
+        if (modal.buttons && !isEmpty(modal.buttons)) {
+          let primaryButtons = map(modal.buttons, specToButton);
+          primaryButtons = filter(
+            primaryButtons,
+            b => !/secondary/.test(b.className)
+          );
+          // if there's more than one primary button, or none at all, 'ok' does nothing
+          if (primaryButtons.length === 1) {
+            const onClick = this.buttonOnClick(primaryButtons[0]);
+            onClick();
+          }
+        }
       }
     });
   }
@@ -506,7 +489,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
     return (
       <BigButtonsDiv>
         {map(buttons, (buttonSpec, index) => {
-          const button = this.specToButton(buttonSpec);
+          const button = specToButton(buttonSpec);
           const { label, className = "", icon, id, tags, timeAgo } = button;
           let onClick = this.buttonOnClick(button);
 
@@ -554,7 +537,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
       <ButtonsDiv>
         <Filler />
         {map(buttons, (buttonSpec, index) => {
-          const button = this.specToButton(buttonSpec);
+          const button = specToButton(buttonSpec);
           const { label, className = "", icon, id } = button;
           let onClick = this.buttonOnClick(button);
 
@@ -572,22 +555,6 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
         })}
       </ButtonsDiv>
     );
-  }
-
-  specToButton(buttonSpec: IModalButtonSpec): IModalButton {
-    let button: IModalButton;
-    if (typeof buttonSpec === "string") {
-      button = DEFAULT_BUTTONS[buttonSpec];
-      if (!button) {
-        button = {
-          label: "?",
-          action: actions.closeModal({}),
-        };
-      }
-    } else {
-      button = buttonSpec as IModalButton;
-    }
-    return button;
   }
 
   buttonOnClick(button: IModalButton): () => void {
@@ -656,5 +623,3 @@ export default connect<IProps>(injectIntl(Modal), {
     closeModal: () => dispatch(actions.closeModal({})),
   }),
 });
-
-const ea = [];

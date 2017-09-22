@@ -1,10 +1,11 @@
-import { IMenuTemplate } from "../../types/index";
+import { IMenuTemplate, IMenuItem } from "../../types/index";
 import * as actions from "../../actions";
 
 import { isEmpty } from "underscore";
 import getGameStatus, {
   Access,
   OperationType,
+  IOperation,
 } from "../../helpers/get-game-status";
 import { IGame } from "../../db/models/game";
 import actionForGame from "../../util/action-for-game";
@@ -75,29 +76,42 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
 
   let statusItems: IMenuTemplate = [];
 
+  const itemForOperation = (operation: IOperation): IMenuItem => {
+    const localizedLabel = formatOperation(operation);
+    if (operation.name === "launch") {
+      return {
+        localizedLabel,
+        submenu: [
+          {
+            localizedLabel: ["prompt.action.force_close"],
+            action: actions.forceCloseGameRequest({ game }),
+          },
+        ],
+      };
+    } else {
+      const item: IMenuItem = {
+        localizedLabel,
+        enabled: false,
+      };
+
+      if (operation.type === OperationType.Download && operation.id) {
+        item.submenu = [
+          {
+            localizedLabel: ["grid.item.discard_download"],
+            action: actions.discardDownloadRequest({ id: operation.id }),
+          },
+        ];
+      }
+      return item;
+    }
+  };
+
   if (cave) {
     let busy = false;
 
     if (operation) {
       busy = true;
-
-      const localizedLabel = formatOperation(operation);
-      if (operation.name === "launch") {
-        statusItems.push({
-          localizedLabel,
-          submenu: [
-            {
-              localizedLabel: ["prompt.action.force_close"],
-              action: actions.forceCloseGameRequest({ game }),
-            },
-          ],
-        });
-      } else {
-        statusItems.push({
-          localizedLabel,
-          enabled: false,
-        });
-      }
+      statusItems.push(itemForOperation(operation));
     } else {
       statusItems.push({
         localizedLabel: [`grid.item.${mainAction}`],
@@ -121,54 +135,48 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
 
     template = concatTemplates(template, updateAndLocalItems);
 
-    let advancedItems: IMenuTemplate = [];
+    if (!busy) {
+      let advancedItems: IMenuTemplate = [];
 
-    const buildInfo = db.caves.get(k =>
-      k.fields(["buildId"]).where("id = ?", cave.id)
-    );
-    if (buildInfo && buildInfo.buildId) {
-      advancedItems = concatTemplates(advancedItems, [
-        {
-          localizedLabel: ["grid.item.verify_integrity"],
-          action: actions.healCave({ caveId: cave.id }),
-        },
-        {
-          localizedLabel: ["grid.item.revert_to_version"],
-          action: actions.revertCaveRequest({ caveId: cave.id }),
-        },
-      ]);
+      const buildInfo = db.caves.get(k =>
+        k.fields(["buildId"]).where("id = ?", cave.id)
+      );
+      if (buildInfo && buildInfo.buildId) {
+        advancedItems = concatTemplates(advancedItems, [
+          {
+            localizedLabel: ["grid.item.verify_integrity"],
+            action: actions.healCave({ caveId: cave.id }),
+          },
+          {
+            localizedLabel: ["grid.item.revert_to_version"],
+            action: actions.revertCaveRequest({ caveId: cave.id }),
+          },
+        ]);
+      }
+
+      if (!isEmpty(advancedItems)) {
+        template = concatTemplates(template, [
+          {
+            localizedLabel: ["grid.item.advanced"],
+            submenu: advancedItems,
+          },
+        ]);
+      }
     }
-
-    if (advancedItems.length > 0) {
-      template = concatTemplates(template, [
-        {
-          localizedLabel: ["grid.item.advanced"],
-          submenu: advancedItems,
-        },
-      ]);
-    }
-
-    let uninstallReinstallItems: IMenuTemplate = [];
 
     if (!busy) {
+      let uninstallReinstallItems: IMenuTemplate = [];
       uninstallReinstallItems.push({
         id: "context--grid-item-uninstall-request",
         localizedLabel: ["grid.item.uninstall_request"],
         action: actions.requestCaveUninstall({ caveId: cave.id }),
       });
-    }
 
-    template = concatTemplates(template, uninstallReinstallItems);
+      template = concatTemplates(template, uninstallReinstallItems);
+    }
   } else {
     if (operation) {
-      if (operation.type === OperationType.Download) {
-        statusItems.push({
-          localizedLabel: ["grid.item.downloading"],
-          action: actions.navigate({ tab: "downloads" }),
-        });
-      } else {
-        // uhh and we have no cave you say? that's weird
-      }
+      statusItems.push(itemForOperation(operation));
     } else {
       if (status.access === Access.None) {
         if (game.canBeBought) {

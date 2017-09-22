@@ -11,12 +11,15 @@ import performDownload from "./perform-download";
 
 import { getActiveDownload } from "./getters";
 
-import Context from "../../context";
+import Context, { MinimalContext } from "../../context";
 import { IStore, IDownloadItem, IDownloadResult } from "../../types";
 import { IProgressInfo, isCancelled } from "../../types";
 
 import { DB } from "../../db";
+import * as paths from "../../os/paths";
+import butler from "../../util/butler";
 import watcherState from "./download-watcher-persistent-state";
+import { wipeDownloadFolder } from "./wipe-download-folder";
 
 async function updateDownloadState(store: IStore, db: DB) {
   const downloadsState = store.getState().downloads;
@@ -79,29 +82,39 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
   watcherState.currentContext = new Context(store, db);
 
   let error: Error;
-  let cancelled = false;
+  let interrupted = false;
   let result: IDownloadResult;
 
   try {
     watcherState.currentContext.on(
       "progress",
       throttle((ev: IProgressInfo) => {
-        if (cancelled) {
+        if (interrupted) {
           return;
         }
         store.dispatch(actions.downloadProgress({ id: item.id, ...ev }));
       }, 250)
     );
 
-    logger.info("Starting download...");
+    logger.info(`Download for ${item.game.title} started`);
     result = await performDownload(watcherState.currentContext, item);
   } catch (e) {
     error = e;
   } finally {
     if (isCancelled(error)) {
       // no error to handle, but don't trigger downloadEnded either
-      cancelled = true;
-      logger.info(`Download cancelled for ${item.game.title}`);
+      interrupted = true;
+
+      if (watcherState.discarded[item.id]) {
+        logger.info(`Download for ${item.game.title} discarded`);
+        await wipeDownloadFolder({
+          logger,
+          preferences: store.getState().preferences,
+          upload: item.upload,
+        });
+      } else {
+        logger.info(`Download for ${item.game.title} paused/deprioritized`);
+      }
     } else {
       logger.info(`Download for ${item.game.title} ended`);
       if (error) {
@@ -129,5 +142,10 @@ export default function(watcher: Watcher, db: DB) {
     } catch (e) {
       logger.error(`While updating download state: ${e.stack || e}`);
     }
+  });
+
+  watcher.on(actions.discardDownload, async (store, action) => {
+    const { id } = action.payload;
+    watcherState.discarded[id] = true;
   });
 }
