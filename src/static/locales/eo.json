@@ -462,8 +462,17 @@
     "grid.item.discard_download": "Ĉesigi la elŝutadon",
     "prompt.action.nevermind": "Ne gravas",
     "prompt.discard_download.message": "Ĉu vi certe volas ĉesigi la elŝutadon de „{{title}}“?",
-    "prompt.discard_download.detail": "Vi povos denove instali ĝin kiam ajn vi volas, sed la instalado komenciĝos dekomence.",
+    "prompt.discard_download.detail": "Vi povos denove instali „{{title}}“ kiam ajn vi volas, sed la instalado komenciĝos dekomence.",
     "prompt.discard_download.action": "Ĉesigi la instaladon",
     "prompt.uninstall_error.message_permissions": "Iuj dosieroj de „{{title}}“ ne povas esti forigitaj. Ĉu vi volas denove provi kiel administranto?",
-    "prompt.uninstall_error.action_permissions": "Forigi kiel administranto"
+    "prompt.uninstall_error.action_permissions": "Forigi kiel administranto",
+    "download.ongoing.install": "Instalado de „{{title}}“…",
+    "download.ongoing.update": "Ĝisdatigado de „{{title}}“…",
+    "download.ongoing.reinstall": "Reinstalado de „{{title}}“…",
+    "download.ongoing.revert": "Retroinstalado de antaŭa versio de „{{title}}“…",
+    "download.ongoing.heal": "Riparado de „{{title}“…",
+    "prompt.discard_download.action.stop_download": "Ĉesigi la elŝutadon",
+    "prompt.discard_download.action.continue_download": "Daŭrigi la elŝutadon",
+    "prompt.dangerous_discard_download.message": "Se vi ĉesigus la elŝutadon, „{{title}}“ restos en nekohera stato.",
+    "prompt.dangerous_discard_download.detail": "„{{title}}“ restaŭriĝos al la lasta versio la sekvantan fojon, kiam vi provos uzi ĝin."
 }
