@@ -3,7 +3,6 @@ import * as actions from "../../actions";
 
 import * as paths from "../../os/paths";
 
-import { t } from "../../format";
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
 import Context from "../../context";
@@ -12,8 +11,6 @@ import lazyGetGame from "../lazy-get-game";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.healCave, async (store, action) => {
-    const i18n = store.getState().i18n;
-
     const { caveId } = action.payload;
     const opts = {
       logger: paths.caveLogger(caveId),
@@ -26,7 +23,8 @@ export default function(watcher: Watcher, db: DB) {
         return;
       }
 
-      if (!cave.buildId) {
+      const build = fromJSONField(cave.build);
+      if (!build) {
         opts.logger.warn(`Cave isn't wharf-enabled, can't heal: ${caveId}`);
         return;
       }
@@ -34,22 +32,12 @@ export default function(watcher: Watcher, db: DB) {
       const ctx = new Context(store, db);
       const game = await lazyGetGame(ctx, cave.gameId);
 
-      const upload = {
-        ...fromJSONField(cave.upload),
-        buildId: cave.buildId,
-      };
-
-      store.dispatch(
-        actions.statusMessage({
-          message: t(i18n, ["status.healing"]),
-        })
-      );
-
       store.dispatch(
         actions.queueDownload({
           caveId: cave.id,
           game,
-          upload,
+          upload: fromJSONField(cave.upload),
+          buildId: build.id,
           reason: "heal",
         })
       );

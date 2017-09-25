@@ -44,6 +44,9 @@ export interface IQueueDownloadOpts {
   /** upload we're downloading */
   upload: IUpload;
 
+  /** build we're aiming for (if we're reverting/healing) */
+  buildId?: number;
+
   /** total size of download (size of archive or sum of patch sizes) */
   totalSize?: number;
 

@@ -106,6 +106,22 @@ export const DATE_FORMAT: IDateFormat = {
   },
 };
 
+export const MONTH_YEAR_FORMAT: IDateFormat = {
+  key: 2,
+  options: {
+    year: "numeric",
+    month: "long",
+  },
+};
+
+export const DAY_MONTH_FORMAT: IDateFormat = {
+  key: 3,
+  options: {
+    month: "long",
+    day: "numeric",
+  },
+};
+
 export function elapsed(t1: number, t2: number) {
   return (t2 - t1).toFixed(2) + "ms";
 }

@@ -46,7 +46,7 @@ export default function getWatcher(db: DB) {
   const watcher = new Watcher();
 
   fetchers(watcher, db);
-  preboot(watcher);
+  preboot(watcher, db);
   preferences(watcher);
   mainWindow(watcher);
   locales(watcher);

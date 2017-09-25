@@ -3,7 +3,6 @@ import { Watcher } from "./watcher";
 import * as actions from "../actions";
 
 import store from "../store/metal-store";
-import db from "../db";
 
 import { cleanOldLogs } from "./preboot/clean-old-logs";
 import { cleanDownloadFolders } from "./preboot/clean-download-folders";
@@ -20,11 +19,12 @@ import { applyProxySettings } from "../reactors/proxy";
 
 import { elapsed } from "../format/datetime";
 import loadPreferences from "./preboot/load-preferences";
+import { DB } from "../db";
 
 let testProxy = false;
 let proxyTested = false;
 
-export default function(watcher: Watcher) {
+export default function(watcher: Watcher, db: DB) {
   const ctx = new Context(store, db);
   watcher.on(actions.preboot, async (store, action) => {
     let dispatchedBoot = false;

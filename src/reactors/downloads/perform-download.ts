@@ -34,7 +34,11 @@ export default async function performDownload(
   if (item.upgradePath && item.caveId) {
     logger.info("Got an upgrade path, downloading patches");
 
-    return await downloadPatches({ ctx, item, logger, credentials });
+    return await doMorphingOperation(
+      ctx,
+      item.caveId,
+      async () => await downloadPatches({ ctx, item, logger, credentials })
+    );
   }
 
   const { upload, caveId } = item;
@@ -46,7 +50,7 @@ export default async function performDownload(
   const archivePath = paths.downloadPath(upload, preferences);
 
   if (isHeal(item)) {
-    const buildId = upload.buildId;
+    const buildId = item.buildId;
 
     logger.info(`Downloading wharf-enabled download, build #${buildId}`);
 
@@ -68,11 +72,16 @@ export default async function performDownload(
     const fullInstallFolder = paths.appPath(cave, preferences);
     logger.info(`Doing verify+heal to ${fullInstallFolder}`);
 
-    await butler.verify(signatureURL, fullInstallFolder, {
+    await doMorphingOperation(
       ctx,
-      logger,
-      heal: `archive,${archiveURL}`,
-    });
+      cave.id,
+      async () =>
+        await butler.verify(signatureURL, fullInstallFolder, {
+          ctx,
+          logger,
+          heal: `archive,${archiveURL}`,
+        })
+    );
 
     ctx.db.saveOne("caves", cave.id, {
       upload: {
@@ -105,4 +114,20 @@ export default async function performDownload(
   return {
     archivePath,
   };
+}
+
+/**
+ * Mark cave as morphing, do `cb`, then clear the morphing marker
+ * if it succeeded.
+ */
+async function doMorphingOperation<T>(
+  ctx: Context,
+  caveId: string,
+  cb: () => Promise<T>
+): Promise<T> {
+  ctx.db.saveOne("caves", caveId, { morphing: true });
+  const res = await cb();
+  // if cb throws, we'll never reach here
+  ctx.db.saveOne("caves", caveId, { morphing: false });
+  return res;
 }

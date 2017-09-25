@@ -7,7 +7,7 @@ import * as url from "url";
 
 import { ICave, ICaveLocation } from "../db/models/cave";
 import { IGame } from "../db/models/game";
-import { toJSONField } from "../db/json-field";
+import { toJSONField, fromJSONField } from "../db/json-field";
 import {
   IQueueInstallOpts,
   IStore,
@@ -79,27 +79,12 @@ export async function queueInstall(
   try {
     const { upload } = opts;
 
-    const versionName = (buildId: number, buildUserVersion: string) => {
-      if (buildUserVersion) {
-        return `${buildUserVersion} (#${buildId})`;
-      } else if (buildId) {
-        return `#{buildId}`;
-      } else {
-        return "<not versioned>";
-      }
-    };
-
     if (!freshInstall) {
       logger.info(
-        `← old version: ${versionName(caveIn.buildId, caveIn.buildUserVersion)}`
+        `← old version: ${formatBuildVersion(fromJSONField(caveIn.build))}`
       );
     }
-    logger.info(
-      `→ new version: ${versionName(
-        upload.buildId,
-        upload.build && upload.build.userVersion
-      )}`
-    );
+    logger.info(`→ new version: ${formatBuildVersion(upload.build)}`);
 
     const prefs = ctx.store.getState().preferences;
     let destPath = paths.appPath(caveIn, prefs);
@@ -232,6 +217,7 @@ import { Watcher } from "./watcher";
 import { promisedModal } from "./modals";
 import { t } from "../format/index";
 import { wipeDownloadFolder } from "./downloads/wipe-download-folder";
+import { formatBuildVersion } from "../helpers/build";
 
 export default async function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueInstall, async (store, action) => {
@@ -286,7 +272,7 @@ function showReadyNotification(
   } else if (reason === "update") {
     message = ["notification.download_updated", { title }];
   } else if (reason === "revert") {
-    const version = cave.buildUserVersion || `#${cave.buildId}`;
+    const version = formatBuildVersion(fromJSONField(cave.build));
     message = ["notification.download_reverted", { title, version }];
   } else if (reason === "heal") {
     message = ["notification.download_healed", { title }];

@@ -42,6 +42,7 @@ import {
 import { powerSaveBlocker } from "electron";
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
+import { fromJSONField } from "../db/json-field";
 
 const emptyArr = [];
 
@@ -131,6 +132,26 @@ async function doLaunch(
   let args: string[] = [];
 
   const { db, store } = ctx;
+
+  if (cave.morphing) {
+    store.dispatch(
+      actions.statusMessage({
+        message: ["status.repairing_game", { title: game.title }],
+      })
+    );
+    store.dispatch(
+      actions.queueDownload({
+        caveId: cave.id,
+        game,
+        reason: "heal",
+        // FIXME: have a backup plan if the upload's gone
+        upload: fromJSONField(cave.upload),
+        // FIXME: can non-wharf uploads have the 'morphing' flag set?
+        buildId: fromJSONField(cave.build).id,
+      })
+    );
+    return;
+  }
 
   const action = actionForGame(game, cave);
   if (action === "open") {

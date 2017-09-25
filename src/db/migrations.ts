@@ -1,7 +1,9 @@
 import { IMigrations } from "./migrator";
+import * as squel from "squel";
 
 import { importOldDatabases } from "./import-old-database";
 import { app } from "electron";
+import { IBuild } from "../types/index";
 
 // stolen from lapis, yay
 export default <IMigrations>{
@@ -18,5 +20,31 @@ export default <IMigrations>{
       db,
       userDataPath,
     });
+  },
+
+  1506341540: async m => {
+    // fill in `build` for caves that only have `buildId`
+    const { db } = m;
+    const cavesToFix = db.caves.all(k =>
+      k.where(
+        squel
+          .expr()
+          .and("build IS NULL")
+          .and("buildId IS NOT NULL")
+      )
+    );
+
+    for (const caveToFix of cavesToFix) {
+      // TODO: we could do API calls here to get the full build info
+      // but that seems like the wrong thing to do in a migration,
+      // maybe we could have a check/fix in loginSucceeded ?
+      db.saveOne("caves", caveToFix.id, {
+        build: {
+          id: caveToFix.buildId,
+          userVersion: caveToFix.buildUserVersion,
+          migrated: true,
+        } as Partial<IBuild>,
+      });
+    }
   },
 };

@@ -194,8 +194,21 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   onNavigate = (ev: React.MouseEvent<any>) => {
     const { item, navigateToGame } = this.props;
-    const { game } = item;
+    if (ev.shiftKey && ev.ctrlKey) {
+      const { openModal } = this.props;
+      openModal({
+        title: "Download data",
+        message: "",
+        widget: "explore-json",
+        widgetParams: {
+          data: item,
+        },
+      });
+      return;
+    }
+
     const background = doesEventMeanBackground(ev);
+    const { game } = item;
     navigateToGame({ game, background });
   };
 
@@ -450,6 +463,7 @@ interface IDerivedProps {
   retryDownload: typeof actions.retryDownload;
   discardDownloadRequest: typeof actions.discardDownloadRequest;
   openGameContextMenu: typeof actions.openGameContextMenu;
+  openModal: typeof actions.openModal;
 
   intl: InjectedIntl;
 }
@@ -477,5 +491,6 @@ export default connect<IProps>(injectIntl(HoverDownloadRow), {
       actions.discardDownloadRequest
     ),
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
+    openModal: dispatcher(dispatch, actions.openModal),
   }),
 });
