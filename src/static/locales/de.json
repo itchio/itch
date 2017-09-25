@@ -438,5 +438,6 @@
     "grid.item.open_file_location.windows": "Ordner öffnen",
     "grid.item.open_file_location.linux": "In Dateimanager öffnen",
     "grid.item.open_file_location.osx": "Im Finder öffnen",
-    "menu.file.close_tabs_below": "Tabs unterhalb schließen"
+    "menu.file.close_tabs_below": "Tabs unterhalb schließen",
+    "prompt.blessing.detail": "Fahre nur fort, wenn Du dem Autor vertraust"
 }
