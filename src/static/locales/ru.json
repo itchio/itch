@@ -371,7 +371,7 @@
     "grid.item.advanced": "Дополнительно...",
     "download.reason.reinstall": "переустановка",
     "download.reason.revert": "переключиться на другую версию",
-    "notification.download_reverted": "{{title}} возвращёно к версии {{version}}!",
+    "notification.download_reverted": "{{title}} переключено на версию {{version}}!",
     "download.reason.heal": "проверка и восстановление",
     "notification.download_healed": "{{title}} проверено и восстановлено!",
     "login.two_factor.title": "Двухфакторая аутентификация",
@@ -398,7 +398,7 @@
     "grid.item.verify_integrity": "Проверить целостность",
     "grid.item.revert_to_version": "Переключить на другую версию…",
     "grid.item.view_details": "Подробности...",
-    "prompt.revert.title": "Откатить до заданной версии",
+    "prompt.revert.title": "Переключить {{title} на другую версию",
     "prompt.revert.message": "Откатить с версии {{buildId}} до версии:",
     "prompt.revert.action.revert": "Откатить",
     "status.reverting": "Откатываем до версии {{buildId}}...",
@@ -481,5 +481,7 @@
     "prompt.discard_download.action.stop_download": "Остановить загрузку",
     "prompt.discard_download.action.continue_download": "Продолжить загрузку",
     "prompt.dangerous_discard_download.message": "Остановка загрузки оставит {{title}} в несогласованном состоянии.",
-    "prompt.dangerous_discard_download.detail": "Мы восстановим {{title}} до последней версии при запуске в следующий раз."
+    "prompt.dangerous_discard_download.detail": "Мы восстановим {{title}} до последней версии при запуске в следующий раз.",
+    "prompt.revert.version": "версия {{version}}",
+    "status.repairing_game": "{{title}} должно закончить обновление, чтобы иметь возможность запуститься"
 }
