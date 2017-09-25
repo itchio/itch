@@ -5,7 +5,6 @@ import { toJSONField } from "../../db/json-field";
 import { toDateTimeField } from "../../db/datetime-field";
 
 import Context from "../../context";
-import butler from "../../util/butler";
 
 import { Logger } from "../../logger";
 
@@ -15,6 +14,7 @@ import {
   IRuntime,
   InstallReason,
   IUpload,
+  IBuild,
 } from "../../types";
 import { IGame } from "../../db/models/game";
 
@@ -38,6 +38,9 @@ export interface ICoreOpts {
 
   /** the upload we're installing from */
   upload: IUpload;
+
+  /** the build we're installing */
+  build?: IBuild;
 }
 
 export interface IInstallOpts extends ICoreOpts {
@@ -114,7 +117,8 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
   const { reason, runtime } = opts;
   const logger = opts.logger.child({ name: "install" });
 
-  const { ctx, game, upload, caveIn, downloadFolderPath } = opts;
+  // TODO: actually pass `build` when we have one - I don't think we do that yet
+  const { ctx, game, upload, build, caveIn } = opts;
 
   const inPlace = isInPlace(opts);
   let cave: ICave;
@@ -136,8 +140,7 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
       ...caveIn,
       installedAt: toDateTimeField(new Date()),
       channelName: upload.channelName,
-      buildId: upload.buildId,
-      buildUserVersion: upload.build && upload.build.userVersion,
+      build: build ? build : upload.build,
       upload: toJSONField(upload),
       ...result.caveOut,
     };

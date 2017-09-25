@@ -96,6 +96,8 @@ async function _doCheckForGameUpdate(
     }
   }
 
+  const caveBuild = fromJSONField(cave.build);
+
   logger.info(`Looking for updates to ${game.title}...`);
 
   try {
@@ -133,18 +135,17 @@ async function _doCheckForGameUpdate(
     let hasUpgrade = false;
 
     const caveUpload = fromJSONField(cave.upload);
-    const caveUploadId = caveUpload ? caveUpload.id : null;
-    if (caveUploadId && cave.buildId) {
+    if (caveUpload && caveBuild) {
       logger.info(
-        `Looking for new builds of ${game.title}, from build ${cave.buildId} (upload ${caveUploadId})`
+        `Looking for new builds of ${game.title}, from build ${caveBuild.id} (upload ${caveUpload.id})`
       );
-      const upload = findWhere(uploads, { id: caveUploadId });
+      const upload = findWhere(uploads, { id: caveUpload.id });
       if (!upload || !upload.buildId) {
         logger.warn("Uh oh, our wharf-enabled upload disappeared");
       } else {
-        if (upload.buildId !== cave.buildId) {
+        if (upload.buildId !== caveBuild.id) {
           logger.info(
-            `Got new build available: ${upload.buildId} > ${cave.buildId}`
+            `Got new build available: ${upload.buildId} > ${caveBuild.id}`
           );
           if (noisy) {
             store.dispatch(
@@ -158,7 +159,7 @@ async function _doCheckForGameUpdate(
 
           try {
             const upgradePathResult = await findUpgradePath(ctx, {
-              currentBuildId: cave.buildId,
+              currentBuildId: caveBuild.id,
               game,
               gameCredentials,
               upload,
@@ -224,8 +225,8 @@ async function _doCheckForGameUpdate(
     }
 
     const upload = recentUploads[0];
-    const differentUpload = upload.id !== caveUploadId;
-    const wentWharf = upload.buildId && !cave.buildId;
+    const differentUpload = upload.id !== caveUpload.id;
+    const wentWharf = upload.buildId && !caveBuild;
 
     if (hasUpgrade || differentUpload || wentWharf) {
       logger.info(`Got a new upload for ${game.title}: ${upload.filename}`);
@@ -303,16 +304,17 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.checkForGameUpdates, async (store, action) => {
-    const caves = {};
+    // FIXME: that's a bit dirty
+    const caves = db.caves.all(k => k.where("1"));
 
     const ctx = new Context(store, db);
 
-    for (const caveId of Object.keys(caves)) {
+    for (const cave of caves) {
       try {
-        await doCheckForGameUpdate(ctx, caves[caveId]);
+        await doCheckForGameUpdate(ctx, cave);
       } catch (e) {
         logger.error(
-          `While checking for cave ${caveId} update: ${e.stack || e}`
+          `While checking for cave ${cave.id} update: ${e.stack || e}`
         );
       }
       await delay(DELAY_BETWEEN_GAMES);

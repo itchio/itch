@@ -11,13 +11,11 @@ import performDownload from "./perform-download";
 
 import { getActiveDownload } from "./getters";
 
-import Context, { MinimalContext } from "../../context";
+import Context from "../../context";
 import { IStore, IDownloadItem, IDownloadResult } from "../../types";
 import { IProgressInfo, isCancelled } from "../../types";
 
 import { DB } from "../../db";
-import * as paths from "../../os/paths";
-import butler from "../../util/butler";
 import watcherState from "./download-watcher-persistent-state";
 import { wipeDownloadFolder } from "./wipe-download-folder";
 

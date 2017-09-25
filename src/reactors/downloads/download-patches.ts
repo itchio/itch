@@ -94,13 +94,8 @@ export default async function downloadPatches(
     });
 
     ctx.db.saveOne("caves", cave.id, {
-      buildId: entry.id,
-      buildUserVersion: entry.userVersion,
       installedArchiveMtime: entry.updatedAt,
-      upload: {
-        ...upload,
-        buildId: entry.id,
-      },
+      build: entry,
     });
 
     logger.info(`Done applying ${entry.id}`);

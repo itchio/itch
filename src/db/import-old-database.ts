@@ -334,8 +334,12 @@ export function importGlobalMarket(
         pathScheme: caveIn.pathScheme,
 
         channelName: caveIn.channelName,
+        // NB: buildId/buildUserVersion are deprecated, but that's
+        // handled in a later migration
         buildId: caveIn.buildId,
         buildUserVersion: caveIn.buildUserVersion,
+        build: null,
+        morphing: false,
         installedAt: toDateTimeField(caveIn.installedAt),
 
         installedPrereqs: toJSONField(caveIn.installedPrereqs),

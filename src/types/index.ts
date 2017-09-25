@@ -182,6 +182,9 @@ export interface IBuild {
 
   /** when the build was last updated */
   updatedAt: string;
+
+  /** if true, was migrated from old database schema and needs to be refreshed from API */
+  migrated?: boolean;
 }
 
 export type TableName =

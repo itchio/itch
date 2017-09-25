@@ -2,12 +2,10 @@ import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 
-import { formatDate, DATE_FORMAT } from "../../format";
-
-import client from "../../api";
+import api from "../../api";
 import rootLogger from "../../logger";
 
-import { map, filter } from "underscore";
+import { filter } from "underscore";
 
 import { promisedModal } from "../modals";
 
@@ -17,12 +15,10 @@ import lazyGetGame from "../lazy-get-game";
 
 import { IRevertCaveParams } from "../../components/modal-widgets/revert-cave";
 
-import { t } from "../../format";
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
 
 import asTask from "./as-task";
-import { fromDateTimeField } from "../../db/datetime-field";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
@@ -46,14 +42,16 @@ export default function(watcher: Watcher, db: DB) {
       gameId: cave.gameId,
       work: async (ctx, logger) => {
         const game = await lazyGetGame(ctx, cave.gameId);
-        if (!cave.buildId) {
-          logger.error(`Cave isn't wharf-enabled, can't revert: ${caveId}`);
+
+        const upload = fromJSONField(cave.upload);
+        if (!upload) {
+          logger.error(`No upload in cave, can't revert: ${caveId}`);
           return;
         }
 
-        const upload = fromJSONField(cave.upload);
-        if (!cave.buildId) {
-          logger.error(`No upload in cave, can't revert: ${caveId}`);
+        const build = fromJSONField(cave.build);
+        if (!build) {
+          logger.error(`Cave isn't wharf-enabled, can't revert: ${caveId}`);
           return;
         }
 
@@ -64,58 +62,32 @@ export default function(watcher: Watcher, db: DB) {
           logger.error(`No credentials, cannot revert to build`);
           return;
         }
-        const keyClient = client.withKey(credentials.key);
-        const buildsList = await keyClient.listBuilds(
+        const client = api.withKey(credentials.key);
+        const buildsList = await client.listBuilds(
           gameCredentials.downloadKey,
           upload.id
         );
 
         logger.info(`Builds list:\n${JSON.stringify(buildsList, null, 2)}`);
 
-        const oldBuilds = filter(buildsList.builds, build => {
-          return build.id < cave.buildId;
+        // TODO: figure out if we should show newer builds here as well?
+        // if we do, we should show the current one as 'current' and have it be disabled
+        const remoteBuilds = filter(buildsList.builds, remoteBuild => {
+          return remoteBuild.id < build.id;
         });
 
-        const i18n = store.getState().i18n;
+        // FIXME: what if remoteBuilds is empty ?
 
         const response = await promisedModal(store, {
-          title: t(i18n, ["prompt.revert.title"]),
+          title: ["prompt.revert.title", { title: game.title }],
           message: "",
           widget: "revert-cave",
           widgetParams: {
             currentCave: cave,
+            game,
+            remoteBuilds,
           } as IRevertCaveParams,
-          bigButtons: map(oldBuilds, build => {
-            let label = "";
-            if (build.userVersion) {
-              label = `${build.userVersion}`;
-            } else {
-              label = `#${build.id}`;
-            }
-
-            label = `${label} — ${formatDate(
-              fromDateTimeField(build.updatedAt),
-              i18n.lang,
-              DATE_FORMAT
-            )}`;
-
-            return {
-              label,
-              icon: "tag",
-              action: actions.modalResponse({
-                revertBuildId: build.id,
-              }),
-            };
-          }),
-          buttons: [
-            {
-              label: t(i18n, ["prompt.revert.action.revert"]),
-              icon: "checkmark",
-              action: actions.modalResponse({}),
-              actionSource: "widget",
-            },
-            "cancel",
-          ],
+          buttons: ["cancel"],
         });
 
         if (response.type !== MODAL_RESPONSE) {
@@ -143,21 +115,11 @@ export default function(watcher: Watcher, db: DB) {
         }
 
         store.dispatch(
-          actions.statusMessage({
-            message: t(i18n, ["status.reverting", { buildId }]),
-          })
-        );
-
-        const changedUpload = {
-          ...upload,
-          buildId,
-        };
-
-        store.dispatch(
           actions.queueDownload({
             caveId: cave.id,
             game,
-            upload: changedUpload,
+            upload,
+            buildId,
             reason: "revert",
           })
         );

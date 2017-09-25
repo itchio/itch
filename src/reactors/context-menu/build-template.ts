@@ -139,9 +139,9 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
       let advancedItems: IMenuTemplate = [];
 
       const buildInfo = db.caves.get(k =>
-        k.fields(["buildId"]).where("id = ?", cave.id)
+        k.fields(["build"]).where("id = ?", cave.id)
       );
-      if (buildInfo && buildInfo.buildId) {
+      if (buildInfo && buildInfo.build) {
         advancedItems = concatTemplates(advancedItems, [
           {
             localizedLabel: ["grid.item.verify_integrity"],
