@@ -340,7 +340,7 @@
     "status.game_update.not_found": "{{title}} ist auf dem neuesten Stand.",
     "download.reason.reinstall": "zur Neuinstallation",
     "download.reason.revert": "zum Zurücksetzen auf eine frühere Version",
-    "game.install.could_not_launch.missing_jre": "Es benötigt Java, welches nicht auf ihrem System installiert ist.",
+    "game.install.could_not_launch.missing_jre": "Es benötigt Java, welches nicht auf Ihrem System installiert ist.",
     "grid.item.download_java": "Java herunterladen",
     "grid.item.update": "Update",
     "grid.item.open_demo": "Demo öffnen",
@@ -434,5 +434,9 @@
     "prompt.uninstall_error.title": "Fehler bei der Deinstallation",
     "download.outcome.updated": "wurde auf die neueste Version aktualisiert",
     "download.outcome.installed": "installiert",
-    "prompt.uninstall_error.message": "Deinstallation fehlgeschlagen. Eintrag trotzdem entfernen?"
+    "prompt.uninstall_error.message": "Deinstallation fehlgeschlagen. Eintrag trotzdem entfernen?",
+    "grid.item.open_file_location.windows": "Ordner öffnen",
+    "grid.item.open_file_location.linux": "In Dateimanager öffnen",
+    "grid.item.open_file_location.osx": "Im Finder öffnen",
+    "menu.file.close_tabs_below": "Tabs unterhalb schließen"
 }
