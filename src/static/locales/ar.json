@@ -1,5 +1,5 @@
 {
-    "desktop.shortcut.comment": "قم بتنصيب ولعب ألعاب itch.io بكل سهولة",
+    "desktop.shortcut.comment": "ثبّت والعب ألعاب itch.io بسهولة",
     "errors.api.login.incorrect_username_or_password": "خطأ في اسم المستخدم أو كلمة المرور",
     "errors.api.login.password_must_be_provided": "لا بد من كتابة كلمة المرور",
     "errors.api.login.username_must_be_provided": "لا بد من إدخال اسم المستخدم",
@@ -130,5 +130,7 @@
     "status.downloaded": "اضغط لإعادة التشغيل وتطبيق التحديث!",
     "status.downloading": "جار تنزيل التحديث...",
     "status.uptodate": "نسختك من التطبيق على أحدث إصدار!",
-    "action.name.editor": "محرّر"
+    "action.name.editor": "محرّر",
+    "docs.learn_more": "تعلم المزيد",
+    "download.started": "بدأ"
 }
