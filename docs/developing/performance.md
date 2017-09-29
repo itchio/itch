@@ -3,22 +3,10 @@
 
 ## Environment variables
 
-Each of these environment variables will slow down the app, but also provide insights as to how
-to make it faster (mostly, make it do less work):
+There used to be a bunch of ways to monitor wastage when rendering components,
+but most of them were broken by React 16.
 
-  * `ITCH_REACT_PERF=1` will append `?react_perf` to the loaded URL, which lets you do
-
-```javascript
-var Perf = require("react-addons-perf");
-Perf.start();
-// do stuff
-Perf.stop();
-Perf.printWasted(); // or whatever else
-```
-
-  * `ITCH_RESELECT_EVERYTHING=1` will make all connected components evaluate `mapStateToProps`
-  twice with exactly the same inputs, and if they return objects that aren't ===, it prints an error
-  to the console. This helps spotting connected components that aren't using memoized selectors (reselect) yet.
+So, now it's mostly just the chrome dev tools.
 
   * `ITCH_DONT_SHOW_WEBVIEWS=1` will avoid creating any `<webview/>` elements, which lets you measure more
   accurately how much RAM the app is using.
@@ -32,8 +20,6 @@ environment include:
   * Bluebird longStackTraces
   * Source map support (with require hook)
   * Hot Module Reloading (?)
-
-Note: `react-addons-perf` only works in the development environment.
 
 ## Chrome DevTools
 

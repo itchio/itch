@@ -395,60 +395,69 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   render() {
+    return (
+      <ReactModal
+        isOpen={!!this.props.modal}
+        contentLabel="Modal"
+        style={customStyles}
+      >
+        {this.renderContent()}
+      </ReactModal>
+    );
+  }
+
+  renderContent() {
     const { modal, closeModal, intl } = this.props;
 
-    if (modal) {
-      const {
-        bigButtons = [],
-        buttons = [],
-        title = "",
-        message = "",
-        detail,
-        widget,
-      } = modal;
-
-      return (
-        <ReactModal isOpen contentLabel="Modal" style={customStyles}>
-          <ModalDiv>
-            <HeaderDiv>
-              <span className="title">{format(title)}</span>
-              <Filler />
-              {modal.unclosable ? null : (
-                <IconButton icon="cross" onClick={() => closeModal({})} />
-              )}
-            </HeaderDiv>
-
-            {message !== "" ? (
-              <div className="body">
-                <div className="message">
-                  <div>
-                    <Markdown source={formatString(intl, message)} />
-                  </div>
-                  {detail && (
-                    <div className="secondary">
-                      <Markdown source={formatString(intl, detail)} />
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : null}
-
-            {widget ? this.renderWidget(widget, modal) : null}
-
-            {bigButtons.length > 0 ? (
-              <div className="big-wrapper">
-                {this.renderCover(modal)}
-                {this.renderButtons(bigButtons, "big")}
-              </div>
-            ) : null}
-
-            {this.renderButtons(buttons, "normal")}
-          </ModalDiv>
-        </ReactModal>
-      );
-    } else {
-      return <div />;
+    if (!modal) {
+      return null;
     }
+
+    const {
+      bigButtons = [],
+      buttons = [],
+      title = "",
+      message = "",
+      detail,
+      widget,
+    } = modal;
+    return (
+      <ModalDiv>
+        <HeaderDiv>
+          <span className="title">{format(title)}</span>
+          <Filler />
+          {modal.unclosable ? null : (
+            <IconButton icon="cross" onClick={() => closeModal({})} />
+          )}
+        </HeaderDiv>
+
+        {message !== "" ? (
+          <div className="body">
+            <div className="message">
+              <div>
+                <Markdown source={formatString(intl, message)} />
+              </div>
+              {detail && (
+                <div className="secondary">
+                  <Markdown source={formatString(intl, detail)} />
+                </div>
+              )}
+            </div>
+          </div>
+        ) : null}
+
+        {widget ? this.renderWidget(widget, modal) : null}
+
+        {bigButtons.length > 0 ? (
+          <div className="big-wrapper">
+            {this.renderCover(modal)}
+            {this.renderButtons(bigButtons, "big")}
+          </div>
+        ) : null}
+
+        {this.renderButtons(buttons, "normal")}
+      </ModalDiv>
+    );
   }
 
   renderCover(modal: IModal): JSX.Element {
