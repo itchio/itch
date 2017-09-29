@@ -17,8 +17,6 @@ const CaveModelOriginal = {
 
     upload: Column.JSON,
     channelName: Column.Text,
-    buildId: Column.Integer,
-    buildUserVersion: Column.Text,
     build: Column.JSON,
     handPicked: Column.Boolean,
     morphing: Column.Boolean,
@@ -36,6 +34,10 @@ const CaveModelOriginal = {
     installFolder: Column.Text,
     installerType: Column.Text,
     pathScheme: Column.Integer,
+  },
+  deprecatedColumns: {
+    buildId: Column.Integer,
+    buildUserVersion: Column.Text,
   },
 };
 
@@ -79,23 +81,6 @@ export interface ICave extends ICaveSummary, ICaveLocation {
 
   /** itch.io upload currently installed */
   upload: JSONField<IUpload>;
-
-  /**
-   * identifier of itch.io / wharf build currently installed.
-   * if not set, the associated upload wasn't wharf-enabled at the
-   * time of the install. if set, there's a good chance we can apply
-   * patches instead of fully downloading the new version.
-   * 
-   * @deprecated use `build` instead
-   */
-  buildId: number;
-
-  /**
-   * user version for wharf build currently installed
-   * 
-   * @deprecated use `build` instead
-   */
-  buildUserVersion: string;
 
   /**
    * itch.io/wharf build currently installed
@@ -152,4 +137,23 @@ export interface ICave extends ICaveSummary, ICaveLocation {
 
   /** result of the configure step */
   verdict: JSONField<IConfigureResult>;
+}
+
+export interface ICaveWithDeprecated extends ICave {
+  /**
+   * identifier of itch.io / wharf build currently installed.
+   * if not set, the associated upload wasn't wharf-enabled at the
+   * time of the install. if set, there's a good chance we can apply
+   * patches instead of fully downloading the new version.
+   * 
+   * @deprecated use `build` instead
+   */
+  buildId: number;
+
+  /**
+   * user version for wharf build currently installed
+   * 
+   * @deprecated use `build` instead
+   */
+  buildUserVersion: string;
 }

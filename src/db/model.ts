@@ -14,6 +14,7 @@ export type Model = {
   table: string;
   primaryKey: string;
   columns: Columns;
+  deprecatedColumns?: Columns;
 };
 
 export function ensureExtends<A extends B, B>() {

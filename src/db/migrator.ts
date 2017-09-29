@@ -6,11 +6,15 @@ import { Model, Column } from "./model";
 import { Logger } from "../logger";
 import { toDateTimeField } from "./datetime-field";
 
-import { sortBy, indexBy, pluck, filter } from "underscore";
+import { sortBy, indexBy, pluck, filter, difference } from "underscore";
+
+type IDropColumns = (model: Model, columnNames: string[]) => void;
 
 export interface IMigrator {
   db: DB;
   logger: Logger;
+
+  dropColumns: IDropColumns;
 }
 
 interface IMigration {
@@ -37,6 +41,7 @@ export async function runMigrations(
   const migrator: IMigrator = {
     db: q.getDB(),
     logger,
+    dropColumns: (model, columnNames) => dropColumns(q, model, columnNames),
   };
 
   for (const id of pending) {
@@ -64,7 +69,10 @@ function ensureMigrationsTable(q: Querier) {
 
 function pendingMigrations(q: Querier, migrations: IMigrations): string[] {
   const doneMigrations = q.allSql(
-    squel.select().from(migrationsTable).toParam()
+    squel
+      .select()
+      .from(migrationsTable)
+      .toParam()
   );
   const doneById = indexBy(doneMigrations, "id");
 
@@ -150,19 +158,13 @@ export function checkSchema(
       );
     }
 
-    const exists = q
-      .getDB()
-      .prepare(`SELECT name FROM sqlite_master WHERE type="table" AND name=?`)
-      .get(model.table);
+    const exists = hasDbTable(q, model.table);
     if (!exists) {
       result.toCreate.push({ model: model });
       continue;
     }
 
-    const dbColumns = q
-      .getDB()
-      .prepare(`PRAGMA table_info(${model.table})`)
-      .all();
+    const dbColumns = listDbColumns(q, model.table);
     const byName = indexBy(dbColumns, "name");
 
     let hadIncorrectColumns = false;
@@ -187,10 +189,15 @@ export function checkSchema(
     }
 
     if (hadIncorrectColumns) {
-      // we don't care about columns that disappeared
-      const existingColumns = filter(pluck(dbColumns, "name"), columnName =>
-        model.columns.hasOwnProperty(columnName)
-      );
+      // If one of the model's columns were not in the DB,
+      // then we need to fix the schema.
+      //
+      // We'll use a temporary table for that, so we need a list of
+      // columns that we'll transfer from the temporary table to the new one.
+      //
+      // We will preserve deprecated columns here as schema syncing runs
+      // before migrations.
+      const existingColumns = listExistingDbColumns(model, dbColumns);
       result.toSync.push({ model, existingColumns });
     }
   }
@@ -216,7 +223,7 @@ export function fixSchema(q: Querier, checkResult: ICheckSchemaResult) {
         .run();
       conn.prepare(`drop table ${model.table}`).run();
 
-      createTableForModel(q, model);
+      createTableForModel(q, model, existingColumns);
 
       conn
         .prepare(
@@ -233,17 +240,32 @@ export function fixSchema(q: Querier, checkResult: ICheckSchemaResult) {
   }
 }
 
-function createTableForModel(q: Querier, model: Model) {
+function createTableForModel(
+  q: Querier,
+  model: Model,
+  columnsToPreserve?: string[]
+) {
+  let columnInstructions = Object.keys(model.columns).map(columnName => {
+    const columnType = model.columns[columnName];
+    const primary = columnName === model.primaryKey ? " PRIMARY KEY" : "";
+    return `${columnName} ${sqliteColumnType(columnType)}${primary}`;
+  });
+
+  if (columnsToPreserve) {
+    for (const columnName of columnsToPreserve) {
+      const columnType = model.deprecatedColumns[columnName];
+      if (columnType) {
+        columnInstructions.push(
+          `${columnName} ${sqliteColumnType(columnType)}`
+        );
+      }
+    }
+  }
+
   q.runSql({
     text: `
     CREATE TABLE ${model.table} (
-    ${Object.keys(model.columns)
-      .map(columnName => {
-        const columnType = model.columns[columnName];
-        const primary = columnName === model.primaryKey ? " PRIMARY KEY" : "";
-        return `${columnName} ${sqliteColumnType(columnType)}${primary}`;
-      })
-      .join(",")}
+    ${columnInstructions.join(",")}
     )
     `,
     values: [],
@@ -266,4 +288,72 @@ function sqliteColumnType(columnType: Column): string {
       // we don't know how to check other types
       throw new Error(`Unsupported column type ${columnType}`);
   }
+}
+
+interface IDbColumn {
+  name: string;
+  type: string;
+}
+
+function hasDbTable(q: Querier, tableName: string): boolean {
+  const tableInfo = q
+    .getDB()
+    .prepare(`SELECT name FROM sqlite_master WHERE type="table" AND name=?`)
+    .get(tableName);
+
+  return !!tableInfo;
+}
+
+export function listDbColumns(q: Querier, tableName: string): IDbColumn[] {
+  return q
+    .getDB()
+    .prepare(`PRAGMA table_info(${tableName})`)
+    .all();
+}
+
+function listExistingDbColumns(model: Model, dbColumns: IDbColumn[]): string[] {
+  return filter(pluck(dbColumns, "name"), columnName => {
+    if (model.columns.hasOwnProperty(columnName)) {
+      // is in current model, preserve
+      return true;
+    }
+
+    if (
+      model.deprecatedColumns &&
+      model.deprecatedColumns.hasOwnProperty(columnName)
+    ) {
+      // was in model at some point, preserve
+      return true;
+    }
+
+    // has never been in schema, remove
+    return false;
+  });
+}
+
+function dropColumns(q: Querier, model: Model, columnNames: string[]) {
+  if (!hasDbTable(q, model.table)) {
+    // can't drop columns if we don't have the table eh?
+    return;
+  }
+
+  // this isn't a real schema sync, we just want to exclude some columns from the schema
+  const dbColumns = listDbColumns(q, model.table);
+
+  // get a list of columns we'd preserve if we were doing a normal sync
+  let existingColumns = listExistingDbColumns(model, dbColumns);
+
+  // then exclude the ones we want to drop
+  existingColumns = difference(existingColumns, columnNames);
+
+  // and run a sync
+  fixSchema(q, {
+    toCreate: [],
+    toSync: [
+      {
+        model,
+        existingColumns,
+      },
+    ],
+  });
 }

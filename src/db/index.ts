@@ -4,9 +4,10 @@ import {
   checkSchema,
   hasSchemaErrors,
   fixSchema,
+  IMigrations,
 } from "./migrator";
 import { modelMap } from "./repository";
-import migrations from "./migrations";
+import defaultMigrations from "./migrations";
 export * from "./db";
 
 import { IStore } from "../types";
@@ -14,17 +15,23 @@ import { globalDbPath } from "../os/paths";
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "db" });
 
-let db = new DB(modelMap);
+// singleton database for the actual app
+let db: DB;
 
 export async function connectDatabase(store: IStore) {
+  db = new DB(modelMap);
+
   const dbPath = globalDbPath();
   logger.info(`connecting to db ${dbPath}`);
-
   db.load(store, dbPath);
+  await migrateDatabase(db, defaultMigrations);
+}
 
-  const q = db.getQuerier();
+// this variant is exported for testing
+export async function migrateDatabase(database: DB, migrations: IMigrations) {
+  const q = database.getQuerier();
 
-  const checkResult = checkSchema(q, modelMap);
+  const checkResult = checkSchema(q, database.modelMap);
   const { toCreate, toSync } = checkResult;
 
   if (hasSchemaErrors(checkResult)) {

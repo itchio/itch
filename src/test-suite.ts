@@ -102,6 +102,13 @@ export class TestWatcher extends Watcher {
 import { DB } from "./db";
 import { modelMap, IModelMap } from "./db/repository";
 import { checkSchema, fixSchema } from "./db/migrator";
+import { isEmpty } from "underscore";
+
+let dbsToClose: DB[] = [];
+
+export function registerDBToClose(db: DB) {
+  dbsToClose.push(db);
+}
 
 export async function withDB(store: IStore, cb: (db: DB) => Promise<void>) {
   await withCustomDB(store, modelMap, cb);
@@ -112,6 +119,10 @@ export async function withCustomDB(
   customMap: IModelMap,
   cb: (db: DB) => Promise<void>
 ) {
+  while (!isEmpty(dbsToClose)) {
+    dbsToClose.shift().close();
+  }
+
   const db = new DB(customMap);
   try {
     db.load(store, ":memory:");

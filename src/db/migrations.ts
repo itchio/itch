@@ -4,6 +4,7 @@ import * as squel from "squel";
 import { importOldDatabases } from "./import-old-database";
 import { app } from "electron";
 import { IBuild } from "../types/index";
+import { ICaveWithDeprecated, CaveModel } from "./models/cave";
 
 // stolen from lapis, yay
 export default <IMigrations>{
@@ -32,7 +33,7 @@ export default <IMigrations>{
           .and("build IS NULL")
           .and("buildId IS NOT NULL")
       )
-    );
+    ) as ICaveWithDeprecated[];
 
     for (const caveToFix of cavesToFix) {
       // TODO: we could do API calls here to get the full build info
@@ -46,5 +47,9 @@ export default <IMigrations>{
         } as Partial<IBuild>,
       });
     }
+  },
+
+  1506688480: async m => {
+    m.dropColumns(CaveModel, ["buildId", "buildUserVersion"]);
   },
 };

@@ -13,7 +13,7 @@ import { IUser } from "./models/user";
 import { IProfile } from "./models/profile";
 import { IDownloadKey } from "./models/download-key";
 
-import { IUpload, InstallerType, ITableMap } from "../types";
+import { IUpload, InstallerType, ITableMap, IBuild } from "../types";
 
 import { Logger } from "../logger";
 
@@ -320,6 +320,16 @@ export function importGlobalMarket(
         saveGame(out, caveIn.game);
       }
 
+      let build: IBuild = null;
+      if (caveIn.buildId) {
+        build = {
+          id: caveIn.buildId,
+          userVersion: caveIn.buildUserVersion,
+          version: null,
+          updatedAt: null,
+        };
+      }
+
       const caveOut: ICave = {
         id,
         gameId,
@@ -334,11 +344,7 @@ export function importGlobalMarket(
         pathScheme: caveIn.pathScheme,
 
         channelName: caveIn.channelName,
-        // NB: buildId/buildUserVersion are deprecated, but that's
-        // handled in a later migration
-        buildId: caveIn.buildId,
-        buildUserVersion: caveIn.buildUserVersion,
-        build: null,
+        build,
         morphing: false,
         installedAt: toDateTimeField(caveIn.installedAt),
 
