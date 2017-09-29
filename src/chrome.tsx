@@ -76,12 +76,7 @@ function render(RealApp: typeof App) {
   } else {
     rootComponent = <RealApp />;
   }
-  ReactDOM.render(
-    <Provider store={store}>
-      {rootComponent}
-    </Provider>,
-    appNode
-  );
+  ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
 }
 
 if (env.name === "test") {
@@ -125,17 +120,7 @@ if (os.platform() === "darwin") {
 }
 
 async function start() {
-  let perf: any;
-  if (process.env.ITCH_REACT_PERF === "1") {
-    perf = require("react-addons-perf");
-    perf.start();
-  }
   render(App);
-  if (perf) {
-    perf.stop();
-    (window as any).perf = perf;
-    console.log(`Perf available as window.perf, enjoy!`);
-  }
 
   if (module.hot) {
     module.hot.accept(() => {

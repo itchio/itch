@@ -90,17 +90,15 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
         <BrowserBar tab={tab} tabData={tabData} url={url} />
         <BrowserMain>
           <WebviewShell className={classNames({ fresh })}>
-            {DONT_SHOW_WEBVIEWS
-              ? null
-              : <webview
-                  is
-                  partition={partition}
-                  plugins="on"
-                  preload={getInjectPath("itchio")}
-                  src={url}
-                  ref={this.gotWebview}
-                  sandbox={true}
-                />}
+            {DONT_SHOW_WEBVIEWS ? null : (
+              <webview
+                partition={partition}
+                plugins="on"
+                preload={getInjectPath("itchio")}
+                src={url}
+                ref={this.gotWebview}
+              />
+            )}
           </WebviewShell>
         </BrowserMain>
         {context}
