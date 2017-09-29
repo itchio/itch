@@ -16,11 +16,9 @@ import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "db" });
 
 // singleton database for the actual app
-let db: DB;
+const db = new DB(modelMap);
 
 export async function connectDatabase(store: IStore) {
-  db = new DB(modelMap);
-
   const dbPath = globalDbPath();
   logger.info(`connecting to db ${dbPath}`);
   db.load(store, dbPath);
