@@ -124,7 +124,6 @@ module.exports = {
     "@types",
 
     ".bin",
-    "*.min.js",
     "test.js",
     "*.test.js",
     "gruntfile.js",
@@ -165,7 +164,6 @@ module.exports = {
     "docs-theme", // polished, for example
     "umd",
     "amd",
-    ".publish", // wtf react-select
     "flow-typed",
     "_book",
     ".bin",
@@ -180,9 +178,9 @@ module.exports = {
     "handlebars/dist",
     "math-expression-evaluator/dist",
     "polished/dist",
-    "react/dist",
+    "react/umd",
+    "react/cjs/react.development.js",
     "react-dom/dist",
-    "react-input-autosize/dist",
     "react-intl/dist",
     "react-modal/dist",
     "react-redux/dist",
