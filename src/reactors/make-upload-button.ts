@@ -40,7 +40,7 @@ export default function makeUploadButton(
 
   if (upload.type === "html") {
     tags.push({
-      icon: "earth",
+      icon: "html5",
     });
   }
 
