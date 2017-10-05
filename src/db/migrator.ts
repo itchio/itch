@@ -6,15 +6,17 @@ import { Model, Column } from "./model";
 import { Logger } from "../logger";
 import { toDateTimeField } from "./datetime-field";
 
-import { sortBy, indexBy, pluck, filter, difference } from "underscore";
+import { sortBy, indexBy, pluck, filter, difference, every } from "underscore";
 
 type IDropColumns = (model: Model, columnNames: string[]) => void;
+type IHasColumns = (model: Model, columnNames: string[]) => boolean;
 
 export interface IMigrator {
   db: DB;
   logger: Logger;
 
   dropColumns: IDropColumns;
+  hasColumns: IHasColumns;
 }
 
 interface IMigration {
@@ -42,6 +44,7 @@ export async function runMigrations(
     db: q.getDB(),
     logger,
     dropColumns: (model, columnNames) => dropColumns(q, model, columnNames),
+    hasColumns: (model, columnNames) => hasColumns(q, model, columnNames),
   };
 
   for (const id of pending) {
@@ -356,4 +359,17 @@ function dropColumns(q: Querier, model: Model, columnNames: string[]) {
       },
     ],
   });
+}
+
+function hasColumns(q: Querier, model: Model, columnNames: string[]) {
+  if (!hasDbTable(q, model.table)) {
+    // if we don't have the table, we certainly don't have the columns!
+    return;
+  }
+
+  // this isn't a real schema sync, we just want to exclude some columns from the schema
+  const dbColumns = listDbColumns(q, model.table);
+
+  const byName = indexBy(dbColumns, "name");
+  return every(columnNames, name => !!byName[name]);
 }

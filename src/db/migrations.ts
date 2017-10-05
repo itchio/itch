@@ -23,8 +23,13 @@ export default <IMigrations>{
     });
   },
 
-  1506341540: async m => {
+  1507191613: async m => {
     // fill in `build` for caves that only have `buildId`
+    if (!m.hasColumns(CaveModel, ["buildId", "buildUserVersion"])) {
+      // a fresh DB won't have these, it's ok to skip :)
+      return;
+    }
+
     const { db } = m;
     const cavesToFix = db.caves.all(k =>
       k.where(
@@ -36,9 +41,6 @@ export default <IMigrations>{
     ) as ICaveWithDeprecated[];
 
     for (const caveToFix of cavesToFix) {
-      // TODO: we could do API calls here to get the full build info
-      // but that seems like the wrong thing to do in a migration,
-      // maybe we could have a check/fix in loginSucceeded ?
       db.saveOne("caves", caveToFix.id, {
         build: {
           id: caveToFix.buildId,
@@ -47,9 +49,7 @@ export default <IMigrations>{
         } as Partial<IBuild>,
       });
     }
-  },
 
-  1506688480: async m => {
     m.dropColumns(CaveModel, ["buildId", "buildUserVersion"]);
   },
 };
