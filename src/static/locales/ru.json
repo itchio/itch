@@ -78,7 +78,7 @@
     "preferences.install_locations": "Папки установки",
     "preferences.language": "Язык",
     "preferences.language.auto": "Язык системы ({{language}})",
-    "preferences.language.get_involved": "Вы можете помочь с переводом {{name}} на русский язык!",
+    "preferences.language.get_involved": "Вы можете помочь с переводом {{name}} на свой язык!",
     "prompt.action.cancel": "Отмена",
     "prompt.action.close": "Закрыть",
     "prompt.action.confirm_removal": "Удалить",
