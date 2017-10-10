@@ -1,5 +1,5 @@
 import * as ospath from "path";
-import { partial, first } from "underscore";
+import { first } from "underscore";
 
 import spawn from "../os/spawn";
 import * as sf from "../os/sf";
@@ -11,19 +11,31 @@ import { Logger, devNull } from "../logger";
 import urls from "../constants/urls";
 import { formatExitCode } from "../format/exit-code";
 
+import { IButlerSender, IButlerSendable } from "./butler/sendables";
+
 const showDebug = process.env.MY_BUTLER_IS_MY_FRIEND === "1";
 const dumpAllOutput = process.env.MY_BUTLER_IS_MY_ENEMY === "1";
 
-export interface IButlerResult extends IButlerOpts {
+export interface IButlerResult {
   value: any;
 }
 
+export interface IButlerRequest {
+  operation: string;
+  request: string;
+  params: any;
+}
+
 type IResultListener = (result: IButlerResult) => void;
+type IRequestListener = (request: IButlerRequest) => void;
 type IValueListener = (value: any) => void;
+type ISenderReadyListener = (sender: IButlerSender) => void;
 
 export interface IButlerOpts {
   logger: Logger;
   ctx: MinimalContext;
+  onSenderReady?: ISenderReadyListener;
+  onRequest?: IRequestListener;
   onResult?: IResultListener;
   onValue?: IValueListener;
   elevate?: boolean;
@@ -34,12 +46,13 @@ type IErrorListener = (err: Error) => void;
 interface IParseButlerStatusOpts {
   onError: IErrorListener;
   onResult: IResultListener;
+  onRequest: IRequestListener;
   ctx: MinimalContext;
   logger: Logger;
 }
 
 function parseButlerStatus(opts: IParseButlerStatusOpts, token: string) {
-  const { ctx, onError, onResult, logger } = opts;
+  const { ctx, onError, onResult, onRequest, logger } = opts;
 
   if (dumpAllOutput) {
     logger.debug(`butler stdout: ${token}`);
@@ -71,6 +84,10 @@ function parseButlerStatus(opts: IParseButlerStatusOpts, token: string) {
       onResult(status);
       return;
     }
+    case "request": {
+      onRequest(status.value);
+      return;
+    }
     default:
     // muffin
   }
@@ -88,7 +105,7 @@ async function butler<T>(
 
   let args = ["--address", urls.itchio, "--json", command, ...commandArgs];
 
-  const onToken = partial(parseButlerStatus, {
+  const parseStatusOpts = {
     onError: (e: Error) => {
       err = e;
     },
@@ -101,9 +118,18 @@ async function butler<T>(
         opts.onValue(value);
       }
     },
+    onRequest: (request: IButlerRequest) => {
+      if (opts.onRequest) {
+        opts.onRequest(request);
+      }
+    },
     ctx,
     logger,
-  } as IParseButlerStatusOpts);
+  };
+
+  const onToken = (line: string) => {
+    parseButlerStatus(parseStatusOpts, line);
+  };
   const onErrToken = (line: string) => {
     logger.info(`butler stderr: ${line}`);
   };
@@ -117,6 +143,20 @@ async function butler<T>(
     args,
     onToken,
     onErrToken,
+    onStdinReady: stdin => {
+      if (opts.onSenderReady) {
+        const sender: IButlerSender = {
+          send: (payload: IButlerSendable) => {
+            const json = JSON.stringify(payload);
+            stdin.cork();
+            stdin.write(json);
+            stdin.write("\n");
+            process.nextTick(() => stdin.uncork());
+          },
+        };
+        opts.onSenderReady(sender);
+      }
+    },
     ctx,
     logger: dumpAllOutput || showDebug ? opts.logger : devNull,
   });
@@ -497,6 +537,10 @@ async function msiUninstall(opts: IMsiUninstallOpts) {
   await butler(opts, "msi-uninstall", [productCode]);
 }
 
+async function caveCommand(opts: IButlerOpts): Promise<any> {
+  return await butler(opts, "cave", []);
+}
+
 async function sanityCheck(ctx: MinimalContext): Promise<boolean> {
   try {
     await spawn.assert({
@@ -533,4 +577,5 @@ export default {
   elfprops,
   configure,
   configureSingle,
+  caveCommand,
 };

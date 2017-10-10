@@ -21,7 +21,7 @@ import * as sf from "../os/sf";
 import { currentRuntime } from "../os/runtime";
 import { Logger } from "../logger";
 
-import { coreInstall, isInPlace } from "../install-managers/common/core";
+import { coreInstall } from "../install-managers/common/core";
 import asTask from "./tasks/as-task";
 
 function defaultInstallLocation(store: IStore) {
@@ -77,40 +77,20 @@ export async function queueInstall(
   }
 
   try {
-    const { upload } = opts;
-
-    if (!freshInstall) {
-      logger.info(
-        `← old version: ${formatBuildVersion(fromJSONField(caveIn.build))}`
-      );
-    }
-    logger.info(`→ new version: ${formatBuildVersion(upload.build)}`);
+    // const { upload } = opts;
+    // if (!freshInstall) {
+    //   logger.info(
+    //     `← old version: ${formatBuildVersion(fromJSONField(caveIn.build))}`
+    //   );
+    // }
+    // logger.info(`→ new version: ${formatBuildVersion(upload.build)}`);
 
     const prefs = ctx.store.getState().preferences;
     let destPath = paths.appPath(caveIn, prefs);
-    let archivePath = paths.downloadPath(upload, prefs);
-    let downloadFolderPath = paths.downloadFolderPath(upload, prefs);
-
-    const inPlace = isInPlace(opts);
-
-    if (!await sf.exists(archivePath) && !inPlace) {
-      const { handPicked } = opts;
-
-      logger.warn("archive disappeared, redownloading...");
-      ctx.store.dispatch(
-        actions.queueDownload({
-          caveId,
-          game,
-          handPicked,
-          upload,
-          totalSize: upload.size,
-          incremental: false,
-          reason,
-          upgradePath: null,
-        })
-      );
-      return;
-    }
+    // let archivePath = paths.downloadPath(upload, prefs);
+    let archivePath = null;
+    let taskId = uuid();
+    let downloadFolderPath = paths.downloadFolderPathForId(taskId, prefs);
 
     // TODO: check available disk space
     // have a check at download too, why not.
@@ -145,11 +125,11 @@ export async function queueInstall(
     }
     throw e;
   } finally {
-    await wipeDownloadFolder({
-      logger,
-      preferences: ctx.store.getState().preferences,
-      upload,
-    });
+    // await wipeDownloadFolder({
+    //   logger,
+    //   preferences: ctx.store.getState().preferences,
+    //   upload,
+    // });
   }
 }
 
@@ -216,7 +196,6 @@ import { DB } from "../db";
 import { Watcher } from "./watcher";
 import { promisedModal } from "./modals";
 import { t } from "../format/index";
-import { wipeDownloadFolder } from "./downloads/wipe-download-folder";
 import { formatBuildVersion } from "../helpers/build";
 
 export default async function(watcher: Watcher, db: DB) {

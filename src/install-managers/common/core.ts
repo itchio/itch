@@ -1,12 +1,12 @@
 import getInstallerType from "./get-installer-type";
 
 import { ICave } from "../../db/models/cave";
-import { toJSONField } from "../../db/json-field";
-import { toDateTimeField } from "../../db/datetime-field";
 
 import Context from "../../context";
 
 import { Logger } from "../../logger";
+import butler from "../../util/butler";
+import { ICaveCommand, CaveOperation } from "../../util/butler/sendables";
 
 import {
   Cancelled,
@@ -18,7 +18,7 @@ import {
 } from "../../types";
 import { IGame } from "../../db/models/game";
 
-import { IReceipt, readReceipt, writeReceipt } from "./receipt";
+import { IReceipt, readReceipt } from "./receipt";
 
 export interface ICoreOpts {
   /** for cancellations, accessing db, etc. */
@@ -90,7 +90,7 @@ import msi from "../msi";
 import dmg from "../dmg";
 import nsis from "../nsis";
 import inno from "../inno";
-import configure from "../../reactors/launch/configure";
+import getGameCredentials from "../../reactors/downloads/get-game-credentials";
 
 const managers: IInstallManagers = {
   naked,
@@ -114,11 +114,12 @@ interface IPrepareOpts {
 }
 
 export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
-  const { reason, runtime } = opts;
+  // const { reason, runtime } = opts;
   const logger = opts.logger.child({ name: "install" });
 
   // TODO: actually pass `build` when we have one - I don't think we do that yet
-  const { ctx, game, upload, build, caveIn } = opts;
+  // const { ctx, game, upload, build, caveIn } = opts;
+  const { ctx, game, caveIn } = opts;
 
   const inPlace = isInPlace(opts);
   let cave: ICave;
@@ -126,52 +127,73 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
   if (inPlace) {
     cave = caveIn;
   } else {
-    const prepOpts = {
-      // when reinstalling, we do want to sniff again
-      forceSniff: opts.reason === "reinstall",
-    };
+    // const prepOpts = {
+    //   // when reinstalling, we do want to sniff again
+    //   forceSniff: opts.reason === "reinstall",
+    // };
 
-    const { manager, source, installerName } = await prepare(opts, prepOpts);
-    logger.info(`Installing (${reason}) with ${installerName} (${source})`);
+    // const { manager, source, installerName } = await prepare(opts, prepOpts);
+    // logger.info(`Installing (${reason}) with ${installerName} (${source})`);
 
-    const result = await manager.install({ ...opts, logger });
+    const credentials = await getGameCredentials(ctx, game);
 
-    cave = {
-      ...caveIn,
-      installedAt: toDateTimeField(new Date()),
-      channelName: upload.channelName,
-      build: build ? build : upload.build,
-      upload: toJSONField(upload),
-      ...result.caveOut,
-    };
-
-    if (reason !== "install") {
-      logger.info(`Not first install (${reason}), clearing verdict`);
-      cave.verdict = null;
-    }
-
-    logger.info(`Writing receipt...`);
-    await writeReceipt(opts, {
-      cave,
-      files: result.files,
-      installerName,
-      ...result.receiptOut || {},
+    // const result = await manager.install({ ...opts, logger });
+    const butlerPromise = butler.caveCommand({
+      onSenderReady: sender => {
+        sender.send(<ICaveCommand>{
+          type: "cave-command",
+          operation: CaveOperation.Install,
+          installParams: {
+            game,
+            installFolder: opts.destPath,
+            stageFolder: opts.downloadFolderPath,
+            credentials,
+          },
+        });
+      },
+      logger,
+      ctx,
     });
 
-    logger.info(`Committing game & cave to db`);
-    ctx.db.saveOne("games", String(game.id), game);
-    ctx.db.saveOne("caves", cave.id, cave);
+    await butlerPromise;
+    return;
+
+    // cave = {
+    //   ...caveIn,
+    //   installedAt: toDateTimeField(new Date()),
+    //   channelName: upload.channelName,
+    //   build: build ? build : upload.build,
+    //   upload: toJSONField(upload),
+    //   ...result.caveOut,
+    // };
+
+    // if (reason !== "install") {
+    //   logger.info(`Not first install (${reason}), clearing verdict`);
+    //   cave.verdict = null;
+    // }
+
+    // logger.info(`Writing receipt...`);
+    // await writeReceipt(opts, {
+    //   cave,
+    //   files: result.files,
+    //   installerName,
+    //   ...result.receiptOut || {},
+    // });
+
+    // logger.info(`Committing game & cave to db`);
+    // ctx.db.saveOne("games", String(game.id), game);
+    // ctx.db.saveOne("caves", cave.id, cave);
   }
 
-  logger.info(`Configuring...`);
-  await configure(ctx, {
-    game,
-    cave,
-    logger,
-    runtime,
-  });
+  // logger.info(`Configuring...`);
+  // await configure(ctx, {
+  //   game,
+  //   cave,
+  //   logger,
+  //   runtime,
+  // });
 
-  return cave;
+  // return cave;
 }
 
 export async function coreUninstall(opts: IUninstallOpts) {

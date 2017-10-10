@@ -79,6 +79,16 @@ export function downloadFolderPath(
   );
 }
 
+export function downloadFolderPathForId(
+  id: string,
+  preferences: IPreferencesState
+): string {
+  return join(
+    downloadBasePath(preferences.defaultInstallLocation, preferences),
+    id
+  );
+}
+
 export function downloadPath(upload: IUpload, preferences: IPreferencesState) {
   if (typeof upload.filename !== "string") {
     throw new Error(`Cannot download upload without filename`);

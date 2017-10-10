@@ -1,5 +1,6 @@
 import * as childProcess from "child_process";
 import * as split2 from "split2";
+import * as stream from "stream";
 
 import rootLogger, { Logger } from "../logger";
 const spawnLogger = rootLogger.child({ name: "spawn" });
@@ -19,6 +20,9 @@ interface ISpawnOpts {
 
   /** Defaults to eol for the current platform ("\r\n" or "\n") */
   split?: string;
+
+  /** Called when the process has been started and we're ready to write to stdin */
+  onStdinReady?: (stdin: stream.Writable) => void;
 
   /** If set, called on each line of stdout */
   onToken?: (token: string) => void;
@@ -59,7 +63,14 @@ interface ISpawnInterface {
 let spawn: ISpawnInterface;
 
 spawn = async function(opts: ISpawnOpts): Promise<number> {
-  const { ctx, split, onToken, onErrToken, logger = spawnLogger } = opts;
+  const {
+    ctx,
+    split,
+    onStdinReady,
+    onToken,
+    onErrToken,
+    logger = spawnLogger,
+  } = opts;
   if (!ctx) {
     throw new Error("spawn cannot be called with a null context");
   }
@@ -68,7 +79,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
 
   let stdioOpts = {
     stdio: [
-      "ignore", // stdin
+      onStdinReady ? "pipe" : "ignore", // stdin
       onToken ? "pipe" : "ignore", // stdout
       onErrToken ? "pipe" : "ignore", // stderr
     ],
@@ -107,6 +118,10 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
         cbErr = err;
       }
     });
+  }
+
+  if (onStdinReady) {
+    onStdinReady(child.stdin);
   }
 
   let cancelled = false;

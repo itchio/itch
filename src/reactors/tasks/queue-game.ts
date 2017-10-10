@@ -36,6 +36,22 @@ export default function(watcher: Watcher, db: DB) {
 
     logger.info(`No cave for ${game.title} (#${game.id}), attempting install`);
 
+    logger.warn(`Doing experimental butler install`);
+    store.dispatch(
+      actions.queueInstall({
+        archivePath: null,
+        caveId: null,
+        upload: null,
+        handPicked: false,
+        game,
+        installLocation: store.getState().preferences.defaultInstallLocation,
+        reason: "install",
+      })
+    );
+    if (1 == 1) {
+      return;
+    }
+
     const ctx = new Context(store, db);
     const gameCredentials = await getGameCredentials(ctx, game);
     if (!gameCredentials) {
