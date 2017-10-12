@@ -38,6 +38,7 @@ const EmptyStateContainer = styled.div`
   width: 100%;
   height: 100%;
   align-items: center;
+  overflow: hidden;
 `;
 
 export class EmptyState extends React.PureComponent<IProps, any> {
