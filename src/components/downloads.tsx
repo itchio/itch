@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
-import format from "./format";
+import format, { formatString } from "./format";
 
 import { map, first, rest } from "underscore";
 import * as actions from "../actions";
@@ -10,7 +10,9 @@ import * as actions from "../actions";
 import Link from "./basics/link";
 import Row from "./download/row";
 import TitleBar from "./title-bar";
+import EmptyState from "./empty-state";
 
+import { injectIntl, InjectedIntl } from "react-intl";
 import { IRootState, IDownloadItem } from "../types";
 import { dispatcher } from "../constants/action-types";
 
@@ -52,13 +54,6 @@ const DownloadsContentDiv = styled.div`
   }
 `;
 
-const EmptyState = styled.div`
-  font-size: ${props => props.theme.fontSizes.large};
-  color: ${props => props.theme.secondaryText};
-
-  margin: 20px;
-`;
-
 class Downloads extends React.PureComponent<IProps & IDerivedProps> {
   constructor() {
     super();
@@ -70,21 +65,30 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <DownloadsDiv>
         <TitleBar tab={tab} />
-        <DownloadsContentDiv>{this.renderContents()}</DownloadsContentDiv>
+        {this.renderContents()}
       </DownloadsDiv>
     );
   }
 
   renderContents() {
     const { items, finishedItems } = this.props;
-    const { clearFinishedDownloads } = this.props;
+    const { clearFinishedDownloads, navigate, intl } = this.props;
 
     const hasItems = items.length + finishedItems.length > 0;
     if (!hasItems) {
       return (
-        <EmptyState className="no-active-downloads">
-          {format(["status.downloads.no_active_downloads"])}
-        </EmptyState>
+        <EmptyState
+          icon="download"
+          bigText={formatString(intl, ["status.downloads.no_active_downloads"])}
+          smallText={formatString(intl, [
+            "status.downloads.no_active_downloads_subtext",
+          ])}
+          buttonIcon="globe"
+          buttonText={formatString(intl, [
+            "status.downloads.find_games_button",
+          ])}
+          buttonAction={() => navigate({ tab: "featured" })}
+        />
       );
     }
 
@@ -149,9 +153,11 @@ interface IDerivedProps {
   finishedItems: IDownloadItem[];
 
   clearFinishedDownloads: typeof actions.clearFinishedDownloads;
+  navigate: typeof actions.navigate;
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(Downloads, {
+export default connect<IProps>(injectIntl(Downloads), {
   state: createStructuredSelector({
     items: (rs: IRootState) => getPendingDownloads(rs.downloads),
     finishedItems: (rs: IRootState) => getFinishedDownloads(rs.downloads),
@@ -161,5 +167,6 @@ export default connect<IProps>(Downloads, {
       dispatch,
       actions.clearFinishedDownloads
     ),
+    navigate: dispatcher(dispatch, actions.navigate),
   }),
 });

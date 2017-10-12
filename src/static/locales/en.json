@@ -391,6 +391,8 @@
     "status.downloads.click_to_manage": "Click to manage downloads",
     "status.downloads.download_error": "Download error",
     "status.downloads.no_active_downloads": "No active downloads",
+    "status.downloads.no_active_downloads_subtext": "Games you install or download will show up here",
+    "status.downloads.find_games_button": "Download some games!",
     "status.downloads.unknown_size": "Unknown",
     "status.game_update.check_failed": "Could not check for updates: {{err}}",
     "status.game_update.found": "Found new version of {{title}}!",
