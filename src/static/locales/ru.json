@@ -483,5 +483,7 @@
     "prompt.dangerous_discard_download.message": "Остановка загрузки оставит {{title}} в несогласованном состоянии.",
     "prompt.dangerous_discard_download.detail": "Мы восстановим {{title}} до последней версии при запуске в следующий раз.",
     "prompt.revert.version": "версия {{version}}",
-    "status.repairing_game": "{{title}} должно закончить обновление, чтобы иметь возможность запуститься"
+    "status.repairing_game": "{{title}} должно закончить обновление, чтобы иметь возможность запуститься",
+    "status.downloads.no_active_downloads_subtext": "Здесь появятся игры, которые вы установили или загрузили",
+    "status.downloads.find_games_button": "Поискать игры!"
 }
