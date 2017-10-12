@@ -83,7 +83,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
           smallText={formatString(intl, [
             "status.downloads.no_active_downloads_subtext",
           ])}
-          buttonIcon="globe"
+          buttonIcon="earth"
           buttonText={formatString(intl, [
             "status.downloads.find_games_button",
           ])}
