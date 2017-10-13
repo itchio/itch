@@ -468,5 +468,7 @@
     "prompt.dangerous_discard_download.message": "Ако спрете свалянето, „{{title}}“ ще остане в неопределено състояние.",
     "prompt.dangerous_discard_download.detail": "„{{title}}“ ще се върне към последната версия при следващия опит за пускане.",
     "prompt.revert.version": "версия {{version}}",
-    "status.repairing_game": "„{{title}}“ трябва да приключи обновяването си, преди да може да се пусне"
+    "status.repairing_game": "„{{title}}“ трябва да приключи обновяването си, преди да може да се пусне",
+    "status.downloads.no_active_downloads_subtext": "Игрите, които инсталирате или сваляте, ще се появяват тук",
+    "status.downloads.find_games_button": "Започнете да сваляте игри!"
 }
