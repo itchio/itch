@@ -484,6 +484,8 @@
     "prompt.dangerous_discard_download.detail": "Мы восстановим {{title}} до последней версии при запуске в следующий раз.",
     "prompt.revert.version": "версия {{version}}",
     "status.repairing_game": "{{title}} должно закончить обновление, чтобы иметь возможность запуститься",
-    "status.downloads.no_active_downloads_subtext": "Здесь появятся игры, которые вы установили или загрузили",
-    "status.downloads.find_games_button": "Поискать игры!"
+    "status.downloads.no_active_downloads_subtext": "Всё, что вы установили или загрузили появится здесь",
+    "status.downloads.find_games_button": "Поищем что-нибудь!",
+    "grid.empty_state.leader": "Всё отфильтровалось...",
+    "grid.empty_state.explanation": "Фильтры скрыли всё, что у нас есть"
 }
