@@ -476,5 +476,7 @@
     "prompt.dangerous_discard_download.message": "Se vi ĉesigus la elŝutadon, „{{title}}“ restos en nekohera stato.",
     "prompt.dangerous_discard_download.detail": "„{{title}}“ restaŭriĝos al la lasta versio la sekvantan fojon, kiam vi provos uzi ĝin.",
     "prompt.revert.version": "versio {{version}}",
-    "status.repairing_game": "„{{title}}“ devas fini sian ĝisdatigadon, antaŭ ol ĝi povus plenumiĝi"
+    "status.repairing_game": "„{{title}}“ devas fini sian ĝisdatigadon, antaŭ ol ĝi povus plenumiĝi",
+    "status.downloads.no_active_downloads_subtext": "La ludoj, kiujn vi instalas aŭ elŝutas, aperos ĉi tie",
+    "status.downloads.find_games_button": "Elŝutu ludojn!"
 }
