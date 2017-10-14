@@ -336,7 +336,7 @@
     "download.started": "Начато",
     "download.reason.install": "первая установка",
     "download.reason.update": "обновление до последней версии",
-    "grid.clear_filters": "Отменить фильтры",
+    "grid.clear_filters": "Отменить фильтр",
     "new_tab.titles.buttons": "Выберите что-нибудь:",
     "outlinks.manage_collections": "Управление коллекциями",
     "preferences.behavior": "Поведение",
@@ -480,12 +480,12 @@
     "download.ongoing.heal": "Восстанавливаем {{title}}…",
     "prompt.discard_download.action.stop_download": "Остановить загрузку",
     "prompt.discard_download.action.continue_download": "Продолжить загрузку",
-    "prompt.dangerous_discard_download.message": "Остановка загрузки оставит {{title}} в несогласованном состоянии.",
+    "prompt.dangerous_discard_download.message": "{{title}} останется в несогласованном состоянии, если остановить загрузку.",
     "prompt.dangerous_discard_download.detail": "Мы восстановим {{title}} до последней версии при запуске в следующий раз.",
     "prompt.revert.version": "версия {{version}}",
     "status.repairing_game": "{{title}} должно закончить обновление, чтобы иметь возможность запуститься",
-    "status.downloads.no_active_downloads_subtext": "Всё, что вы установили или загрузили появится здесь",
-    "status.downloads.find_games_button": "Поищем что-нибудь!",
+    "status.downloads.no_active_downloads_subtext": "Тут будет список того, что вы скачали",
+    "status.downloads.find_games_button": "Давайте что-нибудь скачаем!",
     "grid.empty_state.leader": "Всё отфильтровалось...",
-    "grid.empty_state.explanation": "Фильтры скрыли всё, что у нас есть"
+    "grid.empty_state.explanation": "Фильтр скрыл всё, что у нас есть"
 }
