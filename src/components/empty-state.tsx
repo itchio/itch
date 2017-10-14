@@ -13,7 +13,7 @@ const EmptyStateDiv = styled.div`
 
   .leader {
     display: inline-block;
-    font-size: 200px;
+    font-size: 170px;
     margin-bottom: 20px;
   }
 
@@ -59,7 +59,7 @@ export class EmptyState extends React.PureComponent<IProps, any> {
           <h1>{bigText}</h1>
           <h2>{smallText}</h2>
           <ButtonContainer>
-            <Button icon={buttonIcon} primary={true} onClick={buttonAction}>
+            <Button icon={buttonIcon} primary discreet onClick={buttonAction}>
               {buttonText}
             </Button>
           </ButtonContainer>

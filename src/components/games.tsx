@@ -7,8 +7,12 @@ import { IRootState, TabLayout, ITabParams, IGameSet } from "../types";
 import GameGrid from "./game-grid/grid";
 import GameTable, { GameColumn } from "./game-table/table";
 
+import { formatString } from "./format";
+import EmptyState from "./empty-state";
+
 import { ISortParams } from "./sort-types";
 
+import { injectIntl, InjectedIntl } from "react-intl";
 import * as actions from "../actions";
 import { dispatcher } from "../constants/action-types";
 
@@ -61,9 +65,23 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
       prefLayout,
       forcedLayout,
       columns,
+      clearFilters,
+      intl,
     } = this.props;
     const { sortBy, sortDirection } = params;
 
+    if (hiddenCount >= gameIds.length) {
+      return (
+        <EmptyState
+          icon="filter"
+          bigText={formatString(intl, ["grid.empty_state.leader"])}
+          smallText={formatString(intl, ["grid.empty_state.explanation"])}
+          buttonIcon="delete"
+          buttonText={formatString(intl, ["grid.clear_filters"])}
+          buttonAction={() => clearFilters({ tab })}
+        />
+      );
+    }
     let shownLayout = forcedLayout || prefLayout;
     if (shownLayout === "grid") {
       return (
@@ -102,18 +120,20 @@ interface IProps {
 interface IDerivedProps {
   games: IGameSet;
   gameIds: number[];
-  hiddenCount?: number;
+  hiddenCount: number;
 
   prefLayout: TabLayout;
   params: ITabParams;
 
   tabParamsChanged: typeof actions.tabParamsChanged;
+  clearFilters: typeof actions.clearFilters;
+  intl: InjectedIntl;
 }
 
 const eo: any = {};
 const ea: any[] = [];
 
-export default connect<IProps>(Games, {
+export default connect<IProps>(injectIntl(Games), {
   state: (initialState, initialProps) => {
     const { tab } = initialProps;
     return createSelector(
@@ -123,6 +143,7 @@ export default connect<IProps>(Games, {
       createStructuredSelector({
         gameIds: (sp: Space, params, prefLayout) => sp.games().ids || ea,
         games: (sp: Space, params, prefLayout) => sp.games().set || eo,
+        hiddenCount: (sp: Space, params, prefLayout) => sp.games().hiddenCount,
         prefLayout: (sp: Space, params, prefLayout) => prefLayout,
         params: (sp: Space, params, prefLayout) => params,
       })
@@ -130,5 +151,6 @@ export default connect<IProps>(Games, {
   },
   dispatch: dispatch => ({
     tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),
+    clearFilters: dispatcher(dispatch, actions.clearFilters),
   }),
 });
