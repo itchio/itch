@@ -78,6 +78,10 @@ export default class CollectionFetcher extends Fetcher {
 
     const remoteGames = normalized.entities.games;
     const remoteGameIds: number[] = normalized.result.gameIds;
+
+    remoteCollection.gameIds = remoteGameIds;
+    db.saveOne("collections", collectionId, remoteCollection);
+
     this.pushAllGames(getByIds<IGame>(remoteGames, remoteGameIds));
   }
 
