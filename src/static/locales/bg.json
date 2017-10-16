@@ -469,6 +469,8 @@
     "prompt.dangerous_discard_download.detail": "„{{title}}“ ще се върне към последната версия при следващия опит за пускане.",
     "prompt.revert.version": "версия {{version}}",
     "status.repairing_game": "„{{title}}“ трябва да приключи обновяването си, преди да може да се пусне",
-    "status.downloads.no_active_downloads_subtext": "Игрите, които инсталирате или сваляте, ще се появяват тук",
-    "status.downloads.find_games_button": "Започнете да сваляте игри!"
+    "status.downloads.no_active_downloads_subtext": "Нещата, които инсталирате или сваляте, ще се появяват тук",
+    "status.downloads.find_games_button": "Започнете да сваляте неща!",
+    "grid.empty_state.leader": "Всичко е филтрирано…",
+    "grid.empty_state.explanation": "Филтрите Ви скриват всичко тук"
 }
