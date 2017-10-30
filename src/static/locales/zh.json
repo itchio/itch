@@ -172,7 +172,7 @@
     "login.remembered_session.last_connected": "上次登录",
     "game.install.no_executables_found": "找不到可执行文件",
     "game.install.no_html_index_found": "找不到 HTML 索引文件",
-    "grid.criterion.filter": "过滤...",
+    "grid.criterion.filter": "过滤器...",
     "grid.item.buy_now_again": "购买一份额外拷贝",
     "grid.item.prioritize_download": "定为首要任务",
     "grid.item.update": "更新",
