@@ -418,5 +418,9 @@
     "web.context_menu.copy": "复制",
     "web.context_menu.paste": "粘贴",
     "web.context_menu.open_in_new_tab": "在新标签页中打开",
-    "web.context_menu.copy_link": "复制链接"
+    "web.context_menu.copy_link": "复制链接",
+    "prompt.uninstall_error.title": "卸载错误",
+    "grid.item.status.installed": "已安装",
+    "new_tab.devlogs": "开发者日志",
+    "prompt.action.continue": "继续"
 }
