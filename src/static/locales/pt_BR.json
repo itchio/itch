@@ -335,7 +335,7 @@
     "grid.item.view_details": "Ver detalhes...",
     "table.column.name": "Nome",
     "download.reason.revert": "voltar para uma versão anterior",
-    "grid.filters.options.owned": "Possuído",
+    "grid.filters.options.owned": "Comprado",
     "grid.criterion.only_compatible": "Incompatível",
     "prompt.uninstall_error.message": "A instalação falhou. Remover entrada mesmo assim?",
     "grid.item.revert_to_version": "Reverter para versão...",
