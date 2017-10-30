@@ -370,5 +370,6 @@
     "collection.summary": "Uma coleção com {{itemCount}} itens",
     "download.outcome.installed": "instalado",
     "download.outcome.reinstalled": "reinstalado",
-    "download.outcome.healed": "verificado e reparado"
+    "download.outcome.healed": "verificado e reparado",
+    "grid.filters.options.installed": "Instalado"
 }
