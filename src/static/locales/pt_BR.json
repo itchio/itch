@@ -375,5 +375,7 @@
     "grid.filters.options.no_results": "Nenhum resultado encontrado",
     "grid.item.discard_download": "Parar download",
     "grid.item.status.installed": "Instalado",
-    "table.column.play_time": "Tempo de jogo"
+    "table.column.play_time": "Tempo de jogo",
+    "table.column.published": "Publicado",
+    "collection_grid.item.updated_at": "Ultima atualização há {{time_ago}}"
 }
