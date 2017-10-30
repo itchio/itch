@@ -372,5 +372,6 @@
     "download.outcome.reinstalled": "reinstalado",
     "download.outcome.healed": "verificado e reparado",
     "grid.filters.options.installed": "Instalado",
-    "grid.filters.options.no_results": "Nenhum resultado encontrado"
+    "grid.filters.options.no_results": "Nenhum resultado encontrado",
+    "grid.item.discard_download": "Parar download"
 }
