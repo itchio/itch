@@ -374,5 +374,6 @@
     "grid.filters.options.installed": "Instalado",
     "grid.filters.options.no_results": "Nenhum resultado encontrado",
     "grid.item.discard_download": "Parar download",
-    "grid.item.status.installed": "Instalado"
+    "grid.item.status.installed": "Instalado",
+    "table.column.play_time": "Tempo de jogo"
 }
