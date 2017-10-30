@@ -140,7 +140,7 @@
     "game.install.no_executables_found": "Nenhum executável encontrado",
     "game.install.no_html_index_found": "Arquivo index.html não encontrado",
     "game.install.no_uploads_available.detail": "Talvez não seja compatível com sua plataforma ou com o aplicativo do itch ainda!",
-    "game.install.no_uploads_available.message": "Nenhum download compatível foi encontrado para '{{title}}', então nada foi instalado",
+    "game.install.no_uploads_available.message": "Nenhum download compatível foi encontrado para '{{title}}', então nada foi instalado.",
     "game.install.try_again": "Tentar novamente",
     "game.install.visit_web_page": "Visitar página",
     "grid.criterion.filtered_by": "Filtrado por “{{term}}”",
