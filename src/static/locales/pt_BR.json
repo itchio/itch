@@ -367,5 +367,8 @@
     "setup.status.done": "Tudo pronto!",
     "web.context_menu.copy": "Copiar\n",
     "web.context_menu.paste": "Colar",
-    "collection.summary": "Uma coleção com {{itemCount}} itens"
+    "collection.summary": "Uma coleção com {{itemCount}} itens",
+    "download.outcome.installed": "instalado",
+    "download.outcome.reinstalled": "reinstalado",
+    "download.outcome.healed": "verificado e reparado"
 }
