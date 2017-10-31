@@ -457,5 +457,6 @@
     "prompt.dangerous_discard_download.detail": "Beim nächsten Start von {{title}} werden wir es auf die neuste Version zurücksetzen.",
     "prompt.blessing.message": "Zum Verwalten von {{title}} werden Admin-Rechte benötigt",
     "prompt.uninstall_error.message_permissions": "Einige Dateien von {{title}} konnten nicht gelöscht werden. Als Admin erneut versuchen?",
-    "prompt.uninstall_error.action_permissions": "Als Admin entfernen"
+    "prompt.uninstall_error.action_permissions": "Als Admin entfernen",
+    "prompt.install_error.message": "Die Installation ist fehlgeschlagen"
 }
