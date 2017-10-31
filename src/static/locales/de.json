@@ -444,5 +444,7 @@
     "install_location.property.size_on_disk": "{{size}} auf Laufwerk",
     "collection.summary": "Eine Sammlung von {{itemCount}} Artikeln",
     "download.ongoing.install": "Installiere {{title}}...",
-    "download.ongoing.update": "Bringe {{title}} auf den neusten Stand..."
+    "download.ongoing.update": "Bringe {{title}} auf den neusten Stand...",
+    "download.ongoing.reinstall": "Neuinstallation von {{Titel}}...",
+    "download.ongoing.heal": "Repariere {{Titel}}..."
 }
