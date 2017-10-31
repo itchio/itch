@@ -178,7 +178,7 @@
     "usage_stats.description.game": "Ein Spiel",
     "grid.item.show_local_files": "Lokale Dateien anzeigen",
     "prompt.self_update_ready.message": "Wähle {{restart}} um das Update sofort zu aktivieren.\n\nAnsonsten wird das Update beim nächsten Neustart der App aktiviert.",
-    "new_tab.random": "Etwas Zufälliges ansehen",
+    "new_tab.random": "Zufällige Spiele",
     "sidebar.category.tabs": "Tabs",
     "usage_stats.description.tool": "Ein Tool",
     "usage_stats.last_opened_time_ago": "Zuletzt geöffnet {{time_ago}}",
