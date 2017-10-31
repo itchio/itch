@@ -447,5 +447,9 @@
     "download.ongoing.update": "Bringe {{title}} auf den neusten Stand...",
     "download.ongoing.reinstall": "Neuinstallation von {{Titel}}...",
     "download.ongoing.heal": "Repariere {{Titel}}...",
-    "grid.item.not_compatible": "Nicht für diese Plattform verfügbar"
+    "grid.item.not_compatible": "Nicht für diese Plattform verfügbar",
+    "grid.item.uninstall_request": "Deinstallieren oder neu installieren...",
+    "table.column.installed_size": "Größe",
+    "login.action.retry_setup": "Installation wiederholen",
+    "menu.file.close_other_tabs": "Andere Tabs schließen"
 }
