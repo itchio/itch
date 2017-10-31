@@ -451,5 +451,11 @@
     "grid.item.uninstall_request": "Deinstallieren oder neu installieren...",
     "table.column.installed_size": "Größe",
     "login.action.retry_setup": "Installation wiederholen",
-    "menu.file.close_other_tabs": "Andere Tabs schließen"
+    "menu.file.close_other_tabs": "Andere Tabs schließen",
+    "prompt.discard_download.message": "Bist du Dir sicher, dass du den Download von {{title}} beenden willst?",
+    "prompt.discard_download.action.continue_download": "Download fortsetzen",
+    "prompt.dangerous_discard_download.detail": "Beim nächsten Start von {{title}} werden wir es auf die neuste Version zurücksetzen.",
+    "prompt.blessing.message": "Zum Verwalten von {{title}} werden Admin-Rechte benötigt",
+    "prompt.uninstall_error.message_permissions": "Einige Dateien von {{title}} konnten nicht gelöscht werden. Als Admin erneut versuchen?",
+    "prompt.uninstall_error.action_permissions": "Als Admin entfernen"
 }
