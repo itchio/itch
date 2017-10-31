@@ -339,7 +339,7 @@
     "status.game_update.found": "Neue Version von {{title}} gefunden!",
     "status.game_update.not_found": "{{title}} ist auf dem neuesten Stand.",
     "download.reason.reinstall": "zur Neuinstallation",
-    "download.reason.revert": "zum Zurücksetzen auf eine frühere Version",
+    "download.reason.revert": "auf eine andere Version wechseln",
     "game.install.could_not_launch.missing_jre": "Es benötigt Java, welches nicht auf Ihrem System installiert ist.",
     "grid.item.download_java": "Java herunterladen",
     "grid.item.update": "Update",
