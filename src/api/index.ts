@@ -118,9 +118,7 @@ export class Client {
 
     const { schema } = params;
     if (schema) {
-      console.log(`before normalize: ${JSON.stringify(body, null, 2)}`);
       body = normalize(body, schema);
-      console.log(` after normalize: ${JSON.stringify(body, null, 2)}`);
     }
 
     body = camelifyObject(body);
