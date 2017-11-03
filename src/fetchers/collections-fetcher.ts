@@ -1,8 +1,5 @@
 import { Fetcher } from "./fetcher";
 
-import normalize from "../api/normalize";
-import { collection, arrayOf } from "../api/schemas";
-
 import { fromJSONField } from "../db/json-field";
 
 import { indexBy } from "underscore";
@@ -66,21 +63,17 @@ export default class CollectionsFetcher extends Fetcher {
 
   async remote() {
     const { db } = this.ctx;
-    const normalized = await this.withApi(async api => {
-      return normalize(await api.myCollections(), {
-        collections: arrayOf(collection),
-      });
-    });
+    const collRes = await this.withApi(async api => await api.myCollections());
 
-    const collections = normalized.entities.collections || emptyObj;
+    const collections = collRes.entities.collections || emptyObj;
     const meId = this.ensureCredentials().me.id;
     for (const id of Object.keys(collections)) {
       collections[id].userId = meId;
     }
 
-    db.saveMany(normalized.entities);
+    db.saveMany(collRes.entities);
 
-    const { collectionIds } = normalized.result;
+    const { collectionIds } = collRes.result;
     db.saveOne("profiles", meId, { myCollectionIds: collectionIds });
   }
 }

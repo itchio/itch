@@ -4,9 +4,6 @@ import { indexBy } from "underscore";
 
 import { IGame } from "../db/models/game";
 
-import normalize from "../api/normalize";
-import { collection, game, arrayOf } from "../api/schemas";
-
 import { fromJSONField } from "../db/json-field";
 
 const ea = [];
@@ -51,15 +48,11 @@ export default class CollectionFetcher extends Fetcher {
       });
     }
 
-    let normalized;
     const collResponse = await this.withApi(async api => {
       return await api.collection(collectionId);
     });
 
-    normalized = normalize(collResponse, {
-      collection: collection,
-    });
-    let remoteCollection = normalized.entities.collections[collectionId];
+    let remoteCollection = collResponse.entities.collections[collectionId];
 
     this.push({
       collections: {
@@ -72,16 +65,8 @@ export default class CollectionFetcher extends Fetcher {
       return await api.collectionGames(collectionId);
     });
 
-    normalized = normalize(gamesResponse, {
-      games: arrayOf(game),
-    });
-
-    const remoteGames = normalized.entities.games;
-    const remoteGameIds: number[] = normalized.result.gameIds;
-
-    remoteCollection.gameIds = remoteGameIds;
-    db.saveOne("collections", collectionId, remoteCollection);
-
+    const remoteGames = gamesResponse.entities.games;
+    const remoteGameIds: number[] = gamesResponse.result.gameIds;
     this.pushAllGames(getByIds<IGame>(remoteGames, remoteGameIds));
   }
 

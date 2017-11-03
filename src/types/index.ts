@@ -109,6 +109,10 @@ export interface IGameSet {
   [id: string]: IGame;
 }
 
+export interface IDownloadKeySet {
+  [id: string]: IDownloadKey;
+}
+
 export interface ICollectionSet {
   [id: string]: ICollection;
 }

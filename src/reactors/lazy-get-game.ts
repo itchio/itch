@@ -24,9 +24,9 @@ export default async function lazyGetGame(
     stop: async () => null,
     work: async () => {
       const api = client.withKey(gameCredentials.apiKey);
-      const gameResponse = await api.game(gameId);
-      if (gameResponse) {
-        return gameResponse.game;
+      const gameRes = await api.game(gameId);
+      if (gameRes) {
+        return gameRes.entities.games[gameRes.result.gameId];
       }
 
       return null;
