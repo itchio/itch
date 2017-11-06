@@ -71,6 +71,9 @@ export interface IModalResponsePayload {
   /** two-factor authentication code entered */
   totpCode?: string;
 
+  /** recaptcha verification code */
+  recaptchaResponse?: string;
+
   /** whether to clear cookies */
   cookies?: boolean;
 

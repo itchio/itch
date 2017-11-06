@@ -54,6 +54,12 @@ export interface ILoginWithPasswordResult {
   
   /** set if we tried to log in without totp code */
   totpNeeded?: boolean;
+
+  /** set if we need to fill in a recaptcha before logging in */
+  recaptchaNeeded?: boolean;
+
+  /** if recaptchaNeeded is true, this is set to an URL that'll serve a recaptcha */
+  recaptchaUrl?: string;
 }
 
 export interface IUpgradeResponse {

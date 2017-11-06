@@ -48,6 +48,11 @@ interface ITransformerMap {
   [key: string]: (input: any) => any;
 }
 
+export interface ILoginExtras {
+  totpCode?: string;
+  recaptchaResponse?: string;
+}
+
 /**
  * async Wrapper for the itch.io API
  */
@@ -110,17 +115,23 @@ export class Client {
     });
   }
 
-  async loginWithPassword (username: string, password: string, totpCode?: string): Promise<ILoginWithPasswordResult> {
+  async loginWithPassword (username: string, password: string, extras: ILoginExtras = {}): Promise<ILoginWithPasswordResult> {
     let data = {
       username: username,
       password: password,
       source: "desktop",
       v: 2,
     };
-    if (totpCode) {
+    if (extras.totpCode) {
       data = {
         ...data,
-        totp_code: totpCode,
+        totp_code: extras.totpCode,
+      };
+    }
+    if (extras.recaptchaResponse) {
+      data = {
+        ...data,
+        recaptcha_response: extras.recaptchaResponse,
       };
     }
 
