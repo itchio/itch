@@ -5,8 +5,6 @@ import { ICave } from "../../db/models/cave";
 import Context from "../../context";
 
 import { Logger } from "../../logger";
-import butler from "../../util/butler";
-import { ICaveCommand, CaveOperation } from "../../util/butler/sendables";
 
 import {
   Cancelled,
@@ -19,6 +17,9 @@ import {
 import { IGame } from "../../db/models/game";
 
 import { IReceipt, readReceipt } from "./receipt";
+
+import urls from "../../constants/urls";
+import { Instance, messages } from "node-buse";
 
 export interface ICoreOpts {
   /** for cancellations, accessing db, etc. */
@@ -127,35 +128,58 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
   if (inPlace) {
     cave = caveIn;
   } else {
-    // const prepOpts = {
-    //   // when reinstalling, we do want to sniff again
-    //   forceSniff: opts.reason === "reinstall",
-    // };
-
-    // const { manager, source, installerName } = await prepare(opts, prepOpts);
-    // logger.info(`Installing (${reason}) with ${installerName} (${source})`);
-
     const credentials = await getGameCredentials(ctx, game);
 
-    // const result = await manager.install({ ...opts, logger });
-    const butlerPromise = butler.caveCommand({
-      onSenderReady: sender => {
-        sender.send(<ICaveCommand>{
-          type: "cave-command",
-          operation: CaveOperation.Install,
-          installParams: {
-            game,
-            installFolder: opts.destPath,
-            stageFolder: opts.downloadFolderPath,
-            credentials,
-          },
+    const instance = new Instance();
+    instance.onClient(async client => {
+      try {
+        client.onNotification(messages.Operation.Progress, ({ params }) => {
+          ctx.emitProgress(params);
         });
-      },
-      logger,
-      ctx,
-    });
 
-    await butlerPromise;
+        client.onNotification(messages.Log, ({ params }) => {
+          switch (params.level) {
+            case "debug":
+              logger.debug(`[butler] ${params.message}`);
+              break;
+            case "info":
+              logger.info(`[butler] ${params.message}`);
+              break;
+            case "warn":
+              logger.warn(`[butler] ${params.message}`);
+              break;
+            case "error":
+              logger.error(`[butler] ${params.message}`);
+              break;
+            default:
+              logger.info(`[butler ${params.level}] ${params.message}`);
+              break;
+          }
+        });
+
+        await client.call(
+          messages.Operation.Start({
+            stagingFolder: opts.downloadFolderPath,
+            operation: "install",
+            installParams: {
+              game,
+              installFolder: opts.destPath,
+              credentials: {
+                apiKey: credentials.apiKey,
+                downloadKey: credentials.downloadKey
+                  ? credentials.downloadKey.id
+                  : null,
+                server: urls.itchioApi,
+              },
+            },
+          })
+        );
+      } finally {
+        instance.cancel();
+      }
+    });
+    await instance.promise();
+
     return;
 
     // cave = {
