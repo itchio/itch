@@ -137,8 +137,12 @@ ${log}
         }
       };
     };
-    process.on("uncaughtException", makeHandler("Uncaught exception"));
-    process.on("unhandledRejection", makeHandler("Unhandled rejection"));
+    // a better person than me would've figured out why
+    // it refuses to takes on("uncaughtException") etc.
+    // but I didn't. it's just typings. I know they exist.
+    // you can't lie to me like that, typescript.
+    (process as any).on("uncaughtException", makeHandler("Uncaught exception"));
+    (process as any).on("unhandledRejection", makeHandler("Unhandled rejection"));
     console.log("Fully mounted crash reporter"); // tslint:disable-line:no-console
   },
 };

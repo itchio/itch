@@ -8,7 +8,7 @@ interface WebViewProps {
   plugins?: string;
   partition?: string;
   sandbox?: boolean;
-  ref?: (wv: Electron.WebViewElement) => void;
+  ref?: (wv: Electron.WebviewTag) => void;
   style?: React.CSSProperties;
 }
 

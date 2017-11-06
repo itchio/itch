@@ -58,16 +58,14 @@ async function registerProtocol (opts: IRegisterProtocolOpts) {
   }
 
   const {session} = require("electron");
-  const caveSession = session.fromPartition(partition);
+  const caveSession = session.fromPartition(partition, {cache: false});
 
   await new Promise((resolve, reject) => {
     caveSession.protocol.registerFileProtocol(WEBGAME_PROTOCOL, (request, callback) => {
       const urlPath = url.parse(request.url).pathname;
       const filePath = ospath.join(fileRoot, urlPath.replace(/^\//, ""));
 
-      callback({
-        path: filePath,
-      });
+      callback(filePath);
     }, (error) => {
       if (error) {
         reject(error);

@@ -10,7 +10,7 @@ import * as ospath from "path";
 const injectPath = ospath.resolve(__dirname, "..", "..", "inject", "captcha.js");
 
 export class RecaptchaInput extends React.Component<IRecaptchaInputProps> {
-  webview: Electron.WebViewElement;
+  webview: Electron.WebviewTag;
   checker: NodeJS.Timer;
 
   constructor () {
@@ -27,7 +27,7 @@ export class RecaptchaInput extends React.Component<IRecaptchaInputProps> {
     </div>;
   }
 
-  gotWebview (wv: Electron.WebViewElement) {
+  gotWebview (wv: Electron.WebviewTag) {
     this.webview = wv;
     this.clearChecker();
 
@@ -36,7 +36,7 @@ export class RecaptchaInput extends React.Component<IRecaptchaInputProps> {
     }
 
     this.checker = setInterval(() => {
-      this.webview.executeJavaScript(`window.captchaResponse`, false, (response) => {
+      this.webview.executeJavaScript(`window.captchaResponse`, false, (response: string | undefined) => {
         if (response) {
           this.props.updatePayload({
             recaptchaResponse: response,

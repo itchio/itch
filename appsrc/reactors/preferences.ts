@@ -13,8 +13,6 @@ import mklog from "../util/log";
 const log = mklog("preferences");
 import {opts} from "../logger";
 
-import {ISession} from "../electron/types";
-
 import {promisedModal} from "./modals";
 
 let saveAtomicInvocations = 0;
@@ -82,7 +80,7 @@ export default function (watcher: Watcher) {
     const userId = store.getState().session.credentials.me.id;
 
     const session = require("electron").session;
-    const ourSession = session.fromPartition(partitionForUser(String(userId))) as ISession;
+    const ourSession = session.fromPartition(partitionForUser(String(userId)), {cache: true});
 
     if (action.payload.cache) {
       promises.push(new Promise((resolve, reject) => {
@@ -94,6 +92,10 @@ export default function (watcher: Watcher) {
       promises.push(new Promise((resolve, reject) => {
         ourSession.clearStorageData({
           storages: ["cookies"],
+          // for all origins
+          origin: null,
+          // look chromium just clear everything thanks
+          quotas: ["temporary", "persistent", "syncable"],
         }, resolve);
       }));
     }
