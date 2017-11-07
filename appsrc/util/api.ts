@@ -35,6 +35,8 @@ import {
   IListUploadsExtras,
   IPasswordOrSecret,
   IDownloadBuildFileExtras,
+  ITotpVerifyResult,
+  ILoginExtras,
 } from "../types/api";
 
 const cooldown = mkcooldown(130);
@@ -46,11 +48,6 @@ type HTTPMethod = "get" | "head" | "post";
 
 interface ITransformerMap {
   [key: string]: (input: any) => any;
-}
-
-export interface ILoginExtras {
-  totpCode?: string;
-  recaptchaResponse?: string;
 }
 
 /**
@@ -120,14 +117,8 @@ export class Client {
       username: username,
       password: password,
       source: "desktop",
-      v: 2,
+      v: 3,
     };
-    if (extras.totpCode) {
-      data = {
-        ...data,
-        totp_code: extras.totpCode,
-      };
-    }
     if (extras.recaptchaResponse) {
       data = {
         ...data,
@@ -136,6 +127,11 @@ export class Client {
     }
 
     return await this.request("post", "/login", data);
+  }
+
+  async totpVerify (token: string, code: string): Promise<ITotpVerifyResult> {
+    const data = { token, code }
+    return await this.request("post", "/totp/verify", data);
   }
 
   withKey (key: string): AuthenticatedClient {

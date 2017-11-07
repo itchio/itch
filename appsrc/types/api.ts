@@ -43,7 +43,11 @@ export interface IMeResult {
 
 export type ILoginKeyResult = IMeResult;
 
-export interface ILoginWithPasswordResult {
+export interface ILoginExtras {
+  recaptchaResponse?: string;
+}
+
+export interface ISuccessfulLoginResult {
   /** itch.io API key (fresh or cached) */
   key?: IAPIKey;
 
@@ -51,15 +55,24 @@ export interface ILoginWithPasswordResult {
   cookie?: {
     [name: string]: string;
   };
-  
-  /** set if we tried to log in without totp code */
-  totpNeeded?: boolean;
+}
 
+export interface ILoginWithPasswordResult extends ISuccessfulLoginResult {
   /** set if we need to fill in a recaptcha before logging in */
   recaptchaNeeded?: boolean;
 
   /** if recaptchaNeeded is true, this is set to an URL that'll serve a recaptcha */
   recaptchaUrl?: string;
+  
+  /** set if we tried to log in without totp code */
+  totpNeeded?: boolean;
+
+  /** token used for verify totp step (login v3) */
+  token?: string;
+}
+
+export interface ITotpVerifyResult extends ISuccessfulLoginResult {
+  // nothing more
 }
 
 export interface IUpgradeResponse {

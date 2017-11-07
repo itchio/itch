@@ -2,7 +2,7 @@
 import {Watcher} from "./watcher";
 import * as actions from "../actions";
 
-import client, { ILoginExtras } from "../util/api";
+import client from "../util/api";
 import partitionForUser from "../util/partition-for-user";
 
 import {sortBy} from "underscore";
@@ -13,6 +13,7 @@ import {promisedModal} from "./modals";
 
 import {ITwoFactorInputParams} from "../components/modal-widgets/two-factor-input";
 import { IRecaptchaInputParams } from "../components/modal-widgets/recaptcha-input";
+import { ILoginExtras, ISuccessfulLoginResult } from "../types/api";
 
 const YEAR_IN_SECONDS = 365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
 
@@ -24,8 +25,11 @@ export default function (watcher: Watcher) {
     let extras: ILoginExtras = {};
 
     try {
-      let res = await client.loginWithPassword(username, password, extras);
-      if (res.recaptchaNeeded) {
+      let res: ISuccessfulLoginResult;
+      let passwordRes = await client.loginWithPassword(username, password, extras);
+      res = passwordRes;
+
+      if (passwordRes.recaptchaNeeded) {
         const modalRes = await promisedModal(store, {
           title: "Captcha",
           message: "",
@@ -38,20 +42,21 @@ export default function (watcher: Watcher) {
           ],
           widget: "recaptcha-input",
           widgetParams: {
-            url: res.recaptchaUrl,
+            url: passwordRes.recaptchaUrl,
           } as IRecaptchaInputParams
         });
 
         if (modalRes.type === MODAL_RESPONSE) {
           extras.recaptchaResponse = modalRes.payload.recaptchaResponse;
-          res = await client.loginWithPassword(username, password, extras);
+          passwordRes = await client.loginWithPassword(username, password, extras);
+          res = passwordRes;
         } else {
           store.dispatch(actions.loginCancelled({}));
           return;
         }
       }
 
-      if (res.totpNeeded) {
+      if (passwordRes.totpNeeded) {
         const modalRes = await promisedModal(store, {
           title: ["login.two_factor.title"],
           message: "",
@@ -76,8 +81,8 @@ export default function (watcher: Watcher) {
         });
 
         if (modalRes.type === MODAL_RESPONSE) {
-          extras.totpCode = modalRes.payload.totpCode;
-          res = await client.loginWithPassword(username, password, extras);
+          const totpRes = await client.totpVerify(passwordRes.token, modalRes.payload.totpCode);
+          res = totpRes;
         } else {
           store.dispatch(actions.loginCancelled({}));
           return;
