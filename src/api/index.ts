@@ -165,7 +165,7 @@ export class Client {
 
   async totpVerify(token: string, code: string): Promise<ITotpVerifyResult> {
     const data = { token, code };
-    return await this.request("post", "/totp/verify", data);
+    return await this.request({ method: "post", path: "/totp/verify", data });
   }
 
   withKey(key: string): AuthenticatedClient {
