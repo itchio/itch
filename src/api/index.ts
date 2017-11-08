@@ -33,6 +33,8 @@ import {
   IListUploadsExtras,
   IPasswordOrSecret,
   IDownloadBuildFileExtras,
+  ILoginExtras,
+  ITotpVerifyResult,
 } from "../types/api";
 
 const DUMP_API_CALLS = process.env.LET_ME_IN === "1";
@@ -136,28 +138,30 @@ export class Client {
   async loginWithPassword(
     username: string,
     password: string,
-    totpCode?: string
+    extras: ILoginExtras
   ): Promise<ILoginWithPasswordResult> {
     let data: {
       username: string;
       password: string;
       source: "desktop";
-      totp_code?: string;
+      recaptcha_response?: string;
       v: number;
     } = {
       username: username,
       password: password,
       source: "desktop",
-      v: 2,
+      v: 3,
     };
-    if (totpCode) {
-      data = {
-        ...data,
-        totp_code: totpCode,
-      };
+    if (data.recaptcha_response) {
+      data.recaptcha_response = extras.recaptchaResponse;
     }
 
     return await this.request("post", "/login", data);
+  }
+
+  async totpVerify(token: string, code: string): Promise<ITotpVerifyResult> {
+    const data = { token, code };
+    return await this.request("post", "/totp/verify", data);
   }
 
   withKey(key: string): AuthenticatedClient {

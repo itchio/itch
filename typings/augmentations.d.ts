@@ -8,12 +8,13 @@ interface WebViewProps {
   partition?: string;
   sandbox?: boolean;
   ref?: (wv: Electron.WebviewTag) => void;
+  style?: React.CSSProperties;
 }
 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "webview": WebViewProps;
+      webview: WebViewProps;
     }
   }
   interface NodeModule {
