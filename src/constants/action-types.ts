@@ -94,6 +94,9 @@ export interface IModalResponsePayload {
 
   /** manually picked upload for install */
   pickedUpload?: Types.IUpload;
+
+  /** recaptcha challenge response */
+  recaptchaResponse?: string;
 }
 
 export const MODAL_NO_RESPONSE = "MODAL_NO_RESPONSE";

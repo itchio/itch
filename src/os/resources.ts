@@ -28,7 +28,7 @@ export function getLocalesConfigPath(): string {
   return getPath(resourcePath);
 }
 
-type IInjectName = "itchio" | "game";
+type IInjectName = "itchio" | "game" | "captcha";
 
 export function getInjectPath(name: IInjectName) {
   return getPath(`inject/${name}-init.js`);
