@@ -75,7 +75,7 @@ suite(__filename, s => {
       [
         "post",
         "/login",
-        { username: "foo", password: "bar", source: "desktop", v: 2 },
+        { username: "foo", password: "bar", source: "desktop", v: 3 },
       ]
     );
   }
