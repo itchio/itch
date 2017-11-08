@@ -38,12 +38,12 @@ export default function (watcher: Watcher) {
               label: ["login.action.login"],
               action: actions.modalResponse({}),
               actionSource: "widget",
-            }
+            },
           ],
           widget: "recaptcha-input",
           widgetParams: {
             url: passwordRes.recaptchaUrl,
-          } as IRecaptchaInputParams
+          } as IRecaptchaInputParams,
         });
 
         if (modalRes.type === MODAL_RESPONSE) {

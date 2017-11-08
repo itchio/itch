@@ -112,7 +112,9 @@ export class Client {
     });
   }
 
-  async loginWithPassword (username: string, password: string, extras: ILoginExtras = {}): Promise<ILoginWithPasswordResult> {
+  async loginWithPassword (
+      username: string, password: string,
+      extras: ILoginExtras = {}): Promise<ILoginWithPasswordResult> {
     let data = {
       username: username,
       password: password,
@@ -130,7 +132,7 @@ export class Client {
   }
 
   async totpVerify (token: string, code: string): Promise<ITotpVerifyResult> {
-    const data = { token, code }
+    const data = { token, code };
     return await this.request("post", "/totp/verify", data);
   }
 

@@ -11,7 +11,7 @@ url="https://github.com/itchio/{{CI_APPNAME}}"
 license=('MIT')
 
 depends=('alsa-lib' 'libnotify' 'nss' 'gconf' 'gtk2' 'libxtst' 'desktop-file-utils' 'gtk-update-icon-cache' 'libxss')
-makedepends=('nodejs' 'nodejs-grunt-cli' 'npm>=5.2.0' 'python2' 'gcc')
+makedepends=('nodejs' 'nodejs-grunt-cli' 'npm>=5.5.1' 'python2' 'gcc')
 options=('!strip')
 install="{{CI_APPNAME}}.install"
 
@@ -26,9 +26,6 @@ prepare() {
   cd "itch-${pkgver}{{CI_SUFFIX}}"
 
   export PYTHON=/usr/bin/python2
-
-  # Try to work around https://github.com/npm/npm/issues/17781
-  npm install -g npm@5.2.0
 
   # Get dependencies
   # (npm3's progress indicator is notoriously slow, disable)

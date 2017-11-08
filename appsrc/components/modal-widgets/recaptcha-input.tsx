@@ -52,7 +52,7 @@ export class RecaptchaInput extends React.Component<IRecaptchaInputProps> {
 
   clearChecker() {
     if (this.checker) {
-      clearInterval(this.checker)
+      clearInterval(this.checker);
       this.checker = null;
     }
   }
@@ -74,4 +74,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
 )(RecaptchaInput);
-

@@ -77,7 +77,7 @@ test("api", t => {
 
     testAPI(
       "loginWithPassword", ["foo", "bar"],
-      ["post", "/login", {username: "foo", password: "bar", source: "desktop", v: 2}],
+      ["post", "/login", {username: "foo", password: "bar", source: "desktop", v: 3}],
     );
   }
 
