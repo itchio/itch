@@ -7,8 +7,6 @@ import { ICollection } from "../db/models/collection";
 import { IDownloadKey, IDownloadKeySummary } from "../db/models/download-key";
 import { ICaveSummary, ICave } from "../db/models/cave";
 
-import { DateTimeField } from "../db/datetime-field";
-
 export * from "./tasks";
 export * from "./errors";
 import * as Tasks from "./tasks";
@@ -383,7 +381,7 @@ export interface IModalButton {
   tags?: IModalButtonTag[];
 
   timeAgo?: {
-    date: DateTimeField;
+    date: Date;
   };
 }
 

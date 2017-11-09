@@ -3,8 +3,6 @@ import * as actions from "../../actions";
 
 import { IExploreJsonParams } from "../../components/modal-widgets/explore-json";
 import { DB } from "../../db";
-import { CaveModel } from "../../db/models/cave";
-import expandFields from "../../db/expand-fields";
 import Context from "../../context";
 
 import lazyGetGame from "../lazy-get-game";
@@ -17,7 +15,6 @@ export default function(watcher: Watcher, db: DB) {
     if (!cave) {
       return;
     }
-    expandFields(cave, CaveModel);
 
     const ctx = new Context(store, db);
     const game = await lazyGetGame(ctx, cave.gameId);

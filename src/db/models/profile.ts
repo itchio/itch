@@ -1,6 +1,5 @@
 import { Model, ensureExtends, Column } from "../model";
 import { IItchAppTabs } from "../../types";
-import { JSONField } from "../json-field";
 
 const ProfileModelOriginal = {
   table: "profiles",
@@ -24,7 +23,7 @@ export interface IProfile {
   /** the itch.io user id associated with this profile */
   id: number;
 
-  myGameIds: JSONField<number[]>;
-  myCollectionIds: JSONField<number[]>;
-  openTabs: JSONField<IItchAppTabs>;
+  myGameIds: number[];
+  myCollectionIds: number[];
+  openTabs: IItchAppTabs;
 }

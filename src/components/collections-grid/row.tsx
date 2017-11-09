@@ -11,7 +11,6 @@ import Hoverable from "../basics/hover-hoc";
 
 import { IGameSet } from "../../types";
 import { ICollection } from "../../db/models/collection";
-import { fromJSONField } from "../../db/json-field";
 import { GAMES_SHOWN_PER_COLLECTION } from "../../fetchers/constants";
 
 const emptyArr = [];
@@ -23,10 +22,8 @@ export default class CollectionRow extends React.PureComponent<IProps> {
     const { allGames, collection } = this.props;
     const { title } = collection;
 
-    const gameIds = fromJSONField(collection.gameIds, emptyArr).slice(
-      0,
-      GAMES_SHOWN_PER_COLLECTION
-    );
+    const gameIds = (collection.gameIds || emptyArr)
+      .slice(0, GAMES_SHOWN_PER_COLLECTION);
     const games = filter(map(gameIds, gameId => allGames[gameId]), x => !!x);
 
     const gameItems = map(games, (game, index) => {

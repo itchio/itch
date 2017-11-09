@@ -1,7 +1,7 @@
 import { fileSize } from "../format/filesize";
 
 import platformData from "../constants/platform-data";
-import { DateTimeField, toDateTimeField } from "../db/datetime-field";
+import { toDateTimeField } from "../db/datetime-field";
 
 import { IUpload, ILocalizedString, IModalButtonTag } from "../types";
 
@@ -10,7 +10,7 @@ interface IUploadButton {
   tags: IModalButtonTag[];
   icon: string;
   timeAgo: {
-    date: DateTimeField;
+    date: Date;
   };
 }
 

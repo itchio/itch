@@ -1,6 +1,4 @@
 import { Model, ensureExtends, Column } from "../model";
-import { JSONField } from "../json-field";
-import { DateTimeField } from "../datetime-field";
 
 import { PathScheme } from "../../os/paths";
 
@@ -50,7 +48,7 @@ ensureExtends<ICave, Columns>();
 export interface ICaveSummary {
   id: string;
   gameId: number;
-  lastTouchedAt: DateTimeField;
+  lastTouchedAt: Date;
   secondsRun: number;
   installedSize: number;
 }
@@ -80,21 +78,21 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   externalGameId: number;
 
   /** itch.io upload currently installed */
-  upload: JSONField<IUpload>;
+  upload: IUpload;
 
   /**
    * itch.io/wharf build currently installed
    */
-  build: JSONField<IBuild>;
+  build: IBuild;
 
   /** channel name of build currently installed */
   channelName: string;
 
   /** timestamp when that cave was last installed. updates count as install. */
-  installedAt: DateTimeField;
+  installedAt: Date;
 
   /** timestamp when that cave was last opened/played */
-  lastTouchedAt: DateTimeField;
+  lastTouchedAt: Date;
 
   /** number of seconds played/run, as recorded locally */
   secondsRun: number;
@@ -119,9 +117,9 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   installedUE4Prereq: boolean;
 
   /** indexed by prereq name (standard, stored in ibrew-like repo), set to true when installed successfully */
-  installedPrereqs: JSONField<{
+  installedPrereqs: {
     [prereqName: string]: boolean;
-  }>;
+  };
 
   /** name of the install location: 'default' or a GUID */
   installLocation: string;
@@ -136,7 +134,7 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   pathScheme: PathScheme;
 
   /** result of the configure step */
-  verdict: JSONField<IConfigureResult>;
+  verdict: IConfigureResult;
 }
 
 export interface ICaveWithDeprecated extends ICave {

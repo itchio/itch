@@ -1,6 +1,4 @@
 import { Model, ensureExtends, Column } from "../model";
-import { JSONField } from "../json-field";
-import { DateTimeField } from "../datetime-field";
 
 import {
   GameType,
@@ -88,7 +86,7 @@ export interface IGame {
   classification: GameClassification;
 
   /** Only present for HTML5 games, otherwise null */
-  embed: JSONField<IGameEmbedInfo>;
+  embed: IGameEmbedInfo;
 
   /** true if the game has a demo that can be downloaded for free */
   hasDemo: boolean;
@@ -97,7 +95,7 @@ export interface IGame {
   minPrice: number;
 
   /** current sale, if any */
-  sale: JSONField<IGameSaleInfo>;
+  sale: IGameSaleInfo;
 
   /** as of November 7, 2016, this property doesn't exist yet in the API, but a man can dream.. */
   currency: string;
@@ -109,10 +107,10 @@ export interface IGame {
   canBeBought: boolean;
 
   /** date the game was published, or empty/null if not published */
-  createdAt: DateTimeField;
+  createdAt: Date;
 
   /** date the game was published, or empty/null if not published */
-  publishedAt: DateTimeField;
+  publishedAt: Date;
 
   pOsx: boolean;
   pWindows: boolean;

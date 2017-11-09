@@ -1,6 +1,4 @@
 import { Model, ensureExtends, Column } from "../model";
-import { JSONField } from "../json-field";
-import { DateTimeField } from "../datetime-field";
 
 const CollectionModelOriginal = {
   table: "collections",
@@ -33,16 +31,16 @@ export interface ICollection {
   title: string;
 
   /** the date the collection was first created at */
-  createdAt: DateTimeField;
+  createdAt: Date;
 
   /** the date the collection was last updated at (description, contents, etc.) */
-  updatedAt: DateTimeField;
+  updatedAt: Date;
 
   /** the total number of games in that collection */
   gamesCount: number;
 
   /** the list of identifiers for games that belong to that collection */
-  gameIds: JSONField<number[]>;
+  gameIds: number[];
 
   /** the creator of this collection */
   userId: number;

@@ -1,6 +1,6 @@
 import suite from "../test-suite";
 
-import { fromJSONField, toJSONField, JSONField } from "./json-field";
+import { fromJSONField, toJSONField } from "./json-field";
 
 suite(__filename, s => {
   const input = {
@@ -10,11 +10,11 @@ suite(__filename, s => {
     },
     date: "1970-01-02T00:00:00.000Z",
   };
-  const invalidJson: JSONField<any> = `{`;
-  const notString: JSONField<any> = 43 as any;
-  const empty: JSONField<any> = "";
-  const jsonNull: JSONField<any> = "null";
-  const fallback = { a: "b" };
+  const invalidJson = `{`;
+  const notString = 43 as any;
+  const empty = "" as any;
+  const jsonNull = "null" as any;
+  const fallback = { a: "b" } as any;
   s.case("fromJSONField", t => {
     t.same(fromJSONField(null), null);
     t.same(fromJSONField(invalidJson), null);
