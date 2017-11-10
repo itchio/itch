@@ -1,7 +1,6 @@
 import * as React from "react";
 import { InjectedIntl } from "react-intl";
 
-import { IGame } from "../../db/models/game";
 import { ICaveSummary } from "../../db/models/cave";
 
 import Cover from "../basics/cover";
@@ -19,6 +18,7 @@ import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { createSelector } from "reselect";
 import { IRootState } from "../../types/index";
 import { connect } from "../connect";
+import { Game } from "ts-itchio-api";
 
 class Row extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -100,7 +100,7 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
 }
 
 interface IProps {
-  game: IGame;
+  game: Game;
   cave: ICaveSummary;
   intl: InjectedIntl;
   index: number;

@@ -1,4 +1,3 @@
-import { IGame } from "../../db/models/game";
 import { ICave } from "../../db/models/cave";
 
 import { IStore, isCancelled } from "../../types";
@@ -9,6 +8,7 @@ import diego from "../../os/diego";
 import { t } from "../../format";
 
 import * as actions from "../../actions";
+import { Game } from "ts-itchio-api";
 
 type ExtendedError = Error & {
   reason?: string;
@@ -17,7 +17,7 @@ type ExtendedError = Error & {
 export default async function notifyCrash(
   store: IStore,
   cave: ICave,
-  game: IGame,
+  game: Game,
   e: ExtendedError,
   logger: Logger
 ) {

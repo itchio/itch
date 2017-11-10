@@ -8,6 +8,7 @@ import Context from "../../context";
 
 import { IDownloadItem, IDownloadResult, IGameCredentials } from "../../types";
 import { IDownloadBuildFileExtras } from "../../types/api";
+import { BuildFileType } from "ts-itchio-api";
 
 interface IDownloadPatchesOpts {
   ctx: Context;
@@ -54,20 +55,20 @@ export default async function downloadPatches(
       credentials.downloadKey,
       upload.id,
       entry.id,
-      "patch",
+      BuildFileType.Patch,
       patchExtras
     );
     const signaturePath = api.downloadBuildURL(
       credentials.downloadKey,
       upload.id,
       entry.id,
-      "signature"
+      BuildFileType.Signature
     );
     const archivePath = api.downloadBuildURL(
       credentials.downloadKey,
       upload.id,
       entry.id,
-      "archive"
+      BuildFileType.Archive
     );
 
     // TODO: if this is interrupted, it has to restart the current patch from the beginning.

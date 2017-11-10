@@ -28,19 +28,19 @@ const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 import findUploads from "./downloads/find-uploads";
 import findUpgradePath from "./downloads/find-upgrade-path";
 
-import { IGame } from "../db/models/game";
 import { ICave } from "../db/models/cave";
 import { fromDateTimeField } from "../db/datetime-field";
 import { fromJSONField } from "../db/json-field";
 
 import { fileSize } from "../format/filesize";
+import { Game } from "ts-itchio-api";
 
 interface IUpdateCheckResult {
   /** set if an error occured while looking for a new version of a game */
   err?: Error;
 
   /** might be null if an error happened */
-  game?: IGame;
+  game?: Game;
 
   /** true if the game has an upgrade that can be installed */
   hasUpgrade?: boolean;
@@ -66,7 +66,7 @@ async function _doCheckForGameUpdate(
     return { hasUpgrade: false };
   }
 
-  let game: IGame;
+  let game: Game;
   try {
     game = await lazyGetGame(ctx, cave.gameId);
   } catch (e) {

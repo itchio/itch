@@ -4,13 +4,12 @@ import client from "../../api";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "find-upgrade-path" });
 
-import { IGame } from "../../db/models/game";
-
-import { IUpload, IUpgradePathItem, IGameCredentials } from "../../types";
+import { IUpgradePathItem, IGameCredentials } from "../../types";
+import { Game, Upload } from "ts-itchio-api";
 
 interface IFindUpgradePathOpts {
-  game: IGame;
-  upload: IUpload;
+  game: Game;
+  upload: Upload;
   currentBuildId: number;
   gameCredentials: IGameCredentials;
 }

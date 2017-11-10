@@ -23,6 +23,9 @@ export interface IConnection {
 import { IStore, IEntityMap, ITableMap, IDBDeleteSpec } from "../types";
 
 import rootLogger, { devNull } from "../logger";
+import { Game, User } from "ts-itchio-api";
+import { ICave } from "./models/cave";
+import { ICollection } from "./models/collection";
 const logger = rootLogger.child({ name: "db" });
 
 const logSqlQueries = process.env.ITCH_SQL === "1";
@@ -152,6 +155,20 @@ export class DB extends RepoContainer {
   /**
    * Save a single entity to the db, optionally persisting to disk (see ISaveOpts).
    */
+  saveOne(tableName: "games", id: string | number, record: Partial<Game>): void;
+  saveOne(tableName: "user", id: string | number, record: Partial<User>): void;
+  saveOne(
+    tableName: "collection",
+    id: string | number,
+    record: Partial<ICollection>
+  ): void;
+  saveOne(
+    tableName: "caves",
+    id: string | number,
+    record: Partial<ICave>
+  ): void;
+  saveOne<T>(tableName: string, id: string | number, record: Partial<T>): void;
+
   saveOne<T>(tableName: string, id: string | number, record: Partial<T>): void {
     this.saveMany({
       [tableName]: {

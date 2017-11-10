@@ -3,9 +3,7 @@ import "electron";
 
 import * as Types from "../types";
 import { IProgressInfo, IMenuTemplate } from "../types";
-
-import { IGame } from "../db/models/game";
-import { IOwnUser } from "../db/models/user";
+import { Game, OwnUser, Upload } from "ts-itchio-api";
 
 export type IAction<T> = Action<T>;
 
@@ -93,7 +91,7 @@ export interface IModalResponsePayload {
   cache?: boolean;
 
   /** manually picked upload for install */
-  pickedUpload?: Types.IUpload;
+  pickedUpload?: Upload;
 
   /** recaptcha challenge response */
   recaptchaResponse?: string;
@@ -439,7 +437,7 @@ export interface IOpenTabContextMenuPayload extends IOpenContextMenuBase {
 export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
 export interface IOpenGameContextMenuPayload extends IOpenContextMenuBase {
   /** game to open the context menu of */
-  game: IGame;
+  game: Game;
 }
 
 export const POPUP_CONTEXT_MENU = "POPUP_CONTEXT_MENU";
@@ -767,7 +765,7 @@ export interface IRecordGameInteractionPayload {}
 export const FORCE_CLOSE_GAME_REQUEST = "FORCE_CLOSE_GAME_REQUEST";
 export interface IForceCloseGameRequestPayload {
   /** the game we want to force-quit */
-  game: IGame;
+  game: Game;
 }
 
 export const FORCE_CLOSE_LAST_GAME = "FORCE_CLOSE_LAST_GAME";
@@ -818,7 +816,7 @@ export interface IQueueGameUpdatePayload {
   update: Types.IGameUpdate;
 
   /** the upload that was picked */
-  upload: Types.IUpload;
+  upload: Upload;
 
   /** was the upload hand-picked? */
   handPicked?: boolean;
@@ -858,7 +856,7 @@ export interface IViewCaveDetailsPayload {
 export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {
   /** the game we want to download */
-  game: IGame;
+  game: Game;
 }
 
 export const QUEUE_LAUNCH = "QUEUE_LAUNCH";
@@ -870,12 +868,12 @@ export interface IQueueInstallPayload extends Types.IQueueInstallOpts {}
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
 export interface IInitiatePurchasePayload {
-  game: IGame;
+  game: Game;
 }
 
 export const PURCHASE_COMPLETED = "PURCHASE_COMPLETED";
 export interface IPurchaseCompletedPayload {
-  game: IGame;
+  game: Game;
 }
 
 export const ENCOURAGE_GENEROSITY = "ENCOURAGE_GENEROSITY";
@@ -994,7 +992,7 @@ export interface ILoginWithTokenPayload {
   key: string;
 
   /** loginWithToken is used for remembered sessions - we already have user info for those */
-  me: IOwnUser;
+  me: OwnUser;
 }
 
 /** Wrong login/password or something else */
@@ -1015,7 +1013,7 @@ export interface ILoginCancelledPayload {}
 export const LOGIN_SUCCEEDED = "LOGIN_SUCCEEDED";
 export interface ILoginSucceededPayload {
   key: string;
-  me: IOwnUser;
+  me: OwnUser;
 }
 
 /** market available beyond this point */

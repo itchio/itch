@@ -11,8 +11,6 @@ import { Logger, devNull } from "../logger";
 import urls from "../constants/urls";
 import { formatExitCode } from "../format/exit-code";
 
-import { IButlerSender, IButlerSendable } from "./butler/sendables";
-
 const showDebug = process.env.MY_BUTLER_IS_MY_FRIEND === "1";
 const dumpAllOutput = process.env.MY_BUTLER_IS_MY_ENEMY === "1";
 
@@ -29,12 +27,10 @@ export interface IButlerRequest {
 type IResultListener = (result: IButlerResult) => void;
 type IRequestListener = (request: IButlerRequest) => void;
 type IValueListener = (value: any) => void;
-type ISenderReadyListener = (sender: IButlerSender) => void;
 
 export interface IButlerOpts {
   logger: Logger;
   ctx: MinimalContext;
-  onSenderReady?: ISenderReadyListener;
   onRequest?: IRequestListener;
   onResult?: IResultListener;
   onValue?: IValueListener;
@@ -143,20 +139,6 @@ async function butler<T>(
     args,
     onToken,
     onErrToken,
-    onStdinReady: stdin => {
-      if (opts.onSenderReady) {
-        const sender: IButlerSender = {
-          send: (payload: IButlerSendable) => {
-            const json = JSON.stringify(payload);
-            stdin.cork();
-            stdin.write(json);
-            stdin.write("\n");
-            process.nextTick(() => stdin.uncork());
-          },
-        };
-        opts.onSenderReady(sender);
-      }
-    },
     ctx,
     logger: dumpAllOutput || showDebug ? opts.logger : devNull,
   });

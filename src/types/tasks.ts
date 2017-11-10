@@ -1,8 +1,6 @@
-import { IGame } from "../db/models/game";
 import { ICave } from "../db/models/cave";
 
 import {
-  IUpload,
   IUpgradePathItem,
   IManifest,
   IManifestAction,
@@ -11,6 +9,7 @@ import {
 } from ".";
 
 import { Logger } from "../logger";
+import { Game, Upload } from "ts-itchio-api";
 
 export type DownloadReason =
   | "install"
@@ -34,7 +33,7 @@ export interface IQueueDownloadOpts {
    * game record at the time the download started - in case we're downloading
    * something that's not cached locally.
    */
-  game: IGame;
+  game: Game;
 
   /**    
    * identifier of the cave this download was started for
@@ -42,7 +41,7 @@ export interface IQueueDownloadOpts {
   caveId?: string;
 
   /** upload we're downloading */
-  upload: IUpload;
+  upload: Upload;
 
   /** build we're aiming for (if we're reverting/healing) */
   buildId?: number;
@@ -71,13 +70,13 @@ export interface IQueueInstallOpts {
   reason: InstallReason;
 
   /** the game we're installing */
-  game: IGame;
+  game: Game;
 
   /** set if we're reinstalling */
   caveId: string;
 
   /** which upload we're installing */
-  upload: IUpload;
+  upload: Upload;
 
   /** true if the upload was hand-picked amongst several options */
   handPicked: boolean;
@@ -107,7 +106,7 @@ export interface ILaunchOpts {
   args: string[];
   logger: Logger;
   cave: ICave;
-  game: IGame;
+  game: Game;
 
   runtime: IRuntime;
 }
@@ -116,7 +115,7 @@ export type IPrepareOpts = ILaunchOpts;
 
 export interface IConfigureOpts {
   cave: ICave;
-  game: IGame;
+  game: Game;
 
   logger: Logger;
 

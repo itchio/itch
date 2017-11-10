@@ -7,11 +7,11 @@ import getGameStatus, {
   OperationType,
   IOperation,
 } from "../../helpers/get-game-status";
-import { IGame } from "../../db/models/game";
 import actionForGame from "../../util/action-for-game";
 import Context from "../../context";
 import { showInExplorerString } from "../../format/show-in-explorer";
 import { formatOperation } from "../../format/operation";
+import { Game } from "ts-itchio-api";
 
 export function concatTemplates(
   a: IMenuTemplate,
@@ -65,7 +65,7 @@ export function closeTabControls(ctx: Context, tab: string): IMenuTemplate {
   ];
 }
 
-export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
+export function gameControls(ctx: Context, game: Game): IMenuTemplate {
   const { store, db } = ctx;
   let template: IMenuTemplate = [];
 

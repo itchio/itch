@@ -63,14 +63,7 @@ interface ISpawnInterface {
 let spawn: ISpawnInterface;
 
 spawn = async function(opts: ISpawnOpts): Promise<number> {
-  const {
-    ctx,
-    split,
-    onStdinReady,
-    onToken,
-    onErrToken,
-    logger = spawnLogger,
-  } = opts;
+  const { ctx, split, onToken, onErrToken, logger = spawnLogger } = opts;
   if (!ctx) {
     throw new Error("spawn cannot be called with a null context");
   }
@@ -79,7 +72,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
 
   let stdioOpts = {
     stdio: [
-      onStdinReady ? "pipe" : "ignore", // stdin
+      "ignore", // stdin
       onToken ? "pipe" : "ignore", // stdout
       onErrToken ? "pipe" : "ignore", // stderr
     ],
@@ -118,10 +111,6 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
         cbErr = err;
       }
     });
-  }
-
-  if (onStdinReady) {
-    onStdinReady(child.stdin);
   }
 
   let cancelled = false;

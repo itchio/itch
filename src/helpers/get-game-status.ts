@@ -4,7 +4,6 @@ import { IRootState, IGameUpdate, ITask, IDownloadItem } from "../types/index";
 
 import { first } from "underscore";
 import getByIds from "./get-by-ids";
-import { IGame } from "../db/models/game";
 import {
   getPendingForGame,
   getActiveDownload,
@@ -12,6 +11,7 @@ import {
 import isPlatformCompatible from "../util/is-platform-compatible";
 import memoize from "../util/lru-memoize";
 import { TaskName, DownloadReason } from "../types/tasks";
+import { Game } from "ts-itchio-api";
 
 /**
  * What type of access we have to the game - do we own it,
@@ -83,10 +83,7 @@ export interface IGameStatus {
   compatible: boolean;
 }
 
-export default function getGameStatus(
-  rs: IRootState,
-  game: IGame
-): IGameStatus {
+export default function getGameStatus(rs: IRootState, game: Game): IGameStatus {
   const { commons, session, tasks, downloads } = rs;
   const { credentials } = session;
 
@@ -129,7 +126,7 @@ export default function getGameStatus(
 }
 
 function rawGetGameStatus(
-  game: IGame,
+  game: Game,
   cave: ICaveSummary,
   downloadKey: IDownloadKeySummary,
   pressUser: boolean,

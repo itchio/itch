@@ -1,8 +1,8 @@
 import { ClassificationAction } from "../types";
 import classificationActions from "../constants/classification-actions";
 
-import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
+import { Game } from "ts-itchio-api";
 
 /**
  * Returns whether a game can be "launched" or "opened", where "launching" means
@@ -10,7 +10,7 @@ import { ICaveSummary } from "../db/models/cave";
  * in a file explorer.
  */
 export default function actionForGame(
-  game: IGame,
+  game: Game,
   cave: ICaveSummary | null
 ): ClassificationAction {
   // FIXME: we're not using the cave at all here - we probably should.

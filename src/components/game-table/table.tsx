@@ -6,8 +6,6 @@ import { connect } from "../connect";
 import { dispatcher } from "../../constants/action-types";
 import * as actions from "../../actions";
 
-import { IGame } from "../../db/models/game";
-
 import { first } from "underscore";
 
 import getByIds from "../../helpers/get-by-ids";
@@ -20,6 +18,7 @@ import { TableContainerDiv, TableDiv, ITableSizes } from "./table-styles";
 
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import format from "../format";
+import { Game } from "ts-itchio-api";
 
 const rowHeight = 70;
 const rightMargin = 10;
@@ -184,7 +183,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
     });
   };
 
-  eventToGame(ev: React.MouseEvent<HTMLElement>, cb: (game: IGame) => void) {
+  eventToGame(ev: React.MouseEvent<HTMLElement>, cb: (game: Game) => void) {
     let target = ev.target as HTMLElement;
     while (target && !target.classList.contains("table--row")) {
       target = target.parentElement;

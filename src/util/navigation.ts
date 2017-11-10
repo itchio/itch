@@ -1,11 +1,10 @@
 import urlParser from "./url";
 import * as querystring from "querystring";
 
-import { IGame } from "../db/models/game";
-import { IUser } from "../db/models/user";
 import { ICollection } from "../db/models/collection";
 
 import { IInstallLocation, ITabData } from "../types";
+import { Game, User } from "ts-itchio-api";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {
@@ -40,7 +39,7 @@ export function transformUrl(original: string): string {
   return req;
 }
 
-export function gameToTabData(game: IGame): ITabData {
+export function gameToTabData(game: Game): ITabData {
   return {
     games: {
       set: {
@@ -51,7 +50,7 @@ export function gameToTabData(game: IGame): ITabData {
   };
 }
 
-export function userToTabData(user: IUser): ITabData {
+export function userToTabData(user: User): ITabData {
   return {
     users: {
       set: {

@@ -3,8 +3,8 @@ import * as squel from "squel";
 
 import { importOldDatabases } from "./import-old-database";
 import { app } from "electron";
-import { IBuild } from "../types/index";
 import { ICaveWithDeprecated, CaveModel } from "./models/cave";
+import { Build } from "ts-itchio-api";
 
 // stolen from lapis, yay
 export default <IMigrations>{
@@ -45,8 +45,7 @@ export default <IMigrations>{
         build: {
           id: caveToFix.buildId,
           userVersion: caveToFix.buildUserVersion,
-          migrated: true,
-        } as Partial<IBuild>,
+        } as Build,
       });
     }
 

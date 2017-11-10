@@ -11,7 +11,6 @@ import {
 } from "underscore";
 
 import { ICave } from "../../db/models/cave";
-import { IGame } from "../../db/models/game";
 
 import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
@@ -44,7 +43,7 @@ import { IPrereqsStateParams } from "../../components/modal-widgets/prereqs-stat
 
 interface IWindowsPrereqsOpts {
   cave: ICave;
-  game: IGame;
+  game: Game;
   manifest: IManifest;
   logger: Logger;
   runtime: IRuntime;
@@ -72,6 +71,7 @@ interface IButlerPrereqResult extends IButlerPrereqMessage {
 import { extract } from "../../util/extract";
 import { formatExitCode } from "../../format/exit-code";
 import { fromJSONField } from "../../db/json-field";
+import { Game } from "ts-itchio-api";
 
 export default async function handleWindowsPrereqs(
   ctx: Context,

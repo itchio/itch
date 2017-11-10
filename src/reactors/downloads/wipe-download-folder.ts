@@ -1,12 +1,13 @@
-import { IUpload, IPreferencesState } from "../../types";
+import { IPreferencesState } from "../../types";
 import { Logger } from "../../logger/index";
 
 import butler from "../../util/butler";
 import * as paths from "../../os/paths";
 import { MinimalContext } from "../../context/index";
+import { Upload } from "ts-itchio-api";
 
 interface IWipeDownloadFolderOpts {
-  upload: IUpload;
+  upload: Upload;
   logger: Logger;
   preferences: IPreferencesState;
 }

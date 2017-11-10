@@ -6,8 +6,6 @@ import GameStats from "./game-stats";
 import Filler from "./basics/filler";
 import IconButton from "./basics/icon-button";
 
-import { IGame } from "../db/models/game";
-
 import { IDispatch, dispatcher } from "../constants/action-types";
 import { IRootState } from "../types";
 import * as actions from "../actions";
@@ -18,6 +16,7 @@ import styled from "./styles";
 
 import { Space } from "../helpers/space";
 import getGameStatus, { IGameStatus } from "../helpers/get-game-status";
+import { Game } from "ts-itchio-api";
 
 const Spacer = styled.div`
   flex-basis: 10px;
@@ -77,7 +76,7 @@ export class GameBrowserContext extends React.PureComponent<
 interface IProps extends IBrowserControlProps {}
 
 interface IDerivedProps {
-  game: IGame;
+  game: Game;
   status: IGameStatus;
 
   openGameContextMenu: typeof actions.openGameContextMenu;

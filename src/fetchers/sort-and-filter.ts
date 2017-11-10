@@ -1,5 +1,4 @@
 import * as squel from "squel";
-import { IGame } from "../db/models/game";
 import { CaveModel, ICaveSummary } from "../db/models/cave";
 import { DownloadKeyModel } from "../db/models/download-key";
 
@@ -14,10 +13,11 @@ import { IStore, ITabParams, ICommonsState } from "../types";
 import isPlatformCompatible from "../util/is-platform-compatible";
 
 import { filter, sortBy as sortedBy } from "underscore";
+import { Game } from "ts-itchio-api";
 
 const emptyObj = {};
 
-function getCaveSummary(commons: ICommonsState, game: IGame): ICaveSummary {
+function getCaveSummary(commons: ICommonsState, game: Game): ICaveSummary {
   const ids = commons.caveIdsByGameId[game.id];
   if (ids && ids.length > 0) {
     return commons.caves[ids[0]];
@@ -26,10 +26,10 @@ function getCaveSummary(commons: ICommonsState, game: IGame): ICaveSummary {
 }
 
 export function sortAndFilter(
-  games: IGame[],
+  games: Game[],
   tab: string,
   store: IStore
-): IGame[] {
+): Game[] {
   let set = games;
   const state = store.getState();
   const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;

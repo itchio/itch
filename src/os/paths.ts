@@ -4,9 +4,10 @@ import { app } from "electron";
 import urls from "../constants/urls";
 import * as urlParser from "url";
 
-import { IUpload, IPreferencesState } from "../types";
+import { IPreferencesState } from "../types";
 import { ICaveLocation } from "../db/models/cave";
 import { makeLogger, Logger } from "../logger";
+import { Upload } from "ts-itchio-api";
 
 const APPDATA_RE = /^appdata\/(.*)$/;
 
@@ -65,7 +66,7 @@ export function downloadBasePath(
 }
 
 export function downloadFolderPath(
-  upload: IUpload,
+  upload: Upload,
   preferences: IPreferencesState
 ): string {
   let slug = `${upload.id}`;
@@ -89,7 +90,7 @@ export function downloadFolderPathForId(
   );
 }
 
-export function downloadPath(upload: IUpload, preferences: IPreferencesState) {
+export function downloadPath(upload: Upload, preferences: IPreferencesState) {
   if (typeof upload.filename !== "string") {
     throw new Error(`Cannot download upload without filename`);
   }

@@ -8,7 +8,6 @@ import * as paths from "../../os/paths";
 
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
-import { IUpload } from "../../types";
 
 import { coreUninstall } from "../../install-managers/common/core";
 
@@ -20,11 +19,12 @@ import { promisedModal } from "../modals";
 import asTask from "./as-task";
 import lazyGetGame from "../lazy-get-game";
 import { ICave } from "../../db/models/cave";
+import { Upload } from "ts-itchio-api";
 
 export async function queueUninstall(
   ctx: Context,
   logger: Logger,
-  { cave, destPath, upload }: { cave: ICave; destPath: string; upload: IUpload }
+  { cave, destPath, upload }: { cave: ICave; destPath: string; upload: Upload }
 ) {
   const runtime = currentRuntime();
 

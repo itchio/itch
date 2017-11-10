@@ -7,15 +7,15 @@ import client from "../../api";
 
 import actionForGame from "../../util/action-for-game";
 
-import { IGame } from "../../db/models/game";
 import Context from "../../context";
 
-import { IRuntime, IUpload, IGameCredentials } from "../../types";
+import { IRuntime, IGameCredentials } from "../../types";
 
 import { runtimeProp, runtimeString, currentRuntime } from "../../os/runtime";
+import { Game, Upload } from "ts-itchio-api";
 
 export interface IFindUploadOpts {
-  game: IGame;
+  game: Game;
   gameCredentials: IGameCredentials;
 }
 
@@ -25,7 +25,7 @@ export interface IFindUploadOpts {
 // app won't be able to handle but the user might
 // be able to play by downloading manually.
 export interface IFindUploadResult {
-  uploads: IUpload[];
+  uploads: Upload[];
   hadUntagged: boolean;
   hadWrongFormat: boolean;
   hadWrongArch: boolean;
@@ -57,8 +57,8 @@ export default async function findUploads(
 
 export function narrowDownUploads(
   ctx: Context,
-  input: IUpload[],
-  game: IGame,
+  input: Upload[],
+  game: Game,
   runtime: IRuntime
 ): IFindUploadResult {
   if (actionForGame(game, null) === "open") {
@@ -92,13 +92,13 @@ export function narrowDownUploads(
   };
 }
 
-export const excludeUntagged = (uploads: IUpload[]) =>
+export const excludeUntagged = (uploads: Upload[]) =>
   filter(
     uploads,
     u => u.pLinux || u.pWindows || u.pOsx || u.pAndroid || u.type === "html"
   );
 
-export const excludeWrongPlatform = (uploads: IUpload[], runtime: IRuntime) =>
+export const excludeWrongPlatform = (uploads: Upload[], runtime: IRuntime) =>
   union(
     where(uploads, { [runtimeProp(runtime)]: true }),
     where(uploads, { type: "html" })
@@ -106,15 +106,15 @@ export const excludeWrongPlatform = (uploads: IUpload[], runtime: IRuntime) =>
 
 const knownBadFormatRegexp = /\.(rpm|deb|pkg)$/i;
 
-export const excludeWrongFormat = (uploads: IUpload[]) =>
+export const excludeWrongFormat = (uploads: Upload[]) =>
   filter(uploads, upload => !knownBadFormatRegexp.test(upload.filename));
 
 interface IScoredUpload {
-  upload: IUpload;
+  upload: Upload;
   score: number;
 }
 
-export function scoreUpload(upload: IUpload): IScoredUpload {
+export function scoreUpload(upload: Upload): IScoredUpload {
   let filename = upload.filename.toLowerCase();
   let score = 500;
 
@@ -148,7 +148,7 @@ export function scoreUpload(upload: IUpload): IScoredUpload {
 export const sortUploads = (tuples: IScoredUpload[]) =>
   map(sortBy(tuples, "score"), t => t.upload).reverse();
 
-const uploadContainsString = (upload: IUpload, needle: string) => {
+const uploadContainsString = (upload: Upload, needle: string) => {
   return (
     (upload.filename || "").indexOf(needle) !== -1 ||
     (upload.displayName || "").indexOf(needle) !== -1
@@ -156,7 +156,7 @@ const uploadContainsString = (upload: IUpload, needle: string) => {
 };
 
 const anyUploadContainsString = (
-  candidates: IUpload[],
+  candidates: Upload[],
   needle: string
 ): boolean => {
   for (const upload of candidates) {
@@ -168,9 +168,9 @@ const anyUploadContainsString = (
 };
 
 export const excludeWrongArch = (
-  input: IUpload[],
+  input: Upload[],
   runtime: IRuntime
-): IUpload[] => {
+): Upload[] => {
   if (input.length <= 1) {
     return input;
   }

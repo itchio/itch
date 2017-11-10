@@ -1,10 +1,7 @@
-import { IGame, IOwnGame } from "../db/models/game";
-import { IUser, IOwnUser } from "../db/models/user";
+import { Game, OwnGame, User, OwnUser, Build, Upload } from "ts-itchio-api";
 
 import {
-  IUpload,
   IUpgradePathItem,
-  IBuild,
   IUserSet,
   IDownloadKeySet,
   IGameSet,
@@ -12,12 +9,12 @@ import {
 } from ".";
 
 export interface IOwnGameSet {
-  [id: string]: IOwnGame;
+  [id: string]: OwnGame;
 }
 
 /** In API responses, the user object is nested - we normalize it later */
-export interface IAPIGame extends IGame {
-  user: IUser;
+export interface IAPIGame extends Game {
+  user: User;
 }
 
 export interface IAPIKey {
@@ -42,7 +39,7 @@ export interface IAPIKey {
 
 export interface IMeResult {
   /** extended user info */
-  user: IOwnUser;
+  user: OwnUser;
 }
 
 export type ILoginKeyResult = IMeResult;
@@ -85,7 +82,7 @@ export interface IUpgradeResponse {
 }
 
 export interface IListUploadsResponse {
-  uploads: IUpload[];
+  uploads: Upload[];
 }
 
 export interface IMyGamesResult {
@@ -118,8 +115,6 @@ export interface IGameResult {
     users: IUserSet;
   };
 }
-
-export type BuildFileType = "archive" | "patch" | "manifest" | "signature";
 
 export interface ICollectionResult {
   result: {
@@ -215,11 +210,11 @@ export interface IDownloadUploadResult {
 }
 
 export interface IListBuildsResponse {
-  builds: IBuild[];
+  builds: Build[];
 }
 
 export interface IBuildResponse {
-  build: IBuild;
+  build: Build;
 }
 
 export type IDownloadBuildResult = IDownloadUploadResult;

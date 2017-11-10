@@ -9,8 +9,6 @@ import makeUploadButton from "../make-upload-button";
 import { promisedModal } from "../modals";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 
-import { IUpload } from "../../types";
-
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "queue-game" });
 
@@ -18,6 +16,7 @@ import findUploads, { IFindUploadResult } from "../downloads/find-uploads";
 import getGameCredentials from "../downloads/get-game-credentials";
 
 import { map } from "underscore";
+import { Upload } from "ts-itchio-api";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueGame, async (store, action) => {
@@ -109,7 +108,7 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    let upload: IUpload;
+    let upload: Upload;
     let handPicked = false;
 
     if (uploads.length === 1) {

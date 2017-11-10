@@ -5,8 +5,7 @@ import * as paths from "./paths";
 import { app } from "electron";
 
 import preferencesReducer from "../reducers/preferences";
-
-import { IUpload } from "../types";
+import { Upload } from "ts-itchio-api";
 
 suite(__filename, s => {
   s.case("downloadPath", t => {
@@ -18,7 +17,7 @@ suite(__filename, s => {
         ({
           filename: "voices.tar.gz",
           id: 1990,
-        } as any) as IUpload,
+        } as any) as Upload,
         preferences
       ),
       join(userData, "downloads", "1990", "voices.tar.gz")
@@ -28,7 +27,7 @@ suite(__filename, s => {
         ({
           filename: "FACES OF WRATH.TAR.BZ2",
           id: 1997,
-        } as any) as IUpload,
+        } as any) as Upload,
         preferences
       ),
       join(userData, "downloads", "1997", "FACES OF WRATH.TAR.BZ2")
@@ -38,7 +37,7 @@ suite(__filename, s => {
         ({
           filename: "2019.07.21.zip",
           id: 1990,
-        } as any) as IUpload,
+        } as any) as Upload,
         preferences
       ),
       join(userData, "downloads", "1990", "2019.07.21.zip")
@@ -48,7 +47,7 @@ suite(__filename, s => {
         ({
           filename: "the-elusive-extless-file",
           id: 1994,
-        } as any) as IUpload,
+        } as any) as Upload,
         preferences
       ),
       join(userData, "downloads", "1994", "the-elusive-extless-file")

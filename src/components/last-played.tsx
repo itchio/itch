@@ -3,10 +3,10 @@ import * as React from "react";
 import format from "./format";
 
 import actionForGame from "../util/action-for-game";
-import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
 
 import TimeAgo from "./basics/time-ago";
+import { Game } from "ts-itchio-api";
 
 export default class LastPlayed extends React.PureComponent<
   IProps & IDerivedProps
@@ -24,25 +24,29 @@ export default class LastPlayed extends React.PureComponent<
 
     return (
       <div className="last-playthrough">
-        {lastTouchedAt
-          ? <label>
-              {short
-                ? <TimeAgo date={lastTouchedAt} />
-                : format([
-                    `usage_stats.last_${xed}_time_ago`,
-                    {
-                      time_ago: <TimeAgo date={lastTouchedAt} />,
-                    },
-                  ])}
-            </label>
-          : format([`usage_stats.never_${xed}`])}
+        {lastTouchedAt ? (
+          <label>
+            {short ? (
+              <TimeAgo date={lastTouchedAt} />
+            ) : (
+              format([
+                `usage_stats.last_${xed}_time_ago`,
+                {
+                  time_ago: <TimeAgo date={lastTouchedAt} />,
+                },
+              ])
+            )}
+          </label>
+        ) : (
+          format([`usage_stats.never_${xed}`])
+        )}
       </div>
     );
   }
 }
 
 interface IProps {
-  game: IGame;
+  game: Game;
   cave: ICaveSummary;
   short?: boolean;
 }

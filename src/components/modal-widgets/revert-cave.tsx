@@ -4,8 +4,6 @@ import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
 import { ICave } from "../../db/models/cave";
 import { fromDateTimeField } from "../../db/datetime-field";
-import { IGame } from "../../db/models/game";
-import { IBuild } from "../../types/index";
 
 import * as actions from "../../actions";
 
@@ -24,6 +22,7 @@ import {
 import { DATE_FORMAT } from "../../format/datetime";
 import { connect } from "../connect";
 import { dispatcher } from "../../constants/action-types";
+import { Game, Build } from "ts-itchio-api";
 
 const BuildListDiv = styled.div`
   width: 100%;
@@ -87,7 +86,7 @@ const BuildListDiv = styled.div`
   }
 `;
 
-function monthFor(b: IBuild) {
+function monthFor(b: Build) {
   const date = fromDateTimeField(b.updatedAt);
   return date.getUTCFullYear() * 12 + date.getUTCMonth();
 }
@@ -119,7 +118,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
-  renderBuild(b: IBuild): JSX.Element {
+  renderBuild(b: Build): JSX.Element {
     const version = b.userVersion || b.version;
     const updatedAt = fromDateTimeField(b.updatedAt);
     const { locale } = this.props.intl;
@@ -164,8 +163,8 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
 
 export interface IRevertCaveParams {
   currentCave: ICave;
-  game: IGame;
-  remoteBuilds: IBuild[];
+  game: Game;
+  remoteBuilds: Build[];
 }
 
 interface IProps extends IModalWidgetProps {}

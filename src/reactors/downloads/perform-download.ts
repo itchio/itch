@@ -12,6 +12,7 @@ import { fromJSONField } from "../../db/json-field";
 
 import { IDownloadItem, IDownloadResult } from "../../types";
 import Context from "../../context";
+import { BuildFileType } from "ts-itchio-api";
 
 export default async function performDownload(
   ctx: Context,
@@ -58,13 +59,13 @@ export default async function performDownload(
       credentials.downloadKey,
       upload.id,
       buildId,
-      "archive"
+      BuildFileType.Archive
     );
     const signatureURL = api.downloadBuildURL(
       credentials.downloadKey,
       upload.id,
       buildId,
-      "signature"
+      BuildFileType.Signature
     );
 
     const cave = ctx.db.caves.findOneById(caveId);

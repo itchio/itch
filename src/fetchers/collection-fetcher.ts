@@ -2,9 +2,8 @@ import { Fetcher } from "./fetcher";
 import getByIds from "../helpers/get-by-ids";
 import { indexBy } from "underscore";
 
-import { IGame } from "../db/models/game";
-
 import { fromJSONField } from "../db/json-field";
+import { Game } from "ts-itchio-api";
 
 const ea = [];
 
@@ -67,7 +66,7 @@ export default class CollectionFetcher extends Fetcher {
 
     const remoteGames = gamesResponse.entities.games;
     const remoteGameIds: number[] = gamesResponse.result.gameIds;
-    this.pushAllGames(getByIds<IGame>(remoteGames, remoteGameIds));
+    this.pushAllGames(getByIds<Game>(remoteGames, remoteGameIds));
   }
 
   clean() {

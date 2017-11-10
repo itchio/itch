@@ -2,8 +2,8 @@ import { Model, ensureExtends, Column } from "../model";
 
 import { PathScheme } from "../../os/paths";
 
-import { IUpload, InstallerType, IBuild } from "../../types";
 import { IConfigureResult } from "../../util/butler";
+import { Build, Upload } from "ts-itchio-api";
 
 const CaveModelOriginal = {
   table: "caves",
@@ -30,7 +30,6 @@ const CaveModelOriginal = {
 
     installLocation: Column.Text,
     installFolder: Column.Text,
-    installerType: Column.Text,
     pathScheme: Column.Integer,
   },
   deprecatedColumns: {
@@ -78,12 +77,12 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   externalGameId: number;
 
   /** itch.io upload currently installed */
-  upload: IUpload;
+  upload: Upload;
 
   /**
    * itch.io/wharf build currently installed
    */
-  build: IBuild;
+  build: Build;
 
   /** channel name of build currently installed */
   channelName: string;
@@ -126,9 +125,6 @@ export interface ICave extends ICaveSummary, ICaveLocation {
 
   /** name of the install folder in the install location, derived from the game's title */
   installFolder: string;
-
-  /** type of the method used to install/uninstall the game */
-  installerType: InstallerType;
 
   /** scheme used for computing paths */
   pathScheme: PathScheme;

@@ -28,7 +28,6 @@ import {
   IDownloadUploadResult,
   IListBuildsResponse,
   IBuildResponse,
-  BuildFileType,
   IDownloadBuildResult,
   IGameExtras,
   IListUploadsExtras,
@@ -41,6 +40,7 @@ import {
 const DUMP_API_CALLS = process.env.LET_ME_IN === "1";
 import { makeLogger, devNull } from "../logger";
 import { normalize } from "idealizr";
+import { BuildFileType } from "ts-itchio-api";
 const logger = DUMP_API_CALLS ? makeLogger({}) : devNull;
 
 type HTTPMethod = "get" | "head" | "post";

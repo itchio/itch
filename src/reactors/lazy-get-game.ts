@@ -1,15 +1,15 @@
 import db from "../db";
-import { IGame } from "../db/models/game";
 
 import client from "../api";
 
 import Context from "../context";
 import { getGameCredentialsForId } from "./downloads/get-game-credentials";
+import { Game } from "ts-itchio-api";
 
 export default async function lazyGetGame(
   ctx: Context,
   gameId: number
-): Promise<IGame> {
+): Promise<Game> {
   const game = db.games.findOneById(gameId);
   if (game) {
     return game;

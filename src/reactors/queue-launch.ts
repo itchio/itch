@@ -6,7 +6,6 @@ import Context from "../context";
 import { Logger } from "../logger";
 
 import { DB } from "../db";
-import { IGame } from "../db/models/game";
 import { ICave } from "../db/models/cave";
 
 import * as paths from "../os/paths";
@@ -43,6 +42,7 @@ import { powerSaveBlocker } from "electron";
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
 import { fromJSONField } from "../db/json-field";
+import { Game } from "ts-itchio-api";
 
 const emptyArr = [];
 
@@ -57,7 +57,7 @@ export default function(watcher: Watcher, db: DB) {
 
     const runtime = currentRuntime();
 
-    let game: IGame;
+    let game: Game;
 
     asTask({
       name: "launch",
@@ -125,7 +125,7 @@ async function doLaunch(
   ctx: Context,
   logger: Logger,
   cave: ICave,
-  game: IGame,
+  game: Game,
   runtime: IRuntime
 ) {
   let env: IEnvironment = {};

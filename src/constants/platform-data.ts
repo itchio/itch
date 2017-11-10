@@ -5,7 +5,7 @@ const data = {
 };
 export default data;
 
-export type PlatformHolder = { [K in keyof typeof data]: boolean } & {
+export type PlatformHolder = { [K in keyof typeof data]?: boolean } & {
   type: "html" | any;
 };
 

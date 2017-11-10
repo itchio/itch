@@ -1,11 +1,10 @@
 import { ITabData, ITabWeb, ITabLocation, ITabGames } from "../types/tab-data";
-import { IGame } from "../db/models/game";
 import { ICollection } from "../db/models/collection";
-import { IUser } from "../db/models/user";
 import { ILocalizedString, IStore, IRootState } from "../types/index";
 
 import staticTabData, { IBaseTabData } from "../constants/static-tab-data";
 import memoize from "../util/lru-memoize";
+import { Game, User } from "ts-itchio-api";
 
 // Empty Object
 const eo = {} as any;
@@ -69,7 +68,7 @@ export class Space {
     return this.suffix;
   }
 
-  game(): IGame {
+  game(): Game {
     return (this.games().set || eo)[this.numericId()] || eo;
   }
 
@@ -81,7 +80,7 @@ export class Space {
     return ((this.data.collections || eo).set || eo)[this.numericId()] || eo;
   }
 
-  user(): IUser {
+  user(): User {
     return ((this.data.users || eo).set || eo)[this.numericId()] || eo;
   }
 

@@ -6,7 +6,6 @@ import * as actions from "../actions";
 import * as url from "url";
 
 import { ICave, ICaveLocation } from "../db/models/cave";
-import { IGame } from "../db/models/game";
 import { toJSONField, fromJSONField } from "../db/json-field";
 import {
   IQueueInstallOpts,
@@ -136,7 +135,7 @@ export async function queueInstall(
 const slugRegexp = /^\/([^\/]+)/;
 
 /** Gives a human-readable install folder name, given a game */
-export function installFolderName(game: IGame) {
+export function installFolderName(game: Game) {
   if (!game) {
     throw new Error(`No game provided to installFolderName`);
   }
@@ -144,7 +143,7 @@ export function installFolderName(game: IGame) {
   return installFolderNameFromSlug(game) || installFolderNameFromId(game);
 }
 
-function installFolderNameFromSlug(game: IGame) {
+function installFolderNameFromSlug(game: Game) {
   if (typeof game.url !== "string") {
     return null;
   }
@@ -171,7 +170,7 @@ function installFolderNameFromSlug(game: IGame) {
   return slug;
 }
 
-function installFolderNameFromId(game: IGame) {
+function installFolderNameFromId(game: Game) {
   return `game-${game.id}`;
 }
 
@@ -197,6 +196,7 @@ import { Watcher } from "./watcher";
 import { promisedModal } from "./modals";
 import { t } from "../format/index";
 import { formatBuildVersion } from "../helpers/build";
+import { Game } from "ts-itchio-api";
 
 export default async function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueInstall, async (store, action) => {
@@ -232,7 +232,7 @@ export default async function(watcher: Watcher, db: DB) {
 
 function showReadyNotification(
   store: IStore,
-  game: IGame,
+  game: Game,
   reason: InstallReason,
   cave: ICave
 ) {

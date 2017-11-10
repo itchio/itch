@@ -6,19 +6,12 @@ import Context from "../../context";
 
 import { Logger } from "../../logger";
 
-import {
-  Cancelled,
-  InstallerType,
-  IRuntime,
-  InstallReason,
-  IUpload,
-  IBuild,
-} from "../../types";
-import { IGame } from "../../db/models/game";
+import { Cancelled, InstallerType, IRuntime, InstallReason } from "../../types";
 
 import { IReceipt, readReceipt } from "./receipt";
 
 import urls from "../../constants/urls";
+
 import { Instance, messages } from "node-buse";
 
 export interface ICoreOpts {
@@ -35,13 +28,13 @@ export interface ICoreOpts {
   destPath: string;
 
   /** the game we're installing/uninstalling */
-  game: IGame;
+  game: Game;
 
   /** the upload we're installing from */
-  upload: IUpload;
+  upload: Upload;
 
   /** the build we're installing */
-  build?: IBuild;
+  build?: Build;
 }
 
 export interface IInstallOpts extends ICoreOpts {
@@ -92,6 +85,8 @@ import dmg from "../dmg";
 import nsis from "../nsis";
 import inno from "../inno";
 import getGameCredentials from "../../reactors/downloads/get-game-credentials";
+import configure from "../../reactors/launch/configure";
+import { Game, Build, Upload } from "ts-itchio-api";
 
 const managers: IInstallManagers = {
   naked,
@@ -115,11 +110,10 @@ interface IPrepareOpts {
 }
 
 export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
-  // const { reason, runtime } = opts;
+  const { reason, runtime } = opts;
   const logger = opts.logger.child({ name: "install" });
 
   // TODO: actually pass `build` when we have one - I don't think we do that yet
-  // const { ctx, game, upload, build, caveIn } = opts;
   const { ctx, game, caveIn } = opts;
 
   const inPlace = isInPlace(opts);
@@ -176,50 +170,41 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
         );
 
         logger.info(`final install result:\n${JSON.stringify(res, null, 2)}`);
+        const ires = res.installResult;
+
+        cave = {
+          ...caveIn,
+          installedAt: new Date(),
+          channelName: ires.upload.channelName,
+          build: ires.build ? ires.build : null,
+          upload: ires.upload,
+        };
+
+        if (reason !== "install") {
+          logger.info(`Not first install (${reason}), clearing verdict`);
+          cave.verdict = null;
+        }
+
+        logger.info(`Committing game & cave to db`);
+        ctx.db.saveOne("games", game.id, game);
+        ctx.db.saveOne("caves", cave.id, cave);
       } finally {
         instance.cancel();
       }
     });
     await instance.promise();
 
-    return;
-
-    // cave = {
-    //   ...caveIn,
-    //   installedAt: toDateTimeField(new Date()),
-    //   channelName: upload.channelName,
-    //   build: build ? build : upload.build,
-    //   upload: toJSONField(upload),
-    //   ...result.caveOut,
-    // };
-
-    // if (reason !== "install") {
-    //   logger.info(`Not first install (${reason}), clearing verdict`);
-    //   cave.verdict = null;
-    // }
-
-    // logger.info(`Writing receipt...`);
-    // await writeReceipt(opts, {
-    //   cave,
-    //   files: result.files,
-    //   installerName,
-    //   ...result.receiptOut || {},
-    // });
-
-    // logger.info(`Committing game & cave to db`);
-    // ctx.db.saveOne("games", String(game.id), game);
-    // ctx.db.saveOne("caves", cave.id, cave);
+    // TODO: move to buse
+    logger.info(`Configuring...`);
+    await configure(ctx, {
+      game,
+      cave,
+      logger,
+      runtime,
+    });
   }
 
-  // logger.info(`Configuring...`);
-  // await configure(ctx, {
-  //   game,
-  //   cave,
-  //   logger,
-  //   runtime,
-  // });
-
-  // return cave;
+  return cave;
 }
 
 export async function coreUninstall(opts: IUninstallOpts) {

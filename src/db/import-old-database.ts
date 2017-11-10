@@ -7,13 +7,11 @@ import { toDateTimeField } from "./datetime-field";
 import { toJSONField } from "./json-field";
 
 import { ICave } from "./models/cave";
-import { IGame } from "./models/game";
 import { ICollection } from "./models/collection";
-import { IUser } from "./models/user";
 import { IProfile } from "./models/profile";
 import { IDownloadKey } from "./models/download-key";
 
-import { IUpload, InstallerType, ITableMap, IBuild } from "../types";
+import { InstallerType, ITableMap } from "../types";
 
 import { Logger } from "../logger";
 
@@ -22,6 +20,7 @@ import { Logger } from "../logger";
 // for references on the now-dead marketdb
 
 import { DB } from ".";
+import { User, Game, Upload, Build } from "ts-itchio-api";
 
 interface IImportOpts {
   db: DB;
@@ -34,10 +33,10 @@ interface IImportResult {
     [key: string]: ICave;
   };
   games: {
-    [key: string]: IGame;
+    [key: string]: Game;
   };
   users: {
-    [key: string]: IUser;
+    [key: string]: User;
   };
   collections: {
     [key: string]: ICollection;
@@ -146,7 +145,7 @@ export function importUserMarkets(
   const games = readAllRecords(opts, marketPath, "games");
   for (const id of Object.keys(games)) {
     const gameIn = games[id];
-    const gameOut: IGame = {
+    const gameOut: Game = {
       id: gameIn.id,
       url: gameIn.url,
       userId: gameIn.userId,
@@ -182,7 +181,7 @@ export function importUserMarkets(
   const users = readAllRecords(opts, marketPath, "users");
   for (const id of Object.keys(users)) {
     const userIn = users[id];
-    const userOut: IUser = {
+    const userOut: User = {
       id: userIn.id,
       url: userIn.url,
       username: userIn.username,
@@ -274,7 +273,7 @@ export function importGlobalMarket(
       // new:
       //   upload: actualUpload
       const uploadId = caveIn.uploadId;
-      let upload: IUpload = null;
+      let upload: Upload = null;
       if (caveIn.uploads && caveIn.uploads[uploadId]) {
         upload = caveIn.uploads[uploadId];
       }
@@ -314,19 +313,22 @@ export function importGlobalMarket(
         }
       }
 
+      // FIXME: write installerType to receipt instead of throwing it away
+
       let gameId: number = null;
       if (caveIn.game) {
         gameId = caveIn.game.id;
         saveGame(out, caveIn.game);
       }
 
-      let build: IBuild = null;
+      let build: Build = null;
       if (caveIn.buildId) {
         build = {
           id: caveIn.buildId,
           userVersion: caveIn.buildUserVersion,
           version: null,
           updatedAt: null,
+          createdAt: null,
         };
       }
 
@@ -340,7 +342,6 @@ export function importGlobalMarket(
 
         installLocation: caveIn.installLocation || "appdata",
         installFolder: caveIn.installFolder,
-        installerType,
         pathScheme: caveIn.pathScheme,
 
         channelName: caveIn.channelName,
