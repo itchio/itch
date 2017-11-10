@@ -110,7 +110,7 @@
     "which": "^1.2.11"
   },
   "devDependencies": {
-    "electron": "^1.6.15",
+    "electron": "^1.7.9",
     "electron-packager": "^7.0.1",
     "electron-rebuild": "^1.5.7",
     "grunt": "^1.0.1",
