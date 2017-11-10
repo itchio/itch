@@ -157,7 +157,7 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
           }
         });
 
-        await client.call(
+        const res = await client.call(
           messages.Operation.Start({
             stagingFolder: opts.downloadFolderPath,
             operation: "install",
@@ -174,6 +174,8 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
             },
           })
         );
+
+        logger.info(`final install result:\n${JSON.stringify(res, null, 2)}`);
       } finally {
         instance.cancel();
       }
