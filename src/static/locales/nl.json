@@ -286,5 +286,8 @@
     "game.install.libraries_missing": "Sommige benodigde {{arch}} bibliotheken zijn nodig: {{libraries}}",
     "grid.item.status.installed": "Geïnstalleerd",
     "login.action.retry_setup": "Probeer de set-up opnieuw",
-    "new_tab.devlogs": "Developer logs"
+    "new_tab.devlogs": "Developer logs",
+    "pick_update_upload.detail": "We vragen dit omdat je tijdens het installeren een handmatige selectie hebt gemaakt.",
+    "prompt.clear_browsing_data.category.cookies": "Cookies",
+    "prompt.clear_browsing_data.cookies_info": "Dit zal je uitloggen van alle websites waar je via de itch-app bij ingelogd bent."
 }
