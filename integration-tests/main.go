@@ -100,6 +100,9 @@ func doMain() error {
 
 	appPath := cwd
 	binaryPathBytes, err := exec.Command("node", "-e", "console.log(require('electron'))").Output()
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
 	binaryPath := strings.TrimSpace(string(binaryPathBytes))
 
 	relativeBinaryPath, err := filepath.Rel(cwd, binaryPath)

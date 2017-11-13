@@ -50,13 +50,22 @@ export interface IQueueDownloadOpts {
   totalSize?: number;
 
   /** true if wharf-enabled update via butler */
+  // TODO: deprecate
   incremental?: boolean;
 
   /** patch entries to upgrade to latest via butler */
+  // TODO: deprecate
   upgradePath?: IUpgradePathItem[];
 
   /** if true, user disambiguated from list of uploads */
+  // TODO: deprecate
   handPicked?: boolean;
+
+  /** for fresh game installs, where to install it */
+  installLocation?: string;
+
+  /** for fresh game installs, where to install it */
+  installFolder?: string;
 }
 
 export interface IDownloadResult {
@@ -65,28 +74,6 @@ export interface IDownloadResult {
 }
 
 export type TaskName = "install" | "uninstall" | "configure" | "launch";
-
-export interface IQueueInstallOpts {
-  reason: InstallReason;
-
-  /** the game we're installing */
-  game: Game;
-
-  /** set if we're reinstalling */
-  caveId: string;
-
-  /** which upload we're installing */
-  upload: Upload;
-
-  /** true if the upload was hand-picked amongst several options */
-  handPicked: boolean;
-
-  /** file to install from */
-  archivePath: string;
-
-  /** id of install location to install in */
-  installLocation: string;
-}
 
 export interface IQueueUninstallOpts {
   /** which cave we're uninstalling */

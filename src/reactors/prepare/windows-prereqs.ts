@@ -25,7 +25,7 @@ import { join, basename } from "path";
 import urls from "../../constants/urls";
 
 import * as actions from "../../actions";
-import Context from "../../context";
+import Context, { MinimalContext } from "../../context";
 
 import {
   IManifest,
@@ -430,7 +430,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
     }
 
     try {
-      await butler.wipe(workDir.name, { ctx, logger });
+      await butler.wipe(workDir.name, { ctx: new MinimalContext(), logger });
     } catch (e) {
       logger.warn(`Couldn't wipe: ${e.stack}`);
     }

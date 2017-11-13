@@ -12,6 +12,11 @@ const ITCH_INCREMENTAL_ONLY = process.env.ITCH_INCREMENTAL_ONLY === "1";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
+    if (!!true) {
+      // FIXME: just burn this reactor to the ground instead
+      return;
+    }
+
     const { item } = action.payload;
     let { err } = action.payload;
 

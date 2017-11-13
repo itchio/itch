@@ -1,25 +1,23 @@
-import { IPreferencesState } from "../../types";
+import { IPreferencesState, IDownloadItem } from "../../types";
 import { Logger } from "../../logger/index";
 
 import butler from "../../util/butler";
 import * as paths from "../../os/paths";
 import { MinimalContext } from "../../context/index";
-import { Upload } from "ts-itchio-api";
 
 interface IWipeDownloadFolderOpts {
-  upload: Upload;
+  item: IDownloadItem;
   logger: Logger;
   preferences: IPreferencesState;
 }
 
 export async function wipeDownloadFolder(opts: IWipeDownloadFolderOpts) {
-  const { logger, upload, preferences } = opts;
+  const { logger, item, preferences } = opts;
 
-  // for 'install' and 'reinstall' downloads, this path is where the
-  // archives/installers are downloaded.
-  // for 'upgrade', this is the staging folder for butler
-  // for 'revert' / 'verify', this should normally be an empty folder
-  const downloadFolderPath = paths.downloadFolderPath(upload, preferences);
+  const downloadFolderPath = paths.downloadFolderPathForId(
+    item.id,
+    preferences
+  );
 
   logger.debug(`Wiping download folder ${downloadFolderPath}`);
   try {

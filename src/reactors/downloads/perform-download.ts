@@ -1,18 +1,17 @@
 import * as paths from "../../os/paths";
-import client from "../../api";
-import butler from "../../util/butler";
+import * as sf from "../../os/sf";
+import urls from "../../constants/urls";
 
 import rootLogger from "../../logger";
 
-import downloadPatches from "./download-patches";
 import getGameCredentials from "./get-game-credentials";
-import isHeal from "./is-heal";
 
-import { fromJSONField } from "../../db/json-field";
-
-import { IDownloadItem, IDownloadResult } from "../../types";
+import { IDownloadItem, IDownloadResult, currentRuntime } from "../../types";
 import Context from "../../context";
-import { BuildFileType } from "ts-itchio-api";
+import { Instance, messages } from "node-buse";
+import { ICave, ICaveLocation } from "../../db/models/cave";
+
+import configure from "../launch/configure";
 
 export default async function performDownload(
   ctx: Context,
@@ -27,93 +26,129 @@ export default async function performDownload(
   }
   const logger = parentLogger.child({ name: `download` });
 
+  const { game, caveId, installLocation, installFolder } = item;
+  const { preferences } = ctx.store.getState();
+
+  const stagingFolder = paths.downloadFolderPathForId(item.id, preferences);
+
+  if (await sf.exists(stagingFolder)) {
+    logger.info(`Resuming!`);
+  }
+
   const credentials = await getGameCredentials(ctx, item.game);
   if (!credentials) {
     throw new Error(`no game credentials, can't download`);
   }
 
-  if (item.upgradePath && item.caveId) {
-    logger.info("Got an upgrade path, downloading patches");
+  const caveLocation: ICaveLocation = {
+    id: caveId,
+    installFolder,
+    installLocation,
+    pathScheme: paths.PathScheme.MODERN_SHARED,
+  };
+  const absoluteInstallFolder = paths.appPath(caveLocation, preferences);
 
-    return await doMorphingOperation(
-      ctx,
-      item.caveId,
-      async () => await downloadPatches({ ctx, item, logger, credentials })
-    );
-  }
+  let cave: ICave;
 
-  const { upload, caveId } = item;
+  if (!!true) {
+    const instance = new Instance();
+    instance.onClient(async client => {
+      try {
+        client.onNotification(messages.Operation.Progress, ({ params }) => {
+          ctx.emitProgress(params);
+        });
 
-  const api = client.withKey(credentials.apiKey);
+        client.onNotification(messages.Log, ({ params }) => {
+          switch (params.level) {
+            case "debug":
+              logger.debug(`[butler] ${params.message}`);
+              break;
+            case "info":
+              logger.info(`[butler] ${params.message}`);
+              break;
+            case "warn":
+              logger.warn(`[butler] ${params.message}`);
+              break;
+            case "error":
+              logger.error(`[butler] ${params.message}`);
+              break;
+            default:
+              logger.info(`[butler ${params.level}] ${params.message}`);
+              break;
+          }
+        });
 
-  const { preferences } = ctx.store.getState();
+        client.onNotification(messages.TaskStarted, ({ params }) => {
+          logger.info(
+            `butler says task ${params.type} started (for ${params.reason})`
+          );
+        });
 
-  const archivePath = paths.downloadPath(upload, preferences);
+        client.onNotification(messages.TaskEnded, ({ params }) => {
+          logger.info(`butler says task ended`);
+        });
 
-  if (isHeal(item)) {
-    const buildId = item.buildId;
+        const res = await client.call(
+          messages.Operation.Start({
+            stagingFolder,
+            operation: "install",
+            installParams: {
+              game,
+              installFolder: absoluteInstallFolder,
+              credentials: {
+                apiKey: credentials.apiKey,
+                downloadKey: credentials.downloadKey
+                  ? credentials.downloadKey.id
+                  : null,
+                server: urls.itchioApi,
+              },
+            },
+          })
+        );
 
-    logger.info(`Downloading wharf-enabled download, build #${buildId}`);
+        logger.info(`final install result:\n${JSON.stringify(res, null, 2)}`);
+        const ires = res.installResult;
 
-    const archiveURL = api.downloadBuildURL(
-      credentials.downloadKey,
-      upload.id,
-      buildId,
-      BuildFileType.Archive
-    );
-    const signatureURL = api.downloadBuildURL(
-      credentials.downloadKey,
-      upload.id,
-      buildId,
-      BuildFileType.Signature
-    );
+        cave = {
+          ...caveLocation,
+          gameId: game.id,
 
-    const cave = ctx.db.caves.findOneById(caveId);
+          installedAt: new Date(),
+          channelName: ires.upload.channelName,
+          build: ires.build,
+          upload: ires.upload,
+          handPicked: false, // TODO: butler should let us know if it was handpicked in the result
+        };
 
-    const fullInstallFolder = paths.appPath(cave, preferences);
-    logger.info(`Doing verify+heal to ${fullInstallFolder}`);
-
-    await doMorphingOperation(
-      ctx,
-      cave.id,
-      async () =>
-        await butler.verify(signatureURL, fullInstallFolder, {
-          ctx,
-          logger,
-          heal: `archive,${archiveURL}`,
-        })
-    );
-
-    ctx.db.saveOne("caves", cave.id, {
-      upload: {
-        ...fromJSONField(cave.upload),
-        buildId,
-      },
-      buildId,
-    });
-  } else {
-    const uploadURL = api.downloadUploadURL(credentials.downloadKey, upload.id);
-
-    try {
-      await butler.cp({
-        ctx,
-        src: uploadURL,
-        dest: archivePath,
-        resume: true,
-        logger,
-      });
-    } catch (e) {
-      if (e.errors && e.errors[0] === "invalid upload") {
-        const e = new Error("invalid upload");
-        (e as any).itchReason = "upload-gone";
-        throw e;
+        logger.info(`Committing game & cave to db`);
+        ctx.db.saveOne("games", game.id, game);
+        ctx.db.saveOne("caves", cave.id, cave);
+      } finally {
+        instance.cancel();
       }
-      throw e;
-    }
+    });
+
+    await ctx.withStopper({
+      work: async () => {
+        await instance.promise();
+      },
+      stop: async () => {
+        instance.cancel();
+      },
+    });
+
+    // TODO: move to buse
+    logger.info(`Configuring...`);
+    await configure(ctx, {
+      game,
+      cave,
+      logger,
+      runtime: currentRuntime(),
+    });
   }
 
   return {
-    archivePath,
+    archivePath: null,
   };
 }
 
@@ -121,7 +156,8 @@ export default async function performDownload(
  * Mark cave as morphing, do `cb`, then clear the morphing marker
  * if it succeeded.
  */
-async function doMorphingOperation<T>(
+// TODO: use for everything but first installs
+export async function doMorphingOperation<T>(
   ctx: Context,
   caveId: string,
   cb: () => Promise<T>

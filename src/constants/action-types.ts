@@ -648,6 +648,9 @@ export interface IQueueDownloadPayload extends Types.IQueueDownloadOpts {}
 export const DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
 export type IDownloadStartedPayload = Partial<Types.IDownloadItem>;
 
+export const DOWNLOAD_UPDATE = "DOWNLOAD_UPDATE";
+export type IDownloadUpdatePayload = Partial<Types.IDownloadItem>;
+
 export const DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS";
 export interface IDownloadProgressPayload extends IProgressInfo {
   /** the download in progress */

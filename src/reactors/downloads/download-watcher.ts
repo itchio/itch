@@ -108,7 +108,7 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
         await wipeDownloadFolder({
           logger,
           preferences: store.getState().preferences,
-          upload: item.upload,
+          item,
         });
       } else {
         logger.info(`Download for ${item.game.title} paused/deprioritized`);

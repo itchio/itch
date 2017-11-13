@@ -10,7 +10,10 @@ import { Cancelled, InstallerType, IRuntime, InstallReason } from "../../types";
 
 import { IReceipt, readReceipt } from "./receipt";
 
+import * as actions from "../../actions";
+
 import urls from "../../constants/urls";
+import uuid from "../../util/uuid";
 
 import { Instance, messages } from "node-buse";
 
@@ -119,6 +122,8 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
   const inPlace = isInPlace(opts);
   let cave: ICave;
 
+  const taskId = uuid();
+
   if (inPlace) {
     cave = caveIn;
   } else {
@@ -149,6 +154,28 @@ export async function coreInstall(opts: IInstallOpts): Promise<ICave> {
               logger.info(`[butler ${params.level}] ${params.message}`);
               break;
           }
+        });
+
+        client.onNotification(messages.TaskStarted, ({ params }) => {
+          ctx.store.dispatch(
+            actions.downloadStarted({
+              id: taskId,
+              reason: params.reason as any,
+              game: params.game,
+              upload: params.upload,
+            })
+          );
+        });
+
+        client.onNotification(messages.TaskEnded, ({ params }) => {
+          ctx.store.dispatch(
+            actions.downloadEnded({
+              id: taskId,
+              err: null,
+              result: null,
+              item: null,
+            })
+          );
         });
 
         const res = await client.call(

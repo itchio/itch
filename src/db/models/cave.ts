@@ -42,14 +42,14 @@ export const CaveModel: Model = CaveModelOriginal;
 
 type Columns = { [K in keyof typeof CaveModelOriginal.columns]: any };
 ensureExtends<Columns, ICave>();
-ensureExtends<ICave, Columns>();
+ensureExtends<ICave, Partial<Columns>>();
 
 export interface ICaveSummary {
   id: string;
   gameId: number;
-  lastTouchedAt: Date;
-  secondsRun: number;
-  installedSize: number;
+  lastTouchedAt?: Date;
+  secondsRun?: number;
+  installedSize?: number;
 }
 
 export interface ICaveLocation {
@@ -74,7 +74,7 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   gameId: number;
 
   /** external game id this cave contains */
-  externalGameId: number;
+  externalGameId?: number;
 
   /** itch.io upload currently installed */
   upload: Upload;
@@ -91,13 +91,13 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   installedAt: Date;
 
   /** timestamp when that cave was last opened/played */
-  lastTouchedAt: Date;
+  lastTouchedAt?: Date;
 
   /** number of seconds played/run, as recorded locally */
-  secondsRun: number;
+  secondsRun?: number;
 
   /** true if the upload to install was hand-picked */
-  handPicked: boolean;
+  handPicked?: boolean;
 
   /**
    * Set to true when a maintenance task (revert, heal, upgrade) is started, set to false after
@@ -107,16 +107,16 @@ export interface ICave extends ICaveSummary, ICaveLocation {
    * If when trying to open a cave we find that `morphing` is set to true (and no tasks are
    * currently active), we'll trigger a heal to the version we have in the cave info.
    */
-  morphing: boolean;
+  morphing?: boolean;
 
   /** size of installed folder, in bytes */
-  installedSize: number;
+  installedSize?: number;
 
   /** set to true if UE4's prereq setup file was successfully run */
-  installedUE4Prereq: boolean;
+  installedUE4Prereq?: boolean;
 
   /** indexed by prereq name (standard, stored in ibrew-like repo), set to true when installed successfully */
-  installedPrereqs: {
+  installedPrereqs?: {
     [prereqName: string]: boolean;
   };
 
@@ -130,7 +130,7 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   pathScheme: PathScheme;
 
   /** result of the configure step */
-  verdict: IConfigureResult;
+  verdict?: IConfigureResult;
 }
 
 export interface ICaveWithDeprecated extends ICave {

@@ -803,9 +803,6 @@ export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
 
   /** an error that may have occured while downloading */
   err?: string;
-
-  /** for fresh game installs, where to install it */
-  installLocation?: string;
 }
 
 export type DownloadSpeedDataPoint = number;
