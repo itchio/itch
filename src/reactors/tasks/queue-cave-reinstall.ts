@@ -68,8 +68,6 @@ export default function(watcher: Watcher, db: DB) {
         caveId,
         upload,
         totalSize: upload.size,
-        installLocation: cave.installLocation,
-        installFolder: cave.installFolder,
         reason: "reinstall",
       })
     );

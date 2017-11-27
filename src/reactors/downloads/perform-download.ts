@@ -21,8 +21,10 @@ export default async function performDownload(
   // up being valid, for bug reporting purposes.
 
   let parentLogger = rootLogger;
+  let caveIn: ICave;
   if (item.caveId) {
     parentLogger = paths.caveLogger(item.caveId);
+    caveIn = ctx.db.caves.findOneById(item.caveId);
   }
   const logger = parentLogger.child({ name: `download` });
 
@@ -40,12 +42,14 @@ export default async function performDownload(
     throw new Error(`no game credentials, can't download`);
   }
 
-  const caveLocation: ICaveLocation = {
-    id: caveId,
-    installFolder,
-    installLocation,
-    pathScheme: paths.PathScheme.MODERN_SHARED,
-  };
+  let caveLocation: ICaveLocation = caveIn
+    ? caveIn
+    : {
+        id: caveId,
+        installFolder,
+        installLocation,
+        pathScheme: paths.PathScheme.MODERN_SHARED,
+      };
   const absoluteInstallFolder = paths.appPath(caveLocation, preferences);
 
   let cave: ICave;
