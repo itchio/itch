@@ -2,6 +2,7 @@ package main
 
 import (
 	"os/exec"
+	"runtime"
 	"time"
 )
 
@@ -12,9 +13,14 @@ func prepareFlow(r *runner) {
 	must(r.click("#login-button"))
 	must(r.waitForVisible("#user-menu"))
 
+	butlerExeName := "butler"
+	if runtime.GOOS == "windows" {
+		butlerExeName += ".exe"
+	}
+
 	tries := 5
 	for {
-		butlerOutput, err := exec.Command("tmp/prefix/userData/bin/butler.exe", "upgrade", "--head", "--assume-yes").Output()
+		butlerOutput, err := exec.Command("tmp/prefix/userData/bin/"+butlerExeName, "upgrade", "--head", "--assume-yes").Output()
 		if err == nil {
 			r.logf("butler upgrade output:\n%s", butlerOutput)
 			break
