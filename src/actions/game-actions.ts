@@ -5,8 +5,6 @@ import {
   IQueueGamePayload,
   QUEUE_LAUNCH,
   IQueueLaunchPayload,
-  QUEUE_INSTALL,
-  IQueueInstallPayload,
   PROBE_CAVE,
   IProbeCavePayload,
   EXPLORE_CAVE,
@@ -55,7 +53,6 @@ import {
 
 export const queueGame = createAction<IQueueGamePayload>(QUEUE_GAME);
 export const queueLaunch = createAction<IQueueLaunchPayload>(QUEUE_LAUNCH);
-export const queueInstall = createAction<IQueueInstallPayload>(QUEUE_INSTALL);
 
 export const probeCave = createAction<IProbeCavePayload>(PROBE_CAVE);
 export const exploreCave = createAction<IExploreCavePayload>(EXPLORE_CAVE);

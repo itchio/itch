@@ -865,9 +865,6 @@ export interface IQueueGamePayload {
 export const QUEUE_LAUNCH = "QUEUE_LAUNCH";
 export interface IQueueLaunchPayload extends Types.IQueueLaunchOpts {}
 
-export const QUEUE_INSTALL = "QUEUE_INSTALL";
-export interface IQueueInstallPayload extends Types.IQueueInstallOpts {}
-
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
 export interface IInitiatePurchasePayload {
