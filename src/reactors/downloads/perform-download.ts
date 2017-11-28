@@ -12,6 +12,13 @@ import { Instance, messages } from "node-buse";
 import { ICave, ICaveLocation } from "../../db/models/cave";
 
 import configure from "../launch/configure";
+import { promisedModal } from "../modals";
+
+import * as actions from "../../actions";
+import makeUploadButton from "../make-upload-button";
+
+import { map } from "underscore";
+import { MODAL_RESPONSE } from "../../constants/action-types";
 
 export default async function performDownload(
   ctx: Context,
@@ -90,6 +97,32 @@ export default async function performDownload(
 
         client.onNotification(messages.TaskEnded, ({ params }) => {
           logger.info(`butler says task ended`);
+        });
+
+        client.onRequest(messages.PickUpload, async ({ params }) => {
+          const { uploads } = params;
+          const { title } = game;
+
+          const modalRes = await promisedModal(ctx.store, {
+            title: ["pick_install_upload.title", { title }],
+            message: ["pick_install_upload.message", { title }],
+            detail: ["pick_install_upload.detail"],
+            bigButtons: map(uploads, (candidate, index) => {
+              return {
+                ...makeUploadButton(candidate),
+                action: actions.modalResponse({
+                  pickedUploadIndex: index,
+                }),
+              };
+            }),
+            buttons: ["cancel"],
+          });
+
+          if (modalRes.type === MODAL_RESPONSE) {
+            return { index: modalRes.payload.pickedUploadIndex };
+          } else {
+            throw new Error(`no upload picked`);
+          }
         });
 
         const res = await client.call(

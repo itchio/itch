@@ -58,6 +58,7 @@ async function queueInstall(store: IStore, db: DB, game: Game) {
     actions.queueDownload({
       reason: "install",
       upload: null,
+      caveId,
       installLocation: caveLocation.installLocation,
       installFolder: caveLocation.installFolder,
       game,

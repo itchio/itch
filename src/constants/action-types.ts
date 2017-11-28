@@ -91,7 +91,7 @@ export interface IModalResponsePayload {
   cache?: boolean;
 
   /** manually picked upload for install */
-  pickedUpload?: Upload;
+  pickedUploadIndex?: number;
 
   /** recaptcha challenge response */
   recaptchaResponse?: string;
