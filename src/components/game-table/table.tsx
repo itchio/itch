@@ -277,14 +277,13 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
       }
 
       const caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
-      const cave = first(caves);
 
       return (
         <Row
           key={game.id}
           columns={columns}
           game={game}
-          cave={cave}
+          caves={caves}
           intl={intl}
           rowHeight={rowHeight}
           index={startRow + index}

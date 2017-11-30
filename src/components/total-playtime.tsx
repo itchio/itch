@@ -14,7 +14,7 @@ export default class TotalPlaytime extends React.PureComponent<
 > {
   render() {
     const { game, cave, short = false } = this.props;
-    const { secondsRun = 0 } = (cave || {}) as ICaveSummary;
+    let { secondsRun = 0 } = (cave || {}) as ICaveSummary;
 
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
@@ -44,6 +44,7 @@ interface IProps {
   game: Game;
   cave: ICaveSummary;
   short?: boolean;
+  secondsRun?: number;
 }
 
 interface IDerivedProps {}

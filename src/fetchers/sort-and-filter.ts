@@ -154,15 +154,15 @@ export function addSortAndFilterToQuery(
         select.order("games.publishedAt", sortDirection === "ASC");
         break;
       case "secondsRun":
-        select.order("caves.secondsRun", sortDirection === "ASC");
+        select.order("sum(caves.secondsRun)", sortDirection === "ASC");
         joinCave = true;
         break;
       case "lastTouchedAt":
-        select.order("caves.lastTouchedAt", sortDirection === "ASC");
+        select.order("max(caves.lastTouchedAt)", sortDirection === "ASC");
         joinCave = true;
         break;
       case "installedSize":
-        select.order("caves.installedSize", sortDirection === "ASC");
+        select.order("sum(caves.installedSize)", sortDirection === "ASC");
         joinCave = true;
         break;
       default:
@@ -181,19 +181,10 @@ export function addSortAndFilterToQuery(
   }
 
   if (joinCave) {
-    select.left_join(
-      CaveModel.table,
-      null,
-      squel.expr().and(
-        "caves.id = ?",
-        squel
-          .select()
-          .field("caves.id")
-          .from("caves")
-          .where("caves.gameId = games.id")
-          .limit(1)
-      )
-    );
+    select.left_join(CaveModel.table, null, "caves.gameId = games.id");
+    // FIXME: should this be in if (joinCave) ?
+    // does this break paging? so many questions.
+    select.group("games.id");
   }
 
   if (joinDownloadKeys) {
