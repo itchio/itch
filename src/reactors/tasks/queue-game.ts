@@ -16,7 +16,11 @@ import Context from "../../context/index";
 import { ICaveLocation } from "../../db/models/cave";
 
 import uuid from "../../util/uuid";
-import { Game } from "ts-itchio-api";
+import { Game, Upload } from "ts-itchio-api";
+import { promisedModal } from "../modals";
+
+import { map } from "underscore";
+import makeUploadButton from "../make-upload-button";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueGame, async (store, action) => {
@@ -26,19 +30,48 @@ export default function(watcher: Watcher, db: DB) {
 
     if (caves.length > 0) {
       logger.info(
-        `Have ${caves.length} caves for game ${game.title} (#${game.id}), launching the first one`
+        `Have ${caves.length} caves for game ${game.title} (#${game.id})`
       );
-      const cave = caves[0];
-      store.dispatch(actions.queueLaunch({ caveId: cave.id }));
+
+      if (caves.length === 1) {
+        const cave = caves[0];
+        store.dispatch(actions.queueLaunch({ caveId: cave.id }));
+        return;
+      }
+
+      // TODO: i18n
+      store.dispatch(
+        actions.openModal({
+          title: `Launch ${game.title}`,
+          message: "What do you want to open/launch?",
+          bigButtons: map(caves, cave => {
+            return {
+              ...makeUploadButton(cave.upload),
+              action: actions.queueLaunch({ caveId: cave.id }),
+            };
+          }),
+          buttons: ["cancel"],
+        })
+      );
       return;
     }
 
     logger.info(`No cave for ${game.title} (#${game.id}), attempting install`);
     await queueInstall(store, db, game);
   });
+
+  watcher.on(actions.queueGameInstall, async (store, action) => {
+    const { game, upload } = action.payload;
+    await queueInstall(store, db, game, upload);
+  });
 }
 
-async function queueInstall(store: IStore, db: DB, game: Game) {
+export async function queueInstall(
+  store: IStore,
+  db: DB,
+  game: Game,
+  upload?: Upload
+) {
   const caveId = uuid();
   const installFolder = installFolderName(game);
 
@@ -57,7 +90,7 @@ async function queueInstall(store: IStore, db: DB, game: Game) {
   store.dispatch(
     actions.queueDownload({
       reason: "install",
-      upload: null,
+      upload,
       caveId,
       installLocation: caveLocation.installLocation,
       installFolder: caveLocation.installFolder,

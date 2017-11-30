@@ -166,10 +166,16 @@ export function gameControls(ctx: Context, game: Game): IMenuTemplate {
 
     if (!busy) {
       let uninstallReinstallItems: IMenuTemplate = [];
+      // uninstallReinstallItems.push({
+      //   id: "context--grid-item-uninstall-request",
+      //   localizedLabel: ["grid.item.uninstall_request"],
+      //   action: actions.requestCaveUninstall({ caveId: cave.id }),
+      // });
+
       uninstallReinstallItems.push({
-        id: "context--grid-item-uninstall-request",
-        localizedLabel: ["grid.item.uninstall_request"],
-        action: actions.requestCaveUninstall({ caveId: cave.id }),
+        id: "context--grid-item-manage",
+        localizedLabel: ["grid.item.manage"],
+        action: actions.manageGame({ game }),
       });
 
       template = concatTemplates(template, uninstallReinstallItems);

@@ -715,6 +715,12 @@ export interface IClearGameDownloadsPayload {
   gameId: number;
 }
 
+/** User wants to uninstall an upload for a game or install another upload */
+export const MANAGE_GAME = "MANAGE_GAME";
+export interface IManageGamePayload {
+  game: Game;
+}
+
 /** User requested game to be uninstalled */
 export const REQUEST_CAVE_UNINSTALL = "REQUEST_CAVE_UNINSTALL";
 export interface IRequestCaveUninstallPayload {
@@ -855,11 +861,21 @@ export interface IViewCaveDetailsPayload {
   caveId: string;
 }
 
-/** User requested game to be installed */
+/** User requested game to be installed or launched (ie. the main action) */
 export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {
   /** the game we want to download */
   game: Game;
+}
+
+/** User requested game to be installed */
+export const QUEUE_GAME_INSTALL = "QUEUE_GAME_INSTALL";
+export interface IQueueGameInstallPayload {
+  /** the game we want to install */
+  game: Game;
+
+  /** the upload we've picked */
+  upload: Upload;
 }
 
 export const QUEUE_LAUNCH = "QUEUE_LAUNCH";

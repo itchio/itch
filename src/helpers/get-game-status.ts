@@ -1,5 +1,5 @@
 import { IDownloadKeySummary } from "../db/models/download-key";
-import { ICaveSummary } from "../db/models/cave";
+import { ICaveSummary, ICave } from "../db/models/cave";
 import { IRootState, IGameUpdate, ITask, IDownloadItem } from "../types/index";
 
 import { first } from "underscore";
@@ -83,17 +83,23 @@ export interface IGameStatus {
   compatible: boolean;
 }
 
-export default function getGameStatus(rs: IRootState, game: Game): IGameStatus {
+export default function getGameStatus(
+  rs: IRootState,
+  game: Game,
+  cave?: ICaveSummary
+): IGameStatus {
   const { commons, session, tasks, downloads } = rs;
   const { credentials } = session;
 
-  let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
   let downloadKeys = getByIds(
     commons.downloadKeys,
     commons.downloadKeyIdsByGameId[game.id]
   );
 
-  const cave = first(caves);
+  if (!cave) {
+    let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+    cave = first(caves);
+  }
   const downloadKey = first(downloadKeys);
 
   const pressUser = credentials.me.pressUser;

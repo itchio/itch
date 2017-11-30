@@ -19,6 +19,7 @@ import makeUploadButton from "../make-upload-button";
 
 import { map } from "underscore";
 import { MODAL_RESPONSE } from "../../constants/action-types";
+import { buseGameCredentials } from "../../util/buse-utils";
 
 export default async function performDownload(
   ctx: Context,
@@ -132,13 +133,8 @@ export default async function performDownload(
             installParams: {
               game,
               installFolder: absoluteInstallFolder,
-              credentials: {
-                apiKey: credentials.apiKey,
-                downloadKey: credentials.downloadKey
-                  ? credentials.downloadKey.id
-                  : null,
-                server: urls.itchioApi,
-              },
+              credentials: buseGameCredentials(credentials),
+              upload: item.upload,
             },
           })
         );
