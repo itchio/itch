@@ -1,6 +1,5 @@
 import * as paths from "../../os/paths";
 import * as sf from "../../os/sf";
-import urls from "../../constants/urls";
 
 import rootLogger from "../../logger";
 

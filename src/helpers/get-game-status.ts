@@ -1,5 +1,5 @@
 import { IDownloadKeySummary } from "../db/models/download-key";
-import { ICaveSummary, ICave } from "../db/models/cave";
+import { ICaveSummary } from "../db/models/cave";
 import { IRootState, IGameUpdate, ITask, IDownloadItem } from "../types/index";
 
 import { first } from "underscore";

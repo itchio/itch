@@ -6,8 +6,6 @@ import { connect } from "../connect";
 import { dispatcher } from "../../constants/action-types";
 import * as actions from "../../actions";
 
-import { first } from "underscore";
-
 import getByIds from "../../helpers/get-by-ids";
 import { IGameSet, ICommonsState, ILocalizedString } from "../../types";
 import { IOnSortChange, SortDirection, SortKey } from "../sort-types";

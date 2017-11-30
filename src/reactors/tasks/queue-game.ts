@@ -17,7 +17,6 @@ import { ICaveLocation } from "../../db/models/cave";
 
 import uuid from "../../util/uuid";
 import { Game, Upload } from "ts-itchio-api";
-import { promisedModal } from "../modals";
 
 import { map } from "underscore";
 import makeUploadButton from "../make-upload-button";

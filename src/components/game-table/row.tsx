@@ -20,7 +20,6 @@ import { IRootState } from "../../types/index";
 import { connect } from "../connect";
 import { Game } from "ts-itchio-api";
 
-import { first } from "underscore";
 import { aggregateCaveSummaries } from "../../util/aggregate-cave-summaries";
 
 class Row extends React.PureComponent<IProps & IDerivedProps> {
