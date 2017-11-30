@@ -113,10 +113,19 @@ async function _doCheckForGameUpdate(
       return { err: new Error("No uploads found") };
     }
 
+    const caveUpload = fromJSONField(cave.upload);
     const installedAt = fromDateTimeField(cave.installedAt) || new Date(0);
     logger.info(`installed at ${installedAt.toISOString()}`);
 
     const recentUploads = filter(uploads, upload => {
+      if (caveUpload && caveUpload.filename !== upload.filename) {
+        logger.info(
+          `Filtering out ${upload.filename} (#${upload.id})` +
+            `, ${upload.filename} is different from ${caveUpload.filename}`
+        );
+        return false;
+      }
+
       const updatedAt = fromDateTimeField(upload.updatedAt);
       logger.info(`upload ${upload.id} updated at ${updatedAt.toISOString()}`);
       const isRecent = updatedAt.getTime() > installedAt.getTime();
@@ -134,7 +143,6 @@ async function _doCheckForGameUpdate(
 
     let hasUpgrade = false;
 
-    const caveUpload = fromJSONField(cave.upload);
     if (caveUpload && caveBuild) {
       logger.info(
         `Looking for new builds of ${game.title}, from build ${caveBuild.id} (upload ${caveUpload.id})`
