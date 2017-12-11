@@ -256,11 +256,17 @@ function createTableForModel(
 
   if (columnsToPreserve) {
     for (const columnName of columnsToPreserve) {
-      const columnType = model.deprecatedColumns[columnName];
-      if (columnType) {
-        columnInstructions.push(
-          `${columnName} ${sqliteColumnType(columnType)}`
-        );
+      if (model.columns.hasOwnProperty(columnName)) {
+        // still in the model, no need to do anything!
+      } else if (model.deprecatedColumns) {
+        // only if the model has deprecated columns listed, try
+        // to get the type from there
+        const columnType = model.deprecatedColumns[columnName];
+        if (columnType) {
+          columnInstructions.push(
+            `${columnName} ${sqliteColumnType(columnType)}`
+          );
+        }
       }
     }
   }

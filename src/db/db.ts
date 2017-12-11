@@ -98,14 +98,18 @@ export class DB extends RepoContainer {
         continue;
       }
 
-      const oldRecordsList = this.q.all(Model, k =>
-        k.where(`${Model.primaryKey} in ?`, entityIds)
-      );
-      const oldRecords = indexBy(oldRecordsList, Model.primaryKey);
-
       let numUpToDate = 0;
       const updated = [];
       this.q.withTransaction(() => {
+        logger.debug(
+          `Fetching ${entityIds.length} old entities from ${Model.table}`
+        );
+        const oldRecordsList = this.q.allByKeySafe(Model, entityIds);
+        logger.debug(
+          `Got ${oldRecordsList.length} old entities from ${Model.table}`
+        );
+        const oldRecords = indexBy(oldRecordsList, Model.primaryKey);
+
         for (const id of entityIds) {
           let newRecord = entities[id];
           let oldRecord = oldRecords[id];
