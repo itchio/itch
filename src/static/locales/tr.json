@@ -327,5 +327,15 @@
     "download.reason.revert": "önceki sürüme dönmek için",
     "download.reason.heal": "doğrulamak ve kurmak için",
     "grid.item.advanced": "Gelişmiş...",
-    "collection.summary": "Eşya koleksiyonu {{itemCount}}"
+    "collection.summary": "Eşya koleksiyonu {{itemCount}}",
+    "download.ongoing.install": "{{title}} yükleniyor…",
+    "download.ongoing.update": "{{title}} güncelleniyor…",
+    "download.ongoing.reinstall": "{{title}} tekrar yükleniyor…",
+    "download.ongoing.revert": "{{title}} başka bir sürümle değiştiriliyor…",
+    "download.ongoing.heal": "{{title} onarılıyor…",
+    "download.outcome.installed": "yüklendi",
+    "download.outcome.updated": "son sürüme güncellendi",
+    "download.outcome.reinstalled": "tekrar yüklendi",
+    "download.outcome.reverted": "başka bir sürümle değiştirildi",
+    "download.outcome.healed": "doğrulandı ve onarıldı"
 }
