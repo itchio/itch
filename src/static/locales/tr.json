@@ -326,5 +326,6 @@
     "prompt.url_install.credit": "{{username}} tarafından bir {{classification}}",
     "download.reason.revert": "önceki sürüme dönmek için",
     "download.reason.heal": "doğrulamak ve kurmak için",
-    "grid.item.advanced": "Gelişmiş..."
+    "grid.item.advanced": "Gelişmiş...",
+    "collection.summary": "Eşya koleksiyonu {{itemCount}}"
 }
