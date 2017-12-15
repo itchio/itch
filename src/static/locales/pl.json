@@ -420,5 +420,21 @@
     "game.install.libraries_missing": "Brakuje wymaganych {{arch}} bibliotek: {{libraries}}",
     "grid.filters.options.no_results": "Niczego nie znaleziono",
     "preferences.behavior.prevent_display_sleep": "Zapobiegaj wyłączaniu ekranu podczas gry",
-    "collection.summary": "Kolekcja {{itemCount}} przedmiotów"
+    "collection.summary": "Kolekcja {{itemCount}} przedmiotów",
+    "download.ongoing.revert": "Zmiana wersji {{title}}",
+    "download.ongoing.heal": "Naprawa danych {{title}}",
+    "download.outcome.installed": "Zainstalowano",
+    "download.outcome.updated": "Zaktualizowano do najnowszej wersji",
+    "download.outcome.reinstalled": "Przeinstalowano",
+    "download.outcome.reverted": "Zmieniono wersję",
+    "download.outcome.healed": "naprawiono i zweryfikowano",
+    "game.install.could_not_launch.message": "Otrzymana przez nas wiadomość brzmi: {{errorMessage}}",
+    "grid.criterion.filter_by": "Filtruj korzystając z:",
+    "grid.filters.options.compatible": "Kompatybilne",
+    "grid.filters.options.installed": "Zainstalowane",
+    "grid.filters.options.owned": "Posiadane",
+    "grid.empty_state.leader": "Wszystkie wyniki zostały ukryte zgodnie z ustawieniami filtrów",
+    "grid.empty_state.explanation": "Twoje ustawienia filtrów spowodowały ukrycie wszystkich wyników",
+    "grid.item.discard_download": "Zatrzymaj pobieranie",
+    "grid.item.not_compatible": "Niedostępne dla tej platformy"
 }
