@@ -407,5 +407,6 @@
     "prereq.explanation": "Algunos paquetes necesitan ser instalados una vez para que {{title}} funcione correctamente.",
     "prereq.status.installing": "Instalando... (esto podría tardar unos minutos)",
     "prereq.status.done": "¡Hecho!",
-    "notification.download_healed": "¡{{title}} verificado y reparado!"
+    "notification.download_healed": "¡{{title}} verificado y reparado!",
+    "collection.summary": "Una colección de  {{itemCount}} objetos"
 }
