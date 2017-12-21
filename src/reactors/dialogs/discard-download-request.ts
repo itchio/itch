@@ -13,6 +13,12 @@ export default function(watcher: Watcher) {
 
     const confirmAction = actions.discardDownload({ id });
 
+    if (item.finished || !item.progress) {
+      // finished or not started yet, let's just go ahead
+      store.dispatch(confirmAction);
+      return;
+    }
+
     if (isHeal(item)) {
       store.dispatch(
         actions.openModal({
@@ -41,12 +47,6 @@ export default function(watcher: Watcher) {
           ],
         })
       );
-      return;
-    }
-
-    if (item.finished || !item.progress) {
-      // finished or not started yet, let's just go ahead
-      store.dispatch(confirmAction);
       return;
     }
 
