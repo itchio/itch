@@ -8,7 +8,7 @@ import getGameCredentials from "./get-game-credentials";
 import { IDownloadItem, IDownloadResult, currentRuntime } from "../../types";
 import Context from "../../context";
 import { Instance, messages } from "node-buse";
-import { ICave, ICaveLocation } from "../../db/models/cave";
+import { ICave } from "../../db/models/cave";
 
 import configure from "../launch/configure";
 import { promisedModal } from "../modals";
@@ -19,6 +19,7 @@ import makeUploadButton from "../make-upload-button";
 import { map } from "underscore";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 import { buseGameCredentials } from "../../util/buse-utils";
+import { computeCaveLocation } from "./compute-cave-location";
 
 export default async function performDownload(
   ctx: Context,
@@ -35,7 +36,7 @@ export default async function performDownload(
   }
   const logger = parentLogger.child({ name: `download` });
 
-  const { game, caveId, installLocation, installFolder } = item;
+  const { game } = item;
   const { preferences } = ctx.store.getState();
 
   const stagingFolder = paths.downloadFolderPathForId(item.id, preferences);
@@ -49,135 +50,172 @@ export default async function performDownload(
     throw new Error(`no game credentials, can't download`);
   }
 
-  let caveLocation: ICaveLocation = caveIn
-    ? caveIn
-    : {
-        id: caveId,
-        installFolder,
-        installLocation,
-        pathScheme: paths.PathScheme.MODERN_SHARED,
-      };
-  const absoluteInstallFolder = paths.appPath(caveLocation, preferences);
+  const { caveLocation, absoluteInstallFolder } = computeCaveLocation(
+    item,
+    preferences,
+    caveIn
+  );
 
   let cave: ICave;
+  let butlerExited = false;
 
-  if (!!true) {
-    const instance = new Instance();
-    instance.onClient(async client => {
-      try {
-        client.onNotification(messages.Operation.Progress, ({ params }) => {
-          ctx.emitProgress(params);
-        });
+  const instance = new Instance();
+  instance.onClient(async client => {
+    try {
+      client.onNotification(messages.Operation.Progress, ({ params }) => {
+        ctx.emitProgress(params);
+      });
 
-        client.onNotification(messages.Log, ({ params }) => {
-          switch (params.level) {
-            case "debug":
-              logger.debug(`[butler] ${params.message}`);
-              break;
-            case "info":
-              logger.info(`[butler] ${params.message}`);
-              break;
-            case "warn":
-              logger.warn(`[butler] ${params.message}`);
-              break;
-            case "error":
-              logger.error(`[butler] ${params.message}`);
-              break;
-            default:
-              logger.info(`[butler ${params.level}] ${params.message}`);
-              break;
-          }
-        });
+      client.onNotification(messages.Log, ({ params }) => {
+        switch (params.level) {
+          case "debug":
+            logger.debug(`[butler] ${params.message}`);
+            break;
+          case "info":
+            logger.info(`[butler] ${params.message}`);
+            break;
+          case "warn":
+            logger.warn(`[butler] ${params.message}`);
+            break;
+          case "error":
+            logger.error(`[butler] ${params.message}`);
+            break;
+          default:
+            logger.info(`[butler ${params.level}] ${params.message}`);
+            break;
+        }
+      });
 
-        client.onNotification(messages.TaskStarted, ({ params }) => {
-          logger.info(
-            `butler says task ${params.type} started (for ${params.reason})`
-          );
-        });
-
-        client.onNotification(messages.TaskEnded, ({ params }) => {
-          logger.info(`butler says task ended`);
-        });
-
-        client.onRequest(messages.PickUpload, async ({ params }) => {
-          const { uploads } = params;
-          const { title } = game;
-
-          const modalRes = await promisedModal(ctx.store, {
-            title: ["pick_install_upload.title", { title }],
-            message: ["pick_install_upload.message", { title }],
-            detail: ["pick_install_upload.detail"],
-            bigButtons: map(uploads, (candidate, index) => {
-              return {
-                ...makeUploadButton(candidate),
-                action: actions.modalResponse({
-                  pickedUploadIndex: index,
-                }),
-              };
-            }),
-            buttons: ["cancel"],
-          });
-
-          if (modalRes.type === MODAL_RESPONSE) {
-            return { index: modalRes.payload.pickedUploadIndex };
-          } else {
-            throw new Error(`no upload picked`);
-          }
-        });
-
-        const res = await client.call(
-          messages.Operation.Start({
-            stagingFolder,
-            operation: "install",
-            installParams: {
-              game,
-              installFolder: absoluteInstallFolder,
-              credentials: buseGameCredentials(credentials),
-              upload: item.upload,
-            },
-          })
+      client.onNotification(messages.TaskStarted, ({ params }) => {
+        logger.info(
+          `butler says task ${params.type} started (for ${params.reason})`
         );
+      });
 
-        logger.info(`final install result:\n${JSON.stringify(res, null, 2)}`);
-        const ires = res.installResult;
+      client.onNotification(messages.TaskEnded, ({ params }) => {
+        logger.info(`butler says task ended`);
+      });
 
-        cave = {
-          ...caveLocation,
-          gameId: game.id,
+      client.onRequest(messages.PickUpload, async ({ params }) => {
+        const { uploads } = params;
+        const { title } = game;
 
-          installedAt: new Date(),
-          channelName: ires.upload.channelName,
-          build: ires.build,
-          upload: ires.upload,
-          handPicked: false, // TODO: butler should let us know if it was handpicked in the result
-        };
+        const modalRes = await promisedModal(ctx.store, {
+          title: ["pick_install_upload.title", { title }],
+          message: ["pick_install_upload.message", { title }],
+          detail: ["pick_install_upload.detail"],
+          bigButtons: map(uploads, (candidate, index) => {
+            return {
+              ...makeUploadButton(candidate),
+              action: actions.modalResponse({
+                pickedUploadIndex: index,
+              }),
+            };
+          }),
+          buttons: ["cancel"],
+        });
 
-        logger.info(`Committing game & cave to db`);
-        ctx.db.saveOne("games", game.id, game);
-        ctx.db.saveOne("caves", cave.id, cave);
-      } finally {
-        instance.cancel();
-      }
-    });
+        if (modalRes.type === MODAL_RESPONSE) {
+          return { index: modalRes.payload.pickedUploadIndex };
+        } else {
+          throw new Error(`no upload picked`);
+        }
+      });
 
-    await ctx.withStopper({
-      work: async () => {
-        await instance.promise();
-      },
-      stop: async () => {
-        instance.cancel();
-      },
-    });
+      const id = item.id;
 
-    // TODO: move to buse
-    logger.info(`Configuring...`);
-    await configure(ctx, {
-      game,
-      cave,
-      logger,
-      runtime: currentRuntime(),
-    });
-  }
+      ctx.on("graceful-cancel", () => {
+        (async () => {
+          if (butlerExited) {
+            // nothing to do
+            return;
+          }
+
+          const deadline = 5 * 1000;
+          logger.warn(
+            `Asking butler to cancel with a ${(deadline /
+              1000).toFixed()}s deadline`
+          );
+          setTimeout(() => {
+            if (butlerExited) {
+              logger.info(`butler exited gracefully!`);
+              return;
+            }
+            logger.warn(`butler failed to exit within deadline, killing it!`);
+
+            try {
+              instance.cancel();
+            } catch (e) {
+              logger.warn(`While cancelling instance: ${e.stack}`);
+            }
+          }, deadline);
+
+          await client.call(messages.Operation.Cancel({ id }));
+        })().catch(e => {
+          logger.warn(`While discarding: ${e.stack}`);
+        });
+      });
+
+      const res = await client.call(
+        messages.Operation.Start({
+          id,
+          stagingFolder,
+          operation: "install",
+          installParams: {
+            game,
+            installFolder: absoluteInstallFolder,
+            credentials: buseGameCredentials(credentials),
+            upload: item.upload,
+            fresh: item.reason === "install",
+          },
+        })
+      );
+
+      logger.info(`butler says operation ended`);
+      logger.info(`final install result:\n${JSON.stringify(res, null, 2)}`);
+      const ires = res.installResult;
+
+      cave = {
+        ...caveLocation,
+        gameId: game.id,
+
+        installedAt: new Date(),
+        channelName: ires.upload.channelName,
+        build: ires.build,
+        upload: ires.upload,
+        // TODO: butler should let us know if it was handpicked in the result.
+        // We can't keep track of it ourselves, because performDownload() might
+        // be called many times for the same download
+        handPicked: false,
+      };
+
+      logger.info(`Committing game & cave to db`);
+      ctx.db.saveOne("games", game.id, game);
+      ctx.db.saveOne("caves", cave.id, cave);
+    } finally {
+      instance.cancel();
+    }
+  });
+  butlerExited = true;
+
+  await ctx.withStopper({
+    work: async () => {
+      await instance.promise();
+    },
+    stop: async () => {
+      logger.info(`Asked to stop, cancelling butler process`);
+      instance.cancel();
+    },
+  });
+
+  // TODO: move to buse
+  logger.info(`Configuring...`);
+  await configure(ctx, {
+    game,
+    cave,
+    logger,
+    runtime: currentRuntime(),
+  });
 
   return {
     archivePath: null,

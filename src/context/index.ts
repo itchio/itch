@@ -113,9 +113,14 @@ export class MinimalContext {
 
   on(ev: "abort", listener: IAbortListener);
   on(ev: "progress", listener: IProgressListener);
+  on(ev: string, listener: (data: any) => void);
 
   on(ev: string, listener: (data: any) => void) {
     this.emitter.on(ev, listener);
+  }
+
+  emit(ev: string, data: any) {
+    this.emitter.emit(ev, data);
   }
 
   emitProgress(progress: IProgressInfo) {

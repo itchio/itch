@@ -695,6 +695,11 @@ export interface IDiscardDownloadPayload {
   id: string;
 }
 
+export const DOWNLOAD_DISCARDED = "DOWNLOAD_DISCARDED";
+export interface IDownloadDiscardedPayload {
+  id: string;
+}
+
 export const DISCARD_DOWNLOAD_REQUEST = "DISCARD_DOWNLOAD_REQUEST";
 export interface IDiscardDownloadRequestPayload
   extends IDiscardDownloadPayload {}

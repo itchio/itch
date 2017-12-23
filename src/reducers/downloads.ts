@@ -126,7 +126,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
     return updateSingle(state, { id, order });
   });
 
-  on(actions.discardDownload, (state, action) => {
+  on(actions.downloadDiscarded, (state, action) => {
     const { id } = action.payload;
     const { items } = state;
 

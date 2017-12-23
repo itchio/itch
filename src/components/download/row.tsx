@@ -330,7 +330,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   progress() {
-    const { first, finished, item, status } = this.props;
+    const { first, finished, item, status, downloadsPaused } = this.props;
     const { err, game, finishedAt, reason } = item;
     const { operation } = status;
 
@@ -367,15 +367,16 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     const { progress = 0, bps, eta } = status.operation;
 
     const progressInnerStyle: React.CSSProperties = {};
-    if (progress > 0) {
-      progressInnerStyle.width = `${progress * 100}%`;
-    } else {
-      progressInnerStyle.width = `${100 / 3}%`;
-    }
-
     const positiveProgress = progress > 0;
     const hasNonDownloadTask =
       operation && operation.type !== OperationType.Download;
+    const indeterminate =
+      (first || hasNonDownloadTask) && !downloadsPaused && !positiveProgress;
+    if (indeterminate) {
+      progressInnerStyle.width = `${100 / 3}%`;
+    } else {
+      progressInnerStyle.width = `${progress * 100}%`;
+    }
 
     return (
       <div className="stats-inner">
@@ -383,7 +384,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
         <div className="progress">
           <div
             className={classNames("progress-inner", {
-              indeterminate: (first || hasNonDownloadTask) && !positiveProgress,
+              indeterminate,
             })}
             style={progressInnerStyle}
           />
@@ -476,6 +477,7 @@ export default connect<IProps>(injectIntl(HoverDownloadRow), {
 
     return {
       speeds: rs.downloads.speeds,
+      downloadsPaused: rs.downloads.paused,
       tasksByGameId: rs.tasks.tasksByGameId,
       status: getGameStatus(rs, game),
     };

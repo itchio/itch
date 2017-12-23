@@ -28,6 +28,8 @@ import {
   IRetryDownloadPayload,
   DOWNLOAD_SPEED_DATAPOINT,
   IDownloadSpeedDatapointPayload,
+  IDownloadDiscardedPayload,
+  DOWNLOAD_DISCARDED,
 } from "../constants/action-types";
 
 export const queueDownload = createAction<IQueueDownloadPayload>(
@@ -67,6 +69,9 @@ export const discardDownloadRequest = createAction<
 >(DISCARD_DOWNLOAD_REQUEST);
 export const discardDownload = createAction<IDiscardDownloadPayload>(
   DISCARD_DOWNLOAD
+);
+export const downloadDiscarded = createAction<IDownloadDiscardedPayload>(
+  DOWNLOAD_DISCARDED
 );
 export const pauseDownloads = createAction<IPauseDownloadsPayload>(
   PAUSE_DOWNLOADS

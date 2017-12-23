@@ -16,13 +16,15 @@ import { IStore, IDownloadItem, IDownloadResult } from "../../types";
 import { IProgressInfo, isCancelled } from "../../types";
 
 import { DB } from "../../db";
-import watcherState from "./download-watcher-persistent-state";
-import { wipeDownloadFolder } from "./wipe-download-folder";
+import watcherState, {
+  IDownloadHandle,
+} from "./download-watcher-persistent-state";
+import { wipeDownloadFolder, wipeInstallFolder } from "./wipe-download-folder";
 
 async function updateDownloadState(store: IStore, db: DB) {
   const downloadsState = store.getState().downloads;
   if (downloadsState.paused) {
-    if (watcherState.currentDownload) {
+    if (watcherState.current) {
       cancelCurrent();
     }
     await setProgress(store, -1);
@@ -33,8 +35,8 @@ async function updateDownloadState(store: IStore, db: DB) {
   if (activeDownload) {
     await setProgress(store, activeDownload.progress || 0);
     if (
-      !watcherState.currentDownload ||
-      watcherState.currentDownload.id !== activeDownload.id
+      !watcherState.current ||
+      watcherState.current.item.id !== activeDownload.id
     ) {
       logger.info(`${activeDownload.id} is the new active download`);
       start(store, db, activeDownload);
@@ -43,7 +45,7 @@ async function updateDownloadState(store: IStore, db: DB) {
     }
   } else {
     await setProgress(store, -1);
-    if (watcherState.currentDownload) {
+    if (watcherState.current) {
       logger.info("Cancelling/clearing out last download");
       cancelCurrent();
     } else {
@@ -63,28 +65,35 @@ async function setProgress(store: IStore, alpha: number) {
 }
 
 function cancelCurrent() {
-  if (!watcherState.currentContext) {
+  const handle = watcherState.current;
+
+  if (!handle) {
     return;
   }
 
-  watcherState.currentContext.tryAbort().catch(e => {
-    logger.warn(`Could not cancel current download: ${e.stack}`);
-  });
-  watcherState.currentContext = null;
-  watcherState.currentDownload = null;
+  if (handle.ctx) {
+    handle.ctx.emit("graceful-cancel", {});
+  }
+
+  watcherState.current = null;
 }
 
 async function start(store: IStore, db: DB, item: IDownloadItem) {
   cancelCurrent();
-  watcherState.currentDownload = item;
-  watcherState.currentContext = new Context(store, db);
+  const ctx = new Context(store, db);
+  const handle: IDownloadHandle = {
+    item,
+    ctx,
+  };
+  watcherState.current = handle;
+  watcherState.handles[item.id] = handle;
 
   let error: Error;
   let interrupted = false;
   let result: IDownloadResult;
 
   try {
-    watcherState.currentContext.on(
+    ctx.on(
       "progress",
       throttle((ev: IProgressInfo) => {
         if (interrupted) {
@@ -95,21 +104,19 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
     );
 
     logger.info(`Download for ${item.game.title} started`);
-    result = await performDownload(watcherState.currentContext, item);
+    result = await performDownload(ctx, item);
   } catch (e) {
     error = e;
   } finally {
+    delete watcherState.handles[item.id];
+
     if (isCancelled(error)) {
       // no error to handle, but don't trigger downloadEnded either
       interrupted = true;
 
       if (watcherState.discarded[item.id]) {
-        logger.info(`Download for ${item.game.title} discarded`);
-        await wipeDownloadFolder({
-          logger,
-          preferences: store.getState().preferences,
-          item,
-        });
+        delete watcherState.discarded[item.id];
+        await cleanupDiscarded(store, db, item);
       } else {
         logger.info(`Download for ${item.game.title} paused/deprioritized`);
       }
@@ -120,7 +127,8 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
       }
       const err = error ? error.message || "" + error : null;
 
-      const freshItem = store.getState().downloads.items[item.id];
+      let storeItem = store.getState().downloads.items[item.id];
+      let freshItem = storeItem ? storeItem : item;
       store.dispatch(
         actions.downloadEnded({
           id: freshItem.id,
@@ -144,6 +152,38 @@ export default function(watcher: Watcher, db: DB) {
 
   watcher.on(actions.discardDownload, async (store, action) => {
     const { id } = action.payload;
-    watcherState.discarded[id] = true;
+
+    const item = store.getState().downloads.items[id];
+    if (!item) {
+      logger.warn(`Trying to discard unknown donwload ${id}, doing nothing`);
+      return;
+    }
+
+    if (watcherState.handles[id]) {
+      logger.info(`Has handle, marking ${id} as discarded`);
+      watcherState.discarded[id] = true;
+    } else {
+      logger.info(`No handle for ${id}, cleaning up right now`);
+      await cleanupDiscarded(store, db, item);
+    }
+    store.dispatch(actions.downloadDiscarded({ id }));
   });
+}
+
+async function cleanupDiscarded(store: IStore, db: DB, item: IDownloadItem) {
+  logger.info(
+    `Download for ${item.game.title} discarded, wiping staging folder`
+  );
+  let folderOpts = {
+    logger,
+    preferences: store.getState().preferences,
+    item,
+    caveIn: item.caveId ? db.caves.findOneById(item.caveId) : null,
+  };
+  await wipeDownloadFolder(folderOpts);
+
+  if (item.reason === "install") {
+    logger.info(`Was fresh install, wiping install folder too`);
+    await wipeInstallFolder(folderOpts);
+  }
 }
