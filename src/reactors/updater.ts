@@ -19,6 +19,8 @@ const logger = makeLogger({ logPath: paths.updaterLogPath() }).child({
 
 import { findWhere, filter } from "underscore";
 
+const SKIP_GAME_UPDATES = process.env.ITCH_SKIP_GAME_UPDATES === "1";
+
 const DELAY_BETWEEN_GAMES = 25;
 
 // 30 minutes * 60 = seconds, * 1000 = millis
@@ -307,8 +309,14 @@ export default function(watcher: Watcher, db: DB) {
       })
     );
 
-    logger.info("Regularly scheduled check for game updates...");
-    store.dispatch(actions.checkForGameUpdates({}));
+    if (SKIP_GAME_UPDATES) {
+      logger.debug(
+        "Skipping game update check as requested per environment variable"
+      );
+    } else {
+      logger.info("Regularly scheduled check for game updates...");
+      store.dispatch(actions.checkForGameUpdates({}));
+    }
   });
 
   watcher.on(actions.checkForGameUpdates, async (store, action) => {
