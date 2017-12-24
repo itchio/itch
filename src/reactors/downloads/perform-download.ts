@@ -5,7 +5,12 @@ import rootLogger from "../../logger";
 
 import getGameCredentials from "./get-game-credentials";
 
-import { IDownloadItem, IDownloadResult, currentRuntime } from "../../types";
+import {
+  IDownloadItem,
+  IDownloadResult,
+  currentRuntime,
+  Cancelled,
+} from "../../types";
 import Context from "../../context";
 import { Instance, messages } from "node-buse";
 import { ICave } from "../../db/models/cave";
@@ -58,6 +63,7 @@ export default async function performDownload(
 
   let cave: ICave;
   let butlerExited = false;
+  let cancelled = false;
 
   const instance = new Instance();
   instance.onClient(async client => {
@@ -126,8 +132,14 @@ export default async function performDownload(
 
       ctx.on("graceful-cancel", () => {
         (async () => {
+          logger.warn(`Received graceful-cancel`);
+          cancelled = true;
+
           if (butlerExited) {
             // nothing to do
+            logger.warn(
+              `Nothing to do for graceful-cancel, butler already exited`
+            );
             return;
           }
 
@@ -193,10 +205,10 @@ export default async function performDownload(
       ctx.db.saveOne("games", game.id, game);
       ctx.db.saveOne("caves", cave.id, cave);
     } finally {
+      butlerExited = true;
       instance.cancel();
     }
   });
-  butlerExited = true;
 
   await ctx.withStopper({
     work: async () => {
@@ -204,9 +216,14 @@ export default async function performDownload(
     },
     stop: async () => {
       logger.info(`Asked to stop, cancelling butler process`);
+      cancelled = true;
       instance.cancel();
     },
   });
+
+  if (cancelled) {
+    throw new Cancelled();
+  }
 
   // TODO: move to buse
   logger.info(`Configuring...`);

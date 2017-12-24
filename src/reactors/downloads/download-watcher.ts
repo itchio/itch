@@ -72,6 +72,7 @@ function cancelCurrent() {
   }
 
   if (handle.ctx) {
+    logger.info(`Emitting graceful-cancel!`);
     handle.ctx.emit("graceful-cancel", {});
   }
 
