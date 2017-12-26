@@ -408,5 +408,10 @@
     "prereq.status.installing": "Instalando... (esto podría tardar unos minutos)",
     "prereq.status.done": "¡Hecho!",
     "notification.download_healed": "¡{{title}} verificado y reparado!",
-    "collection.summary": "Una colección de  {{itemCount}} objetos"
+    "collection.summary": "Una colección de  {{itemCount}} objetos",
+    "download.outcome.updated": "actualizado a la última versión",
+    "download.outcome.reinstalled": "reinstalado",
+    "download.outcome.healed": "verificado y arreglado",
+    "game.install.could_not_launch.message": "El mensaje obtenido fué: {{errorMessage}}",
+    "game.install.libraries_missing": "Algunas librerías {{arch}} requeridas no se han encontrado: {{libraries}}"
 }
