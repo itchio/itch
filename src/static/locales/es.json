@@ -421,5 +421,6 @@
     "grid.item.uninstall_request": "Desinstalar o reinstalar...",
     "grid.item.status.installed": "Instalado",
     "table.column.installed_size": "Tamaño",
-    "login.action.retry_setup": "Reintentar instalación"
+    "login.action.retry_setup": "Reintentar instalación",
+    "login.two_factor.learn_more": "Leer sobre la autentificación en dos pasos"
 }
