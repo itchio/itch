@@ -420,5 +420,6 @@
     "grid.item.open_file_location.linux": "Mostar en administrador de archivos",
     "grid.item.uninstall_request": "Desinstalar o reinstalar...",
     "grid.item.status.installed": "Instalado",
-    "table.column.installed_size": "Tamaño"
+    "table.column.installed_size": "Tamaño",
+    "login.action.retry_setup": "Reintentar instalación"
 }
