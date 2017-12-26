@@ -178,7 +178,7 @@
     "moment.now": "ahora",
     "new_tab.community": "Comunidad",
     "new_tab.on_sale": "En oferta",
-    "new_tab.random": "Ver algo aleatorio",
+    "new_tab.random": "Juego aleatorio",
     "new_tab.titles.browser_placeholder": "Ingresa cualquier dirección web",
     "new_tab.titles.input": "...o",
     "new_tab.top_sellers": "Los más vendidos",
@@ -429,5 +429,6 @@
     "prompt.clear_browsing_data.cache_size_used": "La caché ocupa {{size}} en disco.",
     "prompt.clear_browsing_data.cookies_info": "Esto te desconectará de todas las webs en las que has entrado desde la app de itch.",
     "prompt.clear_browsing_data.notification": "¡Datos de navegación borrados!",
-    "prompt.uninstall_error.title": "Error desinstalando"
+    "prompt.uninstall_error.title": "Error desinstalando",
+    "prompt.uninstall_error.action_permissions": "Borrar como administrador"
 }
