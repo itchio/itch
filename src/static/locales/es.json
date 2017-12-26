@@ -422,5 +422,8 @@
     "grid.item.status.installed": "Instalado",
     "table.column.installed_size": "Tamaño",
     "login.action.retry_setup": "Reintentar instalación",
-    "login.two_factor.learn_more": "Leer sobre la autentificación en dos pasos"
+    "login.two_factor.learn_more": "Leer sobre la autentificación en dos pasos",
+    "preferences.behavior.prevent_display_sleep": "Impedir que la pantalla se apague mientras juegas",
+    "preferences.advanced.clear_browsing_data": "Borrar datos de navegación",
+    "prompt.clear_browsing_data.clear": "Borrar datos"
 }
