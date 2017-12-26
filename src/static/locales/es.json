@@ -413,5 +413,6 @@
     "download.outcome.reinstalled": "reinstalado",
     "download.outcome.healed": "verificado y arreglado",
     "game.install.could_not_launch.message": "El mensaje obtenido fué: {{errorMessage}}",
-    "game.install.libraries_missing": "Algunas librerías {{arch}} requeridas no se han encontrado: {{libraries}}"
+    "game.install.libraries_missing": "Algunas librerías {{arch}} requeridas no se han encontrado: {{libraries}}",
+    "grid.filters.options.owned": "Adquirido"
 }
