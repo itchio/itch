@@ -414,5 +414,11 @@
     "download.outcome.healed": "verificado y arreglado",
     "game.install.could_not_launch.message": "El mensaje obtenido fué: {{errorMessage}}",
     "game.install.libraries_missing": "Algunas librerías {{arch}} requeridas no se han encontrado: {{libraries}}",
-    "grid.filters.options.owned": "Adquirido"
+    "grid.filters.options.owned": "Adquirido",
+    "grid.item.not_compatible": "No disponible en esta plataforma",
+    "grid.item.revert_to_version": "Cambiar a otra versión...",
+    "grid.item.open_file_location.linux": "Mostar en administrador de archivos",
+    "grid.item.uninstall_request": "Desinstalar o reinstalar...",
+    "grid.item.status.installed": "Instalado",
+    "table.column.installed_size": "Tamaño"
 }
