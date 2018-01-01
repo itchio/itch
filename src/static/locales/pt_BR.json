@@ -377,5 +377,6 @@
     "grid.item.status.installed": "Instalado",
     "table.column.play_time": "Tempo de jogo",
     "table.column.published": "Publicado",
-    "collection_grid.item.updated_at": "Ultima atualização há {{time_ago}}"
+    "collection_grid.item.updated_at": "Ultima atualização há {{time_ago}}",
+    "download.ongoing.revert": "Alternando {{title}} para outra versão…"
 }
