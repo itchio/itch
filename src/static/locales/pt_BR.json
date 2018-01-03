@@ -382,5 +382,6 @@
     "sandbox.setup.linux.detail": "Após clicar em 'Prosseguir', uma janela aparecerá pedindo sua senha. Isto é apenas necessário quando o sandbox é acessado pela primeira vez ou atualizado, e sua senha nunca será lembrada.",
     "preferences.install_location.navigate": "Visualizar o conteúdo deste local de instalação em nova aba",
     "preferences.behavior.open_at_login": "Abrir o itch quando meu computador iniciar",
-    "preferences.behavior.open_as_hidden": "Abrir o itch como oculto ao iniciar"
+    "preferences.behavior.open_as_hidden": "Abrir o itch como oculto ao iniciar",
+    "preferences.behavior.open_at_login.error": "Não foi possível aplicar as configurações de inicialização automática: {{cause}}"
 }
