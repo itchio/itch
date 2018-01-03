@@ -65,37 +65,12 @@ export function downloadBasePath(
   return join(location.path, "downloads");
 }
 
-export function downloadFolderPath(
-  upload: Upload,
-  preferences: IPreferencesState
-): string {
-  let slug = `${upload.id}`;
-  if (upload.buildId) {
-    slug = `${slug}-${upload.buildId}`;
-  }
-
-  return join(
-    downloadBasePath(preferences.defaultInstallLocation, preferences),
-    slug
-  );
-}
-
 export function downloadFolderPathForId(
-  id: string,
-  preferences: IPreferencesState
+  preferences: IPreferencesState,
+  installLocation: string,
+  id: string
 ): string {
-  return join(
-    downloadBasePath(preferences.defaultInstallLocation, preferences),
-    id
-  );
-}
-
-export function downloadPath(upload: Upload, preferences: IPreferencesState) {
-  if (typeof upload.filename !== "string") {
-    throw new Error(`Cannot download upload without filename`);
-  }
-
-  return join(downloadFolderPath(upload, preferences), upload.filename);
+  return join(downloadBasePath(installLocation, preferences), id);
 }
 
 export function globalDbPath(): string {

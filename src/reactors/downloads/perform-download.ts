@@ -23,7 +23,7 @@ import makeUploadButton from "../make-upload-button";
 
 import { map } from "underscore";
 import { MODAL_RESPONSE } from "../../constants/action-types";
-import { buseGameCredentials } from "../../util/buse-utils";
+import { buseGameCredentials, setupClient } from "../../util/buse-utils";
 import { computeCaveLocation } from "./compute-cave-location";
 
 export default async function performDownload(
@@ -44,12 +44,6 @@ export default async function performDownload(
   const { game } = item;
   const { preferences } = ctx.store.getState();
 
-  const stagingFolder = paths.downloadFolderPathForId(item.id, preferences);
-
-  if (await sf.exists(stagingFolder)) {
-    logger.info(`Resuming!`);
-  }
-
   const credentials = await getGameCredentials(ctx, item.game);
   if (!credentials) {
     throw new Error(`no game credentials, can't download`);
@@ -61,6 +55,15 @@ export default async function performDownload(
     caveIn
   );
 
+  const stagingFolder = paths.downloadFolderPathForId(
+    preferences,
+    caveLocation.installLocation,
+    item.id
+  );
+  if (await sf.exists(stagingFolder)) {
+    logger.info(`Resuming!`);
+  }
+
   let cave: ICave;
   let butlerExited = false;
   let cancelled = false;
@@ -68,39 +71,7 @@ export default async function performDownload(
   const instance = new Instance();
   instance.onClient(async client => {
     try {
-      client.onNotification(messages.Operation.Progress, ({ params }) => {
-        ctx.emitProgress(params);
-      });
-
-      client.onNotification(messages.Log, ({ params }) => {
-        switch (params.level) {
-          case "debug":
-            logger.debug(`[butler] ${params.message}`);
-            break;
-          case "info":
-            logger.info(`[butler] ${params.message}`);
-            break;
-          case "warn":
-            logger.warn(`[butler] ${params.message}`);
-            break;
-          case "error":
-            logger.error(`[butler] ${params.message}`);
-            break;
-          default:
-            logger.info(`[butler ${params.level}] ${params.message}`);
-            break;
-        }
-      });
-
-      client.onNotification(messages.TaskStarted, ({ params }) => {
-        logger.info(
-          `butler says task ${params.type} started (for ${params.reason})`
-        );
-      });
-
-      client.onNotification(messages.TaskEnded, ({ params }) => {
-        logger.info(`butler says task ended`);
-      });
+      setupClient(client, logger, ctx);
 
       client.onRequest(messages.PickUpload, async ({ params }) => {
         const { uploads } = params;

@@ -15,11 +15,14 @@ interface IWipeFolderOpts {
 }
 
 export async function wipeDownloadFolder(opts: IWipeFolderOpts) {
-  const { item, preferences } = opts;
+  const { item, preferences, caveIn } = opts;
+
+  const { caveLocation } = computeCaveLocation(item, preferences, caveIn);
 
   const downloadFolderPath = paths.downloadFolderPathForId(
-    item.id,
-    preferences
+    preferences,
+    caveLocation.installLocation,
+    item.id
   );
 
   return await wipeFolder(opts, "download", downloadFolderPath);

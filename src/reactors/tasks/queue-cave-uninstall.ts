@@ -17,7 +17,6 @@ import { MODAL_RESPONSE } from "../../constants/action-types";
 import { promisedModal } from "../modals";
 
 import asTask from "./as-task";
-import lazyGetGame from "../lazy-get-game";
 import { ICave } from "../../db/models/cave";
 import { Upload } from "ts-itchio-api";
 
@@ -26,21 +25,11 @@ export async function queueUninstall(
   logger: Logger,
   { cave, destPath, upload }: { cave: ICave; destPath: string; upload: Upload }
 ) {
-  const runtime = currentRuntime();
-
-  const game = await lazyGetGame(ctx, cave.gameId);
-  if (!game) {
-    throw new Error("Couldn't find game to operate on");
-  }
-
   await coreUninstall({
     ctx,
-    runtime,
     logger,
     destPath,
-    game,
     cave,
-    upload,
   });
 
   logger.info(`Uninstall successful`);
