@@ -379,5 +379,6 @@
     "table.column.published": "Publicado",
     "collection_grid.item.updated_at": "Ultima atualização há {{time_ago}}",
     "download.ongoing.revert": "Alternando {{title}} para outra versão…",
-    "sandbox.setup.linux.detail": "Após clicar em 'Prosseguir', uma janela aparecerá pedindo sua senha. Isto é apenas necessário quando o sandbox é acessado pela primeira vez ou atualizado, e sua senha nunca será lembrada."
+    "sandbox.setup.linux.detail": "Após clicar em 'Prosseguir', uma janela aparecerá pedindo sua senha. Isto é apenas necessário quando o sandbox é acessado pela primeira vez ou atualizado, e sua senha nunca será lembrada.",
+    "preferences.install_location.navigate": "Visualizar o conteúdo deste local de instalação em nova aba"
 }
