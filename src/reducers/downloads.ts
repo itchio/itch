@@ -90,7 +90,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
   });
 
   on(actions.downloadEnded, (state, action) => {
-    const { id, finishedAt, err } = action.payload;
+    const { id, finishedAt, err, errStack } = action.payload;
     return updateSingle(state, {
       id,
       finished: true,
@@ -99,6 +99,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
       eta: 0,
       bps: 0,
       err,
+      errStack,
     });
   });
 
@@ -139,13 +140,6 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
     return {
       ...state,
       items: omit(state.items, id),
-    };
-  });
-
-  on(actions.clearFinishedDownloads, (state, action) => {
-    return {
-      ...state,
-      items: index(getPendingDownloads(state)),
     };
   });
 

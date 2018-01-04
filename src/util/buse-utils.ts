@@ -15,43 +15,44 @@ export function buseGameCredentials(
   };
 }
 
-export function setupClient(client: Client, logger: Logger, ctx: Context) {
+export function setupClient(
+  client: Client,
+  parentLogger: Logger,
+  ctx: Context
+) {
   client.onNotification(messages.Operation.Progress, ({ params }) => {
     ctx.emitProgress(params);
   });
 
+  const logger = parentLogger.child({ name: "butler" });
+
   client.onNotification(messages.Log, ({ params }) => {
     switch (params.level) {
       case "debug":
-        logger.debug(`[butler] ${params.message}`);
+        logger.debug(params.message);
         break;
       case "info":
-        logger.info(`[butler] ${params.message}`);
+        logger.info(params.message);
         break;
-      case "warn":
-        logger.warn(`[butler] ${params.message}`);
+      case "warning":
+        logger.warn(params.message);
         break;
       case "error":
-        logger.error(`[butler] ${params.message}`);
+        logger.error(params.message);
         break;
       default:
-        logger.info(`[butler ${params.level}] ${params.message}`);
+        logger.info(`[${params.level}] ${params.message}`);
         break;
     }
   });
 
   client.onNotification(messages.TaskStarted, ({ params }) => {
-    logger.info(
-      `butler says task ${params.type} started (for ${params.reason})`
+    parentLogger.info(
+      `butler task started: ${params.type} (for ${params.reason})`
     );
-    ctx.emitProgress({
-      progress: 0,
-      bps: 0,
-      eta: 0,
-    });
   });
 
   client.onNotification(messages.TaskEnded, ({ params }) => {
-    logger.info(`butler says task ended`);
+    parentLogger.info(`butler task ended`);
   });
 }

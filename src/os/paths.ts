@@ -7,7 +7,6 @@ import * as urlParser from "url";
 import { IPreferencesState } from "../types";
 import { ICaveLocation } from "../db/models/cave";
 import { makeLogger, Logger } from "../logger";
-import { Upload } from "ts-itchio-api";
 
 const APPDATA_RE = /^appdata\/(.*)$/;
 

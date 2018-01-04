@@ -803,6 +803,9 @@ export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
 
   /** an error that may have occured while downloading */
   err?: string;
+
+  /** stack trace of an error that may have occured while downloading */
+  errStack?: string;
 }
 
 export type DownloadSpeedDataPoint = number;

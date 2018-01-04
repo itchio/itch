@@ -9,7 +9,7 @@ import { BrowserWindow } from "electron";
 
 import performDownload from "./perform-download";
 
-import { getActiveDownload } from "./getters";
+import { getActiveDownload, getFinishedDownloads } from "./getters";
 
 import Context from "../../context";
 import { IStore, IDownloadItem, IDownloadResult } from "../../types";
@@ -127,6 +127,7 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
         logger.error(`Download for ${item.game.title} threw: ${error.stack}`);
       }
       const err = error ? error.message || "" + error : null;
+      const errStack = error ? error.stack : null;
 
       let storeItem = store.getState().downloads.items[item.id];
       let freshItem = storeItem ? storeItem : item;
@@ -135,6 +136,7 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
           id: freshItem.id,
           item: freshItem,
           err,
+          errStack,
           result,
         })
       );
@@ -156,7 +158,7 @@ export default function(watcher: Watcher, db: DB) {
 
     const item = store.getState().downloads.items[id];
     if (!item) {
-      logger.warn(`Trying to discard unknown donwload ${id}, doing nothing`);
+      logger.warn(`Trying to discard unknown download ${id}, doing nothing`);
       return;
     }
 
@@ -168,6 +170,21 @@ export default function(watcher: Watcher, db: DB) {
       await cleanupDiscarded(store, db, item);
     }
     store.dispatch(actions.downloadDiscarded({ id }));
+  });
+
+  watcher.on(actions.clearFinishedDownloads, async (store, action) => {
+    const { downloads } = store.getState();
+    const finishedDownloads = getFinishedDownloads(downloads);
+
+    // clear all downloads individually, so we have a chance to react to `discardDownload`
+    // and gracefully cancel butler / clean up download and install directory
+    for (const fd of finishedDownloads) {
+      store.dispatch(
+        actions.discardDownload({
+          id: fd.id,
+        })
+      );
+    }
   });
 }
 

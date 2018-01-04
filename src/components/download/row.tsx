@@ -9,6 +9,7 @@ import * as actions from "../../actions";
 
 import TimeAgo from "../basics/time-ago";
 import IconButton from "../basics/icon-button";
+import Button from "../basics/button";
 import Hover, { IHoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
 import MainAction from "../game-actions/main-action";
@@ -220,7 +221,11 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     let onStatsClick = (ev: React.MouseEvent<any>): void => null;
     if (finished) {
-      onStatsClick = this.onNavigate;
+      if (item.err) {
+        onStatsClick = this.onShowError;
+      } else {
+        onStatsClick = this.onNavigate;
+      }
     }
 
     const itemClasses = classNames("download-row-item", {
@@ -266,11 +271,6 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     this.props.prioritizeDownload({ id });
   };
 
-  onRetry = () => {
-    const { id } = this.props.item;
-    this.props.retryDownload({ id });
-  };
-
   onResume = () => {
     this.props.resumeDownloads({});
   };
@@ -279,16 +279,19 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     this.props.pauseDownloads({});
   };
 
+  onShowError = (ev: React.MouseEvent<any>) => {
+    ev.stopPropagation();
+
+    const { id } = this.props.item;
+    this.props.showDownloadError({ id });
+  };
+
   controls() {
     const { intl, first, item, status } = this.props;
     const { err } = item;
 
     if (!status.operation && err) {
-      return (
-        <div className="controls small">
-          <IconButton icon="repeat" onClick={this.onRetry} />
-        </div>
-      );
+      return null;
     }
 
     if (!status.operation) {
@@ -337,11 +340,21 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     if (finished && !operation) {
       if (err) {
         return (
-          <div className="error-message">
-            {format(["status.downloads.download_error"])}
-            <div className="timeago" data-rh-at="top" data-rh={err}>
-              {truncate(err, { length: 60 })}
+          <div className="stats--control">
+            <div className="control--title">
+              {game.title}
+              <span className="control--reason">
+                {" — "}
+                {format(["prompt.install_error.message"])}
+              </span>
             </div>
+            <Button
+              icon="error"
+              primary
+              discreet
+              label={format(["grid.item.view_details"])}
+              onClick={this.onShowError}
+            />
           </div>
         );
       }
@@ -459,9 +472,9 @@ interface IDerivedProps {
 
   navigateToGame: typeof actions.navigateToGame;
   prioritizeDownload: typeof actions.prioritizeDownload;
+  showDownloadError: typeof actions.showDownloadError;
   pauseDownloads: typeof actions.pauseDownloads;
   resumeDownloads: typeof actions.resumeDownloads;
-  retryDownload: typeof actions.retryDownload;
   discardDownloadRequest: typeof actions.discardDownloadRequest;
   openGameContextMenu: typeof actions.openGameContextMenu;
   openModal: typeof actions.openModal;
@@ -485,6 +498,7 @@ export default connect<IProps>(injectIntl(HoverDownloadRow), {
   dispatch: dispatch => ({
     navigateToGame: dispatcher(dispatch, actions.navigateToGame),
     prioritizeDownload: dispatcher(dispatch, actions.prioritizeDownload),
+    showDownloadError: dispatcher(dispatch, actions.showDownloadError),
     pauseDownloads: dispatcher(dispatch, actions.pauseDownloads),
     resumeDownloads: dispatcher(dispatch, actions.resumeDownloads),
     retryDownload: dispatcher(dispatch, actions.retryDownload),

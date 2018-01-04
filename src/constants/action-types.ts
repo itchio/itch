@@ -668,6 +668,9 @@ export interface IDownloadEndedPayload {
   /** an error, if any */
   err: string;
 
+  /** an error stack, if any */
+  errStack: string;
+
   /** stuff like: where the file was downloaded. */
   result: Types.IDownloadResult;
 
@@ -687,6 +690,12 @@ export interface IClearFinishedDownloadsPayload {}
 export const PRIORITIZE_DOWNLOAD = "PRIORITIZE_DOWNLOAD";
 export interface IPrioritizeDownloadPayload {
   /** the download to prioritize */
+  id: string;
+}
+
+export const SHOW_DOWNLOAD_ERROR = "SHOW_DOWNLOAD_ERROR";
+export interface IShowDownloadErrorPayload {
+  /** the download for which we want to show an error dialog */
   id: string;
 }
 

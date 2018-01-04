@@ -1,7 +1,7 @@
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import * as paths from "../../os/paths";
+import rootLogger from "../../logger";
 
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
@@ -13,7 +13,7 @@ export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.healCave, async (store, action) => {
     const { caveId } = action.payload;
     const opts = {
-      logger: paths.caveLogger(caveId),
+      logger: rootLogger,
     };
 
     try {

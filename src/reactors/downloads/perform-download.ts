@@ -30,13 +30,9 @@ export default async function performDownload(
   ctx: Context,
   item: IDownloadItem
 ): Promise<IDownloadResult> {
-  // TODO: we want to store download/install logs even if the cave never ends
-  // up being valid, for bug reporting purposes.
-
   let parentLogger = rootLogger;
   let caveIn: ICave;
   if (item.caveId) {
-    parentLogger = paths.caveLogger(item.caveId);
     caveIn = ctx.db.caves.findOneById(item.caveId);
   }
   const logger = parentLogger.child({ name: `download` });
