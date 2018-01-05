@@ -430,5 +430,6 @@
     "prompt.clear_browsing_data.cookies_info": "Esto te desconectará de todas las webs en las que has entrado desde la app de itch.",
     "prompt.clear_browsing_data.notification": "¡Datos de navegación borrados!",
     "prompt.uninstall_error.title": "Error desinstalando",
-    "prompt.uninstall_error.action_permissions": "Borrar como administrador"
+    "prompt.uninstall_error.action_permissions": "Borrar como administrador",
+    "grid.item.discard_download": "Detener descarga"
 }
