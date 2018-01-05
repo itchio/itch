@@ -7,6 +7,7 @@ import lazyGetGame from "../lazy-get-game";
 
 import Context from "../../context";
 import { DB } from "../../db";
+import { fromJSONField } from "../../db/json-field";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
@@ -32,23 +33,7 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    const uploadResponse = await findUploads(ctx, {
-      game,
-      gameCredentials,
-    });
-    if (!uploadResponse) {
-      // couldn't find an upload
-      return;
-    }
-
-    // FIXME: what if there's several uploads to pick from (but not
-    // the original?)
-    // FIXME: what about trying to maintain the original?
-    const { uploads } = uploadResponse;
-    if (uploads.length < 1) {
-      return;
-    }
-    const upload = uploads[0];
+    const upload = fromJSONField(cave.upload, null);
 
     // FIXME: this is bad.
     const state = store.getState();
@@ -67,7 +52,6 @@ export default function(watcher: Watcher, db: DB) {
         game,
         caveId,
         upload,
-        totalSize: upload.size,
         reason: "reinstall",
       })
     );
