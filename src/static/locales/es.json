@@ -435,5 +435,7 @@
     "download.ongoing.update": "Actualizando {{title}}…",
     "download.ongoing.reinstall": "Re-instalando {{title}}...",
     "download.ongoing.revert": "Cambiando {{título}} a otra versión...",
-    "download.ongoing.heal": "Reparando {{title}}..."
+    "download.ongoing.heal": "Reparando {{title}}...",
+    "download.outcome.installed": "instalado",
+    "download.outcome.reverted": "cambiado a otra versión"
 }
