@@ -431,5 +431,5 @@
     "prompt.clear_browsing_data.notification": "¡Datos de navegación borrados!",
     "prompt.uninstall_error.title": "Error desinstalando",
     "prompt.uninstall_error.action_permissions": "Borrar como administrador",
-    "grid.item.discard_download": "Detener descarga"
+    "grid.item.discard_download": "Cancelar la descarga"
 }
