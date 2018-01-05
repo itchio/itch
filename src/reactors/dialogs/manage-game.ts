@@ -4,14 +4,40 @@ import { DB } from "../../db/db";
 import { Instance, messages } from "node-buse";
 import getGameCredentials from "../../reactors/downloads/get-game-credentials";
 import Context from "../../context/index";
-import { Upload } from "ts-itchio-api";
 import { buseGameCredentials } from "../../util/buse-utils";
+
+import rootLogger from "../../logger";
+import { IManageGameParams } from "../../components/modal-widgets/manage-game";
+const logger = rootLogger.child({ name: "manage-game" });
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.manageGame, async (store, action) => {
     const { game } = action.payload;
 
     const caves = db.caves.all(k => k.where("gameId = ?", game.id));
+
+    const widgetParams: IManageGameParams = {
+      game,
+      caves,
+      allUploads: [],
+      loadingUploads: true,
+    };
+
+    const openModal = actions.openModal({
+      title: ["prompt.manage_game.title", { title: game.title }],
+      message: "",
+      buttons: [
+        {
+          label: ["prompt.action.close"],
+          action: actions.closeModal({}),
+          className: "secondary",
+        },
+      ],
+      widget: "manage-game",
+      widgetParams,
+    });
+    store.dispatch(openModal);
+    const modalId = openModal.payload.id;
 
     const ctx = new Context(store, db);
 
@@ -20,38 +46,35 @@ export default function(watcher: Watcher, db: DB) {
       throw new Error(`no game credentials, can't download`);
     }
 
-    let allUploads: Upload[] = [];
-    const instance = new Instance();
-    instance.onClient(async client => {
-      try {
-        const res = await client.call(
-          messages.Game.FindUploads({
-            game,
-            credentials: buseGameCredentials(credentials),
-          })
-        );
-        allUploads = res.uploads;
-      } catch (e) {
-        console.log(`Could not fetch compatible uploads: ${e.stack}`);
-      } finally {
-        instance.cancel();
-      }
-    });
-    await instance.promise();
+    try {
+      const instance = new Instance();
+      instance.onClient(async client => {
+        try {
+          const res = await client.call(
+            messages.Game.FindUploads({
+              game,
+              credentials: buseGameCredentials(credentials),
+            })
+          );
+          widgetParams.allUploads = res.uploads;
+        } catch (e) {
+          console.log(`Could not fetch compatible uploads: ${e.stack}`);
+        } finally {
+          instance.cancel();
+        }
+      });
+      await instance.promise();
+    } catch (e) {
+      logger.warn(`could not list uploads: ${e.message}`);
+    } finally {
+      widgetParams.loadingUploads = false;
 
-    store.dispatch(
-      // TODO: i18n
-      actions.openModal({
-        title: `Manage ${game.title}`,
-        message: "",
-        buttons: [],
-        widget: "manage-game",
-        widgetParams: {
-          game,
-          caves,
-          allUploads,
-        },
-      })
-    );
+      store.dispatch(
+        actions.updateModalWidgetParams({
+          id: modalId,
+          widgetParams,
+        })
+      );
+    }
   });
 }

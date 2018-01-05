@@ -20,6 +20,13 @@ import PlatformIcons from "../basics/platform-icons";
 
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
+import format, { formatString } from "../format";
+import { injectIntl, InjectedIntl } from "react-intl";
+import LoadingCircle from "../basics/loading-circle";
+import { formatUploadTitle } from "../../format/upload";
+import { showInExplorerString } from "../../format/show-in-explorer";
+import TotalPlaytime from "../total-playtime";
+import LastPlayed from "../last-played";
 
 const CaveItemList = styled.div`margin: 8px 0;`;
 
@@ -33,10 +40,32 @@ const CaveItem = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
+
+const CaveDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const CaveDetailsRow = styled.div`
+  padding: 6px 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
   .platform-icons {
     margin-left: 8px;
   }
+
+  &.smaller {
+    font-size: 90%;
+  }
+`;
+
+const Spacer = styled.div`
+  height: 1px;
+  width: 8px;
 `;
 
 const CaveItemActions = styled.div`
@@ -57,8 +86,8 @@ const FileSize = styled.div`
 class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const params = this.props.modal.widgetParams as IManageGameParams;
-    const { game, caves, allUploads } = params;
-    const { gameStatuses } = this.props;
+    const { game, caves, allUploads, loadingUploads } = params;
+    const { gameStatuses, intl } = this.props;
 
     const installedUploadIds = {};
     for (const cave of caves) {
@@ -74,34 +103,47 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <ModalWidgetDiv>
-        <p>The following items are installed: </p>
+        <p>{format(["prompt.manage_game.installed_uploads"])}</p>
 
         <CaveItemList>
           {map(caves, (cave, i) => {
-            const status = gameStatuses[i];
             const u = cave.upload;
             return (
               <CaveItem>
-                <Title>{uploadTitle(u)}</Title>
-                {cave.installedSize ? (
-                  <FileSize>{fileSize(cave.installedSize)}</FileSize>
-                ) : null}
-                {u ? (
-                  <PlatformIcons className="platform-icons" target={u} />
-                ) : null}
-                <Filler />
-                <GameStats game={game} status={status} />
+                <CaveDetails>
+                  <CaveDetailsRow>
+                    <Title>{formatUploadTitle(u)}</Title>
+                  </CaveDetailsRow>
+                  <CaveDetailsRow className="smaller">
+                    {cave.installedSize ? (
+                      <FileSize>{fileSize(cave.installedSize)}</FileSize>
+                    ) : null}
+                    {u ? (
+                      <PlatformIcons className="platform-icons" target={u} />
+                    ) : null}
+                    <Spacer />
+                    <LastPlayed game={game} cave={cave} />
+                    <Spacer />
+                    <TotalPlaytime game={game} cave={cave} />
+                  </CaveDetailsRow>
+                </CaveDetails>
                 <Filler />
                 <CaveItemActions>
                   <IconButton
                     data-cave-id={cave.id}
-                    hint="Re-install"
+                    hint={formatString(intl, showInExplorerString())}
+                    icon="folder-open"
+                    onClick={this.onExplore}
+                  />
+                  <IconButton
+                    data-cave-id={cave.id}
+                    hint={formatString(intl, ["prompt.uninstall.reinstall"])}
                     icon="repeat"
                     onClick={this.onReinstall}
                   />
                   <IconButton
                     data-cave-id={cave.id}
-                    hint="Uninstall"
+                    hint={formatString(intl, ["prompt.uninstall.uninstall"])}
                     icon="uninstall"
                     onClick={this.onUninstall}
                   />
@@ -112,16 +154,32 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
         </CaveItemList>
 
         {uninstalledUploads.length > 0 ? (
-          <p>You can also install these: </p>
-        ) : null}
+          <p>{format(["prompt.manage_game.available_uploads"])}</p>
+        ) : (
+          <p>
+            {loadingUploads ? (
+              <LoadingCircle progress={0} />
+            ) : (
+              format(["prompt.manage_game.no_other_uploads"])
+            )}
+          </p>
+        )}
         {uninstalledUploads.length > 0 ? (
           <CaveItemList>
             {map(uninstalledUploads, u => {
               return (
                 <CaveItem>
-                  <Title>{uploadTitle(u)}</Title>
-                  {u.size > 0 ? <FileSize>{fileSize(u.size)}</FileSize> : null}
-                  <PlatformIcons className="platform-icons" target={u} />
+                  <CaveDetails>
+                    <CaveDetailsRow>
+                      <Title>{formatUploadTitle(u)}</Title>
+                    </CaveDetailsRow>
+                    <CaveDetailsRow className="smaller">
+                      {u.size > 0 ? (
+                        <FileSize>{fileSize(u.size)}</FileSize>
+                      ) : null}
+                      <PlatformIcons className="platform-icons" target={u} />
+                    </CaveDetailsRow>
+                  </CaveDetails>
                   <Filler />
                   <CaveItemActions>
                     <Button
@@ -131,7 +189,7 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
                       primary
                       onClick={this.onInstall}
                     >
-                      Install
+                      {format(["grid.item.install"])}
                     </Button>
                   </CaveItemActions>
                 </CaveItem>
@@ -166,13 +224,32 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
       action: actions.queueCaveReinstall({ caveId }),
     });
   };
+
+  onExplore = (ev: React.MouseEvent<HTMLElement>) => {
+    const caveId = ev.currentTarget.dataset.caveId;
+    this.props.exploreCave({ caveId });
+  };
 }
 
-function uploadTitle(u: Upload) {
-  return u ? u.displayName || u.filename : "?";
+export interface IManageGameParams {
+  game: Game;
+  caves: ICave[];
+  allUploads: Upload[];
+  loadingUploads: boolean;
 }
 
-export default connect<IProps>(ManageGame, {
+interface IProps extends IModalWidgetProps {}
+
+interface IDerivedProps {
+  gameStatuses: IGameStatus;
+
+  closeModal: typeof actions.closeModal;
+  exploreCave: typeof actions.exploreCave;
+
+  intl: InjectedIntl;
+}
+
+export default connect<IProps>(injectIntl(ManageGame), {
   state: createStructuredSelector({
     gameStatuses: (rs: IRootState, props: IProps) => {
       const params = props.modal.widgetParams as IManageGameParams;
@@ -182,19 +259,6 @@ export default connect<IProps>(ManageGame, {
   }),
   dispatch: dispatch => ({
     closeModal: dispatcher(dispatch, actions.closeModal),
+    exploreCave: dispatcher(dispatch, actions.exploreCave),
   }),
 });
-
-export interface IManageGameParams {
-  game: Game;
-  caves: ICave[];
-  allUploads: Upload[];
-}
-
-interface IProps extends IModalWidgetProps {}
-
-interface IDerivedProps {
-  gameStatuses: IGameStatus;
-
-  closeModal: typeof actions.closeModal;
-}

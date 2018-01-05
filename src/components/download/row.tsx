@@ -33,6 +33,7 @@ import {
   formatOutcome,
   formatOperation,
 } from "../../format/operation";
+import { formatUploadTitle } from "../../format/upload";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -77,6 +78,11 @@ const DownloadRowDiv = styled.div`
 
   .game-title {
     font-weight: bold;
+
+    .game-file-name {
+      display: inline;
+      font-weight: normal;
+    }
   }
 
   .cover,
@@ -157,6 +163,11 @@ const DownloadRowDiv = styled.div`
   .control--title {
     padding-bottom: 0.5em;
     font-weight: bold;
+  }
+
+  .control--filename {
+    display: inline;
+    font-weight: normal;
   }
 
   .control--reason {
@@ -334,7 +345,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   progress() {
     const { first, finished, item, status, downloadsPaused } = this.props;
-    const { err, game, finishedAt, reason } = item;
+    const { err, game, upload, finishedAt, reason } = item;
     const { operation } = status;
 
     if (finished && !operation) {
@@ -364,6 +375,9 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
         <div className="stats--control">
           <div className="control--title">
             {game.title}
+            <div className="control--filename">
+              {upload ? ` · ${formatUploadTitle(upload)}` : null}
+            </div>
             {outcomeText ? (
               <span className="control--reason">
                 {" — "}
@@ -393,7 +407,12 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <div className="stats-inner">
-        <div className="game-title">{game.title}</div>
+        <div className="game-title">
+          {game.title}
+          <div className="game-file-name">
+            {upload ? ` · ${formatUploadTitle(upload)}` : null}
+          </div>
+        </div>
         <div className="progress">
           <div
             className={classNames("progress-inner", {

@@ -13,11 +13,16 @@ import {
   IModalResponsePayload,
   MODAL_NO_RESPONSE,
   IModalNoResponsePayload,
+  IUpdateModalWidgetParamsPayload,
+  UPDATE_MODAL_WIDGET_PARAMS,
 } from "../constants/action-types";
 
 const internalOpenModal = createAction<IOpenModalPayload>(OPEN_MODAL);
 export const openModal = (payload = {} as IOpenModalPayload) =>
   internalOpenModal({ ...payload, id: uuid() });
+export const updateModalWidgetParams = createAction<
+  IUpdateModalWidgetParamsPayload
+>(UPDATE_MODAL_WIDGET_PARAMS);
 export const closeModal = createAction<ICloseModalPayload>(CLOSE_MODAL);
 export const modalClosed = createAction<IModalClosedPayload>(MODAL_CLOSED);
 export const modalResponse = createAction<IModalResponsePayload>(

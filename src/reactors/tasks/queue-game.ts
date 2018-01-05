@@ -38,11 +38,10 @@ export default function(watcher: Watcher, db: DB) {
         return;
       }
 
-      // TODO: i18n
       store.dispatch(
         actions.openModal({
-          title: `Launch ${game.title}`,
-          message: "What do you want to open/launch?",
+          title: ["prompt.launch.title", { title: game.title }],
+          message: ["prompt.launch.message"],
           bigButtons: map(caves, cave => {
             return {
               ...makeUploadButton(cave.upload),

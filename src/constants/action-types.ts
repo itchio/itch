@@ -59,6 +59,15 @@ export interface IOpenAppLogPayload {}
 export const OPEN_MODAL = "OPEN_MODAL";
 export interface IOpenModalPayload extends Types.IModal {}
 
+export const UPDATE_MODAL_WIDGET_PARAMS = "UPDATE_MODAL_WIDGET_PARAMS";
+export interface IUpdateModalWidgetParamsPayload {
+  /** the modal's unique identifier */
+  id: string;
+
+  /** the parameters for the widget being shown in the modal */
+  widgetParams: any;
+}
+
 /** close frontmost modal */
 export const CLOSE_MODAL = "CLOSE_MODAL";
 export interface ICloseModalPayload {
