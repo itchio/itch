@@ -128,7 +128,7 @@ args = ["--that", "--is", "--a", "lot=of-arguments"]
 
 The `os` field can be used to specify which operating system an action
 applies to. This allows you to create a single `.itch.toml` that can
-ship with both a Windowsand MacOS build, for example. Actions with
+ship with both a Windows and MacOS build, for example. Actions with
 `"windows"` set will not appear on MacOS, etc.
 
 An action without an `os` field will appear on all operating systems. If present,
