@@ -95,6 +95,14 @@ export default async function performDownload(
         }
       });
 
+      client.onRequest(messages.GetReceipt, async ({ params }) => {
+        // TODO: read legacy-format receipt from existing install folder
+        // plus DB info from cave
+        logger.warn(`buse sent getReceipt: stub!`);
+
+        return { receipt: null };
+      });
+
       const id = item.id;
 
       ctx.on("graceful-cancel", () => {
