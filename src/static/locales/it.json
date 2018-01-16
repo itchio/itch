@@ -365,5 +365,6 @@
     "pick_update_upload.single.message": "Puoi scegliere di aggiornare adesso o più avanti",
     "grid.item.revert_to_version": "Ripristina alla versione...",
     "grid.item.view_details": "Mostra i dettagli...",
-    "table.column.name": "Nome"
+    "table.column.name": "Nome",
+    "table.column.play_time": "Tempo di gioco"
 }
