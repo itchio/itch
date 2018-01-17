@@ -25,6 +25,7 @@ import { map } from "underscore";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 import { buseGameCredentials, setupClient } from "../../util/buse-utils";
 import { computeCaveLocation } from "./compute-cave-location";
+import { readReceipt } from "../../install-managers/common/receipt";
 
 export default async function performDownload(
   ctx: Context,
@@ -96,11 +97,40 @@ export default async function performDownload(
       });
 
       client.onRequest(messages.GetReceipt, async ({ params }) => {
-        // TODO: read legacy-format receipt from existing install folder
-        // plus DB info from cave
-        logger.warn(`buse sent getReceipt: stub!`);
+        logger.info(`butler asked for receipt info`);
 
-        return { receipt: null };
+        if (!caveIn) {
+          logger.info(`no existing cave, returning null receipt`);
+          return { receipt: null };
+        }
+
+        let files: string[] = [];
+        const legacyReceipt = await readReceipt({
+          ctx: ctx,
+          logger: logger,
+          destPath: absoluteInstallFolder,
+        });
+
+        if (
+          legacyReceipt &&
+          legacyReceipt.files &&
+          Array.isArray(legacyReceipt.files)
+        ) {
+          files = legacyReceipt.files;
+          logger.info(
+            `found legacy receipt! (${legacyReceipt.files.length} files)`
+          );
+        } else {
+          logger.info(`no legacy receipt`);
+        }
+
+        return {
+          receipt: {
+            files,
+            upload: caveIn.upload,
+            build: caveIn.build,
+          },
+        };
       });
 
       const id = item.id;
@@ -158,8 +188,8 @@ export default async function performDownload(
         })
       );
 
-      logger.info(`butler says operation ended`);
-      logger.info(`final install result:\n${JSON.stringify(res, null, 2)}`);
+      logger.debug(`butler says operation ended`);
+      logger.debug(`final install result:\n${JSON.stringify(res, null, 2)}`);
       const ires = res.installResult;
 
       cave = {
