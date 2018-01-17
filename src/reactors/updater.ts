@@ -28,13 +28,11 @@ const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;
 const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 
 import findUploads from "./downloads/find-uploads";
-import findUpgradePath from "./downloads/find-upgrade-path";
 
 import { ICave } from "../db/models/cave";
 import { fromDateTimeField } from "../db/datetime-field";
 import { fromJSONField } from "../db/json-field";
 
-import { fileSize } from "../format/filesize";
 import { Game } from "ts-itchio-api";
 
 interface IUpdateCheckResult {
@@ -168,32 +166,13 @@ async function _doCheckForGameUpdate(
           hasUpgrade = true;
 
           try {
-            const upgradePathResult = await findUpgradePath(ctx, {
-              currentBuildId: caveBuild.id,
-              game,
-              gameCredentials,
-              upload,
-            });
-            if (!upgradePathResult) {
-              throw new Error("no upgrade path found");
-            }
-            const { upgradePath, totalSize } = upgradePathResult;
-
-            logger.info(
-              `Got ${upgradePath.length} patches to download, ${fileSize(
-                totalSize
-              )} total`
-            );
-
             store.dispatch(
               actions.gameUpdateAvailable({
                 caveId: cave.id,
                 update: {
                   game,
-                  gameCredentials,
                   recentUploads: [upload],
                   incremental: true,
-                  upgradePath,
                 },
               })
             );
@@ -225,7 +204,6 @@ async function _doCheckForGameUpdate(
           caveId: cave.id,
           update: {
             game,
-            gameCredentials,
             recentUploads,
           },
         })
@@ -255,7 +233,6 @@ async function _doCheckForGameUpdate(
           caveId: cave.id,
           update: {
             game,
-            gameCredentials,
             recentUploads,
           },
         })

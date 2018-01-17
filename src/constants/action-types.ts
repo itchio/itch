@@ -849,9 +849,6 @@ export interface IQueueGameUpdatePayload {
 
   /** the upload that was picked */
   upload: Upload;
-
-  /** was the upload hand-picked? */
-  handPicked?: boolean;
 }
 
 export const NUKE_CAVE_PREREQS = "NUKE_CAVE_PREREQS";

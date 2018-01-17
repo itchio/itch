@@ -1,13 +1,11 @@
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import findUploads from "../downloads/find-uploads";
 import getGameCredentials from "../downloads/get-game-credentials";
 import lazyGetGame from "../lazy-get-game";
 
 import Context from "../../context";
 import { DB } from "../../db";
-import { fromJSONField } from "../../db/json-field";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {
@@ -33,9 +31,10 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    const upload = fromJSONField(cave.upload, null);
+    const { upload, build } = cave;
 
-    // FIXME: this is bad.
+    // FIXME: this is bad - ideally butler would ask for a lock
+    // on the game's folder, and itch would handle those.
     const state = store.getState();
     const tasksForGame = state.tasks.tasksByGameId[cave.gameId];
     if (tasksForGame && tasksForGame.length > 0) {
@@ -52,6 +51,7 @@ export default function(watcher: Watcher, db: DB) {
         game,
         caveId,
         upload,
+        build,
         reason: "reinstall",
       })
     );

@@ -243,9 +243,6 @@ export interface IGameUpdate {
   /** which game an update is available for */
   game: Game;
 
-  /** key we used to find uploads, and that should be used for downloads */
-  gameCredentials: IGameCredentials;
-
   /**
    * uploads to pick from (fresher than our last install).
    * will hopefully be often of size 1, but not always

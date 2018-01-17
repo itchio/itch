@@ -41,7 +41,6 @@ import {
 import { powerSaveBlocker } from "electron";
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
-import { fromJSONField } from "../db/json-field";
 import { Game } from "ts-itchio-api";
 
 const emptyArr = [];
@@ -139,15 +138,15 @@ async function doLaunch(
         message: ["status.repairing_game", { title: game.title }],
       })
     );
+
+    const { upload, build } = cave;
     store.dispatch(
       actions.queueDownload({
         caveId: cave.id,
         game,
         reason: "heal",
-        // FIXME: have a backup plan if the upload's gone
-        upload: fromJSONField(cave.upload),
-        // FIXME: can non-wharf uploads have the 'morphing' flag set?
-        buildId: fromJSONField(cave.build).id,
+        upload,
+        build,
       })
     );
     return;

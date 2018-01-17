@@ -12,10 +12,6 @@ import styled from "../styles";
 import { map, find, filter } from "underscore";
 import { fileSize } from "../../format/filesize";
 import { connect } from "../connect";
-import { createStructuredSelector } from "reselect";
-import { IRootState } from "../../types/index";
-import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
-import GameStats from "../game-stats";
 import PlatformIcons from "../basics/platform-icons";
 
 import * as actions from "../../actions";
@@ -87,7 +83,7 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const params = this.props.modal.widgetParams as IManageGameParams;
     const { game, caves, allUploads, loadingUploads } = params;
-    const { gameStatuses, intl } = this.props;
+    const { intl } = this.props;
 
     const installedUploadIds = {};
     for (const cave of caves) {
@@ -241,8 +237,6 @@ export interface IManageGameParams {
 interface IProps extends IModalWidgetProps {}
 
 interface IDerivedProps {
-  gameStatuses: IGameStatus;
-
   closeModal: typeof actions.closeModal;
   exploreCave: typeof actions.exploreCave;
 
@@ -250,13 +244,6 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(injectIntl(ManageGame), {
-  state: createStructuredSelector({
-    gameStatuses: (rs: IRootState, props: IProps) => {
-      const params = props.modal.widgetParams as IManageGameParams;
-      const { caves, game } = params;
-      return map(caves, cave => getGameStatus(rs, game, cave));
-    },
-  }),
   dispatch: dispatch => ({
     closeModal: dispatcher(dispatch, actions.closeModal),
     exploreCave: dispatcher(dispatch, actions.exploreCave),

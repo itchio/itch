@@ -9,7 +9,7 @@ import {
 } from ".";
 
 import { Logger } from "../logger";
-import { Game, Upload } from "ts-itchio-api";
+import { Game, Upload, Build } from "ts-itchio-api";
 
 export type DownloadReason =
   | "install"
@@ -44,7 +44,7 @@ export interface IQueueDownloadOpts {
   upload: Upload;
 
   /** build we're aiming for (if we're reverting/healing) */
-  buildId?: number;
+  build?: Build;
 
   /** total size of download (size of archive or sum of patch sizes) */
   totalSize?: number;

@@ -183,6 +183,7 @@ export default async function performDownload(
             installFolder: absoluteInstallFolder,
             credentials: buseGameCredentials(credentials),
             upload: item.upload,
+            build: item.build,
             fresh: item.reason === "install",
           },
         })

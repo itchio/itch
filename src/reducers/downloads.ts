@@ -2,11 +2,7 @@ import { createStructuredSelector } from "reselect";
 
 import { indexBy, map, last, omit } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
-import {
-  getActiveDownload,
-  getPendingDownloads,
-  excludeGame,
-} from "../reactors/downloads/getters";
+import { getActiveDownload, excludeGame } from "../reactors/downloads/getters";
 
 import { IDownloadsState, IDownloadItem } from "../types";
 

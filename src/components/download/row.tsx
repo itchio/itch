@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 import { connect } from "../connect";
 import Chart from "./chart";
 
-import { truncate, downloadProgress, fileSize } from "../../format";
+import { downloadProgress, fileSize } from "../../format";
 
 import * as actions from "../../actions";
 
