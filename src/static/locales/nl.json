@@ -289,5 +289,6 @@
     "new_tab.devlogs": "Developer logs",
     "pick_update_upload.detail": "We vragen dit omdat je tijdens het installeren een handmatige selectie hebt gemaakt.",
     "prompt.clear_browsing_data.category.cookies": "Cookies",
-    "prompt.clear_browsing_data.cookies_info": "Dit zal je uitloggen van alle websites waar je via de itch-app bij ingelogd bent."
+    "prompt.clear_browsing_data.cookies_info": "Dit zal je uitloggen van alle websites waar je via de itch-app bij ingelogd bent.",
+    "game.install.could_not_launch.message": "Het bericht dat wij kregen luidde: {{errorMessage}}"
 }
