@@ -24,7 +24,10 @@ const baseInitialState = {
 };
 const initialState = { ...baseInitialState, ...selector(baseInitialState) };
 
-const updateSingle = (state: IDownloadsState, record: any): IDownloadsState => {
+const updateSingle = (
+  state: IDownloadsState,
+  record: Partial<IDownloadItem>
+): IDownloadsState => {
   const { items } = state;
   const { id } = record;
 

@@ -3,7 +3,7 @@ import "electron";
 
 import * as Types from "../types";
 import { IProgressInfo, IMenuTemplate } from "../types";
-import { Game, OwnUser, Upload } from "ts-itchio-api";
+import { Game, OwnUser, Upload, Build } from "ts-itchio-api";
 
 export type IAction<T> = Action<T>;
 
@@ -661,9 +661,12 @@ export const DOWNLOAD_UPDATE = "DOWNLOAD_UPDATE";
 export type IDownloadUpdatePayload = Partial<Types.IDownloadItem>;
 
 export const DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS";
-export interface IDownloadProgressPayload extends IProgressInfo {
+export interface IDownloadProgressPayload extends Partial<IProgressInfo> {
   /** the download in progress */
   id: string;
+
+  build?: Build;
+  upload?: Upload;
 }
 
 export const DOWNLOAD_ENDED = "DOWNLOAD_ENDED";

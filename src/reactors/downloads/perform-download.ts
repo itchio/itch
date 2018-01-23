@@ -136,6 +136,14 @@ export default async function performDownload(
       client.onNotification(messages.TaskStarted, ({ params }) => {
         const { type, reason } = params;
         logger.info(`Task ${type} started (for ${reason})`);
+
+        ctx.store.dispatch(
+          actions.downloadProgress({
+            id: item.id,
+            upload: params.upload,
+            build: params.build,
+          })
+        );
       });
 
       client.onNotification(messages.TaskSucceeded, async ({ params }) => {
