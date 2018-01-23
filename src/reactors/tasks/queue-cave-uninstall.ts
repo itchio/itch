@@ -31,8 +31,6 @@ export async function queueUninstall(
     destPath,
     cave,
   });
-
-  logger.info(`Uninstall successful`);
 }
 
 export default function(watcher: Watcher, db: DB) {
@@ -41,7 +39,7 @@ export default function(watcher: Watcher, db: DB) {
 
     const cave = db.caves.findOneById(caveId);
     if (!cave) {
-      // no such cave, can't uninstall!
+      rootLogger.error(`No such cave ${caveId}, can't uninstall`);
       return;
     }
 

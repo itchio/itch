@@ -92,7 +92,7 @@ export default async function performDownload(
         if (modalRes.type === MODAL_RESPONSE) {
           return { index: modalRes.payload.pickedUploadIndex };
         } else {
-          throw new Error(`no upload picked`);
+          throw new Cancelled();
         }
       });
 
@@ -131,6 +131,38 @@ export default async function performDownload(
             build: caveIn.build,
           },
         };
+      });
+
+      client.onNotification(messages.TaskStarted, ({ params }) => {
+        const { type, reason } = params;
+        logger.info(`Task ${type} started (for ${reason})`);
+      });
+
+      client.onNotification(messages.TaskSucceeded, async ({ params }) => {
+        logger.info(`Task ${params.type} succeeded`);
+
+        const ires = params.installResult;
+        if (ires == null) {
+          logger.info(`...no install result, that's fine`);
+        }
+
+        logger.info(`Committing game & cave to db`);
+        cave = {
+          ...caveLocation,
+          gameId: game.id,
+
+          installedAt: new Date(),
+          channelName: ires.upload.channelName,
+          build: ires.build,
+          upload: ires.upload,
+          // TODO: butler should let us know if it was handpicked in the result.
+          // We can't keep track of it ourselves, because performDownload() might
+          // be called many times for the same download
+          handPicked: false,
+        };
+
+        ctx.db.saveOne("games", game.id, game);
+        ctx.db.saveOne("caves", cave.id, cave);
       });
 
       const id = item.id;
@@ -173,7 +205,7 @@ export default async function performDownload(
         });
       });
 
-      const res = await client.call(
+      await client.call(
         messages.Operation.Start({
           id,
           stagingFolder,
@@ -184,32 +216,9 @@ export default async function performDownload(
             credentials: buseGameCredentials(credentials),
             upload: item.upload,
             build: item.build,
-            fresh: item.reason === "install",
           },
         })
       );
-
-      logger.debug(`butler says operation ended`);
-      logger.debug(`final install result:\n${JSON.stringify(res, null, 2)}`);
-      const ires = res.installResult;
-
-      cave = {
-        ...caveLocation,
-        gameId: game.id,
-
-        installedAt: new Date(),
-        channelName: ires.upload.channelName,
-        build: ires.build,
-        upload: ires.upload,
-        // TODO: butler should let us know if it was handpicked in the result.
-        // We can't keep track of it ourselves, because performDownload() might
-        // be called many times for the same download
-        handPicked: false,
-      };
-
-      logger.info(`Committing game & cave to db`);
-      ctx.db.saveOne("games", game.id, game);
-      ctx.db.saveOne("caves", cave.id, cave);
     } finally {
       butlerExited = true;
       instance.cancel();

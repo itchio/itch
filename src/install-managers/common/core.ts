@@ -43,7 +43,17 @@ export async function coreUninstall(opts: IUninstallOpts) {
       try {
         setupClient(client, logger, ctx);
 
-        const res = await client.call(
+        client.onNotification(messages.TaskStarted, ({ params }) => {
+          const { type, reason } = params;
+          logger.info(`Task ${type} started (for ${reason})`);
+        });
+
+        client.onNotification(messages.TaskSucceeded, ({ params }) => {
+          const { type } = params;
+          logger.info(`Task ${type} succeeded`);
+        });
+
+        await client.call(
           messages.Operation.Start({
             id,
             stagingFolder,
@@ -54,8 +64,7 @@ export async function coreUninstall(opts: IUninstallOpts) {
           })
         );
 
-        logger.info(`butler says operation ended`);
-        logger.info(`final uninstall result:\n${JSON.stringify(res, null, 2)}`);
+        logger.info(`Uninstall successful`);
       } finally {
         instance.cancel();
       }

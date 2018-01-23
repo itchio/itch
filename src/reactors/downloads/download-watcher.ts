@@ -38,7 +38,12 @@ async function updateDownloadState(store: IStore, db: DB) {
       !watcherState.current ||
       watcherState.current.item.id !== activeDownload.id
     ) {
-      logger.info(`${activeDownload.id} is the new active download`);
+      let { game, upload } = activeDownload;
+      logger.info(
+        `New active download: ${game
+          ? game.title
+          : "<unknown game>"} :: ${upload ? upload.filename : "<best upload>"}`
+      );
       start(store, db, activeDownload);
     } else {
       // still downloading currentDownload
@@ -46,7 +51,7 @@ async function updateDownloadState(store: IStore, db: DB) {
   } else {
     await setProgress(store, -1);
     if (watcherState.current) {
-      logger.info("Cancelling/clearing out last download");
+      logger.info("Cancelling last download");
       cancelCurrent();
     } else {
       // idle

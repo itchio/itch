@@ -45,14 +45,4 @@ export function setupClient(
         break;
     }
   });
-
-  client.onNotification(messages.TaskStarted, ({ params }) => {
-    parentLogger.info(
-      `butler task started: ${params.type} (for ${params.reason})`
-    );
-  });
-
-  client.onNotification(messages.TaskEnded, ({ params }) => {
-    parentLogger.info(`butler task ended`);
-  });
 }
