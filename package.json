@@ -116,7 +116,7 @@
     "codecov": "^2.2.0",
     "cross-env": "^5.0.0",
     "debounce-collect": "^1.0.2",
-    "electron": "^1.7.9",
+    "electron": "^1.7.11",
     "electron-compilers-ftl": "^5.9.5",
     "electron-rebuild-ftl": "^1.5.11",
     "gaze": "^1.1.2",
