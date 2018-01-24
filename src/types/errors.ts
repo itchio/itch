@@ -101,6 +101,19 @@ export function isCancelled(e: any): boolean {
   return false;
 }
 
+export function isAborted(e: any): boolean {
+  if (!e) {
+    return false;
+  }
+
+  let je = e as RequestError;
+  if (je.rpcError && je.rpcError.code === messages.Codes.OperationAborted) {
+    return true;
+  }
+
+  return false;
+}
+
 export class Retry extends ItchError {
   constructor(detail: string) {
     super("ITCH_ERETRY");

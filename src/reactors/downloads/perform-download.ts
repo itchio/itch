@@ -92,7 +92,8 @@ export default async function performDownload(
         if (modalRes.type === MODAL_RESPONSE) {
           return { index: modalRes.payload.pickedUploadIndex };
         } else {
-          throw new Cancelled();
+          // that tells butler to abort
+          return { index: -1 };
         }
       });
 
@@ -228,8 +229,10 @@ export default async function performDownload(
           },
         })
       );
+      logger.debug(`returned from Operation.Start`);
     } finally {
       butlerExited = true;
+      logger.debug(`cancelling instance in finally`);
       instance.cancel();
     }
   });
@@ -239,13 +242,16 @@ export default async function performDownload(
       await instance.promise();
     },
     stop: async () => {
-      logger.info(`Asked to stop, cancelling butler process`);
+      logger.debug(`Asked to stop, cancelling butler process`);
       cancelled = true;
       instance.cancel();
     },
   });
 
+  logger.debug(`returned from withStopper await`);
+
   if (cancelled) {
+    logger.debug(`throwing cancelled`);
     throw new Cancelled();
   }
 

@@ -13,7 +13,7 @@ import { getActiveDownload, getFinishedDownloads } from "./getters";
 
 import Context from "../../context";
 import { IStore, IDownloadItem, IDownloadResult } from "../../types";
-import { IProgressInfo, isCancelled } from "../../types";
+import { IProgressInfo, isCancelled, isAborted } from "../../types";
 
 import { DB } from "../../db";
 import watcherState, {
@@ -112,15 +112,26 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
     logger.info(`Download for ${item.game.title} started`);
     result = await performDownload(ctx, item);
   } catch (e) {
+    logger.debug(`caught exception ${e.stack}`);
     error = e;
   } finally {
+    logger.debug(`deleting handle`);
     delete watcherState.handles[item.id];
 
-    if (isCancelled(error)) {
+    let cancelled = isCancelled(error);
+    let aborted = isAborted(error);
+
+    if (cancelled || aborted) {
       // no error to handle, but don't trigger downloadEnded either
       interrupted = true;
 
-      if (watcherState.discarded[item.id]) {
+      if (watcherState.discarded[item.id] || aborted) {
+        if (aborted) {
+          logger.info(`Download for ${item.game.title} aborted`);
+          store.dispatch(actions.downloadDiscarded({ id: item.id }));
+        } else {
+          logger.info(`Download for ${item.game.title} discarded`);
+        }
         delete watcherState.discarded[item.id];
         await cleanupDiscarded(store, db, item);
       } else {
@@ -194,9 +205,7 @@ export default function(watcher: Watcher, db: DB) {
 }
 
 async function cleanupDiscarded(store: IStore, db: DB, item: IDownloadItem) {
-  logger.info(
-    `Download for ${item.game.title} discarded, wiping staging folder`
-  );
+  logger.info(`Wiping staging folder for ${item.game.title}`);
   let folderOpts = {
     logger,
     preferences: store.getState().preferences,
