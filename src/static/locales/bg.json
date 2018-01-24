@@ -472,5 +472,12 @@
     "status.downloads.no_active_downloads_subtext": "Нещата, които инсталирате или сваляте, ще се появяват тук",
     "status.downloads.find_games_button": "Започнете да сваляте неща!",
     "grid.empty_state.leader": "Всичко е филтрирано…",
-    "grid.empty_state.explanation": "Филтрите Ви скриват всичко тук"
+    "grid.empty_state.explanation": "Филтрите Ви скриват всичко тук",
+    "grid.item.manage": "Управление",
+    "prompt.launch.title": "Пускане на „{{title}}“",
+    "prompt.launch.message": "Кое искате да пуснете?",
+    "prompt.manage_game.title": "Управление на „{{title}}“",
+    "prompt.manage_game.installed_uploads": "Следните неща са инсталирани:",
+    "prompt.manage_game.available_uploads": "Следните неща също са налични:",
+    "prompt.manage_game.no_other_uploads": "В момента няма нищо друго налично."
 }
