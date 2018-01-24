@@ -437,5 +437,6 @@
     "download.ongoing.revert": "Cambiando {{título}} a otra versión...",
     "download.ongoing.heal": "Reparando {{title}}...",
     "download.outcome.installed": "instalado",
-    "download.outcome.reverted": "cambiado a otra versión"
+    "download.outcome.reverted": "cambiado a otra versión",
+    "grid.empty_state.leader": "Todo está filtrado..."
 }
