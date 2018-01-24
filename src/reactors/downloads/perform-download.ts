@@ -152,6 +152,7 @@ export default async function performDownload(
         const ires = params.installResult;
         if (ires == null) {
           logger.info(`...no install result, that's fine`);
+          return;
         }
 
         logger.info(`Committing game & cave to db`);
