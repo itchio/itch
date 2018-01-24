@@ -1,18 +1,19 @@
 import { ClassificationAction } from "../types";
+import { GameClassification } from "ts-itchio-api";
 
 export interface IClassificationActions {
   [key: string]: ClassificationAction;
 }
 
 export default {
-  game: "launch",
-  tool: "launch",
+  [GameClassification.Game]: "launch",
+  [GameClassification.Tool]: "launch",
 
-  assets: "open",
-  game_mod: "open",
-  physical_game: "open",
-  soundtrack: "open",
-  other: "open",
-  comic: "open",
-  book: "open",
+  [GameClassification.Assets]: "open",
+  [GameClassification.GameMod]: "open",
+  [GameClassification.PhysicalGame]: "open",
+  [GameClassification.Soundtrack]: "open",
+  [GameClassification.Other]: "open",
+  [GameClassification.Comic]: "open",
+  [GameClassification.Book]: "open",
 } as IClassificationActions;

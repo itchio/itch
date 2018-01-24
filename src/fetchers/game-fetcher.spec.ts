@@ -42,7 +42,14 @@ suite(__filename, s => {
           .expects("request")
           .once()
           .resolves({
-            game,
+            result: {
+              gameId: game.id,
+            },
+            entities: {
+              games: {
+                [game.id]: game,
+              },
+            },
           });
 
         const f = new GameFetcher();

@@ -19,6 +19,8 @@ const logger = makeLogger({ logPath: paths.updaterLogPath() }).child({
 
 import { findWhere, filter } from "underscore";
 
+const SKIP_GAME_UPDATES = process.env.ITCH_SKIP_GAME_UPDATES === "1";
+
 const DELAY_BETWEEN_GAMES = 25;
 
 // 30 minutes * 60 = seconds, * 1000 = millis
@@ -26,21 +28,19 @@ const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;
 const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 
 import findUploads from "./downloads/find-uploads";
-import findUpgradePath from "./downloads/find-upgrade-path";
 
-import { IGame } from "../db/models/game";
 import { ICave } from "../db/models/cave";
 import { fromDateTimeField } from "../db/datetime-field";
 import { fromJSONField } from "../db/json-field";
 
-import { fileSize } from "../format/filesize";
+import { Game } from "ts-itchio-api";
 
 interface IUpdateCheckResult {
   /** set if an error occured while looking for a new version of a game */
   err?: Error;
 
   /** might be null if an error happened */
-  game?: IGame;
+  game?: Game;
 
   /** true if the game has an upgrade that can be installed */
   hasUpgrade?: boolean;
@@ -66,7 +66,7 @@ async function _doCheckForGameUpdate(
     return { hasUpgrade: false };
   }
 
-  let game: IGame;
+  let game: Game;
   try {
     game = await lazyGetGame(ctx, cave.gameId);
   } catch (e) {
@@ -113,10 +113,19 @@ async function _doCheckForGameUpdate(
       return { err: new Error("No uploads found") };
     }
 
+    const caveUpload = fromJSONField(cave.upload);
     const installedAt = fromDateTimeField(cave.installedAt) || new Date(0);
     logger.info(`installed at ${installedAt.toISOString()}`);
 
     const recentUploads = filter(uploads, upload => {
+      if (caveUpload && caveUpload.filename !== upload.filename) {
+        logger.info(
+          `Filtering out ${upload.filename} (#${upload.id})` +
+            `, ${upload.filename} is different from ${caveUpload.filename}`
+        );
+        return false;
+      }
+
       const updatedAt = fromDateTimeField(upload.updatedAt);
       logger.info(`upload ${upload.id} updated at ${updatedAt.toISOString()}`);
       const isRecent = updatedAt.getTime() > installedAt.getTime();
@@ -134,7 +143,6 @@ async function _doCheckForGameUpdate(
 
     let hasUpgrade = false;
 
-    const caveUpload = fromJSONField(cave.upload);
     if (caveUpload && caveBuild) {
       logger.info(
         `Looking for new builds of ${game.title}, from build ${caveBuild.id} (upload ${caveUpload.id})`
@@ -158,32 +166,13 @@ async function _doCheckForGameUpdate(
           hasUpgrade = true;
 
           try {
-            const upgradePathResult = await findUpgradePath(ctx, {
-              currentBuildId: caveBuild.id,
-              game,
-              gameCredentials,
-              upload,
-            });
-            if (!upgradePathResult) {
-              throw new Error("no upgrade path found");
-            }
-            const { upgradePath, totalSize } = upgradePathResult;
-
-            logger.info(
-              `Got ${upgradePath.length} patches to download, ${fileSize(
-                totalSize
-              )} total`
-            );
-
             store.dispatch(
               actions.gameUpdateAvailable({
                 caveId: cave.id,
                 update: {
                   game,
-                  gameCredentials,
                   recentUploads: [upload],
                   incremental: true,
-                  upgradePath,
                 },
               })
             );
@@ -215,7 +204,6 @@ async function _doCheckForGameUpdate(
           caveId: cave.id,
           update: {
             game,
-            gameCredentials,
             recentUploads,
           },
         })
@@ -245,7 +233,6 @@ async function _doCheckForGameUpdate(
           caveId: cave.id,
           update: {
             game,
-            gameCredentials,
             recentUploads,
           },
         })
@@ -299,8 +286,14 @@ export default function(watcher: Watcher, db: DB) {
       })
     );
 
-    logger.info("Regularly scheduled check for game updates...");
-    store.dispatch(actions.checkForGameUpdates({}));
+    if (SKIP_GAME_UPDATES) {
+      logger.debug(
+        "Skipping game update check as requested per environment variable"
+      );
+    } else {
+      logger.info("Regularly scheduled check for game updates...");
+      store.dispatch(actions.checkForGameUpdates({}));
+    }
   });
 
   watcher.on(actions.checkForGameUpdates, async (store, action) => {

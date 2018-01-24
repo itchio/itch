@@ -1,8 +1,6 @@
-import { IGame } from "../db/models/game";
 import { ICave } from "../db/models/cave";
 
 import {
-  IUpload,
   IUpgradePathItem,
   IManifest,
   IManifestAction,
@@ -11,6 +9,7 @@ import {
 } from ".";
 
 import { Logger } from "../logger";
+import { Game, Upload, Build } from "ts-itchio-api";
 
 export type DownloadReason =
   | "install"
@@ -34,7 +33,7 @@ export interface IQueueDownloadOpts {
    * game record at the time the download started - in case we're downloading
    * something that's not cached locally.
    */
-  game: IGame;
+  game: Game;
 
   /**    
    * identifier of the cave this download was started for
@@ -42,22 +41,31 @@ export interface IQueueDownloadOpts {
   caveId?: string;
 
   /** upload we're downloading */
-  upload: IUpload;
+  upload: Upload;
 
   /** build we're aiming for (if we're reverting/healing) */
-  buildId?: number;
+  build?: Build;
 
   /** total size of download (size of archive or sum of patch sizes) */
   totalSize?: number;
 
   /** true if wharf-enabled update via butler */
+  // TODO: deprecate
   incremental?: boolean;
 
   /** patch entries to upgrade to latest via butler */
+  // TODO: deprecate
   upgradePath?: IUpgradePathItem[];
 
   /** if true, user disambiguated from list of uploads */
+  // TODO: deprecate
   handPicked?: boolean;
+
+  /** for fresh game installs, where to install it */
+  installLocation?: string;
+
+  /** for fresh game installs, where to install it */
+  installFolder?: string;
 }
 
 export interface IDownloadResult {
@@ -66,28 +74,6 @@ export interface IDownloadResult {
 }
 
 export type TaskName = "install" | "uninstall" | "configure" | "launch";
-
-export interface IQueueInstallOpts {
-  reason: InstallReason;
-
-  /** the game we're installing */
-  game: IGame;
-
-  /** set if we're reinstalling */
-  caveId: string;
-
-  /** which upload we're installing */
-  upload: IUpload;
-
-  /** true if the upload was hand-picked amongst several options */
-  handPicked: boolean;
-
-  /** file to install from */
-  archivePath: string;
-
-  /** id of install location to install in */
-  installLocation: string;
-}
 
 export interface IQueueUninstallOpts {
   /** which cave we're uninstalling */
@@ -107,7 +93,7 @@ export interface ILaunchOpts {
   args: string[];
   logger: Logger;
   cave: ICave;
-  game: IGame;
+  game: Game;
 
   runtime: IRuntime;
 }
@@ -116,7 +102,7 @@ export type IPrepareOpts = ILaunchOpts;
 
 export interface IConfigureOpts {
   cave: ICave;
-  game: IGame;
+  game: Game;
 
   logger: Logger;
 

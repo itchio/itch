@@ -3,11 +3,6 @@ import * as squel from "squel";
 
 import { addSortAndFilterToQuery } from "./sort-and-filter";
 
-import normalize from "../api/normalize";
-import { downloadKey } from "../api/schemas";
-
-import { arrayOf } from "idealizr";
-
 const emptyObj = {} as any;
 
 export default class LibraryFetcher extends Fetcher {
@@ -22,20 +17,17 @@ export default class LibraryFetcher extends Fetcher {
 
   async remote() {
     const meId = this.ensureCredentials().me.id;
-    const apiResponse = await this.withApi(async api => {
+    const ownedKeysRes = await this.withApi(async api => {
       return await api.myOwnedKeys();
     });
 
-    const normalized = normalize(apiResponse, {
-      owned_keys: arrayOf(downloadKey),
-    });
-    const downloadKeys = normalized.entities.downloadKeys || emptyObj;
+    const downloadKeys = ownedKeysRes.entities.downloadKeys || emptyObj;
     for (const id of Object.keys(downloadKeys)) {
       downloadKeys[id].ownerId = meId;
     }
 
     const { db } = this.ctx;
-    db.saveMany(normalized.entities);
+    db.saveMany(ownedKeysRes.entities);
 
     await this.pushLocal();
   }

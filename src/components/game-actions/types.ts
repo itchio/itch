@@ -1,12 +1,12 @@
-import { IGame } from "../../db/models/game";
 import { ICave } from "../../db/models/cave";
 import { IDownloadKey } from "../../db/models/download-key";
 
 import { ClassificationAction, ITask, IDownloadItem } from "../../types";
+import { Game } from "ts-itchio-api";
 
 export interface IActionsInfo {
   cave: ICave;
-  game: IGame;
+  game: Game;
   downloadKey: IDownloadKey;
 
   action: ClassificationAction;

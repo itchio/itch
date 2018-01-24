@@ -2,11 +2,7 @@ import { createStructuredSelector } from "reselect";
 
 import { indexBy, map, last, omit } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
-import {
-  getActiveDownload,
-  getPendingDownloads,
-  excludeGame,
-} from "../reactors/downloads/getters";
+import { getActiveDownload, excludeGame } from "../reactors/downloads/getters";
 
 import { IDownloadsState, IDownloadItem } from "../types";
 
@@ -28,7 +24,10 @@ const baseInitialState = {
 };
 const initialState = { ...baseInitialState, ...selector(baseInitialState) };
 
-const updateSingle = (state: IDownloadsState, record: any): IDownloadsState => {
+const updateSingle = (
+  state: IDownloadsState,
+  record: Partial<IDownloadItem>
+): IDownloadsState => {
   const { items } = state;
   const { id } = record;
 
@@ -90,7 +89,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
   });
 
   on(actions.downloadEnded, (state, action) => {
-    const { id, finishedAt, err } = action.payload;
+    const { id, finishedAt, err, errStack } = action.payload;
     return updateSingle(state, {
       id,
       finished: true,
@@ -99,6 +98,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
       eta: 0,
       bps: 0,
       err,
+      errStack,
     });
   });
 
@@ -126,7 +126,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
     return updateSingle(state, { id, order });
   });
 
-  on(actions.discardDownload, (state, action) => {
+  on(actions.downloadDiscarded, (state, action) => {
     const { id } = action.payload;
     const { items } = state;
 
@@ -139,13 +139,6 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
     return {
       ...state,
       items: omit(state.items, id),
-    };
-  });
-
-  on(actions.clearFinishedDownloads, (state, action) => {
-    return {
-      ...state,
-      items: index(getPendingDownloads(state)),
     };
   });
 

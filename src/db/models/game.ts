@@ -1,13 +1,6 @@
 import { Model, ensureExtends, Column } from "../model";
-import { JSONField } from "../json-field";
-import { DateTimeField } from "../datetime-field";
 
-import {
-  GameType,
-  GameClassification,
-  IGameEmbedInfo,
-  IGameSaleInfo,
-} from "../../types";
+import { OwnGame } from "ts-itchio-api";
 
 export interface IGameBase {
   id: number | string;
@@ -17,8 +10,8 @@ export interface IGameBase {
 }
 
 type Columns = { [K in keyof typeof GameModelOriginal.columns]: any };
-ensureExtends<Columns, IOwnGame>();
-ensureExtends<IOwnGame, Columns>();
+ensureExtends<Columns, OwnGame>();
+ensureExtends<OwnGame, Partial<Columns>>();
 
 const GameModelOriginal = {
   table: "games",
@@ -58,75 +51,3 @@ const GameModelOriginal = {
   },
 };
 export const GameModel: Model = GameModelOriginal;
-
-export interface IGame {
-  /** itch.io-generated unique identifier */
-  id: number;
-
-  /** address of the game's page on itch.io */
-  url: string;
-
-  /** unique identifier of the developer this game belongs to */
-  userId: number;
-
-  /** human-friendly title (may contain any character) */
-  title: string;
-
-  /** human-friendly short description */
-  shortText: string;
-
-  /** non-GIF cover url */
-  stillCoverUrl: string;
-
-  /** cover url (might be a GIF) */
-  coverUrl: string;
-
-  /** downloadable game, html game, etc. */
-  type: GameType;
-
-  /** classification: game, tool, comic, etc. */
-  classification: GameClassification;
-
-  /** Only present for HTML5 games, otherwise null */
-  embed: JSONField<IGameEmbedInfo>;
-
-  /** true if the game has a demo that can be downloaded for free */
-  hasDemo: boolean;
-
-  /** price of a game, in cents of a dollar */
-  minPrice: number;
-
-  /** current sale, if any */
-  sale: JSONField<IGameSaleInfo>;
-
-  /** as of November 7, 2016, this property doesn't exist yet in the API, but a man can dream.. */
-  currency: string;
-
-  /** if true, this game is downloadable by press users for free */
-  inPressSystem: boolean;
-
-  /** if true, this game accepts money (donations or purchases) */
-  canBeBought: boolean;
-
-  /** date the game was published, or empty/null if not published */
-  createdAt: DateTimeField;
-
-  /** date the game was published, or empty/null if not published */
-  publishedAt: DateTimeField;
-
-  pOsx: boolean;
-  pWindows: boolean;
-  pLinux: boolean;
-  pAndroid: boolean;
-}
-
-export interface IOwnGame extends IGame {
-  /** how many times has the game been downloaded (all time) */
-  downloadsCount: number;
-
-  /** how many times has the game been purchased (all time) */
-  purchasesCount: number;
-
-  /** how many page views has the game gotten (all time) */
-  viewsCount: number;
-}

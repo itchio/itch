@@ -4,17 +4,17 @@ import { formatDuration } from "../format";
 
 import actionForGame from "../util/action-for-game";
 
-import { IGame } from "../db/models/game";
 import { ICaveSummary } from "../db/models/cave";
 
 import format from "../components/format";
+import { Game } from "ts-itchio-api";
 
 export default class TotalPlaytime extends React.PureComponent<
   IProps & IDerivedProps
 > {
   render() {
     const { game, cave, short = false } = this.props;
-    const { secondsRun = 0 } = (cave || {}) as ICaveSummary;
+    let { secondsRun = 0 } = (cave || {}) as ICaveSummary;
 
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
@@ -27,11 +27,9 @@ export default class TotalPlaytime extends React.PureComponent<
       return (
         <div className="total-playtime">
           <span>
-            {short
-              ? null
-              : <label>
-                  {format([`usage_stats.has_${xed}_for_duration`])}{" "}
-                </label>}
+            {short ? null : (
+              <label>{format([`usage_stats.has_${xed}_for_duration`])} </label>
+            )}
             {formatDuration(secondsRun)}
           </span>
         </div>
@@ -43,9 +41,10 @@ export default class TotalPlaytime extends React.PureComponent<
 }
 
 interface IProps {
-  game: IGame;
+  game: Game;
   cave: ICaveSummary;
   short?: boolean;
+  secondsRun?: number;
 }
 
 interface IDerivedProps {}

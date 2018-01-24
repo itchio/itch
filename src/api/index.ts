@@ -3,6 +3,7 @@ import * as querystring from "querystring";
 import { request, RequestFunc } from "../net";
 import { camelifyObject } from "../format";
 import urls from "../constants/urls";
+import * as schemas from "./schemas";
 
 import mkcooldown from "./cooldown";
 
@@ -27,7 +28,6 @@ import {
   IDownloadUploadResult,
   IListBuildsResponse,
   IBuildResponse,
-  BuildFileType,
   IDownloadBuildResult,
   IGameExtras,
   IListUploadsExtras,
@@ -39,18 +39,14 @@ import {
 
 const DUMP_API_CALLS = process.env.LET_ME_IN === "1";
 import { makeLogger, devNull } from "../logger";
+import { normalize } from "idealizr";
+import { BuildFileType } from "ts-itchio-api";
 const logger = DUMP_API_CALLS ? makeLogger({}) : devNull;
 
 type HTTPMethod = "get" | "head" | "post";
 
 interface ITransformerMap {
   [key: string]: (input: any) => any;
-}
-
-// ugh
-interface IAPIRequestOpts {
-  keepSnakeCase?: boolean;
-  transformers?: ITransformerMap;
 }
 
 /**
@@ -76,15 +72,15 @@ export class Client {
 
   /**
    * Make a `method` http request to `path`, passing `data` as parameters (GET, POST body, etc.)
-   * `transformers` contaie functions that change the result. Before transformers are run
-   * the response is camelified.
+   * 
+   * The body is:
+   *   - transformed is transformers are passed
+   *   - normalized if a schema is passed
+   *   - camelified
    */
-  async request(
-    method: HTTPMethod,
-    path: string,
-    data: any = {},
-    requestOpts: IAPIRequestOpts = {}
-  ): Promise<any> {
+  async request(params: IRequestParams): Promise<any> {
+    const { method, data, path } = params;
+
     const t1 = Date.now();
 
     const uri = `${this.rootUrl}${path}`;
@@ -110,18 +106,22 @@ export class Client {
       throw new ApiError(body.errors);
     }
 
-    if (!requestOpts.keepSnakeCase) {
-      body = camelifyObject(body);
-    }
-
-    if (requestOpts.transformers) {
-      for (const key in requestOpts.transformers) {
-        if (!requestOpts.transformers.hasOwnProperty(key)) {
+    const { transformers } = params;
+    if (transformers) {
+      for (const key in transformers) {
+        if (!transformers.hasOwnProperty(key)) {
           continue;
         }
-        body[key] = requestOpts.transformers[key](body[key]);
+        body[key] = transformers[key](body[key]);
       }
     }
+
+    const { schema } = params;
+    if (schema) {
+      body = normalize(body, schema);
+    }
+
+    body = camelifyObject(body);
 
     return body;
   }
@@ -130,8 +130,12 @@ export class Client {
    * Log in using an API key
    */
   async loginKey(key: string): Promise<ILoginKeyResult> {
-    return await this.request("get", `/${key}/me`, {
-      source: "desktop",
+    return await this.request({
+      method: "get",
+      path: `/${key}/me`,
+      data: {
+        source: "desktop",
+      },
     });
   }
 
@@ -156,12 +160,12 @@ export class Client {
       data.recaptcha_response = extras.recaptchaResponse;
     }
 
-    return await this.request("post", "/login", data);
+    return await this.request({ method: "post", path: "/login", data });
   }
 
   async totpVerify(token: string, code: string): Promise<ITotpVerifyResult> {
     const data = { token, code };
-    return await this.request("post", "/totp/verify", data);
+    return await this.request({ method: "post", path: "/totp/verify", data });
   }
 
   withKey(key: string): AuthenticatedClient {
@@ -175,6 +179,15 @@ export class Client {
 
 export const client = new Client();
 export default client;
+
+interface IRequestParams {
+  method: HTTPMethod;
+  path: string;
+  data?: any;
+  // TODO: remove when {}-instead-of-[] is fixed server-side
+  transformers?: ITransformerMap;
+  schema?: any;
+}
 
 /**
  * A user, according to the itch.io API
@@ -205,34 +218,16 @@ export class AuthenticatedClient {
   /**
    * Make an authenticated request to the itch.io server
    */
-  async request(
-    method: HTTPMethod,
-    path: string,
-    data: any = {},
-    requestOpts: IAPIRequestOpts = {}
-  ): Promise<any> {
-    const url = `/${this.key}${path}`;
-    return await this.client.request(method, url, data, requestOpts);
-  }
+  async request(params: IRequestParams): Promise<any> {
+    if (!/^\//.test(params.path)) {
+      throw new Error(
+        `expecting API path to start with /, but got: ${params.path}`
+      );
+    }
 
-  /**
-   * Retrieve games ones create or is a game admin for.
-   */
-  async myGames(data: any = {}): Promise<IMyGamesResult> {
-    // this endpoint is not paginated
-    return await this.request("get", "/my-games", data, {
-      keepSnakeCase: true,
-      transformers: { games: ensureArray },
-    });
-  }
-
-  /**
-   * Retrieve download keys linked to this account
-   */
-  async myOwnedKeys(data = {}): Promise<IMyOwnedKeysResult> {
-    return await this.request("get", "/my-owned-keys", data, {
-      keepSnakeCase: true,
-      transformers: { owned_keys: ensureArray },
+    return await this.client.request({
+      ...params,
+      path: `/${this.key}${params.path}`,
     });
   }
 
@@ -240,71 +235,12 @@ export class AuthenticatedClient {
    * Retrieve extended user info for user associated with API key
    */
   async me(): Promise<IMeResult> {
-    return await this.request("get", "/me");
+    return await this.request({ method: "get", path: "/me" });
   }
 
-  async myCollections(): Promise<IMyCollectionsResult> {
-    return await this.request(
-      "get",
-      "/my-collections",
-      {},
-      {
-        keepSnakeCase: true,
-        transformers: { collections: ensureArray },
-      }
-    );
-  }
-
-  async game(
-    gameID: number,
-    gameExtras: IGameExtras = {}
-  ): Promise<IGameResult> {
-    return await this.request("get", `/game/${gameID}`, gameExtras);
-  }
-
-  async user(userID: number): Promise<IUserResult> {
-    return await this.request("get", `/users/${userID}`);
-  }
-
-  async collection(collectionID: number): Promise<ICollectionResult> {
-    return await this.request("get", `/collection/${collectionID}`);
-  }
-
-  async collectionGames(
-    collectionID: number,
-    page = 1
-  ): Promise<ICollectionGamesResult> {
-    return await this.request("get", `/collection/${collectionID}/games`, {
-      page,
-    });
-  }
-
-  async searchGames(query: string): Promise<ISearchGamesResult> {
-    return await this.request(
-      "get",
-      "/search/games",
-      { query },
-      {
-        keepSnakeCase: true,
-        transformers: { games: ensureArray },
-      }
-    );
-  }
-
-  async searchUsers(query: string): Promise<ISearchUsersResult> {
-    return await this.request(
-      "get",
-      "/search/users",
-      { query },
-      {
-        keepSnakeCase: true,
-        transformers: { users: ensureArray },
-      }
-    );
-  }
-
-  // list uploads
-
+  /**
+   * List all uploads for a game (that we have access to)
+   */
   async listUploads(
     downloadKey: IDownloadKey,
     gameID: number,
@@ -312,34 +248,39 @@ export class AuthenticatedClient {
   ): Promise<IListUploadsResponse> {
     // TODO: adjust API to support download_key_id
     if (downloadKey) {
-      return await this.request(
-        "get",
-        `/download-key/${downloadKey.id}/uploads`,
-        extras,
-        {
-          transformers: { uploads: ensureArray },
-        }
-      );
+      return await this.request({
+        method: "get",
+        path: `/download-key/${downloadKey.id}/uploads`,
+        data: extras,
+        transformers: { uploads: ensureArray },
+      });
     } else {
-      return await this.request("get", `/game/${gameID}/uploads`, extras, {
+      return await this.request({
+        method: "get",
+        path: `/game/${gameID}/uploads`,
+        data: extras,
         transformers: { uploads: ensureArray },
       });
     }
   }
 
-  // download uploads
-
+  /**
+   * Request a direct download URl for an upload
+   */
   async downloadUpload(
     downloadKey: IDownloadKey,
     uploadID: number
   ): Promise<IDownloadUploadResult> {
-    return await this.request(
-      "get",
-      `/upload/${uploadID}/download`,
-      sprinkleDownloadKey(downloadKey, {})
-    );
+    return await this.request({
+      method: "get",
+      path: `/upload/${uploadID}/download`,
+      data: sprinkleDownloadKey(downloadKey, {}),
+    });
   }
 
+  /**
+   * Return an itchfs URL to download an upload
+   */
   downloadUploadURL(
     downloadKey: IDownloadKey,
     uploadID: number,
@@ -351,8 +292,6 @@ export class AuthenticatedClient {
     );
   }
 
-  // wharf-related endpoints
-
   /**
    * List the N most recent builds for a wharf-enabled upload
    */
@@ -360,14 +299,12 @@ export class AuthenticatedClient {
     downloadKey: IDownloadKey,
     uploadID: number
   ): Promise<IListBuildsResponse> {
-    return await this.request(
-      "get",
-      `/upload/${uploadID}/builds`,
-      sprinkleDownloadKey(downloadKey, {}),
-      {
-        transformers: { builds: ensureArray },
-      }
-    );
+    return await this.request({
+      method: "get",
+      path: `/upload/${uploadID}/builds`,
+      data: sprinkleDownloadKey(downloadKey, {}),
+      transformers: { builds: ensureArray },
+    });
   }
 
   /**
@@ -378,11 +315,11 @@ export class AuthenticatedClient {
     uploadID: number,
     buildID: number
   ): Promise<IBuildResponse> {
-    return await this.request(
-      "get",
-      `/upload/${uploadID}/builds/${buildID}`,
-      sprinkleDownloadKey(downloadKey, {})
-    );
+    return await this.request({
+      method: "get",
+      path: `/upload/${uploadID}/builds/${buildID}`,
+      data: sprinkleDownloadKey(downloadKey, {}),
+    });
   }
 
   /**
@@ -393,11 +330,11 @@ export class AuthenticatedClient {
     uploadID: number,
     currentBuildID: number
   ): Promise<IUpgradeResponse> {
-    return await this.request(
-      "get",
-      `/upload/${uploadID}/upgrade/${currentBuildID}`,
-      sprinkleDownloadKey(downloadKey, { v: 2 })
-    );
+    return await this.request({
+      method: "get",
+      path: `/upload/${uploadID}/upgrade/${currentBuildID}`,
+      data: sprinkleDownloadKey(downloadKey, { v: 2 }),
+    });
   }
 
   /**
@@ -408,11 +345,11 @@ export class AuthenticatedClient {
     uploadID: number,
     buildID: number
   ): Promise<IDownloadBuildResult> {
-    return await this.request(
-      "get",
-      `/upload/${uploadID}/download/builds/${buildID}`,
-      sprinkleDownloadKey(downloadKey, { v: 2 })
-    );
+    return await this.request({
+      method: "get",
+      path: `/upload/${uploadID}/download/builds/${buildID}`,
+      data: sprinkleDownloadKey(downloadKey, { v: 2 }),
+    });
   }
 
   /**
@@ -430,17 +367,173 @@ export class AuthenticatedClient {
     return this.itchfsURL(path, sprinkleDownloadKey(downloadKey, extras));
   }
 
+  /**
+   * Create a JWT token with a subset of our API key's permissions,
+   * tied to a (valid) game ID.
+   */
   async subkey(gameID: number, scope: string) {
-    return await this.request("post", "/credentials/subkey", {
-      game_id: gameID,
-      scope,
+    return await this.request({
+      method: "post",
+      path: "/credentials/subkey",
+      data: {
+        game_id: gameID,
+        scope,
+      },
+    });
+  }
+
+  //--------------------------------------------------------------------
+  // Normalized methods
+  //--------------------------------------------------------------------
+
+  /**
+   * Fetch a single user by ID
+   * (Normalized)
+   */
+  async user(userID: number): Promise<IUserResult> {
+    return await this.request({
+      method: "get",
+      path: `/users/${userID}`,
+      schema: { user: schemas.user },
+    });
+  }
+
+  /**
+   * Fetch a single collection by ID
+   * (Normalized)
+   */
+  async collection(collectionID: number): Promise<ICollectionResult> {
+    return await this.request({
+      method: "get",
+      path: `/collection/${collectionID}`,
+      schema: {
+        collection: schemas.collection,
+      },
+    });
+  }
+
+  /**
+   * Retrieve a single game by ID
+   * (Normalized)
+   */
+  async game(
+    gameID: number,
+    gameExtras: IGameExtras = {}
+  ): Promise<IGameResult> {
+    return await this.request({
+      method: "get",
+      path: `/game/${gameID}`,
+      data: gameExtras,
+      schema: {
+        game: schemas.game,
+      },
+    });
+  }
+
+  /**
+   * Retrieve games ones create or is a game admin for.
+   * (Normalized)
+   */
+  async myGames(): Promise<IMyGamesResult> {
+    // Note: this endpoint is not paginated
+    return await this.request({
+      method: "get",
+      path: "/my-games",
+      transformers: { games: ensureArray },
+      schema: {
+        games: schemas.arrayOf(schemas.game),
+      },
+    });
+  }
+
+  /**
+   * Retrieve download keys linked to this account
+   * (Normalized)
+   */
+  async myOwnedKeys(page = 1): Promise<IMyOwnedKeysResult> {
+    // Note: this endpoint is paginated, but
+    // does not return `page` or `per_page`
+    return await this.request({
+      method: "get",
+      path: "/my-owned-keys",
+      data: { page },
+      transformers: { owned_keys: ensureArray },
+      schema: {
+        owned_keys: schemas.arrayOf(schemas.downloadKey),
+      },
+    });
+  }
+
+  /**
+   * Fetch a page of games from a collection
+   * (Normalized)
+   */
+  async collectionGames(
+    collectionID: number,
+    page = 1
+  ): Promise<ICollectionGamesResult> {
+    return await this.request({
+      method: "get",
+      path: `/collection/${collectionID}/games`,
+      data: { page },
+      schema: {
+        games: schemas.arrayOf(schemas.game),
+      },
+    });
+  }
+
+  /**
+   * Fetch all user collections
+   * (Normalized)
+   */
+  async myCollections(): Promise<IMyCollectionsResult> {
+    // Note: this endpoint is not paginated
+    return await this.request({
+      method: "get",
+      path: "/my-collections",
+      transformers: { collections: ensureArray },
+      schema: {
+        collections: schemas.arrayOf(schemas.collection),
+      },
+    });
+  }
+
+  /**
+   * Do a text search for games
+   * (Normalized)
+   */
+  async searchGames(query: string): Promise<ISearchGamesResult> {
+    return await this.request({
+      method: "get",
+      path: "/search/games",
+      data: { query },
+      transformers: { games: ensureArray },
+      schema: {
+        games: schemas.arrayOf(schemas.game),
+      },
+    });
+  }
+
+  /**
+   * Do a text search for users
+   * (Normalized)
+   */
+  async searchUsers(query: string): Promise<ISearchUsersResult> {
+    return await this.request({
+      method: "get",
+      path: "/search/users",
+      data: { query },
+      transformers: { users: ensureArray },
+      schema: {
+        users: schemas.arrayOf(schemas.user),
+      },
     });
   }
 }
 
 /**
  * if not an array, return the empty array, otherwise identity
- * cf. https://github.com/itchio/itchio-app/issues/48
+ * cf. https://github.com/itchio/itch/issues/48
  * this works around the fact that, in lua, empty object and empty array both
  * serialize to empty object
  */

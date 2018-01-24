@@ -28,6 +28,10 @@ import {
   IRetryDownloadPayload,
   DOWNLOAD_SPEED_DATAPOINT,
   IDownloadSpeedDatapointPayload,
+  IDownloadDiscardedPayload,
+  DOWNLOAD_DISCARDED,
+  IShowDownloadErrorPayload,
+  SHOW_DOWNLOAD_ERROR,
 } from "../constants/action-types";
 
 export const queueDownload = createAction<IQueueDownloadPayload>(
@@ -62,11 +66,17 @@ export const clearGameDownloads = createAction<IClearGameDownloadsPayload>(
 export const prioritizeDownload = createAction<IPrioritizeDownloadPayload>(
   PRIORITIZE_DOWNLOAD
 );
+export const showDownloadError = createAction<IShowDownloadErrorPayload>(
+  SHOW_DOWNLOAD_ERROR
+);
 export const discardDownloadRequest = createAction<
   IDiscardDownloadRequestPayload
 >(DISCARD_DOWNLOAD_REQUEST);
 export const discardDownload = createAction<IDiscardDownloadPayload>(
   DISCARD_DOWNLOAD
+);
+export const downloadDiscarded = createAction<IDownloadDiscardedPayload>(
+  DOWNLOAD_DISCARDED
 );
 export const pauseDownloads = createAction<IPauseDownloadsPayload>(
   PAUSE_DOWNLOADS

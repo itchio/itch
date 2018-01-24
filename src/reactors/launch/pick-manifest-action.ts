@@ -9,17 +9,16 @@ import {
   IModalButtonSpec,
 } from "../../types";
 
-import { IGame } from "../../db/models/game";
-
 import { promisedModal } from "../../reactors/modals";
 import { MODAL_RESPONSE } from "../../constants/action-types";
 
 import { findWhere } from "underscore";
+import { Game } from "ts-itchio-api";
 
 export default async function pickManifestAction(
   store: IStore,
   manifest: IManifest,
-  game: IGame
+  game: Game
 ): Promise<IManifestAction> {
   const buttons: IModalButtonSpec[] = [];
   const bigButtons: IModalButtonSpec[] = [];

@@ -5,8 +5,6 @@ import {
   IQueueGamePayload,
   QUEUE_LAUNCH,
   IQueueLaunchPayload,
-  QUEUE_INSTALL,
-  IQueueInstallPayload,
   PROBE_CAVE,
   IProbeCavePayload,
   EXPLORE_CAVE,
@@ -51,15 +49,22 @@ import {
   IHealCavePayload,
   VIEW_CAVE_DETAILS,
   IViewCaveDetailsPayload,
+  IManageGamePayload,
+  MANAGE_GAME,
+  IQueueGameInstallPayload,
+  QUEUE_GAME_INSTALL,
 } from "../constants/action-types";
 
 export const queueGame = createAction<IQueueGamePayload>(QUEUE_GAME);
+export const queueGameInstall = createAction<IQueueGameInstallPayload>(
+  QUEUE_GAME_INSTALL
+);
 export const queueLaunch = createAction<IQueueLaunchPayload>(QUEUE_LAUNCH);
-export const queueInstall = createAction<IQueueInstallPayload>(QUEUE_INSTALL);
 
 export const probeCave = createAction<IProbeCavePayload>(PROBE_CAVE);
 export const exploreCave = createAction<IExploreCavePayload>(EXPLORE_CAVE);
 export const reportCave = createAction<IReportCavePayload>(REPORT_CAVE);
+export const manageGame = createAction<IManageGamePayload>(MANAGE_GAME);
 export const requestCaveUninstall = createAction<IRequestCaveUninstallPayload>(
   REQUEST_CAVE_UNINSTALL
 );

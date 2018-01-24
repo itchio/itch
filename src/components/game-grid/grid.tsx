@@ -15,8 +15,8 @@ import Cell from "./cell";
 import { GridContainerDiv, GridDiv } from "./grid-styles";
 
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
-import { IGame } from "../../db/models/game";
 import doesEventMeanBackground from "../when-click-navigates";
+import { Game } from "ts-itchio-api";
 
 const globalMargin = 20;
 const sidebarCushion = 5;
@@ -137,7 +137,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
     }
   }
 
-  eventToGame(ev: React.MouseEvent<HTMLElement>, cb: (game: IGame) => void) {
+  eventToGame(ev: React.MouseEvent<HTMLElement>, cb: (game: Game) => void) {
     let target = ev.target as HTMLElement;
     while (target && !target.classList.contains("grid--cell")) {
       target = target.parentElement;

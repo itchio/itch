@@ -1,5 +1,4 @@
 import { Model, ensureExtends, Column } from "../model";
-import { DateTimeField } from "../datetime-field";
 
 export const DownloadKeyModelOriginal = {
   table: "downloadKeys",
@@ -24,7 +23,7 @@ ensureExtends<IDownloadKey, Columns>();
 export interface IDownloadKeySummary {
   id: number;
   gameId: number;
-  createdAt: DateTimeField;
+  createdAt: Date;
 }
 
 export interface IDownloadKey extends IDownloadKeySummary {
@@ -35,10 +34,10 @@ export interface IDownloadKey extends IDownloadKeySummary {
   gameId: number;
 
   /** date the download key was issued on (often: date purchase was completed) */
-  createdAt: DateTimeField;
+  createdAt: Date;
 
   /** not sure to be completely honest */
-  updatedAt: DateTimeField;
+  updatedAt: Date;
 
   /** user the download key belongs to */
   ownerId: number;

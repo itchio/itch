@@ -12,11 +12,11 @@ import PlatformIcons from "./basics/platform-icons";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
-import { IGame } from "../db/models/game";
 import { fromJSONField } from "../db/json-field";
 
 import styled from "./styles";
 import { IGameStatus } from "../helpers/get-game-status";
+import { Game } from "ts-itchio-api";
 
 const GameStatsDiv = styled.div`
   display: flex;
@@ -150,6 +150,6 @@ export default class GameStats extends React.PureComponent<IProps> {
 }
 
 interface IProps {
-  game: IGame;
+  game: Game;
   status: IGameStatus;
 }

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { InjectedIntl } from "react-intl";
 
-import { IGame } from "../../db/models/game";
 import { ICaveSummary } from "../../db/models/cave";
 
 import Cover from "../basics/cover";
@@ -19,10 +18,13 @@ import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { createSelector } from "reselect";
 import { IRootState } from "../../types/index";
 import { connect } from "../connect";
+import { Game } from "ts-itchio-api";
+
+import { aggregateCaveSummaries } from "../../util/aggregate-cave-summaries";
 
 class Row extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { game, cave, index, rowHeight, columns, status } = this.props;
+    const { game, caves, index, rowHeight, columns, status } = this.props;
 
     const { stillCoverUrl, coverUrl, publishedAt } = game;
     const translateY = Math.round(index * rowHeight);
@@ -32,6 +34,8 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
       return <MainAction game={game} status={status} iconOnly />;
     };
     let className = (gc: GameColumn): string => `row--${gc}`;
+
+    let cave = aggregateCaveSummaries(caves);
 
     return (
       <div className="table--row" style={style} data-game-id={game.id}>
@@ -57,7 +61,7 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
           } else if (c === "play-time") {
             return (
               <div key={c} className={className(c)}>
-                {cave ? (
+                {caves.length > 0 ? (
                   <TotalPlaytime game={game} cave={cave} short={true} />
                 ) : null}
               </div>
@@ -100,8 +104,8 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
 }
 
 interface IProps {
-  game: IGame;
-  cave: ICaveSummary;
+  game: Game;
+  caves: ICaveSummary[];
   intl: InjectedIntl;
   index: number;
   rowHeight: number;

@@ -13,6 +13,16 @@ export default reducer<IModalsState>(initialState, on => {
     return [modal, ...state];
   });
 
+  on(actions.updateModalWidgetParams, (state, action) => {
+    const { id, widgetParams } = action.payload;
+    return state.map(modal => {
+      if (modal.id === id) {
+        return { ...modal, widgetParams };
+      }
+      return modal;
+    });
+  });
+
   on(actions.modalClosed, (state, action) => {
     const { id } = action.payload;
     return reject(state, modal => modal.id === id);

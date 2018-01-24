@@ -5,8 +5,6 @@ import {
   collectionToTabData,
 } from "../util/navigation";
 
-import { IGame } from "../db/models/game";
-import { IUser } from "../db/models/user";
 import { ICollection } from "../db/models/collection";
 
 import uuid from "../util/uuid";
@@ -97,6 +95,7 @@ import {
   ICloseContextMenuPayload,
   CLOSE_CONTEXT_MENU,
 } from "../constants/action-types";
+import { User, Game } from "ts-itchio-api";
 
 export const navigate = createAction<INavigatePayload>(NAVIGATE);
 
@@ -109,7 +108,7 @@ export const focusTab = createAction<IFocusTabPayload>(FOCUS_TAB);
 export const focusNthTab = createAction<IFocusNthTabPayload>(FOCUS_NTH_TAB);
 
 interface INavigateToGamePayload {
-  game: IGame;
+  game: Game;
   background?: boolean;
 }
 export const navigateToGame = (payload: INavigateToGamePayload) =>
@@ -120,7 +119,7 @@ export const navigateToGame = (payload: INavigateToGamePayload) =>
   });
 
 interface INavigateToUserPayload {
-  user: IUser;
+  user: User;
   background?: boolean;
 }
 export const navigateToUser = (payload: INavigateToUserPayload) =>

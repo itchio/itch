@@ -4,8 +4,6 @@ import { connect } from "../connect";
 
 import { IRootState } from "../../types";
 
-import { IOwnUser } from "../../db/models/user";
-
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
 
@@ -20,6 +18,7 @@ import Button from "../basics/button";
 import Dropdown from "./dropdown";
 import { IDropdownItem } from "./dropdown-item";
 import Icon from "../basics/icon";
+import { OwnUser } from "ts-itchio-api";
 
 const IconBadge = styled(Icon)`
   display: inline-block;
@@ -156,7 +155,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
 interface IProps {}
 
 interface IDerivedProps {
-  me: IOwnUser;
+  me: OwnUser;
   displayName?: string;
   username: string;
   coverUrl: string;

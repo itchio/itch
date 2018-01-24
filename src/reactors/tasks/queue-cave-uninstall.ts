@@ -8,7 +8,6 @@ import * as paths from "../../os/paths";
 
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
-import { IUpload } from "../../types";
 
 import { coreUninstall } from "../../install-managers/common/core";
 
@@ -18,32 +17,20 @@ import { MODAL_RESPONSE } from "../../constants/action-types";
 import { promisedModal } from "../modals";
 
 import asTask from "./as-task";
-import lazyGetGame from "../lazy-get-game";
 import { ICave } from "../../db/models/cave";
+import { Upload } from "ts-itchio-api";
 
 export async function queueUninstall(
   ctx: Context,
   logger: Logger,
-  { cave, destPath, upload }: { cave: ICave; destPath: string; upload: IUpload }
+  { cave, destPath, upload }: { cave: ICave; destPath: string; upload: Upload }
 ) {
-  const runtime = currentRuntime();
-
-  const game = await lazyGetGame(ctx, cave.gameId);
-  if (!game) {
-    throw new Error("Couldn't find game to operate on");
-  }
-
   await coreUninstall({
     ctx,
-    runtime,
     logger,
     destPath,
-    game,
     cave,
-    upload,
   });
-
-  logger.info(`Uninstall successful`);
 }
 
 export default function(watcher: Watcher, db: DB) {
@@ -52,7 +39,7 @@ export default function(watcher: Watcher, db: DB) {
 
     const cave = db.caves.findOneById(caveId);
     if (!cave) {
-      // no such cave, can't uninstall!
+      rootLogger.error(`No such cave ${caveId}, can't uninstall`);
       return;
     }
 

@@ -1,13 +1,20 @@
-import { IGame, IOwnGame } from "../db/models/game";
-import { IUser, IOwnUser } from "../db/models/user";
-import { IDownloadKey } from "../db/models/download-key";
-import { ICollection } from "../db/models/collection";
+import { Game, OwnGame, User, OwnUser, Build, Upload } from "ts-itchio-api";
 
-import { IUpload, IUpgradePathItem, IBuild } from ".";
+import {
+  IUpgradePathItem,
+  IUserSet,
+  IDownloadKeySet,
+  IGameSet,
+  ICollectionSet,
+} from ".";
+
+export interface IOwnGameSet {
+  [id: string]: OwnGame;
+}
 
 /** In API responses, the user object is nested - we normalize it later */
-export interface IAPIGame extends IGame {
-  user: IUser;
+export interface IAPIGame extends Game {
+  user: User;
 }
 
 export interface IAPIKey {
@@ -32,7 +39,7 @@ export interface IAPIKey {
 
 export interface IMeResult {
   /** extended user info */
-  user: IOwnUser;
+  user: OwnUser;
 }
 
 export type ILoginKeyResult = IMeResult;
@@ -75,79 +82,126 @@ export interface IUpgradeResponse {
 }
 
 export interface IListUploadsResponse {
-  uploads: IUpload[];
+  uploads: Upload[];
 }
 
 export interface IMyGamesResult {
-  games: IOwnGame[];
-}
-
-export interface IOwnDownloadKey extends IDownloadKey {
-  game: IAPIGame;
+  result: {
+    gameIds: number[];
+  };
+  entities: {
+    games: IOwnGameSet;
+    users: IUserSet;
+  };
 }
 
 export interface IMyOwnedKeysResult {
-  ownedKeys: IOwnDownloadKey[];
+  result: {
+    downloadKeyIds: number[];
+  };
+  entities: {
+    downloadKeys: IDownloadKeySet;
+    games: IGameSet;
+    users: IUserSet;
+  };
 }
 
 export interface IGameResult {
-  game: IAPIGame;
+  result: {
+    gameId: number;
+  };
+  entities: {
+    games: IGameSet;
+    users: IUserSet;
+  };
 }
 
-export type BuildFileType = "archive" | "patch" | "manifest" | "signature";
-
 export interface ICollectionResult {
-  collection: ICollection;
+  result: {
+    collectionId: number;
+  };
+  entities: {
+    collections: ICollectionSet;
+  };
 }
 
 export interface IMyCollectionsResult {
-  collections: ICollection[];
+  result: {
+    collectionIds: number[];
+  };
+
+  entities: {
+    collections: ICollectionSet;
+    games: IGameSet;
+    users: IUserSet;
+  };
 }
 
 export interface IUserResult {
-  user: IUser;
+  result: {
+    userId: number;
+  };
+
+  entities: {
+    users: IUserSet;
+  };
 }
 
 export interface ICollectionGamesResult {
-  /** total number of games in collection, across all pages */
-  totalItems: number;
+  result: {
+    /** current page index */
+    page: number;
 
-  /** current page index */
-  page: number;
+    /** number of items listed on each page */
+    perPage: number;
 
-  /** number of items listed on each page */
-  perPage: number;
+    /** list of game IDs on this page, in API order */
+    gameIds: number[];
+  };
 
-  /** games on current page */
-  games: IGame[];
+  // Note: as of 2017-03-11, this endpoint does
+  // not include users or sales in the game objects
+  entities: {
+    /** games on current page */
+    games: IGameSet;
+  };
 }
 
 export interface ISearchGamesResult {
-  /** total number of games in search results, across all pages */
-  totalItems: number;
+  result: {
+    /** current page index */
+    page: number;
 
-  /** current page index */
-  page: number;
+    /** number of items listed on each page */
+    perPage: number;
 
-  /** number of items listed on each page */
-  perPage: number;
+    /** game IDs on this page in API order */
+    gameIds: number[];
+  };
 
-  /** games on current page */
-  games: IAPIGame[];
+  // Note: as of 2017-03-11, no users are returned in games search
+  entities: {
+    /** games on current page */
+    games: IGameSet;
+  };
 }
 
 export interface ISearchUsersResult {
-  /** total number of users in search results, across all pages */
-  totalItems: number;
+  result: {
+    /** current page index */
+    page: number;
 
-  /** current page index */
-  page: number;
+    /** number of items listed on each page */
+    perPage: number;
 
-  /** number of items listed on each page */
-  perPage: number;
+    /** user IDs on this page in API order */
+    userIds: number[];
+  };
 
-  /** users on current page */
-  users: IUser[];
+  entities: {
+    /** users on current page */
+    users: IUserSet;
+  };
 }
 
 export interface IDownloadUploadResult {
@@ -156,11 +210,11 @@ export interface IDownloadUploadResult {
 }
 
 export interface IListBuildsResponse {
-  builds: IBuild[];
+  builds: Build[];
 }
 
 export interface IBuildResponse {
-  build: IBuild;
+  build: Build;
 }
 
 export type IDownloadBuildResult = IDownloadUploadResult;

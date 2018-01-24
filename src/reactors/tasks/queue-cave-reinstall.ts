@@ -1,7 +1,6 @@
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
 
-import findUploads from "../downloads/find-uploads";
 import getGameCredentials from "../downloads/get-game-credentials";
 import lazyGetGame from "../lazy-get-game";
 
@@ -32,25 +31,10 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    const uploadResponse = await findUploads(ctx, {
-      game,
-      gameCredentials,
-    });
-    if (!uploadResponse) {
-      // couldn't find an upload
-      return;
-    }
+    const { upload, build } = cave;
 
-    // FIXME: what if there's several uploads to pick from (but not
-    // the original?)
-    // FIXME: what about trying to maintain the original?
-    const { uploads } = uploadResponse;
-    if (uploads.length < 1) {
-      return;
-    }
-    const upload = uploads[0];
-
-    // FIXME: this is bad.
+    // FIXME: this is bad - ideally butler would ask for a lock
+    // on the game's folder, and itch would handle those.
     const state = store.getState();
     const tasksForGame = state.tasks.tasksByGameId[cave.gameId];
     if (tasksForGame && tasksForGame.length > 0) {
@@ -67,7 +51,7 @@ export default function(watcher: Watcher, db: DB) {
         game,
         caveId,
         upload,
-        totalSize: upload.size,
+        build,
         reason: "reinstall",
       })
     );

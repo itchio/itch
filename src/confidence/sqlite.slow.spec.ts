@@ -230,7 +230,7 @@ CREATE TABLE noels (
     const fetchedNoel = q.get(Noel, k => k.where("id = ?", 1));
     t.same(fetchedNoel, {
       id: 1,
-      happy: 1,
+      happy: true,
     });
   });
 });

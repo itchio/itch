@@ -4,7 +4,7 @@ import { app } from "electron";
 import urls from "../constants/urls";
 import * as urlParser from "url";
 
-import { IUpload, IPreferencesState } from "../types";
+import { IPreferencesState } from "../types";
 import { ICaveLocation } from "../db/models/cave";
 import { makeLogger, Logger } from "../logger";
 
@@ -64,27 +64,12 @@ export function downloadBasePath(
   return join(location.path, "downloads");
 }
 
-export function downloadFolderPath(
-  upload: IUpload,
-  preferences: IPreferencesState
+export function downloadFolderPathForId(
+  preferences: IPreferencesState,
+  installLocation: string,
+  id: string
 ): string {
-  let slug = `${upload.id}`;
-  if (upload.buildId) {
-    slug = `${slug}-${upload.buildId}`;
-  }
-
-  return join(
-    downloadBasePath(preferences.defaultInstallLocation, preferences),
-    slug
-  );
-}
-
-export function downloadPath(upload: IUpload, preferences: IPreferencesState) {
-  if (typeof upload.filename !== "string") {
-    throw new Error(`Cannot download upload without filename`);
-  }
-
-  return join(downloadFolderPath(upload, preferences), upload.filename);
+  return join(downloadBasePath(installLocation, preferences), id);
 }
 
 export function globalDbPath(): string {

@@ -5,8 +5,8 @@ import * as actions from "../../actions";
 
 import Cover from "../basics/cover";
 
-import { IUser } from "../../db/models/user";
 import styled from "../styles";
+import { User } from "ts-itchio-api";
 
 const UserSearchResultDiv = styled.div`
   &:hover {
@@ -47,7 +47,7 @@ class UserSearchResult extends GenericSearchResult<IUserSearchResultProps> {
 }
 
 interface IUserSearchResultProps {
-  user: IUser;
+  user: User;
   onClick: () => void;
   chosen: boolean;
   active: boolean;

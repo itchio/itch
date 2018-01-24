@@ -1,15 +1,15 @@
 import { IGameCredentials } from "../../types";
-import { IGame } from "../../db/models/game";
 import { IDownloadKey } from "../../db/models/download-key";
 import Context from "../../context";
 
 import { filter, findWhere, first } from "underscore";
+import { Game } from "ts-itchio-api";
 
 // TODO: handle passwords & secrets as well.
 
 export default async function getGameCredentials(
   ctx: Context,
-  game: IGame
+  game: Game
 ): Promise<IGameCredentials> {
   return await getGameCredentialsInternal(ctx, game.id, game.inPressSystem);
 }

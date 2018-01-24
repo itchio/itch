@@ -5,7 +5,6 @@ import GenericSearchResult from "./generic-search-result";
 import isPlatformCompatible from "../../util/is-platform-compatible";
 import { formatPrice, applySale } from "../../format";
 
-import { IGame } from "../../db/models/game";
 import { fromJSONField } from "../../db/json-field";
 
 import Hoverable from "../basics/hover-hoc";
@@ -18,6 +17,7 @@ import * as actions from "../../actions";
 import PlatformIcons from "../basics/platform-icons";
 import { connect } from "../connect";
 import { dispatcher } from "../../constants/action-types";
+import { Game } from "ts-itchio-api";
 
 const StyledPlatformIcons = styled(PlatformIcons)`
   -webkit-filter: brightness(90%);
@@ -199,7 +199,7 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
 }
 
 interface IProps {
-  game: IGame;
+  game: Game;
   onClick: () => void;
   chosen: boolean;
   active: boolean;
