@@ -480,5 +480,12 @@
     "status.downloads.no_active_downloads_subtext": "La aferoj, kiujn vi instalas aŭ elŝutas, aperos ĉi tie",
     "status.downloads.find_games_button": "Elŝutu ion!",
     "grid.empty_state.leader": "Ĉio estas filtrita…",
-    "grid.empty_state.explanation": "Viaj filtriloj kaŝas ĉion ĉi tie"
+    "grid.empty_state.explanation": "Viaj filtriloj kaŝas ĉion ĉi tie",
+    "grid.item.manage": "Administri",
+    "prompt.launch.title": "Startigi „{{title}}“",
+    "prompt.launch.message": "Kiun vi volas startigi?",
+    "prompt.manage_game.title": "Administri „{{title}}“",
+    "prompt.manage_game.installed_uploads": "La jenaj aĵoj estas instalitaj:",
+    "prompt.manage_game.available_uploads": "La jenaj aĵoj estas ankaŭ disponeblaj:",
+    "prompt.manage_game.no_other_uploads": "Ĉi-momente neniuj aliaj aĵoj estas disponeblaj."
 }
