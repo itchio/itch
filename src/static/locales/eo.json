@@ -487,5 +487,6 @@
     "prompt.manage_game.title": "Administri „{{title}}“",
     "prompt.manage_game.installed_uploads": "La jenaj aĵoj estas instalitaj:",
     "prompt.manage_game.available_uploads": "La jenaj aĵoj estas ankaŭ disponeblaj:",
-    "prompt.manage_game.no_other_uploads": "Ĉi-momente neniuj aliaj aĵoj estas disponeblaj."
+    "prompt.manage_game.no_other_uploads": "Ĉi-momente neniuj aliaj aĵoj estas disponeblaj.",
+    "preferences.advanced.prefer_optimized_patches": "Preferi optimumigitajn flikaĵojn"
 }
