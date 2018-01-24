@@ -493,5 +493,6 @@
     "prompt.revert.version": "version {{version}}",
     "status.repairing_game": "La mise à jour de {{title}} doit être complétée avant son ouverture",
     "status.downloads.no_active_downloads_subtext": "Ce que vous installez apparaitra ici",
-    "status.downloads.find_games_button": "Explorer l'univers itch.io"
+    "status.downloads.find_games_button": "Explorer l'univers itch.io",
+    "preferences.advanced.prefer_optimized_patches": "Utiliser de préférence les mises à jour optimisées"
 }
