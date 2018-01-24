@@ -487,5 +487,11 @@
     "status.downloads.no_active_downloads_subtext": "Тут будет список того, что вы скачали",
     "status.downloads.find_games_button": "Давайте что-нибудь скачаем!",
     "grid.empty_state.leader": "Всё отфильтровалось...",
-    "grid.empty_state.explanation": "Фильтр скрыл всё, что у нас есть"
+    "grid.empty_state.explanation": "Фильтр скрыл всё, что у нас есть",
+    "grid.item.manage": "Управление",
+    "prompt.launch.title": "Запуск {{title}}",
+    "prompt.manage_game.title": "Управление {{title}}",
+    "prompt.manage_game.installed_uploads": "Установлены следующие файлы:",
+    "prompt.manage_game.available_uploads": "Кроме того, доступны файлы:",
+    "prompt.manage_game.no_other_uploads": "Альтернативных файлов для установки нет."
 }
