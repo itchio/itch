@@ -493,5 +493,6 @@
     "prompt.manage_game.title": "Управление {{title}}",
     "prompt.manage_game.installed_uploads": "Установлены следующие файлы:",
     "prompt.manage_game.available_uploads": "Доступны альтернативные файлы:",
-    "prompt.manage_game.no_other_uploads": "Альтернативных файлов для установки нет."
+    "prompt.manage_game.no_other_uploads": "Альтернативных файлов для установки нет.",
+    "preferences.advanced.prefer_optimized_patches": "Предпочитать оптимизированные патчи"
 }
