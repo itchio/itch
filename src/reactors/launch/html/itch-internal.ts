@@ -37,9 +37,9 @@ export async function registerProtocol(opts: IRegisterProtocolOpts) {
       WEBGAME_PROTOCOL,
       (request, callback) => {
         const urlPath = url.parse(request.url).pathname;
-        // FIXME: this is wrong, the path may also be url-encoded, see
-        // https://github.com/itchio/itch/issues/1211
-        const filePath = join(fileRoot, urlPath.replace(/^\//, ""));
+        const decodedPath = decodeURI(urlPath);
+        const rootlessPath = decodedPath.replace(/^\//, "");
+        const filePath = join(fileRoot, rootlessPath);
 
         callback(filePath);
       },
