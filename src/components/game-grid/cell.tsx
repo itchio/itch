@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import { IGame } from "../../db/models/game";
 import { ICaveSummary } from "../../db/models/cave";
 import { InjectedIntl } from "react-intl";
 
@@ -19,6 +18,7 @@ import { connect } from "../connect";
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
 import isCavePristine from "../../helpers/is-cave-pristine";
+import { Game } from "ts-itchio-api";
 
 class Cell extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -85,7 +85,7 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
 }
 
 interface IProps {
-  game: IGame;
+  game: Game;
   cave: ICaveSummary;
   intl: InjectedIntl;
 

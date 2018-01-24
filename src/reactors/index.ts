@@ -30,7 +30,6 @@ import url from "./url";
 import itchInternal from "./itch-internal";
 import tasks from "./tasks";
 import downloads from "./downloads";
-import queueInstall from "./queue-install";
 import queueLaunch from "./queue-launch";
 import updater from "./updater";
 import gameUpdates from "./game-updates";
@@ -74,7 +73,6 @@ export default function getWatcher(db: DB) {
   itchInternal(watcher);
   tasks(watcher, db);
   downloads(watcher, db);
-  queueInstall(watcher, db);
   queueLaunch(watcher, db);
   updater(watcher, db);
   gameUpdates(watcher, db);

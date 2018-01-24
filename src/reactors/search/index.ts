@@ -13,8 +13,6 @@ import {
   mergeSearchResults,
   excludeIncompatibleSearchResults,
 } from "./search-helpers";
-import normalize from "../../api/normalize";
-import { arrayOf, game, user } from "../../api/schemas";
 
 async function doRemoteSearch(
   store: IStore,
@@ -29,23 +27,21 @@ async function doRemoteSearch(
   const api = client.withKey(credentials.key);
 
   const gamePromise = (async () => {
-    const apiResponse = await api.searchGames(query);
-    const result = normalize(apiResponse, { games: arrayOf(game) });
+    const gamesRes = await api.searchGames(query);
     cb({
       games: {
-        set: result.entities.games,
-        ids: result.result.gameIds,
+        set: gamesRes.entities.games,
+        ids: gamesRes.result.gameIds,
       },
     });
   })();
 
   const userPromise = (async () => {
-    const apiResponse = await api.searchUsers(query);
-    const result = normalize(apiResponse, { users: arrayOf(user) });
+    const usersRes = await api.searchUsers(query);
     cb({
       users: {
-        set: result.entities.users,
-        ids: result.result.userIds,
+        set: usersRes.entities.users,
+        ids: usersRes.result.userIds,
       },
     });
   })();

@@ -9,16 +9,15 @@ import { filter } from "underscore";
 
 import { promisedModal } from "../modals";
 
-import findUpgradePath from "../downloads/find-upgrade-path";
 import getGameCredentials from "../downloads/get-game-credentials";
 import lazyGetGame from "../lazy-get-game";
 
 import { IRevertCaveParams } from "../../components/modal-widgets/revert-cave";
 
 import { DB } from "../../db";
-import { fromJSONField } from "../../db/json-field";
 
 import asTask from "./as-task";
+import { Build } from "ts-itchio-api";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
@@ -41,17 +40,20 @@ export default function(watcher: Watcher, db: DB) {
       name: "install",
       gameId: cave.gameId,
       work: async (ctx, logger) => {
+        // TODO: should all of this be a butler service task? (find a build to revert to)
+
         const game = await lazyGetGame(ctx, cave.gameId);
 
-        const upload = fromJSONField(cave.upload);
+        const { upload } = cave;
+        const currentBuild = cave.build;
+
         if (!upload) {
           logger.error(`No upload in cave, can't revert: ${caveId}`);
           return;
         }
 
-        const build = fromJSONField(cave.build);
-        if (!build) {
-          logger.error(`Cave isn't wharf-enabled, can't revert: ${caveId}`);
+        if (!currentBuild) {
+          logger.error(`Upload isn't wharf-enabled, can't revert: ${caveId}`);
           return;
         }
 
@@ -68,12 +70,10 @@ export default function(watcher: Watcher, db: DB) {
           upload.id
         );
 
-        logger.info(`Builds list:\n${JSON.stringify(buildsList, null, 2)}`);
-
         // TODO: figure out if we should show newer builds here as well?
         // if we do, we should show the current one as 'current' and have it be disabled
         const remoteBuilds = filter(buildsList.builds, remoteBuild => {
-          return remoteBuild.id < build.id;
+          return remoteBuild.id < currentBuild.id;
         });
 
         // FIXME: what if remoteBuilds is empty ?
@@ -97,20 +97,20 @@ export default function(watcher: Watcher, db: DB) {
 
         const buildId = response.payload.revertBuildId;
 
-        try {
-          // this will throw if the buildId isn't in the chain of builds of the current upload
-          await findUpgradePath(ctx, {
-            currentBuildId: buildId,
-            game,
-            gameCredentials,
-            upload,
-          });
-        } catch (e) {
-          logger.error(`Could not get upgrade path: ${e}`);
-          store.dispatch(
-            actions.statusMessage({
-              message: e.message,
-            })
+        let pickedBuild: Build;
+        for (const b of remoteBuilds) {
+          if (b.id == buildId) {
+            pickedBuild = b;
+          }
+        }
+
+        if (!pickedBuild) {
+          throw new Error(
+            `Couldn't find picked build ${buildId} in the remoteBuilds list: ${JSON.stringify(
+              remoteBuilds,
+              null,
+              2
+            )}`
           );
         }
 
@@ -119,7 +119,7 @@ export default function(watcher: Watcher, db: DB) {
             caveId: cave.id,
             game,
             upload,
-            buildId,
+            build: pickedBuild,
             reason: "revert",
           })
         );

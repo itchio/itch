@@ -19,6 +19,9 @@ export function parseDate(input: string) {
 
 const date = transform(parseDate);
 
+// N.B: these need to be snake_case because
+// they happen before camelification
+
 game.define({
   user,
   created_at: date,

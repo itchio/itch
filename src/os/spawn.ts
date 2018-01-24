@@ -1,5 +1,6 @@
 import * as childProcess from "child_process";
 import * as split2 from "split2";
+import * as stream from "stream";
 
 import rootLogger, { Logger } from "../logger";
 const spawnLogger = rootLogger.child({ name: "spawn" });
@@ -19,6 +20,9 @@ interface ISpawnOpts {
 
   /** Defaults to eol for the current platform ("\r\n" or "\n") */
   split?: string;
+
+  /** Called when the process has been started and we're ready to write to stdin */
+  onStdinReady?: (stdin: stream.Writable) => void;
 
   /** If set, called on each line of stdout */
   onToken?: (token: string) => void;

@@ -1,6 +1,5 @@
 import * as actions from "../../actions";
 
-import { IGame } from "../../db/models/game";
 import { IDownloadKey } from "../../db/models/download-key";
 import { ICaveSummary } from "../../db/models/cave";
 
@@ -10,6 +9,7 @@ import { IAction } from "../../constants/action-types";
 
 import { InjectedIntl } from "react-intl";
 import { showInExplorerString } from "../../format/show-in-explorer";
+import { Game } from "ts-itchio-api";
 
 export type ActionType = "secondary" | "separator" | "info";
 
@@ -31,7 +31,7 @@ function browseAction(caveId: string): IActionOpts {
 }
 
 function purchaseAction(
-  game: IGame,
+  game: Game,
   downloadKey: IDownloadKey,
   intl: InjectedIntl
 ): IActionOpts {
@@ -63,7 +63,7 @@ function uninstallAction(caveId: string): IActionOpts {
 }
 
 interface IListSecondaryActionsProps {
-  game: IGame;
+  game: Game;
   cave: ICaveSummary;
   downloadKey: IDownloadKey;
 

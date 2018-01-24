@@ -4,7 +4,6 @@ import { IRootState, IGameUpdate, ITask, IDownloadItem } from "../types/index";
 
 import { first } from "underscore";
 import getByIds from "./get-by-ids";
-import { IGame } from "../db/models/game";
 import {
   getPendingForGame,
   getActiveDownload,
@@ -12,6 +11,7 @@ import {
 import isPlatformCompatible from "../util/is-platform-compatible";
 import memoize from "../util/lru-memoize";
 import { TaskName, DownloadReason } from "../types/tasks";
+import { Game } from "ts-itchio-api";
 
 /**
  * What type of access we have to the game - do we own it,
@@ -85,18 +85,21 @@ export interface IGameStatus {
 
 export default function getGameStatus(
   rs: IRootState,
-  game: IGame
+  game: Game,
+  cave?: ICaveSummary
 ): IGameStatus {
   const { commons, session, tasks, downloads } = rs;
   const { credentials } = session;
 
-  let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
   let downloadKeys = getByIds(
     commons.downloadKeys,
     commons.downloadKeyIdsByGameId[game.id]
   );
 
-  const cave = first(caves);
+  if (!cave) {
+    let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+    cave = first(caves);
+  }
   const downloadKey = first(downloadKeys);
 
   const pressUser = credentials.me.pressUser;
@@ -129,7 +132,7 @@ export default function getGameStatus(
 }
 
 function rawGetGameStatus(
-  game: IGame,
+  game: Game,
   cave: ICaveSummary,
   downloadKey: IDownloadKeySummary,
   pressUser: boolean,

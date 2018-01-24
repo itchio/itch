@@ -1,16 +1,17 @@
 import { fileSize } from "../format/filesize";
 
 import platformData from "../constants/platform-data";
-import { DateTimeField, toDateTimeField } from "../db/datetime-field";
+import { toDateTimeField } from "../db/datetime-field";
 
-import { IUpload, ILocalizedString, IModalButtonTag } from "../types";
+import { ILocalizedString, IModalButtonTag } from "../types";
+import { Upload } from "ts-itchio-api";
 
 interface IUploadButton {
   label: ILocalizedString;
   tags: IModalButtonTag[];
   icon: string;
   timeAgo: {
-    date: DateTimeField;
+    date: Date;
   };
 }
 
@@ -20,7 +21,7 @@ interface IMakeUploadButtonOpts {
 }
 
 export default function makeUploadButton(
-  upload: IUpload,
+  upload: Upload,
   opts = { showSize: true } as IMakeUploadButtonOpts
 ): IUploadButton {
   let label = `${upload.displayName || upload.filename}`;

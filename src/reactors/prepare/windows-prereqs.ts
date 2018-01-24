@@ -11,7 +11,6 @@ import {
 } from "underscore";
 
 import { ICave } from "../../db/models/cave";
-import { IGame } from "../../db/models/game";
 
 import spawn from "../../os/spawn";
 import * as paths from "../../os/paths";
@@ -26,7 +25,7 @@ import { join, basename } from "path";
 import urls from "../../constants/urls";
 
 import * as actions from "../../actions";
-import Context from "../../context";
+import Context, { MinimalContext } from "../../context";
 
 import {
   IManifest,
@@ -44,7 +43,7 @@ import { IPrereqsStateParams } from "../../components/modal-widgets/prereqs-stat
 
 interface IWindowsPrereqsOpts {
   cave: ICave;
-  game: IGame;
+  game: Game;
   manifest: IManifest;
   logger: Logger;
   runtime: IRuntime;
@@ -72,6 +71,7 @@ interface IButlerPrereqResult extends IButlerPrereqMessage {
 import { extract } from "../../util/extract";
 import { formatExitCode } from "../../format/exit-code";
 import { fromJSONField } from "../../db/json-field";
+import { Game } from "ts-itchio-api";
 
 export default async function handleWindowsPrereqs(
   ctx: Context,
@@ -430,7 +430,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
     }
 
     try {
-      await butler.wipe(workDir.name, { ctx, logger });
+      await butler.wipe(workDir.name, { ctx: new MinimalContext(), logger });
     } catch (e) {
       logger.warn(`Couldn't wipe: ${e.stack}`);
     }

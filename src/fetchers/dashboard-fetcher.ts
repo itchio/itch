@@ -1,9 +1,6 @@
 import { Fetcher } from "./fetcher";
 import * as squel from "squel";
 
-import normalize from "../api/normalize";
-import { game, arrayOf } from "../api/schemas";
-
 import { addSortAndFilterToQuery } from "./sort-and-filter";
 import { fromJSONField } from "../db/json-field";
 
@@ -49,22 +46,16 @@ export default class DashboardFetcher extends Fetcher {
   async remote() {
     const { db } = this.ctx;
 
-    const apiResponse = await this.withApi(async api => {
-      return await api.myGames();
-    });
-
-    const normalized = normalize(apiResponse, {
-      games: arrayOf(game),
-    });
+    const myGamesRes = await this.withApi(async api => await api.myGames());
     const meId = this.ensureCredentials().me.id;
 
-    const remoteGameIds = pluck(normalized.entities.games, "id");
+    const remoteGameIds = pluck(myGamesRes.entities.games, "id");
     this.debug(
-      `Fetched ${Object.keys(normalized.entities.games).length} games from API`
+      `Fetched ${Object.keys(myGamesRes.entities.games).length} games from API`
     );
 
     db.saveMany({
-      ...normalized.entities,
+      ...myGamesRes.entities,
       profiles: {
         [meId]: {
           id: meId,

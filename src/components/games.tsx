@@ -70,7 +70,7 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
     } = this.props;
     const { sortBy, sortDirection } = params;
 
-    if (hiddenCount >= gameIds.length) {
+    if (gameIds.length === 0) {
       return (
         <EmptyState
           icon="filter"

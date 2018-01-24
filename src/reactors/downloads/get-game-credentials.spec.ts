@@ -6,8 +6,8 @@ import getGameCredentials, {
 import Context from "../../context";
 
 import { IStore, ICredentials, IRootState } from "../../types";
-import { IGame } from "../../db/models/game";
 import { IDownloadKey } from "../../db/models/download-key";
+import { Game } from "ts-itchio-api";
 
 const state = ({
   session: {
@@ -27,7 +27,7 @@ suite(__filename, s => {
 
       const game = ({
         id: 728,
-      } as any) as IGame;
+      } as any) as Game;
       let gc = await getGameCredentials(ctx, game);
       t.same(gc, null, "no credentials when logged out");
 

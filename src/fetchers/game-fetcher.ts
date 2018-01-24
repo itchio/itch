@@ -1,8 +1,5 @@
 import { Fetcher } from "./fetcher";
 
-import normalize from "../api/normalize";
-import { game } from "../api/schemas";
-
 import { gameToTabData } from "../util/navigation";
 
 export default class GameFetcher extends Fetcher {
@@ -18,19 +15,15 @@ export default class GameFetcher extends Fetcher {
     };
     pushGame(localGame);
 
-    const normalized = await this.withApi(async api => {
-      const apiGame = await api.game(gameId);
-      return normalize(apiGame, { game });
-    });
-
-    pushGame(normalized.entities.games[normalized.result.gameId]);
+    const gameRes = await this.withApi(async api => await api.game(gameId));
+    pushGame(gameRes.entities.games[gameRes.result.gameId]);
 
     // if the game is already in the DB, we'd like to
     // update it with Fresh API Data (TM). this will also
     // save related records such as the creator of the game,
     // which is fine
     if (localGame) {
-      db.saveMany(normalized.entities);
+      db.saveMany(gameRes.entities);
     }
   }
 

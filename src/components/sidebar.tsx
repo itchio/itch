@@ -16,8 +16,6 @@ import UserMenu from "./sidebar/user-menu";
 import { IRootState } from "../types";
 import { dispatcher } from "../constants/action-types";
 
-import { IOwnUser } from "../db/models/user";
-
 import { SortableContainer, arrayMove } from "react-sortable-hoc";
 
 import styled, * as styles from "./styles";
@@ -25,6 +23,7 @@ import { SidebarSection, SidebarHeading } from "./sidebar/styles";
 
 import format, { formatString } from "./format";
 import { injectIntl, InjectedIntl } from "react-intl";
+import { OwnUser } from "ts-itchio-api";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -180,7 +179,7 @@ interface IDerivedProps {
   osx: boolean;
   sidebarWidth: number;
   fullscreen: boolean;
-  me: IOwnUser;
+  me: OwnUser;
 
   tab: string;
   path: string;

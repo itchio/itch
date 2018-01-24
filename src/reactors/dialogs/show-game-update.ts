@@ -57,7 +57,6 @@ export default function(watcher: Watcher) {
             action: actions.queueGameUpdate({
               ...action.payload,
               upload,
-              handPicked: !single,
             }),
           };
           return spec;

@@ -3,12 +3,13 @@ import * as classNames from "classnames";
 import { connect } from "../connect";
 import Chart from "./chart";
 
-import { truncate, downloadProgress, fileSize } from "../../format";
+import { downloadProgress, fileSize } from "../../format";
 
 import * as actions from "../../actions";
 
 import TimeAgo from "../basics/time-ago";
 import IconButton from "../basics/icon-button";
+import Button from "../basics/button";
 import Hover, { IHoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
 import MainAction from "../game-actions/main-action";
@@ -32,6 +33,7 @@ import {
   formatOutcome,
   formatOperation,
 } from "../../format/operation";
+import { formatUploadTitle } from "../../format/upload";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -76,6 +78,11 @@ const DownloadRowDiv = styled.div`
 
   .game-title {
     font-weight: bold;
+
+    .game-file-name {
+      display: inline;
+      font-weight: normal;
+    }
   }
 
   .cover,
@@ -158,6 +165,11 @@ const DownloadRowDiv = styled.div`
     font-weight: bold;
   }
 
+  .control--filename {
+    display: inline;
+    font-weight: normal;
+  }
+
   .control--reason {
     font-weight: normal;
     color: ${props => props.theme.secondaryText};
@@ -220,7 +232,11 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     let onStatsClick = (ev: React.MouseEvent<any>): void => null;
     if (finished) {
-      onStatsClick = this.onNavigate;
+      if (item.err) {
+        onStatsClick = this.onShowError;
+      } else {
+        onStatsClick = this.onNavigate;
+      }
     }
 
     const itemClasses = classNames("download-row-item", {
@@ -266,11 +282,6 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     this.props.prioritizeDownload({ id });
   };
 
-  onRetry = () => {
-    const { id } = this.props.item;
-    this.props.retryDownload({ id });
-  };
-
   onResume = () => {
     this.props.resumeDownloads({});
   };
@@ -279,16 +290,19 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     this.props.pauseDownloads({});
   };
 
+  onShowError = (ev: React.MouseEvent<any>) => {
+    ev.stopPropagation();
+
+    const { id } = this.props.item;
+    this.props.showDownloadError({ id });
+  };
+
   controls() {
     const { intl, first, item, status } = this.props;
     const { err } = item;
 
     if (!status.operation && err) {
-      return (
-        <div className="controls small">
-          <IconButton icon="repeat" onClick={this.onRetry} />
-        </div>
-      );
+      return null;
     }
 
     if (!status.operation) {
@@ -330,18 +344,28 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   progress() {
-    const { first, finished, item, status } = this.props;
-    const { err, game, finishedAt, reason } = item;
+    const { first, finished, item, status, downloadsPaused } = this.props;
+    const { err, game, upload, finishedAt, reason } = item;
     const { operation } = status;
 
     if (finished && !operation) {
       if (err) {
         return (
-          <div className="error-message">
-            {format(["status.downloads.download_error"])}
-            <div className="timeago" data-rh-at="top" data-rh={err}>
-              {truncate(err, { length: 60 })}
+          <div className="stats--control">
+            <div className="control--title">
+              {game.title}
+              <span className="control--reason">
+                {" — "}
+                {format(["prompt.install_error.message"])}
+              </span>
             </div>
+            <Button
+              icon="error"
+              primary
+              discreet
+              label={format(["grid.item.view_details"])}
+              onClick={this.onShowError}
+            />
           </div>
         );
       }
@@ -351,6 +375,9 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
         <div className="stats--control">
           <div className="control--title">
             {game.title}
+            <div className="control--filename">
+              {upload ? ` · ${formatUploadTitle(upload)}` : null}
+            </div>
             {outcomeText ? (
               <span className="control--reason">
                 {" — "}
@@ -367,23 +394,29 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     const { progress = 0, bps, eta } = status.operation;
 
     const progressInnerStyle: React.CSSProperties = {};
-    if (progress > 0) {
-      progressInnerStyle.width = `${progress * 100}%`;
-    } else {
-      progressInnerStyle.width = `${100 / 3}%`;
-    }
-
     const positiveProgress = progress > 0;
     const hasNonDownloadTask =
       operation && operation.type !== OperationType.Download;
+    const indeterminate =
+      (first || hasNonDownloadTask) && !downloadsPaused && !positiveProgress;
+    if (indeterminate) {
+      progressInnerStyle.width = `${100 / 3}%`;
+    } else {
+      progressInnerStyle.width = `${progress * 100}%`;
+    }
 
     return (
       <div className="stats-inner">
-        <div className="game-title">{game.title}</div>
+        <div className="game-title">
+          {game.title}
+          <div className="game-file-name">
+            {upload ? ` · ${formatUploadTitle(upload)}` : null}
+          </div>
+        </div>
         <div className="progress">
           <div
             className={classNames("progress-inner", {
-              indeterminate: (first || hasNonDownloadTask) && !positiveProgress,
+              indeterminate,
             })}
             style={progressInnerStyle}
           />
@@ -458,9 +491,9 @@ interface IDerivedProps {
 
   navigateToGame: typeof actions.navigateToGame;
   prioritizeDownload: typeof actions.prioritizeDownload;
+  showDownloadError: typeof actions.showDownloadError;
   pauseDownloads: typeof actions.pauseDownloads;
   resumeDownloads: typeof actions.resumeDownloads;
-  retryDownload: typeof actions.retryDownload;
   discardDownloadRequest: typeof actions.discardDownloadRequest;
   openGameContextMenu: typeof actions.openGameContextMenu;
   openModal: typeof actions.openModal;
@@ -476,6 +509,7 @@ export default connect<IProps>(injectIntl(HoverDownloadRow), {
 
     return {
       speeds: rs.downloads.speeds,
+      downloadsPaused: rs.downloads.paused,
       tasksByGameId: rs.tasks.tasksByGameId,
       status: getGameStatus(rs, game),
     };
@@ -483,6 +517,7 @@ export default connect<IProps>(injectIntl(HoverDownloadRow), {
   dispatch: dispatch => ({
     navigateToGame: dispatcher(dispatch, actions.navigateToGame),
     prioritizeDownload: dispatcher(dispatch, actions.prioritizeDownload),
+    showDownloadError: dispatcher(dispatch, actions.showDownloadError),
     pauseDownloads: dispatcher(dispatch, actions.pauseDownloads),
     resumeDownloads: dispatcher(dispatch, actions.resumeDownloads),
     retryDownload: dispatcher(dispatch, actions.retryDownload),

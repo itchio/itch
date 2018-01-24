@@ -1,34 +1,60 @@
-import { IUpload, IPreferencesState } from "../../types";
+import { IPreferencesState, IDownloadItem } from "../../types";
 import { Logger } from "../../logger/index";
 
 import butler from "../../util/butler";
 import * as paths from "../../os/paths";
 import { MinimalContext } from "../../context/index";
+import { ICave } from "../../db/models/cave";
+import { computeCaveLocation } from "./compute-cave-location";
 
-interface IWipeDownloadFolderOpts {
-  upload: IUpload;
+interface IWipeFolderOpts {
+  caveIn?: ICave;
+  item: IDownloadItem;
   logger: Logger;
   preferences: IPreferencesState;
 }
 
-export async function wipeDownloadFolder(opts: IWipeDownloadFolderOpts) {
-  const { logger, upload, preferences } = opts;
+export async function wipeDownloadFolder(opts: IWipeFolderOpts) {
+  const { item, preferences, caveIn } = opts;
 
-  // for 'install' and 'reinstall' downloads, this path is where the
-  // archives/installers are downloaded.
-  // for 'upgrade', this is the staging folder for butler
-  // for 'revert' / 'verify', this should normally be an empty folder
-  const downloadFolderPath = paths.downloadFolderPath(upload, preferences);
+  const { caveLocation } = computeCaveLocation(item, preferences, caveIn);
 
-  logger.debug(`Wiping download folder ${downloadFolderPath}`);
+  const downloadFolderPath = paths.downloadFolderPathForId(
+    preferences,
+    caveLocation.installLocation,
+    item.id
+  );
+
+  return await wipeFolder(opts, "download", downloadFolderPath);
+}
+
+export async function wipeInstallFolder(opts: IWipeFolderOpts) {
+  const { item, preferences, caveIn } = opts;
+
+  const { absoluteInstallFolder } = computeCaveLocation(
+    item,
+    preferences,
+    caveIn
+  );
+  return await wipeFolder(opts, "install", absoluteInstallFolder);
+}
+
+async function wipeFolder(
+  opts: IWipeFolderOpts,
+  kind: string,
+  absoluteFolderPath
+) {
+  const { logger } = opts;
+
+  logger.debug(`Wiping download folder ${absoluteFolderPath}`);
   try {
-    await butler.wipe(downloadFolderPath, {
+    await butler.wipe(absoluteFolderPath, {
       ctx: new MinimalContext(),
       logger,
     });
   } catch (e) {
     logger.warn(
-      `Could not wipe download folder ${downloadFolderPath}: ${e.stack}`
+      `Could not wipe download folder ${absoluteFolderPath}: ${e.stack}`
     );
   }
 }

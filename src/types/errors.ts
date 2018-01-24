@@ -1,3 +1,5 @@
+import { messages, RequestError } from "node-buse";
+
 type ItchErrorCode =
   | "ITCH_ECRASH"
   | "ITCH_ECANCELLED"
@@ -82,8 +84,21 @@ export class Cancelled extends ItchError {
 }
 
 export function isCancelled(e: any): boolean {
+  if (!e) {
+    return false;
+  }
+
   let ie = e as ItchError;
-  return ie && ie.code === "ITCH_ECANCELLED";
+  if (ie.code === "ITCH_ECANCELLED") {
+    return true;
+  }
+
+  let je = e as RequestError;
+  if (je.rpcError && je.rpcError.code === messages.Codes.OperationCancelled) {
+    return true;
+  }
+
+  return false;
 }
 
 export class Retry extends ItchError {

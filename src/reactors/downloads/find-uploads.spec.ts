@@ -5,10 +5,10 @@ import { IRuntime } from "../../types";
 
 import Context from "../../context";
 
-import { IGame } from "../../db/models/game";
-import { IUpload, IStore, IRootState } from "../../types";
+import { IStore, IRootState } from "../../types";
+import { Game, Upload, UploadType } from "ts-itchio-api";
 
-const asUpload = (x: Partial<IUpload>) => x as IUpload;
+const asUpload = (x: Partial<Upload>) => x as Upload;
 
 // TODO: test more cases
 
@@ -30,7 +30,7 @@ suite(__filename, s => {
       const game = ({
         id: 123,
         classification: "game",
-      } as any) as IGame;
+      } as any) as Game;
 
       const linux64: IRuntime = {
         platform: "linux",
@@ -113,7 +113,7 @@ suite(__filename, s => {
       });
 
       const html = asUpload({
-        type: "html",
+        type: UploadType.HTML,
         filename: "twine-is-not-a-twemulator.zip",
       });
 

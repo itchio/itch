@@ -2,6 +2,7 @@ import * as squel from "squel";
 
 import { DB } from ".";
 import { Model } from "./model";
+import expandFields from "./expand-fields";
 
 export type SelectCb = (k: squel.Select) => squel.Select;
 export type DeleteCb = (k: squel.Delete) => squel.Delete;
@@ -37,12 +38,48 @@ export default class Querier {
 
   get(model: Model, cb: SelectCb): any {
     const sql = cb(squel.select().from(model.table)).toParam();
-    return this.db.prepare(sql.text).get(...sql.values);
+    const res = this.db.prepare(sql.text).get(...sql.values);
+    if (res) {
+      expandFields(res, model);
+    }
+    return res;
   }
 
   all(model: Model, cb: SelectCb = identity): any[] {
     const sql = cb(squel.select().from(model.table)).toParam();
-    return this.db.prepare(sql.text).all(...sql.values);
+    const records = this.db.prepare(sql.text).all(...sql.values);
+    for (const record of records) {
+      expandFields(record, model);
+    }
+    return records;
+  }
+
+  /**
+   * Fetches many instances of a model by its primary key
+   * Paginates if needed to respect SQLite limits
+   */
+  allByKeySafe(model: Model, primaryKeys: any[]): any[] {
+    let res: any[] = [];
+    // actually defaults to 999 in SQLite: https://sqlite.org/limits.html
+    // but better safe than sorry
+    const maxParamsByQuery = 900;
+
+    let offset = 0;
+    while (offset < primaryKeys.length) {
+      let queryLength = primaryKeys.length - offset;
+      if (queryLength > maxParamsByQuery) {
+        queryLength = maxParamsByQuery;
+      }
+
+      let queryKeys = primaryKeys.slice(offset, offset + queryLength);
+      res = [
+        ...res,
+        ...this.all(model, k => k.where(`${model.primaryKey} in ?`, queryKeys)),
+      ];
+
+      offset += queryLength;
+    }
+    return res;
   }
 
   update(model: Model, cb: UpdateCb): void {

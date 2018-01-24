@@ -3,9 +3,7 @@ import "electron";
 
 import * as Types from "../types";
 import { IProgressInfo, IMenuTemplate } from "../types";
-
-import { IGame } from "../db/models/game";
-import { IOwnUser } from "../db/models/user";
+import { Game, OwnUser, Upload, Build } from "ts-itchio-api";
 
 export type IAction<T> = Action<T>;
 
@@ -61,6 +59,15 @@ export interface IOpenAppLogPayload {}
 export const OPEN_MODAL = "OPEN_MODAL";
 export interface IOpenModalPayload extends Types.IModal {}
 
+export const UPDATE_MODAL_WIDGET_PARAMS = "UPDATE_MODAL_WIDGET_PARAMS";
+export interface IUpdateModalWidgetParamsPayload {
+  /** the modal's unique identifier */
+  id: string;
+
+  /** the parameters for the widget being shown in the modal */
+  widgetParams: any;
+}
+
 /** close frontmost modal */
 export const CLOSE_MODAL = "CLOSE_MODAL";
 export interface ICloseModalPayload {
@@ -93,7 +100,7 @@ export interface IModalResponsePayload {
   cache?: boolean;
 
   /** manually picked upload for install */
-  pickedUpload?: Types.IUpload;
+  pickedUploadIndex?: number;
 
   /** recaptcha challenge response */
   recaptchaResponse?: string;
@@ -439,7 +446,7 @@ export interface IOpenTabContextMenuPayload extends IOpenContextMenuBase {
 export const OPEN_GAME_CONTEXT_MENU = "OPEN_GAME_CONTEXT_MENU";
 export interface IOpenGameContextMenuPayload extends IOpenContextMenuBase {
   /** game to open the context menu of */
-  game: IGame;
+  game: Game;
 }
 
 export const POPUP_CONTEXT_MENU = "POPUP_CONTEXT_MENU";
@@ -650,10 +657,16 @@ export interface IQueueDownloadPayload extends Types.IQueueDownloadOpts {}
 export const DOWNLOAD_STARTED = "DOWNLOAD_STARTED";
 export type IDownloadStartedPayload = Partial<Types.IDownloadItem>;
 
+export const DOWNLOAD_UPDATE = "DOWNLOAD_UPDATE";
+export type IDownloadUpdatePayload = Partial<Types.IDownloadItem>;
+
 export const DOWNLOAD_PROGRESS = "DOWNLOAD_PROGRESS";
-export interface IDownloadProgressPayload extends IProgressInfo {
+export interface IDownloadProgressPayload extends Partial<IProgressInfo> {
   /** the download in progress */
   id: string;
+
+  build?: Build;
+  upload?: Upload;
 }
 
 export const DOWNLOAD_ENDED = "DOWNLOAD_ENDED";
@@ -666,6 +679,9 @@ export interface IDownloadEndedPayload {
 
   /** an error, if any */
   err: string;
+
+  /** an error stack, if any */
+  errStack: string;
 
   /** stuff like: where the file was downloaded. */
   result: Types.IDownloadResult;
@@ -689,8 +705,19 @@ export interface IPrioritizeDownloadPayload {
   id: string;
 }
 
+export const SHOW_DOWNLOAD_ERROR = "SHOW_DOWNLOAD_ERROR";
+export interface IShowDownloadErrorPayload {
+  /** the download for which we want to show an error dialog */
+  id: string;
+}
+
 export const DISCARD_DOWNLOAD = "DISCARD_DOWNLOAD";
 export interface IDiscardDownloadPayload {
+  id: string;
+}
+
+export const DOWNLOAD_DISCARDED = "DOWNLOAD_DISCARDED";
+export interface IDownloadDiscardedPayload {
   id: string;
 }
 
@@ -712,6 +739,12 @@ export interface IRetryDownloadPayload {
 export const CLEAR_GAME_DOWNLOADS = "CLEAR_GAME_DOWNLOADS";
 export interface IClearGameDownloadsPayload {
   gameId: number;
+}
+
+/** User wants to uninstall an upload for a game or install another upload */
+export const MANAGE_GAME = "MANAGE_GAME";
+export interface IManageGamePayload {
+  game: Game;
 }
 
 /** User requested game to be uninstalled */
@@ -767,7 +800,7 @@ export interface IRecordGameInteractionPayload {}
 export const FORCE_CLOSE_GAME_REQUEST = "FORCE_CLOSE_GAME_REQUEST";
 export interface IForceCloseGameRequestPayload {
   /** the game we want to force-quit */
-  game: IGame;
+  game: Game;
 }
 
 export const FORCE_CLOSE_LAST_GAME = "FORCE_CLOSE_LAST_GAME";
@@ -818,10 +851,7 @@ export interface IQueueGameUpdatePayload {
   update: Types.IGameUpdate;
 
   /** the upload that was picked */
-  upload: Types.IUpload;
-
-  /** was the upload hand-picked? */
-  handPicked?: boolean;
+  upload: Upload;
 }
 
 export const NUKE_CAVE_PREREQS = "NUKE_CAVE_PREREQS";
@@ -854,28 +884,35 @@ export interface IViewCaveDetailsPayload {
   caveId: string;
 }
 
-/** User requested game to be installed */
+/** User requested game to be installed or launched (ie. the main action) */
 export const QUEUE_GAME = "QUEUE_GAME";
 export interface IQueueGamePayload {
   /** the game we want to download */
-  game: IGame;
+  game: Game;
+}
+
+/** User requested game to be installed */
+export const QUEUE_GAME_INSTALL = "QUEUE_GAME_INSTALL";
+export interface IQueueGameInstallPayload {
+  /** the game we want to install */
+  game: Game;
+
+  /** the upload we've picked */
+  upload: Upload;
 }
 
 export const QUEUE_LAUNCH = "QUEUE_LAUNCH";
 export interface IQueueLaunchPayload extends Types.IQueueLaunchOpts {}
 
-export const QUEUE_INSTALL = "QUEUE_INSTALL";
-export interface IQueueInstallPayload extends Types.IQueueInstallOpts {}
-
 /** Buy / support something! */
 export const INITIATE_PURCHASE = "INITIATE_PURCHASE";
 export interface IInitiatePurchasePayload {
-  game: IGame;
+  game: Game;
 }
 
 export const PURCHASE_COMPLETED = "PURCHASE_COMPLETED";
 export interface IPurchaseCompletedPayload {
-  game: IGame;
+  game: Game;
 }
 
 export const ENCOURAGE_GENEROSITY = "ENCOURAGE_GENEROSITY";
@@ -994,7 +1031,7 @@ export interface ILoginWithTokenPayload {
   key: string;
 
   /** loginWithToken is used for remembered sessions - we already have user info for those */
-  me: IOwnUser;
+  me: OwnUser;
 }
 
 /** Wrong login/password or something else */
@@ -1015,7 +1052,7 @@ export interface ILoginCancelledPayload {}
 export const LOGIN_SUCCEEDED = "LOGIN_SUCCEEDED";
 export interface ILoginSucceededPayload {
   key: string;
-  me: IOwnUser;
+  me: OwnUser;
 }
 
 /** market available beyond this point */

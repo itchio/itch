@@ -1,17 +1,17 @@
 import * as os from "../os";
 import { camelify } from "../format";
 
-import { IGame } from "../db/models/game";
-
 import classificationActions from "../constants/classification-actions";
+import { Game, GameType, GameClassification } from "ts-itchio-api";
 
 const platform = os.itchPlatform();
 const platformProp = camelify("p_" + platform);
 
-export default function isPlatformCompatible(game: IGame): boolean {
+export default function isPlatformCompatible(game: Game): boolean {
   const hasTaggedPlatform = !!(game as any)[platformProp];
-  const isHTMLGame = game.type === "html";
+  const isHTMLGame = game.type === GameType.HTML;
   const isOpenable =
-    classificationActions[game.classification || "game"] === "open";
+    classificationActions[game.classification || GameClassification.Game] ===
+    "open";
   return hasTaggedPlatform || isHTMLGame || isOpenable;
 }

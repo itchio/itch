@@ -50,11 +50,12 @@ export class EmptyState extends React.PureComponent<IProps, any> {
       buttonIcon,
       buttonText,
       buttonAction,
+      className,
     } = this.props;
 
     return (
       <EmptyStateContainer>
-        <EmptyStateDiv>
+        <EmptyStateDiv className={className}>
           <Icon icon={icon} className="leader" />
           <h1>{bigText}</h1>
           <h2>{smallText}</h2>
@@ -70,6 +71,7 @@ export class EmptyState extends React.PureComponent<IProps, any> {
 }
 
 interface IProps {
+  className?: string;
   bigText: string;
   smallText?: string;
   icon: string;

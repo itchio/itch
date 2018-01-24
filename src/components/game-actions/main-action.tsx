@@ -16,11 +16,11 @@ import {
   OperationType,
   Access,
 } from "../../helpers/get-game-status";
-import { IGame } from "../../db/models/game";
 import format, { formatString } from "../format";
 import actionForGame from "../../util/action-for-game";
 import { ILocalizedString } from "../../types/index";
 import * as classNames from "classnames";
+import { Game } from "ts-itchio-api";
 
 class MainAction extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -177,7 +177,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
 }
 
 interface IProps {
-  game: IGame;
+  game: Game;
   status: IGameStatus;
 
   wide?: boolean;

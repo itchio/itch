@@ -8,7 +8,6 @@ import defaultApiClient, { AuthenticatedClient, Client } from "../api";
 import { isNetworkError } from "../net/errors";
 
 import { sortAndFilter } from "./sort-and-filter";
-import { IGame } from "../db/models/game";
 
 import Context from "../context";
 
@@ -23,6 +22,7 @@ export enum FetchReason {
 
 import rootLogger, { Logger } from "../logger";
 import { Space } from "../helpers/space";
+import { Game } from "ts-itchio-api";
 
 interface OptionalFetcherParams {
   apiClient?: Client;
@@ -190,7 +190,7 @@ export class Fetcher {
     return this._space;
   }
 
-  pushAllGames(input: IGame[], opts: IPushAllGameOpts = {}) {
+  pushAllGames(input: Game[], opts: IPushAllGameOpts = {}) {
     const games = this.sortAndFilter(input);
     this.logger.debug(
       `Pushing games, ${input.length} => (sort+filter) => ${games.length}`
@@ -221,7 +221,7 @@ export class Fetcher {
     });
   }
 
-  sortAndFilter(input: IGame[]): IGame[] {
+  sortAndFilter(input: Game[]): Game[] {
     return sortAndFilter(input, this.tab, this.ctx.store);
   }
 
@@ -233,7 +233,7 @@ export class Fetcher {
 interface IPushGamesOpts {
   getFilteredCount: () => number;
   totalCount: number;
-  range: IGame[];
+  range: Game[];
 }
 
 interface IPushAllGameOpts {

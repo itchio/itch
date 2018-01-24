@@ -28,5 +28,10 @@ suite(__filename, s => {
         alreadyDone: ["dont_touch_me"],
       }
     );
+
+    const date = new Date();
+    t.same(camelifyObject({ created_at: date }), {
+      createdAt: date,
+    });
   });
 });

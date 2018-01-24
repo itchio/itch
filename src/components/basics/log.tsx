@@ -22,12 +22,17 @@ const LogTable = styled.table`
   padding: 1em;
 
   tbody {
-    max-height: 4em;
+    max-height: 10em;
     overflow-y: scroll;
+
+    display: block;
+    tr {
+      display: table;
+    }
   }
 
   td {
-    padding: 0 .5em;
+    padding: 0 0.5em;
     padding-left: 0;
     line-height: 1.4;
     color: ${props => props.theme.secondaryText};
@@ -75,7 +80,8 @@ export default class Log extends React.PureComponent<IProps> {
     const entries = log.split("\n").map(x => {
       // TODO: use fast-json-parse instead ?
       try {
-        return JSON.parse(x);
+        const entry = JSON.parse(x);
+        return entry.hasOwnProperty("msg") ? entry : x;
       } catch (e) {
         return x;
       }
@@ -84,32 +90,24 @@ export default class Log extends React.PureComponent<IProps> {
     return (
       <LogTable>
         <tbody>
-          {entries.map(x => {
-            if (x.msg) {
+          {entries.map((x, i) => {
+            if (x.hasOwnProperty("msg")) {
               // TODO: show date jumps
               return (
-                <tr>
+                <tr key={i}>
                   <td className="timecol">
                     <FormattedTime value={x.time} />
                   </td>
                   <td className="modcol">
-                    {x.name
-                      ? <span>
-                          {x.name}
-                        </span>
-                      : null}
+                    {x.name ? <span>{x.name}</span> : null}
                   </td>
-                  <td className={levels[x.level] + " msgcol"}>
-                    {x.msg}
-                  </td>
+                  <td className={levels[x.level] + " msgcol"}>{x.msg}</td>
                 </tr>
               );
             } else {
               return (
-                <tr>
-                  <td colSpan={numColumns}>
-                    {x}
-                  </td>
+                <tr key={i}>
+                  <td colSpan={numColumns}>{x}</td>
                 </tr>
               );
             }

@@ -7,11 +7,11 @@ import getGameStatus, {
   OperationType,
   IOperation,
 } from "../../helpers/get-game-status";
-import { IGame } from "../../db/models/game";
 import actionForGame from "../../util/action-for-game";
 import Context from "../../context";
 import { showInExplorerString } from "../../format/show-in-explorer";
 import { formatOperation } from "../../format/operation";
+import { Game } from "ts-itchio-api";
 
 export function concatTemplates(
   a: IMenuTemplate,
@@ -65,7 +65,7 @@ export function closeTabControls(ctx: Context, tab: string): IMenuTemplate {
   ];
 }
 
-export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
+export function gameControls(ctx: Context, game: Game): IMenuTemplate {
   const { store, db } = ctx;
   let template: IMenuTemplate = [];
 
@@ -166,10 +166,16 @@ export function gameControls(ctx: Context, game: IGame): IMenuTemplate {
 
     if (!busy) {
       let uninstallReinstallItems: IMenuTemplate = [];
+      // uninstallReinstallItems.push({
+      //   id: "context--grid-item-uninstall-request",
+      //   localizedLabel: ["grid.item.uninstall_request"],
+      //   action: actions.requestCaveUninstall({ caveId: cave.id }),
+      // });
+
       uninstallReinstallItems.push({
-        id: "context--grid-item-uninstall-request",
-        localizedLabel: ["grid.item.uninstall_request"],
-        action: actions.requestCaveUninstall({ caveId: cave.id }),
+        id: "context--grid-item-manage",
+        localizedLabel: ["grid.item.manage"],
+        action: actions.manageGame({ game }),
       });
 
       template = concatTemplates(template, uninstallReinstallItems);

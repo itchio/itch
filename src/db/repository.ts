@@ -3,15 +3,16 @@ import * as squel from "squel";
 
 import { Model } from "./model";
 
-import { IGame, GameModel } from "./models/game";
+import { GameModel } from "./models/game";
 import { IExternalGame, ExternalGameModel } from "./models/external-game";
 import { ICollection, CollectionModel } from "./models/collection";
 import { IDownloadKey, DownloadKeyModel } from "./models/download-key";
 import { ICave, CaveModel } from "./models/cave";
-import { IUser, UserModel } from "./models/user";
+import { UserModel } from "./models/user";
 import { IProfile, ProfileModel } from "./models/profile";
 import { IGamePassword, GamePasswordModel } from "./models/game-password";
 import { IGameSecret, GameSecretModel } from "./models/game-secret";
+import { Game, User } from "ts-itchio-api";
 
 export interface IModelMap {
   [key: string]: Model;
@@ -77,12 +78,12 @@ class Repository<T> {
 }
 
 export class RepoContainer {
-  games: Repository<IGame>;
+  games: Repository<Game>;
   externalGames: Repository<IExternalGame>;
   collections: Repository<ICollection>;
   downloadKeys: Repository<IDownloadKey>;
   caves: Repository<ICave>;
-  users: Repository<IUser>;
+  users: Repository<User>;
   profiles: Repository<IProfile>;
   gamePasswords: Repository<IGamePassword>;
   gameSecrets: Repository<IGameSecret>;

@@ -15,7 +15,6 @@ import {
   getActiveDownload,
 } from "../../reactors/downloads/getters";
 
-import { IGame } from "../../db/models/game";
 import {
   IRootState,
   ITabData,
@@ -26,6 +25,7 @@ import {
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDurationAsMessage } from "../../format/datetime";
 import { Space } from "../../helpers/space";
+import { Game } from "ts-itchio-api";
 
 interface ISortableHubSidebarItemProps {
   props: any & {
@@ -98,7 +98,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
       }
     }
 
-    let gameOverride: IGame = null;
+    let gameOverride: Game = null;
     let { onClick, onClose, onContextMenu } = this;
     if (!sortable) {
       onClose = null;

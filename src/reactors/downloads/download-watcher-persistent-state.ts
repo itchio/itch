@@ -1,15 +1,22 @@
 import { IDownloadItem } from "../../types/index";
 import Context from "../../context/index";
 
+export interface IDownloadHandle {
+  item: IDownloadItem;
+  ctx: Context;
+}
+
 const state: {
-  currentDownload: IDownloadItem;
-  currentContext: Context;
+  current: IDownloadHandle;
+  handles: {
+    [key: string]: IDownloadHandle;
+  };
   discarded: {
     [key: string]: boolean;
   };
 } = {
-  currentDownload: null,
-  currentContext: null,
+  current: null,
+  handles: {},
   discarded: {},
 };
 

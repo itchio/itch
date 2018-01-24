@@ -12,6 +12,7 @@ const Pre = styled.pre`
   padding: 1em;
   line-height: 1.4;
   margin-bottom: 1em;
+  white-space: pre-wrap;
 `;
 
 const ContainerDiv = styled.div`
@@ -21,7 +22,7 @@ const ContainerDiv = styled.div`
     summary {
       margin-left: -1em;
       margin-bottom: 1em;
-      padding: .2m;
+      padding: 0.2m;
 
       &:active,
       &:focus {
@@ -40,19 +41,15 @@ export default class ShowError extends React.PureComponent<IProps> {
     const { errorStack, log } = this.props.modal
       .widgetParams as IShowErrorParams;
 
-    const errorLines = errorStack.split("\n");
+    const errorLines = (errorStack || "Unknown error").split("\n");
     return (
       <ModalWidgetDiv>
         <ContainerDiv>
           <details>
             <summary>View details</summary>
             <details>
-              <summary>
-                {errorLines[0]}
-              </summary>
-              <Pre>
-                {errorLines.slice(1).join("\n")}
-              </Pre>
+              <summary>{errorLines[0]}</summary>
+              <Pre>{errorLines.slice(1).join("\n")}</Pre>
             </details>
             <details>
               <summary>Debug log</summary>

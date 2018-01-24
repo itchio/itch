@@ -1,5 +1,3 @@
-export type DateTimeField = string;
-
 export function fromDateTimeField(input: any): Date {
   if (input === null || input === undefined) {
     return null;
@@ -26,7 +24,7 @@ export function fromDateTimeField(input: any): Date {
   return d;
 }
 
-export function toDateTimeField(input: any): DateTimeField {
+export function toDateTimeField(input: any): any {
   const value = fromDateTimeField(input);
   if (value === null) {
     return null;

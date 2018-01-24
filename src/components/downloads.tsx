@@ -78,6 +78,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     if (!hasItems) {
       return (
         <EmptyState
+          className="no-active-downloads"
           icon="download"
           bigText={formatString(intl, ["status.downloads.no_active_downloads"])}
           smallText={formatString(intl, [

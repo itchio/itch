@@ -2,9 +2,6 @@ import { Fetcher } from "./fetcher";
 
 import db from "../db";
 
-import normalize from "../api/normalize";
-import { user } from "../api/schemas";
-
 import { userToTabData } from "../util/navigation";
 
 export default class UserFetcher extends Fetcher {
@@ -23,11 +20,8 @@ export default class UserFetcher extends Fetcher {
     };
     pushUser(localUser);
 
-    const normalized = await this.withApi(async api => {
-      return normalize(await api.user(userId), { user });
-    });
-
-    pushUser(normalized.entities.users[normalized.result.userId]);
+    const userRes = await this.withApi(async api => await api.user(userId));
+    pushUser(userRes.entities.users[userRes.result.userId]);
   }
 
   clean() {

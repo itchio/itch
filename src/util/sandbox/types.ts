@@ -1,7 +1,6 @@
 import { Logger } from "../../logger";
 import Context from "../../context";
-
-import { IGame } from "../../db/models/game";
+import { Game } from "ts-itchio-api";
 
 export interface INeed {
   type: string;
@@ -23,7 +22,7 @@ export interface ICheckResult {
 }
 
 export interface IWithinOpts {
-  game: IGame;
+  game: Game;
   appPath: string;
   exePath: string;
   fullExec: string;

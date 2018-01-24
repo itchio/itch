@@ -7,17 +7,15 @@ import { getInjectPath } from "../os/resources";
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "purchases" });
 
-import { IGame } from "../db/models/game";
-import { IOwnUser } from "../db/models/user";
-
 import * as actions from "../actions";
 
 import { BrowserWindow } from "electron";
+import { OwnUser, Game } from "ts-itchio-api";
 
 /**
  * Creates a new browser window to initiate the purchase flow
  */
-function makePurchaseWindow(me: IOwnUser, game: IGame) {
+function makePurchaseWindow(me: OwnUser, game: Game) {
   const partition = `persist:itchio-${me.id}`;
 
   const win = new BrowserWindow({
