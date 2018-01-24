@@ -136,12 +136,14 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
                     hint={formatString(intl, ["prompt.uninstall.reinstall"])}
                     icon="repeat"
                     onClick={this.onReinstall}
+                    className="manage-reinstall"
                   />
                   <IconButton
                     data-cave-id={cave.id}
                     hint={formatString(intl, ["prompt.uninstall.uninstall"])}
                     icon="uninstall"
                     onClick={this.onUninstall}
+                    className="manage-uninstall"
                   />
                 </CaveItemActions>
               </CaveItem>

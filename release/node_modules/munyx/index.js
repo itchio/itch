@@ -20,7 +20,7 @@ if (process.platform === 'win32') {
 
 const STDIN = 0;
 
-const SH_PATH = (process.platform === 'win32') ? `${process.env.WD}sh.exe` : '/bin/sh'
+const SH_PATH = (process.platform === 'win32') ? `sh.exe` : '/bin/sh'
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);

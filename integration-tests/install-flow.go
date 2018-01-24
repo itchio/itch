@@ -49,8 +49,8 @@ func installFlow(r *runner) {
 
 	r.logf("re-installing it")
 	must(r.click(".meat-tab.visible .more-actions"))
-	must(r.click("#context--grid-item-uninstall-request"))
-	must(r.click("#modal-reinstall"))
+	must(r.click("#context--grid-item-manage"))
+	must(r.click(".manage-reinstall"))
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
 
 	r.logf("closing all tabs")
@@ -78,7 +78,7 @@ func installFlow(r *runner) {
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
 	must(r.click(".meat-tab.visible .title-bar"))
 	must(r.click(".meat-tab.visible .more-actions"))
-	must(r.click("#context--grid-item-uninstall-request"))
-	must(r.click("#modal-uninstall"))
+	must(r.click("#context--grid-item-manage"))
+	must(r.click(".manage-uninstall"))
 	must(r.waitUntilTextExists(mainActionSelector, "Install"))
 }
