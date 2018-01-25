@@ -23,6 +23,7 @@ test-linux:
   except:
     - tags
   artifacts:
+    expire_in: 1 week
     when: always
     paths:
       - screenshots
@@ -37,6 +38,7 @@ test-darwin:
   except:
     - tags
   artifacts:
+    expire_in: 1 week
     when: always
     paths:
       - screenshots
@@ -51,6 +53,7 @@ test-windows:
   except:
     - tags
   artifacts:
+    expire_in: 1 week
     when: always
     paths:
       - screenshots
@@ -75,6 +78,7 @@ compile:
   only:
     - tags
   artifacts:
+    expire_in: 1 week
     paths:
       - dist.tar
 
@@ -88,6 +92,7 @@ generate-linux-extras:
   only:
     - tags
   artifacts:
+    expire_in: 1 week
     paths:
       - linux-extras
 
@@ -102,6 +107,7 @@ package-linux-386:
   only:
     - tags
   artifacts:
+    expire_in: 1 week
     paths:
       - packages
   dependencies:
@@ -119,6 +125,7 @@ package-linux-amd64:
   only:
     - tags
   artifacts:
+    expire_in: 1 week
     paths:
       - packages
   dependencies:
@@ -136,6 +143,7 @@ package-darwin-amd64:
   only:
     - tags
   artifacts:
+    expire_in: 1 week
     paths:
       - packages
   dependencies:
@@ -151,6 +159,7 @@ package-windows-386:
     - export BUTLER_ENABLE=1
     - release/ci-package.js windows 386
   artifacts:
+    expire_in: 1 week
     paths:
       - packages
   dependencies:
