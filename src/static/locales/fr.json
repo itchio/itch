@@ -292,7 +292,7 @@
     "action.name.manual": "Manuel de l'utilisateur",
     "action.name.editor": "Éditeur",
     "action.name.forums": "Forums",
-    "game.install.could_not_launch.detail": "Voici ses derniers mots: {{error}}",
+    "game.install.could_not_launch.detail": "Envoyer un rapport est la meilleure façon d'aider à régler le problème !",
     "grid.criterion.filter": "Filtrer...",
     "grid.criterion.only_compatible": "Cacher incompatibles",
     "grid.hidden_count": "+ {{count}} éléments exclus par les filtres",
