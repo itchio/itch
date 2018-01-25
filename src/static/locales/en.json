@@ -239,6 +239,7 @@
     "preferences.advanced": "Advanced",
     "preferences.advanced.open_app_log": "Open app log",
     "preferences.advanced.clear_browsing_data": "Clear browsing data",
+    "preferences.advanced.prefer_optimized_patches": "Prefer optimized patches",
     "preferences.proxy_server_address": "HTTPS Proxy",
     "preferences.proxy_server_source.direct": "Direct (no proxy)",
     "pick_install_upload.title": "Multiple downloads are available for {{title}}",

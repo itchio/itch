@@ -552,7 +552,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
               borderBottom: "1px solid",
             }}
           >
-            Check for update
+            {format(["menu.help.check_for_update"])}
           </span>
         </p>
         <p>
@@ -591,7 +591,9 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
               });
             }}
           />
-          <span>Prefer optimized patches</span>
+          <span>
+            {format(["preferences.advanced.prefer_optimized_patches"])}
+          </span>
           <span
             data-rh-at="bottom"
             data-rh={formatString(intl, ["label.experimental"])}
