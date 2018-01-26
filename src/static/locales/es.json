@@ -438,5 +438,6 @@
     "download.ongoing.heal": "Reparando {{title}}...",
     "download.outcome.installed": "instalado",
     "download.outcome.reverted": "cambiado a otra versión",
-    "grid.empty_state.leader": "Todo está filtrado..."
+    "grid.empty_state.leader": "Todo está filtrado...",
+    "grid.item.open_file_location.osx": "Mostrar en Finder"
 }

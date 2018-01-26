@@ -479,5 +479,6 @@
     "prompt.manage_game.title": "Управление на „{{title}}“",
     "prompt.manage_game.installed_uploads": "Следните неща са инсталирани:",
     "prompt.manage_game.available_uploads": "Следните неща също са налични:",
-    "prompt.manage_game.no_other_uploads": "В момента няма нищо друго налично."
+    "prompt.manage_game.no_other_uploads": "В момента няма нищо друго налично.",
+    "preferences.advanced.prefer_optimized_patches": "Предпочитане на оптимизирани кръпки"
 }
