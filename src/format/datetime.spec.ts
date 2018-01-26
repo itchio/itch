@@ -10,7 +10,10 @@ import { fromDateTimeField } from "../db/datetime-field";
 
 suite(__filename, s => {
   s.case("seconds", t => {
-    t.same(formatDurationAsMessage(38), { id: "duration.minute" });
+    t.same(formatDurationAsMessage(38), {
+      id: "duration.seconds",
+      values: { x: "38" },
+    });
     t.same(formatDurationAsMessage(123), {
       id: "duration.minutes",
       values: { x: "2" },
