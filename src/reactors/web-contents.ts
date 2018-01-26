@@ -109,10 +109,20 @@ export default function(watcher: Watcher, db: DB) {
     });
 
     wc.on("did-finish-load", () => {
-      logger.debug(`did-finish-load (on), executing injected js`);
+      logger.debug(
+        `did-finish-load (on), executing injected js and analyzing page`
+      );
       wc.executeJavaScript(
         `window.__itchInit && window.__itchInit(${JSON.stringify(tab)})`,
         false
+      );
+
+      store.dispatch(
+        actions.analyzePage({
+          tab,
+          url: wc.getURL(),
+          iframe: false,
+        })
       );
     });
 
@@ -124,17 +134,6 @@ export default function(watcher: Watcher, db: DB) {
       pushWeb({ loading: false });
     });
 
-    wc.on("did-finish-load", () => {
-      logger.debug(`Finished load, analyzing ${wc.getURL()}`);
-      store.dispatch(
-        actions.analyzePage({
-          tab,
-          url: wc.getURL(),
-          iframe: false,
-        })
-      );
-    });
-
     // FIXME: page-title-updated isn't documented, see https://github.com/electron/electron/issues/10040
     // also, with electron@1.7.5, it seems to not always fire. whereas webview's event does.
 
@@ -143,8 +142,18 @@ export default function(watcher: Watcher, db: DB) {
       pushWeb({ favicon: favicons[0] });
     });
 
-    wc.on("did-navigate", (e, url) => didNavigate(url));
-    wc.on("did-navigate-in-page", (e, url) => didNavigate(url));
+    wc.on("did-navigate", (e, url) => {
+      logger.debug(`did-navigate to ${url}`);
+      didNavigate(url);
+    });
+    wc.on("did-navigate-in-page", (e, url, isMainFrame) => {
+      logger.debug(
+        `did-navigate-in-page to ${url}, isMainFrame = ${isMainFrame}`
+      );
+      if (isMainFrame) {
+        didNavigate(url);
+      }
+    });
 
     wc.on(
       "new-window",
