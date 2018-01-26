@@ -30,8 +30,7 @@ const BrowserControlsContainer = styled.div`
 `;
 
 const browserAddressStyle = css`
-  ${styles.singleLine()}
-  font-size: 14px;
+  ${styles.singleLine()} font-size: 14px;
   height: 33px;
   line-height: 30px;
   margin: 0 6px;
@@ -107,32 +106,36 @@ export class BrowserControls extends React.PureComponent<
           disabled={!canGoForward}
           onClick={this.goForward}
         />
-        {loading
-          ? <IconButton icon="cross" onClick={this.stop} />
-          : <IconButton icon="repeat" onClick={this.reload} />}
-        {editingAddress
-          ? <BrowserAddressInput
-              type="search"
-              disabled={frozen}
-              innerRef={this.onBrowserAddress as any}
-              defaultValue={url}
-              onKeyUp={this.addressKeyUp}
-              onBlur={this.addressBlur}
-            />
-          : <BrowserAddressSpan
-              className={classNames({ frozen })}
-              innerRef={this.onBrowserAddress}
-              onClick={this.startEditingAddress}
-            >
-              {HTTPS_RE.test(url)
-                ? <span>
-                    <span className="security-theater-bit">
-                      {"https://"}
-                    </span>
-                    {url.replace(HTTPS_RE, "")}
-                  </span>
-                : url}
-            </BrowserAddressSpan>}
+        {loading ? (
+          <IconButton icon="cross" onClick={this.stop} />
+        ) : (
+          <IconButton icon="repeat" onClick={this.reload} />
+        )}
+        {editingAddress ? (
+          <BrowserAddressInput
+            type="search"
+            disabled={frozen}
+            innerRef={this.onBrowserAddress as any}
+            defaultValue={url}
+            onKeyUp={this.addressKeyUp}
+            onBlur={this.addressBlur}
+          />
+        ) : (
+          <BrowserAddressSpan
+            className={classNames({ frozen })}
+            innerRef={this.onBrowserAddress}
+            onClick={this.startEditingAddress}
+          >
+            {HTTPS_RE.test(url) ? (
+              <span>
+                <span className="security-theater-bit">{"https://"}</span>
+                {url.replace(HTTPS_RE, "")}
+              </span>
+            ) : (
+              url
+            )}
+          </BrowserAddressSpan>
+        )}
         <IconButton
           hint={this.props.intl.formatMessage({ id: "browser.popout" })}
           hintPosition="bottom"
@@ -170,7 +173,7 @@ export class BrowserControls extends React.PureComponent<
         tab,
         path: `url/${url}`,
       });
-      this.pushWeb({ editingAddress: false });
+      this.pushWeb({ editingAddress: false, url });
     } else if (e.key === "Escape") {
       this.pushWeb({ editingAddress: false });
     }

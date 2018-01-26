@@ -13,7 +13,7 @@ const BrowserBarDiv = styled.div`
   align-items: center;
   padding: 5px 0 4px 4px;
   background: ${props => props.theme.breadBackground};
-  transition: all .2s;
+  transition: all 0.2s;
   min-height: 32px;
 
   border-width: 0;
@@ -52,10 +52,11 @@ export default class BrowserBar extends React.PureComponent<IProps> {
   render() {
     const { tabData } = this.props;
     const { loading } = tabData.web || eo;
+    const url = tabData.web ? tabData.web.url : this.props.url;
 
     return (
       <BrowserBarDiv className={classNames({ loading })}>
-        <BrowserControls {...this.props} />
+        <BrowserControls {...this.props} url={url} />
       </BrowserBarDiv>
     );
   }

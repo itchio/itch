@@ -47,7 +47,7 @@ if (beChatty) {
     },
     stateTransformer: (state: any) => "",
     actionTransformer: (action: any) => {
-      if (/_FETCHED$/.test(action.type)) {
+      if (/_FETCHED$/.test(action.type) && action.type !== "TAB_DATA_FETCHED") {
         return {
           type: action.type,
           payload: { redacted: "true" },

@@ -127,10 +127,12 @@ export default function(watcher: Watcher, db: DB) {
     });
 
     wc.on("did-start-loading", () => {
+      logger.debug(`did-start-loading`);
       pushWeb({ loading: true });
     });
 
     wc.on("did-stop-loading", () => {
+      logger.debug(`did-stop-loading`);
       pushWeb({ loading: false });
     });
 

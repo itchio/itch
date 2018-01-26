@@ -68,6 +68,13 @@ const WebviewShell = styled.div`
 `;
 
 export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
+  initialURL: string;
+
+  constructor(props: any, context: any) {
+    super(props, context);
+    this.initialURL = props.url;
+  }
+
   isFrozen() {
     const { tab } = this.props;
     const frozen = !!staticTabData[tab] || !tab;
@@ -95,8 +102,8 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
                 partition={partition}
                 plugins="on"
                 preload={getInjectPath("itchio")}
-                src={url}
                 ref={this.gotWebview}
+                src={this.initialURL}
               />
             )}
           </WebviewShell>
@@ -104,6 +111,23 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
         {context}
       </BrowserMeatContainer>
     );
+  }
+
+  componentDidUpdate(prevProps: IProps & IDerivedProps, prevState: any) {
+    if (!this._wv) {
+      return;
+    }
+
+    if (!this._wv.getWebContents()) {
+      return;
+    }
+
+    const wvURL = this._wv.getURL();
+    if (prevProps.url != this.props.url) {
+      if (wvURL != this.props.url) {
+        this._wv.loadURL(this.props.url);
+      }
+    }
   }
 
   /**
@@ -122,12 +146,14 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
     }
     this._wv = wv;
     const { tabDataFetched, tabGotWebContents, tab } = this.props;
+    console.log("started loading because of webview", wv);
     tabDataFetched({
       tab,
       data: { web: { url: wv.src, loading: true } },
     });
 
     let onDomReady = () => {
+      console.log("dom ready", wv);
       tabGotWebContents({ tab, webContentsId: wv.getWebContents().id });
       wv.removeEventListener("dom-ready", onDomReady);
     };
@@ -153,10 +179,7 @@ interface IDerivedProps {
   proxySource?: string;
 
   navigate: typeof actions.navigate;
-  evolveTab: typeof actions.evolveTab;
   tabDataFetched: typeof actions.tabDataFetched;
-  tabReloaded: typeof actions.tabReloaded;
-  tabLoading: typeof actions.tabLoading;
   tabGotWebContents: typeof actions.tabGotWebContents;
 
   intl: InjectedIntl;
@@ -171,10 +194,7 @@ export default connect<IProps>(injectIntl(BrowserMeat), {
   }),
   dispatch: (dispatch: IDispatch) => ({
     navigate: dispatcher(dispatch, actions.navigate),
-    evolveTab: dispatcher(dispatch, actions.evolveTab),
     tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
-    tabReloaded: dispatcher(dispatch, actions.tabReloaded),
-    tabLoading: dispatcher(dispatch, actions.tabLoading),
     tabGotWebContents: dispatcher(dispatch, actions.tabGotWebContents),
   }),
 });
