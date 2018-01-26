@@ -429,7 +429,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
               <div className="paused">
                 {format(["grid.item.downloads_paused"])}
               </div>
-            ) : null : (first || operation) && eta && bps ? (
+            ) : null : (first || operation) && eta >= 0 && bps ? (
               <span>{downloadProgress({ eta, bps }, operation.paused)}</span>
             ) : null}
           </div>

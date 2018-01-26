@@ -28,6 +28,7 @@
     "duration.hours": "{{x}} hours",
     "duration.minute": "a minute or less",
     "duration.minutes": "{{x}} minutes",
+    "duration.seconds": "{{x}} seconds",
     "errors.api.login.incorrect_username_or_password": "Incorrect username or password",
     "errors.api.login.password_must_be_provided": "Password must be provided",
     "errors.api.login.username_must_be_provided": "Username must be provided",
