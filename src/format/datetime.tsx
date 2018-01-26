@@ -18,8 +18,11 @@ interface IFormattedDuration {
 }
 
 export function formatDurationAsMessage(secs: number): IFormattedDuration {
-  if (secs < 120) {
-    return { id: "duration.minute" };
+  if (secs < 60) {
+    return {
+      id: "duration.seconds",
+      values: { x: Math.floor(secs).toFixed() },
+    };
   } else if (secs < 3600) {
     return {
       id: "duration.minutes",

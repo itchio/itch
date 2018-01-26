@@ -313,8 +313,6 @@ export function importGlobalMarket(
         }
       }
 
-      // FIXME: write installerType to receipt instead of throwing it away
-
       let gameId: number = null;
       if (caveIn.game) {
         gameId = caveIn.game.id;
