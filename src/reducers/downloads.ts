@@ -20,7 +20,7 @@ const selector = createStructuredSelector({
 const baseInitialState = {
   speeds: map(new Array(SPEED_DATA_POINT_COUNT), x => 0),
   items: {},
-  paused: false,
+  paused: true,
 };
 const initialState = { ...baseInitialState, ...selector(baseInitialState) };
 
