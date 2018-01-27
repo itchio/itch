@@ -22,11 +22,8 @@ suite(__filename, s => {
         id: 12,
       } as any,
       caveId: null,
-      handPicked: false,
-      incremental: false,
       reason: "install",
       totalSize: 0,
-      upgradePath: null,
       upload: null,
     });
     await w.dispatch(queueAction);

@@ -793,10 +793,10 @@ export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
   eta?: number;
 
   /** timestamp the download started at */
-  startedAt?: number;
+  startedAt?: Date;
 
   /** timestamp the download finished at */
-  finishedAt?: number;
+  finishedAt?: Date;
 
   /** an error that may have occured while downloading */
   err?: string;

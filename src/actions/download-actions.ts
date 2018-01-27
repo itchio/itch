@@ -43,7 +43,7 @@ const internalDownloadStarted = createAction<IDownloadStartedPayload>(
 );
 
 export const downloadStarted = (payload: IDownloadStartedPayload) =>
-  internalDownloadStarted({ ...payload, startedAt: Date.now(), id: uuid() });
+  internalDownloadStarted({ ...payload, startedAt: new Date(), id: uuid() });
 
 export const downloadProgress = createAction<IDownloadProgressPayload>(
   DOWNLOAD_PROGRESS
@@ -54,7 +54,7 @@ const internalDownloadEnded = createAction<IDownloadEndedPayload>(
 );
 
 export const downloadEnded = (payload: IDownloadEndedPayload) =>
-  internalDownloadEnded({ ...payload, finishedAt: Date.now() });
+  internalDownloadEnded({ ...payload, finishedAt: new Date() });
 
 export const clearFinishedDownloads = createAction<
   IClearFinishedDownloadsPayload

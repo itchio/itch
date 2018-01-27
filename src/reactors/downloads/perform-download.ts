@@ -5,12 +5,7 @@ import rootLogger from "../../logger";
 
 import getGameCredentials from "./get-game-credentials";
 
-import {
-  IDownloadItem,
-  IDownloadResult,
-  currentRuntime,
-  Cancelled,
-} from "../../types";
+import { IDownloadItem, currentRuntime, Cancelled } from "../../types";
 import Context from "../../context";
 import { Instance, messages } from "node-buse";
 import { ICave } from "../../db/models/cave";
@@ -30,7 +25,7 @@ import { readReceipt } from "../../install-managers/common/receipt";
 export default async function performDownload(
   ctx: Context,
   item: IDownloadItem
-): Promise<IDownloadResult> {
+): Promise<void> {
   let parentLogger = rootLogger;
   let caveIn: ICave;
   if (item.caveId) {
@@ -263,10 +258,6 @@ export default async function performDownload(
     logger,
     runtime: currentRuntime(),
   });
-
-  return {
-    archivePath: null,
-  };
 }
 
 /**

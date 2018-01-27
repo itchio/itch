@@ -13,6 +13,8 @@ import { IProfile, ProfileModel } from "./models/profile";
 import { IGamePassword, GamePasswordModel } from "./models/game-password";
 import { IGameSecret, GameSecretModel } from "./models/game-secret";
 import { Game, User } from "ts-itchio-api";
+import { IDownloadItem } from "../types/index";
+import { DownloadModel } from "./models/download";
 
 export interface IModelMap {
   [key: string]: Model;
@@ -28,6 +30,7 @@ export const modelMap: IModelMap = {
   profiles: ProfileModel,
   gamePasswords: GamePasswordModel,
   gameSecrets: GameSecretModel,
+  downloads: DownloadModel,
 };
 
 interface IConditions {
@@ -87,6 +90,7 @@ export class RepoContainer {
   profiles: Repository<IProfile>;
   gamePasswords: Repository<IGamePassword>;
   gameSecrets: Repository<IGameSecret>;
+  downloads: Repository<IDownloadItem>;
 
   protected q: Querier;
 

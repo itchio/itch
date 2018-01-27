@@ -1,12 +1,6 @@
 import { ICave } from "../db/models/cave";
 
-import {
-  IUpgradePathItem,
-  IManifest,
-  IManifestAction,
-  IEnvironment,
-  IRuntime,
-} from ".";
+import { IManifest, IManifestAction, IEnvironment, IRuntime } from ".";
 
 import { Logger } from "../logger";
 import { Game, Upload, Build } from "ts-itchio-api";
@@ -49,28 +43,11 @@ export interface IQueueDownloadOpts {
   /** total size of download (size of archive or sum of patch sizes) */
   totalSize?: number;
 
-  /** true if wharf-enabled update via butler */
-  // TODO: deprecate
-  incremental?: boolean;
-
-  /** patch entries to upgrade to latest via butler */
-  // TODO: deprecate
-  upgradePath?: IUpgradePathItem[];
-
-  /** if true, user disambiguated from list of uploads */
-  // TODO: deprecate
-  handPicked?: boolean;
-
   /** for fresh game installs, where to install it */
   installLocation?: string;
 
   /** for fresh game installs, where to install it */
   installFolder?: string;
-}
-
-export interface IDownloadResult {
-  /** where on disk the file was downloaded to */
-  archivePath: string | null;
 }
 
 export type TaskName = "install" | "uninstall" | "configure" | "launch";

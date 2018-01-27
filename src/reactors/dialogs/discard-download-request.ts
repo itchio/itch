@@ -1,6 +1,5 @@
 import { Watcher } from "../watcher";
 import * as actions from "../../actions";
-import isHeal from "../downloads/is-heal";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.discardDownloadRequest, async (store, action) => {
@@ -19,7 +18,8 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    if (isHeal(item)) {
+    // FIXME: would be better to check if the cave is morphing
+    if (item.reason !== "install") {
       store.dispatch(
         actions.openModal({
           title: [

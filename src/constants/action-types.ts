@@ -683,11 +683,8 @@ export interface IDownloadEndedPayload {
   /** an error stack, if any */
   errStack: string;
 
-  /** stuff like: where the file was downloaded. */
-  result: Types.IDownloadResult;
-
   /** timestamp when the download finished */
-  finishedAt?: number;
+  finishedAt?: Date;
 }
 
 export const DOWNLOAD_SPEED_DATAPOINT = "DOWNLOAD_SPEED_DATAPOINT";

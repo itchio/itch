@@ -12,7 +12,7 @@ import performDownload from "./perform-download";
 import { getActiveDownload, getFinishedDownloads } from "./getters";
 
 import Context from "../../context";
-import { IStore, IDownloadItem, IDownloadResult } from "../../types";
+import { IStore, IDownloadItem } from "../../types";
 import { IProgressInfo, isCancelled, isAborted } from "../../types";
 
 import { DB } from "../../db";
@@ -96,7 +96,6 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
 
   let error: Error;
   let interrupted = false;
-  let result: IDownloadResult;
 
   try {
     ctx.on(
@@ -110,7 +109,7 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
     );
 
     logger.info(`Download for ${item.game.title} started`);
-    result = await performDownload(ctx, item);
+    await performDownload(ctx, item);
   } catch (e) {
     logger.debug(`caught exception ${e.stack}`);
     error = e;
@@ -153,7 +152,6 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
           item: freshItem,
           err,
           errStack,
-          result,
         })
       );
     }

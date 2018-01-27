@@ -20,7 +20,13 @@ export interface IConnection {
   close(): void;
 }
 
-import { IStore, IEntityMap, ITableMap, IDBDeleteSpec } from "../types";
+import {
+  IStore,
+  IEntityMap,
+  ITableMap,
+  IDBDeleteSpec,
+  IDownloadItem,
+} from "../types";
 
 import rootLogger, { devNull } from "../logger";
 import { Game, User } from "ts-itchio-api";
@@ -161,6 +167,11 @@ export class DB extends RepoContainer {
    */
   saveOne(tableName: "games", id: string | number, record: Partial<Game>): void;
   saveOne(tableName: "user", id: string | number, record: Partial<User>): void;
+  saveOne(
+    tableName: "downloads",
+    id: string | number,
+    record: Partial<IDownloadItem>
+  ): void;
   saveOne(
     tableName: "collection",
     id: string | number,
