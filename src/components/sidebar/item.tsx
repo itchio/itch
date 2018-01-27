@@ -189,7 +189,7 @@ class Item extends React.PureComponent<IProps, IState> {
           <ItemHeading>{format(label)}</ItemHeading>
           {count > 0 ? <Bubble>{count}</Bubble> : null}
           <Filler />
-          {progress > 0 ? (
+          {progress !== null ? (
             <ProgressOuter>
               <div className="progress-inner" style={progressStyle} />
             </ProgressOuter>

@@ -69,9 +69,9 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     const label = sp.label();
-    const icon = sp.icon();
+    let icon = sp.icon();
     let count = 0;
-    let progress = 0;
+    let progress: number = null;
     let sublabel: ILocalizedString = null;
 
     if (tab === "downloads") {
@@ -82,6 +82,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
         progress = activeDownload.progress;
         if (downloads.paused) {
           const { intl } = this.props;
+          icon = "stopwatch";
           sublabel = intl.formatMessage({ id: "grid.item.downloads_paused" });
         } else if (activeDownload.eta) {
           const title = activeDownload.game.title;
