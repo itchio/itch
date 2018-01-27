@@ -46,7 +46,7 @@ async function wipeFolder(
 ) {
   const { logger } = opts;
 
-  logger.debug(`Wiping download folder ${absoluteFolderPath}`);
+  logger.debug(`Wiping ${kind} folder ${absoluteFolderPath}`);
   try {
     await butler.wipe(absoluteFolderPath, {
       ctx: new MinimalContext(),
@@ -54,7 +54,7 @@ async function wipeFolder(
     });
   } catch (e) {
     logger.warn(
-      `Could not wipe download folder ${absoluteFolderPath}: ${e.stack}`
+      `Could not wipe ${kind} folder ${absoluteFolderPath}: ${e.stack}`
     );
   }
 }

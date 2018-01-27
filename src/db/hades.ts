@@ -121,18 +121,18 @@ export function toDB(newValue: any, type: Column): any {
 }
 
 export function updateQuery(model: Model, primaryValue: any, newFields: any) {
-  let query = `UPDATE ${model.table} SET `;
+  let query = `UPDATE "${model.table}" SET `;
   for (const key of Object.keys(newFields)) {
-    query += `${key} = $${key} `;
+    query += `"${key}" = $${key} `;
   }
-  query += `WHERE ${model.primaryKey} = ${JSON.stringify(primaryValue)}`;
+  query += `WHERE "${model.primaryKey}" = ${JSON.stringify(primaryValue)}`;
   return query;
 }
 
 export function insertQuery(model: Model, primaryValue: any, newFields: any) {
   let query = `INSERT INTO ${model.table}`;
   const keys = Object.keys(newFields);
-  query += ` (${keys.join(",")})`;
+  query += ` (${keys.map(x => `"${x}"`).join(",")})`;
   query += ` VALUES (${keys.map(k => "$" + k).join(",")})`;
   return query;
 }

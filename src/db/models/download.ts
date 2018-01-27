@@ -9,7 +9,7 @@ const DownloadModelOriginal = {
     reason: Column.Text,
     progress: Column.Float,
     finished: Column.Boolean,
-    order: Column.Integer,
+    rank: Column.Integer,
     bps: Column.Float,
     eta: Column.Float,
     startedAt: Column.DateTime,

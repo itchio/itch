@@ -61,9 +61,9 @@ export async function runMigrations(
 function ensureMigrationsTable(q: Querier) {
   q.runSql({
     text: `
-    CREATE TABLE IF NOT EXISTS "${migrationsTable}" (
-      "id" INTEGER PRIMARY KEY,
-      "migratedAt" DATETIME
+    CREATE TABLE IF NOT EXISTS ${migrationsTable} (
+      id INTEGER PRIMARY KEY,
+      migratedAt DATETIME
     )
     `,
     values: [],
@@ -222,23 +222,20 @@ export function fixSchema(q: Querier, checkResult: ICheckSchemaResult) {
 
       conn.prepare("pragma foreign_keys = 0").run();
       conn
-        .prepare(`create table "${tempName}" as select * from "${model.table}"`)
+        .prepare(`create table ${tempName} as select * from ${model.table}`)
         .run();
-      conn.prepare(`drop table "${model.table}"`).run();
+      conn.prepare(`drop table ${model.table}`).run();
 
       createTableForModel(q, model, existingColumns);
 
+      const columnList = existingColumns.join(", ");
       conn
         .prepare(
-          `insert into "${model.table}" (${existingColumns
-            .map(x => `"${x}"`)
-            .join(", ")}) select ${existingColumns
-            .map(x => `"${x}"`)
-            .join(", ")} from "${tempName}"`
+          `insert into ${model.table} (${columnList}) select ${columnList} from ${tempName}`
         )
         .run();
 
-      conn.prepare(`drop table "${tempName}"`).run();
+      conn.prepare(`drop table ${tempName}`).run();
 
       conn.prepare("pragma foreign_keys = 1").run();
     });
@@ -253,7 +250,7 @@ function createTableForModel(
   let columnInstructions = Object.keys(model.columns).map(columnName => {
     const columnType = model.columns[columnName];
     const primary = columnName === model.primaryKey ? " PRIMARY KEY" : "";
-    return `"${columnName}" ${sqliteColumnType(columnType)}${primary}`;
+    return `${columnName} ${sqliteColumnType(columnType)}${primary}`;
   });
 
   if (columnsToPreserve) {
@@ -266,7 +263,7 @@ function createTableForModel(
         const columnType = model.deprecatedColumns[columnName];
         if (columnType) {
           columnInstructions.push(
-            `"${columnName}" ${sqliteColumnType(columnType)}`
+            `${columnName} ${sqliteColumnType(columnType)}`
           );
         }
       }
@@ -275,7 +272,7 @@ function createTableForModel(
 
   q.runSql({
     text: `
-    CREATE TABLE "${model.table}" (
+    CREATE TABLE ${model.table} (
     ${columnInstructions.join(",")}
     )
     `,

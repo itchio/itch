@@ -4,6 +4,7 @@ import "electron";
 import * as Types from "../types";
 import { IProgressInfo, IMenuTemplate } from "../types";
 import { Game, OwnUser, Upload, Build } from "ts-itchio-api";
+import { CleanDownloadsEntry } from "node-buse/lib/messages";
 
 export type IAction<T> = Action<T>;
 
@@ -1136,3 +1137,19 @@ export interface IDbCommitPayload {
 
 export const COMMONS_UPDATED = "COMMONS_UPDATED";
 export type ICommonsUpdatedPayload = Partial<Types.ICommonsState>;
+
+export const DOWNLOADS_RESTORED = "DOWNLOADS_RESTORED";
+export interface IDownloadsRestoredPayload {}
+
+export const CLEAN_DOWNLOADS_SEARCH = "CLEAN_DOWNLOADS_SEARCH";
+export interface ICleanDownloadsSearchPayload {}
+
+export const CLEAN_DOWNLOADS_FOUND_ENTRIES = "CLEAN_DOWNLOADS_FOUND_ENTRIES";
+export interface ICleanDownloadsFoundEntriesPayload {
+  entries: CleanDownloadsEntry[];
+}
+
+export const CLEAN_DOWNLOADS_APPLY = "CLEAN_DOWNLOADS_APPLY";
+export interface ICleanDownloadsApplyPayload {
+  entries: CleanDownloadsEntry[];
+}

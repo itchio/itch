@@ -115,6 +115,7 @@ export interface ITableMap {
   games?: IEntityMap<Partial<Game>>;
   users?: IEntityMap<Partial<User>>;
   collections?: IEntityMap<Partial<ICollection>>;
+  downloads?: IEntityMap<Partial<IDownloadItem>>;
 }
 
 /**
@@ -783,8 +784,8 @@ export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
   /** set when download has been completed */
   finished?: boolean;
 
-  /** order in the download list: can be negative, for reordering */
-  order: number;
+  /** rank in the download list: can be negative, for reordering */
+  rank: number;
 
   /** at how many bytes per second are we downloading right now? */
   bps?: number;
@@ -822,6 +823,9 @@ export interface IDownloadsState {
 
   /** true if downloads are currently paused */
   paused: boolean;
+
+  /** false until we've restored previous downloads from the DB */
+  restored: boolean;
 
   /** Download speeds, in bps, each item represents one second */
   speeds: IDownloadSpeeds;

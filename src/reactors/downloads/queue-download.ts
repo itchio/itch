@@ -5,9 +5,8 @@ import { getPendingForGame } from "./getters";
 import { isEmpty } from "underscore";
 
 import rootLogger from "../../logger";
+import uuid from "../../util/uuid";
 const logger = rootLogger.child({ name: "queue-download" });
-
-let orderSeed = 0;
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueDownload, async (store, action) => {
@@ -28,7 +27,8 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.downloadStarted({
         ...opts,
-        order: orderSeed++,
+        startedAt: new Date(),
+        id: uuid(),
       })
     );
   });

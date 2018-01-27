@@ -1,5 +1,4 @@
 import { createAction } from "redux-actions";
-import uuid from "../util/uuid";
 
 import {
   QUEUE_DOWNLOAD,
@@ -32,18 +31,23 @@ import {
   DOWNLOAD_DISCARDED,
   IShowDownloadErrorPayload,
   SHOW_DOWNLOAD_ERROR,
+  IDownloadsRestoredPayload,
+  DOWNLOADS_RESTORED,
+  ICleanDownloadsSearchPayload,
+  CLEAN_DOWNLOADS_SEARCH,
+  ICleanDownloadsFoundEntriesPayload,
+  CLEAN_DOWNLOADS_FOUND_ENTRIES,
+  ICleanDownloadsApplyPayload,
+  CLEAN_DOWNLOADS_APPLY,
 } from "../constants/action-types";
 
 export const queueDownload = createAction<IQueueDownloadPayload>(
   QUEUE_DOWNLOAD
 );
 
-const internalDownloadStarted = createAction<IDownloadStartedPayload>(
+export const downloadStarted = createAction<IDownloadStartedPayload>(
   DOWNLOAD_STARTED
 );
-
-export const downloadStarted = (payload: IDownloadStartedPayload) =>
-  internalDownloadStarted({ ...payload, startedAt: new Date(), id: uuid() });
 
 export const downloadProgress = createAction<IDownloadProgressPayload>(
   DOWNLOAD_PROGRESS
@@ -91,3 +95,19 @@ export const retryDownload = createAction<IRetryDownloadPayload>(
 export const downloadSpeedDatapoint = createAction<
   IDownloadSpeedDatapointPayload
 >(DOWNLOAD_SPEED_DATAPOINT);
+
+export const downloadsRestored = createAction<IDownloadsRestoredPayload>(
+  DOWNLOADS_RESTORED
+);
+
+export const cleanDownloadsSearch = createAction<ICleanDownloadsSearchPayload>(
+  CLEAN_DOWNLOADS_SEARCH
+);
+
+export const cleanDownloadsFoundEntries = createAction<
+  ICleanDownloadsFoundEntriesPayload
+>(CLEAN_DOWNLOADS_FOUND_ENTRIES);
+
+export const cleanDownloadsApply = createAction<ICleanDownloadsApplyPayload>(
+  CLEAN_DOWNLOADS_APPLY
+);

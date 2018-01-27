@@ -3,7 +3,7 @@ import { GameCredentials } from "node-buse/lib/messages";
 import urls from "../constants/urls";
 import { Client, messages } from "node-buse";
 import { Logger } from "../logger/index";
-import Context from "../context/index";
+import { MinimalContext } from "../context/index";
 
 export function buseGameCredentials(
   credentials: IGameCredentials
@@ -18,7 +18,7 @@ export function buseGameCredentials(
 export function setupClient(
   client: Client,
   parentLogger: Logger,
-  ctx: Context
+  ctx: MinimalContext
 ) {
   client.onNotification(messages.Operation.Progress, ({ params }) => {
     ctx.emitProgress(params);

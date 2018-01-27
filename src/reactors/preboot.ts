@@ -5,7 +5,6 @@ import * as actions from "../actions";
 import store from "../store/metal-store";
 
 import { cleanOldLogs } from "./preboot/clean-old-logs";
-import { cleanDownloadFolders } from "./preboot/clean-download-folders";
 import * as xdgMime from "./preboot/xdg-mime";
 import * as visualElements from "./preboot/visual-elements";
 
@@ -147,18 +146,6 @@ export default function(watcher: Watcher, db: DB) {
 
     if (!dispatchedBoot) {
       store.dispatch(actions.boot({}));
-    }
-  });
-
-  // TODO: move me somewhere where we handle restoring downloads also
-  // (we have to wait for setupDone so we have butler)
-  watcher.on(actions.setupDone, async (store, action) => {
-    try {
-      await cleanDownloadFolders();
-    } catch (e) {
-      logger.error(
-        `Could not clean download folders: ${e.stack || e.message || e}`
-      );
     }
   });
 

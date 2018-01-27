@@ -298,6 +298,7 @@ export default function(watcher: Watcher, db: DB) {
 
   watcher.on(actions.checkForGameUpdates, async (store, action) => {
     // FIXME: that's a bit dirty
+    // TODO: also, paginate
     const caves = db.caves.all(k => k.where("1"));
 
     const ctx = new Context(store, db);
