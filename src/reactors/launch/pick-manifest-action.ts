@@ -11,6 +11,7 @@ import {
 
 import { promisedModal } from "../../reactors/modals";
 import { MODAL_RESPONSE } from "../../constants/action-types";
+import * as os from "../../os";
 
 import { findWhere } from "underscore";
 import { Game } from "ts-itchio-api";
@@ -22,6 +23,8 @@ export default async function pickManifestAction(
 ): Promise<IManifestAction> {
   const buttons: IModalButtonSpec[] = [];
   const bigButtons: IModalButtonSpec[] = [];
+
+  const itchPlatform = os.itchPlatform();
 
   switch (manifest.actions.length) {
     case 0:
@@ -37,16 +40,36 @@ export default async function pickManifestAction(
     if (!actionOption.name) {
       throw new Error(`in manifest, action ${index} is missing a name`);
     }
-    bigButtons.push({
-      label: [
-        `action.name.${actionOption.name}`,
-        { defaultValue: actionOption.name },
-      ],
-      action: actions.modalResponse({ manifestActionName: actionOption.name }),
-      icon:
-        actionOption.icon || defaultManifestIcons[actionOption.name] || "star",
-      className: `action-${actionOption.name}`,
-    });
+
+    let os: string = actionOption.os;
+
+    if (os && os != "windows" && os != "linux" && os != "osx" && !os.startsWith("mac")) {
+      // if the action has an OS specified, check if it matches a known OS, else throw an error to inform devs
+      throw new Error(`Unknown OS specified in manifest: "${os}".`);
+    }
+
+    if (
+      !os ||
+      os == itchPlatform ||
+      (itchPlatform == "osx" && os.startsWith("mac"))
+    ) {
+      // only create the button if its OS is unspecified or is the current OS
+      bigButtons.push({
+        label: [
+          `action.name.${actionOption.name}`,
+          { defaultValue: actionOption.name },
+        ],
+        action: actions.modalResponse({
+          manifestActionName: actionOption.name,
+        }),
+        icon:
+          actionOption.icon ||
+          defaultManifestIcons[actionOption.name] ||
+          "star",
+        className: `action-${actionOption.name}`,
+      });
+    }
+
     index++;
   }
 

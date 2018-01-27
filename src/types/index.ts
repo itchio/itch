@@ -140,6 +140,9 @@ export interface IManifestAction {
   /** file path (relative to manifest), URL, etc. */
   path: string;
 
+  /** OS name, valid options are windows, linux, osx, and anything starting with mac */
+  os: string;
+
   /** icon name (see static/fonts/icomoon/demo.html, don't include `icon-` prefix) */
   icon: string;
 

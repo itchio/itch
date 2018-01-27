@@ -117,11 +117,33 @@ The `args` field can be used to specify arguments to pass to executables.
 
 It must be a TOML array:
 
-```
+```toml
 [[actions]]
 name = "A lot of arguments"
 path = "sample.exe"
 args = ["--that", "--is", "--a", "lot=of-arguments"]
+```
+
+### Operating Systems
+
+The `os` field can be used to specify which operating system an action
+applies to. This allows you to create a single `.itch.toml` that can
+ship with both a Windows and MacOS build, for example. Actions with
+`"windows"` set will not appear on MacOS, etc.
+
+An action without an `os` field will appear on all operating systems. If present,
+`os` must be set to a valid OS such as `"windows"`, `"macos"`, or `"linux"`
+
+```toml
+[[actions]]
+name = "Launch Windows version - hidden on MacOS and Linux"
+path = "sample.exe"
+os = "windows"
+
+[[actions]]
+name = "Launch MacOS version - hidden on Windows and Linux"
+path = "sample.app"
+os = "macos"
 ```
 
 ### Sandbox opt-in
