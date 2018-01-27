@@ -21,4 +21,5 @@ export type Model = {
 export function ensureExtends<A extends B, B>() {
   let _: B;
   _ = null as A;
+  _ = _; // silence compiler error
 }

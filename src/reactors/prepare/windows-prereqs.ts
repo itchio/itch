@@ -285,7 +285,6 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
 
   const workDir = tmp.dirSync();
   let openModalAction: IAction<IOpenModalPayload>;
-  let pollState = true;
 
   try {
     tasks = filter(remainingTasks, null);
@@ -423,8 +422,6 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
     installedPrereqs = { ...installedPrereqs, ...nowInstalledPrereqs };
     db.saveOne("caves", cave.id, { installedPrereqs });
   } finally {
-    pollState = false;
-
     if (openModalAction) {
       store.dispatch(actions.closeModal({ id: openModalAction.payload.id }));
     }

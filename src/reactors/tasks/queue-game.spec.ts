@@ -2,8 +2,6 @@ import suite, { TestWatcher, actions, withDB } from "../../test-suite";
 
 import queueDownload from "./queue-game";
 
-// TODO: actual tests
-
 suite(__filename, s => {
   s.case("queueDownload", async t => {
     const w = new TestWatcher();
@@ -14,6 +12,9 @@ suite(__filename, s => {
       w.on(actions.queueLaunch, async (store, action) => {
         queuedLaunch = true;
       });
+
+      // TODO: actual tests
+      t.false(queuedLaunch);
     });
   });
 });

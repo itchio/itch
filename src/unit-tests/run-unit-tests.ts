@@ -173,7 +173,6 @@ app.on("ready", async () => {
     const srcPath = path.resolve(__dirname, "..", "..");
 
     const through = require("through");
-    let lastTest = "";
 
     const formatLine = (line: string) => {
       return line
@@ -300,8 +299,6 @@ app.on("ready", async () => {
           }
           console.log("");
         }
-      } else if (data.type === "test") {
-        lastTest = data.name;
       }
     });
     const harness = tape.getHarness({
@@ -321,7 +318,6 @@ app.on("ready", async () => {
       }
     }
 
-    let requireStartedAt: number;
     let testStartedAt: number;
 
     const p = new Promise((resolve, reject) => {
@@ -367,8 +363,6 @@ app.on("ready", async () => {
     if (chatty) {
       console.log(chalk.blue(`loading ${testFiles.length} test suites`));
     }
-
-    requireStartedAt = Date.now();
 
     for (const testFile of testFiles) {
       const ext = path.posix.extname(testFile);
