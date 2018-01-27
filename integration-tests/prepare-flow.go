@@ -18,7 +18,9 @@ func prepareFlow(r *runner) {
 		butlerExeName += ".exe"
 	}
 
-	tries := 5
+	tries := 6
+	sleepTime := 2 * time.Second
+
 	for {
 		butlerOutput, err := exec.Command("tmp/prefix/userData/bin/"+butlerExeName, "upgrade", "--head", "--assume-yes").Output()
 		if err == nil {
@@ -28,8 +30,9 @@ func prepareFlow(r *runner) {
 
 		tries--
 		if tries > 0 {
-			r.logf("butler upgrade failure, will retry %d more times: %s", tries, err.Error())
-			time.Sleep(2 * time.Second)
+			r.logf("butler upgrade failure, will retry %d more times after sleeping %s: %s", tries, sleepTime, err.Error())
+			time.Sleep(sleepTime)
+			sleepTime *= 2
 			continue
 		}
 		must(err)
