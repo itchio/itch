@@ -97,4 +97,4 @@ The app is SQLite-backed now, so:
   * Avoid doing joins yourself
   * Avoid doing dumb queries
 
-Use `ITCH_SQL=1` to make typeorm print queries to the console.
+Use `ITCH_SQL=1` to dump SQL queries to the console.
