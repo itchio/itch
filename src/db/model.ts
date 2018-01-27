@@ -4,6 +4,7 @@ export enum Column {
   Text,
   DateTime,
   JSON,
+  Float,
 }
 
 export type Columns = {

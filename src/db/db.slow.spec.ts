@@ -10,6 +10,7 @@ const Cell: Model = {
     timestamp: Column.DateTime,
     object: Column.JSON,
     note: Column.Text,
+    floating: Column.Float,
   },
 };
 
@@ -71,6 +72,17 @@ suite(__filename, s => {
       db.saveMany({
         cells: allCells,
       });
+
+      t.false(q.get(Cell, k => k.where("id = ?", 3)).timestamp);
+
+      // setting a float
+
+      allCells["3"].floating = 3.14;
+      db.saveMany({
+        cells: allCells,
+      });
+
+      t.same(q.get(Cell, k => k.where("id = ?", 3)).floating, 3.14);
     });
   });
 });

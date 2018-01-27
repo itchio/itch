@@ -287,6 +287,8 @@ function sqliteColumnType(columnType: Column): string {
       return "boolean";
     case Column.Integer:
       return "integer";
+    case Column.Float:
+      return "real";
     case Column.JSON:
       return "text";
     case Column.Text:

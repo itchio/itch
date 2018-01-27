@@ -4,6 +4,8 @@ import { fromJSONField, toJSONField } from "./json-field";
 
 import deepEqual = require("deep-equal");
 
+const epsilon = 0.00001;
+
 /**
  * Given an schema, an old record and a new record
  * @param oldRecord 
@@ -34,6 +36,16 @@ export function updateFor(oldRecord: any, newRecord: any, model: Model): any {
       use = true;
     } else {
       switch (type) {
+        case Column.Float:
+          const oldFloat = parseFloat(oldValue);
+          const newFloat = parseFloat(newValue);
+          const delta = newFloat - oldFloat;
+          use =
+            delta > epsilon ||
+            delta < epsilon ||
+            isNaN(oldFloat) ||
+            isNaN(newFloat);
+          break;
         case Column.Integer:
           use = parseInt(newValue, 10) !== parseInt(oldValue, 10);
           break;
