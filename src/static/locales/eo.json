@@ -490,5 +490,6 @@
     "prompt.manage_game.no_other_uploads": "Ĉi-momente neniuj aliaj aĵoj estas disponeblaj.",
     "preferences.advanced.prefer_optimized_patches": "Preferi optimumigitajn flikaĵojn",
     "duration.seconds": "{{x}} sekundoj",
-    "sidebar.applog": "Protokolo de la aplikaĵo"
+    "sidebar.applog": "Protokolo de la aplikaĵo",
+    "grid.item_count": "{{count}} aĵoj"
 }
