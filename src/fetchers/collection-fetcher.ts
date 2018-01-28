@@ -66,9 +66,9 @@ export default class CollectionFetcher extends Fetcher {
         this.debug(`Could not persist remote collection: ${e.stack}`);
       }
 
-      this.debug(`Local collection updatedAt: ${localCollection.updatedAt}`);
-      this.debug(`Remote collection updatedAt: ${remoteCollection.updatedAt}`);
-      if (remoteCollection.updatedAt <= localCollection.updatedAt) {
+      this.debug(`Collection last updated: ${remoteCollection.updatedAt}`);
+      this.debug(`Collection last fetched: ${localCollection.fetchedAt}`);
+      if (remoteCollection.updatedAt <= localCollection.fetchedAt) {
         if (this.reason == FetchReason.TabReloaded) {
           this.debug(
             `Remote isn't more recent, but this is a manual reload: fetching remote anyway.`
@@ -80,46 +80,58 @@ export default class CollectionFetcher extends Fetcher {
       }
     }
 
-    let fetchedGames = 0;
-    let page = 1;
-    let allGamesList: Game[] = [];
+    await this.withLoading(async () => {
+      const fetchedAt = new Date();
+      let fetchedGames = 0;
+      let page = 1;
+      let allGamesList: Game[] = [];
 
-    while (fetchedGames < remoteCollection.gamesCount) {
-      this.debug(
-        `Fetching page ${page}... (${fetchedGames}/${remoteCollection.gamesCount} games fetched)`
-      );
-      const gamesResponse = await this.withApi(async api => {
-        return await api.collectionGames(collectionId, page);
-      });
-      const { gameIds } = gamesResponse.result;
-      if (isEmpty(gameIds)) {
-        break;
+      while (fetchedGames < remoteCollection.gamesCount) {
+        this.debug(
+          `Fetching page ${page}... (${fetchedGames}/${remoteCollection.gamesCount} games fetched)`
+        );
+        const gamesResponse = await this.withApi(async api => {
+          return await api.collectionGames(collectionId, page);
+        });
+        const { gameIds } = gamesResponse.result;
+        if (isEmpty(gameIds)) {
+          break;
+        }
+
+        const remoteGames = gamesResponse.entities.games;
+        const gameList = getByIds<Game>(remoteGames, gameIds);
+        allGamesList = [...allGamesList, ...gameList];
+
+        if (localCollection) {
+          try {
+            db.saveMany(gamesResponse.entities);
+            remoteCollection.gameIds = pick(allGamesList, "id");
+            db.saveOne("collections", remoteCollection.id, remoteCollection);
+          } catch (e) {
+            this.debug(`Couldn't persist games locally: ${e.stack}`);
+          }
+        }
+
+        page++;
+        fetchedGames += gameIds.length;
       }
-
-      const remoteGames = gamesResponse.entities.games;
-      const gameList = getByIds<Game>(remoteGames, gameIds);
-      allGamesList = [...allGamesList, ...gameList];
+      this.debug(
+        `Fetched ${allGamesList.length}/${remoteCollection.gamesCount} games total`
+      );
 
       if (localCollection) {
         try {
-          db.saveMany(gamesResponse.entities);
-          remoteCollection.gameIds = pick(allGamesList, "id");
+          remoteCollection.fetchedAt = fetchedAt;
           db.saveOne("collections", remoteCollection.id, remoteCollection);
         } catch (e) {
-          this.debug(`Couldn't persist games locally: ${e.stack}`);
+          this.debug(`Couldn't persist collection locally: ${e.stack}`);
         }
       }
 
-      page++;
-      fetchedGames += gameIds.length;
-    }
-    this.debug(
-      `Fetched ${allGamesList.length}/${remoteCollection.gamesCount} games total`
-    );
-
-    allGamesList.length = remoteCollection.gamesCount;
-    this.pushAllGames(allGamesList, {
-      totalCount: remoteCollection.gamesCount,
+      allGamesList.length = remoteCollection.gamesCount;
+      this.pushAllGames(allGamesList, {
+        totalCount: remoteCollection.gamesCount,
+      });
     });
   }
 

@@ -17,7 +17,6 @@ import { css } from "./styles";
 import { FiltersContainer } from "./filters-container";
 import Link from "./basics/link";
 import Criterion from "./basics/criterion";
-import LoadingCircle from "./basics/loading-circle";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
@@ -36,6 +35,10 @@ const TagFilters = styled.section`
     width: 10px;
     height: 1;
   }
+`;
+
+const SecondaryText = styled.section`
+  color: ${props => props.theme.secondaryText};
 `;
 
 const LayoutPickers = styled.section`display: flex;`;
@@ -103,10 +106,10 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
           </TagFilters>
         ) : null}
 
-        {numItems < 0 ? (
-          <LoadingCircle progress={-1} />
-        ) : (
-          <span>{numItems} items</span>
+        {numItems < 0 ? null : (
+          <SecondaryText>
+            {format(["grid.item_count", { count: numItems }])}
+          </SecondaryText>
         )}
 
         {this.props.children}

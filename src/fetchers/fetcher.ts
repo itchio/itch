@@ -139,6 +139,19 @@ export class Fetcher {
     throw new Error(`fetchers should override work()!`);
   }
 
+  async withLoading<T>(cb: () => Promise<T>): Promise<T> {
+    this.ctx.store.dispatch(
+      actions.tabLoading({ tab: this.tab, loading: true })
+    );
+    try {
+      return await cb();
+    } finally {
+      this.ctx.store.dispatch(
+        actions.tabLoading({ tab: this.tab, loading: false })
+      );
+    }
+  }
+
   /**
    * Called by work when data is available.
    */

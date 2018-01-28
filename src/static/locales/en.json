@@ -51,6 +51,7 @@
     "grid.filters.options.installed": "Installed",
     "grid.filters.options.owned": "Owned",
     "grid.filters.options.no_results": "No results found",
+    "grid.item_count": "{{count}} items",
     "grid.hidden_count": "+ {{count}} items hidden by filters",
     "grid.clear_filters": "Clear filters",
     "grid.empty_state.leader": "Everything's filtered away...",

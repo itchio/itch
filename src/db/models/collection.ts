@@ -11,6 +11,7 @@ const CollectionModelOriginal = {
 
     createdAt: Column.DateTime,
     updatedAt: Column.DateTime,
+    fetchedAt: Column.DateTime,
 
     gamesCount: Column.Integer,
     gameIds: Column.JSON,
@@ -35,6 +36,9 @@ export interface ICollection {
 
   /** the date the collection was last updated at (description, contents, etc.) */
   updatedAt: Date;
+
+  /** the date the collection was last fetched at */
+  fetchedAt: Date;
 
   /** the total number of games in that collection */
   gamesCount: number;
