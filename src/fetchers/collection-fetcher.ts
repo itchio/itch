@@ -68,6 +68,7 @@ export default class CollectionFetcher extends Fetcher {
 
       this.debug(`Collection last updated: ${remoteCollection.updatedAt}`);
       this.debug(`Collection last fetched: ${localCollection.fetchedAt}`);
+      // remarkably, this works properly when fetchedAt is null/undefined
       if (remoteCollection.updatedAt <= localCollection.fetchedAt) {
         if (this.reason == FetchReason.TabReloaded) {
           this.debug(
