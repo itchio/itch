@@ -1,7 +1,7 @@
 import * as querystring from "querystring";
 
 import { request, RequestFunc } from "../net";
-import { camelifyObject } from "../format";
+import { camelifyObject, fileSize } from "../format";
 import urls from "../constants/urls";
 import * as schemas from "./schemas";
 
@@ -94,8 +94,9 @@ export class Client {
 
     const shortPath = path.replace(/^\/[^\/]*\//, "");
     logger.info(
-      `${t2 - t1}ms wait, ${t3 -
-        t2}ms http, ${method} ${shortPath} with ${JSON.stringify(data)}`
+      `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${shortPath} ${data
+        ? `with ${JSON.stringify(data)}`
+        : ""}, ${fileSize(resp.size)} response`
     );
 
     if (resp.statusCode !== 200) {
