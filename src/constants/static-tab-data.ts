@@ -12,6 +12,7 @@ interface IBaseTabDataSet {
   library: IBaseTabData;
   preferences: IBaseTabData;
   downloads: IBaseTabData;
+  applog: IBaseTabData;
 }
 
 const baseData = {
@@ -21,6 +22,7 @@ const baseData = {
   library: { label: ["sidebar.owned"] },
   preferences: { label: ["sidebar.preferences"] },
   downloads: { label: ["sidebar.downloads"] },
+  applog: { label: ["sidebar.applog"] },
 } as IBaseTabDataSet;
 
 for (const key of Object.keys(baseData)) {

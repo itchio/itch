@@ -6,7 +6,6 @@ import Icon from "./icon";
 import styled, * as styles from "../styles";
 
 const IconButtonDiv = styled.div`
-  display: inline-block;
   ${styles.clickable()};
   font-size: ${props => props.theme.fontSizes.baseText};
   display: flex;

@@ -96,14 +96,6 @@ const PreferencesContentDiv = styled.div`
     z-index: 5;
   }
 
-  .select-row {
-    display: inline-block;
-  }
-
-  .select-row select {
-    margin-left: 2px;
-  }
-
   .buttons {
     float: right;
     opacity: 0.7;
@@ -532,8 +524,8 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
       appVersion,
       clearBrowsingDataRequest,
       updatePreferences,
-      openAppLog,
       intl,
+      navigate,
     } = this.props;
     const { preferOptimizedPatches } = this.props.preferences;
 
@@ -563,7 +555,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             className="link"
             onClick={e => {
               e.preventDefault();
-              openAppLog({});
+              navigate({ tab: "applog" });
             }}
           >
             {format(["preferences.advanced.open_app_log"])}
@@ -781,7 +773,6 @@ interface IDerivedProps {
   queueLocaleDownload: typeof actions.queueLocaleDownload;
 
   updatePreferences: typeof actions.updatePreferences;
-  openAppLog: typeof actions.openAppLog;
   clearBrowsingDataRequest: typeof actions.clearBrowsingDataRequest;
   navigate: typeof actions.navigate;
   checkForSelfUpdate: typeof actions.checkForSelfUpdate;
@@ -866,7 +857,6 @@ export default connect<IProps>(injectIntl(Preferences), {
     queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
 
     updatePreferences: dispatcher(dispatch, actions.updatePreferences),
-    openAppLog: dispatcher(dispatch, actions.openAppLog),
     clearBrowsingDataRequest: dispatcher(
       dispatch,
       actions.clearBrowsingDataRequest

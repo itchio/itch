@@ -3,9 +3,12 @@ import * as React from "react";
 import { map } from "underscore";
 import styled from "../styles";
 
+const SelectRowDiv = styled.div`display: inline-block;`;
+
 const Select = styled.select`
   border: none;
   padding: 6px 8px;
+  margin-left: 2px;
   background: ${props => props.theme.sidebarBackground};
   border-radius: 4px;
   color: ${props => props.theme.baseText};
@@ -42,7 +45,7 @@ class SelectRow extends React.PureComponent<ISelectRowProps> {
     ));
 
     return (
-      <div className="select-row">
+      <SelectRowDiv>
         <Select
           innerRef={this.gotElement}
           value={value}
@@ -50,7 +53,7 @@ class SelectRow extends React.PureComponent<ISelectRowProps> {
         >
           {optionTags}
         </Select>
-      </div>
+      </SelectRowDiv>
     );
   }
 

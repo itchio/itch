@@ -1,7 +1,10 @@
 import * as React from "react";
 
 import styled from "../styles";
+import SelectRow from "./select-row";
+
 import { FormattedTime } from "react-intl";
+import * as _ from "underscore";
 
 // time, module, message
 const numColumns = 3;
@@ -16,14 +19,35 @@ const levels = {
   "10": "trace",
 };
 
+const reverseLevels = {
+  fatal: "60",
+  error: "50",
+  warn: "40",
+  info: "30",
+  debug: "20",
+  trace: "10",
+};
+
+const LogContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const LogControls = styled.div`
+  padding-bottom: 1em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 const LogTable = styled.table`
   background: ${props => props.theme.sidebarBackground};
-  margin: 1em 0;
-  padding: 1em;
+  width: 100%;
+  height: 100%;
 
   tbody {
-    max-height: 10em;
     overflow-y: scroll;
+    height: 100%;
 
     display: block;
     tr {
@@ -74,10 +98,22 @@ const LogTable = styled.table`
   }
 `;
 
-export default class Log extends React.PureComponent<IProps> {
+const kMaxLines = 250;
+
+export default class Log extends React.PureComponent<IProps, IState> {
+  constructor(props: any, context: any) {
+    super(props, context);
+    this.state = {
+      level: reverseLevels["info"],
+    };
+  }
+
   render() {
-    const { log } = this.props;
-    const entries = log.split("\n").map(x => {
+    let level = parseInt(this.state.level, 10);
+    const { log, className, extraControls } = this.props;
+    let lines = log.split("\n");
+
+    let entries = lines.map(x => {
       // TODO: use fast-json-parse instead ?
       try {
         const entry = JSON.parse(x);
@@ -86,38 +122,87 @@ export default class Log extends React.PureComponent<IProps> {
         return x;
       }
     });
+    entries = _.filter(entries, x => (x.level ? x.level >= level : false));
+    entries = _.last(entries, kMaxLines);
 
     return (
-      <LogTable>
-        <tbody>
-          {entries.map((x, i) => {
-            if (x.hasOwnProperty("msg")) {
-              // TODO: show date jumps
-              return (
-                <tr key={i}>
-                  <td className="timecol">
-                    <FormattedTime value={x.time} />
-                  </td>
-                  <td className="modcol">
-                    {x.name ? <span>{x.name}</span> : null}
-                  </td>
-                  <td className={levels[x.level] + " msgcol"}>{x.msg}</td>
-                </tr>
-              );
-            } else {
-              return (
-                <tr key={i}>
-                  <td colSpan={numColumns}>{x}</td>
-                </tr>
-              );
-            }
-          })}
-        </tbody>
-      </LogTable>
+      <LogContainer className={className}>
+        <LogControls>
+          <label>
+            {"Level: "}
+            <SelectRow
+              options={[
+                { label: "Debug", value: reverseLevels["debug"] },
+                { label: "Info", value: reverseLevels["info"] },
+                { label: "Warning", value: reverseLevels["warn"] },
+                { label: "Error", value: reverseLevels["error"] },
+              ]}
+              value={this.state.level}
+              onChange={this.onChangeLevel}
+            />
+          </label>
+          {extraControls}
+        </LogControls>
+        <LogTable>
+          <tbody ref={this.gotBody}>
+            {entries.map((x, i) => {
+              if (x.hasOwnProperty("msg")) {
+                // TODO: show date jumps
+                return (
+                  <tr key={i}>
+                    <td className="timecol">
+                      <FormattedTime value={x.time} />
+                    </td>
+                    <td className="modcol">
+                      {x.name ? <span>{x.name}</span> : null}
+                    </td>
+                    <td className={levels[x.level] + " msgcol"}>{x.msg}</td>
+                  </tr>
+                );
+              } else {
+                return (
+                  <tr key={i}>
+                    <td colSpan={numColumns}>{x}</td>
+                  </tr>
+                );
+              }
+            })}
+          </tbody>
+        </LogTable>
+      </LogContainer>
     );
   }
+
+  componentDidUpdate() {
+    this.scrollDown();
+  }
+
+  tbody: HTMLElement;
+
+  gotBody = (tbody: HTMLElement) => {
+    this.tbody = tbody;
+    this.scrollDown();
+  };
+
+  scrollDown() {
+    if (!this.tbody) {
+      return;
+    }
+
+    this.tbody.scrollTop = this.tbody.scrollHeight;
+  }
+
+  onChangeLevel = (value: string) => {
+    this.setState({ level: value });
+  };
+}
+
+interface IState {
+  level: string;
 }
 
 interface IProps {
   log: string;
+  className?: string;
+  extraControls?: JSX.Element;
 }

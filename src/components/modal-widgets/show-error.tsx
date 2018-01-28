@@ -5,6 +5,14 @@ import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 import styled from "../styles";
 import Log from "../basics/log";
 
+const StyledLog = styled(Log)`
+  tbody {
+    min-height: 250px;
+  }
+
+  padding-bottom: 1em;
+`;
+
 const Pre = styled.pre`
   max-height: 10em;
   overflow-y: scroll;
@@ -53,7 +61,7 @@ export default class ShowError extends React.PureComponent<IProps> {
             </details>
             <details>
               <summary>Debug log</summary>
-              <Log log={log} />
+              <StyledLog log={log} />
             </details>
           </details>
         </ContainerDiv>

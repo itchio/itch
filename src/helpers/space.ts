@@ -163,5 +163,6 @@ let iconForPrefix: { [key: string]: string } = {
   search: "search",
   locations: "folder-open",
   new: "star2",
+  applog: "bug",
 };
 const fallbackIcon = "moon";

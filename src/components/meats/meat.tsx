@@ -13,6 +13,7 @@ import Collection from "../collection";
 import Browser from "../url-meat";
 import NewTab from "../new-tab";
 import Location from "../location";
+import AppLog from "../app-log";
 import { Space } from "../../helpers/space";
 
 export default class Meat extends React.PureComponent<IProps> {
@@ -58,6 +59,8 @@ export default class Meat extends React.PureComponent<IProps> {
         return Collection;
       case "toast":
         return Collection;
+      case "applog":
+        return AppLog;
       case "url":
       case "games":
       case "users":

@@ -73,6 +73,6 @@ export default function(watcher: Watcher) {
   watcher.on(actions.openAppLog, async (store, action) => {
     const path = mainLogPath();
     logger.info(`Opening app log at ${path}`);
-    shell.openItem(path);
+    shell.showItemInFolder(path);
   });
 }

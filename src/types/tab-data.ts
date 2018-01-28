@@ -47,6 +47,10 @@ export interface ITabToast {
   stack?: string;
 }
 
+export interface ITabLog {
+  log: string;
+}
+
 export interface ITabData {
   /** path of tab, something like `collections/:id`, etc. */
   path?: string;
@@ -60,6 +64,7 @@ export interface ITabData {
   web?: ITabWeb;
   toast?: ITabToast;
   location?: ITabLocation;
+  log?: ITabLog;
 }
 
 export interface ITabDataSave extends ITabData {
