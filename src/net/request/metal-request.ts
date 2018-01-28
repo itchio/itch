@@ -77,6 +77,8 @@ export async function request(
       const contentType = /[^;]*/.exec(contentTypeHeader)[0];
 
       res.on("end", async () => {
+        response.size = text.length;
+
         if (opts.sink) {
           // all good, it's up to caller to wait on promised sink
         } else if (contentType === "application/json") {

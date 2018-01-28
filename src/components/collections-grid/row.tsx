@@ -44,7 +44,7 @@ export default class CollectionRow extends React.PureComponent<IProps> {
       cols.push(item);
     });
 
-    const itemCount = (collection.gameIds || []).length;
+    const itemCount = collection.gamesCount;
 
     const { index, rowHeight, interiorPadding, globalPadding } = this.props;
 

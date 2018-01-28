@@ -17,6 +17,7 @@ import { css } from "./styles";
 import { FiltersContainer } from "./filters-container";
 import Link from "./basics/link";
 import Criterion from "./basics/criterion";
+import LoadingCircle from "./basics/loading-circle";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
@@ -56,7 +57,11 @@ const LayoutPicker = styled.section`
 
 class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { showBinaryFilters = true, showLayoutPicker = true } = this.props;
+    const {
+      showBinaryFilters = true,
+      showLayoutPicker = true,
+      numItems,
+    } = this.props;
 
     return (
       <FiltersContainer>
@@ -97,6 +102,12 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
             ) : null}
           </TagFilters>
         ) : null}
+
+        {numItems < 0 ? (
+          <LoadingCircle progress={-1} />
+        ) : (
+          <span>{numItems} items</span>
+        )}
 
         {this.props.children}
         <Filler />
@@ -155,17 +166,27 @@ interface IDerivedProps {
   onlyOwnedGames: boolean;
   onlyInstalledGames: boolean;
 
+  numItems: number;
+
   updatePreferences: typeof actions.updatePreferences;
 }
 
 export default connect<IProps>(GameFilters, {
-  state: (initialState, props) => {
+  state: (initialState, props: IProps) => {
     return createStructuredSelector({
       layout: (rs: IRootState) => rs.preferences.layout,
       onlyCompatibleGames: (rs: IRootState) =>
         rs.preferences.onlyCompatibleGames,
       onlyOwnedGames: (rs: IRootState) => rs.preferences.onlyOwnedGames,
       onlyInstalledGames: (rs: IRootState) => rs.preferences.onlyInstalledGames,
+      numItems: (rs: IRootState) => {
+        const tabData = rs.session.tabData[props.tab];
+        if (tabData && tabData.games && tabData.games.ids) {
+          return tabData.games.ids.length;
+        } else {
+          return -1;
+        }
+      },
     });
   },
   dispatch: dispatch => ({

@@ -15,6 +15,7 @@ export interface IResponse {
   statusCode: number;
   status: string;
   body: any;
+  size: number;
   headers: IHeaders;
 }
 
