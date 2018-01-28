@@ -46,6 +46,10 @@ export function sortAndFilter(
     const ownedSet = state.commons.downloadKeyIdsByGameId;
 
     set = filter(set, g => {
+      if (!g) {
+        return false;
+      }
+
       if (prefs.onlyCompatibleGames && !isPlatformCompatible(g)) {
         return false;
       }

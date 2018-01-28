@@ -59,6 +59,10 @@ class Repository<T> {
     return this.q.all(this.model, cb);
   }
 
+  allByKeySafe(primaryKeys: any[]): T[] {
+    return this.q.allByKeySafe(this.model, primaryKeys);
+  }
+
   delete(cb: DeleteCb): void {
     return this.q.delete(this.model, cb);
   }

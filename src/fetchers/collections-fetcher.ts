@@ -32,9 +32,7 @@ export default class CollectionsFetcher extends Fetcher {
     }
 
     const localCollectionIds = fromJSONField(profile.myCollectionIds, ea);
-    const localCollections = db.collections.all(k =>
-      k.where("id in ?", localCollectionIds)
-    );
+    const localCollections = db.collections.allByKeySafe(localCollectionIds);
 
     let allGameIds: number[] = [];
     for (const c of localCollections) {
