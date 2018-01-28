@@ -494,7 +494,7 @@
     "prompt.manage_game.installed_uploads": "Установлены следующие файлы:",
     "prompt.manage_game.available_uploads": "Доступны альтернативные файлы:",
     "prompt.manage_game.no_other_uploads": "Альтернативных файлов для установки нет.",
-    "preferences.advanced.prefer_optimized_patches": "Предпочитать оптимизированные патчи",
+    "preferences.advanced.prefer_optimized_patches": "Использовать оптимизированные патчи",
     "duration.seconds": "{{x}} секунд",
     "sidebar.applog": "Лог приложения"
 }
