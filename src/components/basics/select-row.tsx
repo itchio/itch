@@ -1,14 +1,24 @@
 import * as React from "react";
 
 import { map } from "underscore";
+import styled from "../styles";
+
+const Select = styled.select`
+  border: none;
+  padding: 6px 8px;
+  background: ${props => props.theme.sidebarBackground};
+  border-radius: 4px;
+  color: ${props => props.theme.baseText};
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+`;
 
 /**
  * A drop-down you can select from
  */
 class SelectRow extends React.PureComponent<ISelectRowProps> {
-  refs: {
-    input: HTMLInputElement;
-  };
+  element: HTMLSelectElement;
 
   constructor(props: ISelectRowProps) {
     super(props);
@@ -25,23 +35,35 @@ class SelectRow extends React.PureComponent<ISelectRowProps> {
     let options = this.props.options;
     let value = this.props.value;
 
-    const optionTags = map(options, (option, index) =>
+    const optionTags = map(options, (option, index) => (
       <option key={index} value={option.value}>
         {option.label}
-      </option>,
-    );
+      </option>
+    ));
 
     return (
       <div className="select-row">
-        <select ref="input" value={value} onChange={this.onChange}>
+        <Select
+          innerRef={this.gotElement}
+          value={value}
+          onChange={this.onChange}
+        >
           {optionTags}
-        </select>
+        </Select>
       </div>
     );
   }
 
+  gotElement = (element: HTMLSelectElement) => {
+    this.element = element;
+  };
+
   value() {
-    return this.refs.input.value;
+    if (this.element) {
+      return this.element.value;
+    } else {
+      return null;
+    }
   }
 }
 
