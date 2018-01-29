@@ -109,6 +109,8 @@ export function sortAndFilter(
     if (sortDirection === "DESC") {
       set.reverse();
     }
+
+    set = filter(set, x => !!x);
   }
 
   return set;

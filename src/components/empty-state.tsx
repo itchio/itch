@@ -1,5 +1,4 @@
 import * as React from "react";
-import { connect } from "./connect";
 
 import Icon from "./basics/icon";
 
@@ -41,7 +40,7 @@ const EmptyStateContainer = styled.div`
   overflow: hidden;
 `;
 
-export class EmptyState extends React.PureComponent<IProps, any> {
+export default class EmptyState extends React.PureComponent<IProps> {
   render() {
     const {
       bigText,
@@ -79,5 +78,3 @@ interface IProps {
   buttonText?: string;
   buttonAction?: React.MouseEventHandler<HTMLDivElement>;
 }
-
-export default connect<IProps>(EmptyState, {});

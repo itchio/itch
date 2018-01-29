@@ -18,6 +18,7 @@ import CollectionRow from "./row";
 import * as actions from "../../actions";
 import { dispatcher } from "../../constants/action-types";
 import { whenClickNavigates } from "../when-click-navigates";
+import HiddenIndicator from "../hidden-indicator";
 
 const tab = "collections";
 const eo: any = {};
@@ -31,6 +32,7 @@ const globalPadding = 20;
 class Grid extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { collectionIds } = this.props;
+    const hiddenCount = 0;
 
     const numCollections = collectionIds.length;
     const contentHeight = numCollections * rowHeight;
@@ -53,6 +55,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
           />
           {this.renderCollections()}
         </GridDiv>
+        <HiddenIndicator tab={tab} count={hiddenCount} />
       </GridContainerDiv>
     );
   }
@@ -133,7 +136,6 @@ interface IDerivedProps {
   games: IGameSet;
   collectionIds: number[];
   collections: ICollectionSet;
-  hiddenCount: number;
   intl: InjectedIntl;
 
   navigateToCollection: typeof actions.navigateToCollection;
@@ -147,7 +149,6 @@ export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
       collectionIds: (tabData: ITabData) =>
         (tabData.collections || eo).ids || ea,
       collections: (tabData: ITabData) => (tabData.collections || eo).set || eo,
-      hiddenCount: (tabData: ITabData) => 0,
     })
   ),
   dispatch: dispatch => ({

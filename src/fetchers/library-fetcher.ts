@@ -46,10 +46,7 @@ export default class LibraryFetcher extends Fetcher {
         store
       );
 
-    this.pushGames({
-      range: db.games.all(k => doQuery(k).field("games.*")),
-      totalCount: libraryGameIds.length,
-      getFilteredCount: () => db.games.count(k => doQuery(k)),
-    });
+    const games = db.games.all(k => doQuery(k).field("games.*"));
+    this.pushFilteredGames(games, libraryGameIds.length);
   }
 }

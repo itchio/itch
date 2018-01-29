@@ -36,7 +36,7 @@ export default class CollectionsFetcher extends Fetcher {
 
     let allGameIds: number[] = [];
     for (const c of localCollections) {
-      const collectionGameIds = fromJSONField(c.gameIds, []);
+      const collectionGameIds = c.gameIds || ea;
       allGameIds = [
         ...allGameIds,
         ...collectionGameIds.slice(0, GAMES_SHOWN_PER_COLLECTION),

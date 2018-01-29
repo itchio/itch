@@ -15,6 +15,7 @@ import Cell from "./cell";
 import { GridContainerDiv, GridDiv } from "./grid-styles";
 
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
+import HiddenIndicator from "../hidden-indicator";
 import doesEventMeanBackground from "../when-click-navigates";
 import { Game } from "ts-itchio-api";
 
@@ -32,6 +33,8 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
       scrollTop,
       width,
       height,
+      hiddenCount,
+      tab,
       intl,
     } = this.props;
 
@@ -102,6 +105,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
           />
           {children}
         </GridDiv>
+        <HiddenIndicator tab={tab} count={hiddenCount} />
       </GridContainerDiv>
     );
   }

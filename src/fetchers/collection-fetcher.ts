@@ -1,29 +1,39 @@
 import { Fetcher, FetchReason } from "./fetcher";
 import getByIds from "../helpers/get-by-ids";
-import { indexBy, isEmpty, pick } from "underscore";
+import { indexBy, isEmpty, pluck } from "underscore";
 
 import { Game } from "ts-itchio-api";
+import { fromDateTimeField } from "../db/datetime-field";
 
 const ea = [];
 
 export default class CollectionFetcher extends Fetcher {
   async work(): Promise<void> {
     const { db } = this.ctx;
+    let forced = this.reason === FetchReason.TabReloaded;
+    let dataGamesCount = 0;
 
-    // FIXME: we need a way to filter items without re-fetching from remote
-    // but the previous way to do it was broken
+    {
+      // first, filter what we already got
+      const games = getByIds(
+        this.space().games().set,
+        this.space().games().allIds
+      );
+      dataGamesCount = games.length;
+      if (games.length > 0) {
+        this.pushUnfilteredGames(games);
+      }
+    }
+
+    if (dataGamesCount == 0) {
+      forced = true;
+    }
 
     const collectionId = this.space().numericId();
     let localCollection = db.collections.findOneById(collectionId);
 
     if (localCollection) {
-      this.push({
-        collections: {
-          set: { [collectionId]: localCollection },
-          ids: [collectionId],
-        },
-      });
-
+      this.pushCollection(localCollection);
       const gameIds = (localCollection && localCollection.gameIds) || ea;
 
       const localGames = db.games.allByKeySafe(gameIds);
@@ -38,50 +48,65 @@ export default class CollectionFetcher extends Fetcher {
         ),
       ];
 
-      this.pushAllGames(fullGames, {
-        totalCount: localCollection.gamesCount,
-      });
+      this.pushUnfilteredGames(fullGames);
     }
 
-    const collResponse = await this.withApi(async api => {
-      return await api.collection(collectionId);
-    });
-
-    let remoteCollection = collResponse.entities.collections[collectionId];
+    let lastFetched: Date = null;
     if (localCollection) {
-      remoteCollection.userId = localCollection.userId;
-    }
-
-    this.push({
-      collections: {
-        set: { [collectionId]: remoteCollection },
-        ids: [collectionId],
-      },
-    });
-
-    if (localCollection) {
-      try {
-        db.saveMany(collResponse.entities);
-      } catch (e) {
-        this.debug(`Could not persist remote collection: ${e.stack}`);
+      lastFetched = fromDateTimeField(localCollection.fetchedAt);
+    } else {
+      const dataColl = this.space().collection();
+      if (dataColl) {
+        lastFetched = fromDateTimeField(dataColl.fetchedAt);
       }
+    }
 
-      this.debug(`Collection last updated: ${remoteCollection.updatedAt}`);
-      this.debug(`Collection last fetched: ${localCollection.fetchedAt}`);
-      // remarkably, this works properly when fetchedAt is null/undefined
-      if (remoteCollection.updatedAt <= localCollection.fetchedAt) {
-        if (this.reason == FetchReason.TabReloaded) {
-          this.debug(
-            `Remote isn't more recent, but this is a manual reload: fetching remote anyway.`
-          );
-        } else {
-          this.debug(`Remote isn't more recent, not fetching games`);
-          return;
-        }
+    if (lastFetched && !forced) {
+      // never check on collections more than every 5 minutes
+      const peaceThreshold = 1000 * 60 * 5;
+      const diff = Date.now() - lastFetched.getTime();
+      if (diff < peaceThreshold) {
+        this.debug(
+          `It's only been ${(diff / 1000).toFixed(
+            0
+          )} seconds since last fetch, skipping`
+        );
+        return;
       }
     }
 
     await this.withLoading(async () => {
+      const collResponse = await this.withApi(async api => {
+        return await api.collection(collectionId);
+      });
+
+      let remoteCollection = collResponse.entities.collections[collectionId];
+      if (localCollection) {
+        // work around lack of `user_id` in API, remove after
+        // https://github.com/itchio/itch/issues/1646 is resolved
+        remoteCollection.userId = localCollection.userId;
+      }
+
+      this.pushCollection(remoteCollection);
+
+      if (localCollection) {
+        try {
+          db.saveMany(collResponse.entities);
+        } catch (e) {
+          this.debug(`Could not persist remote collection: ${e.stack}`);
+        }
+      }
+
+      if (lastFetched && !forced) {
+        this.debug(`last updated: ${remoteCollection.updatedAt}`);
+        this.debug(`last fetched: ${lastFetched}`);
+        const uptodate = remoteCollection.updatedAt <= lastFetched;
+        if (uptodate) {
+          this.debug(`Remote isn't more recent, not fetching games`);
+          return;
+        }
+      }
+
       const fetchedAt = new Date();
       let fetchedGames = 0;
       let page = 1;
@@ -106,7 +131,7 @@ export default class CollectionFetcher extends Fetcher {
         if (localCollection) {
           try {
             db.saveMany(gamesResponse.entities);
-            remoteCollection.gameIds = pick(allGamesList, "id");
+            remoteCollection.gameIds = pluck(allGamesList, "id");
             db.saveOne("collections", remoteCollection.id, remoteCollection);
           } catch (e) {
             this.debug(`Couldn't persist games locally: ${e.stack}`);
@@ -120,6 +145,11 @@ export default class CollectionFetcher extends Fetcher {
         `Fetched ${allGamesList.length}/${remoteCollection.gamesCount} games total`
       );
 
+      this.pushUnfilteredGames(allGamesList);
+
+      remoteCollection.fetchedAt = fetchedAt;
+      this.pushCollection(remoteCollection);
+
       if (localCollection) {
         try {
           remoteCollection.fetchedAt = fetchedAt;
@@ -128,11 +158,6 @@ export default class CollectionFetcher extends Fetcher {
           this.debug(`Couldn't persist collection locally: ${e.stack}`);
         }
       }
-
-      allGamesList.length = remoteCollection.gamesCount;
-      this.pushAllGames(allGamesList, {
-        totalCount: remoteCollection.gamesCount,
-      });
     });
   }
 

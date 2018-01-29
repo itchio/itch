@@ -36,11 +36,8 @@ export default class DashboardFetcher extends Fetcher {
         store
       );
 
-    this.pushGames({
-      totalCount: myGameIds.length,
-      range: db.games.all(k => doQuery(k).field("games.*")),
-      getFilteredCount: () => db.games.count(k => doQuery(k)),
-    });
+    const games = db.games.all(k => doQuery(k).field("games.*"));
+    this.pushFilteredGames(games, myGameIds.length);
   }
 
   async remote() {

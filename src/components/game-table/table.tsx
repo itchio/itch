@@ -15,6 +15,7 @@ import doesEventMeanBackground from "../when-click-navigates";
 import { TableContainerDiv, TableDiv, ITableSizes } from "./table-styles";
 
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
+import HiddenIndicator from "../hidden-indicator";
 import format from "../format";
 import { Game } from "ts-itchio-api";
 
@@ -93,7 +94,7 @@ export const defaultGameColumns = [
 
 class Table extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { columns = defaultGameColumns } = this.props;
+    const { columns = defaultGameColumns, hiddenCount, tab } = this.props;
     const sizes = this.computeSizes(columns);
     const numGames = this.props.gameIds.length;
     const contentHeight = numGames * rowHeight;
@@ -119,6 +120,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
           />
           {this.renderGames()}
         </TableDiv>
+        <HiddenIndicator tab={tab} count={hiddenCount} />
       </TableContainerDiv>
     );
   }

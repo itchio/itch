@@ -13,7 +13,8 @@ export interface ITabGames {
   /** games in relation to this tab (single game, games in a collection) */
   set: IGameSet;
   ids: number[];
-  hiddenCount?: number;
+  allIds?: number[];
+  totalCount?: number;
 }
 
 export interface ITabCollections {

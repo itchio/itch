@@ -18,6 +18,7 @@ import { dispatcher } from "../constants/action-types";
 
 import styled from "./styles";
 import { Space } from "../helpers/space";
+import LoadingState from "./loading-state";
 
 export const HubGamesDiv = styled.div`flex-grow: 1;`;
 
@@ -59,18 +60,24 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
     const {
       games = {},
       gameIds = [],
-      hiddenCount,
+      totalCount,
       tab,
       params,
       prefLayout,
       forcedLayout,
       columns,
       clearFilters,
+      loading,
       intl,
     } = this.props;
     const { sortBy, sortDirection } = params;
 
+    const hiddenCount = totalCount - gameIds.length;
     if (gameIds.length === 0) {
+      if (loading) {
+        return <LoadingState />;
+      }
+
       return (
         <EmptyState
           icon="filter"
@@ -120,7 +127,8 @@ interface IProps {
 interface IDerivedProps {
   games: IGameSet;
   gameIds: number[];
-  hiddenCount: number;
+  totalCount: number;
+  loading: boolean;
 
   prefLayout: TabLayout;
   params: ITabParams;
@@ -140,12 +148,14 @@ export default connect<IProps>(injectIntl(Games), {
       (rs: IRootState) => Space.fromData(rs.session.tabData[tab] || eo),
       (rs: IRootState) => rs.session.tabParams[tab] || eo,
       (rs: IRootState) => rs.preferences.layout,
+      (rs: IRootState) => rs.session.navigation.loadingTabs[tab] || false,
       createStructuredSelector({
         gameIds: (sp: Space, params, prefLayout) => sp.games().ids || ea,
         games: (sp: Space, params, prefLayout) => sp.games().set || eo,
-        hiddenCount: (sp: Space, params, prefLayout) => sp.games().hiddenCount,
+        totalCount: (sp: Space, params, prefLayout) => sp.games().totalCount,
         prefLayout: (sp: Space, params, prefLayout) => prefLayout,
         params: (sp: Space, params, prefLayout) => params,
+        loading: (sp: Space, params, prefLayout, loading) => loading,
       })
     );
   },

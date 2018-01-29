@@ -30,7 +30,7 @@ class HiddenIndicator extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { intl, tab, count, clearFilters } = this.props;
 
-    if (count === 0) {
+    if (!count) {
       return null;
     }
 

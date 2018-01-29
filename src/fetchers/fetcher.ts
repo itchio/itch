@@ -23,6 +23,7 @@ export enum FetchReason {
 import rootLogger, { Logger } from "../logger";
 import { Space } from "../helpers/space";
 import { Game } from "ts-itchio-api";
+import { ICollection } from "../db/models/collection";
 
 interface OptionalFetcherParams {
   apiClient?: Client;
@@ -169,6 +170,29 @@ export class Fetcher {
     this.ctx.store.dispatch(action);
   }
 
+  pushCollection(c: ICollection) {
+    this.push({
+      collections: {
+        ids: [c.id],
+        set: {
+          [c.id]: c,
+        },
+      },
+    });
+  }
+
+  pushGame(g: Game) {
+    this.push({
+      games: {
+        ids: [g.id],
+        set: {
+          [g.id]: g,
+        },
+        totalCount: 1,
+      },
+    });
+  }
+
   retry(why: string) {
     throw new Retry(why);
   }
@@ -203,33 +227,28 @@ export class Fetcher {
     return this._space;
   }
 
-  pushAllGames(input: Game[], opts: IPushAllGameOpts = {}) {
+  pushUnfilteredGames(input: Game[]) {
     const games = this.sortAndFilter(input);
     this.logger.debug(
       `Pushing games, ${input.length} => (sort+filter) => ${games.length}`
     );
 
-    const gameIds = pluck(games, "id");
-    const totalCount = opts.totalCount || input.length;
-    gameIds.length = totalCount;
-
     this.push({
       games: {
-        set: indexBy(games, "id"),
-        ids: gameIds,
-        hiddenCount: input.length - games.length,
+        set: indexBy(input, "id"),
+        allIds: pluck(input, "id"),
+        ids: pluck(games, "id"),
+        totalCount: input.length,
       },
     });
   }
 
-  pushGames(opts: IPushGamesOpts) {
-    const { range, totalCount } = opts;
-
+  pushFilteredGames(input: Game[], totalCount: number) {
     this.push({
       games: {
-        set: indexBy(range, "id"),
-        ids: pluck(range, "id"),
-        hiddenCount: totalCount - range.length,
+        set: indexBy(input, "id"),
+        ids: pluck(input, "id"),
+        totalCount,
       },
     });
   }
@@ -241,14 +260,4 @@ export class Fetcher {
   clean() {
     this.logger.warn(`clean(): stub!`);
   }
-}
-
-interface IPushGamesOpts {
-  getFilteredCount: () => number;
-  totalCount: number;
-  range: Game[];
-}
-
-interface IPushAllGameOpts {
-  totalCount?: number;
 }

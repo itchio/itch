@@ -29,8 +29,6 @@ export default class LocationFetcher extends Fetcher {
       )
     );
 
-    this.pushAllGames(games, {
-      totalCount: games.length,
-    });
+    this.pushUnfilteredGames(games);
   }
 }
