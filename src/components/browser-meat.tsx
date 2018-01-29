@@ -134,6 +134,9 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
     const wvURL = this._wv.getURL();
     if (prevProps.url != this.props.url) {
       if (wvURL != this.props.url) {
+        console.log(
+          `Calling loadURL with ${this.props.url} because wvURL is ${wvURL}`
+        );
         this._wv.loadURL(this.props.url);
       }
     }

@@ -177,6 +177,20 @@ export default function(watcher: Watcher, db: DB) {
         store.dispatch(actions.navigate({ tab: `url/${url}`, background }));
       }
     );
+
+    wc.on(
+      "navigation-entry-commited" as any,
+      (event, url, inPage, replaceEntry) => {
+        logger.debug(
+          `navigation entry committed: ${url}, inPage = ${inPage}, replaceEntry = ${replaceEntry}`
+        );
+        logger.debug(
+          `history is now: ${JSON.stringify((wc as any).history, null, 2)}`
+        );
+        logger.debug(`currentIndex: ${(wc as any).currentIndex}`);
+        logger.debug(`inPageIndex: ${(wc as any).inPageIndex}`);
+      }
+    );
   });
 
   watcher.on(actions.analyzePage, async (store, action) => {
