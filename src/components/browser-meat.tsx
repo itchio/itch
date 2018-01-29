@@ -146,14 +146,12 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
     }
     this._wv = wv;
     const { tabDataFetched, tabGotWebContents, tab } = this.props;
-    console.log("started loading because of webview", wv);
     tabDataFetched({
       tab,
       data: { web: { url: wv.src, loading: true } },
     });
 
     let onDomReady = () => {
-      console.log("dom ready", wv);
       tabGotWebContents({ tab, webContentsId: wv.getWebContents().id });
       wv.removeEventListener("dom-ready", onDomReady);
     };
