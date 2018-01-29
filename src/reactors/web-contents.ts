@@ -1,5 +1,6 @@
 import * as actions from "../actions";
 import { Watcher } from "./watcher";
+import * as url from "url";
 
 import { webContents, BrowserWindow } from "electron";
 
@@ -76,11 +77,23 @@ export default function(watcher: Watcher, db: DB) {
     pushWeb({ webContentsId, loading: wc.isLoading() });
 
     const didNavigate = url => {
-      pushWeb({
-        url,
-        canGoBack: wc.canGoBack(),
-        canGoForward: wc.canGoForward(),
-      });
+      const path = parseWellKnownUrl(url);
+      if (path) {
+        store.dispatch(
+          actions.tabEvolved({
+            tab,
+            data: {
+              path,
+            },
+          })
+        );
+      } else {
+        pushWeb({
+          url,
+          canGoBack: wc.canGoBack(),
+          canGoForward: wc.canGoForward(),
+        });
+      }
     };
 
     didNavigate(wc.getURL());
@@ -279,4 +292,22 @@ export default function(watcher: Watcher, db: DB) {
       });
     }
   });
+}
+
+const COLLECTION_URL_RE = /^\/c\/([0-9]+)/;
+
+function parseWellKnownUrl(rawurl: string): string {
+  try {
+    const u = url.parse(rawurl);
+    if (u.hostname === "itch.io") {
+      const matches = COLLECTION_URL_RE.exec(u.pathname);
+      if (matches) {
+        return `collections/${matches[1]}`;
+      }
+    }
+  } catch (e) {
+    logger.warn(`Could not parse url: ${rawurl}`);
+  }
+
+  return null;
 }
