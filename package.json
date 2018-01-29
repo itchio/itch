@@ -66,7 +66,7 @@
     "react-sortable-hoc": "^0.6.7",
     "redux": "^3.6.0",
     "redux-actions": "^0.9.1",
-    "redux-cli-logger": "2.0.0",
+    "redux-cli-logger": "^2.1.0",
     "redux-logger": "^2.6.1",
     "require-times": "^1.1.0",
     "reselect": "^2.5.2",
