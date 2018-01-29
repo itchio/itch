@@ -43,6 +43,11 @@ const SecondaryText = styled.section`
 
 const LayoutPickers = styled.section`display: flex;`;
 
+const Spacer = styled.div`
+  width: 10px;
+  height: 1px;
+`;
+
 const LayoutPicker = styled.section`
   padding: 10px;
   border-radius: 50%;
@@ -112,7 +117,7 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
           </SecondaryText>
         )}
 
-        {this.props.children}
+        {this.props.children ? [<Spacer />, this.props.children] : null}
         <Filler />
         {showLayoutPicker ? this.renderLayoutPickers() : null}
       </FiltersContainer>

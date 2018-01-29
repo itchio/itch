@@ -148,6 +148,10 @@ export class Space {
   isFrozen(): boolean {
     return !!staticTabData[this.path()];
   }
+
+  isRestored(): boolean {
+    return this.data ? this.data.restored : null;
+  }
 }
 
 // maps tab prefixes to icomoon icons

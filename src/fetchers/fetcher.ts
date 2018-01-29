@@ -70,6 +70,28 @@ export class Fetcher {
     return this.space().path();
   }
 
+  private async doWork() {
+    if (this.reason === FetchReason.TabEvolved || this.space().isRestored()) {
+      // always show a spinner when getting a new path
+      try {
+        await this.withLoading(async () => {
+          await this.work();
+        });
+      } finally {
+        this.ctx.store.dispatch(
+          actions.tabDataFetched({
+            tab: this.tab,
+            data: {
+              restored: false,
+            },
+          })
+        );
+      }
+    } else {
+      await this.work();
+    }
+  }
+
   async run() {
     this.startedAt = Date.now();
 
@@ -91,7 +113,7 @@ export class Fetcher {
       retriableError = null;
 
       try {
-        await this.work();
+        await this.doWork();
       } catch (e) {
         if (isRetry(e)) {
           retriableError = e;

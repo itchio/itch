@@ -13,6 +13,10 @@ const initialState = {
   ...staticTabData,
 } as ITabDataSet;
 
+for (const k of Object.keys(initialState)) {
+  initialState[k].restored = true;
+}
+
 const emptyObj = {} as any;
 
 let deepFields = ["users", "games", "collections", "web", "toast"];

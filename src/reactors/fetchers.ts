@@ -47,6 +47,18 @@ export async function queueFetch(
 
   const fetcherClass = getFetcherClass(store, tab);
   if (!fetcherClass) {
+    // no fetcher, nothing to do - but we gotta mark it as non-restored
+    const sp = Space.fromStore(store, tab);
+    if (sp.isRestored()) {
+      store.dispatch(
+        actions.tabDataFetched({
+          tab,
+          data: {
+            restored: false,
+          },
+        })
+      );
+    }
     return;
   }
 
@@ -141,18 +153,6 @@ export default function(watcher: Watcher, db: DB) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
     const { tab } = action.payload;
-    // if we just focused a tab, it shouldn't be marked 'restored' anymore
-    const tabData = store.getState().session.tabData[tab];
-    if (tabData && tabData.restored) {
-      store.dispatch(
-        actions.tabDataFetched({
-          tab,
-          data: { restored: false },
-          shallow: true,
-        })
-      );
-    }
-
     queueFetch(store, db, tab, FetchReason.TabChanged);
   });
 

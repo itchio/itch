@@ -66,7 +66,13 @@ export default class CollectionsFetcher extends Fetcher {
     const collections = collRes.entities.collections || emptyObj;
     const meId = this.ensureCredentials().me.id;
     for (const id of Object.keys(collections)) {
-      collections[id].userId = meId;
+      const remoteCollection = collections[id];
+      const localCollection = db.collections.findOneById(id);
+      if (localCollection && Array.isArray(localCollection.gameIds)) {
+        // don't bring back total number of gameIds to 15
+        remoteCollection.gameIds = localCollection.gameIds;
+      }
+      remoteCollection.userId = meId;
     }
 
     db.saveMany(collRes.entities);
