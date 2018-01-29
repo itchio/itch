@@ -527,7 +527,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
       intl,
       navigate,
     } = this.props;
-    const { preferOptimizedPatches } = this.props.preferences;
+    const { preferOptimizedPatches, disableBrowser } = this.props.preferences;
 
     return (
       <div className="explanation advanced-form">
@@ -595,6 +595,18 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
               onClick={(e: React.MouseEvent<any>) => e.preventDefault()}
             />
           </span>
+        </label>
+        <label className={classNames({ active: disableBrowser })}>
+          <input
+            type="checkbox"
+            checked={disableBrowser}
+            onChange={e => {
+              updatePreferences({
+                disableBrowser: e.currentTarget.checked,
+              });
+            }}
+          />
+          <span>{format(["preferences.advanced.disable_browser"])}</span>
         </label>
       </div>
     );

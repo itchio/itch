@@ -20,6 +20,7 @@ export const initialState = {
   manualGameUpdates: false,
   preventDisplaySleep: true,
   preferOptimizedPatches: false,
+  disableBrowser: false,
 
   onlyCompatibleGames: true,
   onlyOwnedGames: false,

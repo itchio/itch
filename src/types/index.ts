@@ -717,6 +717,9 @@ export interface IPreferencesState {
 
   /** layout to use to show games */
   layout?: TabLayout;
+
+  /** disable all webviews */
+  disableBrowser?: boolean;
 }
 
 export interface ITask {

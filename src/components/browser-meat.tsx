@@ -16,8 +16,6 @@ import { IMeatProps } from "./meats/types";
 
 import TitleBar from "./title-bar";
 
-const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
-
 import BrowserBar from "./browser-bar";
 
 import GameBrowserContext from "./game-browser-context";
@@ -28,6 +26,7 @@ import { IDispatch, dispatcher } from "../constants/action-types";
 import "electron";
 
 import styled, * as styles from "./styles";
+import DisabledBrowser from "./disabled-browser";
 
 const BrowserMeatContainer = styled.div`${styles.meat()};`;
 
@@ -82,7 +81,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   render() {
-    const { tab, tabData, url, controls, meId } = this.props;
+    const { tab, tabData, url, controls, meId, disableBrowser } = this.props;
     const fresh = !(tabData.web && tabData.web.webContentsId);
     const partition = partitionForUser(meId);
 
@@ -97,7 +96,9 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
         <BrowserBar tab={tab} tabData={tabData} url={url} />
         <BrowserMain>
           <WebviewShell className={classNames({ fresh })}>
-            {DONT_SHOW_WEBVIEWS ? null : (
+            {disableBrowser ? (
+              <DisabledBrowser url={url} />
+            ) : (
               <webview
                 partition={partition}
                 plugins="on"
@@ -114,6 +115,14 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   componentDidUpdate(prevProps: IProps & IDerivedProps, prevState: any) {
+    if (!prevProps.disableBrowser && this.props.disableBrowser) {
+      const { tab } = this.props;
+      this.props.tabDataFetched({
+        tab,
+        data: { web: { loading: false } },
+      });
+    }
+
     if (!this._wv) {
       return;
     }
@@ -176,6 +185,8 @@ interface IDerivedProps {
   proxy?: string;
   proxySource?: string;
 
+  disableBrowser: boolean;
+
   navigate: typeof actions.navigate;
   tabDataFetched: typeof actions.tabDataFetched;
   tabGotWebContents: typeof actions.tabGotWebContents;
@@ -189,6 +200,7 @@ export default connect<IProps>(injectIntl(BrowserMeat), {
       (rs.session.credentials.me || { id: "anonymous" }).id,
     proxy: (rs: IRootState) => rs.system.proxy,
     proxySource: (rs: IRootState) => rs.system.proxySource,
+    disableBrowser: (rs: IRootState) => rs.preferences.disableBrowser,
   }),
   dispatch: (dispatch: IDispatch) => ({
     navigate: dispatcher(dispatch, actions.navigate),
