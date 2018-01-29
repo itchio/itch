@@ -9,7 +9,8 @@ const Select = styled.select`
   border: none;
   padding: 6px 8px;
   margin-left: 2px;
-  background: ${props => props.theme.sidebarBackground};
+  background: #5f5f5f;
+  border: 1px solid #6f6f6f;
   border-radius: 4px;
   color: ${props => props.theme.baseText};
   cursor: pointer;
