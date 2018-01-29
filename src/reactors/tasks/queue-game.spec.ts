@@ -1,6 +1,7 @@
-import suite, { TestWatcher, actions, withDB } from "../../test-suite";
+import suite, { TestWatcher, withDB } from "../../test-suite";
 
 import queueDownload from "./queue-game";
+import { actions } from "../../actions/index";
 
 suite(__filename, s => {
   s.case("queueDownload", async t => {

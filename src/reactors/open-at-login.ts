@@ -1,5 +1,5 @@
 import { Watcher } from "./watcher";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import * as os from "../os";
 import * as sf from "../os/sf";

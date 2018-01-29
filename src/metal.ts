@@ -21,7 +21,7 @@ if (env.name === "development") {
 import autoUpdaterStart from "./util/auto-updater";
 import { isItchioURL } from "./util/url";
 
-import * as actions from "./actions";
+import { actions } from "./actions";
 import { app, protocol, globalShortcut } from "electron";
 
 logger.info(

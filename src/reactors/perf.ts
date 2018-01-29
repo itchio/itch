@@ -1,5 +1,5 @@
 import { Watcher } from "./watcher";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "perf" });

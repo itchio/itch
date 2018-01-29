@@ -4,7 +4,7 @@ import { connect } from "./connect";
 import { map } from "underscore";
 
 import urls from "../constants/urls";
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import Filler from "./basics/filler";
 import Icon from "./basics/icon";
@@ -13,8 +13,6 @@ import TitleBar from "./title-bar";
 import { IMeatProps } from "./meats/types";
 
 import { transformUrl } from "../util/navigation";
-
-import { dispatcher } from "../constants/action-types";
 
 import styled, * as styles from "./styles";
 
@@ -104,9 +102,7 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps> {
 
           <Spacer />
 
-          <Title>
-            {format(["new_tab.titles.buttons"])}
-          </Title>
+          <Title>{format(["new_tab.titles.buttons"])}</Title>
 
           {map(newTabItems, item => {
             const { label, icon, path } = item;
@@ -117,16 +113,12 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps> {
                 onClick={() => evolveTab({ tab: tab, path })}
               >
                 <Icon icon={icon} />
-                <span>
-                  {format(label)}
-                </span>
+                <span>{format(label)}</span>
               </NewTabItem>
             );
           })}
 
-          <Title>
-            {format(["new_tab.titles.input"])}
-          </Title>
+          <Title>{format(["new_tab.titles.input"])}</Title>
           <WebNavContainer>
             <UrlContainer>
               <input

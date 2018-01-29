@@ -24,7 +24,7 @@ import { Logger } from "../../logger";
 import { join, basename } from "path";
 import urls from "../../constants/urls";
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import Context, { MinimalContext } from "../../context";
 
 import {
@@ -35,9 +35,8 @@ import {
   IProgressListener,
   TaskProgressStatus,
   IRuntime,
+  IAction,
 } from "../../types";
-
-import { IAction, IOpenModalPayload } from "../../constants/action-types";
 
 import { IPrereqsStateParams } from "../../components/modal-widgets/prereqs-state";
 
@@ -103,7 +102,7 @@ async function handleUE4Prereq(
 
   const { runtime } = opts;
 
-  let openModalAction: IAction<IOpenModalPayload>;
+  let openModalAction: IAction<typeof actions.openModal.payload>;
   const { db, store } = ctx;
   const logger = opts.logger.child({ name: "windows-prereqs" });
 
@@ -284,7 +283,7 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
   );
 
   const workDir = tmp.dirSync();
-  let openModalAction: IAction<IOpenModalPayload>;
+  let openModalAction: IAction<typeof actions.openModal.payload>;
 
   try {
     tasks = filter(remainingTasks, null);

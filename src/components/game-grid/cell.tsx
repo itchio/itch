@@ -15,8 +15,7 @@ import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { IRootState } from "../../types/index";
 import { connect } from "../connect";
 
-import * as actions from "../../actions";
-import { dispatcher } from "../../constants/action-types";
+import { actions, dispatcher } from "../../actions";
 import isCavePristine from "../../helpers/is-cave-pristine";
 import { Game } from "ts-itchio-api";
 

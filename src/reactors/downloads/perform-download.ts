@@ -13,11 +13,10 @@ import { ICave } from "../../db/models/cave";
 import configure from "../launch/configure";
 import { promisedModal } from "../modals";
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import makeUploadButton from "../make-upload-button";
 
 import { map } from "underscore";
-import { MODAL_RESPONSE } from "../../constants/action-types";
 import { buseGameCredentials, setupClient } from "../../util/buse-utils";
 import { computeCaveLocation } from "./compute-cave-location";
 import { readReceipt } from "../../install-managers/common/receipt";
@@ -84,7 +83,7 @@ export default async function performDownload(
           buttons: ["cancel"],
         });
 
-        if (modalRes.type === MODAL_RESPONSE) {
+        if (modalRes.type === "modalResponse") {
           return { index: modalRes.payload.pickedUploadIndex };
         } else {
           // that tells butler to abort

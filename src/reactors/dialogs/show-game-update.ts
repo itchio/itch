@@ -1,4 +1,4 @@
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import makeUploadButton from "../../reactors/make-upload-button";
 

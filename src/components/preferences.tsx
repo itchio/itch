@@ -17,7 +17,7 @@ import ProxySettings from "./preferences/proxy-settings";
 
 import TitleBar from "./title-bar";
 
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import { map, each, filter } from "underscore";
 
@@ -34,7 +34,6 @@ import {
   IPreferencesState,
   IInstallLocation,
 } from "../types";
-import { dispatcher } from "../constants/action-types";
 
 import { IMeatProps } from "./meats/types";
 

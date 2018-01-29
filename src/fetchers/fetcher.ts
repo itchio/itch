@@ -2,7 +2,7 @@ import { ITabData, ICredentials, Retry, isRetry } from "../types";
 import * as bluebird from "bluebird";
 import { indexBy, pluck } from "underscore";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import defaultApiClient, { AuthenticatedClient, Client } from "../api";
 import { isNetworkError } from "../net/errors";

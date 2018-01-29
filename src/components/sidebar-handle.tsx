@@ -1,15 +1,13 @@
 import * as React from "react";
 import { connect } from "./connect";
 
-import * as actions from "../actions";
-
-import { dispatcher } from "../constants/action-types";
+import { actions, dispatcher } from "../actions";
 
 import styled from "./styles";
 
 const HandleDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
-  height: '100%';
+  height: "100%";
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: ${props => props.theme.widths.handle};

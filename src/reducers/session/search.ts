@@ -2,7 +2,7 @@ import SearchExamples from "../../constants/search-examples";
 
 import { ISessionSearchState } from "../../types";
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import reducer from "../reducer";
 import { isEmpty } from "underscore";
 

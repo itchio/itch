@@ -1,6 +1,6 @@
 import { Watcher } from "./watcher";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import { sortBy } from "underscore";
 import { Space } from "../helpers/space";

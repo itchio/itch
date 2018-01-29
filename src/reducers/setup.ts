@@ -1,5 +1,5 @@
 import { ISetupState } from "../types";
-import * as actions from "../actions";
+import { actions } from "../actions";
 import reducer from "./reducer";
 
 const initialState = {

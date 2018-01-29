@@ -7,7 +7,7 @@ import rootLogger from "../../logger";
 import { IStore } from "../../types/index";
 const logger = rootLogger.child({ name: "load-preferences" });
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 export default async function loadPreferences(store: IStore) {
   let prefs: any = {};

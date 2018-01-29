@@ -1,5 +1,5 @@
 import { Watcher } from "../watcher";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import { getPendingForGame } from "./getters";
 import { isEmpty } from "underscore";

@@ -7,8 +7,7 @@ import chromeStore from "../../store/chrome-store";
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
 import { IRootState } from "../../types/index";
-import * as actions from "../../actions";
-import { dispatcher } from "../../constants/action-types";
+import { actions, dispatcher } from "../../actions";
 
 import styled from "../styles";
 import Button from "../basics/button";
@@ -30,8 +29,8 @@ const ControlsDiv = styled.div`
     border-left: 2px solid ${props => props.theme.prefBorder};
   }
 
-  input[type=checkbox] {
-    margin-right: .4em;
+  input[type="checkbox"] {
+    margin-right: 0.4em;
   }
 `;
 

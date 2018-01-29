@@ -1,5 +1,5 @@
 import { Watcher } from "./watcher";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import client from "../api";
 import partitionForUser from "../util/partition-for-user";
@@ -7,7 +7,6 @@ import partitionForUser from "../util/partition-for-user";
 import { sortBy } from "underscore";
 
 import { promisedModal } from "./modals";
-import { MODAL_RESPONSE } from "../constants/action-types";
 import urls from "../constants/urls";
 import * as urlParser from "url";
 import { isNetworkError } from "../net/errors";
@@ -57,7 +56,7 @@ export default function(watcher: Watcher) {
           } as IRecaptchaInputParams,
         });
 
-        if (modalRes.type === MODAL_RESPONSE) {
+        if (modalRes.type === "modalResponse") {
           extras.recaptchaResponse = modalRes.payload.recaptchaResponse;
           passwordRes = await client.loginWithPassword(
             username,
@@ -95,7 +94,7 @@ export default function(watcher: Watcher) {
           } as ITwoFactorInputParams,
         });
 
-        if (modalRes.type === MODAL_RESPONSE) {
+        if (modalRes.type === "modalResponse") {
           const code = modalRes.payload.totpCode;
           const totpRes = await client.totpVerify(passwordRes.token, code);
           res = totpRes;

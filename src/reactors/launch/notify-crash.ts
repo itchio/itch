@@ -7,7 +7,7 @@ import diego from "../../os/diego";
 
 import { t } from "../../format";
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import { Game } from "ts-itchio-api";
 
 type ExtendedError = Error & {

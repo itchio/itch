@@ -5,7 +5,7 @@ import { createStructuredSelector } from "reselect";
 import format, { formatString } from "./format";
 
 import { map, first, rest } from "underscore";
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import Link from "./basics/link";
 import Row from "./download/row";
@@ -14,7 +14,6 @@ import EmptyState from "./empty-state";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import { IRootState, IDownloadItem } from "../types";
-import { dispatcher } from "../constants/action-types";
 
 import {
   getPendingDownloads,

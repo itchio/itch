@@ -3,12 +3,11 @@ import * as React from "react";
 import * as classNames from "classnames";
 import { connect } from "./connect";
 
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 
 import { ITabWeb } from "../types";
-import { dispatcher, ITriggerPayload } from "../constants/action-types";
 
 import IconButton from "./basics/icon-button";
 
@@ -72,7 +71,7 @@ export class BrowserControls extends React.PureComponent<
 > {
   browserAddress: HTMLInputElement | HTMLElement;
 
-  triggerForTab(command: ITriggerPayload["command"]) {
+  triggerForTab(command: typeof actions.trigger.payload.command) {
     const { trigger, tab } = this.props;
     trigger({ tab, command });
   }

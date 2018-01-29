@@ -1,4 +1,4 @@
-import * as actions from "../actions";
+import { actions } from "../actions";
 import { Watcher } from "./watcher";
 import { DB } from "../db";
 

@@ -6,7 +6,7 @@ import * as querystring from "querystring";
 import * as electron from "electron";
 import partitionForUser from "../util/partition-for-user";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "itch-internal" });

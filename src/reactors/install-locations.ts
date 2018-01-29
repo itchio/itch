@@ -12,12 +12,11 @@ import diskspace from "../os/diskspace";
 import explorer from "../os/explorer";
 import { t } from "../format";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import { BrowserWindow, dialog } from "electron";
 
 import { IRootState } from "../types";
-import { IAddInstallLocationPayload } from "../constants/action-types";
 
 import Context from "../context";
 import { DB } from "../db";
@@ -148,7 +147,7 @@ export default function(watcher: Watcher, db: DB) {
     };
 
     const promise = new Promise<
-      IAddInstallLocationPayload
+      typeof actions.addInstallLocation.payload
     >((resolve, reject) => {
       const callback = (response: string[]) => {
         if (!response) {

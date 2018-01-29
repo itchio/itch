@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 import GenericSearchResult from "./generic-search-result";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import Cover from "../basics/cover";
 

@@ -1,6 +1,5 @@
 import { Watcher } from "../watcher";
-import * as actions from "../../actions";
-import { MODAL_RESPONSE } from "../../constants/action-types";
+import { actions } from "../../actions";
 
 import api from "../../api";
 import rootLogger from "../../logger";
@@ -90,7 +89,7 @@ export default function(watcher: Watcher, db: DB) {
           buttons: ["cancel"],
         });
 
-        if (response.type !== MODAL_RESPONSE) {
+        if (response.type !== "modalResponse") {
           // modal was closed
           return;
         }

@@ -7,8 +7,7 @@ import watching, { Watcher } from "../watching";
 
 import { connect } from "../connect";
 
-import * as actions from "../../actions";
-import { dispatcher } from "../../constants/action-types";
+import { actions, dispatcher } from "../../actions";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatString } from "../format";

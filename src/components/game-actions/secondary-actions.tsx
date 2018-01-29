@@ -7,20 +7,20 @@ import IconButton from "../basics/icon-button";
 import listSecondaryActions, { IActionOpts } from "./list-secondary-actions";
 import { map } from "underscore";
 
-import { IDispatch } from "../../constants/action-types";
 import { IActionsInfo } from "./types";
 
 import styled, * as styles from "../styles";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatString } from "../format";
+import { IDispatch } from "../../types/index";
 
 const SecondaryActionsDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
 
-  animation: ${styles.animations.fadeIn} .1s ease-in;
+  animation: ${styles.animations.fadeIn} 0.1s ease-in;
 `;
 
 class SecondaryActions extends React.PureComponent<IProps & IDerivedProps> {

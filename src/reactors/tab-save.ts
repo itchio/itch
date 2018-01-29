@@ -5,8 +5,8 @@ import { Watcher } from "./watcher";
 import { fromJSONField } from "../db/json-field";
 import { DB } from "../db/index";
 import { ITabDataSave } from "../types/index";
-import { actions } from "../test-suite";
 import { IProfile } from "../db/models/profile";
+import { actions } from "../actions/index";
 
 const eo: any = {};
 

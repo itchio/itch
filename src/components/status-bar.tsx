@@ -3,13 +3,12 @@ import * as classNames from "classnames";
 import { createStructuredSelector } from "reselect";
 import { connect } from "./connect";
 
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import Icon from "./basics/icon";
 import LoadingCircle from "./basics/loading-circle";
 
 import { IRootState, ISelfUpdateState, ILocalizedString } from "../types";
-import { dispatcher } from "../constants/action-types";
 
 import format from "./format";
 

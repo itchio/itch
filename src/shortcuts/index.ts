@@ -1,4 +1,4 @@
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import * as Combokeys from "combokeys-ftl";
 import * as hookGlobalBind from "combokeys-ftl/plugins/global-bind";

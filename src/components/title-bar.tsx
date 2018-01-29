@@ -5,8 +5,7 @@ import * as classNames from "classnames";
 
 import { IRootState, ITabData } from "../types";
 
-import { dispatcher } from "../constants/action-types";
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import { FiltersContainer, filtersContainerHeight } from "./filters-container";
 import IconButton from "./basics/icon-button";

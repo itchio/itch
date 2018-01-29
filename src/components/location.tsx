@@ -1,13 +1,12 @@
 import * as React from "react";
 import { connect } from "./connect";
 
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import { IMeatProps } from "./meats/types";
 
 import Games from "./games";
 
-import { dispatcher } from "../constants/action-types";
 import format from "./format";
 import { Space } from "../helpers/space";
 
@@ -68,7 +67,7 @@ interface IDerivedProps {
 }
 
 export default connect<IProps>(Location, {
-  dispatch: (dispatch): Partial<IDerivedProps> => ({
+  dispatch: dispatch => ({
     browseInstallLocation: dispatcher(dispatch, actions.browseInstallLocation),
   }),
 });

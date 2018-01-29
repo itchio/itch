@@ -6,8 +6,7 @@ import Item from "./item";
 
 import { connect } from "../connect";
 
-import * as actions from "../../actions";
-import { dispatcher } from "../../constants/action-types";
+import { actions, dispatcher } from "../../actions";
 
 import { size } from "underscore";
 import {

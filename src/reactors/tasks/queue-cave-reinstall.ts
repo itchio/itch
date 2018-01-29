@@ -1,5 +1,5 @@
 import { Watcher } from "../watcher";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import getGameCredentials from "../downloads/get-game-credentials";
 import lazyGetGame from "../lazy-get-game";

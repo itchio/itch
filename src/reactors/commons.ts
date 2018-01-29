@@ -8,12 +8,11 @@ import { ICaveSummary } from "../db/models/cave";
 import { indexBy, union, pluck } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 import { throttle, object, isEqual } from "underscore";
 
 import rootLogger from "../logger";
 import { fromJSONField } from "../db/json-field";
-import { ICommonsUpdatedPayload } from "../constants/action-types";
 const logger = rootLogger.child({ name: "commons" });
 
 const emptyArr = [];
@@ -138,7 +137,7 @@ export default function(watcher: Watcher, db: DB) {
   });
 }
 
-function push(store: IStore, next: ICommonsUpdatedPayload) {
+function push(store: IStore, next: typeof actions.commonsUpdated.payload) {
   const prev = store.getState().commons;
 
   let hasDifferences = false;

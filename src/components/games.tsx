@@ -13,8 +13,7 @@ import EmptyState from "./empty-state";
 import { ISortParams } from "./sort-types";
 
 import { injectIntl, InjectedIntl } from "react-intl";
-import * as actions from "../actions";
-import { dispatcher } from "../constants/action-types";
+import { actions, dispatcher } from "../actions";
 
 import styled from "./styles";
 import { Space } from "../helpers/space";

@@ -1,6 +1,6 @@
 import { IMeatProps } from "./meats/types";
 import * as React from "react";
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import styled, * as styles from "./styles";
 import TitleBar from "./title-bar";
@@ -8,7 +8,6 @@ import Log from "./basics/log";
 import Link from "./basics/link";
 import IconButton from "./basics/icon-button";
 import { connect } from "./connect";
-import { dispatcher } from "../constants/action-types";
 import format from "./format";
 import { showInExplorerString } from "../format/show-in-explorer";
 

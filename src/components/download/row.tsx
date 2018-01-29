@@ -5,7 +5,7 @@ import Chart from "./chart";
 
 import { downloadProgress, fileSize } from "../../format";
 
-import * as actions from "../../actions";
+import { actions, dispatcher } from "../../actions";
 
 import TimeAgo from "../basics/time-ago";
 import IconButton from "../basics/icon-button";
@@ -15,7 +15,6 @@ import Cover from "../basics/cover";
 import MainAction from "../game-actions/main-action";
 
 import { IDownloadSpeeds, IDownloadItem, ITask, IRootState } from "../../types";
-import { dispatcher } from "../../constants/action-types";
 
 import styled, * as styles from "../styles";
 import { darken } from "polished";

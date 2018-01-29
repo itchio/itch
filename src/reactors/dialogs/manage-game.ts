@@ -1,5 +1,5 @@
 import { Watcher } from "../watcher";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import { DB } from "../../db/db";
 import { Instance, messages } from "node-buse";
 import getGameCredentials from "../../reactors/downloads/get-game-credentials";

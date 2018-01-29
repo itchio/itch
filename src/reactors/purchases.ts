@@ -7,7 +7,7 @@ import { getInjectPath } from "../os/resources";
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "purchases" });
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import { BrowserWindow } from "electron";
 import { OwnUser, Game } from "ts-itchio-api";

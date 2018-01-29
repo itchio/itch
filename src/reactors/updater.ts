@@ -6,7 +6,7 @@ import { isNetworkError } from "../net/errors";
 
 import delay from "./delay";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import lazyGetGame from "./lazy-get-game";
 import getGameCredentials from "./downloads/get-game-credentials";

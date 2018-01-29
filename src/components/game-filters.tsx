@@ -2,12 +2,11 @@ import * as React from "react";
 import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import format from "./format";
 
 import { IRootState, TabLayout } from "../types";
-import { dispatcher } from "../constants/action-types";
 
 import Icon from "./basics/icon";
 import Filler from "./basics/filler";

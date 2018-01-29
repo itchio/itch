@@ -1,5 +1,5 @@
 import { IModalButton, IModalButtonSpec } from "../types/index";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 interface IDefaultButtons {
   [key: string]: IModalButton;

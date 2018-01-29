@@ -1,7 +1,7 @@
 import { Watcher } from "../reactors/watcher";
 import { DB } from "../db";
 import Context from "../context";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "report" });

@@ -13,10 +13,9 @@ import Cover from "../basics/cover";
 const HoverCover = Hoverable(Cover);
 
 import styled, * as styles from "../styles";
-import * as actions from "../../actions";
+import { actions, dispatcher } from "../../actions";
 import PlatformIcons from "../basics/platform-icons";
 import { connect } from "../connect";
-import { dispatcher } from "../../constants/action-types";
 import { Game } from "ts-itchio-api";
 
 const StyledPlatformIcons = styled(PlatformIcons)`

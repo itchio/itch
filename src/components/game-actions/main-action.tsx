@@ -8,9 +8,8 @@ import Icon from "../basics/icon";
 import Button from "../basics/button";
 import IconButton from "../basics/icon-button";
 
-import * as actions from "../../actions";
+import { actions, dispatcher } from "../../actions";
 
-import { dispatcher } from "../../constants/action-types";
 import {
   IGameStatus,
   OperationType,

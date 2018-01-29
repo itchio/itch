@@ -6,10 +6,9 @@ import IconButton from "../../basics/icon-button";
 
 import defaultImages from "../../../constants/default-images";
 
-import * as actions from "../../../actions";
+import { actions, dispatcher } from "../../../actions";
 
 import { IRememberedSession } from "../../../types";
-import { dispatcher } from "../../../constants/action-types";
 
 import styled from "../../styles";
 
@@ -100,9 +99,7 @@ export class RememberedSession extends React.PureComponent<
       >
         <img className="avatar" src={coverUrl} />
         <div className="rest">
-          <p className="username">
-            {displayName || username}
-          </p>
+          <p className="username">{displayName || username}</p>
           <p className="last-connected">
             {format(["login.remembered_session.last_connected"])}{" "}
             <TimeAgo date={session.lastConnected} />
@@ -123,7 +120,7 @@ export class RememberedSession extends React.PureComponent<
 
 interface IProps {
   session: IRememberedSession;
-  onLogin?: typeof actions.loginWithToken;
+  onLogin?: (payload: typeof actions.loginWithToken.payload) => void;
 }
 
 interface IDerivedProps {

@@ -5,7 +5,7 @@ import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 import { ICave } from "../../db/models/cave";
 import { fromDateTimeField } from "../../db/datetime-field";
 
-import * as actions from "../../actions";
+import { actions, dispatcher } from "../../actions";
 
 import format from "../format";
 
@@ -21,7 +21,6 @@ import {
 } from "../../format/index";
 import { DATE_FORMAT } from "../../format/datetime";
 import { connect } from "../connect";
-import { dispatcher } from "../../constants/action-types";
 import { Game, Build } from "ts-itchio-api";
 
 const BuildListDiv = styled.div`

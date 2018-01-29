@@ -2,7 +2,7 @@ import { map, reject, omit, filter } from "underscore";
 
 import { ISessionNavigationState, ITabDataSave } from "../../types";
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import reducer from "../reducer";
 
 import { arrayMove } from "react-sortable-hoc";
@@ -177,11 +177,11 @@ export default reducer<ISessionNavigationState>(initialState, on => {
 
   // happens after SESSION_READY depending on the user's profile (press, developer)
   on(actions.unlockTab, (state, action) => {
-    const { path } = action.payload;
+    const { tab } = action.payload;
 
     const { constant } = state.tabs;
 
-    if (constant.indexOf(path) !== -1) {
+    if (constant.indexOf(tab) !== -1) {
       // already unlocked, nothing to do
       return state;
     }
@@ -190,7 +190,7 @@ export default reducer<ISessionNavigationState>(initialState, on => {
       ...state,
       tabs: {
         ...state.tabs,
-        constant: [...constant, path],
+        constant: [...constant, tab],
       },
     };
   });

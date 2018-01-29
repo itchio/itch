@@ -1,6 +1,6 @@
 import { omit } from "underscore";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 import reducer from "./reducer";
 
 import { IRememberedSessionsState } from "../types";

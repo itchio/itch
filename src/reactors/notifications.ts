@@ -3,7 +3,7 @@ import { Watcher } from "./watcher";
 import { app, Notification, nativeImage } from "electron";
 import * as os from "../os";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 import env from "../env";
 
 import delay from "./delay";

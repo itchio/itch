@@ -16,7 +16,7 @@ import rootLogger, { devNull } from "../logger";
 const logger = rootLogger.child({ name: "self-update" });
 import { formatDate, DATE_FORMAT } from "../format/datetime";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 import { fromDateTimeField } from "../db/datetime-field";
 import memoize from "../util/lru-memoize";
 import { MinimalContext } from "../context/index";

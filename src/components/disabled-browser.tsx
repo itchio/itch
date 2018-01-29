@@ -1,11 +1,10 @@
 import * as React from "react";
 
 import styled from "./styles";
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 import format from "./format";
 
 import { connect } from "./connect";
-import { dispatcher } from "../constants/action-types";
 import Link from "./basics/link";
 
 const DisabledBrowserContainer = styled.div`

@@ -1,8 +1,7 @@
 import * as React from "react";
 import { connect } from "./connect";
 
-import * as actions from "../actions";
-import { dispatcher } from "../constants/action-types";
+import { actions, dispatcher } from "../actions";
 
 import IconButton from "./basics/icon-button";
 

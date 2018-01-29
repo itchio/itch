@@ -2,13 +2,11 @@ import * as React from "react";
 import { connect } from "./connect";
 
 import urls from "../constants/urls";
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import { FiltersContainer } from "./filters-container";
 
 import { IMeatProps } from "./meats/types";
-
-import { dispatcher } from "../constants/action-types";
 
 import CollectionsGrid from "./collections-grid/grid";
 import Link from "./basics/link";

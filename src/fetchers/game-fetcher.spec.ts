@@ -1,8 +1,9 @@
-import suite, { TestWatcher, withDB, actions } from "../test-suite";
+import suite, { TestWatcher, withDB } from "../test-suite";
 import GameFetcher from "./game-fetcher";
 import Context from "../context/index";
 import { FetchReason } from "./fetcher";
 import { Client } from "../api/index";
+import { actions } from "../actions/index";
 
 suite(__filename, s => {
   s.case("fetches game", async t => {
@@ -18,6 +19,7 @@ suite(__filename, s => {
 
       const path = `games/${game.id}`;
       const openTabAction = actions.openTab({
+        tab: "XXX",
         background: false,
         data: { path },
       });

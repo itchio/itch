@@ -1,13 +1,13 @@
 import { Watcher } from "./watcher";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 import { getActiveDownload } from "./downloads/getters";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
     const me = store.getState().session.credentials.me;
     if (me.developer) {
-      store.dispatch(actions.unlockTab({ path: "dashboard" }));
+      store.dispatch(actions.unlockTab({ tab: "dashboard" }));
     }
 
     store.dispatch(actions.switchPage({ page: "hub" }));

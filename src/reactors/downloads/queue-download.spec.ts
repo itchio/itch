@@ -1,4 +1,5 @@
-import suite, { TestWatcher, actions } from "../../test-suite";
+import suite, { TestWatcher } from "../../test-suite";
+import { actions } from "../../actions/index";
 
 import navigation from "../navigation";
 import queueDownload from "./queue-download";

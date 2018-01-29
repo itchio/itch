@@ -1,6 +1,6 @@
 import Context from "../context";
 import { Watcher } from "./watcher";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import store from "../store/metal-store";
 

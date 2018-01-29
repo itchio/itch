@@ -1,11 +1,11 @@
 import { IModal } from "../../types";
-import { IModalResponsePayload } from "../../constants/action-types";
 
 import styled, * as styles from "../styles";
+import { actions } from "../../actions/index";
 
 export interface IModalWidgetProps {
   modal: IModal;
-  updatePayload: (payload: IModalResponsePayload) => void;
+  updatePayload: (payload: typeof actions.modalResponse.payload) => void;
 }
 
 export const ModalWidgetDiv = styled.div`

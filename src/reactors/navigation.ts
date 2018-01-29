@@ -1,4 +1,4 @@
-import * as actions from "../actions";
+import { actions } from "../actions";
 import { Watcher } from "./watcher";
 
 import staticTabData from "../constants/static-tab-data";
@@ -11,9 +11,48 @@ import { IRootState } from "../types";
 import rootLogger from "../logger";
 import { Space } from "../helpers/space";
 import { shell } from "electron";
+import {
+  collectionToTabData,
+  gameToTabData,
+  userToTabData,
+} from "../util/navigation";
+import uuid from "../util/uuid";
 const logger = rootLogger.child({ name: "reactors/navigation" });
 
 export default function(watcher: Watcher) {
+  watcher.on(actions.navigateToCollection, async (store, action) => {
+    const { collection, background } = action.payload;
+    store.dispatch(
+      actions.navigate({
+        tab: `collections/${collection.id}`,
+        data: collectionToTabData(collection),
+        background,
+      })
+    );
+  });
+
+  watcher.on(actions.navigateToGame, async (store, action) => {
+    const { game, background } = action.payload;
+    store.dispatch(
+      actions.navigate({
+        tab: `games/${game.id}`,
+        data: gameToTabData(game),
+        background,
+      })
+    );
+  });
+
+  watcher.on(actions.navigateToUser, async (store, action) => {
+    const { user, background } = action.payload;
+    store.dispatch(
+      actions.navigate({
+        tab: `users/${user.id}`,
+        data: userToTabData(user),
+        background,
+      })
+    );
+  });
+
   watcher.on(actions.clearFilters, async (store, action) => {
     store.dispatch(
       actions.updatePreferences({
@@ -68,7 +107,7 @@ export default function(watcher: Watcher) {
     if (staticData) {
       const { label, ...staticDataExceptId } = staticData;
       store.dispatch(
-        actions.internalOpenTab({
+        actions.openTab({
           tab,
           background,
           data: {
@@ -80,6 +119,7 @@ export default function(watcher: Watcher) {
     } else {
       store.dispatch(
         actions.openTab({
+          tab: uuid(),
           background,
           data: {
             path: tab,

@@ -1,6 +1,5 @@
 import allInitial from "./all";
-import { IAction } from "../constants/action-types";
-import { IRootState } from "../types/index";
+import { IRootState, IAction } from "../types/index";
 
 let all = allInitial;
 

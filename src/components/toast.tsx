@@ -1,12 +1,10 @@
 import * as React from "react";
 import { connect } from "./connect";
 
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import Icon from "./basics/icon";
 import { IMeatProps } from "./meats/types";
-
-import { dispatcher } from "../constants/action-types";
 
 import format from "./format";
 
@@ -50,9 +48,7 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps, IState> {
     return (
       <div className="toast-meat">
         <Icon icon="heart-broken" className="leader" />
-        <h2>
-          {format(["toast.title"])}
-        </h2>
+        <h2>{format(["toast.title"])}</h2>
 
         <p>
           {format(["toast.message"])} {format(["toast.call_to_action"])}
@@ -66,11 +62,11 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps, IState> {
           {format(["toast.actions.learn_more"])}
         </span>
 
-        {this.state.expanded
-          ? <p className="error">
-              {(tabData.toast || eo).error}
-            </p>
-          : ""}
+        {this.state.expanded ? (
+          <p className="error">{(tabData.toast || eo).error}</p>
+        ) : (
+          ""
+        )}
 
         <span className="link" onClick={this.sendFeedback}>
           {format(["toast.actions.report"])}

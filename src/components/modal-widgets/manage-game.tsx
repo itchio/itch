@@ -14,8 +14,7 @@ import { fileSize } from "../../format/filesize";
 import { connect } from "../connect";
 import PlatformIcons from "../basics/platform-icons";
 
-import * as actions from "../../actions";
-import { dispatcher } from "../../constants/action-types";
+import { actions, dispatcher } from "../../actions";
 import format, { formatString } from "../format";
 import { injectIntl, InjectedIntl } from "react-intl";
 import LoadingCircle from "../basics/loading-circle";

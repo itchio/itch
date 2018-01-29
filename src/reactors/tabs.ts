@@ -2,7 +2,7 @@ import { Watcher } from "./watcher";
 
 import uuid from "../util/uuid";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import { IStore } from "../types";
 

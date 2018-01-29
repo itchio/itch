@@ -11,7 +11,7 @@ import urls from "../constants/urls";
 
 import { shell } from "electron";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 let onSessionReady: () => void;
 

@@ -1,5 +1,5 @@
 import { Watcher } from "../watcher";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import { IExploreJsonParams } from "../../components/modal-widgets/explore-json";
 import { DB } from "../../db";

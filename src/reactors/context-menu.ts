@@ -1,13 +1,12 @@
 import { Watcher } from "./watcher";
 
-import { IStore, IMenuTemplate } from "../types";
+import { IStore, IMenuTemplate, IOpenContextMenuBase } from "../types";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import { DB } from "../db";
 
 import { Space } from "../helpers/space";
-import { IOpenContextMenuBase } from "../constants/action-types";
 import {
   gameControls,
   newTabControls,

@@ -1,5 +1,5 @@
 import { Watcher } from "../watcher";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import { t } from "../../format";
 
 export default function(watcher: Watcher) {

@@ -7,7 +7,7 @@ import { dirname } from "path";
 import { sync as mkdirp } from "mkdirp";
 
 import { indexBy } from "underscore";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 export interface IStatement {
   run(...args: any[]);

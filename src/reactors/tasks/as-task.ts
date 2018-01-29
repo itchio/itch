@@ -5,7 +5,7 @@ import * as memory from "memory-streams";
 import { IStore, IProgressInfo, isCancelled, TaskName } from "../../types";
 import { DB } from "../../db";
 import Context from "../../context";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import rootLogger, { Logger, makeLogger } from "../../logger";
 import { getCurrentTasks } from "./as-task-persistent-state";

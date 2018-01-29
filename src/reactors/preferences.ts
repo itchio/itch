@@ -4,7 +4,7 @@ import { preferencesPath, mainLogPath } from "../os/paths";
 import * as sf from "../os/sf";
 import partitionForUser from "../util/partition-for-user";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "preferences" });

@@ -1,6 +1,6 @@
 import defaultManifestIcons from "../../constants/default-manifest-icons";
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import {
   IStore,
@@ -10,7 +10,6 @@ import {
 } from "../../types";
 
 import { promisedModal } from "../../reactors/modals";
-import { MODAL_RESPONSE } from "../../constants/action-types";
 
 import { findWhere } from "underscore";
 import { Game } from "ts-itchio-api";
@@ -61,7 +60,7 @@ export default async function pickManifestAction(
     buttons,
   });
 
-  if (response.type === MODAL_RESPONSE) {
+  if (response.type === "modalResponse") {
     return findWhere(manifest.actions, {
       name: response.payload.manifestActionName,
     });

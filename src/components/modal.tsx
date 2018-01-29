@@ -16,11 +16,10 @@ const HoverCover = Hoverable(Cover);
 
 import colors from "../constants/colors";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 import { map, isEmpty, filter } from "underscore";
 
 import { IModal, IModalButtonSpec, IModalButton, IModalAction } from "../types";
-import { IModalResponsePayload } from "../constants/action-types";
 
 import { IModalWidgetProps } from "./modal-widgets/modal-widget";
 
@@ -597,7 +596,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
     }
   }
 
-  updatePayload = (payload: IModalResponsePayload) => {
+  updatePayload = (payload: typeof actions.modalResponse.payload) => {
     this.setState({ widgetPayload: payload });
   };
 
@@ -618,7 +617,7 @@ interface IDerivedProps {
 }
 
 interface IState {
-  widgetPayload?: IModalResponsePayload;
+  widgetPayload?: typeof actions.modalResponse.payload;
 }
 
 export default connect<IProps>(injectIntl(Modal), {

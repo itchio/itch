@@ -19,7 +19,7 @@ import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "main-window" });
 
 import { t } from "../format";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 let createLock = false;
 let firstWindow = true;

@@ -1,8 +1,8 @@
 import { IStatusState } from "../types";
-import * as actions from "../actions";
 import reducer from "./reducer";
 
 import { rest } from "underscore";
+import { actions } from "../actions/index";
 
 const initialState = {
   messages: [],

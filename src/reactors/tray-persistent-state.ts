@@ -1,10 +1,9 @@
-import { IStore } from "../types/index";
+import { IStore, IAction } from "../types/index";
 import { Tray } from "electron";
 import { getImagePath } from "../os/resources";
 import * as os from "../os";
 import env from "../env";
-import { IAction } from "../constants/action-types";
-import { actions } from "../test-suite";
+import { actions } from "../actions/index";
 
 let tray: Electron.Tray;
 

@@ -1,5 +1,4 @@
 import { Store } from "redux";
-import { Action } from "redux-actions";
 
 // shared with node-buse
 import { Game, User, OwnUser, Upload } from "ts-itchio-api";
@@ -21,6 +20,15 @@ import { SortDirection, SortKey } from "../components/sort-types";
 
 export interface IStore extends Store<IRootState> {}
 
+export interface IDispatch {
+  (action: IAction<any>): void;
+}
+
+export interface IAction<T extends Object> {
+  type: string;
+  payload?: T;
+}
+
 interface IWatcher {
   addSub(sub: IWatcher): void;
   removeSub(sub: IWatcher): void;
@@ -31,7 +39,7 @@ export interface IChromeStore extends IStore {
 }
 
 export interface IDispatch {
-  (a: Action<any>): void;
+  (a: IAction<any>): void;
 }
 
 export type Partial<T> = { [P in keyof T]?: T[P] };
@@ -61,15 +69,6 @@ export interface ITabParamsSet {
 export interface ITabParams {
   sortBy?: SortKey;
   sortDirection?: SortDirection;
-}
-
-export interface ITabPaginationSet {
-  [key: string]: ITabPagination;
-}
-
-export interface ITabPagination {
-  offset?: number;
-  limit?: number;
 }
 
 export interface IGameSet {
@@ -264,7 +263,7 @@ export interface IGameUpdatesState {
   };
 }
 
-export type IModalAction = Action<any> | Action<any>[];
+export type IModalAction = IAction<any> | IAction<any>[];
 
 export type ModalButtonActionSource = "widget";
 
@@ -451,7 +450,6 @@ export interface IRememberedSessionsState {
 
 export interface ISessionState {
   /** collection freshness information */
-  cachedCollections: ISessionCachedCollectionsState;
   credentials: ISessionCredentialsState;
   folders: ISessionFoldersState;
   login: ISessionLoginState;
@@ -460,14 +458,6 @@ export interface ISessionState {
 
   tabData: TabDataTypes.ITabDataSet;
   tabParams: ITabParamsSet;
-  tabPagination: ITabPaginationSet;
-}
-
-export interface ISessionCachedCollectionsState {
-  /** maps collections to the date they were last fetched */
-  fetched: {
-    [collectionId: number]: number;
-  };
 }
 
 export interface ISessionCredentialsState {
@@ -558,9 +548,11 @@ export interface ISessionSearchState {
 }
 
 export interface II18nResources {
-  [lang: string]: {
-    [key: string]: string;
-  };
+  [lang: string]: II18nKeys;
+}
+
+export interface II18nKeys {
+  [key: string]: string;
 }
 
 /** Info about a locale. See locales.json for a list that ships with the app. */
@@ -968,8 +960,27 @@ export interface IRuntime {
 
 export interface IMenuItem extends Electron.MenuItemConstructorOptions {
   localizedLabel?: ILocalizedString;
-  action?: Action<any>;
+  action?: IAction<any>;
   submenu?: IMenuItem[];
   id?: string;
 }
 export type IMenuTemplate = IMenuItem[];
+
+export interface IOpenTabPayload {
+  /** the id of the new tab to open (generated) */
+  tab?: string;
+
+  /** any data we already known about the tab */
+  data?: TabDataTypes.ITabData;
+
+  /** whether to open a new tab in the background */
+  background?: boolean;
+}
+
+export interface IOpenContextMenuBase {
+  /** left coordinate, in pixels */
+  clientX: number;
+
+  /** top coordinate, in pixels */
+  clientY: number;
+}

@@ -1,11 +1,14 @@
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import { IDownloadKey } from "../../db/models/download-key";
 import { ICaveSummary } from "../../db/models/cave";
 
-import { ClassificationAction, ILocalizedString, ITask } from "../../types";
-
-import { IAction } from "../../constants/action-types";
+import {
+  ClassificationAction,
+  ILocalizedString,
+  ITask,
+  IAction,
+} from "../../types";
 
 import { InjectedIntl } from "react-intl";
 import { showInExplorerString } from "../../format/show-in-explorer";

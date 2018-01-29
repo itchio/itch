@@ -3,8 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { connect } from "../connect";
 
-import { dispatcher } from "../../constants/action-types";
-import * as actions from "../../actions";
+import { actions, dispatcher } from "../../actions";
 
 import { first } from "underscore";
 
@@ -174,7 +173,6 @@ interface IDerivedProps {
   clearFilters: typeof actions.clearFilters;
   navigateToGame: typeof actions.navigateToGame;
   openGameContextMenu: typeof actions.openGameContextMenu;
-  tabPaginationChanged: typeof actions.tabPaginationChanged;
 
   intl: InjectedIntl;
 }
@@ -188,6 +186,5 @@ export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
     clearFilters: dispatcher(dispatch, actions.clearFilters),
     navigateToGame: dispatcher(dispatch, actions.navigateToGame),
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
-    tabPaginationChanged: dispatcher(dispatch, actions.tabPaginationChanged),
   }),
 });

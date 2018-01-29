@@ -10,8 +10,7 @@ import { IMeatProps } from "./meats/types";
 import styled, * as styles from "./styles";
 import { connect } from "./connect";
 
-import * as actions from "../actions";
-import { dispatcher } from "../constants/action-types";
+import { actions, dispatcher } from "../actions";
 import { Space } from "../helpers/space";
 import urls from "../constants/urls";
 import { injectIntl, InjectedIntl } from "react-intl";

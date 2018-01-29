@@ -15,12 +15,12 @@ const upgradesEnabled =
 const remoteDir = join(app.getPath("userData"), "locales");
 const localesConfigPath = getLocalesConfigPath();
 
-import { IStore, II18nResources } from "../types";
+import { IStore, II18nResources, II18nKeys } from "../types";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "locales" });
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 function canonicalFileName(lang: string): string {
   return getLocalePath(`${lang}.json`);
@@ -93,7 +93,7 @@ async function loadLocale(store: IStore, lang: string) {
   try {
     const payload = await ifs.readFile(local);
     const resources = JSON.parse(payload);
-    store.dispatch(actions.localeDownloadEnded({ lang, resources }));
+    commitLocale(store, lang, resources);
   } catch (e) {
     if (e.code === "ENOENT") {
       logger.warn(`No such locale ${local}`);
@@ -114,7 +114,7 @@ async function loadLocale(store: IStore, lang: string) {
 
       if (payload) {
         const resources = JSON.parse(payload);
-        store.dispatch(actions.localeDownloadEnded({ lang, resources }));
+        commitLocale(store, lang, resources);
       }
     } catch (e) {
       logger.warn(`Failed to load locale from ${local}: ${e.stack}`);
@@ -122,6 +122,15 @@ async function loadLocale(store: IStore, lang: string) {
   }
 
   store.dispatch(actions.queueLocaleDownload({ lang, implicit: true }));
+}
+
+function commitLocale(store: IStore, lang: string, resourcesIn: II18nKeys) {
+  const resources: II18nKeys = {};
+  for (const key of Object.keys(resourcesIn)) {
+    const value = resourcesIn[key];
+    resources[key] = value.replace(/{{/g, "{").replace(/}}/g, "}");
+  }
+  store.dispatch(actions.localeDownloadEnded({ lang, resources }));
 }
 
 export default function(watcher: Watcher) {
@@ -153,7 +162,7 @@ export default function(watcher: Watcher) {
       } catch (e) {
         logger.warn(`Failed downloading locale for ${lang}: ${e.message}`);
       } finally {
-        store.dispatch(actions.localeDownloadEnded({ lang, resources }));
+        commitLocale(store, lang, resources);
       }
     }
   );

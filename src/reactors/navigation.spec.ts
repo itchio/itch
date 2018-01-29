@@ -1,6 +1,7 @@
-import suite, { TestWatcher, actions } from "../test-suite";
+import suite, { TestWatcher } from "../test-suite";
 
 import navigation from "./navigation";
+import { actions } from "../actions/index";
 
 suite(__filename, s => {
   s.case("clears filters", async t => {

@@ -4,7 +4,7 @@ import { groupBy, omit } from "underscore";
 
 import { ITasksState } from "../types";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 import derivedReducer from "./derived-reducer";
 import reducer from "./reducer";
 

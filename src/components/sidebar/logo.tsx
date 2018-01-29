@@ -6,8 +6,7 @@ import * as classNames from "classnames";
 
 import { connect } from "../connect";
 
-import * as actions from "../../actions";
-import { dispatcher } from "../../constants/action-types";
+import { actions, dispatcher } from "../../actions";
 import { IRootState } from "../../types/index";
 
 class Logo extends React.PureComponent<IDerivedProps> {

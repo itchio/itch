@@ -7,7 +7,7 @@ import linuxSandboxTemplate from "../../constants/sandbox-policies/linux-templat
 
 import { fromJSONField } from "../../db/json-field";
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import sandbox from "../../util/sandbox";
 import * as os from "../../os";
@@ -24,7 +24,6 @@ import html from "./html";
 import expandManifestPath from "./expand-manifest-path";
 
 import { promisedModal } from "../../reactors/modals";
-import { MODAL_RESPONSE } from "../../constants/action-types";
 
 import { formatExitCode } from "../../format/exit-code";
 
@@ -208,7 +207,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
       });
 
       if (
-        response.type === MODAL_RESPONSE &&
+        response.type === "modalResponse" &&
         response.payload.sandboxBlessing
       ) {
         // carry on

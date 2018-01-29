@@ -1,5 +1,5 @@
 import { Watcher } from "../watcher";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "download-persist" });
@@ -14,7 +14,6 @@ import { createSelector } from "reselect";
 import { Instance, messages } from "node-buse";
 import { setupClient } from "../../util/buse-utils";
 import { fileSize } from "../../format/index";
-import { ICleanDownloadsApplyPayload } from "../../constants/action-types";
 
 function persistDownloads(store: IStore, db: DB) {
   const state = store.getState();
@@ -118,7 +117,7 @@ export async function cleanDownloadsSearch(store: IStore) {
 
 export async function cleanDownloadsApply(
   store: IStore,
-  payload: ICleanDownloadsApplyPayload
+  payload: typeof actions.cleanDownloadsApply.payload
 ) {
   const { entries } = payload;
   const ctx = new MinimalContext();

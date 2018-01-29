@@ -1,5 +1,5 @@
 import reducer from "../reducer";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import { IUIContextMenuState } from "../../types/index";
 
 const initialState: IUIContextMenuState = {

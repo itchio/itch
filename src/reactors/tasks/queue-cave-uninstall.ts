@@ -1,5 +1,5 @@
 import { Watcher } from "../watcher";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import Context from "../../context";
 import rootLogger, { Logger } from "../../logger";
 import { currentRuntime } from "../../os/runtime";
@@ -13,7 +13,6 @@ import { coreUninstall } from "../../install-managers/common/core";
 
 import butler from "../../util/butler";
 
-import { MODAL_RESPONSE } from "../../constants/action-types";
 import { promisedModal } from "../modals";
 
 import asTask from "./as-task";
@@ -97,7 +96,7 @@ export default function(watcher: Watcher, db: DB) {
           ],
         });
 
-        if (response.type !== MODAL_RESPONSE) {
+        if (response.type !== "modalResponse") {
           // modal was closed
           return;
         }
@@ -135,7 +134,7 @@ export default function(watcher: Watcher, db: DB) {
               "cancel",
             ],
           });
-          if (response.type !== MODAL_RESPONSE) {
+          if (response.type !== "modalResponse") {
             // modal was closed
             return;
           }

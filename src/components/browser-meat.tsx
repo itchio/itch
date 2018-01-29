@@ -5,7 +5,7 @@ import { connect } from "./connect";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import partitionForUser from "../util/partition-for-user";
 import { getInjectPath } from "../os/resources";
@@ -21,7 +21,6 @@ import BrowserBar from "./browser-bar";
 import GameBrowserContext from "./game-browser-context";
 
 import { IRootState } from "../types";
-import { IDispatch, dispatcher } from "../constants/action-types";
 
 import "electron";
 
@@ -205,7 +204,7 @@ export default connect<IProps>(injectIntl(BrowserMeat), {
     proxySource: (rs: IRootState) => rs.system.proxySource,
     disableBrowser: (rs: IRootState) => rs.preferences.disableBrowser,
   }),
-  dispatch: (dispatch: IDispatch) => ({
+  dispatch: dispatch => ({
     navigate: dispatcher(dispatch, actions.navigate),
     tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
     tabGotWebContents: dispatcher(dispatch, actions.tabGotWebContents),

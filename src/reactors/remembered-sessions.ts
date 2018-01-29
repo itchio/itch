@@ -7,7 +7,7 @@ import { usersPath } from "../os/paths";
 import * as invariant from "invariant";
 import { filter, map, indexBy } from "underscore";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 const TOKEN_FILE_NAME = "token.json";
 

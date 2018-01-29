@@ -2,7 +2,7 @@ import { Watcher } from "../reactors/watcher";
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "fetchers" });
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import { Fetcher, FetchReason } from "../fetchers/fetcher";
 import { IStore } from "../types";

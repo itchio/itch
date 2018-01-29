@@ -1,12 +1,11 @@
-import { IStore, IRootState } from "../types";
-import { IAction } from "../constants/action-types";
-import * as actionTypes from "../constants/action-types";
+import { IStore, IRootState, IAction } from "../types";
 
 import { each } from "underscore";
 
 import debounce from "./debounce";
 
 import rootLogger from "../logger";
+import { actions } from "../actions/index";
 const logger = rootLogger.child({ name: "watcher" });
 
 export interface IReactor<T> {
@@ -43,7 +42,7 @@ export class Watcher {
     let oldRs: IRootState = null;
     let selector: Selector;
 
-    const actionName = "TICK";
+    const actionName = "tick";
     this.addWatcher(actionName, async (store, action) => {
       let rs = store.getState();
       if (rs === oldRs) {
@@ -99,7 +98,7 @@ export class Watcher {
 
   validate() {
     each(Object.keys(this.reactors), key => {
-      if (!actionTypes.hasOwnProperty(key)) {
+      if (!actions.hasOwnProperty(key)) {
         throw new Error(`trying to react to unknown action type ${key}`);
       }
     });

@@ -1,7 +1,7 @@
 import { IGameUpdatesState } from "../types";
 import { omit } from "underscore";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 import reducer from "./reducer";
 
 const initialState = {

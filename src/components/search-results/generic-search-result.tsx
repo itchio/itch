@@ -1,9 +1,9 @@
 import * as React from "react";
 import { findDOMNode } from "react-dom";
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import watching, { Watcher } from "../watching";
-import { IAction } from "../../constants/action-types";
+import { IAction } from "../../types/index";
 
 interface IGenericSearchResultProps {
   chosen: boolean;

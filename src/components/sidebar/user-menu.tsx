@@ -4,8 +4,7 @@ import { connect } from "../connect";
 
 import { IRootState } from "../../types";
 
-import * as actions from "../../actions";
-import { dispatcher } from "../../constants/action-types";
+import { actions, dispatcher } from "../../actions";
 
 import defaultImages from "../../constants/default-images";
 

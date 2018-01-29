@@ -4,8 +4,7 @@ import * as React from "react";
 import styled from "../styles";
 import * as classNames from "classnames";
 
-import { dispatcher } from "../../constants/action-types";
-import * as actions from "../../actions";
+import { actions, dispatcher } from "../../actions";
 
 const SearchDiv = styled.div`
   position: absolute;

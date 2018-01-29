@@ -1,5 +1,5 @@
 import { IMenuTemplate, IMenuItem } from "../../types/index";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 import { isEmpty } from "underscore";
 import getGameStatus, {

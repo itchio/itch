@@ -5,7 +5,7 @@ import * as squel from "squel";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "fetch-search" });
 
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import { indexBy, pluck } from "underscore";
 import { ISearchResults, IStore } from "../../types";
 import { client } from "../../api";

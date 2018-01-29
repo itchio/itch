@@ -6,11 +6,10 @@ import { createStructuredSelector } from "reselect";
 
 import { each, isEmpty } from "underscore";
 
-import * as actions from "../../actions";
+import { actions, dispatcher } from "../../actions";
 import watching, { Watcher } from "../watching";
 
 import { IRootState, ISearchResults } from "../../types";
-import { dispatcher } from "../../constants/action-types";
 
 import GameSearchResult from "./game-search-result";
 import UserSearchResult from "./user-search-result";

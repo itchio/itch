@@ -5,6 +5,7 @@ import {
   IUIContextMenuState,
   IMenuItem,
   IMenuTemplate,
+  IDispatch,
 } from "../types/index";
 
 import styled from "./styles";
@@ -18,9 +19,7 @@ import {
 import { createSelector } from "reselect";
 import format from "./format";
 
-import * as actions from "../actions";
-import { dispatcher } from "../constants/action-types";
-import { Action } from "redux-actions";
+import { actions, dispatcher } from "../actions";
 import { lighten } from "polished";
 
 const menuId = "itch_context_menu";
@@ -275,7 +274,7 @@ interface IDerivedProps {
   macos: boolean;
 
   closeContextMenu: typeof actions.closeContextMenu;
-  dispatch: (action: Action<any>) => void;
+  dispatch: IDispatch;
 }
 
 export default connect<{}>(ContextMenuHandler, {

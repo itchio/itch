@@ -2,7 +2,7 @@ import { Watcher } from "./watcher";
 
 import { clipboard } from "electron";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.copyToClipboard, async (store, action) => {

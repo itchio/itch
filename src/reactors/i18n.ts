@@ -1,8 +1,8 @@
 import { Watcher } from "./watcher";
 import { createSelector } from "reselect";
 
-import { languageChanged } from "../actions";
 import { IRootState } from "../types";
+import { actions } from "../actions/index";
 
 const fallbackLang = "en";
 
@@ -14,7 +14,7 @@ export default function(watcher: Watcher) {
         (rs: IRootState) => rs.preferences.lang,
         (sniffedLang, preferenceLang) => {
           const lang = preferenceLang || sniffedLang || fallbackLang;
-          schedule.dispatch(languageChanged({ lang }));
+          schedule.dispatch(actions.languageChanged({ lang }));
         }
       ),
   });

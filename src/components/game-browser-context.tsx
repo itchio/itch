@@ -6,9 +6,8 @@ import GameStats from "./game-stats";
 import Filler from "./basics/filler";
 import IconButton from "./basics/icon-button";
 
-import { IDispatch, dispatcher } from "../constants/action-types";
 import { IRootState } from "../types";
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import { IBrowserControlProps } from "./browser-state";
 
@@ -94,7 +93,7 @@ export default connect<IProps>(GameBrowserContext, {
       status: getGameStatus(rs, game),
     };
   },
-  dispatch: (dispatch: IDispatch) => ({
+  dispatch: dispatch => ({
     openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
   }),
 });

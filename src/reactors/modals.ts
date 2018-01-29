@@ -1,25 +1,25 @@
 import { Watcher } from "./watcher";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import { each, findWhere } from "underscore";
 
-import { IStore } from "../types";
-import {
-  IAction,
-  IOpenModalPayload,
-  IModalResponsePayload,
-} from "../constants/action-types";
+import { IStore, IAction } from "../types";
 
 import modalResolves from "./modals-persistent-state";
 
 // look, so this probably breaks the spirit of redux, not denying it,
 // but also, redux has a pretty strong will, I'm sure it'll recover.
 
-export function promisedModal(store: IStore, payload: IOpenModalPayload) {
+export function promisedModal(
+  store: IStore,
+  payload: typeof actions.openModal.payload
+) {
   const modalAction = actions.openModal(payload);
   const { id } = modalAction.payload;
 
-  const p = new Promise<IAction<IModalResponsePayload>>(resolve => {
+  const p = new Promise<
+    IAction<typeof actions.modalResponse.payload>
+  >(resolve => {
     modalResolves[id] = resolve;
   });
 

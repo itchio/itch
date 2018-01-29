@@ -19,13 +19,9 @@ import TitleBar from "../title-bar";
 
 import { reportIssue, IReportIssueOpts } from "../../util/crash-reporter";
 
-import * as actions from "../../actions";
+import { actions, dispatcher } from "../../actions";
 
 import { ISetupOperation, IRememberedSessionsState } from "../../types";
-import {
-  dispatcher,
-  ILoginWithTokenPayload,
-} from "../../constants/action-types";
 
 import format, { formatString } from "../format";
 import { injectIntl, InjectedIntl } from "react-intl";
@@ -385,7 +381,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
     } = this.props;
 
     if (stage === "pick") {
-      const onLogin = (payload: ILoginWithTokenPayload): any => {
+      const onLogin = (payload: typeof actions.loginWithToken.payload) => {
         const { username } = this.refs;
         if (username) {
           (username as HTMLInputElement).value = payload.username;
@@ -562,7 +558,7 @@ export default connect<IProps>(injectIntl(GatePage), {
       return { stage: "ready", errors: [], blockingOperation: null };
     }
   },
-  dispatch: (dispatch): Partial<IDerivedProps> => ({
+  dispatch: dispatch => ({
     loginWithPassword: dispatcher(dispatch, actions.loginWithPassword),
     loginWithToken: dispatcher(dispatch, actions.loginWithToken),
     loginStartPicking: dispatcher(dispatch, actions.loginStartPicking),

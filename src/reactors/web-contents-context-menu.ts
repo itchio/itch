@@ -1,6 +1,6 @@
 import * as electron from "electron";
 
-import * as actions from "../actions";
+import { actions } from "../actions";
 import { IStore } from "../types/index";
 
 import IntlMessageFormat = require("intl-messageformat");

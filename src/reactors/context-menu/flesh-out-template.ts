@@ -1,6 +1,6 @@
 import { t } from "../../format";
 import urls from "../../constants/urls";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 import { IStore, IMenuTemplate, IRuntime, IMenuItem } from "../../types/index";
 
 import { map } from "underscore";

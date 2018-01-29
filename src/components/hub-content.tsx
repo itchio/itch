@@ -2,14 +2,13 @@ import * as React from "react";
 import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import AllMeats from "./meats/all-meats";
 
 let FIRST_EVER_RENDER = true;
 
 import { ICredentials } from "../types";
-import { dispatcher } from "../constants/action-types";
 
 import styled from "./styles";
 

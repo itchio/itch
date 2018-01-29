@@ -1,7 +1,6 @@
 import { Watcher } from "../watcher";
 
-import * as actions from "../../actions";
-import { MODAL_RESPONSE } from "../../constants/action-types";
+import { actions } from "../../actions";
 import { promisedModal } from "../modals";
 
 import { IClearBrowsingDataParams } from "../../components/modal-widgets/clear-browsing-data";
@@ -24,7 +23,7 @@ export default function(watcher: Watcher) {
       ],
     });
 
-    if (response.type !== MODAL_RESPONSE) {
+    if (response.type !== "modalResponse") {
       // modal was closed
       return;
     }

@@ -55,13 +55,10 @@ export const fixture = {
 
 /** A watcher made for testing reactors */
 import { Watcher } from "./reactors/watcher";
-import { IStore } from "./types";
-import { IAction } from "./constants/action-types";
+import { IStore, IAction } from "./types";
 import { createStore } from "redux";
 import reducer from "./reducers";
-
-import * as allActions from "./actions";
-export const actions = allActions;
+import { actions } from "./actions";
 
 export class TestWatcher extends Watcher {
   store: IStore;

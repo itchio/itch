@@ -1,5 +1,5 @@
 import { Watcher } from "../watcher";
-import * as actions from "../../actions";
+import { actions } from "../../actions";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.changeUser, async (store, action) => {

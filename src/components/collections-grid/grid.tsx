@@ -15,8 +15,7 @@ import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 
 import { GridContainerDiv, GridDiv } from "./grid-styles";
 import CollectionRow from "./row";
-import * as actions from "../../actions";
-import { dispatcher } from "../../constants/action-types";
+import { actions, dispatcher } from "../../actions";
 import { whenClickNavigates } from "../when-click-navigates";
 import HiddenIndicator from "../hidden-indicator";
 

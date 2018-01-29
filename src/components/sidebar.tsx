@@ -4,7 +4,7 @@ import { connect } from "./connect";
 import { map } from "underscore";
 import { createStructuredSelector } from "reselect";
 
-import * as actions from "../actions";
+import { actions, dispatcher } from "../actions";
 
 import Filler from "./basics/filler";
 import IconButton from "./basics/icon-button";
@@ -14,7 +14,6 @@ import Logo from "./sidebar/logo";
 import UserMenu from "./sidebar/user-menu";
 
 import { IRootState } from "../types";
-import { dispatcher } from "../constants/action-types";
 
 import { SortableContainer, arrayMove } from "react-sortable-hoc";
 

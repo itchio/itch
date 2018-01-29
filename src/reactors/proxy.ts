@@ -1,5 +1,5 @@
 import { Watcher } from "./watcher";
-import * as actions from "../actions";
+import { actions } from "../actions";
 
 import { IProxySettings } from "../types";
 import partitionForUser from "../util/partition-for-user";

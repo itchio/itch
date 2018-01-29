@@ -8,7 +8,7 @@ import { IRuntime, IMenuItem, IMenuTemplate } from "../types";
 
 import { IRootState, ISessionCredentialsState } from "../types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
-import { actions } from "../test-suite";
+import { actions } from "../actions/index";
 
 export default function(watcher: Watcher, runtime: IRuntime) {
   watcher.onStateChange({
