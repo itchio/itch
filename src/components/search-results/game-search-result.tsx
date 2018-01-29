@@ -47,6 +47,11 @@ const GameSearchResultDiv = styled.div`
     cursor: pointer;
   }
 
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+  }
+
   .vertical-section {
     display: flex;
     flex-direction: row;
@@ -95,7 +100,7 @@ const Title = styled.div`
 
   font-size: ${props => props.theme.fontSizes.large};
   line-height: 1.4;
-  padding-bottom: 0.4em;
+  sadding-bottom: 0.4em;
 `;
 
 const Price = styled.div`
@@ -146,7 +151,6 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
     return (
       <GameSearchResultDiv
         className={resultClasses}
-        onMouseEnter={this.onMouseEnter}
         onClick={onClick}
         onContextMenu={this.onContextMenu}
         data-game-id={game.id}
@@ -180,13 +184,6 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
     const { game } = this.props;
     return actions.navigateToGame({ game });
   }
-
-  onMouseEnter = () => {
-    this.props.searchHighlightOffset({
-      offset: this.props.index,
-      relative: false,
-    });
-  };
 
   onContextMenu = (ev: React.MouseEvent<any>) => {
     const { game } = this.props;
