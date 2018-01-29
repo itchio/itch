@@ -497,5 +497,8 @@
     "preferences.advanced.prefer_optimized_patches": "Использовать оптимизированные патчи",
     "duration.seconds": "{{x}} секунд",
     "sidebar.applog": "Лог приложения",
-    "grid.item_count": "{{count}} приложений"
+    "grid.item_count": "{{count}} приложений",
+    "browser.disabled": "Браузер itch выключен",
+    "browser.reenable": "Включить обратно",
+    "preferences.advanced.disable_browser": "Выключить браузер"
 }
