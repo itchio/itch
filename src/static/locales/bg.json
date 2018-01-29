@@ -482,5 +482,6 @@
     "prompt.manage_game.no_other_uploads": "В момента няма нищо друго налично.",
     "preferences.advanced.prefer_optimized_patches": "Предпочитане на оптимизирани кръпки",
     "duration.seconds": "{{x}} секунди",
-    "sidebar.applog": "Журнал на приложението"
+    "sidebar.applog": "Журнал на приложението",
+    "grid.item_count": "{{count}} неща"
 }

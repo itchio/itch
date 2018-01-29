@@ -496,5 +496,6 @@
     "prompt.manage_game.no_other_uploads": "Альтернативных файлов для установки нет.",
     "preferences.advanced.prefer_optimized_patches": "Использовать оптимизированные патчи",
     "duration.seconds": "{{x}} секунд",
-    "sidebar.applog": "Лог приложения"
+    "sidebar.applog": "Лог приложения",
+    "grid.item_count": "{{count}} приложений"
 }
