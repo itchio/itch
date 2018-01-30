@@ -1,8 +1,8 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, Dispatchers } from "./connect";
 
 import urls from "../constants/urls";
-import { actions, dispatcher } from "../actions";
+import { actionCreatorsList } from "../actions";
 
 import { FiltersContainer } from "./filters-container";
 
@@ -42,13 +42,10 @@ export class Collections extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IMeatProps {}
 
-interface IDerivedProps {
-  navigate: typeof actions.navigate;
-  intl: InjectedIntl;
-}
+const actionCreators = actionCreatorsList("navigate");
 
-export default connect<IProps>(injectIntl(Collections), {
-  dispatch: dispatch => ({
-    navigate: dispatcher(dispatch, actions.navigate),
-  }),
-});
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
+  intl: InjectedIntl;
+};
+
+export default connect<IProps>(injectIntl(Collections), { actionCreators });

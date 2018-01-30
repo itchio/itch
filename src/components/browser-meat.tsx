@@ -1,11 +1,11 @@
 import { createStructuredSelector } from "reselect";
 import * as classNames from "classnames";
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, Dispatchers } from "./connect";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 
-import { actions, dispatcher } from "../actions";
+import { actionCreatorsList } from "../actions";
 
 import partitionForUser from "../util/partition-for-user";
 import { getInjectPath } from "../os/resources";
@@ -182,19 +182,21 @@ interface IProps extends IMeatProps {
   controls: ControlsType;
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "navigate",
+  "tabDataFetched",
+  "tabGotWebContents"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   meId: string;
   proxy?: string;
   proxySource?: string;
 
   disableBrowser: boolean;
 
-  navigate: typeof actions.navigate;
-  tabDataFetched: typeof actions.tabDataFetched;
-  tabGotWebContents: typeof actions.tabGotWebContents;
-
   intl: InjectedIntl;
-}
+};
 
 export default connect<IProps>(injectIntl(BrowserMeat), {
   state: createStructuredSelector({
@@ -204,9 +206,5 @@ export default connect<IProps>(injectIntl(BrowserMeat), {
     proxySource: (rs: IRootState) => rs.system.proxySource,
     disableBrowser: (rs: IRootState) => rs.preferences.disableBrowser,
   }),
-  dispatch: dispatch => ({
-    navigate: dispatcher(dispatch, actions.navigate),
-    tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
-    tabGotWebContents: dispatcher(dispatch, actions.tabGotWebContents),
-  }),
+  actionCreators,
 });

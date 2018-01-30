@@ -1,7 +1,7 @@
 import * as React from "react";
 import { InjectedIntl, injectIntl } from "react-intl";
 import { createSelector, createStructuredSelector } from "reselect";
-import { connect } from "../connect";
+import { connect, Dispatchers } from "../connect";
 import { findWhere } from "underscore";
 
 import {
@@ -15,7 +15,7 @@ import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 
 import { GridContainerDiv, GridDiv } from "./grid-styles";
 import CollectionRow from "./row";
-import { actions, dispatcher } from "../../actions";
+import { actions } from "../../actions";
 import { whenClickNavigates } from "../when-click-navigates";
 import HiddenIndicator from "../hidden-indicator";
 
@@ -131,14 +131,16 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IDimensionsProps {}
 
-interface IDerivedProps {
+const actionCreators = {
+  navigateToCollection: actions.navigateToCollection,
+};
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   games: IGameSet;
   collectionIds: number[];
   collections: ICollectionSet;
   intl: InjectedIntl;
-
-  navigateToCollection: typeof actions.navigateToCollection;
-}
+};
 
 export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
   state: createSelector(
@@ -150,7 +152,5 @@ export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
       collections: (tabData: ITabData) => (tabData.collections || eo).set || eo,
     })
   ),
-  dispatch: dispatch => ({
-    navigateToCollection: dispatcher(dispatch, actions.navigateToCollection),
-  }),
+  actionCreators,
 });

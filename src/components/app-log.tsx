@@ -1,6 +1,6 @@
 import { IMeatProps } from "./meats/types";
 import * as React from "react";
-import { actions } from "../actions";
+import { actionCreatorsList } from "../actions";
 
 import styled, * as styles from "./styles";
 import TitleBar from "./title-bar";
@@ -74,10 +74,7 @@ class AppLog extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IMeatProps {}
 
-const actionCreators = {
-  openAppLog: actions.openAppLog,
-  tabReloaded: actions.tabReloaded,
-};
+const actionCreators = actionCreatorsList("openAppLog", "tabReloaded");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 

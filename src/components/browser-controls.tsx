@@ -1,9 +1,9 @@
 import listensToClickOutside = require("react-onclickoutside");
 import * as React from "react";
 import * as classNames from "classnames";
-import { connect } from "./connect";
+import { connect, Dispatchers } from "./connect";
 
-import { actions, dispatcher } from "../actions";
+import { actions, actionCreatorsList } from "../actions";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 
@@ -198,23 +198,18 @@ export class BrowserControls extends React.PureComponent<
 
 interface IProps extends IBrowserControlProps {}
 
-interface IDerivedProps {
-  openUrl: typeof actions.openUrl;
-  trigger: typeof actions.trigger;
-  evolveTab: typeof actions.evolveTab;
-  tabDataFetched: typeof actions.tabDataFetched;
+const actionCreators = actionCreatorsList(
+  "openUrl",
+  "trigger",
+  "evolveTab",
+  "tabDataFetched"
+);
 
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   intl: InjectedIntl;
-}
+};
 
 export default connect<IProps>(
   injectIntl(listensToClickOutside(BrowserControls)),
-  {
-    dispatch: dispatch => ({
-      openUrl: dispatcher(dispatch, actions.openUrl),
-      trigger: dispatcher(dispatch, actions.trigger),
-      evolveTab: dispatcher(dispatch, actions.evolveTab),
-      tabDataFetched: dispatcher(dispatch, actions.tabDataFetched),
-    }),
-  }
+  { actionCreators }
 );

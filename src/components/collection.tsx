@@ -8,9 +8,9 @@ import IconButton from "./basics/icon-button";
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
-import { connect } from "./connect";
+import { connect, Dispatchers } from "./connect";
 
-import { actions, dispatcher } from "../actions";
+import { actions } from "../actions";
 import { Space } from "../helpers/space";
 import urls from "../constants/urls";
 import { injectIntl, InjectedIntl } from "react-intl";
@@ -56,16 +56,13 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IMeatProps {}
 
-interface IDerivedProps {
-  tabReloaded: typeof actions.tabReloaded;
-  openUrl: typeof actions.openUrl;
+const actionCreators = {
+  tabReloaded: actions.tabReloaded,
+  openUrl: actions.openUrl,
+};
 
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   intl: InjectedIntl;
-}
+};
 
-export default connect<IProps>(injectIntl(Collection), {
-  dispatch: dispatch => ({
-    tabReloaded: dispatcher(dispatch, actions.tabReloaded),
-    openUrl: dispatcher(dispatch, actions.openUrl),
-  }),
-});
+export default connect<IProps>(injectIntl(Collection), { actionCreators });

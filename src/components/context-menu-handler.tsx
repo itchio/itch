@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, Dispatchers } from "./connect";
 import {
   IRootState,
   IUIContextMenuState,
@@ -19,7 +19,7 @@ import {
 import { createSelector } from "reselect";
 import format from "./format";
 
-import { actions, dispatcher } from "../actions";
+import { actionCreatorsList } from "../actions";
 import { lighten } from "polished";
 
 const menuId = "itch_context_menu";
@@ -268,14 +268,15 @@ class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
   };
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("closeContextMenu");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   open: boolean;
   data: IUIContextMenuState["data"];
   macos: boolean;
 
-  closeContextMenu: typeof actions.closeContextMenu;
   dispatch: IDispatch;
-}
+};
 
 export default connect<{}>(ContextMenuHandler, {
   state: createSelector(
@@ -284,8 +285,5 @@ export default connect<{}>(ContextMenuHandler, {
     (rs: IRootState) => rs.system.macos,
     (open, data, macos) => ({ open, data, macos })
   ),
-  dispatch: dispatch => ({
-    closeContextMenu: dispatcher(dispatch, actions.closeContextMenu),
-    dispatch,
-  }),
+  actionCreators,
 });
