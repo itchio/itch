@@ -6,40 +6,64 @@ import { getInjectPath } from "../../os/resources";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { actions } from "../../actions/index";
 
+import styled from "../styles";
+import LoadingCircle from "../basics/loading-circle";
+import * as classNames from "classnames";
+
+const WidgetDiv = styled.div`
+  &.loading {
+    webview {
+      width: 0;
+      height: 0;
+    }
+  }
+`;
+
 class RecaptchaInput extends React.Component<
-  IRecaptchaInputProps & IDerivedProps
+  IRecaptchaInputProps & IDerivedProps,
+  IState
 > {
   webview: Electron.WebviewTag;
   checker: NodeJS.Timer;
 
   constructor() {
     super();
-    this.gotWebview = this.gotWebview.bind(this);
+    this.state = {
+      loaded: false,
+    };
   }
 
   render() {
     const params = this.props.modal.widgetParams as IRecaptchaInputParams;
     const { url } = params;
+    const { loaded } = this.state;
+
+    const classes = classNames("modal-widget", { loaded });
 
     return (
-      <div className="modal-widget">
+      <WidgetDiv className={classes}>
+        {loaded ? null : <LoadingCircle progress={-1} />}
         <webview
           ref={this.gotWebview}
           src={url}
           style={{ minHeight: "500px" }}
           preload={getInjectPath("captcha")}
         />
-      </div>
+      </WidgetDiv>
     );
   }
 
-  gotWebview(wv: Electron.WebviewTag) {
+  gotWebview = (wv: Electron.WebviewTag) => {
     this.webview = wv;
     this.clearChecker();
 
     if (!this.webview) {
       return;
     }
+
+    this.webview.addEventListener("did-finish-load", () => {
+      this.setState({ loaded: true });
+    });
 
     this.checker = setInterval(() => {
       this.webview.executeJavaScript(
@@ -56,7 +80,7 @@ class RecaptchaInput extends React.Component<
         }
       );
     }, 500);
-  }
+  };
 
   componentWillUnmount() {
     this.clearChecker();
@@ -68,6 +92,10 @@ class RecaptchaInput extends React.Component<
       this.checker = null;
     }
   }
+}
+
+interface IState {
+  loaded: boolean;
 }
 
 export interface IRecaptchaInputParams {
