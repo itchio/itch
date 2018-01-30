@@ -567,12 +567,14 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   buttonOnClick(button: IModalButton): () => void {
     const { closeModal } = this.props;
-    const { actionSource } = button;
-    let { action } = button;
+    const { action, actionSource } = button;
 
     let onClick = () => closeModal({ action });
     if (actionSource === "widget") {
-      action = actions.modalResponse(this.state.widgetPayload);
+      onClick = () => {
+        const action = actions.modalResponse(this.state.widgetPayload);
+        closeModal({ action });
+      };
     }
     return onClick;
   }
