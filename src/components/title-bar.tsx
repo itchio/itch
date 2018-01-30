@@ -7,6 +7,7 @@ import { IRootState, ITabData } from "../types";
 
 import { FiltersContainer, filtersContainerHeight } from "./filters-container";
 import IconButton from "./basics/icon-button";
+import UserMenu from "./sidebar/user-menu";
 
 import env from "../env";
 
@@ -37,7 +38,9 @@ const DraggableDivInner = styled.div`
   align-items: center;
 `;
 
-const Filler = styled.div`flex: 1 1;`;
+const Filler = styled.div`
+  flex: 1 1;
+`;
 
 const TitleDiv = styled.div`
   ${styles.singleLine()};
@@ -68,13 +71,7 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
             <Filler />
           </DraggableDivInner>
         </DraggableDiv>
-        {loggedIn ? (
-          <IconButton
-            id="preferences-top-button"
-            icon="cog"
-            onClick={this.preferencesClick}
-          />
-        ) : null}
+        {loggedIn ? <UserMenu /> : null}
         <IconButton icon="minus" onClick={this.minimizeClick} />
         <IconButton
           icon={maximized ? "window-restore" : "window-maximize"}

@@ -34,6 +34,9 @@ export const uiColors = {
   boxShadow: "#1b1919",
 };
 
+const breadBackground = darken(0.05, "#292727");
+const itemBackground = "#2b2a2a";
+
 export const colors = {
   accent: baseColors.carnation,
   lightAccent: baseColors.vividTangerine,
@@ -46,9 +49,10 @@ export const colors = {
   sale: baseColors.amber,
   bundle: baseColors.heliotrope,
 
-  explanation: "#464545",
+  explanation: itemBackground,
 
-  meatBackground: "#333131",
+  meatBackground: breadBackground,
+  itemBackground,
 
   baseBackground: baseColors.darkMineShaft,
   baseText: baseColors.ivory,
@@ -64,9 +68,9 @@ export const colors = {
   inputBoxShadow: uiColors.boxShadow,
   inputBoxShadowFocused: "#1b1919",
 
-  sidebarBackground: darken(0.02, baseColors.codGray),
-  sidebarBorder: baseColors.lightMineShaft,
-  sidebarEntryFocusedBackground: lighten(0.05, baseColors.codGray),
+  sidebarBackground: breadBackground,
+  sidebarBorder: lighten(0.03, breadBackground),
+  sidebarEntryFocusedBackground: lighten(0.05, breadBackground),
 
   dropdownBackground: lighten(0.15, baseColors.codGray),
 
@@ -75,7 +79,7 @@ export const colors = {
 
   ternaryText: baseColors.zambezi,
 
-  breadBackground: "#292727",
+  breadBackground,
   breadBoxShadow: "#171717",
 
   filterBackground: "#4a4848",
@@ -260,15 +264,12 @@ export const heavyInput = () => css`
   font-size: ${props => props.theme.fontSizes.baseText};
   padding: 12px 10px 9px 10px;
   margin: 8px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 
-  border: 2px solid ${props => props.theme.inputBorder};
-  border-radius: 4px 2px 4px 2px;
-
-  background-color: ${props => props.theme.inputBackground};
+  background-color: rgba(0, 0, 0, 0.4);
   color: ${props => props.theme.inputText};
 
   text-shadow: 0 0 2px ${props => props.theme.inputTextShadow};
-  box-shadow: 0 0 2px ${props => props.theme.inputBoxShadow};
 
   &::-webkit-input-placeholder {
     text-shadow: 0 0 2px transparent;
@@ -276,26 +277,21 @@ export const heavyInput = () => css`
   }
 
   &:focus {
-    border-color: ${props => props.theme.inputBorderFocused};
-    box-shadow: 0 0 2px ${props => props.theme.inputBoxShadowFocused};
     outline: 0;
   }
 `;
 
 export const searchInput = () => css`
-  border: 2px solid #404040;
-  border-radius: 4px 2px 4px 2px;
-  background-color: #2d2b2b;
   color: ${props => props.theme.secondaryTextHover};
 
   ::-webkit-input-placeholder {
     color: ${props => props.theme.inputPlaceholder};
   }
 
-  box-shadow: 0 0 2px #1b1919;
+  background: none;
+  border: none;
   width: 200px;
-  text-indent: 18px;
-  padding: 6px 10px 5px 9px;
+  padding: 6px 10px 5px 22px;
   height: 32px;
   font-size: 14px;
 `;

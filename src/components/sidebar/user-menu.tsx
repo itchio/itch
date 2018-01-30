@@ -10,21 +10,24 @@ import urls from "../../constants/urls";
 
 import styled, * as styles from "../styles";
 import Filler from "../basics/filler";
-import Button from "../basics/button";
 
-import Dropdown from "./dropdown";
-import { IDropdownItem } from "./dropdown-item";
 import Icon from "../basics/icon";
 import { OwnUser } from "ts-itchio-api";
+import { actions } from "../../actions/index";
 
-const IconBadge = styled(Icon)`
-  display: inline-block;
-  padding: 0 4px;
-`;
+const UserMenuDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-const UserMenuButton = styled(Button)`
-  margin: 8px;
-  margin-right: 0;
+  padding: 8px;
+  margin-right: 8px;
+
+  transition: background 0.2s;
+  &:hover {
+    background: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
 
   .icon {
     margin: 0;
@@ -32,8 +35,8 @@ const UserMenuButton = styled(Button)`
   }
 
   img {
-    height: 32px;
-    width: 32px;
+    height: 24px;
+    width: 24px;
     margin-right: 8px;
     border-radius: 2px;
     flex-shrink: 0;
@@ -43,91 +46,15 @@ const UserMenuButton = styled(Button)`
     flex-shrink: 1;
     ${styles.singleLine()};
   }
-
-  .flipper {
-    margin-left: 4px;
-    flex-shrink: 0;
-  }
 `;
 
 class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
-  items: IDropdownItem[] = [
-    {
-      icon: "rocket",
-      label: ["sidebar.view_creator_profile"],
-      onClick: () => this.props.viewCreatorProfile({}),
-    },
-    {
-      icon: "fire",
-      label: ["sidebar.view_community_profile"],
-      onClick: () => this.props.viewCommunityProfile({}),
-    },
-    {
-      type: "separator",
-    },
-    {
-      icon: "download",
-      label: ["sidebar.downloads"],
-      id: "user-menu-downloads",
-      onClick: () => this.props.navigate({ tab: "downloads" }),
-    },
-    {
-      icon: "cog",
-      label: ["sidebar.preferences"],
-      id: "user-menu-preferences",
-      onClick: () => this.props.navigate({ tab: "preferences" }),
-    },
-    {
-      type: "separator",
-    },
-    {
-      icon: "repeat",
-      label: ["menu.help.check_for_update"],
-      onClick: () => this.props.checkForSelfUpdate({}),
-    },
-    {
-      icon: "search",
-      label: ["menu.help.search_issue"],
-      onClick: () =>
-        this.props.openUrl({ url: `${urls.itchRepo}/search?type=Issues` }),
-    },
-    {
-      icon: "bug",
-      label: ["menu.help.report_issue"],
-      onClick: () => this.props.reportIssue({}),
-    },
-    {
-      icon: "newspaper-o",
-      label: ["menu.help.release_notes"],
-      onClick: () => this.props.viewChangelog({}),
-    },
-    {
-      icon: "lifebuoy",
-      label: ["menu.help.help"],
-      onClick: () => this.props.navigate({ tab: "url/" + urls.manual }),
-    },
-    {
-      type: "separator",
-    },
-    {
-      icon: "shuffle",
-      label: ["menu.account.change_user"],
-      id: "user-menu-change-user",
-      onClick: () => this.props.changeUser({}),
-    },
-    {
-      icon: "exit",
-      label: ["menu.file.quit"],
-      onClick: () => this.props.quit({}),
-    },
-  ];
-
   render() {
     if (!this.props.me) {
       return null; // cf. #1405
     }
 
-    return <Dropdown items={this.items} inner={this.me()} updown />;
+    return this.me();
   }
 
   me() {
@@ -135,33 +62,99 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
     const { coverUrl = defaultImages.avatar, username, displayName } = me;
 
     return (
-      <UserMenuButton id="user-menu" discreet>
+      <UserMenuDiv id="user-menu" onClick={this.openMenu}>
         <img src={coverUrl} />
-        <span>
-          {displayName || username}
-          {me.developer ? <IconBadge icon="rocket" /> : null}
-          {me.pressUser ? <IconBadge icon="newspaper-o" /> : null}
-        </span>
+        <span>{displayName || username}</span>
         <Filler />
-        <Icon icon="triangle-down" className="flipper" />
-      </UserMenuButton>
+      </UserMenuDiv>
     );
   }
+
+  openMenu = (e: React.MouseEvent<any>) => {
+    this.props.popupContextMenu({
+      clientX: e.clientX,
+      clientY: e.clientY,
+      template: [
+        {
+          icon: "rocket",
+          localizedLabel: ["sidebar.view_creator_profile"],
+          action: actions.viewCreatorProfile({}),
+        },
+        {
+          icon: "fire",
+          localizedLabel: ["sidebar.view_community_profile"],
+          action: actions.viewCommunityProfile({}),
+        },
+        {
+          type: "separator",
+        },
+        {
+          icon: "download",
+          localizedLabel: ["sidebar.downloads"],
+          id: "user-menu-downloads",
+          action: actions.navigate({ tab: "downloads" }),
+          accelerator: "CmdOrCtrl+J",
+        },
+        {
+          icon: "cog",
+          localizedLabel: ["sidebar.preferences"],
+          id: "user-menu-preferences",
+          action: actions.navigate({ tab: "preferences" }),
+          accelerator: "CmdOrCtrl+,",
+        },
+        {
+          type: "separator",
+        },
+        {
+          icon: "repeat",
+          localizedLabel: ["menu.help.check_for_update"],
+          action: actions.checkForSelfUpdate({}),
+        },
+        {
+          icon: "search",
+          localizedLabel: ["menu.help.search_issue"],
+          action: actions.openUrl({
+            url: `${urls.itchRepo}/search?type=Issues`,
+          }),
+        },
+        {
+          icon: "bug",
+          localizedLabel: ["menu.help.report_issue"],
+          action: actions.reportIssue({}),
+        },
+        {
+          icon: "newspaper-o",
+          localizedLabel: ["menu.help.release_notes"],
+          action: actions.viewChangelog({}),
+        },
+        {
+          icon: "lifebuoy",
+          localizedLabel: ["menu.help.help"],
+          action: actions.navigate({ tab: "url/" + urls.manual }),
+        },
+        {
+          type: "separator",
+        },
+        {
+          icon: "shuffle",
+          localizedLabel: ["menu.account.change_user"],
+          id: "user-menu-change-user",
+          action: actions.changeUser({}),
+        },
+        {
+          icon: "exit",
+          localizedLabel: ["menu.file.quit"],
+          action: actions.quit({}),
+          accelerator: "CmdOrCtrl+Q",
+        },
+      ],
+    });
+  };
 }
 
 interface IProps {}
 
-const actionCreators = actionCreatorsList(
-  "viewCreatorProfile",
-  "viewCommunityProfile",
-  "changeUser",
-  "navigate",
-  "quit",
-  "reportIssue",
-  "openUrl",
-  "checkForSelfUpdate",
-  "viewChangelog"
-);
+const actionCreators = actionCreatorsList("popupContextMenu");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   me: OwnUser;

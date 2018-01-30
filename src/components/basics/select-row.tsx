@@ -6,15 +6,17 @@ import { ILocalizedString } from "../../types/index";
 import { formatString } from "../format";
 import { injectIntl, InjectedIntl } from "react-intl";
 
-const SelectRowDiv = styled.div`display: inline-block;`;
+const SelectRowDiv = styled.div`
+  display: inline-block;
+`;
 
 const Select = styled.select`
   border: none;
   padding: 6px 8px;
   margin-left: 2px;
-  background: #5f5f5f;
-  border: 1px solid #6f6f6f;
-  border-radius: 4px;
+  background: ${props => props.theme.itemBackground};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
   color: ${props => props.theme.baseText};
   cursor: pointer;
   font-family: inherit;

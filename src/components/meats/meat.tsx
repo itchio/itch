@@ -11,7 +11,6 @@ import Preferences from "../preferences";
 import Downloads from "../downloads";
 import Collection from "../collection";
 import Browser from "../url-meat";
-import NewTab from "../new-tab";
 import Location from "../location";
 import AppLog from "../app-log";
 import { Space } from "../../helpers/space";
@@ -51,8 +50,6 @@ export default class Meat extends React.PureComponent<IProps> {
         return Downloads;
       case "preferences":
         return Preferences;
-      case "new":
-        return NewTab;
       case "locations":
         return Location;
       case "collections":
@@ -65,6 +62,7 @@ export default class Meat extends React.PureComponent<IProps> {
       case "games":
       case "users":
       case "search":
+      case "new":
         return Browser;
       default:
         return null;

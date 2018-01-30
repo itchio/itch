@@ -70,6 +70,8 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
         const url =
           urls.itchio + "/search?" + querystring.stringify({ q: sp.suffix });
         return { url, controls: "generic" };
+      case "new":
+        return { url: "about:blank", controls: "generic" };
       default:
         return { url: tabUrl || "about:blank", controls: "generic" };
     }

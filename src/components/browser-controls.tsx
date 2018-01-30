@@ -11,7 +11,6 @@ import IconButton from "./basics/icon-button";
 
 import styled, * as styles from "./styles";
 import { css } from "./styles";
-import { darken } from "polished";
 import { Space } from "../helpers/space";
 import { IBrowserControlProps } from "./browser-state";
 import { transformUrl } from "../util/navigation";
@@ -23,35 +22,44 @@ const BrowserControlsContainer = styled.div`
   flex-direction: row;
   align-items: center;
 
+  padding-right: 4px;
+
   flex-grow: 1;
 `;
 
-const browserAddressStyle = css`
-  ${styles.singleLine()} font-size: 14px;
+const browserAddressStyle = () => css`
+  ${styles.singleLine()};
+  font-size: 14px;
   height: 33px;
-  line-height: 30px;
+  line-height: 33px;
   margin: 0 6px;
-  color: $base-text-color;
-  border: 2px solid ${props => darken(0.4, props.theme.secondaryText)};
-  background: #353535;
-  box-shadow: 0 0 2px #000000;
   text-shadow: 0 0 1px black;
   padding: 0 8px;
-  border-radius: 2px;
   flex-grow: 1;
-  max-width: 480px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: none;
 
   transition: all 0.4s;
+
+  &:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+  }
 `;
 
 const BrowserAddressInput = styled.input`
-  ${browserAddressStyle} text-shadow: 0 0 1px transparent;
-  color: ${props => props.theme.sidebarBackground};
-  background: white;
+  ${browserAddressStyle()};
+
+  text-shadow: 0 0 1px transparent;
+  color: white;
 `;
 
 const BrowserAddressSpan = styled.span`
-  ${browserAddressStyle} &.frozen {
+  ${browserAddressStyle()};
+
+  &.frozen {
     cursor: not-allowed;
   }
 
@@ -67,6 +75,7 @@ function isHTMLInput(el: HTMLElement): el is HTMLInputElement {
 export class BrowserControls extends React.PureComponent<
   IProps & IDerivedProps
 > {
+  fresh = true;
   browserAddress: HTMLInputElement | HTMLElement;
 
   triggerForTab(command: typeof actions.trigger.payload.command) {
@@ -152,6 +161,12 @@ export class BrowserControls extends React.PureComponent<
 
     if (!browserAddress) {
       return;
+    }
+
+    const sp = Space.fromData(this.props.tabData);
+    if (this.fresh && sp.prefix === "new") {
+      this.fresh = false;
+      this.startEditingAddress();
     }
 
     if (isHTMLInput(browserAddress)) {

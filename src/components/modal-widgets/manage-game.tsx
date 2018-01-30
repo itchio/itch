@@ -23,13 +23,15 @@ import TotalPlaytime from "../total-playtime";
 import LastPlayed from "../last-played";
 import { IModalWidgetProps } from "./index";
 
-const CaveItemList = styled.div`margin: 8px 0;`;
+const CaveItemList = styled.div`
+  margin: 8px 0;
+`;
 
 const CaveItem = styled.div`
   margin: 12px 4px;
   padding: 4px;
-  border: 1px solid ${props => props.theme.inputBorder};
-  background: ${props => props.theme.meatBackground};
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${props => props.theme.itemBackground};
   border-radius: 2px;
 
   display: flex;

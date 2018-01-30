@@ -13,7 +13,9 @@ import IconButton from "../basics/icon-button";
 import styled, * as styles from "../styles";
 import { darken } from "polished";
 
-const UnshrinkableIconButton = styled(IconButton)`flex-shrink: 0;`;
+const UnshrinkableIconButton = styled(IconButton)`
+  flex-shrink: 0;
+`;
 
 const ItemHeading = styled.div`
   ${styles.singleLine()};
@@ -53,7 +55,7 @@ export const ItemSection = styled.section`
   &:hover {
     cursor: pointer;
     background: ${props =>
-      darken(0.05, props.theme.sidebarEntryFocusedBackground)};
+      darken(0.02, props.theme.sidebarEntryFocusedBackground)};
     color: ${props => props.theme.baseText};
 
     .icon-cross {

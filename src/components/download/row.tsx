@@ -15,7 +15,6 @@ import MainAction from "../game-actions/main-action";
 import { IDownloadSpeeds, IDownloadItem, ITask, IRootState } from "../../types";
 
 import styled, * as styles from "../styles";
-import { darken } from "polished";
 
 import format from "../format";
 import doesEventMeanBackground from "../when-click-navigates";
@@ -51,13 +50,7 @@ const DownloadRowDiv = styled.div`
     cursor: pointer;
   }
 
-  background-color: ${props => darken(0.05, props.theme.explanation)};
-
-  &.first,
-  &.finished,
-  &:hover {
-    background-color: ${props => props.theme.explanation};
-  }
+  background-color: ${props => props.theme.itemBackground};
 
   .cover,
   .progress,
@@ -318,10 +311,12 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <Controls>
-        {first ? status.operation.paused ? (
-          <IconButton big icon="triangle-right" onClick={this.onResume} />
-        ) : (
-          <IconButton big icon="pause" onClick={this.onPause} />
+        {first ? (
+          status.operation.paused ? (
+            <IconButton big icon="triangle-right" onClick={this.onResume} />
+          ) : (
+            <IconButton big icon="pause" onClick={this.onPause} />
+          )
         ) : (
           <IconButton
             big
@@ -423,11 +418,13 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
           {this.formatTimeAgo()}
           <div className="filler" />
           <div>
-            {operation.paused ? first ? (
-              <div className="paused">
-                {format(["grid.item.downloads_paused"])}
-              </div>
-            ) : null : (first || operation) && eta >= 0 && bps ? (
+            {operation.paused ? (
+              first ? (
+                <div className="paused">
+                  {format(["grid.item.downloads_paused"])}
+                </div>
+              ) : null
+            ) : (first || operation) && eta >= 0 && bps ? (
               <span>{downloadProgress({ eta, bps }, operation.paused)}</span>
             ) : null}
           </div>

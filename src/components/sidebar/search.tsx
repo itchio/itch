@@ -11,23 +11,40 @@ import { actions } from "../../actions";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatString } from "../format";
+import { IRootState } from "../../types/index";
+import * as classNames from "classnames";
 
 const SearchContainer = styled.section`
   position: relative;
-  padding: 0 8px;
-  margin: 8px 4px;
+  padding: 0px 8px;
+  margin: 16px 0;
+  margin-left: 2px;
+  margin-left: 10px;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+
+  transition: border-color 0.4s;
+  &.open {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
 
   input[type="search"] {
-    ${styles.searchInput()} width: 100%;
+    ${styles.searchInput()};
+    width: 100%;
     margin-left: 4px;
-    text-indent: 16px;
-    padding: 6px 10px 5px 9px;
     height: 32px;
-    font-size: 14px;
+    font-size: inherit;
+
+    &:focus {
+      outline: none;
+    }
   }
 
   .icon-search {
-    ${styles.searchIcon()} left: 20px;
+    ${styles.searchIcon()};
+    left: 10px;
+    font-size: inherit;
   }
 `;
 
@@ -114,10 +131,10 @@ class Search extends React.PureComponent<IDerivedProps> {
   }
 
   render() {
-    const { intl } = this.props;
+    const { intl, open } = this.props;
 
     return (
-      <SearchContainer>
+      <SearchContainer className={classNames({ open })}>
         <input
           id="search"
           ref={this.gotInput}
@@ -146,7 +163,14 @@ const actionCreators = actionCreatorsList(
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
+  open: boolean;
+
   intl: InjectedIntl;
 };
 
-export default connect<{}>(injectIntl(Search), { actionCreators });
+export default connect<{}>(injectIntl(Search), {
+  state: (rs: IRootState) => ({
+    open: rs.session.search.open,
+  }),
+  actionCreators,
+});

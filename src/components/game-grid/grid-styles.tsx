@@ -13,11 +13,7 @@ interface IGridProps {
 
 const StylableDiv = (props: IGridProps) => {
   const { sizes, children, ...restProps } = props;
-  return (
-    <div {...restProps}>
-      {children}
-    </div>
-  );
+  return <div {...restProps}>{children}</div>;
 };
 
 export const GridContainerDiv = styled(StylableDiv)`
@@ -36,10 +32,9 @@ export const GridContainerDiv = styled(StylableDiv)`
     overflow: hidden;
 
     border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
     border-radius: 2px;
 
-    background: #232222;
+    background: ${props => props.theme.itemBackground};
     border: 1px solid #191919;
 
     &.pristine {
@@ -57,7 +52,7 @@ export const GridContainerDiv = styled(StylableDiv)`
   }
 
   .bubble {
-    background: rgba(255, 255, 255, .9);
+    background: rgba(255, 255, 255, 0.9);
     color: black;
     border-radius: 4px;
     padding: 2px;

@@ -29,7 +29,7 @@ const LayoutContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 2px;
 
   &,

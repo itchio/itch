@@ -37,7 +37,8 @@ const ResultsContainer = styled.div`
 
   position: absolute;
   left: ${props => -stripUnit(props.theme.widths.searchSidebar) - 30}px;
-  top: ${filtersContainerHeight}px;
+  // top: ${filtersContainerHeight}px;
+  top: 0;
   bottom: 0;
   box-shadow: 0 0 30px ${props => props.theme.sidebarBackground};
   border-radius: 0 0 0 2px;
@@ -134,11 +135,9 @@ export class SearchResultBar extends React.PureComponent<
             {loading ? <LoadingCircle progress={-1} /> : <Icon icon="search" />}
           </IconContainer>
           <h2>
-            {query && query != "" ? (
-              format(["search.results.title", { query }])
-            ) : (
-              format(["search.empty.tagline", { example }])
-            )}
+            {query && query != ""
+              ? format(["search.results.title", { query }])
+              : format(["search.empty.tagline", { example }])}
           </h2>
           <Filler />
           <IconButton icon="arrow-right" onClick={this.onOpenAsTab} />

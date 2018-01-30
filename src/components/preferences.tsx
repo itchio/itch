@@ -41,7 +41,14 @@ import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
 
-const PreferencesDiv = styled.div`${styles.meat()};`;
+const PreferencesDiv = styled.div`
+  ${styles.meat()};
+`;
+
+const Spacer = styled.div`
+  width: 8px;
+  height: 2px;
+`;
 
 const PreferencesContentDiv = styled.div`
   overflow-y: auto;
@@ -329,7 +336,9 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     const badgeLang = lang ? lang.substr(0, 2) : "en";
-    const translationBadgeUrl = `${urls.itchTranslationPlatform}/widgets/itch/${badgeLang}/svg-badge.svg`;
+    const translationBadgeUrl = `${
+      urls.itchTranslationPlatform
+    }/widgets/itch/${badgeLang}/svg-badge.svg`;
 
     return (
       <PreferencesDiv>
@@ -338,12 +347,13 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           <h2>{format(["preferences.language"])}</h2>
           <div className="language-form">
             <label className="active">
+              <Icon icon="earth" />
+              <Spacer />
               <SelectRow
                 onChange={this.onLanguageChange}
                 options={options}
                 value={lang || "__"}
               />
-
               {downloading ? (
                 <LoadingCircle progress={-1} />
               ) : (
@@ -359,10 +369,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           </div>
 
           <p className="explanation flex">
-            {format([
-              "preferences.language.get_involved",
-              { name: "itch" },
-            ])}{" "}
+            {format(["preferences.language.get_involved", { name: "itch" }])}{" "}
             <a href={translateUrl}>
               <img className="weblate-badge" src={translationBadgeUrl} />
             </a>
@@ -494,9 +501,9 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             onClick={e => updatePreferences({ showAdvanced: !showAdvanced })}
           >
             <span
-              className={`icon icon-triangle-right turner ${showAdvanced
-                ? "turned"
-                : ""}`}
+              className={`icon icon-triangle-right turner ${
+                showAdvanced ? "turned" : ""
+              }`}
             />{" "}
             {format(["preferences.advanced"])}
           </h2>

@@ -14,10 +14,10 @@ const LogoDiv = styled.div`
   cursor: pointer;
 
   margin-top: 10px;
-  height: 69px;
+  height: 59px;
 
   img {
-    width: 120px;
+    width: 110px;
     margin: 10px 0;
   }
 

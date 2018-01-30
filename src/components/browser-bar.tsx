@@ -11,7 +11,7 @@ const BrowserBarDiv = styled.div`
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  padding: 5px 0 4px 4px;
+  padding: 5px 0 7px 4px;
   background: ${props => props.theme.breadBackground};
   transition: all 0.2s;
   min-height: 32px;

@@ -14,11 +14,7 @@ interface IGridProps {
 
 const StylableDiv = (props: IGridProps) => {
   const { sizes, children, ...restProps } = props;
-  return (
-    <div {...restProps}>
-      {children}
-    </div>
-  );
+  return <div {...restProps}>{children}</div>;
 };
 
 export const GridContainerDiv = styled(StylableDiv)`
@@ -28,9 +24,8 @@ export const GridContainerDiv = styled(StylableDiv)`
   overflow: hidden;
 
   .grid--row {
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
     border-radius: 2px;
-    background: ${props => props.theme.sidebarBackground};
+    background: ${props => props.theme.itemBackground};
     border: 1px solid #191919;
 
     margin: 0 ${props => props.sizes.globalPadding}px;

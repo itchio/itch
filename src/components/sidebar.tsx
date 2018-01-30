@@ -9,7 +9,6 @@ import IconButton from "./basics/icon-button";
 import Search from "./sidebar/search";
 import Tab from "./sidebar/tab";
 import Logo from "./sidebar/logo";
-import UserMenu from "./sidebar/user-menu";
 
 import { IRootState } from "../types";
 
@@ -59,7 +58,9 @@ interface ISortableContainerParams {
   sidebarProps: IProps & IDerivedProps;
 }
 
-const SortableListContainer = styled.div`overflow-y: auto;`;
+const SortableListContainer = styled.div`
+  overflow-y: auto;
+`;
 
 const SortableList = SortableContainer((params: ISortableContainerParams) => {
   const { sidebarProps, items } = params;
@@ -118,6 +119,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
               {format(["sidebar.category.basics"])}
             </SidebarHeading>
           </SidebarSection>
+
           {map(tabs.constant, (id, index) => {
             return <Tab key={id} tab={id} active={currentId === id} />;
           })}
@@ -149,8 +151,6 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
         </SidebarItems>
 
         <Filler />
-
-        <UserMenu />
       </SidebarDiv>
     );
   }
