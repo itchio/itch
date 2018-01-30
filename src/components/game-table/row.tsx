@@ -1,5 +1,4 @@
 import * as React from "react";
-import { InjectedIntl } from "react-intl";
 
 import { ICaveSummary } from "../../db/models/cave";
 
@@ -106,7 +105,6 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
 interface IProps {
   game: Game;
   caves: ICaveSummary[];
-  intl: InjectedIntl;
   index: number;
   rowHeight: number;
   columns: GameColumn[];

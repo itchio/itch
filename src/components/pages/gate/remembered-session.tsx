@@ -106,7 +106,10 @@ export class RememberedSession extends React.PureComponent<
           </p>
         </div>
         <div className="filler" />
-        <span data-rh-at="left" data-rh="Forget this session">
+        <span
+          data-rh-at="left"
+          data-rh={JSON.stringify(["prompt.forget_session.action"])}
+        >
           <IconButton
             icon="cross"
             className="forget-session"

@@ -1,8 +1,6 @@
 import * as React from "react";
 import * as classNames from "classnames";
 import { ICaveSummary } from "../../db/models/cave";
-import { InjectedIntl } from "react-intl";
-
 import Hoverable from "../basics/hover-hoc";
 import Filler from "../basics/filler";
 import Cover from "../basics/cover";
@@ -85,7 +83,6 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
 interface IProps {
   game: Game;
   cave: ICaveSummary;
-  intl: InjectedIntl;
 
   column: number;
   columnWidth: number;

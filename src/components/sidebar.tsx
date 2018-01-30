@@ -18,8 +18,7 @@ import { SortableContainer, arrayMove } from "react-sortable-hoc";
 import styled, * as styles from "./styles";
 import { SidebarSection, SidebarHeading } from "./sidebar/styles";
 
-import format, { formatString } from "./format";
-import { injectIntl, InjectedIntl } from "react-intl";
+import format from "./format";
 import { OwnUser } from "ts-itchio-api";
 
 const SidebarDiv = styled.div`
@@ -103,14 +102,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
   };
 
   render() {
-    const {
-      intl,
-      osx,
-      sidebarWidth,
-      fullscreen,
-      tab: currentId,
-      tabs,
-    } = this.props;
+    const { osx, sidebarWidth, fullscreen, tab: currentId, tabs } = this.props;
 
     return (
       <SidebarDiv id="sidebar" width={sidebarWidth}>
@@ -136,13 +128,13 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
             <IconButton
               icon="delete"
               id="sidebar-close-all-tabs"
-              hint={formatString(intl, ["sidebar.close_all_tabs"])}
+              hint={["sidebar.close_all_tabs"]}
               onClick={this.closeAllTabs}
             />
             <IconButton
               id="new-tab-icon"
               icon="plus"
-              hint={formatString(intl, ["sidebar.new_tab"])}
+              hint={["sidebar.new_tab"]}
               onClick={this.newTab}
             />
           </SidebarSection>
@@ -195,15 +187,13 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
     constant: string[];
     transient: string[];
   };
-
-  intl: InjectedIntl;
 };
 
 interface IState {
   transient: string[];
 }
 
-export default connect<IProps>(injectIntl(Sidebar), {
+export default connect<IProps>(Sidebar, {
   state: createStructuredSelector({
     appVersion: (rs: IRootState) => rs.system.appVersion,
     osx: (rs: IRootState) => rs.system.osx,

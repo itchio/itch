@@ -4,6 +4,8 @@ import Icon from "./basics/icon";
 
 import styled from "./styles";
 import Button from "./basics/button";
+import { ILocalizedString } from "../types/index";
+import format from "./format";
 
 const EmptyStateDiv = styled.div`
   color: ${props => props.theme.secondaryText};
@@ -56,11 +58,11 @@ export default class EmptyState extends React.PureComponent<IProps> {
       <EmptyStateContainer>
         <EmptyStateDiv className={className}>
           <Icon icon={icon} className="leader" />
-          <h1>{bigText}</h1>
-          <h2>{smallText}</h2>
+          <h1>{format(bigText)}</h1>
+          <h2>{format(smallText)}</h2>
           <ButtonContainer>
             <Button icon={buttonIcon} primary discreet onClick={buttonAction}>
-              {buttonText}
+              {format(buttonText)}
             </Button>
           </ButtonContainer>
         </EmptyStateDiv>
@@ -71,10 +73,10 @@ export default class EmptyState extends React.PureComponent<IProps> {
 
 interface IProps {
   className?: string;
-  bigText: string;
-  smallText?: string;
+  bigText: ILocalizedString;
+  smallText?: ILocalizedString;
   icon: string;
   buttonIcon?: string;
-  buttonText?: string;
+  buttonText?: ILocalizedString;
   buttonAction?: React.MouseEventHandler<HTMLDivElement>;
 }

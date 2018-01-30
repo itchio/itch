@@ -4,6 +4,7 @@ import * as classNames from "classnames";
 import Icon from "./icon";
 
 import styled, * as styles from "../styles";
+import { ILocalizedString } from "../../types/index";
 
 const IconButtonDiv = styled.div`
   ${styles.clickable()};
@@ -60,7 +61,7 @@ class IconButton extends React.PureComponent<IProps> {
     return (
       <IconButtonDiv
         className={classNames(className, { disabled, big, huge, emphasized })}
-        data-rh={hint}
+        data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at={hintPosition}
         {...restProps}
       >
@@ -75,7 +76,7 @@ interface IProps {
   disabled?: boolean;
   className?: string;
   id?: string;
-  hint?: string;
+  hint?: ILocalizedString;
   hintPosition?: "top" | "left" | "right" | "bottom";
 
   onClick?: any;

@@ -24,14 +24,10 @@ export class TwoFactorInput extends React.PureComponent<
     return (
       <ModalWidgetDiv>
         <p>
-          <strong>
-            {format(["login.two_factor.as_user", { username }])}
-          </strong>
+          <strong>{format(["login.two_factor.as_user", { username }])}</strong>
         </p>
 
-        <p>
-          {format(["login.two_factor.enter_code"])}
-        </p>
+        <p>{format(["login.two_factor.enter_code"])}</p>
 
         <input
           placeholder={formatString(intl, [

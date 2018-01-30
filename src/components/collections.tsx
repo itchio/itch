@@ -13,7 +13,7 @@ import Filler from "./basics/filler";
 import TitleBar from "./title-bar";
 
 import styled, * as styles from "./styles";
-import { injectIntl, InjectedIntl } from "react-intl";
+import format from "./format";
 
 const CollectionsContainer = styled.div`${styles.meat()};`;
 
@@ -21,14 +21,14 @@ const tab = "collections";
 
 export class Collections extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { intl, navigate } = this.props;
+    const { navigate } = this.props;
 
     return (
       <CollectionsContainer>
         <TitleBar tab={tab} />
         <FiltersContainer>
           <Link
-            label={intl.formatMessage({ id: "outlinks.manage_collections" })}
+            label={format(["outlinks.manage_collections"])}
             onClick={e => navigate({ tab: `url/${urls.myCollections}` })}
           />
           <Filler />
@@ -43,8 +43,6 @@ interface IProps extends IMeatProps {}
 
 const actionCreators = actionCreatorsList("navigate");
 
-type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  intl: InjectedIntl;
-};
+type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(injectIntl(Collections), { actionCreators });
+export default connect<IProps>(Collections, { actionCreators });

@@ -10,7 +10,7 @@ import urls from "../constants/urls";
 import Icon from "./basics/icon";
 import LoadingCircle from "./basics/loading-circle";
 import IconButton from "./basics/icon-button";
-import SelectRow from "./basics/select-row";
+import SelectRow, { ISelectOption } from "./basics/select-row";
 
 import OpenAtLoginError from "./preferences/open-at-login-error";
 import ProxySettings from "./preferences/proxy-settings";
@@ -23,8 +23,7 @@ import diskspace from "../os/diskspace";
 
 import { fileSize } from "../format/filesize";
 
-import { injectIntl, InjectedIntl } from "react-intl";
-import format, { formatString } from "./format";
+import format from "./format";
 
 import {
   IRootState,
@@ -302,14 +301,7 @@ const PreferencesContentDiv = styled.div`
 
 export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const {
-      intl,
-      tab,
-      lang,
-      sniffedLang = "",
-      downloading,
-      locales,
-    } = this.props;
+    const { tab, lang, sniffedLang = "", downloading, locales } = this.props;
     const {
       isolateApps,
       openAtLogin,
@@ -322,15 +314,13 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
     } = this.props.preferences;
     const { queueLocaleDownload, updatePreferences } = this.props;
 
-    const options = [
+    const options: ISelectOption[] = [
       {
+        label: ["preferences.language.auto", { language: sniffedLang }],
         value: "__",
-        label: formatString(intl, [
-          "preferences.language.auto",
-          { language: sniffedLang },
-        ]),
       },
-    ].concat(locales);
+      ...locales,
+    ];
 
     let translateUrl = `${urls.itchTranslationPlatform}/projects/itch/itch`;
     const english = /^en/.test(lang);
@@ -521,7 +511,6 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
       appVersion,
       clearBrowsingDataRequest,
       updatePreferences,
-      intl,
       navigate,
     } = this.props;
     const { preferOptimizedPatches, disableBrowser } = this.props.preferences;
@@ -585,7 +574,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           </span>
           <span
             data-rh-at="bottom"
-            data-rh={formatString(intl, ["label.experimental"])}
+            data-rh={JSON.stringify(["label.experimental"])}
           >
             <Icon
               icon="lab-flask"
@@ -624,7 +613,6 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
       addInstallLocationRequest,
       removeInstallLocationRequest,
       makeInstallLocationDefault,
-      intl,
     } = this.props;
 
     const header = (
@@ -674,7 +662,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             <div
               className="default-switch"
               data-rh-at="right"
-              data-rh={formatString(intl, [
+              data-rh={JSON.stringify([
                 "preferences.install_location." +
                   (isDefault ? "is_default" : "make_default"),
               ])}
@@ -682,9 +670,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
               <span className="single-line">{path}</span>
               {isDefault ? (
                 <span className="single-line default-state">
-                  ({formatString(intl, [
-                    "preferences.install_location.is_default_short",
-                  ]).toLowerCase()})
+                  {format(["preferences.install_location.is_default_short"])}
                 </span>
               ) : null}
             </div>
@@ -694,9 +680,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           <td
             className="action icon-action install-location-navigate"
             data-rh-at="top"
-            data-rh={formatString(intl, [
-              "preferences.install_location.navigate",
-            ])}
+            data-rh={JSON.stringify(["preferences.install_location.navigate"])}
             onClick={e => {
               e.preventDefault();
               navigate({ tab: `locations/${name}` });
@@ -709,9 +693,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             <td
               className="action icon-action delete"
               data-rh-at="top"
-              data-rh={formatString(intl, [
-                "preferences.install_location.delete",
-              ])}
+              data-rh={JSON.stringify(["preferences.install_location.delete"])}
               onClick={e => removeInstallLocationRequest({ name })}
             >
               <Icon icon="cross" />
@@ -787,11 +769,9 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   sniffedLang: string;
   lang: string;
   installLocations: IExtendedInstallLocations;
-
-  intl: InjectedIntl;
 };
 
-export default connect<IProps>(injectIntl(Preferences), {
+export default connect<IProps>(Preferences, {
   state: createStructuredSelector({
     appVersion: (rs: IRootState) => rs.system.appVersion,
     preferences: (rs: IRootState) => rs.preferences,

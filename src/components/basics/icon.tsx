@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as classNames from "classnames";
+import { ILocalizedString } from "../../types/index";
 
 /**
  * An icon from the icomoon font.
@@ -13,19 +14,21 @@ class Icon extends React.PureComponent<IProps> {
     }
 
     const finalClassName = classNames(className, `icon icon-${icon}`);
-    const hintProps: any = {};
-    if (hint) {
-      hintProps["data-rh"] = hint;
-      hintProps["data-rh-at"] = "top";
-    }
 
-    return <span className={finalClassName} {...hintProps} {...restProps} />;
+    return (
+      <span
+        className={finalClassName}
+        data-rh={hint ? JSON.stringify(hint) : null}
+        data-rh-at="top"
+        {...restProps}
+      />
+    );
   }
 }
 
 interface IProps {
   icon: string;
-  hint?: string;
+  hint?: ILocalizedString;
   className?: string;
   onClick?: any;
 }

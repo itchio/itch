@@ -5,8 +5,6 @@ import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import { actions } from "../actions";
 
-import { injectIntl, InjectedIntl } from "react-intl";
-
 import { ITabWeb } from "../types";
 
 import IconButton from "./basics/icon-button";
@@ -136,7 +134,7 @@ export class BrowserControls extends React.PureComponent<
           </BrowserAddressSpan>
         )}
         <IconButton
-          hint={this.props.intl.formatMessage({ id: "browser.popout" })}
+          hint={["browser.popout"]}
           hintPosition="bottom"
           icon="redo"
           onClick={this.popOutBrowser}
@@ -205,11 +203,8 @@ const actionCreators = actionCreatorsList(
   "tabDataFetched"
 );
 
-type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  intl: InjectedIntl;
-};
+type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(
-  injectIntl(listensToClickOutside(BrowserControls)),
-  { actionCreators }
-);
+export default connect<IProps>(listensToClickOutside(BrowserControls), {
+  actionCreators,
+});

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
-import { injectIntl, InjectedIntl } from "react-intl";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import getByIds from "../../helpers/get-by-ids";
@@ -256,7 +255,6 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
       commons,
       scrollTop,
       height,
-      intl,
     } = this.props;
 
     const overscan = 1;
@@ -281,7 +279,6 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
           columns={columns}
           game={game}
           caves={caves}
-          intl={intl}
           rowHeight={rowHeight}
           index={startRow + index}
         />
@@ -312,11 +309,9 @@ const actionCreators = actionCreatorsList(
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   commons: ICommonsState;
-
-  intl: InjectedIntl;
 };
 
-export default connect<IProps>(injectIntl(injectDimensions(Table)), {
+export default connect<IProps>(injectDimensions(Table), {
   state: () =>
     createStructuredSelector({
       commons: state => state.commons,

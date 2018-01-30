@@ -1,6 +1,5 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
-import { injectIntl, InjectedIntl } from "react-intl";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
 import { first } from "underscore";
@@ -32,7 +31,6 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
       height,
       hiddenCount,
       tab,
-      intl,
     } = this.props;
 
     const numColumns = Math.floor(width / 280);
@@ -69,7 +67,6 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
               key={game.id}
               game={game}
               cave={cave}
-              intl={intl}
               columnWidth={columnWidth}
               interiorMargin={interiorMargin}
               globalMargin={globalMargin}
@@ -173,11 +170,9 @@ const actionCreators = actionCreatorsList(
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   commons: ICommonsState;
-
-  intl: InjectedIntl;
 };
 
-export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
+export default connect<IProps>(injectDimensions(Grid), {
   state: () =>
     createStructuredSelector({
       commons: state => state.commons,

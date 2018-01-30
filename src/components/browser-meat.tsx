@@ -3,8 +3,6 @@ import * as classNames from "classnames";
 import * as React from "react";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
-import { injectIntl, InjectedIntl } from "react-intl";
-
 import partitionForUser from "../util/partition-for-user";
 import { getInjectPath } from "../os/resources";
 
@@ -192,11 +190,9 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   proxySource?: string;
 
   disableBrowser: boolean;
-
-  intl: InjectedIntl;
 };
 
-export default connect<IProps>(injectIntl(BrowserMeat), {
+export default connect<IProps>(BrowserMeat, {
   state: createStructuredSelector({
     meId: (rs: IRootState) =>
       (rs.session.credentials.me || { id: "anonymous" }).id,

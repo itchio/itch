@@ -1,8 +1,6 @@
 import * as React from "react";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
-import { injectIntl, InjectedIntl } from "react-intl";
-
 import LoadingCircle from "../basics/loading-circle";
 import Icon from "../basics/icon";
 import Button from "../basics/button";
@@ -13,7 +11,7 @@ import {
   OperationType,
   Access,
 } from "../../helpers/get-game-status";
-import format, { formatString } from "../format";
+import format from "../format";
 import actionForGame from "../../util/action-for-game";
 import { ILocalizedString } from "../../types/index";
 import * as classNames from "classnames";
@@ -103,7 +101,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
       return null;
     }
 
-    const { iconOnly, className, intl } = this.props;
+    const { iconOnly, className } = this.props;
     if (iconOnly) {
       if (!iconComponent) {
         if (icon) {
@@ -116,7 +114,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
           className={classNames(className, "main-action")}
           data-game-id={this.props.game.id}
           icon={iconComponent}
-          hint={label ? formatString(intl, label) : null}
+          hint={label}
           hintPosition="left"
         />
       );
@@ -191,8 +189,6 @@ const actionCreators = actionCreatorsList(
   "viewCaveDetails"
 );
 
-type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  intl: InjectedIntl;
-};
+type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(injectIntl(MainAction), { actionCreators });
+export default connect<IProps>(MainAction, { actionCreators });

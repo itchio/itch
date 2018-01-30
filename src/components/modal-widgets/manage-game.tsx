@@ -15,8 +15,7 @@ import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import PlatformIcons from "../basics/platform-icons";
 
 import { actions } from "../../actions";
-import format, { formatString } from "../format";
-import { injectIntl, InjectedIntl } from "react-intl";
+import format from "../format";
 import LoadingCircle from "../basics/loading-circle";
 import { formatUploadTitle } from "../../format/upload";
 import { showInExplorerString } from "../../format/show-in-explorer";
@@ -82,7 +81,6 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const params = this.props.modal.widgetParams as IManageGameParams;
     const { game, caves, allUploads, loadingUploads } = params;
-    const { intl } = this.props;
 
     const installedUploadIds = {};
     for (const cave of caves) {
@@ -126,20 +124,20 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
                 <CaveItemActions>
                   <IconButton
                     data-cave-id={cave.id}
-                    hint={formatString(intl, showInExplorerString())}
+                    hint={showInExplorerString()}
                     icon="folder-open"
                     onClick={this.onExplore}
                   />
                   <IconButton
                     data-cave-id={cave.id}
-                    hint={formatString(intl, ["prompt.uninstall.reinstall"])}
+                    hint={["prompt.uninstall.reinstall"]}
                     icon="repeat"
                     onClick={this.onReinstall}
                     className="manage-reinstall"
                   />
                   <IconButton
                     data-cave-id={cave.id}
-                    hint={formatString(intl, ["prompt.uninstall.uninstall"])}
+                    hint={["prompt.uninstall.uninstall"]}
                     icon="uninstall"
                     onClick={this.onUninstall}
                     className="manage-uninstall"
@@ -239,8 +237,6 @@ interface IProps extends IModalWidgetProps {}
 
 const actionCreators = actionCreatorsList("closeModal", "exploreCave");
 
-type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  intl: InjectedIntl;
-};
+type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(injectIntl(ManageGame), { actionCreators });
+export default connect<IProps>(ManageGame, { actionCreators });

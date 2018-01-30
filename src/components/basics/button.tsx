@@ -3,6 +3,7 @@ import * as classNames from "classnames";
 import styled, * as styles from "../styles";
 
 import Icon from "./icon";
+import { ILocalizedString } from "../../types/index";
 
 const Label = styled.div`${styles.singleLine()};`;
 
@@ -96,7 +97,7 @@ class Button extends React.PureComponent<IProps, any> {
     return (
       <ButtonDiv
         onClick={onClick}
-        data-rh={hint}
+        data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at="top"
         className={classNames(className, { primary, discreet, wide, fat })}
         {...restProps}
@@ -117,7 +118,7 @@ interface IProps {
   className?: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   primary?: boolean;
-  hint?: string;
+  hint?: ILocalizedString;
   icon?: string;
   iconComponent?: JSX.Element;
   label?: JSX.Element | string;

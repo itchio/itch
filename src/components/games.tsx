@@ -7,12 +7,9 @@ import { IRootState, TabLayout, ITabParams, IGameSet } from "../types";
 import GameGrid from "./game-grid/grid";
 import GameTable, { GameColumn } from "./game-table/table";
 
-import { formatString } from "./format";
 import EmptyState from "./empty-state";
 
 import { ISortParams } from "./sort-types";
-
-import { injectIntl, InjectedIntl } from "react-intl";
 
 import styled from "./styles";
 import { Space } from "../helpers/space";
@@ -66,7 +63,6 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
       columns,
       clearFilters,
       loading,
-      intl,
     } = this.props;
     const { sortBy, sortDirection } = params;
 
@@ -79,10 +75,10 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
       return (
         <EmptyState
           icon="filter"
-          bigText={formatString(intl, ["grid.empty_state.leader"])}
-          smallText={formatString(intl, ["grid.empty_state.explanation"])}
+          bigText={["grid.empty_state.leader"]}
+          smallText={["grid.empty_state.explanation"]}
           buttonIcon="delete"
-          buttonText={formatString(intl, ["grid.clear_filters"])}
+          buttonText={["grid.clear_filters"]}
           buttonAction={() => clearFilters({ tab })}
         />
       );
@@ -132,14 +128,12 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 
   prefLayout: TabLayout;
   params: ITabParams;
-
-  intl: InjectedIntl;
 };
 
 const eo: any = {};
 const ea: any[] = [];
 
-export default connect<IProps>(injectIntl(Games), {
+export default connect<IProps>(Games, {
   state: (initialState, initialProps) => {
     const { tab } = initialProps;
     return createSelector(

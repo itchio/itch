@@ -2,6 +2,9 @@ import * as React from "react";
 
 import { map } from "underscore";
 import styled from "../styles";
+import { ILocalizedString } from "../../types/index";
+import { formatString } from "../format";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 const SelectRowDiv = styled.div`display: inline-block;`;
 
@@ -21,10 +24,10 @@ const Select = styled.select`
 /**
  * A drop-down you can select from
  */
-class SelectRow extends React.PureComponent<ISelectRowProps> {
+class SelectRow extends React.PureComponent<ISelectRowProps & IDerivedProps> {
   element: HTMLSelectElement;
 
-  constructor(props: ISelectRowProps) {
+  constructor(props: ISelectRowProps & IDerivedProps) {
     super(props);
   }
 
@@ -36,12 +39,11 @@ class SelectRow extends React.PureComponent<ISelectRowProps> {
   };
 
   render() {
-    let options = this.props.options;
-    let value = this.props.value;
+    const { options, value, intl } = this.props;
 
     const optionTags = map(options, (option, index) => (
       <option key={index} value={option.value}>
-        {option.label}
+        {formatString(intl, option.label)}
       </option>
     ));
 
@@ -71,8 +73,8 @@ class SelectRow extends React.PureComponent<ISelectRowProps> {
   }
 }
 
-interface ISelectOption {
-  label: string;
+export interface ISelectOption {
+  label: ILocalizedString;
   value: string;
 }
 
@@ -82,4 +84,8 @@ interface ISelectRowProps {
   onChange?(value: string): void;
 }
 
-export default SelectRow;
+interface IDerivedProps {
+  intl: InjectedIntl;
+}
+
+export default injectIntl(SelectRow);

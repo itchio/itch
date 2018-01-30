@@ -3,7 +3,7 @@ import * as React from "react";
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
 import { ICave } from "../../db/models/cave";
-import { fromDateTimeField } from "../../db/datetime-field";
+import { fromDateTimeField, toDateTimeField } from "../../db/datetime-field";
 
 import { actions } from "../../actions";
 
@@ -19,7 +19,6 @@ import {
   DAY_MONTH_FORMAT,
   formatDate,
 } from "../../format/index";
-import { DATE_FORMAT } from "../../format/datetime";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Game, Build } from "ts-itchio-api";
 
@@ -141,7 +140,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
         <div className="spacer" />
         <div
           className="timeago"
-          data-rh={formatDate(updatedAt, locale, DATE_FORMAT)}
+          data-rh={JSON.stringify({ date: toDateTimeField(updatedAt) })}
         >
           {formatDate(updatedAt, locale, DAY_MONTH_FORMAT)}
         </div>

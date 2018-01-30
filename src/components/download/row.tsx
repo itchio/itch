@@ -17,8 +17,7 @@ import { IDownloadSpeeds, IDownloadItem, ITask, IRootState } from "../../types";
 import styled, * as styles from "../styles";
 import { darken } from "polished";
 
-import format, { formatString } from "../format";
-import { injectIntl, InjectedIntl } from "react-intl";
+import format from "../format";
 import doesEventMeanBackground from "../when-click-navigates";
 import getGameStatus, {
   IGameStatus,
@@ -295,7 +294,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   controls() {
-    const { intl, first, item, status } = this.props;
+    const { first, item, status } = this.props;
     const { err } = item;
 
     if (!status.operation && err) {
@@ -308,7 +307,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
           <IconButton
             icon="cross"
             hintPosition="left"
-            hint={formatString(intl, ["status.downloads.clear_finished"])}
+            hint={["status.downloads.clear_finished"]}
             onClick={this.onDiscard}
           />
         </div>
@@ -324,7 +323,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
         ) : (
           <IconButton
             big
-            hint={formatString(intl, ["grid.item.prioritize_download"])}
+            hint={["grid.item.prioritize_download"]}
             icon="caret-up"
             onClick={this.onPrioritize}
           />
@@ -332,7 +331,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
         <IconButton
           big
           hintPosition="left"
-          hint={formatString(intl, ["grid.item.discard_download"])}
+          hint={["grid.item.discard_download"]}
           icon="cross"
           onClick={this.onDiscard}
         />
@@ -496,13 +495,11 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   tasksByGameId: {
     [gameId: string]: ITask[];
   };
-
-  intl: InjectedIntl;
 };
 
 const HoverDownloadRow = Hover(DownloadRow);
 
-export default connect<IProps>(injectIntl(HoverDownloadRow), {
+export default connect<IProps>(HoverDownloadRow, {
   state: (rs: IRootState, props: IProps) => {
     const game = props.item.game;
 

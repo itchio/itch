@@ -70,7 +70,7 @@ class RowButton extends React.PureComponent<IProps, any> {
     return (
       <RowButtonDiv
         onClick={onClick}
-        data-rh={hint}
+        data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at="top"
         className={classNames(className)}
         {...restProps}
@@ -78,11 +78,7 @@ class RowButton extends React.PureComponent<IProps, any> {
         {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
         {iconComponent || icon ? <Spacer /> : null}
         {icon && label ? " " : null}
-        {label
-          ? <Label>
-              {label}
-            </Label>
-          : null}
+        {label ? <Label>{label}</Label> : null}
         {this.props.children}
       </RowButtonDiv>
     );
@@ -117,10 +113,6 @@ const TagDiv = styled.div`
 
 export class Tag extends React.PureComponent<{}, {}> {
   render() {
-    return (
-      <TagDiv>
-        {this.props.children}
-      </TagDiv>
-    );
+    return <TagDiv>{this.props.children}</TagDiv>;
   }
 }

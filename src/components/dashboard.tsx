@@ -10,20 +10,20 @@ import TitleBar from "./title-bar";
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
-import { injectIntl, InjectedIntl } from "react-intl";
+import format from "./format";
 
 const DashboardContainer = styled.div`${styles.meat()};`;
 
 export class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { intl, tab, navigate } = this.props;
+    const { tab, navigate } = this.props;
 
     return (
       <DashboardContainer>
         <TitleBar tab={tab} />
         <GameFilters tab={tab}>
           <Link
-            label={intl.formatMessage({ id: "outlinks.open_dashboard" })}
+            label={format(["outlinks.open_dashboard"])}
             onClick={e => navigate({ tab: `url/${urls.dashboard}` })}
           />
         </GameFilters>
@@ -37,8 +37,6 @@ interface IProps extends IMeatProps {}
 
 const actionCreators = actionCreatorsList("navigate");
 
-type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  intl: InjectedIntl;
-};
+type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(injectIntl(Dashboard), { actionCreators });
+export default connect<IProps>(Dashboard, { actionCreators });

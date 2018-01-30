@@ -15,6 +15,9 @@ import { IRootState } from "../types";
 import styled from "./styles";
 import { formatString } from "./format";
 import { injectIntl, InjectedIntl } from "react-intl";
+import { DATE_FORMAT } from "../format/index";
+import { formatDate } from "../format/datetime";
+import { fromDateTimeField } from "../db/datetime-field";
 
 const LayoutContainer = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -80,12 +83,22 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
             events
             onRenderContent={(target, content) => {
               let { rh } = target.dataset;
+              if (!rh) {
+                return null;
+              }
 
-              if (rh[0] === "[") {
+              const firstChar = rh[0];
+              if (firstChar === "[" || firstChar === "{" || firstChar === `"`) {
                 try {
                   const obj = JSON.parse(rh);
                   if (Array.isArray(obj)) {
                     rh = formatString(intl, obj);
+                  } else if (obj.hasOwnProperty("date")) {
+                    rh = formatDate(
+                      fromDateTimeField(obj.date),
+                      intl.locale,
+                      DATE_FORMAT
+                    );
                   } else {
                     rh = obj;
                   }
@@ -93,6 +106,10 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
                   // muffin
                 }
               }
+              if (!rh) {
+                return null;
+              }
+
               return <div className="react-hint__content">{rh}</div>;
             }}
           />

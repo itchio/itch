@@ -13,7 +13,6 @@ import { connect, Dispatchers } from "./connect";
 import { actions } from "../actions";
 import { Space } from "../helpers/space";
 import urls from "../constants/urls";
-import { injectIntl, InjectedIntl } from "react-intl";
 
 const CollectionDiv = styled.div`${styles.meat()};`;
 
@@ -28,7 +27,7 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps> {
           <IconButton icon="repeat" onClick={this.onRepeat} />
           <IconButton
             icon="redo"
-            hint={this.props.intl.formatMessage({ id: "browser.popout" })}
+            hint={["browser.popout"]}
             hintPosition="bottom"
             onClick={this.popOutBrowser}
           />
@@ -61,8 +60,6 @@ const actionCreators = {
   openUrl: actions.openUrl,
 };
 
-type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  intl: InjectedIntl;
-};
+type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(injectIntl(Collection), { actionCreators });
+export default connect<IProps>(Collection, { actionCreators });

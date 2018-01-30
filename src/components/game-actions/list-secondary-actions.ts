@@ -10,7 +10,6 @@ import {
   IAction,
 } from "../../types";
 
-import { InjectedIntl } from "react-intl";
 import { showInExplorerString } from "../../format/show-in-explorer";
 import { Game } from "ts-itchio-api";
 
@@ -33,11 +32,7 @@ function browseAction(caveId: string): IActionOpts {
   };
 }
 
-function purchaseAction(
-  game: Game,
-  downloadKey: IDownloadKey,
-  intl: InjectedIntl
-): IActionOpts {
+function purchaseAction(game: Game, downloadKey: IDownloadKey): IActionOpts {
   const donate = game.minPrice === 0;
 
   if (donate) {
@@ -76,8 +71,6 @@ interface IListSecondaryActionsProps {
   action: ClassificationAction;
 
   tasks: ITask[];
-
-  intl: InjectedIntl;
 }
 
 export default function listSecondaryActions(
@@ -91,7 +84,6 @@ export default function listSecondaryActions(
     downloadKey,
     action,
     tasks,
-    intl,
   } = props;
   let error = false;
 
@@ -100,7 +92,7 @@ export default function listSecondaryActions(
   if (cave) {
     // No errors
     if (canBeBought) {
-      items.push(purchaseAction(game, downloadKey, intl));
+      items.push(purchaseAction(game, downloadKey));
     }
 
     items.push({
@@ -133,7 +125,7 @@ export default function listSecondaryActions(
     const mainIsPurchase = !mayDownload && hasMinPrice && canBeBought;
 
     if (!mainIsPurchase && canBeBought) {
-      items.push(purchaseAction(game, downloadKey, intl));
+      items.push(purchaseAction(game, downloadKey));
     }
 
     items.push({

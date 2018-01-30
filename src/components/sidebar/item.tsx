@@ -169,7 +169,7 @@ class Item extends React.PureComponent<IProps, IState> {
       <ItemSection
         className={classNames({ active, fresh })}
         data-rh-at="right"
-        data-rh={format(sublabel)}
+        data-rh={sublabel ? JSON.stringify(sublabel) : null}
         onClick={this.onClick}
         onMouseUp={this.onMouseUp}
         onContextMenu={onContextMenu}

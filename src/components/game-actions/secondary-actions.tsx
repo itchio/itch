@@ -11,8 +11,6 @@ import { IActionsInfo } from "./types";
 
 import styled, * as styles from "../styles";
 
-import { injectIntl, InjectedIntl } from "react-intl";
-import { formatString } from "../format";
 import { IDispatch } from "../../types/index";
 
 const SecondaryActionsDiv = styled.div`
@@ -35,7 +33,7 @@ class SecondaryActions extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   action = (opts: IActionOpts) => {
-    const { intl, dispatch } = this.props;
+    const { dispatch } = this.props;
     const { action, label, icon, type = "action", classes = [] } = opts;
 
     if (type === "info" || type === "separator" || type === "secondary") {
@@ -51,7 +49,7 @@ class SecondaryActions extends React.PureComponent<IProps & IDerivedProps> {
         key={key}
         className={actionClasses}
         onClick={() => dispatch(action)}
-        hint={formatString(intl, label)}
+        hint={label}
       />
     );
   };
@@ -61,9 +59,8 @@ interface IProps extends IActionsInfo {}
 
 interface IDerivedProps {
   dispatch: IDispatch;
-  intl: InjectedIntl;
 }
 
-export default connect<IProps>(injectIntl(SecondaryActions), {
+export default connect<IProps>(SecondaryActions, {
   dispatch: dispatch => ({ dispatch }),
 });

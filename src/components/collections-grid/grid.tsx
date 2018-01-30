@@ -1,5 +1,4 @@
 import * as React from "react";
-import { InjectedIntl, injectIntl } from "react-intl";
 import { createSelector, createStructuredSelector } from "reselect";
 import { connect, Dispatchers } from "../connect";
 import { findWhere } from "underscore";
@@ -139,10 +138,9 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   games: IGameSet;
   collectionIds: number[];
   collections: ICollectionSet;
-  intl: InjectedIntl;
 };
 
-export default connect<IProps>(injectIntl(injectDimensions(Grid)), {
+export default connect<IProps>(injectDimensions(Grid), {
   state: createSelector(
     (rs: IRootState) => rs.session.tabData[tab] || eo,
     createStructuredSelector({

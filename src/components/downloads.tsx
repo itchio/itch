@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import { createStructuredSelector } from "reselect";
 
-import format, { formatString } from "./format";
+import format from "./format";
 
 import { map, first, rest } from "underscore";
 
@@ -11,7 +11,6 @@ import Row from "./download/row";
 import TitleBar from "./title-bar";
 import EmptyState from "./empty-state";
 
-import { injectIntl, InjectedIntl } from "react-intl";
 import { IRootState, IDownloadItem } from "../types";
 
 import {
@@ -70,7 +69,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
 
   renderContents() {
     const { items, finishedItems } = this.props;
-    const { clearFinishedDownloads, navigate, intl } = this.props;
+    const { clearFinishedDownloads, navigate } = this.props;
 
     const hasItems = items.length + finishedItems.length > 0;
     if (!hasItems) {
@@ -78,14 +77,10 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
         <EmptyState
           className="no-active-downloads"
           icon="download"
-          bigText={formatString(intl, ["status.downloads.no_active_downloads"])}
-          smallText={formatString(intl, [
-            "status.downloads.no_active_downloads_subtext",
-          ])}
+          bigText={["status.downloads.no_active_downloads"]}
+          smallText={["status.downloads.no_active_downloads_subtext"]}
           buttonIcon="earth"
-          buttonText={formatString(intl, [
-            "status.downloads.find_games_button",
-          ])}
+          buttonText={["status.downloads.find_games_button"]}
           buttonAction={() => navigate({ tab: "featured" })}
         />
       );
@@ -152,11 +147,9 @@ const actionCreators = actionCreatorsList("clearFinishedDownloads", "navigate");
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   items: IDownloadItem[];
   finishedItems: IDownloadItem[];
-
-  intl: InjectedIntl;
 };
 
-export default connect<IProps>(injectIntl(Downloads), {
+export default connect<IProps>(Downloads, {
   state: createStructuredSelector({
     items: (rs: IRootState) => getPendingDownloads(rs.downloads),
     finishedItems: (rs: IRootState) => getFinishedDownloads(rs.downloads),
