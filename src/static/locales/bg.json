@@ -483,5 +483,8 @@
     "preferences.advanced.prefer_optimized_patches": "Предпочитане на оптимизирани кръпки",
     "duration.seconds": "{{x}} секунди",
     "sidebar.applog": "Журнал на приложението",
-    "grid.item_count": "{{count}} неща"
+    "grid.item_count": "{{count}} неща",
+    "browser.disabled": "Уеб браузърът на Итч е изключен",
+    "browser.reenable": "Включване",
+    "preferences.advanced.disable_browser": "Изключване на уеб браузъра"
 }
