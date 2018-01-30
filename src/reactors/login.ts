@@ -43,13 +43,6 @@ export default function(watcher: Watcher) {
         const modalRes = await promisedModal(store, {
           title: "Captcha",
           message: "",
-          buttons: [
-            {
-              label: ["login.action.login"],
-              action: actions.modalResponse({}),
-              actionSource: "widget",
-            },
-          ],
           widget: "recaptcha-input",
           widgetParams: {
             url: passwordRes.recaptchaUrl || urls.itchio + "/captcha",

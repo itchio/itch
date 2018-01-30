@@ -3,9 +3,11 @@ import * as React from "react";
 import { IModalWidgetProps } from "./modal-widget";
 
 import { getInjectPath } from "../../os/resources";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
+import { actions } from "../../actions/index";
 
-export default class RecaptchaInput extends React.Component<
-  IRecaptchaInputProps
+class RecaptchaInput extends React.Component<
+  IRecaptchaInputProps & IDerivedProps
 > {
   webview: Electron.WebviewTag;
   checker: NodeJS.Timer;
@@ -24,7 +26,7 @@ export default class RecaptchaInput extends React.Component<
         <webview
           ref={this.gotWebview}
           src={url}
-          style={{ minHeight: "400px" }}
+          style={{ minHeight: "500px" }}
           preload={getInjectPath("captcha")}
         />
       </div>
@@ -45,8 +47,10 @@ export default class RecaptchaInput extends React.Component<
         false,
         (response: string | undefined) => {
           if (response) {
-            this.props.updatePayload({
-              recaptchaResponse: response,
+            this.props.closeModal({
+              action: actions.modalResponse({
+                recaptchaResponse: response,
+              }),
             });
           }
         }
@@ -73,3 +77,11 @@ export interface IRecaptchaInputParams {
 interface IRecaptchaInputProps extends IModalWidgetProps {
   params: IRecaptchaInputParams;
 }
+
+const actionCreators = actionCreatorsList("closeModal");
+
+type IDerivedProps = Dispatchers<typeof actionCreators>;
+
+export default connect<IRecaptchaInputProps>(RecaptchaInput, {
+  actionCreators,
+});
