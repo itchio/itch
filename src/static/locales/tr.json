@@ -337,5 +337,6 @@
     "download.outcome.updated": "son sürüme güncellendi",
     "download.outcome.reinstalled": "tekrar yüklendi",
     "download.outcome.reverted": "başka bir sürümle değiştirildi",
-    "download.outcome.healed": "doğrulandı ve onarıldı"
+    "download.outcome.healed": "doğrulandı ve onarıldı",
+    "grid.item.open_file_location.windows": "Dosyayı gezginde aç"
 }
