@@ -51,8 +51,7 @@ func loginFlow(r *runner) {
 	r.logf("opening new tab")
 	must(r.click("#new-tab-icon"))
 	must(r.click(".meat-tab.visible .browser-address"))
-	must(r.setValue(".meat-tab.visible .browser-address", "https://itch.io/login"))
-	must(r.click(".meat-tab.visible .go-button"))
+	must(r.setValue(".meat-tab.visible .browser-address", "https://itch.io/login\uE007"))
 
 	r.logf("checking that we're redirected to the dashboard")
 	must(r.waitUntilTextExists(
@@ -77,8 +76,7 @@ func loginFlow(r *runner) {
 	r.logf("opening new tab")
 	must(r.click("#new-tab-icon"))
 	must(r.click("input.browser-address"))
-	must(r.setValue("input.browser-address", "https://itch.io/login"))
-	must(r.click(".meat-tab.visible .go-button"))
+	must(r.setValue("input.browser-address", "https://itch.io/login\uE007"))
 
 	r.logf("checking that we've landed on the login page")
 	must(r.waitUntilTextExists(
