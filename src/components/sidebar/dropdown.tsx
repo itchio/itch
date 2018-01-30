@@ -60,7 +60,7 @@ export class Dropdown extends React.PureComponent<
       inner,
       className,
       updown = false,
-      ...restProps,
+      ...restProps
     } = this.props;
 
     const { open } = this.state;
@@ -83,19 +83,13 @@ export class Dropdown extends React.PureComponent<
     }
 
     const innerC = (
-      <DropdownInnerContainer
-        key="inner"
-        className={innerClasses}
-        onClick={this.toggle}
-      >
+      <DropdownInnerContainer className={innerClasses} onClick={this.toggle}>
         {inner}
       </DropdownInnerContainer>
     );
 
     const childrenC = (
-      <DropdownDiv key="children" className={dropdownClasses}>
-        {children}
-      </DropdownDiv>
+      <DropdownDiv className={dropdownClasses}>{children}</DropdownDiv>
     );
 
     return (
@@ -104,7 +98,15 @@ export class Dropdown extends React.PureComponent<
         className={containerClasses}
         {...restProps}
       >
-        {updown ? [childrenC, innerC] : [innerC, childrenC]}
+        {updown ? (
+          <>
+            {childrenC} {innerC}
+          </>
+        ) : (
+          <>
+            {innerC} {childrenC}
+          </>
+        )}
       </DropdownContainer>
     );
   }
