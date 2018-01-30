@@ -38,7 +38,7 @@ export function formatDurationAsMessage(secs: number): IFormattedDuration {
   }
 }
 
-interface IDateFormat {
+export interface IDateFormat {
   key: number;
   options: Intl.DateTimeFormatOptions;
 }

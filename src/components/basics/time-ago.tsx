@@ -12,12 +12,12 @@ export default class TimeAgo extends React.PureComponent<IProps> {
 
     const dateObject = fromDateTimeField(date);
     if (!dateObject) {
-      return <span />;
+      return null;
     }
 
     if (!dateObject.getTime || isNaN(dateObject.getTime())) {
       console.warn("TimeAgo was passed an invalid date: ", this.props.date);
-      return <span />;
+      return null;
     }
 
     return (

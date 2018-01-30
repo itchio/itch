@@ -10,15 +10,11 @@ import { actions } from "../../actions";
 import format from "../format";
 
 import Icon from "../basics/icon";
+import CustomDate from "../basics/custom-date";
 
 import styled from "../styles";
 import { lighten } from "polished";
-import { injectIntl, InjectedIntl } from "react-intl";
-import {
-  MONTH_YEAR_FORMAT,
-  DAY_MONTH_FORMAT,
-  formatDate,
-} from "../../format/index";
+import { MONTH_YEAR_FORMAT, DAY_MONTH_FORMAT } from "../../format/index";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Game, Build } from "ts-itchio-api";
 import { IModalWidgetProps } from "./index";
@@ -102,7 +98,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
         const monthDate = fromDateTimeField(build.updatedAt);
         builds.push(
           <div key={`month-${month}`} className="builds--month">
-            {formatDate(monthDate, this.props.intl.locale, MONTH_YEAR_FORMAT)}
+            <CustomDate date={monthDate} format={MONTH_YEAR_FORMAT} />
           </div>
         );
         lastMonth = month;
@@ -120,7 +116,6 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
   renderBuild(b: Build): JSX.Element {
     const version = b.userVersion || b.version;
     const updatedAt = fromDateTimeField(b.updatedAt);
-    const { locale } = this.props.intl;
 
     return (
       <div
@@ -143,7 +138,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
           className="timeago"
           data-rh={JSON.stringify({ date: toDateTimeField(updatedAt) })}
         >
-          {formatDate(updatedAt, locale, DAY_MONTH_FORMAT)}
+          <CustomDate date={updatedAt} format={DAY_MONTH_FORMAT} />
         </div>
       </div>
     );
@@ -176,8 +171,6 @@ interface IProps
 
 const actionCreators = actionCreatorsList("closeModal");
 
-type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  intl: InjectedIntl;
-};
+type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(injectIntl(RevertCave), { actionCreators });
+export default connect<IProps>(RevertCave, { actionCreators });
