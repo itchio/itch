@@ -96,7 +96,7 @@ export default function(watcher: Watcher, db: DB) {
           ],
         });
 
-        if (response.type !== "modalResponse") {
+        if (!response) {
           // modal was closed
           return;
         }
@@ -134,7 +134,7 @@ export default function(watcher: Watcher, db: DB) {
               "cancel",
             ],
           });
-          if (response.type !== "modalResponse") {
+          if (!response) {
             // modal was closed
             return;
           }

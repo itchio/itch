@@ -206,10 +206,7 @@ const launchNative: ILauncher = async (ctx, opts) => {
         ],
       });
 
-      if (
-        response.type === "modalResponse" &&
-        response.payload.sandboxBlessing
-      ) {
+      if (response && response.sandboxBlessing) {
         // carry on
       } else {
         return; // cancelled by user

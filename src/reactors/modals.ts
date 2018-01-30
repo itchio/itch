@@ -3,28 +3,26 @@ import { actions } from "../actions";
 
 import { each, findWhere } from "underscore";
 
-import { IStore, IAction } from "../types";
+import { IStore, ModalResponse } from "../types";
 
 import modalResolves from "./modals-persistent-state";
 
 // look, so this probably breaks the spirit of redux, not denying it,
 // but also, redux has a pretty strong will, I'm sure it'll recover.
 
-export function promisedModal(
+export async function promisedModal(
   store: IStore,
   payload: typeof actions.openModal.payload
-) {
+): Promise<ModalResponse> {
   const modalAction = actions.openModal(payload);
   const { id } = modalAction.payload;
 
-  const p = new Promise<
-    IAction<typeof actions.modalResponse.payload>
-  >(resolve => {
+  const p = new Promise<ModalResponse>(resolve => {
     modalResolves[id] = resolve;
   });
 
   store.dispatch(modalAction);
-  return p;
+  return await p;
 }
 
 export default function(watcher: Watcher) {
@@ -38,28 +36,32 @@ export default function(watcher: Watcher) {
       modal = findWhere(modals, { id });
     }
 
+    let response: ModalResponse = null;
     if (action) {
       if (Array.isArray(action)) {
         each(action, a => store.dispatch(a));
       } else {
         store.dispatch(action);
+        if (action.type === "modalResponse") {
+          response = action.payload;
+        }
       }
     }
 
     store.dispatch(
       actions.modalClosed({
         id: modal ? modal.id : id,
-        action,
+        response,
       })
     );
   });
 
   watcher.on(actions.modalClosed, async (store, outerAction) => {
-    const { id, action } = outerAction.payload;
+    const { id, response } = outerAction.payload;
 
     const resolve = modalResolves[id];
     if (resolve) {
-      resolve(action || actions.modalNoResponse({}));
+      resolve(response);
     }
   });
 }

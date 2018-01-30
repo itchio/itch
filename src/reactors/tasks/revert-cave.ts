@@ -89,12 +89,12 @@ export default function(watcher: Watcher, db: DB) {
           buttons: ["cancel"],
         });
 
-        if (response.type !== "modalResponse") {
+        if (!response) {
           // modal was closed
           return;
         }
 
-        const buildId = response.payload.revertBuildId;
+        const buildId = response.revertBuildId;
 
         let pickedBuild: Build;
         for (const b of remoteBuilds) {

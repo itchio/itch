@@ -83,8 +83,8 @@ export default async function performDownload(
           buttons: ["cancel"],
         });
 
-        if (modalRes.type === "modalResponse") {
-          return { index: modalRes.payload.pickedUploadIndex };
+        if (modalRes) {
+          return { index: modalRes.pickedUploadIndex };
         } else {
           // that tells butler to abort
           return { index: -1 };

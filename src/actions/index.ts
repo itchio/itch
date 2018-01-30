@@ -29,6 +29,7 @@ import {
   IOpenAtLoginError,
   ILocalizedString,
   IOpenContextMenuBase,
+  ModalResponse,
 } from "../types/index";
 import { OwnUser, Game, Build, Upload, User } from "ts-itchio-api";
 import { ITabData } from "../types/tab-data";
@@ -137,37 +138,10 @@ export const actions = wireActions({
     /** id of the modal that was just closed */
     id: string;
 
-    /** action that should be dispatched once the modal's been closed */
-    action: IModalAction;
+    /** if there was a response, it's here */
+    response: ModalResponse | null;
   }>(),
-  modalResponse: action<{
-    // FIXME: this is messy
-
-    /** which manifest action was picked when launching a game */
-    manifestActionName?: string;
-
-    /** whether or not to install the sandbox */
-    sandboxBlessing?: boolean;
-
-    /** which build id to revert to */
-    revertBuildId?: number;
-
-    /** two-factor authentication code entered */
-    totpCode?: string;
-
-    /** whether to clear cookies */
-    cookies?: boolean;
-
-    /** whether to clear cache */
-    cache?: boolean;
-
-    /** manually picked upload for install */
-    pickedUploadIndex?: number;
-
-    /** recaptcha challenge response */
-    recaptchaResponse?: string;
-  }>(),
-  modalNoResponse: action<{}>(),
+  modalResponse: action<ModalResponse>(),
 
   // setup
 

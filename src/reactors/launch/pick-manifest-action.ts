@@ -60,9 +60,9 @@ export default async function pickManifestAction(
     buttons,
   });
 
-  if (response.type === "modalResponse") {
+  if (response) {
     return findWhere(manifest.actions, {
-      name: response.payload.manifestActionName,
+      name: response.manifestActionName,
     });
   }
 

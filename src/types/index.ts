@@ -984,3 +984,31 @@ export interface IOpenContextMenuBase {
   /** top coordinate, in pixels */
   clientY: number;
 }
+
+export interface ModalResponse {
+  // FIXME: this is messy
+
+  /** which manifest action was picked when launching a game */
+  manifestActionName?: string;
+
+  /** whether or not to install the sandbox */
+  sandboxBlessing?: boolean;
+
+  /** which build id to revert to */
+  revertBuildId?: number;
+
+  /** two-factor authentication code entered */
+  totpCode?: string;
+
+  /** whether to clear cookies */
+  cookies?: boolean;
+
+  /** whether to clear cache */
+  cache?: boolean;
+
+  /** manually picked upload for install */
+  pickedUploadIndex?: number;
+
+  /** recaptcha challenge response */
+  recaptchaResponse?: string;
+}

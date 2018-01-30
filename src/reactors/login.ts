@@ -56,8 +56,8 @@ export default function(watcher: Watcher) {
           } as IRecaptchaInputParams,
         });
 
-        if (modalRes.type === "modalResponse") {
-          extras.recaptchaResponse = modalRes.payload.recaptchaResponse;
+        if (modalRes) {
+          extras.recaptchaResponse = modalRes.recaptchaResponse;
           passwordRes = await client.loginWithPassword(
             username,
             password,
@@ -94,8 +94,8 @@ export default function(watcher: Watcher) {
           } as ITwoFactorInputParams,
         });
 
-        if (modalRes.type === "modalResponse") {
-          const code = modalRes.payload.totpCode;
+        if (modalRes) {
+          const code = modalRes.totpCode;
           const totpRes = await client.totpVerify(passwordRes.token, code);
           res = totpRes;
         } else {

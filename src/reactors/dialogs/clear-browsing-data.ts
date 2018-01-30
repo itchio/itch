@@ -23,15 +23,15 @@ export default function(watcher: Watcher) {
       ],
     });
 
-    if (response.type !== "modalResponse") {
+    if (!response) {
       // modal was closed
       return;
     }
 
     store.dispatch(
       actions.clearBrowsingData({
-        cache: response.payload.cache,
-        cookies: response.payload.cookies,
+        cache: response.cache,
+        cookies: response.cookies,
       })
     );
   });
