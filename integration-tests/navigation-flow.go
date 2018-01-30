@@ -3,7 +3,7 @@ package main
 const currTab = ".meat-tab[data-visible=true] "
 
 func navigationFlow(r *runner) {
-	must(r.waitForVisible("#user-menu"))
+	must(r.waitForVisible(".meat-tab.visible .user-menu"))
 
 	r.logf("navigating to dashboard")
 	must(r.click("#sidebar section[data-path='dashboard']"))

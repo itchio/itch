@@ -11,7 +11,6 @@ import urls from "../../constants/urls";
 import styled, * as styles from "../styles";
 import Filler from "../basics/filler";
 
-import Icon from "../basics/icon";
 import { OwnUser } from "ts-itchio-api";
 import { actions } from "../../actions/index";
 
@@ -62,7 +61,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
     const { coverUrl = defaultImages.avatar, username, displayName } = me;
 
     return (
-      <UserMenuDiv id="user-menu" onClick={this.openMenu}>
+      <UserMenuDiv className="user-menu" onClick={this.openMenu}>
         <img src={coverUrl} />
         <span>{displayName || username}</span>
         <Filler />

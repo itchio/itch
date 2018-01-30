@@ -11,7 +11,7 @@ func prepareFlow(r *runner) {
 	must(r.setValue("#login-username", testAccountName))
 	must(r.setValue("#login-password", testAccountPassword))
 	must(r.click("#login-button"))
-	must(r.waitForVisible("#user-menu"))
+	must(r.waitForVisible(".meat-tab.visible .user-menu"))
 
 	butlerExeName := "butler"
 	if runtime.GOOS == "windows" {

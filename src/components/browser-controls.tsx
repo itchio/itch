@@ -119,6 +119,7 @@ export class BrowserControls extends React.PureComponent<
         )}
         {editingAddress ? (
           <BrowserAddressInput
+            className="browser-address"
             type="search"
             disabled={frozen}
             innerRef={this.onBrowserAddress as any}
@@ -128,7 +129,7 @@ export class BrowserControls extends React.PureComponent<
           />
         ) : (
           <BrowserAddressSpan
-            className={classNames({ frozen })}
+            className={classNames("browser-address", { frozen })}
             innerRef={this.onBrowserAddress}
             onClick={this.startEditingAddress}
           >

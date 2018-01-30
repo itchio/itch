@@ -64,7 +64,10 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <TitleFiltersContainer className="title-bar">
-        <DraggableDiv className={classNames({ dimmed: !focused })}>
+        <DraggableDiv
+          id="title-draggable"
+          className={classNames({ dimmed: !focused })}
+        >
           <DraggableDivInner>
             <TitleDiv className="title-bar-text">{format(label)}</TitleDiv>
             {inner}

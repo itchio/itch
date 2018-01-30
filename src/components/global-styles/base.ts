@@ -7,10 +7,6 @@ const testDisables = () => {
   }
 
   return css`
-    canvas.ink {
-      display: none !important;
-    }
-
     * {
       transition-property: none !important;
       -o-transition-property: none !important;
@@ -28,7 +24,8 @@ const testDisables = () => {
 };
 
 export default css`
-  html, body {
+  html,
+  body {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -48,5 +45,5 @@ export default css`
     color: ${theme.accent};
   }
 
-  ${testDisables()} 
+  ${testDisables()};
 `;

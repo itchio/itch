@@ -8,7 +8,7 @@ import (
 
 func loginFlow(r *runner) {
 	logout := func(forReal bool) {
-		must(r.click("#user-menu"))
+		must(r.click(".meat-tab.visible .user-menu"))
 		must(r.click("#user-menu-change-user"))
 
 		if forReal {
@@ -41,7 +41,7 @@ func loginFlow(r *runner) {
 		must(r.setValue("#login-username", testAccountName))
 		must(r.setValue("#login-password", testAccountPassword))
 		must(r.click("#login-button"))
-		must(r.waitForVisible("#user-menu"))
+		must(r.waitForVisible(".meat-tab.visible .user-menu"))
 	}
 	loginWithPassword()
 
@@ -50,8 +50,8 @@ func loginFlow(r *runner) {
 
 	r.logf("opening new tab")
 	must(r.click("#new-tab-icon"))
-	must(r.click("input.browser-address"))
-	must(r.setValue("input.browser-address", "https://itch.io/login"))
+	must(r.click(".meat-tab.visible .browser-address"))
+	must(r.setValue(".meat-tab.visible .browser-address", "https://itch.io/login"))
 	must(r.click(".meat-tab.visible .go-button"))
 
 	r.logf("checking that we're redirected to the dashboard")
@@ -61,7 +61,7 @@ func loginFlow(r *runner) {
 	))
 
 	r.logf("now clearing cookies")
-	must(r.click("#user-menu"))
+	must(r.click(".meat-tab.visible .user-menu"))
 	must(r.click("#user-menu-preferences"))
 
 	r.logf("expanding advanced preferences")
@@ -87,7 +87,7 @@ func loginFlow(r *runner) {
 	))
 
 	r.logf("opening downloads tab")
-	must(r.click("#user-menu"))
+	must(r.click(".meat-tab.visible .user-menu"))
 	must(r.click("#user-menu-downloads"))
 	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Downloads"))
 
@@ -98,7 +98,7 @@ func loginFlow(r *runner) {
 
 	r.logf("logging back in with remembered sessions")
 	must(r.click(".remembered-session"))
-	must(r.waitForVisible("#user-menu"))
+	must(r.waitForVisible(".meat-tab.visible .user-menu"))
 
 	r.logf("making sure preferences tab was restored")
 	must(r.waitForVisible("#sidebar section[data-path='preferences']"))

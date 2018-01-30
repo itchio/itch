@@ -59,7 +59,7 @@ func installFlow(r *runner) {
 	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", "My creations"))
 
 	r.logf("opening preferences")
-	must(r.click("#user-menu"))
+	must(r.click(".meat-tab.visible .user-menu"))
 	must(r.click("#user-menu-preferences"))
 	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Preferences"))
 
