@@ -338,5 +338,6 @@
     "download.outcome.reinstalled": "tekrar yüklendi",
     "download.outcome.reverted": "başka bir sürümle değiştirildi",
     "download.outcome.healed": "doğrulandı ve onarıldı",
-    "grid.item.open_file_location.windows": "Dosyayı gezginde aç"
+    "grid.item.open_file_location.windows": "Dosyayı gezginde aç",
+    "game.install.could_not_launch.missing_jre": "Sisteminizde bulunmayan Java'ya ihtiyaç duyuyor"
 }
