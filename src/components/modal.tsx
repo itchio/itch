@@ -572,9 +572,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
     let onClick = () => closeModal({ action });
     if (actionSource === "widget") {
-      onClick = () => {
-        action = actions.modalResponse(this.state.widgetPayload);
-      };
+      action = actions.modalResponse(this.state.widgetPayload);
     }
     return onClick;
   }
