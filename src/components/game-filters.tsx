@@ -38,7 +38,9 @@ const SecondaryText = styled.section`
   color: ${props => props.theme.secondaryText};
 `;
 
-const LayoutPickers = styled.section`display: flex;`;
+const LayoutPickers = styled.section`
+  display: flex;
+`;
 
 const Spacer = styled.div`
   width: 10px;
@@ -57,7 +59,11 @@ const LayoutPicker = styled.section`
   }
 
   ${(props: ILayoutPickerProps) =>
-    props.active ? css`filter: brightness(100%);` : ""};
+    props.active
+      ? css`
+          filter: brightness(100%);
+        `
+      : ""};
 `;
 
 class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
@@ -114,7 +120,12 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
           </SecondaryText>
         )}
 
-        {this.props.children ? [<Spacer />, this.props.children] : null}
+        {this.props.children ? (
+          <>
+            <Spacer />
+            {this.props.children}
+          </>
+        ) : null}
         <Filler />
         {showLayoutPicker ? this.renderLayoutPickers() : null}
       </FiltersContainer>
