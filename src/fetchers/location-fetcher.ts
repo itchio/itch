@@ -29,6 +29,6 @@ export default class LocationFetcher extends Fetcher {
       )
     );
 
-    this.pushUnfilteredGames(games);
+    this.pushUnfilteredGames(games, { disableFilters: true });
   }
 }

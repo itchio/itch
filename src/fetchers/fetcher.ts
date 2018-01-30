@@ -7,7 +7,7 @@ import { actions } from "../actions";
 import defaultApiClient, { AuthenticatedClient, Client } from "../api";
 import { isNetworkError } from "../net/errors";
 
-import { sortAndFilter } from "./sort-and-filter";
+import { sortAndFilter, ISortAndFilterOpts } from "./sort-and-filter";
 
 import Context from "../context";
 
@@ -249,8 +249,8 @@ export class Fetcher {
     return this._space;
   }
 
-  pushUnfilteredGames(input: Game[]) {
-    const games = this.sortAndFilter(input);
+  pushUnfilteredGames(input: Game[], opts: ISortAndFilterOpts = {}) {
+    const games = this.sortAndFilter(input, opts);
     this.logger.debug(
       `Pushing games, ${input.length} => (sort+filter) => ${games.length}`
     );
@@ -275,8 +275,8 @@ export class Fetcher {
     });
   }
 
-  sortAndFilter(input: Game[]): Game[] {
-    return sortAndFilter(input, this.tab, this.ctx.store);
+  sortAndFilter(input: Game[], opts: ISortAndFilterOpts = {}): Game[] {
+    return sortAndFilter(input, this.tab, this.ctx.store, opts);
   }
 
   clean() {

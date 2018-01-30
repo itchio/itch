@@ -25,10 +25,15 @@ function getCaveSummary(commons: ICommonsState, game: Game): ICaveSummary {
   return null;
 }
 
+export interface ISortAndFilterOpts {
+  disableFilters?: boolean;
+}
+
 export function sortAndFilter(
   games: Game[],
   tab: string,
-  store: IStore
+  store: IStore,
+  opts: ISortAndFilterOpts = {}
 ): Game[] {
   let set = games;
   const state = store.getState();
@@ -41,7 +46,7 @@ export function sortAndFilter(
     prefs.onlyInstalledGames ||
     prefs.onlyOwnedGames;
 
-  if (hasFilters) {
+  if (hasFilters && !opts.disableFilters) {
     const installedSet = state.commons.caveIdsByGameId;
     const ownedSet = state.commons.downloadKeyIdsByGameId;
 
