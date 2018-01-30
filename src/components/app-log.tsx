@@ -1,13 +1,13 @@
 import { IMeatProps } from "./meats/types";
 import * as React from "react";
-import { actions, dispatcher } from "../actions";
+import { actions } from "../actions";
 
 import styled, * as styles from "./styles";
 import TitleBar from "./title-bar";
 import Log from "./basics/log";
 import Link from "./basics/link";
 import IconButton from "./basics/icon-button";
-import { connect } from "./connect";
+import { connect, Dispatchers } from "./connect";
 import format from "./format";
 import { showInExplorerString } from "../format/show-in-explorer";
 
@@ -74,14 +74,11 @@ class AppLog extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IMeatProps {}
 
-interface IDerivedProps {
-  openAppLog: typeof actions.openAppLog;
-  tabReloaded: typeof actions.tabReloaded;
-}
+const actionCreators = {
+  openAppLog: actions.openAppLog,
+  tabReloaded: actions.tabReloaded,
+};
 
-export default connect<IProps>(AppLog, {
-  dispatch: dispatch => ({
-    openAppLog: dispatcher(dispatch, actions.openAppLog),
-    tabReloaded: dispatcher(dispatch, actions.tabReloaded),
-  }),
-});
+type IDerivedProps = Dispatchers<typeof actionCreators>;
+
+export default connect<IProps>(AppLog, { actionCreators });
