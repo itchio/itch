@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect } from "../connect";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 
@@ -7,8 +7,6 @@ import LoadingCircle from "../basics/loading-circle";
 import Icon from "../basics/icon";
 import Button from "../basics/button";
 import IconButton from "../basics/icon-button";
-
-import { actions, dispatcher } from "../../actions";
 
 import {
   IGameStatus,
@@ -156,7 +154,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
         this.props.navigate({ tab: "downloads" });
       } else if (operation.type === OperationType.Task) {
         if (operation.name === "launch") {
-          this.props.abortGameRequest({ game });
+          this.props.forceCloseGameRequest({ game });
         }
       }
     } else if (cave) {
@@ -184,24 +182,17 @@ interface IProps {
   iconOnly?: boolean;
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "queueGame",
+  "showGameUpdate",
+  "initiatePurchase",
+  "forceCloseGameRequest",
+  "navigate",
+  "viewCaveDetails"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   intl: InjectedIntl;
+};
 
-  queueGame: typeof actions.queueGame;
-  showGameUpdate: typeof actions.showGameUpdate;
-  initiatePurchase: typeof actions.initiatePurchase;
-  abortGameRequest: typeof actions.forceCloseGameRequest;
-  navigate: typeof actions.navigate;
-  viewCaveDetails: typeof actions.viewCaveDetails;
-}
-
-export default connect<IProps>(injectIntl(MainAction), {
-  dispatch: dispatch => ({
-    queueGame: dispatcher(dispatch, actions.queueGame),
-    showGameUpdate: dispatcher(dispatch, actions.showGameUpdate),
-    initiatePurchase: dispatcher(dispatch, actions.initiatePurchase),
-    abortGameRequest: dispatcher(dispatch, actions.forceCloseGameRequest),
-    navigate: dispatcher(dispatch, actions.navigate),
-    viewCaveDetails: dispatcher(dispatch, actions.viewCaveDetails),
-  }),
-});
+export default connect<IProps>(injectIntl(MainAction), { actionCreators });

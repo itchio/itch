@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
 import { IRootState, TabLayout, ITabParams, IGameSet } from "../types";
@@ -13,7 +13,6 @@ import EmptyState from "./empty-state";
 import { ISortParams } from "./sort-types";
 
 import { injectIntl, InjectedIntl } from "react-intl";
-import { actions, dispatcher } from "../actions";
 
 import styled from "./styles";
 import { Space } from "../helpers/space";
@@ -123,7 +122,9 @@ interface IProps {
   columns?: GameColumn[];
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("tabParamsChanged", "clearFilters");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   games: IGameSet;
   gameIds: number[];
   totalCount: number;
@@ -132,10 +133,8 @@ interface IDerivedProps {
   prefLayout: TabLayout;
   params: ITabParams;
 
-  tabParamsChanged: typeof actions.tabParamsChanged;
-  clearFilters: typeof actions.clearFilters;
   intl: InjectedIntl;
-}
+};
 
 const eo: any = {};
 const ea: any[] = [];
@@ -158,8 +157,5 @@ export default connect<IProps>(injectIntl(Games), {
       })
     );
   },
-  dispatch: dispatch => ({
-    tabParamsChanged: dispatcher(dispatch, actions.tabParamsChanged),
-    clearFilters: dispatcher(dispatch, actions.clearFilters),
-  }),
+  actionCreators,
 });

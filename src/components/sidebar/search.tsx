@@ -5,9 +5,9 @@ import styled, * as styles from "../styles";
 
 import watching, { Watcher } from "../watching";
 
-import { connect } from "../connect";
+import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
-import { actions, dispatcher } from "../../actions";
+import { actions } from "../../actions";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatString } from "../format";
@@ -138,20 +138,15 @@ class Search extends React.PureComponent<IDerivedProps> {
   };
 }
 
-interface IDerivedProps {
-  search: typeof actions.search;
-  focusSearch: typeof actions.focusSearch;
-  closeSearch: typeof actions.closeSearch;
-  searchHighlightOffset: typeof actions.searchHighlightOffset;
+const actionCreators = actionCreatorsList(
+  "search",
+  "focusSearch",
+  "closeSearch",
+  "searchHighlightOffset"
+);
 
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   intl: InjectedIntl;
-}
+};
 
-export default connect<{}>(injectIntl(Search), {
-  dispatch: dispatch => ({
-    search: dispatcher(dispatch, actions.search),
-    focusSearch: dispatcher(dispatch, actions.focusSearch),
-    closeSearch: dispatcher(dispatch, actions.closeSearch),
-    searchHighlightOffset: dispatcher(dispatch, actions.searchHighlightOffset),
-  }),
-});
+export default connect<{}>(injectIntl(Search), { actionCreators });

@@ -1,11 +1,9 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import { connect } from "../connect";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import Chart from "./chart";
 
 import { downloadProgress, fileSize } from "../../format";
-
-import { actions, dispatcher } from "../../actions";
 
 import TimeAgo from "../basics/time-ago";
 import IconButton from "../basics/icon-button";
@@ -479,7 +477,18 @@ interface IProps extends IHoverProps {
   item: IDownloadItem;
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "navigateToGame",
+  "prioritizeDownload",
+  "showDownloadError",
+  "pauseDownloads",
+  "resumeDownloads",
+  "discardDownloadRequest",
+  "openGameContextMenu",
+  "openModal"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   status: IGameStatus;
   speeds: IDownloadSpeeds;
 
@@ -488,17 +497,8 @@ interface IDerivedProps {
     [gameId: string]: ITask[];
   };
 
-  navigateToGame: typeof actions.navigateToGame;
-  prioritizeDownload: typeof actions.prioritizeDownload;
-  showDownloadError: typeof actions.showDownloadError;
-  pauseDownloads: typeof actions.pauseDownloads;
-  resumeDownloads: typeof actions.resumeDownloads;
-  discardDownloadRequest: typeof actions.discardDownloadRequest;
-  openGameContextMenu: typeof actions.openGameContextMenu;
-  openModal: typeof actions.openModal;
-
   intl: InjectedIntl;
-}
+};
 
 const HoverDownloadRow = Hover(DownloadRow);
 
@@ -513,18 +513,5 @@ export default connect<IProps>(injectIntl(HoverDownloadRow), {
       status: getGameStatus(rs, game),
     };
   },
-  dispatch: dispatch => ({
-    navigateToGame: dispatcher(dispatch, actions.navigateToGame),
-    prioritizeDownload: dispatcher(dispatch, actions.prioritizeDownload),
-    showDownloadError: dispatcher(dispatch, actions.showDownloadError),
-    pauseDownloads: dispatcher(dispatch, actions.pauseDownloads),
-    resumeDownloads: dispatcher(dispatch, actions.resumeDownloads),
-    retryDownload: dispatcher(dispatch, actions.retryDownload),
-    discardDownloadRequest: dispatcher(
-      dispatch,
-      actions.discardDownloadRequest
-    ),
-    openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
-    openModal: dispatcher(dispatch, actions.openModal),
-  }),
+  actionCreators,
 });

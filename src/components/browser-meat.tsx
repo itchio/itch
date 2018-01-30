@@ -1,11 +1,9 @@
 import { createStructuredSelector } from "reselect";
 import * as classNames from "classnames";
 import * as React from "react";
-import { connect, Dispatchers } from "./connect";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import { injectIntl, InjectedIntl } from "react-intl";
-
-import { actionCreatorsList } from "../actions";
 
 import partitionForUser from "../util/partition-for-user";
 import { getInjectPath } from "../os/resources";

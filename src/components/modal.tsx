@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import { createStructuredSelector } from "reselect";
 
 import ReactModal = require("react-modal");
@@ -19,7 +19,7 @@ import colors from "../constants/colors";
 import { actions } from "../actions";
 import { map, isEmpty, filter } from "underscore";
 
-import { IModal, IModalButtonSpec, IModalButton, IModalAction } from "../types";
+import { IModal, IModalButtonSpec, IModalButton } from "../types";
 
 import { IModalWidgetProps } from "./modal-widgets/modal-widget";
 
@@ -566,13 +566,14 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   buttonOnClick(button: IModalButton): () => void {
-    const { dispatch } = this.props;
-    const { action, actionSource } = button;
+    const { closeModal } = this.props;
+    const { actionSource } = button;
+    let { action } = button;
 
-    let onClick = () => dispatch(action);
+    let onClick = () => closeModal({ action });
     if (actionSource === "widget") {
       onClick = () => {
-        dispatch(actions.modalResponse(this.state.widgetPayload));
+        action = actions.modalResponse(this.state.widgetPayload);
       };
     }
     return onClick;
@@ -607,14 +608,13 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
 interface IProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("closeModal");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   modal: IModal;
 
-  closeModal: typeof actions.closeModal;
-  dispatch: (action: IModalAction) => void;
-
   intl: InjectedIntl;
-}
+};
 
 interface IState {
   widgetPayload?: typeof actions.modalResponse.payload;
@@ -624,10 +624,5 @@ export default connect<IProps>(injectIntl(Modal), {
   state: createStructuredSelector({
     modal: state => state.modals[0],
   }),
-  dispatch: (dispatch, props) => ({
-    dispatch: (action: IModalAction) => {
-      dispatch(actions.closeModal({ action }));
-    },
-    closeModal: () => dispatch(actions.closeModal({})),
-  }),
+  actionCreators,
 });

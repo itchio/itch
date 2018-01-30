@@ -1,10 +1,8 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
-import { connect } from "../connect";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import { IRootState } from "../../types";
-
-import { actions, dispatcher } from "../../actions";
 
 import defaultImages from "../../constants/default-images";
 
@@ -153,37 +151,29 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "viewCreatorProfile",
+  "viewCommunityProfile",
+  "changeUser",
+  "navigate",
+  "quit",
+  "reportIssue",
+  "openUrl",
+  "checkForSelfUpdate",
+  "viewChangelog"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   me: OwnUser;
   displayName?: string;
   username: string;
   coverUrl: string;
-
-  viewCreatorProfile: typeof actions.viewCreatorProfile;
-  viewCommunityProfile: typeof actions.viewCommunityProfile;
-  changeUser: typeof actions.changeUser;
-  navigate: typeof actions.navigate;
-  quit: typeof actions.quit;
-  reportIssue: typeof actions.reportIssue;
-  openUrl: typeof actions.openUrl;
-  checkForSelfUpdate: typeof actions.checkForSelfUpdate;
-  viewChangelog: typeof actions.viewChangelog;
-}
+};
 
 export default connect<IProps>(UserMenu, {
   state: () =>
     createStructuredSelector({
       me: (rs: IRootState) => rs.session.credentials.me,
     }),
-  dispatch: dispatch => ({
-    viewCreatorProfile: dispatcher(dispatch, actions.viewCreatorProfile),
-    viewCommunityProfile: dispatcher(dispatch, actions.viewCommunityProfile),
-    changeUser: dispatcher(dispatch, actions.changeUser),
-    navigate: dispatcher(dispatch, actions.navigate),
-    quit: dispatcher(dispatch, actions.quit),
-    reportIssue: dispatcher(dispatch, actions.reportIssue),
-    openUrl: dispatcher(dispatch, actions.openUrl),
-    checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
-    viewChangelog: dispatcher(dispatch, actions.viewChangelog),
-  }),
+  actionCreators,
 });

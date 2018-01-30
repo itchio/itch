@@ -1,7 +1,5 @@
 import * as React from "react";
-import { connect } from "./connect";
-
-import { actions, dispatcher } from "../actions";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import { IMeatProps } from "./meats/types";
 
@@ -62,12 +60,8 @@ export class Location extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IMeatProps {}
 
-interface IDerivedProps {
-  browseInstallLocation: typeof actions.browseInstallLocation;
-}
+const actionCreators = actionCreatorsList("browseInstallLocation");
 
-export default connect<IProps>(Location, {
-  dispatch: dispatch => ({
-    browseInstallLocation: dispatcher(dispatch, actions.browseInstallLocation),
-  }),
-});
+type IDerivedProps = Dispatchers<typeof actionCreators>;
+
+export default connect<IProps>(Location, { actionCreators });

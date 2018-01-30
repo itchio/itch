@@ -13,9 +13,8 @@ const HoverCover = Hoverable(Cover);
 import MainAction from "../game-actions/main-action";
 import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { IRootState } from "../../types/index";
-import { connect } from "../connect";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
-import { actions, dispatcher } from "../../actions";
 import isCavePristine from "../../helpers/is-cave-pristine";
 import { Game } from "ts-itchio-api";
 
@@ -98,17 +97,15 @@ interface IProps {
   globalMargin: number;
 }
 
-interface IDerivedProps {
-  status: IGameStatus;
+const actionCreators = actionCreatorsList("openGameContextMenu");
 
-  openGameContextMenu: typeof actions.openGameContextMenu;
-}
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
+  status: IGameStatus;
+};
 
 export default connect<IProps>(Cell, {
   state: (rs: IRootState, props: IProps) => ({
     status: getGameStatus(rs, props.game),
   }),
-  dispatch: dispatch => ({
-    openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
-  }),
+  actionCreators,
 });

@@ -5,7 +5,7 @@ import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 import { ICave } from "../../db/models/cave";
 import { fromDateTimeField } from "../../db/datetime-field";
 
-import { actions, dispatcher } from "../../actions";
+import { actions } from "../../actions";
 
 import format from "../format";
 
@@ -20,7 +20,7 @@ import {
   formatDate,
 } from "../../format/index";
 import { DATE_FORMAT } from "../../format/datetime";
-import { connect } from "../connect";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Game, Build } from "ts-itchio-api";
 
 const BuildListDiv = styled.div`
@@ -168,14 +168,10 @@ export interface IRevertCaveParams {
 
 interface IProps extends IModalWidgetProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("closeModal");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   intl: InjectedIntl;
+};
 
-  closeModal: typeof actions.closeModal;
-}
-
-export default connect<IProps>(injectIntl(RevertCave), {
-  dispatch: dispatch => ({
-    closeModal: dispatcher(dispatch, actions.closeModal),
-  }),
-});
+export default connect<IProps>(injectIntl(RevertCave), { actionCreators });

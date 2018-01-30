@@ -1,7 +1,7 @@
 import { connect as reduxConnect } from "react-redux";
 
 import { IRootState, IDispatch } from "../types";
-import { ActionCreator, dispatcher } from "../actions/index";
+import { ActionCreator, dispatcher, actions } from "../actions/index";
 
 export type IActionCreators = {
   [key: string]: ActionCreator<any>;
@@ -23,6 +23,18 @@ interface IConnectOpts {
   state?: IStateMapper;
   dispatch?: IDispatchMapper;
   actionCreators?: IActionCreators;
+}
+
+type actionTypes = typeof actions;
+
+export function actionCreatorsList<K extends keyof actionTypes>(
+  ...input: K[]
+): Pick<actionTypes, K> {
+  const res: Pick<actionTypes, K> = {} as any;
+  for (const k of input) {
+    res[k] = actions[k];
+  }
+  return res;
 }
 
 export function connect<TProps>(

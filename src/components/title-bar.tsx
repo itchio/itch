@@ -1,11 +1,9 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
-import { connect } from "./connect";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import * as classNames from "classnames";
 
 import { IRootState, ITabData } from "../types";
-
-import { actions, dispatcher } from "../actions";
 
 import { FiltersContainer, filtersContainerHeight } from "./filters-container";
 import IconButton from "./basics/icon-button";
@@ -109,16 +107,18 @@ interface IProps {
   inner?: JSX.Element | JSX.Element[];
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "navigate",
+  "hideWindow",
+  "minimizeWindow",
+  "toggleMaximizeWindow"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   tabData: ITabData;
   maximized: boolean;
   focused: boolean;
-
-  navigate: typeof actions.navigate;
-  hideWindow: typeof actions.hideWindow;
-  minimizeWindow: typeof actions.minimizeWindow;
-  toggleMaximizeWindow: typeof actions.toggleMaximizeWindow;
-}
+};
 
 export default connect<IProps>(TitleBar, {
   state: () =>
@@ -128,10 +128,5 @@ export default connect<IProps>(TitleBar, {
       maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
       focused: (rs: IRootState) => rs.ui.mainWindow.focused,
     }),
-  dispatch: dispatch => ({
-    navigate: dispatcher(dispatch, actions.navigate),
-    hideWindow: dispatcher(dispatch, actions.hideWindow),
-    minimizeWindow: dispatcher(dispatch, actions.minimizeWindow),
-    toggleMaximizeWindow: dispatcher(dispatch, actions.toggleMaximizeWindow),
-  }),
+  actionCreators,
 });

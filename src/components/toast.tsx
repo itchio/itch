@@ -1,7 +1,5 @@
 import * as React from "react";
-import { connect } from "./connect";
-
-import { actions, dispatcher } from "../actions";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 
 import Icon from "./basics/icon";
 import { IMeatProps } from "./meats/types";
@@ -78,18 +76,12 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps, IState> {
 
 interface IProps extends IMeatProps {}
 
-interface IDerivedProps {
-  evolveTab: typeof actions.evolveTab;
-  reportIssue: typeof actions.reportIssue;
-}
+const actionCreators = actionCreatorsList("evolveTab", "reportIssue");
+
+type IDerivedProps = Dispatchers<typeof actionCreators>;
 
 interface IState {
   expanded: boolean;
 }
 
-export default connect<IProps>(Toast, {
-  dispatch: dispatch => ({
-    evolveTab: dispatcher(dispatch, actions.evolveTab),
-    reportIssue: dispatcher(dispatch, actions.reportIssue),
-  }),
-});
+export default connect<IProps>(Toast, { actionCreators });

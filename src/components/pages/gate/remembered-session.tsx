@@ -1,12 +1,12 @@
 import * as React from "react";
-import { connect } from "../../connect";
+import { connect, Dispatchers, actionCreatorsList } from "../../connect";
 
 import TimeAgo from "../../basics/time-ago";
 import IconButton from "../../basics/icon-button";
 
 import defaultImages from "../../../constants/default-images";
 
-import { actions, dispatcher } from "../../../actions";
+import { actions } from "../../../actions";
 
 import { IRememberedSession } from "../../../types";
 
@@ -123,14 +123,11 @@ interface IProps {
   onLogin?: (payload: typeof actions.loginWithToken.payload) => void;
 }
 
-interface IDerivedProps {
-  loginWithToken: typeof actions.loginWithToken;
-  forgetSessionRequest: typeof actions.forgetSessionRequest;
-}
+const actionCreators = actionCreatorsList(
+  "loginWithToken",
+  "forgetSessionRequest"
+);
 
-export default connect<IProps>(RememberedSession, {
-  dispatch: dispatch => ({
-    loginWithToken: dispatcher(dispatch, actions.loginWithToken),
-    forgetSessionRequest: dispatcher(dispatch, actions.forgetSessionRequest),
-  }),
-});
+type IDerivedProps = Dispatchers<typeof actionCreators>;
+
+export default connect<IProps>(RememberedSession, { actionCreators });

@@ -1,8 +1,6 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import { createStructuredSelector } from "reselect";
-
-import { actions, dispatcher } from "../actions";
 
 import AllMeats from "./meats/all-meats";
 
@@ -43,17 +41,15 @@ export class HubContent extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {}
 
-interface IDerivedProps {
-  credentials: ICredentials;
+const actionCreators = actionCreatorsList("firstUsefulPage");
 
-  firstUsefulPage: typeof actions.firstUsefulPage;
-}
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
+  credentials: ICredentials;
+};
 
 export default connect<IProps>(HubContent, {
   state: createStructuredSelector({
     credentials: state => state.session.credentials,
   }),
-  dispatch: dispatch => ({
-    firstUsefulPage: dispatcher(dispatch, actions.firstUsefulPage),
-  }),
+  actionCreators,
 });

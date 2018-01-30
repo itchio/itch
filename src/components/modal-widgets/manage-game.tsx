@@ -11,10 +11,10 @@ import styled from "../styles";
 
 import { map, find, filter } from "underscore";
 import { fileSize } from "../../format/filesize";
-import { connect } from "../connect";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import PlatformIcons from "../basics/platform-icons";
 
-import { actions, dispatcher } from "../../actions";
+import { actions } from "../../actions";
 import format, { formatString } from "../format";
 import { injectIntl, InjectedIntl } from "react-intl";
 import LoadingCircle from "../basics/loading-circle";
@@ -237,16 +237,10 @@ export interface IManageGameParams {
 
 interface IProps extends IModalWidgetProps {}
 
-interface IDerivedProps {
-  closeModal: typeof actions.closeModal;
-  exploreCave: typeof actions.exploreCave;
+const actionCreators = actionCreatorsList("closeModal", "exploreCave");
 
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   intl: InjectedIntl;
-}
+};
 
-export default connect<IProps>(injectIntl(ManageGame), {
-  dispatch: dispatch => ({
-    closeModal: dispatcher(dispatch, actions.closeModal),
-    exploreCave: dispatcher(dispatch, actions.exploreCave),
-  }),
-});
+export default connect<IProps>(injectIntl(ManageGame), { actionCreators });

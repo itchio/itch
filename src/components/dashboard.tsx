@@ -1,8 +1,7 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import urls from "../constants/urls";
-import { actions, dispatcher } from "../actions";
 
 import Link from "./basics/link";
 import Games from "./games";
@@ -36,13 +35,10 @@ export class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IMeatProps {}
 
-interface IDerivedProps {
-  navigate: typeof actions.navigate;
-  intl: InjectedIntl;
-}
+const actionCreators = actionCreatorsList("navigate");
 
-export default connect<IProps>(injectIntl(Dashboard), {
-  dispatch: dispatch => ({
-    navigate: dispatcher(dispatch, actions.navigate),
-  }),
-});
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
+  intl: InjectedIntl;
+};
+
+export default connect<IProps>(injectIntl(Dashboard), { actionCreators });

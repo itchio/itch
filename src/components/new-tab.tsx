@@ -1,10 +1,9 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 
 import { map } from "underscore";
 
 import urls from "../constants/urls";
-import { actions, dispatcher } from "../actions";
 
 import Filler from "./basics/filler";
 import Icon from "./basics/icon";
@@ -175,17 +174,13 @@ export class NewTab extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IMeatProps {}
 
-interface IDerivedProps {
-  evolveTab: typeof actions.evolveTab;
+const actionCreators = actionCreatorsList("evolveTab");
 
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   intl: InjectedIntl;
-}
+};
 
-export default connect<IProps>(injectIntl(NewTab), {
-  dispatch: dispatch => ({
-    evolveTab: dispatcher(dispatch, actions.evolveTab),
-  }),
-});
+export default connect<IProps>(injectIntl(NewTab), { actionCreators });
 
 // TODO: show recommended for you?
 const newTabItems = [

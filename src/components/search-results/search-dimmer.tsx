@@ -1,10 +1,8 @@
 import { IRootState } from "../../types/index";
-import { connect } from "../connect";
+import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import * as React from "react";
 import styled from "../styles";
 import * as classNames from "classnames";
-
-import { actions, dispatcher } from "../../actions";
 
 const SearchDiv = styled.div`
   position: absolute;
@@ -37,17 +35,15 @@ class SearchDimmer extends React.Component<IDerivedProps> {
   };
 }
 
-interface IDerivedProps {
-  open: boolean;
+const actionCreators = actionCreatorsList("closeSearch");
 
-  closeSearch: typeof actions.closeSearch;
-}
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
+  open: boolean;
+};
 
 export default connect<{}>(SearchDimmer, {
   state: (rs: IRootState) => ({
     open: rs.session.search.open,
   }),
-  dispatch: dispatch => ({
-    closeSearch: dispatcher(dispatch, actions.closeSearch),
-  }),
+  actionCreators,
 });

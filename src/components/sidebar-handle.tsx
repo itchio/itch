@@ -1,7 +1,5 @@
 import * as React from "react";
-import { connect } from "./connect";
-
-import { actions, dispatcher } from "../actions";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 
 import styled from "./styles";
 
@@ -65,16 +63,12 @@ class SidebarHandle extends React.PureComponent<
 
 interface IProps {}
 
-interface IDerivedProps {
-  updatePreferences: typeof actions.updatePreferences;
-}
+const actionCreators = actionCreatorsList("updatePreferences");
+
+type IDerivedProps = Dispatchers<typeof actionCreators>;
 
 interface IState {
   isResizing: boolean;
 }
 
-export default connect<IProps>(SidebarHandle, {
-  dispatch: dispatch => ({
-    updatePreferences: dispatcher(dispatch, actions.updatePreferences),
-  }),
-});
+export default connect<IProps>(SidebarHandle, { actionCreators });

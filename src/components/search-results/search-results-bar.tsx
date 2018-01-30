@@ -1,12 +1,12 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { connect } from "../connect";
+import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import { createStructuredSelector } from "reselect";
 
 import { each, isEmpty } from "underscore";
 
-import { actions, dispatcher } from "../../actions";
+import { actions } from "../../actions";
 import watching, { Watcher } from "../watching";
 
 import { IRootState, ISearchResults } from "../../types";
@@ -233,19 +233,21 @@ export class SearchResultBar extends React.PureComponent<
 
 interface IProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "closeSearch",
+  "navigate",
+  "navigateToGame",
+  "navigateToUser"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   open: boolean;
   loading: boolean;
   highlight: number;
   query: string;
   results: ISearchResults;
   example: string;
-
-  closeSearch: typeof actions.closeSearch;
-  navigate: typeof actions.navigate;
-  navigateToGame: typeof actions.navigateToGame;
-  navigateToUser: typeof actions.navigateToUser;
-}
+};
 
 interface IState {
   chosen: number;
@@ -260,10 +262,5 @@ export default connect<IProps>(SearchResultBar, {
     results: (rs: IRootState) => rs.session.search.results,
     example: (rs: IRootState) => rs.session.search.example,
   }),
-  dispatch: dispatch => ({
-    closeSearch: dispatcher(dispatch, actions.closeSearch),
-    navigate: dispatcher(dispatch, actions.navigate),
-    navigateToGame: dispatcher(dispatch, actions.navigateToGame),
-    navigateToUser: dispatcher(dispatch, actions.navigateToUser),
-  }),
+  actionCreators,
 });

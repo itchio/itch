@@ -1,8 +1,6 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import { createStructuredSelector } from "reselect";
-
-import { actions, dispatcher } from "../actions";
 
 import format from "./format";
 
@@ -167,16 +165,16 @@ interface IProps {
   showLayoutPicker?: boolean;
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("updatePreferences");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   layout: TabLayout;
   onlyCompatibleGames: boolean;
   onlyOwnedGames: boolean;
   onlyInstalledGames: boolean;
 
   numItems: number;
-
-  updatePreferences: typeof actions.updatePreferences;
-}
+};
 
 export default connect<IProps>(GameFilters, {
   state: (initialState, props: IProps) => {
@@ -196,7 +194,5 @@ export default connect<IProps>(GameFilters, {
       },
     });
   },
-  dispatch: dispatch => ({
-    updatePreferences: dispatcher(dispatch, actions.updatePreferences),
-  }),
+  actionCreators,
 });

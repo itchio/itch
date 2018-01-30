@@ -1,10 +1,8 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 
 import { map } from "underscore";
 import { createStructuredSelector } from "reselect";
-
-import { actions, dispatcher } from "../actions";
 
 import Filler from "./basics/filler";
 import IconButton from "./basics/icon-button";
@@ -174,7 +172,18 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
 
 interface IProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "closeAllTabs",
+  "moveTab",
+  "newTab",
+  "copyToClipboard",
+  "reportIssue",
+  "openUrl",
+  "checkForSelfUpdate",
+  "quit"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   osx: boolean;
   sidebarWidth: number;
   fullscreen: boolean;
@@ -187,20 +196,8 @@ interface IDerivedProps {
     transient: string[];
   };
 
-  closeAllTabs: typeof actions.closeAllTabs;
-  moveTab: typeof actions.moveTab;
-
-  newTab: typeof actions.newTab;
-  copyToClipboard: typeof actions.copyToClipboard;
-
-  reportIssue: typeof actions.reportIssue;
-  openUrl: typeof actions.openUrl;
-  checkForSelfUpdate: typeof actions.checkForSelfUpdate;
-
-  quit: typeof actions.quit;
-
   intl: InjectedIntl;
-}
+};
 
 interface IState {
   transient: string[];
@@ -216,18 +213,5 @@ export default connect<IProps>(injectIntl(Sidebar), {
     tab: (rs: IRootState) => rs.session.navigation.tab,
     tabs: (rs: IRootState) => rs.session.navigation.tabs,
   }),
-  dispatch: dispatch => ({
-    navigate: dispatcher(dispatch, actions.navigate),
-    closeAllTabs: dispatcher(dispatch, actions.closeAllTabs),
-    moveTab: dispatcher(dispatch, actions.moveTab),
-
-    newTab: dispatcher(dispatch, actions.newTab),
-    copyToClipboard: dispatcher(dispatch, actions.copyToClipboard),
-
-    reportIssue: dispatcher(dispatch, actions.reportIssue),
-    openUrl: dispatcher(dispatch, actions.openUrl),
-    checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
-
-    quit: dispatcher(dispatch, actions.quit),
-  }),
+  actionCreators,
 });

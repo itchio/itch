@@ -1,6 +1,6 @@
 import * as classNames from "classnames";
 import * as React from "react";
-import { connect } from "../connect";
+import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
 import { isEmpty, map, sortBy, size } from "underscore";
 import { resolve } from "path";
@@ -19,7 +19,7 @@ import TitleBar from "../title-bar";
 
 import { reportIssue, IReportIssueOpts } from "../../util/crash-reporter";
 
-import { actions, dispatcher } from "../../actions";
+import { actions } from "../../actions";
 
 import { ISetupOperation, IRememberedSessionsState } from "../../types";
 
@@ -522,21 +522,24 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "loginWithPassword",
+  "loginWithToken",
+  "loginStartPicking",
+  "loginStopPicking",
+  "forgetSessionRequest",
+  "retrySetup",
+  "openUrl"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   stage: string;
   errors: string[];
   blockingOperation?: ISetupOperation;
   rememberedSessions: IRememberedSessionsState;
-  loginWithPassword: typeof actions.loginWithPassword;
-  loginWithToken: typeof actions.loginWithToken;
-  loginStartPicking: typeof actions.loginStartPicking;
-  loginStopPicking: typeof actions.loginStopPicking;
-  forgetSessionRequest: typeof actions.forgetSessionRequest;
-  retrySetup: typeof actions.retrySetup;
-  openUrl: typeof actions.openUrl;
 
   intl: InjectedIntl;
-}
+};
 
 export default connect<IProps>(injectIntl(GatePage), {
   state: (state): Partial<IDerivedProps> => {
@@ -558,13 +561,5 @@ export default connect<IProps>(injectIntl(GatePage), {
       return { stage: "ready", errors: [], blockingOperation: null };
     }
   },
-  dispatch: dispatch => ({
-    loginWithPassword: dispatcher(dispatch, actions.loginWithPassword),
-    loginWithToken: dispatcher(dispatch, actions.loginWithToken),
-    loginStartPicking: dispatcher(dispatch, actions.loginStartPicking),
-    loginStopPicking: dispatcher(dispatch, actions.loginStopPicking),
-    forgetSessionRequest: dispatcher(dispatch, actions.forgetSessionRequest),
-    retrySetup: dispatcher(dispatch, actions.retrySetup),
-    openUrl: dispatcher(dispatch, actions.openUrl),
-  }),
+  actionCreators,
 });

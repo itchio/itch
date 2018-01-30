@@ -4,9 +4,7 @@ import { createStructuredSelector } from "reselect";
 
 import Item from "./item";
 
-import { connect } from "../connect";
-
-import { actions, dispatcher } from "../../actions";
+import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
 import { size } from "underscore";
 import {
@@ -149,18 +147,20 @@ interface IProps {
   sortable?: boolean;
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "navigate",
+  "closeTab",
+  "openModal",
+  "openTabContextMenu"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   data: ITabData;
   loading: boolean;
   downloads?: IDownloadsState;
 
-  navigate: typeof actions.navigate;
-  closeTab: typeof actions.closeTab;
-  openModal: typeof actions.openModal;
-  openTabContextMenu: typeof actions.openTabContextMenu;
-
   intl: InjectedIntl;
-}
+};
 
 const Tab = connect<IProps>(injectIntl(TabBase), {
   state: (initialState, initialProps) => {
@@ -172,12 +172,7 @@ const Tab = connect<IProps>(injectIntl(TabBase), {
       downloads: (rs: IRootState) => tab === "downloads" && rs.downloads,
     });
   },
-  dispatch: dispatch => ({
-    navigate: dispatcher(dispatch, actions.navigate),
-    closeTab: dispatcher(dispatch, actions.closeTab),
-    openModal: dispatcher(dispatch, actions.openModal),
-    openTabContextMenu: dispatcher(dispatch, actions.openTabContextMenu),
-  }),
+  actionCreators,
 });
 
 export default Tab;

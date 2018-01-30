@@ -1,10 +1,9 @@
 import * as React from "react";
 
 import styled from "./styles";
-import { actions, dispatcher } from "../actions";
 import format from "./format";
 
-import { connect } from "./connect";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import Link from "./basics/link";
 
 const DisabledBrowserContainer = styled.div`
@@ -59,12 +58,8 @@ interface IProps {
   url: string;
 }
 
-interface IDerivedProps {
-  updatePreferences: typeof actions.updatePreferences;
-}
+const actionCreators = actionCreatorsList("updatePreferences");
 
-export default connect<IProps>(DisabledBrowser, {
-  dispatch: dispatch => ({
-    updatePreferences: dispatcher(dispatch, actions.updatePreferences),
-  }),
-});
+type IDerivedProps = Dispatchers<typeof actionCreators>;
+
+export default connect<IProps>(DisabledBrowser, { actionCreators });

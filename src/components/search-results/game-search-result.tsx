@@ -13,9 +13,9 @@ import Cover from "../basics/cover";
 const HoverCover = Hoverable(Cover);
 
 import styled, * as styles from "../styles";
-import { actions, dispatcher } from "../../actions";
+import { actions } from "../../actions";
 import PlatformIcons from "../basics/platform-icons";
-import { connect } from "../connect";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Game } from "ts-itchio-api";
 
 const StyledPlatformIcons = styled(PlatformIcons)`
@@ -202,14 +202,11 @@ interface IProps {
   index: number;
 }
 
-interface IDerivedProps {
-  searchHighlightOffset: typeof actions.searchHighlightOffset;
-  openGameContextMenu: typeof actions.openGameContextMenu;
-}
+const actionCreators = actionCreatorsList(
+  "searchHighlightOffset",
+  "openGameContextMenu"
+);
 
-export default connect<IProps>(GameSearchResult, {
-  dispatch: dispatch => ({
-    searchHighlightOffset: dispatcher(dispatch, actions.searchHighlightOffset),
-    openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
-  }),
-});
+type IDerivedProps = Dispatchers<typeof actionCreators>;
+
+export default connect<IProps>(GameSearchResult, { actionCreators });

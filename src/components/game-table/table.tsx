@@ -1,9 +1,7 @@
 import * as React from "react";
 import { createStructuredSelector } from "reselect";
 import { injectIntl, InjectedIntl } from "react-intl";
-import { connect } from "../connect";
-
-import { actions, dispatcher } from "../../actions";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import getByIds from "../../helpers/get-by-ids";
 import { IGameSet, ICommonsState, ILocalizedString } from "../../types";
@@ -306,24 +304,22 @@ interface IProps extends IDimensionsProps {
   onSortChange: IOnSortChange;
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "clearFilters",
+  "navigateToGame",
+  "openGameContextMenu"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   commons: ICommonsState;
 
-  clearFilters: typeof actions.clearFilters;
-  navigateToGame: typeof actions.navigateToGame;
-  openGameContextMenu: typeof actions.openGameContextMenu;
-
   intl: InjectedIntl;
-}
+};
 
 export default connect<IProps>(injectIntl(injectDimensions(Table)), {
   state: () =>
     createStructuredSelector({
       commons: state => state.commons,
     }),
-  dispatch: dispatch => ({
-    clearFilters: dispatcher(dispatch, actions.clearFilters),
-    navigateToGame: dispatcher(dispatch, actions.navigateToGame),
-    openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
-  }),
+  actionCreators,
 });

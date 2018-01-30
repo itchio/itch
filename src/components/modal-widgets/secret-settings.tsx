@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect } from "../connect";
+import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
 // for debug purposes only
 import chromeStore from "../../store/chrome-store";
@@ -7,7 +7,6 @@ import chromeStore from "../../store/chrome-store";
 import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
 
 import { IRootState } from "../../types/index";
-import { actions, dispatcher } from "../../actions";
 
 import styled from "../styles";
 import Button from "../basics/button";
@@ -117,26 +116,20 @@ interface IProps extends IModalWidgetProps {
   params: IExploreJsonParams;
 }
 
-interface IDerivedProps {
-  status: IRootState["status"];
+const actionCreators = actionCreatorsList(
+  "setReduxLoggingEnabled",
+  "openModal",
+  "reloadLocales",
+  "openDevTools"
+);
 
-  setReduxLoggingEnabled: typeof actions.setReduxLoggingEnabled;
-  openModal: typeof actions.openModal;
-  reloadLocales: typeof actions.reloadLocales;
-  openDevTools: typeof actions.openDevTools;
-}
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
+  status: IRootState["status"];
+};
 
 export default connect<IProps>(SecretSettings, {
   state: (rs: IRootState) => ({
     status: rs.status,
   }),
-  dispatch: dispatch => ({
-    setReduxLoggingEnabled: dispatcher(
-      dispatch,
-      actions.setReduxLoggingEnabled
-    ),
-    openModal: dispatcher(dispatch, actions.openModal),
-    reloadLocales: dispatcher(dispatch, actions.reloadLocales),
-    openDevTools: dispatcher(dispatch, actions.openDevTools),
-  }),
+  actionCreators,
 });

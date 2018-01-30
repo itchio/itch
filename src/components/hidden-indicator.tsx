@@ -1,7 +1,5 @@
 import * as React from "react";
-import { connect } from "./connect";
-
-import { actions, dispatcher } from "../actions";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import IconButton from "./basics/icon-button";
 
@@ -52,14 +50,10 @@ interface IProps {
   count: number;
 }
 
-interface IDerivedProps {
-  clearFilters: typeof actions.clearFilters;
+const actionCreators = actionCreatorsList("clearFilters");
 
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   intl: InjectedIntl;
-}
+};
 
-export default connect<IProps>(injectIntl(HiddenIndicator), {
-  dispatch: dispatch => ({
-    clearFilters: dispatcher(dispatch, actions.clearFilters),
-  }),
-});
+export default connect<IProps>(injectIntl(HiddenIndicator), { actionCreators });

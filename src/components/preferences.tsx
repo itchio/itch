@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createSelector, createStructuredSelector } from "reselect";
-import { connect } from "./connect";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 
 import * as path from "path";
 import * as classNames from "classnames";
@@ -16,8 +16,6 @@ import OpenAtLoginError from "./preferences/open-at-login-error";
 import ProxySettings from "./preferences/proxy-settings";
 
 import TitleBar from "./title-bar";
-
-import { actions, dispatcher } from "../actions";
 
 import { map, each, filter } from "underscore";
 
@@ -767,7 +765,19 @@ interface IExtendedInstallLocations {
 
 interface IProps extends IMeatProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "addInstallLocationRequest",
+  "removeInstallLocationRequest",
+  "makeInstallLocationDefault",
+  "queueLocaleDownload",
+  // ---
+  "updatePreferences",
+  "clearBrowsingDataRequest",
+  "navigate",
+  "checkForSelfUpdate"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   locales: ILocaleInfo[];
   appVersion: string;
   preferences: IPreferencesState;
@@ -778,18 +788,8 @@ interface IDerivedProps {
   lang: string;
   installLocations: IExtendedInstallLocations;
 
-  addInstallLocationRequest: typeof actions.addInstallLocationRequest;
-  removeInstallLocationRequest: typeof actions.removeInstallLocationRequest;
-  makeInstallLocationDefault: typeof actions.makeInstallLocationDefault;
-  queueLocaleDownload: typeof actions.queueLocaleDownload;
-
-  updatePreferences: typeof actions.updatePreferences;
-  clearBrowsingDataRequest: typeof actions.clearBrowsingDataRequest;
-  navigate: typeof actions.navigate;
-  checkForSelfUpdate: typeof actions.checkForSelfUpdate;
-
   intl: InjectedIntl;
-}
+};
 
 export default connect<IProps>(injectIntl(Preferences), {
   state: createStructuredSelector({
@@ -852,27 +852,5 @@ export default connect<IProps>(injectIntl(Preferences), {
       }
     ),
   }),
-  dispatch: dispatch => ({
-    addInstallLocationRequest: dispatcher(
-      dispatch,
-      actions.addInstallLocationRequest
-    ),
-    removeInstallLocationRequest: dispatcher(
-      dispatch,
-      actions.removeInstallLocationRequest
-    ),
-    makeInstallLocationDefault: dispatcher(
-      dispatch,
-      actions.makeInstallLocationDefault
-    ),
-    queueLocaleDownload: dispatcher(dispatch, actions.queueLocaleDownload),
-
-    updatePreferences: dispatcher(dispatch, actions.updatePreferences),
-    clearBrowsingDataRequest: dispatcher(
-      dispatch,
-      actions.clearBrowsingDataRequest
-    ),
-    navigate: dispatcher(dispatch, actions.navigate),
-    checkForSelfUpdate: dispatcher(dispatch, actions.checkForSelfUpdate),
-  }),
+  actionCreators,
 });

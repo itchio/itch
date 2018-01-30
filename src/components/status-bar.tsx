@@ -1,9 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 import { createStructuredSelector } from "reselect";
-import { connect } from "./connect";
-
-import { actions, dispatcher } from "../actions";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 
 import Icon from "./basics/icon";
 import LoadingCircle from "./basics/loading-circle";
@@ -172,31 +170,22 @@ class StatusBar extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList(
+  "applySelfUpdateRequest",
+  "showAvailableSelfUpdate",
+  "dismissStatus",
+  "dismissStatusMessage"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   selfUpdate: ISelfUpdateState;
   statusMessages: ILocalizedString[];
-
-  applySelfUpdateRequest: typeof actions.applySelfUpdateRequest;
-  showAvailableSelfUpdate: typeof actions.showAvailableSelfUpdate;
-  dismissStatus: typeof actions.dismissStatus;
-  dismissStatusMessage: typeof actions.dismissStatusMessage;
-}
+};
 
 export default connect<IProps>(StatusBar, {
   state: createStructuredSelector({
     selfUpdate: (rs: IRootState) => rs.selfUpdate,
     statusMessages: (rs: IRootState) => rs.status.messages,
   }),
-  dispatch: dispatch => ({
-    showAvailableSelfUpdate: dispatcher(
-      dispatch,
-      actions.showAvailableSelfUpdate
-    ),
-    applySelfUpdateRequest: dispatcher(
-      dispatch,
-      actions.applySelfUpdateRequest
-    ),
-    dismissStatus: dispatcher(dispatch, actions.dismissStatus),
-    dismissStatusMessage: dispatcher(dispatch, actions.dismissStatusMessage),
-  }),
+  actionCreators,
 });

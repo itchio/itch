@@ -1,11 +1,10 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import { createStructuredSelector } from "reselect";
 
 import format, { formatString } from "./format";
 
 import { map, first, rest } from "underscore";
-import { actions, dispatcher } from "../actions";
 
 import Link from "./basics/link";
 import Row from "./download/row";
@@ -148,25 +147,19 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IMeatProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("clearFinishedDownloads", "navigate");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   items: IDownloadItem[];
   finishedItems: IDownloadItem[];
 
-  clearFinishedDownloads: typeof actions.clearFinishedDownloads;
-  navigate: typeof actions.navigate;
   intl: InjectedIntl;
-}
+};
 
 export default connect<IProps>(injectIntl(Downloads), {
   state: createStructuredSelector({
     items: (rs: IRootState) => getPendingDownloads(rs.downloads),
     finishedItems: (rs: IRootState) => getFinishedDownloads(rs.downloads),
   }),
-  dispatch: dispatch => ({
-    clearFinishedDownloads: dispatcher(
-      dispatch,
-      actions.clearFinishedDownloads
-    ),
-    navigate: dispatcher(dispatch, actions.navigate),
-  }),
+  actionCreators,
 });

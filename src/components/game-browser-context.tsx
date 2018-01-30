@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect } from "./connect";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import MainAction from "./game-actions/main-action";
 import GameStats from "./game-stats";
@@ -7,7 +7,6 @@ import Filler from "./basics/filler";
 import IconButton from "./basics/icon-button";
 
 import { IRootState } from "../types";
-import { actions, dispatcher } from "../actions";
 
 import { IBrowserControlProps } from "./browser-state";
 
@@ -74,12 +73,12 @@ export class GameBrowserContext extends React.PureComponent<
 
 interface IProps extends IBrowserControlProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("openGameContextMenu");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   game: Game;
   status: IGameStatus;
-
-  openGameContextMenu: typeof actions.openGameContextMenu;
-}
+};
 
 export default connect<IProps>(GameBrowserContext, {
   state: (rs: IRootState, props: IProps) => {
@@ -93,7 +92,5 @@ export default connect<IProps>(GameBrowserContext, {
       status: getGameStatus(rs, game),
     };
   },
-  dispatch: dispatch => ({
-    openGameContextMenu: dispatcher(dispatch, actions.openGameContextMenu),
-  }),
+  actionCreators,
 });

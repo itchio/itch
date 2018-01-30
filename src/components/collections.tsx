@@ -1,8 +1,7 @@
 import * as React from "react";
-import { connect, Dispatchers } from "./connect";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import urls from "../constants/urls";
-import { actionCreatorsList } from "../actions";
 
 import { FiltersContainer } from "./filters-container";
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, Dispatchers } from "./connect";
+import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import {
   IRootState,
   IUIContextMenuState,
@@ -19,7 +19,6 @@ import {
 import { createSelector } from "reselect";
 import format from "./format";
 
-import { actionCreatorsList } from "../actions";
 import { lighten } from "polished";
 
 const menuId = "itch_context_menu";
@@ -286,4 +285,5 @@ export default connect<{}>(ContextMenuHandler, {
     (open, data, macos) => ({ open, data, macos })
   ),
   actionCreators,
+  dispatch: dispatch => ({ dispatch }),
 });
