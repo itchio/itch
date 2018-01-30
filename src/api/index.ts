@@ -157,7 +157,7 @@ export class Client {
       source: "desktop",
       v: 3,
     };
-    if (data.recaptcha_response) {
+    if (extras.recaptchaResponse) {
       data.recaptcha_response = extras.recaptchaResponse;
     }
 
