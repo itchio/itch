@@ -23,6 +23,7 @@ import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDurationAsMessage } from "../../format/datetime";
 import { Space } from "../../helpers/space";
 import { Game } from "ts-itchio-api";
+import { modalWidgets } from "../modal-widgets/index";
 
 interface ISortableHubSidebarItemProps {
   props: any & {
@@ -128,14 +129,15 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   onExplore = (tab: string) => {
-    this.props.openModal({
-      title: "Tab data",
-      message: "",
-      widget: "explore-json",
-      widgetParams: {
-        data: this.props.data,
-      },
-    });
+    this.props.openModal(
+      modalWidgets.exploreJson.make({
+        title: "Tab data",
+        message: "",
+        widgetParams: {
+          data: this.props.data,
+        },
+      })
+    );
   };
 }
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
+import { ModalWidgetDiv } from "./modal-widget";
 
 import { ICave } from "../../db/models/cave";
 import { fromDateTimeField, toDateTimeField } from "../../db/datetime-field";
@@ -21,6 +21,7 @@ import {
 } from "../../format/index";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Game, Build } from "ts-itchio-api";
+import { IModalWidgetProps } from "./index";
 
 const BuildListDiv = styled.div`
   width: 100%;
@@ -91,7 +92,7 @@ function monthFor(b: Build) {
 
 class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { remoteBuilds } = this.props.modal.widgetParams as IRevertCaveParams;
+    const { remoteBuilds } = this.props.modal.widgetParams;
 
     const builds: JSX.Element[] = [];
     let lastMonth = 0;
@@ -165,7 +166,13 @@ export interface IRevertCaveParams {
   remoteBuilds: Build[];
 }
 
-interface IProps extends IModalWidgetProps {}
+export interface IRevertCaveResponse {
+  /** which build id to revert to */
+  revertBuildId?: number;
+}
+
+interface IProps
+  extends IModalWidgetProps<IRevertCaveParams, IRevertCaveResponse> {}
 
 const actionCreators = actionCreatorsList("closeModal");
 

@@ -30,6 +30,7 @@ import {
   formatOperation,
 } from "../../format/operation";
 import { formatUploadTitle } from "../../format/upload";
+import { modalWidgets } from "../modal-widgets/index";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -204,14 +205,15 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     const { item, navigateToGame } = this.props;
     if (ev.shiftKey && ev.ctrlKey) {
       const { openModal } = this.props;
-      openModal({
-        title: "Download data",
-        message: "",
-        widget: "explore-json",
-        widgetParams: {
-          data: item,
-        },
-      });
+      openModal(
+        modalWidgets.exploreJson.make({
+          title: "Download data",
+          message: "",
+          widgetParams: {
+            data: item,
+          },
+        })
+      );
       return;
     }
 

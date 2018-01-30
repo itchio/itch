@@ -12,6 +12,7 @@ import { actions } from "../actions";
 const TOKEN_FILE_NAME = "token.json";
 
 import { IStore } from "../types";
+import { modalWidgets } from "../components/modal-widgets/index";
 
 export function getTokenPath(userId: string) {
   return ospath.join(usersPath(), userId, TOKEN_FILE_NAME);
@@ -75,20 +76,23 @@ export default function(watcher: Watcher) {
   watcher.on(actions.forgetSessionRequest, async (store, action) => {
     const { id, username } = action.payload;
     store.dispatch(
-      actions.openModal({
-        title: ["prompt.forget_session.title"],
-        message: ["prompt.forget_session.message", { username }],
-        detail: ["prompt.forget_session.detail"],
-        buttons: [
-          {
-            id: "modal-forget-session",
-            label: ["prompt.forget_session.action"],
-            action: actions.forgetSession({ id, username }),
-            icon: "cross",
-          },
-          "cancel",
-        ],
-      })
+      actions.openModal(
+        modalWidgets.naked.make({
+          title: ["prompt.forget_session.title"],
+          message: ["prompt.forget_session.message", { username }],
+          detail: ["prompt.forget_session.detail"],
+          buttons: [
+            {
+              id: "modal-forget-session",
+              label: ["prompt.forget_session.action"],
+              action: actions.forgetSession({ id, username }),
+              icon: "cross",
+            },
+            "cancel",
+          ],
+          widgetParams: null,
+        })
+      )
     );
   });
 

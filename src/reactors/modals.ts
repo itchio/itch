@@ -6,18 +6,19 @@ import { each, findWhere } from "underscore";
 import { IStore, ModalResponse } from "../types";
 
 import modalResolves from "./modals-persistent-state";
+import { ITypedModal } from "../components/modal-widgets/index";
 
 // look, so this probably breaks the spirit of redux, not denying it,
 // but also, redux has a pretty strong will, I'm sure it'll recover.
 
-export async function promisedModal(
+export async function promisedModal<Params, Response>(
   store: IStore,
-  payload: typeof actions.openModal.payload
-): Promise<ModalResponse> {
+  payload: ITypedModal<Params, Response>
+): Promise<Response> {
   const modalAction = actions.openModal(payload);
   const { id } = modalAction.payload;
 
-  const p = new Promise<ModalResponse>(resolve => {
+  const p = new Promise<any>(resolve => {
     modalResolves[id] = resolve;
   });
 

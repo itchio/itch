@@ -6,31 +6,28 @@ import { findWhere, map } from "underscore";
 
 import { downloadProgress } from "../../format";
 
-import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
+import { ModalWidgetDiv } from "./modal-widget";
 import LoadingCircle from "../basics/loading-circle";
 
 import { IRootState, ITask, IPrereqsState } from "../../types";
 
 import format from "../format";
+import { IModalWidgetProps } from "./index";
 
-export class PrereqsState extends React.PureComponent<IProps & IDerivedProps> {
+class PrereqsState extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { prereqsState } = this.props;
-    const params = this.props.modal.widgetParams as IPrereqsStateParams;
+    const params = this.props.modal.widgetParams;
 
     if (!prereqsState) {
       return (
-        <ModalWidgetDiv>
-          {format(["setup.status.preparing"])}
-        </ModalWidgetDiv>
+        <ModalWidgetDiv>{format(["setup.status.preparing"])}</ModalWidgetDiv>
       );
     }
 
     return (
       <ModalWidgetDiv>
-        <p>
-          {format(["prereq.explanation", { title: params.gameTitle }])}
-        </p>
+        <p>{format(["prereq.explanation", { title: params.gameTitle }])}</p>
 
         <ul className="prereqs-rows">
           {map(prereqsState.tasks, (v, k) => {
@@ -44,13 +41,13 @@ export class PrereqsState extends React.PureComponent<IProps & IDerivedProps> {
               <li key={k} className="prereqs-row" style={{ order: v.order }}>
                 <LoadingCircle progress={progress} />
                 <div className="prereqs-info">
-                  <div className="task-name">
-                    {v.name}
-                  </div>
+                  <div className="task-name">{v.name}</div>
                   <div className="task-status">
-                    {v.status === "downloading" && v.progress
-                      ? downloadProgress(v, false)
-                      : format([`prereq.status.${v.status}`])}
+                    {v.status === "downloading" && v.progress ? (
+                      downloadProgress(v, false)
+                    ) : (
+                      format([`prereq.status.${v.status}`])
+                    )}
                   </div>
                 </div>
               </li>
@@ -67,7 +64,10 @@ export interface IPrereqsStateParams {
   gameTitle: string;
 }
 
-interface IProps extends IModalWidgetProps {}
+interface IPrereqsStateResponse {}
+
+interface IProps
+  extends IModalWidgetProps<IPrereqsStateParams, IPrereqsStateResponse> {}
 
 interface IDerivedProps {
   prereqsState: IPrereqsState;
@@ -81,7 +81,7 @@ export default connect<IProps>(PrereqsState, {
   state: () => {
     const selector = createStructuredSelector({
       tasks: (rs: IRootState, props: IProps) => {
-        const params = props.modal.widgetParams as IPrereqsStateParams;
+        const params = props.modal.widgetParams;
         const tasks = rs.tasks.tasksByGameId[params.gameId];
         return tasks;
       },

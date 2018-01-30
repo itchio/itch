@@ -1,12 +1,4 @@
-import { IModal } from "../../types";
-
 import styled, * as styles from "../styles";
-import { actions } from "../../actions/index";
-
-export interface IModalWidgetProps {
-  modal: IModal;
-  updatePayload: (payload: typeof actions.modalResponse.payload) => void;
-}
 
 export const ModalWidgetDiv = styled.div`
   padding: 10px 20px;

@@ -19,9 +19,7 @@ import colors from "../constants/colors";
 import { actions } from "../actions";
 import { map, isEmpty, filter } from "underscore";
 
-import { IModal, IModalButtonSpec, IModalButton } from "../types";
-
-import { IModalWidgetProps } from "./modal-widgets/modal-widget";
+import { IModal, IModalButtonSpec, IModalButton, IAction } from "../types";
 
 import watching, { Watcher } from "./watching";
 import styled, * as styles from "./styles";
@@ -30,6 +28,7 @@ import { stripUnit } from "polished";
 import format, { formatString } from "./format";
 import { InjectedIntl, injectIntl } from "react-intl";
 import { specToButton } from "../helpers/spec-to-button";
+import { modalWidgets } from "./modal-widgets/index";
 
 type Flavor = "normal" | "big";
 
@@ -567,34 +566,26 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   buttonOnClick(button: IModalButton): () => void {
     const { closeModal } = this.props;
-    const { action, actionSource } = button;
+    const { action } = button;
 
-    let onClick = () => closeModal({ action });
-    if (actionSource === "widget") {
+    let onClick: () => void;
+    if (action === "widgetResponse") {
       onClick = () => {
         const action = actions.modalResponse(this.state.widgetPayload);
         closeModal({ action });
       };
+    } else {
+      onClick = () => closeModal({ action: action as IAction<any> });
     }
     return onClick;
   }
 
   renderWidget(widget: string, modal: IModal): JSX.Element {
-    // this is run in the context of `chrome.js`, so relative to `app`
-    try {
-      let module = require(`./modal-widgets/${widget}`);
-      if (!module) {
-        throw new Error("new export");
-      }
-      let Component = module.default as React.ComponentClass<IModalWidgetProps>;
-      return <Component modal={modal} updatePayload={this.updatePayload} />;
-    } catch (e) {
-      return (
-        <div>
-          Missing widget: {widget} — ${e.message}
-        </div>
-      );
+    const Component = modalWidgets[widget].component;
+    if (!Component) {
+      return null;
     }
+    return <Component modal={modal} updatePayload={this.updatePayload} />;
   }
 
   updatePayload = (payload: typeof actions.modalResponse.payload) => {

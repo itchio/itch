@@ -4,7 +4,6 @@ import {
   ISystemTasksState,
   ProxySource,
   ICommonsState,
-  IModal,
   IModalAction,
   ISetupOperation,
   IRememberedSessionsState,
@@ -36,6 +35,10 @@ import { ITabData } from "../types/tab-data";
 import { TaskName } from "../types/tasks";
 import { CleanDownloadsEntry } from "node-buse/lib/messages";
 import { ICollection } from "../db/models/collection";
+import {
+  ITypedModal,
+  ITypedModalUpdate,
+} from "../components/modal-widgets/index";
 
 export interface ActionCreator<PayloadType> {
   payload: PayloadType;
@@ -119,14 +122,8 @@ export const actions = wireActions({
 
   // modals
 
-  openModal: action<IModal>(),
-  updateModalWidgetParams: action<{
-    /** the modal's unique identifier */
-    id: string;
-
-    /** the parameters for the widget being shown in the modal */
-    widgetParams: any;
-  }>(),
+  openModal: action<ITypedModal<any, any>>(),
+  updateModalWidgetParams: action<ITypedModalUpdate<any>>(),
   closeModal: action<{
     /** id of the modal to close - if unspecified, close frontmost */
     id?: string;
@@ -141,7 +138,7 @@ export const actions = wireActions({
     /** if there was a response, it's here */
     response: ModalResponse | null;
   }>(),
-  modalResponse: action<ModalResponse>(),
+  modalResponse: action<any>(),
 
   // setup
 

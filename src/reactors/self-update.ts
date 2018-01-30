@@ -20,6 +20,7 @@ import { actions } from "../actions";
 import { fromDateTimeField } from "../db/datetime-field";
 import memoize from "../util/lru-memoize";
 import { MinimalContext } from "../context/index";
+import { modalWidgets } from "../components/modal-widgets/index";
 
 const linux = os.itchPlatform() === "linux";
 
@@ -200,34 +201,37 @@ export default function(watcher: Watcher) {
     const pubDate = fromDateTimeField(spec.pub_date);
 
     store.dispatch(
-      actions.openModal({
-        title: ["prompt.self_update_ready.title", { version: spec.name }],
-        message: [
-          "prompt.self_update_ready.message",
-          {
-            restart: t(i18n, ["prompt.self_update_ready.action.restart"]),
-          },
-        ],
-        detail: [
-          "prompt.self_update_ready.detail",
-          {
-            notes: spec.notes,
-            pubDate: formatDate(pubDate, i18n.lang, DATE_FORMAT),
-          },
-        ],
-        buttons: [
-          {
-            label: ["prompt.self_update_ready.action.restart"],
-            action: actions.applySelfUpdate({}),
-            icon: "repeat",
-          },
-          {
-            label: ["prompt.self_update_ready.action.snooze"],
-            action: actions.snoozeSelfUpdate({}),
-            className: "secondary",
-          },
-        ],
-      })
+      actions.openModal(
+        modalWidgets.naked.make({
+          title: ["prompt.self_update_ready.title", { version: spec.name }],
+          message: [
+            "prompt.self_update_ready.message",
+            {
+              restart: t(i18n, ["prompt.self_update_ready.action.restart"]),
+            },
+          ],
+          detail: [
+            "prompt.self_update_ready.detail",
+            {
+              notes: spec.notes,
+              pubDate: formatDate(pubDate, i18n.lang, DATE_FORMAT),
+            },
+          ],
+          buttons: [
+            {
+              label: ["prompt.self_update_ready.action.restart"],
+              action: actions.applySelfUpdate({}),
+              icon: "repeat",
+            },
+            {
+              label: ["prompt.self_update_ready.action.snooze"],
+              action: actions.snoozeSelfUpdate({}),
+              className: "secondary",
+            },
+          ],
+          widgetParams: null,
+        })
+      )
     );
   });
 
@@ -259,41 +263,44 @@ export default function(watcher: Watcher) {
     const messageString = `prompt.self_update.message.${os.itchPlatform()}`;
 
     store.dispatch(
-      actions.openModal({
-        title: ["prompt.self_update.title", { version: spec.name }],
-        message: [messageString],
-        detail: [
-          "prompt.self_update.detail",
-          {
-            notes: spec.notes,
-            pubDate: formatDate(pubDate, lang, DATE_FORMAT),
-          },
-        ],
-        buttons: [
-          {
-            label: ["prompt.self_update.action.download"],
-            action: [
-              actions.openUrl({ url: spec.url }),
-              actions.dismissStatus({}),
-            ],
-            icon: "download",
-          },
-          {
-            label: ["prompt.self_update.action.view"],
-            action: [
-              actions.openUrl({ url: urls.releasesPage }),
-              actions.dismissStatus({}),
-            ],
-            className: "secondary",
-            icon: "earth",
-          },
-          {
-            label: ["prompt.self_update.action.dismiss"],
-            action: actions.dismissStatus({}),
-            className: "secondary",
-          },
-        ],
-      })
+      actions.openModal(
+        modalWidgets.naked.make({
+          title: ["prompt.self_update.title", { version: spec.name }],
+          message: [messageString],
+          detail: [
+            "prompt.self_update.detail",
+            {
+              notes: spec.notes,
+              pubDate: formatDate(pubDate, lang, DATE_FORMAT),
+            },
+          ],
+          buttons: [
+            {
+              label: ["prompt.self_update.action.download"],
+              action: [
+                actions.openUrl({ url: spec.url }),
+                actions.dismissStatus({}),
+              ],
+              icon: "download",
+            },
+            {
+              label: ["prompt.self_update.action.view"],
+              action: [
+                actions.openUrl({ url: urls.releasesPage }),
+                actions.dismissStatus({}),
+              ],
+              className: "secondary",
+              icon: "earth",
+            },
+            {
+              label: ["prompt.self_update.action.dismiss"],
+              action: actions.dismissStatus({}),
+              className: "secondary",
+            },
+          ],
+          widgetParams: null,
+        })
+      )
     );
   });
 
@@ -303,11 +310,14 @@ export default function(watcher: Watcher) {
     const resp = await request("get", uri, {});
 
     store.dispatch(
-      actions.openModal({
-        title: ["menu.help.release_notes"],
-        message: "Changelog",
-        detail: resp.body,
-      })
+      actions.openModal(
+        modalWidgets.naked.make({
+          title: ["menu.help.release_notes"],
+          message: "Changelog",
+          detail: resp.body,
+          widgetParams: null,
+        })
+      )
     );
   });
 }

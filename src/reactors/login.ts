@@ -14,9 +14,8 @@ import { isNetworkError } from "../net/errors";
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "login" });
 
-import { ITwoFactorInputParams } from "../components/modal-widgets/two-factor-input";
 import { ILoginExtras, ISuccessfulLoginResult } from "../types/api";
-import { IRecaptchaInputParams } from "../components/modal-widgets/recaptcha-input";
+import { modalWidgets } from "../components/modal-widgets/index";
 
 const forceCaptcha = process.env.IAMA_CAPTCHA_AMA === "1";
 
@@ -40,14 +39,16 @@ export default function(watcher: Watcher) {
       );
       res = passwordRes;
       if (passwordRes.recaptchaNeeded || forceCaptcha) {
-        const modalRes = await promisedModal(store, {
-          title: "Captcha",
-          message: "",
-          widget: "recaptcha-input",
-          widgetParams: {
-            url: passwordRes.recaptchaUrl || urls.itchio + "/captcha",
-          } as IRecaptchaInputParams,
-        });
+        const modalRes = await promisedModal(
+          store,
+          modalWidgets.recaptchaInput.make({
+            title: "Captcha",
+            message: "",
+            widgetParams: {
+              url: passwordRes.recaptchaUrl || urls.itchio + "/captcha",
+            },
+          })
+        );
 
         if (modalRes) {
           extras.recaptchaResponse = modalRes.recaptchaResponse;
@@ -64,28 +65,29 @@ export default function(watcher: Watcher) {
       }
 
       if (passwordRes.totpNeeded) {
-        const modalRes = await promisedModal(store, {
-          title: ["login.two_factor.title"],
-          message: "",
-          buttons: [
-            {
-              label: ["login.action.login"],
-              action: actions.modalResponse({}),
-              actionSource: "widget",
+        const modalRes = await promisedModal(
+          store,
+          modalWidgets.twoFactorInput.make({
+            title: ["login.two_factor.title"],
+            message: "",
+            buttons: [
+              {
+                label: ["login.action.login"],
+                action: "widgetResponse",
+              },
+              {
+                label: ["login.two_factor.learn_more"],
+                action: actions.openUrl({
+                  url: urls.twoFactorHelp,
+                }),
+                className: "secondary",
+              },
+            ],
+            widgetParams: {
+              username,
             },
-            {
-              label: ["login.two_factor.learn_more"],
-              action: actions.openUrl({
-                url: urls.twoFactorHelp,
-              }),
-              className: "secondary",
-            },
-          ],
-          widget: "two-factor-input",
-          widgetParams: {
-            username,
-          } as ITwoFactorInputParams,
-        });
+          })
+        );
 
         if (modalRes) {
           const code = modalRes.totpCode;

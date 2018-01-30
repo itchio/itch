@@ -1,13 +1,14 @@
 import * as React from "react";
 
-import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
+import { ModalWidgetDiv } from "./modal-widget";
 
 import JSONTree from "react-json-tree";
 import theme from "./json-tree-theme";
+import { IModalWidgetProps } from "./index";
 
-export default class ExploreJson extends React.PureComponent<IProps> {
+class ExploreJson extends React.PureComponent<IProps> {
   render() {
-    const params = this.props.modal.widgetParams as IExploreJsonParams;
+    const params = this.props.modal.widgetParams;
     const { data } = params;
 
     return (
@@ -24,6 +25,9 @@ export interface IExploreJsonParams {
   data: any;
 }
 
-interface IProps extends IModalWidgetProps {
-  params: IExploreJsonParams;
-}
+export interface IExploreJsonResponse {}
+
+interface IProps
+  extends IModalWidgetProps<IExploreJsonParams, IExploreJsonResponse> {}
+
+export default ExploreJson;

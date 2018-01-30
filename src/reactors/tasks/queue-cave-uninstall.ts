@@ -18,6 +18,7 @@ import { promisedModal } from "../modals";
 import asTask from "./as-task";
 import { ICave } from "../../db/models/cave";
 import { Upload } from "ts-itchio-api";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 export async function queueUninstall(
   ctx: Context,
@@ -79,22 +80,24 @@ export default function(watcher: Watcher, db: DB) {
         doCleanup = true;
       },
       onError: async (err, log) => {
-        const response = await promisedModal(store, {
-          title: ["prompt.uninstall_error.title"],
-          message: ["prompt.uninstall_error.message"],
-          widget: "show-error",
-          widgetParams: {
-            errorStack: err.stack,
-            log,
-          },
-          buttons: [
-            {
-              label: ["prompt.action.ok"],
-              action: actions.modalResponse({}),
+        const response = await promisedModal(
+          store,
+          modalWidgets.showError.make({
+            title: ["prompt.uninstall_error.title"],
+            message: ["prompt.uninstall_error.message"],
+            buttons: [
+              {
+                label: ["prompt.action.ok"],
+                action: actions.modalResponse({}),
+              },
+              "cancel",
+            ],
+            widgetParams: {
+              errorStack: err.stack,
+              log,
             },
-            "cancel",
-          ],
-        });
+          })
+        );
 
         if (!response) {
           // modal was closed
@@ -119,21 +122,26 @@ export default function(watcher: Watcher, db: DB) {
         const shouldSuggestAdminWipe = onWindows && /Access is denied/.test(e);
 
         if (shouldSuggestAdminWipe) {
-          const response = await promisedModal(store, {
-            title: ["prompt.uninstall_error.title"],
-            message: [
-              "prompt.uninstall_error.message_permissions",
-              { title: game.title },
-            ],
-            buttons: [
-              {
-                label: ["prompt.uninstall_error.action_permissions"],
-                icon: "security",
-                action: actions.modalResponse({}),
-              },
-              "cancel",
-            ],
-          });
+          const response = await promisedModal(
+            store,
+            modalWidgets.adminWipeBlessing.make({
+              title: ["prompt.uninstall_error.title"],
+              message: [
+                "prompt.uninstall_error.message_permissions",
+                { title: game.title },
+              ],
+              buttons: [
+                {
+                  label: ["prompt.uninstall_error.action_permissions"],
+                  icon: "security",
+                  action: modalWidgets.adminWipeBlessing.action({}),
+                },
+                "cancel",
+              ],
+              widgetParams: null,
+            })
+          );
+
           if (!response) {
             // modal was closed
             return;

@@ -17,6 +17,7 @@ import * as TabDataTypes from "./tab-data";
 export * from "../os/runtime";
 
 import { SortDirection, SortKey } from "../components/sort-types";
+import { modalWidgets } from "../components/modal-widgets/index";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -265,8 +266,6 @@ export interface IGameUpdatesState {
 
 export type IModalAction = IAction<any> | IAction<any>[];
 
-export type ModalButtonActionSource = "widget";
-
 export interface IModalButton {
   /** HTML id for this button */
   id?: string;
@@ -277,11 +276,8 @@ export interface IModalButton {
   /** text to show on button */
   label: ILocalizedString;
 
-  /** whether this button directly specifies an action or if it's taken from the widget */
-  actionSource?: ModalButtonActionSource;
-
   /** what should happen when clicking the button */
-  action: IModalAction;
+  action?: IModalAction | "widgetResponse";
 
   /** use this to specify custom CSS classes (which is both naughty and nice) */
   className?: string;
@@ -306,7 +302,7 @@ export function isModalButton(object: any): object is IModalButton {
 // FIXME: that's naughty - just make static buttons be constants instead, that works.
 export type IModalButtonSpec = IModalButton | "ok" | "cancel" | "nevermind";
 
-export interface IModal {
+export interface IModalBase {
   /** generated identifier for this modal */
   id?: string;
 
@@ -329,13 +325,23 @@ export interface IModal {
   /** secondary buttons */
   buttons?: IModalButtonSpec[];
 
-  /** name of a custom React component to render below message */
-  widget?: string;
+  unclosable?: boolean;
+}
+
+export interface IModal extends IModalBase {
+  /** name of modal widget to render */
+  widget?: keyof typeof modalWidgets;
 
   /** parameters to pass to React component */
-  widgetParams?: any;
+  widgetParams?: {};
+}
 
-  unclosable?: boolean;
+export interface IModalUpdate {
+  /** the modal's unique identifier */
+  id: string;
+
+  /** the parameters for the widget being shown in the modal */
+  widgetParams: any;
 }
 
 export type IModalsState = IModal[];
@@ -987,27 +993,6 @@ export interface IOpenContextMenuBase {
 
 export interface ModalResponse {
   // FIXME: this is messy
-
-  /** which manifest action was picked when launching a game */
-  manifestActionName?: string;
-
-  /** whether or not to install the sandbox */
-  sandboxBlessing?: boolean;
-
-  /** which build id to revert to */
-  revertBuildId?: number;
-
-  /** two-factor authentication code entered */
-  totpCode?: string;
-
-  /** whether to clear cookies */
-  cookies?: boolean;
-
-  /** whether to clear cache */
-  cache?: boolean;
-
-  /** manually picked upload for install */
-  pickedUploadIndex?: number;
 
   /** recaptcha challenge response */
   recaptchaResponse?: string;

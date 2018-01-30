@@ -1,15 +1,13 @@
 import * as React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
-// for debug purposes only
-import chromeStore from "../../store/chrome-store";
-
-import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
+import { ModalWidgetDiv } from "./modal-widget";
 
 import { IRootState } from "../../types/index";
 
 import styled from "../styles";
 import Button from "../basics/button";
+import { modalWidgets, IModalWidgetProps } from "./index";
 
 const ControlsDiv = styled.div`
   display: flex;
@@ -33,9 +31,7 @@ const ControlsDiv = styled.div`
   }
 `;
 
-export class SecretSettings extends React.PureComponent<
-  IProps & IDerivedProps
-> {
+class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { status } = this.props;
 
@@ -85,15 +81,18 @@ export class SecretSettings extends React.PureComponent<
     this.props.reloadLocales({});
   };
 
-  onViewAppState = () => {
-    this.props.openModal({
-      title: "",
-      message: "Entire app state: ",
-      widget: "explore-json",
-      widgetParams: {
-        data: chromeStore.getState(),
-      },
-    });
+  onViewAppState = async () => {
+    const chromeStore = (await import("../../store/chrome-store")).default;
+
+    this.props.openModal(
+      modalWidgets.exploreJson.make({
+        title: "",
+        message: "Entire app state: ",
+        widgetParams: {
+          data: chromeStore.getState(),
+        },
+      })
+    );
   };
 
   toggleReduxLogging = () => {
@@ -108,12 +107,13 @@ export class SecretSettings extends React.PureComponent<
   };
 }
 
-export interface IExploreJsonParams {
-  data: any;
-}
+export interface ISecretSettingsParams {}
 
-interface IProps extends IModalWidgetProps {
-  params: IExploreJsonParams;
+export interface ISecretSettingsResponse {}
+
+interface IProps
+  extends IModalWidgetProps<ISecretSettingsParams, ISecretSettingsResponse> {
+  params: ISecretSettingsParams;
 }
 
 const actionCreators = actionCreatorsList(

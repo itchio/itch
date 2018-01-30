@@ -42,6 +42,7 @@ import { powerSaveBlocker } from "electron";
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
 import { Game } from "ts-itchio-api";
+import { modalWidgets } from "../components/modal-widgets/index";
 
 const emptyArr = [];
 
@@ -84,26 +85,27 @@ export default function(watcher: Watcher, db: DB) {
           }
         }
 
-        await promisedModal(store, {
-          title: ["game.install.could_not_launch", { title }],
-          message: [
-            "game.install.could_not_launch.message",
-            { title, errorMessage },
-          ],
-          detail: ["game.install.could_not_launch.detail"],
-          widget: "show-error",
-          widgetParams: {
-            errorStack: e.stack,
-            log,
-          },
-          buttons: [
-            {
-              label: ["prompt.action.ok"],
-              action: actions.modalResponse({}),
+        await promisedModal(
+          store,
+          modalWidgets.showError.make({
+            title: ["game.install.could_not_launch", { title }],
+            message: [
+              "game.install.could_not_launch.message",
+              { title, errorMessage },
+            ],
+            detail: ["game.install.could_not_launch.detail"],
+            widgetParams: {
+              errorStack: e.stack,
+              log,
             },
-            "cancel",
-          ],
-        });
+            buttons: [
+              {
+                label: ["prompt.action.ok"],
+              },
+              "cancel",
+            ],
+          })
+        );
       },
     });
   });

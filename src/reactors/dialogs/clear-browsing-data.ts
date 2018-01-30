@@ -3,25 +3,26 @@ import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 import { promisedModal } from "../modals";
 
-import { IClearBrowsingDataParams } from "../../components/modal-widgets/clear-browsing-data";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.clearBrowsingDataRequest, async (store, action) => {
-    const response = await promisedModal(store, {
-      title: ["preferences.advanced.clear_browsing_data"],
-      message: "",
-      widget: "clear-browsing-data",
-      widgetParams: {} as IClearBrowsingDataParams,
-      buttons: [
-        {
-          label: ["prompt.clear_browsing_data.clear"],
-          id: "modal-clear-data",
-          action: actions.modalResponse({}),
-          actionSource: "widget",
-        },
-        "cancel",
-      ],
-    });
+    const response = await promisedModal(
+      store,
+      modalWidgets.clearBrowsingData.make({
+        title: ["preferences.advanced.clear_browsing_data"],
+        message: "",
+        buttons: [
+          {
+            label: ["prompt.clear_browsing_data.clear"],
+            id: "modal-clear-data",
+            action: "widgetResponse",
+          },
+          "cancel",
+        ],
+        widgetParams: {},
+      })
+    );
 
     if (!response) {
       // modal was closed

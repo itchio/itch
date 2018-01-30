@@ -2,8 +2,6 @@ import * as React from "react";
 import * as classNames from "classnames";
 import { connect } from "../connect";
 
-import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
-
 import partitionForUser from "../../util/partition-for-user";
 
 import LoadingCircle from "../basics/loading-circle";
@@ -12,13 +10,10 @@ import * as electron from "electron";
 
 import format from "../format";
 import { fileSize } from "../../format/filesize";
+import { IModalWidgetProps } from "./index";
+import { ModalWidgetDiv } from "./modal-widget";
 
-// TODO: So maybe this is a good place to clear downloads too
-// I dunno, just a though. Like technically they shouldn't even
-// stay long (should be cleaned up after install etc.)
-// but yeah.
-
-export class ClearBrowsingData extends React.PureComponent<
+class ClearBrowsingData extends React.PureComponent<
   IProps & IDerivedProps,
   IState
 > {
@@ -39,7 +34,7 @@ export class ClearBrowsingData extends React.PureComponent<
     // and we should read from store or something
     const ourSession = electron.remote.session.fromPartition(
       partitionForUser(String(userId)),
-      { cache: true },
+      { cache: true }
     );
 
     ourSession.getCacheSize(cacheSize => {
@@ -97,19 +92,21 @@ export class ClearBrowsingData extends React.PureComponent<
               {format(["prompt.clear_browsing_data.category.cache"])}
             </div>
             <div className="checkbox-info">
-              {fetchedCacheSize
-                ? format([
-                    "prompt.clear_browsing_data.cache_size_used",
-                    {
-                      size: fileSize(shownCacheSize),
-                    },
-                  ])
-                : <span>
-                    <LoadingCircle progress={0.1} />{" "}
-                    {format([
-                      "prompt.clear_browsing_data.retrieving_cache_size",
-                    ])},
-                  </span>}
+              {fetchedCacheSize ? (
+                format([
+                  "prompt.clear_browsing_data.cache_size_used",
+                  {
+                    size: fileSize(shownCacheSize),
+                  },
+                ])
+              ) : (
+                <span>
+                  <LoadingCircle progress={0.1} />{" "}
+                  {format([
+                    "prompt.clear_browsing_data.retrieving_cache_size",
+                  ])},
+                </span>
+              )}
             </div>
           </label>
           <label className={classNames({ active: clearCookies })}>
@@ -133,8 +130,19 @@ export class ClearBrowsingData extends React.PureComponent<
 }
 
 export interface IClearBrowsingDataParams {}
+export interface IClearBrowsingDataResponse {
+  /** whether to clear cookies */
+  cookies?: boolean;
 
-interface IProps extends IModalWidgetProps {}
+  /** whether to clear cache */
+  cache?: boolean;
+}
+
+interface IProps
+  extends IModalWidgetProps<
+      IClearBrowsingDataParams,
+      IClearBrowsingDataResponse
+    > {}
 
 interface IDerivedProps {
   userId: number;

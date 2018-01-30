@@ -20,6 +20,7 @@ import { Game, Upload } from "ts-itchio-api";
 
 import { map } from "underscore";
 import makeUploadButton from "../make-upload-button";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueGame, async (store, action) => {
@@ -39,17 +40,20 @@ export default function(watcher: Watcher, db: DB) {
       }
 
       store.dispatch(
-        actions.openModal({
-          title: ["prompt.launch.title", { title: game.title }],
-          message: ["prompt.launch.message"],
-          bigButtons: map(caves, cave => {
-            return {
-              ...makeUploadButton(cave.upload),
-              action: actions.queueLaunch({ caveId: cave.id }),
-            };
-          }),
-          buttons: ["cancel"],
-        })
+        actions.openModal(
+          modalWidgets.naked.make({
+            title: ["prompt.launch.title", { title: game.title }],
+            message: ["prompt.launch.message"],
+            bigButtons: map(caves, cave => {
+              return {
+                ...makeUploadButton(cave.upload),
+                action: actions.queueLaunch({ caveId: cave.id }),
+              };
+            }),
+            buttons: ["cancel"],
+            widgetParams: null,
+          })
+        )
       );
       return;
     }

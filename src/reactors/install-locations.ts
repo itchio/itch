@@ -20,6 +20,7 @@ import { IRootState } from "../types";
 
 import Context from "../context";
 import { DB } from "../db";
+import { modalWidgets } from "../components/modal-widgets/index";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
@@ -50,18 +51,21 @@ export default function(watcher: Watcher, db: DB) {
 
     if (numItems > 0) {
       store.dispatch(
-        actions.openModal({
-          title: ["prompt.install_location_not_empty.title"],
-          message: ["prompt.install_location_not_empty.message"],
-          detail: ["prompt.install_location_not_empty.detail"],
-          buttons: [
-            {
-              label: ["prompt.install_location_not_empty.show_contents"],
-              action: actions.navigate({ tab: `locations/${name}` }),
-            },
-            "cancel",
-          ],
-        })
+        actions.openModal(
+          modalWidgets.naked.make({
+            title: ["prompt.install_location_not_empty.title"],
+            message: ["prompt.install_location_not_empty.message"],
+            detail: ["prompt.install_location_not_empty.detail"],
+            buttons: [
+              {
+                label: ["prompt.install_location_not_empty.show_contents"],
+                action: actions.navigate({ tab: `locations/${name}` }),
+              },
+              "cancel",
+            ],
+            widgetParams: null,
+          })
+        )
       );
       return;
     }

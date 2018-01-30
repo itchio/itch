@@ -9,6 +9,7 @@ import rootLogger from "../../logger";
 import { ICave } from "../../db/models/cave";
 import { computeCaveLocation } from "./compute-cave-location";
 import { join } from "path";
+import { modalWidgets } from "../../components/modal-widgets/index";
 const logger = rootLogger.child({ name: "show-download-error" });
 
 export default function(watcher: Watcher, db: DB) {
@@ -47,28 +48,29 @@ export default function(watcher: Watcher, db: DB) {
     }
 
     store.dispatch(
-      actions.openModal({
-        title: ["prompt.install_error.title"],
-        message: ["prompt.install_error.message"],
-        widget: "show-error",
-        widgetParams: {
-          errorStack: item.errStack,
-          log,
-        },
-        buttons: [
-          {
-            label: ["game.install.try_again"],
-            icon: "repeat",
-            action: actions.retryDownload({ id }),
+      actions.openModal(
+        modalWidgets.showError.make({
+          title: ["prompt.install_error.title"],
+          message: ["prompt.install_error.message"],
+          widgetParams: {
+            errorStack: item.errStack,
+            log,
           },
-          {
-            label: ["grid.item.discard_download"],
-            icon: "delete",
-            action: actions.discardDownload({ id }),
-          },
-          "cancel",
-        ],
-      })
+          buttons: [
+            {
+              label: ["game.install.try_again"],
+              icon: "repeat",
+              action: actions.retryDownload({ id }),
+            },
+            {
+              label: ["grid.item.discard_download"],
+              icon: "delete",
+              action: actions.discardDownload({ id }),
+            },
+            "cancel",
+          ],
+        })
+      )
     );
   });
 }

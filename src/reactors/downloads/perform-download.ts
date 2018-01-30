@@ -20,6 +20,7 @@ import { map } from "underscore";
 import { buseGameCredentials, setupClient } from "../../util/buse-utils";
 import { computeCaveLocation } from "./compute-cave-location";
 import { readReceipt } from "../../install-managers/common/receipt";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default async function performDownload(
   ctx: Context,
@@ -68,20 +69,24 @@ export default async function performDownload(
         const { uploads } = params;
         const { title } = game;
 
-        const modalRes = await promisedModal(ctx.store, {
-          title: ["pick_install_upload.title", { title }],
-          message: ["pick_install_upload.message", { title }],
-          detail: ["pick_install_upload.detail"],
-          bigButtons: map(uploads, (candidate, index) => {
-            return {
-              ...makeUploadButton(candidate),
-              action: actions.modalResponse({
-                pickedUploadIndex: index,
-              }),
-            };
-          }),
-          buttons: ["cancel"],
-        });
+        const modalRes = await promisedModal(
+          ctx.store,
+          modalWidgets.pickUpload.make({
+            title: ["pick_install_upload.title", { title }],
+            message: ["pick_install_upload.message", { title }],
+            detail: ["pick_install_upload.detail"],
+            bigButtons: map(uploads, (candidate, index) => {
+              return {
+                ...makeUploadButton(candidate),
+                action: modalWidgets.pickUpload.action({
+                  pickedUploadIndex: index,
+                }),
+              };
+            }),
+            buttons: ["cancel"],
+            widgetParams: {},
+          })
+        );
 
         if (modalRes) {
           return { index: modalRes.pickedUploadIndex };

@@ -35,6 +35,7 @@ import { IEnvironment, ILaunchOpts, Crash, MissingLibs } from "../../types";
 import { ILauncher } from "./types";
 
 import configure from "./configure";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 const itchPlatform = os.itchPlatform();
 
@@ -145,19 +146,22 @@ const launchNative: ILauncher = async (ctx, opts) => {
       exePath = javaPath;
     } catch (e) {
       store.dispatch(
-        actions.openModal({
-          title: "",
-          message: ["game.install.could_not_launch", { title: game.title }],
-          detail: ["game.install.could_not_launch.missing_jre"],
-          buttons: [
-            {
-              label: ["grid.item.download_java"],
-              icon: "download",
-              action: actions.openUrl({ url: urls.javaDownload }),
-            },
-            "cancel",
-          ],
-        })
+        actions.openModal(
+          modalWidgets.naked.make({
+            title: "",
+            message: ["game.install.could_not_launch", { title: game.title }],
+            detail: ["game.install.could_not_launch.missing_jre"],
+            buttons: [
+              {
+                label: ["grid.item.download_java"],
+                icon: "download",
+                action: actions.openUrl({ url: urls.javaDownload }),
+              },
+              "cancel",
+            ],
+            widgetParams: null,
+          })
+        )
       );
       return;
     }
@@ -186,25 +190,31 @@ const launchNative: ILauncher = async (ctx, opts) => {
         windows: urls.windowsSandboxSetup,
       };
 
-      const response = await promisedModal(store, {
-        title: ["sandbox.setup.title"],
-        message: [`sandbox.setup.${itchPlatform}.message`],
-        detail: [`sandbox.setup.${itchPlatform}.detail`],
-        buttons: [
-          {
-            label: ["sandbox.setup.proceed"],
-            action: actions.modalResponse({ sandboxBlessing: true }),
-            icon: "security",
-          },
-          {
-            label: ["docs.learn_more"],
-            action: actions.openUrl({ url: learnMoreMap[itchPlatform] }),
-            icon: "earth",
-            className: "secondary",
-          },
-          "cancel",
-        ],
-      });
+      const response = await promisedModal(
+        store,
+        modalWidgets.sandboxBlessing.make({
+          title: ["sandbox.setup.title"],
+          message: [`sandbox.setup.${itchPlatform}.message`],
+          detail: [`sandbox.setup.${itchPlatform}.detail`],
+          buttons: [
+            {
+              label: ["sandbox.setup.proceed"],
+              action: modalWidgets.sandboxBlessing.action({
+                sandboxBlessing: true,
+              }),
+              icon: "security",
+            },
+            {
+              label: ["docs.learn_more"],
+              action: actions.openUrl({ url: learnMoreMap[itchPlatform] }),
+              icon: "earth",
+              className: "secondary",
+            },
+            "cancel",
+          ],
+          widgetParams: {},
+        })
+      );
 
       if (response && response.sandboxBlessing) {
         // carry on

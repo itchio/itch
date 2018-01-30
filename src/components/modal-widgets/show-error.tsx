@@ -1,9 +1,10 @@
 import * as React from "react";
 
-import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
+import { ModalWidgetDiv } from "./modal-widget";
 
 import styled from "../styles";
 import Log from "../basics/log";
+import { IModalWidgetProps } from "./index";
 
 const StyledLog = styled(Log)`
   tbody {
@@ -44,10 +45,9 @@ const ContainerDiv = styled.div`
   }
 `;
 
-export default class ShowError extends React.PureComponent<IProps> {
+class ShowError extends React.PureComponent<IProps> {
   render() {
-    const { errorStack, log } = this.props.modal
-      .widgetParams as IShowErrorParams;
+    const { errorStack, log } = this.props.modal.widgetParams;
 
     const errorLines = (errorStack || "Unknown error").split("\n");
     return (
@@ -74,9 +74,14 @@ export default class ShowError extends React.PureComponent<IProps> {
   }
 }
 
-interface IShowErrorParams {
+export interface IShowErrorParams {
   errorStack: string;
   log: string;
 }
 
-interface IProps extends IModalWidgetProps {}
+export interface IShowErrorResponse {}
+
+interface IProps
+  extends IModalWidgetProps<IShowErrorParams, IShowErrorResponse> {}
+
+export default ShowError;

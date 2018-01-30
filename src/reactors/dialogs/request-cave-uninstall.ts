@@ -5,6 +5,7 @@ import lazyGetGame from "../lazy-get-game";
 
 import { DB } from "../../db";
 import Context from "../../context";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
@@ -22,25 +23,28 @@ export default function(watcher: Watcher, db: DB) {
     const title = game ? game.title : "this";
 
     store.dispatch(
-      actions.openModal({
-        title: "",
-        message: ["prompt.uninstall.message", { title }],
-        buttons: [
-          {
-            label: ["prompt.uninstall.uninstall"],
-            id: "modal-uninstall",
-            action: actions.queueCaveUninstall({ caveId }),
-            icon: "uninstall",
-          },
-          {
-            label: ["prompt.uninstall.reinstall"],
-            id: "modal-reinstall",
-            action: actions.queueCaveReinstall({ caveId }),
-            icon: "repeat",
-          },
-          "cancel",
-        ],
-      })
+      actions.openModal(
+        modalWidgets.naked.make({
+          title: "",
+          message: ["prompt.uninstall.message", { title }],
+          buttons: [
+            {
+              label: ["prompt.uninstall.uninstall"],
+              id: "modal-uninstall",
+              action: actions.queueCaveUninstall({ caveId }),
+              icon: "uninstall",
+            },
+            {
+              label: ["prompt.uninstall.reinstall"],
+              id: "modal-reinstall",
+              action: actions.queueCaveReinstall({ caveId }),
+              icon: "repeat",
+            },
+            "cancel",
+          ],
+          widgetParams: null,
+        })
+      )
     );
   });
 }

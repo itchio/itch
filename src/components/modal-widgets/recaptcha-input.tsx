@@ -1,14 +1,12 @@
 import * as React from "react";
 
-import { IModalWidgetProps } from "./modal-widget";
-
 import { getInjectPath } from "../../os/resources";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
-import { actions } from "../../actions/index";
 
 import styled from "../styles";
 import LoadingCircle from "../basics/loading-circle";
 import * as classNames from "classnames";
+import { modalWidgets, IModalWidgetProps } from "./index";
 
 const WidgetDiv = styled.div`
   &.loading {
@@ -34,7 +32,7 @@ class RecaptchaInput extends React.Component<
   }
 
   render() {
-    const params = this.props.modal.widgetParams as IRecaptchaInputParams;
+    const params = this.props.modal.widgetParams;
     const { url } = params;
     const { loaded } = this.state;
 
@@ -72,7 +70,7 @@ class RecaptchaInput extends React.Component<
         (response: string | undefined) => {
           if (response) {
             this.props.closeModal({
-              action: actions.modalResponse({
+              action: modalWidgets.recaptchaInput.action({
                 recaptchaResponse: response,
               }),
             });
@@ -102,7 +100,12 @@ export interface IRecaptchaInputParams {
   url: string;
 }
 
-interface IRecaptchaInputProps extends IModalWidgetProps {
+export interface IRecaptchaInputResponse {
+  recaptchaResponse: string;
+}
+
+interface IRecaptchaInputProps
+  extends IModalWidgetProps<IRecaptchaInputParams, IRecaptchaInputResponse> {
   params: IRecaptchaInputParams;
 }
 

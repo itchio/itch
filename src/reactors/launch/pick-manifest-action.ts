@@ -13,6 +13,7 @@ import { promisedModal } from "../../reactors/modals";
 
 import { findWhere } from "underscore";
 import { Game } from "ts-itchio-api";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default async function pickManifestAction(
   store: IStore,
@@ -51,14 +52,18 @@ export default async function pickManifestAction(
 
   buttons.push("cancel");
 
-  const response = await promisedModal(store, {
-    title: game.title,
-    stillCoverUrl: game.stillCoverUrl,
-    coverUrl: game.coverUrl,
-    message: "",
-    bigButtons,
-    buttons,
-  });
+  const response = await promisedModal(
+    store,
+    modalWidgets.pickManifestAction.make({
+      title: game.title,
+      stillCoverUrl: game.stillCoverUrl,
+      coverUrl: game.coverUrl,
+      message: "",
+      bigButtons,
+      buttons,
+      widgetParams: {},
+    })
+  );
 
   if (response) {
     return findWhere(manifest.actions, {

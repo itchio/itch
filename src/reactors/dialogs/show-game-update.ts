@@ -6,6 +6,7 @@ import { map } from "underscore";
 import { Watcher } from "../watcher";
 
 import { ILocalizedString, IModalButtonSpec } from "../../types";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.showGameUpdate, async (store, action) => {
@@ -47,22 +48,25 @@ export default function(watcher: Watcher) {
     dialogButtons.push("cancel");
 
     store.dispatch(
-      actions.openModal({
-        title: dialogTitle,
-        message: dialogMessage,
-        detail: dialogDetail,
-        bigButtons: map(update.recentUploads, upload => {
-          const spec: IModalButtonSpec = {
-            ...makeUploadButton(upload, { showSize: false }),
-            action: actions.queueGameUpdate({
-              ...action.payload,
-              upload,
-            }),
-          };
-          return spec;
-        }),
-        buttons: dialogButtons,
-      })
+      actions.openModal(
+        modalWidgets.naked.make({
+          title: dialogTitle,
+          message: dialogMessage,
+          detail: dialogDetail,
+          bigButtons: map(update.recentUploads, upload => {
+            const spec: IModalButtonSpec = {
+              ...makeUploadButton(upload, { showSize: false }),
+              action: actions.queueGameUpdate({
+                ...action.payload,
+                upload,
+              }),
+            };
+            return spec;
+          }),
+          buttons: dialogButtons,
+          widgetParams: null,
+        })
+      )
     );
   });
 }

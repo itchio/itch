@@ -19,6 +19,7 @@ import { applyProxySettings } from "../reactors/proxy";
 import { elapsed } from "../format/datetime";
 import loadPreferences from "./preboot/load-preferences";
 import { DB } from "../db";
+import { modalWidgets } from "../components/modal-widgets/index";
 
 let testProxy = false;
 let proxyTested = false;
@@ -50,26 +51,30 @@ export default function(watcher: Watcher, db: DB) {
               `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`
             );
 
+            // TODO: that's super annoying as a modal.
+
             store.dispatch(
-              actions.openModal({
-                title: `Certificate error: ${error}`,
-                message:
-                  `There was an error with the certificate for ` +
-                  `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
-                  `Please check your proxy configuration and try again.`,
-                detail: `If you ignore this error, the rest of the app might not work correctly.`,
-                buttons: [
-                  {
-                    label: "Ignore and continue",
-                    action: actions.closeModal({}),
-                    className: "secondary",
-                  },
-                  {
-                    label: ["menu.file.quit"],
-                    action: actions.quit({}),
-                  },
-                ],
-              })
+              actions.openModal(
+                modalWidgets.naked.make({
+                  title: `Certificate error: ${error}`,
+                  message:
+                    `There was an error with the certificate for ` +
+                    `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
+                    `Please check your proxy configuration and try again.`,
+                  detail: `If you ignore this error, the rest of the app might not work correctly.`,
+                  buttons: [
+                    {
+                      label: "Ignore and continue",
+                      className: "secondary",
+                    },
+                    {
+                      label: ["menu.file.quit"],
+                      action: actions.quit({}),
+                    },
+                  ],
+                  widgetParams: null,
+                })
+              )
             );
           }
         );

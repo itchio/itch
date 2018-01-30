@@ -38,8 +38,6 @@ import {
   IAction,
 } from "../../types";
 
-import { IPrereqsStateParams } from "../../components/modal-widgets/prereqs-state";
-
 interface IWindowsPrereqsOpts {
   cave: ICave;
   game: Game;
@@ -71,6 +69,7 @@ import { extract } from "../../util/extract";
 import { formatExitCode } from "../../format/exit-code";
 import { fromJSONField } from "../../db/json-field";
 import { Game } from "ts-itchio-api";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default async function handleWindowsPrereqs(
   ctx: Context,
@@ -147,24 +146,25 @@ async function handleUE4Prereq(
     });
 
     const { game } = opts;
-    openModalAction = actions.openModal({
-      title: ["grid.item.installing"],
-      message: "",
-      widget: "prereqs-state",
-      widgetParams: {
-        gameId: String(cave.gameId),
-        gameTitle: game.title,
-      } as IPrereqsStateParams,
-      buttons: [
-        {
-          id: "modal-cancel",
-          label: ["prompt.action.cancel"],
-          action: actions.abortTask({ id: ctx.getTaskId() }),
-          className: "secondary",
+    openModalAction = actions.openModal(
+      modalWidgets.prereqsState.make({
+        title: ["grid.item.installing"],
+        message: "",
+        widgetParams: {
+          gameId: String(cave.gameId),
+          gameTitle: game.title,
         },
-      ],
-      unclosable: true,
-    });
+        buttons: [
+          {
+            id: "modal-cancel",
+            label: ["prompt.action.cancel"],
+            action: actions.abortTask({ id: ctx.getTaskId() }),
+            className: "secondary",
+          },
+        ],
+        unclosable: true,
+      })
+    );
     store.dispatch(openModalAction);
 
     logger.info(`launching UE4 prereq setup ${prereqFullPath}`);
@@ -312,24 +312,25 @@ async function handleManifest(ctx: Context, opts: IWindowsPrereqsOpts) {
     sendProgress();
 
     const { game } = opts;
-    openModalAction = actions.openModal({
-      title: ["grid.item.installing"],
-      message: "",
-      widget: "prereqs-state",
-      widgetParams: {
-        gameId: String(cave.gameId),
-        gameTitle: game.title,
-      } as IPrereqsStateParams,
-      buttons: [
-        {
-          id: "modal-cancel",
-          label: ["prompt.action.cancel"],
-          action: actions.abortTask({ id: ctx.getTaskId() }),
-          className: "secondary",
+    openModalAction = actions.openModal(
+      modalWidgets.prereqsState.make({
+        title: ["grid.item.installing"],
+        message: "",
+        widgetParams: {
+          gameId: String(cave.gameId),
+          gameTitle: game.title,
         },
-      ],
-      unclosable: true,
-    });
+        buttons: [
+          {
+            id: "modal-cancel",
+            label: ["prompt.action.cancel"],
+            action: actions.abortTask({ id: ctx.getTaskId() }),
+            className: "secondary",
+          },
+        ],
+        unclosable: true,
+      })
+    );
 
     store.dispatch(openModalAction);
 

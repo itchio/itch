@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IModalWidgetProps, ModalWidgetDiv } from "./modal-widget";
+import { ModalWidgetDiv } from "./modal-widget";
 import { Game, Upload } from "ts-itchio-api";
 import { ICave } from "../../db/models/cave";
 
@@ -21,6 +21,7 @@ import { formatUploadTitle } from "../../format/upload";
 import { showInExplorerString } from "../../format/show-in-explorer";
 import TotalPlaytime from "../total-playtime";
 import LastPlayed from "../last-played";
+import { IModalWidgetProps } from "./index";
 
 const CaveItemList = styled.div`margin: 8px 0;`;
 
@@ -79,7 +80,7 @@ const FileSize = styled.div`
 
 class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const params = this.props.modal.widgetParams as IManageGameParams;
+    const params = this.props.modal.widgetParams;
     const { game, caves, allUploads, loadingUploads } = params;
 
     const installedUploadIds = {};
@@ -198,7 +199,7 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
 
   onInstall = (ev: React.MouseEvent<HTMLElement>) => {
     const uploadId = parseInt(ev.currentTarget.dataset.uploadId, 10);
-    const params = this.props.modal.widgetParams as IManageGameParams;
+    const params = this.props.modal.widgetParams;
     const { game, allUploads } = params;
     const upload = find(allUploads, { id: uploadId });
     this.props.closeModal({
@@ -233,7 +234,10 @@ export interface IManageGameParams {
   loadingUploads: boolean;
 }
 
-interface IProps extends IModalWidgetProps {}
+export interface IManageGameResponse {}
+
+interface IProps
+  extends IModalWidgetProps<IManageGameParams, IManageGameResponse> {}
 
 const actionCreators = actionCreatorsList("closeModal", "exploreCave");
 

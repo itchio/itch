@@ -7,7 +7,7 @@ import Context from "../../context/index";
 import { buseGameCredentials } from "../../util/buse-utils";
 
 import rootLogger from "../../logger";
-import { IManageGameParams } from "../../components/modal-widgets/manage-game";
+import { modalWidgets } from "../../components/modal-widgets/index";
 const logger = rootLogger.child({ name: "manage-game" });
 
 export default function(watcher: Watcher, db: DB) {
@@ -16,26 +16,26 @@ export default function(watcher: Watcher, db: DB) {
 
     const caves = db.caves.all(k => k.where("gameId = ?", game.id));
 
-    const widgetParams: IManageGameParams = {
+    const widgetParams = {
       game,
       caves,
       allUploads: [],
       loadingUploads: true,
     };
 
-    const openModal = actions.openModal({
-      title: ["prompt.manage_game.title", { title: game.title }],
-      message: "",
-      buttons: [
-        {
-          label: ["prompt.action.close"],
-          action: actions.closeModal({}),
-          className: "secondary",
-        },
-      ],
-      widget: "manage-game",
-      widgetParams,
-    });
+    const openModal = actions.openModal(
+      modalWidgets.manageGame.make({
+        title: ["prompt.manage_game.title", { title: game.title }],
+        message: "",
+        buttons: [
+          {
+            label: ["prompt.action.close"],
+            className: "secondary",
+          },
+        ],
+        widgetParams,
+      })
+    );
     store.dispatch(openModal);
     const modalId = openModal.payload.id;
 
@@ -70,10 +70,12 @@ export default function(watcher: Watcher, db: DB) {
       widgetParams.loadingUploads = false;
 
       store.dispatch(
-        actions.updateModalWidgetParams({
-          id: modalId,
-          widgetParams,
-        })
+        actions.updateModalWidgetParams(
+          modalWidgets.manageGame.update({
+            id: modalId,
+            widgetParams,
+          })
+        )
       );
     }
   });

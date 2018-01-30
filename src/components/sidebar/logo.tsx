@@ -7,6 +7,7 @@ import * as classNames from "classnames";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
 import { IRootState } from "../../types/index";
+import { modalWidgets } from "../modal-widgets/index";
 
 const LogoDiv = styled.div`
   text-align: center;
@@ -44,12 +45,13 @@ class Logo extends React.PureComponent<IDerivedProps> {
   onClick = (e: React.MouseEvent<any>) => {
     if (e.shiftKey && e.ctrlKey) {
       const { openModal } = this.props;
-      openModal({
-        title: "Secret options",
-        message: "",
-        widget: "secret-settings",
-        widgetParams: {},
-      });
+      openModal(
+        modalWidgets.secretSettings.make({
+          title: "Secret options",
+          message: "",
+          widgetParams: {},
+        })
+      );
       return;
     }
 

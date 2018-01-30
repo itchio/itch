@@ -11,12 +11,11 @@ import { promisedModal } from "../modals";
 import getGameCredentials from "../downloads/get-game-credentials";
 import lazyGetGame from "../lazy-get-game";
 
-import { IRevertCaveParams } from "../../components/modal-widgets/revert-cave";
-
 import { DB } from "../../db";
 
 import asTask from "./as-task";
 import { Build } from "ts-itchio-api";
+import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.revertCaveRequest, async (store, action) => {
@@ -77,17 +76,19 @@ export default function(watcher: Watcher, db: DB) {
 
         // FIXME: what if remoteBuilds is empty ?
 
-        const response = await promisedModal(store, {
-          title: ["prompt.revert.title", { title: game.title }],
-          message: "",
-          widget: "revert-cave",
-          widgetParams: {
-            currentCave: cave,
-            game,
-            remoteBuilds,
-          } as IRevertCaveParams,
-          buttons: ["cancel"],
-        });
+        const response = await promisedModal(
+          store,
+          modalWidgets.revertCave.make({
+            title: ["prompt.revert.title", { title: game.title }],
+            message: "",
+            widgetParams: {
+              currentCave: cave,
+              game,
+              remoteBuilds,
+            },
+            buttons: ["cancel"],
+          })
+        );
 
         if (!response) {
           // modal was closed
