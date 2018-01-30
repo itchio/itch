@@ -391,7 +391,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
               <span> {format(["preferences.security.sandbox.title"])} </span>
               <span
                 data-rh-at="bottom"
-                data-rh={formatString(intl, ["label.experimental"])}
+                data-rh={JSON.stringify(["label.experimental"])}
               >
                 <Icon
                   icon="lab-flask"

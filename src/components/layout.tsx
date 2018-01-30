@@ -7,11 +7,14 @@ import HubPage from "./pages/hub";
 import StatusBar from "./status-bar";
 import NonLocalIndicator from "./non-local-indicator";
 import ContextMenuHandler from "./context-menu-handler";
-import ReactHint = require("react-hint");
+import ReactHintFactory = require("react-hint");
+const ReactHint = ReactHintFactory(React);
 
 import { IRootState } from "../types";
 
 import styled from "./styles";
+import { formatString } from "./format";
+import { injectIntl, InjectedIntl } from "react-intl";
 
 const LayoutContainer = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -66,12 +69,33 @@ const ReactHintContainer = styled.div`
  */
 class Layout extends React.PureComponent<IProps & IDerivedProps> {
   render() {
+    const { intl } = this.props;
+
     return (
       <LayoutContainer>
         {this.main()}
         <StatusBar />
         <ReactHintContainer>
-          <ReactHint />
+          <ReactHint
+            events
+            onRenderContent={(target, content) => {
+              let { rh } = target.dataset;
+
+              if (rh[0] === "[") {
+                try {
+                  const obj = JSON.parse(rh);
+                  if (Array.isArray(obj)) {
+                    rh = formatString(intl, obj);
+                  } else {
+                    rh = obj;
+                  }
+                } catch (e) {
+                  // muffin
+                }
+              }
+              return <div className="react-hint__content">{rh}</div>;
+            }}
+          />
         </ReactHintContainer>
         <NonLocalIndicator />
         <ContextMenuHandler />
@@ -97,9 +121,11 @@ interface IProps {}
 
 interface IDerivedProps {
   page: string;
+
+  intl: InjectedIntl;
 }
 
-export default connect<IProps>(Layout, {
+export default connect<IProps>(injectIntl(Layout), {
   state: createStructuredSelector({
     page: (rs: IRootState) => rs.session.navigation.page,
   }),
