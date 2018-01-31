@@ -90,9 +90,9 @@ export class BrowserControls extends React.PureComponent<
   reload = () => this.triggerForTab("reload");
 
   render() {
-    const { tabData } = this.props;
+    const { tabInstance } = this.props;
     let url = this.props.url || "";
-    const sp = Space.fromData(tabData);
+    const sp = Space.fromInstance(tabInstance);
     let { loading, canGoBack, canGoForward, editingAddress } = sp.web();
 
     const frozen = sp.isFrozen();
@@ -164,7 +164,7 @@ export class BrowserControls extends React.PureComponent<
       return;
     }
 
-    const sp = Space.fromData(this.props.tabData);
+    const sp = Space.fromInstance(this.props.tabInstance);
     if (this.fresh && sp.prefix === "new") {
       this.fresh = false;
       this.startEditingAddress();
@@ -184,7 +184,7 @@ export class BrowserControls extends React.PureComponent<
       const { tab, evolveTab } = this.props;
       evolveTab({
         tab,
-        path: `url/${url}`,
+        url,
         replace: false,
       });
       this.pushWeb({ editingAddress: false, url });

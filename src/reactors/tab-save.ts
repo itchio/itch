@@ -1,16 +1,18 @@
-import { map } from "underscore";
+// import { map } from "underscore";
 
 import { Watcher } from "./watcher";
 
-import { fromJSONField } from "../db/json-field";
+// import { fromJSONField } from "../db/json-field";
 import { DB } from "../db/index";
-import { ITabDataSave } from "../types/index";
-import { IProfile } from "../db/models/profile";
-import { actions } from "../actions/index";
+// import { ITabDataSave } from "../types/index";
+// import { IProfile } from "../db/models/profile";
+// import { actions } from "../actions/index";
 
-const eo: any = {};
+// const eo: any = {};
 
 export default function(watcher: Watcher, db: DB) {
+  // TODO: re-implement
+  /*
   watcher.on(actions.tabsChanged, async (store, action) => {
     const { navigation, tabData, credentials } = store.getState().session;
     if (!credentials || !credentials.me) {
@@ -44,4 +46,5 @@ export default function(watcher: Watcher, db: DB) {
       store.dispatch(actions.tabsRestored({ current, items }));
     }
   });
+  */
 }

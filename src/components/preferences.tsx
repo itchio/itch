@@ -545,7 +545,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             className="link"
             onClick={e => {
               e.preventDefault();
-              navigate({ tab: "applog" });
+              navigate({ url: "itch://applog" });
             }}
           >
             {format(["preferences.advanced.open_app_log"])}
@@ -687,7 +687,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             data-rh={JSON.stringify(["preferences.install_location.navigate"])}
             onClick={e => {
               e.preventDefault();
-              navigate({ tab: `locations/${name}` });
+              navigate({ url: `itch://locations/${name}` });
             }}
           >
             <Icon icon="arrow-right" />

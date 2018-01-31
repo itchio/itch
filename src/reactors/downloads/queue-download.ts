@@ -20,7 +20,7 @@ export default function(watcher: Watcher) {
       // TODO: decide - do we show a notification instead?
       // what if the download is queued programmatically (from an update check, for example)
       logger.warn(`Not starting another download for ${opts.game.title}`);
-      store.dispatch(actions.navigate({ tab: "downloads" }));
+      store.dispatch(actions.navigate({ url: "itch://downloads" }));
       return;
     }
 

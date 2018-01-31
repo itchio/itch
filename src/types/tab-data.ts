@@ -1,7 +1,7 @@
 import { IGameSet, ICollectionSet, IUserSet } from "./index";
 
-export interface ITabDataSet {
-  [key: string]: ITabData;
+export interface ITabInstances {
+  [key: string]: ITabInstance;
 }
 
 interface ITabUsers {
@@ -52,13 +52,36 @@ export interface ITabLog {
   log: string;
 }
 
+export interface ITabPage {
+  /**
+   * url of tab, something like:
+   *   - itch://collections/:id
+   *   - itch://games/:id
+   *   - itch://preferences
+   *   - https://google.com/
+   *   - https://leafo.itch.io/x-moon
+   */
+  url: string;
+
+  /**
+   * resource associated with tab, something like
+   *    - `games/:id`
+   */
+  resource?: string;
+}
+
+export interface ITabInstance {
+  /** pages visited in this tab */
+  history: ITabPage[];
+
+  /** current index of history shown */
+  currentIndex: number;
+
+  /** data for the current page - is cleared on navigation */
+  data: ITabData;
+}
+
 export interface ITabData {
-  /** path of tab, something like `collections/:id`, etc. */
-  path?: string;
-
-  /** true if the tab has never been fetched in that session before */
-  fresh?: boolean;
-
   users?: ITabUsers;
   games?: ITabGames;
   collections?: ITabCollections;
@@ -68,14 +91,6 @@ export interface ITabData {
   log?: ITabLog;
 }
 
-export interface ITabDataSave extends ITabData {
+export interface ITabDataSave extends ITabInstance {
   id: string;
-}
-
-export interface ITabHistory {
-  paths: string[];
-}
-
-export interface ITabHistorySet {
-  [tab: string]: ITabHistory;
 }

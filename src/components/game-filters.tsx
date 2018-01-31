@@ -14,6 +14,8 @@ import { css } from "./styles";
 import { FiltersContainer } from "./filters-container";
 import Link from "./basics/link";
 import Criterion from "./basics/criterion";
+import { Space } from "../helpers/space";
+import { size } from "underscore";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
@@ -196,12 +198,7 @@ export default connect<IProps>(GameFilters, {
       onlyOwnedGames: (rs: IRootState) => rs.preferences.onlyOwnedGames,
       onlyInstalledGames: (rs: IRootState) => rs.preferences.onlyInstalledGames,
       numItems: (rs: IRootState) => {
-        const tabData = rs.session.tabData[props.tab];
-        if (tabData && tabData.games && tabData.games.ids) {
-          return tabData.games.ids.length;
-        } else {
-          return -1;
-        }
+        return size(Space.fromState(rs, props.tab).games().ids);
       },
     });
   },

@@ -27,7 +27,7 @@ export class Collections extends React.PureComponent<IProps & IDerivedProps> {
         <FiltersContainer>
           <Link
             label={format(["outlinks.manage_collections"])}
-            onClick={e => navigate({ tab: `url/${urls.myCollections}` })}
+            onClick={e => navigate({ url: urls.myCollections })}
           />
           <Filler />
         </FiltersContainer>

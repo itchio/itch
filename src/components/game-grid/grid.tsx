@@ -14,6 +14,7 @@ import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import HiddenIndicator from "../hidden-indicator";
 import doesEventMeanBackground from "../when-click-navigates";
 import { Game } from "ts-itchio-api";
+import { gameEvolvePayload } from "../../util/navigation";
 
 const globalMargin = 20;
 const sidebarCushion = 5;
@@ -107,10 +108,19 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     if (this.isCoverClick(ev)) {
       this.eventToGame(ev, game => {
-        this.props.navigateToGame({
-          game,
-          background: doesEventMeanBackground(ev),
-        });
+        // TODO: dedup with table
+        if (doesEventMeanBackground(ev)) {
+          this.props.navigate({
+            ...gameEvolvePayload(game),
+            background: true,
+          });
+        } else {
+          this.props.evolveTab({
+            ...gameEvolvePayload(game),
+            tab: this.props.tab,
+            replace: false,
+          });
+        }
       });
     }
   };
@@ -164,7 +174,8 @@ interface IProps extends IDimensionsProps {
 
 const actionCreators = actionCreatorsList(
   "clearFilters",
-  "navigateToGame",
+  "navigate",
+  "evolveTab",
   "openGameContextMenu"
 );
 

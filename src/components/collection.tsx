@@ -42,8 +42,8 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   popOutBrowser = () => {
-    const { tabData } = this.props;
-    const sp = Space.fromData(tabData);
+    const { tabInstance } = this.props;
+    const sp = Space.fromInstance(tabInstance);
     const c = sp.collection();
     if (c) {
       // fill in a dummy slug, the app will redirect

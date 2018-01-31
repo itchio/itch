@@ -7,14 +7,14 @@ import urls from "../constants/urls";
 import { IMeatProps } from "./meats/types";
 
 import BrowserMeat, { ControlsType } from "./browser-meat";
-import * as querystring from "querystring";
 import { Space } from "../helpers/space";
 
 export default class UrlMeat extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super();
+    // TODO: re-implement fresh
     this.state = {
-      active: props.visible && !props.tabData.fresh,
+      active: props.visible /* && !props.tabInstance.fresh */,
     };
   }
 
@@ -38,43 +38,28 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
   }
 
   getUrlAndControls(): IUrlAndControls {
-    const { tabData } = this.props;
+    const { tabInstance } = this.props;
+    let controls = "generic" as ControlsType;
 
-    const sp = Space.fromData(tabData);
-    const tabUrl = sp.web().url;
-
-    switch (sp.prefix) {
+    const sp = Space.fromInstance(tabInstance);
+    switch (sp.internalPage()) {
       case "featured":
         if (env.name === "test") {
-          return { url: "about:blank", controls: "generic" };
+          return { url: "about:blank", controls };
         } else {
-          return { url: urls.itchio + "/", controls: "generic" };
-        }
-      case "url":
-        return { url: sp.suffix, controls: "generic" };
-      case "users":
-        const user = sp.user();
-        if (user) {
-          return { url: tabUrl || user.url, controls: "generic" };
-        } else {
-          return { url: tabUrl, controls: "generic" };
+          return { url: urls.itchio + "/", controls };
         }
       case "games":
-        const game = sp.game();
-        if (game) {
-          return { url: tabUrl || game.url, controls: "game" };
-        } else {
-          return { url: tabUrl, controls: "generic" };
-        }
-      case "search":
-        const url =
-          urls.itchio + "/search?" + querystring.stringify({ q: sp.suffix });
-        return { url, controls: "generic" };
-      case "new":
-        return { url: "about:blank", controls: "generic" };
-      default:
-        return { url: tabUrl || "about:blank", controls: "generic" };
+      case "new-tab":
+        // let it simmer
+        return { url: "about:blank", controls };
     }
+
+    if (sp.prefix === "games") {
+      controls = "game";
+    }
+
+    return { url: sp.url() || sp.web().url, controls };
   }
 
   componentWillReceiveProps(props: IProps) {

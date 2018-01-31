@@ -9,11 +9,12 @@ import SearchDimmer from "../search-results/search-dimmer";
 
 import { map } from "underscore";
 
-import { IRootState, ITabs, ITabDataSet } from "../../types";
+import { IRootState, ITabInstances, IOpenTabs } from "../../types";
 
 import styled from "../styles";
 import TitleBar from "../title-bar";
 import { filtersContainerHeight } from "../filters-container";
+import { Space } from "../../helpers/space";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -44,23 +45,24 @@ const MeatTab = styled.div`
 
 export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tabData, tabs, id: currentId } = this.props;
+    const { openTabs, tabInstances, id: currentId } = this.props;
 
     return (
       <MeatContainer>
         <TitleBar tab={currentId} />
-        {map(tabs, id => {
-          const data = tabData[id] || {};
-          const visible = id === currentId;
+        {map(openTabs, tab => {
+          const tabInstance = tabInstances[tab];
+          const sp = Space.fromInstance(tabInstance);
+          const visible = tab === currentId;
           return (
             <MeatTab
-              key={id}
-              data-id={id}
-              data-path={data.path}
+              key={tab}
+              data-id={tab}
+              data-internal-page={sp.internalPage()}
               data-visible={visible}
               className={classNames("meat-tab", { visible })}
             >
-              <Meat tab={id} tabData={data} visible={visible} />
+              <Meat tab={tab} tabInstance={tabInstance} visible={visible} />
             </MeatTab>
           );
         })}
@@ -73,25 +75,22 @@ export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {}
 
-// FIXME: tabData is way overkill for this
-// we just want path, and it should be stored separately
-
 interface IDerivedProps {
   /** current tab shown */
   id: string;
-  tabs: string[];
-  tabData: ITabDataSet;
+  openTabs: string[];
+  tabInstances: ITabInstances;
 }
 
-const allTabsSelector = createSelector(
-  (rs: IRootState) => rs.session.navigation.tabs,
-  (tabs: ITabs) => [...tabs.constant, ...tabs.transient].sort()
+const openTabsSelector = createSelector(
+  (rs: IRootState) => rs.session.navigation.openTabs,
+  (openTabs: IOpenTabs) => [...openTabs.constant, ...openTabs.transient].sort()
 );
 
 export default connect<IProps>(AllMeats, {
   state: createStructuredSelector({
     id: (rs: IRootState) => rs.session.navigation.tab,
-    tabs: (rs: IRootState) => allTabsSelector(rs),
-    tabData: (rs: IRootState) => rs.session.tabData,
+    openTabs: (rs: IRootState) => openTabsSelector(rs),
+    tabInstances: (rs: IRootState) => rs.session.tabInstances,
   }),
 });

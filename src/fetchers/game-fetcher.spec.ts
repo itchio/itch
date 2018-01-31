@@ -17,11 +17,10 @@ suite(__filename, s => {
         classification: "game",
       };
 
-      const path = `games/${game.id}`;
+      const url = `itch://games/${game.id}`;
       const openTabAction = actions.openTab({
-        tab: "XXX",
+        url,
         background: false,
-        data: { path },
       });
       const { tab } = openTabAction.payload;
 
@@ -63,14 +62,14 @@ suite(__filename, s => {
 
       await runGameFetcher();
 
-      const td = () => w.store.getState().session.tabData;
+      const td = () => w.store.getState().session.tabInstances;
       t.same(
-        td()[tab].games.ids,
+        td()[tab].data.games.ids,
         [game.id],
         "tabData should list the game's id"
       );
       t.same(
-        td()[tab].games.set[game.id].title,
+        td()[tab].data.games.set[game.id].title,
         game.title,
         "tabData should have correct game data"
       );

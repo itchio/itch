@@ -1,4 +1,4 @@
-import { ITabData, ICredentials, Retry, isRetry } from "../types";
+import { ICredentials, Retry, isRetry, ITabData } from "../types";
 import * as bluebird from "bluebird";
 import { indexBy, pluck } from "underscore";
 
@@ -58,16 +58,15 @@ export class Fetcher {
     this.reason = reason;
     this.apiClient = params.apiClient || defaultApiClient;
 
-    const sp = this.space();
     this.logger = rootLogger.child({
-      name: `${this.constructor.name} :: ${sp.path()}`,
+      name: `${this.constructor.name} :: ${this.space().url()}`,
     });
 
     this.logger.debug(`fetching (${FetchReason[reason]})`);
   }
 
   tabName(): string {
-    return this.space().path();
+    return this.space().url();
   }
 
   private async doWork() {
@@ -78,14 +77,16 @@ export class Fetcher {
           await this.work();
         });
       } finally {
-        this.ctx.store.dispatch(
-          actions.tabDataFetched({
-            tab: this.tab,
-            data: {
-              fresh: false,
-            },
-          })
-        );
+        // FIXME: figure out how to adjust freshness again
+        // (if needed at all?)
+        // this.ctx.store.dispatch(
+        //   actions.tabDataFetched({
+        //     tab: this.tab,
+        //     data: {
+        //       fresh: false,
+        //     },
+        //   })
+        // );
       }
     } else {
       await this.work();

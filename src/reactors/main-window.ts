@@ -311,7 +311,9 @@ function ensureWindowInsideDisplay(window: Electron.BrowserWindow) {
 
   if (env.name === "test") {
     logger.info(
-      `Main window is ${bounds.width}x${bounds.height}, at (${bounds.x}, ${bounds.y})`
+      `Main window is ${bounds.width}x${bounds.height}, at (${bounds.x}, ${
+        bounds.y
+      })`
     );
   }
 }
@@ -397,10 +399,10 @@ export default function(watcher: Watcher) {
     makeSelector: (store, schedule) => {
       const getI18n = (rs: IRootState) => rs.i18n;
       const getID = (rs: IRootState) => rs.session.navigation.tab;
-      const getTabData = (rs: IRootState) => rs.session.tabData;
+      const getTabInstance = (rs: IRootState) => rs.session.tabInstances;
 
-      const getSpace = createSelector(getID, getTabData, (id, tabData) =>
-        Space.fromData(tabData[id])
+      const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>
+        Space.fromInstance(tabData[id])
       );
 
       return createSelector(getI18n, getSpace, (i18n, sp) => {

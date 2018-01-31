@@ -1,32 +1,23 @@
-import { ITabData, ILocalizedString } from "../types";
-
-export interface IBaseTabData extends ITabData {
-  label?: ILocalizedString;
-}
+import { ITabPage } from "../types";
 
 interface IBaseTabDataSet {
-  [key: string]: IBaseTabData;
-  featured: IBaseTabData;
-  dashboard: IBaseTabData;
-  collections: IBaseTabData;
-  library: IBaseTabData;
-  preferences: IBaseTabData;
-  downloads: IBaseTabData;
-  applog: IBaseTabData;
+  [key: string]: ITabPage;
 }
 
+const stub = () => ({ url: null } as ITabPage);
+
 const baseData = {
-  featured: { label: "itch.io" },
-  dashboard: { label: ["sidebar.dashboard"] },
-  collections: { label: ["sidebar.collections"] },
-  library: { label: ["sidebar.owned"] },
-  preferences: { label: ["sidebar.preferences"] },
-  downloads: { label: ["sidebar.downloads"] },
-  applog: { label: ["sidebar.applog"] },
+  "itch://featured": stub(),
+  "itch://dashboard": stub(),
+  "itch://collections": stub(),
+  "itch://library": stub(),
+  "itch://preferences": stub(),
+  "itch://downloads": stub(),
+  "itch://applog": stub(),
 } as IBaseTabDataSet;
 
 for (const key of Object.keys(baseData)) {
-  baseData[key].path = key;
+  baseData[key].url = key;
 }
 
 export default baseData;

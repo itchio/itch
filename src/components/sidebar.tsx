@@ -10,7 +10,7 @@ import Search from "./sidebar/search";
 import Tab from "./sidebar/tab";
 import Logo from "./sidebar/logo";
 
-import { IRootState } from "../types";
+import { IRootState, IOpenTabs } from "../types";
 
 import { SortableContainer, arrayMove } from "react-sortable-hoc";
 
@@ -82,7 +82,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
   constructor(props: IProps & IDerivedProps) {
     super();
     this.state = {
-      transient: props.tabs.transient,
+      transient: props.openTabs.transient,
     };
   }
 
@@ -103,7 +103,13 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
   };
 
   render() {
-    const { osx, sidebarWidth, fullscreen, tab: currentId, tabs } = this.props;
+    const {
+      osx,
+      sidebarWidth,
+      fullscreen,
+      tab: currentId,
+      openTabs,
+    } = this.props;
 
     return (
       <SidebarDiv id="sidebar" width={sidebarWidth}>
@@ -120,7 +126,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
             </SidebarHeading>
           </SidebarSection>
 
-          {map(tabs.constant, (id, index) => {
+          {map(openTabs.constant, (id, index) => {
             return <Tab key={id} tab={id} active={currentId === id} />;
           })}
 
@@ -157,7 +163,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   componentWillReceiveProps(props: IProps & IDerivedProps) {
     this.setState({
-      transient: props.tabs.transient,
+      transient: props.openTabs.transient,
     });
   }
 }
@@ -183,10 +189,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 
   tab: string;
   path: string;
-  tabs: {
-    constant: string[];
-    transient: string[];
-  };
+  openTabs: IOpenTabs;
 };
 
 interface IState {
@@ -201,7 +204,7 @@ export default connect<IProps>(Sidebar, {
     sidebarWidth: (rs: IRootState) => rs.preferences.sidebarWidth || 240,
     me: (rs: IRootState) => rs.session.credentials.me,
     tab: (rs: IRootState) => rs.session.navigation.tab,
-    tabs: (rs: IRootState) => rs.session.navigation.tabs,
+    openTabs: (rs: IRootState) => rs.session.navigation.openTabs,
   }),
   actionCreators,
 });

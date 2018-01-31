@@ -462,9 +462,7 @@ export interface ISessionState {
   navigation: ISessionNavigationState;
   search: ISessionSearchState;
 
-  tabData: TabDataTypes.ITabDataSet;
-  tabHistory: TabDataTypes.ITabHistorySet;
-  tabParams: ITabParamsSet;
+  tabInstances: TabDataTypes.ITabInstances;
 }
 
 export interface ISessionCredentialsState {
@@ -491,7 +489,7 @@ export interface ISessionLoginState {
   blockingOperation: ISetupOperation;
 }
 
-export interface ITabs {
+export interface IOpenTabs {
   /** tabs that can't be closed or re-ordered */
   constant: string[];
   /** tabs that can be moved around/closed */
@@ -502,7 +500,7 @@ export type TabLayout = "grid" | "table";
 
 export interface ISessionNavigationState {
   /** opened tabs */
-  tabs: ITabs;
+  openTabs: IOpenTabs;
 
   /** set to true when a tab is loading */
   loadingTabs: {
@@ -973,15 +971,23 @@ export interface IMenuItem extends Electron.MenuItemConstructorOptions {
 }
 export type IMenuTemplate = IMenuItem[];
 
-export interface IOpenTabPayload {
-  /** the id of the new tab to open (generated) */
-  tab?: string;
+export interface INavigatePayload {
+  /** the url to navigate to */
+  url: string;
 
-  /** any data we already known about the tab */
+  /** if we know this associates with a resource, let it be known here */
+  resource?: string;
+
+  /** if we already have tab data, let it be here */
   data?: TabDataTypes.ITabData;
 
   /** whether to open a new tab in the background */
   background?: boolean;
+}
+
+export interface IOpenTabPayload extends INavigatePayload {
+  /** the id of the new tab to open (generated) */
+  tab?: string;
 }
 
 export interface IOpenContextMenuBase {

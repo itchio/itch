@@ -6,6 +6,7 @@ import BrowserControls from "./browser-controls";
 import { IBrowserControlProps } from "./browser-state";
 
 import styled, * as styles from "./styles";
+import { Space } from "../helpers/space";
 
 const BrowserBarDiv = styled.div`
   display: flex;
@@ -46,13 +47,13 @@ const BrowserBarDiv = styled.div`
   align-items: center;
 `;
 
-const eo: any = {};
-
 export default class BrowserBar extends React.PureComponent<IProps> {
   render() {
-    const { tabData } = this.props;
-    const { loading } = tabData.web || eo;
-    const url = tabData.web ? tabData.web.url : this.props.url;
+    const { tabInstance } = this.props;
+    const sp = Space.fromInstance(tabInstance);
+
+    const loading = !!sp.web().loading;
+    const url = sp.web().url || this.props.url;
 
     return (
       <BrowserBarDiv className={classNames({ loading })}>

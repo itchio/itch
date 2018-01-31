@@ -67,9 +67,9 @@ function convertMenuAction(payload: IMenuItem, runtime: IRuntime) {
     case "menu.file.quit":
       return actions.quitWhenMain({});
     case "menu.file.preferences":
-      return actions.navigate({ tab: "preferences" });
+      return actions.navigate({ url: "itch://preferences" });
     case "menu.view.downloads":
-      return actions.navigate({ tab: "downloads" });
+      return actions.navigate({ url: "itch://downloads" });
     case "menu.account.change_user":
       return actions.changeUser({});
     case "menu.help.view_terms":

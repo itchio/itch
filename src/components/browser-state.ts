@@ -1,7 +1,7 @@
-import { ITabData } from "../types";
+import { ITabInstance } from "../types";
 
 export interface IBrowserControlProps {
   tab: string;
-  tabData: ITabData;
+  tabInstance: ITabInstance;
   url: string;
 }

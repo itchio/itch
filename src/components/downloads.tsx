@@ -75,7 +75,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
           smallText={["status.downloads.no_active_downloads_subtext"]}
           buttonIcon="earth"
           buttonText={["status.downloads.find_games_button"]}
-          buttonAction={() => navigate({ tab: "featured" })}
+          buttonAction={() => navigate({ url: "itch://featured" })}
         />
       );
     }

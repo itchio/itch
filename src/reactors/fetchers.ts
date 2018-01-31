@@ -50,14 +50,15 @@ export async function queueFetch(
     // no fetcher, nothing to do - but we gotta mark it as non-fresh
     const sp = Space.fromStore(store, tab);
     if (sp.isFresh()) {
-      store.dispatch(
-        actions.tabDataFetched({
-          tab,
-          data: {
-            fresh: false,
-          },
-        })
-      );
+      // TODO: figure out how to mark as non-fresh again
+      // store.dispatch(
+      //   actions.tabDataFetched({
+      //     tab,
+      //     data: {
+      //       fresh: false,
+      //     },
+      //   })
+      // );
     }
     return;
   }
@@ -105,11 +106,11 @@ export async function queueFetch(
 function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
   const sp = Space.fromStore(store, tab);
 
-  switch (sp.prefix) {
+  switch (sp.internalPage()) {
     case "dashboard":
       return DashboardFetcher;
     case "collections": {
-      if (sp.suffix) {
+      if (sp.firstPathElement()) {
         return CollectionFetcher;
       } else {
         return CollectionsFetcher;
@@ -130,10 +131,15 @@ function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
     case "applog":
       return AppLogFetcher;
   }
+
+  switch (sp.prefix) {
+    case "games":
+      return GameFetcher;
+  }
 }
 
 const queueCleanup = throttle((store: IStore) => {
-  const validKeys = new Set(Object.keys(store.getState().session.tabData));
+  const validKeys = new Set(Object.keys(store.getState().session.tabInstances));
 
   const allKeys = union(
     Object.keys(lastFetchers),

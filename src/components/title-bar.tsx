@@ -3,7 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import * as classNames from "classnames";
 
-import { IRootState, ITabData } from "../types";
+import { IRootState, ITabInstance } from "../types";
 
 import { FiltersContainer, filtersContainerHeight } from "./filters-container";
 import IconButton from "./basics/icon-button";
@@ -52,9 +52,9 @@ const emptyObj = {};
 
 class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, maximized, focused, tabData } = this.props;
+    const { tab, maximized, focused, tabInstance } = this.props;
 
-    const sp = Space.fromData(tabData);
+    const sp = Space.fromInstance(tabInstance);
     let label = sp.label();
 
     const loggedIn = tab !== "login";
@@ -85,7 +85,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   preferencesClick = () => {
-    this.props.navigate({ tab: "preferences" });
+    this.props.navigate({ url: "itch://preferences" });
   };
 
   minimizeClick = () => {
@@ -113,7 +113,7 @@ const actionCreators = actionCreatorsList(
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  tabData: ITabData;
+  tabInstance: ITabInstance;
   maximized: boolean;
   focused: boolean;
 };
@@ -121,8 +121,8 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 export default connect<IProps>(TitleBar, {
   state: () =>
     createStructuredSelector({
-      tabData: (rs: IRootState, props: IProps) =>
-        rs.session.tabData[props.tab] || emptyObj,
+      tabInstance: (rs: IRootState, props: IProps) =>
+        rs.session.tabInstances[props.tab] || emptyObj,
       maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
       focused: (rs: IRootState) => rs.ui.mainWindow.focused,
     }),

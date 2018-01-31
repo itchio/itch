@@ -14,6 +14,7 @@ import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import HiddenIndicator from "../hidden-indicator";
 import format from "../format";
 import { Game } from "ts-itchio-api";
+import { gameEvolvePayload } from "../../util/navigation";
 
 const rowHeight = 70;
 const rightMargin = 10;
@@ -162,10 +163,19 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
 
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     this.eventToGame(ev, game => {
-      this.props.navigateToGame({
-        game,
-        background: doesEventMeanBackground(ev),
-      });
+      // TODO: dedup with grid
+      if (doesEventMeanBackground(ev)) {
+        this.props.navigate({
+          ...gameEvolvePayload(game),
+          background: true,
+        });
+      } else {
+        this.props.evolveTab({
+          ...gameEvolvePayload(game),
+          tab: this.props.tab,
+          replace: false,
+        });
+      }
     });
   };
 
@@ -236,9 +246,9 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
             <span className="header--spacer" />
             {sortKey ? (
               <span
-                className={`header--icon ${sortDirection === "ASC"
-                  ? "icon-caret-up"
-                  : "icon-caret-down"}`}
+                className={`header--icon ${
+                  sortDirection === "ASC" ? "icon-caret-up" : "icon-caret-down"
+                }`}
               />
             ) : null}
           </span>
@@ -303,7 +313,8 @@ interface IProps extends IDimensionsProps {
 
 const actionCreators = actionCreatorsList(
   "clearFilters",
-  "navigateToGame",
+  "navigate",
+  "evolveTab",
   "openGameContextMenu"
 );
 

@@ -1,17 +1,31 @@
-import { ITabData, ITabWeb, ITabLocation, ITabGames } from "../types/tab-data";
 import { ICollection } from "../db/models/collection";
-import { ILocalizedString, IStore, IRootState } from "../types/index";
+import {
+  ILocalizedString,
+  IStore,
+  IRootState,
+  ITabPage,
+  ITabData,
+  ITabLog,
+  ITabCollections,
+  ITabInstance,
+  ITabWeb,
+  ITabLocation,
+  ITabGames,
+} from "../types/index";
 
-import staticTabData, { IBaseTabData } from "../constants/static-tab-data";
+import * as nodeUrl from "url";
+
 import memoize from "../util/lru-memoize";
 import { Game, User } from "ts-itchio-api";
+import { currentPage } from "../util/navigation";
+import staticTabData from "../constants/static-tab-data";
 
 // Empty Object
 const eo = {} as any;
 
-export const spaceFromData = memoize(
+export const spaceFromInstance = memoize(
   100,
-  (dataIn: ITabData) => new Space(dataIn)
+  (dataIn: ITabInstance) => new Space(dataIn)
 );
 
 /**
@@ -22,42 +36,61 @@ export const spaceFromData = memoize(
 export class Space {
   prefix: string;
   suffix: string;
-  private _path: string;
-  private data: ITabData;
+  // private _instance: ITabInstance;
+  private _page: ITabPage;
+  private _data: ITabData;
+  private _protocol: string;
+  private _hostname: string;
+  private _pathElements: string[];
 
-  constructor(dataIn: ITabData) {
-    let data = dataIn || eo;
-    this.data = data;
+  constructor(instanceIn: ITabInstance) {
+    let instance = instanceIn || eo;
+    // this._instance = instance;
 
-    let { path } = data;
-    if (!path) {
-      path = "";
+    this._data = instance.data || eo;
+    this._page = currentPage(instance) || eo;
+
+    const { resource, url } = this._page;
+    if (resource) {
+      const slashIndex = resource.indexOf("/");
+      if (slashIndex > 0) {
+        this.prefix = resource.substring(0, slashIndex);
+        this.suffix = resource.substring(slashIndex + 1);
+      } else {
+        this.prefix = resource;
+      }
     }
-    this._path = path;
 
-    const slashIndex = path.indexOf("/");
-    if (slashIndex > 0) {
-      this.prefix = path.substring(0, slashIndex);
-      this.suffix = path.substring(slashIndex + 1);
-    } else {
-      this.prefix = path;
+    if (url) {
+      try {
+        const parsed = nodeUrl.parse(url);
+        this._protocol = parsed.protocol;
+        this._hostname = parsed.hostname;
+        this._pathElements = parsed.pathname.replace(/^\//, "").split("/");
+      } catch (e) {
+        // TODO: figure this out
+      }
     }
   }
 
   static fromStore(store: IStore, tab: string): Space {
-    return spaceFromData(store.getState().session.tabData[tab]);
+    return spaceFromInstance(store.getState().session.tabInstances[tab]);
   }
 
   static fromState(rs: IRootState, tab: string): Space {
-    return spaceFromData(rs.session.tabData[tab]);
+    return spaceFromInstance(rs.session.tabInstances[tab]);
   }
 
-  static fromData(data: ITabData): Space {
-    return spaceFromData(data);
+  static fromInstance(data: ITabInstance): Space {
+    return spaceFromInstance(data);
   }
 
-  path(): string {
-    return this._path;
+  url(): string {
+    return this._page.url;
+  }
+
+  resource(): string {
+    return this._page.resource;
   }
 
   numericId(): number {
@@ -73,100 +106,175 @@ export class Space {
   }
 
   games(): ITabGames {
-    return this.data.games || eo;
+    return this._data.games || eo;
+  }
+
+  collections(): ITabCollections {
+    return this._data.collections || eo;
   }
 
   collection(): ICollection {
-    return ((this.data.collections || eo).set || eo)[this.numericId()] || eo;
+    return (
+      ((this._data.collections || eo).set || eo)[this.firstPathNumber()] || eo
+    );
   }
 
   user(): User {
-    return ((this.data.users || eo).set || eo)[this.numericId()] || eo;
+    return ((this._data.users || eo).set || eo)[this.numericId()] || eo;
   }
 
   web(): ITabWeb {
-    return this.data.web || eo;
+    return this._data.web || eo;
+  }
+
+  log(): ITabLog {
+    return this._data.log || eo;
   }
 
   location(): ITabLocation {
-    return this.data.location || eo;
+    return this._data.location || eo;
   }
 
   icon(): string {
-    return iconForPrefix[this.prefix] || fallbackIcon;
+    switch (this.internalPage()) {
+      case "featured":
+        return "itchio";
+      case "dashboard":
+        return "archive";
+      case "library":
+        return "heart-filled";
+      case "preferences":
+        return "cog";
+      case "downloads":
+        return "download";
+      case "collections":
+        return "video_collection";
+      case "games":
+        return "star";
+      case "locations":
+        return "folder-open";
+      case "new-tab":
+        return "star2";
+      case "applog":
+        return "bug";
+    }
+
+    return fallbackIcon;
   }
 
   image(): string {
-    switch (this.prefix) {
-      case "games": {
-        const g = this.game();
-        return g.stillCoverUrl || g.coverUrl;
-      }
-      case "users": {
-        const u = this.user() || eo;
-        return u.stillCoverUrl || u.coverUrl;
-      }
-      case "url": {
-        return (this.data.web || eo).favicon;
+    if (this.internalPage()) {
+      // only icons
+      return null;
+    }
+
+    if (this.firstPathElement() === "games") {
+      const g = this.game();
+      return g.stillCoverUrl || g.coverUrl;
+    }
+    return this.web().favicon;
+  }
+
+  isBrowser(): boolean {
+    switch (this._protocol) {
+      case "itch:": {
+        switch (this._hostname) {
+          case "games":
+            return true;
+          case "featured":
+            return true;
+          case "new-tab":
+            return true;
+          default:
+            return false;
+        }
       }
     }
 
+    return !!this._page.url;
+  }
+
+  protocol(): string {
+    return this._protocol;
+  }
+
+  internalPage(): string {
+    if (this._protocol === "itch:") {
+      return this._hostname;
+    }
     return null;
   }
 
-  staticData(): IBaseTabData {
-    return staticTabData[this.path()] || eo;
+  firstPathElement(): string {
+    if (this._pathElements) {
+      return this._pathElements[0];
+    }
+    return null;
+  }
+
+  firstPathNumber(): number {
+    if (this._pathElements) {
+      return parseInt(this._pathElements[0], 10);
+    }
+    return null;
   }
 
   label(): ILocalizedString {
-    const fallback = this.staticData().label || ["sidebar.loading"];
+    let fallback = this.web().title || ["sidebar.loading"];
 
-    switch (this.prefix) {
-      case "games": {
-        return this.game().title || fallback;
+    switch (this._protocol) {
+      case "itch:": {
+        switch (this._hostname) {
+          case "featured":
+            return "itch.io";
+          case "preferences":
+            return ["sidebar.preferences"];
+          case "collections":
+            if (this.firstPathElement()) {
+              return this.collection().title || fallback;
+            }
+            return ["sidebar.collections"];
+          case "library":
+            return ["sidebar.owned"];
+          case "dashboard":
+            return ["sidebar.dashboard"];
+          case "downloads":
+            return ["sidebar.downloads"];
+          case "preferences":
+            return ["sidebar.preferences"];
+          case "new-tab":
+            return ["sidebar.new_tab"];
+          default:
+            return "?";
+        }
       }
-      case "users": {
-        const u = this.user();
-        return u.displayName || u.username || fallback;
-      }
-      case "collections": {
-        return this.collection().title || fallback;
-      }
-      case "url": {
-        return this.web().title || fallback;
-      }
-      case "new": {
-        return ["sidebar.new_tab"];
-      }
-      case "locations": {
-        return this.location().path || fallback;
+
+      default: {
+        switch (this.prefix) {
+          case "games": {
+            return this.game().title || fallback;
+          }
+          case "users": {
+            const u = this.user();
+            return u.displayName || u.username || fallback;
+          }
+          case "locations": {
+            return this.location().path || fallback;
+          }
+        }
       }
     }
+
     return fallback;
   }
 
   isFrozen(): boolean {
-    return !!staticTabData[this.path()];
+    return !!staticTabData[this.url()];
   }
 
   isFresh(): boolean {
-    return this.data ? this.data.fresh : false;
+    return false;
   }
 }
 
-// maps tab prefixes to icomoon icons
-let iconForPrefix: { [key: string]: string } = {
-  featured: "itchio",
-  dashboard: "archive",
-  library: "heart-filled",
-  preferences: "cog",
-  downloads: "download",
-  collections: "video_collection",
-  games: "star",
-  users: "t-shirt",
-  search: "search",
-  locations: "folder-open",
-  new: "star2",
-  applog: "bug",
-};
 const fallbackIcon = "moon";

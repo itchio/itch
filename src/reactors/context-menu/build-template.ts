@@ -43,7 +43,7 @@ export function closeTabControls(ctx: Context, tab: string): IMenuTemplate {
 
   // TODO: disable some menu items if last transient tab, or constant tab
   const isEssential =
-    store.getState().session.navigation.tabs.constant.indexOf(tab) !== -1;
+    store.getState().session.navigation.openTabs.constant.indexOf(tab) !== -1;
 
   return [
     {

@@ -13,8 +13,8 @@ import { Space } from "../helpers/space";
 import { shell } from "electron";
 import {
   collectionToTabData,
-  gameToTabData,
   userToTabData,
+  gameEvolvePayload,
 } from "../util/navigation";
 import uuid from "../util/uuid";
 const logger = rootLogger.child({ name: "reactors/navigation" });
@@ -24,7 +24,7 @@ export default function(watcher: Watcher) {
     const { collection, background } = action.payload;
     store.dispatch(
       actions.navigate({
-        tab: `collections/${collection.id}`,
+        url: `itch://collections/${collection.id}`,
         data: collectionToTabData(collection),
         background,
       })
@@ -35,8 +35,7 @@ export default function(watcher: Watcher) {
     const { game, background } = action.payload;
     store.dispatch(
       actions.navigate({
-        tab: `games/${game.id}`,
-        data: gameToTabData(game),
+        ...gameEvolvePayload(game),
         background,
       })
     );
@@ -46,7 +45,7 @@ export default function(watcher: Watcher) {
     const { user, background } = action.payload;
     store.dispatch(
       actions.navigate({
-        tab: `users/${user.id}`,
+        url: `itch://users/${user.id}`,
         data: userToTabData(user),
         background,
       })
@@ -65,73 +64,58 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.navigate, async (store, action) => {
     const rs = store.getState();
-    const { tab, background } = action.payload;
-    logger.debug(`Navigating to ${tab} ${background ? "(in background)" : ""}`);
+    const { url, resource, data, background } = action.payload;
+    logger.debug(`Navigating to ${url} ${background ? "(in background)" : ""}`);
 
-    const sp = Space.fromData({ path: tab });
-    if (sp.prefix === "url" && /mailto:/.test(sp.suffix)) {
+    const sp = Space.fromInstance({
+      history: [{ url, resource }],
+      currentIndex: 0,
+      data,
+    });
+    if (sp.protocol() == "mailto:") {
       logger.debug(`Is mailto link, opening as external and skipping tab open`);
       shell.openExternal(sp.suffix);
       return;
     }
 
-    const { tabData } = rs.session;
+    const { openTabs } = rs.session.navigation;
+    const constantTabs = new Set(openTabs.constant);
+    const transientTabs = new Set(openTabs.transient);
 
-    const { tabs } = rs.session.navigation;
-    const constantTabs = new Set(tabs.constant);
-    const transientTabs = new Set(tabs.transient);
-
-    if (constantTabs.has(tab) || transientTabs.has(tab)) {
-      // switching to constant or transient tab by id, that's good
+    if (constantTabs.has(url) || transientTabs.has(url)) {
+      // switching to constant or transient tab by url, that's good
       if (!background) {
-        store.dispatch(actions.focusTab({ tab }));
+        store.dispatch(actions.focusTab({ tab: url }));
       }
       return;
     }
 
-    for (const existingTab of tabs.transient) {
-      const td = tabData[existingTab];
-      if (td && td.path === tab) {
-        // switching by path is cool
-        if (!background) {
-          store.dispatch(actions.focusTab({ tab: existingTab }));
-        }
-        return;
-      }
-    }
-
-    const { data } = action.payload;
-    const staticData = staticTabData[tab];
+    const staticData = staticTabData[url];
 
     // must be a new tab then!
     if (staticData) {
-      const { label, ...staticDataExceptId } = staticData;
       store.dispatch(
         actions.openTab({
-          tab,
+          tab: url,
+          url,
           background,
-          data: {
-            ...staticDataExceptId,
-            ...data,
-          },
         })
       );
     } else {
       store.dispatch(
         actions.openTab({
           tab: uuid(),
+          url,
+          resource,
           background,
-          data: {
-            path: tab,
-            ...data,
-          },
+          data,
         })
       );
     }
   });
 
   watcher.on(actions.closeAllTabs, async (store, action) => {
-    const { transient } = store.getState().session.navigation.tabs;
+    const { transient } = store.getState().session.navigation.openTabs;
 
     // woo !
     for (const tab of transient) {
@@ -141,7 +125,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.closeOtherTabs, async (store, action) => {
     const safeTab = action.payload.tab;
-    const { transient } = store.getState().session.navigation.tabs;
+    const { transient } = store.getState().session.navigation.openTabs;
 
     // woo !
     for (const tab of transient) {
@@ -153,7 +137,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.closeTabsBelow, async (store, action) => {
     const markerTab = action.payload.tab;
-    const { transient } = store.getState().session.navigation.tabs;
+    const { transient } = store.getState().session.navigation.openTabs;
 
     // woo !
     let closing = false;
@@ -168,8 +152,8 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.closeCurrentTab, async (store, action) => {
-    const { tabs, tab } = store.getState().session.navigation;
-    const { transient } = tabs;
+    const { openTabs, tab } = store.getState().session.navigation;
+    const { transient } = openTabs;
 
     if (contains(transient, tab)) {
       store.dispatch(actions.closeTab({ tab }));
@@ -177,7 +161,9 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.downloadStarted, async (store, action) => {
-    store.dispatch(actions.navigate({ tab: "downloads", background: true }));
+    store.dispatch(
+      actions.navigate({ url: "itch://downloads", background: true })
+    );
   });
 
   watcher.onStateChange({
@@ -191,10 +177,11 @@ export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) =>
       createSelector(
-        (rs: IRootState) => rs.session.navigation.tabs,
-        (rs: IRootState) => rs.session.tabData,
+        (rs: IRootState) => rs.session.navigation.openTabs,
+        (rs: IRootState) => rs.session.tabInstances,
         (rs: IRootState) => rs.session.navigation.tab,
-        (tabs, tabData, tab) => schedule.dispatch(actions.tabsChanged({}))
+        (openTabs, tabInstances, tab) =>
+          schedule.dispatch(actions.tabsChanged({}))
       ),
   });
 }

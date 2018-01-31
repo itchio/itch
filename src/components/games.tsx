@@ -139,16 +139,17 @@ export default connect<IProps>(Games, {
   state: (initialState, initialProps) => {
     const { tab } = initialProps;
     return createSelector(
-      (rs: IRootState) => Space.fromData(rs.session.tabData[tab] || eo),
-      (rs: IRootState) => rs.session.tabParams[tab] || eo,
+      (rs: IRootState) => Space.fromState(rs, tab),
       (rs: IRootState) => rs.preferences.layout,
+      // FIXME: that's what tabParams was for presumably
+      (rs: IRootState) => "table",
       (rs: IRootState) => rs.session.navigation.loadingTabs[tab] || false,
       createStructuredSelector({
         gameIds: (sp: Space, params, prefLayout) => sp.games().ids || ea,
         games: (sp: Space, params, prefLayout) => sp.games().set || eo,
         totalCount: (sp: Space, params, prefLayout) => sp.games().totalCount,
         prefLayout: (sp: Space, params, prefLayout) => prefLayout,
-        params: (sp: Space, params, prefLayout) => params,
+        params: (sp: Space, params, prefLayout) => ({} as ITabParams),
         loading: (sp: Space, params, prefLayout, loading) =>
           loading || sp.isFresh(),
       })

@@ -1,23 +1,23 @@
-import { map, reject, omit, filter } from "underscore";
+import { reject, omit } from "underscore";
 
-import { ISessionNavigationState, ITabDataSave } from "../../types";
+import { ISessionNavigationState } from "../../types";
 
 import { actions } from "../../actions";
 import reducer from "../reducer";
 
 import { arrayMove } from "react-sortable-hoc";
 
-const baseTabs = ["featured", "library", "collections"];
+const baseTabs = ["itch://featured", "itch://library", "itch://collections"];
 
 const initialState = {
   page: "gate",
-  tabs: {
+  openTabs: {
     constant: baseTabs,
     transient: [],
   },
   loadingTabs: {},
-  lastConstant: "featured",
-  tab: "featured",
+  lastConstant: "itch://featured",
+  tab: "itch://featured",
 } as ISessionNavigationState;
 
 export default reducer<ISessionNavigationState>(initialState, on => {
@@ -40,7 +40,7 @@ export default reducer<ISessionNavigationState>(initialState, on => {
   });
 
   on(actions.tabChanged, (state, action) => {
-    const { constant } = state.tabs;
+    const { constant } = state.openTabs;
     const { tab } = action.payload;
 
     if (!tab) {
@@ -67,12 +67,12 @@ export default reducer<ISessionNavigationState>(initialState, on => {
 
   on(actions.openTab, (state, action) => {
     const { tab, background } = action.payload;
-    const { constant, transient } = state.tabs;
+    const { constant, transient } = state.openTabs;
 
     return {
       ...state,
       tab: background ? state.tab : tab,
-      tabs: {
+      openTabs: {
         constant,
         transient: [tab, ...transient],
       },
@@ -91,24 +91,24 @@ export default reducer<ISessionNavigationState>(initialState, on => {
   on(actions.moveTab, (state, action) => {
     const { before, after } = action.payload;
 
-    const { tabs } = state;
-    const { transient } = tabs;
+    const { openTabs } = state;
+    const { transient } = openTabs;
 
     const newTransient = arrayMove(transient, before, after);
 
     return {
       ...state,
-      tabs: {
-        ...state.tabs,
+      openTabs: {
+        ...state.openTabs,
         transient: newTransient,
       },
     };
   });
 
   on(actions.closeTab, (state, action) => {
-    const { tab, tabs } = state;
+    const { tab, openTabs } = state;
     const closeId = action.payload.tab || tab;
-    const { constant, transient } = tabs;
+    const { constant, transient } = openTabs;
 
     if (constant.indexOf(closeId) !== -1) {
       // constant tabs cannot be closed
@@ -139,36 +139,41 @@ export default reducer<ISessionNavigationState>(initialState, on => {
     return {
       ...state,
       tab: newId,
-      tabs: {
-        ...state.tabs,
+      openTabs: {
+        ...state.openTabs,
         transient: newTransient,
       },
     };
   });
 
   on(actions.tabsRestored, (state, action) => {
-    const snapshot = action.payload;
+    if (1 === 1) {
+      // FIXME: re-enable at some point
+      return state;
+    }
 
-    const tab = snapshot.current || state.tab;
-    const transient = filter(
-      map(snapshot.items, (tab: ITabDataSave) => {
-        if (typeof tab !== "object" || !tab.id || !tab.path) {
-          return;
-        }
+    // const snapshot = action.payload;
 
-        return tab.id;
-      }),
-      x => !!x
-    );
+    // const tab = snapshot.current || state.tab;
+    // const transient = filter(
+    //   map(snapshot.items, (tab: ITabDataSave) => {
+    //     if (typeof tab !== "object" || !tab.id || !tab.path) {
+    //       return;
+    //     }
 
-    return {
-      ...state,
-      tab,
-      tabs: {
-        ...state.tabs,
-        transient,
-      },
-    };
+    //     return tab.id;
+    //   }),
+    //   x => !!x
+    // );
+
+    // return {
+    //   ...state,
+    //   tab,
+    //   openTabs: {
+    //     ...state.openTabs,
+    //     transient,
+    //   },
+    // };
   });
 
   on(actions.logout, (state, action) => {
@@ -177,20 +182,20 @@ export default reducer<ISessionNavigationState>(initialState, on => {
 
   // happens after SESSION_READY depending on the user's profile (press, developer)
   on(actions.unlockTab, (state, action) => {
-    const { tab } = action.payload;
+    const { url } = action.payload;
 
-    const { constant } = state.tabs;
+    const { constant } = state.openTabs;
 
-    if (constant.indexOf(tab) !== -1) {
+    if (constant.indexOf(url) !== -1) {
       // already unlocked, nothing to do
       return state;
     }
 
     return {
       ...state,
-      tabs: {
-        ...state.tabs,
-        constant: [...constant, tab],
+      openTabs: {
+        ...state.openTabs,
+        constant: [...constant, url],
       },
     };
   });

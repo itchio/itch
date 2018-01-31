@@ -25,6 +25,7 @@ import styled, * as styles from "./styles";
 import DisabledBrowser from "./disabled-browser";
 import format from "./format";
 import { map } from "underscore";
+import { Space } from "../helpers/space";
 
 const BrowserMeatContainer = styled.div`
   ${styles.meat()};
@@ -120,33 +121,43 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   render() {
-    const { tab, tabData, url, controls, meId, disableBrowser } = this.props;
-    const fresh = !(tabData.web && tabData.web.webContentsId);
+    const {
+      tab,
+      tabInstance,
+      url,
+      controls,
+      meId,
+      disableBrowser,
+    } = this.props;
+    const sp = Space.fromInstance(tabInstance);
+    const fresh = !sp.web().webContentsId;
     const partition = partitionForUser(meId);
 
     let context: React.ReactElement<any> = null;
     if (controls === "game") {
-      context = <GameBrowserContext tab={tab} tabData={tabData} url={url} />;
+      context = (
+        <GameBrowserContext tab={tab} tabInstance={tabInstance} url={url} />
+      );
     }
 
-    const newTab = !!/^new\//.exec(tabData && tabData.path);
+    const newTab = sp.internalPage() === "new-tab";
 
     return (
       <BrowserMeatContainer>
-        <BrowserBar tab={tab} tabData={tabData} url={url} />
+        <BrowserBar tab={tab} tabInstance={tabInstance} url={url} />
         <BrowserMain>
           {newTab ? (
             <NewTabGrid>
               <Title>{format(["new_tab.titles.buttons"])}</Title>
 
               {map(newTabItems, item => {
-                const { label, icon, path } = item;
+                const { label, icon, url } = item;
 
                 return (
                   <NewTabItem
-                    key={path}
+                    key={url}
                     onClick={() =>
-                      this.props.evolveTab({ tab: tab, path, replace: true })
+                      this.props.evolveTab({ tab: tab, url, replace: true })
                     }
                   >
                     <Icon icon={icon} />
@@ -281,26 +292,26 @@ const newTabItems = [
   {
     label: ["new_tab.twitter"],
     icon: "twitter",
-    path: "url/https://twitter.com/search?q=itch.io&src=typd",
+    url: "https://twitter.com/search?q=itch.io&src=typd",
   },
   {
     label: ["new_tab.random"],
     icon: "shuffle",
-    path: "url/" + urls.itchio + "/randomizer",
+    url: urls.itchio + "/randomizer",
   },
   {
     label: ["new_tab.on_sale"],
     icon: "shopping_cart",
-    path: "url/" + urls.itchio + "/games/on-sale",
+    url: urls.itchio + "/games/on-sale",
   },
   {
     label: ["new_tab.top_sellers"],
     icon: "star",
-    path: "url/" + urls.itchio + "/games/top-sellers",
+    url: urls.itchio + "/games/top-sellers",
   },
   {
     label: ["new_tab.devlogs"],
     icon: "fire",
-    path: "url/" + urls.itchio + "/featured-games-feed?filter=devlogs",
+    url: urls.itchio + "/featured-games-feed?filter=devlogs",
   },
 ];

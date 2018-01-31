@@ -29,9 +29,10 @@ import {
   ILocalizedString,
   IOpenContextMenuBase,
   ModalResponse,
+  ITabData,
+  INavigatePayload,
 } from "../types/index";
 import { OwnUser, Game, Build, Upload, User } from "ts-itchio-api";
-import { ITabData } from "../types/tab-data";
 import { TaskName } from "../types/tasks";
 import { CleanDownloadsEntry } from "node-buse/lib/messages";
 import { ICollection } from "../db/models/collection";
@@ -270,13 +271,13 @@ export const actions = wireActions({
     page: string;
   }>(),
   unlockTab: action<{
-    /** the path of the tab to unlock (press, dashboard, etc.) */
-    tab: string;
+    /** the url of the tab to unlock (press, dashboard, etc.) */
+    url: string;
   }>(),
 
   openTab: action<IOpenTabPayload>(),
   newTab: action<{}>(),
-  navigate: action<IOpenTabPayload>(),
+  navigate: action<INavigatePayload>(),
   navigateToUser: action<{
     /** user to navigate to */
     user: User;
@@ -335,11 +336,14 @@ export const actions = wireActions({
     /** the tab to evolve */
     tab: string;
 
-    /** the tab's new path */
-    path: string;
+    /** the new URL */
+    url: string;
+
+    /** the new resource if any */
+    resource?: string;
 
     /** new tab data to add to the previous set */
-    extras?: ITabData;
+    data?: ITabData;
 
     /** if set, evolve tab immediately, don't wait for a fetch */
     quick?: boolean;

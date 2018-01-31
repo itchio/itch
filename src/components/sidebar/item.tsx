@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 
 import format from "../format";
 
-import { ILocalizedString, ITabData } from "../../types";
+import { ILocalizedString, ITabInstance } from "../../types";
 
 import Filler from "../basics/filler";
 import LoadingCircle from "../basics/loading-circle";
@@ -157,7 +157,7 @@ class Item extends React.PureComponent<IProps, IState> {
   };
 
   render() {
-    const { count, sublabel, progress, tab, path, label, active } = this.props;
+    const { count, sublabel, progress, tab, label, active } = this.props;
     const { fresh } = this.state;
     const { onClose, onContextMenu } = this.props;
 
@@ -175,7 +175,6 @@ class Item extends React.PureComponent<IProps, IState> {
         onClick={this.onClick}
         onMouseUp={this.onMouseUp}
         onContextMenu={onContextMenu}
-        data-path={path}
         data-id={tab}
       >
         <Row>
@@ -216,7 +215,6 @@ class Item extends React.PureComponent<IProps, IState> {
 }
 
 interface IProps {
-  path: string;
   tab: string;
   label: ILocalizedString;
   active: boolean;
@@ -233,7 +231,7 @@ interface IProps {
   onContextMenu: (ev: React.MouseEvent<any>) => void;
   onClose?: () => void;
   onExplore?: (tabId: string) => void;
-  data?: ITabData;
+  tabInstance?: ITabInstance;
 }
 
 interface IState {

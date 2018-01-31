@@ -1,19 +1,20 @@
 import suite from "../test-suite";
 import { Space } from "./space";
+import { ITabInstance } from "../types/index";
 
 suite(__filename, s => {
-  s.case("paths", t => {
-    let sp = Space.fromData({ path: "games/3" });
-    t.same(sp.prefix, "games");
-    t.same(sp.suffix, "3");
-    t.same(sp.numericId(), 3);
+  const makeInstance = (url?, resource?) =>
+    ({
+      history: [{ url, resource }],
+      currentIndex: 0,
+    } as ITabInstance);
 
-    sp = Space.fromData({ path: "url/http://itch.io/randomizer?relevant=1" });
-    t.same(sp.prefix, "url");
-    t.same(sp.suffix, "http://itch.io/randomizer?relevant=1");
+  s.case("internal pages", t => {
+    // FIXME: fill up
 
-    sp = Space.fromData({ path: "invalid" });
-    t.same(sp.prefix, "invalid");
-    t.same(sp.suffix, undefined);
+    let sp = Space.fromInstance(makeInstance("itch://games/3"));
+    t.same(sp.internalPage(), "games");
+    t.same(sp.firstPathElement(), "3");
+    t.same(sp.firstPathNumber(), 3);
   });
 });

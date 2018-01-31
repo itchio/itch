@@ -59,7 +59,7 @@ export default function(watcher: Watcher, db: DB) {
             buttons: [
               {
                 label: ["prompt.install_location_not_empty.show_contents"],
-                action: actions.navigate({ tab: `locations/${name}` }),
+                action: actions.navigate({ url: `itch://locations/${name}` }),
               },
               "cancel",
             ],
@@ -150,21 +150,21 @@ export default function(watcher: Watcher, db: DB) {
         | "createDirectory")[],
     };
 
-    const promise = new Promise<
-      typeof actions.addInstallLocation.payload
-    >((resolve, reject) => {
-      const callback = (response: string[]) => {
-        if (!response) {
-          return resolve();
-        }
+    const promise = new Promise<typeof actions.addInstallLocation.payload>(
+      (resolve, reject) => {
+        const callback = (response: string[]) => {
+          if (!response) {
+            return resolve();
+          }
 
-        return resolve({
-          name: uuid(),
-          path: response[0],
-        });
-      };
-      dialog.showOpenDialog(window, dialogOpts, callback);
-    });
+          return resolve({
+            name: uuid(),
+            path: response[0],
+          });
+        };
+        dialog.showOpenDialog(window, dialogOpts, callback);
+      }
+    );
 
     const loc = await promise;
     if (loc) {

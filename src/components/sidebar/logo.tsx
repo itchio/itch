@@ -56,7 +56,7 @@ class Logo extends React.PureComponent<IDerivedProps> {
     }
 
     const { navigate } = this.props;
-    navigate({ tab: "featured" });
+    navigate({ url: "itch://featured" });
   };
 }
 

@@ -69,7 +69,7 @@ export default function create(wc: Electron.WebContents, store: IStore) {
           click() {
             store.dispatch(
               actions.navigate({
-                tab: "url/" + props.linkURL,
+                url: props.linkURL,
                 background: true,
               })
             );
@@ -100,8 +100,9 @@ export default function create(wc: Electron.WebContents, store: IStore) {
     menuTpl = delUnusedElements(menuTpl);
 
     if (menuTpl.length > 0) {
-      const menu = (electron.Menu || electron.remote.Menu)
-        .buildFromTemplate(menuTpl as any);
+      const menu = (electron.Menu || electron.remote.Menu).buildFromTemplate(
+        menuTpl as any
+      );
 
       menu.popup(electron.BrowserWindow.getFocusedWindow(), {
         async: true,

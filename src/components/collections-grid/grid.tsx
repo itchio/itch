@@ -3,12 +3,7 @@ import { createSelector, createStructuredSelector } from "reselect";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { findWhere, isEmpty } from "underscore";
 
-import {
-  IGameSet,
-  IRootState,
-  ITabData,
-  ICollectionSet,
-} from "../../types/index";
+import { IGameSet, IRootState, ICollectionSet } from "../../types/index";
 import { ICollection } from "../../db/models/collection";
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 
@@ -18,8 +13,9 @@ import { whenClickNavigates } from "../when-click-navigates";
 import HiddenIndicator from "../hidden-indicator";
 import EmptyState from "../empty-state";
 import LoadingState from "../loading-state";
+import { Space } from "../../helpers/space";
 
-const tab = "collections";
+const tab = "itch://collections";
 const eo: any = {};
 const ea = [] as any[];
 
@@ -51,7 +47,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
           smallText={["collections.empty_sub"]}
           buttonIcon="earth"
           buttonText={["status.downloads.find_games_button"]}
-          buttonAction={() => navigate({ tab: "featured" })}
+          buttonAction={() => navigate({ url: "itch://featured" })}
         />
       );
     }
@@ -160,15 +156,13 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 
 export default connect<IProps>(injectDimensions(Grid), {
   state: createSelector(
-    (rs: IRootState) => rs.session.tabData[tab] || eo,
+    (rs: IRootState) => Space.fromInstance(rs.session.tabInstances[tab]),
     (rs: IRootState) => rs.session.navigation.loadingTabs[tab],
     createStructuredSelector({
-      games: (tabData: ITabData) => (tabData.games || eo).set || eo,
-      collectionIds: (tabData: ITabData) =>
-        (tabData.collections || eo).ids || ea,
-      collections: (tabData: ITabData) => (tabData.collections || eo).set || eo,
-      loading: (tabData: ITabData, loading: boolean) =>
-        loading || tabData.fresh,
+      games: (sp: Space) => sp.games().set || eo,
+      collectionIds: (sp: Space) => sp.collections().ids || ea,
+      collections: (sp: Space) => sp.collections().set || eo,
+      loading: (sp: Space, loading: boolean) => loading || sp.isFresh(),
     })
   ),
   actionCreators,

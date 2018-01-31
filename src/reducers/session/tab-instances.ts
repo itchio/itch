@@ -1,21 +1,29 @@
-import { ITabDataSet, ITabData, ITabDataSave } from "../../types";
+import { ITabInstances, ITabData } from "../../types";
 import { actions } from "../../actions";
 import reducer from "../reducer";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "reducers/tab-data" });
 
-import { omit, each } from "underscore";
+import { omit } from "underscore";
 
 import staticTabData from "../../constants/static-tab-data";
 
-const initialState = {
-  ...staticTabData,
-} as ITabDataSet;
+const initialState: ITabInstances = {};
 
-for (const k of Object.keys(initialState)) {
-  initialState[k].fresh = true;
+for (const tab of Object.keys(staticTabData)) {
+  const page = staticTabData[tab];
+  initialState[tab] = {
+    history: [page],
+    currentIndex: 0,
+    data: {},
+  };
 }
+
+// TODO: re-implement fresh
+// for (const k of Object.keys(initialState)) {
+//   initialState[k].fresh = true;
+// }
 
 const emptyObj = {} as any;
 
@@ -43,11 +51,11 @@ function merge(
   return res;
 }
 
-export default reducer<ITabDataSet>(initialState, on => {
+export default reducer<ITabInstances>(initialState, on => {
   on(actions.tabDataFetched, (state, action) => {
     const { tab, data, shallow } = action.payload;
-    const oldData = state[tab];
-    if (!oldData) {
+    const oldInstance = state[tab];
+    if (!oldInstance) {
       // ignore fresh data for closed tabs
       logger.debug(`tabDataFetched, ignoring fresh data for ${tab}`);
       return state;
@@ -55,24 +63,52 @@ export default reducer<ITabDataSet>(initialState, on => {
 
     return {
       ...state,
-      [tab]: merge(oldData, data, { shallow }),
+      [tab]: {
+        ...oldInstance,
+        data: merge(oldInstance.data, data, { shallow }),
+      },
     };
   });
 
   on(actions.evolveTab, (state, action) => {
-    const { tab, path, extras = emptyObj } = action.payload;
-    const data = { path, ...extras };
+    const { tab, data = emptyObj } = action.payload;
+    let { url, resource, replace } = action.payload;
 
-    const oldData = state[tab];
-    if (!oldData) {
+    const oldInstance = state[tab];
+    if (!oldInstance) {
       // ignore fresh data for closed tabs
       return state;
     }
 
+    let { history, currentIndex } = oldInstance;
+    if (history[currentIndex].url === url) {
+      replace = true;
+    }
+
+    if (/^collections\//.test(resource)) {
+      url = `itch://${resource}`;
+    }
+
+    if (!resource) {
+      // keep the resource in case it's not specified
+      resource = history[currentIndex].resource;
+    }
+    if (replace) {
+      history = [...history.slice(0, currentIndex), { url, resource }];
+    } else {
+      history = [...history.slice(0, currentIndex + 1), { url, resource }];
+    }
+    currentIndex = history.length - 1;
+
     // merge old & new data
     return {
       ...state,
-      [tab]: merge(oldData, data, { shallow: false }),
+      [tab]: {
+        ...oldInstance,
+        history,
+        currentIndex,
+        data: merge(oldInstance.data, data, { shallow: false }),
+      },
     };
   });
 
@@ -100,11 +136,21 @@ export default reducer<ITabDataSet>(initialState, on => {
   });
 
   on(actions.openTab, (state, action) => {
-    const { tab, data = emptyObj } = action.payload;
+    const { tab, url, resource, data = emptyObj } = action.payload;
     const staticData = staticTabData[tab] || emptyObj;
     return {
       ...state,
-      [tab]: { ...data, ...staticData, fresh: true },
+      [tab]: {
+        history: [
+          {
+            url,
+            resource,
+          },
+        ],
+        currentIndex: 0,
+        data: { ...data, ...staticData },
+        fresh: true,
+      },
     };
   });
 
@@ -126,6 +172,10 @@ export default reducer<ITabDataSet>(initialState, on => {
   });
 
   on(actions.tabsRestored, (state, action) => {
+    // TODO: re-implement
+    return state;
+
+    /*
     const snapshot = action.payload;
 
     let s = state;
@@ -150,5 +200,6 @@ export default reducer<ITabDataSet>(initialState, on => {
     });
 
     return s;
+    */
   });
 });

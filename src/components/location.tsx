@@ -35,14 +35,14 @@ const LargeFiltersContainer = styled(FiltersContainer)`
 
 export class Location extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, tabData, browseInstallLocation } = this.props;
+    const { tab, tabInstance, browseInstallLocation } = this.props;
 
-    const locationName = Space.fromData(tabData).suffix;
+    const locationName = Space.fromInstance(tabInstance).firstPathElement();
 
     return (
       <LocationContainer>
         <LargeFiltersContainer>
-          <LocationTitleBarExtra tabData={tabData} />
+          <LocationTitleBarExtra tabInstance={tabInstance} />
           <Button
             icon="folder-open"
             discreet

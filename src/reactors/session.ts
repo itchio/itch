@@ -7,7 +7,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
     const me = store.getState().session.credentials.me;
     if (me.developer) {
-      store.dispatch(actions.unlockTab({ tab: "dashboard" }));
+      store.dispatch(actions.unlockTab({ url: "itch://dashboard" }));
     }
 
     store.dispatch(actions.switchPage({ page: "hub" }));
@@ -18,7 +18,9 @@ export default function(watcher: Watcher) {
     // and open downloads tab if we have some pending
     const { downloads } = store.getState();
     if (getActiveDownload(downloads)) {
-      store.dispatch(actions.navigate({ tab: "downloads", background: true }));
+      store.dispatch(
+        actions.navigate({ url: "itch://downloads", background: true })
+      );
     }
   });
 

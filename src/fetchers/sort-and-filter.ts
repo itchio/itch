@@ -37,7 +37,9 @@ export function sortAndFilter(
 ): Game[] {
   let set = games;
   const state = store.getState();
-  const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
+  // const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
+  // FIXME: restore in some form
+  const tabParams: ITabParams = emptyObj;
   const { sortBy, sortDirection = "DESC" } = tabParams;
   const prefs = state.preferences;
 
@@ -128,7 +130,9 @@ export function addSortAndFilterToQuery(
   store: IStore
 ): squel.Select {
   const state = store.getState();
-  const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
+  // FIXME: restore that
+  // const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
+  const tabParams: ITabParams = emptyObj;
   const { sortBy, sortDirection = "DESC" } = tabParams;
   const prefs = state.preferences;
 

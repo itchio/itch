@@ -91,14 +91,14 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
           icon: "download",
           localizedLabel: ["sidebar.downloads"],
           id: "user-menu-downloads",
-          action: actions.navigate({ tab: "downloads" }),
+          action: actions.navigate({ url: "itch://downloads" }),
           accelerator: "CmdOrCtrl+J",
         },
         {
           icon: "cog",
           localizedLabel: ["sidebar.preferences"],
           id: "user-menu-preferences",
-          action: actions.navigate({ tab: "preferences" }),
+          action: actions.navigate({ url: "itch://preferences" }),
           accelerator: "CmdOrCtrl+,",
         },
         {
@@ -129,7 +129,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
         {
           icon: "lifebuoy",
           localizedLabel: ["menu.help.help"],
-          action: actions.navigate({ tab: "url/" + urls.manual }),
+          action: actions.navigate({ url: urls.manual }),
         },
         {
           type: "separator",

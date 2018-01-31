@@ -8,6 +8,7 @@ import IconButton from "./basics/icon-button";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import format from "./format";
 import { showInExplorerString } from "../format/show-in-explorer";
+import { Space } from "../helpers/space";
 
 const AppLogDiv = styled.div`
   ${styles.meat()};
@@ -34,11 +35,10 @@ const ControlsDiv = styled.div`
 
 class AppLog extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tabData } = this.props;
-    let log = "Loading...\n";
-    if (tabData && tabData.log && tabData.log.log) {
-      log = tabData.log.log;
-    }
+    const { tabInstance } = this.props;
+    const sp = Space.fromInstance(tabInstance);
+
+    let log = sp.log().log || "Loading...\n";
 
     return (
       <AppLogDiv>

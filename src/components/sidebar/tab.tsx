@@ -14,11 +14,9 @@ import {
 
 import {
   IRootState,
-  ITabData,
+  ITabInstance,
   ILocalizedString,
   IDownloadsState,
-  ITabHistory,
-  ITabParams,
 } from "../../types";
 
 import { injectIntl, InjectedIntl } from "react-intl";
@@ -33,16 +31,14 @@ interface ISortableHubSidebarItemProps {
   };
 }
 
-const eo: any = {};
-
 const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
   return <Item {...props.props} />;
 });
 
 class TabBase extends React.PureComponent<IProps & IDerivedProps> {
   onClick = () => {
-    const { tab, navigate } = this.props;
-    navigate({ tab });
+    const { tab, focusTab } = this.props;
+    focusTab({ tab });
   };
 
   onClose = () => {
@@ -56,16 +52,15 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   render() {
-    const { tab, index, sortable, data, active } = this.props;
+    const { tab, index, sortable, tabInstance, active } = this.props;
     const { onExplore } = this;
 
-    const sp = Space.fromData(data);
+    const sp = Space.fromInstance(tabInstance);
     let loading = this.props.loading || sp.web().loading;
-    const path = data.path || tab;
 
     let iconImage = sp.image();
     if (sp.prefix === "url") {
-      iconImage = (data.web || eo).favicon;
+      iconImage = sp.web().favicon;
     }
 
     const label = sp.label();
@@ -106,7 +101,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
 
     const props = {
       tab,
-      path,
+      tabInstance,
       label,
       icon,
       iconImage,
@@ -117,7 +112,6 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
       onClose,
       onContextMenu,
       onExplore,
-      data,
       sublabel,
       gameOverride,
       loading,
@@ -131,14 +125,14 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   onExplore = (tab: string) => {
-    const { data, history, loading, params } = this.props;
+    const { tabInstance } = this.props;
 
     this.props.openModal(
       modalWidgets.exploreJson.make({
         title: "Tab information",
         message: "",
         widgetParams: {
-          data: { data, history, loading, params },
+          data: { tab, tabInstance },
         },
       })
     );
@@ -154,15 +148,14 @@ interface IProps {
 
 const actionCreators = actionCreatorsList(
   "navigate",
+  "focusTab",
   "closeTab",
   "openModal",
   "openTabContextMenu"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  data: ITabData;
-  history: ITabHistory;
-  params: ITabParams;
+  tabInstance: ITabInstance;
   loading: boolean;
   downloads?: IDownloadsState;
 
@@ -174,9 +167,7 @@ const Tab = connect<IProps>(injectIntl(TabBase), {
     let { tab } = initialProps;
 
     return createStructuredSelector({
-      data: (rs: IRootState) => rs.session.tabData[tab] || eo,
-      history: (rs: IRootState) => rs.session.tabHistory[tab] || eo,
-      params: (rs: IRootState) => rs.session.tabParams[tab] || eo,
+      tabInstance: (rs: IRootState) => rs.session.tabInstances[tab],
       loading: (rs: IRootState) => !!rs.session.navigation.loadingTabs[tab],
       downloads: (rs: IRootState) => tab === "downloads" && rs.downloads,
     });

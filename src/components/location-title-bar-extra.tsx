@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ITabData, ICommonsState, IRootState } from "../types/index";
+import { ITabInstance, ICommonsState, IRootState } from "../types/index";
 import { connect } from "./connect";
 import { createSelector } from "reselect";
 import { Space } from "../helpers/space";
@@ -17,8 +17,8 @@ class LocationTitleBarExtra extends React.PureComponent<
   IProps & IDerivedProps
 > {
   render() {
-    const { tabData, locationSizes } = this.props;
-    const sp = Space.fromData(tabData);
+    const { tabInstance, locationSizes } = this.props;
+    const sp = Space.fromInstance(tabInstance);
     const size = locationSizes[sp.stringId()];
     if (!(size > 0)) {
       return null;
@@ -36,7 +36,7 @@ class LocationTitleBarExtra extends React.PureComponent<
 }
 
 interface IProps {
-  tabData: ITabData;
+  tabInstance: ITabInstance;
 }
 
 interface IDerivedProps {

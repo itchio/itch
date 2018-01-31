@@ -24,7 +24,7 @@ export class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
         <GameFilters tab={tab}>
           <Link
             label={format(["outlinks.open_dashboard"])}
-            onClick={e => navigate({ tab: `url/${urls.dashboard}` })}
+            onClick={e => navigate({ url: urls.dashboard })}
           />
         </GameFilters>
         <Games tab={tab} />

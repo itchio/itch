@@ -25,6 +25,7 @@ import format from "../format";
 import { hasSearchResults } from "../../reactors/search/search-helpers";
 import LoadingCircle from "../basics/loading-circle";
 import { filtersContainerHeight } from "../filters-container";
+import urls from "../../constants/urls";
 
 const ResultsContainer = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -154,7 +155,9 @@ export class SearchResultBar extends React.PureComponent<
 
   onOpenAsTab = () => {
     this.props.closeSearch({});
-    this.props.navigate({ tab: `search/${this.props.query}` });
+    this.props.navigate({
+      url: `${urls.itchio}?${encodeURIComponent(this.props.query)}`,
+    });
   };
 
   subscribe(watcher: Watcher) {

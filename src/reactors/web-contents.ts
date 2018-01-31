@@ -4,8 +4,6 @@ import * as url from "url";
 
 import { webContents, BrowserWindow } from "electron";
 
-import staticTabData from "../constants/static-tab-data";
-
 import urlParser from "../util/url";
 
 import rootLogger from "../logger";
@@ -17,30 +15,19 @@ import createContextMenu from "./web-contents-context-menu";
 import { ITabWeb } from "../types/tab-data";
 import { DB } from "../db/index";
 import { doSave } from "./navigation/save-password-and-secret";
+import { Space } from "../helpers/space";
 
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
-
-function isFrozen(tab: string): boolean {
-  return !!staticTabData[tab];
-}
 
 function withWebContents(
   store: IStore,
   tab: string,
   cb: (wc: Electron.WebContents) => any
 ) {
-  const data = store.getState().session.tabData[tab];
-  if (!data) {
-    return;
-  }
+  const sp = Space.fromStore(store, tab);
 
-  const { web } = data;
-  if (!web) {
-    return;
-  }
-
-  const { webContentsId } = web;
+  const { webContentsId } = sp.web();
   if (!webContentsId) {
     return;
   }
@@ -76,31 +63,37 @@ export default function(watcher: Watcher, db: DB) {
     };
     pushWeb({ webContentsId, loading: wc.isLoading() });
 
+    const sp = Space.fromStore(store, tab);
     const didNavigate = url => {
-      const path = parseWellKnownUrl(url);
-      if (path) {
+      if (sp.isFrozen()) {
+        return;
+      }
+
+      if (url !== "about:blank") {
+        const resource = parseWellKnownUrl(url);
         store.dispatch(
           actions.evolveTab({
             tab,
-            path,
-            replace: true,
+            url,
+            resource,
+            replace: false,
           })
         );
-      } else {
-        pushWeb({
-          url,
-          canGoBack: wc.canGoBack(),
-          canGoForward: wc.canGoForward(),
-        });
       }
+      pushWeb({
+        url,
+        canGoBack: wc.canGoBack(),
+        canGoForward: wc.canGoForward(),
+      });
     };
 
     didNavigate(wc.getURL());
 
-    if (isFrozen(tab)) {
+    if (sp.isFrozen()) {
       wc.on("will-navigate", (ev, url) => {
+        console.log("will-navigate!", url);
         ev.preventDefault();
-        store.dispatch(actions.navigate({ tab: `url/${url}` }));
+        store.dispatch(actions.navigate({ url }));
       });
     }
 
@@ -173,7 +166,7 @@ export default function(watcher: Watcher, db: DB) {
       "new-window",
       (ev, url, frameName, disposition, options, additionalFeatures) => {
         const background = disposition === "background-tab";
-        store.dispatch(actions.navigate({ tab: `url/${url}`, background }));
+        store.dispatch(actions.navigate({ url, background }));
       }
     );
 
@@ -196,34 +189,30 @@ export default function(watcher: Watcher, db: DB) {
     const { tab, url, iframe } = action.payload;
     withWebContents(store, tab, async wc => {
       logger.debug(`Analyzing ${url}, iframe? ${iframe}`);
-      if (isFrozen(tab)) {
+      const sp = Space.fromStore(store, tab);
+      if (sp.isFrozen()) {
         logger.debug(`Is frozen, won't analyze`);
         return;
       }
 
-      const onNewPath = newPath => {
-        if (newPath) {
-          logger.debug(`Evolving to ${newPath}`);
+      const onNewPath = resource => {
+        if (resource) {
+          // FIXME: we need this to be better - analyze can finish after we've already navigated away
+          // so we need to only set resource if the url is what we think it is
+          logger.debug(`Got resource ${resource}`);
           store.dispatch(
             actions.evolveTab({
               tab: tab,
-              path: newPath,
-              replace: false,
+              url,
+              resource,
+              replace: true,
             })
           );
 
           const parsed = urlParser.parse(url);
           if (parsed.search) {
-            doSave(newPath, parsed.search, db);
+            doSave(resource, parsed.search, db);
           }
-        } else {
-          store.dispatch(
-            actions.evolveTab({
-              tab: tab,
-              path: `url/${url}`,
-              replace: false,
-            })
-          );
         }
       };
 

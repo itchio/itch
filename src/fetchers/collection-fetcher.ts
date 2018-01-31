@@ -29,7 +29,7 @@ export default class CollectionFetcher extends Fetcher {
       forced = true;
     }
 
-    const collectionId = this.space().numericId();
+    const collectionId = this.space().firstPathNumber();
     let localCollection = db.collections.findOneById(collectionId);
 
     if (localCollection) {
@@ -114,7 +114,9 @@ export default class CollectionFetcher extends Fetcher {
 
       while (fetchedGames < remoteCollection.gamesCount) {
         this.debug(
-          `Fetching page ${page}... (${fetchedGames}/${remoteCollection.gamesCount} games fetched)`
+          `Fetching page ${page}... (${fetchedGames}/${
+            remoteCollection.gamesCount
+          } games fetched)`
         );
         const gamesResponse = await this.withApi(async api => {
           return await api.collectionGames(collectionId, page);
@@ -142,7 +144,9 @@ export default class CollectionFetcher extends Fetcher {
         fetchedGames += gameIds.length;
       }
       this.debug(
-        `Fetched ${allGamesList.length}/${remoteCollection.gamesCount} games total`
+        `Fetched ${allGamesList.length}/${
+          remoteCollection.gamesCount
+        } games total`
       );
 
       this.pushUnfilteredGames(allGamesList);

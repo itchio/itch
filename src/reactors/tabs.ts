@@ -1,14 +1,12 @@
 import { Watcher } from "./watcher";
 
-import uuid from "../util/uuid";
-
 import { actions } from "../actions";
 
 import { IStore } from "../types";
 
 async function applyTabOffset(store: IStore, offset: number) {
-  const { tab, tabs } = store.getState().session.navigation;
-  const { constant, transient } = tabs;
+  const { tab, openTabs } = store.getState().session.navigation;
+  const { constant, transient } = openTabs;
 
   const allTabs = constant.concat(transient);
   const numTabs = allTabs.length;
@@ -19,20 +17,20 @@ async function applyTabOffset(store: IStore, offset: number) {
   const newIndex = (index + offset + numTabs) % numTabs;
   const newTab = allTabs[newIndex];
 
-  store.dispatch(actions.navigate({ tab: newTab }));
+  store.dispatch(actions.focusTab({ tab: newTab }));
 }
 
 export default function(watcher: Watcher) {
   watcher.on(actions.newTab, async (store, action) => {
-    store.dispatch(actions.navigate({ tab: "new/" + uuid() }));
+    store.dispatch(actions.navigate({ url: "itch://new-tab" }));
   });
 
   watcher.on(actions.focusNthTab, async (store, action) => {
     const n = action.payload.index;
-    const constant = store.getState().session.navigation.tabs.constant;
+    const constant = store.getState().session.navigation.openTabs.constant;
     const tab = constant[n - 1];
     if (tab) {
-      store.dispatch(actions.navigate({ tab }));
+      store.dispatch(actions.focusTab({ tab }));
     }
   });
 

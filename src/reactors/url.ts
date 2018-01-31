@@ -59,14 +59,8 @@ export default function(watcher: Watcher) {
           return;
         }
         const gameId = tokens[1];
-        store.dispatch(actions.navigate({ tab: "games/" + gameId }));
+        store.dispatch(actions.navigate({ url: `itch://games/${gameId}` }));
         break;
-      }
-
-      default: {
-        const resourcePath = url.hostname + url.pathname;
-        logger.info(`Opening resource directly: ${resourcePath}`);
-        store.dispatch(actions.navigate({ tab: resourcePath }));
       }
     }
   });
@@ -79,16 +73,14 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.viewCreatorProfile, async (store, action) => {
     const url = store.getState().session.credentials.me.url;
-    store.dispatch(actions.navigate({ tab: "url/" + url }));
+    store.dispatch(actions.navigate({ url }));
   });
 
   watcher.on(actions.viewCommunityProfile, async (store, action) => {
     const url = store.getState().session.credentials.me.url;
     const host = urlParser.parse(url).hostname;
     const slug = /^[^.]+/.exec(host);
-    store.dispatch(
-      actions.navigate({ tab: "url/" + `${urls.itchio}/profile/${slug}` })
-    );
+    store.dispatch(actions.navigate({ url: `${urls.itchio}/profile/${slug}` }));
   });
 
   watcher.on(actions.reportIssue, async (store, action) => {

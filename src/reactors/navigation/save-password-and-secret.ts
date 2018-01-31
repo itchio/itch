@@ -1,12 +1,14 @@
-import rootLogger from "../../logger";
-const logger = rootLogger.child({ name: "save-password-and-secret" });
+// import rootLogger from "../../logger";
+// const logger = rootLogger.child({ name: "save-password-and-secret" });
 
-import * as querystring from "querystring";
+// import * as querystring from "querystring";
 import { DB } from "../../db";
-import { Space } from "../../helpers/space";
+// import { Space } from "../../helpers/space";
 
 export function doSave(path: string, query: string, db: DB) {
-  const sp = Space.fromData({ path });
+  // TODO: re-implement
+  /*
+  const sp = Space.fromInstance({ path });
 
   if (sp.prefix !== "games") {
     return;
@@ -30,4 +32,5 @@ export function doSave(path: string, query: string, db: DB) {
       secret: parsed.secret,
     });
   }
+  */
 }

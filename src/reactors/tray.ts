@@ -33,9 +33,9 @@ const setTrayMenu = memoize(1, function(
   }
 });
 
-async function go(store: IStore, path: string) {
+async function go(store: IStore, url: string) {
   store.dispatch(actions.focusWindow({}));
-  store.dispatch(actions.navigate({ tab: path }));
+  store.dispatch(actions.navigate({ url }));
 }
 
 function refreshTray(store: IStore, i18n: II18nState) {
@@ -43,10 +43,13 @@ function refreshTray(store: IStore, i18n: II18nState) {
   // (like: make it display recent stuff / maybe the last few tabs)
 
   const menuTemplate: IMenuTemplate = [
-    { localizedLabel: ["sidebar.owned"], click: () => go(store, "library") },
+    {
+      localizedLabel: ["sidebar.owned"],
+      click: () => go(store, "itch://library"),
+    },
     {
       localizedLabel: ["sidebar.dashboard"],
-      click: () => go(store, "dashboard"),
+      click: () => go(store, "itch://dashboard"),
     },
   ];
 

@@ -1,11 +1,7 @@
-import { ITabData } from "../../types";
+import { ITabInstance } from "../../types";
 
-export interface IBaseMeatProps {
+export interface IMeatProps {
   tab: string;
-  tabData: ITabData;
+  tabInstance: ITabInstance;
   visible: boolean;
-}
-
-export interface IMeatProps extends IBaseMeatProps {
-  tabPath: string;
 }
