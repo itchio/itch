@@ -50,9 +50,9 @@ const TitleDiv = styled.div`
 
 const emptyObj = {};
 
-export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
+class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, maximized, focused, tabData, inner = null } = this.props;
+    const { tab, maximized, focused, tabData } = this.props;
 
     const sp = Space.fromData(tabData);
     let label = sp.label();
@@ -70,7 +70,6 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
         >
           <DraggableDivInner>
             <TitleDiv className="title-bar-text">{format(label)}</TitleDiv>
-            {inner}
             <Filler />
           </DraggableDivInner>
         </DraggableDiv>
@@ -104,7 +103,6 @@ export class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {
   tab: string;
-  inner?: JSX.Element | JSX.Element[];
 }
 
 const actionCreators = actionCreatorsList(

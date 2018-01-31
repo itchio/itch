@@ -8,7 +8,6 @@ import { map, first, rest } from "underscore";
 
 import Link from "./basics/link";
 import Row from "./download/row";
-import TitleBar from "./title-bar";
 import EmptyState from "./empty-state";
 
 import { IRootState, IDownloadItem } from "../types";
@@ -22,7 +21,9 @@ import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
 
-const DownloadsDiv = styled.div`${styles.meat()};`;
+const DownloadsDiv = styled.div`
+  ${styles.meat()};
+`;
 
 const DownloadsContentDiv = styled.div`
   overflow-y: auto;
@@ -57,14 +58,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   render() {
-    const { tab } = this.props;
-
-    return (
-      <DownloadsDiv>
-        <TitleBar tab={tab} />
-        {this.renderContents()}
-      </DownloadsDiv>
-    );
+    return <DownloadsDiv>{this.renderContents()}</DownloadsDiv>;
   }
 
   renderContents() {
@@ -108,33 +102,29 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
         ) : (
           ""
         )}
-        {queuedItems.length > 0 ? (
-          map(queuedItems, (item, i) => <Row key={item.id} item={item} />)
-        ) : (
-          ""
-        )}
+        {queuedItems.length > 0
+          ? map(queuedItems, (item, i) => <Row key={item.id} item={item} />)
+          : ""}
 
-        {finishedItems.length > 0 ? (
-          [
-            <div key="finished-header" className="section-bar">
-              <h2 className="finished-header">
-                {format(["status.downloads.category.recent_activity"])}
-              </h2>
-              <Link
-                className="downloads-clear-all"
-                onClick={() => clearFinishedDownloads({})}
-              >
-                {format(["status.downloads.clear_all_finished"])}
-              </Link>
-            </div>,
-          ].concat(
-            map(finishedItems, item => (
-              <Row key={item.id} item={item} finished />
-            ))
-          )
-        ) : (
-          ""
-        )}
+        {finishedItems.length > 0
+          ? [
+              <div key="finished-header" className="section-bar">
+                <h2 className="finished-header">
+                  {format(["status.downloads.category.recent_activity"])}
+                </h2>
+                <Link
+                  className="downloads-clear-all"
+                  onClick={() => clearFinishedDownloads({})}
+                >
+                  {format(["status.downloads.clear_all_finished"])}
+                </Link>
+              </div>,
+            ].concat(
+              map(finishedItems, item => (
+                <Row key={item.id} item={item} finished />
+              ))
+            )
+          : ""}
       </DownloadsContentDiv>
     );
   }

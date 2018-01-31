@@ -15,8 +15,6 @@ import Link from "../basics/link";
 import Button from "../basics/button";
 import Filler from "../basics/filler";
 
-import TitleBar from "../title-bar";
-
 import { reportIssue, IReportIssueOpts } from "../../util/crash-reporter";
 
 import { actions } from "../../actions";
@@ -259,7 +257,6 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <GateDiv className={classNames({ disabled })} data-stage={stage}>
-        <TitleBar tab="login" />
         <section className="top-filler" />
         <section className="logo">
           <img
@@ -354,18 +351,16 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
             label={format(["login.action.reset_password"])}
             onClick={() => openUrl({ url: urls.accountForgotPassword })}
           />
-          {numSavedSessions > 0 ? (
-            [
-              <span key="separator">{" · "}</span>,
-              <Link
-                key="show-saved-logins"
-                label={format(["login.action.show_saved_logins"])}
-                onClick={this.onStartPicking}
-              />,
-            ]
-          ) : (
-            ""
-          )}
+          {numSavedSessions > 0
+            ? [
+                <span key="separator">{" · "}</span>,
+                <Link
+                  key="show-saved-logins"
+                  label={format(["login.action.show_saved_logins"])}
+                  onClick={this.onStartPicking}
+                />,
+              ]
+            : ""}
         </section>
       );
     }

@@ -15,7 +15,9 @@ import styled from "./styles";
 import { Space } from "../helpers/space";
 import LoadingState from "./loading-state";
 
-export const HubGamesDiv = styled.div`flex-grow: 1;`;
+export const HubGamesDiv = styled.div`
+  flex-grow: 1;
+`;
 
 function isColumnDescDefault(sortBy: string): boolean {
   return sortBy === "secondsRun" || sortBy === "lastTouchedAt";
@@ -147,7 +149,8 @@ export default connect<IProps>(Games, {
         totalCount: (sp: Space, params, prefLayout) => sp.games().totalCount,
         prefLayout: (sp: Space, params, prefLayout) => prefLayout,
         params: (sp: Space, params, prefLayout) => params,
-        loading: (sp: Space, params, prefLayout, loading) => loading,
+        loading: (sp: Space, params, prefLayout, loading) =>
+          loading || sp.isFresh(),
       })
     );
   },

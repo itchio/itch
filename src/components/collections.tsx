@@ -10,14 +10,13 @@ import { IMeatProps } from "./meats/types";
 import CollectionsGrid from "./collections-grid/grid";
 import Link from "./basics/link";
 import Filler from "./basics/filler";
-import TitleBar from "./title-bar";
 
 import styled, * as styles from "./styles";
 import format from "./format";
 
-const CollectionsContainer = styled.div`${styles.meat()};`;
-
-const tab = "collections";
+const CollectionsContainer = styled.div`
+  ${styles.meat()};
+`;
 
 export class Collections extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -25,7 +24,6 @@ export class Collections extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <CollectionsContainer>
-        <TitleBar tab={tab} />
         <FiltersContainer>
           <Link
             label={format(["outlinks.manage_collections"])}

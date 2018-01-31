@@ -12,6 +12,8 @@ import { map } from "underscore";
 import { IRootState, ITabs, ITabDataSet } from "../../types";
 
 import styled from "../styles";
+import TitleBar from "../title-bar";
+import { filtersContainerHeight } from "../filters-container";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -33,6 +35,8 @@ const MeatTab = styled.div`
   left: 0;
   bottom: 0;
   transform: translateY(-100%);
+  padding-top: ${filtersContainerHeight}px;
+  overflow: hidden;
 
   &.visible {
     transform: translateY(0);
@@ -45,6 +49,7 @@ export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <MeatContainer>
+        <TitleBar tab={currentId} />
         {map(tabs, id => {
           const data = tabData[id] || {};
           const visible = id === currentId;

@@ -6,6 +6,8 @@
     "label.experimental": "Experimental",
     "collection.empty": "There are no games in this collection",
     "collection.summary": "A collection of {{itemCount}} items",
+    "collections.empty": "You currently have no collections",
+    "collections.empty_sub": "Browse for some games and add them to a new collection!",
     "desktop.shortcut.comment": "Install and play itch.io games easily",
     "docs.learn_more": "Learn more",
     "download.started": "Started",

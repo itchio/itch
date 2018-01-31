@@ -15,8 +15,6 @@ import SelectRow, { ISelectOption } from "./basics/select-row";
 import OpenAtLoginError from "./preferences/open-at-login-error";
 import ProxySettings from "./preferences/proxy-settings";
 
-import TitleBar from "./title-bar";
-
 import { map, each, filter } from "underscore";
 
 import diskspace from "../os/diskspace";
@@ -308,7 +306,7 @@ const PreferencesContentDiv = styled.div`
 
 export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, lang, sniffedLang = "", downloading, locales } = this.props;
+    const { lang, sniffedLang = "", downloading, locales } = this.props;
     const {
       isolateApps,
       openAtLogin,
@@ -342,7 +340,6 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <PreferencesDiv>
-        <TitleBar tab={tab} />
         <PreferencesContentDiv>
           <h2>{format(["preferences.language"])}</h2>
           <div className="language-form">

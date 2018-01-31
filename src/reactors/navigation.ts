@@ -130,20 +130,6 @@ export default function(watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.evolveTab, async (store, action) => {
-    const { tab, path, extras } = action.payload;
-
-    store.dispatch(
-      actions.tabEvolved({
-        tab,
-        data: {
-          path,
-          ...extras,
-        },
-      })
-    );
-  });
-
   watcher.on(actions.closeAllTabs, async (store, action) => {
     const { transient } = store.getState().session.navigation.tabs;
 

@@ -14,7 +14,7 @@ const initialState = {
 } as ITabDataSet;
 
 for (const k of Object.keys(initialState)) {
-  initialState[k].restored = true;
+  initialState[k].fresh = true;
 }
 
 const emptyObj = {} as any;
@@ -36,8 +36,8 @@ function merge(
   };
   for (const df of deepFields) {
     res[df] = {
-      ...a[df] || emptyObj,
-      ...b[df] || emptyObj,
+      ...(a[df] || emptyObj),
+      ...(b[df] || emptyObj),
     };
   }
   return res;
@@ -59,8 +59,10 @@ export default reducer<ITabDataSet>(initialState, on => {
     };
   });
 
-  on(actions.tabEvolved, (state, action) => {
-    const { tab, data = emptyObj } = action.payload;
+  on(actions.evolveTab, (state, action) => {
+    const { tab, path, extras = emptyObj } = action.payload;
+    const data = { path, ...extras };
+
     const oldData = state[tab];
     if (!oldData) {
       // ignore fresh data for closed tabs
@@ -102,7 +104,7 @@ export default reducer<ITabDataSet>(initialState, on => {
     const staticData = staticTabData[tab] || emptyObj;
     return {
       ...state,
-      [tab]: { ...data, ...staticData },
+      [tab]: { ...data, ...staticData, fresh: true },
     };
   });
 
@@ -113,7 +115,7 @@ export default reducer<ITabDataSet>(initialState, on => {
     return {
       ...state,
       [tab]: {
-        ...oldData || emptyObj,
+        ...(oldData || emptyObj),
         webContentsId,
       },
     };
@@ -142,7 +144,7 @@ export default reducer<ITabDataSet>(initialState, on => {
         ...s,
         [tab.id]: {
           ...data,
-          restored: true,
+          fresh: true,
         },
       };
     });

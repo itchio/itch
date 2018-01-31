@@ -71,7 +71,7 @@ export class Fetcher {
   }
 
   private async doWork() {
-    if (this.reason === FetchReason.TabEvolved || this.space().isRestored()) {
+    if (this.reason === FetchReason.TabEvolved || this.space().isFresh()) {
       // always show a spinner when getting a new path
       try {
         await this.withLoading(async () => {
@@ -82,7 +82,7 @@ export class Fetcher {
           actions.tabDataFetched({
             tab: this.tab,
             data: {
-              restored: false,
+              fresh: false,
             },
           })
         );
@@ -166,6 +166,7 @@ export class Fetcher {
     this.ctx.store.dispatch(
       actions.tabLoading({ tab: this.tab, loading: true })
     );
+
     try {
       return await cb();
     } finally {
