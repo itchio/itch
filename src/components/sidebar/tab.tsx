@@ -17,6 +17,8 @@ import {
   ITabData,
   ILocalizedString,
   IDownloadsState,
+  ITabHistory,
+  ITabParams,
 } from "../../types";
 
 import { injectIntl, InjectedIntl } from "react-intl";
@@ -129,12 +131,14 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   onExplore = (tab: string) => {
+    const { data, history, loading, params } = this.props;
+
     this.props.openModal(
       modalWidgets.exploreJson.make({
-        title: "Tab data",
+        title: "Tab information",
         message: "",
         widgetParams: {
-          data: this.props.data,
+          data: { data, history, loading, params },
         },
       })
     );
@@ -157,6 +161,8 @@ const actionCreators = actionCreatorsList(
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   data: ITabData;
+  history: ITabHistory;
+  params: ITabParams;
   loading: boolean;
   downloads?: IDownloadsState;
 
@@ -169,6 +175,8 @@ const Tab = connect<IProps>(injectIntl(TabBase), {
 
     return createStructuredSelector({
       data: (rs: IRootState) => rs.session.tabData[tab] || eo,
+      history: (rs: IRootState) => rs.session.tabHistory[tab] || eo,
+      params: (rs: IRootState) => rs.session.tabParams[tab] || eo,
       loading: (rs: IRootState) => !!rs.session.navigation.loadingTabs[tab],
       downloads: (rs: IRootState) => tab === "downloads" && rs.downloads,
     });

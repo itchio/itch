@@ -48,7 +48,9 @@ export default function(watcher: Watcher) {
           })
         );
       } else if (pathname === "/evolve-tab") {
-        store.dispatch(actions.evolveTab({ tab: tab, path: params.path }));
+        store.dispatch(
+          actions.evolveTab({ tab: tab, path: params.path, replace: true })
+        );
       } else {
         logger.warn(
           `Got unrecognized message via itch-internal: ${pathname}, params ${JSON.stringify(

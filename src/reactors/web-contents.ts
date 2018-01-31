@@ -83,6 +83,7 @@ export default function(watcher: Watcher, db: DB) {
           actions.evolveTab({
             tab,
             path,
+            replace: true,
           })
         );
       } else {
@@ -207,6 +208,7 @@ export default function(watcher: Watcher, db: DB) {
             actions.evolveTab({
               tab: tab,
               path: newPath,
+              replace: false,
             })
           );
 
@@ -219,6 +221,7 @@ export default function(watcher: Watcher, db: DB) {
             actions.evolveTab({
               tab: tab,
               path: `url/${url}`,
+              replace: false,
             })
           );
         }

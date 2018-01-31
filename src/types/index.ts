@@ -463,6 +463,7 @@ export interface ISessionState {
   search: ISessionSearchState;
 
   tabData: TabDataTypes.ITabDataSet;
+  tabHistory: TabDataTypes.ITabHistorySet;
   tabParams: ITabParamsSet;
 }
 

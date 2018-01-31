@@ -37,7 +37,7 @@ export class Toast extends React.PureComponent<IProps & IDerivedProps, IState> {
     const { path } = tabData;
     const untoastedPath = path.replace(/^toast\//, "");
 
-    evolveTab({ tab: tab, path: untoastedPath, quick: true });
+    evolveTab({ tab: tab, path: untoastedPath, replace: true });
   };
 
   render() {

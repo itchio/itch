@@ -185,6 +185,7 @@ export class BrowserControls extends React.PureComponent<
       evolveTab({
         tab,
         path: `url/${url}`,
+        replace: false,
       });
       this.pushWeb({ editingAddress: false, url });
     } else if (e.key === "Escape") {

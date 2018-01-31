@@ -145,7 +145,9 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
                 return (
                   <NewTabItem
                     key={path}
-                    onClick={() => this.props.evolveTab({ tab: tab, path })}
+                    onClick={() =>
+                      this.props.evolveTab({ tab: tab, path, replace: true })
+                    }
                   >
                     <Icon icon={icon} />
                     <span>{format(label)}</span>

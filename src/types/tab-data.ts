@@ -71,3 +71,11 @@ export interface ITabData {
 export interface ITabDataSave extends ITabData {
   id: string;
 }
+
+export interface ITabHistory {
+  paths: string[];
+}
+
+export interface ITabHistorySet {
+  [tab: string]: ITabHistory;
+}

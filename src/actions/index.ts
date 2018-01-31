@@ -343,6 +343,9 @@ export const actions = wireActions({
 
     /** if set, evolve tab immediately, don't wait for a fetch */
     quick?: boolean;
+
+    /** if false, that's a new history entry, if true it replaces the current one */
+    replace: boolean;
   }>(),
   tabReloaded: action<{
     /** the tab that just reloaded */
