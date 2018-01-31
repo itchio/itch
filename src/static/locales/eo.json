@@ -494,5 +494,7 @@
     "grid.item_count": "{{count}} aĵoj",
     "browser.disabled": "La retumilo de itch estas malebligita",
     "browser.reenable": "Ebligi",
-    "preferences.advanced.disable_browser": "Malebligi la retumilon"
+    "preferences.advanced.disable_browser": "Malebligi la retumilon",
+    "collections.empty": "Aktuale vi ne havas kolektojn",
+    "collections.empty_sub": "Esploru la katalogon kaj kreu novan kolekton da ludoj!"
 }
