@@ -852,6 +852,12 @@ export const actions = wireActions({
       | "stop"
       | "focusLocation";
   }>(),
+  tabGoBack: action<{
+    tab: string;
+  }>(),
+  tabGoForward: action<{
+    tab: string;
+  }>(),
   openUrl: action<{
     /** the URL to open in an external web browser */
     url: string;

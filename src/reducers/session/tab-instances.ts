@@ -94,11 +94,15 @@ export default reducer<ITabInstances>(initialState, on => {
       resource = history[currentIndex].resource;
     }
     if (replace) {
-      history = [...history.slice(0, currentIndex), { url, resource }];
+      history = [
+        ...history.slice(0, currentIndex),
+        { url, resource },
+        ...history.slice(currentIndex + 1),
+      ];
     } else {
       history = [...history.slice(0, currentIndex + 1), { url, resource }];
+      currentIndex = history.length - 1;
     }
-    currentIndex = history.length - 1;
 
     // merge old & new data
     return {
@@ -108,6 +112,42 @@ export default reducer<ITabInstances>(initialState, on => {
         history,
         currentIndex,
         data: merge(oldInstance.data, data, { shallow: false }),
+      },
+    };
+  });
+
+  on(actions.tabGoBack, (state, action) => {
+    const { tab } = action.payload;
+    const instance = state[tab];
+
+    if (instance.currentIndex <= 0) {
+      // we can't go back!
+      return state;
+    }
+
+    return {
+      ...state,
+      [tab]: {
+        ...instance,
+        currentIndex: instance.currentIndex - 1,
+      },
+    };
+  });
+
+  on(actions.tabGoForward, (state, action) => {
+    const { tab } = action.payload;
+    const instance = state[tab];
+
+    if (instance.currentIndex >= instance.history.length - 1) {
+      // we can't go forward!
+      return state;
+    }
+
+    return {
+      ...state,
+      [tab]: {
+        ...instance,
+        currentIndex: instance.currentIndex + 1,
       },
     };
   });

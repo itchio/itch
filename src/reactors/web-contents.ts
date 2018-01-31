@@ -71,6 +71,7 @@ export default function(watcher: Watcher, db: DB) {
 
       if (url !== "about:blank") {
         const resource = parseWellKnownUrl(url);
+        logger.debug(`didNavigate with ${url}`);
         store.dispatch(
           actions.evolveTab({
             tab,
@@ -81,17 +82,16 @@ export default function(watcher: Watcher, db: DB) {
         );
       }
       pushWeb({
-        url,
         canGoBack: wc.canGoBack(),
         canGoForward: wc.canGoForward(),
       });
     };
 
+    logger.debug(`initial didNavigate with ${wc.getURL()}`);
     didNavigate(wc.getURL());
 
     if (sp.isFrozen()) {
       wc.on("will-navigate", (ev, url) => {
-        console.log("will-navigate!", url);
         ev.preventDefault();
         store.dispatch(actions.navigate({ url }));
       });
@@ -173,6 +173,9 @@ export default function(watcher: Watcher, db: DB) {
     wc.on(
       "navigation-entry-commited" as any,
       (event, url, inPage, replaceEntry) => {
+        if (1 === 1) {
+          return;
+        }
         logger.debug(
           `navigation entry committed: ${url}, inPage = ${inPage}, replaceEntry = ${replaceEntry}`
         );
@@ -254,14 +257,6 @@ export default function(watcher: Watcher, db: DB) {
       };
 
       switch (command) {
-        case "goBack": {
-          wc.goBack();
-          break;
-        }
-        case "goForward": {
-          wc.goForward();
-          break;
-        }
         case "reload": {
           wc.reload();
           break;

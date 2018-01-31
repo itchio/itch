@@ -187,7 +187,7 @@ export class BrowserControls extends React.PureComponent<
         url,
         replace: false,
       });
-      this.pushWeb({ editingAddress: false, url });
+      this.pushWeb({ editingAddress: false });
     } else if (e.key === "Escape") {
       this.pushWeb({ editingAddress: false });
     }

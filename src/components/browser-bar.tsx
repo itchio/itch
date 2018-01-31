@@ -53,7 +53,7 @@ export default class BrowserBar extends React.PureComponent<IProps> {
     const sp = Space.fromInstance(tabInstance);
 
     const loading = !!sp.web().loading;
-    const url = sp.web().url || this.props.url;
+    const url = this.props.url;
 
     return (
       <BrowserBarDiv className={classNames({ loading })}>

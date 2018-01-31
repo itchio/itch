@@ -59,7 +59,7 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
       controls = "game";
     }
 
-    return { url: sp.url() || sp.web().url, controls };
+    return { url: sp.url(), controls };
   }
 
   componentWillReceiveProps(props: IProps) {

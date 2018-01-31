@@ -62,6 +62,19 @@ export default function(watcher: Watcher) {
     );
   });
 
+  watcher.on(actions.trigger, async (store, action) => {
+    const { tab } = store.getState().session.navigation;
+    const { command } = action.payload;
+    switch (command) {
+      case "goBack":
+        store.dispatch(actions.tabGoBack({ tab }));
+        break;
+      case "goForward":
+        store.dispatch(actions.tabGoForward({ tab }));
+        break;
+    }
+  });
+
   watcher.on(actions.navigate, async (store, action) => {
     const rs = store.getState();
     const { url, resource, data, background } = action.payload;

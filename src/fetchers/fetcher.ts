@@ -222,7 +222,7 @@ export class Fetcher {
   }
 
   debug(msg: string, ...args: any[]) {
-    this.logger.info(msg, ...args);
+    this.logger.debug(msg, ...args);
   }
 
   warrantsRemote(reason: FetchReason) {

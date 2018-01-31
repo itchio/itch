@@ -238,7 +238,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
     const { tabDataFetched, tabGotWebContents, tab } = this.props;
     tabDataFetched({
       tab,
-      data: { web: { url: wv.src, loading: true } },
+      data: { web: { loading: true } },
     });
 
     let onDomReady = () => {
