@@ -52,6 +52,14 @@ export default function setupShortcuts(store: IStore) {
     store.dispatch(actions.trigger({ command: "back" }));
   });
 
+  combo.bindGlobal(["alt+left"], () => {
+    store.dispatch(actions.trigger({ command: "goBack" }));
+  });
+
+  combo.bindGlobal(["alt+right"], () => {
+    store.dispatch(actions.trigger({ command: "goForward" }));
+  });
+
   const prefix = macos ? "command" : "ctrl";
 
   for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
