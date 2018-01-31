@@ -2,7 +2,6 @@ import * as React from "react";
 
 import Games from "./games";
 import GameFilters from "./game-filters";
-import TitleBar from "./title-bar";
 import IconButton from "./basics/icon-button";
 
 import { IMeatProps } from "./meats/types";
@@ -14,7 +13,9 @@ import { actions } from "../actions";
 import { Space } from "../helpers/space";
 import urls from "../constants/urls";
 
-const CollectionDiv = styled.div`${styles.meat()};`;
+const CollectionDiv = styled.div`
+  ${styles.meat()};
+`;
 
 export class Collection extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -22,7 +23,6 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <CollectionDiv>
-        <TitleBar tab={tab} />
         <GameFilters tab={tab}>
           <IconButton icon="repeat" onClick={this.onRepeat} />
           <IconButton

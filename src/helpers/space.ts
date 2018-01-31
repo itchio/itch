@@ -16,7 +16,7 @@ export const spaceFromData = memoize(
 
 /**
  * A Space gives structured info about a tab.
- * 
+ *
  * Because spaces > tabs.
  */
 export class Space {
@@ -149,8 +149,8 @@ export class Space {
     return !!staticTabData[this.path()];
   }
 
-  isRestored(): boolean {
-    return this.data ? this.data.restored : null;
+  isFresh(): boolean {
+    return this.data ? this.data.fresh : false;
   }
 }
 

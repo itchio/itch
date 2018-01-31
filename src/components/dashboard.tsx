@@ -6,13 +6,14 @@ import urls from "../constants/urls";
 import Link from "./basics/link";
 import Games from "./games";
 import GameFilters from "./game-filters";
-import TitleBar from "./title-bar";
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
 import format from "./format";
 
-const DashboardContainer = styled.div`${styles.meat()};`;
+const DashboardContainer = styled.div`
+  ${styles.meat()};
+`;
 
 export class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -20,7 +21,6 @@ export class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <DashboardContainer>
-        <TitleBar tab={tab} />
         <GameFilters tab={tab}>
           <Link
             label={format(["outlinks.open_dashboard"])}

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createSelector, createStructuredSelector } from "reselect";
-import { connect, Dispatchers } from "../connect";
-import { findWhere } from "underscore";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
+import { findWhere, isEmpty } from "underscore";
 
 import {
   IGameSet,
@@ -14,9 +14,10 @@ import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 
 import { GridContainerDiv, GridDiv } from "./grid-styles";
 import CollectionRow from "./row";
-import { actions } from "../../actions";
 import { whenClickNavigates } from "../when-click-navigates";
 import HiddenIndicator from "../hidden-indicator";
+import EmptyState from "../empty-state";
+import LoadingState from "../loading-state";
 
 const tab = "collections";
 const eo: any = {};
@@ -29,13 +30,31 @@ const globalPadding = 20;
 
 class Grid extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { collectionIds } = this.props;
+    const { collectionIds, navigate, loading } = this.props;
     const hiddenCount = 0;
 
     const numCollections = collectionIds.length;
-    const contentHeight = numCollections * rowHeight;
+    const contentHeight =
+      numCollections > 0 ? `${numCollections * rowHeight}px` : "100%";
 
     const sizes = { rowHeight, frescoHeight, globalPadding };
+
+    if (isEmpty(collectionIds)) {
+      if (loading) {
+        return <LoadingState />;
+      }
+
+      return (
+        <EmptyState
+          icon="tag"
+          bigText={["collections.empty"]}
+          smallText={["collections.empty_sub"]}
+          buttonIcon="earth"
+          buttonText={["status.downloads.find_games_button"]}
+          buttonAction={() => navigate({ tab: "featured" })}
+        />
+      );
+    }
 
     return (
       <GridContainerDiv sizes={sizes}>
@@ -48,7 +67,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
             style={{
               position: "absolute",
               width: "1px",
-              height: `${contentHeight}px`,
+              height: contentHeight,
             }}
           />
           {this.renderCollections()}
@@ -130,24 +149,26 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IDimensionsProps {}
 
-const actionCreators = {
-  navigateToCollection: actions.navigateToCollection,
-};
+const actionCreators = actionCreatorsList("navigateToCollection", "navigate");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   games: IGameSet;
   collectionIds: number[];
   collections: ICollectionSet;
+  loading: boolean;
 };
 
 export default connect<IProps>(injectDimensions(Grid), {
   state: createSelector(
     (rs: IRootState) => rs.session.tabData[tab] || eo,
+    (rs: IRootState) => rs.session.navigation.loadingTabs[tab],
     createStructuredSelector({
       games: (tabData: ITabData) => (tabData.games || eo).set || eo,
       collectionIds: (tabData: ITabData) =>
         (tabData.collections || eo).ids || ea,
       collections: (tabData: ITabData) => (tabData.collections || eo).set || eo,
+      loading: (tabData: ITabData, loading: boolean) =>
+        loading || tabData.fresh,
     })
   ),
   actionCreators,

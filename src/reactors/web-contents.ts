@@ -80,11 +80,9 @@ export default function(watcher: Watcher, db: DB) {
       const path = parseWellKnownUrl(url);
       if (path) {
         store.dispatch(
-          actions.tabEvolved({
+          actions.evolveTab({
             tab,
-            data: {
-              path,
-            },
+            path,
           })
         );
       } else {

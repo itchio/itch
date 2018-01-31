@@ -2,7 +2,6 @@ import { IMeatProps } from "./meats/types";
 import * as React from "react";
 
 import styled, * as styles from "./styles";
-import TitleBar from "./title-bar";
 import Log from "./basics/log";
 import Link from "./basics/link";
 import IconButton from "./basics/icon-button";
@@ -10,7 +9,9 @@ import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import format from "./format";
 import { showInExplorerString } from "../format/show-in-explorer";
 
-const AppLogDiv = styled.div`${styles.meat()};`;
+const AppLogDiv = styled.div`
+  ${styles.meat()};
+`;
 
 const Spacer = styled.div`
   display: inline-block;
@@ -33,7 +34,7 @@ const ControlsDiv = styled.div`
 
 class AppLog extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, tabData } = this.props;
+    const { tabData } = this.props;
     let log = "Loading...\n";
     if (tabData && tabData.log && tabData.log.log) {
       log = tabData.log.log;
@@ -41,7 +42,6 @@ class AppLog extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <AppLogDiv>
-        <TitleBar tab={tab} />
         <AppLogContentDiv>
           <Log
             log={log}

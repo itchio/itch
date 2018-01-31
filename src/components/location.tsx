@@ -9,7 +9,6 @@ import format from "./format";
 import { Space } from "../helpers/space";
 
 import styled, * as styles from "./styles";
-import TitleBar from "./title-bar";
 
 import Button from "./basics/button";
 import LocationTitleBarExtra from "./location-title-bar-extra";
@@ -25,7 +24,9 @@ const columns = [
   GameColumn.InstalledSize,
 ];
 
-const LocationContainer = styled.div`${styles.meat()};`;
+const LocationContainer = styled.div`
+  ${styles.meat()};
+`;
 
 const LargeFiltersContainer = styled(FiltersContainer)`
   padding-top: 12px;
@@ -40,7 +41,6 @@ export class Location extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <LocationContainer>
-        <TitleBar tab={tab} />
         <LargeFiltersContainer>
           <LocationTitleBarExtra tabData={tabData} />
           <Button

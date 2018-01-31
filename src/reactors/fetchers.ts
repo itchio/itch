@@ -47,14 +47,14 @@ export async function queueFetch(
 
   const fetcherClass = getFetcherClass(store, tab);
   if (!fetcherClass) {
-    // no fetcher, nothing to do - but we gotta mark it as non-restored
+    // no fetcher, nothing to do - but we gotta mark it as non-fresh
     const sp = Space.fromStore(store, tab);
-    if (sp.isRestored()) {
+    if (sp.isFresh()) {
       store.dispatch(
         actions.tabDataFetched({
           tab,
           data: {
-            restored: false,
+            fresh: false,
           },
         })
       );
@@ -69,8 +69,9 @@ export async function queueFetch(
       delete lastFetchers[tab];
     } catch (e) {
       logger.warn(
-        `While cleaning ${lastFetcher.constructor
-          .name} => ${fetcherClass.name} for ${tab}: ${e.stack}`
+        `While cleaning ${lastFetcher.constructor.name} => ${
+          fetcherClass.name
+        } for ${tab}: ${e.stack}`
       );
     }
   }
@@ -161,7 +162,7 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   // tab navigated to something else? let's fetch
-  watcher.on(actions.tabEvolved, async (store, action) => {
+  watcher.on(actions.evolveTab, async (store, action) => {
     queueFetch(store, db, action.payload.tab, FetchReason.TabEvolved);
   });
 

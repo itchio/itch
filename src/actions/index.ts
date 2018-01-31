@@ -344,15 +344,6 @@ export const actions = wireActions({
     /** if set, evolve tab immediately, don't wait for a fetch */
     quick?: boolean;
   }>(),
-  tabEvolved: action<{
-    // TODO: deprecate
-
-    /** the tab that evolved (maybe went from a boring web tab to a game tab) */
-    tab: string;
-
-    /** the new data we got on it */
-    data: ITabData;
-  }>(),
   tabReloaded: action<{
     /** the tab that just reloaded */
     tab: string;

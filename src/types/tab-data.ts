@@ -56,8 +56,8 @@ export interface ITabData {
   /** path of tab, something like `collections/:id`, etc. */
   path?: string;
 
-  /** true if the tab was restored as part of session */
-  restored?: boolean;
+  /** true if the tab has never been fetched in that session before */
+  fresh?: boolean;
 
   users?: ITabUsers;
   games?: ITabGames;

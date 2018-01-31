@@ -12,8 +12,6 @@ import staticTabData from "../constants/static-tab-data";
 
 import { IMeatProps } from "./meats/types";
 
-import TitleBar from "./title-bar";
-
 import BrowserBar from "./browser-bar";
 
 import GameBrowserContext from "./game-browser-context";
@@ -135,7 +133,6 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <BrowserMeatContainer>
-        <TitleBar tab={tab} />
         <BrowserBar tab={tab} tabData={tabData} url={url} />
         <BrowserMain>
           {newTab ? (

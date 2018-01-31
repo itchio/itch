@@ -14,7 +14,7 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super();
     this.state = {
-      active: props.visible || !props.tabData.restored,
+      active: props.visible && !props.tabData.fresh,
     };
   }
 
