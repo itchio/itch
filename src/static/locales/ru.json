@@ -500,5 +500,7 @@
     "grid.item_count": "{{count}} приложений",
     "browser.disabled": "Браузер itch выключен",
     "browser.reenable": "Включить обратно",
-    "preferences.advanced.disable_browser": "Выключить браузер"
+    "preferences.advanced.disable_browser": "Выключить браузер",
+    "collections.empty": "У вас пока нет коллекций",
+    "collections.empty_sub": "Поищите игры и добавьте в новую коллекцию!"
 }
