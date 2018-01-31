@@ -30,12 +30,11 @@ const MeatContainer = styled.div`
 const MeatTab = styled.div`
   display: flex;
   position: absolute;
-  top: 0;
+  top: ${filtersContainerHeight}px;
   right: 0;
   left: 0;
   bottom: 0;
-  transform: translateY(-100%);
-  padding-top: ${filtersContainerHeight}px;
+  transform: translateY(-200%);
   overflow: hidden;
 
   &.visible {
