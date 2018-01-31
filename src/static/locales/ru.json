@@ -502,5 +502,6 @@
     "browser.reenable": "Включить обратно",
     "preferences.advanced.disable_browser": "Выключить браузер",
     "collections.empty": "У вас пока нет коллекций",
-    "collections.empty_sub": "Поищите игры и добавьте в новую коллекцию!"
+    "collections.empty_sub": "Поищите игры и добавьте в новую коллекцию!",
+    "preferences.advanced.disable_hardware_acceleration": "Выключить аппаратное ускорение (может исправить проблемы на Linux)"
 }
