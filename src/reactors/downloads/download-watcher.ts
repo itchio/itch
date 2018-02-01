@@ -40,9 +40,9 @@ async function updateDownloadState(store: IStore, db: DB) {
     ) {
       let { game, upload } = activeDownload;
       logger.info(
-        `New active download: ${game
-          ? game.title
-          : "<unknown game>"} :: ${upload ? upload.filename : "<best upload>"}`
+        `New active download: ${game ? game.title : "<unknown game>"} :: ${
+          upload ? upload.filename : "<best upload>"
+        }`
       );
       start(store, db, activeDownload);
     } else {
@@ -212,8 +212,8 @@ async function cleanupDiscarded(store: IStore, db: DB, item: IDownloadItem) {
   };
   await wipeDownloadFolder(folderOpts);
 
-  if (item.reason === "install") {
-    logger.info(`Was fresh install, wiping install folder too`);
+  if (item.reason === "install" && item.err) {
+    logger.info(`Was fresh install (and had err), wiping install folder too`);
     await wipeInstallFolder(folderOpts);
   }
 }
