@@ -1,31 +1,43 @@
-import * as sf from "../../os/sf";
+import * as fs from "fs";
 import { camelifyObject } from "../../format";
 import { initialState } from "../../reducers/preferences";
 import { preferencesPath } from "../../os/paths";
 
 import rootLogger from "../../logger";
-import { IStore } from "../../types/index";
+import { IStore, IPreferencesState } from "../../types/index";
 const logger = rootLogger.child({ name: "load-preferences" });
 
 import { actions } from "../../actions";
 
 export default async function loadPreferences(store: IStore) {
-  let prefs: any = {};
+  const prefs = loadPreferencesSync();
+  store.dispatch(actions.updatePreferences(prefs));
+  store.dispatch(actions.preferencesLoaded(prefs));
+}
+
+export function loadPreferencesSync(): IPreferencesState {
+  let prefs = initialState;
 
   try {
-    const contents = await sf.readFile(preferencesPath(), {
+    const contents = fs.readFileSync(preferencesPath(), {
       encoding: "utf8",
     });
-    prefs = camelifyObject(JSON.parse(contents));
+    prefs = mergePreferences(contents);
     logger.debug(`imported preferences: ${JSON.stringify(prefs)}`);
-  } catch (err) {
-    if (err.code === "ENOENT") {
-      logger.info(`no preferences yet. fresh start!`);
+  } catch (e) {
+    if (e.code === "ENOENT") {
+      // ignore
     } else {
-      logger.warn(`while importing preferences: ${err.stack}`);
+      logger.warn(`while importing preferences: ${e.stack}`);
     }
   }
 
-  store.dispatch(actions.updatePreferences(prefs));
-  store.dispatch(actions.preferencesLoaded({ ...initialState, ...prefs }));
+  return prefs;
+}
+
+function mergePreferences(contents: string): IPreferencesState {
+  return {
+    ...initialState,
+    ...camelifyObject(JSON.parse(contents)),
+  };
 }

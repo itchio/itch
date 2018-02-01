@@ -25,11 +25,13 @@ import { actions } from "./actions";
 import { app, protocol, globalShortcut } from "electron";
 
 logger.info(
-  `${env.appName} ${app.getVersion()} on electron ${process.versions
-    .electron} in ${env.name}`
+  `${env.appName} ${app.getVersion()} on electron ${
+    process.versions.electron
+  } in ${env.name}`
 );
 
 import { connectDatabase } from "./db";
+import { loadPreferencesSync } from "./reactors/preboot/load-preferences";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -51,6 +53,15 @@ function autoUpdateDone() {
   if (process.env.CAPSULE_LIBRARY_PATH) {
     // disable acceleration when captured by capsule
     app.disableHardwareAcceleration();
+  } else {
+    try {
+      const prefs = loadPreferencesSync();
+      if (prefs.disableHardwareAcceleration) {
+        app.disableHardwareAcceleration();
+      }
+    } catch (e) {
+      // oh well
+    }
   }
 
   // devtools don't work with mixed sandbox mode -

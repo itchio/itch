@@ -310,7 +310,7 @@ export interface IModalBase {
   title: ILocalizedString;
 
   /** main body of text */
-  message: ILocalizedString;
+  message?: ILocalizedString;
 
   /** secondary body of text */
   detail?: ILocalizedString;
@@ -717,6 +717,9 @@ export interface IPreferencesState {
 
   /** disable all webviews */
   disableBrowser?: boolean;
+
+  /** disable GPU acceleration, see #809 */
+  disableHardwareAcceleration?: boolean;
 }
 
 export interface ITask {

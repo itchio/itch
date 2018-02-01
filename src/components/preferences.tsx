@@ -28,6 +28,7 @@ import {
   ILocaleInfo,
   IPreferencesState,
   IInstallLocation,
+  ILocalizedString,
 } from "../types";
 
 import { IMeatProps } from "./meats/types";
@@ -511,13 +512,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   renderAdvanced() {
-    const {
-      appVersion,
-      clearBrowsingDataRequest,
-      updatePreferences,
-      navigate,
-    } = this.props;
-    const { preferOptimizedPatches, disableBrowser } = this.props.preferences;
+    const { appVersion, clearBrowsingDataRequest, navigate } = this.props;
 
     return (
       <div className="explanation advanced-form">
@@ -563,42 +558,39 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             {format(["preferences.advanced.clear_browsing_data"])}
           </span>
         </p>
-        <label className={classNames({ active: preferOptimizedPatches })}>
-          <input
-            type="checkbox"
-            checked={preferOptimizedPatches}
-            onChange={e => {
-              updatePreferences({
-                preferOptimizedPatches: e.currentTarget.checked,
-              });
-            }}
-          />
-          <span>
-            {format(["preferences.advanced.prefer_optimized_patches"])}
-          </span>
-          <span
-            data-rh-at="bottom"
-            data-rh={JSON.stringify(["label.experimental"])}
-          >
-            <Icon
-              icon="lab-flask"
-              onClick={(e: React.MouseEvent<any>) => e.preventDefault()}
-            />
-          </span>
-        </label>
-        <label className={classNames({ active: disableBrowser })}>
-          <input
-            type="checkbox"
-            checked={disableBrowser}
-            onChange={e => {
-              updatePreferences({
-                disableBrowser: e.currentTarget.checked,
-              });
-            }}
-          />
-          <span>{format(["preferences.advanced.disable_browser"])}</span>
-        </label>
+        {this.renderAdvancedCheckbox("preferOptimizedPatches", [
+          "preferences.advanced.prefer_optimized_patches",
+        ])}
+        {this.renderAdvancedCheckbox("disableBrowser", [
+          "preferences.advanced.disable_browser",
+        ])}
+        {this.renderAdvancedCheckbox("disableHardwareAcceleration", [
+          "preferences.advanced.disable_hardware_acceleration",
+        ])}
       </div>
+    );
+  }
+
+  renderAdvancedCheckbox(
+    propName: keyof IDerivedProps["preferences"],
+    label: ILocalizedString
+  ): JSX.Element {
+    const active = !!this.props.preferences[propName];
+    const { updatePreferences } = this.props;
+
+    return (
+      <label className={classNames({ active })}>
+        <input
+          type="checkbox"
+          checked={active}
+          onChange={e => {
+            updatePreferences({
+              [propName]: e.currentTarget.checked,
+            });
+          }}
+        />
+        <span>{format(label)}</span>
+      </label>
     );
   }
 

@@ -57,7 +57,7 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
           <Button
             className="control"
             primary={true}
-            icon="repeat"
+            icon="earth"
             onClick={this.onReloadLocales}
             label="Reload locales"
           />
@@ -67,6 +67,13 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
             icon="bug"
             onClick={this.onViewAppState}
             label="View app state"
+          />
+          <Button
+            className="control"
+            primary={true}
+            icon="palette"
+            onClick={this.onGPUFeatureStatus}
+            label="View GPU feature status"
           />
         </ControlsDiv>
       </ModalWidgetDiv>
@@ -83,13 +90,28 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
 
   onViewAppState = async () => {
     const chromeStore = (await import("../../store/chrome-store")).default;
-
     this.props.openModal(
       modalWidgets.exploreJson.make({
-        title: "",
-        message: "Entire app state: ",
+        title: "Redux app state",
         widgetParams: {
           data: chromeStore.getState(),
+        },
+      })
+    );
+  };
+
+  onGPUFeatureStatus = () => {
+    // sic.: the typings are wrong, they have
+    // `getGpuFeatureStatus` but the correct casing is
+    // `getGPUFeatureStatus`. See https://github.com/electron/electron/issues/10788
+    // FIXME: remove workaround once upgrading to electron 1.8.x
+    const app = require("electron").remote.app as any;
+    const data = app.getGPUFeatureStatus();
+    this.props.openModal(
+      modalWidgets.exploreJson.make({
+        title: "GPU feature status",
+        widgetParams: {
+          data,
         },
       })
     );
