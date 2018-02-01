@@ -5,24 +5,22 @@ import { indexBy, isEmpty, pluck } from "underscore";
 import { Game } from "ts-itchio-api";
 import { fromDateTimeField } from "../db/datetime-field";
 
-const ea = [];
+const ea = [] as any[];
 
 export default class CollectionFetcher extends Fetcher {
   async work(): Promise<void> {
     const { db } = this.ctx;
     let forced = this.reason === FetchReason.TabReloaded;
     let dataGamesCount = 0;
+    let cachedGames: Game[] = ea;
 
     {
       // first, filter what we already got
-      const games = getByIds(
+      cachedGames = getByIds(
         this.space().games().set,
         this.space().games().allIds
       );
-      dataGamesCount = games.length;
-      if (games.length > 0) {
-        this.pushUnfilteredGames(games);
-      }
+      dataGamesCount = cachedGames.length;
     }
 
     if (dataGamesCount == 0) {
@@ -32,6 +30,7 @@ export default class CollectionFetcher extends Fetcher {
     const collectionId = this.space().firstPathNumber();
     let localCollection = db.collections.findOneById(collectionId);
 
+    let pushedLocals = false;
     if (localCollection) {
       this.pushCollection(localCollection);
       const gameIds = (localCollection && localCollection.gameIds) || ea;
@@ -49,6 +48,7 @@ export default class CollectionFetcher extends Fetcher {
       ];
 
       this.pushUnfilteredGames(fullGames);
+      pushedLocals = true;
     }
 
     let lastFetched: Date = null;
@@ -66,11 +66,9 @@ export default class CollectionFetcher extends Fetcher {
       const peaceThreshold = 1000 * 60 * 5;
       const diff = Date.now() - lastFetched.getTime();
       if (diff < peaceThreshold) {
-        this.debug(
-          `It's only been ${(diff / 1000).toFixed(
-            0
-          )} seconds since last fetch, skipping`
-        );
+        if (!pushedLocals) {
+          this.pushUnfilteredGames(cachedGames);
+        }
         return;
       }
     }

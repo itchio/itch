@@ -172,6 +172,7 @@ export default function(watcher: Watcher) {
       host,
       protocol,
       pathname,
+      slashes: true,
       search: `?${querystring.stringify(newParams)}`,
     });
 

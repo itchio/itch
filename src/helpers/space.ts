@@ -16,7 +16,6 @@ import {
 import * as nodeURL from "url";
 import * as querystring from "querystring";
 
-import memoize from "../util/lru-memoize";
 import { Game, User } from "ts-itchio-api";
 import { currentPage } from "../util/navigation";
 import staticTabData from "../constants/static-tab-data";
@@ -24,10 +23,7 @@ import staticTabData from "../constants/static-tab-data";
 // Empty Object
 const eo = {} as any;
 
-export const spaceFromInstance = memoize(
-  100,
-  (dataIn: ITabInstance) => new Space(dataIn)
-);
+export const spaceFromInstance = (dataIn: ITabInstance) => new Space(dataIn);
 
 export interface IQuery {
   [key: string]: string;
@@ -41,17 +37,16 @@ export interface IQuery {
 export class Space {
   prefix: string;
   suffix: string;
-  // private _instance: ITabInstance;
   private _page: ITabPage;
   private _data: ITabData;
   private _protocol: string;
   private _hostname: string;
   private _pathElements: string[];
   private _query: IQuery;
+  private _querylessURL: string;
 
   constructor(instanceIn: ITabInstance) {
     let instance = instanceIn || eo;
-    // this._instance = instance;
 
     this._data = instance.data || eo;
     this._page = currentPage(instance) || eo;
@@ -73,9 +68,17 @@ export class Space {
         this._protocol = parsed.protocol;
         this._hostname = parsed.hostname;
         this._query = querystring.parse(parsed.query);
-        this._pathElements = parsed.pathname.replace(/^\//, "").split("/");
+        if (parsed.pathname) {
+          this._pathElements = parsed.pathname.replace(/^\//, "").split("/");
+        }
+
+        {
+          const { query, search, href, ...rest } = parsed;
+          this._querylessURL = nodeURL.format(rest);
+        }
       } catch (e) {
         // TODO: figure this out
+        console.log(`Could not parse url: `, e);
       }
     }
   }
@@ -280,7 +283,7 @@ export class Space {
   }
 
   isFrozen(): boolean {
-    return !!staticTabData[this.url()];
+    return !!staticTabData[this._querylessURL];
   }
 
   isFresh(): boolean {

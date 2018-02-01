@@ -252,9 +252,13 @@ export class Fetcher {
   }
 
   pushUnfilteredGames(input: Game[], opts: ISortAndFilterOpts = {}) {
+    let t1 = Date.now();
     const games = this.sortAndFilter(input, opts);
+    let t2 = Date.now();
     this.logger.debug(
-      `Pushing games, ${input.length} => (sort+filter) => ${games.length}`
+      `Pushing games, ${input.length} => ${games.length} (in ${(
+        t2 - t1
+      ).toFixed()}ms)`
     );
 
     this.push({
