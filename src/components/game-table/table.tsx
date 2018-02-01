@@ -163,19 +163,11 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
 
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     this.eventToGame(ev, game => {
-      // TODO: dedup with grid
-      if (doesEventMeanBackground(ev)) {
-        this.props.navigate({
-          ...gameEvolvePayload(game),
-          background: true,
-        });
-      } else {
-        this.props.evolveTab({
-          ...gameEvolvePayload(game),
-          tab: this.props.tab,
-          replace: false,
-        });
-      }
+      this.props.navigateTab({
+        tab: this.props.tab,
+        background: doesEventMeanBackground(ev),
+        ...gameEvolvePayload(game),
+      });
     });
   };
 
@@ -313,8 +305,7 @@ interface IProps extends IDimensionsProps {
 
 const actionCreators = actionCreatorsList(
   "clearFilters",
-  "navigate",
-  "evolveTab",
+  "navigateTab",
   "openGameContextMenu"
 );
 

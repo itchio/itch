@@ -3,7 +3,14 @@ import * as querystring from "querystring";
 
 import { ICollection } from "../db/models/collection";
 
-import { IInstallLocation, ITabInstance, ITabPage, ITabData } from "../types";
+import {
+  IInstallLocation,
+  ITabInstance,
+  ITabPage,
+  ITabData,
+  IEvolveBasePayload,
+  INavigatePayload,
+} from "../types";
 import { Game, User } from "ts-itchio-api";
 
 export function transformUrl(original: string): string {
@@ -51,7 +58,7 @@ export function currentPage(tabInstance: ITabInstance): ITabPage {
   return tabInstance.history[tabInstance.currentIndex];
 }
 
-export function gameEvolvePayload(game: Game) {
+export function gameEvolvePayload(game: Game): INavigatePayload {
   return {
     url: game.url ? game.url : `itch://games/${game.id}`,
     resource: `games/${game.id}`,
@@ -67,6 +74,15 @@ export function gameToTabData(game: Game): ITabData {
       },
       ids: [game.id],
     },
+  };
+}
+
+export function collectionEvolvePayload(
+  collection: ICollection
+): INavigatePayload {
+  return {
+    url: `itch://collections/${collection.id}`,
+    data: collectionToTabData(collection),
   };
 }
 

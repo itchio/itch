@@ -18,6 +18,7 @@ export * from "../os/runtime";
 
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
+import { ITabData } from "./tab-data";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -1006,4 +1007,28 @@ export interface ModalResponse {
 
   /** recaptcha challenge response */
   recaptchaResponse?: string;
+}
+
+export interface IEvolveBasePayload {
+  /** the tab to evolve */
+  tab: string;
+
+  /** the new URL */
+  url: string;
+
+  /** the new resource if any */
+  resource?: string;
+
+  /** new tab data to add to the previous set */
+  data?: ITabData;
+}
+
+export interface IEvolveTabPayload extends IEvolveBasePayload {
+  /** if false, that's a new history entry, if true it replaces the current one */
+  replace: boolean;
+}
+
+export interface INavigateTabPayload extends IEvolveBasePayload {
+  /** whether to open in the background */
+  background: boolean;
 }

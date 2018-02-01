@@ -31,6 +31,8 @@ import {
   ModalResponse,
   ITabData,
   INavigatePayload,
+  IEvolveTabPayload,
+  INavigateTabPayload,
 } from "../types/index";
 import { OwnUser, Game, Build, Upload, User } from "ts-itchio-api";
 import { TaskName } from "../types/tasks";
@@ -332,25 +334,8 @@ export const actions = wireActions({
     tab: string;
   }>(),
 
-  evolveTab: action<{
-    /** the tab to evolve */
-    tab: string;
-
-    /** the new URL */
-    url: string;
-
-    /** the new resource if any */
-    resource?: string;
-
-    /** new tab data to add to the previous set */
-    data?: ITabData;
-
-    /** if set, evolve tab immediately, don't wait for a fetch */
-    quick?: boolean;
-
-    /** if false, that's a new history entry, if true it replaces the current one */
-    replace: boolean;
-  }>(),
+  navigateTab: action<INavigateTabPayload>(),
+  evolveTab: action<IEvolveTabPayload>(),
   tabReloaded: action<{
     /** the tab that just reloaded */
     tab: string;

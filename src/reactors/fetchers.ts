@@ -172,6 +172,14 @@ export default function(watcher: Watcher, db: DB) {
     queueFetch(store, db, action.payload.tab, FetchReason.TabEvolved);
   });
 
+  watcher.on(actions.tabGoBack, async (store, action) => {
+    queueFetch(store, db, action.payload.tab, FetchReason.TabEvolved);
+  });
+
+  watcher.on(actions.tabGoForward, async (store, action) => {
+    queueFetch(store, db, action.payload.tab, FetchReason.TabEvolved);
+  });
+
   // tab reloaded by user? let's fetch!
   watcher.on(actions.tabReloaded, async (store, action) => {
     queueFetch(store, db, action.payload.tab, FetchReason.TabReloaded);

@@ -14,6 +14,7 @@ import HiddenIndicator from "../hidden-indicator";
 import EmptyState from "../empty-state";
 import LoadingState from "../loading-state";
 import { Space } from "../../helpers/space";
+import { collectionEvolvePayload } from "../../util/navigation";
 
 const tab = "itch://collections";
 const eo: any = {};
@@ -100,8 +101,11 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     whenClickNavigates(ev, ({ background }) => {
       this.eventToCollection(ev, collection => {
-        const { navigateToCollection } = this.props;
-        navigateToCollection({ collection, background });
+        this.props.navigateTab({
+          tab,
+          background,
+          ...collectionEvolvePayload(collection),
+        });
       });
     });
   };
@@ -145,7 +149,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps extends IDimensionsProps {}
 
-const actionCreators = actionCreatorsList("navigateToCollection", "navigate");
+const actionCreators = actionCreatorsList("navigateTab", "navigate");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   games: IGameSet;

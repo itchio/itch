@@ -12,9 +12,9 @@ import rootLogger from "../logger";
 import { Space } from "../helpers/space";
 import { shell } from "electron";
 import {
-  collectionToTabData,
   userToTabData,
   gameEvolvePayload,
+  collectionEvolvePayload,
 } from "../util/navigation";
 import uuid from "../util/uuid";
 const logger = rootLogger.child({ name: "reactors/navigation" });
@@ -24,8 +24,7 @@ export default function(watcher: Watcher) {
     const { collection, background } = action.payload;
     store.dispatch(
       actions.navigate({
-        url: `itch://collections/${collection.id}`,
-        data: collectionToTabData(collection),
+        ...collectionEvolvePayload(collection),
         background,
       })
     );
@@ -72,6 +71,33 @@ export default function(watcher: Watcher) {
       case "goForward":
         store.dispatch(actions.tabGoForward({ tab }));
         break;
+    }
+  });
+
+  watcher.on(actions.navigateTab, async (store, action) => {
+    const { background, tab } = action.payload;
+    const sp = Space.fromStore(store, tab);
+
+    if (background) {
+      store.dispatch(actions.navigate(action.payload));
+    } else if (sp.isFrozen()) {
+      const { tab, ...rest } = action.payload;
+
+      store.dispatch(
+        actions.navigate({
+          ...rest,
+          background: false,
+        })
+      );
+    } else {
+      const { background, ...rest } = action.payload;
+
+      store.dispatch(
+        actions.evolveTab({
+          ...rest,
+          replace: false,
+        })
+      );
     }
   });
 
