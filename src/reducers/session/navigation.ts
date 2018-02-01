@@ -1,6 +1,6 @@
-import { reject, omit } from "underscore";
+import { reject, omit, map, filter } from "underscore";
 
-import { ISessionNavigationState } from "../../types";
+import { ISessionNavigationState, ITabDataSave } from "../../types";
 
 import { actions } from "../../actions";
 import reducer from "../reducer";
@@ -147,33 +147,24 @@ export default reducer<ISessionNavigationState>(initialState, on => {
   });
 
   on(actions.tabsRestored, (state, action) => {
-    if (1 === 1) {
-      // FIXME: re-enable at some point
-      return state;
-    }
+    const snapshot = action.payload;
 
-    // const snapshot = action.payload;
+    const tab = snapshot.current || state.tab;
+    const transient = filter(
+      map(snapshot.items, (tab: ITabDataSave) => {
+        return tab.id;
+      }),
+      x => !!x
+    );
 
-    // const tab = snapshot.current || state.tab;
-    // const transient = filter(
-    //   map(snapshot.items, (tab: ITabDataSave) => {
-    //     if (typeof tab !== "object" || !tab.id || !tab.path) {
-    //       return;
-    //     }
-
-    //     return tab.id;
-    //   }),
-    //   x => !!x
-    // );
-
-    // return {
-    //   ...state,
-    //   tab,
-    //   openTabs: {
-    //     ...state.openTabs,
-    //     transient,
-    //   },
-    // };
+    return {
+      ...state,
+      tab,
+      openTabs: {
+        ...state.openTabs,
+        transient,
+      },
+    };
   });
 
   on(actions.logout, (state, action) => {

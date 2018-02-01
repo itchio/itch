@@ -1,11 +1,11 @@
-import { ITabInstances, ITabData } from "../../types";
+import { ITabInstances, ITabData, ITabDataSave } from "../../types";
 import { actions } from "../../actions";
 import reducer from "../reducer";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "reducers/tab-data" });
 
-import { omit } from "underscore";
+import { omit, each } from "underscore";
 
 import staticTabData from "../../constants/static-tab-data";
 
@@ -154,16 +154,16 @@ export default reducer<ITabInstances>(initialState, on => {
 
   on(actions.focusTab, (state, action) => {
     const { tab } = action.payload;
-    const oldData = state[tab] || emptyObj;
+    const oldInstance = state[tab];
 
-    // when constants tabs are focused, they need
-    // an initial empty set of tabData, otherwise
-    // we won't accept the result of fetchers for
-    // those.
-    return {
-      ...state,
-      [tab]: { ...oldData },
-    };
+    // wake up any sleepy tabs
+    if (oldInstance && oldInstance.sleepy) {
+      return {
+        ...state,
+        [tab]: omit(oldInstance, "sleepy"),
+      };
+    }
+    return state;
   });
 
   on(actions.closeTab, (state, action) => {
@@ -189,7 +189,6 @@ export default reducer<ITabInstances>(initialState, on => {
         ],
         currentIndex: 0,
         data: { ...data, ...staticData },
-        fresh: true,
       },
     };
   });
@@ -212,10 +211,6 @@ export default reducer<ITabInstances>(initialState, on => {
   });
 
   on(actions.tabsRestored, (state, action) => {
-    // TODO: re-implement
-    return state;
-
-    /*
     const snapshot = action.payload;
 
     let s = state;
@@ -234,12 +229,11 @@ export default reducer<ITabInstances>(initialState, on => {
         ...s,
         [tab.id]: {
           ...data,
-          fresh: true,
+          sleepy: true,
         },
       };
     });
 
     return s;
-    */
   });
 });

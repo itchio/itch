@@ -47,19 +47,7 @@ export async function queueFetch(
 
   const fetcherClass = getFetcherClass(store, tab);
   if (!fetcherClass) {
-    // no fetcher, nothing to do - but we gotta mark it as non-fresh
-    const sp = Space.fromStore(store, tab);
-    if (sp.isFresh()) {
-      // TODO: figure out how to mark as non-fresh again
-      // store.dispatch(
-      //   actions.tabDataFetched({
-      //     tab,
-      //     data: {
-      //       fresh: false,
-      //     },
-      //   })
-      // );
-    }
+    // no fetcher, nothing to do
     return;
   }
 

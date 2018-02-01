@@ -70,24 +70,11 @@ export class Fetcher {
   }
 
   private async doWork() {
-    if (this.reason === FetchReason.TabEvolved || this.space().isFresh()) {
+    if (this.reason === FetchReason.TabEvolved || this.space().isSleepy()) {
       // always show a spinner when getting a new path
-      try {
-        await this.withLoading(async () => {
-          await this.work();
-        });
-      } finally {
-        // FIXME: figure out how to adjust freshness again
-        // (if needed at all?)
-        // this.ctx.store.dispatch(
-        //   actions.tabDataFetched({
-        //     tab: this.tab,
-        //     data: {
-        //       fresh: false,
-        //     },
-        //   })
-        // );
-      }
+      await this.withLoading(async () => {
+        await this.work();
+      });
     } else {
       await this.work();
     }

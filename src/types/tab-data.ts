@@ -76,6 +76,9 @@ export interface ITabInstance {
 
   /** data for the current page - is cleared on navigation */
   data: ITabData;
+
+  /** if sleepy, don't load until it's focused */
+  sleepy?: boolean;
 }
 
 export interface ITabData {

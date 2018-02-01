@@ -1,27 +1,33 @@
-// import { map } from "underscore";
+import { map, filter, findWhere, isEmpty, size } from "underscore";
 
 import { Watcher } from "./watcher";
 
-// import { fromJSONField } from "../db/json-field";
 import { DB } from "../db/index";
-// import { ITabDataSave } from "../types/index";
-// import { IProfile } from "../db/models/profile";
-// import { actions } from "../actions/index";
+import { ITabDataSave, ITabInstance } from "../types/index";
+import { IProfile } from "../db/models/profile";
+import { actions } from "../actions/index";
 
-// const eo: any = {};
+const eo: any = {};
 
 export default function(watcher: Watcher, db: DB) {
-  // TODO: re-implement
-  /*
   watcher.on(actions.tabsChanged, async (store, action) => {
-    const { navigation, tabData, credentials } = store.getState().session;
+    const { navigation, tabInstances, credentials } = store.getState().session;
     if (!credentials || !credentials.me) {
       return;
     }
-    const { tab, tabs } = navigation;
+    const { tab, openTabs } = navigation;
     const meId = credentials.me.id;
-    const items: ITabDataSave[] = map(tabs.transient, id => {
-      const data = tabData[id] || eo;
+    const items: ITabDataSave[] = map(openTabs.transient, id => {
+      let data = tabInstances[id] || eo;
+      if (size(data.games) > 1) {
+        // make sure our snapshot isn't too large (don't cache
+        // entire collections)
+        data = {
+          ...data,
+          games: null,
+        };
+      }
+
       return {
         id,
         ...data,
@@ -42,9 +48,41 @@ export default function(watcher: Watcher, db: DB) {
 
     const profile = db.profiles.findOneById(meId);
     if (profile && profile.openTabs) {
-      const { current, items } = fromJSONField(profile.openTabs);
-      store.dispatch(actions.tabsRestored({ current, items }));
+      let { current, items } = profile.openTabs;
+
+      console.log(`items: ${JSON.stringify(items, null, 2)}`);
+
+      // only restore valid items
+      items = filter(items, item => isValidTabInstance(item));
+
+      console.log(`filtered items: ${JSON.stringify(items, null, 2)}`);
+
+      if (!isEmpty(items)) {
+        // does our current tab still exist?
+        if (findWhere(items, { id: current })) {
+          // good!
+        } else {
+          // otherwise, fall back on a reasonable default
+          current = "itch://featured";
+        }
+
+        store.dispatch(actions.tabsRestored({ current, items }));
+      }
     }
   });
-  */
+}
+
+function isValidTabInstance(ti: ITabInstance): boolean {
+  const hasValidHistory = ti.history && Array.isArray(ti.history);
+  if (!hasValidHistory) {
+    return false;
+  }
+
+  const hasValidIndex =
+    ti.currentIndex >= 0 && ti.currentIndex < ti.history.length;
+  if (!hasValidIndex) {
+    return false;
+  }
+
+  return true;
 }

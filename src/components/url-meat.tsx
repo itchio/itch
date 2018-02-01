@@ -12,9 +12,8 @@ import { Space } from "../helpers/space";
 export default class UrlMeat extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super();
-    // TODO: re-implement fresh
     this.state = {
-      active: props.visible /* && !props.tabInstance.fresh */,
+      active: props.visible || !props.tabInstance.sleepy,
     };
   }
 

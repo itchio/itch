@@ -166,7 +166,7 @@ export default connect<IProps>(injectDimensions(Grid), {
       games: (sp: Space) => sp.games().set || eo,
       collectionIds: (sp: Space) => sp.collections().ids || ea,
       collections: (sp: Space) => sp.collections().set || eo,
-      loading: (sp: Space, loading: boolean) => loading || sp.isFresh(),
+      loading: (sp: Space, loading: boolean) => loading || sp.isSleepy(),
     })
   ),
   actionCreators,

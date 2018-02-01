@@ -148,7 +148,7 @@ export default connect<IProps>(Games, {
         totalCount: (sp: Space, prefLayout) => sp.games().totalCount,
         prefLayout: (sp: Space, prefLayout) => prefLayout,
         params: (sp: Space, prefLayout) => sp.query(),
-        loading: (sp: Space, prefLayout, loading) => loading || sp.isFresh(),
+        loading: (sp: Space, prefLayout, loading) => loading || sp.isSleepy(),
       })
     );
   },

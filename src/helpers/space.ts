@@ -290,8 +290,8 @@ export class Space {
     return !!staticTabData[this._querylessURL];
   }
 
-  isFresh(): boolean {
-    return false;
+  isSleepy(): boolean {
+    return this._instance.sleepy;
   }
 
   canGoBack(): boolean {
