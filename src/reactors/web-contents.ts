@@ -1,6 +1,6 @@
 import { actions } from "../actions";
 import { Watcher } from "./watcher";
-import * as url from "url";
+import * as nodeURL from "url";
 
 import { webContents, BrowserWindow } from "electron";
 
@@ -20,11 +20,20 @@ import { Space } from "../helpers/space";
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
 
-function withWebContents(
+export type ExtendedWebContents = Electron.WebContents & {
+  history: string[];
+  currentIndex: number;
+  pendingIndex: number;
+  inPageIndex: number;
+};
+
+type WebContentsCallback<T> = (wc: ExtendedWebContents) => T;
+
+function withWebContents<T>(
   store: IStore,
   tab: string,
-  cb: (wc: Electron.WebContents) => any
-) {
+  cb: WebContentsCallback<T>
+): T {
   const sp = Space.fromStore(store, tab);
 
   const { webContentsId } = sp.web();
@@ -37,7 +46,7 @@ function withWebContents(
     return;
   }
 
-  cb(wc);
+  return cb(wc as ExtendedWebContents);
 }
 
 export default function(watcher: Watcher, db: DB) {
@@ -45,7 +54,7 @@ export default function(watcher: Watcher, db: DB) {
     const { tab, webContentsId } = action.payload;
     logger.debug(`Got webContents ${webContentsId} for tab ${tab}`);
 
-    const wc = webContents.fromId(webContentsId);
+    const wc = webContents.fromId(webContentsId) as ExtendedWebContents;
     if (!wc) {
       logger.warn(`Couldn't get webContents for tab ${tab}`);
       return;
@@ -64,20 +73,19 @@ export default function(watcher: Watcher, db: DB) {
     pushWeb({ webContentsId, loading: wc.isLoading() });
 
     const sp = Space.fromStore(store, tab);
-    const didNavigate = url => {
+    const didNavigate = (url: string, replace?: boolean) => {
       if (sp.isFrozen()) {
         return;
       }
 
       if (url !== "about:blank") {
         const resource = parseWellKnownUrl(url);
-        logger.debug(`didNavigate with ${url}`);
         store.dispatch(
           actions.evolveTab({
             tab,
             url,
             resource,
-            replace: false,
+            replace,
           })
         );
       }
@@ -88,7 +96,7 @@ export default function(watcher: Watcher, db: DB) {
     };
 
     logger.debug(`initial didNavigate with ${wc.getURL()}`);
-    didNavigate(wc.getURL());
+    didNavigate(wc.getURL(), true);
 
     if (sp.isFrozen()) {
       wc.on("will-navigate", (ev, url) => {
@@ -132,12 +140,10 @@ export default function(watcher: Watcher, db: DB) {
     });
 
     wc.on("did-start-loading", () => {
-      logger.debug(`did-start-loading`);
       pushWeb({ loading: true });
     });
 
     wc.on("did-stop-loading", () => {
-      logger.debug(`did-stop-loading`);
       pushWeb({ loading: false });
     });
 
@@ -145,21 +151,7 @@ export default function(watcher: Watcher, db: DB) {
     // also, with electron@1.7.5, it seems to not always fire. whereas webview's event does.
 
     wc.on("page-favicon-updated", (ev, favicons) => {
-      logger.debug(`Got page-favicon-updated: ${favicons[0]}`);
       pushWeb({ favicon: favicons[0] });
-    });
-
-    wc.on("did-navigate", (e, url) => {
-      logger.debug(`did-navigate to ${url}`);
-      didNavigate(url);
-    });
-    wc.on("did-navigate-in-page", (e, url, isMainFrame) => {
-      logger.debug(
-        `did-navigate-in-page to ${url}, isMainFrame = ${isMainFrame}`
-      );
-      if (isMainFrame) {
-        didNavigate(url);
-      }
     });
 
     wc.on(
@@ -173,32 +165,29 @@ export default function(watcher: Watcher, db: DB) {
     wc.on(
       "navigation-entry-commited" as any,
       (event, url, inPage, replaceEntry) => {
-        if (1 === 1) {
-          return;
-        }
+        logger.debug(`=================================`);
         logger.debug(
           `navigation entry committed: ${url}, inPage = ${inPage}, replaceEntry = ${replaceEntry}`
         );
-        logger.debug(
-          `history is now: ${JSON.stringify((wc as any).history, null, 2)}`
-        );
-        logger.debug(`currentIndex: ${(wc as any).currentIndex}`);
-        logger.debug(`inPageIndex: ${(wc as any).inPageIndex}`);
+        logger.debug(`history is now: ${JSON.stringify(wc.history, null, 2)}`);
+        logger.debug(`currentIndex: ${wc.currentIndex}`);
+        logger.debug(`inPageIndex: ${wc.inPageIndex}`);
+        didNavigate(url, replaceEntry);
+        logger.debug(`=================================`);
       }
     );
   });
 
   watcher.on(actions.analyzePage, async (store, action) => {
     const { tab, url, iframe } = action.payload;
-    withWebContents(store, tab, async wc => {
-      logger.debug(`Analyzing ${url}, iframe? ${iframe}`);
+    await withWebContents(store, tab, async wc => {
       const sp = Space.fromStore(store, tab);
       if (sp.isFrozen()) {
         logger.debug(`Is frozen, won't analyze`);
         return;
       }
 
-      const onNewPath = resource => {
+      const onNewPath = (url: string, resource: string) => {
         if (resource) {
           // FIXME: we need this to be better - analyze can finish after we've already navigated away
           // so we need to only set resource if the url is what we think it is
@@ -220,19 +209,21 @@ export default function(watcher: Watcher, db: DB) {
       };
 
       if (iframe) {
-        const querylessUrl = url.replace(/\?.*$/, "");
-        const dataUrl = `${querylessUrl}/data.json`;
-        const data = await request("get", dataUrl, {}, { format: "json" });
-        logger.debug(`iframe page data = ${JSON.stringify(data, null, 2)}`);
+        const parsed = nodeURL.parse(url);
+        const { host, protocol, pathname } = parsed;
+        const dataURL = nodeURL.format({
+          host,
+          protocol,
+          pathname: `${pathname}/data.json`,
+        });
+        const data = await request("get", dataURL, {}, { format: "json" });
         if (data && data.body && data.body.id) {
-          onNewPath(`games/${data.body.id}`);
+          onNewPath(wc.getURL(), `games/${data.body.id}`);
         }
       } else {
-        logger.debug(`Executing javascript on page`);
         const code = `(document.querySelector('meta[name="itch:path"]') || {}).content`;
         const newPath = await wc.executeJavaScript(code);
-        logger.debug(`result of await: ${newPath}`);
-        onNewPath(newPath);
+        onNewPath(url, newPath);
       }
     });
   });
@@ -299,7 +290,7 @@ const COLLECTION_URL_RE = /^\/c\/([0-9]+)/;
 
 function parseWellKnownUrl(rawurl: string): string {
   try {
-    const u = url.parse(rawurl);
+    const u = nodeURL.parse(rawurl);
     if (u.hostname === "itch.io") {
       const matches = COLLECTION_URL_RE.exec(u.pathname);
       if (matches) {

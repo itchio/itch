@@ -90,6 +90,8 @@ export default class GameStats extends React.PureComponent<IProps> {
         <GameStatsDiv>
           <div className="total-playtime">
             <div className="total-playtime--line">
+              {game.title}
+              {" — "}
               {format([`usage_stats.description.${classification}`])}
               {showPlatforms ? (
                 <span>
@@ -109,38 +111,39 @@ export default class GameStats extends React.PureComponent<IProps> {
               ) : null}
             </div>
             <div className="total-playtime--line">
-              {downloadKey ? (
-                format([
-                  "usage_stats.description.bought_time_ago",
-                  {
-                    time_ago: <TimeAgo date={downloadKey.createdAt} />,
-                  },
-                ])
-              ) : minPrice > 0 ? (
-                format([
-                  "usage_stats.description.price",
-                  {
-                    price: sale ? (
-                      <span>
-                        <label key="original-price" className="original-price">
-                          {formatPrice(currency, minPrice)}
-                        </label>
-                        <label key="discounted-price">
-                          {" "}
-                          {formatPrice(
-                            currency,
-                            minPrice * (1 - sale.rate / 100)
-                          )}
-                        </label>
-                      </span>
-                    ) : (
-                      <label>{formatPrice(currency, minPrice)}</label>
-                    ),
-                  },
-                ])
-              ) : (
-                format(["usage_stats.description.free_download"])
-              )}
+              {downloadKey
+                ? format([
+                    "usage_stats.description.bought_time_ago",
+                    {
+                      time_ago: <TimeAgo date={downloadKey.createdAt} />,
+                    },
+                  ])
+                : minPrice > 0
+                  ? format([
+                      "usage_stats.description.price",
+                      {
+                        price: sale ? (
+                          <span>
+                            <label
+                              key="original-price"
+                              className="original-price"
+                            >
+                              {formatPrice(currency, minPrice)}
+                            </label>
+                            <label key="discounted-price">
+                              {" "}
+                              {formatPrice(
+                                currency,
+                                minPrice * (1 - sale.rate / 100)
+                              )}
+                            </label>
+                          </span>
+                        ) : (
+                          <label>{formatPrice(currency, minPrice)}</label>
+                        ),
+                      },
+                    ])
+                  : format(["usage_stats.description.free_download"])}
             </div>
           </div>
         </GameStatsDiv>

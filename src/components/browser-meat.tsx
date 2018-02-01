@@ -24,8 +24,11 @@ import "electron";
 import styled, * as styles from "./styles";
 import DisabledBrowser from "./disabled-browser";
 import format from "./format";
-import { map } from "underscore";
+import { map, debounce } from "underscore";
 import { Space } from "../helpers/space";
+import { ExtendedWebContents } from "../reactors/web-contents";
+
+const showHistory = process.env.ITCH_SHOW_HISTORY === "1";
 
 const BrowserMeatContainer = styled.div`
   ${styles.meat()};
@@ -196,44 +199,61 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
       });
     }
 
+    if (prevProps.url !== this.props.url) {
+      this.scheduleUpdate();
+    }
+  }
+
+  scheduleUpdate = debounce(() => {
+    const showMessage = (message: string) => {
+      if (showHistory) {
+        this.props.statusMessage({ message });
+      }
+    };
+
     const wv = this._wv;
     if (!wv) {
+      showMessage("no webview");
       return;
     }
 
-    const wc = wv.getWebContents();
+    const wc = wv.getWebContents() as ExtendedWebContents;
     if (!wc) {
+      showMessage("no webContents");
       return;
     }
 
     const wvURL = wv.getURL();
     const newURL = this.props.url;
-    if (prevProps.url != newURL) {
-      if (wvURL != newURL) {
-        console.log(`Calling loadURL with ${newURL} because wvURL is ${wvURL}`);
-        const wc = wv.getWebContents() as any;
-        console.log(`History:\n${JSON.stringify(wc.history, null, 2)}`);
-        console.log(`currentIndex: ${wc.currentIndex}`);
-        console.log(`pendingIndex: ${wc.pendingIndex}`);
-        console.log(`inPageIndex: ${wc.inPageIndex}`);
 
-        if (wv.canGoBack() && wc.history[wc.currentIndex - 1] === newURL) {
-          console.log(`Going back`);
-          wv.goBack();
-          return;
-        }
-
-        if (wv.canGoForward() && wc.history[wc.currentIndex + 1] === newURL) {
-          console.log(`Going forward`);
-          wv.goForward();
-          return;
-        }
-
-        wv.clearHistory();
-        wv.loadURL(newURL);
-      }
+    if (wvURL === newURL) {
+      showMessage("already good");
+      return;
     }
-  }
+
+    let { history, currentIndex, pendingIndex, inPageIndex } = wc;
+    if (wv.canGoBack() && history[currentIndex - 1] === newURL) {
+      showMessage(
+        `back - pending ${pendingIndex}, inPage ${inPageIndex}, was ${wvURL}`
+      );
+      wv.goBack();
+      return;
+    }
+
+    if (wv.canGoForward() && history[currentIndex + 1] === newURL) {
+      showMessage(
+        `forward - pending ${pendingIndex}, inPage ${inPageIndex}, was ${wvURL}`
+      );
+      wv.goForward();
+      return;
+    }
+
+    showMessage(
+      `load ${newURL} - pending ${pendingIndex}, inPage ${inPageIndex}, was ${wvURL}`
+    );
+    wv.clearHistory();
+    wv.loadURL(newURL);
+  }, 500);
 
   /**
    * Register our webcontents with the metal side so
@@ -285,7 +305,8 @@ const actionCreators = actionCreatorsList(
   "navigate",
   "tabDataFetched",
   "tabGotWebContents",
-  "evolveTab"
+  "evolveTab",
+  "statusMessage"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {

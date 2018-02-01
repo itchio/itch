@@ -9,6 +9,7 @@ import env from "../env";
 import delay from "./delay";
 
 import rootLogger from "../logger";
+import { t } from "../format/index";
 const logger = rootLogger.child({ name: "notifications" });
 
 const AUTODISMISS_DELAY = 5000;
@@ -54,6 +55,9 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.statusMessage, async (store, action) => {
+    const { message } = action.payload;
+    const { i18n } = store.getState();
+    logger.info(`Status: ${t(i18n, message)}`);
     await delay(AUTODISMISS_DELAY);
     store.dispatch(actions.dismissStatusMessage({}));
   });
