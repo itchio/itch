@@ -196,21 +196,41 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
       });
     }
 
-    if (!this._wv) {
+    const wv = this._wv;
+    if (!wv) {
       return;
     }
 
-    if (!this._wv.getWebContents()) {
+    const wc = wv.getWebContents();
+    if (!wc) {
       return;
     }
 
-    const wvURL = this._wv.getURL();
-    if (prevProps.url != this.props.url) {
-      if (wvURL != this.props.url) {
-        console.log(
-          `Calling loadURL with ${this.props.url} because wvURL is ${wvURL}`
-        );
-        this._wv.loadURL(this.props.url);
+    const wvURL = wv.getURL();
+    const newURL = this.props.url;
+    if (prevProps.url != newURL) {
+      if (wvURL != newURL) {
+        console.log(`Calling loadURL with ${newURL} because wvURL is ${wvURL}`);
+        const wc = wv.getWebContents() as any;
+        console.log(`History:\n${JSON.stringify(wc.history, null, 2)}`);
+        console.log(`currentIndex: ${wc.currentIndex}`);
+        console.log(`pendingIndex: ${wc.pendingIndex}`);
+        console.log(`inPageIndex: ${wc.inPageIndex}`);
+
+        if (wv.canGoBack() && wc.history[wc.currentIndex - 1] === newURL) {
+          console.log(`Going back`);
+          wv.goBack();
+          return;
+        }
+
+        if (wv.canGoForward() && wc.history[wc.currentIndex + 1] === newURL) {
+          console.log(`Going forward`);
+          wv.goForward();
+          return;
+        }
+
+        wv.clearHistory();
+        wv.loadURL(newURL);
       }
     }
   }
