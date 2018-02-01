@@ -69,7 +69,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
     let progress: number = null;
     let sublabel: ILocalizedString = null;
 
-    if (tab === "downloads") {
+    if (tab === "itch://downloads") {
       const { downloads } = this.props;
       count = size(getFinishedDownloads(downloads));
       const activeDownload = getActiveDownload(downloads);
@@ -169,7 +169,7 @@ const Tab = connect<IProps>(injectIntl(TabBase), {
     return createStructuredSelector({
       tabInstance: (rs: IRootState) => rs.session.tabInstances[tab],
       loading: (rs: IRootState) => !!rs.session.navigation.loadingTabs[tab],
-      downloads: (rs: IRootState) => tab === "downloads" && rs.downloads,
+      downloads: (rs: IRootState) => tab === "itch://downloads" && rs.downloads,
     });
   },
   actionCreators,

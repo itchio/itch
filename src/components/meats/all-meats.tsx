@@ -14,6 +14,7 @@ import {
   ITabInstances,
   IOpenTabs,
   ILoadingTabs,
+  ICredentials,
 } from "../../types";
 
 import styled from "../styles";
@@ -50,7 +51,10 @@ const MeatTab = styled.div`
 
 export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { openTabs, tabInstances, id: currentId } = this.props;
+    const { credentials, openTabs, tabInstances, id: currentId } = this.props;
+    if (!(credentials && credentials.me && credentials.me.id)) {
+      return null;
+    }
 
     return (
       <MeatContainer>
@@ -92,6 +96,7 @@ interface IDerivedProps {
   openTabs: string[];
   tabInstances: ITabInstances;
   loadingTabs: ILoadingTabs;
+  credentials: ICredentials;
 }
 
 const openTabsSelector = createSelector(
@@ -101,6 +106,7 @@ const openTabsSelector = createSelector(
 
 export default connect<IProps>(AllMeats, {
   state: createStructuredSelector({
+    credentials: (rs: IRootState) => rs.session.credentials,
     id: (rs: IRootState) => rs.session.navigation.tab,
     openTabs: (rs: IRootState) => openTabsSelector(rs),
     tabInstances: (rs: IRootState) => rs.session.tabInstances,
