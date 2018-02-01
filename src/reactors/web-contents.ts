@@ -244,37 +244,39 @@ export default function(watcher: Watcher, db: DB) {
     }
     logger.debug(`Got command ${command} for tab ${tab}`);
 
-    withWebContents(store, tab, wc => {
-      let pushWeb = (web: Partial<ITabWeb>) => {
-        store.dispatch(
-          actions.tabDataFetched({
-            tab,
-            data: {
-              web,
-            },
-          })
-        );
-      };
+    let pushWeb = (web: Partial<ITabWeb>) => {
+      store.dispatch(
+        actions.tabDataFetched({
+          tab,
+          data: {
+            web,
+          },
+        })
+      );
+    };
 
-      switch (command) {
-        case "reload": {
+    switch (command) {
+      case "reload": {
+        withWebContents(store, tab, wc => {
           wc.reload();
-          break;
-        }
-        case "stop": {
-          wc.stop();
-          break;
-        }
-        case "location": {
-          pushWeb({ editingAddress: true });
-          break;
-        }
-        case "back": {
-          pushWeb({ editingAddress: false });
-          break;
-        }
+        });
+        break;
       }
-    });
+      case "stop": {
+        withWebContents(store, tab, wc => {
+          wc.stop();
+        });
+        break;
+      }
+      case "location": {
+        pushWeb({ editingAddress: true });
+        break;
+      }
+      case "back": {
+        pushWeb({ editingAddress: false });
+        break;
+      }
+    }
   });
 
   watcher.on(actions.openDevTools, async (store, action) => {

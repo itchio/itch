@@ -165,7 +165,7 @@ export class BrowserControls extends React.PureComponent<
     }
 
     const sp = Space.fromInstance(this.props.tabInstance);
-    if (this.fresh && sp.prefix === "new") {
+    if (this.fresh && sp.internalPage() === "new-tab") {
       this.fresh = false;
       this.startEditingAddress();
     }
