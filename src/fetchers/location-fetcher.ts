@@ -3,7 +3,7 @@ import { Fetcher } from "./fetcher";
 export default class LocationFetcher extends Fetcher {
   async work(): Promise<void> {
     const { db } = this.ctx;
-    const id = this.space().stringId();
+    const id = this.space().firstPathElement();
 
     let path = id === "appdata" ? "appdata" : null;
     if (!path) {

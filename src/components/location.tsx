@@ -5,16 +5,16 @@ import { IMeatProps } from "./meats/types";
 
 import Games from "./games";
 
-import format from "./format";
 import { Space } from "../helpers/space";
 
 import styled, * as styles from "./styles";
 
-import Button from "./basics/button";
+import Link from "./basics/link";
 import LocationTitleBarExtra from "./location-title-bar-extra";
-import { FiltersContainer } from "./filters-container";
+import FiltersContainer from "./filters-container";
 import { showInExplorerString } from "../format/show-in-explorer";
 import { GameColumn } from "./game-table/table";
+import format from "./format";
 
 const columns = [
   GameColumn.Cover,
@@ -28,29 +28,21 @@ const LocationContainer = styled.div`
   ${styles.meat()};
 `;
 
-const LargeFiltersContainer = styled(FiltersContainer)`
-  padding-top: 12px;
-  padding-bottom: 12px;
-`;
-
 export class Location extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, tabInstance, browseInstallLocation } = this.props;
+    const { tab, tabInstance, browseInstallLocation, loading } = this.props;
 
     const locationName = Space.fromInstance(tabInstance).firstPathElement();
 
     return (
       <LocationContainer>
-        <LargeFiltersContainer>
+        <FiltersContainer loading={loading}>
           <LocationTitleBarExtra tabInstance={tabInstance} />
-          <Button
-            icon="folder-open"
-            discreet
+          <Link
+            label={format(showInExplorerString())}
             onClick={e => browseInstallLocation({ name: locationName })}
-          >
-            {format(showInExplorerString())}
-          </Button>
-        </LargeFiltersContainer>
+          />
+        </FiltersContainer>
 
         <Games tab={tab} forcedLayout="table" columns={columns} />
       </LocationContainer>

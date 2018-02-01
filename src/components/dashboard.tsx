@@ -17,11 +17,11 @@ const DashboardContainer = styled.div`
 
 export class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, navigate } = this.props;
+    const { tab, loading, navigate } = this.props;
 
     return (
       <DashboardContainer>
-        <GameFilters tab={tab}>
+        <GameFilters tab={tab} loading={loading}>
           <Link
             label={format(["outlinks.open_dashboard"])}
             onClick={e => navigate({ url: urls.dashboard })}

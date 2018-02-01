@@ -178,10 +178,10 @@ async function createWindow(store: IStore, hidden: boolean) {
   window.on("app-command", (e: any, cmd: AppCommand) => {
     switch (cmd) {
       case "browser-backward":
-        store.dispatch(actions.trigger({ command: "goBack" }));
+        store.dispatch(actions.commandGoBack({}));
         break;
       case "browser-forward":
-        store.dispatch(actions.trigger({ command: "goForward" }));
+        store.dispatch(actions.commandGoForward({}));
         break;
       default:
       // ignore unknown app commands
@@ -452,11 +452,8 @@ export default function(watcher: Watcher) {
     toggleMaximizeWindow();
   });
 
-  watcher.on(actions.trigger, async (store, action) => {
-    const { command } = action.payload;
-    if (command === "back") {
-      exitFullScreen();
-    }
+  watcher.on(actions.commandBack, async (store, action) => {
+    exitFullScreen();
   });
 
   watcher.on(actions.windowBoundsChanged, async (store, action) => {

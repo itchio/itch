@@ -364,29 +364,28 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   subscribe(watcher: Watcher) {
-    watcher.on(actions.trigger, async (store, action) => {
-      if (action.payload.command === "ok") {
-        const { modal } = this.props;
-        if (!modal) {
-          return;
-        }
+    watcher.on(actions.commandOk, async (store, action) => {
+      // TODO: move this to metal side
+      const { modal } = this.props;
+      if (!modal) {
+        return;
+      }
 
-        if (modal.bigButtons && !isEmpty(modal.bigButtons)) {
-          // 'ok' does nothing when there's big buttons
-          return;
-        }
+      if (modal.bigButtons && !isEmpty(modal.bigButtons)) {
+        // 'ok' does nothing when there's big buttons
+        return;
+      }
 
-        if (modal.buttons && !isEmpty(modal.buttons)) {
-          let primaryButtons = map(modal.buttons, specToButton);
-          primaryButtons = filter(
-            primaryButtons,
-            b => !/secondary/.test(b.className)
-          );
-          // if there's more than one primary button, or none at all, 'ok' does nothing
-          if (primaryButtons.length === 1) {
-            const onClick = this.buttonOnClick(primaryButtons[0]);
-            onClick();
-          }
+      if (modal.buttons && !isEmpty(modal.buttons)) {
+        let primaryButtons = map(modal.buttons, specToButton);
+        primaryButtons = filter(
+          primaryButtons,
+          b => !/secondary/.test(b.className)
+        );
+        // if there's more than one primary button, or none at all, 'ok' does nothing
+        if (primaryButtons.length === 1) {
+          const onClick = this.buttonOnClick(primaryButtons[0]);
+          onClick();
         }
       }
     });
@@ -514,16 +513,16 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
                 {tags || timeAgo ? (
                   <BigButtonRow>
-                    {tags ? (
-                      map(tags, tag => {
-                        return (
-                          <Tag>
-                            {tag.icon ? <Icon icon={tag.icon} /> : null}
-                            {tag.label ? format(tag.label) : null}
-                          </Tag>
-                        );
-                      })
-                    ) : null}
+                    {tags
+                      ? map(tags, tag => {
+                          return (
+                            <Tag>
+                              {tag.icon ? <Icon icon={tag.icon} /> : null}
+                              {tag.label ? format(tag.label) : null}
+                            </Tag>
+                          );
+                        })
+                      : null}
                     {timeAgo ? (
                       <Tag>
                         <TimeAgo date={timeAgo.date} />

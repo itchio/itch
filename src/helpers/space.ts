@@ -37,6 +37,7 @@ export interface IQuery {
 export class Space {
   prefix: string;
   suffix: string;
+  private _instance: ITabInstance;
   private _page: ITabPage;
   private _data: ITabData;
   private _protocol: string;
@@ -48,6 +49,7 @@ export class Space {
   constructor(instanceIn: ITabInstance) {
     let instance = instanceIn || eo;
 
+    this._instance = instance;
     this._data = instance.data || eo;
     this._page = currentPage(instance) || eo;
 
@@ -258,6 +260,8 @@ export class Space {
             return ["sidebar.preferences"];
           case "new-tab":
             return ["sidebar.new_tab"];
+          case "locations":
+            return this.location().path;
           default:
             return "?";
         }
@@ -287,6 +291,23 @@ export class Space {
   }
 
   isFresh(): boolean {
+    return false;
+  }
+
+  canGoBack(): boolean {
+    if (this._instance && this._instance.currentIndex > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  canGoForward(): boolean {
+    if (
+      this._instance &&
+      this._instance.currentIndex < this._instance.history.length - 1
+    ) {
+      return true;
+    }
     return false;
   }
 }

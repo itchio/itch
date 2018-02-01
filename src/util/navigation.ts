@@ -8,7 +8,6 @@ import {
   ITabInstance,
   ITabPage,
   ITabData,
-  IEvolveBasePayload,
   INavigatePayload,
 } from "../types";
 import { Game, User } from "ts-itchio-api";

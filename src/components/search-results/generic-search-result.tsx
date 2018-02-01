@@ -15,12 +15,10 @@ abstract class GenericSearchResult<
   Props extends IGenericSearchResultProps
 > extends React.PureComponent<Props> {
   subscribe(watcher: Watcher) {
-    watcher.on(actions.trigger, async (store, action) => {
-      if (action.payload.command === "ok") {
-        if (this.props.chosen && this.props.active) {
-          store.dispatch(this.getNavigateAction());
-          store.dispatch(actions.closeSearch({}));
-        }
+    watcher.on(actions.commandOk, async (store, action) => {
+      if (this.props.chosen && this.props.active) {
+        store.dispatch(this.getNavigateAction());
+        store.dispatch(actions.closeSearch({}));
       }
     });
   }

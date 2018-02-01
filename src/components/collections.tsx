@@ -3,7 +3,7 @@ import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import urls from "../constants/urls";
 
-import { FiltersContainer } from "./filters-container";
+import FiltersContainer from "./filters-container";
 
 import { IMeatProps } from "./meats/types";
 
@@ -20,11 +20,11 @@ const CollectionsContainer = styled.div`
 
 export class Collections extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { navigate } = this.props;
+    const { loading, navigate } = this.props;
 
     return (
       <CollectionsContainer>
-        <FiltersContainer>
+        <FiltersContainer loading={loading}>
           <Link
             label={format(["outlinks.manage_collections"])}
             onClick={e => navigate({ url: urls.myCollections })}

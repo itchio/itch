@@ -11,7 +11,7 @@ import Filler from "./basics/filler";
 
 import styled, * as styles from "./styles";
 import { css } from "./styles";
-import { FiltersContainer } from "./filters-container";
+import FiltersContainer from "./filters-container";
 import Link from "./basics/link";
 import Criterion from "./basics/criterion";
 import { Space } from "../helpers/space";
@@ -71,13 +71,17 @@ const LayoutPicker = styled.section`
 class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const {
+      before,
+      after,
       showBinaryFilters = true,
       showLayoutPicker = true,
       numItems,
+      loading,
     } = this.props;
 
     return (
-      <FiltersContainer>
+      <FiltersContainer loading={loading}>
+        {before}
         {showBinaryFilters ? (
           <TagFilters>
             {format(["grid.criterion.filter_by"])}
@@ -129,6 +133,7 @@ class GameFilters extends React.PureComponent<IProps & IDerivedProps> {
           </>
         ) : null}
         <Filler />
+        {after}
         {showLayoutPicker ? this.renderLayoutPickers() : null}
       </FiltersContainer>
     );
@@ -176,6 +181,11 @@ interface IProps {
   /** whether or not to show binary filters ('only compatible', etc.) */
   showBinaryFilters?: boolean;
   showLayoutPicker?: boolean;
+
+  loading: boolean;
+
+  before?: JSX.Element;
+  after?: JSX.Element;
 }
 
 const actionCreators = actionCreatorsList("updatePreferences");

@@ -64,17 +64,19 @@ export default function(watcher: Watcher) {
     );
   });
 
-  watcher.on(actions.trigger, async (store, action) => {
+  watcher.on(actions.commandGoBack, async (store, action) => {
     const { tab } = store.getState().session.navigation;
-    const { command } = action.payload;
-    switch (command) {
-      case "goBack":
-        store.dispatch(actions.tabGoBack({ tab }));
-        break;
-      case "goForward":
-        store.dispatch(actions.tabGoForward({ tab }));
-        break;
-    }
+    store.dispatch(actions.tabGoBack({ tab }));
+  });
+
+  watcher.on(actions.commandGoForward, async (store, action) => {
+    const { tab } = store.getState().session.navigation;
+    store.dispatch(actions.tabGoForward({ tab }));
+  });
+
+  watcher.on(actions.commandReload, async (store, action) => {
+    const { tab } = store.getState().session.navigation;
+    store.dispatch(actions.tabReloaded({ tab }));
   });
 
   watcher.on(actions.navigateTab, async (store, action) => {

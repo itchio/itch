@@ -33,8 +33,6 @@ export interface ITabWeb {
 
   title?: string;
   favicon?: string;
-  canGoBack?: boolean;
-  canGoForward?: boolean;
   editingAddress?: boolean;
   loading?: boolean;
 }

@@ -3,8 +3,6 @@ import * as React from "react";
 import * as classNames from "classnames";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
-import { actions } from "../actions";
-
 import { ITabWeb } from "../types";
 
 import IconButton from "./basics/icon-button";
@@ -72,33 +70,21 @@ function isHTMLInput(el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
 }
 
-export class BrowserControls extends React.PureComponent<
-  IProps & IDerivedProps
-> {
+class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
   fresh = true;
   browserAddress: HTMLInputElement | HTMLElement;
 
-  triggerForTab(command: typeof actions.trigger.payload.command) {
-    const { trigger, tab } = this.props;
-    trigger({ tab, command });
-  }
-
   // event handlers
-  goBack = () => this.triggerForTab("goBack");
-  goForward = () => this.triggerForTab("goForward");
-  stop = () => this.triggerForTab("stop");
-  reload = () => this.triggerForTab("reload");
+  goBack = () => this.props.tabGoBack({ tab: this.props.tab });
+  goForward = () => this.props.tabGoForward({ tab: this.props.tab });
+  stop = () => this.props.tabStop({ tab: this.props.tab });
+  reload = () => this.props.tabReloaded({ tab: this.props.tab });
 
   render() {
     const { tabInstance } = this.props;
-    let url = this.props.url || "";
     const sp = Space.fromInstance(tabInstance);
-    let { loading, canGoBack, canGoForward, editingAddress } = sp.web();
-
-    const frozen = sp.isFrozen();
-    if (frozen) {
-      editingAddress = false;
-    }
+    const canGoBack = sp.canGoBack();
+    const canGoForward = sp.canGoForward();
 
     return (
       <BrowserControlsContainer>
@@ -112,6 +98,28 @@ export class BrowserControls extends React.PureComponent<
           disabled={!canGoForward}
           onClick={this.goForward}
         />
+        {this.renderAddressBar(sp)}
+      </BrowserControlsContainer>
+    );
+  }
+
+  renderAddressBar(sp: Space) {
+    const { loading } = this.props;
+    const url = this.props.url || "";
+
+    if (!this.props.showAddressBar) {
+      return null;
+    }
+
+    let { editingAddress } = sp.web();
+
+    const frozen = sp.isFrozen();
+    if (frozen) {
+      editingAddress = false;
+    }
+
+    return (
+      <>
         {loading ? (
           <IconButton icon="cross" onClick={this.stop} />
         ) : (
@@ -149,7 +157,7 @@ export class BrowserControls extends React.PureComponent<
           icon="redo"
           onClick={this.popOutBrowser}
         />
-      </BrowserControlsContainer>
+      </>
     );
   }
 
@@ -211,11 +219,17 @@ export class BrowserControls extends React.PureComponent<
   };
 }
 
-interface IProps extends IBrowserControlProps {}
+interface IProps extends IBrowserControlProps {
+  loading: boolean;
+  showAddressBar?: boolean;
+}
 
 const actionCreators = actionCreatorsList(
   "openUrl",
-  "trigger",
+  "tabGoBack",
+  "tabGoForward",
+  "tabStop",
+  "tabReloaded",
   "evolveTab",
   "tabDataFetched"
 );

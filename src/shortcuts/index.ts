@@ -33,31 +33,31 @@ export default function setupShortcuts(store: IStore) {
   });
 
   combo.bindGlobal(["f5", "ctrl+r", "command+r"], () => {
-    store.dispatch(actions.trigger({ command: "reload" }));
+    store.dispatch(actions.commandReload({}));
   });
 
   combo.bindGlobal(["enter"], () => {
-    store.dispatch(actions.trigger({ command: "ok" }));
+    store.dispatch(actions.commandOk({}));
   });
 
   combo.bindGlobal(["ctrl+enter", "command+enter"], () => {
-    store.dispatch(actions.trigger({ command: "main" }));
+    store.dispatch(actions.commandMain({}));
   });
 
   combo.bindGlobal(["ctrl+l", "command+l"], () => {
-    store.dispatch(actions.trigger({ command: "location" }));
+    store.dispatch(actions.commandLocation({}));
   });
 
   combo.bindGlobal(["escape"], () => {
-    store.dispatch(actions.trigger({ command: "back" }));
+    store.dispatch(actions.commandBack({}));
   });
 
   combo.bindGlobal(["alt+left"], () => {
-    store.dispatch(actions.trigger({ command: "goBack" }));
+    store.dispatch(actions.commandGoBack({}));
   });
 
   combo.bindGlobal(["alt+right"], () => {
-    store.dispatch(actions.trigger({ command: "goForward" }));
+    store.dispatch(actions.commandGoForward({}));
   });
 
   const prefix = macos ? "command" : "ctrl";

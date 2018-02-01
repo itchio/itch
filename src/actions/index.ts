@@ -822,25 +822,22 @@ export const actions = wireActions({
     message: ILocalizedString;
   }>(),
   dismissStatusMessage: action<{}>(),
-  trigger: action<{
-    /** if null, applies to current tab */
-    tab?: string;
-
-    command:
-      | "main"
-      | "ok"
-      | "back"
-      | "goBack"
-      | "goForward"
-      | "location"
-      | "reload"
-      | "stop"
-      | "focusLocation";
-  }>(),
+  commandMain: action<{}>(),
+  commandOk: action<{}>(),
+  commandBack: action<{}>(),
+  commandGoBack: action<{}>(),
+  commandGoForward: action<{}>(),
+  commandLocation: action<{}>(),
+  commandReload: action<{}>(),
+  commandStop: action<{}>(),
+  commandFocusLocation: action<{}>(),
   tabGoBack: action<{
     tab: string;
   }>(),
   tabGoForward: action<{
+    tab: string;
+  }>(),
+  tabStop: action<{
     tab: string;
   }>(),
   openUrl: action<{

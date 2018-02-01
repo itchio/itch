@@ -89,10 +89,6 @@ export default function(watcher: Watcher, db: DB) {
           })
         );
       }
-      pushWeb({
-        canGoBack: wc.canGoBack(),
-        canGoForward: wc.canGoForward(),
-      });
     };
 
     logger.debug(`initial didNavigate with ${wc.getURL()}`);
@@ -228,46 +224,42 @@ export default function(watcher: Watcher, db: DB) {
     });
   });
 
-  watcher.on(actions.trigger, async (store, action) => {
-    let { tab, command } = action.payload;
-    if (!tab) {
-      tab = store.getState().session.navigation.tab;
-    }
-    logger.debug(`Got command ${command} for tab ${tab}`);
+  watcher.on(actions.commandReload, async (store, action) => {
+    const { tab } = store.getState().session.navigation;
+    withWebContents(store, tab, wc => {
+      wc.reload();
+    });
+  });
 
-    let pushWeb = (web: Partial<ITabWeb>) => {
-      store.dispatch(
-        actions.tabDataFetched({
-          tab,
-          data: {
-            web,
-          },
-        })
-      );
-    };
+  watcher.on(actions.commandStop, async (store, action) => {
+    const { tab } = store.getState().session.navigation;
+    withWebContents(store, tab, wc => {
+      wc.stop();
+    });
+  });
 
-    switch (command) {
-      case "reload": {
-        withWebContents(store, tab, wc => {
-          wc.reload();
-        });
-        break;
-      }
-      case "stop": {
-        withWebContents(store, tab, wc => {
-          wc.stop();
-        });
-        break;
-      }
-      case "location": {
-        pushWeb({ editingAddress: true });
-        break;
-      }
-      case "back": {
-        pushWeb({ editingAddress: false });
-        break;
-      }
-    }
+  watcher.on(actions.commandLocation, async (store, action) => {
+    const { tab } = store.getState().session.navigation;
+    store.dispatch(
+      actions.tabDataFetched({
+        tab,
+        data: {
+          web: { editingAddress: true },
+        },
+      })
+    );
+  });
+
+  watcher.on(actions.commandBack, async (store, action) => {
+    const { tab } = store.getState().session.navigation;
+    store.dispatch(
+      actions.tabDataFetched({
+        tab,
+        data: {
+          web: { editingAddress: false },
+        },
+      })
+    );
   });
 
   watcher.on(actions.openDevTools, async (store, action) => {

@@ -5,7 +5,7 @@ import * as classNames from "classnames";
 
 import { IRootState, ITabInstance } from "../types";
 
-import { FiltersContainer, filtersContainerHeight } from "./filters-container";
+import FiltersContainer from "./filters-container";
 import IconButton from "./basics/icon-button";
 import UserMenu from "./sidebar/user-menu";
 
@@ -15,10 +15,6 @@ import styled, * as styles from "./styles";
 
 import format from "./format";
 import { Space } from "../helpers/space";
-
-const TitleFiltersContainer = styled(FiltersContainer)`
-  max-height: ${filtersContainerHeight}px;
-`;
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
@@ -63,7 +59,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     return (
-      <TitleFiltersContainer className="title-bar">
+      <FiltersContainer className="title-bar" loading={false}>
         <DraggableDiv
           id="title-draggable"
           className={classNames({ dimmed: !focused })}
@@ -80,7 +76,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
           onClick={this.maximizeRestoreClick}
         />
         <IconButton icon="remove" onClick={this.closeClick} />
-      </TitleFiltersContainer>
+      </FiltersContainer>
     );
   }
 

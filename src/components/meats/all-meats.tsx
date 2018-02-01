@@ -9,7 +9,12 @@ import SearchDimmer from "../search-results/search-dimmer";
 
 import { map } from "underscore";
 
-import { IRootState, ITabInstances, IOpenTabs } from "../../types";
+import {
+  IRootState,
+  ITabInstances,
+  IOpenTabs,
+  ILoadingTabs,
+} from "../../types";
 
 import styled from "../styles";
 import TitleBar from "../title-bar";
@@ -54,6 +59,7 @@ export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
           const tabInstance = tabInstances[tab];
           const sp = Space.fromInstance(tabInstance);
           const visible = tab === currentId;
+          const loading = this.props.loadingTabs[tab];
           return (
             <MeatTab
               key={tab}
@@ -62,7 +68,12 @@ export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
               data-visible={visible}
               className={classNames("meat-tab", { visible })}
             >
-              <Meat tab={tab} tabInstance={tabInstance} visible={visible} />
+              <Meat
+                tab={tab}
+                tabInstance={tabInstance}
+                visible={visible}
+                loading={loading}
+              />
             </MeatTab>
           );
         })}
@@ -80,6 +91,7 @@ interface IDerivedProps {
   id: string;
   openTabs: string[];
   tabInstances: ITabInstances;
+  loadingTabs: ILoadingTabs;
 }
 
 const openTabsSelector = createSelector(
@@ -92,5 +104,6 @@ export default connect<IProps>(AllMeats, {
     id: (rs: IRootState) => rs.session.navigation.tab,
     openTabs: (rs: IRootState) => openTabsSelector(rs),
     tabInstances: (rs: IRootState) => rs.session.tabInstances,
+    loadingTabs: (rs: IRootState) => rs.session.navigation.loadingTabs,
   }),
 });

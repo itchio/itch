@@ -121,11 +121,9 @@ class Search extends React.PureComponent<IDerivedProps> {
       }
     });
 
-    watcher.on(actions.trigger, async (store, action) => {
-      if (action.payload.command === "back") {
-        if (this.input) {
-          this.props.closeSearch({});
-        }
+    watcher.on(actions.commandBack, async (store, action) => {
+      if (this.input) {
+        this.props.closeSearch({});
       }
     });
   }

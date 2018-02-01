@@ -12,6 +12,7 @@ import { connect, Dispatchers } from "./connect";
 import { actions } from "../actions";
 import { Space } from "../helpers/space";
 import urls from "../constants/urls";
+import BrowserControls from "./browser-controls";
 
 const CollectionDiv = styled.div`
   ${styles.meat()};
@@ -19,12 +20,22 @@ const CollectionDiv = styled.div`
 
 export class Collection extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab } = this.props;
+    const { tab, tabInstance, loading } = this.props;
 
     return (
       <CollectionDiv>
-        <GameFilters tab={tab}>
-          <IconButton icon="repeat" onClick={this.onRepeat} />
+        <GameFilters
+          loading={loading}
+          tab={tab}
+          before={
+            <BrowserControls
+              tab={tab}
+              tabInstance={tabInstance}
+              url=""
+              loading={loading}
+            />
+          }
+        >
           <IconButton
             icon="redo"
             hint={["browser.popout"]}
@@ -36,10 +47,6 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps> {
       </CollectionDiv>
     );
   }
-
-  onRepeat = () => {
-    this.props.tabReloaded({ tab: this.props.tab });
-  };
 
   popOutBrowser = () => {
     const { tabInstance } = this.props;
@@ -56,7 +63,6 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps> {
 interface IProps extends IMeatProps {}
 
 const actionCreators = {
-  tabReloaded: actions.tabReloaded,
   openUrl: actions.openUrl,
 };
 

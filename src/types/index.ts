@@ -504,9 +504,7 @@ export interface ISessionNavigationState {
   openTabs: IOpenTabs;
 
   /** set to true when a tab is loading */
-  loadingTabs: {
-    [key: string]: boolean;
-  };
+  loadingTabs: ILoadingTabs;
 
   /** current page (gate, etc.) */
   page: string;
@@ -516,6 +514,10 @@ export interface ISessionNavigationState {
 
   /** last constant tab visited */
   lastConstant: string;
+}
+
+export interface ILoadingTabs {
+  [key: string]: boolean;
 }
 
 export interface ISearchResults {
