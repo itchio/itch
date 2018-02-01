@@ -13,7 +13,8 @@ import {
   ITabGames,
 } from "../types/index";
 
-import * as nodeUrl from "url";
+import * as nodeURL from "url";
+import * as querystring from "querystring";
 
 import memoize from "../util/lru-memoize";
 import { Game, User } from "ts-itchio-api";
@@ -27,6 +28,10 @@ export const spaceFromInstance = memoize(
   100,
   (dataIn: ITabInstance) => new Space(dataIn)
 );
+
+export interface IQuery {
+  [key: string]: string;
+}
 
 /**
  * A Space gives structured info about a tab.
@@ -42,6 +47,7 @@ export class Space {
   private _protocol: string;
   private _hostname: string;
   private _pathElements: string[];
+  private _query: IQuery;
 
   constructor(instanceIn: ITabInstance) {
     let instance = instanceIn || eo;
@@ -63,9 +69,10 @@ export class Space {
 
     if (url) {
       try {
-        const parsed = nodeUrl.parse(url);
+        const parsed = nodeURL.parse(url);
         this._protocol = parsed.protocol;
         this._hostname = parsed.hostname;
+        this._query = querystring.parse(parsed.query);
         this._pathElements = parsed.pathname.replace(/^\//, "").split("/");
       } catch (e) {
         // TODO: figure this out
@@ -217,6 +224,10 @@ export class Space {
       return parseInt(this._pathElements[0], 10);
     }
     return null;
+  }
+
+  query(): IQuery {
+    return this._query || eo;
   }
 
   label(): ILocalizedString {

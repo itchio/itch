@@ -19,6 +19,9 @@ import {
 import uuid from "../util/uuid";
 const logger = rootLogger.child({ name: "reactors/navigation" });
 
+import * as nodeURL from "url";
+import * as querystring from "querystring";
+
 export default function(watcher: Watcher) {
   watcher.on(actions.navigateToCollection, async (store, action) => {
     const { collection, background } = action.payload;
@@ -151,6 +154,34 @@ export default function(watcher: Watcher) {
         })
       );
     }
+  });
+
+  watcher.on(actions.tabParamsChanged, async (store, action) => {
+    let { tab, params } = action.payload;
+    const sp = Space.fromStore(store, tab);
+
+    const newParams = {
+      ...sp.query(),
+      ...params,
+    };
+
+    const previousURL = sp.url();
+    const parsed = nodeURL.parse(previousURL);
+    const { host, protocol, pathname } = parsed;
+    const newURL = nodeURL.format({
+      host,
+      protocol,
+      pathname,
+      search: `?${querystring.stringify(newParams)}`,
+    });
+
+    store.dispatch(
+      actions.evolveTab({
+        tab,
+        url: newURL,
+        replace: true,
+      })
+    );
   });
 
   watcher.on(actions.closeAllTabs, async (store, action) => {

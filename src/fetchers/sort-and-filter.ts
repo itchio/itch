@@ -14,8 +14,7 @@ import isPlatformCompatible from "../util/is-platform-compatible";
 
 import { filter, sortBy as sortedBy } from "underscore";
 import { Game } from "ts-itchio-api";
-
-const emptyObj = {};
+import { Space } from "../helpers/space";
 
 function getCaveSummary(commons: ICommonsState, game: Game): ICaveSummary {
   const ids = commons.caveIdsByGameId[game.id];
@@ -36,12 +35,12 @@ export function sortAndFilter(
   opts: ISortAndFilterOpts = {}
 ): Game[] {
   let set = games;
-  const state = store.getState();
-  // const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
-  // FIXME: restore in some form
-  const tabParams: ITabParams = emptyObj;
+  const rs = store.getState();
+
+  const sp = Space.fromState(rs, tab);
+  const tabParams = sp.query() as ITabParams;
   const { sortBy, sortDirection = "DESC" } = tabParams;
-  const prefs = state.preferences;
+  const prefs = rs.preferences;
 
   const hasFilters =
     prefs.onlyCompatibleGames ||
@@ -49,8 +48,8 @@ export function sortAndFilter(
     prefs.onlyOwnedGames;
 
   if (hasFilters && !opts.disableFilters) {
-    const installedSet = state.commons.caveIdsByGameId;
-    const ownedSet = state.commons.downloadKeyIdsByGameId;
+    const installedSet = rs.commons.caveIdsByGameId;
+    const ownedSet = rs.commons.downloadKeyIdsByGameId;
 
     set = filter(set, g => {
       if (!g) {
@@ -81,7 +80,7 @@ export function sortAndFilter(
         break;
       case "lastTouchedAt":
         set = sortedBy(set, g => {
-          const cave = getCaveSummary(state.commons, g);
+          const cave = getCaveSummary(rs.commons, g);
           if (cave) {
             return cave.lastTouchedAt;
           } else {
@@ -91,7 +90,7 @@ export function sortAndFilter(
         break;
       case "secondsRun":
         set = sortedBy(set, g => {
-          const cave = getCaveSummary(state.commons, g);
+          const cave = getCaveSummary(rs.commons, g);
           if (cave) {
             return cave.secondsRun;
           } else {
@@ -101,7 +100,7 @@ export function sortAndFilter(
         break;
       case "installedSize":
         set = sortedBy(set, g => {
-          const cave = getCaveSummary(state.commons, g);
+          const cave = getCaveSummary(rs.commons, g);
           if (cave) {
             return cave.installedSize;
           } else {
@@ -129,12 +128,11 @@ export function addSortAndFilterToQuery(
   tab: string,
   store: IStore
 ): squel.Select {
-  const state = store.getState();
-  // FIXME: restore that
-  // const tabParams: ITabParams = state.session.tabParams[tab] || emptyObj;
-  const tabParams: ITabParams = emptyObj;
+  const rs = store.getState();
+  const sp = Space.fromState(rs, tab);
+  const tabParams = sp.query() as ITabParams;
   const { sortBy, sortDirection = "DESC" } = tabParams;
-  const prefs = state.preferences;
+  const prefs = rs.preferences;
 
   if (prefs.onlyCompatibleGames) {
     expr.and(
@@ -203,7 +201,7 @@ export function addSortAndFilterToQuery(
   }
 
   if (joinDownloadKeys) {
-    const meId = state.session.credentials.me.id;
+    const meId = rs.session.credentials.me.id;
     select.left_join(
       DownloadKeyModel.table,
       null,
