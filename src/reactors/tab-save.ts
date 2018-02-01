@@ -50,12 +50,8 @@ export default function(watcher: Watcher, db: DB) {
     if (profile && profile.openTabs) {
       let { current, items } = profile.openTabs;
 
-      console.log(`items: ${JSON.stringify(items, null, 2)}`);
-
       // only restore valid items
       items = filter(items, item => isValidTabInstance(item));
-
-      console.log(`filtered items: ${JSON.stringify(items, null, 2)}`);
 
       if (!isEmpty(items)) {
         // does our current tab still exist?
