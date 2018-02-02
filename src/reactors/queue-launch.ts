@@ -14,39 +14,17 @@ import { currentRuntime } from "../os/runtime";
 import lazyGetGame from "./lazy-get-game";
 import getGameCredentials from "./downloads/get-game-credentials";
 
-import api from "../api";
+import { IRuntime, isAborted } from "../types";
 
-import nativePrepare from "./prepare/native";
-
-import nativeLaunch from "./launch/native";
-import htmlLaunch from "./launch/html";
-import shellLaunch from "./launch/shell";
-import externalLaunch from "./launch/external";
-
-import getManifest from "./launch/get-manifest";
-import pickManifestAction from "./launch/pick-manifest-action";
-import launchTypeForAction from "./launch/launch-type-for-action";
-
-import actionForGame from "../util/action-for-game";
-
-import { ILaunchers, IPrepares } from "./launch/types";
-import {
-  IEnvironment,
-  Crash,
-  IManifestAction,
-  IRuntime,
-  isCancelled,
-} from "../types";
-
-import { powerSaveBlocker } from "electron";
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
 import { Game } from "ts-itchio-api";
 import { modalWidgets } from "../components/modal-widgets/index";
-import { setupClient } from "../util/buse-utils";
+import { setupClient, buseGameCredentials } from "../util/buse-utils";
 import { Instance, messages } from "node-buse";
-
-const emptyArr = [];
+import pickManifestAction from "./launch/pick-manifest-action";
+import { performHTMLLaunch } from "./launch/html";
+import { shell } from "electron";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueLaunch, async (store, action) => {
@@ -75,6 +53,11 @@ export default function(watcher: Watcher, db: DB) {
         return await doLaunch(ctx, logger, cave, game, runtime);
       },
       onError: async (e: any, log) => {
+        if (isAborted(e)) {
+          // just ignore it then
+          return;
+        }
+
         let title = game ? game.title : "<missing game>";
         const i18n = store.getState().i18n;
 
@@ -113,17 +96,6 @@ export default function(watcher: Watcher, db: DB) {
   });
 }
 
-const launchers = {
-  native: nativeLaunch,
-  html: htmlLaunch,
-  shell: shellLaunch,
-  external: externalLaunch,
-} as ILaunchers;
-
-const prepares = {
-  native: nativePrepare,
-} as IPrepares;
-
 async function doLaunch(
   ctx: Context,
   logger: Logger,
@@ -131,10 +103,7 @@ async function doLaunch(
   game: Game,
   runtime: IRuntime
 ) {
-  let env: IEnvironment = {};
-  let args: string[] = [];
-
-  const { db, store } = ctx;
+  const { store } = ctx;
 
   if (cave.morphing) {
     store.dispatch(
@@ -156,23 +125,13 @@ async function doLaunch(
     return;
   }
 
-  const action = actionForGame(game, cave);
-  if (action === "open") {
-    db.saveOne("caves", cave.id, { lastTouchedAt: new Date() });
-    shellLaunch(ctx, {
-      manifest: null,
-      cave,
-      game,
-      args,
-      env,
-      logger,
-      runtime,
-    });
-    return;
-  }
-
   const { appVersion } = store.getState().system;
   logger.info(`itch ${appVersion} launching '${game.title}' (#${game.id})`);
+
+  const credentials = getGameCredentials(ctx, game);
+  if (!credentials) {
+    throw new Error(`no game credentials, can't launch`);
+  }
 
   const { preferences } = store.getState();
   const appPath = paths.appPath(cave, preferences);
@@ -183,11 +142,43 @@ async function doLaunch(
     try {
       setupClient(client, logger, ctx);
 
+      client.onRequest(messages.PickManifestAction, async ({ params }) => {
+        const name = await pickManifestAction(store, params.actions, game);
+        return { name };
+      });
+
+      client.onRequest(messages.HTMLLaunch, async ({ params }) => {
+        return await performHTMLLaunch({
+          ctx,
+          logger,
+          game,
+          params,
+        });
+      });
+
+      client.onRequest(messages.ShellLaunch, async ({ params }) => {
+        shell.openItem(params.itemPath);
+        return {};
+      });
+
+      client.onRequest(messages.URLLaunch, async ({ params }) => {
+        store.dispatch(actions.navigate({ url: params.url }));
+        return {};
+      });
+
       await client.call(
         messages.Launch({
           installFolder: appPath,
+          game,
+          upload: cave.upload,
+          build: cave.build,
           verdict: cave.verdict,
+
           prereqsDir,
+
+          sandbox: preferences.isolateApps,
+
+          credentials: buseGameCredentials(credentials),
         })
       );
     } finally {
@@ -214,7 +205,7 @@ async function doLaunch(
 
   //   if (manifestAction.scope) {
   //     logger.info(`Requesting subkey with scope: ${manifestAction.scope}`);
-  //     const gameCredentials = await getGameCredentials(ctx, game);
+  //     const gameCredentials = getGameCredentials(ctx, game);
   //     if (gameCredentials) {
   //       const client = api.withKey(gameCredentials.apiKey);
   //       const subkey = await client.subkey(game.id, manifestAction.scope);

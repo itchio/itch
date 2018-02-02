@@ -134,39 +134,6 @@ export interface IDBDeleteSpec {
   entities: IEntityRefs;
 }
 
-// see https://itch.io/docs/itch/integrating/manifest.html
-export interface IManifestAction {
-  /** human-readable or standard name */
-  name: string;
-
-  /** file path (relative to manifest), URL, etc. */
-  path: string;
-
-  /** icon name (see static/fonts/icomoon/demo.html, don't include `icon-` prefix) */
-  icon: string;
-
-  /** command-line arguments */
-  args: string[];
-
-  /** sandbox opt-in */
-  sandbox?: boolean;
-
-  /** requested API scope */
-  scope?: string;
-
-  /** don't redirect stdout/stderr, open in new console window */
-  console?: boolean;
-}
-
-export interface IManifestPrereq {
-  name: string;
-}
-
-export interface IManifest {
-  actions: IManifestAction[];
-  prereqs: IManifestPrereq[];
-}
-
 export interface ICredentials {
   key: string;
   me: OwnUser;

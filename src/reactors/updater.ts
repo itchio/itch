@@ -101,7 +101,7 @@ async function _doCheckForGameUpdate(
   logger.info(`Looking for updates to ${game.title}...`);
 
   try {
-    const gameCredentials = await getGameCredentials(ctx, game);
+    const gameCredentials = getGameCredentials(ctx, game);
     if (!gameCredentials) {
       throw new Error("no game credentials");
     }
@@ -138,14 +138,18 @@ async function _doCheckForGameUpdate(
       return isRecent;
     });
     logger.info(
-      `${uploads.length} available uploads, ${recentUploads.length} are more recent`
+      `${uploads.length} available uploads, ${
+        recentUploads.length
+      } are more recent`
     );
 
     let hasUpgrade = false;
 
     if (caveUpload && caveBuild) {
       logger.info(
-        `Looking for new builds of ${game.title}, from build ${caveBuild.id} (upload ${caveUpload.id})`
+        `Looking for new builds of ${game.title}, from build ${
+          caveBuild.id
+        } (upload ${caveUpload.id})`
       );
       const upload = findWhere(uploads, { id: caveUpload.id });
       if (!upload || !upload.buildId) {

@@ -15,7 +15,7 @@ export default async function lazyGetGame(
     return game;
   }
 
-  const gameCredentials = await getGameCredentialsForId(ctx, gameId);
+  const gameCredentials = getGameCredentialsForId(ctx, gameId);
   if (!gameCredentials) {
     return null;
   }

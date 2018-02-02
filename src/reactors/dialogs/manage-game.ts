@@ -41,7 +41,7 @@ export default function(watcher: Watcher, db: DB) {
 
     const ctx = new Context(store, db);
 
-    const credentials = await getGameCredentials(ctx, game);
+    const credentials = getGameCredentials(ctx, game);
     if (!credentials) {
       throw new Error(`no game credentials, can't download`);
     }

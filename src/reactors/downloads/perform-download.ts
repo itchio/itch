@@ -36,7 +36,7 @@ export default async function performDownload(
   const { game } = item;
   const { preferences } = ctx.store.getState();
 
-  const credentials = await getGameCredentials(ctx, item.game);
+  const credentials = getGameCredentials(ctx, item.game);
   if (!credentials) {
     throw new Error(`no game credentials, can't download`);
   }
@@ -191,8 +191,9 @@ export default async function performDownload(
 
           const deadline = 5 * 1000;
           logger.warn(
-            `Asking butler to cancel with a ${(deadline /
-              1000).toFixed()}s deadline`
+            `Asking butler to cancel with a ${(
+              deadline / 1000
+            ).toFixed()}s deadline`
           );
           setTimeout(() => {
             if (butlerExited) {
