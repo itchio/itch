@@ -24,14 +24,14 @@ suite(__filename, s => {
 
     let nav = () => w.store.getState().session.navigation;
 
-    t.same(nav().tab, "featured");
+    t.same(nav().tab, "itch://featured");
 
     await w.dispatch(actions.navigate({ url: "itch://library" }));
-    t.same(nav().tab, "library");
+    t.same(nav().tab, "itch://library");
 
     await w.dispatch(actions.navigate({ url: "itch://preferences" }));
-    t.same(nav().openTabs.transient, ["preferences"]);
-    t.same(nav().tab, "preferences");
+    t.same(nav().openTabs.transient, ["itch://preferences"]);
+    t.same(nav().tab, "itch://preferences");
 
     let tabChanged = false;
     w.on(actions.tabChanged, async () => {
@@ -48,26 +48,23 @@ suite(__filename, s => {
     navigation(w);
 
     let nav = () => w.store.getState().session.navigation;
-    // let instances = () => w.store.getState().session.tabInstances;
+    let instances = () => w.store.getState().session.tabInstances;
 
     let constantTab = nav().tab;
 
     await w.dispatch(actions.navigate({ url: "https://itch.io" }));
     let id1 = nav().tab;
-    // TODO: re-implement
-    /*
     t.same(
-      instances()[id1].path,
-      "url/https://itch.io",
-      "set up path properly"
+      instances()[id1].history[0].url,
+      "https://itch.io",
+      "set up url properly"
     );
-    */
 
     await w.dispatch(actions.navigate({ url: "itch://library" }));
-    t.same(nav().tab, "library");
+    t.same(nav().tab, "itch://library");
 
-    await w.dispatch(actions.navigate({ url: "https://itch.io" }));
-    t.same(nav().tab, id1, "switched to right tab by path");
+    await w.dispatch(actions.focusTab({ tab: id1 }));
+    t.same(nav().tab, id1, "switched to right tab by id");
 
     await w.dispatch(actions.closeCurrentTab({}));
     t.same(nav().tab, constantTab, "closes transient tab");

@@ -42,7 +42,7 @@ suite(__filename, s => {
     );
     t.same(
       w.store.getState().session.navigation.tab,
-      "downloads",
+      "itch://downloads",
       "..but switches to downloads tab"
     );
   });

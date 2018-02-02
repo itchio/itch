@@ -14,6 +14,10 @@ export default class GameFetcher extends Fetcher {
 
     let localGame = db.games.findOneById(gameId);
     let pushGame = (game: typeof localGame) => {
+      if (!game) {
+        return;
+      }
+
       if (isInternal) {
         isInternal = false;
         // we need to turn that into an https URL presto
@@ -26,10 +30,7 @@ export default class GameFetcher extends Fetcher {
           })
         );
       }
-
-      if (game) {
-        this.push(gameToTabData(game));
-      }
+      this.push(gameToTabData(game));
     };
     pushGame(localGame);
 
