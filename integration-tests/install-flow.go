@@ -32,7 +32,7 @@ func installFlow(r *runner) {
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
 
 	r.logf("switching to downloads tab")
-	must(r.click("#sidebar section[data-path='downloads']"))
+	must(r.click("#sidebar section[data-url='itch://downloads']"))
 
 	r.logf("making sure our download shows up as finished")
 	var downloadRowSelector = fmt.Sprintf(".meat-tab.visible .download-row-item.finished[data-game-id='%d'] .control--title", testGameID)
@@ -45,7 +45,7 @@ func installFlow(r *runner) {
 	must(r.waitForVisible(".meat-tab.visible .no-active-downloads"))
 
 	r.logf("navigating back to game")
-	must(r.click(fmt.Sprintf("#sidebar section[data-path='games/%d']", testGameID)))
+	must(r.click(fmt.Sprintf("#sidebar section[data-resource='games/%d']", testGameID)))
 
 	r.logf("re-installing it")
 	must(r.click(".meat-tab.visible .more-actions"))
@@ -56,12 +56,12 @@ func installFlow(r *runner) {
 	r.logf("closing all tabs")
 	must(r.click("#sidebar-close-all-tabs"))
 	// this depends on navigation flow being done before that
-	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", "My creations"))
+	must(r.waitUntilTextExists(".title-bar-text", "My creations"))
 
 	r.logf("opening preferences")
-	must(r.click(".meat-tab.visible .user-menu"))
+	must(r.click(".user-menu"))
 	must(r.click("#user-menu-preferences"))
-	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Preferences"))
+	must(r.waitUntilTextExists(".title-bar-text", "Preferences"))
 
 	r.logf("opening default install location in tab")
 	must(r.click(".meat-tab.visible .install-location-row.default .install-location-navigate"))
@@ -72,11 +72,10 @@ func installFlow(r *runner) {
 
 	r.logf("open it again")
 	must(r.click(rowSelector))
-	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", testGameName))
+	must(r.waitUntilTextExists(".title-bar-text", testGameName))
 
 	r.logf("uninstalling it")
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
-	must(r.click(".meat-tab.visible .title-bar"))
 	must(r.click(".meat-tab.visible .more-actions"))
 	must(r.click("#context--grid-item-manage"))
 	must(r.click(".manage-uninstall"))

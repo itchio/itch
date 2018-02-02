@@ -8,7 +8,7 @@ import (
 
 func loginFlow(r *runner) {
 	logout := func(forReal bool) {
-		must(r.click(".meat-tab.visible .user-menu"))
+		must(r.click(".user-menu"))
 		must(r.click("#user-menu-change-user"))
 
 		if forReal {
@@ -41,7 +41,7 @@ func loginFlow(r *runner) {
 		must(r.setValue("#login-username", testAccountName))
 		must(r.setValue("#login-password", testAccountPassword))
 		must(r.click("#login-button"))
-		must(r.waitForVisible(".meat-tab.visible .user-menu"))
+		must(r.waitForVisible(".user-menu"))
 	}
 	loginWithPassword()
 
@@ -55,12 +55,12 @@ func loginFlow(r *runner) {
 
 	r.logf("checking that we're redirected to the dashboard")
 	must(r.waitUntilTextExists(
-		".meat-tab.visible .title-bar-text",
+		".title-bar-text",
 		"Creator Dashboard",
 	))
 
 	r.logf("now clearing cookies")
-	must(r.click(".meat-tab.visible .user-menu"))
+	must(r.click(".user-menu"))
 	must(r.click("#user-menu-preferences"))
 
 	r.logf("expanding advanced preferences")
@@ -80,14 +80,14 @@ func loginFlow(r *runner) {
 
 	r.logf("checking that we've landed on the login page")
 	must(r.waitUntilTextExists(
-		".meat-tab.visible .title-bar-text",
+		".title-bar-text",
 		"Log in",
 	))
 
 	r.logf("opening downloads tab")
-	must(r.click(".meat-tab.visible .user-menu"))
+	must(r.click(".user-menu"))
 	must(r.click("#user-menu-downloads"))
-	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Downloads"))
+	must(r.waitUntilTextExists(".title-bar-text", "Downloads"))
 
 	r.logf("doing cancelled logout")
 	logout(false)
@@ -96,12 +96,12 @@ func loginFlow(r *runner) {
 
 	r.logf("logging back in with remembered sessions")
 	must(r.click(".remembered-session"))
-	must(r.waitForVisible(".meat-tab.visible .user-menu"))
+	must(r.waitForVisible(".user-menu"))
 
 	r.logf("making sure preferences tab was restored")
-	must(r.waitForVisible("#sidebar section[data-path='preferences']"))
+	must(r.waitForVisible("#sidebar section[data-url='itch://preferences']"))
 	r.logf("making sure downloads tab was restored and is currently visible")
-	must(r.waitUntilTextExists(".meat-tab.visible .title-bar-text", "Downloads"))
+	must(r.waitUntilTextExists(".title-bar-text", "Downloads"))
 
 	r.logf("logging out for real")
 	logout(true)

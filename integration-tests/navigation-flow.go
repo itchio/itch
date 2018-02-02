@@ -1,14 +1,14 @@
 package main
 
-const currTab = ".meat-tab[data-visible=true] "
+const currTab = ".meat-tab.visible "
 
 func navigationFlow(r *runner) {
-	must(r.waitForVisible(".meat-tab.visible .user-menu"))
+	must(r.waitForVisible(".user-menu"))
 
 	r.logf("navigating to dashboard")
-	must(r.click("#sidebar section[data-path='dashboard']"))
+	must(r.click("#sidebar section[data-url='itch://dashboard']"))
 
-	must(r.waitForVisible(".meat-tab[data-id=dashboard] .layout-picker"))
+	must(r.waitForVisible(".meat-tab[data-url='itch://dashboard'] .layout-picker"))
 	must(r.click(currTab + ".layout-picker[data-layout='grid']"))
 
 	r.logf("clearing filters if any")

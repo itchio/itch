@@ -59,10 +59,8 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
     let loading = this.props.loading || sp.web().loading;
 
     let iconImage = sp.image();
-    if (sp.prefix === "url") {
-      iconImage = sp.web().favicon;
-    }
-
+    const url = sp.url();
+    const resource = sp.resource();
     const label = sp.label();
     let icon = sp.icon();
     let count = 0;
@@ -101,6 +99,8 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
 
     const props = {
       tab,
+      url,
+      resource,
       tabInstance,
       label,
       icon,

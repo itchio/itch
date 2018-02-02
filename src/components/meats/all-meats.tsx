@@ -68,8 +68,8 @@ export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
             <MeatTab
               key={tab}
               data-id={tab}
-              data-internal-page={sp.internalPage()}
-              data-visible={visible}
+              data-url={sp.url()}
+              data-resource={sp.resource()}
               className={classNames("meat-tab", { visible })}
             >
               <Meat
