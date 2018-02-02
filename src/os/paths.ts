@@ -97,6 +97,10 @@ export function preferencesPath(): string {
   return join(app.getPath("userData"), "preferences.json");
 }
 
+export function prereqsPath(): string {
+  return join(app.getPath("userData"), "prereqs");
+}
+
 export function mainLogPath(): string {
   return join(app.getPath("userData"), "logs", "itch.txt");
 }
