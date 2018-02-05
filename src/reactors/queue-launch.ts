@@ -68,6 +68,9 @@ export default function(watcher: Watcher, db: DB) {
           } else {
             errorMessage = String(e.reason);
           }
+        } else {
+          // only show first line
+          errorMessage = errorMessage.split("\n")[0];
         }
 
         await promisedModal(
