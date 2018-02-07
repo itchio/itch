@@ -48,7 +48,7 @@ function restoreDownloads(store: IStore, db: DB) {
     const [finished, nonFinished] = _.partition(items, x => x.finished);
 
     const sendAll = (items: IDownloadItem[]) => {
-      for (const item of _.sortBy(items, "order")) {
+      for (const item of _.sortBy(items, "rank")) {
         store.dispatch(actions.downloadStarted(item));
       }
     };

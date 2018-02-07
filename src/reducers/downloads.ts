@@ -1,8 +1,17 @@
 import { createStructuredSelector } from "reselect";
 
-import { indexBy, map, last, omit, min, max } from "underscore";
+import {
+  indexBy,
+  map,
+  last,
+  omit,
+  min,
+  max,
+  isEmpty,
+  values,
+} from "underscore";
 import groupIdBy from "../helpers/group-id-by";
-import { getActiveDownload, excludeGame } from "../reactors/downloads/getters";
+import { excludeGame } from "../reactors/downloads/getters";
 
 import { IDownloadsState, IDownloadItem } from "../types";
 
@@ -59,14 +68,18 @@ function index(items: IDownloadItem[]): IDownloadsState["items"] {
 
 // higher priority = smaller numbers
 function higherPriorityRank(state: IDownloadsState): number {
-  const highest = min(state.items, x => x.rank);
-  return highest ? highest.rank - 1 : 0;
+  if (isEmpty(state.items)) {
+    return 0;
+  }
+  return min(values(state.items), x => x.rank).rank - 1;
 }
 
 // lower priority = larger numbers
 function lowerPriorityRank(state: IDownloadsState): number {
-  const lowest = max(state.items, x => x.rank);
-  return lowest ? lowest.rank + 1 : 0;
+  if (isEmpty(state.items)) {
+    return 0;
+  }
+  return max(values(state.items), x => x.rank).rank + 1;
 }
 
 const baseReducer = reducer<IDownloadsState>(initialState, on => {
@@ -80,6 +93,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
 
   on(actions.downloadStarted, (state, action) => {
     const item = action.payload as IDownloadItem;
+    const rank = higherPriorityRank(state);
 
     return {
       ...state,
@@ -87,7 +101,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
         ...index(excludeGame(state, item.game.id)),
         [item.id]: {
           ...item,
-          rank: higherPriorityRank(state),
+          rank,
         },
       },
     };
@@ -141,17 +155,8 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
 
   on(actions.prioritizeDownload, (state, action) => {
     const { id } = action.payload;
-    const activeDownload = getActiveDownload(state);
 
-    if (!activeDownload || activeDownload.id === id) {
-      // either no downloads, or only one. nothing to prioritize!
-      return state;
-    }
-
-    // don't re-number priorities, just go into the negatives
-    const rank = activeDownload.rank - 1;
-
-    return updateSingle(state, { id, rank });
+    return updateSingle(state, { id, rank: higherPriorityRank(state) });
   });
 
   on(actions.downloadDiscarded, (state, action) => {
