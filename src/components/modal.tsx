@@ -22,7 +22,7 @@ import { map, isEmpty, filter } from "underscore";
 import { IModal, IModalButtonSpec, IModalButton, IAction } from "../types";
 
 import watching, { Watcher } from "./watching";
-import styled, * as styles from "./styles";
+import styled from "./styles";
 import { stripUnit } from "polished";
 
 import format, { formatString } from "./format";
@@ -35,17 +35,15 @@ type Flavor = "normal" | "big";
 const customStyles = {
   overlay: {
     backgroundColor: "rgba(7, 4, 4, 0.75)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
-    top: "50%",
-    left: "50%",
+    position: "initial",
     minWidth: "50%",
     maxWidth: "90%",
     maxHeight: "80%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
     padding: "0px",
     backgroundColor: colors.darkMineShaft,
     border: `1px solid ${colors.lightMineShaft}`,
@@ -320,14 +318,11 @@ const HeaderDiv = styled.div`
   flex-direction: row;
   align-items: center;
 
+  min-height: 2.6em;
+
   .title {
     color: ${props => props.theme.secondaryText};
     font-size: ${props => props.theme.fontSizes.large};
-  }
-
-  .close-modal {
-    font-size: 20px;
-    ${styles.secondaryLink()};
   }
 `;
 
