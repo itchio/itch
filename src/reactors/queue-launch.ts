@@ -14,17 +14,19 @@ import { currentRuntime } from "../os/runtime";
 import lazyGetGame from "./lazy-get-game";
 import getGameCredentials from "./downloads/get-game-credentials";
 
-import { IRuntime, isAborted } from "../types";
+import { IRuntime, isAborted, Cancelled } from "../types";
 
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
 import { Game } from "ts-itchio-api";
-import { modalWidgets } from "../components/modal-widgets/index";
+import { modalWidgets, ITypedModal } from "../components/modal-widgets/index";
 import { setupClient, buseGameCredentials } from "../util/buse-utils";
 import { Instance, messages } from "node-buse";
 import pickManifestAction from "./launch/pick-manifest-action";
 import { performHTMLLaunch } from "./launch/html";
 import { shell } from "electron";
+import { PrereqStatus } from "node-buse/lib/messages";
+import { IPrereqsStateParams } from "../components/modal-widgets/prereqs-state";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueLaunch, async (store, action) => {
@@ -140,7 +142,25 @@ async function doLaunch(
   const appPath = paths.appPath(cave, preferences);
   const prereqsDir = paths.prereqsPath();
 
+  // TODO: extract that to another module
+  let prereqsModal: ITypedModal<any, any>;
+  let prereqsStateParams: IPrereqsStateParams;
+
+  function closePrereqsModal() {
+    if (!prereqsModal) {
+      return;
+    }
+
+    store.dispatch(
+      actions.closeModal({
+        id: prereqsModal.id,
+      })
+    );
+    prereqsModal = null;
+  }
+
   const instance = new Instance();
+  let cancelled = false;
   instance.onClient(async client => {
     try {
       setupClient(client, logger, ctx);
@@ -169,6 +189,117 @@ async function doLaunch(
         return {};
       });
 
+      client.onNotification(messages.PrereqsStarted, async ({ params }) => {
+        prereqsStateParams = {
+          gameTitle: game.title,
+          tasks: {},
+        };
+
+        const {} = params;
+        for (const name of Object.keys(params.tasks)) {
+          const task = params.tasks[name];
+          prereqsStateParams.tasks[name] = {
+            fullName: task.fullName,
+            order: task.order,
+            status: PrereqStatus.Pending,
+            progress: 0,
+            eta: 0,
+            bps: 0,
+          };
+        }
+
+        prereqsModal = modalWidgets.prereqsState.make({
+          title: ["grid.item.installing"],
+          message: "",
+          widgetParams: prereqsStateParams,
+          buttons: [
+            {
+              id: "modal-cancel",
+              label: ["prompt.action.cancel"],
+              action: actions.abortTask({ id: ctx.getTaskId() }),
+              className: "secondary",
+            },
+          ],
+          unclosable: true,
+        });
+        store.dispatch(actions.openModal(prereqsModal));
+      });
+
+      client.onNotification(messages.PrereqsTaskState, async ({ params }) => {
+        if (!prereqsModal) {
+          return;
+        }
+
+        const { name, status, progress, eta, bps } = params;
+
+        let state = {
+          ...prereqsStateParams.tasks[name],
+          status,
+          progress,
+          eta,
+          bps,
+        };
+
+        let tasks = {
+          ...prereqsStateParams.tasks,
+          [params.name]: state,
+        };
+
+        prereqsStateParams = { ...prereqsStateParams, tasks };
+
+        store.dispatch(
+          actions.updateModalWidgetParams(
+            modalWidgets.prereqsState.update({
+              id: prereqsModal.id,
+              widgetParams: prereqsStateParams,
+            })
+          )
+        );
+      });
+
+      client.onRequest(messages.PrereqsFailed, async ({ params }) => {
+        closePrereqsModal();
+
+        const { title } = game;
+        const { errorStack, error } = params;
+        const errorMessage = error;
+
+        const res = await promisedModal(
+          store,
+          modalWidgets.showError.make({
+            title: ["game.install.could_not_launch", { title }],
+            message: [
+              "game.install.could_not_launch.message",
+              { title, errorMessage },
+            ],
+            detail: ["game.install.could_not_launch.detail"],
+            widgetParams: {
+              errorStack,
+              log: "(empty)", // TODO: fill ?
+            },
+            buttons: [
+              {
+                label: ["prompt.action.continue"],
+                action: actions.modalResponse({
+                  continue: true,
+                }),
+              },
+              "cancel",
+            ],
+          })
+        );
+
+        if (res) {
+          return { continue: true };
+        }
+
+        return { continue: false };
+      });
+
+      client.onNotification(messages.PrereqsEnded, async ({ params }) => {
+        closePrereqsModal();
+      });
+
       await client.call(
         messages.Launch({
           installFolder: appPath,
@@ -185,10 +316,26 @@ async function doLaunch(
         })
       );
     } finally {
+      closePrereqsModal();
       instance.cancel();
     }
   });
-  await instance.promise();
+
+  await ctx.withStopper({
+    work: async () => {
+      await instance.promise();
+    },
+    stop: async () => {
+      logger.debug(`Asked to stop, cancelling butler process`);
+      cancelled = true;
+      instance.cancel();
+    },
+  });
+
+  if (cancelled) {
+    logger.debug(`throwing cancelled`);
+    throw new Cancelled();
+  }
 
   // let manifestAction: IManifestAction;
   // const manifest = await getManifest(store, cave, logger);

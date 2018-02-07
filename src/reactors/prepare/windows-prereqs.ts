@@ -464,7 +464,9 @@ async function assessDep(
   );
   if (infoRes.statusCode !== 200) {
     throw new Error(
-      `Could not install prerequisite ${prereq.name}: server replied with HTTP ${infoRes.statusCode}`
+      `Could not install prerequisite ${
+        prereq.name
+      }: server replied with HTTP ${infoRes.statusCode}`
     );
   }
 

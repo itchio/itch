@@ -19,6 +19,7 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
+import { PrereqStatus } from "node-buse/lib/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -710,8 +711,6 @@ export interface ITask {
 
   /** estimated time remaining for task, in seconds, if available */
   eta?: number;
-
-  prereqsState?: IPrereqsState;
 }
 
 export interface ITasksState {
@@ -861,36 +860,11 @@ export interface IProgressInfo {
 
   /** estimated time remaining, in seconds */
   eta?: number;
-
-  prereqsState?: IPrereqsState;
 }
 
 export interface IProgressListener {
   (info: IProgressInfo): void;
 }
-
-export interface IPrereqsState {
-  tasks: {
-    [prereqName: string]: ITaskProgressState;
-  };
-}
-
-export interface ITaskProgressState {
-  name: string;
-  order: number;
-  status: TaskProgressStatus;
-  progress: number;
-  eta: number;
-  bps: number;
-  prereqsState?: IPrereqsState;
-}
-
-export type TaskProgressStatus =
-  | "downloading"
-  | "extracting"
-  | "ready"
-  | "installing"
-  | "done";
 
 export interface IRedistInfo {
   /** Human-friendly name for redist, e.g. "Microsoft Visual C++ 2010 Redistributable" */

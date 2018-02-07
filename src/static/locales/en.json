@@ -131,6 +131,7 @@
     "login.two_factor.verification_code_label": "Verification code",
     "login.two_factor.learn_more": "Read about two-factor authentication",
     "prereq.explanation": "A few packages need to be installed once for {{title}} to run properly.",
+    "prereq.status.pending": "Preparing…",
     "prereq.status.downloading": "Downloading…",
     "prereq.status.extracting": "Extracting…",
     "prereq.status.ready": "Ready for install",
