@@ -446,7 +446,7 @@
     "download.outcome.installed": "installé",
     "download.outcome.updated": "mis à jour à la version la plus récente",
     "download.outcome.reinstalled": "réinstallé",
-    "download.outcome.reverted": "basculé vers une autre version",
+    "download.outcome.reverted": "rétabli à une version antérieure",
     "download.outcome.healed": "vérifié",
     "game.install.could_not_launch.message": "L'erreur suivante s'est produite : {{errorMessage}}",
     "grid.criterion.filter_by": "Filtrer par : ",
