@@ -475,7 +475,7 @@
     "download.ongoing.install": "Installation de {{title}}…",
     "download.ongoing.update": "Mise à jour de {{title}}…",
     "download.ongoing.reinstall": "Ré-installation de {{title}}…",
-    "download.ongoing.revert": "Changement de version pour {{title}}…",
+    "download.ongoing.revert": "Restauration de {{title}} à une autre version…",
     "download.ongoing.heal": "Vérification de {{title}}…",
     "prompt.discard_download.action.stop_download": "Arrêter le téléchargement",
     "prompt.discard_download.action.continue_download": "Continuer le téléchargement",
