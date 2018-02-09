@@ -481,7 +481,7 @@
     "prompt.discard_download.action.continue_download": "Continuer le téléchargement",
     "prompt.dangerous_discard_download.message": "Arrêter ce téléchargement laissera {{title}} dans un état incohérent.",
     "prompt.dangerous_discard_download.detail": "{{title}} sera restauré à la dernière version la prochaine fois que vous essayerez de l'utiliser.",
-    "grid.empty_state.leader": "Les filtres activés cachent tout...",
+    "grid.empty_state.leader": "Tout est filtré...",
     "grid.empty_state.explanation": "Les filtres activés cachent tous les éléments",
     "grid.item.manage": "Gérer",
     "prompt.launch.title": "Lancer {{title}}",
