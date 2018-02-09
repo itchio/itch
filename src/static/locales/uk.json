@@ -69,5 +69,5 @@
     "grid.item.probe": "Перевірити причини збою",
     "prompt.url_install.credit": "{{classification}} за {{username}}",
     "web.context_menu.copy_link": "Копіювати посилання",
-    "grid.item.downloading": "Завантаження..."
+    "grid.item.downloading": "Завантажується..."
 }
