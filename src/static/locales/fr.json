@@ -367,7 +367,7 @@
     "login.two_factor.enter_code": "Entrez le code de vérification pour poursuivre la connexion.",
     "login.two_factor.verification_code_label": "Code de vérification",
     "login.two_factor.learn_more": "À propos de l'authentification forte",
-    "notification.download_reverted": "La version {{version}} a été rétablie pour {{title}} !",
+    "notification.download_reverted": "{{title}} maintenant à la version {{version}} !",
     "notification.download_healed": "{{title}} a été vérifié avec succès !",
     "preferences.behavior.open_at_login": "Lancer itch au démarrage de l'ordinateur",
     "preferences.behavior.open_as_hidden": "Exécuter itch masqué au démarrage",
