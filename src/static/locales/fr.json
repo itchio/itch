@@ -309,7 +309,7 @@
     "sandbox.setup.windows.message": "Afin d'initialiser le bac à sable, et pour cette fois seulement, itch a besoin des droits Administrateurs.",
     "sandbox.setup.windows.detail": "Après avoir choisi 'Continuer', un dialogue de permission peut apparaitre pour obtenir votre accord. Ceci ajoutera un compte utilisateur `itch-player` pour séparer vos jeux du reste de votre système.",
     "sandbox.setup.linux.message": "Afin d'initialiser le bac à sable, et pour cette fois seulement, itch a besoin d'exécuter un script en mode Super-utilisateur.",
-    "sandbox.setup.linux.detail": "Après avoir cliqué sur \"Continuer\", une fenêtre demandant votre mot de passe apparaîtra. Ceci n'est nécessaire que pour l'initialisation du bac à sable ou sa mise à jour et votre mot de passe n'est pas enregistré par l'application itch.",
+    "sandbox.setup.linux.detail": "Après avoir cliqué sur \"Continuer\", une fenêtre demandant votre mot de passe apparaîtra. Ceci n'est nécessaire que pour l'initialisation du bac à sable ou sa mise à jour. Votre mot de passe ne sera pas enregistré par l'application itch.",
     "prompt.action.force_close": "Forcer la fermeture",
     "prompt.force_close_game.title": "Forcer la fermeture du programme ?",
     "prompt.force_close_game.message": "Voulez-vous forcer {{title}} à se fermer ?",
