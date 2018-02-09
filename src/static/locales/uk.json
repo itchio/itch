@@ -69,5 +69,20 @@
     "grid.item.probe": "Перевірити причини збою",
     "prompt.url_install.credit": "{{classification}} за {{username}}",
     "web.context_menu.copy_link": "Копіювати посилання",
-    "grid.item.downloading": "Завантажується..."
+    "grid.item.downloading": "Завантажується...",
+    "action.name.forums": "Форуми",
+    "label.experimental": "Експерементальний",
+    "collection.empty": "Ігри в цій колекції відсутні",
+    "game.install.could_not_launch": "Під час запуску {{title}} сталася помилка",
+    "game.install.no_executables_found": "Не знайдено жодного .exe файла",
+    "game.install.libraries_missing": "Деякі необхідні {{arch}} бібліотеки відсутні: {{libraries}}",
+    "game.install.no_html_index_found": "Файлів index.html не було знайдено",
+    "game.install.no_uploads_available.detail": "Можливо воно не сумісно з вашою платформою або з додатком itch.io, поки що!",
+    "game.install.no_uploads_available.message": "Не знайдено жодних сумісних завантажень для '{{title}}', тому нічого не було встановлено.",
+    "game.install.try_again": "Спробувати знову",
+    "game.install.visit_web_page": "Перейти на веб сторінку",
+    "grid.filters.options.compatible": "Сумісні",
+    "grid.filters.options.installed": "Встановлені",
+    "grid.filters.options.owned": "Придбані",
+    "grid.filters.options.no_results": "Нічого не знайдено"
 }
