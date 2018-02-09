@@ -136,7 +136,7 @@
     "prompt.action.close": "Fermer",
     "prompt.action.confirm_removal": "Supprimer",
     "prompt.action.install": "Installer",
-    "prompt.action.ok": "Accepter",
+    "prompt.action.ok": "D'acc",
     "prompt.additional_purchase.detail": "...mais vous pouvez encore l'offrir !\n\nVoulez-vous l'acheter à nouveau ?",
     "prompt.additional_purchase.message": "Vous possédez déjà un exemplaire de {{title}}.",
     "prompt.additional_purchase.purchase_again": "Acheter à nouveau",
