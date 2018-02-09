@@ -498,5 +498,7 @@
     "collections.empty": "Vous n'avez aucune collection pour l'instant",
     "collections.empty_sub": "Cherche quelques jeux et ajoutes-les à une nouvelle collection !",
     "duration.seconds": "{{x}} secondes",
-    "grid.item_count": "{{count}} éléments"
+    "grid.item_count": "{{count}} éléments",
+    "browser.disabled": "Le navigateur internet itch est désactivé",
+    "browser.reenable": "Re-activer"
 }
