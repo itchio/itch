@@ -442,7 +442,7 @@
     "prompt.action.continue": "Continuer",
     "prompt.uninstall_error.title": "Erreur de désinstallation",
     "prompt.uninstall_error.message": "La désinstallation a échouée. Voulez-vous quand même supprimer l'entrée ?",
-    "collection.summary": "Une collection de {{itemCount}} objets",
+    "collection.summary": "Une collection de {{itemCount}} éléments",
     "download.outcome.installed": "installé",
     "download.outcome.updated": "mis à jour à la version la plus récente",
     "download.outcome.reinstalled": "réinstallé",
