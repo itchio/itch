@@ -500,5 +500,8 @@
     "duration.seconds": "{{x}} secondes",
     "grid.item_count": "{{count}} éléments",
     "browser.disabled": "Le navigateur internet itch est désactivé",
-    "browser.reenable": "Réactiver"
+    "browser.reenable": "Réactiver",
+    "preferences.advanced.disable_browser": "Désactiver le navigateur internet",
+    "preferences.advanced.disable_hardware_acceleration": "Désactiver les accélérations hardware (peut causer des crash/bugs sur Linux)",
+    "sidebar.applog": "Logs de l'application"
 }
