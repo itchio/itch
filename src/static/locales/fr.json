@@ -465,7 +465,7 @@
     "prompt.discard_download.detail": "Vous pourrez installer {{title}} à nouveau n'importe quand, mais le téléchargement recommencera du début.",
     "prompt.discard_download.action": "Abandonner",
     "prompt.blessing.message": "Les droits administrateurs sont requis pour gérer {{title}}",
-    "prompt.blessing.detail": "Ne continuez que si vous faites confiance à l'auteur.",
+    "prompt.blessing.detail": "Continue seulement si tu fais confiance au créateur.",
     "prompt.uninstall_error.message_permissions": "Certains fichiers n'ont pu être supprimer pour {{title}}. Ré-essayer en tant qu'administrateur ?",
     "prompt.uninstall_error.action_permissions": "Supprimer en tant qu'administrateur",
     "prompt.install_error.message": "L'installation a échoué.",
