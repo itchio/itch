@@ -500,5 +500,5 @@
     "duration.seconds": "{{x}} secondes",
     "grid.item_count": "{{count}} éléments",
     "browser.disabled": "Le navigateur internet itch est désactivé",
-    "browser.reenable": "Re-activer"
+    "browser.reenable": "Réactiver"
 }
