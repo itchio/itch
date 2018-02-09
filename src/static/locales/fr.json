@@ -356,7 +356,7 @@
     "prompt.install_error.title": "Un problème est survenu lors de l'installation :",
     "prompt.install_error.find_upload": "En cherchant un fichier à télécharger : {{message}}",
     "download.reason.reinstall": "pour réinstaller",
-    "download.reason.revert": "revenir à une version antérieure",
+    "download.reason.revert": "pour revenir à une version antérieure",
     "download.reason.heal": "pour vérifier l'intégrité des données",
     "game.install.could_not_launch.missing_jre": "L'environnement Java est nécessaire et n'a pas été trouvé sur votre système.",
     "grid.item.advanced": "Avancé...",
