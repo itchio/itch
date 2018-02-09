@@ -398,7 +398,7 @@
     "setup.error_dialog.title": "Un problème est survenu",
     "setup.location.message": "Choisissez où l'application sera installée",
     "grid.item.verify_integrity": "Vérifier l'intégrité",
-    "grid.item.revert_to_version": "Basculer vers une autre version...",
+    "grid.item.revert_to_version": "Revenir à la version...",
     "grid.item.view_details": "Voir détails...",
     "prereq.explanation": "{{title}} nécessite l'installation préalable de quelques paquets pour fonctionner.",
     "prereq.status.downloading": "Téléchargement…",
