@@ -444,7 +444,7 @@
     "prompt.uninstall_error.message": "La désinstallation a échouée. Voulez-vous quand même supprimer l'entrée ?",
     "collection.summary": "Une collection de {{itemCount}} éléments",
     "download.outcome.installed": "installé",
-    "download.outcome.updated": "mis à jour",
+    "download.outcome.updated": "mis à jour à la version la plus récente",
     "download.outcome.reinstalled": "réinstallé",
     "download.outcome.reverted": "basculé vers une autre version",
     "download.outcome.healed": "vérifié",
