@@ -494,5 +494,7 @@
     "status.repairing_game": "La mise à jour de {{title}} doit être complétée avant son ouverture",
     "status.downloads.no_active_downloads_subtext": "Ce que vous installez apparaitra ici",
     "status.downloads.find_games_button": "Explorer l'univers itch.io",
-    "preferences.advanced.prefer_optimized_patches": "Utiliser de préférence les mises à jour optimisées"
+    "preferences.advanced.prefer_optimized_patches": "Utiliser de préférence les mises à jour optimisées",
+    "collections.empty": "Vous n'avez aucune collection pour l'instant",
+    "collections.empty_sub": "Cherche quelques jeux et ajoute les à une nouvelle collection !"
 }
