@@ -496,5 +496,6 @@
     "status.downloads.find_games_button": "Explorer l'univers itch.io",
     "preferences.advanced.prefer_optimized_patches": "Utiliser de préférence les mises à jour optimisées",
     "collections.empty": "Vous n'avez aucune collection pour l'instant",
-    "collections.empty_sub": "Cherche quelques jeux et ajoutes-les à une nouvelle collection !"
+    "collections.empty_sub": "Cherche quelques jeux et ajoutes-les à une nouvelle collection !",
+    "duration.seconds": "{{x}} secondes"
 }
