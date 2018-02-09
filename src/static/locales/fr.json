@@ -451,7 +451,7 @@
     "game.install.could_not_launch.message": "L'erreur suivante s'est produite : {{errorMessage}}",
     "grid.criterion.filter_by": "Filtrer par : ",
     "grid.item.discard_download": "Arrêter le téléchargement",
-    "grid.item.not_compatible": "Pas disponible pour cette plateforme",
+    "grid.item.not_compatible": "Indisponible sur cette plateforme",
     "grid.item.open_file_location.windows": "Ouvrir le dossier dans l'explorateur",
     "grid.item.open_file_location.linux": "Montrer dans le gestionnaire de fichiers",
     "grid.item.open_file_location.osx": "Montrer dans le Finder",
