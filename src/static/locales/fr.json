@@ -406,7 +406,7 @@
     "prereq.status.ready": "Prêt à installer",
     "prereq.status.installing": "Installation... (cela peut prendre un moment)",
     "prereq.status.done": "Installé !",
-    "prompt.revert.title": "Basculer {{title}} vers une autre version",
+    "prompt.revert.title": "Changer {{title}} à une autre version",
     "prompt.revert.message": "Passer de la version {{buildId}} à la version :",
     "prompt.revert.action.revert": "Revenir",
     "status.reverting": "Retour vers {{buildId}} en cours...",
