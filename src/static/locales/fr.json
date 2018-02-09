@@ -497,5 +497,6 @@
     "preferences.advanced.prefer_optimized_patches": "Utiliser de préférence les mises à jour optimisées",
     "collections.empty": "Vous n'avez aucune collection pour l'instant",
     "collections.empty_sub": "Cherche quelques jeux et ajoutes-les à une nouvelle collection !",
-    "duration.seconds": "{{x}} secondes"
+    "duration.seconds": "{{x}} secondes",
+    "grid.item_count": "{{count}} éléments"
 }
