@@ -14,7 +14,7 @@ import { currentRuntime } from "../os/runtime";
 import lazyGetGame from "./lazy-get-game";
 import getGameCredentials from "./downloads/get-game-credentials";
 
-import { IRuntime, isAborted, Cancelled } from "../types";
+import { IRuntime, isAborted, Cancelled, ILocalizedString } from "../types";
 
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
@@ -298,6 +298,58 @@ async function doLaunch(
 
       client.onNotification(messages.PrereqsEnded, async ({ params }) => {
         closePrereqsModal();
+      });
+
+      client.onNotification(messages.LaunchRunning, async ({ params }) => {
+        logger.info("Now running...");
+      });
+
+      client.onNotification(messages.LaunchExited, async ({ params }) => {
+        logger.info("Exited!");
+      });
+
+      client.onRequest(messages.SaveVerdict, async ({ params }) => {
+        cave.verdict = params.verdict;
+        this.ctx.db.saveOne("caves", cave.id, cave);
+        return {};
+      });
+
+      client.onRequest(messages.AllowSandboxSetup, async ({ params }) => {
+        let messageString: ILocalizedString = "";
+        let detailString: ILocalizedString = "";
+
+        if (process.platform === "win32") {
+          messageString = ["sandbox.setup.windows.message"];
+          detailString = ["sandbox.setup.windows.detail"];
+        } else {
+          messageString = ["sandbox.setup.linux.message"];
+          detailString = ["sandbox.setup.linux.detail"];
+        }
+
+        const res = await promisedModal(
+          store,
+          modalWidgets.sandboxBlessing.make({
+            title: ["sandbox.setup.title"],
+            message: messageString,
+            detail: detailString,
+            widgetParams: {},
+            buttons: [
+              {
+                label: ["sandbox.setup.proceed"],
+                action: modalWidgets.sandboxBlessing.action({
+                  sandboxBlessing: true,
+                }),
+                icon: "security",
+              },
+              "cancel",
+            ],
+          })
+        );
+        if (res && res.sandboxBlessing) {
+          return { allow: true };
+        }
+
+        return { allow: false };
       });
 
       await client.call(
