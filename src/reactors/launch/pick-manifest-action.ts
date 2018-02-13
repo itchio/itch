@@ -12,7 +12,7 @@ import { ManifestAction } from "node-buse/lib/messages";
 
 // TODO: support localized action names
 
-export default async function pickManifestAction(
+export async function pickManifestAction(
   store: IStore,
   manifestActions: ManifestAction[],
   game: Game

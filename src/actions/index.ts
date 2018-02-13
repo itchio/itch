@@ -16,7 +16,6 @@ import {
   II18nKeys,
   IPartsInfo,
   IProgressInfo,
-  IPrereqsState,
   IQueueDownloadOpts,
   IDownloadItem,
   IOpenTabPayload,
@@ -530,9 +529,6 @@ export const actions = wireActions({
     IProgressInfo & {
       /** the task this progress info is for */
       id: string;
-
-      /** state of prereqs installation */
-      prereqsState?: IPrereqsState;
     }
   >(),
   taskEnded: action<{

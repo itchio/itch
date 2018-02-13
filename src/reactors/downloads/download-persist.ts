@@ -11,8 +11,8 @@ import * as _ from "underscore";
 import { MinimalContext } from "../../context/index";
 import { downloadBasePath } from "../../os/paths";
 import { createSelector } from "reselect";
-import { Instance, messages } from "node-buse";
-import { setupClient } from "../../util/buse-utils";
+import { messages } from "node-buse";
+import { setupClient, makeButlerInstance } from "../../util/buse-utils";
 import { fileSize } from "../../format/index";
 
 function persistDownloads(store: IStore, db: DB) {
@@ -63,7 +63,7 @@ function restoreDownloads(store: IStore, db: DB) {
 
 export async function cleanDownloadsSearch(store: IStore) {
   const ctx = new MinimalContext();
-  const instance = new Instance();
+  const instance = await makeButlerInstance();
 
   const { preferences, downloads } = store.getState();
   const { items } = downloads;
@@ -121,7 +121,7 @@ export async function cleanDownloadsApply(
 ) {
   const { entries } = payload;
   const ctx = new MinimalContext();
-  const instance = new Instance();
+  const instance = await makeButlerInstance();
 
   instance.onClient(async client => {
     try {

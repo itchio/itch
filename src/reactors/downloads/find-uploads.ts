@@ -47,9 +47,9 @@ export default async function findUploads(
     game.id
   );
 
-  const note = `(${gameCredentials.downloadKey
-    ? "with"
-    : "without"} download key)`;
+  const note = `(${
+    gameCredentials.downloadKey ? "with" : "without"
+  } download key)`;
   logger.info(`got a list of ${uploads.length} uploads ${note}`);
 
   return narrowDownUploads(ctx, uploads, game, currentRuntime());

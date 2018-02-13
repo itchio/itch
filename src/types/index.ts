@@ -19,7 +19,6 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
-import { PrereqStatus } from "node-buse/lib/messages";
 
 export interface IStore extends Store<IRootState> {}
 

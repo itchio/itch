@@ -1,9 +1,18 @@
 import { IGameCredentials } from "../types/index";
 import { GameCredentials } from "node-buse/lib/messages";
 import urls from "../constants/urls";
-import { Client, messages } from "node-buse";
+import { Client, messages, Instance } from "node-buse";
 import { Logger } from "../logger/index";
 import { MinimalContext } from "../context/index";
+import * as ospath from "path";
+import { getBinPath } from "./ibrew";
+
+export async function makeButlerInstance(): Promise<Instance> {
+  // TODO: respect global lock when we're updating butler
+  return new Instance({
+    butlerExecutable: ospath.join(getBinPath(), "butler"),
+  });
+}
 
 export function buseGameCredentials(
   credentials: IGameCredentials

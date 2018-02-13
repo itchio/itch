@@ -7,7 +7,7 @@ import * as paths from "../../os/paths";
 import butler from "../../util/butler";
 import uuid from "../../util/uuid";
 
-import { Instance, messages } from "node-buse";
+import { messages } from "node-buse";
 
 export interface IUninstallOpts {
   /** the cave to uninstall */
@@ -23,9 +23,10 @@ export interface IUninstallOpts {
   logger: Logger;
 }
 
-import { setupClient } from "../../util/buse-utils";
+import { setupClient, makeButlerInstance } from "../../util/buse-utils";
 
-export async function coreUninstall(opts: IUninstallOpts) {
+// TODO: should this be wrapped in asTask, with a show-error modal?
+export async function performUninstall(opts: IUninstallOpts) {
   const logger = opts.logger.child({ name: "uninstall" });
   const { ctx, destPath, cave } = opts;
 
@@ -38,7 +39,7 @@ export async function coreUninstall(opts: IUninstallOpts) {
   );
 
   try {
-    const instance = new Instance();
+    const instance = await makeButlerInstance();
     instance.onClient(async client => {
       try {
         setupClient(client, logger, ctx);

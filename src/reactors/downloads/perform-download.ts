@@ -7,7 +7,7 @@ import getGameCredentials from "./get-game-credentials";
 
 import { IDownloadItem, currentRuntime, Cancelled } from "../../types";
 import Context from "../../context";
-import { Instance, messages } from "node-buse";
+import { messages } from "node-buse";
 import { ICave } from "../../db/models/cave";
 
 import configure from "../launch/configure";
@@ -17,9 +17,13 @@ import { actions } from "../../actions";
 import makeUploadButton from "../make-upload-button";
 
 import { map } from "underscore";
-import { buseGameCredentials, setupClient } from "../../util/buse-utils";
+import {
+  buseGameCredentials,
+  setupClient,
+  makeButlerInstance,
+} from "../../util/buse-utils";
 import { computeCaveLocation } from "./compute-cave-location";
-import { readReceipt } from "../../install-managers/common/receipt";
+import { readLegacyReceipt } from "./legacy-receipt";
 import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default async function performDownload(
@@ -60,7 +64,7 @@ export default async function performDownload(
   let butlerExited = false;
   let cancelled = false;
 
-  const instance = new Instance();
+  const instance = await makeButlerInstance();
   instance.onClient(async client => {
     try {
       setupClient(client, logger, ctx);
@@ -105,7 +109,7 @@ export default async function performDownload(
         }
 
         let files: string[] = [];
-        const legacyReceipt = await readReceipt({
+        const legacyReceipt = await readLegacyReceipt({
           ctx: ctx,
           logger: logger,
           destPath: absoluteInstallFolder,

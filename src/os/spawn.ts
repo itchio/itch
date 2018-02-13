@@ -85,7 +85,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
   }
 
   const spawnOpts = {
-    ...opts.opts || {},
+    ...(opts.opts || {}),
     ...stdioOpts,
   };
   logger.debug(`spawning ${command} :: ${args.join(" ::: ")}`);
