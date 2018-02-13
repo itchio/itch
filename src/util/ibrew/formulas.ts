@@ -40,7 +40,6 @@ self.butler = {
   versionCheck: {
     command: "butler",
     args: ["-V"],
-    cleanPath: true,
   },
 };
 
