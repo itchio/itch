@@ -48,6 +48,7 @@ export class Logger {
   private _level: Level;
   private _levelNumber: number;
   private closed: boolean;
+  customOut?: any;
 
   constructor({
     write,
@@ -171,7 +172,7 @@ export function makeLogger({
 
     const outStream = multi(streamOutputs);
 
-    return new Logger({
+    const logger = new Logger({
       write: entry => {
         outStream.write(JSON.stringify(entry));
         outStream.write("\n");
@@ -189,6 +190,8 @@ export function makeLogger({
         }
       },
     });
+    logger.customOut = customOut;
+    return logger;
   }
 }
 

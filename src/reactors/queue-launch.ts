@@ -262,7 +262,13 @@ async function doLaunch(
 
         const { title } = game;
         const { errorStack, error } = params;
-        const errorMessage = error;
+        let errorMessage = error;
+        errorMessage = errorMessage.split("\n")[0];
+
+        let log = "(empty)\n";
+        if (logger.customOut && logger.customOut.toString) {
+          log = logger.customOut.toString();
+        }
 
         const res = await promisedModal(
           store,
@@ -275,7 +281,7 @@ async function doLaunch(
             detail: ["game.install.could_not_launch.detail"],
             widgetParams: {
               errorStack,
-              log: "(empty)", // TODO: fill ?
+              log,
             },
             buttons: [
               {

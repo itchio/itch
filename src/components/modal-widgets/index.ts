@@ -31,6 +31,7 @@ import {
   IModal,
 } from "../../types/index";
 import { actions } from "../../actions/index";
+import uuid from "../../util/uuid";
 
 export interface ITypedModalBase<Params> extends IModalBase {
   widgetParams: Params;
@@ -83,6 +84,7 @@ function widget<Params, Response>(
         ...base,
         widget: spec.key,
         __response: undefined,
+        id: uuid(),
       };
     },
     update: payload => {
