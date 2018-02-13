@@ -2,6 +2,8 @@ import * as React from "react";
 
 import styled from "../styles";
 import SelectRow from "./select-row";
+import IconButton from "./icon-button";
+import Filler from "./filler";
 
 import { FormattedTime } from "react-intl";
 import * as _ from "underscore";
@@ -142,6 +144,8 @@ export default class Log extends React.PureComponent<IProps, IState> {
             />
           </label>
           {extraControls}
+          <Filler />
+          <IconButton icon="caret-down" onClick={this.onJumpDown} />
         </LogControls>
         <LogTable>
           <tbody ref={this.gotBody}>
@@ -194,6 +198,10 @@ export default class Log extends React.PureComponent<IProps, IState> {
 
   onChangeLevel = (value: string) => {
     this.setState({ level: value });
+  };
+
+  onJumpDown = () => {
+    this.scrollDown();
   };
 }
 
