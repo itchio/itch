@@ -24,7 +24,7 @@ import { setupClient, buseGameCredentials } from "../util/buse-utils";
 import { Instance, messages } from "node-buse";
 import pickManifestAction from "./launch/pick-manifest-action";
 import { performHTMLLaunch } from "./launch/html";
-import { shell } from "electron";
+import { shell, powerSaveBlocker } from "electron";
 import { PrereqStatus } from "node-buse/lib/messages";
 import { IPrereqsStateParams } from "../components/modal-widgets/prereqs-state";
 
@@ -158,6 +158,10 @@ async function doLaunch(
     );
     prereqsModal = null;
   }
+
+  let interval: NodeJS.Timer;
+  const UPDATE_PLAYTIME_INTERVAL = 10; // in seconds
+  let powerSaveBlockerId = null;
 
   const instance = new Instance();
   let cancelled = false;
@@ -307,7 +311,22 @@ async function doLaunch(
       });
 
       client.onNotification(messages.LaunchRunning, async ({ params }) => {
-        logger.info("Now running...");
+        logger.info("Now running!");
+
+        interval = setInterval(async () => {
+          const now = new Date();
+          const freshCave = ctx.db.caves.findOneById(cave.id);
+          const previousSecondsRun = freshCave ? freshCave.secondsRun || 0 : 0;
+          const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
+          ctx.db.saveOne("caves", cave.id, {
+            secondsRun: newSecondsRun,
+            lastTouched: now,
+          });
+        }, UPDATE_PLAYTIME_INTERVAL * 1000);
+
+        if (preferences.preventDisplaySleep) {
+          powerSaveBlockerId = powerSaveBlocker.start("prevent-display-sleep");
+        }
       });
 
       client.onNotification(messages.LaunchExited, async ({ params }) => {
@@ -376,6 +395,11 @@ async function doLaunch(
     } finally {
       closePrereqsModal();
       instance.cancel();
+      clearInterval(interval);
+      if (powerSaveBlockerId) {
+        powerSaveBlocker.stop(powerSaveBlockerId);
+      }
+      ctx.db.saveOne("caves", cave.id, { lastTouchedAt: new Date() });
     }
   });
 
@@ -394,124 +418,4 @@ async function doLaunch(
     logger.debug(`throwing cancelled`);
     throw new Cancelled();
   }
-
-  // let manifestAction: IManifestAction;
-  // const manifest = await getManifest(store, cave, logger);
-
-  // if (manifest) {
-  //   manifestAction = await pickManifestAction(store, manifest, game);
-  //   if (!manifestAction) {
-  //     logger.info(`No manifest action picked, cancelling`);
-  //     return;
-  //   }
-  // }
-
-  // let launchType = "native";
-
-  // if (manifestAction) {
-  //   launchType = await launchTypeForAction(ctx, appPath, manifestAction.path);
-
-  //   if (manifestAction.scope) {
-  //     logger.info(`Requesting subkey with scope: ${manifestAction.scope}`);
-  //     const gameCredentials = getGameCredentials(ctx, game);
-  //     if (gameCredentials) {
-  //       const client = api.withKey(gameCredentials.apiKey);
-  //       const subkey = await client.subkey(game.id, manifestAction.scope);
-  //       logger.info(
-  //         `Got subkey (${subkey.key.length} chars, expires ${subkey.expiresAt})`
-  //       );
-  //       (env as any).ITCHIO_API_KEY = subkey.key;
-  //       (env as any).ITCHIO_API_KEY_EXPIRES_AT = subkey.expiresAt;
-  //     } else {
-  //       logger.error(`No credentials, cannot request API key to give to game`);
-  //     }
-  //   }
-
-  //   args = [...args, ...(manifestAction.args || emptyArr)];
-  // }
-
-  // const launcher = launchers[launchType];
-  // if (!launcher) {
-  //   throw new Error(`Unsupported launch type '${launchType}'`);
-  // }
-
-  // const prepare = prepares[launchType];
-  // if (prepare) {
-  //   logger.info(`launching prepare for ${launchType}`);
-  //   await prepare(ctx, {
-  //     manifest,
-  //     manifestAction,
-  //     args,
-  //     cave,
-  //     env,
-  //     game,
-  //     logger,
-  //     runtime,
-  //   });
-  // } else {
-  //   logger.info(`no prepare for ${launchType}`);
-  // }
-
-  // const startedAt = new Date();
-  // db.saveOne("caves", cave.id, { lastTouchedAt: startedAt });
-
-  // let interval: NodeJS.Timer;
-  // const UPDATE_PLAYTIME_INTERVAL = 10; // in seconds
-  // let powerSaveBlockerId = null;
-  // try {
-  //   // FIXME: this belongs in a watcher reactor or something, not here.
-  //   interval = setInterval(async () => {
-  //     const now = new Date();
-  //     const freshCave = db.caves.findOneById(cave.id);
-  //     const previousSecondsRun = freshCave ? freshCave.secondsRun || 0 : 0;
-  //     const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
-  //     db.saveOne("caves", cave.id, {
-  //       secondsRun: newSecondsRun,
-  //       lastTouched: now,
-  //     });
-  //   }, UPDATE_PLAYTIME_INTERVAL * 1000);
-
-  //   // FIXME: this belongs in a watcher reactor too
-  //   if (preferences.preventDisplaySleep) {
-  //     powerSaveBlockerId = powerSaveBlocker.start("prevent-display-sleep");
-  //   }
-
-  //   ctx.emitProgress({ progress: 1 });
-  //   await launcher(ctx, {
-  //     cave,
-  //     game,
-  //     args,
-  //     env,
-  //     manifestAction,
-  //     manifest,
-  //     logger,
-  //     runtime,
-  //   });
-  // } catch (e) {
-  //   if (isCancelled(e)) {
-  //     // all good then
-  //     return;
-  //   }
-  //   logger.error(`Fatal error: ${e.message || String(e)}`);
-
-  //   // FIXME: don't use instanceof ever
-  //   if (e instanceof Crash) {
-  //     const secondsRunning = (Date.now() - +startedAt) / 1000;
-  //     if (secondsRunning > 2) {
-  //       // looks like the game actually launched fine!
-  //       logger.warn(
-  //         `Game was running for ${secondsRunning} seconds, ignoring: ${e.toString()}`
-  //       );
-  //       return;
-  //     }
-  //   }
-
-  //   throw e;
-  // } finally {
-  //   clearInterval(interval);
-  //   if (powerSaveBlockerId) {
-  //     powerSaveBlocker.stop(powerSaveBlockerId);
-  //   }
-  //   db.saveOne("caves", cave.id, { lastTouchedAt: new Date() });
-  // }
 }
