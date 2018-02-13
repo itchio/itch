@@ -2,7 +2,6 @@ export interface IVersionCheck {
   command?: string;
   args: string[];
   parser?: RegExp;
-  cleanPath?: boolean;
 }
 
 export interface IFormulaSpec {

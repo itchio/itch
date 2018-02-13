@@ -179,21 +179,11 @@ async function getLocalVersion(ctx: Context, name: string): Promise<string> {
   const check: IVersionCheck = { ...defaultVersionCheck, ...versionCheck };
 
   try {
-    const command = check.command ? check.command : name;
+    let { command, args, parser } = check;
+    command = ospath.join(getBinPath(), command);
+
     const extraOpts = {} as any;
-    if (check.cleanPath) {
-      extraOpts.env = {
-        ...process.env,
-        PATH: this.binPath(),
-      };
-    }
-    const info = await os.assertPresence(
-      ctx,
-      command,
-      check.args,
-      check.parser,
-      extraOpts
-    );
+    const info = await os.assertPresence(ctx, command, args, parser, extraOpts);
     return version.normalize(info.parsed);
   } catch (err) {
     console.log(`[ibrew] While checking version for ${name}: ${err.message}`);
