@@ -489,5 +489,8 @@
     "preferences.advanced.disable_browser": "Изключване на уеб браузъра",
     "collections.empty": "В момента нямате колекции",
     "collections.empty_sub": "Разгледайте каталога и създайте нова колекция от игри!",
-    "preferences.advanced.disable_hardware_acceleration": "Изключване на хардуерното ускорение (решава някои проблеми под Линукс)"
+    "preferences.advanced.disable_hardware_acceleration": "Изключване на хардуерното ускорение (решава някои проблеми под Линукс)",
+    "prereq.status.pending": "Подготвяне…",
+    "status.downloads.updates_available": "Има налични обновления",
+    "status.downloads.update_all": "Обновяване на всичко"
 }
