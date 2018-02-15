@@ -19,6 +19,7 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
+import { GameUpdate } from "node-buse/lib/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -208,27 +209,10 @@ export interface IGameCredentials {
   downloadKey?: IDownloadKey;
 }
 
-export interface IGameUpdate {
-  /** which game an update is available for */
-  game: Game;
-
-  /**
-   * uploads to pick from (fresher than our last install).
-   * will hopefully be often of size 1, but not always
-   */
-  recentUploads: Upload[];
-
-  /** true if wharf-enabled upgrade via butler */
-  incremental?: boolean;
-
-  /** list of patch entries needed to upgrade to latest via butler */
-  upgradePath?: IUpgradePathItem[];
-}
-
 export interface IGameUpdatesState {
   /** pending game updates */
   updates: {
-    [caveId: string]: IGameUpdate;
+    [caveId: string]: GameUpdate;
   };
 }
 

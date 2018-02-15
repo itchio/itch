@@ -35,7 +35,7 @@ import {
 } from "../types/index";
 import { OwnUser, Game, Build, Upload, User } from "ts-itchio-api";
 import { TaskName } from "../types/tasks";
-import { CleanDownloadsEntry } from "node-buse/lib/messages";
+import { CleanDownloadsEntry, GameUpdate } from "node-buse/lib/messages";
 import { ICollection } from "../db/models/collection";
 import {
   ITypedModal,
@@ -687,24 +687,21 @@ export const actions = wireActions({
     caveId: string;
 
     /** the actual update info */
-    update: IGameUpdate;
+    update: GameUpdate;
   }>(),
   showGameUpdate: action<{
     /** the cave we're updating */
     caveId: string;
 
     /** the actual update info */
-    update: IGameUpdate;
+    update: GameUpdate;
   }>(),
   queueGameUpdate: action<{
     /** the cave we're updating */
     caveId: string;
 
     /** the actual update info */
-    update: IGameUpdate;
-
-    /** the upload that was picked */
-    upload: Upload;
+    update: GameUpdate;
   }>(),
   nukeCavePrereqs: action<{
     /** the cave to nuke the prereqs of */

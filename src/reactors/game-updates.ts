@@ -11,30 +11,19 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    const { recentUploads } = action.payload.update;
-    if (recentUploads.length > 1) {
-      // let user decide
-      return;
-    }
-
-    store.dispatch(
-      actions.queueGameUpdate({
-        ...action.payload,
-        upload: recentUploads[0],
-      })
-    );
+    store.dispatch(actions.queueGameUpdate(action.payload));
   });
 
   watcher.on(actions.queueGameUpdate, async (store, action) => {
-    const { update, upload, caveId } = action.payload;
-    const { game } = update;
+    const { update, caveId } = action.payload;
+    const { game, upload, build } = update;
 
     store.dispatch(
       actions.queueDownload({
         game,
         caveId,
         upload,
-        build: upload.build,
+        build,
         reason: "update",
       })
     );
