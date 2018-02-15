@@ -14,11 +14,6 @@ export interface IFormulaSpec {
   };
 }
 
-export interface ISkipUpgradeResult {
-  /** reason why we're skipping the upgrade */
-  reason: string;
-}
-
 export interface IFormulas {
   butler: IFormulaSpec;
 
