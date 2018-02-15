@@ -9,8 +9,6 @@ import * as paths from "../../os/paths";
 import { DB } from "../../db";
 import { fromJSONField } from "../../db/json-field";
 
-import { coreUninstall } from "../../install-managers/common/core";
-
 import butler from "../../util/butler";
 
 import { promisedModal } from "../modals";
@@ -20,12 +18,14 @@ import { ICave } from "../../db/models/cave";
 import { Upload } from "ts-itchio-api";
 import { modalWidgets } from "../../components/modal-widgets/index";
 
+import { performUninstall } from "../downloads/perform-uninstall";
+
 export async function queueUninstall(
   ctx: Context,
   logger: Logger,
   { cave, destPath, upload }: { cave: ICave; destPath: string; upload: Upload }
 ) {
-  await coreUninstall({
+  await performUninstall({
     ctx,
     logger,
     destPath,

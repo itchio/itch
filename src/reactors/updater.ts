@@ -2,14 +2,9 @@ import { Watcher } from "./watcher";
 import { DB } from "../db";
 import Context from "../context";
 
-import { isNetworkError } from "../net/errors";
-
-import delay from "./delay";
-
 import { actions } from "../actions";
 
-import lazyGetGame from "./lazy-get-game";
-import getGameCredentials from "./downloads/get-game-credentials";
+import { getGameCredentialsForId } from "./downloads/get-game-credentials";
 import * as paths from "../os/paths";
 
 import { makeLogger } from "../logger";
@@ -17,301 +12,205 @@ const logger = makeLogger({ logPath: paths.updaterLogPath() }).child({
   name: "updater",
 });
 
-import { findWhere, filter } from "underscore";
+import { isEmpty } from "underscore";
 
 const SKIP_GAME_UPDATES = process.env.ITCH_SKIP_GAME_UPDATES === "1";
-
-const DELAY_BETWEEN_GAMES = 25;
 
 // 30 minutes * 60 = seconds, * 1000 = millis
 const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;
 const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 
-import findUploads from "./downloads/find-uploads";
-
 import { ICave } from "../db/models/cave";
-import { fromDateTimeField } from "../db/datetime-field";
-import { fromJSONField } from "../db/json-field";
+import { toDateTimeField } from "../db/datetime-field";
 
+import { makeButlerInstance, buseGameCredentials } from "../util/buse-utils";
+import { messages } from "node-buse";
+import { IStore, IGameCredentials } from "../types/index";
+import { CheckUpdateItem, CheckUpdateResult } from "node-buse/lib/messages";
+import { client } from "../api/index";
 import { Game } from "ts-itchio-api";
+import lazyGetGame from "./lazy-get-game";
 
-interface IUpdateCheckResult {
-  /** set if an error occured while looking for a new version of a game */
-  err?: Error;
-
-  /** might be null if an error happened */
-  game?: Game;
-
-  /** true if the game has an upgrade that can be installed */
-  hasUpgrade?: boolean;
-}
-
-interface IUpdateCheckOpts {
-  noisy?: boolean;
-}
-
-async function _doCheckForGameUpdate(
-  ctx: Context,
-  cave: ICave,
-  inTaskOpts = {} as IUpdateCheckOpts
-): Promise<IUpdateCheckResult> {
-  const { noisy = false } = inTaskOpts;
-  const returnVars = {} as IUpdateCheckResult;
-
-  const store = ctx.store;
-  const state = store.getState();
-
-  if (!cave.gameId) {
-    logger.warn(`Cave lacks gameId, skipping: ${cave.id}`);
-    return { hasUpgrade: false };
-  }
-
-  let game: Game;
-  try {
-    game = await lazyGetGame(ctx, cave.gameId);
-  } catch (e) {
-    logger.error(
-      `Could not fetch game for ${cave.gameId}, skipping (${e.message || e})`
-    );
-    return { err: e };
-  }
-  returnVars.game = game;
-  returnVars.hasUpgrade = false;
-
-  if (!game) {
-    logger.warn(
-      `Can't check for updates for ${game.title}, not visible by current user?`
-    );
-    return returnVars;
-  }
-
-  const tasksForGame = state.tasks.tasksByGameId[game.id];
-  if (tasksForGame) {
-    for (const task of tasksForGame) {
-      if (task.name === "launch") {
-        // TODO: don't need to skip the check, just the apply
-        logger.warn(`Game ${game.title} is running, skipping update check`);
-        return returnVars;
-      }
-    }
-  }
-
-  const caveBuild = fromJSONField(cave.build);
-
-  logger.info(`Looking for updates to ${game.title}...`);
-
-  try {
-    const gameCredentials = await getGameCredentials(ctx, game);
-    if (!gameCredentials) {
-      throw new Error("no game credentials");
-    }
-
-    const { uploads } = await findUploads(ctx, { game, gameCredentials });
-
-    if (uploads.length === 0) {
-      logger.error(`Can't check for updates for ${game.title}, no uploads.`);
-      return { err: new Error("No uploads found") };
-    }
-
-    const caveUpload = fromJSONField(cave.upload);
-    const installedAt = fromDateTimeField(cave.installedAt) || new Date(0);
-    logger.info(`installed at ${installedAt.toISOString()}`);
-
-    const recentUploads = filter(uploads, upload => {
-      if (caveUpload && caveUpload.filename !== upload.filename) {
-        logger.info(
-          `Filtering out ${upload.filename} (#${upload.id})` +
-            `, ${upload.filename} is different from ${caveUpload.filename}`
-        );
-        return false;
-      }
-
-      const updatedAt = fromDateTimeField(upload.updatedAt);
-      logger.info(`upload ${upload.id} updated at ${updatedAt.toISOString()}`);
-      const isRecent = updatedAt.getTime() > installedAt.getTime();
-      if (!isRecent) {
-        logger.info(
-          `Filtering out ${upload.filename} (#${upload.id})` +
-            `, ${updatedAt.toISOString()} is older than ${installedAt.toISOString()}`
-        );
-      }
-      return isRecent;
-    });
-    logger.info(
-      `${uploads.length} available uploads, ${recentUploads.length} are more recent`
-    );
-
-    let hasUpgrade = false;
-
-    if (caveUpload && caveBuild) {
-      logger.info(
-        `Looking for new builds of ${game.title}, from build ${caveBuild.id} (upload ${caveUpload.id})`
-      );
-      const upload = findWhere(uploads, { id: caveUpload.id });
-      if (!upload || !upload.buildId) {
-        logger.warn("Uh oh, our wharf-enabled upload disappeared");
-      } else {
-        if (upload.buildId !== caveBuild.id) {
-          logger.info(
-            `Got new build available: ${upload.buildId} > ${caveBuild.id}`
-          );
-          if (noisy) {
-            store.dispatch(
-              actions.statusMessage({
-                message: ["status.game_update.found", { title: game.title }],
-              })
-            );
-          }
-
-          hasUpgrade = true;
-
-          try {
-            store.dispatch(
-              actions.gameUpdateAvailable({
-                caveId: cave.id,
-                update: {
-                  game,
-                  recentUploads: [upload],
-                  incremental: true,
-                },
-              })
-            );
-
-            return { ...returnVars, hasUpgrade };
-          } catch (e) {
-            logger.error(`While getting upgrade path: ${e.message || e}`);
-            return { err: e.message };
-          }
-        } else {
-          logger.info(
-            `Newest upload has same buildId ${upload.buildId}, disregarding`
-          );
-          return returnVars;
-        }
-      }
-    }
-
-    if (recentUploads.length === 0) {
-      logger.info(`No recent uploads for ${game.title}, update check done`);
-      return returnVars;
-    }
-
-    if (recentUploads.length > 1) {
-      logger.info("Multiple recent uploads, user will have to pick");
-
-      store.dispatch(
-        actions.gameUpdateAvailable({
-          caveId: cave.id,
-          update: {
-            game,
-            recentUploads,
-          },
-        })
-      );
-
-      return { ...returnVars, hasUpgrade: true };
-    }
-
-    const upload = recentUploads[0];
-    const differentUpload = upload.id !== caveUpload.id;
-    const wentWharf = upload.buildId && !caveBuild;
-
-    if (hasUpgrade || differentUpload || wentWharf) {
-      logger.info(`Got a new upload for ${game.title}: ${upload.filename}`);
-      if (hasUpgrade) {
-        logger.info("(Reason: forced)");
-      }
-      if (differentUpload) {
-        logger.info("(Reason: different upload)");
-      }
-      if (wentWharf) {
-        logger.info("(Reason: went wharf)");
-      }
-
-      store.dispatch(
-        actions.gameUpdateAvailable({
-          caveId: cave.id,
-          update: {
-            game,
-            recentUploads,
-          },
-        })
-      );
-
-      return { ...returnVars, hasUpgrade };
-    }
-  } catch (e) {
-    if (isNetworkError(e)) {
-      logger.warn(`Skipping update check for ${game.title}: we're offline`);
-      return { err: new Error(`Network error (${e.code})`) };
-    } else {
-      logger.error(`While looking for update: ${e.stack || e}`);
-      logger.error(`Error object: ${JSON.stringify(e, null, 2)}`);
-      return { err: e };
-    }
-  }
-
-  return returnVars;
-}
-
-async function doCheckForGameUpdate(
-  ctx: Context,
-  cave: ICave,
-  taskOpts = {} as IUpdateCheckOpts
+function queueGameUpdate(
+  gameCredentials: IGameCredentials,
+  db: DB,
+  gameId: number
 ) {
-  try {
-    return await _doCheckForGameUpdate(ctx, cave, taskOpts);
-  } catch (e) {
-    if (e.code && e.code === "ENOTFOUND") {
-      logger.warn("Offline, skipping update check");
-    } else {
-      throw e;
+  (async () => {
+    try {
+      const api = client.withKey(gameCredentials.apiKey);
+      let game: Game;
+      try {
+        const gameRes = await api.game(gameId);
+        if (gameRes) {
+          game = gameRes.entities.games[gameRes.result.gameId];
+        }
+      } catch (e) {}
+
+      if (game) {
+        db.saveOne("games", game.id, game);
+      }
+    } catch (e) {
+      logger.warn(`Could not update game info for ${gameId}: ${e.stack}`);
     }
+  })();
+}
+
+async function prepareUpdateItem(
+  ctx: Context,
+  cave: ICave
+): Promise<CheckUpdateItem> {
+  if (!cave.gameId) {
+    throw new Error(`Cave ${cave.id} lacks gameId`);
   }
+
+  const gameCredentials = getGameCredentialsForId(ctx, cave.gameId);
+  if (!gameCredentials) {
+    throw new Error(`Could not find game credentials for game ${cave.gameId}`);
+  }
+  queueGameUpdate(gameCredentials, ctx.db, cave.gameId);
+
+  const game = await lazyGetGame(ctx, cave.gameId);
+  if (!game) {
+    throw new Error(`Invalid game ${cave.gameId}`);
+  }
+
+  const item: CheckUpdateItem = {
+    itemId: cave.id,
+    installedAt: toDateTimeField(cave.installedAt),
+    game,
+    upload: cave.upload,
+    build: cave.build,
+    credentials: buseGameCredentials(gameCredentials),
+  };
+  return item;
+}
+
+async function performUpdateCheck(
+  ctx: Context,
+  items: CheckUpdateItem[]
+): Promise<CheckUpdateResult> {
+  let res: CheckUpdateResult;
+
+  const instance = await makeButlerInstance();
+  instance.onClient(async client => {
+    try {
+      client.onNotification(
+        messages.GameUpdateAvailable,
+        async ({ params }) => {
+          const { update } = params;
+          ctx.store.dispatch(actions.gameUpdateAvailable({ update }));
+        }
+      );
+      res = await client.call(messages.CheckUpdate({ items }));
+    } finally {
+      instance.cancel();
+    }
+  });
+  await instance.promise();
+  return res;
+}
+
+function sleepTime(): number {
+  return DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE;
+}
+
+function reschedule(store: IStore) {
+  const nextCheck = Date.now() + sleepTime();
+  logger.info(`Scheduling next game update check for ${new Date(nextCheck)}`);
+
+  store.dispatch(
+    actions.scheduleSystemTask({
+      nextGameUpdateCheck: nextCheck,
+    })
+  );
 }
 
 export default function(watcher: Watcher, db: DB) {
-  watcher.on(actions.tick, async (store, action) => {
-    const { nextGameUpdateCheck } = store.getState().systemTasks;
-    if (Date.now() <= nextGameUpdateCheck) {
-      // it's not our time... yet!
-      return;
-    }
+  if (SKIP_GAME_UPDATES) {
+    logger.debug(
+      "Skipping game update check as requested per environment variable"
+    );
+  } else {
+    watcher.on(actions.tick, async (store, action) => {
+      const { nextGameUpdateCheck } = store.getState().systemTasks;
+      if (Date.now() <= nextGameUpdateCheck) {
+        // it's not our time... yet!
+        return;
+      }
 
-    const sleepTime =
-      DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE;
+      logger.info("Regularly scheduled check for game updates...");
+      store.dispatch(actions.checkForGameUpdates({}));
+    });
+  }
+
+  watcher.on(actions.checkForGameUpdates, async (store, action) => {
+    reschedule(store);
+
     store.dispatch(
-      actions.scheduleSystemTask({
-        nextGameUpdateCheck: Date.now() + sleepTime,
+      actions.gameUpdateCheckStatus({
+        checking: true,
+        progress: 0,
       })
     );
 
-    if (SKIP_GAME_UPDATES) {
-      logger.debug(
-        "Skipping game update check as requested per environment variable"
-      );
-    } else {
-      logger.info("Regularly scheduled check for game updates...");
-      store.dispatch(actions.checkForGameUpdates({}));
-    }
-  });
+    try {
+      const ctx = new Context(store, db);
+      const totalCaves = db.caves.count(k => k.where("1"));
+      let limit = 15;
+      let offset = 0;
 
-  watcher.on(actions.checkForGameUpdates, async (store, action) => {
-    // FIXME: that's a bit dirty
-    // TODO: also, paginate
-    const caves = db.caves.all(k => k.where("1"));
-
-    const ctx = new Context(store, db);
-
-    for (const cave of caves) {
-      try {
-        await doCheckForGameUpdate(ctx, cave);
-      } catch (e) {
-        logger.error(
-          `While checking for cave ${cave.id} update: ${e.stack || e}`
+      while (offset < totalCaves) {
+        store.dispatch(
+          actions.gameUpdateCheckStatus({
+            checking: true,
+            progress: offset / totalCaves,
+          })
         );
+
+        let start = offset;
+        let end = offset + limit;
+        if (end > totalCaves) {
+          end = totalCaves;
+        }
+        logger.info(
+          `Checking updates for games ${start}-${end} of ${totalCaves}`
+        );
+
+        const caves = db.caves.all(k =>
+          k
+            .where("1")
+            .limit(limit)
+            .offset(offset)
+        );
+        let items: CheckUpdateItem[] = [];
+        for (const cave of caves) {
+          try {
+            const item = await prepareUpdateItem(ctx, cave);
+            items.push(item);
+          } catch (e) {
+            logger.error(
+              `Won't be able to check ${cave.id} for upgrade: ${e.stack}`
+            );
+          }
+        }
+
+        try {
+          await performUpdateCheck(ctx, items);
+        } catch (e) {
+          logger.error(
+            `While performing ${items.length} update checks: ${e.stack}`
+          );
+        }
+        offset += limit;
       }
-      await delay(DELAY_BETWEEN_GAMES);
+    } finally {
+      store.dispatch(
+        actions.gameUpdateCheckStatus({
+          checking: false,
+          progress: -1,
+        })
+      );
     }
   });
 
@@ -328,51 +227,59 @@ export default function(watcher: Watcher, db: DB) {
     }
 
     const ctx = new Context(store, db);
+    const item = await prepareUpdateItem(ctx, cave);
+    let res: CheckUpdateResult;
 
     try {
-      const result = await doCheckForGameUpdate(ctx, cave, { noisy });
-      if (noisy) {
-        if (result && result.err) {
-          store.dispatch(
-            actions.statusMessage({
-              message: ["status.game_update.check_failed", { err: result.err }],
-            })
-          );
-        } else if (result && result.hasUpgrade) {
-          if (result.game) {
-            store.dispatch(
-              actions.statusMessage({
-                message: [
-                  "status.game_update.found",
-                  { title: result.game.title },
-                ],
-              })
-            );
-          }
-        } else if (result && result.game) {
-          store.dispatch(
-            actions.statusMessage({
-              message: [
-                "status.game_update.not_found",
-                { title: result.game.title },
-              ],
-            })
-          );
-        }
-      }
+      res = await performUpdateCheck(ctx, [item]);
     } catch (e) {
-      logger.error(`While checking for cave ${caveId} update: ${e.stack || e}`);
-      if (noisy) {
-        store.dispatch(
-          actions.statusMessage({
-            message: ["status.game_update.check_failed", { err: e }],
-          })
-        );
-      }
-    } finally {
-      if (noisy) {
-        logger.info(`Done looking for updates for cave ${caveId}`);
+      logger.error(`While checking for game update: ${e.stack}`);
+      if (!res) {
+        res = {
+          updates: [],
+          warnings: [String(e)],
+        };
       }
     }
+
+    if (noisy) {
+      dispatchUpdateNotification(store, item, res);
+    }
   });
+}
+
+function dispatchUpdateNotification(
+  store: IStore,
+  item: CheckUpdateItem,
+  result: CheckUpdateResult
+) {
+  if (!result) {
+    return;
+  }
+
+  if (!isEmpty(result.warnings)) {
+    store.dispatch(
+      actions.statusMessage({
+        message: [
+          "status.game_update.check_failed",
+          { err: result.warnings[0] },
+        ],
+      })
+    );
+    return;
+  }
+
+  if (isEmpty(result.updates)) {
+    store.dispatch(
+      actions.statusMessage({
+        message: ["status.game_update.not_found", { title: item.game.title }],
+      })
+    );
+  } else {
+    store.dispatch(
+      actions.statusMessage({
+        message: ["status.game_update.found", { title: item.game.title }],
+      })
+    );
+  }
 }

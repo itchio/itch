@@ -16,11 +16,9 @@ import {
   II18nKeys,
   IPartsInfo,
   IProgressInfo,
-  IPrereqsState,
   IQueueDownloadOpts,
   IDownloadItem,
   IOpenTabPayload,
-  IGameUpdate,
   IQueueLaunchOpts,
   GenerosityLevel,
   ISearchResults,
@@ -36,7 +34,7 @@ import {
 } from "../types/index";
 import { OwnUser, Game, Build, Upload, User } from "ts-itchio-api";
 import { TaskName } from "../types/tasks";
-import { CleanDownloadsEntry } from "node-buse/lib/messages";
+import { CleanDownloadsEntry, GameUpdate } from "node-buse/lib/messages";
 import { ICollection } from "../db/models/collection";
 import {
   ITypedModal,
@@ -530,9 +528,6 @@ export const actions = wireActions({
     IProgressInfo & {
       /** the task this progress info is for */
       id: string;
-
-      /** state of prereqs installation */
-      prereqsState?: IPrereqsState;
     }
   >(),
   taskEnded: action<{
@@ -686,30 +681,26 @@ export const actions = wireActions({
     /** display a notification if the game is up-to-date. otherwise, stay silent */
     noisy: boolean;
   }>(),
-  gameUpdateAvailable: action<{
-    /** which cave has an update available */
-    caveId: string;
+  gameUpdateCheckStatus: action<{
+    /** whether we're currently checking */
+    checking: boolean;
 
+    /** how far along we are */
+    progress: number;
+  }>(),
+  gameUpdateAvailable: action<{
     /** the actual update info */
-    update: IGameUpdate;
+    update: GameUpdate;
   }>(),
   showGameUpdate: action<{
-    /** the cave we're updating */
-    caveId: string;
-
     /** the actual update info */
-    update: IGameUpdate;
+    update: GameUpdate;
   }>(),
   queueGameUpdate: action<{
-    /** the cave we're updating */
-    caveId: string;
-
     /** the actual update info */
-    update: IGameUpdate;
-
-    /** the upload that was picked */
-    upload: Upload;
+    update: GameUpdate;
   }>(),
+  queueAllGameUpdates: action<{}>(),
   nukeCavePrereqs: action<{
     /** the cave to nuke the prereqs of */
     caveId: string;

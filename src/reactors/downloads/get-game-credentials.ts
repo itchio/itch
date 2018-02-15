@@ -7,25 +7,25 @@ import { Game } from "ts-itchio-api";
 
 // TODO: handle passwords & secrets as well.
 
-export default async function getGameCredentials(
+export default function getGameCredentials(
   ctx: Context,
   game: Game
-): Promise<IGameCredentials> {
-  return await getGameCredentialsInternal(ctx, game.id, game.inPressSystem);
+): IGameCredentials {
+  return getGameCredentialsInternal(ctx, game.id, game.inPressSystem);
 }
 
-export async function getGameCredentialsForId(
+export function getGameCredentialsForId(
   ctx: Context,
   gameId: number
-): Promise<IGameCredentials> {
-  return await getGameCredentialsInternal(ctx, gameId, false);
+): IGameCredentials {
+  return getGameCredentialsInternal(ctx, gameId, false);
 }
 
-async function getGameCredentialsInternal(
+function getGameCredentialsInternal(
   ctx: Context,
   gameId: number,
   inPressSystem: boolean
-): Promise<IGameCredentials> {
+): IGameCredentials {
   const state = ctx.store.getState();
 
   const currentUserCreds = state.session.credentials;

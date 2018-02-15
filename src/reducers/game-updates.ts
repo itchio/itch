@@ -6,27 +6,38 @@ import reducer from "./reducer";
 
 const initialState = {
   updates: {},
+  checking: false,
+  progress: -1,
 } as IGameUpdatesState;
 
 export default reducer<IGameUpdatesState>(initialState, on => {
+  on(actions.gameUpdateCheckStatus, (state, action) => {
+    const { checking, progress } = action.payload;
+    return {
+      ...state,
+      checking,
+      progress,
+    };
+  });
+
   on(actions.gameUpdateAvailable, (state, action) => {
-    const { caveId, update } = action.payload;
+    const { update } = action.payload;
 
     return {
       ...state,
       updates: {
         ...state.updates,
-        [caveId]: update,
+        [update.itemId]: update,
       },
     };
   });
 
   on(actions.queueGameUpdate, (state, action) => {
-    const { caveId } = action.payload;
+    const { update } = action.payload;
 
     return {
       ...state,
-      updates: omit(state.updates, caveId),
+      updates: omit(state.updates, update.itemId),
     };
   });
 });

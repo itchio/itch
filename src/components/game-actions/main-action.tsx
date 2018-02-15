@@ -157,7 +157,7 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
       }
     } else if (cave) {
       if (update) {
-        this.props.showGameUpdate({ caveId: cave.id, update });
+        this.props.showGameUpdate({ update });
       } else {
         this.props.queueGame({ game });
       }

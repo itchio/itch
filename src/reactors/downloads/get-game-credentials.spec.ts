@@ -28,7 +28,7 @@ suite(__filename, s => {
       const game = ({
         id: 728,
       } as any) as Game;
-      let gc = await getGameCredentials(ctx, game);
+      let gc = getGameCredentials(ctx, game);
       t.same(gc, null, "no credentials when logged out");
 
       const c19 = ({
@@ -60,18 +60,18 @@ suite(__filename, s => {
 
       game.inPressSystem = true;
 
-      gc = await getGameCredentials(ctx, game);
+      gc = getGameCredentials(ctx, game);
       t.same(gc.apiKey, c19.key, "api key only when press access is allowed");
 
       c19.me.pressUser = false;
 
-      gc = await getGameCredentials(ctx, game);
+      gc = getGameCredentials(ctx, game);
       t.same(gc.apiKey, c19.key, "api key only when not a press user");
 
       c19.me.pressUser = true;
       game.inPressSystem = false;
 
-      gc = await getGameCredentials(ctx, game);
+      gc = getGameCredentials(ctx, game);
       t.same(gc.apiKey, c19.key, "api key only when game not in press system");
 
       const dk190 = ({
@@ -88,17 +88,17 @@ suite(__filename, s => {
       } as any) as IDownloadKey;
       db.saveOne("downloadKeys", dk750.id, dk750);
 
-      gc = await getGameCredentials(ctx, game);
+      gc = getGameCredentials(ctx, game);
       t.same(gc.downloadKey.id, dk190.id, "prefer current user download key 1");
 
       state.session.credentials = c75;
 
-      gc = await getGameCredentials(ctx, game);
+      gc = getGameCredentials(ctx, game);
       t.same(gc.downloadKey.id, dk750.id, "prefer current user download key 2");
 
       db.downloadKeys.delete(k => k.where("id = ?", 750));
 
-      gc = await getGameCredentials(ctx, game);
+      gc = getGameCredentials(ctx, game);
       t.same(
         { api: gc.apiKey, download: gc.downloadKey.id },
         { api: c19.key, download: dk190.id },
@@ -107,13 +107,13 @@ suite(__filename, s => {
 
       delete state.rememberedSessions[c19.me.id];
 
-      gc = await getGameCredentials(ctx, game);
+      gc = getGameCredentials(ctx, game);
       t.notOk(
         gc.downloadKey,
         "won't take other user's download key if we don't have corresponding API key"
       );
 
-      gc = await getGameCredentialsForId(ctx, game.id);
+      gc = getGameCredentialsForId(ctx, game.id);
       t.same(gc.apiKey, c75.key, "looks up properly by id alone too");
     });
   });

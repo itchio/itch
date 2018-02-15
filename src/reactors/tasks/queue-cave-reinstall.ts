@@ -25,7 +25,7 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    const gameCredentials = await getGameCredentials(ctx, game);
+    const gameCredentials = getGameCredentials(ctx, game);
     if (!gameCredentials) {
       // no credentials
       return;

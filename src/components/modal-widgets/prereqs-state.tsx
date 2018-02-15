@@ -1,53 +1,39 @@
 import * as React from "react";
-import { createSelector, createStructuredSelector } from "reselect";
-import { connect } from "../connect";
-
-import { findWhere, map } from "underscore";
+import { map } from "underscore";
 
 import { downloadProgress } from "../../format";
-
 import { ModalWidgetDiv } from "./modal-widget";
 import LoadingCircle from "../basics/loading-circle";
 
-import { IRootState, ITask, IPrereqsState } from "../../types";
-
 import format from "../format";
 import { IModalWidgetProps } from "./index";
+import { PrereqStatus } from "node-buse/lib/messages";
 
-class PrereqsState extends React.PureComponent<IProps & IDerivedProps> {
+class PrereqsState extends React.PureComponent<IProps> {
   render() {
-    const { prereqsState } = this.props;
-    const params = this.props.modal.widgetParams;
-
-    if (!prereqsState) {
-      return (
-        <ModalWidgetDiv>{format(["setup.status.preparing"])}</ModalWidgetDiv>
-      );
-    }
+    const { gameTitle, tasks } = this.props.modal.widgetParams;
 
     return (
       <ModalWidgetDiv>
-        <p>{format(["prereq.explanation", { title: params.gameTitle }])}</p>
+        <p>{format(["prereq.explanation", { title: gameTitle }])}</p>
 
         <ul className="prereqs-rows">
-          {map(prereqsState.tasks, (v, k) => {
+          {map(tasks, (v, name) => {
             let progress = v.progress;
-            if (v.status === "installing" || v.status === "extracting") {
+            if (v.status === "installing") {
               // just displays a spinner
               progress = 0.1;
             }
 
             return (
-              <li key={k} className="prereqs-row" style={{ order: v.order }}>
+              <li key={name} className="prereqs-row" style={{ order: v.order }}>
                 <LoadingCircle progress={progress} />
                 <div className="prereqs-info">
-                  <div className="task-name">{v.name}</div>
+                  <div className="task-name">{v.fullName}</div>
                   <div className="task-status">
-                    {v.status === "downloading" && v.progress ? (
-                      downloadProgress(v, false)
-                    ) : (
-                      format([`prereq.status.${v.status}`])
-                    )}
+                    {v.status === "downloading" && v.progress
+                      ? downloadProgress({ eta: v.eta, bps: v.bps }, false)
+                      : format([`prereq.status.${v.status}`])}
                   </div>
                 </div>
               </li>
@@ -60,8 +46,19 @@ class PrereqsState extends React.PureComponent<IProps & IDerivedProps> {
 }
 
 export interface IPrereqsStateParams {
-  gameId: string;
   gameTitle: string;
+  tasks: {
+    [prereqName: string]: ITaskProgressState;
+  };
+}
+
+export interface ITaskProgressState {
+  order: number;
+  fullName: string;
+  status: PrereqStatus;
+  progress: number;
+  eta: number;
+  bps: number;
 }
 
 interface IPrereqsStateResponse {}
@@ -69,29 +66,4 @@ interface IPrereqsStateResponse {}
 interface IProps
   extends IModalWidgetProps<IPrereqsStateParams, IPrereqsStateResponse> {}
 
-interface IDerivedProps {
-  prereqsState: IPrereqsState;
-}
-
-interface IStructuredSelectorResult {
-  tasks: ITask[];
-}
-
-export default connect<IProps>(PrereqsState, {
-  state: () => {
-    const selector = createStructuredSelector({
-      tasks: (rs: IRootState, props: IProps) => {
-        const params = props.modal.widgetParams;
-        const tasks = rs.tasks.tasksByGameId[params.gameId];
-        return tasks;
-      },
-    });
-
-    return createSelector(selector, (cs: IStructuredSelectorResult) => {
-      const task = findWhere(cs.tasks, { name: "launch" });
-      return {
-        prereqsState: task ? task.prereqsState : null,
-      };
-    });
-  },
-});
+export default PrereqsState;

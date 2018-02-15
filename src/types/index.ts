@@ -1,7 +1,7 @@
 import { Store } from "redux";
 
 // shared with node-buse
-import { Game, User, OwnUser, Upload } from "ts-itchio-api";
+import { Game, User, OwnUser } from "ts-itchio-api";
 
 import { ICollection } from "../db/models/collection";
 import { IDownloadKey, IDownloadKeySummary } from "../db/models/download-key";
@@ -19,6 +19,7 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
+import { GameUpdate } from "node-buse/lib/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -134,39 +135,6 @@ export interface IDBDeleteSpec {
   entities: IEntityRefs;
 }
 
-// see https://itch.io/docs/itch/integrating/manifest.html
-export interface IManifestAction {
-  /** human-readable or standard name */
-  name: string;
-
-  /** file path (relative to manifest), URL, etc. */
-  path: string;
-
-  /** icon name (see static/fonts/icomoon/demo.html, don't include `icon-` prefix) */
-  icon: string;
-
-  /** command-line arguments */
-  args: string[];
-
-  /** sandbox opt-in */
-  sandbox?: boolean;
-
-  /** requested API scope */
-  scope?: string;
-
-  /** don't redirect stdout/stderr, open in new console window */
-  console?: boolean;
-}
-
-export interface IManifestPrereq {
-  name: string;
-}
-
-export interface IManifest {
-  actions: IManifestAction[];
-  prereqs: IManifestPrereq[];
-}
-
 export interface ICredentials {
   key: string;
   me: OwnUser;
@@ -241,28 +209,17 @@ export interface IGameCredentials {
   downloadKey?: IDownloadKey;
 }
 
-export interface IGameUpdate {
-  /** which game an update is available for */
-  game: Game;
-
-  /**
-   * uploads to pick from (fresher than our last install).
-   * will hopefully be often of size 1, but not always
-   */
-  recentUploads: Upload[];
-
-  /** true if wharf-enabled upgrade via butler */
-  incremental?: boolean;
-
-  /** list of patch entries needed to upgrade to latest via butler */
-  upgradePath?: IUpgradePathItem[];
-}
-
 export interface IGameUpdatesState {
   /** pending game updates */
   updates: {
-    [caveId: string]: IGameUpdate;
+    [caveId: string]: GameUpdate;
   };
+
+  /** are we currently checking? */
+  checking: boolean;
+
+  /** check progress */
+  progress: number;
 }
 
 export type IModalAction = IAction<any> | IAction<any>[];
@@ -743,8 +700,6 @@ export interface ITask {
 
   /** estimated time remaining for task, in seconds, if available */
   eta?: number;
-
-  prereqsState?: IPrereqsState;
 }
 
 export interface ITasksState {
@@ -894,36 +849,11 @@ export interface IProgressInfo {
 
   /** estimated time remaining, in seconds */
   eta?: number;
-
-  prereqsState?: IPrereqsState;
 }
 
 export interface IProgressListener {
   (info: IProgressInfo): void;
 }
-
-export interface IPrereqsState {
-  tasks: {
-    [prereqName: string]: ITaskProgressState;
-  };
-}
-
-export interface ITaskProgressState {
-  name: string;
-  order: number;
-  status: TaskProgressStatus;
-  progress: number;
-  eta: number;
-  bps: number;
-  prereqsState?: IPrereqsState;
-}
-
-export type TaskProgressStatus =
-  | "downloading"
-  | "extracting"
-  | "ready"
-  | "installing"
-  | "done";
 
 export interface IRedistInfo {
   /** Human-friendly name for redist, e.g. "Microsoft Visual C++ 2010 Redistributable" */
