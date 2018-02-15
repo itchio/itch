@@ -19,7 +19,6 @@ import {
   IQueueDownloadOpts,
   IDownloadItem,
   IOpenTabPayload,
-  IGameUpdate,
   IQueueLaunchOpts,
   GenerosityLevel,
   ISearchResults,
@@ -682,27 +681,26 @@ export const actions = wireActions({
     /** display a notification if the game is up-to-date. otherwise, stay silent */
     noisy: boolean;
   }>(),
-  gameUpdateAvailable: action<{
-    /** which cave has an update available */
-    caveId: string;
+  gameUpdateCheckStatus: action<{
+    /** whether we're currently checking */
+    checking: boolean;
 
+    /** how far along we are */
+    progress: number;
+  }>(),
+  gameUpdateAvailable: action<{
     /** the actual update info */
     update: GameUpdate;
   }>(),
   showGameUpdate: action<{
-    /** the cave we're updating */
-    caveId: string;
-
     /** the actual update info */
     update: GameUpdate;
   }>(),
   queueGameUpdate: action<{
-    /** the cave we're updating */
-    caveId: string;
-
     /** the actual update info */
     update: GameUpdate;
   }>(),
+  queueAllGameUpdates: action<{}>(),
   nukeCavePrereqs: action<{
     /** the cave to nuke the prereqs of */
     caveId: string;

@@ -1,6 +1,7 @@
 import { actions } from "../actions";
 import { Watcher } from "./watcher";
 import { DB } from "../db";
+import { each } from "underscore";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.gameUpdateAvailable, async (store, action) => {
@@ -15,17 +16,24 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.queueGameUpdate, async (store, action) => {
-    const { update, caveId } = action.payload;
+    const { update } = action.payload;
     const { game, upload, build } = update;
 
     store.dispatch(
       actions.queueDownload({
         game,
-        caveId,
+        caveId: update.itemId,
         upload,
         build,
         reason: "update",
       })
     );
+  });
+
+  watcher.on(actions.queueAllGameUpdates, async (store, action) => {
+    const { updates } = store.getState().gameUpdates;
+    each(updates, update => {
+      store.dispatch(actions.queueGameUpdate({ update }));
+    });
   });
 }

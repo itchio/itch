@@ -5,12 +5,12 @@ import makeUploadButton from "../../reactors/make-upload-button";
 import { map } from "underscore";
 import { Watcher } from "../watcher";
 
-import { ILocalizedString, IModalButtonSpec, IModal } from "../../types";
+import { IModalButtonSpec } from "../../types";
 import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.showGameUpdate, async (store, action) => {
-    const { update, caveId } = action.payload;
+    const { update } = action.payload;
     const { game, upload } = update;
     const uploads = [upload];
 
@@ -24,7 +24,7 @@ export default function(watcher: Watcher) {
       {
         icon: "download",
         label: ["pick_update_upload.buttons.update"],
-        action: actions.queueGameUpdate({ caveId, update }),
+        action: actions.queueGameUpdate({ update }),
       },
       {
         icon: "play",
@@ -44,7 +44,7 @@ export default function(watcher: Watcher) {
           bigButtons: map(uploads, upload => {
             const spec: IModalButtonSpec = {
               ...makeUploadButton(upload, { showSize: false }),
-              action: actions.queueGameUpdate({ caveId, update }),
+              action: actions.queueGameUpdate({ update }),
             };
             return spec;
           }),

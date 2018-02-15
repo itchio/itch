@@ -1,7 +1,7 @@
 import { Store } from "redux";
 
 // shared with node-buse
-import { Game, User, OwnUser, Upload } from "ts-itchio-api";
+import { Game, User, OwnUser } from "ts-itchio-api";
 
 import { ICollection } from "../db/models/collection";
 import { IDownloadKey, IDownloadKeySummary } from "../db/models/download-key";
@@ -214,6 +214,12 @@ export interface IGameUpdatesState {
   updates: {
     [caveId: string]: GameUpdate;
   };
+
+  /** are we currently checking? */
+  checking: boolean;
+
+  /** check progress */
+  progress: number;
 }
 
 export type IModalAction = IAction<any> | IAction<any>[];

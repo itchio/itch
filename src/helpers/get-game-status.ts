@@ -1,6 +1,6 @@
 import { IDownloadKeySummary } from "../db/models/download-key";
 import { ICaveSummary } from "../db/models/cave";
-import { IRootState, IGameUpdate, ITask, IDownloadItem } from "../types/index";
+import { IRootState, ITask, IDownloadItem } from "../types/index";
 
 import { first } from "underscore";
 import getByIds from "./get-by-ids";
@@ -12,6 +12,7 @@ import isPlatformCompatible from "../util/is-platform-compatible";
 import memoize from "../util/lru-memoize";
 import { TaskName, DownloadReason } from "../types/tasks";
 import { Game } from "ts-itchio-api";
+import { GameUpdate } from "node-buse/lib/messages";
 
 /**
  * What type of access we have to the game - do we own it,
@@ -79,7 +80,7 @@ export interface IGameStatus {
   cave: ICaveSummary;
   access: Access;
   operation: IOperation;
-  update: IGameUpdate;
+  update: GameUpdate;
   compatible: boolean;
 }
 
@@ -113,7 +114,7 @@ export default function getGameStatus(
     areDownloadsPaused = downloads.paused;
   }
 
-  let update: IGameUpdate;
+  let update: GameUpdate;
   if (cave) {
     update = rs.gameUpdates.updates[cave.id];
   }
@@ -138,7 +139,7 @@ function rawGetGameStatus(
   pressUser: boolean,
   task: ITask,
   download: IDownloadItem,
-  update: IGameUpdate,
+  update: GameUpdate,
   isDownloadActive,
   areDownloadsPaused
 ): IGameStatus {

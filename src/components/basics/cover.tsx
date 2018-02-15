@@ -38,8 +38,10 @@ class Image extends React.PureComponent<IImageProps> {
 
 interface IImageProps {
   src?: string;
+  className?: string;
   onLoadStart: () => void;
   onLoadEnd: () => void;
+  onError: () => void;
 }
 
 const StyledImage = styled(Image)`
@@ -50,6 +52,10 @@ const StyledImage = styled(Image)`
   height: 100%;
 
   object-fit: cover;
+
+  &.error {
+    visibility: hidden;
+  }
 `;
 
 const Ribbon = styled.div`
@@ -69,7 +75,7 @@ const Ribbon = styled.div`
 class Cover extends React.PureComponent<IProps, IState> {
   constructor() {
     super();
-    this.state = { loading: false };
+    this.state = { loading: false, error: false };
   }
 
   render() {
@@ -82,7 +88,7 @@ class Cover extends React.PureComponent<IProps, IState> {
       ribbon,
       square,
       className,
-      ...restProps,
+      ...restProps
     } = this.props;
 
     let gif: boolean;
@@ -110,6 +116,8 @@ class Cover extends React.PureComponent<IProps, IState> {
             src={url}
             onLoadStart={this.onLoadStart}
             onLoadEnd={this.onLoadEnd}
+            onError={this.onError}
+            className={this.state.error ? "error" : ""}
           />
         ) : (
           <RandomSvg seed={gameId} />
@@ -128,10 +136,15 @@ class Cover extends React.PureComponent<IProps, IState> {
   onLoadEnd = () => {
     this.setState({ loading: false });
   };
+
+  onError = () => {
+    this.setState({ error: true });
+  };
 }
 
 interface IState {
   loading: boolean;
+  error: boolean;
 }
 
 export interface IProps extends IHoverProps {
