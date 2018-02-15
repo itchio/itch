@@ -1,17 +1,11 @@
 import { Shm } from "shoom";
 
 import * as btoa from "btoa";
-import { dirname, basename, join } from "path";
 import * as querystring from "querystring";
-
-import { where, isEmpty } from "underscore";
-
-import configure from "./configure";
 
 import { BrowserWindow, shell } from "electron";
 
 import spawn from "../../os/spawn";
-import * as paths from "../../os/paths";
 import { getInjectPath } from "../../os/resources";
 import url from "../../util/url";
 import debugBrowserWindow from "../../util/debug-browser-window";
@@ -24,53 +18,36 @@ const { messages } = capsule;
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
-import { fromJSONField } from "../../db/json-field";
-
 import { registerProtocol, setupItchInternal } from "./html/itch-internal";
-import { ICandidate } from "../../util/butler";
+import { Game } from "ts-itchio-api";
+import { Logger } from "../../logger/index";
+import { HTMLLaunchParams, HTMLLaunchResult } from "node-buse/lib/messages";
 
-import { ILauncher } from "./types";
+interface HTMLLaunchOpts {
+  ctx: Context;
+  game: Game;
+  logger: Logger;
 
-const launch: ILauncher = async (ctx, opts) => {
-  const { game, args, env, logger } = opts;
-  let { cave } = opts;
-  const { store } = ctx;
+  params: HTMLLaunchParams;
+}
 
-  const appPath = paths.appPath(cave, store.getState().preferences);
-  let verdict = fromJSONField(cave.verdict);
+export async function performHTMLLaunch(
+  opts: HTMLLaunchOpts
+): Promise<HTMLLaunchResult> {
+  const { ctx, logger, game, params } = opts;
+  const { rootFolder, indexPath, env, args } = params;
 
-  let htmlCandidates: ICandidate[] = [];
-  let grabCandidates = () => {
-    if (!verdict) {
-      return false;
-    }
-    htmlCandidates = where(verdict.candidates, { flavor: "html" });
-    return !isEmpty(htmlCandidates);
-  };
-
-  if (!grabCandidates()) {
-    verdict = await configure(ctx, opts);
-  }
-
-  if (!grabCandidates()) {
-    throw new Error(`Can't launch HTML game, no candidates`);
-  }
-  const candidate = htmlCandidates[0];
-  const entryPoint = join(appPath, candidate.path);
-
-  logger.info(`entry point: ${entryPoint}`);
-
+  // TODO: think if this is the right place to do that?
   let { width, height } = { width: 1280, height: 720 };
-
-  const embed = fromJSONField(game.embed);
+  const { embed } = game;
   if (embed && embed.width && embed.height) {
     width = embed.width;
     height = embed.height;
   }
 
-  logger.info(`starting at resolution ${width}x${height}`);
+  logger.info(`performing HTML launch at resolution ${width}x${height}`);
 
-  const partition = `persist:gamesession_${cave.gameId}`;
+  const partition = `persist:gamesession_${game.id}`;
 
   // TODO: show game icon as, well, the window's icon
   let win = new BrowserWindow({
@@ -116,11 +93,7 @@ const launch: ILauncher = async (ctx, opts) => {
   userAgent = userAgent.replace(/Electron\/[0-9.]+\s/, "");
   win.webContents.setUserAgent(userAgent);
 
-  // serve files
-  let fileRoot = dirname(entryPoint);
-  let indexName = basename(entryPoint);
-
-  await registerProtocol({ partition, fileRoot });
+  await registerProtocol({ partition, fileRoot: rootFolder });
 
   setupItchInternal({
     session: win.webContents.session,
@@ -156,7 +129,7 @@ const launch: ILauncher = async (ctx, opts) => {
     extraHeaders: "pragma: no-cache\n",
   };
 
-  win.loadURL(`itch-cave://game.itch/${indexName}?${query}`, options);
+  win.loadURL(`itch-cave://game.itch/${indexPath}?${query}`, options);
 
   let capsulePromise: Promise<number>;
   let connection: Connection;
@@ -285,6 +258,6 @@ const launch: ILauncher = async (ctx, opts) => {
       win.close();
     });
   });
-};
 
-export default launch;
+  return {};
+}

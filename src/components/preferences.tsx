@@ -512,7 +512,12 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   renderAdvanced() {
-    const { appVersion, clearBrowsingDataRequest, navigate } = this.props;
+    const {
+      appVersion,
+      clearBrowsingDataRequest,
+      navigate,
+      checkForGameUpdates,
+    } = this.props;
 
     return (
       <div className="explanation advanced-form">
@@ -544,6 +549,18 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             }}
           >
             {format(["preferences.advanced.open_app_log"])}
+          </span>
+        </p>
+        <p className="section">
+          <span
+            className="link"
+            onClick={e => {
+              e.preventDefault();
+              checkForGameUpdates({});
+              navigate({ url: "itch://downloads" });
+            }}
+          >
+            Check for game updates
           </span>
         </p>
         <p className="section">
@@ -752,7 +769,8 @@ const actionCreators = actionCreatorsList(
   "updatePreferences",
   "clearBrowsingDataRequest",
   "navigate",
-  "checkForSelfUpdate"
+  "checkForSelfUpdate",
+  "checkForGameUpdates"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {

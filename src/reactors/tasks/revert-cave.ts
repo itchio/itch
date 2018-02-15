@@ -55,7 +55,7 @@ export default function(watcher: Watcher, db: DB) {
           return;
         }
 
-        const gameCredentials = await getGameCredentials(ctx, game);
+        const gameCredentials = getGameCredentials(ctx, game);
 
         const credentials = store.getState().session.credentials;
         if (!credentials) {

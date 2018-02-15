@@ -2,38 +2,26 @@ import defaultManifestIcons from "../../constants/default-manifest-icons";
 
 import { actions } from "../../actions";
 
-import {
-  IStore,
-  IManifest,
-  IManifestAction,
-  IModalButtonSpec,
-} from "../../types";
+import { IStore, IModalButtonSpec } from "../../types";
 
 import { promisedModal } from "../../reactors/modals";
 
-import { findWhere } from "underscore";
 import { Game } from "ts-itchio-api";
 import { modalWidgets } from "../../components/modal-widgets/index";
+import { ManifestAction } from "node-buse/lib/messages";
 
-export default async function pickManifestAction(
+// TODO: support localized action names
+
+export async function pickManifestAction(
   store: IStore,
-  manifest: IManifest,
+  manifestActions: ManifestAction[],
   game: Game
-): Promise<IManifestAction> {
+): Promise<string> {
   const buttons: IModalButtonSpec[] = [];
   const bigButtons: IModalButtonSpec[] = [];
 
-  switch (manifest.actions.length) {
-    case 0:
-      return null; // empty manifest, okay
-    case 1:
-      return manifest.actions[0];
-    default:
-    // keep going then
-  }
-
   let index = 0;
-  for (const actionOption of manifest.actions) {
+  for (const actionOption of manifestActions) {
     if (!actionOption.name) {
       throw new Error(`in manifest, action ${index} is missing a name`);
     }
@@ -66,9 +54,7 @@ export default async function pickManifestAction(
   );
 
   if (response) {
-    return findWhere(manifest.actions, {
-      name: response.manifestActionName,
-    });
+    return response.manifestActionName;
   }
 
   return null;

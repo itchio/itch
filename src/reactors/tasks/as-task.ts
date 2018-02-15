@@ -2,7 +2,13 @@ import uuid from "../../util/uuid";
 import { throttle } from "underscore";
 import * as memory from "memory-streams";
 
-import { IStore, IProgressInfo, isCancelled, TaskName } from "../../types";
+import {
+  IStore,
+  IProgressInfo,
+  isCancelled,
+  TaskName,
+  isAborted,
+} from "../../types";
 import { DB } from "../../db";
 import Context from "../../context";
 import { actions } from "../../actions";
@@ -71,6 +77,8 @@ export default async function asTask(opts: IAsTaskOpts) {
   if (err) {
     if (isCancelled(err)) {
       rootLogger.warn(`Task ${name} cancelled`);
+    } else if (isAborted(err)) {
+      rootLogger.warn(`Task ${name} aborted`);
     } else {
       rootLogger.warn(`Task ${name} threw: ${err.stack}`);
       if (onError) {

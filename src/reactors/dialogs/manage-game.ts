@@ -1,10 +1,10 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 import { DB } from "../../db/db";
-import { Instance, messages } from "node-buse";
+import { messages } from "node-buse";
 import getGameCredentials from "../../reactors/downloads/get-game-credentials";
 import Context from "../../context/index";
-import { buseGameCredentials } from "../../util/buse-utils";
+import { buseGameCredentials, makeButlerInstance } from "../../util/buse-utils";
 
 import rootLogger from "../../logger";
 import { modalWidgets } from "../../components/modal-widgets/index";
@@ -41,13 +41,13 @@ export default function(watcher: Watcher, db: DB) {
 
     const ctx = new Context(store, db);
 
-    const credentials = await getGameCredentials(ctx, game);
+    const credentials = getGameCredentials(ctx, game);
     if (!credentials) {
       throw new Error(`no game credentials, can't download`);
     }
 
     try {
-      const instance = new Instance();
+      const instance = await makeButlerInstance();
       instance.onClient(async client => {
         try {
           const res = await client.call(

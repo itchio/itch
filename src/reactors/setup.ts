@@ -1,9 +1,6 @@
 import { Watcher } from "./watcher";
 
-import * as bluebird from "bluebird";
-import ibrew from "../util/ibrew";
-
-import { map } from "underscore";
+import { installFormula } from "../util/ibrew";
 
 import { IStore, ILocalizedString } from "../types";
 import { DB } from "../db";
@@ -23,28 +20,14 @@ async function fetch(ctx: Context, name: string) {
     },
   };
 
-  await ibrew.fetch(opts, name);
+  await installFormula(opts, name);
 }
 
 async function setup(store: IStore, db: DB) {
-  // TODO: implement lazy dependency install
-  const skipSetup = false;
-  if (skipSetup) {
-    logger.warn("skipping setup");
-    return;
-  }
-
   const ctx = new Context(store, db);
 
   logger.info("setup starting");
-  await fetch(ctx, "unarchiver");
-  logger.info("unarchiver done");
-  await bluebird.all(
-    map(
-      ["butler", "isolate", "activate", "firejail"],
-      async name => await fetch(ctx, name)
-    )
-  );
+  await fetch(ctx, "butler");
   logger.info("all deps done");
   store.dispatch(actions.setupDone({}));
 }

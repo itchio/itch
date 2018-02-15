@@ -10,6 +10,7 @@ import { IProgressInfo, ExeArch } from "../types";
 import { Logger, devNull } from "../logger";
 import urls from "../constants/urls";
 import { formatExitCode } from "../format/exit-code";
+import { getBinPath } from "./ibrew";
 
 const showDebug = process.env.MY_BUTLER_IS_MY_FRIEND === "1";
 const dumpAllOutput = process.env.MY_BUTLER_IS_MY_ENEMY === "1";
@@ -135,7 +136,7 @@ async function butler<T>(
   }
 
   const code = await spawn({
-    command: "butler",
+    command: ospath.join(getBinPath(), "butler"),
     args,
     onToken,
     onErrToken,

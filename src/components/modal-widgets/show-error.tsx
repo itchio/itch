@@ -59,7 +59,7 @@ class ShowError extends React.PureComponent<IProps> {
               <summary>{errorLines[0]}</summary>
               <Pre>{errorLines.slice(1).join("\n")}</Pre>
             </details>
-            <details>
+            <details open>
               <summary>Debug log</summary>
               <StyledLog log={log} />
             </details>

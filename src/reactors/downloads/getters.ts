@@ -13,7 +13,7 @@ export const getPendingDownloads = memoize(1, function(
   downloads: IDownloadsState
 ): IDownloadItem[] {
   const pending = filter(downloads.items, i => !i.finished);
-  return sortBy(pending, "order");
+  return sortBy(pending, "rank");
 });
 
 export const getFinishedDownloads = memoize(1, function(

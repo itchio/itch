@@ -1,6 +1,6 @@
 import { ICave } from "../db/models/cave";
 
-import { IManifest, IManifestAction, IEnvironment, IRuntime } from ".";
+import { IRuntime } from ".";
 
 import { Logger } from "../logger";
 import { Game, Upload, Build } from "ts-itchio-api";
@@ -29,7 +29,7 @@ export interface IQueueDownloadOpts {
    */
   game: Game;
 
-  /**    
+  /**
    * identifier of the cave this download was started for
    */
   caveId?: string;
@@ -61,21 +61,6 @@ export interface IQueueLaunchOpts {
   /** which cave we're launching */
   caveId: string;
 }
-
-export interface ILaunchOpts {
-  manifest: IManifest;
-  manifestAction?: IManifestAction;
-
-  env: IEnvironment;
-  args: string[];
-  logger: Logger;
-  cave: ICave;
-  game: Game;
-
-  runtime: IRuntime;
-}
-
-export type IPrepareOpts = ILaunchOpts;
 
 export interface IConfigureOpts {
   cave: ICave;

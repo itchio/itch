@@ -1,15 +1,7 @@
-import * as ospath from "path";
-import * as sf from "../../os/sf";
-
-export interface ISkipUpgradeWhenOpts {
-  binPath: string;
-}
-
 export interface IVersionCheck {
   command?: string;
   args: string[];
   parser?: RegExp;
-  cleanPath?: boolean;
 }
 
 export interface IFormulaSpec {
@@ -20,23 +12,10 @@ export interface IFormulaSpec {
     command: string;
     args: string[];
   };
-  osWhitelist?: string[];
-  skipUpgradeWhen?: (opts: ISkipUpgradeWhenOpts) => Promise<ISkipUpgradeResult>;
-}
-
-export interface ISkipUpgradeResult {
-  /** reason why we're skipping the upgrade */
-  reason: string;
 }
 
 export interface IFormulas {
-  unarchiver: IFormulaSpec;
   butler: IFormulaSpec;
-  elevate: IFormulaSpec;
-  isolate: IFormulaSpec;
-  dllassert: IFormulaSpec;
-  activate: IFormulaSpec;
-  firejail: IFormulaSpec;
 
   [formulaName: string]: IFormulaSpec;
 }
@@ -44,29 +23,11 @@ export interface IFormulas {
 let self = {} as IFormulas;
 
 /**
- * a command-line tool for extracting various archives, including rar,
- * without silly license restrictions. pretty good.
- * https://bitbucket.org/WAHa_06x36/theunarchiver
- */
-self.unarchiver = {
-  format: "tar.gz",
-  subfolder: "unarchiver",
-  versionCheck: {
-    command: "unar",
-    args: ["--version"],
-  },
-  sanityCheck: {
-    command: "unar",
-    args: ["--version"],
-  },
-};
-
-/**
  * your little itch.io helper
  * https://github.com/itchio/butler
  */
 self.butler = {
-  format: "7z",
+  format: "gz",
   sanityCheck: {
     command: "butler",
     args: ["-V"],
@@ -74,58 +35,6 @@ self.butler = {
   versionCheck: {
     command: "butler",
     args: ["-V"],
-    cleanPath: true,
-  },
-};
-
-/**
- * unprivileged user management:
- * https://github.com/itchio/isolate
- */
-self.isolate = {
-  format: "7z",
-  osWhitelist: ["windows"],
-};
-
-/**
- * bring macOS apps forwards even when executed directly:
- * https://github.com/itchio/activate
- */
-self.activate = {
-  format: "7z",
-  osWhitelist: ["darwin"],
-};
-
-/**
- * sandbox for Linux executables (seccomp-bpf sandbox)
- * https://github.com/netblue30/firejail
- * https://github.com/itchio/firejail-buildscripts
- */
-self.firejail = {
-  format: "7z",
-  osWhitelist: ["linux"],
-  skipUpgradeWhen: async function(opts) {
-    const { binPath } = opts;
-    try {
-      const stats = await sf.lstat(ospath.join(binPath, "firejail"));
-      if (stats.uid !== 0) {
-        return { reason: "not owned by root" };
-      }
-      if ((stats.mode & 0o4000) === 0) {
-        return { reason: "not suid" };
-      }
-    } catch (e) {
-      if (e.code === "ENOENT") {
-        // all good
-      } else {
-        throw e;
-      }
-    }
-    return null;
-  },
-  versionCheck: {
-    args: ["--version"],
-    parser: /firejail version ([0-9a-z.]*)/,
   },
 };
 
