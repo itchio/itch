@@ -503,5 +503,8 @@
     "preferences.advanced.disable_browser": "Выключить браузер",
     "collections.empty": "У вас пока нет коллекций",
     "collections.empty_sub": "Поищите игры и добавьте в новую коллекцию!",
-    "preferences.advanced.disable_hardware_acceleration": "Выключить аппаратное ускорение (может исправить проблемы на Linux)"
+    "preferences.advanced.disable_hardware_acceleration": "Выключить аппаратное ускорение (может исправить проблемы на Linux)",
+    "prereq.status.pending": "Подготавливаем…",
+    "status.downloads.updates_available": "Есть обновления",
+    "status.downloads.update_all": "Обновить всё"
 }
