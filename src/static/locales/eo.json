@@ -497,5 +497,8 @@
     "preferences.advanced.disable_browser": "Malebligi la retumilon",
     "collections.empty": "Aktuale vi ne havas kolektojn",
     "collections.empty_sub": "Esploru la katalogon kaj kreu novan kolekton da ludoj!",
-    "preferences.advanced.disable_hardware_acceleration": "Malebligi la aparatarajn plirapidigojn (tio povas solvi iujn problemojn por la uzantoj de Linukso)"
+    "preferences.advanced.disable_hardware_acceleration": "Malebligi la aparatarajn plirapidigojn (tio povas solvi iujn problemojn por la uzantoj de Linukso)",
+    "prereq.status.pending": "Preparado…",
+    "status.downloads.updates_available": "Estas disponeblaj ĝisdatigoj",
+    "status.downloads.update_all": "Ĝisdatigi ĉiujn"
 }
