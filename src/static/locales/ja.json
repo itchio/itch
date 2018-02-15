@@ -341,5 +341,6 @@
     "menu.file.new_tab": "新規タブ",
     "grid.item.update": "アップデートする",
     "game.install.could_not_launch.missing_jre": "必要のJavaはこのコンピュータに見つかりませんでした。",
-    "game.install.libraries_missing": "必要の{{arch}}のライブラリはありません： {{libraries}}"
+    "game.install.libraries_missing": "必要の{{arch}}のライブラリはありません： {{libraries}}",
+    "grid.criterion.search": "検索..."
 }
