@@ -503,5 +503,8 @@
     "browser.reenable": "Réactiver",
     "preferences.advanced.disable_browser": "Désactiver le navigateur internet",
     "preferences.advanced.disable_hardware_acceleration": "Désactiver les accélérations hardware (peut causer des crash/bugs sur Linux)",
-    "sidebar.applog": "Logs de l'application"
+    "sidebar.applog": "Logs de l'application",
+    "status.downloads.updates_available": "Mises à jour disponibles",
+    "status.downloads.update_all": "Tout mettre à jour",
+    "prereq.status.pending": "Préparation…"
 }
