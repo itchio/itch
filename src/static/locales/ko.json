@@ -95,5 +95,6 @@
     "grid.item.developer": "개발자",
     "search.results.games": "게임",
     "grid.item.share": "공유",
-    "grid.item.show_local_files": "로컬 파일 보기"
+    "grid.item.show_local_files": "로컬 파일 보기",
+    "grid.item.check_for_update": "업데이트 확인"
 }
