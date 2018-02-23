@@ -99,5 +99,6 @@
     "grid.item.check_for_update": "업데이트 확인",
     "grid.item.discard_download": "다운로드 중지",
     "grid.item.prioritize_download": "우선순위 정렬",
-    "grid.item.advanced": "고급"
+    "grid.item.advanced": "고급",
+    "grid.item.buy_now_again": "추가 구매하기"
 }
