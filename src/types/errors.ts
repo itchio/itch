@@ -94,7 +94,7 @@ export function isCancelled(e: any): boolean {
   }
 
   let je = e as RequestError;
-  if (je.rpcError && je.rpcError.code === messages.Codes.OperationCancelled) {
+  if (je.rpcError && je.rpcError.code === messages.Code.OperationCancelled) {
     return true;
   }
 
@@ -107,7 +107,7 @@ export function isAborted(e: any): boolean {
   }
 
   let je = e as RequestError;
-  if (je.rpcError && je.rpcError.code === messages.Codes.OperationAborted) {
+  if (je.rpcError && je.rpcError.code === messages.Code.OperationAborted) {
     return true;
   }
 

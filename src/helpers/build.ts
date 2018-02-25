@@ -1,4 +1,4 @@
-import { Build } from "ts-itchio-api";
+import { Build } from "node-buse/lib/messages";
 
 export function formatBuildVersion(build: Build): string {
   if (build) {

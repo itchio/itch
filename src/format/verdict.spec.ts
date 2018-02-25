@@ -1,7 +1,7 @@
-import { Arch, Flavor } from "../util/butler";
 import suite from "../test-suite";
 
 import { formatVerdict } from "./verdict";
+import { Arch, Flavor } from "node-buse/lib/messages";
 
 suite(__filename, s => {
   s.case("truncate", t => {
@@ -18,6 +18,7 @@ suite(__filename, s => {
           windowsInfo: {
             gui: true,
           },
+          mode: 0o644,
         },
         {
           path: "vncviewer.exe",
@@ -28,6 +29,7 @@ suite(__filename, s => {
           windowsInfo: {
             gui: true,
           },
+          mode: 0o644,
         },
       ],
     };

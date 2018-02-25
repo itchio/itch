@@ -20,7 +20,7 @@ import { Logger } from "../logger";
 // for references on the now-dead marketdb
 
 import { DB } from ".";
-import { User, Game, Upload, Build } from "ts-itchio-api";
+import { User, Game, Upload, Build } from "node-buse/lib/messages";
 
 interface IImportOpts {
   db: DB;
@@ -54,7 +54,7 @@ const emptyObj = {};
 function merge(res: IImportResult, tableName: string, id: string, data: any) {
   const table = res[tableName];
   table[id] = {
-    ...table[id] || emptyObj,
+    ...(table[id] || emptyObj),
     ...data,
   };
 }
@@ -161,7 +161,6 @@ export function importUserMarkets(
       publishedAt: toDateTimeField(gameIn.publishedAt),
 
       canBeBought: gameIn.canBeBought,
-      currency: gameIn.currency,
       minPrice: gameIn.minPrice,
       hasDemo: gameIn.hasDemo,
       inPressSystem: gameIn.inPressSystem,
@@ -189,6 +188,10 @@ export function importUserMarkets(
 
       coverUrl: userIn.coverUrl,
       stillCoverUrl: userIn.stillCoverUrl,
+
+      // eh.
+      developer: userIn.developer,
+      pressUser: userIn.pressUser,
     };
 
     merge(out, "users", String(userOut.id), userOut);
@@ -323,6 +326,10 @@ export function importGlobalMarket(
       if (caveIn.buildId) {
         build = {
           id: caveIn.buildId,
+          parentBuildId: undefined,
+          state: undefined,
+          files: undefined,
+          user: undefined,
           userVersion: caveIn.buildUserVersion,
           version: null,
           updatedAt: null,
@@ -352,7 +359,7 @@ export function importGlobalMarket(
         /**
          * throw away old `executables: string[]` field,
          * let butler re-configure all games on next launch.
-         * 
+         *
          * alea jacta est!
          */
         verdict: null,

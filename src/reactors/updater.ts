@@ -28,7 +28,7 @@ import { messages } from "node-buse";
 import { IStore, IGameCredentials } from "../types/index";
 import { CheckUpdateItem, CheckUpdateResult } from "node-buse/lib/messages";
 import { client } from "../api/index";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 import lazyGetGame from "./lazy-get-game";
 
 function queueGameUpdate(

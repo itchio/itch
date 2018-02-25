@@ -1,8 +1,5 @@
 import { Store } from "redux";
 
-// shared with node-buse
-import { Game, User, OwnUser } from "ts-itchio-api";
-
 import { ICollection } from "../db/models/collection";
 import { IDownloadKey, IDownloadKeySummary } from "../db/models/download-key";
 import { ICaveSummary, ICave } from "../db/models/cave";
@@ -19,7 +16,7 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
-import { GameUpdate } from "node-buse/lib/messages";
+import { GameUpdate, Game, User } from "node-buse/lib/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -137,7 +134,7 @@ export interface IDBDeleteSpec {
 
 export interface ICredentials {
   key: string;
-  me: OwnUser;
+  me: User;
 }
 
 /**
@@ -402,7 +399,7 @@ export interface IRememberedSession {
   key: string;
 
   /** user info */
-  me: OwnUser;
+  me: User;
 
   /** date the user was last active in the app (this install) */
   lastConnected: number;
@@ -428,7 +425,7 @@ export interface ISessionCredentialsState {
   key: string;
 
   /** info on user using the app */
-  me: OwnUser;
+  me: User;
 }
 
 export interface ISessionFoldersState {

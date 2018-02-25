@@ -1,6 +1,6 @@
 import { Model, ensureExtends, Column } from "../model";
 
-import { OwnGame } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 export interface IGameBase {
   id: number | string;
@@ -10,8 +10,8 @@ export interface IGameBase {
 }
 
 type Columns = { [K in keyof typeof GameModelOriginal.columns]: any };
-ensureExtends<Columns, OwnGame>();
-ensureExtends<OwnGame, Partial<Columns>>();
+ensureExtends<Columns, Game>();
+ensureExtends<Game, Partial<Columns>>();
 
 const GameModelOriginal = {
   table: "games",

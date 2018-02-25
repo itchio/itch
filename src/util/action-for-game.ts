@@ -2,7 +2,7 @@ import { ClassificationAction } from "../types";
 import classificationActions from "../constants/classification-actions";
 
 import { ICaveSummary } from "../db/models/cave";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 /**
  * Returns whether a game can be "launched" or "opened", where "launching" means

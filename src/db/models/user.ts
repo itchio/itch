@@ -1,5 +1,5 @@
 import { Model, ensureExtends, Column } from "../model";
-import { OwnUser } from "ts-itchio-api";
+import { User } from "node-buse/lib/messages";
 
 const UserModelOriginal = {
   table: "users",
@@ -21,5 +21,5 @@ const UserModelOriginal = {
 export const UserModel: Model = UserModelOriginal;
 
 type Columns = { [K in keyof typeof UserModelOriginal.columns]: any };
-ensureExtends<Columns, OwnUser>();
-ensureExtends<OwnUser, Partial<Columns>>();
+ensureExtends<Columns, User>();
+ensureExtends<User, Partial<Columns>>();

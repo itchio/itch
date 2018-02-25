@@ -7,7 +7,7 @@ import actionForGame from "../util/action-for-game";
 import { ICaveSummary } from "../db/models/cave";
 
 import format from "../components/format";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 export default class TotalPlaytime extends React.PureComponent<
   IProps & IDerivedProps

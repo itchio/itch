@@ -10,7 +10,7 @@ import {
   ITabData,
   INavigatePayload,
 } from "../types";
-import { Game, User } from "ts-itchio-api";
+import { Game, User } from "node-buse/lib/messages";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {

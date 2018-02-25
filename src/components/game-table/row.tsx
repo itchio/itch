@@ -17,7 +17,7 @@ import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { createSelector } from "reselect";
 import { IRootState } from "../../types/index";
 import { connect } from "../connect";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 import { aggregateCaveSummaries } from "../../util/aggregate-cave-summaries";
 
@@ -76,9 +76,9 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
           } else if (c === "installed-size") {
             return (
               <div key={c} className={className(c)}>
-                {cave && cave.installedSize ? (
-                  fileSize(cave.installedSize)
-                ) : null}
+                {cave && cave.installedSize
+                  ? fileSize(cave.installedSize)
+                  : null}
               </div>
             );
           } else if (c === "published") {

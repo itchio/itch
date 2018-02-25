@@ -1,4 +1,4 @@
-import { GameSaleInfo } from "ts-itchio-api";
+import { Sale } from "node-buse/lib/messages";
 
 export function formatPrice(currency: string, value: number) {
   if (currency === "CAD") {
@@ -17,7 +17,7 @@ export function formatPrice(currency: string, value: number) {
   }
 }
 
-export function applySale(price: number, sale: GameSaleInfo) {
+export function applySale(price: number, sale: Sale) {
   if (sale && sale.rate !== 0) {
     // rate is [0,100], we want [0.0,1.0]
     let floatRate = sale.rate / 100;

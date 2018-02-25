@@ -1,5 +1,5 @@
 import { ClassificationAction } from "../types";
-import { GameClassification } from "ts-itchio-api";
+import { GameClassification } from "node-buse/lib/messages";
 
 export interface IClassificationActions {
   [key: string]: ClassificationAction;

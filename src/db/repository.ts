@@ -12,7 +12,7 @@ import { UserModel } from "./models/user";
 import { IProfile, ProfileModel } from "./models/profile";
 import { IGamePassword, GamePasswordModel } from "./models/game-password";
 import { IGameSecret, GameSecretModel } from "./models/game-secret";
-import { Game, User } from "ts-itchio-api";
+import { Game, User } from "node-buse/lib/messages";
 import { IDownloadItem } from "../types/index";
 import { DownloadModel } from "./models/download";
 

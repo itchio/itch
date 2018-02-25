@@ -29,7 +29,7 @@ import {
 } from "../types";
 
 import rootLogger, { devNull } from "../logger";
-import { Game, User } from "ts-itchio-api";
+import { Game, User } from "node-buse/lib/messages";
 import { ICave } from "./models/cave";
 import { ICollection } from "./models/collection";
 const logger = rootLogger.child({ name: "db" });
@@ -99,7 +99,9 @@ export class DB extends RepoContainer {
       const Model = this.modelMap[tableName];
       if (!Model) {
         logger.info(
-          `Dunno how to persist ${tableName}, skipping ${entityIds.length} records`
+          `Dunno how to persist ${tableName}, skipping ${
+            entityIds.length
+          } records`
         );
         continue;
       }
@@ -155,8 +157,9 @@ export class DB extends RepoContainer {
 
       if (numUpToDate < entityIds.length) {
         logger.debug(
-          `${entityIds.length -
-            numUpToDate}/${entityIds.length} new/modified ${tableName}`
+          `${entityIds.length - numUpToDate}/${
+            entityIds.length
+          } new/modified ${tableName}`
         );
       }
     }
@@ -202,7 +205,9 @@ export class DB extends RepoContainer {
       const Model = this.modelMap[tableName];
       if (!Model) {
         logger.info(
-          `Dunno how to persist ${tableName}, skipping delete of ${ids.length} items`
+          `Dunno how to persist ${tableName}, skipping delete of ${
+            ids.length
+          } items`
         );
         continue;
       }

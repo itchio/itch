@@ -7,7 +7,7 @@ import Context from "../../context";
 
 import { IStore, ICredentials, IRootState } from "../../types";
 import { IDownloadKey } from "../../db/models/download-key";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 const state = ({
   session: {

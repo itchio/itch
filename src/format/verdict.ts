@@ -1,10 +1,9 @@
-import { IConfigureResult } from "../util/butler";
-
 import { fileSize } from "./filesize";
+import { Verdict } from "node-buse/lib/messages";
 
 const emptyArr = [];
 
-export function formatVerdict(input: IConfigureResult) {
+export function formatVerdict(input: Verdict) {
   const result = [];
   result.push(`| ${fileSize(input.totalSize)} ${input.basePath}`);
 

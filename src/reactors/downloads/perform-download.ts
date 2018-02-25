@@ -133,6 +133,7 @@ export default async function performDownload(
             files,
             upload: caveIn.upload,
             build: caveIn.build,
+            game: null,
           },
         };
       });
@@ -213,17 +214,17 @@ export default async function performDownload(
             }
           }, deadline);
 
-          await client.call(messages.Operation.Cancel({ id }));
+          await client.call(messages.OperationCancel({ id }));
         })().catch(e => {
           logger.warn(`While discarding: ${e.stack}`);
         });
       });
 
       await client.call(
-        messages.Operation.Start({
+        messages.OperationStart({
           id,
           stagingFolder,
-          operation: "install",
+          operation: messages.Operation.Install,
           installParams: {
             game,
             installFolder: absoluteInstallFolder,

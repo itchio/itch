@@ -10,12 +10,12 @@ const logger = rootLogger.child({ name: "purchases" });
 import { actions } from "../actions";
 
 import { BrowserWindow } from "electron";
-import { OwnUser, Game } from "ts-itchio-api";
+import { User, Game } from "node-buse/lib/messages";
 
 /**
  * Creates a new browser window to initiate the purchase flow
  */
-function makePurchaseWindow(me: OwnUser, game: Game) {
+function makePurchaseWindow(me: User, game: Game) {
   const partition = `persist:itchio-${me.id}`;
 
   const win = new BrowserWindow({

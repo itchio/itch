@@ -2,8 +2,7 @@ import { Model, ensureExtends, Column } from "../model";
 
 import { PathScheme } from "../../os/paths";
 
-import { IConfigureResult } from "../../util/butler";
-import { Build, Upload } from "ts-itchio-api";
+import { Build, Upload, Verdict } from "node-buse/lib/messages";
 
 const CaveModelOriginal = {
   table: "caves",
@@ -130,7 +129,7 @@ export interface ICave extends ICaveSummary, ICaveLocation {
   pathScheme: PathScheme;
 
   /** result of the configure step */
-  verdict?: IConfigureResult;
+  verdict?: Verdict;
 }
 
 export interface ICaveWithDeprecated extends ICave {
@@ -139,14 +138,14 @@ export interface ICaveWithDeprecated extends ICave {
    * if not set, the associated upload wasn't wharf-enabled at the
    * time of the install. if set, there's a good chance we can apply
    * patches instead of fully downloading the new version.
-   * 
+   *
    * @deprecated use `build` instead
    */
   buildId: number;
 
   /**
    * user version for wharf build currently installed
-   * 
+   *
    * @deprecated use `build` instead
    */
   buildUserVersion: string;

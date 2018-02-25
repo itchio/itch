@@ -87,7 +87,7 @@ export async function cleanDownloadsSearch(store: IStore) {
       setupClient(client, logger, ctx);
 
       const res = await client.call(
-        messages.CleanDownloads.Search({ roots, whitelist })
+        messages.CleanDownloadsSearch({ roots, whitelist })
       );
 
       if (res.entries && res.entries.length > 0) {
@@ -127,7 +127,7 @@ export async function cleanDownloadsApply(
     try {
       setupClient(client, logger, ctx);
 
-      await client.call(messages.CleanDownloads.Apply({ entries }));
+      await client.call(messages.CleanDownloadsApply({ entries }));
     } catch (e) {
       logger.error(`While cleaning downloads: ${e.stack}`);
     } finally {

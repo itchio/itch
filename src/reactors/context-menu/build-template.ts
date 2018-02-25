@@ -11,7 +11,7 @@ import actionForGame from "../../util/action-for-game";
 import Context from "../../context";
 import { showInExplorerString } from "../../format/show-in-explorer";
 import { formatOperation } from "../../format/operation";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 export function concatTemplates(
   a: IMenuTemplate,
