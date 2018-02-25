@@ -16,7 +16,7 @@ import Context from "../../context/index";
 import { ICaveLocation } from "../../db/models/cave";
 
 import uuid from "../../util/uuid";
-import { Game, Upload } from "ts-itchio-api";
+import { Game, Upload } from "node-buse/lib/messages";
 
 import { map } from "underscore";
 import makeUploadButton from "../make-upload-button";

@@ -3,7 +3,7 @@ import { ICave } from "../db/models/cave";
 import { IRuntime } from ".";
 
 import { Logger } from "../logger";
-import { Game, Upload, Build } from "ts-itchio-api";
+import { Game, Upload, Build } from "node-buse/lib/messages";
 
 export type DownloadReason =
   | "install"

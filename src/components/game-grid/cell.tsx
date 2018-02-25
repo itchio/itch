@@ -14,7 +14,7 @@ import { IRootState } from "../../types/index";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import isCavePristine from "../../helpers/is-cave-pristine";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 class Cell extends React.PureComponent<IProps & IDerivedProps> {
   render() {

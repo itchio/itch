@@ -18,7 +18,7 @@ import styled, * as styles from "./styles";
 import { SidebarSection, SidebarHeading } from "./sidebar/styles";
 
 import format from "./format";
-import { OwnUser } from "ts-itchio-api";
+import { User } from "node-buse/lib/messages";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -185,7 +185,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   osx: boolean;
   sidebarWidth: number;
   fullscreen: boolean;
-  me: OwnUser;
+  me: User;
 
   tab: string;
   path: string;

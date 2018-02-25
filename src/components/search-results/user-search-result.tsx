@@ -6,7 +6,7 @@ import { actions } from "../../actions";
 import Cover from "../basics/cover";
 
 import styled from "../styles";
-import { User } from "ts-itchio-api";
+import { User } from "node-buse/lib/messages";
 
 const UserSearchResultDiv = styled.div`
   &:hover {

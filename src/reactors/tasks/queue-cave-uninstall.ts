@@ -15,7 +15,7 @@ import { promisedModal } from "../modals";
 
 import asTask from "./as-task";
 import { ICave } from "../../db/models/cave";
-import { Upload } from "ts-itchio-api";
+import { Upload } from "node-buse/lib/messages";
 import { modalWidgets } from "../../components/modal-widgets/index";
 
 import { performUninstall } from "../downloads/perform-uninstall";

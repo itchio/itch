@@ -19,7 +19,7 @@ const { messages } = capsule;
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
 import { registerProtocol, setupItchInternal } from "./html/itch-internal";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 import { Logger } from "../../logger/index";
 import { HTMLLaunchParams, HTMLLaunchResult } from "node-buse/lib/messages";
 

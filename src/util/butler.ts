@@ -11,6 +11,7 @@ import { Logger, devNull } from "../logger";
 import urls from "../constants/urls";
 import { formatExitCode } from "../format/exit-code";
 import { getBinPath } from "./ibrew";
+import { Verdict, Candidate } from "node-buse/lib/messages";
 
 const showDebug = process.env.MY_BUTLER_IS_MY_FRIEND === "1";
 const dumpAllOutput = process.env.MY_BUTLER_IS_MY_ENEMY === "1";
@@ -392,40 +393,6 @@ async function elfprops(opts: IElfPropsOpts): Promise<IElfPropsResult> {
   return await butler<IElfPropsResult>(opts, "elfprops", args);
 }
 
-export interface IConfigureResult {
-  basePath: string;
-  totalSize: number;
-  candidates?: ICandidate[];
-}
-
-export type Flavor =
-  | "linux"
-  | "macos"
-  | "app-macos"
-  | "windows"
-  | "script"
-  | "windows-script"
-  | "jar"
-  | "html"
-  | "love";
-
-export type Arch = "386" | "amd64";
-
-export interface ICandidate {
-  path: string;
-  depth: number;
-  flavor: Flavor;
-  arch?: Arch;
-  size: number;
-  windowsInfo?: {
-    gui?: boolean;
-    installerType?: string;
-  };
-  scriptInfo?: {
-    interpreter?: string;
-  };
-}
-
 export interface IConfigureOpts extends IButlerOpts {
   path: string;
   osFilter?: string;
@@ -433,7 +400,7 @@ export interface IConfigureOpts extends IButlerOpts {
   noFilter?: boolean;
 }
 
-async function configure(opts: IConfigureOpts): Promise<IConfigureResult> {
+async function configure(opts: IConfigureOpts): Promise<Verdict> {
   const { path, logger } = opts;
   let args = [path];
   if (opts.osFilter) {
@@ -447,10 +414,10 @@ async function configure(opts: IConfigureOpts): Promise<IConfigureResult> {
   }
 
   logger.info(`launching butler with args: ${JSON.stringify(args)}`);
-  return await butler<IConfigureResult>(opts, "configure", args);
+  return await butler<Verdict>(opts, "configure", args);
 }
 
-async function configureSingle(opts: IConfigureOpts): Promise<ICandidate> {
+async function configureSingle(opts: IConfigureOpts): Promise<Candidate> {
   const result = await configure(opts);
   if (result) {
     return first(result.candidates);

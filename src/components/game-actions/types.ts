@@ -2,7 +2,7 @@ import { ICave } from "../../db/models/cave";
 import { IDownloadKey } from "../../db/models/download-key";
 
 import { ClassificationAction, ITask, IDownloadItem } from "../../types";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 export interface IActionsInfo {
   cave: ICave;

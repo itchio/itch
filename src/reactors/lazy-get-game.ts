@@ -4,7 +4,7 @@ import client from "../api";
 
 import Context from "../context";
 import { getGameCredentialsForId } from "./downloads/get-game-credentials";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 export default async function lazyGetGame(
   ctx: Context,

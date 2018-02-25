@@ -40,7 +40,7 @@ import {
 const DUMP_API_CALLS = process.env.LET_ME_IN === "1";
 import { makeLogger, devNull } from "../logger";
 import { normalize } from "idealizr";
-import { BuildFileType } from "ts-itchio-api";
+import { BuildFileType } from "node-buse/lib/messages";
 const logger = DUMP_API_CALLS ? makeLogger({}) : devNull;
 
 type HTTPMethod = "get" | "head" | "post";
@@ -72,7 +72,7 @@ export class Client {
 
   /**
    * Make a `method` http request to `path`, passing `data` as parameters (GET, POST body, etc.)
-   * 
+   *
    * The body is:
    *   - transformed is transformers are passed
    *   - normalized if a schema is passed
@@ -94,9 +94,9 @@ export class Client {
 
     const shortPath = path.replace(/^\/[^\/]*\//, "");
     logger.info(
-      `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${shortPath} ${data
-        ? `with ${JSON.stringify(data)}`
-        : ""}, ${fileSize(resp.size)} response`
+      `${t2 - t1}ms wait, ${t3 - t2}ms http, ${method} ${shortPath} ${
+        data ? `with ${JSON.stringify(data)}` : ""
+      }, ${fileSize(resp.size)} response`
     );
 
     if (resp.statusCode !== 200) {

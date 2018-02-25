@@ -11,7 +11,7 @@ import {
 } from "../../types";
 
 import { showInExplorerString } from "../../format/show-in-explorer";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 export type ActionType = "secondary" | "separator" | "info";
 

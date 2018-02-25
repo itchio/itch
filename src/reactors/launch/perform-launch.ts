@@ -12,7 +12,7 @@ import getGameCredentials from "../downloads/get-game-credentials";
 import { IRuntime, Cancelled, ILocalizedString } from "../../types";
 
 import { promisedModal } from "../modals";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 import {
   modalWidgets,
   ITypedModal,

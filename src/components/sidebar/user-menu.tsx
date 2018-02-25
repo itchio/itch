@@ -11,7 +11,7 @@ import urls from "../../constants/urls";
 import styled, * as styles from "../styles";
 import Filler from "../basics/filler";
 
-import { OwnUser } from "ts-itchio-api";
+import { User } from "node-buse/lib/messages";
 import { actions } from "../../actions/index";
 
 const UserMenuDiv = styled.div`
@@ -156,7 +156,7 @@ interface IProps {}
 const actionCreators = actionCreatorsList("popupContextMenu");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  me: OwnUser;
+  me: User;
   displayName?: string;
   username: string;
   coverUrl: string;

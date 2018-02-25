@@ -55,10 +55,10 @@ export async function performUninstall(opts: IUninstallOpts) {
         });
 
         await client.call(
-          messages.Operation.Start({
+          messages.OperationStart({
             id,
             stagingFolder,
-            operation: "uninstall",
+            operation: messages.Operation.Uninstall,
             uninstallParams: {
               installFolder: destPath,
             },

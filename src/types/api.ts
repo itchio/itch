@@ -1,4 +1,4 @@
-import { Game, OwnGame, User, OwnUser, Build, Upload } from "ts-itchio-api";
+import { Game, User, Build, Upload } from "node-buse/lib/messages";
 
 import {
   IUpgradePathItem,
@@ -9,7 +9,7 @@ import {
 } from ".";
 
 export interface IOwnGameSet {
-  [id: string]: OwnGame;
+  [id: string]: Game;
 }
 
 /** In API responses, the user object is nested - we normalize it later */
@@ -39,7 +39,7 @@ export interface IAPIKey {
 
 export interface IMeResult {
   /** extended user info */
-  user: OwnUser;
+  user: User;
 }
 
 export type ILoginKeyResult = IMeResult;

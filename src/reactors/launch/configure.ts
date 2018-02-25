@@ -1,4 +1,4 @@
-import butler, { IConfigureResult } from "../../util/butler";
+import butler from "../../util/butler";
 
 import * as paths from "../../os/paths";
 import { devNull } from "../../logger";
@@ -7,11 +7,12 @@ import Context from "../../context";
 import { formatVerdict } from "../../format/verdict";
 
 import { IConfigureOpts } from "../../types";
+import { Verdict } from "node-buse/lib/messages";
 
 export default async function configure(
   ctx: Context,
   opts: IConfigureOpts
-): Promise<IConfigureResult> {
+): Promise<Verdict> {
   const { cave, runtime } = opts;
   const logger = opts.logger.child({ name: "configure" });
 

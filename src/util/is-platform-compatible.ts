@@ -2,7 +2,7 @@ import * as os from "../os";
 import { camelify } from "../format";
 
 import classificationActions from "../constants/classification-actions";
-import { Game, GameType, GameClassification } from "ts-itchio-api";
+import { Game, GameType, GameClassification } from "node-buse/lib/messages";
 
 const platform = os.itchPlatform();
 const platformProp = camelify("p_" + platform);

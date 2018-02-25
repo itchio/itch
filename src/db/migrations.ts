@@ -4,7 +4,7 @@ import * as squel from "squel";
 import { importOldDatabases } from "./import-old-database";
 import { app } from "electron";
 import { ICaveWithDeprecated, CaveModel } from "./models/cave";
-import { Build } from "ts-itchio-api";
+import { Build } from "node-buse/lib/messages";
 
 // stolen from lapis, yay
 export default <IMigrations>{

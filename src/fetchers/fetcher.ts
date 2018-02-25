@@ -22,7 +22,7 @@ export enum FetchReason {
 
 import rootLogger, { Logger } from "../logger";
 import { Space } from "../helpers/space";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 import { ICollection } from "../db/models/collection";
 
 interface OptionalFetcherParams {

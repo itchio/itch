@@ -13,7 +13,7 @@ import { isAborted } from "../types";
 
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 import { modalWidgets } from "../components/modal-widgets/index";
 
 import { performLaunch } from "./launch/perform-launch";

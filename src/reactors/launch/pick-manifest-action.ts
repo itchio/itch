@@ -6,15 +6,15 @@ import { IStore, IModalButtonSpec } from "../../types";
 
 import { promisedModal } from "../../reactors/modals";
 
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 import { modalWidgets } from "../../components/modal-widgets/index";
-import { ManifestAction } from "node-buse/lib/messages";
+import { Action } from "node-buse/lib/messages";
 
 // TODO: support localized action names
 
 export async function pickManifestAction(
   store: IStore,
-  manifestActions: ManifestAction[],
+  manifestActions: Action[],
   game: Game
 ): Promise<string> {
   const buttons: IModalButtonSpec[] = [];

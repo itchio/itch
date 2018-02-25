@@ -29,7 +29,7 @@ export function setupClient(
   parentLogger: Logger,
   ctx: MinimalContext
 ) {
-  client.onNotification(messages.Operation.Progress, ({ params }) => {
+  client.onNotification(messages.OperationProgress, ({ params }) => {
     ctx.emitProgress(params);
   });
 

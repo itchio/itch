@@ -13,7 +13,7 @@ import { IStore, ITabParams, ICommonsState } from "../types";
 import isPlatformCompatible from "../util/is-platform-compatible";
 
 import { filter, sortBy as sortedBy } from "underscore";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 import { Space } from "../helpers/space";
 
 function getCaveSummary(commons: ICommonsState, game: Game): ICaveSummary {

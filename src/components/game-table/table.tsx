@@ -13,7 +13,7 @@ import { TableContainerDiv, TableDiv, ITableSizes } from "./table-styles";
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import HiddenIndicator from "../hidden-indicator";
 import format from "../format";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 import { gameEvolvePayload } from "../../util/navigation";
 
 const rowHeight = 70;

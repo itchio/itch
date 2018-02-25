@@ -32,7 +32,7 @@ import {
   IEvolveTabPayload,
   INavigateTabPayload,
 } from "../types/index";
-import { OwnUser, Game, Build, Upload, User } from "ts-itchio-api";
+import { Game, Build, Upload, User } from "node-buse/lib/messages";
 import { TaskName } from "../types/tasks";
 import { CleanDownloadsEntry, GameUpdate } from "node-buse/lib/messages";
 import { ICollection } from "../db/models/collection";
@@ -170,7 +170,7 @@ export const actions = wireActions({
     key: string;
 
     /** loginWithToken is used for remembered sessions - we already have user info for those */
-    me: OwnUser;
+    me: User;
   }>(),
   loginFailed: action<{
     /** the username we couldn't log in as (useful to prefill login form for retry) */
@@ -185,7 +185,7 @@ export const actions = wireActions({
     key: string;
 
     /** user info (with extra fields only we can see) */
-    me: OwnUser;
+    me: User;
   }>(),
 
   sessionReady: action<IRememberedSessionsState>(),

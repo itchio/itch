@@ -22,7 +22,7 @@ import {
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDurationAsMessage } from "../../format/datetime";
 import { Space } from "../../helpers/space";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 import { modalWidgets } from "../modal-widgets/index";
 
 interface ISortableHubSidebarItemProps {

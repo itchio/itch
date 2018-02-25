@@ -16,7 +16,7 @@ import { fromJSONField } from "../db/json-field";
 
 import styled from "./styles";
 import { IGameStatus } from "../helpers/get-game-status";
-import { Game } from "ts-itchio-api";
+import { Game } from "node-buse/lib/messages";
 
 const GameStatsDiv = styled.div`
   display: flex;
@@ -81,7 +81,8 @@ export default class GameStats extends React.PureComponent<IProps> {
         </GameStatsDiv>
       );
     } else {
-      const { minPrice, currency = "USD" } = game;
+      const { minPrice } = game;
+      const currency = "USD";
       const sale = fromJSONField(game.sale);
       const showPlatforms = classAction === "launch" && hasPlatforms(game);
 

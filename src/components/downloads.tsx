@@ -96,8 +96,8 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
       <DownloadsContentDiv>
         {this.renderFirstItem(firstItem)}
         {this.renderQueuedItems(queuedItems)}
-        {this.renderUpdates()}
         {this.renderRecentActivity()}
+        {this.renderUpdates()}
       </DownloadsContentDiv>
     );
   }

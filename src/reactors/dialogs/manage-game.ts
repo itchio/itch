@@ -51,7 +51,7 @@ export default function(watcher: Watcher, db: DB) {
       instance.onClient(async client => {
         try {
           const res = await client.call(
-            messages.Game.FindUploads({
+            messages.GameFindUploads({
               game,
               credentials: buseGameCredentials(credentials),
             })
