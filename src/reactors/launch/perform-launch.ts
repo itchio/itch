@@ -18,11 +18,11 @@ import {
   ITypedModal,
 } from "../../components/modal-widgets/index";
 import {
+  messages,
   setupClient,
   buseGameCredentials,
   makeButlerInstance,
-} from "../../util/buse-utils";
-import { messages } from "node-buse";
+} from "../../buse/index";
 import { shell, powerSaveBlocker } from "electron";
 import { PrereqStatus } from "node-buse/lib/messages";
 import { IPrereqsStateParams } from "../../components/modal-widgets/prereqs-state";

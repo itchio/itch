@@ -23,8 +23,11 @@ const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 import { ICave } from "../db/models/cave";
 import { toDateTimeField } from "../db/datetime-field";
 
-import { makeButlerInstance, buseGameCredentials } from "../util/buse-utils";
-import { messages } from "node-buse";
+import {
+  messages,
+  makeButlerInstance,
+  buseGameCredentials,
+} from "../buse/index";
 import { IStore, IGameCredentials } from "../types/index";
 import { CheckUpdateItem, CheckUpdateResult } from "node-buse/lib/messages";
 import { client } from "../api/index";
