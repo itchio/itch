@@ -370,27 +370,27 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
     const {
       intl,
       blockingOperation,
-      rememberedSessions = {},
+      rememberedSessions,
       stage,
       retrySetup,
     } = this.props;
 
     if (stage === "pick") {
-      const onLogin = (payload: typeof actions.loginWithToken.payload) => {
+      const onLogin = (payload: typeof actions.useSavedLogin.payload) => {
         const { username } = this.refs;
         if (username) {
-          (username as HTMLInputElement).value = payload.username;
+          (username as HTMLInputElement).value = payload.session.user.username;
         }
-        this.props.loginWithToken(payload);
+        this.props.useSavedLogin(payload);
       };
 
       return (
         <RememberedSessions>
           {map(
-            sortBy(rememberedSessions, x => -x.lastConnected),
-            (session, userId) => (
+            sortBy(rememberedSessions.sessions, x => -x.lastConnected),
+            session => (
               <RememberedSession
-                key={userId}
+                key={session.user.id}
                 session={session}
                 onLogin={onLogin}
               />
@@ -519,7 +519,7 @@ interface IProps {}
 
 const actionCreators = actionCreatorsList(
   "loginWithPassword",
-  "loginWithToken",
+  "useSavedLogin",
   "loginStartPicking",
   "loginStopPicking",
   "forgetSessionRequest",

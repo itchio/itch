@@ -34,13 +34,11 @@ export default function(watcher: Watcher) {
     if (page === "gate" && picking) {
       const rememberedSessions = store.getState().rememberedSessions;
       const mostRecentSession = sortBy(
-        rememberedSessions,
+        rememberedSessions.sessions,
         x => -x.lastConnected
       )[0];
       if (mostRecentSession) {
-        const { me, key } = mostRecentSession;
-        const { username } = me;
-        store.dispatch(actions.loginWithToken({ username, key, me }));
+        store.dispatch(actions.useSavedLogin({ session: mostRecentSession }));
       }
     }
   });

@@ -1,4 +1,4 @@
-import { Game, User, Build, Upload } from "node-buse/lib/messages";
+import { Game, User, Build, Upload } from "../buse/messages";
 
 import {
   IUpgradePathItem,

@@ -3,7 +3,6 @@ import login from "./login";
 import credentials from "./credentials";
 import navigation from "./navigation";
 import search from "./search";
-import folders from "./folders";
 import tabInstances from "./tab-instances";
 
 import { Reducer } from "redux";
@@ -14,7 +13,6 @@ const reducers: any = {
   credentials,
   navigation,
   search,
-  folders,
   tabInstances,
 };
 

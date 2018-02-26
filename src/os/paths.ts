@@ -97,6 +97,10 @@ export function preferencesPath(): string {
   return join(app.getPath("userData"), "preferences.json");
 }
 
+export function butlerDbPath(): string {
+  return join(app.getPath("userData"), "db", "butler.db");
+}
+
 export function prereqsPath(): string {
   return join(app.getPath("userData"), "prereqs");
 }

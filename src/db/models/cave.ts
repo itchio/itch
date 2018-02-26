@@ -2,7 +2,7 @@ import { Model, ensureExtends, Column } from "../model";
 
 import { PathScheme } from "../../os/paths";
 
-import { Build, Upload, Verdict } from "node-buse/lib/messages";
+import { Build, Upload, Verdict } from "../../buse/messages";
 
 const CaveModelOriginal = {
   table: "caves",

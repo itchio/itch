@@ -13,7 +13,7 @@ const logger = rootLogger.child({ name: "itch-internal" });
 
 export default function(watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
-    const userId = action.payload.me.id;
+    const userId = action.payload.session.user.id;
 
     logger.debug(`Setting up for user ${userId}`);
 

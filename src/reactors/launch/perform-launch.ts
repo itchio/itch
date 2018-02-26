@@ -12,7 +12,6 @@ import getGameCredentials from "../downloads/get-game-credentials";
 import { IRuntime, Cancelled, ILocalizedString } from "../../types";
 
 import { promisedModal } from "../modals";
-import { Game } from "node-buse/lib/messages";
 import {
   modalWidgets,
   ITypedModal,
@@ -24,7 +23,7 @@ import {
   makeButlerInstance,
 } from "../../buse/index";
 import { shell, powerSaveBlocker } from "electron";
-import { PrereqStatus } from "node-buse/lib/messages";
+import { Game, PrereqStatus } from "../../buse/messages";
 import { IPrereqsStateParams } from "../../components/modal-widgets/prereqs-state";
 
 import { pickManifestAction } from "./pick-manifest-action";

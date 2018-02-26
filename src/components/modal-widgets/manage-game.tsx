@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { ModalWidgetDiv } from "./modal-widget";
-import { Game, Upload } from "node-buse/lib/messages";
+import { Game, Upload } from "../../buse/messages";
 import { ICave } from "../../db/models/cave";
 
 import IconButton from "../basics/icon-button";

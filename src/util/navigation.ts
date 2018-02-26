@@ -10,7 +10,7 @@ import {
   ITabData,
   INavigatePayload,
 } from "../types";
-import { Game, User } from "node-buse/lib/messages";
+import { Game, User } from "../buse/messages";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {

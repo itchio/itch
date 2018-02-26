@@ -17,7 +17,7 @@ import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { createSelector } from "reselect";
 import { IRootState } from "../../types/index";
 import { connect } from "../connect";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../../buse/messages";
 
 import { aggregateCaveSummaries } from "../../util/aggregate-cave-summaries";
 

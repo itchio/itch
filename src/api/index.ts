@@ -40,7 +40,7 @@ import {
 const DUMP_API_CALLS = process.env.LET_ME_IN === "1";
 import { makeLogger, devNull } from "../logger";
 import { normalize } from "idealizr";
-import { BuildFileType } from "node-buse/lib/messages";
+import { BuildFileType } from "../buse/messages";
 const logger = DUMP_API_CALLS ? makeLogger({}) : devNull;
 
 type HTTPMethod = "get" | "head" | "post";

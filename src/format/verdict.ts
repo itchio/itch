@@ -1,5 +1,5 @@
 import { fileSize } from "./filesize";
-import { Verdict } from "node-buse/lib/messages";
+import { Verdict } from "../buse/messages";
 
 const emptyArr = [];
 

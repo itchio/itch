@@ -14,7 +14,7 @@ import lazyGetGame from "../lazy-get-game";
 import { DB } from "../../db";
 
 import asTask from "./as-task";
-import { Build } from "node-buse/lib/messages";
+import { Build } from "../../buse/messages";
 import { modalWidgets } from "../../components/modal-widgets/index";
 
 export default function(watcher: Watcher, db: DB) {

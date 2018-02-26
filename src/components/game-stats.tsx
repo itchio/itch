@@ -16,7 +16,7 @@ import { fromJSONField } from "../db/json-field";
 
 import styled from "./styles";
 import { IGameStatus } from "../helpers/get-game-status";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../buse/messages";
 
 const GameStatsDiv = styled.div`
   display: flex;

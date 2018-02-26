@@ -9,11 +9,11 @@ const initialState = {
 
 export default reducer<ISessionCredentialsState>(initialState, on => {
   on(actions.loginSucceeded, (state, action) => {
-    const { key, me } = action.payload;
+    const { session } = action.payload;
     return {
       ...state,
-      key,
-      me,
+      key: "DUMMY",
+      me: session.user,
     };
   });
 

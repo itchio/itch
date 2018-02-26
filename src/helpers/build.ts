@@ -1,4 +1,4 @@
-import { Build } from "node-buse/lib/messages";
+import { Build } from "../buse/messages";
 
 export function formatBuildVersion(build: Build): string {
   if (build) {

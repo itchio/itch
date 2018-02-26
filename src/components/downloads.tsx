@@ -21,7 +21,7 @@ import {
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
-import { GameUpdate } from "node-buse/lib/messages";
+import { GameUpdate } from "../buse/messages";
 import LoadingCircle from "./basics/loading-circle";
 
 const DownloadsDiv = styled.div`

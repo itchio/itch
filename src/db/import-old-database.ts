@@ -20,7 +20,7 @@ import { Logger } from "../logger";
 // for references on the now-dead marketdb
 
 import { DB } from ".";
-import { User, Game, Upload, Build } from "node-buse/lib/messages";
+import { User, Game, Upload, Build } from "../buse/messages";
 
 interface IImportOpts {
   db: DB;

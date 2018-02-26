@@ -1,5 +1,5 @@
 import { Model, ensureExtends, Column } from "../model";
-import { User } from "node-buse/lib/messages";
+import { User } from "../../buse/messages";
 
 const UserModelOriginal = {
   table: "users",

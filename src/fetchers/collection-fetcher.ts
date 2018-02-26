@@ -2,7 +2,7 @@ import { Fetcher, FetchReason } from "./fetcher";
 import getByIds from "../helpers/get-by-ids";
 import { indexBy, isEmpty, pluck } from "underscore";
 
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../buse/messages";
 import { fromDateTimeField } from "../db/datetime-field";
 
 const ea = [] as any[];

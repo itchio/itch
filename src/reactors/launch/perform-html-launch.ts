@@ -19,9 +19,8 @@ const { messages } = capsule;
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
 import { registerProtocol, setupItchInternal } from "./html/itch-internal";
-import { Game } from "node-buse/lib/messages";
+import { Game, HTMLLaunchParams, HTMLLaunchResult } from "../../buse/messages";
 import { Logger } from "../../logger/index";
-import { HTMLLaunchParams, HTMLLaunchResult } from "node-buse/lib/messages";
 
 interface HTMLLaunchOpts {
   ctx: Context;

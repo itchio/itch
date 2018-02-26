@@ -1,6 +1,6 @@
 import { Model, ensureExtends, Column } from "../model";
 
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../../buse/messages";
 
 export interface IGameBase {
   id: number | string;

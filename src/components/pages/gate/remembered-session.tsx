@@ -7,8 +7,7 @@ import IconButton from "../../basics/icon-button";
 import defaultImages from "../../../constants/default-images";
 
 import { actions } from "../../../actions";
-
-import { IRememberedSession } from "../../../types";
+import { Session } from "../../../buse/messages";
 
 import styled from "../../styles";
 
@@ -77,24 +76,20 @@ export class RememberedSession extends React.PureComponent<
   IProps & IDerivedProps
 > {
   render() {
-    const { session, loginWithToken, forgetSessionRequest } = this.props;
-    const { me, key } = session;
-    const { id, username, displayName, coverUrl = defaultImages.avatar } = me;
+    const { session, forgetSessionRequest } = this.props;
+    const { user } = session;
+    const { username, displayName, coverUrl = defaultImages.avatar } = user;
 
     const onForget = (e: React.MouseEvent<HTMLElement>) => {
       e.stopPropagation();
-      forgetSessionRequest({ id, username });
+      forgetSessionRequest({ session });
     };
 
     return (
       <RememberedSessionDiv
         className="remembered-session"
         onClick={() => {
-          const payload = { username, key, me };
-          if (this.props.onLogin) {
-            this.props.onLogin(payload);
-          }
-          loginWithToken(payload);
+          this.props.onLogin({ session });
         }}
       >
         <img className="avatar" src={coverUrl} />
@@ -122,14 +117,11 @@ export class RememberedSession extends React.PureComponent<
 }
 
 interface IProps {
-  session: IRememberedSession;
-  onLogin?: (payload: typeof actions.loginWithToken.payload) => void;
+  session: Session;
+  onLogin: (payload: typeof actions.useSavedLogin.payload) => void;
 }
 
-const actionCreators = actionCreatorsList(
-  "loginWithToken",
-  "forgetSessionRequest"
-);
+const actionCreators = actionCreatorsList("forgetSessionRequest");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 

@@ -29,9 +29,9 @@ import {
   buseGameCredentials,
 } from "../buse/index";
 import { IStore, IGameCredentials } from "../types/index";
-import { CheckUpdateItem, CheckUpdateResult } from "node-buse/lib/messages";
+import { CheckUpdateItem, CheckUpdateResult } from "../buse/messages";
 import { client } from "../api/index";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../buse/messages";
 import lazyGetGame from "./lazy-get-game";
 
 function queueGameUpdate(

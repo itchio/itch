@@ -11,8 +11,8 @@ import {
 import isPlatformCompatible from "../util/is-platform-compatible";
 import memoize from "../util/lru-memoize";
 import { TaskName, DownloadReason } from "../types/tasks";
-import { Game } from "node-buse/lib/messages";
-import { GameUpdate } from "node-buse/lib/messages";
+import { Game } from "../buse/messages";
+import { GameUpdate } from "../buse/messages";
 
 /**
  * What type of access we have to the game - do we own it,

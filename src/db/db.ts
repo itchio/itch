@@ -29,7 +29,7 @@ import {
 } from "../types";
 
 import rootLogger, { devNull } from "../logger";
-import { Game, User } from "node-buse/lib/messages";
+import { Game, User } from "../buse/messages";
 import { ICave } from "./models/cave";
 import { ICollection } from "./models/collection";
 const logger = rootLogger.child({ name: "db" });

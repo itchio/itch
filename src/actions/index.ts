@@ -7,7 +7,6 @@ import {
   IModalAction,
   ISetupOperation,
   IRememberedSessionsState,
-  IRememberedSession,
   IItchAppTabs,
   ITabParams,
   IMenuTemplate,
@@ -32,9 +31,16 @@ import {
   IEvolveTabPayload,
   INavigateTabPayload,
 } from "../types/index";
-import { Game, Build, Upload, User } from "node-buse/lib/messages";
+import {
+  Game,
+  Build,
+  Upload,
+  User,
+  CleanDownloadsEntry,
+  GameUpdate,
+  Session,
+} from "../buse/messages";
 import { TaskName } from "../types/tasks";
-import { CleanDownloadsEntry, GameUpdate } from "node-buse/lib/messages";
 import { ICollection } from "../db/models/collection";
 import {
   ITypedModal,
@@ -162,15 +168,8 @@ export const actions = wireActions({
     /** the 2FA totp code entered by user */
     totpCode?: string;
   }>(),
-  loginWithToken: action<{
-    /** the username or e-mail for the itch.io account to log in as */
-    username: string;
-
-    /** an API token for the itch.io account to log in as */
-    key: string;
-
-    /** loginWithToken is used for remembered sessions - we already have user info for those */
-    me: User;
+  useSavedLogin: action<{
+    session: Session;
   }>(),
   loginFailed: action<{
     /** the username we couldn't log in as (useful to prefill login form for retry) */
@@ -181,35 +180,19 @@ export const actions = wireActions({
   }>(),
   loginCancelled: action<{}>(),
   loginSucceeded: action<{
-    /** API key we just validated */
-    key: string;
-
-    /** user info (with extra fields only we can see) */
-    me: User;
+    /** Session we just logged in as */
+    session: Session;
   }>(),
 
-  sessionReady: action<IRememberedSessionsState>(),
+  sessionReady: action<{}>(),
   sessionsRemembered: action<IRememberedSessionsState>(),
-  sessionUpdated: action<{
-    /** the session to update (user id) */
-    id: string;
-
-    /** new/updated fields (can't delete fields) */
-    record: IRememberedSession;
-  }>(),
   forgetSessionRequest: action<{
-    /** the session to forget (user id) */
-    id: number;
-
-    /** username for the session we want to forget */
-    username: string;
+    /** Session to forget */
+    session: Session;
   }>(),
   forgetSession: action<{
-    /** the session to forget (user id) */
-    id: number;
-
-    /** username for the session we want to forget */
-    username: string;
+    /** Session to forget */
+    session: Session;
   }>(),
 
   changeUser: action<{}>(),

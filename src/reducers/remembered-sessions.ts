@@ -1,4 +1,4 @@
-import { omit } from "underscore";
+import { filter } from "underscore";
 
 import { actions } from "../actions";
 import reducer from "./reducer";
@@ -13,19 +13,11 @@ export default reducer<IRememberedSessionsState>(initialState, on => {
     return sessions;
   });
 
-  on(actions.sessionUpdated, (state, action) => {
-    const { id, record } = action.payload;
+  on(actions.forgetSession, (state, action) => {
+    const { session } = action.payload;
     return {
       ...state,
-      [id]: {
-        ...state[id] || {},
-        ...record,
-      },
+      sessions: filter(state.sessions, x => x.id != session.id),
     };
-  });
-
-  on(actions.forgetSession, (state, action) => {
-    const { id } = action.payload;
-    return omit(state, "" + id);
   });
 });

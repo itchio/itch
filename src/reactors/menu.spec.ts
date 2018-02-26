@@ -35,8 +35,11 @@ suite(__filename, s => {
 
     await w.dispatchAndWaitImmediate(
       actions.loginSucceeded({
-        key: "hello",
-        me: {} as any,
+        session: {
+          id: -1,
+          user: {} as any,
+          lastConnected: null,
+        },
       })
     );
 

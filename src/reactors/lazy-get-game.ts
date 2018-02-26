@@ -4,7 +4,7 @@ import client from "../api";
 
 import Context from "../context";
 import { getGameCredentialsForId } from "./downloads/get-game-credentials";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../buse/messages";
 
 export default async function lazyGetGame(
   ctx: Context,

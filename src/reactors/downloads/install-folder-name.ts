@@ -1,4 +1,4 @@
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../../buse/messages";
 import * as url from "url";
 import Context from "../../context/index";
 import { ICaveLocation } from "../../db/models/cave";

@@ -16,7 +16,7 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
-import { GameUpdate, Game, User } from "node-buse/lib/messages";
+import { GameUpdate, Game, User, Session } from "../buse/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -394,25 +394,13 @@ export interface ISetupState {
   blockingOperation: ISetupOperation;
 }
 
-export interface IRememberedSession {
-  /** API key */
-  key: string;
-
-  /** user info */
-  me: User;
-
-  /** date the user was last active in the app (this install) */
-  lastConnected: number;
-}
-
 export interface IRememberedSessionsState {
-  [id: string]: IRememberedSession;
+  sessions: Session[];
 }
 
 export interface ISessionState {
   /** collection freshness information */
   credentials: ISessionCredentialsState;
-  folders: ISessionFoldersState;
   login: ISessionLoginState;
   navigation: ISessionNavigationState;
   search: ISessionSearchState;
@@ -426,11 +414,6 @@ export interface ISessionCredentialsState {
 
   /** info on user using the app */
   me: User;
-}
-
-export interface ISessionFoldersState {
-  /** path where user-specific data is stored, such as their credentials */
-  libraryDir: string;
 }
 
 export interface ISessionLoginState {

@@ -3,7 +3,7 @@ import { IDownloadKey } from "../../db/models/download-key";
 import Context from "../../context";
 
 import { filter, findWhere, first } from "underscore";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../../buse/messages";
 
 // TODO: handle passwords & secrets as well.
 

@@ -1,5 +1,5 @@
 import { ClassificationAction } from "../types";
-import { GameClassification } from "node-buse/lib/messages";
+import { GameClassification } from "../buse/messages";
 
 export interface IClassificationActions {
   [key: string]: ClassificationAction;

@@ -1,7 +1,7 @@
 import suite from "../test-suite";
 
 import { formatVerdict } from "./verdict";
-import { Arch, Flavor } from "node-buse/lib/messages";
+import { Arch, Flavor } from "../buse/messages";
 
 suite(__filename, s => {
   s.case("truncate", t => {

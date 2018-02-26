@@ -11,7 +11,7 @@ import { Logger, devNull } from "../logger";
 import urls from "../constants/urls";
 import { formatExitCode } from "../format/exit-code";
 import { getBinPath } from "./ibrew";
-import { Verdict, Candidate } from "node-buse/lib/messages";
+import { Verdict, Candidate } from "../buse/messages";
 
 const showDebug = process.env.MY_BUTLER_IS_MY_FRIEND === "1";
 const dumpAllOutput = process.env.MY_BUTLER_IS_MY_ENEMY === "1";

@@ -26,10 +26,13 @@ suite(__filename, s => {
 
       w.store.dispatch(
         actions.loginSucceeded({
-          key: "wallop",
-          me: {
+          session: {
             id: 123,
-          } as any,
+            lastConnected: null,
+            user: {
+              id: 123,
+            } as any,
+          },
         })
       );
 

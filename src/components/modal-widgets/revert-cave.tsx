@@ -16,7 +16,7 @@ import styled from "../styles";
 import { lighten } from "polished";
 import { MONTH_YEAR_FORMAT, DAY_MONTH_FORMAT } from "../../format/index";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
-import { Game, Build } from "node-buse/lib/messages";
+import { Game, Build } from "../../buse/messages";
 import { IModalWidgetProps } from "./index";
 
 const BuildListDiv = styled.div`

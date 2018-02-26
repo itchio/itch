@@ -6,9 +6,8 @@ import { IStore, IModalButtonSpec } from "../../types";
 
 import { promisedModal } from "../../reactors/modals";
 
-import { Game } from "node-buse/lib/messages";
+import { Game, Action } from "../../buse/messages";
 import { modalWidgets } from "../../components/modal-widgets/index";
-import { Action } from "node-buse/lib/messages";
 
 // TODO: support localized action names
 

@@ -10,7 +10,7 @@ const logger = rootLogger.child({ name: "purchases" });
 import { actions } from "../actions";
 
 import { BrowserWindow } from "electron";
-import { User, Game } from "node-buse/lib/messages";
+import { User, Game } from "../buse/messages";
 
 /**
  * Creates a new browser window to initiate the purchase flow

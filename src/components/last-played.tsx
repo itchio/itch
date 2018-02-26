@@ -6,7 +6,7 @@ import actionForGame from "../util/action-for-game";
 import { ICaveSummary } from "../db/models/cave";
 
 import TimeAgo from "./basics/time-ago";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../buse/messages";
 
 export default class LastPlayed extends React.PureComponent<
   IProps & IDerivedProps

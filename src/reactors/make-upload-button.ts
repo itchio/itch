@@ -4,7 +4,7 @@ import platformData from "../constants/platform-data";
 import { toDateTimeField } from "../db/datetime-field";
 
 import { ILocalizedString, IModalButtonTag } from "../types";
-import { Upload } from "node-buse/lib/messages";
+import { Upload } from "../buse/messages";
 
 interface IUploadButton {
   label: ILocalizedString;

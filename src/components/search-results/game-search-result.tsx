@@ -16,7 +16,7 @@ import styled, * as styles from "../styles";
 import { actions } from "../../actions";
 import PlatformIcons from "../basics/platform-icons";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../../buse/messages";
 
 const StyledPlatformIcons = styled(PlatformIcons)`
   -webkit-filter: brightness(90%);

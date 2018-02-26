@@ -7,7 +7,7 @@ import LoadingCircle from "../basics/loading-circle";
 
 import format from "../format";
 import { IModalWidgetProps } from "./index";
-import { PrereqStatus } from "node-buse/lib/messages";
+import { PrereqStatus } from "../../buse/messages";
 
 class PrereqsState extends React.PureComponent<IProps> {
   render() {

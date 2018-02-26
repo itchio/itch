@@ -7,7 +7,7 @@ import Context from "../../context";
 import { formatVerdict } from "../../format/verdict";
 
 import { IConfigureOpts } from "../../types";
-import { Verdict } from "node-buse/lib/messages";
+import { Verdict } from "../../buse/messages";
 
 export default async function configure(
   ctx: Context,
