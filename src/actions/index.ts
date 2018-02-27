@@ -186,6 +186,7 @@ export const actions = wireActions({
 
   sessionReady: action<{}>(),
   sessionsRemembered: action<IRememberedSessionsState>(),
+  sessionsRememberedFirstTime: action<{}>(),
   forgetSessionRequest: action<{
     /** Session to forget */
     session: Session;

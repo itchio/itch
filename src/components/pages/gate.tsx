@@ -14,6 +14,7 @@ import LoadingCircle from "../basics/loading-circle";
 import Link from "../basics/link";
 import Button from "../basics/button";
 import Filler from "../basics/filler";
+import TitleBar from "../title-bar";
 
 import { reportIssue, IReportIssueOpts } from "../../util/crash-reporter";
 
@@ -257,6 +258,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <GateDiv className={classNames({ disabled })} data-stage={stage}>
+        <TitleBar tab="login" />
         <section className="top-filler" />
         <section className="logo">
           <img

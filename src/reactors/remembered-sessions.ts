@@ -9,17 +9,27 @@ const TOKEN_FILE_NAME = "token.json";
 
 import { modalWidgets } from "../components/modal-widgets/index";
 import { withButlerClient, messages } from "../buse/index";
+import { IStore } from "../types/index";
 
 export function getTokenPath(userId: string) {
   return ospath.join(usersPath(), userId, TOKEN_FILE_NAME);
 }
 
+async function fetchRememberedSessions(store: IStore) {
+  await withButlerClient(async client => {
+    const { sessions } = await client.call(messages.SessionList({}));
+    store.dispatch(actions.sessionsRemembered({ sessions }));
+  });
+}
+
 export default function(watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
-    await withButlerClient(async client => {
-      const { sessions } = await client.call(messages.SessionList({}));
-      store.dispatch(actions.sessionsRemembered({ sessions }));
-    });
+    await fetchRememberedSessions(store);
+  });
+
+  watcher.on(actions.logout, async (store, action) => {
+    await fetchRememberedSessions(store);
+    store.dispatch(actions.sessionsRememberedFirstTime({}));
   });
 
   watcher.on(actions.forgetSessionRequest, async (store, action) => {

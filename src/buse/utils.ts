@@ -29,6 +29,13 @@ export async function withButlerClient<T>(cb: WithCB<T>): Promise<T> {
       res = await cb(client);
     });
     await instance.promise();
+  } catch (e) {
+    console.log(`Caught butler error: ${e.stack}`);
+    if ((e as any).rpcError) {
+      const { rpcError } = e as any;
+      console.log(`Golang stack:\n${rpcError.data.stack}`);
+    }
+    throw e;
   } finally {
     instance.cancel();
   }

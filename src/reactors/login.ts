@@ -121,8 +121,8 @@ export default function(watcher: Watcher) {
     });
   });
 
-  watcher.on(actions.sessionsRemembered, async (store, action) => {
-    const rememberedSessions = action.payload;
+  watcher.on(actions.sessionsRememberedFirstTime, async (store, action) => {
+    const { rememberedSessions } = store.getState();
     const mostRecentSession = sortBy(
       rememberedSessions.sessions,
       x => -x.lastConnected
