@@ -27,6 +27,7 @@ import {
   messages,
   makeButlerInstance,
   buseGameCredentials,
+  setupLogging,
 } from "../buse/index";
 import { IStore, IGameCredentials } from "../types/index";
 import { CheckUpdateItem, CheckUpdateResult } from "../buse/messages";
@@ -97,6 +98,7 @@ async function performUpdateCheck(
 
   const instance = await makeButlerInstance();
   instance.onClient(async client => {
+    setupLogging(client, logger);
     try {
       client.onNotification(
         messages.GameUpdateAvailable,

@@ -20,13 +20,18 @@ export async function makeButlerInstance(): Promise<Instance> {
 
 export type WithCB<T> = (client: Client) => Promise<T>;
 
-export async function withButlerClient<T>(cb: WithCB<T>): Promise<T> {
+export async function withButlerClient<T>(
+  parentLogger: Logger,
+  cb: WithCB<T>
+): Promise<T> {
   let res: T;
   const instance = await makeButlerInstance();
 
   try {
     instance.onClient(async client => {
+      setupLogging(client, parentLogger);
       res = await cb(client);
+      instance.cancel();
     });
     await instance.promise();
   } catch (e) {
@@ -62,6 +67,10 @@ export function setupClient(
     ctx.emitProgress(params);
   });
 
+  setupLogging(client, parentLogger);
+}
+
+export function setupLogging(client: Client, parentLogger: Logger) {
   const logger = parentLogger.child({ name: "butler" });
 
   client.onNotification(messages.Log, ({ params }) => {

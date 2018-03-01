@@ -2,18 +2,17 @@ import { Fetcher } from "./fetcher";
 
 import { gameToTabData } from "../util/navigation";
 import { actions } from "../actions/index";
+import { withButlerClient, messages } from "../buse/index";
+import { Game } from "../buse/messages";
 
 export default class GameFetcher extends Fetcher {
   async work(): Promise<void> {
-    const { db } = this.ctx;
     const sp = this.space();
 
     let isInternal = sp.internalPage() === "games";
-
     const gameId = isInternal ? sp.firstPathNumber() : sp.numericId();
 
-    let localGame = db.games.findOneById(gameId);
-    let pushGame = (game: typeof localGame) => {
+    const pushGame = (game: Game) => {
       if (!game) {
         return;
       }
@@ -32,18 +31,21 @@ export default class GameFetcher extends Fetcher {
       }
       this.push(gameToTabData(game));
     };
-    pushGame(localGame);
 
-    const gameRes = await this.withApi(async api => await api.game(gameId));
-    pushGame(gameRes.entities.games[gameRes.result.gameId]);
+    await withButlerClient(this.logger, async client => {
+      client.onNotification(messages.FetchGameYield, async ({ params }) => {
+        pushGame(params.game);
+      });
 
-    // if the game is already in the DB, we'd like to
-    // update it with Fresh API Data (TM). this will also
-    // save related records such as the creator of the game,
-    // which is fine
-    if (localGame) {
-      db.saveMany(gameRes.entities);
-    }
+      await client.call(
+        messages.FetchGame({
+          // TODO: make this less terrible
+          credentials: { sessionId: this.ensureCredentials().me.id },
+          gameId,
+        })
+      );
+      this.debug("Done calling butler");
+    });
   }
 
   clean() {

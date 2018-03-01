@@ -72,6 +72,7 @@ export async function queueFetch(
   const ctx = new Context(store, db);
   fetcher.hook(ctx, tab, reason);
 
+  const t1 = Date.now();
   fetcher
     .run()
     .catch(e => {
@@ -79,6 +80,8 @@ export async function queueFetch(
       fetcher.logger.error(`failed: ${e.stack}`);
     })
     .then(() => {
+      const t2 = Date.now();
+      fetcher.logger.debug(`finished in ${(t2 - t1).toFixed()}ms`);
       delete fetching[tab];
 
       const nextReason = nextFetchReason[tab];

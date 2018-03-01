@@ -20,7 +20,7 @@ export default function(watcher: Watcher) {
     const { username, password } = action.payload;
     store.dispatch(actions.attemptLogin({}));
     try {
-      await withButlerClient(async client => {
+      await withButlerClient(logger, async client => {
         client.onRequest(messages.SessionRequestCaptcha, async ({ params }) => {
           const modalRes = await promisedModal(
             store,
@@ -97,13 +97,13 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.useSavedLogin, async (store, action) => {
-    await withButlerClient(async client => {
+    await withButlerClient(logger, async client => {
       store.dispatch(actions.attemptLogin({}));
 
       try {
         const { session } = await client.call(
           messages.SessionUseSavedLogin({
-            sessionID: action.payload.session.id,
+            sessionId: action.payload.session.id,
           })
         );
 

@@ -11,12 +11,15 @@ import { modalWidgets } from "../components/modal-widgets/index";
 import { withButlerClient, messages } from "../buse/index";
 import { IStore } from "../types/index";
 
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "remembered-sessions" });
+
 export function getTokenPath(userId: string) {
   return ospath.join(usersPath(), userId, TOKEN_FILE_NAME);
 }
 
 async function fetchRememberedSessions(store: IStore) {
-  await withButlerClient(async client => {
+  await withButlerClient(logger, async client => {
     const { sessions } = await client.call(messages.SessionList({}));
     store.dispatch(actions.sessionsRemembered({ sessions }));
   });
@@ -25,11 +28,11 @@ async function fetchRememberedSessions(store: IStore) {
 export default function(watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
     await fetchRememberedSessions(store);
+    store.dispatch(actions.sessionsRememberedFirstTime({}));
   });
 
   watcher.on(actions.logout, async (store, action) => {
     await fetchRememberedSessions(store);
-    store.dispatch(actions.sessionsRememberedFirstTime({}));
   });
 
   watcher.on(actions.forgetSessionRequest, async (store, action) => {
@@ -59,8 +62,8 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.forgetSession, async (store, action) => {
     const { session } = action.payload;
-    await withButlerClient(async client => {
-      await client.call(messages.SessionForget({ sessionID: session.id }));
+    await withButlerClient(logger, async client => {
+      await client.call(messages.SessionForget({ sessionId: session.id }));
     });
   });
 }

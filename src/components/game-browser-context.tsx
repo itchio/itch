@@ -44,7 +44,7 @@ export class GameBrowserContext extends React.PureComponent<
 
   render() {
     const { game, status } = this.props;
-    if (!game) {
+    if (!game || !game.id) {
       return <div />;
     }
 
