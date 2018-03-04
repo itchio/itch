@@ -439,5 +439,6 @@
     "download.outcome.installed": "instalado",
     "download.outcome.reverted": "cambiado a otra versión",
     "grid.empty_state.leader": "Todo está filtrado...",
-    "grid.item.open_file_location.osx": "Mostrar en Finder"
+    "grid.item.open_file_location.osx": "Mostrar en Finder",
+    "download.reason.reinstall": "para reinstalar"
 }
