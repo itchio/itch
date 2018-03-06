@@ -16,7 +16,7 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
-import { GameUpdate, Game, User, Session } from "../buse/messages";
+import { GameUpdate, Game, User, Profile } from "../buse/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -144,8 +144,8 @@ export interface IRootState {
   modals: IModalsState;
   system: ISystemState;
   setup: ISetupState;
-  rememberedSessions: IRememberedSessionsState;
-  session: ISessionState;
+  rememberedProfiles: IRememberedProfilesState;
+  profile: IProfileState;
   i18n: II18nState;
   ui: IUIState;
   selfUpdate: ISelfUpdateState;
@@ -394,21 +394,21 @@ export interface ISetupState {
   blockingOperation: ISetupOperation;
 }
 
-export interface IRememberedSessionsState {
-  sessions: Session[];
+export interface IRememberedProfilesState {
+  profiles: Profile[];
 }
 
-export interface ISessionState {
+export interface IProfileState {
   /** collection freshness information */
-  credentials: ISessionCredentialsState;
-  login: ISessionLoginState;
-  navigation: ISessionNavigationState;
-  search: ISessionSearchState;
+  credentials: IProfileCredentialsState;
+  login: IProfileLoginState;
+  navigation: IProfileNavigationState;
+  search: IProfileSearchState;
 
   tabInstances: TabDataTypes.ITabInstances;
 }
 
-export interface ISessionCredentialsState {
+export interface IProfileCredentialsState {
   /** API key */
   key: string;
 
@@ -416,7 +416,7 @@ export interface ISessionCredentialsState {
   me: User;
 }
 
-export interface ISessionLoginState {
+export interface IProfileLoginState {
   /**
    * true if the list of remembered sessions is shown,
    * false if the username/password form is shown.
@@ -436,7 +436,7 @@ export interface IOpenTabs {
 
 export type TabLayout = "grid" | "table";
 
-export interface ISessionNavigationState {
+export interface IProfileNavigationState {
   /** opened tabs */
   openTabs: IOpenTabs;
 
@@ -469,7 +469,7 @@ export interface ISearchResults {
   };
 }
 
-export interface ISessionSearchState {
+export interface IProfileSearchState {
   /** search suggestion */
   example: string;
 

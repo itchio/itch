@@ -225,21 +225,21 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.commandReload, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     withWebContents(store, tab, wc => {
       wc.reload();
     });
   });
 
   watcher.on(actions.commandStop, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     withWebContents(store, tab, wc => {
       wc.stop();
     });
   });
 
   watcher.on(actions.commandLocation, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     store.dispatch(
       actions.tabDataFetched({
         tab,
@@ -251,7 +251,7 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.commandBack, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     store.dispatch(
       actions.tabDataFetched({
         tab,
@@ -270,7 +270,7 @@ export default function(watcher: Watcher, db: DB) {
         bw.webContents.openDevTools({ mode: "detach" });
       }
     } else {
-      const { tab } = store.getState().session.navigation;
+      const { tab } = store.getState().profile.navigation;
       withWebContents(store, tab, wc => {
         wc.openDevTools({ mode: "bottom" });
       });

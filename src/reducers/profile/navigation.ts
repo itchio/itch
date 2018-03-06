@@ -1,6 +1,6 @@
 import { reject, omit, map, filter } from "underscore";
 
-import { ISessionNavigationState, ITabDataSave } from "../../types";
+import { IProfileNavigationState, ITabDataSave } from "../../types";
 
 import { actions } from "../../actions";
 import reducer from "../reducer";
@@ -18,9 +18,9 @@ const initialState = {
   loadingTabs: {},
   lastConstant: "itch://featured",
   tab: "itch://featured",
-} as ISessionNavigationState;
+} as IProfileNavigationState;
 
-export default reducer<ISessionNavigationState>(initialState, on => {
+export default reducer<IProfileNavigationState>(initialState, on => {
   on(actions.tabLoading, (state, action) => {
     const { tab, loading } = action.payload;
     if (loading) {

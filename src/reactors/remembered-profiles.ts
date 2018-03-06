@@ -12,44 +12,44 @@ import { withButlerClient, messages } from "../buse/index";
 import { IStore } from "../types/index";
 
 import rootLogger from "../logger";
-const logger = rootLogger.child({ name: "remembered-sessions" });
+const logger = rootLogger.child({ name: "remembered-profiles" });
 
 export function getTokenPath(userId: string) {
   return ospath.join(usersPath(), userId, TOKEN_FILE_NAME);
 }
 
-async function fetchRememberedSessions(store: IStore) {
+async function fetchRememberedProfiles(store: IStore) {
   await withButlerClient(logger, async client => {
-    const { sessions } = await client.call(messages.SessionList({}));
-    store.dispatch(actions.sessionsRemembered({ sessions }));
+    const { profiles } = await client.call(messages.ProfileList({}));
+    store.dispatch(actions.profilesRemembered({ profiles }));
   });
 }
 
 export default function(watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
-    await fetchRememberedSessions(store);
-    store.dispatch(actions.sessionsRememberedFirstTime({}));
+    await fetchRememberedProfiles(store);
+    store.dispatch(actions.profilesRememberedFirstTime({}));
   });
 
   watcher.on(actions.logout, async (store, action) => {
-    await fetchRememberedSessions(store);
+    await fetchRememberedProfiles(store);
   });
 
-  watcher.on(actions.forgetSessionRequest, async (store, action) => {
-    const { session } = action.payload;
-    const { username } = session.user;
+  watcher.on(actions.forgetProfileRequest, async (store, action) => {
+    const { profile } = action.payload;
+    const { username } = profile.user;
 
     store.dispatch(
       actions.openModal(
         modalWidgets.naked.make({
-          title: ["prompt.forget_session.title"],
-          message: ["prompt.forget_session.message", { username }],
-          detail: ["prompt.forget_session.detail"],
+          title: ["prompt.forget_profile.title"],
+          message: ["prompt.forget_profile.message", { username }],
+          detail: ["prompt.forget_profile.detail"],
           buttons: [
             {
-              id: "modal-forget-session",
-              label: ["prompt.forget_session.action"],
-              action: actions.forgetSession({ session }),
+              id: "modal-forget-profile",
+              label: ["prompt.forget_profile.action"],
+              action: actions.forgetProfile({ profile }),
               icon: "cross",
             },
             "cancel",
@@ -60,10 +60,10 @@ export default function(watcher: Watcher) {
     );
   });
 
-  watcher.on(actions.forgetSession, async (store, action) => {
-    const { session } = action.payload;
+  watcher.on(actions.forgetProfile, async (store, action) => {
+    const { profile } = action.payload;
     await withButlerClient(logger, async client => {
-      await client.call(messages.SessionForget({ sessionId: session.id }));
+      await client.call(messages.ProfileForget({ profileId: profile.id }));
     });
   });
 }

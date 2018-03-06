@@ -18,7 +18,7 @@ const logger = rootLogger.child({ name: "commons" });
 const emptyArr = [];
 
 function updateDownloadKeys(store: IStore, db: DB): IDownloadKeySummary[] {
-  const { credentials } = store.getState().session;
+  const { credentials } = store.getState().profile;
 
   const hasMeId = credentials.me && credentials.me.id;
   if (!hasMeId) {
@@ -57,7 +57,7 @@ function updateCaves(store: IStore, db: DB): ICaveSummary[] {
 }
 
 function updateMyGameIds(store: IStore, db: DB) {
-  const { credentials } = store.getState().session;
+  const { credentials } = store.getState().profile;
 
   const hasMeId = credentials.me && credentials.me.id;
   if (!hasMeId) {

@@ -141,7 +141,7 @@ export default connect<IProps>(Games, {
     return createSelector(
       (rs: IRootState) => Space.fromState(rs, tab),
       (rs: IRootState) => rs.preferences.layout,
-      (rs: IRootState) => rs.session.navigation.loadingTabs[tab] || false,
+      (rs: IRootState) => rs.profile.navigation.loadingTabs[tab] || false,
       createStructuredSelector({
         gameIds: (sp: Space, prefLayout) => sp.games().ids || ea,
         games: (sp: Space, prefLayout) => sp.games().set || eo,

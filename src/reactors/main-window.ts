@@ -398,8 +398,8 @@ export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) => {
       const getI18n = (rs: IRootState) => rs.i18n;
-      const getID = (rs: IRootState) => rs.session.navigation.tab;
-      const getTabInstance = (rs: IRootState) => rs.session.tabInstances;
+      const getID = (rs: IRootState) => rs.profile.navigation.tab;
+      const getTabInstance = (rs: IRootState) => rs.profile.tabInstances;
 
       const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>
         Space.fromInstance(tabData[id])

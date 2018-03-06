@@ -167,8 +167,8 @@ const Tab = connect<IProps>(injectIntl(TabBase), {
     let { tab } = initialProps;
 
     return createStructuredSelector({
-      tabInstance: (rs: IRootState) => rs.session.tabInstances[tab],
-      loading: (rs: IRootState) => !!rs.session.navigation.loadingTabs[tab],
+      tabInstance: (rs: IRootState) => rs.profile.tabInstances[tab],
+      loading: (rs: IRootState) => !!rs.profile.navigation.loadingTabs[tab],
       downloads: (rs: IRootState) => tab === "itch://downloads" && rs.downloads,
     });
   },

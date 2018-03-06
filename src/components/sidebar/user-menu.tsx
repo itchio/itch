@@ -165,7 +165,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 export default connect<IProps>(UserMenu, {
   state: () =>
     createStructuredSelector({
-      me: (rs: IRootState) => rs.session.credentials.me,
+      me: (rs: IRootState) => rs.profile.credentials.me,
     }),
   actionCreators,
 });

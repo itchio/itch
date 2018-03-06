@@ -40,6 +40,8 @@ const GameModelOriginal = {
     createdAt: Column.DateTime,
     publishedAt: Column.DateTime,
 
+    published: Column.Boolean,
+
     pOsx: Column.Boolean,
     pWindows: Column.Boolean,
     pLinux: Column.Boolean,

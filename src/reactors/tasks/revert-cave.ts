@@ -57,7 +57,7 @@ export default function(watcher: Watcher, db: DB) {
 
         const gameCredentials = getGameCredentials(ctx, game);
 
-        const credentials = store.getState().session.credentials;
+        const credentials = store.getState().profile.credentials;
         if (!credentials) {
           logger.error(`No credentials, cannot revert to build`);
           return;

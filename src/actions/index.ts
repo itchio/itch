@@ -6,7 +6,7 @@ import {
   ICommonsState,
   IModalAction,
   ISetupOperation,
-  IRememberedSessionsState,
+  IRememberedProfilesState,
   IItchAppTabs,
   ITabParams,
   IMenuTemplate,
@@ -38,7 +38,7 @@ import {
   User,
   CleanDownloadsEntry,
   GameUpdate,
-  Session,
+  Profile,
 } from "../buse/messages";
 import { TaskName } from "../types/tasks";
 import { ICollection } from "../db/models/collection";
@@ -153,7 +153,7 @@ export const actions = wireActions({
   setupDone: action<{}>(),
   retrySetup: action<{}>(),
 
-  // sessions
+  // login
 
   loginStartPicking: action<{}>(),
   loginStopPicking: action<{}>(),
@@ -169,7 +169,7 @@ export const actions = wireActions({
     totpCode?: string;
   }>(),
   useSavedLogin: action<{
-    session: Session;
+    profile: Profile;
   }>(),
   loginFailed: action<{
     /** the username we couldn't log in as (useful to prefill login form for retry) */
@@ -180,20 +180,20 @@ export const actions = wireActions({
   }>(),
   loginCancelled: action<{}>(),
   loginSucceeded: action<{
-    /** Session we just logged in as */
-    session: Session;
+    /** Profile we just logged in as */
+    profile: Profile;
   }>(),
 
-  sessionReady: action<{}>(),
-  sessionsRemembered: action<IRememberedSessionsState>(),
-  sessionsRememberedFirstTime: action<{}>(),
-  forgetSessionRequest: action<{
-    /** Session to forget */
-    session: Session;
+  profileReady: action<{}>(),
+  profilesRemembered: action<IRememberedProfilesState>(),
+  profilesRememberedFirstTime: action<{}>(),
+  forgetProfileRequest: action<{
+    /** Profile to forget */
+    profile: Profile;
   }>(),
-  forgetSession: action<{
-    /** Session to forget */
-    session: Session;
+  forgetProfile: action<{
+    /** Profile to forget */
+    profile: Profile;
   }>(),
 
   changeUser: action<{}>(),

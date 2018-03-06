@@ -35,7 +35,7 @@ suite(__filename, s => {
 
     await w.dispatchAndWaitImmediate(
       actions.loginSucceeded({
-        session: {
+        profile: {
           id: -1,
           user: {} as any,
           lastConnected: null,

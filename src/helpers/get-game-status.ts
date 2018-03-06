@@ -89,8 +89,8 @@ export default function getGameStatus(
   game: Game,
   cave?: ICaveSummary
 ): IGameStatus {
-  const { commons, session, tasks, downloads } = rs;
-  const { credentials } = session;
+  const { commons, profile, tasks, downloads } = rs;
+  const { credentials } = profile;
 
   let downloadKeys = getByIds(
     commons.downloadKeys,

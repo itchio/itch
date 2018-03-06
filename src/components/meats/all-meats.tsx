@@ -100,16 +100,16 @@ interface IDerivedProps {
 }
 
 const openTabsSelector = createSelector(
-  (rs: IRootState) => rs.session.navigation.openTabs,
+  (rs: IRootState) => rs.profile.navigation.openTabs,
   (openTabs: IOpenTabs) => [...openTabs.constant, ...openTabs.transient].sort()
 );
 
 export default connect<IProps>(AllMeats, {
   state: createStructuredSelector({
-    credentials: (rs: IRootState) => rs.session.credentials,
-    id: (rs: IRootState) => rs.session.navigation.tab,
+    credentials: (rs: IRootState) => rs.profile.credentials,
+    id: (rs: IRootState) => rs.profile.navigation.tab,
     openTabs: (rs: IRootState) => openTabsSelector(rs),
-    tabInstances: (rs: IRootState) => rs.session.tabInstances,
-    loadingTabs: (rs: IRootState) => rs.session.navigation.loadingTabs,
+    tabInstances: (rs: IRootState) => rs.profile.tabInstances,
+    loadingTabs: (rs: IRootState) => rs.profile.navigation.loadingTabs,
   }),
 });

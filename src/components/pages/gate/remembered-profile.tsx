@@ -7,13 +7,13 @@ import IconButton from "../../basics/icon-button";
 import defaultImages from "../../../constants/default-images";
 
 import { actions } from "../../../actions";
-import { Session } from "../../../buse/messages";
+import { Profile } from "../../../buse/messages";
 
 import styled from "../../styles";
 
 import format from "../../format";
 
-const RememberedSessionDiv = styled.div`
+const RememberedProfileDiv = styled.div`
   flex-shrink: 0;
   min-width: 300px;
   border-radius: 2px;
@@ -72,57 +72,57 @@ const RememberedSessionDiv = styled.div`
   }
 `;
 
-export class RememberedSession extends React.PureComponent<
+export class RememberedProfile extends React.PureComponent<
   IProps & IDerivedProps
 > {
   render() {
-    const { session, forgetSessionRequest } = this.props;
-    const { user } = session;
+    const { profile, forgetProfileRequest } = this.props;
+    const { user } = profile;
     const { username, displayName, coverUrl = defaultImages.avatar } = user;
 
     const onForget = (e: React.MouseEvent<HTMLElement>) => {
       e.stopPropagation();
-      forgetSessionRequest({ session });
+      forgetProfileRequest({ profile });
     };
 
     return (
-      <RememberedSessionDiv
-        className="remembered-session"
+      <RememberedProfileDiv
+        className="remembered-profile"
         onClick={() => {
-          this.props.onLogin({ session });
+          this.props.onLogin({ profile });
         }}
       >
         <img className="avatar" src={coverUrl} />
         <div className="rest">
           <p className="username">{displayName || username}</p>
           <p className="last-connected">
-            {format(["login.remembered_session.last_connected"])}{" "}
-            <TimeAgo date={session.lastConnected} />
+            {format(["login.remembered_profile.last_connected"])}{" "}
+            <TimeAgo date={profile.lastConnected} />
           </p>
         </div>
         <div className="filler" />
         <span
           data-rh-at="left"
-          data-rh={JSON.stringify(["prompt.forget_session.action"])}
+          data-rh={JSON.stringify(["prompt.forget_profile.action"])}
         >
           <IconButton
             icon="cross"
-            className="forget-session"
+            className="forget-profile"
             onClick={onForget}
           />
         </span>
-      </RememberedSessionDiv>
+      </RememberedProfileDiv>
     );
   }
 }
 
 interface IProps {
-  session: Session;
+  profile: Profile;
   onLogin: (payload: typeof actions.useSavedLogin.payload) => void;
 }
 
-const actionCreators = actionCreatorsList("forgetSessionRequest");
+const actionCreators = actionCreatorsList("forgetProfileRequest");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(RememberedSession, { actionCreators });
+export default connect<IProps>(RememberedProfile, { actionCreators });

@@ -168,7 +168,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 
 export default connect<{}>(injectIntl(Search), {
   state: (rs: IRootState) => ({
-    open: rs.session.search.open,
+    open: rs.profile.search.open,
   }),
   actionCreators,
 });

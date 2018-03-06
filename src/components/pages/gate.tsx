@@ -8,7 +8,7 @@ import { resolve } from "path";
 import urls from "../../constants/urls";
 
 import ErrorList from "./gate/error-list";
-import RememberedSession from "./gate/remembered-session";
+import RememberedProfile from "./gate/remembered-profile";
 import Icon from "../basics/icon";
 import LoadingCircle from "../basics/loading-circle";
 import Link from "../basics/link";
@@ -20,7 +20,7 @@ import { reportIssue, IReportIssueOpts } from "../../util/crash-reporter";
 
 import { actions } from "../../actions";
 
-import { ISetupOperation, IRememberedSessionsState } from "../../types";
+import { ISetupOperation, IRememberedProfilesState } from "../../types";
 
 import format, { formatString } from "../format";
 import { injectIntl, InjectedIntl } from "react-intl";
@@ -225,7 +225,7 @@ const Form = styled.form`
   }
 `;
 
-const RememberedSessions = styled.div`
+const RememberedProfiles = styled.div`
   animation: fade-in 0.2s;
 
   display: flex;
@@ -339,8 +339,8 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
         </section>
       );
     } else {
-      const { rememberedSessions = {} } = this.props;
-      const numSavedSessions = Object.keys(rememberedSessions).length;
+      const { rememberedProfiles = {} } = this.props;
+      const numSavedProfiles = Object.keys(rememberedProfiles).length;
 
       return (
         <section className="links">
@@ -353,7 +353,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
             label={format(["login.action.reset_password"])}
             onClick={() => openUrl({ url: urls.accountForgotPassword })}
           />
-          {numSavedSessions > 0
+          {numSavedProfiles > 0
             ? [
                 <span key="separator">{" · "}</span>,
                 <Link
@@ -372,7 +372,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
     const {
       intl,
       blockingOperation,
-      rememberedSessions,
+      rememberedProfiles,
       stage,
       retrySetup,
     } = this.props;
@@ -381,24 +381,24 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
       const onLogin = (payload: typeof actions.useSavedLogin.payload) => {
         const { username } = this.refs;
         if (username) {
-          (username as HTMLInputElement).value = payload.session.user.username;
+          (username as HTMLInputElement).value = payload.profile.user.username;
         }
         this.props.useSavedLogin(payload);
       };
 
       return (
-        <RememberedSessions>
+        <RememberedProfiles>
           {map(
-            sortBy(rememberedSessions.sessions, x => -x.lastConnected),
-            session => (
-              <RememberedSession
-                key={session.user.id}
-                session={session}
+            sortBy(rememberedProfiles.profiles, x => -x.lastConnected),
+            profile => (
+              <RememberedProfile
+                key={profile.user.id}
+                profile={profile}
                 onLogin={onLogin}
               />
             )
           )}
-        </RememberedSessions>
+        </RememberedProfiles>
       );
     }
 
@@ -524,7 +524,7 @@ const actionCreators = actionCreatorsList(
   "useSavedLogin",
   "loginStartPicking",
   "loginStopPicking",
-  "forgetSessionRequest",
+  "forgetProfileRequest",
   "retrySetup",
   "openUrl"
 );
@@ -533,24 +533,24 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   stage: string;
   errors: string[];
   blockingOperation?: ISetupOperation;
-  rememberedSessions: IRememberedSessionsState;
+  rememberedProfiles: IRememberedProfilesState;
 
   intl: InjectedIntl;
 };
 
 export default connect<IProps>(injectIntl(GatePage), {
   state: (state): Partial<IDerivedProps> => {
-    const { rememberedSessions, session } = state;
-    const { login } = session;
+    const { rememberedProfiles, profile } = state;
+    const { login } = profile;
 
-    if (!session.credentials.key) {
-      const hasSessions = Object.keys(rememberedSessions).length > 0;
+    if (!profile.credentials.key) {
+      const hasProfiles = Object.keys(rememberedProfiles).length > 0;
       const stage =
-        !login.blockingOperation && hasSessions && login.picking
+        !login.blockingOperation && hasProfiles && login.picking
           ? "pick"
           : "login";
       const { picking, ...stateProps } = login;
-      return { ...stateProps, stage, rememberedSessions };
+      return { ...stateProps, stage, rememberedProfiles };
     } else if (!state.setup.done) {
       const { done, ...stateProps } = state.setup;
       return { stage: "setup", ...stateProps };

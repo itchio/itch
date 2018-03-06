@@ -83,12 +83,12 @@ export class Fetcher {
   async run() {
     this.startedAt = Date.now();
 
-    const { session } = this.ctx.store.getState();
+    const { profile } = this.ctx.store.getState();
     if (
-      !session ||
-      !session.credentials ||
-      !session.credentials.me ||
-      !session.credentials.me.id
+      !profile ||
+      !profile.credentials ||
+      !profile.credentials.me ||
+      !profile.credentials.me.id
     ) {
       this.logger.info(`No credentials yet, skipping`);
       return;
@@ -208,8 +208,8 @@ export class Fetcher {
     throw new Retry(why);
   }
 
-  debug(msg: string, ...args: any[]) {
-    this.logger.debug(msg, ...args);
+  debug(msg: string) {
+    this.logger.debug(msg);
   }
 
   warrantsRemote(reason: FetchReason) {
@@ -222,12 +222,16 @@ export class Fetcher {
   }
 
   ensureCredentials(): ICredentials {
-    const { credentials } = this.ctx.store.getState().session;
+    const { credentials } = this.ctx.store.getState().profile;
     if (!credentials || !credentials.me) {
       this.retry("missing credentials");
     }
 
     return credentials;
+  }
+
+  profileId(): number {
+    return this.ensureCredentials().me.id;
   }
 
   private _space: Space;

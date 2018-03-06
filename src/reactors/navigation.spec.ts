@@ -22,7 +22,7 @@ suite(__filename, s => {
     const w = new TestWatcher();
     navigation(w);
 
-    let nav = () => w.store.getState().session.navigation;
+    let nav = () => w.store.getState().profile.navigation;
 
     t.same(nav().tab, "itch://featured");
 
@@ -47,8 +47,8 @@ suite(__filename, s => {
     const w = new TestWatcher();
     navigation(w);
 
-    let nav = () => w.store.getState().session.navigation;
-    let instances = () => w.store.getState().session.tabInstances;
+    let nav = () => w.store.getState().profile.navigation;
+    let instances = () => w.store.getState().profile.tabInstances;
 
     let constantTab = nav().tab;
 
@@ -84,8 +84,8 @@ suite(__filename, s => {
     const w = new TestWatcher();
     navigation(w);
 
-    let nav = () => w.store.getState().session.navigation;
-    let instances = () => w.store.getState().session.tabInstances;
+    let nav = () => w.store.getState().profile.navigation;
+    let instances = () => w.store.getState().profile.tabInstances;
 
     await w.dispatch(actions.navigate({ url: "https://itch.io" }));
     let tab = nav().tab;

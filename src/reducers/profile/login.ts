@@ -1,4 +1,4 @@
-import { ISessionLoginState } from "../../types";
+import { IProfileLoginState } from "../../types";
 import { actions } from "../../actions";
 import reducer from "../reducer";
 
@@ -6,9 +6,9 @@ const initialState = {
   picking: true,
   errors: [],
   blockingOperation: null,
-} as ISessionLoginState;
+} as IProfileLoginState;
 
-export default reducer<ISessionLoginState>(initialState, on => {
+export default reducer<IProfileLoginState>(initialState, on => {
   on(actions.attemptLogin, (state, action) => {
     return {
       ...state,

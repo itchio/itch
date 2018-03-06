@@ -77,7 +77,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.initiatePurchase, async (store, action) => {
     const { game } = action.payload;
 
-    const me = store.getState().session.credentials.me;
+    const me = store.getState().profile.credentials.me;
     const win = makePurchaseWindow(me, game);
 
     if (process.env.CAST_NO_SHADOW === "1") {

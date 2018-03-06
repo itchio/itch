@@ -6,7 +6,7 @@ import search from "./search";
 import tabInstances from "./tab-instances";
 
 import { Reducer } from "redux";
-import { ISessionState } from "../../types";
+import { IProfileState } from "../../types";
 
 const reducers: any = {
   login,
@@ -16,4 +16,4 @@ const reducers: any = {
   tabInstances,
 };
 
-export default combineReducers(reducers) as Reducer<ISessionState>;
+export default combineReducers(reducers) as Reducer<IProfileState>;

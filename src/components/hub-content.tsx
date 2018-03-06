@@ -6,7 +6,7 @@ import AllMeats from "./meats/all-meats";
 
 let FIRST_EVER_RENDER = true;
 
-import { ICredentials } from "../types";
+import { ICredentials, IRootState } from "../types";
 
 import styled from "./styles";
 
@@ -49,7 +49,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 
 export default connect<IProps>(HubContent, {
   state: createStructuredSelector({
-    credentials: state => state.session.credentials,
+    credentials: (rs: IRootState) => rs.profile.credentials,
   }),
   actionCreators,
 });

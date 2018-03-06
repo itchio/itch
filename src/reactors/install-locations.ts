@@ -219,7 +219,7 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.taskEnded, async (store, action) => {
-    const id = store.getState().session.navigation.tab;
+    const id = store.getState().profile.navigation.tab;
     if (id === "preferences") {
       store.dispatch(actions.queryFreeSpace({}));
     }
@@ -229,7 +229,7 @@ export default function(watcher: Watcher, db: DB) {
     makeSelector: (store, schedule) =>
       createSelector(
         (rs: IRootState) => rs.preferences.installLocations,
-        (rs: IRootState) => rs.session.navigation.tab,
+        (rs: IRootState) => rs.profile.navigation.tab,
         (installLocs, id) => {
           if (id === "preferences") {
             schedule.dispatch(actions.queryFreeSpace({}));

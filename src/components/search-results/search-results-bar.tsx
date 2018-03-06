@@ -257,12 +257,12 @@ interface IState {
 
 export default connect<IProps>(SearchResultBar, {
   state: createStructuredSelector({
-    open: (rs: IRootState) => rs.session.search.open,
-    loading: (rs: IRootState) => rs.session.search.loading,
-    highlight: (rs: IRootState) => rs.session.search.highlight,
-    query: (rs: IRootState) => rs.session.search.query,
-    results: (rs: IRootState) => rs.session.search.results,
-    example: (rs: IRootState) => rs.session.search.example,
+    open: (rs: IRootState) => rs.profile.search.open,
+    loading: (rs: IRootState) => rs.profile.search.loading,
+    highlight: (rs: IRootState) => rs.profile.search.highlight,
+    query: (rs: IRootState) => rs.profile.search.query,
+    results: (rs: IRootState) => rs.profile.search.results,
+    example: (rs: IRootState) => rs.profile.search.example,
   }),
   actionCreators,
 });

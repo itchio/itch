@@ -144,6 +144,6 @@ interface IDerivedProps {
 
 export default connect<IProps>(injectIntl(Layout), {
   state: createStructuredSelector({
-    page: (rs: IRootState) => rs.session.navigation.page,
+    page: (rs: IRootState) => rs.profile.navigation.page,
   }),
 });

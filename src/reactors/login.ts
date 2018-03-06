@@ -10,7 +10,7 @@ import * as urlParser from "url";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { withButlerClient, messages } from "../buse/index";
 import partitionForUser from "../util/partition-for-user";
-import { Session } from "../buse/messages";
+import { Profile } from "../buse/messages";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "login" });
@@ -21,7 +21,7 @@ export default function(watcher: Watcher) {
     store.dispatch(actions.attemptLogin({}));
     try {
       await withButlerClient(logger, async client => {
-        client.onRequest(messages.SessionRequestCaptcha, async ({ params }) => {
+        client.onRequest(messages.ProfileRequestCaptcha, async ({ params }) => {
           const modalRes = await promisedModal(
             store,
             modalWidgets.recaptchaInput.make({
@@ -41,7 +41,7 @@ export default function(watcher: Watcher) {
           }
         });
 
-        client.onRequest(messages.SessionRequestTOTP, async ({ params }) => {
+        client.onRequest(messages.ProfileRequestTOTP, async ({ params }) => {
           const modalRes = await promisedModal(
             store,
             modalWidgets.twoFactorInput.make({
@@ -74,8 +74,8 @@ export default function(watcher: Watcher) {
           }
         });
 
-        const { session, cookie } = await client.call(
-          messages.SessionLoginWithPassword({
+        const { profile, cookie } = await client.call(
+          messages.ProfileLoginWithPassword({
             username,
             password,
           })
@@ -83,13 +83,13 @@ export default function(watcher: Watcher) {
 
         if (cookie) {
           try {
-            await setCookie(session, cookie);
+            await setCookie(profile, cookie);
           } catch (e) {
             logger.error(`Could not set cookie: ${e.stack}`);
           }
         }
 
-        store.dispatch(actions.loginSucceeded({ session }));
+        store.dispatch(actions.loginSucceeded({ profile }));
       });
     } catch (e) {
       store.dispatch(actions.loginFailed({ username, errors: [e.message] }));
@@ -101,19 +101,19 @@ export default function(watcher: Watcher) {
       store.dispatch(actions.attemptLogin({}));
 
       try {
-        const { session } = await client.call(
-          messages.SessionUseSavedLogin({
-            sessionId: action.payload.session.id,
+        const { profile } = await client.call(
+          messages.ProfileUseSavedLogin({
+            profileId: action.payload.profile.id,
           })
         );
 
-        store.dispatch(actions.loginSucceeded({ session }));
+        store.dispatch(actions.loginSucceeded({ profile }));
       } catch (e) {
         // TODO: handle offline login
-        const originalSession = action.payload.session;
+        const originalProfile = action.payload.profile;
         store.dispatch(
           actions.loginFailed({
-            username: originalSession.user.username,
+            username: originalProfile.user.username,
             errors: e.errors || e.stack || e,
           })
         );
@@ -121,14 +121,14 @@ export default function(watcher: Watcher) {
     });
   });
 
-  watcher.on(actions.sessionsRememberedFirstTime, async (store, action) => {
-    const { rememberedSessions } = store.getState();
-    const mostRecentSession = sortBy(
-      rememberedSessions.sessions,
+  watcher.on(actions.profilesRememberedFirstTime, async (store, action) => {
+    const { rememberedProfiles } = store.getState();
+    const mostRecentProfile = sortBy(
+      rememberedProfiles.profiles,
       x => -x.lastConnected
     )[0];
-    if (mostRecentSession) {
-      store.dispatch(actions.useSavedLogin({ session: mostRecentSession }));
+    if (mostRecentProfile) {
+      store.dispatch(actions.useSavedLogin({ profile: mostRecentProfile }));
     }
   });
 }
@@ -136,8 +136,8 @@ export default function(watcher: Watcher) {
 const YEAR_IN_SECONDS =
   365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
 
-async function setCookie(itchSession: Session, cookie: Map<string, string>) {
-  const partition = partitionForUser(String(itchSession.user.id));
+async function setCookie(profile: Profile, cookie: Map<string, string>) {
+  const partition = partitionForUser(String(profile.user.id));
   const session = require("electron").session.fromPartition(partition, {
     cache: false,
   });

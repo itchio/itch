@@ -130,7 +130,7 @@ function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
 }
 
 const queueCleanup = throttle((store: IStore) => {
-  const validKeys = new Set(Object.keys(store.getState().session.tabInstances));
+  const validKeys = new Set(Object.keys(store.getState().profile.tabInstances));
 
   const allKeys = union(
     Object.keys(lastFetchers),
@@ -184,13 +184,13 @@ export default function(watcher: Watcher, db: DB) {
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {
-      const currentTab = store.getState().session.navigation.tab;
+      const currentTab = store.getState().profile.navigation.tab;
       queueFetch(store, db, currentTab, FetchReason.WindowFocused);
     }
   });
 
   watcher.on(actions.commonsUpdated, async (store, action) => {
-    const currentTab = store.getState().session.navigation.tab;
+    const currentTab = store.getState().profile.navigation.tab;
     queueFetch(store, db, currentTab, FetchReason.CommonsChanged);
   });
 
@@ -203,7 +203,7 @@ export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.updatePreferences, async (store, action) => {
     const prefs = action.payload;
     if (some(watchedPreferences, k => prefs.hasOwnProperty(k))) {
-      const currentTabId = store.getState().session.navigation.tab;
+      const currentTabId = store.getState().profile.navigation.tab;
       queueFetch(store, db, currentTabId, FetchReason.TabParamsChanged);
     }
   });

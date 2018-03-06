@@ -39,8 +39,7 @@ export default class GameFetcher extends Fetcher {
 
       await client.call(
         messages.FetchGame({
-          // TODO: make this less terrible
-          credentials: { sessionId: this.ensureCredentials().me.id },
+          profileId: this.profileId(),
           gameId,
         })
       );

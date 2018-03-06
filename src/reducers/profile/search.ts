@@ -1,6 +1,6 @@
 import SearchExamples from "../../constants/search-examples";
 
-import { ISessionSearchState } from "../../types";
+import { IProfileSearchState } from "../../types";
 
 import { actions } from "../../actions";
 import reducer from "../reducer";
@@ -20,9 +20,9 @@ const initialState = {
   loading: false,
   highlight: 0,
   results: null,
-} as ISessionSearchState;
+} as IProfileSearchState;
 
-export default reducer<ISessionSearchState>(initialState, on => {
+export default reducer<IProfileSearchState>(initialState, on => {
   on(actions.search, (state, action) => {
     const typedQuery = action.payload.query;
     if (!typedQuery) {

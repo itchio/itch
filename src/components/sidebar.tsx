@@ -202,9 +202,9 @@ export default connect<IProps>(Sidebar, {
     osx: (rs: IRootState) => rs.system.osx,
     fullscreen: (rs: IRootState) => rs.ui.mainWindow.fullscreen,
     sidebarWidth: (rs: IRootState) => rs.preferences.sidebarWidth || 240,
-    me: (rs: IRootState) => rs.session.credentials.me,
-    tab: (rs: IRootState) => rs.session.navigation.tab,
-    openTabs: (rs: IRootState) => rs.session.navigation.openTabs,
+    me: (rs: IRootState) => rs.profile.credentials.me,
+    tab: (rs: IRootState) => rs.profile.navigation.tab,
+    openTabs: (rs: IRootState) => rs.profile.navigation.openTabs,
   }),
   actionCreators,
 });

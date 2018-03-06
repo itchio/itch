@@ -11,7 +11,7 @@ const eo: any = {};
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.tabsChanged, async (store, action) => {
-    const { navigation, tabInstances, credentials } = store.getState().session;
+    const { navigation, tabInstances, credentials } = store.getState().profile;
     if (!credentials || !credentials.me) {
       return;
     }
@@ -40,7 +40,7 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.loginSucceeded, async (store, action) => {
-    const { credentials } = store.getState().session;
+    const { credentials } = store.getState().profile;
     if (!credentials || !credentials.me) {
       return;
     }

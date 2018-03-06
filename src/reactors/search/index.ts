@@ -19,7 +19,7 @@ async function doRemoteSearch(
   query: string,
   cb: (sr: ISearchResults) => void
 ): Promise<void> {
-  const { credentials } = store.getState().session;
+  const { credentials } = store.getState().profile;
   if (!credentials || !credentials.key) {
     // can't do remote search
     return;

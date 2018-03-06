@@ -5,7 +5,7 @@ import { getActiveDownload } from "./downloads/getters";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
-    const me = store.getState().session.credentials.me;
+    const me = store.getState().profile.credentials.me;
     if (me.developer) {
       store.dispatch(actions.unlockTab({ url: "itch://dashboard" }));
     }

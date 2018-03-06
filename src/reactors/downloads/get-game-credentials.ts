@@ -28,7 +28,7 @@ function getGameCredentialsInternal(
 ): IGameCredentials {
   const state = ctx.store.getState();
 
-  const currentUserCreds = state.session.credentials;
+  const currentUserCreds = state.profile.credentials;
   if (!currentUserCreds || !currentUserCreds.me) {
     // not logged in :(
     return null;
@@ -45,7 +45,7 @@ function getGameCredentialsInternal(
   // fish for a download key
   const allDownloadKeys = ctx.db.downloadKeys.find({ gameId });
 
-  const sessions = state.rememberedSessions;
+  const sessions = state.rememberedProfiles;
   const hasValidSession = (k: IDownloadKey) => {
     const session = sessions[k.ownerId];
     return !!(session && session.key);

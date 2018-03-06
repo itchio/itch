@@ -320,7 +320,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 export default connect<IProps>(BrowserMeat, {
   state: createStructuredSelector({
     meId: (rs: IRootState) =>
-      (rs.session.credentials.me || { id: "anonymous" }).id,
+      (rs.profile.credentials.me || { id: "anonymous" }).id,
     proxy: (rs: IRootState) => rs.system.proxy,
     proxySource: (rs: IRootState) => rs.system.proxySource,
     disableBrowser: (rs: IRootState) => rs.preferences.disableBrowser,

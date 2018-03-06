@@ -102,9 +102,7 @@ class ClearBrowsingData extends React.PureComponent<
               ) : (
                 <span>
                   <LoadingCircle progress={0.1} />{" "}
-                  {format([
-                    "prompt.clear_browsing_data.retrieving_cache_size",
-                  ])},
+                  {format(["prompt.clear_browsing_data.retrieving_cache_size"])},
                 </span>
               )}
             </div>
@@ -158,6 +156,6 @@ interface IState {
 
 export default connect<IProps>(ClearBrowsingData, {
   state: state => ({
-    userId: state.session.credentials.me.id,
+    userId: state.profile.credentials.me.id,
   }),
 });

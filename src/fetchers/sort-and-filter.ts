@@ -201,7 +201,7 @@ export function addSortAndFilterToQuery(
   }
 
   if (joinDownloadKeys) {
-    const meId = rs.session.credentials.me.id;
+    const meId = rs.profile.credentials.me.id;
     select.left_join(
       DownloadKeyModel.table,
       null,

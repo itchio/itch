@@ -86,11 +86,11 @@ export class Space {
   }
 
   static fromStore(store: IStore, tab: string): Space {
-    return spaceFromInstance(store.getState().session.tabInstances[tab]);
+    return spaceFromInstance(store.getState().profile.tabInstances[tab]);
   }
 
   static fromState(rs: IRootState, tab: string): Space {
-    return spaceFromInstance(rs.session.tabInstances[tab]);
+    return spaceFromInstance(rs.profile.tabInstances[tab]);
   }
 
   static fromInstance(data: ITabInstance): Space {

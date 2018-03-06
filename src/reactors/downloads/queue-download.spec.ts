@@ -41,7 +41,7 @@ suite(__filename, s => {
       "doesn't queue download more than once"
     );
     t.same(
-      w.store.getState().session.navigation.tab,
+      w.store.getState().profile.navigation.tab,
       "itch://downloads",
       "..but switches to downloads tab"
     );

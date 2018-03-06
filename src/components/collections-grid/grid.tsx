@@ -160,8 +160,8 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 
 export default connect<IProps>(injectDimensions(Grid), {
   state: createSelector(
-    (rs: IRootState) => Space.fromInstance(rs.session.tabInstances[tab]),
-    (rs: IRootState) => rs.session.navigation.loadingTabs[tab],
+    (rs: IRootState) => Space.fromInstance(rs.profile.tabInstances[tab]),
+    (rs: IRootState) => rs.profile.navigation.loadingTabs[tab],
     createStructuredSelector({
       games: (sp: Space) => sp.games().set || eo,
       collectionIds: (sp: Space) => sp.collections().ids || ea,

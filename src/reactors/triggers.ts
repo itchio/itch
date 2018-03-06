@@ -7,7 +7,7 @@ import { Space } from "../helpers/space";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.commandMain, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     const sp = Space.fromStore(store, tab);
 
     if (sp.prefix === "games") {
@@ -29,16 +29,16 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    const page = store.getState().session.navigation.page;
-    const picking = store.getState().session.login.picking;
+    const page = store.getState().profile.navigation.page;
+    const picking = store.getState().profile.login.picking;
     if (page === "gate" && picking) {
-      const rememberedSessions = store.getState().rememberedSessions;
-      const mostRecentSession = sortBy(
-        rememberedSessions.sessions,
+      const rememberedProfiles = store.getState().rememberedProfiles;
+      const mostRecentProfile = sortBy(
+        rememberedProfiles.profiles,
         x => -x.lastConnected
       )[0];
-      if (mostRecentSession) {
-        store.dispatch(actions.useSavedLogin({ session: mostRecentSession }));
+      if (mostRecentProfile) {
+        store.dispatch(actions.useSavedLogin({ profile: mostRecentProfile }));
       }
     }
   });

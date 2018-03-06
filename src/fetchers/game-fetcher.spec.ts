@@ -26,7 +26,7 @@ suite(__filename, s => {
 
       w.store.dispatch(
         actions.loginSucceeded({
-          session: {
+          profile: {
             id: 123,
             lastConnected: null,
             user: {
@@ -65,7 +65,7 @@ suite(__filename, s => {
 
       await runGameFetcher();
 
-      const td = () => w.store.getState().session.tabInstances;
+      const td = () => w.store.getState().profile.tabInstances;
       t.same(
         td()[tab].data.games.ids,
         [game.id],
