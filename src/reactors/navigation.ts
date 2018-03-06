@@ -183,6 +183,7 @@ export default function(watcher: Watcher) {
         tab,
         url: newURL,
         replace: true,
+        onlyParamsChange: true,
       })
     );
   });

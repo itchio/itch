@@ -16,7 +16,7 @@ export enum FetchReason {
   TabEvolved,
   TabReloaded,
   WindowFocused,
-  TabParamsChanged,
+  ParamsChanged,
   CommonsChanged,
 }
 
@@ -212,9 +212,9 @@ export class Fetcher {
     this.logger.debug(msg);
   }
 
-  warrantsRemote(reason: FetchReason) {
-    switch (reason) {
-      case FetchReason.TabParamsChanged:
+  warrantsRemote() {
+    switch (this.reason) {
+      case FetchReason.ParamsChanged:
         return false;
       default:
         return true;

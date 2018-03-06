@@ -16,7 +16,7 @@ export default class CollectionsFetcher extends Fetcher {
   async work(): Promise<void> {
     await this.pushLocal();
 
-    if (this.warrantsRemote(this.reason)) {
+    if (this.warrantsRemote()) {
       await this.remote();
       await this.pushLocal();
     }

@@ -938,6 +938,9 @@ export interface IEvolveBasePayload {
 export interface IEvolveTabPayload extends IEvolveBasePayload {
   /** if false, that's a new history entry, if true it replaces the current one */
   replace: boolean;
+
+  /** if true, it doesn't warrant a remote fetch */
+  onlyParamsChange?: boolean;
 }
 
 export interface INavigateTabPayload extends IEvolveBasePayload {

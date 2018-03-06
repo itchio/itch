@@ -160,7 +160,11 @@ export default function(watcher: Watcher, db: DB) {
 
   // tab navigated to something else? let's fetch
   watcher.on(actions.evolveTab, async (store, action) => {
-    queueFetch(store, db, action.payload.tab, FetchReason.TabEvolved);
+    const { onlyParamsChange } = action.payload;
+    const reason = onlyParamsChange
+      ? FetchReason.ParamsChanged
+      : FetchReason.TabEvolved;
+    queueFetch(store, db, action.payload.tab, reason);
   });
 
   watcher.on(actions.tabGoBack, async (store, action) => {
@@ -174,11 +178,6 @@ export default function(watcher: Watcher, db: DB) {
   // tab reloaded by user? let's fetch!
   watcher.on(actions.tabReloaded, async (store, action) => {
     queueFetch(store, db, action.payload.tab, FetchReason.TabReloaded);
-  });
-
-  // tab got new params? it's a fetching!
-  watcher.on(actions.tabParamsChanged, async (store, action) => {
-    queueFetch(store, db, action.payload.tab, FetchReason.TabParamsChanged);
   });
 
   // window gaining focus? fetch away!
@@ -204,7 +203,7 @@ export default function(watcher: Watcher, db: DB) {
     const prefs = action.payload;
     if (some(watchedPreferences, k => prefs.hasOwnProperty(k))) {
       const currentTabId = store.getState().profile.navigation.tab;
-      queueFetch(store, db, currentTabId, FetchReason.TabParamsChanged);
+      queueFetch(store, db, currentTabId, FetchReason.ParamsChanged);
     }
   });
 }

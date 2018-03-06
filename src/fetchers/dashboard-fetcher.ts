@@ -1,64 +1,38 @@
 import { Fetcher } from "./fetcher";
-import * as squel from "squel";
-
-import { addSortAndFilterToQuery } from "./sort-and-filter";
-import { fromJSONField } from "../db/json-field";
-
-import { pluck } from "underscore";
-
-const ea = [];
+import { map } from "underscore";
+import { withButlerClient, messages } from "../buse";
+import getByIds from "../helpers/get-by-ids";
 
 export default class DashboardFetcher extends Fetcher {
   async work(): Promise<void> {
-    await this.pushLocal();
+    // first, filter what we already got
+    const cachedGames = getByIds(
+      this.space().games().set,
+      this.space().games().allIds
+    );
+    const dataGamesCount = cachedGames.length;
 
-    if (this.warrantsRemote(this.reason)) {
-      await this.remote();
-      await this.pushLocal();
+    if (dataGamesCount > 0) {
+      this.pushUnfilteredGames(cachedGames);
+      if (!this.warrantsRemote()) {
+        return;
+      }
     }
-  }
 
-  async pushLocal() {
-    const { db, store } = this.ctx;
-    const meId = this.ensureCredentials().me.id;
-    const profile = db.profiles.findOneById(meId);
-    if (!profile) {
-      this.debug(`Could not find a profile for ${meId}`);
-      return;
-    }
-    const myGameIds = fromJSONField(profile.myGameIds, ea);
-
-    let doQuery = (k: squel.Select) =>
-      addSortAndFilterToQuery(
-        k,
-        squel.expr().and("games.id in ?", myGameIds),
-        this.tab,
-        store
+    await withButlerClient(this.logger, async client => {
+      client.onNotification(
+        messages.FetchProfileGamesYield,
+        async ({ params }) => {
+          const games = map(params.items, i => i.game);
+          this.pushUnfilteredGames(games);
+        }
       );
 
-    const games = db.games.all(k => doQuery(k).field("games.*"));
-    this.pushFilteredGames(games, myGameIds.length);
-  }
-
-  async remote() {
-    const { db } = this.ctx;
-
-    const myGamesRes = await this.withApi(async api => await api.myGames());
-    const meId = this.ensureCredentials().me.id;
-
-    const remoteGameIds = pluck(myGamesRes.entities.games, "id");
-    this.debug(
-      `Fetched ${Object.keys(myGamesRes.entities.games).length} games from API`
-    );
-
-    db.saveMany({
-      ...myGamesRes.entities,
-      profiles: {
-        [meId]: {
-          id: meId,
-          myGameIds: remoteGameIds,
-        },
-      },
+      await client.call(
+        messages.FetchProfileGames({
+          profileId: this.profileId(),
+        })
+      );
     });
   }
 }
