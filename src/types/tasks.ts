@@ -3,7 +3,7 @@ import { ICave } from "../db/models/cave";
 import { IRuntime } from ".";
 
 import { Logger } from "../logger";
-import { Game, Upload, Build } from "../buse/messages";
+import { Game, Upload, Build, Cave } from "../buse/messages";
 
 export type DownloadReason =
   | "install"
@@ -59,7 +59,7 @@ export interface IQueueUninstallOpts {
 
 export interface IQueueLaunchOpts {
   /** which cave we're launching */
-  caveId: string;
+  cave: Cave;
 }
 
 export interface IConfigureOpts {

@@ -1,10 +1,6 @@
 import { Watcher } from "./watcher";
 import { IStore } from "../types";
 
-import { DB } from "../db";
-import { IDownloadKeySummary } from "../db/models/download-key";
-import { ICaveSummary } from "../db/models/cave";
-
 import { indexBy } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
 
@@ -15,7 +11,7 @@ import rootLogger from "../logger";
 import { withButlerClient, messages } from "../buse";
 const logger = rootLogger.child({ name: "commons" });
 
-async function updateCommonsNow(store: IStore, db: DB) {
+async function updateCommonsNow(store: IStore) {
   await withButlerClient(logger, async client => {
     const { caves, downloadKeys, installLocations } = await client.call(
       messages.FetchCommons({})
@@ -38,17 +34,17 @@ async function updateCommonsNow(store: IStore, db: DB) {
 
 const updateCommons = throttle(updateCommonsNow, 500);
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
-    updateCommons(store, db);
+    updateCommons(store);
   });
 
   watcher.on(actions.loginSucceeded, async (store, action) => {
-    updateCommons(store, db);
+    updateCommons(store);
   });
 
   watcher.on(actions.logout, async (store, action) => {
-    updateCommons(store, db);
+    updateCommons(store);
   });
 
   // TODO: this used to be called on dbcommit as well

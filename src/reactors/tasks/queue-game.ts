@@ -18,48 +18,54 @@ import { ICaveLocation } from "../../db/models/cave";
 import uuid from "../../util/uuid";
 import { Game, Upload } from "../../buse/messages";
 
-import { map } from "underscore";
+import { map, isEmpty } from "underscore";
 import makeUploadButton from "../make-upload-button";
 import { modalWidgets } from "../../components/modal-widgets/index";
+import { withButlerClient, messages } from "../../buse";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueGame, async (store, action) => {
     const { game } = action.payload;
+    const { caves } = await withButlerClient(
+      logger,
+      async client =>
+        await client.call(messages.FetchCavesByGameID({ gameId: game.id }))
+    );
 
-    const caves = db.caves.find({ gameId: game.id });
-
-    if (caves.length > 0) {
+    if (isEmpty(caves)) {
       logger.info(
-        `Have ${caves.length} caves for game ${game.title} (#${game.id})`
+        `No cave for ${game.title} (#${game.id}), attempting install`
       );
-
-      if (caves.length === 1) {
-        const cave = caves[0];
-        store.dispatch(actions.queueLaunch({ caveId: cave.id }));
-        return;
-      }
-
-      store.dispatch(
-        actions.openModal(
-          modalWidgets.naked.make({
-            title: ["prompt.launch.title", { title: game.title }],
-            message: ["prompt.launch.message"],
-            bigButtons: map(caves, cave => {
-              return {
-                ...makeUploadButton(cave.upload),
-                action: actions.queueLaunch({ caveId: cave.id }),
-              };
-            }),
-            buttons: ["cancel"],
-            widgetParams: null,
-          })
-        )
-      );
+      await queueInstall(store, db, game);
       return;
     }
 
-    logger.info(`No cave for ${game.title} (#${game.id}), attempting install`);
-    await queueInstall(store, db, game);
+    logger.info(
+      `Have ${caves.length} caves for game ${game.title} (#${game.id})`
+    );
+
+    if (caves.length === 1) {
+      const cave = caves[0];
+      store.dispatch(actions.queueLaunch({ cave }));
+      return;
+    }
+
+    store.dispatch(
+      actions.openModal(
+        modalWidgets.naked.make({
+          title: ["prompt.launch.title", { title: game.title }],
+          message: ["prompt.launch.message"],
+          bigButtons: map(caves, cave => {
+            return {
+              ...makeUploadButton(cave.upload),
+              action: actions.queueLaunch({ cave }),
+            };
+          }),
+          buttons: ["cancel"],
+          widgetParams: null,
+        })
+      )
+    );
   });
 
   watcher.on(actions.queueGameInstall, async (store, action) => {

@@ -7,41 +7,27 @@ import { DB } from "../db";
 
 import { currentRuntime } from "../os/runtime";
 
-import lazyGetGame from "./lazy-get-game";
-
 import { isAborted } from "../types";
 
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
-import { Game } from "../buse/messages";
 import { modalWidgets } from "../components/modal-widgets/index";
 
 import { performLaunch } from "./launch/perform-launch";
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.queueLaunch, async (store, action) => {
-    const { caveId } = action.payload;
-
-    const cave = db.caves.findOneById(caveId);
-    if (!cave) {
-      throw new Error("no such cave");
-    }
+    const { cave } = action.payload;
+    const { game } = cave;
 
     const runtime = currentRuntime();
 
-    let game: Game;
-
     asTask({
       name: "launch",
-      gameId: cave.gameId,
+      gameId: game.id,
       store,
       db,
       work: async (ctx, logger) => {
-        game = await lazyGetGame(ctx, cave.gameId);
-        if (!game) {
-          throw new Error("no such game");
-        }
-
         return await performLaunch(ctx, logger, cave, game, runtime);
       },
       onError: async (e: any, log) => {

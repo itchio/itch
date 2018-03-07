@@ -11,7 +11,6 @@ import CollectionsFetcher from "../fetchers/collections-fetcher";
 import LibraryFetcher from "../fetchers/library-fetcher";
 
 import GameFetcher from "../fetchers/game-fetcher";
-import UserFetcher from "../fetchers/user-fetcher";
 import CollectionFetcher from "../fetchers/collection-fetcher";
 import LocationFetcher from "../fetchers/location-fetcher";
 import AppLogFetcher from "../fetchers/applog-fetcher";
@@ -113,8 +112,6 @@ function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
       return LibraryFetcher;
     case "games":
       return GameFetcher;
-    case "users":
-      return UserFetcher;
     case "collections":
       return CollectionFetcher;
     case "locations":
