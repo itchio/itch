@@ -186,12 +186,6 @@ export interface ICommonsState {
     [gameId: string]: string[];
   };
 
-  /** games we can edit or have keys for */
-  libraryGameIds: number[];
-  myGameIdsSet: {
-    [gameId: string]: boolean;
-  };
-
   /** size on disk (in bytes) of each install location */
   locationSizes: {
     [id: string]: number;
