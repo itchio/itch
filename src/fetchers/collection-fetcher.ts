@@ -1,11 +1,22 @@
 import { Fetcher } from "./fetcher";
 import { withButlerClient, messages } from "../buse";
 import { Game } from "../buse/messages";
+import getByIds from "../helpers/get-by-ids";
 
 export default class CollectionFetcher extends Fetcher {
   async work(): Promise<void> {
-    if (!this.warrantsRemote()) {
-      return;
+    // first, filter what we already got
+    const cachedGames = getByIds(
+      this.space().games().set,
+      this.space().games().allIds
+    );
+    const dataGamesCount = cachedGames.length;
+
+    if (dataGamesCount > 0) {
+      this.pushUnfilteredGames(cachedGames);
+      if (!this.warrantsRemote()) {
+        return;
+      }
     }
 
     await withButlerClient(this.logger, async client => {

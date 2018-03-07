@@ -35,4 +35,8 @@ export default class DashboardFetcher extends Fetcher {
       );
     });
   }
+
+  clean() {
+    this.push({ games: null }, { shallow: true });
+  }
 }
