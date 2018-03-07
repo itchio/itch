@@ -26,7 +26,6 @@ const initialState = {
   },
   proxy: null,
   proxySource: null,
-  booted: false,
   quitting: false,
   nextSelfUpdateCheck: Date.now() + 60 * 1000,
   nextGameUpdateCheck: Date.now() + 30 * 1000,

@@ -28,6 +28,7 @@ import format, { formatString } from "./format";
 import { InjectedIntl, injectIntl } from "react-intl";
 import { specToButton } from "../helpers/spec-to-button";
 import { modalWidgets } from "./modal-widgets/index";
+import classNames = require("classnames");
 
 type Flavor = "normal" | "big";
 
@@ -48,6 +49,23 @@ const ModalPortalDiv = styled.div`
     min-width: 50%;
     max-width: 90%;
     max-height: 80%;
+
+    &.fullscreen {
+      min-width: 100%;
+      max-width: 100%;
+      min-height: 100%;
+      max-height: 100%;
+      position: relative;
+
+      .modal-div {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
     padding: 0px;
     background-color: ${colors.darkMineShaft};
     border: 1px solid ${colors.lightMineShaft};
@@ -397,7 +415,11 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
     return (
       <ModalPortalDiv>
-        <div className="content">{this.renderContent()}</div>
+        <div
+          className={classNames("content", { fullscreen: modal.fullscreen })}
+        >
+          {this.renderContent()}
+        </div>
       </ModalPortalDiv>
     );
   }
@@ -418,7 +440,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
       widget,
     } = modal;
     return (
-      <ModalDiv>
+      <ModalDiv className="modal-div">
         <HeaderDiv>
           <span className="title">{format(title)}</span>
           <Filler />

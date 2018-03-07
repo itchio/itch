@@ -5,7 +5,7 @@ import Button from "../../basics/button";
 import LoadingCircle from "../../basics/loading-circle";
 
 import format from "../../format";
-import * as classNames from "classnames";
+import styled from "../../styles";
 
 import { connect, Dispatchers, actionCreatorsList } from "../../connect";
 import { ISetupOperation } from "../../../types";
@@ -22,11 +22,11 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
     if (hasError) {
       iconElement = <Icon icon={icon} />;
     } else {
-      iconElement = <LoadingCircle progress={-1} />;
+      iconElement = <LoadingCircle wide progress={-1} />;
     }
 
     return (
-      <div className={classNames("status-container", { error: hasError })}>
+      <BlockingOperationDiv>
         {iconElement}
         {format(message)}
         {hasError ? (
@@ -50,10 +50,16 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
             />
           </div>
         ) : null}
-      </div>
+      </BlockingOperationDiv>
     );
   }
 }
+
+const BlockingOperationDiv = styled.div`
+  font-size: ${props => props.theme.fontSizes.huge};
+`;
+
+// props
 
 interface IProps {
   blockingOperation: ISetupOperation;

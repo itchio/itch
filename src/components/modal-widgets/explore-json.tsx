@@ -5,6 +5,7 @@ import { ModalWidgetDiv } from "./modal-widget";
 import JSONTree from "react-json-tree";
 import theme from "./json-tree-theme";
 import { IModalWidgetProps } from "./index";
+import styled from "../styles";
 
 class ExploreJson extends React.PureComponent<IProps> {
   render() {
@@ -13,13 +14,21 @@ class ExploreJson extends React.PureComponent<IProps> {
 
     return (
       <ModalWidgetDiv>
-        <div className="json-tree-container">
+        <JSONTreeContainer>
           <JSONTree data={data} theme={theme} invertTheme={false} />
-        </div>
+        </JSONTreeContainer>
       </ModalWidgetDiv>
     );
   }
 }
+
+const JSONTreeContainer = styled.div`
+  width: 100%;
+  min-height: 350px;
+  overflow-y: auto;
+`;
+
+// props
 
 export interface IExploreJsonParams {
   data: any;

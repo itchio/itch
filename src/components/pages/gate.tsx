@@ -111,11 +111,8 @@ export default connect<IProps>(GatePage, {
       };
     }
 
-    if (login.picking) {
-      return { stage: "pick" };
-    } else {
-      return { stage: "login", blockingOperation: login.blockingOperation };
-    }
+    const stage = login.picking ? "pick" : "login";
+    return { stage, blockingOperation: login.blockingOperation };
   },
   actionCreators,
 });

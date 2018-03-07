@@ -1,8 +1,6 @@
 import { Watcher } from "./watcher";
 import { actions } from "../actions";
 
-import { sortBy } from "underscore";
-
 import { promisedModal } from "./modals";
 import urls from "../constants/urls";
 import * as urlParser from "url";
@@ -30,6 +28,7 @@ export default function(watcher: Watcher) {
               widgetParams: {
                 url: params.recaptchaUrl || urls.itchio + "/captcha",
               },
+              fullscreen: true,
             })
           );
 

@@ -3,6 +3,7 @@ import styled, * as styles from "../styles";
 export const ModalWidgetDiv = styled.div`
   padding: 10px 20px;
   flex-grow: 1;
+  overflow-y: auto;
 
   input[type="number"],
   input[type="text"],
@@ -26,12 +27,6 @@ export const ModalWidgetDiv = styled.div`
   p {
     line-height: 1.4;
     margin: 8px 0;
-  }
-
-  .json-tree-container {
-    width: 100%;
-    height: 350px;
-    overflow-y: auto;
   }
 
   .prereqs-rows {

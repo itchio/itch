@@ -9,6 +9,16 @@ import * as classNames from "classnames";
 import { modalWidgets, IModalWidgetProps } from "./index";
 
 const WidgetDiv = styled.div`
+  position: relative;
+
+  webview {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+  }
+
   &.loading {
     webview {
       width: 0;
@@ -44,7 +54,6 @@ class RecaptchaInput extends React.Component<
         <webview
           ref={this.gotWebview}
           src={url}
-          style={{ minHeight: "500px" }}
           preload={getInjectPath("captcha")}
         />
       </WidgetDiv>

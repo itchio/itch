@@ -9,6 +9,7 @@ interface WebViewProps {
   sandbox?: boolean;
   ref?: (wv: Electron.WebviewTag) => void;
   style?: React.CSSProperties;
+  autosize?: boolean;
 }
 
 declare global {

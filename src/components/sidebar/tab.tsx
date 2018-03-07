@@ -134,6 +134,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
         widgetParams: {
           data: { tab, tabInstance },
         },
+        fullscreen: true,
       })
     );
   };
