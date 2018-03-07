@@ -67,7 +67,7 @@ export default function getWatcher(db: DB) {
   profile(watcher);
   navigation(watcher);
   tabSave(watcher, db);
-  commons(watcher, db);
+  commons(watcher);
   purchases(watcher);
   url(watcher);
   itchInternal(watcher);

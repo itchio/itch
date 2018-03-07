@@ -49,6 +49,7 @@ const ModalPortalDiv = styled.div`
     min-width: 50%;
     max-width: 90%;
     max-height: 80%;
+    overflow-y: auto;
 
     &.fullscreen {
       min-width: 100%;
