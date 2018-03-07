@@ -1,4 +1,3 @@
-import { ICollection } from "../db/models/collection";
 import {
   ILocalizedString,
   IStore,
@@ -16,7 +15,7 @@ import {
 import * as nodeURL from "url";
 import * as querystring from "querystring";
 
-import { Game, User } from "../buse/messages";
+import { Game, Collection, User } from "../buse/messages";
 import { currentPage } from "../util/navigation";
 import staticTabData from "../constants/static-tab-data";
 
@@ -125,7 +124,7 @@ export class Space {
     return this._data.collections || eo;
   }
 
-  collection(): ICollection {
+  collection(): Collection {
     return (
       ((this._data.collections || eo).set || eo)[this.firstPathNumber()] || eo
     );

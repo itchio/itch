@@ -31,7 +31,6 @@ import {
 import rootLogger, { devNull } from "../logger";
 import { Game, User } from "../buse/messages";
 import { ICave } from "./models/cave";
-import { ICollection } from "./models/collection";
 const logger = rootLogger.child({ name: "db" });
 
 const logSqlQueries = process.env.ITCH_SQL === "1";
@@ -174,11 +173,6 @@ export class DB extends RepoContainer {
     tableName: "downloads",
     id: string | number,
     record: Partial<IDownloadItem>
-  ): void;
-  saveOne(
-    tableName: "collection",
-    id: string | number,
-    record: Partial<ICollection>
   ): void;
   saveOne(
     tableName: "caves",

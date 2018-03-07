@@ -1,8 +1,6 @@
 import urlParser from "./url";
 import * as querystring from "querystring";
 
-import { ICollection } from "../db/models/collection";
-
 import {
   IInstallLocation,
   ITabInstance,
@@ -10,7 +8,7 @@ import {
   ITabData,
   INavigatePayload,
 } from "../types";
-import { Game, User } from "../buse/messages";
+import { Game, User, Collection } from "../buse/messages";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {
@@ -77,7 +75,7 @@ export function gameToTabData(game: Game): ITabData {
 }
 
 export function collectionEvolvePayload(
-  collection: ICollection
+  collection: Collection
 ): INavigatePayload {
   return {
     url: `itch://collections/${collection.id}`,
@@ -95,7 +93,7 @@ export function userToTabData(user: User): ITabData {
   };
 }
 
-export function collectionToTabData(collection: ICollection): ITabData {
+export function collectionToTabData(collection: Collection): ITabData {
   return {
     collections: {
       set: {

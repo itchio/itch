@@ -5,7 +5,6 @@ import { Model } from "./model";
 
 import { GameModel } from "./models/game";
 import { IExternalGame, ExternalGameModel } from "./models/external-game";
-import { ICollection, CollectionModel } from "./models/collection";
 import { IDownloadKey, DownloadKeyModel } from "./models/download-key";
 import { ICave, CaveModel } from "./models/cave";
 import { UserModel } from "./models/user";
@@ -23,7 +22,6 @@ export interface IModelMap {
 export const modelMap: IModelMap = {
   games: GameModel,
   externalGames: ExternalGameModel,
-  collections: CollectionModel,
   downloadKeys: DownloadKeyModel,
   caves: CaveModel,
   users: UserModel,
@@ -87,7 +85,6 @@ class Repository<T> {
 export class RepoContainer {
   games: Repository<Game>;
   externalGames: Repository<IExternalGame>;
-  collections: Repository<ICollection>;
   downloadKeys: Repository<IDownloadKey>;
   caves: Repository<ICave>;
   users: Repository<User>;

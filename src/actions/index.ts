@@ -39,9 +39,9 @@ import {
   CleanDownloadsEntry,
   GameUpdate,
   Profile,
+  Collection,
 } from "../buse/messages";
 import { TaskName } from "../types/tasks";
-import { ICollection } from "../db/models/collection";
 import {
   ITypedModal,
   ITypedModalUpdate,
@@ -278,7 +278,7 @@ export const actions = wireActions({
   }>(),
   navigateToCollection: action<{
     /** navigation to navigate to */
-    collection: ICollection;
+    collection: Collection;
 
     /** whether to open in a new tab or not */
     background?: boolean;

@@ -22,8 +22,7 @@ export enum FetchReason {
 
 import rootLogger, { Logger } from "../logger";
 import { Space } from "../helpers/space";
-import { Game } from "../buse/messages";
-import { ICollection } from "../db/models/collection";
+import { Game, Collection } from "../buse/messages";
 
 interface OptionalFetcherParams {
   apiClient?: Client;
@@ -181,13 +180,11 @@ export class Fetcher {
     this.ctx.store.dispatch(action);
   }
 
-  pushCollection(c: ICollection) {
+  pushCollection(c: Collection) {
     this.push({
       collections: {
+        set: { [c.id]: c },
         ids: [c.id],
-        set: {
-          [c.id]: c,
-        },
       },
     });
   }

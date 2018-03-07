@@ -1,6 +1,5 @@
 import { Store } from "redux";
 
-import { ICollection } from "../db/models/collection";
 import { IDownloadKey, IDownloadKeySummary } from "../db/models/download-key";
 import { ICaveSummary, ICave } from "../db/models/cave";
 
@@ -16,7 +15,7 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
-import { GameUpdate, Game, User, Profile } from "../buse/messages";
+import { GameUpdate, Game, User, Profile, Collection } from "../buse/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -80,7 +79,7 @@ export interface IDownloadKeySet {
 }
 
 export interface ICollectionSet {
-  [id: string]: ICollection;
+  [id: string]: Collection;
 }
 
 export interface ICaveSet {
@@ -113,7 +112,6 @@ export interface ITableMap {
   [table: string]: IEntityMap<any>;
   games?: IEntityMap<Partial<Game>>;
   users?: IEntityMap<Partial<User>>;
-  collections?: IEntityMap<Partial<ICollection>>;
   downloads?: IEntityMap<Partial<IDownloadItem>>;
 }
 

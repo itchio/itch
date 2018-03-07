@@ -3,8 +3,7 @@ import { createSelector, createStructuredSelector } from "reselect";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { findWhere, isEmpty } from "underscore";
 
-import { IGameSet, IRootState, ICollectionSet } from "../../types/index";
-import { ICollection } from "../../db/models/collection";
+import { IRootState, ICollectionSet } from "../../types/index";
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 
 import { GridContainerDiv, GridDiv } from "./grid-styles";
@@ -15,6 +14,7 @@ import EmptyState from "../empty-state";
 import LoadingState from "../loading-state";
 import { Space } from "../../helpers/space";
 import { collectionEvolvePayload } from "../../util/navigation";
+import { Collection } from "../../buse/messages";
 
 const tab = "itch://collections";
 const eo: any = {};
@@ -76,7 +76,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
 
   eventToCollection(
     ev: React.MouseEvent<HTMLElement>,
-    cb: (collection: ICollection) => void
+    cb: (collection: Collection) => void
   ) {
     let target = ev.target as HTMLElement;
     while (target && !target.classList.contains("grid--row")) {
@@ -115,7 +115,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   renderCollections(): JSX.Element[] {
-    const { collectionIds, collections, games, scrollTop, height } = this.props;
+    const { collectionIds, collections, scrollTop, height } = this.props;
 
     const overscan = 1;
     const outerRowHeight = rowHeight + interiorPadding;
@@ -136,7 +136,6 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
         <CollectionRow
           key={id}
           collection={collection}
-          allGames={games}
           index={index + startRow}
           interiorPadding={interiorPadding}
           globalPadding={globalPadding}
@@ -152,7 +151,6 @@ interface IProps extends IDimensionsProps {}
 const actionCreators = actionCreatorsList("navigateTab", "navigate");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  games: IGameSet;
   collectionIds: number[];
   collections: ICollectionSet;
   loading: boolean;
@@ -163,7 +161,6 @@ export default connect<IProps>(injectDimensions(Grid), {
     (rs: IRootState) => Space.fromInstance(rs.profile.tabInstances[tab]),
     (rs: IRootState) => rs.profile.navigation.loadingTabs[tab],
     createStructuredSelector({
-      games: (sp: Space) => sp.games().set || eo,
       collectionIds: (sp: Space) => sp.collections().ids || ea,
       collections: (sp: Space) => sp.collections().set || eo,
       loading: (sp: Space, loading: boolean) => loading || sp.isSleepy(),
