@@ -6,16 +6,72 @@ import IconButton from "../../basics/icon-button";
 
 import defaultImages from "../../../constants/default-images";
 
-import { actions } from "../../../actions";
 import { Profile } from "../../../buse/messages";
 
 import styled from "../../styles";
 
 import format from "../../format";
 
+export class RememberedProfile extends React.PureComponent<
+  IProps & IDerivedProps
+> {
+  render() {
+    const { profile, forgetProfileRequest } = this.props;
+    const { user } = profile;
+    const { username, displayName, coverUrl = defaultImages.avatar } = user;
+
+    const onForget = (e: React.MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
+      forgetProfileRequest({ profile });
+    };
+
+    return (
+      <RememberedProfileDiv
+        className="remembered-profile"
+        onClick={() => {
+          this.props.useSavedLogin({ profile });
+        }}
+      >
+        <img className="avatar" src={coverUrl} />
+        <div className="rest">
+          <p className="username">{displayName || username}</p>
+          <p className="last-connected">
+            {format(["login.remembered_session.last_connected"])}{" "}
+            <TimeAgo date={profile.lastConnected} />
+          </p>
+        </div>
+        <div className="filler" />
+        <span
+          data-rh-at="left"
+          data-rh={JSON.stringify(["prompt.forget_session.action"])}
+        >
+          <IconButton
+            icon="cross"
+            className="forget-profile"
+            onClick={onForget}
+          />
+        </span>
+      </RememberedProfileDiv>
+    );
+  }
+}
+
+interface IProps {
+  profile: Profile;
+}
+
+const actionCreators = actionCreatorsList(
+  "forgetProfileRequest",
+  "useSavedLogin"
+);
+
+type IDerivedProps = Dispatchers<typeof actionCreators>;
+
+export default connect<IProps>(RememberedProfile, { actionCreators });
+
 const RememberedProfileDiv = styled.div`
   flex-shrink: 0;
-  min-width: 300px;
+  min-width: 380px;
   border-radius: 2px;
   background: ${props => props.theme.sidebarBackground};
   display: flex;
@@ -71,58 +127,3 @@ const RememberedProfileDiv = styled.div`
     -webkit-filter: brightness(70%);
   }
 `;
-
-export class RememberedProfile extends React.PureComponent<
-  IProps & IDerivedProps
-> {
-  render() {
-    const { profile, forgetProfileRequest } = this.props;
-    const { user } = profile;
-    const { username, displayName, coverUrl = defaultImages.avatar } = user;
-
-    const onForget = (e: React.MouseEvent<HTMLElement>) => {
-      e.stopPropagation();
-      forgetProfileRequest({ profile });
-    };
-
-    return (
-      <RememberedProfileDiv
-        className="remembered-profile"
-        onClick={() => {
-          this.props.onLogin({ profile });
-        }}
-      >
-        <img className="avatar" src={coverUrl} />
-        <div className="rest">
-          <p className="username">{displayName || username}</p>
-          <p className="last-connected">
-            {format(["login.remembered_profile.last_connected"])}{" "}
-            <TimeAgo date={profile.lastConnected} />
-          </p>
-        </div>
-        <div className="filler" />
-        <span
-          data-rh-at="left"
-          data-rh={JSON.stringify(["prompt.forget_profile.action"])}
-        >
-          <IconButton
-            icon="cross"
-            className="forget-profile"
-            onClick={onForget}
-          />
-        </span>
-      </RememberedProfileDiv>
-    );
-  }
-}
-
-interface IProps {
-  profile: Profile;
-  onLogin: (payload: typeof actions.useSavedLogin.payload) => void;
-}
-
-const actionCreators = actionCreatorsList("forgetProfileRequest");
-
-type IDerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<IProps>(RememberedProfile, { actionCreators });

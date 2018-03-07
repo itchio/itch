@@ -29,7 +29,7 @@ export default reducer<IProfileLoginState>(initialState, on => {
   });
 
   on(actions.loginFailed, (state, action) => {
-    const { errors } = action.payload;
+    const { errors, username } = action.payload;
     // set picking to false because if we were trying a key login, we probably want
     // to re-enter the password to see if we can obtain a new API token
     return {
@@ -37,6 +37,7 @@ export default reducer<IProfileLoginState>(initialState, on => {
       errors,
       blockingOperation: null,
       picking: false,
+      lastUsername: username,
     };
   });
 

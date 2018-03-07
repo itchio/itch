@@ -1,5 +1,6 @@
 import { join } from "path";
-import { app } from "electron";
+import * as electron from "electron";
+const app = electron.app || electron.remote.app;
 
 import urls from "../constants/urls";
 import * as urlParser from "url";

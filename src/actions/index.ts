@@ -6,7 +6,6 @@ import {
   ICommonsState,
   IModalAction,
   ISetupOperation,
-  IRememberedProfilesState,
   IItchAppTabs,
   ITabParams,
   IMenuTemplate,
@@ -185,8 +184,6 @@ export const actions = wireActions({
   }>(),
 
   profileReady: action<{}>(),
-  profilesRemembered: action<IRememberedProfilesState>(),
-  profilesRememberedFirstTime: action<{}>(),
   forgetProfileRequest: action<{
     /** Profile to forget */
     profile: Profile;

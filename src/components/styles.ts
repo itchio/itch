@@ -270,6 +270,7 @@ export const heavyInput = () => css`
   color: ${props => props.theme.inputText};
 
   text-shadow: 0 0 2px ${props => props.theme.inputTextShadow};
+  transition: all 0.4s;
 
   &::-webkit-input-placeholder {
     text-shadow: 0 0 2px transparent;
@@ -278,6 +279,7 @@ export const heavyInput = () => css`
 
   &:focus {
     outline: 0;
+    border-color: rgba(255, 255, 255, 0.4);
   }
 `;
 

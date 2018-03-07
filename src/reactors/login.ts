@@ -120,17 +120,6 @@ export default function(watcher: Watcher) {
       }
     });
   });
-
-  watcher.on(actions.profilesRememberedFirstTime, async (store, action) => {
-    const { rememberedProfiles } = store.getState();
-    const mostRecentProfile = sortBy(
-      rememberedProfiles.profiles,
-      x => -x.lastConnected
-    )[0];
-    if (mostRecentProfile) {
-      store.dispatch(actions.useSavedLogin({ profile: mostRecentProfile }));
-    }
-  });
 }
 
 const YEAR_IN_SECONDS =

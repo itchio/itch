@@ -15,7 +15,7 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
-import { GameUpdate, Game, User, Profile, Collection } from "../buse/messages";
+import { GameUpdate, Game, User, Collection } from "../buse/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -142,7 +142,6 @@ export interface IRootState {
   modals: IModalsState;
   system: ISystemState;
   setup: ISetupState;
-  rememberedProfiles: IRememberedProfilesState;
   profile: IProfileState;
   i18n: II18nState;
   ui: IUIState;
@@ -392,10 +391,6 @@ export interface ISetupState {
   blockingOperation: ISetupOperation;
 }
 
-export interface IRememberedProfilesState {
-  profiles: Profile[];
-}
-
 export interface IProfileState {
   /** collection freshness information */
   credentials: IProfileCredentialsState;
@@ -423,6 +418,7 @@ export interface IProfileLoginState {
 
   errors: string[];
   blockingOperation: ISetupOperation;
+  lastUsername?: string;
 }
 
 export interface IOpenTabs {

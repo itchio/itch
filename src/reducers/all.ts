@@ -3,7 +3,6 @@ import { combineReducers } from "redux";
 import modals from "./modals";
 import system from "./system";
 import setup from "./setup";
-import rememberedProfiles from "./remembered-profiles";
 import profile from "./profile";
 import i18n from "./i18n";
 import ui from "./ui";
@@ -20,7 +19,6 @@ const reducer = combineReducers({
   modals,
   system,
   setup,
-  rememberedProfiles,
   profile,
   i18n,
   ui,

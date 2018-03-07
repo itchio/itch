@@ -1,5 +1,6 @@
 import * as ospath from "path";
-import { app } from "electron";
+import * as electron from "electron";
+
 import * as os from "../os";
 import * as sf from "../os/sf";
 import spawn from "../os/spawn";
@@ -194,6 +195,7 @@ async function getLocalVersion(ctx: Context, name: string): Promise<string> {
 }
 
 export function getBinPath() {
+  const app = electron.app || electron.remote.app;
   return ospath.join(app.getPath("userData"), "bin");
 }
 
