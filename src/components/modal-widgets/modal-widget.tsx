@@ -28,26 +28,4 @@ export const ModalWidgetDiv = styled.div`
     line-height: 1.4;
     margin: 8px 0;
   }
-
-  .prereqs-rows {
-    display: flex;
-    flex: 0 1;
-    flex-direction: column;
-    align-content: flex-start;
-  }
-
-  .prereqs-row {
-    display: flex;
-    flex: 0 1;
-    flex-direction: row;
-    align-items: center;
-    margin: 14px 0;
-    margin-left: 10px;
-
-    .task-status {
-      margin-top: 5px;
-      font-size: 80%;
-      color: ${props => props.theme.secondaryText};
-    }
-  }
 `;
