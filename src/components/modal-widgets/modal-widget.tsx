@@ -50,42 +50,4 @@ export const ModalWidgetDiv = styled.div`
       color: ${props => props.theme.secondaryText};
     }
   }
-
-  .clear-browsing-data-list {
-    label {
-      display: block;
-      border-left: 3px solid ${props => props.theme.prefBorder};
-      padding: 5px 0;
-      padding-left: 5px;
-      margin: 3px 0;
-      margin-bottom: 10px;
-      transition: 0.2s border ease-in-out;
-
-      &:hover {
-        cursor: pointer;
-      }
-
-      &.active {
-        border-color: ${props => props.theme.accent};
-      }
-    }
-
-    .checkbox {
-      margin: 0;
-      display: flex;
-      align-items: center;
-
-      input[type="checkbox"] {
-        margin-right: 10px;
-      }
-    }
-
-    .checkbox-info {
-      margin: 0;
-      margin-top: 5px;
-      margin-left: 5px;
-      font-size: 90%;
-      color: ${props => props.theme.secondaryText};
-    }
-  }
 `;
