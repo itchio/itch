@@ -2,7 +2,6 @@ import * as React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import { createStructuredSelector } from "reselect";
 
-import ReactModal = require("react-modal");
 import Button from "./basics/button";
 import RowButton, { Tag } from "./basics/row-button";
 import IconButton from "./basics/icon-button";
@@ -22,7 +21,7 @@ import { map, isEmpty, filter } from "underscore";
 import { IModal, IModalButtonSpec, IModalButton, IAction } from "../types";
 
 import watching, { Watcher } from "./watching";
-import styled from "./styles";
+import styled, * as styles from "./styles";
 import { stripUnit } from "polished";
 
 import format, { formatString } from "./format";
@@ -32,26 +31,31 @@ import { modalWidgets } from "./modal-widgets/index";
 
 type Flavor = "normal" | "big";
 
-const customStyles = {
-  overlay: {
-    backgroundColor: "rgba(7, 4, 4, 0.75)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  content: {
-    position: "initial",
-    minWidth: "50%",
-    maxWidth: "90%",
-    maxHeight: "80%",
-    padding: "0px",
-    backgroundColor: colors.darkMineShaft,
-    border: `1px solid ${colors.lightMineShaft}`,
-    borderRadius: "2px",
-    boxShadow: "0 0 16px black",
-    zIndex: 400,
-  },
-};
+const ModalPortalDiv = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(7, 4, 4, 0.74);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  animation: ${styles.animations.fadeIn} 0.2s;
+
+  .content {
+    min-width: 50%;
+    max-width: 90%;
+    max-height: 80%;
+    padding: 0px;
+    background-color: ${colors.darkMineShaft};
+    border: 1px solid ${colors.lightMineShaft};
+    border-radius: 2px;
+    box-shadow: 0 0 32px black;
+    z-index: 200;
+  }
+`;
 
 const ModalDiv = styled.div`
   min-width: 200px;
@@ -360,7 +364,6 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   subscribe(watcher: Watcher) {
     watcher.on(actions.commandOk, async (store, action) => {
-      // TODO: move this to metal side
       const { modal } = this.props;
       if (!modal) {
         return;
@@ -387,14 +390,15 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   render() {
+    const { modal } = this.props;
+    if (!modal) {
+      return null;
+    }
+
     return (
-      <ReactModal
-        isOpen={!!this.props.modal}
-        contentLabel="Modal"
-        style={customStyles}
-      >
-        {this.renderContent()}
-      </ReactModal>
+      <ModalPortalDiv>
+        <div className="content">{this.renderContent()}</div>
+      </ModalPortalDiv>
     );
   }
 
@@ -585,10 +589,6 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   updatePayload = (payload: typeof actions.modalResponse.payload) => {
     this.setState({ widgetPayload: payload });
   };
-
-  componentWillMount() {
-    ReactModal.setAppElement("body");
-  }
 }
 
 interface IProps {}
