@@ -1,7 +1,5 @@
 import { actions } from "../../actions";
 
-import { IDownloadKey } from "../../db/models/download-key";
-
 import {
   ClassificationAction,
   ILocalizedString,
@@ -31,7 +29,7 @@ function browseAction(caveId: string): IActionOpts {
   };
 }
 
-function purchaseAction(game: Game, downloadKey: IDownloadKey): IActionOpts {
+function purchaseAction(game: Game, downloadKey: DownloadKey): IActionOpts {
   const donate = game.minPrice === 0;
 
   if (donate) {

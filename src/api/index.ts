@@ -9,7 +9,6 @@ import mkcooldown from "./cooldown";
 
 import { contains } from "underscore";
 
-import { IDownloadKey } from "../db/models/download-key";
 import {
   ILoginKeyResult,
   IUpgradeResponse,
@@ -40,7 +39,7 @@ import {
 const DUMP_API_CALLS = process.env.LET_ME_IN === "1";
 import { makeLogger, devNull } from "../logger";
 import { normalize } from "idealizr";
-import { BuildFileType } from "../buse/messages";
+import { BuildFileType, DownloadKey } from "../buse/messages";
 const logger = DUMP_API_CALLS ? makeLogger({}) : devNull;
 
 type HTTPMethod = "get" | "head" | "post";
@@ -243,7 +242,7 @@ export class AuthenticatedClient {
    * List all uploads for a game (that we have access to)
    */
   async listUploads(
-    downloadKey: IDownloadKey,
+    downloadKey: DownloadKey,
     gameID: number,
     extras: IListUploadsExtras = {}
   ): Promise<IListUploadsResponse> {
@@ -269,7 +268,7 @@ export class AuthenticatedClient {
    * Request a direct download URl for an upload
    */
   async downloadUpload(
-    downloadKey: IDownloadKey,
+    downloadKey: DownloadKey,
     uploadID: number
   ): Promise<IDownloadUploadResult> {
     return await this.request({
@@ -283,7 +282,7 @@ export class AuthenticatedClient {
    * Return an itchfs URL to download an upload
    */
   downloadUploadURL(
-    downloadKey: IDownloadKey,
+    downloadKey: DownloadKey,
     uploadID: number,
     extras: IPasswordOrSecret = {}
   ): string {
@@ -297,7 +296,7 @@ export class AuthenticatedClient {
    * List the N most recent builds for a wharf-enabled upload
    */
   async listBuilds(
-    downloadKey: IDownloadKey,
+    downloadKey: DownloadKey,
     uploadID: number
   ): Promise<IListBuildsResponse> {
     return await this.request({
@@ -312,7 +311,7 @@ export class AuthenticatedClient {
    * Get detailed info for the given build of a given upload
    */
   async build(
-    downloadKey: IDownloadKey,
+    downloadKey: DownloadKey,
     uploadID: number,
     buildID: number
   ): Promise<IBuildResponse> {
@@ -327,7 +326,7 @@ export class AuthenticatedClient {
    * Return list of patches needed to upgrade to the latest build
    */
   async findUpgrade(
-    downloadKey: IDownloadKey,
+    downloadKey: DownloadKey,
     uploadID: number,
     currentBuildID: number
   ): Promise<IUpgradeResponse> {
@@ -342,7 +341,7 @@ export class AuthenticatedClient {
    * Download a given build
    */
   async downloadBuild(
-    downloadKey: IDownloadKey,
+    downloadKey: DownloadKey,
     uploadID: number,
     buildID: number
   ): Promise<IDownloadBuildResult> {
@@ -357,7 +356,7 @@ export class AuthenticatedClient {
    * Returns the itchfs URL of a given build
    */
   downloadBuildURL(
-    downloadKey: IDownloadKey,
+    downloadKey: DownloadKey,
     uploadID: number,
     buildID: number,
     fileType: BuildFileType,
@@ -549,7 +548,7 @@ export function ensureArray(v: any): any[] {
  * if downloadKey isn't null, add its id to the parameters
  */
 function sprinkleDownloadKey(
-  downloadKey: IDownloadKey | null,
+  downloadKey: DownloadKey | null,
   params: any
 ): any {
   if (!downloadKey) {
