@@ -4,7 +4,6 @@ import * as squel from "squel";
 import { Model } from "./model";
 
 import { GameModel } from "./models/game";
-import { IProfile, ProfileModel } from "./models/profile";
 import { Game } from "../buse/messages";
 import { IDownloadItem } from "../types/index";
 import { DownloadModel } from "./models/download";
@@ -15,7 +14,6 @@ export interface IModelMap {
 
 export const modelMap: IModelMap = {
   games: GameModel,
-  profiles: ProfileModel,
   downloads: DownloadModel,
 };
 
@@ -72,7 +70,6 @@ class Repository<T> {
 
 export class RepoContainer {
   games: Repository<Game>;
-  profiles: Repository<IProfile>;
   downloads: Repository<IDownloadItem>;
 
   protected q: Querier;

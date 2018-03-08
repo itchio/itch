@@ -1,11 +1,13 @@
-import { map, filter, findWhere, isEmpty, size } from "underscore";
+import { map, size } from "underscore";
 
 import { Watcher } from "./watcher";
 
 import { DB } from "../db/index";
-import { ITabDataSave, ITabInstance } from "../types/index";
-import { IProfile } from "../db/models/profile";
+import { ITabDataSave } from "../types/index";
 import { actions } from "../actions/index";
+
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "tab-save" });
 
 const eo: any = {};
 
@@ -34,51 +36,54 @@ export default function(watcher: Watcher, db: DB) {
       };
     });
 
-    db.saveOne<IProfile>("profiles", meId, {
-      openTabs: { current: tab, items },
-    });
+    let _ = { meId, tab, items };
+    _ = _;
+
+    logger.error(`TODO: Re-implement tabsChanged with buse!`);
   });
 
   watcher.on(actions.loginSucceeded, async (store, action) => {
-    const { credentials } = store.getState().profile;
-    if (!credentials || !credentials.me) {
-      return;
-    }
-    const meId = credentials.me.id;
+    logger.error(`TODO: Re-implement loginSucceeded tab restore with buse!`);
 
-    const profile = db.profiles.findOneById(meId);
-    if (profile && profile.openTabs) {
-      let { current, items } = profile.openTabs;
+    // const { credentials } = store.getState().profile;
+    // if (!credentials || !credentials.me) {
+    //   return;
+    // }
+    // const meId = credentials.me.id;
 
-      // only restore valid items
-      items = filter(items, item => isValidTabInstance(item));
+    // const profile = db.profiles.findOneById(meId);
+    // if (profile && profile.openTabs) {
+    //   let { current, items } = profile.openTabs;
 
-      if (!isEmpty(items)) {
-        // does our current tab still exist?
-        if (findWhere(items, { id: current })) {
-          // good!
-        } else {
-          // otherwise, fall back on a reasonable default
-          current = "itch://featured";
-        }
+    //   // only restore valid items
+    //   items = filter(items, item => isValidTabInstance(item));
 
-        store.dispatch(actions.tabsRestored({ current, items }));
-      }
-    }
+    //   if (!isEmpty(items)) {
+    //     // does our current tab still exist?
+    //     if (findWhere(items, { id: current })) {
+    //       // good!
+    //     } else {
+    //       // otherwise, fall back on a reasonable default
+    //       current = "itch://featured";
+    //     }
+
+    //     store.dispatch(actions.tabsRestored({ current, items }));
+    //   }
+    // }
   });
 }
 
-function isValidTabInstance(ti: ITabInstance): boolean {
-  const hasValidHistory = ti.history && Array.isArray(ti.history);
-  if (!hasValidHistory) {
-    return false;
-  }
+// function isValidTabInstance(ti: ITabInstance): boolean {
+//   const hasValidHistory = ti.history && Array.isArray(ti.history);
+//   if (!hasValidHistory) {
+//     return false;
+//   }
 
-  const hasValidIndex =
-    ti.currentIndex >= 0 && ti.currentIndex < ti.history.length;
-  if (!hasValidIndex) {
-    return false;
-  }
+//   const hasValidIndex =
+//     ti.currentIndex >= 0 && ti.currentIndex < ti.history.length;
+//   if (!hasValidIndex) {
+//     return false;
+//   }
 
-  return true;
-}
+//   return true;
+// }
