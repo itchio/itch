@@ -8,8 +8,6 @@ import { IExternalGame, ExternalGameModel } from "./models/external-game";
 import { IDownloadKey, DownloadKeyModel } from "./models/download-key";
 import { UserModel } from "./models/user";
 import { IProfile, ProfileModel } from "./models/profile";
-import { IGamePassword, GamePasswordModel } from "./models/game-password";
-import { IGameSecret, GameSecretModel } from "./models/game-secret";
 import { Game, User } from "../buse/messages";
 import { IDownloadItem } from "../types/index";
 import { DownloadModel } from "./models/download";
@@ -24,8 +22,6 @@ export const modelMap: IModelMap = {
   downloadKeys: DownloadKeyModel,
   users: UserModel,
   profiles: ProfileModel,
-  gamePasswords: GamePasswordModel,
-  gameSecrets: GameSecretModel,
   downloads: DownloadModel,
 };
 
@@ -86,8 +82,6 @@ export class RepoContainer {
   downloadKeys: Repository<IDownloadKey>;
   users: Repository<User>;
   profiles: Repository<IProfile>;
-  gamePasswords: Repository<IGamePassword>;
-  gameSecrets: Repository<IGameSecret>;
   downloads: Repository<IDownloadItem>;
 
   protected q: Querier;
