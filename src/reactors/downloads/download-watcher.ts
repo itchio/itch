@@ -19,7 +19,6 @@ import { DB } from "../../db";
 import watcherState, {
   IDownloadHandle,
 } from "./download-watcher-persistent-state";
-import { wipeDownloadFolder, wipeInstallFolder } from "./wipe-download-folder";
 
 async function updateDownloadState(store: IStore, db: DB) {
   const downloadsState = store.getState().downloads;
@@ -132,7 +131,6 @@ async function start(store: IStore, db: DB, item: IDownloadItem) {
           logger.info(`Download for ${item.game.title} discarded`);
         }
         delete watcherState.discarded[item.id];
-        await cleanupDiscarded(store, db, item);
       } else {
         logger.info(`Download for ${item.game.title} paused/deprioritized`);
       }
@@ -181,7 +179,6 @@ export default function(watcher: Watcher, db: DB) {
       watcherState.discarded[id] = true;
     } else {
       logger.info(`No handle for ${id}, cleaning up right now`);
-      await cleanupDiscarded(store, db, item);
     }
     store.dispatch(actions.downloadDiscarded({ id }));
   });
@@ -200,20 +197,4 @@ export default function(watcher: Watcher, db: DB) {
       );
     }
   });
-}
-
-async function cleanupDiscarded(store: IStore, db: DB, item: IDownloadItem) {
-  logger.info(`Wiping staging folder for ${item.game.title}`);
-  let folderOpts = {
-    logger,
-    preferences: store.getState().preferences,
-    item,
-    caveIn: item.caveId ? db.caves.findOneById(item.caveId) : null,
-  };
-  await wipeDownloadFolder(folderOpts);
-
-  if (item.reason === "install" && item.err) {
-    logger.info(`Was fresh install (and had err), wiping install folder too`);
-    await wipeInstallFolder(folderOpts);
-  }
 }

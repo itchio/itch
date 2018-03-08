@@ -21,6 +21,10 @@ import { IRootState } from "../types";
 import Context from "../context";
 import { DB } from "../db";
 import { modalWidgets } from "../components/modal-widgets/index";
+import { withButlerClient, messages } from "../buse";
+
+import rootLogger from "../logger";
+const logger = rootLogger.child({ name: "install-locations" });
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
@@ -38,6 +42,8 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.removeInstallLocationRequest, async (store, action) => {
+    // TODO: move all that to buse - let it worry about numItems, moving items, etc.
+
     const { name } = action.payload;
     invariant(
       typeof name === "string",
@@ -45,7 +51,14 @@ export default function(watcher: Watcher, db: DB) {
     );
     invariant(name !== "appdata", "cannot remove appdata");
 
-    const numItems = db.caves.count(k => k.where("installLocation = ?", name));
+    const { caves } = await withButlerClient(
+      logger,
+      async client =>
+        await client.call(
+          messages.FetchCavesByInstallLocationID({ installLocationId: name })
+        )
+    );
+    const numItems = caves.length;
 
     const i18n = store.getState().i18n;
 

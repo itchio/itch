@@ -1,8 +1,3 @@
-import { ICave } from "../db/models/cave";
-
-import { IRuntime } from ".";
-
-import { Logger } from "../logger";
 import { Game, Upload, Build, Cave } from "../buse/messages";
 
 export type DownloadReason =
@@ -62,13 +57,4 @@ export interface IQueueUninstallOpts {
 export interface IQueueLaunchOpts {
   /** which cave we're launching */
   cave: Cave;
-}
-
-export interface IConfigureOpts {
-  cave: ICave;
-  game: Game;
-
-  logger: Logger;
-
-  runtime: IRuntime;
 }

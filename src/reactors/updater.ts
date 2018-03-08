@@ -1,6 +1,5 @@
 import { Watcher } from "./watcher";
 import { DB } from "../db";
-import Context from "../context";
 
 import { actions } from "../actions";
 
@@ -28,10 +27,7 @@ import {
 import { IStore } from "../types/index";
 import { CheckUpdateItem, CheckUpdateResult, Cave } from "../buse/messages";
 
-async function prepareUpdateItem(
-  ctx: Context,
-  cave: Cave
-): Promise<CheckUpdateItem> {
+async function prepareUpdateItem(cave: Cave): Promise<CheckUpdateItem> {
   if (!cave.game) {
     throw new Error(`Cave ${cave.id} lacks game`);
   }
@@ -47,7 +43,7 @@ async function prepareUpdateItem(
 }
 
 async function performUpdateCheck(
-  ctx: Context,
+  store: IStore,
   items: CheckUpdateItem[]
 ): Promise<CheckUpdateResult> {
   let res: CheckUpdateResult;
@@ -60,7 +56,7 @@ async function performUpdateCheck(
         messages.GameUpdateAvailable,
         async ({ params }) => {
           const { update } = params;
-          ctx.store.dispatch(actions.gameUpdateAvailable({ update }));
+          store.dispatch(actions.gameUpdateAvailable({ update }));
         }
       );
       res = await client.call(messages.CheckUpdate({ items }));
@@ -116,55 +112,43 @@ export default function(watcher: Watcher, db: DB) {
     );
 
     try {
-      const ctx = new Context(store, db);
-      const totalCaves = db.caves.count(k => k.where("1"));
-      let limit = 15;
-      let offset = 0;
+      store.dispatch(
+        actions.gameUpdateCheckStatus({
+          checking: true,
+          progress: 0,
+        })
+      );
 
-      while (offset < totalCaves) {
-        store.dispatch(
-          actions.gameUpdateCheckStatus({
-            checking: true,
-            progress: offset / totalCaves,
-          })
-        );
+      // TODO: let butler page through the caves instead,
+      // this is too much back and forth
+      const { caves } = await withButlerClient(
+        logger,
+        async client => await client.call(messages.FetchCaves({}))
+      );
 
-        let start = offset;
-        let end = offset + limit;
-        if (end > totalCaves) {
-          end = totalCaves;
-        }
-        logger.info(
-          `Checking updates for games ${start}-${end} of ${totalCaves}`
-        );
+      if (isEmpty(caves)) {
+        return;
+      }
 
-        // TODO: let butler page through the caves instead,
-        // this is too much back and forth
-        const { caves } = await withButlerClient(
-          logger,
-          async client => await client.call(messages.FetchCaves({}))
-        );
+      logger.info(`Checking updates for ${caves.length} games`);
 
-        let items: CheckUpdateItem[] = [];
-        for (const cave of caves) {
-          try {
-            const item = await prepareUpdateItem(ctx, cave);
-            items.push(item);
-          } catch (e) {
-            logger.error(
-              `Won't be able to check ${cave.id} for upgrade: ${e.stack}`
-            );
-          }
-        }
-
+      let items: CheckUpdateItem[] = [];
+      for (const cave of caves) {
         try {
-          await performUpdateCheck(ctx, items);
+          items.push(await prepareUpdateItem(cave));
         } catch (e) {
           logger.error(
-            `While performing ${items.length} update checks: ${e.stack}`
+            `Won't be able to check ${cave.id} for upgrade: ${e.stack}`
           );
         }
-        offset += limit;
+      }
+
+      try {
+        await performUpdateCheck(store, items);
+      } catch (e) {
+        logger.error(
+          `While performing ${items.length} update checks: ${e.stack}`
+        );
       }
     } finally {
       store.dispatch(
@@ -187,12 +171,11 @@ export default function(watcher: Watcher, db: DB) {
       async client => await client.call(messages.FetchCave({ caveId }))
     );
 
-    const ctx = new Context(store, db);
-    const item = await prepareUpdateItem(ctx, cave);
+    const item = await prepareUpdateItem(cave);
     let res: CheckUpdateResult;
 
     try {
-      res = await performUpdateCheck(ctx, [item]);
+      res = await performUpdateCheck(store, [item]);
     } catch (e) {
       logger.error(`While checking for game update: ${e.stack}`);
       if (!res) {

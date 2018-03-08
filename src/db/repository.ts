@@ -6,7 +6,6 @@ import { Model } from "./model";
 import { GameModel } from "./models/game";
 import { IExternalGame, ExternalGameModel } from "./models/external-game";
 import { IDownloadKey, DownloadKeyModel } from "./models/download-key";
-import { ICave, CaveModel } from "./models/cave";
 import { UserModel } from "./models/user";
 import { IProfile, ProfileModel } from "./models/profile";
 import { IGamePassword, GamePasswordModel } from "./models/game-password";
@@ -23,7 +22,6 @@ export const modelMap: IModelMap = {
   games: GameModel,
   externalGames: ExternalGameModel,
   downloadKeys: DownloadKeyModel,
-  caves: CaveModel,
   users: UserModel,
   profiles: ProfileModel,
   gamePasswords: GamePasswordModel,
@@ -86,7 +84,6 @@ export class RepoContainer {
   games: Repository<Game>;
   externalGames: Repository<IExternalGame>;
   downloadKeys: Repository<IDownloadKey>;
-  caves: Repository<ICave>;
   users: Repository<User>;
   profiles: Repository<IProfile>;
   gamePasswords: Repository<IGamePassword>;

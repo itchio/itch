@@ -5,73 +5,7 @@ const app = electron.app || electron.remote.app;
 import urls from "../constants/urls";
 import * as urlParser from "url";
 
-import { IPreferencesState } from "../types";
-import { ICaveLocation } from "../db/models/cave";
 import { makeLogger, Logger } from "../logger";
-
-const APPDATA_RE = /^appdata\/(.*)$/;
-
-/*
- * Pathmaker returns the location of disk of files that usually change from
- * one install to the other (as opposed to resources)
- */
-
-export function appPath(cave: ICaveLocation, preferences: IPreferencesState) {
-  // < 0.13.x, installFolder isn't set, it's implicitly the cave's id
-  // < 18.5.x, everything is installed in an `apps` subfolder
-  const {
-    installLocation,
-    installFolder = cave.id,
-    pathScheme = PathScheme.LEGACY_PER_USER,
-  } = cave;
-
-  let appsSuffix = false;
-  let base = "";
-
-  const matches = APPDATA_RE.exec(installLocation);
-  if (matches) {
-    // caves migrated from 0.13.x or earlier: installed in per-user directory
-    base = join(app.getPath("userData"), "users", matches[1]);
-    appsSuffix = true;
-  } else if (installLocation === "appdata") {
-    // caves >= 0.14.x with no special install location specified
-    base = join(app.getPath("userData"));
-    appsSuffix = true;
-  } else {
-    const locations = preferences.installLocations;
-    const location = locations[installLocation];
-    base = location.path;
-  }
-
-  if (pathScheme === PathScheme.LEGACY_PER_USER) {
-    appsSuffix = true;
-  }
-
-  if (appsSuffix) {
-    return join(base, "apps", installFolder);
-  } else {
-    return join(base, installFolder);
-  }
-}
-
-export function downloadBasePath(
-  installLocation: string,
-  preferences: IPreferencesState
-): string {
-  if (installLocation === "appdata") {
-    return join(app.getPath("userData"), "downloads");
-  }
-  const location = preferences.installLocations[installLocation];
-  return join(location.path, "downloads");
-}
-
-export function downloadFolderPathForId(
-  preferences: IPreferencesState,
-  installLocation: string,
-  id: string
-): string {
-  return join(downloadBasePath(installLocation, preferences), id);
-}
 
 export function globalDbPath(): string {
   let dbName = "local";

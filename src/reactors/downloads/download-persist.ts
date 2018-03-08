@@ -8,11 +8,7 @@ import { DB } from "../../db/db";
 import { IStore, IDownloadItem, IRootState } from "../../types/index";
 
 import * as _ from "underscore";
-import { MinimalContext } from "../../context/index";
-import { downloadBasePath } from "../../os/paths";
 import { createSelector } from "reselect";
-import { fileSize } from "../../format/index";
-import { messages, setupClient, makeButlerInstance } from "../../buse/index";
 
 function persistDownloads(store: IStore, db: DB) {
   const state = store.getState();
@@ -61,80 +57,84 @@ function restoreDownloads(store: IStore, db: DB) {
 }
 
 export async function cleanDownloadsSearch(store: IStore) {
-  const ctx = new MinimalContext();
-  const instance = await makeButlerInstance();
+  throw new Error("re-implement me in buse please!");
 
-  const { preferences, downloads } = store.getState();
-  const { items } = downloads;
+  // const ctx = new MinimalContext();
+  // const instance = await makeButlerInstance();
 
-  // staging folders' names are just the UUID of a download
-  const whitelist = Object.keys(items);
+  // const { preferences, downloads } = store.getState();
+  // const { items } = downloads;
 
-  let installLocations = [
-    "appdata",
-    ...Object.keys(preferences.installLocations),
-  ];
+  // // staging folders' names are just the UUID of a download
+  // const whitelist = Object.keys(items);
 
-  const roots = [];
-  for (const loc of installLocations) {
-    const folder = downloadBasePath(loc, preferences);
-    roots.push(folder);
-  }
+  // let installLocations = [
+  //   "appdata",
+  //   ...Object.keys(preferences.installLocations),
+  // ];
 
-  instance.onClient(async client => {
-    try {
-      setupClient(client, logger, ctx);
+  // const roots = [];
+  // for (const loc of installLocations) {
+  //   const folder = downloadBasePath(loc, preferences);
+  //   roots.push(folder);
+  // }
 
-      const res = await client.call(
-        messages.CleanDownloadsSearch({ roots, whitelist })
-      );
+  // instance.onClient(async client => {
+  //   try {
+  //     setupClient(client, logger, ctx);
 
-      if (res.entries && res.entries.length > 0) {
-        let totalSize = 0;
-        for (const entry of res.entries) {
-          totalSize += entry.size;
-        }
+  //     const res = await client.call(
+  //       messages.CleanDownloadsSearch({ roots, whitelist })
+  //     );
 
-        logger.info(
-          `${res.entries.length} folders can be cleaned, ${fileSize(
-            totalSize
-          )} total`
-        );
-        store.dispatch(
-          actions.cleanDownloadsFoundEntries({ entries: res.entries })
-        );
-      }
-    } catch (e) {
-      logger.error(`While searching for downloads to clean: ${e.stack}`);
-    } finally {
-      instance.cancel();
-    }
-  });
+  //     if (res.entries && res.entries.length > 0) {
+  //       let totalSize = 0;
+  //       for (const entry of res.entries) {
+  //         totalSize += entry.size;
+  //       }
 
-  await instance.promise();
+  //       logger.info(
+  //         `${res.entries.length} folders can be cleaned, ${fileSize(
+  //           totalSize
+  //         )} total`
+  //       );
+  //       store.dispatch(
+  //         actions.cleanDownloadsFoundEntries({ entries: res.entries })
+  //       );
+  //     }
+  //   } catch (e) {
+  //     logger.error(`While searching for downloads to clean: ${e.stack}`);
+  //   } finally {
+  //     instance.cancel();
+  //   }
+  // });
+
+  // await instance.promise();
 }
 
 export async function cleanDownloadsApply(
   store: IStore,
   payload: typeof actions.cleanDownloadsApply.payload
 ) {
-  const { entries } = payload;
-  const ctx = new MinimalContext();
-  const instance = await makeButlerInstance();
+  throw new Error("re-implement me in buse please!");
 
-  instance.onClient(async client => {
-    try {
-      setupClient(client, logger, ctx);
+  // const { entries } = payload;
+  // const ctx = new MinimalContext();
+  // const instance = await makeButlerInstance();
 
-      await client.call(messages.CleanDownloadsApply({ entries }));
-    } catch (e) {
-      logger.error(`While cleaning downloads: ${e.stack}`);
-    } finally {
-      instance.cancel();
-    }
-  });
+  // instance.onClient(async client => {
+  //   try {
+  //     setupClient(client, logger, ctx);
 
-  await instance.promise();
+  //     await client.call(messages.CleanDownloadsApply({ entries }));
+  //   } catch (e) {
+  //     logger.error(`While cleaning downloads: ${e.stack}`);
+  //   } finally {
+  //     instance.cancel();
+  //   }
+  // });
+
+  // await instance.promise();
 }
 
 export default function(watcher: Watcher, db: DB) {
