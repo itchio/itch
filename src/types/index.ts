@@ -1,8 +1,5 @@
 import { Store } from "redux";
 
-import { IDownloadKey, IDownloadKeySummary } from "../db/models/download-key";
-import { ICaveSummary, ICave } from "../db/models/cave";
-
 export * from "./tasks";
 export * from "./errors";
 import * as Tasks from "./tasks";
@@ -15,7 +12,16 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
-import { GameUpdate, Game, User, Collection } from "../buse/messages";
+import {
+  GameUpdate,
+  Game,
+  User,
+  Collection,
+  CaveSummary,
+  DownloadKeySummary,
+  Cave,
+  DownloadKey,
+} from "../buse/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -75,7 +81,7 @@ export interface IGameSet {
 }
 
 export interface IDownloadKeySet {
-  [id: string]: IDownloadKey;
+  [id: string]: DownloadKey;
 }
 
 export interface ICollectionSet {
@@ -83,7 +89,7 @@ export interface ICollectionSet {
 }
 
 export interface ICaveSet {
-  [key: string]: ICave;
+  [key: string]: Cave;
 }
 
 export type InstallerType =
@@ -151,36 +157,23 @@ export interface IRootState {
   downloads: IDownloadsState;
   status: IStatusState;
   gameUpdates: IGameUpdatesState;
-  queries: IQueriesState;
+
   /** commonly-needed subset of DB rows available in a compact & performance-friendly format */
   commons: ICommonsState;
+
   systemTasks: ISystemTasksState;
-}
-
-export interface IQueriesState {
-  [key: string]: {
-    [key: string]: any[];
-  };
-
-  cavesByGameId: {
-    [gameId: string]: ICave[];
-  };
-
-  downloadKeysByGameId: {
-    [gameId: string]: IDownloadKey[];
-  };
 }
 
 export interface ICommonsState {
   downloadKeys: {
-    [downloadKeyId: string]: IDownloadKeySummary;
+    [downloadKeyId: string]: DownloadKeySummary;
   };
   downloadKeyIdsByGameId: {
     [gameId: string]: string[];
   };
 
   caves: {
-    [caveId: string]: ICaveSummary;
+    [caveId: string]: CaveSummary;
   };
   caveIdsByGameId: {
     [gameId: string]: string[];
@@ -190,11 +183,6 @@ export interface ICommonsState {
   locationSizes: {
     [id: string]: number;
   };
-}
-
-export interface IGameCredentials {
-  apiKey: string;
-  downloadKey?: IDownloadKey;
 }
 
 export interface IGameUpdatesState {
@@ -308,10 +296,6 @@ export interface IItchAppTabs {
 
   /** list of transient tabs when the snapshot was taken */
   items: TabDataTypes.ITabDataSave[];
-}
-
-export interface IDownloadKeysMap {
-  [id: string]: IDownloadKey;
 }
 
 export type ProxySource = "os" | "env";

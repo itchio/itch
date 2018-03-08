@@ -48,6 +48,8 @@ export interface IQueueDownloadOpts {
 
   /** for fresh game installs, where to install it */
   installFolder?: string;
+
+  stagingFolder?: string;
 }
 
 export type TaskName = "install" | "uninstall" | "configure" | "launch";

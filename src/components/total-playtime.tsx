@@ -4,17 +4,15 @@ import { formatDuration } from "../format";
 
 import actionForGame from "../util/action-for-game";
 
-import { ICaveSummary } from "../db/models/cave";
-
 import format from "../components/format";
-import { Game } from "../buse/messages";
+import { Game, CaveSummary } from "../buse/messages";
 
 export default class TotalPlaytime extends React.PureComponent<
   IProps & IDerivedProps
 > {
   render() {
     const { game, cave, short = false } = this.props;
-    let { secondsRun = 0 } = (cave || {}) as ICaveSummary;
+    let { secondsRun = 0 } = (cave || {}) as CaveSummary;
 
     const classification = game.classification || "game";
     const classAction = actionForGame(game, cave);
@@ -42,7 +40,7 @@ export default class TotalPlaytime extends React.PureComponent<
 
 interface IProps {
   game: Game;
-  cave: ICaveSummary;
+  cave: CaveSummary;
   short?: boolean;
   secondsRun?: number;
 }

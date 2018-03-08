@@ -1,29 +1,19 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 
-import { DB } from "../../db";
-import * as paths from "../../os/paths";
-
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "queue-game" });
 
-import { IStore } from "../../types/index";
-import {
-  ensureUniqueInstallFolder,
-  installFolderName,
-} from "../downloads/install-folder-name";
-import Context from "../../context/index";
-import { ICaveLocation } from "../../db/models/cave";
-
-import uuid from "../../util/uuid";
-import { Game, Upload } from "../../buse/messages";
+import { IStore, DownloadReason } from "../../types/index";
+import { Game, Upload, InstallQueueResult } from "../../buse/messages";
 
 import { map, isEmpty } from "underscore";
 import makeUploadButton from "../make-upload-button";
 import { modalWidgets } from "../../components/modal-widgets/index";
 import { withButlerClient, messages } from "../../buse";
+import { promisedModal } from "../modals";
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
     const { game } = action.payload;
     const { caves } = await withButlerClient(
@@ -36,7 +26,7 @@ export default function(watcher: Watcher, db: DB) {
       logger.info(
         `No cave for ${game.title} (#${game.id}), attempting install`
       );
-      await queueInstall(store, db, game);
+      await queueInstall(store, game);
       return;
     }
 
@@ -70,39 +60,67 @@ export default function(watcher: Watcher, db: DB) {
 
   watcher.on(actions.queueGameInstall, async (store, action) => {
     const { game, upload } = action.payload;
-    await queueInstall(store, db, game, upload);
+    await queueInstall(store, game, upload);
   });
 }
 
-export async function queueInstall(
+export async function queueInstall(store: IStore, game: Game, upload?: Upload) {
+  await withButlerClient(logger, async client => {
+    client.onRequest(messages.PickUpload, async ({ params }) => {
+      const { uploads } = params;
+      const { title } = game;
+
+      const modalRes = await promisedModal(
+        store,
+        modalWidgets.pickUpload.make({
+          title: ["pick_install_upload.title", { title }],
+          message: ["pick_install_upload.message", { title }],
+          detail: ["pick_install_upload.detail"],
+          bigButtons: map(uploads, (candidate, index) => {
+            return {
+              ...makeUploadButton(candidate),
+              action: modalWidgets.pickUpload.action({
+                pickedUploadIndex: index,
+              }),
+            };
+          }),
+          buttons: ["cancel"],
+          widgetParams: {},
+        })
+      );
+
+      if (modalRes) {
+        return { index: modalRes.pickedUploadIndex };
+      } else {
+        // that tells butler to abort
+        return { index: -1 };
+      }
+    });
+
+    const installLocationId = defaultInstallLocation(store);
+    const res = await client.call(
+      messages.InstallQueue({
+        game,
+        upload,
+        installLocationId,
+      })
+    );
+    commitInstall(store, "install", res);
+  });
+}
+
+export function commitInstall(
   store: IStore,
-  db: DB,
-  game: Game,
-  upload?: Upload
+  reason: DownloadReason,
+  res: InstallQueueResult
 ) {
-  const caveId = uuid();
-  const installFolder = installFolderName(game);
-
-  let caveLocation: ICaveLocation;
-  caveLocation = {
-    id: caveId,
-    installLocation: defaultInstallLocation(store),
-    installFolder,
-    pathScheme: paths.PathScheme.MODERN_SHARED,
-  };
-
-  // FIXME: we only want that on first-time installs
-  const ctx = new Context(store, db);
-  await ensureUniqueInstallFolder(ctx, caveLocation);
-
   store.dispatch(
     actions.queueDownload({
       reason: "install",
-      upload,
-      caveId,
-      installLocation: caveLocation.installLocation,
-      installFolder: caveLocation.installFolder,
-      game,
+      game: res.game,
+      upload: res.upload,
+      build: res.build,
+      stagingFolder: res.stagingFolder,
     })
   );
 }

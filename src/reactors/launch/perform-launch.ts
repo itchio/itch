@@ -5,7 +5,7 @@ import { Logger } from "../../logger";
 
 import * as paths from "../../os/paths";
 
-import { IRuntime, Cancelled, ILocalizedString } from "../../types";
+import { Cancelled, ILocalizedString } from "../../types";
 
 import { promisedModal } from "../modals";
 import {
@@ -24,8 +24,7 @@ export async function performLaunch(
   ctx: Context,
   logger: Logger,
   cave: Cave,
-  game: Game,
-  runtime: IRuntime
+  game: Game
 ) {
   const { store } = ctx;
 
@@ -62,8 +61,8 @@ export async function performLaunch(
       setupClient(client, logger, ctx);
 
       client.onRequest(messages.PickManifestAction, async ({ params }) => {
-        const name = await pickManifestAction(store, params.actions, game);
-        return { name };
+        const index = await pickManifestAction(store, params.actions, game);
+        return { index };
       });
 
       client.onRequest(messages.HTMLLaunch, async ({ params }) => {

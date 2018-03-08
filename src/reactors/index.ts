@@ -71,9 +71,9 @@ export default function getWatcher(db: DB) {
   purchases(watcher);
   url(watcher);
   itchInternal(watcher);
-  tasks(watcher, db);
+  tasks(watcher);
   downloads(watcher, db);
-  queueLaunch(watcher, db);
+  queueLaunch(watcher);
   updater(watcher, db);
   gameUpdates(watcher, db);
   report(watcher, db);

@@ -1,7 +1,5 @@
 import * as React from "react";
 
-import { ICaveSummary } from "../../db/models/cave";
-
 import Cover from "../basics/cover";
 import Hoverable from "../basics/hover-hoc";
 import TimeAgo from "../basics/time-ago";
@@ -17,7 +15,7 @@ import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { createSelector } from "reselect";
 import { IRootState } from "../../types/index";
 import { connect } from "../connect";
-import { Game } from "../../buse/messages";
+import { Game, CaveSummary } from "../../buse/messages";
 
 import { aggregateCaveSummaries } from "../../util/aggregate-cave-summaries";
 
@@ -104,7 +102,7 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {
   game: Game;
-  caves: ICaveSummary[];
+  caves: CaveSummary[];
   index: number;
   rowHeight: number;
   columns: GameColumn[];

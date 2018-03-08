@@ -1,7 +1,6 @@
 import { actions } from "../../actions";
 
 import { IDownloadKey } from "../../db/models/download-key";
-import { ICaveSummary } from "../../db/models/cave";
 
 import {
   ClassificationAction,
@@ -11,7 +10,7 @@ import {
 } from "../../types";
 
 import { showInExplorerString } from "../../format/show-in-explorer";
-import { Game } from "../../buse/messages";
+import { Game, CaveSummary, DownloadKey } from "../../buse/messages";
 
 export type ActionType = "secondary" | "separator" | "info";
 
@@ -62,8 +61,8 @@ function uninstallAction(caveId: string): IActionOpts {
 
 interface IListSecondaryActionsProps {
   game: Game;
-  cave: ICaveSummary;
-  downloadKey: IDownloadKey;
+  cave: CaveSummary;
+  downloadKey: DownloadKey;
 
   mayDownload: boolean;
   canBeBought: boolean;

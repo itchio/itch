@@ -24,6 +24,7 @@ export interface ITabCollections {
 }
 
 export interface ITabLocation {
+  size: number;
   path: string;
 }
 

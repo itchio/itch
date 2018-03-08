@@ -1,6 +1,4 @@
-import { IGameCredentials } from "../types/index";
-import { GameCredentials } from "../buse/messages";
-import urls from "../constants/urls";
+import { Cave, CaveSummary } from "../buse/messages";
 import { Client, Instance } from "node-buse";
 import { Logger } from "../logger/index";
 import { MinimalContext } from "../context/index";
@@ -9,6 +7,8 @@ import { getBinPath } from "../util/ibrew";
 
 import * as messages from "./messages";
 import { butlerDbPath } from "../os/paths";
+
+// TODO: pass server URL to butler
 
 export async function makeButlerInstance(): Promise<Instance> {
   // TODO: respect global lock when we're updating butler
@@ -48,22 +48,12 @@ export async function withButlerClient<T>(
   return res;
 }
 
-export function buseGameCredentials(
-  credentials: IGameCredentials
-): GameCredentials {
-  return {
-    apiKey: credentials.apiKey,
-    downloadKey: credentials.downloadKey ? credentials.downloadKey.id : null,
-    server: urls.itchioApi,
-  };
-}
-
 export function setupClient(
   client: Client,
   parentLogger: Logger,
   ctx: MinimalContext
 ) {
-  client.onNotification(messages.OperationProgress, ({ params }) => {
+  client.onNotification(messages.Progress, ({ params }) => {
     ctx.emitProgress(params);
   });
 
@@ -92,4 +82,14 @@ export function setupLogging(client: Client, parentLogger: Logger) {
         break;
     }
   });
+}
+
+export function getCaveSummary(cave: Cave): CaveSummary {
+  return {
+    id: cave.id,
+    gameId: cave.game.id,
+    lastTouchedAt: cave.stats.lastTouchedAt,
+    secondsRun: cave.stats.secondsRun,
+    installedSize: cave.installInfo.installedSize,
+  };
 }

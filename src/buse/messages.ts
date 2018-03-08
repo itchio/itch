@@ -334,7 +334,7 @@ export interface CaveInstallInfo {
   /** undocumented */
   installLocation: string;
   /** undocumented */
-  absoluteInstallFolder: string;
+  installFolder: string;
 }
 
 /**
@@ -348,6 +348,21 @@ export interface InstallLocationSummary {
 }
 
 /**
+ * Result for Fetch.Caves
+ */
+export interface FetchCavesResult {
+  /** undocumented */
+  caves: Cave[];
+}
+
+/**
+ * Retrieve info for all caves.
+ */
+export const FetchCaves = createRequest<FetchCavesParams, FetchCavesResult>(
+  "Fetch.Caves"
+);
+
+/**
  * Result for Fetch.Cave
  */
 export interface FetchCaveResult {
@@ -356,7 +371,7 @@ export interface FetchCaveResult {
 }
 
 /**
- * undocumented
+ * Retrieve info on a cave by ID.
  */
 export const FetchCave = createRequest<FetchCaveParams, FetchCaveResult>(
   "Fetch.Cave"
@@ -371,12 +386,32 @@ export interface FetchCavesByGameIDResult {
 }
 
 /**
- * undocumented
+ * Retrieve all caves for a given game.
  */
 export const FetchCavesByGameID = createRequest<
   FetchCavesByGameIDParams,
   FetchCavesByGameIDResult
 >("Fetch.CavesByGameID");
+
+/**
+ * Result for Fetch.CavesByInstallLocationID
+ */
+export interface FetchCavesByInstallLocationIDResult {
+  /** undocumented */
+  installLocationPath: string;
+  /** undocumented */
+  installLocationSize: number;
+  /** undocumented */
+  caves: Cave[];
+}
+
+/**
+ * Retrieve all caves installed to a given location.
+ */
+export const FetchCavesByInstallLocationID = createRequest<
+  FetchCavesByInstallLocationIDParams,
+  FetchCavesByInstallLocationIDResult
+>("Fetch.CavesByInstallLocationID");
 
 /**
  * Result for Game.FindUploads
@@ -395,36 +430,110 @@ export const GameFindUploads = createRequest<
 >("Game.FindUploads");
 
 /**
- * Result for Operation.Start
+ * Result for Install.Queue
  */
-export interface OperationStartResult {
+export interface InstallQueueResult {
+  /** undocumented */
+  game: Game;
+  /** undocumented */
+  upload: Upload;
+  /** undocumented */
+  build: Build;
+  /** undocumented */
+  installFolder: string;
+  /** undocumented */
+  stagingFolder: string;
+}
+
+/**
+ * Queues an install operation to be later performed
+ * via @@InstallPerformParams.
+ */
+export const InstallQueue = createRequest<
+  InstallQueueParams,
+  InstallQueueResult
+>("Install.Queue");
+
+/**
+ * Result for Install.Perform
+ */
+export interface InstallPerformResult {
   // no fields
 }
 
 /**
- * Start a new operation (installing or uninstalling).
+ * Perform an install that was previously queued via
+ * @@InstallQueueParams.
  *
- * Can be cancelled by passing the same `ID` to @@OperationCancelParams.
+ * Can be cancelled by passing the same `ID` to @@InstallCancelParams.
  */
-export const OperationStart = createRequest<
-  OperationStartParams,
-  OperationStartResult
->("Operation.Start");
+export const InstallPerform = createRequest<
+  InstallPerformParams,
+  InstallPerformResult
+>("Install.Perform");
 
 /**
- * Result for Operation.Cancel
+ * Result for Install.Cancel
  */
-export interface OperationCancelResult {
+export interface InstallCancelResult {
   // no fields
 }
 
 /**
  * Attempt to gracefully cancel an ongoing operation.
  */
-export const OperationCancel = createRequest<
-  OperationCancelParams,
-  OperationCancelResult
->("Operation.Cancel");
+export const InstallCancel = createRequest<
+  InstallCancelParams,
+  InstallCancelResult
+>("Install.Cancel");
+
+/**
+ * Result for Uninstall.Perform
+ */
+export interface UninstallPerformResult {
+  // no fields
+}
+
+/**
+ * UninstallParams contains all the parameters needed to perform
+ * an uninstallation for a game via @@OperationStartParams.
+ */
+export const UninstallPerform = createRequest<
+  UninstallPerformParams,
+  UninstallPerformResult
+>("Uninstall.Perform");
+
+/**
+ * Result for Install.VersionSwitch.Queue
+ */
+export interface InstallVersionSwitchQueueResult {
+  // no fields
+}
+
+/**
+ * Prepare to queue a version switch. The client will
+ * receive an @@InstallVersionSwitchPickParams.
+ */
+export const InstallVersionSwitchQueue = createRequest<
+  InstallVersionSwitchQueueParams,
+  InstallVersionSwitchQueueResult
+>("Install.VersionSwitch.Queue");
+
+/**
+ * Result for InstallVersionSwitchPick
+ */
+export interface InstallVersionSwitchPickResult {
+  /** A negative index aborts the version switch */
+  index: number;
+}
+
+/**
+ * Let the user pick which version to switch to.
+ */
+export const InstallVersionSwitchPick = createRequest<
+  InstallVersionSwitchPickParams,
+  InstallVersionSwitchPickResult
+>("InstallVersionSwitchPick");
 
 /**
  * GameCredentials contains all the credentials required to make API requests
@@ -455,21 +564,6 @@ export interface PickUploadResult {
  */
 export const PickUpload = createRequest<PickUploadParams, PickUploadResult>(
   "PickUpload"
-);
-
-/**
- * Result for GetReceipt
- */
-export interface GetReceiptResult {
-  /** undocumented */
-  receipt: Receipt;
-}
-
-/**
- * Retrieves existing receipt information for an install
- */
-export const GetReceipt = createRequest<GetReceiptParams, GetReceiptResult>(
-  "GetReceipt"
 );
 
 /**
@@ -508,8 +602,8 @@ export const Launch = createRequest<LaunchParams, LaunchResult>("Launch");
  * Result for PickManifestAction
  */
 export interface PickManifestActionResult {
-  /** Name of the action picked by user, or empty is we're aborting. */
-  name: string;
+  /** Index of action picked by user, or negative if aborting */
+  index: number;
 }
 
 /**
@@ -1495,6 +1589,13 @@ export interface FetchCommonsParams {
 }
 
 /**
+ * Params for Fetch.Caves
+ */
+export interface FetchCavesParams {
+  // no fields
+}
+
+/**
  * Params for Fetch.Cave
  */
 export interface FetchCaveParams {
@@ -1511,84 +1612,116 @@ export interface FetchCavesByGameIDParams {
 }
 
 /**
+ * Params for Fetch.CavesByInstallLocationID
+ */
+export interface FetchCavesByInstallLocationIDParams {
+  /** undocumented */
+  installLocationId: string;
+}
+
+/**
  * Params for Game.FindUploads
  */
 export interface GameFindUploadsParams {
   /** Which game to find uploads for */
   game: Game;
-  /** The credentials to use to list uploads */
-  credentials: GameCredentials;
 }
 
 /**
- * Params for Operation.Start
+ * Params for Install.Queue
  */
-export interface OperationStartParams {
+export interface InstallQueueParams {
   /**
-   * A UUID, generated by the client, used for referring to the
-   * task when cancelling it, for instance.
+   * ID of the cave to perform the install for.
+   * If not specified, will create a new cave.
    */
-  id: string;
+  caveId?: string;
   /**
-   * A folder that butler can use to store temporary files, like
-   * partial downloads, checkpoint files, etc.
+   * If CaveID is not specified, ID of an install location
+   * to install to.
    */
-  stagingFolder: string;
-  /** Which operation to perform */
-  operation: Operation;
-  /** Must be set if Operation is `install` */
-  installParams?: InstallParams;
-  /** Must be set if Operation is `uninstall` */
-  uninstallParams?: UninstallParams;
-}
-
-/**
- * undocumented
- */
-export enum Operation {
-  // Install a game (includes upgrades, heals, etc.)
-  Install = "install",
-  // Uninstall a game
-  Uninstall = "uninstall",
-}
-
-/**
- * Params for Operation.Cancel
- */
-export interface OperationCancelParams {
-  /** The UUID of the task to cancel, as passed to @@OperationStartParams */
-  id: string;
-}
-
-/**
- * InstallParams contains all the parameters needed to perform
- * an installation for a game via @@OperationStartParams.
- */
-export interface InstallParams {
-  /** Which game to install */
-  game: Game;
-  /** An absolute path where to install the game */
-  installFolder: string;
-  /** Which upload to install */
+  installLocationId?: string;
+  /**
+   * If set, InstallFolder can be set and no cave
+   * record will be read or modified
+   */
+  noCave?: boolean;
+  /** When NoCave is set, exactly where to install */
+  installFolder?: string;
+  /**
+   * Which game to install.
+   *
+   * If unspecified and caveId is specified, the same game will be used.
+   */
+  game?: Game;
+  /**
+   * Which upload to install.
+   *
+   * If unspecified and caveId is specified, the same upload will be used.
+   */
   upload?: Upload;
-  /** Which build to install */
+  /**
+   * Which build to install
+   *
+   * If unspecified and caveId is specified, the same build will be used.
+   */
   build?: Build;
-  /** Which credentials to use to install the game */
-  credentials: GameCredentials;
   /**
    * If true, do not run windows installers, just extract
    * whatever to the install folder.
    */
   ignoreInstallers?: boolean;
+  /**
+   * A folder that butler can use to store temporary files, like
+   * partial downloads, checkpoint files, etc.
+   */
+  stagingFolder?: string;
 }
 
 /**
- * UninstallParams contains all the parameters needed to perform
- * an uninstallation for a game via @@OperationStartParams.
+ * Params for Install.Perform
  */
-export interface UninstallParams {
-  /** Absolute path of the folder butler should uninstall */
-  installFolder: string;
+export interface InstallPerformParams {
+  /** ID that can be later used in @@InstallCancelParams */
+  id: string;
+  /** The folder turned by @@InstallQueueParams */
+  stagingFolder: string;
+}
+
+/**
+ * Params for Install.Cancel
+ */
+export interface InstallCancelParams {
+  /** The UUID of the task to cancel, as passed to @@OperationStartParams */
+  id: string;
+}
+
+/**
+ * Params for Uninstall.Perform
+ */
+export interface UninstallPerformParams {
+  /** The cave to uninstall */
+  caveId: string;
+}
+
+/**
+ * Params for Install.VersionSwitch.Queue
+ */
+export interface InstallVersionSwitchQueueParams {
+  /** The cave to switch to a different version */
+  caveId: string;
+}
+
+/**
+ * Params for InstallVersionSwitchPick
+ */
+export interface InstallVersionSwitchPickParams {
+  /** undocumented */
+  cave: Cave;
+  /** undocumented */
+  upload: Upload;
+  /** undocumented */
+  builds: Build[];
 }
 
 /**
@@ -1600,16 +1733,9 @@ export interface PickUploadParams {
 }
 
 /**
- * Params for GetReceipt
+ * Payload for Progress
  */
-export interface GetReceiptParams {
-  // no fields
-}
-
-/**
- * Payload for Operation.Progress
- */
-export interface OperationProgressNotification {
+export interface ProgressNotification {
   /** An overall progress value between 0 and 1 */
   progress: number;
   /** Estimated completion time for the operation, in seconds (floating) */
@@ -1619,11 +1745,9 @@ export interface OperationProgressNotification {
 }
 
 /**
- * Sent periodically during @@OperationStartParams to inform on the current state an operation.
+ * Sent periodically during @@InstallPerformParams to inform on the current state of an install
  */
-export const OperationProgress = createNotification<
-  OperationProgressNotification
->("Operation.Progress");
+export const Progress = createNotification<ProgressNotification>("Progress");
 
 /**
  * undocumented
@@ -1729,15 +1853,13 @@ export interface CheckUpdateItem {
    */
   itemId: string;
   /** Timestamp of the last successful install operation */
-  installedAt: string;
+  installedAt: Date;
   /** Game for which to look for an update */
   game: Game;
   /** Currently installed upload */
   upload: Upload;
   /** Currently installed build */
   build: Build;
-  /** Credentials to use to list uploads */
-  credentials: GameCredentials;
 }
 
 /**

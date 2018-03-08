@@ -3,10 +3,6 @@ import { actions } from "../actions";
 import asTask from "./tasks/as-task";
 import { Watcher } from "./watcher";
 
-import { DB } from "../db";
-
-import { currentRuntime } from "../os/runtime";
-
 import { isAborted } from "../types";
 
 import { promisedModal } from "./modals";
@@ -15,20 +11,17 @@ import { modalWidgets } from "../components/modal-widgets/index";
 
 import { performLaunch } from "./launch/perform-launch";
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.queueLaunch, async (store, action) => {
     const { cave } = action.payload;
     const { game } = cave;
-
-    const runtime = currentRuntime();
 
     asTask({
       name: "launch",
       gameId: game.id,
       store,
-      db,
       work: async (ctx, logger) => {
-        return await performLaunch(ctx, logger, cave, game, runtime);
+        return await performLaunch(ctx, logger, cave, game);
       },
       onError: async (e: any, log) => {
         if (isAborted(e)) {

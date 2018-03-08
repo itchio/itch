@@ -133,6 +133,7 @@ export class MinimalContext {
 }
 
 export default class Context extends MinimalContext {
+  // TODO: remove DB
   constructor(public store: IStore, public db: DB) {
     super();
   }

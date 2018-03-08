@@ -9,7 +9,6 @@ import {
   TaskName,
   isAborted,
 } from "../../types";
-import { DB } from "../../db";
 import Context from "../../context";
 import { actions } from "../../actions";
 
@@ -18,7 +17,6 @@ import { getCurrentTasks } from "./as-task-persistent-state";
 
 interface IAsTaskOpts {
   store: IStore;
-  db: DB;
   name: TaskName;
   gameId: number;
 
@@ -32,7 +30,7 @@ interface IAsTaskOpts {
 export default async function asTask(opts: IAsTaskOpts) {
   const id = uuid();
 
-  const { store, db, name, gameId } = opts;
+  const { store, name, gameId } = opts;
 
   const memlog = new memory.WritableStream();
   const logger = makeLogger({ customOut: memlog });
@@ -46,7 +44,7 @@ export default async function asTask(opts: IAsTaskOpts) {
     })
   );
 
-  const ctx = new Context(store, db);
+  const ctx = new Context(store, null);
   ctx.registerTaskId(id);
   ctx.on(
     "progress",

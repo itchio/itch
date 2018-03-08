@@ -1,8 +1,7 @@
 import * as React from "react";
 
 import { ModalWidgetDiv } from "./modal-widget";
-import { Game, Upload } from "../../buse/messages";
-import { ICave } from "../../db/models/cave";
+import { Game, Upload, Cave } from "../../buse/messages";
 
 import IconButton from "../basics/icon-button";
 import Button from "../basics/button";
@@ -22,6 +21,7 @@ import { showInExplorerString } from "../../format/show-in-explorer";
 import TotalPlaytime from "../total-playtime";
 import LastPlayed from "../last-played";
 import { IModalWidgetProps } from "./index";
+import { getCaveSummary } from "../../buse";
 
 const CaveItemList = styled.div`
   margin: 8px 0;
@@ -104,6 +104,8 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
         <CaveItemList>
           {map(caves, (cave, i) => {
             const u = cave.upload;
+            const caveSummary = getCaveSummary(cave);
+
             return (
               <CaveItem>
                 <CaveDetails>
@@ -111,16 +113,18 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
                     <Title>{formatUploadTitle(u)}</Title>
                   </CaveDetailsRow>
                   <CaveDetailsRow className="smaller">
-                    {cave.installedSize ? (
-                      <FileSize>{fileSize(cave.installedSize)}</FileSize>
+                    {cave.installInfo.installedSize ? (
+                      <FileSize>
+                        {fileSize(cave.installInfo.installedSize)}
+                      </FileSize>
                     ) : null}
                     {u ? (
                       <PlatformIcons className="platform-icons" target={u} />
                     ) : null}
                     <Spacer />
-                    <LastPlayed game={game} cave={cave} />
+                    <LastPlayed game={game} cave={caveSummary} />
                     <Spacer />
-                    <TotalPlaytime game={game} cave={cave} />
+                    <TotalPlaytime game={game} cave={caveSummary} />
                   </CaveDetailsRow>
                 </CaveDetails>
                 <Filler />
@@ -231,7 +235,7 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
 
 export interface IManageGameParams {
   game: Game;
-  caves: ICave[];
+  caves: Cave[];
   allUploads: Upload[];
   loadingUploads: boolean;
 }

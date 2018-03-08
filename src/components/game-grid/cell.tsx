@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as classNames from "classnames";
-import { ICaveSummary } from "../../db/models/cave";
 import Hoverable from "../basics/hover-hoc";
 import Filler from "../basics/filler";
 import Cover from "../basics/cover";
@@ -14,7 +13,7 @@ import { IRootState } from "../../types/index";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import isCavePristine from "../../helpers/is-cave-pristine";
-import { Game } from "../../buse/messages";
+import { Game, CaveSummary } from "../../buse/messages";
 
 class Cell extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -82,7 +81,7 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {
   game: Game;
-  cave: ICaveSummary;
+  cave: CaveSummary;
 
   column: number;
   columnWidth: number;

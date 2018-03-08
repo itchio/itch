@@ -682,20 +682,8 @@ export const actions = wireActions({
     update: GameUpdate;
   }>(),
   queueAllGameUpdates: action<{}>(),
-  nukeCavePrereqs: action<{
-    /** the cave to nuke the prereqs of */
-    caveId: string;
-  }>(),
-  configureCave: action<{
-    /** the cave to configure */
-    caveId: string;
-  }>(),
   revertCaveRequest: action<{
     /** the cave to revert to a different build */
-    caveId: string;
-  }>(),
-  healCave: action<{
-    /** the cave to heal */
     caveId: string;
   }>(),
   viewCaveDetails: action<{

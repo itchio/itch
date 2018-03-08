@@ -7,7 +7,7 @@ suite(__filename, s => {
   s.case("queueDownload", async t => {
     const w = new TestWatcher();
     await withDB(w.store, async db => {
-      queueDownload(w, db);
+      queueDownload(w);
 
       let queuedLaunch = false;
       w.on(actions.queueLaunch, async (store, action) => {

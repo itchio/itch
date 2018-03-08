@@ -137,8 +137,8 @@ export const modalWidgets = wireWidgets({
   pickManifestAction: widget<
     {},
     {
-      /** which manifest action was picked when launching a game */
-      manifestActionName?: string;
+      /** index of the manifest action that was picked when launching a game */
+      index: number;
     }
   >(null),
 

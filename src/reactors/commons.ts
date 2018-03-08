@@ -47,6 +47,12 @@ export default function(watcher: Watcher) {
     updateCommons(store);
   });
 
+  watcher.on(actions.windowFocusChanged, async (store, action) => {
+    if (action.payload.focused) {
+      updateCommons(store);
+    }
+  });
+
   // TODO: this used to be called on dbcommit as well
 }
 

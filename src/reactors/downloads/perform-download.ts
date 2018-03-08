@@ -1,66 +1,19 @@
-import * as paths from "../../os/paths";
-import * as sf from "../../os/sf";
-
 import rootLogger from "../../logger";
+const logger = rootLogger.child({ name: "perform-download" });
 
-import getGameCredentials from "./get-game-credentials";
-
-import { IDownloadItem, currentRuntime, Cancelled } from "../../types";
+import { IDownloadItem, Cancelled } from "../../types";
 import Context from "../../context";
-import { ICave } from "../../db/models/cave";
-
-import configure from "../launch/configure";
-import { promisedModal } from "../modals";
 
 import { actions } from "../../actions";
-import makeUploadButton from "../make-upload-button";
 
-import { map } from "underscore";
-import {
-  messages,
-  buseGameCredentials,
-  setupClient,
-  makeButlerInstance,
-} from "../../buse/index";
-import { computeCaveLocation } from "./compute-cave-location";
-import { readLegacyReceipt } from "./legacy-receipt";
-import { modalWidgets } from "../../components/modal-widgets/index";
+import { messages, setupClient, makeButlerInstance } from "../../buse/index";
 
 export default async function performDownload(
   ctx: Context,
   item: IDownloadItem
 ): Promise<void> {
-  let parentLogger = rootLogger;
-  let caveIn: ICave;
-  if (item.caveId) {
-    caveIn = ctx.db.caves.findOneById(item.caveId);
-  }
-  const logger = parentLogger.child({ name: `download` });
+  const { stagingFolder } = item;
 
-  const { game } = item;
-  const { preferences } = ctx.store.getState();
-
-  const credentials = getGameCredentials(ctx, item.game);
-  if (!credentials) {
-    throw new Error(`no game credentials, can't download`);
-  }
-
-  const { caveLocation, absoluteInstallFolder } = computeCaveLocation(
-    item,
-    preferences,
-    caveIn
-  );
-
-  const stagingFolder = paths.downloadFolderPathForId(
-    preferences,
-    caveLocation.installLocation,
-    item.id
-  );
-  if (await sf.exists(stagingFolder)) {
-    logger.info(`Resuming!`);
-  }
-
-  let cave: ICave;
   let butlerExited = false;
   let cancelled = false;
 
@@ -68,75 +21,6 @@ export default async function performDownload(
   instance.onClient(async client => {
     try {
       setupClient(client, logger, ctx);
-
-      client.onRequest(messages.PickUpload, async ({ params }) => {
-        const { uploads } = params;
-        const { title } = game;
-
-        const modalRes = await promisedModal(
-          ctx.store,
-          modalWidgets.pickUpload.make({
-            title: ["pick_install_upload.title", { title }],
-            message: ["pick_install_upload.message", { title }],
-            detail: ["pick_install_upload.detail"],
-            bigButtons: map(uploads, (candidate, index) => {
-              return {
-                ...makeUploadButton(candidate),
-                action: modalWidgets.pickUpload.action({
-                  pickedUploadIndex: index,
-                }),
-              };
-            }),
-            buttons: ["cancel"],
-            widgetParams: {},
-          })
-        );
-
-        if (modalRes) {
-          return { index: modalRes.pickedUploadIndex };
-        } else {
-          // that tells butler to abort
-          return { index: -1 };
-        }
-      });
-
-      client.onRequest(messages.GetReceipt, async ({ params }) => {
-        logger.info(`butler asked for receipt info`);
-
-        if (!caveIn) {
-          logger.info(`no existing cave, returning null receipt`);
-          return { receipt: null };
-        }
-
-        let files: string[] = [];
-        const legacyReceipt = await readLegacyReceipt({
-          ctx: ctx,
-          logger: logger,
-          destPath: absoluteInstallFolder,
-        });
-
-        if (
-          legacyReceipt &&
-          legacyReceipt.files &&
-          Array.isArray(legacyReceipt.files)
-        ) {
-          files = legacyReceipt.files;
-          logger.info(
-            `found legacy receipt! (${legacyReceipt.files.length} files)`
-          );
-        } else {
-          logger.info(`no legacy receipt`);
-        }
-
-        return {
-          receipt: {
-            files,
-            upload: caveIn.upload,
-            build: caveIn.build,
-            game: null,
-          },
-        };
-      });
 
       client.onNotification(messages.TaskStarted, ({ params }) => {
         const { type, reason } = params;
@@ -153,30 +37,6 @@ export default async function performDownload(
 
       client.onNotification(messages.TaskSucceeded, async ({ params }) => {
         logger.info(`Task ${params.type} succeeded`);
-
-        const ires = params.installResult;
-        if (ires == null) {
-          logger.info(`...no install result, that's fine`);
-          return;
-        }
-
-        logger.info(`Committing game & cave to db`);
-        cave = {
-          ...caveLocation,
-          gameId: game.id,
-
-          installedAt: new Date(),
-          channelName: ires.upload.channelName,
-          build: ires.build,
-          upload: ires.upload,
-          // TODO: butler should let us know if it was handpicked in the result.
-          // We can't keep track of it ourselves, because performDownload() might
-          // be called many times for the same download
-          handPicked: false,
-        };
-
-        ctx.db.saveOne("games", game.id, game);
-        ctx.db.saveOne("caves", cave.id, cave);
       });
 
       const id = item.id;
@@ -214,27 +74,14 @@ export default async function performDownload(
             }
           }, deadline);
 
-          await client.call(messages.OperationCancel({ id }));
+          await client.call(messages.InstallCancel({ id }));
         })().catch(e => {
           logger.warn(`While discarding: ${e.stack}`);
         });
       });
 
-      await client.call(
-        messages.OperationStart({
-          id,
-          stagingFolder,
-          operation: messages.Operation.Install,
-          installParams: {
-            game,
-            installFolder: absoluteInstallFolder,
-            credentials: buseGameCredentials(credentials),
-            upload: item.upload,
-            build: item.build,
-          },
-        })
-      );
-      logger.debug(`returned from Operation.Start`);
+      await client.call(messages.InstallPerform({ id, stagingFolder }));
+      logger.debug(`returned from Install.Perform`);
     } finally {
       butlerExited = true;
       logger.debug(`cancelling instance in finally`);
@@ -259,30 +106,4 @@ export default async function performDownload(
     logger.debug(`throwing cancelled`);
     throw new Cancelled();
   }
-
-  // TODO: move to buse
-  logger.info(`Configuring...`);
-  await configure(ctx, {
-    game,
-    cave,
-    logger,
-    runtime: currentRuntime(),
-  });
-}
-
-/**
- * Mark cave as morphing, do `cb`, then clear the morphing marker
- * if it succeeded.
- */
-// TODO: use for everything but first installs
-export async function doMorphingOperation<T>(
-  ctx: Context,
-  caveId: string,
-  cb: () => Promise<T>
-): Promise<T> {
-  ctx.db.saveOne("caves", caveId, { morphing: true });
-  const res = await cb();
-  // if cb throws, we'll never reach here
-  ctx.db.saveOne("caves", caveId, { morphing: false });
-  return res;
 }

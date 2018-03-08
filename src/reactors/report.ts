@@ -1,6 +1,5 @@
 import { Watcher } from "../reactors/watcher";
 import { DB } from "../db";
-import Context from "../context";
 import { actions } from "../actions";
 
 import rootLogger from "../logger";
@@ -12,28 +11,22 @@ import { reportIssue } from "../util/crash-reporter";
 import github, { IGistData } from "../api/github";
 import * as sf from "../os/sf";
 import { caveLogPath } from "../os/paths";
+import { withButlerClient, messages } from "../buse";
 
-import lazyGetGame from "./lazy-get-game";
-
-// TODO: show dialog when reporting game
+// TODO: move to itch.io feedback system, see
+// https://github.com/itchio/itch/issues/1511
 
 export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.reportCave, async (store, action) => {
     const { caveId } = action.payload;
 
     try {
-      const cave = db.caves.findOneById(caveId);
-      if (!cave) {
-        return;
-      }
-
+      const { cave } = await withButlerClient(
+        logger,
+        async client => await client.call(messages.FetchCave({ caveId }))
+      );
+      const { game } = cave;
       const logPath = caveLogPath(caveId);
-      const ctx = new Context(store, db);
-      const game = await lazyGetGame(ctx, cave.gameId);
-      if (!game) {
-        return;
-      }
-
       const gameLog = await sf.readFile(logPath, { encoding: "utf8" });
 
       const gistData = {
@@ -45,7 +38,9 @@ export default function(watcher: Watcher, db: DB) {
       gistData.files[`${slug}-log.txt`] = { content: gameLog };
       const gist = await github.createGist(gistData);
 
-      const body = `:rotating_light: ${game.classification} [${game.title}](${game.url}) is broken for me.
+      const body = `:rotating_light: ${game.classification} [${game.title}](${
+        game.url
+      }) is broken for me.
 
 :book: Here's the complete [debug log](${gist.html_url}).
 

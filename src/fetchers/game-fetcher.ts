@@ -5,6 +5,9 @@ import { actions } from "../actions/index";
 import { withButlerClient, messages } from "../buse/index";
 import { Game } from "../buse/messages";
 
+// TODO: save password & secret, see
+// https://github.com/itchio/itch/issues/1080
+
 export default class GameFetcher extends Fetcher {
   async work(): Promise<void> {
     const sp = this.space();

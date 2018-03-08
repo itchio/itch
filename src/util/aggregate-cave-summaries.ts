@@ -1,8 +1,8 @@
-import { ICaveSummary } from "../db/models/cave";
 import { fromDateTimeField } from "../db/datetime-field";
+import { CaveSummary } from "../buse/messages";
 
-export function aggregateCaveSummaries(caves: ICaveSummary[]): ICaveSummary {
-  let cave: ICaveSummary;
+export function aggregateCaveSummaries(caves: CaveSummary[]): CaveSummary {
+  let cave: CaveSummary;
   if (caves.length === 0) {
     return cave;
   }

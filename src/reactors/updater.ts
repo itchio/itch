@@ -4,7 +4,6 @@ import Context from "../context";
 
 import { actions } from "../actions";
 
-import { getGameCredentialsForId } from "./downloads/get-game-credentials";
 import * as paths from "../os/paths";
 
 import { makeLogger } from "../logger";
@@ -20,72 +19,29 @@ const SKIP_GAME_UPDATES = process.env.ITCH_SKIP_GAME_UPDATES === "1";
 const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;
 const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 
-import { ICave } from "../db/models/cave";
-import { toDateTimeField } from "../db/datetime-field";
-
 import {
   messages,
   makeButlerInstance,
-  buseGameCredentials,
   setupLogging,
+  withButlerClient,
 } from "../buse/index";
-import { IStore, IGameCredentials } from "../types/index";
-import { CheckUpdateItem, CheckUpdateResult } from "../buse/messages";
-import { client } from "../api/index";
-import { Game } from "../buse/messages";
-import lazyGetGame from "./lazy-get-game";
-
-function queueGameUpdate(
-  gameCredentials: IGameCredentials,
-  db: DB,
-  gameId: number
-) {
-  (async () => {
-    try {
-      const api = client.withKey(gameCredentials.apiKey);
-      let game: Game;
-      try {
-        const gameRes = await api.game(gameId);
-        if (gameRes) {
-          game = gameRes.entities.games[gameRes.result.gameId];
-        }
-      } catch (e) {}
-
-      if (game) {
-        db.saveOne("games", game.id, game);
-      }
-    } catch (e) {
-      logger.warn(`Could not update game info for ${gameId}: ${e.stack}`);
-    }
-  })();
-}
+import { IStore } from "../types/index";
+import { CheckUpdateItem, CheckUpdateResult, Cave } from "../buse/messages";
 
 async function prepareUpdateItem(
   ctx: Context,
-  cave: ICave
+  cave: Cave
 ): Promise<CheckUpdateItem> {
-  if (!cave.gameId) {
-    throw new Error(`Cave ${cave.id} lacks gameId`);
-  }
-
-  const gameCredentials = getGameCredentialsForId(ctx, cave.gameId);
-  if (!gameCredentials) {
-    throw new Error(`Could not find game credentials for game ${cave.gameId}`);
-  }
-  queueGameUpdate(gameCredentials, ctx.db, cave.gameId);
-
-  const game = await lazyGetGame(ctx, cave.gameId);
-  if (!game) {
-    throw new Error(`Invalid game ${cave.gameId}`);
+  if (!cave.game) {
+    throw new Error(`Cave ${cave.id} lacks game`);
   }
 
   const item: CheckUpdateItem = {
     itemId: cave.id,
-    installedAt: toDateTimeField(cave.installedAt),
-    game,
+    installedAt: cave.stats.installedAt,
+    game: cave.game,
     upload: cave.upload,
     build: cave.build,
-    credentials: buseGameCredentials(gameCredentials),
   };
   return item;
 }
@@ -182,12 +138,13 @@ export default function(watcher: Watcher, db: DB) {
           `Checking updates for games ${start}-${end} of ${totalCaves}`
         );
 
-        const caves = db.caves.all(k =>
-          k
-            .where("1")
-            .limit(limit)
-            .offset(offset)
+        // TODO: let butler page through the caves instead,
+        // this is too much back and forth
+        const { caves } = await withButlerClient(
+          logger,
+          async client => await client.call(messages.FetchCaves({}))
         );
+
         let items: CheckUpdateItem[] = [];
         for (const cave of caves) {
           try {
@@ -225,11 +182,10 @@ export default function(watcher: Watcher, db: DB) {
       logger.info(`Looking for updates for cave ${caveId}`);
     }
 
-    const cave = db.caves.findOneById(caveId);
-    if (!cave) {
-      logger.warn(`No cave with id ${caveId}, bailing out`);
-      return;
-    }
+    const { cave } = await withButlerClient(
+      logger,
+      async client => await client.call(messages.FetchCave({ caveId }))
+    );
 
     const ctx = new Context(store, db);
     const item = await prepareUpdateItem(ctx, cave);

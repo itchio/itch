@@ -2,7 +2,6 @@ import * as React from "react";
 
 import { ModalWidgetDiv } from "./modal-widget";
 
-import { ICave } from "../../db/models/cave";
 import { fromDateTimeField, toDateTimeField } from "../../db/datetime-field";
 
 import { actions } from "../../actions";
@@ -16,7 +15,7 @@ import styled from "../styles";
 import { lighten } from "polished";
 import { MONTH_YEAR_FORMAT, DAY_MONTH_FORMAT } from "../../format/index";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
-import { Game, Build } from "../../buse/messages";
+import { Build, Cave, Upload } from "../../buse/messages";
 import { IModalWidgetProps } from "./index";
 
 const BuildListDiv = styled.div`
@@ -88,22 +87,23 @@ function monthFor(b: Build) {
 
 class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { remoteBuilds } = this.props.modal.widgetParams;
+    const { builds } = this.props.modal.widgetParams;
 
-    const builds: JSX.Element[] = [];
+    const buildElements: JSX.Element[] = [];
     let lastMonth = 0;
-    for (const build of remoteBuilds) {
+    for (let index = 0; index < builds.length; index++) {
+      const build = builds[index];
       const month = monthFor(build);
       if (month != lastMonth) {
         const monthDate = fromDateTimeField(build.updatedAt);
-        builds.push(
+        buildElements.push(
           <div key={`month-${month}`} className="builds--month">
             <CustomDate date={monthDate} format={MONTH_YEAR_FORMAT} />
           </div>
         );
         lastMonth = month;
       }
-      builds.push(this.renderBuild(build));
+      buildElements.push(this.renderBuild(index, build));
     }
 
     return (
@@ -113,7 +113,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
-  renderBuild(b: Build): JSX.Element {
+  renderBuild(index: number, b: Build): JSX.Element {
     const version = b.userVersion || b.version;
     const updatedAt = fromDateTimeField(b.updatedAt);
 
@@ -121,7 +121,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
       <div
         className="builds--item"
         key={b.id}
-        data-build-id={b.id}
+        data-index={b.id}
         onClick={this.onClick}
       >
         <Icon icon="history" />
@@ -145,25 +145,23 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
-    const revertBuildId = parseInt(ev.currentTarget.dataset.buildId, 10);
-
+    const index = parseInt(ev.currentTarget.dataset.index, 10);
+    const res: IRevertCaveResponse = { index };
     this.props.closeModal({
-      action: actions.modalResponse({
-        revertBuildId,
-      }),
+      action: actions.modalResponse(res),
     });
   };
 }
 
 export interface IRevertCaveParams {
-  currentCave: ICave;
-  game: Game;
-  remoteBuilds: Build[];
+  cave: Cave;
+  upload: Upload;
+  builds: Build[];
 }
 
 export interface IRevertCaveResponse {
-  /** which build id to revert to */
-  revertBuildId?: number;
+  /** index of build to revert to (or negative to abort) */
+  index?: number;
 }
 
 interface IProps

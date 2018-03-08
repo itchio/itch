@@ -4,8 +4,6 @@ import * as nodeURL from "url";
 
 import { webContents, BrowserWindow } from "electron";
 
-import urlParser from "../util/url";
-
 import rootLogger from "../logger";
 import { request } from "../net/request";
 import { IStore } from "../types/index";
@@ -14,7 +12,6 @@ const logger = rootLogger.child({ name: "web-contents" });
 import createContextMenu from "./web-contents-context-menu";
 import { ITabWeb } from "../types/tab-data";
 import { DB } from "../db/index";
-import { doSave } from "./navigation/save-password-and-secret";
 import { Space } from "../helpers/space";
 
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
@@ -196,11 +193,6 @@ export default function(watcher: Watcher, db: DB) {
               replace: true,
             })
           );
-
-          const parsed = urlParser.parse(url);
-          if (parsed.search) {
-            doSave(resource, parsed.search, db);
-          }
         }
       };
 

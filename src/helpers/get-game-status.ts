@@ -1,5 +1,3 @@
-import { IDownloadKeySummary } from "../db/models/download-key";
-import { ICaveSummary } from "../db/models/cave";
 import { IRootState, ITask, IDownloadItem } from "../types/index";
 
 import { first } from "underscore";
@@ -11,7 +9,7 @@ import {
 import isPlatformCompatible from "../util/is-platform-compatible";
 import memoize from "../util/lru-memoize";
 import { TaskName, DownloadReason } from "../types/tasks";
-import { Game } from "../buse/messages";
+import { Game, CaveSummary, DownloadKeySummary } from "../buse/messages";
 import { GameUpdate } from "../buse/messages";
 
 /**
@@ -76,8 +74,8 @@ export interface IOperation {
 }
 
 export interface IGameStatus {
-  downloadKey: IDownloadKeySummary;
-  cave: ICaveSummary;
+  downloadKey: DownloadKeySummary;
+  cave: CaveSummary;
   access: Access;
   operation: IOperation;
   update: GameUpdate;
@@ -87,7 +85,7 @@ export interface IGameStatus {
 export default function getGameStatus(
   rs: IRootState,
   game: Game,
-  cave?: ICaveSummary
+  cave?: CaveSummary
 ): IGameStatus {
   const { commons, profile, tasks, downloads } = rs;
   const { credentials } = profile;
@@ -134,8 +132,8 @@ export default function getGameStatus(
 
 function rawGetGameStatus(
   game: Game,
-  cave: ICaveSummary,
-  downloadKey: IDownloadKeySummary,
+  cave: CaveSummary,
+  downloadKey: DownloadKeySummary,
   pressUser: boolean,
   task: ITask,
   download: IDownloadItem,
