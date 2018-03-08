@@ -1,5 +1,0 @@
-Filesystem    1024-blocks      Used Available Capacity  Mounted on
-/dev/disk1      243915264 233784144   9875120    96%    /
-devfs                 183       183         0   100%    /dev
-map -hosts              0         0         0   100%    /net
-map auto_home           0         0         0   100%    /home

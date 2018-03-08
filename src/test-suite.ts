@@ -1,6 +1,5 @@
 import * as zopf from "zopf";
 import * as fs from "fs";
-import { join, resolve } from "path";
 
 import { relative } from "path";
 
@@ -27,31 +26,6 @@ export default function suite(filename: string, cb: (s: ISuite) => void) {
 
   zopf(name, cb);
 }
-
-const fixturesPath = resolve(__dirname, "..", "fixtures");
-
-export const fixture = {
-  path: function(spec: string) {
-    return join(fixturesPath, `files/${spec}`);
-  },
-
-  lines: function(spec: string, file: string): string[] {
-    return fs
-      .readFileSync(join(fixturesPath, `files/${spec}/${file}.txt`), {
-        encoding: "utf8",
-      })
-      .split("\n");
-  },
-
-  json: function(spec: string): any {
-    const path = join(fixturesPath, `${spec}.json`);
-    return JSON.parse(fs.readFileSync(path, { encoding: "utf8" }));
-  },
-
-  api: function(spec: string) {
-    return fixture.json(`api/${spec}`);
-  },
-};
 
 /** A watcher made for testing reactors */
 import { Watcher } from "./reactors/watcher";

@@ -4,9 +4,6 @@ import { indexBy, pluck } from "underscore";
 
 import { actions } from "../actions";
 
-import defaultApiClient, { AuthenticatedClient, Client } from "../api";
-import { isNetworkError } from "../net/errors";
-
 import { sortAndFilter, ISortAndFilterOpts } from "./sort-and-filter";
 
 import Context from "../context";
@@ -24,15 +21,10 @@ import rootLogger, { Logger } from "../logger";
 import { Space } from "../helpers/space";
 import { Game, Collection } from "../buse/messages";
 
-interface OptionalFetcherParams {
-  apiClient?: Client;
-}
-
 /**
  * Fetches all the data a tab needs to display, except webviews.
  * This can be games, users, etc.
- * Should return info from local DB as soon as possible, and fresh data from
- * API afterwards.
+ * Should return info from local DB as soon as possible, and fresh data afterwards.
  */
 export class Fetcher {
   ctx: Context;
@@ -42,20 +34,13 @@ export class Fetcher {
 
   startedAt: number;
   logger?: Logger;
-  apiClient: Client;
 
   retryCount = 0;
 
-  hook(
-    ctx: Context,
-    tab: string,
-    reason: FetchReason,
-    params: OptionalFetcherParams = {}
-  ) {
+  hook(ctx: Context, tab: string, reason: FetchReason) {
     this.ctx = ctx;
     this.tab = tab;
     this.reason = reason;
-    this.apiClient = params.apiClient || defaultApiClient;
 
     this.logger = rootLogger.child({
       name: `${this.constructor.name} :: ${this.space().url()}`,
@@ -122,21 +107,6 @@ export class Fetcher {
           this.logger.debug(`${retriableError} (${sleepTime}ms)`);
           await bluebird.delay(sleepTime);
         }
-      }
-    }
-  }
-
-  async withApi<T>(cb: (api: AuthenticatedClient) => Promise<T>): Promise<T> {
-    const { key } = this.ensureCredentials();
-    const api = this.apiClient.withKey(key);
-    try {
-      return await cb(api);
-    } catch (e) {
-      if (isNetworkError(e)) {
-        this.retry(e.message);
-      } else {
-        this.logger.error(`API error: ${e.stack}`);
-        throw e;
       }
     }
   }

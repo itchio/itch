@@ -4,7 +4,6 @@ export * from "./tasks";
 export * from "./errors";
 import * as Tasks from "./tasks";
 
-export * from "./api";
 export * from "./tab-data";
 import * as TabDataTypes from "./tab-data";
 export * from "../os/runtime";

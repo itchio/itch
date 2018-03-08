@@ -1,9 +1,0 @@
-Filesystem     1024-blocks    Used Available Capacity Mounted on
-udev                916484       0    916484       0% /dev
-tmpfs               184096   21192    162904      12% /run
-/dev/sda1        122273488 7384432 114872672       7% /
-tmpfs               920472       4    920468       1% /dev/shm
-tmpfs                 5120       0      5120       0% /run/lock
-tmpfs               920472       0    920472       0% /sys/fs/cgroup
-cgmfs                  100       0       100       0% /run/cgmanager/fs
-tmpfs               184096       0    184096       0% /run/user/1000
