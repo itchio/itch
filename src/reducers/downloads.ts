@@ -18,7 +18,6 @@ const selector = createStructuredSelector({
 });
 
 const baseInitialState: Partial<IDownloadsState> = {
-  // TODO: use buse notifications for that instead
   speeds: map(new Array(SPEED_DATA_POINT_COUNT), x => 0),
   items: {},
   progresses: {},
@@ -39,23 +38,14 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
   });
 
   on(actions.downloadProgress, (state, action) => {
-    const { download, progress } = action.payload;
+    const { download, progress, speedHistory } = action.payload;
     return {
       ...state,
       progresses: {
         ...state.progresses,
         [download.id]: progress,
       },
-    };
-  });
-
-  // TODO: shank
-  on(actions.downloadSpeedDatapoint, (state, action) => {
-    const { bps } = action.payload;
-
-    return {
-      ...state,
-      speeds: last([...state.speeds, bps], SPEED_DATA_POINT_COUNT),
+      speeds: speedHistory,
     };
   });
 

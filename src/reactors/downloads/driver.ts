@@ -39,8 +39,10 @@ export default function(watcher: Watcher) {
           client.onNotification(
             messages.DownloadsDriveProgress,
             async ({ params }) => {
-              const { download, progress } = params;
-              store.dispatch(actions.downloadProgress({ download, progress }));
+              const { download, progress, speedHistory } = params;
+              store.dispatch(
+                actions.downloadProgress({ download, progress, speedHistory })
+              );
             }
           );
           state.client = client;

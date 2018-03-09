@@ -19,16 +19,13 @@ export default class LocationFetcher extends Fetcher {
         messages.FetchCavesByInstallLocationID({ installLocationId })
       );
 
-      if (isEmpty(caves)) {
-        this.pushUnfilteredGames([]);
-        return;
-      }
-
       let games: Game[] = [];
-      for (const c of caves) {
-        games.push(c.game);
+      if (!isEmpty(caves)) {
+        for (const c of caves) {
+          games.push(c.game);
+        }
+        games = uniq(games, g => g.id);
       }
-      games = uniq(games, g => g.id);
 
       this.pushUnfilteredGames(games, { disableFilters: true });
       this.push({

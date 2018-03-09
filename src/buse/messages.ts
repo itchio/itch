@@ -674,6 +674,8 @@ export interface DownloadsDriveProgressNotification {
   download: Download;
   /** undocumented */
   progress: DownloadProgress;
+  /** BPS values for the last minute */
+  speedHistory: number[];
 }
 
 /**

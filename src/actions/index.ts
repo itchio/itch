@@ -523,13 +523,10 @@ export const actions = wireActions({
   downloadProgress: action<{
     download: Download;
     progress: DownloadProgress;
+    speedHistory: number[];
   }>(),
   downloadEnded: action<{
     download: Download;
-  }>(),
-  downloadSpeedDatapoint: action<{
-    /** how many bytes we've downloaded in the last second */
-    bps: number;
   }>(),
   clearFinishedDownloads: action<{}>(),
   prioritizeDownload: action<{
