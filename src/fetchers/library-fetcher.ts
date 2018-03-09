@@ -3,6 +3,7 @@ import { Fetcher } from "./fetcher";
 import getByIds from "../helpers/get-by-ids";
 import { withButlerClient, messages } from "../buse";
 import { Game } from "../buse/messages";
+import { uniq } from "underscore";
 
 export default class LibraryFetcher extends Fetcher {
   async work(): Promise<void> {
@@ -24,10 +25,11 @@ export default class LibraryFetcher extends Fetcher {
       client.onNotification(
         messages.FetchProfileOwnedKeysYield,
         async ({ params }) => {
-          const games: Game[] = [];
+          let games: Game[] = [];
           for (const dk of params.items) {
             games.push(dk.game);
           }
+          games = uniq(games, g => g.id);
           this.pushUnfilteredGames(games);
         }
       );
