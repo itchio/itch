@@ -28,15 +28,13 @@ export default function(watcher: Watcher) {
       logger.warn(`could not read log: ${e.stack}`);
     }
 
-    let errStack = "TODO: figure out errstack with buse";
-
     store.dispatch(
       actions.openModal(
         modalWidgets.showError.make({
           title: ["prompt.install_error.title"],
           message: ["prompt.install_error.message"],
           widgetParams: {
-            errorStack: errStack,
+            errorStack: item.error,
             log,
           },
           buttons: [

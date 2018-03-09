@@ -23,15 +23,16 @@ export default function(watcher: Watcher) {
     const { game, upload, build } = update;
 
     await withButlerClient(logger, async client => {
-      const item = await client.call(
+      await client.call(
         messages.InstallQueue({
           caveId: update.itemId,
           game,
           upload,
           build,
+          queueDownload: true,
         })
       );
-      await client.call(messages.DownloadsQueue({ item }));
+      store.dispatch(actions.downloadQueued({}));
     });
   });
 

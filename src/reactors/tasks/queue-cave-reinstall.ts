@@ -11,8 +11,8 @@ export default function(watcher: Watcher) {
     const { caveId } = action.payload;
 
     await withButlerClient(logger, async client => {
-      const item = await client.call(messages.InstallQueue({ caveId }));
-      await client.call(messages.DownloadsQueue({ item }));
+      await client.call(messages.InstallQueue({ caveId, queueDownload: true }));
+      store.dispatch(actions.downloadQueued({}));
     });
   });
 }

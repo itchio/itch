@@ -234,7 +234,7 @@ export default function(watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.downloadStarted, async (store, action) => {
+  watcher.on(actions.downloadQueued, async (store, action) => {
     store.dispatch(
       actions.navigate({ url: "itch://downloads", background: true })
     );

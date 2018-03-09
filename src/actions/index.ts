@@ -30,7 +30,6 @@ import {
 } from "../types/index";
 import {
   Game,
-  Build,
   Upload,
   User,
   CleanDownloadsEntry,
@@ -38,6 +37,7 @@ import {
   Profile,
   Collection,
   Download,
+  DownloadProgress,
 } from "../buse/messages";
 import { TaskName } from "../types/tasks";
 import {
@@ -516,34 +516,16 @@ export const actions = wireActions({
 
   // downloads
 
-  downloadStarted: action<Download>(),
-  downloadProgress: action<
-    Partial<IProgressInfo> & {
-      /** the download in progress */
-      id: string;
-
-      /** the build associated to the download */
-      build?: Build;
-
-      /** the upload associated to the download */
-      upload?: Upload;
-    }
-  >(),
+  downloadQueued: action<{}>(),
+  downloadsListed: action<{
+    downloads: Download[];
+  }>(),
+  downloadProgress: action<{
+    download: Download;
+    progress: DownloadProgress;
+  }>(),
   downloadEnded: action<{
-    /** the id of the download that just ended */
-    id: string;
-
-    /** the download that just ended */
-    item: Download;
-
-    /** an error, if any */
-    err: string;
-
-    /** an error stack, if any */
-    errStack: string;
-
-    /** timestamp when the download finished */
-    finishedAt?: Date;
+    download: Download;
   }>(),
   downloadSpeedDatapoint: action<{
     /** how many bytes we've downloaded in the last second */
@@ -556,10 +538,6 @@ export const actions = wireActions({
   }>(),
   showDownloadError: action<{
     /** the download for which we want to show an error dialog */
-    id: string;
-  }>(),
-  discardDownloadRequest: action<{
-    /** id of download to discard */
     id: string;
   }>(),
   discardDownload: action<{

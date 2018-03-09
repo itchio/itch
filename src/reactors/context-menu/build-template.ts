@@ -94,7 +94,7 @@ export function gameControls(store: IStore, game: Game): IMenuTemplate {
         item.submenu = [
           {
             localizedLabel: ["grid.item.discard_download"],
-            action: actions.discardDownloadRequest({ id: operation.id }),
+            action: actions.discardDownload({ id: operation.id }),
           },
         ];
       }

@@ -436,6 +436,8 @@ export interface InstallQueueResult {
   /** undocumented */
   id: string;
   /** undocumented */
+  reason: DownloadReason;
+  /** undocumented */
   caveId: string;
   /** undocumented */
   game: Game;
@@ -650,6 +652,21 @@ export const DownloadsDrive = createRequest<
 >("Downloads.Drive");
 
 /**
+ * Result for Downloads.Drive.Cancel
+ */
+export interface DownloadsDriveCancelResult {
+  // no fields
+}
+
+/**
+ * Stop driving downloads gracefully.
+ */
+export const DownloadsDriveCancel = createRequest<
+  DownloadsDriveCancelParams,
+  DownloadsDriveCancelResult
+>("Downloads.Drive.Cancel");
+
+/**
  * Payload for Downloads.Drive.Progress
  */
 export interface DownloadsDriveProgressNotification {
@@ -682,12 +699,26 @@ export const DownloadsDriveFinished = createNotification<
 >("Downloads.Drive.Finished");
 
 /**
+ * undocumented
+ */
+export enum DownloadReason {
+  Install = "install",
+  Reinstall = "reinstall",
+  Update = "update",
+  VersionSwitch = "version-switch",
+}
+
+/**
  * Represents a download queued, which will be
  * performed whenever @@DownloadsDriveParams is called.
  */
 export interface Download {
   /** undocumented */
   id: string;
+  /** undocumented */
+  error: string;
+  /** undocumented */
+  reason: DownloadReason;
   /** undocumented */
   position: number;
   /** undocumented */
@@ -719,6 +750,36 @@ export interface DownloadProgress {
   /** undocumented */
   bps: number;
 }
+
+/**
+ * Result for Downloads.Retry
+ */
+export interface DownloadsRetryResult {
+  // no fields
+}
+
+/**
+ * Retries a download that has errored
+ */
+export const DownloadsRetry = createRequest<
+  DownloadsRetryParams,
+  DownloadsRetryResult
+>("Downloads.Retry");
+
+/**
+ * Result for Downloads.Discard
+ */
+export interface DownloadsDiscardResult {
+  // no fields
+}
+
+/**
+ * Attempts to discard a download
+ */
+export const DownloadsDiscard = createRequest<
+  DownloadsDiscardParams,
+  DownloadsDiscardResult
+>("Downloads.Discard");
 
 /**
  * Result for CheckUpdate
@@ -1790,6 +1851,8 @@ export interface InstallQueueParams {
    * If not specified, will create a new cave.
    */
   caveId?: string;
+  /** If unspecified, will default to 'install' */
+  reason?: DownloadReason;
   /**
    * If CaveID is not specified, ID of an install location
    * to install to.
@@ -1830,6 +1893,12 @@ export interface InstallQueueParams {
    * partial downloads, checkpoint files, etc.
    */
   stagingFolder?: string;
+  /**
+   * If set, and the install operation is successfully disambiguated,
+   * will queue it as a download for butler to drive.
+   * See @@DownloadsDriveParams.
+   */
+  queueDownload?: boolean;
 }
 
 /**
@@ -2024,6 +2093,29 @@ export interface DownloadsClearFinishedParams {
  */
 export interface DownloadsDriveParams {
   // no fields
+}
+
+/**
+ * Params for Downloads.Drive.Cancel
+ */
+export interface DownloadsDriveCancelParams {
+  // no fields
+}
+
+/**
+ * Params for Downloads.Retry
+ */
+export interface DownloadsRetryParams {
+  /** undocumented */
+  downloadId: string;
+}
+
+/**
+ * Params for Downloads.Discard
+ */
+export interface DownloadsDiscardParams {
+  /** undocumented */
+  downloadId: string;
 }
 
 /**

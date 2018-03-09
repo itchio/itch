@@ -103,15 +103,16 @@ export async function queueInstall(
     });
 
     const installLocationId = defaultInstallLocation(store);
-    const item = await client.call(
+    await client.call(
       messages.InstallQueue({
         game,
         upload,
         build,
         installLocationId,
+        queueDownload: true,
       })
     );
-    await client.call(messages.DownloadsQueue({ item }));
+    store.dispatch(actions.downloadQueued({}));
   });
 }
 

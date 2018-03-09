@@ -4,8 +4,8 @@ import { t } from "../../format";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
-    const { err, item } = action.payload;
-    if (err) {
+    const { download } = action.payload;
+    if (download.error) {
       // don't show notifications for these
       return;
     }
@@ -16,29 +16,27 @@ export default function(watcher: Watcher) {
     if (readyNotification) {
       let notificationMessage: string = null;
       let notificationOptions: any = {
-        title: item.game.title,
+        title: download.game.title,
       };
 
-      // TODO: figure this out with buse
-      let reason = null;
-      switch (reason) {
+      switch (download.reason) {
         case "install":
           notificationMessage = "notification.download_installed";
+          break;
+        case "reinstall":
+          notificationMessage = "notification.download_healed";
           break;
         case "update":
           notificationMessage = "notification.download_updated";
           break;
-        case "revert":
+        case "version-switch":
           notificationMessage = "notification.download_reverted";
           notificationOptions.version = `?`;
-          const { build } = item;
+          const { build } = download;
           if (build) {
             notificationOptions.version = `#${build.userVersion ||
               build.version}`;
           }
-          break;
-        case "heal":
-          notificationMessage = "notification.download_healed";
           break;
         default:
         // make the typescript compiler happy
@@ -50,7 +48,7 @@ export default function(watcher: Watcher) {
         store.dispatch(
           actions.notify({
             body: message,
-            onClick: actions.navigateToGame({ game: item.game }),
+            onClick: actions.navigateToGame({ game: download.game }),
           })
         );
       }

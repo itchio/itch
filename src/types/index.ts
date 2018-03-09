@@ -660,9 +660,6 @@ export interface IDownloadsState {
   /** true if downloads are currently paused */
   paused: boolean;
 
-  /** false until we've restored previous downloads from the DB */
-  restored: boolean;
-
   /** Download speeds, in bps, each item represents one second */
   speeds: IDownloadSpeeds;
 }

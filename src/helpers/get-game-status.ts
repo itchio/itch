@@ -186,15 +186,16 @@ function rawGetGameStatus(
       bps: task.bps,
     };
   } else if (download) {
+    let p = downloadProgress || { progress: null, eta: null, bps: null };
     operation = {
       type: OperationType.Download,
       id: download.id,
-      reason: "TODO: figure me out with buse",
+      reason: download.reason,
       active: isDownloadActive,
       paused: areDownloadsPaused,
-      progress: downloadProgress.progress,
-      eta: downloadProgress.eta,
-      bps: downloadProgress.bps,
+      progress: p.progress,
+      eta: p.eta,
+      bps: p.bps,
     };
   }
 

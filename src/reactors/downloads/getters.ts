@@ -33,10 +33,3 @@ export function getPendingForGame(
     i => i.game && +i.game.id === +gameId
   );
 }
-
-export function excludeGame(
-  downloads: IDownloadsState,
-  gameId: number
-): Download[] {
-  return filter(downloads.items, i => !i.game || +i.game.id !== +gameId);
-}

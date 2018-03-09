@@ -224,9 +224,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     let onStatsClick = (ev: React.MouseEvent<any>): void => null;
     if (finished) {
-      // TODO: figure this out with buse
-      let err = null;
-      if (err) {
+      if (item.error) {
         onStatsClick = this.onShowError;
       } else {
         onStatsClick = this.onNavigate;
@@ -268,7 +266,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   onDiscard = () => {
     const { id } = this.props.item;
-    this.props.discardDownloadRequest({ id });
+    this.props.discardDownload({ id });
   };
 
   onPrioritize = () => {
@@ -292,11 +290,8 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   controls() {
-    const { first, status } = this.props;
-    // TODO: figure this out with buse
-    let err = null;
-
-    if (!status.operation && err) {
+    const { first, status, item } = this.props;
+    if (!status.operation && item.error) {
       return null;
     }
 
@@ -342,14 +337,13 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   progress() {
     const { first, finished, item, status, downloadsPaused } = this.props;
-    // TODO: figure this out with buse
-    let err = null;
-    let reason = "TODO: figure this out with buse";
+    let error = item.error;
+    let reason = item.reason;
     const { game, upload, finishedAt } = item;
     const { operation } = status;
 
     if (finished && !operation) {
-      if (err) {
+      if (error) {
         return (
           <div className="stats--control">
             <div className="control--title">
@@ -487,7 +481,7 @@ const actionCreators = actionCreatorsList(
   "showDownloadError",
   "pauseDownloads",
   "resumeDownloads",
-  "discardDownloadRequest",
+  "discardDownload",
   "openGameContextMenu",
   "openModal"
 );
