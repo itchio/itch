@@ -3,7 +3,7 @@ import { fileSize } from "../format/filesize";
 import platformData from "../constants/platform-data";
 
 import { ILocalizedString, IModalButtonTag } from "../types";
-import { Upload } from "../buse/messages";
+import { Upload, UploadType } from "../buse/messages";
 
 interface IUploadButton {
   label: ILocalizedString;
@@ -38,18 +38,6 @@ export default function makeUploadButton(
     });
   }
 
-  if (upload.type === "html") {
-    tags.push({
-      icon: "html5",
-    });
-  }
-
-  if (upload.type === "soundtrack") {
-    tags.push({
-      icon: "html5",
-    });
-  }
-
   for (const prop of Object.keys(platformData)) {
     if ((upload as any)[prop]) {
       tags.push({
@@ -62,7 +50,55 @@ export default function makeUploadButton(
     date: upload.updatedAt,
   };
 
-  const icon = "download";
-
+  const icon = uploadIcon(upload) || "download";
   return { label, tags, icon, timeAgo };
+}
+
+const uploadIcons = {
+  [UploadType.Default]: "gamepad",
+
+  [UploadType.Flash]: "neutral",
+  [UploadType.Unity]: "neutral",
+  [UploadType.Java]: "neutral",
+  [UploadType.HTML]: "html5",
+
+  [UploadType.Soundtrack]: "music",
+  [UploadType.Book]: "book",
+  [UploadType.Video]: "video",
+  [UploadType.Documentation]: "book",
+  [UploadType.Mod]: "shirt",
+  [UploadType.AudioAssets]: "file-music",
+  [UploadType.GraphicalAssets]: "images",
+  [UploadType.Sourcecode]: "code",
+
+  [UploadType.Other]: "zip",
+};
+
+export function uploadIcon(upload: Upload): string {
+  return uploadIcons[upload.type];
+}
+
+// TODO: i18n that stuff
+const uploadTypeHints = {
+  [UploadType.Default]: "File",
+
+  [UploadType.Flash]: "Flash embed",
+  [UploadType.Unity]: "Unity embed (legacy)",
+  [UploadType.Java]: "Java applet",
+  [UploadType.HTML]: "HTML5 app",
+
+  [UploadType.Soundtrack]: "Soundtrack",
+  [UploadType.Book]: "Book",
+  [UploadType.Video]: "Video",
+  [UploadType.Documentation]: "Documentation",
+  [UploadType.Mod]: "Mod",
+  [UploadType.AudioAssets]: "Audio assets",
+  [UploadType.GraphicalAssets]: "Graphical assets",
+  [UploadType.Sourcecode]: "Source code",
+
+  [UploadType.Other]: "Other",
+};
+
+export function uploadTypeHint(upload: Upload): string {
+  return uploadTypeHints[upload.type];
 }

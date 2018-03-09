@@ -21,7 +21,8 @@ export function aggregateCaveSummaries(caves: CaveSummary[]): CaveSummary {
       secondsRun += c.secondsRun;
     }
 
-    const cLastTouchedAt = c.lastTouchedAt;
+    // TODO: that shouldn't be needed
+    let cLastTouchedAt = c.lastTouchedAt ? new Date(c.lastTouchedAt) : null;
     if (cLastTouchedAt) {
       if (!lastTouchedAt) {
         // if that's the first lastTouchedAt value,

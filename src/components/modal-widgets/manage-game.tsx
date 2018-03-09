@@ -4,6 +4,7 @@ import { ModalWidgetDiv } from "./modal-widget";
 import { Game, Upload, Cave } from "../../buse/messages";
 
 import IconButton from "../basics/icon-button";
+import UploadIcon from "../basics/upload-icon";
 import Button from "../basics/button";
 import Filler from "../basics/filler";
 import styled from "../styles";
@@ -11,7 +12,6 @@ import styled from "../styles";
 import { map, find, filter } from "underscore";
 import { fileSize } from "../../format/filesize";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
-import PlatformIcons from "../basics/platform-icons";
 
 import { actions } from "../../actions";
 import format from "../format";
@@ -73,6 +73,10 @@ const CaveItemActions = styled.div`
 const Title = styled.div`
   margin-left: 8px;
   font-weight: bold;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const FileSize = styled.div`
@@ -110,16 +114,13 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
               <CaveItem>
                 <CaveDetails>
                   <CaveDetailsRow>
-                    <Title>{formatUploadTitle(u)}</Title>
+                    <Title>{formatUpload(u)}</Title>
                   </CaveDetailsRow>
                   <CaveDetailsRow className="smaller">
                     {cave.installInfo.installedSize ? (
                       <FileSize>
                         {fileSize(cave.installInfo.installedSize)}
                       </FileSize>
-                    ) : null}
-                    {u ? (
-                      <PlatformIcons className="platform-icons" target={u} />
                     ) : null}
                     <Spacer />
                     <LastPlayed game={game} cave={caveSummary} />
@@ -173,13 +174,12 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
                 <CaveItem>
                   <CaveDetails>
                     <CaveDetailsRow>
-                      <Title>{formatUploadTitle(u)}</Title>
+                      <Title>{formatUpload(u)}</Title>
                     </CaveDetailsRow>
                     <CaveDetailsRow className="smaller">
                       {u.size > 0 ? (
                         <FileSize>{fileSize(u.size)}</FileSize>
                       ) : null}
-                      <PlatformIcons className="platform-icons" target={u} />
                     </CaveDetailsRow>
                   </CaveDetails>
                   <Filler />
@@ -250,3 +250,13 @@ const actionCreators = actionCreatorsList("closeModal", "exploreCave");
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
 export default connect<IProps>(ManageGame, { actionCreators });
+
+function formatUpload(upload: Upload): JSX.Element {
+  return (
+    <>
+      <UploadIcon upload={upload} />
+      <Spacer />
+      {formatUploadTitle(upload)}
+    </>
+  );
+}

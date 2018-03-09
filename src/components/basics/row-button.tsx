@@ -5,7 +5,13 @@ import { lighten } from "polished";
 
 import Icon from "./icon";
 
-const Label = styled.div`${styles.singleLine()};`;
+const LargeIcon = styled(Icon)`
+  font-size: 20px;
+`;
+
+const Label = styled.div`
+  ${styles.singleLine()};
+`;
 
 const RowButtonDiv = styled.div`
   ${styles.singleLine()};
@@ -24,11 +30,10 @@ const RowButtonDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
 
   &:hover {
-    background: ${props => lighten(0.15, props.theme.breadBackground)};
-    border-color: ${props => lighten(0.2, props.theme.inputBorder)};
+    background: ${props => lighten(0.12, props.theme.breadBackground)};
+    border-color: ${props => lighten(0.1, props.theme.inputBorder)};
     color: ${props => props.theme.secondaryTextHover};
 
-    box-shadow: 0 0 8px ${props => props.theme.inputBoxShadow};
     cursor: pointer;
   }
 
@@ -47,16 +52,22 @@ const RowButtonDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  min-width: 450px;
 `;
 
 const Spacer = styled.div`
   min-width: 8px;
   flex-shrink: 0;
+
+  &.large {
+    min-width: 16px;
+  }
 `;
 
 class RowButton extends React.PureComponent<IProps, any> {
   render() {
-    const {
+    let {
       className,
       icon,
       iconComponent,
@@ -64,8 +75,12 @@ class RowButton extends React.PureComponent<IProps, any> {
       hint,
       onClick,
       ink = true,
-      ...restProps,
+      ...restProps
     } = this.props;
+
+    if (!iconComponent && icon) {
+      iconComponent = <LargeIcon icon={icon} />;
+    }
 
     return (
       <RowButtonDiv
@@ -75,9 +90,13 @@ class RowButton extends React.PureComponent<IProps, any> {
         className={classNames(className)}
         {...restProps}
       >
-        {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
-        {iconComponent || icon ? <Spacer /> : null}
-        {icon && label ? " " : null}
+        {iconComponent ? (
+          <>
+            {iconComponent}
+            <Spacer className="large" />
+          </>
+        ) : null}
+        {iconComponent && label ? " " : null}
         {label ? <Label>{label}</Label> : null}
         {this.props.children}
       </RowButtonDiv>

@@ -4,6 +4,7 @@ import { each } from "underscore";
 import { withButlerClient, messages } from "../buse";
 
 import rootLogger from "../logger";
+import { DownloadReason } from "../buse/messages";
 const logger = rootLogger.child({ name: "game-updates" });
 
 export default function(watcher: Watcher) {
@@ -29,6 +30,7 @@ export default function(watcher: Watcher) {
           game,
           upload,
           build,
+          reason: DownloadReason.Update,
           queueDownload: true,
         })
       );

@@ -6,11 +6,11 @@ import Chart from "./chart";
 import { downloadProgress } from "../../format";
 
 import TimeAgo from "../basics/time-ago";
+import UploadIcon from "../basics/upload-icon";
 import IconButton from "../basics/icon-button";
 import Button from "../basics/button";
 import Hover, { IHoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
-import MainAction from "../game-actions/main-action";
 
 import { IDownloadSpeeds, ITask, IRootState } from "../../types";
 
@@ -30,114 +30,84 @@ import {
 } from "../../format/operation";
 import { formatUploadTitle } from "../../format/upload";
 import { modalWidgets } from "../modal-widgets/index";
-import { Download } from "../../buse/messages";
+import { Download, Upload } from "../../buse/messages";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
-
-  flex-shrink: 0;
-  line-height: 1.6;
-  border-radius: 2px;
-  padding: 7px 5px 7px 10px;
-  margin: 10px 0px 5px 0px;
-  cursor: default;
   position: relative;
 
-  max-width: 800px;
+  background-color: ${props => props.theme.inputBackground};
+  padding: 10px;
+  margin: 20px 0;
 
-  border: 1px solid transparent;
+  &.first {
+    padding-bottom: 14px;
+  }
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
   &.finished {
     cursor: pointer;
   }
 
-  background-color: ${props => props.theme.itemBackground};
-
-  .cover,
-  .progress,
-  .controls,
-  .game-title,
-  .timeago {
-    z-index: 4;
-  }
-
-  .controls {
-    &.small {
-      align-self: flex-start;
-    }
-  }
-
-  .game-title {
-    font-weight: bold;
-
-    .game-file-name {
-      display: inline;
-      font-weight: normal;
-    }
-  }
-
-  .cover,
-  .progress {
-    transition: -webkit-filter 1s;
-  }
-
-  &.dimmed {
-    .cover,
-    .progress,
-    .timeago {
-      filter: grayscale(100%) brightness(50%);
-    }
-
-    .controls,
-    .game-title {
-      color: $secondary-text-color;
-    }
-
-    .stats {
-      color: darken($secondary-text-color, 10%);
-    }
-  }
-
-  .game-title {
-    ${styles.singleLine()} max-width: 500px;
-  }
-
-  .timeago {
-    font-size: 80%;
-    color: $secondary-text-color;
-    display: flex;
-    flex-direction: row;
-
-    .filler {
-      flex-grow: 1;
-      min-width: 20px;
-    }
-  }
-
-  display: flex;
-  align-items: center;
-
   .stats {
     flex-grow: 1;
-    height: $download-cover-height;
-    display: flex;
-    align-items: center;
+  }
 
-    .stats-inner {
-      width: 100%;
+  .stats--control {
+    .control-title,
+    .control--details {
+      white-space: nowrap;
+      max-width: 500px;
+      text-overflow: ellipsis;
+    }
+
+    .control--title {
+      padding: 0.4em 0;
+      padding-bottom: 0;
+      font-size: ${props => props.theme.fontSizes.larger};
+      font-weight: bold;
+    }
+
+    .control--details,
+    .control--status {
+      font-size: ${props => props.theme.fontSizes.baseText};
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      padding: 0.4em 0;
+    }
+
+    .control--error {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      padding: 0.4em 0;
+    }
+
+    .control--details {
+      color: ${props => props.theme.secondaryText};
     }
 
     .progress {
       ${styles.progress()};
-      margin: 10px 0;
-      height: 5px;
-      overflow: hidden;
 
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 4px;
+
+      overflow: hidden;
       &,
       .progress-inner {
         border-radius: 5px;
       }
-
       .progress-inner.indeterminate {
         animation: ${styles.animations.horizontalIndeterminate} 2.4s ease-in-out
           infinite;
@@ -145,26 +115,25 @@ const DownloadRowDiv = styled.div`
     }
   }
 
-  .stats--control {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  &:not(.first) {
+    .progress {
+      display: none;
+    }
   }
+`;
 
-  .control--title {
-    padding-bottom: 0.5em;
-    font-weight: bold;
-  }
+const Filler = styled.div`
+  flex-grow: 1;
+`;
 
-  .control--filename {
-    display: inline;
-    font-weight: normal;
-  }
+const Spacer = styled.div`
+  height: 1px;
+  min-width: 8px;
+`;
 
-  .control--reason {
-    font-weight: normal;
-    color: ${props => props.theme.secondaryText};
-  }
+const VSpacer = styled.div`
+  width: 1px;
+  min-height: 8px;
 `;
 
 const StyledCover = styled(Cover)`
@@ -336,51 +305,15 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   progress() {
-    const { first, finished, item, status, downloadsPaused } = this.props;
-    let error = item.error;
-    let reason = item.reason;
-    const { game, upload, finishedAt } = item;
+    const { first, finished, status, downloadsPaused } = this.props;
     const { operation } = status;
 
-    if (finished && !operation) {
-      if (error) {
-        return (
-          <div className="stats--control">
-            <div className="control--title">
-              {game.title}
-              <span className="control--reason">
-                {" — "}
-                {format(["prompt.install_error.message"])}
-              </span>
-            </div>
-            <Button
-              icon="error"
-              primary
-              discreet
-              label={format(["grid.item.view_details"])}
-              onClick={this.onShowError}
-            />
-          </div>
-        );
-      }
-
-      const outcomeText = formatOutcome(reason);
+    if (finished) {
       return (
         <div className="stats--control">
-          <div className="control--title">
-            {game.title}
-            <div className="control--filename">
-              {upload ? ` · ${formatUploadTitle(upload)}` : null}
-            </div>
-            {outcomeText ? (
-              <span className="control--reason">
-                {" — "}
-                {format(outcomeText)}
-              </span>
-            ) : null}{" "}
-            <TimeAgo className="control--reason" date={finishedAt} />
-          </div>
-          <MainAction game={game} status={status} />
+          {this.renderTitle()}
+          {this.renderDetails()}
+          {this.renderErrorOrTimestamp()}
         </div>
       );
     }
@@ -398,15 +331,14 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     } else {
       progressInnerStyle.width = `${progress * 100}%`;
     }
+    if (this.props.downloadsPaused) {
+      progressInnerStyle.filter = "grayscale(100%)";
+    }
 
     return (
-      <div className="stats-inner">
-        <div className="game-title">
-          {game.title}
-          <div className="game-file-name">
-            {upload ? ` · ${formatUploadTitle(upload)}` : null}
-          </div>
-        </div>
+      <div className="stats--control">
+        {this.renderTitle()}
+        {this.renderDetails()}
         <div className="progress">
           <div
             className={classNames("progress-inner", {
@@ -415,33 +347,94 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
             style={progressInnerStyle}
           />
         </div>
-        <div className="timeago">
-          {this.formatTimeAgo()}
-          <div className="filler" />
-          <div>
-            {operation.paused ? (
-              first ? (
-                <div className="paused">
-                  {format(["grid.item.downloads_paused"])}
-                </div>
-              ) : null
-            ) : (first || operation) && eta >= 0 && bps ? (
-              <span>{downloadProgress({ eta, bps }, operation.paused)}</span>
+        <div className="control--status">
+          {this.renderStatus()}
+          <Filler />
+          <>
+            {!operation.paused && first && eta >= 0 && bps ? (
+              <>
+                <Spacer />
+                {downloadProgress({ eta, bps }, operation.paused)}
+              </>
             ) : null}
-          </div>
+          </>
         </div>
       </div>
     );
   }
-  formatTimeAgo() {
-    const { status } = this.props;
+
+  renderTitle(): JSX.Element {
+    const { game } = this.props.item;
+    return (
+      <div className="control--title">
+        <strong>{game.title}</strong>
+      </div>
+    );
+  }
+
+  renderDetails(): JSX.Element {
+    const { upload } = this.props.item;
+    return <div className="control--details">{this.renderUpload(upload)}</div>;
+  }
+
+  renderErrorOrTimestamp(): JSX.Element {
+    const { error, finishedAt, reason } = this.props.item;
+
+    if (!error) {
+      const outcomeText = formatOutcome(reason);
+      return (
+        <div className="control--status">
+          <TimeAgo date={finishedAt} />
+          {outcomeText ? (
+            <>
+              <Spacer />
+              {"—"}
+              <Spacer />
+              {format(outcomeText)}
+            </>
+          ) : null}
+        </div>
+      );
+    }
+
+    return (
+      <div className="control--error">
+        {format(["prompt.install_error.message"])}
+        <VSpacer />
+        <Button
+          icon="error"
+          primary
+          discreet
+          label={format(["grid.item.view_details"])}
+          onClick={this.onShowError}
+        />
+      </div>
+    );
+  }
+
+  renderUpload(upload: Upload): JSX.Element {
+    if (!upload) {
+      return null;
+    }
+
+    return (
+      <>
+        <UploadIcon upload={upload} />
+        <Spacer />
+        {formatUploadTitle(upload)}
+      </>
+    );
+  }
+
+  renderStatus() {
+    const { status, first } = this.props;
     const { operation } = status;
 
-    if (operation.paused) {
+    if (operation.paused || !first) {
       return format(["grid.item.queued"]);
     }
 
-    return <div>{this.formatOperation(operation)}</div>;
+    return this.formatOperation(operation);
   }
 
   formatOperation(op: IOperation): string | JSX.Element {
@@ -449,18 +442,22 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       const { item } = this.props;
       const reasonText = formatReason(op.reason);
       return (
-        <span>
-          {format(["download.started"])}{" "}
-          <TimeAgo date={new Date(item.startedAt)} />
+        <>
+          <TimeAgo
+            before={format(["download.started"])}
+            date={new Date(item.startedAt)}
+          />
           {reasonText ? (
-            <span>
-              {" — "}
+            <>
+              <Spacer />
+              {"—"}
+              <Spacer />
               {format(reasonText)}
-            </span>
+            </>
           ) : (
             ""
           )}
-        </span>
+        </>
       );
     }
 

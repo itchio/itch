@@ -1224,7 +1224,7 @@ export interface Upload {
   /** Is this upload a pre-order placeholder? */
   preorder: boolean;
   /** Upload type: default, soundtrack, etc. */
-  type: string;
+  type: UploadType;
   /** Is this upload tagged with 'macOS compatible'? (creator-controlled) */
   pOsx: boolean;
   /** Is this upload tagged with 'Linux compatible'? (creator-controlled) */
@@ -1237,6 +1237,32 @@ export interface Upload {
   createdAt: Date;
   /** Date this upload was last updated at (order changed, display name set, etc.) */
   updatedAt: Date;
+}
+
+/**
+ * undocumented
+ */
+export enum UploadType {
+  Default = "default",
+  // ----------------
+  // embed types
+  // ----------------
+  Flash = "flash",
+  Unity = "unity",
+  Java = "java",
+  HTML = "html",
+  // ----------------
+  // asorted types
+  // ----------------
+  Soundtrack = "soundtrack",
+  Book = "book",
+  Video = "video",
+  Documentation = "documentation",
+  Mod = "mod",
+  AudioAssets = "audio_assets",
+  GraphicalAssets = "graphical_assets",
+  Sourcecode = "sourcecode",
+  Other = "other",
 }
 
 /**

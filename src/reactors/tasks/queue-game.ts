@@ -80,7 +80,8 @@ export async function queueInstall(
         modalWidgets.pickUpload.make({
           title: ["pick_install_upload.title", { title }],
           message: ["pick_install_upload.message", { title }],
-          detail: ["pick_install_upload.detail"],
+          coverUrl: game.coverUrl,
+          stillCoverUrl: game.stillCoverUrl,
           bigButtons: map(uploads, (candidate, index) => {
             return {
               ...makeUploadButton(candidate),
