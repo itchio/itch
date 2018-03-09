@@ -17,7 +17,6 @@ import { formatString } from "./format";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { DATE_FORMAT } from "../format/index";
 import { formatDate } from "../format/datetime";
-import { fromDateTimeField } from "../db/datetime-field";
 
 const LayoutContainer = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -95,7 +94,7 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
                     rh = formatString(intl, obj);
                   } else if (obj.hasOwnProperty("date")) {
                     rh = formatDate(
-                      fromDateTimeField(obj.date),
+                      new Date(obj.date),
                       intl.locale,
                       DATE_FORMAT
                     );

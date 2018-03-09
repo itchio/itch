@@ -14,7 +14,6 @@ import { electronEnhancer } from "ftl-redux-electron-store";
 import route from "../reactors/route";
 import getWatcher from "../reactors";
 import reducer from "../reducers";
-import db from "../db";
 
 import shouldLogAction from "./should-log-action";
 
@@ -61,7 +60,7 @@ if (beChatty) {
   middleware.push(logger);
 }
 
-let watcher = getWatcher(db);
+let watcher = getWatcher();
 
 const enhancer = compose(
   electronEnhancer({
@@ -79,7 +78,7 @@ if (module.hot) {
   module.hot.accept(() => {
     console.warn(`Refreshing all reactors...`);
     const _getWatcher = require("../reactors").default;
-    watcher = _getWatcher(db);
+    watcher = _getWatcher();
   });
 }
 

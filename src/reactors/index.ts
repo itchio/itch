@@ -1,5 +1,4 @@
 import { Watcher } from "./watcher";
-import { DB } from "../db";
 
 import fetchers from "./fetchers";
 import preboot from "./preboot";
@@ -41,44 +40,44 @@ import notifications from "./notifications";
 import { currentRuntime } from "../os/runtime";
 const runtime = currentRuntime();
 
-export default function getWatcher(db: DB) {
+export default function getWatcher() {
   const watcher = new Watcher();
 
-  fetchers(watcher, db);
-  preboot(watcher, db);
+  fetchers(watcher);
+  preboot(watcher);
   preferences(watcher);
   mainWindow(watcher);
   locales(watcher);
   tray(watcher);
   menu(watcher, runtime);
-  installLocations(watcher, db);
+  installLocations(watcher);
   selfUpdate(watcher);
-  setup(watcher, db);
+  setup(watcher);
   tabs(watcher);
   triggers(watcher);
   modals(watcher);
   openAtLogin(watcher);
   proxy(watcher);
   login(watcher);
-  dialogs(watcher, db);
+  dialogs(watcher);
   i18n(watcher);
-  contextMenu(watcher, db);
+  contextMenu(watcher);
   rememberedProfiles(watcher);
   profile(watcher);
   navigation(watcher);
-  tabSave(watcher, db);
+  tabSave(watcher);
   commons(watcher);
   purchases(watcher);
   url(watcher);
   itchInternal(watcher);
   tasks(watcher);
-  downloads(watcher, db);
+  downloads(watcher);
   queueLaunch(watcher);
-  updater(watcher, db);
-  gameUpdates(watcher, db);
-  report(watcher, db);
-  search(watcher, db);
-  webContents(watcher, db);
+  updater(watcher);
+  gameUpdates(watcher);
+  report(watcher);
+  search(watcher);
+  webContents(watcher);
   notifications(watcher);
 
   watcher.validate();

@@ -1,7 +1,6 @@
 import { fileSize } from "../format/filesize";
 
 import platformData from "../constants/platform-data";
-import { toDateTimeField } from "../db/datetime-field";
 
 import { ILocalizedString, IModalButtonTag } from "../types";
 import { Upload } from "../buse/messages";
@@ -54,7 +53,7 @@ export default function makeUploadButton(
   }
 
   const timeAgo = {
-    date: toDateTimeField(upload.updatedAt),
+    date: upload.updatedAt,
   };
 
   const icon = "download";

@@ -19,14 +19,13 @@ import { BrowserWindow, dialog } from "electron";
 import { IRootState } from "../types";
 
 import Context from "../context";
-import { DB } from "../db";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { withButlerClient, messages } from "../buse";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "install-locations" });
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
     const { name } = action.payload;
     invariant(
@@ -219,7 +218,7 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.queryFreeSpace, async (store, action) => {
-    const ctx = new Context(store, db);
+    const ctx = new Context(store);
     const diskInfo = await diskspace.diskInfo(ctx);
     store.dispatch(actions.freeSpaceUpdated({ diskInfo }));
   });

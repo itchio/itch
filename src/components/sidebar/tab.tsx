@@ -72,14 +72,14 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
       count = size(getFinishedDownloads(downloads));
       const activeDownload = getActiveDownload(downloads);
       if (activeDownload) {
-        progress = activeDownload.progress;
+        const progress = downloads.progresses[activeDownload.id];
         if (downloads.paused) {
           icon = "stopwatch";
           sublabel = ["grid.item.downloads_paused"];
-        } else if (activeDownload.eta) {
+        } else if (progress && progress.eta) {
           const title = activeDownload.game.title;
           const { intl } = this.props;
-          const formatted = formatDurationAsMessage(activeDownload.eta);
+          const formatted = formatDurationAsMessage(progress.eta);
           const humanDuration = intl.formatMessage(
             {
               id: formatted.id,

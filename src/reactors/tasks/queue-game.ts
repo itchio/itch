@@ -4,8 +4,8 @@ import { actions } from "../../actions";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "queue-game" });
 
-import { IStore, DownloadReason } from "../../types/index";
-import { Game, Upload, InstallQueueResult } from "../../buse/messages";
+import { IStore } from "../../types/index";
+import { Game, Upload, Build } from "../../buse/messages";
 
 import { map, isEmpty } from "underscore";
 import makeUploadButton from "../make-upload-button";
@@ -64,7 +64,12 @@ export default function(watcher: Watcher) {
   });
 }
 
-export async function queueInstall(store: IStore, game: Game, upload?: Upload) {
+export async function queueInstall(
+  store: IStore,
+  game: Game,
+  upload?: Upload,
+  build?: Build
+) {
   await withButlerClient(logger, async client => {
     client.onRequest(messages.PickUpload, async ({ params }) => {
       const { uploads } = params;
@@ -98,31 +103,16 @@ export async function queueInstall(store: IStore, game: Game, upload?: Upload) {
     });
 
     const installLocationId = defaultInstallLocation(store);
-    const res = await client.call(
+    const item = await client.call(
       messages.InstallQueue({
         game,
         upload,
+        build,
         installLocationId,
       })
     );
-    commitInstall(store, "install", res);
+    await client.call(messages.DownloadsQueue({ item }));
   });
-}
-
-export function commitInstall(
-  store: IStore,
-  reason: DownloadReason,
-  res: InstallQueueResult
-) {
-  store.dispatch(
-    actions.queueDownload({
-      reason: "install",
-      game: res.game,
-      upload: res.upload,
-      build: res.build,
-      stagingFolder: res.stagingFolder,
-    })
-  );
 }
 
 function defaultInstallLocation(store: IStore) {

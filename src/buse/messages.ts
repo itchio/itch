@@ -434,6 +434,10 @@ export const GameFindUploads = createRequest<
  */
 export interface InstallQueueResult {
   /** undocumented */
+  id: string;
+  /** undocumented */
+  caveId: string;
+  /** undocumented */
   game: Game;
   /** undocumented */
   upload: Upload;
@@ -565,6 +569,156 @@ export interface PickUploadResult {
 export const PickUpload = createRequest<PickUploadParams, PickUploadResult>(
   "PickUpload"
 );
+
+/**
+ * Result for Downloads.Queue
+ */
+export interface DownloadsQueueResult {
+  // no fields
+}
+
+/**
+ * Queue a download that will be performed later by
+ * @@DownloadsDriveParams.
+ */
+export const DownloadsQueue = createRequest<
+  DownloadsQueueParams,
+  DownloadsQueueResult
+>("Downloads.Queue");
+
+/**
+ * Result for Downloads.Prioritize
+ */
+export interface DownloadsPrioritizeResult {
+  // no fields
+}
+
+/**
+ * Put a download on top of the queue.
+ */
+export const DownloadsPrioritize = createRequest<
+  DownloadsPrioritizeParams,
+  DownloadsPrioritizeResult
+>("Downloads.Prioritize");
+
+/**
+ * Result for Downloads.List
+ */
+export interface DownloadsListResult {
+  /** undocumented */
+  downloads: Download[];
+}
+
+/**
+ * List all known downloads.
+ */
+export const DownloadsList = createRequest<
+  DownloadsListParams,
+  DownloadsListResult
+>("Downloads.List");
+
+/**
+ * Result for Downloads.ClearFinished
+ */
+export interface DownloadsClearFinishedResult {
+  /** The number of removed downloads */
+  removedCount: number;
+}
+
+/**
+ * Removes all finished downloads from the queue.
+ */
+export const DownloadsClearFinished = createRequest<
+  DownloadsClearFinishedParams,
+  DownloadsClearFinishedResult
+>("Downloads.ClearFinished");
+
+/**
+ * Result for Downloads.Drive
+ */
+export interface DownloadsDriveResult {
+  // no fields
+}
+
+/**
+ * Drive downloads, which is: perform them one at a time,
+ * until they're all finished.
+ */
+export const DownloadsDrive = createRequest<
+  DownloadsDriveParams,
+  DownloadsDriveResult
+>("Downloads.Drive");
+
+/**
+ * Payload for Downloads.Drive.Progress
+ */
+export interface DownloadsDriveProgressNotification {
+  /** undocumented */
+  download: Download;
+  /** undocumented */
+  progress: DownloadProgress;
+}
+
+/**
+ * undocumented
+ */
+export const DownloadsDriveProgress = createNotification<
+  DownloadsDriveProgressNotification
+>("Downloads.Drive.Progress");
+
+/**
+ * Payload for Downloads.Drive.Finished
+ */
+export interface DownloadsDriveFinishedNotification {
+  /** undocumented */
+  download: Download;
+}
+
+/**
+ * undocumented
+ */
+export const DownloadsDriveFinished = createNotification<
+  DownloadsDriveFinishedNotification
+>("Downloads.Drive.Finished");
+
+/**
+ * Represents a download queued, which will be
+ * performed whenever @@DownloadsDriveParams is called.
+ */
+export interface Download {
+  /** undocumented */
+  id: string;
+  /** undocumented */
+  position: number;
+  /** undocumented */
+  caveId: string;
+  /** undocumented */
+  game: Game;
+  /** undocumented */
+  upload: Upload;
+  /** undocumented */
+  build: Build;
+  /** undocumented */
+  startedAt: Date;
+  /** undocumented */
+  finishedAt: Date;
+  /** undocumented */
+  stagingFolder: string;
+}
+
+/**
+ * undocumented
+ */
+export interface DownloadProgress {
+  /** undocumented */
+  stage: string;
+  /** undocumented */
+  progress: number;
+  /** undocumented */
+  eta: number;
+  /** undocumented */
+  bps: number;
+}
 
 /**
  * Result for CheckUpdate
@@ -1833,6 +1987,43 @@ export interface InstallResult {
   upload: Upload;
   /** The build we installed */
   build?: Build;
+}
+
+/**
+ * Params for Downloads.Queue
+ */
+export interface DownloadsQueueParams {
+  /** undocumented */
+  item: InstallQueueResult;
+}
+
+/**
+ * Params for Downloads.Prioritize
+ */
+export interface DownloadsPrioritizeParams {
+  /** undocumented */
+  downloadId: string;
+}
+
+/**
+ * Params for Downloads.List
+ */
+export interface DownloadsListParams {
+  // no fields
+}
+
+/**
+ * Params for Downloads.ClearFinished
+ */
+export interface DownloadsClearFinishedParams {
+  // no fields
+}
+
+/**
+ * Params for Downloads.Drive
+ */
+export interface DownloadsDriveParams {
+  // no fields
 }
 
 /**

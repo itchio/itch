@@ -14,8 +14,6 @@ import {
   II18nKeys,
   IPartsInfo,
   IProgressInfo,
-  IQueueDownloadOpts,
-  IDownloadItem,
   IOpenTabPayload,
   IQueueLaunchOpts,
   GenerosityLevel,
@@ -39,6 +37,7 @@ import {
   GameUpdate,
   Profile,
   Collection,
+  Download,
 } from "../buse/messages";
 import { TaskName } from "../types/tasks";
 import {
@@ -115,14 +114,6 @@ export const actions = wireActions({
     /** a valid HTTP(S) proxy string (that could be in $HTTP_PROXY) */
     proxy: string;
     source: ProxySource;
-  }>(),
-  dbCommit: action<{
-    /** the table the records that were changed belong to */
-    tableName: string;
-    /** primary keys for updated records */
-    updated: string[];
-    /** primary keys for deleted records */
-    deleted: string[];
   }>(),
   commonsUpdated: action<Partial<ICommonsState>>(),
 
@@ -525,8 +516,7 @@ export const actions = wireActions({
 
   // downloads
 
-  queueDownload: action<IQueueDownloadOpts>(),
-  downloadStarted: action<Partial<IDownloadItem>>(),
+  downloadStarted: action<Download>(),
   downloadProgress: action<
     Partial<IProgressInfo> & {
       /** the download in progress */
@@ -544,7 +534,7 @@ export const actions = wireActions({
     id: string;
 
     /** the download that just ended */
-    item: IDownloadItem;
+    item: Download;
 
     /** an error, if any */
     err: string;

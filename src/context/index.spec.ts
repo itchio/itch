@@ -1,15 +1,13 @@
 import suite from "../test-suite";
 import Context from ".";
 
-import { DB } from "../db";
 import { IStore, isCancelled } from "../types";
 
-const db = {} as DB;
 const store = {} as IStore;
 
 suite(__filename, s => {
   s.case("Context propagates progress", async t => {
-    const c = new Context(store, db);
+    const c = new Context(store);
 
     let p1 = 0;
     let p2 = 0;
@@ -30,7 +28,7 @@ suite(__filename, s => {
   });
 
   s.case("Context returns result", async t => {
-    const c = new Context(store, db);
+    const c = new Context(store);
 
     const ret = await (async () => {
       return c.withStopper({
@@ -43,7 +41,7 @@ suite(__filename, s => {
   });
 
   s.case("Context signals abort", async t => {
-    const c = new Context(store, db);
+    const c = new Context(store);
 
     let abortCount = 0;
     let allowAbort = false;
@@ -113,7 +111,7 @@ suite(__filename, s => {
   });
 
   s.case("Sub-context work", async t => {
-    const c = new Context(store, db);
+    const c = new Context(store);
 
     let subRef;
     let canAbort = false;

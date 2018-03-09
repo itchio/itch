@@ -1,6 +1,5 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
-import { DB } from "../../db/db";
 
 import rootLogger from "../../logger";
 import { modalWidgets } from "../../components/modal-widgets/index";
@@ -11,7 +10,7 @@ import {
 } from "../../buse/index";
 const logger = rootLogger.child({ name: "manage-game" });
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.manageGame, async (store, action) => {
     const { game } = action.payload;
 

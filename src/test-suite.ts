@@ -70,43 +70,6 @@ export class TestWatcher extends Watcher {
   }
 }
 
-import { DB } from "./db";
-import { modelMap, IModelMap } from "./db/repository";
-import { checkSchema, fixSchema } from "./db/migrator";
-import { isEmpty } from "underscore";
-
-let dbsToClose: DB[] = [];
-
-export function registerDBToClose(db: DB) {
-  dbsToClose.push(db);
-}
-
-export async function withDB(store: IStore, cb: (db: DB) => Promise<void>) {
-  await withCustomDB(store, modelMap, cb);
-}
-
-export async function withCustomDB(
-  store: IStore,
-  customMap: IModelMap,
-  cb: (db: DB) => Promise<void>
-) {
-  while (!isEmpty(dbsToClose)) {
-    dbsToClose.shift().close();
-  }
-
-  const db = new DB(customMap);
-  try {
-    db.load(store, ":memory:");
-    const q = db.getQuerier();
-    fixSchema(q, checkSchema(q, customMap));
-    await cb(db);
-  } catch (e) {
-    throw e;
-  } finally {
-    db.close();
-  }
-}
-
 /**
  * Returns a promise that resolves when setImmediate's callback is called
  * Some parts of the code (reactors for example) use setImmediate to avoid

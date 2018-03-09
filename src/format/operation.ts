@@ -1,6 +1,5 @@
-import { ILocalizedString } from "../types/index";
+import { ILocalizedString, DownloadReason } from "../types/index";
 import { IOperation, OperationType } from "../helpers/get-game-status";
-import { DownloadReason } from "../types/tasks";
 
 export function formatOperation(op: IOperation): ILocalizedString {
   if (op.type === OperationType.Task) {

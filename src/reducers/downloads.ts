@@ -13,17 +13,18 @@ import {
 import groupIdBy from "../helpers/group-id-by";
 import { excludeGame } from "../reactors/downloads/getters";
 
-import { IDownloadsState, IDownloadItem } from "../types";
+import { IDownloadsState } from "../types";
 
 import reducer from "./reducer";
 import derivedReducer from "./derived-reducer";
 import { actions } from "../actions";
+import { Download } from "../buse/messages";
 
 const SPEED_DATA_POINT_COUNT = 60;
 
 const selector = createStructuredSelector({
   itemIdsByGameId: (state: IDownloadsState) =>
-    groupIdBy<IDownloadItem>(state.items, i => String(i.game && i.game.id)),
+    groupIdBy<Download>(state.items, i => String(i.game && i.game.id)),
 });
 
 const baseInitialState: Partial<IDownloadsState> = {
@@ -39,7 +40,7 @@ const initialState: IDownloadsState = {
 
 const updateSingle = (
   state: IDownloadsState,
-  record: Partial<IDownloadItem>
+  record: Partial<Download>
 ): IDownloadsState => {
   const { items } = state;
   const { id } = record;
@@ -62,24 +63,24 @@ const updateSingle = (
   };
 };
 
-function index(items: IDownloadItem[]): IDownloadsState["items"] {
+function index(items: Download[]): IDownloadsState["items"] {
   return indexBy(items, "id");
 }
 
 // higher priority = smaller numbers
-function higherPriorityRank(state: IDownloadsState): number {
+function higherPriorityPosition(state: IDownloadsState): number {
   if (isEmpty(state.items)) {
     return 0;
   }
-  return min(values(state.items), x => x.rank).rank - 1;
+  return min(values(state.items), x => x.position).position - 1;
 }
 
 // lower priority = larger numbers
-function lowerPriorityRank(state: IDownloadsState): number {
+function lowerPriorityPosition(state: IDownloadsState): number {
   if (isEmpty(state.items)) {
     return 0;
   }
-  return max(values(state.items), x => x.rank).rank + 1;
+  return max(values(state.items), x => x.position).position + 1;
 }
 
 const baseReducer = reducer<IDownloadsState>(initialState, on => {
@@ -92,8 +93,8 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
   });
 
   on(actions.downloadStarted, (state, action) => {
-    const item = action.payload as IDownloadItem;
-    const rank = higherPriorityRank(state);
+    const item = action.payload as Download;
+    const rank = higherPriorityPosition(state);
 
     return {
       ...state,
@@ -120,8 +121,8 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
 
     return updateSingle(state, {
       id,
-      rank: lowerPriorityRank(state),
-      finished: false,
+      position: lowerPriorityPosition(state),
+      finishedAt: null,
     });
   });
 
@@ -131,16 +132,10 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
   });
 
   on(actions.downloadEnded, (state, action) => {
-    const { id, finishedAt, err, errStack } = action.payload;
+    const { id, finishedAt } = action.payload;
     return updateSingle(state, {
       id,
-      finished: true,
       finishedAt,
-      progress: 0,
-      eta: 0,
-      bps: 0,
-      err,
-      errStack,
     });
   });
 
@@ -156,7 +151,7 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
   on(actions.prioritizeDownload, (state, action) => {
     const { id } = action.payload;
 
-    return updateSingle(state, { id, rank: higherPriorityRank(state) });
+    return updateSingle(state, { id, position: higherPriorityPosition(state) });
   });
 
   on(actions.downloadDiscarded, (state, action) => {

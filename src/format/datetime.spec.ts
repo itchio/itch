@@ -6,7 +6,6 @@ import {
   getFormatter,
   DATE_FORMAT,
 } from "./datetime";
-import { fromDateTimeField } from "../db/datetime-field";
 
 suite(__filename, s => {
   s.case("seconds", t => {
@@ -29,14 +28,6 @@ suite(__filename, s => {
     const refString = "April 3, 1994, 11:47:21";
 
     t.same(formatDate(null, "en", DATE_FORMAT), "");
-    t.same(
-      formatDate(
-        fromDateTimeField("1994-04-03 11:47:21 +0"),
-        "en",
-        DATE_FORMAT
-      ),
-      "April 3, 1994, 11:47:21"
-    );
     t.same(formatDate(new Date("haha"), "en", DATE_FORMAT), "Ø");
     t.same(
       formatDate(new Date("1994-04-03 11:47:21 +0"), "en", DATE_FORMAT),

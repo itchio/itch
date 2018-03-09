@@ -4,11 +4,10 @@ import { actions } from "../../actions";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "request-cave-uninstall" });
 
-import { DB } from "../../db";
 import { modalWidgets } from "../../components/modal-widgets/index";
 import { withButlerClient, messages } from "../../buse";
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
     const { caveId } = action.payload;
 

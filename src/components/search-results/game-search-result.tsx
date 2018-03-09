@@ -5,8 +5,6 @@ import GenericSearchResult from "./generic-search-result";
 import isPlatformCompatible from "../../util/is-platform-compatible";
 import { formatPrice, applySale } from "../../format";
 
-import { fromJSONField } from "../../db/json-field";
-
 import Hoverable from "../basics/hover-hoc";
 import Filler from "../basics/filler";
 import Cover from "../basics/cover";
@@ -127,7 +125,7 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
     let compatible = isPlatformCompatible(game);
     let price: React.ReactElement<any> = null;
 
-    const sale = fromJSONField(game.sale);
+    const { sale } = game;
 
     if (game.minPrice > 0) {
       let bestPrice = applySale(game.minPrice, sale);

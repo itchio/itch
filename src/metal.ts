@@ -14,7 +14,7 @@ if (env.name === "development") {
   logger.info("Enabling hot-module reload!");
   enableLiveReload({
     strategy: "react-hmr",
-    blacklist: ["db", "store", "logger", "persistent-state"],
+    blacklist: ["store", "logger", "persistent-state"],
   });
 }
 
@@ -30,7 +30,6 @@ logger.info(
   } in ${env.name}`
 );
 
-import { connectDatabase } from "./db";
 import { loadPreferencesSync } from "./reactors/preboot/load-preferences";
 
 const appUserModelId = "com.squirrel.itch.itch";
@@ -98,8 +97,6 @@ function autoUpdateDone() {
         return;
       }
     }
-
-    await connectDatabase(store);
 
     store.dispatch(
       actions.processUrlArguments({

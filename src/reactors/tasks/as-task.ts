@@ -44,7 +44,7 @@ export default async function asTask(opts: IAsTaskOpts) {
     })
   );
 
-  const ctx = new Context(store, null);
+  const ctx = new Context(store);
   ctx.registerTaskId(id);
   ctx.on(
     "progress",

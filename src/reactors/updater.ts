@@ -1,5 +1,4 @@
 import { Watcher } from "./watcher";
-import { DB } from "../db";
 
 import { actions } from "../actions";
 
@@ -83,7 +82,7 @@ function reschedule(store: IStore) {
   );
 }
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   if (SKIP_GAME_UPDATES) {
     logger.debug(
       "Skipping game update check as requested per environment variable"

@@ -1,4 +1,3 @@
-import { DB } from "../db";
 import { IStore, IProgressInfo, IProgressListener, Cancelled } from "../types";
 
 import { EventEmitter } from "events";
@@ -133,12 +132,11 @@ export class MinimalContext {
 }
 
 export default class Context extends MinimalContext {
-  // TODO: remove DB
-  constructor(public store: IStore, public db: DB) {
+  constructor(public store: IStore) {
     super();
   }
 
   clone(): Context {
-    return new Context(this.store, this.db);
+    return new Context(this.store);
   }
 }

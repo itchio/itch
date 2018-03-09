@@ -20,6 +20,8 @@ import {
   DownloadKeySummary,
   Cave,
   DownloadKey,
+  Download,
+  DownloadProgress,
 } from "../buse/messages";
 
 export interface IStore extends Store<IRootState> {}
@@ -89,50 +91,6 @@ export interface ICollectionSet {
 
 export interface ICaveSet {
   [key: string]: Cave;
-}
-
-export type InstallerType =
-  | "archive"
-  | "air"
-  | "dmg"
-  | "inno"
-  | "nsis"
-  | "msi"
-  | "naked"
-  | "unknown";
-
-export type TableName =
-  | "caves"
-  | "users"
-  | "games"
-  | "collections"
-  | "downloadKeys"
-  | "itchAppTabs";
-
-export interface IEntityMap<T> {
-  [entityId: string]: T;
-}
-
-export interface ITableMap {
-  [table: string]: IEntityMap<any>;
-  games?: IEntityMap<Partial<Game>>;
-  users?: IEntityMap<Partial<User>>;
-  downloads?: IEntityMap<Partial<IDownloadItem>>;
-}
-
-/**
- * Refers to a bunch of records, for example:
- * { 'apples': ['gala', 'cripps', 'golden'], 'pears': ['anjou'] }
- */
-export interface IEntityRefs {
-  [table: string]: string[];
-}
-
-/**
- * Specifies what to delete from the DB
- */
-export interface IDBDeleteSpec {
-  entities: IEntityRefs;
 }
 
 export interface ICredentials {
@@ -677,58 +635,26 @@ export interface IUpgradePathItem {
   patchSize: number;
 }
 
-/**
- * A download in progress for the app. Always linked to a game,
- * sometimes for first install, sometimes for update.
- */
-export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
-  /** unique generated id for this download */
-  id: string;
-
-  /** reason why this download was started */
-  reason: Tasks.DownloadReason;
-
-  /** download progress in a [0, 1] interval */
-  progress: number;
-
-  /** set when download has been completed */
-  finished?: boolean;
-
-  /** rank in the download list: can be negative, for reordering */
-  rank: number;
-
-  /** at how many bytes per second are we downloading right now? */
-  bps?: number;
-
-  /** how many seconds till the download ends? */
-  eta?: number;
-
-  /** timestamp the download started at */
-  startedAt?: Date;
-
-  /** timestamp the download finished at */
-  finishedAt?: Date;
-
-  /** an error that may have occured while downloading */
-  err?: string;
-
-  /** stack trace of an error that may have occured while downloading */
-  errStack?: string;
-}
-
 export type DownloadSpeedDataPoint = number;
 
 export type IDownloadSpeeds = DownloadSpeedDataPoint[];
 
+// TODO: figure this out with buse
+export type DownloadReason = string;
+
 export interface IDownloadsState {
   /** All the downloads we know about, indexed by their own id */
   items: {
-    [id: string]: IDownloadItem;
+    [id: string]: Download;
   };
 
   /** IDs of all the downloads we know about, grouped by the id of the game they're associated to */
   itemIdsByGameId: {
     [gameId: string]: string[];
+  };
+
+  progresses: {
+    [id: string]: DownloadProgress;
   };
 
   /** true if downloads are currently paused */

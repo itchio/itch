@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import Chart from "./chart";
 
-import { downloadProgress, fileSize } from "../../format";
+import { downloadProgress } from "../../format";
 
 import TimeAgo from "../basics/time-ago";
 import IconButton from "../basics/icon-button";
@@ -12,7 +12,7 @@ import Hover, { IHoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
 import MainAction from "../game-actions/main-action";
 
-import { IDownloadSpeeds, IDownloadItem, ITask, IRootState } from "../../types";
+import { IDownloadSpeeds, ITask, IRootState } from "../../types";
 
 import styled, * as styles from "../styles";
 
@@ -30,6 +30,7 @@ import {
 } from "../../format/operation";
 import { formatUploadTitle } from "../../format/upload";
 import { modalWidgets } from "../modal-widgets/index";
+import { DownloadProgress, Download } from "../../buse/messages";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -84,7 +85,7 @@ const DownloadRowDiv = styled.div`
     .cover,
     .progress,
     .timeago {
-      -webkit-filter: grayscale(100%) brightness(50%);
+      filter: grayscale(100%) brightness(50%);
     }
 
     .controls,
@@ -223,7 +224,9 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     let onStatsClick = (ev: React.MouseEvent<any>): void => null;
     if (finished) {
-      if (item.err) {
+      // TODO: figure this out with buse
+      let err = null;
+      if (err) {
         onStatsClick = this.onShowError;
       } else {
         onStatsClick = this.onNavigate;
@@ -289,8 +292,9 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   controls() {
-    const { first, item, status } = this.props;
-    const { err } = item;
+    const { first, status } = this.props;
+    // TODO: figure this out with buse
+    let err = null;
 
     if (!status.operation && err) {
       return null;
@@ -338,7 +342,10 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   progress() {
     const { first, finished, item, status, downloadsPaused } = this.props;
-    const { err, game, upload, finishedAt, reason } = item;
+    // TODO: figure this out with buse
+    let err = null;
+    let reason = "TODO: figure this out with buse";
+    const { game, upload, finishedAt } = item;
     const { operation } = status;
 
     if (finished && !operation) {
@@ -459,7 +466,6 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
           ) : (
             ""
           )}
-          {item.totalSize ? ` — ${fileSize(item.totalSize)}` : ""}
         </span>
       );
     }
@@ -472,7 +478,7 @@ interface IProps extends IHoverProps {
   // TODO: first really means active, active really means !finished
   first?: boolean;
   finished?: boolean;
-  item: IDownloadItem;
+  item: Download;
 }
 
 const actionCreators = actionCreatorsList(
@@ -494,6 +500,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   tasksByGameId: {
     [gameId: string]: ITask[];
   };
+  itemProgress: DownloadProgress;
 };
 
 const HoverDownloadRow = Hover(DownloadRow);
@@ -507,6 +514,7 @@ export default connect<IProps>(HoverDownloadRow, {
       downloadsPaused: rs.downloads.paused,
       tasksByGameId: rs.tasks.tasksByGameId,
       status: getGameStatus(rs, game),
+      downloadProgress: rs.downloads.progresses[props.item.id],
     };
   },
   actionCreators,

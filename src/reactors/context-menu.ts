@@ -4,8 +4,6 @@ import { IStore, IMenuTemplate, IOpenContextMenuBase } from "../types";
 
 import { actions } from "../actions";
 
-import { DB } from "../db";
-
 import { Space } from "../helpers/space";
 import {
   gameControls,
@@ -13,7 +11,6 @@ import {
   concatTemplates,
   closeTabControls,
 } from "./context-menu/build-template";
-import Context from "../context/index";
 
 function openMenu(
   store: IStore,
@@ -30,31 +27,29 @@ function openMenu(
   );
 }
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.openTabContextMenu, async (store, action) => {
     const { tab } = action.payload;
-    const ctx = new Context(store, db);
 
     let template: IMenuTemplate;
-    template = concatTemplates(template, newTabControls(ctx, tab));
+    template = concatTemplates(template, newTabControls(store, tab));
 
     const sp = Space.fromStore(store, tab);
     if (sp.prefix === "games") {
       const game = sp.game();
       if (game) {
-        template = concatTemplates(template, gameControls(ctx, game));
+        template = concatTemplates(template, gameControls(store, game));
       }
     }
 
-    template = concatTemplates(template, closeTabControls(ctx, tab));
+    template = concatTemplates(template, closeTabControls(store, tab));
     const { clientX, clientY } = action.payload;
     openMenu(store, template, { clientX, clientY });
   });
 
   watcher.on(actions.openGameContextMenu, async (store, action) => {
     const { game } = action.payload;
-    const ctx = new Context(store, db);
-    const template = gameControls(ctx, game);
+    const template = gameControls(store, game);
 
     const { clientX, clientY } = action.payload;
     openMenu(store, template, { clientX, clientY });

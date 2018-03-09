@@ -2,14 +2,12 @@ import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 import * as sf from "../../os/sf";
 
-import { DB } from "../../db/index";
-
 import rootLogger from "../../logger";
 import { join } from "path";
 import { modalWidgets } from "../../components/modal-widgets/index";
 const logger = rootLogger.child({ name: "show-download-error" });
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.showDownloadError, async (store, action) => {
     const { id } = action.payload;
 
@@ -30,13 +28,15 @@ export default function(watcher: Watcher, db: DB) {
       logger.warn(`could not read log: ${e.stack}`);
     }
 
+    let errStack = "TODO: figure out errstack with buse";
+
     store.dispatch(
       actions.openModal(
         modalWidgets.showError.make({
           title: ["prompt.install_error.title"],
           message: ["prompt.install_error.message"],
           widgetParams: {
-            errorStack: item.errStack,
+            errorStack: errStack,
             log,
           },
           buttons: [

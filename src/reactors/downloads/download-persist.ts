@@ -4,57 +4,7 @@ import { actions } from "../../actions";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "download-persist" });
 
-import { DB } from "../../db/db";
-import { IStore, IDownloadItem, IRootState } from "../../types/index";
-
-import * as _ from "underscore";
-import { createSelector } from "reselect";
-
-function persistDownloads(store: IStore, db: DB) {
-  const state = store.getState();
-  const { items, restored } = state.downloads;
-  if (!restored) {
-    // don't persist yet
-  }
-  const numItems = Object.keys(items).length;
-
-  if (numItems > 0) {
-    logger.debug(`Persisting ${numItems} downloads...`);
-
-    db.saveMany({
-      downloads: items,
-    });
-  }
-
-  const numDbItems = db.downloads.count(k => k.where("1"));
-  const extras = numDbItems - numItems;
-  if (extras > 0) {
-    logger.debug(`Purging ${extras} items from DB`);
-    db.downloads.delete(k => k.where("id not in ?", Object.keys(items)));
-  }
-}
-
-function restoreDownloads(store: IStore, db: DB) {
-  let numRestored = 0;
-
-  try {
-    const items = db.downloads.all(k => k.where("1"));
-    numRestored = items.length;
-    const [finished, nonFinished] = _.partition(items, x => x.finished);
-
-    const sendAll = (items: IDownloadItem[]) => {
-      for (const item of _.sortBy(items, "rank")) {
-        store.dispatch(actions.downloadStarted(item));
-      }
-    };
-
-    sendAll(nonFinished);
-    sendAll(finished);
-  } finally {
-    logger.info(`Restored ${numRestored} downloads`);
-    store.dispatch(actions.downloadsRestored({}));
-  }
-}
+import { IStore } from "../../types/index";
 
 export async function cleanDownloadsSearch(store: IStore) {
   throw new Error("re-implement me in buse please!");
@@ -137,23 +87,7 @@ export async function cleanDownloadsApply(
   // await instance.promise();
 }
 
-export default function(watcher: Watcher, db: DB) {
-  watcher.on(actions.boot, async (store, action) => {
-    try {
-      restoreDownloads(store, db);
-    } catch (e) {
-      logger.error(`While restoring downloads: ${e.stack || e}`);
-    }
-  });
-
-  watcher.on(actions.tick, async (store, action) => {
-    try {
-      persistDownloads(store, db);
-    } catch (e) {
-      logger.error(`While persisting downloads: ${e.stack || e}`);
-    }
-  });
-
+export default function(watcher: Watcher) {
   watcher.on(actions.cleanDownloadsSearch, async (store, action) => {
     try {
       await cleanDownloadsSearch(store);
@@ -170,18 +104,5 @@ export default function(watcher: Watcher, db: DB) {
     } catch (e) {
       logger.error(`While cleaning download folders: ${e.stack || e}`);
     }
-  });
-
-  watcher.onStateChange({
-    makeSelector: (store, schedule) =>
-      createSelector(
-        (rs: IRootState) => rs.setup.done,
-        (rs: IRootState) => rs.downloads.restored,
-        (setupDone, downloadsRestored) => {
-          if (setupDone && downloadsRestored) {
-            schedule.dispatch(actions.cleanDownloadsSearch({}));
-          }
-        }
-      ),
   });
 }

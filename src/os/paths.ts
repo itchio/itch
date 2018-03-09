@@ -7,14 +7,6 @@ import * as urlParser from "url";
 
 import { makeLogger, Logger } from "../logger";
 
-export function globalDbPath(): string {
-  let dbName = "local";
-  if (urls.itchio !== urls.originalItchio) {
-    dbName = fsFriendlyHost(urls.itchio);
-  }
-  return join(app.getPath("userData"), "marketdb", dbName + ".db");
-}
-
 export function usersPath(): string {
   let usersPath = join(app.getPath("userData"), "users");
   if (urls.itchio !== urls.originalItchio) {

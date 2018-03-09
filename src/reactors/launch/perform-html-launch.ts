@@ -133,7 +133,7 @@ export async function performHTMLLaunch(
   let capsulePromise: Promise<number>;
   let connection: Connection;
   const capsulerunPath = process.env.CAPSULERUN_PATH;
-  const capsuleContext = new Context(ctx.store, ctx.db);
+  const capsuleContext = ctx.clone();
   if (capsulerunPath) {
     logger.info(`Launching capsule...`);
 

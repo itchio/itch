@@ -2,8 +2,6 @@ import * as React from "react";
 
 import { ModalWidgetDiv } from "./modal-widget";
 
-import { fromDateTimeField, toDateTimeField } from "../../db/datetime-field";
-
 import { actions } from "../../actions";
 
 import format from "../format";
@@ -81,7 +79,7 @@ const BuildListDiv = styled.div`
 `;
 
 function monthFor(b: Build) {
-  const date = fromDateTimeField(b.updatedAt);
+  const date = b.updatedAt;
   return date.getUTCFullYear() * 12 + date.getUTCMonth();
 }
 
@@ -95,7 +93,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
       const build = builds[index];
       const month = monthFor(build);
       if (month != lastMonth) {
-        const monthDate = fromDateTimeField(build.updatedAt);
+        const monthDate = build.updatedAt;
         buildElements.push(
           <div key={`month-${month}`} className="builds--month">
             <CustomDate date={monthDate} format={MONTH_YEAR_FORMAT} />
@@ -115,7 +113,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
 
   renderBuild(index: number, b: Build): JSX.Element {
     const version = b.userVersion || b.version;
-    const updatedAt = fromDateTimeField(b.updatedAt);
+    const updatedAt = b.updatedAt;
 
     return (
       <div
@@ -134,10 +132,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
         <div className="version--raw">{`#${b.id}`}</div>
         <div className="filler" />
         <div className="spacer" />
-        <div
-          className="timeago"
-          data-rh={JSON.stringify({ date: toDateTimeField(updatedAt) })}
-        >
+        <div className="timeago" data-rh={JSON.stringify({ date: updatedAt })}>
           <CustomDate date={updatedAt} format={DAY_MONTH_FORMAT} />
         </div>
       </div>

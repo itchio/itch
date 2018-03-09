@@ -53,7 +53,8 @@ export default function(watcher: Watcher) {
     }
   });
 
-  // TODO: this used to be called on dbcommit as well
+  // TODO: this needs to be called on other occasions: when an install
+  // or uninstall finished, for example.
 }
 
 function push(store: IStore, next: typeof actions.commonsUpdated.payload) {

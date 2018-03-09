@@ -1,5 +1,4 @@
 import { Watcher } from "../reactors/watcher";
-import { DB } from "../db";
 import { actions } from "../actions";
 
 import rootLogger from "../logger";
@@ -16,7 +15,7 @@ import { withButlerClient, messages } from "../buse";
 // TODO: move to itch.io feedback system, see
 // https://github.com/itchio/itch/issues/1511
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.reportCave, async (store, action) => {
     const { caveId } = action.payload;
 

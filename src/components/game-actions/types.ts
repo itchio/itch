@@ -1,5 +1,5 @@
-import { ClassificationAction, ITask, IDownloadItem } from "../../types";
-import { Game, CaveSummary, DownloadKey } from "../../buse/messages";
+import { ClassificationAction, ITask } from "../../types";
+import { Game, CaveSummary, DownloadKey, Download } from "../../buse/messages";
 
 export interface IActionsInfo {
   cave: CaveSummary;
@@ -12,5 +12,5 @@ export interface IActionsInfo {
   canBeBought: boolean;
 
   tasks: ITask[];
-  downloads: IDownloadItem[];
+  downloads: Download[];
 }

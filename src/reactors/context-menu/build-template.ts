@@ -1,4 +1,4 @@
-import { IMenuTemplate, IMenuItem } from "../../types/index";
+import { IMenuTemplate, IMenuItem, IStore } from "../../types/index";
 import { actions } from "../../actions";
 
 import { isEmpty } from "underscore";
@@ -8,7 +8,6 @@ import getGameStatus, {
   IOperation,
 } from "../../helpers/get-game-status";
 import actionForGame from "../../util/action-for-game";
-import Context from "../../context";
 import { showInExplorerString } from "../../format/show-in-explorer";
 import { formatOperation } from "../../format/operation";
 import { Game } from "../../buse/messages";
@@ -28,7 +27,7 @@ export function concatTemplates(
   return [...a, { type: "separator" }, ...b];
 }
 
-export function newTabControls(ctx: Context, tab: string): IMenuTemplate {
+export function newTabControls(store: IStore, tab: string): IMenuTemplate {
   return [
     {
       localizedLabel: ["menu.file.new_tab"],
@@ -38,9 +37,7 @@ export function newTabControls(ctx: Context, tab: string): IMenuTemplate {
   ];
 }
 
-export function closeTabControls(ctx: Context, tab: string): IMenuTemplate {
-  const { store } = ctx;
-
+export function closeTabControls(store: IStore, tab: string): IMenuTemplate {
   // TODO: disable some menu items if last transient tab, or constant tab
   const isEssential =
     store.getState().profile.navigation.openTabs.constant.indexOf(tab) !== -1;
@@ -65,8 +62,7 @@ export function closeTabControls(ctx: Context, tab: string): IMenuTemplate {
   ];
 }
 
-export function gameControls(ctx: Context, game: Game): IMenuTemplate {
-  const { store } = ctx;
+export function gameControls(store: IStore, game: Game): IMenuTemplate {
   let template: IMenuTemplate = [];
 
   const status = getGameStatus(store.getState(), game);

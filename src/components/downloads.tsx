@@ -11,7 +11,7 @@ import Row from "./download/row";
 import GameUpdateRow from "./download/game-update-row";
 import EmptyState from "./empty-state";
 
-import { IRootState, IDownloadItem } from "../types";
+import { IRootState } from "../types";
 
 import {
   getPendingDownloads,
@@ -21,7 +21,7 @@ import {
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
-import { GameUpdate } from "../buse/messages";
+import { GameUpdate, Download } from "../buse/messages";
 import LoadingCircle from "./basics/loading-circle";
 
 const DownloadsDiv = styled.div`
@@ -102,7 +102,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
-  renderFirstItem(firstItem: IDownloadItem): JSX.Element {
+  renderFirstItem(firstItem: Download): JSX.Element {
     if (!firstItem) {
       return null;
     }
@@ -118,7 +118,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
-  renderQueuedItems(queuedItems: IDownloadItem[]): JSX.Element {
+  renderQueuedItems(queuedItems: Download[]): JSX.Element {
     if (isEmpty(queuedItems)) {
       return null;
     }
@@ -201,8 +201,8 @@ const actionCreators = actionCreatorsList(
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  items: IDownloadItem[];
-  finishedItems: IDownloadItem[];
+  items: Download[];
+  finishedItems: Download[];
   updates: {
     [caveId: string]: GameUpdate;
   };

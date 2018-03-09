@@ -16,7 +16,6 @@ import LocationFetcher from "../fetchers/location-fetcher";
 import AppLogFetcher from "../fetchers/applog-fetcher";
 
 import Context from "../context";
-import { DB } from "../db";
 
 import { some, throttle, union } from "underscore";
 import { Space } from "../helpers/space";
@@ -35,7 +34,6 @@ let nextFetchReason: {
 
 export async function queueFetch(
   store: IStore,
-  db: DB,
   tab: string,
   reason: FetchReason
 ) {
@@ -68,7 +66,7 @@ export async function queueFetch(
 
   const fetcher = new fetcherClass();
   lastFetchers[tab] = fetcher;
-  const ctx = new Context(store, db);
+  const ctx = new Context(store);
   fetcher.hook(ctx, tab, reason);
 
   const t1 = Date.now();
@@ -86,7 +84,7 @@ export async function queueFetch(
       const nextReason = nextFetchReason[tab];
       if (nextReason) {
         delete nextFetchReason[tab];
-        queueFetch(store, db, tab, nextReason).catch(err => {
+        queueFetch(store, tab, nextReason).catch(err => {
           logger.error(`In queued fetcher: ${err.stack}`);
         });
       }
@@ -144,11 +142,11 @@ const queueCleanup = throttle((store: IStore) => {
   }
 }, 3000 /* space out cleanups */);
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
     const { tab } = action.payload;
-    queueFetch(store, db, tab, FetchReason.TabChanged);
+    queueFetch(store, tab, FetchReason.TabChanged);
   });
 
   watcher.on(actions.tabsChanged, async (store, action) => {
@@ -161,33 +159,33 @@ export default function(watcher: Watcher, db: DB) {
     const reason = onlyParamsChange
       ? FetchReason.ParamsChanged
       : FetchReason.TabEvolved;
-    queueFetch(store, db, action.payload.tab, reason);
+    queueFetch(store, action.payload.tab, reason);
   });
 
   watcher.on(actions.tabGoBack, async (store, action) => {
-    queueFetch(store, db, action.payload.tab, FetchReason.TabEvolved);
+    queueFetch(store, action.payload.tab, FetchReason.TabEvolved);
   });
 
   watcher.on(actions.tabGoForward, async (store, action) => {
-    queueFetch(store, db, action.payload.tab, FetchReason.TabEvolved);
+    queueFetch(store, action.payload.tab, FetchReason.TabEvolved);
   });
 
   // tab reloaded by user? let's fetch!
   watcher.on(actions.tabReloaded, async (store, action) => {
-    queueFetch(store, db, action.payload.tab, FetchReason.TabReloaded);
+    queueFetch(store, action.payload.tab, FetchReason.TabReloaded);
   });
 
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {
       const currentTab = store.getState().profile.navigation.tab;
-      queueFetch(store, db, currentTab, FetchReason.WindowFocused);
+      queueFetch(store, currentTab, FetchReason.WindowFocused);
     }
   });
 
   watcher.on(actions.commonsUpdated, async (store, action) => {
     const currentTab = store.getState().profile.navigation.tab;
-    queueFetch(store, db, currentTab, FetchReason.CommonsChanged);
+    queueFetch(store, currentTab, FetchReason.CommonsChanged);
   });
 
   const watchedPreferences = [
@@ -200,7 +198,7 @@ export default function(watcher: Watcher, db: DB) {
     const prefs = action.payload;
     if (some(watchedPreferences, k => prefs.hasOwnProperty(k))) {
       const currentTabId = store.getState().profile.navigation.tab;
-      queueFetch(store, db, currentTabId, FetchReason.ParamsChanged);
+      queueFetch(store, currentTabId, FetchReason.ParamsChanged);
     }
   });
 }

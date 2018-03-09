@@ -1,4 +1,3 @@
-import { fromDateTimeField } from "../db/datetime-field";
 import { CaveSummary } from "../buse/messages";
 
 export function aggregateCaveSummaries(caves: CaveSummary[]): CaveSummary {
@@ -22,7 +21,7 @@ export function aggregateCaveSummaries(caves: CaveSummary[]): CaveSummary {
       secondsRun += c.secondsRun;
     }
 
-    const cLastTouchedAt = fromDateTimeField(c.lastTouchedAt);
+    const cLastTouchedAt = c.lastTouchedAt;
     if (cLastTouchedAt) {
       if (!lastTouchedAt) {
         // if that's the first lastTouchedAt value,
@@ -39,7 +38,7 @@ export function aggregateCaveSummaries(caves: CaveSummary[]): CaveSummary {
   }
 
   cave = {
-    // FIXME: I don't feel good about this, but maybe it's
+    // TODO: I don't feel good about this, but maybe it's
     // better (crash early / noisily) than blindly passing
     // the first cave's ID? -- amos
     id: "<aggregate>",

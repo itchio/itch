@@ -3,7 +3,6 @@ import { Watcher } from "./watcher";
 import { installFormula } from "../util/ibrew";
 
 import { IStore, ILocalizedString } from "../types";
-import { DB } from "../db";
 import Context from "../context";
 
 import { actions } from "../actions";
@@ -23,8 +22,8 @@ async function fetch(ctx: Context, name: string) {
   await installFormula(opts, name);
 }
 
-async function setup(store: IStore, db: DB) {
-  const ctx = new Context(store, db);
+async function setup(store: IStore) {
+  const ctx = new Context(store);
 
   logger.info("setup starting");
   await fetch(ctx, "butler");
@@ -32,9 +31,9 @@ async function setup(store: IStore, db: DB) {
   store.dispatch(actions.setupDone({}));
 }
 
-async function doSetup(store: IStore, db: DB) {
+async function doSetup(store: IStore) {
   try {
-    await setup(store, db);
+    await setup(store);
   } catch (e) {
     logger.error(`setup got error: ${e.stack}`);
 
@@ -48,12 +47,12 @@ async function doSetup(store: IStore, db: DB) {
   }
 }
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
-    await doSetup(store, db);
+    await doSetup(store);
   });
 
   watcher.on(actions.retrySetup, async (store, action) => {
-    await doSetup(store, db);
+    await doSetup(store);
   });
 }

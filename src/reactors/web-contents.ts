@@ -11,7 +11,6 @@ const logger = rootLogger.child({ name: "web-contents" });
 
 import createContextMenu from "./web-contents-context-menu";
 import { ITabWeb } from "../types/tab-data";
-import { DB } from "../db/index";
 import { Space } from "../helpers/space";
 
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
@@ -46,7 +45,7 @@ function withWebContents<T>(
   return cb(wc as ExtendedWebContents);
 }
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.tabGotWebContents, async (store, action) => {
     const { tab, webContentsId } = action.payload;
     logger.debug(`Got webContents ${webContentsId} for tab ${tab}`);

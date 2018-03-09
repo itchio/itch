@@ -18,7 +18,10 @@ export default function(watcher: Watcher) {
       let notificationOptions: any = {
         title: item.game.title,
       };
-      switch (item.reason) {
+
+      // TODO: figure this out with buse
+      let reason = null;
+      switch (reason) {
         case "install":
           notificationMessage = "notification.download_installed";
           break;

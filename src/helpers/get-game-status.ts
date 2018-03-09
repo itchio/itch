@@ -1,4 +1,4 @@
-import { IRootState, ITask, IDownloadItem } from "../types/index";
+import { IRootState, ITask, DownloadReason } from "../types/index";
 
 import { first } from "underscore";
 import getByIds from "./get-by-ids";
@@ -8,8 +8,14 @@ import {
 } from "../reactors/downloads/getters";
 import isPlatformCompatible from "../util/is-platform-compatible";
 import memoize from "../util/lru-memoize";
-import { TaskName, DownloadReason } from "../types/tasks";
-import { Game, CaveSummary, DownloadKeySummary } from "../buse/messages";
+import { TaskName } from "../types/tasks";
+import {
+  Game,
+  CaveSummary,
+  DownloadKeySummary,
+  Download,
+  DownloadProgress,
+} from "../buse/messages";
 import { GameUpdate } from "../buse/messages";
 
 /**
@@ -106,10 +112,12 @@ export default function getGameStatus(
   const download = first(getPendingForGame(downloads, game.id));
   let isActiveDownload = false;
   let areDownloadsPaused = false;
+  let downloadProgress: DownloadProgress;
   if (download) {
     const activeDownload = getActiveDownload(downloads);
     isActiveDownload = download.id === activeDownload.id;
     areDownloadsPaused = downloads.paused;
+    downloadProgress = downloads.progresses[download.id];
   }
 
   let update: GameUpdate;
@@ -124,6 +132,7 @@ export default function getGameStatus(
     pressUser,
     task,
     download,
+    downloadProgress,
     update,
     isActiveDownload,
     areDownloadsPaused
@@ -136,7 +145,8 @@ function rawGetGameStatus(
   downloadKey: DownloadKeySummary,
   pressUser: boolean,
   task: ITask,
-  download: IDownloadItem,
+  download: Download,
+  downloadProgress: DownloadProgress,
   update: GameUpdate,
   isDownloadActive,
   areDownloadsPaused
@@ -179,12 +189,12 @@ function rawGetGameStatus(
     operation = {
       type: OperationType.Download,
       id: download.id,
-      reason: download.reason,
+      reason: "TODO: figure me out with buse",
       active: isDownloadActive,
       paused: areDownloadsPaused,
-      progress: download.progress,
-      eta: download.eta,
-      bps: download.bps,
+      progress: downloadProgress.progress,
+      eta: downloadProgress.eta,
+      bps: downloadProgress.bps,
     };
   }
 
