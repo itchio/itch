@@ -1,6 +1,6 @@
 import { IRootState, ITask, DownloadReason } from "../types/index";
 
-import { first } from "underscore";
+import { first, findWhere } from "underscore";
 import getByIds from "./get-by-ids";
 import {
   getPendingForGame,
@@ -91,7 +91,7 @@ export interface IGameStatus {
 export default function getGameStatus(
   rs: IRootState,
   game: Game,
-  cave?: CaveSummary
+  caveId?: string
 ): IGameStatus {
   const { commons, profile, tasks, downloads } = rs;
   const { credentials } = profile;
@@ -101,15 +101,28 @@ export default function getGameStatus(
     commons.downloadKeyIdsByGameId[game.id]
   );
 
+  let cave: CaveSummary;
   if (!cave) {
-    let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
-    cave = first(caves);
+    if (caveId) {
+      cave = commons.caves[caveId];
+    } else {
+      let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+      cave = first(caves);
+    }
   }
   const downloadKey = first(downloadKeys);
 
   const pressUser = credentials.me.pressUser;
   const task = first(tasks.tasksByGameId[game.id]);
-  const download = first(getPendingForGame(downloads, game.id));
+
+  const pendingDownloads = getPendingForGame(downloads, game.id);
+  let download: Download;
+  if (caveId) {
+    download = findWhere(pendingDownloads, { caveId });
+  } else {
+    download = first(pendingDownloads);
+  }
+
   let isActiveDownload = false;
   let areDownloadsPaused = false;
   let downloadProgress: DownloadProgress;

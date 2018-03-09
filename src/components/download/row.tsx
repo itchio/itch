@@ -30,7 +30,7 @@ import {
 } from "../../format/operation";
 import { formatUploadTitle } from "../../format/upload";
 import { modalWidgets } from "../modal-widgets/index";
-import { DownloadProgress, Download } from "../../buse/messages";
+import { Download } from "../../buse/messages";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -494,7 +494,6 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   tasksByGameId: {
     [gameId: string]: ITask[];
   };
-  itemProgress: DownloadProgress;
 };
 
 const HoverDownloadRow = Hover(DownloadRow);
@@ -507,8 +506,7 @@ export default connect<IProps>(HoverDownloadRow, {
       speeds: rs.downloads.speeds,
       downloadsPaused: rs.downloads.paused,
       tasksByGameId: rs.tasks.tasksByGameId,
-      status: getGameStatus(rs, game),
-      downloadProgress: rs.downloads.progresses[props.item.id],
+      status: getGameStatus(rs, game, props.item.caveId),
     };
   },
   actionCreators,
