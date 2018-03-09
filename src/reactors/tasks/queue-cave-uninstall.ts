@@ -27,6 +27,7 @@ export default function(watcher: Watcher) {
       store,
       work: async (ctx, logger) => {
         await performUninstall({ logger, caveId });
+        store.dispatch(actions.uninstallEnded({}));
       },
       onError: async (err, log) => {
         const response = await promisedModal(

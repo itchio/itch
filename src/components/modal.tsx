@@ -444,7 +444,9 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
     return (
       <ModalDiv className="modal-div">
         <HeaderDiv>
-          <span className="title">{format(title)}</span>
+          <span className="title" onClick={this.onDebugClick}>
+            {format(title)}
+          </span>
           <Filler />
           {modal.unclosable ? null : (
             <IconButton icon="cross" onClick={() => closeModal({})} />
@@ -479,6 +481,23 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
       </ModalDiv>
     );
   }
+
+  onDebugClick = (e: React.MouseEvent<any>) => {
+    if (e.shiftKey && e.ctrlKey) {
+      const { openModal } = this.props;
+      openModal(
+        modalWidgets.exploreJson.make({
+          title: "Modal payload",
+          message: "",
+          widgetParams: {
+            data: this.props.modal,
+          },
+          fullscreen: true,
+        })
+      );
+      return;
+    }
+  };
 
   renderCover(modal: IModal): JSX.Element {
     const { coverUrl, stillCoverUrl } = modal;
@@ -617,7 +636,7 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
 interface IProps {}
 
-const actionCreators = actionCreatorsList("closeModal");
+const actionCreators = actionCreatorsList("openModal", "closeModal");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   modal: IModal;

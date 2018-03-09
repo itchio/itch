@@ -584,6 +584,7 @@ export const actions = wireActions({
     upload: Upload;
   }>(),
   queueLaunch: action<IQueueLaunchOpts>(),
+  launchEnded: action<{}>(),
   manageGame: action<{
     /** which game to manage */
     game: Game;
@@ -600,6 +601,7 @@ export const actions = wireActions({
     /** id of the cave to reinstall */
     caveId: string;
   }>(),
+  uninstallEnded: action<{}>(),
   exploreCave: action<{
     /** id of the cave to explore */
     caveId: string;

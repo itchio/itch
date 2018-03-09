@@ -44,6 +44,12 @@ export default function makeUploadButton(
     });
   }
 
+  if (upload.type === "soundtrack") {
+    tags.push({
+      icon: "html5",
+    });
+  }
+
   for (const prop of Object.keys(platformData)) {
     if ((upload as any)[prop]) {
       tags.push({

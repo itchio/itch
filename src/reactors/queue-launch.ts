@@ -21,7 +21,8 @@ export default function(watcher: Watcher) {
       gameId: game.id,
       store,
       work: async (ctx, logger) => {
-        return await performLaunch(ctx, logger, cave, game);
+        await performLaunch(ctx, logger, cave, game);
+        store.dispatch(actions.launchEnded({}));
       },
       onError: async (e: any, log) => {
         if (isAborted(e)) {

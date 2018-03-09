@@ -53,8 +53,17 @@ export default function(watcher: Watcher) {
     }
   });
 
-  // TODO: this needs to be called on other occasions: when an install
-  // or uninstall finished, for example.
+  watcher.on(actions.downloadEnded, async (store, action) => {
+    updateCommons(store);
+  });
+
+  watcher.on(actions.uninstallEnded, async (store, action) => {
+    updateCommons(store);
+  });
+
+  watcher.on(actions.launchEnded, async (store, action) => {
+    updateCommons(store);
+  });
 }
 
 function push(store: IStore, next: typeof actions.commonsUpdated.payload) {
