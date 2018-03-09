@@ -1,5 +1,5 @@
 import { Cave, CaveSummary } from "../buse/messages";
-import { Client, Instance } from "node-buse";
+import { Client, Instance, RequestError } from "node-buse";
 import { Logger } from "../logger/index";
 import { MinimalContext } from "../context/index";
 import * as ospath from "path";
@@ -92,4 +92,63 @@ export function getCaveSummary(cave: Cave): CaveSummary {
     secondsRun: cave.stats.secondsRun,
     installedSize: cave.installInfo.installedSize,
   };
+}
+
+export function getErrorMessage(e: any): string {
+  if (!e) {
+    return "Unknown error";
+  }
+
+  // TODO: this is a good place to do i18n on buse error codes!
+
+  let errorMessage = e.message;
+  const re = e.rpcError;
+  if (re) {
+    if (re.message) {
+      // use just the json-rpc message if possible
+      errorMessage = re.message;
+    }
+  }
+  return errorMessage;
+}
+
+export function isInternalError(e: any): boolean {
+  const re = asRequestError(e);
+
+  if (!re) {
+    return true;
+  }
+
+  if (re.rpcError.code < 0) {
+    return true;
+  }
+  return false;
+}
+
+export function getErrorStack(e: any): string {
+  if (!e) {
+    return "Unknown error";
+  }
+
+  let errorStack = e.stack;
+
+  const re = asRequestError(e);
+  if (re) {
+    if (re.rpcError.data && re.rpcError.data.stack) {
+      // use golang stack if available
+      errorStack = re.rpcError.data.stack;
+    } else if (re.message) {
+      // or just message
+      errorStack = re.message;
+    }
+  }
+  return errorStack;
+}
+
+export function asRequestError(e: any): RequestError {
+  const re = e as RequestError;
+  if (re.rpcError) {
+    return e as RequestError;
+  }
+  return null;
 }

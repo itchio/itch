@@ -988,6 +988,8 @@ export enum Code {
   OperationCancelled = 499,
   // An operation was aborted by the user
   OperationAborted = 410,
+  // We tried to launch something, but the install folder just wasn't there
+  InstallFolderDisappeared = 404,
 }
 
 /**

@@ -5,6 +5,8 @@ import { ModalWidgetDiv } from "./modal-widget";
 import styled from "../styles";
 import Log from "../basics/log";
 import { IModalWidgetProps } from "./index";
+import { size } from "underscore";
+import { getErrorStack, isInternalError } from "../../buse";
 
 const StyledLog = styled(Log)`
   tbody {
@@ -47,18 +49,25 @@ const ContainerDiv = styled.div`
 
 class ShowError extends React.PureComponent<IProps> {
   render() {
-    const { errorStack, log } = this.props.modal.widgetParams;
+    const { rawError, log } = this.props.modal.widgetParams;
+    const internal = isInternalError(rawError);
+    if (!internal) {
+      return null;
+    }
 
+    const errorStack = getErrorStack(rawError);
     const errorLines = (errorStack || "Unknown error").split("\n");
     return (
       <ModalWidgetDiv>
         <ContainerDiv>
           <details>
             <summary>View details</summary>
-            <details>
-              <summary>{errorLines[0]}</summary>
-              <Pre>{errorLines.slice(1).join("\n")}</Pre>
-            </details>
+            {size(errorLines) == 1 ? null : (
+              <details>
+                <summary>{errorLines[0]}</summary>
+                <Pre>{errorLines.slice(1).join("\n")}</Pre>
+              </details>
+            )}
             <details open>
               <summary>Debug log</summary>
               <StyledLog log={log} />
@@ -75,7 +84,7 @@ class ShowError extends React.PureComponent<IProps> {
 }
 
 export interface IShowErrorParams {
-  errorStack: string;
+  rawError: any;
   log: string;
 }
 

@@ -29,7 +29,7 @@ export default function(watcher: Watcher) {
         await performUninstall({ logger, caveId });
         store.dispatch(actions.uninstallEnded({}));
       },
-      onError: async (err, log) => {
+      onError: async (e, log) => {
         const response = await promisedModal(
           store,
           modalWidgets.showError.make({
@@ -42,10 +42,7 @@ export default function(watcher: Watcher) {
               },
               "cancel",
             ],
-            widgetParams: {
-              errorStack: err.stack,
-              log,
-            },
+            widgetParams: { rawError: e, log },
           })
         );
 

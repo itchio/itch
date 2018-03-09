@@ -160,6 +160,10 @@ const ModalDiv = styled.div`
       .secondary {
         color: ${props => props.theme.secondaryText};
       }
+
+      strong {
+        font-weight: bold;
+      }
     }
 
     p {

@@ -34,7 +34,7 @@ export default function(watcher: Watcher) {
           title: ["prompt.install_error.title"],
           message: ["prompt.install_error.message"],
           widgetParams: {
-            errorStack: item.error,
+            rawError: { stack: item.error },
             log,
           },
           buttons: [

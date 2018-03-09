@@ -1,5 +1,7 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
+import * as fs from "fs";
+import { dirname } from "path";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "explore-cave" });
@@ -16,6 +18,12 @@ export default function(watcher: Watcher) {
       return await client.call(messages.FetchCave({ caveId }));
     });
 
-    explorer.open(cave.installInfo.installFolder);
+    const installFolder = cave.installInfo.installFolder;
+    try {
+      fs.accessSync(installFolder);
+      explorer.open(installFolder);
+    } catch (e) {
+      explorer.open(dirname(installFolder));
+    }
   });
 }
