@@ -2,7 +2,7 @@ import { Fetcher } from "./fetcher";
 import { withButlerClient, messages } from "../buse";
 
 import rootLogger from "../logger";
-import { isEmpty } from "underscore";
+import { isEmpty, uniq } from "underscore";
 import { Game } from "../buse/messages";
 const logger = rootLogger.child({ name: "location-fetcher" });
 
@@ -24,10 +24,12 @@ export default class LocationFetcher extends Fetcher {
         return;
       }
 
-      const games: Game[] = [];
+      let games: Game[] = [];
       for (const c of caves) {
         games.push(c.game);
       }
+      games = uniq(games, g => g.id);
+
       this.pushUnfilteredGames(games, { disableFilters: true });
       this.push({
         location: {

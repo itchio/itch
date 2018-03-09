@@ -27,7 +27,7 @@ export default function(watcher: Watcher) {
         action: actions.queueGameUpdate({ update }),
       },
       {
-        icon: "play",
+        icon: "play2",
         label: ["pick_update_upload.buttons.just_launch"],
         action: actions.queueGame({ game }),
         className: "secondary",
