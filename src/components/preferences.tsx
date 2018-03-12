@@ -2,19 +2,15 @@ import * as React from "react";
 import { createStructuredSelector } from "reselect";
 import { connect, actionCreatorsList, Dispatchers } from "./connect";
 
-import urls from "../constants/urls";
-
-import Label from "./preferences/label";
-import ExperimentalMark from "./preferences/experimental-mark";
-import OpenAtLoginError from "./preferences/open-at-login-error";
-
 import ProxySettings from "./preferences/proxy-settings";
 import LanguageSettings from "./preferences/language-settings";
+import BehaviorSettings from "./preferences/behavior-settings";
 import InstallLocationsSettings from "./preferences/install-locations-settings";
+import Checkbox from "./preferences/checkbox";
 
 import format from "./format";
 
-import { IRootState, IPreferencesState, ILocalizedString } from "../types";
+import { IRootState, IPreferencesState } from "../types";
 
 import { IMeatProps } from "./meats/types";
 
@@ -151,131 +147,13 @@ const PreferencesContentDiv = styled.div`
 
 export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const {
-      isolateApps,
-      openAtLogin,
-      openAsHidden,
-      closeToTray,
-      readyNotification,
-      manualGameUpdates,
-      preventDisplaySleep,
-      showAdvanced,
-    } = this.props.preferences;
+    const { showAdvanced } = this.props.preferences;
     const { updatePreferences } = this.props;
     return (
       <PreferencesDiv>
         <PreferencesContentDiv>
           <LanguageSettings />
-
-          <h2>{format(["preferences.security"])}</h2>
-          <div className="security-form">
-            <Label active={isolateApps}>
-              <input
-                type="checkbox"
-                checked={isolateApps}
-                onChange={e => {
-                  updatePreferences({ isolateApps: e.currentTarget.checked });
-                }}
-              />
-              <span> {format(["preferences.security.sandbox.title"])} </span>
-              <ExperimentalMark />
-            </Label>
-          </div>
-
-          <p className="explanation">
-            {format(["preferences.security.sandbox.description"])}{" "}
-            <a href={urls.sandboxDocs}>{format(["docs.learn_more"])}</a>
-          </p>
-
-          <h2>{format(["preferences.behavior"])}</h2>
-          <div className="behavior-form">
-            <Label active={openAtLogin}>
-              <input
-                type="checkbox"
-                checked={openAtLogin}
-                onChange={e => {
-                  updatePreferences({ openAtLogin: e.currentTarget.checked });
-                }}
-              />
-              <span> {format(["preferences.behavior.open_at_login"])} </span>
-            </Label>
-
-            <OpenAtLoginError />
-
-            <Label active={openAsHidden}>
-              <input
-                type="checkbox"
-                checked={openAsHidden}
-                onChange={e => {
-                  updatePreferences({ openAsHidden: e.currentTarget.checked });
-                }}
-              />
-              <span> {format(["preferences.behavior.open_as_hidden"])} </span>
-            </Label>
-
-            <Label active={closeToTray}>
-              <input
-                type="checkbox"
-                checked={closeToTray}
-                onChange={e => {
-                  updatePreferences({ closeToTray: e.currentTarget.checked });
-                }}
-              />
-              <span> {format(["preferences.behavior.close_to_tray"])} </span>
-            </Label>
-
-            <Label active={manualGameUpdates}>
-              <input
-                type="checkbox"
-                checked={manualGameUpdates}
-                onChange={e => {
-                  updatePreferences({
-                    manualGameUpdates: e.currentTarget.checked,
-                  });
-                }}
-              />
-              <span>
-                {" "}
-                {format(["preferences.behavior.manual_game_updates"])}{" "}
-              </span>
-            </Label>
-
-            <Label active={preventDisplaySleep}>
-              <input
-                type="checkbox"
-                checked={preventDisplaySleep}
-                onChange={e => {
-                  updatePreferences({
-                    preventDisplaySleep: e.currentTarget.checked,
-                  });
-                }}
-              />
-              <span>
-                {" "}
-                {format(["preferences.behavior.prevent_display_sleep"])}{" "}
-              </span>
-            </Label>
-          </div>
-
-          <h2>{format(["preferences.notifications"])}</h2>
-          <div className="behavior-form">
-            <Label active={readyNotification}>
-              <input
-                type="checkbox"
-                checked={readyNotification}
-                onChange={e => {
-                  updatePreferences({
-                    readyNotification: e.currentTarget.checked,
-                  });
-                }}
-              />
-              <span>
-                {" "}
-                {format(["preferences.notifications.ready_notification"])}{" "}
-              </span>
-            </Label>
-          </div>
-
+          <BehaviorSettings />
           <InstallLocationsSettings />
 
           <h2
@@ -360,39 +238,19 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             {format(["preferences.advanced.clear_browsing_data"])}
           </span>
         </p>
-        {this.renderAdvancedCheckbox("preferOptimizedPatches", [
-          "preferences.advanced.prefer_optimized_patches",
-        ])}
-        {this.renderAdvancedCheckbox("disableBrowser", [
-          "preferences.advanced.disable_browser",
-        ])}
-        {this.renderAdvancedCheckbox("disableHardwareAcceleration", [
-          "preferences.advanced.disable_hardware_acceleration",
-        ])}
-      </div>
-    );
-  }
-
-  renderAdvancedCheckbox(
-    propName: keyof IDerivedProps["preferences"],
-    label: ILocalizedString
-  ): JSX.Element {
-    const active = !!this.props.preferences[propName];
-    const { updatePreferences } = this.props;
-
-    return (
-      <Label active={active}>
-        <input
-          type="checkbox"
-          checked={active}
-          onChange={e => {
-            updatePreferences({
-              [propName]: e.currentTarget.checked,
-            });
-          }}
+        <Checkbox
+          name="preferOptimizedPatches"
+          label={format(["preferences.advanced.prefer_optimized_patches"])}
         />
-        <span>{format(label)}</span>
-      </Label>
+        <Checkbox
+          name="disableBrowser"
+          label={format(["preferences.advanced.disable_browser"])}
+        />
+        <Checkbox
+          name="disableHardwareAcceleration"
+          label={format(["preferences.advanced.disable_hardware_acceleration"])}
+        />
+      </div>
     );
   }
 }
