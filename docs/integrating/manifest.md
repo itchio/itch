@@ -64,6 +64,9 @@ Valid actions contain at least:
   * A name: this will affect the label shown to users
   * A path: this specifies what to run when the action is picked
 
+For executables, give the path of the `.exe` on Windows, of the binary
+or launcher script on Linux, and of the `FooBar.app` app bundle on macOS.
+
 ### Names
 
 A few well-known names are supported:
