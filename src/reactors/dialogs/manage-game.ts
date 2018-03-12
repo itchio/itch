@@ -1,13 +1,16 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 import { DB } from "../../db/db";
-import { messages } from "node-buse";
 import getGameCredentials from "../../reactors/downloads/get-game-credentials";
 import Context from "../../context/index";
-import { buseGameCredentials, makeButlerInstance } from "../../util/buse-utils";
 
 import rootLogger from "../../logger";
 import { modalWidgets } from "../../components/modal-widgets/index";
+import {
+  buseGameCredentials,
+  makeButlerInstance,
+  messages,
+} from "../../buse/index";
 const logger = rootLogger.child({ name: "manage-game" });
 
 export default function(watcher: Watcher, db: DB) {

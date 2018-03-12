@@ -11,9 +11,8 @@ import * as _ from "underscore";
 import { MinimalContext } from "../../context/index";
 import { downloadBasePath } from "../../os/paths";
 import { createSelector } from "reselect";
-import { messages } from "node-buse";
-import { setupClient, makeButlerInstance } from "../../util/buse-utils";
 import { fileSize } from "../../format/index";
+import { messages, setupClient, makeButlerInstance } from "../../buse/index";
 
 function persistDownloads(store: IStore, db: DB) {
   const state = store.getState();

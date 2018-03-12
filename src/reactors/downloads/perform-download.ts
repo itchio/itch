@@ -7,7 +7,6 @@ import getGameCredentials from "./get-game-credentials";
 
 import { IDownloadItem, currentRuntime, Cancelled } from "../../types";
 import Context from "../../context";
-import { messages } from "node-buse";
 import { ICave } from "../../db/models/cave";
 
 import configure from "../launch/configure";
@@ -18,10 +17,11 @@ import makeUploadButton from "../make-upload-button";
 
 import { map } from "underscore";
 import {
+  messages,
   buseGameCredentials,
   setupClient,
   makeButlerInstance,
-} from "../../util/buse-utils";
+} from "../../buse/index";
 import { computeCaveLocation } from "./compute-cave-location";
 import { readLegacyReceipt } from "./legacy-receipt";
 import { modalWidgets } from "../../components/modal-widgets/index";
