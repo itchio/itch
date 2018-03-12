@@ -8,12 +8,13 @@ import * as classNames from "classnames";
 import urls from "../constants/urls";
 
 import Icon from "./basics/icon";
-import LoadingCircle from "./basics/loading-circle";
-import IconButton from "./basics/icon-button";
-import SelectRow, { ISelectOption } from "./basics/select-row";
 
+import Label from "./preferences/label";
+import ExperimentalMark from "./preferences/experimental-mark";
 import OpenAtLoginError from "./preferences/open-at-login-error";
+
 import ProxySettings from "./preferences/proxy-settings";
+import LanguageSettings from "./preferences/language-settings";
 
 import { map, each, filter } from "underscore";
 
@@ -25,7 +26,6 @@ import format from "./format";
 
 import {
   IRootState,
-  ILocaleInfo,
   IPreferencesState,
   IInstallLocation,
   ILocalizedString,
@@ -42,11 +42,6 @@ import styled, * as styles from "./styles";
 
 const PreferencesDiv = styled.div`
   ${styles.meat()};
-`;
-
-const Spacer = styled.div`
-  width: 8px;
-  height: 2px;
 `;
 
 const PreferencesContentDiv = styled.div`
@@ -88,52 +83,8 @@ const PreferencesContentDiv = styled.div`
     }
   }
 
-  .preferences-background {
-    position: absolute;
-    right: 0px;
-    top: 30px;
-  }
-
   .preferences-form {
     z-index: 5;
-  }
-
-  .buttons {
-    float: right;
-    opacity: 0.7;
-
-    &:hover {
-      opacity: 1;
-      cursor: hand;
-    }
-  }
-
-  .security-form,
-  .behavior-form,
-  .notifications-form,
-  .language-form,
-  .advanced-form {
-    flex-shrink: 0;
-
-    label {
-      background: ${props => props.theme.explanation};
-      padding: 8px 11px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-
-      ${styles.prefChunk()} &.active {
-        ${styles.prefChunkActive()};
-      }
-
-      input[type="checkbox"] {
-        margin-right: 8px;
-      }
-    }
-
-    .icon-lab-flask {
-      margin-left: 8px;
-    }
   }
 
   .advanced-form {
@@ -198,10 +149,6 @@ const PreferencesContentDiv = styled.div`
       color: #87a7c3;
       text-decoration: none;
     }
-  }
-
-  .preferences-background {
-    @include icon-as-background;
   }
 
   .proxy-settings {
@@ -307,7 +254,6 @@ const PreferencesContentDiv = styled.div`
 
 export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { lang, sniffedLang = "", downloading, locales } = this.props;
     const {
       isolateApps,
       openAtLogin,
@@ -318,64 +264,15 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
       preventDisplaySleep,
       showAdvanced,
     } = this.props.preferences;
-    const { queueLocaleDownload, updatePreferences } = this.props;
-
-    const options: ISelectOption[] = [
-      {
-        label: ["preferences.language.auto", { language: sniffedLang }],
-        value: "__",
-      },
-      ...locales,
-    ];
-
-    let translateUrl = `${urls.itchTranslationPlatform}/projects/itch/itch`;
-    const english = /^en/.test(lang);
-    if (!english && lang !== "__") {
-      translateUrl += `/${lang}`;
-    }
-
-    const badgeLang = lang ? lang.substr(0, 2) : "en";
-    const translationBadgeUrl = `${
-      urls.itchTranslationPlatform
-    }/widgets/itch/${badgeLang}/svg-badge.svg`;
-
+    const { updatePreferences } = this.props;
     return (
       <PreferencesDiv>
         <PreferencesContentDiv>
-          <h2>{format(["preferences.language"])}</h2>
-          <div className="language-form">
-            <label className="active">
-              <Icon icon="earth" />
-              <Spacer />
-              <SelectRow
-                onChange={this.onLanguageChange}
-                options={options}
-                value={lang || "__"}
-              />
-              {downloading ? (
-                <LoadingCircle progress={-1} />
-              ) : (
-                <IconButton
-                  icon="repeat"
-                  onClick={e => {
-                    e.preventDefault();
-                    queueLocaleDownload({ lang });
-                  }}
-                />
-              )}
-            </label>
-          </div>
-
-          <p className="explanation flex">
-            {format(["preferences.language.get_involved", { name: "itch" }])}{" "}
-            <a href={translateUrl}>
-              <img className="weblate-badge" src={translationBadgeUrl} />
-            </a>
-          </p>
+          <LanguageSettings />
 
           <h2>{format(["preferences.security"])}</h2>
           <div className="security-form">
-            <label className={classNames({ active: isolateApps })}>
+            <Label active={isolateApps}>
               <input
                 type="checkbox"
                 checked={isolateApps}
@@ -384,16 +281,8 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 }}
               />
               <span> {format(["preferences.security.sandbox.title"])} </span>
-              <span
-                data-rh-at="bottom"
-                data-rh={JSON.stringify(["label.experimental"])}
-              >
-                <Icon
-                  icon="lab-flask"
-                  onClick={(e: React.MouseEvent<any>) => e.preventDefault()}
-                />
-              </span>
-            </label>
+              <ExperimentalMark />
+            </Label>
           </div>
 
           <p className="explanation">
@@ -403,7 +292,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
 
           <h2>{format(["preferences.behavior"])}</h2>
           <div className="behavior-form">
-            <label className={classNames({ active: openAtLogin })}>
+            <Label active={openAtLogin}>
               <input
                 type="checkbox"
                 checked={openAtLogin}
@@ -412,11 +301,11 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 }}
               />
               <span> {format(["preferences.behavior.open_at_login"])} </span>
-            </label>
+            </Label>
 
             <OpenAtLoginError />
 
-            <label className={classNames({ active: openAsHidden })}>
+            <Label active={openAsHidden}>
               <input
                 type="checkbox"
                 checked={openAsHidden}
@@ -425,9 +314,9 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 }}
               />
               <span> {format(["preferences.behavior.open_as_hidden"])} </span>
-            </label>
+            </Label>
 
-            <label className={classNames({ active: closeToTray })}>
+            <Label active={closeToTray}>
               <input
                 type="checkbox"
                 checked={closeToTray}
@@ -436,9 +325,9 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 }}
               />
               <span> {format(["preferences.behavior.close_to_tray"])} </span>
-            </label>
+            </Label>
 
-            <label className={classNames({ active: manualGameUpdates })}>
+            <Label active={manualGameUpdates}>
               <input
                 type="checkbox"
                 checked={manualGameUpdates}
@@ -452,9 +341,9 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 {" "}
                 {format(["preferences.behavior.manual_game_updates"])}{" "}
               </span>
-            </label>
+            </Label>
 
-            <label className={classNames({ active: preventDisplaySleep })}>
+            <Label active={preventDisplaySleep}>
               <input
                 type="checkbox"
                 checked={preventDisplaySleep}
@@ -468,12 +357,12 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 {" "}
                 {format(["preferences.behavior.prevent_display_sleep"])}{" "}
               </span>
-            </label>
+            </Label>
           </div>
 
           <h2>{format(["preferences.notifications"])}</h2>
           <div className="behavior-form">
-            <label className={classNames({ active: readyNotification })}>
+            <Label active={readyNotification}>
               <input
                 type="checkbox"
                 checked={readyNotification}
@@ -487,7 +376,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 {" "}
                 {format(["preferences.notifications.ready_notification"])}{" "}
               </span>
-            </label>
+            </Label>
           </div>
 
           <h2>{format(["preferences.install_locations"])}</h2>
@@ -596,7 +485,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
     const { updatePreferences } = this.props;
 
     return (
-      <label className={classNames({ active })}>
+      <Label active={active}>
         <input
           type="checkbox"
           checked={active}
@@ -607,18 +496,9 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           }}
         />
         <span>{format(label)}</span>
-      </label>
+      </Label>
     );
   }
-
-  onLanguageChange = (lang: string) => {
-    const { updatePreferences } = this.props;
-    if (lang === "__") {
-      lang = null;
-    }
-
-    updatePreferences({ lang });
-  };
 
   installLocationTable() {
     const { navigate } = this.props;
@@ -774,14 +654,8 @@ const actionCreators = actionCreatorsList(
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  locales: ILocaleInfo[];
   appVersion: string;
   preferences: IPreferencesState;
-
-  /** if true, we're downloading a locale right now */
-  downloading: boolean;
-  sniffedLang: string;
-  lang: string;
   installLocations: IExtendedInstallLocations;
 };
 
@@ -789,11 +663,6 @@ export default connect<IProps>(Preferences, {
   state: createStructuredSelector({
     appVersion: (rs: IRootState) => rs.system.appVersion,
     preferences: (rs: IRootState) => rs.preferences,
-    downloading: (rs: IRootState) =>
-      Object.keys(rs.i18n.downloading).length > 0,
-    lang: (rs: IRootState) => rs.i18n.lang,
-    locales: (rs: IRootState) => rs.i18n.locales,
-    sniffedLang: (rs: IRootState) => rs.system.sniffedLanguage,
     installLocations: createSelector(
       (rs: IRootState) => rs.preferences.installLocations,
       (rs: IRootState) => rs.preferences.defaultInstallLocation,
