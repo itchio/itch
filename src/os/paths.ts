@@ -32,6 +32,10 @@ export function prereqsPath(): string {
   return join(app.getPath("userData"), "prereqs");
 }
 
+export function appdataLocationPath(): string {
+  return join(app.getPath("userData"), "apps");
+}
+
 export function mainLogPath(): string {
   return join(app.getPath("userData"), "logs", "itch.txt");
 }

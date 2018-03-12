@@ -1,7 +1,7 @@
 import { Watcher } from "./watcher";
 import { IStore } from "../types";
 
-import { indexBy } from "underscore";
+import { indexBy, isEmpty } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
 
 import { actions } from "../actions";
@@ -18,8 +18,10 @@ async function updateCommonsNow(store: IStore) {
     );
 
     let locationSizes = {};
-    for (const x of installLocations) {
-      locationSizes[x.installLocation] = x.size;
+    if (!isEmpty(installLocations)) {
+      for (const x of installLocations) {
+        locationSizes[x.id] = x.sizeInfo.installedSize;
+      }
     }
 
     push(store, {

@@ -148,6 +148,69 @@ export const ProfileForget = createRequest<
 >("Profile.Forget");
 
 /**
+ * Result for Profile.Data.Put
+ */
+export interface ProfileDataPutResult {
+  // no fields
+}
+
+/**
+ * Stores some data associated to a profile, by key.
+ */
+export const ProfileDataPut = createRequest<
+  ProfileDataPutParams,
+  ProfileDataPutResult
+>("Profile.Data.Put");
+
+/**
+ * Result for Profile.Data.Get
+ */
+export interface ProfileDataGetResult {
+  /** True if the value existed */
+  ok: boolean;
+  /** undocumented */
+  value: string;
+}
+
+/**
+ * Retrieves some data associated to a profile, by key.
+ */
+export const ProfileDataGet = createRequest<
+  ProfileDataGetParams,
+  ProfileDataGetResult
+>("Profile.Data.Get");
+
+/**
+ * Result for Search.Games
+ */
+export interface SearchGamesResult {
+  // no fields
+}
+
+/**
+ * Searches for games. Returns data from the local
+ * database and the API, via @@SearchGamesYieldNotification.
+ */
+export const SearchGames = createRequest<SearchGamesParams, SearchGamesResult>(
+  "Search.Games"
+);
+
+/**
+ * Result for Search.Users
+ */
+export interface SearchUsersResult {
+  // no fields
+}
+
+/**
+ * Searches for users. Returns data from the local
+ * database and the API, via @@SearchUsersYieldNotification.
+ */
+export const SearchUsers = createRequest<SearchUsersParams, SearchUsersResult>(
+  "Search.Users"
+);
+
+/**
  * Result for Fetch.Game
  */
 export interface FetchGameResult {
@@ -342,9 +405,29 @@ export interface CaveInstallInfo {
  */
 export interface InstallLocationSummary {
   /** undocumented */
-  installLocation: string;
+  id: string;
   /** undocumented */
-  size: number;
+  path: string;
+  /** undocumented */
+  sizeInfo: InstallLocationSizeInfo;
+}
+
+/**
+ * undocumented
+ */
+export interface InstallLocationSizeInfo {
+  /** Number of bytes used by caves installed in this location */
+  installedSize: number;
+  /**
+   * Free space at this location (depends on the partition/disk on which
+   * it is), or a negative value if we can't find it
+   */
+  freeSize: number;
+  /**
+   * Total space of this location (depends on the partition/disk on which
+   * it is), or a negative value if we can't find it
+   */
+  totalSize: number;
 }
 
 /**
@@ -571,6 +654,52 @@ export interface PickUploadResult {
 export const PickUpload = createRequest<PickUploadParams, PickUploadResult>(
   "PickUpload"
 );
+
+/**
+ * Result for Install.Locations.List
+ */
+export interface InstallLocationsListResult {
+  /** undocumented */
+  installLocations: InstallLocationSummary[];
+}
+
+/**
+ * undocumented
+ */
+export const InstallLocationsList = createRequest<
+  InstallLocationsListParams,
+  InstallLocationsListResult
+>("Install.Locations.List");
+
+/**
+ * Result for Install.Locations.Add
+ */
+export interface InstallLocationsAddResult {
+  // no fields
+}
+
+/**
+ * undocumented
+ */
+export const InstallLocationsAdd = createRequest<
+  InstallLocationsAddParams,
+  InstallLocationsAddResult
+>("Install.Locations.Add");
+
+/**
+ * Result for Install.Locations.Remove
+ */
+export interface InstallLocationsRemoveResult {
+  // no fields
+}
+
+/**
+ * undocumented
+ */
+export const InstallLocationsRemove = createRequest<
+  InstallLocationsRemoveParams,
+  InstallLocationsRemoveResult
+>("Install.Locations.Remove");
 
 /**
  * Result for Downloads.Queue
@@ -1681,6 +1810,78 @@ export interface ProfileForgetParams {
 }
 
 /**
+ * Params for Profile.Data.Put
+ */
+export interface ProfileDataPutParams {
+  /** undocumented */
+  profileId: number;
+  /** undocumented */
+  key: string;
+  /** undocumented */
+  value: string;
+}
+
+/**
+ * Params for Profile.Data.Get
+ */
+export interface ProfileDataGetParams {
+  /** undocumented */
+  profileId: number;
+  /** undocumented */
+  key: string;
+}
+
+/**
+ * Params for Search.Games
+ */
+export interface SearchGamesParams {
+  /** undocumented */
+  profileId: number;
+  /** undocumented */
+  query: string;
+}
+
+/**
+ * Payload for SearchGamesYield
+ */
+export interface SearchGamesYieldNotification {
+  /** undocumented */
+  games: Game[];
+}
+
+/**
+ * Sent during @@SearchGamesParams
+ */
+export const SearchGamesYield = createNotification<
+  SearchGamesYieldNotification
+>("SearchGamesYield");
+
+/**
+ * Params for Search.Users
+ */
+export interface SearchUsersParams {
+  /** undocumented */
+  profileId: number;
+  /** undocumented */
+  query: string;
+}
+
+/**
+ * Payload for SearchUsersYield
+ */
+export interface SearchUsersYieldNotification {
+  /** undocumented */
+  users: User[];
+}
+
+/**
+ * Sent during @@SearchUsersParams when results are available
+ */
+export const SearchUsersYield = createNotification<
+  SearchUsersYieldNotification
+>("SearchUsersYield");
+
+/**
  * Params for Fetch.Game
  */
 export interface FetchGameParams {
@@ -2086,6 +2287,31 @@ export interface InstallResult {
   upload: Upload;
   /** The build we installed */
   build?: Build;
+}
+
+/**
+ * Params for Install.Locations.List
+ */
+export interface InstallLocationsListParams {
+  // no fields
+}
+
+/**
+ * Params for Install.Locations.Add
+ */
+export interface InstallLocationsAddParams {
+  /** identifier of the new install location */
+  id: string;
+  /** path of the new install location */
+  path: string;
+}
+
+/**
+ * Params for Install.Locations.Remove
+ */
+export interface InstallLocationsRemoveParams {
+  /** identifier of the install location to remove */
+  id: string;
 }
 
 /**

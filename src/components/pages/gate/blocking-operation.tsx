@@ -12,6 +12,29 @@ import { ISetupOperation } from "../../../types";
 
 import { reportIssue } from "../../../util/crash-reporter";
 
+const BlockingOperationDiv = styled.div`
+  font-size: ${props => props.theme.fontSizes.huge};
+
+  .message {
+    padding: 1em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .error-actions {
+    padding: 1em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+`;
+
+const Spacer = styled.div`
+  height: 1px;
+  min-width: 8px;
+`;
+
 class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { retrySetup, blockingOperation } = this.props;
@@ -27,8 +50,15 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <BlockingOperationDiv>
-        {iconElement}
-        {format(message)}
+        <div className="message">
+          {iconElement ? (
+            <>
+              {iconElement}
+              <Spacer />
+            </>
+          ) : null}
+          {format(message)}
+        </div>
         {hasError ? (
           <div className="error-actions">
             <Button
@@ -37,6 +67,7 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
               label={format(["login.action.retry_setup"])}
               onClick={() => retrySetup({})}
             />
+            <Spacer />
             <Button
               discreet
               icon="bug"
@@ -54,10 +85,6 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 }
-
-const BlockingOperationDiv = styled.div`
-  font-size: ${props => props.theme.fontSizes.huge};
-`;
 
 // props
 

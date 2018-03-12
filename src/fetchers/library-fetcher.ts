@@ -26,9 +26,10 @@ export default class LibraryFetcher extends Fetcher {
         messages.FetchProfileOwnedKeysYield,
         async ({ params }) => {
           let games: Game[] = [];
-          for (const dk of params.items) {
-            games.push(dk.game);
-          }
+          if (params.items)
+            for (const dk of params.items) {
+              games.push(dk.game);
+            }
           games = uniq(games, g => g.id);
           this.pushUnfilteredGames(games);
         }
