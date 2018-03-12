@@ -1,4 +1,4 @@
-import { IGameSet, ICollectionSet, IUserSet } from "./index";
+import { IGameSet, ICollectionSet, IUserSet, ILocalizedString } from "./index";
 
 export interface ITabInstances {
   [key: string]: ITabInstance;
@@ -80,6 +80,9 @@ export interface ITabInstance {
 
   /** if sleepy, don't load until it's focused */
   sleepy?: boolean;
+
+  /** label we had when saving the tab */
+  savedLabel?: ILocalizedString;
 }
 
 export interface ITabData {
@@ -92,6 +95,13 @@ export interface ITabData {
   log?: ITabLog;
 }
 
-export interface ITabDataSave extends ITabInstance {
+export interface ITabDataSave {
+  /** id of the tab */
   id: string;
+
+  /** pages visited in this tab */
+  history: ITabPage[];
+
+  /** current index of history shown */
+  currentIndex: number;
 }

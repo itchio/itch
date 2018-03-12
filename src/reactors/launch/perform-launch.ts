@@ -175,7 +175,7 @@ export async function performLaunch(
             ],
             detail: ["game.install.could_not_launch.detail"],
             widgetParams: {
-              errorStack,
+              rawError: { stack: errorStack },
               log,
             },
             buttons: [

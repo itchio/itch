@@ -20,11 +20,6 @@ for (const tab of Object.keys(staticTabData)) {
   };
 }
 
-// TODO: re-implement fresh
-// for (const k of Object.keys(initialState)) {
-//   initialState[k].fresh = true;
-// }
-
 const emptyObj = {} as any;
 
 let deepFields = ["users", "games", "collections", "web", "toast"];
@@ -61,11 +56,13 @@ export default reducer<ITabInstances>(initialState, on => {
       return state;
     }
 
+    let newData = merge(oldInstance.data, data, { shallow });
+
     return {
       ...state,
       [tab]: {
         ...oldInstance,
-        data: merge(oldInstance.data, data, { shallow }),
+        data: newData,
       },
     };
   });
@@ -215,20 +212,21 @@ export default reducer<ITabInstances>(initialState, on => {
 
     let s = state;
 
-    each(snapshot.items, (tab: ITabDataSave) => {
-      if (typeof tab !== "object") {
+    each(snapshot.items, (tabSave: ITabDataSave) => {
+      if (typeof tabSave !== "object") {
         return;
       }
 
-      const { id, ...data } = tab;
+      const { id, ...data } = tabSave;
       if (!id) {
         return;
       }
 
       s = {
         ...s,
-        [tab.id]: {
+        [tabSave.id]: {
           ...data,
+          data: {},
           sleepy: true,
         },
       };

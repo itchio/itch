@@ -235,7 +235,8 @@ export class Space {
   }
 
   label(): ILocalizedString {
-    let fallback = this.web().title || ["sidebar.loading"];
+    let fallback = this.web().title ||
+      this._instance.savedLabel || ["sidebar.loading"];
 
     switch (this._protocol) {
       case "itch:": {

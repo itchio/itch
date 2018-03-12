@@ -2,8 +2,6 @@ import * as React from "react";
 
 import { FormattedRelative } from "react-intl";
 
-import styled from "../styles";
-
 export default class TimeAgo extends React.PureComponent<IProps> {
   render() {
     const { className, before } = this.props;

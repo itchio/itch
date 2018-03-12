@@ -1,4 +1,4 @@
-import { map, size } from "underscore";
+import { map, filter } from "underscore";
 
 import { Watcher } from "./watcher";
 
@@ -6,9 +6,14 @@ import { ITabDataSave } from "../types/index";
 import { actions } from "../actions/index";
 
 import rootLogger from "../logger";
+import { withButlerClient, messages } from "../buse/index";
+import { Space } from "../helpers/space";
 const logger = rootLogger.child({ name: "tab-save" });
 
-const eo: any = {};
+interface Snapshot {
+  current: string;
+  items: ITabDataSave[];
+}
 
 export default function(watcher: Watcher) {
   watcher.on(actions.tabsChanged, async (store, action) => {
@@ -17,31 +22,60 @@ export default function(watcher: Watcher) {
       return;
     }
     const { tab, openTabs } = navigation;
-    const meId = credentials.me.id;
-    const items: ITabDataSave[] = map(openTabs.transient, id => {
-      let data = tabInstances[id] || eo;
-      if (size(data.games) > 1) {
-        // make sure our snapshot isn't too large (don't cache
-        // entire collections)
-        data = {
-          ...data,
-          games: null,
-        };
+    const profileId = credentials.me.id;
+    let items: ITabDataSave[];
+    items = map(openTabs.transient, id => {
+      const ti = tabInstances[id];
+      if (!ti) {
+        return null;
       }
 
-      return {
-        id,
-        ...data,
-      };
+      const sp = Space.fromInstance(ti);
+      const { history, currentIndex } = ti;
+      const savedLabel = sp.label();
+      return { id, history, currentIndex, savedLabel };
     });
+    items = filter(items, x => !!x);
 
-    let _ = { meId, tab, items };
-    _ = _;
+    const snapshot: Snapshot = { current: tab, items };
 
-    logger.error(`TODO: Re-implement tabsChanged with buse!`);
+    await withButlerClient(logger, async client => {
+      await client.call(
+        messages.ProfileDataPut({
+          profileId,
+          key: "@itch/tabs",
+          value: JSON.stringify(snapshot),
+        })
+      );
+    });
   });
 
   watcher.on(actions.loginSucceeded, async (store, action) => {
-    logger.error(`TODO: Re-implement loginSucceeded tab restore with buse!`);
+    const { credentials } = store.getState().profile;
+    const profileId = credentials.me.id;
+
+    const { value, ok } = await withButlerClient(
+      logger,
+      async client =>
+        await client.call(
+          messages.ProfileDataGet({
+            profileId,
+            key: "@itch/tabs",
+          })
+        )
+    );
+
+    if (!ok) {
+      logger.info(`No tabs to restore`);
+      return;
+    }
+
+    try {
+      const snapshot = JSON.parse(value) as Snapshot;
+      store.dispatch(actions.tabsRestored(snapshot));
+    } catch (e) {
+      logger.warn(`Could not retrieve saved tabs: ${e.message}`);
+      return;
+    }
   });
 }

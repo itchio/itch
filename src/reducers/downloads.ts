@@ -1,6 +1,6 @@
 import { createStructuredSelector } from "reselect";
 
-import { map, last, indexBy } from "underscore";
+import { map, indexBy } from "underscore";
 import groupIdBy from "../helpers/group-id-by";
 
 import { IDownloadsState } from "../types";
