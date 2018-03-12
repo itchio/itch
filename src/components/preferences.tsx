@@ -1,13 +1,8 @@
 import * as React from "react";
-import { createSelector, createStructuredSelector } from "reselect";
+import { createStructuredSelector } from "reselect";
 import { connect, actionCreatorsList, Dispatchers } from "./connect";
 
-import * as path from "path";
-import * as classNames from "classnames";
-
 import urls from "../constants/urls";
-
-import Icon from "./basics/icon";
 
 import Label from "./preferences/label";
 import ExperimentalMark from "./preferences/experimental-mark";
@@ -15,28 +10,13 @@ import OpenAtLoginError from "./preferences/open-at-login-error";
 
 import ProxySettings from "./preferences/proxy-settings";
 import LanguageSettings from "./preferences/language-settings";
-
-import { map, each, filter } from "underscore";
-
-import diskspace from "../os/diskspace";
-
-import { fileSize } from "../format/filesize";
+import InstallLocationsSettings from "./preferences/install-locations-settings";
 
 import format from "./format";
 
-import {
-  IRootState,
-  IPreferencesState,
-  IInstallLocation,
-  ILocalizedString,
-} from "../types";
+import { IRootState, IPreferencesState, ILocalizedString } from "../types";
 
 import { IMeatProps } from "./meats/types";
-
-// TODO: split me up! before you go go
-// don't let me tangle up like a yo yo
-// split me up! before you go go
-// refactor me toniiiiiiiiiiiiiight
 
 import styled, * as styles from "./styles";
 
@@ -165,89 +145,6 @@ const PreferencesContentDiv = styled.div`
       line-height: 32px;
       color: $ivory;
       -webkit-user-select: initial;
-    }
-  }
-
-  .install-locations {
-    width: 100%;
-    font-size: 14px;
-    border-collapse: collapse;
-    background-color: $explanation-color;
-
-    td {
-      padding: 10px 15px;
-      text-align: left;
-
-      &:first-child {
-        @include pref-chunk;
-      }
-    }
-
-    tr.default {
-      td {
-        &:first-child {
-          @include pref-chunk-active;
-        }
-      }
-    }
-
-    tr.header {
-      td {
-        background: $pref-border-color;
-        color: $base-text-color;
-      }
-    }
-
-    td {
-      color: #999;
-    }
-
-    .borderless {
-      td {
-        border: none;
-      }
-    }
-
-    .action {
-      color: white;
-
-      .single-line {
-        @include single-line;
-        width: 100%;
-      }
-
-      .default-state {
-        color: #999;
-        margin-left: 8px;
-      }
-
-      .icon {
-        -webkit-filter: brightness(70%);
-      }
-
-      .icon-plus,
-      .icon-refresh,
-      .icon-stopwatch,
-      .icon-folder,
-      .icon-star,
-      .icon-star2 {
-        font-size: 80%;
-        margin-right: 8px;
-      }
-
-      &:hover {
-        .icon {
-          -webkit-filter: none;
-        }
-        cursor: pointer;
-      }
-    }
-
-    .icon-action {
-      padding-left: 0;
-      padding-right: 0;
-
-      text-align: center;
     }
   }
 `;
@@ -379,8 +276,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             </Label>
           </div>
 
-          <h2>{format(["preferences.install_locations"])}</h2>
-          {this.installLocationTable()}
+          <InstallLocationsSettings />
 
           <h2
             id="preferences-advanced-section"
@@ -499,153 +395,11 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
       </Label>
     );
   }
-
-  installLocationTable() {
-    const { navigate } = this.props;
-    const {
-      addInstallLocationRequest,
-      removeInstallLocationRequest,
-      makeInstallLocationDefault,
-    } = this.props;
-
-    const header = (
-      <tr key="header" className="header">
-        <td>{format(["preferences.install_location.path"])}</td>
-        <td>{format(["preferences.install_location.used_space"])}</td>
-        <td>{format(["preferences.install_location.free_space"])}</td>
-        <td />
-        <td />
-      </tr>
-    );
-
-    const installLocations = (this.props.installLocations ||
-      {}) as IExtendedInstallLocations;
-    const {
-      aliases,
-      defaultLoc = "appdata",
-      locations = [],
-    } = installLocations;
-
-    // can't delete your last remaining location.
-    const severalLocations = locations.length > 0;
-
-    let rows: JSX.Element[] = [];
-    rows.push(header);
-
-    each(locations, location => {
-      const { name } = location;
-      const isDefault = name === defaultLoc;
-      const mayDelete = severalLocations && name !== "appdata";
-
-      let { path } = location;
-      for (const alias of aliases) {
-        path = path.replace(alias[0], alias[1]);
-      }
-      const { size, freeSpace } = location;
-      const rowClasses = classNames("install-location-row", {
-        ["default"]: isDefault,
-      });
-
-      rows.push(
-        <tr className={rowClasses} key={`location-${name}`}>
-          <td
-            className="action path"
-            onClick={e => makeInstallLocationDefault({ name })}
-          >
-            <div
-              className="default-switch"
-              data-rh-at="right"
-              data-rh={JSON.stringify([
-                "preferences.install_location." +
-                  (isDefault ? "is_default" : "make_default"),
-              ])}
-            >
-              <span className="single-line">{path}</span>
-              {isDefault ? (
-                <span className="single-line default-state">
-                  {format(["preferences.install_location.is_default_short"])}
-                </span>
-              ) : null}
-            </div>
-          </td>
-          <td> {fileSize(size)} </td>
-          <td> {freeSpace > 0 ? fileSize(freeSpace) : "..."} </td>
-          <td
-            className="action icon-action install-location-navigate"
-            data-rh-at="top"
-            data-rh={JSON.stringify(["preferences.install_location.navigate"])}
-            onClick={e => {
-              e.preventDefault();
-              navigate({ url: `itch://locations/${name}` });
-            }}
-          >
-            <Icon icon="arrow-right" />
-          </td>
-
-          {mayDelete ? (
-            <td
-              className="action icon-action delete"
-              data-rh-at="top"
-              data-rh={JSON.stringify(["preferences.install_location.delete"])}
-              onClick={e => removeInstallLocationRequest({ name })}
-            >
-              <Icon icon="cross" />
-            </td>
-          ) : (
-            <td />
-          )}
-        </tr>
-      );
-    });
-
-    rows.push(
-      <tr key="add-new">
-        <td
-          className="action add-new"
-          onClick={e => {
-            e.preventDefault();
-            addInstallLocationRequest({});
-          }}
-        >
-          <Icon icon="plus" />
-          {format(["preferences.install_location.add"])}
-        </td>
-      </tr>
-    );
-
-    return (
-      <table className="install-locations">
-        <tbody>{rows}</tbody>
-      </table>
-    );
-  }
-}
-
-interface IExtendedInstallLocation extends IInstallLocation {
-  /** some hardcoded value like 'appData' or an UUID */
-  name: string;
-
-  /** total size of installed items in this location */
-  size: number;
-
-  /** free disk space in this location */
-  freeSpace: number;
-}
-
-interface IExtendedInstallLocations {
-  aliases: string[][];
-  defaultLoc?: string;
-  locations: IExtendedInstallLocation[];
 }
 
 interface IProps extends IMeatProps {}
 
 const actionCreators = actionCreatorsList(
-  "addInstallLocationRequest",
-  "removeInstallLocationRequest",
-  "makeInstallLocationDefault",
-  "queueLocaleDownload",
-  // ---
   "updatePreferences",
   "clearBrowsingDataRequest",
   "navigate",
@@ -656,64 +410,12 @@ const actionCreators = actionCreatorsList(
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   appVersion: string;
   preferences: IPreferencesState;
-  installLocations: IExtendedInstallLocations;
 };
 
 export default connect<IProps>(Preferences, {
   state: createStructuredSelector({
     appVersion: (rs: IRootState) => rs.system.appVersion,
     preferences: (rs: IRootState) => rs.preferences,
-    installLocations: createSelector(
-      (rs: IRootState) => rs.preferences.installLocations,
-      (rs: IRootState) => rs.preferences.defaultInstallLocation,
-      (rs: IRootState) => rs.system.homePath,
-      (rs: IRootState) => rs.system.userDataPath,
-      (rs: IRootState) => rs.system.diskInfo,
-      (rs: IRootState) => rs.commons.locationSizes,
-      (
-        locInfos,
-        defaultLoc,
-        homePath,
-        userDataPath,
-        diskInfo,
-        locationSizes
-      ) => {
-        if (!locInfos) {
-          return {};
-        }
-
-        locInfos = {
-          ...locInfos,
-          appdata: {
-            path: path.join(userDataPath, "apps"),
-          },
-        };
-
-        const locations = filter(
-          map(locInfos, (locInfo, name) => {
-            if (locInfo.deleted) {
-              return;
-            }
-
-            const size = locationSizes[name] || 0;
-
-            return {
-              ...locInfo,
-              name,
-              freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
-              size,
-            };
-          }),
-          x => !!x
-        );
-
-        return {
-          locations,
-          aliases: [[homePath, "~"]],
-          defaultLoc,
-        };
-      }
-    ),
   }),
   actionCreators,
 });
