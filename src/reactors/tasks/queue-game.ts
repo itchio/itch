@@ -1,8 +1,10 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 
-import rootLogger from "../../logger";
+import rootLogger, { Logger } from "../../logger";
 const logger = rootLogger.child({ name: "queue-game" });
+
+import asTask from "./as-task";
 
 import { IStore } from "../../types/index";
 import { Game, Upload, Build } from "../../buse/messages";
@@ -70,6 +72,54 @@ export async function queueInstall(
   upload?: Upload,
   build?: Build
 ) {
+  await asTask({
+    name: "install-queue",
+    gameId: game.id,
+    store,
+    work: async (ctx, logger) => {
+      await performInstallQueue({ store, logger, game, upload, build });
+    },
+    onError: async (e, log) => {
+      store.dispatch(
+        actions.openModal(
+          modalWidgets.showError.make({
+            title: ["prompt.install_error.title"],
+            message: e.message,
+            coverUrl: game.coverUrl,
+            stillCoverUrl: game.stillCoverUrl,
+            bigButtons: [
+              {
+                label: ["game.install.try_again"],
+                action: actions.queueGameInstall({
+                  game,
+                  upload,
+                }),
+                icon: "repeat",
+                tags: [{ label: "One never knows.." }],
+              },
+              "cancel",
+            ],
+            widgetParams: { rawError: e, log },
+          })
+        )
+      );
+    },
+  });
+}
+
+async function performInstallQueue({
+  store,
+  logger,
+  game,
+  upload,
+  build,
+}: {
+  store: IStore;
+  logger: Logger;
+  game: Game;
+  upload: Upload;
+  build: Build;
+}) {
   await withButlerClient(logger, async client => {
     client.onRequest(messages.PickUpload, async ({ params }) => {
       const { uploads } = params;
@@ -104,6 +154,7 @@ export async function queueInstall(
     });
 
     const installLocationId = defaultInstallLocation(store);
+
     await client.call(
       messages.InstallQueue({
         game,

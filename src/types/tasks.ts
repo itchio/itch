@@ -1,6 +1,11 @@
 import { Cave } from "../buse/messages";
 
-export type TaskName = "install" | "uninstall" | "configure" | "launch";
+export type TaskName =
+  | "install-queue"
+  | "install"
+  | "uninstall"
+  | "configure"
+  | "launch";
 
 export interface IQueueUninstallOpts {
   /** which cave we're uninstalling */

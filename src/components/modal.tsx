@@ -472,14 +472,14 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
           </div>
         ) : null}
 
-        {widget ? this.renderWidget(widget, modal) : null}
-
         {bigButtons.length > 0 ? (
           <div className="big-wrapper">
             {this.renderCover(modal)}
             {this.renderButtons(bigButtons, "big")}
           </div>
         ) : null}
+
+        {widget ? this.renderWidget(widget, modal) : null}
 
         {this.renderButtons(buttons, "normal")}
       </ModalDiv>
