@@ -2,18 +2,19 @@ import * as React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import format from "../format";
 
-import { each, size } from "underscore";
+import { size } from "underscore";
 import * as classNames from "classnames";
 import { fileSize } from "../../format/filesize";
 
 import Icon from "../basics/icon";
+import IconButton from "../basics/icon-button";
 
-import styled from "../styles";
+import styled, * as styles from "../styles";
 import { InstallLocationSummary } from "../../buse/messages";
 import { messages, call } from "../../buse/index";
 
-import { IRootState } from "../../types/index";
-
+import { IRootState, IMenuTemplate } from "../../types/index";
+import { actions } from "../../actions/index";
 const LocationTable = styled.table`
   width: 100%;
   font-size: 14px;
@@ -21,26 +22,24 @@ const LocationTable = styled.table`
   background-color: $explanation-color;
 
   td {
-    padding: 10px 15px;
+    padding: 4px 15px;
     text-align: left;
+    background: ${props => props.theme.explanation};
 
     &:first-child {
-      @include pref-chunk;
+      ${styles.prefChunk()};
     }
+  }
+
+  tr.add-new td {
+    padding: 10px 15px;
   }
 
   tr.default {
     td {
       &:first-child {
-        @include pref-chunk-active;
+        ${styles.prefChunkActive()};
       }
-    }
-  }
-
-  tr.header {
-    td {
-      background: $pref-border-color;
-      color: $base-text-color;
     }
   }
 
@@ -58,8 +57,9 @@ const LocationTable = styled.table`
     color: white;
 
     .single-line {
-      @include single-line;
-      width: 100%;
+      ${styles.singleLine()};
+      display: inline-block;
+      max-width: 200px;
     }
 
     .default-state {
@@ -95,15 +95,50 @@ const LocationTable = styled.table`
 
     text-align: center;
   }
+
+  .progress-wrapper {
+    font-size: ${props => props.theme.fontSizes.smaller};
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .progress {
+    background: #555;
+    padding: 0.2em 0.4em;
+    min-width: 160px;
+    position: relative;
+    text-align: center;
+
+    &,
+    .progress-inner {
+      border-radius: 4px;
+    }
+    & .progress-inner {
+      background: white;
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+    }
+
+    .progress-label {
+      color: white;
+      mix-blend-mode: difference;
+    }
+  }
 `;
 
 class InstallLocationSettings extends React.Component<
   IProps & IDerivedProps,
   IState
 > {
-  state = {
-    installLocations: [],
-  };
+  constructor() {
+    super();
+    this.state = {
+      installLocations: [],
+    };
+  }
 
   componentDidMount() {
     this.refresh();
@@ -124,97 +159,66 @@ class InstallLocationSettings extends React.Component<
   }
 
   installLocationTable() {
-    const {
-      navigate,
-      removeInstallLocation,
-      addInstallLocation,
-      makeInstallLocationDefault,
-    } = this.props;
-
-    const header = (
-      <tr key="header" className="header">
-        <td>{format(["preferences.install_location.path"])}</td>
-        <td>{format(["preferences.install_location.used_space"])}</td>
-        <td>{format(["preferences.install_location.free_space"])}</td>
-        <td />
-        <td />
-      </tr>
-    );
+    const { addInstallLocation } = this.props;
 
     const { installLocations } = this.state;
     const { defaultInstallLocation } = this.props;
 
-    // cannot delete your last remaining location.
-    const severalLocations = size(installLocations) > 1;
-
     let rows: JSX.Element[] = [];
-    rows.push(header);
-
-    each(installLocations, il => {
+    for (const il of installLocations) {
       const { id } = il;
       const isDefault = id === defaultInstallLocation;
-      const mayDelete = severalLocations && id !== "appdata";
 
-      const { path, installedSize, freeSize } = il;
+      const { path, sizeInfo } = il;
+      const { installedSize, freeSize, totalSize } = sizeInfo;
       const rowClasses = classNames("install-location-row", {
         ["default"]: isDefault,
       });
 
       rows.push(
         <tr className={rowClasses} key={`location-${id}`}>
-          <td
-            className="action path"
-            onClick={e => makeInstallLocationDefault({ id })}
-          >
+          <td className="action path">
+            <span className="single-line">{path}</span>
+            {isDefault ? (
+              <span className="single-line default-state">
+                {format(["preferences.install_location.is_default_short"])}
+              </span>
+            ) : null}
+          </td>
+          <td>
             <div
-              className="default-switch"
-              data-rh-at="right"
-              data-rh={JSON.stringify([
-                "preferences.install_location." +
-                  (isDefault ? "is_default" : "make_default"),
-              ])}
+              className="progress-wrapper"
+              data-rh={`${fileSize(installedSize)} used by games`}
             >
-              <span className="single-line">{path}</span>
-              {isDefault ? (
-                <span className="single-line default-state">
-                  {format(["preferences.install_location.is_default_short"])}
+              <div className="progress">
+                <div
+                  className="progress-inner"
+                  style={{
+                    right: `${freeSize / totalSize * 100}%`,
+                  }}
+                />
+                <span className="progress-label">
+                  {fileSize(freeSize)} free of {fileSize(totalSize)}
                 </span>
-              ) : null}
+              </div>
             </div>
           </td>
-          <td> {fileSize(installedSize)} </td>
-          <td> {freeSize > 0 ? fileSize(freeSize) : "..."} </td>
-          <td
-            className="action icon-action install-location-navigate"
-            data-rh-at="top"
-            data-rh={JSON.stringify(["preferences.install_location.navigate"])}
-            onClick={e => {
-              e.preventDefault();
-              navigate({ url: `itch://locations/${id}` });
-            }}
-          >
-            <Icon icon="arrow-right" />
+          <td className="action icon-action">
+            <IconButton
+              emphasized
+              icon="more_vert"
+              data-id={id}
+              onClick={this.onMoreActions}
+            />
           </td>
-
-          {mayDelete ? (
-            <td
-              className="action icon-action delete"
-              data-rh-at="top"
-              data-rh={JSON.stringify(["preferences.install_location.delete"])}
-              onClick={e => removeInstallLocation({ id })}
-            >
-              <Icon icon="cross" />
-            </td>
-          ) : (
-            <td />
-          )}
         </tr>
       );
-    });
+    }
 
     rows.push(
-      <tr key="add-new">
+      <tr key="add-new" className="add-new">
         <td
+          colSpan={3}
           className="action add-new"
           onClick={e => {
             e.preventDefault();
@@ -233,16 +237,47 @@ class InstallLocationSettings extends React.Component<
       </LocationTable>
     );
   }
+
+  onMoreActions = (e: React.MouseEvent<any>) => {
+    e.preventDefault();
+    const { id } = e.currentTarget.dataset;
+    const isDefault = this.props.defaultInstallLocation == id;
+    const mayDelete = size(this.state.installLocations) > 1;
+
+    let template: IMenuTemplate = [];
+    if (!isDefault) {
+      template.push({
+        localizedLabel: ["preferences.install_location.make_default_short"],
+        action: actions.makeInstallLocationDefault({ id }),
+      });
+    }
+    template.push({
+      localizedLabel: ["preferences.install_location.navigate"],
+      action: actions.navigate({ url: `itch://locations/${id}` }),
+    });
+
+    if (mayDelete) {
+      template.push({
+        localizedLabel: ["preferences.install_location.delete"],
+        action: actions.removeInstallLocation({ id }),
+      });
+    }
+
+    // TODO: disable some of these
+    this.props.popupContextMenu({
+      clientX: e.clientX,
+      clientY: e.clientY,
+      template,
+    });
+  };
 }
 
 interface IProps {}
 
 const actionCreators = actionCreatorsList(
+  "popupContextMenu",
   "updatePreferences",
-  "addInstallLocation",
-  "removeInstallLocation",
-  "makeInstallLocationDefault",
-  "navigate"
+  "addInstallLocation"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
