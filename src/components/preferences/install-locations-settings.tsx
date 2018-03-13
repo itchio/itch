@@ -1,18 +1,20 @@
 import * as React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import format from "../format";
-import { createStructuredSelector, createSelector } from "reselect";
-import { IRootState, IInstallLocation } from "../../types/index";
 
-import { each, map, filter } from "underscore";
+import { each, size } from "underscore";
 import * as classNames from "classnames";
 import { fileSize } from "../../format/filesize";
 
 import Icon from "../basics/icon";
-import * as path from "path";
-import diskspace from "../../os/diskspace";
 
 import styled from "../styles";
+import { InstallLocationSummary } from "../../buse/messages";
+import { messages, withButlerClient } from "../../buse/index";
+
+import rootLogger from "../../logger";
+import { IRootState } from "../../types/index";
+const logger = rootLogger.child({ name: "install-location-settings" });
 
 const LocationTable = styled.table`
   width: 100%;
@@ -97,9 +99,28 @@ const LocationTable = styled.table`
   }
 `;
 
-class InstallLocationSettings extends React.PureComponent<
-  IProps & IDerivedProps
+class InstallLocationSettings extends React.Component<
+  IProps & IDerivedProps,
+  IState
 > {
+  state = {
+    installLocations: [],
+  };
+
+  componentDidMount() {
+    this.refresh();
+  }
+
+  async refresh() {
+    const { installLocations } = await withButlerClient(
+      logger,
+      async client => {
+        return await client.call(messages.InstallLocationsList({}));
+      }
+    );
+    this.setState({ installLocations });
+  }
+
   render() {
     return (
       <>
@@ -127,39 +148,30 @@ class InstallLocationSettings extends React.PureComponent<
       </tr>
     );
 
-    const installLocations = (this.props.installLocations ||
-      {}) as IExtendedInstallLocations;
-    const {
-      aliases,
-      defaultLoc = "appdata",
-      locations = [],
-    } = installLocations;
+    const { installLocations } = this.state;
+    const { defaultInstallLocation } = this.props;
 
-    // can't delete your last remaining location.
-    const severalLocations = locations.length > 0;
+    // cannot delete your last remaining location.
+    const severalLocations = size(installLocations) > 1;
 
     let rows: JSX.Element[] = [];
     rows.push(header);
 
-    each(locations, location => {
-      const { name } = location;
-      const isDefault = name === defaultLoc;
-      const mayDelete = severalLocations && name !== "appdata";
+    each(installLocations, il => {
+      const { id } = il;
+      const isDefault = id === defaultInstallLocation;
+      const mayDelete = severalLocations && id !== "appdata";
 
-      let { path } = location;
-      for (const alias of aliases) {
-        path = path.replace(alias[0], alias[1]);
-      }
-      const { size, freeSpace } = location;
+      const { path, installedSize, freeSize } = il;
       const rowClasses = classNames("install-location-row", {
         ["default"]: isDefault,
       });
 
       rows.push(
-        <tr className={rowClasses} key={`location-${name}`}>
+        <tr className={rowClasses} key={`location-${id}`}>
           <td
             className="action path"
-            onClick={e => makeInstallLocationDefault({ name })}
+            onClick={e => makeInstallLocationDefault({ name: id })}
           >
             <div
               className="default-switch"
@@ -177,15 +189,15 @@ class InstallLocationSettings extends React.PureComponent<
               ) : null}
             </div>
           </td>
-          <td> {fileSize(size)} </td>
-          <td> {freeSpace > 0 ? fileSize(freeSpace) : "..."} </td>
+          <td> {fileSize(installedSize)} </td>
+          <td> {freeSize > 0 ? fileSize(freeSize) : "..."} </td>
           <td
             className="action icon-action install-location-navigate"
             data-rh-at="top"
             data-rh={JSON.stringify(["preferences.install_location.navigate"])}
             onClick={e => {
               e.preventDefault();
-              navigate({ url: `itch://locations/${name}` });
+              navigate({ url: `itch://locations/${id}` });
             }}
           >
             <Icon icon="arrow-right" />
@@ -196,7 +208,7 @@ class InstallLocationSettings extends React.PureComponent<
               className="action icon-action delete"
               data-rh-at="top"
               data-rh={JSON.stringify(["preferences.install_location.delete"])}
-              onClick={e => removeInstallLocationRequest({ name })}
+              onClick={e => removeInstallLocationRequest({ name: id })}
             >
               <Icon icon="cross" />
             </td>
@@ -241,79 +253,16 @@ const actionCreators = actionCreatorsList(
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  installLocations: IExtendedInstallLocations;
+  defaultInstallLocation: string;
 };
 
-interface IExtendedInstallLocation extends IInstallLocation {
-  /** some hardcoded value like 'appData' or an UUID */
-  name: string;
-
-  /** total size of installed items in this location */
-  size: number;
-
-  /** free disk space in this location */
-  freeSpace: number;
-}
-
-interface IExtendedInstallLocations {
-  aliases: string[][];
-  defaultLoc?: string;
-  locations: IExtendedInstallLocation[];
+interface IState {
+  installLocations: InstallLocationSummary[];
 }
 
 export default connect<IProps>(InstallLocationSettings, {
   actionCreators,
-  state: createStructuredSelector({
-    installLocations: createSelector(
-      (rs: IRootState) => rs.preferences.installLocations,
-      (rs: IRootState) => rs.preferences.defaultInstallLocation,
-      (rs: IRootState) => rs.system.homePath,
-      (rs: IRootState) => rs.system.userDataPath,
-      (rs: IRootState) => rs.system.diskInfo,
-      (rs: IRootState) => rs.commons.locationSizes,
-      (
-        locInfos,
-        defaultLoc,
-        homePath,
-        userDataPath,
-        diskInfo,
-        locationSizes
-      ) => {
-        if (!locInfos) {
-          return {};
-        }
-
-        locInfos = {
-          ...locInfos,
-          appdata: {
-            path: path.join(userDataPath, "apps"),
-          },
-        };
-
-        const locations = filter(
-          map(locInfos, (locInfo, name) => {
-            if (locInfo.deleted) {
-              return;
-            }
-
-            const size = locationSizes[name] || 0;
-
-            return {
-              ...locInfo,
-              name,
-              freeSpace: diskspace.freeInFolder(diskInfo, locInfo.path),
-              size,
-            };
-          }),
-          x => !!x
-        );
-
-        return {
-          locations,
-          aliases: [[homePath, "~"]],
-          defaultLoc,
-        };
-      }
-    ),
+  state: (rs: IRootState) => ({
+    defaultInstallLocation: rs.preferences.defaultInstallLocation,
   }),
 });
