@@ -62,6 +62,11 @@ const LocationTable = styled.table`
     color: ${props => props.theme.baseText};
     min-width: 160px;
     width: 50%;
+
+    .default-state {
+      padding-left: 1em;
+      color: ${props => props.theme.secondaryText};
+    }
   }
 
   td.progress-column {
