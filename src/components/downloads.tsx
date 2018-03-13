@@ -7,6 +7,7 @@ import format from "./format";
 import { map, first, rest, isEmpty, size } from "underscore";
 
 import Link from "./basics/link";
+import Button from "./basics/button";
 import Row from "./download/row";
 import GameUpdateRow from "./download/game-update-row";
 import EmptyState from "./empty-state";
@@ -47,6 +48,10 @@ const DownloadsContentDiv = styled.div`
     .spacer {
       height: 1px;
       width: 1em;
+    }
+
+    .filler {
+      flex-grow: 1;
     }
 
     .clear {
@@ -94,6 +99,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <DownloadsContentDiv>
+        {this.renderControls()}
         {this.renderFirstItem(firstItem)}
         {this.renderQueuedItems(queuedItems)}
         {this.renderRecentActivity()}
@@ -162,6 +168,33 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
+  renderControls(): JSX.Element {
+    return (
+      <>
+        <div className="section-bar">
+          <div className="filler" />
+          {this.props.downloadsPaused ? (
+            <Button discreet icon="triangle-right" onClick={this.onTogglePause}>
+              Resume downloads
+            </Button>
+          ) : (
+            <Button discreet icon="pause" onClick={this.onTogglePause}>
+              Pause downloads
+            </Button>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  onTogglePause = () => {
+    if (this.props.downloadsPaused) {
+      this.props.resumeDownloads({});
+    } else {
+      this.props.pauseDownloads({});
+    }
+  };
+
   renderRecentActivity(): JSX.Element {
     const { finishedItems, clearFinishedDownloads } = this.props;
 
@@ -197,7 +230,9 @@ interface IProps extends IMeatProps {}
 const actionCreators = actionCreatorsList(
   "clearFinishedDownloads",
   "navigate",
-  "queueAllGameUpdates"
+  "queueAllGameUpdates",
+  "pauseDownloads",
+  "resumeDownloads"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
@@ -208,6 +243,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   };
   updateCheckHappening: boolean;
   updateCheckProgress: number;
+  downloadsPaused: boolean;
 };
 
 export default connect<IProps>(Downloads, {
@@ -217,6 +253,7 @@ export default connect<IProps>(Downloads, {
     updates: (rs: IRootState) => rs.gameUpdates.updates,
     updateCheckHappening: (rs: IRootState) => rs.gameUpdates.checking,
     updateCheckProgress: (rs: IRootState) => rs.gameUpdates.progress,
+    downloadsPaused: (rs: IRootState) => rs.downloads.paused,
   }),
   actionCreators,
 });

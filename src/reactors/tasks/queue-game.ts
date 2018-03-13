@@ -153,6 +153,36 @@ async function performInstallQueue({
       }
     });
 
+    client.onRequest(messages.ExternalUploadsAreBad, async ({ params }) => {
+      const modalRes = await promisedModal(
+        store,
+        modalWidgets.naked.make({
+          title: "Dragons be thar",
+          message:
+            "You've chosen to install an external upload. Those are supported poorly.",
+          detail:
+            "There's a chance it won't install at all.\n\nAlso, we won't be able to check for updates.",
+          bigButtons: [
+            {
+              label: "Install it anyway",
+              tags: [{ label: "Consequences be damned" }],
+              icon: "fire",
+              action: actions.modalResponse({}),
+            },
+            "nevermind",
+          ],
+          widgetParams: null,
+        })
+      );
+
+      if (!modalRes) {
+        return { whatever: false };
+      }
+
+      // ahh damn.
+      return { whatever: true };
+    });
+
     const installLocationId = defaultInstallLocation(store);
 
     await client.call(

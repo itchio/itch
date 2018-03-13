@@ -30,7 +30,7 @@ import {
 } from "../../format/operation";
 import { formatUploadTitle } from "../../format/upload";
 import { modalWidgets } from "../modal-widgets/index";
-import { Download, Upload } from "../../buse/messages";
+import { Download } from "../../buse/messages";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -243,14 +243,6 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     this.props.prioritizeDownload({ id });
   };
 
-  onResume = () => {
-    this.props.resumeDownloads({});
-  };
-
-  onPause = () => {
-    this.props.pauseDownloads({});
-  };
-
   onShowError = (ev: React.MouseEvent<any>) => {
     ev.stopPropagation();
 
@@ -279,13 +271,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <Controls>
-        {first ? (
-          status.operation.paused ? (
-            <IconButton big icon="triangle-right" onClick={this.onResume} />
-          ) : (
-            <IconButton big icon="pause" onClick={this.onPause} />
-          )
-        ) : (
+        {first ? null : (
           <IconButton
             big
             hint={["grid.item.prioritize_download"]}
@@ -373,8 +359,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   renderDetails(): JSX.Element {
-    const { upload } = this.props.item;
-    return <div className="control--details">{this.renderUpload(upload)}</div>;
+    return <div className="control--details">{this.renderUpload()}</div>;
   }
 
   renderErrorOrTimestamp(): JSX.Element {
@@ -412,16 +397,22 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
-  renderUpload(upload: Upload): JSX.Element {
-    if (!upload) {
-      return null;
-    }
+  renderUpload(): JSX.Element {
+    const { item, status } = this.props;
+    const { upload } = item;
+    const { operation } = status;
 
     return (
       <>
         <UploadIcon upload={upload} />
         <Spacer />
         {formatUploadTitle(upload)}
+        {operation && operation.stage ? (
+          <>
+            <Spacer />
+            ({operation.stage})
+          </>
+        ) : null}
       </>
     );
   }
@@ -476,8 +467,6 @@ const actionCreators = actionCreatorsList(
   "navigateToGame",
   "prioritizeDownload",
   "showDownloadError",
-  "pauseDownloads",
-  "resumeDownloads",
   "discardDownload",
   "openGameContextMenu",
   "openModal"

@@ -544,6 +544,22 @@ export const InstallQueue = createRequest<
 >("Install.Queue");
 
 /**
+ * Result for ExternalUploadsAreBad
+ */
+export interface ExternalUploadsAreBadResult {
+  /** If true, will proceed with install anyway. Otherwise aborts. */
+  whatever: boolean;
+}
+
+/**
+ * Sent during @@InstallQueueParams.
+ */
+export const ExternalUploadsAreBad = createRequest<
+  ExternalUploadsAreBadParams,
+  ExternalUploadsAreBadResult
+>("ExternalUploadsAreBad");
+
+/**
  * Result for Install.Perform
  */
 export interface InstallPerformResult {
@@ -1065,6 +1081,24 @@ export const PrereqsFailed = createRequest<
   PrereqsFailedParams,
   PrereqsFailedResult
 >("PrereqsFailed");
+
+/**
+ * Result for System.StatFS
+ */
+export interface SystemStatFSResult {
+  /** undocumented */
+  freeSize: number;
+  /** undocumented */
+  totalSize: number;
+}
+
+/**
+ * Get information on a filesystem.
+ */
+export const SystemStatFS = createRequest<
+  SystemStatFSParams,
+  SystemStatFSResult
+>("System.StatFS");
 
 /**
  * Payload for Log
@@ -2149,6 +2183,14 @@ export interface InstallQueueParams {
 }
 
 /**
+ * Params for ExternalUploadsAreBad
+ */
+export interface ExternalUploadsAreBadParams {
+  /** undocumented */
+  upload: Upload;
+}
+
+/**
  * Params for Install.Perform
  */
 export interface InstallPerformParams {
@@ -2708,6 +2750,14 @@ export const CleanDownloadsApply = createRequest<
   CleanDownloadsApplyParams,
   CleanDownloadsApplyResult
 >("CleanDownloads.Apply");
+
+/**
+ * Params for System.StatFS
+ */
+export interface SystemStatFSParams {
+  /** undocumented */
+  path: string;
+}
 
 /**
  * Params for Test.DoubleTwice

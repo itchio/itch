@@ -77,6 +77,7 @@ export interface IOperation {
   progress: number;
   bps?: number;
   eta?: number;
+  stage?: string;
 }
 
 export interface IGameStatus {
@@ -197,9 +198,15 @@ function rawGetGameStatus(
       progress: task.progress,
       eta: task.eta,
       bps: task.bps,
+      stage: null,
     };
   } else if (download) {
-    let p = downloadProgress || { progress: null, eta: null, bps: null };
+    let p = downloadProgress || {
+      progress: null,
+      eta: null,
+      bps: null,
+      stage: null,
+    };
     operation = {
       type: OperationType.Download,
       id: download.id,
@@ -209,6 +216,7 @@ function rawGetGameStatus(
       progress: p.progress,
       eta: p.eta,
       bps: p.bps,
+      stage: p.stage,
     };
   }
 
