@@ -37,6 +37,7 @@ import {
   Collection,
   Download,
   DownloadProgress,
+  InstallLocationSummary,
 } from "../buse/messages";
 import { TaskName } from "../types/tasks";
 import {
@@ -266,6 +267,13 @@ export const actions = wireActions({
   navigateToCollection: action<{
     /** navigation to navigate to */
     collection: Collection;
+
+    /** whether to open in a new tab or not */
+    background?: boolean;
+  }>(),
+  navigateToInstallLocation: action<{
+    /** install location to navigate to */
+    installLocation: InstallLocationSummary;
 
     /** whether to open in a new tab or not */
     background?: boolean;

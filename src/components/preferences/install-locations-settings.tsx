@@ -45,48 +45,10 @@ const LocationTable = styled.table`
 
   td {
     color: #999;
-  }
-
-  .borderless {
-    td {
-      border: none;
-    }
-  }
-
-  .action {
-    color: white;
-
-    .single-line {
-      ${styles.singleLine()};
-      display: inline-block;
-      max-width: 200px;
-    }
-
-    .default-state {
-      color: #999;
-      margin-left: 8px;
-    }
-
-    .icon {
-      -webkit-filter: brightness(70%);
-    }
-
-    .icon-plus,
-    .icon-refresh,
-    .icon-stopwatch,
-    .icon-folder,
-    .icon-star,
-    .icon-star2 {
-      font-size: 80%;
-      margin-right: 8px;
-    }
-
-    &:hover {
-      .icon {
-        -webkit-filter: none;
-      }
-      cursor: pointer;
-    }
+    max-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .icon-action {
@@ -94,6 +56,22 @@ const LocationTable = styled.table`
     padding-right: 0;
 
     text-align: center;
+  }
+
+  td.path-column {
+    color: ${props => props.theme.baseText};
+    min-width: 160px;
+    width: 50%;
+  }
+
+  td.progress-column {
+    min-width: 180px;
+    width: 100%;
+  }
+
+  td.more-column {
+    min-width: 60px;
+    max-width: 60px;
   }
 
   .progress-wrapper {
@@ -105,10 +83,9 @@ const LocationTable = styled.table`
 
   .progress {
     background: #555;
-    padding: 0.2em 0.4em;
-    min-width: 160px;
+    padding: 2px 8px;
     position: relative;
-    text-align: center;
+    ${styles.singleLine()};
 
     &,
     .progress-inner {
@@ -177,15 +154,15 @@ class InstallLocationSettings extends React.Component<
 
       rows.push(
         <tr className={rowClasses} key={`location-${id}`}>
-          <td className="action path">
-            <span className="single-line">{path}</span>
+          <td className="path-column">
+            {path}
             {isDefault ? (
               <span className="single-line default-state">
                 {format(["preferences.install_location.is_default_short"])}
               </span>
             ) : null}
           </td>
-          <td>
+          <td className="progress-column">
             <div
               className="progress-wrapper"
               data-rh={`${fileSize(installedSize)} used by games`}
@@ -203,7 +180,7 @@ class InstallLocationSettings extends React.Component<
               </div>
             </div>
           </td>
-          <td className="action icon-action">
+          <td className="more-column">
             <IconButton
               emphasized
               icon="more_vert"
@@ -245,16 +222,17 @@ class InstallLocationSettings extends React.Component<
     const mayDelete = size(this.state.installLocations) > 1;
 
     let template: IMenuTemplate = [];
+    template.push({
+      localizedLabel: ["preferences.install_location.navigate"],
+      action: actions.navigate({ url: `itch://locations/${id}` }),
+    });
+
     if (!isDefault) {
       template.push({
         localizedLabel: ["preferences.install_location.make_default_short"],
         action: actions.makeInstallLocationDefault({ id }),
       });
     }
-    template.push({
-      localizedLabel: ["preferences.install_location.navigate"],
-      action: actions.navigate({ url: `itch://locations/${id}` }),
-    });
 
     if (mayDelete) {
       template.push({

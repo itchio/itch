@@ -17,6 +17,7 @@ for (const tab of Object.keys(staticTabData)) {
     history: [page],
     currentIndex: 0,
     data: {},
+    sleepy: true,
   };
 }
 
@@ -185,6 +186,7 @@ export default reducer<ITabInstances>(initialState, on => {
           },
         ],
         currentIndex: 0,
+        sleepy: true,
         data: { ...data, ...staticData },
       },
     };

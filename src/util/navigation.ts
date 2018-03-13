@@ -8,7 +8,13 @@ import {
   ITabData,
   INavigatePayload,
 } from "../types";
-import { Game, User, Collection } from "../buse/messages";
+import {
+  Game,
+  User,
+  Collection,
+  InstallLocationSummary,
+} from "../buse/messages";
+import { install } from "../os/win32/registry";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {
@@ -93,6 +99,17 @@ export function userToTabData(user: User): ITabData {
   };
 }
 
+export function installLocationToTabData(
+  installLocation: InstallLocationSummary
+): ITabData {
+  return {
+    location: {
+      path: installLocation.path,
+      size: installLocation.sizeInfo.installedSize,
+    },
+  };
+}
+
 export function collectionToTabData(collection: Collection): ITabData {
   return {
     collections: {
@@ -102,10 +119,6 @@ export function collectionToTabData(collection: Collection): ITabData {
       ids: [collection.id],
     },
   };
-}
-
-export function locationToTabData(location: IInstallLocation): ITabData {
-  return {};
 }
 
 export default {

@@ -46,7 +46,7 @@ export class Location extends React.PureComponent<IProps & IDerivedProps> {
           />
         </FiltersContainer>
 
-        <Games tab={tab} forcedLayout="table" columns={columns} />
+        <Games tab={tab} forcedLayout="table" columns={columns} ignoreFilters />
       </LocationContainer>
     );
   }

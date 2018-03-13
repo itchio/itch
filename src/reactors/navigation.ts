@@ -15,6 +15,7 @@ import {
   userToTabData,
   gameEvolvePayload,
   collectionEvolvePayload,
+  installLocationToTabData,
 } from "../util/navigation";
 import uuid from "../util/uuid";
 const logger = rootLogger.child({ name: "reactors/navigation" });
@@ -49,6 +50,17 @@ export default function(watcher: Watcher) {
       actions.navigate({
         url: `itch://users/${user.id}`,
         data: userToTabData(user),
+        background,
+      })
+    );
+  });
+
+  watcher.on(actions.navigateToInstallLocation, async (store, action) => {
+    const { installLocation, background } = action.payload;
+    store.dispatch(
+      actions.navigate({
+        url: `itch://locations/${installLocation.id}`,
+        data: installLocationToTabData(installLocation),
         background,
       })
     );

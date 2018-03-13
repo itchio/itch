@@ -74,16 +74,26 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
         return <LoadingState />;
       }
 
-      return (
-        <EmptyState
-          icon="filter"
-          bigText={["grid.empty_state.leader"]}
-          smallText={["grid.empty_state.explanation"]}
-          buttonIcon="delete"
-          buttonText={["grid.clear_filters"]}
-          buttonAction={() => clearFilters({ tab })}
-        />
-      );
+      if (this.props.ignoreFilters) {
+        return (
+          <EmptyState
+            icon="neutral"
+            bigText={["grid.really_empty_state.leader"]}
+            smallText={["grid.really_empty_state.explanation"]}
+          />
+        );
+      } else {
+        return (
+          <EmptyState
+            icon="filter"
+            bigText={["grid.empty_state.leader"]}
+            smallText={["grid.empty_state.explanation"]}
+            buttonIcon="delete"
+            buttonText={["grid.clear_filters"]}
+            buttonAction={() => clearFilters({ tab })}
+          />
+        );
+      }
     }
     let shownLayout = forcedLayout || prefLayout;
     if (shownLayout === "grid") {
@@ -118,6 +128,7 @@ interface IProps {
   tab: string;
   forcedLayout?: TabLayout;
   columns?: GameColumn[];
+  ignoreFilters?: boolean;
 }
 
 const actionCreators = actionCreatorsList("tabParamsChanged", "clearFilters");

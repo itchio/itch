@@ -67,6 +67,8 @@
   "grid.clear_filters": "Clear filters",
   "grid.empty_state.leader": "Everything's filtered away...",
   "grid.empty_state.explanation": "Your filters are hiding everything here",
+  "grid.really_empty_state.leader": "There's nothing here...",
+  "grid.really_empty_state.explanation": "...yet!",
   "grid.item.buy_now": "Buy now",
   "grid.item.buy_now_again": "Buy an extra copy",
   "grid.item.prioritize_download": "Prioritize",
