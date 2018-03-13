@@ -10,11 +10,9 @@ import Icon from "../basics/icon";
 
 import styled from "../styles";
 import { InstallLocationSummary } from "../../buse/messages";
-import { messages, withButlerClient } from "../../buse/index";
+import { messages, call } from "../../buse/index";
 
-import rootLogger from "../../logger";
 import { IRootState } from "../../types/index";
-const logger = rootLogger.child({ name: "install-location-settings" });
 
 const LocationTable = styled.table`
   width: 100%;
@@ -112,12 +110,7 @@ class InstallLocationSettings extends React.Component<
   }
 
   async refresh() {
-    const { installLocations } = await withButlerClient(
-      logger,
-      async client => {
-        return await client.call(messages.InstallLocationsList({}));
-      }
-    );
+    const { installLocations } = await call(messages.InstallLocationsList, {});
     this.setState({ installLocations });
   }
 
@@ -133,8 +126,8 @@ class InstallLocationSettings extends React.Component<
   installLocationTable() {
     const {
       navigate,
-      addInstallLocationRequest,
-      removeInstallLocationRequest,
+      removeInstallLocation,
+      addInstallLocation,
       makeInstallLocationDefault,
     } = this.props;
 
@@ -171,7 +164,7 @@ class InstallLocationSettings extends React.Component<
         <tr className={rowClasses} key={`location-${id}`}>
           <td
             className="action path"
-            onClick={e => makeInstallLocationDefault({ name: id })}
+            onClick={e => makeInstallLocationDefault({ id })}
           >
             <div
               className="default-switch"
@@ -208,7 +201,7 @@ class InstallLocationSettings extends React.Component<
               className="action icon-action delete"
               data-rh-at="top"
               data-rh={JSON.stringify(["preferences.install_location.delete"])}
-              onClick={e => removeInstallLocationRequest({ name: id })}
+              onClick={e => removeInstallLocation({ id })}
             >
               <Icon icon="cross" />
             </td>
@@ -225,7 +218,7 @@ class InstallLocationSettings extends React.Component<
           className="action add-new"
           onClick={e => {
             e.preventDefault();
-            addInstallLocationRequest({});
+            addInstallLocation({});
           }}
         >
           <Icon icon="plus" />
@@ -246,8 +239,8 @@ interface IProps {}
 
 const actionCreators = actionCreatorsList(
   "updatePreferences",
-  "addInstallLocationRequest",
-  "removeInstallLocationRequest",
+  "addInstallLocation",
+  "removeInstallLocation",
   "makeInstallLocationDefault",
   "navigate"
 );

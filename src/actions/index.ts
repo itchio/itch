@@ -12,7 +12,6 @@ import {
   ISelfUpdate,
   II18nResources,
   II18nKeys,
-  IPartsInfo,
   IProgressInfo,
   IOpenTabPayload,
   IQueueLaunchOpts,
@@ -452,34 +451,19 @@ export const actions = wireActions({
   // install locations
 
   browseInstallLocation: action<{
-    /** name of install location to browse */
-    name: string;
+    /** id of install location to browse */
+    id: string;
   }>(),
-  addInstallLocationRequest: action<{}>(),
-  addInstallLocation: action<{
-    /** install location name */
-    name: string;
-
-    /** install location path */
-    path: string;
-  }>(),
-  removeInstallLocationRequest: action<{
-    /** name of the install location to remove */
-    name: string;
-  }>(),
+  addInstallLocation: action<{}>(),
   removeInstallLocation: action<{
-    /** name of the install location to remove */
-    name: string;
+    /** id of the install location to remove */
+    id: string;
   }>(),
   makeInstallLocationDefault: action<{
-    /** name of install location to make the default */
-    name: string;
+    /** id of install location to make the default */
+    id: string;
   }>(),
-  queryFreeSpace: action<{}>(),
-  freeSpaceUpdated: action<{
-    /** result of of a free disk space query */
-    diskInfo: IPartsInfo;
-  }>(),
+  installLocationsChanged: action<{}>(),
 
   // tasks
 

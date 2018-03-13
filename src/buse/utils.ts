@@ -1,6 +1,7 @@
 import { Cave, CaveSummary } from "../buse/messages";
-import { Client, Instance, RequestError } from "node-buse";
-import { Logger } from "../logger/index";
+import { Client, Instance, RequestError, IRequestCreator } from "node-buse";
+import rootLogger, { Logger } from "../logger/index";
+const lazyDefaultLogger = rootLogger.child({ name: "buse" });
 import { MinimalContext } from "../context/index";
 import * as ospath from "path";
 import { getBinPath } from "../util/ibrew";
@@ -46,6 +47,15 @@ export async function withButlerClient<T>(
   }
 
   return res;
+}
+
+export async function call<Params, Res>(
+  rc: IRequestCreator<Params, Res>,
+  params: Params
+): Promise<Res> {
+  return await withButlerClient(lazyDefaultLogger, async client =>
+    client.call(rc(params))
+  );
 }
 
 export function setupClient(

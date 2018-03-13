@@ -17,13 +17,6 @@ const initialState = {
   sniffedLanguage: null,
   homePath: app.getPath("home"),
   userDataPath: app.getPath("userData"),
-  diskInfo: {
-    parts: [],
-    total: {
-      free: 0,
-      size: 0,
-    },
-  },
   proxy: null,
   proxySource: null,
   quitting: false,
@@ -37,14 +30,6 @@ export default reducer<ISystemState>(initialState, on => {
     return {
       ...state,
       sniffedLanguage,
-    };
-  });
-
-  on(actions.freeSpaceUpdated, (state, action) => {
-    const { diskInfo } = action.payload;
-    return {
-      ...state,
-      diskInfo,
     };
   });
 

@@ -291,9 +291,6 @@ export interface ISystemState {
   /** ~/.config/itch, ~/Library/Application Data/itch, %APPDATA%/itch */
   userDataPath: string;
 
-  /** total/free space in various partitions/disks */
-  diskInfo: IPartsInfo;
-
   /** if non-null, the proxy specified by the OS (as sniffed by Chromium) */
   proxy?: string;
 
@@ -690,27 +687,6 @@ export interface IStatusState {
  * [key: string, params: {[name: string]: string}]
  */
 export type ILocalizedString = string | any[];
-
-// diskinfo
-
-export interface ISpaceInfo {
-  free: number;
-  size: number;
-}
-
-export interface IPartInfo extends ISpaceInfo {
-  letter?: string;
-  mountpoint?: string;
-}
-
-/**
- * Contains information about the size and free space
- * of all the partitions / disks of this computer.
- */
-export interface IPartsInfo {
-  parts: IPartInfo[];
-  total: ISpaceInfo;
-}
 
 export interface IProgressInfo {
   /** progress of the task between [0,1] */

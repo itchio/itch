@@ -702,6 +702,22 @@ export const InstallLocationsRemove = createRequest<
 >("Install.Locations.Remove");
 
 /**
+ * Result for Install.Locations.GetByID
+ */
+export interface InstallLocationsGetByIDResult {
+  /** undocumented */
+  installLocation: InstallLocationSummary;
+}
+
+/**
+ * undocumented
+ */
+export const InstallLocationsGetByID = createRequest<
+  InstallLocationsGetByIDParams,
+  InstallLocationsGetByIDResult
+>("Install.Locations.GetByID");
+
+/**
  * Result for Downloads.Queue
  */
 export interface DownloadsQueueResult {
@@ -2300,8 +2316,11 @@ export interface InstallLocationsListParams {
  * Params for Install.Locations.Add
  */
 export interface InstallLocationsAddParams {
-  /** identifier of the new install location */
-  id: string;
+  /**
+   * identifier of the new install location.
+   * if not specified, will be generated.
+   */
+  id?: string;
   /** path of the new install location */
   path: string;
 }
@@ -2310,6 +2329,14 @@ export interface InstallLocationsAddParams {
  * Params for Install.Locations.Remove
  */
 export interface InstallLocationsRemoveParams {
+  /** identifier of the install location to remove */
+  id: string;
+}
+
+/**
+ * Params for Install.Locations.GetByID
+ */
+export interface InstallLocationsGetByIDParams {
   /** identifier of the install location to remove */
   id: string;
 }
