@@ -6,8 +6,6 @@ const envName =
   process.env.NODE_ENV ||
   (isDev ? "development" : "production");
 
-process.env.NODE_ENV = envName;
-
 export default {
   name: envName,
   channel: isCanary ? "canary" : "stable",
