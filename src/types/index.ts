@@ -94,7 +94,6 @@ export interface ICaveSet {
 }
 
 export interface ICredentials {
-  key: string;
   me: User;
 }
 
@@ -331,10 +330,8 @@ export interface IProfileState {
   tabInstances: TabDataTypes.ITabInstances;
 }
 
+// TODO: remove, just put the buse profile object in the state
 export interface IProfileCredentialsState {
-  /** API key */
-  key: string;
-
   /** info on user using the app */
   me: User;
 }
