@@ -7,14 +7,6 @@ if (process.env.ITCH_TIME_REQUIRE === "2") {
 }
 
 import env from "./env";
-
-if (env.name !== "production") {
-  require("bluebird").config({
-    longStackTraces: true,
-    warnings: true,
-  });
-}
-
 import * as os from "./os";
 
 import * as React from "react";

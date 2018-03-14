@@ -1,5 +1,4 @@
 import * as ospath from "path";
-import * as electron from "electron";
 
 import * as os from "../os";
 import * as sf from "../os/sf";
@@ -13,6 +12,7 @@ import Context from "../context";
 import formulas, { IFormulaSpec } from "./ibrew/formulas";
 import { IVersionCheck } from "./ibrew/formulas";
 
+import { getBinPath } from "./ibrew/binpath";
 import version from "./ibrew/version";
 
 import net from "./ibrew/net";
@@ -192,11 +192,6 @@ async function getLocalVersion(ctx: Context, name: string): Promise<string> {
     // not present
     return null;
   }
-}
-
-export function getBinPath() {
-  const app = electron.app || electron.remote.app;
-  return ospath.join(app.getPath("userData"), "bin");
 }
 
 function ext() {

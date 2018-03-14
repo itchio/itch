@@ -4,10 +4,10 @@ import rootLogger, { Logger } from "../logger/index";
 const lazyDefaultLogger = rootLogger.child({ name: "buse" });
 import { MinimalContext } from "../context/index";
 import * as ospath from "path";
-import { getBinPath } from "../util/ibrew";
 
 import * as messages from "./messages";
 import { butlerDbPath } from "../os/paths";
+import { getBinPath } from "../util/ibrew/binpath";
 
 // TODO: pass server URL to butler
 

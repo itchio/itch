@@ -102,11 +102,6 @@
     "@types/split2": "^2.1.5",
     "@types/tmp": "0.0.33",
     "@types/which": "^1.0.28",
-    "babel-core": "^6.26.0",
-    "babel-plugin-istanbul": "^4.1.4",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-plugin-transform-require-on-use": "^2.1.0",
-    "babel-preset-async-to-bluebird": "^1.1.0",
     "codecov": "^2.2.0",
     "cross-env": "^5.0.0",
     "debounce-collect": "^1.0.2",
@@ -129,7 +124,7 @@
     "zopf": "^7.0.0"
   },
   "scripts": {
-    "start": "electron . --color --inspect",
+    "start": "electron . --color",
     "precommit": "lint-staged",
     "postinstall": "node src/commands/electron-rebuild-maybe.js",
     "test": "cross-env NODE_ENV=test electron . --color --run-unit-tests",
