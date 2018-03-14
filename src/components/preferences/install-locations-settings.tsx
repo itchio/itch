@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import format from "../format";
 
-import { size } from "underscore";
+import { size, findWhere } from "underscore";
 import * as classNames from "classnames";
 import { fileSize } from "../../format/filesize";
 
@@ -127,8 +127,11 @@ class InstallLocationSettings extends React.Component<
   }
 
   async refresh() {
-    const { installLocations } = await call(messages.InstallLocationsList, {});
-    this.setState({ installLocations });
+    const res = await call(messages.InstallLocationsList);
+    if (res) {
+      const { installLocations } = res;
+      this.setState({ installLocations });
+    }
   }
 
   render() {
@@ -168,22 +171,28 @@ class InstallLocationSettings extends React.Component<
             ) : null}
           </td>
           <td className="progress-column">
-            <div
-              className="progress-wrapper"
-              data-rh={`${fileSize(installedSize)} used by games`}
-            >
-              <div className="progress">
+            {totalSize >= 0 ? (
+              <>
                 <div
-                  className="progress-inner"
-                  style={{
-                    right: `${freeSize / totalSize * 100}%`,
-                  }}
-                />
-                <span className="progress-label">
-                  {fileSize(freeSize)} free of {fileSize(totalSize)}
-                </span>
-              </div>
-            </div>
+                  className="progress-wrapper"
+                  data-rh={`${fileSize(installedSize)} used by games`}
+                >
+                  <div className="progress">
+                    <div
+                      className="progress-inner"
+                      style={{
+                        right: `${freeSize / totalSize * 100}%`,
+                      }}
+                    />
+                    <span className="progress-label">
+                      {fileSize(freeSize)} free of {fileSize(totalSize)}
+                    </span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>Not available</>
+            )}
           </td>
           <td className="more-column">
             <IconButton
@@ -223,13 +232,15 @@ class InstallLocationSettings extends React.Component<
   onMoreActions = (e: React.MouseEvent<any>) => {
     e.preventDefault();
     const { id } = e.currentTarget.dataset;
+    const installLocations = this.state.installLocations;
     const isDefault = this.props.defaultInstallLocation == id;
-    const mayDelete = size(this.state.installLocations) > 1;
+    let installLocation = findWhere(installLocations, { id });
+    const mayDelete = size(installLocations) > 1;
 
     let template: IMenuTemplate = [];
     template.push({
       localizedLabel: ["preferences.install_location.navigate"],
-      action: actions.navigate({ url: `itch://locations/${id}` }),
+      action: actions.navigateToInstallLocation({ installLocation }),
     });
 
     if (!isDefault) {
