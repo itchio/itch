@@ -257,7 +257,7 @@ function computeMenuTemplate(
   }
   template.push(menus.edit);
   template.push(menus.view);
-  if (credentials.key) {
+  if (credentials.me) {
     template.push(menus.account);
   } else {
     template.push(menus.accountLoggedOut);

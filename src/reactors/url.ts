@@ -39,8 +39,8 @@ export default function(watcher: Watcher) {
     const { uri } = action.payload;
 
     logger.info(`Starting to handle itch.io url ${uri}`);
-    const key = store.getState().profile.credentials.key;
-    if (!key) {
+    const me = store.getState().profile.credentials.me;
+    if (!me) {
       logger.info("Waiting for profile to be ready before handling itchio url");
       await new Promise((resolve, reject) => {
         onProfileReady = resolve;
