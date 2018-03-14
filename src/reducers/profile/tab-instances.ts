@@ -62,7 +62,7 @@ export default reducer<ITabInstances>(initialState, on => {
     return {
       ...state,
       [tab]: {
-        ...oldInstance,
+        ...omit(oldInstance, "sleepy"),
         data: newData,
       },
     };
