@@ -49,13 +49,23 @@ export async function withButlerClient<T>(
   return res;
 }
 
+const eo = {};
+
 export async function call<Params, Res>(
   rc: IRequestCreator<Params, Res>,
-  params: Params
+  params?: Params,
+  clientSetup?: (client: Client) => void
 ): Promise<Res> {
-  return await withButlerClient(lazyDefaultLogger, async client =>
-    client.call(rc(params))
-  );
+  return await withButlerClient(lazyDefaultLogger, async client => {
+    if (clientSetup) {
+      clientSetup(client);
+    }
+    if (!params) {
+      // that's a bit ugly but it lets us do call(messages.XXX)
+      params = eo as Params;
+    }
+    return client.call(rc(params));
+  });
 }
 
 export function setupClient(
