@@ -31,17 +31,27 @@ import {
 import { formatUploadTitle } from "../../format/upload";
 import { modalWidgets } from "../modal-widgets/index";
 import { Download } from "../../buse/messages";
+import LoadingCircle from "../basics/loading-circle";
+import { lighten } from "polished";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
   position: relative;
 
+  border: 1px solid transparent;
+  transition: all 0.4s;
+
   background-color: ${props => props.theme.inputBackground};
   padding: 10px;
-  margin: 20px 0;
+  margin: 10px 0;
 
   &.first {
     padding-bottom: 14px;
+  }
+
+  &.has-operation {
+    background-color: ${props => lighten(0.05, props.theme.inputBackground)};
+    border-color: ${props => lighten(0.2, props.theme.inputBackground)};
   }
 
   display: flex;
@@ -204,6 +214,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       first,
       dimmed: !finished && !first,
       finished,
+      ["has-operation"]: !!this.props.status.operation,
     });
 
     const { hover, onMouseEnter, onMouseLeave } = this.props;
@@ -258,8 +269,9 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     if (!status.operation) {
       return (
-        <div className="controls small">
+        <div className="controls">
           <IconButton
+            big
             icon="cross"
             hintPosition="left"
             hint={["status.downloads.clear_finished"]}
@@ -269,16 +281,18 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       );
     }
 
+    let showPrioritize = !item.finishedAt && !first;
+
     return (
       <Controls>
-        {first ? null : (
+        {showPrioritize ? (
           <IconButton
             big
             hint={["grid.item.prioritize_download"]}
             icon="caret-up"
             onClick={this.onPrioritize}
           />
-        )}
+        ) : null}
         <IconButton
           big
           hintPosition="left"
@@ -364,8 +378,17 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   renderErrorOrTimestamp(): JSX.Element {
     const { error, finishedAt, reason } = this.props.item;
+    const { operation } = this.props.status;
 
     if (!error) {
+      if (operation && operation.type == OperationType.Task) {
+        return (
+          <div className="control--status">
+            {this.formatOperation(operation)}
+          </div>
+        );
+      }
+
       const outcomeText = formatOutcome(reason);
       return (
         <div className="control--status">
@@ -398,21 +421,14 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   renderUpload(): JSX.Element {
-    const { item, status } = this.props;
+    const { item } = this.props;
     const { upload } = item;
-    const { operation } = status;
 
     return (
       <>
         <UploadIcon upload={upload} />
         <Spacer />
         {formatUploadTitle(upload)}
-        {operation && operation.stage ? (
-          <>
-            <Spacer />
-            ({operation.stage})
-          </>
-        ) : null}
       </>
     );
   }
@@ -438,6 +454,14 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
             before={format(["download.started"])}
             date={new Date(item.startedAt)}
           />
+          {op.stage ? (
+            <>
+              <Spacer />
+              {"—"}
+              <Spacer />
+              {op.stage}
+            </>
+          ) : null}
           {reasonText ? (
             <>
               <Spacer />
@@ -452,7 +476,12 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       );
     }
 
-    return format(formatOperation(op));
+    return (
+      <>
+        <LoadingCircle progress={op.progress} />
+        {format(formatOperation(op))}
+      </>
+    );
   }
 }
 

@@ -57,10 +57,13 @@ export function mergeUsers(current: ISearchResults, users: User[]) {
 }
 
 export function hasSearchResults(sr: ISearchResults): boolean {
-  if (!sr) {
-    return false;
+  if (sr && sr.games && !isEmpty(sr.games.ids)) {
+    return true;
   }
-  return !isEmpty(sr.games) || !isEmpty(sr.users);
+  if (sr && sr.users && !isEmpty(sr.users.ids)) {
+    return true;
+  }
+  return false;
 }
 
 export function excludeIncompatibleSearchResults(input: ISearchResults) {

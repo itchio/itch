@@ -46,12 +46,9 @@ export default async function asTask(opts: IAsTaskOpts) {
 
   const ctx = new Context(store);
   ctx.registerTaskId(id);
-  ctx.on(
-    "progress",
-    throttle((ev: IProgressInfo) => {
-      store.dispatch(actions.taskProgress({ id, ...ev }));
-    }, 250)
-  );
+  ctx.on("progress", (ev: IProgressInfo) => {
+    store.dispatch(actions.taskProgress({ id, ...ev }));
+  });
 
   getCurrentTasks()[id] = ctx;
 

@@ -4,6 +4,12 @@ import { IOperation, OperationType } from "../helpers/get-game-status";
 export function formatOperation(op: IOperation): ILocalizedString {
   if (op.type === OperationType.Task) {
     if (op.name === "launch") {
+      switch (op.stage) {
+        case "prepare":
+          return ["grid.item.running.prepare"];
+        case "clean":
+          return ["grid.item.running.clean"];
+      }
       return ["grid.item.running"];
     } else if (op.name === "uninstall") {
       return ["grid.item.uninstalling"];

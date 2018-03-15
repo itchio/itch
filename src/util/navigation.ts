@@ -1,20 +1,13 @@
 import urlParser from "./url";
 import * as querystring from "querystring";
 
-import {
-  IInstallLocation,
-  ITabInstance,
-  ITabPage,
-  ITabData,
-  INavigatePayload,
-} from "../types";
+import { ITabInstance, ITabPage, ITabData, INavigatePayload } from "../types";
 import {
   Game,
   User,
   Collection,
   InstallLocationSummary,
 } from "../buse/messages";
-import { install } from "../os/win32/registry";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {

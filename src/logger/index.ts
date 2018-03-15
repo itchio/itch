@@ -1,5 +1,3 @@
-import { mainLogPath } from "../os/paths";
-
 import browserWrite from "./browser-write";
 import consoleWrite from "./console-write";
 
@@ -195,10 +193,13 @@ export function makeLogger({
   }
 }
 
-const defaultLogger =
-  process.type === "browser"
-    ? makeLogger({ logPath: mainLogPath() }) // log 'metal' process to file
-    : makeLogger({}); // don't log browser process to file
+let defaultLogger: Logger;
+if (process.type === "browser") {
+  const { mainLogPath } = require("../os/paths");
+  defaultLogger = makeLogger({ logPath: mainLogPath() }); // log 'metal' process to file
+} else {
+  defaultLogger = makeLogger({}); // don't log browser process to file
+}
 
 export const devNull = new Logger({
   write: () => {

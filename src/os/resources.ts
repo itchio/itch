@@ -1,8 +1,5 @@
-import { sep, posix } from "path";
-const { normalize } = posix;
-
 // this gives us a unix-style base path
-const basePath = normalize(__dirname.split(sep).join("/") + "/..");
+const basePath = "./dist";
 
 /*
  * Resources are files shipped with the app, that are static

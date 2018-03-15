@@ -15,7 +15,7 @@ const UserSearchResultDiv = styled.div`
   margin: 0 6px;
 
   .cover {
-    width: 32px;
+    width: 36px;
   }
 `;
 

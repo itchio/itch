@@ -113,7 +113,8 @@ export class Space {
   }
 
   game(): Game {
-    return (this.games().set || eo)[this.numericId()] || eo;
+    const gameSet = this.games().set || eo;
+    return gameSet[this.numericId()] || eo;
   }
 
   games(): ITabGames {
@@ -174,14 +175,15 @@ export class Space {
   }
 
   image(): string {
+    const g = this.game();
+    let gameCover = g.stillCoverUrl || g.coverUrl;
+    if (gameCover) {
+      return gameCover;
+    }
+
     if (this.internalPage()) {
       // only icons
       return null;
-    }
-
-    if (this.firstPathElement() === "games") {
-      const g = this.game();
-      return g.stillCoverUrl || g.coverUrl;
     }
     return this.web().favicon;
   }

@@ -81,8 +81,6 @@ export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
             </MeatTab>
           );
         })}
-        <SearchResultsBar />
-        <SearchDimmer />
       </MeatContainer>
     );
   }

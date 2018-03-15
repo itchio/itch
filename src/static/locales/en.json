@@ -105,6 +105,8 @@
   "grid.item.report_problem": "Send feedback",
   "grid.item.retry": "Try to download / install / launch this item again",
   "grid.item.running": "Running…",
+  "grid.item.running.prepare": "Preparing…",
+  "grid.item.running.clean": "Cleaning up…",
   "grid.item.uninstall": "Uninstall",
   "grid.item.uninstall_request": "Uninstall or re-install…",
   "grid.item.manage": "Manage",

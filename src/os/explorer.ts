@@ -1,5 +1,5 @@
 import { shell } from "electron";
-import * as os from ".";
+import * as os from "./index";
 
 export function open(folder: string) {
   if (os.platform() === "darwin") {

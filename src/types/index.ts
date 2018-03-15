@@ -601,6 +601,8 @@ export interface ITask {
 
   /** estimated time remaining for task, in seconds, if available */
   eta?: number;
+
+  stage?: string;
 }
 
 export interface ITasksState {
@@ -694,6 +696,8 @@ export interface IProgressInfo {
 
   /** estimated time remaining, in seconds */
   eta?: number;
+
+  stage?: string;
 }
 
 export interface IProgressListener {

@@ -4,14 +4,11 @@ import { createSelector } from "reselect";
 
 import env from "../env";
 
-import * as sf from "../os/sf";
-
 import { darkMineShaft } from "../constants/colors";
 import { app, BrowserWindow } from "electron";
 import config from "../util/config";
 import { getImagePath } from "../os/resources";
 import * as os from "../os";
-import { resolve } from "path";
 import * as invariant from "invariant";
 import { debounce } from "underscore";
 
@@ -213,24 +210,6 @@ async function createWindow(store: IStore, hidden: boolean) {
   });
 
   window.on("ready-to-show", async (e: any) => {
-    if (env.name === "development") {
-      try {
-        await sf.stat(".cache");
-        logger.warn("");
-        logger.warn("####################################");
-        logger.warn("# Did you forget to wipe '.cache'? #");
-        logger.warn("#                                  #");
-        logger.warn("# The app is running in dev, yet   #");
-        logger.warn("# there is a '.cache' folder, so   #");
-        logger.warn("# only precompiled sources will be #");
-        logger.warn("# used.                            #");
-        logger.warn("####################################");
-        logger.warn("");
-      } catch (e) {
-        /* most probably ENOENT - which is good (in dev) */
-      }
-    }
-
     createLock = false;
     if (firstWindow) {
       firstWindow = false;
@@ -250,8 +229,7 @@ async function createWindow(store: IStore, hidden: boolean) {
     window.webContents.openDevTools({ mode: "detach" });
   }
 
-  const rootDir = resolve(__dirname, "..");
-  let uri = `file://${rootDir}/index.html`;
+  let uri = `http://localhost:1234/dist/index.html`;
   if (process.env.ITCH_REACT_PERF === "1") {
     logger.info(`Enabling react perf`);
     uri += `?react_perf`;

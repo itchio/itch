@@ -1,5 +1,5 @@
 /* Diego is your little diagnostics mercenary! */
-import * as os from ".";
+import * as os from "./index";
 import spawn from "./spawn";
 
 import store from "../store/metal-store";

@@ -32,6 +32,14 @@ const DownloadsDiv = styled.div`
 const DownloadsContentDiv = styled.div`
   overflow-y: auto;
   padding: 0 20px 20px 10px;
+  padding-top: 15px;
+  position: relative;
+
+  .global-controls {
+    position: absolute;
+    top: 0;
+    right: 6px;
+  }
 
   .section-bar {
     display: flex;
@@ -171,7 +179,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
   renderControls(): JSX.Element {
     return (
       <>
-        <div className="section-bar">
+        <div className="section-bar global-controls">
           <div className="filler" />
           {this.props.downloadsPaused ? (
             <Button discreet icon="triangle-right" onClick={this.onTogglePause}>

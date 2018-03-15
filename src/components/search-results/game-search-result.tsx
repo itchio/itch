@@ -2,44 +2,27 @@ import * as React from "react";
 import * as classNames from "classnames";
 import GenericSearchResult from "./generic-search-result";
 
-import isPlatformCompatible from "../../util/is-platform-compatible";
-import { formatPrice, applySale } from "../../format";
-
-import Hoverable from "../basics/hover-hoc";
 import Filler from "../basics/filler";
 import Cover from "../basics/cover";
-const HoverCover = Hoverable(Cover);
 
 import styled, * as styles from "../styles";
 import { actions } from "../../actions";
-import PlatformIcons from "../basics/platform-icons";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Game } from "../../buse/messages";
 
-const StyledPlatformIcons = styled(PlatformIcons)`
-  -webkit-filter: brightness(90%);
-
-  .icon {
-    text-shadow: 1px 1px 1px #000000;
-  }
-`;
-
 const GameSearchResultDiv = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: stretch;
-  padding: 10px 20px;
-  margin: 6px 0;
-  box-shadow: 0 0 8px rgba(40, 40, 40, 0.3);
+  padding: 4px 8px;
+  padding-left: 12px;
+
   flex-shrink: 0;
 
-  border-left: 2px solid transparent;
-  background-color: ${props => props.theme.sidebarEntryFocusedBackground};
-
-  margin-right: 10px;
-  border-radius: 0 4px 4px 0;
+  border-left: 1px solid transparent;
 
   &.chosen {
+    background-color: ${props => props.theme.sidebarEntryFocusedBackground};
     border-color: ${props => props.theme.accent};
     cursor: pointer;
   }
@@ -49,23 +32,9 @@ const GameSearchResultDiv = styled.div`
     cursor: pointer;
   }
 
-  .vertical-section {
-    display: flex;
-    flex-direction: row;
-    flex-shrink: 0;
-
-    &.title {
-      align-items: center;
-    }
-
-    &.rest {
-      margin: 6px 0;
-    }
-  }
-
   .cover-container {
     flex-shrink: 0;
-    width: ${80 * 1.0}px;
+    width: ${80 * 1}px;
 
     display: flex;
     flex-direction: row;
@@ -77,44 +46,39 @@ const GameSearchResultDiv = styled.div`
   }
 `;
 
-const TitleBlock = styled.div`
-  padding: 0 12px;
-  flex-grow: 1;
-
+const SectionDiv = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: stretch;
+
+  overflow-x: hidden;
+  ${styles.singleLine()};
+  line-height: 1.4;
 `;
 
-const ShortText = styled.div`
-  margin-bottom: 6px;
-  line-height: 1.6;
-  color: ${props => props.theme.secondaryText};
+const TitleDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
-const Title = styled.div`
+const Title = styled.span`
+  font-size: ${props => props.theme.fontSizes.smaller};
   ${styles.singleLine()};
 
-  font-size: ${props => props.theme.fontSizes.large};
-  line-height: 1.4;
-  sadding-bottom: 0.4em;
+  &.chosen {
+    font-size: ${props => props.theme.fontSizes.larger};
+  }
 `;
 
-const Price = styled.div`
-  margin-left: 10px;
-
-  text-transform: uppercase;
-
-  padding: 3px 4px 2px 3px;
-  border-radius: 2px;
-
+const ShortText = styled.span`
   font-size: ${props => props.theme.fontSizes.smaller};
-
-  ${props => styles.metaColors(props.theme.priceNormal)};
-
-  &.onsale {
-    ${props => styles.metaColors(props.theme.priceSale)};
-  }
+  color: ${props => props.theme.secondaryText};
+  margin-right: 8px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-all;
+  white-space: normal;
 `;
 
 class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
@@ -122,74 +86,66 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
     const { game, onClick, chosen } = this.props;
     const { title, stillCoverUrl, coverUrl } = game;
 
-    let compatible = isPlatformCompatible(game);
-    let price: React.ReactElement<any> = null;
-
-    const { sale } = game;
-
-    if (game.minPrice > 0) {
-      let bestPrice = applySale(game.minPrice, sale);
-      // bundles will have a 0% rate for example
-      const onsale = !!(sale && sale.rate !== 0);
-
-      // FIXME: hardcoding 'USD' is wrong
-      price = (
-        <Price className={classNames({ onsale })}>
-          {formatPrice("USD", bestPrice)}
-        </Price>
-      );
-    }
-
     const resultClasses = classNames("game-search-result", {
-      ["not-platform-compatible"]: !compatible,
       chosen: chosen,
     });
 
     return (
       <GameSearchResultDiv
         className={resultClasses}
-        onClick={onClick}
-        onContextMenu={this.onContextMenu}
+        onMouseDown={onClick}
         data-game-id={game.id}
         ref="root"
+        onMouseEnter={this.onMouseEnter}
       >
-        <div className="vertical-section title">
-          <Title>{title}</Title>
-          <Filler />
-          <StyledPlatformIcons target={game} />
-          {price}
-        </div>
-        <div className="vertical-section rest">
-          <div className="cover-container">
-            <HoverCover
-              className="cover"
-              gameId={game.id}
-              coverUrl={coverUrl}
-              stillCoverUrl={stillCoverUrl}
-              showGifMarker
-            />
-          </div>
-          <TitleBlock>
-            <ShortText>{game.shortText}</ShortText>
-          </TitleBlock>
-        </div>
+        <SectionDiv>
+          <TitleDiv>
+            <Title className={classNames({ chosen })}>{title}</Title>
+            <Filler />
+          </TitleDiv>
+          {chosen ? (
+            <TitleDiv>
+              <ShortText>
+                {game.shortText && game.shortText !== ""
+                  ? game.shortText
+                  : "No description"}
+              </ShortText>
+              {game.user ? (
+                <ShortText>
+                  By {game.user.displayName || game.user.username}
+                </ShortText>
+              ) : null}
+            </TitleDiv>
+          ) : null}
+        </SectionDiv>
+        {chosen ? (
+          <>
+            <Filler />
+            <div className="cover-container">
+              <Cover
+                className="cover"
+                gameId={game.id}
+                coverUrl={coverUrl}
+                stillCoverUrl={stillCoverUrl}
+              />
+            </div>
+          </>
+        ) : null}
       </GameSearchResultDiv>
     );
   }
+
+  onMouseEnter = () => {
+    this.props.searchHighlightOffset({
+      offset: this.props.index,
+      relative: false,
+    });
+  };
 
   getNavigateAction() {
     const { game } = this.props;
     return actions.navigateToGame({ game });
   }
-
-  onContextMenu = (ev: React.MouseEvent<any>) => {
-    const { game } = this.props;
-    this.props.openGameContextMenu({
-      game,
-      clientX: ev.clientX,
-      clientY: ev.clientY,
-    });
-  };
 }
 
 interface IProps {
@@ -200,10 +156,7 @@ interface IProps {
   index: number;
 }
 
-const actionCreators = actionCreatorsList(
-  "searchHighlightOffset",
-  "openGameContextMenu"
-);
+const actionCreators = actionCreatorsList("searchHighlightOffset");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 

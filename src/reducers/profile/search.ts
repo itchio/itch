@@ -29,6 +29,10 @@ export default reducer<IProfileSearchState>(initialState, on => {
       return state;
     }
 
+    if (typedQuery == state.typedQuery) {
+      return state;
+    }
+
     return {
       ...state,
       typedQuery,
@@ -67,6 +71,10 @@ export default reducer<IProfileSearchState>(initialState, on => {
 
   on(actions.searchFetched, (state, action) => {
     const { query, results } = action.payload;
+    if (query != state.typedQuery) {
+      return state;
+    }
+
     const example = SearchExamples[randomExampleIndex()];
     return {
       ...state,
@@ -77,7 +85,7 @@ export default reducer<IProfileSearchState>(initialState, on => {
   });
 
   on(actions.searchStarted, (state, action) => {
-    return { ...state, loading: true };
+    return { ...state, loading: true, highlight: 0 };
   });
 
   on(actions.searchFinished, (state, action) => {

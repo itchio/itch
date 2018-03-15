@@ -1,8 +1,6 @@
 import * as React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
-import { resolve } from "path";
-
 import LoginForm from "./gate/login-form";
 import RememberedProfiles from "./gate/remembered-profiles";
 import BlockingOperation from "./gate/blocking-operation";
@@ -28,6 +26,7 @@ const GateDiv = styled.div`
     align-items: center;
 
     margin: 40px 0;
+    margin-top: 80px;
     min-height: 120px;
 
     img {
@@ -45,6 +44,8 @@ const GateDiv = styled.div`
   }
 `;
 
+const appWhite = require("../../static/images/logos/app-white.svg");
+
 export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
   username: HTMLInputElement;
   password: HTMLInputElement;
@@ -54,9 +55,7 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
       <GateDiv>
         <TitleBar tab="login" />
         <section className="logo">
-          <img
-            src={resolve(__dirname, "../../static/images/logos/app-white.svg")}
-          />
+          <img src={appWhite} />
         </section>
         <Filler />
         <section className="crux">{this.renderChild()}</section>

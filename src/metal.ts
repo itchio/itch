@@ -6,17 +6,12 @@ if (process.env.ITCH_TIME_REQUIRE === "1") {
   rt.start();
 }
 
+if (process.env.NODE_ENV !== "production") {
+  require("./custom-hmr-runtime.js");
+}
+
 import env from "./env";
 import logger from "./logger";
-import { enableLiveReload } from "electron-compile-ftl";
-
-if (env.name === "development") {
-  logger.info("Enabling hot-module reload!");
-  enableLiveReload({
-    strategy: "react-hmr",
-    blacklist: ["store", "logger", "persistent-state"],
-  });
-}
 
 import autoUpdaterStart from "./util/auto-updater";
 import { isItchioURL } from "./util/url";

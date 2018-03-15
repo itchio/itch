@@ -1,4 +1,4 @@
-if (process.type !== "renderer") {
+if (process.type === "browser") {
   throw new Error("chrome store required from metal");
 }
 

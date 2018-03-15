@@ -1,4 +1,7 @@
-const env = require("./env").default;
+// const env = require("./env").default;
+const env = {
+  name: "development"
+};
 
 let runTests = false;
 let thorough = true;
@@ -19,23 +22,28 @@ if (runTests) {
   process.env.ITCH_LOG_LEVEL = "error";
 }
 
-if (env.name !== "test") {
-  require("./util/crash-reporter").mount();
-}
+// if (env.name !== "test") {
+//   require("./util/crash-reporter").mount();
+// }
 
-if (env.name === "test") {
-  require("./boot/test-paths").setup();
-}
+// if (env.name === "test") {
+//   require("./boot/test-paths").setup();
+// }
 
 if (env.name === "development") {
-  global.require = require;
-  setInterval(function() {}, 400);
-
-  global.wait = function(p) {
-    p
-      .then(res => console.log("Promise result: ", res))
-      .catch(e => console.log("Promise rejected: ", e));
-  };
+  const fs = require("fs");
+  require("source-map-support").install({
+    retrieveSourceMap: function(source) {
+      if (/metal.js$/.test(source)) {
+        const map = fs.readFileSync('./dist/metal.map', 'utf8');
+        return {
+          url: 'metal.ts',
+          map: map,
+        };
+      }
+      return null;
+    }
+  });
 }
 
 function main() {

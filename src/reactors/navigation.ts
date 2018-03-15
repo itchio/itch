@@ -146,6 +146,20 @@ export default function(watcher: Watcher) {
       return;
     }
 
+    if (resource) {
+      const tabInstances = rs.profile.tabInstances;
+      for (const transient of openTabs.transient) {
+        const ti = tabInstances[transient];
+        if (ti && ti.history[ti.currentIndex].resource === resource) {
+          // switching to transient by resource, I like your style
+          if (!background) {
+            store.dispatch(actions.focusTab({ tab: transient }));
+          }
+          return;
+        }
+      }
+    }
+
     const staticData = staticTabData[url];
 
     // must be a new tab then!

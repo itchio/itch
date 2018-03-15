@@ -58,6 +58,12 @@
     -webkit-app-region: drag;
   }
   </style>
+  <script>
+    // disable stock hmr runtime
+    this._WebSocket = WebSocket;
+    delete WebSocket;
+  </script>
+  <script src="custom-hmr-runtime.js"></script> 
   <script async defer src="chrome.tsx"></script> 
   <link rel="stylesheet" href="../node_modules/react-hint/css/index.css"/>
   <link rel="stylesheet" href="./static/fonts/lato/latofonts-custom.css"/>

@@ -45,6 +45,7 @@ export default function(watcher: Watcher) {
               );
             }
           );
+
           state.client = client;
           await client.call(messages.DownloadsDrive({}));
         });

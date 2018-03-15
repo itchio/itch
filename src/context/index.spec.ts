@@ -1,5 +1,5 @@
 import suite from "../test-suite";
-import Context from ".";
+import Context from "./index";
 
 import { IStore, isCancelled } from "../types";
 

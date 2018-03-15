@@ -26,7 +26,17 @@ export async function performLaunch(
   cave: Cave,
   game: Game
 ) {
+  ctx.emitProgress({ progress: -1, stage: "configure" });
+
   const { store } = ctx;
+  const taskId = ctx.getTaskId();
+  store.dispatch(
+    actions.taskProgress({
+      id: taskId,
+      progress: -1,
+      stage: "prepare",
+    })
+  );
 
   // TODO: have butler check morphing and queue a heal if needed
   const { appVersion } = store.getState().system;
@@ -203,6 +213,7 @@ export async function performLaunch(
 
       client.onNotification(messages.LaunchRunning, async ({ params }) => {
         logger.info("Now running!");
+        ctx.emitProgress({ progress: 1, stage: "run" });
 
         if (preferences.preventDisplaySleep) {
           powerSaveBlockerId = powerSaveBlocker.start("prevent-display-sleep");
@@ -211,6 +222,7 @@ export async function performLaunch(
 
       client.onNotification(messages.LaunchExited, async ({ params }) => {
         logger.info("Exited!");
+        ctx.emitProgress({ progress: -1, stage: "clean" });
       });
 
       client.onRequest(messages.AllowSandboxSetup, async ({ params }) => {
