@@ -23,7 +23,12 @@ async function main() {
   await copy("src/static/", "dist/static/", {overwrite: true});
 
   console.log(`Starting up electron!`);
-  const el = childProcess.spawn(`node_modules\\.bin\\electron.cmd`, [
+  let electronPath = `node_modules/.bin/electron`;
+  if (process.platform === "win32") {
+    electronPath = `node_modules\\.bin\\electron`;
+  }
+
+  const el = childProcess.spawn(electronPath, [
     "."
   ], {
     stdio: "inherit",
