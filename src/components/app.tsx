@@ -10,8 +10,8 @@ import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
 class App extends React.PureComponent<IDerivedProps, IState> {
-  constructor() {
-    super();
+  constructor(props: App["props"], context) {
+    super(props, context);
     this.state = {
       localeVersion: 1,
       locale: "en",

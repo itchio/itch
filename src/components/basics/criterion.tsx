@@ -37,7 +37,7 @@ const CriterionDiv = styled.div`
   }
 `;
 
-export default class Criterion extends React.Component<IProps> {
+export default class Criterion extends React.PureComponent<IProps> {
   render() {
     const { label, checked, onChange } = this.props;
 

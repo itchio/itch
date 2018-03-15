@@ -119,8 +119,8 @@ class InstallLocationSettings extends React.Component<
   IProps & IDerivedProps,
   IState
 > {
-  constructor() {
-    super();
+  constructor(props: InstallLocationSettings["props"], context) {
+    super(props, context);
     this.state = {
       installLocations: [],
     };

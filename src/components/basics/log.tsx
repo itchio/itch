@@ -103,7 +103,7 @@ const LogTable = styled.table`
 const kMaxLines = 250;
 
 export default class Log extends React.PureComponent<IProps, IState> {
-  constructor(props: any, context: any) {
+  constructor(props: Log["props"], context) {
     super(props, context);
     this.state = {
       level: reverseLevels["info"],

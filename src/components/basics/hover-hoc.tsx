@@ -17,8 +17,8 @@ export default function<P extends IHoverProps>(
   return class extends React.PureComponent<P, IHoverState> {
     static displayName = `Hoverable(${getDisplayName(WrappedComponent)})`;
 
-    constructor() {
-      super();
+    constructor(props: P, context) {
+      super(props, context);
       this.state = {
         hover: false,
       };

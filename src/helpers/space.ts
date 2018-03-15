@@ -24,10 +24,6 @@ const eo = {} as any;
 
 export const spaceFromInstance = (dataIn: ITabInstance) => new Space(dataIn);
 
-export interface IQuery {
-  [key: string]: string;
-}
-
 /**
  * A Space gives structured info about a tab.
  *
@@ -42,7 +38,7 @@ export class Space {
   private _protocol: string;
   private _hostname: string;
   private _pathElements: string[];
-  private _query: IQuery;
+  private _query: querystring.ParsedUrlQuery;
   private _querylessURL: string;
 
   constructor(instanceIn: ITabInstance) {

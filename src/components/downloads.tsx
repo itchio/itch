@@ -74,10 +74,6 @@ const DownloadsContentDiv = styled.div`
 `;
 
 class Downloads extends React.PureComponent<IProps & IDerivedProps> {
-  constructor() {
-    super();
-  }
-
   render() {
     return <DownloadsDiv>{this.renderContents()}</DownloadsDiv>;
   }

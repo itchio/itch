@@ -11,10 +11,6 @@ class TwoFactorInput extends React.PureComponent<IProps & IDerivedProps> {
     totpInput?: HTMLInputElement;
   };
 
-  constructor() {
-    super();
-  }
-
   render() {
     const params = this.props.modal.widgetParams;
     const { username } = params;

@@ -1,5 +1,4 @@
 import uuid from "../../util/uuid";
-import { throttle } from "underscore";
 import * as memory from "memory-streams";
 
 import {

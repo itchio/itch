@@ -1,5 +1,4 @@
 import * as React from "react";
-import { getImagePath } from "../../os/resources";
 import styled from "../styles";
 import { createStructuredSelector } from "reselect";
 import * as classNames from "classnames";

@@ -32,8 +32,8 @@ export default function(watcher: Watcher) {
 
       let parsed = urlParser.parse(details.url);
       const { pathname, query } = parsed;
-      const params = querystring.parse(query);
-      const { tab } = params;
+      const params = flattenQuery(querystring.parse(query));
+      const { tab, url, iframe } = params;
 
       logger.debug(`Got itch-internal request ${pathname}?${query} for ${tab}`);
 
@@ -43,8 +43,8 @@ export default function(watcher: Watcher) {
         store.dispatch(
           actions.analyzePage({
             tab,
-            url: params.url,
-            iframe: params.iframe,
+            url,
+            iframe: Boolean(iframe),
           })
         );
       } else {
@@ -56,4 +56,19 @@ export default function(watcher: Watcher) {
       }
     });
   });
+}
+
+function flattenQuery(
+  pqs: querystring.ParsedUrlQuery
+): { [key: string]: string } {
+  let res: { [key: string]: string } = {};
+  for (const k of Object.keys(pqs)) {
+    const vv = pqs[k];
+    if (Array.isArray(vv)) {
+      res[k] = vv[0];
+    } else {
+      res[k] = vv;
+    }
+  }
+  return res;
 }

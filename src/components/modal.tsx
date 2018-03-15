@@ -379,8 +379,8 @@ const BigButtonsDiv = styled.div`
 
 @watching
 export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
-  constructor() {
-    super();
+  constructor(props: Modal["props"], context) {
+    super(props, context);
     this.state = {
       widgetPayload: null,
     };

@@ -37,8 +37,8 @@ const BrowserContextDiv = styled.div`
 export class GameBrowserContext extends React.PureComponent<
   IProps & IDerivedProps
 > {
-  constructor() {
-    super();
+  constructor(props: IProps & IDerivedProps, context) {
+    super(props, context);
     this.state = {};
   }
 

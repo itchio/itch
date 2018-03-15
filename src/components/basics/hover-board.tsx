@@ -3,8 +3,8 @@ import * as React from "react";
 class HoverBoard extends React.PureComponent<void, IState> {
   childProps: any;
 
-  constructor() {
-    super();
+  constructor(props: void, context) {
+    super(props, context);
 
     this.state = {
       hover: false,

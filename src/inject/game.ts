@@ -63,7 +63,9 @@ const extendedGlobal = global as ExtendedGlobal;
     console.log("Referrer query: ", parsedQuery);
 
     const itchObjectBase64 = parsedQuery.itchObject;
-    const jsonSource = atob(itchObjectBase64);
+    const jsonSource = atob(
+      Array.isArray(itchObjectBase64) ? itchObjectBase64[0] : itchObjectBase64
+    );
     extendedGlobal.Itch = JSON.parse(jsonSource);
     console.log("Loaded itch environment!");
     console.dir(extendedGlobal.Itch);

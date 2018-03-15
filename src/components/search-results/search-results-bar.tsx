@@ -51,7 +51,7 @@ const ResultList = styled.div`
 
 const NoResults = styled.p`
   font-size: ${props => props.theme.fontSizes.smaller};
-  padding: 8px 4px;
+  padding: 8px 12px;
 `;
 
 @watching
@@ -59,8 +59,8 @@ export class SearchResultBar extends React.PureComponent<
   IProps & IDerivedProps,
   IState
 > {
-  constructor() {
-    super();
+  constructor(props: SearchResultBar["props"], context) {
+    super(props, context);
     this.state = {
       chosen: 0,
     };
@@ -100,16 +100,20 @@ export class SearchResultBar extends React.PureComponent<
   }
 
   resultsGrid(results: ISearchResults) {
-    const { highlight } = this.props;
+    const { highlight, query, example, loading } = this.props;
     const active = this.props.open;
 
     const items: React.ReactElement<any>[] = [];
-    const { navigateToGame, closeSearch } = this.props;
+    const { navigateToGame } = this.props;
 
     if (!hasSearchResults(results)) {
       items.push(
         <NoResults key="no-results">
-          {format(["search.empty.no_results"])}
+          {loading
+            ? format(["sidebar.loading"])
+            : query
+              ? format(["search.empty.no_results"])
+              : format(["search.empty.tagline", { example }])}
         </NoResults>
       );
     } else {
@@ -154,6 +158,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   query: string;
   results: ISearchResults;
   example: string;
+  loading: boolean;
 };
 
 interface IState {
@@ -167,6 +172,7 @@ export default connect<IProps>(SearchResultBar, {
     query: (rs: IRootState) => rs.profile.search.query,
     results: (rs: IRootState) => rs.profile.search.results,
     example: (rs: IRootState) => rs.profile.search.example,
+    loading: (rs: IRootState) => rs.profile.search.loading,
   }),
   actionCreators,
 });

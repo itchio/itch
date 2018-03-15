@@ -26,8 +26,8 @@ export class RememberedProfiles extends React.PureComponent<
   IProps & IDerivedProps,
   IState
 > {
-  constructor() {
-    super();
+  constructor(props: RememberedProfiles["props"], context) {
+    super(props, context);
     this.state = {
       loading: true,
       profiles: [],

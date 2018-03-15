@@ -24,7 +24,6 @@ const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
   font-size: ${styles.fontSizes.sidebar};
 
-  width: ${props => props.width}px;
   height: 100%;
   flex-grow: 0;
   flex-shrink: 0;
@@ -79,8 +78,8 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
 });
 
 class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
-  constructor(props: IProps & IDerivedProps) {
-    super();
+  constructor(props: Sidebar["props"], context) {
+    super(props, context);
     this.state = {
       transient: props.openTabs.transient,
     };
@@ -112,7 +111,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
     } = this.props;
 
     return (
-      <SidebarDiv id="sidebar" width={sidebarWidth}>
+      <SidebarDiv id="sidebar" style={{ width: `${sidebarWidth}px` }}>
         {osx && !fullscreen ? <TitleBarPadder /> : null}
 
         <Logo />

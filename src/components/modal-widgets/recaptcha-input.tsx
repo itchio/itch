@@ -27,15 +27,15 @@ const WidgetDiv = styled.div`
   }
 `;
 
-class RecaptchaInput extends React.Component<
+class RecaptchaInput extends React.PureComponent<
   IRecaptchaInputProps & IDerivedProps,
   IState
 > {
   webview: Electron.WebviewTag;
   checker: NodeJS.Timer;
 
-  constructor() {
-    super();
+  constructor(props: IRecaptchaInputProps & IDerivedProps, context) {
+    super(props, context);
     this.state = {
       loaded: false,
     };

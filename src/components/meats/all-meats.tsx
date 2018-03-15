@@ -4,8 +4,6 @@ import { createSelector, createStructuredSelector } from "reselect";
 import * as classNames from "classnames";
 
 import Meat from "./meat";
-import SearchResultsBar from "../search-results/search-results-bar";
-import SearchDimmer from "../search-results/search-dimmer";
 
 import { map } from "underscore";
 

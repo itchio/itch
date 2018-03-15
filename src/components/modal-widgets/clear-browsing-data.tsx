@@ -18,8 +18,8 @@ class ClearBrowsingData extends React.PureComponent<
   IProps & IDerivedProps,
   IState
 > {
-  constructor() {
-    super();
+  constructor(props: ClearBrowsingData["props"], context) {
+    super(props, context);
     this.state = {
       fetchedCacheSize: false,
       clearCache: true,
