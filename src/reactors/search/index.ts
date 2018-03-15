@@ -10,13 +10,23 @@ import { filter, sortBy } from "underscore";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.search, async (store, action) => {
+    const oldQuery = store.getState().profile.search.query;
+
+    const query = action.payload.query.trim();
+
+    if (query.length === 0) {
+      // clear search
+      store.dispatch(actions.searchFetched({ query: "", results: {} }));
+    }
+
+    if (oldQuery === action.payload.query) {
+      // already fetched, nevermind
+      return;
+    }
+
     store.dispatch(actions.searchStarted({}));
     try {
       const profileId = store.getState().profile.credentials.me.id;
-      const { query } = action.payload;
-      if (query.length < 3) {
-        return;
-      }
 
       let results: ISearchResults = {};
 

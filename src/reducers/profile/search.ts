@@ -25,10 +25,6 @@ const initialState = {
 export default reducer<IProfileSearchState>(initialState, on => {
   on(actions.search, (state, action) => {
     const typedQuery = action.payload.query;
-    if (!typedQuery) {
-      return state;
-    }
-
     if (typedQuery == state.typedQuery) {
       return state;
     }
