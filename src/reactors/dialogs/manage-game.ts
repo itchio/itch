@@ -29,7 +29,7 @@ export default function(watcher: Watcher) {
 
     const openModal = actions.openModal(
       modalWidgets.manageGame.make({
-        title: ["prompt.manage_game.title", { title: game.title }],
+        title: game.title,
         message: "",
         buttons: [
           {

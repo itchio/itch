@@ -1,6 +1,6 @@
 import { IRootState, ITask, DownloadReason } from "../types/index";
 
-import { first, findWhere } from "underscore";
+import { first, findWhere, size } from "underscore";
 import getByIds from "./get-by-ids";
 import {
   getPendingForGame,
@@ -83,6 +83,7 @@ export interface IOperation {
 export interface IGameStatus {
   downloadKey: DownloadKeySummary;
   cave: CaveSummary;
+  numCaves: number;
   access: Access;
   operation: IOperation;
   update: GameUpdate;
@@ -103,11 +104,13 @@ export default function getGameStatus(
   );
 
   let cave: CaveSummary;
+  let numCaves = 0;
   if (!cave) {
     if (caveId) {
       cave = commons.caves[caveId];
     } else {
       let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+      numCaves = size(caves);
       cave = first(caves);
     }
   }
@@ -142,6 +145,7 @@ export default function getGameStatus(
   return realGetGameStatus(
     game,
     cave,
+    numCaves,
     downloadKey,
     pressUser,
     task,
@@ -156,6 +160,7 @@ export default function getGameStatus(
 function rawGetGameStatus(
   game: Game,
   cave: CaveSummary,
+  numCaves: number,
   downloadKey: DownloadKeySummary,
   pressUser: boolean,
   task: ITask,
@@ -223,6 +228,7 @@ function rawGetGameStatus(
   const compatible = isPlatformCompatible(game);
   return {
     cave,
+    numCaves,
     downloadKey,
     access,
     operation,

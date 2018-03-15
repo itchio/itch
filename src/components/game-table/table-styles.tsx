@@ -56,6 +56,27 @@ export const TableContainerDiv = styled(StylableDiv)`
   flex-direction: column;
   overflow: hidden;
 
+  .filter {
+    z-index: 80;
+    background: ${props => props.theme.sidebarBackground};
+    border-radius: 4px;
+
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    top: 8px;
+    right: 8px;
+
+    padding: 2px;
+
+    input {
+      ${styles.heavyInput()};
+      width: 280px;
+    }
+  }
+
   .table--row,
   .table--header {
     display: flex;
@@ -78,11 +99,18 @@ export const TableContainerDiv = styled(StylableDiv)`
     overflow: hidden;
 
     font-size: ${props => props.theme.fontSizes.large};
+    cursor: default;
+    user-select: none;
 
-    &:hover {
+    &.selected {
       background-color: ${props => darken(0.05, props.theme.meatBackground)};
+    }
+
+    &.has-cave {
       border-color: ${props => props.theme.accent};
-      cursor: pointer;
+      .row--title {
+        color: ${props => props.theme.baseText};
+      }
     }
   }
 
@@ -112,6 +140,7 @@ export const TableContainerDiv = styled(StylableDiv)`
   .row--title {
     ${column()};
     width: ${props => props.sizes.title}px;
+    color: ${props => props.theme.ternaryText};
   }
 
   .row--play-time {
@@ -171,4 +200,8 @@ export const TableDiv = styled.div`
   flex-grow: 1;
   overflow-y: scroll;
   position: relative;
+
+  &:focus {
+    outline: none;
+  }
 `;

@@ -670,6 +670,8 @@ export const actions = wireActions({
 
   // search
 
+  focusInPageSearch: action<{}>(),
+
   focusSearch: action<{}>(),
   clearFilters: action<{}>(),
   searchQueryChanged: action<{}>(),

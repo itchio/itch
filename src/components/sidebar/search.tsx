@@ -121,13 +121,6 @@ class Search extends React.PureComponent<IDerivedProps> {
   };
 
   subscribe(watcher: Watcher) {
-    watcher.on(actions.focusSearch, async (store, action) => {
-      if (this.input) {
-        this.input.focus();
-        this.input.select();
-      }
-    });
-
     watcher.on(actions.commandBack, async (store, action) => {
       if (this.input) {
         this.props.closeSearch({});

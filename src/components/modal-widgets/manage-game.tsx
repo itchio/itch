@@ -9,7 +9,7 @@ import Button from "../basics/button";
 import Filler from "../basics/filler";
 import styled from "../styles";
 
-import { map, find, filter } from "underscore";
+import { map, find, filter, each, size } from "underscore";
 import { fileSize } from "../../format/filesize";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
@@ -90,11 +90,11 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
     const { game, caves, allUploads, loadingUploads } = params;
 
     const installedUploadIds = {};
-    for (const cave of caves) {
+    each(caves, cave => {
       if (cave.upload) {
         installedUploadIds[cave.upload.id] = true;
       }
-    }
+    });
 
     const uninstalledUploads = filter(
       allUploads,
@@ -103,61 +103,67 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <ModalWidgetDiv>
-        <p>{format(["prompt.manage_game.installed_uploads"])}</p>
+        {size(caves) > 0 ? (
+          <>
+            <p>{format(["prompt.manage_game.installed_uploads"])}</p>
 
-        <CaveItemList>
-          {map(caves, (cave, i) => {
-            const u = cave.upload;
-            const caveSummary = getCaveSummary(cave);
+            <CaveItemList>
+              {map(caves, (cave, i) => {
+                const u = cave.upload;
+                const caveSummary = getCaveSummary(cave);
 
-            return (
-              <CaveItem>
-                <CaveDetails>
-                  <CaveDetailsRow>
-                    <Title>{formatUpload(u)}</Title>
-                  </CaveDetailsRow>
-                  <CaveDetailsRow className="smaller">
-                    {cave.installInfo.installedSize ? (
-                      <FileSize>
-                        {fileSize(cave.installInfo.installedSize)}
-                      </FileSize>
-                    ) : null}
-                    <Spacer />
-                    <LastPlayed game={game} cave={caveSummary} />
-                    <Spacer />
-                    <TotalPlaytime game={game} cave={caveSummary} />
-                  </CaveDetailsRow>
-                </CaveDetails>
-                <Filler />
-                <CaveItemActions>
-                  <IconButton
-                    data-cave-id={cave.id}
-                    hint={showInExplorerString()}
-                    icon="folder-open"
-                    onClick={this.onExplore}
-                  />
-                  <IconButton
-                    data-cave-id={cave.id}
-                    hint={["prompt.uninstall.reinstall"]}
-                    icon="repeat"
-                    onClick={this.onReinstall}
-                    className="manage-reinstall"
-                  />
-                  <IconButton
-                    data-cave-id={cave.id}
-                    hint={["prompt.uninstall.uninstall"]}
-                    icon="uninstall"
-                    onClick={this.onUninstall}
-                    className="manage-uninstall"
-                  />
-                </CaveItemActions>
-              </CaveItem>
-            );
-          })}
-        </CaveItemList>
+                return (
+                  <CaveItem>
+                    <CaveDetails>
+                      <CaveDetailsRow>
+                        <Title>{formatUpload(u)}</Title>
+                      </CaveDetailsRow>
+                      <CaveDetailsRow className="smaller">
+                        {cave.installInfo.installedSize ? (
+                          <FileSize>
+                            {fileSize(cave.installInfo.installedSize)}
+                          </FileSize>
+                        ) : null}
+                        <Spacer />
+                        <LastPlayed game={game} cave={caveSummary} />
+                        <Spacer />
+                        <TotalPlaytime game={game} cave={caveSummary} />
+                      </CaveDetailsRow>
+                    </CaveDetails>
+                    <Filler />
+                    <CaveItemActions>
+                      <IconButton
+                        data-cave-id={cave.id}
+                        hint={showInExplorerString()}
+                        icon="folder-open"
+                        onClick={this.onExplore}
+                      />
+                      <IconButton
+                        data-cave-id={cave.id}
+                        hint={["prompt.uninstall.reinstall"]}
+                        icon="repeat"
+                        onClick={this.onReinstall}
+                        className="manage-reinstall"
+                      />
+                      <IconButton
+                        data-cave-id={cave.id}
+                        hint={["prompt.uninstall.uninstall"]}
+                        icon="uninstall"
+                        onClick={this.onUninstall}
+                        className="manage-uninstall"
+                      />
+                    </CaveItemActions>
+                  </CaveItem>
+                );
+              })}
+            </CaveItemList>
+          </>
+        ) : null}
 
         {uninstalledUploads.length > 0 ? (
-          <p>{format(["prompt.manage_game.available_uploads"])}</p>
+          size(caves) > 0 ? (
+            <p>{format(["prompt.manage_game.available_uploads"])}</p>
+          ) : null
         ) : (
           <p>
             {loadingUploads ? (

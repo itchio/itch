@@ -24,6 +24,8 @@ interface IAsTaskOpts {
 
   /** Called with the thrown error & the logs so far if set */
   onError?: (error: Error, log: string) => Promise<void>;
+
+  onCancel?: () => Promise<void>;
 }
 
 export default async function asTask(opts: IAsTaskOpts) {
@@ -53,7 +55,7 @@ export default async function asTask(opts: IAsTaskOpts) {
 
   let err: Error;
 
-  const { work, onError } = opts;
+  const { work, onError, onCancel } = opts;
 
   try {
     await work(ctx, logger);
@@ -71,8 +73,14 @@ export default async function asTask(opts: IAsTaskOpts) {
   if (err) {
     if (isCancelled(err)) {
       rootLogger.warn(`Task ${name} cancelled`);
+      if (onCancel) {
+        await onCancel();
+      }
     } else if (isAborted(err)) {
       rootLogger.warn(`Task ${name} aborted`);
+      if (onCancel) {
+        await onCancel();
+      }
     } else {
       rootLogger.warn(`Task ${name} threw: ${err.stack}`);
       if (onError) {

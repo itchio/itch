@@ -66,7 +66,7 @@ export function gameControls(store: IStore, game: Game): IMenuTemplate {
   let template: IMenuTemplate = [];
 
   const status = getGameStatus(store.getState(), game);
-  const { cave, operation } = status;
+  const { cave, numCaves, operation } = status;
 
   const mainAction = actionForGame(game, cave);
 
@@ -138,6 +138,17 @@ export function gameControls(store: IStore, game: Game): IMenuTemplate {
         localizedLabel: ["grid.item.manage"],
         action: actions.manageGame({ game }),
       });
+
+      if (numCaves === 1) {
+        uninstallReinstallItems.push({
+          type: "separator",
+        });
+        uninstallReinstallItems.push({
+          id: "context--grid-item-uninstall",
+          localizedLabel: ["grid.item.uninstall"],
+          action: actions.requestCaveUninstall({ caveId: cave.id }),
+        });
+      }
 
       template = concatTemplates(template, uninstallReinstallItems);
     }

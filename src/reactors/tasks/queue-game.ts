@@ -72,6 +72,12 @@ export async function queueInstall(
   upload?: Upload,
   build?: Build
 ) {
+  store.dispatch(
+    actions.statusMessage({
+      message: `Queuing ${game.title} for install...`,
+    })
+  );
+
   await asTask({
     name: "install-queue",
     gameId: game.id,
@@ -102,6 +108,13 @@ export async function queueInstall(
             widgetParams: { rawError: e, log },
           })
         )
+      );
+    },
+    onCancel: async () => {
+      store.dispatch(
+        actions.statusMessage({
+          message: `Install for ${game.title} cancelled!`,
+        })
       );
     },
   });
