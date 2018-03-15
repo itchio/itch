@@ -79,6 +79,10 @@ const LocationTable = styled.table`
     max-width: 60px;
   }
 
+  tr.add-new:hover {
+    cursor: pointer;
+  }
+
   .progress-wrapper {
     font-size: ${props => props.theme.fontSizes.smaller};
     &:hover {
@@ -216,8 +220,7 @@ class InstallLocationSettings extends React.Component<
             addInstallLocation({});
           }}
         >
-          <Icon icon="plus" />
-          {format(["preferences.install_location.add"])}
+          <Icon icon="plus" /> {format(["preferences.install_location.add"])}
         </td>
       </tr>
     );
