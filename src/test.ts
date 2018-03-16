@@ -5,7 +5,6 @@ const { assert } = chai;
 import "mocha";
 
 process.env.NODE_ENV = "test";
-import env from "./env";
 
 const _describe = describe;
 const _it = it;
