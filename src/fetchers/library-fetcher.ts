@@ -22,16 +22,29 @@ export default class LibraryFetcher extends Fetcher {
     }
 
     await withButlerClient(this.logger, async client => {
+      let games: Game[] = [];
+
+      const push = () => {
+        games = uniq(games, g => g.id);
+        this.pushUnfilteredGames(games);
+      };
+
+      const { caves } = await client.call(messages.FetchCaves({}));
+      if (caves) {
+        for (const cave of caves) {
+          games.push(cave.game);
+        }
+      }
+
       client.onNotification(
         messages.FetchProfileOwnedKeysYield,
         async ({ params }) => {
-          let games: Game[] = [];
-          if (params.items)
+          if (params.items) {
             for (const dk of params.items) {
               games.push(dk.game);
             }
-          games = uniq(games, g => g.id);
-          this.pushUnfilteredGames(games);
+            push();
+          }
         }
       );
 
