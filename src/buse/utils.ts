@@ -36,10 +36,10 @@ export async function withButlerClient<T>(
     });
     await instance.promise();
   } catch (e) {
-    console.log(`Caught butler error: ${e.stack}`);
+    console.error(`Caught butler error: ${e.stack}`);
     const re = asRequestError(e);
     if (re && re.rpcError && re.rpcError.data) {
-      console.log(`Golang stack:\n${re.rpcError.data.stack}`);
+      console.error(`Golang stack:\n${re.rpcError.data.stack}`);
     }
     throw e;
   } finally {

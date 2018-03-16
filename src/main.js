@@ -1,36 +1,13 @@
-// const env = require("./env").default;
-const env = {
-  name: "development"
-};
 
-let runTests = false;
-let thorough = true;
-
-for (const arg of process.argv) {
-  if (arg === "--run-unit-tests") {
-    runTests = true;
-  }
-  if (arg === "--thorough") {
-    thorough = true;
-  }
-  if (arg === "--shallow") {
-    thorough = false;
-  }
-}
-
-if (runTests) {
-  process.env.ITCH_LOG_LEVEL = "error";
-}
-
-// if (env.name !== "test") {
-//   require("./util/crash-reporter").mount();
+// if (process.env.NODE_ENV !== "test") {
+  require("./util/crash-reporter").mount();
 // }
 
-// if (env.name === "test") {
-//   require("./boot/test-paths").setup();
-// }
+if (process.env.NODE_ENV === "test") {
+  require("./boot/test-paths").setup();
+}
 
-if (env.name === "development") {
+if (process.env.NODE_ENV !== "production") {
   const fs = require("fs");
   require("source-map-support").install({
     retrieveSourceMap: function(source) {
@@ -46,12 +23,4 @@ if (env.name === "development") {
   });
 }
 
-function main() {
-  if (runTests) {
-    require("./unit-tests/run-unit-tests");
-  } else {
-    require("./metal");
-  }
-}
-
-main();
+require("./metal");

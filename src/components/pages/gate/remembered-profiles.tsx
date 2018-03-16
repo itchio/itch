@@ -1,7 +1,7 @@
 import * as React from "react";
 import { map, isEmpty } from "underscore";
-import rootLogger from "../../../logger";
-import { withButlerClient, messages } from "../../../buse";
+import { messages, call } from "../../../buse";
+import { doAsync } from "../../do-async";
 import { Profile } from "../../../buse/messages";
 
 import Link from "../../basics/link";
@@ -35,24 +35,21 @@ export class RememberedProfiles extends React.PureComponent<
   }
 
   componentDidMount() {
-    const logger = rootLogger.child({ name: "remembered-profiles" });
-    withButlerClient(logger, async client => {
-      const res = await client.call(messages.ProfileList({}));
-      this.setState({
-        loading: false,
-        profiles: res.profiles,
-      });
-    }).catch(e => console.error(e));
+    doAsync(async () => {
+      const { profiles } = await call(messages.ProfileList, {});
+      this.setState({ loading: false, profiles });
+
+      if (isEmpty(profiles)) {
+        // FIXME: that's just not good.
+        this.props.loginStopPicking({});
+      }
+    });
   }
 
   render() {
     const { loading, profiles } = this.state;
     if (loading) {
       return <LoadingCircle progress={-1} wide />;
-    }
-
-    if (isEmpty(profiles)) {
-      return <p>No saved profiles</p>;
     }
 
     const { loginStopPicking } = this.props;

@@ -1,12 +1,16 @@
 package main
 
 import (
+	"compress/gzip"
 	"context"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -62,6 +66,57 @@ func doMain() error {
 	}
 	r.cwd = cwd
 
+	r.logf("Building...")
+	{
+		cmd := exec.Command("node", "./src/init.js")
+		cmd.Env = os.Environ()
+		cmd.Env = append(cmd.Env, "NODE_ENV=test")
+		combinedOut, err := cmd.CombinedOutput()
+		if err != nil {
+			r.logf("Build failed:\n%s", string(combinedOut))
+			return errors.Wrap(err, 0)
+		}
+	}
+
+	r.logf("Downloading butler")
+	{
+		ext := ""
+		if runtime.GOOS == "windows" {
+			ext = ".exe"
+		}
+		butlerURL := fmt.Sprintf("https://dl.itch.ovh/butler/%s-%s/head/butler.gz", runtime.GOOS, runtime.GOARCH)
+		butlerDest := filepath.Join(cwd, "tmp", "prefix", "userData", "bin", "butler"+ext)
+		err := os.MkdirAll(filepath.Dir(butlerDest), 0755)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+		butlerFile, err := os.Create(butlerDest)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+
+		req, err := http.Get(butlerURL)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+
+		gunzipper, err := gzip.NewReader(req.Body)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+
+		_, err = io.Copy(butlerFile, gunzipper)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+		butlerFile.Close()
+
+		err = os.Chmod(butlerDest, 0755)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+	}
+
 	must(downloadChromeDriver(r))
 
 	chromeDriverPort := 9515
@@ -72,6 +127,7 @@ func doMain() error {
 	env = append(env, "NODE_ENV=test")
 	env = append(env, "ITCH_LOG_LEVEL=debug")
 	env = append(env, "ITCH_NO_STDOUT=1")
+	env = append(env, "ELECTRON_ENABLE_LOGGING=1")
 	r.chromeDriverCmd.Env = env
 
 	go func() {

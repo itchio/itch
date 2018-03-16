@@ -20,6 +20,10 @@ const BlockingOperationDiv = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: center;
+    white-space: pre-wrap;
+    max-height: 150px;
+    overflow-y: auto;
+    user-select: initial;
   }
 
   .error-actions {

@@ -229,7 +229,10 @@ async function createWindow(store: IStore, hidden: boolean) {
     window.webContents.openDevTools({ mode: "detach" });
   }
 
-  let uri = `http://localhost:1234/dist/index.html`;
+  let uri = `file:///${__dirname}/index.html`;
+  if (process.env.NODE_ENV == "development") {
+    uri = `http://localhost:1234/dist/index.html`;
+  }
   if (process.env.ITCH_REACT_PERF === "1") {
     logger.info(`Enabling react perf`);
     uri += `?react_perf`;

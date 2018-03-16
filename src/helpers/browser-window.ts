@@ -6,7 +6,7 @@ const fakeWindow = {
 
 export const BrowserWindow = {
   fromId(id: number): electron.BrowserWindow {
-    if (process.env.NODE_ENV === "test") {
+    if (!process.type) {
       return fakeWindow;
     }
     return electron.BrowserWindow.fromId(id);

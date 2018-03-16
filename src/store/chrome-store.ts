@@ -55,3 +55,5 @@ const store = createStore(reducer, initialState, enhancer) as IChromeStore;
 store.watcher = watcher;
 
 export default store;
+
+(window as any).ReduxStore = store;
