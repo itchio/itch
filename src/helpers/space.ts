@@ -228,7 +228,7 @@ export class Space {
     return null;
   }
 
-  query(): IQuery {
+  query(): querystring.ParsedUrlQuery {
     return this._query || eo;
   }
 
