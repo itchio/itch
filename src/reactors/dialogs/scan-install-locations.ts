@@ -8,6 +8,7 @@ import { IScanInstallLocationsParams } from "../../components/modal-widgets/scan
 
 export default function(watcher: Watcher) {
   watcher.on(actions.scanInstallLocations, async (store, action) => {
+    let names: string[] = [];
     let widgetParams: IScanInstallLocationsParams = {
       progress: 0.00001,
       game: null,
@@ -55,6 +56,7 @@ export default function(watcher: Watcher) {
           client.onNotification(
             messages.InstallLocationsScanYield,
             async ({ params }) => {
+              names.push(params.game.title);
               widgetParams.game = params.game;
               update();
             }
@@ -66,13 +68,14 @@ export default function(watcher: Watcher) {
               const res = await promisedModal(
                 store,
                 modalWidgets.naked.make({
-                  title: "itch can import installed games!",
+                  title: "Confirm import",
+                  message: "The following items can be imported:",
+                  detail: names.map(n => `  * ${n}`).join("\n") + "\n",
                   widgetParams: null,
-                  bigButtons: [
+                  buttons: [
                     {
                       label: `Import ${params.numItems} items`,
                       icon: "install",
-                      tags: [{ label: "Go go go!" }],
                       action: actions.modalResponse({}),
                     },
                     "cancel",

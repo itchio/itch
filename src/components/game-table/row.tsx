@@ -5,6 +5,7 @@ import Hoverable from "../basics/hover-hoc";
 import TimeAgo from "../basics/time-ago";
 import TotalPlaytime from "../total-playtime";
 import LastPlayed from "../last-played";
+import MainAction from "../game-actions/main-action";
 
 const HoverCover = Hoverable(Cover);
 
@@ -22,7 +23,15 @@ import IconButton from "../basics/icon-button";
 
 class Row extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { game, caves, index, rowHeight, columns, selected } = this.props;
+    const {
+      game,
+      caves,
+      index,
+      rowHeight,
+      columns,
+      selected,
+      status,
+    } = this.props;
 
     const { stillCoverUrl, coverUrl, publishedAt } = game;
     const translateY = Math.round(index * rowHeight);
@@ -73,7 +82,9 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
               <div key={c} className={className(c)}>
                 {cave ? (
                   <LastPlayed game={game} cave={cave} short={true} />
-                ) : null}
+                ) : (
+                  <MainAction game={game} status={status} />
+                )}
               </div>
             );
           } else if (c === "installed-size") {

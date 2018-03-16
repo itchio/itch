@@ -42,7 +42,7 @@ export default function(watcher: Watcher) {
             buttons: [
               {
                 label: ["prompt.install_location_not_empty.show_contents"],
-                action: actions.navigate({ url: `itch://locations/${name}` }),
+                action: actions.navigateToInstallLocation({ installLocation }),
               },
               "cancel",
             ],
@@ -65,7 +65,7 @@ export default function(watcher: Watcher) {
               location: installLocation.path,
             },
           ],
-          bigButtons: [
+          buttons: [
             {
               label: ["prompt.action.confirm_removal"],
               action: actions.modalResponse({}),

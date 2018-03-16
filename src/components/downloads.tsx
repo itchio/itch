@@ -37,8 +37,8 @@ const DownloadsContentDiv = styled.div`
 
   .global-controls {
     position: absolute;
-    top: 0;
-    right: 6px;
+    top: 20px;
+    right: 20px;
   }
 
   .section-bar {
@@ -175,8 +175,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
   renderControls(): JSX.Element {
     return (
       <>
-        <div className="section-bar global-controls">
-          <div className="filler" />
+        <div className="global-controls">
           {this.props.downloadsPaused ? (
             <Button discreet icon="triangle-right" onClick={this.onTogglePause}>
               Resume downloads

@@ -38,6 +38,7 @@ export function sortAndFilter(
     prefs.onlyOwnedGames;
 
   if (hasFilters && !opts.disableFilters) {
+    const downloadSet = rs.downloads.itemIdsByGameId;
     const installedSet = rs.commons.caveIdsByGameId;
     const ownedSet = rs.commons.downloadKeyIdsByGameId;
 
@@ -49,7 +50,11 @@ export function sortAndFilter(
       if (prefs.onlyCompatibleGames && !isPlatformCompatible(g)) {
         return false;
       }
-      if (prefs.onlyInstalledGames && !installedSet[g.id]) {
+      if (
+        prefs.onlyInstalledGames &&
+        !installedSet[g.id] &&
+        !downloadSet[g.id]
+      ) {
         return false;
       }
       if (prefs.onlyOwnedGames && !ownedSet[g.id]) {

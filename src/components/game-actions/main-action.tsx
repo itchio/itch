@@ -47,14 +47,22 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
         if (operation.paused) {
           label = ["grid.item.downloads_paused"];
         } else if (operation.active) {
-          label = ["grid.item.downloading"];
+          label = ["grid.item.installing"];
         } else {
           label = ["grid.item.queued"];
         }
       } else if (type === OperationType.Task) {
-        const { name } = operation;
+        const { name, stage } = operation;
         if (name === "launch") {
-          label = ["grid.item.running"];
+          if (stage === "prepare") {
+            label = ["grid.item.running.prepare"];
+          } else if (stage === "clean") {
+            label = ["grid.item.running.clean"];
+          } else {
+            label = ["grid.item.running"];
+          }
+        } else if (name === "uninstall") {
+          label = ["grid.item.uninstalling"];
         } else {
           label = ["grid.item.installing"];
         }

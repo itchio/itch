@@ -15,6 +15,7 @@ import { messages, call } from "../../buse/index";
 import { IRootState, IMenuTemplate } from "../../types/index";
 import { actions } from "../../actions/index";
 import Button from "../basics/button";
+import watching, { Watcher } from "../watching";
 const LocationTable = styled.table`
   width: 100%;
   font-size: 14px;
@@ -108,7 +109,7 @@ const LocationTable = styled.table`
 `;
 
 const ControlButtonsDiv = styled.div`
-  padding: 8px;
+  padding: 12px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -119,6 +120,7 @@ const Spacer = styled.div`
   height: 1px;
 `;
 
+@watching
 class InstallLocationSettings extends React.Component<
   IProps & IDerivedProps,
   IState
@@ -128,6 +130,12 @@ class InstallLocationSettings extends React.Component<
     this.state = {
       installLocations: [],
     };
+  }
+
+  subscribe(watcher: Watcher) {
+    watcher.on(actions.installLocationsChanged, async (store, action) => {
+      this.refresh();
+    });
   }
 
   componentDidMount() {
@@ -151,12 +159,14 @@ class InstallLocationSettings extends React.Component<
         <ControlButtonsDiv>
           <Button
             icon="plus"
+            discreet
             label={format(["preferences.install_location.add"])}
             onClick={() => this.props.addInstallLocation({})}
           />
           <Spacer />
           <Button
             icon="repeat"
+            discreet
             label="Scan install locations for games"
             onClick={() => this.props.scanInstallLocations({})}
           />

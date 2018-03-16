@@ -82,7 +82,7 @@ export const TableContainerDiv = styled(StylableDiv)`
     display: flex;
     flex-direction: row;
     padding: 0.25em;
-    border-left: 2px solid transparent;
+    border-left: 1px solid transparent;
   }
 
   .table--header {
@@ -93,7 +93,8 @@ export const TableContainerDiv = styled(StylableDiv)`
 
   .table--row {
     position: absolute;
-    transition: transform 0.2s, border-color 0.2s;
+    transition: transform 0.2s;
+    border: 1px solid transparent;
 
     height: ${rowHeight}px;
     overflow: hidden;
@@ -106,10 +107,9 @@ export const TableContainerDiv = styled(StylableDiv)`
       background-color: ${props => darken(0.05, props.theme.meatBackground)};
     }
 
-    &.has-cave {
-      border-color: ${props => props.theme.accent};
-      .row--title {
-        color: ${props => props.theme.baseText};
+    &:not(.has-cave) {
+      .row--cover {
+        opacity: 0.2;
       }
     }
   }
@@ -135,6 +135,7 @@ export const TableContainerDiv = styled(StylableDiv)`
     overflow: hidden;
     width: ${props => props.sizes.cover}px;
     padding-right: 0.6em;
+    opacity: 1;
   }
 
   .row--title {
@@ -180,6 +181,7 @@ export const TableContainerDiv = styled(StylableDiv)`
     ${titleSection()};
     ${styles.singleLine()};
 
+    color: ${props => props.theme.baseText};
     font-weight: bold;
     margin-bottom: 0.25em;
   }
@@ -187,8 +189,8 @@ export const TableContainerDiv = styled(StylableDiv)`
   .title--description {
     ${titleSection()};
 
-    font-size: 90%;
     color: ${props => props.theme.secondaryText};
+    font-size: 90%;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;

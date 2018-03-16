@@ -8,8 +8,8 @@ import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
 import { size } from "underscore";
 import {
-  getFinishedDownloads,
   getActiveDownload,
+  getPendingDownloads,
 } from "../../reactors/downloads/getters";
 
 import {
@@ -69,7 +69,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
 
     if (tab === "itch://downloads") {
       const { downloads } = this.props;
-      count = size(getFinishedDownloads(downloads));
+      count = size(getPendingDownloads(downloads));
       const activeDownload = getActiveDownload(downloads);
       if (activeDownload) {
         const downloadProgress = downloads.progresses[activeDownload.id];

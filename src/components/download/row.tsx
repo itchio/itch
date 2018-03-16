@@ -11,6 +11,7 @@ import IconButton from "../basics/icon-button";
 import Button from "../basics/button";
 import Hover, { IHoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
+import MainAction from "../game-actions/main-action";
 
 import { IDownloadSpeeds, ITask, IRootState } from "../../types";
 
@@ -57,10 +58,6 @@ const DownloadRowDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-
-  &.finished {
-    cursor: pointer;
-  }
 
   .stats {
     flex-grow: 1;
@@ -201,15 +198,6 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
     const { game } = item;
     const { coverUrl, stillCoverUrl } = game;
 
-    let onStatsClick = (ev: React.MouseEvent<any>): void => null;
-    if (finished) {
-      if (item.error) {
-        onStatsClick = this.onShowError;
-      } else {
-        onStatsClick = this.onNavigate;
-      }
-    }
-
     const itemClasses = classNames("download-row-item", {
       first,
       dimmed: !finished && !first,
@@ -236,9 +224,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
           gameId={game.id}
           onClick={this.onNavigate}
         />
-        <div className="stats" onClick={onStatsClick}>
-          {this.progress()}
-        </div>
+        <div className="stats">{this.progress()}</div>
         {this.controls()}
       </DownloadRowDiv>
     );
@@ -267,21 +253,9 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       return null;
     }
 
-    if (!status.operation) {
-      return (
-        <div className="controls">
-          <IconButton
-            big
-            icon="cross"
-            hintPosition="left"
-            hint={["status.downloads.clear_finished"]}
-            onClick={this.onDiscard}
-          />
-        </div>
-      );
-    }
-
     let showPrioritize = !item.finishedAt && !first;
+    let showMainAction =
+      !status.operation || status.operation.type !== OperationType.Download;
 
     return (
       <Controls>
@@ -293,13 +267,20 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
             onClick={this.onPrioritize}
           />
         ) : null}
-        <IconButton
-          big
-          hintPosition="left"
-          hint={["grid.item.discard_download"]}
-          icon="cross"
-          onClick={this.onDiscard}
-        />
+        {showMainAction ? (
+          <>
+            <MainAction game={item.game} status={status} />
+            <Spacer />
+          </>
+        ) : (
+          <IconButton
+            big
+            hintPosition="left"
+            hint={["grid.item.discard_download"]}
+            icon="cross"
+            onClick={this.onDiscard}
+          />
+        )}
       </Controls>
     );
   }
@@ -378,17 +359,8 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
   renderErrorOrTimestamp(): JSX.Element {
     const { error, finishedAt, reason } = this.props.item;
-    const { operation } = this.props.status;
 
     if (!error) {
-      if (operation && operation.type == OperationType.Task) {
-        return (
-          <div className="control--status">
-            {this.formatOperation(operation)}
-          </div>
-        );
-      }
-
       const outcomeText = formatOutcome(reason);
       return (
         <div className="control--status">
