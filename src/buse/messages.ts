@@ -734,6 +734,40 @@ export const InstallLocationsGetByID = createRequest<
 >("Install.Locations.GetByID");
 
 /**
+ * Result for Install.Locations.Scan.ConfirmImport
+ */
+export interface InstallLocationsScanConfirmImportResult {
+  /** undocumented */
+  confirm: boolean;
+}
+
+/**
+ * Sent at the end of @@InstallLocationsScanParams
+ */
+export const InstallLocationsScanConfirmImport = createRequest<
+  InstallLocationsScanConfirmImportParams,
+  InstallLocationsScanConfirmImportResult
+>("Install.Locations.Scan.ConfirmImport");
+
+/**
+ * Result for Install.Locations.Scan
+ */
+export interface InstallLocationsScanResult {
+  /** undocumented */
+  numFoundItems: number;
+  /** undocumented */
+  numImportedItems: number;
+}
+
+/**
+ * undocumented
+ */
+export const InstallLocationsScan = createRequest<
+  InstallLocationsScanParams,
+  InstallLocationsScanResult
+>("Install.Locations.Scan");
+
+/**
  * Result for Downloads.Queue
  */
 export interface DownloadsQueueResult {
@@ -2381,6 +2415,38 @@ export interface InstallLocationsRemoveParams {
 export interface InstallLocationsGetByIDParams {
   /** identifier of the install location to remove */
   id: string;
+}
+
+/**
+ * Params for Install.Locations.Scan
+ */
+export interface InstallLocationsScanParams {
+  /** path to a legacy marketDB */
+  legacyMarketPath?: string;
+}
+
+/**
+ * Payload for Install.Locations.Scan.Yield
+ */
+export interface InstallLocationsScanYieldNotification {
+  /** undocumented */
+  game: Game;
+}
+
+/**
+ * Sent during @@InstallLocationsScanParams whenever
+ * a game is found.
+ */
+export const InstallLocationsScanYield = createNotification<
+  InstallLocationsScanYieldNotification
+>("Install.Locations.Scan.Yield");
+
+/**
+ * Params for Install.Locations.Scan.ConfirmImport
+ */
+export interface InstallLocationsScanConfirmImportParams {
+  /** number of items that will be imported */
+  numItems: number;
 }
 
 /**

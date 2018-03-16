@@ -66,6 +66,10 @@ export default function(watcher: Watcher) {
   watcher.on(actions.launchEnded, async (store, action) => {
     updateCommons(store);
   });
+
+  watcher.on(actions.newItemsImported, async (store, action) => {
+    updateCommons(store);
+  });
 }
 
 function push(store: IStore, next: typeof actions.commonsUpdated.payload) {

@@ -471,6 +471,8 @@ export const actions = wireActions({
     /** id of install location to make the default */
     id: string;
   }>(),
+  scanInstallLocations: action<{}>(),
+  newItemsImported: action<{}>(),
   installLocationsChanged: action<{}>(),
 
   // tasks

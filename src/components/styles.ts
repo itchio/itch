@@ -309,10 +309,10 @@ export const searchIcon = () => css`
 `;
 
 export const clickable = () => css`
-  -webkit-filter: brightness(90%);
+  filter: brightness(90%);
 
   &:hover {
-    -webkit-filter: brightness(110%);
+    filter: brightness(110%);
     cursor: pointer;
   }
 

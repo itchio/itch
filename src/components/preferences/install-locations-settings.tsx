@@ -6,7 +6,6 @@ import { size, findWhere } from "underscore";
 import * as classNames from "classnames";
 import { fileSize } from "../../format/filesize";
 
-import Icon from "../basics/icon";
 import IconButton from "../basics/icon-button";
 
 import styled, * as styles from "../styles";
@@ -15,6 +14,7 @@ import { messages, call } from "../../buse/index";
 
 import { IRootState, IMenuTemplate } from "../../types/index";
 import { actions } from "../../actions/index";
+import Button from "../basics/button";
 const LocationTable = styled.table`
   width: 100%;
   font-size: 14px;
@@ -29,10 +29,6 @@ const LocationTable = styled.table`
     &:first-child {
       ${styles.prefChunk()};
     }
-  }
-
-  tr.add-new td {
-    padding: 10px 15px;
   }
 
   tr.default {
@@ -79,10 +75,6 @@ const LocationTable = styled.table`
     max-width: 60px;
   }
 
-  tr.add-new:hover {
-    cursor: pointer;
-  }
-
   .progress-wrapper {
     font-size: ${props => props.theme.fontSizes.smaller};
     &:hover {
@@ -115,6 +107,18 @@ const LocationTable = styled.table`
   }
 `;
 
+const ControlButtonsDiv = styled.div`
+  padding: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const Spacer = styled.div`
+  width: 8px;
+  height: 1px;
+`;
+
 class InstallLocationSettings extends React.Component<
   IProps & IDerivedProps,
   IState
@@ -143,13 +147,25 @@ class InstallLocationSettings extends React.Component<
       <>
         <h2>{format(["preferences.install_locations"])}</h2>
         {this.installLocationTable()}
+
+        <ControlButtonsDiv>
+          <Button
+            icon="plus"
+            label={format(["preferences.install_location.add"])}
+            onClick={() => this.props.addInstallLocation({})}
+          />
+          <Spacer />
+          <Button
+            icon="repeat"
+            label="Scan install locations for games"
+            onClick={() => this.props.scanInstallLocations({})}
+          />
+        </ControlButtonsDiv>
       </>
     );
   }
 
   installLocationTable() {
-    const { addInstallLocation } = this.props;
-
     const { installLocations } = this.state;
     const { defaultInstallLocation } = this.props;
 
@@ -210,20 +226,9 @@ class InstallLocationSettings extends React.Component<
       );
     }
 
-    rows.push(
-      <tr key="add-new" className="add-new">
-        <td
-          colSpan={3}
-          className="action add-new"
-          onClick={e => {
-            e.preventDefault();
-            addInstallLocation({});
-          }}
-        >
-          <Icon icon="plus" /> {format(["preferences.install_location.add"])}
-        </td>
-      </tr>
-    );
+    rows.push();
+
+    rows.push();
 
     return (
       <LocationTable>
@@ -274,7 +279,8 @@ interface IProps {}
 const actionCreators = actionCreatorsList(
   "popupContextMenu",
   "updatePreferences",
-  "addInstallLocation"
+  "addInstallLocation",
+  "scanInstallLocations"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {

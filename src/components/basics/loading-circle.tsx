@@ -27,7 +27,6 @@ const CircleContainer = styled.div`
     svg {
       width: 18px;
       height: 18px;
-      margin-bottom: -2px;
     }
   }
 `;
