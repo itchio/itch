@@ -1,6 +1,7 @@
 import { Watcher } from "./watcher";
 
-import { Menu, BrowserWindow } from "electron";
+import { BrowserWindow } from "../helpers/browser-window";
+import { Menu } from "../helpers/menu";
 
 import { createSelector } from "reselect";
 

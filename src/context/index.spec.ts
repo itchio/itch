@@ -1,12 +1,11 @@
-import suite from "../test-suite";
+import { describe, it, assert } from "../test";
+
 import Context from "./index";
-
 import { IStore, isCancelled } from "../types";
-
 const store = {} as IStore;
 
-suite(__filename, s => {
-  s.case("Context propagates progress", async t => {
+describe("Context", () => {
+  it("Context propagates progress", async () => {
     const c = new Context(store);
 
     let p1 = 0;
@@ -18,16 +17,16 @@ suite(__filename, s => {
       p2 = info.progress;
     });
 
-    t.same(p1, 0, "progress1 is 0 still");
-    t.same(p2, 0, "progress2 is 0 still");
+    assert.equal(p1, 0);
+    assert.equal(p2, 0);
 
     c.emitProgress({ progress: 0.5 });
 
-    t.same(p1, 0.5, "progress1 is now 0.5");
-    t.same(p2, 0.5, "progress2 is now 0.5");
+    assert.equal(p1, 0.5);
+    assert.equal(p2, 0.5);
   });
 
-  s.case("Context returns result", async t => {
+  it("Context returns result", async () => {
     const c = new Context(store);
 
     const ret = await (async () => {
@@ -37,10 +36,10 @@ suite(__filename, s => {
       });
     })();
 
-    t.same(ret, 42, "result was returned");
+    assert.equal(ret, 42);
   });
 
-  s.case("Context signals abort", async t => {
+  it("Context signals abort", async () => {
     const c = new Context(store);
 
     let abortCount = 0;
@@ -50,8 +49,8 @@ suite(__filename, s => {
       abortCount++;
     });
 
-    t.is(abortCount, 0, "haven't aborted initially");
-    t.false(c.isDead(), "context is not dead yet");
+    assert.equal(abortCount, 0);
+    assert.isFalse(c.isDead());
 
     let ranFirstTask = false;
     let cancelledFirstTask = false;
@@ -73,15 +72,15 @@ suite(__filename, s => {
         /* muffin */
       });
 
-    await t.rejects(c.tryAbort());
-    t.same(abortCount, 0, "haven't aborted yet");
-    t.true(ranFirstTask, "first task was run");
-    t.false(cancelledFirstTask, "first task was not cancelled yet");
+    await assert.isRejected(c.tryAbort());
+    assert.equal(abortCount, 0);
+    assert.isTrue(ranFirstTask);
+    assert.isFalse(cancelledFirstTask);
 
     allowAbort = true;
     await c.tryAbort();
-    t.same(abortCount, 1, "we aborted once");
-    t.true(c.isDead(), "context is dead now");
+    assert.equal(abortCount, 1);
+    assert.isTrue(c.isDead());
     await p1;
 
     let ranSecondTask = false;
@@ -102,15 +101,15 @@ suite(__filename, s => {
         }
       });
 
-    t.false(ranSecondTask, "second task was not ran");
+    assert.isFalse(ranSecondTask);
     await p2;
-    t.true(cancelledSecondTask, "second task was cancelled");
+    assert.isTrue(cancelledSecondTask);
 
     await c.tryAbort();
-    t.same(abortCount, 1, "we aborted only once throughout");
+    assert.equal(abortCount, 1);
   });
 
-  s.case("Sub-context work", async t => {
+  it("Sub-context work", async () => {
     const c = new Context(store);
 
     let subRef;
@@ -135,10 +134,10 @@ suite(__filename, s => {
         // woops
       });
 
-    await t.rejects(c.tryAbort());
+    await assert.isRejected(c.tryAbort());
     canAbort = true;
     await c.tryAbort();
-    t.true(c.isDead, "parent context is dead");
-    t.true(subRef.isDead, "sub context is dead too");
+    await assert.isTrue(c.isDead());
+    await assert.isTrue(subRef.isDead());
   });
 });

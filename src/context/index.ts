@@ -48,9 +48,10 @@ export class MinimalContext {
     this.dead = true;
 
     while (this.stoppers.length > 0) {
-      const stopper = this.stoppers.pop();
+      let stopper = this.stoppers[this.stoppers.length - 1];
       try {
         await stopper();
+        this.stoppers.pop();
       } catch (e) {
         this.dead = false;
         throw e;

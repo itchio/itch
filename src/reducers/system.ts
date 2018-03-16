@@ -1,6 +1,5 @@
 import * as os from "../os";
-import * as electron from "electron";
-const app = electron.app || electron.remote.app;
+import * as app from "../helpers/app";
 
 import { actions } from "../actions";
 import reducer from "./reducer";

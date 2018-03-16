@@ -1,31 +1,17 @@
-import * as zopf from "zopf";
-import * as fs from "fs";
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
+chai.use(chaiAsPromised);
+const { assert } = chai;
+import "mocha";
 
-import { relative } from "path";
+process.env.NODE_ENV = "test";
+import env from "./env";
 
-const basePath = __dirname;
+const _describe = describe;
+const _it = it;
+export { _describe as describe, _it as it, assert };
+
 const emptyArr = [];
-
-interface ISuite {
-  case: (name: string, cb: (t: Zopf.ITest) => void | Promise<void>) => void;
-}
-
-export default function suite(filename: string, cb: (s: ISuite) => void) {
-  if (!fs.existsSync(filename)) {
-    throw new Error(
-      `incorrect usage of suite() - should pass __filename, got ${JSON.stringify(
-        filename
-      )}`
-    );
-  }
-
-  const name = relative(basePath, filename)
-    .replace(/\\/g, "/")
-    .replace(/\.spec\.ts$/, "")
-    .replace(/\/index$/, "/");
-
-  zopf(name, cb);
-}
 
 /** A watcher made for testing reactors */
 import { Watcher } from "./reactors/watcher";

@@ -1,10 +1,10 @@
-import suite, { TestWatcher } from "../test-suite";
+import { describe, it, assert, TestWatcher } from "../test";
 
 import navigation from "./navigation";
 import { actions } from "../actions/index";
 
-suite(__filename, s => {
-  s.case("clears filters", async t => {
+describe(__filename, () => {
+  it("clears filters", async () => {
     const w = new TestWatcher();
     navigation(w);
 
@@ -13,25 +13,25 @@ suite(__filename, s => {
     w.store.getState().preferences.onlyOwnedGames = true;
 
     await w.dispatch(actions.clearFilters({}));
-    t.false(w.store.getState().preferences.onlyCompatibleGames);
-    t.false(w.store.getState().preferences.onlyInstalledGames);
-    t.false(w.store.getState().preferences.onlyOwnedGames);
+    assert.isFalse(w.store.getState().preferences.onlyCompatibleGames);
+    assert.isFalse(w.store.getState().preferences.onlyInstalledGames);
+    assert.isFalse(w.store.getState().preferences.onlyOwnedGames);
   });
 
-  s.case("handles constant tabs properly", async t => {
+  it("handles constant tabs properly", async () => {
     const w = new TestWatcher();
     navigation(w);
 
     let nav = () => w.store.getState().profile.navigation;
 
-    t.same(nav().tab, "itch://featured");
+    assert.equal(nav().tab, "itch://featured");
 
     await w.dispatch(actions.navigate({ url: "itch://library" }));
-    t.same(nav().tab, "itch://library");
+    assert.equal(nav().tab, "itch://library");
 
     await w.dispatch(actions.navigate({ url: "itch://preferences" }));
-    t.same(nav().openTabs.transient, ["itch://preferences"]);
-    t.same(nav().tab, "itch://preferences");
+    assert.deepEqual(nav().openTabs.transient, ["itch://preferences"]);
+    assert.equal(nav().tab, "itch://preferences");
 
     let tabChanged = false;
     w.on(actions.tabChanged, async () => {
@@ -40,10 +40,10 @@ suite(__filename, s => {
     await w.dispatchAndWaitImmediate(
       actions.navigate({ url: "itch://library" })
     );
-    t.true(tabChanged);
+    assert.isTrue(tabChanged);
   });
 
-  s.case("handles transient tabs properly", async t => {
+  it("handles transient tabs properly", async () => {
     const w = new TestWatcher();
     navigation(w);
 
@@ -54,33 +54,33 @@ suite(__filename, s => {
 
     await w.dispatch(actions.navigate({ url: "https://itch.io" }));
     let id1 = nav().tab;
-    t.same(
+    assert.equal(
       instances()[id1].history[0].url,
       "https://itch.io",
       "set up url properly"
     );
 
     await w.dispatch(actions.navigate({ url: "itch://library" }));
-    t.same(nav().tab, "itch://library");
+    assert.equal(nav().tab, "itch://library");
 
     await w.dispatch(actions.focusTab({ tab: id1 }));
-    t.same(nav().tab, id1, "switched to right tab by id");
+    assert.equal(nav().tab, id1, "switched to right tab by id");
 
     await w.dispatch(actions.closeCurrentTab({}));
-    t.same(nav().tab, constantTab, "closes transient tab");
+    assert.equal(nav().tab, constantTab, "closes transient tab");
 
     await w.dispatch(actions.closeCurrentTab({}));
-    t.same(nav().tab, constantTab, "doesn't close constant tabs");
+    assert.equal(nav().tab, constantTab, "doesn't close constant tabs");
 
     await w.dispatch(actions.navigate({ url: "itch://preferences" }));
     await w.dispatch(actions.navigate({ url: "itch://downloads" }));
-    t.same(nav().openTabs.transient.length, 2, "opens two tabs");
+    assert.equal(nav().openTabs.transient.length, 2, "opens two tabs");
 
     await w.dispatch(actions.closeAllTabs({}));
-    t.same(nav().openTabs.transient.length, 0, "closes all tabs");
+    assert.equal(nav().openTabs.transient.length, 0, "closes all tabs");
   });
 
-  s.case("handles transient tabs properly", async t => {
+  it("handles transient tabs properly (2)", async () => {
     const w = new TestWatcher();
     navigation(w);
 
@@ -89,7 +89,7 @@ suite(__filename, s => {
 
     await w.dispatch(actions.navigate({ url: "https://itch.io" }));
     let tab = nav().tab;
-    t.same(instances()[tab].history[0].url, "https://itch.io");
+    assert.equal(instances()[tab].history[0].url, "https://itch.io");
 
     await w.dispatch(
       actions.evolveTab({
@@ -98,7 +98,7 @@ suite(__filename, s => {
         replace: false,
       })
     );
-    t.same(
+    assert.equal(
       instances()[tab].history[1].url,
       "https://itch.io/login",
       "evolves a tab"

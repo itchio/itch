@@ -1,14 +1,14 @@
-import suite from "../test-suite";
+import { describe, it, assert } from "../test";
 
 import groupIdBy from "./group-id-by";
 import { indexBy } from "underscore";
 
-suite(__filename, s => {
-  s.case("groupIdBy", t => {
-    t.same(groupIdBy(null, "gameId"), {});
-    t.same(groupIdBy(undefined, "gameId"), {});
-    t.same(groupIdBy([], "gameId"), {});
-    t.same(groupIdBy({}, "gameId"), {});
+describe(__filename, () => {
+  it("groupIdBy", () => {
+    assert.deepEqual(groupIdBy(null, "gameId"), {});
+    assert.deepEqual(groupIdBy(undefined, "gameId"), {});
+    assert.deepEqual(groupIdBy([], "gameId"), {});
+    assert.deepEqual(groupIdBy({}, "gameId"), {});
 
     const items = [
       { id: 1, gameId: 11 },
@@ -17,16 +17,13 @@ suite(__filename, s => {
       { id: 77, gameId: 77 },
     ];
 
-    t.same(
-      groupIdBy(items, "gameId"),
-      {
-        11: [1],
-        44: [4],
-        77: [7, 77],
-      } as any
-    );
+    assert.deepEqual(groupIdBy(items, "gameId"), {
+      11: [1],
+      44: [4],
+      77: [7, 77],
+    } as any);
 
-    t.same(
+    assert.deepEqual(
       groupIdBy<typeof items[0]>(items, o => String(o.gameId * 10)),
       {
         110: [1],
@@ -35,35 +32,26 @@ suite(__filename, s => {
       } as any
     );
 
-    t.same(
-      groupIdBy(items, "id"),
-      {
-        1: [1],
-        4: [4],
-        7: [7],
-        77: [77],
-      } as any
-    );
+    assert.deepEqual(groupIdBy(items, "id"), {
+      1: [1],
+      4: [4],
+      7: [7],
+      77: [77],
+    } as any);
 
     const itemMap = indexBy(items, "id");
 
-    t.same(
-      groupIdBy(itemMap, "gameId"),
-      {
-        11: [1],
-        44: [4],
-        77: [7, 77],
-      } as any
-    );
+    assert.deepEqual(groupIdBy(itemMap, "gameId"), {
+      11: [1],
+      44: [4],
+      77: [7, 77],
+    } as any);
 
-    t.same(
-      groupIdBy(itemMap, "id"),
-      {
-        1: [1],
-        4: [4],
-        7: [7],
-        77: [77],
-      } as any
-    );
+    assert.deepEqual(groupIdBy(itemMap, "id"), {
+      1: [1],
+      4: [4],
+      7: [7],
+      77: [77],
+    } as any);
   });
 });
