@@ -1,4 +1,4 @@
-import { IMenuTemplate, IMenuItem } from "../../types/index";
+import { IMenuTemplate, IMenuItem, IStore } from "../../types/index";
 import { actions } from "../../actions";
 
 import { isEmpty } from "underscore";
@@ -8,10 +8,9 @@ import getGameStatus, {
   IOperation,
 } from "../../helpers/get-game-status";
 import actionForGame from "../../util/action-for-game";
-import Context from "../../context";
 import { showInExplorerString } from "../../format/show-in-explorer";
 import { formatOperation } from "../../format/operation";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../../buse/messages";
 
 export function concatTemplates(
   a: IMenuTemplate,
@@ -28,7 +27,7 @@ export function concatTemplates(
   return [...a, { type: "separator" }, ...b];
 }
 
-export function newTabControls(ctx: Context, tab: string): IMenuTemplate {
+export function newTabControls(store: IStore, tab: string): IMenuTemplate {
   return [
     {
       localizedLabel: ["menu.file.new_tab"],
@@ -38,12 +37,10 @@ export function newTabControls(ctx: Context, tab: string): IMenuTemplate {
   ];
 }
 
-export function closeTabControls(ctx: Context, tab: string): IMenuTemplate {
-  const { store } = ctx;
-
+export function closeTabControls(store: IStore, tab: string): IMenuTemplate {
   // TODO: disable some menu items if last transient tab, or constant tab
   const isEssential =
-    store.getState().session.navigation.openTabs.constant.indexOf(tab) !== -1;
+    store.getState().profile.navigation.openTabs.constant.indexOf(tab) !== -1;
 
   return [
     {
@@ -65,12 +62,11 @@ export function closeTabControls(ctx: Context, tab: string): IMenuTemplate {
   ];
 }
 
-export function gameControls(ctx: Context, game: Game): IMenuTemplate {
-  const { store, db } = ctx;
+export function gameControls(store: IStore, game: Game): IMenuTemplate {
   let template: IMenuTemplate = [];
 
   const status = getGameStatus(store.getState(), game);
-  const { cave, operation } = status;
+  const { cave, numCaves, operation } = status;
 
   const mainAction = actionForGame(game, cave);
 
@@ -98,7 +94,7 @@ export function gameControls(ctx: Context, game: Game): IMenuTemplate {
         item.submenu = [
           {
             localizedLabel: ["grid.item.discard_download"],
-            action: actions.discardDownloadRequest({ id: operation.id }),
+            action: actions.discardDownload({ id: operation.id }),
           },
         ];
       }
@@ -136,47 +132,23 @@ export function gameControls(ctx: Context, game: Game): IMenuTemplate {
     template = concatTemplates(template, updateAndLocalItems);
 
     if (!busy) {
-      let advancedItems: IMenuTemplate = [];
-
-      const buildInfo = db.caves.get(k =>
-        k.fields(["build"]).where("id = ?", cave.id)
-      );
-      if (buildInfo && buildInfo.build) {
-        advancedItems = concatTemplates(advancedItems, [
-          {
-            localizedLabel: ["grid.item.verify_integrity"],
-            action: actions.healCave({ caveId: cave.id }),
-          },
-          {
-            localizedLabel: ["grid.item.revert_to_version"],
-            action: actions.revertCaveRequest({ caveId: cave.id }),
-          },
-        ]);
-      }
-
-      if (!isEmpty(advancedItems)) {
-        template = concatTemplates(template, [
-          {
-            localizedLabel: ["grid.item.advanced"],
-            submenu: advancedItems,
-          },
-        ]);
-      }
-    }
-
-    if (!busy) {
       let uninstallReinstallItems: IMenuTemplate = [];
-      // uninstallReinstallItems.push({
-      //   id: "context--grid-item-uninstall-request",
-      //   localizedLabel: ["grid.item.uninstall_request"],
-      //   action: actions.requestCaveUninstall({ caveId: cave.id }),
-      // });
-
       uninstallReinstallItems.push({
         id: "context--grid-item-manage",
         localizedLabel: ["grid.item.manage"],
         action: actions.manageGame({ game }),
       });
+
+      if (numCaves === 1) {
+        uninstallReinstallItems.push({
+          type: "separator",
+        });
+        uninstallReinstallItems.push({
+          id: "context--grid-item-uninstall",
+          localizedLabel: ["grid.item.uninstall"],
+          action: actions.requestCaveUninstall({ caveId: cave.id }),
+        });
+      }
 
       template = concatTemplates(template, uninstallReinstallItems);
     }

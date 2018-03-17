@@ -7,7 +7,8 @@ import LoadingCircle from "../basics/loading-circle";
 
 import format from "../format";
 import { IModalWidgetProps } from "./index";
-import { PrereqStatus } from "node-buse/lib/messages";
+import { PrereqStatus } from "../../buse/messages";
+import styled from "../styles";
 
 class PrereqsState extends React.PureComponent<IProps> {
   render() {
@@ -17,16 +18,22 @@ class PrereqsState extends React.PureComponent<IProps> {
       <ModalWidgetDiv>
         <p>{format(["prereq.explanation", { title: gameTitle }])}</p>
 
-        <ul className="prereqs-rows">
+        <PrereqsRows>
           {map(tasks, (v, name) => {
             let progress = v.progress;
-            if (v.status === "installing") {
-              // just displays a spinner
-              progress = 0.1;
+            switch (v.status) {
+              case PrereqStatus.Installing: {
+                progress = -1; // indeterminate
+                break;
+              }
+              case PrereqStatus.Done: {
+                progress = 1;
+                break;
+              }
             }
 
             return (
-              <li key={name} className="prereqs-row" style={{ order: v.order }}>
+              <PrereqsRow key={name} style={{ order: v.order }}>
                 <LoadingCircle progress={progress} />
                 <div className="prereqs-info">
                   <div className="task-name">{v.fullName}</div>
@@ -36,14 +43,38 @@ class PrereqsState extends React.PureComponent<IProps> {
                       : format([`prereq.status.${v.status}`])}
                   </div>
                 </div>
-              </li>
+              </PrereqsRow>
             );
           })}
-        </ul>
+        </PrereqsRows>
       </ModalWidgetDiv>
     );
   }
 }
+
+const PrereqsRows = styled.ul`
+  display: flex;
+  flex: 0 1;
+  flex-direction: column;
+  align-content: flex-start;
+`;
+
+const PrereqsRow = styled.li`
+  display: flex;
+  flex: 0 1;
+  flex-direction: row;
+  align-items: center;
+  margin: 14px 0;
+  margin-left: 10px;
+
+  .task-status {
+    margin-top: 5px;
+    font-size: 80%;
+    color: ${props => props.theme.secondaryText};
+  }
+`;
+
+// props
 
 export interface IPrereqsStateParams {
   gameTitle: string;

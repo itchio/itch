@@ -1,5 +1,4 @@
 import uuid from "../../util/uuid";
-import { throttle } from "underscore";
 import * as memory from "memory-streams";
 
 import {
@@ -9,7 +8,6 @@ import {
   TaskName,
   isAborted,
 } from "../../types";
-import { DB } from "../../db";
 import Context from "../../context";
 import { actions } from "../../actions";
 
@@ -18,7 +16,6 @@ import { getCurrentTasks } from "./as-task-persistent-state";
 
 interface IAsTaskOpts {
   store: IStore;
-  db: DB;
   name: TaskName;
   gameId: number;
 
@@ -27,12 +24,14 @@ interface IAsTaskOpts {
 
   /** Called with the thrown error & the logs so far if set */
   onError?: (error: Error, log: string) => Promise<void>;
+
+  onCancel?: () => Promise<void>;
 }
 
 export default async function asTask(opts: IAsTaskOpts) {
   const id = uuid();
 
-  const { store, db, name, gameId } = opts;
+  const { store, name, gameId } = opts;
 
   const memlog = new memory.WritableStream();
   const logger = makeLogger({ customOut: memlog });
@@ -46,20 +45,17 @@ export default async function asTask(opts: IAsTaskOpts) {
     })
   );
 
-  const ctx = new Context(store, db);
+  const ctx = new Context(store);
   ctx.registerTaskId(id);
-  ctx.on(
-    "progress",
-    throttle((ev: IProgressInfo) => {
-      store.dispatch(actions.taskProgress({ id, ...ev }));
-    }, 250)
-  );
+  ctx.on("progress", (ev: IProgressInfo) => {
+    store.dispatch(actions.taskProgress({ id, ...ev }));
+  });
 
   getCurrentTasks()[id] = ctx;
 
   let err: Error;
 
-  const { work, onError } = opts;
+  const { work, onError, onCancel } = opts;
 
   try {
     await work(ctx, logger);
@@ -77,8 +73,14 @@ export default async function asTask(opts: IAsTaskOpts) {
   if (err) {
     if (isCancelled(err)) {
       rootLogger.warn(`Task ${name} cancelled`);
+      if (onCancel) {
+        await onCancel();
+      }
     } else if (isAborted(err)) {
       rootLogger.warn(`Task ${name} aborted`);
+      if (onCancel) {
+        await onCancel();
+      }
     } else {
       rootLogger.warn(`Task ${name} threw: ${err.stack}`);
       if (onError) {

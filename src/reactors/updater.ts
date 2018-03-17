@@ -1,10 +1,7 @@
 import { Watcher } from "./watcher";
-import { DB } from "../db";
-import Context from "../context";
 
 import { actions } from "../actions";
 
-import { getGameCredentialsForId } from "./downloads/get-game-credentials";
 import * as paths from "../os/paths";
 
 import { makeLogger } from "../logger";
@@ -20,89 +17,45 @@ const SKIP_GAME_UPDATES = process.env.ITCH_SKIP_GAME_UPDATES === "1";
 const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;
 const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 
-import { ICave } from "../db/models/cave";
-import { toDateTimeField } from "../db/datetime-field";
-
 import {
   messages,
   makeButlerInstance,
-  buseGameCredentials,
+  setupLogging,
+  withButlerClient,
 } from "../buse/index";
-import { IStore, IGameCredentials } from "../types/index";
-import { CheckUpdateItem, CheckUpdateResult } from "node-buse/lib/messages";
-import { client } from "../api/index";
-import { Game } from "node-buse/lib/messages";
-import lazyGetGame from "./lazy-get-game";
+import { IStore } from "../types/index";
+import { CheckUpdateItem, CheckUpdateResult, Cave } from "../buse/messages";
 
-function queueGameUpdate(
-  gameCredentials: IGameCredentials,
-  db: DB,
-  gameId: number
-) {
-  (async () => {
-    try {
-      const api = client.withKey(gameCredentials.apiKey);
-      let game: Game;
-      try {
-        const gameRes = await api.game(gameId);
-        if (gameRes) {
-          game = gameRes.entities.games[gameRes.result.gameId];
-        }
-      } catch (e) {}
-
-      if (game) {
-        db.saveOne("games", game.id, game);
-      }
-    } catch (e) {
-      logger.warn(`Could not update game info for ${gameId}: ${e.stack}`);
-    }
-  })();
-}
-
-async function prepareUpdateItem(
-  ctx: Context,
-  cave: ICave
-): Promise<CheckUpdateItem> {
-  if (!cave.gameId) {
-    throw new Error(`Cave ${cave.id} lacks gameId`);
-  }
-
-  const gameCredentials = getGameCredentialsForId(ctx, cave.gameId);
-  if (!gameCredentials) {
-    throw new Error(`Could not find game credentials for game ${cave.gameId}`);
-  }
-  queueGameUpdate(gameCredentials, ctx.db, cave.gameId);
-
-  const game = await lazyGetGame(ctx, cave.gameId);
-  if (!game) {
-    throw new Error(`Invalid game ${cave.gameId}`);
+async function prepareUpdateItem(cave: Cave): Promise<CheckUpdateItem> {
+  if (!cave.game) {
+    throw new Error(`Cave ${cave.id} lacks game`);
   }
 
   const item: CheckUpdateItem = {
     itemId: cave.id,
-    installedAt: toDateTimeField(cave.installedAt),
-    game,
+    installedAt: cave.stats.installedAt,
+    game: cave.game,
     upload: cave.upload,
     build: cave.build,
-    credentials: buseGameCredentials(gameCredentials),
   };
   return item;
 }
 
 async function performUpdateCheck(
-  ctx: Context,
+  store: IStore,
   items: CheckUpdateItem[]
 ): Promise<CheckUpdateResult> {
   let res: CheckUpdateResult;
 
   const instance = await makeButlerInstance();
   instance.onClient(async client => {
+    setupLogging(client, logger);
     try {
       client.onNotification(
         messages.GameUpdateAvailable,
         async ({ params }) => {
           const { update } = params;
-          ctx.store.dispatch(actions.gameUpdateAvailable({ update }));
+          store.dispatch(actions.gameUpdateAvailable({ update }));
         }
       );
       res = await client.call(messages.CheckUpdate({ items }));
@@ -129,7 +82,7 @@ function reschedule(store: IStore) {
   );
 }
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   if (SKIP_GAME_UPDATES) {
     logger.debug(
       "Skipping game update check as requested per environment variable"
@@ -158,54 +111,43 @@ export default function(watcher: Watcher, db: DB) {
     );
 
     try {
-      const ctx = new Context(store, db);
-      const totalCaves = db.caves.count(k => k.where("1"));
-      let limit = 15;
-      let offset = 0;
+      store.dispatch(
+        actions.gameUpdateCheckStatus({
+          checking: true,
+          progress: 0,
+        })
+      );
 
-      while (offset < totalCaves) {
-        store.dispatch(
-          actions.gameUpdateCheckStatus({
-            checking: true,
-            progress: offset / totalCaves,
-          })
-        );
+      // TODO: let butler page through the caves instead,
+      // this is too much back and forth
+      const { caves } = await withButlerClient(
+        logger,
+        async client => await client.call(messages.FetchCaves({}))
+      );
 
-        let start = offset;
-        let end = offset + limit;
-        if (end > totalCaves) {
-          end = totalCaves;
-        }
-        logger.info(
-          `Checking updates for games ${start}-${end} of ${totalCaves}`
-        );
+      if (isEmpty(caves)) {
+        return;
+      }
 
-        const caves = db.caves.all(k =>
-          k
-            .where("1")
-            .limit(limit)
-            .offset(offset)
-        );
-        let items: CheckUpdateItem[] = [];
-        for (const cave of caves) {
-          try {
-            const item = await prepareUpdateItem(ctx, cave);
-            items.push(item);
-          } catch (e) {
-            logger.error(
-              `Won't be able to check ${cave.id} for upgrade: ${e.stack}`
-            );
-          }
-        }
+      logger.info(`Checking updates for ${caves.length} games`);
 
+      let items: CheckUpdateItem[] = [];
+      for (const cave of caves) {
         try {
-          await performUpdateCheck(ctx, items);
+          items.push(await prepareUpdateItem(cave));
         } catch (e) {
           logger.error(
-            `While performing ${items.length} update checks: ${e.stack}`
+            `Won't be able to check ${cave.id} for upgrade: ${e.stack}`
           );
         }
-        offset += limit;
+      }
+
+      try {
+        await performUpdateCheck(store, items);
+      } catch (e) {
+        logger.error(
+          `While performing ${items.length} update checks: ${e.stack}`
+        );
       }
     } finally {
       store.dispatch(
@@ -223,18 +165,16 @@ export default function(watcher: Watcher, db: DB) {
       logger.info(`Looking for updates for cave ${caveId}`);
     }
 
-    const cave = db.caves.findOneById(caveId);
-    if (!cave) {
-      logger.warn(`No cave with id ${caveId}, bailing out`);
-      return;
-    }
+    const { cave } = await withButlerClient(
+      logger,
+      async client => await client.call(messages.FetchCave({ caveId }))
+    );
 
-    const ctx = new Context(store, db);
-    const item = await prepareUpdateItem(ctx, cave);
+    const item = await prepareUpdateItem(cave);
     let res: CheckUpdateResult;
 
     try {
-      res = await performUpdateCheck(ctx, [item]);
+      res = await performUpdateCheck(store, [item]);
     } catch (e) {
       logger.error(`While checking for game update: ${e.stack}`);
       if (!res) {

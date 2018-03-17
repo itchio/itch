@@ -1,18 +1,13 @@
 import { Watcher } from "../watcher";
-import { DB } from "../../db";
 
-import queueDownload from "./queue-download";
-import downloadWatcher from "./download-watcher";
-import downloadSpeedWatcher from "./download-speed-watcher";
 import showDownloadError from "./show-download-error";
 import downloadEnded from "./download-ended";
-import downloadPersist from "./download-persist";
+import driver from "./driver";
+import operations from "./operations";
 
-export default function(watcher: Watcher, db: DB) {
-  queueDownload(watcher);
-  downloadWatcher(watcher, db);
-  downloadSpeedWatcher(watcher);
-  showDownloadError(watcher, db);
+export default function(watcher: Watcher) {
+  showDownloadError(watcher);
   downloadEnded(watcher);
-  downloadPersist(watcher, db);
+  driver(watcher);
+  operations(watcher);
 }

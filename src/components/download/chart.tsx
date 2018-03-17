@@ -9,6 +9,7 @@ const ChartWrapper = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
+  pointer-events: none;
 `;
 
 class ChartGradient extends React.PureComponent<{}> {

@@ -21,7 +21,7 @@ export default function setupShortcuts(store: IStore) {
 
   // user shortcuts
   combo.bindGlobal(["ctrl+f", "command+f"], () => {
-    store.dispatch(actions.focusSearch({}));
+    store.dispatch(actions.focusInPageSearch({}));
   });
 
   combo.bindGlobal(["ctrl+tab", "ctrl+pagedown"], () => {

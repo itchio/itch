@@ -2,15 +2,13 @@ import * as React from "react";
 
 import { FormattedRelative } from "react-intl";
 
-import { MixedDate } from "../../format/datetime";
-import { fromDateTimeField, toDateTimeField } from "../../db/datetime-field";
-
 export default class TimeAgo extends React.PureComponent<IProps> {
   render() {
-    const { className } = this.props;
+    const { className, before } = this.props;
     let { date } = this.props;
 
-    const dateObject = fromDateTimeField(date);
+    // TODO: we shouldn't need that
+    const dateObject = new Date(date);
     if (!dateObject) {
       return null;
     }
@@ -23,8 +21,9 @@ export default class TimeAgo extends React.PureComponent<IProps> {
     return (
       <span
         className={className}
-        data-rh={JSON.stringify({ date: toDateTimeField(dateObject) })}
+        data-rh={JSON.stringify({ date: dateObject.toISOString() })}
       >
+        {before ? <>{before} </> : null}
         <FormattedRelative value={dateObject} />
       </span>
     );
@@ -32,6 +31,7 @@ export default class TimeAgo extends React.PureComponent<IProps> {
 }
 
 interface IProps {
-  date: MixedDate;
+  date: Date;
   className?: string;
+  before?: string | JSX.Element;
 }

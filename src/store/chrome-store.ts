@@ -1,4 +1,4 @@
-if (process.type !== "renderer") {
+if (process.type === "browser") {
   throw new Error("chrome store required from metal");
 }
 
@@ -55,3 +55,5 @@ const store = createStore(reducer, initialState, enhancer) as IChromeStore;
 store.watcher = watcher;
 
 export default store;
+
+(window as any).ReduxStore = store;

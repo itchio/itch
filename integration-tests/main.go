@@ -1,12 +1,16 @@
 package main
 
 import (
+	"compress/gzip"
 	"context"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -20,6 +24,7 @@ const testAccountName = "itch-test-account"
 const chromeDriverVersion = "2.27"
 
 var testAccountPassword = os.Getenv("ITCH_TEST_ACCOUNT_PASSWORD")
+var testAccountAPIKey = os.Getenv("ITCH_TEST_ACCOUNT_API_KEY")
 
 type CleanupFunc func()
 
@@ -47,8 +52,8 @@ var r *runner
 func doMain() error {
 	bootTime := time.Now()
 
-	if testAccountPassword == "" {
-		return errors.New("password not given via environment, stopping here")
+	if testAccountAPIKey == "" {
+		return errors.New("API key not given via environment, stopping here")
 	}
 
 	r = &runner{
@@ -62,7 +67,25 @@ func doMain() error {
 	}
 	r.cwd = cwd
 
-	must(downloadChromeDriver(r))
+	done := make(chan error)
+	go func() {
+		done <- r.getButler()
+		r.logf("✓ Butler is all set up!")
+	}()
+
+	go func() {
+		done <- downloadChromeDriver(r)
+		r.logf("✓ ChromeDriver is set up!")
+	}()
+
+	go func() {
+		done <- r.bundle()
+		r.logf("✓ Everything is bundled!")
+	}()
+
+	for i := 0; i < 3; i++ {
+		must(<-done)
+	}
 
 	chromeDriverPort := 9515
 	chromeDriverLogPath := filepath.Join(cwd, "chrome-driver.log.txt")
@@ -72,6 +95,7 @@ func doMain() error {
 	env = append(env, "NODE_ENV=test")
 	env = append(env, "ITCH_LOG_LEVEL=debug")
 	env = append(env, "ITCH_NO_STDOUT=1")
+	env = append(env, "ELECTRON_ENABLE_LOGGING=1")
 	r.chromeDriverCmd.Env = env
 
 	go func() {
@@ -135,8 +159,7 @@ func doMain() error {
 		return errors.Wrap(err, 0)
 	}
 
-	r.logf("Hey cool, we're in the app!")
-	r.logf("it started in %s", time.Since(startTime))
+	r.logf("We're talking to the app! (started in %s)", time.Since(startTime))
 
 	r.testStart = time.Now()
 
@@ -150,6 +173,90 @@ func doMain() error {
 
 	log.Printf("Succeeded in %s", time.Since(r.testStart))
 	log.Printf("Total time %s", time.Since(bootTime))
+	return nil
+}
+
+func (r *runner) getButler() error {
+	ext := ""
+	if runtime.GOOS == "windows" {
+		ext = ".exe"
+	}
+	butlerDest := filepath.Join(r.cwd, "tmp", "prefix", "userData", "bin", "butler"+ext)
+	err := os.MkdirAll(filepath.Dir(butlerDest), 0755)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+	butlerFile, err := os.Create(butlerDest)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+	defer func() {
+		must(butlerFile.Close())
+		must(os.Chmod(butlerDest, 0755))
+	}()
+
+	if _, ok := os.LookupEnv("CI"); !ok {
+		r.logf("Looking for local butler")
+		butlerSrc, err := exec.LookPath("butler" + ext)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+		r.logf("Copying local butler from (%s)", butlerSrc)
+		r.logf("to (%s)", butlerDest)
+
+		butlerSrcFile, err := os.Open(butlerSrc)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+		defer butlerSrcFile.Close()
+
+		_, err = io.Copy(butlerFile, butlerSrcFile)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+
+		return nil
+	}
+
+	r.logf("Downloading butler")
+	butlerURL := fmt.Sprintf("https://dl.itch.ovh/butler/%s-%s/head/butler.gz", runtime.GOOS, runtime.GOARCH)
+
+	req, err := http.Get(butlerURL)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+
+	gunzipper, err := gzip.NewReader(req.Body)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+
+	_, err = io.Copy(butlerFile, gunzipper)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+	return nil
+}
+
+func (r *runner) bundle() error {
+	r.logf("Bundling...")
+	err := os.RemoveAll("dist")
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+	err = os.RemoveAll(".cache")
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+
+	cmd := exec.Command("node", "./src/init.js")
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, "NODE_ENV=test")
+	combinedOut, err := cmd.CombinedOutput()
+	if err != nil {
+		r.logf("Build failed:\n%s", string(combinedOut))
+		return errors.Wrap(err, 0)
+	}
 	return nil
 }
 

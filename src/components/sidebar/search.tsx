@@ -13,8 +13,17 @@ import { injectIntl, InjectedIntl } from "react-intl";
 import { formatString } from "../format";
 import { IRootState } from "../../types/index";
 import * as classNames from "classnames";
+import SearchResultsBar from "../search-results/search-results-bar";
+import LoadingCircle from "../basics/loading-circle";
 
-const SearchContainer = styled.section`
+const SearchContainerContainer = styled.section`
+  .relative-wrapper {
+    position: relative;
+    height: 0;
+  }
+`;
+
+const SearchContainer = styled.div`
   position: relative;
   padding: 0px 8px;
   margin: 16px 0;
@@ -41,7 +50,7 @@ const SearchContainer = styled.section`
     }
   }
 
-  .icon-search {
+  .search-icon {
     ${styles.searchIcon()};
     left: 10px;
     font-size: inherit;
@@ -61,6 +70,10 @@ class Search extends React.PureComponent<IDerivedProps> {
 
   onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     this.props.focusSearch({});
+  };
+
+  onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    this.props.closeSearch({});
   };
 
   onChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -108,19 +121,6 @@ class Search extends React.PureComponent<IDerivedProps> {
   };
 
   subscribe(watcher: Watcher) {
-    watcher.on(actions.focusSearch, async (store, action) => {
-      if (this.input) {
-        this.input.focus();
-        this.input.select();
-      }
-    });
-
-    watcher.on(actions.closeSearch, async (store, action) => {
-      if (this.input) {
-        this.input.blur();
-      }
-    });
-
     watcher.on(actions.commandBack, async (store, action) => {
       if (this.input) {
         this.props.closeSearch({});
@@ -129,22 +129,32 @@ class Search extends React.PureComponent<IDerivedProps> {
   }
 
   render() {
-    const { intl, open } = this.props;
+    const { intl, open, loading } = this.props;
 
     return (
-      <SearchContainer className={classNames({ open })}>
-        <input
-          id="search"
-          ref={this.gotInput}
-          type="search"
-          placeholder={formatString(intl, ["search.placeholder"]) + "..."}
-          onKeyDown={this.onKeyDown}
-          onKeyUp={this.onKeyUp}
-          onChange={this.onChange}
-          onFocus={this.onFocus}
-        />
-        <span className="icon icon-search" />
-      </SearchContainer>
+      <SearchContainerContainer>
+        <SearchContainer className={classNames({ open })}>
+          <input
+            id="search"
+            ref={this.gotInput}
+            type="search"
+            placeholder={formatString(intl, ["search.placeholder"]) + "..."}
+            onKeyDown={this.onKeyDown}
+            onKeyUp={this.onKeyUp}
+            onChange={this.onChange}
+            onBlur={this.onBlur}
+            onFocus={this.onFocus}
+          />
+          {loading ? (
+            <LoadingCircle className="search-icon" progress={-1} />
+          ) : (
+            <span className="icon icon-search search-icon" />
+          )}
+          <div className="relative-wrapper">
+            <SearchResultsBar />
+          </div>
+        </SearchContainer>
+      </SearchContainerContainer>
     );
   }
 
@@ -162,13 +172,15 @@ const actionCreators = actionCreatorsList(
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   open: boolean;
+  loading: boolean;
 
   intl: InjectedIntl;
 };
 
 export default connect<{}>(injectIntl(Search), {
   state: (rs: IRootState) => ({
-    open: rs.session.search.open,
+    open: rs.profile.search.open,
+    loading: rs.profile.search.loading,
   }),
   actionCreators,
 });

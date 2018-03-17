@@ -3,18 +3,19 @@ import { createStructuredSelector } from "reselect";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import getByIds from "../../helpers/get-by-ids";
-import { IGameSet, ICommonsState, ILocalizedString } from "../../types";
+import { IGameSet, ICommonsState, ILocalizedString, IStore } from "../../types";
 import { IOnSortChange, SortDirection, SortKey } from "../sort-types";
 
 import Row from "./row";
-import doesEventMeanBackground from "../when-click-navigates";
 import { TableContainerDiv, TableDiv, ITableSizes } from "./table-styles";
 
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import HiddenIndicator from "../hidden-indicator";
 import format from "../format";
-import { Game } from "node-buse/lib/messages";
-import { gameEvolvePayload } from "../../util/navigation";
+import { Game } from "../../buse/messages";
+import watching, { Watcher } from "../watching";
+import { actions } from "../../actions";
+import IconButton from "../basics/icon-button";
 
 const rowHeight = 70;
 const rightMargin = 10;
@@ -89,12 +90,107 @@ export const defaultGameColumns = [
   GameColumn.InstallStatus,
 ];
 
-class Table extends React.PureComponent<IProps & IDerivedProps> {
+@watching
+class Table extends React.PureComponent<IProps & IDerivedProps, IState> {
+  constructor(props: Table["props"], context) {
+    super(props, context);
+    this.state = {
+      selectedGameId: null,
+      filter: null,
+    };
+  }
+
+  weAreFocused(store: IStore): boolean {
+    const { modals } = store.getState();
+    if (modals.length > 0) {
+      return false;
+    }
+
+    const { tab } = store.getState().profile.navigation;
+    if (tab !== this.props.tab) {
+      return false;
+    }
+
+    return true;
+  }
+
+  subscribe(watcher: Watcher) {
+    watcher.on(actions.commandOk, async (store, action) => {
+      if (!this.weAreFocused(store)) {
+        return;
+      }
+
+      const { selectedGameId } = this.state;
+      if (selectedGameId) {
+        let game = this.props.games[selectedGameId];
+        if (game) {
+          this.props.navigateToGame({ game });
+        }
+      }
+    });
+
+    watcher.on(actions.commandMain, async (store, action) => {
+      if (!this.weAreFocused(store)) {
+        return;
+      }
+
+      const { selectedGameId } = this.state;
+      if (selectedGameId) {
+        let game = this.props.games[selectedGameId];
+        if (game) {
+          this.props.queueGame({ game });
+        }
+      }
+    });
+
+    watcher.on(actions.focusInPageSearch, async (store, action) => {
+      if (!this.weAreFocused(store)) {
+        return;
+      }
+
+      if (this.state.filter !== null) {
+        return;
+      }
+      this.setState({ filter: "" });
+    });
+  }
+
+  getFilteredGameIds(filter: string): number[] {
+    const { gameIds, games } = this.props;
+
+    let idMap: any = {};
+
+    let newGameIds: number[] = [];
+    let lowerFilter = filter.toLowerCase();
+    for (let id of gameIds) {
+      let game = games[id];
+      if (game && game.title.toLowerCase().indexOf(lowerFilter) !== -1) {
+        idMap[id] = true;
+        newGameIds.push(id);
+      }
+    }
+
+    for (let id of gameIds) {
+      let game = games[id];
+      if (
+        game &&
+        game.shortText &&
+        game.shortText.toLowerCase().indexOf(lowerFilter) !== -1
+      ) {
+        if (!idMap[id]) {
+          newGameIds.push(id);
+        }
+      }
+    }
+    return newGameIds;
+  }
+
   render() {
     const { columns = defaultGameColumns, hiddenCount, tab } = this.props;
     const sizes = this.computeSizes(columns);
     const numGames = this.props.gameIds.length;
     const contentHeight = numGames * rowHeight;
+    const { filter } = this.state;
 
     const tableProps = {
       sizes,
@@ -102,10 +198,26 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <TableContainerDiv {...tableProps}>
+        {filter === null ? null : (
+          <div className="filter">
+            <input
+              ref={this.gotFilter}
+              type="text"
+              value={filter}
+              onChange={this.onFilterChange}
+              onKeyDown={this.onFilterKeyDown}
+              onBlur={this.onFilterBlur}
+            />
+            <IconButton icon="cross" onClick={this.onFilterClose} />
+          </div>
+        )}
         {this.renderHeaders(columns)}
         <TableDiv
-          innerRef={this.props.divRef}
+          tabIndex={1}
+          innerRef={this.gotEl}
+          onKeyDown={this.onKeyDown}
           onClick={this.onClick}
+          onDoubleClick={this.onDoubleClick}
           onContextMenu={this.onContextMenu}
         >
           <div
@@ -161,13 +273,76 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
     return sizes;
   }
 
+  onKeyDown = (ev: React.KeyboardEvent<any>) => {
+    const { gameIds } = this.props;
+    const { selectedGameId } = this.state;
+
+    const applyOffset = (offset: number) => {
+      ev.preventDefault();
+      let index = -1;
+      for (let i = 0; i < gameIds.length; i++) {
+        if (gameIds[i] === selectedGameId) {
+          index = i;
+          break;
+        }
+      }
+
+      let newIndex = index + offset;
+      if (newIndex < 0) {
+        newIndex = 0;
+      }
+      if (newIndex > gameIds.length - 1) {
+        newIndex = gameIds.length - 1;
+      }
+
+      let newGameId = gameIds[newIndex];
+      if (newGameId) {
+        this.setState({ selectedGameId: newGameId });
+        this.scrollIntoView(newGameId);
+      }
+    };
+
+    switch (ev.key) {
+      case "ArrowUp":
+        return applyOffset(-1);
+      case "ArrowDown":
+        return applyOffset(1);
+      case "PageUp":
+        return applyOffset(-10);
+      case "PageDown":
+        return applyOffset(10);
+      case " ":
+        if (ev.shiftKey) {
+          return applyOffset(-5);
+        } else {
+          return applyOffset(5);
+        }
+      case "Home":
+        this.setState({ selectedGameId: gameIds[0] });
+        return;
+      case "End":
+        this.setState({ selectedGameId: gameIds[gameIds.length - 1] });
+        return;
+      default:
+        if (!ev.ctrlKey && !ev.altKey && !ev.metaKey) {
+          if (ev.key.match(/^[a-z0-9]$/i)) {
+            if (!this.filterEl) {
+              this.setState({ filter: "" });
+            }
+          }
+        }
+    }
+  };
+
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     this.eventToGame(ev, game => {
-      this.props.navigateTab({
-        tab: this.props.tab,
-        background: doesEventMeanBackground(ev),
-        ...gameEvolvePayload(game),
-      });
+      this.setState({ selectedGameId: game.id });
+    });
+  };
+
+  onDoubleClick = (ev: React.MouseEvent<HTMLDivElement>) => {
+    this.eventToGame(ev, game => {
+      this.props.queueGame({ game });
     });
   };
 
@@ -250,7 +425,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   renderGames() {
-    const {
+    let {
       games,
       gameIds,
       columns = defaultGameColumns,
@@ -259,7 +434,12 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
       height,
     } = this.props;
 
-    const overscan = 1;
+    const { selectedGameId, filter } = this.state;
+    if (filter) {
+      gameIds = this.getFilteredGameIds(filter);
+    }
+
+    const overscan = 15;
     const numVisibleRows = height / rowHeight;
     let startRow = Math.floor(scrollTop / rowHeight);
     let endRow = startRow + numVisibleRows + 1;
@@ -277,6 +457,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
 
       return (
         <Row
+          selected={game.id === selectedGameId}
           key={game.id}
           columns={columns}
           game={game}
@@ -287,6 +468,81 @@ class Table extends React.PureComponent<IProps & IDerivedProps> {
       );
     });
   }
+
+  el: HTMLDivElement;
+  gotEl = (el: HTMLDivElement) => {
+    this.el = el;
+    this.props.divRef(el);
+  };
+
+  filterEl: HTMLInputElement;
+  gotFilter = (filterEl: HTMLInputElement) => {
+    this.filterEl = filterEl;
+    if (filterEl) {
+      filterEl.focus();
+      if (this.el) {
+        this.el.scrollTop = 0;
+      }
+    } else {
+      this.scrollIntoView(this.state.selectedGameId);
+    }
+  };
+
+  scrollIntoView(gameId: number) {
+    if (!this.el) {
+      return;
+    }
+
+    let index = -1;
+    for (let i = 0; i < this.props.gameIds.length; i++) {
+      if (this.props.gameIds[i] === gameId) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index !== -1) {
+      this.el.scrollTop = index * rowHeight;
+    }
+  }
+
+  onFilterChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      filter: ev.currentTarget.value,
+    });
+    let filteredGameIds = this.getFilteredGameIds(ev.currentTarget.value);
+    if (filteredGameIds && filteredGameIds.length > 0) {
+      this.setState({
+        selectedGameId: filteredGameIds[0],
+      });
+    }
+  };
+
+  onFilterBlur = (ev: React.FocusEvent<HTMLInputElement>) => {
+    this.setState({ filter: null });
+  };
+
+  onFilterClose = ev => {
+    this.setState({ filter: null });
+    if (this.el) {
+      this.el.focus();
+    }
+  };
+
+  onFilterKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    if (ev.key === "Escape") {
+      this.onFilterClose(null);
+    }
+    if (
+      ev.key === "ArrowUp" ||
+      ev.key === "ArrowDown" ||
+      ev.key === "PageUp" ||
+      ev.key === "PageDown"
+    ) {
+      ev.preventDefault();
+      this.onKeyDown(ev);
+    }
+  };
 }
 
 interface IProps extends IDimensionsProps {
@@ -303,9 +559,17 @@ interface IProps extends IDimensionsProps {
   onSortChange: IOnSortChange;
 }
 
+interface IState {
+  selectedGameId: number;
+  filter: string;
+}
+
 const actionCreators = actionCreatorsList(
   "clearFilters",
   "navigateTab",
+  "queueGame",
+  "manageGame",
+  "navigateToGame",
   "openGameContextMenu"
 );
 

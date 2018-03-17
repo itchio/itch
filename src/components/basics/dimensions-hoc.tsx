@@ -30,8 +30,8 @@ export default function injectDimensions<P extends IDimensionsProps>(
     ro: ResizeObserver;
     onScroll: any;
 
-    constructor() {
-      super();
+    constructor(props: P, context) {
+      super(props, context);
       this.state = { width: 0, height: 0, scrollTop: 0 };
     }
 

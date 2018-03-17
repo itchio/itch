@@ -17,7 +17,7 @@ import { formatString } from "./format";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { DATE_FORMAT } from "../format/index";
 import { formatDate } from "../format/datetime";
-import { fromDateTimeField } from "../db/datetime-field";
+import classNames = require("classnames");
 
 const LayoutContainer = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -31,6 +31,10 @@ const LayoutContainer = styled.div`
   bottom: 0;
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 2px;
+
+  &.maximized {
+    border-color: transparent;
+  }
 
   &,
   input {
@@ -72,10 +76,10 @@ const ReactHintContainer = styled.div`
  */
 class Layout extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { intl } = this.props;
+    const { intl, maximized } = this.props;
 
     return (
-      <LayoutContainer>
+      <LayoutContainer className={classNames({ maximized })}>
         {this.main()}
         <StatusBar />
         <ReactHintContainer>
@@ -95,7 +99,7 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
                     rh = formatString(intl, obj);
                   } else if (obj.hasOwnProperty("date")) {
                     rh = formatDate(
-                      fromDateTimeField(obj.date),
+                      new Date(obj.date),
                       intl.locale,
                       DATE_FORMAT
                     );
@@ -138,12 +142,14 @@ interface IProps {}
 
 interface IDerivedProps {
   page: string;
+  maximized: boolean;
 
   intl: InjectedIntl;
 }
 
 export default connect<IProps>(injectIntl(Layout), {
   state: createStructuredSelector({
-    page: (rs: IRootState) => rs.session.navigation.page,
+    page: (rs: IRootState) => rs.profile.navigation.page,
+    maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
   }),
 });

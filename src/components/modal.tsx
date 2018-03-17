@@ -2,7 +2,6 @@ import * as React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import { createStructuredSelector } from "reselect";
 
-import ReactModal = require("react-modal");
 import Button from "./basics/button";
 import RowButton, { Tag } from "./basics/row-button";
 import IconButton from "./basics/icon-button";
@@ -22,36 +21,60 @@ import { map, isEmpty, filter } from "underscore";
 import { IModal, IModalButtonSpec, IModalButton, IAction } from "../types";
 
 import watching, { Watcher } from "./watching";
-import styled from "./styles";
+import styled, * as styles from "./styles";
 import { stripUnit } from "polished";
 
 import format, { formatString } from "./format";
 import { InjectedIntl, injectIntl } from "react-intl";
 import { specToButton } from "../helpers/spec-to-button";
 import { modalWidgets } from "./modal-widgets/index";
+import classNames = require("classnames");
 
 type Flavor = "normal" | "big";
 
-const customStyles = {
-  overlay: {
-    backgroundColor: "rgba(7, 4, 4, 0.75)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  content: {
-    position: "initial",
-    minWidth: "50%",
-    maxWidth: "90%",
-    maxHeight: "80%",
-    padding: "0px",
-    backgroundColor: colors.darkMineShaft,
-    border: `1px solid ${colors.lightMineShaft}`,
-    borderRadius: "2px",
-    boxShadow: "0 0 16px black",
-    zIndex: 400,
-  },
-};
+const ModalPortalDiv = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(7, 4, 4, 0.74);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  animation: ${styles.animations.fadeIn} 0.2s;
+
+  .content {
+    min-width: 50%;
+    max-width: 90%;
+    max-height: 80%;
+    overflow-y: auto;
+
+    &.fullscreen {
+      min-width: 100%;
+      max-width: 100%;
+      min-height: 100%;
+      max-height: 100%;
+      position: relative;
+
+      .modal-div {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    padding: 0px;
+    background-color: ${colors.darkMineShaft};
+    border: 1px solid ${colors.lightMineShaft};
+    border-radius: 2px;
+    box-shadow: 0 0 32px black;
+    z-index: 200;
+  }
+`;
 
 const ModalDiv = styled.div`
   min-width: 200px;
@@ -60,6 +83,7 @@ const ModalDiv = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: auto;
 
   .big-wrapper {
     display: flex;
@@ -135,6 +159,10 @@ const ModalDiv = styled.div`
 
       .secondary {
         color: ${props => props.theme.secondaryText};
+      }
+
+      strong {
+        font-weight: bold;
       }
     }
 
@@ -351,8 +379,8 @@ const BigButtonsDiv = styled.div`
 
 @watching
 export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
-  constructor() {
-    super();
+  constructor(props: Modal["props"], context) {
+    super(props, context);
     this.state = {
       widgetPayload: null,
     };
@@ -360,7 +388,6 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   subscribe(watcher: Watcher) {
     watcher.on(actions.commandOk, async (store, action) => {
-      // TODO: move this to metal side
       const { modal } = this.props;
       if (!modal) {
         return;
@@ -387,14 +414,19 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   render() {
+    const { modal } = this.props;
+    if (!modal) {
+      return null;
+    }
+
     return (
-      <ReactModal
-        isOpen={!!this.props.modal}
-        contentLabel="Modal"
-        style={customStyles}
-      >
-        {this.renderContent()}
-      </ReactModal>
+      <ModalPortalDiv>
+        <div
+          className={classNames("content", { fullscreen: modal.fullscreen })}
+        >
+          {this.renderContent()}
+        </div>
+      </ModalPortalDiv>
     );
   }
 
@@ -414,9 +446,11 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
       widget,
     } = modal;
     return (
-      <ModalDiv>
+      <ModalDiv className="modal-div">
         <HeaderDiv>
-          <span className="title">{format(title)}</span>
+          <span className="title" onClick={this.onDebugClick}>
+            {format(title)}
+          </span>
           <Filler />
           {modal.unclosable ? null : (
             <IconButton icon="cross" onClick={() => closeModal({})} />
@@ -438,8 +472,6 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
           </div>
         ) : null}
 
-        {widget ? this.renderWidget(widget, modal) : null}
-
         {bigButtons.length > 0 ? (
           <div className="big-wrapper">
             {this.renderCover(modal)}
@@ -447,10 +479,29 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
           </div>
         ) : null}
 
+        {widget ? this.renderWidget(widget, modal) : null}
+
         {this.renderButtons(buttons, "normal")}
       </ModalDiv>
     );
   }
+
+  onDebugClick = (e: React.MouseEvent<any>) => {
+    if (e.shiftKey && e.ctrlKey) {
+      const { openModal } = this.props;
+      openModal(
+        modalWidgets.exploreJson.make({
+          title: "Modal payload",
+          message: "",
+          widgetParams: {
+            data: this.props.modal,
+          },
+          fullscreen: true,
+        })
+      );
+      return;
+    }
+  };
 
   renderCover(modal: IModal): JSX.Element {
     const { coverUrl, stillCoverUrl } = modal;
@@ -585,15 +636,11 @@ export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   updatePayload = (payload: typeof actions.modalResponse.payload) => {
     this.setState({ widgetPayload: payload });
   };
-
-  componentWillMount() {
-    ReactModal.setAppElement("body");
-  }
 }
 
 interface IProps {}
 
-const actionCreators = actionCreatorsList("closeModal");
+const actionCreators = actionCreatorsList("openModal", "closeModal");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   modal: IModal;

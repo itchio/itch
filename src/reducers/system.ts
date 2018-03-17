@@ -1,6 +1,5 @@
 import * as os from "../os";
-import * as electron from "electron";
-const app = electron.app || electron.remote.app;
+import * as app from "../helpers/app";
 
 import { actions } from "../actions";
 import reducer from "./reducer";
@@ -17,16 +16,8 @@ const initialState = {
   sniffedLanguage: null,
   homePath: app.getPath("home"),
   userDataPath: app.getPath("userData"),
-  diskInfo: {
-    parts: [],
-    total: {
-      free: 0,
-      size: 0,
-    },
-  },
   proxy: null,
   proxySource: null,
-  booted: false,
   quitting: false,
   nextSelfUpdateCheck: Date.now() + 60 * 1000,
   nextGameUpdateCheck: Date.now() + 30 * 1000,
@@ -41,27 +32,12 @@ export default reducer<ISystemState>(initialState, on => {
     };
   });
 
-  on(actions.freeSpaceUpdated, (state, action) => {
-    const { diskInfo } = action.payload;
-    return {
-      ...state,
-      diskInfo,
-    };
-  });
-
   on(actions.proxySettingsDetected, (state, action) => {
     const { proxy, source } = action.payload;
     return {
       ...state,
       proxy,
       proxySource: source,
-    };
-  });
-
-  on(actions.prepareQuit, (state, action) => {
-    return {
-      ...state,
-      quitting: true,
     };
   });
 });

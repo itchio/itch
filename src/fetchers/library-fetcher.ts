@@ -1,52 +1,69 @@
 import { Fetcher } from "./fetcher";
-import * as squel from "squel";
 
-import { addSortAndFilterToQuery } from "./sort-and-filter";
-
-const emptyObj = {} as any;
+import getByIds from "../helpers/get-by-ids";
+import { withButlerClient, messages } from "../buse";
+import { Game } from "../buse/messages";
+import { uniq } from "underscore";
 
 export default class LibraryFetcher extends Fetcher {
   async work(): Promise<void> {
-    await this.pushLocal();
+    // first, filter what we already got
+    const cachedGames = getByIds(
+      this.space().games().set,
+      this.space().games().allIds
+    );
+    const dataGamesCount = cachedGames.length;
 
-    if (this.warrantsRemote(this.reason)) {
-      await this.remote();
-      await this.pushLocal();
-    }
-  }
-
-  async remote() {
-    const meId = this.ensureCredentials().me.id;
-    const ownedKeysRes = await this.withApi(async api => {
-      return await api.myOwnedKeys();
-    });
-
-    const downloadKeys = ownedKeysRes.entities.downloadKeys || emptyObj;
-    for (const id of Object.keys(downloadKeys)) {
-      downloadKeys[id].ownerId = meId;
+    if (dataGamesCount > 0) {
+      this.pushUnfilteredGames(cachedGames);
+      if (!this.warrantsRemote()) {
+        return;
+      }
     }
 
-    const { db } = this.ctx;
-    db.saveMany(ownedKeysRes.entities);
+    await withButlerClient(this.logger, async client => {
+      let games: Game[] = [];
 
-    await this.pushLocal();
-  }
+      const push = () => {
+        games = uniq(games, g => g.id);
+        this.pushUnfilteredGames(games);
+      };
 
-  async pushLocal() {
-    const { db, store } = this.ctx;
-    const { commons } = store.getState();
+      const { caves } = await client.call(messages.FetchCaves({}));
+      if (caves) {
+        for (const cave of caves) {
+          games.push(cave.game);
+        }
+      }
 
-    const { libraryGameIds } = commons;
-
-    let doQuery = (k: squel.Select) =>
-      addSortAndFilterToQuery(
-        k,
-        squel.expr().and("games.id in ?", libraryGameIds),
-        this.tab,
-        store
+      client.onNotification(
+        messages.FetchProfileOwnedKeysYield,
+        async ({ params }) => {
+          if (params.items) {
+            for (const dk of params.items) {
+              games.push(dk.game);
+            }
+            push();
+          }
+        }
       );
 
-    const games = db.games.all(k => doQuery(k).field("games.*"));
-    this.pushFilteredGames(games, libraryGameIds.length);
+      await client.call(
+        messages.FetchProfileOwnedKeys({
+          profileId: this.profileId(),
+        })
+      );
+    });
+  }
+
+  clean() {
+    this.push(
+      {
+        collections: null,
+        users: null,
+        games: null,
+      },
+      { shallow: true }
+    );
   }
 }

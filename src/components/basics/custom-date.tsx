@@ -1,18 +1,12 @@
 import * as React from "react";
 import { injectIntl, InjectedIntl } from "react-intl";
-import {
-  formatDate,
-  MixedDate,
-  DATE_FORMAT,
-  IDateFormat,
-} from "../../format/datetime";
-import { fromDateTimeField } from "../../db/datetime-field";
+import { formatDate, DATE_FORMAT, IDateFormat } from "../../format/datetime";
 
 class CustomDate extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { intl, date, format = DATE_FORMAT } = this.props;
 
-    const dateObject = fromDateTimeField(date);
+    const dateObject = date;
     if (!dateObject) {
       return null;
     }
@@ -27,7 +21,7 @@ class CustomDate extends React.PureComponent<IProps & IDerivedProps> {
 }
 
 interface IProps {
-  date: MixedDate;
+  date: Date;
   format?: IDateFormat;
 }
 

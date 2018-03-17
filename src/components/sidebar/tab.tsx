@@ -8,8 +8,8 @@ import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
 import { size } from "underscore";
 import {
-  getFinishedDownloads,
   getActiveDownload,
+  getPendingDownloads,
 } from "../../reactors/downloads/getters";
 
 import {
@@ -22,7 +22,7 @@ import {
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDurationAsMessage } from "../../format/datetime";
 import { Space } from "../../helpers/space";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../../buse/messages";
 import { modalWidgets } from "../modal-widgets/index";
 
 interface ISortableHubSidebarItemProps {
@@ -69,17 +69,18 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
 
     if (tab === "itch://downloads") {
       const { downloads } = this.props;
-      count = size(getFinishedDownloads(downloads));
+      count = size(getPendingDownloads(downloads));
       const activeDownload = getActiveDownload(downloads);
       if (activeDownload) {
-        progress = activeDownload.progress;
+        const downloadProgress = downloads.progresses[activeDownload.id];
         if (downloads.paused) {
           icon = "stopwatch";
           sublabel = ["grid.item.downloads_paused"];
-        } else if (activeDownload.eta) {
+        } else if (downloadProgress && downloadProgress.eta) {
+          progress = downloadProgress.progress;
           const title = activeDownload.game.title;
           const { intl } = this.props;
-          const formatted = formatDurationAsMessage(activeDownload.eta);
+          const formatted = formatDurationAsMessage(downloadProgress.eta);
           const humanDuration = intl.formatMessage(
             {
               id: formatted.id,
@@ -134,6 +135,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
         widgetParams: {
           data: { tab, tabInstance },
         },
+        fullscreen: true,
       })
     );
   };
@@ -167,8 +169,8 @@ const Tab = connect<IProps>(injectIntl(TabBase), {
     let { tab } = initialProps;
 
     return createStructuredSelector({
-      tabInstance: (rs: IRootState) => rs.session.tabInstances[tab],
-      loading: (rs: IRootState) => !!rs.session.navigation.loadingTabs[tab],
+      tabInstance: (rs: IRootState) => rs.profile.tabInstances[tab],
+      loading: (rs: IRootState) => !!rs.profile.navigation.loadingTabs[tab],
       downloads: (rs: IRootState) => tab === "itch://downloads" && rs.downloads,
     });
   },

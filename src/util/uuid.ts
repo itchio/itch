@@ -1,6 +1,6 @@
 let rng: () => Uint8Array;
 
-if (process.type === "browser") {
+if (process.type === "browser" || !process.type) {
   const crypto = require("crypto");
   rng = () => crypto.randomBytes(16);
 } else {

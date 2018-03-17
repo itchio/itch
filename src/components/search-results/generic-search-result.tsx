@@ -26,7 +26,9 @@ abstract class GenericSearchResult<
   componentDidUpdate() {
     if (this.props.chosen) {
       const node = findDOMNode(this);
-      (node as any).scrollIntoViewIfNeeded();
+      if (node) {
+        (node as any).scrollIntoViewIfNeeded();
+      }
     }
   }
 

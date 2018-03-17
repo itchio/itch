@@ -12,13 +12,14 @@ import format from "../format";
 import { fileSize } from "../../format/filesize";
 import { IModalWidgetProps } from "./index";
 import { ModalWidgetDiv } from "./modal-widget";
+import styled from "../styles";
 
 class ClearBrowsingData extends React.PureComponent<
   IProps & IDerivedProps,
   IState
 > {
-  constructor() {
-    super();
+  constructor(props: ClearBrowsingData["props"], context) {
+    super(props, context);
     this.state = {
       fetchedCacheSize: false,
       clearCache: true,
@@ -80,7 +81,7 @@ class ClearBrowsingData extends React.PureComponent<
 
     return (
       <ModalWidgetDiv>
-        <div className="clear-browsing-data-list">
+        <ClearBrowsingDataList>
           <label className={classNames({ active: clearCache })}>
             <div className="checkbox">
               <input
@@ -102,9 +103,7 @@ class ClearBrowsingData extends React.PureComponent<
               ) : (
                 <span>
                   <LoadingCircle progress={0.1} />{" "}
-                  {format([
-                    "prompt.clear_browsing_data.retrieving_cache_size",
-                  ])},
+                  {format(["prompt.clear_browsing_data.retrieving_cache_size"])},
                 </span>
               )}
             </div>
@@ -123,11 +122,51 @@ class ClearBrowsingData extends React.PureComponent<
               {format(["prompt.clear_browsing_data.cookies_info"])}
             </div>
           </label>
-        </div>
+        </ClearBrowsingDataList>
       </ModalWidgetDiv>
     );
   }
 }
+
+const ClearBrowsingDataList = styled.div`
+  label {
+    display: block;
+    border-left: 3px solid ${props => props.theme.prefBorder};
+    padding: 5px 0;
+    padding-left: 5px;
+    margin: 3px 0;
+    margin-bottom: 10px;
+    transition: 0.2s border ease-in-out;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.active {
+      border-color: ${props => props.theme.accent};
+    }
+  }
+
+  .checkbox {
+    margin: 0;
+    display: flex;
+    align-items: center;
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+    }
+  }
+
+  .checkbox-info {
+    margin: 0;
+    margin-top: 5px;
+    margin-left: 5px;
+    font-size: 90%;
+    color: ${props => props.theme.secondaryText};
+  }
+`;
+
+// props
 
 export interface IClearBrowsingDataParams {}
 export interface IClearBrowsingDataResponse {
@@ -158,6 +197,6 @@ interface IState {
 
 export default connect<IProps>(ClearBrowsingData, {
   state: state => ({
-    userId: state.session.credentials.me.id,
+    userId: state.profile.credentials.me.id,
   }),
 });

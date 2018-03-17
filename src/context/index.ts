@@ -1,4 +1,3 @@
-import { DB } from "../db";
 import { IStore, IProgressInfo, IProgressListener, Cancelled } from "../types";
 
 import { EventEmitter } from "events";
@@ -49,9 +48,10 @@ export class MinimalContext {
     this.dead = true;
 
     while (this.stoppers.length > 0) {
-      const stopper = this.stoppers.pop();
+      let stopper = this.stoppers[this.stoppers.length - 1];
       try {
         await stopper();
+        this.stoppers.pop();
       } catch (e) {
         this.dead = false;
         throw e;
@@ -133,11 +133,11 @@ export class MinimalContext {
 }
 
 export default class Context extends MinimalContext {
-  constructor(public store: IStore, public db: DB) {
+  constructor(public store: IStore) {
     super();
   }
 
   clone(): Context {
-    return new Context(this.store, this.db);
+    return new Context(this.store);
   }
 }

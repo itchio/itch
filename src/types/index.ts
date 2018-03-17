@@ -1,14 +1,9 @@
 import { Store } from "redux";
 
-import { ICollection } from "../db/models/collection";
-import { IDownloadKey, IDownloadKeySummary } from "../db/models/download-key";
-import { ICaveSummary, ICave } from "../db/models/cave";
-
 export * from "./tasks";
 export * from "./errors";
 import * as Tasks from "./tasks";
 
-export * from "./api";
 export * from "./tab-data";
 import * as TabDataTypes from "./tab-data";
 export * from "../os/runtime";
@@ -16,7 +11,18 @@ export * from "../os/runtime";
 import { SortDirection, SortKey } from "../components/sort-types";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { ITabData } from "./tab-data";
-import { GameUpdate, Game, User } from "node-buse/lib/messages";
+import {
+  GameUpdate,
+  Game,
+  User,
+  Collection,
+  CaveSummary,
+  DownloadKeySummary,
+  Cave,
+  DownloadKey,
+  Download,
+  DownloadProgress,
+} from "../buse/messages";
 
 export interface IStore extends Store<IRootState> {}
 
@@ -76,64 +82,18 @@ export interface IGameSet {
 }
 
 export interface IDownloadKeySet {
-  [id: string]: IDownloadKey;
+  [id: string]: DownloadKey;
 }
 
 export interface ICollectionSet {
-  [id: string]: ICollection;
+  [id: string]: Collection;
 }
 
 export interface ICaveSet {
-  [key: string]: ICave;
-}
-
-export type InstallerType =
-  | "archive"
-  | "air"
-  | "dmg"
-  | "inno"
-  | "nsis"
-  | "msi"
-  | "naked"
-  | "unknown";
-
-export type TableName =
-  | "caves"
-  | "users"
-  | "games"
-  | "collections"
-  | "downloadKeys"
-  | "itchAppTabs";
-
-export interface IEntityMap<T> {
-  [entityId: string]: T;
-}
-
-export interface ITableMap {
-  [table: string]: IEntityMap<any>;
-  games?: IEntityMap<Partial<Game>>;
-  users?: IEntityMap<Partial<User>>;
-  collections?: IEntityMap<Partial<ICollection>>;
-  downloads?: IEntityMap<Partial<IDownloadItem>>;
-}
-
-/**
- * Refers to a bunch of records, for example:
- * { 'apples': ['gala', 'cripps', 'golden'], 'pears': ['anjou'] }
- */
-export interface IEntityRefs {
-  [table: string]: string[];
-}
-
-/**
- * Specifies what to delete from the DB
- */
-export interface IDBDeleteSpec {
-  entities: IEntityRefs;
+  [key: string]: Cave;
 }
 
 export interface ICredentials {
-  key: string;
   me: User;
 }
 
@@ -144,8 +104,7 @@ export interface IRootState {
   modals: IModalsState;
   system: ISystemState;
   setup: ISetupState;
-  rememberedSessions: IRememberedSessionsState;
-  session: ISessionState;
+  profile: IProfileState;
   i18n: II18nState;
   ui: IUIState;
   selfUpdate: ISelfUpdateState;
@@ -154,56 +113,32 @@ export interface IRootState {
   downloads: IDownloadsState;
   status: IStatusState;
   gameUpdates: IGameUpdatesState;
-  queries: IQueriesState;
+
   /** commonly-needed subset of DB rows available in a compact & performance-friendly format */
   commons: ICommonsState;
+
   systemTasks: ISystemTasksState;
-}
-
-export interface IQueriesState {
-  [key: string]: {
-    [key: string]: any[];
-  };
-
-  cavesByGameId: {
-    [gameId: string]: ICave[];
-  };
-
-  downloadKeysByGameId: {
-    [gameId: string]: IDownloadKey[];
-  };
 }
 
 export interface ICommonsState {
   downloadKeys: {
-    [downloadKeyId: string]: IDownloadKeySummary;
+    [downloadKeyId: string]: DownloadKeySummary;
   };
   downloadKeyIdsByGameId: {
     [gameId: string]: string[];
   };
 
   caves: {
-    [caveId: string]: ICaveSummary;
+    [caveId: string]: CaveSummary;
   };
   caveIdsByGameId: {
     [gameId: string]: string[];
-  };
-
-  /** games we can edit or have keys for */
-  libraryGameIds: number[];
-  myGameIdsSet: {
-    [gameId: string]: boolean;
   };
 
   /** size on disk (in bytes) of each install location */
   locationSizes: {
     [id: string]: number;
   };
-}
-
-export interface IGameCredentials {
-  apiKey: string;
-  downloadKey?: IDownloadKey;
 }
 
 export interface IGameUpdatesState {
@@ -281,6 +216,7 @@ export interface IModalBase {
   buttons?: IModalButtonSpec[];
 
   unclosable?: boolean;
+  fullscreen?: boolean;
 }
 
 export interface IModal extends IModalBase {
@@ -316,10 +252,6 @@ export interface IItchAppTabs {
 
   /** list of transient tabs when the snapshot was taken */
   items: TabDataTypes.ITabDataSave[];
-}
-
-export interface IDownloadKeysMap {
-  [id: string]: IDownloadKey;
 }
 
 export type ProxySource = "os" | "env";
@@ -358,17 +290,11 @@ export interface ISystemState {
   /** ~/.config/itch, ~/Library/Application Data/itch, %APPDATA%/itch */
   userDataPath: string;
 
-  /** total/free space in various partitions/disks */
-  diskInfo: IPartsInfo;
-
   /** if non-null, the proxy specified by the OS (as sniffed by Chromium) */
   proxy?: string;
 
   /** if non-null, where the proxy settings come from */
   proxySource?: ProxySource;
-
-  /** true if we're done booting */
-  booted?: boolean;
 
   /** true if we're about to quit */
   quitting?: boolean;
@@ -394,54 +320,26 @@ export interface ISetupState {
   blockingOperation: ISetupOperation;
 }
 
-export interface IRememberedSession {
-  /** API key */
-  key: string;
-
-  /** user info */
-  me: User;
-
-  /** date the user was last active in the app (this install) */
-  lastConnected: number;
-}
-
-export interface IRememberedSessionsState {
-  [id: string]: IRememberedSession;
-}
-
-export interface ISessionState {
+export interface IProfileState {
   /** collection freshness information */
-  credentials: ISessionCredentialsState;
-  folders: ISessionFoldersState;
-  login: ISessionLoginState;
-  navigation: ISessionNavigationState;
-  search: ISessionSearchState;
+  credentials: IProfileCredentialsState;
+  login: IProfileLoginState;
+  navigation: IProfileNavigationState;
+  search: IProfileSearchState;
 
   tabInstances: TabDataTypes.ITabInstances;
 }
 
-export interface ISessionCredentialsState {
-  /** API key */
-  key: string;
-
+// TODO: remove, just put the buse profile object in the state
+export interface IProfileCredentialsState {
   /** info on user using the app */
   me: User;
 }
 
-export interface ISessionFoldersState {
-  /** path where user-specific data is stored, such as their credentials */
-  libraryDir: string;
-}
-
-export interface ISessionLoginState {
-  /**
-   * true if the list of remembered sessions is shown,
-   * false if the username/password form is shown.
-   */
-  picking: boolean;
-
+export interface IProfileLoginState {
   errors: string[];
   blockingOperation: ISetupOperation;
+  lastUsername?: string;
 }
 
 export interface IOpenTabs {
@@ -453,7 +351,7 @@ export interface IOpenTabs {
 
 export type TabLayout = "grid" | "table";
 
-export interface ISessionNavigationState {
+export interface IProfileNavigationState {
   /** opened tabs */
   openTabs: IOpenTabs;
 
@@ -486,7 +384,7 @@ export interface ISearchResults {
   };
 }
 
-export interface ISessionSearchState {
+export interface IProfileSearchState {
   /** search suggestion */
   example: string;
 
@@ -697,6 +595,8 @@ export interface ITask {
 
   /** estimated time remaining for task, in seconds, if available */
   eta?: number;
+
+  stage?: string;
 }
 
 export interface ITasksState {
@@ -725,53 +625,17 @@ export interface IUpgradePathItem {
   patchSize: number;
 }
 
-/**
- * A download in progress for the app. Always linked to a game,
- * sometimes for first install, sometimes for update.
- */
-export interface IDownloadItem extends Tasks.IQueueDownloadOpts {
-  /** unique generated id for this download */
-  id: string;
-
-  /** reason why this download was started */
-  reason: Tasks.DownloadReason;
-
-  /** download progress in a [0, 1] interval */
-  progress: number;
-
-  /** set when download has been completed */
-  finished?: boolean;
-
-  /** rank in the download list: can be negative, for reordering */
-  rank: number;
-
-  /** at how many bytes per second are we downloading right now? */
-  bps?: number;
-
-  /** how many seconds till the download ends? */
-  eta?: number;
-
-  /** timestamp the download started at */
-  startedAt?: Date;
-
-  /** timestamp the download finished at */
-  finishedAt?: Date;
-
-  /** an error that may have occured while downloading */
-  err?: string;
-
-  /** stack trace of an error that may have occured while downloading */
-  errStack?: string;
-}
-
 export type DownloadSpeedDataPoint = number;
 
 export type IDownloadSpeeds = DownloadSpeedDataPoint[];
 
+// TODO: figure this out with buse
+export type DownloadReason = string;
+
 export interface IDownloadsState {
   /** All the downloads we know about, indexed by their own id */
   items: {
-    [id: string]: IDownloadItem;
+    [id: string]: Download;
   };
 
   /** IDs of all the downloads we know about, grouped by the id of the game they're associated to */
@@ -779,11 +643,12 @@ export interface IDownloadsState {
     [gameId: string]: string[];
   };
 
+  progresses: {
+    [id: string]: DownloadProgress;
+  };
+
   /** true if downloads are currently paused */
   paused: boolean;
-
-  /** false until we've restored previous downloads from the DB */
-  restored: boolean;
 
   /** Download speeds, in bps, each item represents one second */
   speeds: IDownloadSpeeds;
@@ -816,27 +681,6 @@ export interface IStatusState {
  */
 export type ILocalizedString = string | any[];
 
-// diskinfo
-
-export interface ISpaceInfo {
-  free: number;
-  size: number;
-}
-
-export interface IPartInfo extends ISpaceInfo {
-  letter?: string;
-  mountpoint?: string;
-}
-
-/**
- * Contains information about the size and free space
- * of all the partitions / disks of this computer.
- */
-export interface IPartsInfo {
-  parts: IPartInfo[];
-  total: ISpaceInfo;
-}
-
 export interface IProgressInfo {
   /** progress of the task between [0,1] */
   progress: number;
@@ -846,6 +690,8 @@ export interface IProgressInfo {
 
   /** estimated time remaining, in seconds */
   eta?: number;
+
+  stage?: string;
 }
 
 export interface IProgressListener {
@@ -955,6 +801,9 @@ export interface IEvolveBasePayload {
 export interface IEvolveTabPayload extends IEvolveBasePayload {
   /** if false, that's a new history entry, if true it replaces the current one */
   replace: boolean;
+
+  /** if true, it doesn't warrant a remote fetch */
+  onlyParamsChange?: boolean;
 }
 
 export interface INavigateTabPayload extends IEvolveBasePayload {

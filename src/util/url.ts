@@ -1,5 +1,6 @@
 /* node's standard url module */
-import * as url from "url";
+import { parse } from "url";
+export * from "url";
 
 /** user.example.org => example.org */
 export function subdomainToDomain(subdomain: string): string {
@@ -11,10 +12,5 @@ export function subdomainToDomain(subdomain: string): string {
 }
 
 export function isItchioURL(s: string): boolean {
-  return url.parse(s).protocol === "itchio:";
+  return parse(s).protocol === "itchio:";
 }
-
-export const parse = url.parse.bind(url);
-export const format = url.format.bind(url);
-
-export default { subdomainToDomain, isItchioURL, parse, format };

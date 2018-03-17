@@ -1,8 +1,5 @@
 import { actions } from "../../actions";
 
-import { IDownloadKey } from "../../db/models/download-key";
-import { ICaveSummary } from "../../db/models/cave";
-
 import {
   ClassificationAction,
   ILocalizedString,
@@ -11,7 +8,7 @@ import {
 } from "../../types";
 
 import { showInExplorerString } from "../../format/show-in-explorer";
-import { Game } from "node-buse/lib/messages";
+import { Game, CaveSummary, DownloadKey } from "../../buse/messages";
 
 export type ActionType = "secondary" | "separator" | "info";
 
@@ -32,7 +29,7 @@ function browseAction(caveId: string): IActionOpts {
   };
 }
 
-function purchaseAction(game: Game, downloadKey: IDownloadKey): IActionOpts {
+function purchaseAction(game: Game, downloadKey: DownloadKey): IActionOpts {
   const donate = game.minPrice === 0;
 
   if (donate) {
@@ -62,8 +59,8 @@ function uninstallAction(caveId: string): IActionOpts {
 
 interface IListSecondaryActionsProps {
   game: Game;
-  cave: ICaveSummary;
-  downloadKey: IDownloadKey;
+  cave: CaveSummary;
+  downloadKey: DownloadKey;
 
   mayDownload: boolean;
   canBeBought: boolean;

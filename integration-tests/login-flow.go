@@ -21,44 +21,59 @@ func loginFlow(r *runner) {
 	r.logf("logging out for real")
 	logout(true)
 
-	r.logf("forgetting session")
-	must(r.waitForVisible(".remembered-session"))
-	must(r.click(".remembered-session .forget-session"))
-	must(r.click("#modal-forget-session"))
+	r.logf("forgetting profile")
+	must(r.waitForVisible(".remembered-profile"))
+	must(r.click(".remembered-profile .forget-profile"))
+	must(r.click("#modal-forget-profile"))
 
-	r.logf("logging in with invalid credentials")
-	must(r.setValue("#login-username", "c93e730d"))
-	must(r.setValue("#login-password", "553b6a59"))
-	must(r.click("#login-button"))
-	must(r.waitUntilTextExists("#login-errors", "Incorrect username or password"))
+	// we cannot, as recaptcha hits us
+	canUsePasswords := false
 
-	if testAccountPassword == "" {
-		must(errors.Wrap(fmt.Errorf("No password in environment, not performing further login tests"), 0))
-	}
-
-	r.logf("logging in with valid credentials")
-	loginWithPassword := func() {
-		must(r.setValue("#login-username", testAccountName))
-		must(r.setValue("#login-password", testAccountPassword))
+	if canUsePasswords {
+		r.logf("logging in with invalid credentials")
+		must(r.setValue("#login-username", "c93e730d"))
+		must(r.setValue("#login-password", "553b6a59"))
 		must(r.click("#login-button"))
-		must(r.waitForVisible(".user-menu"))
+		must(r.waitUntilTextExists("#login-errors", "Incorrect username or password"))
+
+		if testAccountPassword == "" {
+			must(errors.Wrap(fmt.Errorf("No password in environment, not performing further login tests"), 0))
+		}
+
+		r.logf("logging in with valid credentials")
+		loginWithPassword := func() {
+			must(r.setValue("#login-username", testAccountName))
+			must(r.setValue("#login-password", testAccountPassword))
+			must(r.click("#login-button"))
+			must(r.waitForVisible(".user-menu"))
+		}
+		loginWithPassword()
+
+		// now kids this is the REAL integration testing you've been talked about
+		r.logf("checking that we're logged in on itch.io too")
+
+		r.logf("opening new tab")
+		must(r.click("#new-tab-icon"))
+		must(r.click(".meat-tab.visible .browser-address"))
+		must(r.setValue(".meat-tab.visible .browser-address", "https://itch.io/login\uE007"))
+
+		r.logf("checking that we're redirected to the dashboard")
+		must(r.waitUntilTextExists(
+			".title-bar-text",
+			"Creator Dashboard",
+		))
+	} else {
+		r.logf("logging in with valid credentials")
+		loginWithPassword := func() {
+			must(r.setValue("#login-username", "#api-key"))
+			must(r.setValue("#login-password", testAccountAPIKey))
+			must(r.click("#login-button"))
+			must(r.waitForVisible(".user-menu"))
+		}
+		loginWithPassword()
 	}
-	loginWithPassword()
 
-	// now kids this is the REAL integration testing you've been talked about
-	r.logf("checking that we're logged in on itch.io too")
-
-	r.logf("opening new tab")
-	must(r.click("#new-tab-icon"))
-	must(r.click(".meat-tab.visible .browser-address"))
-	must(r.setValue(".meat-tab.visible .browser-address", "https://itch.io/login\uE007"))
-
-	r.logf("checking that we're redirected to the dashboard")
-	must(r.waitUntilTextExists(
-		".title-bar-text",
-		"Creator Dashboard",
-	))
-
+	// this is kinda pointless if we can't use passwords
 	r.logf("now clearing cookies")
 	must(r.click(".user-menu"))
 	must(r.click("#user-menu-preferences"))
@@ -94,8 +109,8 @@ func loginFlow(r *runner) {
 	r.logf("logging out for real")
 	logout(true)
 
-	r.logf("logging back in with remembered sessions")
-	must(r.click(".remembered-session"))
+	r.logf("logging back in with remembered profile")
+	must(r.click(".remembered-profile"))
 	must(r.waitForVisible(".user-menu"))
 
 	r.logf("making sure preferences tab was restored")

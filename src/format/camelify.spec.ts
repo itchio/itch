@@ -1,18 +1,18 @@
-import suite from "../test-suite";
+import { describe, it, assert } from "../test";
 
 import { camelify, camelifyObject } from "./camelify";
 
-suite(__filename, s => {
-  s.case("camelify", t => {
-    t.same(camelify("underscore"), "underscore");
-    t.same(camelify("under score"), "under score");
-    t.same(camelify("under_score"), "underScore");
-    t.same(camelify("heed_the_call"), "heedTheCall");
-    t.same(camelify("_sorry"), "Sorry");
+describe("camelify", () => {
+  it("camelify", () => {
+    assert.equal(camelify("underscore"), "underscore");
+    assert.equal(camelify("under score"), "under score");
+    assert.equal(camelify("under_score"), "underScore");
+    assert.equal(camelify("heed_the_call"), "heedTheCall");
+    assert.equal(camelify("_sorry"), "Sorry");
   });
 
-  s.case("camelifyObject", t => {
-    t.same(
+  it("camelifyObject", () => {
+    assert.deepEqual(
       camelifyObject({
         heed: 12,
         the_call: {
@@ -30,7 +30,7 @@ suite(__filename, s => {
     );
 
     const date = new Date();
-    t.same(camelifyObject({ created_at: date }), {
+    assert.deepEqual(camelifyObject({ created_at: date }), {
       createdAt: date,
     });
   });

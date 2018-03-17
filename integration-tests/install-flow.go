@@ -64,14 +64,15 @@ func installFlow(r *runner) {
 	must(r.waitUntilTextExists(".title-bar-text", "Preferences"))
 
 	r.logf("opening default install location in tab")
-	must(r.click(".meat-tab.visible .install-location-row.default .install-location-navigate"))
+	must(r.click(".meat-tab.visible .install-location-row.default .more-actions-button"))
+	must(r.click("#context--install-location-navigate"))
 
 	r.logf("making sure our installed game shows up")
 	var rowSelector = fmt.Sprintf(".meat-tab.visible .table--row[data-game-id='%d']", testGameID)
 	must(r.waitUntilTextExists(rowSelector+" .title--name", testGameName))
 
 	r.logf("open it again")
-	must(r.click(rowSelector))
+	must(r.click(rowSelector + " .open-game-in-tab"))
 	must(r.waitUntilTextExists(".title-bar-text", testGameName))
 
 	r.logf("uninstalling it")

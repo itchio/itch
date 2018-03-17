@@ -1,8 +1,6 @@
-import { IDownloadKeySummary } from "../db/models/download-key";
-import { ICaveSummary } from "../db/models/cave";
-import { IRootState, ITask, IDownloadItem } from "../types/index";
+import { IRootState, ITask, DownloadReason } from "../types/index";
 
-import { first } from "underscore";
+import { first, findWhere, size } from "underscore";
 import getByIds from "./get-by-ids";
 import {
   getPendingForGame,
@@ -10,9 +8,15 @@ import {
 } from "../reactors/downloads/getters";
 import isPlatformCompatible from "../util/is-platform-compatible";
 import memoize from "../util/lru-memoize";
-import { TaskName, DownloadReason } from "../types/tasks";
-import { Game } from "node-buse/lib/messages";
-import { GameUpdate } from "node-buse/lib/messages";
+import { TaskName } from "../types/tasks";
+import {
+  Game,
+  CaveSummary,
+  DownloadKeySummary,
+  Download,
+  DownloadProgress,
+} from "../buse/messages";
+import { GameUpdate } from "../buse/messages";
 
 /**
  * What type of access we have to the game - do we own it,
@@ -73,11 +77,13 @@ export interface IOperation {
   progress: number;
   bps?: number;
   eta?: number;
+  stage?: string;
 }
 
 export interface IGameStatus {
-  downloadKey: IDownloadKeySummary;
-  cave: ICaveSummary;
+  downloadKey: DownloadKeySummary;
+  cave: CaveSummary;
+  numCaves: number;
   access: Access;
   operation: IOperation;
   update: GameUpdate;
@@ -87,31 +93,48 @@ export interface IGameStatus {
 export default function getGameStatus(
   rs: IRootState,
   game: Game,
-  cave?: ICaveSummary
+  caveId?: string
 ): IGameStatus {
-  const { commons, session, tasks, downloads } = rs;
-  const { credentials } = session;
+  const { commons, profile, tasks, downloads } = rs;
+  const { credentials } = profile;
 
   let downloadKeys = getByIds(
     commons.downloadKeys,
     commons.downloadKeyIdsByGameId[game.id]
   );
 
+  let cave: CaveSummary;
+  let numCaves = 0;
   if (!cave) {
-    let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
-    cave = first(caves);
+    if (caveId) {
+      cave = commons.caves[caveId];
+    } else {
+      let caves = getByIds(commons.caves, commons.caveIdsByGameId[game.id]);
+      numCaves = size(caves);
+      cave = first(caves);
+    }
   }
   const downloadKey = first(downloadKeys);
 
   const pressUser = credentials.me.pressUser;
   const task = first(tasks.tasksByGameId[game.id]);
-  const download = first(getPendingForGame(downloads, game.id));
+
+  const pendingDownloads = getPendingForGame(downloads, game.id);
+  let download: Download;
+  if (caveId) {
+    download = findWhere(pendingDownloads, { caveId });
+  } else {
+    download = first(pendingDownloads);
+  }
+
   let isActiveDownload = false;
   let areDownloadsPaused = false;
+  let downloadProgress: DownloadProgress;
   if (download) {
     const activeDownload = getActiveDownload(downloads);
     isActiveDownload = download.id === activeDownload.id;
     areDownloadsPaused = downloads.paused;
+    downloadProgress = downloads.progresses[download.id];
   }
 
   let update: GameUpdate;
@@ -122,10 +145,12 @@ export default function getGameStatus(
   return realGetGameStatus(
     game,
     cave,
+    numCaves,
     downloadKey,
     pressUser,
     task,
     download,
+    downloadProgress,
     update,
     isActiveDownload,
     areDownloadsPaused
@@ -134,11 +159,13 @@ export default function getGameStatus(
 
 function rawGetGameStatus(
   game: Game,
-  cave: ICaveSummary,
-  downloadKey: IDownloadKeySummary,
+  cave: CaveSummary,
+  numCaves: number,
+  downloadKey: DownloadKeySummary,
   pressUser: boolean,
   task: ITask,
-  download: IDownloadItem,
+  download: Download,
+  downloadProgress: DownloadProgress,
   update: GameUpdate,
   isDownloadActive,
   areDownloadsPaused
@@ -176,23 +203,32 @@ function rawGetGameStatus(
       progress: task.progress,
       eta: task.eta,
       bps: task.bps,
+      stage: task.stage,
     };
   } else if (download) {
+    let p = downloadProgress || {
+      progress: null,
+      eta: null,
+      bps: null,
+      stage: null,
+    };
     operation = {
       type: OperationType.Download,
       id: download.id,
       reason: download.reason,
       active: isDownloadActive,
       paused: areDownloadsPaused,
-      progress: download.progress,
-      eta: download.eta,
-      bps: download.bps,
+      progress: p.progress,
+      eta: p.eta,
+      bps: p.bps,
+      stage: p.stage,
     };
   }
 
   const compatible = isPlatformCompatible(game);
   return {
     cave,
+    numCaves,
     downloadKey,
     access,
     operation,

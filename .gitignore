@@ -32,6 +32,7 @@ npm-debug.log
 /build
 /cache
 /stage*
+/app*
 /dist*
 /deb-stage
 /rpm-stage

@@ -6,18 +6,13 @@ import {
   ICommonsState,
   IModalAction,
   ISetupOperation,
-  IRememberedSessionsState,
-  IRememberedSession,
   IItchAppTabs,
   ITabParams,
   IMenuTemplate,
   ISelfUpdate,
   II18nResources,
   II18nKeys,
-  IPartsInfo,
   IProgressInfo,
-  IQueueDownloadOpts,
-  IDownloadItem,
   IOpenTabPayload,
   IQueueLaunchOpts,
   GenerosityLevel,
@@ -32,10 +27,19 @@ import {
   IEvolveTabPayload,
   INavigateTabPayload,
 } from "../types/index";
-import { Game, Build, Upload, User } from "node-buse/lib/messages";
+import {
+  Game,
+  Upload,
+  User,
+  CleanDownloadsEntry,
+  GameUpdate,
+  Profile,
+  Collection,
+  Download,
+  DownloadProgress,
+  InstallLocationSummary,
+} from "../buse/messages";
 import { TaskName } from "../types/tasks";
-import { CleanDownloadsEntry, GameUpdate } from "node-buse/lib/messages";
-import { ICollection } from "../db/models/collection";
 import {
   ITypedModal,
   ITypedModalUpdate,
@@ -111,14 +115,6 @@ export const actions = wireActions({
     proxy: string;
     source: ProxySource;
   }>(),
-  dbCommit: action<{
-    /** the table the records that were changed belong to */
-    tableName: string;
-    /** primary keys for updated records */
-    updated: string[];
-    /** primary keys for deleted records */
-    deleted: string[];
-  }>(),
   commonsUpdated: action<Partial<ICommonsState>>(),
 
   // modals
@@ -147,10 +143,8 @@ export const actions = wireActions({
   setupDone: action<{}>(),
   retrySetup: action<{}>(),
 
-  // sessions
+  // login
 
-  loginStartPicking: action<{}>(),
-  loginStopPicking: action<{}>(),
   attemptLogin: action<{}>(),
   loginWithPassword: action<{
     /** the username or e-mail for the itch.io account to log in as */
@@ -162,15 +156,8 @@ export const actions = wireActions({
     /** the 2FA totp code entered by user */
     totpCode?: string;
   }>(),
-  loginWithToken: action<{
-    /** the username or e-mail for the itch.io account to log in as */
-    username: string;
-
-    /** an API token for the itch.io account to log in as */
-    key: string;
-
-    /** loginWithToken is used for remembered sessions - we already have user info for those */
-    me: User;
+  useSavedLogin: action<{
+    profile: Profile;
   }>(),
   loginFailed: action<{
     /** the username we couldn't log in as (useful to prefill login form for retry) */
@@ -181,36 +168,20 @@ export const actions = wireActions({
   }>(),
   loginCancelled: action<{}>(),
   loginSucceeded: action<{
-    /** API key we just validated */
-    key: string;
-
-    /** user info (with extra fields only we can see) */
-    me: User;
+    /** Profile we just logged in as */
+    profile: Profile;
   }>(),
 
-  sessionReady: action<IRememberedSessionsState>(),
-  sessionsRemembered: action<IRememberedSessionsState>(),
-  sessionUpdated: action<{
-    /** the session to update (user id) */
-    id: string;
-
-    /** new/updated fields (can't delete fields) */
-    record: IRememberedSession;
+  profileReady: action<{}>(),
+  forgetProfileRequest: action<{
+    /** Profile to forget */
+    profile: Profile;
   }>(),
-  forgetSessionRequest: action<{
-    /** the session to forget (user id) */
-    id: number;
-
-    /** username for the session we want to forget */
-    username: string;
+  forgetProfile: action<{
+    /** Profile to forget */
+    profile: Profile;
   }>(),
-  forgetSession: action<{
-    /** the session to forget (user id) */
-    id: number;
-
-    /** username for the session we want to forget */
-    username: string;
-  }>(),
+  profilesUpdated: action<{}>(),
 
   changeUser: action<{}>(),
   logout: action<{}>(),
@@ -294,7 +265,14 @@ export const actions = wireActions({
   }>(),
   navigateToCollection: action<{
     /** navigation to navigate to */
-    collection: ICollection;
+    collection: Collection;
+
+    /** whether to open in a new tab or not */
+    background?: boolean;
+  }>(),
+  navigateToInstallLocation: action<{
+    /** install location to navigate to */
+    installLocation: InstallLocationSummary;
 
     /** whether to open in a new tab or not */
     background?: boolean;
@@ -480,34 +458,21 @@ export const actions = wireActions({
   // install locations
 
   browseInstallLocation: action<{
-    /** name of install location to browse */
-    name: string;
+    /** id of install location to browse */
+    id: string;
   }>(),
-  addInstallLocationRequest: action<{}>(),
-  addInstallLocation: action<{
-    /** install location name */
-    name: string;
-
-    /** install location path */
-    path: string;
-  }>(),
-  removeInstallLocationRequest: action<{
-    /** name of the install location to remove */
-    name: string;
-  }>(),
+  addInstallLocation: action<{}>(),
   removeInstallLocation: action<{
-    /** name of the install location to remove */
-    name: string;
+    /** id of the install location to remove */
+    id: string;
   }>(),
   makeInstallLocationDefault: action<{
-    /** name of install location to make the default */
-    name: string;
+    /** id of install location to make the default */
+    id: string;
   }>(),
-  queryFreeSpace: action<{}>(),
-  freeSpaceUpdated: action<{
-    /** result of of a free disk space query */
-    diskInfo: IPartsInfo;
-  }>(),
+  scanInstallLocations: action<{}>(),
+  newItemsImported: action<{}>(),
+  installLocationsChanged: action<{}>(),
 
   // tasks
 
@@ -544,39 +509,17 @@ export const actions = wireActions({
 
   // downloads
 
-  queueDownload: action<IQueueDownloadOpts>(),
-  downloadStarted: action<Partial<IDownloadItem>>(),
-  downloadProgress: action<
-    Partial<IProgressInfo> & {
-      /** the download in progress */
-      id: string;
-
-      /** the build associated to the download */
-      build?: Build;
-
-      /** the upload associated to the download */
-      upload?: Upload;
-    }
-  >(),
-  downloadEnded: action<{
-    /** the id of the download that just ended */
-    id: string;
-
-    /** the download that just ended */
-    item: IDownloadItem;
-
-    /** an error, if any */
-    err: string;
-
-    /** an error stack, if any */
-    errStack: string;
-
-    /** timestamp when the download finished */
-    finishedAt?: Date;
+  downloadQueued: action<{}>(),
+  downloadsListed: action<{
+    downloads: Download[];
   }>(),
-  downloadSpeedDatapoint: action<{
-    /** how many bytes we've downloaded in the last second */
-    bps: number;
+  downloadProgress: action<{
+    download: Download;
+    progress: DownloadProgress;
+    speedHistory: number[];
+  }>(),
+  downloadEnded: action<{
+    download: Download;
   }>(),
   clearFinishedDownloads: action<{}>(),
   prioritizeDownload: action<{
@@ -585,10 +528,6 @@ export const actions = wireActions({
   }>(),
   showDownloadError: action<{
     /** the download for which we want to show an error dialog */
-    id: string;
-  }>(),
-  discardDownloadRequest: action<{
-    /** id of download to discard */
     id: string;
   }>(),
   discardDownload: action<{
@@ -635,6 +574,7 @@ export const actions = wireActions({
     upload: Upload;
   }>(),
   queueLaunch: action<IQueueLaunchOpts>(),
+  launchEnded: action<{}>(),
   manageGame: action<{
     /** which game to manage */
     game: Game;
@@ -651,6 +591,7 @@ export const actions = wireActions({
     /** id of the cave to reinstall */
     caveId: string;
   }>(),
+  uninstallEnded: action<{}>(),
   exploreCave: action<{
     /** id of the cave to explore */
     caveId: string;
@@ -701,20 +642,8 @@ export const actions = wireActions({
     update: GameUpdate;
   }>(),
   queueAllGameUpdates: action<{}>(),
-  nukeCavePrereqs: action<{
-    /** the cave to nuke the prereqs of */
-    caveId: string;
-  }>(),
-  configureCave: action<{
-    /** the cave to configure */
-    caveId: string;
-  }>(),
   revertCaveRequest: action<{
     /** the cave to revert to a different build */
-    caveId: string;
-  }>(),
-  healCave: action<{
-    /** the cave to heal */
     caveId: string;
   }>(),
   viewCaveDetails: action<{
@@ -741,6 +670,8 @@ export const actions = wireActions({
   }>(),
 
   // search
+
+  focusInPageSearch: action<{}>(),
 
   focusSearch: action<{}>(),
   clearFilters: action<{}>(),

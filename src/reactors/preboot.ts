@@ -18,14 +18,13 @@ import { applyProxySettings } from "../reactors/proxy";
 
 import { elapsed } from "../format/datetime";
 import loadPreferences from "./preboot/load-preferences";
-import { DB } from "../db";
 import { modalWidgets } from "../components/modal-widgets/index";
 
 let testProxy = false;
 let proxyTested = false;
 
-export default function(watcher: Watcher, db: DB) {
-  const ctx = new Context(store, db);
+export default function(watcher: Watcher) {
+  const ctx = new Context(store);
   watcher.on(actions.preboot, async (store, action) => {
     let dispatchedBoot = false;
 
@@ -48,7 +47,9 @@ export default function(watcher: Watcher, db: DB) {
             callback(false);
 
             logger.error(
-              `Certificate error: ${error} issued by ${certificate.issuerName} for ${certificate.subjectName}`
+              `Certificate error: ${error} issued by ${
+                certificate.issuerName
+              } for ${certificate.subjectName}`
             );
 
             // TODO: that's super annoying as a modal.
@@ -59,7 +60,9 @@ export default function(watcher: Watcher, db: DB) {
                   title: `Certificate error: ${error}`,
                   message:
                     `There was an error with the certificate for ` +
-                    `\`${certificate.subjectName}\` issued by \`${certificate.issuerName}\`.\n\n` +
+                    `\`${certificate.subjectName}\` issued by \`${
+                      certificate.issuerName
+                    }\`.\n\n` +
                     `Please check your proxy configuration and try again.`,
                   detail: `If you ignore this error, the rest of the app might not work correctly.`,
                   buttons: [

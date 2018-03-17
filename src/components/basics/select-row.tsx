@@ -29,8 +29,8 @@ const Select = styled.select`
 class SelectRow extends React.PureComponent<ISelectRowProps & IDerivedProps> {
   element: HTMLSelectElement;
 
-  constructor(props: ISelectRowProps & IDerivedProps) {
-    super(props);
+  constructor(props: SelectRow["props"], context) {
+    super(props, context);
   }
 
   onChange = (event: React.FormEvent<HTMLSelectElement>) => {

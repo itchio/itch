@@ -14,7 +14,7 @@ import styled from "./styles";
 
 import { Space } from "../helpers/space";
 import getGameStatus, { IGameStatus } from "../helpers/get-game-status";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../buse/messages";
 
 const Spacer = styled.div`
   flex-basis: 10px;
@@ -37,14 +37,14 @@ const BrowserContextDiv = styled.div`
 export class GameBrowserContext extends React.PureComponent<
   IProps & IDerivedProps
 > {
-  constructor() {
-    super();
+  constructor(props: IProps & IDerivedProps, context) {
+    super(props, context);
     this.state = {};
   }
 
   render() {
     const { game, status } = this.props;
-    if (!game) {
+    if (!game || !game.id) {
       return <div />;
     }
 

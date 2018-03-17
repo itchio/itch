@@ -1,23 +1,21 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 
-import lazyGetGame from "../lazy-get-game";
+import rootLogger from "../../logger";
+const logger = rootLogger.child({ name: "request-cave-uninstall" });
 
-import { DB } from "../../db";
-import Context from "../../context";
 import { modalWidgets } from "../../components/modal-widgets/index";
+import { withButlerClient, messages } from "../../buse";
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
     const { caveId } = action.payload;
 
-    const cave = db.caves.findOneById(caveId);
-    if (!cave) {
-      return;
-    }
-
-    const ctx = new Context(store, db);
-    const game = await lazyGetGame(ctx, cave.gameId);
+    const { cave } = await withButlerClient(
+      logger,
+      async client => await client.call(messages.FetchCave({ caveId }))
+    );
+    const { game } = cave;
 
     // FIXME: i18n - plus, that's generally bad
     const title = game ? game.title : "this";

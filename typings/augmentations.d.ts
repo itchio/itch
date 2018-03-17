@@ -9,6 +9,7 @@ interface WebViewProps {
   sandbox?: boolean;
   ref?: (wv: Electron.WebviewTag) => void;
   style?: React.CSSProperties;
+  autosize?: boolean;
 }
 
 declare global {
@@ -20,6 +21,7 @@ declare global {
   interface NodeModule {
     hot?: {
       accept: (cb: () => void) => void;
+      dispose: (cb: () => void) => void;
     };
   }
 }

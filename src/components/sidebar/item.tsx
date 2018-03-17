@@ -111,16 +111,7 @@ const Bubble = styled.span`
   white-space: nowrap;
 `;
 
-class Item extends React.PureComponent<IProps, IState> {
-  freshTimeout: NodeJS.Timer;
-
-  constructor() {
-    super();
-    this.state = {
-      fresh: true,
-    };
-  }
-
+class Item extends React.PureComponent<IProps> {
   onClick = (e: React.MouseEvent<HTMLElement>) => {
     if (e.shiftKey && e.ctrlKey) {
       const { onExplore, tab } = this.props;
@@ -167,7 +158,6 @@ class Item extends React.PureComponent<IProps, IState> {
       url,
       resource,
     } = this.props;
-    const { fresh } = this.state;
     const { onClose, onContextMenu } = this.props;
 
     const progressColor = "white";
@@ -178,7 +168,7 @@ class Item extends React.PureComponent<IProps, IState> {
 
     return (
       <ItemSection
-        className={classNames({ active, fresh })}
+        className={classNames({ active })}
         data-rh-at="right"
         data-rh={sublabel ? JSON.stringify(sublabel) : null}
         onClick={this.onClick}
@@ -213,16 +203,6 @@ class Item extends React.PureComponent<IProps, IState> {
       </ItemSection>
     );
   }
-
-  componentDidMount() {
-    this.freshTimeout = setTimeout(() => {
-      this.setState({ fresh: false });
-    }, 400);
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.freshTimeout);
-  }
 }
 
 interface IProps {
@@ -245,10 +225,6 @@ interface IProps {
   onClose?: () => void;
   onExplore?: (tabId: string) => void;
   tabInstance?: ITabInstance;
-}
-
-interface IState {
-  fresh: boolean;
 }
 
 export default Item;

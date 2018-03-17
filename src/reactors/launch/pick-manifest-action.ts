@@ -1,14 +1,11 @@
 import defaultManifestIcons from "../../constants/default-manifest-icons";
 
-import { actions } from "../../actions";
-
 import { IStore, IModalButtonSpec } from "../../types";
 
 import { promisedModal } from "../../reactors/modals";
 
-import { Game } from "node-buse/lib/messages";
+import { Game, Action } from "../../buse/messages";
 import { modalWidgets } from "../../components/modal-widgets/index";
-import { Action } from "node-buse/lib/messages";
 
 // TODO: support localized action names
 
@@ -16,26 +13,24 @@ export async function pickManifestAction(
   store: IStore,
   manifestActions: Action[],
   game: Game
-): Promise<string> {
+): Promise<number> {
   const buttons: IModalButtonSpec[] = [];
   const bigButtons: IModalButtonSpec[] = [];
 
-  let index = 0;
-  for (const actionOption of manifestActions) {
-    if (!actionOption.name) {
+  for (let index = 0; index < manifestActions.length; index++) {
+    const action = manifestActions[index];
+    if (!action.name) {
       throw new Error(`in manifest, action ${index} is missing a name`);
     }
+
+    const icon = action.icon || defaultManifestIcons[action.name] || "star";
+
     bigButtons.push({
-      label: [
-        `action.name.${actionOption.name}`,
-        { defaultValue: actionOption.name },
-      ],
-      action: actions.modalResponse({ manifestActionName: actionOption.name }),
-      icon:
-        actionOption.icon || defaultManifestIcons[actionOption.name] || "star",
-      className: `action-${actionOption.name}`,
+      label: [`action.name.${action.name}`, { defaultValue: action.name }],
+      action: modalWidgets.pickManifestAction.action({ index }),
+      icon,
+      className: `action-${action.name}`,
     });
-    index++;
   }
 
   buttons.push("cancel");
@@ -54,8 +49,9 @@ export async function pickManifestAction(
   );
 
   if (response) {
-    return response.manifestActionName;
+    return response.index;
   }
 
-  return null;
+  // as per buse spec, negative index means abort launch
+  return -1;
 }

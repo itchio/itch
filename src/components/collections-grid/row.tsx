@@ -2,29 +2,23 @@ import * as React from "react";
 
 import format from "../format";
 
-import { map, each, filter } from "underscore";
+import { map, each } from "underscore";
 
 import Icon from "../basics/icon";
 import TimeAgo from "../basics/time-ago";
 import Cover from "../basics/cover";
 import Hoverable from "../basics/hover-hoc";
 
-import { IGameSet } from "../../types";
-import { ICollection } from "../../db/models/collection";
-import { GAMES_SHOWN_PER_COLLECTION } from "../../fetchers/constants";
-
-const emptyArr = [];
+import { Collection } from "../../buse/messages";
 
 const HoverCover = Hoverable(Cover);
 
 export default class CollectionRow extends React.PureComponent<IProps> {
   render() {
-    const { allGames, collection } = this.props;
+    const { collection } = this.props;
     const { title } = collection;
 
-    const gameIds = (collection.gameIds || emptyArr)
-      .slice(0, GAMES_SHOWN_PER_COLLECTION);
-    const games = filter(map(gameIds, gameId => allGames[gameId]), x => !!x);
+    const games = map(collection.collectionGames, cg => cg.game);
 
     const gameItems = map(games, (game, index) => {
       const { coverUrl, stillCoverUrl } = game;
@@ -83,8 +77,7 @@ export default class CollectionRow extends React.PureComponent<IProps> {
 }
 
 interface IProps {
-  collection: ICollection;
-  allGames: IGameSet;
+  collection: Collection;
 
   index: number;
   rowHeight: number;

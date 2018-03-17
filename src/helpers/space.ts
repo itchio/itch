@@ -1,4 +1,3 @@
-import { ICollection } from "../db/models/collection";
 import {
   ILocalizedString,
   IStore,
@@ -16,7 +15,7 @@ import {
 import * as nodeURL from "url";
 import * as querystring from "querystring";
 
-import { Game, User } from "node-buse/lib/messages";
+import { Game, Collection, User } from "../buse/messages";
 import { currentPage } from "../util/navigation";
 import staticTabData from "../constants/static-tab-data";
 
@@ -24,10 +23,6 @@ import staticTabData from "../constants/static-tab-data";
 const eo = {} as any;
 
 export const spaceFromInstance = (dataIn: ITabInstance) => new Space(dataIn);
-
-export interface IQuery {
-  [key: string]: string;
-}
 
 /**
  * A Space gives structured info about a tab.
@@ -43,7 +38,7 @@ export class Space {
   private _protocol: string;
   private _hostname: string;
   private _pathElements: string[];
-  private _query: IQuery;
+  private _query: querystring.ParsedUrlQuery;
   private _querylessURL: string;
 
   constructor(instanceIn: ITabInstance) {
@@ -86,11 +81,11 @@ export class Space {
   }
 
   static fromStore(store: IStore, tab: string): Space {
-    return spaceFromInstance(store.getState().session.tabInstances[tab]);
+    return spaceFromInstance(store.getState().profile.tabInstances[tab]);
   }
 
   static fromState(rs: IRootState, tab: string): Space {
-    return spaceFromInstance(rs.session.tabInstances[tab]);
+    return spaceFromInstance(rs.profile.tabInstances[tab]);
   }
 
   static fromInstance(data: ITabInstance): Space {
@@ -114,7 +109,8 @@ export class Space {
   }
 
   game(): Game {
-    return (this.games().set || eo)[this.numericId()] || eo;
+    const gameSet = this.games().set || eo;
+    return gameSet[this.numericId()] || eo;
   }
 
   games(): ITabGames {
@@ -125,7 +121,7 @@ export class Space {
     return this._data.collections || eo;
   }
 
-  collection(): ICollection {
+  collection(): Collection {
     return (
       ((this._data.collections || eo).set || eo)[this.firstPathNumber()] || eo
     );
@@ -175,14 +171,15 @@ export class Space {
   }
 
   image(): string {
+    const g = this.game();
+    let gameCover = g.stillCoverUrl || g.coverUrl;
+    if (gameCover) {
+      return gameCover;
+    }
+
     if (this.internalPage()) {
       // only icons
       return null;
-    }
-
-    if (this.firstPathElement() === "games") {
-      const g = this.game();
-      return g.stillCoverUrl || g.coverUrl;
     }
     return this.web().favicon;
   }
@@ -231,12 +228,13 @@ export class Space {
     return null;
   }
 
-  query(): IQuery {
+  query(): querystring.ParsedUrlQuery {
     return this._query || eo;
   }
 
   label(): ILocalizedString {
-    let fallback = this.web().title || ["sidebar.loading"];
+    let fallback = this.web().title ||
+      this._instance.savedLabel || ["sidebar.loading"];
 
     switch (this._protocol) {
       case "itch:": {

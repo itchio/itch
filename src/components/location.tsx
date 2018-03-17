@@ -22,6 +22,7 @@ const columns = [
   GameColumn.LastPlayed,
   GameColumn.PlayTime,
   GameColumn.InstalledSize,
+  GameColumn.InstallStatus,
 ];
 
 const LocationContainer = styled.div`
@@ -32,7 +33,9 @@ export class Location extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tab, tabInstance, browseInstallLocation, loading } = this.props;
 
-    const locationName = Space.fromInstance(tabInstance).firstPathElement();
+    const installLocationId = Space.fromInstance(
+      tabInstance
+    ).firstPathElement();
 
     return (
       <LocationContainer>
@@ -40,11 +43,11 @@ export class Location extends React.PureComponent<IProps & IDerivedProps> {
           <LocationTitleBarExtra tabInstance={tabInstance} />
           <Link
             label={format(showInExplorerString())}
-            onClick={e => browseInstallLocation({ name: locationName })}
+            onClick={e => browseInstallLocation({ id: installLocationId })}
           />
         </FiltersContainer>
 
-        <Games tab={tab} forcedLayout="table" columns={columns} />
+        <Games tab={tab} forcedLayout="table" columns={columns} ignoreFilters />
       </LocationContainer>
     );
   }

@@ -1,7 +1,5 @@
 import * as React from "react";
-import { ITabInstance, ICommonsState, IRootState } from "../types/index";
-import { connect } from "./connect";
-import { createSelector } from "reselect";
+import { ITabInstance } from "../types/index";
 import { Space } from "../helpers/space";
 import { fileSize } from "../format/filesize";
 
@@ -13,13 +11,11 @@ const SecondaryText = styled.span`
   margin-right: 0.5em;
 `;
 
-class LocationTitleBarExtra extends React.PureComponent<
-  IProps & IDerivedProps
-> {
+export default class LocationTitleBarExtra extends React.PureComponent<IProps> {
   render() {
-    const { tabInstance, locationSizes } = this.props;
+    const { tabInstance } = this.props;
     const sp = Space.fromInstance(tabInstance);
-    const size = locationSizes[sp.stringId()];
+    const { size } = sp.location();
     if (!(size > 0)) {
       return null;
     }
@@ -38,14 +34,3 @@ class LocationTitleBarExtra extends React.PureComponent<
 interface IProps {
   tabInstance: ITabInstance;
 }
-
-interface IDerivedProps {
-  locationSizes: ICommonsState["locationSizes"];
-}
-
-export default connect<IProps>(LocationTitleBarExtra, {
-  state: createSelector(
-    (rs: IRootState) => rs.commons.locationSizes,
-    locationSizes => ({ locationSizes })
-  ),
-});
