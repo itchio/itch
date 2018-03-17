@@ -11,7 +11,7 @@ book:
     - dropsy
   script:
     - npm install --no-save babel-cli babel-preset-env
-    - node_modules/.bin/babel-cli --presets env release --out-dir release-for-old-nodes
+    - node_modules/.bin/babel --presets env release --out-dir release-for-old-nodes
     - node release-for-old-nodes/ci-book.js
 
 test-linux:
