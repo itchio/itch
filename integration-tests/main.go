@@ -66,58 +66,22 @@ func doMain() error {
 	}
 	r.cwd = cwd
 
-	r.logf("Building...")
-	{
-		cmd := exec.Command("node", "./src/init.js")
-		cmd.Env = os.Environ()
-		cmd.Env = append(cmd.Env, "NODE_ENV=test")
-		combinedOut, err := cmd.CombinedOutput()
-		if err != nil {
-			r.logf("Build failed:\n%s", string(combinedOut))
-			return errors.Wrap(err, 0)
-		}
+	done := make(chan error)
+	go func() {
+		done <- r.getButler()
+	}()
+
+	go func() {
+		done <- r.bundle()
+	}()
+
+	go func() {
+		done <- downloadChromeDriver(r)
+	}()
+
+	for i := 0; i < 3; i++ {
+		must(<-done)
 	}
-
-	r.logf("Downloading butler")
-	{
-		ext := ""
-		if runtime.GOOS == "windows" {
-			ext = ".exe"
-		}
-		butlerURL := fmt.Sprintf("https://dl.itch.ovh/butler/%s-%s/head/butler.gz", runtime.GOOS, runtime.GOARCH)
-		butlerDest := filepath.Join(cwd, "tmp", "prefix", "userData", "bin", "butler"+ext)
-		err := os.MkdirAll(filepath.Dir(butlerDest), 0755)
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-		butlerFile, err := os.Create(butlerDest)
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-
-		req, err := http.Get(butlerURL)
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-
-		gunzipper, err := gzip.NewReader(req.Body)
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-
-		_, err = io.Copy(butlerFile, gunzipper)
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-		butlerFile.Close()
-
-		err = os.Chmod(butlerDest, 0755)
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-	}
-
-	must(downloadChromeDriver(r))
 
 	chromeDriverPort := 9515
 	chromeDriverLogPath := filepath.Join(cwd, "chrome-driver.log.txt")
@@ -191,8 +155,7 @@ func doMain() error {
 		return errors.Wrap(err, 0)
 	}
 
-	r.logf("Hey cool, we're in the app!")
-	r.logf("it started in %s", time.Since(startTime))
+	r.logf("We're talking to the app! (started in %s)", time.Since(startTime))
 
 	r.testStart = time.Now()
 
@@ -206,6 +169,81 @@ func doMain() error {
 
 	log.Printf("Succeeded in %s", time.Since(r.testStart))
 	log.Printf("Total time %s", time.Since(bootTime))
+	return nil
+}
+
+func (r *runner) getButler() error {
+	ext := ""
+	if runtime.GOOS == "windows" {
+		ext = ".exe"
+	}
+	butlerDest := filepath.Join(r.cwd, "tmp", "prefix", "userData", "bin", "butler"+ext)
+	err := os.MkdirAll(filepath.Dir(butlerDest), 0755)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+	butlerFile, err := os.Create(butlerDest)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+	defer func() {
+		must(butlerFile.Close())
+		must(os.Chmod(butlerDest, 0755))
+	}()
+
+	if _, ok := os.LookupEnv("CI"); !ok {
+		r.logf("Looking for local butler")
+		butlerSrc, err := exec.LookPath("butler" + ext)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+		r.logf("Copying local butler from (%s)", butlerSrc)
+		r.logf("to (%s)", butlerDest)
+
+		butlerSrcFile, err := os.Open(butlerSrc)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+		defer butlerSrcFile.Close()
+
+		_, err = io.Copy(butlerFile, butlerSrcFile)
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+
+		return nil
+	}
+
+	r.logf("Downloading butler")
+	butlerURL := fmt.Sprintf("https://dl.itch.ovh/butler/%s-%s/head/butler.gz", runtime.GOOS, runtime.GOARCH)
+
+	req, err := http.Get(butlerURL)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+
+	gunzipper, err := gzip.NewReader(req.Body)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+
+	_, err = io.Copy(butlerFile, gunzipper)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+	return nil
+}
+
+func (r *runner) bundle() error {
+	r.logf("Bundling...")
+	cmd := exec.Command("node", "./src/init.js")
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, "NODE_ENV=test")
+	combinedOut, err := cmd.CombinedOutput()
+	if err != nil {
+		r.logf("Build failed:\n%s", string(combinedOut))
+		return errors.Wrap(err, 0)
+	}
 	return nil
 }
 
