@@ -1,5 +1,5 @@
 import { RequestError } from "node-buse";
-import { messages } from "../buse/index";
+import * as messages from "../buse/messages";
 
 type ItchErrorCode =
   | "ITCH_ECRASH"

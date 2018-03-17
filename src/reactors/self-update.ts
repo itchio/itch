@@ -17,7 +17,6 @@ const logger = rootLogger.child({ name: "self-update" });
 import { formatDate, DATE_FORMAT } from "../format/datetime";
 
 import { actions } from "../actions";
-import { fromDateTimeField } from "../db/datetime-field";
 import memoize from "../util/lru-memoize";
 import { MinimalContext } from "../context/index";
 import { modalWidgets } from "../components/modal-widgets/index";
@@ -198,7 +197,8 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    const pubDate = fromDateTimeField(spec.pub_date);
+    // TODO: is this correct?
+    const pubDate = new Date(spec.pub_date);
 
     store.dispatch(
       actions.openModal(
@@ -305,6 +305,8 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.viewChangelog, async (store, action) => {
+    store.dispatch(actions.statusMessage({ message: "Fetching changelog..." }));
+
     const updateServer = urls.updateServers[env.channel];
     const uri = `${updateServer}/notes`;
     const resp = await request("get", uri, {});

@@ -13,7 +13,7 @@ import { GridContainerDiv, GridDiv } from "./grid-styles";
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import HiddenIndicator from "../hidden-indicator";
 import doesEventMeanBackground from "../when-click-navigates";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../../buse/messages";
 import { gameEvolvePayload } from "../../util/navigation";
 
 const globalMargin = 20;

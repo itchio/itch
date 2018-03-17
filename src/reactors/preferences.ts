@@ -27,7 +27,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.clearBrowsingData, async (store, action) => {
     const promises: Promise<any>[] = [];
 
-    const userId = store.getState().session.credentials.me.id;
+    const userId = store.getState().profile.credentials.me.id;
 
     const partition = partitionForUser(String(userId));
     const ourSession = session.fromPartition(partition, { cache: true });

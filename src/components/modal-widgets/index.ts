@@ -23,6 +23,10 @@ import ClearBrowsingData, {
   IClearBrowsingDataParams,
   IClearBrowsingDataResponse,
 } from "./clear-browsing-data";
+import ScanInstallLocations, {
+  IScanInstallLocationsParams,
+  IScanInstallLocationsResponse,
+} from "./scan-install-locations";
 import {
   ModalResponse,
   IAction,
@@ -123,6 +127,10 @@ export const modalWidgets = wireWidgets({
   twoFactorInput: widget<ITwoFactorInputParams, ITwoFactorInputResponse>(
     TwoFactorInput
   ),
+  scanInstallLocations: widget<
+    IScanInstallLocationsParams,
+    IScanInstallLocationsResponse
+  >(ScanInstallLocations),
 
   // dummy widgets
 
@@ -137,8 +145,8 @@ export const modalWidgets = wireWidgets({
   pickManifestAction: widget<
     {},
     {
-      /** which manifest action was picked when launching a game */
-      manifestActionName?: string;
+      /** index of the manifest action that was picked when launching a game */
+      index: number;
     }
   >(null),
 

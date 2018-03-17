@@ -1,5 +1,4 @@
 import * as React from "react";
-import { getImagePath } from "../../os/resources";
 import styled from "../styles";
 import { createStructuredSelector } from "reselect";
 import * as classNames from "classnames";
@@ -37,7 +36,7 @@ class Logo extends React.PureComponent<IDerivedProps> {
         data-rh-at="bottom"
         data-rh={`itch v${appVersion}`}
       >
-        <img src={getImagePath("logos/app-white.svg")} />
+        <img src={require("../../static/images/logos/app-white.svg")} />
       </LogoDiv>
     );
   }

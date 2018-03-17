@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as marked from "marked-extra";
-import { toImage } from "emojione";
+import { emojify } from "node-emoji";
 
 import urls from "../../constants/urls";
 
@@ -12,7 +12,7 @@ export default class Markdown extends React.PureComponent<IGFMProps> {
   renderHTML() {
     const { source } = this.props;
 
-    const emojified = toImage(source);
+    const emojified = emojify(source);
     const autolinked = autolink(emojified);
     const sanitized = sanitize(autolinked);
 

@@ -96,6 +96,7 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
         widgetParams: {
           data: chromeStore.getState(),
         },
+        fullscreen: true,
       })
     );
   };

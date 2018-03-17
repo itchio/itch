@@ -3,10 +3,9 @@ import * as React from "react";
 import format from "./format";
 
 import actionForGame from "../util/action-for-game";
-import { ICaveSummary } from "../db/models/cave";
 
 import TimeAgo from "./basics/time-ago";
-import { Game } from "node-buse/lib/messages";
+import { Game, CaveSummary } from "../buse/messages";
 
 export default class LastPlayed extends React.PureComponent<
   IProps & IDerivedProps
@@ -47,7 +46,7 @@ export default class LastPlayed extends React.PureComponent<
 
 interface IProps {
   game: Game;
-  cave: ICaveSummary;
+  cave: CaveSummary;
   short?: boolean;
 }
 

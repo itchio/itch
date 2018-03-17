@@ -74,16 +74,26 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
         return <LoadingState />;
       }
 
-      return (
-        <EmptyState
-          icon="filter"
-          bigText={["grid.empty_state.leader"]}
-          smallText={["grid.empty_state.explanation"]}
-          buttonIcon="delete"
-          buttonText={["grid.clear_filters"]}
-          buttonAction={() => clearFilters({ tab })}
-        />
-      );
+      if (this.props.ignoreFilters) {
+        return (
+          <EmptyState
+            icon="neutral"
+            bigText={["grid.really_empty_state.leader"]}
+            smallText={["grid.really_empty_state.explanation"]}
+          />
+        );
+      } else {
+        return (
+          <EmptyState
+            icon="filter"
+            bigText={["grid.empty_state.leader"]}
+            smallText={["grid.empty_state.explanation"]}
+            buttonIcon="delete"
+            buttonText={["grid.clear_filters"]}
+            buttonAction={() => clearFilters({ tab })}
+          />
+        );
+      }
     }
     let shownLayout = forcedLayout || prefLayout;
     if (shownLayout === "grid") {
@@ -118,6 +128,7 @@ interface IProps {
   tab: string;
   forcedLayout?: TabLayout;
   columns?: GameColumn[];
+  ignoreFilters?: boolean;
 }
 
 const actionCreators = actionCreatorsList("tabParamsChanged", "clearFilters");
@@ -141,7 +152,7 @@ export default connect<IProps>(Games, {
     return createSelector(
       (rs: IRootState) => Space.fromState(rs, tab),
       (rs: IRootState) => rs.preferences.layout,
-      (rs: IRootState) => rs.session.navigation.loadingTabs[tab] || false,
+      (rs: IRootState) => rs.profile.navigation.loadingTabs[tab] || false,
       createStructuredSelector({
         gameIds: (sp: Space, prefLayout) => sp.games().ids || ea,
         games: (sp: Space, prefLayout) => sp.games().set || eo,

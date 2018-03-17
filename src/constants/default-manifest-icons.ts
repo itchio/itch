@@ -3,7 +3,7 @@ interface IManifestIcons {
 }
 
 export default {
-  play: "play",
+  play: "play2",
   editor: "pencil",
   manual: "lifebuoy",
   forums: "users",

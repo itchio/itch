@@ -1,8 +1,8 @@
-import suite from "../test-suite";
+import { describe, it, assert } from "../test";
 import getByIds from "./get-by-ids";
 
-suite(__filename, s => {
-  s.case("gets records by IDs, being chill about null values", t => {
+describe("get-by-ids", () => {
+  it("gets records by IDs, being chill about null values", () => {
     const records = {
       "12": {
         word: "twelve",
@@ -15,11 +15,11 @@ suite(__filename, s => {
       },
     };
 
-    t.same(getByIds(null, []), []);
-    t.same(getByIds(records, null), []);
-    t.same(getByIds(records, []), []);
-    t.same(getByIds(records, ["34"]), [{ word: "thirty-four" }]);
-    t.same(getByIds(records, ["56", "1024", "12"]), [
+    assert.deepEqual(getByIds(null, []), []);
+    assert.deepEqual(getByIds(records, null), []);
+    assert.deepEqual(getByIds(records, []), []);
+    assert.deepEqual(getByIds(records, ["34"]), [{ word: "thirty-four" }]);
+    assert.deepEqual(getByIds(records, ["56", "1024", "12"]), [
       { word: "fifty-six" },
       { word: "twelve" },
     ]);

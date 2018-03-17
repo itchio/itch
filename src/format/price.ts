@@ -1,4 +1,4 @@
-import { Sale } from "node-buse/lib/messages";
+import { Sale } from "../buse/messages";
 
 export function formatPrice(currency: string, value: number) {
   if (currency === "CAD") {

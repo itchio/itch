@@ -7,7 +7,7 @@ import { BrowserWindow, shell } from "electron";
 
 import spawn from "../../os/spawn";
 import { getInjectPath } from "../../os/resources";
-import url from "../../util/url";
+import * as url from "../../util/url";
 import debugBrowserWindow from "../../util/debug-browser-window";
 
 import Context from "../../context";
@@ -19,9 +19,8 @@ const { messages } = capsule;
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
 import { registerProtocol, setupItchInternal } from "./html/itch-internal";
-import { Game } from "node-buse/lib/messages";
+import { Game, HTMLLaunchParams, HTMLLaunchResult } from "../../buse/messages";
 import { Logger } from "../../logger/index";
-import { HTMLLaunchParams, HTMLLaunchResult } from "node-buse/lib/messages";
 
 interface HTMLLaunchOpts {
   ctx: Context;
@@ -134,7 +133,7 @@ export async function performHTMLLaunch(
   let capsulePromise: Promise<number>;
   let connection: Connection;
   const capsulerunPath = process.env.CAPSULERUN_PATH;
-  const capsuleContext = new Context(ctx.store, ctx.db);
+  const capsuleContext = ctx.clone();
   if (capsulerunPath) {
     logger.info(`Launching capsule...`);
 

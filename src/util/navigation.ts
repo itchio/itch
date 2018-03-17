@@ -1,16 +1,13 @@
-import urlParser from "./url";
+import * as urlParser from "./url";
 import * as querystring from "querystring";
 
-import { ICollection } from "../db/models/collection";
-
+import { ITabInstance, ITabPage, ITabData, INavigatePayload } from "../types";
 import {
-  IInstallLocation,
-  ITabInstance,
-  ITabPage,
-  ITabData,
-  INavigatePayload,
-} from "../types";
-import { Game, User } from "node-buse/lib/messages";
+  Game,
+  User,
+  Collection,
+  InstallLocationSummary,
+} from "../buse/messages";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {
@@ -77,7 +74,7 @@ export function gameToTabData(game: Game): ITabData {
 }
 
 export function collectionEvolvePayload(
-  collection: ICollection
+  collection: Collection
 ): INavigatePayload {
   return {
     url: `itch://collections/${collection.id}`,
@@ -95,7 +92,18 @@ export function userToTabData(user: User): ITabData {
   };
 }
 
-export function collectionToTabData(collection: ICollection): ITabData {
+export function installLocationToTabData(
+  installLocation: InstallLocationSummary
+): ITabData {
+  return {
+    location: {
+      path: installLocation.path,
+      size: installLocation.sizeInfo.installedSize,
+    },
+  };
+}
+
+export function collectionToTabData(collection: Collection): ITabData {
   return {
     collections: {
       set: {
@@ -104,10 +112,6 @@ export function collectionToTabData(collection: ICollection): ITabData {
       ids: [collection.id],
     },
   };
-}
-
-export function locationToTabData(location: IInstallLocation): ITabData {
-  return {};
 }
 
 export default {

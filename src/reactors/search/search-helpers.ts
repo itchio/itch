@@ -2,7 +2,7 @@ import { isEmpty, filter, union, indexBy, pluck } from "underscore";
 import { ISearchResults } from "../../types/index";
 import getByIds from "../../helpers/get-by-ids";
 import isPlatformCompatible from "../../util/is-platform-compatible";
-
+import { Game, User } from "../../buse/messages";
 interface ISource<T> {
   set: {
     [key: string]: T;
@@ -38,11 +38,32 @@ export function mergeSearchResults(
   };
 }
 
+export function mergeGames(current: ISearchResults, games: Game[]) {
+  return mergeSearchResults(current, {
+    games: {
+      ids: pluck(games, "id"),
+      set: indexBy(games, "id"),
+    },
+  });
+}
+
+export function mergeUsers(current: ISearchResults, users: User[]) {
+  return mergeSearchResults(current, {
+    users: {
+      ids: pluck(users, "id"),
+      set: indexBy(users, "id"),
+    },
+  });
+}
+
 export function hasSearchResults(sr: ISearchResults): boolean {
-  if (!sr) {
-    return false;
+  if (sr && sr.games && !isEmpty(sr.games.ids)) {
+    return true;
   }
-  return !isEmpty(sr.games) || !isEmpty(sr.users);
+  if (sr && sr.users && !isEmpty(sr.users.ids)) {
+    return true;
+  }
+  return false;
 }
 
 export function excludeIncompatibleSearchResults(input: ISearchResults) {

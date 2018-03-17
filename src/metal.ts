@@ -6,17 +6,12 @@ if (process.env.ITCH_TIME_REQUIRE === "1") {
   rt.start();
 }
 
+if (process.env.NODE_ENV !== "production") {
+  require("./custom-hmr-runtime.js");
+}
+
 import env from "./env";
 import logger from "./logger";
-import { enableLiveReload } from "electron-compile-ftl";
-
-if (env.name === "development") {
-  logger.info("Enabling hot-module reload!");
-  enableLiveReload({
-    strategy: "react-hmr",
-    blacklist: ["db", "store", "logger", "persistent-state"],
-  });
-}
 
 import autoUpdaterStart from "./util/auto-updater";
 import { isItchioURL } from "./util/url";
@@ -30,8 +25,8 @@ logger.info(
   } in ${env.name}`
 );
 
-import { connectDatabase } from "./db";
 import { loadPreferencesSync } from "./reactors/preboot/load-preferences";
+import { prepareQuit } from "./reactors/main-window";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -99,8 +94,6 @@ function autoUpdateDone() {
       }
     }
 
-    await connectDatabase(store);
-
     store.dispatch(
       actions.processUrlArguments({
         args: process.argv,
@@ -137,7 +130,7 @@ function autoUpdateDone() {
   });
 
   app.on("before-quit", (e: Event) => {
-    store.dispatch(actions.prepareQuit({}));
+    prepareQuit();
   });
 
   app.on("window-all-closed", (e: Event) => {

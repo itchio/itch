@@ -1,28 +1,24 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 
-import { DB } from "../../db";
-import Context from "../../context";
+import rootLogger from "../../logger";
+const logger = rootLogger.child({ name: "queue-cave-reinstall" });
 
-import lazyGetGame from "../lazy-get-game";
 import { modalWidgets } from "../../components/modal-widgets/index";
+import { withButlerClient, messages } from "../../buse";
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.viewCaveDetails, async (store, action) => {
     const { caveId } = action.payload;
 
-    const cave = db.caves.findOneById(caveId);
-    if (!cave) {
-      return;
-    }
-
-    const ctx = new Context(store, db);
-    const game = await lazyGetGame(ctx, cave.gameId);
+    const { cave } = await withButlerClient(logger, async client => {
+      return await client.call(messages.FetchCave({ caveId }));
+    });
 
     store.dispatch(
       actions.openModal(
         modalWidgets.exploreJson.make({
-          title: `Cave details for ${game ? game.title : "?"}`,
+          title: `Cave details for ${cave.game ? cave.game.title : "?"}`,
           message: "Local cave data:",
           widgetParams: {
             data: cave,
@@ -30,16 +26,6 @@ export default function(watcher: Watcher, db: DB) {
           buttons: [
             {
               label: ["prompt.action.ok"],
-            },
-            {
-              label: "Nuke prereqs",
-              action: actions.nukeCavePrereqs({ caveId: cave.id }),
-              className: "secondary",
-            },
-            {
-              label: "Re-configure",
-              action: actions.configureCave({ caveId: cave.id }),
-              className: "secondary",
             },
           ],
         })

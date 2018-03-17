@@ -19,8 +19,8 @@ class SidebarHandle extends React.PureComponent<
   IProps & IDerivedProps,
   IState
 > {
-  constructor() {
-    super();
+  constructor(props: SidebarHandle["props"], context) {
+    super(props, context);
     this.state = { isResizing: false };
   }
 

@@ -1,12 +1,13 @@
 import { Watcher } from "./watcher";
 
-import { Menu, BrowserWindow } from "electron";
+import { BrowserWindow } from "../helpers/browser-window";
+import { Menu } from "../helpers/menu";
 
 import { createSelector } from "reselect";
 
 import { IRuntime, IMenuItem, IMenuTemplate } from "../types";
 
-import { IRootState, ISessionCredentialsState } from "../types";
+import { IRootState, IProfileCredentialsState } from "../types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 import { actions } from "../actions/index";
 
@@ -15,7 +16,7 @@ export default function(watcher: Watcher, runtime: IRuntime) {
     makeSelector: (store, schedule) => {
       let templateSelector = createSelector(
         (rs: IRootState) => rs.system.appVersion,
-        (rs: IRootState) => rs.session.credentials,
+        (rs: IRootState) => rs.profile.credentials,
         (appVersion, credentials) => {
           return computeMenuTemplate(appVersion, credentials, runtime);
         }
@@ -49,7 +50,7 @@ interface IAllTemplates {
 
 function computeMenuTemplate(
   appVersion: string,
-  credentials: ISessionCredentialsState,
+  credentials: IProfileCredentialsState,
   runtime: IRuntime
 ) {
   const menus: IAllTemplates = {
@@ -257,7 +258,7 @@ function computeMenuTemplate(
   }
   template.push(menus.edit);
   template.push(menus.view);
-  if (credentials.key) {
+  if (credentials.me) {
     template.push(menus.account);
   } else {
     template.push(menus.accountLoggedOut);

@@ -6,7 +6,7 @@ import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import urls from "../constants/urls";
 
 import partitionForUser from "../util/partition-for-user";
-import { getInjectPath } from "../os/resources";
+import { getInjectURL } from "../os/resources";
 
 import staticTabData from "../constants/static-tab-data";
 
@@ -54,7 +54,7 @@ const WebviewShell = styled.div`
 
   &.fresh {
     background-color: ${props => props.theme.sidebarBackground};
-    background-image: url("./static/images/logos/app-white.svg");
+    background-image: url("${require("../static/images/logos/app-white.svg")}");
     background-position: 50% 50%;
     background-repeat: no-repeat;
   }
@@ -176,8 +176,8 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
               ) : (
                 <webview
                   partition={partition}
-                  plugins="on"
-                  preload={getInjectPath("itchio")}
+                  plugins
+                  preload={getInjectURL("itchio")}
                   ref={this.gotWebview}
                   src={this.initialURL}
                 />
@@ -320,7 +320,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 export default connect<IProps>(BrowserMeat, {
   state: createStructuredSelector({
     meId: (rs: IRootState) =>
-      (rs.session.credentials.me || { id: "anonymous" }).id,
+      (rs.profile.credentials.me || { id: "anonymous" }).id,
     proxy: (rs: IRootState) => rs.system.proxy,
     proxySource: (rs: IRootState) => rs.system.proxySource,
     disableBrowser: (rs: IRootState) => rs.preferences.disableBrowser,

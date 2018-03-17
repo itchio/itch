@@ -13,7 +13,7 @@ import { shell } from "electron";
 
 import { actions } from "../actions";
 
-let onSessionReady: () => void;
+let onProfileReady: () => void;
 
 export default function(watcher: Watcher) {
   watcher.on(actions.processUrlArguments, async (store, action) => {
@@ -39,11 +39,11 @@ export default function(watcher: Watcher) {
     const { uri } = action.payload;
 
     logger.info(`Starting to handle itch.io url ${uri}`);
-    const key = store.getState().session.credentials.key;
-    if (!key) {
-      logger.info("Waiting for session to be ready before handling itchio url");
+    const me = store.getState().profile.credentials.me;
+    if (!me) {
+      logger.info("Waiting for profile to be ready before handling itchio url");
       await new Promise((resolve, reject) => {
-        onSessionReady = resolve;
+        onProfileReady = resolve;
       });
     }
 
@@ -65,19 +65,19 @@ export default function(watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.sessionReady, async (store, action) => {
-    if (onSessionReady) {
-      onSessionReady();
+  watcher.on(actions.profileReady, async (store, action) => {
+    if (onProfileReady) {
+      onProfileReady();
     }
   });
 
   watcher.on(actions.viewCreatorProfile, async (store, action) => {
-    const url = store.getState().session.credentials.me.url;
+    const url = store.getState().profile.credentials.me.url;
     store.dispatch(actions.navigate({ url }));
   });
 
   watcher.on(actions.viewCommunityProfile, async (store, action) => {
-    const url = store.getState().session.credentials.me.url;
+    const url = store.getState().profile.credentials.me.url;
     const host = urlParser.parse(url).hostname;
     const slug = /^[^.]+/.exec(host);
     store.dispatch(actions.navigate({ url: `${urls.itchio}/profile/${slug}` }));

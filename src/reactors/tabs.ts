@@ -5,7 +5,7 @@ import { actions } from "../actions";
 import { IStore } from "../types";
 
 async function applyTabOffset(store: IStore, offset: number) {
-  const { tab, openTabs } = store.getState().session.navigation;
+  const { tab, openTabs } = store.getState().profile.navigation;
   const { constant, transient } = openTabs;
 
   const allTabs = constant.concat(transient);
@@ -27,7 +27,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.focusNthTab, async (store, action) => {
     const n = action.payload.index;
-    const constant = store.getState().session.navigation.openTabs.constant;
+    const constant = store.getState().profile.navigation.openTabs.constant;
     const tab = constant[n - 1];
     if (tab) {
       store.dispatch(actions.focusTab({ tab }));

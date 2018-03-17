@@ -7,11 +7,12 @@ import format from "./format";
 import { map, first, rest, isEmpty, size } from "underscore";
 
 import Link from "./basics/link";
+import Button from "./basics/button";
 import Row from "./download/row";
 import GameUpdateRow from "./download/game-update-row";
 import EmptyState from "./empty-state";
 
-import { IRootState, IDownloadItem } from "../types";
+import { IRootState } from "../types";
 
 import {
   getPendingDownloads,
@@ -21,7 +22,7 @@ import {
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
-import { GameUpdate } from "node-buse/lib/messages";
+import { GameUpdate, Download } from "../buse/messages";
 import LoadingCircle from "./basics/loading-circle";
 
 const DownloadsDiv = styled.div`
@@ -31,6 +32,14 @@ const DownloadsDiv = styled.div`
 const DownloadsContentDiv = styled.div`
   overflow-y: auto;
   padding: 0 20px 20px 10px;
+  padding-top: 15px;
+  position: relative;
+
+  .global-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
 
   .section-bar {
     display: flex;
@@ -49,6 +58,10 @@ const DownloadsContentDiv = styled.div`
       width: 1em;
     }
 
+    .filler {
+      flex-grow: 1;
+    }
+
     .clear {
       margin-left: 8px;
       ${styles.clickable()};
@@ -61,10 +74,6 @@ const DownloadsContentDiv = styled.div`
 `;
 
 class Downloads extends React.PureComponent<IProps & IDerivedProps> {
-  constructor() {
-    super();
-  }
-
   render() {
     return <DownloadsDiv>{this.renderContents()}</DownloadsDiv>;
   }
@@ -94,6 +103,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <DownloadsContentDiv>
+        {this.renderControls()}
         {this.renderFirstItem(firstItem)}
         {this.renderQueuedItems(queuedItems)}
         {this.renderRecentActivity()}
@@ -102,7 +112,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
-  renderFirstItem(firstItem: IDownloadItem): JSX.Element {
+  renderFirstItem(firstItem: Download): JSX.Element {
     if (!firstItem) {
       return null;
     }
@@ -118,7 +128,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
-  renderQueuedItems(queuedItems: IDownloadItem[]): JSX.Element {
+  renderQueuedItems(queuedItems: Download[]): JSX.Element {
     if (isEmpty(queuedItems)) {
       return null;
     }
@@ -162,6 +172,32 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
+  renderControls(): JSX.Element {
+    return (
+      <>
+        <div className="global-controls">
+          {this.props.downloadsPaused ? (
+            <Button discreet icon="triangle-right" onClick={this.onTogglePause}>
+              Resume downloads
+            </Button>
+          ) : (
+            <Button discreet icon="pause" onClick={this.onTogglePause}>
+              Pause downloads
+            </Button>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  onTogglePause = () => {
+    if (this.props.downloadsPaused) {
+      this.props.resumeDownloads({});
+    } else {
+      this.props.pauseDownloads({});
+    }
+  };
+
   renderRecentActivity(): JSX.Element {
     const { finishedItems, clearFinishedDownloads } = this.props;
 
@@ -197,17 +233,20 @@ interface IProps extends IMeatProps {}
 const actionCreators = actionCreatorsList(
   "clearFinishedDownloads",
   "navigate",
-  "queueAllGameUpdates"
+  "queueAllGameUpdates",
+  "pauseDownloads",
+  "resumeDownloads"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  items: IDownloadItem[];
-  finishedItems: IDownloadItem[];
+  items: Download[];
+  finishedItems: Download[];
   updates: {
     [caveId: string]: GameUpdate;
   };
   updateCheckHappening: boolean;
   updateCheckProgress: number;
+  downloadsPaused: boolean;
 };
 
 export default connect<IProps>(Downloads, {
@@ -217,6 +256,7 @@ export default connect<IProps>(Downloads, {
     updates: (rs: IRootState) => rs.gameUpdates.updates,
     updateCheckHappening: (rs: IRootState) => rs.gameUpdates.checking,
     updateCheckProgress: (rs: IRootState) => rs.gameUpdates.progress,
+    downloadsPaused: (rs: IRootState) => rs.downloads.paused,
   }),
   actionCreators,
 });

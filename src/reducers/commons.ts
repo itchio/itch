@@ -8,8 +8,6 @@ const initialState: ICommonsState = {
   downloadKeyIdsByGameId: {},
   caves: {},
   caveIdsByGameId: {},
-  libraryGameIds: [],
-  myGameIdsSet: {},
   locationSizes: {},
 };
 

@@ -118,7 +118,7 @@ export default connect<IProps>(TitleBar, {
   state: () =>
     createStructuredSelector({
       tabInstance: (rs: IRootState, props: IProps) =>
-        rs.session.tabInstances[props.tab] || emptyObj,
+        rs.profile.tabInstances[props.tab] || emptyObj,
       maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
       focused: (rs: IRootState) => rs.ui.mainWindow.focused,
     }),

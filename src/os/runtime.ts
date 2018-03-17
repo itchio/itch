@@ -1,4 +1,4 @@
-import { itchPlatform, isLinux64, isWin64 } from ".";
+import { itchPlatform, isLinux64, isWin64 } from "./index";
 import { IRuntime } from "../types";
 
 export type ItchRuntimeProp = "pOsx" | "pWindows" | "pLinux" | "";

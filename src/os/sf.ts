@@ -1,4 +1,3 @@
-import * as invariant from "invariant";
 import { promisify } from "bluebird";
 import * as bluebird from "bluebird";
 
@@ -30,7 +29,7 @@ import { EventEmitter } from "events";
 /**
  * Promised version of isaacs' little globber
  * https://www.npmjs.com/package/glob
- * 
+ *
  * (single function, callback-based, doesn't accept fs)
  */
 export const glob = promisify(require("glob") as IGlobStatic);
@@ -147,8 +146,6 @@ export async function writeFile(
  * 'close' or 'end' is emitted, rejects when 'error' is
  */
 export async function promised(stream: EventEmitter): Promise<any> {
-  invariant(typeof stream === "object", "sf.promised has object stream");
-
   const p = new bluebird((resolve, reject) => {
     stream.on("close", resolve);
     stream.on("end", resolve);

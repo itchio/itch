@@ -1,43 +1,61 @@
 import * as React from "react";
 
-import { ICaveSummary } from "../../db/models/cave";
-
 import Cover from "../basics/cover";
 import Hoverable from "../basics/hover-hoc";
 import TimeAgo from "../basics/time-ago";
 import TotalPlaytime from "../total-playtime";
 import LastPlayed from "../last-played";
+import MainAction from "../game-actions/main-action";
 
 const HoverCover = Hoverable(Cover);
-import MainAction from "../game-actions/main-action";
 
 import { fileSize } from "../../format/filesize";
 import { GameColumn } from "./table";
 import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { createSelector } from "reselect";
 import { IRootState } from "../../types/index";
-import { connect } from "../connect";
-import { Game } from "node-buse/lib/messages";
+import { connect, actionCreatorsList, Dispatchers } from "../connect";
+import { Game, CaveSummary } from "../../buse/messages";
 
 import { aggregateCaveSummaries } from "../../util/aggregate-cave-summaries";
+import classNames = require("classnames");
+import IconButton from "../basics/icon-button";
 
 class Row extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { game, caves, index, rowHeight, columns, status } = this.props;
+    const {
+      game,
+      caves,
+      index,
+      rowHeight,
+      columns,
+      selected,
+      status,
+    } = this.props;
 
     const { stillCoverUrl, coverUrl, publishedAt } = game;
     const translateY = Math.round(index * rowHeight);
     const style = { transform: `translateY(${translateY}px)` };
 
     const renderInstallStatus = () => {
-      return <MainAction game={game} status={status} iconOnly />;
+      return (
+        <IconButton
+          className="open-game-in-tab"
+          icon={"arrow-right"}
+          onClick={this.onNavigateClick}
+        />
+      );
     };
     let className = (gc: GameColumn): string => `row--${gc}`;
 
     let cave = aggregateCaveSummaries(caves);
 
     return (
-      <div className="table--row" style={style} data-game-id={game.id}>
+      <div
+        className={classNames("table--row", { selected, ["has-cave"]: !!cave })}
+        style={style}
+        data-game-id={game.id}
+      >
         {columns.map(c => {
           if (c === "cover") {
             return (
@@ -70,7 +88,9 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
               <div key={c} className={className(c)}>
                 {cave ? (
                   <LastPlayed game={game} cave={cave} short={true} />
-                ) : null}
+                ) : (
+                  <MainAction game={game} status={status} />
+                )}
               </div>
             );
           } else if (c === "installed-size") {
@@ -100,21 +120,30 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
       </div>
     );
   }
+
+  onNavigateClick = () => {
+    const { game } = this.props;
+    this.props.navigateToGame({ game });
+  };
 }
 
 interface IProps {
   game: Game;
-  caves: ICaveSummary[];
+  caves: CaveSummary[];
   index: number;
   rowHeight: number;
   columns: GameColumn[];
+  selected: boolean;
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("navigateToGame");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   status: IGameStatus;
-}
+};
 
 export default connect<IProps>(Row, {
+  actionCreators,
   state: createSelector(
     (rs: IRootState, props: IProps) => getGameStatus(rs, props.game),
     status => ({

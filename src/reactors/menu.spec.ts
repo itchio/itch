@@ -1,4 +1,4 @@
-import suite, { TestWatcher } from "../test-suite";
+import { describe, it, assert, TestWatcher } from "../test";
 import { actions } from "../actions";
 import { IRuntime, IMenuTemplate } from "../types";
 
@@ -7,8 +7,8 @@ import menu from "./menu";
 import { find, findWhere } from "underscore";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 
-suite(__filename, s => {
-  s.case("builds the menu", async t => {
+describe("menu", () => {
+  it("builds the menu", async () => {
     let w = new TestWatcher();
     const winRuntime: IRuntime = {
       platform: "windows",
@@ -31,18 +31,25 @@ suite(__filename, s => {
 
     let template = w.store.getState().ui.menu.template;
     let account = findMenu(template, "menu.account.account");
-    t.same(account.submenu[0].localizedLabel, ["menu.account.not_logged_in"]);
+    assert.deepEqual(account.submenu[0].localizedLabel, [
+      "menu.account.not_logged_in",
+    ]);
 
     await w.dispatchAndWaitImmediate(
       actions.loginSucceeded({
-        key: "hello",
-        me: {} as any,
+        profile: {
+          id: -1,
+          user: {} as any,
+          lastConnected: null,
+        },
       })
     );
 
     template = w.store.getState().ui.menu.template;
     account = findMenu(template, "menu.account.account");
-    t.same(account.submenu[0].localizedLabel, ["menu.account.change_user"]);
+    assert.deepEqual(account.submenu[0].localizedLabel, [
+      "menu.account.change_user",
+    ]);
 
     let changeUserDispatched = false;
     w.on(actions.changeUser, async () => {
@@ -52,12 +59,12 @@ suite(__filename, s => {
     let fleshed = fleshOutTemplate(w.store, winRuntime, template);
     const accountItem = findWhere(fleshed, { label: "menu.account.account" });
     accountItem.submenu[0].click();
-    t.true(changeUserDispatched);
+    assert.isTrue(changeUserDispatched);
 
     let helpItem = findWhere(fleshed, {
       label: "Help",
     });
-    t.ok(helpItem, "menu items are translated in english");
+    assert.isOk(helpItem, "menu items are translated in english");
 
     await w.dispatchAndWaitImmediate(
       actions.localeDownloadEnded({
@@ -77,7 +84,7 @@ suite(__filename, s => {
     helpItem = findWhere(fleshed, {
       label: "Aide",
     });
-    t.ok(helpItem, "menu items are translated in french");
+    assert.isOk(helpItem, "menu items are translated in french");
 
     // check that all actions convert properly
     const visit = (item: Electron.MenuItemConstructorOptions) => {

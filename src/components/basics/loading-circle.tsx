@@ -27,7 +27,6 @@ const CircleContainer = styled.div`
     svg {
       width: 18px;
       height: 18px;
-      margin-bottom: -2px;
     }
   }
 `;
@@ -36,10 +35,10 @@ export default class LoadingCircle extends React.PureComponent<
   ILoadingCircleProps
 > {
   render() {
-    const { progress, bare, wide } = this.props;
+    const { className, progress, bare, wide } = this.props;
 
     return (
-      <CircleContainer className={classNames({ bare, wide })}>
+      <CircleContainer className={classNames(className, { bare, wide })}>
         <Circle
           percent={progress > 0 ? progress * 100.0 : 100 / 3}
           trailWidth={3}
@@ -53,6 +52,7 @@ export default class LoadingCircle extends React.PureComponent<
 }
 
 export interface ILoadingCircleProps {
+  className?: string;
   progress: number;
   bare?: boolean;
   wide?: boolean;

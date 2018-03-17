@@ -10,8 +10,11 @@ book:
   tags:
     - dropsy
   script:
-    - npm install babel-cli babel-preset-es2017
-    - node_modules/.bin/babel-node --presets es2017 --only 'release/*' release/ci-book.js
+    - npm install --no-save babel-cli babel-preset-es2017
+    - mkdir -p release-for-old-nodes
+    - cp -rf ./release/node_modules ./release-for-old-nodes/node_modules
+    - node_modules/.bin/babel --no-babelrc --presets es2017 release --out-dir release-for-old-nodes
+    - node release-for-old-nodes/ci-book.js
 
 test-linux:
   stage: build

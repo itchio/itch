@@ -1,18 +1,13 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
-import * as paths from "../../os/paths";
 import * as sf from "../../os/sf";
 
-import { DB } from "../../db/index";
-
 import rootLogger from "../../logger";
-import { ICave } from "../../db/models/cave";
-import { computeCaveLocation } from "./compute-cave-location";
 import { join } from "path";
 import { modalWidgets } from "../../components/modal-widgets/index";
 const logger = rootLogger.child({ name: "show-download-error" });
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.showDownloadError, async (store, action) => {
     const { id } = action.payload;
 
@@ -25,21 +20,7 @@ export default function(watcher: Watcher, db: DB) {
       return;
     }
 
-    const { preferences } = store.getState();
-    let caveIn: ICave;
-    if (item.caveId) {
-      caveIn = db.caves.findOneById(item.caveId);
-    }
-
-    const { caveLocation } = computeCaveLocation(item, preferences, caveIn);
-
-    const stagingFolder = paths.downloadFolderPathForId(
-      preferences,
-      caveLocation.installLocation,
-      item.id
-    );
-
-    const operateLogPath = join(stagingFolder, "operate-log.json");
+    const operateLogPath = join(item.stagingFolder, "operate-log.json");
     let log = "<missing log>";
     try {
       log = await sf.readFile(operateLogPath, { encoding: "utf8" });
@@ -53,7 +34,7 @@ export default function(watcher: Watcher, db: DB) {
           title: ["prompt.install_error.title"],
           message: ["prompt.install_error.message"],
           widgetParams: {
-            errorStack: item.errStack,
+            rawError: { stack: item.error },
             log,
           },
           buttons: [

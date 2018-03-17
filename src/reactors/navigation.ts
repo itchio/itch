@@ -15,6 +15,7 @@ import {
   userToTabData,
   gameEvolvePayload,
   collectionEvolvePayload,
+  installLocationToTabData,
 } from "../util/navigation";
 import uuid from "../util/uuid";
 const logger = rootLogger.child({ name: "reactors/navigation" });
@@ -54,6 +55,17 @@ export default function(watcher: Watcher) {
     );
   });
 
+  watcher.on(actions.navigateToInstallLocation, async (store, action) => {
+    const { installLocation, background } = action.payload;
+    store.dispatch(
+      actions.navigate({
+        url: `itch://locations/${installLocation.id}`,
+        data: installLocationToTabData(installLocation),
+        background,
+      })
+    );
+  });
+
   watcher.on(actions.clearFilters, async (store, action) => {
     store.dispatch(
       actions.updatePreferences({
@@ -65,17 +77,17 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.commandGoBack, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     store.dispatch(actions.tabGoBack({ tab }));
   });
 
   watcher.on(actions.commandGoForward, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     store.dispatch(actions.tabGoForward({ tab }));
   });
 
   watcher.on(actions.commandReload, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     store.dispatch(actions.tabReloaded({ tab }));
   });
 
@@ -122,7 +134,7 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    const { openTabs } = rs.session.navigation;
+    const { openTabs } = rs.profile.navigation;
     const constantTabs = new Set(openTabs.constant);
     const transientTabs = new Set(openTabs.transient);
 
@@ -132,6 +144,20 @@ export default function(watcher: Watcher) {
         store.dispatch(actions.focusTab({ tab: url }));
       }
       return;
+    }
+
+    if (resource) {
+      const tabInstances = rs.profile.tabInstances;
+      for (const transient of openTabs.transient) {
+        const ti = tabInstances[transient];
+        if (ti && ti.history[ti.currentIndex].resource === resource) {
+          // switching to transient by resource, I like your style
+          if (!background) {
+            store.dispatch(actions.focusTab({ tab: transient }));
+          }
+          return;
+        }
+      }
     }
 
     const staticData = staticTabData[url];
@@ -183,12 +209,13 @@ export default function(watcher: Watcher) {
         tab,
         url: newURL,
         replace: true,
+        onlyParamsChange: true,
       })
     );
   });
 
   watcher.on(actions.closeAllTabs, async (store, action) => {
-    const { transient } = store.getState().session.navigation.openTabs;
+    const { transient } = store.getState().profile.navigation.openTabs;
 
     // woo !
     for (const tab of transient) {
@@ -198,7 +225,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.closeOtherTabs, async (store, action) => {
     const safeTab = action.payload.tab;
-    const { transient } = store.getState().session.navigation.openTabs;
+    const { transient } = store.getState().profile.navigation.openTabs;
 
     // woo !
     for (const tab of transient) {
@@ -210,7 +237,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.closeTabsBelow, async (store, action) => {
     const markerTab = action.payload.tab;
-    const { transient } = store.getState().session.navigation.openTabs;
+    const { transient } = store.getState().profile.navigation.openTabs;
 
     // woo !
     let closing = false;
@@ -225,7 +252,7 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.closeCurrentTab, async (store, action) => {
-    const { openTabs, tab } = store.getState().session.navigation;
+    const { openTabs, tab } = store.getState().profile.navigation;
     const { transient } = openTabs;
 
     if (contains(transient, tab)) {
@@ -233,7 +260,7 @@ export default function(watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.downloadStarted, async (store, action) => {
+  watcher.on(actions.downloadQueued, async (store, action) => {
     store.dispatch(
       actions.navigate({ url: "itch://downloads", background: true })
     );
@@ -242,7 +269,7 @@ export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) =>
       createSelector(
-        (rs: IRootState) => rs.session.navigation.tab,
+        (rs: IRootState) => rs.profile.navigation.tab,
         tab => schedule.dispatch(actions.tabChanged({ tab }))
       ),
   });
@@ -250,9 +277,9 @@ export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) =>
       createSelector(
-        (rs: IRootState) => rs.session.navigation.openTabs,
-        (rs: IRootState) => rs.session.tabInstances,
-        (rs: IRootState) => rs.session.navigation.tab,
+        (rs: IRootState) => rs.profile.navigation.openTabs,
+        (rs: IRootState) => rs.profile.tabInstances,
+        (rs: IRootState) => rs.profile.navigation.tab,
         (openTabs, tabInstances, tab) =>
           schedule.dispatch(actions.tabsChanged({}))
       ),

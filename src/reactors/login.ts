@@ -1,186 +1,175 @@
 import { Watcher } from "./watcher";
 import { actions } from "../actions";
 
-import client from "../api";
-import partitionForUser from "../util/partition-for-user";
-
-import { sortBy } from "underscore";
-
 import { promisedModal } from "./modals";
 import urls from "../constants/urls";
 import * as urlParser from "url";
-import { isNetworkError } from "../net/errors";
+
+import { modalWidgets } from "../components/modal-widgets/index";
+import { withButlerClient, messages, call } from "../buse/index";
+import partitionForUser from "../util/partition-for-user";
+import { Profile } from "../buse/messages";
 
 import rootLogger from "../logger";
+import { IStore } from "../types";
+import { restoreTabs } from "./tab-save";
 const logger = rootLogger.child({ name: "login" });
-
-import { ILoginExtras, ISuccessfulLoginResult } from "../types/api";
-import { modalWidgets } from "../components/modal-widgets/index";
-
-const forceCaptcha = process.env.IAMA_CAPTCHA_AMA === "1";
-
-const YEAR_IN_SECONDS =
-  365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
 
 export default function(watcher: Watcher) {
   watcher.on(actions.loginWithPassword, async (store, action) => {
     const { username, password } = action.payload;
 
     store.dispatch(actions.attemptLogin({}));
-    let extras: ILoginExtras = {};
-
     try {
-      let res: ISuccessfulLoginResult;
+      // integration tests for the integration test goddess
+      if (username === "#api-key") {
+        const { profile } = await call(messages.ProfileLoginWithAPIKey, {
+          apiKey: password,
+        });
+        await loginSucceeded(store, profile);
+        return;
+      }
 
-      let passwordRes = await client.loginWithPassword(
-        username,
-        password,
-        extras
-      );
-      res = passwordRes;
-      if (passwordRes.recaptchaNeeded || forceCaptcha) {
-        const modalRes = await promisedModal(
-          store,
-          modalWidgets.recaptchaInput.make({
-            title: "Captcha",
-            message: "",
-            widgetParams: {
-              url: passwordRes.recaptchaUrl || urls.itchio + "/captcha",
-            },
-          })
-        );
-
-        if (modalRes) {
-          extras.recaptchaResponse = modalRes.recaptchaResponse;
-          passwordRes = await client.loginWithPassword(
-            username,
-            password,
-            extras
+      await withButlerClient(logger, async client => {
+        client.onRequest(messages.ProfileRequestCaptcha, async ({ params }) => {
+          const modalRes = await promisedModal(
+            store,
+            modalWidgets.recaptchaInput.make({
+              title: "Captcha",
+              message: "",
+              widgetParams: {
+                url: params.recaptchaUrl || urls.itchio + "/captcha",
+              },
+              fullscreen: true,
+            })
           );
-          res = passwordRes;
-        } else {
-          store.dispatch(actions.loginCancelled({}));
-          return;
-        }
-      }
 
-      if (passwordRes.totpNeeded) {
-        const modalRes = await promisedModal(
-          store,
-          modalWidgets.twoFactorInput.make({
-            title: ["login.two_factor.title"],
-            message: "",
-            buttons: [
-              {
-                label: ["login.action.login"],
-                action: "widgetResponse",
-              },
-              {
-                label: ["login.two_factor.learn_more"],
-                action: actions.openUrl({
-                  url: urls.twoFactorHelp,
-                }),
-                className: "secondary",
-              },
-            ],
-            widgetParams: {
-              username,
-            },
-          })
-        );
-
-        if (modalRes) {
-          const code = modalRes.totpCode;
-          const totpRes = await client.totpVerify(passwordRes.token, code);
-          res = totpRes;
-        } else {
-          store.dispatch(actions.loginCancelled({}));
-          return;
-        }
-      }
-
-      const key = res.key.key;
-      const keyClient = client.withKey(key);
-
-      // login returns a cookie, set it into our web session so that we're
-      // seamlessly logged into the app.
-      if (res.cookie) {
-        const partition = partitionForUser(String(res.key.userId));
-        const session = require("electron").session.fromPartition(partition, {
-          cache: false,
+          if (modalRes) {
+            return { recaptchaResponse: modalRes.recaptchaResponse };
+          } else {
+            // abort
+            return { recaptchaResponse: null };
+          }
         });
 
-        for (const name of Object.keys(res.cookie)) {
-          const value = res.cookie[name];
-          const epoch = Date.now() * 0.001;
-          await new Promise((resolve, reject) => {
-            const parsed = urlParser.parse(urls.itchio);
-            const opts = {
-              name,
-              value: encodeURIComponent(value),
-              url: `${parsed.protocol}//${parsed.hostname}`,
-              domain: "." + parsed.hostname,
-              secure: parsed.protocol === "https:",
-              httpOnly: true,
-              expirationDate: epoch + YEAR_IN_SECONDS, // have it valid for a year
-            };
-            logger.debug(`Setting cookie: ${JSON.stringify(opts)}`);
-            session.cookies.set(opts, (error: Error) => {
-              if (error) {
-                logger.error(`Cookie error: ${JSON.stringify(error)}`);
-                reject(error);
-              } else {
-                resolve();
-              }
-            });
-          });
-        }
-      }
+        client.onRequest(messages.ProfileRequestTOTP, async ({ params }) => {
+          const modalRes = await promisedModal(
+            store,
+            modalWidgets.twoFactorInput.make({
+              title: ["login.two_factor.title"],
+              message: "",
+              buttons: [
+                {
+                  label: ["login.action.login"],
+                  action: "widgetResponse",
+                },
+                {
+                  label: ["login.two_factor.learn_more"],
+                  action: actions.openUrl({
+                    url: urls.twoFactorHelp,
+                  }),
+                  className: "secondary",
+                },
+              ],
+              widgetParams: {
+                username,
+              },
+            })
+          );
 
-      // validate API key and get user profile in one fell swoop
-      const me = (await keyClient.me()).user;
-      store.dispatch(actions.loginSucceeded({ key, me }));
+          if (modalRes) {
+            return { code: modalRes.totpCode };
+          } else {
+            // abort
+            return { code: null };
+          }
+        });
+
+        const { profile, cookie } = await client.call(
+          messages.ProfileLoginWithPassword({
+            username,
+            password,
+          })
+        );
+
+        if (cookie) {
+          try {
+            await setCookie(profile, cookie);
+          } catch (e) {
+            logger.error(`Could not set cookie: ${e.stack}`);
+          }
+        }
+
+        await loginSucceeded(store, profile);
+      });
     } catch (e) {
-      store.dispatch(
-        actions.loginFailed({ username, errors: e.errors || e.stack || e })
-      );
+      store.dispatch(actions.loginFailed({ username, errors: [e.message] }));
     }
   });
 
-  watcher.on(actions.loginWithToken, async (store, action) => {
-    const { username, key } = action.payload;
+  watcher.on(actions.useSavedLogin, async (store, action) => {
+    await withButlerClient(logger, async client => {
+      store.dispatch(actions.attemptLogin({}));
 
-    store.dispatch(actions.attemptLogin({}));
+      try {
+        const { profile } = await client.call(
+          messages.ProfileUseSavedLogin({
+            profileId: action.payload.profile.id,
+          })
+        );
 
-    try {
-      const keyClient = client.withKey(key);
-
-      // validate API key and get user profile in one fell swoop
-      const me = (await keyClient.me()).user;
-      store.dispatch(actions.loginSucceeded({ key, me }));
-    } catch (e) {
-      const { me } = action.payload;
-      if (me && isNetworkError(e)) {
-        // log in anyway
-        store.dispatch(actions.loginSucceeded({ key, me }));
-      } else {
+        await loginSucceeded(store, profile);
+      } catch (e) {
+        // TODO: handle offline login
+        const originalProfile = action.payload.profile;
         store.dispatch(
-          actions.loginFailed({ username, errors: e.errors || e.stack || e })
+          actions.loginFailed({
+            username: originalProfile.user.username,
+            errors: e.errors || e.stack || e,
+          })
         );
       }
-    }
+    });
+  });
+}
+
+const YEAR_IN_SECONDS =
+  365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
+
+async function setCookie(profile: Profile, cookie: Map<string, string>) {
+  const partition = partitionForUser(String(profile.user.id));
+  const session = require("electron").session.fromPartition(partition, {
+    cache: false,
   });
 
-  watcher.on(actions.sessionsRemembered, async (store, action) => {
-    const rememberedSessions = action.payload;
-    const mostRecentSession = sortBy(
-      rememberedSessions,
-      x => -x.lastConnected
-    )[0];
-    if (mostRecentSession) {
-      const { me, key } = mostRecentSession;
-      const { username } = me;
-      store.dispatch(actions.loginWithToken({ username, key, me }));
-    }
-  });
+  for (const name of Object.keys(cookie)) {
+    const value = cookie[name];
+    const epoch = Date.now() * 0.001;
+    await new Promise((resolve, reject) => {
+      const parsed = urlParser.parse(urls.itchio);
+      const opts = {
+        name,
+        value: encodeURIComponent(value),
+        url: `${parsed.protocol}//${parsed.hostname}`,
+        domain: "." + parsed.hostname,
+        secure: parsed.protocol === "https:",
+        httpOnly: true,
+        expirationDate: epoch + YEAR_IN_SECONDS, // have it valid for a year
+      };
+      logger.debug(`Setting cookie: ${JSON.stringify(opts)}`);
+      session.cookies.set(opts, (error: Error) => {
+        if (error) {
+          logger.error(`Cookie error: ${JSON.stringify(error)}`);
+          reject(error);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+}
+
+async function loginSucceeded(store: IStore, profile: Profile) {
+  await restoreTabs(store, profile);
+  store.dispatch(actions.loginSucceeded({ profile }));
 }

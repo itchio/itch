@@ -8,9 +8,6 @@ but most of them were broken by React 16.
 
 So, now it's mostly just the chrome dev tools.
 
-  * `ITCH_DONT_SHOW_WEBVIEWS=1` will avoid creating any `<webview/>` elements, which lets you measure more
-  accurately how much RAM the app is using.
-
 ## Production vs Development environments
 
 When measuring some things, you may want to set `NODE_ENV=production`. Things that slow down the development

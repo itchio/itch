@@ -9,17 +9,9 @@ import { IRootState } from "../types";
 import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
-const REDUX_DEVTOOLS_ENABLED = process.env.REDUX_DEVTOOLS === "1";
-
-let devTools: JSX.Element;
-if (REDUX_DEVTOOLS_ENABLED) {
-  const DevTools = require("./dev-tools").default;
-  devTools = <DevTools />;
-}
-
 class App extends React.PureComponent<IDerivedProps, IState> {
-  constructor() {
-    super();
+  constructor(props: App["props"], context) {
+    super(props, context);
     this.state = {
       localeVersion: 1,
       locale: "en",
@@ -35,7 +27,6 @@ class App extends React.PureComponent<IDerivedProps, IState> {
           <div>
             <Layout />
             <Modal />
-            {devTools}
           </div>
         </ThemeProvider>
       </IntlProvider>

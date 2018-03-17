@@ -4,8 +4,6 @@ import * as nodeURL from "url";
 
 import { webContents, BrowserWindow } from "electron";
 
-import urlParser from "../util/url";
-
 import rootLogger from "../logger";
 import { request } from "../net/request";
 import { IStore } from "../types/index";
@@ -13,9 +11,8 @@ const logger = rootLogger.child({ name: "web-contents" });
 
 import createContextMenu from "./web-contents-context-menu";
 import { ITabWeb } from "../types/tab-data";
-import { DB } from "../db/index";
-import { doSave } from "./navigation/save-password-and-secret";
 import { Space } from "../helpers/space";
+import { openAppDevTools } from "./open-app-devtools";
 
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
@@ -49,7 +46,7 @@ function withWebContents<T>(
   return cb(wc as ExtendedWebContents);
 }
 
-export default function(watcher: Watcher, db: DB) {
+export default function(watcher: Watcher) {
   watcher.on(actions.tabGotWebContents, async (store, action) => {
     const { tab, webContentsId } = action.payload;
     logger.debug(`Got webContents ${webContentsId} for tab ${tab}`);
@@ -79,7 +76,14 @@ export default function(watcher: Watcher, db: DB) {
       }
 
       if (url !== "about:blank") {
-        const resource = parseWellKnownUrl(url);
+        let resource = null;
+        const result = parseWellKnownUrl(url);
+        if (result) {
+          url = result.url;
+          resource = result.resource;
+          console.log(`Caught well-known url: `, result);
+        }
+
         store.dispatch(
           actions.evolveTab({
             tab,
@@ -196,11 +200,6 @@ export default function(watcher: Watcher, db: DB) {
               replace: true,
             })
           );
-
-          const parsed = urlParser.parse(url);
-          if (parsed.search) {
-            doSave(resource, parsed.search, db);
-          }
         }
       };
 
@@ -225,21 +224,21 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.commandReload, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     withWebContents(store, tab, wc => {
       wc.reload();
     });
   });
 
   watcher.on(actions.commandStop, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     withWebContents(store, tab, wc => {
       wc.stop();
     });
   });
 
   watcher.on(actions.commandLocation, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     store.dispatch(
       actions.tabDataFetched({
         tab,
@@ -251,7 +250,7 @@ export default function(watcher: Watcher, db: DB) {
   });
 
   watcher.on(actions.commandBack, async (store, action) => {
-    const { tab } = store.getState().session.navigation;
+    const { tab } = store.getState().profile.navigation;
     store.dispatch(
       actions.tabDataFetched({
         tab,
@@ -265,12 +264,9 @@ export default function(watcher: Watcher, db: DB) {
   watcher.on(actions.openDevTools, async (store, action) => {
     const { forApp } = action.payload;
     if (forApp) {
-      const bw = BrowserWindow.getFocusedWindow();
-      if (bw && bw.webContents) {
-        bw.webContents.openDevTools({ mode: "detach" });
-      }
+      await openAppDevTools(BrowserWindow.getFocusedWindow());
     } else {
-      const { tab } = store.getState().session.navigation;
+      const { tab } = store.getState().profile.navigation;
       withWebContents(store, tab, wc => {
         wc.openDevTools({ mode: "bottom" });
       });
@@ -279,18 +275,36 @@ export default function(watcher: Watcher, db: DB) {
 }
 
 const COLLECTION_URL_RE = /^\/c\/([0-9]+)/;
+const DOWNLOAD_URL_RE = /^.*\/download\/[a-zA-Z0-9]*$/;
 
-function parseWellKnownUrl(rawurl: string): string {
+interface WellKnownUrlResult {
+  resource: string;
+  url: string;
+}
+
+function parseWellKnownUrl(url: string): WellKnownUrlResult {
   try {
-    const u = nodeURL.parse(rawurl);
+    const u = nodeURL.parse(url);
     if (u.hostname === "itch.io") {
-      const matches = COLLECTION_URL_RE.exec(u.pathname);
-      if (matches) {
-        return `collections/${matches[1]}`;
+      const collMatches = COLLECTION_URL_RE.exec(u.pathname);
+      if (collMatches) {
+        return {
+          resource: `collections/${collMatches[1]}`,
+          url,
+        };
+      }
+    } else if (u.hostname.endsWith(".itch.io")) {
+      const dlMatches = DOWNLOAD_URL_RE.exec(u.pathname);
+      if (dlMatches) {
+        let gameUrl = url.replace(/\/download.*$/, "");
+        return {
+          resource: null,
+          url: gameUrl,
+        };
       }
     }
   } catch (e) {
-    logger.warn(`Could not parse url: ${rawurl}`);
+    logger.warn(`Could not parse url: ${url}`);
   }
 
   return null;

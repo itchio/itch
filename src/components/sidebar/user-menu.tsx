@@ -11,7 +11,7 @@ import urls from "../../constants/urls";
 import styled, * as styles from "../styles";
 import Filler from "../basics/filler";
 
-import { User } from "node-buse/lib/messages";
+import { User } from "../../buse/messages";
 import { actions } from "../../actions/index";
 
 const UserMenuDiv = styled.div`
@@ -165,7 +165,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 export default connect<IProps>(UserMenu, {
   state: () =>
     createStructuredSelector({
-      me: (rs: IRootState) => rs.session.credentials.me,
+      me: (rs: IRootState) => rs.profile.credentials.me,
     }),
   actionCreators,
 });

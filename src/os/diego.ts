@@ -1,9 +1,8 @@
 /* Diego is your little diagnostics mercenary! */
-import * as os from ".";
+import * as os from "./index";
 import spawn from "./spawn";
 
 import store from "../store/metal-store";
-import db from "../db";
 
 import { Logger, devNull } from "../logger";
 import Context from "../context";
@@ -11,7 +10,7 @@ import Context from "../context";
 const promisedDiego = collect();
 
 async function collect() {
-  const ctx = new Context(store, db);
+  const ctx = new Context(store);
   let output = "";
 
   const log = (msg: string): void => {

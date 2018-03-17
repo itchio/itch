@@ -18,13 +18,12 @@ import styled, * as styles from "./styles";
 import { SidebarSection, SidebarHeading } from "./sidebar/styles";
 
 import format from "./format";
-import { User } from "node-buse/lib/messages";
+import { User } from "../buse/messages";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
   font-size: ${styles.fontSizes.sidebar};
 
-  width: ${props => props.width}px;
   height: 100%;
   flex-grow: 0;
   flex-shrink: 0;
@@ -79,8 +78,8 @@ const SortableList = SortableContainer((params: ISortableContainerParams) => {
 });
 
 class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
-  constructor(props: IProps & IDerivedProps) {
-    super();
+  constructor(props: Sidebar["props"], context) {
+    super(props, context);
     this.state = {
       transient: props.openTabs.transient,
     };
@@ -112,7 +111,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
     } = this.props;
 
     return (
-      <SidebarDiv id="sidebar" width={sidebarWidth}>
+      <SidebarDiv id="sidebar" style={{ width: `${sidebarWidth}px` }}>
         {osx && !fullscreen ? <TitleBarPadder /> : null}
 
         <Logo />
@@ -202,9 +201,9 @@ export default connect<IProps>(Sidebar, {
     osx: (rs: IRootState) => rs.system.osx,
     fullscreen: (rs: IRootState) => rs.ui.mainWindow.fullscreen,
     sidebarWidth: (rs: IRootState) => rs.preferences.sidebarWidth || 240,
-    me: (rs: IRootState) => rs.session.credentials.me,
-    tab: (rs: IRootState) => rs.session.navigation.tab,
-    openTabs: (rs: IRootState) => rs.session.navigation.openTabs,
+    me: (rs: IRootState) => rs.profile.credentials.me,
+    tab: (rs: IRootState) => rs.profile.navigation.tab,
+    openTabs: (rs: IRootState) => rs.profile.navigation.openTabs,
   }),
   actionCreators,
 });

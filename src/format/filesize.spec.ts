@@ -1,13 +1,13 @@
-import suite from "../test-suite";
+import { describe, it, assert } from "../test";
 
 import { fileSize } from "./filesize";
 
-suite(__filename, s => {
-  s.case("fileSize", t => {
-    t.same(fileSize(1023), "1023 B");
-    t.same(fileSize(234090), "229 KiB");
-    t.same(fileSize(6934028), "6.6 MiB");
-    t.same(fileSize(239502889), "228 MiB");
-    t.same(fileSize(2395028891), "2.2 GiB");
+describe("filesize", () => {
+  it("fileSize", () => {
+    assert.equal(fileSize(1023), "1023 B");
+    assert.equal(fileSize(234090), "229 KiB");
+    assert.equal(fileSize(6934028), "6.6 MiB");
+    assert.equal(fileSize(239502889), "228 MiB");
+    assert.equal(fileSize(2395028891), "2.2 GiB");
   });
 });

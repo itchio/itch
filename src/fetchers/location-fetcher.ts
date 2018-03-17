@@ -1,34 +1,41 @@
 import { Fetcher } from "./fetcher";
+import { withButlerClient, messages } from "../buse";
+
+import rootLogger from "../logger";
+import { isEmpty, uniq } from "underscore";
+import { Game } from "../buse/messages";
+const logger = rootLogger.child({ name: "location-fetcher" });
 
 export default class LocationFetcher extends Fetcher {
   async work(): Promise<void> {
-    const { db } = this.ctx;
-    const id = this.space().firstPathElement();
+    const installLocationId = this.space().firstPathElement();
 
-    let path = id === "appdata" ? "appdata" : null;
-    if (!path) {
-      const info = this.ctx.store.getState().preferences.installLocations[id];
-      if (info) {
-        path = info.path;
-      }
-    }
+    await this.withLoading(async () => {
+      await withButlerClient(logger, async client => {
+        const {
+          caves,
+          installLocationPath,
+          installLocationSize,
+        } = await client.call(
+          messages.FetchCavesByInstallLocationID({ installLocationId })
+        );
 
-    if (!path) {
-      path = "<unknown path>";
-    }
-    this.push({
-      location: {
-        path,
-      },
+        let games: Game[] = [];
+        if (!isEmpty(caves)) {
+          for (const c of caves) {
+            games.push(c.game);
+          }
+          games = uniq(games, g => g.id);
+        }
+
+        this.pushUnfilteredGames(games, { disableFilters: true });
+        this.push({
+          location: {
+            path: installLocationPath,
+            size: installLocationSize,
+          },
+        });
+      });
     });
-
-    const games = db.games.all(k =>
-      k.where(
-        "exists (select * from caves where caves.gameId = games.id and caves.installLocation = ?)",
-        id
-      )
-    );
-
-    this.pushUnfilteredGames(games, { disableFilters: true });
   }
 }

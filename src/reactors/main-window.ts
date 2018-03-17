@@ -4,14 +4,11 @@ import { createSelector } from "reselect";
 
 import env from "../env";
 
-import * as sf from "../os/sf";
-
 import { darkMineShaft } from "../constants/colors";
 import { app, BrowserWindow } from "electron";
 import config from "../util/config";
 import { getImagePath } from "../os/resources";
 import * as os from "../os";
-import { resolve } from "path";
 import * as invariant from "invariant";
 import { debounce } from "underscore";
 
@@ -33,6 +30,9 @@ const macOs = os.platform() === "darwin";
 
 import { IRootState, IStore } from "../types";
 import { Space } from "../helpers/space";
+import { openAppDevTools } from "./open-app-devtools";
+
+let quitting = false;
 
 async function createWindow(store: IStore, hidden: boolean) {
   if (createLock) {
@@ -91,7 +91,7 @@ async function createWindow(store: IStore, hidden: boolean) {
 
   window.on("close", (e: any) => {
     logger.debug("Main window being closed");
-    if (store.getState().system.quitting) {
+    if (quitting) {
       logger.debug("Quitting, letting main window close");
       // alright alright you get to close
       return;
@@ -213,24 +213,6 @@ async function createWindow(store: IStore, hidden: boolean) {
   });
 
   window.on("ready-to-show", async (e: any) => {
-    if (env.name === "development") {
-      try {
-        await sf.stat(".cache");
-        logger.warn("");
-        logger.warn("####################################");
-        logger.warn("# Did you forget to wipe '.cache'? #");
-        logger.warn("#                                  #");
-        logger.warn("# The app is running in dev, yet   #");
-        logger.warn("# there is a '.cache' folder, so   #");
-        logger.warn("# only precompiled sources will be #");
-        logger.warn("# used.                            #");
-        logger.warn("####################################");
-        logger.warn("");
-      } catch (e) {
-        /* most probably ENOENT - which is good (in dev) */
-      }
-    }
-
     createLock = false;
     if (firstWindow) {
       firstWindow = false;
@@ -246,12 +228,13 @@ async function createWindow(store: IStore, hidden: boolean) {
     }
   });
 
-  if (parseInt(process.env.DEVTOOLS, 10) > 0) {
-    window.webContents.openDevTools({ mode: "detach" });
+  let uri = `file:///${__dirname}/index.html`;
+  if (
+    process.env.NODE_ENV !== "test" &&
+    process.env.NODE_ENV !== "production"
+  ) {
+    uri = `http://localhost:1234/dist/index.html`;
   }
-
-  const rootDir = resolve(__dirname, "..");
-  let uri = `file://${rootDir}/index.html`;
   if (process.env.ITCH_REACT_PERF === "1") {
     logger.info(`Enabling react perf`);
     uri += `?react_perf`;
@@ -259,6 +242,10 @@ async function createWindow(store: IStore, hidden: boolean) {
   window.loadURL(uri);
   if (env.name === "development") {
     window.emit("ready-to-show", {});
+  }
+
+  if (parseInt(process.env.DEVTOOLS, 10) > 0) {
+    await openAppDevTools(window);
   }
 }
 
@@ -398,8 +385,8 @@ export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) => {
       const getI18n = (rs: IRootState) => rs.i18n;
-      const getID = (rs: IRootState) => rs.session.navigation.tab;
-      const getTabInstance = (rs: IRootState) => rs.session.tabInstances;
+      const getID = (rs: IRootState) => rs.profile.navigation.tab;
+      const getTabInstance = (rs: IRootState) => rs.profile.tabInstances;
 
       const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>
         Space.fromInstance(tabData[id])
@@ -491,13 +478,17 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.quit, async (store, action) => {
-    store.dispatch(actions.prepareQuit({}));
+    prepareQuit();
     store.dispatch(actions.quitElectronApp({}));
   });
 
   watcher.on(actions.quitAndInstall, async (store, action) => {
-    store.dispatch(actions.prepareQuit({}));
+    prepareQuit();
     logger.info("Handing off to Squirrel for self-update");
     require("electron").autoUpdater.quitAndInstall();
   });
+}
+
+export function prepareQuit() {
+  quitting = true;
 }

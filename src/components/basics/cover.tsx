@@ -73,8 +73,8 @@ const Ribbon = styled.div`
 `;
 
 class Cover extends React.PureComponent<IProps, IState> {
-  constructor() {
-    super();
+  constructor(props: Cover["props"], context) {
+    super(props, context);
     this.state = { loading: false, error: false };
   }
 

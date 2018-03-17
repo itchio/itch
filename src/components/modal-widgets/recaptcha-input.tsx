@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { getInjectPath } from "../../os/resources";
+import { getInjectURL } from "../../os/resources";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import styled from "../styles";
@@ -9,6 +9,16 @@ import * as classNames from "classnames";
 import { modalWidgets, IModalWidgetProps } from "./index";
 
 const WidgetDiv = styled.div`
+  position: relative;
+
+  webview {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+  }
+
   &.loading {
     webview {
       width: 0;
@@ -17,15 +27,15 @@ const WidgetDiv = styled.div`
   }
 `;
 
-class RecaptchaInput extends React.Component<
+class RecaptchaInput extends React.PureComponent<
   IRecaptchaInputProps & IDerivedProps,
   IState
 > {
   webview: Electron.WebviewTag;
   checker: NodeJS.Timer;
 
-  constructor() {
-    super();
+  constructor(props: IRecaptchaInputProps & IDerivedProps, context) {
+    super(props, context);
     this.state = {
       loaded: false,
     };
@@ -44,8 +54,7 @@ class RecaptchaInput extends React.Component<
         <webview
           ref={this.gotWebview}
           src={url}
-          style={{ minHeight: "500px" }}
-          preload={getInjectPath("captcha")}
+          preload={getInjectURL("captcha")}
         />
       </WidgetDiv>
     );

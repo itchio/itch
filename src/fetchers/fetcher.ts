@@ -4,9 +4,6 @@ import { indexBy, pluck } from "underscore";
 
 import { actions } from "../actions";
 
-import defaultApiClient, { AuthenticatedClient, Client } from "../api";
-import { isNetworkError } from "../net/errors";
-
 import { sortAndFilter, ISortAndFilterOpts } from "./sort-and-filter";
 
 import Context from "../context";
@@ -16,24 +13,18 @@ export enum FetchReason {
   TabEvolved,
   TabReloaded,
   WindowFocused,
-  TabParamsChanged,
+  ParamsChanged,
   CommonsChanged,
 }
 
 import rootLogger, { Logger } from "../logger";
 import { Space } from "../helpers/space";
-import { Game } from "node-buse/lib/messages";
-import { ICollection } from "../db/models/collection";
-
-interface OptionalFetcherParams {
-  apiClient?: Client;
-}
+import { Game, Collection } from "../buse/messages";
 
 /**
  * Fetches all the data a tab needs to display, except webviews.
  * This can be games, users, etc.
- * Should return info from local DB as soon as possible, and fresh data from
- * API afterwards.
+ * Should return info from local DB as soon as possible, and fresh data afterwards.
  */
 export class Fetcher {
   ctx: Context;
@@ -43,20 +34,13 @@ export class Fetcher {
 
   startedAt: number;
   logger?: Logger;
-  apiClient: Client;
 
   retryCount = 0;
 
-  hook(
-    ctx: Context,
-    tab: string,
-    reason: FetchReason,
-    params: OptionalFetcherParams = {}
-  ) {
+  hook(ctx: Context, tab: string, reason: FetchReason) {
     this.ctx = ctx;
     this.tab = tab;
     this.reason = reason;
-    this.apiClient = params.apiClient || defaultApiClient;
 
     this.logger = rootLogger.child({
       name: `${this.constructor.name} :: ${this.space().url()}`,
@@ -83,12 +67,12 @@ export class Fetcher {
   async run() {
     this.startedAt = Date.now();
 
-    const { session } = this.ctx.store.getState();
+    const { profile } = this.ctx.store.getState();
     if (
-      !session ||
-      !session.credentials ||
-      !session.credentials.me ||
-      !session.credentials.me.id
+      !profile ||
+      !profile.credentials ||
+      !profile.credentials.me ||
+      !profile.credentials.me.id
     ) {
       this.logger.info(`No credentials yet, skipping`);
       return;
@@ -123,21 +107,6 @@ export class Fetcher {
           this.logger.debug(`${retriableError} (${sleepTime}ms)`);
           await bluebird.delay(sleepTime);
         }
-      }
-    }
-  }
-
-  async withApi<T>(cb: (api: AuthenticatedClient) => Promise<T>): Promise<T> {
-    const { key } = this.ensureCredentials();
-    const api = this.apiClient.withKey(key);
-    try {
-      return await cb(api);
-    } catch (e) {
-      if (isNetworkError(e)) {
-        this.retry(e.message);
-      } else {
-        this.logger.error(`API error: ${e.stack}`);
-        throw e;
       }
     }
   }
@@ -181,13 +150,11 @@ export class Fetcher {
     this.ctx.store.dispatch(action);
   }
 
-  pushCollection(c: ICollection) {
+  pushCollection(c: Collection) {
     this.push({
       collections: {
+        set: { [c.id]: c },
         ids: [c.id],
-        set: {
-          [c.id]: c,
-        },
       },
     });
   }
@@ -208,13 +175,13 @@ export class Fetcher {
     throw new Retry(why);
   }
 
-  debug(msg: string, ...args: any[]) {
-    this.logger.debug(msg, ...args);
+  debug(msg: string) {
+    this.logger.debug(msg);
   }
 
-  warrantsRemote(reason: FetchReason) {
-    switch (reason) {
-      case FetchReason.TabParamsChanged:
+  warrantsRemote() {
+    switch (this.reason) {
+      case FetchReason.ParamsChanged:
         return false;
       default:
         return true;
@@ -222,12 +189,16 @@ export class Fetcher {
   }
 
   ensureCredentials(): ICredentials {
-    const { credentials } = this.ctx.store.getState().session;
+    const { credentials } = this.ctx.store.getState().profile;
     if (!credentials || !credentials.me) {
       this.retry("missing credentials");
     }
 
     return credentials;
+  }
+
+  profileId(): number {
+    return this.ensureCredentials().me.id;
   }
 
   private _space: Space;

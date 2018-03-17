@@ -1,84 +1,76 @@
-import { map, filter, findWhere, isEmpty, size } from "underscore";
+import { map, filter } from "underscore";
 
 import { Watcher } from "./watcher";
 
-import { DB } from "../db/index";
-import { ITabDataSave, ITabInstance } from "../types/index";
-import { IProfile } from "../db/models/profile";
+import { ITabDataSave, IStore } from "../types/index";
 import { actions } from "../actions/index";
 
-const eo: any = {};
+import rootLogger from "../logger";
+import { withButlerClient, messages } from "../buse/index";
+import { Space } from "../helpers/space";
+import { Profile } from "../buse/messages";
+import { call } from "../buse/utils";
+const logger = rootLogger.child({ name: "tab-save" });
 
-export default function(watcher: Watcher, db: DB) {
+interface Snapshot {
+  current: string;
+  items: ITabDataSave[];
+}
+
+export default function(watcher: Watcher) {
   watcher.on(actions.tabsChanged, async (store, action) => {
-    const { navigation, tabInstances, credentials } = store.getState().session;
+    const { navigation, tabInstances, credentials } = store.getState().profile;
     if (!credentials || !credentials.me) {
       return;
     }
     const { tab, openTabs } = navigation;
-    const meId = credentials.me.id;
-    const items: ITabDataSave[] = map(openTabs.transient, id => {
-      let data = tabInstances[id] || eo;
-      if (size(data.games) > 1) {
-        // make sure our snapshot isn't too large (don't cache
-        // entire collections)
-        data = {
-          ...data,
-          games: null,
-        };
+    const profileId = credentials.me.id;
+    let items: ITabDataSave[];
+    items = map(openTabs.transient, id => {
+      const ti = tabInstances[id];
+      if (!ti) {
+        return null;
       }
 
-      return {
-        id,
-        ...data,
-      };
+      const sp = Space.fromInstance(ti);
+      const { history, currentIndex } = ti;
+      const savedLabel = sp.label();
+      return { id, history, currentIndex, savedLabel };
     });
+    items = filter(items, x => !!x);
 
-    db.saveOne<IProfile>("profiles", meId, {
-      openTabs: { current: tab, items },
+    const snapshot: Snapshot = { current: tab, items };
+
+    await withButlerClient(logger, async client => {
+      await client.call(
+        messages.ProfileDataPut({
+          profileId,
+          key: "@itch/tabs",
+          value: JSON.stringify(snapshot),
+        })
+      );
     });
-  });
-
-  watcher.on(actions.loginSucceeded, async (store, action) => {
-    const { credentials } = store.getState().session;
-    if (!credentials || !credentials.me) {
-      return;
-    }
-    const meId = credentials.me.id;
-
-    const profile = db.profiles.findOneById(meId);
-    if (profile && profile.openTabs) {
-      let { current, items } = profile.openTabs;
-
-      // only restore valid items
-      items = filter(items, item => isValidTabInstance(item));
-
-      if (!isEmpty(items)) {
-        // does our current tab still exist?
-        if (findWhere(items, { id: current })) {
-          // good!
-        } else {
-          // otherwise, fall back on a reasonable default
-          current = "itch://featured";
-        }
-
-        store.dispatch(actions.tabsRestored({ current, items }));
-      }
-    }
   });
 }
 
-function isValidTabInstance(ti: ITabInstance): boolean {
-  const hasValidHistory = ti.history && Array.isArray(ti.history);
-  if (!hasValidHistory) {
-    return false;
+export async function restoreTabs(store: IStore, profile: Profile) {
+  const profileId = profile.id;
+
+  const { value, ok } = await call(messages.ProfileDataGet, {
+    profileId,
+    key: "@itch/tabs",
+  });
+
+  if (!ok) {
+    logger.info(`No tabs to restore`);
+    return;
   }
 
-  const hasValidIndex =
-    ti.currentIndex >= 0 && ti.currentIndex < ti.history.length;
-  if (!hasValidIndex) {
-    return false;
+  try {
+    const snapshot = JSON.parse(value) as Snapshot;
+    store.dispatch(actions.tabsRestored(snapshot));
+  } catch (e) {
+    logger.warn(`Could not retrieve saved tabs: ${e.message}`);
+    return;
   }
-
-  return true;
 }

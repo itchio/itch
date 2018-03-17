@@ -12,11 +12,9 @@ import PlatformIcons from "./basics/platform-icons";
 import TotalPlaytime from "./total-playtime";
 import LastPlayed from "./last-played";
 
-import { fromJSONField } from "../db/json-field";
-
 import styled from "./styles";
 import { IGameStatus } from "../helpers/get-game-status";
-import { Game } from "node-buse/lib/messages";
+import { Game } from "../buse/messages";
 
 const GameStatsDiv = styled.div`
   display: flex;
@@ -83,7 +81,7 @@ export default class GameStats extends React.PureComponent<IProps> {
     } else {
       const { minPrice } = game;
       const currency = "USD";
-      const sale = fromJSONField(game.sale);
+      const { sale } = game;
       const showPlatforms = classAction === "launch" && hasPlatforms(game);
 
       // TODO: break down into components, or functions at the very least

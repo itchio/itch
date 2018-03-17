@@ -3,28 +3,18 @@ import { actions } from "../../actions";
 import Context from "../../context";
 import { Logger } from "../../logger";
 
-import { ICave } from "../../db/models/cave";
-
 import * as paths from "../../os/paths";
 
-import getGameCredentials from "../downloads/get-game-credentials";
-
-import { IRuntime, Cancelled, ILocalizedString } from "../../types";
+import { Cancelled, ILocalizedString } from "../../types";
 
 import { promisedModal } from "../modals";
-import { Game } from "node-buse/lib/messages";
 import {
   modalWidgets,
   ITypedModal,
 } from "../../components/modal-widgets/index";
-import {
-  messages,
-  setupClient,
-  buseGameCredentials,
-  makeButlerInstance,
-} from "../../buse/index";
+import { messages, setupClient, makeButlerInstance } from "../../buse/index";
 import { shell, powerSaveBlocker } from "electron";
-import { PrereqStatus } from "node-buse/lib/messages";
+import { Game, PrereqStatus, Cave } from "../../buse/messages";
 import { IPrereqsStateParams } from "../../components/modal-widgets/prereqs-state";
 
 import { pickManifestAction } from "./pick-manifest-action";
@@ -33,42 +23,26 @@ import { performHTMLLaunch } from "./perform-html-launch";
 export async function performLaunch(
   ctx: Context,
   logger: Logger,
-  cave: ICave,
-  game: Game,
-  runtime: IRuntime
+  cave: Cave,
+  game: Game
 ) {
+  ctx.emitProgress({ progress: -1, stage: "configure" });
+
   const { store } = ctx;
+  const taskId = ctx.getTaskId();
+  store.dispatch(
+    actions.taskProgress({
+      id: taskId,
+      progress: -1,
+      stage: "prepare",
+    })
+  );
 
-  if (cave.morphing) {
-    store.dispatch(
-      actions.statusMessage({
-        message: ["status.repairing_game", { title: game.title }],
-      })
-    );
-
-    const { upload, build } = cave;
-    store.dispatch(
-      actions.queueDownload({
-        caveId: cave.id,
-        game,
-        reason: "heal",
-        upload,
-        build,
-      })
-    );
-    return;
-  }
-
+  // TODO: have butler check morphing and queue a heal if needed
   const { appVersion } = store.getState().system;
   logger.info(`itch ${appVersion} launching '${game.title}' (#${game.id})`);
 
-  const credentials = getGameCredentials(ctx, game);
-  if (!credentials) {
-    throw new Error(`no game credentials, can't launch`);
-  }
-
   const { preferences } = store.getState();
-  const appPath = paths.appPath(cave, preferences);
   const prereqsDir = paths.prereqsPath();
 
   // TODO: extract that to another module
@@ -88,8 +62,6 @@ export async function performLaunch(
     prereqsModal = null;
   }
 
-  let interval: NodeJS.Timer;
-  const UPDATE_PLAYTIME_INTERVAL = 10; // in seconds
   let powerSaveBlockerId = null;
 
   const instance = await makeButlerInstance();
@@ -99,8 +71,8 @@ export async function performLaunch(
       setupClient(client, logger, ctx);
 
       client.onRequest(messages.PickManifestAction, async ({ params }) => {
-        const name = await pickManifestAction(store, params.actions, game);
-        return { name };
+        const index = await pickManifestAction(store, params.actions, game);
+        return { index };
       });
 
       client.onRequest(messages.HTMLLaunch, async ({ params }) => {
@@ -213,7 +185,7 @@ export async function performLaunch(
             ],
             detail: ["game.install.could_not_launch.detail"],
             widgetParams: {
-              errorStack,
+              rawError: { stack: errorStack },
               log,
             },
             buttons: [
@@ -241,17 +213,7 @@ export async function performLaunch(
 
       client.onNotification(messages.LaunchRunning, async ({ params }) => {
         logger.info("Now running!");
-
-        interval = setInterval(async () => {
-          const now = new Date();
-          const freshCave = ctx.db.caves.findOneById(cave.id);
-          const previousSecondsRun = freshCave ? freshCave.secondsRun || 0 : 0;
-          const newSecondsRun = UPDATE_PLAYTIME_INTERVAL + previousSecondsRun;
-          ctx.db.saveOne("caves", cave.id, {
-            secondsRun: newSecondsRun,
-            lastTouched: now,
-          });
-        }, UPDATE_PLAYTIME_INTERVAL * 1000);
+        ctx.emitProgress({ progress: 1, stage: "run" });
 
         if (preferences.preventDisplaySleep) {
           powerSaveBlockerId = powerSaveBlocker.start("prevent-display-sleep");
@@ -260,12 +222,7 @@ export async function performLaunch(
 
       client.onNotification(messages.LaunchExited, async ({ params }) => {
         logger.info("Exited!");
-      });
-
-      client.onRequest(messages.SaveVerdict, async ({ params }) => {
-        cave.verdict = params.verdict;
-        this.ctx.db.saveOne("caves", cave.id, cave);
-        return {};
+        ctx.emitProgress({ progress: -1, stage: "clean" });
       });
 
       client.onRequest(messages.AllowSandboxSetup, async ({ params }) => {
@@ -308,27 +265,17 @@ export async function performLaunch(
 
       await client.call(
         messages.Launch({
-          installFolder: appPath,
-          game,
-          upload: cave.upload,
-          build: cave.build,
-          verdict: cave.verdict,
-
+          caveId: cave.id,
           prereqsDir,
-
           sandbox: preferences.isolateApps,
-
-          credentials: buseGameCredentials(credentials),
         })
       );
     } finally {
       closePrereqsModal();
       instance.cancel();
-      clearInterval(interval);
       if (powerSaveBlockerId) {
         powerSaveBlocker.stop(powerSaveBlockerId);
       }
-      ctx.db.saveOne("caves", cave.id, { lastTouchedAt: new Date() });
     }
   });
 
