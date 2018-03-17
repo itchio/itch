@@ -506,5 +506,10 @@
     "preferences.advanced.disable_hardware_acceleration": "Выключить аппаратное ускорение (может исправить проблемы на Linux)",
     "prereq.status.pending": "Подготавливаем…",
     "status.downloads.updates_available": "Есть обновления",
-    "status.downloads.update_all": "Обновить всё"
+    "status.downloads.update_all": "Обновить всё",
+    "grid.really_empty_state.leader": "Тут ничего нет...",
+    "grid.really_empty_state.explanation": "...пока!",
+    "grid.item.running.prepare": "Подготавливаем…",
+    "grid.item.running.clean": "Прибираемся…",
+    "preferences.install_location.disk_usage": "Использование диска"
 }
