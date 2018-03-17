@@ -3,7 +3,7 @@ import { Watcher } from "./watcher";
 import { installFormula } from "../util/ibrew";
 
 import { IStore, ILocalizedString } from "../types";
-import Context from "../context";
+import { Context } from "../context";
 
 import { actions } from "../actions";
 

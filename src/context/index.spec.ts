@@ -1,6 +1,6 @@
 import { describe, it, assert } from "../test";
 
-import Context from "./index";
+import { Context } from "./index";
 import { IStore, isCancelled } from "../types";
 const store = {} as IStore;
 

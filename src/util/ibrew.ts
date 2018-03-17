@@ -7,7 +7,7 @@ import spawn from "../os/spawn";
 import { partial } from "underscore";
 
 import { Logger, devNull } from "../logger";
-import Context from "../context";
+import { Context } from "../context";
 
 import formulas, { IFormulaSpec } from "./ibrew/formulas";
 import { IVersionCheck } from "./ibrew/formulas";

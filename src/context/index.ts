@@ -132,7 +132,7 @@ export class MinimalContext {
   }
 }
 
-export default class Context extends MinimalContext {
+export class Context extends MinimalContext {
   constructor(public store: IStore) {
     super();
   }

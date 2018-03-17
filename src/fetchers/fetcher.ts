@@ -6,7 +6,7 @@ import { actions } from "../actions";
 
 import { sortAndFilter, ISortAndFilterOpts } from "./sort-and-filter";
 
-import Context from "../context";
+import { Context } from "../context";
 
 export enum FetchReason {
   TabChanged,

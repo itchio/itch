@@ -10,7 +10,7 @@ import { getInjectPath } from "../../os/resources";
 import * as url from "../../util/url";
 import debugBrowserWindow from "../../util/debug-browser-window";
 
-import Context from "../../context";
+import { Context } from "../../context";
 
 import Connection from "../../capsule/connection";
 import { capsule } from "../../capsule/messages_generated";

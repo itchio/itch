@@ -5,7 +5,7 @@ import spawn from "./spawn";
 import store from "../store/metal-store";
 
 import { Logger, devNull } from "../logger";
-import Context from "../context";
+import { Context } from "../context";
 
 const promisedDiego = collect();
 

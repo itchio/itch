@@ -1,4 +1,4 @@
-import Context from "../../context/index";
+import { Context } from "../../context/index";
 
 export interface ITaskMap {
   [id: string]: Context;

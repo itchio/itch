@@ -42,7 +42,6 @@ export default class GameFetcher extends Fetcher {
 
       await client.call(
         messages.FetchGame({
-          profileId: this.profileId(),
           gameId,
         })
       );

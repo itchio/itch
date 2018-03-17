@@ -15,7 +15,7 @@ import CollectionFetcher from "../fetchers/collection-fetcher";
 import LocationFetcher from "../fetchers/location-fetcher";
 import AppLogFetcher from "../fetchers/applog-fetcher";
 
-import Context from "../context";
+import { Context } from "../context";
 
 import { some, throttle, union } from "underscore";
 import { Space } from "../helpers/space";

@@ -8,7 +8,7 @@ import {
   TaskName,
   isAborted,
 } from "../../types";
-import Context from "../../context";
+import { Context } from "../../context";
 import { actions } from "../../actions";
 
 import rootLogger, { Logger, makeLogger } from "../../logger";

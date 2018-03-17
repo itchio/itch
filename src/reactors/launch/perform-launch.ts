@@ -1,6 +1,6 @@
 import { actions } from "../../actions";
 
-import Context from "../../context";
+import { Context } from "../../context";
 import { Logger } from "../../logger";
 
 import * as paths from "../../os/paths";

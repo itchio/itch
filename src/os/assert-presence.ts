@@ -1,5 +1,5 @@
 import spawn from "./spawn";
-import Context from "../context";
+import { Context } from "../context";
 
 import { devNull } from "../logger";
 import { formatExitCode } from "../format/exit-code";
