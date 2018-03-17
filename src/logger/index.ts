@@ -6,7 +6,21 @@ import * as path from "path";
 import * as stream from "logrotate-stream";
 const multi = require("multi-write-stream");
 
-const LOG_LEVEL = (process.env.ITCH_LOG_LEVEL || "info") as Level;
+function parseEnvLevel() {
+  let l = process.env.ITCH_LOG_LEVEL;
+  if (l) {
+    const validLevels = ["silent", "error", "warn", "info", "debug"];
+    if (validLevels.indexOf(l) !== -1) {
+      return l;
+    }
+    console.warn(
+      `Ignoring ITCH_LOG_LEVEL=${l}, expected one of: ${validLevels.join(", ")}`
+    );
+  }
+  return "info";
+}
+
+const LOG_LEVEL = parseEnvLevel() as Level;
 const NO_STDOUT = process.env.ITCH_NO_STDOUT === "1";
 
 export type Level = "silent" | "error" | "warn" | "info" | "debug";
