@@ -55,7 +55,7 @@ async function main() {
   }
 
   console.log(`Copying assets...`);
-  for (const staticName of ["locales", "images"]) {
+  for (const staticName of ["locales", "locales.json", "images"]) {
     await copy(`src/static/${staticName}`, path.join(outDir, `static/${staticName}`), {
       overwrite: true
     });

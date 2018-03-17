@@ -23,6 +23,7 @@ async function main() {
   for (const field of ["name", "productName", "desktopName"]) {
     pkg[field] = $.appName();
   }
+  delete pkg.scripts.postinstall;
   pkg.version = $.buildVersion();
   const pkgContents = JSON.stringify(pkg, null, 2);
   await $.writeFile(`dist/package.json`, pkgContents);
