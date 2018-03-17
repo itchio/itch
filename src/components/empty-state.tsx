@@ -59,7 +59,7 @@ export default class EmptyState extends React.PureComponent<IProps> {
         <EmptyStateDiv className={className}>
           <Icon icon={icon} className="leader" />
           <h1>{format(bigText)}</h1>
-          {smallText ? <h2>{format(smallText)}</h2> : ""}
+          {smallText ? <h2>{format(smallText)}</h2> : null}
           {buttonAction ? (
             <>
               <ButtonContainer>

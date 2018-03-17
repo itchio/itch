@@ -168,7 +168,7 @@ export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             />{" "}
             {format(["preferences.advanced"])}
           </h2>
-          {showAdvanced ? this.renderAdvanced() : ""}
+          {showAdvanced ? this.renderAdvanced() : null}
         </PreferencesContentDiv>
       </PreferencesDiv>
     );
