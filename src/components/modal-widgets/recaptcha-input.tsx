@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { getInjectPath } from "../../os/resources";
+import { getInjectURL } from "../../os/resources";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import styled from "../styles";
@@ -54,7 +54,7 @@ class RecaptchaInput extends React.PureComponent<
         <webview
           ref={this.gotWebview}
           src={url}
-          preload={getInjectPath("captcha")}
+          preload={getInjectURL("captcha")}
         />
       </WidgetDiv>
     );

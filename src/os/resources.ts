@@ -1,5 +1,8 @@
+import { join } from "path";
+import { getAppPath } from "../helpers/app";
+
 // this gives us a unix-style base path
-const basePath = "./dist";
+const basePath = "./app";
 
 /*
  * Resources are files shipped with the app, that are static
@@ -27,6 +30,17 @@ export function getLocalesConfigPath(): string {
 
 type IInjectName = "itchio" | "game" | "captcha";
 
+let appFolderName = "app";
+if (process.env.NODE_ENV === "production") {
+  appFolderName = "app.asar";
+}
+
+let absoluteAppPath = join(getAppPath(), appFolderName);
+
 export function getInjectPath(name: IInjectName) {
-  return getPath(`inject/${name}-init.js`);
+  return join(absoluteAppPath, `inject-${name}.js`);
+}
+
+export function getInjectURL(name: IInjectName) {
+  return `file://${getInjectPath(name)}`;
 }

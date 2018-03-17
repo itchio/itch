@@ -21,7 +21,7 @@
       "email": "leafo@itch.io"
     }
   ],
-  "main": "dist/main.js",
+  "main": "app/main.js",
   "license": "MIT",
   "dependencies": {
     "@types/emojione": "^2.2.2",
@@ -47,7 +47,7 @@
     "memory-streams": "^0.1.2",
     "mkdirp": "^0.5.1",
     "multi-write-stream": "^2.0.1",
-    "node-buse": "^3.4.0",
+    "node-buse": "^3.5.0",
     "polished": "^1.0.3",
     "react": "^16.2.0",
     "react-contextmenu": "^2.6.5",

@@ -6,7 +6,7 @@ import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import urls from "../constants/urls";
 
 import partitionForUser from "../util/partition-for-user";
-import { getInjectPath } from "../os/resources";
+import { getInjectURL } from "../os/resources";
 
 import staticTabData from "../constants/static-tab-data";
 
@@ -177,7 +177,7 @@ export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
                 <webview
                   partition={partition}
                   plugins
-                  preload={getInjectPath("itchio")}
+                  preload={getInjectURL("itchio")}
                   ref={this.gotWebview}
                   src={this.initialURL}
                 />

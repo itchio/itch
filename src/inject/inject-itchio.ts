@@ -3,7 +3,7 @@
  * to make them friendlier to the app, like the login form, the purchase form, etc.
  */
 
-/** 
+/**
  * Our own little twist on `window`, with a few more fields
  */
 interface IExtendedWindow {
@@ -105,7 +105,10 @@ setTimeout(function() {
     {
       const $page = $(".view_game_page");
       if ($page.length) {
-        $page.find(".buy_row").prev("h2").hide();
+        $page
+          .find(".buy_row")
+          .prev("h2")
+          .hide();
         $page.find(".buy_row, .donate, .uploads").hide();
         $page.find(".game_frame").remove();
       }

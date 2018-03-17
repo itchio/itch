@@ -8,6 +8,9 @@ export async function openAppDevTools(bw: Electron.BrowserWindow) {
     `);
     if (hasReactDevTools) {
       console.log(`Installed react devtools!`);
+      await bw.webContents.executeJavaScript(
+        `console.log("React DevTools installed, reload the page (Shift+F5) for the React tab to show up.")`
+      );
       bw.webContents.reload();
     }
   }
