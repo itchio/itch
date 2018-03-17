@@ -10,7 +10,9 @@ book:
   tags:
     - dropsy
   script:
-    - npm run ci-book
+    - npm install --no-save babel-cli babel-preset-env
+    - babel-cli --presets env release --out-dir release-for-old-nodes
+    - node release-for-old-nodes/ci-book.js
 
 test-linux:
   stage: build

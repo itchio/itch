@@ -126,7 +126,6 @@
     "upload-coverage": "codecov -f ./coverage/lcov.info",
     "i18n": "node release/ci-i18n-check.js",
     "compile": "cross-env NODE_ENV=production electron-compile --appdir . ./src",
-    "ci-book": "npm install --no-save babel-cli babel-preset-env && babel-node --presets env --only 'release/*' release/ci-book.js",
     "ts-check": "tsc --noEmit --skipLibCheck"
   },
   "lint-staged": {
