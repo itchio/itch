@@ -170,6 +170,6 @@ async function setCookie(profile: Profile, cookie: Map<string, string>) {
 }
 
 async function loginSucceeded(store: IStore, profile: Profile) {
-  store.dispatch(actions.loginSucceeded({ profile }));
   await restoreTabs(store, profile);
+  store.dispatch(actions.loginSucceeded({ profile }));
 }
