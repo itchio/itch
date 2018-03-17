@@ -461,5 +461,5 @@
     "prompt.install_error.message": "Die Installation ist fehlgeschlagen",
     "status.cancelled.message": "Der Vorgang wurde abgebrochen.",
     "collections.empty": "Du hast momentan keine Sammlungen",
-    "download.reason.install": "installieren"
+    "download.reason.install": "zum installieren"
 }
