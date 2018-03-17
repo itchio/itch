@@ -70,19 +70,21 @@ func doMain() error {
 	done := make(chan error)
 	go func() {
 		done <- r.getButler()
+		r.logf("✓ Butler is all set up!")
 	}()
 
 	go func() {
 		done <- downloadChromeDriver(r)
+		r.logf("✓ ChromeDriver is set up!")
 	}()
 
 	go func() {
 		done <- r.bundle()
+		r.logf("✓ Everything is bundled!")
 	}()
 
 	for i := 0; i < 3; i++ {
 		must(<-done)
-		r.logf("Task %d done...", i+1)
 	}
 
 	chromeDriverPort := 9515
