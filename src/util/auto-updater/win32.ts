@@ -1,7 +1,6 @@
 import * as bluebird from "bluebird";
 
 import * as os from "../../os";
-import * as registry from "../../os/win32/registry";
 import * as shortcut from "../../os/win32/shortcut";
 
 import { AutoUpdaterStart } from "./types";
@@ -10,17 +9,17 @@ import { MinimalContext } from "../../context";
 const ctx = new MinimalContext();
 
 async function onInstall() {
-  await bluebird.all([registry.install(ctx), shortcut.install(ctx)]);
+  await bluebird.all([shortcut.install(ctx)]);
   return true;
 }
 
 async function onUpdate() {
-  await bluebird.all([registry.update(ctx), shortcut.update(ctx)]);
+  await bluebird.all([shortcut.update(ctx)]);
   return true;
 }
 
 async function onUninstall() {
-  await bluebird.all([registry.uninstall(ctx), shortcut.uninstall(ctx)]);
+  await bluebird.all([shortcut.uninstall(ctx)]);
   return true;
 }
 

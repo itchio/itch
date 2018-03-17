@@ -9,7 +9,7 @@ import { join, dirname } from "path";
 import rootLogger, { devNull } from "../../logger";
 const logger = rootLogger.child({ name: "visual-elements" });
 
-import Context from "../../context";
+import { MinimalContext } from "../../context";
 
 const getStartMenuVbs = `set sh = WScript.CreateObject("Wscript.Shell")
 startPath = sh.SpecialFolders("StartMenu")
@@ -22,7 +22,7 @@ const visualElementsManifest = `<Application xmlns:xsi="http://www.w3.org/2001/X
     ForegroundText="light"/>
 </Application>`;
 
-export async function createIfNeeded(ctx: Context): Promise<void> {
+export async function createIfNeeded(ctx: MinimalContext): Promise<void> {
   if (os.platform() !== "win32") {
     return;
   }

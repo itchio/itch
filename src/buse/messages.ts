@@ -1995,8 +1995,6 @@ export const SearchUsersYield = createNotification<
  * Params for Fetch.Game
  */
 export interface FetchGameParams {
-  /** Profile to use to fetch game */
-  profileId: number;
   /** Identifier of game to look for */
   gameId: number;
 }
@@ -2021,7 +2019,7 @@ export const FetchGameYield = createNotification<FetchGameYieldNotification>(
  * Params for Fetch.Collection
  */
 export interface FetchCollectionParams {
-  /** Profile to use to fetch game */
+  /** Profile to use to fetch collection */
   profileId: number;
   /** Identifier of the collection to look for */
   collectionId: number;

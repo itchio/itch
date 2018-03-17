@@ -55,13 +55,13 @@ async function syncInstallLocations(store: IStore) {
     let numAdded = 0;
     if (!isEmpty(oldLocations)) {
       for (const id of Object.keys(oldLocations)) {
-        logger.info(`Checking install location ${id}...`);
+        logger.debug(`Checking install location ${id}...`);
         const oldLoc = oldLocations[id];
         const newLoc = newLocationsById[id];
         if (newLoc) {
-          logger.info(`Has on butler side too!`);
+          logger.debug(`Has on butler side too!`);
         } else {
-          logger.info(`Synchronizing ${id}...`);
+          logger.debug(`Synchronizing ${id}...`);
           numAdded++;
           await client.call(
             messages.InstallLocationsAdd({

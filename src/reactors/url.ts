@@ -15,6 +15,7 @@ import { actions } from "../actions";
 import { IStore } from "../types";
 
 import { filter } from "underscore";
+import { call, messages } from "../buse";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.processUrlArguments, async (store, action) => {
@@ -94,8 +95,29 @@ function handleItchioUrl(store: IStore, uri: string) {
           logger.warn(`missing gameId for ${url}, ignoring`);
           return;
         }
-        const gameId = tokens[1];
-        store.dispatch(actions.navigate({ url: `itch://games/${gameId}` }));
+        const gameId = parseInt(tokens[1], 10);
+
+        (async () => {
+          try {
+            let navigated = false;
+            await call(messages.FetchGame, { gameId }, async client => {
+              client.onNotification(messages.FetchGameYield, ({ params }) => {
+                if (navigated) {
+                  return;
+                }
+                navigated = true;
+                const { game } = params;
+                store.dispatch(actions.navigateToGame({ game }));
+              });
+            });
+          } catch (e) {
+            store.dispatch(
+              actions.statusMessage({ message: `Game ${gameId} not found` })
+            );
+          }
+        })().catch(e => {
+          /* ignore */
+        });
         break;
       }
       default:

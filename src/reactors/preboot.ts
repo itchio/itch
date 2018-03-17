@@ -1,11 +1,11 @@
-import Context from "../context";
+import { MinimalContext } from "../context";
 import { Watcher } from "./watcher";
 import { actions } from "../actions";
 
-import store from "../store/metal-store";
+import { app } from "electron";
+import env from "../env";
 
 import { cleanOldLogs } from "./preboot/clean-old-logs";
-import * as xdgMime from "./preboot/xdg-mime";
 import * as visualElements from "./preboot/visual-elements";
 
 import rootLogger from "../logger";
@@ -24,7 +24,6 @@ let testProxy = false;
 let proxyTested = false;
 
 export default function(watcher: Watcher) {
-  const ctx = new Context(store);
   watcher.on(actions.preboot, async (store, action) => {
     let dispatchedBoot = false;
 
@@ -39,7 +38,6 @@ export default function(watcher: Watcher) {
       }
 
       try {
-        const { app } = require("electron");
         app.on(
           "certificate-error",
           (ev, webContents, url, error, certificate, callback) => {
@@ -132,18 +130,27 @@ export default function(watcher: Watcher) {
         logger.error(`Could not clean old logs: ${e.stack || e.message || e}`);
       }
 
-      try {
-        await xdgMime.registerIfNeeded(ctx, { logger: rootLogger });
-      } catch (e) {
-        logger.error(`Could not run xdg-mime: ${e.stack || e.message || e}`);
+      if (env.name === "production" && env.appName === "itch") {
+        try {
+          app.setAsDefaultProtocolClient("itchio");
+          app.setAsDefaultProtocolClient("itch");
+        } catch (e) {
+          logger.error(
+            `Could not set app as default protocol client: ${e.stack ||
+              e.message ||
+              e}`
+          );
+        }
       }
 
-      try {
-        await visualElements.createIfNeeded(ctx);
-      } catch (e) {
-        logger.error(
-          `Could not run visualElements: ${e.stack || e.message || e}`
-        );
+      if (process.platform === "win32") {
+        try {
+          await visualElements.createIfNeeded(new MinimalContext());
+        } catch (e) {
+          logger.error(
+            `Could not run visualElements: ${e.stack || e.message || e}`
+          );
+        }
       }
     } catch (e) {
       throw e;
