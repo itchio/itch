@@ -11,9 +11,9 @@ book:
     - dropsy
   script:
     - npm install --no-save babel-cli babel-preset-es2017
-    - rm -rf release-for-old-nodes
+    - mkdir -p release-for-old-nodes
+    - cp -rf ./release/node_modules ./release-for-old-nodes/node_modules
     - node_modules/.bin/babel --no-babelrc --presets es2017 release --out-dir release-for-old-nodes
-    - ln -s ./release/node_modules ./release-for-old-nodes/node_modules
     - node release-for-old-nodes/ci-book.js
 
 test-linux:
