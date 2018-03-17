@@ -32,6 +32,8 @@ import { IRootState, IStore } from "../types";
 import { Space } from "../helpers/space";
 import { openAppDevTools } from "./open-app-devtools";
 
+let quitting = false;
+
 async function createWindow(store: IStore, hidden: boolean) {
   if (createLock) {
     return;
@@ -89,7 +91,7 @@ async function createWindow(store: IStore, hidden: boolean) {
 
   window.on("close", (e: any) => {
     logger.debug("Main window being closed");
-    if (store.getState().system.quitting) {
+    if (quitting) {
       logger.debug("Quitting, letting main window close");
       // alright alright you get to close
       return;
@@ -476,13 +478,17 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.quit, async (store, action) => {
-    store.dispatch(actions.prepareQuit({}));
+    prepareQuit();
     store.dispatch(actions.quitElectronApp({}));
   });
 
   watcher.on(actions.quitAndInstall, async (store, action) => {
-    store.dispatch(actions.prepareQuit({}));
+    prepareQuit();
     logger.info("Handing off to Squirrel for self-update");
     require("electron").autoUpdater.quitAndInstall();
   });
+}
+
+export function prepareQuit() {
+  quitting = true;
 }

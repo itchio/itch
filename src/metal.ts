@@ -26,6 +26,7 @@ logger.info(
 );
 
 import { loadPreferencesSync } from "./reactors/preboot/load-preferences";
+import { prepareQuit } from "./reactors/main-window";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -129,7 +130,7 @@ function autoUpdateDone() {
   });
 
   app.on("before-quit", (e: Event) => {
-    store.dispatch(actions.prepareQuit({}));
+    prepareQuit();
   });
 
   app.on("window-all-closed", (e: Event) => {

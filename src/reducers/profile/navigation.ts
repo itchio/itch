@@ -67,6 +67,10 @@ export default reducer<IProfileNavigationState>(initialState, on => {
 
   on(actions.openTab, (state, action) => {
     const { tab, background } = action.payload;
+    if (!tab) {
+      return state;
+    }
+
     const { constant, transient } = state.openTabs;
 
     return {

@@ -12,7 +12,6 @@ These environment variables will change the behavior of the app:
   * `DIEGO_IS_ASLEEP=1` - forbid [our diagnostics tool][diego] from running commands like
     `uname`, `lspci`, `sw_vers`, `wmic`, and `ver` on your system and writing
     the results to a file on your local disk.
-  * `CAST_NO_SHADOW=1` — opens devtools for the purchase window
   * `REMEMBER_ME_WHEN_IM_GONE=1` - don't wipe downloads when uninstalling.
     Useful for debugging install/uninstall routines.
   * `IMMEDIATE_NOSE_DIVE=1` - open dev tools before launching html games

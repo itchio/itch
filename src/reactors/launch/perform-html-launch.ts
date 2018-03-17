@@ -7,7 +7,7 @@ import { BrowserWindow, shell } from "electron";
 
 import spawn from "../../os/spawn";
 import { getInjectPath } from "../../os/resources";
-import url from "../../util/url";
+import * as url from "../../util/url";
 import debugBrowserWindow from "../../util/debug-browser-window";
 
 import Context from "../../context";

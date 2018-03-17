@@ -175,6 +175,9 @@ export default reducer<ITabInstances>(initialState, on => {
 
   on(actions.openTab, (state, action) => {
     const { tab, url, resource, data = emptyObj } = action.payload;
+    if (!tab) {
+      return state;
+    }
     const staticData = staticTabData[tab] || emptyObj;
     return {
       ...state,

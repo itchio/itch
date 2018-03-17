@@ -305,6 +305,8 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.viewChangelog, async (store, action) => {
+    store.dispatch(actions.statusMessage({ message: "Fetching changelog..." }));
+
     const updateServer = urls.updateServers[env.channel];
     const uri = `${updateServer}/notes`;
     const resp = await request("get", uri, {});

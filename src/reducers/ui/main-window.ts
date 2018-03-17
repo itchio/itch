@@ -20,10 +20,6 @@ export default reducer<IUIMainWindowState>(initialState, on => {
     return { ...state, id: null, focused: false };
   });
 
-  on(actions.prepareQuit, (state, action) => {
-    return { ...state, quitting: true };
-  });
-
   on(actions.windowFocusChanged, (state, action) => {
     const { focused } = action.payload;
     return { ...state, focused };

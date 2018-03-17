@@ -1,6 +1,6 @@
 import { Watcher } from "./watcher";
 
-import urlParser from "../util/url";
+import * as urlParser from "../util/url";
 import * as querystring from "querystring";
 
 import * as electron from "electron";

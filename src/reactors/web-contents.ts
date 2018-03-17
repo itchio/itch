@@ -76,7 +76,14 @@ export default function(watcher: Watcher) {
       }
 
       if (url !== "about:blank") {
-        const resource = parseWellKnownUrl(url);
+        let resource = null;
+        const result = parseWellKnownUrl(url);
+        if (result) {
+          url = result.url;
+          resource = result.resource;
+          console.log(`Caught well-known url: `, result);
+        }
+
         store.dispatch(
           actions.evolveTab({
             tab,
@@ -268,18 +275,36 @@ export default function(watcher: Watcher) {
 }
 
 const COLLECTION_URL_RE = /^\/c\/([0-9]+)/;
+const DOWNLOAD_URL_RE = /^.*\/download\/[a-zA-Z0-9]*$/;
 
-function parseWellKnownUrl(rawurl: string): string {
+interface WellKnownUrlResult {
+  resource: string;
+  url: string;
+}
+
+function parseWellKnownUrl(url: string): WellKnownUrlResult {
   try {
-    const u = nodeURL.parse(rawurl);
+    const u = nodeURL.parse(url);
     if (u.hostname === "itch.io") {
-      const matches = COLLECTION_URL_RE.exec(u.pathname);
-      if (matches) {
-        return `collections/${matches[1]}`;
+      const collMatches = COLLECTION_URL_RE.exec(u.pathname);
+      if (collMatches) {
+        return {
+          resource: `collections/${collMatches[1]}`,
+          url,
+        };
+      }
+    } else if (u.hostname.endsWith(".itch.io")) {
+      const dlMatches = DOWNLOAD_URL_RE.exec(u.pathname);
+      if (dlMatches) {
+        let gameUrl = url.replace(/\/download.*$/, "");
+        return {
+          resource: null,
+          url: gameUrl,
+        };
       }
     }
   } catch (e) {
-    logger.warn(`Could not parse url: ${rawurl}`);
+    logger.warn(`Could not parse url: ${url}`);
   }
 
   return null;

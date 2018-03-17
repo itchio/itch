@@ -34,7 +34,6 @@ async function main() {
 
   let injectEntryPoints = [
     "inject/inject-game.ts",
-    "inject/inject-itchio.ts",
     "inject/inject-captcha.ts",
   ];
   for (const injectEntryPoint of injectEntryPoints) {

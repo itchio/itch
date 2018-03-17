@@ -1,4 +1,4 @@
-import urlParser from "./url";
+import * as urlParser from "./url";
 import * as querystring from "querystring";
 
 import { ITabInstance, ITabPage, ITabData, INavigatePayload } from "../types";

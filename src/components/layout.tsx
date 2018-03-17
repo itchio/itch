@@ -17,6 +17,7 @@ import { formatString } from "./format";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { DATE_FORMAT } from "../format/index";
 import { formatDate } from "../format/datetime";
+import classNames = require("classnames");
 
 const LayoutContainer = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -30,6 +31,10 @@ const LayoutContainer = styled.div`
   bottom: 0;
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 2px;
+
+  &.maximized {
+    border-color: transparent;
+  }
 
   &,
   input {
@@ -71,10 +76,10 @@ const ReactHintContainer = styled.div`
  */
 class Layout extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { intl } = this.props;
+    const { intl, maximized } = this.props;
 
     return (
-      <LayoutContainer>
+      <LayoutContainer className={classNames({ maximized })}>
         {this.main()}
         <StatusBar />
         <ReactHintContainer>
@@ -137,6 +142,7 @@ interface IProps {}
 
 interface IDerivedProps {
   page: string;
+  maximized: boolean;
 
   intl: InjectedIntl;
 }
@@ -144,5 +150,6 @@ interface IDerivedProps {
 export default connect<IProps>(injectIntl(Layout), {
   state: createStructuredSelector({
     page: (rs: IRootState) => rs.profile.navigation.page,
+    maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
   }),
 });

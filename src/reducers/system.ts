@@ -40,11 +40,4 @@ export default reducer<ISystemState>(initialState, on => {
       proxySource: source,
     };
   });
-
-  on(actions.prepareQuit, (state, action) => {
-    return {
-      ...state,
-      quitting: true,
-    };
-  });
 });
