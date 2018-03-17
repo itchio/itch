@@ -54,8 +54,12 @@ async function main() {
     await chromeBundler.bundle();
   }
 
-  console.log(`Copying incidentals...`);
-  await copy("src/static/", path.join(outDir, "static"), {overwrite: true});
+  console.log(`Copying assets...`);
+  for (const staticName of ["locales", "images"]) {
+    await copy(`src/static/${staticName}`, path.join(outDir, `static/${staticName}`), {
+      overwrite: true
+    });
+  }
 
   if (development) {
     let electronPath = `node_modules/.bin/electron`;
