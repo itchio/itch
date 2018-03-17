@@ -19,7 +19,6 @@ import login from "./login";
 import dialogs from "./dialogs";
 import i18n from "./i18n";
 import contextMenu from "./context-menu";
-import rememberedProfiles from "./remembered-profiles";
 import profile from "./profile";
 import navigation from "./navigation";
 import tabSave from "./tab-save";
@@ -62,7 +61,6 @@ export default function getWatcher() {
   dialogs(watcher);
   i18n(watcher);
   contextMenu(watcher);
-  rememberedProfiles(watcher);
   profile(watcher);
   navigation(watcher);
   tabSave(watcher);

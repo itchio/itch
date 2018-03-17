@@ -6,24 +6,24 @@ import IconButton from "../../basics/icon-button";
 
 import defaultImages from "../../../constants/default-images";
 
+import { call, messages } from "../../../buse";
 import { Profile } from "../../../buse/messages";
 
 import styled from "../../styles";
 
 import format from "../../format";
+import { modalWidgets } from "../../modal-widgets";
+import { actions } from "../../../actions";
+import watching, { Watcher } from "../../watching";
 
+@watching
 export class RememberedProfile extends React.PureComponent<
   IProps & IDerivedProps
 > {
   render() {
-    const { profile, forgetProfileRequest } = this.props;
+    const { profile } = this.props;
     const { user } = profile;
     const { username, displayName, coverUrl = defaultImages.avatar } = user;
-
-    const onForget = (e: React.MouseEvent<HTMLElement>) => {
-      e.stopPropagation();
-      forgetProfileRequest({ profile });
-    };
 
     return (
       <RememberedProfileDiv
@@ -48,22 +48,51 @@ export class RememberedProfile extends React.PureComponent<
           <IconButton
             icon="cross"
             className="forget-profile"
-            onClick={onForget}
+            onClick={this.onForget}
           />
         </span>
       </RememberedProfileDiv>
     );
   }
+
+  subscribe(watcher: Watcher) {
+    watcher.on(actions.forgetProfile, async (store, action) => {
+      const { profile } = action.payload;
+      await call(messages.ProfileForget, { profileId: profile.id });
+      store.dispatch(actions.profilesUpdated({}));
+    });
+  }
+
+  onForget = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    const { profile } = this.props;
+    const { username } = profile.user;
+
+    this.props.openModal(
+      modalWidgets.naked.make({
+        title: ["prompt.forget_session.title"],
+        message: ["prompt.forget_session.message", { username }],
+        detail: ["prompt.forget_session.detail"],
+        buttons: [
+          {
+            id: "modal-forget-profile",
+            label: ["prompt.forget_session.action"],
+            action: actions.forgetProfile({ profile }),
+            icon: "cross",
+          },
+          "cancel",
+        ],
+        widgetParams: null,
+      })
+    );
+  };
 }
 
 interface IProps {
   profile: Profile;
 }
 
-const actionCreators = actionCreatorsList(
-  "forgetProfileRequest",
-  "useSavedLogin"
-);
+const actionCreators = actionCreatorsList("openModal", "useSavedLogin");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
