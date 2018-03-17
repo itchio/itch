@@ -11,6 +11,8 @@ import partitionForUser from "../util/partition-for-user";
 import { Profile } from "../buse/messages";
 
 import rootLogger from "../logger";
+import { IStore } from "../types";
+import { restoreTabs } from "./tab-save";
 const logger = rootLogger.child({ name: "login" });
 
 export default function(watcher: Watcher) {
@@ -24,7 +26,7 @@ export default function(watcher: Watcher) {
         const { profile } = await call(messages.ProfileLoginWithAPIKey, {
           apiKey: password,
         });
-        store.dispatch(actions.loginSucceeded({ profile }));
+        await loginSucceeded(store, profile);
         return;
       }
 
@@ -98,7 +100,7 @@ export default function(watcher: Watcher) {
           }
         }
 
-        store.dispatch(actions.loginSucceeded({ profile }));
+        await loginSucceeded(store, profile);
       });
     } catch (e) {
       store.dispatch(actions.loginFailed({ username, errors: [e.message] }));
@@ -116,7 +118,7 @@ export default function(watcher: Watcher) {
           })
         );
 
-        store.dispatch(actions.loginSucceeded({ profile }));
+        await loginSucceeded(store, profile);
       } catch (e) {
         // TODO: handle offline login
         const originalProfile = action.payload.profile;
@@ -165,4 +167,9 @@ async function setCookie(profile: Profile, cookie: Map<string, string>) {
       });
     });
   }
+}
+
+async function loginSucceeded(store: IStore, profile: Profile) {
+  store.dispatch(actions.loginSucceeded({ profile }));
+  await restoreTabs(store, profile);
 }

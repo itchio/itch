@@ -73,15 +73,16 @@ func doMain() error {
 	}()
 
 	go func() {
-		done <- r.bundle()
+		done <- downloadChromeDriver(r)
 	}()
 
 	go func() {
-		done <- downloadChromeDriver(r)
+		done <- r.bundle()
 	}()
 
 	for i := 0; i < 3; i++ {
 		must(<-done)
+		r.logf("Task %d done...", i+1)
 	}
 
 	chromeDriverPort := 9515
@@ -237,6 +238,15 @@ func (r *runner) getButler() error {
 
 func (r *runner) bundle() error {
 	r.logf("Bundling...")
+	err := os.RemoveAll("dist")
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+	err = os.RemoveAll(".cache")
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+
 	cmd := exec.Command("node", "./src/init.js")
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "NODE_ENV=test")

@@ -2,12 +2,14 @@ import { map, filter } from "underscore";
 
 import { Watcher } from "./watcher";
 
-import { ITabDataSave } from "../types/index";
+import { ITabDataSave, IStore } from "../types/index";
 import { actions } from "../actions/index";
 
 import rootLogger from "../logger";
 import { withButlerClient, messages } from "../buse/index";
 import { Space } from "../helpers/space";
+import { Profile } from "../buse/messages";
+import { call } from "../buse/utils";
 const logger = rootLogger.child({ name: "tab-save" });
 
 interface Snapshot {
@@ -49,33 +51,26 @@ export default function(watcher: Watcher) {
       );
     });
   });
+}
 
-  watcher.on(actions.loginSucceeded, async (store, action) => {
-    const { credentials } = store.getState().profile;
-    const profileId = credentials.me.id;
+export async function restoreTabs(store: IStore, profile: Profile) {
+  const profileId = profile.id;
 
-    const { value, ok } = await withButlerClient(
-      logger,
-      async client =>
-        await client.call(
-          messages.ProfileDataGet({
-            profileId,
-            key: "@itch/tabs",
-          })
-        )
-    );
-
-    if (!ok) {
-      logger.info(`No tabs to restore`);
-      return;
-    }
-
-    try {
-      const snapshot = JSON.parse(value) as Snapshot;
-      store.dispatch(actions.tabsRestored(snapshot));
-    } catch (e) {
-      logger.warn(`Could not retrieve saved tabs: ${e.message}`);
-      return;
-    }
+  const { value, ok } = await call(messages.ProfileDataGet, {
+    profileId,
+    key: "@itch/tabs",
   });
+
+  if (!ok) {
+    logger.info(`No tabs to restore`);
+    return;
+  }
+
+  try {
+    const snapshot = JSON.parse(value) as Snapshot;
+    store.dispatch(actions.tabsRestored(snapshot));
+  } catch (e) {
+    logger.warn(`Could not retrieve saved tabs: ${e.message}`);
+    return;
+  }
 }
