@@ -145,8 +145,6 @@ export const actions = wireActions({
 
   // login
 
-  loginStartPicking: action<{}>(),
-  loginStopPicking: action<{}>(),
   attemptLogin: action<{}>(),
   loginWithPassword: action<{
     /** the username or e-mail for the itch.io account to log in as */
@@ -183,6 +181,7 @@ export const actions = wireActions({
     /** Profile to forget */
     profile: Profile;
   }>(),
+  profilesUpdated: action<{}>(),
 
   changeUser: action<{}>(),
   logout: action<{}>(),

@@ -10,6 +10,11 @@ const production = process.env.NODE_ENV === "production";
 const development = !testing && !production;
 const watch = development;
 
+let publicUrl = undefined;
+if (!development) {
+  publicUrl = "./";
+}
+
 async function main() {
   console.log(`Bundling metal-side bundles...`);
   let metalEntryPoints = [
@@ -27,18 +32,18 @@ async function main() {
 
   console.log(`Bundling chrome...`);
   const chromeFile = path.join(__dirname, "./index.html");
-  const chromeOptions = { target: "electron", logLevel, watch, publicUrl: "./" };
+  const chromeOptions = { target: "electron", logLevel, watch, publicUrl };
   const chromeBundler = new parcel(chromeFile, chromeOptions);
-  if (testing) {
-    await chromeBundler.bundle();
-  } else {
+  if (watch) {
     await chromeBundler.serve();
+  } else {
+    await chromeBundler.bundle();
   }
 
   console.log(`Copying incidentals...`);
   await copy("src/static/", "dist/static/", {overwrite: true});
 
-  if (!testing) {
+  if (development) {
     let electronPath = `node_modules/.bin/electron`;
     if (process.platform === "win32") {
       electronPath = `node_modules\\.bin\\electron`;

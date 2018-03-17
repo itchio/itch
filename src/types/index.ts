@@ -337,12 +337,6 @@ export interface IProfileCredentialsState {
 }
 
 export interface IProfileLoginState {
-  /**
-   * true if the list of remembered sessions is shown,
-   * false if the username/password form is shown.
-   */
-  picking: boolean;
-
   errors: string[];
   blockingOperation: ISetupOperation;
   lastUsername?: string;

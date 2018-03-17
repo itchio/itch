@@ -11,9 +11,9 @@ import { Links } from "./links";
 import styled, * as styles from "../../styles";
 import { IRootState } from "../../../types";
 
-export class LoginForm extends React.PureComponent<IDerivedProps> {
+export class LoginForm extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { openUrl, loginStartPicking, lastUsername } = this.props;
+    const { openUrl, showSaved, lastUsername } = this.props;
 
     return (
       <LoginFormDiv>
@@ -63,7 +63,7 @@ export class LoginForm extends React.PureComponent<IDerivedProps> {
           <Link
             key="show-saved-logins"
             label={format(["login.action.show_saved_logins"])}
-            onClick={() => loginStartPicking({})}
+            onClick={showSaved}
           />
         </Links>
       </LoginFormDiv>
@@ -124,13 +124,11 @@ const LoginFormDiv = styled.div``;
 
 // props
 
-interface IProps {}
+interface IProps {
+  showSaved: () => void;
+}
 
-const actionCreators = actionCreatorsList(
-  "openUrl",
-  "loginStartPicking",
-  "loginWithPassword"
-);
+const actionCreators = actionCreatorsList("openUrl", "loginWithPassword");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   lastUsername?: string;

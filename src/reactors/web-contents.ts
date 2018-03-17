@@ -12,6 +12,7 @@ const logger = rootLogger.child({ name: "web-contents" });
 import createContextMenu from "./web-contents-context-menu";
 import { ITabWeb } from "../types/tab-data";
 import { Space } from "../helpers/space";
+import { openAppDevTools } from "./open-app-devtools";
 
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
@@ -256,10 +257,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.openDevTools, async (store, action) => {
     const { forApp } = action.payload;
     if (forApp) {
-      const bw = BrowserWindow.getFocusedWindow();
-      if (bw && bw.webContents) {
-        bw.webContents.openDevTools({ mode: "detach" });
-      }
+      await openAppDevTools(BrowserWindow.getFocusedWindow());
     } else {
       const { tab } = store.getState().profile.navigation;
       withWebContents(store, tab, wc => {

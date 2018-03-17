@@ -1,8 +1,7 @@
 import * as React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
-import LoginForm from "./gate/login-form";
-import RememberedProfiles from "./gate/remembered-profiles";
+import LoginScreen from "./gate/login-screen";
 import BlockingOperation from "./gate/blocking-operation";
 import TitleBar from "../title-bar";
 import Filler from "../basics/filler";
@@ -65,17 +64,12 @@ export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   renderChild() {
-    const { blockingOperation, stage } = this.props;
+    const { blockingOperation } = this.props;
 
     if (blockingOperation) {
       return <BlockingOperation blockingOperation={blockingOperation} />;
     }
-
-    if (stage === "pick") {
-      return <RememberedProfiles />;
-    } else {
-      return <LoginForm />;
-    }
+    return <LoginScreen />;
   }
 }
 
@@ -84,15 +78,13 @@ interface IProps {}
 const actionCreators = actionCreatorsList(
   "loginWithPassword",
   "useSavedLogin",
-  "loginStartPicking",
-  "loginStopPicking",
   "forgetProfileRequest",
   "retrySetup",
   "openUrl"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  stage: string;
+  stage: "setup" | "login";
   errors?: string[];
   blockingOperation?: ISetupOperation;
 };
@@ -109,9 +101,7 @@ export default connect<IProps>(GatePage, {
         blockingOperation: rs.setup.blockingOperation,
       };
     }
-
-    const stage = login.picking ? "pick" : "login";
-    return { stage, blockingOperation: login.blockingOperation };
+    return { stage: "login", blockingOperation: login.blockingOperation };
   },
   actionCreators,
 });

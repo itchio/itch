@@ -30,6 +30,7 @@ const macOs = os.platform() === "darwin";
 
 import { IRootState, IStore } from "../types";
 import { Space } from "../helpers/space";
+import { openAppDevTools } from "./open-app-devtools";
 
 async function createWindow(store: IStore, hidden: boolean) {
   if (createLock) {
@@ -225,12 +226,11 @@ async function createWindow(store: IStore, hidden: boolean) {
     }
   });
 
-  if (parseInt(process.env.DEVTOOLS, 10) > 0) {
-    window.webContents.openDevTools({ mode: "detach" });
-  }
-
   let uri = `file:///${__dirname}/index.html`;
-  if (process.env.NODE_ENV == "development") {
+  if (
+    process.env.NODE_ENV !== "test" &&
+    process.env.NODE_ENV !== "production"
+  ) {
     uri = `http://localhost:1234/dist/index.html`;
   }
   if (process.env.ITCH_REACT_PERF === "1") {
@@ -240,6 +240,10 @@ async function createWindow(store: IStore, hidden: boolean) {
   window.loadURL(uri);
   if (env.name === "development") {
     window.emit("ready-to-show", {});
+  }
+
+  if (parseInt(process.env.DEVTOOLS, 10) > 0) {
+    await openAppDevTools(window);
   }
 }
 
