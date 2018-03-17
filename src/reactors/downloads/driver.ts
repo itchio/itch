@@ -59,6 +59,8 @@ export default function(watcher: Watcher) {
       }
     }
 
+    // TODO: that's a bit much tbqh, we can probably find a way not to do
+    // it on every tick
     await withButlerClient(logger, async client => {
       const { downloads } = await client.call(messages.DownloadsList({}));
       store.dispatch(actions.downloadsListed({ downloads }));

@@ -328,6 +328,7 @@ export interface IProfileState {
   search: IProfileSearchState;
 
   tabInstances: TabDataTypes.ITabInstances;
+  itchioUris: string[];
 }
 
 // TODO: remove, just put the buse profile object in the state

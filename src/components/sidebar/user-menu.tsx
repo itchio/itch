@@ -112,7 +112,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
         {
           icon: "search",
           localizedLabel: ["menu.help.search_issue"],
-          action: actions.openUrl({
+          action: actions.openInExternalBrowser({
             url: `${urls.itchRepo}/search?type=Issues`,
           }),
         },

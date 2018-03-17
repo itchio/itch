@@ -12,62 +12,44 @@ import urls from "../constants/urls";
 import { shell } from "electron";
 
 import { actions } from "../actions";
+import { IStore } from "../types";
 
-let onProfileReady: () => void;
+import { filter } from "underscore";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.processUrlArguments, async (store, action) => {
     const { args } = action.payload;
     for (const uri of args) {
       if (isItchioURL(uri)) {
-        store.dispatch(actions.handleItchioUrl({ uri }));
+        store.dispatch(actions.handleItchioURI({ uri }));
         break;
       }
     }
   });
 
-  watcher.on(actions.openUrl, async (store, action) => {
+  watcher.on(actions.openInExternalBrowser, async (store, action) => {
     const uri = action.payload.url;
-    if (isItchioURL(uri)) {
-      store.dispatch(actions.handleItchioUrl({ uri }));
-    } else {
-      shell.openExternal(uri);
-    }
+    shell.openExternal(uri);
   });
 
-  watcher.on(actions.handleItchioUrl, async (store, action) => {
+  watcher.on(actions.handleItchioURI, async (store, action) => {
     const { uri } = action.payload;
 
-    logger.info(`Starting to handle itch.io url ${uri}`);
-    const me = store.getState().profile.credentials.me;
-    if (!me) {
-      logger.info("Waiting for profile to be ready before handling itchio url");
-      await new Promise((resolve, reject) => {
-        onProfileReady = resolve;
-      });
-    }
-
-    const url = urlParser.parse(uri);
-    const verb = url.hostname;
-    const tokens = url.pathname.split("/");
-
-    switch (verb) {
-      case "install":
-      case "launch": {
-        if (!tokens[1]) {
-          logger.warn("for install: missing game, bailing out.");
-          return;
-        }
-        const gameId = tokens[1];
-        store.dispatch(actions.navigate({ url: `itch://games/${gameId}` }));
-        break;
-      }
+    const { me } = store.getState().profile.credentials;
+    if (me) {
+      handleItchioUrl(store, uri);
+    } else {
+      logger.info(`Queuing ${uri} for later...`);
+      store.dispatch(actions.pushItchioURI({ uri }));
     }
   });
 
-  watcher.on(actions.profileReady, async (store, action) => {
-    if (onProfileReady) {
-      onProfileReady();
+  watcher.on(actions.loginSucceeded, async (store, action) => {
+    const uris = store.getState().profile.itchioUris;
+    store.dispatch(actions.clearItchioURIs({}));
+
+    for (const uri of uris) {
+      handleItchioUrl(store, uri);
     }
   });
 
@@ -93,4 +75,35 @@ export default function(watcher: Watcher) {
       log: issueLog,
     });
   });
+}
+
+function handleItchioUrl(store: IStore, uri: string) {
+  logger.info(`Processing itchio uri (${uri})`);
+
+  try {
+    const url = urlParser.parse(uri);
+
+    let tokens = url.pathname.split("/");
+    tokens = filter(tokens, x => !!x);
+    tokens = [url.hostname, ...tokens];
+    logger.info(`tokens = ${tokens.join(" ::: ")}`);
+
+    switch (tokens[0]) {
+      case "games": {
+        if (!tokens[1]) {
+          logger.warn(`missing gameId for ${url}, ignoring`);
+          return;
+        }
+        const gameId = tokens[1];
+        store.dispatch(actions.navigate({ url: `itch://games/${gameId}` }));
+        break;
+      }
+      default:
+        logger.warn(`no host for ${uri}, ignoring`);
+        return;
+    }
+  } catch (e) {
+    logger.warn(`while processing ${uri}: ${e.stack}`);
+    return;
+  }
 }

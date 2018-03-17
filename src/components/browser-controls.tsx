@@ -162,7 +162,7 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   popOutBrowser = () => {
-    this.props.openUrl({ url: this.props.url });
+    this.props.openInExternalBrowser({ url: this.props.url });
   };
 
   onBrowserAddress = (browserAddress: HTMLElement | HTMLInputElement) => {
@@ -225,7 +225,7 @@ interface IProps extends IBrowserControlProps {
 }
 
 const actionCreators = actionCreatorsList(
-  "openUrl",
+  "openInExternalBrowser",
   "tabGoBack",
   "tabGoForward",
   "tabStop",

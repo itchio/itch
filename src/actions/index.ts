@@ -106,10 +106,15 @@ export const actions = wireActions({
     /** these are command-line arguments */
     args: string[];
   }>(),
-  handleItchioUrl: action<{
+  handleItchioURI: action<{
     /** example: itchio:///games/3 */
     uri: string;
   }>(),
+  pushItchioURI: action<{
+    uri: string;
+  }>(),
+  clearItchioURIs: action<{}>(),
+
   proxySettingsDetected: action<{
     /** a valid HTTP(S) proxy string (that could be in $HTTP_PROXY) */
     proxy: string;
@@ -172,7 +177,6 @@ export const actions = wireActions({
     profile: Profile;
   }>(),
 
-  profileReady: action<{}>(),
   forgetProfileRequest: action<{
     /** Profile to forget */
     profile: Profile;
@@ -398,10 +402,8 @@ export const actions = wireActions({
 
   // self-update & quit
 
-  prepareQuit: action<{}>(),
   quit: action<{}>(),
   quitWhenMain: action<{}>(),
-  quitElectronApp: action<{}>(),
   quitAndInstall: action<{}>(),
   checkForSelfUpdate: action<{}>(),
   checkingForSelfUpdate: action<{}>(),
@@ -762,7 +764,7 @@ export const actions = wireActions({
   tabStop: action<{
     tab: string;
   }>(),
-  openUrl: action<{
+  openInExternalBrowser: action<{
     /** the URL to open in an external web browser */
     url: string;
   }>(),

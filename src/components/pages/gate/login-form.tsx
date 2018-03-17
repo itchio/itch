@@ -13,7 +13,7 @@ import { IRootState } from "../../../types";
 
 export class LoginForm extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { openUrl, showSaved, lastUsername } = this.props;
+    const { openInExternalBrowser, showSaved, lastUsername } = this.props;
 
     return (
       <LoginFormDiv>
@@ -52,12 +52,14 @@ export class LoginForm extends React.PureComponent<IProps & IDerivedProps> {
         <Links>
           <Link
             label={format(["login.action.register"])}
-            onClick={() => openUrl({ url: urls.accountRegister })}
+            onClick={() => openInExternalBrowser({ url: urls.accountRegister })}
           />
           <span>{" · "}</span>
           <Link
             label={format(["login.action.reset_password"])}
-            onClick={() => openUrl({ url: urls.accountForgotPassword })}
+            onClick={() =>
+              openInExternalBrowser({ url: urls.accountForgotPassword })
+            }
           />
           <span key="separator">{" · "}</span>
           <Link
@@ -128,7 +130,10 @@ interface IProps {
   showSaved: () => void;
 }
 
-const actionCreators = actionCreatorsList("openUrl", "loginWithPassword");
+const actionCreators = actionCreatorsList(
+  "openInExternalBrowser",
+  "loginWithPassword"
+);
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   lastUsername?: string;

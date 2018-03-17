@@ -26,7 +26,7 @@ logger.info(
 );
 
 import { loadPreferencesSync } from "./reactors/preboot/load-preferences";
-import { prepareQuit } from "./reactors/main-window";
+import { IStore } from "./types";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -71,10 +71,11 @@ function autoUpdateDone() {
   }
   protocol.registerStandardSchemes(["itch-cave"]);
 
-  const store = require("./store/metal-store").default;
+  let store: IStore;
+  store = require("./store/metal-store").default;
 
-  app.on("ready", async function() {
-    if (env.name !== "test") {
+  let onReady = () => {
+    if (process.env.NODE_ENV !== "test") {
       const shouldQuit = app.makeSingleInstance((argv, cwd) => {
         // we only get inside this callback when another instance
         // is launched - so this executes in the context of the main instance
@@ -87,8 +88,6 @@ function autoUpdateDone() {
       });
 
       if (shouldQuit) {
-        // app.quit() is the source of all our problems,
-        // cf. https://github.com/itchio/itch/issues/202
         app.exit(0);
         return;
       }
@@ -109,7 +108,6 @@ function autoUpdateDone() {
     }
 
     store.dispatch(actions.languageSniffed({ lang: app.getLocale() }));
-
     store.dispatch(actions.preboot({}));
 
     setInterval(() => {
@@ -119,39 +117,20 @@ function autoUpdateDone() {
         logger.error(`While dispatching tick: ${e.stack}`);
       }
     }, 1000 /* each second */);
-  });
+  };
 
-  app.on("activate", () => {
-    store.dispatch(actions.focusWindow({}));
-  });
+  app.on("ready", onReady);
 
   app.on("will-finish-launching", () => {
     app.setAppUserModelId(appUserModelId);
   });
 
-  app.on("before-quit", (e: Event) => {
-    prepareQuit();
-  });
-
-  app.on("window-all-closed", (e: Event) => {
-    const state = store.getState();
-    if (state.ui.mainWindow.quitting) {
-      // let normal electron shutdown process continue
-      return;
-    } else {
-      // prevent electron shutdown, we want to remain alive
-      e.preventDefault();
-    }
-  });
-
   // macOS (Info.pList)
   app.on("open-url", (e: Event, url: string) => {
     if (isItchioURL(url)) {
-      // macOS will err -600 if we don't
+      // otherwise it'll err -600
       e.preventDefault();
-      store.dispatch(actions.openUrl({ url }));
-    } else {
-      console.log(`Ignoring non-itchio url: ${url}`);
+      store.dispatch(actions.handleItchioURI({ uri: url }));
     }
   });
 }

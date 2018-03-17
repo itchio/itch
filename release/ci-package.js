@@ -100,7 +100,16 @@ async function ciPackage(argsIn) {
       icon: icnsPath,
       appBundleId: "io." + appName + ".mac",
       appCategoryType: "public.app-category.games",
-      protocols: [{ name: "itch.io", schemes: [appName + "io"] }],
+      protocols: [
+        {
+          name: appName + ".io",
+          schemes: [appName + "io"]
+        },
+        {
+          name: appName,
+          schemes: [appName]
+        }
+      ],
     }),
     "linux-ia32": Object.assign({}, electronSharedOptions, {
       platform: "linux",

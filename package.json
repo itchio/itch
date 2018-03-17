@@ -46,7 +46,7 @@
     "memory-streams": "^0.1.2",
     "mkdirp": "^0.5.1",
     "multi-write-stream": "^2.0.1",
-    "node-buse": "^3.5.0",
+    "node-buse": "^3.6.0",
     "node-emoji": "^1.8.1",
     "polished": "^1.0.3",
     "react": "^16.2.0",

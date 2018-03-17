@@ -79,8 +79,7 @@ const actionCreators = actionCreatorsList(
   "loginWithPassword",
   "useSavedLogin",
   "forgetProfileRequest",
-  "retrySetup",
-  "openUrl"
+  "retrySetup"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {

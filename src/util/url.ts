@@ -12,5 +12,11 @@ export function subdomainToDomain(subdomain: string): string {
 }
 
 export function isItchioURL(s: string): boolean {
-  return parse(s).protocol === "itchio:";
+  try {
+    if (s.startsWith("itchio:") || s.startsWith("itch:")) {
+      const { protocol } = parse(s);
+      return protocol === "itchio:" || protocol === "itch:";
+    }
+  } catch (e) {}
+  return false;
 }

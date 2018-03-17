@@ -32,8 +32,6 @@ import { IRootState, IStore } from "../types";
 import { Space } from "../helpers/space";
 import { openAppDevTools } from "./open-app-devtools";
 
-let quitting = false;
-
 async function createWindow(store: IStore, hidden: boolean) {
   if (createLock) {
     return;
@@ -90,13 +88,6 @@ async function createWindow(store: IStore, hidden: boolean) {
   ensureWindowInsideDisplay(window);
 
   window.on("close", (e: any) => {
-    logger.debug("Main window being closed");
-    if (quitting) {
-      logger.debug("Quitting, letting main window close");
-      // alright alright you get to close
-      return;
-    }
-
     const prefs = store.getState().preferences || { closeToTray: true };
 
     let { closeToTray } = prefs;
@@ -473,22 +464,12 @@ export default function(watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.quitElectronApp, async (store, action) => {
-    app.quit();
-  });
-
   watcher.on(actions.quit, async (store, action) => {
-    prepareQuit();
-    store.dispatch(actions.quitElectronApp({}));
+    app.exit(0);
   });
 
   watcher.on(actions.quitAndInstall, async (store, action) => {
-    prepareQuit();
     logger.info("Handing off to Squirrel for self-update");
     require("electron").autoUpdater.quitAndInstall();
   });
-}
-
-export function prepareQuit() {
-  quitting = true;
 }

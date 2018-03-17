@@ -278,7 +278,7 @@ export default function(watcher: Watcher) {
             {
               label: ["prompt.self_update.action.download"],
               action: [
-                actions.openUrl({ url: spec.url }),
+                actions.openInExternalBrowser({ url: spec.url }),
                 actions.dismissStatus({}),
               ],
               icon: "download",
@@ -286,7 +286,7 @@ export default function(watcher: Watcher) {
             {
               label: ["prompt.self_update.action.view"],
               action: [
-                actions.openUrl({ url: urls.releasesPage }),
+                actions.openInExternalBrowser({ url: urls.releasesPage }),
                 actions.dismissStatus({}),
               ],
               className: "secondary",

@@ -65,7 +65,7 @@ export default function(watcher: Watcher) {
                 },
                 {
                   label: ["login.two_factor.learn_more"],
-                  action: actions.openUrl({
+                  action: actions.openInExternalBrowser({
                     url: urls.twoFactorHelp,
                   }),
                   className: "secondary",

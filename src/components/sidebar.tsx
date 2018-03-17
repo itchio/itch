@@ -175,7 +175,6 @@ const actionCreators = actionCreatorsList(
   "newTab",
   "copyToClipboard",
   "reportIssue",
-  "openUrl",
   "checkForSelfUpdate",
   "quit"
 );

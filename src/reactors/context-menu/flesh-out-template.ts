@@ -47,7 +47,7 @@ function convertMenuAction(payload: IMenuItem, runtime: IRuntime) {
 
   switch (role) {
     case "about":
-      return actions.openUrl({ url: urls.appHomepage });
+      return actions.openInExternalBrowser({ url: urls.appHomepage });
     default: // muffin
   }
 
@@ -73,17 +73,25 @@ function convertMenuAction(payload: IMenuItem, runtime: IRuntime) {
     case "menu.account.change_user":
       return actions.changeUser({});
     case "menu.help.view_terms":
-      return actions.openUrl({ url: urls.termsOfService });
+      return actions.openInExternalBrowser({ url: urls.termsOfService });
     case "menu.help.view_license":
-      return actions.openUrl({ url: `${urls.itchRepo}/blob/master/LICENSE` });
+      return actions.openInExternalBrowser({
+        url: `${urls.itchRepo}/blob/master/LICENSE`,
+      });
     case "menu.help.check_for_update":
       return actions.checkForSelfUpdate({});
     case "menu.help.report_issue":
-      return actions.openUrl({ url: `${urls.itchRepo}/issues/new` });
+      return actions.openInExternalBrowser({
+        url: `${urls.itchRepo}/issues/new`,
+      });
     case "menu.help.search_issue":
-      return actions.openUrl({ url: `${urls.itchRepo}/search?type=Issues` });
+      return actions.openInExternalBrowser({
+        url: `${urls.itchRepo}/search?type=Issues`,
+      });
     case "menu.help.release_notes":
-      return actions.openUrl({ url: `${urls.itchRepo}/releases` });
+      return actions.openInExternalBrowser({
+        url: `${urls.itchRepo}/releases`,
+      });
     default:
       return null;
   }

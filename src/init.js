@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const copy = require("recursive-copy");
 const childProcess = require("child_process");
-const logLevel = 3;
+const logLevel = 2;
 let outDir = "./app";
 
 const testing = process.env.NODE_ENV === "test";

@@ -55,7 +55,7 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps> {
     if (c) {
       // fill in a dummy slug, the app will redirect
       let url = `${urls.itchio}/c/${c.id}/hello`;
-      this.props.openUrl({ url });
+      this.props.openInExternalBrowser({ url });
     }
   };
 }
@@ -63,7 +63,7 @@ export class Collection extends React.PureComponent<IProps & IDerivedProps> {
 interface IProps extends IMeatProps {}
 
 const actionCreators = {
-  openUrl: actions.openUrl,
+  openInExternalBrowser: actions.openInExternalBrowser,
 };
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
