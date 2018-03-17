@@ -27,7 +27,7 @@ class LoginScreen extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   componentDidMount() {
-    this.refresh(true);
+    this.refresh();
   }
 
   subscribe(watcher: Watcher) {
@@ -39,16 +39,14 @@ class LoginScreen extends React.PureComponent<IProps & IDerivedProps, IState> {
     });
   }
 
-  refresh(initial = false) {
+  refresh() {
     doAsync(async () => {
       const { profiles } = await call(messages.ProfileList, {});
-
-      if (initial && isEmpty(profiles)) {
-        this.setState({ loading: false, showingSaved: false });
-        return;
-      }
-
       this.setState({ loading: false, profiles });
+
+      if (isEmpty(profiles)) {
+        this.setState({ showingSaved: false });
+      }
     });
   }
 
