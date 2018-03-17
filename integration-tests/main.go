@@ -24,6 +24,7 @@ const testAccountName = "itch-test-account"
 const chromeDriverVersion = "2.27"
 
 var testAccountPassword = os.Getenv("ITCH_TEST_ACCOUNT_PASSWORD")
+var testAccountAPIKey = os.Getenv("ITCH_TEST_ACCOUNT_API_KEY")
 
 type CleanupFunc func()
 
@@ -51,8 +52,8 @@ var r *runner
 func doMain() error {
 	bootTime := time.Now()
 
-	if testAccountPassword == "" {
-		return errors.New("password not given via environment, stopping here")
+	if testAccountAPIKey == "" {
+		return errors.New("API key not given via environment, stopping here")
 	}
 
 	r = &runner{

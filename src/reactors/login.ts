@@ -6,7 +6,7 @@ import urls from "../constants/urls";
 import * as urlParser from "url";
 
 import { modalWidgets } from "../components/modal-widgets/index";
-import { withButlerClient, messages } from "../buse/index";
+import { withButlerClient, messages, call } from "../buse/index";
 import partitionForUser from "../util/partition-for-user";
 import { Profile } from "../buse/messages";
 
@@ -16,8 +16,18 @@ const logger = rootLogger.child({ name: "login" });
 export default function(watcher: Watcher) {
   watcher.on(actions.loginWithPassword, async (store, action) => {
     const { username, password } = action.payload;
+
     store.dispatch(actions.attemptLogin({}));
     try {
+      // integration tests for the integration test goddess
+      if (username === "#api-key") {
+        const { profile } = await call(messages.ProfileLoginWithAPIKey, {
+          apiKey: password,
+        });
+        store.dispatch(actions.loginSucceeded({ profile }));
+        return;
+      }
+
       await withButlerClient(logger, async client => {
         client.onRequest(messages.ProfileRequestCaptcha, async ({ params }) => {
           const modalRes = await promisedModal(

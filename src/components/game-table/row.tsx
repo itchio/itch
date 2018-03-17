@@ -38,7 +38,13 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
     const style = { transform: `translateY(${translateY}px)` };
 
     const renderInstallStatus = () => {
-      return <IconButton icon={"arrow-right"} onClick={this.onNavigateClick} />;
+      return (
+        <IconButton
+          className="open-game-in-tab"
+          icon={"arrow-right"}
+          onClick={this.onNavigateClick}
+        />
+      );
     };
     let className = (gc: GameColumn): string => `row--${gc}`;
 

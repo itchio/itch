@@ -22,6 +22,7 @@ const columns = [
   GameColumn.LastPlayed,
   GameColumn.PlayTime,
   GameColumn.InstalledSize,
+  GameColumn.InstallStatus,
 ];
 
 const LocationContainer = styled.div`

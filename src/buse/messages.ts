@@ -79,6 +79,24 @@ export const ProfileLoginWithPassword = createRequest<
 >("Profile.LoginWithPassword");
 
 /**
+ * Result for Profile.LoginWithAPIKey
+ */
+export interface ProfileLoginWithAPIKeyResult {
+  /** Information for the new profile, now remembered */
+  profile: Profile;
+}
+
+/**
+ * Add a new profile by API key login. This can be used
+ * for integration tests, for example. Note that no cookies
+ * are returned for this kind of login.
+ */
+export const ProfileLoginWithAPIKey = createRequest<
+  ProfileLoginWithAPIKeyParams,
+  ProfileLoginWithAPIKeyResult
+>("Profile.LoginWithAPIKey");
+
+/**
  * Result for Profile.RequestCaptcha
  */
 export interface ProfileRequestCaptchaResult {
@@ -1860,6 +1878,14 @@ export interface ProfileLoginWithPasswordParams {
   username: string;
   /** The password to use */
   password: string;
+}
+
+/**
+ * Params for Profile.LoginWithAPIKey
+ */
+export interface ProfileLoginWithAPIKeyParams {
+  /** The API token to use */
+  apiKey: string;
 }
 
 /**

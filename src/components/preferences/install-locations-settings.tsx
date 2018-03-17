@@ -226,6 +226,7 @@ class InstallLocationSettings extends React.Component<
           </td>
           <td className="more-column">
             <IconButton
+              className={"more-actions-button"}
               emphasized
               icon="more_vert"
               data-id={id}
@@ -259,12 +260,14 @@ class InstallLocationSettings extends React.Component<
     template.push({
       localizedLabel: ["preferences.install_location.navigate"],
       action: actions.navigateToInstallLocation({ installLocation }),
+      id: "context--install-location-navigate",
     });
 
     if (!isDefault) {
       template.push({
         localizedLabel: ["preferences.install_location.make_default_short"],
         action: actions.makeInstallLocationDefault({ id }),
+        id: "context--install-location-make-default",
       });
     }
 
@@ -272,6 +275,7 @@ class InstallLocationSettings extends React.Component<
       template.push({
         localizedLabel: ["preferences.install_location.delete"],
         action: actions.removeInstallLocation({ id }),
+        id: "context--install-location-delete",
       });
     }
 
