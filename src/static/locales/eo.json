@@ -500,5 +500,10 @@
     "preferences.advanced.disable_hardware_acceleration": "Malebligi la aparatarajn plirapidigojn (tio povas solvi iujn problemojn por la uzantoj de Linukso)",
     "prereq.status.pending": "Preparado…",
     "status.downloads.updates_available": "Estas disponeblaj ĝisdatigoj",
-    "status.downloads.update_all": "Ĝisdatigi ĉiujn"
+    "status.downloads.update_all": "Ĝisdatigi ĉiujn",
+    "grid.really_empty_state.leader": "Ĉi tie estas nenio…",
+    "grid.really_empty_state.explanation": "…jam!",
+    "grid.item.running.prepare": "Preparado…",
+    "grid.item.running.clean": "Purigado…",
+    "preferences.install_location.disk_usage": "Uzado de la disko"
 }
