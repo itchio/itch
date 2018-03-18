@@ -492,5 +492,10 @@
     "preferences.advanced.disable_hardware_acceleration": "Изключване на хардуерното ускорение (решава някои проблеми под Линукс)",
     "prereq.status.pending": "Подготвяне…",
     "status.downloads.updates_available": "Има налични обновления",
-    "status.downloads.update_all": "Обновяване на всичко"
+    "status.downloads.update_all": "Обновяване на всичко",
+    "grid.really_empty_state.leader": "Тук няма нищо…",
+    "grid.really_empty_state.explanation": "…все още!",
+    "grid.item.running.prepare": "Подготовка…",
+    "grid.item.running.clean": "Почистване…",
+    "preferences.install_location.disk_usage": "Използване на диска"
 }
