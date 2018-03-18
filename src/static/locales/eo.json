@@ -505,5 +505,6 @@
     "grid.really_empty_state.explanation": "…jam!",
     "grid.item.running.prepare": "Preparado…",
     "grid.item.running.clean": "Purigado…",
-    "preferences.install_location.disk_usage": "Uzado de la disko"
+    "preferences.install_location.disk_usage": "Uzado de la disko",
+    "login.status.finalizing_installation": "Kompletigado de la instalado…"
 }
