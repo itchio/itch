@@ -348,5 +348,10 @@
     "download.reason.heal": "検証と修正",
     "download.ongoing.install": "{{title}}のインストール中…",
     "download.ongoing.update": "{{title}}のアップデート中…",
-    "download.ongoing.reinstall": "{{title}}の再インストール中…"
+    "download.ongoing.reinstall": "{{title}}の再インストール中…",
+    "preferences.notifications": "お知らせ",
+    "preferences.notifications.ready_notification": "インストール、またはアップデートができたら通知します",
+    "pick_update_upload.single.message": "アップデートは今でも後でもできます。",
+    "pick_update_upload.buttons.update": "今すぐアップデートする",
+    "pick_update_upload.tags.demo": "デモ"
 }
