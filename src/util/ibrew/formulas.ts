@@ -5,7 +5,7 @@ export interface IVersionCheck {
 }
 
 export interface IFormulaSpec {
-  format: string;
+  format: "zip";
   subfolder?: string;
   versionCheck?: IVersionCheck;
   sanityCheck?: {
@@ -27,7 +27,7 @@ let self = {} as IFormulas;
  * https://github.com/itchio/butler
  */
 self.butler = {
-  format: "gz",
+  format: "zip",
   sanityCheck: {
     command: "butler",
     args: ["-V"],

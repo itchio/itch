@@ -63,7 +63,7 @@ export async function request(
       let text: any = "";
 
       if (opts.sink) {
-        res.pipe(opts.sink);
+        res.pipe(opts.sink());
       } else {
         res.setEncoding("utf8");
         res.on("data", function(chunk) {

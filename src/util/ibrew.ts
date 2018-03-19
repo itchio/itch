@@ -1,4 +1,10 @@
 import * as ospath from "path";
+import * as yauzl from "yauzl";
+import { promisify } from "util";
+const yauzlOpen = promisify(yauzl.open) as (
+  path: string,
+  options: yauzl.Options
+) => Promise<yauzl.ZipFile>;
 
 import * as os from "../os";
 import * as sf from "../os/sf";
@@ -23,8 +29,7 @@ import {
   ChecksumAlgo,
   IChecksums,
 } from "../net";
-import { createGunzip } from "zlib";
-import { createReadStream, createWriteStream } from "fs";
+import { createWriteStream } from "fs";
 
 const defaultVersionCheck = {
   args: ["-V"],
@@ -53,21 +58,27 @@ export async function installFormula(opts: IFetchOpts, name: string) {
   const downloadVersion = async function(v: string) {
     const archiveName = getArchiveName(name);
     const archivePath = ospath.join(getBinPath(), archiveName);
-    const archiveUrl = `${channel}/v${v}/${archiveName}`;
-    onStatus("download", [
-      "login.status.dependency_install",
-      { name, version: v },
-    ]);
-    logger.info(`fetching ${name}@${v} from ${archiveUrl}`);
+    const versionDir = v === "head" ? v : `v${v}`;
+    let archiveUrl = `${channel}/${versionDir}/${archiveName}`;
+    if (v === "head") {
+      // bust cloudflare cache
+      archiveUrl += `?t=${Date.now()}`;
+    }
 
-    await downloadToFile(opts.logger, archiveUrl, archivePath);
+    onStatus("download", ["login.status.finalizing_installation"]);
+    logger.info(`downloading ${name}@${v} from ${archiveUrl}`);
+    logger.info(`...to ${archivePath}`);
 
     let algo: ChecksumAlgo;
     let sums: IChecksums;
 
     for (algo of net.CHECKSUM_ALGOS) {
       try {
-        sums = await getChecksums(opts.logger, `${channel}/v${v}`, algo);
+        sums = await getChecksums(
+          opts.logger,
+          `${channel}/${versionDir}`,
+          algo
+        );
         break;
       } catch (e) {
         logger.warn(
@@ -75,6 +86,8 @@ export async function installFormula(opts: IFetchOpts, name: string) {
         );
       }
     }
+
+    await downloadToFile(opts.ctx, opts.logger, archiveUrl, archivePath);
 
     if (sums && sums[archiveName]) {
       await ensureChecksum(opts.logger, {
@@ -86,22 +99,48 @@ export async function installFormula(opts: IFetchOpts, name: string) {
       logger.warn(`${name}: no hashes found, skipping integrity check`);
     }
 
-    if (formula.format === "gz") {
+    if (formula.format === "zip") {
       logger.info(`${name}: extracting ${formula.format} archive`);
-      let src = createReadStream(archivePath);
-      let destName = `${name}${ext()}`;
-      let destPath = ospath.join(getBinPath(), destName);
 
-      await sf.mkdirp(ospath.dirname(destPath));
-      const dst = createWriteStream(destPath);
-      src.pipe(createGunzip()).pipe(dst);
-      await sf.promised(dst);
+      const zipfile = await yauzlOpen(archivePath, { lazyEntries: true });
+      zipfile.readEntry();
+      await new Promise((resolve, reject) => {
+        zipfile.on("entry", entry => {
+          logger.info(`Got entry ${entry.fileName}`);
+          if (/\/$/.test(entry.fileName)) {
+            // Directory file names end with '/'.
+            // Note that entires for directories themselves are optional.
+            // An entry's fileName implicitly requires its parent directories to exist.
+            zipfile.readEntry();
+          } else {
+            // file entry
+            zipfile.openReadStream(entry, function(err, src) {
+              (async () => {
+                if (err) {
+                  throw err;
+                }
 
-      logger.info(`${name}: making ${formula.format} executable`);
-      await sf.chmod(destPath, 0o755);
+                const destPath = ospath.join(getBinPath(), entry.fileName);
+                logger.info(`Extracting ${destPath}...`);
 
-      logger.info(`${name}: cleaning up ${formula.format} archive`);
-      await sf.wipe(archivePath);
+                await sf.mkdirp(ospath.dirname(destPath));
+                const dst = createWriteStream(destPath);
+                src.pipe(dst);
+                await sf.promised(dst);
+                await sf.chmod(destPath, 0o755);
+              })()
+                .catch(reject)
+                .then(() => {
+                  zipfile.readEntry();
+                });
+            });
+          }
+        });
+        zipfile.on("end", entry => {
+          resolve();
+        });
+      });
+      logger.info(`${name}: Extraction successful!`);
     } else {
       throw new Error(`unsupported ibrew formula format: ${formula.format}`);
     }
@@ -166,8 +205,8 @@ export async function installFormula(opts: IFetchOpts, name: string) {
 function getArchiveName(name: string) {
   let formula = formulas[name];
 
-  if (formula.format === "gz") {
-    return `${name}.gz`;
+  if (formula.format === "zip") {
+    return `${name}.zip`;
   } else {
     throw new Error(`Unknown formula format: ${formula.format}`);
   }
@@ -192,8 +231,4 @@ async function getLocalVersion(ctx: Context, name: string): Promise<string> {
     // not present
     return null;
   }
-}
-
-function ext() {
-  return os.platform() === "win32" ? ".exe" : "";
 }

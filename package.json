@@ -26,7 +26,6 @@
   "dependencies": {
     "@types/emojione": "^2.2.2",
     "@types/lru-cache": "^4.1.0",
-    "bluebird": "^3.4.0",
     "btoa": "^1.1.2",
     "chalk": "^2.1.0",
     "classnames": "^2.2.5",
@@ -49,6 +48,7 @@
     "node-buse": "^3.6.0",
     "node-emoji": "^1.8.1",
     "polished": "^1.0.3",
+    "progress-stream": "^2.0.0",
     "react": "^16.2.0",
     "react-contextmenu": "^2.6.5",
     "react-dom": "^16.2.0",
@@ -73,7 +73,8 @@
     "tmp": "0.0.29",
     "triangulr": "^1.0.0",
     "underscore": "^1.8.3",
-    "which": "^1.2.11"
+    "which": "^1.2.11",
+    "yauzl": "^2.9.1"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.8",
@@ -98,7 +99,10 @@
     "@types/split2": "^2.1.5",
     "@types/tmp": "0.0.33",
     "@types/which": "^1.0.28",
+    "@types/yauzl": "^2.9.0",
+    "babel-plugin-transform-async-to-module-method": "^6.24.1",
     "babel-plugin-transform-node-env-inline": "^0.3.0",
+    "bluebird": "^3.5.1",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "codecov": "^2.2.0",

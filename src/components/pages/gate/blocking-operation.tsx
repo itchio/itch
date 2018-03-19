@@ -11,6 +11,7 @@ import { connect, Dispatchers, actionCreatorsList } from "../../connect";
 import { ISetupOperation } from "../../../types";
 
 import { reportIssue } from "../../../util/crash-reporter";
+import { downloadProgress, fileSize } from "../../../format";
 
 const BlockingOperationDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.huge};
@@ -24,6 +25,13 @@ const BlockingOperationDiv = styled.div`
     max-height: 150px;
     overflow-y: auto;
     user-select: initial;
+  }
+
+  .progress {
+    padding: 1em;
+    font-size: ${props => props.theme.fontSizes.smaller};
+    color: ${props => props.theme.secondaryText};
+    text-align: center;
   }
 
   .error-actions {
@@ -43,13 +51,13 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { retrySetup, blockingOperation } = this.props;
 
-    const { message, icon } = blockingOperation;
+    const { message, icon, progress } = blockingOperation;
     const hasError = icon === "error";
     let iconElement: JSX.Element;
     if (hasError) {
       iconElement = <Icon icon={icon} />;
     } else {
-      iconElement = <LoadingCircle wide progress={-1} />;
+      iconElement = <LoadingCircle wide progress={progress ? progress : -1} />;
     }
 
     return (
@@ -63,6 +71,16 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
           ) : null}
           {format(message)}
         </div>
+        {blockingOperation.progress > 0 ? (
+          <div className="progress">
+            {fileSize(
+              blockingOperation.totalBytes * blockingOperation.progress
+            )}{" "}
+            / {fileSize(blockingOperation.totalBytes)}
+            {" @ "}
+            {downloadProgress(blockingOperation, false)}
+          </div>
+        ) : null}
         {hasError ? (
           <div className="error-actions">
             <Button

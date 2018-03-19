@@ -9,6 +9,8 @@ import { request, ChecksumAlgo } from "../../net";
 
 const CHECKSUM_ALGOS: ChecksumAlgo[] = ["SHA256", "SHA1"];
 
+const forceHead = true;
+
 /** platform in go format */
 function goos(): string {
   let result = os.platform();
@@ -38,6 +40,10 @@ function channel(formulaName: string): string {
 
 /** fetch latest version number from repo */
 async function getLatestVersion(channel: string): Promise<string> {
+  if (forceHead) {
+    return "head";
+  }
+
   const url = `${channel}/LATEST?${querystring.stringify({ t: +new Date() })}`;
   const res = await request("get", url, {});
 

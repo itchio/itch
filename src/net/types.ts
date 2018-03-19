@@ -26,7 +26,7 @@ export interface IRequestCallback {
 }
 
 export interface IRequestOpts {
-  sink?: WriteStream;
+  sink?: () => WriteStream;
   cb?: IRequestCallback;
   format?: "json" | null;
 }

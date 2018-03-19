@@ -15,6 +15,8 @@ export default reducer<IProfileLoginState>(initialState, on => {
       blockingOperation: {
         icon: "heart-filled",
         message: ["login.status.login"],
+        bps: 0,
+        eta: 0,
       },
     };
   });

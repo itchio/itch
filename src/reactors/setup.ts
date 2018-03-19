@@ -18,9 +18,14 @@ async function fetch(ctx: Context, name: string) {
     ctx,
     logger,
     onStatus: (icon: string, message: ILocalizedString) => {
-      ctx.store.dispatch(actions.setupStatus({ icon, message }));
+      ctx.store.dispatch(
+        actions.setupStatus({ icon, message, bps: 0, eta: 0 })
+      );
     },
   };
+  ctx.on("progress", progress => {
+    ctx.store.dispatch(actions.setupOperationProgress({ progress }));
+  });
 
   await installFormula(opts, name);
 }
@@ -92,6 +97,8 @@ async function doSetup(store: IStore) {
         icon: "error",
         message: ["login.status.setup_failure", { error: e.message || "" + e }],
         stack: e.stack,
+        bps: 0,
+        eta: 0,
       })
     );
   }

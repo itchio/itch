@@ -15,6 +15,10 @@ import { MinimalContext } from "../../context";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.tick, async (store, action) => {
+    if (!store.getState().setup.done) {
+      return;
+    }
+
     const { paused } = store.getState().downloads;
     if (paused) {
       if (state.instance && !state.instance.cancelled) {
