@@ -344,5 +344,7 @@
     "game.install.libraries_missing": "必要の{{arch}}のライブラリはありません： {{libraries}}",
     "grid.criterion.search": "検索...",
     "grid.filters.options.compatible": "互換",
-    "download.reason.reinstall": "再インストール"
+    "download.reason.reinstall": "再インストール",
+    "download.reason.heal": "検証と修正",
+    "download.ongoing.install": "{{title}}のインストール中…"
 }
