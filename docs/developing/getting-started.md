@@ -4,9 +4,14 @@
 itch is built in HTML/SCSS/TypeScript and runs inside of Electron. Install the
 following to get started with development:
 
-* Install [node.js][] (7.6 or newer)
+* Install the latest [node.js][]
 
 [node.js]: https://nodejs.org/
+
+> Note:
+> Linux distributions tend to ship outdated node.js versions,
+> luckily nodesource provides [binary distributions](https://github.com/nodesource/distributions/)
+> you may want to check out.
 
 Then, clone the <https://github.com/itchio/itch> repository somewhere.
 
@@ -50,19 +55,7 @@ locale updates, etc.
 `test` looks a lot like `production` except that some things are disabled: logging,
 for instance, is suppressed. The app will also not exit by itself, but print
 a well-known string to the console, allowing the integration test runner to kill the
-app itself (spectron is picky like that).
-
-### Development mode is slow
-
-There's a few things slowing down the app in development, a big one is the amount
-of checks that React does. If you want to get a feel for how fast the app could be
-without all those extra checks and warnings, you can simply run:
-
-```bash
-NODE_ENV=production npm start
-```
-
-Note that, in production, a bunch of developer tools are not available.
+app itself.
 
 ## App structure
 
@@ -98,17 +91,14 @@ side of the app:
 
 Finally, some environment variables change the behavior of the application, there's a list in [environment-variables.md](environment-variables.md)
 
-> Tip: 
->
-> When running from msys, `export OS=cygwin` to see log output
-
 ## Compiling
 
 TypeScript sources and static assets live in `src`.
 
-In development, files are built as they're required, by [electron-compile](https://github.com/electron/electron-compile).
+They're compiled and bundled by [parcel](https://parceljs.org/).
 
-In production, they're precompiled with the `compile` script in `package.json`.
+In development, files are recompiled automatically and the chrome side
+is served over HTTP. In production, they're precompiled (by `src/init.js` in both cases).
 
 ### Live reload / Hot module reload
 
@@ -121,27 +111,8 @@ on the looks of a React component.
 
 ### The .cache folder
 
-If you run `npm run compile`, all files will be compiled and put into a cache folder
-named `.cache`.
-
-This normally happens on the Continuous Integration servers when a new release of
-the app is prepared.
-
-There is a catch: if the app detects a `.cache` folder, it will be in `read-only` mode:
-no matter how much the source files changed, the app will only ever run from the
-already-compiled files in the `.cache` folder.
-
-If you run the app in development (the default) and it detects a `.cache` folder, it
-will print a warning letting you know that changes won't be picked up (even when
-restarting the app).
-
-> There's really no reason to run `npm run compile` locally. If you see a `.cache`
-> folder, remove it.
-
-In development, the cache folder is somewhere in `$TEMP` or `$TMPDIR` or `/tmp/`.
-On Linux, it's often `/tmp/$(whoami)/compileCache_{hash}`. While `electron-compile`
-should normally not cause any issues, if you do want to clear the development
-compile cache, just remove the whole folder (preferably while the app is *not running*).
+If you tune `src/init.js` to change some parcel parameters, you may have to remove
+the `.cache` folder. If you're feeling paranoid, you can also wipe `app`, and `dist`.
 
 ## Code style
 
@@ -163,9 +134,9 @@ API responses are normalized to camelCase.
 
 ### Logging
 
-Logging is done via [pino](https://github.com/pinojs/pino). Each module for which
-it makes sense to have a certain amount of logging (for example, detailing the
-install process of a game, etc.) should get its own child logger, like so:
+Each module for which it makes sense to have a certain amount of logging
+(for example, detailing the install process of a game, etc.) should get its
+own child logger, like so:
 
 ```typescript
 import rootLogger from "../logger";
@@ -207,20 +178,20 @@ async function installSoftware (name: string) {
 }
 ```
 
-Currently, async/await code is transformed using babel to bluebird promises,
+In development, async/await code is transformed using babel to bluebird promises,
 which in turn uses coroutines and has long stack traces support.
 
 This lets us dive into issues that involve several promises awaiting each
-other. In the future, native node promises will also have great stack trace
-support, and we won't have to go through bluebird or use babel anymore.
+other. In production, they're left as-is, since both Node and Chrome now
+support async/await.
 
 ### React components
 
 React components are TypeScript classes that extend `React.PureComponent`. All
 components are pure components, never extend `React.Component` instead.
 
-We have our own `connect` flavor that does state mapping and dispatch mapping,
-and adds `t` (in the `I18nProps` interface) for i18n.
+We have our own `connect` flavor that does state mapping and actionCreators mapping
+(grep it to find out how it works).
 
 Look at `src/components/basics/` for simple examples.
 
@@ -230,8 +201,10 @@ Most of the CSS styles in the app are handled by [styled-components](https://git
 
 This lets us handle theme switching, namespace and compose our styles easily.
 
-Some text editor plug-ins, like [styled-components for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=jpoissonnier.vscode-styled-components) provide syntax highlighting for
-css blocks.
+Some text editor plug-ins, like [styled-components for Visual Studio
+Code][vscode-styled-components] provide syntax highlighting for css blocks.
+
+[vscode-styled-components]: https://marketplace.visualstudio.com/items?itemName=jpoissonnier.vscode-styled-components
 
 ## Testing
 

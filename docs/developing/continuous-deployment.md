@@ -118,13 +118,6 @@ used to happen a lot).*
 The automated pipeline only creates a release *draft* on GitHub - it still needs
 to be approved by a human before the update server starts serving it to users.
 
-[Amos][] is in charge of that. It is used to be a lot more work before the canary
-channel was a thing (see below) — previously, one had to download the draft
-builds, install them on each platform and [test them][qa checklist].
-
-[Amos]: https://github.com/fasterthanlime
-[qa checklist]: ./qa-checklist.md
-
 Similarly, [Bintray][] packages are created in draft mode and have to be published
 by hand. The actual "ship it" process looks like:
 
