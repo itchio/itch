@@ -109,12 +109,12 @@ class GameUpdateRow extends React.PureComponent<IProps & IDerivedProps> {
   };
 }
 
-export interface IProps {
+interface IProps {
   update: GameUpdate;
 }
 
 const actionCreators = actionCreatorsList("navigateToGame", "queueGameUpdate");
 
-export type IDerivedProps = Dispatchers<typeof actionCreators> & {};
+type IDerivedProps = Dispatchers<typeof actionCreators> & {};
 
 export default connect<IProps>(GameUpdateRow, { actionCreators });
