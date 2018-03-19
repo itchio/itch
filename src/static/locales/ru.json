@@ -512,5 +512,6 @@
     "grid.item.running.prepare": "Подготавливаем…",
     "grid.item.running.clean": "Прибираемся…",
     "preferences.install_location.disk_usage": "Использование диска",
-    "login.status.finalizing_installation": "Заканчиваем установку…"
+    "login.status.finalizing_installation": "Заканчиваем установку…",
+    "login.status.antivirus_warning": "Антивирусное ПО может мешать работе itch."
 }
