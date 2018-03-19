@@ -12,12 +12,11 @@ import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { IRootState } from "../../types/index";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
-import isCavePristine from "../../helpers/is-cave-pristine";
 import { Game, CaveSummary } from "../../buse/messages";
 
 class Cell extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { game, cave, status } = this.props;
+    const { game, status } = this.props;
 
     const {
       column,
@@ -38,8 +37,7 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
       transform: `translate(${translateX}px, ${translateY}px)`,
     };
 
-    const pristine = cave && isCavePristine(cave);
-    const className = classNames("grid--cell", { pristine });
+    const className = classNames("grid--cell");
 
     return (
       <div className={className} style={style} data-game-id={game.id}>
@@ -47,7 +45,6 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
           className="cell--cover"
           showGifMarker={true}
           coverUrl={coverUrl}
-          ribbon={pristine}
           stillCoverUrl={stillCoverUrl}
           gameId={game.id}
         />

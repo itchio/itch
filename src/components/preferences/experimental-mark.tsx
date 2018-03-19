@@ -8,7 +8,7 @@ const Spacer = styled.span`
   width: 8px;
 `;
 
-export default class ExperimentalMark extends React.PureComponent<{}> {
+class ExperimentalMark extends React.PureComponent<{}> {
   render() {
     return (
       <span
@@ -21,3 +21,5 @@ export default class ExperimentalMark extends React.PureComponent<{}> {
     );
   }
 }
+
+export default ExperimentalMark;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FormattedMessage, InjectedIntl } from "react-intl";
 
-export default function format(input: any): JSX.Element | string {
+function format(input: any): JSX.Element | string {
   if (Array.isArray(input)) {
     const id = input[0];
     const valuesIn = input[1] || {};
@@ -13,6 +13,8 @@ export default function format(input: any): JSX.Element | string {
     return input;
   }
 }
+// FIXME: avoid export default
+export default format;
 
 export function formatString(intl: InjectedIntl, input: any): string {
   if (Array.isArray(input)) {

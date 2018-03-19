@@ -7,7 +7,7 @@ import IntlMessageFormat = require("intl-messageformat");
 
 const emptyObj: any = {};
 
-export default function create(wc: Electron.WebContents, store: IStore) {
+function create(wc: Electron.WebContents, store: IStore) {
   const intl = {
     formatMessage: ({ id }: { id: string }, values = {}): string => {
       const { i18n } = store.getState();
@@ -110,6 +110,8 @@ export default function create(wc: Electron.WebContents, store: IStore) {
     }
   });
 }
+
+export default create;
 
 function delUnusedElements(menuTpl: Electron.MenuItemConstructorOptions[]) {
   let notDeletedPrevEl: Electron.MenuItemConstructorOptions;

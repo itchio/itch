@@ -5,7 +5,6 @@ import { actions } from "../actions";
 import { app } from "electron";
 import env from "../env";
 
-import { cleanOldLogs } from "./preboot/clean-old-logs";
 import * as visualElements from "./preboot/visual-elements";
 
 import rootLogger from "../logger";
@@ -123,12 +122,6 @@ export default function(watcher: Watcher) {
 
       store.dispatch(actions.boot({}));
       dispatchedBoot = true;
-
-      try {
-        await cleanOldLogs();
-      } catch (e) {
-        logger.error(`Could not clean old logs: ${e.stack || e.message || e}`);
-      }
 
       if (env.name === "production" && env.appName === "itch") {
         try {

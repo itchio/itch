@@ -35,6 +35,7 @@ import report from "./report";
 import search from "./search";
 import webContents from "./web-contents";
 import notifications from "./notifications";
+import clipboard from "./clipboard";
 
 import { currentRuntime } from "../os/runtime";
 const runtime = currentRuntime();
@@ -77,6 +78,7 @@ export default function getWatcher() {
   search(watcher);
   webContents(watcher);
   notifications(watcher);
+  clipboard(watcher);
 
   watcher.validate();
   return watcher;

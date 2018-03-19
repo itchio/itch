@@ -23,7 +23,7 @@ interface IActionHandlerCallback<State> {
   (registerReducer: IRegisterReducer<State>): void;
 }
 
-export default function reducer<State>(
+function reducer<State>(
   initialState: State,
   cb: IActionHandlerCallback<State>,
   defaultReducer?: IActionReducer<State, any>
@@ -60,3 +60,5 @@ export default function reducer<State>(
     return rs;
   };
 }
+
+export default reducer;

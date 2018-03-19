@@ -9,7 +9,7 @@ import Cover from "../basics/cover";
 import styled from "../styles";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import format from "../format";
-import doesEventMeanBackground from "../when-click-navigates";
+import { doesEventMeanBackground } from "../when-click-navigates";
 
 const GameUpdateRowDiv = styled.div`
   flex-shrink: 0;

@@ -32,11 +32,7 @@ let nextFetchReason: {
   [key: string]: FetchReason;
 } = {};
 
-export async function queueFetch(
-  store: IStore,
-  tab: string,
-  reason: FetchReason
-) {
+async function queueFetch(store: IStore, tab: string, reason: FetchReason) {
   if (fetching[tab]) {
     nextFetchReason[tab] = reason;
     return;

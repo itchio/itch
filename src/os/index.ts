@@ -1,10 +1,8 @@
 import * as os from "os";
 
-export * from "./arch";
 export * from "./assert-presence";
 import env from "../env";
-
-import { ItchPlatform } from "../types";
+import { ItchPlatform } from "../buse/messages";
 
 export function platform(): string {
   return process.platform;
@@ -42,13 +40,13 @@ export function getVersion(key: VersionKey): string {
 export function itchPlatform(): ItchPlatform {
   switch (platform()) {
     case "darwin":
-      return "osx";
+      return ItchPlatform.OSX;
     case "win32":
-      return "windows";
+      return ItchPlatform.Windows;
     case "linux":
-      return "linux";
+      return ItchPlatform.Linux;
     default:
-      return "unknown";
+      return ItchPlatform.Unknown;
   }
 }
 

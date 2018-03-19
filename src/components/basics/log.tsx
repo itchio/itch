@@ -102,7 +102,7 @@ const LogTable = styled.table`
 
 const kMaxLines = 250;
 
-export default class Log extends React.PureComponent<IProps, IState> {
+class Log extends React.PureComponent<IProps, IState> {
   constructor(props: Log["props"], context) {
     super(props, context);
     this.state = {
@@ -204,6 +204,8 @@ export default class Log extends React.PureComponent<IProps, IState> {
     this.scrollDown();
   };
 }
+
+export default Log;
 
 interface IState {
   level: string;

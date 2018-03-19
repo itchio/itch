@@ -11,7 +11,7 @@ const LibraryContainer = styled.div`
   ${styles.meat()};
 `;
 
-export default class Library extends React.PureComponent<IProps> {
+class Library extends React.PureComponent<IProps> {
   render() {
     const { tab, loading } = this.props;
 
@@ -23,5 +23,7 @@ export default class Library extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default Library;
 
 interface IProps extends IMeatProps {}

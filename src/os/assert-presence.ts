@@ -56,5 +56,3 @@ export async function assertPresence(
 
   return { code, stdout, stderr, parsed };
 }
-
-export default assertPresence;

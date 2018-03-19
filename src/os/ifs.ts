@@ -26,4 +26,3 @@ export async function exists(file: string): Promise<boolean> {
 
 import * as sf from "../os/sf";
 export const writeFile = sf.writeFile;
-export default { readFile, writeFile, exists };

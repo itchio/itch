@@ -11,7 +11,8 @@ import { connect, Dispatchers, actionCreatorsList } from "../../connect";
 import { ISetupOperation } from "../../../types";
 
 import { reportIssue } from "../../../util/crash-reporter";
-import { downloadProgress, fileSize } from "../../../format";
+import { fileSize } from "../../../format/filesize";
+import { downloadProgress } from "../../../format/download-progress";
 
 const BlockingOperationDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.huge};

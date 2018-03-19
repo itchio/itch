@@ -45,8 +45,6 @@ export interface IDateFormat {
 
 const cacheByFormat = new Map<number, Map<string, Intl.DateTimeFormat>>();
 
-export type MixedDate = Date | string | number;
-
 /**
  * Format a date for humans in the given locale
  */

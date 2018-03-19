@@ -19,7 +19,7 @@ interface IMakeUploadButtonOpts {
   showSize?: boolean;
 }
 
-export default function makeUploadButton(
+function makeUploadButton(
   upload: Upload,
   opts = { showSize: true } as IMakeUploadButtonOpts
 ): IUploadButton {
@@ -53,6 +53,8 @@ export default function makeUploadButton(
   const icon = uploadIcon(upload) || "download";
   return { label, tags, icon, timeAgo };
 }
+
+export default makeUploadButton;
 
 const uploadIcons = {
   [UploadType.Default]: "gamepad",

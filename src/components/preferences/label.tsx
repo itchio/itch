@@ -1,6 +1,7 @@
 import * as React from "react";
 import styled, * as styles from "../styles";
 import * as classNames from "classnames";
+
 const LabelEl = styled.label`
   background: ${props => props.theme.explanation};
   padding: 8px 11px;
@@ -19,12 +20,14 @@ const LabelEl = styled.label`
   }
 `;
 
-export default class Label extends React.PureComponent<IProps> {
+class Label extends React.PureComponent<IProps> {
   render() {
     const { active, children } = this.props;
     return <LabelEl className={classNames({ active })}>{children}</LabelEl>;
   }
 }
+
+export default Label;
 
 interface IProps {
   active?: boolean;

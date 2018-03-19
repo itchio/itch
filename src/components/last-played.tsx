@@ -7,9 +7,7 @@ import actionForGame from "../util/action-for-game";
 import TimeAgo from "./basics/time-ago";
 import { Game, CaveSummary } from "../buse/messages";
 
-export default class LastPlayed extends React.PureComponent<
-  IProps & IDerivedProps
-> {
+class LastPlayed extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { game, cave, short = false } = this.props;
     const { lastTouchedAt = null } = cave || {};
@@ -43,6 +41,8 @@ export default class LastPlayed extends React.PureComponent<
     );
   }
 }
+
+export default LastPlayed;
 
 interface IProps {
   game: Game;

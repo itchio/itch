@@ -1,6 +1,6 @@
 import { Context } from "../../context/index";
 
-export interface ITaskMap {
+interface ITaskMap {
   [id: string]: Context;
 }
 

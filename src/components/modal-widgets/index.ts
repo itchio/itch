@@ -37,7 +37,7 @@ import {
 import { actions } from "../../actions/index";
 import uuid from "../../util/uuid";
 
-export interface ITypedModalBase<Params> extends IModalBase {
+interface ITypedModalBase<Params> extends IModalBase {
   widgetParams: Params;
 }
 
@@ -47,7 +47,7 @@ export interface ITypedModal<Params, Response> extends IModal {
   __response: Response;
 }
 
-export interface ITypedModalUpdateBase<Params> extends IModalUpdate {
+interface ITypedModalUpdateBase<Params> extends IModalUpdate {
   widgetParams: Partial<Params>;
 }
 
@@ -56,7 +56,7 @@ export interface ITypedModalUpdate<Params>
   __params: Params;
 }
 
-export type ModalWidgetSpec<Params, Response> = {
+type ModalWidgetSpec<Params, Response> = {
   params?: Params;
   response?: Response;
   key: string;

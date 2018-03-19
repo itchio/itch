@@ -7,7 +7,7 @@ interface IBuilderFunc {
   (builder: flatbuffers.Builder): void;
 }
 
-export default class Connection {
+class Connection {
   closed: boolean;
   readPath: string;
   writePath: string;
@@ -54,3 +54,5 @@ export default class Connection {
     this.closed = true;
   }
 }
+
+export default Connection;

@@ -132,10 +132,7 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
 
 export interface ISecretSettingsParams {}
 
-export interface ISecretSettingsResponse {}
-
-interface IProps
-  extends IModalWidgetProps<ISecretSettingsParams, ISecretSettingsResponse> {
+interface IProps extends IModalWidgetProps<ISecretSettingsParams, void> {
   params: ISecretSettingsParams;
 }
 

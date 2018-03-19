@@ -11,10 +11,10 @@ import CustomDate from "../basics/custom-date";
 
 import styled from "../styles";
 import { lighten } from "polished";
-import { MONTH_YEAR_FORMAT, DAY_MONTH_FORMAT } from "../../format/index";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Build, Cave, Upload } from "../../buse/messages";
 import { IModalWidgetProps } from "./index";
+import { DAY_MONTH_FORMAT, MONTH_YEAR_FORMAT } from "../../format/datetime";
 
 const BuildListDiv = styled.div`
   width: 100%;

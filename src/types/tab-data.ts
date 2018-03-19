@@ -38,14 +38,6 @@ export interface ITabWeb {
   loading?: boolean;
 }
 
-export interface ITabToast {
-  /** error to show for toast tab */
-  error?: string;
-
-  /** stack trace to show for toast tab */
-  stack?: string;
-}
-
 export interface ITabLog {
   log: string;
 }
@@ -90,7 +82,6 @@ export interface ITabData {
   games?: ITabGames;
   collections?: ITabCollections;
   web?: ITabWeb;
-  toast?: ITabToast;
   location?: ITabLocation;
   log?: ITabLog;
 }

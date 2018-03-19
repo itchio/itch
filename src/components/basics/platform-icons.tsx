@@ -33,7 +33,7 @@ interface IIconProps {
   field: keyof typeof platformData;
 }
 
-export default class PlatformIcons extends React.PureComponent<IProps> {
+class PlatformIcons extends React.PureComponent<IProps> {
   render() {
     const { target, ...restProps } = this.props;
     if (
@@ -55,6 +55,8 @@ export default class PlatformIcons extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default PlatformIcons;
 
 interface IProps {
   target: PlatformHolder;

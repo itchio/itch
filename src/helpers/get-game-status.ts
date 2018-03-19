@@ -1,4 +1,4 @@
-import { IRootState, ITask, DownloadReason } from "../types/index";
+import { IRootState, ITask, DownloadReason, TaskName } from "../types/index";
 
 import { first, findWhere, size } from "underscore";
 import getByIds from "./get-by-ids";
@@ -8,7 +8,6 @@ import {
 } from "../reactors/downloads/getters";
 import isPlatformCompatible from "../util/is-platform-compatible";
 import memoize from "../util/lru-memoize";
-import { TaskName } from "../types/tasks";
 import {
   Game,
   CaveSummary,
@@ -90,7 +89,7 @@ export interface IGameStatus {
   compatible: boolean;
 }
 
-export default function getGameStatus(
+function getGameStatus(
   rs: IRootState,
   game: Game,
   caveId?: string
@@ -156,6 +155,8 @@ export default function getGameStatus(
     areDownloadsPaused
   );
 }
+
+export default getGameStatus;
 
 function rawGetGameStatus(
   game: Game,

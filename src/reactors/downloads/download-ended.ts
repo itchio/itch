@@ -1,6 +1,6 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
-import { t } from "../../format";
+import { t } from "../../format/t";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {

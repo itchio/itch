@@ -1,4 +1,4 @@
-export interface IRegisteredProtocols {
+interface IRegisteredProtocols {
   [key: string]: boolean;
 }
 

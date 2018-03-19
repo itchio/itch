@@ -32,11 +32,7 @@ function err(e: Error, action: IAction<any>) {
   }
 }
 
-export default async function route(
-  watcher: Watcher,
-  store: IStore,
-  action: IAction<any>
-) {
+async function route(watcher: Watcher, store: IStore, action: IAction<any>) {
   setTimeout(() => {
     try {
       for (const r of watcher.reactors[action.type] || emptyArr) {
@@ -64,3 +60,5 @@ export default async function route(
     }
   }, 0);
 }
+
+export default route;

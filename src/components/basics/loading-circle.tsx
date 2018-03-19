@@ -31,9 +31,7 @@ const CircleContainer = styled.div`
   }
 `;
 
-export default class LoadingCircle extends React.PureComponent<
-  ILoadingCircleProps
-> {
+class LoadingCircle extends React.PureComponent<ILoadingCircleProps> {
   render() {
     const { className, progress, bare, wide } = this.props;
 
@@ -51,7 +49,9 @@ export default class LoadingCircle extends React.PureComponent<
   }
 }
 
-export interface ILoadingCircleProps {
+export default LoadingCircle;
+
+interface ILoadingCircleProps {
   className?: string;
   progress: number;
   bare?: boolean;

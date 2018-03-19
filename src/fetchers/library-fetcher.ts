@@ -5,7 +5,7 @@ import { withButlerClient, messages } from "../buse";
 import { Game } from "../buse/messages";
 import { uniq } from "underscore";
 
-export default class LibraryFetcher extends Fetcher {
+class LibraryFetcher extends Fetcher {
   async work(): Promise<void> {
     // first, filter what we already got
     const cachedGames = getByIds(
@@ -67,3 +67,5 @@ export default class LibraryFetcher extends Fetcher {
     );
   }
 }
+
+export default LibraryFetcher;

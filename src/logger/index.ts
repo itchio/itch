@@ -23,7 +23,7 @@ function parseEnvLevel() {
 const LOG_LEVEL = parseEnvLevel() as Level;
 const NO_STDOUT = process.env.ITCH_NO_STDOUT === "1";
 
-export type Level = "silent" | "error" | "warn" | "info" | "debug";
+type Level = "silent" | "error" | "warn" | "info" | "debug";
 
 const levelNumbers = {
   silent: 100,

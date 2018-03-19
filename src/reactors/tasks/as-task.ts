@@ -28,7 +28,7 @@ interface IAsTaskOpts {
   onCancel?: () => Promise<void>;
 }
 
-export default async function asTask(opts: IAsTaskOpts) {
+async function asTask(opts: IAsTaskOpts) {
   const id = uuid();
 
   const { store, name, gameId } = opts;
@@ -96,3 +96,5 @@ export default async function asTask(opts: IAsTaskOpts) {
     })
   );
 }
+
+export default asTask;

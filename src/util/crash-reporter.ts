@@ -35,7 +35,7 @@ function errorTypeString(t: ErrorType): string {
   }
 }
 
-export interface IReportIssueOpts {
+interface IReportIssueOpts {
   log?: string;
   body?: string;
   type?: string;

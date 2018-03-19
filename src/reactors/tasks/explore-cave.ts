@@ -6,7 +6,7 @@ import { dirname } from "path";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "explore-cave" });
 
-import explorer from "../../os/explorer";
+import * as explorer from "../../os/explorer";
 
 import { withButlerClient, messages } from "../../buse";
 

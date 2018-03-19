@@ -2,17 +2,8 @@ import { Logger } from "../../logger";
 
 import { messages, withButlerClient } from "../../buse/index";
 
-export interface IUninstallOpts {
-  /** ID of the cave to uninstall */
-  caveId: string;
-
-  /** usually goes to a cave logger */
-  logger: Logger;
-}
-
-export async function performUninstall(opts: IUninstallOpts) {
-  const logger = opts.logger.child({ name: "uninstall" });
-  const { caveId } = opts;
+export async function performUninstall(parentLogger: Logger, caveId: string) {
+  const logger = parentLogger.child({ name: "uninstall" });
 
   await withButlerClient(logger, async client => {
     client.onNotification(messages.TaskStarted, ({ params }) => {

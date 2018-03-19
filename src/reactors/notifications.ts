@@ -9,7 +9,7 @@ import env from "../env";
 import delay from "./delay";
 
 import rootLogger from "../logger";
-import { t } from "../format/index";
+import { t } from "../format/t";
 const logger = rootLogger.child({ name: "notifications" });
 
 const AUTODISMISS_DELAY = 5000;

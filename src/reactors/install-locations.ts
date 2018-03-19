@@ -1,7 +1,6 @@
 import { Watcher } from "./watcher";
 
-import explorer from "../os/explorer";
-import { t } from "../format";
+import * as explorer from "../os/explorer";
 
 import { actions } from "../actions";
 
@@ -10,6 +9,7 @@ import { BrowserWindow, dialog } from "electron";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { call, messages } from "../buse";
 import { promisedModal } from "./modals";
+import { t } from "../format/t";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {

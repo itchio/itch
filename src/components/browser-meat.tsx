@@ -40,15 +40,6 @@ const BrowserMain = styled.div`
   flex-direction: row;
 `;
 
-export const BrowserContextContainer = styled.div`
-  flex-basis: 240px;
-  background: ${props => props.theme.sidebarBackground};
-
-  display: flex;
-  align-items: stretch;
-  flex-direction: column;
-`;
-
 const WebviewShell = styled.div`
   background: white;
 

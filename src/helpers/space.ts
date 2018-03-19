@@ -22,7 +22,7 @@ import staticTabData from "../constants/static-tab-data";
 // Empty Object
 const eo = {} as any;
 
-export const spaceFromInstance = (dataIn: ITabInstance) => new Space(dataIn);
+const spaceFromInstance = (dataIn: ITabInstance) => new Space(dataIn);
 
 /**
  * A Space gives structured info about a tab.

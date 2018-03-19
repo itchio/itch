@@ -113,9 +113,3 @@ export function collectionToTabData(collection: Collection): ITabData {
     },
   };
 }
-
-export default {
-  transformUrl,
-  gameToTabData,
-  collectionToTabData,
-};

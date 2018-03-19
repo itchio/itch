@@ -22,7 +22,7 @@ const ItemHeading = styled.div`
   padding: 0.2em 0;
 `;
 
-export const ItemSection = styled.section`
+const ItemSection = styled.section`
   background: ${props => props.theme.sidebarBackground};
   font-size: 14px;
   border-radius: 0 4px 4px 0;

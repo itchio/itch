@@ -4,19 +4,19 @@ import registeredProtocols from "./itch-internal-persistent-state";
 
 const WEBGAME_PROTOCOL = "itch-cave";
 
-export interface IBeforeSendHeadersDetails {
+interface IBeforeSendHeadersDetails {
   url: string;
 }
 
-export interface IBeforeSendHeadersCallbackOpts {
+interface IBeforeSendHeadersCallbackOpts {
   cancel: boolean;
 }
 
-export interface IBeforeSendHeadersCallback {
+interface IBeforeSendHeadersCallback {
   (opts: IBeforeSendHeadersCallbackOpts): void;
 }
 
-export interface IRegisterProtocolOpts {
+interface IRegisterProtocolOpts {
   partition: string;
   fileRoot: string;
 }

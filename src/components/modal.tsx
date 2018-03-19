@@ -13,7 +13,7 @@ import Cover from "./basics/cover";
 import Hoverable from "./basics/hover-hoc";
 const HoverCover = Hoverable(Cover);
 
-import colors from "../constants/colors";
+import * as colors from "../constants/colors";
 
 import { actions } from "../actions";
 import { map, isEmpty, filter } from "underscore";

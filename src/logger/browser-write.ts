@@ -10,7 +10,7 @@ const levelColors = {
   10: "color:grey;",
 };
 
-export default function write(entry: ILogEntry) {
+function write(entry: ILogEntry) {
   const { name, level, msg } = entry;
   console.log(
     "%c " +
@@ -25,3 +25,5 @@ export default function write(entry: ILogEntry) {
     "color:44e;"
   );
 }
+
+export default write;

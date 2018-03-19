@@ -1,6 +1,7 @@
 import * as os from "../../os";
 import spawn from "../../os/spawn";
 import * as sf from "../../os/sf";
+import * as fs from "fs";
 import * as shortcut from "../../os/win32/shortcut";
 
 import { app } from "electron";
@@ -72,9 +73,14 @@ export async function createIfNeeded(ctx: MinimalContext): Promise<void> {
     return;
   }
 
-  const itchLinks = await sf.glob(`${app.getName()}.lnk`, {
-    cwd: startMenuPath,
-  });
+  const shortcutName = `${app.getName()}.lnk`;
+  const startMenuEntries = fs.readdirSync(startMenuPath);
+  let itchLinks: string[] = [];
+  for (const e of startMenuEntries) {
+    if (e == shortcutName) {
+      itchLinks.push(shortcutName);
+    }
+  }
   logger.debug(`Found shortcuts:\n${JSON.stringify(itchLinks, null, 2)}`);
 
   const mtime = Date.now() / 1000;

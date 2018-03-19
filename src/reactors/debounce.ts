@@ -1,6 +1,6 @@
 const chatty = process.env.IAMA_JELLO_AMA === "1";
 
-export class CancelError extends Error {
+class CancelError extends Error {
   constructor() {
     super("");
   }

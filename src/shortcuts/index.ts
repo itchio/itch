@@ -10,7 +10,7 @@ hookGlobalBind(combo);
 
 const macos = process.platform === "darwin";
 
-export default function setupShortcuts(store: IStore) {
+function setupShortcuts(store: IStore) {
   // dev shortcuts
   combo.bindGlobal(["shift+f12", "ctrl+shift+c", "command+shift+c"], () => {
     store.dispatch(actions.openDevTools({ forApp: true }));
@@ -68,3 +68,5 @@ export default function setupShortcuts(store: IStore) {
     });
   }
 }
+
+export default setupShortcuts;

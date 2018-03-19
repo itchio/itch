@@ -5,8 +5,6 @@ import format from "./format";
 import { hasPlatforms } from "../constants/platform-data";
 import actionForGame from "../util/action-for-game";
 
-import { formatPrice } from "../format";
-
 import TimeAgo from "./basics/time-ago";
 import PlatformIcons from "./basics/platform-icons";
 import TotalPlaytime from "./total-playtime";
@@ -15,6 +13,7 @@ import LastPlayed from "./last-played";
 import styled from "./styles";
 import { IGameStatus } from "../helpers/get-game-status";
 import { Game } from "../buse/messages";
+import { formatPrice } from "../format/price";
 
 const GameStatsDiv = styled.div`
   display: flex;
@@ -63,7 +62,7 @@ const GameStatsDiv = styled.div`
   }
 `;
 
-export default class GameStats extends React.PureComponent<IProps> {
+class GameStats extends React.PureComponent<IProps> {
   render() {
     const { game, status } = this.props;
     const classification = game.classification || "game";
@@ -150,6 +149,8 @@ export default class GameStats extends React.PureComponent<IProps> {
     }
   }
 }
+
+export default GameStats;
 
 interface IProps {
   game: Game;

@@ -1,76 +1,15 @@
 import { RequestError } from "node-buse";
 import * as messages from "../buse/messages";
 
-type ItchErrorCode =
-  | "ITCH_ECRASH"
-  | "ITCH_ECANCELLED"
-  | "ITCH_EMISSINGLIBS"
-  | "ITCH_ERETRY";
+type ItchErrorCode = "ITCH_ECANCELLED" | "ITCH_ERETRY";
 
-export class ItchError extends Error {
+class ItchError extends Error {
   constructor(public code: ItchErrorCode) {
     super();
   }
 
   toString(): string {
     return this.code;
-  }
-}
-
-interface ICrashOpts {
-  error: string;
-}
-
-export class Crash extends ItchError {
-  error: string;
-
-  constructor(opts: ICrashOpts) {
-    super("ITCH_ECRASH");
-    this.error = opts.error;
-  }
-
-  toString() {
-    return `Application crashed. ${this.error || ""}`;
-  }
-}
-
-interface IMissingLibsOpts {
-  arch: string;
-  libs: string[];
-}
-
-export class MissingLibs extends ItchError {
-  arch: string;
-  libs: string[];
-  reason: any[];
-
-  constructor(opts: IMissingLibsOpts) {
-    super("ITCH_EMISSINGLIBS");
-    this.arch = opts.arch || "386";
-    this.libs = opts.libs || [];
-    this.reason = [
-      "game.install.libraries_missing",
-      {
-        arch: this.prettyArch(this.arch),
-        libraries: this.libs.join(" "),
-      },
-    ];
-  }
-
-  prettyArch(arch: string): string {
-    if (arch === "386") {
-      return "32-bit";
-    }
-
-    if (arch === "amd64") {
-      return "64-bit";
-    }
-
-    return arch;
-  }
-
-  toString() {
-    return `${this.arch} libraries are missing: ${this.libs.join(", ")}`;
   }
 }
 

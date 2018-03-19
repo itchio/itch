@@ -24,7 +24,7 @@ function asColoredLevel(value) {
   }
 }
 
-export default function write(entry: ILogEntry, stream: NodeJS.WritableStream) {
+function write(entry: ILogEntry, stream: NodeJS.WritableStream) {
   let line =
     asISODate(entry.time).split(/T|Z/)[1] + " " + asColoredLevel(entry);
   line += " ";
@@ -37,3 +37,5 @@ export default function write(entry: ILogEntry, stream: NodeJS.WritableStream) {
   line += "\n";
   stream.write(line);
 }
+
+export default write;

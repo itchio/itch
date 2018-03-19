@@ -26,7 +26,7 @@ export default function(watcher: Watcher) {
       gameId: cave.game.id,
       store,
       work: async (ctx, logger) => {
-        await performUninstall({ logger, caveId });
+        await performUninstall(logger, caveId);
         store.dispatch(actions.uninstallEnded({}));
       },
       onError: async (e, log) => {

@@ -42,7 +42,7 @@ const EmptyStateContainer = styled.div`
   overflow: hidden;
 `;
 
-export default class EmptyState extends React.PureComponent<IProps> {
+class EmptyState extends React.PureComponent<IProps> {
   render() {
     const {
       bigText,
@@ -79,6 +79,8 @@ export default class EmptyState extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default EmptyState;
 
 interface IProps {
   className?: string;

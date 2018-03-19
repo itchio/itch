@@ -3,7 +3,7 @@ import { map } from "underscore";
 import { withButlerClient, messages } from "../buse";
 import getByIds from "../helpers/get-by-ids";
 
-export default class DashboardFetcher extends Fetcher {
+class DashboardFetcher extends Fetcher {
   async work(): Promise<void> {
     // first, filter what we already got
     const cachedGames = getByIds(
@@ -40,3 +40,5 @@ export default class DashboardFetcher extends Fetcher {
     this.push({ games: null }, { shallow: true });
   }
 }
+
+export default DashboardFetcher;

@@ -66,7 +66,7 @@ export default function(watcher: Watcher) {
   });
 }
 
-export async function queueInstall(
+async function queueInstall(
   store: IStore,
   game: Game,
   upload?: Upload,

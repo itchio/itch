@@ -1,9 +1,9 @@
-import { t } from "../../format";
 import urls from "../../constants/urls";
 import { actions } from "../../actions";
 import { IStore, IMenuTemplate, IRuntime, IMenuItem } from "../../types/index";
 
 import { map } from "underscore";
+import { t } from "../../format/t";
 
 export function fleshOutTemplate(
   store: IStore,

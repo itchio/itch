@@ -6,7 +6,7 @@ import { isEmpty, uniq } from "underscore";
 import { Game } from "../buse/messages";
 const logger = rootLogger.child({ name: "location-fetcher" });
 
-export default class LocationFetcher extends Fetcher {
+class LocationFetcher extends Fetcher {
   async work(): Promise<void> {
     const installLocationId = this.space().firstPathElement();
 
@@ -39,3 +39,5 @@ export default class LocationFetcher extends Fetcher {
     });
   }
 }
+
+export default LocationFetcher;

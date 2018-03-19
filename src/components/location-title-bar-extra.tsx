@@ -11,7 +11,7 @@ const SecondaryText = styled.span`
   margin-right: 0.5em;
 `;
 
-export default class LocationTitleBarExtra extends React.PureComponent<IProps> {
+class LocationTitleBarExtra extends React.PureComponent<IProps> {
   render() {
     const { tabInstance } = this.props;
     const sp = Space.fromInstance(tabInstance);
@@ -30,6 +30,8 @@ export default class LocationTitleBarExtra extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default LocationTitleBarExtra;
 
 interface IProps {
   tabInstance: ITabInstance;

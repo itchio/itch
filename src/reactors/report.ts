@@ -7,7 +7,7 @@ const logger = rootLogger.child({ name: "report" });
 import urls from "../constants/urls";
 
 import { reportIssue } from "../util/crash-reporter";
-import github, { IGistData } from "../api/github";
+import { createGist, IGistData } from "../api/github";
 import * as sf from "../os/sf";
 import { caveLogPath } from "../os/paths";
 import { withButlerClient, messages } from "../buse";
@@ -35,7 +35,7 @@ export default function(watcher: Watcher) {
       } as IGistData;
       const slug = /\/\/.*\/(.*)$/.exec(game.url)[1];
       gistData.files[`${slug}-log.txt`] = { content: gameLog };
-      const gist = await github.createGist(gistData);
+      const gist = await createGist(gistData);
 
       const body = `:rotating_light: ${game.classification} [${game.title}](${
         game.url

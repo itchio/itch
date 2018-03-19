@@ -60,7 +60,7 @@ export class TestWatcher extends Watcher {
  * Some parts of the code (reactors for example) use setImmediate to avoid
  * infinite recursion.
  */
-export async function immediate() {
+async function immediate() {
   await new Promise((resolve, reject) => {
     setImmediate(resolve);
   });

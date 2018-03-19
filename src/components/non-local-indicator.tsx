@@ -18,7 +18,7 @@ const IndicatorDiv = styled.div`
   pointer-events: none;
 `;
 
-export default class NonLocalIndicator extends React.PureComponent<{}, {}> {
+class NonLocalIndicator extends React.PureComponent<{}, {}> {
   render() {
     if (urls.itchio === urls.originalItchio) {
       return null;
@@ -31,3 +31,5 @@ export default class NonLocalIndicator extends React.PureComponent<{}, {}> {
     );
   }
 }
+
+export default NonLocalIndicator;

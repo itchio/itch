@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { camelifyObject } from "../../format";
 import { initialState } from "../../reducers/preferences";
 import { preferencesPath } from "../../os/paths";
 
@@ -8,12 +7,15 @@ import { IStore, IPreferencesState } from "../../types/index";
 const logger = rootLogger.child({ name: "load-preferences" });
 
 import { actions } from "../../actions";
+import { camelifyObject } from "../../format/camelify";
 
-export default async function loadPreferences(store: IStore) {
+async function loadPreferences(store: IStore) {
   const prefs = loadPreferencesSync();
   store.dispatch(actions.updatePreferences(prefs));
   store.dispatch(actions.preferencesLoaded(prefs));
 }
+
+export default loadPreferences;
 
 export function loadPreferencesSync(): IPreferencesState {
   let prefs = initialState;

@@ -19,7 +19,7 @@ export async function makeButlerInstance(): Promise<Instance> {
   });
 }
 
-export type WithCB<T> = (client: Client) => Promise<T>;
+type WithCB<T> = (client: Client) => Promise<T>;
 
 export async function withButlerClient<T>(
   parentLogger: Logger,

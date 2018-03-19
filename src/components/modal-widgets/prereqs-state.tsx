@@ -1,7 +1,6 @@
 import * as React from "react";
 import { map } from "underscore";
 
-import { downloadProgress } from "../../format";
 import { ModalWidgetDiv } from "./modal-widget";
 import LoadingCircle from "../basics/loading-circle";
 
@@ -9,6 +8,7 @@ import format from "../format";
 import { IModalWidgetProps } from "./index";
 import { PrereqStatus } from "../../buse/messages";
 import styled from "../styles";
+import { downloadProgress } from "../../format/download-progress";
 
 class PrereqsState extends React.PureComponent<IProps> {
   render() {
@@ -83,7 +83,7 @@ export interface IPrereqsStateParams {
   };
 }
 
-export interface ITaskProgressState {
+interface ITaskProgressState {
   order: number;
   fullName: string;
   status: PrereqStatus;
@@ -92,9 +92,6 @@ export interface ITaskProgressState {
   bps: number;
 }
 
-interface IPrereqsStateResponse {}
-
-interface IProps
-  extends IModalWidgetProps<IPrereqsStateParams, IPrereqsStateResponse> {}
+interface IProps extends IModalWidgetProps<IPrereqsStateParams, void> {}
 
 export default PrereqsState;

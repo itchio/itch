@@ -7,7 +7,7 @@ import { IBrowserControlProps } from "./browser-state";
 import { Space } from "../helpers/space";
 import FiltersContainer from "./filters-container";
 
-export default class BrowserBar extends React.PureComponent<IProps> {
+class BrowserBar extends React.PureComponent<IProps> {
   render() {
     const { tabInstance } = this.props;
     const sp = Space.fromInstance(tabInstance);
@@ -27,5 +27,7 @@ export default class BrowserBar extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default BrowserBar;
 
 interface IProps extends IBrowserControlProps {}

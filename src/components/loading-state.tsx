@@ -18,7 +18,7 @@ const LoadingStateDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.huge};
 `;
 
-export default class LoadingState extends React.PureComponent<IProps> {
+class LoadingState extends React.PureComponent<IProps> {
   render() {
     return (
       <LoadingStateContainer>
@@ -30,5 +30,7 @@ export default class LoadingState extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default LoadingState;
 
 interface IProps {}

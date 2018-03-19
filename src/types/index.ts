@@ -1,8 +1,6 @@
 import { Store } from "redux";
 
-export * from "./tasks";
 export * from "./errors";
-import * as Tasks from "./tasks";
 
 export * from "./tab-data";
 import * as TabDataTypes from "./tab-data";
@@ -18,10 +16,9 @@ import {
   Collection,
   CaveSummary,
   DownloadKeySummary,
-  Cave,
-  DownloadKey,
   Download,
   DownloadProgress,
+  ItchPlatform,
 } from "../buse/messages";
 
 export interface IStore extends Store<IRootState> {}
@@ -48,28 +45,12 @@ export interface IDispatch {
   (a: IAction<any>): void;
 }
 
-export type Partial<T> = { [P in keyof T]?: T[P] };
-
 export type GenerosityLevel = "discreet";
-
-export type LaunchType = "native" | "html" | "external" | "shell";
 
 export type ClassificationAction = "launch" | "open";
 
 export interface IUserSet {
   [id: string]: User;
-}
-
-export interface IInstallLocationRecord {
-  /** UUID or 'default' */
-  id: string;
-
-  /** path on disk, null for 'default' (since it's computed) */
-  path?: string;
-}
-
-export interface ITabParamsSet {
-  [key: string]: ITabParams;
 }
 
 export interface ITabParams {
@@ -81,16 +62,8 @@ export interface IGameSet {
   [id: string]: Game;
 }
 
-export interface IDownloadKeySet {
-  [id: string]: DownloadKey;
-}
-
 export interface ICollectionSet {
   [id: string]: Collection;
-}
-
-export interface ICaveSet {
-  [key: string]: Cave;
 }
 
 export interface ICredentials {
@@ -185,10 +158,6 @@ export interface IModalButtonTag {
   icon?: string;
 }
 
-export function isModalButton(object: any): object is IModalButton {
-  return "label" in object;
-}
-
 // FIXME: that's naughty - just make static buttons be constants instead, that works.
 export type IModalButtonSpec = IModalButton | "ok" | "cancel" | "nevermind";
 
@@ -236,15 +205,6 @@ export interface IModalUpdate {
 }
 
 export type IModalsState = IModal[];
-
-export interface IItchAppProfile {
-  [id: string]: any;
-  myGames: IItchAppProfileMyGames;
-}
-
-export interface IItchAppProfileMyGames {
-  ids: string[];
-}
 
 export interface IItchAppTabs {
   /** id of current tab at time of snapshot */
@@ -507,7 +467,7 @@ export interface ISelfUpdateState {
   error?: string;
 }
 
-export interface IInstallLocation {
+interface IInstallLocation {
   /** path on disk (empty for appdata) */
   path: string;
 
@@ -588,7 +548,7 @@ export interface ITask {
   id: string;
 
   /** name of the task: install, uninstall, etc. */
-  name: Tasks.TaskName;
+  name: TaskName;
 
   /** progress in the [0, 1] interval */
   progress: number;
@@ -620,21 +580,6 @@ export interface ITasksState {
   finishedTasks: ITask[];
 }
 
-export interface IEnvironment {
-  [key: string]: string;
-}
-
-export interface IUpgradePathItem {
-  id: number;
-  userVersion?: string;
-  updatedAt: string;
-  patchSize: number;
-}
-
-export type DownloadSpeedDataPoint = number;
-
-export type IDownloadSpeeds = DownloadSpeedDataPoint[];
-
 // TODO: figure this out with buse
 export type DownloadReason = string;
 
@@ -657,10 +602,10 @@ export interface IDownloadsState {
   paused: boolean;
 
   /** Download speeds, in bps, each item represents one second */
-  speeds: IDownloadSpeeds;
+  speeds: number[];
 }
 
-export type OpenAtLoginErrorCause = "no_desktop_file" | "error";
+type OpenAtLoginErrorCause = "no_desktop_file" | "error";
 
 /**
  * Something went wrong when applying
@@ -706,48 +651,8 @@ export interface IProgressListener {
   (info: IProgressInfo): void;
 }
 
-export interface IRedistInfo {
-  /** Human-friendly name for redist, e.g. "Microsoft Visual C++ 2010 Redistributable" */
-  fullName: string;
-
-  /** The exact version provided */
-  version: string;
-
-  /** Architecture of the redist */
-  arch: "386" | "amd64";
-
-  /** Executable to launch (in .7z archive) */
-  command: string;
-
-  /** Arguments to give to executable on launch - aim for quiet/unattended/no reboots */
-  args: string[];
-
-  /** Should the executable be run as admin? */
-  elevate?: boolean;
-
-  /** Registry keys we can check to see if installed */
-  registryKeys?: string[];
-
-  /** List of DLLs to check for, to make sure it's installed */
-  dlls?: string[];
-
-  /** Meaning of some exit codes */
-  exitCodes?: IRedistExitCode[];
-}
-
-export interface IRedistExitCode {
-  code: number;
-  success?: boolean;
-  message?: string;
-}
-
-export type ExeArch = "386" | "amd64";
-
-export type ItchPlatform = "osx" | "windows" | "linux" | "unknown";
-
 export interface IRuntime {
   platform: ItchPlatform;
-  is64: boolean;
 }
 
 export interface IMenuItem extends Electron.MenuItemConstructorOptions {
@@ -792,7 +697,7 @@ export interface ModalResponse {
   recaptchaResponse?: string;
 }
 
-export interface IEvolveBasePayload {
+interface IEvolveBasePayload {
   /** the tab to evolve */
   tab: string;
 
@@ -818,3 +723,10 @@ export interface INavigateTabPayload extends IEvolveBasePayload {
   /** whether to open in the background */
   background: boolean;
 }
+
+export type TaskName =
+  | "install-queue"
+  | "install"
+  | "uninstall"
+  | "configure"
+  | "launch";

@@ -4,7 +4,7 @@ import { emojify } from "node-emoji";
 
 import urls from "../../constants/urls";
 
-export default class Markdown extends React.PureComponent<IGFMProps> {
+class Markdown extends React.PureComponent<IGFMProps> {
   render() {
     return <div dangerouslySetInnerHTML={this.renderHTML()} />;
   }
@@ -25,6 +25,8 @@ export default class Markdown extends React.PureComponent<IGFMProps> {
     return { __html: html };
   }
 }
+
+export default Markdown;
 
 interface IGFMProps {
   source: string;

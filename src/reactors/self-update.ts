@@ -5,7 +5,6 @@ import * as os from "../os";
 import spawn from "../os/spawn";
 import { request } from "../net/request";
 import { isNetworkError } from "../net/errors";
-import { t } from "../format";
 
 import delay from "./delay";
 
@@ -20,6 +19,7 @@ import { actions } from "../actions";
 import memoize from "../util/lru-memoize";
 import { MinimalContext } from "../context/index";
 import { modalWidgets } from "../components/modal-widgets/index";
+import { t } from "../format/t";
 
 const linux = os.itchPlatform() === "linux";
 

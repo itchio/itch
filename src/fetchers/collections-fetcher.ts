@@ -4,7 +4,7 @@ import { indexBy, pluck } from "underscore";
 import { withButlerClient, messages } from "../buse";
 import { Collection } from "../buse/messages";
 
-export default class CollectionsFetcher extends Fetcher {
+class CollectionsFetcher extends Fetcher {
   constructor() {
     super();
   }
@@ -36,3 +36,5 @@ export default class CollectionsFetcher extends Fetcher {
     });
   }
 }
+
+export default CollectionsFetcher;

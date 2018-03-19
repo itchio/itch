@@ -13,7 +13,7 @@ import { Collection } from "../../buse/messages";
 
 const HoverCover = Hoverable(Cover);
 
-export default class CollectionRow extends React.PureComponent<IProps> {
+class CollectionRow extends React.PureComponent<IProps> {
   render() {
     const { collection } = this.props;
     const { title } = collection;
@@ -75,6 +75,8 @@ export default class CollectionRow extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default CollectionRow;
 
 interface IProps {
   collection: Collection;

@@ -1,15 +1,12 @@
 import * as React from "react";
 
-import { formatDuration } from "../format";
-
 import actionForGame from "../util/action-for-game";
 
 import format from "../components/format";
 import { Game, CaveSummary } from "../buse/messages";
+import { formatDuration } from "../format/datetime";
 
-export default class TotalPlaytime extends React.PureComponent<
-  IProps & IDerivedProps
-> {
+class TotalPlaytime extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { game, cave, short = false } = this.props;
     let { secondsRun = 0 } = (cave || {}) as CaveSummary;
@@ -37,6 +34,8 @@ export default class TotalPlaytime extends React.PureComponent<
     return null;
   }
 }
+
+export default TotalPlaytime;
 
 interface IProps {
   game: Game;

@@ -16,7 +16,7 @@ interface IProps {
   seed?: number;
 }
 
-export default class RandomSvg extends React.PureComponent<IProps> {
+class RandomSvg extends React.PureComponent<IProps> {
   render() {
     let { seed, ...restProps } = this.props;
 
@@ -38,7 +38,7 @@ export default class RandomSvg extends React.PureComponent<IProps> {
       const variance = 32;
       const ratio = path.x * path.y / (path.cols * path.lines);
       const code = Math.floor(
-        255 - ratio * (255 - variance) - random() * variance,
+        255 - ratio * (255 - variance) - random() * variance
       ).toString(16);
 
       // + "3344" looked good
@@ -61,3 +61,5 @@ export default class RandomSvg extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default RandomSvg;

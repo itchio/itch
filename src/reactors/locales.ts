@@ -1,7 +1,7 @@
 import { Watcher } from "./watcher";
 
 import { join } from "path";
-import ifs from "../os/ifs";
+import { readFile, writeFile, exists } from "../os/ifs";
 
 import { getLocalesConfigPath, getLocalePath } from "../os/resources";
 import { request } from "../net/request";
@@ -72,7 +72,7 @@ async function doDownloadLocale(
   try {
     logger.debug(`Saving fresh ${lang} locale to ${remote}`);
     const payload = JSON.stringify(finalResources, null, 2);
-    await ifs.writeFile(remote, payload, { encoding: "utf8" });
+    await writeFile(remote, payload, { encoding: "utf8" });
   } catch (e) {
     logger.warn(
       `Could not save locale to ${remote}: ${e.stack || e.message || e}`
@@ -84,14 +84,14 @@ async function doDownloadLocale(
 
 async function loadLocale(store: IStore, lang: string) {
   let local = canonicalFileName(lang);
-  if (!await ifs.exists(local)) {
+  if (!await exists(local)) {
     // try stripping region
     lang = lang.substring(0, 2);
     local = canonicalFileName(lang);
   }
 
   try {
-    const payload = await ifs.readFile(local);
+    const payload = await readFile(local);
     const resources = JSON.parse(payload);
     commitLocale(store, lang, resources);
   } catch (e) {
@@ -107,7 +107,7 @@ async function loadLocale(store: IStore, lang: string) {
     try {
       let payload: string;
       try {
-        payload = await ifs.readFile(remote);
+        payload = await readFile(remote);
       } catch (e) {
         // no updated version of the locale available
       }
@@ -136,7 +136,7 @@ function commitLocale(store: IStore, lang: string, resourcesIn: II18nKeys) {
 export default function(watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
     // load initial locales
-    const configPayload = await ifs.readFile(localesConfigPath);
+    const configPayload = await readFile(localesConfigPath);
     const config = JSON.parse(configPayload);
     store.dispatch(actions.localesConfigLoaded(config));
 

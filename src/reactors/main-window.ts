@@ -15,7 +15,6 @@ import { debounce } from "underscore";
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "main-window" });
 
-import { t } from "../format";
 import { actions } from "../actions";
 
 let createLock = false;
@@ -31,6 +30,7 @@ const macOs = os.platform() === "darwin";
 import { IRootState, IStore } from "../types";
 import { Space } from "../helpers/space";
 import { openAppDevTools } from "./open-app-devtools";
+import { t } from "../format/t";
 
 async function createWindow(store: IStore, hidden: boolean) {
   if (createLock) {

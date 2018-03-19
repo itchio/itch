@@ -1,7 +1,7 @@
 import { ClassificationAction } from "../types";
 import { GameClassification } from "../buse/messages";
 
-export interface IClassificationActions {
+interface IClassificationActions {
   [key: string]: ClassificationAction;
 }
 

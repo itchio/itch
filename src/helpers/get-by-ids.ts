@@ -6,10 +6,7 @@ interface IRecordMap<T> {
   [key: string]: T;
 }
 
-export default function getByIds<T>(
-  records: IRecordMap<T>,
-  ids: string[] | number[]
-): T[] {
+function getByIds<T>(records: IRecordMap<T>, ids: string[] | number[]): T[] {
   if (size(ids) === 0) {
     return emptyArr;
   }
@@ -27,3 +24,5 @@ export default function getByIds<T>(
   }
   return result;
 }
+
+export default getByIds;

@@ -18,7 +18,7 @@ const RememberedProfilesDiv = styled.div`
   overflow-y: auto;
 `;
 
-export default class RememberedProfiles extends React.PureComponent<IProps> {
+class RememberedProfiles extends React.PureComponent<IProps> {
   render() {
     const { profiles, showForm } = this.props;
 
@@ -35,6 +35,8 @@ export default class RememberedProfiles extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default RememberedProfiles;
 
 interface IProps {
   profiles: Profile[];

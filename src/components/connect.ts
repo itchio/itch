@@ -3,7 +3,7 @@ import { connect as reduxConnect } from "react-redux";
 import { IRootState, IDispatch } from "../types";
 import { ActionCreator, dispatcher, actions } from "../actions/index";
 
-export type IActionCreators = {
+type IActionCreators = {
   [key: string]: ActionCreator<any>;
 };
 

@@ -1,6 +1,6 @@
 import { Reducer, Action } from "redux";
 
-export default function derived<T>(
+function derived<T>(
   reducer: Reducer<any>,
   derivedReducer: (state: any) => any
 ): Reducer<T> {
@@ -16,3 +16,5 @@ export default function derived<T>(
     }
   };
 }
+
+export default derived;

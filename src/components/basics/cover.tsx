@@ -58,20 +58,6 @@ const StyledImage = styled(Image)`
   }
 `;
 
-const Ribbon = styled.div`
-  width: 100%;
-  position: absolute;
-  top: 0;
-  height: 65px;
-  right: -50%;
-  z-index: 4;
-  text-align: center;
-  background: rgba(250, 92, 92, 0.93);
-  transform: rotateZ(45deg);
-  font-size: 20px;
-  box-shadow: 0 0 10px 1px #2f2d2d;
-`;
-
 class Cover extends React.PureComponent<IProps, IState> {
   constructor(props: Cover["props"], context) {
     super(props, context);
@@ -85,7 +71,6 @@ class Cover extends React.PureComponent<IProps, IState> {
       stillCoverUrl,
       hover,
       gameId,
-      ribbon,
       square,
       className,
       ...restProps
@@ -110,7 +95,6 @@ class Cover extends React.PureComponent<IProps, IState> {
     return (
       <CoverDiv {...restProps} className={classNames(className, { square })}>
         {gif && showGifMarker ? <GifMarker /> : null}
-        {ribbon ? <Ribbon /> : null}
         {url ? (
           <StyledImage
             src={url}
@@ -147,7 +131,7 @@ interface IState {
   error: boolean;
 }
 
-export interface IProps extends IHoverProps {
+interface IProps extends IHoverProps {
   showGifMarker?: boolean;
   coverUrl: string;
   stillCoverUrl: string;
@@ -155,7 +139,6 @@ export interface IProps extends IHoverProps {
   onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
   className?: string;
   gameId: number;
-  ribbon?: boolean;
   square?: boolean;
 }
 

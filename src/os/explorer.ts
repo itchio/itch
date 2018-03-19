@@ -10,5 +10,3 @@ export function open(folder: string) {
     shell.openItem(folder);
   }
 }
-
-export default { open };

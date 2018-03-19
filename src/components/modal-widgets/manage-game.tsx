@@ -246,10 +246,7 @@ export interface IManageGameParams {
   loadingUploads: boolean;
 }
 
-export interface IManageGameResponse {}
-
-interface IProps
-  extends IModalWidgetProps<IManageGameParams, IManageGameResponse> {}
+interface IProps extends IModalWidgetProps<IManageGameParams, void> {}
 
 const actionCreators = actionCreatorsList("closeModal", "exploreCave");
 

@@ -14,7 +14,6 @@ import {
   II18nKeys,
   IProgressInfo,
   IOpenTabPayload,
-  IQueueLaunchOpts,
   GenerosityLevel,
   ISearchResults,
   IPreferencesState,
@@ -26,7 +25,9 @@ import {
   INavigatePayload,
   IEvolveTabPayload,
   INavigateTabPayload,
+  TaskName,
 } from "../types/index";
+
 import {
   Game,
   Upload,
@@ -38,8 +39,8 @@ import {
   Download,
   DownloadProgress,
   InstallLocationSummary,
+  Cave,
 } from "../buse/messages";
-import { TaskName } from "../types/tasks";
 import {
   ITypedModal,
   ITypedModalUpdate,
@@ -50,7 +51,7 @@ export interface ActionCreator<PayloadType> {
   (payload: PayloadType): IAction<PayloadType>;
 }
 
-export function action<PayloadType>(): ActionCreator<PayloadType> {
+function action<PayloadType>(): ActionCreator<PayloadType> {
   const ret = (type: string) => (
     payload: PayloadType
   ): IAction<PayloadType> => {
@@ -578,7 +579,7 @@ export const actions = wireActions({
     /** the upload we picked */
     upload: Upload;
   }>(),
-  queueLaunch: action<IQueueLaunchOpts>(),
+  queueLaunch: action<{ cave: Cave }>(),
   launchEnded: action<{}>(),
   manageGame: action<{
     /** which game to manage */

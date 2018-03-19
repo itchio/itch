@@ -40,7 +40,7 @@ const HistoryDiv = styled.div`
   }
 `;
 
-export default class Meat extends React.PureComponent<IProps> {
+class Meat extends React.PureComponent<IProps> {
   render() {
     const inst = this.props.tabInstance;
     const sp = Space.fromInstance(inst);
@@ -108,5 +108,7 @@ export default class Meat extends React.PureComponent<IProps> {
     }
   }
 }
+
+export default Meat;
 
 interface IProps extends IMeatProps {}

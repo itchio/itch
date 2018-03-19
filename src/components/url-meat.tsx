@@ -9,7 +9,7 @@ import { IMeatProps } from "./meats/types";
 import BrowserMeat, { ControlsType } from "./browser-meat";
 import { Space } from "../helpers/space";
 
-export default class UrlMeat extends React.PureComponent<IProps, IState> {
+class UrlMeat extends React.PureComponent<IProps, IState> {
   constructor(props: IProps, context) {
     super(props, context);
     this.state = {
@@ -69,6 +69,8 @@ export default class UrlMeat extends React.PureComponent<IProps, IState> {
     }
   }
 }
+
+export default UrlMeat;
 
 interface IUrlAndControls {
   url: string;

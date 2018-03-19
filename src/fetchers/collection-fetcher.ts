@@ -3,7 +3,7 @@ import { withButlerClient, messages } from "../buse";
 import { Game } from "../buse/messages";
 import getByIds from "../helpers/get-by-ids";
 
-export default class CollectionFetcher extends Fetcher {
+class CollectionFetcher extends Fetcher {
   async work(): Promise<void> {
     // first, filter what we already got
     const cachedGames = getByIds(
@@ -54,3 +54,5 @@ export default class CollectionFetcher extends Fetcher {
     );
   }
 }
+
+export default CollectionFetcher;

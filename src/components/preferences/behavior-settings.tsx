@@ -7,7 +7,7 @@ import ExperimentalMark from "./experimental-mark";
 import format from "../format";
 import urls from "../../constants/urls";
 
-export default class BehaviorSettings extends React.PureComponent<IProps> {
+class BehaviorSettings extends React.PureComponent<IProps> {
   render() {
     return (
       <>
@@ -67,5 +67,7 @@ export default class BehaviorSettings extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default BehaviorSettings;
 
 interface IProps {}

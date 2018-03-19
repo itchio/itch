@@ -22,7 +22,7 @@ const emptyArr = [];
  * This will give:
  *   {"10": [1], "20": [2, 3]}
  */
-export default function groupIdBy<T>(
+function groupIdBy<T>(
   records: IRecordMap | IRecord[],
   field: string | IGetter<T>
 ): IGrouped {
@@ -46,3 +46,5 @@ export default function groupIdBy<T>(
   }
   return result;
 }
+
+export default groupIdBy;

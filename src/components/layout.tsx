@@ -15,8 +15,7 @@ import { IRootState } from "../types";
 import styled from "./styles";
 import { formatString } from "./format";
 import { injectIntl, InjectedIntl } from "react-intl";
-import { DATE_FORMAT } from "../format/index";
-import { formatDate } from "../format/datetime";
+import { formatDate, DATE_FORMAT } from "../format/datetime";
 import classNames = require("classnames");
 
 const LayoutContainer = styled.div`

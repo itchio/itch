@@ -38,7 +38,7 @@ interface GameColumnData {
   flexBasis?: number;
 }
 
-export const columnData: {
+const columnData: {
   [key: string]: GameColumnData;
 } = {
   [GameColumn.Cover]: {
@@ -82,7 +82,7 @@ export const columnData: {
   },
 };
 
-export const defaultGameColumns = [
+const defaultGameColumns = [
   GameColumn.Cover,
   GameColumn.Title,
   GameColumn.PlayTime,

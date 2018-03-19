@@ -3,8 +3,6 @@ import * as classNames from "classnames";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import Chart from "./chart";
 
-import { downloadProgress } from "../../format";
-
 import TimeAgo from "../basics/time-ago";
 import UploadIcon from "../basics/upload-icon";
 import IconButton from "../basics/icon-button";
@@ -13,12 +11,12 @@ import Hover, { IHoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
 import MainAction from "../game-actions/main-action";
 
-import { IDownloadSpeeds, ITask, IRootState } from "../../types";
+import { ITask, IRootState } from "../../types";
 
 import styled, * as styles from "../styles";
 
 import format from "../format";
-import doesEventMeanBackground from "../when-click-navigates";
+import { doesEventMeanBackground } from "../when-click-navigates";
 import getGameStatus, {
   IGameStatus,
   IOperation,
@@ -34,6 +32,7 @@ import { modalWidgets } from "../modal-widgets/index";
 import { Download } from "../../buse/messages";
 import LoadingCircle from "../basics/loading-circle";
 import { lighten } from "polished";
+import { downloadProgress } from "../../format/download-progress";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -475,7 +474,7 @@ const actionCreators = actionCreatorsList(
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   status: IGameStatus;
-  speeds: IDownloadSpeeds;
+  speeds: number[];
 
   downloadsPaused: boolean;
   tasksByGameId: {

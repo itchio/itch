@@ -8,7 +8,7 @@ import rootLogger from "../logger";
 import { actions } from "../actions/index";
 const logger = rootLogger.child({ name: "watcher" });
 
-export interface IReactor<T> {
+interface IReactor<T> {
   (store: IStore, action: IAction<T>): Promise<void>;
 }
 

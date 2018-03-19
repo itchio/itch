@@ -88,9 +88,6 @@ export interface IShowErrorParams {
   log: string;
 }
 
-export interface IShowErrorResponse {}
-
-interface IProps
-  extends IModalWidgetProps<IShowErrorParams, IShowErrorResponse> {}
+interface IProps extends IModalWidgetProps<IShowErrorParams, void> {}
 
 export default ShowError;

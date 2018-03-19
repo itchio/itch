@@ -1,7 +1,5 @@
-import { isEmpty, filter, union, indexBy, pluck } from "underscore";
+import { isEmpty, union, indexBy, pluck } from "underscore";
 import { ISearchResults } from "../../types/index";
-import getByIds from "../../helpers/get-by-ids";
-import isPlatformCompatible from "../../util/is-platform-compatible";
 import { Game, User } from "../../buse/messages";
 interface ISource<T> {
   set: {
@@ -10,7 +8,7 @@ interface ISource<T> {
   ids: number[];
 }
 
-export function mergeResources<T>(
+function mergeResources<T>(
   current: ISource<T>,
   addition: ISource<T>
 ): ISource<T> {
@@ -28,7 +26,7 @@ export function mergeResources<T>(
   };
 }
 
-export function mergeSearchResults(
+function mergeSearchResults(
   current: ISearchResults,
   addition: ISearchResults
 ): ISearchResults {
@@ -64,20 +62,4 @@ export function hasSearchResults(sr: ISearchResults): boolean {
     return true;
   }
   return false;
-}
-
-export function excludeIncompatibleSearchResults(input: ISearchResults) {
-  if (!input || !input.games) {
-    return input;
-  }
-
-  const inputGames = getByIds(input.games.set, input.games.ids);
-  const games = filter(inputGames, isPlatformCompatible);
-  return {
-    games: {
-      set: indexBy(games, "id"),
-      ids: pluck(games, "id"),
-    },
-    users: input.users,
-  };
 }

@@ -11,13 +11,8 @@ import EmptyState from "./empty-state";
 
 import { ISortParams } from "./sort-types";
 
-import styled from "./styles";
 import { Space } from "../helpers/space";
 import LoadingState from "./loading-state";
-
-export const HubGamesDiv = styled.div`
-  flex-grow: 1;
-`;
 
 function isColumnDescDefault(sortBy: string): boolean {
   return sortBy === "secondsRun" || sortBy === "lastTouchedAt";

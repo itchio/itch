@@ -4,12 +4,7 @@ import * as bluebird from "bluebird";
 import * as fs from "fs";
 import * as path from "path";
 
-import {
-  IFSError,
-  IGlobStatic,
-  IReadFileOpts,
-  IWriteFileOpts,
-} from "../types/sf";
+import { IFSError, IReadFileOpts, IWriteFileOpts } from "../types/sf";
 
 /*
  * Let's patch all the things! Electron randomly decides to
@@ -26,25 +21,11 @@ import {
 
 import { EventEmitter } from "events";
 
-/**
- * Promised version of isaacs' little globber
- * https://www.npmjs.com/package/glob
- *
- * (single function, callback-based, doesn't accept fs)
- */
-export const glob = promisify(require("glob") as IGlobStatic);
-
 type Mkdirp = (path: string, opts?: any) => Promise<void>;
 export const mkdirp: Mkdirp = promisify(require("mkdirp")) as any;
 
 type Rimraf = (path: string, opts?: any) => Promise<void>;
 const rimraf: Rimraf = promisify(require("rimraf")) as any;
-
-// global ignore patterns
-export const globIgnore = [
-  // on macOS, trashes exist on dmg volumes but cannot be scandir'd for some reason
-  "**/.Trashes/**",
-];
 
 export const nodeReadFile = (bluebird.promisify(
   fs.readFile

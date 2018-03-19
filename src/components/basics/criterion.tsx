@@ -37,7 +37,7 @@ const CriterionDiv = styled.div`
   }
 `;
 
-export default class Criterion extends React.PureComponent<IProps> {
+class Criterion extends React.PureComponent<IProps> {
   render() {
     const { label, checked, onChange } = this.props;
 
@@ -53,6 +53,8 @@ export default class Criterion extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default Criterion;
 
 interface IProps {
   label: string | JSX.Element;

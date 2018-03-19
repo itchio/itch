@@ -21,7 +21,7 @@ export interface IResponse {
 
 import { WriteStream } from "fs";
 
-export interface IRequestCallback {
+interface IRequestCallback {
   (res: IResponse): void;
 }
 

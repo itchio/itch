@@ -27,5 +27,3 @@ export async function createGist(data: IGistData) {
     )}`
   );
 }
-
-export default { createGist };

@@ -14,7 +14,7 @@ export interface IFormulaSpec {
   };
 }
 
-export interface IFormulas {
+interface IFormulas {
   butler: IFormulaSpec;
 
   [formulaName: string]: IFormulaSpec;

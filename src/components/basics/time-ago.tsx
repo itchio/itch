@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { FormattedRelative } from "react-intl";
 
-export default class TimeAgo extends React.PureComponent<IProps> {
+class TimeAgo extends React.PureComponent<IProps> {
   render() {
     const { className, before } = this.props;
     let { date } = this.props;
@@ -29,6 +29,8 @@ export default class TimeAgo extends React.PureComponent<IProps> {
     );
   }
 }
+
+export default TimeAgo;
 
 interface IProps {
   date: Date;

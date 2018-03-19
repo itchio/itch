@@ -1,6 +1,6 @@
 import { MouseEvent } from "react";
 
-export default function doesEventMeanBackground(e: MouseEvent<any>) {
+export function doesEventMeanBackground(e: MouseEvent<any>) {
   if (!e) {
     return false;
   }
