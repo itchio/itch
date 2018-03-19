@@ -145,6 +145,9 @@ export const actions = wireActions({
   // setup
 
   setupStatus: action<ISetupOperation>(),
+  setupOperationProgress: action<{
+    progress: IProgressInfo;
+  }>(),
   setupDone: action<{}>(),
   retrySetup: action<{}>(),
 

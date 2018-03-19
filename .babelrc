@@ -1,5 +1,16 @@
 {
-    "plugins": [
-        ["transform-node-env-inline"]
-    ]
+  "plugins": [["transform-node-env-inline"]],
+  "env": {
+    "development": {
+      "plugins": [
+        [
+          "transform-async-to-module-method",
+          {
+            "module": "bluebird",
+            "method": "coroutine"
+          }
+        ]
+      ]
+    }
+  }
 }

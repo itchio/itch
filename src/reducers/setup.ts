@@ -18,6 +18,21 @@ export default reducer<ISetupState>(initialState, on => {
     };
   });
 
+  on(actions.setupOperationProgress, (state, action) => {
+    let { blockingOperation } = state;
+    const { progress } = action.payload;
+    if (blockingOperation) {
+      blockingOperation = {
+        ...blockingOperation,
+        ...progress,
+      };
+    }
+    return {
+      ...state,
+      blockingOperation,
+    };
+  });
+
   on(actions.setupDone, (state, action) => {
     return {
       ...state,

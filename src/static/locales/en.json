@@ -138,6 +138,8 @@
   "login.status.dependency_check": "Making sure we have everything set up…",
   "login.status.dependency_install":
     "Installing dependency {{name}} {{version}}",
+  "login.status.finalizing_installation":
+    "Finalizing installation…",
   "login.status.login": "Logging you in…",
   "login.status.setup_failure": "There was a problem during setup: {{error}}",
   "login.two_factor.title": "Two-factor authentication",

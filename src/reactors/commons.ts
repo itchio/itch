@@ -12,6 +12,10 @@ import { withButlerClient, messages } from "../buse";
 const logger = rootLogger.child({ name: "commons" });
 
 async function updateCommonsNow(store: IStore) {
+  if (!store.getState().setup.done) {
+    return;
+  }
+
   await withButlerClient(logger, async client => {
     const { caves, downloadKeys, installLocations } = await client.call(
       messages.FetchCommons({})

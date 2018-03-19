@@ -103,6 +103,10 @@ export default function(watcher: Watcher) {
   watcher.on(actions.checkForGameUpdates, async (store, action) => {
     reschedule(store);
 
+    if (!store.getState().setup.done) {
+      return;
+    }
+
     store.dispatch(
       actions.gameUpdateCheckStatus({
         checking: true,
