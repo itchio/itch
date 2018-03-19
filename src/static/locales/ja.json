@@ -343,5 +343,6 @@
     "game.install.could_not_launch.missing_jre": "必要のJavaはこのコンピュータに見つかりませんでした。",
     "game.install.libraries_missing": "必要の{{arch}}のライブラリはありません： {{libraries}}",
     "grid.criterion.search": "検索...",
-    "grid.filters.options.compatible": "互換"
+    "grid.filters.options.compatible": "互換",
+    "download.reason.reinstall": "再インストール"
 }
