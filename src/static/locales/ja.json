@@ -346,5 +346,7 @@
     "grid.filters.options.compatible": "互換",
     "download.reason.reinstall": "再インストール",
     "download.reason.heal": "検証と修正",
-    "download.ongoing.install": "{{title}}のインストール中…"
+    "download.ongoing.install": "{{title}}のインストール中…",
+    "download.ongoing.update": "{{title}}のアップデート中…",
+    "download.ongoing.reinstall": "{{title}}の再インストール中…"
 }
