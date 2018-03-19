@@ -511,5 +511,6 @@
     "grid.really_empty_state.explanation": "...пока!",
     "grid.item.running.prepare": "Подготавливаем…",
     "grid.item.running.clean": "Прибираемся…",
-    "preferences.install_location.disk_usage": "Использование диска"
+    "preferences.install_location.disk_usage": "Использование диска",
+    "login.status.finalizing_installation": "Заканчиваем установку…"
 }
