@@ -378,7 +378,7 @@ const BigButtonsDiv = styled.div`
 `;
 
 @watching
-export class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
+class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
   constructor(props: Modal["props"], context) {
     super(props, context);
     this.state = {

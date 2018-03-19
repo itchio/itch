@@ -45,7 +45,7 @@ const GateDiv = styled.div`
 
 const appWhite = require("../../static/images/logos/app-white.svg");
 
-export class GatePage extends React.PureComponent<IProps & IDerivedProps> {
+class GatePage extends React.PureComponent<IProps & IDerivedProps> {
   username: HTMLInputElement;
   password: HTMLInputElement;
 

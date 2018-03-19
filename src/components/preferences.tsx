@@ -145,7 +145,7 @@ const PreferencesContentDiv = styled.div`
   }
 `;
 
-export class Preferences extends React.PureComponent<IProps & IDerivedProps> {
+class Preferences extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { showAdvanced } = this.props.preferences;
     const { updatePreferences } = this.props;

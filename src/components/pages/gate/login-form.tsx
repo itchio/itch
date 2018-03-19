@@ -11,7 +11,7 @@ import { Links } from "./links";
 import styled, * as styles from "../../styles";
 import { IRootState } from "../../../types";
 
-export class LoginForm extends React.PureComponent<IProps & IDerivedProps> {
+class LoginForm extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { openInExternalBrowser, showSaved, lastUsername } = this.props;
 

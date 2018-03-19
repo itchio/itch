@@ -18,7 +18,7 @@ const CollectionsContainer = styled.div`
   ${styles.meat()};
 `;
 
-export class Collections extends React.PureComponent<IProps & IDerivedProps> {
+class Collections extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { loading, navigate } = this.props;
 

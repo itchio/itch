@@ -18,7 +18,7 @@ const ContentContainer = styled.div`
   flex-grow: 1;
 `;
 
-export class HubContent extends React.PureComponent<IProps & IDerivedProps> {
+class HubContent extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     if (!this.props.credentials) {
       return <div />;

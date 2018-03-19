@@ -17,9 +17,7 @@ import { actions } from "../../../actions";
 import watching, { Watcher } from "../../watching";
 
 @watching
-export class RememberedProfile extends React.PureComponent<
-  IProps & IDerivedProps
-> {
+class RememberedProfile extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { profile } = this.props;
     const { user } = profile;

@@ -55,7 +55,7 @@ const NoResults = styled.p`
 `;
 
 @watching
-export class SearchResultBar extends React.PureComponent<
+class SearchResultBar extends React.PureComponent<
   IProps & IDerivedProps,
   IState
 > {

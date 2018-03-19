@@ -29,7 +29,7 @@ const LocationContainer = styled.div`
   ${styles.meat()};
 `;
 
-export class Location extends React.PureComponent<IProps & IDerivedProps> {
+class Location extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tab, tabInstance, browseInstallLocation, loading } = this.props;
 

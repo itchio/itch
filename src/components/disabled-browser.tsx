@@ -31,9 +31,7 @@ const Spacer = styled.div`
   width: 10px;
 `;
 
-export class DisabledBrowser extends React.PureComponent<
-  IProps & IDerivedProps
-> {
+class DisabledBrowser extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     return (
       <DisabledBrowserContainer>

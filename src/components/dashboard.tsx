@@ -15,7 +15,7 @@ const DashboardContainer = styled.div`
   ${styles.meat()};
 `;
 
-export class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
+class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tab, loading, navigate } = this.props;
 

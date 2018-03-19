@@ -47,7 +47,7 @@ const MeatTab = styled.div`
   }
 `;
 
-export class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
+class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { credentials, openTabs, tabInstances, id: currentId } = this.props;
     if (!(credentials && credentials.me && credentials.me.id)) {

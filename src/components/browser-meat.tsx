@@ -109,7 +109,7 @@ const Title = styled.h2`
   font-size: ${props => props.theme.fontSizes.huge};
 `;
 
-export class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
+class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
   initialURL: string;
 
   constructor(props: any, context: any) {

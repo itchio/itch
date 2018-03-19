@@ -18,7 +18,7 @@ const CollectionDiv = styled.div`
   ${styles.meat()};
 `;
 
-export class Collection extends React.PureComponent<IProps & IDerivedProps> {
+class Collection extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tab, tabInstance, loading } = this.props;
 

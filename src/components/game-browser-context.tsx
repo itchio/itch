@@ -34,9 +34,7 @@ const BrowserContextDiv = styled.div`
   align-items: center;
 `;
 
-export class GameBrowserContext extends React.PureComponent<
-  IProps & IDerivedProps
-> {
+class GameBrowserContext extends React.PureComponent<IProps & IDerivedProps> {
   constructor(props: IProps & IDerivedProps, context) {
     super(props, context);
     this.state = {};

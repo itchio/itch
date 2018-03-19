@@ -4,7 +4,7 @@
 declare module "recharts" {
   import * as React from "react";
 
-  export class ResponsiveContainer extends React.PureComponent<
+  class ResponsiveContainer extends React.PureComponent<
     IResponsiveContainerProps,
     any
   > {}
@@ -14,7 +14,7 @@ declare module "recharts" {
     height?: string | number;
   }
 
-  export class AreaChart extends React.PureComponent<IAreaChartProps, any> {}
+  class AreaChart extends React.PureComponent<IAreaChartProps, any> {}
 
   export interface IAreaChartProps {
     margin?: {
@@ -26,7 +26,7 @@ declare module "recharts" {
     data: any /** whoo, free-form! can't type that. */;
   }
 
-  export class Area extends React.PureComponent<IAreaProps, any> {}
+  class Area extends React.PureComponent<IAreaProps, any> {}
 
   export type AreaType = "monotone";
 
