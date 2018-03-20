@@ -4,11 +4,28 @@
 import { createRequest, createNotification } from "node-buse";
 
 /**
- * Params for Version.Get
+ * Params for Connection.New
  */
-export interface VersionGetParams {
+export interface ConnectionNewParams {
   // no fields
 }
+
+/**
+ * Result for Connection.New
+ */
+export interface ConnectionNewResult {
+  /** undocumented */
+  address: string;
+}
+
+/**
+ * Ask butler to listen for a new connection, so commands can
+ * be sent to it.
+ */
+export const ConnectionNew = createRequest<
+  ConnectionNewParams,
+  ConnectionNewResult
+>("Connection.New");
 
 /**
  * Result for Version.Get
@@ -1861,6 +1878,13 @@ export interface Receipt {
    * used for a clean uninstall.
    */
   msiProductCode?: string;
+}
+
+/**
+ * Params for Version.Get
+ */
+export interface VersionGetParams {
+  // no fields
 }
 
 /**
