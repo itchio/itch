@@ -54,9 +54,10 @@ const eo = {};
 export async function call<Params, Res>(
   rc: IRequestCreator<Params, Res>,
   params?: Params,
-  clientSetup?: (client: Client) => void
+  clientSetup?: (client: Client) => void,
+  logger?: Logger
 ): Promise<Res> {
-  return await withButlerClient(lazyDefaultLogger, async client => {
+  return await withButlerClient(logger || lazyDefaultLogger, async client => {
     if (clientSetup) {
       clientSetup(client);
     }
