@@ -9,6 +9,7 @@ import styled, * as styles from "../styles";
 import { actions } from "../../actions";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Game } from "../../buse/messages";
+import { whenClickNavigates } from "../when-click-navigates";
 
 const GameSearchResultDiv = styled.div`
   display: flex;
@@ -83,7 +84,7 @@ const ShortText = styled.span`
 
 class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
   render() {
-    const { game, onClick, chosen } = this.props;
+    const { game, chosen } = this.props;
     const { title, stillCoverUrl, coverUrl } = game;
 
     const resultClasses = classNames("game-search-result", {
@@ -93,7 +94,7 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
     return (
       <GameSearchResultDiv
         className={resultClasses}
-        onMouseDown={onClick}
+        onMouseDown={this.onClick}
         data-game-id={game.id}
         ref="root"
         onMouseEnter={this.onMouseEnter}
@@ -135,6 +136,15 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
     );
   }
 
+  onClick = (ev: React.MouseEvent<any>) => {
+    ev.preventDefault();
+
+    whenClickNavigates(ev, ({ background }) => {
+      const { game, navigateToGame } = this.props;
+      navigateToGame({ game, background });
+    });
+  };
+
   onMouseEnter = () => {
     this.props.searchHighlightOffset({
       offset: this.props.index,
@@ -150,13 +160,15 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
 
 interface IProps {
   game: Game;
-  onClick: () => void;
   chosen: boolean;
   active: boolean;
   index: number;
 }
 
-const actionCreators = actionCreatorsList("searchHighlightOffset");
+const actionCreators = actionCreatorsList(
+  "searchHighlightOffset",
+  "navigateToGame"
+);
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 

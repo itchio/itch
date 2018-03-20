@@ -104,7 +104,6 @@ class SearchResultBar extends React.PureComponent<
     const active = this.props.open;
 
     const items: React.ReactElement<any>[] = [];
-    const { navigateToGame } = this.props;
 
     if (!hasSearchResults(results)) {
       items.push(
@@ -129,9 +128,6 @@ class SearchResultBar extends React.PureComponent<
               index={index}
               chosen={index === highlight}
               active={active}
-              onClick={() => {
-                navigateToGame({ game });
-              }}
             />
           );
           index++;
