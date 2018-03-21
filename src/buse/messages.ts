@@ -916,6 +916,38 @@ export const DownloadsDriveProgress = createNotification<
 >("Downloads.Drive.Progress");
 
 /**
+ * Payload for Downloads.Drive.Started
+ */
+export interface DownloadsDriveStartedNotification {
+  /** undocumented */
+  download: Download;
+}
+
+/**
+ * undocumented
+ */
+export const DownloadsDriveStarted = createNotification<
+  DownloadsDriveStartedNotification
+>("Downloads.Drive.Started");
+
+/**
+ * Payload for Downloads.Drive.Errored
+ */
+export interface DownloadsDriveErroredNotification {
+  /** undocumented */
+  download: Download;
+  /** undocumented */
+  error: string;
+}
+
+/**
+ * undocumented
+ */
+export const DownloadsDriveErrored = createNotification<
+  DownloadsDriveErroredNotification
+>("Downloads.Drive.Errored");
+
+/**
  * Payload for Downloads.Drive.Finished
  */
 export interface DownloadsDriveFinishedNotification {
@@ -929,6 +961,21 @@ export interface DownloadsDriveFinishedNotification {
 export const DownloadsDriveFinished = createNotification<
   DownloadsDriveFinishedNotification
 >("Downloads.Drive.Finished");
+
+/**
+ * Payload for Downloads.Drive.Discarded
+ */
+export interface DownloadsDriveDiscardedNotification {
+  /** undocumented */
+  download: Download;
+}
+
+/**
+ * undocumented
+ */
+export const DownloadsDriveDiscarded = createNotification<
+  DownloadsDriveDiscardedNotification
+>("Downloads.Drive.Discarded");
 
 /**
  * undocumented

@@ -3,22 +3,17 @@ import { actions } from "../../actions";
 
 import rootLogger from "../../logger";
 import { modalWidgets } from "../../components/modal-widgets/index";
-import {
-  makeButlerInstance,
-  messages,
-  withButlerClient,
-} from "../../buse/index";
+import { messages, withLogger } from "../../buse/index";
 const logger = rootLogger.child({ name: "manage-game" });
+const call = withLogger(logger);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.manageGame, async (store, action) => {
     const { game } = action.payload;
 
-    const { caves } = await withButlerClient(
-      logger,
-      async client =>
-        await client.call(messages.FetchCavesByGameID({ gameId: game.id }))
-    );
+    const { caves } = await call(messages.FetchCavesByGameID, {
+      gameId: game.id,
+    });
 
     const widgetParams = {
       game,
@@ -44,20 +39,12 @@ export default function(watcher: Watcher) {
     const modalId = openModal.payload.id;
 
     try {
-      const instance = await makeButlerInstance();
-      instance.onClient(async client => {
-        try {
-          const { uploads } = await client.call(
-            messages.GameFindUploads({ game })
-          );
-          widgetParams.allUploads = uploads;
-        } catch (e) {
-          console.log(`Could not fetch compatible uploads: ${e.stack}`);
-        } finally {
-          instance.cancel();
-        }
-      });
-      await instance.promise();
+      try {
+        const { uploads } = await call(messages.GameFindUploads, { game });
+        widgetParams.allUploads = uploads;
+      } catch (e) {
+        console.log(`Could not fetch compatible uploads: ${e.stack}`);
+      }
     } catch (e) {
       logger.warn(`could not list uploads: ${e.message}`);
     } finally {

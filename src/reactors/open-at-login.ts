@@ -35,7 +35,7 @@ async function updateOpenAtLoginState(
     );
     const autostartFilePath = ospath.join(configHome, desktopFileName);
 
-    logger.info(`Copying ${desktopFilePath} => ${autostartFilePath}`);
+    logger.debug(`Copying ${desktopFilePath} => ${autostartFilePath}`);
 
     if (openAtLogin) {
       try {

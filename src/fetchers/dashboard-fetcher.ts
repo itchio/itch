@@ -1,6 +1,6 @@
 import { Fetcher } from "./fetcher";
 import { map } from "underscore";
-import { withButlerClient, messages } from "../buse";
+import { messages, withLogger } from "../buse";
 import getByIds from "../helpers/get-by-ids";
 
 class DashboardFetcher extends Fetcher {
@@ -19,21 +19,19 @@ class DashboardFetcher extends Fetcher {
       }
     }
 
-    await withButlerClient(this.logger, async client => {
-      client.onNotification(
-        messages.FetchProfileGamesYield,
-        async ({ params }) => {
-          const games = map(params.items, i => i.game);
+    const call = withLogger(this.logger);
+    await call(
+      messages.FetchProfileGames,
+      {
+        profileId: this.profileId(),
+      },
+      client => {
+        client.on(messages.FetchProfileGamesYield, async ({ items }) => {
+          const games = map(items, i => i.game);
           this.pushUnfilteredGames(games);
-        }
-      );
-
-      await client.call(
-        messages.FetchProfileGames({
-          profileId: this.profileId(),
-        })
-      );
-    });
+        });
+      }
+    );
   }
 
   clean() {

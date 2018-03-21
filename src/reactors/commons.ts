@@ -8,33 +8,33 @@ import { actions } from "../actions";
 import { throttle, isEqual } from "underscore";
 
 import rootLogger from "../logger";
-import { withButlerClient, messages } from "../buse";
+import { messages, withLogger } from "../buse";
 const logger = rootLogger.child({ name: "commons" });
+const call = withLogger(logger);
 
 async function updateCommonsNow(store: IStore) {
   if (!store.getState().setup.done) {
     return;
   }
 
-  await withButlerClient(logger, async client => {
-    const { caves, downloadKeys, installLocations } = await client.call(
-      messages.FetchCommons({})
-    );
+  const { caves, downloadKeys, installLocations } = await call(
+    messages.FetchCommons,
+    {}
+  );
 
-    let locationSizes = {};
-    if (!isEmpty(installLocations)) {
-      for (const x of installLocations) {
-        locationSizes[x.id] = x.sizeInfo.installedSize;
-      }
+  let locationSizes = {};
+  if (!isEmpty(installLocations)) {
+    for (const x of installLocations) {
+      locationSizes[x.id] = x.sizeInfo.installedSize;
     }
+  }
 
-    push(store, {
-      caves: indexBy(caves, "id"),
-      caveIdsByGameId: groupIdBy(caves, "gameId"),
-      downloadKeys: indexBy(downloadKeys, "id"),
-      downloadKeyIdsByGameId: groupIdBy(downloadKeys, "gameId"),
-      locationSizes,
-    });
+  push(store, {
+    caves: indexBy(caves, "id"),
+    caveIdsByGameId: groupIdBy(caves, "gameId"),
+    downloadKeys: indexBy(downloadKeys, "id"),
+    downloadKeyIdsByGameId: groupIdBy(downloadKeys, "gameId"),
+    locationSizes,
   });
 }
 

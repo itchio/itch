@@ -49,17 +49,11 @@ const baseReducer = reducer<IDownloadsState>(initialState, on => {
     };
   });
 
-  on(actions.pauseDownloads, (state, action) => {
+  on(actions.setDownloadsPaused, (state, action) => {
+    const { paused } = action.payload;
     return {
       ...state,
-      paused: true,
-    };
-  });
-
-  on(actions.resumeDownloads, (state, action): IDownloadsState => {
-    return {
-      ...state,
-      paused: false,
+      paused,
     };
   });
 });

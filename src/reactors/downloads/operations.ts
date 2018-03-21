@@ -1,38 +1,32 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
-import { messages, withButlerClient } from "../../buse";
+import { messages, withLogger } from "../../buse";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "download-operations" });
+const call = withLogger(logger);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.prioritizeDownload, async (store, action) => {
     const { id } = action.payload;
-    await withButlerClient(logger, async client => {
-      await client.call(messages.DownloadsPrioritize({ downloadId: id }));
-    });
+    await call(messages.DownloadsPrioritize, { downloadId: id });
+    store.dispatch(actions.refreshDownloads({}));
   });
 
   watcher.on(actions.discardDownload, async (store, action) => {
     const { id } = action.payload;
-    await withButlerClient(logger, async client => {
-      await client.call(messages.DownloadsDiscard({ downloadId: id }));
-    });
+    await call(messages.DownloadsDiscard, { downloadId: id });
+    store.dispatch(actions.refreshDownloads({}));
   });
 
   watcher.on(actions.retryDownload, async (store, action) => {
     const { id } = action.payload;
-    await withButlerClient(logger, async client => {
-      await client.call(messages.DownloadsRetry({ downloadId: id }));
-    });
+    await call(messages.DownloadsRetry, { downloadId: id });
+    store.dispatch(actions.refreshDownloads({}));
   });
 
   watcher.on(actions.clearFinishedDownloads, async (store, action) => {
-    await withButlerClient(logger, async client => {
-      await client.call(messages.DownloadsClearFinished({}));
-    });
+    await call(messages.DownloadsClearFinished, {});
+    store.dispatch(actions.refreshDownloads({}));
   });
-
-  // TODO: have butler clear game downloads when an uninstall is performed
-  // and clear cave downloads when a download from the same cave is performed
 }

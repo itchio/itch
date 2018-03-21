@@ -37,7 +37,7 @@ export default function(watcher: Watcher) {
     const sp = Space.fromStore(store, tab);
     if (sp.prefix === "games") {
       const game = sp.game();
-      if (game) {
+      if (game && game.id) {
         template = concatTemplates(template, gameControls(store, game));
       }
     }

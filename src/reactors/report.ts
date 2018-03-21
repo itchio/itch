@@ -10,7 +10,7 @@ import { reportIssue } from "../util/crash-reporter";
 import { createGist, IGistData } from "../api/github";
 import * as sf from "../os/sf";
 import { caveLogPath } from "../os/paths";
-import { withButlerClient, messages } from "../buse";
+import { messages, call } from "../buse";
 
 // TODO: move to itch.io feedback system, see
 // https://github.com/itchio/itch/issues/1511
@@ -20,10 +20,7 @@ export default function(watcher: Watcher) {
     const { caveId } = action.payload;
 
     try {
-      const { cave } = await withButlerClient(
-        logger,
-        async client => await client.call(messages.FetchCave({ caveId }))
-      );
+      const { cave } = await call(messages.FetchCave, { caveId });
       const { game } = cave;
       const logPath = caveLogPath(caveId);
       const gameLog = await sf.readFile(logPath, { encoding: "utf8" });

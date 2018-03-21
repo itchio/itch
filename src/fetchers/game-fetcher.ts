@@ -2,7 +2,7 @@ import { Fetcher } from "./fetcher";
 
 import { gameToTabData } from "../util/navigation";
 import { actions } from "../actions/index";
-import { withButlerClient, messages } from "../buse/index";
+import { messages, withLogger } from "../buse/index";
 import { Game } from "../buse/messages";
 
 // TODO: save password & secret, see
@@ -35,17 +35,9 @@ class GameFetcher extends Fetcher {
       this.push(gameToTabData(game));
     };
 
-    await withButlerClient(this.logger, async client => {
-      client.onNotification(messages.FetchGameYield, async ({ params }) => {
-        pushGame(params.game);
-      });
-
-      await client.call(
-        messages.FetchGame({
-          gameId,
-        })
-      );
-      this.debug("Done calling butler");
+    let call = withLogger(this.logger);
+    await call(messages.FetchGame, { gameId }, client => {
+      client.on(messages.FetchGameYield, async ({ game }) => pushGame(game));
     });
   }
 

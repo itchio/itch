@@ -108,7 +108,6 @@ async function createWindow(store: IStore, hidden: boolean) {
 
     if (!window.isVisible()) {
       logger.info("Main window hidden, letting it close");
-      // timeout elapsed and still not shown - it's a closin'!
       return;
     }
 

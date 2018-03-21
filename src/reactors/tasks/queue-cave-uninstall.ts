@@ -2,6 +2,7 @@ import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 
 import rootLogger from "../../logger";
+const logger = rootLogger.child({ name: "queue-cave-uninstall" });
 
 import { promisedModal } from "../modals";
 
@@ -9,7 +10,9 @@ import asTask from "./as-task";
 import { modalWidgets } from "../../components/modal-widgets/index";
 
 import { performUninstall } from "../downloads/perform-uninstall";
-import { withButlerClient, messages } from "../../buse";
+
+import { withLogger, messages } from "../../buse";
+const call = withLogger(logger);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueCaveUninstall, async (store, action) => {
@@ -17,9 +20,7 @@ export default function(watcher: Watcher) {
 
     // TODO: figure if we really need that. asTask wants a gameId
     // but do we really need it? how used is asTask anyway?
-    const { cave } = await withButlerClient(rootLogger, async client => {
-      return await client.call(messages.FetchCave({ caveId }));
-    });
+    const { cave } = await call(messages.FetchCave, { caveId });
 
     await asTask({
       name: "uninstall",

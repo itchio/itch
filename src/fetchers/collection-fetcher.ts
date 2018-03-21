@@ -1,5 +1,5 @@
 import { Fetcher } from "./fetcher";
-import { messages, call } from "../buse";
+import { messages, withLogger } from "../buse";
 import { Game } from "../buse/messages";
 import getByIds from "../helpers/get-by-ids";
 
@@ -20,27 +20,24 @@ class CollectionFetcher extends Fetcher {
     }
 
     const collectionId = this.space().firstPathNumber();
+    const call = withLogger(this.logger);
     await call(
       messages.FetchCollection,
       {
         profileId: this.profileId(),
         collectionId,
       },
-      async client => {
-        client.onNotification(
-          messages.FetchCollectionYield,
-          async ({ params }) => {
-            const games: Game[] = [];
-            for (const cg of params.collection.collectionGames) {
-              games.push(cg.game);
-            }
-
-            this.pushCollection(params.collection);
-            this.pushUnfilteredGames(games);
+      client => {
+        client.on(messages.FetchCollectionYield, async ({ collection }) => {
+          const games: Game[] = [];
+          for (const cg of collection.collectionGames) {
+            games.push(cg.game);
           }
-        );
-      },
-      this.logger
+
+          this.pushCollection(collection);
+          this.pushUnfilteredGames(games);
+        });
+      }
     );
   }
 

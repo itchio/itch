@@ -5,16 +5,14 @@ import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "request-cave-uninstall" });
 
 import { modalWidgets } from "../../components/modal-widgets/index";
-import { withButlerClient, messages } from "../../buse";
+import { withLogger, messages } from "../../buse";
+const call = withLogger(logger);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
     const { caveId } = action.payload;
 
-    const { cave } = await withButlerClient(
-      logger,
-      async client => await client.call(messages.FetchCave({ caveId }))
-    );
+    const { cave } = await call(messages.FetchCave, { caveId });
     const { game } = cave;
 
     // FIXME: i18n - plus, that's generally bad

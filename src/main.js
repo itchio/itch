@@ -8,23 +8,29 @@ if (process.env.NODE_ENV === "test") {
 }
 
 if (process.env.NODE_ENV !== "production") {
+  Error.stackTraceLimit = Infinity;
+
   require("bluebird").config({
     longStackTraces: true,
   });
 
-  const fs = require("fs");
-  require("source-map-support").install({
-    retrieveSourceMap: function(source) {
-      if (/metal.js$/.test(source)) {
-        const map = fs.readFileSync('./dist/metal.map', 'utf8');
-        return {
-          url: 'metal.ts',
-          map: map,
-        };
+  require("clarify");
+
+  if (process.env.NO_SOURCE_MAPS !== "1") {
+    const fs = require("fs");
+    require("source-map-support").install({
+      retrieveSourceMap: function(source) {
+        if (/main.js$/.test(source)) {
+          const map = fs.readFileSync('./app/main.map', 'utf8');
+          return {
+            url: 'main.ts',
+            map: map,
+          };
+        }
+        return null;
       }
-      return null;
-    }
-  });
+    });
+  }
 }
 
 require("./metal");

@@ -104,7 +104,7 @@ async function handle(type: ErrorType, e: Error) {
   }
   catching = true;
 
-  console.log(`${errorTypeString(type)}: ${e.stack}`);
+  console.log(`crash-reporter reporting: ${errorTypeString(type)}: ${e.stack}`);
   let res = await writeCrashLog(e);
   let log = res.log;
   let crashFile = res.crashFile;

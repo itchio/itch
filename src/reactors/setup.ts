@@ -8,10 +8,11 @@ import { Context } from "../context";
 import { actions } from "../actions";
 
 import rootLogger from "../logger";
-import { withButlerClient, messages } from "../buse/index";
+import { messages, withLogger } from "../buse/index";
 import { indexBy, isEmpty } from "underscore";
 import { appdataLocationPath } from "../os/paths";
 const logger = rootLogger.child({ name: "setup" });
+const call = withLogger(logger);
 
 async function fetch(ctx: Context, name: string) {
   const opts = {
@@ -33,57 +34,49 @@ async function fetch(ctx: Context, name: string) {
 async function setup(store: IStore) {
   const ctx = new Context(store);
 
-  logger.info("setup starting");
   await fetch(ctx, "butler");
-  logger.info("all deps done");
 
   await syncInstallLocations(store);
   store.dispatch(actions.setupDone({}));
 }
 
 async function syncInstallLocations(store: IStore) {
-  await withButlerClient(logger, async client => {
-    const { installLocations } = await client.call(
-      messages.InstallLocationsList({})
-    );
-    const newLocationsById = indexBy(installLocations, "id");
+  const { installLocations } = await call(messages.InstallLocationsList, {});
+  const newLocationsById = indexBy(installLocations, "id");
 
-    const rs = store.getState();
-    let oldLocations = {
-      ...rs.preferences.installLocations,
-      appdata: {
-        id: "appdata",
-        path: appdataLocationPath(),
-      },
-    };
+  const rs = store.getState();
+  let oldLocations = {
+    ...rs.preferences.installLocations,
+    appdata: {
+      id: "appdata",
+      path: appdataLocationPath(),
+    },
+  };
 
-    let numAdded = 0;
-    if (!isEmpty(oldLocations)) {
-      for (const id of Object.keys(oldLocations)) {
-        logger.debug(`Checking install location ${id}...`);
-        const oldLoc = oldLocations[id];
-        const newLoc = newLocationsById[id];
-        if (newLoc) {
-          logger.debug(`Has on butler side too!`);
-        } else {
-          logger.debug(`Synchronizing ${id}...`);
-          numAdded++;
-          await client.call(
-            messages.InstallLocationsAdd({
-              id,
-              path: oldLoc.path,
-            })
-          );
-        }
+  let numAdded = 0;
+  if (!isEmpty(oldLocations)) {
+    for (const id of Object.keys(oldLocations)) {
+      logger.debug(`Checking install location ${id}...`);
+      const oldLoc = oldLocations[id];
+      const newLoc = newLocationsById[id];
+      if (newLoc) {
+        logger.debug(`Has on butler side too!`);
+      } else {
+        logger.debug(`Synchronizing ${id}...`);
+        numAdded++;
+        await call(messages.InstallLocationsAdd, {
+          id,
+          path: oldLoc.path,
+        });
       }
     }
+  }
 
-    if (numAdded > 0) {
-      logger.info(`Registered ${numAdded} install locations with butler`);
-    } else {
-      logger.info(`All install locations synchronized with butler`);
-    }
-  });
+  if (numAdded > 0) {
+    logger.info(`Registered ${numAdded} install locations with butler`);
+  } else {
+    logger.info(`All install locations synchronized with butler`);
+  }
 }
 
 async function doSetup(store: IStore) {

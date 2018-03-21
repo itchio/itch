@@ -519,6 +519,7 @@ export const actions = wireActions({
   downloadsListed: action<{
     downloads: Download[];
   }>(),
+  refreshDownloads: action<{}>(),
   downloadProgress: action<{
     download: Download;
     progress: DownloadProgress;
@@ -544,8 +545,9 @@ export const actions = wireActions({
     /** id of download that was just discarded */
     id: string;
   }>(),
-  pauseDownloads: action<{}>(),
-  resumeDownloads: action<{}>(),
+  setDownloadsPaused: action<{
+    paused: boolean;
+  }>(),
   retryDownload: action<{
     /** id of download to retry */
     id: string;

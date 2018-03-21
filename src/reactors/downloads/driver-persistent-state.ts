@@ -1,8 +1,47 @@
-import { Instance, Client } from "node-buse";
+import { Client } from "node-buse";
 
-const state: {
-  instance?: Instance;
-  client?: Client;
-} = {};
+import rootLogger from "../../logger";
+import { messages } from "../../buse";
+const logger = rootLogger.child({ name: "download-driver" });
 
-export default state;
+export enum Phase {
+  IDLE,
+  STARTING,
+  RUNNING,
+  CANCELLING,
+}
+
+class State {
+  private client: Client;
+  private phase: Phase;
+
+  constructor() {
+    this.phase = Phase.IDLE;
+  }
+
+  registerClient(client: Client) {
+    this.client = client;
+    this.setPhase(Phase.RUNNING);
+  }
+
+  async cancel() {
+    this.setPhase(Phase.CANCELLING);
+    await this.client.call(messages.DownloadsDriveCancel, {});
+    this.client = null;
+  }
+
+  getClient() {
+    return this.client;
+  }
+
+  setPhase(phase: Phase) {
+    logger.info(`${Phase[this.phase]} => ${Phase[phase]}`);
+    this.phase = phase;
+  }
+
+  getPhase() {
+    return this.phase;
+  }
+}
+
+export const state = new State();

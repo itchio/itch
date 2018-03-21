@@ -8,16 +8,14 @@ const logger = rootLogger.child({ name: "explore-cave" });
 
 import * as explorer from "../../os/explorer";
 
-import { withButlerClient, messages } from "../../buse";
+import { withLogger, messages } from "../../buse";
+const call = withLogger(logger);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.exploreCave, async (store, action) => {
     const { caveId } = action.payload;
 
-    const { cave } = await withButlerClient(logger, async client => {
-      return await client.call(messages.FetchCave({ caveId }));
-    });
-
+    const { cave } = await call(messages.FetchCave, { caveId });
     const installFolder = cave.installInfo.installFolder;
     try {
       fs.accessSync(installFolder);

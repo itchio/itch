@@ -137,9 +137,11 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
   }
 
   onClick = (ev: React.MouseEvent<any>) => {
-    ev.preventDefault();
-
     whenClickNavigates(ev, ({ background }) => {
+      if (background) {
+        ev.preventDefault();
+      }
+
       const { game, navigateToGame } = this.props;
       navigateToGame({ game, background });
     });

@@ -116,7 +116,7 @@ function autoUpdateDone() {
       } catch (e) {
         logger.error(`While dispatching tick: ${e.stack}`);
       }
-    }, 1000 /* each second */);
+    }, 1 * 1000 /* every second */);
   };
 
   app.on("ready", onReady);

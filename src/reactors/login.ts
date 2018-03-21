@@ -6,7 +6,7 @@ import urls from "../constants/urls";
 import * as urlParser from "url";
 
 import { modalWidgets } from "../components/modal-widgets/index";
-import { withButlerClient, messages, call } from "../buse/index";
+import { messages, withLogger } from "../buse/index";
 import partitionForUser from "../util/partition-for-user";
 import { Profile } from "../buse/messages";
 
@@ -14,6 +14,7 @@ import rootLogger from "../logger";
 import { IStore } from "../types";
 import { restoreTabs } from "./tab-save";
 const logger = rootLogger.child({ name: "login" });
+const call = withLogger(logger);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.loginWithPassword, async (store, action) => {
@@ -30,106 +31,104 @@ export default function(watcher: Watcher) {
         return;
       }
 
-      await withButlerClient(logger, async client => {
-        client.onRequest(messages.ProfileRequestCaptcha, async ({ params }) => {
-          const modalRes = await promisedModal(
-            store,
-            modalWidgets.recaptchaInput.make({
-              title: "Captcha",
-              message: "",
-              widgetParams: {
-                url: params.recaptchaUrl || urls.itchio + "/captcha",
-              },
-              fullscreen: true,
-            })
+      const { profile, cookie } = await call(
+        messages.ProfileLoginWithPassword,
+        {
+          username,
+          password,
+        },
+        client => {
+          client.on(
+            messages.ProfileRequestCaptcha,
+            async ({ recaptchaUrl }) => {
+              const modalRes = await promisedModal(
+                store,
+                modalWidgets.recaptchaInput.make({
+                  title: "Captcha",
+                  message: "",
+                  widgetParams: {
+                    url: recaptchaUrl || urls.itchio + "/captcha",
+                  },
+                  fullscreen: true,
+                })
+              );
+
+              if (modalRes) {
+                return { recaptchaResponse: modalRes.recaptchaResponse };
+              } else {
+                // abort
+                return { recaptchaResponse: null };
+              }
+            }
           );
 
-          if (modalRes) {
-            return { recaptchaResponse: modalRes.recaptchaResponse };
-          } else {
-            // abort
-            return { recaptchaResponse: null };
-          }
-        });
-
-        client.onRequest(messages.ProfileRequestTOTP, async ({ params }) => {
-          const modalRes = await promisedModal(
-            store,
-            modalWidgets.twoFactorInput.make({
-              title: ["login.two_factor.title"],
-              message: "",
-              buttons: [
-                {
-                  label: ["login.action.login"],
-                  action: "widgetResponse",
+          client.on(messages.ProfileRequestTOTP, async () => {
+            const modalRes = await promisedModal(
+              store,
+              modalWidgets.twoFactorInput.make({
+                title: ["login.two_factor.title"],
+                message: "",
+                buttons: [
+                  {
+                    label: ["login.action.login"],
+                    action: "widgetResponse",
+                  },
+                  {
+                    label: ["login.two_factor.learn_more"],
+                    action: actions.openInExternalBrowser({
+                      url: urls.twoFactorHelp,
+                    }),
+                    className: "secondary",
+                  },
+                ],
+                widgetParams: {
+                  username,
                 },
-                {
-                  label: ["login.two_factor.learn_more"],
-                  action: actions.openInExternalBrowser({
-                    url: urls.twoFactorHelp,
-                  }),
-                  className: "secondary",
-                },
-              ],
-              widgetParams: {
-                username,
-              },
-            })
-          );
+              })
+            );
 
-          if (modalRes) {
-            return { code: modalRes.totpCode };
-          } else {
-            // abort
-            return { code: null };
-          }
-        });
-
-        const { profile, cookie } = await client.call(
-          messages.ProfileLoginWithPassword({
-            username,
-            password,
-          })
-        );
-
-        if (cookie) {
-          try {
-            await setCookie(profile, cookie);
-          } catch (e) {
-            logger.error(`Could not set cookie: ${e.stack}`);
-          }
+            if (modalRes) {
+              return { code: modalRes.totpCode };
+            } else {
+              // abort
+              return { code: null };
+            }
+          });
         }
+      );
 
-        await loginSucceeded(store, profile);
-      });
+      if (cookie) {
+        try {
+          await setCookie(profile, cookie);
+        } catch (e) {
+          logger.error(`Could not set cookie: ${e.stack}`);
+        }
+      }
+
+      await loginSucceeded(store, profile);
     } catch (e) {
       store.dispatch(actions.loginFailed({ username, errors: [e.message] }));
     }
   });
 
   watcher.on(actions.useSavedLogin, async (store, action) => {
-    await withButlerClient(logger, async client => {
-      store.dispatch(actions.attemptLogin({}));
+    store.dispatch(actions.attemptLogin({}));
 
-      try {
-        const { profile } = await client.call(
-          messages.ProfileUseSavedLogin({
-            profileId: action.payload.profile.id,
-          })
-        );
-
-        await loginSucceeded(store, profile);
-      } catch (e) {
-        // TODO: handle offline login
-        const originalProfile = action.payload.profile;
-        store.dispatch(
-          actions.loginFailed({
-            username: originalProfile.user.username,
-            errors: e.errors || e.stack || e,
-          })
-        );
-      }
-    });
+    try {
+      const { profile } = await call(messages.ProfileUseSavedLogin, {
+        profileId: action.payload.profile.id,
+      });
+      await loginSucceeded(store, profile);
+    } catch (e) {
+      // TODO: handle offline login
+      const originalProfile = action.payload.profile;
+      store.dispatch(
+        actions.loginFailed({
+          username: originalProfile.user.username,
+          errors: e.errors || e.stack || e,
+        })
+      );
+    }
   });
 }
 

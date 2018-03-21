@@ -86,15 +86,18 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
       isEmpty(items) && isEmpty(finishedItems) && isEmpty(updates);
     if (allEmpty) {
       return (
-        <EmptyState
-          className="no-active-downloads"
-          icon="download"
-          bigText={["status.downloads.no_active_downloads"]}
-          smallText={["status.downloads.no_active_downloads_subtext"]}
-          buttonIcon="earth"
-          buttonText={["status.downloads.find_games_button"]}
-          buttonAction={() => navigate({ url: "itch://featured" })}
-        />
+        <DownloadsContentDiv>
+          {this.renderControls()}
+          <EmptyState
+            className="no-active-downloads"
+            icon="download"
+            bigText={["status.downloads.no_active_downloads"]}
+            smallText={["status.downloads.no_active_downloads_subtext"]}
+            buttonIcon="earth"
+            buttonText={["status.downloads.find_games_button"]}
+            buttonAction={() => navigate({ url: "itch://featured" })}
+          />
+        </DownloadsContentDiv>
       );
     }
 
@@ -191,11 +194,8 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   onTogglePause = () => {
-    if (this.props.downloadsPaused) {
-      this.props.resumeDownloads({});
-    } else {
-      this.props.pauseDownloads({});
-    }
+    const { downloadsPaused, setDownloadsPaused } = this.props;
+    setDownloadsPaused({ paused: !downloadsPaused });
   };
 
   renderRecentActivity(): JSX.Element {
@@ -234,8 +234,7 @@ const actionCreators = actionCreatorsList(
   "clearFinishedDownloads",
   "navigate",
   "queueAllGameUpdates",
-  "pauseDownloads",
-  "resumeDownloads"
+  "setDownloadsPaused"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {

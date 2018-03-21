@@ -12,17 +12,18 @@ import { Game, Upload, Build } from "../../buse/messages";
 import { map, isEmpty } from "underscore";
 import makeUploadButton from "../make-upload-button";
 import { modalWidgets } from "../../components/modal-widgets/index";
-import { withButlerClient, messages } from "../../buse";
+
+import { withLogger, messages } from "../../buse";
+const call = withLogger(logger);
+
 import { promisedModal } from "../modals";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
     const { game } = action.payload;
-    const { caves } = await withButlerClient(
-      logger,
-      async client =>
-        await client.call(messages.FetchCavesByGameID({ gameId: game.id }))
-    );
+    const { caves } = await call(messages.FetchCavesByGameID, {
+      gameId: game.id,
+    });
 
     if (isEmpty(caves)) {
       logger.info(
@@ -133,82 +134,81 @@ async function performInstallQueue({
   upload: Upload;
   build: Build;
 }) {
-  await withButlerClient(logger, async client => {
-    client.onRequest(messages.PickUpload, async ({ params }) => {
-      const { uploads } = params;
-      const { title } = game;
+  const installLocationId = defaultInstallLocation(store);
 
-      const modalRes = await promisedModal(
-        store,
-        modalWidgets.pickUpload.make({
-          title: ["pick_install_upload.title", { title }],
-          message: ["pick_install_upload.message", { title }],
-          coverUrl: game.coverUrl,
-          stillCoverUrl: game.stillCoverUrl,
-          bigButtons: map(uploads, (candidate, index) => {
-            return {
-              ...makeUploadButton(candidate),
-              action: modalWidgets.pickUpload.action({
-                pickedUploadIndex: index,
-              }),
-            };
-          }),
-          buttons: ["cancel"],
-          widgetParams: {},
-        })
-      );
+  await call(
+    messages.InstallQueue,
+    {
+      game,
+      upload,
+      build,
+      installLocationId,
+      queueDownload: true,
+    },
+    client => {
+      client.on(messages.PickUpload, async ({ uploads }) => {
+        const { title } = game;
 
-      if (modalRes) {
-        return { index: modalRes.pickedUploadIndex };
-      } else {
-        // that tells butler to abort
-        return { index: -1 };
-      }
-    });
+        const modalRes = await promisedModal(
+          store,
+          modalWidgets.pickUpload.make({
+            title: ["pick_install_upload.title", { title }],
+            message: ["pick_install_upload.message", { title }],
+            coverUrl: game.coverUrl,
+            stillCoverUrl: game.stillCoverUrl,
+            bigButtons: map(uploads, (candidate, index) => {
+              return {
+                ...makeUploadButton(candidate),
+                action: modalWidgets.pickUpload.action({
+                  pickedUploadIndex: index,
+                }),
+              };
+            }),
+            buttons: ["cancel"],
+            widgetParams: {},
+          })
+        );
 
-    client.onRequest(messages.ExternalUploadsAreBad, async ({ params }) => {
-      const modalRes = await promisedModal(
-        store,
-        modalWidgets.naked.make({
-          title: "Dragons be thar",
-          message:
-            "You've chosen to install an external upload. Those are supported poorly.",
-          detail:
-            "There's a chance it won't install at all.\n\nAlso, we won't be able to check for updates.",
-          bigButtons: [
-            {
-              label: "Install it anyway",
-              tags: [{ label: "Consequences be damned" }],
-              icon: "fire",
-              action: actions.modalResponse({}),
-            },
-            "nevermind",
-          ],
-          widgetParams: null,
-        })
-      );
+        if (modalRes) {
+          return { index: modalRes.pickedUploadIndex };
+        } else {
+          // that tells butler to abort
+          return { index: -1 };
+        }
+      });
 
-      if (!modalRes) {
-        return { whatever: false };
-      }
+      client.on(messages.ExternalUploadsAreBad, async () => {
+        const modalRes = await promisedModal(
+          store,
+          modalWidgets.naked.make({
+            title: "Dragons be thar",
+            message:
+              "You've chosen to install an external upload. Those are supported poorly.",
+            detail:
+              "There's a chance it won't install at all.\n\nAlso, we won't be able to check for updates.",
+            bigButtons: [
+              {
+                label: "Install it anyway",
+                tags: [{ label: "Consequences be damned" }],
+                icon: "fire",
+                action: actions.modalResponse({}),
+              },
+              "nevermind",
+            ],
+            widgetParams: null,
+          })
+        );
 
-      // ahh damn.
-      return { whatever: true };
-    });
+        if (!modalRes) {
+          return { whatever: false };
+        }
 
-    const installLocationId = defaultInstallLocation(store);
-
-    await client.call(
-      messages.InstallQueue({
-        game,
-        upload,
-        build,
-        installLocationId,
-        queueDownload: true,
-      })
-    );
-    store.dispatch(actions.downloadQueued({}));
-  });
+        // ahh damn.
+        return { whatever: true };
+      });
+    }
+  );
+  store.dispatch(actions.downloadQueued({}));
 }
 
 function defaultInstallLocation(store: IStore) {

@@ -17,12 +17,9 @@ const SKIP_GAME_UPDATES = process.env.ITCH_SKIP_GAME_UPDATES === "1";
 const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;
 const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 
-import {
-  messages,
-  makeButlerInstance,
-  setupLogging,
-  withButlerClient,
-} from "../buse/index";
+import { messages, withLogger } from "../buse/index";
+const call = withLogger(logger);
+
 import { IStore } from "../types/index";
 import { CheckUpdateItem, CheckUpdateResult, Cave } from "../buse/messages";
 
@@ -45,26 +42,11 @@ async function performUpdateCheck(
   store: IStore,
   items: CheckUpdateItem[]
 ): Promise<CheckUpdateResult> {
-  let res: CheckUpdateResult;
-
-  const instance = await makeButlerInstance();
-  instance.onClient(async client => {
-    setupLogging(client, logger);
-    try {
-      client.onNotification(
-        messages.GameUpdateAvailable,
-        async ({ params }) => {
-          const { update } = params;
-          store.dispatch(actions.gameUpdateAvailable({ update }));
-        }
-      );
-      res = await client.call(messages.CheckUpdate({ items }));
-    } finally {
-      instance.cancel();
-    }
+  return await call(messages.CheckUpdate, { items }, client => {
+    client.on(messages.GameUpdateAvailable, async ({ update }) => {
+      store.dispatch(actions.gameUpdateAvailable({ update }));
+    });
   });
-  await instance.promise();
-  return res;
 }
 
 function sleepTime(): number {
@@ -124,10 +106,7 @@ export default function(watcher: Watcher) {
 
       // TODO: let butler page through the caves instead,
       // this is too much back and forth
-      const { caves } = await withButlerClient(
-        logger,
-        async client => await client.call(messages.FetchCaves({}))
-      );
+      const { caves } = await call(messages.FetchCaves, {});
 
       if (isEmpty(caves)) {
         return;
@@ -169,10 +148,7 @@ export default function(watcher: Watcher) {
       logger.info(`Looking for updates for cave ${caveId}`);
     }
 
-    const { cave } = await withButlerClient(
-      logger,
-      async client => await client.call(messages.FetchCave({ caveId }))
-    );
+    const { cave } = await call(messages.FetchCave, { caveId });
 
     const item = await prepareUpdateItem(cave);
     let res: CheckUpdateResult;

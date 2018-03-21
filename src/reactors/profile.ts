@@ -13,7 +13,7 @@ export default function(watcher: Watcher) {
     store.dispatch(actions.switchPage({ page: "hub" }));
 
     // resume downloads
-    store.dispatch(actions.resumeDownloads({}));
+    store.dispatch(actions.setDownloadsPaused({ paused: false }));
 
     // and open downloads tab if we have some pending
     const { downloads } = store.getState();
@@ -26,6 +26,6 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.logout, async (store, action) => {
     store.dispatch(actions.switchPage({ page: "gate" }));
-    store.dispatch(actions.pauseDownloads({}));
+    store.dispatch(actions.setDownloadsPaused({ paused: true }));
   });
 }

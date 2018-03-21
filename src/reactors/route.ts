@@ -32,33 +32,26 @@ function err(e: Error, action: IAction<any>) {
   }
 }
 
-async function route(watcher: Watcher, store: IStore, action: IAction<any>) {
-  setTimeout(() => {
-    try {
-      for (const r of watcher.reactors[action.type] || emptyArr) {
-        r(store, action).catch(e => {
-          err(e, action);
-        });
-      }
-
-      for (const sub of watcher.subs) {
-        if (!sub) {
-          continue;
-        }
-
-        for (const r of sub.reactors[action.type] || emptyArr) {
-          r(store, action).catch(e => {
-            err(e, action);
-          });
-        }
-      }
-    } catch (e) {
-      const e2 = new Error(
-        `Could not route action, original stack:\n${e.stack}`
-      );
-      err(e2, action);
+function route(watcher: Watcher, store: IStore, action: IAction<any>): void {
+  (async () => {
+    for (const r of watcher.reactors[action.type] || emptyArr) {
+      await r(store, action);
     }
-  }, 0);
+
+    for (const sub of watcher.subs) {
+      if (!sub) {
+        continue;
+      }
+
+      for (const r of sub.reactors[action.type] || emptyArr) {
+        await r(store, action);
+      }
+    }
+  })().catch(e => {
+    err(e, action);
+  });
+
+  return;
 }
 
 export default route;

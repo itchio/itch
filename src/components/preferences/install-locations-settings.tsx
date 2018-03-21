@@ -143,7 +143,7 @@ class InstallLocationSettings extends React.Component<
   }
 
   async refresh() {
-    const res = await call(messages.InstallLocationsList);
+    const res = await call(messages.InstallLocationsList, {});
     if (res) {
       const { installLocations } = res;
       this.setState({ installLocations });

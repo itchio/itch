@@ -1,12 +1,15 @@
 import { Fetcher } from "./fetcher";
 
 import getByIds from "../helpers/get-by-ids";
-import { withButlerClient, messages } from "../buse";
+import { messages, withLogger } from "../buse";
+
 import { Game } from "../buse/messages";
 import { uniq } from "underscore";
 
 class LibraryFetcher extends Fetcher {
   async work(): Promise<void> {
+    let call = withLogger(this.logger);
+
     // first, filter what we already got
     const cachedGames = getByIds(
       this.space().games().set,
@@ -21,39 +24,37 @@ class LibraryFetcher extends Fetcher {
       }
     }
 
-    await withButlerClient(this.logger, async client => {
-      let games: Game[] = [];
+    let games: Game[] = [];
 
-      const push = () => {
-        games = uniq(games, g => g.id);
-        this.pushUnfilteredGames(games);
-      };
+    const push = () => {
+      games = uniq(games, g => g.id);
+      this.pushUnfilteredGames(games);
+    };
 
-      const { caves } = await client.call(messages.FetchCaves({}));
-      if (caves) {
-        for (const cave of caves) {
-          games.push(cave.game);
-        }
+    const { caves } = await call(messages.FetchCaves, {});
+    if (caves) {
+      for (const cave of caves) {
+        games.push(cave.game);
       }
+      push();
+    }
 
-      client.onNotification(
-        messages.FetchProfileOwnedKeysYield,
-        async ({ params }) => {
-          if (params.items) {
-            for (const dk of params.items) {
+    await call(
+      messages.FetchProfileOwnedKeys,
+      {
+        profileId: this.profileId(),
+      },
+      client => {
+        client.on(messages.FetchProfileOwnedKeysYield, async ({ items }) => {
+          if (items) {
+            for (const dk of items) {
               games.push(dk.game);
             }
             push();
           }
-        }
-      );
-
-      await client.call(
-        messages.FetchProfileOwnedKeys({
-          profileId: this.profileId(),
-        })
-      );
-    });
+        });
+      }
+    );
   }
 
   clean() {

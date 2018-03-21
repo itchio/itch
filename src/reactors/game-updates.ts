@@ -1,11 +1,12 @@
 import { actions } from "../actions";
 import { Watcher } from "./watcher";
 import { each } from "underscore";
-import { withButlerClient, messages } from "../buse";
+import { messages, withLogger } from "../buse";
 
 import rootLogger from "../logger";
 import { DownloadReason } from "../buse/messages";
 const logger = rootLogger.child({ name: "game-updates" });
+const call = withLogger(logger);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.gameUpdateAvailable, async (store, action) => {
@@ -23,19 +24,15 @@ export default function(watcher: Watcher) {
     const { update } = action.payload;
     const { game, upload, build } = update;
 
-    await withButlerClient(logger, async client => {
-      await client.call(
-        messages.InstallQueue({
-          caveId: update.itemId,
-          game,
-          upload,
-          build,
-          reason: DownloadReason.Update,
-          queueDownload: true,
-        })
-      );
-      store.dispatch(actions.downloadQueued({}));
+    await call(messages.InstallQueue, {
+      caveId: update.itemId,
+      game,
+      upload,
+      build,
+      reason: DownloadReason.Update,
+      queueDownload: true,
     });
+    store.dispatch(actions.downloadQueued({}));
   });
 
   watcher.on(actions.queueAllGameUpdates, async (store, action) => {

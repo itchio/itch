@@ -5,12 +5,14 @@ import { Watcher } from "./watcher";
 import { ITabDataSave, IStore } from "../types/index";
 import { actions } from "../actions/index";
 
-import rootLogger from "../logger";
-import { withButlerClient, messages } from "../buse/index";
 import { Space } from "../helpers/space";
 import { Profile } from "../buse/messages";
-import { call } from "../buse/utils";
+
+import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "tab-save" });
+
+import { messages, withLogger } from "../buse/index";
+const call = withLogger(logger);
 
 interface Snapshot {
   current: string;
@@ -41,14 +43,10 @@ export default function(watcher: Watcher) {
 
     const snapshot: Snapshot = { current: tab, items };
 
-    await withButlerClient(logger, async client => {
-      await client.call(
-        messages.ProfileDataPut({
-          profileId,
-          key: "@itch/tabs",
-          value: JSON.stringify(snapshot),
-        })
-      );
+    await call(messages.ProfileDataPut, {
+      profileId,
+      key: "@itch/tabs",
+      value: JSON.stringify(snapshot),
     });
   });
 }

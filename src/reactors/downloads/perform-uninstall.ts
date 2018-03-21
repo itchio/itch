@@ -1,23 +1,19 @@
 import { Logger } from "../../logger";
 
-import { messages, withButlerClient } from "../../buse/index";
+import { messages, withLogger } from "../../buse/index";
 
 export async function performUninstall(parentLogger: Logger, caveId: string) {
   const logger = parentLogger.child({ name: "uninstall" });
+  const call = withLogger(logger);
 
-  await withButlerClient(logger, async client => {
-    client.onNotification(messages.TaskStarted, ({ params }) => {
-      const { type, reason } = params;
+  await call(messages.UninstallPerform, { caveId }, client => {
+    client.on(messages.TaskStarted, async ({ type, reason }) => {
       logger.info(`Task ${type} started (for ${reason})`);
     });
 
-    client.onNotification(messages.TaskSucceeded, ({ params }) => {
-      const { type } = params;
+    client.on(messages.TaskSucceeded, async ({ type }) => {
       logger.info(`Task ${type} succeeded`);
     });
-
-    await client.call(messages.UninstallPerform({ caveId }));
-
-    logger.info(`Uninstall successful`);
   });
+  logger.info(`Uninstall successful`);
 }

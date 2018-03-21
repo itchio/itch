@@ -1,5 +1,5 @@
 import { Cave, CaveSummary } from "../buse/messages";
-import { Client, Instance, RequestError, IRequestCreator } from "node-buse";
+import { Instance, RequestError, IRequestCreator, Client } from "node-buse";
 import rootLogger, { Logger } from "../logger/index";
 const lazyDefaultLogger = rootLogger.child({ name: "buse" });
 import { MinimalContext } from "../context/index";
@@ -27,45 +27,64 @@ export async function withButlerClient<T>(
 ): Promise<T> {
   let res: T;
   const instance = await makeButlerInstance();
+  const client = await instance.getClient();
+  setupLogging(client, parentLogger);
 
+  let err: Error;
   try {
-    instance.onClient(async client => {
-      setupLogging(client, parentLogger);
-      res = await cb(client);
-      instance.cancel();
-    });
-    await instance.promise();
+    res = await cb(client);
   } catch (e) {
     console.error(`Caught butler error: ${e.stack}`);
     const re = asRequestError(e);
     if (re && re.rpcError && re.rpcError.data) {
       console.error(`Golang stack:\n${re.rpcError.data.stack}`);
     }
-    throw e;
+    err = e;
   } finally {
     instance.cancel();
   }
 
+  if (err) {
+    throw err;
+  }
   return res;
 }
 
-const eo = {};
-
-export async function call<Params, Res>(
+type Call = <Params, Res>(
   rc: IRequestCreator<Params, Res>,
-  params?: Params,
-  clientSetup?: (client: Client) => void,
-  logger?: Logger
+  params: Params,
+  setup?: (client: Client) => void
+) => Promise<Res>;
+
+export let call: Call;
+
+call = async function<Params, Res>(
+  rc: IRequestCreator<Params, Res>,
+  params: Params,
+  setup?: (client: Client) => void
 ): Promise<Res> {
-  return await withButlerClient(logger || lazyDefaultLogger, async client => {
-    if (clientSetup) {
-      clientSetup(client);
+  return await callInternal(lazyDefaultLogger, rc, params, setup);
+};
+
+export const withLogger = (logger: Logger) => async <Params, Res>(
+  rc: IRequestCreator<Params, Res>,
+  params: Params,
+  setup?: (client: Client) => void
+): Promise<Res> => {
+  return await callInternal(logger, rc, params, setup);
+};
+
+async function callInternal<Params, Res>(
+  logger: Logger,
+  rc: IRequestCreator<Params, Res>,
+  params: Params,
+  setup?: (client: Client) => void
+): Promise<Res> {
+  return await withButlerClient(logger, async client => {
+    if (setup) {
+      setup(client);
     }
-    if (!params) {
-      // that's a bit ugly but it lets us do call(messages.XXX)
-      params = eo as Params;
-    }
-    return client.call(rc(params));
+    return await client.call(rc, params);
   });
 }
 
@@ -81,8 +100,10 @@ export function setupClient(
   setupLogging(client, parentLogger);
 }
 
-export function setupLogging(client: Client, parentLogger: Logger) {
-  const logger = parentLogger.child({ name: "butler" });
+export function setupLogging(client: Client, logger: Logger) {
+  client.onWarning(msg => {
+    logger.warn(`(buse) ${msg}`);
+  });
 
   client.onNotification(messages.Log, ({ params }) => {
     switch (params.level) {
