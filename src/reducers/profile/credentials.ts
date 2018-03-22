@@ -3,7 +3,6 @@ import { actions } from "../../actions";
 import reducer from "../reducer";
 
 const initialState = {
-  key: null,
   me: null,
 } as IProfileCredentialsState;
 
@@ -12,7 +11,6 @@ export default reducer<IProfileCredentialsState>(initialState, on => {
     const { profile } = action.payload;
     return {
       ...state,
-      key: "DUMMY",
       me: profile.user,
     };
   });

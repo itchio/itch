@@ -18,6 +18,9 @@ func loginFlow(r *runner) {
 		}
 	}
 
+	r.logf("closing all tabs")
+	must(r.click("#sidebar-close-all-tabs"))
+
 	r.logf("logging out for real")
 	logout(true)
 
