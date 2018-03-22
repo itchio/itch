@@ -1,9 +1,5 @@
 import { Watcher } from "./watcher";
-
-import { installFormula } from "../util/ibrew";
-
-import { IStore, ILocalizedString } from "../types";
-import { Context } from "../context";
+import { IStore } from "../types";
 
 import { actions } from "../actions";
 
@@ -11,34 +7,9 @@ import rootLogger from "../logger";
 import { messages, withLogger } from "../buse/index";
 import { indexBy, isEmpty } from "underscore";
 import { appdataLocationPath } from "../os/paths";
+import { Manager } from "../broth/manager";
 const logger = rootLogger.child({ name: "setup" });
 const call = withLogger(logger);
-
-async function fetch(ctx: Context, name: string) {
-  const opts = {
-    ctx,
-    logger,
-    onStatus: (icon: string, message: ILocalizedString) => {
-      ctx.store.dispatch(
-        actions.setupStatus({ icon, message, bps: 0, eta: 0 })
-      );
-    },
-  };
-  ctx.on("progress", progress => {
-    ctx.store.dispatch(actions.setupOperationProgress({ progress }));
-  });
-
-  await installFormula(opts, name);
-}
-
-async function setup(store: IStore) {
-  const ctx = new Context(store);
-
-  await fetch(ctx, "butler");
-
-  await syncInstallLocations(store);
-  store.dispatch(actions.setupDone({}));
-}
 
 async function syncInstallLocations(store: IStore) {
   const { installLocations } = await call(messages.InstallLocationsList, {});
@@ -79,9 +50,15 @@ async function syncInstallLocations(store: IStore) {
   }
 }
 
-async function doSetup(store: IStore) {
+export let manager: Manager;
+
+async function initialSetup(store: IStore) {
   try {
-    await setup(store);
+    manager = new Manager(store);
+    await manager.ensure();
+
+    await syncInstallLocations(store);
+    store.dispatch(actions.setupDone({}));
   } catch (e) {
     logger.error(`setup got error: ${e.stack}`);
 
@@ -90,8 +67,6 @@ async function doSetup(store: IStore) {
         icon: "error",
         message: ["login.status.setup_failure", { error: e.message || "" + e }],
         stack: e.stack,
-        bps: 0,
-        eta: 0,
       })
     );
   }
@@ -99,10 +74,10 @@ async function doSetup(store: IStore) {
 
 export default function(watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
-    await doSetup(store);
+    await initialSetup(store);
   });
 
   watcher.on(actions.retrySetup, async (store, action) => {
-    await doSetup(store);
+    await initialSetup(store);
   });
 }

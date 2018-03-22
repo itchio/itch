@@ -63,9 +63,12 @@ async function main() {
   if (development) {
     let electronPath = `node_modules/.bin/electron`;
     if (process.platform === "win32") {
-      electronPath = `node_modules\\.bin\\electron`;
+      electronPath = `node_modules\\.bin\\electron.cmd`;
     }
-    const electronArgs = process.argv.slice(2);
+    let electronArgs = process.argv.slice(2);
+    if (process.env.MSYSCON) {
+      electronArgs = ["--color", ...electronArgs];
+    }
 
     console.log(`Starting up ${electronPath} with args ${electronArgs.join(" ::: ")}`);
     const el = childProcess.spawn(electronPath, [

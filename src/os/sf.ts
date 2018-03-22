@@ -27,6 +27,9 @@ export const mkdirp: Mkdirp = promisify(require("mkdirp")) as any;
 type Rimraf = (path: string, opts?: any) => Promise<void>;
 const rimraf: Rimraf = promisify(require("rimraf")) as any;
 
+export const nodeReaddir = (bluebird.promisify(
+  fs.readdir
+) as any) as typeof readdir;
 export const nodeReadFile = (bluebird.promisify(
   fs.readFile
 ) as any) as typeof readFile;
@@ -84,6 +87,13 @@ export async function exists(file: string) {
 
     fs.access(file, fs.constants.R_OK, callback);
   });
+}
+
+/**
+ * List children of a directory
+ */
+export async function readdir(dir: string): Promise<string[]> {
+  return await nodeReaddir(dir);
 }
 
 /**

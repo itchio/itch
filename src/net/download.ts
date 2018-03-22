@@ -7,20 +7,20 @@ import { fileSize } from "../format/filesize";
 import { Logger } from "../logger";
 import { request } from "./request";
 import { WriteStream } from "fs";
-import { Context } from "../context";
+import { MinimalContext } from "../context";
 
 /**
  * Download to file without using butler
  */
 export async function downloadToFile(
-  ctx: Context,
+  ctx: MinimalContext,
   logger: Logger,
   url: string,
   file: string
 ) {
   const dir = dirname(file);
   try {
-    await sf.mkdir(dir);
+    await sf.mkdirp(dir);
   } catch (e) {
     logger.error(`Could not create ${dir}: ${e.message}`);
   }

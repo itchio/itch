@@ -15,6 +15,7 @@ import styled, * as styles from "./styles";
 
 import format from "./format";
 import { Space } from "../helpers/space";
+import { modalWidgets } from "./modal-widgets";
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
@@ -63,6 +64,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
         <DraggableDiv
           id="title-draggable"
           className={classNames({ dimmed: !focused })}
+          onClick={this.onClick}
         >
           <DraggableDivInner>
             <TitleDiv className="title-bar-text">{format(label)}</TitleDiv>
@@ -79,6 +81,23 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
       </FiltersContainer>
     );
   }
+
+  onClick = (e: React.MouseEvent<any>) => {
+    if (e.shiftKey && e.ctrlKey) {
+      const { openModal } = this.props;
+      openModal(
+        modalWidgets.secretSettings.make({
+          title: "Secret options",
+          message: "",
+          widgetParams: {},
+        })
+      );
+      return;
+    }
+
+    const { navigate } = this.props;
+    navigate({ url: "itch://featured" });
+  };
 
   preferencesClick = () => {
     this.props.navigate({ url: "itch://preferences" });
@@ -105,7 +124,8 @@ const actionCreators = actionCreatorsList(
   "navigate",
   "hideWindow",
   "minimizeWindow",
-  "toggleMaximizeWindow"
+  "toggleMaximizeWindow",
+  "openModal"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {

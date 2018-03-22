@@ -17,7 +17,7 @@ export default {
   appHomepage: "https://itch.io/app",
   itchTranslationPlatform: "https://weblate.itch.ovh/",
   githubApi: "https://api.github.com",
-  ibrewRepo: "https://dl.itch.ovh",
+  brothRepo: "https://dl.itch.ovh",
   remoteLocalePath: "https://locales.itch.ovh/itch",
   manual,
   updateServers: {

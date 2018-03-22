@@ -7,15 +7,33 @@ import * as ospath from "path";
 
 import * as messages from "./messages";
 import { butlerDbPath } from "../os/paths";
-import { getBinPath } from "../util/ibrew/binpath";
+import urls from "../constants/urls";
+import { getRootState } from "../store/get-root-state";
 
 // TODO: pass server URL to butler
 
 export async function makeButlerInstance(): Promise<Instance> {
-  // TODO: respect global lock when we're updating butler
+  const butlerPkg = getRootState().broth.packages["butler"];
+  if (!butlerPkg) {
+    throw new Error(
+      `Cannot make butler instance: package 'butler' not registered`
+    );
+  }
+
+  const versionPrefix = butlerPkg.versionPrefix;
+  if (!versionPrefix) {
+    throw new Error(`Cannot make butler instance: no version prefix`);
+  }
+
+  return makeButlerInstanceWithPrefix(versionPrefix);
+}
+
+export async function makeButlerInstanceWithPrefix(
+  versionPrefix: string
+): Promise<Instance> {
   return new Instance({
-    butlerExecutable: ospath.join(getBinPath(), "butler"),
-    args: ["--dbpath", butlerDbPath()],
+    butlerExecutable: ospath.join(versionPrefix, "butler"),
+    args: ["--dbpath", butlerDbPath(), "--address", urls.itchio],
   });
 }
 

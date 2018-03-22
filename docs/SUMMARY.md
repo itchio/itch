@@ -47,7 +47,7 @@
     * [Performance hacking](developing/performance.md)
   * [Behind the scenes](developing/behind-the-scenes.md)
     * [Continuous deployment](developing/continuous-deployment.md)
-    * [Dependencies (ibrew)](installing/dependencies.md)
+    * [Dependencies (broth)](installing/dependencies.md)
 
 * [Appendix](appendix/README.md)
   * [Acknowledgements](appendix/acknowledgements.md)

@@ -91,6 +91,19 @@ export interface IRootState {
   commons: ICommonsState;
 
   systemTasks: ISystemTasksState;
+  broth: IBrothState;
+}
+
+export interface IBrothState {
+  packages: {
+    [key: string]: IPackageState;
+  };
+}
+
+export interface IPackageState {
+  stage: "assess" | "download" | "install" | "idle";
+  versionPrefix?: string;
+  progressInfo?: IProgressInfo;
 }
 
 export interface ICommonsState {
@@ -273,8 +286,8 @@ export interface ISetupOperation {
   icon: string;
   stack?: string;
   progress?: number;
-  bps: number;
-  eta: number;
+  bps?: number;
+  eta?: number;
   stage?: string;
   totalBytes?: number;
 }

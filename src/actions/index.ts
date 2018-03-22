@@ -5,7 +5,6 @@ import {
   ProxySource,
   ICommonsState,
   IModalAction,
-  ISetupOperation,
   IItchAppTabs,
   ITabParams,
   IMenuTemplate,
@@ -26,6 +25,7 @@ import {
   IEvolveTabPayload,
   INavigateTabPayload,
   TaskName,
+  IPackageState,
 } from "../types/index";
 
 import {
@@ -145,7 +145,27 @@ export const actions = wireActions({
 
   // setup
 
-  setupStatus: action<ISetupOperation>(),
+  packagesListed: action<{
+    packageNames: string[];
+  }>(),
+  packageGotVersionPrefix: action<{
+    name: string;
+    versionPrefix: string;
+  }>(),
+  packageStage: action<{
+    name: string;
+    stage: IPackageState["stage"];
+  }>(),
+  packageProgress: action<{
+    name: string;
+    progressInfo: IProgressInfo;
+  }>(),
+
+  setupStatus: action<{
+    icon: string;
+    message: ILocalizedString;
+    stack?: string;
+  }>(),
   setupOperationProgress: action<{
     progress: IProgressInfo;
   }>(),

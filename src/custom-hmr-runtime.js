@@ -1,3 +1,5 @@
+const enableMetalHMR = false;
+
 if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
   console.log(`Installing custom HMR runtime`);
   var global = (1, eval)('this');
@@ -5,13 +7,15 @@ if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
   if (typeof _WebSocket !== "undefined") {
     OurWebSocket = _WebSocket;
   } else {
-    // not in browser, let's fake some things
-    OurWebSocket = require("ws");
-    global.location = {
-      hostname: "localhost",
-      protocol: null,
-    };
-    global.require = module.bundle;
+    if (enableMetalHMR) {
+      // not in browser, let's fake some things
+      OurWebSocket = require("ws");
+      global.location = {
+        hostname: "localhost",
+        protocol: null,
+      };
+      global.require = module.bundle;
+    }
   }
 
   var OldModule = module.bundle.Module;

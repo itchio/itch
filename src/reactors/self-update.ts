@@ -20,6 +20,8 @@ import memoize from "../util/lru-memoize";
 import { MinimalContext } from "../context/index";
 import { modalWidgets } from "../components/modal-widgets/index";
 import { t } from "../format/t";
+import { IStore } from "../types";
+import { manager } from "./setup";
 
 const linux = os.itchPlatform() === "linux";
 
@@ -32,7 +34,7 @@ const UPDATE_INTERVAL_WIGGLE = 0.2 * 60 * 60 * 1000;
 // 5 seconds, * 1000 = millis
 const DISMISS_TIME = 5 * 1000;
 
-const CHECK_FOR_SELF_UPDATES =
+const selfUpdateEnabled =
   env.name === "production" || process.env.UP_TO_SCRATCH === "1";
 
 /**
@@ -75,7 +77,7 @@ async function getFeedURL() {
 
 export default function(watcher: Watcher) {
   watcher.on(actions.firstWindowReady, async (store, action) => {
-    if (!CHECK_FOR_SELF_UPDATES) {
+    if (!selfUpdateEnabled) {
       return;
     }
 
@@ -136,55 +138,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.checkForSelfUpdate, async (store, action) => {
     logger.info("Checking...");
-    const uri = await getFeedURL();
-
-    try {
-      const resp = await request("get", uri, {});
-
-      logger.info(`HTTP GET ${uri}: ${resp.statusCode}`);
-      if (resp.statusCode === 200) {
-        const downloadSelfUpdates = store.getState().preferences
-          .downloadSelfUpdates;
-
-        if (autoUpdater && !hadErrors && downloadSelfUpdates && !linux) {
-          store.dispatch(
-            actions.selfUpdateAvailable({ spec: resp.body, downloading: true })
-          );
-          autoUpdater.checkForUpdates();
-        } else {
-          store.dispatch(
-            actions.selfUpdateAvailable({
-              spec: resp.body,
-              downloading: false,
-            })
-          );
-        }
-      } else if (resp.statusCode === 204) {
-        store.dispatch(actions.selfUpdateNotAvailable({ uptodate: true }));
-        await delay(DISMISS_TIME);
-        store.dispatch(actions.dismissStatus({}));
-      } else {
-        store.dispatch(
-          actions.selfUpdateError({
-            message: `While trying to reach update server: ${resp.status}`,
-          })
-        );
-      }
-    } catch (e) {
-      if (isNetworkError(e)) {
-        logger.warn(
-          "Seems like we have no network connectivity, skipping self-update check"
-        );
-        store.dispatch(actions.selfUpdateNotAvailable({ uptodate: false }));
-      } else {
-        logger.error(`Server-side error on HTTP GET ${uri}`);
-        store.dispatch(
-          actions.selfUpdateError({
-            message: `While trying to reach update server: ${e.message || e}`,
-          })
-        );
-      }
-    }
+    await Promise.all([checkForSelfUpdate(store), checkForComponentsUpdate()]);
   });
 
   watcher.on(actions.applySelfUpdateRequest, async (store, action) => {
@@ -322,4 +276,60 @@ export default function(watcher: Watcher) {
       )
     );
   });
+}
+
+async function checkForComponentsUpdate() {
+  await manager.upgrade();
+}
+
+async function checkForSelfUpdate(store: IStore) {
+  const uri = await getFeedURL();
+
+  try {
+    const resp = await request("get", uri, {});
+
+    logger.info(`HTTP GET ${uri}: ${resp.statusCode}`);
+    if (resp.statusCode === 200) {
+      const downloadSelfUpdates = store.getState().preferences
+        .downloadSelfUpdates;
+
+      if (autoUpdater && !hadErrors && downloadSelfUpdates && !linux) {
+        store.dispatch(
+          actions.selfUpdateAvailable({ spec: resp.body, downloading: true })
+        );
+        autoUpdater.checkForUpdates();
+      } else {
+        store.dispatch(
+          actions.selfUpdateAvailable({
+            spec: resp.body,
+            downloading: false,
+          })
+        );
+      }
+    } else if (resp.statusCode === 204) {
+      store.dispatch(actions.selfUpdateNotAvailable({ uptodate: true }));
+      await delay(DISMISS_TIME);
+      store.dispatch(actions.dismissStatus({}));
+    } else {
+      store.dispatch(
+        actions.selfUpdateError({
+          message: `While trying to reach update server: ${resp.status}`,
+        })
+      );
+    }
+  } catch (e) {
+    if (isNetworkError(e)) {
+      logger.warn(
+        "Seems like we have no network connectivity, skipping self-update check"
+      );
+      store.dispatch(actions.selfUpdateNotAvailable({ uptodate: false }));
+    } else {
+      logger.error(`Server-side error on HTTP GET ${uri}`);
+      store.dispatch(
+        actions.selfUpdateError({
+          message: `While trying to reach update server: ${e.message || e}`,
+        })
+      );
+    }
+  }
 }
