@@ -168,6 +168,12 @@ func doMain() error {
 	r.logf("We're talking to the app! (started in %s)", time.Since(startTime))
 	r.logf("Session ID: %s", sessRes.SessionID)
 
+	r.logf("Taking screenshot")
+	err := r.takeScreenshot("initial")
+	if err != nil {
+		r.logf("Could not take screenshot: %s", err.Error())
+	}
+
 	r.testStart = time.Now()
 	r.readyForScreenshot = true
 
