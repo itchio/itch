@@ -5,7 +5,10 @@ import reducer from "./reducer";
 const initialState = {
   done: false,
   errors: [],
-  blockingOperation: null,
+  blockingOperation: {
+    icon: "moon",
+    message: ["login.status.dependency_check"],
+  },
 } as ISetupState;
 
 export default reducer<ISetupState>(initialState, on => {

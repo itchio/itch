@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -21,6 +22,7 @@ import (
 )
 
 const testAccountName = "itch-test-account"
+const enableGetButler = false
 
 var testAccountPassword = os.Getenv("ITCH_TEST_ACCOUNT_PASSWORD")
 var testAccountAPIKey = os.Getenv("ITCH_TEST_ACCOUNT_API_KEY")
@@ -48,6 +50,21 @@ func main() {
 
 var r *runner
 
+type logWatch struct {
+	re *regexp.Regexp
+	c  chan bool
+}
+
+func (lw *logWatch) WaitWithTimeout(timeout time.Duration) error {
+	select {
+	case <-lw.c:
+		r.logf("Saw pattern (%s)", lw.re.String())
+		return nil
+	case <-time.After(timeout):
+		return errors.Errorf("")
+	}
+}
+
 func doMain() error {
 	bootTime := time.Now()
 
@@ -68,22 +85,29 @@ func doMain() error {
 	r.cwd = cwd
 
 	done := make(chan error)
-	go func() {
-		done <- r.getButler()
-		r.logf("✓ Butler is all set up!")
-	}()
 
+	numPrepTasks := 0
+	if enableGetButler {
+		numPrepTasks++
+		go func() {
+			done <- r.getButler()
+			r.logf("✓ Butler is all set up!")
+		}()
+	}
+
+	numPrepTasks++
 	go func() {
 		done <- downloadChromeDriver(r)
 		r.logf("✓ ChromeDriver is set up!")
 	}()
 
+	numPrepTasks++
 	go func() {
 		done <- r.bundle()
 		r.logf("✓ Everything is bundled!")
 	}()
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < numPrepTasks; i++ {
 		must(<-done)
 	}
 
@@ -98,6 +122,19 @@ func doMain() error {
 	env = append(env, "ELECTRON_ENABLE_LOGGING=1")
 	r.chromeDriverCmd.Env = env
 
+	var logWatches []*logWatch
+
+	makeLogWatch := func(re *regexp.Regexp) *logWatch {
+		lw := &logWatch{
+			re: re,
+			c:  make(chan bool, 1),
+		}
+		logWatches = append(logWatches, lw)
+		return lw
+	}
+
+	setupWatch := makeLogWatch(regexp.MustCompile("Setup done"))
+
 	go func() {
 		t, err := tail.TailFile(filepath.Join(cwd, r.prefix, "prefix", "userData", "logs", "itch.txt"), tail.Config{
 			Follow: true,
@@ -106,6 +143,14 @@ func doMain() error {
 		must(err)
 
 		for line := range t.Lines {
+			for i, lw := range logWatches {
+				if lw.re.MatchString(line.Text) {
+					lw.c <- true
+					copy(logWatches[i:], logWatches[i+1:])
+					logWatches[len(logWatches)-1] = nil
+					logWatches = logWatches[:len(logWatches)-1]
+				}
+			}
 			fmt.Println(line.Text)
 		}
 	}()
@@ -113,12 +158,6 @@ func doMain() error {
 	must(r.chromeDriverCmd.Start())
 
 	r.cleanup = func() {
-		r.logf("Taking screenshot")
-		err := r.takeScreenshot("final")
-		if err != nil {
-			r.logf("Could not take screenshot: %s", err.Error())
-		}
-
 		r.logf("Cleaning up chrome driver...")
 		r.driver.CloseWindow()
 		chromeDriverCancel()
@@ -174,6 +213,9 @@ func doMain() error {
 		r.logf("Could not take screenshot: %s", err.Error())
 	}
 
+	r.logf("Waiting for setup to be done...")
+	must(setupWatch.WaitWithTimeout(30 * time.Second))
+
 	r.testStart = time.Now()
 	r.readyForScreenshot = true
 
@@ -187,6 +229,13 @@ func doMain() error {
 
 	log.Printf("Succeeded in %s", time.Since(r.testStart))
 	log.Printf("Total time %s", time.Since(bootTime))
+
+	r.logf("Taking final screenshot")
+	err = r.takeScreenshot("final")
+	if err != nil {
+		r.logf("Could not take final screenshot: %s", err.Error())
+	}
+
 	return nil
 }
 

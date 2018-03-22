@@ -162,6 +162,9 @@ export class Package {
     this.store.dispatch(
       actions.packageProgress({ name: this.name, progressInfo })
     );
+    this.store.dispatch(
+      actions.setupOperationProgress({ progress: progressInfo })
+    );
   }
 
   private async doUpgrade() {
@@ -185,6 +188,13 @@ export class Package {
     if (await this.isVersionValid(latestVersion)) {
       // do nothing
     } else {
+      this.store.dispatch(
+        actions.setupStatus({
+          icon: "install",
+          message: ["login.status.finalizing_installation"],
+        })
+      );
+
       const ctx = new MinimalContext();
       const archiveName = `${this.name}.zip`;
       const archiveUrl = this.buildDownloadURL(

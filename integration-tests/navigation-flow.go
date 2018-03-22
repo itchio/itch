@@ -16,12 +16,14 @@ func navigationFlow(r *runner) {
 
 	r.logf("checking grid is shown")
 	must(r.waitForVisible(currTab + ".grid--cell"))
+	r.takeScreenshot("dashboard grid")
 
 	r.logf("switching to table layout")
 	must(r.click(currTab + ".layout-picker[data-layout='table']"))
 
 	r.logf("checking table is shown")
 	must(r.waitForVisible(currTab + ".table--row"))
+	r.takeScreenshot("dashboard table")
 
 	const firstTitleSelector = currTab + ".table--row .title--name"
 

@@ -239,7 +239,7 @@ func (r *runner) takeScreenshot(name string) error {
 		return errors.Wrap(err, 0)
 	}
 
-	screenshotName := fmt.Sprintf("%s - %s", time.Now().UTC().Format(time.StampMilli), name)
+	screenshotName := fmt.Sprintf("%s - %s", time.Now().UTC().Format(time.RFC3339Nano), name)
 	screenshotPath := filepath.Join("screenshots", screenshotName+".png")
 
 	err = ioutil.WriteFile(screenshotPath, imageBytes, 0644)
