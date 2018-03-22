@@ -110,6 +110,7 @@ const LocationTable = styled.table`
 
 const ControlButtonsDiv = styled.div`
   padding: 12px;
+  padding-top: 24px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -159,14 +160,12 @@ class InstallLocationSettings extends React.Component<
         <ControlButtonsDiv>
           <Button
             icon="plus"
-            discreet
             label={format(["preferences.install_location.add"])}
             onClick={() => this.props.addInstallLocation({})}
           />
           <Spacer />
           <Button
             icon="repeat"
-            discreet
             label="Scan install locations for games"
             onClick={() => this.props.scanInstallLocations({})}
           />

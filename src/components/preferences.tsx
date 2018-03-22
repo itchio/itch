@@ -10,11 +10,20 @@ import Checkbox from "./preferences/checkbox";
 
 import format from "./format";
 
-import { IRootState, IPreferencesState } from "../types";
+import {
+  IRootState,
+  IPreferencesState,
+  ISystemState,
+  IBrothState,
+} from "../types";
 
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
+import Icon from "./basics/icon";
+import { formatItchPlatform, formatArch } from "../format/platform";
+import LoadingCircle from "./basics/loading-circle";
+import { downloadProgress } from "../format/download-progress";
 
 const PreferencesDiv = styled.div`
   ${styles.meat()};
@@ -66,6 +75,10 @@ const PreferencesContentDiv = styled.div`
   .advanced-form {
     .section {
       margin: 8px 0;
+
+      &.component {
+        margin-left: 16px;
+      }
 
       &:first-child {
         margin-top: 0;
@@ -126,23 +139,6 @@ const PreferencesContentDiv = styled.div`
       text-decoration: none;
     }
   }
-
-  .proxy-settings {
-    display: flex;
-    align-items: center;
-    padding: 5px 0 5px 0;
-
-    .value {
-      min-width: 150px;
-      background: $explanation-color;
-      padding: 0 5px;
-      margin: 0 5px;
-      height: 32px;
-      line-height: 32px;
-      color: $ivory;
-      -webkit-user-select: initial;
-    }
-  }
 `;
 
 class Preferences extends React.PureComponent<IProps & IDerivedProps> {
@@ -153,8 +149,8 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
       <PreferencesDiv>
         <PreferencesContentDiv>
           <LanguageSettings />
-          <BehaviorSettings />
           <InstallLocationsSettings />
+          <BehaviorSettings />
 
           <h2
             id="preferences-advanced-section"
@@ -176,7 +172,8 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
 
   renderAdvanced() {
     const {
-      appVersion,
+      system,
+      broth,
       clearBrowsingDataRequest,
       navigate,
       checkForGameUpdates,
@@ -184,8 +181,8 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <div className="explanation advanced-form">
-        <p className="section app-version">
-          itch v{appVersion}
+        <p className="section">
+          <Icon icon="pin" /> itch v{system.appVersion}
           <span
             className="button"
             onClick={() => {
@@ -199,6 +196,51 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           >
             {format(["menu.help.check_for_update"])}
           </span>
+        </p>
+        {Object.keys(broth.packages).map(pkgName => {
+          const pkg = broth.packages[pkgName];
+          return (
+            <p className="section component">
+              {(() => {
+                switch (pkg.stage) {
+                  case "idle":
+                    return <Icon icon="checkmark" />;
+                  case "assess":
+                    return <Icon icon="stopwatch" />;
+                  case "download":
+                    return <Icon icon="download" />;
+                  case "install":
+                    return <Icon icon="install" />;
+                }
+              })()}
+              &nbsp;
+              {pkgName} @ {pkg.version}
+              &nbsp;
+              {(() => {
+                if (pkg.progressInfo) {
+                  const { eta = 0, bps = 0 } = pkg.progressInfo;
+                  return (
+                    <>
+                      &nbsp;
+                      <LoadingCircle progress={pkg.progressInfo.progress} />
+                      {downloadProgress({ eta, bps }, false)}
+                    </>
+                  );
+                } else if (pkg.stage === "assess" || pkg.stage === "install") {
+                  return (
+                    <>
+                      &nbsp;
+                      <LoadingCircle progress={-1} />
+                    </>
+                  );
+                }
+              })()}
+            </p>
+          );
+        })}
+        <p className="section">
+          <Icon icon="security" /> {formatItchPlatform(system.platform)}{" "}
+          {formatArch(system.arch)}
         </p>
         <p>
           <ProxySettings />
@@ -266,14 +308,16 @@ const actionCreators = actionCreatorsList(
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  appVersion: string;
   preferences: IPreferencesState;
+  system: ISystemState;
+  broth: IBrothState;
 };
 
 export default connect<IProps>(Preferences, {
   state: createStructuredSelector({
-    appVersion: (rs: IRootState) => rs.system.appVersion,
     preferences: (rs: IRootState) => rs.preferences,
+    system: (rs: IRootState) => rs.system,
+    broth: (rs: IRootState) => rs.broth,
   }),
   actionCreators,
 });

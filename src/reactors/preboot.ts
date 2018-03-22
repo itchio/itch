@@ -4,13 +4,14 @@ import { actions } from "../actions";
 
 import { app } from "electron";
 import env from "../env";
+import * as os from "../os";
 
 import * as visualElements from "./preboot/visual-elements";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "preboot" });
 
-import { ProxySource } from "../types";
+import { ProxySource, ISystemState } from "../types";
 
 import { NET_PARTITION_NAME } from "../constants/net";
 import { applyProxySettings } from "../reactors/proxy";
@@ -28,6 +29,22 @@ export default function(watcher: Watcher) {
 
     let t1 = Date.now();
     try {
+      const system: ISystemState = {
+        appVersion: app.getVersion(),
+        platform: os.itchPlatform(),
+        arch: os.arch(),
+        macos: os.platform() === "darwin",
+        windows: os.platform() === "win32",
+        linux: os.platform() === "linux",
+        sniffedLanguage: null,
+        homePath: app.getPath("home"),
+        userDataPath: app.getPath("userData"),
+        proxy: null,
+        proxySource: null,
+        quitting: false,
+      };
+      store.dispatch(actions.systemAssessed({ system }));
+
       try {
         await loadPreferences(store);
       } catch (e) {

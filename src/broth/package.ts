@@ -129,6 +129,7 @@ export class Package {
       this.store.dispatch(
         actions.packageGotVersionPrefix({
           name: this.name,
+          version: version.format(),
           versionPrefix: newVersionPrefix,
         })
       );

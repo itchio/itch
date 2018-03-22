@@ -26,6 +26,7 @@ import {
   INavigateTabPayload,
   TaskName,
   IPackageState,
+  ISystemState,
 } from "../types/index";
 
 import {
@@ -97,6 +98,9 @@ export const actions = wireActions({
   tick: action<{}>(),
   scheduleSystemTask: action<Partial<ISystemTasksState>>(),
   firstUsefulPage: action<{}>(),
+  systemAssessed: action<{
+    system: ISystemState;
+  }>(),
   languageSniffed: action<{
     lang: string;
   }>(),
@@ -150,6 +154,7 @@ export const actions = wireActions({
   }>(),
   packageGotVersionPrefix: action<{
     name: string;
+    version: string;
     versionPrefix: string;
   }>(),
   packageStage: action<{

@@ -49,14 +49,18 @@ const emptyObj = {};
 
 class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, maximized, focused, tabInstance } = this.props;
+    const { tab, macos, focused, tabInstance } = this.props;
 
     const sp = Space.fromInstance(tabInstance);
     let label = sp.label();
 
     const loggedIn = tab !== "login";
     if (!loggedIn) {
-      label = env.appName;
+      if (macos) {
+        label = "";
+      } else {
+        label = env.appName;
+      }
     }
 
     return (
@@ -72,13 +76,26 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
           </DraggableDivInner>
         </DraggableDiv>
         {loggedIn ? <UserMenu /> : null}
+        {this.renderIcons()}
+      </FiltersContainer>
+    );
+  }
+
+  renderIcons() {
+    const { macos, maximized } = this.props;
+    if (macos) {
+      return null;
+    }
+
+    return (
+      <>
         <IconButton icon="minus" onClick={this.minimizeClick} />
         <IconButton
           icon={maximized ? "window-restore" : "window-maximize"}
           onClick={this.maximizeRestoreClick}
         />
         <IconButton icon="remove" onClick={this.closeClick} />
-      </FiltersContainer>
+      </>
     );
   }
 
@@ -132,6 +149,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   tabInstance: ITabInstance;
   maximized: boolean;
   focused: boolean;
+  macos: boolean;
 };
 
 export default connect<IProps>(TitleBar, {
@@ -141,6 +159,7 @@ export default connect<IProps>(TitleBar, {
         rs.profile.tabInstances[props.tab] || emptyObj,
       maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
       focused: (rs: IRootState) => rs.ui.mainWindow.focused,
+      macos: (rs: IRootState) => rs.system.macos,
     }),
   actionCreators,
 });
