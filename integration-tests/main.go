@@ -21,6 +21,8 @@ import (
 	"github.com/onsi/gocleanup"
 )
 
+const stampFormat = "15:04:05.999"
+
 const testAccountName = "itch-test-account"
 const enableGetButler = false
 
@@ -31,6 +33,8 @@ type CleanupFunc func()
 
 type runner struct {
 	cwd                string
+	logger             *log.Logger
+	errLogger          *log.Logger
 	chromeDriverExe    string
 	chromeDriverCmd    *exec.Cmd
 	driver             gs.WebDriver
@@ -41,7 +45,11 @@ type runner struct {
 }
 
 func (r *runner) logf(format string, args ...interface{}) {
-	log.Printf(format, args...)
+	r.logger.Printf(format, args...)
+}
+
+func (r *runner) errf(format string, args ...interface{}) {
+	r.errLogger.Printf(format, args...)
 }
 
 func main() {
@@ -66,6 +74,7 @@ func (lw *logWatch) WaitWithTimeout(timeout time.Duration) error {
 }
 
 func doMain() error {
+	log.SetFlags(log.Ltime | log.Lmicroseconds)
 	bootTime := time.Now()
 
 	if testAccountAPIKey == "" {
@@ -73,7 +82,9 @@ func doMain() error {
 	}
 
 	r = &runner{
-		prefix: "tmp",
+		prefix:    "tmp",
+		logger:    log.New(os.Stdout, "• ", log.Ltime|log.Lmicroseconds),
+		errLogger: log.New(os.Stderr, "❌ ", log.Ltime|log.Lmicroseconds),
 	}
 	must(os.RemoveAll(r.prefix))
 	must(os.RemoveAll("screenshots"))
@@ -136,9 +147,12 @@ func doMain() error {
 	setupWatch := makeLogWatch(regexp.MustCompile("Setup done"))
 
 	go func() {
+		logger := log.New(os.Stdout, "★ ", 0)
+
 		t, err := tail.TailFile(filepath.Join(cwd, r.prefix, "prefix", "userData", "logs", "itch.txt"), tail.Config{
 			Follow: true,
 			Poll:   true,
+			Logger: tail.DiscardingLogger,
 		})
 		must(err)
 
@@ -151,7 +165,7 @@ func doMain() error {
 					logWatches = logWatches[:len(logWatches)-1]
 				}
 			}
-			fmt.Println(line.Text)
+			logger.Print(line.Text)
 		}
 	}()
 
@@ -206,34 +220,34 @@ func doMain() error {
 
 	r.logf("We're talking to the app! (started in %s)", time.Since(startTime))
 	r.logf("Session ID: %s", sessRes.SessionID)
+	r.readyForScreenshot = true
 
 	r.logf("Taking screenshot")
 	err = r.takeScreenshot("initial")
 	if err != nil {
-		r.logf("Could not take screenshot: %s", err.Error())
+		r.errf("Could not take screenshot: %s", err.Error())
 	}
-
-	r.logf("Waiting for setup to be done...")
-	must(setupWatch.WaitWithTimeout(30 * time.Second))
-
-	r.testStart = time.Now()
-	r.readyForScreenshot = true
 
 	// Delete the session once this function is completed.
 	defer driver.DeleteSession()
 
+	r.logf("Waiting for setup to be done...")
+	must(setupWatch.WaitWithTimeout(30 * time.Second))
+	r.testStart = time.Now()
+
+	must(errors.New("oh no"))
 	prepareFlow(r)
 	navigationFlow(r)
 	installFlow(r)
 	loginFlow(r)
 
-	log.Printf("Succeeded in %s", time.Since(r.testStart))
-	log.Printf("Total time %s", time.Since(bootTime))
+	r.logf("Succeeded in %s", time.Since(r.testStart))
+	r.logf("Total time %s", time.Since(bootTime))
 
 	r.logf("Taking final screenshot")
 	err = r.takeScreenshot("final")
 	if err != nil {
-		r.logf("Could not take final screenshot: %s", err.Error())
+		r.errf("Could not take final screenshot: %s", err.Error())
 	}
 
 	return nil
@@ -309,7 +323,7 @@ func (r *runner) bundle() error {
 	cmd.Env = append(cmd.Env, "NODE_ENV=test")
 	combinedOut, err := cmd.CombinedOutput()
 	if err != nil {
-		r.logf("Build failed:\n%s", string(combinedOut))
+		r.errf("Build failed:\n%s", string(combinedOut))
 		return errors.Wrap(err, 0)
 	}
 	return nil
@@ -317,21 +331,34 @@ func (r *runner) bundle() error {
 
 func must(err error) {
 	if err != nil {
-		log.Println("Fatal error:")
+		fmt.Println("==================================================================")
+		fmt.Println("Fatal error:")
 		switch err := err.(type) {
 		case *errors.Error:
-			log.Println(err.ErrorStack())
+			fmt.Println(err.ErrorStack())
 		default:
-			log.Println(err.Error())
+			fmt.Println(err.Error())
 		}
+		fmt.Println("==================================================================")
 
 		if r != nil {
-			log.Printf("Failed in %s", time.Since(r.testStart))
+			r.errf("Failed in %s", time.Since(r.testStart))
 
-			log.Printf("Taking failure screenshot...")
-			serr := r.takeScreenshot(err.Error())
-			if serr != nil {
-				log.Printf("Could not take failure screenshot: %s", serr.Error())
+			logRes, logErr := r.driver.Log("browser")
+			if logErr == nil {
+				r.logf("Browser log:")
+				for _, entry := range logRes.Entries {
+					stamp := time.Unix(int64(entry.Timestamp/1000.0), 0).Format(stampFormat)
+					fmt.Printf("♪ %s %s %s\n", stamp, entry.Level, strings.Replace(entry.Message, "\\n", "\n", -1))
+				}
+			} else {
+				r.errf("Could not get browser log: %s", logErr.Error())
+			}
+
+			r.logf("Taking failure screenshot...")
+			screenErr := r.takeScreenshot(err.Error())
+			if screenErr != nil {
+				r.errf("Could not take failure screenshot: %s", screenErr.Error())
 			}
 
 			if r.cleanup != nil {
