@@ -18,7 +18,6 @@ book:
 
 test-linux:
   stage: build
-  retry: 2
   tags:
     - linux
   script:
@@ -34,7 +33,6 @@ test-linux:
 
 test-darwin:
   stage: build
-  retry: 2
   tags:
     - darwin
   script:
@@ -50,7 +48,6 @@ test-darwin:
 
 test-windows:
   stage: build
-  retry: 2
   tags:
     - windows
   script:

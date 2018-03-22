@@ -331,7 +331,7 @@ func must(err error) {
 			log.Printf("Taking failure screenshot...")
 			serr := r.takeScreenshot(err.Error())
 			if serr != nil {
-				log.Printf("Could not take failure screenshot: %s", err.Error())
+				log.Printf("Could not take failure screenshot: %s", serr.Error())
 			}
 
 			if r.cleanup != nil {
