@@ -118,6 +118,7 @@ func doMain() error {
 		if err != nil {
 			r.logf("Could not take screenshot: %s", err.Error())
 		}
+
 		r.logf("Cleaning up chrome driver...")
 		r.driver.CloseWindow()
 		chromeDriverCancel()
@@ -159,12 +160,13 @@ func doMain() error {
 
 	r.driver = driver
 
-	_, err = driver.CreateSession()
+	sessRes, err := driver.CreateSession()
 	if err != nil {
 		return errors.Wrap(err, 0)
 	}
 
 	r.logf("We're talking to the app! (started in %s)", time.Since(startTime))
+	r.logf("Session ID: %s", sessRes.SessionID)
 
 	r.testStart = time.Now()
 	r.readyForScreenshot = true
@@ -172,7 +174,6 @@ func doMain() error {
 	// Delete the session once this function is completed.
 	defer driver.DeleteSession()
 
-	must(r.click(".woops"))
 	prepareFlow(r)
 	navigationFlow(r)
 	installFlow(r)
@@ -270,8 +271,13 @@ func must(err error) {
 		}
 
 		if r != nil {
-			r.takeScreenshot(err.Error())
 			log.Printf("Failed in %s", time.Since(r.testStart))
+
+			log.Printf("Taking failure screenshot...")
+			serr := r.takeScreenshot(err.Error())
+			if serr != nil {
+				log.Printf("Could not take failure screenshot: %s", err.Error())
+			}
 
 			if r.cleanup != nil {
 				r.cleanup()

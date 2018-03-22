@@ -8,8 +8,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/go-errors/errors"
 )
@@ -36,8 +38,18 @@ func downloadChromeDriver(r *runner) error {
 		}
 	}
 
+	showChromeDriverVersion := func() error {
+		out, err := exec.Command(driverExe, "--version").CombinedOutput()
+		if err != nil {
+			return errors.Wrap(err, 0)
+		}
+		r.logf("%s", strings.TrimSpace(string(out)))
+		return nil
+	}
+
 	if hasChromeDriver {
 		r.logf("Found cached copy of chromedriver, using it")
+		must(showChromeDriverVersion())
 		return nil
 	}
 
@@ -101,6 +113,7 @@ func downloadChromeDriver(r *runner) error {
 			return errors.Wrap(err, 0)
 		}
 	}
+	must(showChromeDriverVersion())
 
 	return nil
 }
