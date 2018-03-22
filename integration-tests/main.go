@@ -169,7 +169,7 @@ func doMain() error {
 	r.logf("Session ID: %s", sessRes.SessionID)
 
 	r.logf("Taking screenshot")
-	err := r.takeScreenshot("initial")
+	err = r.takeScreenshot("initial")
 	if err != nil {
 		r.logf("Could not take screenshot: %s", err.Error())
 	}
