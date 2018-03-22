@@ -6,6 +6,12 @@ if (process.env.ITCH_TIME_REQUIRE === "2") {
   rt.start();
 }
 
+if (process.env.NODE_ENV !== "production") {
+  require("bluebird").config({
+    longStackTraces: true,
+  });
+}
+
 import env from "./env";
 import * as os from "./os";
 
