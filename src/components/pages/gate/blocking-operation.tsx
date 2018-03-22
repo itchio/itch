@@ -61,6 +61,8 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
       iconElement = <LoadingCircle wide progress={progress ? progress : -1} />;
     }
 
+    const { bps = 0, eta = 0 } = blockingOperation;
+
     return (
       <BlockingOperationDiv>
         <div className="message">
@@ -78,8 +80,12 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
               blockingOperation.totalBytes * blockingOperation.progress
             )}{" "}
             / {fileSize(blockingOperation.totalBytes)}
-            {" @ "}
-            {downloadProgress(blockingOperation, false)}
+            {bps !== 0 || eta !== 0 ? (
+              <>
+                {" @ "}
+                {downloadProgress({ eta, bps }, false)}
+              </>
+            ) : null}
           </div>
         ) : null}
         {hasError ? (
