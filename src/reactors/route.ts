@@ -33,24 +33,28 @@ function err(e: Error, action: IAction<any>) {
 }
 
 function route(watcher: Watcher, store: IStore, action: IAction<any>): void {
-  (async () => {
-    for (const r of watcher.reactors[action.type] || emptyArr) {
-      await r(store, action);
-    }
+  setTimeout(() => {
+    (async () => {
+      let promises = [];
 
-    for (const sub of watcher.subs) {
-      if (!sub) {
-        continue;
+      for (const r of watcher.reactors[action.type] || emptyArr) {
+        promises.push(r(store, action));
       }
 
-      for (const r of sub.reactors[action.type] || emptyArr) {
-        await r(store, action);
-      }
-    }
-  })().catch(e => {
-    err(e, action);
-  });
+      for (const sub of watcher.subs) {
+        if (!sub) {
+          continue;
+        }
 
+        for (const r of sub.reactors[action.type] || emptyArr) {
+          promises.push(r(store, action));
+        }
+      }
+      await Promise.all(promises);
+    })().catch(e => {
+      err(e, action);
+    });
+  }, 0);
   return;
 }
 

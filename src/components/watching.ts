@@ -11,7 +11,9 @@ import * as PropTypes from "prop-types";
 export default function(constructor: Function) {
   if (!constructor.prototype.subscribe) {
     throw new Error(
-      `Component ${constructor.name} is missing subscribe method (watching decorator)`
+      `Component ${
+        constructor.name
+      } is missing subscribe method (watching decorator)`
     );
   }
 

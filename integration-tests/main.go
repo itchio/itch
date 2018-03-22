@@ -181,7 +181,7 @@ func (r *runner) getButler() error {
 	if runtime.GOOS == "windows" {
 		ext = ".exe"
 	}
-	butlerDest := filepath.Join(r.cwd, "tmp", "prefix", "userData", "bin", "butler"+ext)
+	butlerDest := filepath.Join(r.cwd, "tmp", "prefix", "userData", "broth", "butler", "versions", "9999.0.0", "butler"+ext)
 	err := os.MkdirAll(filepath.Dir(butlerDest), 0755)
 	if err != nil {
 		return errors.Wrap(err, 0)

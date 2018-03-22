@@ -6,7 +6,6 @@ import IconButton from "../../basics/icon-button";
 
 import defaultImages from "../../../constants/default-images";
 
-import { call, messages } from "../../../buse";
 import { Profile } from "../../../buse/messages";
 
 import styled from "../../styles";
@@ -14,9 +13,7 @@ import styled from "../../styles";
 import format from "../../format";
 import { modalWidgets } from "../../modal-widgets";
 import { actions } from "../../../actions";
-import watching, { Watcher } from "../../watching";
 
-@watching
 class RememberedProfile extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { profile } = this.props;
@@ -51,14 +48,6 @@ class RememberedProfile extends React.PureComponent<IProps & IDerivedProps> {
         </span>
       </RememberedProfileDiv>
     );
-  }
-
-  subscribe(watcher: Watcher) {
-    watcher.on(actions.forgetProfile, async (store, action) => {
-      const { profile } = action.payload;
-      await call(messages.ProfileForget, { profileId: profile.id });
-      store.dispatch(actions.profilesUpdated({}));
-    });
   }
 
   onForget = (e: React.MouseEvent<HTMLElement>) => {

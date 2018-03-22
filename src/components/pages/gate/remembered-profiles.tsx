@@ -9,6 +9,10 @@ import styled from "../../styles";
 import format from "../../format";
 import { Links } from "./links";
 
+import watching, { Watcher } from "../../watching";
+import { actions } from "../../../actions";
+import { messages, call } from "../../../buse";
+
 const RememberedProfilesDiv = styled.div`
   animation: fade-in 0.2s;
 
@@ -18,6 +22,7 @@ const RememberedProfilesDiv = styled.div`
   overflow-y: auto;
 `;
 
+@watching
 class RememberedProfiles extends React.PureComponent<IProps> {
   render() {
     const { profiles, showForm } = this.props;
@@ -33,6 +38,14 @@ class RememberedProfiles extends React.PureComponent<IProps> {
         </Links>
       </RememberedProfilesDiv>
     );
+  }
+
+  subscribe(watcher: Watcher) {
+    watcher.on(actions.forgetProfile, async (store, action) => {
+      const { profile } = action.payload;
+      await call(messages.ProfileForget, { profileId: profile.id });
+      store.dispatch(actions.profilesUpdated({}));
+    });
   }
 }
 
