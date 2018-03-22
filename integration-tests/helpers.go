@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -218,6 +219,8 @@ func (r *runner) waitForVisibleWithTimeout(selector string, timeout time.Duratio
 	return nil
 }
 
+var badFileCharRe = regexp.MustCompile("[^A-Za-z0-9-.]")
+
 func (r *runner) takeScreenshot(name string) error {
 	if !r.readyForScreenshot {
 		r.logf("Too early to take a screenshot, ignoring (%s)", name)
@@ -240,6 +243,7 @@ func (r *runner) takeScreenshot(name string) error {
 	}
 
 	screenshotName := fmt.Sprintf("%s - %s", time.Now().UTC().Format(time.RFC3339Nano), name)
+	screenshotName = badFileCharRe.ReplaceAllLiteralString(screenshotName, "_")
 	screenshotPath := filepath.Join("screenshots", screenshotName+".png")
 
 	err = ioutil.WriteFile(screenshotPath, imageBytes, 0644)
