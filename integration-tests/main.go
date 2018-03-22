@@ -235,7 +235,6 @@ func doMain() error {
 	must(setupWatch.WaitWithTimeout(30 * time.Second))
 	r.testStart = time.Now()
 
-	must(errors.New("oh no"))
 	prepareFlow(r)
 	navigationFlow(r)
 	installFlow(r)
