@@ -21,7 +21,6 @@ import (
 )
 
 const testAccountName = "itch-test-account"
-const chromeDriverVersion = "2.27"
 
 var testAccountPassword = os.Getenv("ITCH_TEST_ACCOUNT_PASSWORD")
 var testAccountAPIKey = os.Getenv("ITCH_TEST_ACCOUNT_API_KEY")
@@ -32,11 +31,11 @@ type runner struct {
 	cwd                string
 	chromeDriverExe    string
 	chromeDriverCmd    *exec.Cmd
-	chromeDriverCancel context.CancelFunc
 	driver             gs.WebDriver
 	prefix             string
 	cleanup            CleanupFunc
 	testStart          time.Time
+	readyForScreenshot bool
 }
 
 func (r *runner) logf(format string, args ...interface{}) {
@@ -60,6 +59,7 @@ func doMain() error {
 		prefix: "tmp",
 	}
 	must(os.RemoveAll(r.prefix))
+	must(os.RemoveAll("screenshots"))
 
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -113,6 +113,11 @@ func doMain() error {
 	must(r.chromeDriverCmd.Start())
 
 	r.cleanup = func() {
+		r.logf("Taking screenshot")
+		err := r.takeScreenshot("final")
+		if err != nil {
+			r.logf("Could not take screenshot: %s", err.Error())
+		}
 		r.logf("Cleaning up chrome driver...")
 		r.driver.CloseWindow()
 		chromeDriverCancel()
@@ -162,10 +167,12 @@ func doMain() error {
 	r.logf("We're talking to the app! (started in %s)", time.Since(startTime))
 
 	r.testStart = time.Now()
+	r.readyForScreenshot = true
 
 	// Delete the session once this function is completed.
 	defer driver.DeleteSession()
 
+	must(r.click(".woops"))
 	prepareFlow(r)
 	navigationFlow(r)
 	installFlow(r)
@@ -240,14 +247,6 @@ func (r *runner) getButler() error {
 
 func (r *runner) bundle() error {
 	r.logf("Bundling...")
-	err := os.RemoveAll("dist")
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-	err = os.RemoveAll(".cache")
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
 
 	cmd := exec.Command("node", "./src/init.js")
 	cmd.Env = os.Environ()
@@ -271,6 +270,7 @@ func must(err error) {
 		}
 
 		if r != nil {
+			r.takeScreenshot(err.Error())
 			log.Printf("Failed in %s", time.Since(r.testStart))
 
 			if r.cleanup != nil {

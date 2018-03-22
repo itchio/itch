@@ -14,6 +14,8 @@ import (
 	"github.com/go-errors/errors"
 )
 
+const chromeDriverVersion = "2.37"
+
 func downloadChromeDriver(r *runner) error {
 	driverCache := filepath.Join(r.cwd, ".chromedriver")
 	ext := ".exe"

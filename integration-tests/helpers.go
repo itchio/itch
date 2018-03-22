@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -211,6 +214,39 @@ func (r *runner) waitForVisibleWithTimeout(selector string, timeout time.Duratio
 	if !found {
 		return errors.Wrap(fmt.Errorf("timed out waiting for %s to be visible", selector), 0)
 	}
+
+	return nil
+}
+
+func (r *runner) takeScreenshot(name string) error {
+	if !r.readyForScreenshot {
+		r.logf("Too early to take a screenshot, ignoring (%s)", name)
+		return nil
+	}
+
+	s, err := r.driver.Screenshot()
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+
+	imageBytes, err := s.ImageBytes()
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+
+	err = os.MkdirAll("screenshots", 0755)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+
+	screenshotName := fmt.Sprintf("%s - %s", time.Now().UTC().Format(time.StampMilli), name)
+	screenshotPath := filepath.Join("screenshots", screenshotName+".png")
+
+	err = ioutil.WriteFile(screenshotPath, imageBytes, 0644)
+	if err != nil {
+		return errors.Wrap(err, 0)
+	}
+	r.logf("Wrote %s", screenshotPath)
 
 	return nil
 }
