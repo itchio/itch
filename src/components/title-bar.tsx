@@ -89,12 +89,12 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <>
-        <IconButton icon="minus" onClick={this.minimizeClick} />
+        <IconButton icon="window-minimize" onClick={this.minimizeClick} />
         <IconButton
           icon={maximized ? "window-restore" : "window-maximize"}
           onClick={this.maximizeRestoreClick}
         />
-        <IconButton icon="remove" onClick={this.closeClick} />
+        <IconButton icon="window-close" onClick={this.closeClick} />
       </>
     );
   }
