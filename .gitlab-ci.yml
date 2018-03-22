@@ -30,6 +30,7 @@ test-linux:
     when: always
     paths:
       - screenshots
+      - chrome-driver.log.txt
 
 test-darwin:
   stage: build
@@ -45,6 +46,7 @@ test-darwin:
     when: always
     paths:
       - screenshots
+      - chrome-driver.log.txt
 
 test-windows:
   stage: build
@@ -60,6 +62,7 @@ test-windows:
     when: always
     paths:
       - screenshots
+      - chrome-driver.log.txt
 
 # I18n check
 i18n-check:
