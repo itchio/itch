@@ -8,6 +8,7 @@ import { messages, withLogger } from "../buse/index";
 import { indexBy, isEmpty } from "underscore";
 import { appdataLocationPath } from "../os/paths";
 import { Manager } from "../broth/manager";
+import delay from "./delay";
 const logger = rootLogger.child({ name: "setup" });
 const call = withLogger(logger);
 
@@ -52,9 +53,18 @@ async function syncInstallLocations(store: IStore) {
 
 export let manager: Manager;
 
-async function initialSetup(store: IStore) {
+async function initialSetup(store: IStore, { retry }) {
   try {
-    manager = new Manager(store);
+    store.dispatch(
+      actions.setupStatus({
+        icon: "install",
+        message: ["login.status.finalizing_installation"],
+      })
+    );
+
+    if (!manager) {
+      manager = new Manager(store);
+    }
     await manager.ensure();
 
     await syncInstallLocations(store);
@@ -62,6 +72,13 @@ async function initialSetup(store: IStore) {
     logger.info(`Setup done`);
   } catch (e) {
     logger.error(`setup got error: ${e.stack}`);
+
+    if (retry) {
+      // UX trick #239408: sometimes setup is so fast,
+      // it does't feel like anything happened,
+      // so let the user see that we tried.
+      await delay(1000);
+    }
 
     store.dispatch(
       actions.setupStatus({
@@ -75,10 +92,10 @@ async function initialSetup(store: IStore) {
 
 export default function(watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
-    await initialSetup(store);
+    await initialSetup(store, { retry: false });
   });
 
   watcher.on(actions.retrySetup, async (store, action) => {
-    await initialSetup(store);
+    await initialSetup(store, { retry: true });
   });
 }

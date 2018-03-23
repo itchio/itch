@@ -24,7 +24,6 @@ export default {
     stable: "https://nuts.itch.zone",
     canary: "https://nuts-canary.itch.ovh",
   } as IUpdateServers,
-  javaDownload: "https://www.java.com/en/download",
 
   itchioApi: itchio,
   termsOfService: `${itchio}/docs/legal/terms`,
@@ -34,14 +33,11 @@ export default {
   developersLearnMore: `${itchio}/developers`,
   dashboard: `${itchio}/dashboard`,
   myCollections: `${itchio}/my-collections`,
-  rarPolicy: `${itchio}/t/11918/rar-support-is-not-happening-repack-your-games`,
-  debPolicy: `${itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`,
-  rpmPolicy: `${itchio}/t/13882/deb-and-rpm-arent-supported-by-itch-please-ship-portable-linux-builds`,
   sandboxDocs: `${manual}/using/sandbox.html`,
   proxyDocs: `${manual}/using/proxy.html`,
   linuxSandboxSetup: `${manual}/using/sandbox/linux.html#one-time-setup`,
   windowsSandboxSetup: `${manual}/using/sandbox/windows.html#one-time-setup`,
   releasesPage: `${itchRepo}/releases`,
   installingOnLinux: `${manual}/installing/linux/`,
-  redistsBase: `https://dl.itch.ovh/itch-redists`,
+  windowsAntivirus: `${manual}/installing/windows.html#antivirus-software`,
 };

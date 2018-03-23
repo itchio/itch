@@ -142,6 +142,7 @@
     "Finalizing installation…",
   "login.status.login": "Logging you in…",
   "login.status.setup_failure": "There was a problem during setup: {{error}}",
+  "login.status.antivirus_warning": "Antivirus software may interfere with itch.",
   "login.two_factor.title": "Two-factor authentication",
   "login.two_factor.as_user": "Logging in as {{username}}",
   "login.two_factor.enter_code":
