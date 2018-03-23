@@ -17,6 +17,7 @@ import { unzip } from "./unzip";
 
 import * as semver from "semver";
 import { SemVer } from "semver";
+import { rest, isEmpty } from "underscore";
 
 const forceHead = true;
 const semVerHead = semver.coerce("9999.0.0");
@@ -105,14 +106,19 @@ export class Package {
     this.logger.warn(msg);
   }
 
+  debug(msg: string) {
+    this.logger.debug(msg);
+  }
+
   async ensure() {
     await mkdirp(this.getVersionsDir());
     const validVersions = await this.getValidVersions();
-    if (validVersions.length > 0) {
-      this.refreshPrefix(validVersions[0]);
-    } else {
+    if (isEmpty(validVersions)) {
       this.info(`No valid versions installed`);
       await this.upgrade();
+    } else {
+      await this.cleanOldVersions();
+      this.refreshPrefix(validVersions[0]);
     }
   }
 
@@ -237,6 +243,7 @@ export class Package {
     }
 
     this.info(`Validated!`);
+    await this.cleanOldVersions();
     this.refreshPrefix(latestVersion);
   }
 
@@ -257,6 +264,19 @@ export class Package {
     });
   }
 
+  async cleanOldVersions() {
+    const validVersions = await this.getValidVersions();
+    const obsoleteVersions = rest(validVersions, 2);
+    if (isEmpty(obsoleteVersions)) {
+      return;
+    }
+
+    for (const ov of obsoleteVersions) {
+      this.info(`Removing obsolete version ${ov.format()}`);
+      await sf.wipe(this.getVersionPrefix(ov));
+    }
+  }
+
   async getValidVersions(): Promise<SemVer[]> {
     const presentVersions = await this.getPresentVersions();
 
@@ -268,7 +288,7 @@ export class Package {
     }
 
     validVersions = validVersions.sort(semver.compare).reverse();
-    this.info(`Valid versions: ${validVersions.join(", ")}`);
+    this.debug(`Valid versions: ${validVersions.join(", ")}`);
     return validVersions;
   }
 
@@ -288,7 +308,7 @@ export class Package {
     }
 
     presentVersions = presentVersions.sort(semver.compare).reverse();
-    this.info(`Present versions: ${presentVersions.join(", ")}`);
+    this.debug(`Present versions: ${presentVersions.join(", ")}`);
     return presentVersions;
   }
 
