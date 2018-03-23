@@ -20,7 +20,7 @@ export default reducer<IBrothState>(initialState, on => {
   });
 
   on(actions.packageGotVersionPrefix, (state, action) => {
-    const { name, versionPrefix } = action.payload;
+    const { name, version, versionPrefix } = action.payload;
 
     let oldPackage = state.packages[name];
     if (oldPackage) {
@@ -30,6 +30,7 @@ export default reducer<IBrothState>(initialState, on => {
           ...state.packages,
           [name]: {
             ...oldPackage,
+            version,
             versionPrefix,
           },
         },

@@ -38,6 +38,8 @@ func installFlow(r *runner) {
 	var downloadRowSelector = fmt.Sprintf(".meat-tab.visible .download-row-item.finished[data-game-id='%d'] .control--title", testGameID)
 	must(r.waitUntilTextExists(downloadRowSelector, "111 first"))
 
+	r.takeScreenshot("finished download")
+
 	r.logf("clearing downloads")
 	must(r.click(".meat-tab.visible .downloads-clear-all"))
 
@@ -46,6 +48,8 @@ func installFlow(r *runner) {
 
 	r.logf("navigating back to game")
 	must(r.click(fmt.Sprintf("#sidebar section[data-resource='games/%d']", testGameID)))
+
+	r.takeScreenshot("installed game tab")
 
 	r.logf("re-installing it")
 	must(r.click(".meat-tab.visible .more-actions"))
@@ -71,6 +75,8 @@ func installFlow(r *runner) {
 	var rowSelector = fmt.Sprintf(".meat-tab.visible .table--row[data-game-id='%d']", testGameID)
 	must(r.waitUntilTextExists(rowSelector+" .title--name", testGameName))
 
+	r.takeScreenshot("install location tab")
+
 	r.logf("open it again")
 	must(r.click(rowSelector + " .open-game-in-tab"))
 	must(r.waitUntilTextExists(".title-bar-text", testGameName))
@@ -79,6 +85,7 @@ func installFlow(r *runner) {
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
 	must(r.click(".meat-tab.visible .more-actions"))
 	must(r.click("#context--grid-item-manage"))
+	r.takeScreenshot("managing uploads")
 	must(r.click(".manage-uninstall"))
 	must(r.waitUntilTextExists(mainActionSelector, "Install"))
 }

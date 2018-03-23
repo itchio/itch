@@ -59,6 +59,7 @@ async function initialSetup(store: IStore) {
 
     await syncInstallLocations(store);
     store.dispatch(actions.setupDone({}));
+    logger.info(`Setup done`);
   } catch (e) {
     logger.error(`setup got error: ${e.stack}`);
 

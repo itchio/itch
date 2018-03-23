@@ -102,6 +102,7 @@ export interface IBrothState {
 
 export interface IPackageState {
   stage: "assess" | "download" | "install" | "idle";
+  version?: string;
   versionPrefix?: string;
   progressInfo?: IProgressInfo;
 }
@@ -242,10 +243,12 @@ export interface ISystemState {
   appVersion: string;
 
   /** the platform string, in itch format */
-  platform: string;
+  platform: ItchPlatform;
+
+  /** 'ia32' or 'x64' */
+  arch: string;
 
   /** true if running on macOS */
-  osx: boolean;
   macos: boolean;
 
   /** true if running on Windows */

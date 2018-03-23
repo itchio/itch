@@ -6,7 +6,6 @@ stages:
 
 test-linux:
   stage: build
-  retry: 2
   tags:
     - linux
   script:
@@ -18,10 +17,10 @@ test-linux:
     when: always
     paths:
       - screenshots
+      - chrome-driver.log.txt
 
 test-darwin:
   stage: build
-  retry: 2
   tags:
     - darwin
   script:
@@ -33,10 +32,10 @@ test-darwin:
     when: always
     paths:
       - screenshots
+      - chrome-driver.log.txt
 
 test-windows:
   stage: build
-  retry: 2
   tags:
     - windows
   script:
@@ -48,6 +47,7 @@ test-windows:
     when: always
     paths:
       - screenshots
+      - chrome-driver.log.txt
 
 # I18n check
 i18n-check:

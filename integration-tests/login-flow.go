@@ -18,6 +18,9 @@ func loginFlow(r *runner) {
 		}
 	}
 
+	r.logf("closing all tabs")
+	must(r.click("#sidebar-close-all-tabs"))
+
 	r.logf("logging out for real")
 	logout(true)
 
@@ -88,6 +91,8 @@ func loginFlow(r *runner) {
 	must(r.click("#clear-cookies-checkbox"))
 	must(r.click("#modal-clear-data"))
 
+	r.takeScreenshot("clearing cookies")
+
 	r.logf("opening new tab")
 	must(r.click("#new-tab-icon"))
 	must(r.click("input.browser-address"))
@@ -111,6 +116,7 @@ func loginFlow(r *runner) {
 
 	r.logf("logging back in with remembered profile")
 	must(r.click(".remembered-profile"))
+	r.takeScreenshot("viewing remembered profiles")
 	must(r.waitForVisible(".user-menu"))
 
 	r.logf("making sure preferences tab was restored")

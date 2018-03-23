@@ -33,11 +33,6 @@ const SidebarDiv = styled.div`
   flex-direction: column;
 `;
 
-const TitleBarPadder = styled.div`
-  flex-basis: 20px;
-  flex-shrink: 0;
-`;
-
 const SidebarItems = styled.div`
   display: flex;
   align-items: stretch;
@@ -102,18 +97,10 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
   };
 
   render() {
-    const {
-      osx,
-      sidebarWidth,
-      fullscreen,
-      tab: currentId,
-      openTabs,
-    } = this.props;
+    const { sidebarWidth, tab: currentId, openTabs } = this.props;
 
     return (
       <SidebarDiv id="sidebar" style={{ width: `${sidebarWidth}px` }}>
-        {osx && !fullscreen ? <TitleBarPadder /> : null}
-
         <Logo />
 
         <Search />
@@ -180,9 +167,7 @@ const actionCreators = actionCreatorsList(
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  osx: boolean;
   sidebarWidth: number;
-  fullscreen: boolean;
   me: User;
 
   tab: string;
@@ -197,8 +182,6 @@ interface IState {
 export default connect<IProps>(Sidebar, {
   state: createStructuredSelector({
     appVersion: (rs: IRootState) => rs.system.appVersion,
-    osx: (rs: IRootState) => rs.system.osx,
-    fullscreen: (rs: IRootState) => rs.ui.mainWindow.fullscreen,
     sidebarWidth: (rs: IRootState) => rs.preferences.sidebarWidth || 240,
     me: (rs: IRootState) => rs.profile.credentials.me,
     tab: (rs: IRootState) => rs.profile.navigation.tab,

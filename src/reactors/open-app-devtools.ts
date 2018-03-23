@@ -11,7 +11,6 @@ export async function openAppDevTools(bw: Electron.BrowserWindow) {
       await bw.webContents.executeJavaScript(
         `console.log("React DevTools installed, reload the page (Shift+F5) for the React tab to show up.")`
       );
-      bw.webContents.reload();
     }
   }
 }
