@@ -12,7 +12,7 @@ import { Profile } from "../buse/messages";
 
 import rootLogger from "../logger";
 import { IStore } from "../types";
-import { restoreTabs } from "./tab-save";
+import { restoreTabs, saveTabs } from "./tab-save";
 const logger = rootLogger.child({ name: "login" });
 const call = withLogger(logger);
 
@@ -129,6 +129,11 @@ export default function(watcher: Watcher) {
         })
       );
     }
+  });
+
+  watcher.on(actions.requestLogout, async (store, action) => {
+    await saveTabs(store);
+    store.dispatch(actions.logout({}));
   });
 }
 

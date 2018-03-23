@@ -19,35 +19,45 @@ interface Snapshot {
   items: ITabDataSave[];
 }
 
+const tabAutoSaveThreshold = 10 * 1000;
+
 export default function(watcher: Watcher) {
-  watcher.on(actions.tabsChanged, async (store, action) => {
-    const { navigation, tabInstances, credentials } = store.getState().profile;
-    if (!credentials || !credentials.me) {
-      return;
+  watcher.onDebounced(
+    actions.tabsChanged,
+    tabAutoSaveThreshold,
+    async (store, action) => {
+      await saveTabs(store);
     }
-    const { tab, openTabs } = navigation;
-    const profileId = credentials.me.id;
-    let items: ITabDataSave[];
-    items = map(openTabs.transient, id => {
-      const ti = tabInstances[id];
-      if (!ti) {
-        return null;
-      }
+  );
+}
 
-      const sp = Space.fromInstance(ti);
-      const { history, currentIndex } = ti;
-      const savedLabel = sp.label();
-      return { id, history, currentIndex, savedLabel };
-    });
-    items = filter(items, x => !!x);
+export async function saveTabs(store: IStore) {
+  const { navigation, tabInstances, credentials } = store.getState().profile;
+  if (!credentials || !credentials.me) {
+    return;
+  }
+  const { tab, openTabs } = navigation;
+  const profileId = credentials.me.id;
+  let items: ITabDataSave[];
+  items = map(openTabs.transient, id => {
+    const ti = tabInstances[id];
+    if (!ti) {
+      return null;
+    }
 
-    const snapshot: Snapshot = { current: tab, items };
+    const sp = Space.fromInstance(ti);
+    const { history, currentIndex } = ti;
+    const savedLabel = sp.label();
+    return { id, history, currentIndex, savedLabel };
+  });
+  items = filter(items, x => !!x);
 
-    await call(messages.ProfileDataPut, {
-      profileId,
-      key: "@itch/tabs",
-      value: JSON.stringify(snapshot),
-    });
+  const snapshot: Snapshot = { current: tab, items };
+
+  await call(messages.ProfileDataPut, {
+    profileId,
+    key: "@itch/tabs",
+    value: JSON.stringify(snapshot),
   });
 }
 

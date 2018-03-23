@@ -69,7 +69,7 @@ func (lw *logWatch) WaitWithTimeout(timeout time.Duration) error {
 		r.logf("Saw pattern (%s)", lw.re.String())
 		return nil
 	case <-time.After(timeout):
-		return errors.Errorf("")
+		return errors.Errorf("Timed out after %s waiting for pattern (%s)", timeout, lw.re.String())
 	}
 }
 
@@ -232,7 +232,7 @@ func doMain() error {
 	defer driver.DeleteSession()
 
 	r.logf("Waiting for setup to be done...")
-	must(setupWatch.WaitWithTimeout(30 * time.Second))
+	must(setupWatch.WaitWithTimeout(60 * time.Second))
 	r.testStart = time.Now()
 
 	prepareFlow(r)

@@ -14,7 +14,7 @@ export default function(watcher: Watcher) {
             {
               id: "modal-logout",
               label: ["prompt.logout_action"],
-              action: actions.logout({}),
+              action: actions.requestLogout({}),
               icon: "exit",
             },
             "cancel",

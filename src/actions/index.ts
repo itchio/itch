@@ -217,6 +217,7 @@ export const actions = wireActions({
   profilesUpdated: action<{}>(),
 
   changeUser: action<{}>(),
+  requestLogout: action<{}>(),
   logout: action<{}>(),
 
   // onboarding
