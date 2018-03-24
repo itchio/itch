@@ -20,7 +20,7 @@ import {
   DownloadProgress,
   ItchPlatform,
 } from "../buse/messages";
-
+import { IEndpoint } from "node-buse";
 export interface IStore extends Store<IRootState> {}
 
 export interface IDispatch {
@@ -92,12 +92,17 @@ export interface IRootState {
 
   systemTasks: ISystemTasksState;
   broth: IBrothState;
+  buse: IBuseState;
 }
 
 export interface IBrothState {
   packages: {
     [key: string]: IPackageState;
   };
+}
+
+export interface IBuseState {
+  endpoint?: IEndpoint;
 }
 
 export interface IPackageState {

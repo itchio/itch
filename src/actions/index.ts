@@ -46,7 +46,7 @@ import {
   ITypedModal,
   ITypedModalUpdate,
 } from "../components/modal-widgets/index";
-
+import { IEndpoint } from "node-buse";
 export interface ActionCreator<PayloadType> {
   payload: PayloadType;
   (payload: PayloadType): IAction<PayloadType>;
@@ -164,6 +164,10 @@ export const actions = wireActions({
   packageProgress: action<{
     name: string;
     progressInfo: IProgressInfo;
+  }>(),
+
+  gotBuseEndpoint: action<{
+    endpoint: IEndpoint;
   }>(),
 
   setupStatus: action<{

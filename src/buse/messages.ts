@@ -4,28 +4,27 @@
 import { createRequest, createNotification } from "node-buse";
 
 /**
- * Params for Connection.New
+ * Params for Handshake
  */
-export interface ConnectionNewParams {
-  // no fields
-}
-
-/**
- * Result for Connection.New
- */
-export interface ConnectionNewResult {
+export interface HandshakeParams {
   /** undocumented */
-  address: string;
+  message: string;
 }
 
 /**
- * Ask butler to listen for a new connection, so commands can
- * be sent to it.
+ * Result for Handshake
  */
-export const ConnectionNew = createRequest<
-  ConnectionNewParams,
-  ConnectionNewResult
->("Connection.New");
+export interface HandshakeResult {
+  /** undocumented */
+  signature: string;
+}
+
+/**
+ * undocumented
+ */
+export const Handshake = createRequest<HandshakeParams, HandshakeResult>(
+  "Handshake"
+);
 
 /**
  * Result for Version.Get
@@ -616,7 +615,8 @@ export const InstallPerform = createRequest<
  * Result for Install.Cancel
  */
 export interface InstallCancelResult {
-  // no fields
+  /** undocumented */
+  didCancel: boolean;
 }
 
 /**
@@ -885,7 +885,8 @@ export const DownloadsDrive = createRequest<
  * Result for Downloads.Drive.Cancel
  */
 export interface DownloadsDriveCancelResult {
-  // no fields
+  /** undocumented */
+  didCancel: boolean;
 }
 
 /**
@@ -1091,6 +1092,22 @@ export interface LaunchResult {
  * Attempt to launch an installed game.
  */
 export const Launch = createRequest<LaunchParams, LaunchResult>("Launch");
+
+/**
+ * Result for Launch.Cancel
+ */
+export interface LaunchCancelResult {
+  /** undocumented */
+  didCancel: boolean;
+}
+
+/**
+ * Close a running game or cancel launching it
+ */
+export const LaunchCancel = createRequest<
+  LaunchCancelParams,
+  LaunchCancelResult
+>("Launch.Cancel");
 
 /**
  * Result for PickManifestAction
@@ -2674,6 +2691,13 @@ export interface LaunchParams {
   forcePrereqs?: boolean;
   /** Enable sandbox (regardless of manifest opt-in) */
   sandbox: boolean;
+}
+
+/**
+ * Params for Launch.Cancel
+ */
+export interface LaunchCancelParams {
+  // no fields
 }
 
 /**

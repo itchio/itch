@@ -15,6 +15,7 @@ import gameUpdates from "./game-updates";
 import commons from "./commons";
 import systemTasks from "./system-tasks";
 import broth from "./broth";
+import buse from "./buse";
 
 const reducer = combineReducers({
   modals,
@@ -32,5 +33,6 @@ const reducer = combineReducers({
   commons,
   systemTasks,
   broth,
+  buse,
 });
 export default reducer;
