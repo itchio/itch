@@ -499,5 +499,5 @@
     "grid.item.running.clean": "Почистване…",
     "preferences.install_location.disk_usage": "Използване на диска",
     "login.status.finalizing_installation": "Завършване на инсталацията…",
-    "login.status.antivirus_warning": "Антивирусните програми може да пречат на работата на Итч."
+    "login.status.antivirus_warning": "Антивирусните програми може да попречат на работата на Итч."
 }
