@@ -1,4 +1,6 @@
-import { messages, makeButlerInstanceWithPrefix } from "../buse";
+import { messages } from "../buse";
+import { Client } from "node-buse";
+import { makeButlerInstanceWithPrefix } from "../buse/master-client";
 
 export interface FormulaSpec {
   sanityCheck?: (versionPrefix: string) => Promise<void>;
@@ -22,12 +24,20 @@ function describeFormula(name: string, formula: FormulaSpec) {
  */
 describeFormula("butler", {
   sanityCheck: async (versionPrefix: string) => {
+    console.log(`sanity check: making instance...`);
     const instance = await makeButlerInstanceWithPrefix(versionPrefix);
     try {
-      const client = await instance.getClient();
+      console.log(`creating client...`);
+      const client = new Client(await instance.getEndpoint());
+      console.log(`connecting client...`);
+      await client.connect();
+      console.log(`calling...`);
       await client.call(messages.VersionGet, {});
+      console.log(`calling close...`);
+      client.close();
     } finally {
-      instance.cancel();
+      console.log(`awaiting instance`);
+      await instance.promise();
     }
   },
 });

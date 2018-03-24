@@ -21,7 +21,7 @@ import { rest, isEmpty } from "underscore";
 
 const forceHead = true;
 const semVerHead = semver.coerce("9999.0.0");
-const sanityCheckTimeout = 2000;
+const sanityCheckTimeout = 10000;
 const platform = `${goos()}-${goarch()}`;
 
 export class Package {
@@ -273,7 +273,11 @@ export class Package {
 
     for (const ov of obsoleteVersions) {
       this.info(`Removing obsolete version ${ov.format()}`);
-      await sf.wipe(this.getVersionPrefix(ov));
+      try {
+        await sf.wipe(this.getVersionPrefix(ov));
+      } catch (e) {
+        this.warn(`Could not remove version ${ov.format()}: ${e}`);
+      }
     }
   }
 

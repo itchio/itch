@@ -9,6 +9,8 @@ import { indexBy, isEmpty } from "underscore";
 import { appdataLocationPath } from "../os/paths";
 import { Manager } from "../broth/manager";
 import delay from "./delay";
+import { makeButlerInstance } from "../buse/master-client";
+import { Client } from "node-buse";
 const logger = rootLogger.child({ name: "setup" });
 const call = withLogger(logger);
 
@@ -52,6 +54,7 @@ async function syncInstallLocations(store: IStore) {
 }
 
 export let manager: Manager;
+let masterClient: Client;
 
 async function initialSetup(store: IStore, { retry }) {
   try {
@@ -66,6 +69,17 @@ async function initialSetup(store: IStore, { retry }) {
       manager = new Manager(store);
     }
     await manager.ensure();
+
+    let instance = await makeButlerInstance();
+    instance.promise().catch(e => {
+      console.error(e);
+    });
+    const endpoint = await instance.getEndpoint();
+    // the instance will exit gracefully when all clients
+    // are closed, so let's keep one around to keep it alive.
+    masterClient = new Client(endpoint);
+    await masterClient.connect();
+    store.dispatch(actions.gotBuseEndpoint({ endpoint }));
 
     await syncInstallLocations(store);
     store.dispatch(actions.setupDone({}));

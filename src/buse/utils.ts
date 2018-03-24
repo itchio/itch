@@ -1,41 +1,11 @@
 import { Cave, CaveSummary } from "../buse/messages";
-import { Instance, RequestError, IRequestCreator, Client } from "node-buse";
+import { RequestError, IRequestCreator, Client } from "node-buse";
 import rootLogger, { Logger } from "../logger/index";
 const lazyDefaultLogger = rootLogger.child({ name: "buse" });
 import { MinimalContext } from "../context/index";
-import * as ospath from "path";
 
 import * as messages from "./messages";
-import { butlerDbPath } from "../os/paths";
-import urls from "../constants/urls";
 import { getRootState } from "../store/get-root-state";
-
-// TODO: pass server URL to butler
-
-export async function makeButlerInstance(): Promise<Instance> {
-  const butlerPkg = getRootState().broth.packages["butler"];
-  if (!butlerPkg) {
-    throw new Error(
-      `Cannot make butler instance: package 'butler' not registered`
-    );
-  }
-
-  const versionPrefix = butlerPkg.versionPrefix;
-  if (!versionPrefix) {
-    throw new Error(`Cannot make butler instance: no version prefix`);
-  }
-
-  return makeButlerInstanceWithPrefix(versionPrefix);
-}
-
-export async function makeButlerInstanceWithPrefix(
-  versionPrefix: string
-): Promise<Instance> {
-  return new Instance({
-    butlerExecutable: ospath.join(versionPrefix, "butler"),
-    args: ["--dbpath", butlerDbPath(), "--address", urls.itchio],
-  });
-}
 
 type WithCB<T> = (client: Client) => Promise<T>;
 
@@ -43,11 +13,15 @@ export async function withButlerClient<T>(
   parentLogger: Logger,
   cb: WithCB<T>
 ): Promise<T> {
-  let res: T;
-  const instance = await makeButlerInstance();
-  const client = await instance.getClient();
+  const { endpoint } = getRootState().buse;
+  if (!endpoint) {
+    throw new Error(`no buse endpoint yet`);
+  }
+  const client = new Client(endpoint);
+  await client.connect();
   setupLogging(client, parentLogger);
 
+  let res: T;
   let err: Error;
   try {
     res = await cb(client);
@@ -59,7 +33,7 @@ export async function withButlerClient<T>(
     }
     err = e;
   } finally {
-    instance.cancel();
+    client.close();
   }
 
   if (err) {
