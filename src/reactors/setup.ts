@@ -54,7 +54,12 @@ async function syncInstallLocations(store: IStore) {
 }
 
 export let manager: Manager;
+
 let masterClient: Client;
+let initialBuseResolve: (value?: any) => void;
+let initialBusePromise = new Promise((resolve, reject) => {
+  initialBuseResolve = resolve;
+});
 
 async function initialSetup(store: IStore, { retry }) {
   try {
@@ -69,18 +74,14 @@ async function initialSetup(store: IStore, { retry }) {
       manager = new Manager(store);
     }
     await manager.ensure();
-
-    let instance = await makeButlerInstance();
-    instance.promise().catch(e => {
-      console.error(e);
-    });
-    const endpoint = await instance.getEndpoint();
-    // the instance will exit gracefully when all clients
-    // are closed, so let's keep one around to keep it alive.
-    masterClient = new Client(endpoint);
-    await masterClient.connect();
-    store.dispatch(actions.gotBuseEndpoint({ endpoint }));
-
+    await Promise.race([
+      initialBusePromise,
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error("Timed out while connecting to buse"));
+        }, 5000);
+      }),
+    ]);
     await syncInstallLocations(store);
     store.dispatch(actions.setupDone({}));
     logger.info(`Setup done`);
@@ -104,6 +105,29 @@ async function initialSetup(store: IStore, { retry }) {
   }
 }
 
+async function refreshBuse(store: IStore) {
+  logger.info(`Refreshing buse! Spinning up new instance...`);
+  let instance = await makeButlerInstance();
+  instance.promise().catch(e => {
+    console.error(e);
+  });
+  const endpoint = await instance.getEndpoint();
+
+  logger.info(`Connecting client...`);
+  const nextClient = new Client(endpoint);
+  await nextClient.connect();
+
+  if (masterClient) {
+    // instances exit gracefully when all clients have closed
+    logger.info(`Closing old master client...`);
+    masterClient.close();
+    masterClient = null;
+  }
+  masterClient = nextClient;
+  store.dispatch(actions.gotBuseEndpoint({ endpoint }));
+  initialBuseResolve();
+}
+
 export default function(watcher: Watcher) {
   watcher.on(actions.boot, async (store, action) => {
     await initialSetup(store, { retry: false });
@@ -111,5 +135,12 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.retrySetup, async (store, action) => {
     await initialSetup(store, { retry: true });
+  });
+
+  watcher.on(actions.packageGotVersionPrefix, async (store, action) => {
+    const { name } = action.payload;
+    if (name === "butler") {
+      await refreshBuse(store);
+    }
   });
 }
