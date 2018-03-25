@@ -7,7 +7,7 @@ import { actions } from "../actions";
 import { BrowserWindow, dialog } from "electron";
 
 import { modalWidgets } from "../components/modal-widgets/index";
-import { call, messages } from "../buse";
+import { call, messages } from "../butlerd";
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
 

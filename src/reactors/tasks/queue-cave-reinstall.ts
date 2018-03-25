@@ -4,10 +4,10 @@ import { actions } from "../../actions";
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "queue-cave-reinstall" });
 
-import { messages, withLogger } from "../../buse";
+import { messages, withLogger } from "../../butlerd";
 const call = withLogger(logger);
 
-import { DownloadReason } from "../../buse/messages";
+import { DownloadReason } from "../../butlerd/messages";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueCaveReinstall, async (store, action) => {

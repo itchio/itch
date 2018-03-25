@@ -1,7 +1,7 @@
-import { Client } from "node-buse";
+import { Client } from "butlerd";
 
 import rootLogger from "../../logger";
-import { messages } from "../../buse";
+import { messages } from "../../butlerd";
 const logger = rootLogger.child({ name: "download-driver" });
 
 export enum Phase {

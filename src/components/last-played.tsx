@@ -5,7 +5,7 @@ import format from "./format";
 import actionForGame from "../util/action-for-game";
 
 import TimeAgo from "./basics/time-ago";
-import { Game, CaveSummary } from "../buse/messages";
+import { Game, CaveSummary } from "../butlerd/messages";
 
 class LastPlayed extends React.PureComponent<IProps & IDerivedProps> {
   render() {

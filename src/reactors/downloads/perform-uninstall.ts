@@ -1,6 +1,6 @@
 import { Logger } from "../../logger";
 
-import { messages, withLogger } from "../../buse/index";
+import { messages, withLogger } from "../../butlerd/index";
 
 export async function performUninstall(parentLogger: Logger, caveId: string) {
   const logger = parentLogger.child({ name: "uninstall" });

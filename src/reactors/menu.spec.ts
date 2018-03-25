@@ -6,7 +6,7 @@ import "electron";
 import menu from "./menu";
 import { find, findWhere } from "underscore";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
-import { ItchPlatform } from "../buse/messages";
+import { ItchPlatform } from "../butlerd/messages";
 
 describe("menu", () => {
   it("builds the menu", async () => {

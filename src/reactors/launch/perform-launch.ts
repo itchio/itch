@@ -12,14 +12,14 @@ import {
   modalWidgets,
   ITypedModal,
 } from "../../components/modal-widgets/index";
-import { messages, setupClient } from "../../buse/index";
+import { messages, setupClient } from "../../butlerd/index";
 import { shell, powerSaveBlocker } from "electron";
-import { Game, PrereqStatus, Cave } from "../../buse/messages";
+import { Game, PrereqStatus, Cave } from "../../butlerd/messages";
 import { IPrereqsStateParams } from "../../components/modal-widgets/prereqs-state";
 
 import { pickManifestAction } from "./pick-manifest-action";
 import { performHTMLLaunch } from "./perform-html-launch";
-import { Client } from "node-buse";
+import { Client } from "butlerd";
 export async function performLaunch(
   ctx: Context,
   logger: Logger,
@@ -69,7 +69,7 @@ export async function performLaunch(
 
   await ctx.withStopper({
     work: async () => {
-      client = new Client(store.getState().buse.endpoint);
+      client = new Client(store.getState().butlerd.endpoint);
       await client.connect();
       try {
         setupClient(client, logger, ctx);

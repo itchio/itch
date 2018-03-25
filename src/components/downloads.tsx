@@ -22,7 +22,7 @@ import {
 import { IMeatProps } from "./meats/types";
 
 import styled, * as styles from "./styles";
-import { GameUpdate, Download } from "../buse/messages";
+import { GameUpdate, Download } from "../butlerd/messages";
 import LoadingCircle from "./basics/loading-circle";
 
 const DownloadsDiv = styled.div`

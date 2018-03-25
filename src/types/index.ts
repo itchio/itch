@@ -19,8 +19,8 @@ import {
   Download,
   DownloadProgress,
   ItchPlatform,
-} from "../buse/messages";
-import { IEndpoint } from "node-buse";
+} from "../butlerd/messages";
+import { IEndpoint } from "butlerd";
 export interface IStore extends Store<IRootState> {}
 
 export interface IDispatch {
@@ -92,7 +92,7 @@ export interface IRootState {
 
   systemTasks: ISystemTasksState;
   broth: IBrothState;
-  buse: IBuseState;
+  butlerd: IButlerdState;
 }
 
 export interface IBrothState {
@@ -101,7 +101,7 @@ export interface IBrothState {
   };
 }
 
-export interface IBuseState {
+export interface IButlerdState {
   endpoint?: IEndpoint;
 }
 
@@ -317,7 +317,7 @@ export interface IProfileState {
   itchioUris: string[];
 }
 
-// TODO: remove, just put the buse profile object in the state
+// TODO: remove, just put the butlerd profile object in the state
 export interface IProfileCredentialsState {
   /** info on user using the app */
   me: User;
@@ -600,9 +600,6 @@ export interface ITasksState {
   /** all tasks finished and not cleared yet, since the app started */
   finishedTasks: ITask[];
 }
-
-// TODO: figure this out with buse
-export type DownloadReason = string;
 
 export interface IDownloadsState {
   /** All the downloads we know about, indexed by their own id */

@@ -10,7 +10,7 @@ import getGameStatus, {
 import actionForGame from "../../util/action-for-game";
 import { showInExplorerString } from "../../format/show-in-explorer";
 import { formatOperation } from "../../format/operation";
-import { Game } from "../../buse/messages";
+import { Game } from "../../butlerd/messages";
 
 export function concatTemplates(
   a: IMenuTemplate,

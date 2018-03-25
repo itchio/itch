@@ -8,7 +8,7 @@ import { IDownloadsState } from "../types";
 import reducer from "./reducer";
 import derivedReducer from "./derived-reducer";
 import { actions } from "../actions";
-import { Download } from "../buse/messages";
+import { Download } from "../butlerd/messages";
 
 const SPEED_DATA_POINT_COUNT = 60;
 

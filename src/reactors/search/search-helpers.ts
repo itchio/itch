@@ -1,6 +1,6 @@
 import { isEmpty, union, indexBy, pluck } from "underscore";
 import { ISearchResults } from "../../types/index";
-import { Game, User } from "../../buse/messages";
+import { Game, User } from "../../butlerd/messages";
 interface ISource<T> {
   set: {
     [key: string]: T;

@@ -6,7 +6,7 @@ import styled from "../styles";
 import Log from "../basics/log";
 import { IModalWidgetProps } from "./index";
 import { size } from "underscore";
-import { getErrorStack, isInternalError } from "../../buse";
+import { getErrorStack, isInternalError } from "../../butlerd";
 
 const StyledLog = styled(Log)`
   tbody {

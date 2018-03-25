@@ -11,7 +11,7 @@ import { modalWidgets } from "../../components/modal-widgets/index";
 
 import { performUninstall } from "../downloads/perform-uninstall";
 
-import { withLogger, messages } from "../../buse";
+import { withLogger, messages } from "../../butlerd";
 const call = withLogger(logger);
 
 export default function(watcher: Watcher) {

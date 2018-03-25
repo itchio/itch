@@ -1,6 +1,6 @@
 import { Fetcher } from "./fetcher";
-import { messages, withLogger } from "../buse";
-import { Game } from "../buse/messages";
+import { messages, withLogger } from "../butlerd";
+import { Game } from "../butlerd/messages";
 import getByIds from "../helpers/get-by-ids";
 
 class CollectionFetcher extends Fetcher {

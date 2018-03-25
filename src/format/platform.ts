@@ -1,4 +1,4 @@
-import { ItchPlatform } from "../buse/messages";
+import { ItchPlatform } from "../butlerd/messages";
 
 const itchPlatforms = {
   linux: "Linux", // we hardly GNU you

@@ -1,14 +1,14 @@
 import { actions } from "../actions";
 import reducer from "./reducer";
 
-import { IBuseState } from "../types";
+import { IButlerdState } from "../types";
 
 const initialState = {
   endpoint: null,
-} as IBuseState;
+} as IButlerdState;
 
-export default reducer<IBuseState>(initialState, on => {
-  on(actions.gotBuseEndpoint, (state, action) => {
+export default reducer<IButlerdState>(initialState, on => {
+  on(actions.gotButlerdEndpoint, (state, action) => {
     const { endpoint } = action.payload;
     return { ...state, endpoint };
   });

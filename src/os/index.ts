@@ -2,7 +2,7 @@ import * as os from "os";
 
 export * from "./assert-presence";
 import env from "../env";
-import { ItchPlatform } from "../buse/messages";
+import { ItchPlatform } from "../butlerd/messages";
 
 export function platform(): string {
   return process.platform;

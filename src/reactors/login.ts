@@ -6,9 +6,9 @@ import urls from "../constants/urls";
 import * as urlParser from "url";
 
 import { modalWidgets } from "../components/modal-widgets/index";
-import { messages, withLogger } from "../buse/index";
+import { messages, withLogger } from "../butlerd/index";
 import partitionForUser from "../util/partition-for-user";
-import { Profile } from "../buse/messages";
+import { Profile } from "../butlerd/messages";
 
 import rootLogger from "../logger";
 import { IStore } from "../types";

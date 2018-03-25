@@ -1,6 +1,6 @@
 import * as React from "react";
 import { map } from "underscore";
-import { Profile } from "../../../buse/messages";
+import { Profile } from "../../../butlerd/messages";
 
 import Link from "../../basics/link";
 
@@ -11,7 +11,7 @@ import { Links } from "./links";
 
 import watching, { Watcher } from "../../watching";
 import { actions } from "../../../actions";
-import { messages, call } from "../../../buse";
+import { messages, call } from "../../../butlerd";
 
 const RememberedProfilesDiv = styled.div`
   animation: fade-in 0.2s;

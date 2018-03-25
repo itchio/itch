@@ -7,8 +7,8 @@ import { promisedModal } from "./modals";
 import { modalWidgets } from "../components/modal-widgets/index";
 
 import { performLaunch } from "./launch/perform-launch";
-import { getErrorMessage, isInternalError, asRequestError } from "../buse";
-import { Code } from "../buse/messages";
+import { getErrorMessage, isInternalError, asRequestError } from "../butlerd";
+import { Code } from "../butlerd/messages";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueLaunch, async (store, action) => {

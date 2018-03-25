@@ -19,7 +19,7 @@ export enum FetchReason {
 
 import rootLogger, { Logger } from "../logger";
 import { Space } from "../helpers/space";
-import { Game, Collection } from "../buse/messages";
+import { Game, Collection } from "../butlerd/messages";
 
 /**
  * Fetches all the data a tab needs to display, except webviews.

@@ -1,4 +1,4 @@
-import { Game } from "../../buse/messages";
+import { Game } from "../../butlerd/messages";
 import * as React from "react";
 import { ModalWidgetDiv } from "./modal-widget";
 import { IModalWidgetProps } from ".";

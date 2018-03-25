@@ -3,7 +3,7 @@ import { IStore, ITabParams, ICommonsState } from "../types";
 import isPlatformCompatible from "../util/is-platform-compatible";
 
 import { filter, sortBy as sortedBy } from "underscore";
-import { Game, CaveSummary } from "../buse/messages";
+import { Game, CaveSummary } from "../butlerd/messages";
 import { Space } from "../helpers/space";
 
 function disambiguateCave(commons: ICommonsState, game: Game): CaveSummary {

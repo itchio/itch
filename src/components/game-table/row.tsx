@@ -15,7 +15,7 @@ import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { createSelector } from "reselect";
 import { IRootState } from "../../types/index";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
-import { Game, CaveSummary } from "../../buse/messages";
+import { Game, CaveSummary } from "../../butlerd/messages";
 
 import { aggregateCaveSummaries } from "../../util/aggregate-cave-summaries";
 import classNames = require("classnames");

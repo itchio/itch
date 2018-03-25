@@ -1,6 +1,6 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
-import { messages, withLogger } from "../../buse";
+import { messages, withLogger } from "../../butlerd";
 
 import rootLogger from "../../logger";
 const logger = rootLogger.child({ name: "download-driver" });

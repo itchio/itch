@@ -1,7 +1,7 @@
 import { Fetcher } from "./fetcher";
 
 import { indexBy, pluck } from "underscore";
-import { messages, withLogger } from "../buse";
+import { messages, withLogger } from "../butlerd";
 
 class CollectionsFetcher extends Fetcher {
   constructor() {

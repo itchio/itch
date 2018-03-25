@@ -2,8 +2,8 @@ import { Fetcher } from "./fetcher";
 
 import { gameToTabData } from "../util/navigation";
 import { actions } from "../actions/index";
-import { messages, withLogger } from "../buse/index";
-import { Game } from "../buse/messages";
+import { messages, withLogger } from "../butlerd/index";
+import { Game } from "../butlerd/messages";
 
 // TODO: save password & secret, see
 // https://github.com/itchio/itch/issues/1080

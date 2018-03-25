@@ -1,7 +1,7 @@
 import { Watcher } from "../watcher";
 
 import { actions } from "../../actions";
-import { call, messages } from "../../buse/index";
+import { call, messages } from "../../butlerd/index";
 import { ISearchResults } from "../../types/index";
 import { mergeGames, mergeUsers } from "./search-helpers";
 import isPlatformCompatible from "../../util/is-platform-compatible";

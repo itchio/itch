@@ -29,7 +29,7 @@ import {
 } from "../../format/operation";
 import { formatUploadTitle } from "../../format/upload";
 import { modalWidgets } from "../modal-widgets/index";
-import { Download } from "../../buse/messages";
+import { Download } from "../../butlerd/messages";
 import LoadingCircle from "../basics/loading-circle";
 import { lighten } from "polished";
 import { downloadProgress } from "../../format/download-progress";

@@ -18,7 +18,7 @@ import styled, * as styles from "./styles";
 import { SidebarSection, SidebarHeading } from "./sidebar/styles";
 
 import format from "./format";
-import { User } from "../buse/messages";
+import { User } from "../butlerd/messages";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};

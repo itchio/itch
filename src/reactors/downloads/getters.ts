@@ -2,7 +2,7 @@ import { IDownloadsState } from "../../types";
 
 import { first, filter, sortBy } from "underscore";
 import memoize from "../../util/lru-memoize";
-import { Download } from "../../buse/messages";
+import { Download } from "../../butlerd/messages";
 
 export const getActiveDownload = memoize(1, function(
   downloads: IDownloadsState

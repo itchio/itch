@@ -1,5 +1,5 @@
 import { getRootState } from "../store/get-root-state";
-import { Instance } from "node-buse";
+import { Instance } from "butlerd";
 import { butlerDbPath } from "../os/paths";
 import urls from "../constants/urls";
 import * as ospath from "path";

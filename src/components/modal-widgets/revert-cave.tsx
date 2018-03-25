@@ -12,7 +12,7 @@ import CustomDate from "../basics/custom-date";
 import styled from "../styles";
 import { lighten } from "polished";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
-import { Build, Cave, Upload } from "../../buse/messages";
+import { Build, Cave, Upload } from "../../butlerd/messages";
 import { IModalWidgetProps } from "./index";
 import { DAY_MONTH_FORMAT, MONTH_YEAR_FORMAT } from "../../format/datetime";
 

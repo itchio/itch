@@ -14,7 +14,7 @@ import styled from "./styles";
 
 import { Space } from "../helpers/space";
 import getGameStatus, { IGameStatus } from "../helpers/get-game-status";
-import { Game } from "../buse/messages";
+import { Game } from "../butlerd/messages";
 
 const Spacer = styled.div`
   flex-basis: 10px;

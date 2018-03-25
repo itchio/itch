@@ -1,7 +1,7 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
 import { modalWidgets } from "../../components/modal-widgets";
-import { call, messages } from "../../buse";
+import { call, messages } from "../../butlerd";
 
 import { promisedModal } from "../modals";
 import { IScanInstallLocationsParams } from "../../components/modal-widgets/scan-install-locations";

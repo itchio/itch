@@ -9,7 +9,7 @@ import TimeAgo from "../basics/time-ago";
 import Cover from "../basics/cover";
 import Hoverable from "../basics/hover-hoc";
 
-import { Collection } from "../../buse/messages";
+import { Collection } from "../../butlerd/messages";
 
 const HoverCover = Hoverable(Cover);
 

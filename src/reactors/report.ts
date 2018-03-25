@@ -10,7 +10,7 @@ import { reportIssue } from "../util/crash-reporter";
 import { createGist, IGistData } from "../api/github";
 import * as sf from "../os/sf";
 import { caveLogPath } from "../os/paths";
-import { messages, call } from "../buse";
+import { messages, call } from "../butlerd";
 
 // TODO: move to itch.io feedback system, see
 // https://github.com/itchio/itch/issues/1511
