@@ -441,5 +441,6 @@
     "grid.empty_state.leader": "Todo está filtrado...",
     "grid.item.open_file_location.osx": "Mostrar en Finder",
     "download.reason.reinstall": "para reinstalar",
-    "collections.empty_sub": "¡Busca algunos juegos y agrégalos a una nueva colección!"
+    "collections.empty_sub": "¡Busca algunos juegos y agrégalos a una nueva colección!",
+    "collections.empty": "Actualmente no posees ninguna colección"
 }
