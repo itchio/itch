@@ -1,5 +1,6 @@
-import { ILocalizedString, DownloadReason } from "../types/index";
+import { ILocalizedString } from "../types/index";
 import { IOperation, OperationType } from "../helpers/get-game-status";
+import { DownloadReason } from "../butlerd/messages";
 
 export function formatOperation(op: IOperation): ILocalizedString {
   if (op.type === OperationType.Task) {
@@ -31,10 +32,6 @@ export function formatReason(reason: DownloadReason): ILocalizedString {
       return ["download.reason.update"];
     case "reinstall":
       return ["download.reason.reinstall"];
-    case "revert":
-      return ["download.reason.revert"];
-    case "heal":
-      return ["download.reason.heal"];
     default:
       return null;
   }
@@ -48,10 +45,6 @@ export function formatOutcome(reason: DownloadReason): ILocalizedString {
       return ["download.outcome.updated"];
     case "reinstall":
       return ["download.outcome.reinstalled"];
-    case "revert":
-      return ["download.outcome.reverted"];
-    case "heal":
-      return ["download.outcome.healed"];
     default:
       return null;
   }

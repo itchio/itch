@@ -1,10 +1,10 @@
 import { actions } from "../actions";
 import { Watcher } from "./watcher";
 import { each } from "underscore";
-import { messages, withLogger } from "../buse";
+import { messages, withLogger } from "../butlerd";
 
 import rootLogger from "../logger";
-import { DownloadReason } from "../buse/messages";
+import { DownloadReason } from "../butlerd/messages";
 const logger = rootLogger.child({ name: "game-updates" });
 const call = withLogger(logger);
 

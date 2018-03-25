@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GameUpdate } from "../../buse/messages";
+import { GameUpdate } from "../../butlerd/messages";
 
 import TimeAgo from "../basics/time-ago";
 import Filler from "../basics/filler";

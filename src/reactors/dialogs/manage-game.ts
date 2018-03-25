@@ -3,7 +3,7 @@ import { actions } from "../../actions";
 
 import rootLogger from "../../logger";
 import { modalWidgets } from "../../components/modal-widgets/index";
-import { messages, withLogger } from "../../buse/index";
+import { messages, withLogger } from "../../butlerd/index";
 const logger = rootLogger.child({ name: "manage-game" });
 const call = withLogger(logger);
 

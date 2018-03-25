@@ -17,11 +17,11 @@ const SKIP_GAME_UPDATES = process.env.ITCH_SKIP_GAME_UPDATES === "1";
 const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;
 const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 
-import { messages, withLogger } from "../buse/index";
+import { messages, withLogger } from "../butlerd/index";
 const call = withLogger(logger);
 
 import { IStore } from "../types/index";
-import { CheckUpdateItem, CheckUpdateResult, Cave } from "../buse/messages";
+import { CheckUpdateItem, CheckUpdateResult, Cave } from "../butlerd/messages";
 
 async function prepareUpdateItem(cave: Cave): Promise<CheckUpdateItem> {
   if (!cave.game) {

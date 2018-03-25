@@ -8,7 +8,7 @@ import Cover from "../basics/cover";
 import styled, * as styles from "../styles";
 import { actions } from "../../actions";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
-import { Game } from "../../buse/messages";
+import { Game } from "../../butlerd/messages";
 import { whenClickNavigates } from "../when-click-navigates";
 
 const GameSearchResultDiv = styled.div`

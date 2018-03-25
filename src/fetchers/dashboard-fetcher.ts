@@ -1,6 +1,6 @@
 import { Fetcher } from "./fetcher";
 import { map } from "underscore";
-import { messages, withLogger } from "../buse";
+import { messages, withLogger } from "../butlerd";
 import getByIds from "../helpers/get-by-ids";
 
 class DashboardFetcher extends Fetcher {

@@ -1,8 +1,8 @@
 import { Fetcher } from "./fetcher";
-import { withLogger, messages } from "../buse";
+import { withLogger, messages } from "../butlerd";
 
 import { isEmpty, uniq } from "underscore";
-import { Game } from "../buse/messages";
+import { Game } from "../butlerd/messages";
 
 class LocationFetcher extends Fetcher {
   async work(): Promise<void> {

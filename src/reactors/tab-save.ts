@@ -6,12 +6,12 @@ import { ITabDataSave, IStore } from "../types/index";
 import { actions } from "../actions/index";
 
 import { Space } from "../helpers/space";
-import { Profile } from "../buse/messages";
+import { Profile } from "../butlerd/messages";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "tab-save" });
 
-import { messages, withLogger } from "../buse/index";
+import { messages, withLogger } from "../butlerd/index";
 const call = withLogger(logger);
 
 interface Snapshot {

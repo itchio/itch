@@ -4,7 +4,7 @@ import { IStore, IModalButtonSpec } from "../../types";
 
 import { promisedModal } from "../../reactors/modals";
 
-import { Game, Action } from "../../buse/messages";
+import { Game, Action } from "../../butlerd/messages";
 import { modalWidgets } from "../../components/modal-widgets/index";
 
 // TODO: support localized action names
@@ -52,6 +52,6 @@ export async function pickManifestAction(
     return response.index;
   }
 
-  // as per buse spec, negative index means abort launch
+  // as per butlerd spec, negative index means abort launch
   return -1;
 }

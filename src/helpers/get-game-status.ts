@@ -1,4 +1,4 @@
-import { IRootState, ITask, DownloadReason, TaskName } from "../types/index";
+import { IRootState, ITask, TaskName } from "../types/index";
 
 import { first, findWhere, size } from "underscore";
 import getByIds from "./get-by-ids";
@@ -14,8 +14,9 @@ import {
   DownloadKeySummary,
   Download,
   DownloadProgress,
-} from "../buse/messages";
-import { GameUpdate } from "../buse/messages";
+  DownloadReason,
+} from "../butlerd/messages";
+import { GameUpdate } from "../butlerd/messages";
 
 /**
  * What type of access we have to the game - do we own it,

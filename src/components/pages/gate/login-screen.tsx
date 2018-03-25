@@ -2,8 +2,8 @@ import * as React from "react";
 
 import { actionCreatorsList, Dispatchers, connect } from "../../connect";
 
-import { Profile } from "../../../buse/messages";
-import { messages, call } from "../../../buse";
+import { Profile } from "../../../butlerd/messages";
+import { messages, call } from "../../../butlerd";
 import { doAsync } from "../../do-async";
 
 import { isEmpty } from "underscore";

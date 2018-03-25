@@ -15,7 +15,7 @@ import format from "../format";
 import actionForGame from "../../util/action-for-game";
 import { ILocalizedString } from "../../types/index";
 import * as classNames from "classnames";
-import { Game } from "../../buse/messages";
+import { Game } from "../../butlerd/messages";
 
 class MainAction extends React.PureComponent<IProps & IDerivedProps> {
   render() {

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { ModalWidgetDiv } from "./modal-widget";
-import { Game, Upload, Cave } from "../../buse/messages";
+import { Game, Upload, Cave } from "../../butlerd/messages";
 
 import IconButton from "../basics/icon-button";
 import UploadIcon from "../basics/upload-icon";
@@ -21,7 +21,7 @@ import { showInExplorerString } from "../../format/show-in-explorer";
 import TotalPlaytime from "../total-playtime";
 import LastPlayed from "../last-played";
 import { IModalWidgetProps } from "./index";
-import { getCaveSummary } from "../../buse";
+import { getCaveSummary } from "../../butlerd";
 
 const CaveItemList = styled.div`
   margin: 8px 0;

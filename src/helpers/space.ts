@@ -15,7 +15,7 @@ import {
 import * as nodeURL from "url";
 import * as querystring from "querystring";
 
-import { Game, Collection, User } from "../buse/messages";
+import { Game, Collection, User } from "../butlerd/messages";
 import { currentPage } from "../util/navigation";
 import staticTabData from "../constants/static-tab-data";
 

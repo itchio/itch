@@ -1,6 +1,6 @@
-import { messages } from "../buse";
-import { Client } from "node-buse";
-import { makeButlerInstanceWithPrefix } from "../buse/master-client";
+import { Client } from "butlerd";
+import { messages } from "../butlerd";
+import { makeButlerInstanceWithPrefix } from "../butlerd/master-client";
 
 export interface FormulaSpec {
   sanityCheck?: (versionPrefix: string) => Promise<void>;

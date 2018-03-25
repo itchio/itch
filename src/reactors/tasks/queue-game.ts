@@ -7,13 +7,13 @@ const logger = rootLogger.child({ name: "queue-game" });
 import asTask from "./as-task";
 
 import { IStore } from "../../types/index";
-import { Game, Upload, Build } from "../../buse/messages";
+import { Game, Upload, Build } from "../../butlerd/messages";
 
 import { map, isEmpty } from "underscore";
 import makeUploadButton from "../make-upload-button";
 import { modalWidgets } from "../../components/modal-widgets/index";
 
-import { withLogger, messages } from "../../buse";
+import { withLogger, messages } from "../../butlerd";
 const call = withLogger(logger);
 
 import { promisedModal } from "../modals";

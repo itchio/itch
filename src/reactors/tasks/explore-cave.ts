@@ -8,7 +8,7 @@ const logger = rootLogger.child({ name: "explore-cave" });
 
 import * as explorer from "../../os/explorer";
 
-import { withLogger, messages } from "../../buse";
+import { withLogger, messages } from "../../butlerd";
 const call = withLogger(logger);
 
 export default function(watcher: Watcher) {

@@ -11,7 +11,7 @@ import urls from "../../constants/urls";
 import styled, * as styles from "../styles";
 import Filler from "../basics/filler";
 
-import { User } from "../../buse/messages";
+import { User } from "../../butlerd/messages";
 import { actions } from "../../actions/index";
 
 const UserMenuDiv = styled.div`

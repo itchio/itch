@@ -3,7 +3,7 @@ import * as React from "react";
 import actionForGame from "../util/action-for-game";
 
 import format from "../components/format";
-import { Game, CaveSummary } from "../buse/messages";
+import { Game, CaveSummary } from "../butlerd/messages";
 import { formatDuration } from "../format/datetime";
 
 class TotalPlaytime extends React.PureComponent<IProps & IDerivedProps> {

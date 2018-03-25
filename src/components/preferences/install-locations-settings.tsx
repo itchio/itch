@@ -9,8 +9,8 @@ import { fileSize } from "../../format/filesize";
 import IconButton from "../basics/icon-button";
 
 import styled, * as styles from "../styles";
-import { InstallLocationSummary } from "../../buse/messages";
-import { messages, call } from "../../buse/index";
+import { InstallLocationSummary } from "../../butlerd/messages";
+import { messages, call } from "../../butlerd/index";
 
 import { IRootState, IMenuTemplate } from "../../types/index";
 import { actions } from "../../actions/index";

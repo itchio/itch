@@ -7,7 +7,7 @@ import {
   User,
   Collection,
   InstallLocationSummary,
-} from "../buse/messages";
+} from "../butlerd/messages";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {

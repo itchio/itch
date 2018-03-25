@@ -41,12 +41,12 @@ import {
   DownloadProgress,
   InstallLocationSummary,
   Cave,
-} from "../buse/messages";
+} from "../butlerd/messages";
 import {
   ITypedModal,
   ITypedModalUpdate,
 } from "../components/modal-widgets/index";
-import { IEndpoint } from "node-buse";
+import { IEndpoint } from "butlerd";
 export interface ActionCreator<PayloadType> {
   payload: PayloadType;
   (payload: PayloadType): IAction<PayloadType>;
@@ -166,7 +166,7 @@ export const actions = wireActions({
     progressInfo: IProgressInfo;
   }>(),
 
-  gotBuseEndpoint: action<{
+  gotButlerdEndpoint: action<{
     endpoint: IEndpoint;
   }>(),
 

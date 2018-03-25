@@ -1,7 +1,7 @@
 import { ClassificationAction } from "../types";
 import classificationActions from "../constants/classification-actions";
 
-import { Game, CaveSummary } from "../buse/messages";
+import { Game, CaveSummary } from "../butlerd/messages";
 
 /**
  * Returns whether a game can be "launched" or "opened", where "launching" means

@@ -1,5 +1,5 @@
 import { ClassificationAction } from "../types";
-import { GameClassification } from "../buse/messages";
+import { GameClassification } from "../butlerd/messages";
 
 interface IClassificationActions {
   [key: string]: ClassificationAction;

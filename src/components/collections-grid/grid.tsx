@@ -14,7 +14,7 @@ import EmptyState from "../empty-state";
 import LoadingState from "../loading-state";
 import { Space } from "../../helpers/space";
 import { collectionEvolvePayload } from "../../util/navigation";
-import { Collection } from "../../buse/messages";
+import { Collection } from "../../butlerd/messages";
 
 const tab = "itch://collections";
 const eo: any = {};

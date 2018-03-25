@@ -3,7 +3,7 @@ import { fileSize } from "../format/filesize";
 import platformData from "../constants/platform-data";
 
 import { ILocalizedString, IModalButtonTag } from "../types";
-import { Upload, UploadType } from "../buse/messages";
+import { Upload, UploadType } from "../butlerd/messages";
 
 interface IUploadButton {
   label: ILocalizedString;

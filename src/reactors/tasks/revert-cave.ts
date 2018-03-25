@@ -9,7 +9,7 @@ import { promisedModal } from "../modals";
 import asTask from "./as-task";
 import { modalWidgets } from "../../components/modal-widgets/index";
 
-import { withLogger, messages } from "../../buse";
+import { withLogger, messages } from "../../butlerd";
 const call = withLogger(logger);
 
 export default function(watcher: Watcher) {

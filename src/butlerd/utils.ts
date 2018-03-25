@@ -1,7 +1,8 @@
-import { Cave, CaveSummary } from "../buse/messages";
-import { RequestError, IRequestCreator, Client } from "node-buse";
+import { Cave, CaveSummary } from "./messages";
+import { RequestError, IRequestCreator, Client } from "butlerd";
+
 import rootLogger, { Logger } from "../logger/index";
-const lazyDefaultLogger = rootLogger.child({ name: "buse" });
+const lazyDefaultLogger = rootLogger.child({ name: "butlerd" });
 import { MinimalContext } from "../context/index";
 
 import * as messages from "./messages";
@@ -13,9 +14,9 @@ export async function withButlerClient<T>(
   parentLogger: Logger,
   cb: WithCB<T>
 ): Promise<T> {
-  const { endpoint } = getRootState().buse;
+  const { endpoint } = getRootState().butlerd;
   if (!endpoint) {
-    throw new Error(`no buse endpoint yet`);
+    throw new Error(`no butlerd endpoint yet`);
   }
   const client = new Client(endpoint);
   await client.connect();
@@ -94,7 +95,7 @@ export function setupClient(
 
 export function setupLogging(client: Client, logger: Logger) {
   client.onWarning(msg => {
-    logger.warn(`(buse) ${msg}`);
+    logger.warn(`(butlerd) ${msg}`);
   });
 
   client.onNotification(messages.Log, ({ params }) => {
@@ -133,7 +134,7 @@ export function getErrorMessage(e: any): string {
     return "Unknown error";
   }
 
-  // TODO: this is a good place to do i18n on buse error codes!
+  // TODO: this is a good place to do i18n on butlerd error codes!
 
   let errorMessage = e.message;
   const re = e.rpcError;

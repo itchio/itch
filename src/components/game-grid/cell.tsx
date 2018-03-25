@@ -12,7 +12,7 @@ import getGameStatus, { IGameStatus } from "../../helpers/get-game-status";
 import { IRootState } from "../../types/index";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
-import { Game, CaveSummary } from "../../buse/messages";
+import { Game, CaveSummary } from "../../butlerd/messages";
 
 class Cell extends React.PureComponent<IProps & IDerivedProps> {
   render() {

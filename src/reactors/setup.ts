@@ -4,13 +4,13 @@ import { IStore } from "../types";
 import { actions } from "../actions";
 
 import rootLogger from "../logger";
-import { messages, withLogger } from "../buse/index";
+import { messages, withLogger } from "../butlerd/index";
 import { indexBy, isEmpty } from "underscore";
 import { appdataLocationPath } from "../os/paths";
 import { Manager } from "../broth/manager";
 import delay from "./delay";
-import { makeButlerInstance } from "../buse/master-client";
-import { Client } from "node-buse";
+import { makeButlerInstance } from "../butlerd/master-client";
+import { Client } from "butlerd";
 const logger = rootLogger.child({ name: "setup" });
 const call = withLogger(logger);
 
@@ -56,9 +56,9 @@ async function syncInstallLocations(store: IStore) {
 export let manager: Manager;
 
 let masterClient: Client;
-let initialBuseResolve: (value?: any) => void;
-let initialBusePromise = new Promise((resolve, reject) => {
-  initialBuseResolve = resolve;
+let initialButlerdResolve: (value?: any) => void;
+let initialButlerdPromise = new Promise((resolve, reject) => {
+  initialButlerdResolve = resolve;
 });
 
 async function initialSetup(store: IStore, { retry }) {
@@ -75,10 +75,10 @@ async function initialSetup(store: IStore, { retry }) {
     }
     await manager.ensure();
     await Promise.race([
-      initialBusePromise,
+      initialButlerdPromise,
       new Promise((resolve, reject) => {
         setTimeout(() => {
-          reject(new Error("Timed out while connecting to buse"));
+          reject(new Error("Timed out while connecting to butlerd"));
         }, 5000);
       }),
     ]);
@@ -105,8 +105,8 @@ async function initialSetup(store: IStore, { retry }) {
   }
 }
 
-async function refreshBuse(store: IStore) {
-  logger.info(`Refreshing buse! Spinning up new instance...`);
+async function refreshButlerd(store: IStore) {
+  logger.info(`Refreshing butlerd! Spinning up new instance...`);
   let instance = await makeButlerInstance();
   instance.promise().catch(e => {
     console.error(e);
@@ -124,8 +124,8 @@ async function refreshBuse(store: IStore) {
     masterClient = null;
   }
   masterClient = nextClient;
-  store.dispatch(actions.gotBuseEndpoint({ endpoint }));
-  initialBuseResolve();
+  store.dispatch(actions.gotButlerdEndpoint({ endpoint }));
+  initialButlerdResolve();
 }
 
 export default function(watcher: Watcher) {
@@ -140,7 +140,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.packageGotVersionPrefix, async (store, action) => {
     const { name } = action.payload;
     if (name === "butler") {
-      await refreshBuse(store);
+      await refreshButlerd(store);
     }
   });
 }

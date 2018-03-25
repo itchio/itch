@@ -1,5 +1,5 @@
-import { RequestError } from "node-buse";
-import * as messages from "../buse/messages";
+import { RequestError } from "butlerd";
+import * as messages from "../butlerd/messages";
 
 type ItchErrorCode = "ITCH_ECANCELLED" | "ITCH_ERETRY";
 

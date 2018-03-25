@@ -1,9 +1,9 @@
 import { Fetcher } from "./fetcher";
 
 import getByIds from "../helpers/get-by-ids";
-import { messages, withLogger } from "../buse";
+import { messages, withLogger } from "../butlerd";
 
-import { Game } from "../buse/messages";
+import { Game } from "../butlerd/messages";
 import { uniq } from "underscore";
 
 class LibraryFetcher extends Fetcher {

@@ -8,7 +8,7 @@ import { actions } from "../actions";
 import { throttle, isEqual } from "underscore";
 
 import rootLogger from "../logger";
-import { messages, withLogger } from "../buse";
+import { messages, withLogger } from "../butlerd";
 const logger = rootLogger.child({ name: "commons" });
 const call = withLogger(logger);
 

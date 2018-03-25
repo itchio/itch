@@ -12,7 +12,7 @@ import LastPlayed from "./last-played";
 
 import styled from "./styles";
 import { IGameStatus } from "../helpers/get-game-status";
-import { Game } from "../buse/messages";
+import { Game } from "../butlerd/messages";
 import { formatPrice } from "../format/price";
 
 const GameStatsDiv = styled.div`

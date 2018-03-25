@@ -6,7 +6,7 @@ import IconButton from "../../basics/icon-button";
 
 import defaultImages from "../../../constants/default-images";
 
-import { Profile } from "../../../buse/messages";
+import { Profile } from "../../../butlerd/messages";
 
 import styled from "../../styles";
 

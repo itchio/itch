@@ -15,7 +15,7 @@ import { actions } from "../actions";
 import { IStore } from "../types";
 
 import { filter } from "underscore";
-import { call, messages } from "../buse";
+import { call, messages } from "../butlerd";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.processUrlArguments, async (store, action) => {

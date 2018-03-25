@@ -6,7 +6,7 @@ import LoadingCircle from "../basics/loading-circle";
 
 import format from "../format";
 import { IModalWidgetProps } from "./index";
-import { PrereqStatus } from "../../buse/messages";
+import { PrereqStatus } from "../../butlerd/messages";
 import styled from "../styles";
 import { downloadProgress } from "../../format/download-progress";
 

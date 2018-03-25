@@ -1,7 +1,7 @@
 import * as os from "../os";
 
 import classificationActions from "../constants/classification-actions";
-import { Game, GameType, GameClassification } from "../buse/messages";
+import { Game, GameType, GameClassification } from "../butlerd/messages";
 import { camelify } from "../format/camelify";
 
 const platform = os.itchPlatform();

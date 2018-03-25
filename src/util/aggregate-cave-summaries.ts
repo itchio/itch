@@ -1,4 +1,4 @@
-import { CaveSummary } from "../buse/messages";
+import { CaveSummary } from "../butlerd/messages";
 
 export function aggregateCaveSummaries(caves: CaveSummary[]): CaveSummary {
   let cave: CaveSummary;
