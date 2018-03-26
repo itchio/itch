@@ -8,7 +8,7 @@ import { messages, withLogger } from "../butlerd/index";
 import { indexBy, isEmpty } from "underscore";
 import { appdataLocationPath } from "../os/paths";
 import { Manager } from "../broth/manager";
-import delay from "./delay";
+import { delay } from "./delay";
 import { makeButlerInstance } from "../butlerd/master-client";
 import { Client } from "butlerd";
 import { ItchPromise } from "../util/itch-promise";

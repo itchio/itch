@@ -6,7 +6,7 @@ import * as os from "../os";
 import { actions } from "../actions";
 import env from "../env";
 
-import delay from "./delay";
+import { delay } from "./delay";
 
 import rootLogger from "../logger";
 import { t } from "../format/t";

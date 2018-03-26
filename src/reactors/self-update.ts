@@ -6,7 +6,7 @@ import spawn from "../os/spawn";
 import { request } from "../net/request";
 import { isNetworkError } from "../net/errors";
 
-import delay from "./delay";
+import { delay } from "./delay";
 
 import env from "../env";
 import urls from "../constants/urls";

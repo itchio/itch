@@ -2,9 +2,7 @@ import { join } from "path";
 import { getAppPath } from "../helpers/app";
 
 let appFolderName = "./app";
-if (process.env.NODE_ENV === "production") {
-  appFolderName = "./app.asar";
-}
+
 let absoluteAppPath = join(getAppPath(), appFolderName);
 
 /*
