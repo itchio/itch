@@ -18,6 +18,7 @@ import { IStore, IAction } from "./types";
 import { createStore } from "redux";
 import reducer from "./reducers";
 import { actions } from "./actions";
+import { ItchPromise } from "./util/itch-promise";
 
 export class TestWatcher extends Watcher {
   store: IStore;
@@ -61,7 +62,7 @@ export class TestWatcher extends Watcher {
  * infinite recursion.
  */
 async function immediate() {
-  await new Promise((resolve, reject) => {
+  await new ItchPromise((resolve, reject) => {
     setImmediate(resolve);
   });
 }

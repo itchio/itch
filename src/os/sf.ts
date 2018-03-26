@@ -1,5 +1,4 @@
-import { promisify } from "bluebird";
-import * as bluebird from "bluebird";
+import { promisify, ItchPromise } from "../util/itch-promise";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -27,41 +26,37 @@ export const mkdirp: Mkdirp = promisify(require("mkdirp")) as any;
 type Rimraf = (path: string, opts?: any) => Promise<void>;
 const rimraf: Rimraf = promisify(require("rimraf")) as any;
 
-export const nodeReaddir = (bluebird.promisify(
-  fs.readdir
-) as any) as typeof readdir;
-export const nodeReadFile = (bluebird.promisify(
-  fs.readFile
-) as any) as typeof readFile;
-export const nodeWriteFile = (bluebird.promisify(
+export const nodeReaddir = (promisify(fs.readdir) as any) as typeof readdir;
+export const nodeReadFile = (promisify(fs.readFile) as any) as typeof readFile;
+export const nodeWriteFile = (promisify(
   fs.writeFile
 ) as any) as typeof writeFile;
-export const nodeAppendFile = (bluebird.promisify(
+export const nodeAppendFile = (promisify(
   fs.appendFile
 ) as any) as typeof appendFile;
 
-export const utimes = (bluebird.promisify(fs.utimes) as any) as (
+export const utimes = (promisify(fs.utimes) as any) as (
   path: string,
   atime: number,
   mtime: number
 ) => Promise<void>;
-export const chmod = (bluebird.promisify(fs.chmod) as any) as (
+export const chmod = (promisify(fs.chmod) as any) as (
   path: string,
   mode: number
 ) => Promise<void>;
-export const stat = bluebird.promisify(fs.stat);
-export const lstat = bluebird.promisify(fs.lstat);
-export const readlink = bluebird.promisify(fs.readlink);
-export const symlink = (bluebird.promisify(fs.symlink) as any) as (
+export const stat = promisify(fs.stat);
+export const lstat = promisify(fs.lstat);
+export const readlink = promisify(fs.readlink);
+export const symlink = (promisify(fs.symlink) as any) as (
   srcpath: string,
   dstpath: string
 ) => Promise<void>;
-export const rename = (bluebird.promisify(fs.rename) as any) as (
+export const rename = (promisify(fs.rename) as any) as (
   oldpath: string,
   newpath: string
 ) => Promise<void>;
-export const rmdir = bluebird.promisify(fs.rmdir);
-export const unlink = (bluebird.promisify(fs.unlink) as any) as (
+export const rmdir = promisify(fs.rmdir);
+export const unlink = (promisify(fs.unlink) as any) as (
   file: string
 ) => Promise<void>;
 
@@ -72,7 +67,7 @@ export const createWriteStream = fs.createWriteStream.bind(fs);
  * Returns true if file exists, false if ENOENT, throws if other error
  */
 export async function exists(file: string) {
-  return new Promise((resolve, reject) => {
+  return new ItchPromise((resolve, reject) => {
     const callback = (err: IFSError) => {
       if (err) {
         if (err.code === "ENOENT") {
@@ -137,7 +132,7 @@ export async function writeFile(
  * 'close' or 'end' is emitted, rejects when 'error' is
  */
 export async function promised(stream: EventEmitter): Promise<any> {
-  const p = new bluebird((resolve, reject) => {
+  const p = new ItchPromise((resolve, reject) => {
     stream.on("close", resolve);
     stream.on("end", resolve);
     stream.on("error", reject);

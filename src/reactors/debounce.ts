@@ -1,3 +1,5 @@
+import { ItchPromise } from "../util/itch-promise";
+
 const chatty = process.env.IAMA_JELLO_AMA === "1";
 
 class CancelError extends Error {
@@ -33,7 +35,7 @@ function debounce<T>(f: (...args: any[]) => Promise<T>, ms: number) {
         rejectOther(new CancelError());
         rejectOther = null;
       }
-      await new Promise((resolve, reject) => {
+      await new ItchPromise((resolve, reject) => {
         rejectOther = reject;
         setTimeout(resolve, ms);
       });

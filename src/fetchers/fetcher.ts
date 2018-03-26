@@ -1,5 +1,4 @@
 import { ICredentials, Retry, isRetry, ITabData } from "../types";
-import * as bluebird from "bluebird";
 import { indexBy, pluck } from "underscore";
 
 import { actions } from "../actions";
@@ -20,6 +19,7 @@ export enum FetchReason {
 import rootLogger, { Logger } from "../logger";
 import { Space } from "../helpers/space";
 import { Game, Collection } from "../butlerd/messages";
+import { delay } from "../reactors/delay";
 
 /**
  * Fetches all the data a tab needs to display, except webviews.
@@ -105,7 +105,7 @@ export class Fetcher {
         } else {
           let sleepTime = 100 * Math.pow(2, this.retryCount);
           this.logger.debug(`${retriableError} (${sleepTime}ms)`);
-          await bluebird.delay(sleepTime);
+          await delay(sleepTime);
         }
       }
     }

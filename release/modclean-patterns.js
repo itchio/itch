@@ -134,7 +134,6 @@ module.exports = {
     "*.ps1",
     "*.map",
     "images",
-    "semver",
     "link",
     "links",
     "uglifyjs",
@@ -142,9 +141,6 @@ module.exports = {
     //////////////////////////////////
     // specific modules
     //////////////////////////////////
-
-    // only used to build better-sqlite3
-    "lzz-gyp",
 
     // build artifacts for gyp modules (.node files are elsewhere)
     "global_intermediate",
@@ -182,7 +178,6 @@ module.exports = {
     "react/cjs/react.development.js",
     "react-dom/dist",
     "react-intl/dist",
-    "react-modal/dist",
     "react-redux/dist",
     "redux/dist",
     "redux-logger/dist",
@@ -190,11 +185,7 @@ module.exports = {
     "sprintf-js/dist",
     "styled-components/dist",
     "ua-parser-js/dist",
-
-    "recharts/es6",
-    "recharts/src",
     "styled-components/src",
-    "knex/src",
   ],
 
   ignore: [],

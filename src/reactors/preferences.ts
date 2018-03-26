@@ -10,6 +10,7 @@ import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "preferences" });
 
 import { shell, session } from "electron";
+import { ItchPromise } from "../util/itch-promise";
 
 let saveAtomicInvocations = 0;
 
@@ -37,7 +38,7 @@ export default function(watcher: Watcher) {
     if (action.payload.cache) {
       logger.debug(`clearing cache for ${partition}`);
       promises.push(
-        new Promise((resolve, reject) => {
+        new ItchPromise((resolve, reject) => {
           ourSession.clearCache(resolve);
         })
       );
@@ -46,7 +47,7 @@ export default function(watcher: Watcher) {
     if (action.payload.cookies) {
       logger.debug(`clearing cookies for ${partition}`);
       promises.push(
-        new Promise((resolve, reject) => {
+        new ItchPromise((resolve, reject) => {
           ourSession.clearStorageData(
             {
               storages: ["cookies"],

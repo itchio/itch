@@ -1,25 +1,25 @@
-import * as bluebird from "bluebird";
-
 import * as os from "../../os";
 import * as shortcut from "../../os/win32/shortcut";
 
 import { AutoUpdaterStart } from "./types";
 
 import { MinimalContext } from "../../context";
+import { ItchPromise } from "../itch-promise";
+
 const ctx = new MinimalContext();
 
 async function onInstall() {
-  await bluebird.all([shortcut.install(ctx)]);
+  await ItchPromise.all([shortcut.install(ctx)]);
   return true;
 }
 
 async function onUpdate() {
-  await bluebird.all([shortcut.update(ctx)]);
+  await ItchPromise.all([shortcut.update(ctx)]);
   return true;
 }
 
 async function onUninstall() {
-  await bluebird.all([shortcut.uninstall(ctx)]);
+  await ItchPromise.all([shortcut.uninstall(ctx)]);
   return true;
 }
 

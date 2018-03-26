@@ -11,6 +11,7 @@ import { Manager } from "../broth/manager";
 import delay from "./delay";
 import { makeButlerInstance } from "../butlerd/master-client";
 import { Client } from "butlerd";
+import { ItchPromise } from "../util/itch-promise";
 const logger = rootLogger.child({ name: "setup" });
 const call = withLogger(logger);
 
@@ -57,7 +58,7 @@ export let manager: Manager;
 
 let masterClient: Client;
 let initialButlerdResolve: (value?: any) => void;
-let initialButlerdPromise = new Promise((resolve, reject) => {
+let initialButlerdPromise = new ItchPromise((resolve, reject) => {
   initialButlerdResolve = resolve;
 });
 
@@ -77,7 +78,7 @@ async function initialSetup(store: IStore, { retry }) {
 
     await Promise.race([
       initialButlerdPromise,
-      new Promise((resolve, reject) => {
+      new ItchPromise((resolve, reject) => {
         setTimeout(() => {
           reject(new Error("Timed out while connecting to butlerd"));
         }, 5000);

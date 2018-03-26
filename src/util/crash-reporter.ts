@@ -18,6 +18,7 @@ import * as os from "../os";
 import * as sf from "../os/sf";
 
 import { t } from "../format/t";
+import { ItchPromise } from "./itch-promise";
 
 enum ErrorType {
   UncaughtException,
@@ -152,7 +153,7 @@ async function handle(type: ErrorType, e: Error) {
     ]),
   };
 
-  const response = await new Promise((resolve, reject) =>
+  const response = await new ItchPromise((resolve, reject) =>
     dialog.showMessageBox(dialogOpts, resolve)
   );
 

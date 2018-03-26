@@ -17,6 +17,7 @@ import env from "../../env";
 
 import { net } from "electron";
 import { Readable } from "stream";
+import { ItchPromise } from "../../util/itch-promise";
 
 // TODO: revert that when Electron fixes their typings.
 type ActualElectronResponse = Electron.IncomingMessage & Readable;
@@ -47,7 +48,7 @@ export async function request(
   });
   req.setHeader("user-agent", useragent);
 
-  const p = new Promise<IResponse>((resolve, reject) => {
+  const p = new ItchPromise<IResponse>((resolve, reject) => {
     req.on("response", (res: ActualElectronResponse) => {
       const response = {
         statusCode: res.statusCode,

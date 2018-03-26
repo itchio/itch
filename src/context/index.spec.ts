@@ -2,6 +2,7 @@ import { describe, it, assert } from "../test";
 
 import { Context } from "./index";
 import { IStore, isCancelled } from "../types";
+import { ItchPromise } from "../util/itch-promise";
 const store = {} as IStore;
 
 describe("Context", () => {
@@ -63,7 +64,7 @@ describe("Context", () => {
         },
         work: async () => {
           ranFirstTask = true;
-          await new Promise(() => {
+          await new ItchPromise(() => {
             /* just hang there */
           });
         },
@@ -124,7 +125,7 @@ describe("Context", () => {
             }
           },
           work: async () => {
-            await new Promise(() => {
+            await new ItchPromise(() => {
               /* muffin */
             });
           },

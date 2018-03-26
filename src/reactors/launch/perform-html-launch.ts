@@ -25,6 +25,7 @@ import {
   HTMLLaunchResult,
 } from "../../butlerd/messages";
 import { Logger } from "../../logger/index";
+import { ItchPromise } from "../../util/itch-promise";
 
 interface HTMLLaunchOpts {
   ctx: Context;
@@ -162,13 +163,13 @@ export async function performHTMLLaunch(
     });
 
     try {
-      await new Promise((resolve, reject) => {
+      await new ItchPromise((resolve, reject) => {
         setTimeout(resolve, 1000);
       });
       await connection.connect();
 
       logger.info(`Should be connected now, will send videosetup soon`);
-      await new Promise((resolve, reject) => {
+      await new ItchPromise((resolve, reject) => {
         setTimeout(resolve, 1000);
       });
 
@@ -246,7 +247,7 @@ export async function performHTMLLaunch(
     }
   }
 
-  await new Promise((resolve, reject) => {
+  await new ItchPromise((resolve, reject) => {
     win.on("close", async () => {
       if (connection) {
         connection.close();

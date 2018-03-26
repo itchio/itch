@@ -3,7 +3,7 @@ import * as fs from "fs";
 
 /** reads an entire file as an UTF-8 string */
 export async function readFile(file: string): Promise<string> {
-  return await new Promise<string>((resolve, reject) => {
+  return await new ItchPromise<string>((resolve, reject) => {
     fs.readFile(file, { encoding: "utf8" }, (err, res) => {
       if (err) {
         return reject(err);
@@ -25,4 +25,5 @@ export async function exists(file: string): Promise<boolean> {
 }
 
 import * as sf from "../os/sf";
+import { ItchPromise } from "../util/itch-promise";
 export const writeFile = sf.writeFile;

@@ -174,7 +174,7 @@ async function ciPackage(argsIn) {
               await $.sh(
                 `${toUnixPath(ospath.join(wd, "release", "modclean.js"))} .`
               );
-            });
+            })e
           } catch (err) {
             $.say(`While cleaning:\n${err.stack}`);
             callback(err);

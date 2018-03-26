@@ -9,7 +9,6 @@ import { IStore, IPackageState, IProgressInfo } from "../types";
 import { join } from "path";
 import { readdir, mkdirp } from "../os/sf";
 import formulas, { FormulaSpec } from "./formulas";
-import { delay } from "bluebird";
 import { downloadToFile } from "../net";
 import { actions } from "../actions";
 import { unzip } from "./unzip";
@@ -17,6 +16,7 @@ import { unzip } from "./unzip";
 import * as semver from "semver";
 import { SemVer } from "semver";
 import { rest, isEmpty } from "underscore";
+import { delay } from "../reactors/delay";
 
 const forceHead = true;
 const semVerHead = semver.coerce("9999.0.0");

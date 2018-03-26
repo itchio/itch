@@ -1,6 +1,6 @@
-/** returns a promise that resolves after 'ms' milliseconds */
-function delay(ms: number) {
-  return new Promise((resolve, reject) => setTimeout(resolve, ms));
-}
+import { ItchPromise } from "../util/itch-promise";
 
-export default delay;
+/** returns a promise that resolves after 'ms' milliseconds */
+export function delay(ms: number) {
+  return new ItchPromise((resolve, reject) => setTimeout(resolve, ms));
+}

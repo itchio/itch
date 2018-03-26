@@ -7,6 +7,7 @@ const spawnLogger = rootLogger.child({ name: "spawn" });
 
 import { MinimalContext } from "../context";
 import { formatExitCode } from "../format/exit-code";
+import { ItchPromise } from "../util/itch-promise";
 
 interface ISpawnOpts {
   /** Context this should run in */
@@ -121,7 +122,7 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
       cancelled = true;
     },
     work: () =>
-      new Promise<number>((resolve, reject) => {
+      new ItchPromise<number>((resolve, reject) => {
         child.on("close", (code: number, signal: string) => {
           if (cbErr) {
             reject(cbErr);

@@ -22,6 +22,7 @@ interface IRegisterProtocolOpts {
 }
 
 import { session } from "electron";
+import { ItchPromise } from "../../../util/itch-promise";
 
 export async function registerProtocol(opts: IRegisterProtocolOpts) {
   const { partition, fileRoot } = opts;
@@ -32,7 +33,7 @@ export async function registerProtocol(opts: IRegisterProtocolOpts) {
 
   const caveSession = session.fromPartition(partition, { cache: false });
 
-  await new Promise((resolve, reject) => {
+  await new ItchPromise((resolve, reject) => {
     caveSession.protocol.registerFileProtocol(
       WEBGAME_PROTOCOL,
       (request, callback) => {
@@ -53,7 +54,7 @@ export async function registerProtocol(opts: IRegisterProtocolOpts) {
     );
   });
 
-  const handled = await new Promise((resolve, reject) => {
+  const handled = await new ItchPromise((resolve, reject) => {
     caveSession.protocol.isProtocolHandled(WEBGAME_PROTOCOL, result => {
       resolve(result);
     });

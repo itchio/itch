@@ -13,6 +13,7 @@ import { Profile } from "../butlerd/messages";
 import rootLogger from "../logger";
 import { IStore } from "../types";
 import { restoreTabs, saveTabs } from "./tab-save";
+import { ItchPromise } from "../util/itch-promise";
 const logger = rootLogger.child({ name: "login" });
 const call = withLogger(logger);
 
@@ -149,7 +150,7 @@ async function setCookie(profile: Profile, cookie: Map<string, string>) {
   for (const name of Object.keys(cookie)) {
     const value = cookie[name];
     const epoch = Date.now() * 0.001;
-    await new Promise((resolve, reject) => {
+    await new ItchPromise((resolve, reject) => {
       const parsed = urlParser.parse(urls.itchio);
       const opts = {
         name,

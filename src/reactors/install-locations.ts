@@ -10,6 +10,7 @@ import { modalWidgets } from "../components/modal-widgets/index";
 import { call, messages } from "../butlerd";
 import { promisedModal } from "./modals";
 import { t } from "../format/t";
+import { ItchPromise } from "../util/itch-promise";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
@@ -103,7 +104,7 @@ export default function(watcher: Watcher) {
         | "createDirectory")[],
     };
 
-    const promise = new Promise<typeof actions.addInstallLocation.payload>(
+    const promise = new ItchPromise<typeof actions.addInstallLocation.payload>(
       (resolve, reject) => {
         const callback = (response: string[]) => {
           if (!response) {
