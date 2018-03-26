@@ -27,7 +27,7 @@ export default reducer<ISetupState>(initialState, on => {
     if (blockingOperation) {
       blockingOperation = {
         ...blockingOperation,
-        ...progress,
+        progressInfo: progress,
       };
     }
     return {

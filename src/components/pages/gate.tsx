@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
+import LogoIndicator from "./gate/logo-indicator";
 import LoginScreen from "./gate/login-screen";
 import BlockingOperation from "./gate/blocking-operation";
 import TitleBar from "../title-bar";
@@ -17,23 +18,6 @@ const GateDiv = styled.div`
   align-items: center;
   height: 100%;
 
-  .logo {
-    pointer-events: none;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    margin: 40px 0;
-    margin-top: 80px;
-    min-height: 120px;
-
-    img {
-      width: 90%;
-      margin: 0 auto;
-    }
-  }
-
   .crux {
     flex-grow: 1;
     display: flex;
@@ -43,8 +27,6 @@ const GateDiv = styled.div`
   }
 `;
 
-const appWhite = require("../../static/images/logos/app-white.svg");
-
 class GatePage extends React.PureComponent<IProps & IDerivedProps> {
   username: HTMLInputElement;
   password: HTMLInputElement;
@@ -53,9 +35,7 @@ class GatePage extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <GateDiv>
         <TitleBar tab="login" />
-        <section className="logo">
-          <img src={appWhite} />
-        </section>
+        <LogoIndicator />
         <Filler />
         <section className="crux">{this.renderChild()}</section>
         <Filler />

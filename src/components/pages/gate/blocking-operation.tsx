@@ -61,16 +61,21 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { retrySetup, blockingOperation, windows } = this.props;
 
-    const { message, icon, progress } = blockingOperation;
+    const { message, icon, progressInfo } = blockingOperation;
     const hasError = icon === "error";
     let iconElement: JSX.Element;
     if (hasError) {
       iconElement = <Icon icon={icon} />;
     } else {
-      iconElement = <LoadingCircle wide progress={progress ? progress : -1} />;
+      iconElement = (
+        <LoadingCircle
+          wide
+          progress={progressInfo ? progressInfo.progress : -1}
+        />
+      );
     }
 
-    const { bps = 0, eta = 0 } = blockingOperation;
+    const { bps = 0, eta = 0 } = progressInfo ? progressInfo : {};
 
     return (
       <BlockingOperationDiv>
@@ -83,12 +88,10 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
           ) : null}
           {format(message)}
         </div>
-        {blockingOperation.progress > 0 ? (
+        {!!progressInfo && progressInfo.doneBytes > 0 ? (
           <div className="progress">
-            {fileSize(
-              blockingOperation.totalBytes * blockingOperation.progress
-            )}{" "}
-            / {fileSize(blockingOperation.totalBytes)}
+            {fileSize(progressInfo.doneBytes)} /{" "}
+            {fileSize(progressInfo.totalBytes)}
             {bps !== 0 || eta !== 0 ? (
               <>
                 {" @ "}

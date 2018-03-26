@@ -293,11 +293,8 @@ export interface ISetupOperation {
   message: ILocalizedString;
   icon: string;
   stack?: string;
-  progress?: number;
-  bps?: number;
-  eta?: number;
   stage?: string;
-  totalBytes?: number;
+  progressInfo?: IProgressInfo;
 }
 
 export interface ISetupState {
@@ -662,6 +659,7 @@ export interface IProgressInfo {
 
   stage?: string;
 
+  doneBytes?: number;
   totalBytes?: number;
 }
 

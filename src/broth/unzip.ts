@@ -1,4 +1,5 @@
 import * as yauzl from "yauzl";
+import * as progress from "progress-stream";
 const crc32 = require("crc-32");
 import { promisify } from "util";
 const yauzlOpen = promisify(yauzl.open) as (
@@ -11,11 +12,13 @@ import { dirname, join } from "path";
 import { createWriteStream } from "fs";
 import { Logger } from "../logger";
 import { Stream } from "stream";
+import { IProgressInfo } from "../types";
 
 interface UnzipOpts {
   archivePath: string;
   destination: string;
   logger: Logger;
+  onProgress: (info: IProgressInfo) => void;
 }
 
 const DIR_RE = /\/$/;
@@ -25,7 +28,11 @@ export async function unzip(opts: UnzipOpts) {
   await sf.mkdirp(destination);
 
   const zipfile = await yauzlOpen(archivePath, { lazyEntries: true });
+  logger.info(`Total zip entries: ${zipfile.entryCount}`);
+  logger.info(`zip filesize: ${zipfile.fileSize}`);
   zipfile.readEntry();
+
+  let progressOffset = 0;
 
   const extractEntry = async (entry: yauzl.Entry, err: Error, src: Stream) => {
     if (err) {
@@ -36,8 +43,20 @@ export async function unzip(opts: UnzipOpts) {
 
     await sf.mkdirp(dirname(entryPath));
     const dst = createWriteStream(entryPath);
-    src.pipe(dst);
+    const progressStream = progress({
+      length: entry.uncompressedSize,
+      time: 100,
+    });
+    let progressFactor = entry.compressedSize / zipfile.fileSize;
+    progressStream.on("progress", info => {
+      opts.onProgress({
+        progress: progressOffset + info.percentage / 100 * progressFactor,
+      });
+    });
+    progressStream.pipe(dst);
+    src.pipe(progressStream);
     await sf.promised(dst);
+    progressOffset += progressFactor;
     await sf.chmod(entryPath, 0o755);
 
     const fileBuffer = await sf.readFile(entryPath, { encoding: null });

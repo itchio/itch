@@ -10,7 +10,6 @@ import { join } from "path";
 import { readdir, mkdirp } from "../os/sf";
 import formulas, { FormulaSpec } from "./formulas";
 import { delay } from "bluebird";
-import { MinimalContext } from "../context";
 import { downloadToFile } from "../net";
 import { actions } from "../actions";
 import { unzip } from "./unzip";
@@ -23,6 +22,12 @@ const forceHead = true;
 const semVerHead = semver.coerce("9999.0.0");
 const sanityCheckTimeout = 10000;
 const platform = `${goos()}-${goarch()}`;
+
+const downloadStart = 0.0;
+const downloadWeight = 0.3;
+
+const extractStart = downloadStart + downloadWeight;
+const extractWeight = 0.3;
 
 export class Package {
   private store: IStore;
@@ -166,6 +171,7 @@ export class Package {
   }
 
   private emitProgress(progressInfo: IProgressInfo) {
+    this.logger.info(`${(progressInfo.progress * 100).toFixed(1)}% done...`);
     this.store.dispatch(
       actions.packageProgress({ name: this.name, progressInfo })
     );
@@ -202,7 +208,6 @@ export class Package {
         })
       );
 
-      const ctx = new MinimalContext();
       const archiveName = `${this.name}.zip`;
       const archiveUrl = this.buildDownloadURL(
         latestVersion,
@@ -217,10 +222,18 @@ export class Package {
       this.info(`...from ${archiveUrl}`);
       this.info(`...to ${archivePath}`);
 
-      ctx.on("progress", info => {
-        this.emitProgress(info);
-      });
-      await downloadToFile(ctx, this.logger, archiveUrl, archivePath);
+      await downloadToFile(
+        info => {
+          let newInfo = {
+            ...info,
+            progress: downloadStart + info.progress * downloadWeight,
+          };
+          this.emitProgress(newInfo);
+        },
+        this.logger,
+        archiveUrl,
+        archivePath
+      );
 
       this.stage("install");
       this.info(`Extracting...`);
@@ -231,6 +244,13 @@ export class Package {
         archivePath,
         destination: versionPrefix,
         logger: this.logger,
+        onProgress: info => {
+          let newInfo = {
+            ...info,
+            progress: extractStart + info.progress * extractWeight,
+          };
+          this.emitProgress(newInfo);
+        },
       });
       await this.writeInstallMarker(latestVersion);
 

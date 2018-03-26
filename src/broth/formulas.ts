@@ -25,6 +25,8 @@ function describeFormula(name: string, formula: FormulaSpec) {
 describeFormula("butler", {
   sanityCheck: async (versionPrefix: string) => {
     const instance = await makeButlerInstanceWithPrefix(versionPrefix);
+    // we're awaiting it later, avoid 'unhandledRejection'
+    instance.promise().catch(() => {});
     try {
       const client = new Client(await instance.getEndpoint());
       await client.connect();

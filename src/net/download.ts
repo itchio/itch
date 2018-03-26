@@ -7,13 +7,13 @@ import { fileSize } from "../format/filesize";
 import { Logger } from "../logger";
 import { request } from "./request";
 import { WriteStream } from "fs";
-import { MinimalContext } from "../context";
+import { IProgressInfo } from "../types";
 
 /**
  * Download to file without using butler
  */
 export async function downloadToFile(
-  ctx: MinimalContext,
+  onProgress: (progress: IProgressInfo) => void,
   logger: Logger,
   url: string,
   file: string
@@ -41,19 +41,18 @@ export async function downloadToFile(
     {
       sink: () => {
         progressStream = progress({ length: totalSize, time: 500 });
-        progressStream.on("progress", progress => {
-          ctx.emitProgress({
-            progress: progress.percentage / 100,
-            eta: progress.eta,
-            bps: progress.speed,
+        progressStream.on("progress", info => {
+          onProgress({
+            progress: info.percentage / 100,
+            eta: info.eta,
+            bps: info.speed,
+            doneBytes: info.percentage / 100 * totalSize,
             totalBytes: totalSize,
           });
           logger.info(
-            `${progress.percentage.toFixed(
+            `${info.percentage.toFixed(1)}% done, eta ${info.eta.toFixed(
               1
-            )}% done, eta ${progress.eta.toFixed(1)}s @ ${fileSize(
-              progress.speed
-            )}/s`
+            )}s @ ${fileSize(info.speed)}/s`
           );
         });
         progressStream.pipe(fileSink);

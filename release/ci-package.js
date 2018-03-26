@@ -185,6 +185,7 @@ async function ciPackage(argsIn) {
       ],
     }
   );
+  $.say(`electron-packager options: ${JSON.stringify(electronFinalOptions, null, 2)}`);
   const appPaths = await $.measure("electron package + rebuild", async () => {
     return await electronPackager(electronFinalOptions);
   });
@@ -231,6 +232,11 @@ async function ciPackage(argsIn) {
     let pushPath = buildPath;
     let butlerCmd = `./butler push ${artifactPath} ${butlerTarget}:${butlerChannel} --userversion=${$.buildVersion()}`;
     $(await $.sh(butlerCmd));
+  }
+
+  if (!process.env.CI) {
+    $.say("Not on CI, stopping here.");
+    return;
   }
 
   switch (os) {

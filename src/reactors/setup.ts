@@ -74,6 +74,7 @@ async function initialSetup(store: IStore, { retry }) {
       manager = new Manager(store);
     }
     await manager.ensure();
+
     await Promise.race([
       initialButlerdPromise,
       new Promise((resolve, reject) => {
