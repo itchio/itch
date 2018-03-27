@@ -49,7 +49,7 @@ test-windows:
       - screenshots
       - chrome-driver.log.txt
 
-# I18n check
+# i18n check
 i18n-check:
   stage: build
   tags:
@@ -73,27 +73,12 @@ compile:
     paths:
       - dist.tar
 
-# generate .desktop file for Linux
-generate-linux-extras:
-  stage: build
-  tags:
-    - linux
-  script:
-    - release/ci-generate-linux-extras.js
-  only:
-    - tags
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - linux-extras
-
-# .tar.gz, .rpm and .deb
+# 32-bit linux portable builds
 package-linux-386:
   stage: package
   tags:
     - linux
   script:
-    - export BUTLER_ENABLE=1
     - release/ci-package.js linux 386
   only:
     - tags
@@ -105,13 +90,12 @@ package-linux-386:
     - compile
     - generate-linux-extras
 
-# .tar.gz, .rpm and .deb
+# 64-bit linux portable builds
 package-linux-amd64:
   stage: package
   tags:
     - linux
   script:
-    - export BUTLER_ENABLE=1
     - release/ci-package.js linux amd64
   only:
     - tags
@@ -123,13 +107,12 @@ package-linux-amd64:
     - compile
     - generate-linux-extras
 
-# .dmg and .zip
+# macOS .zip
 package-darwin-amd64:
   stage: package
   tags:
     - darwin
   script:
-    - export BUTLER_ENABLE=1
     - release/ci-package.js darwin amd64
   only:
     - tags
@@ -140,6 +123,7 @@ package-darwin-amd64:
   dependencies:
     - compile
 
+# windows 32-bit build
 package-windows-386:
   stage: package
   tags:
@@ -156,42 +140,35 @@ package-windows-386:
   dependencies:
     - compile
 
-# ArchLinux user repository
-package-aur:
+# windows 64-bit build
+package-windows-amd64:
   stage: package
   tags:
-    - archlinux
+    - windows
   only:
     - tags
   script:
-    - release/ci-package-aur.js
+    - export BUTLER_ENABLE=1
+    - release/ci-package.js windows amd64
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - packages
+  dependencies:
+    - compile
 
-# GitHub releases are used for Squirrel.Windows & Squirrel.Mac,
-# along with direct downloads
-deploy-github:
+deploy-itchio:
   stage: deploy
   tags:
     - linux
   only:
     - tags
   script:
-    - release/ci-deploy-github.js
+    - release/ci-deploy.js
   dependencies:
     - package-linux-386
     - package-linux-amd64
-    - package-windows-386
     - package-darwin-amd64
-
-# We have a YUM (rpm) & APT (deb) repository on bintray
-deploy-bintray:
-  stage: deploy
-  tags:
-    - linux
-  only:
-    - tags
-  script:
-    - release/ci-deploy-bintray.js
-  dependencies:
-    - package-linux-386
-    - package-linux-amd64
-
+    - package-windows-386
+    - package-windows-amd64
+  

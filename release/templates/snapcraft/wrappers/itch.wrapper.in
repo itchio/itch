@@ -1,4 +1,0 @@
-#!/bin/sh
-export TMPDIR=$XDG_RUNTIME_DIR
-
-$SNAP/bin/desktop-launch $SNAP/usr/lib/{{CI_APPNAME}}/{{CI_APPNAME}} "$@"
