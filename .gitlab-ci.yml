@@ -88,7 +88,6 @@ package-linux-386:
       - packages
   dependencies:
     - compile
-    - generate-linux-extras
 
 # 64-bit linux portable builds
 package-linux-amd64:
@@ -105,7 +104,6 @@ package-linux-amd64:
       - packages
   dependencies:
     - compile
-    - generate-linux-extras
 
 # macOS .zip
 package-darwin-amd64:
