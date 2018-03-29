@@ -1,6 +1,6 @@
 {
-    "errors.api.login.incorrect_username_or_password": "",
-    "errors.api.login.password_must_be_provided": "",
+    "errors.api.login.incorrect_username_or_password": "잘못된 사용자 이름 또는 암호",
+    "errors.api.login.password_must_be_provided": "암호는 반드시 입력해야 합니다.",
     "errors.api.login.username_must_be_provided": "사용자명은 반드시 입력해야 합니다",
     "grid.item.buy_now": "구매",
     "grid.item.cancel_download": "다운로드 취소",
@@ -149,5 +149,15 @@
     "notification.download_installed": "{{title}} 설치 완료!",
     "notification.download_updated": "{{title}} 업데이트 완료!",
     "grid.filters.options.no_results": "결과 없음",
-    "action.name.manual": "사용자 매뉴얼"
+    "action.name.manual": "사용자 매뉴얼",
+    "action.name.forums": "포럼",
+    "collection.empty": "모음집에 게임이 없습니다.",
+    "download.reason.update": "최신 버전으로 업데이트",
+    "download.reason.reinstall": "재설치",
+    "download.reason.heal": "인증 및 복구",
+    "duration.hour": "한 시간",
+    "duration.hours": "{{x}}시간",
+    "duration.minutes": "{{x}}분",
+    "game.install.could_not_launch": "{{title}} 실행 중에 에러가 발생했습니다.",
+    "game.install.visit_web_page": "웹사이트 방문"
 }
