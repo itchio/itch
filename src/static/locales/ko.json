@@ -2,7 +2,7 @@
     "errors.api.login.incorrect_username_or_password": "",
     "errors.api.login.password_must_be_provided": "",
     "errors.api.login.username_must_be_provided": "사용자명은 반드시 입력해야 합니다",
-    "grid.item.buy_now": "구매하기",
+    "grid.item.buy_now": "구매",
     "grid.item.cancel_download": "다운로드 취소",
     "grid.item.downloading": "다운로드 중...",
     "grid.item.install": "설치하기",
@@ -148,5 +148,6 @@
     "notification.purchase_complete.may_install_now": "언제든지 설치할 수 있습니다.",
     "notification.download_installed": "{{title}} 설치 완료!",
     "notification.download_updated": "{{title}} 업데이트 완료!",
-    "grid.filters.options.no_results": "결과 없음"
+    "grid.filters.options.no_results": "결과 없음",
+    "action.name.manual": "사용자 매뉴얼"
 }
