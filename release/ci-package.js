@@ -31,6 +31,9 @@ async function ciPackage(args) {
 
   $.say(`Packaging ${$.appName()} for ${os}-${arch}`);
 
+  $.say("Installing dependencies...");
+  $(await $.npm(`install`));
+
   $.say("Decompressing dist...");
   $(await $.sh("rm -rf dist"));
   $(await $.sh("tar xf dist.tar"));
@@ -116,8 +119,7 @@ async function ciPackage(args) {
 
   $.say("Installing electron packaging tools...");
   packages = [
-    "electron-packager@9.0.0",
-    "electron-rebuild-ftl@1.5.11"
+    "electron-packager@9.0.0"
   ];
   $(await $.npm(`install --no-save ${packages.join(" ")}`));
 
