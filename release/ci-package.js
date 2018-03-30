@@ -35,8 +35,11 @@ async function ciPackage(args) {
   $(await $.sh("rm -rf dist"));
   $(await $.sh("tar xf dist.tar"));
 
-  $.say(`Installing dependencies...`);
-  $(await $.npm("install"));
+  $.say("Installing production modules...");
+  await $.showVersions(["npm", "node"]);
+  await $.cd("dist", async () => {
+    $(await $.npm("install --production"));
+  });
 
   const electronVersion = JSON.parse(
     await $.readFile("package.json")
@@ -112,7 +115,10 @@ async function ciPackage(args) {
   $(await $.sh("mkdir -p packages"));
 
   $.say("Installing electron packaging tools...");
-  packages = ["electron-packager@9.0.0"];
+  packages = [
+    "electron-packager@9.0.0",
+    "electron-rebuild-ftl@1.5.11"
+  ];
   $(await $.npm(`install --no-save ${packages.join(" ")}`));
 
   const darwin = require("./package/darwin");
