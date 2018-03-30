@@ -13,13 +13,8 @@ import { downloadToFile } from "../net";
 import { actions } from "../actions";
 import { unzip } from "./unzip";
 
-import * as semver from "semver";
-import { SemVer } from "semver";
-import { rest, isEmpty } from "underscore";
 import { delay } from "../reactors/delay";
 
-const forceHead = true;
-const semVerHead = semver.coerce("9999.0.0");
 const sanityCheckTimeout = 10000;
 const platform = `${goos()}-${goarch()}`;
 
@@ -28,6 +23,8 @@ const downloadWeight = 0.3;
 
 const extractStart = downloadStart + downloadWeight;
 const extractWeight = 0.3;
+
+type Version = string;
 
 export class Package {
   private store: IStore;
@@ -45,7 +42,11 @@ export class Package {
     if (!this.formula) {
       throw new Error(`No spec for formula: ${this.name}`);
     }
-    this.baseURL = `${urls.brothRepo}/${name}/${platform}`;
+    let channel = platform;
+    if (this.formula.transformChannel) {
+      channel = this.formula.transformChannel(channel);
+    }
+    this.baseURL = `${urls.brothRepo}/${name}/${channel}`;
     this.logger = rootLogger.child({ name: `broth :: ${name}` });
     this.stage("idle");
   }
@@ -59,28 +60,22 @@ export class Package {
     return `${this.baseURL}/${cleanPath}${query}`;
   }
 
-  buildDownloadURL(version: SemVer, path: string) {
+  buildDownloadURL(version: Version, path: string) {
     const cleanPath = path.replace(/^\//, "");
-    const remoteVersionFolder = semver.eq(version, semVerHead)
-      ? "head"
-      : `v${version.format()}`;
+    const remoteVersionFolder = version;
     return this.buildURL(`/${remoteVersionFolder}/${cleanPath}`);
   }
 
   /** fetch latest version number from repo */
-  async getLatestVersion(): Promise<SemVer> {
-    if (forceHead) {
-      return semVerHead;
-    }
-
-    const url = this.buildURL(`/LATEST`, { t: Date.now() });
+  async getLatestVersion(): Promise<Version> {
+    const url = this.buildURL(`/LATEST`);
     const res = await request("get", url, {});
     if (res.statusCode !== 200) {
       throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
     }
 
     const versionString = res.body.toString("utf8").trim();
-    return semver.coerce(versionString);
+    return versionString as Version;
   }
 
   getName(): string {
@@ -95,11 +90,15 @@ export class Package {
     return join(this.prefix, this.name, "downloads");
   }
 
-  getVersionPrefix(version: SemVer): string {
-    return join(this.getVersionsDir(), version.format());
+  getChosenMarkerPath(): string {
+    return join(this.prefix, this.name, ".chosen-version");
   }
 
-  getInstalledMarkerPath(version: SemVer): string {
+  getVersionPrefix(version: Version): string {
+    return join(this.getVersionsDir(), version);
+  }
+
+  getInstalledMarkerPath(version: Version): string {
     return join(this.getVersionPrefix(version), ".installed");
   }
 
@@ -117,13 +116,20 @@ export class Package {
 
   async ensure() {
     await mkdirp(this.getVersionsDir());
-    const validVersions = await this.getValidVersions();
-    if (isEmpty(validVersions)) {
-      this.info(`No valid versions installed`);
+
+    try {
       await this.upgrade();
-    } else {
-      await this.cleanOldVersions();
-      this.refreshPrefix(validVersions[0]);
+    } catch (e) {
+      this.warn(`Could not run upgrade: ${e.stack}`);
+      this.info(`Seeing if we have everything we need offline...`);
+
+      const chosenVersion = await this.getChosenVersion();
+      if (chosenVersion && (await this.isVersionValid(chosenVersion))) {
+        this.info(`${chosenVersion} is chosen and valid`);
+        this.refreshPrefix(chosenVersion);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -131,7 +137,7 @@ export class Package {
     return this.store.getState().broth.packages[this.name].versionPrefix;
   }
 
-  refreshPrefix(version: SemVer) {
+  refreshPrefix(version: Version) {
     const newVersionPrefix = this.getVersionPrefix(version);
     const oldVersionPrefix = this.getCurrentVersionPrefix();
 
@@ -140,7 +146,7 @@ export class Package {
       this.store.dispatch(
         actions.packageGotVersionPrefix({
           name: this.name,
-          version: version.format(),
+          version: version,
           versionPrefix: newVersionPrefix,
         })
       );
@@ -162,7 +168,15 @@ export class Package {
 
       try {
         await sf.wipe(this.getDownloadsDir());
-      } catch (e) {}
+      } catch (e) {
+        this.warn(`While cleaning downloads dir: ${e.stack}`);
+      }
+
+      try {
+        await this.cleanOldVersions();
+      } catch (e) {
+        this.warn(`While cleaning old versions: ${e.stack}`);
+      }
     }
   }
 
@@ -171,7 +185,6 @@ export class Package {
   }
 
   private emitProgress(progressInfo: IProgressInfo) {
-    this.logger.info(`${(progressInfo.progress * 100).toFixed(1)}% done...`);
     this.store.dispatch(
       actions.packageProgress({ name: this.name, progressInfo })
     );
@@ -181,7 +194,7 @@ export class Package {
   }
 
   private async doUpgrade() {
-    let latestVersion: SemVer;
+    let latestVersion: Version;
     try {
       latestVersion = await this.getLatestVersion();
     } catch (e) {
@@ -263,11 +276,11 @@ export class Package {
     }
 
     this.info(`Validated!`);
-    await this.cleanOldVersions();
+    await this.writeChosenVersion(latestVersion);
     this.refreshPrefix(latestVersion);
   }
 
-  async hasInstallMarker(version: SemVer): Promise<boolean> {
+  async hasInstallMarker(version: Version): Promise<boolean> {
     const installedMarkerPath = this.getInstalledMarkerPath(version);
     try {
       await sf.readFile(installedMarkerPath, { encoding: "utf8" });
@@ -277,66 +290,63 @@ export class Package {
     return false;
   }
 
-  async writeInstallMarker(version: SemVer) {
+  async writeInstallMarker(version: Version) {
     const installedMarkerPath = this.getInstalledMarkerPath(version);
     await sf.writeFile(installedMarkerPath, `installed on ${new Date()}`, {
       encoding: "utf8",
     });
   }
 
+  async getChosenVersion(): Promise<Version | null> {
+    try {
+      const contents = await sf.readFile(this.getChosenMarkerPath(), {
+        encoding: "utf8",
+      });
+      const version = contents.trim();
+      return version;
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  async writeChosenVersion(version: Version): Promise<void> {
+    this.info(`Marking ${version} as chosen version`);
+    await sf.writeFile(this.getChosenMarkerPath(), version, {
+      encoding: "utf8",
+    });
+  }
+
   async cleanOldVersions() {
-    const validVersions = await this.getValidVersions();
-    const obsoleteVersions = rest(validVersions, 2);
-    if (isEmpty(obsoleteVersions)) {
-      return;
-    }
-
-    for (const ov of obsoleteVersions) {
-      this.info(`Removing obsolete version ${ov.format()}`);
-      try {
-        await sf.wipe(this.getVersionPrefix(ov));
-      } catch (e) {
-        this.warn(`Could not remove version ${ov.format()}: ${e}`);
-      }
-    }
-  }
-
-  async getValidVersions(): Promise<SemVer[]> {
     const presentVersions = await this.getPresentVersions();
+    const chosenVersion = await this.getChosenVersion();
 
-    let validVersions: SemVer[] = [];
-    for (const v of presentVersions) {
-      if (await this.isVersionValid(v)) {
-        validVersions.push(v);
-      }
-    }
-
-    validVersions = validVersions.sort(semver.compare).reverse();
-    this.debug(`Valid versions: ${validVersions.join(", ")}`);
-    return validVersions;
-  }
-
-  async getPresentVersions(): Promise<SemVer[]> {
-    let presentVersions: SemVer[] = [];
-    let subdirs = await readdir(this.getVersionsDir());
-    for (const subdir of subdirs) {
-      const version = semver.coerce(subdir);
-      if (!version) {
-        this.warn(`Ignoring subdir ${subdir}: could not coerce to semver`);
+    for (const ov of presentVersions) {
+      if (ov == chosenVersion) {
         continue;
       }
 
-      if (await this.hasInstallMarker(version)) {
-        presentVersions.push(version);
+      this.info(`Removing obsolete version ${ov}`);
+      try {
+        await sf.wipe(this.getVersionPrefix(ov));
+      } catch (e) {
+        this.warn(`Could not remove version ${ov}: ${e}`);
       }
     }
+  }
 
-    presentVersions = presentVersions.sort(semver.compare).reverse();
+  async getPresentVersions(): Promise<Version[]> {
+    let presentVersions: Version[] = [];
+    let subdirs = await readdir(this.getVersionsDir());
+    for (const subdir of subdirs) {
+      const version = subdir as Version;
+      presentVersions.push(version);
+    }
+
     this.debug(`Present versions: ${presentVersions.join(", ")}`);
     return presentVersions;
   }
 
-  async isVersionValid(v: SemVer): Promise<boolean> {
+  async isVersionValid(v: Version): Promise<boolean> {
     try {
       await Promise.race([
         this.formula.sanityCheck(this.getVersionPrefix(v)),

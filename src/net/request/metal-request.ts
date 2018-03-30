@@ -58,7 +58,12 @@ export async function request(
       } as IResponse;
 
       if (opts.cb) {
-        opts.cb(response);
+        try {
+          opts.cb(response);
+        } catch (e) {
+          reject(e);
+          return;
+        }
       }
 
       let text: any = "";

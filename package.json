@@ -64,7 +64,6 @@
     "require-times": "^1.1.0",
     "reselect": "^2.5.2",
     "rimraf": "^2.6.1",
-    "semver": "^5.5.0",
     "shell-quote": "^1.6.0",
     "shoom": "1.3.0",
     "split2": "^2.1.1",

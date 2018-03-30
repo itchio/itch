@@ -4,6 +4,7 @@ import { makeButlerInstanceWithPrefix } from "../butlerd/master-client";
 
 export interface FormulaSpec {
   sanityCheck?: (versionPrefix: string) => Promise<void>;
+  transformChannel?: (channel: string) => string;
 }
 
 interface Formulas {
@@ -17,6 +18,8 @@ let self = {} as Formulas;
 function describeFormula(name: string, formula: FormulaSpec) {
   self[name] = formula;
 }
+
+const useButlerHead = true;
 
 /**
  * your little itch.io helper
@@ -36,6 +39,8 @@ describeFormula("butler", {
       await instance.promise();
     }
   },
+  transformChannel: (channel: string) =>
+    useButlerHead ? `${channel}-head` : channel,
 });
 
 export default self;

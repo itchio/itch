@@ -28,8 +28,8 @@ export async function unzip(opts: UnzipOpts) {
   await sf.mkdirp(destination);
 
   const zipfile = await yauzlOpen(archivePath, { lazyEntries: true });
-  logger.info(`Total zip entries: ${zipfile.entryCount}`);
-  logger.info(`zip filesize: ${zipfile.fileSize}`);
+  logger.debug(`Total zip entries: ${zipfile.entryCount}`);
+  logger.debug(`.zip filesize: ${zipfile.fileSize}`);
   zipfile.readEntry();
 
   let progressOffset = 0;
@@ -75,7 +75,7 @@ export async function unzip(opts: UnzipOpts) {
 
   await new ItchPromise((resolve, reject) => {
     zipfile.on("entry", (entry: yauzl.Entry) => {
-      logger.info(`→ ${entry.fileName}`);
+      logger.debug(`→ ${entry.fileName}`);
       if (DIR_RE.test(entry.fileName)) {
         // don't do anything for directories
         zipfile.readEntry();
