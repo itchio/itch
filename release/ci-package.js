@@ -177,7 +177,8 @@ async function ciPackage(args) {
 
   $.say(`Built app is in ${buildPath}`);
 
-  if (opts.buildOnly) {
+  if (!process.env.CI) {
+    $.say(`Not on CI, stopping there`);
     return;
   }
 
