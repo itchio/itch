@@ -5,7 +5,7 @@
 const fs = require("fs");
 const $ = require("./common");
 
-async function ciDeploy(args) {
+async function ciDeploy() {
   const dirs = fs.readdirSync("./packages");
   const packages = [];
   for (const dir of dirs) {
@@ -40,3 +40,5 @@ async function ciDeploy(args) {
     $(await $.sh(butlerCmd));
   }
 }
+
+ciDeploy();

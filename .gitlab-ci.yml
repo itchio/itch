@@ -157,6 +157,7 @@ package-windows-amd64:
 
 deploy-itchio:
   stage: deploy
+  when: manual
   tags:
     - linux
   only:
