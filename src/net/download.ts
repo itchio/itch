@@ -59,6 +59,11 @@ export async function downloadToFile(
         return progressStream;
       },
       cb: res => {
+        logger.info(`HTTP ${res.statusCode} ${url}`);
+        if (!/^2/.test("" + res.statusCode)) {
+          throw new Error(`HTTP ${res.statusCode} ${url}`);
+        }
+
         const contentLengthHeader = res.headers["content-length"];
         if (!isEmpty(contentLengthHeader)) {
           totalSize = parseInt(contentLengthHeader[0], 10);
@@ -70,7 +75,7 @@ export async function downloadToFile(
 
   const stats = await sf.lstat(file);
   logger.info(
-    `downloaded ${fileSize(stats.size)} / ${fileSize(totalSize)} (${
+    `Downloaded ${fileSize(stats.size)} / ${fileSize(totalSize)} (${
       stats.size
     } bytes)`
   );
