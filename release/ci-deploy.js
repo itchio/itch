@@ -15,12 +15,11 @@ async function ciDeploy() {
   }
 
   $.say("Grabbing butler");
-  const ext = os === "windows" ? ".exe" : "";
-  const butlerName = `butler${ext}`;
+  const butlerName = `butler`;
   const butlerArch = process.arch === "x64" ? "amd64" : "386";
-  const butlerUrl = `https://dl.itch.ovh/butler/${os}-${butlerArch}/head/${butlerName}`;
-  $(await $.sh(`curl -L -O ${butlerUrl}`));
-  $(await $.sh(`chmod +x ${butlerName}`));
+  const butlerUrl = `https://broth.itch.ovh/butler/linux-amd64/LATEST/.zip`;
+  $(await $.sh(`curl -L ${butlerUrl} -o butler.zip`));
+  $(await $.sh(`unzip butler.zip`));
   $(await $.sh(`./butler --version`));
 
   let wd = process.cwd();
