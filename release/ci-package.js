@@ -197,7 +197,11 @@ async function ciPackage(args) {
   } 
 
   $(await $.sh(`mkdir -p packages/${os}-${arch}`));
-  $(await $.sh(`mv ${buildPath} packages/${os}-${arch}/`));
+  if (os === "darwin") {
+    $(await $.sh(`ditto ${buildPath} packages/${os}-${arch}/`));
+  } else {
+    $(await $.sh(`mv ${buildPath} packages/${os}-${arch}/`));
+  }
 }
 
 ciPackage(process.argv.slice(2));
