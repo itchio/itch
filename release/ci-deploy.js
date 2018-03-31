@@ -25,14 +25,12 @@ async function ciDeploy() {
   let wd = process.cwd();
   for (const pkg of packages) {
     const {os, arch, path} = pkg;
-    let butlerChannel = os;
     let artifactPath = ospath.join(wd, "packages", path);
     if (os === "darwin") {
-      butlerChannel = "mac";
       artifactPath = `${buildPath}/${$.appName()}.app`;
     }
 
-    butlerChannel = `${butlerChannel}-${arch === "386" ? "32" : "64"}`;
+    butlerChannel = `${os}-${arch}`;
     const butlerTarget = `fasterthanlime/${$.appName()}`;
     $.say(`Pushing ${os}-${arch} to itch.io...`);
     let butlerCmd = `./butler push ${artifactPath} ${butlerTarget}:${butlerChannel} --userversion=${$.buildVersion()}`;
