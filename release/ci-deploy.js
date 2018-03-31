@@ -4,6 +4,7 @@
 
 const fs = require("fs");
 const $ = require("./common");
+const ospath = require("path");
 
 async function ciDeploy() {
   const dirs = fs.readdirSync("./packages");
@@ -27,7 +28,7 @@ async function ciDeploy() {
     const {os, arch, path} = pkg;
     let artifactPath = ospath.join(wd, "packages", path);
     if (os === "darwin") {
-      artifactPath = `${buildPath}/${$.appName()}.app`;
+      artifactPath = `${artifactPath}/${$.appName()}.app`;
     }
 
     butlerChannel = `${os}-${arch}`;
