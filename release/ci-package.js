@@ -196,8 +196,8 @@ async function ciPackage(args) {
       break;
   } 
 
-  $.sh(`mkdir -p packages/${os}-${arch}`);
-  $.sh(`mv ${buildPath} packages/${os}-${arch}/`);
+  $(await $.sh(`mkdir -p packages/${os}-${arch}`));
+  $(await $.sh(`mv ${buildPath} packages/${os}-${arch}/`));
 }
 
 ciPackage(process.argv.slice(2));
