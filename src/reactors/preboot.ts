@@ -36,7 +36,7 @@ export default function(watcher: Watcher) {
         macos: os.platform() === "darwin",
         windows: os.platform() === "win32",
         linux: os.platform() === "linux",
-        sniffedLanguage: null,
+        sniffedLanguage: app.getLocale(),
         homePath: app.getPath("home"),
         userDataPath: app.getPath("userData"),
         proxy: null,

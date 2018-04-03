@@ -14,14 +14,6 @@ export default reducer<ISystemState>(initialState, on => {
     };
   });
 
-  on(actions.languageSniffed, (state, action) => {
-    const sniffedLanguage = action.payload.lang;
-    return {
-      ...state,
-      sniffedLanguage,
-    };
-  });
-
   on(actions.proxySettingsDetected, (state, action) => {
     const { proxy, source } = action.payload;
     return {
