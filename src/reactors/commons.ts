@@ -13,6 +13,14 @@ const logger = rootLogger.child({ name: "commons" });
 const call = withLogger(logger);
 
 async function updateCommonsNow(store: IStore) {
+  try {
+    await updateCommonsNowThrows(store);
+  } catch (e) {
+    logger.warn(`While fetching commons: ${e.stack}`);
+  }
+}
+
+async function updateCommonsNowThrows(store: IStore) {
   if (!store.getState().setup.done) {
     return;
   }

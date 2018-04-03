@@ -27,10 +27,16 @@ export async function withButlerClient<T>(
   try {
     res = await cb(client);
   } catch (e) {
-    console.error(`Caught butler error: ${e.stack}`);
-    const re = asRequestError(e);
-    if (re && re.rpcError && re.rpcError.data) {
-      console.error(`Golang stack:\n${re.rpcError.data.stack}`);
+    console.error(`Caught butler error:`);
+    if (isInternalError(e)) {
+      const ed = getRpcErrorData(e);
+      if (ed) {
+        console.error(`butler version: ${ed.butlerVersion}`);
+        console.error(`Golang stack:\n${ed.stack}`);
+      }
+      console.error(`JavaScript stack: ${e.stack}`);
+    } else {
+      console.error(`${e.message}`);
     }
     err = e;
   } finally {
@@ -169,9 +175,10 @@ export function getErrorStack(e: any): string {
 
   const re = asRequestError(e);
   if (re) {
-    if (re.rpcError.data && re.rpcError.data.stack) {
+    const ed = getRpcErrorData(e);
+    if (ed && ed.stack) {
       // use golang stack if available
-      errorStack = re.rpcError.data.stack;
+      errorStack = ed.stack;
     } else if (re.message) {
       // or just message
       errorStack = re.message;
@@ -180,10 +187,18 @@ export function getErrorStack(e: any): string {
   return errorStack;
 }
 
-export function asRequestError(e: any): RequestError {
+export function asRequestError(e: Error): RequestError {
   const re = e as RequestError;
   if (re.rpcError) {
     return e as RequestError;
+  }
+  return null;
+}
+
+export function getRpcErrorData(e: Error): RequestError["rpcError"]["data"] {
+  const re = asRequestError(e);
+  if (re && re.rpcError && re.rpcError.data) {
+    return re.rpcError.data;
   }
   return null;
 }

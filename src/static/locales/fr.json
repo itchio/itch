@@ -506,5 +506,7 @@
     "sidebar.applog": "Logs de l'application",
     "status.downloads.updates_available": "Mises à jour disponibles",
     "status.downloads.update_all": "Tout mettre à jour",
-    "prereq.status.pending": "Préparation…"
+    "prereq.status.pending": "Préparation…",
+    "butlerd.codes.404": "Le dossier d'installation a disparu",
+    "butlerd.codes.2001": "Aucun téléchargement compatible n'a été trouvé pour ce titre"
 }

@@ -6,7 +6,7 @@ import styled from "../styles";
 import Log from "../basics/log";
 import { IModalWidgetProps } from "./index";
 import { size } from "underscore";
-import { getErrorStack, isInternalError } from "../../butlerd";
+import { getErrorStack, isInternalError, getRpcErrorData } from "../../butlerd";
 
 const StyledLog = styled(Log)`
   tbody {
@@ -49,10 +49,15 @@ const ContainerDiv = styled.div`
 
 class ShowError extends React.PureComponent<IProps> {
   render() {
-    const { rawError, log } = this.props.modal.widgetParams;
+    let { rawError, log } = this.props.modal.widgetParams;
     const internal = isInternalError(rawError);
     if (!internal) {
       return null;
+    }
+
+    const ed = getRpcErrorData(rawError);
+    if (ed && ed.butlerVersion) {
+      log = `on butler ${ed.butlerVersion}\n${log}`;
     }
 
     const errorStack = getErrorStack(rawError);
