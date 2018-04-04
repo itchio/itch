@@ -259,7 +259,7 @@ export class Space {
           case "new-tab":
             return ["sidebar.new_tab"];
           case "locations":
-            return this.location().path;
+            return this.location().path || fallback;
           case "applog":
             return ["sidebar.applog"];
           default:
