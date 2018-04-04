@@ -21,7 +21,9 @@ export default function(watcher: Watcher) {
     await refreshDownloads(store);
   });
 
-  watcher.on(actions.setupDone, async (store, action) => {
+  watcher.on(actions.gotButlerdEndpoint, async (store, action) => {
+    state.setPhase(Phase.IDLE);
+    await driverPoll(store);
     await refreshDownloads(store);
   });
 }

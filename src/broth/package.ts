@@ -4,9 +4,13 @@ import * as querystring from "querystring";
 import urls from "../constants/urls";
 import * as sf from "../os/sf";
 
+import { promisify } from "util";
+import * as whichCallback from "which";
+const which = promisify(whichCallback);
+
 import rootLogger, { Logger } from "../logger";
 import { IStore, IPackageState, IProgressInfo } from "../types";
-import { join } from "path";
+import { join, dirname } from "path";
 import { readdir, mkdirp } from "../os/sf";
 import formulas, { FormulaSpec } from "./formulas";
 import { downloadToFile } from "../net";
@@ -25,6 +29,8 @@ const extractStart = downloadStart + downloadWeight;
 const extractWeight = 0.3;
 
 type Version = string;
+
+var useLocals = (process.env.BROTH_USE_LOCAL || "").split(",");
 
 export class Package {
   private store: IStore;
@@ -114,7 +120,27 @@ export class Package {
     this.logger.debug(msg);
   }
 
+  shouldUseLocal(): boolean {
+    return useLocals.indexOf(this.name) !== -1;
+  }
+
   async ensure() {
+    if (this.shouldUseLocal()) {
+      this.info(`Looking for local binary...`);
+
+      const executablePath = await which(this.name);
+      this.info(`Found at ${executablePath}`);
+
+      this.store.dispatch(
+        actions.packageGotVersionPrefix({
+          name: this.name,
+          version: "whatever is in $PATH",
+          versionPrefix: dirname(executablePath),
+        })
+      );
+      return;
+    }
+
     await mkdirp(this.getVersionsDir());
 
     try {
@@ -155,6 +181,11 @@ export class Package {
 
   upgradeLock = false;
   async upgrade() {
+    if (this.shouldUseLocal()) {
+      this.info(`Using local, so, not upgrading.`);
+      return;
+    }
+
     if (this.upgradeLock) {
       throw new Error(`package ${this.name} locked`);
     }

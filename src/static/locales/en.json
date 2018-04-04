@@ -558,5 +558,7 @@
   "web.context_menu.paste": "Paste",
   "web.context_menu.open_in_new_tab": "Open in new tab",
   "web.context_menu.copy_link": "Copy link",
-  "install_location.property.size_on_disk": "{{size}} on disk"
+  "install_location.property.size_on_disk": "{{size}} on disk",
+  "butlerd.codes.404": "The install folder disappeared",
+  "butlerd.codes.2001": "No compatible uploads were found for this title"
 }

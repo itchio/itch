@@ -52,7 +52,9 @@ class LogoIndicator extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   update = (props: LogoIndicator["props"]) => {
-    this.vivus.setFrameProgress(props.progress);
+    if (this.vivus) {
+      this.vivus.setFrameProgress(props.progress);
+    }
   };
 }
 

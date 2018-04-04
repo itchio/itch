@@ -92,6 +92,7 @@ const ModalDiv = styled.div`
     .cover-container,
     .cover {
       width: 230px;
+      margin-bottom: 20px;
     }
 
     .cover-container {

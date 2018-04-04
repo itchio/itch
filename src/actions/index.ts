@@ -101,9 +101,6 @@ export const actions = wireActions({
   systemAssessed: action<{
     system: ISystemState;
   }>(),
-  languageSniffed: action<{
-    lang: string;
-  }>(),
   languageChanged: action<{
     lang: string;
   }>(),

@@ -107,7 +107,6 @@ function autoUpdateDone() {
       rt.end();
     }
 
-    store.dispatch(actions.languageSniffed({ lang: app.getLocale() }));
     store.dispatch(actions.preboot({}));
 
     setInterval(() => {

@@ -8,6 +8,9 @@ import { IRootState } from "../../types/index";
 import styled from "../styles";
 import Button from "../basics/button";
 import { modalWidgets, IModalWidgetProps } from "./index";
+import { doAsync } from "../do-async";
+import { call } from "../../butlerd";
+import { createRequest } from "butlerd";
 
 const ControlsDiv = styled.div`
   display: flex;
@@ -75,6 +78,13 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
             onClick={this.onGPUFeatureStatus}
             label="View GPU feature status"
           />
+          <Button
+            className="control"
+            primary={true}
+            icon="bug"
+            onClick={this.onBadButlerdCall}
+            label="Call non-existent butlerd endpoint"
+          />
         </ControlsDiv>
       </ModalWidgetDiv>
     );
@@ -116,6 +126,38 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
         },
       })
     );
+  };
+
+  onBadButlerdCall = () => {
+    const FakeRequest = createRequest<{}, {}>(
+      "This.Is.Definitely.Not.A.Butlerd.Method"
+    );
+
+    doAsync(async () => {
+      let e: Error;
+      try {
+        await call(FakeRequest, {});
+      } catch (ee) {
+        e = ee;
+      }
+
+      this.props.openModal(
+        modalWidgets.showError.make({
+          title: "test butlerd internal error",
+          message: "This is a test butlerd error",
+          detail: "It's fun to snoop!",
+          widgetParams: {
+            rawError: e,
+            log: "no log",
+          },
+          buttons: [
+            {
+              label: ["prompt.action.continue"],
+            },
+          ],
+        })
+      );
+    });
   };
 
   toggleReduxLogging = () => {

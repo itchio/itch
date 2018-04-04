@@ -507,5 +507,7 @@
     "grid.item.running.clean": "Purigado…",
     "preferences.install_location.disk_usage": "Uzado de la disko",
     "login.status.finalizing_installation": "Kompletigado de la instalado…",
-    "login.status.antivirus_warning": "Senvirusigiloj povas malhelpi la laboron de itch."
+    "login.status.antivirus_warning": "Senvirusigiloj povas malhelpi la laboron de itch.",
+    "butlerd.codes.404": "La instala dosierujo malaperis",
+    "butlerd.codes.2001": "Mankas kongruaj alŝutaĵoj por ĉi tiu titolo"
 }

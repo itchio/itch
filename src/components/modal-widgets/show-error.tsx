@@ -6,11 +6,13 @@ import styled from "../styles";
 import Log from "../basics/log";
 import { IModalWidgetProps } from "./index";
 import { size } from "underscore";
-import { getErrorStack, isInternalError } from "../../butlerd";
+import { getErrorStack, isInternalError, getRpcErrorData } from "../../butlerd";
+import classNames = require("classnames");
+import Icon from "../basics/icon";
 
 const StyledLog = styled(Log)`
   tbody {
-    min-height: 250px;
+    min-height: 180px;
   }
 
   padding-bottom: 1em;
@@ -45,15 +47,50 @@ const ContainerDiv = styled.div`
       }
     }
   }
+
+  p.butler-version {
+    color: ${props => props.theme.secondaryText};
+  }
 `;
 
-class ShowError extends React.PureComponent<IProps> {
+const ReportLabel = styled.label`
+  padding: 20px 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  input[type="checkbox"] {
+    display: block;
+    margin: 0 6px;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  transition: color 0.4s;
+  &:not(.enabled) {
+    color: ${props => props.theme.ternaryText};
+  }
+`;
+
+class ShowError extends React.PureComponent<IProps, IState> {
+  constructor(props: ShowError["props"], context: any) {
+    super(props, context);
+    this.state = {
+      // TODO: save to prefs
+      sendReport: true,
+    };
+  }
+
   render() {
     const { rawError, log } = this.props.modal.widgetParams;
     const internal = isInternalError(rawError);
     if (!internal) {
       return null;
     }
+    const ed = getRpcErrorData(rawError);
 
     const errorStack = getErrorStack(rawError);
     const errorLines = (errorStack || "Unknown error").split("\n");
@@ -71,16 +108,36 @@ class ShowError extends React.PureComponent<IProps> {
             <details open>
               <summary>Debug log</summary>
               <StyledLog log={log} />
+              {ed && ed.butlerVersion ? (
+                <p className="butler-version">
+                  butler version: {ed.butlerVersion}
+                </p>
+              ) : null}
             </details>
           </details>
         </ContainerDiv>
-        <label>
-          <input type="checkbox" checked />
-          Send a report to help resolve this issue
-        </label>
+        <ReportLabel className={classNames({ enabled: this.state.sendReport })}>
+          <input
+            type="checkbox"
+            checked={this.state.sendReport}
+            onChange={this.onSendReportChange}
+          />
+          Send a report to help resolve this issue &nbsp;
+          {this.state.sendReport ? (
+            <Icon icon="heart-filled" />
+          ) : (
+            <Icon icon="heart-broken" />
+          )}
+        </ReportLabel>
       </ModalWidgetDiv>
     );
   }
+
+  onSendReportChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      sendReport: ev.currentTarget.checked,
+    });
+  };
 }
 
 export interface IShowErrorParams {
@@ -89,5 +146,9 @@ export interface IShowErrorParams {
 }
 
 interface IProps extends IModalWidgetProps<IShowErrorParams, void> {}
+
+interface IState {
+  sendReport: boolean;
+}
 
 export default ShowError;

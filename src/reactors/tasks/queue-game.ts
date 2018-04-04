@@ -17,6 +17,7 @@ import { withLogger, messages } from "../../butlerd";
 const call = withLogger(logger);
 
 import { promisedModal } from "../modals";
+import { formatError } from "../../format/errors";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
@@ -91,7 +92,7 @@ async function queueInstall(
         actions.openModal(
           modalWidgets.showError.make({
             title: ["prompt.install_error.title"],
-            message: e.message,
+            message: formatError(e),
             coverUrl: game.coverUrl,
             stillCoverUrl: game.stillCoverUrl,
             bigButtons: [

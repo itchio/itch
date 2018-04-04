@@ -111,7 +111,9 @@ async function refreshButlerd(store: IStore) {
   logger.info(`Refreshing butlerd! Spinning up new instance...`);
   let instance = await makeButlerInstance();
   instance.promise().catch(e => {
-    console.error(e);
+    console.error(`butlerd instance threw:`);
+    console.error(e.stack);
+    refreshButlerd(store).catch(() => {});
   });
   const endpoint = await instance.getEndpoint();
 
@@ -126,6 +128,7 @@ async function refreshButlerd(store: IStore) {
     masterClient = null;
   }
   masterClient = nextClient;
+  logger.info(`Got new endpoint`);
   store.dispatch(actions.gotButlerdEndpoint({ endpoint }));
   initialButlerdResolve();
 }
