@@ -348,7 +348,7 @@
     "preferences.proxy_server_source.env": "Указано переменной окружения",
     "preferences.proxy_server_source.os": "Используется системная настройка",
     "login.messages.welcome_back-halloween": "Кто посмел нарушить мой покой?",
-    "prompt.install_error.title": "Произошла ошибка во время установки:",
+    "prompt.install_error.title": "Произошла ошибка во время установки",
     "prompt.install_error.find_upload": "При поиске загрузки возникла проблема: {{message}}",
     "notification.download_installed": "{{title}} установлено!",
     "notification.download_updated": "Обновление {{title}} завершено!",
@@ -466,7 +466,7 @@
     "install_location.property.size_on_disk": "{{size}} на диске",
     "grid.item.uninstall_request": "Удалить или переустановить…",
     "grid.criterion.filter_by": "Фильтр: ",
-    "grid.item.discard_download": "Остановить загрузку",
+    "grid.item.discard_download": "Отменить загрузку",
     "prompt.discard_download.message": "Вы уверены, что хотите остановить загрузку {{title}}?",
     "prompt.discard_download.detail": "Вы всегда сможете повторить установку {{title}} ещё раз, но скачивание придётся начинать с начала.",
     "prompt.discard_download.action": "Отменить загрузку",
@@ -515,5 +515,12 @@
     "login.status.finalizing_installation": "Заканчиваем установку…",
     "login.status.antivirus_warning": "Антивирусное ПО может мешать работе itch.",
     "butlerd.codes.404": "Папка установки пропала",
-    "butlerd.codes.2001": "Это приложение не имеет совместимых загрузок"
+    "butlerd.codes.2001": "Это приложение не имеет совместимых загрузок",
+    "docs.how_to_help": "Как я могу помочь?",
+    "grid.item.queueing": "Ставим в очередь…",
+    "prompt.show_error.details_for_nerds": "Подробности для гиков",
+    "prompt.show_error.details_for_nerds.event_log": "Лог событий",
+    "prompt.show_error.details_for_nerds.stack_trace": "Стектрейс",
+    "prompt.show_error.send_report": "Отправить отчёт об ошибке, чтобы помочь её исправить",
+    "butlerd.codes.3000": "Это приложение упаковано так, что не совместимо с itch.io."
 }
