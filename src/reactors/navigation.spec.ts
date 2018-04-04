@@ -3,7 +3,7 @@ import { describe, it, assert, TestWatcher } from "../test";
 import navigation from "./navigation";
 import { actions } from "../actions/index";
 
-describe(__filename, () => {
+describe("navigation reactor", () => {
   it("clears filters", async () => {
     const w = new TestWatcher();
     navigation(w);

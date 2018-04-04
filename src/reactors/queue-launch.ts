@@ -9,6 +9,9 @@ import { modalWidgets } from "../components/modal-widgets/index";
 import { performLaunch } from "./launch/perform-launch";
 import { getErrorMessage, isInternalError, asRequestError } from "../butlerd";
 import { Code } from "../butlerd/messages";
+import { formatError } from "../format/errors";
+import { t } from "../format/t";
+import { showInExplorerString } from "../format/show-in-explorer";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueLaunch, async (store, action) => {
@@ -23,7 +26,7 @@ export default function(watcher: Watcher) {
         await performLaunch(ctx, logger, cave, game);
         store.dispatch(actions.launchEnded({}));
       },
-      onError: async (e: any, log) => {
+      onError: async (e: Error, log) => {
         let title = game ? game.title : "<missing game>";
 
         const re = asRequestError(e);
@@ -73,14 +76,19 @@ export default function(watcher: Watcher) {
             title: ["game.install.could_not_launch", { title }],
             coverUrl: game.coverUrl,
             stillCoverUrl: game.stillCoverUrl,
-            message: getErrorMessage(e),
+            message: t(store.getState().i18n, formatError(e)),
             detail: isInternalError(e)
               ? ["game.install.could_not_launch.detail"]
               : null,
-            widgetParams: { rawError: e, log },
+            widgetParams: { rawError: e, log, game, forceDetails: true },
             buttons: [
               {
                 label: ["prompt.action.ok"],
+              },
+              {
+                label: showInExplorerString(),
+                className: "secondary",
+                action: actions.exploreCave({ caveId: cave.id }),
               },
               "cancel",
             ],

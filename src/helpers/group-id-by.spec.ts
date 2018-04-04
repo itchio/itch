@@ -3,7 +3,7 @@ import { describe, it, assert } from "../test";
 import groupIdBy from "./group-id-by";
 import { indexBy } from "underscore";
 
-describe(__filename, () => {
+describe("group-id-by", () => {
   it("groupIdBy", () => {
     assert.deepEqual(groupIdBy(null, "gameId"), {});
     assert.deepEqual(groupIdBy(undefined, "gameId"), {});

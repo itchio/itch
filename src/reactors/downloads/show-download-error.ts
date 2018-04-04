@@ -4,7 +4,8 @@ import * as sf from "../../os/sf";
 
 import rootLogger from "../../logger";
 import { join } from "path";
-import { modalWidgets } from "../../components/modal-widgets/index";
+import { getDownloadError } from "../../format/errors";
+import { makeInstallErrorModal } from "../tasks/make-install-error-modal";
 const logger = rootLogger.child({ name: "show-download-error" });
 
 export default function(watcher: Watcher) {
@@ -30,26 +31,13 @@ export default function(watcher: Watcher) {
 
     store.dispatch(
       actions.openModal(
-        modalWidgets.showError.make({
-          title: ["prompt.install_error.title"],
-          message: ["prompt.install_error.message"],
-          widgetParams: {
-            rawError: { stack: item.error },
-            log,
-          },
-          buttons: [
-            {
-              label: ["game.install.try_again"],
-              icon: "repeat",
-              action: actions.retryDownload({ id }),
-            },
-            {
-              label: ["grid.item.discard_download"],
-              icon: "delete",
-              action: actions.discardDownload({ id }),
-            },
-            "cancel",
-          ],
+        makeInstallErrorModal({
+          store,
+          e: getDownloadError(item),
+          log,
+          game: item.game,
+          retryAction: () => actions.retryDownload({ id }),
+          stopAction: () => actions.discardDownload({ id }),
         })
       )
     );

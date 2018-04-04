@@ -1,7 +1,7 @@
 import styled, * as styles from "../styles";
 
 export const ModalWidgetDiv = styled.div`
-  padding: 10px 20px;
+  padding: 20px;
   flex-grow: 1;
   overflow-y: auto;
 

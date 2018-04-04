@@ -63,6 +63,8 @@ class MainAction extends React.PureComponent<IProps & IDerivedProps> {
           }
         } else if (name === "uninstall") {
           label = ["grid.item.uninstalling"];
+        } else if (name === "install-queue") {
+          label = ["grid.item.queueing"];
         } else {
           label = ["grid.item.installing"];
         }

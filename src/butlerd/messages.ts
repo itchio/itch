@@ -998,6 +998,10 @@ export interface Download {
   /** undocumented */
   error: string;
   /** undocumented */
+  errorMessage: string;
+  /** undocumented */
+  errorCode: number;
+  /** undocumented */
   reason: DownloadReason;
   /** undocumented */
   position: number;
@@ -1304,6 +1308,12 @@ export enum Code {
   OperationAborted = 410,
   // We tried to launch something, but the install folder just wasn't there
   InstallFolderDisappeared = 404,
+  // We tried to install something, but could not find compatible uploads
+  NoCompatibleUploads = 2001,
+  // This title is packaged in a way that is not supported.
+  UnsupportedPackaging = 3000,
+  // Nothing that can be launched was found
+  NoLaunchCandidates = 5000,
 }
 
 /**

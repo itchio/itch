@@ -11,6 +11,7 @@
     "Browse for some games and add them to a new collection!",
   "desktop.shortcut.comment": "Install and play itch.io games easily",
   "docs.learn_more": "Learn more",
+  "docs.how_to_help": "How can I help?",
   "download.started": "Started",
   "download.reason.install": "to install",
   "download.reason.update": "to update to the latest version",
@@ -72,7 +73,7 @@
   "grid.item.buy_now": "Buy now",
   "grid.item.buy_now_again": "Buy an extra copy",
   "grid.item.prioritize_download": "Prioritize",
-  "grid.item.discard_download": "Stop download",
+  "grid.item.discard_download": "Discard download",
   "grid.item.check_for_update": "Check for update",
   "grid.item.developer": "Developer",
   "grid.item.advanced": "Advanced...",
@@ -81,6 +82,7 @@
   "grid.item.finalize_installation": "Finalize install",
   "grid.item.install": "Install",
   "grid.item.review": "Review",
+  "grid.item.queueing": "Queuing…",
   "grid.item.installing": "Installing…",
   "grid.item.update": "Update",
   "grid.item.launch": "Launch",
@@ -341,6 +343,10 @@
     "Stopping this download will leave {{title}} in an inconsistent state.",
   "prompt.dangerous_discard_download.detail":
     "We'll restore {{title}} to the latest version the next time you try to use it.",
+  "prompt.show_error.details_for_nerds": "Details for nerds",
+  "prompt.show_error.details_for_nerds.event_log": "Event log",
+  "prompt.show_error.details_for_nerds.stack_trace": "Stack trace",
+  "prompt.show_error.send_report": "Send a report to help resolve this issue",
   "prompt.clear_browsing_data.clear": "Clear data",
   "prompt.clear_browsing_data.category.cache": "Cached images and files",
   "prompt.clear_browsing_data.retrieving_cache_size":
@@ -403,7 +409,7 @@
   "prompt.no_compatible_version.message":
     "We couldn't find a version of {{title}} for {{platform}}.",
   "prompt.no_compatible_version.title": "{{title}} on {{platform}}",
-  "prompt.install_error.title": "An error occurred during installation:",
+  "prompt.install_error.title": "An error occurred during installation",
   "prompt.install_error.find_upload":
     "While searching for a download: {{message}}",
   "prompt.packaging_policy.learn_more": "Learn more",
@@ -560,5 +566,6 @@
   "web.context_menu.copy_link": "Copy link",
   "install_location.property.size_on_disk": "{{size}} on disk",
   "butlerd.codes.404": "The install folder disappeared",
-  "butlerd.codes.2001": "No compatible uploads were found for this title"
+  "butlerd.codes.2001": "No compatible uploads were found for this title",
+  "butlerd.codes.3000": "This title is packaged in a way that is not compatible with the itch.io app."
 }

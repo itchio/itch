@@ -17,7 +17,7 @@ import { withLogger, messages } from "../../butlerd";
 const call = withLogger(logger);
 
 import { promisedModal } from "../modals";
-import { formatError } from "../../format/errors";
+import { makeInstallErrorModal } from "./make-install-error-modal";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
@@ -74,12 +74,6 @@ async function queueInstall(
   upload?: Upload,
   build?: Build
 ) {
-  store.dispatch(
-    actions.statusMessage({
-      message: `Queuing ${game.title} for install...`,
-    })
-  );
-
   await asTask({
     name: "install-queue",
     gameId: game.id,
@@ -90,24 +84,13 @@ async function queueInstall(
     onError: async (e, log) => {
       store.dispatch(
         actions.openModal(
-          modalWidgets.showError.make({
-            title: ["prompt.install_error.title"],
-            message: formatError(e),
-            coverUrl: game.coverUrl,
-            stillCoverUrl: game.stillCoverUrl,
-            bigButtons: [
-              {
-                label: ["game.install.try_again"],
-                action: actions.queueGameInstall({
-                  game,
-                  upload,
-                }),
-                icon: "repeat",
-                tags: [{ label: "One never knows.." }],
-              },
-              "cancel",
-            ],
-            widgetParams: { rawError: e, log },
+          makeInstallErrorModal({
+            store,
+            e,
+            log,
+            game,
+            retryAction: () => actions.queueGameInstall({ game, upload }),
+            stopAction: () => null,
           })
         )
       );
@@ -137,7 +120,7 @@ async function performInstallQueue({
 }) {
   const installLocationId = defaultInstallLocation(store);
 
-  await call(
+  await withLogger(logger)(
     messages.InstallQueue,
     {
       game,

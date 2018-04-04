@@ -1,5 +1,7 @@
 import { asRequestError } from "../butlerd/utils";
 import { ILocalizedString } from "../types";
+import { RequestError } from "butlerd";
+import { Download } from "../butlerd/messages";
 
 export function formatError(e: Error): ILocalizedString {
   const re = asRequestError(e);
@@ -13,4 +15,17 @@ export function formatError(e: Error): ILocalizedString {
     ];
   }
   return e.message;
+}
+
+export function getDownloadError(item: Download): RequestError {
+  let rawError = new Error(item.errorMessage) as RequestError;
+  rawError.stack = item.error;
+  rawError.rpcError = {
+    code: item.errorCode,
+    message: item.errorMessage,
+    data: {
+      stack: item.error,
+    },
+  };
+  return rawError;
 }

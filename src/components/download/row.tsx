@@ -14,6 +14,7 @@ import MainAction from "../game-actions/main-action";
 import { ITask, IRootState } from "../../types";
 
 import styled, * as styles from "../styles";
+import { css } from "../styles";
 
 import format from "../format";
 import { doesEventMeanBackground } from "../when-click-navigates";
@@ -33,6 +34,7 @@ import { Download } from "../../butlerd/messages";
 import LoadingCircle from "../basics/loading-circle";
 import { lighten } from "polished";
 import { downloadProgress } from "../../format/download-progress";
+import { formatError, getDownloadError } from "../../format/errors";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -89,11 +91,12 @@ const DownloadRowDiv = styled.div`
     }
 
     .control--error {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-
       padding: 0.4em 0;
+      line-height: 1.4;
+
+      max-width: 500px;
+
+      color: ${props => props.theme.baseColors.carnation};
     }
 
     .control--details {
@@ -137,18 +140,21 @@ const Spacer = styled.div`
   min-width: 8px;
 `;
 
-const VSpacer = styled.div`
-  width: 1px;
-  min-height: 8px;
-`;
-
-const StyledCover = styled(Cover)`
+const coverStyle = () => css`
   flex-shrink: 0;
   width: 105px;
   height: 80px;
   padding-bottom: 0;
 
   margin-right: 16px;
+`;
+
+const StyledCover = styled(Cover)`
+  ${coverStyle()};
+
+  &.hasError {
+    filter: grayscale(100%);
+  }
 `;
 
 const Controls = styled.div`
@@ -222,6 +228,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
           stillCoverUrl={stillCoverUrl}
           gameId={game.id}
           onClick={this.onNavigate}
+          className={classNames({ hasError: !!item.error })}
         />
         <div className="stats">{this.progress()}</div>
         {this.controls()}
@@ -249,7 +256,14 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   controls() {
     const { first, status, item } = this.props;
     if (!status.operation && item.error) {
-      return null;
+      return (
+        <Controls>
+          <Button
+            label={format(["grid.item.view_details"])}
+            onClick={this.onShowError}
+          />
+        </Controls>
+      );
     }
 
     let showPrioritize = !item.finishedAt && !first;
@@ -378,15 +392,8 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     return (
       <div className="control--error">
-        {format(["prompt.install_error.message"])}
-        <VSpacer />
-        <Button
-          icon="error"
-          primary
-          discreet
-          label={format(["grid.item.view_details"])}
-          onClick={this.onShowError}
-        />
+        {format(["prompt.install_error.title"])}{" "}
+        {format(formatError(getDownloadError(this.props.item)))}
       </div>
     );
   }

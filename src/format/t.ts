@@ -22,7 +22,11 @@ export function t(i18n: II18nState, input: string | ILocalizedString): string {
     const messages = strings[lang] || strings[lang.substring(0, 2)] || emptyObj;
     const enMessages = strings.en || emptyObj;
     const [key, values] = input;
-    const message = messages[key] || enMessages[key] || key;
+    const message =
+      messages[key] ||
+      enMessages[key] ||
+      (values && values.defaultValue) ||
+      key;
     const formatter = new IntlMessageFormat(message, lang);
     return formatter.format(values);
   } else {

@@ -8,7 +8,11 @@ import { IModalWidgetProps } from "./index";
 import { size } from "underscore";
 import { getErrorStack, isInternalError, getRpcErrorData } from "../../butlerd";
 import classNames = require("classnames");
-import Icon from "../basics/icon";
+import format from "../format";
+import Cover from "../basics/cover";
+import { Game } from "../../butlerd/messages";
+import Link from "../basics/link";
+import { actionCreatorsList, Dispatchers, connect } from "../connect";
 
 const StyledLog = styled(Log)`
   tbody {
@@ -33,6 +37,7 @@ const ContainerDiv = styled.div`
     padding-left: 1em;
 
     summary {
+      color: ${props => props.theme.secondaryText};
       margin-left: -1em;
       margin-bottom: 1em;
       padding: 0.2m;
@@ -54,15 +59,14 @@ const ContainerDiv = styled.div`
 `;
 
 const ReportLabel = styled.label`
-  padding: 20px 0;
-
   display: flex;
   flex-direction: row;
   align-items: center;
 
   input[type="checkbox"] {
     display: block;
-    margin: 0 6px;
+    margin-left: 0;
+    margin-right: 6px;
   }
 
   &:hover {
@@ -70,12 +74,30 @@ const ReportLabel = styled.label`
   }
 
   transition: color 0.4s;
+  color: ${props => props.theme.secondaryText};
+
   &:not(.enabled) {
     color: ${props => props.theme.ternaryText};
   }
 `;
 
-class ShowError extends React.PureComponent<IProps, IState> {
+const GameRow = styled.div`
+  margin: 5px 20px;
+  padding: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 4px;
+
+  background: rgba(0, 0, 0, 0.2);
+
+  .cover-container {
+    width: 32px;
+    margin-right: 10px;
+  }
+`;
+
+class ShowError extends React.PureComponent<IProps & IDerivedProps, IState> {
   constructor(props: ShowError["props"], context: any) {
     super(props, context);
     this.state = {
@@ -85,9 +107,37 @@ class ShowError extends React.PureComponent<IProps, IState> {
   }
 
   render() {
-    const { rawError, log } = this.props.modal.widgetParams;
+    return (
+      <>
+        {this.renderGameStuff()}
+        {this.renderErrorStuff()}
+      </>
+    );
+  }
+
+  renderGameStuff() {
+    const { game } = this.props.modal.widgetParams;
+    if (game) {
+      const { stillCoverUrl, coverUrl, id, title } = game;
+      return (
+        <GameRow>
+          <div className="cover-container">
+            <Cover
+              stillCoverUrl={stillCoverUrl}
+              coverUrl={coverUrl}
+              gameId={id}
+            />
+          </div>
+          <Link onClick={this.onClickGame} label={title} />
+        </GameRow>
+      );
+    }
+  }
+
+  renderErrorStuff() {
+    const { rawError, log, forceDetails } = this.props.modal.widgetParams;
     const internal = isInternalError(rawError);
-    if (!internal) {
+    if (!internal && !forceDetails) {
       return null;
     }
     const ed = getRpcErrorData(rawError);
@@ -98,15 +148,11 @@ class ShowError extends React.PureComponent<IProps, IState> {
       <ModalWidgetDiv>
         <ContainerDiv>
           <details>
-            <summary>View details</summary>
-            {size(errorLines) == 1 ? null : (
-              <details>
-                <summary>{errorLines[0]}</summary>
-                <Pre>{errorLines.slice(1).join("\n")}</Pre>
-              </details>
-            )}
+            <summary>{format(["prompt.show_error.details_for_nerds"])}</summary>
             <details open>
-              <summary>Debug log</summary>
+              <summary>
+                {format(["prompt.show_error.details_for_nerds.event_log"])}
+              </summary>
               <StyledLog log={log} />
               {ed && ed.butlerVersion ? (
                 <p className="butler-version">
@@ -114,6 +160,17 @@ class ShowError extends React.PureComponent<IProps, IState> {
                 </p>
               ) : null}
             </details>
+            {size(errorLines) == 1 ? null : (
+              <details>
+                <summary>
+                  {format(["prompt.show_error.details_for_nerds.stack_trace"])}
+                </summary>
+                <Pre>
+                  {ed && ed.butlerVersion ? `For: ${ed.butlerVersion}\n` : ""}
+                  {errorLines.slice(1).join("\n")}
+                </Pre>
+              </details>
+            )}
           </details>
         </ContainerDiv>
         <ReportLabel className={classNames({ enabled: this.state.sendReport })}>
@@ -122,16 +179,20 @@ class ShowError extends React.PureComponent<IProps, IState> {
             checked={this.state.sendReport}
             onChange={this.onSendReportChange}
           />
-          Send a report to help resolve this issue &nbsp;
-          {this.state.sendReport ? (
-            <Icon icon="heart-filled" />
-          ) : (
-            <Icon icon="heart-broken" />
-          )}
+          {format(["prompt.show_error.send_report"])}
         </ReportLabel>
       </ModalWidgetDiv>
     );
   }
+
+  onClickGame = () => {
+    const { openInExternalBrowser } = this.props;
+    const { game } = this.props.modal.widgetParams;
+    if (!game) {
+      return;
+    }
+    openInExternalBrowser({ url: game.url });
+  };
 
   onSendReportChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
@@ -142,7 +203,9 @@ class ShowError extends React.PureComponent<IProps, IState> {
 
 export interface IShowErrorParams {
   rawError: any;
+  game?: Game;
   log: string;
+  forceDetails?: boolean;
 }
 
 interface IProps extends IModalWidgetProps<IShowErrorParams, void> {}
@@ -151,4 +214,8 @@ interface IState {
   sendReport: boolean;
 }
 
-export default ShowError;
+const actionCreators = actionCreatorsList("openInExternalBrowser");
+
+type IDerivedProps = Dispatchers<typeof actionCreators>;
+
+export default connect<IProps>(ShowError, { actionCreators });

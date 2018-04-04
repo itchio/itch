@@ -7,7 +7,7 @@ import {
   DATE_FORMAT,
 } from "./datetime";
 
-describe("datetim", () => {
+describe("datetime", () => {
   it("seconds", () => {
     assert.deepEqual(formatDurationAsMessage(38), {
       id: "duration.seconds",
