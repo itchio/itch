@@ -127,7 +127,7 @@
   },
   "scripts": {
     "start": "node ./src/init.js",
-    "precommit": "lint-staged",
+    "precommit": "lint-staged && npm run ts-check",
     "postinstall": "electron-rebuild",
     "test": "mocha -r ts-node/register ./src/**/*.spec.ts",
     "integration-tests": "node release/ci-integration-tests.js",

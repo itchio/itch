@@ -7,7 +7,7 @@ import { promisedModal } from "./modals";
 import { modalWidgets } from "../components/modal-widgets/index";
 
 import { performLaunch } from "./launch/perform-launch";
-import { getErrorMessage, isInternalError, asRequestError } from "../butlerd";
+import { isInternalError, asRequestError } from "../butlerd";
 import { Code } from "../butlerd/messages";
 import { formatError } from "../format/errors";
 import { t } from "../format/t";
