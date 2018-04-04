@@ -293,7 +293,7 @@
     "action.name.play": "Играть",
     "action.name.manual": "Руководство пользователя",
     "action.name.editor": "Редактор",
-    "prompt.launch.message": "{{title}} может запускаться в нескольких режимах: выберите один.",
+    "prompt.launch.message": "Что вы хотите открыть?",
     "sandbox.setup.title": "Установка песочницы itch.io",
     "sandbox.setup.proceed": "Установить",
     "sandbox.setup.windows.message": "Для запуска игр в песочнице itch.io необходимо один раз выполнить процедуру установки от имени администратора.",
