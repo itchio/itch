@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 const testGameName = "111 first"
 const testGameID = 149766
@@ -20,7 +23,7 @@ func installFlow(r *runner) {
 	must(r.click(mainActionSelector))
 
 	r.logf("launching it")
-	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
+	must(r.waitUntilTextExistsWithTimeout(mainActionSelector, "Launch", 30*time.Second))
 	must(r.click(mainActionSelector))
 
 	r.logf("force-closing it")

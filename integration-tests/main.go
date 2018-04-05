@@ -320,9 +320,11 @@ func (r *runner) bundle() error {
 	cmd := exec.Command("node", "./src/init.js")
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "NODE_ENV=test")
-	combinedOut, err := cmd.CombinedOutput()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
 	if err != nil {
-		r.errf("Build failed:\n%s", string(combinedOut))
+		r.errf("Bundling failed: %v", err)
 		return errors.Wrap(err, 0)
 	}
 	return nil

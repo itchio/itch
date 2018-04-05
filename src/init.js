@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const copy = require("recursive-copy");
 const childProcess = require("child_process");
-const logLevel = 2;
+let logLevel = 2;
 let outDir = "./app";
 
 const testing = process.env.NODE_ENV === "test";
@@ -18,6 +18,10 @@ if (production) {
 let publicUrl = undefined;
 if (!development) {
   publicUrl = "./";
+}
+
+if (testing) {
+  logLevel = 3;
 }
 
 async function main() {
