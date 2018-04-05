@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { IPreferencesState, IRootState } from "../../types/index";
 
 import Label from "./label";

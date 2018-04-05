@@ -1,9 +1,9 @@
 import { join } from "path";
-import * as electron from "electron";
+import electron from "electron";
 const app = electron.app || electron.remote.app;
 
 import urls from "../constants/urls";
-import * as urlParser from "url";
+import urlParser from "url";
 
 import { makeLogger, Logger } from "../logger";
 

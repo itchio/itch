@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import styled from "../styles";
 
 const GifMarkerSpan = styled.span`
@@ -11,7 +11,7 @@ const GifMarkerSpan = styled.span`
   padding: 4px;
   border-radius: 2px;
   font-weight: bold;
-  opacity: .8;
+  opacity: 0.8;
   z-index: 2;
 
   transition: all 0.2s;
@@ -20,11 +20,7 @@ const GifMarkerSpan = styled.span`
 class GifMarker extends React.PureComponent<IProps> {
   render() {
     const { label = "GIF" } = this.props;
-    return (
-      <GifMarkerSpan>
-        {label}
-      </GifMarkerSpan>
-    );
+    return <GifMarkerSpan>{label}</GifMarkerSpan>;
   }
 }
 

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import { throttle } from "underscore";
 import getDisplayName from "./get-display-name";

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { map } from "underscore";
 import { Profile } from "../../../butlerd/messages";
 

@@ -1,6 +1,6 @@
 import { isEmpty } from "underscore";
 import { dirname } from "path";
-import * as progress from "progress-stream";
+import progress from "progress-stream";
 
 import * as sf from "../os/sf";
 import { fileSize } from "../format/filesize";

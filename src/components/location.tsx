@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import { IMeatProps } from "./meats/types";

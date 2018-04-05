@@ -2,7 +2,7 @@ import { getRootState } from "../store/get-root-state";
 import { Instance } from "butlerd";
 import { butlerDbPath } from "../os/paths";
 import urls from "../constants/urls";
-import * as ospath from "path";
+import ospath from "path";
 
 export async function makeButlerInstance(): Promise<Instance> {
   const butlerPkg = getRootState().broth.packages["butler"];

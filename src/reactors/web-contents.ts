@@ -1,6 +1,6 @@
 import { actions } from "../actions";
 import { Watcher } from "./watcher";
-import * as nodeURL from "url";
+import nodeURL from "url";
 
 import { webContents, BrowserWindow } from "electron";
 

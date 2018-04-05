@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { SortableElement } from "react-sortable-hoc";
 import { createStructuredSelector } from "reselect";
 

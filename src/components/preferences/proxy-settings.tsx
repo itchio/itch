@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { connect } from "../connect";
 
 import urls from "../../constants/urls";

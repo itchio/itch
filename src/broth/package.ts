@@ -1,11 +1,11 @@
 import { goos, goarch } from "./platform";
 import { request } from "../net/request/metal-request";
-import * as querystring from "querystring";
+import querystring from "querystring";
 import urls from "../constants/urls";
 import * as sf from "../os/sf";
 
 import { promisify } from "util";
-import * as whichCallback from "which";
+import whichCallback from "which";
 const which = promisify(whichCallback);
 
 import rootLogger, { Logger } from "../logger";

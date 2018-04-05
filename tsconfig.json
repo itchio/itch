@@ -10,7 +10,8 @@
     "noUnusedLocals": true,
     "inlineSourceMap": true,
     "jsx": "react",
-    "allowJs": true
+    "allowJs": true,
+    "esModuleInterop": true
   },
   "exclude": [
     "app",

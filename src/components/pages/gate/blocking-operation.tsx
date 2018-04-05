@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import Icon from "../../basics/icon";
 import Button from "../../basics/button";

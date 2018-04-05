@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { createStructuredSelector } from "reselect";
 import { connect, actionCreatorsList, Dispatchers } from "./connect";
 

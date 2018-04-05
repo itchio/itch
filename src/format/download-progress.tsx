@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import format from "../components/format";
 import { formatDuration } from "./datetime";
@@ -17,7 +17,7 @@ interface IDownloadProgressOpts {
 export function downloadProgress(
   holder: IProgressHolder,
   downloadsPaused: boolean,
-  opts = {} as IDownloadProgressOpts,
+  opts = {} as IDownloadProgressOpts
 ): string | JSX.Element {
   if (downloadsPaused) {
     return format(["grid.item.downloads_paused"]);

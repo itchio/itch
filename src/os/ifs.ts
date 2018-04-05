@@ -1,5 +1,5 @@
 // asar-aware filesystem module
-import * as fs from "fs";
+import fs from "fs";
 
 /** reads an entire file as an UTF-8 string */
 export async function readFile(file: string): Promise<string> {

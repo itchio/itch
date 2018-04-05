@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { createStructuredSelector } from "reselect";
 import { connect } from "../connect";
 
@@ -40,11 +40,7 @@ class OpenAtLoginError extends React.PureComponent<IProps & IDerivedProps> {
           {format([
             "preferences.behavior.open_at_login.error",
             {
-              cause: (
-                <span>
-                  {cause}
-                </span>
-              ),
+              cause: <span>{cause}</span>,
             },
           ])}
         </p>

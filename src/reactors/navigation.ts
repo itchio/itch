@@ -20,8 +20,8 @@ import {
 import uuid from "../util/uuid";
 const logger = rootLogger.child({ name: "reactors/navigation" });
 
-import * as nodeURL from "url";
-import * as querystring from "querystring";
+import nodeURL from "url";
+import querystring from "querystring";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.navigateToCollection, async (store, action) => {

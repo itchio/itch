@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import Cover from "../basics/cover";
 import Hoverable from "../basics/hover-hoc";

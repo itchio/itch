@@ -1,6 +1,6 @@
-import * as React from "react";
+import React from "react";
 import styled, * as styles from "../styles";
-import * as classNames from "classnames";
+import classNames from "classnames";
 
 const LabelEl = styled.label`
   background: ${props => props.theme.explanation};

@@ -1,6 +1,6 @@
-import * as childProcess from "child_process";
-import * as split2 from "split2";
-import * as stream from "stream";
+import childProcess from "child_process";
+import split2 from "split2";
+import stream from "stream";
 
 import rootLogger, { Logger } from "../logger";
 const spawnLogger = rootLogger.child({ name: "spawn" });

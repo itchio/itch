@@ -124,6 +124,7 @@
     "source-map-support": "^0.4.16",
     "ts-node": "^5.0.1",
     "typescript": "^2.6.2",
+    "uglify-es": "^3.3.9",
     "ws": "^5.0.0"
   },
   "scripts": {

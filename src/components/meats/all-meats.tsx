@@ -1,7 +1,7 @@
-import * as React from "react";
+import React from "react";
 import { connect } from "../connect";
 import { createSelector, createStructuredSelector } from "reselect";
-import * as classNames from "classnames";
+import classNames from "classnames";
 
 import Meat from "./meat";
 

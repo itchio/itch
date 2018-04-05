@@ -1,5 +1,5 @@
-import * as yauzl from "yauzl";
-import * as progress from "progress-stream";
+import yauzl from "yauzl";
+import progress from "progress-stream";
 import { ItchPromise, promisify } from "../util/itch-promise";
 const crc32 = require("crc-32");
 const yauzlOpen = promisify(yauzl.open) as (

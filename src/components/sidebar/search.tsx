@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import { debounce } from "underscore";
 import styled, * as styles from "../styles";
@@ -12,7 +12,7 @@ import { actions } from "../../actions";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatString } from "../format";
 import { IRootState } from "../../types/index";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import SearchResultsBar from "../search-results/search-results-bar";
 import LoadingCircle from "../basics/loading-circle";
 

@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as Vivus from "vivus";
+import React from "react";
+import Vivus from "vivus";
 import { IRootState } from "../../../types";
 import { connect } from "../../connect";
 import styled from "../../styles";

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import IconButton from "./basics/icon-button";

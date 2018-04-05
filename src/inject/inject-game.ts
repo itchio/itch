@@ -1,5 +1,5 @@
-import * as querystring from "querystring";
-import * as urlParser from "url";
+import querystring from "querystring";
+import urlParser from "url";
 
 // only load outside of electron
 const sendMessage = (action: string) => {

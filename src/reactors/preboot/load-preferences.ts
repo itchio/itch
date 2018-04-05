@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import fs from "fs";
 import { initialState } from "../../reducers/preferences";
 import { preferencesPath } from "../../os/paths";
 

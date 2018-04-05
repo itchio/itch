@@ -1,4 +1,4 @@
-import * as electron from "electron";
+import electron from "electron";
 
 const fakeWindow = {
   setMenu(menu: Electron.Menu) {},

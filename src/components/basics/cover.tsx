@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import styled from "../styles";
 
 import GifMarker from "./gif-marker";
@@ -6,7 +6,7 @@ import { IHoverProps } from "./hover-hoc";
 
 import RandomSvg from "./random-svg";
 import LoadingCircle from "./loading-circle";
-import * as classNames from "classnames";
+import classNames from "classnames";
 
 const CoverDiv = styled.div`
   position: relative;

@@ -1,5 +1,5 @@
 import { IMeatProps } from "./meats/types";
-import * as React from "react";
+import React from "react";
 
 import styled, * as styles from "./styles";
 import Log from "./basics/log";

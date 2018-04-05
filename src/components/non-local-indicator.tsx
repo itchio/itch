@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import urls from "../constants/urls";
 
 import styled, * as styles from "./styles";

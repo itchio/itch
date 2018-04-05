@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as marked from "marked-extra";
+import React from "react";
+import marked from "marked-extra";
 import { emojify } from "node-emoji";
 
 import urls from "../../constants/urls";

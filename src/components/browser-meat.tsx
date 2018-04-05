@@ -1,6 +1,6 @@
 import { createStructuredSelector } from "reselect";
-import * as classNames from "classnames";
-import * as React from "react";
+import classNames from "classnames";
+import React from "react";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import urls from "../constants/urls";

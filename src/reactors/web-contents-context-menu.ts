@@ -1,4 +1,4 @@
-import * as electron from "electron";
+import electron from "electron";
 
 import { actions } from "../actions";
 import { IStore } from "../types/index";

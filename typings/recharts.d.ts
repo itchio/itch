@@ -2,7 +2,7 @@
  * Typings for https://github.com/recharts/recharts
  */
 declare module "recharts" {
-  import * as React from "react";
+  import React from "react";
 
   class ResponsiveContainer extends React.PureComponent<
     IResponsiveContainerProps,

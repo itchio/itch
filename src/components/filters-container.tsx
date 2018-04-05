@@ -1,6 +1,6 @@
 import styled, * as styles from "./styles";
-import * as React from "react";
-import * as classNames from "classnames";
+import React from "react";
+import classNames from "classnames";
 
 export const filtersContainerHeight = 40;
 

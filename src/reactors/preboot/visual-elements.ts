@@ -1,7 +1,7 @@
 import * as os from "../../os";
 import spawn from "../../os/spawn";
 import * as sf from "../../os/sf";
-import * as fs from "fs";
+import fs from "fs";
 import * as shortcut from "../../os/win32/shortcut";
 
 import { app } from "electron";

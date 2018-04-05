@@ -1,11 +1,11 @@
 import { shell, dialog } from "electron";
-import * as electron from "electron";
+import electron from "electron";
 const app = electron.app || electron.remote.app;
 
 import env from "../env";
 
-import * as path from "path";
-import * as querystring from "querystring";
+import path from "path";
+import querystring from "querystring";
 
 import platformData from "../constants/platform-data";
 import urls from "../constants/urls";

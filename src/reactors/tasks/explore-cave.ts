@@ -1,6 +1,6 @@
 import { Watcher } from "../watcher";
 import { actions } from "../../actions";
-import * as fs from "fs";
+import fs from "fs";
 import { dirname } from "path";
 
 import rootLogger from "../../logger";

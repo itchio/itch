@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import styled, * as styles from "../styles";
 import { darken } from "polished";
 import { css } from "../styles";

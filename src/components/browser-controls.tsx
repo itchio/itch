@@ -1,6 +1,6 @@
 import listensToClickOutside = require("react-onclickoutside");
-import * as React from "react";
-import * as classNames from "classnames";
+import React from "react";
+import classNames from "classnames";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import { ITabWeb } from "../types";

@@ -15,8 +15,8 @@ if (process.env.NODE_ENV !== "production") {
 import env from "./env";
 import * as os from "./os";
 
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import React from "react";
+import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
 import store from "./store/chrome-store";
@@ -50,7 +50,7 @@ if (env.name === "development") {
   }
 }
 
-import * as electron from "electron";
+import electron from "electron";
 import App from "./components/app";
 import { actions } from "./actions/index";
 

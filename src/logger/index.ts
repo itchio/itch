@@ -1,9 +1,9 @@
 import browserWrite from "./browser-write";
 import consoleWrite from "./console-write";
 
-import * as fs from "fs";
-import * as path from "path";
-import * as stream from "logrotate-stream";
+import fs from "fs";
+import path from "path";
+import stream from "logrotate-stream";
 const multi = require("multi-write-stream");
 
 function parseEnvLevel() {

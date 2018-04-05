@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as classNames from "classnames";
+import React from "react";
+import classNames from "classnames";
 import Hoverable from "../basics/hover-hoc";
 import Filler from "../basics/filler";
 import Cover from "../basics/cover";

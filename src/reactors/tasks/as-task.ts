@@ -1,5 +1,5 @@
 import uuid from "../../util/uuid";
-import * as memory from "memory-streams";
+import memory from "memory-streams";
 
 import {
   IStore,

@@ -1,4 +1,4 @@
-import * as nodeUtil from "util";
+import nodeUtil from "util";
 
 export let ItchPromise: typeof Promise;
 export let promisify: typeof nodeUtil.promisify;

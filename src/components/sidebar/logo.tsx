@@ -1,7 +1,7 @@
-import * as React from "react";
+import React from "react";
 import styled from "../styles";
 import { createStructuredSelector } from "reselect";
-import * as classNames from "classnames";
+import classNames from "classnames";
 
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 

@@ -9,7 +9,7 @@ import { app, BrowserWindow } from "electron";
 import config from "../util/config";
 import { getImagePath } from "../os/resources";
 import * as os from "../os";
-import * as invariant from "invariant";
+import invariant from "invariant";
 import { debounce } from "underscore";
 
 import rootLogger from "../logger";

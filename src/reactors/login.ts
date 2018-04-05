@@ -3,7 +3,7 @@ import { actions } from "../actions";
 
 import { promisedModal } from "./modals";
 import urls from "../constants/urls";
-import * as urlParser from "url";
+import urlParser from "url";
 
 import { modalWidgets } from "../components/modal-widgets/index";
 import { messages, withLogger } from "../butlerd/index";

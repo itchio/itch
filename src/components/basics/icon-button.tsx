@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as classNames from "classnames";
+import React from "react";
+import classNames from "classnames";
 
 import Icon from "./icon";
 
@@ -55,7 +55,7 @@ class IconButton extends React.PureComponent<IProps> {
       icon,
       hint,
       hintPosition = "top",
-      ...restProps,
+      ...restProps
     } = this.props;
 
     return (

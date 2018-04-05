@@ -1,11 +1,11 @@
-import * as React from "react";
+import React from "react";
 
 import { getInjectURL } from "../../os/resources";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import styled from "../styles";
 import LoadingCircle from "../basics/loading-circle";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { modalWidgets, IModalWidgetProps } from "./index";
 
 const WidgetDiv = styled.div`

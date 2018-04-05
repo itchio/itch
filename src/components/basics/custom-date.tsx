@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDate, DATE_FORMAT, IDateFormat } from "../../format/datetime";
 

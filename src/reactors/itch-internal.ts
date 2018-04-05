@@ -1,9 +1,9 @@
 import { Watcher } from "./watcher";
 
 import * as urlParser from "../util/url";
-import * as querystring from "querystring";
+import querystring from "querystring";
 
-import * as electron from "electron";
+import electron from "electron";
 import partitionForUser from "../util/partition-for-user";
 
 import { actions } from "../actions";

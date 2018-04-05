@@ -1,11 +1,13 @@
-import * as React from "react";
-import * as classNames from "classnames";
+import React from "react";
+import classNames from "classnames";
 import styled, * as styles from "../styles";
 
 import Icon from "./icon";
 import { ILocalizedString } from "../../types/index";
 
-const Label = styled.div`${styles.singleLine()};`;
+const Label = styled.div`
+  ${styles.singleLine()};
+`;
 
 const ButtonDiv = styled.div`
   ${styles.singleLine()};
@@ -91,7 +93,7 @@ class Button extends React.PureComponent<IProps, any> {
       hint,
       wide,
       onClick,
-      ...restProps,
+      ...restProps
     } = this.props;
 
     return (

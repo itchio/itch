@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 
 import styled from "../styles";

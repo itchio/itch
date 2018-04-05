@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { FormattedMessage, InjectedIntl } from "react-intl";
 
 function format(input: any): JSX.Element | string {

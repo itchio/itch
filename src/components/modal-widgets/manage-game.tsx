@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import { ModalWidgetDiv } from "./modal-widget";
 import { Game, Upload, Cave } from "../../butlerd/messages";

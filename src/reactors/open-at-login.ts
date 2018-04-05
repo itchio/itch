@@ -3,7 +3,7 @@ import { actions } from "../actions";
 
 import * as os from "../os";
 import * as sf from "../os/sf";
-import * as ospath from "path";
+import ospath from "path";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "open-at-login" });

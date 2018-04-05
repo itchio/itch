@@ -1,4 +1,4 @@
-import * as querystring from "querystring";
+import querystring from "querystring";
 
 import useragent from "../../constants/useragent";
 import { NET_PARTITION_NAME, NET_TIMEOUT_MS } from "../../constants/net";

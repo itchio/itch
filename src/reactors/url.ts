@@ -1,6 +1,6 @@
 import { Watcher } from "./watcher";
 
-import * as urlParser from "url";
+import urlParser from "url";
 
 import rootLogger from "../logger";
 const logger = rootLogger.child({ name: "reactors/url" });

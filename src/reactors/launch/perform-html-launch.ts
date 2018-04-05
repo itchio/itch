@@ -1,7 +1,7 @@
 import { Shm } from "shoom";
 
-import * as btoa from "btoa";
-import * as querystring from "querystring";
+import btoa from "btoa";
+import querystring from "querystring";
 
 import { BrowserWindow, shell } from "electron";
 

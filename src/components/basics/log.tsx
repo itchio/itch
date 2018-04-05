@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import styled from "../styles";
 import SelectRow from "./select-row";
@@ -6,7 +6,7 @@ import IconButton from "./icon-button";
 import Filler from "./filler";
 
 import { FormattedTime } from "react-intl";
-import * as _ from "underscore";
+import _ from "underscore";
 
 // time, module, message
 const numColumns = 3;

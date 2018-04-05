@@ -1,12 +1,12 @@
-import * as React from "react";
-import * as classNames from "classnames";
+import React from "react";
+import classNames from "classnames";
 import { connect } from "../connect";
 
 import partitionForUser from "../../util/partition-for-user";
 
 import LoadingCircle from "../basics/loading-circle";
 
-import * as electron from "electron";
+import electron from "electron";
 
 import format from "../format";
 import { fileSize } from "../../format/filesize";

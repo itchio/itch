@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import Icon from "./icon";
 import { Upload } from "../../butlerd/messages";
 import { uploadIcon, uploadTypeHint } from "../../reactors/make-upload-button";

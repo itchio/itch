@@ -1,9 +1,9 @@
-import * as React from "react";
+import React from "react";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import format from "../format";
 
 import { size, findWhere } from "underscore";
-import * as classNames from "classnames";
+import classNames from "classnames";
 import { fileSize } from "../../format/filesize";
 
 import IconButton from "../basics/icon-button";

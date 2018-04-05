@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { ITabInstance } from "../types/index";
 import { Space } from "../helpers/space";
 import { fileSize } from "../format/filesize";

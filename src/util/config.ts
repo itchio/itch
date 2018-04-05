@@ -1,5 +1,5 @@
-import * as ospath from "path";
-import * as fs from "fs";
+import ospath from "path";
+import fs from "fs";
 import { app } from "electron";
 
 import logger from "../logger";

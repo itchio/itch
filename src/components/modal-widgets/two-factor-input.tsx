@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 import format, { formatString } from "../format";
 import { InjectedIntl, injectIntl } from "react-intl";

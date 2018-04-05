@@ -1,11 +1,12 @@
 import { Cave, CaveSummary } from "./messages";
+import * as messages from "./messages";
+
 import { RequestError, IRequestCreator, Client } from "butlerd";
 
 import rootLogger, { Logger } from "../logger/index";
 const lazyDefaultLogger = rootLogger.child({ name: "butlerd" });
 import { MinimalContext } from "../context/index";
 
-import * as messages from "./messages";
 import { getRootState } from "../store/get-root-state";
 
 type WithCB<T> = (client: Client) => Promise<T>;
