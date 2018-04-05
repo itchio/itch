@@ -23,6 +23,7 @@ class ExploreJson extends React.PureComponent<IProps> {
 
 const JSONTreeContainer = styled.div`
   width: 100%;
+  user-select: initial;
 
   .json-inspector__leaf_root {
     filter: brightness(150%);
