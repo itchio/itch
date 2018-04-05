@@ -362,7 +362,7 @@
     "pick_update_upload.buttons.update": "Обновяване сега",
     "pick_update_upload.buttons.just_launch": "Пускане",
     "pick_update_upload.tags.demo": "пробна версия",
-    "prompt.install_error.title": "Възникна грешка при инсталирането:",
+    "prompt.install_error.title": "Възникна грешка при инсталирането",
     "prompt.install_error.find_upload": "Грешка при търсенето на сваляне: {{message}}",
     "status.game_update.busy": "„{{title}}“ не може да бъде обновено, защото в момента е пуснато.",
     "status.uninstall.busy": "„{{title}}“ не може да бъде деинсталирано, защото в момента е пуснато.",
@@ -451,7 +451,7 @@
     "install_location.property.size_on_disk": "{{size}} на диска",
     "grid.item.uninstall_request": "Деинсталиране или преинсталиране…",
     "grid.criterion.filter_by": "Филтриране по: ",
-    "grid.item.discard_download": "Спиране на свалянето",
+    "grid.item.discard_download": "Отказване на свалянето",
     "prompt.action.nevermind": "Няма значение",
     "prompt.discard_download.message": "Наистина ли искате да спрете свалянето на „{{title}}“?",
     "prompt.discard_download.detail": "Можете да повторите инсталацията на „{{title}}“ когато решите, но тя ще започне отначало.",
@@ -501,5 +501,12 @@
     "login.status.finalizing_installation": "Завършване на инсталацията…",
     "login.status.antivirus_warning": "Антивирусните програми може да попречат на работата на Итч.",
     "butlerd.codes.404": "Инсталационната папка е изчезнала",
-    "butlerd.codes.2001": "Няма съвместими качвания за това заглавие"
+    "butlerd.codes.2001": "Няма съвместими качвания за това заглавие",
+    "docs.how_to_help": "Как мога да помогна?",
+    "grid.item.queueing": "Добавяне в опашката…",
+    "prompt.show_error.details_for_nerds": "Подробности за техничари",
+    "prompt.show_error.details_for_nerds.event_log": "Журнал на събитията",
+    "prompt.show_error.details_for_nerds.stack_trace": "Проследяване на стека",
+    "prompt.show_error.send_report": "Изпращане на доклад за проблема, който да помогне за оправянето му",
+    "butlerd.codes.3000": "Това заглавие е пакетирано по такъв начин, че не е съвместимо с приложението Итч."
 }
