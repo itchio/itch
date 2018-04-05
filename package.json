@@ -117,7 +117,7 @@
     "husky": "^0.14.0",
     "lint-staged": "^4.0.0",
     "mocha": "^5.0.4",
-    "parcel-bundler": "^1.6.2",
+    "parcel-bundler": "^1.7.0",
     "prettier": "^1.10.2",
     "react-hot-loader": "^3.0.0-beta.6",
     "recursive-copy": "^2.0.9",
