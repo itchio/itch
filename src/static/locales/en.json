@@ -567,5 +567,7 @@
   "install_location.property.size_on_disk": "{{size}} on disk",
   "butlerd.codes.404": "The install folder disappeared",
   "butlerd.codes.2001": "No compatible uploads were found for this title",
-  "butlerd.codes.3000": "This title is packaged in a way that is not compatible with the itch.io app."
+  "butlerd.codes.3000": "This title is packaged in a way that is not compatible with the itch.io app.",
+  "butlerd.codes.5000": "Nothing that can be launched was found.",
+  "butlerd.codes.9000": "There is no Internet connection."
 }
