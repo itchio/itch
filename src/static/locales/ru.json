@@ -522,5 +522,7 @@
     "prompt.show_error.details_for_nerds.event_log": "Лог событий",
     "prompt.show_error.details_for_nerds.stack_trace": "Стектрейс",
     "prompt.show_error.send_report": "Отправить отчёт об ошибке, чтобы помочь её исправить",
-    "butlerd.codes.3000": "Это приложение упаковано так, что не совместимо с itch.io."
+    "butlerd.codes.3000": "Это приложение упаковано так, что не совместимо с itch.io.",
+    "butlerd.codes.5000": "Не найдено ничего, что можно было бы запустить.",
+    "butlerd.codes.9000": "Нет соединения с интернетом."
 }
