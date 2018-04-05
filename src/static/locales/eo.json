@@ -396,7 +396,7 @@
     "prompt.clear_browsing_data.category.cookies": "Kuketoj",
     "prompt.clear_browsing_data.cookies_info": "Tiel vi elsalutos el ĉiuj retejoj, en kiuj vi ensalutis per la programo de itch.",
     "prompt.clear_browsing_data.notification": "La datenoj de la retumilo estas forviŝitaj!",
-    "prompt.install_error.title": "Eraro okazis dum la instalo:",
+    "prompt.install_error.title": "Eraro okazis dum la instalo",
     "prompt.install_error.find_upload": "Dum la serĉo pri io por elŝuti: {{message}}",
     "prompt.revert.title": "Ŝanĝi „{{title}}“ al alia versio",
     "prompt.revert.message": "Revenigi de versio {{buildId}} al versio:",
@@ -459,7 +459,7 @@
     "install_location.property.size_on_disk": "{{size}} en la disko",
     "grid.item.uninstall_request": "Malinstali aŭ reinstali…",
     "grid.criterion.filter_by": "Filtri laŭ: ",
-    "grid.item.discard_download": "Ĉesigi la elŝutadon",
+    "grid.item.discard_download": "Forigi la elŝutadon",
     "prompt.action.nevermind": "Ne gravas",
     "prompt.discard_download.message": "Ĉu vi certe volas ĉesigi la elŝutadon de „{{title}}“?",
     "prompt.discard_download.detail": "Vi povos denove instali „{{title}}“ kiam ajn vi volas, sed la instalado komenciĝos dekomence.",
@@ -509,5 +509,12 @@
     "login.status.finalizing_installation": "Kompletigado de la instalado…",
     "login.status.antivirus_warning": "Senvirusigiloj povas malhelpi la laboron de itch.",
     "butlerd.codes.404": "La instala dosierujo malaperis",
-    "butlerd.codes.2001": "Mankas kongruaj alŝutaĵoj por ĉi tiu titolo"
+    "butlerd.codes.2001": "Mankas kongruaj alŝutaĵoj por ĉi tiu titolo",
+    "docs.how_to_help": "Kiel mi povas helpi?",
+    "grid.item.queueing": "Envicigado…",
+    "prompt.show_error.details_for_nerds": "Detaloj por sciemuloj",
+    "prompt.show_error.details_for_nerds.event_log": "Protokolo de la eventoj",
+    "prompt.show_error.details_for_nerds.stack_trace": "Spurado de la steko",
+    "prompt.show_error.send_report": "Sendi raporton pri la problemo, por ke ĝi estu solvita",
+    "butlerd.codes.3000": "Ĉi tiu titolo oni pakis tiel, ke la aplikaĵo de itch.io ne povas uzi ĝin."
 }
