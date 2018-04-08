@@ -83,7 +83,7 @@ export function getFormatter(
     if (stripped !== locale) {
       locales = [locale, stripped];
     }
-    if (env.name === "test") {
+    if (env.integrationTests || env.unitTests) {
       // use UTC for tests, keep using guessed locale for
       // development/production environments.
       (format.options as any).timeZone = "UTC";

@@ -1,9 +1,10 @@
 import nodeUtil from "util";
+import env from "../env";
 
 export let ItchPromise: typeof Promise;
 export let promisify: typeof nodeUtil.promisify;
 
-if (process.env.NODE_ENV === "production") {
+if (env.development) {
   promisify = nodeUtil.promisify;
   ItchPromise = Promise;
 } else {

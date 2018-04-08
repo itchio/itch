@@ -18,7 +18,7 @@ import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import { Game, CaveSummary } from "../../butlerd/messages";
 
 import { aggregateCaveSummaries } from "../../util/aggregate-cave-summaries";
-import classNames = require("classnames");
+import classNames from "classnames";
 import IconButton from "../basics/icon-button";
 
 class Row extends React.PureComponent<IProps & IDerivedProps> {

@@ -126,7 +126,7 @@ class InstallLocationSettings extends React.Component<
   IProps & IDerivedProps,
   IState
 > {
-  constructor(props: InstallLocationSettings["props"], context) {
+  constructor(props: InstallLocationSettings["props"], context: any) {
     super(props, context);
     this.state = {
       installLocations: [],
@@ -184,7 +184,7 @@ class InstallLocationSettings extends React.Component<
       const isDefault = id === defaultInstallLocation;
 
       const { path, sizeInfo } = il;
-      const { installedSize, freeSize, totalSize } = sizeInfo;
+      const { installedSize, freeSize, totalSize } = sizeInfo!;
       const rowClasses = classNames("install-location-row", {
         ["default"]: isDefault,
       });

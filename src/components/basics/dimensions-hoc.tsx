@@ -18,19 +18,20 @@ export interface IDimensionsProps {
 
 declare class ResizeObserver {
   constructor(cb: () => void);
-  observe(el: HTMLElement);
-  disconnect();
+  observe(el: HTMLElement): void;
+  disconnect(): void;
 }
 
+// TODO: when typescript 2.8 is out, use subtraction types here
 function injectDimensions<P extends IDimensionsProps>(
   WrappedComponent: React.ComponentClass<P>
 ): React.ComponentClass<P> {
   return class extends React.PureComponent<P, IDimensionsState> {
     static displayName = `Dimensions(${getDisplayName(WrappedComponent)})`;
-    ro: ResizeObserver;
+    ro: ResizeObserver | null = null;
     onScroll: any;
 
-    constructor(props: P, context) {
+    constructor(props: P, context: any) {
       super(props, context);
       this.state = { width: 0, height: 0, scrollTop: 0 };
     }

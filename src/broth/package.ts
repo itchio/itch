@@ -338,6 +338,7 @@ export class Package {
     } catch (e) {
       // ignore
     }
+    return null;
   }
 
   async writeChosenVersion(version: Version): Promise<void> {

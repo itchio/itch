@@ -79,7 +79,7 @@ interface IProps {
   hint?: ILocalizedString;
   hintPosition?: "top" | "left" | "right" | "bottom";
 
-  onClick?: any;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   big?: boolean;
   huge?: boolean;
   emphasized?: boolean;

@@ -30,17 +30,17 @@ function withWebContents<T>(
   store: IStore,
   tab: string,
   cb: WebContentsCallback<T>
-): T {
+): T | null {
   const sp = Space.fromStore(store, tab);
 
   const { webContentsId } = sp.web();
   if (!webContentsId) {
-    return;
+    return null;
   }
 
   const wc = webContents.fromId(webContentsId);
   if (!wc || wc.isDestroyed()) {
-    return;
+    return null;
   }
 
   return cb(wc as ExtendedWebContents);

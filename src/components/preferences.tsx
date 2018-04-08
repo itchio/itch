@@ -234,6 +234,7 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                     </>
                   );
                 }
+                return null;
               })()}
             </p>
           );

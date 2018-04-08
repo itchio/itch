@@ -33,7 +33,7 @@ export class Fetcher {
   aborted = false;
 
   startedAt: number;
-  logger?: Logger;
+  logger: Logger;
 
   retryCount = 0;
 

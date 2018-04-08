@@ -7,7 +7,8 @@ import {
   applyMiddleware,
   compose,
   GenericStoreEnhancer,
-  Store,
+  Middleware,
+  MiddlewareAPI,
 } from "redux";
 import { electronEnhancer } from "ftl-redux-electron-store";
 
@@ -19,9 +20,9 @@ import shouldLogAction from "./should-log-action";
 
 import { IStore } from "../types";
 
-const crashGetter = (store: Store<any>) => (next: (action: any) => any) => (
-  action: any
-) => {
+const crashGetter = (store: MiddlewareAPI<any>) => (
+  next: (action: any) => any
+) => (action: any) => {
   try {
     if (action && !action.type) {
       throw new Error(
@@ -34,7 +35,8 @@ const crashGetter = (store: Store<any>) => (next: (action: any) => any) => (
   }
 };
 
-const middleware = [crashGetter];
+const middleware: Middleware[] = [];
+middleware.push(crashGetter);
 
 const beChatty = process.env.MARCO_POLO === "1";
 
@@ -71,7 +73,7 @@ const enhancer = compose(
   applyMiddleware(...middleware)
 ) as GenericStoreEnhancer;
 
-const initialState = {};
+const initialState = {} as any;
 const store = createStore(reducer, initialState, enhancer) as IStore;
 
 if (module.hot) {

@@ -1,7 +1,7 @@
 import { join } from "path";
 import { getAppPath } from "../helpers/app";
 
-let appFolderName = "./app";
+let appFolderName = "./src";
 
 let absoluteAppPath = join(getAppPath(), appFolderName);
 

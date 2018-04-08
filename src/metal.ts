@@ -1,13 +1,9 @@
 // This file is the entry point for the main (browser) process
 
-let rt;
+let rt: any;
 if (process.env.ITCH_TIME_REQUIRE === "1") {
   rt = require("require-times")([".js", ".ts", ".tsx"]);
   rt.start();
-}
-
-if (process.env.NODE_ENV !== "production") {
-  require("./custom-hmr-runtime.js");
 }
 
 import env from "./env";
@@ -20,9 +16,9 @@ import { actions } from "./actions";
 import { app, protocol, globalShortcut } from "electron";
 
 logger.info(
-  `${env.appName} ${app.getVersion()} on electron ${
+  `${env.appName}@${app.getVersion()} on electron@${
     process.versions.electron
-  } in ${env.name}`
+  } in ${env.production ? "production" : "development"}`
 );
 
 import { loadPreferencesSync } from "./reactors/preboot/load-preferences";
@@ -62,7 +58,7 @@ function autoUpdateDone() {
   // devtools don't work with mixed sandbox mode -
   // enable it only in production and only when the
   // `DEVTOOLS` environment variable is not specified
-  if (env.name === "production") {
+  if (env.production) {
     app.enableMixedSandbox();
   }
 
@@ -75,7 +71,7 @@ function autoUpdateDone() {
   store = require("./store/metal-store").default;
 
   let onReady = () => {
-    if (process.env.NODE_ENV !== "test") {
+    if (!env.integrationTests) {
       const shouldQuit = app.makeSingleInstance((argv, cwd) => {
         // we only get inside this callback when another instance
         // is launched - so this executes in the context of the main instance

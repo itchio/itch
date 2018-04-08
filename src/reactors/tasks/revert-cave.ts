@@ -17,6 +17,10 @@ export default function(watcher: Watcher) {
     const { caveId } = action.payload;
 
     const { cave } = await call(messages.FetchCave, { caveId });
+    if (!cave || !cave.game) {
+      return;
+    }
+
     await asTask({
       store,
       name: "install",
@@ -38,7 +42,7 @@ export default function(watcher: Watcher) {
 
               if (!response) {
                 // modal was closed
-                return;
+                return { index: -1 };
               }
 
               return { index: -1 };

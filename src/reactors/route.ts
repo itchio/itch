@@ -2,17 +2,17 @@ import { IStore, isCancelled, IAction } from "../types";
 
 import { Watcher } from "./watcher";
 
-import env from "../env";
 import * as os from "../os";
 
 import rootLogger from "../logger";
+import env from "../env";
 const logger = rootLogger.child({ name: "route" });
 
 let printError = (msg: string) => {
   logger.error(msg);
 };
 
-if (env.name === "test") {
+if (env.integrationTests) {
   printError = (msg: string) => {
     console.error(msg);
     console.error("Bailing out...");

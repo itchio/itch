@@ -1,5 +1,5 @@
-import fastMemoize = require("fast-memoize");
-import LRU = require("lru-cache");
+import fastMemoize from "fast-memoize";
+import LRU from "lru-cache";
 
 function memoize<T>(limit: number, f: T): T {
   return fastMemoize(f, {

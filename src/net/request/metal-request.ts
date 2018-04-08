@@ -49,7 +49,8 @@ export async function request(
   req.setHeader("user-agent", useragent);
 
   const p = new ItchPromise<IResponse>((resolve, reject) => {
-    req.on("response", (res: ActualElectronResponse) => {
+    req.on("response", (inputRes: any) => {
+      const res = inputRes as ActualElectronResponse;
       const response = {
         statusCode: res.statusCode,
         status: res.statusMessage,
@@ -80,7 +81,7 @@ export async function request(
       const contentTypeHeader = (res.headers["content-type"] || [
         "text/plain",
       ])[0];
-      const contentType = /[^;]*/.exec(contentTypeHeader)[0];
+      const contentType = /[^;]*/.exec(contentTypeHeader)![0];
 
       res.on("end", async () => {
         response.size = text.length;
@@ -114,7 +115,7 @@ export async function request(
       // cf. https://github.com/electron/electron/blob/master/docs/api/client-request.md
       // "Providing empty credentials will cancel the request and report
       // an authentication error on the response object"
-      callback(undefined, undefined);
+      callback(undefined as any, undefined as any);
     });
 
     req.on("close", () => {

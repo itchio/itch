@@ -102,6 +102,7 @@ class Search extends React.PureComponent<IDerivedProps> {
       e.stopPropagation();
       return false;
     }
+    return true;
   };
 
   onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {

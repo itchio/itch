@@ -133,7 +133,9 @@ class ContextMenuHandler extends React.PureComponent<IDerivedProps> {
   render() {
     return (
       <ContextMenuHandlerDiv>
-        <ContextMenuTrigger id={menuId} ref={this.gotTrigger} />
+        <ContextMenuTrigger id={menuId} ref={this.gotTrigger}>
+          {" "}
+        </ContextMenuTrigger>
 
         <ContextMenu
           id={menuId}

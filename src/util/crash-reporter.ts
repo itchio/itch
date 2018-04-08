@@ -110,7 +110,7 @@ async function handle(type: ErrorType, e: Error) {
   let log = res.log;
   let crashFile = res.crashFile;
 
-  if (env.name === "test") {
+  if (env.integrationTests) {
     console.log(`Crash log written to ${res.crashFile}, bailing out`);
     os.exit(1);
     return;
@@ -132,8 +132,8 @@ async function handle(type: ErrorType, e: Error) {
     ]),
     t(i18n, ["prompt.action.close", { defaultValue: "Close" }]),
   ];
-  if (env.name === "development") {
-    buttons.push("Ignore and continue (dev only)");
+  if (env.development) {
+    buttons.push("Ignore and continue");
   }
   let dialogOpts = {
     type: "error" as "error", // woo typescript is crazy stuff, friendos

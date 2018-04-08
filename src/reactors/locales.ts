@@ -10,7 +10,8 @@ import { app } from "electron";
 import env from "../env";
 
 const upgradesEnabled =
-  env.name === "production" || process.env.DID_I_STUTTER === "1";
+  (env.production && !env.integrationTests) ||
+  process.env.DID_I_STUTTER === "1";
 
 const remoteDir = join(app.getPath("userData"), "locales");
 const localesConfigPath = getLocalesConfigPath();
@@ -59,7 +60,7 @@ async function doDownloadLocale(
   logger.debug(`HTTP GET ${uri}: ${resp.statusCode}`);
   if (resp.statusCode === 404) {
     // no such locale, alrighty then.
-    return;
+    return {};
   } else if (resp.statusCode !== 200) {
     throw new Error("Locale update server is down, try again later");
   }

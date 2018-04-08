@@ -59,7 +59,7 @@ const StyledImage = styled(Image)`
 `;
 
 class Cover extends React.PureComponent<IProps, IState> {
-  constructor(props: Cover["props"], context) {
+  constructor(props: Cover["props"], context: any) {
     super(props, context);
     this.state = { loading: false, error: false };
   }
@@ -76,8 +76,8 @@ class Cover extends React.PureComponent<IProps, IState> {
       ...restProps
     } = this.props;
 
-    let gif: boolean;
-    let url: string;
+    let gif: boolean = false;
+    let url: string | null = null;
 
     if (coverUrl) {
       if (hover) {
@@ -133,8 +133,8 @@ interface IState {
 
 interface IProps extends IHoverProps {
   showGifMarker?: boolean;
-  coverUrl: string;
-  stillCoverUrl: string;
+  coverUrl?: string;
+  stillCoverUrl?: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
   className?: string;

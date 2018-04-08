@@ -7,7 +7,7 @@ import Log from "../basics/log";
 import { IModalWidgetProps } from "./index";
 import { size } from "underscore";
 import { getErrorStack, isInternalError, getRpcErrorData } from "../../butlerd";
-import classNames = require("classnames");
+import classNames from "classnames";
 import format from "../format";
 import Cover from "../basics/cover";
 import { Game } from "../../butlerd/messages";
@@ -117,21 +117,23 @@ class ShowError extends React.PureComponent<IProps & IDerivedProps, IState> {
 
   renderGameStuff() {
     const { game } = this.props.modal.widgetParams;
-    if (game) {
-      const { stillCoverUrl, coverUrl, id, title } = game;
-      return (
-        <GameRow>
-          <div className="cover-container">
-            <Cover
-              stillCoverUrl={stillCoverUrl}
-              coverUrl={coverUrl}
-              gameId={id}
-            />
-          </div>
-          <Link onClick={this.onClickGame} label={title} />
-        </GameRow>
-      );
+    if (!game) {
+      return null;
     }
+
+    const { stillCoverUrl, coverUrl, id, title } = game;
+    return (
+      <GameRow>
+        <div className="cover-container">
+          <Cover
+            stillCoverUrl={stillCoverUrl}
+            coverUrl={coverUrl}
+            gameId={id}
+          />
+        </div>
+        <Link onClick={this.onClickGame} label={title} />
+      </GameRow>
+    );
   }
 
   renderErrorStuff() {

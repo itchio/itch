@@ -2,8 +2,8 @@ interface IRecord {
   id: any;
 }
 
-interface IRecordMap {
-  [id: string]: IRecord;
+interface IRecordMap<T extends IRecord> {
+  [id: string]: T;
 }
 
 interface IGrouped {
@@ -14,7 +14,7 @@ interface IGetter<T> {
   (x: T): string;
 }
 
-const emptyArr = [];
+const emptyArr: any[] = [];
 
 /**
  * Given:
@@ -22,13 +22,14 @@ const emptyArr = [];
  * This will give:
  *   {"10": [1], "20": [2, 3]}
  */
-function groupIdBy<T>(
-  records: IRecordMap | IRecord[],
+function groupIdBy<T extends IRecord>(
+  records: IRecordMap<T> | T[],
   field: string | IGetter<T>
 ): IGrouped {
   const result: IGrouped = {};
 
-  const getter = typeof field === "string" ? o => o[field] : field;
+  const getter: IGetter<T> =
+    typeof field === "string" ? (o: any) => o[field] : (field as IGetter<T>);
 
   if (!records) {
     // muffin

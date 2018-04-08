@@ -1,26 +1,12 @@
 {
+  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "app",
-    "target": "es2017",
-    "lib": ["dom", "es6", "es2015"],
-    "module": "commonjs",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "noUnusedLocals": true,
-    "inlineSourceMap": true,
     "jsx": "react",
-    "allowJs": true,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "module": "commonjs",
     "esModuleInterop": true
-  },
-  "exclude": [
-    "app",
-    "build",
-    "stage",
-    "node_modules",
-    "fixtures",
-    "dist",
-    "release",
-    "coverage"
-  ]
+  }
 }

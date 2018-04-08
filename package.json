@@ -21,7 +21,7 @@
       "email": "leafo@itch.io"
     }
   ],
-  "main": "app/main.js",
+  "main": "dist/main/main.js",
   "license": "MIT",
   "dependencies": {
     "@types/emojione": "^2.2.2",
@@ -58,6 +58,7 @@
     "react-json-inspector": "^7.1.1",
     "react-onclickoutside": "^5.0.1",
     "react-redux": "^5.0.5",
+    "react-refetch": "^1.0.4",
     "react-sortable-hoc": "^0.6.7",
     "redux": "^3.6.0",
     "redux-cli-logger": "^2.1.0",
@@ -90,6 +91,7 @@
     "@types/mocha": "^2.2.48",
     "@types/node": "^8.0.25",
     "@types/node-emoji": "^1.8.0",
+    "@types/prop-types": "^15.5.2",
     "@types/react": "^16.0.5",
     "@types/react-dom": "^16.0.4",
     "@types/react-hot-loader": "^3.0.4",
@@ -114,10 +116,11 @@
     "electron": "^1.8.4",
     "electron-react-devtools": "^0.5.3",
     "electron-rebuild-ftl": "^1.5.11",
+    "electron-webpack": "^2.0.1",
+    "electron-webpack-ts": "^2.0.0",
     "husky": "^0.14.0",
     "lint-staged": "^4.0.0",
     "mocha": "^5.0.4",
-    "parcel-bundler": "^1.7.0",
     "prettier": "^1.10.2",
     "react-hot-loader": "^3.0.0-beta.6",
     "recursive-copy": "^2.0.9",
@@ -125,17 +128,18 @@
     "ts-node": "^5.0.1",
     "typescript": "^2.6.2",
     "uglify-es": "^3.3.9",
+    "webpack": "^4.5.0",
     "ws": "^5.0.0"
   },
   "scripts": {
-    "start": "node ./src/init.js",
+    "start": "cross-env ELECTRON_ARGS=\"[\\\".\\\"]\" electron-webpack dev",
+    "compile": "electron-webpack",
     "precommit": "lint-staged && npm run ts-check",
     "postinstall": "electron-rebuild",
     "test": "mocha -r ts-node/register ./src/**/*.spec.ts",
     "integration-tests": "node release/ci-integration-tests.js",
     "upload-coverage": "codecov -f ./coverage/lcov.info",
     "i18n": "node release/ci-i18n-check.js",
-    "compile": "cross-env NODE_ENV=production electron-compile --appdir . ./src",
     "ts-check": "tsc --noEmit --skipLibCheck"
   },
   "lint-staged": {

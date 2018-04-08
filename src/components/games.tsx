@@ -2,7 +2,7 @@ import React from "react";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import { createSelector, createStructuredSelector } from "reselect";
 
-import { IRootState, TabLayout, ITabParams, IGameSet } from "../types";
+import { IRootState, ITabParams, IGameSet, TabLayout } from "../types";
 
 import GameGrid from "./game-grid/grid";
 import GameTable, { GameColumn } from "./game-table/table";
@@ -149,12 +149,13 @@ export default connect<IProps>(Games, {
       (rs: IRootState) => rs.preferences.layout,
       (rs: IRootState) => rs.profile.navigation.loadingTabs[tab] || false,
       createStructuredSelector({
-        gameIds: (sp: Space, prefLayout) => sp.games().ids || ea,
-        games: (sp: Space, prefLayout) => sp.games().set || eo,
-        totalCount: (sp: Space, prefLayout) => sp.games().totalCount,
-        prefLayout: (sp: Space, prefLayout) => prefLayout,
-        params: (sp: Space, prefLayout) => sp.query(),
-        loading: (sp: Space, prefLayout, loading) => loading || sp.isSleepy(),
+        gameIds: (sp: Space, prefLayout: TabLayout) => sp.games().ids || ea,
+        games: (sp: Space, prefLayout: TabLayout) => sp.games().set || eo,
+        totalCount: (sp: Space, prefLayout: TabLayout) => sp.games().totalCount,
+        prefLayout: (sp: Space, prefLayout: TabLayout) => prefLayout,
+        params: (sp: Space, prefLayout: TabLayout) => sp.query(),
+        loading: (sp: Space, prefLayout: TabLayout, loading: boolean) =>
+          loading || sp.isSleepy(),
       })
     );
   },

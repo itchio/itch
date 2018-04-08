@@ -61,7 +61,7 @@ export function cliArgs(): string[] {
 }
 
 export function exit(exitCode: number) {
-  if (env.name === "test") {
+  if (env.integrationTests) {
     console.log(`this is the magic exit code: ${exitCode}`);
   } else {
     const electron = require("electron");

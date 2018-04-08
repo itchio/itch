@@ -1,7 +1,5 @@
 import { ItchPromise } from "../util/itch-promise";
 
-const chatty = process.env.IAMA_JELLO_AMA === "1";
-
 class CancelError extends Error {
   constructor() {
     super("");
@@ -23,13 +21,9 @@ function debounce<Arg1, Arg2, T>(
 ): (arg1: Arg1, arg2: Arg2) => Promise<T>;
 
 function debounce<T>(f: (...args: any[]) => Promise<T>, ms: number) {
-  let rejectOther: (err: Error) => void;
+  let rejectOther: ((err: Error) => void) | null;
 
   return async function(...args: any[]) {
-    if (chatty) {
-      console.log(`launching ${f}`);
-    }
-
     try {
       if (rejectOther) {
         rejectOther(new CancelError());
@@ -42,19 +36,14 @@ function debounce<T>(f: (...args: any[]) => Promise<T>, ms: number) {
 
       const ret = await f(...args);
       rejectOther = null;
-      if (chatty) {
-        console.log(`not cancelled! ${f}`);
-      }
       return ret;
     } catch (e) {
       if (e instanceof CancelError) {
-        if (chatty) {
-          console.log(`cancelled: ${f}`);
-        }
       } else {
         throw e;
       }
     }
+    return undefined as any;
   };
 }
 

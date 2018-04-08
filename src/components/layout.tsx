@@ -7,7 +7,7 @@ import HubPage from "./pages/hub";
 import StatusBar from "./status-bar";
 import NonLocalIndicator from "./non-local-indicator";
 import ContextMenuHandler from "./context-menu-handler";
-import ReactHintFactory = require("react-hint");
+import ReactHintFactory from "react-hint";
 const ReactHint = ReactHintFactory(React);
 
 import { IRootState } from "../types";
@@ -16,7 +16,7 @@ import styled from "./styles";
 import { formatString } from "./format";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDate, DATE_FORMAT } from "../format/datetime";
-import classNames = require("classnames");
+import classNames from "classnames";
 
 const LayoutContainer = styled.div`
   background: ${props => props.theme.baseBackground};

@@ -42,7 +42,7 @@ export function transformUrl(original: string): string {
   return req;
 }
 
-export function currentPage(tabInstance: ITabInstance): ITabPage {
+export function currentPage(tabInstance: ITabInstance): ITabPage | null {
   if (!tabInstance) {
     return null;
   }
@@ -98,7 +98,7 @@ export function installLocationToTabData(
   return {
     location: {
       path: installLocation.path,
-      size: installLocation.sizeInfo.installedSize,
+      size: installLocation.sizeInfo!.installedSize,
     },
   };
 }

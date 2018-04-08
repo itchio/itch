@@ -43,7 +43,7 @@ class UrlMeat extends React.PureComponent<IProps, IState> {
     const sp = Space.fromInstance(tabInstance);
     switch (sp.internalPage()) {
       case "featured":
-        if (env.name === "test") {
+        if (env.integrationTests) {
           return { url: "about:blank", controls };
         } else {
           return { url: urls.itchio + "/", controls };

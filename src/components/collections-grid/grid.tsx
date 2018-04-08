@@ -114,7 +114,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
     // nothing so far
   };
 
-  renderCollections(): JSX.Element[] {
+  renderCollections(): (JSX.Element | null)[] {
     const { collectionIds, collections, scrollTop, height } = this.props;
 
     const overscan = 1;
@@ -146,15 +146,16 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   }
 }
 
-interface IProps extends IDimensionsProps {}
+interface IProps {}
 
 const actionCreators = actionCreatorsList("navigateTab", "navigate");
 
-type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  collectionIds: number[];
-  collections: ICollectionSet;
-  loading: boolean;
-};
+type IDerivedProps = Dispatchers<typeof actionCreators> &
+  IDimensionsProps & {
+    collectionIds: number[];
+    collections: ICollectionSet;
+    loading: boolean;
+  };
 
 export default connect<IProps>(injectDimensions(Grid), {
   state: createSelector(

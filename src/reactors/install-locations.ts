@@ -33,7 +33,7 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    if (installLocation.sizeInfo.installedSize > 0) {
+    if (installLocation.sizeInfo!.installedSize > 0) {
       store.dispatch(
         actions.openModal(
           modalWidgets.naked.make({
@@ -104,18 +104,16 @@ export default function(watcher: Watcher) {
         | "createDirectory")[],
     };
 
-    const promise = new ItchPromise<typeof actions.addInstallLocation.payload>(
-      (resolve, reject) => {
-        const callback = (response: string[]) => {
-          if (!response) {
-            return resolve();
-          }
+    const promise = new ItchPromise<string>((resolve, reject) => {
+      const callback = (response: string[]) => {
+        if (!response) {
+          return resolve();
+        }
 
-          return resolve(response[0]);
-        };
-        dialog.showOpenDialog(window, dialogOpts, callback);
-      }
-    );
+        return resolve(response[0]);
+      };
+      dialog.showOpenDialog(window, dialogOpts, callback);
+    });
 
     const path = await promise;
     if (path) {

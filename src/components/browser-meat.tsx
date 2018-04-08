@@ -167,7 +167,6 @@ class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
               ) : (
                 <webview
                   partition={partition}
-                  plugins
                   preload={getInjectURL("itchio")}
                   ref={this.gotWebview}
                   src={this.initialURL}

@@ -1,4 +1,4 @@
-import listensToClickOutside = require("react-onclickoutside");
+import listensToClickOutside from "react-onclickoutside";
 import React from "react";
 import classNames from "classnames";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";

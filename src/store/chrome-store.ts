@@ -49,7 +49,7 @@ let enhancer: GenericStoreEnhancer;
 
 enhancer = compose(ee, em) as GenericStoreEnhancer;
 
-const initialState = {};
+const initialState = {} as any;
 const store = createStore(reducer, initialState, enhancer) as IChromeStore;
 
 store.watcher = watcher;

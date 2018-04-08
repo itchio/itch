@@ -1,68 +1,50 @@
 // This file is the entry point for renderer processes
 
-let rt;
-if (process.env.ITCH_TIME_REQUIRE === "2") {
-  rt = require("require-times")([".js", ".ts", ".tsx"]);
-  rt.start();
-}
+import "!style-loader!css-loader!./fonts/lato/latofonts.css";
+import "!style-loader!css-loader!./fonts/icomoon/style.css";
+import "!style-loader!css-loader!react-hint/css/index.css";
+import "!style-loader!css-loader!react-json-inspector/json-inspector.css";
 
-if (process.env.NODE_ENV !== "production") {
+import env from "../env";
+if (env.development) {
+  require("react-hot-loader/patch");
   require("bluebird").config({
     longStackTraces: true,
   });
 }
 
-import env from "./env";
-import * as os from "./os";
+import * as os from "../os";
 
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
-import store from "./store/chrome-store";
+import store from "../store/chrome-store";
 
-import setupShortcuts from "./shortcuts";
+import setupShortcuts from "../shortcuts";
 setupShortcuts(store);
 
-import * as globalStyles from "./components/global-styles";
+import * as globalStyles from "../components/global-styles";
 globalStyles.inject();
 
-let AppContainer: React.ComponentClass<{}> = null;
-if (env.name === "development") {
+let AppContainer: React.ComponentClass<{}>;
+if (env.development) {
   try {
     const rhl = require("react-hot-loader");
     AppContainer = rhl.AppContainer;
   } catch (e) {
     console.error(`Could not enable react-hot-loader:`, e);
   }
-
-  if (process.env.ITCH_REACT_FRUGAL === "1") {
-    try {
-      const frugal = require("react-frugal").default;
-      frugal(React, ReactDOM, {
-        exclude: [
-          /(styled\.|(Connect|Styled|InjectIntl|Hoverable|Dimension)\()/,
-        ],
-      });
-    } catch (e) {
-      console.error(`Could not enable react-frugal:`, e);
-    }
-  }
 }
 
 import electron from "electron";
-import App from "./components/app";
-import { actions } from "./actions/index";
+import App from "../components/app";
+import { actions } from "../actions/index";
 
-let appNode: Element;
+let appNode: Element | null;
 
 function render(RealApp: typeof App) {
-  if (rt) {
-    rt.end();
-    rt = null;
-  }
-
-  document.querySelector("body").classList.remove("loading");
+  document.querySelector("body")!.classList.remove("loading");
   appNode = document.querySelector("#app");
 
   let rootComponent: JSX.Element;
@@ -78,10 +60,12 @@ function render(RealApp: typeof App) {
   ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
 }
 
-if (env.name === "test") {
+if (env.integrationTests) {
   window.onerror = (evt, source, line, column, err) => {
-    console.error(`Unhandled error: ${err.stack}`);
-    os.exit(1);
+    if (err) {
+      console.error(`Unhandled error: ${err.stack}`);
+      os.exit(1);
+    }
   };
 }
 
@@ -106,6 +90,7 @@ document.addEventListener("click", (e: MouseEvent) => {
     electron.remote.shell.openExternal((target as HTMLLinkElement).href);
     return false;
   }
+  return true;
 });
 
 // disable two-finger zoom on macOS
@@ -123,7 +108,7 @@ async function start() {
 
   if (module.hot) {
     module.hot.accept(() => {
-      const NextApp = require("./components/app").default;
+      const NextApp = require("../components/app").default;
       render(NextApp);
     });
   }

@@ -8,8 +8,8 @@ export type SortKey =
   | "installedSize";
 
 export interface ISortParams {
-  sortBy: SortKey;
-  sortDirection: SortDirection;
+  sortBy: SortKey | null;
+  sortDirection: SortDirection | null;
 }
 
 export interface IOnSortChange {

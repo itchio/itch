@@ -1,6 +1,8 @@
 import { Watcher } from "./watcher";
 
 import { createSelector } from "reselect";
+import { format as formatUrl } from "url";
+import * as path from "path";
 
 import env from "../env";
 
@@ -9,7 +11,6 @@ import { app, BrowserWindow } from "electron";
 import config from "../util/config";
 import { getImagePath } from "../os/resources";
 import * as os from "../os";
-import invariant from "invariant";
 import { debounce } from "underscore";
 
 import rootLogger from "../logger";
@@ -70,6 +71,7 @@ async function createWindow(store: IStore, hidden: boolean) {
     frame: false,
     webPreferences: {
       blinkFeatures: "ResizeObserver",
+      webSecurity: env.development ? false : true,
     },
   };
   const window = new BrowserWindow(opts);
@@ -91,7 +93,7 @@ async function createWindow(store: IStore, hidden: boolean) {
     const prefs = store.getState().preferences || { closeToTray: true };
 
     let { closeToTray } = prefs;
-    if (env.name === "test") {
+    if (env.integrationTests) {
       // always let app close in testing
       closeToTray = false;
     }
@@ -147,26 +149,26 @@ async function createWindow(store: IStore, hidden: boolean) {
     }
   });
 
-  window.on("leave-full-screen", (e: any) => {
+  window.on("leave-full-screen", e => {
     if (store.getState().ui.mainWindow.fullscreen) {
       store.dispatch(actions.windowFullscreenChanged({ fullscreen: false }));
     }
   });
 
-  window.on("maximize", (e: any) => {
+  window.on("maximize", e => {
     if (!store.getState().ui.mainWindow.maximized) {
       store.dispatch(actions.windowMaximizedChanged({ maximized: true }));
     }
   });
 
-  window.on("unmaximize", (e: any) => {
+  window.on("unmaximize", e => {
     if (store.getState().ui.mainWindow.maximized) {
       store.dispatch(actions.windowMaximizedChanged({ maximized: false }));
     }
   });
 
-  window.on("app-command", (e: any, cmd: AppCommand) => {
-    switch (cmd) {
+  window.on("app-command", (e, cmd) => {
+    switch (cmd as AppCommand) {
       case "browser-backward":
         store.dispatch(actions.commandGoBack({}));
         break;
@@ -218,23 +220,19 @@ async function createWindow(store: IStore, hidden: boolean) {
     }
   });
 
-  let uri = `file:///${__dirname}/index.html`;
-  if (
-    process.env.NODE_ENV !== "test" &&
-    process.env.NODE_ENV !== "production"
-  ) {
-    uri = `http://localhost:1234/dist/index.html`;
-  }
-  if (process.env.ITCH_REACT_PERF === "1") {
-    logger.info(`Enabling react perf`);
-    uri += `?react_perf`;
-  }
-  window.loadURL(uri);
-  if (env.name === "development") {
-    window.emit("ready-to-show", {});
+  if (env.development) {
+    window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
+  } else {
+    window.loadURL(
+      formatUrl({
+        pathname: path.resolve(__dirname, "..", "renderer", "index.html"),
+        protocol: "file",
+        slashes: true,
+      })
+    );
   }
 
-  if (parseInt(process.env.DEVTOOLS, 10) > 0) {
+  if (parseInt(process.env.DEVTOOLS || "0", 10) > 0) {
     await openAppDevTools(window);
   }
 }
@@ -284,14 +282,6 @@ function ensureWindowInsideDisplay(window: Electron.BrowserWindow) {
   if (bounds !== originalBounds) {
     logger.debug(`New bounds: ${JSON.stringify(bounds)}`);
     window.setBounds(bounds);
-  }
-
-  if (env.name === "test") {
-    logger.info(
-      `Main window is ${bounds.width}x${bounds.height}, at (${bounds.x}, ${
-        bounds.y
-      })`
-    );
   }
 }
 
@@ -406,7 +396,6 @@ export default function(watcher: Watcher) {
 
     if (id) {
       const window = BrowserWindow.fromId(id);
-      invariant(window, "window still exists");
       if (options.toggle && window.isVisible()) {
         window.hide();
       } else {

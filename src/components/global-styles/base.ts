@@ -2,7 +2,7 @@ import { css, theme } from "../styles";
 import env from "../../env";
 
 const testDisables = () => {
-  if (env.name !== "test") {
+  if (!env.integrationTests) {
     return css``;
   }
 
@@ -30,7 +30,7 @@ export default css`
     padding: 0;
     height: 100%;
     overflow: hidden;
-    -webkit-user-select: none;
+    user-select: none;
 
     font-family: LatoWeb, sans-serif;
     color: ${theme.baseText};

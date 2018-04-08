@@ -28,7 +28,7 @@ import format, { formatString } from "./format";
 import { InjectedIntl, injectIntl } from "react-intl";
 import { specToButton } from "../helpers/spec-to-button";
 import { modalWidgets } from "./modal-widgets/index";
-import classNames = require("classnames");
+import classNames from "classnames";
 
 type Flavor = "normal" | "big";
 
@@ -286,7 +286,7 @@ const BigButtonsDiv = styled.div`
 
 @watching
 class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
-  constructor(props: Modal["props"], context) {
+  constructor(props: Modal["props"], context: any) {
     super(props, context);
     this.state = {
       widgetPayload: null,
@@ -309,7 +309,7 @@ class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
         let primaryButtons = map(modal.buttons, specToButton);
         primaryButtons = filter(
           primaryButtons,
-          b => !/secondary/.test(b.className)
+          b => !b.className || !/secondary/.test(b.className)
         );
         // if there's more than one primary button, or none at all, 'ok' does nothing
         if (primaryButtons.length === 1) {
@@ -410,7 +410,7 @@ class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
     }
   };
 
-  renderCover(modal: IModal): JSX.Element {
+  renderCover(modal: IModal): JSX.Element | null {
     const { coverUrl, stillCoverUrl } = modal;
 
     if (!(stillCoverUrl || coverUrl)) {

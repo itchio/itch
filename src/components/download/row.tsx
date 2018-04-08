@@ -165,7 +165,7 @@ const Controls = styled.div`
 `;
 
 class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
-  constructor(props: IProps & IDerivedProps, context) {
+  constructor(props: IProps & IDerivedProps, context: any) {
     super(props, context);
     this.state = {};
   }

@@ -5,7 +5,7 @@ import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import { first } from "underscore";
 
 import getByIds from "../../helpers/get-by-ids";
-import { IGameSet, ICommonsState } from "../../types";
+import { IGameSet, ICommonsState, IRootState } from "../../types";
 
 import Cell from "./cell";
 import { GridContainerDiv, GridDiv } from "./grid-styles";
@@ -128,17 +128,18 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   isCoverClick(ev: React.MouseEvent<HTMLElement>): boolean {
-    let target = ev.target as HTMLElement;
+    let target = ev.target as HTMLElement | null;
     while (target && !target.classList.contains("grid--cell")) {
       if (target.classList.contains("cell--cover")) {
         return true;
       }
       target = target.parentElement;
     }
+    return false;
   }
 
   eventToGame(ev: React.MouseEvent<HTMLElement>, cb: (game: Game) => void) {
-    let target = ev.target as HTMLElement;
+    let target = ev.target as HTMLElement | null;
     while (target && !target.classList.contains("grid--cell")) {
       target = target.parentElement;
     }
@@ -177,7 +178,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 export default connect<IProps>(injectDimensions(Grid), {
   state: () =>
     createStructuredSelector({
-      commons: state => state.commons,
+      commons: (rs: IRootState) => rs.commons,
     }),
   actionCreators,
 });

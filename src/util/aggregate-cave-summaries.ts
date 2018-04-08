@@ -1,7 +1,9 @@
 import { CaveSummary } from "../butlerd/messages";
 
-export function aggregateCaveSummaries(caves: CaveSummary[]): CaveSummary {
-  let cave: CaveSummary;
+export function aggregateCaveSummaries(
+  caves: CaveSummary[]
+): CaveSummary | null {
+  let cave: CaveSummary | null = null;
   if (caves.length === 0) {
     return cave;
   }
@@ -10,7 +12,7 @@ export function aggregateCaveSummaries(caves: CaveSummary[]): CaveSummary {
 
   let installedSize: number = 0;
   let secondsRun: number = 0;
-  let lastTouchedAt: Date;
+  let lastTouchedAt: Date | null = null;
 
   for (const c of caves) {
     if (c.installedSize > 0) {

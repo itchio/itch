@@ -1314,6 +1314,8 @@ export enum Code {
   UnsupportedPackaging = 3000,
   // Nothing that can be launched was found
   NoLaunchCandidates = 5000,
+  // There is no Internet connection
+  NetworkDisconnected = 9000,
 }
 
 /**

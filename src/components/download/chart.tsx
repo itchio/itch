@@ -38,13 +38,13 @@ class Chart extends React.PureComponent<IProps & IDerivedProps> {
     max *= 1.1;
 
     const { width, height } = this.props;
-    const xs = width / (data.length - 1);
-    const ys = height / max;
+    const xs = width! / (data.length - 1);
+    const ys = height! / max;
 
     let pathString = `M0,${height}`;
     for (let x = 0; x < data.length; x++) {
       let y = data[x];
-      pathString += `L${x * xs},${height - y * ys}`;
+      pathString += `L${x * xs},${height! - y * ys}`;
     }
     pathString += `L${data.length * xs},${height}`;
     pathString += `L0,${height}`;

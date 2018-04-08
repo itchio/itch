@@ -89,7 +89,7 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
     const params = this.props.modal.widgetParams;
     const { game, caves, allUploads, loadingUploads } = params;
 
-    const installedUploadIds = {};
+    const installedUploadIds: { [key: number]: boolean } = {};
     each(caves, cave => {
       if (cave.upload) {
         installedUploadIds[cave.upload.id] = true;
@@ -113,7 +113,7 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
                 const caveSummary = getCaveSummary(cave);
 
                 return (
-                  <CaveItem>
+                  <CaveItem key={cave.id}>
                     <CaveDetails>
                       <CaveDetailsRow>
                         <Title>{formatUpload(u)}</Title>

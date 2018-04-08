@@ -140,7 +140,7 @@ export default function(watcher: Watcher) {
       store.dispatch(actions.boot({}));
       dispatchedBoot = true;
 
-      if (env.name === "production" && env.appName === "itch") {
+      if (env.production && env.appName === "itch") {
         try {
           app.setAsDefaultProtocolClient("itchio");
           app.setAsDefaultProtocolClient("itch");

@@ -72,14 +72,18 @@ class LoginForm extends React.PureComponent<IProps & IDerivedProps> {
     );
   }
 
-  username: HTMLInputElement;
-  gotUsernameField = el => (this.username = el);
+  username: HTMLInputElement | null = null;
+  gotUsernameField = (el: HTMLInputElement) => (this.username = el);
 
-  password: HTMLInputElement;
-  gotPasswordField = el => (this.password = el);
+  password: HTMLInputElement | null = null;
+  gotPasswordField = (el: HTMLInputElement) => (this.password = el);
 
   handleSubmit = () => {
     const { username, password } = this;
+    if (!username || !password) {
+      return;
+    }
+
     this.props.loginWithPassword({
       username: username.value,
       password: password.value,

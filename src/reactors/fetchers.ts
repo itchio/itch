@@ -118,6 +118,7 @@ function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
     case "games":
       return GameFetcher;
   }
+  return null;
 }
 
 const queueCleanup = throttle((store: IStore) => {

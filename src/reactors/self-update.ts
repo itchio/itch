@@ -35,7 +35,8 @@ const UPDATE_INTERVAL_WIGGLE = 0.2 * 60 * 60 * 1000;
 const DISMISS_TIME = 5 * 1000;
 
 const selfUpdateEnabled =
-  env.name === "production" || process.env.UP_TO_SCRATCH === "1";
+  (env.production && !env.integrationTests) ||
+  process.env.UP_TO_SCRATCH === "1";
 
 /**
  * Resolves to true if the command returns 0, resolves to false otherwise
@@ -87,7 +88,7 @@ export default function(watcher: Watcher) {
         const environmentSetManually = !!process.env.NODE_ENV;
         if (
           /^Could not get code signature/.test(err.message) &&
-          (env.name === "development" || environmentSetManually)
+          (env.development || environmentSetManually)
         ) {
           // electron-prebuilt isn't signed, we know you can't work Squirrel.mac, don't worry
           logger.info("Ignoring Squirrel.mac complaint");

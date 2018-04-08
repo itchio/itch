@@ -8,7 +8,7 @@ const turn = keyframes`
   100% { transform: rotateZ(360deg); }
 `;
 
-const CircleContainer = styled.div`
+const CircleContainer = styled.span`
   display: inline;
   margin-right: 8px;
 

@@ -28,7 +28,7 @@ let deepFields = ["users", "games", "collections", "web", "toast"];
 function merge(
   a: ITabData,
   b: ITabData,
-  { shallow }: { shallow: boolean }
+  { shallow }: { shallow?: boolean }
 ): ITabData {
   if (shallow) {
     return { ...a, ...b };
@@ -39,9 +39,9 @@ function merge(
     ...b,
   };
   for (const df of deepFields) {
-    res[df] = {
-      ...(a[df] || emptyObj),
-      ...(b[df] || emptyObj),
+    (res as any)[df] = {
+      ...((a as any)[df] || emptyObj),
+      ...((b as any)[df] || emptyObj),
     };
   }
   return res;
@@ -83,7 +83,7 @@ export default reducer<ITabInstances>(initialState, on => {
       replace = true;
     }
 
-    if (/^collections\//.test(resource)) {
+    if (resource && /^collections\//.test(resource)) {
       url = `itch://${resource}`;
     }
 

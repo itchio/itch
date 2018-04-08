@@ -4,13 +4,14 @@ chai.use(chaiAsPromised);
 const { assert } = chai;
 import "mocha";
 
-process.env.NODE_ENV = "test";
+import env from "./env";
+env.unitTests = true;
 
 const _describe = describe;
 const _it = it;
 export { _describe as describe, _it as it, assert };
 
-const emptyArr = [];
+const emptyArr: any[] = [];
 
 /** A watcher made for testing reactors */
 import { Watcher } from "./reactors/watcher";
@@ -22,11 +23,11 @@ import { ItchPromise } from "./util/itch-promise";
 
 export class TestWatcher extends Watcher {
   store: IStore;
-  p: Promise<void>;
+  p: Promise<void> | null;
 
   constructor() {
     super();
-    this.store = createStore(reducer, {}) as IStore;
+    this.store = createStore(reducer, {} as any) as IStore;
     const storeDotDispatch = this.store.dispatch;
     this.store.dispatch = <A extends IAction<any>>(action: A): A => {
       storeDotDispatch(action);

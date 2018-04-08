@@ -16,12 +16,19 @@ interface IProps {
   seed?: number;
 }
 
+interface Path {
+  x: number;
+  y: number;
+  cols: number;
+  lines: number;
+}
+
 class RandomSvg extends React.PureComponent<IProps> {
   render() {
     let { seed, ...restProps } = this.props;
 
     const random = function() {
-      if (seed === null) {
+      if (!seed) {
         return Math.random();
       }
       let n = Math.sin(seed) * 10000;
@@ -34,7 +41,7 @@ class RandomSvg extends React.PureComponent<IProps> {
     let varyVal = Math.floor(random() * 3);
 
     const width = 250 + random() * 80;
-    const colorGenerator = function(path) {
+    const colorGenerator = function(path: Path) {
       const variance = 32;
       const ratio = path.x * path.y / (path.cols * path.lines);
       const code = Math.floor(

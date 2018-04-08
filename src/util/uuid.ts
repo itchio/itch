@@ -27,12 +27,12 @@ export default v4;
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
  */
-const bth = [];
+const bth: string[] = [];
 for (let i = 0; i < 256; ++i) {
   bth[i] = (i + 0x100).toString(16).substr(1);
 }
 
-function bytesToUuid(buf) {
+function bytesToUuid(buf: Uint8Array) {
   let i = 0;
   return (
     bth[buf[i++]] +

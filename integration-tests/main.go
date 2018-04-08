@@ -127,10 +127,9 @@ func doMain() error {
 	chromeDriverCtx, chromeDriverCancel := context.WithCancel(context.Background())
 	r.chromeDriverCmd = exec.CommandContext(chromeDriverCtx, r.chromeDriverExe, fmt.Sprintf("--port=%d", chromeDriverPort), fmt.Sprintf("--log-path=%s", chromeDriverLogPath))
 	env := os.Environ()
-	env = append(env, "NODE_ENV=test")
+	env = append(env, "ITCH_INTEGRATION_TESTS=1")
 	env = append(env, "ITCH_LOG_LEVEL=debug")
 	env = append(env, "ITCH_NO_STDOUT=1")
-	env = append(env, "ELECTRON_ENABLE_LOGGING=1")
 	r.chromeDriverCmd.Env = env
 
 	var logWatches []*logWatch
@@ -317,9 +316,8 @@ func (r *runner) getButler() error {
 func (r *runner) bundle() error {
 	r.logf("Bundling...")
 
-	cmd := exec.Command("node", "./src/init.js")
+	cmd := exec.Command("npm", "run", "compile")
 	cmd.Env = os.Environ()
-	cmd.Env = append(cmd.Env, "NODE_ENV=test")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
