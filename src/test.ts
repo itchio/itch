@@ -4,7 +4,7 @@ chai.use(chaiAsPromised);
 const { assert } = chai;
 import "mocha";
 
-import env from "./env";
+import env from "common/env";
 env.unitTests = true;
 
 const _describe = describe;
@@ -14,12 +14,12 @@ export { _describe as describe, _it as it, assert };
 const emptyArr: any[] = [];
 
 /** A watcher made for testing reactors */
-import { Watcher } from "./reactors/watcher";
-import { IStore, IAction } from "./types";
 import { createStore } from "redux";
-import reducer from "./reducers";
-import { actions } from "./actions";
-import { ItchPromise } from "./util/itch-promise";
+import { Watcher } from "common/util/watcher";
+import { IStore, IAction } from "common/types";
+import reducer from "common/reducers";
+import { actions } from "common/actions";
+import { ItchPromise } from "common/util/itch-promise";
 
 export class TestWatcher extends Watcher {
   store: IStore;

@@ -6,13 +6,13 @@ if (process.env.ITCH_TIME_REQUIRE === "1") {
   rt.start();
 }
 
-import env from "./env";
-import logger from "./logger";
+import env from "common/env";
+import logger from "common/logger";
 
-import autoUpdaterStart from "./util/auto-updater";
-import { isItchioURL } from "./util/url";
+import autoUpdaterStart from "main/auto-updater";
+import { isItchioURL } from "common/util/url";
 
-import { actions } from "./actions";
+import { actions } from "common/actions";
 import { app, protocol, globalShortcut } from "electron";
 
 logger.info(
@@ -21,8 +21,8 @@ logger.info(
   } in ${env.production ? "production" : "development"}`
 );
 
-import { loadPreferencesSync } from "./reactors/preboot/load-preferences";
-import { IStore } from "./types";
+import { loadPreferencesSync } from "main/reactors/preboot/load-preferences";
+import { IStore } from "common/types";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -68,7 +68,7 @@ function autoUpdateDone() {
   protocol.registerStandardSchemes(["itch-cave"]);
 
   let store: IStore;
-  store = require("./store/metal-store").default;
+  store = require("main/store").default;
 
   let onReady = () => {
     if (!env.integrationTests) {

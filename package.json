@@ -126,6 +126,8 @@
     "recursive-copy": "^2.0.9",
     "source-map-support": "^0.4.16",
     "ts-node": "^5.0.1",
+    "tsconfig-paths": "^3.2.0",
+    "tsconfig-paths-webpack-plugin": "^3.0.3",
     "typescript": "^2.6.2",
     "uglify-es": "^3.3.9",
     "webpack": "^4.5.0",
@@ -136,7 +138,7 @@
     "compile": "electron-webpack",
     "precommit": "lint-staged && npm run ts-check",
     "postinstall": "electron-rebuild",
-    "test": "mocha -r ts-node/register ./src/**/*.spec.ts",
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
     "integration-tests": "node release/ci-integration-tests.js",
     "upload-coverage": "codecov -f ./coverage/lcov.info",
     "i18n": "node release/ci-i18n-check.js",
@@ -147,5 +149,13 @@
       "prettier --trailing-comma es5 --write",
       "git add"
     ]
+  },
+  "electronWebpack": {
+    "renderer": {
+      "webpackConfig": "custom.webpack.additions.js"
+    },
+    "main": {
+      "webpackConfig": "custom.webpack.additions.js"
+    }
   }
 }

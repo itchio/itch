@@ -1,10 +1,10 @@
-import env from "../env";
+import env from "common/env";
 
 if (env.integrationTests) {
-  require("../boot/test-paths").setup();
+  require("main/boot/test-paths").setup();
 }
 
-require("../util/crash-reporter").mount();
+require("common/util/crash-reporter").mount();
 
 if (env.development) {
   Error.stackTraceLimit = Infinity;

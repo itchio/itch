@@ -7,6 +7,12 @@
     "noImplicitAny": false,
     "skipLibCheck": true,
     "module": "commonjs",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": "src",
+    "paths": {
+      "common": ["common"],
+      "renderer": ["renderer"],
+      "main": ["main"]
+    }
   }
 }

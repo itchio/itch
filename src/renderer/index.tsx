@@ -5,7 +5,7 @@ import "!style-loader!css-loader!./fonts/icomoon/style.css";
 import "!style-loader!css-loader!react-hint/css/index.css";
 import "!style-loader!css-loader!react-json-inspector/json-inspector.css";
 
-import env from "../env";
+import env from "common/env";
 if (env.development) {
   require("react-hot-loader/patch");
   require("bluebird").config({
@@ -13,18 +13,18 @@ if (env.development) {
   });
 }
 
-import * as os from "../os";
+import * as os from "main/os";
 
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
-import store from "../store/chrome-store";
+import store from "renderer/store";
 
-import setupShortcuts from "../shortcuts";
+import setupShortcuts from "renderer/shortcuts";
 setupShortcuts(store);
 
-import * as globalStyles from "../components/global-styles";
+import * as globalStyles from "renderer/components/global-styles";
 globalStyles.inject();
 
 let AppContainer: React.ComponentClass<{}>;
@@ -38,8 +38,8 @@ if (env.development) {
 }
 
 import electron from "electron";
-import App from "../components/app";
-import { actions } from "../actions/index";
+import App from "renderer/components/app";
+import { actions } from "common/actions/index";
 
 let appNode: Element | null;
 
@@ -58,15 +58,6 @@ function render(RealApp: typeof App) {
     rootComponent = <RealApp />;
   }
   ReactDOM.render(<Provider store={store}>{rootComponent}</Provider>, appNode);
-}
-
-if (env.integrationTests) {
-  window.onerror = (evt, source, line, column, err) => {
-    if (err) {
-      console.error(`Unhandled error: ${err.stack}`);
-      os.exit(1);
-    }
-  };
 }
 
 window.addEventListener("beforeunload", () => {
@@ -108,7 +99,7 @@ async function start() {
 
   if (module.hot) {
     module.hot.accept(() => {
-      const NextApp = require("../components/app").default;
+      const NextApp = require("renderer/components/app").default;
       render(NextApp);
     });
   }
