@@ -56,6 +56,14 @@ const extendedGlobal = global as ExtendedGlobal;
       "%c ========== Loading itch app HTML5 environment ===========",
       "color: #fa5c5c"
     );
+    if (!navigator.languages || !navigator.languages.length) {
+      console.log("Patching navigator.langauges...");
+      Object.defineProperty(navigator, "languages", {
+        value: [navigator.language, "en-US"],
+        configurable: true,
+      });
+    }
+
     const url = urlParser.parse(window.location.href);
     console.log("Parsed url: ", url);
 
