@@ -104,9 +104,7 @@ function create(wc: Electron.WebContents, store: IStore) {
         menuTpl as any
       );
 
-      menu.popup(electron.BrowserWindow.getFocusedWindow(), {
-        async: true,
-      });
+      menu.popup({});
     }
   });
 }

@@ -9,7 +9,6 @@ if (process.env.ITCH_TIME_REQUIRE === "1") {
 import env from "common/env";
 import logger from "common/logger";
 
-import autoUpdaterStart from "main/auto-updater";
 import { isItchioURL } from "common/util/url";
 
 import { actions } from "common/actions";
@@ -26,21 +25,9 @@ import { IStore } from "common/types";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
-async function autoUpdate(autoUpdateDone: () => void) {
-  const quit = await autoUpdaterStart();
-  if (quit) {
-    // squirrel on win32 sometimes requires exiting as early as possible
-    process.exit(0);
-  } else {
-    autoUpdateDone();
-  }
-}
-
-autoUpdate(autoUpdateDone); // no need to wait for app.on('ready')
-
 // App lifecycle
 
-function autoUpdateDone() {
+function main() {
   if (process.env.CAPSULE_LIBRARY_PATH) {
     // disable acceleration when captured by capsule
     app.disableHardwareAcceleration();
@@ -55,9 +42,6 @@ function autoUpdateDone() {
     }
   }
 
-  // devtools don't work with mixed sandbox mode -
-  // enable it only in production and only when the
-  // `DEVTOOLS` environment variable is not specified
   if (env.production) {
     app.enableMixedSandbox();
   }
@@ -67,8 +51,7 @@ function autoUpdateDone() {
   }
   protocol.registerStandardSchemes(["itch-cave"]);
 
-  let store: IStore;
-  store = require("main/store").default;
+  let store: IStore = require("main/store").default;
 
   let onReady = () => {
     if (!env.integrationTests) {
@@ -113,7 +96,6 @@ function autoUpdateDone() {
       }
     }, 1 * 1000 /* every second */);
   };
-
   app.on("ready", onReady);
 
   app.on("will-finish-launching", () => {
@@ -129,3 +111,5 @@ function autoUpdateDone() {
     }
   });
 }
+
+main();

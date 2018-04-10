@@ -1,9 +1,8 @@
 import { join } from "path";
 import { getAppPath } from "common/helpers/app";
 
-let appFolderName = "./src";
-
-let absoluteAppPath = join(getAppPath(), appFolderName);
+let absoluteAppPath = join(getAppPath(), "src");
+let absoluteMainDistPath = join(getAppPath(), "dist", "main");
 
 /*
  * Resources are files shipped with the app, that are static
@@ -32,7 +31,7 @@ export function getLocalesConfigPath(): string {
 type IInjectName = "itchio" | "game" | "captcha";
 
 export function getInjectPath(name: IInjectName) {
-  return join(absoluteAppPath, `inject-${name}.js`);
+  return join(absoluteMainDistPath, `inject-${name}.js`);
 }
 
 export function getInjectURL(name: IInjectName) {

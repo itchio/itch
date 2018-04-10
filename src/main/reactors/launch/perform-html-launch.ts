@@ -70,9 +70,6 @@ export async function performHTMLLaunch(
     webPreferences: {
       /* don't let web code control the OS */
       nodeIntegration: false,
-      /* don't enforce same-origin policy (to allow API requests) */
-      webSecurity: false,
-      allowRunningInsecureContent: true,
       /* hook up a few keyboard shortcuts of our own */
       preload: noPreload ? null : getInjectPath("game"),
       /* stores cookies etc. in persistent session to save progress */

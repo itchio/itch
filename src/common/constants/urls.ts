@@ -3,27 +3,15 @@ const itchio = process.env.WHEN_IN_ROME || originalItchio;
 const manual = "https://itch.io/docs/itch";
 const itchRepo = "https://github.com/itchio/itch";
 
-interface IUpdateServers {
-  [key: string]: string;
-  stable: string;
-  canary: string;
-}
-
 export default {
   itchRepo,
-  watchlistRepo: "https://github.com/itchio/itch-compatibility-watchlist",
   originalItchio,
   itchio,
   appHomepage: "https://itch.io/app",
   itchTranslationPlatform: "https://weblate.itch.ovh/",
-  githubApi: "https://api.github.com",
   brothRepo: "https://broth.itch.ovh",
   remoteLocalePath: "https://locales.itch.ovh/itch",
   manual,
-  updateServers: {
-    stable: "https://nuts.itch.zone",
-    canary: "https://nuts-canary.itch.ovh",
-  } as IUpdateServers,
 
   itchioApi: itchio,
   termsOfService: `${itchio}/docs/legal/terms`,
