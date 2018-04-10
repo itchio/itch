@@ -1,20 +1,20 @@
-// import { Shm } from "shoom";
+import { Shm } from "shoom";
 
 import btoa from "btoa";
 import querystring from "querystring";
 
 import { BrowserWindow, shell } from "electron";
 
-// import spawn from "../../os/spawn";
+import spawn from "main/os/spawn";
 import { getInjectPath } from "common/util/resources";
 import * as url from "common/util/url";
 import debugBrowserWindow from "common/util/debug-browser-window";
 
-import { Context } from "../../context";
+import { Context } from "main/context";
 
-// import Connection from "../../capsule/connection";
-// import { capsule } from "../../capsule/messages_generated";
-// const { messages } = capsule;
+import Connection from "main/capsule/connection";
+import { capsule } from "main/capsule/messages_generated";
+const { messages } = capsule;
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
@@ -132,126 +132,126 @@ export async function performHTMLLaunch(
 
   win.loadURL(`itch-cave://game.itch/${indexPath}?${query}`, options);
 
-  // let capsulePromise: Promise<number>;
-  // let connection: Connection;
-  // const capsulerunPath = process.env.CAPSULERUN_PATH;
-  // const capsuleContext = ctx.clone();
-  // if (capsulerunPath) {
-  //   logger.info(`Launching capsule...`);
+  let capsulePromise: Promise<number>;
+  let connection: Connection;
+  const capsulerunPath = process.env.CAPSULERUN_PATH;
+  const capsuleContext = ctx.clone();
+  if (capsulerunPath) {
+    logger.info(`Launching capsule...`);
 
-  //   const pipeName = "capsule_html5";
-  //   connection = new Connection(pipeName);
+    const pipeName = "capsule_html5";
+    connection = new Connection(pipeName);
 
-  //   capsulePromise = spawn({
-  //     command: capsulerunPath,
-  //     args: ["--pipe", pipeName, "--headless"],
-  //     onToken: tok => {
-  //       logger.info(`[capsule out] ${tok}`);
-  //     },
-  //     onErrToken: async tok => {
-  //       logger.info(`[capsule err] ${tok}`);
-  //     },
-  //     ctx: capsuleContext,
-  //     logger: opts.logger,
-  //   });
+    capsulePromise = spawn({
+      command: capsulerunPath,
+      args: ["--pipe", pipeName, "--headless"],
+      onToken: tok => {
+        logger.info(`[capsule out] ${tok}`);
+      },
+      onErrToken: async tok => {
+        logger.info(`[capsule err] ${tok}`);
+      },
+      ctx: capsuleContext,
+      logger: opts.logger,
+    });
 
-  //   capsulePromise.catch(reason => {
-  //     console.log(`capsule threw an error: ${reason}`);
-  //   });
+    capsulePromise.catch(reason => {
+      console.log(`capsule threw an error: ${reason}`);
+    });
 
-  //   try {
-  //     await new ItchPromise((resolve, reject) => {
-  //       setTimeout(resolve, 1000);
-  //     });
-  //     await connection.connect();
+    try {
+      await new ItchPromise((resolve, reject) => {
+        setTimeout(resolve, 1000);
+      });
+      await connection.connect();
 
-  //     logger.info(`Should be connected now, will send videosetup soon`);
-  //     await new ItchPromise((resolve, reject) => {
-  //       setTimeout(resolve, 1000);
-  //     });
+      logger.info(`Should be connected now, will send videosetup soon`);
+      await new ItchPromise((resolve, reject) => {
+        setTimeout(resolve, 1000);
+      });
 
-  //     const [contentWidth, contentHeight] = win.getContentSize();
-  //     logger.info(`framebuffer size: ${contentWidth}x${contentHeight}`);
-  //     const components = 4;
-  //     const pitch = contentWidth * components;
+      const [contentWidth, contentHeight] = win.getContentSize();
+      logger.info(`framebuffer size: ${contentWidth}x${contentHeight}`);
+      const components = 4;
+      const pitch = contentWidth * components;
 
-  //     const shmPath = "capsule_html5.shm";
-  //     const shmSize = pitch * contentHeight;
-  //     const shm = new Shm({
-  //       path: shmPath,
-  //       size: shmSize,
-  //     });
-  //     shm.create();
+      const shmPath = "capsule_html5.shm";
+      const shmSize = pitch * contentHeight;
+      const shm = new Shm({
+        path: shmPath,
+        size: shmSize,
+      });
+      shm.create();
 
-  //     connection.writePacket(builder => {
-  //       const offset = messages.VideoSetup.createOffsetVector(builder, [
-  //         builder.createLong(0, 0),
-  //       ]);
-  //       const linesize = messages.VideoSetup.createLinesizeVector(builder, [
-  //         builder.createLong(pitch, 0),
-  //       ]);
-  //       const shmemPath = builder.createString(shmPath);
-  //       const shmemSize = builder.createLong(shmSize, 0);
-  //       messages.Shmem.startShmem(builder);
-  //       messages.Shmem.addPath(builder, shmemPath);
-  //       messages.Shmem.addSize(builder, shmemSize);
-  //       const shmem = messages.Shmem.endShmem(builder);
-  //       messages.VideoSetup.startVideoSetup(builder);
-  //       messages.VideoSetup.addWidth(builder, contentWidth);
-  //       messages.VideoSetup.addHeight(builder, contentHeight);
-  //       messages.VideoSetup.addPixFmt(builder, messages.PixFmt.BGRA);
-  //       messages.VideoSetup.addVflip(builder, false);
-  //       messages.VideoSetup.addOffset(builder, offset);
-  //       messages.VideoSetup.addLinesize(builder, linesize);
-  //       messages.VideoSetup.addShmem(builder, shmem);
-  //       const vs = messages.VideoSetup.endVideoSetup(builder);
-  //       messages.Packet.startPacket(builder);
-  //       messages.Packet.addMessageType(builder, messages.Message.VideoSetup);
-  //       messages.Packet.addMessage(builder, vs);
-  //       const pkt = messages.Packet.endPacket(builder);
-  //       builder.finish(pkt);
-  //     });
+      connection.writePacket(builder => {
+        const offset = messages.VideoSetup.createOffsetVector(builder, [
+          builder.createLong(0, 0),
+        ]);
+        const linesize = messages.VideoSetup.createLinesizeVector(builder, [
+          builder.createLong(pitch, 0),
+        ]);
+        const shmemPath = builder.createString(shmPath);
+        const shmemSize = builder.createLong(shmSize, 0);
+        messages.Shmem.startShmem(builder);
+        messages.Shmem.addPath(builder, shmemPath);
+        messages.Shmem.addSize(builder, shmemSize);
+        const shmem = messages.Shmem.endShmem(builder);
+        messages.VideoSetup.startVideoSetup(builder);
+        messages.VideoSetup.addWidth(builder, contentWidth);
+        messages.VideoSetup.addHeight(builder, contentHeight);
+        messages.VideoSetup.addPixFmt(builder, messages.PixFmt.BGRA);
+        messages.VideoSetup.addVflip(builder, false);
+        messages.VideoSetup.addOffset(builder, offset);
+        messages.VideoSetup.addLinesize(builder, linesize);
+        messages.VideoSetup.addShmem(builder, shmem);
+        const vs = messages.VideoSetup.endVideoSetup(builder);
+        messages.Packet.startPacket(builder);
+        messages.Packet.addMessageType(builder, messages.Message.VideoSetup);
+        messages.Packet.addMessage(builder, vs);
+        const pkt = messages.Packet.endPacket(builder);
+        builder.finish(pkt);
+      });
 
-  //     const wc = win.webContents;
-  //     wc.beginFrameSubscription(function(frameBuffer) {
-  //       shm.write(0, frameBuffer);
-  //       const timestamp = Date.now() * 1000;
+      const wc = win.webContents;
+      wc.beginFrameSubscription(function(frameBuffer) {
+        shm.write(0, frameBuffer);
+        const timestamp = Date.now() * 1000;
 
-  //       if (connection.closed) {
-  //         wc.endFrameSubscription();
-  //       }
+        if (connection.closed) {
+          wc.endFrameSubscription();
+        }
 
-  //       connection.writePacket(builder => {
-  //         const frameTimestamp = builder.createLong(timestamp, 0);
-  //         messages.VideoFrameCommitted.startVideoFrameCommitted(builder);
-  //         messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
-  //         messages.VideoFrameCommitted.addIndex(builder, 0);
-  //         const vfc = messages.VideoFrameCommitted.endVideoFrameCommitted(
-  //           builder
-  //         );
-  //         messages.Packet.startPacket(builder);
-  //         messages.Packet.addMessageType(
-  //           builder,
-  //           messages.Message.VideoFrameCommitted
-  //         );
-  //         messages.Packet.addMessage(builder, vfc);
-  //         const pkt = messages.Packet.endPacket(builder);
-  //         builder.finish(pkt);
-  //       });
-  //     });
-  //   } catch (e) {
-  //     logger.error(`While attempting to connect capsule: ${e.stack}`);
-  //   }
-  // }
+        connection.writePacket(builder => {
+          const frameTimestamp = builder.createLong(timestamp, 0);
+          messages.VideoFrameCommitted.startVideoFrameCommitted(builder);
+          messages.VideoFrameCommitted.addTimestamp(builder, frameTimestamp);
+          messages.VideoFrameCommitted.addIndex(builder, 0);
+          const vfc = messages.VideoFrameCommitted.endVideoFrameCommitted(
+            builder
+          );
+          messages.Packet.startPacket(builder);
+          messages.Packet.addMessageType(
+            builder,
+            messages.Message.VideoFrameCommitted
+          );
+          messages.Packet.addMessage(builder, vfc);
+          const pkt = messages.Packet.endPacket(builder);
+          builder.finish(pkt);
+        });
+      });
+    } catch (e) {
+      logger.error(`While attempting to connect capsule: ${e.stack}`);
+    }
+  }
 
   await new ItchPromise((resolve, reject) => {
     win.on("close", async () => {
-      // if (connection) {
-      //   connection.close();
-      // }
-      // if (capsulePromise) {
-      //   await capsulePromise;
-      // }
+      if (connection) {
+        connection.close();
+      }
+      if (capsulePromise) {
+        await capsulePromise;
+      }
       win.webContents.session.clearCache(resolve);
     });
 
