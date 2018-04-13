@@ -135,7 +135,7 @@
   },
   "scripts": {
     "start": "cross-env ELECTRON_ARGS=\"[\\\".\\\"]\" electron-webpack dev",
-    "compile": "electron-webpack",
+    "compile": "electron-webpack --no-progress",
     "precommit": "lint-staged && npm run ts-check",
     "postinstall": "electron-rebuild",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
