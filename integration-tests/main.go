@@ -232,6 +232,7 @@ func doMain() error {
 			hasSession = true
 			break
 		}
+		r.logf("Could not create a webdriver session: %+v", err)
 	}
 
 	if !hasSession {
