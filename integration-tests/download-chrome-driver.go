@@ -40,7 +40,7 @@ func downloadChromeDriver(r *runner) error {
 		return nil
 	}
 
-	r.logf("Downloading chromedriver %s...", r.electronVersion)
+	r.logf("Downloading chromedriver...")
 	err = os.MkdirAll(driverCache, 0755)
 	if err != nil {
 		return errors.WithMessage(err, "making chromedriver cache")
@@ -106,8 +106,12 @@ func downloadChromeDriver(r *runner) error {
 	return nil
 }
 
+// not all electron releases have an associated chromedriver
+// build. oh joy!
+const electronChromeDriverVersion = "v2.0.0-beta.7"
+
 func chromeDriverURL(r *runner) string {
-	tag := "v" + r.electronVersion
+	tag := electronChromeDriverVersion
 
 	os := ""
 	arch := ""

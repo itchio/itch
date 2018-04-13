@@ -229,7 +229,7 @@ func (r *runner) takeScreenshot(name string) error {
 
 	s, err := r.driver.Screenshot()
 	if err != nil {
-		return errors.WithStack(err)
+		return errors.WithMessage(err, fmt.Sprintf("taking screenshot %s:", name))
 	}
 
 	imageBytes, err := s.ImageBytes()
