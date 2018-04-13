@@ -1,6 +1,5 @@
 import querystring from "querystring";
 
-import useragent from "common/constants/useragent";
 import { NET_PARTITION_NAME, NET_TIMEOUT_MS } from "common/constants/net";
 import { HTTPMethod, IRequestOpts, IResponse } from "common/types/net";
 
@@ -17,7 +16,7 @@ import env from "common/env";
 import { net } from "electron";
 import { Readable } from "stream";
 import { ItchPromise } from "common/util/itch-promise";
-
+import { userAgent } from "common/constants/useragent";
 // TODO: revert that when Electron fixes their typings.
 type ActualElectronResponse = Electron.IncomingMessage & Readable;
 
@@ -45,7 +44,7 @@ export async function request(
     url,
     partition: NET_PARTITION_NAME,
   });
-  req.setHeader("user-agent", useragent);
+  req.setHeader("user-agent", userAgent());
 
   const p = new ItchPromise<IResponse>((resolve, reject) => {
     req.on("response", (inputRes: any) => {

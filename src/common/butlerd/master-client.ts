@@ -3,7 +3,7 @@ import { Instance } from "butlerd";
 import { butlerDbPath } from "common/util/paths";
 import urls from "common/constants/urls";
 import ospath from "path";
-
+import { userAgent } from "common/constants/useragent";
 export async function makeButlerInstance(): Promise<Instance> {
   const butlerPkg = getRootState().broth.packages["butler"];
   if (!butlerPkg) {
@@ -25,6 +25,13 @@ export async function makeButlerInstanceWithPrefix(
 ): Promise<Instance> {
   return new Instance({
     butlerExecutable: ospath.join(versionPrefix, "butler"),
-    args: ["--dbpath", butlerDbPath(), "--address", urls.itchio],
+    args: [
+      "--dbpath",
+      butlerDbPath(),
+      "--address",
+      urls.itchio,
+      "--user-agent",
+      userAgent(),
+    ],
   });
 }

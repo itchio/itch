@@ -1,16 +1,13 @@
 import { app, remote } from "electron";
 import * as os from "main/os";
 
-let userAgent: string;
-
-// TODO: investigate - is that needed?
+export let userAgent: () => string;
 
 if (os.processType() === "browser") {
-  userAgent =
+  userAgent = () =>
     `itch/${app.getVersion()} (${os.platform()}; ` +
     `Electron/${os.getVersion("electron")} Chrome/${os.getVersion("chrome")})`;
 } else {
-  userAgent = remote.require("./constants/useragent");
+  let _cached = remote.require("./constants/useragent").userAgent();
+  userAgent = () => _cached;
 }
-
-export default userAgent;
