@@ -99,10 +99,10 @@ func doMain() error {
 	switch runtime.GOOS {
 	case "windows":
 		err := exec.Command("taskkill.exe", "/f", "/im", "chromedriver.exe").Run()
-		r.logf("kill result: %+v", err.Error())
+		r.logf("kill result: %+v", err)
 	case "linux", "darwin":
 		err := exec.Command("killall", "-9", "chromedriver").Run()
-		r.logf("kill result: %+v", err.Error())
+		r.logf("kill result: %+v", err)
 	}
 
 	numPrepTasks++
