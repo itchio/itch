@@ -1,30 +1,25 @@
 package main
 
 import (
-	"compress/gzip"
 	"context"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"strings"
 	"time"
 
 	gs "github.com/fasterthanlime/go-selenium"
-	"github.com/go-errors/errors"
 	"github.com/hpcloud/tail"
 	"github.com/onsi/gocleanup"
+	"github.com/pkg/errors"
 )
 
 const stampFormat = "15:04:05.999"
 
 const testAccountName = "itch-test-account"
-const enableGetButler = false
 
 var testAccountPassword = os.Getenv("ITCH_TEST_ACCOUNT_PASSWORD")
 var testAccountAPIKey = os.Getenv("ITCH_TEST_ACCOUNT_API_KEY")
@@ -42,6 +37,7 @@ type runner struct {
 	cleanup            CleanupFunc
 	testStart          time.Time
 	readyForScreenshot bool
+	electronVersion    string
 }
 
 func (r *runner) logf(format string, args ...interface{}) {
@@ -91,20 +87,21 @@ func doMain() error {
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 	r.cwd = cwd
 
 	done := make(chan error)
 
 	numPrepTasks := 0
-	if enableGetButler {
-		numPrepTasks++
-		go func() {
-			done <- r.getButler()
-			r.logf("✓ Butler is all set up!")
-		}()
+
+	// we exist in the universe where I'm simultaneously pride and ashamed
+	// of this
+	electronVersionBytes, err := exec.Command("node", "-e", "console.log(/[0-9].+$/.exec(require('./package.json').devDependencies.electron)[0])").Output()
+	if err != nil {
+		return errors.WithStack(err)
 	}
+	r.electronVersion = strings.TrimSpace(string(electronVersionBytes))
 
 	numPrepTasks++
 	go func() {
@@ -183,7 +180,7 @@ func doMain() error {
 	appPath := cwd
 	binaryPathBytes, err := exec.Command("node", "-e", "console.log(require('electron'))").Output()
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 	binaryPath := strings.TrimSpace(string(binaryPathBytes))
 
@@ -207,14 +204,14 @@ func doMain() error {
 
 	driver, err := gs.NewSeleniumWebDriver(fmt.Sprintf("http://127.0.0.1:%d", chromeDriverPort), capabilities)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	r.driver = driver
 
 	sessRes, err := driver.CreateSession()
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	r.logf("We're talking to the app! (started in %s)", time.Since(startTime))
@@ -251,68 +248,6 @@ func doMain() error {
 	return nil
 }
 
-func (r *runner) getButler() error {
-	ext := ""
-	if runtime.GOOS == "windows" {
-		ext = ".exe"
-	}
-	butlerDest := filepath.Join(r.cwd, "tmp", "prefix", "userData", "broth", "butler", "versions", "9999.0.0", "butler"+ext)
-	err := os.MkdirAll(filepath.Dir(butlerDest), 0755)
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-	butlerFile, err := os.Create(butlerDest)
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-	defer func() {
-		must(butlerFile.Close())
-		must(os.Chmod(butlerDest, 0755))
-	}()
-
-	if _, ok := os.LookupEnv("CI"); !ok {
-		r.logf("Looking for local butler")
-		butlerSrc, err := exec.LookPath("butler" + ext)
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-		r.logf("Copying local butler from (%s)", butlerSrc)
-		r.logf("to (%s)", butlerDest)
-
-		butlerSrcFile, err := os.Open(butlerSrc)
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-		defer butlerSrcFile.Close()
-
-		_, err = io.Copy(butlerFile, butlerSrcFile)
-		if err != nil {
-			return errors.Wrap(err, 0)
-		}
-
-		return nil
-	}
-
-	r.logf("Downloading butler")
-	butlerURL := fmt.Sprintf("https://dl.itch.ovh/butler/%s-%s/head/butler.gz", runtime.GOOS, runtime.GOARCH)
-
-	req, err := http.Get(butlerURL)
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-
-	gunzipper, err := gzip.NewReader(req.Body)
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-
-	_, err = io.Copy(butlerFile, gunzipper)
-	if err != nil {
-		return errors.Wrap(err, 0)
-	}
-	return nil
-}
-
 func (r *runner) bundle() error {
 	r.logf("Bundling...")
 
@@ -323,7 +258,7 @@ func (r *runner) bundle() error {
 	err := cmd.Run()
 	if err != nil {
 		r.errf("Bundling failed: %v", err)
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 	return nil
 }
@@ -331,13 +266,7 @@ func (r *runner) bundle() error {
 func must(err error) {
 	if err != nil {
 		fmt.Println("==================================================================")
-		fmt.Println("Fatal error:")
-		switch err := err.(type) {
-		case *errors.Error:
-			fmt.Println(err.ErrorStack())
-		default:
-			fmt.Println(err.Error())
-		}
+		fmt.Println("Fatal error: %+v", err)
 		fmt.Println("==================================================================")
 
 		if r != nil {

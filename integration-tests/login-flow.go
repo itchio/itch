@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/go-errors/errors"
+	"github.com/pkg/errors"
 )
 
 func loginFlow(r *runner) {
@@ -40,7 +38,7 @@ func loginFlow(r *runner) {
 		must(r.waitUntilTextExists("#login-errors", "Incorrect username or password"))
 
 		if testAccountPassword == "" {
-			must(errors.Wrap(fmt.Errorf("No password in environment, not performing further login tests"), 0))
+			must(errors.Errorf("No password in environment, not performing further login tests"))
 		}
 
 		r.logf("logging in with valid credentials")

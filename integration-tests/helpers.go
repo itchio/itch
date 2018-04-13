@@ -11,7 +11,7 @@ import (
 	"time"
 
 	gs "github.com/fasterthanlime/go-selenium"
-	"github.com/go-errors/errors"
+	"github.com/pkg/errors"
 )
 
 // SLEEP is the amount of time the driver will sleep between each
@@ -37,23 +37,23 @@ func (r *runner) setValue(selector string, value string) error {
 
 	err := r.waitForVisible(selector)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	by := gs.ByCSSSelector(selector)
 	el, err := d.FindElement(by)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	_, err = el.Clear()
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	_, err = el.SendKeys(value)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -82,18 +82,18 @@ func (r *runner) clickWithTimeout(selector string, timeout time.Duration) error 
 
 	err := r.waitForVisibleWithTimeout(selector, timeout)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	by := gs.ByCSSSelector(selector)
 	el, err := d.FindElement(by)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	_, err = el.Click()
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -111,18 +111,18 @@ func (r *runner) moveTo(selector string) error {
 
 	err := r.waitForVisible(selector)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	by := gs.ByCSSSelector(selector)
 	el, err := d.FindElement(by)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	_, err = el.MoveTo(0, 0)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	return nil
@@ -151,7 +151,7 @@ func (r *runner) waitUntilTextExistsWithTimeout(selector string, value string, t
 
 	err := r.waitForVisible(selector)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	by := gs.ByCSSSelector(selector)
@@ -169,7 +169,7 @@ func (r *runner) waitUntilTextExistsWithTimeout(selector string, value string, t
 		return strings.Contains(text.Text, value)
 	}, timeout, SLEEP)
 	if !found {
-		return errors.Wrap(fmt.Errorf("timed out waiting for %s to have text '%s'", selector, value), 0)
+		return errors.Errorf("timed out waiting for %s to have text '%s'", selector, value)
 	}
 
 	return nil
@@ -213,7 +213,7 @@ func (r *runner) waitForVisibleWithTimeout(selector string, timeout time.Duratio
 	}, timeout, SLEEP)
 
 	if !found {
-		return errors.Wrap(fmt.Errorf("timed out waiting for %s to be visible", selector), 0)
+		return errors.Errorf("timed out waiting for %s to be visible", selector)
 	}
 
 	return nil
@@ -229,17 +229,17 @@ func (r *runner) takeScreenshot(name string) error {
 
 	s, err := r.driver.Screenshot()
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	imageBytes, err := s.ImageBytes()
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	err = os.MkdirAll("screenshots", 0755)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 
 	screenshotName := fmt.Sprintf("%s - %s", time.Now().UTC().Format(time.RFC3339Nano), name)
@@ -248,7 +248,7 @@ func (r *runner) takeScreenshot(name string) error {
 
 	err = ioutil.WriteFile(screenshotPath, imageBytes, 0644)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return errors.WithStack(err)
 	}
 	r.logf("Wrote %s", screenshotPath)
 
