@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -94,17 +95,29 @@ func doMain() error {
 
 	numPrepTasks := 0
 
+	r.logf("Killing any remaining chromedriver instances (woo)...")
+	switch runtime.GOOS {
+	case "windows":
+		err := exec.Command("taskkill.exe", "/f", "/im", "chromedriver.exe").Run()
+		r.logf("kill result: %+v", err.Error())
+	case "linux", "darwin":
+		err := exec.Command("killall", "-9", "chromedriver").Run()
+		r.logf("kill result: %+v", err.Error())
+	}
+
 	numPrepTasks++
 	go func() {
 		done <- downloadChromeDriver(r)
 		r.logf("✓ ChromeDriver is set up!")
 	}()
 
-	numPrepTasks++
-	go func() {
-		done <- r.bundle()
-		r.logf("✓ Everything is bundled!")
-	}()
+	if os.Getenv("NO_BUNDLE") != "1" {
+		numPrepTasks++
+		go func() {
+			done <- r.bundle()
+			r.logf("✓ Everything is bundled!")
+		}()
+	}
 
 	for i := 0; i < numPrepTasks; i++ {
 		must(<-done)
