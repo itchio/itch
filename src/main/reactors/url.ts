@@ -14,7 +14,7 @@ import { IStore } from "common/types";
 
 import { filter } from "underscore";
 import { call, messages } from "common/butlerd";
-import { reportIssue } from "common/util/crash-reporter";
+import { reportIssue } from "main/crash-reporter";
 import { isItchioURL } from "common/util/url";
 
 export default function(watcher: Watcher) {

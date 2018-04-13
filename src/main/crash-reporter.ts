@@ -2,7 +2,7 @@ import { shell, dialog } from "electron";
 import electron from "electron";
 const app = electron.app || electron.remote.app;
 
-import env from "../env";
+import env from "common/env";
 
 import path from "path";
 import querystring from "querystring";
@@ -18,7 +18,7 @@ import * as os from "main/os";
 import * as sf from "main/os/sf";
 
 import { t } from "common/format/t";
-import { ItchPromise } from "./itch-promise";
+import { ItchPromise } from "common/util/itch-promise";
 
 enum ErrorType {
   UncaughtException,

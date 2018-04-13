@@ -6,7 +6,7 @@ import "!style-loader!css-loader!react-hint/css/index.css";
 import "!style-loader!css-loader!react-json-inspector/json-inspector.css";
 
 import env from "common/env";
-if (env.development) {
+if (process.env.NODE_ENV !== "production") {
   require("react-hot-loader/patch");
   require("bluebird").config({
     longStackTraces: true,
