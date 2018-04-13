@@ -287,7 +287,7 @@ func must(err error) {
 		if r != nil {
 			r.errf("Failed in %s", time.Since(r.testStart))
 
-			if r.driver {
+			if r.driver != nil {
 				logRes, logErr := r.driver.Log("browser")
 				if logErr == nil {
 					r.logf("Browser log:")
