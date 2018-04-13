@@ -10,7 +10,6 @@ import styled from "../../styles";
 import { connect, Dispatchers, actionCreatorsList } from "../../connect";
 import { ISetupOperation, IRootState } from "common/types";
 
-import { reportIssue } from "common/util/crash-reporter";
 import { fileSize } from "common/format/filesize";
 import { downloadProgress } from "common/format/download-progress";
 import urls from "common/constants/urls";
@@ -59,7 +58,7 @@ const Spacer = styled.div`
 
 class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { retrySetup, blockingOperation, windows } = this.props;
+    const { retrySetup, reportIssue, blockingOperation, windows } = this.props;
 
     const { message, icon, progressInfo } = blockingOperation;
     const hasError = icon === "error";
@@ -116,8 +115,9 @@ class BlockingOperation extends React.PureComponent<IProps & IDerivedProps> {
                 label={T(["grid.item.report_problem"])}
                 onClick={() =>
                   reportIssue({
-                    type: "Trouble in setup",
-                    body: blockingOperation.stack,
+                    log: `Setup did not complete successfully:\n${
+                      blockingOperation.stack
+                    }`,
                   })
                 }
               />
@@ -154,7 +154,8 @@ interface IProps {
 
 const actionCreators = actionCreatorsList(
   "retrySetup",
-  "openInExternalBrowser"
+  "openInExternalBrowser",
+  "reportIssue"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;

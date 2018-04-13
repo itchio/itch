@@ -6,7 +6,7 @@ if (env.integrationTests) {
 
 require("common/util/crash-reporter").mount();
 
-if (env.development) {
+if (process.env.NODE_ENV !== "production") {
   Error.stackTraceLimit = Infinity;
 
   require("bluebird").config({
