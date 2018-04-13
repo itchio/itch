@@ -4,7 +4,7 @@ if (env.integrationTests) {
   require("main/boot/test-paths").setup();
 }
 
-require("common/util/crash-reporter").mount();
+require("main/crash-reporter").mount();
 
 if (process.env.NODE_ENV !== "production") {
   Error.stackTraceLimit = Infinity;
