@@ -16,7 +16,7 @@ import (
 	"github.com/go-errors/errors"
 )
 
-const chromeDriverVersion = "2.37"
+const chromeDriverVersion = "v2.0.0-beta.7"
 
 func downloadChromeDriver(r *runner) error {
 	driverCache := filepath.Join(r.cwd, ".chromedriver")
@@ -60,6 +60,7 @@ func downloadChromeDriver(r *runner) error {
 	}
 
 	url := chromeDriverURL()
+	r.logf("Downloading from %s", url)
 
 	req, err := http.Get(url)
 	if err != nil {
@@ -119,15 +120,19 @@ func downloadChromeDriver(r *runner) error {
 }
 
 func chromeDriverURL() string {
+	osString := ""
 	archString := ""
 	switch runtime.GOOS {
 	case "windows":
-		archString = "win32"
+		osString = "win32"
+		archString = "ia32"
 	case "darwin":
-		archString = "mac64"
+		osString = "darwin"
+		archString = "x64"
 	case "linux":
-		archString = "linux64"
+		osString = "linux"
+		archString = "x64"
 	}
 
-	return fmt.Sprintf("https://chromedriver.storage.googleapis.com/%s/chromedriver_%s.zip", chromeDriverVersion, archString)
+	return fmt.Sprintf("https://github.com/electron/electron/releases/download/%s/chromedriver-%s-%s-%s.zip", chromeDriverVersion, chromeDriverVersion, osString, archString)
 }
