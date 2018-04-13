@@ -37,7 +37,6 @@ type runner struct {
 	cleanup            CleanupFunc
 	testStart          time.Time
 	readyForScreenshot bool
-	electronVersion    string
 }
 
 func (r *runner) logf(format string, args ...interface{}) {
@@ -94,14 +93,6 @@ func doMain() error {
 	done := make(chan error)
 
 	numPrepTasks := 0
-
-	// we exist in the universe where I'm simultaneously pride and ashamed
-	// of this
-	electronVersionBytes, err := exec.Command("node", "-e", "console.log(/[0-9].+$/.exec(require('./package.json').devDependencies.electron)[0])").Output()
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	r.electronVersion = strings.TrimSpace(string(electronVersionBytes))
 
 	numPrepTasks++
 	go func() {
@@ -166,6 +157,13 @@ func doMain() error {
 	}()
 
 	must(r.chromeDriverCmd.Start())
+	go func() {
+		err := r.chromeDriverCmd.Wait()
+		if err != nil {
+			r.logf("chrome-driver crashed: %+v", err)
+			gocleanup.Exit(1)
+		}
+	}()
 
 	r.cleanup = func() {
 		r.logf("Cleaning up chrome driver...")
@@ -200,8 +198,6 @@ func doMain() error {
 	})
 	capabilities.SetChromeOptions(co)
 
-	startTime := time.Now()
-
 	driver, err := gs.NewSeleniumWebDriver(fmt.Sprintf("http://127.0.0.1:%d", chromeDriverPort), capabilities)
 	if err != nil {
 		return errors.WithStack(err)
@@ -209,19 +205,38 @@ func doMain() error {
 
 	r.driver = driver
 
-	sessRes, err := driver.CreateSession()
-	if err != nil {
-		return errors.WithStack(err)
+	tryCreateSession := func() error {
+		beforeCreateTime := time.Now()
+		sessRes, err := driver.CreateSession()
+		if err != nil {
+			return errors.WithStack(err)
+		}
+
+		r.logf("Session %s created in %s", time.Since(beforeCreateTime), sessRes.SessionID)
+		r.readyForScreenshot = true
+
+		err = r.takeScreenshot("initial")
+		if err != nil {
+			r.readyForScreenshot = false
+			return errors.WithStack(err)
+		}
+		return nil
 	}
 
-	r.logf("We're talking to the app! (started in %s)", time.Since(startTime))
-	r.logf("Session ID: %s", sessRes.SessionID)
-	r.readyForScreenshot = true
+	hasSession := false
+	for tries := 1; tries <= 5; tries++ {
+		r.logf("Creating a webdriver session (try #%d)", tries)
+		err := tryCreateSession()
+		if err == nil {
+			// oh joy!
+			hasSession = true
+			break
+		}
+	}
 
-	r.logf("Taking screenshot")
-	err = r.takeScreenshot("initial")
-	if err != nil {
-		r.errf("Could not take screenshot: %s", err.Error())
+	if !hasSession {
+		r.logf("Could not create a webdriver session :( We tried..")
+		gocleanup.Exit(1)
 	}
 
 	// Delete the session once this function is completed.
@@ -265,34 +280,33 @@ func (r *runner) bundle() error {
 
 func must(err error) {
 	if err != nil {
-		fmt.Println("==================================================================")
-		fmt.Println("Fatal error: %+v", err)
-		fmt.Println("==================================================================")
+		log.Printf("==================================================================")
+		log.Printf("Fatal error: %+v", err)
+		log.Printf("==================================================================")
 
 		if r != nil {
 			r.errf("Failed in %s", time.Since(r.testStart))
 
-			logRes, logErr := r.driver.Log("browser")
-			if logErr == nil {
-				r.logf("Browser log:")
-				for _, entry := range logRes.Entries {
-					stamp := time.Unix(int64(entry.Timestamp/1000.0), 0).Format(stampFormat)
-					fmt.Printf("♪ %s %s %s\n", stamp, entry.Level, strings.Replace(entry.Message, "\\n", "\n", -1))
+			if r.driver {
+				logRes, logErr := r.driver.Log("browser")
+				if logErr == nil {
+					r.logf("Browser log:")
+					for _, entry := range logRes.Entries {
+						stamp := time.Unix(int64(entry.Timestamp/1000.0), 0).Format(stampFormat)
+						fmt.Printf("♪ %s %s %s\n", stamp, entry.Level, strings.Replace(entry.Message, "\\n", "\n", -1))
+					}
+				} else {
+					r.errf("Could not get browser log: %s", logErr.Error())
 				}
-			} else {
-				r.errf("Could not get browser log: %s", logErr.Error())
+
+				r.logf("Taking failure screenshot...")
+				screenErr := r.takeScreenshot(err.Error())
+				if screenErr != nil {
+					r.errf("Could not take failure screenshot: %s", screenErr.Error())
+				}
 			}
 
-			r.logf("Taking failure screenshot...")
-			screenErr := r.takeScreenshot(err.Error())
-			if screenErr != nil {
-				r.errf("Could not take failure screenshot: %s", screenErr.Error())
-			}
-
-			if r.cleanup != nil {
-				r.cleanup()
-				os.Exit(1)
-			}
+			gocleanup.Exit(1)
 		}
 	}
 }
