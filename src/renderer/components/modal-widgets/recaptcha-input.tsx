@@ -10,6 +10,8 @@ import { modalWidgets, IModalWidgetProps } from "./index";
 
 const WidgetDiv = styled.div`
   position: relative;
+  height: 100%;
+  padding: 20px;
 
   webview {
     position: absolute;
