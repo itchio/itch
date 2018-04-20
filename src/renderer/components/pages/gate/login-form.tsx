@@ -10,6 +10,23 @@ import { Links } from "./links";
 
 import styled, * as styles from "../../styles";
 import { IRootState } from "common/types";
+import Icon from "../../basics/icon";
+import { formatError } from "common/format/errors";
+
+const ErrorDiv = styled.div`
+  min-width: 500px;
+  margin: 1.4em 0;
+
+  .header {
+    text-align: center;
+  }
+
+  .icon {
+    margin-right: 8px;
+  }
+
+  color: ${props => props.theme.error};
+`;
 
 class LoginForm extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -18,6 +35,7 @@ class LoginForm extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <LoginFormDiv>
         <Form onSubmit={this.handleSubmit}>
+          {this.renderError()}
           <label>
             {T(["login.field.username"])}
             <input
@@ -69,6 +87,22 @@ class LoginForm extends React.PureComponent<IProps & IDerivedProps> {
           />
         </Links>
       </LoginFormDiv>
+    );
+  }
+
+  renderError(): JSX.Element {
+    const err = this.props.error;
+    if (!err) {
+      return null;
+    }
+
+    return (
+      <ErrorDiv>
+        <div className="header">
+          <Icon icon="error" />
+          {T(formatError(err))}
+        </div>
+      </ErrorDiv>
     );
   }
 
@@ -141,11 +175,13 @@ const actionCreators = actionCreatorsList(
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   lastUsername?: string;
+  error?: Error;
 };
 
 export default connect<IProps>(LoginForm, {
   state: (rs: IRootState) => ({
     lastUsername: rs.profile.login.lastUsername,
+    error: rs.profile.login.error,
   }),
   actionCreators,
 });

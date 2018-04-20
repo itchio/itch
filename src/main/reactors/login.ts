@@ -108,7 +108,7 @@ export default function(watcher: Watcher) {
 
       await loginSucceeded(store, profile);
     } catch (e) {
-      store.dispatch(actions.loginFailed({ username, errors: [e.message] }));
+      store.dispatch(actions.loginFailed({ username, error: e }));
     }
   });
 
@@ -126,7 +126,7 @@ export default function(watcher: Watcher) {
       store.dispatch(
         actions.loginFailed({
           username: originalProfile.user.username,
-          errors: e.errors || e.stack || e,
+          error: e,
         })
       );
     }

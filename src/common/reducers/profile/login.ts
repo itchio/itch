@@ -22,11 +22,11 @@ export default reducer<IProfileLoginState>(initialState, on => {
   });
 
   on(actions.loginFailed, (state, action) => {
-    const { errors, username } = action.payload;
+    const { error, username } = action.payload;
 
     return {
       ...initialState,
-      errors,
+      error,
       blockingOperation: null,
       lastUsername: username,
     };

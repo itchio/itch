@@ -198,8 +198,8 @@ export const actions = wireActions({
     /** the username we couldn't log in as (useful to prefill login form for retry) */
     username: string;
 
-    /** a list of errors that occured while logging in */
-    errors: string[];
+    /** an error that occured while logging in */
+    error: Error;
   }>(),
   loginCancelled: action<{}>(),
   loginSucceeded: action<{

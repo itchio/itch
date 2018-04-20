@@ -322,7 +322,7 @@ export interface IProfileCredentialsState {
 }
 
 export interface IProfileLoginState {
-  errors: string[];
+  error?: Error;
   blockingOperation: ISetupOperation;
   lastUsername?: string;
 }
