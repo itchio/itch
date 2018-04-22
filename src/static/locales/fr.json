@@ -508,5 +508,6 @@
     "status.downloads.update_all": "Tout mettre à jour",
     "prereq.status.pending": "Préparation…",
     "butlerd.codes.404": "Le dossier d'installation a disparu",
-    "butlerd.codes.2001": "Aucun téléchargement compatible n'a été trouvé pour ce titre"
+    "butlerd.codes.2001": "Aucun téléchargement compatible n'a été trouvé pour ce titre",
+    "docs.how_to_help": "Comment puis-je aider ?"
 }
