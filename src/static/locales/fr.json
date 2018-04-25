@@ -450,7 +450,7 @@
     "download.outcome.healed": "vérifiées et réparées",
     "game.install.could_not_launch.message": "L'erreur suivante s'est produite : {{errorMessage}}",
     "grid.criterion.filter_by": "Filtrer par : ",
-    "grid.item.discard_download": "Arrêter le téléchargement",
+    "grid.item.discard_download": "Abandonner le téléchargement",
     "grid.item.not_compatible": "Indisponible sur cette plateforme",
     "grid.item.open_file_location.windows": "Ouvrir le dossier dans l'explorateur",
     "grid.item.open_file_location.linux": "Montrer dans le gestionnaire de fichiers",
@@ -509,5 +509,8 @@
     "prereq.status.pending": "Préparation…",
     "butlerd.codes.404": "Le dossier d'installation a disparu",
     "butlerd.codes.2001": "Aucun téléchargement compatible n'a été trouvé pour ce titre",
-    "docs.how_to_help": "Comment puis-je aider ?"
+    "docs.how_to_help": "Comment puis-je aider ?",
+    "grid.really_empty_state.leader": "Il n'y a rien ici...",
+    "grid.item.running.prepare": "Préparation...",
+    "login.status.finalizing_installation": "Finalisation de l'installation..."
 }
