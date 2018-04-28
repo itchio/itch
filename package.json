@@ -112,7 +112,7 @@
     "clarify": "^2.1.0",
     "codecov": "^2.2.0",
     "cross-env": "^5.0.0",
-    "electron": "^2.0.0-beta.7",
+    "electron": "^2.0.0-beta.8",
     "electron-react-devtools": "^0.5.3",
     "electron-rebuild-ftl": "^1.5.11",
     "electron-webpack": "^2.0.1",
