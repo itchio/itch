@@ -452,5 +452,8 @@
     "login.status.finalizing_installation": "Finalizando instalación...",
     "prereq.status.pending": "Preparando",
     "menu.file.close_other_tabs": "Cerrar las demás pestañas",
-    "preferences.advanced.disable_hardware_acceleration": "Deshabilitar aceleración por hardware (soluciona algunos fallos en Linux)"
+    "preferences.advanced.disable_hardware_acceleration": "Deshabilitar aceleración por hardware (soluciona algunos fallos en Linux)",
+    "prompt.action.nevermind": "Olvídalo",
+    "prompt.action.continue": "Continuar",
+    "prompt.discard_download.detail": "Podrás instalar {{title}} de nuevo en cualquier momento, pero empezará desde cero."
 }
