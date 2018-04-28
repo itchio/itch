@@ -458,5 +458,6 @@
     "prompt.discard_download.detail": "Podrás instalar {{title}} de nuevo en cualquier momento, pero empezará desde cero.",
     "prompt.discard_download.action.continue_download": "Continuar descarga",
     "prompt.dangerous_discard_download.detail": "Restauraremos {{title}} a la última versión la siguiente vez que intentes usarlo.",
-    "prompt.show_error.details_for_nerds.event_log": "Registro de eventos"
+    "prompt.show_error.details_for_nerds.event_log": "Registro de eventos",
+    "prompt.install_error.message": "La instalación falló."
 }
