@@ -444,5 +444,7 @@
     "collections.empty_sub": "¡Busca algunos juegos y agrégalos a una nueva colección!",
     "collections.empty": "Actualmente no posees ninguna colección",
     "grid.item.queueing": "Alistando...",
-    "grid.item.open_file_location.windows": "Abrir carpeta en el explorador"
+    "grid.item.open_file_location.windows": "Abrir carpeta en el explorador",
+    "grid.item.running.prepare": "Preparando...",
+    "grid.item.running.clean": "Limpiando..."
 }
