@@ -450,5 +450,6 @@
     "grid.item.manage": "Administrar",
     "browser.reenable": "Re-habilitar",
     "login.status.finalizing_installation": "Finalizando instalación...",
-    "prereq.status.pending": "Preparando"
+    "prereq.status.pending": "Preparando",
+    "menu.file.close_other_tabs": "Cerrar las demás pestañas"
 }
