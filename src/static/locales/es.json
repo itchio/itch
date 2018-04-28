@@ -447,5 +447,8 @@
     "grid.item.open_file_location.windows": "Abrir carpeta en el explorador",
     "grid.item.running.prepare": "Preparando...",
     "grid.item.running.clean": "Limpiando...",
-    "grid.item.manage": "Administrar"
+    "grid.item.manage": "Administrar",
+    "browser.reenable": "Re-habilitar",
+    "login.status.finalizing_installation": "Finalizando instalación...",
+    "prereq.status.pending": "Preparando"
 }
