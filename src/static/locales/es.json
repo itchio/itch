@@ -455,5 +455,6 @@
     "preferences.advanced.disable_hardware_acceleration": "Deshabilitar aceleración por hardware (soluciona algunos fallos en Linux)",
     "prompt.action.nevermind": "Olvídalo",
     "prompt.action.continue": "Continuar",
-    "prompt.discard_download.detail": "Podrás instalar {{title}} de nuevo en cualquier momento, pero empezará desde cero."
+    "prompt.discard_download.detail": "Podrás instalar {{title}} de nuevo en cualquier momento, pero empezará desde cero.",
+    "prompt.discard_download.action.continue_download": "Continuar descarga"
 }
