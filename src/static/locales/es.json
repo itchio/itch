@@ -461,5 +461,5 @@
     "prompt.show_error.details_for_nerds.event_log": "Registro de eventos",
     "prompt.install_error.message": "La instalación falló.",
     "status.cancelled.message": "La operación se ha cancelado.",
-    "status.uninstall.busy": "{{title}} no puede desinstalarse porque está ejecutándose."
+    "status.uninstall.busy": "{{title}} no puede ser desinstalado porque se está ejecutando."
 }
