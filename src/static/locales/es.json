@@ -293,7 +293,7 @@
     "action.name.play": "Juega ahora",
     "action.name.manual": "Manual de usuario",
     "action.name.editor": "Editor",
-    "prompt.launch.message": "{{title}} puede ser iniciado de varias formas: elige una.",
+    "prompt.launch.message": "¿Cual deseas abrir?",
     "grid.hidden_count": "+ {{count}} artículos ocultos por filtros",
     "action.name.forums": "Foros",
     "collection.empty": "Esta colección está vacía.",
