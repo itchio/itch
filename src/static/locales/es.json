@@ -462,5 +462,6 @@
     "prompt.install_error.message": "La instalación falló.",
     "status.cancelled.message": "La operación se ha cancelado.",
     "status.uninstall.busy": "{{title}} no puede ser desinstalado porque se está ejecutando.",
-    "setup.status.preparing": "Calentando..."
+    "setup.status.preparing": "Calentando...",
+    "setup.status.installing": "Descargando e instalando a {{speed}}"
 }
