@@ -446,5 +446,6 @@
     "grid.item.queueing": "Alistando...",
     "grid.item.open_file_location.windows": "Abrir carpeta en el explorador",
     "grid.item.running.prepare": "Preparando...",
-    "grid.item.running.clean": "Limpiando..."
+    "grid.item.running.clean": "Limpiando...",
+    "grid.item.manage": "Administrar"
 }
