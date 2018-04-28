@@ -456,5 +456,6 @@
     "prompt.action.nevermind": "Olvídalo",
     "prompt.action.continue": "Continuar",
     "prompt.discard_download.detail": "Podrás instalar {{title}} de nuevo en cualquier momento, pero empezará desde cero.",
-    "prompt.discard_download.action.continue_download": "Continuar descarga"
+    "prompt.discard_download.action.continue_download": "Continuar descarga",
+    "prompt.dangerous_discard_download.detail": "Restauraremos {{title}} a la última versión la siguiente vez que intentes usarlo."
 }
