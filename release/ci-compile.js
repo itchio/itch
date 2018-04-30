@@ -12,11 +12,19 @@ async function main() {
 
   $(await $.npm("install"));
 
-  $.say("Wiping dist...");
-  $(await $.sh("rm -rf dist"));
+  $.say("Wiping prefix...");
+  $(await $.sh("rm -rf prefix"));
+  $(await $.sh("mkdir -p prefix"));
 
   $.say("Compiling sources...");
   $(await $.sh("npm run compile"));
+
+  $.say("Copying dist to prefix...");
+  $(await $.sh("cp -rf dist prefix/"));
+
+  $.say("Copying static resources to prefix...");
+  $(await $.sh("mkdir prefix/src"));
+  $(await $.sh("cp -rf src/static prefix/src"));
 
   $.say("Generating custom package.json...");
   const pkg = JSON.parse(await $.readFile("package.json"));
@@ -26,13 +34,13 @@ async function main() {
   delete pkg.scripts.postinstall;
   pkg.version = $.buildVersion();
   const pkgContents = JSON.stringify(pkg, null, 2);
-  await $.writeFile(`dist/package.json`, pkgContents);
+  await $.writeFile(`prefix/package.json`, pkgContents);
 
-  $.say("Compressing dist...");
-  $(await $.sh("tar cf dist.tar dist"));
+  $.say("Compressing prefix...");
+  $(await $.sh("tar cf prefix.tar prefix"));
 
-  const stats = await $.lstat("dist.tar");
-  $.say(`dist.tar is ${humanize.fileSize(stats.size)}`);
+  const stats = await $.lstat("prefix.tar");
+  $.say(`prefix.tar is ${humanize.fileSize(stats.size)}`);
 }
 
 main();

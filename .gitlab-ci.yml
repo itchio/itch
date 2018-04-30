@@ -71,7 +71,7 @@ compile:
   artifacts:
     expire_in: 1 week
     paths:
-      - dist.tar
+      - prefix.tar
 
 # 32-bit linux portable builds
 package-linux-386:

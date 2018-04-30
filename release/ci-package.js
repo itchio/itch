@@ -16,7 +16,7 @@ async function ciPackage(args) {
 
   if (!$.OSES[os]) {
     const msg = `invalid os ${os}, must be in ${Object.keys($.OSES).join(
-      " ::: "
+      " ::: ",
     )}`;
     throw new Error(msg);
   }
@@ -24,7 +24,7 @@ async function ciPackage(args) {
   const archInfo = $.ARCHES[arch];
   if (!archInfo) {
     const msg = `invalid arch ${arch}, must be in ${Object.keys($.ARCHES).join(
-      " ::: "
+      " ::: ",
     )}`;
     throw new Error(msg);
   }
@@ -34,18 +34,18 @@ async function ciPackage(args) {
   $.say("Installing dependencies...");
   $(await $.npm(`install`));
 
-  $.say("Decompressing dist...");
-  $(await $.sh("rm -rf dist"));
-  $(await $.sh("tar xf dist.tar"));
+  $.say("Decompressing prefix...");
+  $(await $.sh("rm -rf prefix"));
+  $(await $.sh("tar xf prefix.tar"));
 
   $.say("Installing production modules...");
   await $.showVersions(["npm", "node"]);
-  await $.cd("dist", async () => {
+  await $.cd("prefix", async () => {
     $(await $.npm("install --production"));
   });
 
   const electronVersion = JSON.parse(
-    await $.readFile("package.json")
+    await $.readFile("package.json"),
   ).devDependencies.electron.replace(/^\^/, "");
   $.say(`Using electron ${electronVersion}`);
 
@@ -60,7 +60,7 @@ async function ciPackage(args) {
   var installerGifPath = "release/images/installer.gif";
 
   const electronSharedOptions = {
-    dir: "dist",
+    dir: "prefix",
     name: appName,
     electronVersion,
     appVersion,
@@ -97,12 +97,12 @@ async function ciPackage(args) {
       protocols: [
         {
           name: appName + ".io",
-          schemes: [appName + "io"]
+          schemes: [appName + "io"],
         },
         {
           name: appName,
-          schemes: [appName]
-        }
+          schemes: [appName],
+        },
       ],
     }),
     "linux-ia32": Object.assign({}, electronSharedOptions, {
@@ -118,9 +118,7 @@ async function ciPackage(args) {
   $(await $.sh("mkdir -p packages"));
 
   $.say("Installing electron packaging tools...");
-  packages = [
-    "electron-packager@9.0.0"
-  ];
+  packages = ["electron-packager@9.0.0"];
   $(await $.npm(`install --no-save ${packages.join(" ")}`));
 
   const darwin = require("./package/darwin");
@@ -158,9 +156,9 @@ async function ciPackage(args) {
           try {
             await $.cd(buildPath, async function() {
               await $.sh(
-                `${toUnixPath(ospath.join(wd, "release", "modclean.js"))} .`
+                `${toUnixPath(ospath.join(wd, "release", "modclean.js"))} .`,
               );
-            })
+            });
           } catch (err) {
             $.say(`While cleaning:\n${err.stack}`);
             callback(err);
@@ -169,9 +167,15 @@ async function ciPackage(args) {
           callback();
         },
       ],
-    }
+    },
   );
-  $.say(`electron-packager options: ${JSON.stringify(electronFinalOptions, null, 2)}`);
+  $.say(
+    `electron-packager options: ${JSON.stringify(
+      electronFinalOptions,
+      null,
+      2,
+    )}`,
+  );
   const appPaths = await $.measure("electron package + rebuild", async () => {
     return await electronPackager(electronFinalOptions);
   });
@@ -194,7 +198,7 @@ async function ciPackage(args) {
     case "linux":
       // tl;dr code-signing on Linux isn't a thing
       break;
-  } 
+  }
 
   $(await $.sh(`mkdir -p packages`));
   if (os === "darwin") {

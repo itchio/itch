@@ -1,10 +1,9 @@
 const isDev = require("electron-is-dev");
-import { readFileSync } from "fs";
-const isCanary =
-  JSON.parse(readFileSync("package.json", { encoding: "utf8" })).name ===
-  "kitch";
+import { app, remote } from "electron";
+const isCanary = (app || remote.app).getName() === "kitch";
 
 const envName = process.env.NODE_ENV || (isDev ? "development" : "production");
+process.env[["NODE", "ENV"].join("_")] = envName;
 
 export default {
   channel: isCanary ? "canary" : "stable",
