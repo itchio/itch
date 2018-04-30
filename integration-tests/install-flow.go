@@ -55,8 +55,8 @@ func installFlow(r *runner) {
 	r.takeScreenshot("installed game tab")
 
 	r.logf("re-installing it")
-	must(r.click(".meat-tab.visible .more-actions"))
-	must(r.click("#context--grid-item-manage"))
+	must(r.click(".meat-tab.visible .manage-game"))
+	must(r.click(".manage-cave"))
 	must(r.click(".manage-reinstall"))
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
 
@@ -86,9 +86,9 @@ func installFlow(r *runner) {
 
 	r.logf("uninstalling it")
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
-	must(r.click(".meat-tab.visible .more-actions"))
-	must(r.click("#context--grid-item-manage"))
+	must(r.click(".meat-tab.visible .manage-game"))
 	r.takeScreenshot("managing uploads")
+	must(r.click(".manage-cave"))
 	must(r.click(".manage-uninstall"))
 	must(r.waitUntilTextExists(mainActionSelector, "Install"))
 }

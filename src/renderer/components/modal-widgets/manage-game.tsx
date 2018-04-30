@@ -131,6 +131,7 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
                     <Filler />
                     <CaveItemActions>
                       <Button
+                        className="manage-cave"
                         data-cave-id={cave.id}
                         icon="cog"
                         discreet
