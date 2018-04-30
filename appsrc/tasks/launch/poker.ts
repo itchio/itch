@@ -258,6 +258,9 @@ function computeScore (execs: IScoredExecutable[]): IScoredExecutable[] {
       // launcher scripts > jar, in case of bundled JRE, cf. https://github.com/itchio/itch/issues/819
       score -= 5;
     }
+    if (/unitycrashhandler.*\.exe$/i.test(name)) {
+      score = -10000; // ffs
+    }
     exe.score = score;
 
     if (score > 0) {
