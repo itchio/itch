@@ -1,6 +1,8 @@
 const isDev = require("electron-is-dev");
 import { app, remote } from "electron";
-const isCanary = (app || remote.app).getName() === "kitch";
+const isCanary =
+  (app || (remote && remote.app) || { getName: () => "itch" }).getName() ===
+  "kitch";
 
 const envName = process.env.NODE_ENV || (isDev ? "development" : "production");
 process.env[["NODE", "ENV"].join("_")] = envName;
