@@ -22,4 +22,11 @@ export default reducer<ISystemState>(initialState, on => {
       proxySource: source,
     };
   });
+
+  on(actions.quit, (state, action) => {
+    return {
+      ...state,
+      quitting: true,
+    };
+  });
 });

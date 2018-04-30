@@ -457,7 +457,8 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.quitAndInstall, async (store, action) => {
-    logger.info("Handing off to Squirrel for self-update");
-    require("electron").autoUpdater.quitAndInstall();
+    // TODO: actually implement
+    logger.info("Handing off to itch-setup for self-update");
+    store.dispatch(actions.quit({}));
   });
 }

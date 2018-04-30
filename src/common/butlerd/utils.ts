@@ -28,18 +28,22 @@ export async function withButlerClient<T>(
   try {
     res = await cb(client);
   } catch (e) {
-    console.error(`Caught butler error:`);
-    if (isInternalError(e)) {
-      const ed = getRpcErrorData(e);
-      if (ed) {
-        console.error(`butler version: ${ed.butlerVersion}`);
-        console.error(`Golang stack:\n${ed.stack}`);
-      }
-      console.error(`JavaScript stack: ${e.stack}`);
+    if (getRootState().system.quitting) {
+      // ignore butlerd error when quitting
     } else {
-      console.error(`${e.message}`);
+      console.error(`Caught butler error:`);
+      if (isInternalError(e)) {
+        const ed = getRpcErrorData(e);
+        if (ed) {
+          console.error(`butler version: ${ed.butlerVersion}`);
+          console.error(`Golang stack:\n${ed.stack}`);
+        }
+        console.error(`JavaScript stack: ${e.stack}`);
+      } else {
+        console.error(`${e.message}`);
+      }
+      err = e;
     }
-    err = e;
   } finally {
     client.close();
   }
