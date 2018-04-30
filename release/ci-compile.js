@@ -16,7 +16,7 @@ async function main() {
   $(await $.sh("rm -rf dist"));
 
   $.say("Compiling sources...");
-  $(await $.sh("NODE_ENV=production node ./src/init.js"));
+  $(await $.sh("npm run compile"));
 
   $.say("Generating custom package.json...");
   const pkg = JSON.parse(await $.readFile("package.json"));
