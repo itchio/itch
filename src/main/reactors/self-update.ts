@@ -165,4 +165,5 @@ async function checkForComponentsUpdate() {
 
 async function checkForSelfUpdate(store: IStore) {
   // TODO: re-implement
+  store.dispatch(actions.selfUpdateNotAvailable({ uptodate: true }));
 }

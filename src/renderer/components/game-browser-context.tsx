@@ -47,31 +47,31 @@ class GameBrowserContext extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     return (
-      <BrowserContextDiv onContextMenu={this.onContextMenu}>
+      <BrowserContextDiv>
         <MainAction game={game} status={status} wide />
         <Spacer />
         <GameStats game={game} status={status} />
         <Filler />
         <IconButton
-          className="more-actions"
+          className="manage-game"
           huge
           emphasized
-          icon="more_vert"
-          onClick={this.onContextMenu}
+          icon="cog"
+          onClick={this.onManage}
         />
       </BrowserContextDiv>
     );
   }
 
-  onContextMenu = (ev: React.MouseEvent<any>) => {
-    const { game, openGameContextMenu } = this.props;
-    openGameContextMenu({ game, clientX: ev.clientX, clientY: ev.pageY });
+  onManage = (ev: React.MouseEvent<any>) => {
+    const { game, manageGame } = this.props;
+    manageGame({ game });
   };
 }
 
 interface IProps extends IBrowserControlProps {}
 
-const actionCreators = actionCreatorsList("openGameContextMenu");
+const actionCreators = actionCreatorsList("openGameContextMenu", "manageGame");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   game: Game;

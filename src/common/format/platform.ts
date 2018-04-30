@@ -1,6 +1,6 @@
-import { ItchPlatform } from "common/butlerd/messages";
+import { Platform } from "common/butlerd/messages";
 
-const itchPlatforms = {
+const platforms = {
   linux: "Linux", // we hardly GNU you
   windows: "Windows",
   osx: "macOS", // since WWDC june 2016
@@ -10,8 +10,8 @@ const itchPlatforms = {
 /**
  * Formats a platform for humans to read.
  */
-export function formatItchPlatform(p: ItchPlatform): string {
-  return itchPlatforms[p] || p;
+export function formatPlatform(p: Platform): string {
+  return platforms[p] || p;
 }
 
 export function formatArch(arch: string): string {

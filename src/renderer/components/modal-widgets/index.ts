@@ -1,15 +1,16 @@
 import React from "react";
 import ManageGame, { IManageGameParams } from "./manage-game";
+import ManageCave, { IManageCaveParams } from "./manage-cave";
 import ExploreJson, {
   IExploreJsonParams,
   IExploreJsonResponse,
 } from "./explore-json";
 import SecretSettings, { ISecretSettingsParams } from "./secret-settings";
 import ShowError, { IShowErrorParams } from "./show-error";
-import RevertCave, {
-  IRevertCaveParams,
-  IRevertCaveResponse,
-} from "./revert-cave";
+import SwitchVersionCave, {
+  ISwitchVersionCaveParams,
+  ISwitchCaveResponse,
+} from "./switch-version-cave";
 import RecaptchaInput, {
   IRecaptchaInputParams,
   IRecaptchaInputResponse,
@@ -117,11 +118,14 @@ export const modalWidgets = wireWidgets({
   exploreJson: widget<IExploreJsonParams, IExploreJsonResponse>(ExploreJson),
 
   manageGame: widget<IManageGameParams, void>(ManageGame),
+  manageCave: widget<IManageCaveParams, void>(ManageCave),
   prereqsState: widget<IPrereqsStateParams, void>(PrereqsState),
   recaptchaInput: widget<IRecaptchaInputParams, IRecaptchaInputResponse>(
     RecaptchaInput
   ),
-  revertCave: widget<IRevertCaveParams, IRevertCaveResponse>(RevertCave),
+  switchVersionCave: widget<ISwitchVersionCaveParams, ISwitchCaveResponse>(
+    SwitchVersionCave
+  ),
   secretSettings: widget<ISecretSettingsParams, void>(SecretSettings),
   showError: widget<IShowErrorParams, void>(ShowError),
   twoFactorInput: widget<ITwoFactorInputParams, ITwoFactorInputResponse>(

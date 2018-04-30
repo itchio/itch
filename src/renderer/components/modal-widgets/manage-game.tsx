@@ -3,7 +3,6 @@ import React from "react";
 import { ModalWidgetDiv } from "./modal-widget";
 import { Game, Upload, Cave } from "common/butlerd/messages";
 
-import IconButton from "../basics/icon-button";
 import UploadIcon from "../basics/upload-icon";
 import Button from "../basics/button";
 import Filler from "../basics/filler";
@@ -17,7 +16,6 @@ import { actions } from "common/actions";
 import { T } from "renderer/t";
 import LoadingCircle from "../basics/loading-circle";
 import { formatUploadTitle } from "common/format/upload";
-import { showInExplorerString } from "common/format/show-in-explorer";
 import TotalPlaytime from "../total-playtime";
 import LastPlayed from "../last-played";
 import { IModalWidgetProps } from "./index";
@@ -132,26 +130,15 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
                     </CaveDetails>
                     <Filler />
                     <CaveItemActions>
-                      <IconButton
+                      <Button
                         data-cave-id={cave.id}
-                        hint={showInExplorerString()}
-                        icon="folder-open"
-                        onClick={this.onExplore}
-                      />
-                      <IconButton
-                        data-cave-id={cave.id}
-                        hint={["prompt.uninstall.reinstall"]}
-                        icon="repeat"
-                        onClick={this.onReinstall}
-                        className="manage-reinstall"
-                      />
-                      <IconButton
-                        data-cave-id={cave.id}
-                        hint={["prompt.uninstall.uninstall"]}
-                        icon="uninstall"
-                        onClick={this.onUninstall}
-                        className="manage-uninstall"
-                      />
+                        icon="cog"
+                        discreet
+                        primary
+                        onClick={this.onManage}
+                      >
+                        {T(["grid.item.manage"])}
+                      </Button>
                     </CaveItemActions>
                   </CaveItem>
                 );
@@ -219,23 +206,11 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
     });
   };
 
-  onUninstall = (ev: React.MouseEvent<HTMLElement>) => {
+  onManage = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = ev.currentTarget.dataset.caveId;
     this.props.closeModal({
-      action: actions.queueCaveUninstall({ caveId }),
+      action: actions.manageCave({ caveId }),
     });
-  };
-
-  onReinstall = (ev: React.MouseEvent<HTMLElement>) => {
-    const caveId = ev.currentTarget.dataset.caveId;
-    this.props.closeModal({
-      action: actions.queueCaveReinstall({ caveId }),
-    });
-  };
-
-  onExplore = (ev: React.MouseEvent<HTMLElement>) => {
-    const caveId = ev.currentTarget.dataset.caveId;
-    this.props.exploreCave({ caveId });
   };
 }
 
@@ -248,7 +223,11 @@ export interface IManageGameParams {
 
 interface IProps extends IModalWidgetProps<IManageGameParams, void> {}
 
-const actionCreators = actionCreatorsList("closeModal", "exploreCave");
+const actionCreators = actionCreatorsList(
+  "closeModal",
+  "exploreCave",
+  "manageCave"
+);
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 

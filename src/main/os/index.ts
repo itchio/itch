@@ -2,7 +2,7 @@ import * as os from "os";
 
 export * from "./assert-presence";
 import env from "common/env";
-import { ItchPlatform } from "common/butlerd/messages";
+import { Platform } from "common/butlerd/messages";
 
 export function platform(): string {
   return process.platform;
@@ -43,16 +43,16 @@ export function getVersion(key: VersionKey): string {
 /**
  * Get platform in the format used by the itch.io API
  */
-export function itchPlatform(): ItchPlatform {
+export function itchPlatform(): Platform {
   switch (platform()) {
     case "darwin":
-      return ItchPlatform.OSX;
+      return Platform.OSX;
     case "win32":
-      return ItchPlatform.Windows;
+      return Platform.Windows;
     case "linux":
-      return ItchPlatform.Linux;
+      return Platform.Linux;
     default:
-      return ItchPlatform.Unknown;
+      return Platform.Unknown;
   }
 }
 

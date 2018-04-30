@@ -78,12 +78,12 @@ const BuildListDiv = styled.div`
   }
 `;
 
-function monthFor(b: Build) {
-  const date = b.updatedAt;
+function monthFor(b: Build): number {
+  const date = new Date(b.updatedAt);
   return date.getUTCFullYear() * 12 + date.getUTCMonth();
 }
 
-class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
+class SwitchVersionCave extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { builds } = this.props.modal.widgetParams;
 
@@ -96,7 +96,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
         const monthDate = build.updatedAt;
         buildElements.push(
           <div key={`month-${month}`} className="builds--month">
-            <CustomDate date={monthDate} format={MONTH_YEAR_FORMAT} />
+            <CustomDate date={new Date(monthDate)} format={MONTH_YEAR_FORMAT} />
           </div>
         );
         lastMonth = month;
@@ -104,9 +104,11 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
       buildElements.push(this.renderBuild(index, build));
     }
 
+    console.log(`buildElement: `, buildElements);
+
     return (
       <ModalWidgetDiv>
-        <BuildListDiv>{builds}</BuildListDiv>
+        <BuildListDiv>{buildElements}</BuildListDiv>
       </ModalWidgetDiv>
     );
   }
@@ -119,7 +121,7 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
       <div
         className="builds--item"
         key={b.id}
-        data-index={b.id}
+        data-index={index}
         onClick={this.onClick}
       >
         <Icon icon="history" />
@@ -141,29 +143,29 @@ class RevertCave extends React.PureComponent<IProps & IDerivedProps> {
 
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     const index = parseInt(ev.currentTarget.dataset.index, 10);
-    const res: IRevertCaveResponse = { index };
+    const res: ISwitchCaveResponse = { index };
     this.props.closeModal({
       action: actions.modalResponse(res),
     });
   };
 }
 
-export interface IRevertCaveParams {
+export interface ISwitchVersionCaveParams {
   cave: Cave;
   upload: Upload;
   builds: Build[];
 }
 
-export interface IRevertCaveResponse {
+export interface ISwitchCaveResponse {
   /** index of build to revert to (or negative to abort) */
   index?: number;
 }
 
 interface IProps
-  extends IModalWidgetProps<IRevertCaveParams, IRevertCaveResponse> {}
+  extends IModalWidgetProps<ISwitchVersionCaveParams, ISwitchCaveResponse> {}
 
 const actionCreators = actionCreatorsList("closeModal");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(RevertCave, { actionCreators });
+export default connect<IProps>(SwitchVersionCave, { actionCreators });

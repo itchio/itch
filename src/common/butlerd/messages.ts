@@ -49,6 +49,36 @@ export const VersionGet = createRequest<VersionGetParams, VersionGetResult>(
 );
 
 /**
+ * Result for Network.SetSimulateOffline
+ */
+export interface NetworkSetSimulateOfflineResult {
+  // no fields
+}
+
+/**
+ * undocumented
+ */
+export const NetworkSetSimulateOffline = createRequest<
+  NetworkSetSimulateOfflineParams,
+  NetworkSetSimulateOfflineResult
+>("Network.SetSimulateOffline");
+
+/**
+ * Result for Network.SetBandwidthThrottle
+ */
+export interface NetworkSetBandwidthThrottleResult {
+  // no fields
+}
+
+/**
+ * undocumented
+ */
+export const NetworkSetBandwidthThrottle = createRequest<
+  NetworkSetBandwidthThrottleParams,
+  NetworkSetBandwidthThrottleResult
+>("Network.SetBandwidthThrottle");
+
+/**
  * Result for Profile.List
  */
 export interface ProfileListResult {
@@ -680,8 +710,6 @@ export const InstallVersionSwitchPick = createRequest<
  * including the download key if any.
  */
 export interface GameCredentials {
-  /** Defaults to `https://itch.io` */
-  server?: string;
   /** A valid itch.io API key */
   apiKey: string;
   /** A download key identifier, or 0 if no download key is available */
@@ -935,10 +963,12 @@ export const DownloadsDriveStarted = createNotification<
  * Payload for Downloads.Drive.Errored
  */
 export interface DownloadsDriveErroredNotification {
-  /** undocumented */
+  /**
+   * The download that errored. It contains all the error
+   * information: a short message, a full stack trace,
+   * and a butlerd error code.
+   */
   download: Download;
-  /** undocumented */
-  error: string;
 }
 
 /**
@@ -977,6 +1007,30 @@ export interface DownloadsDriveDiscardedNotification {
 export const DownloadsDriveDiscarded = createNotification<
   DownloadsDriveDiscardedNotification
 >("Downloads.Drive.Discarded");
+
+/**
+ * Payload for Downloads.Drive.NetworkStatus
+ */
+export interface DownloadsDriveNetworkStatusNotification {
+  /** The current network status */
+  status: NetworkStatus;
+}
+
+/**
+ * Sent during @@DownloadsDriveParams to inform on network
+ * status changes.
+ */
+export const DownloadsDriveNetworkStatus = createNotification<
+  DownloadsDriveNetworkStatusNotification
+>("Downloads.Drive.NetworkStatus");
+
+/**
+ * undocumented
+ */
+export enum NetworkStatus {
+  Online = "online",
+  Offline = "offline",
+}
 
 /**
  * undocumented
@@ -1289,16 +1343,6 @@ export const TestDouble = createRequest<TestDoubleParams, TestDoubleResult>(
 );
 
 /**
- * undocumented
- */
-export enum ItchPlatform {
-  OSX = "osx",
-  Windows = "windows",
-  Linux = "linux",
-  Unknown = "unknown",
-}
-
-/**
  * butlerd JSON-RPC 2.0 error codes
  */
 export enum Code {
@@ -1353,7 +1397,7 @@ export interface Action {
   /** don't redirect stdout/stderr, open in new console window */
   console: boolean;
   /** platform to restrict this action too */
-  platform: ItchPlatform;
+  platform: Platform;
   /** localized action name */
   locales: Map<string, ActionLocale>;
 }
@@ -1812,7 +1856,7 @@ export interface Candidate {
   arch: Arch;
   /** Size is the size of the candidate's file, in bytes */
   size: number;
-  /** Spell contains raw output from <https://github.com/fasterthanlime/wizardry> */
+  /** Spell contains raw output from <https://github.com/itchio/wizardry> */
   spell?: string[];
   /** WindowsInfo contains information specific to native Windows candidates */
   windowsInfo?: WindowsInfo;
@@ -1931,6 +1975,26 @@ export interface JarInfo {
 }
 
 /**
+ * undocumented
+ */
+export enum Platform {
+  OSX = "osx",
+  Windows = "windows",
+  Linux = "linux",
+  Unknown = "unknown",
+}
+
+/**
+ * Runtime describes an os-arch combo in a convenient way
+ */
+export interface Runtime {
+  /** undocumented */
+  platform: Platform;
+  /** undocumented */
+  is64: boolean;
+}
+
+/**
  * A Receipt describes what was installed to a specific folder.
  *
  * It's compressed and written to `./.itch/receipt.json.gz` every
@@ -1961,6 +2025,27 @@ export interface Receipt {
  */
 export interface VersionGetParams {
   // no fields
+}
+
+/**
+ * Params for Network.SetSimulateOffline
+ */
+export interface NetworkSetSimulateOfflineParams {
+  /**
+   * If true, all operations after this point will behave
+   * as if there were no network connections
+   */
+  enabled: boolean;
+}
+
+/**
+ * Params for Network.SetBandwidthThrottle
+ */
+export interface NetworkSetBandwidthThrottleParams {
+  /** If true, will limit. If false, will clear any bandwidth throttles in place */
+  enabled: boolean;
+  /** The target bandwidth, in kbps */
+  rate: number;
 }
 
 /**

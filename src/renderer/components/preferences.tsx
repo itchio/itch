@@ -21,7 +21,7 @@ import { IMeatProps } from "renderer/components/meats/types";
 
 import styled, * as styles from "./styles";
 import Icon from "./basics/icon";
-import { formatItchPlatform, formatArch } from "common/format/platform";
+import { formatPlatform, formatArch } from "common/format/platform";
 import LoadingCircle from "./basics/loading-circle";
 import { downloadProgress } from "common/format/download-progress";
 
@@ -240,7 +240,7 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           );
         })}
         <p className="section">
-          <Icon icon="security" /> {formatItchPlatform(system.platform)}{" "}
+          <Icon icon="security" /> {formatPlatform(system.platform)}{" "}
           {formatArch(system.arch)}
         </p>
         <p>

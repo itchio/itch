@@ -614,6 +614,10 @@ export const actions = wireActions({
     /** which game to manage */
     game: Game;
   }>(),
+  manageCave: action<{
+    /** which cave to manage */
+    caveId: string;
+  }>(),
   requestCaveUninstall: action<{
     /** id of the cave to uninstall */
     caveId: string;
@@ -673,9 +677,9 @@ export const actions = wireActions({
     update: GameUpdate;
   }>(),
   queueAllGameUpdates: action<{}>(),
-  revertCaveRequest: action<{
+  switchVersionCaveRequest: action<{
     /** the cave to revert to a different build */
-    caveId: string;
+    cave: Cave;
   }>(),
   viewCaveDetails: action<{
     /** the cave to view details of */

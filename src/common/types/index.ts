@@ -19,7 +19,7 @@ import {
   DownloadKeySummary,
   Download,
   DownloadProgress,
-  ItchPlatform,
+  Platform,
 } from "common/butlerd/messages";
 import { IEndpoint } from "butlerd";
 export interface IStore extends Store<IRootState> {}
@@ -249,7 +249,7 @@ export interface ISystemState {
   appVersion: string;
 
   /** the platform string, in itch format */
-  platform: ItchPlatform;
+  platform: Platform;
 
   /** 'ia32' or 'x64' */
   arch: string;
@@ -669,7 +669,7 @@ export interface IProgressListener {
 }
 
 export interface IRuntime {
-  platform: ItchPlatform;
+  platform: Platform;
 }
 
 export interface IMenuItem extends Electron.MenuItemConstructorOptions {

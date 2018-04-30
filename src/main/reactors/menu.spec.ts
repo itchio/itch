@@ -6,13 +6,13 @@ import "electron";
 import menu from "./menu";
 import { find, findWhere } from "underscore";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
-import { ItchPlatform } from "common/butlerd/messages";
+import { Platform } from "common/butlerd/messages";
 
 describe("menu", () => {
   it("builds the menu", async () => {
     let w = new TestWatcher();
     const winRuntime: IRuntime = {
-      platform: ItchPlatform.Windows,
+      platform: Platform.Windows,
     };
     menu(w, winRuntime);
 
@@ -107,7 +107,7 @@ describe("menu", () => {
     visitAll();
 
     const macRuntime: IRuntime = {
-      platform: ItchPlatform.OSX,
+      platform: Platform.OSX,
     };
     fleshed = fleshOutTemplate(w.store, macRuntime, template);
     visitAll();
