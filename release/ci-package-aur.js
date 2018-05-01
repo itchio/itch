@@ -52,7 +52,7 @@ $.cd('aur-stage', function () {
   $($.sh(`namcap "${$.app_name()}-${ver}-${rel}-${$.get_output('uname -m').trim()}.pkg.tar.xz"`))
 
   $.say('Updating .SRCINFO...')
-  $($.sh('mksrcinfo'))
+  $($.sh('makepkg --printsrcinfo > .SRCINFO'))
 
   $.say('Pushing to AUR...')
   $($.sh(`git add PKGBUILD .SRCINFO ${$.app_name()}.install`))
