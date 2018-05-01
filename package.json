@@ -72,7 +72,7 @@
     "moment": "^2.15.1",
     "moment-timezone": "^0.5.4",
     "nconf": "^0.8.2",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.9.0",
     "proxyquire": "^1.7.3",
     "rc-progress": "^2.0.3",
     "react": "^15.4.2",
