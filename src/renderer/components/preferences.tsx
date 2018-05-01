@@ -266,7 +266,7 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
               navigate({ url: "itch://downloads" });
             }}
           >
-            Check for game updates
+            {T(["preferences.advanced.check_game_updates"])}
           </span>
         </p>
         <p className="section">

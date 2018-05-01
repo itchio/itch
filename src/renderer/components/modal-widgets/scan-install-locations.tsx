@@ -3,6 +3,7 @@ import React from "react";
 import { ModalWidgetDiv } from "./modal-widget";
 import { IModalWidgetProps } from ".";
 import Cover from "../basics/cover";
+import { T } from "renderer/t";
 
 import LoadingCircle from "../basics/loading-circle";
 
@@ -36,7 +37,7 @@ class ScanInstallLocations extends React.PureComponent<IProps> {
         <ContainerDiv>
           <SectionDiv>
             <LoadingCircle wide progress={progress} />
-            Looking for games...
+            {T(["preferences.scan_install_locations.looking_for_games"])}
           </SectionDiv>
           <SectionDiv>
             <div className="cover-container">

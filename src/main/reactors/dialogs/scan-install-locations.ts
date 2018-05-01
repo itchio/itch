@@ -16,7 +16,7 @@ export default function(watcher: Watcher) {
 
     const openModal = actions.openModal(
       modalWidgets.scanInstallLocations.make({
-        title: "Scanning...",
+        title: ["preferences.scan_install_locations.title"],
         message: "",
         buttons: [
           {
@@ -68,13 +68,16 @@ export default function(watcher: Watcher) {
               const res = await promisedModal(
                 store,
                 modalWidgets.naked.make({
-                  title: "Confirm import",
-                  message: "The following items can be imported:",
+                  title: ["preferences.scan_install_locations.confirm_import"],
+                  message: ["preferences.scan_install_locations.message"],
                   detail: names.map(n => `  * ${n}`).join("\n") + "\n",
                   widgetParams: null,
                   buttons: [
                     {
-                      label: `Import ${params.numItems} items`,
+                      label: [
+                        "preferences.scan_install_locations.import_items",
+                        { numItems: params.numItems },
+                      ],
                       icon: "install",
                       action: actions.modalResponse({}),
                     },
@@ -91,16 +94,17 @@ export default function(watcher: Watcher) {
       if (importRes.numFoundItems == 0) {
         store.dispatch(
           actions.statusMessage({
-            message: "No additional items founds in install locations",
+            message: ["preferences.scan_install_locations.no_items_found"],
           })
         );
       } else if (importRes.numImportedItems > 0) {
         store.dispatch(actions.newItemsImported({}));
         store.dispatch(
           actions.statusMessage({
-            message: `${
-              importRes.numImportedItems
-            } items were successfully imported`,
+            message: [
+              "preferences.scan_install_locations.items_imported",
+              { numImportedItems: importRes.numImportedItems },
+            ],
           })
         );
       }
