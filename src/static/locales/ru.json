@@ -78,7 +78,7 @@
     "preferences.install_locations": "Папки установки",
     "preferences.language": "Язык",
     "preferences.language.auto": "Язык системы ({{language}})",
-    "preferences.language.get_involved": "Вы можете помочь с переводом {{name}} на свой язык!",
+    "preferences.language.get_involved": "Вы можете помочь с переводом {{name}} на ваш язык!",
     "prompt.action.cancel": "Отмена",
     "prompt.action.close": "Закрыть",
     "prompt.action.confirm_removal": "Удалить",
@@ -524,5 +524,18 @@
     "prompt.show_error.send_report": "Отправить отчёт об ошибке, чтобы помочь её исправить",
     "butlerd.codes.3000": "Это приложение упаковано так, что не совместимо с itch.io.",
     "butlerd.codes.5000": "Не найдено ничего, что можно было бы запустить.",
-    "butlerd.codes.9000": "Нет соединения с интернетом."
+    "butlerd.codes.9000": "Нет соединения с интернетом.",
+    "preferences.install_location.size_used_by_games": "{{installedSize}} занято играми",
+    "preferences.install_location.free_of_total": "{{freeSize}} свободно из {{totalSize}}",
+    "preferences.scan_install_locations": "Найти игры в папках установки",
+    "preferences.scan_install_locations.confirm_import": "Подтвердить добавление",
+    "preferences.scan_install_locations.import_items": "Добавить {{numItems}} игр",
+    "preferences.scan_install_locations.items_imported": "{{numImportedItems}} игр было успешно добавлено",
+    "preferences.scan_install_locations.looking_for_games": "Ищем игры...",
+    "preferences.scan_install_locations.message": "Эти игры могут быть добавлены:",
+    "preferences.scan_install_locations.no_items_found": "Новых игр в папках установки не найдено",
+    "preferences.scan_install_locations.title": "Сканируем...",
+    "preferences.advanced.check_game_updates": "Проверить обновления игр",
+    "status.downloads.resume_downloads": "Возобновить загрузки",
+    "status.downloads.pause_downloads": "Приостановить загрузки"
 }
