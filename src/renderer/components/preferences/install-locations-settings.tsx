@@ -166,7 +166,7 @@ class InstallLocationSettings extends React.Component<
           <Spacer />
           <Button
             icon="repeat"
-            label="Scan install locations for games"
+            label={T(["preferences.scan_install_locations"])}
             onClick={() => this.props.scanInstallLocations({})}
           />
         </ControlButtonsDiv>
@@ -204,7 +204,10 @@ class InstallLocationSettings extends React.Component<
               <>
                 <div
                   className="progress-wrapper"
-                  data-rh={`${fileSize(installedSize)} used by games`}
+                  data-rh={JSON.stringify([
+                    "preferences.install_location.size_used_by_games",
+                    { installedSize: fileSize(installedSize) },
+                  ])}
                 >
                   <div className="progress">
                     <div
@@ -214,7 +217,13 @@ class InstallLocationSettings extends React.Component<
                       }}
                     />
                     <span className="progress-label">
-                      {fileSize(freeSize)} free of {fileSize(totalSize)}
+                      {T([
+                        "preferences.install_location.free_of_total",
+                        {
+                          freeSize: fileSize(freeSize),
+                          totalSize: fileSize(totalSize),
+                        },
+                      ])}
                     </span>
                   </div>
                 </div>
