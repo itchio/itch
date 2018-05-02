@@ -159,6 +159,8 @@ func doMain() error {
 	}()
 
 	must(r.chromeDriverCmd.Start())
+	chromeDriverPid := r.chromeDriverCmd.Process.Pid
+	r.logf("chrome-driver started, pid = %d", chromeDriverPid)
 	go func() {
 		err := r.chromeDriverCmd.Wait()
 		if err != nil {
@@ -168,10 +170,17 @@ func doMain() error {
 	}()
 
 	r.cleanup = func() {
-		r.logf("Cleaning up chrome driver...")
+		r.logf("closing chrome-driver window...")
 		r.driver.CloseWindow()
+		r.logf("cancelling chrome-driver context...")
 		chromeDriverCancel()
-		r.chromeDriverCmd.Wait()
+		r.logf("waiting on chrome-driver")
+		err := r.chromeDriverCmd.Wait()
+		if err != nil {
+			r.logf("chrome-driver wait error: %+v", err)
+		} else {
+			r.logf("chrome-driver waited without problemsk")
+		}
 	}
 
 	defer r.cleanup()
