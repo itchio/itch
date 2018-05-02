@@ -80,8 +80,6 @@ package-linux-386:
     - linux
   script:
     - release/ci-package.js linux 386
-  only:
-    - tags
   artifacts:
     expire_in: 1 week
     paths:
@@ -96,8 +94,6 @@ package-linux-amd64:
     - linux
   script:
     - release/ci-package.js linux amd64
-  only:
-    - tags
   artifacts:
     expire_in: 1 week
     paths:
@@ -112,8 +108,6 @@ package-darwin-amd64:
     - darwin
   script:
     - release/ci-package.js darwin amd64
-  only:
-    - tags
   artifacts:
     expire_in: 1 week
     paths:
@@ -126,8 +120,6 @@ package-windows-386:
   stage: package
   tags:
     - windows
-  only:
-    - tags
   script:
     - export BUTLER_ENABLE=1
     - release/ci-package.js windows 386
@@ -143,8 +135,6 @@ package-windows-amd64:
   stage: package
   tags:
     - windows
-  only:
-    - tags
   script:
     - export BUTLER_ENABLE=1
     - release/ci-package.js windows amd64

@@ -6,7 +6,7 @@ async function main() {
   $.say("Wiping build/");
   $(await $.sh("rm -rf build/"));
   $.say("Setting fake build tag...");
-  process.env.CI_BUILD_TAG = "v9999.0.0-canary";
+  process.env.CI_BUILD_TAG = "v9999.0.0";
   $.say("Building...");
   $(await $.sh("node release/ci-compile.js"));
   let os = "linux";

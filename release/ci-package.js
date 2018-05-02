@@ -183,28 +183,50 @@ async function ciPackage(args) {
 
   $.say(`Built app is in ${buildPath}`);
 
-  if (!process.env.CI) {
-    $.say(`Not on CI, stopping there`);
-    return;
+  if (process.env.CI) {
+    $.say(`We're on CI, signing app...`)
+    switch (os) {
+      case "windows":
+        await windows.sign(arch, buildPath);
+        break;
+      case "darwin":
+        await darwin.sign(arch, buildPath);
+        break;
+      case "linux":
+        // tl;dr code-signing on Linux isn't a thing
+        break;
+    }
   }
 
-  switch (os) {
-    case "windows":
-      await windows.sign(arch, buildPath);
-      break;
-    case "darwin":
-      await darwin.sign(arch, buildPath);
-      break;
-    case "linux":
-      // tl;dr code-signing on Linux isn't a thing
-      break;
-  }
+  let ext = os === "windows" ? ".exe" : "";
 
-  $(await $.sh(`mkdir -p packages`));
+  let exeName = $.appName() + ext;
   if (os === "darwin") {
-    $(await $.sh(`ditto ${buildPath} packages/${os}-${arch}`));
+    exeName = ospath.join($.appName() + ".app", "Contents", "MacOS", exeName);
+  }
+  let binaryPath = ospath.join(buildPath, exeName);
+
+  $.say(`Running integration tests on ${binaryPath}`);
+  process.env.ITCH_INTEGRATION_BINARY_PATH = binaryPath;
+
+  if (process.platform === "linux") {
+    $(
+      await $.sh(
+        'xvfb-run -a -s "-screen 0 1280x720x24" npm run integration-tests'
+      )
+    );
   } else {
-    $(await $.sh(`mv ${buildPath} packages/${os}-${arch}`));
+    $(await $.npm("run integration-tests"));
+  }
+
+  if (process.env.CI) {
+    $.say(`We're on CI, preparing artifacts...`)
+    $(await $.sh(`mkdir -p packages`));
+    if (os === "darwin") {
+      $(await $.sh(`ditto ${buildPath} packages/${os}-${arch}`));
+    } else {
+      $(await $.sh(`mv ${buildPath} packages/${os}-${arch}`));
+    }
   }
 }
 

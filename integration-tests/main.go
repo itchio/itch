@@ -105,14 +105,6 @@ func doMain() error {
 		r.logf("✓ ChromeDriver is set up!")
 	}()
 
-	if os.Getenv("NO_BUNDLE") != "1" {
-		numPrepTasks++
-		go func() {
-			done <- r.bundle()
-			r.logf("✓ Everything is bundled!")
-		}()
-	}
-
 	for i := 0; i < numPrepTasks; i++ {
 		must(<-done)
 	}
@@ -196,27 +188,15 @@ func doMain() error {
 	defer r.cleanup()
 	gocleanup.Register(r.cleanup)
 
-	appPath := cwd
-	binaryPathBytes, err := exec.Command("node", "-e", "console.log(require('electron'))").Output()
-	if err != nil {
-		return errors.WithStack(err)
-	}
-	binaryPath := strings.TrimSpace(string(binaryPathBytes))
-
-	relativeBinaryPath, err := filepath.Rel(cwd, binaryPath)
-	if err != nil {
-		relativeBinaryPath = binaryPath
-	}
-	r.logf("Using electron: %s", relativeBinaryPath)
-
 	// Create capabilities, driver etc.
 	capabilities := gs.Capabilities{}
 	capabilities.SetBrowser(gs.ChromeBrowser())
 	co := capabilities.ChromeOptions()
-	co.SetBinary(binaryPath)
-	co.SetArgs([]string{
-		"app=" + appPath,
-	})
+
+	err = r.SetupChromeOptions(co)
+	if err != nil {
+		return err
+	}
 	capabilities.SetChromeOptions(co)
 
 	driver, err := gs.NewSeleniumWebDriver(fmt.Sprintf("http://127.0.0.1:%d", chromeDriverPort), capabilities)
