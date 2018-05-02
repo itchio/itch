@@ -69,6 +69,11 @@ func (lw *logWatch) WaitWithTimeout(timeout time.Duration) error {
 }
 
 func doMain() error {
+	err := SetupProcessGroup()
+	if err != nil {
+		return err
+	}
+
 	log.SetFlags(log.Ltime | log.Lmicroseconds)
 	bootTime := time.Now()
 
@@ -173,10 +178,6 @@ func doMain() error {
 		r.driver.CloseWindow()
 		r.logf("cancelling chrome-driver context...")
 		chromeDriverCancel()
-
-		// see https://github.com/itchio/itch/issues/1784
-		r.logf("thoroughly killing pid %d in the background...", chromeDriverPid)
-		go thoroughKill(r.chromeDriverCmd)
 
 		r.logf("waiting on chrome-driver")
 		select {
