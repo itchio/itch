@@ -159,19 +159,37 @@ func doMain() error {
 	}()
 
 	must(r.chromeDriverCmd.Start())
+	chromeDriverPid := r.chromeDriverCmd.Process.Pid
+	r.logf("chrome-driver started, pid = %d", chromeDriverPid)
+
+	chromeDriverWaitCh := make(chan error)
+
 	go func() {
-		err := r.chromeDriverCmd.Wait()
-		if err != nil {
-			r.logf("chrome-driver crashed: %+v", err)
-			gocleanup.Exit(1)
-		}
+		chromeDriverWaitCh <- r.chromeDriverCmd.Wait()
 	}()
 
 	r.cleanup = func() {
-		r.logf("Cleaning up chrome driver...")
+		r.logf("closing chrome-driver window...")
 		r.driver.CloseWindow()
+		r.logf("cancelling chrome-driver context...")
 		chromeDriverCancel()
-		r.chromeDriverCmd.Wait()
+
+		// see https://github.com/itchio/itch/issues/1784
+		r.logf("thoroughly killing pid %d in the background...", chromeDriverPid)
+		go thoroughKill(r.chromeDriverCmd)
+
+		r.logf("waiting on chrome-driver")
+		select {
+		case err := <-chromeDriverWaitCh:
+			if err == nil {
+				r.logf("chrome-driver exited with: %+v", err)
+			} else {
+				r.logf("chrome-driver exited with: %+v", err)
+			}
+		case <-time.After(15 * time.Second):
+			r.logf("well, we gave it 15 seconds, bailing out now")
+			gocleanup.Exit(1)
+		}
 	}
 
 	defer r.cleanup()
