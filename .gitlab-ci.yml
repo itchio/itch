@@ -66,8 +66,6 @@ compile:
     - linux
   script:
     - release/ci-compile.js
-  only:
-    - tags
   artifacts:
     expire_in: 1 week
     paths:
