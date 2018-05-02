@@ -528,5 +528,8 @@
     "preferences.scan_install_locations.looking_for_games": "Serĉado de ludoj…",
     "preferences.scan_install_locations.message": "La jenaj aĵoj ne povas esti enportitaj:",
     "preferences.scan_install_locations.no_items_found": "Ne estas trovitaj aliaj aĵoj en la instalaj lokoj",
-    "preferences.scan_install_locations.title": "Skanado…"
+    "preferences.scan_install_locations.title": "Skanado…",
+    "preferences.advanced.check_game_updates": "Kontroli pri ĝisdatigoj de la ludoj",
+    "status.downloads.resume_downloads": "Daŭrigi la elŝutadojn",
+    "status.downloads.pause_downloads": "Paŭzigi la elŝutojn"
 }
