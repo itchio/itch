@@ -85,7 +85,7 @@
     "preferences.install_location.size": "Dosiergrando",
     "preferences.install_location.stop_size_computation": "Haltigi la komputadon de la dosierujgrando",
     "preferences.install_location.used_space": "Uzata diskospaco",
-    "preferences.install_locations": "Instal-lokoj",
+    "preferences.install_locations": "Instalaj lokoj",
     "preferences.language": "Lingvo",
     "preferences.language.auto": "Lingvo de la sistemo ({{language}})",
     "preferences.language.get_involved": "Helpu traduki {{name}} en vian lingvon!",
@@ -518,5 +518,15 @@
     "prompt.show_error.send_report": "Sendi raporton pri la problemo, por ke ĝi estu solvita",
     "butlerd.codes.3000": "Ĉi tiun titolon oni pakis tiel, ke la aplikaĵo de itch.io ne povas uzi ĝin.",
     "butlerd.codes.5000": "Estis trovita nenio, kio povas esti startigita.",
-    "butlerd.codes.9000": "Ne estas retkonekto."
+    "butlerd.codes.9000": "Ne estas retkonekto.",
+    "preferences.install_location.size_used_by_games": "{{installedSize}} uzataj de ludoj",
+    "preferences.install_location.free_of_total": "Libera loko: {{freeSize}} el {{totalSize}}",
+    "preferences.scan_install_locations": "Skani la instalajn lokojn por ludoj",
+    "preferences.scan_install_locations.confirm_import": "Konfirmi la enporton",
+    "preferences.scan_install_locations.import_items": "Enporti {{numItems}} aĵojn",
+    "preferences.scan_install_locations.items_imported": "{{numImportedItems}} aĵoj estas sukcese enportitaj",
+    "preferences.scan_install_locations.looking_for_games": "Serĉado de ludoj…",
+    "preferences.scan_install_locations.message": "La jenaj aĵoj ne povas esti enportitaj:",
+    "preferences.scan_install_locations.no_items_found": "Ne estas trovitaj aliaj aĵoj en la instalaj lokoj",
+    "preferences.scan_install_locations.title": "Skanado…"
 }
