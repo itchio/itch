@@ -510,5 +510,18 @@
     "prompt.show_error.send_report": "Изпращане на доклад за проблема, който да помогне за оправянето му",
     "butlerd.codes.3000": "Това заглавие е пакетирано по такъв начин, че не е съвместимо с приложението Итч.",
     "butlerd.codes.5000": "Не беше открито нищо, което да може да бъде пуснато.",
-    "butlerd.codes.9000": "Няма връзка с Интернет."
+    "butlerd.codes.9000": "Няма връзка с Интернет.",
+    "preferences.install_location.size_used_by_games": "{{installedSize}} заето от игри",
+    "preferences.install_location.free_of_total": "Свободно място: {{freeSize}} от {{totalSize}}",
+    "preferences.scan_install_locations": "Претърсване на инсталационните папки за игри",
+    "preferences.scan_install_locations.confirm_import": "Потвърждаване на внасянето",
+    "preferences.scan_install_locations.import_items": "Внасяне на {{numItems}} неща",
+    "preferences.scan_install_locations.items_imported": "{{numImportedItems}} неща бяха успешно внесени",
+    "preferences.scan_install_locations.looking_for_games": "Търсене на игри…",
+    "preferences.scan_install_locations.message": "Следните неща не могат да бъдат внесени:",
+    "preferences.scan_install_locations.no_items_found": "Няма намерени повече неща в инсталационните папки",
+    "preferences.scan_install_locations.title": "Претърсване…",
+    "preferences.advanced.check_game_updates": "Проверка за обновления на игрите",
+    "status.downloads.resume_downloads": "Възобновяване на свалянията",
+    "status.downloads.pause_downloads": "Спиране на свалянията на пауза"
 }
