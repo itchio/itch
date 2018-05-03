@@ -119,7 +119,6 @@ package-windows-386:
   tags:
     - windows
   script:
-    - export BUTLER_ENABLE=1
     - release/ci-package.js windows 386
   artifacts:
     expire_in: 1 week
@@ -134,7 +133,6 @@ package-windows-amd64:
   tags:
     - windows
   script:
-    - export BUTLER_ENABLE=1
     - release/ci-package.js windows amd64
   artifacts:
     expire_in: 1 week

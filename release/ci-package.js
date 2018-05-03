@@ -184,18 +184,24 @@ async function ciPackage(args) {
   $.say(`Built app is in ${buildPath}`);
 
   if (process.env.CI) {
-    $.say(`We're on CI, signing app...`)
-    switch (os) {
-      case "windows":
-        await windows.sign(arch, buildPath);
-        break;
-      case "darwin":
-        await darwin.sign(arch, buildPath);
-        break;
-      case "linux":
-        // tl;dr code-signing on Linux isn't a thing
-        break;
+    if ($.hasTag()) {
+      $.say(`We're on CI and we have a tag, signing app...`)
+      switch (os) {
+        case "windows":
+          await windows.sign(arch, buildPath);
+          break;
+        case "darwin":
+          await darwin.sign(arch, buildPath);
+          break;
+        case "linux":
+          // tl;dr code-signing on Linux isn't a thing
+          break;
+      }
+    } else {
+      $.say(`We're on CI, but we don't have a build tag, not signing app.`)
     }
+  } else {
+    $.say(`Not on CI, not signing app`)
   }
 
   let ext = os === "windows" ? ".exe" : "";
@@ -220,13 +226,19 @@ async function ciPackage(args) {
   }
 
   if (process.env.CI) {
-    $.say(`We're on CI, preparing artifacts...`)
-    $(await $.sh(`mkdir -p packages`));
-    if (os === "darwin") {
-      $(await $.sh(`ditto ${buildPath} packages/${os}-${arch}`));
+    if ($.hasTag()) {
+      $.say(`We're on CI and we have a tag, preparing artifacts...`)
+      $(await $.sh(`mkdir -p packages`));
+      if (os === "darwin") {
+        $(await $.sh(`ditto ${buildPath} packages/${os}-${arch}`));
+      } else {
+        $(await $.sh(`mv ${buildPath} packages/${os}-${arch}`));
+      }
     } else {
-      $(await $.sh(`mv ${buildPath} packages/${os}-${arch}`));
+      $.say(`We're on CI but we don't have a build tag, not preparing artifacts.`)
     }
+  } else {
+    $.say(`Not on CI, not preparing artifacts.`)
   }
 }
 
