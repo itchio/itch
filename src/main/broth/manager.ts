@@ -5,7 +5,7 @@ import { IStore } from "common/types";
 import { app } from "electron";
 import { actions } from "common/actions";
 
-const packageNames = ["butler"];
+const packageNames = ["butler", "itch-setup"];
 
 export class Manager {
   private pkgs: Package[] = [];
