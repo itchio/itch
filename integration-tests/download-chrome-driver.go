@@ -23,21 +23,32 @@ func downloadChromeDriver(r *runner) error {
 		ext = ""
 	}
 
-	err := os.RemoveAll(driverCache)
-	if err != nil {
-		return errors.WithMessage(err, "removing webdriver cache")
-	}
-
 	driverExe := filepath.Join(driverCache, "chromedriver"+ext)
 	r.chromeDriverExe = driverExe
 
-	showChromeDriverVersion := func() error {
+	getChromeDriverVersion := func() (string, error) {
 		out, err := exec.Command(driverExe, "--version").CombinedOutput()
 		if err != nil {
-			return errors.WithMessage(err, "showing chromedriver version")
+			return "", errors.WithMessage(err, "getting chromedriver version")
 		}
-		r.logf("%s", strings.TrimSpace(string(out)))
-		return nil
+		return strings.TrimSpace(string(out)), nil
+	}
+
+	currentVersion, err := getChromeDriverVersion()
+	if err == nil {
+		if currentVersion == electronChromeDriverVersionString {
+			r.logf("Good version found, keeping it: %s", currentVersion)
+			return nil
+		} else {
+			r.logf("Found (%s) but expected (%s)", currentVersion, electronChromeDriverVersion)
+		}
+	} else {
+		r.logf("No chrome driver version found")
+	}
+
+	err = os.RemoveAll(driverCache)
+	if err != nil {
+		return errors.WithMessage(err, "removing webdriver cache")
 	}
 
 	r.logf("Downloading chromedriver...")
@@ -101,7 +112,10 @@ func downloadChromeDriver(r *runner) error {
 			return errors.WithStack(err)
 		}
 	}
-	must(showChromeDriverVersion())
+
+	currentVersion, err = getChromeDriverVersion()
+	must(err)
+	r.logf("%s", currentVersion)
 
 	return nil
 }
@@ -109,6 +123,7 @@ func downloadChromeDriver(r *runner) error {
 // not all electron releases have an associated chromedriver
 // build. oh joy!
 const electronChromeDriverVersion = "v2.0.0-beta.7"
+const electronChromeDriverVersionString = "ChromeDriver 2.30 (7accc8730b0f99b5e7c0702ea89d1fa7c17bfe33)"
 
 func chromeDriverURL(r *runner) string {
 	tag := electronChromeDriverVersion
