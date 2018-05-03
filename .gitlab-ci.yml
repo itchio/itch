@@ -36,6 +36,7 @@ test-darwin:
 
 test-windows:
   stage: build
+  retry: 2
   tags:
     - windows
   script:
@@ -66,8 +67,6 @@ compile:
     - linux
   script:
     - release/ci-compile.js
-  only:
-    - tags
   artifacts:
     expire_in: 1 week
     paths:
@@ -80,8 +79,6 @@ package-linux-386:
     - linux
   script:
     - release/ci-package.js linux 386
-  only:
-    - tags
   artifacts:
     expire_in: 1 week
     paths:
@@ -96,8 +93,6 @@ package-linux-amd64:
     - linux
   script:
     - release/ci-package.js linux amd64
-  only:
-    - tags
   artifacts:
     expire_in: 1 week
     paths:
@@ -112,8 +107,6 @@ package-darwin-amd64:
     - darwin
   script:
     - release/ci-package.js darwin amd64
-  only:
-    - tags
   artifacts:
     expire_in: 1 week
     paths:
@@ -124,12 +117,10 @@ package-darwin-amd64:
 # windows 32-bit build
 package-windows-386:
   stage: package
+  retry: 2
   tags:
     - windows
-  only:
-    - tags
   script:
-    - export BUTLER_ENABLE=1
     - release/ci-package.js windows 386
   artifacts:
     expire_in: 1 week
@@ -141,12 +132,10 @@ package-windows-386:
 # windows 64-bit build
 package-windows-amd64:
   stage: package
+  retry: 2
   tags:
     - windows
-  only:
-    - tags
   script:
-    - export BUTLER_ENABLE=1
     - release/ci-package.js windows amd64
   artifacts:
     expire_in: 1 week

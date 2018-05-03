@@ -11,18 +11,10 @@ async function main() {
   $(await $.npm("install"));
 
   $(await $.npm("run ts-check"));
+  $(await $.npm("test"));
 
   if (process.platform === "linux") {
-    $(await $.npm("test"));
-    $(
-      await $.sh(
-        'xvfb-run -a -s "-screen 0 1280x720x24" npm run integration-tests'
-      )
-    );
     $(await $.npm("run upload-coverage"));
-  } else {
-    $(await $.npm("test"));
-    $(await $.npm("run integration-tests"));
   }
 }
 

@@ -183,28 +183,62 @@ async function ciPackage(args) {
 
   $.say(`Built app is in ${buildPath}`);
 
-  if (!process.env.CI) {
-    $.say(`Not on CI, stopping there`);
-    return;
-  }
-
-  switch (os) {
-    case "windows":
-      await windows.sign(arch, buildPath);
-      break;
-    case "darwin":
-      await darwin.sign(arch, buildPath);
-      break;
-    case "linux":
-      // tl;dr code-signing on Linux isn't a thing
-      break;
-  }
-
-  $(await $.sh(`mkdir -p packages`));
-  if (os === "darwin") {
-    $(await $.sh(`ditto ${buildPath} packages/${os}-${arch}`));
+  if (process.env.CI) {
+    if ($.hasTag()) {
+      $.say(`We're on CI and we have a tag, signing app...`)
+      switch (os) {
+        case "windows":
+          await windows.sign(arch, buildPath);
+          break;
+        case "darwin":
+          await darwin.sign(arch, buildPath);
+          break;
+        case "linux":
+          // tl;dr code-signing on Linux isn't a thing
+          break;
+      }
+    } else {
+      $.say(`We're on CI, but we don't have a build tag, not signing app.`)
+    }
   } else {
-    $(await $.sh(`mv ${buildPath} packages/${os}-${arch}`));
+    $.say(`Not on CI, not signing app`)
+  }
+
+  let ext = os === "windows" ? ".exe" : "";
+
+  let exeName = $.appName() + ext;
+  if (os === "darwin") {
+    exeName = ospath.join($.appName() + ".app", "Contents", "MacOS", exeName);
+  }
+  let binaryPath = ospath.join(buildPath, exeName);
+
+  $.say(`Running integration tests on ${binaryPath}`);
+  process.env.ITCH_INTEGRATION_BINARY_PATH = binaryPath;
+
+  if (process.platform === "linux") {
+    $(
+      await $.sh(
+        'xvfb-run -a -s "-screen 0 1280x720x24" npm run integration-tests'
+      )
+    );
+  } else {
+    $(await $.npm("run integration-tests"));
+  }
+
+  if (process.env.CI) {
+    if ($.hasTag()) {
+      $.say(`We're on CI and we have a tag, preparing artifacts...`)
+      $(await $.sh(`mkdir -p packages`));
+      if (os === "darwin") {
+        $(await $.sh(`ditto ${buildPath} packages/${os}-${arch}`));
+      } else {
+        $(await $.sh(`mv ${buildPath} packages/${os}-${arch}`));
+      }
+    } else {
+      $.say(`We're on CI but we don't have a build tag, not preparing artifacts.`)
+    }
+  } else {
+    $.say(`Not on CI, not preparing artifacts.`)
   }
 }
 
