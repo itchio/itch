@@ -3,6 +3,7 @@ import { request } from "../net/request/metal-request";
 import querystring from "querystring";
 import urls from "common/constants/urls";
 import * as sf from "../os/sf";
+import * as semver from "semver";
 
 import { promisify } from "util";
 import whichCallback from "which";
@@ -30,6 +31,10 @@ const extractWeight = 0.3;
 
 type Version = string;
 
+interface VersionsRes {
+  versions: Version[];
+}
+
 var useLocals = (process.env.BROTH_USE_LOCAL || "").split(",");
 
 export class Package {
@@ -39,6 +44,7 @@ export class Package {
   private name: string;
   private baseURL: string;
   private logger: Logger;
+  private semverConstraint: string;
 
   constructor(store: IStore, prefix: string, name: string) {
     this.store = store;
@@ -51,6 +57,9 @@ export class Package {
     let channel = platform;
     if (this.formula.transformChannel) {
       channel = this.formula.transformChannel(channel);
+    }
+    if (this.formula.getSemverConstraint) {
+      this.semverConstraint = this.formula.getSemverConstraint();
     }
     this.baseURL = `${urls.brothRepo}/${name}/${channel}`;
     this.logger = rootLogger.child({ name: `broth :: ${name}` });
@@ -74,14 +83,50 @@ export class Package {
 
   /** fetch latest version number from repo */
   async getLatestVersion(): Promise<Version> {
-    const url = this.buildURL(`/LATEST`);
-    const res = await request("get", url, {});
-    if (res.statusCode !== 200) {
-      throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
-    }
+    if (this.semverConstraint) {
+      this.debug(
+        `Trying to satisfy semver constraint ${this.semverConstraint}`
+      );
+      const url = this.buildURL(`/versions`);
+      this.debug(`GET ${url}`);
+      const res = await request("get", url, {});
+      if (res.statusCode !== 200) {
+        throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
+      }
 
-    const versionString = res.body.toString("utf8").trim();
-    return versionString as Version;
+      const versionsRes = res.body as VersionsRes;
+      if (!versionsRes.versions) {
+        throw new Error(
+          `got invalid response from broth server: expected JSON object with 'broth' field, got: ${JSON.stringify(
+            versionsRes
+          )}`
+        );
+      }
+
+      // already ordered from most recent to least recent
+      for (const v of versionsRes.versions) {
+        if (semver.satisfies(v, this.semverConstraint)) {
+          return v;
+        } else {
+          this.debug(`Ignoring ${v}`);
+        }
+      }
+
+      throw new Error(
+        `Could not find a version satisfying ${this.semverConstraint}`
+      );
+    } else {
+      this.debug("No semver constraint, going with /LATEST");
+      const url = this.buildURL(`/LATEST`);
+      this.debug(`GET ${url}`);
+      const res = await request("get", url, {});
+      if (res.statusCode !== 200) {
+        throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
+      }
+
+      const versionString = res.body.toString("utf8").trim();
+      return versionString as Version;
+    }
   }
 
   getName(): string {

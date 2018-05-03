@@ -10,7 +10,7 @@ import ospath from "path";
 export interface FormulaSpec {
   sanityCheck?: (versionPrefix: string) => Promise<void>;
   transformChannel?: (channel: string) => string;
-  semverConstraint?: () => string | null;
+  getSemverConstraint?: () => string | null;
 }
 
 interface Formulas {
@@ -49,7 +49,7 @@ describeFormula("butler", {
     }
     return channel;
   },
-  semverConstraint: () => {
+  getSemverConstraint: () => {
     if (env.isCanary) {
       return null;
     }
@@ -76,7 +76,7 @@ describeFormula("itch-setup", {
     }
     return channel;
   },
-  semverConstraint: () => {
+  getSemverConstraint: () => {
     return null;
   },
 });
