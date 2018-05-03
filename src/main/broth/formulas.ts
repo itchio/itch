@@ -5,10 +5,12 @@ import env from "common/env";
 import spawn from "main/os/spawn";
 import { MinimalContext } from "../context";
 import rootLogger from "common/logger";
+import ospath from "path";
 
 export interface FormulaSpec {
   sanityCheck?: (versionPrefix: string) => Promise<void>;
   transformChannel?: (channel: string) => string;
+  semverConstraint?: () => string | null;
 }
 
 interface Formulas {
@@ -41,8 +43,18 @@ describeFormula("butler", {
       await instance.promise();
     }
   },
-  transformChannel: (channel: string) =>
-    env.isCanary ? `${channel}-head` : channel,
+  transformChannel: (channel: string) => {
+    if (env.isCanary) {
+      return `${channel}-head`;
+    }
+    return channel;
+  },
+  semverConstraint: () => {
+    if (env.isCanary) {
+      return null;
+    }
+    return "^13.1.0";
+  },
 });
 
 /**
@@ -54,15 +66,19 @@ describeFormula("itch-setup", {
     await spawn({
       ctx: new MinimalContext(),
       logger: rootLogger.child({ name: "itch-setup formula" }),
-      command: "itch-setup",
+      command: ospath.join(versionPrefix, "itch-setup"),
       args: ["--version"],
-      opts: {
-        cwd: versionPrefix,
-      },
     });
   },
-  transformChannel: (channel: string) =>
-    env.isCanary ? `${channel}-head` : channel,
+  transformChannel: (channel: string) => {
+    if (env.isCanary) {
+      return `${channel}-head`;
+    }
+    return channel;
+  },
+  semverConstraint: () => {
+    return null;
+  },
 });
 
 export default self;
