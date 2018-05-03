@@ -225,6 +225,7 @@ func doMain() error {
 		beforeCreateTime := time.Now()
 		sessRes, err := driver.CreateSession()
 		if err != nil {
+			time.Sleep(1 * time.Second)
 			return errors.WithStack(err)
 		}
 
