@@ -13,8 +13,20 @@ import (
 func (r *runner) SetupChromeOptions(co gs.ChromeOptions) error {
 	binaryPath := os.Getenv("ITCH_INTEGRATION_BINARY_PATH")
 	if binaryPath != "" {
-		r.logf("Testing packaged app at %s", binaryPath)
-		co.SetBinary(binaryPath)
+		absoluteBinaryPath, err := filepath.Abs(binaryPath)
+		if err != nil {
+			r.logf("Had problems making binary path absolute:")
+			return err
+		}
+
+		r.logf("Testing packaged app at %s", absoluteBinaryPath)
+		_, err = os.Stat(absoluteBinaryPath)
+		if err != nil {
+			r.logf("Had problems checking that binary path exists:")
+			return err
+		}
+
+		co.SetBinary(absoluteBinaryPath)
 		return nil
 	}
 

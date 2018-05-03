@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"log"
@@ -95,29 +96,34 @@ func doMain() error {
 	}
 	r.cwd = cwd
 
-	done := make(chan error)
+	must(downloadChromeDriver(r))
+	r.logf("✓ ChromeDriver is set up!")
 
-	numPrepTasks := 0
-
-	numPrepTasks++
-	go func() {
-		done <- downloadChromeDriver(r)
-		r.logf("✓ ChromeDriver is set up!")
-	}()
-
-	for i := 0; i < numPrepTasks; i++ {
-		must(<-done)
-	}
+	chromeDriverStartupChan := make(chan bool)
 
 	chromeDriverPort := 9515
 	chromeDriverLogPath := filepath.Join(cwd, "chrome-driver.log.txt")
 	chromeDriverCtx, chromeDriverCancel := context.WithCancel(context.Background())
 	r.chromeDriverCmd = exec.CommandContext(chromeDriverCtx, r.chromeDriverExe, fmt.Sprintf("--port=%d", chromeDriverPort), fmt.Sprintf("--log-path=%s", chromeDriverLogPath))
+	cdoutR, cdoutW, err := os.Pipe()
+	must(err)
+	r.chromeDriverCmd.Stdout = cdoutW
+	r.chromeDriverCmd.Stderr = os.Stderr
 	env := os.Environ()
 	env = append(env, "ITCH_INTEGRATION_TESTS=1")
 	env = append(env, "ITCH_LOG_LEVEL=debug")
 	env = append(env, "ITCH_NO_STDOUT=1")
 	r.chromeDriverCmd.Env = env
+
+	go func() {
+		s := bufio.NewScanner(cdoutR)
+		for s.Scan() {
+			r.logf("[chromedriver] %s", s.Text())
+			if strings.Contains(s.Text(), "Only local connections are allowed") {
+				close(chromeDriverStartupChan)
+			}
+		}
+	}()
 
 	var logWatches []*logWatch
 
@@ -157,7 +163,7 @@ func doMain() error {
 
 	must(r.chromeDriverCmd.Start())
 	chromeDriverPid := r.chromeDriverCmd.Process.Pid
-	r.logf("chrome-driver started, pid = %d", chromeDriverPid)
+	r.logf("ChromeDriver lives (for now) as PID %d", chromeDriverPid)
 
 	chromeDriverWaitCh := make(chan error)
 
@@ -205,6 +211,15 @@ func doMain() error {
 	}
 
 	r.driver = driver
+
+	r.logf("Waiting for chrome driver to be fully started")
+	select {
+	case <-chromeDriverStartupChan:
+		r.logf("Chrome driver is actually listening!")
+	case <-time.After(2 * time.Second):
+		r.logf("Timed out waiting for chrome driver to start listening...")
+		gocleanup.Exit(1)
+	}
 
 	tryCreateSession := func() error {
 		beforeCreateTime := time.Now()
