@@ -399,5 +399,6 @@
     "grid.item.manage": "Gerenciar",
     "table.column.installed_size": "Tamanho",
     "browser.disabled": "O navegador itch esta desabilitado",
-    "browser.reenable": "Reabilitar"
+    "browser.reenable": "Reabilitar",
+    "login.action.retry_setup": "Restaurar configuração"
 }
