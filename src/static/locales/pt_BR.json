@@ -406,5 +406,6 @@
     "menu.file.close_other_tabs": "Fechar outras abas",
     "menu.file.close_tabs_below": "Fechar abas abaixo",
     "new_tab.devlogs": "Log do desenvolvedor",
-    "notification.download_reverted": "{{title}} foi alterado para a {{version}}!"
+    "notification.download_reverted": "{{title}} foi alterado para a {{version}}!",
+    "notification.download_healed": "{{title}} Verificado e reparado!"
 }
