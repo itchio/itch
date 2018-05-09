@@ -392,5 +392,6 @@
     "game.install.could_not_launch.message": "A mensagem que recebemos foi: {{errorMessage}}",
     "grid.item_count": "{{count}} itens",
     "grid.empty_state.leader": "Tudo foi filtrado...",
-    "grid.empty_state.explanation": "Seus filtros estão escondendo tudo aqui"
+    "grid.empty_state.explanation": "Seus filtros estão escondendo tudo aqui",
+    "grid.item.open_file_location.windows": "Abrir pasta no explorador de arquivos"
 }
