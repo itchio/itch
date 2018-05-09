@@ -404,5 +404,6 @@
     "prereq.status.pending": "Preparando...",
     "prereq.status.installing": "Instalando... (isto pode levar alguns minutos)",
     "menu.file.close_other_tabs": "Fechar outras abas",
-    "menu.file.close_tabs_below": "Fechar abas abaixo"
+    "menu.file.close_tabs_below": "Fechar abas abaixo",
+    "new_tab.devlogs": "Log do desenvolvedor"
 }
