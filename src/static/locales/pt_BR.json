@@ -427,5 +427,6 @@
     "status.game_update.busy": "{{title}} não pode ser atualizado por que está em execução.",
     "status.uninstall.busy": "{{title}} não pode ser desinstalado por que está em execução.",
     "status.reinstall.busy": "{{title}} não pode ser reinstalado por que está em execução.",
-    "setup.error_dialog.title": "Algo deu errado"
+    "setup.error_dialog.title": "Algo deu errado",
+    "web.context_menu.cut": "Apagar"
 }
