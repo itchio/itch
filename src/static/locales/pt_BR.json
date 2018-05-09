@@ -396,5 +396,6 @@
     "grid.item.open_file_location.windows": "Abrir pasta no explorador de arquivos",
     "grid.item.open_file_location.linux": "Mostrar no gerenciador de arquivo",
     "grid.item.uninstall_request": "Desinstalar ou reinstalar...",
-    "grid.item.manage": "Gerenciar"
+    "grid.item.manage": "Gerenciar",
+    "table.column.installed_size": "Tamanho"
 }
