@@ -421,5 +421,6 @@
     "pick_update_upload.buttons.update": "Atualizar agora",
     "prompt.clear_browsing_data.clear": "Limpar dados",
     "prompt.install_error.message": "a instalação falhou",
-    "sidebar.aw_snap": "Ah, não!"
+    "sidebar.aw_snap": "Ah, não!",
+    "status.downloads.category.active": "Download ativo"
 }
