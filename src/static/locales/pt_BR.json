@@ -393,5 +393,8 @@
     "grid.item_count": "{{count}} itens",
     "grid.empty_state.leader": "Tudo foi filtrado...",
     "grid.empty_state.explanation": "Seus filtros estão escondendo tudo aqui",
-    "grid.item.open_file_location.windows": "Abrir pasta no explorador de arquivos"
+    "grid.item.open_file_location.windows": "Abrir pasta no explorador de arquivos",
+    "grid.item.open_file_location.linux": "Mostrar no gerenciador de arquivo",
+    "grid.item.uninstall_request": "Desinstalar ou reinstalar...",
+    "grid.item.manage": "Gerenciar"
 }
