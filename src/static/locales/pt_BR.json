@@ -429,5 +429,7 @@
     "status.reinstall.busy": "{{title}} não pode ser reinstalado por que está em execução.",
     "setup.error_dialog.title": "Algo deu errado",
     "web.context_menu.cut": "Apagar",
-    "web.context_menu.open_in_new_tab": "Abrir em uma nova aba"
+    "web.context_menu.open_in_new_tab": "Abrir em uma nova aba",
+    "status.cancelled.message": "A operação foi cancelada.",
+    "collections.empty_sub": "Navegue por alguns jogos e adicione-os à uma nova coleção!"
 }
