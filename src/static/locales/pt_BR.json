@@ -401,5 +401,6 @@
     "browser.disabled": "O navegador itch esta desabilitado",
     "browser.reenable": "Reabilitar",
     "login.action.retry_setup": "Tentar novamente",
-    "prereq.status.pending": "Preparando..."
+    "prereq.status.pending": "Preparando...",
+    "prereq.status.installing": "Instalando... (isto pode levar alguns minutos)"
 }
