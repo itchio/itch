@@ -422,5 +422,9 @@
     "prompt.clear_browsing_data.clear": "Limpar dados",
     "prompt.install_error.message": "a instalação falhou",
     "sidebar.aw_snap": "Ah, não!",
-    "status.downloads.category.active": "Download ativo"
+    "status.downloads.category.active": "Download ativo",
+    "status.downloads.category.queued": "Downloads em fila",
+    "status.game_update.busy": "{{title}} não pode ser atualizado por que está em execução.",
+    "status.uninstall.busy": "{{title}} não pode ser desinstalado por que está em execução.",
+    "status.reinstall.busy": "{{title}} não pode ser reinstalado por que está em execução."
 }
