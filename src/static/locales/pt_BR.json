@@ -407,5 +407,17 @@
     "menu.file.close_tabs_below": "Fechar abas abaixo",
     "new_tab.devlogs": "Log do desenvolvedor",
     "notification.download_reverted": "{{title}} foi alterado para a {{version}}!",
-    "notification.download_healed": "{{title}} Verificado e reparado!"
+    "notification.download_healed": "{{title}} Verificado e reparado!",
+    "preferences.behavior.manual_game_updates": "Perguntar antes de atualizar qualquer coisa",
+    "preferences.notifications": "Notificações",
+    "preferences.notifications.ready_notification": "Notifique-me quando um download for instalado ou atualizado",
+    "preferences.advanced.clear_browsing_data": "Limpar dados de navegação",
+    "preferences.proxy_server_address": "Proxy HTTPS",
+    "pick_update_upload.title": "Novos downloads estão disponíveis para {{title}}",
+    "pick_update_upload.detail": "Estamos apenas perguntando porque você escolheu um arquivo específico durante a instalação.",
+    "pick_update_upload.single.title": "Uma nova versão de {{title}} está disponível",
+    "pick_update_upload.single.message": "Você pode escolher atualizar agora ou mais tarde.",
+    "pick_update_upload.single.detail": "Nota: você pode habilitar atualizações automáticas na aba Preferências",
+    "pick_update_upload.buttons.update": "Atualizar agora",
+    "prompt.clear_browsing_data.clear": "Limpar dados"
 }
