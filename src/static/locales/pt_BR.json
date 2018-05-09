@@ -386,5 +386,6 @@
     "preferences.behavior.open_at_login.error": "Não foi possível aplicar as configurações de inicialização automática: {{cause}}",
     "download.ongoing.install": "Instalando {{title}}…",
     "download.ongoing.reinstall": "Re-instalando {{title}}…",
-    "download.ongoing.update": "Atualizando {{title}}…"
+    "download.ongoing.update": "Atualizando {{title}}…",
+    "collections.empty": "No momento você não tem coleções "
 }
