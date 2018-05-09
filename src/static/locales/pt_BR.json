@@ -400,5 +400,6 @@
     "table.column.installed_size": "Tamanho",
     "browser.disabled": "O navegador itch esta desabilitado",
     "browser.reenable": "Reabilitar",
-    "login.action.retry_setup": "Tentar novamente"
+    "login.action.retry_setup": "Tentar novamente",
+    "prereq.status.pending": "Preparando..."
 }
