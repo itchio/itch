@@ -387,5 +387,6 @@
     "download.ongoing.install": "Instalando {{title}}…",
     "download.ongoing.reinstall": "Re-instalando {{title}}…",
     "download.ongoing.update": "Atualizando {{title}}…",
-    "collections.empty": "No momento você não tem coleções "
+    "collections.empty": "No momento você não tem coleções ",
+    "duration.seconds": "{{x}} seconds"
 }
