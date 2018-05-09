@@ -419,5 +419,6 @@
     "pick_update_upload.single.message": "Você pode escolher atualizar agora ou mais tarde.",
     "pick_update_upload.single.detail": "Nota: você pode habilitar atualizações automáticas na aba Preferências",
     "pick_update_upload.buttons.update": "Atualizar agora",
-    "prompt.clear_browsing_data.clear": "Limpar dados"
+    "prompt.clear_browsing_data.clear": "Limpar dados",
+    "prompt.install_error.message": "a instalação falhou"
 }
