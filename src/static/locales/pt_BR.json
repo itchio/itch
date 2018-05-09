@@ -171,7 +171,7 @@
     "moment.now": "agora",
     "new_tab.community": "Comunidade",
     "new_tab.on_sale": "Em promoção",
-    "new_tab.random": "Ver algo aleatório",
+    "new_tab.random": "Jogos aleatórios",
     "new_tab.titles.browser_placeholder": "Digite qualquer endereço da web",
     "new_tab.titles.input": "...ou",
     "new_tab.top_sellers": "Mais vendidos",
@@ -402,5 +402,7 @@
     "browser.reenable": "Reabilitar",
     "login.action.retry_setup": "Tentar novamente",
     "prereq.status.pending": "Preparando...",
-    "prereq.status.installing": "Instalando... (isto pode levar alguns minutos)"
+    "prereq.status.installing": "Instalando... (isto pode levar alguns minutos)",
+    "menu.file.close_other_tabs": "Fechar outras abas",
+    "menu.file.close_tabs_below": "Fechar abas abaixo"
 }
