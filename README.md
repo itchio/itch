@@ -26,7 +26,7 @@ detailed instructions.
 
 If you'd like to develop the app instead, read the [Getting Started][developing] page of the developer guide.
 
-[developing]: docs/developing/getting-started.md
+[developing]: https://itch.io/docs/itch/developing/getting-started.html
 
 ## License
 
