@@ -434,5 +434,6 @@
     "collections.empty_sub": "Navegue por alguns jogos e adicione-os à uma nova coleção!",
     "grid.criterion.filter_by": "Filtrar por: ",
     "grid.really_empty_state.leader": "Não há nada aqui...",
-    "grid.really_empty_state.explanation": "...ainda!"
+    "grid.really_empty_state.explanation": "...ainda!",
+    "docs.how_to_help": "Como posso ajudar?"
 }
