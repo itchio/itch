@@ -431,5 +431,6 @@
     "web.context_menu.cut": "Apagar",
     "web.context_menu.open_in_new_tab": "Abrir em uma nova aba",
     "status.cancelled.message": "A operação foi cancelada.",
-    "collections.empty_sub": "Navegue por alguns jogos e adicione-os à uma nova coleção!"
+    "collections.empty_sub": "Navegue por alguns jogos e adicione-os à uma nova coleção!",
+    "grid.criterion.filter_by": "Filtrar por: "
 }
