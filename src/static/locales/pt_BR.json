@@ -388,7 +388,7 @@
     "download.ongoing.reinstall": "Re-instalando {{title}}…",
     "download.ongoing.update": "Atualizando {{title}}…",
     "collections.empty": "No momento você não tem coleções ",
-    "duration.seconds": "{{x}} seconds",
+    "duration.seconds": "{{x}} segundos",
     "game.install.could_not_launch.message": "A mensagem que recebemos foi: {{errorMessage}}",
     "grid.item_count": "{{count}} itens",
     "grid.empty_state.leader": "Tudo foi filtrado...",
