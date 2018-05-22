@@ -8,7 +8,7 @@
     "grid.item.downloading": "Baixando…",
     "grid.item.finalize_installation": "Finalizar instalação",
     "grid.item.install": "Instalar",
-    "grid.item.installing": "Instalando...",
+    "grid.item.installing": "Instalando…",
     "grid.item.launch": "Iniciar",
     "grid.item.not_platform_compatible": "Não disponível para {{platform}}",
     "grid.item.open_in_file_explorer": "Abra a pasta de instalação no explorador de arquivos",
