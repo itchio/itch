@@ -432,5 +432,7 @@
     "web.context_menu.open_in_new_tab": "Abrir em uma nova aba",
     "status.cancelled.message": "A operação foi cancelada.",
     "collections.empty_sub": "Navegue por alguns jogos e adicione-os à uma nova coleção!",
-    "grid.criterion.filter_by": "Filtrar por: "
+    "grid.criterion.filter_by": "Filtrar por: ",
+    "grid.really_empty_state.leader": "Não há nada aqui...",
+    "grid.really_empty_state.explanation": "...ainda!"
 }
