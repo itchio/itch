@@ -37,7 +37,12 @@ interface VersionsRes {
 
 var useLocals = (process.env.BROTH_USE_LOCAL || "").split(",");
 
-export class Package {
+export interface PackageLike {
+  ensure(): Promise<void>;
+  upgrade(): Promise<void>;
+}
+
+export class Package implements PackageLike {
   private store: IStore;
   private formula: FormulaSpec;
   private prefix: string;

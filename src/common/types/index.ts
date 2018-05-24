@@ -107,7 +107,7 @@ export interface IButlerdState {
 }
 
 export interface IPackageState {
-  stage: "assess" | "download" | "install" | "idle";
+  stage: "assess" | "download" | "install" | "idle" | "need-restart";
   version?: string;
   versionPrefix?: string;
   progressInfo?: IProgressInfo;

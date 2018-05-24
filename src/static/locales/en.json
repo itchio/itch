@@ -303,6 +303,7 @@
   "preferences.language.get_involved":
     "Help translate {{name}} in your language!",
   "preferences.advanced": "Advanced",
+  "preferences.advanced.components": "Components",
   "preferences.advanced.open_app_log": "Open app log",
   "preferences.advanced.check_game_updates": "Check for game updates",
   "preferences.advanced.clear_browsing_data": "Clear browsing data",

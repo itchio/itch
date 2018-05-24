@@ -182,7 +182,7 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <div className="explanation advanced-form">
         <p className="section">
-          <Icon icon="pin" /> itch v{system.appVersion}
+          <Icon icon="list" /> {T("preferences.advanced.components")}
           <span
             className="button"
             onClick={() => {
@@ -211,6 +211,8 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                     return <Icon icon="download" />;
                   case "install":
                     return <Icon icon="install" />;
+                  case "need-restart":
+                    return <Icon icon="repeat" />;
                 }
               })()}
               &nbsp;
