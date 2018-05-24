@@ -57,13 +57,16 @@ export async function runItchSetup(
     logger: logger.child({ name: "itch-setup upgrade" }),
     command: ospath.join(prefix, "itch-setup"),
     args: ["--appname", env.appName, ...args],
-    onErrToken: (tok: string) => {
+    onToken: (tok: string) => {
       try {
         const msg = JSON.parse(tok) as ISM;
         onMessage(msg);
       } catch (e) {
         logger.info(`> ${tok}`);
       }
+    },
+    onErrToken: (tok: string) => {
+      logger.info(`> ${tok}`);
     },
   });
   return true;
@@ -76,7 +79,8 @@ export interface ISM {
     | "installing-update"
     | "update-ready"
     | "no-update-available"
-    | "update-failed";
+    | "update-failed"
+    | "ready-to-relaunch";
   payload: any;
 }
 
@@ -102,3 +106,5 @@ export interface ISM_UpdateReady {
 export interface ISM_UpdateFailed {
   message: string;
 }
+
+export interface ISM_ReadyToRelaunch {}

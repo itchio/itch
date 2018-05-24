@@ -40,6 +40,10 @@ export function mainLogPath(): string {
   return join(app.getPath("userData"), "logs", "itch.txt");
 }
 
+export function relaunchLogPath(): string {
+  return join(app.getPath("userData"), "logs", "itch.relaunch.txt");
+}
+
 export function updaterLogPath(): string {
   return join(app.getPath("userData"), "logs", "itch.updater.txt");
 }

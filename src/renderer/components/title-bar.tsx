@@ -8,6 +8,7 @@ import { IRootState, ITabInstance } from "common/types";
 import FiltersContainer from "./filters-container";
 import IconButton from "./basics/icon-button";
 import UserMenu from "./sidebar/user-menu";
+import NewVersionAvailable from "./sidebar/new-version-available";
 
 import env from "common/env";
 
@@ -76,6 +77,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
           </DraggableDivInner>
         </DraggableDiv>
         {loggedIn ? <UserMenu /> : null}
+        <NewVersionAvailable />
         {this.renderIcons()}
       </FiltersContainer>
     );

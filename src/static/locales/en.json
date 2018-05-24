@@ -456,6 +456,8 @@
     "{{notes}}\n\n:date: Published on {{pubDate}}.",
   "prompt.self_update_ready.message":
     "Choose '{{restart}}' to apply the update immediately.\n\nIf you don't, the update will be active the next time the app is restarted.",
+  "prompt.self_update_ready.short":
+    "New version available",
   "prompt.self_update_ready.title":
     "An update has been downloaded and installed",
   "prompt.uninstall_error.title": "Uninstall error",

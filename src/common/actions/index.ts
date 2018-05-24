@@ -166,6 +166,9 @@ export const actions = wireActions({
     progressInfo: IProgressInfo;
   }>(),
 
+  relaunchRequest: action<{}>(),
+  relaunch: action<{}>(),
+
   gotButlerdEndpoint: action<{
     endpoint: IEndpoint;
   }>(),
