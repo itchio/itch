@@ -455,10 +455,4 @@ export default function(watcher: Watcher) {
   watcher.on(actions.quit, async (store, action) => {
     app.exit(0);
   });
-
-  watcher.on(actions.quitAndInstall, async (store, action) => {
-    // TODO: actually implement
-    logger.info("Handing off to itch-setup for self-update");
-    store.dispatch(actions.quit({}));
-  });
 }

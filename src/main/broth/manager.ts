@@ -8,7 +8,7 @@ import { SelfPackage } from "./self-package";
 import env from "common/env";
 
 const regularPackageNames = ["butler", "itch-setup"];
-const packageNames = [...regularPackageNames, env.appName];
+const packageNames = [env.appName, ...regularPackageNames];
 
 export class Manager {
   private pkgs: PackageLike[] = [];
@@ -18,10 +18,10 @@ export class Manager {
     this.prefix = join(app.getPath("userData"), "broth");
 
     store.dispatch(actions.packagesListed({ packageNames }));
+    this.pkgs.push(new SelfPackage(store, env.appName));
     for (const name of regularPackageNames) {
       this.pkgs.push(new Package(store, this.prefix, name));
     }
-    this.pkgs.push(new SelfPackage(store, env.appName));
   }
 
   async ensure() {

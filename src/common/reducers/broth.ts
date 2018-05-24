@@ -4,6 +4,7 @@ import reducer from "./reducer";
 import { IBrothState } from "common/types";
 
 const initialState = {
+  packageNames: [],
   packages: {},
 } as IBrothState;
 
@@ -16,7 +17,7 @@ export default reducer<IBrothState>(initialState, on => {
         stage: "idle",
       };
     }
-    return { packages };
+    return { packages, packageNames };
   });
 
   on(actions.packageGotVersionPrefix, (state, action) => {

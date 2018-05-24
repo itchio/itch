@@ -186,8 +186,7 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
           <span
             className="button"
             onClick={() => {
-              const { checkForSelfUpdate } = this.props;
-              checkForSelfUpdate({});
+              this.props.checkForComponentUpdates({});
             }}
             style={{
               marginLeft: "10px",
@@ -197,7 +196,7 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
             {T(["menu.help.check_for_update"])}
           </span>
         </p>
-        {Object.keys(broth.packages).map(pkgName => {
+        {broth.packageNames.map(pkgName => {
           const pkg = broth.packages[pkgName];
           return (
             <p className="section component">
@@ -216,7 +215,7 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
                 }
               })()}
               &nbsp;
-              {pkgName} @ {pkg.version}
+              {pkgName} @ {formatPackageVersion(pkg.version)}
               &nbsp;
               {(() => {
                 if (pkg.progressInfo) {
@@ -306,7 +305,7 @@ const actionCreators = actionCreatorsList(
   "updatePreferences",
   "clearBrowsingDataRequest",
   "navigate",
-  "checkForSelfUpdate",
+  "checkForComponentUpdates",
   "checkForGameUpdates"
 );
 
@@ -324,3 +323,10 @@ export default connect<IProps>(Preferences, {
   }),
   actionCreators,
 });
+
+function formatPackageVersion(v: string): string {
+  if (/[a-z0-9]/.test(v)) {
+    return v.substr(0, 7);
+  }
+  return v;
+}

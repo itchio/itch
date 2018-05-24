@@ -290,6 +290,7 @@ export class Package implements PackageLike {
       this.getVersionPrefix(latestVersion) === this.getCurrentVersionPrefix()
     ) {
       this.info(`Already the active version, nothing to do`);
+      return;
     }
 
     if (await this.isVersionValid(latestVersion)) {

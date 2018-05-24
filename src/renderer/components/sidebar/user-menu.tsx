@@ -105,11 +105,6 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
           type: "separator",
         },
         {
-          icon: "repeat",
-          localizedLabel: ["menu.help.check_for_update"],
-          action: actions.checkForSelfUpdate({}),
-        },
-        {
           icon: "search",
           localizedLabel: ["menu.help.search_issue"],
           action: actions.openInExternalBrowser({

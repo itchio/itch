@@ -228,9 +228,6 @@ function computeMenuTemplate(
           enabled: false,
         },
         {
-          localizedLabel: ["menu.help.check_for_update"],
-        },
-        {
           type: "separator",
         },
         {

@@ -8,7 +8,6 @@ import {
   IItchAppTabs,
   ITabParams,
   IMenuTemplate,
-  ISelfUpdate,
   II18nResources,
   II18nKeys,
   IProgressInfo,
@@ -435,39 +434,12 @@ export const actions = wireActions({
   >(),
   closeContextMenu: action<{}>(),
 
-  // self-update & quit
+  checkForComponentUpdates: action<{}>(),
 
   quit: action<{}>(),
   quitWhenMain: action<{}>(),
-  quitAndInstall: action<{}>(),
-  checkForSelfUpdate: action<{}>(),
-  checkingForSelfUpdate: action<{}>(),
-  selfUpdateAvailable: action<{
-    /** info on the self-update that's available */
-    spec: ISelfUpdate;
-
-    /** whether the self-update is being immediately downloaded */
-    downloading: boolean;
-  }>(),
-  selfUpdateNotAvailable: action<{
-    /**
-     * true if it also means we're up-to-date — false if, for example,
-     * we were offline and couldn't check (that doesn't count as an error)
-     */
-    uptodate: boolean;
-  }>(),
-  selfUpdateError: action<{
-    /** the error message of the self-updater */
-    message: string;
-  }>(),
-  selfUpdateDownloaded: action<{}>(),
-  showAvailableSelfUpdate: action<{}>(),
-  applySelfUpdateRequest: action<{}>(),
-  applySelfUpdate: action<{}>(),
-  snoozeSelfUpdate: action<{}>(),
 
   // locales
-
   localesConfigLoaded: action<{
     /** initial set of i18n strings */
     strings: II18nResources;
@@ -777,7 +749,6 @@ export const actions = wireActions({
     /** action to dispatch if notification is clicked */
     onClick?: IAction<any>;
   }>(),
-  dismissStatus: action<{}>(),
   statusMessage: action<{
     /** the message we want to show in the status bar */
     message: ILocalizedString;

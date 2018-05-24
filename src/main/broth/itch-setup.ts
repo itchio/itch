@@ -62,7 +62,7 @@ export async function runItchSetup(
         const msg = JSON.parse(tok) as ISM;
         onMessage(msg);
       } catch (e) {
-        logger.warn(`While parsing JSON line "${tok}": ${e}`);
+        logger.info(`> ${tok}`);
       }
     },
   });

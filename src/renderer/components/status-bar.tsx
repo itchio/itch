@@ -4,9 +4,8 @@ import { createStructuredSelector } from "reselect";
 import { connect, actionCreatorsList, Dispatchers } from "./connect";
 
 import Icon from "./basics/icon";
-import LoadingCircle from "./basics/loading-circle";
 
-import { IRootState, ISelfUpdateState, ILocalizedString } from "common/types";
+import { IRootState, ILocalizedString } from "common/types";
 
 import { T } from "renderer/t";
 
@@ -79,21 +78,8 @@ class StatusBar extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   render() {
-    const { statusMessages, selfUpdate } = this.props;
-    const {
-      dismissStatus,
-      dismissStatusMessage,
-      applySelfUpdateRequest,
-      showAvailableSelfUpdate,
-    } = this.props;
-    let {
-      error,
-      uptodate,
-      available,
-      downloading,
-      downloaded,
-      checking,
-    } = selfUpdate;
+    const { statusMessages } = this.props;
+    const { dismissStatusMessage } = this.props;
 
     let children: JSX.Element[] = [];
     let active = true;
@@ -107,48 +93,11 @@ class StatusBar extends React.PureComponent<IProps & IDerivedProps> {
         <span key="message">{T(statusMessages[0])}</span>,
         <Icon key="cross" icon="cross" />,
       ];
-    } else if (error) {
-      callback = () => dismissStatus({});
-      children = [
-        <Icon key="icon" icon="heart-broken" />,
-        <span key="message">Update error: {error}</span>,
-        <Icon key="cross" icon="cross" />,
-      ];
-    } else if (downloaded) {
-      callback = () => applySelfUpdateRequest({});
-      children = [
-        <Icon key="icon" icon="install" />,
-        <span key="message">{T(["status.downloaded"])}</span>,
-      ];
-    } else if (downloading) {
-      busy = true;
-      children = [
-        <Icon key="icon" icon="download" />,
-        <span key="message">{T(["status.downloading"])}</span>,
-      ];
-    } else if (available) {
-      callback = () => showAvailableSelfUpdate({});
-      children = [
-        <Icon key="icon" icon="earth" />,
-        <span key="message">{T(["status.available"])}</span>,
-      ];
-    } else if (checking) {
-      busy = true;
-      children = [
-        <LoadingCircle key="progress" progress={-1} />,
-        <span key="message">{T(["status.checking"])}</span>,
-      ];
-    } else if (uptodate) {
-      children = [
-        <Icon key="icon" icon="like" />,
-        <span key="message">{T(["status.uptodate"])}</span>,
-      ];
     } else {
       active = false;
     }
 
     const classes = classNames({ active, busy });
-    const selfUpdateClasses = classNames("self-update", { busy });
 
     const onClick = () => {
       if (callback) {
@@ -159,9 +108,7 @@ class StatusBar extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <StatusBarDiv className={classes}>
         <div className="filler" />
-        <div className={selfUpdateClasses} onClick={onClick}>
-          {children}
-        </div>
+        <div onClick={onClick}>{children}</div>
         <div className="filler" />
       </StatusBarDiv>
     );
@@ -170,21 +117,14 @@ class StatusBar extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {}
 
-const actionCreators = actionCreatorsList(
-  "applySelfUpdateRequest",
-  "showAvailableSelfUpdate",
-  "dismissStatus",
-  "dismissStatusMessage"
-);
+const actionCreators = actionCreatorsList("dismissStatusMessage");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
-  selfUpdate: ISelfUpdateState;
   statusMessages: ILocalizedString[];
 };
 
 export default connect<IProps>(StatusBar, {
   state: createStructuredSelector({
-    selfUpdate: (rs: IRootState) => rs.selfUpdate,
     statusMessages: (rs: IRootState) => rs.status.messages,
   }),
   actionCreators,

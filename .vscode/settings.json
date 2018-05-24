@@ -23,14 +23,6 @@
   "typescript.tsdk": "./node_modules/typescript/lib",
   "coverage-gutters.lcovname": "./coverage/lcov.info",
   "prettier.trailingComma": "es5",
-  "prettier.javascriptEnable": [
-    "javascript",
-    "javascriptreact"
-  ],
-  "prettier.typescriptEnable": [
-    "typescript",
-    "typescriptreact"
-  ],
   "[typescript]": {
     "editor.formatOnSave": true
   },

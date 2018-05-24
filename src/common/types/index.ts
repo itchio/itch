@@ -81,7 +81,6 @@ export interface IRootState {
   profile: IProfileState;
   i18n: II18nState;
   ui: IUIState;
-  selfUpdate: ISelfUpdateState;
   preferences: IPreferencesState;
   tasks: ITasksState;
   downloads: IDownloadsState;
@@ -97,6 +96,7 @@ export interface IRootState {
 }
 
 export interface IBrothState {
+  packageNames: string[];
   packages: {
     [key: string]: IPackageState;
   };
@@ -287,8 +287,8 @@ export interface ISystemState {
 }
 
 export interface ISystemTasksState {
-  /** timestamp for next self update check (milliseconds since epoch) */
-  nextSelfUpdateCheck: number;
+  /** timestamp for next components update check (milliseconds since epoch) */
+  nextComponentsUpdateCheck: number;
 
   /** timestamp for next game update check (milliseconds since epoch) */
   nextGameUpdateCheck: number;
@@ -464,30 +464,6 @@ export interface IUIState {
   menu: IUIMenuState;
   mainWindow: IUIMainWindowState;
   contextMenu: IUIContextMenuState;
-}
-
-export interface ISelfUpdate {
-  /** the name of the version, e.g. 19.0.0 */
-  name: string;
-
-  /** the date the version was published at */
-  pub_date: string;
-
-  /** release notes for the version */
-  notes: string;
-
-  /** release page for this version */
-  url: string;
-}
-
-export interface ISelfUpdateState {
-  available?: ISelfUpdate;
-  downloading?: ISelfUpdate;
-  downloaded?: ISelfUpdate;
-
-  checking: boolean;
-  uptodate: boolean;
-  error?: string;
 }
 
 interface IInstallLocation {

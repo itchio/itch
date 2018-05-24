@@ -78,8 +78,6 @@ function convertMenuAction(payload: IMenuItem, runtime: IRuntime) {
       return actions.openInExternalBrowser({
         url: `${urls.itchRepo}/blob/master/LICENSE`,
       });
-    case "menu.help.check_for_update":
-      return actions.checkForSelfUpdate({});
     case "menu.help.report_issue":
       return actions.openInExternalBrowser({
         url: `${urls.itchRepo}/issues/new`,

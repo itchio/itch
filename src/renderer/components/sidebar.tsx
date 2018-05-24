@@ -160,7 +160,6 @@ const actionCreators = actionCreatorsList(
   "newTab",
   "copyToClipboard",
   "reportIssue",
-  "checkForSelfUpdate",
   "quit"
 );
 
