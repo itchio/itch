@@ -3,7 +3,7 @@ import styled from "../styles";
 import { T } from "renderer/t";
 import Icon from "renderer/components/basics/icon";
 import { actionCreatorsList, Dispatchers, connect } from "../connect";
-import { IRootState } from "main/net";
+import { IRootState } from "common/types";
 
 const Container = styled.div`
   align-self: stretch;

@@ -79,9 +79,6 @@ func loginFlow(r *runner) {
 	must(r.click(".user-menu"))
 	must(r.click("#user-menu-preferences"))
 
-	r.logf("expanding advanced preferences")
-	must(r.click("#preferences-advanced-section"))
-
 	r.logf("opening clearing browsing data dialog")
 	must(r.click("#clear-browsing-data-link"))
 
