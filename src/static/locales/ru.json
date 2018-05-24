@@ -537,5 +537,7 @@
     "preferences.scan_install_locations.title": "Сканируем...",
     "preferences.advanced.check_game_updates": "Проверить обновления игр",
     "status.downloads.resume_downloads": "Возобновить загрузки",
-    "status.downloads.pause_downloads": "Приостановить загрузки"
+    "status.downloads.pause_downloads": "Приостановить загрузки",
+    "preferences.advanced.components": "Компоненты",
+    "prompt.self_update_ready.short": "Доступна новая версия"
 }
