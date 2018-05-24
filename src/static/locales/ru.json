@@ -539,5 +539,6 @@
     "status.downloads.resume_downloads": "Возобновить загрузки",
     "status.downloads.pause_downloads": "Приостановить загрузки",
     "preferences.advanced.components": "Компоненты",
-    "prompt.self_update_ready.short": "Доступна новая версия"
+    "prompt.self_update_ready.short": "Доступна новая версия",
+    "prompt.revert.no_other_version": "Других версий нет."
 }
