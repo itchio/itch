@@ -59,6 +59,27 @@ export default reducer<IBrothState>(initialState, on => {
     return state;
   });
 
+  on(actions.packageNeedRestart, (state, action) => {
+    const { name, availableVersion } = action.payload;
+
+    let oldPackage = state.packages[name];
+    if (oldPackage) {
+      return {
+        ...state,
+        packages: {
+          ...state.packages,
+          [name]: {
+            ...oldPackage,
+            progressInfo: null,
+            stage: "need-restart",
+            availableVersion,
+          },
+        },
+      };
+    }
+    return state;
+  });
+
   on(actions.packageProgress, (state, action) => {
     const { name, progressInfo } = action.payload;
 

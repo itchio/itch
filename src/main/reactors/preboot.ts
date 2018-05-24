@@ -30,7 +30,8 @@ export default function(watcher: Watcher) {
     let t1 = Date.now();
     try {
       const system: ISystemState = {
-        appVersion: app.getVersion(),
+        appName: app.getName(),
+        appVersion: app.getVersion().replace(/\-.*$/, ""),
         platform: os.itchPlatform(),
         arch: os.arch(),
         macos: os.platform() === "darwin",

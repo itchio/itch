@@ -158,6 +158,10 @@ export const actions = wireActions({
     name: string;
     stage: IPackageState["stage"];
   }>(),
+  packageNeedRestart: action<{
+    name: string;
+    availableVersion: string;
+  }>(),
   packageProgress: action<{
     name: string;
     progressInfo: IProgressInfo;

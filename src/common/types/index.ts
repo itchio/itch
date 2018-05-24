@@ -111,6 +111,7 @@ export interface IPackageState {
   version?: string;
   versionPrefix?: string;
   progressInfo?: IProgressInfo;
+  availableVersion?: string;
 }
 
 export interface ICommonsState {
@@ -245,6 +246,9 @@ export interface IProxySettings {
 }
 
 export interface ISystemState {
+  /** app name, like 'itch' or 'kitch' */
+  appName: string;
+
   /** version string, for example '25.0.0' */
   appVersion: string;
 

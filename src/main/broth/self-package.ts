@@ -59,8 +59,12 @@ export class SelfPackage implements PackageLike {
     } else if (msg.type === "update-ready") {
       const pp = msg.payload as ISM_UpdateReady;
       logger.info(`Version ${pp.version} is ready to be used.`);
-      // TODO: figure out what to do here
-      this.stage("need-restart");
+      this.store.dispatch(
+        actions.packageNeedRestart({
+          name: this.name,
+          availableVersion: pp.version,
+        })
+      );
     } else if (msg.type === "progress") {
       const pp = msg.payload as ISM_Progress;
       this.store.dispatch(

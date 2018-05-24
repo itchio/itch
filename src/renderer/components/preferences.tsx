@@ -182,7 +182,7 @@ class Preferences extends React.PureComponent<IProps & IDerivedProps> {
     return (
       <div className="explanation advanced-form">
         <p className="section">
-          <Icon icon="list" /> {T("preferences.advanced.components")}
+          <Icon icon="list" /> {T(["preferences.advanced.components"])}
           <span
             className="button"
             onClick={() => {
