@@ -133,5 +133,8 @@
     "action.name.editor": "محرّر",
     "docs.learn_more": "تعلم المزيد",
     "download.started": "بدأ",
-    "download.ongoing.reinstall": "يعيد التثبيت {{title}}..."
+    "download.ongoing.reinstall": "يعيد التثبيت {{title}}...",
+    "collection.empty": "ليس هناك ألعاب في هذه المجموعة",
+    "collection.summary": "مجموعة من {{itemCount}} عناصر",
+    "action.name.forums": "منتديات"
 }
