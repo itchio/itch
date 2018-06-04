@@ -455,7 +455,7 @@
     "grid.item.open_file_location.linux": "Montri en la dosieradministrilo",
     "grid.item.open_file_location.osx": "Montri en „Finder“",
     "table.column.installed_size": "Grando",
-    "preferences.install_location.navigate": "Vidi la enhavojn de ĉi tiu loko en nova folio",
+    "preferences.install_location.navigate": "Vidi la enhavojn de ĉi tiu loko",
     "install_location.property.size_on_disk": "{{size}} en la disko",
     "grid.item.uninstall_request": "Malinstali aŭ reinstali…",
     "grid.criterion.filter_by": "Filtri laŭ: ",
