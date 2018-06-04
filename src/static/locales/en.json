@@ -434,6 +434,7 @@
   "prompt.payments_disabled.title": "Payments disabled",
   "prompt.revert.title": "Switch {{title}} to another version",
   "prompt.revert.version": "version {{version}}",
+  "prompt.revert.no_other_version": "No other version is available.",
   "prompt.rpm_policy.detail":
     "itch can only install portable versions of Linux applications.",
   "prompt.rpm_policy.message":

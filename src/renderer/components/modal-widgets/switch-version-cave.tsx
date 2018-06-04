@@ -15,6 +15,7 @@ import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Build, Cave, Upload } from "common/butlerd/messages";
 import { IModalWidgetProps } from "./index";
 import { DAY_MONTH_FORMAT, MONTH_YEAR_FORMAT } from "common/format/datetime";
+import { isEmpty } from "underscore";
 
 const BuildListDiv = styled.div`
   width: 100%;
@@ -88,23 +89,28 @@ class SwitchVersionCave extends React.PureComponent<IProps & IDerivedProps> {
     const { builds } = this.props.modal.widgetParams;
 
     const buildElements: JSX.Element[] = [];
-    let lastMonth = 0;
-    for (let index = 0; index < builds.length; index++) {
-      const build = builds[index];
-      const month = monthFor(build);
-      if (month != lastMonth) {
-        const monthDate = build.updatedAt;
-        buildElements.push(
-          <div key={`month-${month}`} className="builds--month">
-            <CustomDate date={new Date(monthDate)} format={MONTH_YEAR_FORMAT} />
-          </div>
-        );
-        lastMonth = month;
+    if (isEmpty(builds)) {
+      buildElements.push(<>{T(["prompt.revert.no_other_version"])}</>);
+    } else {
+      let lastMonth = 0;
+      for (let index = 0; index < builds.length; index++) {
+        const build = builds[index];
+        const month = monthFor(build);
+        if (month != lastMonth) {
+          const monthDate = build.updatedAt;
+          buildElements.push(
+            <div key={`month-${month}`} className="builds--month">
+              <CustomDate
+                date={new Date(monthDate)}
+                format={MONTH_YEAR_FORMAT}
+              />
+            </div>
+          );
+          lastMonth = month;
+        }
+        buildElements.push(this.renderBuild(index, build));
       }
-      buildElements.push(this.renderBuild(index, build));
     }
-
-    console.log(`buildElement: `, buildElements);
 
     return (
       <ModalWidgetDiv>

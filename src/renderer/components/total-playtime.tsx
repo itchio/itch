@@ -19,13 +19,11 @@ class TotalPlaytime extends React.PureComponent<IProps & IDerivedProps> {
 
     if (secondsRun > 0 && classAction === "launch") {
       return (
-        <div className="total-playtime">
-          <span>
-            {short ? null : (
-              <label>{T([`usage_stats.has_${xed}_for_duration`])} </label>
-            )}
-            {formatDuration(secondsRun)}
-          </span>
+        <div>
+          {short ? null : (
+            <label>{T([`usage_stats.has_${xed}_for_duration`])} </label>
+          )}
+          <span className="total-playtime">{formatDuration(secondsRun)}</span>
         </div>
       );
     }

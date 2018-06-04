@@ -18,6 +18,15 @@ import TotalPlaytime from "../total-playtime";
 import LastPlayed from "../last-played";
 import { IModalWidgetProps } from "./index";
 import { getCaveSummary } from "common/butlerd";
+import RowButton, {
+  BigButtonContent,
+  BigButtonRow,
+  Tag,
+} from "../basics/row-button";
+
+import Cover from "../basics/cover";
+import TimeAgo from "../basics/time-ago";
+import Icon from "../basics/icon";
 
 const CaveItem = styled.div`
   padding: 4px;
@@ -25,6 +34,11 @@ const CaveItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
+  .time-ago,
+  .total-playtime {
+    color: ${props => props.theme.secondaryText} !important;
+  }
 `;
 
 const CaveDetails = styled.div`
@@ -33,15 +47,11 @@ const CaveDetails = styled.div`
 `;
 
 const CaveDetailsRow = styled.div`
-  padding: 6px 0;
+  padding: 8px 0;
 
   display: flex;
   flex-direction: row;
   align-items: center;
-
-  .platform-icons {
-    margin-left: 8px;
-  }
 
   &.smaller {
     font-size: 90%;
@@ -53,9 +63,27 @@ const Spacer = styled.div`
   width: 8px;
 `;
 
+const SpacerLarge = styled.div`
+  height: 1px;
+  width: 16px;
+`;
+
+const CaveItemBigActions = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  & > * {
+    margin-right: 4px;
+  }
+`;
+
 const CaveItemActions = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
   margin-top: 10px;
 
   & > * {
@@ -64,7 +92,6 @@ const CaveItemActions = styled.div`
 `;
 
 const Title = styled.div`
-  margin-left: 8px;
   font-weight: bold;
 
   display: flex;
@@ -73,8 +100,7 @@ const Title = styled.div`
 `;
 
 const FileSize = styled.div`
-  color: ${props => props.theme.secondaryText};
-  margin-left: 8px;
+  font-weight: normal;
 `;
 
 class ManageCave extends React.PureComponent<IProps & IDerivedProps> {
@@ -90,28 +116,78 @@ class ManageCave extends React.PureComponent<IProps & IDerivedProps> {
     const caveSummary = getCaveSummary(cave);
     return (
       <CaveItem key={cave.id}>
-        <CaveDetails>
-          <CaveDetailsRow>
-            <Title>{formatUpload(u)}</Title>
-          </CaveDetailsRow>
-          <CaveDetailsRow className="smaller">
-            {cave.installInfo.installedSize ? (
-              <FileSize>{fileSize(cave.installInfo.installedSize)}</FileSize>
-            ) : null}
-            <Spacer />
-            <LastPlayed game={game} cave={caveSummary} />
-            <Spacer />
-            <TotalPlaytime game={game} cave={caveSummary} />
-          </CaveDetailsRow>
-        </CaveDetails>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <CaveDetails>
+            <CaveDetailsRow>
+              <Title>{formatUpload(u)}</Title>
+            </CaveDetailsRow>
+            <CaveDetailsRow className="smaller">
+              <Icon icon="tag" />
+              <Spacer />
+              Published
+              <Spacer />
+              <TimeAgo date={u.createdAt} />
+              <SpacerLarge />
+              <Icon icon="install" />
+              <Spacer />
+              Installed
+              <Spacer />
+              <TimeAgo date={cave.stats.installedAt} />
+            </CaveDetailsRow>
+            <CaveDetailsRow className="smaller">
+              <Icon icon="history" />
+              <Spacer />
+              <LastPlayed game={game} cave={caveSummary} />
+              <SpacerLarge />
+              <Icon icon="stopwatch" />
+              <Spacer />
+              <TotalPlaytime game={game} cave={caveSummary} />
+            </CaveDetailsRow>
+          </CaveDetails>
+          <div style={{ width: "60px" }}>
+            <Cover
+              gameId={game.id}
+              coverUrl={game.coverUrl}
+              stillCoverUrl={game.stillCoverUrl}
+            />
+          </div>
+        </div>
+        <CaveItemBigActions>
+          <RowButton icon="folder-open" onClick={this.onExplore}>
+            <BigButtonContent>
+              <BigButtonRow>{T(showInExplorerString())}</BigButtonRow>
+              <BigButtonRow>
+                <Tag>{cave.installInfo.installFolder}</Tag>
+                {cave.installInfo.installedSize ? (
+                  <Tag>
+                    <FileSize>
+                      {fileSize(cave.installInfo.installedSize)}
+                    </FileSize>
+                  </Tag>
+                ) : null}
+              </BigButtonRow>
+            </BigButtonContent>
+          </RowButton>
+
+          {u.channelName == "" ? (
+            ""
+          ) : (
+            <RowButton icon="shuffle" onClick={this.onSwitchVersion}>
+              {T(["grid.item.revert_to_version"])}
+            </RowButton>
+          )}
+        </CaveItemBigActions>
         <CaveItemActions>
-          <Button icon="folder-open" onClick={this.onExplore}>
-            {T(showInExplorerString())}
-          </Button>
-          <Button icon="shuffle" onClick={this.onSwitchVersion}>
-            {T(["grid.item.revert_to_version"])}
-          </Button>
           <Button
+            discreet
             icon="repeat"
             onClick={this.onReinstall}
             className="manage-reinstall"
@@ -119,7 +195,7 @@ class ManageCave extends React.PureComponent<IProps & IDerivedProps> {
             {T(["prompt.uninstall.reinstall"])}
           </Button>
           <Button
-            hint={[]}
+            discreet
             icon="uninstall"
             onClick={this.onUninstall}
             className="manage-uninstall"
