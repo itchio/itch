@@ -20,7 +20,7 @@ class TimeAgo extends React.PureComponent<IProps> {
 
     return (
       <span
-        className={className}
+        className={`time-ago ${className}`}
         data-rh={JSON.stringify({ date: dateObject.toISOString() })}
       >
         {before ? <>{before} </> : null}

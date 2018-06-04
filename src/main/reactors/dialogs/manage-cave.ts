@@ -4,6 +4,7 @@ import { actions } from "common/actions";
 import rootLogger from "common/logger";
 import { messages, withLogger } from "common/butlerd/index";
 import { modalWidgets } from "renderer/components/modal-widgets";
+import { formatUploadTitle } from "common/format/upload";
 const logger = rootLogger.child({ name: "manage-game" });
 const call = withLogger(logger);
 
@@ -19,11 +20,11 @@ export default function(watcher: Watcher) {
       cave,
     };
 
-    const { game } = cave;
+    const { game, upload } = cave;
 
     const openModal = actions.openModal(
       modalWidgets.manageCave.make({
-        title: game.title,
+        title: `${game.title} - ${formatUploadTitle(upload)}`,
         message: "",
         widgetParams,
       })

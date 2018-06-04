@@ -130,6 +130,18 @@ const TagDiv = styled.div`
   border-radius: ${props => props.theme.borderRadii.explanation};
 `;
 
+export const BigButtonContent = styled.div`
+  flex: 1 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const BigButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: 0.3em 0.1em;
+`;
+
 export class Tag extends React.PureComponent<{}, {}> {
   render() {
     return <TagDiv>{this.props.children}</TagDiv>;

@@ -3,7 +3,11 @@ import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import { createStructuredSelector } from "reselect";
 
 import Button from "./basics/button";
-import RowButton, { Tag } from "./basics/row-button";
+import RowButton, {
+  Tag,
+  BigButtonContent,
+  BigButtonRow,
+} from "./basics/row-button";
 import IconButton from "./basics/icon-button";
 import Icon from "./basics/icon";
 import Markdown from "./basics/markdown";
@@ -231,18 +235,6 @@ const ModalDiv = styled.div`
       }
     }
   }
-`;
-
-const BigButtonContent = styled.div`
-  flex: 1 1;
-  display: flex;
-  flex-direction: column;
-`;
-
-const BigButtonRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin: 0.3em 0.1em;
 `;
 
 const HeaderDiv = styled.div`
