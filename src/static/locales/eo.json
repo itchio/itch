@@ -533,5 +533,6 @@
     "status.downloads.resume_downloads": "Daŭrigi la elŝutojn",
     "status.downloads.pause_downloads": "Paŭzigi la elŝutojn",
     "preferences.advanced.components": "Komponantoj",
-    "prompt.self_update_ready.short": "Estas disponebla nova versio"
+    "prompt.self_update_ready.short": "Estas disponebla nova versio",
+    "prompt.revert.no_other_version": "Ne estas alia disponebla versio."
 }

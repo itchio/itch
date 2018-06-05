@@ -136,5 +136,6 @@
     "download.ongoing.reinstall": "يعيد التثبيت {{title}}...",
     "collection.empty": "ليس هناك ألعاب في هذه المجموعة",
     "collection.summary": "مجموعة من {{itemCount}} عناصر",
-    "action.name.forums": "منتديات"
+    "action.name.forums": "منتديات",
+    "collections.empty_sub": "تصفح لبعض الألعاب وإضافتها إلى مجموعة جديدة!"
 }
