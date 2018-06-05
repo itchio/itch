@@ -1,14 +1,29 @@
-import * as os from "main/os";
-
 import { classificationActions } from "common/constants/classification-actions";
-import { Game, GameType, GameClassification } from "common/butlerd/messages";
-import { camelify } from "common/format/camelify";
+import {
+  Game,
+  GameType,
+  GameClassification,
+  Platform,
+} from "common/butlerd/messages";
+import { currentRuntime } from "main/os/runtime";
 
-const platform = os.itchPlatform();
-const platformProp = camelify("p_" + platform);
+const runtime = currentRuntime();
 
 export function isPlatformCompatible(game: Game): boolean {
-  const hasTaggedPlatform = !!(game as any)[platformProp];
+  let hasTaggedPlatform = false;
+  // TODO: architectures
+  switch (runtime.platform) {
+    case Platform.OSX:
+      hasTaggedPlatform = !!game.platforms.osx;
+      break;
+    case Platform.Linux:
+      hasTaggedPlatform = !!game.platforms.linux;
+      break;
+    case Platform.Windows:
+      hasTaggedPlatform = !!game.platforms.windows;
+      break;
+  }
+
   const isHTMLGame = game.type === GameType.HTML;
   const isOpenable =
     classificationActions[game.classification || GameClassification.Game] ===

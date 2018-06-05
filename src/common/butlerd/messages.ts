@@ -881,8 +881,7 @@ export const DownloadsList = createRequest<
  * Result for Downloads.ClearFinished
  */
 export interface DownloadsClearFinishedResult {
-  /** The number of removed downloads */
-  removedCount: number;
+  // no fields
 }
 
 /**
@@ -1469,20 +1468,14 @@ export interface Game {
   publishedAt: Date;
   /** Price in cents of a dollar */
   minPrice: number;
-  /** Can this game be bought? */
+  /** Are payments accepted? */
   canBeBought: boolean;
-  /** Is this game downloadable by press users for free? */
-  inPressSystem: boolean;
-  /** Does this game have a demo that can be downloaded for free? */
+  /** Does this game have a demo available? */
   hasDemo: boolean;
-  /** Does this game have an upload tagged with 'macOS compatible'? (creator-controlled) */
-  pOsx: boolean;
-  /** Does this game have an upload tagged with 'Linux compatible'? (creator-controlled) */
-  pLinux: boolean;
-  /** Does this game have an upload tagged with 'Windows compatible'? (creator-controlled) */
-  pWindows: boolean;
-  /** Does this game have an upload tagged with 'Android compatible'? (creator-controlled) */
-  pAndroid: boolean;
+  /** Is this game part of the itch.io press system? */
+  inPressSystem: boolean;
+  /** Platforms this game is available for */
+  platforms: Platforms;
   /** The user account this game is associated to */
   user?: User;
   /** ID of the user account this game is associated to */
@@ -1497,6 +1490,27 @@ export interface Game {
   purchasesCount: number;
   /** undocumented */
   published: boolean;
+}
+
+/**
+ * undocumented
+ */
+export interface Platforms {
+  /** undocumented */
+  windows: Architectures;
+  /** undocumented */
+  linux: Architectures;
+  /** undocumented */
+  osx: Architectures;
+}
+
+/**
+ * undocumented
+ */
+export enum Architectures {
+  All = "all",
+  _386 = "386",
+  Amd64 = "amd64",
 }
 
 /**
@@ -1591,20 +1605,14 @@ export interface Upload {
   channelName: string;
   /** Latest build for this upload, if it's a wharf-enabled upload */
   build: Build;
-  /** Is this upload a demo that can be downloaded for free? */
-  demo: boolean;
-  /** Is this upload a pre-order placeholder? */
-  preorder: boolean;
   /** Upload type: default, soundtrack, etc. */
   type: UploadType;
-  /** Is this upload tagged with 'macOS compatible'? (creator-controlled) */
-  pOsx: boolean;
-  /** Is this upload tagged with 'Linux compatible'? (creator-controlled) */
-  pLinux: boolean;
-  /** Is this upload tagged with 'Windows compatible'? (creator-controlled) */
-  pWindows: boolean;
-  /** Is this upload tagged with 'Android compatible'? (creator-controlled) */
-  pAndroid: boolean;
+  /** Is this upload a pre-order placeholder? */
+  preorder: boolean;
+  /** Is this upload a free demo? */
+  demo: boolean;
+  /** Platforms this upload is compatible with */
+  platforms: Platforms;
   /** Date this upload was created at */
   createdAt: Date;
   /** Date this upload was last updated at (order changed, display name set, etc.) */
@@ -1655,8 +1663,6 @@ export interface Collection {
    * page deleted, visibility level changed, etc.)
    */
   gamesCount: number;
-  /** Games in this collection: filled in API response */
-  games: Game[];
   /** Games in this collection, with additional info */
   collectionGames: CollectionGame[];
   /** undocumented */
