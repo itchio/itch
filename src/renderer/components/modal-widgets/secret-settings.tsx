@@ -85,6 +85,13 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
             onClick={this.onBadButlerdCall}
             label="Call non-existent butlerd endpoint"
           />
+          <Button
+            className="control"
+            primary={true}
+            icon="bug"
+            onClick={this.onOpenCrashy}
+            label="Open crashy tab"
+          />
         </ControlsDiv>
       </ModalWidgetDiv>
     );
@@ -160,6 +167,11 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
     });
   };
 
+  onOpenCrashy = () => {
+    this.props.navigate({ url: "itch://crashy" });
+    this.props.closeModal({});
+  };
+
   toggleReduxLogging = () => {
     const enabled = !this.props.status.reduxLoggingEnabled;
     this.props.setReduxLoggingEnabled({
@@ -181,8 +193,10 @@ interface IProps extends IModalWidgetProps<ISecretSettingsParams, void> {
 const actionCreators = actionCreatorsList(
   "setReduxLoggingEnabled",
   "openModal",
+  "closeModal",
   "reloadLocales",
-  "openDevTools"
+  "openDevTools",
+  "navigate"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {

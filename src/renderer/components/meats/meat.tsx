@@ -1,21 +1,24 @@
 import React from "react";
 import { IMeatProps } from "renderer/components/meats/types";
 
-import Library from "../library";
-import Collections from "../collections";
-import Dashboard from "../dashboard";
-
-import Preferences from "../preferences";
-import Downloads from "../downloads";
-import Collection from "../collection";
-import Browser from "../url-meat";
-import Location from "../location";
-import AppLog from "../app-log";
+import Library from "renderer/components/library";
+import Collections from "renderer/components/collections";
+import Dashboard from "renderer/components/dashboard";
+import Preferences from "renderer/components/preferences";
+import Downloads from "renderer/components/downloads";
+import Collection from "renderer/components/collection";
+import Browser from "renderer/components/url-meat";
+import Location from "renderer/components/location";
+import AppLog from "renderer/components/app-log";
 import { Space } from "common/helpers/space";
 
 const showHistory = process.env.ITCH_SHOW_HISTORY === "1";
 
 import styled from "../styles";
+import Crashy from "renderer/components/crashy";
+import Button from "../basics/button";
+import LoadingCircle from "../basics/loading-circle";
+import { T } from "renderer/t";
 
 const HistoryDiv = styled.div`
   position: absolute;
@@ -40,8 +43,108 @@ const HistoryDiv = styled.div`
   }
 `;
 
-class Meat extends React.PureComponent<IProps> {
+const ErrorDiv = styled.div`
+  display: block;
+  overflow: hidden;
+  margin: 20px;
+  width: 100%;
+`;
+
+const ErrorContents = styled.div`
+  overflow-y: scroll;
+  max-height: fill-available;
+  padding: 20px 0;
+
+  pre {
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+`;
+
+const ErrorHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ErrorButtons = styled.div`
+  margin: 20px 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ErrorSpacer = styled.div`
+  height: 1px;
+  width: 8px;
+`;
+
+class Meat extends React.PureComponent<IProps, IState> {
+  constructor(props: Meat["props"], context: any) {
+    super(props, context);
+    this.state = {
+      hasError: false,
+      loading: false,
+    };
+  }
+
+  componentDidCatch(error, info) {
+    this.setState({
+      hasError: true,
+      loading: false,
+      error,
+      info,
+    });
+  }
+
   render() {
+    if (this.state.hasError) {
+      const { error, info } = this.state;
+
+      return (
+        <ErrorDiv>
+          <ErrorHeader>
+            <h3>itch has encountered a rendering error</h3>
+          </ErrorHeader>
+
+          <ErrorButtons>
+            <Button
+              icon="repeat"
+              onClick={() => {
+                this.setState({ loading: true });
+                setTimeout(() => {
+                  this.setState({ hasError: false, loading: false });
+                }, 400);
+              }}
+            >
+              {this.state.loading ? <LoadingCircle progress={-1} /> : "Reload"}
+            </Button>
+            <ErrorSpacer />
+            <Button icon="bug" onClick={this.onReportIssue}>
+              {T(["menu.help.report_issue"])}
+            </Button>
+          </ErrorButtons>
+
+          <details>
+            <summary>View details for nerds</summary>
+            <ErrorContents>
+              <p>
+                <pre>
+                  {error
+                    ? error.stack ? error.stack : String(error)
+                    : "(no error)"}
+                </pre>
+              </p>
+              <p>
+                <pre>{info ? info.componentStack : "(no component stack)"}</pre>
+              </p>
+            </ErrorContents>
+          </details>
+        </ErrorDiv>
+      );
+    }
+
     const inst = this.props.tabInstance;
     const sp = Space.fromInstance(inst);
     const ConcreteMeat = this.getConcrete(sp);
@@ -79,6 +182,10 @@ class Meat extends React.PureComponent<IProps> {
     }
   }
 
+  onReportIssue = () => {
+    window.alert("Should open modal!");
+  };
+
   getConcrete(sp: Space): React.ComponentClass<IMeatProps> {
     if (sp.isBrowser()) {
       return Browser;
@@ -103,10 +210,19 @@ class Meat extends React.PureComponent<IProps> {
         return Location;
       case "applog":
         return AppLog;
+      case "crashy":
+        return Crashy;
       default:
         return null;
     }
   }
+}
+
+interface IState {
+  hasError: boolean;
+  loading: boolean;
+  error?: any;
+  info?: any;
 }
 
 export default Meat;

@@ -263,7 +263,7 @@ export class Space {
           case "applog":
             return ["sidebar.applog"];
           default:
-            return "?";
+            return this._querylessURL || "Error";
         }
       }
 
