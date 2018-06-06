@@ -24,6 +24,11 @@ import {
   getActiveDownload,
   getPendingDownloads,
 } from "main/reactors/downloads/getters";
+import {
+  rendererWindowState,
+  rendererNavigation,
+  rendererWindow,
+} from "common/util/navigation";
 
 interface ISortableHubSidebarItemProps {
   props: any & {
@@ -38,17 +43,22 @@ const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
 class TabBase extends React.PureComponent<IProps & IDerivedProps> {
   onClick = () => {
     const { tab, focusTab } = this.props;
-    focusTab({ tab });
+    focusTab({ window: rendererWindow(), tab });
   };
 
   onClose = () => {
     const { tab, closeTab } = this.props;
-    closeTab({ tab });
+    closeTab({ window: rendererWindow(), tab });
   };
 
   onContextMenu = (ev: React.MouseEvent<any>) => {
     const { tab, openTabContextMenu } = this.props;
-    openTabContextMenu({ tab, clientX: ev.clientX, clientY: ev.pageY });
+    openTabContextMenu({
+      window: rendererWindow(),
+      tab,
+      clientX: ev.clientX,
+      clientY: ev.pageY,
+    });
   };
 
   render() {
@@ -130,6 +140,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
 
     this.props.openModal(
       modalWidgets.exploreJson.make({
+        window: rendererWindow(),
         title: "Tab information",
         message: "",
         widgetParams: {
@@ -169,8 +180,9 @@ const Tab = connect<IProps>(injectIntl(TabBase), {
     let { tab } = initialProps;
 
     return createStructuredSelector({
-      tabInstance: (rs: IRootState) => rs.profile.tabInstances[tab],
-      loading: (rs: IRootState) => !!rs.profile.navigation.loadingTabs[tab],
+      tabInstance: (rs: IRootState) =>
+        rendererWindowState(rs).tabInstances[tab],
+      loading: (rs: IRootState) => !!rendererNavigation(rs).loadingTabs[tab],
       downloads: (rs: IRootState) => tab === "itch://downloads" && rs.downloads,
     });
   },

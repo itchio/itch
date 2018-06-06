@@ -56,14 +56,19 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.viewCreatorProfile, async (store, action) => {
     const url = store.getState().profile.credentials.me.url;
-    store.dispatch(actions.navigate({ url }));
+    store.dispatch(actions.navigate({ window: "root", url }));
   });
 
   watcher.on(actions.viewCommunityProfile, async (store, action) => {
     const url = store.getState().profile.credentials.me.url;
     const host = urlParser.parse(url).hostname;
     const slug = /^[^.]+/.exec(host);
-    store.dispatch(actions.navigate({ url: `${urls.itchio}/profile/${slug}` }));
+    store.dispatch(
+      actions.navigate({
+        window: "root",
+        url: `${urls.itchio}/profile/${slug}`,
+      })
+    );
   });
 
   watcher.on(actions.reportIssue, async (store, action) => {
@@ -107,7 +112,9 @@ function handleItchioUrl(store: IStore, uri: string) {
                 }
                 navigated = true;
                 const { game } = params;
-                store.dispatch(actions.navigateToGame({ game }));
+                store.dispatch(
+                  actions.navigateToGame({ game, window: "root" })
+                );
               });
             });
           } catch (e) {

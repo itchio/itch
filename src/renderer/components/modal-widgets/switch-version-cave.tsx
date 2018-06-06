@@ -16,6 +16,7 @@ import { Build, Cave, Upload } from "common/butlerd/messages";
 import { IModalWidgetProps } from "./index";
 import { DAY_MONTH_FORMAT, MONTH_YEAR_FORMAT } from "common/format/datetime";
 import { isEmpty } from "underscore";
+import { rendererWindow } from "common/util/navigation";
 
 const BuildListDiv = styled.div`
   width: 100%;
@@ -151,6 +152,7 @@ class SwitchVersionCave extends React.PureComponent<IProps & IDerivedProps> {
     const index = parseInt(ev.currentTarget.dataset.index, 10);
     const res: ISwitchCaveResponse = { index };
     this.props.closeModal({
+      window: rendererWindow(),
       action: actions.modalResponse(res),
     });
   };

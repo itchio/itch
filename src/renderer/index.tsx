@@ -43,6 +43,7 @@ import electron from "electron";
 import App from "renderer/components/app";
 import { actions } from "common/actions/index";
 import { ExtendedWindow } from "common/types";
+import { rendererWindow } from "common/util/navigation";
 
 let appNode: Element | null;
 
@@ -101,7 +102,8 @@ async function start() {
   const opts = parseQueryString(location.search.replace(/^\?/, ""));
   const extWindow = window as ExtendedWindow;
   extWindow.itchWindow = {
-    role: !!opts && !!opts.tab ? "secondary" : "main",
+    id: String(opts.id),
+    role: opts.tab ? "secondary" : "main",
     tab: opts ? String(opts.tab) : null,
   };
 
@@ -127,7 +129,7 @@ document.addEventListener("drop", event => {
   const urls = event.dataTransfer.getData("text/uri-list");
   if (urls) {
     urls.split("\n").forEach(url => {
-      store.dispatch(actions.navigate({ url }));
+      store.dispatch(actions.navigate({ window: rendererWindow(), url }));
     });
   }
 });

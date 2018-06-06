@@ -21,6 +21,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.openModal(
         modalWidgets.naked.make({
+          window: "root",
           title: "",
           message: ["prompt.uninstall.message", { title }],
           buttons: [

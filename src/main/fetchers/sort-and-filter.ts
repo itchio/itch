@@ -20,6 +20,7 @@ export interface ISortAndFilterOpts {
 
 export function sortAndFilter(
   games: Game[],
+  window: string,
   tab: string,
   store: IStore,
   opts: ISortAndFilterOpts = {}
@@ -27,7 +28,7 @@ export function sortAndFilter(
   let set = games;
   const rs = store.getState();
 
-  const sp = Space.fromState(rs, tab);
+  const sp = Space.fromState(rs, window, tab);
   const tabParams = sp.query() as ITabParams;
   const { sortBy, sortDirection = "DESC" } = tabParams;
   const prefs = rs.preferences;

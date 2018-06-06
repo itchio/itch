@@ -10,7 +10,7 @@ import IconButton from "./basics/icon-button";
 import styled, * as styles from "./styles";
 import { css } from "./styles";
 import { Space } from "common/helpers/space";
-import { transformUrl } from "common/util/navigation";
+import { transformUrl, rendererWindow } from "common/util/navigation";
 import { IBrowserControlProps } from "./browser-state";
 
 const HTTPS_RE = /^https:\/\//;
@@ -75,10 +75,14 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
   browserAddress: HTMLInputElement | HTMLElement;
 
   // event handlers
-  goBack = () => this.props.tabGoBack({ tab: this.props.tab });
-  goForward = () => this.props.tabGoForward({ tab: this.props.tab });
-  stop = () => this.props.tabStop({ tab: this.props.tab });
-  reload = () => this.props.tabReloaded({ tab: this.props.tab });
+  goBack = () =>
+    this.props.tabGoBack({ window: rendererWindow(), tab: this.props.tab });
+  goForward = () =>
+    this.props.tabGoForward({ window: rendererWindow(), tab: this.props.tab });
+  stop = () =>
+    this.props.tabStop({ window: rendererWindow(), tab: this.props.tab });
+  reload = () =>
+    this.props.tabReloaded({ window: rendererWindow(), tab: this.props.tab });
 
   render() {
     const { tabInstance } = this.props;
@@ -191,6 +195,7 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
 
       const { tab, evolveTab } = this.props;
       evolveTab({
+        window: rendererWindow(),
         tab,
         url,
         replace: false,
@@ -211,7 +216,7 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
 
   pushWeb(web: Partial<ITabWeb>) {
     const { tabDataFetched, tab } = this.props;
-    tabDataFetched({ tab, data: { web } });
+    tabDataFetched({ window: rendererWindow(), tab, data: { web } });
   }
 
   handleClickOutside = () => {

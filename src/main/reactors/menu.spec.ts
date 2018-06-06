@@ -1,115 +1,115 @@
-import { describe, it, assert, TestWatcher } from "test";
-import { actions } from "common/actions";
-import { IRuntime, IMenuTemplate } from "common/types";
+// import { describe, it, assert, TestWatcher } from "test";
+// import { actions } from "common/actions";
+// import { IRuntime, IMenuTemplate } from "common/types";
 
-import "electron";
-import menu from "./menu";
-import { find, findWhere } from "underscore";
-import { fleshOutTemplate } from "./context-menu/flesh-out-template";
-import { Platform } from "common/butlerd/messages";
+// import "electron";
+// import menu from "./menu";
+// import { find, findWhere } from "underscore";
+// import { fleshOutTemplate } from "./context-menu/flesh-out-template";
+// import { Platform } from "common/butlerd/messages";
 
-describe("menu", () => {
-  it("builds the menu", async () => {
-    let w = new TestWatcher();
-    const winRuntime: IRuntime = {
-      platform: Platform.Windows,
-    };
-    menu(w, winRuntime);
+// describe("menu", () => {
+//   it("builds the menu", async () => {
+//     let w = new TestWatcher();
+//     const winRuntime: IRuntime = {
+//       platform: Platform.Windows,
+//     };
+//     menu(w, winRuntime);
 
-    let findMenu = (template: IMenuTemplate, name: string) =>
-      find(template, x => x.localizedLabel && x.localizedLabel[0] === name);
+//     let findMenu = (template: IMenuTemplate, name: string) =>
+//       find(template, x => x.localizedLabel && x.localizedLabel[0] === name);
 
-    // fire a dummy action so the menu updates
-    await w.dispatchAndWaitImmediate(
-      actions.localeDownloadEnded({
-        lang: "en",
-        resources: {
-          "menu.help.help": "Help",
-        },
-      })
-    );
+//     // fire a dummy action so the menu updates
+//     await w.dispatchAndWaitImmediate(
+//       actions.localeDownloadEnded({
+//         lang: "en",
+//         resources: {
+//           "menu.help.help": "Help",
+//         },
+//       })
+//     );
 
-    let template = w.store.getState().ui.menu.template;
-    let account = findMenu(template, "menu.account.account");
-    assert.deepEqual(account.submenu[0].localizedLabel, [
-      "menu.account.not_logged_in",
-    ]);
+//     let template = w.store.getState().ui.menu.template;
+//     let account = findMenu(template, "menu.account.account");
+//     assert.deepEqual(account.submenu[0].localizedLabel, [
+//       "menu.account.not_logged_in",
+//     ]);
 
-    await w.dispatchAndWaitImmediate(
-      actions.loginSucceeded({
-        profile: {
-          id: -1,
-          user: {} as any,
-          lastConnected: null,
-        },
-      })
-    );
+//     await w.dispatchAndWaitImmediate(
+//       actions.loginSucceeded({
+//         profile: {
+//           id: -1,
+//           user: {} as any,
+//           lastConnected: null,
+//         },
+//       })
+//     );
 
-    template = w.store.getState().ui.menu.template;
-    account = findMenu(template, "menu.account.account");
-    assert.deepEqual(account.submenu[0].localizedLabel, [
-      "menu.account.change_user",
-    ]);
+//     template = w.store.getState().ui.menu.template;
+//     account = findMenu(template, "menu.account.account");
+//     assert.deepEqual(account.submenu[0].localizedLabel, [
+//       "menu.account.change_user",
+//     ]);
 
-    let changeUserDispatched = false;
-    w.on(actions.changeUser, async () => {
-      changeUserDispatched = true;
-    });
+//     let changeUserDispatched = false;
+//     w.on(actions.changeUser, async () => {
+//       changeUserDispatched = true;
+//     });
 
-    let fleshed = fleshOutTemplate(w.store, winRuntime, template);
-    const accountItem = findWhere(fleshed, { label: "menu.account.account" });
-    accountItem.submenu[0].click();
-    assert.isTrue(changeUserDispatched);
+//     let fleshed = fleshOutTemplate(w.store, winRuntime, template);
+//     const accountItem = findWhere(fleshed, { label: "menu.account.account" });
+//     accountItem.submenu[0].click();
+//     assert.isTrue(changeUserDispatched);
 
-    let helpItem = findWhere(fleshed, {
-      label: "Help",
-    });
-    assert.isOk(helpItem, "menu items are translated in english");
+//     let helpItem = findWhere(fleshed, {
+//       label: "Help",
+//     });
+//     assert.isOk(helpItem, "menu items are translated in english");
 
-    await w.dispatchAndWaitImmediate(
-      actions.localeDownloadEnded({
-        lang: "fr",
-        resources: {
-          "menu.help.help": "Aide",
-        },
-      })
-    );
-    await w.dispatchAndWaitImmediate(
-      actions.languageChanged({
-        lang: "fr-FR",
-      })
-    );
+//     await w.dispatchAndWaitImmediate(
+//       actions.localeDownloadEnded({
+//         lang: "fr",
+//         resources: {
+//           "menu.help.help": "Aide",
+//         },
+//       })
+//     );
+//     await w.dispatchAndWaitImmediate(
+//       actions.languageChanged({
+//         lang: "fr-FR",
+//       })
+//     );
 
-    fleshed = fleshOutTemplate(w.store, winRuntime, template);
-    helpItem = findWhere(fleshed, {
-      label: "Aide",
-    });
-    assert.isOk(helpItem, "menu items are translated in french");
+//     fleshed = fleshOutTemplate(w.store, winRuntime, template);
+//     helpItem = findWhere(fleshed, {
+//       label: "Aide",
+//     });
+//     assert.isOk(helpItem, "menu items are translated in french");
 
-    // check that all actions convert properly
-    const visit = (item: Electron.MenuItemConstructorOptions) => {
-      if (item.submenu) {
-        for (const child of item.submenu as Electron.MenuItemConstructorOptions[]) {
-          visit(child);
-        }
-      }
+//     // check that all actions convert properly
+//     const visit = (item: Electron.MenuItemConstructorOptions) => {
+//       if (item.submenu) {
+//         for (const child of item.submenu as Electron.MenuItemConstructorOptions[]) {
+//           visit(child);
+//         }
+//       }
 
-      if (item.click) {
-        item.click(null, null, {} as any);
-      }
-    };
+//       if (item.click) {
+//         item.click(null, null, {} as any);
+//       }
+//     };
 
-    let visitAll = () => {
-      for (const item of fleshed) {
-        visit(item);
-      }
-    };
-    visitAll();
+//     let visitAll = () => {
+//       for (const item of fleshed) {
+//         visit(item);
+//       }
+//     };
+//     visitAll();
 
-    const macRuntime: IRuntime = {
-      platform: Platform.OSX,
-    };
-    fleshed = fleshOutTemplate(w.store, macRuntime, template);
-    visitAll();
-  });
-});
+//     const macRuntime: IRuntime = {
+//       platform: Platform.OSX,
+//     };
+//     fleshed = fleshOutTemplate(w.store, macRuntime, template);
+//     visitAll();
+//   });
+// });

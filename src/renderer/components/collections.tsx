@@ -12,6 +12,7 @@ import Filler from "./basics/filler";
 import styled, * as styles from "./styles";
 import { T } from "renderer/t";
 import { IMeatProps } from "./meats/types";
+import { rendererWindow } from "common/util/navigation";
 
 const CollectionsContainer = styled.div`
   ${styles.meat()};
@@ -26,7 +27,9 @@ class Collections extends React.PureComponent<IProps & IDerivedProps> {
         <FiltersContainer loading={loading}>
           <Link
             label={T(["outlinks.manage_collections"])}
-            onClick={e => navigate({ url: urls.myCollections })}
+            onClick={e =>
+              navigate({ window: rendererWindow(), url: urls.myCollections })
+            }
           />
           <Filler />
         </FiltersContainer>

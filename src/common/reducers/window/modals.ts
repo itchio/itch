@@ -3,7 +3,7 @@ import { reject } from "underscore";
 import { IModalsState } from "common/types";
 
 import { actions } from "common/actions";
-import reducer from "./reducer";
+import reducer from "common/reducers/reducer";
 
 const initialState: IModalsState = [];
 

@@ -48,7 +48,10 @@ export default function(watcher: Watcher) {
         store.dispatch(
           actions.notify({
             body: message,
-            onClick: actions.navigateToGame({ game: download.game }),
+            onClick: actions.navigateToGame({
+              window: "root",
+              game: download.game,
+            }),
           })
         );
       }

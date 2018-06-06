@@ -7,6 +7,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.openModal(
         modalWidgets.naked.make({
+          window: "root",
           title: ["prompt.logout_title"],
           message: ["prompt.logout_confirm"],
           detail: ["prompt.logout_detail"],

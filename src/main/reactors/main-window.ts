@@ -163,10 +163,18 @@ async function createWindow(store: IStore, hidden: boolean) {
   window.on("app-command", (e, cmd) => {
     switch (cmd as AppCommand) {
       case "browser-backward":
-        store.dispatch(actions.commandGoBack({}));
+        store.dispatch(
+          actions.commandGoBack({
+            window: "root",
+          })
+        );
         break;
       case "browser-forward":
-        store.dispatch(actions.commandGoForward({}));
+        store.dispatch(
+          actions.commandGoForward({
+            window: "root",
+          })
+        );
         break;
       default:
       // ignore unknown app commands
@@ -213,7 +221,7 @@ async function createWindow(store: IStore, hidden: boolean) {
     }
   });
 
-  window.loadURL(makeAppURL({}));
+  window.loadURL(makeAppURL({ id: "root" }));
 
   if (parseInt(process.env.DEVTOOLS || "0", 10) > 0) {
     await openAppDevTools(window);
@@ -344,12 +352,15 @@ function updateTitle(store: IStore, title: string) {
   window.setTitle(title);
 }
 
+let secondaryWindowSeed = 1;
+
 export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) => {
       const getI18n = (rs: IRootState) => rs.i18n;
-      const getID = (rs: IRootState) => rs.profile.navigation.tab;
-      const getTabInstance = (rs: IRootState) => rs.profile.tabInstances;
+      const getID = (rs: IRootState) => rs.windows["root"].navigation.tab;
+      const getTabInstance = (rs: IRootState) =>
+        rs.windows["root"].tabInstances;
 
       const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>
         Space.fromInstance(tabData[id])
@@ -411,11 +422,12 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.closeTabOrAuxWindow, async (store, action) => {
+    const { window } = action.payload;
     const focused = BrowserWindow.getFocusedWindow();
     if (focused) {
       const id = store.getState().ui.mainWindow.id;
       if (focused.id === id) {
-        store.dispatch(actions.closeCurrentTab({}));
+        store.dispatch(actions.closeCurrentTab({ window }));
       } else {
         focused.close();
       }
@@ -456,11 +468,22 @@ export default function(watcher: Watcher) {
       },
     });
     const { tab } = action.payload;
-    childWindow.loadURL(makeAppURL({ tab }));
+    const id = `secondary-${secondaryWindowSeed++}`;
+    store.dispatch(
+      actions.windowOpened({
+        window: id,
+      })
+    );
+    childWindow.loadURL(makeAppURL({ id, tab }));
   });
 }
 
-function makeAppURL(params: any): string {
+interface AppURLParams {
+  id: string;
+  tab?: string;
+}
+
+function makeAppURL(params: AppURLParams): string {
   let urlObject: UrlObject;
   if (env.development) {
     urlObject = {

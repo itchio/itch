@@ -29,6 +29,7 @@ export default function(watcher: Watcher) {
     const purchaseUrl = game.url + "/purchase";
     const loginPurchaseUrl = buildLoginAndReturnUrl(purchaseUrl);
 
-    store.dispatch(actions.navigate({ url: loginPurchaseUrl }));
+    // TODO: open in another window eh, why not?
+    store.dispatch(actions.navigate({ window: "root", url: loginPurchaseUrl }));
   });
 }

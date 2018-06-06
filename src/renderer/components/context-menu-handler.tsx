@@ -2,7 +2,7 @@ import React from "react";
 import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import {
   IRootState,
-  IUIContextMenuState,
+  IContextMenuState,
   IMenuItem,
   IMenuTemplate,
   IDispatch,
@@ -20,6 +20,7 @@ import { createSelector } from "reselect";
 import { T } from "renderer/t";
 
 import { lighten } from "polished";
+import { rendererWindowState } from "common/util/navigation";
 
 const menuId = "itch_context_menu";
 
@@ -271,7 +272,7 @@ const actionCreators = actionCreatorsList("closeContextMenu");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   open: boolean;
-  data: IUIContextMenuState["data"];
+  data: IContextMenuState["data"];
   macos: boolean;
 
   dispatch: IDispatch;
@@ -279,8 +280,8 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 
 export default connect<{}>(ContextMenuHandler, {
   state: createSelector(
-    (rs: IRootState) => rs.ui.contextMenu.open,
-    (rs: IRootState) => rs.ui.contextMenu.data,
+    (rs: IRootState) => rendererWindowState(rs).contextMenu.open,
+    (rs: IRootState) => rendererWindowState(rs).contextMenu.data,
     (rs: IRootState) => rs.system.macos,
     (open, data, macos) => ({ open, data, macos })
   ),

@@ -27,10 +27,11 @@ type WebContentsCallback<T> = (wc: ExtendedWebContents) => T;
 
 function withWebContents<T>(
   store: IStore,
+  window: string,
   tab: string,
   cb: WebContentsCallback<T>
 ): T | null {
-  const sp = Space.fromStore(store, tab);
+  const sp = Space.fromStore(store, window, tab);
 
   const { webContentsId } = sp.web();
   if (!webContentsId) {
@@ -47,7 +48,7 @@ function withWebContents<T>(
 
 export default function(watcher: Watcher) {
   watcher.on(actions.tabGotWebContents, async (store, action) => {
-    const { tab, webContentsId } = action.payload;
+    const { window, tab, webContentsId } = action.payload;
     logger.debug(`Got webContents ${webContentsId} for tab ${tab}`);
 
     const wc = webContents.fromId(webContentsId) as ExtendedWebContents;
@@ -59,6 +60,7 @@ export default function(watcher: Watcher) {
     let pushWeb = (web: Partial<ITabWeb>) => {
       store.dispatch(
         actions.tabDataFetched({
+          window,
           tab,
           data: {
             web,
@@ -68,7 +70,7 @@ export default function(watcher: Watcher) {
     };
     pushWeb({ webContentsId, loading: wc.isLoading() });
 
-    const sp = Space.fromStore(store, tab);
+    const sp = Space.fromStore(store, window, tab);
     const didNavigate = (url: string, replace?: boolean) => {
       if (sp.isFrozen()) {
         return;
@@ -85,6 +87,7 @@ export default function(watcher: Watcher) {
 
         store.dispatch(
           actions.evolveTab({
+            window,
             tab,
             url,
             resource,
@@ -100,7 +103,7 @@ export default function(watcher: Watcher) {
     if (sp.isFrozen()) {
       wc.on("will-navigate", (ev, url) => {
         ev.preventDefault();
-        store.dispatch(actions.navigate({ url }));
+        store.dispatch(actions.navigate({ window, url }));
       });
     }
 
@@ -113,7 +116,7 @@ export default function(watcher: Watcher) {
         return;
       }
 
-      createContextMenu(wc, store);
+      createContextMenu(wc, window, store);
 
       if (SHOW_DEVTOOLS) {
         wc.openDevTools({ mode: "detach" });
@@ -131,6 +134,7 @@ export default function(watcher: Watcher) {
 
       store.dispatch(
         actions.analyzePage({
+          window,
           tab,
           url: wc.getURL(),
           iframe: false,
@@ -157,7 +161,7 @@ export default function(watcher: Watcher) {
       "new-window",
       (ev, url, frameName, disposition, options, additionalFeatures) => {
         const background = disposition === "background-tab";
-        store.dispatch(actions.navigate({ url, background }));
+        store.dispatch(actions.navigate({ url, window, background }));
       }
     );
 
@@ -178,9 +182,9 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.analyzePage, async (store, action) => {
-    const { tab, url, iframe } = action.payload;
-    await withWebContents(store, tab, async wc => {
-      const sp = Space.fromStore(store, tab);
+    const { window, tab, url, iframe } = action.payload;
+    await withWebContents(store, window, tab, async wc => {
+      const sp = Space.fromStore(store, window, tab);
       if (sp.isFrozen()) {
         logger.debug(`Is frozen, won't analyze`);
         return;
@@ -193,7 +197,8 @@ export default function(watcher: Watcher) {
           logger.debug(`Got resource ${resource}`);
           store.dispatch(
             actions.evolveTab({
-              tab: tab,
+              window,
+              tab,
               url,
               resource,
               replace: true,
@@ -223,23 +228,27 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.commandReload, async (store, action) => {
-    const { tab } = store.getState().profile.navigation;
-    withWebContents(store, tab, wc => {
+    const { window } = action.payload;
+    const { tab } = store.getState().windows[window].navigation;
+    withWebContents(store, window, tab, wc => {
       wc.reload();
     });
   });
 
   watcher.on(actions.commandStop, async (store, action) => {
-    const { tab } = store.getState().profile.navigation;
-    withWebContents(store, tab, wc => {
+    const { window } = action.payload;
+    const { tab } = store.getState().windows[window].navigation;
+    withWebContents(store, window, tab, wc => {
       wc.stop();
     });
   });
 
   watcher.on(actions.commandLocation, async (store, action) => {
-    const { tab } = store.getState().profile.navigation;
+    const { window } = action.payload;
+    const { tab } = store.getState().windows[window].navigation;
     store.dispatch(
       actions.tabDataFetched({
+        window,
         tab,
         data: {
           web: { editingAddress: true },
@@ -249,9 +258,11 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.commandBack, async (store, action) => {
-    const { tab } = store.getState().profile.navigation;
+    const { window } = action.payload;
+    const { tab } = store.getState().windows[window].navigation;
     store.dispatch(
       actions.tabDataFetched({
+        window,
         tab,
         data: {
           web: { editingAddress: false },
@@ -261,12 +272,12 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.openDevTools, async (store, action) => {
-    const { forApp } = action.payload;
+    const { window, forApp } = action.payload;
     if (forApp) {
       await openAppDevTools(BrowserWindow.getFocusedWindow());
     } else {
-      const { tab } = store.getState().profile.navigation;
-      withWebContents(store, tab, wc => {
+      const { tab } = store.getState().windows[window].navigation;
+      withWebContents(store, window, tab, wc => {
         wc.openDevTools({ mode: "bottom" });
       });
     }

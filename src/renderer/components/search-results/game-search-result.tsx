@@ -10,6 +10,7 @@ import { actions } from "common/actions";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Game } from "common/butlerd/messages";
 import { whenClickNavigates } from "../when-click-navigates";
+import { rendererWindow } from "common/util/navigation";
 
 const GameSearchResultDiv = styled.div`
   display: flex;
@@ -143,7 +144,7 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
       }
 
       const { game, navigateToGame } = this.props;
-      navigateToGame({ game, background });
+      navigateToGame({ window: rendererWindow(), game, background });
     });
   };
 
@@ -156,7 +157,7 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
 
   getNavigateAction() {
     const { game } = this.props;
-    return actions.navigateToGame({ game });
+    return actions.navigateToGame({ window: rendererWindow(), game });
   }
 }
 

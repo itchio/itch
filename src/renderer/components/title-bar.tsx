@@ -17,6 +17,7 @@ import styled, * as styles from "./styles";
 import { T } from "renderer/t";
 import { Space } from "common/helpers/space";
 import { modalWidgets } from "renderer/components/modal-widgets";
+import { rendererWindowState, rendererWindow } from "common/util/navigation";
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
@@ -115,6 +116,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
       const { openModal } = this.props;
       openModal(
         modalWidgets.secretSettings.make({
+          window: rendererWindow(),
           title: "Secret options",
           message: "",
           widgetParams: {},
@@ -124,11 +126,11 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     const { navigate } = this.props;
-    navigate({ url: "itch://featured" });
+    navigate({ window: "root", url: "itch://featured" });
   };
 
   preferencesClick = () => {
-    this.props.navigate({ url: "itch://preferences" });
+    this.props.navigate({ window: "root", url: "itch://preferences" });
   };
 
   minimizeClick = () => {
@@ -168,7 +170,7 @@ export default connect<IProps>(TitleBar, {
   state: () =>
     createStructuredSelector({
       tabInstance: (rs: IRootState, props: IProps) =>
-        rs.profile.tabInstances[props.tab] || emptyObj,
+        rendererWindowState(rs).tabInstances[props.tab] || emptyObj,
       maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
       // TODO: fixme: focus by window
       focused: (rs: IRootState) => true,

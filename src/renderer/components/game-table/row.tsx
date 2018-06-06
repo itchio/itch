@@ -20,6 +20,7 @@ import { Game, CaveSummary } from "common/butlerd/messages";
 import classNames from "classnames";
 import IconButton from "../basics/icon-button";
 import { aggregateCaveSummaries } from "common/util/aggregate-cave-summaries";
+import { rendererWindow } from "common/util/navigation";
 
 class Row extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -123,7 +124,7 @@ class Row extends React.PureComponent<IProps & IDerivedProps> {
 
   onNavigateClick = () => {
     const { game } = this.props;
-    this.props.navigateToGame({ game });
+    this.props.navigateToGame({ window: rendererWindow(), game });
   };
 }
 

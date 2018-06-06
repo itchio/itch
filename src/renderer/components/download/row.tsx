@@ -35,6 +35,7 @@ import LoadingCircle from "../basics/loading-circle";
 import { lighten } from "polished";
 import { downloadProgress } from "common/format/download-progress";
 import { formatError, getDownloadError } from "common/format/errors";
+import { rendererWindow } from "common/util/navigation";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -173,7 +174,12 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   onCoverContextMenu = (ev: React.MouseEvent<any>) => {
     const { item, openGameContextMenu } = this.props;
     const { game } = item;
-    openGameContextMenu({ game, clientX: ev.clientX, clientY: ev.pageY });
+    openGameContextMenu({
+      game,
+      window: rendererWindow(),
+      clientX: ev.clientX,
+      clientY: ev.pageY,
+    });
   };
 
   onNavigate = (ev: React.MouseEvent<any>) => {
@@ -182,6 +188,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
       const { openModal } = this.props;
       openModal(
         modalWidgets.exploreJson.make({
+          window: "root",
           title: "Download data",
           message: "",
           widgetParams: {
@@ -194,7 +201,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     const background = doesEventMeanBackground(ev);
     const { game } = item;
-    navigateToGame({ game, background });
+    navigateToGame({ window: rendererWindow(), game, background });
   };
 
   render() {

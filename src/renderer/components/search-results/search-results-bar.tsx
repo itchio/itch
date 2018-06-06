@@ -18,6 +18,7 @@ import styled from "../styles";
 import { T } from "renderer/t";
 import urls from "common/constants/urls";
 import { hasSearchResults } from "main/reactors/search/search-helpers";
+import { rendererWindow } from "common/util/navigation";
 
 const ResultsContainer = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -87,6 +88,7 @@ class SearchResultBar extends React.PureComponent<
   onOpenAsTab = () => {
     this.props.closeSearch({});
     this.props.navigate({
+      window: rendererWindow(),
       url: `${urls.itchio}?${encodeURIComponent(this.props.query)}`,
     });
   };

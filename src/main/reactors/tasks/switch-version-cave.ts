@@ -31,6 +31,7 @@ export default function(watcher: Watcher) {
                 const response = await promisedModal(
                   store,
                   modalWidgets.switchVersionCave.make({
+                    window: "root",
                     title: ["prompt.revert.title", { title: cave.game.title }],
                     message: "",
                     widgetParams: { cave, upload, builds },

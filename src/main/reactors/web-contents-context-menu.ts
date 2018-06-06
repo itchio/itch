@@ -7,7 +7,7 @@ import IntlMessageFormat from "intl-messageformat";
 
 const emptyObj: any = {};
 
-function create(wc: Electron.WebContents, store: IStore) {
+function create(wc: Electron.WebContents, window: string, store: IStore) {
   const intl = {
     formatMessage: ({ id }: { id: string }, values = {}): string => {
       const { i18n } = store.getState();
@@ -69,6 +69,7 @@ function create(wc: Electron.WebContents, store: IStore) {
           click() {
             store.dispatch(
               actions.navigate({
+                window,
                 url: props.linkURL,
                 background: true,
               })

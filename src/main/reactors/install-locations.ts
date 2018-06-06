@@ -37,13 +37,17 @@ export default function(watcher: Watcher) {
       store.dispatch(
         actions.openModal(
           modalWidgets.naked.make({
+            window: "root",
             title: ["prompt.install_location_not_empty.title"],
             message: ["prompt.install_location_not_empty.message"],
             detail: ["prompt.install_location_not_empty.detail"],
             buttons: [
               {
                 label: ["prompt.install_location_not_empty.show_contents"],
-                action: actions.navigateToInstallLocation({ installLocation }),
+                action: actions.navigateToInstallLocation({
+                  window: "root",
+                  installLocation,
+                }),
               },
               "cancel",
             ],
@@ -58,6 +62,7 @@ export default function(watcher: Watcher) {
       const res = await promisedModal(
         store,
         modalWidgets.naked.make({
+          window: "root",
           title: ["prompt.install_location_remove.title"],
           message: ["prompt.install_location_remove.message"],
           detail: [

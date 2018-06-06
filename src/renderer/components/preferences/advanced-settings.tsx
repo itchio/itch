@@ -39,7 +39,7 @@ class AdvancedSettings extends React.PureComponent<IProps & IDerivedProps> {
               className="link"
               onClick={e => {
                 e.preventDefault();
-                navigate({ url: "itch://applog" });
+                navigate({ window: "root", url: "itch://applog" });
               }}
             >
               {T(["preferences.advanced.open_app_log"])}
@@ -51,7 +51,7 @@ class AdvancedSettings extends React.PureComponent<IProps & IDerivedProps> {
               onClick={e => {
                 e.preventDefault();
                 checkForGameUpdates({});
-                navigate({ url: "itch://downloads" });
+                navigate({ window: "root", url: "itch://downloads" });
               }}
             >
               {T(["preferences.advanced.check_game_updates"])}

@@ -25,6 +25,7 @@ class GameFetcher extends Fetcher {
         // we need to turn that into an https URL presto
         this.ctx.store.dispatch(
           actions.evolveTab({
+            window: "root",
             tab: this.tab,
             url: game.url,
             resource: `games/${gameId}`,

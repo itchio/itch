@@ -6,8 +6,9 @@ import { Space } from "common/helpers/space";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.commandMain, async (store, action) => {
-    const { tab } = store.getState().profile.navigation;
-    const sp = Space.fromStore(store, tab);
+    const { window } = action.payload;
+    const { tab } = store.getState().windows[window].navigation;
+    const sp = Space.fromStore(store, window, tab);
 
     if (sp.prefix === "games") {
       const game = sp.game();
@@ -21,11 +22,12 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.commandBack, async (store, action) => {
-    const modals = store.getState().modals;
+    const { window } = action.payload;
+    const modals = store.getState().windows[window].modals;
     const [modal] = modals;
 
     if (modal) {
-      store.dispatch(actions.closeModal({}));
+      store.dispatch(actions.closeModal({ window }));
     }
   });
 }

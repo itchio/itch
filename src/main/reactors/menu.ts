@@ -28,7 +28,7 @@ export default function(watcher: Watcher, runtime: IRuntime) {
         (rs: IRootState) => rs.ui.mainWindow.id,
         (template, i18n, mainWindowId) => {
           schedule.dispatch(actions.menuChanged({ template }));
-          const fleshed = fleshOutTemplate(store, runtime, template);
+          const fleshed = fleshOutTemplate("root", store, runtime, template);
           const menu = Menu.buildFromTemplate(fleshed);
           setItchAppMenu(mainWindowId, runtime, menu);
         }

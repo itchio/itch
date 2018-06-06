@@ -20,6 +20,7 @@ import TotalPlaytime from "../total-playtime";
 import LastPlayed from "../last-played";
 import { IModalWidgetProps } from "./index";
 import { getCaveSummary } from "common/butlerd";
+import { rendererWindow } from "common/util/navigation";
 
 const CaveItemList = styled.div`
   margin: 8px 0;
@@ -203,6 +204,7 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
     const { game, allUploads } = params;
     const upload = find(allUploads, { id: uploadId });
     this.props.closeModal({
+      window: rendererWindow(),
       action: actions.queueGameInstall({ game, upload }),
     });
   };
@@ -210,6 +212,7 @@ class ManageGame extends React.PureComponent<IProps & IDerivedProps> {
   onManage = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = ev.currentTarget.dataset.caveId;
     this.props.closeModal({
+      window: rendererWindow(),
       action: actions.manageCave({ caveId }),
     });
   };

@@ -16,6 +16,7 @@ import { IRootState, IMenuTemplate } from "common/types";
 import { actions } from "common/actions/index";
 import Button from "../basics/button";
 import watching, { Watcher } from "../watching";
+import { rendererWindow } from "common/util/navigation";
 const LocationTable = styled.table`
   width: 100%;
   font-size: 14px;
@@ -267,7 +268,10 @@ class InstallLocationSettings extends React.Component<
     let template: IMenuTemplate = [];
     template.push({
       localizedLabel: ["preferences.install_location.navigate"],
-      action: actions.navigateToInstallLocation({ installLocation }),
+      action: actions.navigateToInstallLocation({
+        window: "root",
+        installLocation,
+      }),
       id: "context--install-location-navigate",
     });
 
@@ -289,6 +293,7 @@ class InstallLocationSettings extends React.Component<
 
     // TODO: disable some of these
     this.props.popupContextMenu({
+      window: rendererWindow(),
       clientX: e.clientX,
       clientY: e.clientY,
       template,

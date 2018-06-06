@@ -9,6 +9,7 @@ import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import { T } from "renderer/t";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { Space } from "common/helpers/space";
+import { rendererWindow } from "common/util/navigation";
 
 const AppLogDiv = styled.div`
   ${styles.meat()};
@@ -67,7 +68,7 @@ class AppLog extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   onReload = () => {
-    this.props.tabReloaded({ tab: this.props.tab });
+    this.props.tabReloaded({ window: rendererWindow(), tab: this.props.tab });
   };
 }
 

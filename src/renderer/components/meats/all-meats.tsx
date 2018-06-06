@@ -20,6 +20,10 @@ import styled from "../styles";
 import TitleBar from "../title-bar";
 import { filtersContainerHeight } from "../filters-container";
 import { Space } from "common/helpers/space";
+import {
+  rendererNavigation,
+  rendererWindowState,
+} from "common/util/navigation";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -102,16 +106,16 @@ interface IDerivedProps {
 }
 
 const openTabsSelector = createSelector(
-  (rs: IRootState) => rs.profile.navigation.openTabs,
+  (rs: IRootState) => rendererNavigation(rs).openTabs,
   (openTabs: IOpenTabs) => [...openTabs.constant, ...openTabs.transient].sort()
 );
 
 export default connect<IProps>(AllMeats, {
   state: createStructuredSelector({
     credentials: (rs: IRootState) => rs.profile.credentials,
-    id: (rs: IRootState) => rs.profile.navigation.tab,
+    id: (rs: IRootState) => rendererNavigation(rs).tab,
     openTabs: (rs: IRootState) => openTabsSelector(rs),
-    tabInstances: (rs: IRootState) => rs.profile.tabInstances,
-    loadingTabs: (rs: IRootState) => rs.profile.navigation.loadingTabs,
+    tabInstances: (rs: IRootState) => rendererWindowState(rs).tabInstances,
+    loadingTabs: (rs: IRootState) => rendererNavigation(rs).loadingTabs,
   }),
 });

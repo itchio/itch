@@ -33,20 +33,12 @@ export default function(watcher: Watcher) {
       let parsed = urlParser.parse(details.url);
       const { pathname, query } = parsed;
       const params = flattenQuery(querystring.parse(query));
-      const { tab, url, iframe } = params;
+      const { tab } = params;
 
       logger.debug(`Got itch-internal request ${pathname}?${query} for ${tab}`);
 
       if (pathname === "/open-devtools") {
         store.dispatch(actions.openDevTools({ forApp: false }));
-      } else if (pathname === "/analyze-page") {
-        store.dispatch(
-          actions.analyzePage({
-            tab,
-            url,
-            iframe: Boolean(iframe),
-          })
-        );
       } else {
         logger.warn(
           `Got unrecognized message via itch-internal: ${pathname}, params ${JSON.stringify(

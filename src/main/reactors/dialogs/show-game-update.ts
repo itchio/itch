@@ -37,6 +37,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.openModal(
         modalWidgets.naked.make({
+          window: "root",
           title: dialogTitle,
           message: dialogMessage,
           detail: dialogDetail,

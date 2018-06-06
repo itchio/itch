@@ -22,7 +22,13 @@ import * as colors from "common/constants/colors";
 import { actions } from "common/actions";
 import { map, isEmpty, filter } from "underscore";
 
-import { IModal, IModalButtonSpec, IModalButton, IAction } from "common/types";
+import {
+  IModal,
+  IModalButtonSpec,
+  IModalButton,
+  IAction,
+  IRootState,
+} from "common/types";
 
 import watching, { Watcher } from "./watching";
 import styled, * as styles from "./styles";
@@ -33,6 +39,7 @@ import { specToButton } from "common/helpers/spec-to-button";
 import { modalWidgets } from "./modal-widgets/index";
 import classNames from "classnames";
 import { T, TString } from "renderer/t";
+import { rendererWindow, rendererWindowState } from "common/util/navigation";
 
 type Flavor = "normal" | "big";
 
@@ -352,7 +359,14 @@ class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
           </span>
           <Filler />
           {modal.unclosable ? null : (
-            <IconButton icon="cross" onClick={() => closeModal({})} />
+            <IconButton
+              icon="cross"
+              onClick={() =>
+                closeModal({
+                  window: rendererWindow(),
+                })
+              }
+            />
           )}
         </HeaderDiv>
 
@@ -390,6 +404,7 @@ class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
       const { openModal } = this.props;
       openModal(
         modalWidgets.exploreJson.make({
+          window: "root",
           title: "Modal payload",
           message: "",
           widgetParams: {
@@ -516,10 +531,14 @@ class Modal extends React.PureComponent<IProps & IDerivedProps, IState> {
     if (action === "widgetResponse") {
       onClick = () => {
         const action = actions.modalResponse(this.state.widgetPayload);
-        closeModal({ action });
+        closeModal({ window: rendererWindow(), action });
       };
     } else {
-      onClick = () => closeModal({ action: action as IAction<any> });
+      onClick = () =>
+        closeModal({
+          window: rendererWindow(),
+          action: action as IAction<any>,
+        });
     }
     return onClick;
   }
@@ -553,7 +572,7 @@ interface IState {
 
 export default connect<IProps>(injectIntl(Modal), {
   state: createStructuredSelector({
-    modal: state => state.modals[0],
+    modal: (rs: IRootState) => rendererWindowState(rs).modals[0],
   }),
   actionCreators,
 });

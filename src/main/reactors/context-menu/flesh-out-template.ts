@@ -6,6 +6,7 @@ import { map } from "underscore";
 import { t } from "common/format/t";
 
 export function fleshOutTemplate(
+  window: string,
   store: IStore,
   runtime: IRuntime,
   template: IMenuTemplate
@@ -25,7 +26,11 @@ export function fleshOutTemplate(
     }
     if (enabled && !node.click) {
       node.click = e => {
-        const menuAction = convertMenuAction({ localizedLabel, role }, runtime);
+        const menuAction = convertMenuAction(
+          window,
+          { localizedLabel, role },
+          runtime
+        );
         if (menuAction) {
           store.dispatch(menuAction);
         }
@@ -42,7 +47,11 @@ export function fleshOutTemplate(
   return map(template, visitNode);
 }
 
-function convertMenuAction(payload: IMenuItem, runtime: IRuntime) {
+function convertMenuAction(
+  window: string,
+  payload: IMenuItem,
+  runtime: IRuntime
+) {
   const { role, localizedLabel } = payload;
 
   switch (role) {
@@ -55,21 +64,21 @@ function convertMenuAction(payload: IMenuItem, runtime: IRuntime) {
 
   switch (labelString) {
     case "sidebar.new_tab":
-      return actions.newTab({});
+      return actions.newTab({ window });
     case "menu.file.close_tab":
       return runtime.platform === "osx"
-        ? actions.closeTabOrAuxWindow({})
-        : actions.closeCurrentTab({});
+        ? actions.closeTabOrAuxWindow({ window })
+        : actions.closeCurrentTab({ window });
     case "menu.file.close_all_tabs":
-      return actions.closeAllTabs({});
+      return actions.closeAllTabs({ window });
     case "menu.file.close_window":
-      return actions.hideWindow({});
+      return actions.hideWindow({ window });
     case "menu.file.quit":
-      return actions.quitWhenMain({});
+      return actions.quitWhenMain({ window });
     case "menu.file.preferences":
-      return actions.navigate({ url: "itch://preferences" });
+      return actions.navigate({ window, url: "itch://preferences" });
     case "menu.view.downloads":
-      return actions.navigate({ url: "itch://downloads" });
+      return actions.navigate({ window, url: "itch://downloads" });
     case "menu.account.change_user":
       return actions.changeUser({});
     case "menu.help.view_terms":
