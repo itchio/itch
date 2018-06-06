@@ -84,5 +84,6 @@
     "grid.filters.options.compatible": "Сумісні",
     "grid.filters.options.installed": "Встановлені",
     "grid.filters.options.owned": "Придбані",
-    "grid.filters.options.no_results": "Нічого не знайдено"
+    "grid.filters.options.no_results": "Нічого не знайдено",
+    "grid.item.verify_integrity": "Перевірити цілісність"
 }
