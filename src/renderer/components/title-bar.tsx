@@ -3,7 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import classNames from "classnames";
 
-import { IRootState, ITabInstance } from "common/types";
+import { IRootState, ITabInstance, ExtendedWindow } from "common/types";
 
 import FiltersContainer from "./filters-container";
 import IconButton from "./basics/icon-button";
@@ -51,6 +51,8 @@ const emptyObj = {};
 class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tab, macos, focused, tabInstance } = this.props;
+    const iw = (window as ExtendedWindow).itchWindow;
+    const secondary = iw.role == "secondary";
 
     const sp = Space.fromInstance(tabInstance);
     let label = sp.label();
@@ -76,7 +78,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
             <Filler />
           </DraggableDivInner>
         </DraggableDiv>
-        {loggedIn ? <UserMenu /> : null}
+        {secondary ? null : loggedIn ? <UserMenu /> : null}
         <NewVersionAvailable />
         {this.renderIcons()}
       </FiltersContainer>
@@ -89,13 +91,20 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
       return null;
     }
 
+    const iw = (window as ExtendedWindow).itchWindow;
+    const secondary = iw.role == "secondary";
+
     return (
       <>
-        <IconButton icon="window-minimize" onClick={this.minimizeClick} />
-        <IconButton
-          icon={maximized ? "window-restore" : "window-maximize"}
-          onClick={this.maximizeRestoreClick}
-        />
+        {secondary ? null : (
+          <>
+            <IconButton icon="window-minimize" onClick={this.minimizeClick} />
+            <IconButton
+              icon={maximized ? "window-restore" : "window-maximize"}
+              onClick={this.maximizeRestoreClick}
+            />
+          </>
+        )}
         <IconButton icon="window-close" onClick={this.closeClick} />
       </>
     );
@@ -137,6 +146,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {
   tab: string;
+  secondary?: boolean;
 }
 
 const actionCreators = actionCreatorsList(
@@ -160,7 +170,8 @@ export default connect<IProps>(TitleBar, {
       tabInstance: (rs: IRootState, props: IProps) =>
         rs.profile.tabInstances[props.tab] || emptyObj,
       maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
-      focused: (rs: IRootState) => rs.ui.mainWindow.focused,
+      // TODO: fixme: focus by window
+      focused: (rs: IRootState) => true,
       macos: (rs: IRootState) => rs.system.macos,
     }),
   actionCreators,

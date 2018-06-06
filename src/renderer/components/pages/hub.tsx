@@ -5,6 +5,7 @@ import SidebarHandle from "../sidebar-handle";
 import HubContent from "../hub-content";
 
 import styled from "../styles";
+import { ExtendedWindow } from "common/types";
 
 const HubPageDiv = styled.div`
   overflow: hidden;
@@ -19,10 +20,16 @@ const HubPageDiv = styled.div`
 
 class HubPage extends React.PureComponent {
   render() {
+    const iw = (window as ExtendedWindow).itchWindow;
+
     return (
       <HubPageDiv>
-        <Sidebar />
-        <SidebarHandle />
+        {iw.role == "main" ? (
+          <>
+            <Sidebar />
+            <SidebarHandle />
+          </>
+        ) : null}
         <HubContent />
       </HubPageDiv>
     );

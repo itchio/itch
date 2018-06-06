@@ -729,3 +729,14 @@ export type TaskName =
   | "launch";
 
 export type AutoUpdaterStart = () => Promise<boolean>;
+
+export interface ExtendedWindow extends Window {
+  itchWindow: ItchWindow;
+}
+
+export interface ItchWindow {
+  role: ItchWindowRole;
+  tab?: string;
+}
+
+export type ItchWindowRole = "main" | "secondary";

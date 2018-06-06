@@ -143,6 +143,10 @@ export const actions = wireActions({
   }>(),
   modalResponse: action<any>(),
 
+  openWindow: action<{
+    tab: string;
+  }>(),
+
   // setup
 
   packagesListed: action<{

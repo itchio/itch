@@ -92,6 +92,13 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
             onClick={this.onOpenCrashy}
             label="Open crashy tab"
           />
+          <Button
+            className="control"
+            primary={true}
+            icon="bug"
+            onClick={this.onOpenWindow}
+            label="Open window"
+          />
         </ControlsDiv>
       </ModalWidgetDiv>
     );
@@ -172,6 +179,11 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
     this.props.closeModal({});
   };
 
+  onOpenWindow = () => {
+    this.props.openWindow({ tab: "itch://preferences" });
+    this.props.closeModal({});
+  };
+
   toggleReduxLogging = () => {
     const enabled = !this.props.status.reduxLoggingEnabled;
     this.props.setReduxLoggingEnabled({
@@ -196,7 +208,8 @@ const actionCreators = actionCreatorsList(
   "closeModal",
   "reloadLocales",
   "openDevTools",
-  "navigate"
+  "navigate",
+  "openWindow"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {

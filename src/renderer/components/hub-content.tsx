@@ -11,7 +11,6 @@ import { ICredentials, IRootState } from "common/types";
 import styled from "./styles";
 
 const ContentContainer = styled.div`
-  border-left: 1px solid ${props => props.theme.sidebarBorder};
   overflow: hidden;
   display: flex;
   flex-direction: column;

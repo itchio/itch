@@ -124,7 +124,7 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   main() {
-    const { page } = this.props;
+    let { page } = this.props;
 
     switch (page) {
       case "gate":

@@ -1,7 +1,7 @@
 import { Watcher } from "common/util/watcher";
 
 import { createSelector } from "reselect";
-import { format as formatUrl } from "url";
+import { format as formatUrl, UrlObject } from "url";
 import * as path from "path";
 
 import env from "common/env";
@@ -32,6 +32,7 @@ import { Space } from "common/helpers/space";
 import { openAppDevTools } from "./open-app-devtools";
 import { t } from "common/format/t";
 import { getImagePath } from "common/util/resources";
+import { stringify } from "querystring";
 
 async function createWindow(store: IStore, hidden: boolean) {
   if (createLock) {
@@ -49,18 +50,10 @@ async function createWindow(store: IStore, hidden: boolean) {
   };
   const { width, height } = bounds;
   const center = bounds.x === -1 && bounds.y === -1;
-  let iconName = "icon";
-  if (process.platform === "win32") {
-    iconName = "icon-32";
-  }
-
-  const iconPath = getImagePath(
-    "window/" + env.appName + "/" + iconName + ".png"
-  );
 
   let opts: Electron.BrowserWindowConstructorOptions = {
     title: app.getName(),
-    icon: iconPath,
+    icon: getIconPath(),
     width,
     height,
     center,
@@ -78,7 +71,7 @@ async function createWindow(store: IStore, hidden: boolean) {
 
   if (os.platform() === "darwin") {
     try {
-      app.dock.setIcon(iconPath);
+      app.dock.setIcon(getIconPath());
     } catch (err) {
       logger.warn(`Could not set dock icon: ${err.stack}`);
     }
@@ -220,17 +213,7 @@ async function createWindow(store: IStore, hidden: boolean) {
     }
   });
 
-  if (env.development) {
-    window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
-  } else {
-    window.loadURL(
-      formatUrl({
-        pathname: path.resolve(__dirname, "..", "renderer", "index.html"),
-        protocol: "file",
-        slashes: true,
-      })
-    );
-  }
+  window.loadURL(makeAppURL({}));
 
   if (parseInt(process.env.DEVTOOLS || "0", 10) > 0) {
     await openAppDevTools(window);
@@ -455,4 +438,56 @@ export default function(watcher: Watcher) {
   watcher.on(actions.quit, async (store, action) => {
     app.exit(0);
   });
+
+  watcher.on(actions.openWindow, async (store, action) => {
+    const mainId = store.getState().ui.mainWindow.id;
+    const mainWindow = BrowserWindow.fromId(mainId);
+    const childWindow = new BrowserWindow({
+      title: app.getName(),
+      icon: getIconPath(),
+      parent: mainWindow,
+      autoHideMenuBar: true,
+      backgroundColor: darkMineShaft,
+      titleBarStyle: "hidden",
+      frame: false,
+      webPreferences: {
+        blinkFeatures: "ResizeObserver",
+        webSecurity: env.development ? false : true,
+      },
+    });
+    const { tab } = action.payload;
+    childWindow.loadURL(makeAppURL({ tab }));
+  });
+}
+
+function makeAppURL(params: any): string {
+  let urlObject: UrlObject;
+  if (env.development) {
+    urlObject = {
+      pathname: "/",
+      protocol: "http",
+      hostname: "localhost",
+      port: process.env.ELECTRON_WEBPACK_WDS_PORT,
+    };
+  } else {
+    urlObject = {
+      pathname: path.resolve(__dirname, "..", "renderer", "index.html"),
+      protocol: "file",
+      slashes: true,
+    };
+  }
+  urlObject.search = stringify(params);
+
+  const result = formatUrl(urlObject);
+  console.log(`formatted URL: ${result}`);
+  return result;
+}
+
+function getIconPath(): string {
+  let iconName = "icon";
+  if (process.platform === "win32") {
+    iconName = "icon-32";
+  }
+
+  return getImagePath("window/" + env.appName + "/" + iconName + ".png");
 }
