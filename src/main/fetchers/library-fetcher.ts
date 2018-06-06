@@ -18,6 +18,7 @@ class LibraryFetcher extends Fetcher {
     const dataGamesCount = cachedGames.length;
 
     if (dataGamesCount > 0) {
+      this.debug(`Pushing ${dataGamesCount} from cachedGames`);
       this.pushUnfilteredGames(cachedGames);
       if (!this.warrantsRemote()) {
         return;
@@ -36,7 +37,6 @@ class LibraryFetcher extends Fetcher {
       for (const cave of caves) {
         games.push(cave.game);
       }
-      push();
     }
 
     await call(

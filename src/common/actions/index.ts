@@ -149,6 +149,7 @@ export const actions = wireActions({
 
   openWindow: action<{
     tab: string;
+    modal: boolean;
   }>(),
   windowClosed: action<{
     window: string;
@@ -421,7 +422,9 @@ export const actions = wireActions({
     /** the newly active tab */
     tab: string;
   }>(),
-  tabsChanged: action<{}>(),
+  tabsChanged: action<{
+    window: string;
+  }>(),
   tabsRestored: action<IItchAppTabs>(),
   tabDataFetched: action<{
     window: string;

@@ -3,9 +3,7 @@ import windowReducer from "./window";
 import { actions } from "../actions";
 import { omit } from "underscore";
 
-const initialState: IWindowsState = {
-  root: windowReducer(undefined, null),
-};
+const initialState: IWindowsState = {};
 
 const windowOpenedType = actions.windowOpened({} as any).type;
 const windowClosedType = actions.windowClosed({} as any).type;
@@ -43,6 +41,12 @@ export default function(state: IRootState, action: IAction<any>) {
         };
       }
     }
+
+    let newState = {};
+    for (const k of Object.keys(state)) {
+      newState[k] = windowReducer(state[k], action);
+    }
+    return newState;
   }
 
   return state;

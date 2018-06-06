@@ -283,23 +283,44 @@ export default function(watcher: Watcher) {
     );
   });
 
-  // FIXME: figure this out with multi-windows
-  watcher.onStateChange({
-    makeSelector: (store, schedule) =>
-      createSelector(
-        (rs: IRootState) => rs.windows["root"].navigation.tab,
-        tab => schedule.dispatch(actions.tabChanged({ window: "root", tab }))
-      ),
+  let subWatcher: Watcher;
+
+  const refreshSelectors = (rs: IRootState) => {
+    watcher.removeSub(subWatcher);
+    subWatcher = makeSubWatcher(rs);
+    watcher.addSub(subWatcher);
+  };
+
+  watcher.on(actions.windowOpened, async (store, action) => {
+    refreshSelectors(store.getState());
   });
 
-  watcher.onStateChange({
-    makeSelector: (store, schedule) =>
-      createSelector(
-        (rs: IRootState) => rs.windows["root"].navigation.openTabs,
-        (rs: IRootState) => rs.windows["root"].tabInstances,
-        (rs: IRootState) => rs.windows["root"].navigation.tab,
-        (openTabs, tabInstances, tab) =>
-          schedule.dispatch(actions.tabsChanged({}))
-      ),
+  watcher.on(actions.windowClosed, async (store, action) => {
+    refreshSelectors(store.getState());
   });
+}
+
+function makeSubWatcher(rs: IRootState) {
+  const watcher = new Watcher();
+  for (const window of Object.keys(rs.windows)) {
+    watcher.onStateChange({
+      makeSelector: (store, schedule) =>
+        createSelector(
+          (rs: IRootState) => rs.windows[window].navigation.tab,
+          tab => schedule.dispatch(actions.tabChanged({ window, tab }))
+        ),
+    });
+
+    watcher.onStateChange({
+      makeSelector: (store, schedule) =>
+        createSelector(
+          (rs: IRootState) => rs.windows[window].navigation.openTabs,
+          (rs: IRootState) => rs.windows[window].tabInstances,
+          (rs: IRootState) => rs.windows[window].navigation.tab,
+          (openTabs, tabInstances, tab) =>
+            schedule.dispatch(actions.tabsChanged({ window }))
+        ),
+    });
+  }
+  return watcher;
 }

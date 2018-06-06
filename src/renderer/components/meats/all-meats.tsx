@@ -13,7 +13,6 @@ import {
   IOpenTabs,
   ILoadingTabs,
   ICredentials,
-  ExtendedWindow,
 } from "common/types";
 
 import styled from "../styles";
@@ -57,11 +56,6 @@ class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
     let { credentials, openTabs, tabInstances, id: currentId } = this.props;
     if (!(credentials && credentials.me && credentials.me.id)) {
       return null;
-    }
-
-    const iw = (window as ExtendedWindow).itchWindow;
-    if (iw.role == "secondary") {
-      currentId = iw.tab;
     }
 
     return (

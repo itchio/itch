@@ -20,17 +20,34 @@ import { Context } from "../context";
 import { some, throttle, union } from "underscore";
 import { Space } from "common/helpers/space";
 
-let fetching: {
-  [key: string]: boolean;
-} = {};
+interface WindowFetchState {
+  fetching: {
+    [tab: string]: boolean;
+  };
+  lastFetchers: {
+    [tab: string]: any;
+  };
+  nextFetchReason: {
+    [tab: string]: FetchReason;
+  };
+}
 
-let lastFetchers: {
-  [key: string]: any;
-} = {};
+interface WindowsFetchState {
+  [windowId: string]: WindowFetchState;
+}
 
-let nextFetchReason: {
-  [key: string]: FetchReason;
-} = {};
+const fes: WindowsFetchState = {};
+
+function getWindowFetchState(window: string) {
+  if (!fes[window]) {
+    fes[window] = {
+      fetching: {},
+      lastFetchers: {},
+      nextFetchReason: {},
+    };
+  }
+  return fes[window];
+}
 
 // FIXME: fetchers are very much not multi-window-aware
 
@@ -40,8 +57,10 @@ async function queueFetch(
   tab: string,
   reason: FetchReason
 ) {
-  if (fetching[tab]) {
-    nextFetchReason[tab] = reason;
+  const wfes = getWindowFetchState(window);
+
+  if (wfes.fetching[tab]) {
+    wfes.nextFetchReason[tab] = reason;
     return;
   }
 
@@ -51,11 +70,11 @@ async function queueFetch(
     return;
   }
 
-  const lastFetcher = lastFetchers[tab];
+  const lastFetcher = wfes.lastFetchers[tab];
   if (lastFetcher && lastFetcher.constructor !== fetcherClass) {
     try {
       lastFetcher.clean();
-      delete lastFetchers[tab];
+      delete wfes.lastFetchers[tab];
     } catch (e) {
       logger.warn(
         `While cleaning ${lastFetcher.constructor.name} => ${
@@ -65,12 +84,12 @@ async function queueFetch(
     }
   }
 
-  fetching[tab] = true;
+  wfes.fetching[tab] = true;
 
   const fetcher = new fetcherClass();
-  lastFetchers[tab] = fetcher;
+  wfes.lastFetchers[tab] = fetcher;
   const ctx = new Context(store);
-  fetcher.hook(ctx, tab, reason);
+  fetcher.hook(ctx, window, tab, reason);
 
   const t1 = Date.now();
   fetcher
@@ -82,11 +101,11 @@ async function queueFetch(
     .then(() => {
       const t2 = Date.now();
       fetcher.logger.debug(`finished in ${(t2 - t1).toFixed()}ms`);
-      delete fetching[tab];
+      delete wfes.fetching[tab];
 
-      const nextReason = nextFetchReason[tab];
+      const nextReason = wfes.nextFetchReason[tab];
       if (nextReason) {
-        delete nextFetchReason[tab];
+        delete wfes.nextFetchReason[tab];
         queueFetch(store, window, tab, nextReason).catch(err => {
           logger.error(`In queued fetcher: ${err.stack}`);
         });
@@ -132,23 +151,25 @@ function getFetcherClass(
   return null;
 }
 
-const queueCleanup = throttle((store: IStore) => {
+const queueCleanup = throttle((store: IStore, window: string) => {
   // TODO: figure that out multi-window
   const validKeys = new Set(
-    Object.keys(store.getState().windows["root"].tabInstances)
+    Object.keys(store.getState().windows[window].tabInstances)
   );
 
+  const wfs = getWindowFetchState(window);
+
   const allKeys = union(
-    Object.keys(lastFetchers),
-    Object.keys(nextFetchReason),
-    Object.keys(fetching)
+    Object.keys(wfs.lastFetchers),
+    Object.keys(wfs.nextFetchReason),
+    Object.keys(wfs.fetching)
   );
   for (const k of allKeys) {
     if (!validKeys.has(k)) {
       logger.debug(`Cleaning up ${k}`);
-      delete lastFetchers[k];
-      delete fetching[k];
-      delete nextFetchReason[k];
+      delete wfs.lastFetchers[k];
+      delete wfs.fetching[k];
+      delete wfs.nextFetchReason[k];
     }
   }
 }, 3000 /* space out cleanups */);
@@ -161,7 +182,8 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.tabsChanged, async (store, action) => {
-    queueCleanup(store);
+    const { window } = action.payload;
+    queueCleanup(store, window);
   });
 
   // tab navigated to something else? let's fetch
@@ -212,6 +234,11 @@ export default function(watcher: Watcher) {
   watcher.on(actions.commonsUpdated, async (store, action) => {
     const currentTab = store.getState().windows["root"].navigation.tab;
     queueFetch(store, "root", currentTab, FetchReason.CommonsChanged);
+  });
+
+  watcher.on(actions.windowClosed, async (store, action) => {
+    const { window } = action.payload;
+    delete fes[window];
   });
 
   const watchedPreferences = [

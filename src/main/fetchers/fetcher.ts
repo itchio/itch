@@ -38,10 +38,9 @@ export class Fetcher {
 
   retryCount = 0;
 
-  hook(ctx: Context, tab: string, reason: FetchReason) {
+  hook(ctx: Context, window: string, tab: string, reason: FetchReason) {
     this.ctx = ctx;
-    // FIXME: multi-window support?
-    this.window = "root";
+    this.window = window;
     this.tab = tab;
     this.reason = reason;
 

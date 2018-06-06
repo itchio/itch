@@ -67,6 +67,11 @@ async function createWindow(store: IStore, hidden: boolean) {
       webSecurity: env.development ? false : true,
     },
   };
+  store.dispatch(
+    actions.windowOpened({
+      window: "root",
+    })
+  );
   const window = new BrowserWindow(opts);
 
   if (os.platform() === "darwin") {
@@ -452,12 +457,14 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.openWindow, async (store, action) => {
+    const { tab, modal } = action.payload;
+
     const mainId = store.getState().ui.mainWindow.id;
-    const mainWindow = BrowserWindow.fromId(mainId);
     const childWindow = new BrowserWindow({
       title: app.getName(),
       icon: getIconPath(),
-      parent: mainWindow,
+      parent: modal ? BrowserWindow.fromId(mainId) : null,
+      modal,
       autoHideMenuBar: true,
       backgroundColor: darkMineShaft,
       titleBarStyle: "hidden",
@@ -467,11 +474,16 @@ export default function(watcher: Watcher) {
         webSecurity: env.development ? false : true,
       },
     });
-    const { tab } = action.payload;
     const id = `secondary-${secondaryWindowSeed++}`;
     store.dispatch(
       actions.windowOpened({
         window: id,
+      })
+    );
+    store.dispatch(
+      actions.navigate({
+        window: id,
+        url: tab,
       })
     );
     childWindow.loadURL(makeAppURL({ id, tab }));
