@@ -17,7 +17,12 @@ const setTrayMenu = memoize(1, function(
   template: IMenuTemplate,
   store: IStore
 ) {
-  const fleshedOut = fleshOutTemplate(store, currentRuntime(), template);
+  const fleshedOut = fleshOutTemplate(
+    "root",
+    store,
+    currentRuntime(),
+    template
+  );
   const menu = Menu.buildFromTemplate(fleshedOut);
 
   if (os.platform() === "darwin") {
@@ -30,7 +35,7 @@ const setTrayMenu = memoize(1, function(
 
 async function go(store: IStore, url: string) {
   store.dispatch(actions.focusWindow({}));
-  store.dispatch(actions.navigate({ url }));
+  store.dispatch(actions.navigate({ window: "root", url }));
 }
 
 function refreshTray(store: IStore, i18n: II18nState) {

@@ -13,6 +13,7 @@ import { ISortParams } from "common/types";
 
 import { Space } from "common/helpers/space";
 import LoadingState from "./loading-state";
+import { rendererWindow, rendererNavigation } from "common/util/navigation";
 
 function isColumnDescDefault(sortBy: string): boolean {
   return sortBy === "secondsRun" || sortBy === "lastTouchedAt";
@@ -43,7 +44,8 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     this.props.tabParamsChanged({
-      tab: tab,
+      window: rendererWindow(),
+      tab,
       params: { sortBy, sortDirection },
     });
   };
@@ -145,9 +147,9 @@ export default connect<IProps>(Games, {
   state: (initialState, initialProps) => {
     const { tab } = initialProps;
     return createSelector(
-      (rs: IRootState) => Space.fromState(rs, tab),
+      (rs: IRootState) => Space.fromState(rs, rendererWindow(), tab),
       (rs: IRootState) => rs.preferences.layout,
-      (rs: IRootState) => rs.profile.navigation.loadingTabs[tab] || false,
+      (rs: IRootState) => rendererNavigation(rs).loadingTabs[tab] || false,
       createStructuredSelector({
         gameIds: (sp: Space, prefLayout: TabLayout) => sp.games().ids || ea,
         games: (sp: Space, prefLayout: TabLayout) => sp.games().set || eo,

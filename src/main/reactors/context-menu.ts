@@ -15,26 +15,23 @@ import {
 function openMenu(
   store: IStore,
   template: IMenuTemplate,
-  { clientX = null, clientY = null }: IOpenContextMenuBase
+  base: IOpenContextMenuBase
 ) {
   if (template.length === 0) {
     // don't show empty context menus
     return;
   }
-
-  store.dispatch(
-    actions.popupContextMenu({ template, clientX: clientX, clientY: clientY })
-  );
+  store.dispatch(actions.popupContextMenu({ template, ...base }));
 }
 
 export default function(watcher: Watcher) {
   watcher.on(actions.openTabContextMenu, async (store, action) => {
-    const { tab } = action.payload;
+    const { window, tab } = action.payload;
 
     let template: IMenuTemplate;
-    template = concatTemplates(template, newTabControls(store, tab));
+    template = concatTemplates(template, newTabControls(store, window, tab));
 
-    const sp = Space.fromStore(store, tab);
+    const sp = Space.fromStore(store, window, tab);
     if (sp.prefix === "games") {
       const game = sp.game();
       if (game && game.id) {
@@ -42,16 +39,16 @@ export default function(watcher: Watcher) {
       }
     }
 
-    template = concatTemplates(template, closeTabControls(store, tab));
+    template = concatTemplates(template, closeTabControls(store, window, tab));
     const { clientX, clientY } = action.payload;
-    openMenu(store, template, { clientX, clientY });
+    openMenu(store, template, { window, clientX, clientY });
   });
 
   watcher.on(actions.openGameContextMenu, async (store, action) => {
     const { game } = action.payload;
     const template = gameControls(store, game);
 
-    const { clientX, clientY } = action.payload;
-    openMenu(store, template, { clientX, clientY });
+    const { window, clientX, clientY } = action.payload;
+    openMenu(store, template, { window, clientX, clientY });
   });
 }

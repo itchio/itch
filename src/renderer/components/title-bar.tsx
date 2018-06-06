@@ -3,7 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import classNames from "classnames";
 
-import { IRootState, ITabInstance } from "common/types";
+import { IRootState, ITabInstance, ExtendedWindow } from "common/types";
 
 import FiltersContainer from "./filters-container";
 import IconButton from "./basics/icon-button";
@@ -17,6 +17,7 @@ import styled, * as styles from "./styles";
 import { T } from "renderer/t";
 import { Space } from "common/helpers/space";
 import { modalWidgets } from "renderer/components/modal-widgets";
+import { rendererWindowState, rendererWindow } from "common/util/navigation";
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
@@ -51,6 +52,8 @@ const emptyObj = {};
 class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   render() {
     const { tab, macos, focused, tabInstance } = this.props;
+    const iw = (window as ExtendedWindow).itchWindow;
+    const secondary = iw.role == "secondary";
 
     const sp = Space.fromInstance(tabInstance);
     let label = sp.label();
@@ -76,7 +79,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
             <Filler />
           </DraggableDivInner>
         </DraggableDiv>
-        {loggedIn ? <UserMenu /> : null}
+        {secondary ? null : loggedIn ? <UserMenu /> : null}
         <NewVersionAvailable />
         {this.renderIcons()}
       </FiltersContainer>
@@ -89,13 +92,20 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
       return null;
     }
 
+    const iw = (window as ExtendedWindow).itchWindow;
+    const secondary = iw.role == "secondary";
+
     return (
       <>
-        <IconButton icon="window-minimize" onClick={this.minimizeClick} />
-        <IconButton
-          icon={maximized ? "window-restore" : "window-maximize"}
-          onClick={this.maximizeRestoreClick}
-        />
+        {secondary ? null : (
+          <>
+            <IconButton icon="window-minimize" onClick={this.minimizeClick} />
+            <IconButton
+              icon={maximized ? "window-restore" : "window-maximize"}
+              onClick={this.maximizeRestoreClick}
+            />
+          </>
+        )}
         <IconButton icon="window-close" onClick={this.closeClick} />
       </>
     );
@@ -106,6 +116,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
       const { openModal } = this.props;
       openModal(
         modalWidgets.secretSettings.make({
+          window: rendererWindow(),
           title: "Secret options",
           message: "",
           widgetParams: {},
@@ -115,11 +126,11 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     const { navigate } = this.props;
-    navigate({ url: "itch://featured" });
+    navigate({ window: "root", url: "itch://featured" });
   };
 
   preferencesClick = () => {
-    this.props.navigate({ url: "itch://preferences" });
+    this.props.navigate({ window: "root", url: "itch://preferences" });
   };
 
   minimizeClick = () => {
@@ -137,6 +148,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
 
 interface IProps {
   tab: string;
+  secondary?: boolean;
 }
 
 const actionCreators = actionCreatorsList(
@@ -158,9 +170,10 @@ export default connect<IProps>(TitleBar, {
   state: () =>
     createStructuredSelector({
       tabInstance: (rs: IRootState, props: IProps) =>
-        rs.profile.tabInstances[props.tab] || emptyObj,
+        rendererWindowState(rs).tabInstances[props.tab] || emptyObj,
       maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
-      focused: (rs: IRootState) => rs.ui.mainWindow.focused,
+      // TODO: fixme: focus by window
+      focused: (rs: IRootState) => true,
       macos: (rs: IRootState) => rs.system.macos,
     }),
   actionCreators,

@@ -7,6 +7,7 @@ import styled from "../styles";
 import LoadingCircle from "../basics/loading-circle";
 import classNames from "classnames";
 import { modalWidgets, IModalWidgetProps } from "./index";
+import { rendererWindow } from "common/util/navigation";
 
 const WidgetDiv = styled.div`
   position: relative;
@@ -81,6 +82,7 @@ class RecaptchaInput extends React.PureComponent<
         (response: string | undefined) => {
           if (response) {
             this.props.closeModal({
+              window: rendererWindow(),
               action: modalWidgets.recaptchaInput.action({
                 recaptchaResponse: response,
               }),

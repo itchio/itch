@@ -13,6 +13,7 @@ import Filler from "../basics/filler";
 
 import { User } from "common/butlerd/messages";
 import { actions } from "common/actions";
+import { rendererWindow } from "common/util/navigation";
 
 const UserMenuDiv = styled.div`
   display: flex;
@@ -71,6 +72,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
 
   openMenu = (e: React.MouseEvent<any>) => {
     this.props.popupContextMenu({
+      window: rendererWindow(),
       clientX: e.clientX,
       clientY: e.clientY,
       template: [
@@ -91,14 +93,17 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
           icon: "download",
           localizedLabel: ["sidebar.downloads"],
           id: "user-menu-downloads",
-          action: actions.navigate({ url: "itch://downloads" }),
+          action: actions.navigate({ window: "root", url: "itch://downloads" }),
           accelerator: "CmdOrCtrl+J",
         },
         {
           icon: "cog",
           localizedLabel: ["sidebar.preferences"],
           id: "user-menu-preferences",
-          action: actions.navigate({ url: "itch://preferences" }),
+          action: actions.navigate({
+            window: "root",
+            url: "itch://preferences",
+          }),
           accelerator: "CmdOrCtrl+,",
         },
         {
@@ -124,7 +129,7 @@ class UserMenu extends React.PureComponent<IProps & IDerivedProps> {
         {
           icon: "lifebuoy",
           localizedLabel: ["menu.help.help"],
-          action: actions.navigate({ url: urls.manual }),
+          action: actions.navigate({ window: "root", url: urls.manual }),
         },
         {
           type: "separator",

@@ -13,6 +13,7 @@ import { IRootState } from "common/types";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 
 import { Game, CaveSummary } from "common/butlerd/messages";
+import { rendererWindow } from "common/util/navigation";
 
 class Cell extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -72,7 +73,12 @@ class Cell extends React.PureComponent<IProps & IDerivedProps> {
 
   onMoreClick = (ev: React.MouseEvent<any>) => {
     const { game, openGameContextMenu } = this.props;
-    openGameContextMenu({ game, clientX: ev.clientX, clientY: ev.pageY });
+    openGameContextMenu({
+      window: rendererWindow(),
+      game,
+      clientX: ev.clientX,
+      clientY: ev.pageY,
+    });
   };
 }
 

@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
+import { IRootState } from "common/types";
 
-import modals from "./modals";
 import system from "./system";
 import setup from "./setup";
 import profile from "./profile";
@@ -15,9 +15,9 @@ import commons from "./commons";
 import systemTasks from "./system-tasks";
 import broth from "./broth";
 import butlerd from "./butlerd";
+import windows from "./windows";
 
-const reducer = combineReducers({
-  modals,
+const reducer = combineReducers<IRootState>({
   system,
   setup,
   profile,
@@ -32,5 +32,6 @@ const reducer = combineReducers({
   systemTasks,
   broth,
   butlerd,
+  windows,
 });
 export default reducer;

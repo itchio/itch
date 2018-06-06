@@ -124,15 +124,11 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   main() {
-    const { page } = this.props;
-
-    switch (page) {
-      case "gate":
-        return <GatePage />;
-      case "hub":
-        return <HubPage />;
-      default:
-        return <div>Unknown page: {page}</div>;
+    const { ready } = this.props;
+    if (ready) {
+      return <HubPage />;
+    } else {
+      return <GatePage />;
     }
   }
 }
@@ -140,7 +136,7 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
 interface IProps {}
 
 interface IDerivedProps {
-  page: string;
+  ready: boolean;
   maximized: boolean;
 
   intl: InjectedIntl;
@@ -148,7 +144,7 @@ interface IDerivedProps {
 
 export default connect<IProps>(injectIntl(Layout), {
   state: createStructuredSelector({
-    page: (rs: IRootState) => rs.profile.navigation.page,
     maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
+    ready: (rs: IRootState) => rs.setup.done && rs.profile.credentials.me,
   }),
 });

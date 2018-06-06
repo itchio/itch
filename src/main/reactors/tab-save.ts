@@ -32,7 +32,9 @@ export default function(watcher: Watcher) {
 }
 
 export async function saveTabs(store: IStore) {
-  const { navigation, tabInstances, credentials } = store.getState().profile;
+  const rs = store.getState();
+  const { navigation, tabInstances } = rs.windows["root"];
+  const { credentials } = rs.profile;
   if (!credentials || !credentials.me) {
     return;
   }

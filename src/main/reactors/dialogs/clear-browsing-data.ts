@@ -10,6 +10,7 @@ export default function(watcher: Watcher) {
     const response = await promisedModal(
       store,
       modalWidgets.clearBrowsingData.make({
+        window: "root",
         title: ["preferences.advanced.clear_browsing_data"],
         message: "",
         buttons: [

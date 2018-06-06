@@ -92,6 +92,13 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
             onClick={this.onOpenCrashy}
             label="Open crashy tab"
           />
+          <Button
+            className="control"
+            primary={true}
+            icon="bug"
+            onClick={this.onOpenWindow}
+            label="Open window"
+          />
         </ControlsDiv>
       </ModalWidgetDiv>
     );
@@ -109,6 +116,7 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
     const chromeStore = (await import("renderer/store")).default;
     this.props.openModal(
       modalWidgets.exploreJson.make({
+        window: "root",
         title: "Redux app state",
         widgetParams: {
           data: chromeStore.getState(),
@@ -127,6 +135,7 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
     const data = app.getGPUFeatureStatus();
     this.props.openModal(
       modalWidgets.exploreJson.make({
+        window: "root",
         title: "GPU feature status",
         widgetParams: {
           data,
@@ -150,6 +159,7 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
 
       this.props.openModal(
         modalWidgets.showError.make({
+          window: "root",
           title: "test butlerd internal error",
           message: "This is a test butlerd error",
           detail: "It's fun to snoop!",
@@ -168,8 +178,13 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   onOpenCrashy = () => {
-    this.props.navigate({ url: "itch://crashy" });
-    this.props.closeModal({});
+    this.props.navigate({ window: "root", url: "itch://crashy" });
+    this.props.closeModal({ window: "root" });
+  };
+
+  onOpenWindow = () => {
+    this.props.openWindow({ tab: "itch://preferences" });
+    this.props.closeModal({ window: "root" });
   };
 
   toggleReduxLogging = () => {
@@ -196,7 +211,8 @@ const actionCreators = actionCreatorsList(
   "closeModal",
   "reloadLocales",
   "openDevTools",
-  "navigate"
+  "navigate",
+  "openWindow"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {

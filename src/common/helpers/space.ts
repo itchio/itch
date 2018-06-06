@@ -80,12 +80,12 @@ export class Space {
     }
   }
 
-  static fromStore(store: IStore, tab: string): Space {
-    return spaceFromInstance(store.getState().profile.tabInstances[tab]);
+  static fromStore(store: IStore, window: string, tab: string): Space {
+    return this.fromState(store.getState(), window, tab);
   }
 
-  static fromState(rs: IRootState, tab: string): Space {
-    return spaceFromInstance(rs.profile.tabInstances[tab]);
+  static fromState(rs: IRootState, window: string, tab: string): Space {
+    return spaceFromInstance(rs.windows[window].tabInstances[tab]);
   }
 
   static fromInstance(data: ITabInstance): Space {

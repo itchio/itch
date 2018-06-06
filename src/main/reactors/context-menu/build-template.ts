@@ -27,36 +27,45 @@ export function concatTemplates(
   return [...a, { type: "separator" }, ...b];
 }
 
-export function newTabControls(store: IStore, tab: string): IMenuTemplate {
+export function newTabControls(
+  store: IStore,
+  window: string,
+  tab: string
+): IMenuTemplate {
   return [
     {
       localizedLabel: ["menu.file.new_tab"],
       accelerator: "CmdOrCtrl+T",
-      action: actions.newTab({}),
+      action: actions.newTab({ window }),
     },
   ];
 }
 
-export function closeTabControls(store: IStore, tab: string): IMenuTemplate {
+export function closeTabControls(
+  store: IStore,
+  window: string,
+  tab: string
+): IMenuTemplate {
   // TODO: disable some menu items if last transient tab, or constant tab
-  const isEssential =
-    store.getState().profile.navigation.openTabs.constant.indexOf(tab) !== -1;
+  const rs = store.getState();
+  const { constant } = rs.windows[window].navigation.openTabs;
+  const isEssential = constant.indexOf(tab) !== -1;
 
   return [
     {
       localizedLabel: ["menu.file.close_tab"],
       accelerator: "CmdOrCtrl+W",
-      action: actions.closeTab({ tab }),
+      action: actions.closeTab({ window, tab }),
       enabled: !isEssential,
     },
     {
       localizedLabel: ["menu.file.close_other_tabs"],
-      action: actions.closeOtherTabs({ tab }),
+      action: actions.closeOtherTabs({ window, tab }),
       enabled: !isEssential,
     },
     {
       localizedLabel: ["menu.file.close_tabs_below"],
-      action: actions.closeTabsBelow({ tab }),
+      action: actions.closeTabsBelow({ window, tab }),
       enabled: !isEssential,
     },
   ];

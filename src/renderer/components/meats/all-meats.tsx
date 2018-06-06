@@ -13,12 +13,17 @@ import {
   IOpenTabs,
   ILoadingTabs,
   ICredentials,
+  ExtendedWindow,
 } from "common/types";
 
 import styled from "../styles";
 import TitleBar from "../title-bar";
 import { filtersContainerHeight } from "../filters-container";
 import { Space } from "common/helpers/space";
+import {
+  rendererNavigation,
+  rendererWindowState,
+} from "common/util/navigation";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -49,9 +54,14 @@ const MeatTab = styled.div`
 
 class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { credentials, openTabs, tabInstances, id: currentId } = this.props;
+    let { credentials, openTabs, tabInstances, id: currentId } = this.props;
     if (!(credentials && credentials.me && credentials.me.id)) {
       return null;
+    }
+
+    const iw = (window as ExtendedWindow).itchWindow;
+    if (iw.role == "secondary") {
+      currentId = iw.tab;
     }
 
     return (
@@ -96,16 +106,16 @@ interface IDerivedProps {
 }
 
 const openTabsSelector = createSelector(
-  (rs: IRootState) => rs.profile.navigation.openTabs,
+  (rs: IRootState) => rendererNavigation(rs).openTabs,
   (openTabs: IOpenTabs) => [...openTabs.constant, ...openTabs.transient].sort()
 );
 
 export default connect<IProps>(AllMeats, {
   state: createStructuredSelector({
     credentials: (rs: IRootState) => rs.profile.credentials,
-    id: (rs: IRootState) => rs.profile.navigation.tab,
+    id: (rs: IRootState) => rendererNavigation(rs).tab,
     openTabs: (rs: IRootState) => openTabsSelector(rs),
-    tabInstances: (rs: IRootState) => rs.profile.tabInstances,
-    loadingTabs: (rs: IRootState) => rs.profile.navigation.loadingTabs,
+    tabInstances: (rs: IRootState) => rendererWindowState(rs).tabInstances,
+    loadingTabs: (rs: IRootState) => rendererNavigation(rs).loadingTabs,
   }),
 });

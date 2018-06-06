@@ -5,6 +5,8 @@ import "!style-loader!css-loader!./fonts/icomoon/style.css";
 import "!style-loader!css-loader!react-hint/css/index.css";
 import "!style-loader!css-loader!react-json-inspector/json-inspector.css";
 
+import { parse as parseQueryString } from "querystring";
+
 import env from "common/env";
 if (process.env.NODE_ENV !== "production") {
   require("react-hot-loader/patch");
@@ -40,6 +42,8 @@ if (env.development) {
 import electron from "electron";
 import App from "renderer/components/app";
 import { actions } from "common/actions/index";
+import { ExtendedWindow } from "common/types";
+import { rendererWindow } from "common/util/navigation";
 
 let appNode: Element | null;
 
@@ -95,6 +99,14 @@ if (os.platform() === "darwin") {
 }
 
 async function start() {
+  const opts = parseQueryString(location.search.replace(/^\?/, ""));
+  const extWindow = window as ExtendedWindow;
+  extWindow.itchWindow = {
+    id: String(opts.id),
+    role: opts.tab ? "secondary" : "main",
+    tab: opts ? String(opts.tab) : null,
+  };
+
   render(App);
 
   if (module.hot) {
@@ -117,7 +129,7 @@ document.addEventListener("drop", event => {
   const urls = event.dataTransfer.getData("text/uri-list");
   if (urls) {
     urls.split("\n").forEach(url => {
-      store.dispatch(actions.navigate({ url }));
+      store.dispatch(actions.navigate({ window: rendererWindow(), url }));
     });
   }
 });

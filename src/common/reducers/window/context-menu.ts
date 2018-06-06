@@ -1,8 +1,8 @@
 import reducer from "../reducer";
 import { actions } from "common/actions";
-import { IUIContextMenuState } from "../../types/index";
+import { IContextMenuState } from "../../types/index";
 
-const initialState: IUIContextMenuState = {
+const initialState: IContextMenuState = {
   open: false,
   data: {
     clientX: 0,
@@ -11,7 +11,7 @@ const initialState: IUIContextMenuState = {
   },
 };
 
-export default reducer<IUIContextMenuState>(initialState, on => {
+export default reducer<IContextMenuState>(initialState, on => {
   on(actions.popupContextMenu, (state, action) => {
     const { clientX, clientY, template } = action.payload;
 

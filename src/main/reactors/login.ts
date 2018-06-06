@@ -45,6 +45,7 @@ export default function(watcher: Watcher) {
               const modalRes = await promisedModal(
                 store,
                 modalWidgets.recaptchaInput.make({
+                  window: "root",
                   title: "Captcha",
                   message: "",
                   widgetParams: {
@@ -67,6 +68,7 @@ export default function(watcher: Watcher) {
             const modalRes = await promisedModal(
               store,
               modalWidgets.twoFactorInput.make({
+                window: "root",
                 title: ["login.two_factor.title"],
                 message: "",
                 buttons: [

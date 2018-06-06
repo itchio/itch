@@ -15,6 +15,7 @@ import styled from "./styles";
 import { Space } from "common/helpers/space";
 import getGameStatus, { IGameStatus } from "common/helpers/get-game-status";
 import { Game } from "common/butlerd/messages";
+import { rendererWindow } from "common/util/navigation";
 
 const Spacer = styled.div`
   flex-basis: 10px;
@@ -80,7 +81,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 
 export default connect<IProps>(GameBrowserContext, {
   state: (rs: IRootState, props: IProps) => {
-    const game = Space.fromState(rs, props.tab).game();
+    const game = Space.fromState(rs, rendererWindow(), props.tab).game();
     if (!game) {
       return {};
     }

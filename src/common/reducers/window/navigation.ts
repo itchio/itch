@@ -1,6 +1,6 @@
 import { reject, omit, map, filter } from "underscore";
 
-import { IProfileNavigationState, ITabDataSave } from "common/types";
+import { INavigationState, ITabDataSave } from "common/types";
 
 import { actions } from "common/actions";
 import reducer from "../reducer";
@@ -10,7 +10,7 @@ import { arrayMove } from "react-sortable-hoc";
 const baseTabs = ["itch://featured", "itch://library", "itch://collections"];
 
 const initialState = {
-  page: "gate",
+  page: "hub",
   openTabs: {
     constant: baseTabs,
     transient: [],
@@ -18,9 +18,9 @@ const initialState = {
   loadingTabs: {},
   lastConstant: "itch://featured",
   tab: "itch://featured",
-} as IProfileNavigationState;
+} as INavigationState;
 
-export default reducer<IProfileNavigationState>(initialState, on => {
+export default reducer<INavigationState>(initialState, on => {
   on(actions.tabLoading, (state, action) => {
     const { tab, loading } = action.payload;
     if (loading) {

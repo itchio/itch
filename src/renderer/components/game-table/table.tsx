@@ -21,6 +21,11 @@ import { Game } from "common/butlerd/messages";
 import watching, { Watcher } from "../watching";
 import { actions } from "common/actions";
 import IconButton from "../basics/icon-button";
+import {
+  rendererWindowState,
+  rendererNavigation,
+  rendererWindow,
+} from "common/util/navigation";
 
 const rowHeight = 70;
 const rightMargin = 10;
@@ -106,12 +111,12 @@ class Table extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   weAreFocused(store: IStore): boolean {
-    const { modals } = store.getState();
+    const { modals } = rendererWindowState(store.getState());
     if (modals.length > 0) {
       return false;
     }
 
-    const { tab } = store.getState().profile.navigation;
+    const { tab } = rendererNavigation(store.getState());
     if (tab !== this.props.tab) {
       return false;
     }
@@ -129,7 +134,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps, IState> {
       if (selectedGameId) {
         let game = this.props.games[selectedGameId];
         if (game) {
-          this.props.navigateToGame({ game });
+          this.props.navigateToGame({ window: rendererWindow(), game });
         }
       }
     });
@@ -354,6 +359,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps, IState> {
   onContextMenu = (ev: React.MouseEvent<HTMLDivElement>) => {
     this.eventToGame(ev, game => {
       this.props.openGameContextMenu({
+        window: rendererWindow(),
         game,
         clientX: ev.clientX,
         clientY: ev.pageY,

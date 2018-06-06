@@ -72,6 +72,7 @@ export default function(watcher: Watcher) {
             store.dispatch(
               actions.openModal(
                 modalWidgets.naked.make({
+                  window: "root",
                   title: `Certificate error: ${error}`,
                   message:
                     `There was an error with the certificate for ` +

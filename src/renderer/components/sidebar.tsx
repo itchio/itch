@@ -19,6 +19,7 @@ import { SidebarSection, SidebarHeading } from "./sidebar/styles";
 
 import { T } from "renderer/t";
 import { User } from "common/butlerd/messages";
+import { rendererNavigation, rendererWindow } from "common/util/navigation";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -81,11 +82,15 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   closeAllTabs = () => {
-    this.props.closeAllTabs({});
+    this.props.closeAllTabs({
+      window: rendererWindow(),
+    });
   };
 
   newTab = () => {
-    this.props.newTab({});
+    this.props.newTab({
+      window: rendererWindow(),
+    });
   };
 
   onSortEnd = (params: ISortEndParams) => {
@@ -93,7 +98,11 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
     this.setState({
       transient: arrayMove(this.state.transient, oldIndex, newIndex),
     });
-    this.props.moveTab({ before: oldIndex, after: newIndex });
+    this.props.moveTab({
+      window: rendererWindow(),
+      before: oldIndex,
+      after: newIndex,
+    });
   };
 
   render() {
@@ -181,8 +190,8 @@ export default connect<IProps>(Sidebar, {
     appVersion: (rs: IRootState) => rs.system.appVersion,
     sidebarWidth: (rs: IRootState) => rs.preferences.sidebarWidth || 240,
     me: (rs: IRootState) => rs.profile.credentials.me,
-    tab: (rs: IRootState) => rs.profile.navigation.tab,
-    openTabs: (rs: IRootState) => rs.profile.navigation.openTabs,
+    tab: (rs: IRootState) => rendererNavigation(rs).tab,
+    openTabs: (rs: IRootState) => rendererNavigation(rs).openTabs,
   }),
   actionCreators,
 });

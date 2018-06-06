@@ -27,6 +27,7 @@ import RowButton, {
 import Cover from "../basics/cover";
 import TimeAgo from "../basics/time-ago";
 import Icon from "../basics/icon";
+import { rendererWindow } from "common/util/navigation";
 
 const CaveItem = styled.div`
   padding: 4px;
@@ -210,6 +211,7 @@ class ManageCave extends React.PureComponent<IProps & IDerivedProps> {
   onSwitchVersion = (ev: React.MouseEvent<HTMLElement>) => {
     const cave = this.props.modal.widgetParams.cave;
     this.props.closeModal({
+      window: rendererWindow(),
       action: actions.switchVersionCaveRequest({ cave }),
     });
   };
@@ -217,6 +219,7 @@ class ManageCave extends React.PureComponent<IProps & IDerivedProps> {
   onUninstall = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = this.props.modal.widgetParams.cave.id;
     this.props.closeModal({
+      window: rendererWindow(),
       action: actions.queueCaveUninstall({ caveId }),
     });
   };
@@ -224,6 +227,7 @@ class ManageCave extends React.PureComponent<IProps & IDerivedProps> {
   onReinstall = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = this.props.modal.widgetParams.cave.id;
     this.props.closeModal({
+      window: rendererWindow(),
       action: actions.queueCaveReinstall({ caveId }),
     });
   };

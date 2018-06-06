@@ -10,6 +10,7 @@ import styled from "../styles";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import { T } from "renderer/t";
 import { doesEventMeanBackground } from "../when-click-navigates";
+import { rendererWindow } from "common/util/navigation";
 
 const GameUpdateRowDiv = styled.div`
   flex-shrink: 0;
@@ -103,6 +104,7 @@ class GameUpdateRow extends React.PureComponent<IProps & IDerivedProps> {
     const { game } = update;
 
     navigateToGame({
+      window: rendererWindow(),
       game,
       background: doesEventMeanBackground(e),
     });

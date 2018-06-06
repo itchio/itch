@@ -14,7 +14,7 @@ import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
 import HiddenIndicator from "../hidden-indicator";
 import { doesEventMeanBackground } from "../when-click-navigates";
 import { Game } from "common/butlerd/messages";
-import { gameEvolvePayload } from "common/util/navigation";
+import { gameEvolvePayload, rendererWindow } from "common/util/navigation";
 
 const globalMargin = 20;
 const sidebarCushion = 5;
@@ -120,6 +120,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   onContextMenu = (ev: React.MouseEvent<HTMLDivElement>) => {
     this.eventToGame(ev, game => {
       this.props.openGameContextMenu({
+        window: rendererWindow(),
         game,
         clientX: ev.clientX,
         clientY: ev.pageY,

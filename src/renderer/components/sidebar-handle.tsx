@@ -4,6 +4,7 @@ import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import styled from "./styles";
 
 const HandleDiv = styled.div`
+  border-right: 1px solid ${props => props.theme.sidebarBorder};
   background: ${props => props.theme.sidebarBackground};
   height: "100%";
   flex-grow: 0;

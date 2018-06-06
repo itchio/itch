@@ -28,6 +28,7 @@ import { delay } from "../reactors/delay";
  */
 export class Fetcher {
   ctx: Context;
+  window: string;
   tab: string;
   reason: FetchReason;
   aborted = false;
@@ -39,6 +40,8 @@ export class Fetcher {
 
   hook(ctx: Context, tab: string, reason: FetchReason) {
     this.ctx = ctx;
+    // FIXME: multi-window support?
+    this.window = "root";
     this.tab = tab;
     this.reason = reason;
 
@@ -142,6 +145,7 @@ export class Fetcher {
     }
 
     const payload = {
+      window: "root",
       tab: this.tab,
       data,
       shallow,
@@ -204,7 +208,7 @@ export class Fetcher {
   private _space: Space;
   space(): Space {
     if (!this._space) {
-      this._space = Space.fromStore(this.ctx.store, this.tab);
+      this._space = Space.fromStore(this.ctx.store, this.window, this.tab);
     }
     return this._space;
   }
@@ -240,7 +244,7 @@ export class Fetcher {
   }
 
   sortAndFilter(input: Game[], opts: ISortAndFilterOpts = {}): Game[] {
-    return sortAndFilter(input, this.tab, this.ctx.store, opts);
+    return sortAndFilter(input, this.window, this.tab, this.ctx.store, opts);
   }
 
   clean() {

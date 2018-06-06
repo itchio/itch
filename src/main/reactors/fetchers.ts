@@ -32,13 +32,20 @@ let nextFetchReason: {
   [key: string]: FetchReason;
 } = {};
 
-async function queueFetch(store: IStore, tab: string, reason: FetchReason) {
+// FIXME: fetchers are very much not multi-window-aware
+
+async function queueFetch(
+  store: IStore,
+  window: string,
+  tab: string,
+  reason: FetchReason
+) {
   if (fetching[tab]) {
     nextFetchReason[tab] = reason;
     return;
   }
 
-  const fetcherClass = getFetcherClass(store, tab);
+  const fetcherClass = getFetcherClass(store, window, tab);
   if (!fetcherClass) {
     // no fetcher, nothing to do
     return;
@@ -80,15 +87,19 @@ async function queueFetch(store: IStore, tab: string, reason: FetchReason) {
       const nextReason = nextFetchReason[tab];
       if (nextReason) {
         delete nextFetchReason[tab];
-        queueFetch(store, tab, nextReason).catch(err => {
+        queueFetch(store, window, tab, nextReason).catch(err => {
           logger.error(`In queued fetcher: ${err.stack}`);
         });
       }
     });
 }
 
-function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
-  const sp = Space.fromStore(store, tab);
+function getFetcherClass(
+  store: IStore,
+  window: string,
+  tab: string
+): typeof Fetcher {
+  const sp = Space.fromStore(store, window, tab);
 
   switch (sp.internalPage()) {
     case "dashboard":
@@ -122,7 +133,10 @@ function getFetcherClass(store: IStore, tab: string): typeof Fetcher {
 }
 
 const queueCleanup = throttle((store: IStore) => {
-  const validKeys = new Set(Object.keys(store.getState().profile.tabInstances));
+  // TODO: figure that out multi-window
+  const validKeys = new Set(
+    Object.keys(store.getState().windows["root"].tabInstances)
+  );
 
   const allKeys = union(
     Object.keys(lastFetchers),
@@ -142,8 +156,8 @@ const queueCleanup = throttle((store: IStore) => {
 export default function(watcher: Watcher) {
   // changing tabs? it's a fetching
   watcher.on(actions.tabChanged, async (store, action) => {
-    const { tab } = action.payload;
-    queueFetch(store, tab, FetchReason.TabChanged);
+    const { window, tab } = action.payload;
+    queueFetch(store, window, tab, FetchReason.TabChanged);
   });
 
   watcher.on(actions.tabsChanged, async (store, action) => {
@@ -156,33 +170,48 @@ export default function(watcher: Watcher) {
     const reason = onlyParamsChange
       ? FetchReason.ParamsChanged
       : FetchReason.TabEvolved;
-    queueFetch(store, action.payload.tab, reason);
+    queueFetch(store, action.payload.window, action.payload.tab, reason);
   });
 
   watcher.on(actions.tabGoBack, async (store, action) => {
-    queueFetch(store, action.payload.tab, FetchReason.TabEvolved);
+    queueFetch(
+      store,
+      action.payload.window,
+      action.payload.tab,
+      FetchReason.TabEvolved
+    );
   });
 
   watcher.on(actions.tabGoForward, async (store, action) => {
-    queueFetch(store, action.payload.tab, FetchReason.TabEvolved);
+    queueFetch(
+      store,
+      action.payload.window,
+      action.payload.tab,
+      FetchReason.TabEvolved
+    );
   });
 
   // tab reloaded by user? let's fetch!
   watcher.on(actions.tabReloaded, async (store, action) => {
-    queueFetch(store, action.payload.tab, FetchReason.TabReloaded);
+    queueFetch(
+      store,
+      action.payload.window,
+      action.payload.tab,
+      FetchReason.TabReloaded
+    );
   });
 
   // window gaining focus? fetch away!
   watcher.on(actions.windowFocusChanged, async (store, action) => {
     if (action.payload.focused) {
-      const currentTab = store.getState().profile.navigation.tab;
-      queueFetch(store, currentTab, FetchReason.WindowFocused);
+      const currentTab = store.getState().windows["root"].navigation.tab;
+      queueFetch(store, "root", currentTab, FetchReason.WindowFocused);
     }
   });
 
   watcher.on(actions.commonsUpdated, async (store, action) => {
-    const currentTab = store.getState().profile.navigation.tab;
-    queueFetch(store, currentTab, FetchReason.CommonsChanged);
+    const currentTab = store.getState().windows["root"].navigation.tab;
+    queueFetch(store, "root", currentTab, FetchReason.CommonsChanged);
   });
 
   const watchedPreferences = [
@@ -192,10 +221,11 @@ export default function(watcher: Watcher) {
   ];
 
   watcher.on(actions.updatePreferences, async (store, action) => {
+    // FIXME: multiwindow
     const prefs = action.payload;
     if (some(watchedPreferences, k => prefs.hasOwnProperty(k))) {
-      const currentTabId = store.getState().profile.navigation.tab;
-      queueFetch(store, currentTabId, FetchReason.ParamsChanged);
+      const currentTabId = store.getState().windows["root"].navigation.tab;
+      queueFetch(store, "root", currentTabId, FetchReason.ParamsChanged);
     }
   });
 }

@@ -29,10 +29,10 @@ export async function promisedModal<Params, Response>(
 
 export default function(watcher: Watcher) {
   watcher.on(actions.closeModal, async (store, outerAction) => {
-    const { payload = {} } = outerAction;
-    const { action, id } = payload;
+    const { payload } = outerAction;
+    const { window, action, id } = payload;
 
-    const modals = store.getState().modals;
+    const modals = store.getState().windows[window].modals;
     let modal = modals[0];
     if (id) {
       modal = findWhere(modals, { id });
@@ -52,6 +52,7 @@ export default function(watcher: Watcher) {
 
     store.dispatch(
       actions.modalClosed({
+        window,
         id: modal ? modal.id : id,
         response,
       })

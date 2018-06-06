@@ -14,7 +14,11 @@ import EmptyState from "../empty-state";
 import LoadingState from "../loading-state";
 import { Space } from "common/helpers/space";
 import { Collection } from "common/butlerd/messages";
-import { collectionEvolvePayload } from "common/util/navigation";
+import {
+  collectionEvolvePayload,
+  rendererWindowState,
+  rendererNavigation,
+} from "common/util/navigation";
 
 const tab = "itch://collections";
 const eo: any = {};
@@ -48,7 +52,9 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
           smallText={["collections.empty_sub"]}
           buttonIcon="earth"
           buttonText={["status.downloads.find_games_button"]}
-          buttonAction={() => navigate({ url: "itch://featured" })}
+          buttonAction={() =>
+            navigate({ window: "root", url: "itch://featured" })
+          }
         />
       );
     }
@@ -159,8 +165,9 @@ type IDerivedProps = Dispatchers<typeof actionCreators> &
 
 export default connect<IProps>(injectDimensions(Grid), {
   state: createSelector(
-    (rs: IRootState) => Space.fromInstance(rs.profile.tabInstances[tab]),
-    (rs: IRootState) => rs.profile.navigation.loadingTabs[tab],
+    (rs: IRootState) =>
+      Space.fromInstance(rendererWindowState(rs).tabInstances[tab]),
+    (rs: IRootState) => rendererNavigation(rs).loadingTabs[tab],
     createStructuredSelector({
       collectionIds: (sp: Space) => sp.collections().ids || ea,
       collections: (sp: Space) => sp.collections().set || eo,

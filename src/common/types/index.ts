@@ -75,10 +75,10 @@ export interface ICredentials {
  * The entire application state, following the redux philosophy
  */
 export interface IRootState {
-  modals: IModalsState;
   system: ISystemState;
   setup: ISetupState;
   profile: IProfileState;
+  windows: IWindowsState;
   i18n: II18nState;
   ui: IUIState;
   preferences: IPreferencesState;
@@ -183,6 +183,9 @@ export interface IModalButtonTag {
 export type IModalButtonSpec = IModalButton | "ok" | "cancel" | "nevermind";
 
 export interface IModalBase {
+  /** window this modal belongs to */
+  window: string;
+
   /** generated identifier for this modal */
   id?: string;
 
@@ -312,11 +315,20 @@ export interface IProfileState {
   /** collection freshness information */
   credentials: IProfileCredentialsState;
   login: IProfileLoginState;
-  navigation: IProfileNavigationState;
   search: IProfileSearchState;
 
-  tabInstances: TabDataTypes.ITabInstances;
   itchioUris: string[];
+}
+
+export interface IWindowsState {
+  [windowId: string]: IWindowState;
+}
+
+export interface IWindowState {
+  navigation: INavigationState;
+  modals: IModalsState;
+  tabInstances: TabDataTypes.ITabInstances;
+  contextMenu: IContextMenuState;
 }
 
 // TODO: remove, just put the butlerd profile object in the state
@@ -340,15 +352,12 @@ export interface IOpenTabs {
 
 export type TabLayout = "grid" | "table";
 
-export interface IProfileNavigationState {
+export interface INavigationState {
   /** opened tabs */
   openTabs: IOpenTabs;
 
   /** set to true when a tab is loading */
   loadingTabs: ILoadingTabs;
-
-  /** current page (gate, etc.) */
-  page: string;
 
   /** current tab id */
   tab: string;
@@ -451,7 +460,7 @@ export interface IUIMainWindowState {
   maximized: boolean;
 }
 
-export interface IUIContextMenuState {
+export interface IContextMenuState {
   open: boolean;
   data: {
     template: IMenuTemplate;
@@ -463,7 +472,6 @@ export interface IUIContextMenuState {
 export interface IUIState {
   menu: IUIMenuState;
   mainWindow: IUIMainWindowState;
-  contextMenu: IUIContextMenuState;
 }
 
 interface IInstallLocation {
@@ -661,6 +669,9 @@ export interface IMenuItem extends Electron.MenuItemConstructorOptions {
 export type IMenuTemplate = IMenuItem[];
 
 export interface INavigatePayload {
+  /** which window initiated the navigation */
+  window: string;
+
   /** the url to navigate to */
   url: string;
 
@@ -675,11 +686,16 @@ export interface INavigatePayload {
 }
 
 export interface IOpenTabPayload extends INavigatePayload {
+  window: string;
+
   /** the id of the new tab to open (generated) */
   tab?: string;
 }
 
 export interface IOpenContextMenuBase {
+  /** which window to open the context menu for */
+  window: string;
+
   /** left coordinate, in pixels */
   clientX: number;
 
@@ -695,6 +711,9 @@ export interface ModalResponse {
 }
 
 interface IEvolveBasePayload {
+  /** which window we're talking about */
+  window: string;
+
   /** the tab to evolve */
   tab: string;
 
@@ -729,3 +748,15 @@ export type TaskName =
   | "launch";
 
 export type AutoUpdaterStart = () => Promise<boolean>;
+
+export interface ExtendedWindow extends Window {
+  itchWindow: ItchWindow;
+}
+
+export interface ItchWindow {
+  id: string;
+  role: ItchWindowRole;
+  tab?: string;
+}
+
+export type ItchWindowRole = "main" | "secondary";

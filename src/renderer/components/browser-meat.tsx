@@ -26,6 +26,7 @@ import { Space } from "common/helpers/space";
 import { partitionForUser } from "common/util/partition-for-user";
 import { getInjectURL } from "common/util/resources";
 import { ExtendedWebContents } from "main/reactors/web-contents";
+import { rendererWindow } from "common/util/navigation";
 
 const showHistory = process.env.ITCH_SHOW_HISTORY === "1";
 
@@ -150,7 +151,12 @@ class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
                   <NewTabItem
                     key={url}
                     onClick={() =>
-                      this.props.evolveTab({ tab: tab, url, replace: true })
+                      this.props.evolveTab({
+                        tab: tab,
+                        window: rendererWindow(),
+                        url,
+                        replace: true,
+                      })
                     }
                   >
                     <Icon icon={icon} />
@@ -183,6 +189,7 @@ class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
     if (!prevProps.disableBrowser && this.props.disableBrowser) {
       const { tab } = this.props;
       this.props.tabDataFetched({
+        window: rendererWindow(),
         tab,
         data: { web: { loading: false } },
       });
@@ -266,19 +273,28 @@ class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
 
     const { tabDataFetched, tabGotWebContents, tab } = this.props;
     tabDataFetched({
+      window: rendererWindow(),
       tab,
       data: { web: { loading: true } },
     });
 
     let onDomReady = () => {
-      tabGotWebContents({ tab, webContentsId: wv.getWebContents().id });
+      tabGotWebContents({
+        tab,
+        window: rendererWindow(),
+        webContentsId: wv.getWebContents().id,
+      });
       wv.removeEventListener("dom-ready", onDomReady);
     };
     wv.addEventListener("dom-ready", onDomReady);
 
     // FIXME: switch to webcontents event when it.. starts working?
     wv.addEventListener("page-title-updated", ev => {
-      tabDataFetched({ tab, data: { web: { title: ev.title } } });
+      tabDataFetched({
+        tab,
+        window: rendererWindow(),
+        data: { web: { title: ev.title } },
+      });
     });
   };
 }

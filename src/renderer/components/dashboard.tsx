@@ -10,6 +10,7 @@ import { IMeatProps } from "renderer/components/meats/types";
 
 import styled, * as styles from "./styles";
 import { T } from "renderer/t";
+import { rendererWindow } from "common/util/navigation";
 
 const DashboardContainer = styled.div`
   ${styles.meat()};
@@ -24,7 +25,9 @@ class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
         <GameFilters tab={tab} loading={loading}>
           <Link
             label={T(["outlinks.open_dashboard"])}
-            onClick={e => navigate({ url: urls.dashboard })}
+            onClick={e =>
+              navigate({ window: rendererWindow(), url: urls.dashboard })
+            }
           />
         </GameFilters>
         <Games tab={tab} />

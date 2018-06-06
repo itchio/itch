@@ -6,6 +6,11 @@ import {
   ITabPage,
   ITabData,
   INavigatePayload,
+  IRootState,
+  IWindowState,
+  ExtendedWindow,
+  ItchWindow,
+  INavigationState,
 } from "common/types";
 import {
   Game,
@@ -61,6 +66,7 @@ export function currentPage(tabInstance: ITabInstance): ITabPage | null {
 
 export function gameEvolvePayload(game: Game): INavigatePayload {
   return {
+    window: "root",
     url: game.url ? game.url : `itch://games/${game.id}`,
     resource: `games/${game.id}`,
     data: gameToTabData(game),
@@ -82,6 +88,7 @@ export function collectionEvolvePayload(
   collection: Collection
 ): INavigatePayload {
   return {
+    window: "root",
     url: `itch://collections/${collection.id}`,
     data: collectionToTabData(collection),
   };
@@ -117,4 +124,23 @@ export function collectionToTabData(collection: Collection): ITabData {
       ids: [collection.id],
     },
   };
+}
+
+export function itchWindow(): ItchWindow {
+  if (process.type !== "renderer") {
+    throw new Error("itchWindow() can only be called from the renderer");
+  }
+  return (window as ExtendedWindow).itchWindow;
+}
+
+export function rendererWindow(): string {
+  return itchWindow().id;
+}
+
+export function rendererWindowState(rs: IRootState): IWindowState {
+  return rs.windows[rendererWindow()];
+}
+
+export function rendererNavigation(rs: IRootState): INavigationState {
+  return rendererWindowState(rs).navigation;
 }

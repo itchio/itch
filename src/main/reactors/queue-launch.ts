@@ -41,6 +41,7 @@ export default function(watcher: Watcher) {
               store.dispatch(
                 actions.openModal(
                   modalWidgets.naked.make({
+                    window: "root",
                     title: ["game.install.could_not_launch", { title }],
                     coverUrl: game.coverUrl,
                     stillCoverUrl: game.stillCoverUrl,
@@ -73,6 +74,7 @@ export default function(watcher: Watcher) {
         await promisedModal(
           store,
           modalWidgets.showError.make({
+            window: "root",
             title: ["game.install.could_not_launch", { title }],
             coverUrl: game.coverUrl,
             stillCoverUrl: game.stillCoverUrl,
