@@ -1,10 +1,7 @@
 import { actions } from "common/actions";
 import { Watcher } from "common/util/watcher";
 
-import staticTabData from "common/constants/static-tab-data";
-
 import { createSelector } from "reselect";
-import { contains } from "underscore";
 
 import { IRootState } from "common/types";
 
@@ -97,23 +94,12 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.navigateTab, async (store, action) => {
-    const { background, window, tab } = action.payload;
-    const sp = Space.fromStore(store, window, tab);
+    const { background } = action.payload;
 
     if (background) {
       store.dispatch(actions.navigate(action.payload));
-    } else if (sp.isFrozen()) {
-      const { tab, ...rest } = action.payload;
-
-      store.dispatch(
-        actions.navigate({
-          ...rest,
-          background: false,
-        })
-      );
     } else {
       const { background, ...rest } = action.payload;
-
       store.dispatch(
         actions.evolveTab({
           ...rest,
@@ -124,9 +110,7 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.navigate, async (store, action) => {
-    const rs = store.getState();
     const { url, resource, data, window, background } = action.payload;
-    const windowState = rs.windows[window];
     logger.debug(`Navigating to ${url} ${background ? "(in background)" : ""}`);
 
     const sp = Space.fromInstance({
@@ -140,56 +124,17 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    const { openTabs } = windowState.navigation;
-    const constantTabs = new Set(openTabs.constant);
-    const transientTabs = new Set(openTabs.transient);
-
-    if (constantTabs.has(url) || transientTabs.has(url)) {
-      // switching to constant or transient tab by url, that's good
-      if (!background) {
-        store.dispatch(actions.focusTab({ window, tab: url }));
-      }
-      return;
-    }
-
-    if (resource) {
-      const tabInstances = windowState.tabInstances;
-      for (const transient of openTabs.transient) {
-        const ti = tabInstances[transient];
-        if (ti && ti.history[ti.currentIndex].resource === resource) {
-          // switching to transient by resource, I like your style
-          if (!background) {
-            store.dispatch(actions.focusTab({ window, tab: transient }));
-          }
-          return;
-        }
-      }
-    }
-
-    const staticData = staticTabData[url];
-
     // must be a new tab then!
-    if (staticData) {
-      store.dispatch(
-        actions.openTab({
-          window,
-          tab: url,
-          url,
-          background,
-        })
-      );
-    } else {
-      store.dispatch(
-        actions.openTab({
-          window,
-          tab: uuid(),
-          url,
-          resource,
-          background,
-          data,
-        })
-      );
-    }
+    store.dispatch(
+      actions.openTab({
+        window,
+        tab: uuid(),
+        url,
+        resource,
+        background,
+        data,
+      })
+    );
   });
 
   watcher.on(actions.tabParamsChanged, async (store, action) => {
@@ -225,10 +170,9 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.closeAllTabs, async (store, action) => {
     const { window } = action.payload;
-    const { transient } = store.getState().windows[window].navigation.openTabs;
+    const { openTabs } = store.getState().windows[window].navigation;
 
-    // woo !
-    for (const tab of transient) {
+    for (const tab of openTabs) {
       store.dispatch(actions.closeTab({ window, tab }));
     }
   });
@@ -236,10 +180,9 @@ export default function(watcher: Watcher) {
   watcher.on(actions.closeOtherTabs, async (store, action) => {
     const { window } = action.payload;
     const safeTab = action.payload.tab;
-    const { transient } = store.getState().windows[window].navigation.openTabs;
+    const { openTabs } = store.getState().windows[window].navigation;
 
-    // woo !
-    for (const tab of transient) {
+    for (const tab of openTabs) {
       if (tab !== safeTab) {
         store.dispatch(actions.closeTab({ window, tab }));
       }
@@ -249,11 +192,11 @@ export default function(watcher: Watcher) {
   watcher.on(actions.closeTabsBelow, async (store, action) => {
     const { window } = action.payload;
     const markerTab = action.payload.tab;
-    const { transient } = store.getState().windows[window].navigation.openTabs;
+    const { openTabs } = store.getState().windows[window].navigation;
 
     // woo !
     let closing = false;
-    for (const tab of transient) {
+    for (const tab of openTabs) {
       if (closing) {
         store.dispatch(actions.closeTab({ window, tab }));
       } else if (tab === markerTab) {
@@ -265,12 +208,8 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.closeCurrentTab, async (store, action) => {
     const { window } = action.payload;
-    const { openTabs, tab } = store.getState().windows[window].navigation;
-    const { transient } = openTabs;
-
-    if (contains(transient, tab)) {
-      store.dispatch(actions.closeTab({ window, tab }));
-    }
+    const { tab } = store.getState().windows[window].navigation;
+    store.dispatch(actions.closeTab({ window, tab }));
   });
 
   watcher.on(actions.downloadQueued, async (store, action) => {

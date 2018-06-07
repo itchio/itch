@@ -79,8 +79,12 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
             <Filler />
           </DraggableDivInner>
         </DraggableDiv>
-        {secondary ? null : loggedIn ? <UserMenu /> : null}
-        <NewVersionAvailable />
+        {secondary ? null : (
+          <>
+            {loggedIn ? <UserMenu /> : null}
+            <NewVersionAvailable />
+          </>
+        )}
         {this.renderIcons()}
       </FiltersContainer>
     );

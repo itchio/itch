@@ -57,10 +57,6 @@ const BrowserAddressInput = styled.input`
 const BrowserAddressSpan = styled.span`
   ${browserAddressStyle()};
 
-  &.frozen {
-    cursor: not-allowed;
-  }
-
   .security-theater-bit {
     color: rgb(138, 175, 115);
   }
@@ -117,11 +113,6 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
 
     let { editingAddress } = sp.web();
 
-    const frozen = sp.isFrozen();
-    if (frozen) {
-      editingAddress = false;
-    }
-
     return (
       <>
         {loading ? (
@@ -133,7 +124,6 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
           <BrowserAddressInput
             className="browser-address"
             type="search"
-            disabled={frozen}
             innerRef={this.onBrowserAddress as any}
             defaultValue={url}
             onKeyUp={this.addressKeyUp}
@@ -141,7 +131,7 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
           />
         ) : (
           <BrowserAddressSpan
-            className={classNames("browser-address", { frozen })}
+            className={classNames("browser-address")}
             innerRef={this.onBrowserAddress}
             onClick={this.startEditingAddress}
           >

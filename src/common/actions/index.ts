@@ -292,20 +292,12 @@ export const actions = wireActions({
   toggleMaximizeWindow: action<{}>(),
 
   // navigation
-
   switchPage: action<{
     /** window identifier */
     window: string;
 
     /** the page to switch to */
     page: string;
-  }>(),
-  unlockTab: action<{
-    /** window identifier */
-    window: string;
-
-    /** the url of the tab to unlock (press, dashboard, etc.) */
-    url: string;
   }>(),
 
   openTab: action<IOpenTabPayload>(),

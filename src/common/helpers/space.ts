@@ -17,7 +17,6 @@ import querystring from "querystring";
 
 import { Game, Collection, User } from "common/butlerd/messages";
 import { currentPage } from "../util/navigation";
-import staticTabData from "common/constants/static-tab-data";
 
 // Empty Object
 const eo = {} as any;
@@ -284,10 +283,6 @@ export class Space {
     }
 
     return fallback;
-  }
-
-  isFrozen(): boolean {
-    return !!staticTabData[this._querylessURL];
   }
 
   isSleepy(): boolean {

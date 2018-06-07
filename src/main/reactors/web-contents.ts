@@ -70,12 +70,7 @@ export default function(watcher: Watcher) {
     };
     pushWeb({ webContentsId, loading: wc.isLoading() });
 
-    const sp = Space.fromStore(store, window, tab);
     const didNavigate = (url: string, replace?: boolean) => {
-      if (sp.isFrozen()) {
-        return;
-      }
-
       if (url !== "about:blank") {
         let resource = null;
         const result = parseWellKnownUrl(url);
@@ -99,13 +94,6 @@ export default function(watcher: Watcher) {
 
     logger.debug(`initial didNavigate with ${wc.getURL()}`);
     didNavigate(wc.getURL(), true);
-
-    if (sp.isFrozen()) {
-      wc.on("will-navigate", (ev, url) => {
-        ev.preventDefault();
-        store.dispatch(actions.navigate({ window, url }));
-      });
-    }
 
     // FIXME: this used to be `dom-ready` but it doesn't seem to fire
     // on webcontents for webview.
@@ -184,12 +172,6 @@ export default function(watcher: Watcher) {
   watcher.on(actions.analyzePage, async (store, action) => {
     const { window, tab, url, iframe } = action.payload;
     await withWebContents(store, window, tab, async wc => {
-      const sp = Space.fromStore(store, window, tab);
-      if (sp.isFrozen()) {
-        logger.debug(`Is frozen, won't analyze`);
-        return;
-      }
-
       const onNewPath = (url: string, resource: string) => {
         if (resource) {
           // FIXME: we need this to be better - analyze can finish after we've already navigated away

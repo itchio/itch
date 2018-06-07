@@ -4,6 +4,7 @@ import {
   GameType,
   GameClassification,
   Platform,
+  Platforms,
 } from "common/butlerd/messages";
 import { currentRuntime } from "main/os/runtime";
 
@@ -11,16 +12,18 @@ const runtime = currentRuntime();
 
 export function isPlatformCompatible(game: Game): boolean {
   let hasTaggedPlatform = false;
+  const platforms = game.platforms || ({} as Platforms);
+
   // TODO: architectures
   switch (runtime.platform) {
     case Platform.OSX:
-      hasTaggedPlatform = !!game.platforms.osx;
+      hasTaggedPlatform = !!platforms.osx;
       break;
     case Platform.Linux:
-      hasTaggedPlatform = !!game.platforms.linux;
+      hasTaggedPlatform = !!platforms.linux;
       break;
     case Platform.Windows:
-      hasTaggedPlatform = !!game.platforms.windows;
+      hasTaggedPlatform = !!platforms.windows;
       break;
   }
 

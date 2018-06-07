@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "../connect";
-import { createSelector, createStructuredSelector } from "reselect";
+import { createStructuredSelector } from "reselect";
 import classNames from "classnames";
 
 import Meat from "./meat";
@@ -10,7 +10,6 @@ import { map } from "underscore";
 import {
   IRootState,
   ITabInstances,
-  IOpenTabs,
   ILoadingTabs,
   ICredentials,
 } from "common/types";
@@ -99,16 +98,11 @@ interface IDerivedProps {
   credentials: ICredentials;
 }
 
-const openTabsSelector = createSelector(
-  (rs: IRootState) => rendererNavigation(rs).openTabs,
-  (openTabs: IOpenTabs) => [...openTabs.constant, ...openTabs.transient].sort()
-);
-
 export default connect<IProps>(AllMeats, {
   state: createStructuredSelector({
     credentials: (rs: IRootState) => rs.profile.credentials,
     id: (rs: IRootState) => rendererNavigation(rs).tab,
-    openTabs: (rs: IRootState) => openTabsSelector(rs),
+    openTabs: (rs: IRootState) => rendererNavigation(rs).openTabs,
     tabInstances: (rs: IRootState) => rendererWindowState(rs).tabInstances,
     loadingTabs: (rs: IRootState) => rendererNavigation(rs).loadingTabs,
   }),

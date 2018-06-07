@@ -26,6 +26,7 @@ export const initialState = {
   onlyOwnedGames: false,
   onlyInstalledGames: false,
   layout: "grid",
+  enableTabs: false,
 } as IPreferencesState;
 
 export default reducer<IPreferencesState>(initialState, on => {

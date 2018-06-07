@@ -7,17 +7,11 @@ import reducer from "../reducer";
 
 import { arrayMove } from "react-sortable-hoc";
 
-const baseTabs = ["itch://featured", "itch://library", "itch://collections"];
-
 const initialState = {
   page: "hub",
-  openTabs: {
-    constant: baseTabs,
-    transient: [],
-  },
+  openTabs: ["itch://library"],
   loadingTabs: {},
-  lastConstant: "itch://featured",
-  tab: "itch://featured",
+  tab: "itch://library",
 } as INavigationState;
 
 export default reducer<INavigationState>(initialState, on => {
@@ -39,24 +33,6 @@ export default reducer<INavigationState>(initialState, on => {
     }
   });
 
-  on(actions.tabChanged, (state, action) => {
-    const { constant } = state.openTabs;
-    const { tab } = action.payload;
-
-    if (!tab) {
-      return state;
-    }
-
-    if (constant.indexOf(tab) === -1) {
-      return state;
-    }
-
-    return {
-      ...state,
-      lastConstant: tab,
-    };
-  });
-
   on(actions.switchPage, (state, action) => {
     const { page } = action.payload;
     return {
@@ -71,15 +47,12 @@ export default reducer<INavigationState>(initialState, on => {
       return state;
     }
 
-    const { constant, transient } = state.openTabs;
+    const { openTabs } = state;
 
     return {
       ...state,
       tab: background ? state.tab : tab,
-      openTabs: {
-        constant,
-        transient: [tab, ...transient],
-      },
+      openTabs: [tab, ...openTabs],
     };
   });
 
@@ -96,57 +69,36 @@ export default reducer<INavigationState>(initialState, on => {
     const { before, after } = action.payload;
 
     const { openTabs } = state;
-    const { transient } = openTabs;
 
-    const newTransient = arrayMove(transient, before, after);
+    const newOpenTabs = arrayMove(openTabs, before, after);
 
     return {
       ...state,
-      openTabs: {
-        ...state.openTabs,
-        transient: newTransient,
-      },
+      openTabs: newOpenTabs,
     };
   });
 
   on(actions.closeTab, (state, action) => {
     const { tab, openTabs } = state;
     const closeId = action.payload.tab || tab;
-    const { constant, transient } = openTabs;
 
-    if (constant.indexOf(closeId) !== -1) {
-      // constant tabs cannot be closed
-      return state;
-    }
-
-    const ids = [...constant, ...transient];
-    const index = ids.indexOf(tab);
-
-    const newTransient = reject(transient, tabId => tabId === closeId);
+    const index = openTabs.indexOf(tab);
+    const newOpenTabs = reject(openTabs, tabId => tabId === closeId);
 
     let newId = tab;
     if (tab === closeId) {
-      const newIds = [...constant, ...newTransient];
-
       let nextIndex = index;
-      if (nextIndex >= newIds.length) {
+      if (nextIndex >= newOpenTabs.length) {
         nextIndex--;
       }
 
-      if (nextIndex < constant.length) {
-        newId = state.lastConstant;
-      } else {
-        newId = newIds[nextIndex];
-      }
+      newId = newOpenTabs[nextIndex];
     }
 
     return {
       ...state,
       tab: newId,
-      openTabs: {
-        ...state.openTabs,
-        transient: newTransient,
-      },
+      openTabs: newOpenTabs,
     };
   });
 
@@ -154,7 +106,7 @@ export default reducer<INavigationState>(initialState, on => {
     const snapshot = action.payload;
 
     const tab = snapshot.current || state.tab;
-    const transient = filter(
+    const openTabs = filter(
       map(snapshot.items, (tab: ITabDataSave) => {
         return tab.id;
       }),
@@ -164,34 +116,11 @@ export default reducer<INavigationState>(initialState, on => {
     return {
       ...state,
       tab,
-      openTabs: {
-        ...state.openTabs,
-        transient,
-      },
+      openTabs,
     };
   });
 
   on(actions.logout, (state, action) => {
     return initialState;
-  });
-
-  // happens after SESSION_READY depending on the user's profile (press, developer)
-  on(actions.unlockTab, (state, action) => {
-    const { url } = action.payload;
-
-    const { constant } = state.openTabs;
-
-    if (constant.indexOf(url) !== -1) {
-      // already unlocked, nothing to do
-      return state;
-    }
-
-    return {
-      ...state,
-      openTabs: {
-        ...state.openTabs,
-        constant: [...constant, url],
-      },
-    };
   });
 });

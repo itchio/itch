@@ -10,7 +10,7 @@ import Search from "./sidebar/search";
 import Tab from "./sidebar/tab";
 import Logo from "./sidebar/logo";
 
-import { IRootState, IOpenTabs } from "common/types";
+import { IRootState } from "common/types";
 
 import { SortableContainer, arrayMove } from "react-sortable-hoc";
 
@@ -20,6 +20,8 @@ import { SidebarSection, SidebarHeading } from "./sidebar/styles";
 import { T } from "renderer/t";
 import { User } from "common/butlerd/messages";
 import { rendererNavigation, rendererWindow } from "common/util/navigation";
+import Link from "./basics/link";
+import Icon from "renderer/components/basics/icon";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -40,7 +42,6 @@ const SidebarItems = styled.div`
   flex-direction: column;
 
   overflow: hidden;
-  flex-grow: 1;
 `;
 
 interface ISortEndParams {
@@ -77,7 +78,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
   constructor(props: Sidebar["props"], context) {
     super(props, context);
     this.state = {
-      transient: props.openTabs.transient,
+      openTabs: props.openTabs,
     };
   }
 
@@ -96,7 +97,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
   onSortEnd = (params: ISortEndParams) => {
     const { oldIndex, newIndex } = params;
     this.setState({
-      transient: arrayMove(this.state.transient, oldIndex, newIndex),
+      openTabs: arrayMove(this.state.openTabs, oldIndex, newIndex),
     });
     this.props.moveTab({
       window: rendererWindow(),
@@ -106,7 +107,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
   };
 
   render() {
-    const { sidebarWidth, tab: currentId, openTabs } = this.props;
+    const { sidebarWidth, enableTabs } = this.props;
 
     return (
       <SidebarDiv id="sidebar" style={{ width: `${sidebarWidth}px` }}>
@@ -114,15 +115,15 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
 
         <Search />
 
+        {enableTabs ? this.renderTabs() : this.renderShortcuts()}
+      </SidebarDiv>
+    );
+  }
+
+  renderTabs(): JSX.Element {
+    return (
+      <>
         <SidebarItems>
-          <SidebarSection>
-            <SidebarHeading>{T(["sidebar.category.basics"])}</SidebarHeading>
-          </SidebarSection>
-
-          {map(openTabs.constant, (id, index) => {
-            return <Tab key={id} tab={id} active={currentId === id} />;
-          })}
-
           <SidebarSection>
             <SidebarHeading>{T(["sidebar.category.tabs"])}</SidebarHeading>
             <Filler />
@@ -141,22 +142,59 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
           </SidebarSection>
 
           <SortableList
-            items={this.state.transient}
+            items={this.state.openTabs}
             sidebarProps={this.props}
             onSortEnd={this.onSortEnd}
             distance={5}
             lockAxis="y"
           />
         </SidebarItems>
+      </>
+    );
+  }
 
-        <Filler />
-      </SidebarDiv>
+  renderShortcuts(): JSX.Element {
+    return (
+      <>
+        <SidebarItems>
+          {this.renderLink("itch://featured", "earth", "Explore")}
+          {this.renderLink("itch://library", "heart-filled", "Library")}
+          {this.renderLink(
+            "itch://collections",
+            "video_collection",
+            "Collections"
+          )}
+          {this.renderLink("itch://dashboard", "archive", "Dashboard")}
+        </SidebarItems>
+        <div style={{ flexGrow: 1 }} />
+        <SidebarItems>
+          {this.renderLink("itch://preferences", "cog", "Preferences")}
+        </SidebarItems>
+      </>
+    );
+  }
+
+  renderLink(url: string, icon: string, label: string): JSX.Element {
+    return (
+      <SidebarSection>
+        <Link
+          className="sidebar-link"
+          onClick={() => {
+            this.props.navigate({
+              window: rendererWindow(),
+              url,
+            });
+          }}
+        >
+          <Icon icon={icon} /> {label}
+        </Link>
+      </SidebarSection>
     );
   }
 
   componentWillReceiveProps(props: IProps & IDerivedProps) {
     this.setState({
-      transient: props.openTabs.transient,
+      openTabs: props.openTabs,
     });
   }
 }
@@ -164,6 +202,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
 interface IProps {}
 
 const actionCreators = actionCreatorsList(
+  "navigate",
   "closeAllTabs",
   "moveTab",
   "newTab",
@@ -178,11 +217,12 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 
   tab: string;
   path: string;
-  openTabs: IOpenTabs;
+  openTabs: string[];
+  enableTabs: boolean;
 };
 
 interface IState {
-  transient: string[];
+  openTabs: string[];
 }
 
 export default connect<IProps>(Sidebar, {
@@ -192,6 +232,7 @@ export default connect<IProps>(Sidebar, {
     me: (rs: IRootState) => rs.profile.credentials.me,
     tab: (rs: IRootState) => rendererNavigation(rs).tab,
     openTabs: (rs: IRootState) => rendererNavigation(rs).openTabs,
+    enableTabs: (rs: IRootState) => rs.preferences.enableTabs,
   }),
   actionCreators,
 });

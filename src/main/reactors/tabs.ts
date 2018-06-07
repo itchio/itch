@@ -6,16 +6,13 @@ import { IStore } from "common/types";
 
 async function applyTabOffset(store: IStore, window: string, offset: number) {
   const { tab, openTabs } = store.getState().windows[window].navigation;
-  const { constant, transient } = openTabs;
 
-  const allTabs = constant.concat(transient);
-  const numTabs = allTabs.length;
-
-  const index = allTabs.indexOf(tab);
+  const numTabs = openTabs.length;
+  const index = openTabs.indexOf(tab);
 
   // adding numPaths takes care of negative wrapping too!
   const newIndex = (index + offset + numTabs) % numTabs;
-  const newTab = allTabs[newIndex];
+  const newTab = openTabs[newIndex];
 
   store.dispatch(actions.focusTab({ window, tab: newTab }));
 }
@@ -29,9 +26,8 @@ export default function(watcher: Watcher) {
   watcher.on(actions.focusNthTab, async (store, action) => {
     const { window } = action.payload;
     const n = action.payload.index;
-    const constant = store.getState().windows[window].navigation.openTabs
-      .constant;
-    const tab = constant[n - 1];
+    const { openTabs } = store.getState().windows[window].navigation;
+    const tab = openTabs[n - 1];
     if (tab) {
       store.dispatch(actions.focusTab({ window, tab }));
     }

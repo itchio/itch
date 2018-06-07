@@ -9,6 +9,11 @@ export const SidebarSection = styled.div`
   display: flex;
   flex-shrink: 0;
   align-items: center;
+
+  .sidebar-link {
+    text-decoration: none;
+    font-size: 16px;
+  }
 `;
 
 export const SidebarHeading = styled.span`

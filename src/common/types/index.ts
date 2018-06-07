@@ -343,27 +343,17 @@ export interface IProfileLoginState {
   lastUsername?: string;
 }
 
-export interface IOpenTabs {
-  /** tabs that can't be closed or re-ordered */
-  constant: string[];
-  /** tabs that can be moved around/closed */
-  transient: string[];
-}
-
 export type TabLayout = "grid" | "table";
 
 export interface INavigationState {
   /** opened tabs */
-  openTabs: IOpenTabs;
+  openTabs: string[];
 
   /** set to true when a tab is loading */
   loadingTabs: ILoadingTabs;
 
   /** current tab id */
   tab: string;
-
-  /** last constant tab visited */
-  lastConstant: string;
 }
 
 export interface ILoadingTabs {
@@ -548,6 +538,9 @@ export interface IPreferencesState {
 
   /** disable GPU acceleration, see #809 */
   disableHardwareAcceleration?: boolean;
+
+  /** enable tabs - if false, use simple interface */
+  enableTabs?: boolean;
 }
 
 export interface ITask {

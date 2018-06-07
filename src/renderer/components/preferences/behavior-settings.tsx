@@ -28,6 +28,8 @@ class BehaviorSettings extends React.PureComponent<IProps> {
 
         <h2>{T(["preferences.behavior"])}</h2>
         <div className="behavior-form">
+          <Checkbox name="enableTabs" label={"Enable tabs"} />
+
           <Checkbox
             name="openAtLogin"
             label={T(["preferences.behavior.open_at_login"])}

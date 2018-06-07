@@ -46,27 +46,21 @@ export function closeTabControls(
   window: string,
   tab: string
 ): IMenuTemplate {
-  // TODO: disable some menu items if last transient tab, or constant tab
-  const rs = store.getState();
-  const { constant } = rs.windows[window].navigation.openTabs;
-  const isEssential = constant.indexOf(tab) !== -1;
+  // TODO: disable some menu items if last transient tab
 
   return [
     {
       localizedLabel: ["menu.file.close_tab"],
       accelerator: "CmdOrCtrl+W",
       action: actions.closeTab({ window, tab }),
-      enabled: !isEssential,
     },
     {
       localizedLabel: ["menu.file.close_other_tabs"],
       action: actions.closeOtherTabs({ window, tab }),
-      enabled: !isEssential,
     },
     {
       localizedLabel: ["menu.file.close_tabs_below"],
       action: actions.closeTabsBelow({ window, tab }),
-      enabled: !isEssential,
     },
   ];
 }

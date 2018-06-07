@@ -5,8 +5,6 @@ import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
 import urls from "common/constants/urls";
 
-import staticTabData from "common/constants/static-tab-data";
-
 import { IMeatProps } from "renderer/components/meats/types";
 
 import BrowserBar from "./browser-bar";
@@ -106,12 +104,6 @@ class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
   constructor(props: any, context: any) {
     super(props, context);
     this.initialURL = props.url;
-  }
-
-  isFrozen() {
-    const { tab } = this.props;
-    const frozen = !!staticTabData[tab] || !tab;
-    return frozen;
   }
 
   render() {

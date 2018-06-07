@@ -5,13 +5,6 @@ import { getActiveDownload } from "./downloads/getters";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
-    const me = store.getState().profile.credentials.me;
-    if (me.developer) {
-      store.dispatch(
-        actions.unlockTab({ window: "root", url: "itch://dashboard" })
-      );
-    }
-
     store.dispatch(actions.switchPage({ window: "root", page: "hub" }));
 
     // resume downloads

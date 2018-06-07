@@ -67,12 +67,12 @@ async function createWindow(store: IStore, hidden: boolean) {
       webSecurity: env.development ? false : true,
     },
   };
+  const window = new BrowserWindow(opts);
   store.dispatch(
     actions.windowOpened({
       window: "root",
     })
   );
-  const window = new BrowserWindow(opts);
 
   if (os.platform() === "darwin") {
     try {

@@ -29,6 +29,6 @@ export default Link;
 class IProps {
   onClick?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
   label?: JSX.Element | string;
-  children?: string | JSX.Element | JSX.Element[];
+  children?: string | JSX.Element | (string | JSX.Element)[];
   className?: string;
 }

@@ -41,7 +41,7 @@ export async function saveTabs(store: IStore) {
   const { tab, openTabs } = navigation;
   const profileId = credentials.me.id;
   let items: ITabDataSave[];
-  items = map(openTabs.transient, id => {
+  items = map(openTabs, id => {
     const ti = tabInstances[id];
     if (!ti) {
       return null;
