@@ -26,6 +26,7 @@ import {
   TaskName,
   IPackageState,
   ISystemState,
+  ItchWindowRole,
 } from "../types/index";
 
 import {
@@ -148,7 +149,8 @@ export const actions = wireActions({
   modalResponse: action<any>(),
 
   openWindow: action<{
-    tab: string;
+    initialURL: string;
+    role: ItchWindowRole;
     modal: boolean;
   }>(),
   windowClosed: action<{
@@ -156,6 +158,9 @@ export const actions = wireActions({
   }>(),
   windowOpened: action<{
     window: string;
+    nativeId: number;
+    initialURL: string;
+    role: ItchWindowRole;
   }>(),
 
   // setup
@@ -249,25 +254,30 @@ export const actions = wireActions({
 
   // window events
 
-  firstWindowReady: action<{}>(),
-  windowReady: action<{
-    /** electron window id */
-    id: number;
+  windowDestroyed: action<{
+    window: string;
   }>(),
-  windowDestroyed: action<{}>(),
   windowFocusChanged: action<{
+    window: string;
+
     /** current state of focusedness */
     focused: boolean;
   }>(),
   windowFullscreenChanged: action<{
+    window: string;
+
     /** current state of fullscreenedness */
     fullscreen: boolean;
   }>(),
   windowMaximizedChanged: action<{
+    window: string;
+
     /** current state of fullscreenedness */
     maximized: boolean;
   }>(),
   windowBoundsChanged: action<{
+    window: string;
+
     bounds: {
       /** left border, in pixels */
       x: number;
@@ -279,17 +289,21 @@ export const actions = wireActions({
       height: number;
     };
   }>(),
-  createWindow: action<{}>(),
   focusWindow: action<{
+    window: string;
+
     /** if set to true, toggle focus instead of always focusing */
     toggle?: boolean;
-
-    /** if set to true, create window as hidden if it doesn't exist, does nothing otherwise */
-    hidden?: boolean;
   }>(),
-  hideWindow: action<{}>(),
-  minimizeWindow: action<{}>(),
-  toggleMaximizeWindow: action<{}>(),
+  hideWindow: action<{
+    window: string;
+  }>(),
+  minimizeWindow: action<{
+    window: string;
+  }>(),
+  toggleMaximizeWindow: action<{
+    window: string;
+  }>(),
 
   // navigation
   switchPage: action<{
@@ -536,7 +550,9 @@ export const actions = wireActions({
     /** id of install location to browse */
     id: string;
   }>(),
-  addInstallLocation: action<{}>(),
+  addInstallLocation: action<{
+    window: string;
+  }>(),
   removeInstallLocation: action<{
     /** id of the install location to remove */
     id: string;

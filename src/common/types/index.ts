@@ -329,6 +329,21 @@ export interface IWindowState {
   modals: IModalsState;
   tabInstances: TabDataTypes.ITabInstances;
   contextMenu: IContextMenuState;
+  native: INativeWindowState;
+}
+
+export interface INativeWindowState {
+  /** id of the electron BrowserWindow the window is displayed in */
+  id: number;
+
+  /** true if window has focus */
+  focused: boolean;
+
+  /** true if window is fullscreen */
+  fullscreen: boolean;
+
+  /** true if window is maximized */
+  maximized: boolean;
 }
 
 // TODO: remove, just put the butlerd profile object in the state
@@ -436,20 +451,6 @@ export interface IUIMenuState {
   template: IMenuTemplate;
 }
 
-export interface IUIMainWindowState {
-  /** id of the electron BrowserWindow the main window is displayed in */
-  id: number;
-
-  /** true if main window has focus */
-  focused: boolean;
-
-  /** true if main window is fullscreen */
-  fullscreen: boolean;
-
-  /** true if main window is maximized */
-  maximized: boolean;
-}
-
 export interface IContextMenuState {
   open: boolean;
   data: {
@@ -461,7 +462,6 @@ export interface IContextMenuState {
 
 export interface IUIState {
   menu: IUIMenuState;
-  mainWindow: IUIMainWindowState;
 }
 
 interface IInstallLocation {
@@ -747,9 +747,8 @@ export interface ExtendedWindow extends Window {
 }
 
 export interface ItchWindow {
-  id: string;
+  window: string;
   role: ItchWindowRole;
-  tab?: string;
 }
 
 export type ItchWindowRole = "main" | "secondary";

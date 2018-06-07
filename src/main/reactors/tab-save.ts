@@ -78,7 +78,18 @@ export async function restoreTabs(store: IStore, profile: Profile) {
 
   try {
     const snapshot = JSON.parse(value) as Snapshot;
-    store.dispatch(actions.tabsRestored(snapshot));
+    if (!store.getState().preferences.enableTabs) {
+      if (snapshot.items.length > 1) {
+        snapshot.items = [snapshot.items[0]];
+      }
+    }
+
+    const validTabs = new Set(snapshot.items.map(x => x.id));
+    if (validTabs.has(snapshot.current)) {
+      store.dispatch(actions.tabsRestored(snapshot));
+    } else {
+      // nevermind
+    }
   } catch (e) {
     logger.warn(`Could not retrieve saved tabs: ${e.message}`);
     return;

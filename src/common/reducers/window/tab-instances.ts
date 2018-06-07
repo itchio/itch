@@ -7,19 +7,7 @@ const logger = rootLogger.child({ name: "reducers/tab-data" });
 
 import { omit, each } from "underscore";
 
-import staticTabData from "common/constants/static-tab-data";
-
 const initialState: ITabInstances = {};
-
-for (const tab of Object.keys(staticTabData)) {
-  const page = staticTabData[tab];
-  initialState[tab] = {
-    history: [page],
-    currentIndex: 0,
-    data: {},
-    sleepy: true,
-  };
-}
 
 const emptyObj = {} as any;
 
@@ -48,6 +36,19 @@ function merge(
 }
 
 export default reducer<ITabInstances>(initialState, on => {
+  on(actions.windowOpened, (state, action) => {
+    const { initialURL } = action.payload;
+    return {
+      ...state,
+      ["initial-tab"]: {
+        history: [{ url: initialURL }],
+        currentIndex: 0,
+        sleepy: true,
+        data: {},
+      },
+    };
+  });
+
   on(actions.tabDataFetched, (state, action) => {
     const { tab, data, shallow } = action.payload;
     const oldInstance = state[tab];
@@ -166,10 +167,6 @@ export default reducer<ITabInstances>(initialState, on => {
 
   on(actions.closeTab, (state, action) => {
     const { tab } = action.payload;
-    if (staticTabData[tab]) {
-      // never clear tabData for static tabs tabs
-      return state;
-    }
     return omit(state, tab);
   });
 
@@ -178,7 +175,6 @@ export default reducer<ITabInstances>(initialState, on => {
     if (!tab) {
       return state;
     }
-    const staticData = staticTabData[tab] || emptyObj;
     return {
       ...state,
       [tab]: {
@@ -190,7 +186,7 @@ export default reducer<ITabInstances>(initialState, on => {
         ],
         currentIndex: 0,
         sleepy: true,
-        data: { ...data, ...staticData },
+        data: { ...data },
       },
     };
   });

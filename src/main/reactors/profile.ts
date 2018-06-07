@@ -5,8 +5,6 @@ import { getActiveDownload } from "./downloads/getters";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {
-    store.dispatch(actions.switchPage({ window: "root", page: "hub" }));
-
     // resume downloads
     store.dispatch(actions.setDownloadsPaused({ paused: false }));
 
@@ -24,7 +22,6 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.logout, async (store, action) => {
-    store.dispatch(actions.switchPage({ window: "root", page: "gate" }));
     store.dispatch(actions.setDownloadsPaused({ paused: true }));
   });
 }

@@ -134,7 +134,7 @@ export function itchWindow(): ItchWindow {
 }
 
 export function rendererWindow(): string {
-  return itchWindow().id;
+  return itchWindow().window;
 }
 
 export function rendererWindowState(rs: IRootState): IWindowState {

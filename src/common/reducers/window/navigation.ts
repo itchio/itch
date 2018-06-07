@@ -9,12 +9,20 @@ import { arrayMove } from "react-sortable-hoc";
 
 const initialState = {
   page: "hub",
-  openTabs: ["itch://library"],
+  openTabs: [],
   loadingTabs: {},
-  tab: "itch://library",
+  tab: null,
 } as INavigationState;
 
 export default reducer<INavigationState>(initialState, on => {
+  on(actions.windowOpened, (state, action) => {
+    return {
+      ...state,
+      openTabs: ["initial-tab"],
+      tab: "initial-tab",
+    };
+  });
+
   on(actions.tabLoading, (state, action) => {
     const { tab, loading } = action.payload;
     if (loading) {
@@ -31,14 +39,6 @@ export default reducer<INavigationState>(initialState, on => {
         loadingTabs: omit(state.loadingTabs, tab),
       };
     }
-  });
-
-  on(actions.switchPage, (state, action) => {
-    const { page } = action.payload;
-    return {
-      ...state,
-      page,
-    };
   });
 
   on(actions.openTab, (state, action) => {
@@ -80,6 +80,7 @@ export default reducer<INavigationState>(initialState, on => {
 
   on(actions.closeTab, (state, action) => {
     const { tab, openTabs } = state;
+
     const closeId = action.payload.tab || tab;
 
     const index = openTabs.indexOf(tab);

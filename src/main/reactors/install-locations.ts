@@ -4,13 +4,14 @@ import * as explorer from "../os/explorer";
 
 import { actions } from "common/actions";
 
-import { BrowserWindow, dialog } from "electron";
+import { dialog } from "electron";
 
 import { modalWidgets } from "renderer/components/modal-widgets/index";
 import { call, messages } from "common/butlerd";
 import { promisedModal } from "./modals";
 import { t } from "common/format/t";
 import { ItchPromise } from "common/util/itch-promise";
+import { getNativeWindow } from "./main-window";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
@@ -93,11 +94,10 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.addInstallLocation, async (store, action) => {
+    const { window } = action.payload;
     const i18n = store.getState().i18n;
-    const windowId = store.getState().ui.mainWindow.id;
-    const window = BrowserWindow.fromId(windowId);
-
-    if (!window) {
+    const nativeWindow = getNativeWindow(store.getState(), window);
+    if (!nativeWindow) {
       return;
     }
 
@@ -117,7 +117,7 @@ export default function(watcher: Watcher) {
 
         return resolve(response[0]);
       };
-      dialog.showOpenDialog(window, dialogOpts, callback);
+      dialog.showOpenDialog(nativeWindow, dialogOpts, callback);
     });
 
     const path = await promise;

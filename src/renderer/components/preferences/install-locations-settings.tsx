@@ -162,7 +162,9 @@ class InstallLocationSettings extends React.Component<
           <Button
             icon="plus"
             label={T(["preferences.install_location.add"])}
-            onClick={() => this.props.addInstallLocation({})}
+            onClick={() =>
+              this.props.addInstallLocation({ window: rendererWindow() })
+            }
           />
           <Spacer />
           <Button

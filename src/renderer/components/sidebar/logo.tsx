@@ -7,6 +7,7 @@ import { connect, actionCreatorsList, Dispatchers } from "../connect";
 
 import { IRootState } from "common/types";
 import { modalWidgets } from "../modal-widgets/index";
+import { rendererWindow } from "common/util/navigation";
 
 const LogoDiv = styled.div`
   text-align: center;
@@ -70,7 +71,7 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 export default connect(Logo, {
   state: createStructuredSelector({
     appVersion: (rs: IRootState) => rs.system.appVersion,
-    focused: (rs: IRootState) => rs.ui.mainWindow.focused,
+    focused: (rs: IRootState) => rs.windows[rendererWindow()].native.focused,
   }),
   actionCreators,
 });

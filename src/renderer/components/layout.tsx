@@ -17,6 +17,7 @@ import { TString } from "renderer/t";
 import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDate, DATE_FORMAT } from "common/format/datetime";
 import classNames from "classnames";
+import { rendererWindow } from "common/util/navigation";
 
 const LayoutContainer = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -144,7 +145,8 @@ interface IDerivedProps {
 
 export default connect<IProps>(injectIntl(Layout), {
   state: createStructuredSelector({
-    maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
+    maximized: (rs: IRootState) =>
+      rs.windows[rendererWindow()].native.maximized,
     ready: (rs: IRootState) => rs.setup.done && rs.profile.credentials.me,
   }),
 });

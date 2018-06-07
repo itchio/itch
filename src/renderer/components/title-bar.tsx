@@ -138,15 +138,15 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   minimizeClick = () => {
-    this.props.minimizeWindow({});
+    this.props.minimizeWindow({ window: rendererWindow() });
   };
 
   maximizeRestoreClick = () => {
-    this.props.toggleMaximizeWindow({});
+    this.props.toggleMaximizeWindow({ window: rendererWindow() });
   };
 
   closeClick = () => {
-    this.props.hideWindow({});
+    this.props.hideWindow({ window: rendererWindow() });
   };
 }
 
@@ -175,7 +175,8 @@ export default connect<IProps>(TitleBar, {
     createStructuredSelector({
       tabInstance: (rs: IRootState, props: IProps) =>
         rendererWindowState(rs).tabInstances[props.tab] || emptyObj,
-      maximized: (rs: IRootState) => rs.ui.mainWindow.maximized,
+      maximized: (rs: IRootState) =>
+        rs.windows[rendererWindow()].native.maximized,
       // TODO: fixme: focus by window
       focused: (rs: IRootState) => true,
       macos: (rs: IRootState) => rs.system.macos,

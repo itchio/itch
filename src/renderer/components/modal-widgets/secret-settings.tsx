@@ -183,7 +183,11 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   onOpenWindow = () => {
-    this.props.openWindow({ tab: "itch://preferences", modal: false });
+    this.props.openWindow({
+      role: "secondary",
+      initialURL: "itch://preferences",
+      modal: false,
+    });
     this.props.closeModal({ window: "root" });
   };
 

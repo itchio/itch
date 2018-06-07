@@ -1,5 +1,6 @@
 import { Watcher } from "common/util/watcher";
 
+import { screen } from "electron";
 import { createSelector } from "reselect";
 import { format as formatUrl, UrlObject } from "url";
 import * as path from "path";
@@ -7,7 +8,7 @@ import * as path from "path";
 import env from "common/env";
 
 import { darkMineShaft } from "common/constants/colors";
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 import config from "common/util/config";
 import * as os from "../os";
 import { debounce } from "underscore";
@@ -17,9 +18,6 @@ const logger = rootLogger.child({ name: "main-window" });
 
 import { actions } from "common/actions";
 
-let createLock = false;
-let firstWindow = true;
-
 type AppCommand = "browser-backward" | "browser-forward";
 
 const BOUNDS_CONFIG_KEY = "main_window_bounds";
@@ -27,19 +25,21 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = os.platform() === "darwin";
 
-import { IRootState, IStore } from "common/types";
+import {
+  IRootState,
+  IStore,
+  INativeWindowState,
+  ItchWindowRole,
+} from "common/types";
 import { Space } from "common/helpers/space";
 import { openAppDevTools } from "./open-app-devtools";
 import { t } from "common/format/t";
 import { getImagePath } from "common/util/resources";
 import { stringify } from "querystring";
 
-async function createWindow(store: IStore, hidden: boolean) {
-  if (createLock) {
-    return;
-  }
-  createLock = true;
-
+async function createRootWindow(store: IStore) {
+  const window = "root";
+  const role: ItchWindowRole = "main";
   const userBounds = config.get(BOUNDS_CONFIG_KEY) || {};
   const bounds = {
     x: -1,
@@ -52,25 +52,20 @@ async function createWindow(store: IStore, hidden: boolean) {
   const center = bounds.x === -1 && bounds.y === -1;
 
   let opts: Electron.BrowserWindowConstructorOptions = {
+    ...commonBrowserWindowOpts(),
     title: app.getName(),
-    icon: getIconPath(),
     width,
     height,
     center,
     show: false,
-    autoHideMenuBar: true,
-    backgroundColor: darkMineShaft,
-    titleBarStyle: "hidden",
-    frame: false,
-    webPreferences: {
-      blinkFeatures: "ResizeObserver",
-      webSecurity: env.development ? false : true,
-    },
   };
-  const window = new BrowserWindow(opts);
+  const nativeWindow = new BrowserWindow(opts);
   store.dispatch(
     actions.windowOpened({
-      window: "root",
+      window,
+      role,
+      nativeId: nativeWindow.id,
+      initialURL: "itch://library",
     })
   );
 
@@ -83,11 +78,11 @@ async function createWindow(store: IStore, hidden: boolean) {
   }
 
   if (!center) {
-    window.setPosition(bounds.x, bounds.y);
+    nativeWindow.setPosition(bounds.x, bounds.y);
   }
-  ensureWindowInsideDisplay(window);
+  ensureWindowInsideDisplay(nativeWindow);
 
-  window.on("close", (e: any) => {
+  nativeWindow.on("close", (e: any) => {
     const prefs = store.getState().preferences || { closeToTray: true };
 
     let { closeToTray } = prefs;
@@ -106,7 +101,7 @@ async function createWindow(store: IStore, hidden: boolean) {
       return;
     }
 
-    if (!window.isVisible()) {
+    if (!nativeWindow.isVisible()) {
       logger.info("Main window hidden, letting it close");
       return;
     }
@@ -130,106 +125,14 @@ async function createWindow(store: IStore, hidden: boolean) {
     // hide, never destroy
     e.preventDefault();
     logger.info("Hiding main window");
-    window.hide();
+    nativeWindow.hide();
   });
 
-  window.on("focus", (e: any) => {
-    store.dispatch(actions.windowFocusChanged({ focused: true }));
-  });
-
-  window.on("blur", (e: any) => {
-    store.dispatch(actions.windowFocusChanged({ focused: false }));
-  });
-
-  window.on("enter-full-screen", (e: any) => {
-    if (!store.getState().ui.mainWindow.fullscreen) {
-      store.dispatch(actions.windowFullscreenChanged({ fullscreen: true }));
-    }
-  });
-
-  window.on("leave-full-screen", e => {
-    if (store.getState().ui.mainWindow.fullscreen) {
-      store.dispatch(actions.windowFullscreenChanged({ fullscreen: false }));
-    }
-  });
-
-  window.on("maximize", e => {
-    if (!store.getState().ui.mainWindow.maximized) {
-      store.dispatch(actions.windowMaximizedChanged({ maximized: true }));
-    }
-  });
-
-  window.on("unmaximize", e => {
-    if (store.getState().ui.mainWindow.maximized) {
-      store.dispatch(actions.windowMaximizedChanged({ maximized: false }));
-    }
-  });
-
-  window.on("app-command", (e, cmd) => {
-    switch (cmd as AppCommand) {
-      case "browser-backward":
-        store.dispatch(
-          actions.commandGoBack({
-            window: "root",
-          })
-        );
-        break;
-      case "browser-forward":
-        store.dispatch(
-          actions.commandGoForward({
-            window: "root",
-          })
-        );
-        break;
-      default:
-      // ignore unknown app commands
-    }
-  });
-
-  const debouncedBounds = debounce(() => {
-    if (window.isDestroyed()) {
-      return;
-    }
-    const windowBounds = window.getBounds();
-    store.dispatch(actions.windowBoundsChanged({ bounds: windowBounds }));
-  }, 2000);
-
-  window.on("move", (e: any) => {
-    debouncedBounds();
-  });
-
-  window.on("resize", (e: any) => {
-    debouncedBounds();
-  });
-
-  window.on("maximize", (e: any) => {
-    config.set(MAXIMIZED_CONFIG_KEY, true);
-  });
-
-  window.on("unmaximize", (e: any) => {
-    config.set(MAXIMIZED_CONFIG_KEY, false);
-  });
-
-  window.on("ready-to-show", async (e: any) => {
-    createLock = false;
-    if (firstWindow) {
-      firstWindow = false;
-      store.dispatch(actions.firstWindowReady({}));
-    }
-
-    store.dispatch(actions.windowReady({ id: window.id }));
-
-    if (hidden) {
-      store.dispatch(actions.bounce({}));
-    } else {
-      showWindow(window);
-    }
-  });
-
-  window.loadURL(makeAppURL({ id: "root" }));
+  hookNativeWindow(store, window, nativeWindow);
+  nativeWindow.loadURL(makeAppURL({ window, role }));
 
   if (parseInt(process.env.DEVTOOLS || "0", 10) > 0) {
-    await openAppDevTools(window);
+    await openAppDevTools(nativeWindow);
   }
 }
 
@@ -237,13 +140,16 @@ async function createWindow(store: IStore, hidden: boolean) {
  * Make sure the window isn't outside the bounds of the screen,
  * cf. https://github.com/itchio/itch/issues/1051
  */
-function ensureWindowInsideDisplay(window: Electron.BrowserWindow) {
-  const originalBounds = window.getBounds();
+function ensureWindowInsideDisplay(nativeWindow: Electron.BrowserWindow) {
+  if (!nativeWindow || !nativeWindow.isVisible()) {
+    return;
+  }
+
+  const originalBounds = nativeWindow.getBounds();
   logger.debug(
     `Ensuring ${JSON.stringify(originalBounds)} is inside a display`
   );
 
-  const { screen } = require("electron");
   const display = screen.getDisplayMatching(originalBounds);
   if (!display) {
     logger.warn(`No display found matching ${JSON.stringify(originalBounds)}`);
@@ -277,7 +183,7 @@ function ensureWindowInsideDisplay(window: Electron.BrowserWindow) {
 
   if (bounds !== originalBounds) {
     logger.debug(`New bounds: ${JSON.stringify(bounds)}`);
-    window.setBounds(bounds);
+    nativeWindow.setBounds(bounds);
   }
 }
 
@@ -307,44 +213,21 @@ async function toggleMaximizeWindow() {
 }
 
 async function exitFullScreen() {
-  const window = BrowserWindow.getFocusedWindow();
-  if (window && window.isFullScreen()) {
-    window.setFullScreen(false);
-  }
-}
-
-function showWindow(window: Electron.BrowserWindow) {
-  window.show();
-  const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
-  if (maximized && !macOs) {
-    window.maximize();
-  }
-
-  if (!maximized) {
-    ensureWindowInsideDisplay(window);
+  const nativeWindow = BrowserWindow.getFocusedWindow();
+  if (nativeWindow && nativeWindow.isFullScreen()) {
+    nativeWindow.setFullScreen(false);
   }
 }
 
 function ensureMainWindowInsideDisplay(store: IStore) {
-  const id = store.getState().ui.mainWindow.id;
-  if (!id) {
-    return;
+  const nativeWindow = getNativeWindow(store.getState(), "root");
+  if (nativeWindow) {
+    return ensureWindowInsideDisplay(nativeWindow);
   }
-
-  const window = BrowserWindow.fromId(id);
-  if (!window) {
-    return;
-  }
-
-  if (!window.isVisible()) {
-    return;
-  }
-
-  ensureWindowInsideDisplay(window);
 }
 
 function updateTitle(store: IStore, title: string) {
-  const id = store.getState().ui.mainWindow.id;
+  const id = store.getState().windows["root"].native.id;
   if (!id) {
     return;
   }
@@ -377,11 +260,16 @@ export default function(watcher: Watcher) {
     },
   });
 
+  watcher.on(actions.preboot, async (store, action) => {
+    await createRootWindow(store);
+  });
+
   watcher.on(actions.preferencesLoaded, async (store, action) => {
     const hidden = action.payload.openAsHidden;
-    store.dispatch(actions.focusWindow({ hidden }));
+    if (!hidden) {
+      store.dispatch(actions.focusWindow({ window: "root" }));
+    }
 
-    const { screen } = require("electron");
     screen.on("display-added", () => ensureMainWindowInsideDisplay(store));
     screen.on("display-removed", () => ensureMainWindowInsideDisplay(store));
     screen.on("display-metrics-changed", () =>
@@ -390,18 +278,26 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.focusWindow, async (store, action) => {
-    const id = store.getState().ui.mainWindow.id;
-    const options = action.payload || {};
+    const { window } = action.payload;
+    const nativeWindow = getNativeWindow(store.getState(), window);
+    const { toggle } = action.payload;
 
-    if (id) {
-      const window = BrowserWindow.fromId(id);
-      if (options.toggle && window.isVisible()) {
-        window.hide();
+    if (nativeWindow) {
+      if (toggle && nativeWindow.isVisible()) {
+        nativeWindow.hide();
       } else {
-        showWindow(window);
+        nativeWindow.show();
+        if (window === "root") {
+          const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
+          if (maximized && !macOs) {
+            nativeWindow.maximize();
+          }
+
+          if (!maximized) {
+            ensureWindowInsideDisplay(nativeWindow);
+          }
+        }
       }
-    } else {
-      await createWindow(store, action.payload.hidden);
     }
   });
 
@@ -428,19 +324,11 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.closeTabOrAuxWindow, async (store, action) => {
     const { window } = action.payload;
-    const focused = BrowserWindow.getFocusedWindow();
-    if (focused) {
-      const id = store.getState().ui.mainWindow.id;
-      if (focused.id === id) {
-        store.dispatch(actions.closeCurrentTab({ window }));
-      } else {
-        focused.close();
-      }
-    }
+    store.dispatch(actions.closeCurrentTab({ window }));
   });
 
   watcher.on(actions.quitWhenMain, async (store, action) => {
-    const mainId = store.getState().ui.mainWindow.id;
+    const mainId = getNativeState(store.getState(), "root").id;
     const focused = BrowserWindow.getFocusedWindow();
 
     if (focused) {
@@ -457,42 +345,34 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.openWindow, async (store, action) => {
-    const { tab, modal } = action.payload;
+    const { initialURL, modal } = action.payload;
 
-    const mainId = store.getState().ui.mainWindow.id;
-    const childWindow = new BrowserWindow({
+    const rs = store.getState();
+    const mainId = rs.windows["root"].native.id;
+    const nativeWindow = new BrowserWindow({
+      ...commonBrowserWindowOpts(),
       title: app.getName(),
-      icon: getIconPath(),
       parent: modal ? BrowserWindow.fromId(mainId) : null,
       modal,
-      autoHideMenuBar: true,
-      backgroundColor: darkMineShaft,
-      titleBarStyle: "hidden",
-      frame: false,
-      webPreferences: {
-        blinkFeatures: "ResizeObserver",
-        webSecurity: env.development ? false : true,
-      },
     });
-    const id = `secondary-${secondaryWindowSeed++}`;
+    const window = `secondary-${secondaryWindowSeed++}`;
+    const role: ItchWindowRole = "secondary";
     store.dispatch(
       actions.windowOpened({
-        window: id,
+        window,
+        role,
+        nativeId: nativeWindow.id,
+        initialURL: initialURL,
       })
     );
-    store.dispatch(
-      actions.navigate({
-        window: id,
-        url: tab,
-      })
-    );
-    childWindow.loadURL(makeAppURL({ id, tab }));
+    nativeWindow.loadURL(makeAppURL({ window, role }));
+    hookNativeWindow(store, window, nativeWindow);
   });
 }
 
 interface AppURLParams {
-  id: string;
-  tab?: string;
+  window: string;
+  role: ItchWindowRole;
 }
 
 function makeAppURL(params: AppURLParams): string {
@@ -525,4 +405,134 @@ function getIconPath(): string {
   }
 
   return getImagePath("window/" + env.appName + "/" + iconName + ".png");
+}
+
+function commonBrowserWindowOpts(): Partial<BrowserWindowConstructorOptions> {
+  return {
+    icon: getIconPath(),
+    autoHideMenuBar: true,
+    backgroundColor: darkMineShaft,
+    titleBarStyle: "hidden",
+    frame: false,
+    webPreferences: {
+      blinkFeatures: "ResizeObserver",
+      webSecurity: env.development ? false : true,
+    },
+  };
+}
+
+function hookNativeWindow(
+  store: IStore,
+  window: string,
+  nativeWindow: BrowserWindow
+) {
+  nativeWindow.on("focus", (e: any) => {
+    store.dispatch(actions.windowFocusChanged({ window, focused: true }));
+  });
+
+  nativeWindow.on("blur", (e: any) => {
+    store.dispatch(actions.windowFocusChanged({ window, focused: false }));
+  });
+
+  nativeWindow.on("enter-full-screen", (e: any) => {
+    const ns = store.getState().windows[window].native;
+    if (!ns.fullscreen) {
+      store.dispatch(
+        actions.windowFullscreenChanged({ window, fullscreen: true })
+      );
+    }
+  });
+
+  nativeWindow.on("leave-full-screen", e => {
+    const ns = store.getState().windows[window].native;
+    if (ns.fullscreen) {
+      store.dispatch(
+        actions.windowFullscreenChanged({ window, fullscreen: false })
+      );
+    }
+  });
+
+  nativeWindow.on("maximize", e => {
+    const ns = store.getState().windows[window].native;
+    if (!ns.maximized) {
+      store.dispatch(
+        actions.windowMaximizedChanged({ window, maximized: true })
+      );
+    }
+  });
+
+  nativeWindow.on("unmaximize", e => {
+    const ns = store.getState().windows[window].native;
+    if (ns.maximized) {
+      store.dispatch(
+        actions.windowMaximizedChanged({ window, maximized: false })
+      );
+    }
+  });
+
+  nativeWindow.on("app-command", (e, cmd) => {
+    switch (cmd as AppCommand) {
+      case "browser-backward":
+        store.dispatch(
+          actions.commandGoBack({
+            window,
+          })
+        );
+        break;
+      case "browser-forward":
+        store.dispatch(
+          actions.commandGoForward({
+            window,
+          })
+        );
+        break;
+      default:
+      // ignore unknown app commands
+    }
+  });
+
+  const debouncedBounds = debounce(() => {
+    if (nativeWindow.isDestroyed()) {
+      return;
+    }
+    const windowBounds = nativeWindow.getBounds();
+    store.dispatch(
+      actions.windowBoundsChanged({ window, bounds: windowBounds })
+    );
+  }, 2000);
+
+  nativeWindow.on("move", (e: any) => {
+    debouncedBounds();
+  });
+
+  nativeWindow.on("resize", (e: any) => {
+    debouncedBounds();
+  });
+
+  nativeWindow.on("maximize", (e: any) => {
+    config.set(MAXIMIZED_CONFIG_KEY, true);
+  });
+
+  nativeWindow.on("unmaximize", (e: any) => {
+    config.set(MAXIMIZED_CONFIG_KEY, false);
+  });
+}
+
+export function getNativeState(
+  rs: IRootState,
+  window: string
+): INativeWindowState {
+  const w = rs.windows[window];
+  if (w) {
+    return w.native;
+  }
+  return null;
+}
+
+export function getNativeWindow(rs: IRootState, window: string): BrowserWindow {
+  const ns = getNativeState(rs, window);
+  if (ns) {
+    return BrowserWindow.fromId(ns.id);
+  }
+  return null;
 }

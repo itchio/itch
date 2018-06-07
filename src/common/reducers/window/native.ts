@@ -1,4 +1,4 @@
-import { IUIMainWindowState } from "common/types";
+import { INativeWindowState } from "common/types";
 
 import { actions } from "common/actions";
 import reducer from "../reducer";
@@ -8,12 +8,12 @@ const initialState = {
   focused: false,
   fullscreen: false,
   maximized: false,
-} as IUIMainWindowState;
+} as INativeWindowState;
 
-export default reducer<IUIMainWindowState>(initialState, on => {
-  on(actions.windowReady, (state, action) => {
-    const { id } = action.payload;
-    return { ...state, id, focused: true };
+export default reducer<INativeWindowState>(initialState, on => {
+  on(actions.windowOpened, (state, action) => {
+    const { nativeId } = action.payload;
+    return { ...state, id: nativeId };
   });
 
   on(actions.windowDestroyed, (state, action) => {

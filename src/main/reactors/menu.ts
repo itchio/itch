@@ -10,6 +10,7 @@ import { IRuntime, IMenuItem, IMenuTemplate } from "common/types";
 import { IRootState, IProfileCredentialsState } from "common/types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 import { actions } from "common/actions";
+import { getNativeState } from "./main-window";
 
 export default function(watcher: Watcher, runtime: IRuntime) {
   watcher.onStateChange({
@@ -17,15 +18,21 @@ export default function(watcher: Watcher, runtime: IRuntime) {
       let templateSelector = createSelector(
         (rs: IRootState) => rs.system.appVersion,
         (rs: IRootState) => rs.profile.credentials,
-        (appVersion, credentials) => {
-          return computeMenuTemplate(appVersion, credentials, runtime);
+        (rs: IRootState) => rs.preferences.enableTabs,
+        (appVersion, credentials, enableTabs) => {
+          return computeMenuTemplate(
+            appVersion,
+            credentials,
+            enableTabs,
+            runtime
+          );
         }
       );
 
       return createSelector(
         templateSelector,
         (rs: IRootState) => rs.i18n,
-        (rs: IRootState) => rs.ui.mainWindow.id,
+        (rs: IRootState) => getNativeState(rs, "root").id,
         (template, i18n, mainWindowId) => {
           schedule.dispatch(actions.menuChanged({ template }));
           const fleshed = fleshOutTemplate("root", store, runtime, template);
@@ -39,8 +46,10 @@ export default function(watcher: Watcher, runtime: IRuntime) {
 
 interface IAllTemplates {
   mainMac: IMenuItem;
-  file: IMenuItem;
-  fileMac: IMenuItem;
+  fileWithTabs: IMenuItem;
+  fileNoTabs: IMenuItem;
+  fileMacWithTabs: IMenuItem;
+  fileMacNoTabs: IMenuItem;
   edit: IMenuItem;
   view: IMenuItem;
   accountLoggedOut: IMenuItem;
@@ -51,6 +60,7 @@ interface IAllTemplates {
 function computeMenuTemplate(
   appVersion: string,
   credentials: IProfileCredentialsState,
+  enableTabs: boolean,
   runtime: IRuntime
 ) {
   const menus: IAllTemplates = {
@@ -96,7 +106,7 @@ function computeMenuTemplate(
       ],
     },
 
-    file: {
+    fileWithTabs: {
       localizedLabel: ["menu.file.file"],
       submenu: [
         {
@@ -123,7 +133,7 @@ function computeMenuTemplate(
         },
         {
           localizedLabel: ["menu.file.close_window"],
-          accelerator: runtime.platform === "osx" ? "Cmd+Alt+W" : "Alt+F4",
+          accelerator: "Alt+F4",
         },
         {
           localizedLabel: ["menu.file.quit"],
@@ -132,7 +142,25 @@ function computeMenuTemplate(
       ],
     },
 
-    fileMac: {
+    fileNoTabs: {
+      localizedLabel: ["menu.file.file"],
+      submenu: [
+        {
+          localizedLabel: ["menu.file.preferences"],
+          accelerator: "CmdOrCtrl+,",
+        },
+        {
+          localizedLabel: ["menu.file.close_window"],
+          accelerator: "Alt+F4",
+        },
+        {
+          localizedLabel: ["menu.file.quit"],
+          accelerator: "CmdOrCtrl+Q",
+        },
+      ],
+    },
+
+    fileMacWithTabs: {
       localizedLabel: ["menu.file.file"],
       submenu: [
         {
@@ -152,7 +180,17 @@ function computeMenuTemplate(
         },
         {
           localizedLabel: ["menu.file.close_window"],
-          accelerator: runtime.platform === "osx" ? "Cmd+Alt+W" : "Alt+F4",
+          accelerator: "Cmd+Alt+W",
+        },
+      ],
+    },
+
+    fileMacNoTabs: {
+      localizedLabel: ["menu.file.file"],
+      submenu: [
+        {
+          localizedLabel: ["menu.file.close_window"],
+          accelerator: "Cmd+Alt+W",
         },
       ],
     },
@@ -249,9 +287,17 @@ function computeMenuTemplate(
   const template: IMenuTemplate = [];
   if (runtime.platform === "osx") {
     template.push(menus.mainMac);
-    template.push(menus.fileMac);
+    if (enableTabs) {
+      template.push(menus.fileMacWithTabs);
+    } else {
+      template.push(menus.fileMacNoTabs);
+    }
   } else {
-    template.push(menus.file);
+    if (enableTabs) {
+      template.push(menus.fileWithTabs);
+    } else {
+      template.push(menus.fileNoTabs);
+    }
   }
   template.push(menus.edit);
   template.push(menus.view);

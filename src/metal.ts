@@ -63,7 +63,7 @@ function main() {
             args: argv,
           })
         );
-        store.dispatch(actions.focusWindow({}));
+        store.dispatch(actions.focusWindow({ window: "root" }));
       });
 
       if (shouldQuit) {

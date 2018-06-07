@@ -124,17 +124,34 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    // must be a new tab then!
-    store.dispatch(
-      actions.openTab({
-        window,
-        tab: uuid(),
-        url,
-        resource,
-        background,
-        data,
-      })
-    );
+    const rs = store.getState();
+    const { enableTabs } = rs.preferences;
+    if (enableTabs) {
+      store.dispatch(
+        actions.openTab({
+          window,
+          tab: uuid(),
+          url,
+          resource,
+          background,
+          data,
+        })
+      );
+    } else {
+      const tab = rs.windows[window].navigation.openTabs[0];
+
+      // navigate the single tab
+      store.dispatch(
+        actions.evolveTab({
+          tab,
+          replace: false,
+          window,
+          url,
+          resource,
+          data,
+        })
+      );
+    }
   });
 
   watcher.on(actions.tabParamsChanged, async (store, action) => {

@@ -44,7 +44,7 @@ export default function(watcher: Watcher) {
       });
       if (onClick) {
         n.on("click", e => {
-          store.dispatch(actions.focusWindow({}));
+          store.dispatch(actions.focusWindow({ window: "root" }));
           store.dispatch(onClick);
         });
       }

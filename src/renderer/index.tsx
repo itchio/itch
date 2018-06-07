@@ -102,9 +102,8 @@ async function start() {
   const opts = parseQueryString(location.search.replace(/^\?/, ""));
   const extWindow = window as ExtendedWindow;
   extWindow.itchWindow = {
-    id: String(opts.id),
-    role: opts.tab ? "secondary" : "main",
-    tab: opts ? String(opts.tab) : null,
+    window: String(opts.window),
+    role: String(opts.role) as any,
   };
 
   render(App);

@@ -19,9 +19,13 @@ export default function(state: IRootState, action: IAction<any>) {
       const {
         window,
       } = action.payload as typeof actions.windowOpened["payload"];
+
+      let windowState = windowReducer(undefined, null);
+      windowState = windowReducer(windowState, action);
+
       return {
         ...state,
-        [window]: windowReducer(undefined, null),
+        [window]: windowState,
       };
     }
 
