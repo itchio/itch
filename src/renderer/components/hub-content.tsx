@@ -1,10 +1,8 @@
 import React from "react";
-import { connect, actionCreatorsList, Dispatchers } from "./connect";
+import { connect } from "./connect";
 import { createStructuredSelector } from "reselect";
 
 import AllMeats from "./meats/all-meats";
-
-let FIRST_EVER_RENDER = true;
 
 import { ICredentials, IRootState } from "common/types";
 
@@ -29,20 +27,11 @@ class HubContent extends React.PureComponent<IProps & IDerivedProps> {
       </ContentContainer>
     );
   }
-
-  componentDidMount() {
-    if (FIRST_EVER_RENDER) {
-      FIRST_EVER_RENDER = false;
-      this.props.firstUsefulPage({});
-    }
-  }
 }
 
 interface IProps {}
 
-const actionCreators = actionCreatorsList("firstUsefulPage");
-
-type IDerivedProps = Dispatchers<typeof actionCreators> & {
+type IDerivedProps = {
   credentials: ICredentials;
 };
 
@@ -50,5 +39,4 @@ export default connect<IProps>(HubContent, {
   state: createStructuredSelector({
     credentials: (rs: IRootState) => rs.profile.credentials,
   }),
-  actionCreators,
 });

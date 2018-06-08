@@ -97,7 +97,6 @@ export const actions = wireActions({
   boot: action<{}>(),
   tick: action<{}>(),
   scheduleSystemTask: action<Partial<ISystemTasksState>>(),
-  firstUsefulPage: action<{}>(),
   systemAssessed: action<{
     system: ISystemState;
   }>(),
