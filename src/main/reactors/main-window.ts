@@ -419,9 +419,7 @@ function makeAppURL(params: AppURLParams): string {
   }
   urlObject.search = stringify(params);
 
-  const result = formatUrl(urlObject);
-  console.log(`formatted URL: ${result}`);
-  return result;
+  return formatUrl(urlObject);
 }
 
 function getIconPath(): string {
