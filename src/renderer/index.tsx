@@ -71,23 +71,6 @@ window.addEventListener("beforeunload", () => {
   }
 });
 
-// open actual link elements in external browser
-
-document.addEventListener("click", (e: MouseEvent) => {
-  let target = e.target as Element;
-
-  while (target && target.tagName !== "A") {
-    target = target.parentNode as Element;
-  }
-
-  if (target) {
-    e.preventDefault();
-    electron.remote.shell.openExternal((target as HTMLLinkElement).href);
-    return false;
-  }
-  return true;
-});
-
 // disable two-finger zoom on macOS
 
 if (os.platform() === "darwin") {

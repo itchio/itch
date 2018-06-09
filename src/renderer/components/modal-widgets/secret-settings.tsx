@@ -92,13 +92,6 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
             onClick={this.onOpenCrashy}
             label="Open crashy tab"
           />
-          <Button
-            className="control"
-            primary={true}
-            icon="bug"
-            onClick={this.onOpenWindow}
-            label="Open window"
-          />
         </ControlsDiv>
       </ModalWidgetDiv>
     );
@@ -179,15 +172,6 @@ class SecretSettings extends React.PureComponent<IProps & IDerivedProps> {
 
   onOpenCrashy = () => {
     this.props.navigate({ window: "root", url: "itch://crashy" });
-    this.props.closeModal({ window: "root" });
-  };
-
-  onOpenWindow = () => {
-    this.props.openWindow({
-      role: "secondary",
-      initialURL: "itch://preferences",
-      modal: false,
-    });
     this.props.closeModal({ window: "root" });
   };
 

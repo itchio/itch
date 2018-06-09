@@ -6,8 +6,10 @@ import Modal from "./modal";
 import { ThemeProvider, theme } from "./styles";
 import { IntlProvider } from "react-intl";
 import { IRootState } from "common/types";
-import { connect } from "./connect";
+import { connect, actionCreatorsList, Dispatchers } from "./connect";
 import { createStructuredSelector } from "reselect";
+import { doesEventMeanBackground } from "./when-click-navigates";
+import { rendererWindow } from "common/util/navigation";
 
 class App extends React.PureComponent<IDerivedProps, IState> {
   constructor(props: App["props"], context) {
@@ -24,7 +26,7 @@ class App extends React.PureComponent<IDerivedProps, IState> {
     return (
       <IntlProvider key={localeVersion} locale={locale} messages={messages}>
         <ThemeProvider theme={theme}>
-          <div>
+          <div onClickCapture={this.onClickCapture}>
             <Layout />
             <Modal />
           </div>
@@ -32,6 +34,19 @@ class App extends React.PureComponent<IDerivedProps, IState> {
       </IntlProvider>
     );
   }
+
+  onClickCapture = (e: React.MouseEvent<HTMLElement>) => {
+    if (e.target && (e.target as any).tagName == "A") {
+      const href = (e.target as HTMLLinkElement).href;
+      e.preventDefault();
+      e.stopPropagation();
+      this.props.navigate({
+        window: rendererWindow(),
+        url: href,
+        background: doesEventMeanBackground(e),
+      });
+    }
+  };
 
   componentWillMount() {
     this.updateMessages(this.props);
@@ -67,7 +82,9 @@ interface IState {
   };
 }
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("navigate");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   locale: string;
   messages: {
     [id: string]: string;
@@ -75,7 +92,7 @@ interface IDerivedProps {
   fallbackMessages: {
     [id: string]: string;
   };
-}
+};
 
 const emptyObj = {};
 
@@ -88,4 +105,5 @@ export default connect<{}>(App, {
     },
     fallbackMessages: (rs: IRootState) => rs.i18n.strings.en || emptyObj,
   }),
+  actionCreators,
 });

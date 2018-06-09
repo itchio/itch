@@ -19,6 +19,7 @@ const logger = rootLogger.child({ name: "reactors/navigation" });
 
 import nodeURL from "url";
 import querystring from "querystring";
+import { opensInWindow } from "common/constants/windows";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.navigateToCollection, async (store, action) => {
@@ -113,6 +114,17 @@ export default function(watcher: Watcher) {
     const { url, resource, data, window, background } = action.payload;
     logger.debug(`Navigating to ${url} ${background ? "(in background)" : ""}`);
 
+    if (window === "root" && opensInWindow[url]) {
+      store.dispatch(
+        actions.openWindow({
+          initialURL: url,
+          modal: false,
+          role: "secondary",
+        })
+      );
+      return;
+    }
+
     const sp = Space.fromInstance({
       history: [{ url, resource }],
       currentIndex: 0,
@@ -126,7 +138,7 @@ export default function(watcher: Watcher) {
 
     const rs = store.getState();
     const { enableTabs } = rs.preferences;
-    if (enableTabs) {
+    if (enableTabs && window === "root") {
       store.dispatch(
         actions.openTab({
           window,

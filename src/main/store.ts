@@ -77,11 +77,10 @@ const initialState = {} as any;
 const store = createStore(reducer, initialState, enhancer) as IStore;
 
 if (module.hot) {
-  module.hot.dispose(() => {
+  module.hot.accept(() => {
     console.warn(`Refreshing reactors...`);
     const _getWatcher = require("main/reactors").default;
     watcher = _getWatcher();
-    return { stopPropagation: true };
   });
 }
 

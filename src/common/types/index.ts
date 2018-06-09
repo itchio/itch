@@ -361,6 +361,9 @@ export interface IProfileLoginState {
 export type TabLayout = "grid" | "table";
 
 export interface INavigationState {
+  /** what the window was opened on */
+  initialURL: string;
+
   /** opened tabs */
   openTabs: string[];
 

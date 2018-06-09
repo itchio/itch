@@ -4,10 +4,9 @@ import { IRootState, IAction } from "common/types/index";
 let all = allInitial;
 
 if (module.hot) {
-  module.hot.dispose(() => {
+  module.hot.accept(() => {
     console.log(`Refreshing reducers...`);
     all = require("./all").default;
-    return { stopPropagation: true };
   });
 }
 

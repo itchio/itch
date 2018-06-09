@@ -8,6 +8,7 @@ import reducer from "../reducer";
 import { arrayMove } from "react-sortable-hoc";
 
 const initialState = {
+  initialURL: "",
   page: "hub",
   openTabs: [],
   loadingTabs: {},
@@ -16,8 +17,10 @@ const initialState = {
 
 export default reducer<INavigationState>(initialState, on => {
   on(actions.windowOpened, (state, action) => {
+    const { initialURL } = action.payload;
     return {
       ...state,
+      initialURL,
       openTabs: ["initial-tab"],
       tab: "initial-tab",
     };

@@ -36,6 +36,7 @@ import { openAppDevTools } from "./open-app-devtools";
 import { t } from "common/format/t";
 import { getImagePath } from "common/util/resources";
 import { stringify } from "querystring";
+import { opensInWindow } from "common/constants/windows";
 
 async function createRootWindow(store: IStore) {
   const window = "root";
@@ -129,6 +130,15 @@ async function createRootWindow(store: IStore) {
   });
 
   hookNativeWindow(store, window, nativeWindow);
+
+  nativeWindow.on("maximize", (e: any) => {
+    config.set(MAXIMIZED_CONFIG_KEY, true);
+  });
+
+  nativeWindow.on("unmaximize", (e: any) => {
+    config.set(MAXIMIZED_CONFIG_KEY, false);
+  });
+
   nativeWindow.loadURL(makeAppURL({ window, role }));
 
   if (parseInt(process.env.DEVTOOLS || "0", 10) > 0) {
@@ -318,8 +328,10 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.windowBoundsChanged, async (store, action) => {
-    const { bounds } = action.payload;
-    config.set(BOUNDS_CONFIG_KEY, bounds);
+    const { window, bounds } = action.payload;
+    if (window === "root") {
+      config.set(BOUNDS_CONFIG_KEY, bounds);
+    }
   });
 
   watcher.on(actions.closeTabOrAuxWindow, async (store, action) => {
@@ -346,8 +358,22 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.openWindow, async (store, action) => {
     const { initialURL, modal } = action.payload;
-
     const rs = store.getState();
+
+    if (opensInWindow[initialURL]) {
+      // see if we already have a window with that initialURL
+      for (const window of Object.keys(rs.windows)) {
+        const windowState = rs.windows[window];
+        if (windowState.navigation.initialURL === initialURL) {
+          const nativeWin = getNativeWindow(rs, window);
+          if (nativeWin) {
+            nativeWin.focus();
+          }
+          return;
+        }
+      }
+    }
+
     const mainId = rs.windows["root"].native.id;
     const nativeWindow = new BrowserWindow({
       ...commonBrowserWindowOpts(),
@@ -509,12 +535,8 @@ function hookNativeWindow(
     debouncedBounds();
   });
 
-  nativeWindow.on("maximize", (e: any) => {
-    config.set(MAXIMIZED_CONFIG_KEY, true);
-  });
-
-  nativeWindow.on("unmaximize", (e: any) => {
-    config.set(MAXIMIZED_CONFIG_KEY, false);
+  nativeWindow.on("closed", (e: any) => {
+    store.dispatch(actions.windowClosed({ window }));
   });
 }
 

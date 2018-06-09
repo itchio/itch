@@ -20,7 +20,6 @@ import { SidebarSection, SidebarHeading } from "./sidebar/styles";
 import { T } from "renderer/t";
 import { User } from "common/butlerd/messages";
 import { rendererNavigation, rendererWindow } from "common/util/navigation";
-import Link from "./basics/link";
 import Icon from "renderer/components/basics/icon";
 
 const SidebarDiv = styled.div`
@@ -168,6 +167,7 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
         </SidebarItems>
         <div style={{ flexGrow: 1 }} />
         <SidebarItems>
+          {this.renderLink("itch://downloads", "download", "Downloads")}
           {this.renderLink("itch://preferences", "cog", "Preferences")}
         </SidebarItems>
       </>
@@ -177,17 +177,9 @@ class Sidebar extends React.PureComponent<IProps & IDerivedProps, IState> {
   renderLink(url: string, icon: string, label: string): JSX.Element {
     return (
       <SidebarSection>
-        <Link
-          className="sidebar-link"
-          onClick={() => {
-            this.props.navigate({
-              window: rendererWindow(),
-              url,
-            });
-          }}
-        >
+        <a href={url}>
           <Icon icon={icon} /> {label}
-        </Link>
+        </a>
       </SidebarSection>
     );
   }
