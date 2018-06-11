@@ -14,7 +14,7 @@ const createLogger = require("redux-logger");
 
 import route from "common/util/route";
 import { Watcher } from "common/util/watcher";
-const reducer = (state, action) => state;
+import reducer from "common/reducers";
 import shouldLogAction from "common/util/should-log-action";
 
 const watcher = new Watcher();
