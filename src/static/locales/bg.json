@@ -447,7 +447,7 @@
     "grid.item.open_file_location.linux": "Показване във файловия мениджър",
     "grid.item.open_file_location.osx": "Показване във „Finder“",
     "table.column.installed_size": "Размер",
-    "preferences.install_location.navigate": "Преглед на съдържанието на това местоположение в нов раздел",
+    "preferences.install_location.navigate": "Преглед на съдържанието на това местоположение",
     "install_location.property.size_on_disk": "{{size}} на диска",
     "grid.item.uninstall_request": "Деинсталиране или преинсталиране…",
     "grid.criterion.filter_by": "Филтриране по: ",
