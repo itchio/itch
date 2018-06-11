@@ -149,6 +149,11 @@ export default function(watcher: Watcher) {
           data,
         })
       );
+      store.dispatch(
+        actions.focusWindow({
+          window,
+        })
+      );
     } else {
       const tab = rs.windows[window].navigation.openTabs[0];
 
@@ -159,8 +164,13 @@ export default function(watcher: Watcher) {
           replace: false,
           window,
           url,
-          resource,
+          resource: resource ? resource : null,
           data,
+        })
+      );
+      store.dispatch(
+        actions.focusWindow({
+          window,
         })
       );
     }
