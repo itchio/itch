@@ -12,13 +12,13 @@ class BrothComponent extends React.PureComponent<IProps & IDerivedProps> {
     const { name, pkg } = this.props;
 
     return (
-      <p className="section component">
+      <div className="section component">
         {this.renderIcon()}
         &nbsp;
         {name} @ {this.formatPackageVersion(pkg.version)}
         &nbsp;
         {this.renderProgress()}
-      </p>
+      </div>
     );
   }
 
@@ -81,8 +81,11 @@ interface IDerivedProps {
   pkg: IPackageState;
 }
 
-export default connect<IProps>(BrothComponent, {
-  state: createStructuredSelector({
-    pkg: (rs: IRootState, props: IProps) => rs.broth.packages[props.name],
-  }),
-});
+export default connect<IProps>(
+  BrothComponent,
+  {
+    state: createStructuredSelector({
+      pkg: (rs: IRootState, props: IProps) => rs.broth.packages[props.name],
+    }),
+  }
+);

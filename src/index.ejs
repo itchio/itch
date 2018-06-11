@@ -8,20 +8,6 @@
     overflow: hidden;
   }
 
-  body.loading #logo {
-    background-image: url(./static/images/logos/app-white.svg);
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-  }
-
   @keyframes bolt-load {
     from {
       transform: translateX(-100%);
@@ -58,7 +44,6 @@
 <body class="loading">
   <div id="app">
     <div id="draggable"></div>
-    <div id="logo"></div>
     <div id="bolt"></div>
   </div>
 </body>

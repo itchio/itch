@@ -9,23 +9,25 @@ import { createStructuredSelector } from "reselect";
 import Loadable from "react-loadable";
 const LoadableAppContents = Loadable({
   loader: () => import("./app-contents"),
-  loading: (props: any) => (
-    <div
-      style={{
-        position: "fixed",
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        fontSize: "24px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      Loading...
-    </div>
-  ),
+  loading: (props: any) => {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          fontSize: "16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {props.error ? <pre>{props.error.stack}</pre> : "Loading..."}
+      </div>
+    );
+  },
 });
 
 class App extends React.PureComponent<IDerivedProps, IState> {

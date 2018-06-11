@@ -163,16 +163,22 @@ type IDerivedProps = Dispatchers<typeof actionCreators> &
     loading: boolean;
   };
 
-export default connect<IProps>(injectDimensions(Grid), {
-  state: createSelector(
-    (rs: IRootState) =>
-      Space.fromInstance(rendererWindowState(rs).tabInstances[tab]),
-    (rs: IRootState) => rendererNavigation(rs).loadingTabs[tab],
-    createStructuredSelector({
-      collectionIds: (sp: Space) => sp.collections().ids || ea,
-      collections: (sp: Space) => sp.collections().set || eo,
-      loading: (sp: Space, loading: boolean) => loading || sp.isSleepy(),
-    })
-  ),
-  actionCreators,
-});
+export default connect<IProps>(
+  injectDimensions(Grid),
+  {
+    state: createSelector(
+      (rs: IRootState) =>
+        Space.fromInstance(rendererWindowState(rs).tabInstances[tab]),
+      (rs: IRootState) => rendererNavigation(rs).loadingTabs[tab],
+      createStructuredSelector({
+        collectionIds: (sp: Space) => {
+          debugger;
+          return sp.collections().ids || ea;
+        },
+        collections: (sp: Space) => sp.collections().set || eo,
+        loading: (sp: Space, loading: boolean) => loading || sp.isSleepy(),
+      })
+    ),
+    actionCreators,
+  }
+);

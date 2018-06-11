@@ -15,7 +15,7 @@ class BrothComponents extends React.Component<IDerivedProps> {
     const { packageNames } = this.props;
 
     return (
-      <p className="section">
+      <div className="section">
         <Icon icon="list" /> {T(["preferences.advanced.components"])}
         <span
           className="button"
@@ -30,7 +30,7 @@ class BrothComponents extends React.Component<IDerivedProps> {
           {T(["menu.help.check_for_update"])}
         </span>
         {packageNames.map(name => <BrothComponent name={name} />)}
-      </p>
+      </div>
     );
   }
 }
@@ -40,9 +40,12 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   packageNames: string[];
 };
 
-export default connect(BrothComponents, {
-  state: createStructuredSelector({
-    packageNames: (rs: IRootState) => rs.broth.packageNames,
-  }),
-  actionCreators,
-});
+export default connect(
+  BrothComponents,
+  {
+    state: createStructuredSelector({
+      packageNames: (rs: IRootState) => rs.broth.packageNames,
+    }),
+    actionCreators,
+  }
+);

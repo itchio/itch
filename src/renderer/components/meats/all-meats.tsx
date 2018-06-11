@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "../connect";
+import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { createStructuredSelector } from "reselect";
 import classNames from "classnames";
 
@@ -21,7 +21,9 @@ import { Space } from "common/helpers/space";
 import {
   rendererNavigation,
   rendererWindowState,
+  rendererWindow,
 } from "common/util/navigation";
+import { modalWidgets } from "renderer/components/modal-widgets";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -52,13 +54,13 @@ const MeatTab = styled.div`
 
 class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    let { credentials, openTabs, tabInstances, id: currentId } = this.props;
+    let { credentials, openTabs, tabInstances, tab: currentId } = this.props;
     if (!(credentials && credentials.me && credentials.me.id)) {
       return null;
     }
 
     return (
-      <MeatContainer>
+      <MeatContainer onClick={this.onClick}>
         <TitleBar tab={currentId} />
         {map(openTabs, tab => {
           const tabInstance = tabInstances[tab];
@@ -85,25 +87,50 @@ class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
       </MeatContainer>
     );
   }
+
+  onClick = (ev: React.MouseEvent<any>) => {
+    if (ev.shiftKey && ev.ctrlKey) {
+      const { tab, tabInstances } = this.props;
+      const tabInstance = tabInstances[tab];
+
+      this.props.openModal(
+        modalWidgets.exploreJson.make({
+          window: rendererWindow(),
+          title: "Tab information",
+          message: "",
+          widgetParams: {
+            data: { tab, tabInstance },
+          },
+          fullscreen: true,
+        })
+      );
+    }
+  };
 }
 
 interface IProps {}
 
-interface IDerivedProps {
+const actionCreators = actionCreatorsList("openModal");
+
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
   /** current tab shown */
-  id: string;
+  tab: string;
   openTabs: string[];
   tabInstances: ITabInstances;
   loadingTabs: ILoadingTabs;
   credentials: ICredentials;
-}
+};
 
-export default connect<IProps>(AllMeats, {
-  state: createStructuredSelector({
-    credentials: (rs: IRootState) => rs.profile.credentials,
-    id: (rs: IRootState) => rendererNavigation(rs).tab,
-    openTabs: (rs: IRootState) => rendererNavigation(rs).openTabs,
-    tabInstances: (rs: IRootState) => rendererWindowState(rs).tabInstances,
-    loadingTabs: (rs: IRootState) => rendererNavigation(rs).loadingTabs,
-  }),
-});
+export default connect<IProps>(
+  AllMeats,
+  {
+    state: createStructuredSelector({
+      credentials: (rs: IRootState) => rs.profile.credentials,
+      tab: (rs: IRootState) => rendererNavigation(rs).tab,
+      openTabs: (rs: IRootState) => rendererNavigation(rs).openTabs,
+      tabInstances: (rs: IRootState) => rendererWindowState(rs).tabInstances,
+      loadingTabs: (rs: IRootState) => rendererNavigation(rs).loadingTabs,
+    }),
+    actionCreators,
+  }
+);

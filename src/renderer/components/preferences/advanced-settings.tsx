@@ -27,14 +27,14 @@ class AdvancedSettings extends React.PureComponent<IProps & IDerivedProps> {
         <h2 id="preferences-advanced-section">{T(["preferences.advanced"])}</h2>
         <div className="explanation advanced-form">
           <BrothComponents />
-          <p className="section">
+          <div className="section">
             <Icon icon="security" /> {formatPlatform(system.platform)}{" "}
             {formatArch(system.arch)}
-          </p>
+          </div>
           <p>
             <ProxySettings />
           </p>
-          <p className="section">
+          <div className="section">
             <span
               className="link"
               onClick={e => {
@@ -44,8 +44,8 @@ class AdvancedSettings extends React.PureComponent<IProps & IDerivedProps> {
             >
               {T(["preferences.advanced.open_app_log"])}
             </span>
-          </p>
-          <p className="section">
+          </div>
+          <div className="section">
             <span
               className="link"
               onClick={e => {
@@ -56,8 +56,8 @@ class AdvancedSettings extends React.PureComponent<IProps & IDerivedProps> {
             >
               {T(["preferences.advanced.check_game_updates"])}
             </span>
-          </p>
-          <p className="section">
+          </div>
+          <div className="section">
             <span
               id="clear-browsing-data-link"
               className="link"
@@ -68,7 +68,7 @@ class AdvancedSettings extends React.PureComponent<IProps & IDerivedProps> {
             >
               {T(["preferences.advanced.clear_browsing_data"])}
             </span>
-          </p>
+          </div>
           <Checkbox
             name="preferOptimizedPatches"
             label={T(["preferences.advanced.prefer_optimized_patches"])}
@@ -100,9 +100,12 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   system: ISystemState;
 };
 
-export default connect<IProps>(AdvancedSettings, {
-  actionCreators,
-  state: createStructuredSelector({
-    system: (rs: IRootState) => rs.system,
-  }),
-});
+export default connect<IProps>(
+  AdvancedSettings,
+  {
+    actionCreators,
+    state: createStructuredSelector({
+      system: (rs: IRootState) => rs.system,
+    }),
+  }
+);

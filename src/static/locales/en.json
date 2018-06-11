@@ -262,7 +262,7 @@
     "Remove this install location and uninstall its contents",
   "preferences.install_location.free_space": "Free space",
   "preferences.install_location.navigate":
-    "View the contents of this location in new tab",
+    "View the contents of this location",
   "preferences.install_location.is_default_short": "Default",
   "preferences.install_location.make_default_short": "Make default",
   "preferences.install_location.is_default":
