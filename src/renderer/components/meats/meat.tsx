@@ -86,7 +86,23 @@ class Meat extends React.PureComponent<IProps, IState> {
     this.state = {
       hasError: false,
       loading: false,
+      lastURL: null,
     };
+  }
+
+  static getDerivedStateFromProps(props: Meat["props"], state: Meat["state"]) {
+    const ti = props.tabInstance;
+    const { url } = ti.history[ti.currentIndex];
+    if (url !== state.lastURL) {
+      return {
+        hasError: false,
+        loading: false,
+        error: null,
+        info: null,
+        lastURL: url,
+      };
+    }
+    return null;
   }
 
   componentDidCatch(error, info) {
@@ -132,7 +148,9 @@ class Meat extends React.PureComponent<IProps, IState> {
               <p>
                 <pre>
                   {error
-                    ? error.stack ? error.stack : String(error)
+                    ? error.stack
+                      ? error.stack
+                      : String(error)
                     : "(no error)"}
                 </pre>
               </p>
@@ -223,6 +241,7 @@ interface IState {
   loading: boolean;
   error?: any;
   info?: any;
+  lastURL: string;
 }
 
 export default Meat;
