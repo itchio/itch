@@ -526,5 +526,6 @@
     "status.downloads.pause_downloads": "Спиране на свалянията на пауза",
     "preferences.advanced.components": "Компоненти",
     "prompt.self_update_ready.short": "Има нова версия",
-    "prompt.revert.no_other_version": "Няма друга налична версия."
+    "prompt.revert.no_other_version": "Няма друга налична версия.",
+    "pick_update_upload.buttons.skip_update": "Пропускане на обновяването"
 }
