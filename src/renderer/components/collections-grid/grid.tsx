@@ -19,8 +19,8 @@ import {
   rendererWindowState,
   rendererNavigation,
 } from "common/util/navigation";
+import { withTab } from "../meats/tab-provider";
 
-const tab = "itch://collections";
 const eo: any = {};
 const ea = [] as any[];
 
@@ -75,7 +75,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
           />
           {this.renderCollections()}
         </GridDiv>
-        <HiddenIndicator tab={tab} count={hiddenCount} />
+        <HiddenIndicator tab={this.props.tab} count={hiddenCount} />
       </GridContainerDiv>
     );
   }
@@ -108,7 +108,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
     whenClickNavigates(ev, ({ background }) => {
       this.eventToCollection(ev, collection => {
         this.props.navigateTab({
-          tab,
+          tab: this.props.tab,
           background,
           ...collectionEvolvePayload(collection),
         });
@@ -152,7 +152,9 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   }
 }
 
-interface IProps {}
+interface IProps {
+  tab: string;
+}
 
 const actionCreators = actionCreatorsList("navigateTab", "navigate");
 
@@ -163,22 +165,25 @@ type IDerivedProps = Dispatchers<typeof actionCreators> &
     loading: boolean;
   };
 
-export default connect<IProps>(
-  injectDimensions(Grid),
-  {
-    state: createSelector(
-      (rs: IRootState) =>
-        Space.fromInstance(rendererWindowState(rs).tabInstances[tab]),
-      (rs: IRootState) => rendererNavigation(rs).loadingTabs[tab],
-      createStructuredSelector({
-        collectionIds: (sp: Space) => {
-          debugger;
-          return sp.collections().ids || ea;
-        },
-        collections: (sp: Space) => sp.collections().set || eo,
-        loading: (sp: Space, loading: boolean) => loading || sp.isSleepy(),
-      })
-    ),
-    actionCreators,
-  }
+export default withTab(
+  connect<IProps>(
+    injectDimensions(Grid),
+    {
+      state: createSelector(
+        (rs: IRootState, props: IProps) =>
+          Space.fromInstance(rendererWindowState(rs).tabInstances[props.tab]),
+        (rs: IRootState, props: IProps) =>
+          rendererNavigation(rs).loadingTabs[props.tab],
+        createStructuredSelector({
+          collectionIds: (sp: Space) => {
+            debugger;
+            return sp.collections().ids || ea;
+          },
+          collections: (sp: Space) => sp.collections().set || eo,
+          loading: (sp: Space, loading: boolean) => loading || sp.isSleepy(),
+        })
+      ),
+      actionCreators,
+    }
+  )
 );

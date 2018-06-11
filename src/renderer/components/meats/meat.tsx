@@ -19,6 +19,7 @@ import Crashy from "renderer/components/crashy";
 import Button from "../basics/button";
 import LoadingCircle from "../basics/loading-circle";
 import { T } from "renderer/t";
+import { TabProvider } from "renderer/components/meats/tab-provider";
 
 const HistoryDiv = styled.div`
   position: absolute;
@@ -116,51 +117,7 @@ class Meat extends React.PureComponent<IProps, IState> {
 
   render() {
     if (this.state.hasError) {
-      const { error, info } = this.state;
-
-      return (
-        <ErrorDiv>
-          <ErrorHeader>
-            <h3>itch has encountered a rendering error</h3>
-          </ErrorHeader>
-
-          <ErrorButtons>
-            <Button
-              icon="repeat"
-              onClick={() => {
-                this.setState({ loading: true });
-                setTimeout(() => {
-                  this.setState({ hasError: false, loading: false });
-                }, 400);
-              }}
-            >
-              {this.state.loading ? <LoadingCircle progress={-1} /> : "Reload"}
-            </Button>
-            <ErrorSpacer />
-            <Button icon="bug" onClick={this.onReportIssue}>
-              {T(["menu.help.report_issue"])}
-            </Button>
-          </ErrorButtons>
-
-          <details>
-            <summary>View details for nerds</summary>
-            <ErrorContents>
-              <p>
-                <pre>
-                  {error
-                    ? error.stack
-                      ? error.stack
-                      : String(error)
-                    : "(no error)"}
-                </pre>
-              </p>
-              <p>
-                <pre>{info ? info.componentStack : "(no component stack)"}</pre>
-              </p>
-            </ErrorContents>
-          </details>
-        </ErrorDiv>
-      );
+      return this.renderError();
     }
 
     const inst = this.props.tabInstance;
@@ -169,7 +126,7 @@ class Meat extends React.PureComponent<IProps, IState> {
 
     if (ConcreteMeat) {
       return (
-        <>
+        <TabProvider value={{ tab: this.props.tab }}>
           {showHistory ? (
             <HistoryDiv>
               <h2>History</h2>
@@ -193,14 +150,63 @@ class Meat extends React.PureComponent<IProps, IState> {
             </HistoryDiv>
           ) : null}
           <ConcreteMeat {...this.props} />
-        </>
+        </TabProvider>
       );
     } else {
       return <div>Invalid url: {JSON.stringify(sp.url())}</div>;
     }
   }
 
+  renderError = () => {
+    const { error, info } = this.state;
+
+    return (
+      <ErrorDiv>
+        <ErrorHeader>
+          <h3>itch has encountered a rendering error</h3>
+        </ErrorHeader>
+
+        <ErrorButtons>
+          <Button
+            icon="repeat"
+            onClick={() => {
+              this.setState({ loading: true });
+              setTimeout(() => {
+                this.setState({ hasError: false, loading: false });
+              }, 400);
+            }}
+          >
+            {this.state.loading ? <LoadingCircle progress={-1} /> : "Reload"}
+          </Button>
+          <ErrorSpacer />
+          <Button icon="bug" onClick={this.onReportIssue}>
+            {T(["menu.help.report_issue"])}
+          </Button>
+        </ErrorButtons>
+
+        <details>
+          <summary>View details for nerds</summary>
+          <ErrorContents>
+            <p>
+              <pre>
+                {error
+                  ? error.stack
+                    ? error.stack
+                    : String(error)
+                  : "(no error)"}
+              </pre>
+            </p>
+            <p>
+              <pre>{info ? info.componentStack : "(no component stack)"}</pre>
+            </p>
+          </ErrorContents>
+        </details>
+      </ErrorDiv>
+    );
+  };
+
   onReportIssue = () => {
+    // TODO: open window with issue reporting
     window.alert("Should open modal!");
   };
 
