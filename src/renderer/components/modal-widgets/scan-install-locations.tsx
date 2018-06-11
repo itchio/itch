@@ -42,6 +42,7 @@ class ScanInstallLocations extends React.PureComponent<IProps> {
           <SectionDiv>
             <div className="cover-container">
               <Cover
+                hover={false}
                 gameId={game ? game.id : -1}
                 coverUrl={game ? game.coverUrl : null}
                 stillCoverUrl={game ? game.stillCoverUrl : null}

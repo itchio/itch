@@ -1,5 +1,5 @@
 import React from "react";
-import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
+import withDimensions, { DimensionsProps } from "../basics/dimensions-hoc";
 
 import styled from "../styles";
 
@@ -83,6 +83,6 @@ interface IProps {
   data: number[];
 }
 
-interface IDerivedProps extends IDimensionsProps {}
+interface IDerivedProps extends DimensionsProps {}
 
-export default injectDimensions(Chart);
+export default withDimensions(Chart);

@@ -7,6 +7,7 @@ import styled from "./styles";
 import { darken } from "polished";
 
 import { T } from "renderer/t";
+import { withTab } from "./meats/tab-provider";
 
 const HiddenIndicatorDiv = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -53,4 +54,9 @@ const actionCreators = actionCreatorsList("clearFilters");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(HiddenIndicator, { actionCreators });
+export default withTab(
+  connect<IProps>(
+    HiddenIndicator,
+    { actionCreators }
+  )
+);

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "../styles";
 
 import GifMarker from "./gif-marker";
-import { IHoverProps } from "./hover-hoc";
+import withHover, { HoverProps } from "./hover-hoc";
 
 import RandomSvg from "./random-svg";
 import LoadingCircle from "./loading-circle";
@@ -131,7 +131,7 @@ interface IState {
   error: boolean;
 }
 
-interface IProps extends IHoverProps {
+interface IProps extends HoverProps {
   showGifMarker?: boolean;
   coverUrl?: string;
   stillCoverUrl?: string;
@@ -143,3 +143,4 @@ interface IProps extends IHoverProps {
 }
 
 export default Cover;
+export const HoverCover = withHover(Cover);

@@ -1,29 +1,33 @@
 import React from "react";
 import getDisplayName from "./get-display-name";
 
-interface IHoverState {
+interface HoverState {
   hover: boolean;
 }
 
-export interface IHoverProps {
-  hover?: boolean;
+export interface HoverProps {
+  hover: boolean;
   onMouseEnter?: React.EventHandler<React.MouseEvent<any>>;
   onMouseLeave?: React.EventHandler<React.MouseEvent<any>>;
 }
 
-export default function<P extends IHoverProps>(
-  WrappedComponent: React.ComponentClass<P>
-): React.ComponentClass<P> {
-  return class extends React.PureComponent<P, IHoverState> {
-    static displayName = `Hoverable(${getDisplayName(WrappedComponent)})`;
+type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
+type Subtract<T, K> = Omit<T, keyof K>;
 
-    constructor(props: P, context) {
+function withHover<P extends HoverProps>(
+  Component: React.ComponentType<P>
+): React.ComponentType<Subtract<P, HoverProps>> {
+  return class extends React.PureComponent<
+    Subtract<P, HoverProps>,
+    HoverState
+  > {
+    static displayName = `Hoverable(${getDisplayName(Component)})`;
+
+    constructor(props: Subtract<P, HoverProps>, context: any) {
       super(props, context);
       this.state = {
         hover: false,
       };
-      this.onMouseEnter = this.onMouseEnter;
-      this.onMouseLeave = this.onMouseLeave;
     }
 
     onMouseEnter = () => {
@@ -37,7 +41,7 @@ export default function<P extends IHoverProps>(
     render() {
       const restProps = this.props;
       return (
-        <WrappedComponent
+        <Component
           hover={this.state.hover}
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
@@ -47,3 +51,5 @@ export default function<P extends IHoverProps>(
     }
   };
 }
+
+export default withHover;

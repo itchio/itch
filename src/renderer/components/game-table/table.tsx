@@ -14,7 +14,7 @@ import { IOnSortChange, SortDirection, SortKey } from "common/types";
 import Row from "./row";
 import { TableContainerDiv, TableDiv, ITableSizes } from "./table-styles";
 
-import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
+import withDimensions, { DimensionsProps } from "../basics/dimensions-hoc";
 import HiddenIndicator from "../hidden-indicator";
 import { T } from "renderer/t";
 import { Game } from "common/butlerd/messages";
@@ -26,6 +26,7 @@ import {
   rendererNavigation,
   rendererWindow,
 } from "common/util/navigation";
+import { withTab } from "../meats/tab-provider";
 
 const rowHeight = 70;
 const rightMargin = 10;
@@ -196,7 +197,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps, IState> {
   }
 
   render() {
-    const { columns = defaultGameColumns, hiddenCount, tab } = this.props;
+    const { columns = defaultGameColumns, hiddenCount } = this.props;
     const sizes = this.computeSizes(columns);
     const numGames = this.props.gameIds.length;
     const contentHeight = numGames * rowHeight;
@@ -239,7 +240,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps, IState> {
           />
           {this.renderGames()}
         </TableDiv>
-        <HiddenIndicator tab={tab} count={hiddenCount} />
+        <HiddenIndicator count={hiddenCount} />
       </TableContainerDiv>
     );
   }
@@ -277,7 +278,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps, IState> {
 
     for (const c of rest) {
       const gcd = columnData[c];
-      sizes[gcd.name] = gcd.flexBasis / totalWeight * remainingWidth;
+      sizes[gcd.name] = (gcd.flexBasis / totalWeight) * remainingWidth;
     }
 
     return sizes;
@@ -403,7 +404,9 @@ class Table extends React.PureComponent<IProps & IDerivedProps, IState> {
       onClick = () => {
         let dir =
           sortBy === sortKey
-            ? sortDirection === "ASC" ? "DESC" : "ASC"
+            ? sortDirection === "ASC"
+              ? "DESC"
+              : "ASC"
             : "ASC";
         this.props.onSortChange({
           sortBy: sortKey,
@@ -556,7 +559,7 @@ class Table extends React.PureComponent<IProps & IDerivedProps, IState> {
   };
 }
 
-interface IProps extends IDimensionsProps {
+interface IProps extends DimensionsProps {
   // specified
   games: IGameSet;
   gameIds: number[];
@@ -588,10 +591,17 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   commons: ICommonsState;
 };
 
-export default connect<IProps>(injectDimensions(Table), {
-  state: () =>
-    createStructuredSelector({
-      commons: state => state.commons,
-    }),
-  actionCreators,
-});
+export default withTab(
+  withDimensions(
+    connect<IProps>(
+      Table,
+      {
+        state: () =>
+          createStructuredSelector({
+            commons: state => state.commons,
+          }),
+        actionCreators,
+      }
+    )
+  )
+);

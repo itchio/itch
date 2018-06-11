@@ -125,6 +125,7 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
             <Filler />
             <div className="cover-container">
               <Cover
+                hover={false}
                 className="cover"
                 gameId={game.id}
                 coverUrl={coverUrl}
@@ -175,4 +176,7 @@ const actionCreators = actionCreatorsList(
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(GameSearchResult, { actionCreators });
+export default connect<IProps>(
+  GameSearchResult,
+  { actionCreators }
+);

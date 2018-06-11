@@ -130,6 +130,7 @@ class ShowError extends React.PureComponent<IProps & IDerivedProps, IState> {
       <GameRow>
         <div className="cover-container">
           <Cover
+            hover={false}
             stillCoverUrl={stillCoverUrl}
             coverUrl={coverUrl}
             gameId={id}
@@ -224,4 +225,7 @@ const actionCreators = actionCreatorsList("openInExternalBrowser");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(ShowError, { actionCreators });
+export default connect<IProps>(
+  ShowError,
+  { actionCreators }
+);

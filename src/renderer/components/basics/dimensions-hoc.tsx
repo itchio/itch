@@ -9,11 +9,11 @@ interface IDimensionsState {
   scrollTop: number;
 }
 
-export interface IDimensionsProps {
-  width?: number;
-  height?: number;
-  scrollTop?: number;
-  divRef?: (el: HTMLElement) => void;
+export interface DimensionsProps {
+  width: number;
+  height: number;
+  scrollTop: number;
+  divRef: (el: HTMLElement) => void;
 }
 
 declare class ResizeObserver {
@@ -22,16 +22,21 @@ declare class ResizeObserver {
   disconnect(): void;
 }
 
-// TODO: when typescript 2.8 is out, use subtraction types here
-function injectDimensions<P extends IDimensionsProps>(
-  WrappedComponent: React.ComponentClass<P>
-): React.ComponentClass<P> {
-  return class extends React.PureComponent<P, IDimensionsState> {
-    static displayName = `Dimensions(${getDisplayName(WrappedComponent)})`;
+type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
+type Subtract<T, K> = Omit<T, keyof K>;
+
+function withDimensions<P extends DimensionsProps>(
+  Component: React.ComponentType<P>
+): React.ComponentType<Subtract<P, DimensionsProps>> {
+  return class extends React.PureComponent<
+    Subtract<P, DimensionsProps>,
+    IDimensionsState
+  > {
+    static displayName = `Dimensions(${getDisplayName(Component)})`;
     ro: ResizeObserver | null = null;
     onScroll: any;
 
-    constructor(props: P, context: any) {
+    constructor(props: Subtract<P, DimensionsProps>, context: any) {
       super(props, context);
       this.state = { width: 0, height: 0, scrollTop: 0 };
     }
@@ -81,7 +86,7 @@ function injectDimensions<P extends IDimensionsProps>(
       const { width, height, scrollTop } = this.state;
 
       return (
-        <WrappedComponent
+        <Component
           width={width}
           height={height}
           scrollTop={scrollTop}
@@ -93,4 +98,4 @@ function injectDimensions<P extends IDimensionsProps>(
   };
 }
 
-export default injectDimensions;
+export default withDimensions;

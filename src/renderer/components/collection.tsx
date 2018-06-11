@@ -19,16 +19,14 @@ const CollectionDiv = styled.div`
 
 class Collection extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, tabInstance, loading } = this.props;
+    const { tabInstance, loading } = this.props;
 
     return (
       <CollectionDiv>
         <GameFilters
           loading={loading}
-          tab={tab}
           before={
             <BrowserControls
-              tab={tab}
               tabInstance={tabInstance}
               url=""
               loading={loading}
@@ -42,7 +40,7 @@ class Collection extends React.PureComponent<IProps & IDerivedProps> {
             onClick={this.popOutBrowser}
           />
         </GameFilters>
-        <Games tab={tab} />
+        <Games />
       </CollectionDiv>
     );
   }
@@ -67,4 +65,7 @@ const actionCreators = {
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(Collection, { actionCreators });
+export default connect<IProps>(
+  Collection,
+  { actionCreators }
+);

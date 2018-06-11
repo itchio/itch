@@ -4,7 +4,7 @@ import { GameUpdate } from "common/butlerd/messages";
 import TimeAgo from "../basics/time-ago";
 import Filler from "../basics/filler";
 import Link from "../basics/link";
-import Cover from "../basics/cover";
+import { HoverCover } from "../basics/cover";
 
 import styled from "../styles";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
@@ -63,13 +63,15 @@ class GameUpdateRow extends React.PureComponent<IProps & IDerivedProps> {
 
     let updatedAt = build ? build.updatedAt : upload.updatedAt;
     let versionInfo = build
-      ? build.userVersion ? `v${build.userVersion}` : `#${build.version}`
+      ? build.userVersion
+        ? `v${build.userVersion}`
+        : `#${build.version}`
       : upload.displayName || upload.filename;
 
     return (
       <GameUpdateRowDiv>
         <GameCover>
-          <Cover
+          <HoverCover
             gameId={game.id}
             coverUrl={game.coverUrl}
             stillCoverUrl={game.stillCoverUrl}
@@ -119,4 +121,7 @@ const actionCreators = actionCreatorsList("navigateToGame", "queueGameUpdate");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {};
 
-export default connect<IProps>(GameUpdateRow, { actionCreators });
+export default connect<IProps>(
+  GameUpdateRow,
+  { actionCreators }
+);

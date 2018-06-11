@@ -10,6 +10,7 @@ import { T } from "renderer/t";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { Space } from "common/helpers/space";
 import { rendererWindow } from "common/util/navigation";
+import { withTab } from "./meats/tab-provider";
 
 const AppLogDiv = styled.div`
   ${styles.meat()};
@@ -72,10 +73,17 @@ class AppLog extends React.PureComponent<IProps & IDerivedProps> {
   };
 }
 
-interface IProps extends IMeatProps {}
+interface IProps extends IMeatProps {
+  tab: string;
+}
 
 const actionCreators = actionCreatorsList("openAppLog", "tabReloaded");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(AppLog, { actionCreators });
+export default withTab(
+  connect<IProps>(
+    AppLog,
+    { actionCreators }
+  )
+) as React.ComponentClass<IMeatProps>;

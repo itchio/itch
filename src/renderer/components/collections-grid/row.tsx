@@ -6,12 +6,9 @@ import { map, each } from "underscore";
 
 import Icon from "../basics/icon";
 import TimeAgo from "../basics/time-ago";
-import Cover from "../basics/cover";
-import Hoverable from "../basics/hover-hoc";
 
 import { Collection } from "common/butlerd/messages";
-
-const HoverCover = Hoverable(Cover);
+import { HoverCover } from "../basics/cover";
 
 class CollectionRow extends React.PureComponent<IProps> {
   render() {

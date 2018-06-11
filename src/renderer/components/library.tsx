@@ -13,12 +13,12 @@ const LibraryContainer = styled.div`
 
 class Library extends React.PureComponent<IProps> {
   render() {
-    const { tab, loading } = this.props;
+    const { loading } = this.props;
 
     return (
       <LibraryContainer>
-        <GameFilters tab={tab} loading={loading} />
-        <Games tab={tab} />
+        <GameFilters loading={loading} />
+        <Games />
       </LibraryContainer>
     );
   }

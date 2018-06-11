@@ -7,7 +7,7 @@ import TimeAgo from "../basics/time-ago";
 import UploadIcon from "../basics/upload-icon";
 import IconButton from "../basics/icon-button";
 import Button from "../basics/button";
-import Hover, { IHoverProps } from "../basics/hover-hoc";
+import { HoverProps } from "../basics/hover-hoc";
 import Cover from "../basics/cover";
 import MainAction from "../game-actions/main-action";
 
@@ -36,6 +36,7 @@ import { lighten } from "polished";
 import { downloadProgress } from "common/format/download-progress";
 import { formatError, getDownloadError } from "common/format/errors";
 import { rendererWindow } from "common/util/navigation";
+import withHover from "../basics/hover-hoc";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -470,7 +471,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   }
 }
 
-interface IProps extends IHoverProps {
+interface IProps extends HoverProps {
   // TODO: first really means active, active really means !finished
   first?: boolean;
   finished?: boolean;
@@ -496,18 +497,21 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   };
 };
 
-const HoverDownloadRow = Hover(DownloadRow);
+export default withHover(
+  connect<IProps>(
+    DownloadRow,
+    {
+      state: (rs: IRootState, props: IProps) => {
+        const game = props.item.game;
 
-export default connect<IProps>(HoverDownloadRow, {
-  state: (rs: IRootState, props: IProps) => {
-    const game = props.item.game;
-
-    return {
-      speeds: rs.downloads.speeds,
-      downloadsPaused: rs.downloads.paused,
-      tasksByGameId: rs.tasks.tasksByGameId,
-      status: getGameStatus(rs, game, props.item.caveId),
-    };
-  },
-  actionCreators,
-});
+        return {
+          speeds: rs.downloads.speeds,
+          downloadsPaused: rs.downloads.paused,
+          tasksByGameId: rs.tasks.tasksByGameId,
+          status: getGameStatus(rs, game, props.item.caveId),
+        };
+      },
+      actionCreators,
+    }
+  )
+);

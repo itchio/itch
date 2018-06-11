@@ -10,11 +10,12 @@ import { IGameSet, ICommonsState, IRootState } from "common/types";
 import Cell from "./cell";
 import { GridContainerDiv, GridDiv } from "./grid-styles";
 
-import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
+import withDimensions, { DimensionsProps } from "../basics/dimensions-hoc";
 import HiddenIndicator from "../hidden-indicator";
 import { doesEventMeanBackground } from "../when-click-navigates";
 import { Game } from "common/butlerd/messages";
 import { gameEvolvePayload, rendererWindow } from "common/util/navigation";
+import { withTab } from "../meats/tab-provider";
 
 const globalMargin = 20;
 const sidebarCushion = 5;
@@ -31,7 +32,6 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
       width,
       height,
       hiddenCount,
-      tab,
     } = this.props;
 
     const numColumns = Math.floor(width / 280);
@@ -100,7 +100,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
           />
           {children}
         </GridDiv>
-        <HiddenIndicator tab={tab} count={hiddenCount} />
+        <HiddenIndicator count={hiddenCount} />
       </GridContainerDiv>
     );
   }
@@ -158,7 +158,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   }
 }
 
-interface IProps extends IDimensionsProps {
+interface IProps extends DimensionsProps {
   // specified
   games: IGameSet;
   gameIds: number[];
@@ -176,10 +176,17 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   commons: ICommonsState;
 };
 
-export default connect<IProps>(injectDimensions(Grid), {
-  state: () =>
-    createStructuredSelector({
-      commons: (rs: IRootState) => rs.commons,
-    }),
-  actionCreators,
-});
+export default withTab(
+  withDimensions(
+    connect<IProps>(
+      Grid,
+      {
+        state: () =>
+          createStructuredSelector({
+            commons: (rs: IRootState) => rs.commons,
+          }),
+        actionCreators,
+      }
+    )
+  )
+);

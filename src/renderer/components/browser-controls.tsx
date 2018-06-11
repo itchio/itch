@@ -12,6 +12,7 @@ import { css } from "./styles";
 import { Space } from "common/helpers/space";
 import { transformUrl, rendererWindow } from "common/util/navigation";
 import { IBrowserControlProps } from "./browser-state";
+import { withTab } from "./meats/tab-provider";
 
 const HTTPS_RE = /^https:\/\//;
 
@@ -231,6 +232,11 @@ const actionCreators = actionCreatorsList(
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(listensToClickOutside(BrowserControls), {
-  actionCreators,
-});
+export default withTab(
+  connect<IProps>(
+    listensToClickOutside(BrowserControls),
+    {
+      actionCreators,
+    }
+  )
+);

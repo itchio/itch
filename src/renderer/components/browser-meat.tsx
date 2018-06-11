@@ -25,6 +25,7 @@ import { partitionForUser } from "common/util/partition-for-user";
 import { getInjectURL } from "common/util/resources";
 import { ExtendedWebContents } from "main/reactors/web-contents";
 import { rendererWindow } from "common/util/navigation";
+import { withTab } from "./meats/tab-provider";
 
 const showHistory = process.env.ITCH_SHOW_HISTORY === "1";
 
@@ -119,18 +120,16 @@ class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
     const fresh = !sp.web().webContentsId;
     const partition = partitionForUser(meId);
 
-    let context: React.ReactElement<any> = null;
+    let context: JSX.Element;
     if (controls === "game") {
-      context = (
-        <GameBrowserContext tab={tab} tabInstance={tabInstance} url={url} />
-      );
+      context = <GameBrowserContext tabInstance={tabInstance} url={url} />;
     }
 
     const newTab = sp.internalPage() === "new-tab";
 
     return (
       <BrowserMeatContainer>
-        <BrowserBar tab={tab} tabInstance={tabInstance} url={url} />
+        <BrowserBar tabInstance={tabInstance} url={url} />
         <BrowserMain>
           {newTab ? (
             <NewTabGrid>
@@ -294,6 +293,7 @@ class BrowserMeat extends React.PureComponent<IProps & IDerivedProps> {
 export type ControlsType = "generic" | "game";
 
 interface IProps extends IMeatProps {
+  tab: string;
   url: string;
   controls: ControlsType;
 }
@@ -314,16 +314,21 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   disableBrowser: boolean;
 };
 
-export default connect<IProps>(BrowserMeat, {
-  state: createStructuredSelector({
-    meId: (rs: IRootState) =>
-      (rs.profile.credentials.me || { id: "anonymous" }).id,
-    proxy: (rs: IRootState) => rs.system.proxy,
-    proxySource: (rs: IRootState) => rs.system.proxySource,
-    disableBrowser: (rs: IRootState) => rs.preferences.disableBrowser,
-  }),
-  actionCreators,
-});
+export default withTab(
+  connect<IProps>(
+    BrowserMeat,
+    {
+      state: createStructuredSelector({
+        meId: (rs: IRootState) =>
+          (rs.profile.credentials.me || { id: "anonymous" }).id,
+        proxy: (rs: IRootState) => rs.system.proxy,
+        proxySource: (rs: IRootState) => rs.system.proxySource,
+        disableBrowser: (rs: IRootState) => rs.preferences.disableBrowser,
+      }),
+      actionCreators,
+    }
+  )
+);
 
 // TODO: show recommended for you?
 const newTabItems = [

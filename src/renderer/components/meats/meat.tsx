@@ -19,7 +19,6 @@ import Crashy from "renderer/components/crashy";
 import Button from "../basics/button";
 import LoadingCircle from "../basics/loading-circle";
 import { T } from "renderer/t";
-import { TabProvider } from "renderer/components/meats/tab-provider";
 
 const HistoryDiv = styled.div`
   position: absolute;
@@ -126,7 +125,7 @@ class Meat extends React.PureComponent<IProps, IState> {
 
     if (ConcreteMeat) {
       return (
-        <TabProvider value={{ tab: this.props.tab }}>
+        <>
           {showHistory ? (
             <HistoryDiv>
               <h2>History</h2>
@@ -150,7 +149,7 @@ class Meat extends React.PureComponent<IProps, IState> {
             </HistoryDiv>
           ) : null}
           <ConcreteMeat {...this.props} />
-        </TabProvider>
+        </>
       );
     } else {
       return <div>Invalid url: {JSON.stringify(sp.url())}</div>;

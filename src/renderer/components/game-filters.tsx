@@ -17,6 +17,7 @@ import Criterion from "./basics/criterion";
 import { Space } from "common/helpers/space";
 import { size } from "underscore";
 import { rendererWindow } from "common/util/navigation";
+import { withTab } from "./meats/tab-provider";
 
 interface ILayoutPickerProps {
   theme?: styles.ITheme;
@@ -200,20 +201,26 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   numItems: number;
 };
 
-export default connect<IProps>(GameFilters, {
-  state: (initialState, props: IProps) => {
-    return createStructuredSelector({
-      layout: (rs: IRootState) => rs.preferences.layout,
-      onlyCompatibleGames: (rs: IRootState) =>
-        rs.preferences.onlyCompatibleGames,
-      onlyOwnedGames: (rs: IRootState) => rs.preferences.onlyOwnedGames,
-      onlyInstalledGames: (rs: IRootState) => rs.preferences.onlyInstalledGames,
-      numItems: (rs: IRootState) => {
-        return size(
-          Space.fromState(rs, rendererWindow(), props.tab).games().ids
-        );
+export default withTab(
+  connect<IProps>(
+    GameFilters,
+    {
+      state: (initialState, props: IProps) => {
+        return createStructuredSelector({
+          layout: (rs: IRootState) => rs.preferences.layout,
+          onlyCompatibleGames: (rs: IRootState) =>
+            rs.preferences.onlyCompatibleGames,
+          onlyOwnedGames: (rs: IRootState) => rs.preferences.onlyOwnedGames,
+          onlyInstalledGames: (rs: IRootState) =>
+            rs.preferences.onlyInstalledGames,
+          numItems: (rs: IRootState) => {
+            return size(
+              Space.fromState(rs, rendererWindow(), props.tab).games().ids
+            );
+          },
+        });
       },
-    });
-  },
-  actionCreators,
-});
+      actionCreators,
+    }
+  )
+);

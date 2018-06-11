@@ -8,6 +8,7 @@ import { IMeatProps } from "renderer/components/meats/types";
 
 import BrowserMeat, { ControlsType } from "./browser-meat";
 import { Space } from "common/helpers/space";
+import { withTab } from "./meats/tab-provider";
 
 class UrlMeat extends React.PureComponent<IProps, IState> {
   constructor(props: IProps, context) {
@@ -23,17 +24,8 @@ class UrlMeat extends React.PureComponent<IProps, IState> {
       return null;
     }
 
-    const { tab } = this.props;
     const { url, controls } = this.getUrlAndControls();
-
-    return (
-      <BrowserMeat
-        url={url}
-        tab={tab}
-        {...this.props as any}
-        controls={controls}
-      />
-    );
+    return <BrowserMeat url={url} {...this.props as any} controls={controls} />;
   }
 
   getUrlAndControls(): IUrlAndControls {
@@ -70,15 +62,17 @@ class UrlMeat extends React.PureComponent<IProps, IState> {
   }
 }
 
-export default UrlMeat;
-
 interface IUrlAndControls {
   url: string;
   controls: ControlsType;
 }
 
-interface IProps extends IMeatProps {}
+interface IProps extends IMeatProps {
+  tab: string;
+}
 
 interface IState {
   active: boolean;
 }
+
+export default withTab(UrlMeat) as React.ComponentClass<IMeatProps>;

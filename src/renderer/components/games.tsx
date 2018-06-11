@@ -14,6 +14,7 @@ import { ISortParams } from "common/types";
 import { Space } from "common/helpers/space";
 import LoadingState from "./loading-state";
 import { rendererWindow, rendererNavigation } from "common/util/navigation";
+import { withTab } from "./meats/tab-provider";
 
 function isColumnDescDefault(sortBy: string): boolean {
   return sortBy === "secondsRun" || sortBy === "lastTouchedAt";
@@ -95,12 +96,7 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
     let shownLayout = forcedLayout || prefLayout;
     if (shownLayout === "grid") {
       return (
-        <GameGrid
-          games={games}
-          gameIds={gameIds}
-          hiddenCount={hiddenCount}
-          tab={tab}
-        />
+        <GameGrid games={games} gameIds={gameIds} hiddenCount={hiddenCount} />
       );
     } else if (shownLayout === "table") {
       return (
@@ -109,7 +105,6 @@ class Games extends React.PureComponent<IProps & IDerivedProps> {
           games={games}
           gameIds={gameIds}
           hiddenCount={hiddenCount}
-          tab={tab}
           sortBy={sortBy}
           sortDirection={sortDirection}
           onSortChange={this.onSortChange}
@@ -143,23 +138,29 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
 const eo: any = {};
 const ea: any[] = [];
 
-export default connect<IProps>(Games, {
-  state: (initialState, initialProps) => {
-    const { tab } = initialProps;
-    return createSelector(
-      (rs: IRootState) => Space.fromState(rs, rendererWindow(), tab),
-      (rs: IRootState) => rs.preferences.layout,
-      (rs: IRootState) => rendererNavigation(rs).loadingTabs[tab] || false,
-      createStructuredSelector({
-        gameIds: (sp: Space, prefLayout: TabLayout) => sp.games().ids || ea,
-        games: (sp: Space, prefLayout: TabLayout) => sp.games().set || eo,
-        totalCount: (sp: Space, prefLayout: TabLayout) => sp.games().totalCount,
-        prefLayout: (sp: Space, prefLayout: TabLayout) => prefLayout,
-        params: (sp: Space, prefLayout: TabLayout) => sp.query(),
-        loading: (sp: Space, prefLayout: TabLayout, loading: boolean) =>
-          loading || sp.isSleepy(),
-      })
-    );
-  },
-  actionCreators,
-});
+export default withTab(
+  connect<IProps>(
+    Games,
+    {
+      state: (initialState, initialProps) => {
+        const { tab } = initialProps;
+        return createSelector(
+          (rs: IRootState) => Space.fromState(rs, rendererWindow(), tab),
+          (rs: IRootState) => rs.preferences.layout,
+          (rs: IRootState) => rendererNavigation(rs).loadingTabs[tab] || false,
+          createStructuredSelector({
+            gameIds: (sp: Space, prefLayout: TabLayout) => sp.games().ids || ea,
+            games: (sp: Space, prefLayout: TabLayout) => sp.games().set || eo,
+            totalCount: (sp: Space, prefLayout: TabLayout) =>
+              sp.games().totalCount,
+            prefLayout: (sp: Space, prefLayout: TabLayout) => prefLayout,
+            params: (sp: Space, prefLayout: TabLayout) => sp.query(),
+            loading: (sp: Space, prefLayout: TabLayout, loading: boolean) =>
+              loading || sp.isSleepy(),
+          })
+        );
+      },
+      actionCreators,
+    }
+  )
+);

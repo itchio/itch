@@ -16,6 +16,7 @@ import { Space } from "common/helpers/space";
 import getGameStatus, { IGameStatus } from "common/helpers/get-game-status";
 import { Game } from "common/butlerd/messages";
 import { rendererWindow } from "common/util/navigation";
+import { withTab } from "./meats/tab-provider";
 
 const Spacer = styled.div`
   flex-basis: 10px;
@@ -36,7 +37,7 @@ const BrowserContextDiv = styled.div`
 `;
 
 class GameBrowserContext extends React.PureComponent<IProps & IDerivedProps> {
-  constructor(props: IProps & IDerivedProps, context) {
+  constructor(props: GameBrowserContext["props"], context) {
     super(props, context);
     this.state = {};
   }
@@ -79,17 +80,22 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   status: IGameStatus;
 };
 
-export default connect<IProps>(GameBrowserContext, {
-  state: (rs: IRootState, props: IProps) => {
-    const game = Space.fromState(rs, rendererWindow(), props.tab).game();
-    if (!game) {
-      return {};
-    }
+export default withTab(
+  connect<IProps>(
+    GameBrowserContext,
+    {
+      state: (rs: IRootState, props: IProps) => {
+        const game = Space.fromState(rs, rendererWindow(), props.tab).game();
+        if (!game) {
+          return {};
+        }
 
-    return {
-      game,
-      status: getGameStatus(rs, game),
-    };
-  },
-  actionCreators,
-});
+        return {
+          game,
+          status: getGameStatus(rs, game),
+        };
+      },
+      actionCreators,
+    }
+  )
+);

@@ -4,7 +4,7 @@ import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { findWhere, isEmpty } from "underscore";
 
 import { IRootState, ICollectionSet } from "common/types";
-import injectDimensions, { IDimensionsProps } from "../basics/dimensions-hoc";
+import withDimensions, { DimensionsProps } from "../basics/dimensions-hoc";
 
 import { GridContainerDiv, GridDiv } from "./grid-styles";
 import CollectionRow from "./row";
@@ -75,7 +75,7 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
           />
           {this.renderCollections()}
         </GridDiv>
-        <HiddenIndicator tab={this.props.tab} count={hiddenCount} />
+        <HiddenIndicator count={hiddenCount} />
       </GridContainerDiv>
     );
   }
@@ -152,38 +152,36 @@ class Grid extends React.PureComponent<IProps & IDerivedProps> {
   }
 }
 
-interface IProps {
+interface IProps extends DimensionsProps {
   tab: string;
 }
 
 const actionCreators = actionCreatorsList("navigateTab", "navigate");
 
-type IDerivedProps = Dispatchers<typeof actionCreators> &
-  IDimensionsProps & {
-    collectionIds: number[];
-    collections: ICollectionSet;
-    loading: boolean;
-  };
+type IDerivedProps = Dispatchers<typeof actionCreators> & {
+  collectionIds: number[];
+  collections: ICollectionSet;
+  loading: boolean;
+};
 
-export default withTab(
-  connect<IProps>(
-    injectDimensions(Grid),
-    {
-      state: createSelector(
-        (rs: IRootState, props: IProps) =>
-          Space.fromInstance(rendererWindowState(rs).tabInstances[props.tab]),
-        (rs: IRootState, props: IProps) =>
-          rendererNavigation(rs).loadingTabs[props.tab],
-        createStructuredSelector({
-          collectionIds: (sp: Space) => {
-            debugger;
-            return sp.collections().ids || ea;
-          },
-          collections: (sp: Space) => sp.collections().set || eo,
-          loading: (sp: Space, loading: boolean) => loading || sp.isSleepy(),
-        })
-      ),
-      actionCreators,
-    }
+export default withDimensions(
+  withTab(
+    connect<IProps>(
+      Grid,
+      {
+        state: createSelector(
+          (rs: IRootState, props: IProps) =>
+            Space.fromInstance(rendererWindowState(rs).tabInstances[props.tab]),
+          (rs: IRootState, props: IProps) =>
+            rendererNavigation(rs).loadingTabs[props.tab],
+          createStructuredSelector({
+            collectionIds: (sp: Space) => sp.collections().ids || ea,
+            collections: (sp: Space) => sp.collections().set || eo,
+            loading: (sp: Space, loading: boolean) => loading || sp.isSleepy(),
+          })
+        ),
+        actionCreators,
+      }
+    )
   )
 );

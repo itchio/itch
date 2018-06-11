@@ -155,6 +155,7 @@ class ManageCave extends React.PureComponent<IProps & IDerivedProps> {
           </CaveDetails>
           <div style={{ width: "60px" }}>
             <Cover
+              hover={false}
               gameId={game.id}
               coverUrl={game.coverUrl}
               stillCoverUrl={game.stillCoverUrl}
@@ -252,7 +253,10 @@ const actionCreators = actionCreatorsList(
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(ManageCave, { actionCreators });
+export default connect<IProps>(
+  ManageCave,
+  { actionCreators }
+);
 
 function formatUpload(upload: Upload): JSX.Element {
   return (

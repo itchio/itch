@@ -18,11 +18,11 @@ const DashboardContainer = styled.div`
 
 class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    const { tab, loading, navigate } = this.props;
+    const { loading, navigate } = this.props;
 
     return (
       <DashboardContainer>
-        <GameFilters tab={tab} loading={loading}>
+        <GameFilters loading={loading}>
           <Link
             label={T(["outlinks.open_dashboard"])}
             onClick={e =>
@@ -30,7 +30,7 @@ class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
             }
           />
         </GameFilters>
-        <Games tab={tab} />
+        <Games />
       </DashboardContainer>
     );
   }
@@ -42,4 +42,7 @@ const actionCreators = actionCreatorsList("navigate");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IProps>(Dashboard, { actionCreators });
+export default connect<IProps>(
+  Dashboard,
+  { actionCreators }
+);

@@ -24,6 +24,7 @@ import {
   rendererWindow,
 } from "common/util/navigation";
 import { modalWidgets } from "renderer/components/modal-widgets";
+import { TabProvider } from "./tab-provider";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -68,20 +69,21 @@ class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
           const visible = tab === currentId;
           const loading = this.props.loadingTabs[tab];
           return (
-            <MeatTab
-              key={tab}
-              data-id={tab}
-              data-url={sp.url()}
-              data-resource={sp.resource()}
-              className={classNames("meat-tab", { visible })}
-            >
-              <Meat
-                tab={tab}
-                tabInstance={tabInstance}
-                visible={visible}
-                loading={loading}
-              />
-            </MeatTab>
+            <TabProvider key={tab} value={tab}>
+              <MeatTab
+                key={tab}
+                data-id={tab}
+                data-url={sp.url()}
+                data-resource={sp.resource()}
+                className={classNames("meat-tab", { visible })}
+              >
+                <Meat
+                  tabInstance={tabInstance}
+                  visible={visible}
+                  loading={loading}
+                />
+              </MeatTab>
+            </TabProvider>
           );
         })}
       </MeatContainer>
