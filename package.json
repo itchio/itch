@@ -59,7 +59,6 @@
     "react-loadable": "^5.4.0",
     "react-onclickoutside": "^5.0.1",
     "react-redux": "^5.0.5",
-    "react-refetch": "^1.0.4",
     "react-sortable-hoc": "^0.6.7",
     "redux": "^3.6.0",
     "redux-cli-logger": "^2.1.0",
@@ -139,7 +138,7 @@
     "start": "cross-env ELECTRON_ARGS=\"[\\\".\\\"]\" electron-webpack dev",
     "compile": "electron-webpack --no-progress",
     "precommit": "lint-staged && npm run ts-check",
-    "postinstall": "electron-rebuild",
+    "postinstall": "electron-rebuild && electron-webpack dll",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
     "integration-tests": "node release/ci-integration-tests.js",
     "upload-coverage": "codecov -f ./coverage/lcov.info",
@@ -154,7 +153,29 @@
   },
   "electronWebpack": {
     "renderer": {
-      "webpackConfig": "custom.webpack.additions.js"
+      "webpackConfig": "custom.webpack.additions.js",
+      "dll": [
+        "react",
+        "react-dom",
+        "react-redux",
+        "react-intl",
+        "react-hint",
+        "react-sortable-hoc",
+        "react-loadable",
+        "react-onclickoutside",
+        "react-json-inspector",
+        "react-contextmenu",
+        "redux",
+        "combokeys-ftl",
+        "reselect",
+        "polished",
+        "styled-components",
+        "underscore",
+        "butlerd",
+        "vivus",
+        "classnames",
+        "triangulr"
+      ]
     },
     "main": {
       "webpackConfig": "custom.webpack.additions.js",

@@ -313,11 +313,15 @@ export const FetchCollection = createRequest<
  * Result for Fetch.ProfileCollections
  */
 export interface FetchProfileCollectionsResult {
-  // no fields
+  /** Collections belonging to the profile */
+  items: Collection[];
+  /** Use to fetch the next page */
+  nextCursor?: string;
 }
 
 /**
- * undocumented
+ * Lists collections for a profile. Does not contain
+ * games.
  */
 export const FetchProfileCollections = createRequest<
   FetchProfileCollectionsParams,
@@ -2248,29 +2252,15 @@ export interface CollectionGame {
  * Params for Fetch.ProfileCollections
  */
 export interface FetchProfileCollectionsParams {
-  /** Profile to use to fetch game */
+  /** Profile for which to fetch collections */
   profileId: number;
+  /** Maximum number of collections to return at a time. */
+  limit?: number;
+  /** Used for pagination, if specified */
+  cursor?: string;
+  /** If set, will force fresh data */
+  ignoreCache?: boolean;
 }
-
-/**
- * Payload for Fetch.ProfileCollections.Yield
- */
-export interface FetchProfileCollectionsYieldNotification {
-  /** undocumented */
-  offset: number;
-  /** undocumented */
-  total: number;
-  /** undocumented */
-  items: Collection[];
-}
-
-/**
- * Sent during @@FetchProfileCollectionsParams whenever new info is
- * available.
- */
-export const FetchProfileCollectionsYield = createNotification<
-  FetchProfileCollectionsYieldNotification
->("Fetch.ProfileCollections.Yield");
 
 /**
  * Params for Fetch.ProfileGames

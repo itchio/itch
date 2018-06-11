@@ -1,4 +1,4 @@
-import { Fetcher } from "./fetcher";
+import { Fetcher, FetchReason } from "./fetcher";
 
 import { indexBy, pluck } from "underscore";
 import { messages, withLogger } from "common/butlerd";
@@ -9,27 +9,20 @@ class CollectionsFetcher extends Fetcher {
   }
 
   async work(): Promise<void> {
-    if (!this.warrantsRemote()) {
-      return;
-    }
-
     const call = withLogger(this.logger);
-    await call(
-      messages.FetchProfileCollections,
-      {
-        profileId: this.profileId(),
-      },
-      client => {
-        client.on(messages.FetchProfileCollectionsYield, async ({ items }) => {
-          this.push({
-            collections: {
-              set: indexBy(items, "id"),
-              ids: pluck(items, "id"),
-            },
-          });
-        });
-      }
-    );
+    const { items } = await call(messages.FetchProfileCollections, {
+      profileId: this.profileId(),
+      limit: 3,
+      ignoreCache: this.reason == FetchReason.TabReloaded,
+    });
+    if (items) {
+      this.push({
+        collections: {
+          set: indexBy(items, "id"),
+          ids: pluck(items, "id"),
+        },
+      });
+    }
   }
 }
 
