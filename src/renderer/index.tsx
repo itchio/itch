@@ -1,10 +1,5 @@
 // This file is the entry point for renderer processes
 
-import "!style-loader!css-loader!./fonts/lato/latofonts.css";
-import "!style-loader!css-loader!./fonts/icomoon/style.css";
-import "!style-loader!css-loader!react-hint/css/index.css";
-import "!style-loader!css-loader!react-json-inspector/json-inspector.css";
-
 import { parse as parseQueryString } from "querystring";
 
 import env from "common/env";
@@ -14,8 +9,6 @@ if (process.env.NODE_ENV !== "production") {
     longStackTraces: true,
   });
 }
-
-import * as os from "main/os";
 
 import React from "react";
 import ReactDOM from "react-dom";
@@ -73,7 +66,7 @@ window.addEventListener("beforeunload", () => {
 
 // disable two-finger zoom on macOS
 
-if (os.platform() === "darwin") {
+if (process.platform === "darwin") {
   try {
     electron.webFrame.setVisualZoomLevelLimits(1, 1);
   } catch (e) {

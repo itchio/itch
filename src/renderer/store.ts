@@ -14,7 +14,7 @@ const createLogger = require("redux-logger");
 
 import route from "common/util/route";
 import { Watcher } from "common/util/watcher";
-import reducer from "common/reducers";
+const reducer = (state, action) => state;
 import shouldLogAction from "common/util/should-log-action";
 
 const watcher = new Watcher();
@@ -46,7 +46,10 @@ const em = applyMiddleware(...middleware);
 
 let enhancer: GenericStoreEnhancer;
 
-enhancer = compose(ee, em) as GenericStoreEnhancer;
+enhancer = compose(
+  ee,
+  em
+) as GenericStoreEnhancer;
 
 const initialState = {} as any;
 const store = createStore(reducer, initialState, enhancer) as IChromeStore;
