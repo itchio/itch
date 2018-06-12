@@ -209,7 +209,7 @@ class Meat extends React.PureComponent<IProps, IState> {
     window.alert("Should open modal!");
   };
 
-  getConcrete(sp: Space): React.ComponentClass<IMeatProps> {
+  getConcrete(sp: Space): React.ComponentType<IMeatProps> {
     if (sp.isBrowser()) {
       return Browser;
     }

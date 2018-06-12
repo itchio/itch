@@ -23,8 +23,16 @@ class AppContents extends React.PureComponent<IDerivedProps> {
   }
 
   onClickCapture = (e: React.MouseEvent<HTMLElement>) => {
-    if (e.target && (e.target as any).tagName == "A") {
-      const href = (e.target as HTMLLinkElement).href;
+    this.handleClickCapture(e, e.target as HTMLElement);
+  };
+
+  handleClickCapture(e: React.MouseEvent<HTMLElement>, target: HTMLElement) {
+    if (!target) {
+      return;
+    }
+
+    if (target.tagName == "A") {
+      const href = (target as HTMLLinkElement).href;
       e.preventDefault();
       e.stopPropagation();
       this.props.navigate({
@@ -32,8 +40,10 @@ class AppContents extends React.PureComponent<IDerivedProps> {
         url: href,
         background: doesEventMeanBackground(e),
       });
+    } else {
+      this.handleClickCapture(e, target.parentElement);
     }
-  };
+  }
 }
 
 const actionCreators = actionCreatorsList("navigate");

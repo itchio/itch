@@ -18,6 +18,7 @@ import { injectIntl, InjectedIntl } from "react-intl";
 import { formatDate, DATE_FORMAT } from "common/format/datetime";
 import classNames from "classnames";
 import { rendererWindow } from "common/util/navigation";
+import { ProfileIdProvider } from "./profile-provider";
 
 const LayoutContainer = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -92,7 +93,11 @@ class Layout extends React.PureComponent<IProps & IDerivedProps> {
   main() {
     const { ready } = this.props;
     if (ready) {
-      return <HubPage />;
+      return (
+        <ProfileIdProvider value={this.props.profileId}>
+          <HubPage />
+        </ProfileIdProvider>
+      );
     } else {
       return <GatePage />;
     }
@@ -140,14 +145,20 @@ interface IProps {}
 interface IDerivedProps {
   ready: boolean;
   maximized: boolean;
+  profileId: number;
 
   intl: InjectedIntl;
 }
 
-export default connect<IProps>(injectIntl(Layout), {
-  state: createStructuredSelector({
-    maximized: (rs: IRootState) =>
-      rs.windows[rendererWindow()].native.maximized,
-    ready: (rs: IRootState) => rs.setup.done && rs.profile.credentials.me,
-  }),
-});
+export default connect<IProps>(
+  injectIntl(Layout),
+  {
+    state: createStructuredSelector({
+      maximized: (rs: IRootState) =>
+        rs.windows[rendererWindow()].native.maximized,
+      ready: (rs: IRootState) => rs.setup.done && rs.profile.credentials.me,
+      profileId: (rs: IRootState) =>
+        rs.profile.credentials.me && rs.profile.credentials.me.id,
+    }),
+  }
+);
