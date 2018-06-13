@@ -128,6 +128,7 @@ export default function(watcher: Watcher) {
     const sp = Space.fromInstance({
       history: [{ url, resource }],
       currentIndex: 0,
+      sequence: 0,
       data,
     });
     if (sp.protocol() == "mailto:") {

@@ -42,7 +42,7 @@ const EmptyStateContainer = styled.div`
   overflow: hidden;
 `;
 
-class EmptyState extends React.PureComponent<IProps> {
+class EmptyState extends React.PureComponent<Props> {
   render() {
     const {
       bigText,
@@ -51,6 +51,7 @@ class EmptyState extends React.PureComponent<IProps> {
       buttonIcon,
       buttonText,
       buttonAction,
+      componentAction,
       className,
     } = this.props;
 
@@ -60,6 +61,7 @@ class EmptyState extends React.PureComponent<IProps> {
           <Icon icon={icon} className="leader" />
           <h1>{T(bigText)}</h1>
           {smallText ? <h2>{T(smallText)}</h2> : null}
+          {componentAction}
           {buttonAction ? (
             <>
               <ButtonContainer>
@@ -82,7 +84,7 @@ class EmptyState extends React.PureComponent<IProps> {
 
 export default EmptyState;
 
-interface IProps {
+interface Props {
   className?: string;
   bigText: ILocalizedString;
   smallText?: ILocalizedString;
@@ -90,4 +92,5 @@ interface IProps {
   buttonIcon?: string;
   buttonText?: ILocalizedString;
   buttonAction?: React.MouseEventHandler<HTMLDivElement>;
+  componentAction?: JSX.Element;
 }

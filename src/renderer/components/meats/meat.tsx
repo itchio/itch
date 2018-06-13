@@ -1,5 +1,5 @@
 import React from "react";
-import { IMeatProps } from "renderer/components/meats/types";
+import { MeatProps } from "renderer/components/meats/types";
 
 import Library from "renderer/components/library";
 import Collections from "renderer/components/collections";
@@ -19,6 +19,8 @@ import Crashy from "renderer/components/crashy";
 import Button from "../basics/button";
 import LoadingCircle from "../basics/loading-circle";
 import { T } from "renderer/t";
+import { ITabInstance } from "common/types";
+import { withTabInstance } from "./tab-instance-provider";
 
 const HistoryDiv = styled.div`
   position: absolute;
@@ -80,7 +82,7 @@ const ErrorSpacer = styled.div`
   width: 8px;
 `;
 
-class Meat extends React.PureComponent<IProps, IState> {
+class Meat extends React.PureComponent<Props, State> {
   constructor(props: Meat["props"], context: any) {
     super(props, context);
     this.state = {
@@ -209,7 +211,7 @@ class Meat extends React.PureComponent<IProps, IState> {
     window.alert("Should open modal!");
   };
 
-  getConcrete(sp: Space): React.ComponentType<IMeatProps> {
+  getConcrete(sp: Space): React.ComponentType<MeatProps> {
     if (sp.isBrowser()) {
       return Browser;
     }
@@ -241,7 +243,7 @@ class Meat extends React.PureComponent<IProps, IState> {
   }
 }
 
-interface IState {
+interface State {
   hasError: boolean;
   loading: boolean;
   error?: any;
@@ -249,6 +251,9 @@ interface IState {
   lastURL: string;
 }
 
-export default Meat;
+interface Props extends MeatProps {
+  tabInstance: ITabInstance;
+}
 
-interface IProps extends IMeatProps {}
+// FIXME: this is bad
+export default withTabInstance(Meat);

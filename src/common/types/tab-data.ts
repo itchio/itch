@@ -75,6 +75,9 @@ export interface ITabInstance {
 
   /** label we had when saving the tab */
   savedLabel?: ILocalizedString;
+
+  /** number that increments when we reload a tab */
+  sequence: number;
 }
 
 export interface ITabData {

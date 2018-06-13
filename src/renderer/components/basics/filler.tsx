@@ -1,5 +1,5 @@
 import styled from "../styles";
 
 export default styled.div`
-  flex-grow: 1;
+  flex-grow: 100;
 `;

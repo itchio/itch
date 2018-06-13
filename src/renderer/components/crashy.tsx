@@ -1,5 +1,5 @@
 import React from "react";
-import { IMeatProps } from "./meats/types";
+import { MeatProps } from "./meats/types";
 
 class Crashy extends React.PureComponent<IProps> {
   render() {
@@ -10,6 +10,6 @@ class Crashy extends React.PureComponent<IProps> {
   }
 }
 
-interface IProps extends IMeatProps {}
+interface IProps extends MeatProps {}
 
 export default Crashy;

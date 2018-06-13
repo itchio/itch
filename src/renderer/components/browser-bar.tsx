@@ -1,7 +1,5 @@
 import React from "react";
 
-import BrowserControls from "./browser-controls";
-
 import { IBrowserControlProps } from "./browser-state";
 
 import { Space } from "common/helpers/space";
@@ -14,18 +12,8 @@ class BrowserBar extends React.PureComponent<IProps> {
     const sp = Space.fromInstance(tabInstance);
 
     const loading = !!sp.web().loading;
-    const url = this.props.url;
 
-    return (
-      <FiltersContainer loading={loading}>
-        <BrowserControls
-          {...this.props}
-          url={url}
-          showAddressBar
-          loading={loading}
-        />
-      </FiltersContainer>
-    );
+    return <FiltersContainer loading={loading} />;
   }
 }
 

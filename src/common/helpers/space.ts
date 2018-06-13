@@ -12,7 +12,7 @@ import {
   ITabGames,
 } from "../types/index";
 
-import nodeURL from "url";
+import nodeURL, { format, URLSearchParams } from "url";
 import querystring from "querystring";
 
 import { Game, Collection, User } from "common/butlerd/messages";
@@ -36,6 +36,7 @@ export class Space {
   private _data: ITabData;
   private _protocol: string;
   private _hostname: string;
+  private _pathname: string;
   private _pathElements: string[];
   private _query: querystring.ParsedUrlQuery;
   private _querylessURL: string;
@@ -63,6 +64,7 @@ export class Space {
         const parsed = nodeURL.parse(url);
         this._protocol = parsed.protocol;
         this._hostname = parsed.hostname;
+        this._pathname = parsed.pathname;
         this._query = querystring.parse(parsed.query);
         if (parsed.pathname) {
           this._pathElements = parsed.pathname.replace(/^\//, "").split("/");
@@ -93,6 +95,33 @@ export class Space {
 
   url(): string {
     return this._page.url;
+  }
+
+  urlWithParams(newParams: Object): string {
+    const params = new URLSearchParams(this._query);
+    for (const k of Object.keys(newParams)) {
+      const v = newParams[k];
+      params.set(k, v);
+    }
+    return format({
+      protocol: this._protocol,
+      hostname: this._hostname,
+      pathname: this._pathname,
+      slashes: true,
+      search: `?${params.toString()}`,
+    });
+  }
+
+  queryParam(name: string): string {
+    if (this._query) {
+      const value = this._query[name];
+      if (Array.isArray(value)) {
+        return value[0];
+      } else {
+        return value;
+      }
+    }
+    return null;
   }
 
   resource(): string {

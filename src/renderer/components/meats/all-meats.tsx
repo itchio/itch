@@ -25,6 +25,7 @@ import {
 } from "common/util/navigation";
 import { modalWidgets } from "renderer/components/modal-widgets";
 import { TabProvider } from "./tab-provider";
+import { TabInstanceProvider } from "./tab-instance-provider";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -55,7 +56,13 @@ const MeatTab = styled.div`
 
 class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
   render() {
-    let { credentials, openTabs, tabInstances, tab: currentId } = this.props;
+    let {
+      credentials,
+      openTabs,
+      tabInstances,
+      loadingTabs,
+      tab: currentId,
+    } = this.props;
     if (!(credentials && credentials.me && credentials.me.id)) {
       return null;
     }
@@ -67,22 +74,24 @@ class AllMeats extends React.PureComponent<IProps & IDerivedProps> {
           const tabInstance = tabInstances[tab];
           const sp = Space.fromInstance(tabInstance);
           const visible = tab === currentId;
-          const loading = this.props.loadingTabs[tab];
+          const loading = loadingTabs[tab];
           return (
             <TabProvider key={tab} value={tab}>
-              <MeatTab
-                key={tab}
-                data-id={tab}
-                data-url={sp.url()}
-                data-resource={sp.resource()}
-                className={classNames("meat-tab", { visible })}
-              >
-                <Meat
-                  tabInstance={tabInstance}
-                  visible={visible}
-                  loading={loading}
-                />
-              </MeatTab>
+              <TabInstanceProvider value={tabInstance}>
+                <MeatTab
+                  key={tab}
+                  data-id={tab}
+                  data-url={sp.url()}
+                  data-resource={sp.resource()}
+                  className={classNames("meat-tab", { visible })}
+                >
+                  <Meat
+                    visible={visible}
+                    sequence={tabInstance.sequence}
+                    loading={loading}
+                  />
+                </MeatTab>
+              </TabInstanceProvider>
             </TabProvider>
           );
         })}

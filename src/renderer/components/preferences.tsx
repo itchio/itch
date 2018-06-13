@@ -5,7 +5,7 @@ import BehaviorSettings from "./preferences/behavior-settings";
 import InstallLocationsSettings from "./preferences/install-locations-settings";
 import AdvancedSettings from "./preferences/advanced-settings";
 
-import { IMeatProps } from "renderer/components/meats/types";
+import { MeatProps } from "renderer/components/meats/types";
 
 import styled, * as styles from "./styles";
 
@@ -132,6 +132,6 @@ class Preferences extends React.PureComponent<IProps> {
   }
 }
 
-interface IProps extends IMeatProps {}
+interface IProps extends MeatProps {}
 
 export default Preferences;

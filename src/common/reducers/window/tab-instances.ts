@@ -44,6 +44,7 @@ export default reducer<ITabInstances>(initialState, on => {
         history: [{ url: initialURL }],
         currentIndex: 0,
         sleepy: true,
+        sequence: 0,
         data: {},
       },
     };
@@ -186,6 +187,7 @@ export default reducer<ITabInstances>(initialState, on => {
         ],
         currentIndex: 0,
         sleepy: true,
+        sequence: 0,
         data: { ...data },
       },
     };
@@ -229,10 +231,22 @@ export default reducer<ITabInstances>(initialState, on => {
           ...data,
           data: {},
           sleepy: true,
+          sequence: 0,
         },
       };
     });
 
     return s;
+  });
+
+  on(actions.tabReloaded, (state, action) => {
+    const { tab } = action.payload;
+    return {
+      ...state,
+      [tab]: {
+        ...state[tab],
+        sequence: state[tab].sequence + 1,
+      },
+    };
   });
 });

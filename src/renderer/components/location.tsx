@@ -1,7 +1,6 @@
 import React from "react";
-import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
-import { IMeatProps } from "renderer/components/meats/types";
+import { MeatProps } from "renderer/components/meats/types";
 
 import Games from "./games";
 
@@ -15,6 +14,10 @@ import FiltersContainer from "./filters-container";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { GameColumn } from "./game-table/table";
 import { T } from "renderer/t";
+import { actions } from "common/actions";
+import { ITabInstance } from "common/types";
+import { Dispatch, withDispatch } from "./dispatch-provider";
+import { withTabInstance } from "./meats/tab-instance-provider";
 
 const columns = [
   GameColumn.Cover,
@@ -29,9 +32,9 @@ const LocationContainer = styled.div`
   ${styles.meat()};
 `;
 
-class Location extends React.PureComponent<IProps & IDerivedProps> {
+class Location extends React.PureComponent<Props> {
   render() {
-    const { tabInstance, browseInstallLocation, loading } = this.props;
+    const { tabInstance, loading } = this.props;
 
     const installLocationId = Space.fromInstance(
       tabInstance
@@ -43,7 +46,11 @@ class Location extends React.PureComponent<IProps & IDerivedProps> {
           <LocationTitleBarExtra tabInstance={tabInstance} />
           <Link
             label={T(showInExplorerString())}
-            onClick={e => browseInstallLocation({ id: installLocationId })}
+            onClick={e =>
+              this.props.dispatch(
+                actions.browseInstallLocation({ id: installLocationId })
+              )
+            }
           />
         </FiltersContainer>
 
@@ -53,13 +60,9 @@ class Location extends React.PureComponent<IProps & IDerivedProps> {
   }
 }
 
-interface IProps extends IMeatProps {}
+interface Props extends MeatProps {
+  tabInstance: ITabInstance;
+  dispatch: Dispatch;
+}
 
-const actionCreators = actionCreatorsList("browseInstallLocation");
-
-type IDerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<IProps>(
-  Location,
-  { actionCreators }
-);
+export default withTabInstance(withDispatch(Location));

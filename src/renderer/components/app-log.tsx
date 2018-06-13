@@ -1,16 +1,19 @@
-import { IMeatProps } from "renderer/components/meats/types";
+import { MeatProps } from "renderer/components/meats/types";
 import React from "react";
 
 import styled, * as styles from "./styles";
 import Log from "./basics/log";
 import Link from "./basics/link";
 import IconButton from "./basics/icon-button";
-import { connect, Dispatchers, actionCreatorsList } from "./connect";
 import { T } from "renderer/t";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { Space } from "common/helpers/space";
 import { rendererWindow } from "common/util/navigation";
 import { withTab } from "./meats/tab-provider";
+import { ITabInstance } from "common/types";
+import { withDispatch, Dispatch } from "./dispatch-provider";
+import { withTabInstance } from "./meats/tab-instance-provider";
+import { actions } from "common/actions";
 
 const AppLogDiv = styled.div`
   ${styles.meat()};
@@ -35,7 +38,7 @@ const ControlsDiv = styled.div`
   align-items: center;
 `;
 
-class AppLog extends React.PureComponent<IProps & IDerivedProps> {
+class AppLog extends React.PureComponent<Props> {
   render() {
     const { tabInstance } = this.props;
     const sp = Space.fromInstance(tabInstance);
@@ -65,25 +68,20 @@ class AppLog extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   onOpenAppLog = () => {
-    this.props.openAppLog({});
+    this.props.dispatch(actions.openAppLog({}));
   };
 
   onReload = () => {
-    this.props.tabReloaded({ window: rendererWindow(), tab: this.props.tab });
+    this.props.dispatch(
+      actions.tabReloaded({ window: rendererWindow(), tab: this.props.tab })
+    );
   };
 }
 
-interface IProps extends IMeatProps {
+interface Props extends MeatProps {
   tab: string;
+  tabInstance: ITabInstance;
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList("openAppLog", "tabReloaded");
-
-type IDerivedProps = Dispatchers<typeof actionCreators>;
-
-export default withTab(
-  connect<IProps>(
-    AppLog,
-    { actionCreators }
-  )
-) as React.ComponentClass<IMeatProps>;
+export default withTab(withTabInstance(withDispatch(AppLog)));

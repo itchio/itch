@@ -6,7 +6,7 @@ import urls from "common/constants/urls";
 import Link from "./basics/link";
 import Games from "./games";
 import GameFilters from "./game-filters";
-import { IMeatProps } from "renderer/components/meats/types";
+import { MeatProps } from "renderer/components/meats/types";
 
 import styled, * as styles from "./styles";
 import { T } from "renderer/t";
@@ -36,7 +36,7 @@ class Dashboard extends React.PureComponent<IProps & IDerivedProps> {
   }
 }
 
-interface IProps extends IMeatProps {}
+interface IProps extends MeatProps {}
 
 const actionCreators = actionCreatorsList("navigate");
 

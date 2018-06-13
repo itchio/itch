@@ -43,6 +43,16 @@ export default css`
 
   a {
     color: ${theme.accent};
+
+    &[href^="itch:"] {
+      color: ${theme.secondaryText};
+      text-decoration: none;
+
+      &:hover {
+        color: ${theme.baseText};
+        cursor: pointer;
+      }
+    }
   }
 
   ${testDisables()};

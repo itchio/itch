@@ -1,10 +1,11 @@
 import styled, * as styles from "./styles";
 import React from "react";
 import classNames from "classnames";
+import BrowserControls from "./browser-controls";
 
 export const filtersContainerHeight = 40;
 
-const FiltersContainerDiv = styled.section`
+export const FiltersContainerDiv = styled.section`
   display: flex;
   align-items: center;
   width: 100%;
@@ -46,6 +47,7 @@ class FiltersContainer extends React.PureComponent<IProps> {
     const { loading, children, className } = this.props;
     return (
       <FiltersContainerDiv className={classNames(className, { loading })}>
+        <BrowserControls loading={loading} showAddressBar />
         {children}
       </FiltersContainerDiv>
     );

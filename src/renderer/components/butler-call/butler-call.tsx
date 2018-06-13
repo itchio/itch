@@ -4,13 +4,15 @@ import { withButlerClient } from "common/butlerd";
 import rootLogger from "common/logger";
 import LoadingState from "../loading-state";
 import ErrorState from "./error-state";
+import * as lodash from "lodash";
 const logger = rootLogger.child({ name: "ButlerCall" });
 
 interface ButlerCallProps<Params, Result> {
   params: Params;
-  render: (value: Result) => JSX.Element;
-  renderLoading?: () => JSX.Element;
-  renderError?: (error: Error) => JSX.Element;
+  render: (args: ButlerCallArgs<Params, Result>) => JSX.Element;
+  errorsHandled?: boolean;
+  loadingHandled?: boolean;
+  sequence?: number;
 }
 
 interface ButlerCallState<Result> {
@@ -19,13 +21,22 @@ interface ButlerCallState<Result> {
   result: Result;
 }
 
-// aaaaaaand now it's a function!
+type RefreshFunc = () => void;
+
+interface ButlerCallArgs<Params, Result> {
+  loading: boolean;
+  error: Error;
+  result: Result;
+  refresh: RefreshFunc;
+}
+
 const ButlerCall = <Params, Result>(method: IRequestCreator<Params, Result>) =>
   class extends React.PureComponent<
     ButlerCallProps<Params, Result>,
     ButlerCallState<Result>
   > {
-    client: Client | null;
+    clientPromise: Promise<Client>;
+    resolveClient: (client: Client) => void;
     promise: Promise<void>;
     resolve: () => void;
 
@@ -38,33 +49,41 @@ const ButlerCall = <Params, Result>(method: IRequestCreator<Params, Result>) =>
         error: undefined,
         result: undefined,
       };
-      this.promise = new Promise((resolve, reject) => {
-        this.resolve = resolve;
-      });
     }
 
     componentDidMount() {
-      withButlerClient(logger, async client => {
-        this.client = client;
-        this.queueFetch();
-        await this.promise;
-      }).catch(this.setError);
+      this.promise = new Promise((resolve, reject) => {
+        this.resolve = resolve;
+      });
+      this.clientPromise = new Promise((resolve, reject) => {
+        withButlerClient(logger, async client => {
+          resolve(client);
+          await this.promise;
+        }).catch(e => {
+          reject(e);
+          this.setError(e);
+        });
+      });
+      this.queueFetch();
     }
 
     private queueFetch = () => {
-      this.client
-        .call(method, this.props.params)
-        .then(this.setResult)
-        .catch(this.setError);
+      this.setState({
+        loading: true,
+      });
+      this.clientPromise.then(client => {
+        client
+          .call(method, this.props.params)
+          .then(this.setResult)
+          .catch(this.setError);
+      });
     };
 
     private setResult = (r: Result) => {
-      console.log(r);
       this.setState({ result: r, loading: false });
     };
 
     private setError = (e: any) => {
-      console.error(e);
       this.setState({ error: e, loading: false });
     };
 
@@ -77,23 +96,30 @@ const ButlerCall = <Params, Result>(method: IRequestCreator<Params, Result>) =>
 
     render() {
       const { error, loading, result } = this.state;
-      const { render, renderLoading, renderError } = this.props;
+      const { render, errorsHandled, loadingHandled } = this.props;
 
       if (loading) {
-        if (renderLoading) {
-          return renderLoading();
+        if (!loadingHandled) {
+          return <LoadingState />;
         }
-        return <LoadingState />;
       }
 
       if (error) {
-        if (renderError) {
-          return renderError(error);
+        if (!errorsHandled) {
+          return <ErrorState error={error} />;
         }
-        return <ErrorState error={error} />;
       }
 
-      return render(result);
+      return render({ error, loading, result, refresh: this.queueFetch });
+    }
+
+    componentDidUpdate(prevProps: ButlerCallProps<Params, Result>) {
+      if (
+        prevProps.sequence != this.props.sequence ||
+        !lodash.isEqual(prevProps.params, this.props.params)
+      ) {
+        this.queueFetch();
+      }
     }
   };
 

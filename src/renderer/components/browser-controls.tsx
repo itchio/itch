@@ -13,6 +13,7 @@ import { Space } from "common/helpers/space";
 import { transformUrl, rendererWindow } from "common/util/navigation";
 import { IBrowserControlProps } from "./browser-state";
 import { withTab } from "./meats/tab-provider";
+import { withTabInstance } from "./meats/tab-instance-provider";
 
 const HTTPS_RE = /^https:\/\//;
 
@@ -106,7 +107,7 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
 
   renderAddressBar(sp: Space) {
     const { loading } = this.props;
-    const url = this.props.url || "";
+    const url = sp.url();
 
     if (!this.props.showAddressBar) {
       return null;
@@ -157,7 +158,8 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
   }
 
   popOutBrowser = () => {
-    this.props.openInExternalBrowser({ url: this.props.url });
+    const sp = Space.fromInstance(this.props.tabInstance);
+    this.props.openInExternalBrowser({ url: sp.url() });
   };
 
   onBrowserAddress = (browserAddress: HTMLElement | HTMLInputElement) => {
@@ -233,10 +235,12 @@ const actionCreators = actionCreatorsList(
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 
 export default withTab(
-  connect<IProps>(
-    listensToClickOutside(BrowserControls),
-    {
-      actionCreators,
-    }
+  withTabInstance(
+    connect<IProps>(
+      listensToClickOutside(BrowserControls),
+      {
+        actionCreators,
+      }
+    )
   )
 );

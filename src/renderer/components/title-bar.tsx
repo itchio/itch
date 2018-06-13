@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 import { IRootState, ITabInstance, ExtendedWindow } from "common/types";
 
-import FiltersContainer from "./filters-container";
+import { FiltersContainerDiv } from "./filters-container";
 import IconButton from "./basics/icon-button";
 import UserMenu from "./sidebar/user-menu";
 import NewVersionAvailable from "./sidebar/new-version-available";
@@ -68,7 +68,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     return (
-      <FiltersContainer className="title-bar" loading={false}>
+      <FiltersContainerDiv className="title-bar">
         <DraggableDiv
           id="title-draggable"
           className={classNames({ dimmed: !focused })}
@@ -86,7 +86,7 @@ class TitleBar extends React.PureComponent<IProps & IDerivedProps> {
           </>
         )}
         {this.renderIcons()}
-      </FiltersContainer>
+      </FiltersContainerDiv>
     );
   }
 
@@ -170,16 +170,19 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   macos: boolean;
 };
 
-export default connect<IProps>(TitleBar, {
-  state: () =>
-    createStructuredSelector({
-      tabInstance: (rs: IRootState, props: IProps) =>
-        rendererWindowState(rs).tabInstances[props.tab] || emptyObj,
-      maximized: (rs: IRootState) =>
-        rs.windows[rendererWindow()].native.maximized,
-      // TODO: fixme: focus by window
-      focused: (rs: IRootState) => true,
-      macos: (rs: IRootState) => rs.system.macos,
-    }),
-  actionCreators,
-});
+export default connect<IProps>(
+  TitleBar,
+  {
+    state: () =>
+      createStructuredSelector({
+        tabInstance: (rs: IRootState, props: IProps) =>
+          rendererWindowState(rs).tabInstances[props.tab] || emptyObj,
+        maximized: (rs: IRootState) =>
+          rs.windows[rendererWindow()].native.maximized,
+        // TODO: fixme: focus by window
+        focused: (rs: IRootState) => true,
+        macos: (rs: IRootState) => rs.system.macos,
+      }),
+    actionCreators,
+  }
+);

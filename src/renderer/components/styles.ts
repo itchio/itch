@@ -359,7 +359,7 @@ export const horizontalScan = () => css`
   );
   background-size: 200% 100%;
   animation: horizontal-scan 2s infinite;
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 `;
 

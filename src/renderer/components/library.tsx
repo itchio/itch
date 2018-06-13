@@ -3,7 +3,7 @@ import React from "react";
 import Games from "./games";
 import GameFilters from "./game-filters";
 
-import { IMeatProps } from "renderer/components/meats/types";
+import { MeatProps } from "renderer/components/meats/types";
 
 import styled, * as styles from "./styles";
 
@@ -26,4 +26,4 @@ class Library extends React.PureComponent<IProps> {
 
 export default Library;
 
-interface IProps extends IMeatProps {}
+interface IProps extends MeatProps {}

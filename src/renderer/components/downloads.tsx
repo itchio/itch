@@ -19,7 +19,7 @@ import {
   getFinishedDownloads,
 } from "main/reactors/downloads/getters";
 
-import { IMeatProps } from "renderer/components/meats/types";
+import { MeatProps } from "renderer/components/meats/types";
 
 import styled, * as styles from "./styles";
 import { GameUpdate, Download } from "common/butlerd/messages";
@@ -230,7 +230,7 @@ class Downloads extends React.PureComponent<IProps & IDerivedProps> {
   };
 }
 
-interface IProps extends IMeatProps {}
+interface IProps extends MeatProps {}
 
 const actionCreators = actionCreatorsList(
   "clearFinishedDownloads",
@@ -250,14 +250,17 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   downloadsPaused: boolean;
 };
 
-export default connect<IProps>(Downloads, {
-  state: createStructuredSelector({
-    items: (rs: IRootState) => getPendingDownloads(rs.downloads),
-    finishedItems: (rs: IRootState) => getFinishedDownloads(rs.downloads),
-    updates: (rs: IRootState) => rs.gameUpdates.updates,
-    updateCheckHappening: (rs: IRootState) => rs.gameUpdates.checking,
-    updateCheckProgress: (rs: IRootState) => rs.gameUpdates.progress,
-    downloadsPaused: (rs: IRootState) => rs.downloads.paused,
-  }),
-  actionCreators,
-});
+export default connect<IProps>(
+  Downloads,
+  {
+    state: createStructuredSelector({
+      items: (rs: IRootState) => getPendingDownloads(rs.downloads),
+      finishedItems: (rs: IRootState) => getFinishedDownloads(rs.downloads),
+      updates: (rs: IRootState) => rs.gameUpdates.updates,
+      updateCheckHappening: (rs: IRootState) => rs.gameUpdates.checking,
+      updateCheckProgress: (rs: IRootState) => rs.gameUpdates.progress,
+      downloadsPaused: (rs: IRootState) => rs.downloads.paused,
+    }),
+    actionCreators,
+  }
+);

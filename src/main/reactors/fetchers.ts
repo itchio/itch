@@ -7,11 +7,9 @@ import { actions } from "common/actions";
 import { Fetcher, FetchReason } from "../fetchers/fetcher";
 import { IStore } from "common/types";
 import DashboardFetcher from "../fetchers/dashboard-fetcher";
-import CollectionsFetcher from "../fetchers/collections-fetcher";
 import LibraryFetcher from "../fetchers/library-fetcher";
 
 import GameFetcher from "../fetchers/game-fetcher";
-import CollectionFetcher from "../fetchers/collection-fetcher";
 import LocationFetcher from "../fetchers/location-fetcher";
 import AppLogFetcher from "../fetchers/applog-fetcher";
 
@@ -123,21 +121,12 @@ function getFetcherClass(
   switch (sp.internalPage()) {
     case "dashboard":
       return DashboardFetcher;
-    case "collections": {
-      if (sp.firstPathElement()) {
-        return CollectionFetcher;
-      } else {
-        return CollectionsFetcher;
-      }
-    }
     case "dashboard":
       return DashboardFetcher;
     case "library":
       return LibraryFetcher;
     case "games":
       return GameFetcher;
-    case "collections":
-      return CollectionFetcher;
     case "locations":
       return LocationFetcher;
     case "applog":

@@ -4,11 +4,13 @@ import env from "common/env";
 
 import urls from "common/constants/urls";
 
-import { IMeatProps } from "renderer/components/meats/types";
+import { MeatProps } from "renderer/components/meats/types";
 
 import BrowserMeat, { ControlsType } from "./browser-meat";
 import { Space } from "common/helpers/space";
 import { withTab } from "./meats/tab-provider";
+import { ITabInstance } from "common/types";
+import { withTabInstance } from "./meats/tab-instance-provider";
 
 class UrlMeat extends React.PureComponent<IProps, IState> {
   constructor(props: IProps, context) {
@@ -67,12 +69,13 @@ interface IUrlAndControls {
   controls: ControlsType;
 }
 
-interface IProps extends IMeatProps {
+interface IProps extends MeatProps {
   tab: string;
+  tabInstance: ITabInstance;
 }
 
 interface IState {
   active: boolean;
 }
 
-export default withTab(UrlMeat) as React.ComponentClass<IMeatProps>;
+export default withTab(withTabInstance(UrlMeat));
