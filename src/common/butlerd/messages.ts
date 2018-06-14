@@ -278,14 +278,17 @@ export const SearchUsers = createRequest<SearchUsersParams, SearchUsersResult>(
  * Result for Fetch.Game
  */
 export interface FetchGameResult {
-  // no fields
+  /** Game info */
+  game: Game;
+  /**
+   * Marks that a request should be issued
+   * afterwards with 'Fresh' set
+   */
+  stale?: boolean;
 }
 
 /**
  * Fetches information for an itch.io game.
- *
- * Sends @@FetchGameYieldNotification twice at most: first from cache,
- * second from API if we're online.
  */
 export const FetchGame = createRequest<FetchGameParams, FetchGameResult>(
   "Fetch.Game"
@@ -297,17 +300,16 @@ export const FetchGame = createRequest<FetchGameParams, FetchGameResult>(
 export interface FetchCollectionResult {
   /** Collection info */
   collection: Collection;
-  /** Requested games for this collection */
-  collectionGames: CollectionGame[];
-  /** undocumented */
-  nextCursor: string;
+  /**
+   * True if the info was from local DB and
+   * it should be re-queried using "Fresh"
+   */
+  stale?: boolean;
 }
 
 /**
- * Fetches information about a collection and the games it
- * contains.
- *
- * Sends @@FetchCollectionYieldNotification.
+ * Fetch a collection's title, gamesCount, etc.
+ * but not its games.
  */
 export const FetchCollection = createRequest<
   FetchCollectionParams,
@@ -315,13 +317,36 @@ export const FetchCollection = createRequest<
 >("Fetch.Collection");
 
 /**
+ * Result for Fetch.Collection.Games
+ */
+export interface FetchCollectionGamesResult {
+  /** Requested games for this collection */
+  items: CollectionGame[];
+  /** Use to fetch the next 'page' of results */
+  nextCursor?: string;
+  /** If true, re-issue request with 'Fresh' */
+  stale?: boolean;
+}
+
+/**
+ * Fetches information about a collection and the games it
+ * contains.
+ */
+export const FetchCollectionGames = createRequest<
+  FetchCollectionGamesParams,
+  FetchCollectionGamesResult
+>("Fetch.Collection.Games");
+
+/**
  * Result for Fetch.ProfileCollections
  */
 export interface FetchProfileCollectionsResult {
   /** Collections belonging to the profile */
-  collections: Collection[];
-  /** Use to fetch the next page */
+  items: Collection[];
+  /** Used to fetch the next page */
   nextCursor?: string;
+  /** If true, re-issue request with "Fresh" */
+  stale?: boolean;
 }
 
 /**
@@ -2197,28 +2222,29 @@ export const SearchUsersYield = createNotification<
 export interface FetchGameParams {
   /** Identifier of game to look for */
   gameId: number;
+  /** Force an API request */
+  fresh?: boolean;
 }
-
-/**
- * Payload for Fetch.Game.Yield
- */
-export interface FetchGameYieldNotification {
-  /** Current result for game fetching (from local DB, or API, etc.) */
-  game: Game;
-}
-
-/**
- * Sent during @@FetchGameParams whenever a result is
- * available.
- */
-export const FetchGameYield = createNotification<FetchGameYieldNotification>(
-  "Fetch.Game.Yield"
-);
 
 /**
  * Params for Fetch.Collection
  */
 export interface FetchCollectionParams {
+  /** Profile to use to fetch collection */
+  profileId: number;
+  /** Collection to fetch */
+  collectionId: number;
+  /**
+   * Force an API request before replying.
+   * Usually set after getting 'stale' in the response.
+   */
+  fresh?: boolean;
+}
+
+/**
+ * Params for Fetch.Collection.Games
+ */
+export interface FetchCollectionGamesParams {
   /** Profile to use to fetch collection */
   profileId: number;
   /** Identifier of the collection to look for */
@@ -2228,20 +2254,7 @@ export interface FetchCollectionParams {
   /** Used for pagination, if specified */
   cursor?: string;
   /** If set, will force fresh data */
-  ignoreCache?: boolean;
-}
-
-/**
- * Association between a @@Game and a @@Collection
- */
-export interface CollectionGame {
-  /**
-   * Position in collection, use if you want to display them in the
-   * canonical itch.io order
-   */
-  position: number;
-  /** undocumented */
-  game: Game;
+  fresh?: boolean;
 }
 
 /**
@@ -2255,7 +2268,7 @@ export interface FetchProfileCollectionsParams {
   /** Used for pagination, if specified */
   cursor?: string;
   /** If set, will force fresh data */
-  ignoreCache?: boolean;
+  fresh?: boolean;
 }
 
 /**

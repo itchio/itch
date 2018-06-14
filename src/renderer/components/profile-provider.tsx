@@ -2,7 +2,6 @@ import React from "react";
 
 export interface ProfileIdContextProps {
   profileId: number;
-  ref?: React.Ref<any>;
 }
 
 const profileIdContext = React.createContext<number>(undefined);
@@ -14,9 +13,8 @@ type Subtract<T, K> = Omit<T, keyof K>;
 
 export const withProfileId = <P extends ProfileIdContextProps>(
   Component: React.ComponentType<P>
-) =>
-  React.forwardRef<any, Subtract<P, ProfileIdContextProps>>((props, ref) => (
-    <ProfileIdConsumer>
-      {profileId => <Component {...props} profileId={profileId} ref={ref} />}
-    </ProfileIdConsumer>
-  ));
+) => (props: Subtract<P, ProfileIdContextProps>) => (
+  <ProfileIdConsumer>
+    {profileId => <Component {...props} profileId={profileId} />}
+  </ProfileIdConsumer>
+);

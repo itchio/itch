@@ -37,9 +37,8 @@ class GameFetcher extends Fetcher {
     };
 
     let call = withLogger(this.logger);
-    await call(messages.FetchGame, { gameId }, client => {
-      client.on(messages.FetchGameYield, async ({ game }) => pushGame(game));
-    });
+    const { game } = await call(messages.FetchGame, { gameId });
+    pushGame(game);
   }
 
   clean() {

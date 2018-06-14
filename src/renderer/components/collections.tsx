@@ -87,9 +87,9 @@ class Collections extends React.PureComponent<Props> {
     if (!result) {
       return null;
     }
-    const { collections, nextCursor } = result;
+    const { items, nextCursor } = result;
 
-    if (isEmpty(collections)) {
+    if (isEmpty(items)) {
       return (
         <EmptyState
           icon="tag"
@@ -119,7 +119,7 @@ class Collections extends React.PureComponent<Props> {
 
     return (
       <>
-        {collections.map(coll => (
+        {items.map(coll => (
           <div className="collection" key={coll.id}>
             <a href={`itch://collections/${coll.id}`}>
               <h2>{coll.title}</h2>

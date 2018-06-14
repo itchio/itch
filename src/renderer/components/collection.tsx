@@ -16,7 +16,7 @@ import ButlerCall from "./butler-call/butler-call";
 import { messages } from "common/butlerd";
 import { withProfileId } from "./profile-provider";
 import FiltersContainer from "./filters-container";
-import { FetchCollectionResult } from "common/butlerd/messages";
+import { FetchCollectionGamesResult } from "common/butlerd/messages";
 import { withTab } from "./meats/tab-provider";
 
 const CollectionDiv = styled.div`
@@ -35,6 +35,7 @@ const CollectionDiv = styled.div`
 `;
 
 const FetchCollection = ButlerCall(messages.FetchCollection);
+const FetchCollectionGames = ButlerCall(messages.FetchCollectionGames);
 
 class Collection extends React.PureComponent<IProps> {
   render() {
@@ -48,8 +49,6 @@ class Collection extends React.PureComponent<IProps> {
           params={{
             profileId,
             collectionId,
-            limit: 25,
-            cursor: sp.queryParam("cursor"),
           }}
           loadingHandled
           render={({ result, loading }) => {
@@ -63,10 +62,17 @@ class Collection extends React.PureComponent<IProps> {
                     onClick={this.popOutBrowser}
                   />
                 </FiltersContainer>
-                <div className="collection-games-list">
-                  {this.renderCollectionGames(result)}
-                </div>
               </>
+            );
+          }}
+        />
+        <FetchCollectionGames
+          params={{ profileId, collectionId, cursor: sp.queryParam("cursor") }}
+          render={({ result }) => {
+            return (
+              <div className="collection-games-list">
+                {this.renderCollectionGames(result)}
+              </div>
             );
           }}
         />
@@ -74,11 +80,11 @@ class Collection extends React.PureComponent<IProps> {
     );
   }
 
-  renderCollectionGames(result: FetchCollectionResult) {
+  renderCollectionGames(result: FetchCollectionGamesResult) {
     if (!result) {
       return null;
     }
-    const { collection, collectionGames, nextCursor } = result;
+    const { items, nextCursor } = result;
 
     let nextPageURL = null;
     if (nextCursor) {
@@ -90,10 +96,9 @@ class Collection extends React.PureComponent<IProps> {
 
     return (
       <>
-        <h1>{collection.title}</h1>
-        {isEmpty(collectionGames)
+        {isEmpty(items)
           ? null
-          : collectionGames.map(cg => {
+          : items.map(cg => {
               return (
                 <div className="collection-game" key={cg.game.id}>
                   <a href={`itch://games/${cg.game.id}`}>

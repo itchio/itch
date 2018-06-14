@@ -2,7 +2,6 @@ import React from "react";
 
 export interface TabContextProps {
   tab: string;
-  ref?: React.Ref<any>;
 }
 
 const tabContext = React.createContext<string>(undefined);
@@ -14,9 +13,6 @@ type Subtract<T, K> = Omit<T, keyof K>;
 
 export const withTab = <P extends TabContextProps>(
   Component: React.ComponentType<P>
-) =>
-  React.forwardRef<any, Subtract<P, TabContextProps>>((props, ref) => (
-    <TabConsumer>
-      {tab => <Component {...props} tab={tab} ref={ref} />}
-    </TabConsumer>
-  ));
+) => (props: Subtract<P, TabContextProps>) => (
+  <TabConsumer>{tab => <Component {...props} tab={tab} />}</TabConsumer>
+);

@@ -105,18 +105,12 @@ function handleItchioUrl(store: IStore, uri: string) {
         (async () => {
           try {
             let navigated = false;
-            await call(messages.FetchGame, { gameId }, async client => {
-              client.onNotification(messages.FetchGameYield, ({ params }) => {
-                if (navigated) {
-                  return;
-                }
-                navigated = true;
-                const { game } = params;
-                store.dispatch(
-                  actions.navigateToGame({ game, window: "root" })
-                );
-              });
-            });
+            const { game } = await call(messages.FetchGame, { gameId });
+            if (navigated) {
+              return;
+            }
+            navigated = true;
+            store.dispatch(actions.navigateToGame({ game, window: "root" }));
           } catch (e) {
             store.dispatch(
               actions.statusMessage({ message: `Game ${gameId} not found` })
