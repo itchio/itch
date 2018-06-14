@@ -439,6 +439,7 @@ function commonBrowserWindowOpts(): Partial<BrowserWindowConstructorOptions> {
     titleBarStyle: "hidden",
     frame: false,
     webPreferences: {
+      affinity: "all-in-one",
       blinkFeatures: "ResizeObserver",
       webSecurity: env.development ? false : true,
     },
