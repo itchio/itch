@@ -2,9 +2,9 @@ import React from "react";
 import { IRequestCreator, Client } from "butlerd";
 import { withButlerClient } from "common/butlerd";
 import rootLogger, { Logger } from "common/logger";
-import LoadingState from "../loading-state";
 import ErrorState from "./error-state";
 import * as lodash from "lodash";
+import LoadingCircle from "../basics/loading-circle";
 
 interface ButlerCallProps<Params, Result> {
   params: Params;
@@ -137,7 +137,17 @@ const ButlerCall = <Params, Result>(method: IRequestCreator<Params, Result>) =>
 
       if (loading) {
         if (!loadingHandled) {
-          return <LoadingState />;
+          return (
+            <div
+              style={{
+                margin: "20px auto",
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              <LoadingCircle progress={-1} wide />
+            </div>
+          );
         }
       }
 

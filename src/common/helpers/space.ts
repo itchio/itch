@@ -213,20 +213,7 @@ export class Space {
   }
 
   isBrowser(): boolean {
-    switch (this._protocol) {
-      case "itch:": {
-        switch (this._hostname) {
-          case "featured":
-            return true;
-          case "new-tab":
-            return true;
-          default:
-            return false;
-        }
-      }
-    }
-
-    return !!this._page.url;
+    return this._protocol !== "itch:";
   }
 
   protocol(): string {

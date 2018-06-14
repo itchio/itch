@@ -1,5 +1,7 @@
 import styled from "../styles";
 
-export default styled.div`
+const Filler = styled.div`
   flex-grow: 100;
 `;
+
+export default Filler;

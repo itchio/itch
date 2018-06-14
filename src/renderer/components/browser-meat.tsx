@@ -9,7 +9,7 @@ import { MeatProps } from "renderer/components/meats/types";
 
 import BrowserBar from "./browser-bar";
 
-import GameBrowserContext from "./game-browser-context";
+import BrowserContext from "./browser-context";
 import Icon from "./basics/icon";
 
 import { IRootState, ITabInstance } from "common/types";
@@ -109,28 +109,15 @@ class BrowserMeat extends React.PureComponent<Props & DerivedProps> {
   }
 
   render() {
-    const {
-      tab,
-      tabInstance,
-      url,
-      controls,
-      profileId,
-      disableBrowser,
-    } = this.props;
+    const { tab, tabInstance, url, profileId, disableBrowser } = this.props;
     const sp = Space.fromInstance(tabInstance);
     const fresh = !sp.web().webContentsId;
     const partition = partitionForUser(String(profileId));
-
-    let context: JSX.Element;
-    if (controls === "game") {
-      context = <GameBrowserContext tabInstance={tabInstance} />;
-    }
-
     const newTab = sp.internalPage() === "new-tab";
 
     return (
       <BrowserMeatContainer>
-        <BrowserBar tabInstance={tabInstance} />
+        <BrowserBar />
         <BrowserMain>
           {newTab ? (
             <NewTabGrid>
@@ -174,7 +161,7 @@ class BrowserMeat extends React.PureComponent<Props & DerivedProps> {
             </WebviewShell>
           )}
         </BrowserMain>
-        {context}
+        <BrowserContext />
       </BrowserMeatContainer>
     );
   }
@@ -283,8 +270,6 @@ class BrowserMeat extends React.PureComponent<Props & DerivedProps> {
   };
 }
 
-export type ControlsType = "generic" | "game";
-
 interface Props extends MeatProps {
   tab: string;
   tabInstance: ITabInstance;
@@ -292,7 +277,6 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 
   url: string;
-  controls: ControlsType;
 }
 
 interface DerivedProps {

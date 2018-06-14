@@ -13,7 +13,7 @@ export const FiltersContainerDiv = styled.section`
   box-shadow: 0 4px 8px -4px ${props => props.theme.breadBackground};
   flex-shrink: 0;
   padding-left: 10px;
-  padding-right: 4px;
+  padding-right: 10px;
   height: ${filtersContainerHeight}px;
 
   border-width: 0;

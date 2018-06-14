@@ -1,12 +1,8 @@
 import React from "react";
 
-import env from "common/env";
-
-import urls from "common/constants/urls";
-
 import { MeatProps } from "renderer/components/meats/types";
 
-import BrowserMeat, { ControlsType } from "./browser-meat";
+import BrowserMeat from "./browser-meat";
 import { Space } from "common/helpers/space";
 import { withTab } from "./meats/tab-provider";
 import { ITabInstance } from "common/types";
@@ -26,47 +22,21 @@ class UrlMeat extends React.PureComponent<IProps, IState> {
       return null;
     }
 
-    const { url, controls } = this.getUrlAndControls();
-    return <BrowserMeat url={url} {...this.props as any} controls={controls} />;
-  }
-
-  getUrlAndControls(): IUrlAndControls {
     const { tabInstance } = this.props;
-    let controls = "generic" as ControlsType;
-
     const sp = Space.fromInstance(tabInstance);
-    switch (sp.internalPage()) {
-      case "featured":
-        if (env.integrationTests) {
-          return { url: "about:blank", controls };
-        } else {
-          return { url: urls.itchio + "/", controls };
-        }
-      case "games":
-      case "new-tab":
-        // let it simmer
-        return { url: "about:blank", controls };
-    }
-
-    if (sp.prefix === "games") {
-      controls = "game";
-    }
-
-    return { url: sp.url(), controls };
+    return <BrowserMeat url={sp.url()} {...this.props as any} />;
   }
 
-  componentWillReceiveProps(props: IProps) {
-    if (props.visible && !this.state.active) {
-      this.setState({
-        active: true,
-      });
+  static getDerivedStateFromProps(
+    props: UrlMeat["props"],
+    state: UrlMeat["state"]
+  ) {
+    if (props.visible && !state.active) {
+      return { active: true };
     }
-  }
-}
 
-interface IUrlAndControls {
-  url: string;
-  controls: ControlsType;
+    return null;
+  }
 }
 
 interface IProps extends MeatProps {

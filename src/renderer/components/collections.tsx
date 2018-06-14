@@ -4,8 +4,6 @@ import urls from "common/constants/urls";
 
 import FiltersContainer from "./filters-container";
 
-import Filler from "./basics/filler";
-
 import styled, * as styles from "./styles";
 import { T } from "renderer/t";
 import { MeatProps } from "./meats/types";
@@ -80,7 +78,6 @@ class Collections extends React.PureComponent<Props> {
                   <a href={urls.myCollections}>
                     {T(["outlinks.manage_collections"])}
                   </a>
-                  <Filler />
                 </FiltersContainer>
                 <div className="collections-list">
                   {this.renderCollections(result)}

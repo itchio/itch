@@ -1,9 +1,8 @@
 import listensToClickOutside from "react-onclickoutside";
 import React from "react";
 import classNames from "classnames";
-import { connect, Dispatchers, actionCreatorsList } from "./connect";
 
-import { ITabWeb } from "common/types";
+import { ITabWeb, ITabInstance } from "common/types";
 
 import IconButton from "./basics/icon-button";
 
@@ -11,11 +10,13 @@ import styled, * as styles from "./styles";
 import { css } from "./styles";
 import { Space } from "common/helpers/space";
 import { transformUrl, rendererWindow } from "common/util/navigation";
-import { IBrowserControlProps } from "./browser-state";
 import { withTab } from "./meats/tab-provider";
 import { withTabInstance } from "./meats/tab-instance-provider";
+import { Dispatch, withDispatch } from "./dispatch-provider";
+import { actions } from "common/actions";
 
 const HTTPS_RE = /^https:\/\//;
+const ITCH_RE = /^itch:\/\//;
 
 const BrowserControlsContainer = styled.div`
   display: flex;
@@ -62,25 +63,37 @@ const BrowserAddressSpan = styled.span`
   .security-theater-bit {
     color: rgb(138, 175, 115);
   }
+
+  .fluff-bit {
+    color: rgb(148, 184, 218);
+  }
 `;
 
 function isHTMLInput(el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
 }
 
-class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
+class BrowserControls extends React.PureComponent<Props> {
   fresh = true;
   browserAddress: HTMLInputElement | HTMLElement;
 
   // event handlers
   goBack = () =>
-    this.props.tabGoBack({ window: rendererWindow(), tab: this.props.tab });
+    this.props.dispatch(
+      actions.tabGoBack({ window: rendererWindow(), tab: this.props.tab })
+    );
   goForward = () =>
-    this.props.tabGoForward({ window: rendererWindow(), tab: this.props.tab });
+    this.props.dispatch(
+      actions.tabGoForward({ window: rendererWindow(), tab: this.props.tab })
+    );
   stop = () =>
-    this.props.tabStop({ window: rendererWindow(), tab: this.props.tab });
+    this.props.dispatch(
+      actions.tabStop({ window: rendererWindow(), tab: this.props.tab })
+    );
   reload = () =>
-    this.props.tabReloaded({ window: rendererWindow(), tab: this.props.tab });
+    this.props.dispatch(
+      actions.tabReloaded({ window: rendererWindow(), tab: this.props.tab })
+    );
 
   render() {
     const { tabInstance } = this.props;
@@ -137,30 +150,34 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
             innerRef={this.onBrowserAddress}
             onClick={this.startEditingAddress}
           >
-            {HTTPS_RE.test(url) ? (
-              <span>
-                <span className="security-theater-bit">{"https://"}</span>
-                {url.replace(HTTPS_RE, "")}
-              </span>
-            ) : (
-              url
-            )}
+            {this.renderURL(url)}
           </BrowserAddressSpan>
         )}
-        <IconButton
-          hint={["browser.popout"]}
-          hintPosition="bottom"
-          icon="redo"
-          onClick={this.popOutBrowser}
-        />
       </>
     );
   }
 
-  popOutBrowser = () => {
-    const sp = Space.fromInstance(this.props.tabInstance);
-    this.props.openInExternalBrowser({ url: sp.url() });
-  };
+  renderURL(url: string): JSX.Element {
+    if (HTTPS_RE.test(url)) {
+      return (
+        <span>
+          <span className="security-theater-bit">{"https://"}</span>
+          {url.replace(HTTPS_RE, "")}
+        </span>
+      );
+    }
+
+    if (ITCH_RE.test(url)) {
+      return (
+        <span>
+          <span className="fluff-bit">{"itch://"}</span>
+          {url.replace(ITCH_RE, "")}
+        </span>
+      );
+    }
+
+    return <>url</>;
+  }
 
   onBrowserAddress = (browserAddress: HTMLElement | HTMLInputElement) => {
     this.browserAddress = browserAddress;
@@ -186,13 +203,15 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
       const input = e.currentTarget.value;
       const url = transformUrl(input);
 
-      const { tab, evolveTab } = this.props;
-      evolveTab({
-        window: rendererWindow(),
-        tab,
-        url,
-        replace: false,
-      });
+      const { tab, dispatch } = this.props;
+      dispatch(
+        actions.evolveTab({
+          window: rendererWindow(),
+          tab,
+          url,
+          replace: false,
+        })
+      );
       this.pushWeb({ editingAddress: false });
     } else if (e.key === "Escape") {
       this.pushWeb({ editingAddress: false });
@@ -208,8 +227,10 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   pushWeb(web: Partial<ITabWeb>) {
-    const { tabDataFetched, tab } = this.props;
-    tabDataFetched({ window: rendererWindow(), tab, data: { web } });
+    const { dispatch, tab } = this.props;
+    dispatch(
+      actions.tabDataFetched({ window: rendererWindow(), tab, data: { web } })
+    );
   }
 
   handleClickOutside = () => {
@@ -217,30 +238,14 @@ class BrowserControls extends React.PureComponent<IProps & IDerivedProps> {
   };
 }
 
-interface IProps extends IBrowserControlProps {
+interface Props {
+  tab: string;
+  tabInstance: ITabInstance;
+  dispatch: Dispatch;
   loading: boolean;
   showAddressBar?: boolean;
 }
 
-const actionCreators = actionCreatorsList(
-  "openInExternalBrowser",
-  "tabGoBack",
-  "tabGoForward",
-  "tabStop",
-  "tabReloaded",
-  "evolveTab",
-  "tabDataFetched"
-);
-
-type IDerivedProps = Dispatchers<typeof actionCreators>;
-
 export default withTab(
-  withTabInstance(
-    connect<IProps>(
-      listensToClickOutside(BrowserControls),
-      {
-        actionCreators,
-      }
-    )
-  )
+  withTabInstance(withDispatch(listensToClickOutside(BrowserControls)))
 );
