@@ -18,6 +18,7 @@ import { withProfileId } from "./profile-provider";
 import FiltersContainer from "./filters-container";
 import { FetchCollectionGamesResult } from "common/butlerd/messages";
 import { withTab } from "./meats/tab-provider";
+import { rendererWindow } from "common/util/navigation";
 
 const CollectionDiv = styled.div`
   ${styles.meat()};
@@ -49,6 +50,21 @@ class Collection extends React.PureComponent<IProps> {
           params={{
             profileId,
             collectionId,
+          }}
+          onResult={result => {
+            if (!(result && result.collection)) {
+              return;
+            }
+            const coll = result.collection;
+            this.props.dispatch(
+              actions.tabDataFetched({
+                window: rendererWindow(),
+                tab: this.props.tab,
+                data: {
+                  label: `${coll.title} (${coll.gamesCount})`,
+                },
+              })
+            );
           }}
           loadingHandled
           render={({ result, loading }) => {

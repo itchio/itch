@@ -261,6 +261,10 @@ export class Space {
   }
 
   label(): ILocalizedString {
+    if (this._instance && this._instance.data && this._instance.data.label) {
+      return this._instance.data.label;
+    }
+
     let fallback = this.web().title ||
       this._instance.savedLabel || ["sidebar.loading"];
 
@@ -271,11 +275,6 @@ export class Space {
             return "itch.io";
           case "preferences":
             return ["sidebar.preferences"];
-          case "collections":
-            if (this.firstPathElement()) {
-              return this.collection().title || fallback;
-            }
-            return ["sidebar.collections"];
           case "library":
             return ["sidebar.owned"];
           case "dashboard":

@@ -12,6 +12,7 @@ interface ButlerCallProps<Params, Result> {
   errorsHandled?: boolean;
   loadingHandled?: boolean;
   sequence?: number;
+  onResult?: (res: Result) => void;
 }
 
 interface StaleResult {
@@ -113,6 +114,9 @@ const ButlerCall = <Params, Result>(method: IRequestCreator<Params, Result>) =>
 
     private setResult = (r: Result) => {
       console.log(getRequestName(method), `→ `, r);
+      if (this.props.onResult) {
+        this.props.onResult(r);
+      }
       this.setState({ result: r, loading: false });
     };
 

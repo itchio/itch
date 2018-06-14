@@ -87,6 +87,7 @@ export interface ITabData {
   web?: ITabWeb;
   location?: ITabLocation;
   log?: ITabLog;
+  label?: ILocalizedString;
 }
 
 export interface ITabDataSave {

@@ -23,6 +23,7 @@ import TimeAgo from "./basics/time-ago";
 import { Space } from "common/helpers/space";
 import { withTabInstance } from "./meats/tab-instance-provider";
 import { ITabInstance } from "common/types";
+import { rendererWindow } from "common/util/navigation";
 
 const FetchProfileCollections = ButlerCall(messages.FetchProfileCollections);
 
@@ -62,6 +63,15 @@ class Collections extends React.PureComponent<Props> {
         <FetchProfileCollections
           params={{ profileId, limit: 15, cursor: sp.queryParam("cursor") }}
           sequence={this.props.sequence}
+          onResult={result => {
+            this.props.dispatch(
+              actions.tabDataFetched({
+                window: rendererWindow(),
+                tab: this.props.tab,
+                data: { label: ["sidebar.collections"] },
+              })
+            );
+          }}
           loadingHandled
           render={({ result, loading }) => {
             return (
