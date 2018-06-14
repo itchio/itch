@@ -276,7 +276,7 @@ class BrowserMeat extends React.PureComponent<Props & DerivedProps> {
         actions.tabDataFetched({
           tab,
           window: rendererWindow(),
-          data: { web: { title: ev.title } },
+          data: { label: ev.title },
         })
       );
     });

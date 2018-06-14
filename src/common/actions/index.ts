@@ -796,7 +796,9 @@ export const actions = wireActions({
 
   updatePreferences: action<IPreferencesState>(),
   preferencesLoaded: action<IPreferencesState>(),
-  clearBrowsingDataRequest: action<{}>(),
+  clearBrowsingDataRequest: action<{
+    window: string;
+  }>(),
   clearBrowsingData: action<{
     /** Whether to wipe cached images & files */
     cache: boolean;

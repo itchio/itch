@@ -144,7 +144,7 @@ export class Fetcher {
     }
 
     const payload = {
-      window: "root",
+      window: this.window,
       tab: this.tab,
       data,
       shallow,

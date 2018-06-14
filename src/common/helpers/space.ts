@@ -265,8 +265,7 @@ export class Space {
       return this._instance.data.label;
     }
 
-    let fallback = this.web().title ||
-      this._instance.savedLabel || ["sidebar.loading"];
+    let fallback = this._instance.savedLabel || ["sidebar.loading"];
 
     switch (this._protocol) {
       case "itch:": {

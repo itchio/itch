@@ -219,6 +219,107 @@ func (r *runner) waitForVisibleWithTimeout(selector string, timeout time.Duratio
 	return nil
 }
 
+func (r *runner) mustGetSingleWindowHandle() string {
+	handles := r.mustListWindows()
+	if len(handles) != 1 {
+		must(errors.Errorf("Expected exactly 1 windows but got %d: %s",
+			len(handles),
+			strings.Join(handles, ", "),
+		))
+	}
+	return handles[0]
+}
+
+func (r *runner) mustWaitForWindowQuantity(quantity int) {
+	actualQuantity := 0
+
+	success := r.driver.Wait(func(d gs.WebDriver) bool {
+		res, err := d.WindowHandles()
+		if err != nil {
+			return false
+		}
+
+		actualQuantity = len(res.Handles)
+		return actualQuantity == quantity
+	}, TIMEOUT, SLEEP)
+
+	if !success {
+		must(errors.Errorf("Expected %d windows to exist, but had %d", quantity, actualQuantity))
+	}
+}
+
+func (r *runner) mustGetCurrentWindow() string {
+	res, err := r.driver.WindowHandle()
+	must(err)
+
+	return res.Handle
+}
+
+func (r *runner) mustListWindows() []string {
+	res, err := r.driver.WindowHandles()
+	must(err)
+
+	r.logf("Listed windows: %s", strings.Join(res.Handles, ", "))
+	return res.Handles
+}
+
+func (r *runner) mustSwitchToOtherWindow(handle string) {
+	handles := r.mustListWindows()
+	for _, h := range handles {
+		if h != handle {
+			r.mustSwitchToWindow(h)
+			return
+		}
+	}
+	must(errors.Errorf("Tried to switch to window other than (%s) but only found: %s",
+		strings.Join(handles, ", "),
+	))
+}
+
+func (r *runner) mustCloseCurrentWindowAndSwitchTo(handle string) {
+	_, err := r.driver.CloseWindow()
+	must(err)
+
+	r.mustSwitchToWindow(handle)
+}
+
+func (r *runner) mustCloseAllOtherWindows() {
+	handle := r.mustGetCurrentWindow()
+
+	handles := r.mustListWindows()
+	for _, h := range handles {
+		if h != handle {
+			r.mustSwitchToWindow(h)
+			r.mustCloseCurrentWindowAndSwitchTo(handle)
+		}
+	}
+}
+
+func (r *runner) mustSwitchToWindow(handle string) {
+	r.logf("Switching to window (%s)", handle)
+	_, err := r.driver.SwitchToWindow(handle)
+	must(err)
+
+	var currentWindowHandle string
+
+	success := r.driver.Wait(func(w gs.WebDriver) bool {
+		res, err := w.WindowHandle()
+		if err != nil {
+			return false
+		}
+
+		currentWindowHandle = res.Handle
+		if res.Handle == handle {
+			return true
+		}
+		return false
+	}, TIMEOUT, SLEEP)
+
+	if !success {
+		must(errors.Errorf("Tried to switch to window (%s), but we're still on window (%s)", handle, currentWindowHandle))
+	}
+}
+
 var badFileCharRe = regexp.MustCompile("[^A-Za-z0-9-.]")
 
 func (r *runner) takeScreenshot(name string) error {

@@ -12,6 +12,7 @@ import {
 import { createStructuredSelector } from "reselect";
 import { IRootState, ISystemState } from "common/types";
 import BrothComponents from "./broth-components";
+import { rendererWindow } from "common/util/navigation";
 
 class AdvancedSettings extends React.PureComponent<IProps & IDerivedProps> {
   render() {
@@ -63,7 +64,9 @@ class AdvancedSettings extends React.PureComponent<IProps & IDerivedProps> {
               className="link"
               onClick={e => {
                 e.preventDefault();
-                clearBrowsingDataRequest({});
+                clearBrowsingDataRequest({
+                  window: rendererWindow(),
+                });
               }}
             >
               {T(["preferences.advanced.clear_browsing_data"])}

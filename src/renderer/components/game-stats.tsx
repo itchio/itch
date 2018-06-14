@@ -87,7 +87,7 @@ class GameStats extends React.PureComponent<IProps> {
       return (
         <GameStatsDiv>
           <div className="total-playtime">
-            <div className="total-playtime--line">
+            <div className="total-playtime--line game-summary">
               {game.title}
               {" — "}
               {T([`usage_stats.description.${classification}`])}

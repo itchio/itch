@@ -7,10 +7,11 @@ import { modalWidgets } from "renderer/components/modal-widgets";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.clearBrowsingDataRequest, async (store, action) => {
+    const { window } = action.payload;
     const response = await promisedModal(
       store,
       modalWidgets.clearBrowsingData.make({
-        window: "root",
+        window,
         title: ["preferences.advanced.clear_browsing_data"],
         message: "",
         buttons: [

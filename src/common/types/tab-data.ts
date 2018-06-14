@@ -32,7 +32,6 @@ export interface ITabWeb {
   /** numeric identifier of the electron web contents */
   webContentsId?: number;
 
-  title?: string;
   favicon?: string;
   editingAddress?: boolean;
   loading?: boolean;
