@@ -216,8 +216,6 @@ export class Space {
     switch (this._protocol) {
       case "itch:": {
         switch (this._hostname) {
-          case "games":
-            return true;
           case "featured":
             return true;
           case "new-tab":

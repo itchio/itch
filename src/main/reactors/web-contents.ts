@@ -5,7 +5,6 @@ import nodeURL from "url";
 import { webContents, BrowserWindow } from "electron";
 
 import rootLogger from "common/logger";
-import { request } from "../net/request";
 import { IStore, ITabWeb } from "common/types/index";
 const logger = rootLogger.child({ name: "web-contents" });
 
@@ -125,7 +124,6 @@ export default function(watcher: Watcher) {
           window,
           tab,
           url: wc.getURL(),
-          iframe: false,
         })
       );
     });
@@ -170,7 +168,7 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.analyzePage, async (store, action) => {
-    const { window, tab, url, iframe } = action.payload;
+    const { window, tab, url } = action.payload;
     await withWebContents(store, window, tab, async wc => {
       const onNewPath = (url: string, resource: string) => {
         if (resource) {
@@ -189,23 +187,9 @@ export default function(watcher: Watcher) {
         }
       };
 
-      if (iframe) {
-        const parsed = nodeURL.parse(url);
-        const { host, protocol, pathname } = parsed;
-        const dataURL = nodeURL.format({
-          host,
-          protocol,
-          pathname: `${pathname}/data.json`,
-        });
-        const data = await request("get", dataURL, {}, { format: "json" });
-        if (data && data.body && data.body.id) {
-          onNewPath(wc.getURL(), `games/${data.body.id}`);
-        }
-      } else {
-        const code = `(document.querySelector('meta[name="itch:path"]') || {}).content`;
-        const newPath = await wc.executeJavaScript(code);
-        onNewPath(url, newPath);
-      }
+      const code = `(document.querySelector('meta[name="itch:path"]') || {}).content`;
+      const newPath = await wc.executeJavaScript(code);
+      onNewPath(url, newPath);
     });
   });
 

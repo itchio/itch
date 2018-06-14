@@ -3,6 +3,7 @@ import { MeatProps } from "renderer/components/meats/types";
 
 import Library from "renderer/components/library";
 import Collections from "renderer/components/collections";
+import GamePage from "renderer/components/game-page";
 import Dashboard from "renderer/components/dashboard";
 import Preferences from "renderer/components/preferences";
 import Downloads from "renderer/components/downloads";
@@ -219,6 +220,8 @@ class Meat extends React.PureComponent<Props, State> {
     switch (sp.internalPage()) {
       case "library":
         return Library;
+      case "games":
+        return GamePage;
       case "collections":
         if (sp.firstPathElement()) {
           return Collection;

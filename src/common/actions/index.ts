@@ -460,9 +460,6 @@ export const actions = wireActions({
 
     /** The url we're supposed to analyze */
     url: string;
-
-    /** Are we analyzing an iframe or the main page? */
-    iframe: boolean;
   }>(),
   tabLoading: action<{
     /** id of tab whose loading status just chagned */
