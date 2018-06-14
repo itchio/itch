@@ -172,8 +172,9 @@ func doMain() error {
 	}()
 
 	r.cleanup = func() {
-		r.logf("closing chrome-driver window...")
-		r.driver.CloseWindow()
+		r.logf("deleting session")
+		r.driver.DeleteSession()
+
 		r.logf("cancelling chrome-driver context...")
 		chromeDriverCancel()
 
@@ -256,9 +257,6 @@ func doMain() error {
 		r.logf("Could not create a webdriver session :( We tried..")
 		gocleanup.Exit(1)
 	}
-
-	// Delete the session once this function is completed.
-	defer driver.DeleteSession()
 
 	r.logf("Waiting for setup to be done...")
 	must(setupWatch.WaitWithTimeout(60 * time.Second))
