@@ -36,11 +36,11 @@ func downloadChromeDriver(r *runner) error {
 
 	currentVersion, err := getChromeDriverVersion()
 	if err == nil {
-		if currentVersion == electronChromeDriverVersionString {
+		if currentVersion == chromeDriverVersionString {
 			r.logf("Good version found, keeping it: %s", currentVersion)
 			return nil
 		} else {
-			r.logf("Found (%s) but expected (%s)", currentVersion, electronChromeDriverVersion)
+			r.logf("Found (%s) but expected (%s)", currentVersion, chromeDriverVersion)
 		}
 	} else {
 		r.logf("No chrome driver version found")
@@ -120,28 +120,24 @@ func downloadChromeDriver(r *runner) error {
 	return nil
 }
 
-// not all electron releases have an associated chromedriver
-// build. oh joy!
-const electronChromeDriverVersion = "v2.0.0-beta.7"
-const electronChromeDriverVersionString = "ChromeDriver 2.30 (7accc8730b0f99b5e7c0702ea89d1fa7c17bfe33)"
+// chromedriver 2.34 supports Chrome 61-63
+// electron 2.0.2 ships with Chrome 61
+const chromeDriverVersion = "2.34"
+const chromeDriverVersionString = "ChromeDriver 2.34.522913 (36222509aa6e819815938cbf2709b4849735537c)"
 
 func chromeDriverURL(r *runner) string {
-	tag := electronChromeDriverVersion
+	tag := chromeDriverVersion
 
-	os := ""
-	arch := ""
+	suffix := ""
 	switch runtime.GOOS {
 	case "windows":
-		os = "win32"
-		arch = "ia32"
-	case "darwin":
-		os = "darwin"
-		arch = "x64"
+		suffix = "win32"
 	case "linux":
-		os = "linux"
-		arch = "x64"
+		suffix = "linux64"
+	case "darwin":
+		suffix = "mac64"
 	}
 
-	dl := "https://github.com/electron/electron/releases/download"
-	return fmt.Sprintf("%s/%s/chromedriver-%s-%s-%s.zip", dl, tag, tag, os, arch)
+	dl := "https://chromedriver.storage.googleapis.com"
+	return fmt.Sprintf("%s/%s/chromedriver_%s.zip", dl, tag, suffix)
 }

@@ -70,6 +70,8 @@ func (lw *logWatch) WaitWithTimeout(timeout time.Duration) error {
 }
 
 func doMain() error {
+	defer gocleanup.Cleanup()
+
 	err := SetupProcessGroup()
 	if err != nil {
 		return err
@@ -192,7 +194,6 @@ func doMain() error {
 		}
 	}
 
-	defer r.cleanup()
 	gocleanup.Register(r.cleanup)
 
 	// Create capabilities, driver etc.
@@ -316,6 +317,13 @@ func must(err error) {
 				screenErr := r.takeScreenshot(err.Error())
 				if screenErr != nil {
 					r.errf("Could not take failure screenshot: %s", screenErr.Error())
+				}
+			}
+
+			if os.Getenv("HANG_AFTER_FAIL") == "1" {
+				r.logf("HANG_AFTER_FAIL is set, sleeping indefinitely...")
+				for {
+					time.Sleep(1 * time.Second)
 				}
 			}
 

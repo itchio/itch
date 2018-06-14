@@ -34,8 +34,12 @@ func installFlow(r *runner) {
 	r.logf("making sure it's closed")
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
 
-	r.logf("switching to downloads tab")
-	must(r.click("#sidebar section[data-url='itch://downloads']"))
+	r.logf("switching to downloads window")
+	windowHandlesRes, err := r.driver.WindowHandles()
+	must(err)
+	r.logf("found %d windows", len(windowHandlesRes.Handles))
+
+	// must(r.click("#sidebar section[data-url='itch://downloads']"))
 
 	r.logf("making sure our download shows up as finished")
 	var downloadRowSelector = fmt.Sprintf(".meat-tab.visible .download-row-item.finished[data-game-id='%d'] .control--title", testGameID)
