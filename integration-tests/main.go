@@ -264,10 +264,7 @@ func doMain() error {
 	must(setupWatch.WaitWithTimeout(60 * time.Second))
 	r.testStart = time.Now()
 
-	prepareFlow(r)
-	navigationFlow(r)
-	installFlow(r)
-	loginFlow(r)
+	allFlows(r)
 
 	r.logf("Succeeded in %s", time.Since(r.testStart))
 	r.logf("Total time %s", time.Since(bootTime))
