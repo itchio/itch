@@ -6,10 +6,7 @@ import { actions } from "common/actions";
 
 import { Fetcher, FetchReason } from "../fetchers/fetcher";
 import { IStore } from "common/types";
-import DashboardFetcher from "../fetchers/dashboard-fetcher";
-import LibraryFetcher from "../fetchers/library-fetcher";
 
-import LocationFetcher from "../fetchers/location-fetcher";
 import AppLogFetcher from "../fetchers/applog-fetcher";
 
 import { Context } from "../context";
@@ -118,12 +115,6 @@ function getFetcherClass(
   const sp = Space.fromStore(store, window, tab);
 
   switch (sp.internalPage()) {
-    case "dashboard":
-      return DashboardFetcher;
-    case "library":
-      return LibraryFetcher;
-    case "locations":
-      return LocationFetcher;
     case "applog":
       return AppLogFetcher;
   }

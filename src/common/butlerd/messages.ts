@@ -365,10 +365,6 @@ export interface ProfileGame {
   /** undocumented */
   game: Game;
   /** undocumented */
-  user: User;
-  /** Position on profile, from 0 to N */
-  position: number;
-  /** undocumented */
   viewsCount: number;
   /** undocumented */
   downloadsCount: number;
@@ -382,7 +378,12 @@ export interface ProfileGame {
  * Result for Fetch.ProfileGames
  */
 export interface FetchProfileGamesResult {
-  // no fields
+  /** Profile games */
+  items: ProfileGame[];
+  /** Used to fetch the next page */
+  nextCursor?: string;
+  /** If true, re-issue request with "Fresh" */
+  stale?: boolean;
 }
 
 /**
@@ -397,7 +398,12 @@ export const FetchProfileGames = createRequest<
  * Result for Fetch.ProfileOwnedKeys
  */
 export interface FetchProfileOwnedKeysResult {
-  // no fields
+  /** Download keys fetched for profile */
+  items: DownloadKey[];
+  /** Used to fetch the next page */
+  nextCursor?: string;
+  /** If true, re-issue request with "Fresh" */
+  stale?: boolean;
 }
 
 /**
@@ -2275,28 +2281,15 @@ export interface FetchProfileCollectionsParams {
  * Params for Fetch.ProfileGames
  */
 export interface FetchProfileGamesParams {
-  /** Profile to use to fetch game */
+  /** Profile for which to fetch games */
   profileId: number;
+  /** Maximum number of items to return at a time. */
+  limit?: number;
+  /** Used for pagination, if specified */
+  cursor?: string;
+  /** If set, will force fresh data */
+  fresh?: boolean;
 }
-
-/**
- * Payload for Fetch.ProfileGames.Yield
- */
-export interface FetchProfileGamesYieldNotification {
-  /** undocumented */
-  offset: number;
-  /** undocumented */
-  total: number;
-  /** undocumented */
-  items: ProfileGame[];
-}
-
-/**
- * undocumented
- */
-export const FetchProfileGamesYield = createNotification<
-  FetchProfileGamesYieldNotification
->("Fetch.ProfileGames.Yield");
 
 /**
  * Params for Fetch.ProfileOwnedKeys
@@ -2304,26 +2297,13 @@ export const FetchProfileGamesYield = createNotification<
 export interface FetchProfileOwnedKeysParams {
   /** Profile to use to fetch game */
   profileId: number;
+  /** Maximum number of collections to return at a time. */
+  limit?: number;
+  /** Used for pagination, if specified */
+  cursor?: string;
+  /** If set, will force fresh data */
+  fresh?: boolean;
 }
-
-/**
- * Payload for Fetch.ProfileOwnedKeys.Yield
- */
-export interface FetchProfileOwnedKeysYieldNotification {
-  /** undocumented */
-  offset: number;
-  /** undocumented */
-  total: number;
-  /** undocumented */
-  items: DownloadKey[];
-}
-
-/**
- * undocumented
- */
-export const FetchProfileOwnedKeysYield = createNotification<
-  FetchProfileOwnedKeysYieldNotification
->("Fetch.ProfileOwnedKeys.Yield");
 
 /**
  * Params for Fetch.Commons

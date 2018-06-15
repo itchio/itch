@@ -23,11 +23,11 @@ import { rendererWindow } from "common/util/navigation";
 const CollectionDiv = styled.div`
   ${styles.meat()};
 
-  .collection-games-list {
+  .list {
     overflow-y: auto;
   }
 
-  .collection-game {
+  .item {
     margin: 8px;
     line-height: 1.6;
 
@@ -86,9 +86,7 @@ class Collection extends React.PureComponent<IProps> {
           params={{ profileId, collectionId, cursor: sp.queryParam("cursor") }}
           render={({ result }) => {
             return (
-              <div className="collection-games-list">
-                {this.renderCollectionGames(result)}
-              </div>
+              <div className="list">{this.renderCollectionGames(result)}</div>
             );
           }}
         />
@@ -116,7 +114,7 @@ class Collection extends React.PureComponent<IProps> {
           ? null
           : items.map(cg => {
               return (
-                <div className="collection-game" key={cg.game.id}>
+                <div className="item" key={cg.game.id}>
                   <a href={`itch://games/${cg.game.id}`}>
                     <h3>{cg.game.title}</h3>
                   </a>
