@@ -16,7 +16,7 @@ import { IRootState, IMenuTemplate } from "common/types";
 import { actions } from "common/actions/index";
 import Button from "../basics/button";
 import watching, { Watcher } from "../watching";
-import { rendererWindow } from "common/util/navigation";
+import { rendererWindow, urlForInstallLocation } from "common/util/navigation";
 const LocationTable = styled.table`
   width: 100%;
   font-size: 14px;
@@ -216,7 +216,7 @@ class InstallLocationSettings extends React.Component<
                     <div
                       className="progress-inner"
                       style={{
-                        right: `${freeSize / totalSize * 100}%`,
+                        right: `${(freeSize / totalSize) * 100}%`,
                       }}
                     />
                     <span className="progress-label">
@@ -270,9 +270,9 @@ class InstallLocationSettings extends React.Component<
     let template: IMenuTemplate = [];
     template.push({
       localizedLabel: ["preferences.install_location.navigate"],
-      action: actions.navigateToInstallLocation({
+      action: actions.navigate({
         window: "root",
-        installLocation,
+        url: urlForInstallLocation(installLocation.id),
       }),
       id: "context--install-location-navigate",
     });
@@ -320,9 +320,12 @@ interface IState {
   installLocations: InstallLocationSummary[];
 }
 
-export default connect<IProps>(InstallLocationSettings, {
-  actionCreators,
-  state: (rs: IRootState) => ({
-    defaultInstallLocation: rs.preferences.defaultInstallLocation,
-  }),
-});
+export default connect<IProps>(
+  InstallLocationSettings,
+  {
+    actionCreators,
+    state: (rs: IRootState) => ({
+      defaultInstallLocation: rs.preferences.defaultInstallLocation,
+    }),
+  }
+);

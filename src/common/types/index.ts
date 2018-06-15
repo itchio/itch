@@ -5,9 +5,6 @@ export * from "./net";
 export * from "./tab-data";
 import * as TabDataTypes from "./tab-data";
 
-export * from "./sort-types";
-import { SortKey, SortDirection } from "./sort-types";
-
 import { modalWidgets } from "renderer/components/modal-widgets/index";
 import { ITabData } from "./tab-data";
 import {
@@ -52,11 +49,6 @@ export type ClassificationAction = "launch" | "open";
 
 export interface IUserSet {
   [id: string]: User;
-}
-
-export interface ITabParams {
-  sortBy?: SortKey;
-  sortDirection?: SortDirection;
 }
 
 export interface IGameSet {

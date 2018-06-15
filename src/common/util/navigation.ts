@@ -4,20 +4,12 @@ import querystring from "querystring";
 import {
   ITabInstance,
   ITabPage,
-  ITabData,
-  INavigatePayload,
   IRootState,
   IWindowState,
   ExtendedWindow,
   ItchWindow,
   INavigationState,
 } from "common/types";
-import {
-  Game,
-  User,
-  Collection,
-  InstallLocationSummary,
-} from "common/butlerd/messages";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {
@@ -64,68 +56,6 @@ export function currentPage(tabInstance: ITabInstance): ITabPage | null {
   return tabInstance.history[tabInstance.currentIndex];
 }
 
-export function gameEvolvePayload(game: Game): INavigatePayload {
-  return {
-    window: "root",
-    url: game.url ? game.url : `itch://games/${game.id}`,
-    resource: `games/${game.id}`,
-    data: gameToTabData(game),
-  };
-}
-
-export function gameToTabData(game: Game): ITabData {
-  return {
-    games: {
-      set: {
-        [game.id]: game,
-      },
-      ids: [game.id],
-    },
-  };
-}
-
-export function collectionEvolvePayload(
-  collection: Collection
-): INavigatePayload {
-  return {
-    window: "root",
-    url: `itch://collections/${collection.id}`,
-    data: collectionToTabData(collection),
-  };
-}
-
-export function userToTabData(user: User): ITabData {
-  return {
-    users: {
-      set: {
-        [user.id]: user,
-      },
-    },
-  };
-}
-
-export function installLocationToTabData(
-  installLocation: InstallLocationSummary
-): ITabData {
-  return {
-    location: {
-      path: installLocation.path,
-      size: installLocation.sizeInfo!.installedSize,
-    },
-  };
-}
-
-export function collectionToTabData(collection: Collection): ITabData {
-  return {
-    collections: {
-      set: {
-        [collection.id]: collection,
-      },
-      ids: [collection.id],
-    },
-  };
-}
-
 export function itchWindow(): ItchWindow {
   if (process.type !== "renderer") {
     throw new Error("itchWindow() can only be called from the renderer");
@@ -143,4 +73,22 @@ export function rendererWindowState(rs: IRootState): IWindowState {
 
 export function rendererNavigation(rs: IRootState): INavigationState {
   return rendererWindowState(rs).navigation;
+}
+
+// build URLs
+
+export function urlForGame(gameId: number) {
+  return `itch://games/${gameId}`;
+}
+
+export function urlForUser(userId: number) {
+  return `itch://users/${userId}`;
+}
+
+export function urlForCollection(collectionId: number) {
+  return `itch://collections/${collectionId}`;
+}
+
+export function urlForInstallLocation(installLocationId: string) {
+  return `itch://locations/${installLocationId}`;
 }

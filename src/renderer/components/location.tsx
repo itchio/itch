@@ -23,7 +23,7 @@ import {
 import { fileSize } from "common/format/filesize";
 import { isEmpty } from "underscore";
 import { withTab } from "./meats/tab-provider";
-import { rendererWindow } from "common/util/navigation";
+import { rendererWindow, urlForGame } from "common/util/navigation";
 
 const LocationContainer = styled.div`
   ${styles.meat()};
@@ -137,7 +137,7 @@ class Location extends React.PureComponent<Props> {
           : caves.map(cave => {
               return (
                 <div className="item" key={cave.game.id}>
-                  <a href={`itch://games/${cave.game.id}`}>
+                  <a href={urlForGame(cave.game.id)}>
                     <h3>{cave.game.title}</h3>
                   </a>
                   <p>{cave.game.shortText}</p>

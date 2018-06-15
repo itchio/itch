@@ -35,7 +35,7 @@ import LoadingCircle from "../basics/loading-circle";
 import { lighten } from "polished";
 import { downloadProgress } from "common/format/download-progress";
 import { formatError, getDownloadError } from "common/format/errors";
-import { rendererWindow } from "common/util/navigation";
+import { rendererWindow, urlForGame } from "common/util/navigation";
 import withHover from "../basics/hover-hoc";
 
 const DownloadRowDiv = styled.div`
@@ -184,7 +184,7 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   onNavigate = (ev: React.MouseEvent<any>) => {
-    const { item, navigateToGame } = this.props;
+    const { item, navigate } = this.props;
     if (ev.shiftKey && ev.ctrlKey) {
       const { openModal } = this.props;
       openModal(
@@ -202,7 +202,11 @@ class DownloadRow extends React.PureComponent<IProps & IDerivedProps> {
 
     const background = doesEventMeanBackground(ev);
     const { game } = item;
-    navigateToGame({ window: rendererWindow(), game, background });
+    navigate({
+      window: rendererWindow(),
+      url: urlForGame(game.id),
+      background,
+    });
   };
 
   render() {
@@ -479,7 +483,7 @@ interface IProps extends HoverProps {
 }
 
 const actionCreators = actionCreatorsList(
-  "navigateToGame",
+  "navigate",
   "prioritizeDownload",
   "showDownloadError",
   "discardDownload",

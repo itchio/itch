@@ -1,31 +1,7 @@
-import { IGameSet, ICollectionSet, IUserSet, ILocalizedString } from "./index";
+import { ILocalizedString } from "./index";
 
 export interface ITabInstances {
   [key: string]: ITabInstance;
-}
-
-interface ITabUsers {
-  /** users in relation to this tab */
-  set: IUserSet;
-}
-
-export interface ITabGames {
-  /** games in relation to this tab (single game, games in a collection) */
-  set: IGameSet;
-  ids: number[];
-  allIds?: number[];
-  totalCount?: number;
-}
-
-export interface ITabCollections {
-  /** games in relation to this tab (single game, games in a collection) */
-  set: ICollectionSet;
-  ids: number[];
-}
-
-export interface ITabLocation {
-  size: number;
-  path: string;
 }
 
 export interface ITabWeb {
@@ -35,10 +11,6 @@ export interface ITabWeb {
   favicon?: string;
   editingAddress?: boolean;
   loading?: boolean;
-}
-
-export interface ITabLog {
-  log: string;
 }
 
 export interface ITabPage {
@@ -80,12 +52,7 @@ export interface ITabInstance {
 }
 
 export interface ITabData {
-  users?: ITabUsers;
-  games?: ITabGames;
-  collections?: ITabCollections;
   web?: ITabWeb;
-  location?: ITabLocation;
-  log?: ITabLog;
   label?: ILocalizedString;
 }
 

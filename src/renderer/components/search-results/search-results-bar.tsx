@@ -143,12 +143,7 @@ class SearchResultBar extends React.PureComponent<
 
 interface IProps {}
 
-const actionCreators = actionCreatorsList(
-  "closeSearch",
-  "navigate",
-  "navigateToGame",
-  "navigateToUser"
-);
+const actionCreators = actionCreatorsList("closeSearch", "navigate");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
   open: boolean;
@@ -163,14 +158,17 @@ interface IState {
   chosen: number;
 }
 
-export default connect<IProps>(SearchResultBar, {
-  state: createStructuredSelector({
-    open: (rs: IRootState) => rs.profile.search.open,
-    highlight: (rs: IRootState) => rs.profile.search.highlight,
-    query: (rs: IRootState) => rs.profile.search.query,
-    results: (rs: IRootState) => rs.profile.search.results,
-    example: (rs: IRootState) => rs.profile.search.example,
-    loading: (rs: IRootState) => rs.profile.search.loading,
-  }),
-  actionCreators,
-});
+export default connect<IProps>(
+  SearchResultBar,
+  {
+    state: createStructuredSelector({
+      open: (rs: IRootState) => rs.profile.search.open,
+      highlight: (rs: IRootState) => rs.profile.search.highlight,
+      query: (rs: IRootState) => rs.profile.search.query,
+      results: (rs: IRootState) => rs.profile.search.results,
+      example: (rs: IRootState) => rs.profile.search.example,
+      loading: (rs: IRootState) => rs.profile.search.loading,
+    }),
+    actionCreators,
+  }
+);

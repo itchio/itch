@@ -12,8 +12,6 @@ import { shell } from "electron";
 import { actions } from "common/actions";
 import { IStore } from "common/types";
 
-import { filter } from "underscore";
-import { call, messages } from "common/butlerd";
 import { reportIssue } from "main/crash-reporter";
 import { isItchioURL } from "common/util/url";
 
@@ -85,48 +83,5 @@ export default function(watcher: Watcher) {
 
 function handleItchioUrl(store: IStore, uri: string) {
   logger.info(`Processing itchio uri (${uri})`);
-
-  try {
-    const url = urlParser.parse(uri);
-
-    let tokens = url.pathname.split("/");
-    tokens = filter(tokens, x => !!x);
-    tokens = [url.hostname, ...tokens];
-    logger.info(`tokens = ${tokens.join(" ::: ")}`);
-
-    switch (tokens[0]) {
-      case "games": {
-        if (!tokens[1]) {
-          logger.warn(`missing gameId for ${url}, ignoring`);
-          return;
-        }
-        const gameId = parseInt(tokens[1], 10);
-
-        (async () => {
-          try {
-            let navigated = false;
-            const { game } = await call(messages.FetchGame, { gameId });
-            if (navigated) {
-              return;
-            }
-            navigated = true;
-            store.dispatch(actions.navigateToGame({ game, window: "root" }));
-          } catch (e) {
-            store.dispatch(
-              actions.statusMessage({ message: `Game ${gameId} not found` })
-            );
-          }
-        })().catch(e => {
-          /* ignore */
-        });
-        break;
-      }
-      default:
-        logger.warn(`no host for ${uri}, ignoring`);
-        return;
-    }
-  } catch (e) {
-    logger.warn(`while processing ${uri}: ${e.stack}`);
-    return;
-  }
+  store.dispatch(actions.navigate({ window: "root", url: uri }));
 }

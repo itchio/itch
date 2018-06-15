@@ -158,7 +158,7 @@ class Item extends React.PureComponent<IProps> {
       url,
       resource,
     } = this.props;
-    const { onClose, onContextMenu } = this.props;
+    const { onClose } = this.props;
 
     const progressColor = "white";
     const progressStyle = {
@@ -173,7 +173,6 @@ class Item extends React.PureComponent<IProps> {
         data-rh={sublabel ? JSON.stringify(sublabel) : null}
         onClick={this.onClick}
         onMouseUp={this.onMouseUp}
-        onContextMenu={onContextMenu}
         data-id={tab}
         data-url={url}
         data-resource={resource}
@@ -221,7 +220,6 @@ interface IProps {
   loading: boolean;
 
   onClick?: () => void;
-  onContextMenu: (ev: React.MouseEvent<any>) => void;
   onClose?: () => void;
   onExplore?: (tabId: string) => void;
   tabInstance?: ITabInstance;

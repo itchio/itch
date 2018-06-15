@@ -10,7 +10,7 @@ import styled from "../styles";
 import { connect, actionCreatorsList, Dispatchers } from "../connect";
 import { T } from "renderer/t";
 import { doesEventMeanBackground } from "../when-click-navigates";
-import { rendererWindow } from "common/util/navigation";
+import { rendererWindow, urlForGame } from "common/util/navigation";
 
 const GameUpdateRowDiv = styled.div`
   flex-shrink: 0;
@@ -102,12 +102,12 @@ class GameUpdateRow extends React.PureComponent<IProps & IDerivedProps> {
   };
 
   onNavigate = (e: React.MouseEvent<any>) => {
-    const { update, navigateToGame } = this.props;
+    const { update, navigate } = this.props;
     const { game } = update;
 
-    navigateToGame({
+    navigate({
       window: rendererWindow(),
-      game,
+      url: urlForGame(game.id),
       background: doesEventMeanBackground(e),
     });
   };
@@ -117,7 +117,7 @@ interface IProps {
   update: GameUpdate;
 }
 
-const actionCreators = actionCreatorsList("navigateToGame", "queueGameUpdate");
+const actionCreators = actionCreatorsList("navigate", "queueGameUpdate");
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {};
 

@@ -10,7 +10,7 @@ import { actions } from "common/actions";
 import { connect, Dispatchers, actionCreatorsList } from "../connect";
 import { Game } from "common/butlerd/messages";
 import { whenClickNavigates } from "../when-click-navigates";
-import { rendererWindow } from "common/util/navigation";
+import { rendererWindow, urlForGame } from "common/util/navigation";
 
 const GameSearchResultDiv = styled.div`
   display: flex;
@@ -144,8 +144,12 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
         ev.preventDefault();
       }
 
-      const { game, navigateToGame } = this.props;
-      navigateToGame({ window: rendererWindow(), game, background });
+      const { game, navigate } = this.props;
+      navigate({
+        window: rendererWindow(),
+        url: urlForGame(game.id),
+        background,
+      });
     });
   };
 
@@ -158,7 +162,10 @@ class GameSearchResult extends GenericSearchResult<IProps & IDerivedProps> {
 
   getNavigateAction() {
     const { game } = this.props;
-    return actions.navigateToGame({ window: rendererWindow(), game });
+    return actions.navigate({
+      window: rendererWindow(),
+      url: urlForGame(game.id),
+    });
   }
 }
 
@@ -169,10 +176,7 @@ interface IProps {
   index: number;
 }
 
-const actionCreators = actionCreatorsList(
-  "searchHighlightOffset",
-  "navigateToGame"
-);
+const actionCreators = actionCreatorsList("searchHighlightOffset", "navigate");
 
 type IDerivedProps = Dispatchers<typeof actionCreators>;
 

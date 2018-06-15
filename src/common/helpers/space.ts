@@ -4,18 +4,13 @@ import {
   IRootState,
   ITabPage,
   ITabData,
-  ITabLog,
-  ITabCollections,
   ITabInstance,
   ITabWeb,
-  ITabLocation,
-  ITabGames,
 } from "../types/index";
 
 import nodeURL, { format, URLSearchParams } from "url";
 import querystring from "querystring";
 
-import { Game, Collection, User } from "common/butlerd/messages";
 import { currentPage } from "../util/navigation";
 
 // Empty Object
@@ -39,7 +34,6 @@ export class Space {
   private _pathname: string;
   private _pathElements: string[];
   private _query: querystring.ParsedUrlQuery;
-  private _querylessURL: string;
 
   constructor(instanceIn: ITabInstance) {
     let instance = instanceIn || eo;
@@ -68,11 +62,6 @@ export class Space {
         this._query = querystring.parse(parsed.query);
         if (parsed.pathname) {
           this._pathElements = parsed.pathname.replace(/^\//, "").split("/");
-        }
-
-        {
-          const { query, search, href, ...rest } = parsed;
-          this._querylessURL = nodeURL.format(rest);
         }
       } catch (e) {
         // TODO: figure this out
@@ -136,39 +125,8 @@ export class Space {
     return this.suffix;
   }
 
-  game(): Game {
-    const gameSet = this.games().set || eo;
-    return gameSet[this.numericId()] || eo;
-  }
-
-  games(): ITabGames {
-    return this._data.games || eo;
-  }
-
-  collections(): ITabCollections {
-    return this._data.collections || eo;
-  }
-
-  collection(): Collection {
-    return (
-      ((this._data.collections || eo).set || eo)[this.firstPathNumber()] || eo
-    );
-  }
-
-  user(): User {
-    return ((this._data.users || eo).set || eo)[this.numericId()] || eo;
-  }
-
   web(): ITabWeb {
     return this._data.web || eo;
-  }
-
-  log(): ITabLog {
-    return this._data.log || eo;
-  }
-
-  location(): ITabLocation {
-    return this._data.location || eo;
   }
 
   icon(): string {
@@ -196,20 +154,6 @@ export class Space {
     }
 
     return fallbackIcon;
-  }
-
-  image(): string {
-    const g = this.game();
-    let gameCover = g.stillCoverUrl || g.coverUrl;
-    if (gameCover) {
-      return gameCover;
-    }
-
-    if (this.internalPage()) {
-      // only icons
-      return null;
-    }
-    return this.web().favicon;
   }
 
   isBrowser(): boolean {
@@ -251,49 +195,6 @@ export class Space {
     }
 
     let fallback = this._instance.savedLabel || ["sidebar.loading"];
-
-    switch (this._protocol) {
-      case "itch:": {
-        switch (this._hostname) {
-          case "featured":
-            return "itch.io";
-          case "preferences":
-            return ["sidebar.preferences"];
-          case "library":
-            return ["sidebar.owned"];
-          case "dashboard":
-            return ["sidebar.dashboard"];
-          case "downloads":
-            return ["sidebar.downloads"];
-          case "preferences":
-            return ["sidebar.preferences"];
-          case "new-tab":
-            return ["sidebar.new_tab"];
-          case "locations":
-            return this.location().path || fallback;
-          case "applog":
-            return ["sidebar.applog"];
-          default:
-            return this._querylessURL || "Error";
-        }
-      }
-
-      default: {
-        switch (this.prefix) {
-          case "games": {
-            return this.game().title || fallback;
-          }
-          case "users": {
-            const u = this.user();
-            return u.displayName || u.username || fallback;
-          }
-          case "locations": {
-            return this.location().path || fallback;
-          }
-        }
-      }
-    }
-
     return fallback;
   }
 

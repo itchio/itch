@@ -12,6 +12,7 @@ import { promisedModal } from "./modals";
 import { t } from "common/format/t";
 import { ItchPromise } from "common/util/itch-promise";
 import { getNativeWindow } from "./main-window";
+import { urlForInstallLocation } from "common/util/navigation";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
@@ -45,9 +46,9 @@ export default function(watcher: Watcher) {
             buttons: [
               {
                 label: ["prompt.install_location_not_empty.show_contents"],
-                action: actions.navigateToInstallLocation({
+                action: actions.navigate({
                   window: "root",
-                  installLocation,
+                  url: urlForInstallLocation(installLocation.id),
                 }),
               },
               "cancel",

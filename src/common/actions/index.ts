@@ -6,7 +6,6 @@ import {
   ICommonsState,
   IModalAction,
   IItchAppTabs,
-  ITabParams,
   IMenuTemplate,
   II18nResources,
   II18nKeys,
@@ -32,14 +31,11 @@ import {
 import {
   Game,
   Upload,
-  User,
   CleanDownloadsEntry,
   GameUpdate,
   Profile,
-  Collection,
   Download,
   DownloadProgress,
-  InstallLocationSummary,
   Cave,
 } from "common/butlerd/messages";
 import {
@@ -318,46 +314,6 @@ export const actions = wireActions({
     window: string;
   }>(),
   navigate: action<INavigatePayload>(),
-  navigateToUser: action<{
-    /** in which window to navigate to the user */
-    window: string;
-
-    /** user to navigate to */
-    user: User;
-
-    /** whether to open in a new tab or not */
-    background?: boolean;
-  }>(),
-  navigateToGame: action<{
-    /** in which window to navigate to the user */
-    window: string;
-
-    /** game to navigate to */
-    game: Game;
-
-    /** whether to open in a new tab or not */
-    background?: boolean;
-  }>(),
-  navigateToCollection: action<{
-    /** in which window to navigate to the user */
-    window: string;
-
-    /** navigation to navigate to */
-    collection: Collection;
-
-    /** whether to open in a new tab or not */
-    background?: boolean;
-  }>(),
-  navigateToInstallLocation: action<{
-    /** in which window to navigate to the user */
-    window: string;
-
-    /** install location to navigate to */
-    installLocation: InstallLocationSummary;
-
-    /** whether to open in a new tab or not */
-    background?: boolean;
-  }>(),
   focusTab: action<{
     window: string;
 
@@ -443,15 +399,6 @@ export const actions = wireActions({
     /** if true, deep merge with previous state instead of shallow merging */
     shallow?: boolean;
   }>(),
-  tabParamsChanged: action<{
-    window: string;
-
-    /** tab for which the params are changing */
-    tab: string;
-
-    /** the params that changed (deep partial) */
-    params: ITabParams;
-  }>(),
   analyzePage: action<{
     window: string;
 
@@ -476,13 +423,6 @@ export const actions = wireActions({
     /** electron id of webcontents */
     webContentsId: number;
   }>(),
-
-  openTabContextMenu: action<
-    IOpenContextMenuBase & {
-      /** id of the tab to open the context menu of */
-      tab: string;
-    }
-  >(),
   openGameContextMenu: action<
     IOpenContextMenuBase & {
       /** game to open the context menu of */

@@ -18,7 +18,7 @@ import { withProfileId } from "./profile-provider";
 import FiltersContainer from "./filters-container";
 import { FetchCollectionGamesResult } from "common/butlerd/messages";
 import { withTab } from "./meats/tab-provider";
-import { rendererWindow } from "common/util/navigation";
+import { rendererWindow, urlForGame } from "common/util/navigation";
 
 const CollectionDiv = styled.div`
   ${styles.meat()};
@@ -115,7 +115,7 @@ class Collection extends React.PureComponent<IProps> {
           : items.map(cg => {
               return (
                 <div className="item" key={cg.game.id}>
-                  <a href={`itch://games/${cg.game.id}`}>
+                  <a href={urlForGame(cg.game.id)}>
                     <h3>{cg.game.title}</h3>
                   </a>
                   <p>{cg.game.shortText}</p>

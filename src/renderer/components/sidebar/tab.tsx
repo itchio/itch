@@ -51,16 +51,6 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
     closeTab({ window: rendererWindow(), tab });
   };
 
-  onContextMenu = (ev: React.MouseEvent<any>) => {
-    const { tab, openTabContextMenu } = this.props;
-    openTabContextMenu({
-      window: rendererWindow(),
-      tab,
-      clientX: ev.clientX,
-      clientY: ev.pageY,
-    });
-  };
-
   render() {
     const { tab, index, sortable, tabInstance, active } = this.props;
     const { onExplore } = this;
@@ -68,7 +58,6 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
     const sp = Space.fromInstance(tabInstance);
     let loading = this.props.loading || sp.web().loading;
 
-    let iconImage = sp.image();
     const url = sp.url();
     const resource = sp.resource();
     const label = sp.label();
@@ -103,7 +92,7 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
     }
 
     let gameOverride: Game = null;
-    let { onClick, onClose, onContextMenu } = this;
+    let { onClick, onClose } = this;
     if (!sortable) {
       onClose = null;
     }
@@ -115,13 +104,11 @@ class TabBase extends React.PureComponent<IProps & IDerivedProps> {
       tabInstance,
       label,
       icon,
-      iconImage,
       active,
       onClick,
       count,
       progress,
       onClose,
-      onContextMenu,
       onExplore,
       sublabel,
       gameOverride,
@@ -163,8 +150,7 @@ const actionCreators = actionCreatorsList(
   "navigate",
   "focusTab",
   "closeTab",
-  "openModal",
-  "openTabContextMenu"
+  "openModal"
 );
 
 type IDerivedProps = Dispatchers<typeof actionCreators> & {
@@ -175,18 +161,22 @@ type IDerivedProps = Dispatchers<typeof actionCreators> & {
   intl: InjectedIntl;
 };
 
-const Tab = connect<IProps>(injectIntl(TabBase), {
-  state: (initialState, initialProps) => {
-    let { tab } = initialProps;
+const Tab = connect<IProps>(
+  injectIntl(TabBase),
+  {
+    state: (initialState, initialProps) => {
+      let { tab } = initialProps;
 
-    return createStructuredSelector({
-      tabInstance: (rs: IRootState) =>
-        rendererWindowState(rs).tabInstances[tab],
-      loading: (rs: IRootState) => !!rendererNavigation(rs).loadingTabs[tab],
-      downloads: (rs: IRootState) => tab === "itch://downloads" && rs.downloads,
-    });
-  },
-  actionCreators,
-});
+      return createStructuredSelector({
+        tabInstance: (rs: IRootState) =>
+          rendererWindowState(rs).tabInstances[tab],
+        loading: (rs: IRootState) => !!rendererNavigation(rs).loadingTabs[tab],
+        downloads: (rs: IRootState) =>
+          tab === "itch://downloads" && rs.downloads,
+      });
+    },
+    actionCreators,
+  }
+);
 
 export default Tab;

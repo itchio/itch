@@ -1,6 +1,5 @@
 import { Watcher } from "common/util/watcher";
 
-import fetchers from "./fetchers";
 import preboot from "./preboot";
 import preferences from "./preferences";
 import mainWindow from "./main-window";
@@ -42,7 +41,6 @@ const runtime = currentRuntime();
 export default function getWatcher() {
   const watcher = new Watcher();
 
-  fetchers(watcher);
   preboot(watcher);
   preferences(watcher);
   mainWindow(watcher);

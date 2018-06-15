@@ -21,7 +21,7 @@ import TimeAgo from "./basics/time-ago";
 import { Space } from "common/helpers/space";
 import { withTabInstance } from "./meats/tab-instance-provider";
 import { ITabInstance } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { rendererWindow, urlForCollection } from "common/util/navigation";
 
 const FetchProfileCollections = ButlerCall(messages.FetchProfileCollections);
 
@@ -128,7 +128,7 @@ class Collections extends React.PureComponent<Props> {
       <>
         {items.map(coll => (
           <div className="collection" key={coll.id}>
-            <a href={`itch://collections/${coll.id}`}>
+            <a href={urlForCollection(coll.id)}>
               <h2>{coll.title}</h2>
             </a>
             <p>

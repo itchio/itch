@@ -3,7 +3,7 @@ import React from "react";
 import { MeatProps } from "renderer/components/meats/types";
 
 import styled, * as styles from "./styles";
-import { rendererWindow } from "common/util/navigation";
+import { rendererWindow, urlForGame } from "common/util/navigation";
 import ButlerCall from "./butler-call/butler-call";
 import { messages } from "common/butlerd";
 import { Dispatch, withDispatch } from "./dispatch-provider";
@@ -89,7 +89,7 @@ class Dashboard extends React.PureComponent<Props> {
 
           return (
             <div className="item" key={pg.game.id}>
-              <a href={`itch://games/${pg.game.id}`}>
+              <a href={urlForGame(pg.game.id)}>
                 <h3>{pg.game.title}</h3>
               </a>
               <p>{pg.game.shortText}</p>

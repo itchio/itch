@@ -1,6 +1,7 @@
 import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
 import { t } from "common/format/t";
+import { urlForGame } from "common/util/navigation";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.downloadEnded, async (store, action) => {
@@ -48,9 +49,9 @@ export default function(watcher: Watcher) {
         store.dispatch(
           actions.notify({
             body: message,
-            onClick: actions.navigateToGame({
+            onClick: actions.navigate({
               window: "root",
-              game: download.game,
+              url: urlForGame(download.game.id),
             }),
           })
         );

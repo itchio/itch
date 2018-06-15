@@ -3,7 +3,7 @@ import React from "react";
 import { MeatProps } from "renderer/components/meats/types";
 
 import styled, * as styles from "./styles";
-import { rendererWindow } from "common/util/navigation";
+import { rendererWindow, urlForGame } from "common/util/navigation";
 import ButlerCall from "./butler-call/butler-call";
 import { messages } from "common/butlerd";
 import { Dispatch, withDispatch } from "./dispatch-provider";
@@ -89,7 +89,7 @@ class Library extends React.PureComponent<Props> {
 
           return (
             <div className="item" key={ok.game.id}>
-              <a href={`itch://games/${ok.game.id}`}>
+              <a href={urlForGame(ok.game.id)}>
                 <h3>{ok.game.title}</h3>
               </a>
               <p>{ok.game.shortText}</p>
