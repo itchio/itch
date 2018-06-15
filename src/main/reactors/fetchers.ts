@@ -7,12 +7,9 @@ import { actions } from "common/actions";
 import { Fetcher, FetchReason } from "../fetchers/fetcher";
 import { IStore } from "common/types";
 
-import AppLogFetcher from "../fetchers/applog-fetcher";
-
 import { Context } from "../context";
 
 import { some, throttle, union } from "underscore";
-import { Space } from "common/helpers/space";
 
 interface WindowFetchState {
   fetching: {
@@ -112,12 +109,6 @@ function getFetcherClass(
   window: string,
   tab: string
 ): typeof Fetcher {
-  const sp = Space.fromStore(store, window, tab);
-
-  switch (sp.internalPage()) {
-    case "applog":
-      return AppLogFetcher;
-  }
   return null;
 }
 

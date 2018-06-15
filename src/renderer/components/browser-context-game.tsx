@@ -12,6 +12,7 @@ import IconButton from "./basics/icon-button";
 import { Dispatch } from "redux";
 import { withDispatch } from "./dispatch-provider";
 import { connect } from "./connect";
+import { actions } from "common/actions";
 
 const Spacer = styled.div`
   flex-basis: 10px;
@@ -52,7 +53,10 @@ class _BrowserContextGame extends React.PureComponent<Props & DerivedProps> {
     );
   }
 
-  onManage = () => {};
+  onManage = () => {
+    const { game, dispatch } = this.props;
+    dispatch(actions.manageGame({ game }));
+  };
 }
 
 interface Props {

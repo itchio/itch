@@ -7,13 +7,12 @@ import Link from "./basics/link";
 import IconButton from "./basics/icon-button";
 import { T } from "renderer/t";
 import { showInExplorerString } from "common/format/show-in-explorer";
-import { Space } from "common/helpers/space";
 import { rendererWindow } from "common/util/navigation";
 import { withTab } from "./meats/tab-provider";
-import { ITabInstance } from "common/types";
 import { withDispatch, Dispatch } from "./dispatch-provider";
-import { withTabInstance } from "./meats/tab-instance-provider";
 import { actions } from "common/actions";
+import LoadingCircle from "./basics/loading-circle";
+import ErrorState from "./butler-call/error-state";
 
 const AppLogDiv = styled.div`
   ${styles.meat()};
@@ -38,34 +37,78 @@ const ControlsDiv = styled.div`
   align-items: center;
 `;
 
-class AppLog extends React.PureComponent<Props> {
-  render() {
-    const { tabInstance } = this.props;
-    const sp = Space.fromInstance(tabInstance);
+class AppLog extends React.PureComponent<Props, State> {
+  constructor(props: AppLog["props"], context: any) {
+    super(props, context);
+    this.state = {
+      log: null,
+      loading: true,
+      error: null,
+    };
+  }
 
-    let log = sp.log().log || "Loading...\n";
+  render() {
+    const { loading, log, error } = this.state;
 
     return (
       <AppLogDiv>
         <AppLogContentDiv>
-          <Log
-            log={log}
-            extraControls={
-              <ControlsDiv>
-                <Spacer />
-                <Link
-                  onClick={this.onOpenAppLog}
-                  label={T(showInExplorerString())}
-                />
-                <Spacer />
-                <IconButton icon="repeat" onClick={this.onReload} />
-              </ControlsDiv>
-            }
-          />
+          {error ? <ErrorState error={error} /> : null}
+          {log ? (
+            <Log
+              log={log || ""}
+              extraControls={
+                <ControlsDiv>
+                  <Spacer />
+                  <Link
+                    onClick={this.onOpenAppLog}
+                    label={T(showInExplorerString())}
+                  />
+                  <Spacer />
+                  {loading ? (
+                    <LoadingCircle progress={-1} />
+                  ) : (
+                    <IconButton icon="repeat" onClick={this.onReload} />
+                  )}
+                </ControlsDiv>
+              }
+            />
+          ) : null}
         </AppLogContentDiv>
       </AppLogDiv>
     );
   }
+
+  componentDidMount() {
+    this.queueFetch();
+  }
+
+  componentDidUpdate(prevProps: AppLog["props"]) {
+    if (prevProps.sequence != this.props.sequence) {
+      this.queueFetch();
+    }
+  }
+
+  queueFetch = () => {
+    this.setState({ loading: true, error: null });
+    this.doFetch()
+      .catch(e => {
+        this.setState({ error: e });
+      })
+      .then(() => {
+        this.setState({ loading: false });
+      });
+  };
+
+  doFetch = async () => {
+    const fs = await import("fs");
+    const { promisify } = await import("common/util/itch-promise");
+    const readFile = promisify(fs.readFile);
+
+    const { mainLogPath } = await import("common/util/paths");
+    const log = await readFile(mainLogPath(), { encoding: "utf8" });
+    this.setState({ log, error: null });
+  };
 
   onOpenAppLog = () => {
     this.props.dispatch(actions.openAppLog({}));
@@ -80,8 +123,13 @@ class AppLog extends React.PureComponent<Props> {
 
 interface Props extends MeatProps {
   tab: string;
-  tabInstance: ITabInstance;
   dispatch: Dispatch;
 }
 
-export default withTab(withTabInstance(withDispatch(AppLog)));
+interface State {
+  loading: boolean;
+  error: Error;
+  log: string;
+}
+
+export default withTab(withDispatch(AppLog));
