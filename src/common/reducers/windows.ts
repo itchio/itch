@@ -1,14 +1,14 @@
-import { IWindowsState, IRootState, IAction } from "../types";
+import { WindowsState, IRootState, Action } from "../types";
 import windowReducer from "./window";
 import { actions } from "../actions";
 import { omit } from "underscore";
 
-const initialState: IWindowsState = {};
+const initialState: WindowsState = {};
 
 const windowOpenedType = actions.windowOpened({} as any).type;
 const windowClosedType = actions.windowClosed({} as any).type;
 
-export default function(state: IRootState, action: IAction<any>) {
+export default function(state: IRootState, action: Action<any>) {
   if (typeof state === "undefined") {
     return initialState;
   }

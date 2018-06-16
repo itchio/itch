@@ -3,7 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { map, indexBy } from "underscore";
 import groupIdBy from "common/helpers/group-id-by";
 
-import { IDownloadsState } from "common/types";
+import { DownloadsState } from "common/types";
 
 import reducer from "./reducer";
 import derivedReducer from "./derived-reducer";
@@ -13,22 +13,22 @@ import { Download } from "common/butlerd/messages";
 const SPEED_DATA_POINT_COUNT = 60;
 
 const selector = createStructuredSelector({
-  itemIdsByGameId: (state: IDownloadsState) =>
+  itemIdsByGameId: (state: DownloadsState) =>
     groupIdBy<Download>(state.items, i => String(i.game && i.game.id)),
 });
 
-const baseInitialState: Partial<IDownloadsState> = {
+const baseInitialState: Partial<DownloadsState> = {
   speeds: map(new Array(SPEED_DATA_POINT_COUNT), x => 0),
   items: {},
   progresses: {},
   paused: true,
 };
-const initialState: IDownloadsState = {
+const initialState: DownloadsState = {
   ...baseInitialState,
   ...selector(baseInitialState),
 };
 
-const baseReducer = reducer<IDownloadsState>(initialState, on => {
+const baseReducer = reducer<DownloadsState>(initialState, on => {
   on(actions.downloadsListed, (state, action) => {
     const { downloads } = action.payload;
     return {

@@ -1,9 +1,9 @@
 import { actions } from "common/actions";
 import reducer from "./reducer";
 
-import { ICommonsState } from "common/types";
+import { CommonsState } from "common/types";
 
-const initialState: ICommonsState = {
+const initialState: CommonsState = {
   downloadKeys: {},
   downloadKeyIdsByGameId: {},
   caves: {},
@@ -11,7 +11,7 @@ const initialState: ICommonsState = {
   locationSizes: {},
 };
 
-export default reducer<ICommonsState>(initialState, on => {
+export default reducer<CommonsState>(initialState, on => {
   // TODO: be much smarter+faster here.
   // this is a good place to dedupe updates if records
   // are deepEqual

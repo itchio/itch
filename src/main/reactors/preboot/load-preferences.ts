@@ -3,13 +3,13 @@ import { initialState } from "common/reducers/preferences";
 import { preferencesPath } from "common/util/paths";
 
 import rootLogger from "common/logger";
-import { IStore, IPreferencesState } from "common/types/index";
+import { Store, PreferencesState } from "common/types/index";
 const logger = rootLogger.child({ name: "load-preferences" });
 
 import { actions } from "common/actions";
 import { camelifyObject } from "common/format/camelify";
 
-async function loadPreferences(store: IStore) {
+async function loadPreferences(store: Store) {
   const prefs = loadPreferencesSync();
   store.dispatch(actions.updatePreferences(prefs));
   store.dispatch(actions.preferencesLoaded(prefs));
@@ -17,7 +17,7 @@ async function loadPreferences(store: IStore) {
 
 export default loadPreferences;
 
-export function loadPreferencesSync(): IPreferencesState {
+export function loadPreferencesSync(): PreferencesState {
   let prefs = initialState;
 
   try {
@@ -37,7 +37,7 @@ export function loadPreferencesSync(): IPreferencesState {
   return prefs;
 }
 
-function mergePreferences(contents: string): IPreferencesState {
+function mergePreferences(contents: string): PreferencesState {
   return {
     ...initialState,
     ...camelifyObject(JSON.parse(contents)),

@@ -7,13 +7,13 @@ import { fileSize } from "common/format/filesize";
 import { Logger } from "common/logger";
 import { request } from "./request";
 import { WriteStream } from "fs";
-import { IProgressInfo } from "common/types";
+import { ProgressInfo } from "common/types";
 
 /**
  * Download to file without using butler
  */
 export async function downloadToFile(
-  onProgress: (progress: IProgressInfo) => void,
+  onProgress: (progress: ProgressInfo) => void,
   logger: Logger,
   url: string,
   file: string
@@ -46,7 +46,7 @@ export async function downloadToFile(
             progress: info.percentage / 100,
             eta: info.eta,
             bps: info.speed,
-            doneBytes: info.percentage / 100 * totalSize,
+            doneBytes: (info.percentage / 100) * totalSize,
             totalBytes: totalSize,
           });
           logger.info(

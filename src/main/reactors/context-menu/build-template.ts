@@ -1,11 +1,11 @@
-import { IMenuTemplate, IMenuItem, IStore } from "common/types";
+import { MenuTemplate, IMenuItem, Store } from "common/types";
 import { actions } from "common/actions";
 
 import { isEmpty } from "underscore";
 import getGameStatus, {
   Access,
   OperationType,
-  IOperation,
+  Operation,
 } from "common/helpers/get-game-status";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { formatOperation } from "common/format/operation";
@@ -13,9 +13,9 @@ import { Game } from "common/butlerd/messages";
 import { actionForGame } from "common/util/action-for-game";
 
 export function concatTemplates(
-  a: IMenuTemplate,
-  b: IMenuTemplate
-): IMenuTemplate {
+  a: MenuTemplate,
+  b: MenuTemplate
+): MenuTemplate {
   if (isEmpty(a)) {
     return b;
   }
@@ -28,10 +28,10 @@ export function concatTemplates(
 }
 
 export function newTabControls(
-  store: IStore,
+  store: Store,
   window: string,
   tab: string
-): IMenuTemplate {
+): MenuTemplate {
   return [
     {
       localizedLabel: ["menu.file.new_tab"],
@@ -42,10 +42,10 @@ export function newTabControls(
 }
 
 export function closeTabControls(
-  store: IStore,
+  store: Store,
   window: string,
   tab: string
-): IMenuTemplate {
+): MenuTemplate {
   // TODO: disable some menu items if last transient tab
 
   return [
@@ -65,17 +65,17 @@ export function closeTabControls(
   ];
 }
 
-export function gameControls(store: IStore, game: Game): IMenuTemplate {
-  let template: IMenuTemplate = [];
+export function gameControls(store: Store, game: Game): MenuTemplate {
+  let template: MenuTemplate = [];
 
   const status = getGameStatus(store.getState(), game);
   const { cave, numCaves, operation } = status;
 
   const mainAction = actionForGame(game, cave);
 
-  let statusItems: IMenuTemplate = [];
+  let statusItems: MenuTemplate = [];
 
-  const itemForOperation = (operation: IOperation): IMenuItem => {
+  const itemForOperation = (operation: Operation): IMenuItem => {
     const localizedLabel = formatOperation(operation);
     if (operation.name === "launch") {
       return {
@@ -118,7 +118,7 @@ export function gameControls(store: IStore, game: Game): IMenuTemplate {
       });
     }
 
-    let updateAndLocalItems: IMenuTemplate = [];
+    let updateAndLocalItems: MenuTemplate = [];
 
     if (!busy) {
       updateAndLocalItems.push({
@@ -135,7 +135,7 @@ export function gameControls(store: IStore, game: Game): IMenuTemplate {
     template = concatTemplates(template, updateAndLocalItems);
 
     if (!busy) {
-      let uninstallReinstallItems: IMenuTemplate = [];
+      let uninstallReinstallItems: MenuTemplate = [];
       uninstallReinstallItems.push({
         id: "context--grid-item-manage",
         localizedLabel: ["grid.item.manage"],

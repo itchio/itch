@@ -6,7 +6,7 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { map } from "underscore";
-import { IModalWidgetProps } from "./index";
+import { ModalWidgetProps } from "./index";
 
 class PrereqsState extends React.PureComponent<Props> {
   render() {
@@ -74,14 +74,14 @@ const PrereqsRow = styled.li`
 
 // props
 
-export interface IPrereqsStateParams {
+export interface PrereqsStateParams {
   gameTitle: string;
   tasks: {
-    [prereqName: string]: ITaskProgressState;
+    [prereqName: string]: TaskProgressState;
   };
 }
 
-interface ITaskProgressState {
+interface TaskProgressState {
   order: number;
   fullName: string;
   status: PrereqStatus;
@@ -90,6 +90,6 @@ interface ITaskProgressState {
   bps: number;
 }
 
-interface Props extends IModalWidgetProps<IPrereqsStateParams, void> {}
+interface Props extends ModalWidgetProps<PrereqsStateParams, void> {}
 
 export default PrereqsState;

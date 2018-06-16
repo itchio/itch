@@ -1,4 +1,4 @@
-interface ITruncateOpts {
+interface TruncateOpts {
   length: number;
 }
 
@@ -6,7 +6,7 @@ interface ITruncateOpts {
  * Returns a truncated version of input. The output length will not exceed
  * opts.length.
  */
-export function truncate(input: string, opts: ITruncateOpts): string {
+export function truncate(input: string, opts: TruncateOpts): string {
   if (input.length > opts.length) {
     return input.substr(0, opts.length - 3) + "...";
   }

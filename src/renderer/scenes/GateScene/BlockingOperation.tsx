@@ -12,7 +12,7 @@ import {
   Dispatchers,
   actionCreatorsList,
 } from "renderer/hocs/connect";
-import { ISetupOperation, IRootState } from "common/types";
+import { SetupOperation, IRootState } from "common/types";
 
 import { fileSize } from "common/format/filesize";
 import { downloadProgress } from "common/format/download-progress";
@@ -152,7 +152,7 @@ class BlockingOperation extends React.PureComponent<Props & DerivedProps> {
 // props
 
 interface Props {
-  blockingOperation: ISetupOperation;
+  blockingOperation: SetupOperation;
   windows?: boolean;
 }
 

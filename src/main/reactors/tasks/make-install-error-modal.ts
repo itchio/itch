@@ -1,27 +1,22 @@
 import { modalWidgets } from "renderer/modal-widgets";
-import {
-  IModalButtonSpec,
-  ILocalizedString,
-  IStore,
-  IAction,
-} from "common/types";
+import { ModalButtonSpec, LocalizedString, Store, Action } from "common/types";
 import { asRequestError, messages } from "common/butlerd";
 import { t } from "common/format/t";
 import { formatError } from "common/format/errors";
 import { Game } from "common/butlerd/messages";
 
 interface InstallErrorParams {
-  store: IStore;
+  store: Store;
   e: Error;
   log: string;
   game: Game;
-  retryAction: () => IAction<any>;
-  stopAction: () => IAction<any>;
+  retryAction: () => Action<any>;
+  stopAction: () => Action<any>;
 }
 
 export function makeInstallErrorModal(params: InstallErrorParams) {
-  let buttons: IModalButtonSpec[] = [];
-  let detail: ILocalizedString;
+  let buttons: ModalButtonSpec[] = [];
+  let detail: LocalizedString;
   let shouldRetry = true;
   let forceDetails = false;
 

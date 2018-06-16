@@ -1,4 +1,4 @@
-import { INativeWindowState } from "common/types";
+import { NativeWindowState } from "common/types";
 
 import { actions } from "common/actions";
 import reducer from "../reducer";
@@ -8,9 +8,9 @@ const initialState = {
   focused: false,
   fullscreen: false,
   maximized: false,
-} as INativeWindowState;
+} as NativeWindowState;
 
-export default reducer<INativeWindowState>(initialState, on => {
+export default reducer<NativeWindowState>(initialState, on => {
   on(actions.windowOpened, (state, action) => {
     const { nativeId } = action.payload;
     return { ...state, id: nativeId };

@@ -2,9 +2,9 @@ import { Watcher } from "common/util/watcher";
 
 import { actions } from "common/actions";
 
-import { IStore } from "common/types";
+import { Store } from "common/types";
 
-async function applyTabOffset(store: IStore, window: string, offset: number) {
+async function applyTabOffset(store: Store, window: string, offset: number) {
   const { tab, openTabs } = store.getState().windows[window].navigation;
 
   const numTabs = openTabs.length;

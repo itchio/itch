@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 
 import Combokeys from "combokeys-ftl";
 import hookGlobalBind from "combokeys-ftl/plugins/global-bind";
@@ -10,7 +10,7 @@ hookGlobalBind(combo);
 
 const macos = process.platform === "darwin";
 
-function setupShortcuts(store: IStore) {
+function setupShortcuts(store: Store) {
   // dev shortcuts
   combo.bindGlobal(["shift+f12", "ctrl+shift+c", "command+shift+c"], () => {
     store.dispatch(

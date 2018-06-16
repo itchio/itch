@@ -67,7 +67,7 @@ export enum OperationType {
   Task,
 }
 
-export interface IOperation {
+export interface Operation {
   type: OperationType;
   name?: TaskName;
   id?: string;
@@ -80,12 +80,12 @@ export interface IOperation {
   stage?: string;
 }
 
-export interface IGameStatus {
+export interface GameStatus {
   downloadKey: DownloadKeySummary;
   cave: CaveSummary;
   numCaves: number;
   access: Access;
-  operation: IOperation;
+  operation: Operation;
   update: GameUpdate;
   compatible: boolean;
 }
@@ -94,7 +94,7 @@ function getGameStatus(
   rs: IRootState,
   game: Game,
   caveId?: string
-): IGameStatus {
+): GameStatus {
   const { commons, profile, tasks, downloads } = rs;
   const { credentials } = profile;
 
@@ -171,7 +171,7 @@ function rawGetGameStatus(
   update: GameUpdate,
   isDownloadActive,
   areDownloadsPaused
-): IGameStatus {
+): GameStatus {
   let access = Access.None;
   if (!(game.minPrice > 0)) {
     if (game.canBeBought) {
@@ -194,7 +194,7 @@ function rawGetGameStatus(
     }
   }
 
-  let operation: IOperation = null;
+  let operation: Operation = null;
 
   if (task) {
     operation = {

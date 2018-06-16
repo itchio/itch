@@ -3,7 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { connect } from "renderer/hocs/connect";
 
 import Icon from "renderer/basics/Icon";
-import { IRootState, IPackageState } from "common/types";
+import { IRootState, PackageState } from "common/types";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { downloadProgress } from "common/format/download-progress";
 
@@ -78,7 +78,7 @@ interface Props {
 }
 
 interface DerivedProps {
-  pkg: IPackageState;
+  pkg: PackageState;
 }
 
 export default connect<Props>(

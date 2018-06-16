@@ -1,9 +1,9 @@
 import { Context } from "../../context/index";
 
-interface ITaskMap {
+interface TaskMap {
   [id: string]: Context;
 }
 
-let currentTasks = {} as ITaskMap;
+let currentTasks = {} as TaskMap;
 
 export const getCurrentTasks = () => currentTasks;

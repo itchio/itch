@@ -1,14 +1,14 @@
 import { Watcher } from "common/util/watcher";
 
-import { IStore, IMenuTemplate, IOpenContextMenuBase } from "common/types";
+import { Store, MenuTemplate, IOpenContextMenuBase } from "common/types";
 
 import { actions } from "common/actions";
 
 import { gameControls } from "./context-menu/build-template";
 
 function openMenu(
-  store: IStore,
-  template: IMenuTemplate,
+  store: Store,
+  template: MenuTemplate,
   base: IOpenContextMenuBase
 ) {
   if (template.length === 0) {

@@ -1,13 +1,13 @@
 import { connect as reduxConnect } from "react-redux";
 
-import { IRootState, IDispatch } from "common/types";
+import { IRootState, Dispatch } from "common/types";
 import { ActionCreator, dispatcher, actions } from "common/actions/index";
 
-type IActionCreators = {
+type ActionCreators = {
   [key: string]: ActionCreator<any>;
 };
 
-export type Dispatchers<T extends IActionCreators> = {
+export type Dispatchers<T extends ActionCreators> = {
   [k in keyof T]: (payload: T[k]["payload"]) => void
 };
 
@@ -15,14 +15,14 @@ interface StateMapper {
   (rs: IRootState, props: any): any;
 }
 
-interface IDispatchMapper {
-  (dispatch: IDispatch, props: any): any;
+interface DispatchMapper {
+  (dispatch: Dispatch, props: any): any;
 }
 
-interface IConnectOpts {
+interface ConnectOpts {
   state?: StateMapper;
-  dispatch?: IDispatchMapper;
-  actionCreators?: IActionCreators;
+  dispatch?: DispatchMapper;
+  actionCreators?: ActionCreators;
 }
 
 type actionTypes = typeof actions;
@@ -39,7 +39,7 @@ export function actionCreatorsList<K extends keyof actionTypes>(
 
 export function connect<TProps>(
   component: React.ComponentType<any>,
-  opts: IConnectOpts = {}
+  opts: ConnectOpts = {}
 ): React.ComponentType<TProps> {
   let { dispatch, actionCreators } = opts;
   if (actionCreators) {

@@ -5,9 +5,9 @@ import { Menu } from "common/helpers/menu";
 
 import { createSelector } from "reselect";
 
-import { IRuntime, IMenuItem, IMenuTemplate } from "common/types";
+import { IRuntime, IMenuItem, MenuTemplate } from "common/types";
 
-import { IRootState, IProfileCredentialsState } from "common/types";
+import { IRootState, ProfileCredentialsState } from "common/types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 import { actions } from "common/actions";
 import { getNativeState } from "./main-window";
@@ -44,7 +44,7 @@ export default function(watcher: Watcher, runtime: IRuntime) {
   });
 }
 
-interface IAllTemplates {
+interface AllTemplates {
   mainMac: IMenuItem;
   fileWithTabs: IMenuItem;
   fileNoTabs: IMenuItem;
@@ -59,11 +59,11 @@ interface IAllTemplates {
 
 function computeMenuTemplate(
   appVersion: string,
-  credentials: IProfileCredentialsState,
+  credentials: ProfileCredentialsState,
   enableTabs: boolean,
   runtime: IRuntime
 ) {
-  const menus: IAllTemplates = {
+  const menus: AllTemplates = {
     mainMac: {
       // no need for a label, it'll always be app name
       submenu: [
@@ -284,7 +284,7 @@ function computeMenuTemplate(
     },
   };
 
-  const template: IMenuTemplate = [];
+  const template: MenuTemplate = [];
   if (runtime.platform === "osx") {
     template.push(menus.mainMac);
     if (enableTabs) {

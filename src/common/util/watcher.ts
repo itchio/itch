@@ -1,4 +1,4 @@
-import { IStore, IRootState, IAction } from "common/types";
+import { Store, IRootState, Action } from "common/types";
 
 import { each } from "underscore";
 
@@ -9,15 +9,15 @@ import { actions } from "common/actions/index";
 const logger = rootLogger.child({ name: "watcher" });
 
 interface IReactor<T> {
-  (store: IStore, action: IAction<T>): Promise<void>;
+  (store: Store, action: Action<T>): Promise<void>;
 }
 
 interface Schedule {
   (f: () => void): void;
-  dispatch?: (a: IAction<any>) => void;
+  dispatch?: (a: Action<any>) => void;
 }
 type Selector = (rs: IRootState) => void;
-type SelectorMaker = (store: IStore, schedule: Schedule) => Selector;
+type SelectorMaker = (store: Store, schedule: Schedule) => Selector;
 
 /**
  * Allows reacting to certain actions being dispatched
@@ -60,7 +60,7 @@ export class Watcher {
             }
           });
         };
-        schedule.dispatch = (action: IAction<any>) => {
+        schedule.dispatch = (action: Action<any>) => {
           schedule(() => store.dispatch(action));
         };
         selector = makeSelector(store, schedule);
@@ -78,8 +78,8 @@ export class Watcher {
    * Registers a reactor for a given action
    */
   on<T>(
-    actionCreator: (payload: T) => IAction<T>,
-    reactor: (store: IStore, action: IAction<T>) => Promise<void>
+    actionCreator: (payload: T) => Action<T>,
+    reactor: (store: Store, action: Action<T>) => Promise<void>
   ) {
     // create a dummy action to get the type
     const type = actionCreator(({} as any) as T).type;
@@ -87,9 +87,9 @@ export class Watcher {
   }
 
   onDebounced<T>(
-    actionCreator: (payload: T) => IAction<T>,
+    actionCreator: (payload: T) => Action<T>,
     ms: number,
-    reactor: (store: IStore, action: IAction<T>) => Promise<void>
+    reactor: (store: Store, action: Action<T>) => Promise<void>
   ) {
     // create a dummy action to get the type
     const type = actionCreator(({} as any) as T).type;

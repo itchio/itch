@@ -27,8 +27,8 @@ const macOs = os.platform() === "darwin";
 
 import {
   IRootState,
-  IStore,
-  INativeWindowState,
+  Store,
+  NativeWindowState,
   ItchWindowRole,
 } from "common/types";
 import { Space } from "common/helpers/space";
@@ -38,7 +38,7 @@ import { getImagePath } from "common/util/resources";
 import { stringify } from "querystring";
 import { opensInWindow } from "common/constants/windows";
 
-async function createRootWindow(store: IStore) {
+async function createRootWindow(store: Store) {
   const window = "root";
   const role: ItchWindowRole = "main";
   const userBounds = config.get(BOUNDS_CONFIG_KEY) || {};
@@ -229,14 +229,14 @@ async function exitFullScreen() {
   }
 }
 
-function ensureMainWindowInsideDisplay(store: IStore) {
+function ensureMainWindowInsideDisplay(store: Store) {
   const nativeWindow = getNativeWindow(store.getState(), "root");
   if (nativeWindow) {
     return ensureWindowInsideDisplay(nativeWindow);
   }
 }
 
-function updateTitle(store: IStore, title: string) {
+function updateTitle(store: Store, title: string) {
   const id = store.getState().windows["root"].native.id;
   if (!id) {
     return;
@@ -447,7 +447,7 @@ function commonBrowserWindowOpts(): Partial<BrowserWindowConstructorOptions> {
 }
 
 function hookNativeWindow(
-  store: IStore,
+  store: Store,
   window: string,
   nativeWindow: BrowserWindow
 ) {
@@ -542,7 +542,7 @@ function hookNativeWindow(
 export function getNativeState(
   rs: IRootState,
   window: string
-): INativeWindowState {
+): NativeWindowState {
   const w = rs.windows[window];
   if (w) {
     return w.native;

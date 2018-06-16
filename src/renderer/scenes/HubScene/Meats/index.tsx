@@ -1,10 +1,10 @@
 import classNames from "classnames";
 import { Space } from "common/helpers/space";
 import {
-  ICredentials,
-  ILoadingTabs,
+  Credentials,
+  LoadingTabs,
   IRootState,
-  ITabInstances,
+  TabInstances,
 } from "common/types";
 import {
   rendererNavigation,
@@ -127,9 +127,9 @@ type DerivedProps = Dispatchers<typeof actionCreators> & {
   /** current tab shown */
   tab: string;
   openTabs: string[];
-  tabInstances: ITabInstances;
-  loadingTabs: ILoadingTabs;
-  credentials: ICredentials;
+  tabInstances: TabInstances;
+  loadingTabs: LoadingTabs;
+  credentials: Credentials;
 };
 
 export default connect<Props>(

@@ -1,17 +1,17 @@
 import { actions } from "common/actions";
-import { IAction } from "common/types";
+import { Action } from "common/types";
 import React from "react";
 import { findDOMNode } from "react-dom";
 import watching, { Watcher } from "renderer/hocs/watching";
 
-interface IGenericSearchResultProps {
+interface GenericSearchResultProps {
   chosen: boolean;
   active: boolean;
 }
 
 @watching
 abstract class GenericSearchResult<
-  Props extends IGenericSearchResultProps
+  Props extends GenericSearchResultProps
 > extends React.PureComponent<Props> {
   subscribe(watcher: Watcher) {
     watcher.on(actions.commandOk, async (store, action) => {
@@ -31,7 +31,7 @@ abstract class GenericSearchResult<
     }
   }
 
-  abstract getNavigateAction(): IAction<any>;
+  abstract getNavigateAction(): Action<any>;
 }
 
 export default GenericSearchResult;

@@ -10,7 +10,7 @@ import {
 import styled from "renderer/styles";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import classNames from "classnames";
-import { modalWidgets, IModalWidgetProps } from "./index";
+import { modalWidgets, ModalWidgetProps } from "./index";
 import { rendererWindow } from "common/util/navigation";
 
 const WidgetDiv = styled.div`
@@ -35,13 +35,13 @@ const WidgetDiv = styled.div`
 `;
 
 class RecaptchaInput extends React.PureComponent<
-  IRecaptchaInputProps & DerivedProps,
+  RecaptchaInputProps & DerivedProps,
   State
 > {
   webview: Electron.WebviewTag;
   checker: NodeJS.Timer;
 
-  constructor(props: IRecaptchaInputProps & DerivedProps, context) {
+  constructor(props: RecaptchaInputProps & DerivedProps, context) {
     super(props, context);
     this.state = {
       loaded: false,
@@ -113,24 +113,24 @@ interface State {
   loaded: boolean;
 }
 
-export interface IRecaptchaInputParams {
+export interface RecaptchaInputParams {
   url: string;
 }
 
-export interface IRecaptchaInputResponse {
+export interface RecaptchaInputResponse {
   recaptchaResponse: string;
 }
 
-interface IRecaptchaInputProps
-  extends IModalWidgetProps<IRecaptchaInputParams, IRecaptchaInputResponse> {
-  params: IRecaptchaInputParams;
+interface RecaptchaInputProps
+  extends ModalWidgetProps<RecaptchaInputParams, RecaptchaInputResponse> {
+  params: RecaptchaInputParams;
 }
 
 const actionCreators = actionCreatorsList("closeModal");
 
 type DerivedProps = Dispatchers<typeof actionCreators>;
 
-export default connect<IRecaptchaInputProps>(
+export default connect<RecaptchaInputProps>(
   RecaptchaInput,
   {
     actionCreators,

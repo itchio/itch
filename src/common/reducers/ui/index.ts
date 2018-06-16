@@ -4,8 +4,8 @@ import menu from "./menu";
 
 import { Reducer } from "redux";
 
-import { IUState } from "common/types";
+import { UIState } from "common/types";
 
 export default combineReducers({
   menu,
-}) as Reducer<IUState>;
+}) as Reducer<UIState>;

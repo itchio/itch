@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 import { map } from "underscore";
 import { Watcher } from "common/util/watcher";
 
-import { IModalButtonSpec } from "common/types";
+import { ModalButtonSpec } from "common/types";
 import { modalWidgets } from "renderer/modal-widgets";
 import { makeUploadButton } from "main/reactors/make-upload-button";
 
@@ -19,7 +19,7 @@ export default function(watcher: Watcher) {
     let dialogMessage = ["pick_update_upload.single.message", { title }];
     let dialogDetail = ["pick_update_upload.single.detail"];
 
-    const dialogButtons: IModalButtonSpec[] = [
+    const dialogButtons: ModalButtonSpec[] = [
       {
         icon: "download",
         label: ["pick_update_upload.buttons.update"],
@@ -42,7 +42,7 @@ export default function(watcher: Watcher) {
           message: dialogMessage,
           detail: dialogDetail,
           bigButtons: map(uploads, upload => {
-            const spec: IModalButtonSpec = {
+            const spec: ModalButtonSpec = {
               ...makeUploadButton(upload, { showSize: false }),
               action: actions.queueGameUpdate({ update }),
             };

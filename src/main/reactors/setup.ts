@@ -1,5 +1,5 @@
 import { Watcher } from "common/util/watcher";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 
 import { actions } from "common/actions";
 
@@ -15,7 +15,7 @@ import { ItchPromise } from "common/util/itch-promise";
 const logger = rootLogger.child({ name: "setup" });
 const call = withLogger(logger);
 
-async function syncInstallLocations(store: IStore) {
+async function syncInstallLocations(store: Store) {
   const { installLocations } = await call(messages.InstallLocationsList, {});
   const newLocationsById = indexBy(installLocations, "id");
 
@@ -62,7 +62,7 @@ let initialButlerdPromise = new ItchPromise((resolve, reject) => {
   initialButlerdResolve = resolve;
 });
 
-async function initialSetup(store: IStore, { retry }) {
+async function initialSetup(store: Store, { retry }) {
   try {
     store.dispatch(
       actions.setupStatus({
@@ -107,7 +107,7 @@ async function initialSetup(store: IStore, { retry }) {
   }
 }
 
-async function refreshButlerd(store: IStore) {
+async function refreshButlerd(store: Store) {
   logger.info(`Refreshing butlerd! Spinning up new instance...`);
   let instance = await makeButlerInstance();
   instance.promise().catch(e => {

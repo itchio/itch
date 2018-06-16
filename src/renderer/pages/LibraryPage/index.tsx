@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { FetchProfileOwnedKeysResult } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 import { rendererWindow, urlForGame } from "common/util/navigation";
 import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
@@ -104,7 +104,7 @@ interface Props extends MeatProps {
   tab: string;
   profileId: number;
   dispatch: Dispatch;
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
 }
 
 export default withTab(

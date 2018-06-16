@@ -1,4 +1,4 @@
-import { IStore, IAction } from "common/types";
+import { Store, Action } from "common/types";
 import { Tray } from "electron";
 import { getImagePath } from "common/util/resources";
 import * as os from "../os";
@@ -8,9 +8,9 @@ import { actions } from "common/actions";
 let tray: Electron.Tray;
 
 // used to glue balloon click with notification callbacks
-let lastNotificationAction: IAction<any>;
+let lastNotificationAction: Action<any>;
 
-export function getTray(store: IStore): Electron.Tray {
+export function getTray(store: Store): Electron.Tray {
   if (!tray) {
     // cf. https://github.com/itchio/itch/issues/462
     // windows still displays a 16x16, whereas
@@ -46,6 +46,6 @@ export function getTray(store: IStore): Electron.Tray {
   return tray;
 }
 
-export function rememberNotificationAction(action: IAction<any>) {
+export function rememberNotificationAction(action: Action<any>) {
   lastNotificationAction = action;
 }

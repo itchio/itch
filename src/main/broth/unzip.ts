@@ -12,13 +12,13 @@ import { dirname, join } from "path";
 import { createWriteStream } from "fs";
 import { Logger } from "common/logger";
 import { Stream } from "stream";
-import { IProgressInfo } from "common/types";
+import { ProgressInfo } from "common/types";
 
 interface UnzipOpts {
   archivePath: string;
   destination: string;
   logger: Logger;
-  onProgress: (info: IProgressInfo) => void;
+  onProgress: (info: ProgressInfo) => void;
 }
 
 const DIR_RE = /\/$/;
@@ -50,7 +50,7 @@ export async function unzip(opts: UnzipOpts) {
     let progressFactor = entry.compressedSize / zipfile.fileSize;
     progressStream.on("progress", info => {
       opts.onProgress({
-        progress: progressOffset + info.percentage / 100 * progressFactor,
+        progress: progressOffset + (info.percentage / 100) * progressFactor,
       });
     });
     progressStream.pipe(dst);

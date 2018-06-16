@@ -11,14 +11,14 @@ import {
   Dispatchers,
 } from "renderer/hocs/connect";
 import Layout from "renderer/App/Layout";
-import Modal from "renderer/App/Modal";
+import Modals from "renderer/App/Modals";
 
 class AppContents extends React.PureComponent<DerivedProps> {
   render() {
     return (
       <div onClickCapture={this.onClickCapture}>
         <Layout />
-        <Modal />
+        <Modals />
       </div>
     );
   }

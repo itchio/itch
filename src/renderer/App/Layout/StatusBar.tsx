@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ILocalizedString, IRootState } from "common/types";
+import { LocalizedString, IRootState } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import {
@@ -120,7 +120,7 @@ interface Props {}
 const actionCreators = actionCreatorsList("dismissStatusMessage");
 
 type DerivedProps = Dispatchers<typeof actionCreators> & {
-  statusMessages: ILocalizedString[];
+  statusMessages: LocalizedString[];
 };
 
 export default connect<Props>(

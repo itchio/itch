@@ -1,8 +1,8 @@
 import memory from "memory-streams";
 
 import {
-  IStore,
-  IProgressInfo,
+  Store,
+  ProgressInfo,
   isCancelled,
   TaskName,
   isAborted,
@@ -14,8 +14,8 @@ import rootLogger, { Logger, makeLogger } from "common/logger";
 import { getCurrentTasks } from "./as-task-persistent-state";
 import uuid from "common/util/uuid";
 
-interface IAsTaskOpts {
-  store: IStore;
+interface AsTaskOpts {
+  store: Store;
   name: TaskName;
   gameId: number;
 
@@ -28,7 +28,7 @@ interface IAsTaskOpts {
   onCancel?: () => Promise<void>;
 }
 
-async function asTask(opts: IAsTaskOpts) {
+async function asTask(opts: AsTaskOpts) {
   const id = uuid();
 
   const { store, name, gameId } = opts;
@@ -47,7 +47,7 @@ async function asTask(opts: IAsTaskOpts) {
 
   const ctx = new Context(store);
   ctx.registerTaskId(id);
-  ctx.on("progress", (ev: IProgressInfo) => {
+  ctx.on("progress", (ev: ProgressInfo) => {
     store.dispatch(actions.taskProgress({ id, ...ev }));
   });
 

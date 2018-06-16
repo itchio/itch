@@ -5,7 +5,7 @@ import nodeURL from "url";
 import { webContents, BrowserWindow } from "electron";
 
 import rootLogger from "common/logger";
-import { IStore, ITabWeb } from "common/types/index";
+import { Store, TabWeb } from "common/types/index";
 const logger = rootLogger.child({ name: "web-contents" });
 
 import createContextMenu from "./web-contents-context-menu";
@@ -25,7 +25,7 @@ export type ExtendedWebContents = Electron.WebContents & {
 type WebContentsCallback<T> = (wc: ExtendedWebContents) => T;
 
 function withWebContents<T>(
-  store: IStore,
+  store: Store,
   window: string,
   tab: string,
   cb: WebContentsCallback<T>
@@ -56,7 +56,7 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    let pushWeb = (web: Partial<ITabWeb>) => {
+    let pushWeb = (web: Partial<TabWeb>) => {
       store.dispatch(
         actions.tabDataFetched({
           window,

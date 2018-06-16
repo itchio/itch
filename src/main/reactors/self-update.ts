@@ -2,7 +2,7 @@ import { Watcher } from "common/util/watcher";
 
 import { actions } from "common/actions";
 import { manager } from "main/reactors/setup";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 import { t } from "common/format/t";
 import ospath from "path";
 import childProcess from "child_process";
@@ -154,7 +154,7 @@ export default function(watcher: Watcher) {
   });
 }
 
-function rescheduleComponentsUpdate(store: IStore) {
+function rescheduleComponentsUpdate(store: Store) {
   const sleepTime = UPDATE_INTERVAL + Math.random() + UPDATE_INTERVAL_WIGGLE;
   store.dispatch(
     actions.scheduleSystemTask({

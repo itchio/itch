@@ -28,12 +28,12 @@ export function getLocalesConfigPath(): string {
   return getPath(resourcePath);
 }
 
-type IInjectName = "itchio" | "game" | "captcha";
+type InjectName = "itchio" | "game" | "captcha";
 
-export function getInjectPath(name: IInjectName) {
+export function getInjectPath(name: InjectName) {
   return join(absoluteMainDistPath, `inject-${name}.js`);
 }
 
-export function getInjectURL(name: IInjectName) {
+export function getInjectURL(name: InjectName) {
   return `file://${getInjectPath(name)}`;
 }

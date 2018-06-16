@@ -1,7 +1,7 @@
 import querystring from "querystring";
 
 import { NET_PARTITION_NAME, NET_TIMEOUT_MS } from "common/constants/net";
-import { HTTPMethod, IRequestOpts, IResponse } from "common/types/net";
+import { HTTPMethod, RequestOpts, Response } from "common/types/net";
 
 import {
   RequestError,
@@ -25,8 +25,8 @@ export async function request(
   method: HTTPMethod,
   uri: string,
   data: any = {},
-  opts: IRequestOpts = {}
-): Promise<IResponse> {
+  opts: RequestOpts = {}
+): Promise<Response> {
   let url = uri;
   if (env.unitTests) {
     throw new Error(`refusing to do API request in unit test`);
@@ -46,7 +46,7 @@ export async function request(
   });
   req.setHeader("user-agent", userAgent());
 
-  const p = new ItchPromise<IResponse>((resolve, reject) => {
+  const p = new ItchPromise<Response>((resolve, reject) => {
     req.on("response", (inputRes: any) => {
       const res = inputRes as ActualElectronResponse;
       const response = {
@@ -54,7 +54,7 @@ export async function request(
         status: res.statusMessage,
         body: null,
         headers: res.headers,
-      } as IResponse;
+      } as Response;
 
       if (opts.cb) {
         try {

@@ -14,9 +14,9 @@ import { size } from "underscore";
 
 import {
   IRootState,
-  ITabInstance,
-  ILocalizedString,
-  IDownloadsState,
+  TabInstance,
+  LocalizedString,
+  DownloadsState,
 } from "common/types";
 
 import { injectIntl, InjectedIntl } from "react-intl";
@@ -34,13 +34,13 @@ import {
 } from "common/util/navigation";
 import { modalWidgets } from "renderer/modal-widgets";
 
-interface ISortableHubSidebarItemProps {
+interface SortableHubSidebarItemProps {
   props: any & {
     tab: string;
   };
 }
 
-const SortableItem = SortableElement((props: ISortableHubSidebarItemProps) => {
+const SortableItem = SortableElement((props: SortableHubSidebarItemProps) => {
   return <Item {...props.props} />;
 });
 
@@ -68,7 +68,7 @@ class TabBase extends React.PureComponent<Props & DerivedProps> {
     let icon = sp.icon();
     let count = 0;
     let progress: number = null;
-    let sublabel: ILocalizedString = null;
+    let sublabel: LocalizedString = null;
 
     if (tab === "itch://downloads") {
       const { downloads } = this.props;
@@ -158,9 +158,9 @@ const actionCreators = actionCreatorsList(
 );
 
 type DerivedProps = Dispatchers<typeof actionCreators> & {
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
   loading: boolean;
-  downloads?: IDownloadsState;
+  downloads?: DownloadsState;
 
   intl: InjectedIntl;
 };

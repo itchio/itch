@@ -1,7 +1,7 @@
-interface IRegisteredProtocols {
+interface RegisteredProtocols {
   [key: string]: boolean;
 }
 
 // put as a separate module to avoid reloading it
-const registeredProtocols: IRegisteredProtocols = {};
+const registeredProtocols: RegisteredProtocols = {};
 export default registeredProtocols;

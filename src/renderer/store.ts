@@ -19,7 +19,7 @@ import shouldLogAction from "common/util/should-log-action";
 
 const watcher = new Watcher();
 
-import { IChromeStore } from "common/types";
+import { ChromeStore } from "common/types";
 
 const filter = true;
 const middleware: Middleware[] = [];
@@ -52,7 +52,7 @@ enhancer = compose(
 ) as GenericStoreEnhancer;
 
 const initialState = {} as any;
-const store = createStore(reducer, initialState, enhancer) as IChromeStore;
+const store = createStore(reducer, initialState, enhancer) as ChromeStore;
 
 store.watcher = watcher;
 

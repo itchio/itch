@@ -2,7 +2,7 @@ import ospath from "path";
 import spawn from "../os/spawn";
 import env from "common/env";
 import { MinimalContext } from "main/context";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 import { Logger } from "common/logger";
 
 export const itchSetupLock = {
@@ -34,7 +34,7 @@ export interface RunItchSetupOpts {
 }
 
 export async function runItchSetup(
-  store: IStore,
+  store: Store,
   opts: RunItchSetupOpts
 ): Promise<boolean> {
   const { args, logger, onMessage } = opts;

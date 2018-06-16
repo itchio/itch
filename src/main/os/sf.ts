@@ -3,7 +3,7 @@ import { promisify, ItchPromise } from "common/util/itch-promise";
 import fs from "fs";
 import path from "path";
 
-import { IFSError, IReadFileOpts, IWriteFileOpts } from "common/types/sf";
+import { FSError, ReadFileOpts, WriteFileOpts } from "common/types/sf";
 
 /*
  * Let's patch all the things! Electron randomly decides to
@@ -68,7 +68,7 @@ export const createWriteStream = fs.createWriteStream.bind(fs);
  */
 export async function exists(file: string) {
   return new ItchPromise((resolve, reject) => {
-    const callback = (err: IFSError) => {
+    const callback = (err: FSError) => {
       if (err) {
         if (err.code === "ENOENT") {
           resolve(false);
@@ -96,7 +96,7 @@ export async function readdir(dir: string): Promise<string[]> {
  */
 export async function readFile(
   file: string,
-  opts: IReadFileOpts
+  opts: ReadFileOpts
 ): Promise<string> {
   return await nodeReadFile(file, opts);
 }
@@ -108,7 +108,7 @@ export async function readFile(
 export async function appendFile(
   file: string,
   contents: string | Buffer,
-  opts?: IWriteFileOpts
+  opts?: WriteFileOpts
 ): Promise<void> {
   await mkdir(path.dirname(file));
   return await nodeAppendFile(file, contents, opts);
@@ -121,7 +121,7 @@ export async function appendFile(
 export async function writeFile(
   file: string,
   contents: string | Buffer,
-  opts: IWriteFileOpts
+  opts: WriteFileOpts
 ): Promise<void> {
   await mkdir(path.dirname(file));
   return await nodeWriteFile(file, contents, opts);

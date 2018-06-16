@@ -2,7 +2,7 @@ import { createStructuredSelector } from "reselect";
 
 import { groupBy, omit } from "underscore";
 
-import { ITasksState } from "common/types";
+import { TasksState } from "common/types";
 
 import { actions } from "common/actions";
 import derivedReducer from "./derived-reducer";
@@ -11,9 +11,9 @@ import reducer from "./reducer";
 const initialState = {
   tasks: {},
   finishedTasks: [],
-} as ITasksState;
+} as TasksState;
 
-const baseReducer = reducer<ITasksState>(initialState, on => {
+const baseReducer = reducer<TasksState>(initialState, on => {
   on(actions.taskStarted, (state, action) => {
     const task = action.payload;
     return {
@@ -61,7 +61,7 @@ const baseReducer = reducer<ITasksState>(initialState, on => {
 });
 
 const selector = createStructuredSelector({
-  tasksByGameId: (state: ITasksState) => groupBy(state.tasks, "gameId"),
+  tasksByGameId: (state: TasksState) => groupBy(state.tasks, "gameId"),
 });
 
 export default derivedReducer(baseReducer, selector);

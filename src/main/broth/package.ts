@@ -10,7 +10,7 @@ import whichCallback from "which";
 const which = promisify(whichCallback);
 
 import rootLogger, { Logger } from "common/logger";
-import { IStore, IPackageState, IProgressInfo } from "common/types";
+import { Store, PackageState, ProgressInfo } from "common/types";
 import { join, dirname } from "path";
 import { readdir, mkdirp } from "../os/sf";
 import formulas, { FormulaSpec } from "./formulas";
@@ -43,7 +43,7 @@ export interface PackageLike {
 }
 
 export class Package implements PackageLike {
-  private store: IStore;
+  private store: Store;
   private formula: FormulaSpec;
   private prefix: string;
   private name: string;
@@ -51,7 +51,7 @@ export class Package implements PackageLike {
   private logger: Logger;
   private semverConstraint: string;
 
-  constructor(store: IStore, prefix: string, name: string) {
+  constructor(store: Store, prefix: string, name: string) {
     this.store = store;
     this.prefix = prefix;
     this.name = name;
@@ -261,11 +261,11 @@ export class Package implements PackageLike {
     }
   }
 
-  private stage(stage: IPackageState["stage"]) {
+  private stage(stage: PackageState["stage"]) {
     this.store.dispatch(actions.packageStage({ name: this.name, stage }));
   }
 
-  private emitProgress(progressInfo: IProgressInfo) {
+  private emitProgress(progressInfo: ProgressInfo) {
     this.store.dispatch(
       actions.packageProgress({ name: this.name, progressInfo })
     );
@@ -350,7 +350,7 @@ export class Package implements PackageLike {
       await this.writeInstallMarker(latestVersion);
 
       this.info(`Validating...`);
-      if (!await this.isVersionValid(latestVersion)) {
+      if (!(await this.isVersionValid(latestVersion))) {
         throw new Error(
           `Could not validate version ${latestVersion} of ${this.name}`
         );

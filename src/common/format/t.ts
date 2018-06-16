@@ -1,6 +1,6 @@
 import IntlMessageFormat from "intl-messageformat";
 
-import { II18nState, ILocalizedString } from "common/types";
+import { I18nState, LocalizedString } from "common/types";
 
 const emptyObj = {};
 
@@ -8,7 +8,7 @@ const emptyObj = {};
  * Returns the input if it's a string, or a localized message if
  * the input is in the form [i18nKeys, {i18nValue1: foo, i18nValue2: bar}?]
  */
-export function t(i18n: II18nState, input: string | ILocalizedString): string {
+export function t(i18n: I18nState, input: string | LocalizedString): string {
   if (!input) {
     return "";
   }

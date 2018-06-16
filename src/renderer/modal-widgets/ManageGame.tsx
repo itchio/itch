@@ -20,7 +20,7 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { each, filter, find, map, size } from "underscore";
-import { IModalWidgetProps } from "./index";
+import { ModalWidgetProps } from "./index";
 
 const CaveItemList = styled.div`
   margin: 8px 0;
@@ -218,14 +218,14 @@ class ManageGame extends React.PureComponent<Props & DerivedProps> {
   };
 }
 
-export interface IManageGameParams {
+export interface ManageGameParams {
   game: Game;
   caves: Cave[];
   allUploads: Upload[];
   loadingUploads: boolean;
 }
 
-interface Props extends IModalWidgetProps<IManageGameParams, void> {}
+interface Props extends ModalWidgetProps<ManageGameParams, void> {}
 
 const actionCreators = actionCreatorsList(
   "closeModal",

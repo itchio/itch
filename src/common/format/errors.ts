@@ -1,9 +1,9 @@
 import { asRequestError } from "common/butlerd/utils";
-import { ILocalizedString } from "common/types";
+import { LocalizedString } from "common/types";
 import { RequestError } from "butlerd";
 import { Download } from "common/butlerd/messages";
 
-export function formatError(e: Error): ILocalizedString {
+export function formatError(e: Error): LocalizedString {
   const re = asRequestError(e);
   if (re && re.rpcError) {
     const { code, message } = re.rpcError;

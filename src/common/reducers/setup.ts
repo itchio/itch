@@ -1,4 +1,4 @@
-import { ISetupState } from "common/types";
+import { SetupState } from "common/types";
 import { actions } from "common/actions";
 import reducer from "./reducer";
 
@@ -9,9 +9,9 @@ const initialState = {
     icon: "moon",
     message: ["login.status.dependency_check"],
   },
-} as ISetupState;
+} as SetupState;
 
-export default reducer<ISetupState>(initialState, on => {
+export default reducer<SetupState>(initialState, on => {
   on(actions.setupStatus, (state, action) => {
     const blockingOperation = action.payload;
     return {

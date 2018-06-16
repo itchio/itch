@@ -1,8 +1,8 @@
 import {
-  IContextMenuState,
-  IDispatch,
+  ContextMenuState,
+  Dispatch,
   IMenuItem,
-  IMenuTemplate,
+  MenuTemplate,
   IRootState,
 } from "common/types";
 import { rendererWindowState } from "common/util/navigation";
@@ -179,7 +179,7 @@ class ContextMenuHandler extends React.PureComponent<DerivedProps> {
     return <span className="accelerator">{output}</span>;
   }
 
-  renderItems(template: IMenuTemplate): JSX.Element[] {
+  renderItems(template: MenuTemplate): JSX.Element[] {
     return template.map((item, index) => {
       const key = String(index);
       const label = this.formatLabel(item);
@@ -273,10 +273,10 @@ const actionCreators = actionCreatorsList("closeContextMenu");
 
 type DerivedProps = Dispatchers<typeof actionCreators> & {
   open: boolean;
-  data: IContextMenuState["data"];
+  data: ContextMenuState["data"];
   macos: boolean;
 
-  dispatch: IDispatch;
+  dispatch: Dispatch;
 };
 
 export default connect<{}>(

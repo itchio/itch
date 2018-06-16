@@ -2,13 +2,13 @@ import * as urlParser from "./url";
 import querystring from "querystring";
 
 import {
-  ITabInstance,
-  ITabPage,
+  TabInstance,
+  TabPage,
   IRootState,
-  IWindowState,
+  WindowState,
   ExtendedWindow,
   ItchWindow,
-  INavigationState,
+  NavigationState,
 } from "common/types";
 
 export function transformUrl(original: string): string {
@@ -44,7 +44,7 @@ export function transformUrl(original: string): string {
   return req;
 }
 
-export function currentPage(tabInstance: ITabInstance): ITabPage | null {
+export function currentPage(tabInstance: TabInstance): TabPage | null {
   if (!tabInstance) {
     return null;
   }
@@ -67,11 +67,11 @@ export function rendererWindow(): string {
   return itchWindow().window;
 }
 
-export function rendererWindowState(rs: IRootState): IWindowState {
+export function rendererWindowState(rs: IRootState): WindowState {
   return rs.windows[rendererWindow()];
 }
 
-export function rendererNavigation(rs: IRootState): INavigationState {
+export function rendererNavigation(rs: IRootState): NavigationState {
   return rendererWindowState(rs).navigation;
 }
 

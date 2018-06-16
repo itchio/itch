@@ -7,7 +7,7 @@ const logger = rootLogger.child({ name: "download-driver" });
 const call = withLogger(logger);
 
 import { state, Phase } from "./driver-persistent-state";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 
 export default function(watcher: Watcher) {
   // we don't have to worry about login because we start out with paused downloads
@@ -28,12 +28,12 @@ export default function(watcher: Watcher) {
   });
 }
 
-async function refreshDownloads(store: IStore) {
+async function refreshDownloads(store: Store) {
   const { downloads } = await call(messages.DownloadsList, {});
   store.dispatch(actions.downloadsListed({ downloads }));
 }
 
-async function driverPoll(store: IStore) {
+async function driverPoll(store: Store) {
   logger.info(`Download driver polling...`);
 
   const rs = store.getState();

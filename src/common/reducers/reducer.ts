@@ -1,39 +1,39 @@
-import { IAction } from "../types/index";
+import { Action } from "../types/index";
 
-interface IActionCreator<Payload> {
-  (payload: Payload): IAction<Payload>;
+interface ActionCreator<Payload> {
+  (payload: Payload): Action<Payload>;
 }
 
-interface IActionReducer<State, Payload> {
-  (state: State, action: IAction<Payload>): State;
+interface ActionReducer<State, Payload> {
+  (state: State, action: Action<Payload>): State;
 }
 
-interface IActionReducers<State> {
-  [key: string]: IActionReducer<State, any>;
+interface ActionReducers<State> {
+  [key: string]: ActionReducer<State, any>;
 }
 
-interface IRegisterReducer<State> {
+interface RegisterReducer<State> {
   <Payload>(
-    actionCreator: IActionCreator<Payload>,
-    reducer: IActionReducer<State, Payload>
+    actionCreator: ActionCreator<Payload>,
+    reducer: ActionReducer<State, Payload>
   ): void;
 }
 
-interface IActionHandlerCallback<State> {
-  (registerReducer: IRegisterReducer<State>): void;
+interface ActionHandlerCallback<State> {
+  (registerReducer: RegisterReducer<State>): void;
 }
 
 function reducer<State>(
   initialState: State,
-  cb: IActionHandlerCallback<State>,
-  defaultReducer?: IActionReducer<State, any>
-): IActionReducer<State, State> {
-  const actionReducers: IActionReducers<State> = {};
+  cb: ActionHandlerCallback<State>,
+  defaultReducer?: ActionReducer<State, any>
+): ActionReducer<State, State> {
+  const actionReducers: ActionReducers<State> = {};
 
   cb(
     <Payload>(
-      actionCreator: IActionCreator<Payload>,
-      reducer: IActionReducer<State, Payload>
+      actionCreator: ActionCreator<Payload>,
+      reducer: ActionReducer<State, Payload>
     ) => {
       const sampleAction = actionCreator({} as any);
       if (actionReducers[sampleAction.type]) {
@@ -46,7 +46,7 @@ function reducer<State>(
     }
   );
 
-  return (rs: State, action: IAction<any>) => {
+  return (rs: State, action: Action<any>) => {
     if (typeof rs === "undefined") {
       return initialState;
     }

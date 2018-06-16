@@ -1,6 +1,6 @@
 import { reject, omit, map, filter } from "underscore";
 
-import { INavigationState, ITabDataSave } from "common/types";
+import { NavigationState, TabDataSave } from "common/types";
 
 import { actions } from "common/actions";
 import reducer from "../reducer";
@@ -13,9 +13,9 @@ const initialState = {
   openTabs: ["initial-tab"],
   loadingTabs: {},
   tab: "initial-tab",
-} as INavigationState;
+} as NavigationState;
 
-export default reducer<INavigationState>(initialState, on => {
+export default reducer<NavigationState>(initialState, on => {
   on(actions.windowOpened, (state, action) => {
     const { initialURL } = action.payload;
     return {
@@ -109,7 +109,7 @@ export default reducer<INavigationState>(initialState, on => {
 
     const tab = snapshot.current || state.tab;
     const openTabs = filter(
-      map(snapshot.items, (tab: ITabDataSave) => {
+      map(snapshot.items, (tab: TabDataSave) => {
         return tab.id;
       }),
       x => !!x

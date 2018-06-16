@@ -1,4 +1,4 @@
-interface IManifestIcons {
+interface ManifestIcons {
   [key: string]: string;
 }
 
@@ -7,4 +7,4 @@ export default {
   editor: "pencil",
   manual: "lifebuoy",
   forums: "users",
-} as IManifestIcons;
+} as ManifestIcons;

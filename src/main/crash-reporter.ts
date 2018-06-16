@@ -36,7 +36,7 @@ function errorTypeString(t: ErrorType): string {
   }
 }
 
-interface IReportIssueOpts {
+interface ReportIssueOpts {
   log?: string;
   body?: string;
   type?: string;
@@ -64,7 +64,7 @@ async function writeCrashLog(e: Error) {
   return { log, crashFile };
 }
 
-export function reportIssue(opts: IReportIssueOpts) {
+export function reportIssue(opts: ReportIssueOpts) {
   if (typeof opts === "undefined") {
     opts = {};
   }

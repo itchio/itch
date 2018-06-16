@@ -7,14 +7,14 @@ import {
 import urls from "common/constants/urls";
 import { T } from "renderer/t";
 
-import SelectRow, { ISelectOption } from "renderer/basics/SelectRow";
+import SelectRow, { SelectOption } from "renderer/basics/SelectRow";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 
 import Label from "./Label";
 
-import { ILocaleInfo, IRootState } from "common/types";
+import { LocaleInfo, IRootState } from "common/types";
 
 import styled from "renderer/styles";
 import { createStructuredSelector } from "reselect";
@@ -27,7 +27,7 @@ class LanguageSettings extends React.PureComponent<Props & DerivedProps> {
   render() {
     const { queueLocaleDownload, locales, lang, sniffedLang } = this.props;
 
-    const options: ISelectOption[] = [
+    const options: SelectOption[] = [
       {
         label: ["preferences.language.auto", { language: sniffedLang }],
         value: "__",
@@ -102,7 +102,7 @@ const actionCreators = actionCreatorsList(
 );
 
 type DerivedProps = Dispatchers<typeof actionCreators> & {
-  locales: ILocaleInfo[];
+  locales: LocaleInfo[];
   lang: string;
   sniffedLang: string;
   downloading: IRootState["i18n"]["downloading"];

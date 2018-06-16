@@ -1,9 +1,9 @@
 import { currentRuntime } from "main/os/runtime";
-import { ILocalizedString } from "common/types";
+import { LocalizedString } from "common/types";
 
 const runtime = currentRuntime();
 
-export function showInExplorerString(): ILocalizedString {
+export function showInExplorerString(): LocalizedString {
   switch (runtime.platform) {
     case "linux": {
       return ["grid.item.open_file_location.linux"];

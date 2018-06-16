@@ -2,19 +2,19 @@
  * Typings for https://www.npmjs.com/package/fast-memoize
  */
 declare module "fast-memoize" {
-  interface ICache {
+  interface Cache {
     has(key: any): boolean;
     get(key: any): any;
     set(key: any, value: any);
   }
 
-  interface IOpts {
+  interface Opts {
     cache?: {
-      create?: () => ICache;
+      create?: () => Cache;
     };
     serializer?: (value: any) => any;
   }
 
-  function memoize<T>(f: T, opts?: IOpts): T;
+  function memoize<T>(f: T, opts?: Opts): T;
   export = memoize;
 }

@@ -1,12 +1,12 @@
-import { IProfileCredentialsState } from "common/types";
+import { ProfileCredentialsState } from "common/types";
 import { actions } from "common/actions";
 import reducer from "../reducer";
 
 const initialState = {
   me: null,
-} as IProfileCredentialsState;
+} as ProfileCredentialsState;
 
-export default reducer<IProfileCredentialsState>(initialState, on => {
+export default reducer<ProfileCredentialsState>(initialState, on => {
   on(actions.loginSucceeded, (state, action) => {
     const { profile } = action.payload;
     return {

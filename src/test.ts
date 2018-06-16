@@ -16,39 +16,39 @@ const emptyArr: any[] = [];
 /** A watcher made for testing reactors */
 import { createStore } from "redux";
 import { Watcher } from "common/util/watcher";
-import { IStore, IAction } from "common/types";
+import { Store, Action } from "common/types";
 import reducer from "common/reducers";
 import { actions } from "common/actions";
 import { ItchPromise } from "common/util/itch-promise";
 
 export class TestWatcher extends Watcher {
-  store: IStore;
+  store: Store;
   p: Promise<void> | null;
 
   constructor() {
     super();
-    this.store = createStore(reducer, {} as any) as IStore;
+    this.store = createStore(reducer, {} as any) as Store;
     const storeDotDispatch = this.store.dispatch;
-    this.store.dispatch = <A extends IAction<any>>(action: A): A => {
+    this.store.dispatch = <A extends Action<any>>(action: A): A => {
       storeDotDispatch(action);
       this.p = this.routeInternal(action);
       return action;
     };
   }
 
-  async dispatch(action: IAction<any>) {
+  async dispatch(action: Action<any>) {
     this.store.dispatch(action);
     await this.p;
     this.p = null;
   }
 
-  async dispatchAndWaitImmediate(action: IAction<any>) {
+  async dispatchAndWaitImmediate(action: Action<any>) {
     await this.dispatch(action);
     await this.dispatch(actions.tick({}));
     await immediate();
   }
 
-  protected async routeInternal(action: IAction<any>) {
+  protected async routeInternal(action: Action<any>) {
     for (const type of [action.type]) {
       for (const reactor of this.reactors[type] || emptyArr) {
         await reactor(this.store, action);

@@ -3,7 +3,7 @@ import { actions } from "common/actions/index";
 import { call, messages } from "common/butlerd/index";
 import { InstallLocationSummary } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
-import { IMenuTemplate, IRootState } from "common/types";
+import { MenuTemplate, IRootState } from "common/types";
 import { rendererWindow, urlForInstallLocation } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
@@ -268,7 +268,7 @@ class InstallLocationSettings extends React.Component<
     let installLocation = findWhere(installLocations, { id });
     const mayDelete = size(installLocations) > 1;
 
-    let template: IMenuTemplate = [];
+    let template: MenuTemplate = [];
     template.push({
       localizedLabel: ["preferences.install_location.navigate"],
       action: actions.navigate({

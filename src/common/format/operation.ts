@@ -1,8 +1,8 @@
-import { ILocalizedString } from "../types/index";
-import { IOperation, OperationType } from "common/helpers/get-game-status";
+import { LocalizedString } from "../types/index";
+import { Operation, OperationType } from "common/helpers/get-game-status";
 import { DownloadReason } from "common/butlerd/messages";
 
-export function formatOperation(op: IOperation): ILocalizedString {
+export function formatOperation(op: Operation): LocalizedString {
   if (op.type === OperationType.Task) {
     if (op.name === "launch") {
       switch (op.stage) {
@@ -24,7 +24,7 @@ export function formatOperation(op: IOperation): ILocalizedString {
   }
 }
 
-export function formatReason(reason: DownloadReason): ILocalizedString {
+export function formatReason(reason: DownloadReason): LocalizedString {
   switch (reason) {
     case "install":
       return ["download.reason.install"];
@@ -37,7 +37,7 @@ export function formatReason(reason: DownloadReason): ILocalizedString {
   }
 }
 
-export function formatOutcome(reason: DownloadReason): ILocalizedString {
+export function formatOutcome(reason: DownloadReason): LocalizedString {
   switch (reason) {
     case "install":
       return ["download.outcome.installed"];

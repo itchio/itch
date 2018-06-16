@@ -1,7 +1,7 @@
 import { ClassificationAction } from "common/types";
 import { GameClassification } from "common/butlerd/messages";
 
-interface IClassificationActions {
+interface ClassificationActions {
   [key: string]: ClassificationAction;
 }
 
@@ -16,4 +16,4 @@ export const classificationActions = {
   [GameClassification.Other]: "open",
   [GameClassification.Comic]: "open",
   [GameClassification.Book]: "open",
-} as IClassificationActions;
+} as ClassificationActions;

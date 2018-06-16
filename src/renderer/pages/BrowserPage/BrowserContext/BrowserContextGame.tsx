@@ -4,7 +4,7 @@ import styled from "renderer/styles";
 import { Game } from "common/butlerd/messages";
 import { IRootState } from "common/types";
 import { createStructuredSelector } from "reselect";
-import getGameStatus, { IGameStatus } from "common/helpers/get-game-status";
+import getGameStatus, { GameStatus } from "common/helpers/get-game-status";
 import MainAction from "renderer/basics/MainAction";
 import { Dispatch } from "redux";
 import { actions } from "common/actions";
@@ -65,7 +65,7 @@ interface Props {
 }
 
 interface DerivedProps {
-  status: IGameStatus;
+  status: GameStatus;
 }
 
 const BrowserContextGame = withDispatch(

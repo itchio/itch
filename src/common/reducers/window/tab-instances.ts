@@ -1,4 +1,4 @@
-import { ITabInstances, ITabData, ITabDataSave } from "common/types";
+import { TabInstances, TabData, TabDataSave } from "common/types";
 import { actions } from "common/actions";
 import reducer from "../reducer";
 
@@ -7,17 +7,17 @@ const logger = rootLogger.child({ name: "reducers/tab-data" });
 
 import { omit, each } from "underscore";
 
-const initialState: ITabInstances = {};
+const initialState: TabInstances = {};
 
 const emptyObj = {} as any;
 
 let deepFields = ["users", "games", "collections", "web", "toast"];
 
 function merge(
-  a: ITabData,
-  b: ITabData,
+  a: TabData,
+  b: TabData,
   { shallow }: { shallow?: boolean }
-): ITabData {
+): TabData {
   if (shallow) {
     return { ...a, ...b };
   }
@@ -35,7 +35,7 @@ function merge(
   return res;
 }
 
-export default reducer<ITabInstances>(initialState, on => {
+export default reducer<TabInstances>(initialState, on => {
   on(actions.windowOpened, (state, action) => {
     const { initialURL } = action.payload;
     return {
@@ -215,7 +215,7 @@ export default reducer<ITabInstances>(initialState, on => {
 
     let s = state;
 
-    each(snapshot.items, (tabSave: ITabDataSave) => {
+    each(snapshot.items, (tabSave: TabDataSave) => {
       if (typeof tabSave !== "object") {
         return;
       }

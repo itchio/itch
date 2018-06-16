@@ -6,7 +6,7 @@ const logger = rootLogger.child({ name: "queue-game" });
 
 import asTask from "./as-task";
 
-import { IStore } from "common/types/index";
+import { Store } from "common/types/index";
 import { Game, Upload, Build } from "common/butlerd/messages";
 
 import { map, isEmpty } from "underscore";
@@ -70,7 +70,7 @@ export default function(watcher: Watcher) {
 }
 
 async function queueInstall(
-  store: IStore,
+  store: Store,
   game: Game,
   upload?: Upload,
   build?: Build
@@ -113,7 +113,7 @@ async function performInstallQueue({
   upload,
   build,
 }: {
-  store: IStore;
+  store: Store;
   logger: Logger;
   game: Game;
   upload: Upload;
@@ -198,7 +198,7 @@ async function performInstallQueue({
   store.dispatch(actions.downloadQueued({}));
 }
 
-function defaultInstallLocation(store: IStore) {
+function defaultInstallLocation(store: Store) {
   const { defaultInstallLocation } = store.getState().preferences;
   return defaultInstallLocation;
 }

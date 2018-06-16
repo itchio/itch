@@ -1,11 +1,11 @@
-import { Store } from "redux";
+import { Store as ReduxStore } from "redux";
 
 export * from "./errors";
 export * from "./net";
 export * from "./tab-data";
 import * as TabDataTypes from "./tab-data";
 
-import { ITabData } from "./tab-data";
+import { TabData } from "./tab-data";
 import {
   GameUpdate,
   Game,
@@ -19,47 +19,47 @@ import {
 } from "common/butlerd/messages";
 import { IEndpoint } from "butlerd";
 import { modalWidgets } from "renderer/modal-widgets";
-export interface IStore extends Store<IRootState> {}
+export interface Store extends ReduxStore<IRootState> {}
 
-export interface IDispatch {
-  (action: IAction<any>): void;
+export interface Dispatch {
+  (action: Action<any>): void;
 }
 
-export interface IAction<T extends Object> {
+export interface Action<T extends Object> {
   type: string;
   payload?: T;
 }
 
-interface IWatcher {
-  addSub(sub: IWatcher): void;
-  removeSub(sub: IWatcher): void;
+interface Watcher {
+  addSub(sub: Watcher): void;
+  removeSub(sub: Watcher): void;
 }
 
-export interface IChromeStore extends IStore {
-  watcher: IWatcher;
+export interface ChromeStore extends Store {
+  watcher: Watcher;
 }
 
-export interface IDispatch {
-  (a: IAction<any>): void;
+export interface Dispatch {
+  (a: Action<any>): void;
 }
 
 export type GenerosityLevel = "discreet";
 
 export type ClassificationAction = "launch" | "open";
 
-export interface IUserSet {
+export interface UserSet {
   [id: string]: User;
 }
 
-export interface IGameSet {
+export interface GameSet {
   [id: string]: Game;
 }
 
-export interface ICollectionSet {
+export interface CollectionSet {
   [id: string]: Collection;
 }
 
-export interface ICredentials {
+export interface Credentials {
   me: User;
 }
 
@@ -67,46 +67,46 @@ export interface ICredentials {
  * The entire application state, following the redux philosophy
  */
 export interface IRootState {
-  system: ISystemState;
-  setup: ISetupState;
-  profile: IProfileState;
-  windows: IWindowsState;
-  i18n: II18nState;
-  ui: IUState;
-  preferences: IPreferencesState;
-  tasks: ITasksState;
-  downloads: IDownloadsState;
-  status: IStatusState;
-  gameUpdates: IGameUpdatesState;
+  system: SystemState;
+  setup: SetupState;
+  profile: ProfileState;
+  windows: WindowsState;
+  i18n: I18nState;
+  ui: UIState;
+  preferences: PreferencesState;
+  tasks: TasksState;
+  downloads: DownloadsState;
+  status: StatusState;
+  gameUpdates: GameUpdatesState;
 
   /** commonly-needed subset of DB rows available in a compact & performance-friendly format */
-  commons: ICommonsState;
+  commons: CommonsState;
 
-  systemTasks: ISystemTasksState;
-  broth: IBrothState;
-  butlerd: IButlerdState;
+  systemTasks: SystemTasksState;
+  broth: BrothState;
+  butlerd: ButlerdState;
 }
 
-export interface IBrothState {
+export interface BrothState {
   packageNames: string[];
   packages: {
-    [key: string]: IPackageState;
+    [key: string]: PackageState;
   };
 }
 
-export interface IButlerdState {
+export interface ButlerdState {
   endpoint?: IEndpoint;
 }
 
-export interface IPackageState {
+export interface PackageState {
   stage: "assess" | "download" | "install" | "idle" | "need-restart";
   version?: string;
   versionPrefix?: string;
-  progressInfo?: IProgressInfo;
+  progressInfo?: ProgressInfo;
   availableVersion?: string;
 }
 
-export interface ICommonsState {
+export interface CommonsState {
   downloadKeys: {
     [downloadKeyId: string]: DownloadKeySummary;
   };
@@ -127,7 +127,7 @@ export interface ICommonsState {
   };
 }
 
-export interface IGameUpdatesState {
+export interface GameUpdatesState {
   /** pending game updates */
   updates: {
     [caveId: string]: GameUpdate;
@@ -140,9 +140,9 @@ export interface IGameUpdatesState {
   progress: number;
 }
 
-export type IModalAction = IAction<any> | IAction<any>[];
+export type ModalAction = Action<any> | Action<any>[];
 
-export interface IModalButton {
+export interface ModalButton {
   /** HTML id for this button */
   id?: string;
 
@@ -150,31 +150,31 @@ export interface IModalButton {
   icon?: string;
 
   /** text to show on button */
-  label: ILocalizedString;
+  label: LocalizedString;
 
   /** what should happen when clicking the button */
-  action?: IModalAction | "widgetResponse";
+  action?: ModalAction | "widgetResponse";
 
   /** use this to specify custom CSS classes (which is both naughty and nice) */
   className?: string;
 
   /** Tags to tack after label */
-  tags?: IModalButtonTag[];
+  tags?: ModalButtonTag[];
 
   timeAgo?: {
     date: Date;
   };
 }
 
-export interface IModalButtonTag {
-  label?: ILocalizedString;
+export interface ModalButtonTag {
+  label?: LocalizedString;
   icon?: string;
 }
 
 // FIXME: that's naughty - just make static buttons be constants instead, that works.
-export type IModalButtonSpec = IModalButton | "ok" | "cancel" | "nevermind";
+export type ModalButtonSpec = ModalButton | "ok" | "cancel" | "nevermind";
 
-export interface IModalBase {
+export interface ModalBase {
   /** window this modal belongs to */
   window: string;
 
@@ -182,29 +182,29 @@ export interface IModalBase {
   id?: string;
 
   /** title of the modal */
-  title: ILocalizedString;
+  title: LocalizedString;
 
   /** main body of text */
-  message?: ILocalizedString;
+  message?: LocalizedString;
 
   /** secondary body of text */
-  detail?: ILocalizedString;
+  detail?: LocalizedString;
 
   /** an image to show prominently in the modal */
   stillCoverUrl?: string;
   coverUrl?: string;
 
   /** main buttons (in list format) */
-  bigButtons?: IModalButtonSpec[];
+  bigButtons?: ModalButtonSpec[];
 
   /** secondary buttons */
-  buttons?: IModalButtonSpec[];
+  buttons?: ModalButtonSpec[];
 
   unclosable?: boolean;
   fullscreen?: boolean;
 }
 
-export interface IModal extends IModalBase {
+export interface Modal extends ModalBase {
   /** name of modal widget to render */
   widget?: keyof typeof modalWidgets;
 
@@ -212,7 +212,7 @@ export interface IModal extends IModalBase {
   widgetParams?: {};
 }
 
-export interface IModalUpdate {
+export interface ModalUpdate {
   /** the modal's unique identifier */
   id: string;
 
@@ -220,19 +220,19 @@ export interface IModalUpdate {
   widgetParams: any;
 }
 
-export type IModalsState = IModal[];
+export type ModalsState = Modal[];
 
-export interface IItchAppTabs {
+export interface ItchAppTabs {
   /** id of current tab at time of snapshot */
   current: string;
 
   /** list of transient tabs when the snapshot was taken */
-  items: TabDataTypes.ITabDataSave[];
+  items: TabDataTypes.TabDataSave[];
 }
 
 export type ProxySource = "os" | "env";
 
-export interface IProxySettings {
+export interface ProxySettings {
   /** if non-null, the proxy specified by the OS (as sniffed by Chromium) */
   proxy?: string;
 
@@ -240,7 +240,7 @@ export interface IProxySettings {
   proxySource?: ProxySource;
 }
 
-export interface ISystemState {
+export interface SystemState {
   /** app name, like 'itch' or 'kitch' */
   appName: string;
 
@@ -281,7 +281,7 @@ export interface ISystemState {
   quitting?: boolean;
 }
 
-export interface ISystemTasksState {
+export interface SystemTasksState {
   /** timestamp for next components update check (milliseconds since epoch) */
   nextComponentsUpdateCheck: number;
 
@@ -289,42 +289,42 @@ export interface ISystemTasksState {
   nextGameUpdateCheck: number;
 }
 
-export interface ISetupOperation {
-  message: ILocalizedString;
+export interface SetupOperation {
+  message: LocalizedString;
   icon: string;
   stack?: string;
   stage?: string;
-  progressInfo?: IProgressInfo;
+  progressInfo?: ProgressInfo;
 }
 
-export interface ISetupState {
+export interface SetupState {
   done: boolean;
   errors: string[];
-  blockingOperation: ISetupOperation;
+  blockingOperation: SetupOperation;
 }
 
-export interface IProfileState {
+export interface ProfileState {
   /** collection freshness information */
-  credentials: IProfileCredentialsState;
-  login: IProfileLoginState;
-  search: IProfileSearchState;
+  credentials: ProfileCredentialsState;
+  login: ProfileLoginState;
+  search: ProfileSearchState;
 
   itchioUris: string[];
 }
 
-export interface IWindowsState {
-  [windowId: string]: IWindowState;
+export interface WindowsState {
+  [windowId: string]: WindowState;
 }
 
-export interface IWindowState {
-  navigation: INavigationState;
-  modals: IModalsState;
-  tabInstances: TabDataTypes.ITabInstances;
-  contextMenu: IContextMenuState;
-  native: INativeWindowState;
+export interface WindowState {
+  navigation: NavigationState;
+  modals: ModalsState;
+  tabInstances: TabDataTypes.TabInstances;
+  contextMenu: ContextMenuState;
+  native: NativeWindowState;
 }
 
-export interface INativeWindowState {
+export interface NativeWindowState {
   /** id of the electron BrowserWindow the window is displayed in */
   id: number;
 
@@ -339,20 +339,20 @@ export interface INativeWindowState {
 }
 
 // TODO: remove, just put the butlerd profile object in the state
-export interface IProfileCredentialsState {
+export interface ProfileCredentialsState {
   /** info on user using the app */
   me: User;
 }
 
-export interface IProfileLoginState {
+export interface ProfileLoginState {
   error?: Error;
-  blockingOperation: ISetupOperation;
+  blockingOperation: SetupOperation;
   lastUsername?: string;
 }
 
 export type TabLayout = "grid" | "table";
 
-export interface INavigationState {
+export interface NavigationState {
   /** what the window was opened on */
   initialURL: string;
 
@@ -360,29 +360,29 @@ export interface INavigationState {
   openTabs: string[];
 
   /** set to true when a tab is loading */
-  loadingTabs: ILoadingTabs;
+  loadingTabs: LoadingTabs;
 
   /** current tab id */
   tab: string;
 }
 
-export interface ILoadingTabs {
+export interface LoadingTabs {
   [key: string]: boolean;
 }
 
-export interface ISearchResults {
+export interface SearchResults {
   games?: {
     ids: number[];
-    set: IGameSet;
+    set: GameSet;
   };
 
   users?: {
     ids: number[];
-    set: IUserSet;
+    set: UserSet;
   };
 }
 
-export interface IProfileSearchState {
+export interface ProfileSearchState {
   /** search suggestion */
   example: string;
 
@@ -402,19 +402,19 @@ export interface IProfileSearchState {
   highlight: number;
 
   /** current search results for 'query' */
-  results: ISearchResults;
+  results: SearchResults;
 }
 
-export interface II18nResources {
-  [lang: string]: II18nKeys;
+export interface I18nResources {
+  [lang: string]: I18nKeys;
 }
 
-export interface II18nKeys {
+export interface I18nKeys {
   [key: string]: string;
 }
 
 /** Info about a locale. See locales.json for a list that ships with the app. */
-export interface ILocaleInfo {
+export interface LocaleInfo {
   /** 2-letter language code */
   value: string;
 
@@ -422,12 +422,12 @@ export interface ILocaleInfo {
   label: string;
 }
 
-export interface II18nState {
+export interface I18nState {
   /** 2-letter code for the language the app is currently displayed in */
   lang: string;
 
   /** all translated strings */
-  strings: II18nResources;
+  strings: I18nResources;
 
   /** locales we'll download soon */
   queued: {
@@ -439,27 +439,27 @@ export interface II18nState {
     [lang: string]: boolean;
   };
 
-  locales: ILocaleInfo[];
+  locales: LocaleInfo[];
 }
 
-export interface IUIMenuState {
-  template: IMenuTemplate;
+export interface UIMenuState {
+  template: MenuTemplate;
 }
 
-export interface IContextMenuState {
+export interface ContextMenuState {
   open: boolean;
   data: {
-    template: IMenuTemplate;
+    template: MenuTemplate;
     clientX: number;
     clientY: number;
   };
 }
 
-export interface IUState {
-  menu: IUIMenuState;
+export interface UIState {
+  menu: UIMenuState;
 }
 
-interface IInstallLocation {
+interface InstallLocation {
   /** path on disk (empty for appdata) */
   path: string;
 
@@ -467,7 +467,7 @@ interface IInstallLocation {
   deleted?: boolean;
 }
 
-export interface IPreferencesState {
+export interface PreferencesState {
   /** is the app allowed to check for updates to itself? */
   downloadSelfUpdates?: boolean;
 
@@ -475,7 +475,7 @@ export interface IPreferencesState {
   offlineMode?: boolean;
 
   installLocations?: {
-    [key: string]: IInstallLocation;
+    [key: string]: InstallLocation;
   };
 
   /** where to install games (doesn't change already-installed games) */
@@ -560,7 +560,7 @@ export interface ITask {
   stage?: string;
 }
 
-export interface ITasksState {
+export interface TasksState {
   /** all tasks currently going on in the app (installs, uninstalls, etc.) */
   tasks: {
     [key: string]: ITask;
@@ -575,7 +575,7 @@ export interface ITasksState {
   finishedTasks: ITask[];
 }
 
-export interface IDownloadsState {
+export interface DownloadsState {
   /** All the downloads we know about, indexed by their own id */
   items: {
     [id: string]: Download;
@@ -610,8 +610,8 @@ export interface IOpenAtLoginError {
   message?: string;
 }
 
-export interface IStatusState {
-  messages: ILocalizedString[];
+export interface StatusState {
+  messages: LocalizedString[];
   openAtLoginError: IOpenAtLoginError;
   reduxLoggingEnabled: boolean;
 }
@@ -622,9 +622,9 @@ export interface IStatusState {
  * Localized messages can be just a string, or an Array arranged like so:
  * [key: string, params: {[name: string]: string}]
  */
-export type ILocalizedString = string | any[];
+export type LocalizedString = string | any[];
 
-export interface IProgressInfo {
+export interface ProgressInfo {
   /** progress of the task between [0,1] */
   progress: number;
 
@@ -641,7 +641,7 @@ export interface IProgressInfo {
 }
 
 export interface IProgressListener {
-  (info: IProgressInfo): void;
+  (info: ProgressInfo): void;
 }
 
 export interface IRuntime {
@@ -649,12 +649,12 @@ export interface IRuntime {
 }
 
 export interface IMenuItem extends Electron.MenuItemConstructorOptions {
-  localizedLabel?: ILocalizedString;
-  action?: IAction<any>;
+  localizedLabel?: LocalizedString;
+  action?: Action<any>;
   submenu?: IMenuItem[];
   id?: string;
 }
-export type IMenuTemplate = IMenuItem[];
+export type MenuTemplate = IMenuItem[];
 
 export interface INavigatePayload {
   /** which window initiated the navigation */
@@ -667,7 +667,7 @@ export interface INavigatePayload {
   resource?: string;
 
   /** if we already have tab data, let it be here */
-  data?: TabDataTypes.ITabData;
+  data?: TabDataTypes.TabData;
 
   /** whether to open a new tab in the background */
   background?: boolean;
@@ -712,7 +712,7 @@ interface IEvolveBasePayload {
   resource?: string;
 
   /** new tab data to add to the previous set */
-  data?: ITabData;
+  data?: TabData;
 }
 
 export interface IEvolveTabPayload extends IEvolveBasePayload {

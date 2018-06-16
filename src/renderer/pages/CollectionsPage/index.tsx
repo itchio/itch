@@ -3,7 +3,7 @@ import { messages } from "common/butlerd";
 import { FetchProfileCollectionsResult } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Space } from "common/helpers/space";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 import { rendererWindow, urlForCollection } from "common/util/navigation";
 import React from "react";
 import EmptyState from "renderer/basics/EmptyState";
@@ -146,7 +146,7 @@ interface Props extends MeatProps {
   tab: string;
   profileId: number;
   dispatch: Dispatch;
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
 }
 
 export default withTab(

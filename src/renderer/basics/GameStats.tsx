@@ -1,7 +1,7 @@
 import { Game } from "common/butlerd/messages";
 import { hasPlatforms } from "common/constants/platform-data";
 import { formatPrice } from "common/format/price";
-import { IGameStatus } from "common/helpers/get-game-status";
+import { GameStatus } from "common/helpers/get-game-status";
 import { actionForGame } from "common/util/action-for-game";
 import React from "react";
 import LastPlayed from "renderer/basics/LastPlayed";
@@ -150,5 +150,5 @@ export default GameStats;
 
 interface Props {
   game: Game;
-  status: IGameStatus;
+  status: GameStatus;
 }

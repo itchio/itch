@@ -1,5 +1,5 @@
 import React from "react";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 import { messages } from "common/butlerd";
 import { Space } from "common/helpers/space";
 import { actions } from "common/actions";
@@ -43,7 +43,7 @@ class GamePage extends React.PureComponent<Props> {
 
 interface Props {
   tab: string;
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
   dispatch: Dispatch;
 }
 

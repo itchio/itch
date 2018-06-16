@@ -1,5 +1,5 @@
 import { PackageLike } from "./package";
-import { IStore, IPackageState } from "common/types";
+import { Store, PackageState } from "common/types";
 import {
   itchSetupLock,
   runItchSetup,
@@ -15,10 +15,10 @@ import { actions } from "common/actions";
 const logger = rootLogger.child({ name: "self-package" });
 
 export class SelfPackage implements PackageLike {
-  private store: IStore;
+  private store: Store;
   private name: string;
 
-  constructor(store: IStore, name: string) {
+  constructor(store: Store, name: string) {
     this.store = store;
     this.name = name;
   }
@@ -79,7 +79,7 @@ export class SelfPackage implements PackageLike {
     }
   };
 
-  private stage(stage: IPackageState["stage"]) {
+  private stage(stage: PackageState["stage"]) {
     this.store.dispatch(actions.packageStage({ name: this.name, stage }));
   }
 }

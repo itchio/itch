@@ -1,59 +1,58 @@
 import { actions } from "common/actions/index";
 import {
-  IAction,
-  IModal,
-  IModalBase,
-  IModalUpdate,
+  Action,
+  Modal,
+  ModalBase,
+  ModalUpdate,
   ModalResponse,
 } from "common/types";
 import uuid from "common/util/uuid";
 import React from "react";
 import ClearBrowsingData, {
-  IClearBrowsingDataParams,
-  IClearBrowsingDataResponse,
+  ClearBrowsingDataParams,
+  ClearBrowsingDataResponse,
 } from "./ClearBrowsingData";
 import ExploreJson, {
-  IExploreJsonParams,
-  IExploreJsonResponse,
+  ExploreJsonParams,
+  ExploreJsonResponse,
 } from "./ExploreJson";
-import ManageCave, { IManageCaveParams } from "./ManageCave";
-import ManageGame, { IManageGameParams } from "./ManageGame";
-import PrereqsState, { IPrereqsStateParams } from "./PrereqsState";
+import ManageCave, { ManageCaveParams } from "./ManageCave";
+import ManageGame, { ManageGameParams } from "./ManageGame";
+import PrereqsState, { PrereqsStateParams } from "./PrereqsState";
 import RecaptchaInput, {
-  IRecaptchaInputParams,
-  IRecaptchaInputResponse,
+  RecaptchaInputParams,
+  RecaptchaInputResponse,
 } from "./RecaptchaInput";
 import ScanInstallLocations, {
-  IScanInstallLocationsParams,
-  IScanInstallLocationsResponse,
+  ScanInstallLocationsParams,
+  ScanInstallLocationsResponse,
 } from "./ScanInstallLocations";
-import SecretSettings, { ISecretSettingsParams } from "./SecretSettings";
-import ShowError, { IShowErrorParams } from "./ShowError";
+import SecretSettings, { SecretSettingsParams } from "./SecretSettings";
+import ShowError, { ShowErrorParams } from "./ShowError";
 import SwitchVersionCave, {
-  ISwitchCaveResponse,
-  ISwitchVersionCaveParams,
+  SwitchCaveResponse,
+  SwitchVersionCaveParams,
 } from "./SwitchVersionCave";
 import TwoFactorInput, {
-  ITwoFactorInputParams,
-  ITwoFactorInputResponse,
+  TwoFactorInputParams,
+  TwoFactorInputResponse,
 } from "./TwoFactorInput";
 
-interface ITypedModalBase<Params> extends IModalBase {
+interface TypedModalBase<Params> extends ModalBase {
   widgetParams: Params;
 }
 
-export interface ITypedModal<Params, Response> extends IModal {
+export interface TypedModal<Params, Response> extends Modal {
   widgetParams: Params;
   widget?: any;
   __response: Response;
 }
 
-interface ITypedModalUpdateBase<Params> extends IModalUpdate {
+interface TypedModalUpdateBase<Params> extends ModalUpdate {
   widgetParams: Partial<Params>;
 }
 
-export interface ITypedModalUpdate<Params>
-  extends ITypedModalUpdateBase<Params> {
+export interface TypedModalUpdate<Params> extends TypedModalUpdateBase<Params> {
   __params: Params;
 }
 
@@ -62,17 +61,17 @@ type ModalWidgetSpec<Params, Response> = {
   response?: Response;
   key: string;
   component: typeof React.PureComponent;
-  action: (response: Response) => IAction<ModalResponse>;
-  make: (base: ITypedModalBase<Params>) => ITypedModal<Params, Response>;
-  update: (update: ITypedModalUpdateBase<Params>) => ITypedModalUpdate<Params>;
+  action: (response: Response) => Action<ModalResponse>;
+  make: (base: TypedModalBase<Params>) => TypedModal<Params, Response>;
+  update: (update: TypedModalUpdateBase<Params>) => TypedModalUpdate<Params>;
 };
 
-export type IModalWidgetProps<Params, Response> = {
-  modal: ITypedModal<Params, Response>;
+export type ModalWidgetProps<Params, Response> = {
+  modal: TypedModal<Params, Response>;
   updatePayload: (response: Response) => void;
 };
 
-interface IModalWidgets {
+interface ModalWidgets {
   [key: string]: ModalWidgetSpec<any, any>;
 }
 
@@ -102,7 +101,7 @@ function widget<Params, Response>(
   return spec;
 }
 
-function wireWidgets<T extends IModalWidgets>(mws: T): T {
+function wireWidgets<T extends ModalWidgets>(mws: T): T {
   for (const k of Object.keys(mws)) {
     mws[k].key = k;
   }
@@ -110,30 +109,29 @@ function wireWidgets<T extends IModalWidgets>(mws: T): T {
 }
 
 export const modalWidgets = wireWidgets({
-  clearBrowsingData: widget<
-    IClearBrowsingDataParams,
-    IClearBrowsingDataResponse
-  >(ClearBrowsingData),
+  clearBrowsingData: widget<ClearBrowsingDataParams, ClearBrowsingDataResponse>(
+    ClearBrowsingData
+  ),
 
-  exploreJson: widget<IExploreJsonParams, IExploreJsonResponse>(ExploreJson),
+  exploreJson: widget<ExploreJsonParams, ExploreJsonResponse>(ExploreJson),
 
-  manageGame: widget<IManageGameParams, void>(ManageGame),
-  manageCave: widget<IManageCaveParams, void>(ManageCave),
-  prereqsState: widget<IPrereqsStateParams, void>(PrereqsState),
-  recaptchaInput: widget<IRecaptchaInputParams, IRecaptchaInputResponse>(
+  manageGame: widget<ManageGameParams, void>(ManageGame),
+  manageCave: widget<ManageCaveParams, void>(ManageCave),
+  prereqsState: widget<PrereqsStateParams, void>(PrereqsState),
+  recaptchaInput: widget<RecaptchaInputParams, RecaptchaInputResponse>(
     RecaptchaInput
   ),
-  switchVersionCave: widget<ISwitchVersionCaveParams, ISwitchCaveResponse>(
+  switchVersionCave: widget<SwitchVersionCaveParams, SwitchCaveResponse>(
     SwitchVersionCave
   ),
-  secretSettings: widget<ISecretSettingsParams, void>(SecretSettings),
-  showError: widget<IShowErrorParams, void>(ShowError),
-  twoFactorInput: widget<ITwoFactorInputParams, ITwoFactorInputResponse>(
+  secretSettings: widget<SecretSettingsParams, void>(SecretSettings),
+  showError: widget<ShowErrorParams, void>(ShowError),
+  twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(
     TwoFactorInput
   ),
   scanInstallLocations: widget<
-    IScanInstallLocationsParams,
-    IScanInstallLocationsResponse
+    ScanInstallLocationsParams,
+    ScanInstallLocationsResponse
   >(ScanInstallLocations),
 
   // dummy widgets

@@ -1,11 +1,11 @@
 import React from "react";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 
 export interface TabInstanceContextProps {
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
 }
 
-const tabInstanceContext = React.createContext<ITabInstance>(undefined);
+const tabInstanceContext = React.createContext<TabInstance>(undefined);
 export const TabInstanceProvider = tabInstanceContext.Provider;
 export const TabInstanceConsumer = tabInstanceContext.Consumer;
 

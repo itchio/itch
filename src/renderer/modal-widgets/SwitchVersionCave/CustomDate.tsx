@@ -1,6 +1,6 @@
 import React from "react";
 import { injectIntl, InjectedIntl } from "react-intl";
-import { formatDate, DATE_FORMAT, IDateFormat } from "common/format/datetime";
+import { formatDate, DATE_FORMAT, DateFormat } from "common/format/datetime";
 
 class CustomDate extends React.PureComponent<Props & DerivedProps> {
   render() {
@@ -22,7 +22,7 @@ class CustomDate extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   date: Date;
-  format?: IDateFormat;
+  format?: DateFormat;
 }
 
 interface DerivedProps {

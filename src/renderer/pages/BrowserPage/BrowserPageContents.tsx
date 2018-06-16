@@ -10,7 +10,7 @@ import BrowserBar from "./BrowserBar";
 import BrowserContext from "./BrowserContext";
 import Icon from "renderer/basics/Icon";
 
-import { IRootState, ITabInstance } from "common/types";
+import { IRootState, TabInstance } from "common/types";
 
 import { WebviewTag } from "electron";
 
@@ -271,7 +271,7 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
 
 interface Props extends MeatProps {
   tab: string;
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
   profileId: number;
   dispatch: Dispatch;
 

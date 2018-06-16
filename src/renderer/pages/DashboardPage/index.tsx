@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { FetchProfileGamesResult } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 import { rendererWindow, urlForGame } from "common/util/navigation";
 import React from "react";
 import Filler from "renderer/basics/Filler";
@@ -190,7 +190,7 @@ interface Props extends MeatProps {
   tab: string;
   profileId: number;
   dispatch: Dispatch;
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
 }
 
 export default withTab(

@@ -1,4 +1,4 @@
-import { ICredentials, IRootState } from "common/types";
+import { Credentials, IRootState } from "common/types";
 import React from "react";
 import { connect } from "renderer/hocs/connect";
 import Meats from "renderer/scenes/HubScene/Meats";
@@ -29,7 +29,7 @@ class HubContent extends React.PureComponent<Props & DerivedProps> {
 interface Props {}
 
 type DerivedProps = {
-  credentials: ICredentials;
+  credentials: Credentials;
 };
 
 export default connect<Props>(

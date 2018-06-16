@@ -7,7 +7,7 @@ import electron from "electron";
 
 import { T } from "renderer/t";
 import { fileSize } from "common/format/filesize";
-import { IModalWidgetProps } from "./index";
+import { ModalWidgetProps } from "./index";
 import styled from "renderer/styles";
 import { partitionForUser } from "common/util/partition-for-user";
 import { connect } from "renderer/hocs/connect";
@@ -167,8 +167,8 @@ const ClearBrowsingDataList = styled.div`
 
 // props
 
-export interface IClearBrowsingDataParams {}
-export interface IClearBrowsingDataResponse {
+export interface ClearBrowsingDataParams {}
+export interface ClearBrowsingDataResponse {
   /** whether to clear cookies */
   cookies?: boolean;
 
@@ -177,9 +177,9 @@ export interface IClearBrowsingDataResponse {
 }
 
 interface Props
-  extends IModalWidgetProps<
-      IClearBrowsingDataParams,
-      IClearBrowsingDataResponse
+  extends ModalWidgetProps<
+      ClearBrowsingDataParams,
+      ClearBrowsingDataResponse
     > {}
 
 interface DerivedProps {

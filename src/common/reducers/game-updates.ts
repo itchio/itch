@@ -1,4 +1,4 @@
-import { IGameUpdatesState } from "common/types";
+import { GameUpdatesState } from "common/types";
 import { omit } from "underscore";
 
 import { actions } from "common/actions";
@@ -8,9 +8,9 @@ const initialState = {
   updates: {},
   checking: false,
   progress: -1,
-} as IGameUpdatesState;
+} as GameUpdatesState;
 
-export default reducer<IGameUpdatesState>(initialState, on => {
+export default reducer<GameUpdatesState>(initialState, on => {
   on(actions.gameUpdateCheckStatus, (state, action) => {
     const { checking, progress } = action.payload;
     return {

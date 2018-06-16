@@ -10,14 +10,14 @@ export function formatDuration(secs: number): JSX.Element {
   return <FormattedMessage {...formatDurationAsMessage(secs)} />;
 }
 
-interface IFormattedDuration {
+interface FormattedDuration {
   id: string;
   values?: {
     [key: string]: string;
   };
 }
 
-export function formatDurationAsMessage(secs: number): IFormattedDuration {
+export function formatDurationAsMessage(secs: number): FormattedDuration {
   if (secs < 60) {
     return {
       id: "duration.seconds",
@@ -38,7 +38,7 @@ export function formatDurationAsMessage(secs: number): IFormattedDuration {
   }
 }
 
-export interface IDateFormat {
+export interface DateFormat {
   key: number;
   options: Intl.DateTimeFormatOptions;
 }
@@ -52,7 +52,7 @@ const cacheByFormat = new Map<number, Map<string, Intl.DateTimeFormat>>();
 export function formatDate(
   date: Date,
   locale: string,
-  format: IDateFormat
+  format: DateFormat
 ): string {
   if (!date) {
     return "";
@@ -67,7 +67,7 @@ export function formatDate(
 
 // Get a formatter, cached by format & locale
 export function getFormatter(
-  format: IDateFormat,
+  format: DateFormat,
   locale: string
 ): Intl.DateTimeFormat {
   let cacheByLocale = cacheByFormat.get(format.key);
@@ -94,7 +94,7 @@ export function getFormatter(
   return formatter;
 }
 
-export const DATE_FORMAT: IDateFormat = {
+export const DATE_FORMAT: DateFormat = {
   key: 1,
   options: {
     year: "numeric",
@@ -107,7 +107,7 @@ export const DATE_FORMAT: IDateFormat = {
   },
 };
 
-export const MONTH_YEAR_FORMAT: IDateFormat = {
+export const MONTH_YEAR_FORMAT: DateFormat = {
   key: 2,
   options: {
     year: "numeric",
@@ -115,7 +115,7 @@ export const MONTH_YEAR_FORMAT: IDateFormat = {
   },
 };
 
-export const DAY_MONTH_FORMAT: IDateFormat = {
+export const DAY_MONTH_FORMAT: DateFormat = {
   key: 3,
   options: {
     month: "long",

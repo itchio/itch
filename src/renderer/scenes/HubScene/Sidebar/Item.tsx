@@ -3,7 +3,7 @@ import classNames from "classnames";
 
 import { T } from "renderer/t";
 
-import { ILocalizedString, ITabInstance } from "common/types";
+import { LocalizedString, TabInstance } from "common/types";
 
 import Filler from "renderer/basics/Filler";
 import LoadingCircle from "renderer/basics/LoadingCircle";
@@ -208,10 +208,10 @@ interface Props {
   tab: string;
   url: string;
   resource: string;
-  label: ILocalizedString;
+  label: LocalizedString;
   active: boolean;
   count?: number;
-  sublabel?: ILocalizedString;
+  sublabel?: LocalizedString;
   progress?: number;
 
   icon?: string;
@@ -222,7 +222,7 @@ interface Props {
   onClick?: () => void;
   onClose?: () => void;
   onExplore?: (tabId: string) => void;
-  tabInstance?: ITabInstance;
+  tabInstance?: TabInstance;
 }
 
 export default Item;

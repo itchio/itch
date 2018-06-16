@@ -9,7 +9,7 @@ import { MinimalContext } from "../context";
 import { formatExitCode } from "common/format/exit-code";
 import { ItchPromise } from "common/util/itch-promise";
 
-interface ISpawnOpts {
+interface SpawnOpts {
   /** Context this should run in */
   ctx: MinimalContext;
 
@@ -47,23 +47,23 @@ interface ISpawnOpts {
   inheritStd?: boolean;
 }
 
-interface IExecResult {
+interface ExecResult {
   code: number;
   out: string;
   err: string;
 }
 
-interface ISpawnInterface {
-  (opts: ISpawnOpts): Promise<number>;
-  assert(opts: ISpawnOpts): Promise<void>;
-  exec(opts: ISpawnOpts): Promise<IExecResult>;
-  getOutput(opts: ISpawnOpts): Promise<string>;
+interface SpawnInterface {
+  (opts: SpawnOpts): Promise<number>;
+  assert(opts: SpawnOpts): Promise<void>;
+  exec(opts: SpawnOpts): Promise<ExecResult>;
+  getOutput(opts: SpawnOpts): Promise<string>;
   escapePath(arg: string): string;
 }
 
-let spawn: ISpawnInterface;
+let spawn: SpawnInterface;
 
-spawn = async function(opts: ISpawnOpts): Promise<number> {
+spawn = async function(opts: SpawnOpts): Promise<number> {
   const { ctx, split, onToken, onErrToken, logger = spawnLogger } = opts;
   if (!ctx) {
     throw new Error("spawn cannot be called with a null context");
@@ -142,14 +142,14 @@ spawn = async function(opts: ISpawnOpts): Promise<number> {
   });
 } as any;
 
-spawn.assert = async function(opts: ISpawnOpts): Promise<void> {
+spawn.assert = async function(opts: SpawnOpts): Promise<void> {
   const code = await spawn(opts);
   if (code !== 0) {
     throw new Error(`spawn ${opts.command} exit code: ${formatExitCode(code)}`);
   }
 };
 
-spawn.exec = async function(opts: ISpawnOpts): Promise<IExecResult> {
+spawn.exec = async function(opts: SpawnOpts): Promise<ExecResult> {
   let out = "";
   let err = "";
 
@@ -175,7 +175,7 @@ spawn.exec = async function(opts: ISpawnOpts): Promise<IExecResult> {
   return { code, out, err };
 };
 
-spawn.getOutput = async function(opts: ISpawnOpts): Promise<string> {
+spawn.getOutput = async function(opts: SpawnOpts): Promise<string> {
   const { code, err, out } = await spawn.exec(opts);
   const { command } = opts;
 

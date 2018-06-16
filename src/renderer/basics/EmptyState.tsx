@@ -1,4 +1,4 @@
-import { ILocalizedString } from "common/types";
+import { LocalizedString } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Icon from "renderer/basics/Icon";
@@ -84,11 +84,11 @@ export default EmptyState;
 
 interface Props {
   className?: string;
-  bigText: ILocalizedString;
-  smallText?: ILocalizedString;
+  bigText: LocalizedString;
+  smallText?: LocalizedString;
   icon: string;
   buttonIcon?: string;
-  buttonText?: ILocalizedString;
+  buttonText?: LocalizedString;
   buttonAction?: React.MouseEventHandler<HTMLDivElement>;
   componentAction?: JSX.Element;
 }

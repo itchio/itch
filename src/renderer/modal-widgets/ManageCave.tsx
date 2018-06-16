@@ -26,7 +26,7 @@ import {
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { IModalWidgetProps } from "./index";
+import { ModalWidgetProps } from "./index";
 
 const CaveItem = styled.div`
   padding: 4px;
@@ -238,11 +238,11 @@ class ManageCave extends React.PureComponent<Props & DerivedProps> {
   };
 }
 
-export interface IManageCaveParams {
+export interface ManageCaveParams {
   cave: Cave;
 }
 
-interface Props extends IModalWidgetProps<IManageCaveParams, void> {}
+interface Props extends ModalWidgetProps<ManageCaveParams, void> {}
 
 const actionCreators = actionCreatorsList(
   "closeModal",

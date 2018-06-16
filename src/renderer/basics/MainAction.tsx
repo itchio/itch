@@ -2,10 +2,10 @@ import classNames from "classnames";
 import { Game } from "common/butlerd/messages";
 import {
   Access,
-  IGameStatus,
+  GameStatus,
   OperationType,
 } from "common/helpers/get-game-status";
-import { ILocalizedString } from "common/types";
+import { LocalizedString } from "common/types";
 import { actionForGame } from "common/util/action-for-game";
 import React from "react";
 import {
@@ -26,7 +26,7 @@ class MainAction extends React.PureComponent<Props & DerivedProps> {
 
     let iconComponent: JSX.Element;
     let icon: string;
-    let label: ILocalizedString;
+    let label: LocalizedString;
     let primary = false;
 
     if (operation) {
@@ -185,7 +185,7 @@ class MainAction extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   game: Game;
-  status: IGameStatus;
+  status: GameStatus;
 
   wide?: boolean;
   className?: string;

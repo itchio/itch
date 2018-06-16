@@ -1,4 +1,4 @@
-import { IStatusState } from "common/types";
+import { StatusState } from "common/types";
 import reducer from "./reducer";
 
 import { rest } from "underscore";
@@ -8,9 +8,9 @@ const initialState = {
   messages: [],
   openAtLoginError: null,
   reduxLoggingEnabled: false,
-} as IStatusState;
+} as StatusState;
 
-export default reducer<IStatusState>(initialState, on => {
+export default reducer<StatusState>(initialState, on => {
   on(actions.statusMessage, (state, action) => {
     const { message } = action.payload;
 

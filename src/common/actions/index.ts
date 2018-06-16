@@ -1,30 +1,30 @@
 import {
-  IDispatch,
-  IAction,
-  ISystemTasksState,
+  Dispatch,
+  Action,
+  SystemTasksState,
   ProxySource,
-  ICommonsState,
-  IModalAction,
-  IItchAppTabs,
-  IMenuTemplate,
-  II18nResources,
-  II18nKeys,
-  IProgressInfo,
+  CommonsState,
+  ModalAction,
+  ItchAppTabs,
+  MenuTemplate,
+  I18nResources,
+  I18nKeys,
+  ProgressInfo,
   IOpenTabPayload,
   GenerosityLevel,
-  ISearchResults,
-  IPreferencesState,
+  SearchResults,
+  PreferencesState,
   IOpenAtLoginError,
-  ILocalizedString,
+  LocalizedString,
   IOpenContextMenuBase,
   ModalResponse,
-  ITabData,
+  TabData,
   INavigatePayload,
   IEvolveTabPayload,
   INavigateTabPayload,
   TaskName,
-  IPackageState,
-  ISystemState,
+  PackageState,
+  SystemState,
   ItchWindowRole,
 } from "../types/index";
 
@@ -39,16 +39,14 @@ import {
   Cave,
 } from "common/butlerd/messages";
 import { IEndpoint } from "butlerd";
-import { ITypedModal, ITypedModalUpdate } from "renderer/modal-widgets";
+import { TypedModal, TypedModalUpdate } from "renderer/modal-widgets";
 export interface ActionCreator<PayloadType> {
   payload: PayloadType;
-  (payload: PayloadType): IAction<PayloadType>;
+  (payload: PayloadType): Action<PayloadType>;
 }
 
 function action<PayloadType>(): ActionCreator<PayloadType> {
-  const ret = (type: string) => (
-    payload: PayloadType
-  ): IAction<PayloadType> => {
+  const ret = (type: string) => (payload: PayloadType): Action<PayloadType> => {
     return {
       type,
       payload,
@@ -59,8 +57,8 @@ function action<PayloadType>(): ActionCreator<PayloadType> {
 }
 
 export function dispatcher<T, U>(
-  dispatch: IDispatch,
-  actionCreator: (payload: T) => IAction<U>
+  dispatch: Dispatch,
+  actionCreator: (payload: T) => Action<U>
 ) {
   return (payload: T) => {
     const action = actionCreator(payload);
@@ -69,14 +67,14 @@ export function dispatcher<T, U>(
   };
 }
 
-interface IMirrorInput {
+interface MirrorInput {
   [key: string]: ActionCreator<any>;
 }
 
-type IMirrorOutput<T> = { [key in keyof T]: T[key] };
+type MirrorOutput<T> = { [key in keyof T]: T[key] };
 
-function wireActions<T extends IMirrorInput>(input: T): IMirrorOutput<T> {
-  const res: IMirrorOutput<T> = {} as any;
+function wireActions<T extends MirrorInput>(input: T): MirrorOutput<T> {
+  const res: MirrorOutput<T> = {} as any;
   for (const k of Object.keys(input)) {
     res[k] = input[k](k) as any;
   }
@@ -89,9 +87,9 @@ export const actions = wireActions({
   preboot: action<{}>(),
   boot: action<{}>(),
   tick: action<{}>(),
-  scheduleSystemTask: action<Partial<ISystemTasksState>>(),
+  scheduleSystemTask: action<Partial<SystemTasksState>>(),
   systemAssessed: action<{
-    system: ISystemState;
+    system: SystemState;
   }>(),
   languageChanged: action<{
     lang: string;
@@ -114,12 +112,12 @@ export const actions = wireActions({
     proxy: string;
     source: ProxySource;
   }>(),
-  commonsUpdated: action<Partial<ICommonsState>>(),
+  commonsUpdated: action<Partial<CommonsState>>(),
 
   // modals
 
-  openModal: action<ITypedModal<any, any>>(),
-  updateModalWidgetParams: action<ITypedModalUpdate<any>>(),
+  openModal: action<TypedModal<any, any>>(),
+  updateModalWidgetParams: action<TypedModalUpdate<any>>(),
   closeModal: action<{
     window: string;
 
@@ -127,7 +125,7 @@ export const actions = wireActions({
     id?: string;
 
     /** action that should be dispatched once the modal's been closed */
-    action?: IModalAction;
+    action?: ModalAction;
   }>(),
   modalClosed: action<{
     window: string;
@@ -167,7 +165,7 @@ export const actions = wireActions({
   }>(),
   packageStage: action<{
     name: string;
-    stage: IPackageState["stage"];
+    stage: PackageState["stage"];
   }>(),
   packageNeedRestart: action<{
     name: string;
@@ -175,7 +173,7 @@ export const actions = wireActions({
   }>(),
   packageProgress: action<{
     name: string;
-    progressInfo: IProgressInfo;
+    progressInfo: ProgressInfo;
   }>(),
 
   relaunchRequest: action<{}>(),
@@ -187,11 +185,11 @@ export const actions = wireActions({
 
   setupStatus: action<{
     icon: string;
-    message: ILocalizedString;
+    message: LocalizedString;
     stack?: string;
   }>(),
   setupOperationProgress: action<{
-    progress: IProgressInfo;
+    progress: ProgressInfo;
   }>(),
   setupDone: action<{}>(),
   retrySetup: action<{}>(),
@@ -383,7 +381,7 @@ export const actions = wireActions({
   tabsChanged: action<{
     window: string;
   }>(),
-  tabsRestored: action<IItchAppTabs>(),
+  tabsRestored: action<ItchAppTabs>(),
   tabDataFetched: action<{
     window: string;
 
@@ -391,7 +389,7 @@ export const actions = wireActions({
     tab: string;
 
     /** the data we fetched */
-    data: ITabData;
+    data: TabData;
 
     /** if true, deep merge with previous state instead of shallow merging */
     shallow?: boolean;
@@ -434,7 +432,7 @@ export const actions = wireActions({
 
   menuChanged: action<{
     /** new menu template */
-    template: IMenuTemplate;
+    template: MenuTemplate;
   }>(),
 
   // context menus
@@ -442,7 +440,7 @@ export const actions = wireActions({
   popupContextMenu: action<
     IOpenContextMenuBase & {
       /** contents of the context menu */
-      template: IMenuTemplate;
+      template: MenuTemplate;
     }
   >(),
   closeContextMenu: action<{}>(),
@@ -455,7 +453,7 @@ export const actions = wireActions({
   // locales
   localesConfigLoaded: action<{
     /** initial set of i18n strings */
-    strings: II18nResources;
+    strings: I18nResources;
   }>(),
   queueLocaleDownload: action<{
     /** language to download */
@@ -473,7 +471,7 @@ export const actions = wireActions({
     lang: string;
 
     /** i18n strings */
-    resources: II18nKeys;
+    resources: I18nKeys;
   }>(),
   reloadLocales: action<{}>(),
 
@@ -514,7 +512,7 @@ export const actions = wireActions({
     gameId: number;
   }>(),
   taskProgress: action<
-    IProgressInfo & {
+    ProgressInfo & {
       /** the task this progress info is for */
       id: string;
     }
@@ -713,7 +711,7 @@ export const actions = wireActions({
     query: string;
 
     /** the search results */
-    results: ISearchResults;
+    results: SearchResults;
   }>(),
   searchStarted: action<{}>(),
   searchFinished: action<{}>(),
@@ -728,8 +726,8 @@ export const actions = wireActions({
 
   // preferences
 
-  updatePreferences: action<IPreferencesState>(),
-  preferencesLoaded: action<IPreferencesState>(),
+  updatePreferences: action<PreferencesState>(),
+  preferencesLoaded: action<PreferencesState>(),
   clearBrowsingDataRequest: action<{
     window: string;
   }>(),
@@ -766,11 +764,11 @@ export const actions = wireActions({
     icon?: string;
 
     /** action to dispatch if notification is clicked */
-    onClick?: IAction<any>;
+    onClick?: Action<any>;
   }>(),
   statusMessage: action<{
     /** the message we want to show in the status bar */
-    message: ILocalizedString;
+    message: LocalizedString;
   }>(),
   dismissStatusMessage: action<{}>(),
   commandMain: action<{

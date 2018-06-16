@@ -2,7 +2,7 @@ import React from "react";
 import { InjectedIntl, injectIntl } from "react-intl";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { T, TString } from "renderer/t";
-import { IModalWidgetProps } from "./index";
+import { ModalWidgetProps } from "./index";
 
 class TwoFactorInput extends React.PureComponent<Props & DerivedProps> {
   refs: {
@@ -49,18 +49,18 @@ class TwoFactorInput extends React.PureComponent<Props & DerivedProps> {
   };
 }
 
-export interface ITwoFactorInputParams {
+export interface TwoFactorInputParams {
   username: string;
 }
 
-export interface ITwoFactorInputResponse {
+export interface TwoFactorInputResponse {
   /** two-factor authentication code entered */
   totpCode?: string;
 }
 
 interface Props
-  extends IModalWidgetProps<ITwoFactorInputParams, ITwoFactorInputResponse> {
-  params: ITwoFactorInputParams;
+  extends ModalWidgetProps<TwoFactorInputParams, TwoFactorInputResponse> {
+  params: TwoFactorInputParams;
 }
 
 interface DerivedProps {

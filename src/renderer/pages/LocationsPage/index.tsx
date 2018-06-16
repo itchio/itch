@@ -7,7 +7,7 @@ import {
 import { fileSize } from "common/format/filesize";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { Space } from "common/helpers/space";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 import { rendererWindow, urlForGame } from "common/util/navigation";
 import React from "react";
 import FiltersContainer from "renderer/basics/FiltersContainer";
@@ -147,7 +147,7 @@ class LocationPage extends React.PureComponent<Props> {
 
 interface Props extends MeatProps {
   tab: string;
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
   dispatch: Dispatch;
 }
 

@@ -10,10 +10,10 @@ const logger = rootLogger.child({ name: "open-at-login" });
 
 import { createSelector } from "reselect";
 
-import { IStore, IPreferencesState } from "common/types";
+import { Store, PreferencesState } from "common/types";
 
 async function updateOpenAtLoginState(
-  store: IStore,
+  store: Store,
   openAtLogin: boolean,
   openAsHidden: boolean
 ) {
@@ -39,14 +39,14 @@ async function updateOpenAtLoginState(
 
     if (openAtLogin) {
       try {
-        if (!await sf.exists(desktopFilePath)) {
+        if (!(await sf.exists(desktopFilePath))) {
           store.dispatch(
             actions.openAtLoginError({ cause: "no_desktop_file" })
           );
           return;
         }
 
-        if (!await sf.exists(configHome)) {
+        if (!(await sf.exists(configHome))) {
           await sf.mkdir(configHome);
         }
 
@@ -94,12 +94,12 @@ async function updateOpenAtLoginState(
   }
 }
 
-let cachedSelector: (prefs: IPreferencesState) => void;
-function getSelector(store: IStore) {
+let cachedSelector: (prefs: PreferencesState) => void;
+function getSelector(store: Store) {
   if (!cachedSelector) {
     cachedSelector = createSelector(
-      (prefs: IPreferencesState) => prefs.openAtLogin,
-      (prefs: IPreferencesState) => prefs.openAsHidden,
+      (prefs: PreferencesState) => prefs.openAtLogin,
+      (prefs: PreferencesState) => prefs.openAsHidden,
       (openAtLogin: boolean, openAsHidden: boolean) => {
         updateOpenAtLoginState(store, openAtLogin, openAsHidden);
       }

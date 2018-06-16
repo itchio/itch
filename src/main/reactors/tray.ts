@@ -8,15 +8,12 @@ import { createSelector } from "reselect";
 import { actions } from "common/actions";
 import { getTray, rememberNotificationAction } from "./tray-persistent-state";
 
-import { IStore, IRootState, II18nState, IMenuTemplate } from "common/types";
+import { Store, IRootState, I18nState, MenuTemplate } from "common/types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 import { currentRuntime } from "main/os/runtime";
 import { memoize } from "common/util/lru-memoize";
 
-const setTrayMenu = memoize(1, function(
-  template: IMenuTemplate,
-  store: IStore
-) {
+const setTrayMenu = memoize(1, function(template: MenuTemplate, store: Store) {
   const fleshedOut = fleshOutTemplate(
     "root",
     store,
@@ -33,17 +30,17 @@ const setTrayMenu = memoize(1, function(
   }
 });
 
-async function go(store: IStore, url: string) {
+async function go(store: Store, url: string) {
   // TODO: should navigate focus the window anyway ?
   store.dispatch(actions.focusWindow({ window: "root" }));
   store.dispatch(actions.navigate({ window: "root", url }));
 }
 
-function refreshTray(store: IStore, i18n: II18nState) {
+function refreshTray(store: Store, i18n: I18nState) {
   // TODO: make the tray a lot more useful? that'd be good.
   // (like: make it display recent stuff / maybe the last few tabs)
 
-  const menuTemplate: IMenuTemplate = [
+  const menuTemplate: MenuTemplate = [
     {
       localizedLabel: ["sidebar.owned"],
       click: () => go(store, "itch://library"),

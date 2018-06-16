@@ -1,5 +1,5 @@
 import React from "react";
-import { IPreferencesState, IRootState } from "common/types";
+import { PreferencesState, IRootState } from "common/types";
 
 import Label from "./Label";
 import {
@@ -29,7 +29,7 @@ class Checkbox extends React.PureComponent<Props & DerivedProps> {
 }
 
 interface Props {
-  name: keyof IPreferencesState;
+  name: keyof PreferencesState;
   label: string | JSX.Element;
   children?: any;
 }

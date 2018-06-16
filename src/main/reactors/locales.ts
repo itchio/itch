@@ -16,7 +16,7 @@ const remoteDir = join(app.getPath("userData"), "locales");
 import { getLocalesConfigPath, getLocalePath } from "common/util/resources";
 const localesConfigPath = getLocalesConfigPath();
 
-import { IStore, II18nResources, II18nKeys } from "common/types";
+import { Store, I18nResources, I18nKeys } from "common/types";
 
 import rootLogger from "common/logger";
 const logger = rootLogger.child({ name: "locales" });
@@ -33,9 +33,9 @@ function remoteFileName(lang: string): string {
 
 async function doDownloadLocale(
   lang: string,
-  resources: II18nResources,
+  resources: I18nResources,
   { implicit }: { implicit: boolean }
-): Promise<II18nResources> {
+): Promise<I18nResources> {
   if (!upgradesEnabled) {
     if (!implicit) {
       logger.debug(
@@ -83,9 +83,9 @@ async function doDownloadLocale(
   return finalResources;
 }
 
-async function loadLocale(store: IStore, lang: string) {
+async function loadLocale(store: Store, lang: string) {
   let local = canonicalFileName(lang);
-  if (!await exists(local)) {
+  if (!(await exists(local))) {
     // try stripping region
     lang = lang.substring(0, 2);
     local = canonicalFileName(lang);
@@ -125,8 +125,8 @@ async function loadLocale(store: IStore, lang: string) {
   store.dispatch(actions.queueLocaleDownload({ lang, implicit: true }));
 }
 
-function commitLocale(store: IStore, lang: string, resourcesIn: II18nKeys) {
-  const resources: II18nKeys = {};
+function commitLocale(store: Store, lang: string, resourcesIn: I18nKeys) {
+  const resources: I18nKeys = {};
   for (const key of Object.keys(resourcesIn)) {
     const value = resourcesIn[key];
     resources[key] = value.replace(/{{/g, "{").replace(/}}/g, "}");

@@ -19,7 +19,7 @@ import {
   Dispatchers,
   actionCreatorsList,
 } from "renderer/hocs/connect";
-import { IModalWidgetProps } from "renderer/modal-widgets";
+import { ModalWidgetProps } from "renderer/modal-widgets";
 
 const BuildListDiv = styled.div`
   width: 100%;
@@ -153,7 +153,7 @@ class SwitchVersionCave extends React.PureComponent<Props & DerivedProps> {
 
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     const index = parseInt(ev.currentTarget.dataset.index, 10);
-    const res: ISwitchCaveResponse = { index };
+    const res: SwitchCaveResponse = { index };
     this.props.closeModal({
       window: rendererWindow(),
       action: actions.modalResponse(res),
@@ -161,19 +161,19 @@ class SwitchVersionCave extends React.PureComponent<Props & DerivedProps> {
   };
 }
 
-export interface ISwitchVersionCaveParams {
+export interface SwitchVersionCaveParams {
   cave: Cave;
   upload: Upload;
   builds: Build[];
 }
 
-export interface ISwitchCaveResponse {
+export interface SwitchCaveResponse {
   /** index of build to revert to (or negative to abort) */
   index?: number;
 }
 
 interface Props
-  extends IModalWidgetProps<ISwitchVersionCaveParams, ISwitchCaveResponse> {}
+  extends ModalWidgetProps<SwitchVersionCaveParams, SwitchCaveResponse> {}
 
 const actionCreators = actionCreatorsList("closeModal");
 

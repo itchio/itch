@@ -1,4 +1,4 @@
-import { IStore, isCancelled, IAction } from "common/types";
+import { Store, isCancelled, Action } from "common/types";
 
 import { Watcher } from "common/util/watcher";
 
@@ -11,7 +11,7 @@ let printError = (msg: string) => {
 
 const emptyArr = [];
 
-function err(e: Error, action: IAction<any>) {
+function err(e: Error, action: Action<any>) {
   if (isCancelled(e)) {
     console.warn(`reactor for ${action.type} was cancelled`);
   } else {
@@ -21,7 +21,7 @@ function err(e: Error, action: IAction<any>) {
   }
 }
 
-function route(watcher: Watcher, store: IStore, action: IAction<any>): void {
+function route(watcher: Watcher, store: Store, action: Action<any>): void {
   setTimeout(() => {
     (async () => {
       let promises = [];

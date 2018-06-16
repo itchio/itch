@@ -43,20 +43,20 @@ export const levels = {
   10: "TRACE",
 };
 
-export interface ILogEntry {
+export interface LogEntry {
   time: number;
   level: number;
   msg: string;
   name?: string;
 }
 
-type IWrite = (entry: ILogEntry) => void;
-type IClose = () => void;
+type Write = (entry: LogEntry) => void;
+type Close = () => void;
 
 export class Logger {
   private _name: string;
-  private _write: IWrite;
-  private _close: IClose;
+  private _write: Write;
+  private _close: Close;
   private _level: Level;
   private _levelNumber: number;
   private closed: boolean;
@@ -68,8 +68,8 @@ export class Logger {
     name = undefined,
     level = "info",
   }: {
-    write: IWrite;
-    close?: IClose;
+    write: Write;
+    close?: Close;
     name?: string;
     level?: Level;
   }) {

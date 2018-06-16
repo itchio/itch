@@ -1,7 +1,7 @@
 import { Package, PackageLike } from "./package";
 import { join } from "path";
 
-import { IStore } from "common/types";
+import { Store } from "common/types";
 import { app } from "electron";
 import { actions } from "common/actions";
 import { SelfPackage } from "./self-package";
@@ -14,7 +14,7 @@ export class Manager {
   private pkgs: PackageLike[] = [];
   private prefix: string;
 
-  constructor(store: IStore) {
+  constructor(store: Store) {
     this.prefix = join(app.getPath("userData"), "broth");
 
     store.dispatch(actions.packagesListed({ packageNames }));

@@ -1,11 +1,11 @@
 import {
-  ILocalizedString,
-  IStore,
+  LocalizedString,
+  Store,
   IRootState,
-  ITabPage,
-  ITabData,
-  ITabInstance,
-  ITabWeb,
+  TabPage,
+  TabData,
+  TabInstance,
+  TabWeb,
 } from "../types/index";
 
 import nodeURL, { format, URLSearchParams } from "url";
@@ -16,7 +16,7 @@ import { currentPage } from "../util/navigation";
 // Empty Object
 const eo = {} as any;
 
-const spaceFromInstance = (dataIn: ITabInstance) => new Space(dataIn);
+const spaceFromInstance = (dataIn: TabInstance) => new Space(dataIn);
 
 /**
  * A Space gives structured info about a tab.
@@ -26,16 +26,16 @@ const spaceFromInstance = (dataIn: ITabInstance) => new Space(dataIn);
 export class Space {
   prefix: string;
   suffix: string;
-  private _instance: ITabInstance;
-  private _page: ITabPage;
-  private _data: ITabData;
+  private _instance: TabInstance;
+  private _page: TabPage;
+  private _data: TabData;
   private _protocol: string;
   private _hostname: string;
   private _pathname: string;
   private _pathElements: string[];
   private _query: querystring.ParsedUrlQuery;
 
-  constructor(instanceIn: ITabInstance) {
+  constructor(instanceIn: TabInstance) {
     let instance = instanceIn || eo;
 
     this._instance = instance;
@@ -70,7 +70,7 @@ export class Space {
     }
   }
 
-  static fromStore(store: IStore, window: string, tab: string): Space {
+  static fromStore(store: Store, window: string, tab: string): Space {
     return this.fromState(store.getState(), window, tab);
   }
 
@@ -78,7 +78,7 @@ export class Space {
     return spaceFromInstance(rs.windows[window].tabInstances[tab]);
   }
 
-  static fromInstance(data: ITabInstance): Space {
+  static fromInstance(data: TabInstance): Space {
     return spaceFromInstance(data);
   }
 
@@ -125,7 +125,7 @@ export class Space {
     return this.suffix;
   }
 
-  web(): ITabWeb {
+  web(): TabWeb {
     return this._data.web || eo;
   }
 
@@ -189,7 +189,7 @@ export class Space {
     return this._query || eo;
   }
 
-  label(): ILocalizedString {
+  label(): LocalizedString {
     if (this._instance && this._instance.data && this._instance.data.label) {
       return this._instance.data.label;
     }

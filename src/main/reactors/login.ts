@@ -9,7 +9,7 @@ import { messages, withLogger } from "common/butlerd/index";
 import { Profile } from "common/butlerd/messages";
 
 import rootLogger from "common/logger";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 import { restoreTabs, saveTabs } from "./tab-save";
 import { ItchPromise } from "common/util/itch-promise";
 import { partitionForUser } from "common/util/partition-for-user";
@@ -176,7 +176,7 @@ async function setCookie(profile: Profile, cookie: Map<string, string>) {
   }
 }
 
-async function loginSucceeded(store: IStore, profile: Profile) {
+async function loginSucceeded(store: Store, profile: Profile) {
   await restoreTabs(store, profile);
   store.dispatch(actions.loginSucceeded({ profile }));
 }

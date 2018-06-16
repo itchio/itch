@@ -1,6 +1,6 @@
 import { Game } from "common/butlerd/messages";
 import React from "react";
-import { IModalWidgetProps } from ".";
+import { ModalWidgetProps } from ".";
 import Cover from "renderer/basics/Cover";
 import { T } from "renderer/t";
 
@@ -56,17 +56,17 @@ class ScanInstallLocations extends React.PureComponent<Props> {
   }
 }
 
-export interface IScanInstallLocationsParams {
+export interface ScanInstallLocationsParams {
   progress: number;
   game: Game;
 }
 
-export interface IScanInstallLocationsResponse {}
+export interface ScanInstallLocationsResponse {}
 
 interface Props
-  extends IModalWidgetProps<
-      IScanInstallLocationsParams,
-      IScanInstallLocationsResponse
+  extends ModalWidgetProps<
+      ScanInstallLocationsParams,
+      ScanInstallLocationsResponse
     > {}
 
 export default ScanInstallLocations;

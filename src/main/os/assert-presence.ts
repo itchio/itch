@@ -4,7 +4,7 @@ import { Context } from "../context";
 import { devNull } from "common/logger";
 import { formatExitCode } from "common/format/exit-code";
 
-interface IAssertPresenceResult {
+interface AssertPresenceResult {
   code: number;
   stdout: string;
   stderr: string;
@@ -17,7 +17,7 @@ export async function assertPresence(
   args: string[],
   parser: RegExp,
   extraOpts = {} as any
-): Promise<IAssertPresenceResult> {
+): Promise<AssertPresenceResult> {
   let stdout = "";
   let stderr = "";
 

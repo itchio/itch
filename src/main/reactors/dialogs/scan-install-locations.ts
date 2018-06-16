@@ -4,12 +4,12 @@ import { modalWidgets } from "renderer/modal-widgets";
 import { call, messages } from "common/butlerd";
 
 import { promisedModal } from "../modals";
-import { IScanInstallLocationsParams } from "renderer/modal-widgets/ScanInstallLocations";
+import { ScanInstallLocationsParams } from "renderer/modal-widgets/ScanInstallLocations";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.scanInstallLocations, async (store, action) => {
     let names: string[] = [];
-    let widgetParams: IScanInstallLocationsParams = {
+    let widgetParams: ScanInstallLocationsParams = {
       progress: 0.00001,
       game: null,
     };

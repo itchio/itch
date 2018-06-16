@@ -2,29 +2,29 @@ import { fileSize } from "common/format/filesize";
 
 import platformData from "common/constants/platform-data";
 
-import { ILocalizedString, IModalButtonTag } from "common/types";
+import { LocalizedString, ModalButtonTag } from "common/types";
 import { Upload, UploadType } from "common/butlerd/messages";
 
-interface IUploadButton {
-  label: ILocalizedString;
-  tags: IModalButtonTag[];
+interface UploadButton {
+  label: LocalizedString;
+  tags: ModalButtonTag[];
   icon: string;
   timeAgo: {
     date: Date;
   };
 }
 
-interface IMakeUploadButtonOpts {
+interface MakeUploadButtonOpts {
   /** Whether to show the size of uploads (default: true) */
   showSize?: boolean;
 }
 
 export function makeUploadButton(
   upload: Upload,
-  opts = { showSize: true } as IMakeUploadButtonOpts
-): IUploadButton {
+  opts = { showSize: true } as MakeUploadButtonOpts
+): UploadButton {
   let label = `${upload.displayName || upload.filename}`;
-  let tags: IModalButtonTag[] = [];
+  let tags: ModalButtonTag[] = [];
 
   if (upload.size > 0 && opts.showSize) {
     tags.push({

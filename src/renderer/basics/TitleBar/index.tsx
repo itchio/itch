@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import env from "common/env";
 import { Space } from "common/helpers/space";
-import { ExtendedWindow, IRootState, ITabInstance } from "common/types";
+import { ExtendedWindow, IRootState, TabInstance } from "common/types";
 import { rendererWindow, rendererWindowState } from "common/util/navigation";
 import React from "react";
 import { FiltersContainerDiv } from "renderer/basics/FiltersContainer";
@@ -163,7 +163,7 @@ const actionCreators = actionCreatorsList(
 );
 
 type DerivedProps = Dispatchers<typeof actionCreators> & {
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
   maximized: boolean;
   focused: boolean;
   macos: boolean;

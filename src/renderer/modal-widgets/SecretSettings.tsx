@@ -11,7 +11,7 @@ import {
 } from "renderer/hocs/connect";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
-import { IModalWidgetProps, modalWidgets } from "./index";
+import { ModalWidgetProps, modalWidgets } from "./index";
 
 const ControlsDiv = styled.div`
   display: flex;
@@ -188,10 +188,10 @@ class SecretSettings extends React.PureComponent<Props & DerivedProps> {
   };
 }
 
-export interface ISecretSettingsParams {}
+export interface SecretSettingsParams {}
 
-interface Props extends IModalWidgetProps<ISecretSettingsParams, void> {
-  params: ISecretSettingsParams;
+interface Props extends ModalWidgetProps<SecretSettingsParams, void> {
+  params: SecretSettingsParams;
 }
 
 const actionCreators = actionCreatorsList(

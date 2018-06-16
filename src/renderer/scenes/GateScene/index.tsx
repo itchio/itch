@@ -7,7 +7,7 @@ import {
 
 import Filler from "renderer/basics/Filler";
 
-import { ISetupOperation, IRootState } from "common/types";
+import { SetupOperation, IRootState } from "common/types";
 
 import styled from "renderer/styles";
 import BlockingOperation from "renderer/scenes/GateScene/BlockingOperation";
@@ -69,7 +69,7 @@ const actionCreators = actionCreatorsList(
 type DerivedProps = Dispatchers<typeof actionCreators> & {
   stage: "setup" | "login";
   errors?: string[];
-  blockingOperation?: ISetupOperation;
+  blockingOperation?: SetupOperation;
 };
 
 export default connect<Props>(

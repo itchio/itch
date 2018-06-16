@@ -4,29 +4,29 @@ export type RequestFunc = (
   method: HTTPMethod,
   uri: string,
   data: any,
-  opts?: IRequestOpts
-) => Promise<IResponse>;
+  opts?: RequestOpts
+) => Promise<Response>;
 
-export interface IHeaders {
+export interface Headers {
   [key: string]: string[];
 }
 
-export interface IResponse {
+export interface Response {
   statusCode: number;
   status: string;
   body: any;
   size: number;
-  headers: IHeaders;
+  headers: Headers;
 }
 
 import { WriteStream } from "fs";
 
-interface IRequestCallback {
-  (res: IResponse): void;
+interface RequestCallback {
+  (res: Response): void;
 }
 
-export interface IRequestOpts {
+export interface RequestOpts {
   sink?: () => WriteStream;
-  cb?: IRequestCallback;
+  cb?: RequestCallback;
   format?: "json" | null;
 }

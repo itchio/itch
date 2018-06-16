@@ -2,7 +2,7 @@ import React from "react";
 
 import { Space } from "common/helpers/space";
 import FiltersContainer from "renderer/basics/FiltersContainer";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 import { withTabInstance } from "renderer/hocs/withTabInstance";
 import { withTab } from "renderer/hocs/withTab";
 
@@ -16,7 +16,7 @@ class BrowserBar extends React.PureComponent<Props> {
 }
 
 interface Props {
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
 }
 
 export default withTab(withTabInstance(BrowserBar));

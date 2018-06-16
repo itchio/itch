@@ -1,15 +1,15 @@
 import urls from "common/constants/urls";
 import { actions } from "common/actions";
-import { IStore, IMenuTemplate, IRuntime, IMenuItem } from "common/types";
+import { Store, MenuTemplate, IRuntime, IMenuItem } from "common/types";
 
 import { map } from "underscore";
 import { t } from "common/format/t";
 
 export function fleshOutTemplate(
   window: string,
-  store: IStore,
+  store: Store,
   runtime: IRuntime,
-  template: IMenuTemplate
+  template: MenuTemplate
 ): Electron.MenuItemConstructorOptions[] {
   const { i18n } = store.getState();
 

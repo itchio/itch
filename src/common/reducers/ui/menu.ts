@@ -1,13 +1,13 @@
 import { actions } from "common/actions";
 import reducer from "../reducer";
 
-import { IUIMenuState } from "common/types";
+import { UIMenuState } from "common/types";
 
 const initialState = {
   template: [],
-} as IUIMenuState;
+} as UIMenuState;
 
-export default reducer<IUIMenuState>(initialState, on => {
+export default reducer<UIMenuState>(initialState, on => {
   on(actions.menuChanged, (state, action) => {
     const { template } = action.payload;
     return { template };

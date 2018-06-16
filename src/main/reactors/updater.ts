@@ -20,7 +20,7 @@ const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
 import { messages, withLogger } from "common/butlerd/index";
 const call = withLogger(logger);
 
-import { IStore } from "common/types";
+import { Store } from "common/types";
 import {
   CheckUpdateItem,
   CheckUpdateResult,
@@ -43,7 +43,7 @@ async function prepareUpdateItem(cave: Cave): Promise<CheckUpdateItem> {
 }
 
 async function performUpdateCheck(
-  store: IStore,
+  store: Store,
   items: CheckUpdateItem[]
 ): Promise<CheckUpdateResult> {
   return await call(messages.CheckUpdate, { items }, client => {
@@ -57,7 +57,7 @@ function sleepTime(): number {
   return DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE;
 }
 
-function reschedule(store: IStore) {
+function reschedule(store: Store) {
   const nextCheck = Date.now() + sleepTime();
   logger.info(`Scheduling next game update check for ${new Date(nextCheck)}`);
 
@@ -176,7 +176,7 @@ export default function(watcher: Watcher) {
 }
 
 function dispatchUpdateNotification(
-  store: IStore,
+  store: Store,
   item: CheckUpdateItem,
   result: CheckUpdateResult
 ) {

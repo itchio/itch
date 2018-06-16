@@ -3,7 +3,7 @@ import { NET_PARTITION_NAME } from "common/constants/net";
 import env from "common/env";
 import { elapsed } from "common/format/datetime";
 import rootLogger from "common/logger";
-import { ISystemState, ProxySource } from "common/types";
+import { SystemState, ProxySource } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { app } from "electron";
 import loadPreferences from "main/reactors/preboot/load-preferences";
@@ -24,7 +24,7 @@ export default function(watcher: Watcher) {
 
     let t1 = Date.now();
     try {
-      const system: ISystemState = {
+      const system: SystemState = {
         appName: app.getName(),
         appVersion: app.getVersion().replace(/\-.*$/, ""),
         platform: os.itchPlatform(),

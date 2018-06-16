@@ -3,10 +3,10 @@ import { actions } from "common/actions";
 import * as colors from "common/constants/colors";
 import { specToButton } from "common/helpers/spec-to-button";
 import {
-  IAction,
-  IModal,
-  IModalButton,
-  IModalButtonSpec,
+  Action,
+  Modal,
+  ModalButton,
+  ModalButtonSpec,
   IRootState,
 } from "common/types";
 import { rendererWindow, rendererWindowState } from "common/util/navigation";
@@ -86,7 +86,7 @@ const ModalPortalDiv = styled.div`
   }
 `;
 
-const ModalDiv = styled.div`
+const ModalsDiv = styled.div`
   min-width: 200px;
   min-height: 200px;
 
@@ -283,8 +283,8 @@ const BigButtonsDiv = styled.div`
 `;
 
 @watching
-class Modal extends React.PureComponent<Props & DerivedProps, State> {
-  constructor(props: Modal["props"], context: any) {
+class Modals extends React.PureComponent<Props & DerivedProps, State> {
+  constructor(props: Modals["props"], context: any) {
     super(props, context);
     this.state = {
       widgetPayload: null,
@@ -351,7 +351,7 @@ class Modal extends React.PureComponent<Props & DerivedProps, State> {
       widget,
     } = modal;
     return (
-      <ModalDiv className="modal-div">
+      <ModalsDiv className="modal-div">
         <HeaderDiv>
           <span className="title" onClick={this.onDebugClick}>
             {T(title)}
@@ -394,7 +394,7 @@ class Modal extends React.PureComponent<Props & DerivedProps, State> {
         {widget ? this.renderWidget(widget, modal) : null}
 
         {this.renderButtons(buttons, "normal")}
-      </ModalDiv>
+      </ModalsDiv>
     );
   }
 
@@ -416,7 +416,7 @@ class Modal extends React.PureComponent<Props & DerivedProps, State> {
     }
   };
 
-  renderCover(modal: IModal): JSX.Element | null {
+  renderCover(modal: Modal): JSX.Element | null {
     const { coverUrl, stillCoverUrl } = modal;
 
     if (!(stillCoverUrl || coverUrl)) {
@@ -435,7 +435,7 @@ class Modal extends React.PureComponent<Props & DerivedProps, State> {
     );
   }
 
-  renderButtons(buttons: IModalButtonSpec[], flavor: Flavor) {
+  renderButtons(buttons: ModalButtonSpec[], flavor: Flavor) {
     if (buttons.length === 0) {
       return null;
     }
@@ -450,7 +450,7 @@ class Modal extends React.PureComponent<Props & DerivedProps, State> {
     }
   }
 
-  renderBigButtons(buttons: IModalButtonSpec[]) {
+  renderBigButtons(buttons: ModalButtonSpec[]) {
     return (
       <BigButtonsDiv>
         {map(buttons, (buttonSpec, index) => {
@@ -497,7 +497,7 @@ class Modal extends React.PureComponent<Props & DerivedProps, State> {
     );
   }
 
-  renderNormalButtons(buttons: IModalButtonSpec[]) {
+  renderNormalButtons(buttons: ModalButtonSpec[]) {
     return (
       <ButtonsDiv>
         <Filler />
@@ -522,7 +522,7 @@ class Modal extends React.PureComponent<Props & DerivedProps, State> {
     );
   }
 
-  buttonOnClick(button: IModalButton): () => void {
+  buttonOnClick(button: ModalButton): () => void {
     const { closeModal } = this.props;
     const { action } = button;
 
@@ -536,13 +536,13 @@ class Modal extends React.PureComponent<Props & DerivedProps, State> {
       onClick = () =>
         closeModal({
           window: rendererWindow(),
-          action: action as IAction<any>,
+          action: action as Action<any>,
         });
     }
     return onClick;
   }
 
-  renderWidget(widget: string, modal: IModal): JSX.Element {
+  renderWidget(widget: string, modal: Modal): JSX.Element {
     const Component = modalWidgets[widget].component;
     if (!Component) {
       return null;
@@ -560,7 +560,7 @@ interface Props {}
 const actionCreators = actionCreatorsList("openModal", "closeModal");
 
 type DerivedProps = Dispatchers<typeof actionCreators> & {
-  modal: IModal;
+  modal: Modal;
 
   intl: InjectedIntl;
 };
@@ -570,7 +570,7 @@ interface State {
 }
 
 export default connect<Props>(
-  injectIntl(Modal),
+  injectIntl(Modals),
   {
     state: createStructuredSelector({
       modal: (rs: IRootState) => rendererWindowState(rs).modals[0],

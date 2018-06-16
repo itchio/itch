@@ -1,5 +1,5 @@
 import { Space } from "common/helpers/space";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 import React from "react";
 import { withTab } from "renderer/hocs/withTab";
 import { withTabInstance } from "renderer/hocs/withTabInstance";
@@ -39,7 +39,7 @@ class BrowserPage extends React.PureComponent<Props, State> {
 
 interface Props extends MeatProps {
   tab: string;
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
 }
 
 interface State {

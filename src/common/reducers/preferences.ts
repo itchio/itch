@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import reducer from "./reducer";
 
-import { IPreferencesState } from "common/types";
+import { PreferencesState } from "common/types";
 
 const OFFLINE_MODE = process.env.OFFLINE_MODE === "1";
 
@@ -27,9 +27,9 @@ export const initialState = {
   onlyInstalledGames: false,
   layout: "grid",
   enableTabs: false,
-} as IPreferencesState;
+} as PreferencesState;
 
-export default reducer<IPreferencesState>(initialState, on => {
+export default reducer<PreferencesState>(initialState, on => {
   on(actions.updatePreferences, (state, action) => {
     const record = action.payload;
     return {

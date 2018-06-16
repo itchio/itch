@@ -1,13 +1,13 @@
 import electron from "electron";
 
 import { actions } from "common/actions";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 
 import IntlMessageFormat from "intl-messageformat";
 
 const emptyObj: any = {};
 
-function create(wc: Electron.WebContents, window: string, store: IStore) {
+function create(wc: Electron.WebContents, window: string, store: Store) {
   const intl = {
     formatMessage: ({ id }: { id: string }, values = {}): string => {
       const { i18n } = store.getState();

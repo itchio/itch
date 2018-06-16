@@ -129,9 +129,9 @@ export const theme = {
   widths,
 };
 
-export type ITheme = typeof theme;
-export interface IThemeProps {
-  theme: ITheme;
+export type Theme = typeof theme;
+export interface ThemeProps {
+  theme: Theme;
 }
 
 import * as styledComponents from "styled-components";
@@ -142,7 +142,7 @@ const {
   injectGlobal,
   keyframes,
   ThemeProvider,
-} = (styledComponents as any) as ThemedStyledComponentsModule<ITheme>;
+} = (styledComponents as any) as ThemedStyledComponentsModule<Theme>;
 // this tiny workaround brought to you by
 // this line in the styled-components typings:
 // export const ThemeProvider: ThemeProviderComponent<object>;

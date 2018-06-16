@@ -1,5 +1,5 @@
 import { Space } from "common/helpers/space";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
 import LoadingCircle from "renderer/basics/LoadingCircle";
@@ -256,7 +256,7 @@ interface State {
 }
 
 interface Props extends MeatProps {
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
 }
 
 // FIXME: this is bad

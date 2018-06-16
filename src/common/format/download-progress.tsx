@@ -4,20 +4,20 @@ import { formatDuration } from "./datetime";
 import { fileSize } from "./filesize";
 import { T } from "renderer/t";
 
-interface IProgressHolder {
+interface ProgressHolder {
   bps: number;
   eta: number;
 }
 
-interface IDownloadProgressOpts {
+interface DownloadProgressOpts {
   onlyBPS?: boolean;
   onlyETA?: boolean;
 }
 
 export function downloadProgress(
-  holder: IProgressHolder,
+  holder: ProgressHolder,
   downloadsPaused: boolean,
-  opts = {} as IDownloadProgressOpts
+  opts = {} as DownloadProgressOpts
 ): string | JSX.Element {
   if (downloadsPaused) {
     return T(["grid.item.downloads_paused"]);

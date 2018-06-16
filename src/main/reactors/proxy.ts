@@ -1,7 +1,7 @@
 import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
 
-import { IProxySettings } from "common/types";
+import { ProxySettings } from "common/types";
 import { ItchPromise } from "common/util/itch-promise";
 import { partitionForUser } from "common/util/partition-for-user";
 
@@ -16,7 +16,7 @@ export default function(watcher: Watcher) {
   });
 }
 
-interface IProxyConfig {
+interface ProxyConfig {
   /** The URL associated with the PAC file. */
   pacScript: string;
   /** Rules indicating which proxies to use. */
@@ -26,14 +26,14 @@ interface IProxyConfig {
 }
 
 /** Something that accepts electron proxy settings - usually a session */
-interface IAcceptsProxyConfig {
-  setProxy(config: IProxyConfig, callback: Function): void;
+interface AcceptsProxyConfig {
+  setProxy(config: ProxyConfig, callback: Function): void;
   enableNetworkEmulation(options: { offline?: boolean }): void;
 }
 
 export async function applyProxySettings(
-  session: IAcceptsProxyConfig,
-  system: IProxySettings
+  session: AcceptsProxyConfig,
+  system: ProxySettings
 ) {
   if (process.env.ITCH_EMULATE_OFFLINE === "1") {
     session.enableNetworkEmulation({

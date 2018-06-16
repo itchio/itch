@@ -1,6 +1,6 @@
 import SearchExamples from "common/constants/search-examples";
 
-import { IProfileSearchState } from "common/types";
+import { ProfileSearchState } from "common/types";
 
 import { actions } from "common/actions";
 import reducer from "../reducer";
@@ -20,9 +20,9 @@ const initialState = {
   loading: false,
   highlight: 0,
   results: null,
-} as IProfileSearchState;
+} as ProfileSearchState;
 
-export default reducer<IProfileSearchState>(initialState, on => {
+export default reducer<ProfileSearchState>(initialState, on => {
   on(actions.search, (state, action) => {
     const typedQuery = action.payload.query;
     if (typedQuery == state.typedQuery) {

@@ -1,5 +1,5 @@
 import { Watcher } from "common/util/watcher";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 
 import { indexBy, isEmpty } from "underscore";
 import groupIdBy from "common/helpers/group-id-by";
@@ -12,7 +12,7 @@ import { messages, withLogger } from "common/butlerd";
 const logger = rootLogger.child({ name: "commons" });
 const call = withLogger(logger);
 
-async function updateCommonsNow(store: IStore) {
+async function updateCommonsNow(store: Store) {
   try {
     await updateCommonsNowThrows(store);
   } catch (e) {
@@ -20,7 +20,7 @@ async function updateCommonsNow(store: IStore) {
   }
 }
 
-async function updateCommonsNowThrows(store: IStore) {
+async function updateCommonsNowThrows(store: Store) {
   if (!store.getState().setup.done) {
     return;
   }
@@ -84,7 +84,7 @@ export default function(watcher: Watcher) {
   });
 }
 
-function push(store: IStore, next: typeof actions.commonsUpdated.payload) {
+function push(store: Store, next: typeof actions.commonsUpdated.payload) {
   const prev = store.getState().commons;
 
   let hasDifferences = false;

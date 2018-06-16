@@ -1,6 +1,6 @@
 import {
-  IStore,
-  IProgressInfo,
+  Store,
+  ProgressInfo,
   IProgressListener,
   Cancelled,
 } from "common/types";
@@ -8,18 +8,18 @@ import {
 import { EventEmitter } from "events";
 import { ItchPromise } from "common/util/itch-promise";
 
-interface IStopper {
+interface Stopper {
   (): Promise<void>;
 }
 
-interface IAbortListener {
+interface AbortListener {
   (): void;
 }
 
 type Work<T> = () => Promise<T>;
 
-interface IWithStopperOpts<T> {
-  stop: IStopper;
+interface WithStopperOpts<T> {
+  stop: Stopper;
   work: Work<T>;
 }
 
@@ -27,7 +27,7 @@ const cancelPoisonValue = {};
 
 export class MinimalContext {
   private emitter: EventEmitter = new EventEmitter();
-  private stoppers: IStopper[] = [];
+  private stoppers: Stopper[] = [];
   private dead = false;
   private cancelPromise: Promise<{}>;
   private resolveCancelPromise: () => void = null;
@@ -72,7 +72,7 @@ export class MinimalContext {
    * Do some work that can be cancelled (launching a progress,
    * downloading something, etc.)
    */
-  async withStopper<T>(opts: IWithStopperOpts<T>): Promise<T> {
+  async withStopper<T>(opts: WithStopperOpts<T>): Promise<T> {
     if (this.dead) {
       throw new Cancelled();
     }
@@ -117,7 +117,7 @@ export class MinimalContext {
     });
   }
 
-  on(ev: "abort", listener: IAbortListener);
+  on(ev: "abort", listener: AbortListener);
   on(ev: "progress", listener: IProgressListener);
   on(ev: string, listener: (data: any) => void);
 
@@ -129,7 +129,7 @@ export class MinimalContext {
     this.emitter.emit(ev, data);
   }
 
-  emitProgress(progress: IProgressInfo) {
+  emitProgress(progress: ProgressInfo) {
     this.emitter.emit("progress", progress);
   }
 
@@ -139,7 +139,7 @@ export class MinimalContext {
 }
 
 export class Context extends MinimalContext {
-  constructor(public store: IStore) {
+  constructor(public store: Store) {
     super();
   }
 

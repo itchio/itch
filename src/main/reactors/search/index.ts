@@ -5,7 +5,7 @@ import { call, messages } from "common/butlerd/index";
 import { mergeGames, mergeUsers } from "./search-helpers";
 
 import { filter, sortBy } from "underscore";
-import { ISearchResults } from "common/types";
+import { SearchResults } from "common/types";
 import { isPlatformCompatible } from "common/util/is-platform-compatible";
 
 export default function(watcher: Watcher) {
@@ -28,7 +28,7 @@ export default function(watcher: Watcher) {
     try {
       const profileId = store.getState().profile.credentials.me.id;
 
-      let results: ISearchResults = {};
+      let results: SearchResults = {};
 
       let dispatch = () => {
         store.dispatch(actions.searchFetched({ query, results }));

@@ -10,7 +10,7 @@ import {
   connect,
 } from "renderer/hocs/connect";
 import { createStructuredSelector } from "reselect";
-import { IRootState, ISystemState } from "common/types";
+import { IRootState, SystemState } from "common/types";
 import BrothComponents from "./BrothComponents";
 import { rendererWindow } from "common/util/navigation";
 
@@ -100,7 +100,7 @@ const actionCreators = actionCreatorsList(
 );
 
 type DerivedProps = Dispatchers<typeof actionCreators> & {
-  system: ISystemState;
+  system: SystemState;
 };
 
 export default connect<Props>(

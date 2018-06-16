@@ -1,4 +1,4 @@
-import { ILocalizedString } from "common/types";
+import { LocalizedString } from "common/types";
 import React from "react";
 import { InjectedIntl, injectIntl } from "react-intl";
 import styled from "renderer/styles";
@@ -25,7 +25,7 @@ const Select = styled.select`
 /**
  * A drop-down you can select from
  */
-class SelectRow extends React.PureComponent<ISelectRowProps & DerivedProps> {
+class SelectRow extends React.PureComponent<Props & DerivedProps> {
   element: HTMLSelectElement;
 
   constructor(props: SelectRow["props"], context) {
@@ -74,13 +74,13 @@ class SelectRow extends React.PureComponent<ISelectRowProps & DerivedProps> {
   }
 }
 
-export interface ISelectOption {
-  label: ILocalizedString;
+export interface SelectOption {
+  label: LocalizedString;
   value: string;
 }
 
-interface ISelectRowProps {
-  options: ISelectOption[];
+interface Props {
+  options: SelectOption[];
   value?: string;
   onChange?(value: string): void;
 }

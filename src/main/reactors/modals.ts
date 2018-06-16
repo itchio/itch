@@ -3,18 +3,18 @@ import { actions } from "common/actions";
 
 import { each, findWhere } from "underscore";
 
-import { IStore, ModalResponse } from "common/types";
+import { Store, ModalResponse } from "common/types";
 
 import modalResolves from "./modals-persistent-state";
-import { ITypedModal } from "renderer/modal-widgets";
+import { TypedModal } from "renderer/modal-widgets";
 import { ItchPromise } from "common/util/itch-promise";
 
 // look, so this probably breaks the spirit of redux, not denying it,
 // but also, redux has a pretty strong will, I'm sure it'll recover.
 
 export async function promisedModal<Params, Response>(
-  store: IStore,
-  payload: ITypedModal<Params, Response>
+  store: Store,
+  payload: TypedModal<Params, Response>
 ): Promise<Response> {
   const modalAction = actions.openModal(payload);
   const { id } = modalAction.payload;

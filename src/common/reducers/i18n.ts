@@ -2,7 +2,7 @@ import { omit } from "underscore";
 import { actions } from "common/actions";
 import reducer from "./reducer";
 
-import { II18nState } from "common/types";
+import { I18nState } from "common/types";
 
 const initialState = {
   lang: "en",
@@ -12,9 +12,9 @@ const initialState = {
   downloading: {},
   queued: {},
   locales: [],
-} as II18nState;
+} as I18nState;
 
-export default reducer<II18nState>(initialState, on => {
+export default reducer<I18nState>(initialState, on => {
   on(actions.localesConfigLoaded, (state, action) => {
     const config = action.payload;
     return { ...state, ...config };

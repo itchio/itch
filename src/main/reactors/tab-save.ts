@@ -2,7 +2,7 @@ import { map, filter } from "underscore";
 
 import { Watcher } from "common/util/watcher";
 
-import { ITabDataSave, IStore } from "common/types";
+import { TabDataSave, Store } from "common/types";
 import { actions } from "common/actions";
 
 import { Space } from "common/helpers/space";
@@ -16,7 +16,7 @@ const call = withLogger(logger);
 
 interface Snapshot {
   current: string;
-  items: ITabDataSave[];
+  items: TabDataSave[];
 }
 
 const tabAutoSaveThreshold = 10 * 1000;
@@ -31,7 +31,7 @@ export default function(watcher: Watcher) {
   );
 }
 
-export async function saveTabs(store: IStore) {
+export async function saveTabs(store: Store) {
   const rs = store.getState();
   const { navigation, tabInstances } = rs.windows["root"];
   const { credentials } = rs.profile;
@@ -40,7 +40,7 @@ export async function saveTabs(store: IStore) {
   }
   const { tab, openTabs } = navigation;
   const profileId = credentials.me.id;
-  let items: ITabDataSave[];
+  let items: TabDataSave[];
   items = map(openTabs, id => {
     const ti = tabInstances[id];
     if (!ti) {
@@ -63,7 +63,7 @@ export async function saveTabs(store: IStore) {
   });
 }
 
-export async function restoreTabs(store: IStore, profile: Profile) {
+export async function restoreTabs(store: Store, profile: Profile) {
   const profileId = profile.id;
 
   const { value, ok } = await call(messages.ProfileDataGet, {

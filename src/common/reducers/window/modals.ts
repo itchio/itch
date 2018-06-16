@@ -1,13 +1,13 @@
 import { reject } from "underscore";
 
-import { IModalsState } from "common/types";
+import { ModalsState } from "common/types";
 
 import { actions } from "common/actions";
 import reducer from "common/reducers/reducer";
 
-const initialState: IModalsState = [];
+const initialState: ModalsState = [];
 
-export default reducer<IModalsState>(initialState, on => {
+export default reducer<ModalsState>(initialState, on => {
   on(actions.openModal, (state, action) => {
     const modal = action.payload;
     return [modal, ...state];

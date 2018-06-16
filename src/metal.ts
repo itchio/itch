@@ -21,7 +21,7 @@ logger.info(
 );
 
 import { loadPreferencesSync } from "main/reactors/preboot/load-preferences";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
@@ -51,7 +51,7 @@ function main() {
   }
   protocol.registerStandardSchemes(["itch-cave"]);
 
-  let store: IStore = require("main/store").default;
+  let store: Store = require("main/store").default;
 
   let onReady = () => {
     if (!env.integrationTests) {

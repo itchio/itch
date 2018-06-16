@@ -1,16 +1,16 @@
 import { actions } from "common/actions";
 import reducer from "./reducer";
 
-import { IBrothState } from "common/types";
+import { BrothState } from "common/types";
 
 const initialState = {
   packageNames: [],
   packages: {},
-} as IBrothState;
+} as BrothState;
 
-export default reducer<IBrothState>(initialState, on => {
+export default reducer<BrothState>(initialState, on => {
   on(actions.packagesListed, (state, action) => {
-    let packages: IBrothState["packages"] = {};
+    let packages: BrothState["packages"] = {};
     const { packageNames } = action.payload;
     for (const packageName of packageNames) {
       packages[packageName] = {

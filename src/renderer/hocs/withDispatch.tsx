@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "renderer/hocs/connect";
-import { IAction } from "common/types";
+import { Action } from "common/types";
 
 export interface Dispatch {
-  (a: IAction<any>): void;
+  (a: Action<any>): void;
 }
 
 export interface DispatchContextProps {

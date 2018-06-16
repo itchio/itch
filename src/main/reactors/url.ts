@@ -10,7 +10,7 @@ import urls from "common/constants/urls";
 import { shell } from "electron";
 
 import { actions } from "common/actions";
-import { IStore } from "common/types";
+import { Store } from "common/types";
 
 import { reportIssue } from "main/crash-reporter";
 import { isItchioURL } from "common/util/url";
@@ -81,7 +81,7 @@ export default function(watcher: Watcher) {
   });
 }
 
-function handleItchioUrl(store: IStore, uri: string) {
+function handleItchioUrl(store: Store, uri: string) {
   logger.info(`Processing itchio uri (${uri})`);
   store.dispatch(actions.navigate({ window: "root", url: uri }));
 }

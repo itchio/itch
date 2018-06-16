@@ -18,7 +18,7 @@ import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { size } from "underscore";
 import Log from "../pages/AppLogPage/Log";
-import { IModalWidgetProps } from "./index";
+import { ModalWidgetProps } from "./index";
 
 const StyledLog = styled(Log)`
   tbody {
@@ -210,14 +210,14 @@ class ShowError extends React.PureComponent<Props & DerivedProps, State> {
   };
 }
 
-export interface IShowErrorParams {
+export interface ShowErrorParams {
   rawError: any;
   game?: Game;
   log: string;
   forceDetails?: boolean;
 }
 
-interface Props extends IModalWidgetProps<IShowErrorParams, void> {}
+interface Props extends ModalWidgetProps<ShowErrorParams, void> {}
 
 interface State {
   sendReport: boolean;

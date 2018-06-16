@@ -1,4 +1,4 @@
-import { ILogEntry, levels } from "./index";
+import { LogEntry, levels } from "./index";
 
 const levelColors = {
   default: "color:black;",
@@ -10,7 +10,7 @@ const levelColors = {
   10: "color:grey;",
 };
 
-function write(entry: ILogEntry) {
+function write(entry: LogEntry) {
   const { name, level, msg } = entry;
   console.log(
     "%c " +

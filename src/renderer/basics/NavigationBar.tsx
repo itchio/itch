@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
-import { ITabInstance, ITabWeb } from "common/types";
+import { TabInstance, TabWeb } from "common/types";
 import { rendererWindow, transformUrl } from "common/util/navigation";
 import React from "react";
 import listensToClickOutside from "react-onclickoutside";
@@ -223,7 +223,7 @@ class NavigationBar extends React.PureComponent<Props> {
     this.pushWeb({ editingAddress: false });
   };
 
-  pushWeb(web: Partial<ITabWeb>) {
+  pushWeb(web: Partial<TabWeb>) {
     const { dispatch, tab } = this.props;
     dispatch(
       actions.tabDataFetched({ window: rendererWindow(), tab, data: { web } })
@@ -237,7 +237,7 @@ class NavigationBar extends React.PureComponent<Props> {
 
 interface Props {
   tab: string;
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
   dispatch: Dispatch;
   loading: boolean;
   showAddressBar?: boolean;

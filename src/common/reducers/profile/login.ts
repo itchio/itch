@@ -1,13 +1,13 @@
-import { IProfileLoginState } from "common/types";
+import { ProfileLoginState } from "common/types";
 import { actions } from "common/actions";
 import reducer from "../reducer";
 
 const initialState = {
   errors: [],
   blockingOperation: null,
-} as IProfileLoginState;
+} as ProfileLoginState;
 
-export default reducer<IProfileLoginState>(initialState, on => {
+export default reducer<ProfileLoginState>(initialState, on => {
   on(actions.attemptLogin, (state, action) => {
     return {
       ...state,

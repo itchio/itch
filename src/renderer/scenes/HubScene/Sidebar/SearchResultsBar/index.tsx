@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { IRootState, ISearchResults } from "common/types";
+import { IRootState, SearchResults } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import { hasSearchResults } from "main/reactors/search/search-helpers";
 import React from "react";
@@ -98,7 +98,7 @@ class SearchResultsBar extends React.PureComponent<
     });
   }
 
-  resultsGrid(results: ISearchResults) {
+  resultsGrid(results: SearchResults) {
     const { highlight, query, example, loading } = this.props;
     const active = this.props.open;
 
@@ -146,7 +146,7 @@ type DerivedProps = Dispatchers<typeof actionCreators> & {
   open: boolean;
   highlight: number;
   query: string;
-  results: ISearchResults;
+  results: SearchResults;
   example: string;
   loading: boolean;
 };

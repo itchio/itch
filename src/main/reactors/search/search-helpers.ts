@@ -1,17 +1,14 @@
 import { isEmpty, union, indexBy, pluck } from "underscore";
-import { ISearchResults } from "common/types";
+import { SearchResults } from "common/types";
 import { Game, User } from "common/butlerd/messages";
-interface ISource<T> {
+interface Source<T> {
   set: {
     [key: string]: T;
   };
   ids: number[];
 }
 
-function mergeResources<T>(
-  current: ISource<T>,
-  addition: ISource<T>
-): ISource<T> {
+function mergeResources<T>(current: Source<T>, addition: Source<T>): Source<T> {
   if (!current) {
     return addition;
   }
@@ -27,16 +24,16 @@ function mergeResources<T>(
 }
 
 function mergeSearchResults(
-  current: ISearchResults,
-  addition: ISearchResults
-): ISearchResults {
+  current: SearchResults,
+  addition: SearchResults
+): SearchResults {
   return {
     games: mergeResources(current.games, addition.games),
     users: mergeResources(current.users, addition.users),
   };
 }
 
-export function mergeGames(current: ISearchResults, games: Game[]) {
+export function mergeGames(current: SearchResults, games: Game[]) {
   return mergeSearchResults(current, {
     games: {
       ids: pluck(games, "id"),
@@ -45,7 +42,7 @@ export function mergeGames(current: ISearchResults, games: Game[]) {
   });
 }
 
-export function mergeUsers(current: ISearchResults, users: User[]) {
+export function mergeUsers(current: SearchResults, users: User[]) {
   return mergeSearchResults(current, {
     users: {
       ids: pluck(users, "id"),
@@ -54,7 +51,7 @@ export function mergeUsers(current: ISearchResults, users: User[]) {
   });
 }
 
-export function hasSearchResults(sr: ISearchResults): boolean {
+export function hasSearchResults(sr: SearchResults): boolean {
   if (sr && sr.games && !isEmpty(sr.games.ids)) {
     return true;
   }

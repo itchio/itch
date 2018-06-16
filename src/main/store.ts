@@ -18,7 +18,7 @@ import reducer from "common/reducers";
 
 import shouldLogAction from "common/util/should-log-action";
 
-import { IStore } from "common/types";
+import { Store } from "common/types";
 
 const crashGetter = (store: MiddlewareAPI<any>) => (
   next: (action: any) => any
@@ -74,7 +74,7 @@ const enhancer = compose(
 ) as GenericStoreEnhancer;
 
 const initialState = {} as any;
-const store = createStore(reducer, initialState, enhancer) as IStore;
+const store = createStore(reducer, initialState, enhancer) as Store;
 
 if (module.hot) {
   module.hot.accept(() => {

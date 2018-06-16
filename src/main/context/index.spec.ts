@@ -1,9 +1,9 @@
 import { describe, it, assert } from "test";
 
 import { Context } from "./index";
-import { IStore, isCancelled } from "common/types";
+import { Store, isCancelled } from "common/types";
 import { ItchPromise } from "common/util/itch-promise";
-const store = {} as IStore;
+const store = {} as Store;
 
 describe("Context", () => {
   it("Context propagates progress", async () => {
@@ -115,25 +115,23 @@ describe("Context", () => {
 
     let subRef;
     let canAbort = false;
-    c
-      .withSub(async sub => {
-        subRef = sub;
-        await sub.withStopper({
-          stop: async () => {
-            if (!canAbort) {
-              throw new Error("can't abort");
-            }
-          },
-          work: async () => {
-            await new ItchPromise(() => {
-              /* muffin */
-            });
-          },
-        });
-      })
-      .catch(() => {
-        // woops
+    c.withSub(async sub => {
+      subRef = sub;
+      await sub.withStopper({
+        stop: async () => {
+          if (!canAbort) {
+            throw new Error("can't abort");
+          }
+        },
+        work: async () => {
+          await new ItchPromise(() => {
+            /* muffin */
+          });
+        },
       });
+    }).catch(() => {
+      // woops
+    });
 
     await assert.isRejected(c.tryAbort());
     canAbort = true;

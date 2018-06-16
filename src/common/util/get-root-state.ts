@@ -1,9 +1,9 @@
-import { IStore } from "common/types";
+import { Store } from "common/types";
 let _store: {
-  default: IStore;
+  default: Store;
 };
 
-function getStore(): IStore {
+function getStore(): Store {
   if (!_store) {
     if (process.type === "browser") {
       _store = require("main/store");

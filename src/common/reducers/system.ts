@@ -1,11 +1,11 @@
 import { actions } from "common/actions";
 import reducer from "./reducer";
 
-import { ISystemState } from "common/types";
+import { SystemState } from "common/types";
 
-const initialState = {} as ISystemState;
+const initialState = {} as SystemState;
 
-export default reducer<ISystemState>(initialState, on => {
+export default reducer<SystemState>(initialState, on => {
   on(actions.systemAssessed, (state, action) => {
     const { system } = action.payload;
     return {

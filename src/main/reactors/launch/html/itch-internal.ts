@@ -4,19 +4,19 @@ import registeredProtocols from "./itch-internal-persistent-state";
 
 const WEBGAME_PROTOCOL = "itch-cave";
 
-interface IBeforeSendHeadersDetails {
+interface BeforeSendHeadersDetails {
   url: string;
 }
 
-interface IBeforeSendHeadersCallbackOpts {
+interface BeforeSendHeadersCallbackOpts {
   cancel: boolean;
 }
 
-interface IBeforeSendHeadersCallback {
-  (opts: IBeforeSendHeadersCallbackOpts): void;
+interface BeforeSendHeadersCallback {
+  (opts: BeforeSendHeadersCallbackOpts): void;
 }
 
-interface IRegisterProtocolOpts {
+interface RegisterProtocolOpts {
   partition: string;
   fileRoot: string;
 }
@@ -24,7 +24,7 @@ interface IRegisterProtocolOpts {
 import { session } from "electron";
 import { ItchPromise } from "common/util/itch-promise";
 
-export async function registerProtocol(opts: IRegisterProtocolOpts) {
+export async function registerProtocol(opts: RegisterProtocolOpts) {
   const { partition, fileRoot } = opts;
 
   if (registeredProtocols[partition]) {
@@ -67,7 +67,7 @@ export async function registerProtocol(opts: IRegisterProtocolOpts) {
   registeredProtocols[partition] = true;
 }
 
-type ItchInternalRequestCallback = (details: IBeforeSendHeadersDetails) => void;
+type ItchInternalRequestCallback = (details: BeforeSendHeadersDetails) => void;
 
 interface ItchInternalOpts {
   session: Electron.Session;
@@ -102,8 +102,8 @@ export function setupItchInternal(opts: ItchInternalOpts) {
   session.webRequest.onBeforeSendHeaders(
     internalFilter,
     (
-      details: IBeforeSendHeadersDetails,
-      callback: IBeforeSendHeadersCallback
+      details: BeforeSendHeadersDetails,
+      callback: BeforeSendHeadersCallback
     ) => {
       callback({ cancel: true });
       opts.onRequest(details);

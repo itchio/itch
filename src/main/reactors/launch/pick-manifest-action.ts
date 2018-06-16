@@ -1,6 +1,6 @@
 import defaultManifestIcons from "common/constants/default-manifest-icons";
 
-import { IStore, IModalButtonSpec } from "common/types";
+import { Store, ModalButtonSpec } from "common/types";
 
 import { promisedModal } from "../../reactors/modals";
 
@@ -10,12 +10,12 @@ import { modalWidgets } from "renderer/modal-widgets";
 // TODO: support localized action names
 
 export async function pickManifestAction(
-  store: IStore,
+  store: Store,
   manifestActions: Action[],
   game: Game
 ): Promise<number> {
-  const buttons: IModalButtonSpec[] = [];
-  const bigButtons: IModalButtonSpec[] = [];
+  const buttons: ModalButtonSpec[] = [];
+  const bigButtons: ModalButtonSpec[] = [];
 
   for (let index = 0; index < manifestActions.length; index++) {
     const action = manifestActions[index];

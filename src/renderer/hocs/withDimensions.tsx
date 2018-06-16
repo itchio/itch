@@ -3,7 +3,7 @@ import React from "react";
 import { throttle } from "underscore";
 import getDisplayName from "renderer/helpers/getDisplayName";
 
-interface IDimensionsState {
+interface DimensionsState {
   width: number;
   height: number;
   scrollTop: number;
@@ -30,7 +30,7 @@ function withDimensions<P extends DimensionsProps>(
 ): React.ComponentType<Subtract<P, DimensionsProps>> {
   return class extends React.PureComponent<
     Subtract<P, DimensionsProps>,
-    IDimensionsState
+    DimensionsState
   > {
     static displayName = `Dimensions(${getDisplayName(Component)})`;
     ro: ResizeObserver | null = null;

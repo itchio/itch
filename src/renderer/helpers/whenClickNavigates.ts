@@ -7,13 +7,13 @@ export function doesEventMeanBackground(e: MouseEvent<any>) {
   return e.metaKey || e.ctrlKey || e.button === 1;
 }
 
-interface INavigationClickHandler {
+interface NavigationClickHandler {
   (opts: { background: boolean }): void;
 }
 
 export function whenClickNavigates(
   e: MouseEvent<any>,
-  f: INavigationClickHandler
+  f: NavigationClickHandler
 ) {
   // when left click or middle-click
   if (e.button === 0 || e.button === 1) {

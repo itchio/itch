@@ -1,4 +1,4 @@
-import { ILogEntry, levels } from "./index";
+import { LogEntry, levels } from "./index";
 const chalkModule = require("chalk");
 const chalk = new chalkModule.constructor({ enabled: true });
 
@@ -24,7 +24,7 @@ function asColoredLevel(value) {
   }
 }
 
-function write(entry: ILogEntry, stream: NodeJS.WritableStream) {
+function write(entry: LogEntry, stream: NodeJS.WritableStream) {
   let line =
     asISODate(entry.time).split(/T|Z/)[1] + " " + asColoredLevel(entry);
   line += " ";

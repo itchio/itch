@@ -50,12 +50,12 @@ const SidebarItems = styled.div`
   overflow: hidden;
 `;
 
-interface ISortEndParams {
+interface SortEndParams {
   oldIndex: number;
   newIndex: number;
 }
 
-interface ISortableContainerParams {
+interface SortableContainerParams {
   items: string[];
   sidebarProps: Props & DerivedProps;
 }
@@ -64,7 +64,7 @@ const SortableListContainer = styled.div`
   overflow-y: auto;
 `;
 
-const SortableList = SortableContainer((params: ISortableContainerParams) => {
+const SortableList = SortableContainer((params: SortableContainerParams) => {
   const { sidebarProps, items } = params;
   const currentTab = sidebarProps.tab;
 
@@ -100,7 +100,7 @@ class Sidebar extends React.PureComponent<Props & DerivedProps, State> {
     });
   };
 
-  onSortEnd = (params: ISortEndParams) => {
+  onSortEnd = (params: SortEndParams) => {
     const { oldIndex, newIndex } = params;
     this.setState({
       openTabs: arrayMove(this.state.openTabs, oldIndex, newIndex),

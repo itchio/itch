@@ -22,8 +22,8 @@ import { css } from "renderer/styles";
 
 import { T } from "renderer/t";
 import getGameStatus, {
-  IGameStatus,
-  IOperation,
+  GameStatus,
+  Operation,
   OperationType,
 } from "common/helpers/get-game-status";
 import {
@@ -438,7 +438,7 @@ class DownloadRow extends React.PureComponent<Props & DerivedProps> {
     return this.formatOperation(operation);
   }
 
-  formatOperation(op: IOperation): string | JSX.Element {
+  formatOperation(op: Operation): string | JSX.Element {
     if (op.type === OperationType.Download) {
       const { item } = this.props;
       const reasonText = formatReason(op.reason);
@@ -496,7 +496,7 @@ const actionCreators = actionCreatorsList(
 );
 
 type DerivedProps = Dispatchers<typeof actionCreators> & {
-  status: IGameStatus;
+  status: GameStatus;
   speeds: number[];
 
   downloadsPaused: boolean;

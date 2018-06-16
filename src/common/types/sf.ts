@@ -1,13 +1,13 @@
-export interface IReadFileOpts {
+export interface ReadFileOpts {
   encoding: "utf8" | null;
   flag?: string;
 }
 
-export interface IWriteFileOpts extends IReadFileOpts {
+export interface WriteFileOpts extends ReadFileOpts {
   mode?: number;
 }
 
-export interface IFSError {
+export interface FSError {
   code?: string;
   message: string;
 }

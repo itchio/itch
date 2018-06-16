@@ -5,7 +5,7 @@ import { Logger } from "common/logger";
 
 import * as paths from "common/util/paths";
 
-import { Cancelled, ILocalizedString } from "common/types";
+import { Cancelled, LocalizedString } from "common/types";
 
 import { promisedModal } from "../modals";
 import { messages, setupClient } from "common/butlerd/index";
@@ -15,8 +15,8 @@ import { Game, PrereqStatus, Cave } from "common/butlerd/messages";
 import { pickManifestAction } from "./pick-manifest-action";
 import { performHTMLLaunch } from "./perform-html-launch";
 import { Client } from "butlerd";
-import { ITypedModal, modalWidgets } from "renderer/modal-widgets";
-import { IPrereqsStateParams } from "renderer/modal-widgets/PrereqsState";
+import { TypedModal, modalWidgets } from "renderer/modal-widgets";
+import { PrereqsStateParams } from "renderer/modal-widgets/PrereqsState";
 export async function performLaunch(
   ctx: Context,
   logger: Logger,
@@ -43,8 +43,8 @@ export async function performLaunch(
   const prereqsDir = paths.prereqsPath();
 
   // TODO: extract that to another module
-  let prereqsModal: ITypedModal<any, any>;
-  let prereqsStateParams: IPrereqsStateParams;
+  let prereqsModal: TypedModal<any, any>;
+  let prereqsStateParams: PrereqsStateParams;
 
   function closePrereqsModal() {
     if (!prereqsModal) {
@@ -240,8 +240,8 @@ export async function performLaunch(
         });
 
         client.on(messages.AllowSandboxSetup, async () => {
-          let messageString: ILocalizedString = "";
-          let detailString: ILocalizedString = "";
+          let messageString: LocalizedString = "";
+          let detailString: LocalizedString = "";
 
           if (process.platform === "win32") {
             messageString = ["sandbox.setup.windows.message"];

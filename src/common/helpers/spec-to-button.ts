@@ -1,10 +1,10 @@
-import { IModalButton, IModalButtonSpec } from "../types/index";
+import { ModalButton, ModalButtonSpec } from "../types/index";
 
-interface IDefaultButtons {
-  [key: string]: IModalButton;
-  ok: IModalButton;
-  cancel: IModalButton;
-  nevermind: IModalButton;
+interface DefaultButtons {
+  [key: string]: ModalButton;
+  ok: ModalButton;
+  cancel: ModalButton;
+  nevermind: ModalButton;
 }
 
 const DEFAULT_BUTTONS = {
@@ -23,10 +23,10 @@ const DEFAULT_BUTTONS = {
     label: ["prompt.action.ok"],
     className: "secondary",
   },
-} as IDefaultButtons;
+} as DefaultButtons;
 
-export function specToButton(buttonSpec: IModalButtonSpec): IModalButton {
-  let button: IModalButton;
+export function specToButton(buttonSpec: ModalButtonSpec): ModalButton {
+  let button: ModalButton;
   if (typeof buttonSpec === "string") {
     button = DEFAULT_BUTTONS[buttonSpec];
     if (!button) {
@@ -35,7 +35,7 @@ export function specToButton(buttonSpec: IModalButtonSpec): IModalButton {
       };
     }
   } else {
-    button = buttonSpec as IModalButton;
+    button = buttonSpec as ModalButton;
   }
   return button;
 }

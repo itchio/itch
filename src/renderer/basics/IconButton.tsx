@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ILocalizedString } from "common/types";
+import { LocalizedString } from "common/types";
 import React from "react";
 import styled, * as styles from "renderer/styles";
 import Icon from "./Icon";
@@ -74,7 +74,7 @@ interface Props {
   disabled?: boolean;
   className?: string;
   id?: string;
-  hint?: ILocalizedString;
+  hint?: LocalizedString;
   hintPosition?: "top" | "left" | "right" | "bottom";
 
   onClick?: React.MouseEventHandler<HTMLElement>;

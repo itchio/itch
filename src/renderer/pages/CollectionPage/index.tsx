@@ -3,7 +3,7 @@ import { messages } from "common/butlerd";
 import { FetchCollectionGamesResult } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Space } from "common/helpers/space";
-import { ITabInstance } from "common/types";
+import { TabInstance } from "common/types";
 import { rendererWindow, urlForGame } from "common/util/navigation";
 import React from "react";
 import FiltersContainer from "renderer/basics/FiltersContainer";
@@ -135,7 +135,7 @@ class CollectionPage extends React.PureComponent<Props> {
 
 interface Props extends MeatProps {
   profileId: number;
-  tabInstance: ITabInstance;
+  tabInstance: TabInstance;
   tab: string;
   dispatch: Dispatch;
 }

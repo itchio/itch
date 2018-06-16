@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ILocalizedString } from "common/types";
+import { LocalizedString } from "common/types";
 import React from "react";
 
 /**
@@ -28,7 +28,7 @@ class Icon extends React.PureComponent<Props> {
 
 interface Props {
   icon: string;
-  hint?: ILocalizedString;
+  hint?: LocalizedString;
   className?: string;
   onClick?: any;
 }

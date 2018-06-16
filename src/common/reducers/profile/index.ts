@@ -5,7 +5,7 @@ import search from "./search";
 import itchioUris from "./itchio-uris";
 
 import { Reducer } from "redux";
-import { IProfileState } from "common/types";
+import { ProfileState } from "common/types";
 
 const reducers: any = {
   login,
@@ -14,4 +14,4 @@ const reducers: any = {
   itchioUris,
 };
 
-export default combineReducers(reducers) as Reducer<IProfileState>;
+export default combineReducers(reducers) as Reducer<ProfileState>;
