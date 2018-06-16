@@ -1,11 +1,11 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-
+import { messages, withLogger } from "common/butlerd";
 import rootLogger from "common/logger";
+import { Watcher } from "common/util/watcher";
+import { modalWidgets } from "renderer/modal-widgets";
+
 const logger = rootLogger.child({ name: "request-cave-uninstall" });
 
-import { modalWidgets } from "renderer/components/modal-widgets/index";
-import { withLogger, messages } from "common/butlerd";
 const call = withLogger(logger);
 
 export default function(watcher: Watcher) {

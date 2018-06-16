@@ -1,6 +1,6 @@
 import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-import { modalWidgets } from "renderer/components/modal-widgets/index";
+import { modalWidgets } from "renderer/modal-widgets";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.changeUser, async (store, action) => {

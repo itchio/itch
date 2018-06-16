@@ -2,8 +2,7 @@ import { Watcher } from "common/util/watcher";
 
 import { actions } from "common/actions";
 import { promisedModal } from "../modals";
-
-import { modalWidgets } from "renderer/components/modal-widgets";
+import { modalWidgets } from "renderer/modal-widgets";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.clearBrowsingDataRequest, async (store, action) => {

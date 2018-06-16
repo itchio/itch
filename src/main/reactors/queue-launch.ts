@@ -11,7 +11,7 @@ import { Code } from "common/butlerd/messages";
 import { formatError } from "common/format/errors";
 import { t } from "common/format/t";
 import { showInExplorerString } from "common/format/show-in-explorer";
-import { modalWidgets } from "renderer/components/modal-widgets";
+import { modalWidgets } from "renderer/modal-widgets";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueLaunch, async (store, action) => {

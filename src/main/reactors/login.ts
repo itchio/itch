@@ -12,8 +12,8 @@ import rootLogger from "common/logger";
 import { IStore } from "common/types";
 import { restoreTabs, saveTabs } from "./tab-save";
 import { ItchPromise } from "common/util/itch-promise";
-import { modalWidgets } from "renderer/components/modal-widgets";
 import { partitionForUser } from "common/util/partition-for-user";
+import { modalWidgets } from "renderer/modal-widgets";
 const logger = rootLogger.child({ name: "login" });
 const call = withLogger(logger);
 

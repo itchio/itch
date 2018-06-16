@@ -4,7 +4,7 @@ import { map } from "underscore";
 import { Watcher } from "common/util/watcher";
 
 import { IModalButtonSpec } from "common/types";
-import { modalWidgets } from "renderer/components/modal-widgets";
+import { modalWidgets } from "renderer/modal-widgets";
 import { makeUploadButton } from "main/reactors/make-upload-button";
 
 export default function(watcher: Watcher) {

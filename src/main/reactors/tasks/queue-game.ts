@@ -10,7 +10,7 @@ import { IStore } from "common/types/index";
 import { Game, Upload, Build } from "common/butlerd/messages";
 
 import { map, isEmpty } from "underscore";
-import { modalWidgets } from "renderer/components/modal-widgets/index";
+import { modalWidgets } from "renderer/modal-widgets";
 
 import { withLogger, messages } from "common/butlerd";
 const call = withLogger(logger);

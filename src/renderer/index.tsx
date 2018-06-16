@@ -19,7 +19,7 @@ import store from "renderer/store";
 import setupShortcuts from "renderer/shortcuts";
 setupShortcuts(store);
 
-import * as globalStyles from "renderer/components/global-styles";
+import * as globalStyles from "renderer/global-styles";
 globalStyles.inject();
 
 let AppContainer: React.ComponentClass<{}>;
@@ -33,7 +33,7 @@ if (env.development) {
 }
 
 import electron from "electron";
-import App from "renderer/components/app";
+import App from "renderer/App";
 import { actions } from "common/actions/index";
 import { ExtendedWindow } from "common/types";
 import { rendererWindow } from "common/util/navigation";
@@ -86,7 +86,7 @@ async function start() {
 
   if (module.hot) {
     module.hot.accept(() => {
-      const NextApp = require("renderer/components/app").default;
+      const NextApp = require("renderer/App").default;
       render(NextApp);
     });
   }

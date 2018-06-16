@@ -34,5 +34,6 @@
     "showInProblems": true,
     "markers": ["FIXME", "TODO", "XXX"],
     "folderExclude": ["node_modules"]
-  }
+  },
+  "typescript.preferences.importModuleSpecifier": "non-relative"
 }

@@ -1,24 +1,19 @@
-import { MinimalContext } from "../context";
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-
-import { app } from "electron";
+import { NET_PARTITION_NAME } from "common/constants/net";
 import env from "common/env";
+import { elapsed } from "common/format/datetime";
+import rootLogger from "common/logger";
+import { ISystemState, ProxySource } from "common/types";
+import { Watcher } from "common/util/watcher";
+import { app } from "electron";
+import loadPreferences from "main/reactors/preboot/load-preferences";
+import { modalWidgets } from "renderer/modal-widgets";
+import { MinimalContext } from "../context";
 import * as os from "../os";
-
+import { applyProxySettings } from "../reactors/proxy";
 import * as visualElements from "./preboot/visual-elements";
 
-import rootLogger from "common/logger";
 const logger = rootLogger.child({ name: "preboot" });
-
-import { ProxySource, ISystemState } from "common/types";
-
-import { NET_PARTITION_NAME } from "common/constants/net";
-import { applyProxySettings } from "../reactors/proxy";
-
-import { elapsed } from "common/format/datetime";
-import loadPreferences from "main/reactors/preboot/load-preferences";
-import { modalWidgets } from "renderer/components/modal-widgets/index";
 
 let testProxy = false;
 let proxyTested = false;

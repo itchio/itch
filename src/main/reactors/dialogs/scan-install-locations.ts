@@ -1,10 +1,10 @@
 import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-import { modalWidgets } from "renderer/components/modal-widgets";
+import { modalWidgets } from "renderer/modal-widgets";
 import { call, messages } from "common/butlerd";
 
 import { promisedModal } from "../modals";
-import { IScanInstallLocationsParams } from "renderer/components/modal-widgets/scan-install-locations";
+import { IScanInstallLocationsParams } from "renderer/modal-widgets/ScanInstallLocations";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.scanInstallLocations, async (store, action) => {

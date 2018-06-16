@@ -7,7 +7,7 @@ const logger = rootLogger.child({ name: "queue-cave-uninstall" });
 import { promisedModal } from "../modals";
 
 import asTask from "./as-task";
-import { modalWidgets } from "renderer/components/modal-widgets/index";
+import { modalWidgets } from "renderer/modal-widgets";
 
 import { performUninstall } from "../downloads/perform-uninstall";
 

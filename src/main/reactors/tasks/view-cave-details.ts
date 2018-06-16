@@ -5,7 +5,7 @@ import rootLogger from "common/logger";
 const logger = rootLogger.child({ name: "queue-cave-reinstall" });
 
 import { withLogger, messages } from "common/butlerd";
-import { modalWidgets } from "renderer/components/modal-widgets";
+import { modalWidgets } from "renderer/modal-widgets";
 const call = withLogger(logger);
 
 export default function(watcher: Watcher) {

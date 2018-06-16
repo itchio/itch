@@ -5,7 +5,6 @@ export * from "./net";
 export * from "./tab-data";
 import * as TabDataTypes from "./tab-data";
 
-import { modalWidgets } from "renderer/components/modal-widgets/index";
 import { ITabData } from "./tab-data";
 import {
   GameUpdate,
@@ -19,6 +18,7 @@ import {
   Platform,
 } from "common/butlerd/messages";
 import { IEndpoint } from "butlerd";
+import { modalWidgets } from "renderer/modal-widgets";
 export interface IStore extends Store<IRootState> {}
 
 export interface IDispatch {
@@ -72,7 +72,7 @@ export interface IRootState {
   profile: IProfileState;
   windows: IWindowsState;
   i18n: II18nState;
-  ui: IUIState;
+  ui: IUState;
   preferences: IPreferencesState;
   tasks: ITasksState;
   downloads: IDownloadsState;
@@ -455,7 +455,7 @@ export interface IContextMenuState {
   };
 }
 
-export interface IUIState {
+export interface IUState {
   menu: IUIMenuState;
 }
 

@@ -15,8 +15,8 @@ import { Game, PrereqStatus, Cave } from "common/butlerd/messages";
 import { pickManifestAction } from "./pick-manifest-action";
 import { performHTMLLaunch } from "./perform-html-launch";
 import { Client } from "butlerd";
-import { modalWidgets, ITypedModal } from "renderer/components/modal-widgets";
-import { IPrereqsStateParams } from "renderer/components/modal-widgets/prereqs-state";
+import { ITypedModal, modalWidgets } from "renderer/modal-widgets";
+import { IPrereqsStateParams } from "renderer/modal-widgets/PrereqsState";
 export async function performLaunch(
   ctx: Context,
   logger: Logger,

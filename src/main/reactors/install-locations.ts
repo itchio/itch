@@ -6,7 +6,7 @@ import { actions } from "common/actions";
 
 import { dialog } from "electron";
 
-import { modalWidgets } from "renderer/components/modal-widgets/index";
+import { modalWidgets } from "renderer/modal-widgets";
 import { call, messages } from "common/butlerd";
 import { promisedModal } from "./modals";
 import { t } from "common/format/t";

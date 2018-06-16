@@ -1,4 +1,4 @@
-import { modalWidgets } from "renderer/components/modal-widgets";
+import { modalWidgets } from "renderer/modal-widgets";
 import {
   IModalButtonSpec,
   ILocalizedString,

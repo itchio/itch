@@ -7,7 +7,7 @@ const logger = rootLogger.child({ name: "revert-cave" });
 import { promisedModal } from "../modals";
 
 import asTask from "./as-task";
-import { modalWidgets } from "renderer/components/modal-widgets/index";
+import { modalWidgets } from "renderer/modal-widgets";
 
 import { withLogger, messages } from "common/butlerd";
 const call = withLogger(logger);

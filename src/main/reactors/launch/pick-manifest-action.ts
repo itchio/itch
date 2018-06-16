@@ -5,7 +5,7 @@ import { IStore, IModalButtonSpec } from "common/types";
 import { promisedModal } from "../../reactors/modals";
 
 import { Game, Action } from "common/butlerd/messages";
-import { modalWidgets } from "renderer/components/modal-widgets";
+import { modalWidgets } from "renderer/modal-widgets";
 
 // TODO: support localized action names
 

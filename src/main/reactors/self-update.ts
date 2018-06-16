@@ -4,7 +4,6 @@ import { actions } from "common/actions";
 import { manager } from "main/reactors/setup";
 import { IStore } from "common/types";
 import { t } from "common/format/t";
-import { modalWidgets } from "renderer/components/modal-widgets";
 import ospath from "path";
 import childProcess from "child_process";
 import { relaunchLogPath } from "common/util/paths";
@@ -13,6 +12,7 @@ import fs from "fs";
 import rootLogger from "common/logger";
 import { delay } from "./delay";
 import { ISM } from "main/broth/itch-setup";
+import { modalWidgets } from "renderer/modal-widgets";
 const logger = rootLogger.child({ name: "self-update" });
 
 // 2 hours, * 60 = minutes, * 60 = seconds, * 1000 = millis

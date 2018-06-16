@@ -38,11 +38,8 @@ import {
   DownloadProgress,
   Cave,
 } from "common/butlerd/messages";
-import {
-  ITypedModal,
-  ITypedModalUpdate,
-} from "renderer/components/modal-widgets/index";
 import { IEndpoint } from "butlerd";
+import { ITypedModal, ITypedModalUpdate } from "renderer/modal-widgets";
 export interface ActionCreator<PayloadType> {
   payload: PayloadType;
   (payload: PayloadType): IAction<PayloadType>;
