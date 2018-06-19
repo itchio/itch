@@ -10,7 +10,8 @@ export function formatError(e: Error): LocalizedString {
     return [
       `butlerd.codes.${code}`,
       {
-        defaultValue: message,
+        defaultValue: `{message}`,
+        message,
       },
     ];
   }

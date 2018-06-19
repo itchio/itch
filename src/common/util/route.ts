@@ -19,7 +19,7 @@ function err(e: Error, action: Action<any>) {
     printError(
       `while reacting to ${(action || { type: "?" }).type}: ${e.stack || e}`
     );
-    console.log(`e.stack: `, e.stack);
+    console.log(`Full error: `, JSON.stringify(e, null, 2));
   }
 }
 

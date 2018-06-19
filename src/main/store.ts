@@ -77,7 +77,7 @@ const initialState = {} as any;
 const store = createStore(reducer, initialState, enhancer) as Store;
 
 if (module.hot) {
-  module.hot.accept(() => {
+  module.hot.accept("main/reactors", () => {
     console.warn(`Refreshing reactors...`);
     const _getWatcher = require("main/reactors").default;
     watcher = _getWatcher();

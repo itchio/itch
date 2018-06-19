@@ -20,8 +20,7 @@ declare global {
   }
   interface NodeModule {
     hot?: {
-      accept: (cb: () => void) => void;
-      dispose: (cb: () => void) => void;
+      accept: (name: string, cb: () => void) => void;
     };
   }
 }

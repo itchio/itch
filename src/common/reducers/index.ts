@@ -4,7 +4,7 @@ import { IRootState, Action } from "common/types/index";
 let all = allInitial;
 
 if (module.hot) {
-  module.hot.accept(() => {
+  module.hot.accept("./all", () => {
     console.log(`Refreshing reducers...`);
     all = require("./all").default;
   });

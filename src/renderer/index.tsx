@@ -85,7 +85,7 @@ async function start() {
   render(App);
 
   if (module.hot) {
-    module.hot.accept(() => {
+    module.hot.accept("renderer/App", () => {
       const NextApp = require("renderer/App").default;
       render(NextApp);
     });

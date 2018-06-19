@@ -136,7 +136,7 @@
     "ws": "^5.2.0"
   },
   "scripts": {
-    "start": "cross-env ELECTRON_ARGS=\"[\\\".\\\"]\" electron-webpack dev",
+    "start": "cross-env ELECTRON_ARGS=\"[\\\".\\\", \\\"--inspect=9223\\\"]\" electron-webpack dev",
     "compile": "electron-webpack --no-progress",
     "precommit": "lint-staged && npm run ts-check",
     "postinstall": "electron-rebuild && electron-webpack dll",
