@@ -241,6 +241,8 @@ class Meat extends React.PureComponent<Props, State> {
         return AppLogPage;
       case "crashy":
         return CrashyPage;
+      case "new-tab":
+        return BrowserPage;
       default:
         return null;
     }

@@ -12,6 +12,7 @@ import uuid from "common/util/uuid";
 const logger = rootLogger.child({ name: "reactors/navigation" });
 
 import { opensInWindow } from "common/constants/windows";
+import { getNativeWindow } from "main/reactors/main-window";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.clearFilters, async (store, action) => {
@@ -88,23 +89,33 @@ export default function(watcher: Watcher) {
     const rs = store.getState();
     const { enableTabs } = rs.preferences;
     if (enableTabs && window === "root") {
-      store.dispatch(
-        actions.openTab({
-          window,
-          tab: uuid(),
-          url,
-          resource,
-          background,
-          data,
-        })
-      );
-      store.dispatch(
-        actions.focusWindow({
-          window,
-        })
-      );
-    } else {
-      const tab = rs.windows[window].navigation.openTabs[0];
+      const nativeWindow = getNativeWindow(rs, "root");
+      if (nativeWindow && nativeWindow.isFocused()) {
+        // let it navigate the open tab
+      } else {
+        // open a new tab!
+        store.dispatch(
+          actions.openTab({
+            window,
+            tab: uuid(),
+            url,
+            resource,
+            background,
+            data,
+          })
+        );
+        store.dispatch(
+          actions.focusWindow({
+            window,
+          })
+        );
+        return;
+      }
+    }
+
+    {
+      const { navigation } = rs.windows[window];
+      const tab = navigation.tab;
 
       // navigate the single tab
       store.dispatch(
