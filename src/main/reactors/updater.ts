@@ -108,9 +108,12 @@ export default function(watcher: Watcher) {
         })
       );
 
+      // FIXME: change butlerd's API for this
+
       // TODO: let butler page through the caves instead,
       // this is too much back and forth
-      const { caves } = await call(messages.FetchCaves, {});
+      // const { caves } = await call(messages.FetchCaves, {});
+      const caves: Cave[] = [];
 
       if (isEmpty(caves)) {
         return;

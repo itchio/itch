@@ -45,12 +45,15 @@ export default css`
     color: ${theme.accent};
 
     &[href^="itch:"] {
-      color: ${theme.secondaryText};
+      color: ${theme.baseText};
       text-decoration: none;
 
       &:hover {
-        color: ${theme.baseText};
         cursor: pointer;
+      }
+
+      &:active {
+        transform: translateY(1px);
       }
     }
   }

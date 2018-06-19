@@ -386,6 +386,8 @@ export const meat = () => css`
   flex-grow: 1;
   flex-shrink: 1;
   width: 100%;
+
+  color: ${props => props.theme.secondaryText};
 `;
 
 export const thumbnailStyle = () => css`

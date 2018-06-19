@@ -19,6 +19,8 @@ import PreferencesPage from "renderer/pages/PreferencesPage";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
+import OwnedPage from "renderer/pages/LibraryPage/OwnedPage";
+import InstalledPage from "renderer/pages/LibraryPage/InstalledPage";
 
 const showHistory = process.env.ITCH_SHOW_HISTORY === "1";
 
@@ -218,7 +220,14 @@ class Meat extends React.PureComponent<Props, State> {
 
     switch (sp.internalPage()) {
       case "library":
-        return LibraryPage;
+        switch (sp.firstPathElement()) {
+          case "owned":
+            return OwnedPage;
+          case "installed":
+            return InstalledPage;
+          default:
+            return LibraryPage;
+        }
       case "games":
         return GamePage;
       case "featured":

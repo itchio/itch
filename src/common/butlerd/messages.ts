@@ -405,6 +405,16 @@ export const FetchProfileGames = createRequest<
 >("Fetch.ProfileGames");
 
 /**
+ * undocumented
+ */
+export interface ProfileOwnedKeysFilters {
+  /** undocumented */
+  installed: boolean;
+  /** undocumented */
+  classification: GameClassification;
+}
+
+/**
  * Result for Fetch.ProfileOwnedKeys
  */
 export interface FetchProfileOwnedKeysResult {
@@ -545,11 +555,19 @@ export interface InstallLocationSizeInfo {
 }
 
 /**
+ * undocumented
+ */
+export interface CavesFilters {
+  /** undocumented */
+  classification: GameClassification;
+}
+
+/**
  * Result for Fetch.Caves
  */
 export interface FetchCavesResult {
   /** undocumented */
-  caves: Cave[];
+  items: Cave[];
   /** Use to fetch the next 'page' of results */
   nextCursor?: Cursor;
 }
@@ -2324,6 +2342,14 @@ export interface FetchProfileOwnedKeysParams {
   profileId: number;
   /** Maximum number of collections to return at a time. */
   limit?: number;
+  /** When specified only shows game titles that contain this string */
+  search?: string;
+  /** Criterion to sort by */
+  sortBy?: string;
+  /** Filters */
+  filters?: ProfileOwnedKeysFilters;
+  /** undocumented */
+  reverse?: boolean;
   /** Used for pagination, if specified */
   cursor?: Cursor;
   /** If set, will force fresh data */
@@ -2343,12 +2369,16 @@ export interface FetchCommonsParams {
 export interface FetchCavesParams {
   /** Maximum number of caves to return at a time. */
   limit?: number;
-  /** Used for pagination, if specified */
-  cursor?: Cursor;
+  /** When specified only shows game titles that contain this string */
+  search?: string;
   /** undocumented */
   sortBy?: string;
+  /** Filters */
+  filters?: CavesFilters;
   /** undocumented */
   reverse?: boolean;
+  /** Used for pagination, if specified */
+  cursor?: Cursor;
 }
 
 /**
