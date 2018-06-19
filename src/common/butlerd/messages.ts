@@ -323,7 +323,7 @@ export interface FetchCollectionGamesResult {
   /** Requested games for this collection */
   items: CollectionGame[];
   /** Use to fetch the next 'page' of results */
-  nextCursor?: string;
+  nextCursor?: Cursor;
   /** If true, re-issue request with 'Fresh' */
   stale?: boolean;
 }
@@ -344,7 +344,7 @@ export interface FetchProfileCollectionsResult {
   /** Collections belonging to the profile */
   items: Collection[];
   /** Used to fetch the next page */
-  nextCursor?: string;
+  nextCursor?: Cursor;
   /** If true, re-issue request with "Fresh" */
   stale?: boolean;
 }
@@ -357,6 +357,16 @@ export const FetchProfileCollections = createRequest<
   FetchProfileCollectionsParams,
   FetchProfileCollectionsResult
 >("Fetch.ProfileCollections");
+
+/**
+ * undocumented
+ */
+export interface ProfileGameFilters {
+  /** undocumented */
+  visibility: string;
+  /** undocumented */
+  paidStatus: string;
+}
 
 /**
  * undocumented
@@ -381,7 +391,7 @@ export interface FetchProfileGamesResult {
   /** Profile games */
   items: ProfileGame[];
   /** Used to fetch the next page */
-  nextCursor?: string;
+  nextCursor?: Cursor;
   /** If true, re-issue request with "Fresh" */
   stale?: boolean;
 }
@@ -401,7 +411,7 @@ export interface FetchProfileOwnedKeysResult {
   /** Download keys fetched for profile */
   items: DownloadKey[];
   /** Used to fetch the next page */
-  nextCursor?: string;
+  nextCursor?: Cursor;
   /** If true, re-issue request with "Fresh" */
   stale?: boolean;
 }
@@ -540,6 +550,8 @@ export interface InstallLocationSizeInfo {
 export interface FetchCavesResult {
   /** undocumented */
   caves: Cave[];
+  /** Use to fetch the next 'page' of results */
+  nextCursor?: Cursor;
 }
 
 /**
@@ -1458,6 +1470,11 @@ export interface ActionLocale {
 }
 
 /**
+ * undocumented
+ */
+export type Cursor = string;
+
+/**
  * User represents an itch.io account, with basic profile info
  */
 export interface User {
@@ -2258,7 +2275,7 @@ export interface FetchCollectionGamesParams {
   /** Maximum number of games to return at a time. */
   limit?: number;
   /** Used for pagination, if specified */
-  cursor?: string;
+  cursor?: Cursor;
   /** If set, will force fresh data */
   fresh?: boolean;
 }
@@ -2272,7 +2289,7 @@ export interface FetchProfileCollectionsParams {
   /** Maximum number of collections to return at a time. */
   limit?: number;
   /** Used for pagination, if specified */
-  cursor?: string;
+  cursor?: Cursor;
   /** If set, will force fresh data */
   fresh?: boolean;
 }
@@ -2285,8 +2302,16 @@ export interface FetchProfileGamesParams {
   profileId: number;
   /** Maximum number of items to return at a time. */
   limit?: number;
+  /** When specified only shows game titles that contain this string */
+  search?: string;
+  /** Criterion to sort by */
+  sortBy?: string;
+  /** Filters */
+  filters?: ProfileGameFilters;
+  /** undocumented */
+  reverse?: boolean;
   /** Used for pagination, if specified */
-  cursor?: string;
+  cursor?: Cursor;
   /** If set, will force fresh data */
   fresh?: boolean;
 }
@@ -2300,7 +2325,7 @@ export interface FetchProfileOwnedKeysParams {
   /** Maximum number of collections to return at a time. */
   limit?: number;
   /** Used for pagination, if specified */
-  cursor?: string;
+  cursor?: Cursor;
   /** If set, will force fresh data */
   fresh?: boolean;
 }
@@ -2316,7 +2341,14 @@ export interface FetchCommonsParams {
  * Params for Fetch.Caves
  */
 export interface FetchCavesParams {
-  // no fields
+  /** Maximum number of caves to return at a time. */
+  limit?: number;
+  /** Used for pagination, if specified */
+  cursor?: Cursor;
+  /** undocumented */
+  sortBy?: string;
+  /** undocumented */
+  reverse?: boolean;
 }
 
 /**
@@ -2772,7 +2804,7 @@ export interface LaunchParams {
   /** Force installing all prerequisites, even if they're already marked as installed */
   forcePrereqs?: boolean;
   /** Enable sandbox (regardless of manifest opt-in) */
-  sandbox: boolean;
+  sandbox?: boolean;
 }
 
 /**

@@ -1,12 +1,15 @@
+import classNames from "classnames";
 import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { FetchProfileGamesResult } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { TabInstance } from "common/types";
+import { TabInstance, LocalizedString } from "common/types";
 import { rendererWindow, urlForGame } from "common/util/navigation";
 import React from "react";
 import Filler from "renderer/basics/Filler";
-import FiltersContainer from "renderer/basics/FiltersContainer";
+import FiltersContainer, {
+  FiltersContainerDiv,
+} from "renderer/basics/FiltersContainer";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
 import { withProfileId } from "renderer/hocs/withProfileId";
@@ -16,6 +19,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { GameCover } from "renderer/basics/Cover";
 import { FormattedNumber } from "react-intl";
+import Icon from "renderer/basics/Icon";
 
 const FetchProfileGames = butlerCaller(messages.FetchProfileGames);
 
@@ -85,9 +89,52 @@ const DashboardDiv = styled.div`
     line-height: 1.6;
     font-size: 120%;
   }
+
+  .sorts-and-filters {
+    margin-top: 0.4em;
+    font-weight: normal;
+    font-size: 120%;
+
+    .icon {
+      margin-right: 0.4em;
+    }
+
+    .spacer {
+      width: 24px;
+    }
+  }
+
+  a.sort {
+    background: #2d2d2d;
+    padding: 0.4em 0.6em;
+    margin: 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: none;
+
+    &:first-child {
+      border-radius: 2px 0 0 2px;
+      border-left: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    &:last-child {
+      border-radius: 0 2px 2px 0;
+    }
+
+    &.active {
+      background: #444;
+      color: ${props => props.theme.baseText};
+    }
+  }
 `;
 
-class DashboardPage extends React.PureComponent<Props> {
+class DashboardPage extends React.PureComponent<Props, State> {
+  constructor(props: DashboardPage["props"], context: any) {
+    super(props, context);
+    this.state = {
+      sortBy: "default",
+    };
+  }
+
   render() {
     const { profileId, tabInstance } = this.props;
     const sp = Space.fromInstance(tabInstance);
@@ -95,7 +142,16 @@ class DashboardPage extends React.PureComponent<Props> {
     return (
       <DashboardDiv>
         <FetchProfileGames
-          params={{ profileId, limit: 15, cursor: sp.queryParam("cursor") }}
+          params={{
+            profileId,
+            limit: 15,
+            cursor: sp.queryParam("cursor"),
+            sortBy: sp.queryParam("sortBy"),
+            filters: {
+              visibility: sp.queryParam("visibility"),
+              paidStatus: sp.queryParam("paidStatus"),
+            },
+          }}
           sequence={this.props.sequence}
           onResult={result => {
             this.props.dispatch(
@@ -111,6 +167,14 @@ class DashboardPage extends React.PureComponent<Props> {
             return (
               <>
                 <FiltersContainer loading={loading} />
+                <FiltersContainerDiv className="sorts-and-filters">
+                  {this.renderSorts(sp)}
+                </FiltersContainerDiv>
+                <FiltersContainerDiv className="sorts-and-filters">
+                  {this.renderVisibilityFilter(sp)}
+                  <div className="spacer" />
+                  {this.renderPaidStatusFilter(sp)}
+                </FiltersContainerDiv>
                 <div className="list">{this.renderProfileGames(result)}</div>
               </>
             );
@@ -184,6 +248,110 @@ class DashboardPage extends React.PureComponent<Props> {
       </>
     );
   }
+
+  renderPaidStatusFilter(sp: Space): JSX.Element {
+    return (
+      <>
+        <Icon icon="coin" />
+        <div className="sort-group">
+          {this.renderPaidStatus(sp, "", "All items")}
+          {this.renderPaidStatus(sp, "free", "Free")}
+          {this.renderPaidStatus(sp, "paid", "Paid")}
+        </div>
+      </>
+    );
+  }
+
+  renderPaidStatus(
+    sp: Space,
+    paidStatus: string,
+    label: LocalizedString
+  ): JSX.Element {
+    return (
+      <a
+        className={classNames("sort", {
+          active: isSortActive(paidStatus, sp.queryParam("paidStatus"), ""),
+        })}
+        href={sp.urlWithParams({
+          paidStatus,
+        })}
+      >
+        {label}
+      </a>
+    );
+  }
+
+  renderVisibilityFilter(sp: Space): JSX.Element {
+    return (
+      <>
+        <Icon icon="earth" />
+        <div className="sort-group">
+          {this.renderVisibility(sp, "", "All items")}
+          {this.renderVisibility(sp, "published", "Published")}
+          {this.renderVisibility(sp, "draft", "Draft")}
+        </div>
+      </>
+    );
+  }
+
+  renderVisibility(
+    sp: Space,
+    visibility: string,
+    label: LocalizedString
+  ): JSX.Element {
+    return (
+      <a
+        className={classNames("sort", {
+          active: isSortActive(visibility, sp.queryParam("visibility"), ""),
+        })}
+        href={sp.urlWithParams({
+          visibility,
+        })}
+      >
+        {label}
+      </a>
+    );
+  }
+
+  renderSorts(sp: Space): JSX.Element {
+    return (
+      <>
+        <Icon icon="sort-alpha-asc" />
+        <div className="sort-group">
+          {this.renderSort(sp, "default", "Default")}
+          {this.renderSort(sp, "views", "Most views")}
+          {this.renderSort(sp, "downloads", "Most downloads")}
+          {this.renderSort(sp, "purchases", "Most purchases")}
+        </div>
+      </>
+    );
+  }
+
+  renderSort(sp: Space, sortBy: string, label: LocalizedString): JSX.Element {
+    return (
+      <a
+        className={classNames("sort", {
+          active: isSortActive(sortBy, sp.queryParam("sortBy"), "default"),
+        })}
+        href={sp.urlWithParams({
+          sortBy,
+        })}
+      >
+        {label}
+      </a>
+    );
+  }
+}
+
+function isSortActive(
+  expected: string,
+  actual: string,
+  defaultSort: string
+): boolean {
+  if (!actual && expected === defaultSort) {
+    return true;
+  }
+  return expected === actual;
 }
 
 interface Props extends MeatProps {
@@ -191,6 +359,10 @@ interface Props extends MeatProps {
   profileId: number;
   dispatch: Dispatch;
   tabInstance: TabInstance;
+}
+
+interface State {
+  sortBy: string;
 }
 
 export default withTab(
