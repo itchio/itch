@@ -20,6 +20,8 @@ import styled, * as styles from "renderer/styles";
 import { GameCover } from "renderer/basics/Cover";
 import { FormattedNumber } from "react-intl";
 import Icon from "renderer/basics/Icon";
+import EmptyState from "renderer/basics/EmptyState";
+import { isEmpty, debounce } from "underscore";
 
 const FetchProfileGames = butlerCaller(messages.FetchProfileGames);
 
@@ -32,7 +34,8 @@ const DraftStatus = styled.div`
 `;
 
 const CoverBox = styled.div`
-  width: 150px;
+  flex-shrink: 0;
+  width: 130px;
   margin-right: 14px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 `;
@@ -56,10 +59,10 @@ const StatBox = styled.div`
   font-size: ${props => props.theme.fontSizes.baseText};
   color: ${props => props.theme.secondaryText};
   line-height: 1.4;
+  font-weight: lighter;
 `;
 
 const StatNumber = styled.div`
-  font-weight: bolder;
   font-size: ${props => props.theme.fontSizes.larger};
   color: ${props => props.theme.baseText};
   min-width: 3em;
@@ -73,6 +76,11 @@ const Title = styled.div`
   align-items: center;
 `;
 
+const inactiveBg = `linear-gradient(to top,hsla(355, 43%, 25%, 1),hsla(355, 43%, 17%, 1))`;
+const activeBg = `linear-gradient(to top, hsla(355, 43%, 50%, 1), hsla(355, 43%, 37%, 1));`;
+const borderColor = `#843442`;
+const borderRadius = `4px`;
+
 const DashboardDiv = styled.div`
   ${styles.meat()};
 
@@ -85,18 +93,22 @@ const DashboardDiv = styled.div`
     ${styles.boxy()};
     max-width: 1200px;
 
-    margin: 8px auto;
+    margin: 1em auto;
     line-height: 1.6;
-    font-size: 120%;
   }
 
   .sorts-and-filters {
-    margin-top: 0.4em;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    height: auto;
+
+    padding: 0.4em 0.6em;
     font-weight: normal;
-    font-size: 120%;
 
     .icon {
-      margin-right: 0.4em;
+      margin-right: 0.5em;
+      font-size: 80%;
     }
 
     .spacer {
@@ -104,26 +116,40 @@ const DashboardDiv = styled.div`
     }
   }
 
+  .sort-group {
+    margin: 0.5em 0;
+  }
+
   a.sort {
-    background: #2d2d2d;
-    padding: 0.4em 0.6em;
+    display: inline-block;
+    background: ${inactiveBg};
+    padding: 0.5em 1em;
     margin: 0;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid ${borderColor};
     border-left: none;
 
     &:first-child {
-      border-radius: 2px 0 0 2px;
-      border-left: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: ${borderRadius} 0 0 ${borderRadius};
+      border-left: 1px solid ${borderColor};
     }
 
     &:last-child {
-      border-radius: 0 2px 2px 0;
+      border-radius: 0 ${borderRadius} ${borderRadius} 0;
     }
 
     &.active {
-      background: #444;
+      background: ${activeBg};
       color: ${props => props.theme.baseText};
     }
+  }
+
+  input[type="search"] {
+    ${styles.searchInput()};
+    min-width: 25em;
+    padding-left: 10px;
+    margin-left: 1.4em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.3);
   }
 `;
 
@@ -131,7 +157,7 @@ class DashboardPage extends React.PureComponent<Props, State> {
   constructor(props: DashboardPage["props"], context: any) {
     super(props, context);
     this.state = {
-      sortBy: "default",
+      search: "",
     };
   }
 
@@ -147,6 +173,7 @@ class DashboardPage extends React.PureComponent<Props, State> {
             limit: 15,
             cursor: sp.queryParam("cursor"),
             sortBy: sp.queryParam("sortBy"),
+            search: this.state.search,
             filters: {
               visibility: sp.queryParam("visibility"),
               paidStatus: sp.queryParam("paidStatus"),
@@ -166,11 +193,12 @@ class DashboardPage extends React.PureComponent<Props, State> {
           render={({ result, loading }) => {
             return (
               <>
-                <FiltersContainer loading={loading} />
+                <FiltersContainer loading={loading} hideAddressBar>
+                  {this.renderSearch(sp)}
+                </FiltersContainer>
                 <FiltersContainerDiv className="sorts-and-filters">
                   {this.renderSorts(sp)}
-                </FiltersContainerDiv>
-                <FiltersContainerDiv className="sorts-and-filters">
+                  <div className="spacer" />
                   {this.renderVisibilityFilter(sp)}
                   <div className="spacer" />
                   {this.renderPaidStatusFilter(sp)}
@@ -198,6 +226,10 @@ class DashboardPage extends React.PureComponent<Props, State> {
       });
     }
 
+    if (isEmpty(items)) {
+      return <EmptyState bigText="Nothing to see here!" icon="filter" />;
+    }
+
     return (
       <>
         {items.map(pg => {
@@ -209,7 +241,9 @@ class DashboardPage extends React.PureComponent<Props, State> {
             <div className="item" key={pg.game.id}>
               <StatGroup>
                 <CoverBox>
-                  <GameCover game={pg.game} />
+                  <a href={urlForGame(pg.game.id)}>
+                    <GameCover game={pg.game} />
+                  </a>
                 </CoverBox>
                 <TitleBox>
                   <a href={urlForGame(pg.game.id)}>
@@ -252,9 +286,8 @@ class DashboardPage extends React.PureComponent<Props, State> {
   renderPaidStatusFilter(sp: Space): JSX.Element {
     return (
       <>
-        <Icon icon="coin" />
         <div className="sort-group">
-          {this.renderPaidStatus(sp, "", "All items")}
+          {this.renderPaidStatus(sp, "", "All")}
           {this.renderPaidStatus(sp, "free", "Free")}
           {this.renderPaidStatus(sp, "paid", "Paid")}
         </div>
@@ -276,6 +309,7 @@ class DashboardPage extends React.PureComponent<Props, State> {
           paidStatus,
         })}
       >
+        <Icon icon="coin" />
         {label}
       </a>
     );
@@ -284,9 +318,8 @@ class DashboardPage extends React.PureComponent<Props, State> {
   renderVisibilityFilter(sp: Space): JSX.Element {
     return (
       <>
-        <Icon icon="earth" />
         <div className="sort-group">
-          {this.renderVisibility(sp, "", "All items")}
+          {this.renderVisibility(sp, "", "All")}
           {this.renderVisibility(sp, "published", "Published")}
           {this.renderVisibility(sp, "draft", "Draft")}
         </div>
@@ -308,6 +341,7 @@ class DashboardPage extends React.PureComponent<Props, State> {
           visibility,
         })}
       >
+        <Icon icon="earth" />
         {label}
       </a>
     );
@@ -316,7 +350,6 @@ class DashboardPage extends React.PureComponent<Props, State> {
   renderSorts(sp: Space): JSX.Element {
     return (
       <>
-        <Icon icon="sort-alpha-asc" />
         <div className="sort-group">
           {this.renderSort(sp, "default", "Default")}
           {this.renderSort(sp, "views", "Most views")}
@@ -337,10 +370,28 @@ class DashboardPage extends React.PureComponent<Props, State> {
           sortBy,
         })}
       >
+        <Icon icon="sort-alpha-asc" />
         {label}
       </a>
     );
   }
+
+  renderSearch(sp: Space): JSX.Element {
+    const debouncedSetSearch = debounce(this.setSearch, 250);
+    return (
+      <>
+        <input
+          type="search"
+          placeholder="Filter..."
+          onChange={e => debouncedSetSearch(e.currentTarget.value)}
+        />
+      </>
+    );
+  }
+
+  setSearch = (search: string) => {
+    this.setState({ search });
+  };
 }
 
 function isSortActive(
@@ -362,7 +413,7 @@ interface Props extends MeatProps {
 }
 
 interface State {
-  sortBy: string;
+  search: string;
 }
 
 export default withTab(

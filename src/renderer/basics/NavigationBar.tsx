@@ -173,7 +173,7 @@ class NavigationBar extends React.PureComponent<Props> {
       );
     }
 
-    return <>url</>;
+    return <>{url}</>;
   }
 
   onBrowserAddress = (browserAddress: HTMLElement | HTMLInputElement) => {

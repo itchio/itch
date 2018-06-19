@@ -1,4 +1,4 @@
-import { darken, lighten, transparentize } from "polished";
+import { lighten, transparentize } from "polished";
 
 // colors
 
@@ -34,8 +34,8 @@ export const uiColors = {
   boxShadow: "#1b1919",
 };
 
-const breadBackground = darken(0.05, "#292727");
-const itemBackground = "#2b2a2a";
+const breadBackground = `hsla(0, 0%, 8%, 1)`;
+const itemBackground = "#1d1d1d";
 
 export const colors = {
   accent: baseColors.carnation,
@@ -430,7 +430,7 @@ export const metaColors = (color: string) => css`
 `;
 
 export const boxy = () => css`
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: ${props => props.theme.itemBackground};
   overflow: hidden;
 `;

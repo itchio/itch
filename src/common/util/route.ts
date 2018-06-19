@@ -3,6 +3,7 @@ import { Store, isCancelled, Action } from "common/types";
 import { Watcher } from "common/util/watcher";
 
 import rootLogger from "common/logger";
+import { ItchPromise } from "common/util/itch-promise";
 const logger = rootLogger.child({ name: "route" });
 
 let printError = (msg: string) => {
@@ -18,6 +19,7 @@ function err(e: Error, action: Action<any>) {
     printError(
       `while reacting to ${(action || { type: "?" }).type}: ${e.stack || e}`
     );
+    console.log(`e.stack: `, e.stack);
   }
 }
 
@@ -39,7 +41,7 @@ function route(watcher: Watcher, store: Store, action: Action<any>): void {
           promises.push(r(store, action));
         }
       }
-      await Promise.all(promises);
+      await ItchPromise.all(promises);
     })().catch(e => {
       err(e, action);
     });

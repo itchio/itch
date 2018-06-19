@@ -1,33 +1,32 @@
-import React from "react";
+import classNames from "classnames";
+import { User } from "common/butlerd/messages";
+import { IRootState } from "common/types";
 import {
-  connect,
+  rendererNavigation,
+  rendererWindow,
+  rendererWindowState,
+} from "common/util/navigation";
+import React from "react";
+import { arrayMove, SortableContainer } from "react-sortable-hoc";
+import Filler from "renderer/basics/Filler";
+import Icon from "renderer/basics/Icon";
+import IconButton from "renderer/basics/IconButton";
+import {
   actionCreatorsList,
+  connect,
   Dispatchers,
 } from "renderer/hocs/connect";
-
-import { map } from "underscore";
-import { createStructuredSelector } from "reselect";
-
-import Filler from "renderer/basics/Filler";
-
-import { IRootState } from "common/types";
-
-import { SortableContainer, arrayMove } from "react-sortable-hoc";
-
-import styled, * as styles from "renderer/styles";
-
-import { T } from "renderer/t";
-import { User } from "common/butlerd/messages";
-import { rendererNavigation, rendererWindow } from "common/util/navigation";
-import Icon from "renderer/basics/Icon";
-import Tab from "renderer/scenes/HubScene/Sidebar/Tab";
 import Logo from "renderer/scenes/HubScene/Sidebar/Logo";
 import Search from "renderer/scenes/HubScene/Sidebar/Search";
 import {
-  SidebarSection,
   SidebarHeading,
+  SidebarSection,
 } from "renderer/scenes/HubScene/Sidebar/styles";
-import IconButton from "renderer/basics/IconButton";
+import Tab from "renderer/scenes/HubScene/Sidebar/Tab";
+import styled, * as styles from "renderer/styles";
+import { T } from "renderer/t";
+import { createStructuredSelector } from "reselect";
+import { map } from "underscore";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -184,7 +183,10 @@ class Sidebar extends React.PureComponent<Props & DerivedProps, State> {
   renderLink(url: string, icon: string, label: string): JSX.Element {
     return (
       <SidebarSection>
-        <a href={url}>
+        <a
+          href={url}
+          className={classNames({ active: this.props.url.startsWith(url) })}
+        >
           <Icon icon={icon} /> {label}
         </a>
       </SidebarSection>
@@ -218,6 +220,7 @@ type DerivedProps = Dispatchers<typeof actionCreators> & {
   path: string;
   openTabs: string[];
   enableTabs: boolean;
+  url: string;
 };
 
 interface State {
@@ -233,6 +236,11 @@ export default connect<Props>(
       me: (rs: IRootState) => rs.profile.credentials.me,
       tab: (rs: IRootState) => rendererNavigation(rs).tab,
       openTabs: (rs: IRootState) => rendererNavigation(rs).openTabs,
+      url: (rs: IRootState) => {
+        const ws = rendererWindowState(rs);
+        const ti = ws.tabInstances[rendererNavigation(rs).tab];
+        return ti.history[ti.currentIndex].url;
+      },
       enableTabs: (rs: IRootState) => rs.preferences.enableTabs,
     }),
     actionCreators,

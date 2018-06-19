@@ -2,17 +2,18 @@ import { css } from "renderer/styles";
 
 export default css`
   ::-webkit-scrollbar {
-    width: 16px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #4b4a4a;
-    border-radius: 1px;
+    width: 12px;
   }
 
   ::-webkit-scrollbar-thumb {
-    border-radius: 1px;
-    background: #fa5c5c;
-    -webkit-box-shadow: inset 0 0 2px #ff8081;
+    border-radius: 2px;
+    background: #aba1a1;
+    box-shadow: inset 0 0 2px #deb5b6;
+  }
+
+  ::-webkit-scrollbar-track {
+    border-radius: 2px;
+    background: #443e3e;
+    border: 1px solid #484848;
   }
 `;

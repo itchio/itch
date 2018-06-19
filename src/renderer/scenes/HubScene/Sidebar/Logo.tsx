@@ -11,7 +11,6 @@ import {
 
 import { IRootState } from "common/types";
 import { modalWidgets } from "renderer/modal-widgets/index";
-import { rendererWindow } from "common/util/navigation";
 
 const LogoDiv = styled.div`
   text-align: center;
@@ -24,19 +23,15 @@ const LogoDiv = styled.div`
     width: 110px;
     margin: 10px 0;
   }
-
-  &.dimmed {
-    opacity: 0.2;
-  }
 `;
 
 class Logo extends React.PureComponent<DerivedProps> {
   render() {
-    const { appVersion, focused } = this.props;
+    const { appVersion } = this.props;
 
     return (
       <LogoDiv
-        className={classNames("logo-div", { dimmed: !focused })}
+        className={classNames("logo-div")}
         onClick={this.onClick}
         data-rh-at="bottom"
         data-rh={`itch v${appVersion}`}
@@ -69,7 +64,6 @@ const actionCreators = actionCreatorsList("navigate", "openModal");
 
 type DerivedProps = Dispatchers<typeof actionCreators> & {
   appVersion: string;
-  focused: boolean;
 };
 
 export default connect(
@@ -77,7 +71,6 @@ export default connect(
   {
     state: createStructuredSelector({
       appVersion: (rs: IRootState) => rs.system.appVersion,
-      focused: (rs: IRootState) => rs.windows[rendererWindow()].native.focused,
     }),
     actionCreators,
   }

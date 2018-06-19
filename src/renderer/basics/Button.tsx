@@ -12,14 +12,20 @@ const ButtonDiv = styled.div`
   ${styles.singleLine()};
 
   font-size: ${props => props.theme.fontSizes.baseText};
-  font-weight: bold;
+  font-weight: normal;
   padding: 4px 10px 3px 10px;
 
   border: 1px solid;
   border-width: 4px 1px 1px 1px;
   border-radius: 3px;
-  background-color: #393938;
-  border-color: #424242;
+
+  background-image: linear-gradient(
+    10deg,
+    hsla(355, 50%, 37%, 1),
+    hsla(355, 50%, 50%, 1)
+  );
+  border-color: hsla(355, 40%, 44%, 1);
+
   box-shadow: 0 1px 3px ${props => props.theme.inputBoxShadow};
   text-shadow: 0px 1px rgba(0, 0, 0, 0.4);
 
@@ -37,8 +43,7 @@ const ButtonDiv = styled.div`
   }
 
   &.primary {
-    background-color: ${props => props.theme.accent};
-    border-color: ${props => props.theme.lightAccent};
+    font-weight: bold;
   }
 
   &.discreet {

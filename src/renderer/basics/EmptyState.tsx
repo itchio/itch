@@ -83,12 +83,12 @@ class EmptyState extends React.PureComponent<Props> {
 export default EmptyState;
 
 interface Props {
-  className?: string;
   bigText: LocalizedString;
-  smallText?: LocalizedString;
   icon: string;
+  smallText?: LocalizedString;
   buttonIcon?: string;
   buttonText?: LocalizedString;
   buttonAction?: React.MouseEventHandler<HTMLDivElement>;
   componentAction?: JSX.Element;
+  className?: string;
 }
