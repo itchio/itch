@@ -141,5 +141,6 @@
     "action.name.manual": "Manual de utilizador",
     "action.name.editor": "Editor",
     "action.name.forums": "Fóruns",
-    "label.experimental": "Experimental"
+    "label.experimental": "Experimental",
+    "download.reason.update": "para atualizar a última versão"
 }
