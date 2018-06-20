@@ -1,5 +1,10 @@
 import styled, * as styles from "renderer/styles";
 
+export const BaseBox = styled.div`
+  margin: 1em auto;
+  line-height: 1.6;
+`;
+
 export const Box = styled.div`
   ${styles.boxy()};
   max-width: 1200px;

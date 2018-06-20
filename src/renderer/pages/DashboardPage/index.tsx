@@ -13,7 +13,6 @@ import { withProfileId } from "renderer/hocs/withProfileId";
 import { withTab } from "renderer/hocs/withTab";
 import { withTabInstance } from "renderer/hocs/withTabInstance";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import styled from "renderer/styles";
 import EmptyState from "renderer/basics/EmptyState";
 import { isEmpty, debounce } from "underscore";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
@@ -29,16 +28,9 @@ import {
   SortOption,
 } from "renderer/pages/common/SortsAndFilters";
 import FilterInput from "renderer/pages/common/FilterInput";
+import DraftStatus from "renderer/pages/DashboardPage/DraftStatus";
 
 const FetchProfileGames = butlerCaller(messages.FetchProfileGames);
-
-const DraftStatus = styled.div`
-  font-weight: normal;
-  text-transform: lowercase;
-  font-size: ${props => props.theme.fontSizes.baseText};
-  color: ${props => props.theme.bundle};
-  margin-left: 1em;
-`;
 
 class DashboardPage extends React.PureComponent<Props, State> {
   constructor(props: DashboardPage["props"], context: any) {
@@ -90,7 +82,7 @@ class DashboardPage extends React.PureComponent<Props, State> {
                   <SortSpacer />
                   {this.renderPaidStatusFilter(sp)}
                 </SortsAndFilters>
-                <ItemList>{this.renderProfileGames(result)}</ItemList>
+                <ItemList>{this.renderItems(result)}</ItemList>
               </>
             );
           }}
@@ -99,7 +91,7 @@ class DashboardPage extends React.PureComponent<Props, State> {
     );
   }
 
-  renderProfileGames(result: FetchProfileGamesResult) {
+  renderItems(result: FetchProfileGamesResult) {
     if (!result) {
       return null;
     }
