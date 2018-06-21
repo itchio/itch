@@ -218,6 +218,10 @@ export class Space {
     }
     return false;
   }
+
+  sequence(): number {
+    return this._instance.sequence;
+  }
 }
 
 const fallbackIcon = "moon";

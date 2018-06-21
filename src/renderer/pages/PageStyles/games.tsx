@@ -11,7 +11,6 @@ import { Game } from "common/butlerd/messages";
 const CoverBox = styled.div`
   flex-shrink: 0;
   width: 130px;
-  margin-right: 14px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 `;
 

@@ -121,8 +121,9 @@ class DashboardPage extends React.PureComponent<Props, State> {
             <Box key={game.id}>
               <BoxInner>
                 <StandardGameCover game={game} />
+                <SortSpacer />
                 <StandardGameDesc game={game}>
-                  {game.published ? null : <DraftStatus>Draft</DraftStatus>}
+                  {item.published ? null : <DraftStatus>Draft</DraftStatus>}
                 </StandardGameDesc>
                 <Filler />
                 <ProfileGameStats pg={item} />

@@ -13,6 +13,13 @@ export const Box = styled.div`
   line-height: 1.6;
 `;
 
+export const BoxSingle = styled.div`
+  ${styles.boxy()};
+
+  margin: 1em auto;
+  line-height: 1.6;
+`;
+
 export const BoxInner = styled.div`
   width: 100%;
   display: flex;

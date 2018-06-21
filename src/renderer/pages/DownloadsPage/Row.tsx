@@ -5,7 +5,6 @@ import {
   Dispatchers,
   actionCreatorsList,
 } from "renderer/hocs/connect";
-import Chart from "./chart";
 
 import TimeAgo from "renderer/basics/TimeAgo";
 import UploadIcon from "renderer/basics/UploadIcon";
@@ -41,6 +40,7 @@ import { rendererWindow, urlForGame } from "common/util/navigation";
 import withHover from "renderer/hocs/withHover";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
 import { modalWidgets } from "renderer/modal-widgets";
+import Chart from "renderer/pages/DownloadsPage/Chart";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
