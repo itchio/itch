@@ -182,6 +182,16 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
     }
   }
 
+  componentWillUnmount() {
+    const { dispatch, tab } = this.props;
+    dispatch(
+      actions.tabLostWebContents({
+        tab,
+        window: rendererWindow(),
+      })
+    );
+  }
+
   scheduleUpdate = debounce(() => {
     const wv = this._wv;
     if (!wv) {
@@ -255,15 +265,6 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
       wv.removeEventListener("dom-ready", onDomReady);
     };
     wv.addEventListener("dom-ready", onDomReady);
-
-    wv.addEventListener("destroyed", () => {
-      dispatch(
-        actions.tabLostWebContents({
-          tab,
-          window: rendererWindow(),
-        })
-      );
-    });
 
     // FIXME: switch to webcontents event when it.. starts working?
     wv.addEventListener("page-title-updated", ev => {
