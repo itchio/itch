@@ -21,6 +21,7 @@ import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { createStructuredSelector } from "reselect";
 import { first, isEmpty, map, rest, size } from "underscore";
+import FiltersContainer from "renderer/basics/FiltersContainer";
 
 const DownloadsDiv = styled.div`
   ${styles.meat()};
@@ -72,7 +73,12 @@ const DownloadsContentDiv = styled.div`
 
 class Downloads extends React.PureComponent<Props & DerivedProps> {
   render() {
-    return <DownloadsDiv>{this.renderContents()}</DownloadsDiv>;
+    return (
+      <DownloadsDiv>
+        <FiltersContainer loading={false} />
+        {this.renderContents()}
+      </DownloadsDiv>
+    );
   }
 
   renderContents() {

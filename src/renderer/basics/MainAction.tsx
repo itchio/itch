@@ -18,6 +18,11 @@ import Button from "renderer/basics/Button";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
+import styled from "renderer/styles";
+
+const NotCompatibleSpan = styled.span`
+  flex-shrink: 0;
+`;
 
 class MainAction extends React.PureComponent<Props & DerivedProps> {
   render() {
@@ -106,7 +111,7 @@ class MainAction extends React.PureComponent<Props & DerivedProps> {
       } else {
         label = ["grid.item.not_compatible"];
         icon = "neutral";
-        return <span>{T(label)}</span>;
+        return <NotCompatibleSpan>{T(label)}</NotCompatibleSpan>;
       }
     }
 

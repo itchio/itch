@@ -67,7 +67,6 @@ const butlerCaller = <Params, Result>(
     }
 
     componentDidMount() {
-      console.warn(this.id, `componentDidMount`);
       this.promise = new Promise((resolve, reject) => {
         this.resolve = resolve;
       });
@@ -84,7 +83,6 @@ const butlerCaller = <Params, Result>(
     }
 
     private queueFetch = (additionalParams?: Object) => {
-      console.warn(this.id, `queueFetch`);
       markSeed++;
       let markPrefix = `butlerd-${markSeed}`;
       let startMark = `${markPrefix}-start`;
@@ -120,7 +118,6 @@ const butlerCaller = <Params, Result>(
     };
 
     private setResult = (r: Result) => {
-      console.warn(this.id, `setResult`);
       console.log(getRequestName(method), `→ `, r);
       if (this.props.onResult) {
         this.props.onResult(r);
@@ -129,12 +126,10 @@ const butlerCaller = <Params, Result>(
     };
 
     private setError = (e: any) => {
-      console.warn(this.id, `setError`);
       this.setState({ error: e, loading: false });
     };
 
     componentWillUnmount() {
-      console.warn(this.id, `componentWillUnmount`);
       if (this.resolve) {
         this.resolve();
         return;

@@ -8,6 +8,7 @@ import {
   TitleSpacer,
   StandardGameCover,
   TitleBox,
+  bigCoverHeight,
 } from "renderer/pages/PageStyles/games";
 import ErrorState from "renderer/basics/ErrorState";
 import LoadingCircle from "renderer/basics/LoadingCircle";
@@ -20,15 +21,34 @@ const StripeDiv = styled.div`
   flex-direction: row;
   align-items: center;
   width: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
+  position: relative;
+
+  height: ${bigCoverHeight}px;
 
   padding: 1em 0;
+`;
+
+const ViewAll = styled.a`
+  position: absolute;
+  background: ${props => props.theme.breadBackground};
+  box-shadow: 0 0 30px ${props => props.theme.breadBackground};
+  padding: 0 4em;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+
+  z-index: 4;
 `;
 
 const StripeItem = styled.div`
   ${styles.boxy()};
   flex-shrink: 0;
-  margin-right: 1em;
+  margin-right: 0.4em;
 `;
 
 interface Props<Params, Res> {
@@ -36,6 +56,7 @@ interface Props<Params, Res> {
   href: string;
   params: Params;
   sequence?: number;
+  renderTitleExtras?: () => JSX.Element;
   map: (r: Res) => Game[];
 }
 
@@ -63,7 +84,11 @@ export default <Params, Res extends FetchRes>(
           render={({ result, error, loading }) => (
             <>
               {this.renderTitle(loading, error)}
-              {this.renderItems(result)}
+              <StripeDiv>
+                {this.renderViewAll()}
+                {this.renderItems(result)}
+                {this.renderEmpty()}
+              </StripeDiv>
             </>
           )}
         />
@@ -71,7 +96,7 @@ export default <Params, Res extends FetchRes>(
     }
 
     renderTitle(loading: boolean, error: any): JSX.Element {
-      const { href, title } = this.props;
+      const { href, title, renderTitleExtras = renderNoop } = this.props;
       return (
         <>
           <TitleBox>
@@ -83,6 +108,7 @@ export default <Params, Res extends FetchRes>(
                   <LoadingCircle progress={-1} />
                 </>
               ) : null}
+              {renderTitleExtras()}
             </Title>
           </TitleBox>
           {error ? (
@@ -105,14 +131,34 @@ export default <Params, Res extends FetchRes>(
 
       const games = this.props.map(result);
       return (
-        <StripeDiv>
+        <>
           {games.map(game => (
             <StripeItem key={game.id}>
-              <StandardGameCover game={game} />
+              <StandardGameCover game={game} grower />
+            </StripeItem>
+          ))}
+        </>
+      );
+    }
+
+    renderEmpty(): JSX.Element {
+      return (
+        <StripeDiv>
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(id => (
+            <StripeItem key={`empty-${id}`}>
+              <StandardGameCover game={null} />
             </StripeItem>
           ))}
         </StripeDiv>
       );
     }
+
+    renderViewAll(): JSX.Element {
+      return <ViewAll href={this.props.href}>View all...</ViewAll>;
+    }
   };
 };
+
+function renderNoop(): JSX.Element {
+  return null;
+}

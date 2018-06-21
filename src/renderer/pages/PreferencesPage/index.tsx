@@ -5,6 +5,7 @@ import styled, * as styles from "renderer/styles";
 import AdvancedSettings from "./AdvancedSettings";
 import BehaviorSettings from "./BehaviorSettings";
 import LanguageSettings from "./LanguageSettings";
+import FiltersContainer from "renderer/basics/FiltersContainer";
 
 const PreferencesDiv = styled.div`
   ${styles.meat()};
@@ -118,6 +119,7 @@ class PreferencesPage extends React.PureComponent<Props> {
   render() {
     return (
       <PreferencesDiv>
+        <FiltersContainer loading={false} />
         <PreferencesContentDiv>
           <LanguageSettings />
           <InstallLocationsSettings />

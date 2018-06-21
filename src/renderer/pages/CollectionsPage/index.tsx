@@ -18,33 +18,30 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
+import GameStripe from "renderer/pages/common/GameStripe";
+import ItemList from "renderer/pages/common/ItemList";
+import Icon from "renderer/basics/Icon";
+import Filler from "renderer/basics/Filler";
 
 const FetchProfileCollections = butlerCaller(messages.FetchProfileCollections);
+const CollectionGameStripe = GameStripe(messages.FetchCollectionGames);
 
 const CollectionsDiv = styled.div`
   ${styles.meat()};
+`;
 
-  .collections-list {
-    overflow-y: auto;
-  }
+const CollectionInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-  .collection {
-    margin: 8px;
-    padding: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    line-height: 1.6;
-  }
+  font-size: 80%;
+  font-weight: 400;
+  margin: 0 1em;
+`;
 
-  h2 {
-    font-size: 140%;
-  }
-
-  .games-count {
-    display: inline-block;
-    min-width: 12em;
-  }
+const CollectionInfoSpacer = styled.div`
+  width: 0.4em;
 `;
 
 class CollectionsPage extends React.PureComponent<Props> {
@@ -57,7 +54,7 @@ class CollectionsPage extends React.PureComponent<Props> {
         <FetchProfileCollections
           params={{ profileId, limit: 15, cursor: sp.queryParam("cursor") }}
           sequence={this.props.sequence}
-          onResult={result => {
+          onResult={() => {
             this.props.dispatch(
               actions.tabDataFetched({
                 window: rendererWindow(),
@@ -75,9 +72,7 @@ class CollectionsPage extends React.PureComponent<Props> {
                     {T(["outlinks.manage_collections"])}
                   </a>
                 </FiltersContainer>
-                <div className="collections-list">
-                  {this.renderCollections(result)}
-                </div>
+                <ItemList>{this.renderCollections(result)}</ItemList>
               </>
             );
           }}
@@ -91,6 +86,7 @@ class CollectionsPage extends React.PureComponent<Props> {
       return null;
     }
     const { items, nextCursor } = result;
+    const { profileId } = this.props;
 
     if (isEmpty(items)) {
       return (
@@ -123,18 +119,38 @@ class CollectionsPage extends React.PureComponent<Props> {
     return (
       <>
         {items.map(coll => (
-          <div className="collection" key={coll.id}>
-            <a href={urlForCollection(coll.id)}>
-              <h2>{coll.title}</h2>
-            </a>
-            <p>
-              <span className="games-count">
-                <span className="icon icon-tag" /> {coll.gamesCount} games
-              </span>{" "}
-              <span className="icon icon-history" /> Last updated{" "}
-              <TimeAgo date={coll.updatedAt} />
-            </p>
-          </div>
+          // fixme sequence
+          <>
+            <CollectionGameStripe
+              title={coll.title}
+              href={urlForCollection(coll.id)}
+              params={{ profileId, collectionId: coll.id }}
+              sequence={0}
+              renderTitleExtras={() => (
+                <>
+                  <Filler />
+                  <CollectionInfo>
+                    <Icon icon="tag" />
+                    <CollectionInfoSpacer />
+                    {coll.gamesCount} games
+                  </CollectionInfo>
+                  <CollectionInfo>
+                    <Icon icon="history" />
+                    <CollectionInfoSpacer />
+                    Last updated
+                    <CollectionInfoSpacer />
+                    <TimeAgo date={coll.updatedAt} />
+                  </CollectionInfo>
+                </>
+              )}
+              map={result => {
+                if (!result || isEmpty(result.items)) {
+                  return [];
+                }
+                return result.items.map(cg => cg.game);
+              }}
+            />
+          </>
         ))}
         {nextCursor ? <a href={nextPageURL}>Next page</a> : null}
       </>
