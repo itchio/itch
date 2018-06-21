@@ -7,9 +7,7 @@ import { withTab } from "renderer/hocs/withTab";
 import { withTabInstance } from "renderer/hocs/withTabInstance";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import GameSeries from "renderer/pages/common/GameSeries";
-import MainAction from "renderer/basics/MainAction";
-import GameStatusGetter from "renderer/basics/GameStatusGetter";
-import { SortSpacer } from "renderer/pages/common/SortsAndFilters";
+import StandardMainAction from "renderer/pages/common/StandardMainAction";
 
 const InstalledSeries = GameSeries(messages.FetchCaves);
 
@@ -23,15 +21,7 @@ class InstalledPage extends React.PureComponent<Props> {
         label={["sidebar.installed"]}
         params={{ limit: 15, cursor: sp.queryParam("cursor") }}
         getGame={cave => cave.game}
-        renderItemExtras={cave => (
-          <>
-            <GameStatusGetter
-              game={cave.game}
-              render={status => <MainAction game={cave.game} status={status} />}
-            />
-            <SortSpacer />
-          </>
-        )}
+        renderItemExtras={cave => <StandardMainAction game={cave.game} />}
       />
     );
   }

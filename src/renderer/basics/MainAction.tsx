@@ -106,6 +106,7 @@ class MainAction extends React.PureComponent<Props & DerivedProps> {
       } else {
         label = ["grid.item.not_compatible"];
         icon = "neutral";
+        return <span>{T(label)}</span>;
       }
     }
 

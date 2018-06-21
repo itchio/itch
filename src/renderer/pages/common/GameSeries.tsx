@@ -115,6 +115,7 @@ export default <Params, Res extends FetchRes<any>>(
                   </StandardGameDesc>
                   <Filler />
                   {renderItemExtras(item)}
+                  <SortSpacer />
                 </BoxInner>
               </Box>
             );
