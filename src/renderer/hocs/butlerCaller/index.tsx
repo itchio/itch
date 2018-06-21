@@ -35,6 +35,7 @@ interface ButlerCallerArgs<Params, Result> {
 }
 
 let markSeed = 0;
+let callerSeed = 0;
 
 const butlerCaller = <Params, Result>(
   method: IRequestCreator<Params, Result>
@@ -48,11 +49,13 @@ const butlerCaller = <Params, Result>(
     promise: Promise<void>;
     resolve: () => void;
     logger: Logger;
+    id: number;
 
     static displayName = `ButlerCall(${method.name})`;
 
     constructor(props: any, context: any) {
       super(props, context);
+      this.id = callerSeed++;
       this.state = {
         loading: true,
         error: undefined,
@@ -64,6 +67,7 @@ const butlerCaller = <Params, Result>(
     }
 
     componentDidMount() {
+      console.warn(this.id, `componentDidMount`);
       this.promise = new Promise((resolve, reject) => {
         this.resolve = resolve;
       });
@@ -80,6 +84,7 @@ const butlerCaller = <Params, Result>(
     }
 
     private queueFetch = (additionalParams?: Object) => {
+      console.warn(this.id, `queueFetch`);
       markSeed++;
       let markPrefix = `butlerd-${markSeed}`;
       let startMark = `${markPrefix}-start`;
@@ -115,6 +120,7 @@ const butlerCaller = <Params, Result>(
     };
 
     private setResult = (r: Result) => {
+      console.warn(this.id, `setResult`);
       console.log(getRequestName(method), `→ `, r);
       if (this.props.onResult) {
         this.props.onResult(r);
@@ -123,10 +129,12 @@ const butlerCaller = <Params, Result>(
     };
 
     private setError = (e: any) => {
+      console.warn(this.id, `setError`);
       this.setState({ error: e, loading: false });
     };
 
     componentWillUnmount() {
+      console.warn(this.id, `componentWillUnmount`);
       if (this.resolve) {
         this.resolve();
         return;

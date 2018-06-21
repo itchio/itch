@@ -256,6 +256,15 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
     };
     wv.addEventListener("dom-ready", onDomReady);
 
+    wv.addEventListener("destroyed", () => {
+      dispatch(
+        actions.tabLostWebContents({
+          tab,
+          window: rendererWindow(),
+        })
+      );
+    });
+
     // FIXME: switch to webcontents event when it.. starts working?
     wv.addEventListener("page-title-updated", ev => {
       this.props.dispatch(

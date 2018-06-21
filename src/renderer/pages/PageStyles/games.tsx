@@ -40,6 +40,10 @@ export const Title = styled.div`
   align-items: center;
 `;
 
+export const TitleSpacer = styled.div`
+  width: 8px;
+`;
+
 export const Desc = styled.div`
   color: ${props => props.theme.secondaryText};
 `;
