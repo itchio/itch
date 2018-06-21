@@ -15,8 +15,8 @@ const CoverBox = styled.div`
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 `;
 
-export const StandardGameCover = ({ game }: { game: Game }) => (
-  <CoverBox>
+export const StandardGameCover = ({ game, ...restProps }: { game: Game }) => (
+  <CoverBox {...restProps}>
     <a href={urlForGame(game.id)}>
       <GameCover game={game} />
     </a>
@@ -38,6 +38,10 @@ export const Title = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+`;
+
+export const TitleSpacer = styled.div`
+  width: 8px;
 `;
 
 export const Desc = styled.div`

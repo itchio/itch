@@ -1,5 +1,5 @@
 import { createRequest } from "butlerd";
-import { call } from "common/butlerd";
+import { call, messages } from "common/butlerd";
 import { IRootState } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
@@ -89,6 +89,13 @@ class SecretSettings extends React.PureComponent<Props & DerivedProps> {
           <Button
             className="control"
             primary={true}
+            icon="close"
+            onClick={this.onExpireAll}
+            label="Expire all data in local database"
+          />
+          <Button
+            className="control"
+            primary={true}
             icon="bug"
             onClick={this.onOpenCrashy}
             label="Open crashy tab"
@@ -168,6 +175,12 @@ class SecretSettings extends React.PureComponent<Props & DerivedProps> {
           ],
         })
       );
+    });
+  };
+
+  onExpireAll = () => {
+    doAsync(async () => {
+      await call(messages.FetchExpireAll, {});
     });
   };
 

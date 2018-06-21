@@ -193,15 +193,22 @@ export default reducer<TabInstances>(initialState, on => {
     };
   });
 
-  on(actions.tabGotWebContents, (state, action) => {
-    const { tab, webContentsId } = action.payload;
-    const oldData = state[tab];
+  on(actions.tabLostWebContents, (state, action) => {
+    const { tab } = action.payload;
+    const oldInstance = state[tab];
+    if (!oldInstance) {
+      // ignore
+      return state;
+    }
 
     return {
       ...state,
       [tab]: {
-        ...(oldData || emptyObj),
-        webContentsId,
+        ...oldInstance,
+        data: {
+          ...oldInstance.data,
+          web: null,
+        },
       },
     };
   });

@@ -631,6 +631,21 @@ export const FetchCavesByInstallLocationID = createRequest<
 >("Fetch.CavesByInstallLocationID");
 
 /**
+ * Result for Fetch.ExpireAll
+ */
+export interface FetchExpireAllResult {
+  // no fields
+}
+
+/**
+ * Mark all local data as stale.
+ */
+export const FetchExpireAll = createRequest<
+  FetchExpireAllParams,
+  FetchExpireAllResult
+>("Fetch.ExpireAll");
+
+/**
  * Result for Game.FindUploads
  */
 export interface GameFindUploadsResult {
@@ -1429,6 +1444,7 @@ export enum Code {
   NoLaunchCandidates = 5000,
   // There is no Internet connection
   NetworkDisconnected = 9000,
+  DatabaseBusy = 16000,
 }
 
 /**
@@ -2403,6 +2419,13 @@ export interface FetchCavesByGameIDParams {
 export interface FetchCavesByInstallLocationIDParams {
   /** undocumented */
   installLocationId: string;
+}
+
+/**
+ * Params for Fetch.ExpireAll
+ */
+export interface FetchExpireAllParams {
+  // no fields
 }
 
 /**

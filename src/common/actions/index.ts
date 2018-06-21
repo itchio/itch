@@ -418,6 +418,12 @@ export const actions = wireActions({
     /** electron id of webcontents */
     webContentsId: number;
   }>(),
+  tabLostWebContents: action<{
+    window: string;
+
+    /** id of tab who just lost a webcontents */
+    tab: string;
+  }>(),
   openGameContextMenu: action<
     IOpenContextMenuBase & {
       /** game to open the context menu of */
