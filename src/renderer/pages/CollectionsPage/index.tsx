@@ -20,8 +20,7 @@ import { T } from "renderer/t";
 import { isEmpty } from "underscore";
 import GameStripe from "renderer/pages/common/GameStripe";
 import ItemList from "renderer/pages/common/ItemList";
-import Icon from "renderer/basics/Icon";
-import Filler from "renderer/basics/Filler";
+import ErrorState from "renderer/basics/ErrorState";
 
 const FetchProfileCollections = butlerCaller(messages.FetchProfileCollections);
 const CollectionGameStripe = GameStripe(messages.FetchCollectionGames);
@@ -35,9 +34,10 @@ const CollectionInfo = styled.div`
   flex-direction: row;
   align-items: center;
 
-  font-size: 80%;
-  font-weight: 400;
-  margin: 0 1em;
+  font-size: ${props => props.theme.fontSizes.baseText};
+  color: ${props => props.theme.ternaryText};
+  font-weight: 700;
+  margin: 0 0.5em;
 `;
 
 const CollectionInfoSpacer = styled.div`
@@ -52,7 +52,7 @@ class CollectionsPage extends React.PureComponent<Props> {
     return (
       <CollectionsDiv>
         <FetchProfileCollections
-          params={{ profileId, limit: 15, cursor: sp.queryParam("cursor") }}
+          params={{ profileId, limit: 6, cursor: sp.queryParam("cursor") }}
           sequence={this.props.sequence}
           onResult={() => {
             this.props.dispatch(
@@ -64,7 +64,8 @@ class CollectionsPage extends React.PureComponent<Props> {
             );
           }}
           loadingHandled
-          render={({ result, loading }) => {
+          errorsHandled
+          render={({ result, error, loading }) => {
             return (
               <>
                 <FiltersContainer loading={loading}>
@@ -72,6 +73,7 @@ class CollectionsPage extends React.PureComponent<Props> {
                     {T(["outlinks.manage_collections"])}
                   </a>
                 </FiltersContainer>
+                <ErrorState error={error} />
                 <ItemList>{this.renderCollections(result)}</ItemList>
               </>
             );
@@ -128,16 +130,10 @@ class CollectionsPage extends React.PureComponent<Props> {
               sequence={0}
               renderTitleExtras={() => (
                 <>
-                  <Filler />
+                  <CollectionInfoSpacer />
+                  <CollectionInfo>{coll.gamesCount} games</CollectionInfo>
                   <CollectionInfo>
-                    <Icon icon="tag" />
-                    <CollectionInfoSpacer />
-                    {coll.gamesCount} games
-                  </CollectionInfo>
-                  <CollectionInfo>
-                    <Icon icon="history" />
-                    <CollectionInfoSpacer />
-                    Last updated
+                    Updated
                     <CollectionInfoSpacer />
                     <TimeAgo date={coll.updatedAt} />
                   </CollectionInfo>

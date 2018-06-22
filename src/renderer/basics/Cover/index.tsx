@@ -105,12 +105,19 @@ interface Props extends HoverProps {
 export default Cover;
 export const HoverCover = withHover(Cover);
 
-export const GameCover = ({ game }: { game: Game }) => {
+export const GameCover = ({
+  game,
+  showGifMarker,
+}: {
+  game: Game;
+  showGifMarker?: boolean;
+}) => {
   return (
     <HoverCover
       gameId={game.id}
       coverUrl={game.coverUrl}
       stillCoverUrl={game.stillCoverUrl}
+      showGifMarker={showGifMarker}
     />
   );
 };

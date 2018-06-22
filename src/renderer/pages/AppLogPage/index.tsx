@@ -53,7 +53,7 @@ class AppLogPage extends React.PureComponent<Props, State> {
     return (
       <AppLogDiv>
         <AppLogContentDiv>
-          {error ? <ErrorState error={error} /> : null}
+          <ErrorState error={error} />
           {log ? (
             <Log
               log={log || ""}

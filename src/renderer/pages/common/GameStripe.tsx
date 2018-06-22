@@ -8,7 +8,7 @@ import {
   TitleSpacer,
   StandardGameCover,
   TitleBox,
-  bigCoverHeight,
+  coverHeight,
 } from "renderer/pages/PageStyles/games";
 import ErrorState from "renderer/basics/ErrorState";
 import LoadingCircle from "renderer/basics/LoadingCircle";
@@ -24,9 +24,10 @@ const StripeDiv = styled.div`
   overflow: hidden;
   position: relative;
 
-  height: ${bigCoverHeight}px;
+  height: ${coverHeight + 2}px;
 
-  padding: 1em 0;
+  padding: 1.2em 0;
+  margin-bottom: 32px;
 `;
 
 const ViewAll = styled.a`
@@ -48,7 +49,7 @@ const ViewAll = styled.a`
 const StripeItem = styled.div`
   ${styles.boxy()};
   flex-shrink: 0;
-  margin-right: 0.4em;
+  margin-right: 0.8em;
 `;
 
 interface Props<Params, Res> {
@@ -111,11 +112,7 @@ export default <Params, Res extends FetchRes>(
               {renderTitleExtras()}
             </Title>
           </TitleBox>
-          {error ? (
-            <>
-              <ErrorState error={error} />
-            </>
-          ) : null}
+          <ErrorState error={error} />
         </>
       );
     }
@@ -129,27 +126,34 @@ export default <Params, Res extends FetchRes>(
         return null;
       }
 
+      const doneSet = new Set<number>();
       const games = this.props.map(result);
       return (
         <>
-          {games.map(game => (
-            <StripeItem key={game.id}>
-              <StandardGameCover game={game} grower />
-            </StripeItem>
-          ))}
+          {games.map(game => {
+            if (doneSet.has(game.id)) {
+              return null;
+            }
+            doneSet.add(game.id);
+            return (
+              <StripeItem key={game.id}>
+                <StandardGameCover game={game} showInfo />
+              </StripeItem>
+            );
+          })}
         </>
       );
     }
 
     renderEmpty(): JSX.Element {
       return (
-        <StripeDiv>
+        <>
           {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(id => (
             <StripeItem key={`empty-${id}`}>
               <StandardGameCover game={null} />
             </StripeItem>
           ))}
-        </StripeDiv>
+        </>
       );
     }
 

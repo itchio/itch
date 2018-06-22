@@ -1,9 +1,11 @@
-import React from "react";
 import classNames from "classnames";
-import styled from "renderer/styles";
+import React from "react";
+import styled, * as styles from "renderer/styles";
 import { urlForGame } from "common/util/navigation";
 import { GameCover } from "renderer/basics/Cover";
 import { Game } from "common/butlerd/messages";
+import Filler from "renderer/basics/Filler";
+import PlatformIcons from "renderer/basics/PlatformIcons";
 
 //-----------------------------------
 // Cover
@@ -12,12 +14,9 @@ import { Game } from "common/butlerd/messages";
 const baseWidth = 215;
 const baseHeight = 170;
 
-export const coverWidth = baseWidth * 0.8;
-export const coverHeight = baseHeight * 0.8;
-
-export const bigFactor = 1.8;
-export const bigCoverWidth = coverWidth * bigFactor;
-export const bigCoverHeight = coverHeight * bigFactor;
+const coverFactor = 1.1;
+export const coverWidth = baseWidth * coverFactor;
+export const coverHeight = baseHeight * coverFactor;
 
 const CoverBox = styled.div`
   flex-shrink: 0;
@@ -26,20 +25,24 @@ const CoverBox = styled.div`
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
   position: relative;
 
-  .cover-hover {
-    opacity: 0;
-    transition: all 0.4s;
-  }
+  &.showInfo {
+    .cover-hover {
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
 
-  &.grower {
-    transition: all 0.4s;
+    img {
+      transition: filter 0.4s;
+    }
 
     &:hover {
+      img {
+        filter: brightness(42%) saturate(42%);
+      }
+
       .cover-hover {
         opacity: 1;
       }
-      width: ${bigCoverWidth}px;
-      height: ${bigCoverHeight}px;
     }
   }
 `;
@@ -50,37 +53,59 @@ const CoverInfo = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 1em;
 
-  h2 {
-    font-size: 24px;
-    font-weight: light;
-  }
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-  p {
-    color: ${props => props.theme.secondaryText};
-  }
+  line-height: 1.4;
+`;
+
+const DarkBox = styled.div`
+  margin: 0;
+  padding: 0;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  width: 100%;
+  padding: 0.3em 0.7em;
+  background: rgba(0, 0, 0, 0.5);
+`;
+
+const DarkTitle = styled.div`
+  ${styles.singleLine()};
+  font-size: ${props => props.theme.fontSizes.huge};
+  font-weight: 200;
+  padding: 0.3em 0;
 `;
 
 export const StandardGameCover = ({
   game,
-  grower,
+  showInfo,
   ...restProps
 }: {
   game: Game;
-  grower?: boolean;
+  showInfo?: boolean;
 }) => (
-  <CoverBox {...restProps} className={classNames({ grower })}>
+  <CoverBox {...restProps} className={classNames({ showInfo })}>
     {game ? (
       <>
         <a href={urlForGame(game.id)}>
-          <GameCover game={game} />
-          {grower ? (
-            <CoverInfo className="cover-hover">
-              <h2>{game.title}</h2>
-              <p>{game.shortText}</p>
-            </CoverInfo>
+          <GameCover game={game} showGifMarker={!showInfo} />
+          {showInfo ? (
+            <>
+              <CoverInfo className="cover-hover">
+                <DarkBox>
+                  <DarkTitle>{game.title}</DarkTitle>
+                  <p>
+                    <Desc>{game.shortText}</Desc>
+                  </p>
+                  <Filler />
+                  <PlatformIcons target={game} />
+                </DarkBox>
+              </CoverInfo>
+            </>
           ) : null}
         </a>
       </>
@@ -93,13 +118,17 @@ export const StandardGameCover = ({
 //-----------------------------------
 
 export const TitleBox = styled.div`
-  padding: 8px 0;
+  padding: 12px 0;
   align-self: flex-start;
+
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
 `;
 
 export const Title = styled.div`
   font-size: ${props => props.theme.fontSizes.huger};
-  font-weight: bold;
+  font-weight: 200;
   display: flex;
   flex-direction: row;
   align-items: center;

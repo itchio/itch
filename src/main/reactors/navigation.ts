@@ -180,16 +180,6 @@ export default function(watcher: Watcher) {
     store.dispatch(actions.closeTab({ window, tab }));
   });
 
-  watcher.on(actions.downloadQueued, async (store, action) => {
-    store.dispatch(
-      actions.navigate({
-        window: "root",
-        url: "itch://downloads",
-        background: true,
-      })
-    );
-  });
-
   let subWatcher: Watcher;
 
   const refreshSelectors = (rs: IRootState) => {

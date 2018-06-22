@@ -41,6 +41,7 @@ import withHover from "renderer/hocs/withHover";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
 import { modalWidgets } from "renderer/modal-widgets";
 import Chart from "renderer/pages/DownloadsPage/Chart";
+import { Title, TitleBox } from "renderer/pages/PageStyles/games";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -148,8 +149,8 @@ const Spacer = styled.div`
 
 const coverStyle = () => css`
   flex-shrink: 0;
-  width: 105px;
-  height: 80px;
+  width: ${105 * 1.4}px;
+  height: ${80 * 1.4}px;
   padding-bottom: 0;
 
   margin-right: 16px;
@@ -320,11 +321,11 @@ class DownloadRow extends React.PureComponent<Props & DerivedProps> {
 
     if (finished) {
       return (
-        <div className="stats--control">
+        <TitleBox className="stats--control">
           {this.renderTitle()}
           {this.renderDetails()}
           {this.renderErrorOrTimestamp()}
-        </div>
+        </TitleBox>
       );
     }
 
@@ -346,7 +347,7 @@ class DownloadRow extends React.PureComponent<Props & DerivedProps> {
     }
 
     return (
-      <div className="stats--control">
+      <TitleBox className="stats--control">
         {this.renderTitle()}
         {this.renderDetails()}
         <div className="progress">
@@ -369,16 +370,19 @@ class DownloadRow extends React.PureComponent<Props & DerivedProps> {
             ) : null}
           </>
         </div>
-      </div>
+      </TitleBox>
     );
   }
 
   renderTitle(): JSX.Element {
     const { game } = this.props.item;
     return (
-      <div className="control--title">
-        <strong>{game.title}</strong>
-      </div>
+      <>
+        <Title>
+          <a href={urlForGame(game.id)}>{game.title}</a>
+        </Title>
+        <Filler />
+      </>
     );
   }
 

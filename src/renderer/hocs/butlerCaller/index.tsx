@@ -5,6 +5,7 @@ import rootLogger, { Logger } from "common/logger";
 import * as lodash from "lodash";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import ErrorState from "renderer/basics/ErrorState";
+const debug = require("debug")("butlerd:caller");
 
 interface ButlerCallerProps<Params, Result> {
   params: Params;
@@ -103,6 +104,7 @@ const butlerCaller = <Params, Result>(
         try {
           performance.mark(startMark);
           const client = await this.clientPromise;
+          debug(getRequestName(method), fullParams);
           const result = await client.call(method, fullParams);
           performance.mark(endMark);
           performance.measure(`${measureName}`, startMark, endMark);
@@ -118,7 +120,6 @@ const butlerCaller = <Params, Result>(
     };
 
     private setResult = (r: Result) => {
-      console.log(getRequestName(method), `→ `, r);
       if (this.props.onResult) {
         this.props.onResult(r);
       }

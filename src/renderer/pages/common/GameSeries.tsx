@@ -17,6 +17,7 @@ import { rendererWindow } from "common/util/navigation";
 import { withDispatch } from "renderer/hocs/withDispatch";
 import { withTab } from "renderer/hocs/withTab";
 import { SortSpacer } from "renderer/pages/common/SortsAndFilters";
+import ErrorState from "renderer/basics/ErrorState";
 
 interface FetchRes<Item> {
   items: Item[];
@@ -73,6 +74,7 @@ export default <Params, Res extends FetchRes<any>>(
                     {renderMainFilters ? renderMainFilters() : null}
                   </FiltersContainer>
                   {renderExtraFilters ? renderExtraFilters() : null}
+                  <ErrorState error={error} />
                   <ItemList>{this.renderItems(result)}</ItemList>
                 </>
               );
@@ -98,6 +100,8 @@ export default <Params, Res extends FetchRes<any>>(
         renderDescExtras = renderNoop,
       } = this.props;
 
+      let doneSet = new Set<number>();
+
       return (
         <>
           {items.map(item => {
@@ -105,8 +109,17 @@ export default <Params, Res extends FetchRes<any>>(
             if (!game) {
               return null;
             }
+            if (doneSet.has(game.id)) {
+              return null;
+            }
+            doneSet.add(game.id);
             return (
-              <Box key={game.id}>
+              <Box
+                key={game.id}
+                onContextMenu={ev => {
+                  this.onBoxContextMenu(ev, game);
+                }}
+              >
                 <BoxInner>
                   <StandardGameCover game={game} />
                   <SortSpacer />
@@ -121,6 +134,18 @@ export default <Params, Res extends FetchRes<any>>(
             );
           })}
         </>
+      );
+    }
+
+    onBoxContextMenu(ev: React.MouseEvent<HTMLElement>, game: Game) {
+      const { clientX, clientY } = ev;
+      this.props.dispatch(
+        actions.openGameContextMenu({
+          window: rendererWindow(),
+          clientX,
+          clientY,
+          game,
+        })
       );
     }
 

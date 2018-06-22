@@ -22,6 +22,7 @@ import { T } from "renderer/t";
 import { createStructuredSelector } from "reselect";
 import { first, isEmpty, map, rest, size } from "underscore";
 import FiltersContainer from "renderer/basics/FiltersContainer";
+import { Title } from "renderer/pages/PageStyles/games";
 
 const DownloadsDiv = styled.div`
   ${styles.meat()};
@@ -45,11 +46,6 @@ const DownloadsContentDiv = styled.div`
     align-items: center;
     margin: 20px 0 20px 10px;
     flex-shrink: 0;
-
-    h2 {
-      font-size: 22px;
-      margin-right: 1em;
-    }
 
     .spacer {
       height: 1px;
@@ -128,7 +124,7 @@ class Downloads extends React.PureComponent<Props & DerivedProps> {
     return (
       <>
         <div className="section-bar">
-          <h2>{T(["status.downloads.category.active"])}</h2>
+          <Title>{T(["status.downloads.category.active"])}</Title>
         </div>
 
         <Row key={firstItem.id} item={firstItem} first />
@@ -144,7 +140,7 @@ class Downloads extends React.PureComponent<Props & DerivedProps> {
     return (
       <>
         <div className="section-bar">
-          <h2>{T(["status.downloads.category.queued"])}</h2>
+          <Title>{T(["status.downloads.category.queued"])}</Title>
         </div>
         {map(queuedItems, (item, i) => <Row key={item.id} item={item} />)}
       </>
@@ -161,9 +157,9 @@ class Downloads extends React.PureComponent<Props & DerivedProps> {
     return (
       <>
         <div className="section-bar">
-          <h2 className="finished-header">
+          <Title className="finished-header">
             {T(["status.downloads.updates_available"])} ({size(updates)})
-          </h2>
+          </Title>
           <Link
             label={T(["status.downloads.update_all"])}
             onClick={this.onUpdateAll}
@@ -213,9 +209,9 @@ class Downloads extends React.PureComponent<Props & DerivedProps> {
     return (
       <>
         <div key="finished-header" className="section-bar">
-          <h2 className="finished-header">
+          <Title className="finished-header">
             {T(["status.downloads.category.recent_activity"])}
-          </h2>
+          </Title>
           <Link
             className="downloads-clear-all"
             onClick={() => clearFinishedDownloads({})}
