@@ -6,6 +6,7 @@ import { GameCover } from "renderer/basics/Cover";
 import { Game } from "common/butlerd/messages";
 import Filler from "renderer/basics/Filler";
 import PlatformIcons from "renderer/basics/PlatformIcons";
+import StandardSaleRibbon from "renderer/pages/common/StandardSaleRibbon";
 
 //-----------------------------------
 // Cover
@@ -93,6 +94,7 @@ export const StandardGameCover = ({
       <>
         <a href={urlForGame(game.id)}>
           <GameCover game={game} showGifMarker={!showInfo} />
+          <StandardSaleRibbon game={game} />
           {showInfo ? (
             <>
               <CoverInfo className="cover-hover">

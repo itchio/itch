@@ -295,6 +295,42 @@ export const FetchGame = createRequest<FetchGameParams, FetchGameResult>(
 );
 
 /**
+ * Result for Fetch.User
+ */
+export interface FetchUserResult {
+  /** User info */
+  user: User;
+  /**
+   * Marks that a request should be issued
+   * afterwards with 'Fresh' set
+   */
+  stale?: boolean;
+}
+
+/**
+ * Fetches information for an itch.io user.
+ */
+export const FetchUser = createRequest<FetchUserParams, FetchUserResult>(
+  "Fetch.User"
+);
+
+/**
+ * Result for Fetch.Sale
+ */
+export interface FetchSaleResult {
+  /** undocumented */
+  sale?: Sale;
+}
+
+/**
+ * Fetches the best current *locally cached* sale for a given
+ * game.
+ */
+export const FetchSale = createRequest<FetchSaleParams, FetchSaleResult>(
+  "Fetch.Sale"
+);
+
+/**
  * Result for Fetch.Collection
  */
 export interface FetchCollectionResult {
@@ -2281,6 +2317,26 @@ export interface FetchGameParams {
   gameId: number;
   /** Force an API request */
   fresh?: boolean;
+}
+
+/**
+ * Params for Fetch.User
+ */
+export interface FetchUserParams {
+  /** Identifier of the user to look for */
+  userId: number;
+  /** Profile to use to look upser */
+  profileId: number;
+  /** Force an API request */
+  fresh?: boolean;
+}
+
+/**
+ * Params for Fetch.Sale
+ */
+export interface FetchSaleParams {
+  /** Identifier of the game for which to look for a sale */
+  gameId: number;
 }
 
 /**
