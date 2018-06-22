@@ -353,6 +353,16 @@ export const FetchCollection = createRequest<
 >("Fetch.Collection");
 
 /**
+ * undocumented
+ */
+export interface CollectionGamesFilters {
+  /** undocumented */
+  installed: boolean;
+  /** undocumented */
+  classification: GameClassification;
+}
+
+/**
  * Result for Fetch.Collection.Games
  */
 export interface FetchCollectionGamesResult {
@@ -2364,6 +2374,14 @@ export interface FetchCollectionGamesParams {
   collectionId: number;
   /** Maximum number of games to return at a time. */
   limit?: number;
+  /** When specified only shows game titles that contain this string */
+  search?: string;
+  /** Criterion to sort by */
+  sortBy?: string;
+  /** Filters */
+  filters?: CollectionGamesFilters;
+  /** undocumented */
+  reverse?: boolean;
   /** Used for pagination, if specified */
   cursor?: Cursor;
   /** If set, will force fresh data */

@@ -1,27 +1,22 @@
-import React from "react";
-
-import { TabInstance } from "common/types";
-
-import { Space } from "common/helpers/space";
 import { messages } from "common/butlerd";
-import BrowserContextGame from "./BrowserContextGame";
+import { Space } from "common/helpers/space";
+import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
-import { withTab } from "renderer/hocs/withTab";
-import { withTabInstance } from "renderer/hocs/withTabInstance";
+import { withSpace } from "renderer/hocs/withSpace";
+import BrowserContextGame from "./BrowserContextGame";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 
 class BrowserContext extends React.PureComponent<Props> {
   render() {
-    const { tabInstance } = this.props;
-    const sp = Space.fromInstance(tabInstance);
-    if (sp.prefix === "games") {
-      const gameId = sp.numericId();
+    const { space } = this.props;
+    if (space.prefix === "games") {
+      const gameId = space.numericId();
       return (
         <FetchGame
           params={{ gameId }}
-          sequence={tabInstance.sequence}
+          sequence={space.sequence()}
           render={({ result }) => {
             return <BrowserContextGame game={result.game} />;
           }}
@@ -34,9 +29,8 @@ class BrowserContext extends React.PureComponent<Props> {
 }
 
 interface Props {
-  tab: string;
-  tabInstance: TabInstance;
+  space: Space;
   dispatch: Dispatch;
 }
 
-export default withTab(withTabInstance(withDispatch(BrowserContext)));
+export default withSpace(withDispatch(BrowserContext));

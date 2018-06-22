@@ -1,11 +1,6 @@
 import classNames from "classnames";
 import { Space } from "common/helpers/space";
-import {
-  Credentials,
-  LoadingTabs,
-  IRootState,
-  TabInstances,
-} from "common/types";
+import { LoadingTabs, IRootState, TabInstances } from "common/types";
 import {
   rendererNavigation,
   rendererWindow,
@@ -19,13 +14,13 @@ import {
   connect,
   Dispatchers,
 } from "renderer/hocs/connect";
-import { TabProvider } from "renderer/hocs/withTab";
-import { TabInstanceProvider } from "renderer/hocs/withTabInstance";
 import { modalWidgets } from "renderer/modal-widgets";
 import styled from "renderer/styles";
 import { createStructuredSelector } from "reselect";
 import { map } from "underscore";
 import Meat from "./Meat";
+import { SpaceProvider } from "renderer/hocs/withSpace";
+import { Profile } from "common/butlerd/messages";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -57,13 +52,13 @@ const MeatTab = styled.div`
 class Meats extends React.PureComponent<Props & DerivedProps> {
   render() {
     let {
-      credentials,
+      profile,
       openTabs,
       tabInstances,
       loadingTabs,
       tab: currentId,
     } = this.props;
-    if (!(credentials && credentials.me && credentials.me.id)) {
+    if (!profile) {
       return null;
     }
 
@@ -72,27 +67,25 @@ class Meats extends React.PureComponent<Props & DerivedProps> {
         <TitleBar tab={currentId} />
         {map(openTabs, tab => {
           const tabInstance = tabInstances[tab];
-          const sp = Space.fromInstance(tabInstance);
+          const space = Space.fromInstance(tab, tabInstance);
           const visible = tab === currentId;
           const loading = loadingTabs[tab];
           return (
-            <TabProvider key={tab} value={tab}>
-              <TabInstanceProvider value={tabInstance}>
-                <MeatTab
-                  key={tab}
-                  data-id={tab}
-                  data-url={sp.url()}
-                  data-resource={sp.resource()}
-                  className={classNames("meat-tab", { visible })}
-                >
-                  <Meat
-                    visible={visible}
-                    sequence={tabInstance.sequence}
-                    loading={loading}
-                  />
-                </MeatTab>
-              </TabInstanceProvider>
-            </TabProvider>
+            <SpaceProvider key={tab} value={space}>
+              <MeatTab
+                key={tab}
+                data-id={tab}
+                data-url={space.url()}
+                data-resource={space.resource()}
+                className={classNames("meat-tab", { visible })}
+              >
+                <Meat
+                  visible={visible}
+                  sequence={tabInstance.sequence}
+                  loading={loading}
+                />
+              </MeatTab>
+            </SpaceProvider>
           );
         })}
       </MeatContainer>
@@ -129,14 +122,14 @@ type DerivedProps = Dispatchers<typeof actionCreators> & {
   openTabs: string[];
   tabInstances: TabInstances;
   loadingTabs: LoadingTabs;
-  credentials: Credentials;
+  profile: Profile;
 };
 
 export default connect<Props>(
   Meats,
   {
     state: createStructuredSelector({
-      credentials: (rs: IRootState) => rs.profile.credentials,
+      profile: (rs: IRootState) => rs.profile.profile,
       tab: (rs: IRootState) => rendererNavigation(rs).tab,
       openTabs: (rs: IRootState) => rendererNavigation(rs).openTabs,
       tabInstances: (rs: IRootState) => rendererWindowState(rs).tabInstances,

@@ -1,16 +1,15 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
-import { TabInstance, TabWeb } from "common/types";
+import { TabWeb } from "common/types";
 import { rendererWindow, transformUrl } from "common/util/navigation";
 import React from "react";
 import listensToClickOutside from "react-onclickoutside";
 import IconButton from "renderer/basics/IconButton";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
-import { withTab } from "renderer/hocs/withTab";
-import { withTabInstance } from "renderer/hocs/withTabInstance";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
+import { withSpace } from "renderer/hocs/withSpace";
 
 const HTTPS_RE = /^https:\/\//;
 const ITCH_RE = /^itch:\/\//;
@@ -77,26 +76,31 @@ class NavigationBar extends React.PureComponent<Props> {
   // event handlers
   goBack = () =>
     this.props.dispatch(
-      actions.tabGoBack({ window: rendererWindow(), tab: this.props.tab })
+      actions.tabGoBack({ window: rendererWindow(), tab: this.props.space.tab })
     );
   goForward = () =>
     this.props.dispatch(
-      actions.tabGoForward({ window: rendererWindow(), tab: this.props.tab })
+      actions.tabGoForward({
+        window: rendererWindow(),
+        tab: this.props.space.tab,
+      })
     );
   stop = () =>
     this.props.dispatch(
-      actions.tabStop({ window: rendererWindow(), tab: this.props.tab })
+      actions.tabStop({ window: rendererWindow(), tab: this.props.space.tab })
     );
   reload = () =>
     this.props.dispatch(
-      actions.tabReloaded({ window: rendererWindow(), tab: this.props.tab })
+      actions.tabReloaded({
+        window: rendererWindow(),
+        tab: this.props.space.tab,
+      })
     );
 
   render() {
-    const { tabInstance } = this.props;
-    const sp = Space.fromInstance(tabInstance);
-    const canGoBack = sp.canGoBack();
-    const canGoForward = sp.canGoForward();
+    const { space } = this.props;
+    const canGoBack = space.canGoBack();
+    const canGoForward = space.canGoForward();
 
     return (
       <NavigationBarDiv>
@@ -110,7 +114,7 @@ class NavigationBar extends React.PureComponent<Props> {
           disabled={!canGoForward}
           onClick={this.goForward}
         />
-        {this.renderAddressBar(sp)}
+        {this.renderAddressBar(space)}
       </NavigationBarDiv>
     );
   }
@@ -183,8 +187,8 @@ class NavigationBar extends React.PureComponent<Props> {
       return;
     }
 
-    const sp = Space.fromInstance(this.props.tabInstance);
-    if (this.fresh && sp.internalPage() === "new-tab") {
+    const { space } = this.props;
+    if (this.fresh && space.internalPage() === "new-tab") {
       this.fresh = false;
       this.startEditingAddress();
     }
@@ -200,15 +204,8 @@ class NavigationBar extends React.PureComponent<Props> {
       const input = e.currentTarget.value;
       const url = transformUrl(input);
 
-      const { tab, dispatch } = this.props;
-      dispatch(
-        actions.evolveTab({
-          window: rendererWindow(),
-          tab,
-          url,
-          replace: false,
-        })
-      );
+      const { space, dispatch } = this.props;
+      dispatch(space.makeEvolve({ url, replace: false }));
       this.pushWeb({ editingAddress: false });
     } else if (e.key === "Escape") {
       this.pushWeb({ editingAddress: false });
@@ -224,10 +221,8 @@ class NavigationBar extends React.PureComponent<Props> {
   };
 
   pushWeb(web: Partial<TabWeb>) {
-    const { dispatch, tab } = this.props;
-    dispatch(
-      actions.tabDataFetched({ window: rendererWindow(), tab, data: { web } })
-    );
+    const { dispatch, space } = this.props;
+    dispatch(space.makeFetch({ web }));
   }
 
   handleClickOutside = () => {
@@ -236,13 +231,10 @@ class NavigationBar extends React.PureComponent<Props> {
 }
 
 interface Props {
-  tab: string;
-  tabInstance: TabInstance;
+  space: Space;
   dispatch: Dispatch;
   loading: boolean;
   showAddressBar?: boolean;
 }
 
-export default withTab(
-  withTabInstance(withDispatch(listensToClickOutside(NavigationBar)))
-);
+export default withSpace(withDispatch(listensToClickOutside(NavigationBar)));

@@ -34,8 +34,8 @@ export default function(watcher: Watcher) {
   watcher.on(actions.handleItchioURI, async (store, action) => {
     const { uri } = action.payload;
 
-    const { me } = store.getState().profile.credentials;
-    if (me) {
+    const { profile } = store.getState().profile;
+    if (profile) {
       handleItchioUrl(store, uri);
     } else {
       logger.info(`Queuing ${uri} for later...`);
@@ -53,12 +53,12 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.viewCreatorProfile, async (store, action) => {
-    const url = store.getState().profile.credentials.me.url;
+    const url = store.getState().profile.profile.user.url;
     store.dispatch(actions.navigate({ window: "root", url }));
   });
 
   watcher.on(actions.viewCommunityProfile, async (store, action) => {
-    const url = store.getState().profile.credentials.me.url;
+    const url = store.getState().profile.profile.user.url;
     const host = urlParser.parse(url).hostname;
     const slug = /^[^.]+/.exec(host);
     store.dispatch(

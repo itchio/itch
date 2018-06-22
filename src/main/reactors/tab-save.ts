@@ -34,12 +34,12 @@ export default function(watcher: Watcher) {
 export async function saveTabs(store: Store) {
   const rs = store.getState();
   const { navigation, tabInstances } = rs.windows["root"];
-  const { credentials } = rs.profile;
-  if (!credentials || !credentials.me) {
+  const { profile } = rs.profile;
+  if (!profile) {
     return;
   }
   const { tab, openTabs } = navigation;
-  const profileId = credentials.me.id;
+  const profileId = profile.id;
   let items: TabDataSave[];
   items = map(openTabs, id => {
     const ti = tabInstances[id];
@@ -47,7 +47,7 @@ export async function saveTabs(store: Store) {
       return null;
     }
 
-    const sp = Space.fromInstance(ti);
+    const sp = Space.fromInstance(id, ti);
     const { history, currentIndex } = ti;
     const savedLabel = sp.label();
     return { id, history, currentIndex, savedLabel };

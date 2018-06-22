@@ -59,13 +59,13 @@ class TabBase extends React.PureComponent<Props & DerivedProps> {
     const { tab, index, sortable, tabInstance, active } = this.props;
     const { onExplore } = this;
 
-    const sp = Space.fromInstance(tabInstance);
-    let loading = this.props.loading || sp.web().loading;
+    const space = Space.fromInstance(tab, tabInstance);
+    let loading = this.props.loading || space.web().loading;
 
-    const url = sp.url();
-    const resource = sp.resource();
-    const label = sp.label();
-    let icon = sp.icon();
+    const url = space.url();
+    const resource = space.resource();
+    const label = space.label();
+    let icon = space.icon();
     let count = 0;
     let progress: number = null;
     let sublabel: LocalizedString = null;

@@ -7,17 +7,18 @@ import { createSelector } from "reselect";
 
 import { IRuntime, IMenuItem, MenuTemplate } from "common/types";
 
-import { IRootState, ProfileCredentialsState } from "common/types";
+import { IRootState } from "common/types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 import { actions } from "common/actions";
 import { getNativeState } from "./main-window";
+import { Profile } from "common/butlerd/messages";
 
 export default function(watcher: Watcher, runtime: IRuntime) {
   watcher.onStateChange({
     makeSelector: (store, schedule) => {
       let templateSelector = createSelector(
         (rs: IRootState) => rs.system.appVersion,
-        (rs: IRootState) => rs.profile.credentials,
+        (rs: IRootState) => rs.profile.profile,
         (rs: IRootState) => rs.preferences.enableTabs,
         (appVersion, credentials, enableTabs) => {
           return computeMenuTemplate(
@@ -59,7 +60,7 @@ interface AllTemplates {
 
 function computeMenuTemplate(
   appVersion: string,
-  credentials: ProfileCredentialsState,
+  profile: Profile,
   enableTabs: boolean,
   runtime: IRuntime
 ) {
@@ -301,7 +302,7 @@ function computeMenuTemplate(
   }
   template.push(menus.edit);
   template.push(menus.view);
-  if (credentials.me) {
+  if (profile) {
     template.push(menus.account);
   } else {
     template.push(menus.accountLoggedOut);

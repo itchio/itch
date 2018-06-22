@@ -1,33 +1,28 @@
-import { createStructuredSelector } from "reselect";
 import classNames from "classnames";
-import React from "react";
-import { connect } from "renderer/hocs/connect";
-
+import { actions } from "common/actions";
+import { Profile } from "common/butlerd/messages";
 import urls from "common/constants/urls";
-
-import BrowserBar from "./BrowserBar";
-
-import BrowserContext from "./BrowserContext";
-import Icon from "renderer/basics/Icon";
-
-import { IRootState, TabInstance } from "common/types";
-
-import { WebviewTag } from "electron";
-
-import styled, * as styles from "renderer/styles";
-import DisabledBrowser from "./DisabledBrowser";
-import { T } from "renderer/t";
-import { map, debounce } from "underscore";
 import { Space } from "common/helpers/space";
+import { IRootState } from "common/types";
+import { rendererWindow } from "common/util/navigation";
 import { partitionForUser } from "common/util/partition-for-user";
 import { getInjectURL } from "common/util/resources";
+import { WebviewTag } from "electron";
 import { ExtendedWebContents } from "main/reactors/web-contents";
-import { rendererWindow } from "common/util/navigation";
-import { actions } from "common/actions";
-import { withProfileId } from "renderer/hocs/withProfileId";
-import { withDispatch, Dispatch } from "renderer/hocs/withDispatch";
-import { withTab } from "renderer/hocs/withTab";
+import React from "react";
+import Icon from "renderer/basics/Icon";
+import { connect } from "renderer/hocs/connect";
+import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
+import { withProfile } from "renderer/hocs/withProfile";
+import { withSpace } from "renderer/hocs/withSpace";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import styled, * as styles from "renderer/styles";
+import { T } from "renderer/t";
+import { createStructuredSelector } from "reselect";
+import { debounce, map } from "underscore";
+import BrowserBar from "./BrowserBar";
+import BrowserContext from "./BrowserContext";
+import DisabledBrowser from "./DisabledBrowser";
 
 const BrowserPageDiv = styled.div`
   ${styles.meat()};
@@ -108,11 +103,10 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
   }
 
   render() {
-    const { tab, tabInstance, url, profileId, disableBrowser } = this.props;
-    const sp = Space.fromInstance(tabInstance);
-    const fresh = !sp.web().webContentsId;
-    const partition = partitionForUser(String(profileId));
-    const newTab = sp.internalPage() === "new-tab";
+    const { space, url, profile, disableBrowser } = this.props;
+    const fresh = !space.web().webContentsId;
+    const partition = partitionForUser(String(profile.id));
+    const newTab = space.internalPage() === "new-tab";
 
     return (
       <BrowserPageDiv>
@@ -131,7 +125,7 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
                     onClick={() =>
                       this.props.dispatch(
                         actions.evolveTab({
-                          tab: tab,
+                          tab: space.tab,
                           window: rendererWindow(),
                           url,
                           replace: true,
@@ -167,14 +161,8 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
 
   componentDidUpdate(prevProps: Props & DerivedProps, prevState: any) {
     if (!prevProps.disableBrowser && this.props.disableBrowser) {
-      const { tab, dispatch } = this.props;
-      dispatch(
-        actions.tabDataFetched({
-          window: rendererWindow(),
-          tab,
-          data: { web: { loading: false } },
-        })
-      );
+      const { space, dispatch } = this.props;
+      dispatch(space.makeFetch({ web: { loading: false } }));
     }
 
     if (prevProps.url !== this.props.url) {
@@ -183,11 +171,11 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
   }
 
   componentWillUnmount() {
-    const { dispatch, tab } = this.props;
+    const { dispatch, space } = this.props;
     dispatch(
       actions.tabLostWebContents({
-        tab,
         window: rendererWindow(),
+        tab: space.tab,
       })
     );
   }
@@ -245,19 +233,13 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
       wv.src = this.props.url;
     }
 
-    const { dispatch, tab } = this.props;
-    dispatch(
-      actions.tabDataFetched({
-        window: rendererWindow(),
-        tab,
-        data: { web: { loading: true } },
-      })
-    );
+    const { dispatch, space } = this.props;
+    dispatch(space.makeFetch({ web: { loading: true } }));
 
     let onDomReady = () => {
       dispatch(
         actions.tabGotWebContents({
-          tab,
+          tab: space.tab,
           window: rendererWindow(),
           webContentsId: wv.getWebContents().id,
         })
@@ -266,23 +248,15 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
     };
     wv.addEventListener("dom-ready", onDomReady);
 
-    // FIXME: switch to webcontents event when it.. starts working?
     wv.addEventListener("page-title-updated", ev => {
-      this.props.dispatch(
-        actions.tabDataFetched({
-          tab,
-          window: rendererWindow(),
-          data: { label: ev.title },
-        })
-      );
+      dispatch(space.makeFetch({ label: ev.title }));
     });
   };
 }
 
 interface Props extends MeatProps {
-  tab: string;
-  tabInstance: TabInstance;
-  profileId: number;
+  space: Space;
+  profile: Profile;
   dispatch: Dispatch;
 
   url: string;
@@ -294,8 +268,8 @@ interface DerivedProps {
   disableBrowser: boolean;
 }
 
-export default withTab(
-  withProfileId(
+export default withSpace(
+  withProfile(
     withDispatch(
       connect<Props>(
         BrowserPageContents,

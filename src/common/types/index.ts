@@ -16,6 +16,7 @@ import {
   Download,
   DownloadProgress,
   Platform,
+  Profile,
 } from "common/butlerd/messages";
 import { IEndpoint } from "butlerd";
 import { modalWidgets } from "renderer/modal-widgets";
@@ -57,10 +58,6 @@ export interface GameSet {
 
 export interface CollectionSet {
   [id: string]: Collection;
-}
-
-export interface Credentials {
-  me: User;
 }
 
 /**
@@ -305,7 +302,7 @@ export interface SetupState {
 
 export interface ProfileState {
   /** collection freshness information */
-  credentials: ProfileCredentialsState;
+  profile: Profile;
   login: ProfileLoginState;
   search: ProfileSearchState;
 
@@ -336,12 +333,6 @@ export interface NativeWindowState {
 
   /** true if window is maximized */
   maximized: boolean;
-}
-
-// TODO: remove, just put the butlerd profile object in the state
-export interface ProfileCredentialsState {
-  /** info on user using the app */
-  me: User;
 }
 
 export interface ProfileLoginState {
@@ -718,9 +709,6 @@ interface IEvolveBasePayload {
 export interface IEvolveTabPayload extends IEvolveBasePayload {
   /** if false, that's a new history entry, if true it replaces the current one */
   replace: boolean;
-
-  /** if true, it doesn't warrant a remote fetch */
-  onlyParamsChange?: boolean;
 }
 
 export interface INavigateTabPayload extends IEvolveBasePayload {
@@ -747,3 +735,6 @@ export interface ItchWindow {
 }
 
 export type ItchWindowRole = "main" | "secondary";
+
+export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
+export type Subtract<T, K> = Omit<T, keyof K>;

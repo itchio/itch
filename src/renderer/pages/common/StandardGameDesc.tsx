@@ -1,24 +1,24 @@
-import React from "react";
+import { messages } from "common/butlerd";
+import { Game, GameClassification, Profile } from "common/butlerd/messages";
 import { urlForGame } from "common/util/navigation";
-import { Game, GameClassification } from "common/butlerd/messages";
-import { TitleBox, Title } from "renderer/pages/PageStyles/games";
-import { T } from "renderer/t";
+import React from "react";
 import Filler from "renderer/basics/Filler";
 import PlatformIcons from "renderer/basics/PlatformIcons";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { messages } from "common/butlerd";
-import { withProfileId } from "renderer/hocs/withProfileId";
+import { withProfile } from "renderer/hocs/withProfile";
+import { Title, TitleBox } from "renderer/pages/PageStyles/games";
+import { T } from "renderer/t";
 
 const FetchUser = butlerCaller(messages.FetchUser);
 
 const StandardGameDesc = ({
   game,
   children,
-  profileId,
+  profile,
 }: {
   game: Game;
   children?: any;
-  profileId: number;
+  profile: Profile;
 }) => (
   <TitleBox>
     <a href={urlForGame(game.id)}>
@@ -34,7 +34,7 @@ const StandardGameDesc = ({
       <PlatformIcons target={game} before={() => <>&nbsp;&nbsp;</>} />
       {!game.userId ? null : (
         <FetchUser
-          params={{ profileId, userId: game.userId }}
+          params={{ profileId: profile.id, userId: game.userId }}
           render={({ result }) => {
             if (!result || !result.user) {
               return null;
@@ -65,7 +65,7 @@ const StandardGameDesc = ({
   </TitleBox>
 );
 
-export default withProfileId(StandardGameDesc);
+export default withProfile(StandardGameDesc);
 
 function renderClassification(classification: GameClassification) {
   let label = [`usage_stats.description.${classification}`];

@@ -74,15 +74,15 @@ export default function(watcher: Watcher) {
       return;
     }
 
-    const sp = Space.fromInstance({
+    const space = Space.fromInstance("fictional-tab", {
       history: [{ url, resource }],
       currentIndex: 0,
       sequence: 0,
       data,
     });
-    if (sp.protocol() == "mailto:") {
+    if (space.protocol() == "mailto:") {
       logger.debug(`Is mailto link, opening as external and skipping tab open`);
-      shell.openExternal(sp.suffix);
+      shell.openExternal(space.suffix);
       return;
     }
 

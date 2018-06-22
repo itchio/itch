@@ -1,23 +1,22 @@
 import { messages } from "common/butlerd";
+import { GameClassification, Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { TabInstance, LocalizedString } from "common/types";
+import { LocalizedString } from "common/types";
 import React from "react";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
-import { withProfileId } from "renderer/hocs/withProfileId";
-import { withTab } from "renderer/hocs/withTab";
-import { withTabInstance } from "renderer/hocs/withTabInstance";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import GameSeries from "renderer/pages/common/GameSeries";
-import StandardMainAction from "renderer/pages/common/StandardMainAction";
-import { debounce } from "underscore";
+import { withProfile } from "renderer/hocs/withProfile";
+import { withSpace } from "renderer/hocs/withSpace";
 import FilterInput from "renderer/pages/common/FilterInput";
+import GameSeries from "renderer/pages/common/GameSeries";
 import {
-  SortsAndFilters,
   SortGroup,
   SortOption,
+  SortsAndFilters,
   SortSpacer,
 } from "renderer/pages/common/SortsAndFilters";
-import { GameClassification } from "common/butlerd/messages";
+import StandardMainAction from "renderer/pages/common/StandardMainAction";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { debounce } from "underscore";
 
 const OwnedSeries = GameSeries(messages.FetchProfileOwnedKeys);
 
@@ -30,34 +29,32 @@ class OwnedPage extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const { profileId, tabInstance } = this.props;
-    const sp = Space.fromInstance(tabInstance);
+    const { space, profile } = this.props;
 
     return (
       <OwnedSeries
         label={["sidebar.owned"]}
         params={{
-          profileId,
+          profileId: profile.id,
           limit: 15,
-          sortBy: sp.queryParam("sortBy"),
-          cursor: sp.queryParam("cursor"),
+          sortBy: space.queryParam("sortBy"),
           search: this.state.search,
           filters: {
-            classification: sp.queryParam(
+            classification: space.queryParam(
               "classification"
             ) as GameClassification,
-            installed: sp.queryParam("installed") === "true",
+            installed: space.queryParam("installed") === "true",
           },
         }}
         getGame={dk => dk.game}
         renderItemExtras={cave => <StandardMainAction game={cave.game} />}
-        renderMainFilters={() => this.renderSearch(sp)}
-        renderExtraFilters={() => this.renderExtraFilters(sp)}
+        renderMainFilters={() => this.renderSearch(space)}
+        renderExtraFilters={() => this.renderExtraFilters(space)}
       />
     );
   }
 
-  renderSearch(sp: Space): JSX.Element {
+  renderSearch(space: Space): JSX.Element {
     const debouncedSetSearch = debounce(this.setSearch, 250);
     return (
       <FilterInput
@@ -71,31 +68,35 @@ class OwnedPage extends React.PureComponent<Props, State> {
     this.setState({ search });
   };
 
-  renderExtraFilters(sp: Space): JSX.Element {
+  renderExtraFilters(space: Space): JSX.Element {
     return (
       <SortsAndFilters>
-        {this.renderSorts(sp)}
+        {this.renderSorts(space)}
         <SortSpacer />
-        {this.renderInstalledFilter(sp)}
+        {this.renderInstalledFilter(space)}
         <SortSpacer />
-        {this.renderClassificationFilter(sp)}
+        {this.renderClassificationFilter(space)}
       </SortsAndFilters>
     );
   }
 
-  renderSorts(sp: Space) {
+  renderSorts(space: Space) {
     return (
       <SortGroup>
-        {this.renderSort(sp, "acquiredAt", "Acquired recently")}
-        {this.renderSort(sp, "title", "Title")}
+        {this.renderSort(space, "acquiredAt", "Acquired recently")}
+        {this.renderSort(space, "title", "Title")}
       </SortGroup>
     );
   }
 
-  renderSort(sp: Space, sortBy: string, label: LocalizedString): JSX.Element {
+  renderSort(
+    space: Space,
+    sortBy: string,
+    label: LocalizedString
+  ): JSX.Element {
     return (
       <SortOption
-        sp={sp}
+        sp={space}
         optionKey="sortBy"
         optionValue={sortBy}
         icon="sort-alpha-asc"
@@ -104,19 +105,19 @@ class OwnedPage extends React.PureComponent<Props, State> {
     );
   }
 
-  renderInstalledFilter(sp: Space) {
+  renderInstalledFilter(space: Space) {
     return (
       <SortGroup>
-        {this.renderInstalled(sp, "", "All")}
-        {this.renderInstalled(sp, "true", "Installed")}
+        {this.renderInstalled(space, "", "All")}
+        {this.renderInstalled(space, "true", "Installed")}
       </SortGroup>
     );
   }
 
-  renderInstalled(sp: Space, installed: string, label: LocalizedString) {
+  renderInstalled(space: Space, installed: string, label: LocalizedString) {
     return (
       <SortOption
-        sp={sp}
+        sp={space}
         optionKey="installed"
         optionValue={installed}
         icon="checkmark"
@@ -125,31 +126,31 @@ class OwnedPage extends React.PureComponent<Props, State> {
     );
   }
 
-  renderClassificationFilter(sp: Space) {
+  renderClassificationFilter(space: Space) {
     return (
       <SortGroup>
-        {this.renderClassification(sp, "" as GameClassification, "All")}
-        {this.renderClassification(sp, GameClassification.Game, "Games")}
-        {this.renderClassification(sp, GameClassification.Tool, "Tools")}
+        {this.renderClassification(space, "" as GameClassification, "All")}
+        {this.renderClassification(space, GameClassification.Game, "Games")}
+        {this.renderClassification(space, GameClassification.Tool, "Tools")}
         {this.renderClassification(
-          sp,
+          space,
           GameClassification.Assets,
           "Game assets"
         )}
-        {this.renderClassification(sp, GameClassification.Comic, "Comic")}
-        {this.renderClassification(sp, GameClassification.Book, "Book")}
+        {this.renderClassification(space, GameClassification.Comic, "Comic")}
+        {this.renderClassification(space, GameClassification.Book, "Book")}
       </SortGroup>
     );
   }
 
   renderClassification(
-    sp: Space,
+    space: Space,
     classification: GameClassification,
     label: LocalizedString
   ) {
     return (
       <SortOption
-        sp={sp}
+        sp={space}
         optionKey="classification"
         optionValue={classification}
         icon="star"
@@ -164,10 +165,9 @@ interface State {
 }
 
 interface Props extends MeatProps {
-  tab: string;
-  profileId: number;
+  profile: Profile;
+  space: Space;
   dispatch: Dispatch;
-  tabInstance: TabInstance;
 }
 
-export default withTab(withProfileId(withTabInstance(withDispatch(OwnedPage))));
+export default withSpace(withProfile(withDispatch(OwnedPage)));

@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 import login from "./login";
-import credentials from "./credentials";
+import profile from "./profile";
 import search from "./search";
 import itchioUris from "./itchio-uris";
 
@@ -9,7 +9,7 @@ import { ProfileState } from "common/types";
 
 const reducers: any = {
   login,
-  credentials,
+  profile,
   search,
   itchioUris,
 };

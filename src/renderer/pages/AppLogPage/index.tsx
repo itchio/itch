@@ -5,14 +5,14 @@ import Link from "renderer/basics/Link";
 import IconButton from "renderer/basics/IconButton";
 import { T } from "renderer/t";
 import { showInExplorerString } from "common/format/show-in-explorer";
-import { rendererWindow } from "common/util/navigation";
 import { actions } from "common/actions";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import ErrorState from "renderer/basics/ErrorState";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
-import { withTab } from "renderer/hocs/withTab";
 import Log from "renderer/pages/AppLogPage/Log";
+import { Space } from "common/helpers/space";
+import { withSpace } from "renderer/hocs/withSpace";
 
 const AppLogDiv = styled.div`
   ${styles.meat()};
@@ -111,18 +111,18 @@ class AppLogPage extends React.PureComponent<Props, State> {
   };
 
   onOpenAppLog = () => {
-    this.props.dispatch(actions.openAppLog({}));
+    const { dispatch } = this.props;
+    dispatch(actions.openAppLog({}));
   };
 
   onReload = () => {
-    this.props.dispatch(
-      actions.tabReloaded({ window: rendererWindow(), tab: this.props.tab })
-    );
+    const { dispatch, space } = this.props;
+    dispatch(space.makeReload());
   };
 }
 
 interface Props extends MeatProps {
-  tab: string;
+  space: Space;
   dispatch: Dispatch;
 }
 
@@ -132,4 +132,4 @@ interface State {
   log: string;
 }
 
-export default withTab(withDispatch(AppLogPage));
+export default withSpace(withDispatch(AppLogPage));

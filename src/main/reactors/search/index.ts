@@ -26,8 +26,7 @@ export default function(watcher: Watcher) {
 
     store.dispatch(actions.searchStarted({}));
     try {
-      const profileId = store.getState().profile.credentials.me.id;
-
+      const profileId = store.getState().profile.profile.id;
       let results: SearchResults = {};
 
       let dispatch = () => {

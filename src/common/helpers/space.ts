@@ -6,17 +6,22 @@ import {
   TabData,
   TabInstance,
   TabWeb,
+  Action,
+  IEvolveTabPayload,
+  Subtract,
 } from "../types/index";
 
 import nodeURL, { format, URLSearchParams } from "url";
 import querystring from "querystring";
 
-import { currentPage } from "../util/navigation";
+import { currentPage, rendererWindow } from "../util/navigation";
+import { actions } from "common/actions";
 
 // Empty Object
 const eo = {} as any;
 
-const spaceFromInstance = (dataIn: TabInstance) => new Space(dataIn);
+const spaceFromInstance = (tab: string, dataIn: TabInstance) =>
+  new Space(tab, dataIn);
 
 /**
  * A Space gives structured info about a tab.
@@ -24,6 +29,7 @@ const spaceFromInstance = (dataIn: TabInstance) => new Space(dataIn);
  * Because spaces > tabs.
  */
 export class Space {
+  tab: string;
   prefix: string;
   suffix: string;
   private _instance: TabInstance;
@@ -35,7 +41,8 @@ export class Space {
   private _pathElements: string[];
   private _query: querystring.ParsedUrlQuery;
 
-  constructor(instanceIn: TabInstance) {
+  constructor(tab: string, instanceIn: TabInstance) {
+    this.tab = tab;
     let instance = instanceIn || eo;
 
     this._instance = instance;
@@ -75,11 +82,42 @@ export class Space {
   }
 
   static fromState(rs: IRootState, window: string, tab: string): Space {
-    return spaceFromInstance(rs.windows[window].tabInstances[tab]);
+    return spaceFromInstance(tab, rs.windows[window].tabInstances[tab]);
   }
 
-  static fromInstance(data: TabInstance): Space {
-    return spaceFromInstance(data);
+  static fromInstance(tab: string, data: TabInstance): Space {
+    return spaceFromInstance(tab, data);
+  }
+
+  makeEvolve(
+    payload: Subtract<
+      IEvolveTabPayload,
+      {
+        tab: string;
+        window: string;
+      }
+    >
+  ): Action<IEvolveTabPayload> {
+    return actions.evolveTab({
+      window: rendererWindow(),
+      tab: this.tab,
+      ...payload,
+    });
+  }
+
+  makeFetch(data: TabData): Action<any> {
+    return actions.tabDataFetched({
+      window: rendererWindow(),
+      tab: this.tab,
+      data,
+    });
+  }
+
+  makeReload(): Action<any> {
+    return actions.tabReloaded({
+      window: rendererWindow(),
+      tab: this.tab,
+    });
   }
 
   url(): string {

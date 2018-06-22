@@ -391,7 +391,7 @@ export const actions = wireActions({
     /** the data we fetched */
     data: TabData;
 
-    /** if true, deep merge with previous state instead of shallow merging */
+    /** if true, shallow merge with previous state instead of deep merging */
     shallow?: boolean;
   }>(),
   analyzePage: action<{
