@@ -1,20 +1,16 @@
-import React from "react";
-import { TabInstance } from "common/types";
 import { messages } from "common/butlerd";
 import { Space } from "common/helpers/space";
-import { actions } from "common/actions";
-import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
-import { withTabInstance } from "renderer/hocs/withTabInstance";
-import { withTab } from "renderer/hocs/withTab";
+import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
+import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
+import { withSpace } from "renderer/hocs/withSpace";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 
 class GamePage extends React.PureComponent<Props> {
   render() {
-    const { tab, tabInstance } = this.props;
-    const sp = Space.fromInstance(tabInstance);
-    const gameId = sp.firstPathNumber();
+    const { space, dispatch } = this.props;
+    const gameId = space.firstPathNumber();
 
     return (
       <FetchGame
@@ -24,10 +20,8 @@ class GamePage extends React.PureComponent<Props> {
           if (result) {
             const { game } = result;
             if (game) {
-              this.props.dispatch(
-                actions.evolveTab({
-                  window: "root",
-                  tab,
+              dispatch(
+                space.makeEvolve({
                   url: game.url,
                   resource: `games/${gameId}`,
                   replace: true,
@@ -42,9 +36,8 @@ class GamePage extends React.PureComponent<Props> {
 }
 
 interface Props {
-  tab: string;
-  tabInstance: TabInstance;
+  space: Space;
   dispatch: Dispatch;
 }
 
-export default withTabInstance(withTab(withDispatch(GamePage)));
+export default withSpace(withDispatch(GamePage));

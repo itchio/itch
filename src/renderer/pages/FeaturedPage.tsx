@@ -1,18 +1,15 @@
-import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { rendererWindow } from "common/util/navigation";
+import { Space } from "common/helpers/space";
 import React from "react";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
-import { withTab } from "renderer/hocs/withTab";
+import { withSpace } from "renderer/hocs/withSpace";
 
-class _FeaturedPage extends React.PureComponent<Props> {
+class FeaturedPage extends React.PureComponent<Props> {
   render() {
-    const { tab, dispatch } = this.props;
+    const { space, dispatch } = this.props;
 
     dispatch(
-      actions.evolveTab({
-        window: rendererWindow(),
-        tab,
+      space.makeEvolve({
         replace: true,
         url: urls.itchio,
       })
@@ -23,9 +20,8 @@ class _FeaturedPage extends React.PureComponent<Props> {
 }
 
 interface Props {
-  tab: string;
+  space: Space;
   dispatch: Dispatch;
 }
 
-const FeaturedPage = withTab(withDispatch(_FeaturedPage));
-export default FeaturedPage;
+export default withSpace(withDispatch(FeaturedPage));

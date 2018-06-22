@@ -54,7 +54,7 @@ class TitleBar extends React.PureComponent<Props & DerivedProps> {
     const iw = (window as ExtendedWindow).itchWindow;
     const secondary = iw.role == "secondary";
 
-    const sp = Space.fromInstance(tabInstance);
+    const sp = Space.fromInstance(tab, tabInstance);
     let label = sp.label();
 
     const loggedIn = tab !== "login";

@@ -1,26 +1,27 @@
 import { actions } from "common/actions";
 import { messages } from "common/butlerd";
-import { FetchProfileCollectionsResult } from "common/butlerd/messages";
+import {
+  FetchProfileCollectionsResult,
+  Profile,
+} from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Space } from "common/helpers/space";
-import { TabInstance } from "common/types";
-import { rendererWindow, urlForCollection } from "common/util/navigation";
+import { urlForCollection } from "common/util/navigation";
 import React from "react";
 import EmptyState from "renderer/basics/EmptyState";
+import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import TimeAgo from "renderer/basics/TimeAgo";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
-import { withProfileId } from "renderer/hocs/withProfileId";
-import { withTab } from "renderer/hocs/withTab";
-import { withTabInstance } from "renderer/hocs/withTabInstance";
+import { withProfile } from "renderer/hocs/withProfile";
+import { withSpace } from "renderer/hocs/withSpace";
+import GameStripe from "renderer/pages/common/GameStripe";
+import ItemList from "renderer/pages/common/ItemList";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
-import GameStripe from "renderer/pages/common/GameStripe";
-import ItemList from "renderer/pages/common/ItemList";
-import ErrorState from "renderer/basics/ErrorState";
 
 const FetchProfileCollections = butlerCaller(messages.FetchProfileCollections);
 const CollectionGameStripe = GameStripe(messages.FetchCollectionGames);
@@ -46,22 +47,19 @@ const CollectionInfoSpacer = styled.div`
 
 class CollectionsPage extends React.PureComponent<Props> {
   render() {
-    const { profileId, tabInstance } = this.props;
-    const sp = Space.fromInstance(tabInstance);
+    const { profile, space, dispatch } = this.props;
 
     return (
       <CollectionsDiv>
         <FetchProfileCollections
-          params={{ profileId, limit: 6, cursor: sp.queryParam("cursor") }}
+          params={{
+            profileId: profile.id,
+            limit: 6,
+            cursor: space.queryParam("cursor"),
+          }}
           sequence={this.props.sequence}
           onResult={() => {
-            this.props.dispatch(
-              actions.tabDataFetched({
-                window: rendererWindow(),
-                tab: this.props.tab,
-                data: { label: ["sidebar.collections"] },
-              })
-            );
+            dispatch(space.makeFetch({ label: ["sidebar.collections"] }));
           }}
           loadingHandled
           errorsHandled
@@ -88,7 +86,7 @@ class CollectionsPage extends React.PureComponent<Props> {
       return null;
     }
     const { items, nextCursor } = result;
-    const { profileId } = this.props;
+    const { profile } = this.props;
 
     if (isEmpty(items)) {
       return (
@@ -112,8 +110,8 @@ class CollectionsPage extends React.PureComponent<Props> {
 
     let nextPageURL = null;
     if (nextCursor) {
-      const sp = Space.fromInstance(this.props.tabInstance);
-      nextPageURL = sp.urlWithParams({
+      const { space } = this.props;
+      nextPageURL = space.urlWithParams({
         cursor: nextCursor,
       });
     }
@@ -126,7 +124,7 @@ class CollectionsPage extends React.PureComponent<Props> {
             <CollectionGameStripe
               title={coll.title}
               href={urlForCollection(coll.id)}
-              params={{ profileId, collectionId: coll.id }}
+              params={{ profileId: profile.id, collectionId: coll.id }}
               sequence={0}
               renderTitleExtras={() => (
                 <>
@@ -155,12 +153,9 @@ class CollectionsPage extends React.PureComponent<Props> {
 }
 
 interface Props extends MeatProps {
-  tab: string;
-  profileId: number;
+  space: Space;
+  profile: Profile;
   dispatch: Dispatch;
-  tabInstance: TabInstance;
 }
 
-export default withTab(
-  withProfileId(withTabInstance(withDispatch(CollectionsPage)))
-);
+export default withSpace(withProfile(withDispatch(CollectionsPage)));

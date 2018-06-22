@@ -1,5 +1,6 @@
 import React from "react";
 import getDisplayName from "renderer/helpers/getDisplayName";
+import { Subtract } from "common/types";
 
 interface HoverState {
   hover: boolean;
@@ -10,9 +11,6 @@ export interface HoverProps {
   onMouseEnter?: React.EventHandler<React.MouseEvent<any>>;
   onMouseLeave?: React.EventHandler<React.MouseEvent<any>>;
 }
-
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
-type Subtract<T, K> = Omit<T, keyof K>;
 
 function withHover<P extends HoverProps>(
   Component: React.ComponentType<P>

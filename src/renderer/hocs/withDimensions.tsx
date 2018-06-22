@@ -2,6 +2,7 @@ import React from "react";
 
 import { throttle } from "underscore";
 import getDisplayName from "renderer/helpers/getDisplayName";
+import { Subtract } from "common/types";
 
 interface DimensionsState {
   width: number;
@@ -21,9 +22,6 @@ declare class ResizeObserver {
   observe(el: HTMLElement): void;
   disconnect(): void;
 }
-
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
-type Subtract<T, K> = Omit<T, keyof K>;
 
 function withDimensions<P extends DimensionsProps>(
   Component: React.ComponentType<P>

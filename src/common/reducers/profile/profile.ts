@@ -1,18 +1,13 @@
-import { ProfileCredentialsState } from "common/types";
 import { actions } from "common/actions";
 import reducer from "../reducer";
+import { Profile } from "common/butlerd/messages";
 
-const initialState = {
-  me: null,
-} as ProfileCredentialsState;
+const initialState = null as Profile;
 
-export default reducer<ProfileCredentialsState>(initialState, on => {
+export default reducer<Profile>(initialState, on => {
   on(actions.loginSucceeded, (state, action) => {
     const { profile } = action.payload;
-    return {
-      ...state,
-      me: profile.user,
-    };
+    return profile;
   });
 
   on(actions.logout, (state, action) => {

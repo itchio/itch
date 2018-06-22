@@ -1,16 +1,14 @@
-import { Space } from "common/helpers/space";
-import { TabInstance } from "common/types";
 import React from "react";
-import { withTab } from "renderer/hocs/withTab";
-import { withTabInstance } from "renderer/hocs/withTabInstance";
+import { withSpace } from "renderer/hocs/withSpace";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import BrowserMeat from "./BrowserPageContents";
+import { Space } from "common/helpers/space";
 
 class BrowserPage extends React.PureComponent<Props, State> {
   constructor(props: Props, context) {
     super(props, context);
     this.state = {
-      active: props.visible || !props.tabInstance.sleepy,
+      active: props.visible || !props.space.isSleepy(),
     };
   }
 
@@ -20,9 +18,8 @@ class BrowserPage extends React.PureComponent<Props, State> {
       return null;
     }
 
-    const { tabInstance } = this.props;
-    const sp = Space.fromInstance(tabInstance);
-    return <BrowserMeat url={sp.url()} {...this.props as any} />;
+    const { space } = this.props;
+    return <BrowserMeat url={space.url()} {...this.props as any} />;
   }
 
   static getDerivedStateFromProps(
@@ -38,12 +35,11 @@ class BrowserPage extends React.PureComponent<Props, State> {
 }
 
 interface Props extends MeatProps {
-  tab: string;
-  tabInstance: TabInstance;
+  space: Space;
 }
 
 interface State {
   active: boolean;
 }
 
-export default withTab(withTabInstance(BrowserPage));
+export default withSpace(BrowserPage);

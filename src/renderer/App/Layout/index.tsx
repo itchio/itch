@@ -9,12 +9,13 @@ import ContextMenuHandler from "renderer/App/Layout/ContextMenuHandler";
 import NonLocalIndicator from "renderer/App/Layout/NonLocalIndicator";
 import StatusBar from "renderer/App/Layout/StatusBar";
 import { connect } from "renderer/hocs/connect";
-import { ProfileIdProvider } from "renderer/hocs/withProfileId";
 import GateScene from "renderer/scenes/GateScene";
 import HubScene from "renderer/scenes/HubScene";
 import styled from "renderer/styles";
 import { TString } from "renderer/t";
 import { createStructuredSelector } from "reselect";
+import { ProfileProvider } from "renderer/hocs/withProfile";
+import { Profile } from "common/butlerd/messages";
 
 const ReactHint = ReactHintFactory(React);
 
@@ -92,9 +93,9 @@ class Layout extends React.PureComponent<Props & DerivedProps> {
     const { ready } = this.props;
     if (ready) {
       return (
-        <ProfileIdProvider value={this.props.profileId}>
+        <ProfileProvider value={this.props.profile}>
           <HubScene />
-        </ProfileIdProvider>
+        </ProfileProvider>
       );
     } else {
       return <GateScene />;
@@ -143,7 +144,7 @@ interface Props {}
 interface DerivedProps {
   ready: boolean;
   maximized: boolean;
-  profileId: number;
+  profile: Profile;
 
   intl: InjectedIntl;
 }
@@ -154,9 +155,8 @@ export default connect<Props>(
     state: createStructuredSelector({
       maximized: (rs: IRootState) =>
         rs.windows[rendererWindow()].native.maximized,
-      ready: (rs: IRootState) => rs.setup.done && rs.profile.credentials.me,
-      profileId: (rs: IRootState) =>
-        rs.profile.credentials.me && rs.profile.credentials.me.id,
+      ready: (rs: IRootState) => rs.setup.done && rs.profile.profile,
+      profile: (rs: IRootState) => rs.profile.profile,
     }),
   }
 );

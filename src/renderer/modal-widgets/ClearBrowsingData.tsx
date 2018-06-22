@@ -198,7 +198,7 @@ export default connect<Props>(
   ClearBrowsingData,
   {
     state: state => ({
-      userId: state.profile.credentials.me.id,
+      userId: state.profile.profile.id,
     }),
   }
 );

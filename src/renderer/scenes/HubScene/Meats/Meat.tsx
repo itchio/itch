@@ -1,9 +1,8 @@
 import { Space } from "common/helpers/space";
-import { TabInstance } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { withTabInstance } from "renderer/hocs/withTabInstance";
+import { withSpace } from "renderer/hocs/withSpace";
 import AppLogPage from "renderer/pages/AppLogPage";
 import BrowserPage from "renderer/pages/BrowserPage";
 import CollectionPage from "renderer/pages/CollectionPage";
@@ -14,38 +13,13 @@ import DownloadsPage from "renderer/pages/DownloadsPage";
 import FeaturedPage from "renderer/pages/FeaturedPage";
 import GamePage from "renderer/pages/GamePage";
 import LibraryPage from "renderer/pages/LibraryPage";
+import InstalledPage from "renderer/pages/LibraryPage/InstalledPage";
+import OwnedPage from "renderer/pages/LibraryPage/OwnedPage";
 import LocationsPage from "renderer/pages/LocationsPage";
 import PreferencesPage from "renderer/pages/PreferencesPage";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import OwnedPage from "renderer/pages/LibraryPage/OwnedPage";
-import InstalledPage from "renderer/pages/LibraryPage/InstalledPage";
-
-const showHistory = process.env.ITCH_SHOW_HISTORY === "1";
-
-const HistoryDiv = styled.div`
-  position: absolute;
-  pointer-events: none;
-  z-index: 1000;
-  top: 20px;
-  right: 20px;
-  background: rgba(128, 40, 40, 0.9);
-  color: white;
-  padding: 10px;
-  border-radius: 4px;
-  line-height: 1.4;
-  min-width: 400px;
-
-  ul {
-    margin-top: 1em;
-  }
-
-  .resource {
-    color: rgb(130, 130, 220);
-    font-weight: bold;
-  }
-`;
 
 const ErrorDiv = styled.div`
   display: block;
@@ -95,8 +69,7 @@ class Meat extends React.PureComponent<Props, State> {
   }
 
   static getDerivedStateFromProps(props: Meat["props"], state: Meat["state"]) {
-    const ti = props.tabInstance;
-    const { url } = ti.history[ti.currentIndex];
+    const url = props.space.url();
     if (url !== state.lastURL) {
       return {
         hasError: false,
@@ -123,40 +96,17 @@ class Meat extends React.PureComponent<Props, State> {
       return this.renderError();
     }
 
-    const inst = this.props.tabInstance;
-    const sp = Space.fromInstance(inst);
-    const ConcreteMeat = this.getConcrete(sp);
+    const { space } = this.props;
+    const ConcreteMeat = this.getConcrete(space);
 
     if (ConcreteMeat) {
       return (
         <>
-          {showHistory ? (
-            <HistoryDiv>
-              <h2>History</h2>
-              <ul>
-                {inst.history.map((el, i) => {
-                  return (
-                    <li
-                      key={i}
-                      style={{
-                        color: i === inst.currentIndex ? "white" : "#aaa",
-                      }}
-                    >
-                      {i} {el.url}{" "}
-                      {el.resource ? (
-                        <span className="resource">{el.resource}</span>
-                      ) : null}
-                    </li>
-                  );
-                })}
-              </ul>
-            </HistoryDiv>
-          ) : null}
           <ConcreteMeat {...this.props} />
         </>
       );
     } else {
-      return <div>Invalid url: {JSON.stringify(sp.url())}</div>;
+      return <div>Invalid url: {JSON.stringify(space.url())}</div>;
     }
   }
 
@@ -267,8 +217,7 @@ interface State {
 }
 
 interface Props extends MeatProps {
-  tabInstance: TabInstance;
+  space: Space;
 }
 
-// FIXME: this is bad
-export default withTabInstance(Meat);
+export default withSpace(Meat);

@@ -1,23 +1,24 @@
 import { IRequestCreator } from "butlerd";
+import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
+import { Space } from "common/helpers/space";
+import { Dispatch, LocalizedString } from "common/types";
+import { rendererWindow } from "common/util/navigation";
 import React from "react";
 import EmptyState from "renderer/basics/EmptyState";
-import butlerCaller from "renderer/hocs/butlerCaller";
-import ItemList from "renderer/pages/common/ItemList";
-import Page from "renderer/pages/common/Page";
-import { isEmpty } from "underscore";
-import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
-import { StandardGameCover } from "renderer/pages/PageStyles/games";
-import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
+import ErrorState from "renderer/basics/ErrorState";
 import Filler from "renderer/basics/Filler";
 import FiltersContainer from "renderer/basics/FiltersContainer";
-import { LocalizedString, Dispatch } from "common/types";
-import { actions } from "common/actions";
-import { rendererWindow } from "common/util/navigation";
+import butlerCaller from "renderer/hocs/butlerCaller";
 import { withDispatch } from "renderer/hocs/withDispatch";
-import { withTab } from "renderer/hocs/withTab";
+import { withSpace } from "renderer/hocs/withSpace";
+import ItemList from "renderer/pages/common/ItemList";
+import Page from "renderer/pages/common/Page";
 import { SortSpacer } from "renderer/pages/common/SortsAndFilters";
-import ErrorState from "renderer/basics/ErrorState";
+import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
+import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
+import { StandardGameCover } from "renderer/pages/PageStyles/games";
+import { isEmpty } from "underscore";
 
 interface FetchRes<Item> {
   items: Item[];
@@ -25,7 +26,7 @@ interface FetchRes<Item> {
 }
 
 interface Props<Params, Res extends FetchRes<Item>, Item> {
-  label: LocalizedString;
+  label?: LocalizedString;
   params: Params;
   renderMainFilters?: () => JSX.Element;
   renderExtraFilters?: () => JSX.Element;
@@ -34,7 +35,7 @@ interface Props<Params, Res extends FetchRes<Item>, Item> {
   renderItemExtras?: (item: Item) => JSX.Element;
 
   dispatch: Dispatch;
-  tab: string;
+  space: Space;
 }
 
 export default <Params, Res extends FetchRes<any>>(
@@ -46,7 +47,7 @@ export default <Params, Res extends FetchRes<any>>(
     Props<Params, Res, Res["items"][0]>
   > {
     render() {
-      const { label, params } = this.props;
+      const { label, params, dispatch, space } = this.props;
       const {
         renderMainFilters = renderNoop,
         renderExtraFilters = renderNoop,
@@ -59,13 +60,9 @@ export default <Params, Res extends FetchRes<any>>(
             errorsHandled
             params={params}
             onResult={result => {
-              this.props.dispatch(
-                actions.tabDataFetched({
-                  window: rendererWindow(),
-                  tab: this.props.tab,
-                  data: { label },
-                })
-              );
+              if (label) {
+                dispatch(space.makeFetch({ label }));
+              }
             }}
             render={({ result, loading, error }) => {
               return (
@@ -154,7 +151,7 @@ export default <Params, Res extends FetchRes<any>>(
     }
   };
 
-  return withDispatch(withTab(c));
+  return withDispatch(withSpace(c));
 };
 
 function renderNoop(): JSX.Element {

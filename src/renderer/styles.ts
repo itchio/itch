@@ -46,7 +46,7 @@ export const colors = {
   success: baseColors.gossip,
 
   buy: baseColors.shamrock,
-  sale: baseColors.amber,
+  sale: "#34a0f2",
   bundle: baseColors.heliotrope,
 
   explanation: itemBackground,

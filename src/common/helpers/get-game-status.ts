@@ -95,8 +95,8 @@ function getGameStatus(
   game: Game,
   caveId?: string
 ): GameStatus {
-  const { commons, profile, tasks, downloads } = rs;
-  const { credentials } = profile;
+  const { commons, tasks, downloads } = rs;
+  const { profile } = rs.profile;
 
   let downloadKeys = getByIds(
     commons.downloadKeys,
@@ -116,7 +116,7 @@ function getGameStatus(
   }
   const downloadKey = first(downloadKeys);
 
-  const pressUser = credentials.me.pressUser;
+  const pressUser = profile.user.pressUser;
   const task = first(tasks.tasksByGameId[game.id]);
 
   const pendingDownloads = getPendingForGame(downloads, game.id);

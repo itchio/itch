@@ -1,4 +1,5 @@
-import { Credentials, IRootState } from "common/types";
+import { Profile } from "common/butlerd/messages";
+import { IRootState } from "common/types";
 import React from "react";
 import { connect } from "renderer/hocs/connect";
 import Meats from "renderer/scenes/HubScene/Meats";
@@ -14,8 +15,9 @@ const ContentContainer = styled.div`
 
 class HubContent extends React.PureComponent<Props & DerivedProps> {
   render() {
-    if (!this.props.credentials) {
-      return <div />;
+    const { profile } = this.props;
+    if (!profile) {
+      return null;
     }
 
     return (
@@ -29,14 +31,14 @@ class HubContent extends React.PureComponent<Props & DerivedProps> {
 interface Props {}
 
 type DerivedProps = {
-  credentials: Credentials;
+  profile: Profile;
 };
 
 export default connect<Props>(
   HubContent,
   {
     state: createStructuredSelector({
-      credentials: (rs: IRootState) => rs.profile.credentials,
+      profile: (rs: IRootState) => rs.profile.profile,
     }),
   }
 );

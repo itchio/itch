@@ -1,34 +1,31 @@
-import { actions } from "common/actions";
 import { messages } from "common/butlerd";
-import { FetchProfileGamesResult } from "common/butlerd/messages";
+import { FetchProfileGamesResult, Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { TabInstance, LocalizedString } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { LocalizedString } from "common/types";
 import React from "react";
+import EmptyState from "renderer/basics/EmptyState";
 import Filler from "renderer/basics/Filler";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
-import { withProfileId } from "renderer/hocs/withProfileId";
-import { withTab } from "renderer/hocs/withTab";
-import { withTabInstance } from "renderer/hocs/withTabInstance";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import EmptyState from "renderer/basics/EmptyState";
-import { isEmpty, debounce } from "underscore";
-import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
-import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
-import { StandardGameCover } from "renderer/pages/PageStyles/games";
-import ProfileGameStats from "renderer/pages/DashboardPage/ProfileGameStats";
+import { withProfile } from "renderer/hocs/withProfile";
+import { withSpace } from "renderer/hocs/withSpace";
+import FilterInput from "renderer/pages/common/FilterInput";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import {
-  SortSpacer,
-  SortsAndFilters,
   SortGroup,
   SortOption,
+  SortsAndFilters,
+  SortSpacer,
 } from "renderer/pages/common/SortsAndFilters";
-import FilterInput from "renderer/pages/common/FilterInput";
+import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import DraftStatus from "renderer/pages/DashboardPage/DraftStatus";
+import ProfileGameStats from "renderer/pages/DashboardPage/ProfileGameStats";
+import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
+import { StandardGameCover } from "renderer/pages/PageStyles/games";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { debounce, isEmpty } from "underscore";
 
 const FetchProfileGames = butlerCaller(messages.FetchProfileGames);
 
@@ -41,46 +38,39 @@ class DashboardPage extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const { profileId, tabInstance } = this.props;
-    const sp = Space.fromInstance(tabInstance);
+    const { profile, space, dispatch } = this.props;
 
     return (
       <Page>
         <FetchProfileGames
           params={{
-            profileId,
+            profileId: profile.id,
             limit: 15,
-            cursor: sp.queryParam("cursor"),
-            sortBy: sp.queryParam("sortBy"),
+            cursor: space.queryParam("cursor"),
+            sortBy: space.queryParam("sortBy"),
             search: this.state.search,
             filters: {
-              visibility: sp.queryParam("visibility"),
-              paidStatus: sp.queryParam("paidStatus"),
+              visibility: space.queryParam("visibility"),
+              paidStatus: space.queryParam("paidStatus"),
             },
           }}
           sequence={this.props.sequence}
           onResult={result => {
-            this.props.dispatch(
-              actions.tabDataFetched({
-                window: rendererWindow(),
-                tab: this.props.tab,
-                data: { label: ["sidebar.dashboard"] },
-              })
-            );
+            dispatch(space.makeFetch({ label: ["sidebar.dashboard"] }));
           }}
           loadingHandled
           render={({ result, loading }) => {
             return (
               <>
                 <FiltersContainer loading={loading}>
-                  {this.renderSearch(sp)}
+                  {this.renderSearch(space)}
                 </FiltersContainer>
                 <SortsAndFilters>
-                  {this.renderSorts(sp)}
+                  {this.renderSorts(space)}
                   <SortSpacer />
-                  {this.renderVisibilityFilter(sp)}
+                  {this.renderVisibilityFilter(space)}
                   <SortSpacer />
-                  {this.renderPaidStatusFilter(sp)}
+                  {this.renderPaidStatusFilter(space)}
                 </SortsAndFilters>
                 <ItemList>{this.renderItems(result)}</ItemList>
               </>
@@ -99,8 +89,8 @@ class DashboardPage extends React.PureComponent<Props, State> {
 
     let nextPageURL = null;
     if (nextCursor) {
-      const sp = Space.fromInstance(this.props.tabInstance);
-      nextPageURL = sp.urlWithParams({
+      const { space } = this.props;
+      nextPageURL = space.urlWithParams({
         cursor: nextCursor,
       });
     }
@@ -229,16 +219,13 @@ class DashboardPage extends React.PureComponent<Props, State> {
 }
 
 interface Props extends MeatProps {
-  tab: string;
-  profileId: number;
+  profile: Profile;
+  space: Space;
   dispatch: Dispatch;
-  tabInstance: TabInstance;
 }
 
 interface State {
   search: string;
 }
 
-export default withTab(
-  withProfileId(withTabInstance(withDispatch(DashboardPage)))
-);
+export default withProfile(withSpace(withDispatch(DashboardPage)));

@@ -1,24 +1,24 @@
-import React from "react";
-
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import FiltersContainer from "renderer/basics/FiltersContainer";
-import Page from "renderer/pages/common/Page";
-import ItemList from "renderer/pages/common/ItemList";
 import { messages } from "common/butlerd";
-import { isEmpty } from "underscore";
-import { withProfileId } from "renderer/hocs/withProfileId";
 import {
-  FetchProfileOwnedKeysResult,
   FetchCavesResult,
+  FetchProfileOwnedKeysResult,
+  Profile,
 } from "common/butlerd/messages";
+import React from "react";
+import FiltersContainer from "renderer/basics/FiltersContainer";
+import { withProfile } from "renderer/hocs/withProfile";
 import GameStripe from "renderer/pages/common/GameStripe";
+import ItemList from "renderer/pages/common/ItemList";
+import Page from "renderer/pages/common/Page";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { isEmpty } from "underscore";
 
 const OwnedGameStripe = GameStripe(messages.FetchProfileOwnedKeys);
 const InstalledGameStripe = GameStripe(messages.FetchCaves);
 
 class LibraryPage extends React.PureComponent<Props> {
   render() {
-    const { profileId } = this.props;
+    const { profile } = this.props;
 
     return (
       <Page>
@@ -28,7 +28,7 @@ class LibraryPage extends React.PureComponent<Props> {
           <OwnedGameStripe
             title={["sidebar.owned"]}
             href="itch://library/owned"
-            params={{ profileId }}
+            params={{ profileId: profile.id }}
             map={(r: FetchProfileOwnedKeysResult) =>
               !isEmpty(r.items) && r.items.map(x => x.game)
             }
@@ -48,7 +48,7 @@ class LibraryPage extends React.PureComponent<Props> {
 }
 
 interface Props extends MeatProps {
-  profileId: number;
+  profile: Profile;
 }
 
-export default withProfileId(LibraryPage);
+export default withProfile(LibraryPage);

@@ -1,17 +1,42 @@
-import { TabInstances, TabData, TabDataSave } from "common/types";
+import { TabInstances, TabData, TabDataSave, TabInstance } from "common/types";
 import { actions } from "common/actions";
 import reducer from "../reducer";
 
 import rootLogger from "common/logger";
 const logger = rootLogger.child({ name: "reducers/tab-data" });
 
-import { omit, each } from "underscore";
+import { omit, each, size } from "underscore";
 
 const initialState: TabInstances = {};
 
 const emptyObj = {} as any;
+const maxHistorySize = 50;
 
-let deepFields = ["users", "games", "collections", "web", "toast"];
+function trimHistory(ti: TabInstance): TabInstance {
+  if (!ti || !ti.history) {
+    return ti;
+  }
+
+  const historySize = size(ti.history);
+  if (historySize <= maxHistorySize) {
+    return ti;
+  }
+
+  let offset = maxHistorySize - historySize;
+  let newIndex = ti.currentIndex - offset;
+  let newHistory = ti.history.slice(offset);
+  if (newIndex < 0 || newIndex >= size(newHistory)) {
+    newIndex = size(newHistory) - 1;
+  }
+
+  return {
+    ...ti,
+    currentIndex: newIndex,
+    history: newHistory,
+  };
+}
+
+let deepFields = ["web"];
 
 function merge(
   a: TabData,
@@ -105,14 +130,17 @@ export default reducer<TabInstances>(initialState, on => {
     }
 
     // merge old & new data
+    let newInstance = {
+      ...oldInstance,
+      history,
+      currentIndex,
+      data: merge(oldInstance.data, data, { shallow: false }),
+    };
+    newInstance = trimHistory(newInstance);
+
     return {
       ...state,
-      [tab]: {
-        ...oldInstance,
-        history,
-        currentIndex,
-        data: merge(oldInstance.data, data, { shallow: false }),
-      },
+      [tab]: newInstance,
     };
   });
 
@@ -234,12 +262,12 @@ export default reducer<TabInstances>(initialState, on => {
 
       s = {
         ...s,
-        [tabSave.id]: {
+        [tabSave.id]: trimHistory({
           ...data,
           data: {},
           sleepy: true,
           sequence: 0,
-        },
+        }),
       };
     });
 

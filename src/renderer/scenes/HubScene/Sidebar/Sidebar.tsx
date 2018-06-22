@@ -233,7 +233,7 @@ export default connect<Props>(
     state: createStructuredSelector({
       appVersion: (rs: IRootState) => rs.system.appVersion,
       sidebarWidth: (rs: IRootState) => rs.preferences.sidebarWidth || 240,
-      me: (rs: IRootState) => rs.profile.credentials.me,
+      me: (rs: IRootState) => rs.profile.profile.user,
       tab: (rs: IRootState) => rendererNavigation(rs).tab,
       openTabs: (rs: IRootState) => rendererNavigation(rs).openTabs,
       url: (rs: IRootState) => {

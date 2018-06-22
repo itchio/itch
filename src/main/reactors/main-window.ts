@@ -261,7 +261,7 @@ export default function(watcher: Watcher) {
         rs.windows["root"].tabInstances;
 
       const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>
-        Space.fromInstance(tabData[id])
+        Space.fromInstance(id, tabData[id])
       );
 
       return createSelector(getI18n, getSpace, (i18n, sp) => {

@@ -166,7 +166,7 @@ export default connect<Props>(
   {
     state: () =>
       createStructuredSelector({
-        me: (rs: IRootState) => rs.profile.credentials.me,
+        me: (rs: IRootState) => rs.profile.profile.user,
       }),
     actionCreators,
   }

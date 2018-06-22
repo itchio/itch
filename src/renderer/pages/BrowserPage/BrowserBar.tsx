@@ -1,22 +1,18 @@
-import React from "react";
-
 import { Space } from "common/helpers/space";
+import React from "react";
 import FiltersContainer from "renderer/basics/FiltersContainer";
-import { TabInstance } from "common/types";
-import { withTabInstance } from "renderer/hocs/withTabInstance";
-import { withTab } from "renderer/hocs/withTab";
+import { withSpace } from "renderer/hocs/withSpace";
 
 class BrowserBar extends React.PureComponent<Props> {
   render() {
-    const { tabInstance } = this.props;
-    const sp = Space.fromInstance(tabInstance);
-    const loading = !!sp.web().loading;
+    const { space } = this.props;
+    const loading = !!space.web().loading;
     return <FiltersContainer loading={loading} />;
   }
 }
 
 interface Props {
-  tabInstance: TabInstance;
+  space: Space;
 }
 
-export default withTab(withTabInstance(BrowserBar));
+export default withSpace(BrowserBar);
