@@ -440,7 +440,7 @@ function commonBrowserWindowOpts(): Partial<BrowserWindowConstructorOptions> {
     frame: false,
     webPreferences: {
       affinity: "all-in-one",
-      enableBlinkFeatures: "ResizeObserver",
+      blinkFeatures: "ResizeObserver",
       webSecurity: env.development ? false : true,
     },
   };

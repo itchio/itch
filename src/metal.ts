@@ -55,13 +55,7 @@ function main() {
 
   let onReady = () => {
     if (!env.integrationTests) {
-      const isMainInstance = app.requestSingleInstanceLock();
-      if (!isMainInstance) {
-        app.exit(0);
-        return;
-      }
-
-      app.on("second-instance", (argv, cwd) => {
+      const shouldQuit = app.makeSingleInstance((argv, cwd) => {
         // we only get inside this callback when another instance
         // is launched - so this executes in the context of the main instance
         store.dispatch(
@@ -71,6 +65,10 @@ function main() {
         );
         store.dispatch(actions.focusWindow({ window: "root" }));
       });
+      if (shouldQuit) {
+        app.exit(0);
+        return;
+      }
     }
 
     store.dispatch(
