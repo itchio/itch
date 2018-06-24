@@ -96,7 +96,7 @@ class OwnedPage extends React.PureComponent<Props, State> {
   ): JSX.Element {
     return (
       <SortOption
-        sp={space}
+        space={space}
         optionKey="sortBy"
         optionValue={sortBy}
         icon="sort-alpha-asc"
@@ -117,7 +117,7 @@ class OwnedPage extends React.PureComponent<Props, State> {
   renderInstalled(space: Space, installed: string, label: LocalizedString) {
     return (
       <SortOption
-        sp={space}
+        space={space}
         optionKey="installed"
         optionValue={installed}
         icon="checkmark"
@@ -150,7 +150,7 @@ class OwnedPage extends React.PureComponent<Props, State> {
   ) {
     return (
       <SortOption
-        sp={space}
+        space={space}
         optionKey="classification"
         optionValue={classification}
         icon="star"

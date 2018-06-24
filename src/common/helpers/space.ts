@@ -128,7 +128,11 @@ export class Space {
     const params = new URLSearchParams(this._query);
     for (const k of Object.keys(newParams)) {
       const v = newParams[k];
-      params.set(k, v);
+      if (v) {
+        params.set(k, v);
+      } else {
+        params.delete(k);
+      }
     }
     return format({
       protocol: this._protocol,

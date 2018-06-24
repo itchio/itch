@@ -6,9 +6,10 @@ import React from "react";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
-import FilterInput from "renderer/pages/common/FilterInput";
 import GameSeries from "renderer/pages/common/GameSeries";
 import Page from "renderer/pages/common/Page";
+import SearchControl from "renderer/pages/common/SearchControl";
+import SortControl from "renderer/pages/common/SortControl";
 import {
   SortGroup,
   SortOption,
@@ -16,18 +17,10 @@ import {
   SortSpacer,
 } from "renderer/pages/common/SortsAndFilters";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import { debounce } from "underscore";
 
 const ProfileGameSeries = GameSeries(messages.FetchProfileGames);
 
-class DashboardPage extends React.PureComponent<Props, State> {
-  constructor(props: DashboardPage["props"], context: any) {
-    super(props, context);
-    this.state = {
-      search: "",
-    };
-  }
-
+class DashboardPage extends React.PureComponent<Props> {
   render() {
     const { profile, space } = this.props;
 
@@ -40,17 +33,24 @@ class DashboardPage extends React.PureComponent<Props, State> {
             limit: 15,
             cursor: space.queryParam("cursor"),
             sortBy: space.queryParam("sortBy"),
-            search: this.state.search,
+            search: space.queryParam("search"),
             filters: {
               visibility: space.queryParam("visibility"),
               paidStatus: space.queryParam("paidStatus"),
             },
           }}
           getGame={pg => pg.game}
-          renderMainFilters={() => this.renderSearch(space)}
+          renderMainFilters={() => <SearchControl />}
           renderExtraFilters={() => (
             <SortsAndFilters>
-              {this.renderSorts(space)}
+              <SortControl
+                sorts={[
+                  { value: "default", label: "Default" },
+                  { value: "views", label: "Views" },
+                  { value: "downloads", label: "Downloads" },
+                  { value: "purchases", label: "Purchases" },
+                ]}
+              />
               <SortSpacer />
               {this.renderVisibilityFilter(space)}
               <SortSpacer />
@@ -79,7 +79,7 @@ class DashboardPage extends React.PureComponent<Props, State> {
   ): JSX.Element {
     return (
       <SortOption
-        sp={sp}
+        space={sp}
         optionKey="paidStatus"
         optionValue={paidStatus}
         icon="coin"
@@ -107,7 +107,7 @@ class DashboardPage extends React.PureComponent<Props, State> {
   ): JSX.Element {
     return (
       <SortOption
-        sp={sp}
+        space={sp}
         optionKey="visibility"
         optionValue={visibility}
         icon="earth"
@@ -115,53 +115,12 @@ class DashboardPage extends React.PureComponent<Props, State> {
       />
     );
   }
-
-  renderSorts(sp: Space): JSX.Element {
-    return (
-      <SortGroup>
-        {this.renderSort(sp, "default", "Default")}
-        {this.renderSort(sp, "views", "Most views")}
-        {this.renderSort(sp, "downloads", "Most downloads")}
-        {this.renderSort(sp, "purchases", "Most purchases")}
-      </SortGroup>
-    );
-  }
-
-  renderSort(sp: Space, sortBy: string, label: LocalizedString): JSX.Element {
-    return (
-      <SortOption
-        sp={sp}
-        optionKey="sortBy"
-        optionValue={sortBy}
-        icon="sort-alpha-asc"
-        label={label}
-      />
-    );
-  }
-
-  renderSearch(sp: Space): JSX.Element {
-    const debouncedSetSearch = debounce(this.setSearch, 250);
-    return (
-      <FilterInput
-        placeholder="Filter..."
-        onChange={e => debouncedSetSearch(e.currentTarget.value)}
-      />
-    );
-  }
-
-  setSearch = (search: string) => {
-    this.setState({ search });
-  };
 }
 
 interface Props extends MeatProps {
   profile: Profile;
   space: Space;
   dispatch: Dispatch;
-}
-
-interface State {
-  search: string;
 }
 
 export default withProfile(withSpace(withDispatch(DashboardPage)));

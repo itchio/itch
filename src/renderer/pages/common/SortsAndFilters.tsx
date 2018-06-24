@@ -55,7 +55,7 @@ export const SortOptionIcon = styled(Icon)`
 `;
 
 interface SortOptionProps {
-  sp: Space;
+  space: Space;
   icon: string;
   optionKey: string;
   optionValue: string;
@@ -63,9 +63,9 @@ interface SortOptionProps {
 }
 
 export const SortOption = (props: SortOptionProps) => {
-  const { sp, icon, optionKey, optionValue, label } = props;
-  const href = sp.urlWithParams({ [optionKey]: optionValue });
-  const active = isSortActive(optionValue, sp.queryParam(optionKey));
+  const { space, icon, optionKey, optionValue, label } = props;
+  const href = space.urlWithParams({ [optionKey]: optionValue });
+  const active = isSortActive(optionValue, space.queryParam(optionKey));
   return (
     <SortOptionLink href={href} className={classNames({ active })}>
       <SortOptionIcon icon={icon} />
