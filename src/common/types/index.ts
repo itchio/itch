@@ -665,6 +665,9 @@ export interface INavigatePayload {
 
   /** whether to open a new tab in the background */
   background?: boolean;
+
+  /** whether to replace the current history entry */
+  replace?: boolean;
 }
 
 export interface IOpenTabPayload extends INavigatePayload {

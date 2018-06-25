@@ -60,7 +60,7 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.navigate, async (store, action) => {
-    const { url, resource, data, window, background } = action.payload;
+    const { url, resource, data, window, background, replace } = action.payload;
     logger.debug(`Navigating to ${url} ${background ? "(in background)" : ""}`);
 
     if (window === "root" && opensInWindow[url]) {
@@ -120,7 +120,7 @@ export default function(watcher: Watcher) {
       store.dispatch(
         actions.evolveTab({
           tab,
-          replace: false,
+          replace,
           window,
           url,
           resource: resource ? resource : null,
