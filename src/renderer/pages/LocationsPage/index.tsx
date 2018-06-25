@@ -34,11 +34,7 @@ class LocationsPage extends React.PureComponent<Props> {
                           },
                         }}
                         href={`itch://locations/${il.id}`}
-                        map={result =>
-                          result &&
-                          result.items &&
-                          result.items.map(x => x.game)
-                        }
+                        getGame={cave => cave.game}
                       />
                     </>
                   ))

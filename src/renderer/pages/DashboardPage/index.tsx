@@ -17,6 +17,7 @@ import {
   SortSpacer,
 } from "renderer/pages/common/SortsAndFilters";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import ProfileGameStats from "renderer/pages/DashboardPage/ProfileGameStats";
 
 const ProfileGameSeries = GameSeries(messages.FetchProfileGames);
 
@@ -57,6 +58,7 @@ class DashboardPage extends React.PureComponent<Props> {
               {this.renderPaidStatusFilter()}
             </SortsAndFilters>
           )}
+          renderItemExtras={pg => <ProfileGameStats pg={pg} />}
         />
       </Page>
     );

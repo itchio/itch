@@ -136,12 +136,7 @@ class CollectionsPage extends React.PureComponent<Props> {
                   </CollectionInfo>
                 </>
               )}
-              map={result => {
-                if (!result || isEmpty(result.items)) {
-                  return [];
-                }
-                return result.items.map(cg => cg.game);
-              }}
+              getGame={cg => cg.game}
             />
           </>
         ))}
