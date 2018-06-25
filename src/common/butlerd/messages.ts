@@ -605,7 +605,11 @@ export interface InstallLocationSizeInfo {
  */
 export interface CavesFilters {
   /** undocumented */
-  classification: GameClassification;
+  classification?: GameClassification;
+  /** undocumented */
+  gameId?: number;
+  /** undocumented */
+  installLocationId?: string;
 }
 
 /**
@@ -639,42 +643,6 @@ export interface FetchCaveResult {
 export const FetchCave = createRequest<FetchCaveParams, FetchCaveResult>(
   "Fetch.Cave"
 );
-
-/**
- * Result for Fetch.CavesByGameID
- */
-export interface FetchCavesByGameIDResult {
-  /** undocumented */
-  caves: Cave[];
-}
-
-/**
- * Retrieve all caves for a given game.
- */
-export const FetchCavesByGameID = createRequest<
-  FetchCavesByGameIDParams,
-  FetchCavesByGameIDResult
->("Fetch.CavesByGameID");
-
-/**
- * Result for Fetch.CavesByInstallLocationID
- */
-export interface FetchCavesByInstallLocationIDResult {
-  /** undocumented */
-  installLocationPath: string;
-  /** undocumented */
-  installLocationSize: number;
-  /** undocumented */
-  caves: Cave[];
-}
-
-/**
- * Retrieve all caves installed to a given location.
- */
-export const FetchCavesByInstallLocationID = createRequest<
-  FetchCavesByInstallLocationIDParams,
-  FetchCavesByInstallLocationIDResult
->("Fetch.CavesByInstallLocationID");
 
 /**
  * Result for Fetch.ExpireAll
@@ -2477,22 +2445,6 @@ export interface FetchCavesParams {
 export interface FetchCaveParams {
   /** undocumented */
   caveId: string;
-}
-
-/**
- * Params for Fetch.CavesByGameID
- */
-export interface FetchCavesByGameIDParams {
-  /** undocumented */
-  gameId: number;
-}
-
-/**
- * Params for Fetch.CavesByInstallLocationID
- */
-export interface FetchCavesByInstallLocationIDParams {
-  /** undocumented */
-  installLocationId: string;
 }
 
 /**

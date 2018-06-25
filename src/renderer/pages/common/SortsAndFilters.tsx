@@ -6,6 +6,7 @@ import { FiltersContainerDiv } from "renderer/basics/FiltersContainer";
 import { LocalizedString } from "common/types";
 import { T } from "renderer/t";
 import { Space } from "common/helpers/space";
+import { withSpace } from "renderer/hocs/withSpace";
 
 export const SortsAndFilters = styled(FiltersContainerDiv)`
   display: flex;
@@ -26,7 +27,7 @@ const activeBg = `linear-gradient(to top, hsla(355, 43%, 50%, 1), hsla(355, 43%,
 const borderColor = `#843442`;
 const borderRadius = `4px`;
 
-const SortOptionLink = styled.a`
+export const SortOptionLink = styled.a`
   display: inline-block;
   background: ${inactiveBg};
   padding: 0.5em 1em;
@@ -41,6 +42,10 @@ const SortOptionLink = styled.a`
 
   &:last-child {
     border-radius: 0 ${borderRadius} ${borderRadius} 0;
+  }
+
+  &:first-child:last-child {
+    border-radius: ${borderRadius};
   }
 
   &.active {
@@ -62,17 +67,21 @@ interface SortOptionProps {
   label: LocalizedString;
 }
 
-export const SortOption = (props: SortOptionProps) => {
+export const SortOption = withSpace((props: SortOptionProps) => {
   const { space, icon, optionKey, optionValue, label } = props;
   const href = space.urlWithParams({ [optionKey]: optionValue });
   const active = isSortActive(optionValue, space.queryParam(optionKey));
   return (
-    <SortOptionLink href={href} className={classNames({ active })}>
+    <SortOptionLink
+      target="_replace"
+      href={href}
+      className={classNames({ active })}
+    >
       <SortOptionIcon icon={icon} />
       {T(label)}
     </SortOptionLink>
   );
-};
+});
 
 export const SortSpacer = styled.div`
   width: 24px;

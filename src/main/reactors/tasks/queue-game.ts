@@ -22,9 +22,9 @@ import { makeUploadButton } from "main/reactors/make-upload-button";
 export default function(watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
     const { game } = action.payload;
-    const { caves } = await call(messages.FetchCavesByGameID, {
-      gameId: game.id,
-    });
+    const caves = (await call(messages.FetchCaves, {
+      filters: { gameId: game.id },
+    })).items;
 
     if (isEmpty(caves)) {
       logger.info(

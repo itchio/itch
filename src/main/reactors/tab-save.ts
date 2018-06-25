@@ -86,7 +86,12 @@ export async function restoreTabs(store: Store, profile: Profile) {
 
     const validTabs = new Set(snapshot.items.map(x => x.id));
     if (validTabs.has(snapshot.current)) {
-      store.dispatch(actions.tabsRestored(snapshot));
+      store.dispatch(
+        actions.tabsRestored({
+          window: "root",
+          snapshot,
+        })
+      );
     } else {
       // nevermind
     }

@@ -1,4 +1,5 @@
 import { Download, GameUpdate } from "common/butlerd/messages";
+import { Space } from "common/helpers/space";
 import { IRootState } from "common/types";
 import {
   getFinishedDownloads,
@@ -14,15 +15,16 @@ import {
   connect,
   Dispatchers,
 } from "renderer/hocs/connect";
+import { withDispatch, Dispatch } from "renderer/hocs/withDispatch";
+import { withSpace } from "renderer/hocs/withSpace";
 import GameUpdateRow from "renderer/pages/DownloadsPage/GameUpdateRow";
 import Row from "renderer/pages/DownloadsPage/Row";
+import { Title } from "renderer/pages/PageStyles/games";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { createStructuredSelector } from "reselect";
 import { first, isEmpty, map, rest, size } from "underscore";
-import FiltersContainer from "renderer/basics/FiltersContainer";
-import { Title } from "renderer/pages/PageStyles/games";
 
 const DownloadsDiv = styled.div`
   ${styles.meat()};
@@ -67,14 +69,18 @@ const DownloadsContentDiv = styled.div`
   }
 `;
 
-class Downloads extends React.PureComponent<Props & DerivedProps> {
-  render() {
-    return (
-      <DownloadsDiv>
-        <FiltersContainer loading={false} />
-        {this.renderContents()}
-      </DownloadsDiv>
+class DownloadsPage extends React.PureComponent<Props & DerivedProps> {
+  componentDidMount() {
+    const { dispatch, space } = this.props;
+    dispatch(
+      space.makeFetch({
+        label: ["sidebar.downloads"],
+      })
     );
+  }
+
+  render() {
+    return <DownloadsDiv>{this.renderContents()}</DownloadsDiv>;
   }
 
   renderContents() {
@@ -229,7 +235,10 @@ class Downloads extends React.PureComponent<Props & DerivedProps> {
   };
 }
 
-interface Props extends MeatProps {}
+interface Props extends MeatProps {
+  space: Space;
+  dispatch: Dispatch;
+}
 
 const actionCreators = actionCreatorsList(
   "clearFinishedDownloads",
@@ -249,17 +258,21 @@ type DerivedProps = Dispatchers<typeof actionCreators> & {
   downloadsPaused: boolean;
 };
 
-export default connect<Props>(
-  Downloads,
-  {
-    state: createStructuredSelector({
-      items: (rs: IRootState) => getPendingDownloads(rs.downloads),
-      finishedItems: (rs: IRootState) => getFinishedDownloads(rs.downloads),
-      updates: (rs: IRootState) => rs.gameUpdates.updates,
-      updateCheckHappening: (rs: IRootState) => rs.gameUpdates.checking,
-      updateCheckProgress: (rs: IRootState) => rs.gameUpdates.progress,
-      downloadsPaused: (rs: IRootState) => rs.downloads.paused,
-    }),
-    actionCreators,
-  }
+export default withSpace(
+  withDispatch(
+    connect<Props>(
+      DownloadsPage,
+      {
+        state: createStructuredSelector({
+          items: (rs: IRootState) => getPendingDownloads(rs.downloads),
+          finishedItems: (rs: IRootState) => getFinishedDownloads(rs.downloads),
+          updates: (rs: IRootState) => rs.gameUpdates.updates,
+          updateCheckHappening: (rs: IRootState) => rs.gameUpdates.checking,
+          updateCheckProgress: (rs: IRootState) => rs.gameUpdates.progress,
+          downloadsPaused: (rs: IRootState) => rs.downloads.paused,
+        }),
+        actionCreators,
+      }
+    )
+  )
 );

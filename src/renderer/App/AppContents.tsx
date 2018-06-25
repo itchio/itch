@@ -1,20 +1,18 @@
-import "!style-loader!css-loader!react-tabs/style/react-tabs.css";
 import "!style-loader!css-loader!../fonts/icomoon/style.css";
 import "!style-loader!css-loader!../fonts/lato/latofonts-custom.css";
 import "!style-loader!css-loader!react-hint/css/index.css";
 import "!style-loader!css-loader!react-json-inspector/json-inspector.css";
+import "!style-loader!css-loader!react-tabs/style/react-tabs.css";
+import { Dispatch } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import React from "react";
-import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
 import Layout from "renderer/App/Layout";
 import Modals from "renderer/App/Modals";
+import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import { actions } from "common/actions";
 
-class AppContents extends React.PureComponent<DerivedProps> {
+class AppContents extends React.PureComponent<Props> {
   render() {
     return (
       <div onClickCapture={this.onClickCapture}>
@@ -34,26 +32,27 @@ class AppContents extends React.PureComponent<DerivedProps> {
     }
 
     if (target.tagName == "A") {
-      const href = (target as HTMLLinkElement).href;
+      const link = target as HTMLLinkElement;
+      const href = link.href;
       e.preventDefault();
       e.stopPropagation();
-      this.props.navigate({
-        window: rendererWindow(),
-        url: href,
-        background: doesEventMeanBackground(e),
-      });
+      const { dispatch } = this.props;
+      dispatch(
+        actions.navigate({
+          window: rendererWindow(),
+          url: href,
+          background: doesEventMeanBackground(e),
+          replace: link.target === "_replace",
+        })
+      );
     } else {
       this.handleClickCapture(e, target.parentElement);
     }
   }
 }
 
-const actionCreators = actionCreatorsList("navigate");
-type DerivedProps = Dispatchers<typeof actionCreators>;
+interface Props {
+  dispatch: Dispatch;
+}
 
-export default connect<{}>(
-  AppContents,
-  {
-    actionCreators,
-  }
-);
+export default withDispatch(AppContents);

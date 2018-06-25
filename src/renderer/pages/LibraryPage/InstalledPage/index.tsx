@@ -4,6 +4,13 @@ import React from "react";
 import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
 import { withSpace } from "renderer/hocs/withSpace";
 import GameSeries from "renderer/pages/common/GameSeries";
+import SearchControl from "renderer/pages/common/SearchControl";
+import {
+  SortGroup,
+  SortOptionIcon,
+  SortOptionLink,
+  SortsAndFilters,
+} from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
@@ -19,6 +26,21 @@ class InstalledPage extends React.PureComponent<Props> {
         params={{ limit: 15, cursor: space.queryParam("cursor") }}
         getGame={cave => cave.game}
         renderItemExtras={cave => <StandardMainAction game={cave.game} />}
+        renderMainFilters={() => (
+          <>
+            <SearchControl />
+          </>
+        )}
+        renderExtraFilters={() => (
+          <SortsAndFilters>
+            <SortGroup>
+              <SortOptionLink href="itch://locations">
+                <SortOptionIcon icon="cog" />
+                Manage install locations
+              </SortOptionLink>
+            </SortGroup>
+          </SortsAndFilters>
+        )}
       />
     );
   }

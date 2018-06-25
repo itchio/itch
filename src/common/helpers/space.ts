@@ -236,7 +236,7 @@ export class Space {
       return this._instance.data.label;
     }
 
-    let fallback = this._instance.savedLabel || ["sidebar.loading"];
+    let fallback = this._instance.savedLabel || "";
     return fallback;
   }
 

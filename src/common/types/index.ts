@@ -355,6 +355,9 @@ export interface NavigationState {
 
   /** current tab id */
   tab: string;
+
+  /** if true, window was preloaded, it is not used yet */
+  isPreload: boolean;
 }
 
 export interface LoadingTabs {
@@ -662,6 +665,9 @@ export interface INavigatePayload {
 
   /** whether to open a new tab in the background */
   background?: boolean;
+
+  /** whether to replace the current history entry */
+  replace?: boolean;
 }
 
 export interface IOpenTabPayload extends INavigatePayload {

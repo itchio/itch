@@ -125,7 +125,6 @@ class CollectionsPage extends React.PureComponent<Props> {
               title={coll.title}
               href={urlForCollection(coll.id)}
               params={{ profileId: profile.id, collectionId: coll.id }}
-              sequence={0}
               renderTitleExtras={() => (
                 <>
                   <CollectionInfoSpacer />
@@ -137,12 +136,7 @@ class CollectionsPage extends React.PureComponent<Props> {
                   </CollectionInfo>
                 </>
               )}
-              map={result => {
-                if (!result || isEmpty(result.items)) {
-                  return [];
-                }
-                return result.items.map(cg => cg.game);
-              }}
+              getGame={cg => cg.game}
             />
           </>
         ))}

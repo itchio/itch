@@ -15,6 +15,8 @@ import LoadingCircle from "renderer/basics/LoadingCircle";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
 import styled, * as styles from "renderer/styles";
+import { Space } from "common/helpers/space";
+import { withSpace } from "renderer/hocs/withSpace";
 
 const StripeDiv = styled.div`
   display: flex;
@@ -52,34 +54,36 @@ const StripeItem = styled.div`
   margin-right: 0.8em;
 `;
 
-interface Props<Params, Res> {
+interface FetchRes<Item> {
+  items: Item[];
+}
+
+interface Props<Params, Res extends FetchRes<Item>, Item> {
+  space: Space;
   title: LocalizedString;
   href: string;
   params: Params;
-  sequence?: number;
   renderTitleExtras?: () => JSX.Element;
-  map: (r: Res) => Game[];
-}
-
-interface FetchRes {
-  items?: any[];
+  getGame: (item: Item) => Game;
 }
 
 const stripeLimit = 12;
 
-export default <Params, Res extends FetchRes>(
+export default <Params, Res extends FetchRes<any>>(
   rc: IRequestCreator<Params, Res>
 ) => {
   const Call = butlerCaller(rc);
 
-  return class extends React.PureComponent<Props<Params, Res>> {
+  const stripe = class extends React.PureComponent<
+    Props<Params, Res, Res["items"][0]>
+  > {
     render() {
-      const { params, sequence } = this.props;
+      const { params, space } = this.props;
 
       return (
         <Call
           params={{ ...(params as any), limit: stripeLimit }}
-          sequence={sequence}
+          sequence={space.sequence()}
           loadingHandled
           errorsHandled
           render={({ result, error, loading }) => (
@@ -127,11 +131,12 @@ export default <Params, Res extends FetchRes>(
       }
 
       const doneSet = new Set<number>();
-      const games = this.props.map(result);
+      const { getGame } = this.props;
       return (
         <>
-          {games.map(game => {
-            if (doneSet.has(game.id)) {
+          {result.items.map(item => {
+            const game = getGame(item);
+            if (!game || doneSet.has(game.id)) {
               return null;
             }
             doneSet.add(game.id);
@@ -161,6 +166,7 @@ export default <Params, Res extends FetchRes>(
       return <ViewAll href={this.props.href}>View all...</ViewAll>;
     }
   };
+  return withSpace(stripe);
 };
 
 function renderNoop(): JSX.Element {

@@ -107,32 +107,27 @@ class CollectionPage extends React.PureComponent<Props, State> {
   renderExtraFilters(space: Space): JSX.Element {
     return (
       <SortsAndFilters>
-        {this.renderSorts(space)}
+        {this.renderSorts()}
         <SortSpacer />
-        {this.renderInstalledFilter(space)}
+        {this.renderInstalledFilter()}
         <SortSpacer />
-        {this.renderClassificationFilter(space)}
+        {this.renderClassificationFilter()}
       </SortsAndFilters>
     );
   }
 
-  renderSorts(space: Space) {
+  renderSorts() {
     return (
       <SortGroup>
-        {this.renderSort(space, "default", "Default")}
-        {this.renderSort(space, "title", "Title")}
+        {this.renderSort("default", "Default")}
+        {this.renderSort("title", "Title")}
       </SortGroup>
     );
   }
 
-  renderSort(
-    space: Space,
-    sortBy: string,
-    label: LocalizedString
-  ): JSX.Element {
+  renderSort(sortBy: string, label: LocalizedString): JSX.Element {
     return (
       <SortOption
-        space={space}
         optionKey="sortBy"
         optionValue={sortBy}
         icon="sort-alpha-asc"
@@ -141,19 +136,18 @@ class CollectionPage extends React.PureComponent<Props, State> {
     );
   }
 
-  renderInstalledFilter(space: Space) {
+  renderInstalledFilter() {
     return (
       <SortGroup>
-        {this.renderInstalled(space, "", "All")}
-        {this.renderInstalled(space, "true", "Installed")}
+        {this.renderInstalled("", "All")}
+        {this.renderInstalled("true", "Installed")}
       </SortGroup>
     );
   }
 
-  renderInstalled(space: Space, installed: string, label: LocalizedString) {
+  renderInstalled(installed: string, label: LocalizedString) {
     return (
       <SortOption
-        space={space}
         optionKey="installed"
         optionValue={installed}
         icon="checkmark"
@@ -162,31 +156,25 @@ class CollectionPage extends React.PureComponent<Props, State> {
     );
   }
 
-  renderClassificationFilter(space: Space) {
+  renderClassificationFilter() {
     return (
       <SortGroup>
-        {this.renderClassification(space, "" as GameClassification, "All")}
-        {this.renderClassification(space, GameClassification.Game, "Games")}
-        {this.renderClassification(space, GameClassification.Tool, "Tools")}
-        {this.renderClassification(
-          space,
-          GameClassification.Assets,
-          "Game assets"
-        )}
-        {this.renderClassification(space, GameClassification.Comic, "Comic")}
-        {this.renderClassification(space, GameClassification.Book, "Book")}
+        {this.renderClassification("" as GameClassification, "All")}
+        {this.renderClassification(GameClassification.Game, "Games")}
+        {this.renderClassification(GameClassification.Tool, "Tools")}
+        {this.renderClassification(GameClassification.Assets, "Game assets")}
+        {this.renderClassification(GameClassification.Comic, "Comic")}
+        {this.renderClassification(GameClassification.Book, "Book")}
       </SortGroup>
     );
   }
 
   renderClassification(
-    space: Space,
     classification: GameClassification,
     label: LocalizedString
   ) {
     return (
       <SortOption
-        space={space}
         optionKey="classification"
         optionValue={classification}
         icon="star"

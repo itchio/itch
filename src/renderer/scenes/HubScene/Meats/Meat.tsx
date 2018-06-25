@@ -16,10 +16,12 @@ import LibraryPage from "renderer/pages/LibraryPage";
 import InstalledPage from "renderer/pages/LibraryPage/InstalledPage";
 import OwnedPage from "renderer/pages/LibraryPage/OwnedPage";
 import LocationsPage from "renderer/pages/LocationsPage";
+import LocationPage from "renderer/pages/LocationPage";
 import PreferencesPage from "renderer/pages/PreferencesPage";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
+import PreloadPage from "renderer/pages/PreloadPage";
 
 const ErrorDiv = styled.div`
   display: block;
@@ -188,18 +190,24 @@ class Meat extends React.PureComponent<Props, State> {
         } else {
           return CollectionsPage;
         }
+      case "locations":
+        if (sp.firstPathElement()) {
+          return LocationPage;
+        } else {
+          return LocationsPage;
+        }
       case "dashboard":
         return DashboardPage;
       case "downloads":
         return DownloadsPage;
       case "preferences":
         return PreferencesPage;
-      case "locations":
-        return LocationsPage;
       case "applog":
         return AppLogPage;
       case "crashy":
         return CrashyPage;
+      case "preload":
+        return PreloadPage;
       case "new-tab":
         return BrowserPage;
       default:

@@ -246,9 +246,9 @@ export default reducer<TabInstances>(initialState, on => {
   });
 
   on(actions.tabsRestored, (state, action) => {
-    const snapshot = action.payload;
+    const { snapshot } = action.payload;
 
-    let s = state;
+    let s = {};
 
     each(snapshot.items, (tabSave: TabDataSave) => {
       if (typeof tabSave !== "object") {
