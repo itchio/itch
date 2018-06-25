@@ -10,6 +10,7 @@ const Label = styled.div`
 
 const ButtonDiv = styled.div`
   ${styles.singleLine()};
+  transition: all 0.2s;
 
   font-size: ${props => props.theme.fontSizes.baseText};
   font-weight: normal;
@@ -69,6 +70,13 @@ const ButtonDiv = styled.div`
     font-weight: normal;
   }
 
+  &.disabled {
+    opacity: 0.2;
+    &:hover {
+      cursor: not-allowed;
+    }
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -96,16 +104,23 @@ class Button extends React.PureComponent<Props, any> {
       label,
       hint,
       wide,
+      disabled,
       onClick,
       ...restProps
     } = this.props;
 
     return (
       <ButtonDiv
-        onClick={onClick}
+        onClick={disabled ? null : onClick}
         data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at="top"
-        className={classNames(className, { primary, discreet, wide, fat })}
+        className={classNames(className, {
+          primary,
+          discreet,
+          wide,
+          fat,
+          disabled,
+        })}
         {...restProps}
       >
         {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
@@ -131,6 +146,7 @@ interface Props {
   discreet?: boolean;
   wide?: boolean;
   fat?: boolean;
+  disabled?: boolean;
   id?: string;
 }
 

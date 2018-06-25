@@ -19,6 +19,8 @@ import { actions } from "common/actions";
 import { unzip } from "./unzip";
 
 import { delay } from "../reactors/delay";
+import spawn from "main/os/spawn";
+import { MinimalContext } from "main/context";
 
 const sanityCheckTimeout = 10000;
 const platform = `${goos()}-${goarch()}`;
@@ -181,10 +183,18 @@ export class Package implements PackageLike {
       const executablePath = await which(this.name);
       this.info(`Found at ${executablePath}`);
 
+      const { err } = await spawn.exec({
+        logger: this.logger,
+        ctx: new MinimalContext(),
+        command: executablePath,
+        args: ["-V"],
+      });
+      const version = err;
+
       this.store.dispatch(
         actions.packageGotVersionPrefix({
           name: this.name,
-          version: "whatever is in $PATH",
+          version,
           versionPrefix: dirname(executablePath),
         })
       );

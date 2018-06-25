@@ -1,3 +1,4 @@
+import "!style-loader!css-loader!react-tabs/style/react-tabs.css";
 import "!style-loader!css-loader!../fonts/icomoon/style.css";
 import "!style-loader!css-loader!../fonts/lato/latofonts-custom.css";
 import "!style-loader!css-loader!react-hint/css/index.css";

@@ -250,8 +250,18 @@ const HeaderDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: relative;
 
   min-height: 2.6em;
+
+  .draggable {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 60px;
+    -webkit-app-region: drag;
+  }
 
   .title {
     color: ${props => props.theme.secondaryText};
@@ -353,6 +363,7 @@ class Modals extends React.PureComponent<Props & DerivedProps, State> {
     return (
       <ModalsDiv className="modal-div">
         <HeaderDiv>
+          <div className="draggable" />
           <span className="title" onClick={this.onDebugClick}>
             {T(title)}
           </span>

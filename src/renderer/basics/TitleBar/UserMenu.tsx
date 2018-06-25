@@ -109,21 +109,9 @@ class UserMenu extends React.PureComponent<Props & DerivedProps> {
           type: "separator",
         },
         {
-          icon: "search",
-          localizedLabel: ["menu.help.search_issue"],
-          action: actions.openInExternalBrowser({
-            url: `${urls.itchRepo}/search?type=Issues`,
-          }),
-        },
-        {
           icon: "bug",
           localizedLabel: ["menu.help.report_issue"],
           action: actions.reportIssue({}),
-        },
-        {
-          icon: "newspaper-o",
-          localizedLabel: ["menu.help.release_notes"],
-          action: actions.viewChangelog({}),
         },
         {
           icon: "lifebuoy",
