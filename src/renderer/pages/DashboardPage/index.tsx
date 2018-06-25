@@ -52,9 +52,9 @@ class DashboardPage extends React.PureComponent<Props> {
                 ]}
               />
               <SortSpacer />
-              {this.renderVisibilityFilter(space)}
+              {this.renderVisibilityFilter()}
               <SortSpacer />
-              {this.renderPaidStatusFilter(space)}
+              {this.renderPaidStatusFilter()}
             </SortsAndFilters>
           )}
         />
@@ -62,24 +62,19 @@ class DashboardPage extends React.PureComponent<Props> {
     );
   }
 
-  renderPaidStatusFilter(sp: Space): JSX.Element {
+  renderPaidStatusFilter(): JSX.Element {
     return (
       <SortGroup>
-        {this.renderPaidStatus(sp, "", "All")}
-        {this.renderPaidStatus(sp, "free", "Free")}
-        {this.renderPaidStatus(sp, "paid", "Paid")}
+        {this.renderPaidStatus("", "All")}
+        {this.renderPaidStatus("free", "Free")}
+        {this.renderPaidStatus("paid", "Paid")}
       </SortGroup>
     );
   }
 
-  renderPaidStatus(
-    sp: Space,
-    paidStatus: string,
-    label: LocalizedString
-  ): JSX.Element {
+  renderPaidStatus(paidStatus: string, label: LocalizedString): JSX.Element {
     return (
       <SortOption
-        space={sp}
         optionKey="paidStatus"
         optionValue={paidStatus}
         icon="coin"
@@ -88,26 +83,21 @@ class DashboardPage extends React.PureComponent<Props> {
     );
   }
 
-  renderVisibilityFilter(sp: Space): JSX.Element {
+  renderVisibilityFilter(): JSX.Element {
     return (
       <>
         <SortGroup>
-          {this.renderVisibility(sp, "", "All")}
-          {this.renderVisibility(sp, "published", "Published")}
-          {this.renderVisibility(sp, "draft", "Draft")}
+          {this.renderVisibility("", "All")}
+          {this.renderVisibility("published", "Published")}
+          {this.renderVisibility("draft", "Draft")}
         </SortGroup>
       </>
     );
   }
 
-  renderVisibility(
-    sp: Space,
-    visibility: string,
-    label: LocalizedString
-  ): JSX.Element {
+  renderVisibility(visibility: string, label: LocalizedString): JSX.Element {
     return (
       <SortOption
-        space={sp}
         optionKey="visibility"
         optionValue={visibility}
         icon="earth"

@@ -355,6 +355,9 @@ export interface NavigationState {
 
   /** current tab id */
   tab: string;
+
+  /** if true, window was preloaded, it is not used yet */
+  isPreload: boolean;
 }
 
 export interface LoadingTabs {

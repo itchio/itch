@@ -104,8 +104,9 @@ const butlerCaller = <Params, Result>(
         try {
           performance.mark(startMark);
           const client = await this.clientPromise;
-          debug(getRequestName(method), fullParams);
+          debug("%s <- %o", getRequestName(method), fullParams);
           const result = await client.call(method, fullParams);
+          debug("%s -> %o", getRequestName(method), result);
           performance.mark(endMark);
           performance.measure(`${measureName}`, startMark, endMark);
 

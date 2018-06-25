@@ -67,7 +67,6 @@ export default function(watcher: Watcher) {
       store.dispatch(
         actions.openWindow({
           initialURL: url,
-          modal: false,
           role: "secondary",
         })
       );

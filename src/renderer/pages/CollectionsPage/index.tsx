@@ -125,7 +125,6 @@ class CollectionsPage extends React.PureComponent<Props> {
               title={coll.title}
               href={urlForCollection(coll.id)}
               params={{ profileId: profile.id, collectionId: coll.id }}
-              sequence={0}
               renderTitleExtras={() => (
                 <>
                   <CollectionInfoSpacer />

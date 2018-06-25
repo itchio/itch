@@ -5,7 +5,10 @@ import styled, * as styles from "renderer/styles";
 import AdvancedSettings from "./AdvancedSettings";
 import BehaviorSettings from "./BehaviorSettings";
 import LanguageSettings from "./LanguageSettings";
-import FiltersContainer from "renderer/basics/FiltersContainer";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import { withSpace } from "renderer/hocs/withSpace";
+import { Space } from "common/helpers/space";
+import { Dispatch } from "common/types";
 
 const PreferencesDiv = styled.div`
   ${styles.meat()};
@@ -116,10 +119,18 @@ const PreferencesContentDiv = styled.div`
 `;
 
 class PreferencesPage extends React.PureComponent<Props> {
+  componentDidMount() {
+    const { dispatch, space } = this.props;
+    dispatch(
+      space.makeFetch({
+        label: ["sidebar.preferences"],
+      })
+    );
+  }
+
   render() {
     return (
       <PreferencesDiv>
-        <FiltersContainer loading={false} />
         <PreferencesContentDiv>
           <LanguageSettings />
           <InstallLocationsSettings />
@@ -131,6 +142,9 @@ class PreferencesPage extends React.PureComponent<Props> {
   }
 }
 
-interface Props extends MeatProps {}
+interface Props extends MeatProps {
+  space: Space;
+  dispatch: Dispatch;
+}
 
-export default PreferencesPage;
+export default withDispatch(withSpace(PreferencesPage));

@@ -11,9 +11,9 @@ export default function(watcher: Watcher) {
   watcher.on(actions.manageGame, async (store, action) => {
     const { game } = action.payload;
 
-    const { caves } = await call(messages.FetchCavesByGameID, {
-      gameId: game.id,
-    });
+    const caves = (await call(messages.FetchCaves, {
+      filters: { gameId: game.id },
+    })).items;
 
     const widgetParams = {
       game,

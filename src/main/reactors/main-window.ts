@@ -144,6 +144,18 @@ async function createRootWindow(store: Store) {
   if (parseInt(process.env.DEVTOOLS || "0", 10) > 0) {
     await openAppDevTools(nativeWindow);
   }
+
+  preloadWindow(store);
+}
+
+function preloadWindow(store: Store) {
+  store.dispatch(
+    actions.openWindow({
+      initialURL: "itch://preload",
+      role: "secondary",
+      preload: true,
+    })
+  );
 }
 
 /**
@@ -236,38 +248,23 @@ function ensureMainWindowInsideDisplay(store: Store) {
   }
 }
 
-function updateTitle(store: Store, title: string) {
-  const id = store.getState().windows["root"].native.id;
-  if (!id) {
-    return;
-  }
-
-  const window = BrowserWindow.fromId(id);
-  if (!window) {
-    return;
-  }
-
-  window.setTitle(title);
-}
-
 let secondaryWindowSeed = 1;
 
 export default function(watcher: Watcher) {
-  watcher.onStateChange({
-    makeSelector: (store, schedule) => {
-      const getI18n = (rs: IRootState) => rs.i18n;
-      const getID = (rs: IRootState) => rs.windows["root"].navigation.tab;
-      const getTabInstance = (rs: IRootState) =>
-        rs.windows["root"].tabInstances;
+  let subWatcher: Watcher;
 
-      const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>
-        Space.fromInstance(id, tabData[id])
-      );
+  const refreshSelectors = (rs: IRootState) => {
+    watcher.removeSub(subWatcher);
+    subWatcher = makeSubWatcher(rs);
+    watcher.addSub(subWatcher);
+  };
 
-      return createSelector(getI18n, getSpace, (i18n, sp) => {
-        updateTitle(store, t(i18n, sp.label()) + " - itch");
-      });
-    },
+  watcher.on(actions.windowOpened, async (store, action) => {
+    refreshSelectors(store.getState());
+  });
+
+  watcher.on(actions.windowClosed, async (store, action) => {
+    refreshSelectors(store.getState());
   });
 
   watcher.on(actions.preboot, async (store, action) => {
@@ -296,8 +293,8 @@ export default function(watcher: Watcher) {
       if (toggle && nativeWindow.isVisible()) {
         nativeWindow.hide();
       } else {
-        nativeWindow.show();
         if (window === "root") {
+          nativeWindow.show();
           const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
           if (maximized && !macOs) {
             nativeWindow.maximize();
@@ -329,8 +326,19 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.windowBoundsChanged, async (store, action) => {
     const { window, bounds } = action.payload;
+    const nativeWindow = getNativeWindow(store.getState(), window);
+    if (nativeWindow.isMaximized()) {
+      // don't store bounds when maximized
+      return;
+    }
+
     if (window === "root") {
       config.set(BOUNDS_CONFIG_KEY, bounds);
+    } else {
+      const navState = store.getState().windows[window].navigation;
+      const { initialURL } = navState;
+      const configKey = `${initialURL}-bounds`;
+      config.set(configKey, bounds);
     }
   });
 
@@ -357,7 +365,7 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.openWindow, async (store, action) => {
-    const { initialURL, modal } = action.payload;
+    const { initialURL, preload } = action.payload;
     const rs = store.getState();
 
     if (opensInWindow[initialURL]) {
@@ -367,20 +375,102 @@ export default function(watcher: Watcher) {
         if (windowState.navigation.initialURL === initialURL) {
           const nativeWin = getNativeWindow(rs, window);
           if (nativeWin) {
+            nativeWin.show();
             nativeWin.focus();
+
+            store.dispatch(
+              actions.windowAwakened({
+                initialURL,
+                window,
+              })
+            );
+            store.dispatch(
+              actions.navigate({
+                window,
+                url: initialURL,
+              })
+            );
+            return;
           }
-          return;
         }
       }
     }
 
-    const mainId = rs.windows["root"].native.id;
-    const nativeWindow = new BrowserWindow({
+    if (!preload) {
+      // do we have a preload available?
+      let numPreload = 0;
+      for (const window of Object.keys(rs.windows)) {
+        const windowState = rs.windows[window];
+        if (windowState.navigation.isPreload) {
+          numPreload++;
+        }
+      }
+
+      for (const window of Object.keys(rs.windows)) {
+        const windowState = rs.windows[window];
+        if (windowState.navigation.isPreload) {
+          const nativeWin = getNativeWindow(rs, window);
+          if (nativeWin) {
+            // yes we do! use that.
+            store.dispatch(
+              actions.windowAwakened({
+                initialURL,
+                window,
+              })
+            );
+            store.dispatch(
+              actions.navigate({
+                window,
+                url: initialURL,
+              })
+            );
+
+            const configKey = `${initialURL}-bounds`;
+            const bounds = config.get(configKey);
+            if (bounds) {
+              nativeWin.setBounds(bounds);
+            } else {
+              nativeWin.center();
+            }
+
+            setTimeout(() => {
+              let opacity = 0;
+              nativeWin.setOpacity(opacity);
+              nativeWin.show();
+
+              let interval: NodeJS.Timer;
+              let cb = () => {
+                opacity += 0.1;
+
+                if (opacity >= 1.0) {
+                  opacity = 1.0;
+                  clearInterval(interval);
+                }
+                nativeWin.setOpacity(opacity);
+              };
+              interval = setInterval(cb, 16);
+            }, 250);
+
+            // if this was the last preload, preload another one
+            if (numPreload === 1) {
+              preloadWindow(store);
+            }
+
+            return;
+          }
+        }
+      }
+    }
+
+    const opts: BrowserWindowConstructorOptions = {
       ...commonBrowserWindowOpts(),
       title: app.getName(),
-      parent: modal ? BrowserWindow.fromId(mainId) : null,
-      modal,
-    });
+    };
+    if (preload) {
+      opts.show = false;
+    }
+
+    const nativeWindow = new BrowserWindow(opts);
     const window = `secondary-${secondaryWindowSeed++}`;
     const role: ItchWindowRole = "secondary";
     store.dispatch(
@@ -389,6 +479,7 @@ export default function(watcher: Watcher) {
         role,
         nativeId: nativeWindow.id,
         initialURL: initialURL,
+        preload,
       })
     );
     nativeWindow.loadURL(makeAppURL({ window, role }));
@@ -534,6 +625,16 @@ function hookNativeWindow(
     debouncedBounds();
   });
 
+  nativeWindow.on("close", (e: any) => {
+    if (window !== "root") {
+      e.preventDefault();
+      nativeWindow.hide();
+      store.dispatch(actions.windowLulled({ window }));
+    } else {
+      store.dispatch(actions.windowClosed({ window }));
+    }
+  });
+
   nativeWindow.on("closed", (e: any) => {
     store.dispatch(actions.windowClosed({ window }));
   });
@@ -556,4 +657,37 @@ export function getNativeWindow(rs: IRootState, window: string): BrowserWindow {
     return BrowserWindow.fromId(ns.id);
   }
   return null;
+}
+
+function makeSubWatcher(rs: IRootState) {
+  const watcher = new Watcher();
+  for (const window of Object.keys(rs.windows)) {
+    watcher.onStateChange({
+      makeSelector: (store, schedule) => {
+        const getI18n = (rs: IRootState) => rs.i18n;
+        const getID = (rs: IRootState) => rs.windows[window].navigation.tab;
+        const getTabInstance = (rs: IRootState) =>
+          rs.windows[window].tabInstances;
+
+        const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>
+          Space.fromInstance(id, tabData[id])
+        );
+
+        return createSelector(getI18n, getSpace, (i18n, sp) => {
+          const nativeWindow = getNativeWindow(store.getState(), window);
+          if (nativeWindow && !nativeWindow.isDestroyed()) {
+            const label = t(i18n, sp.label());
+            let title: string;
+            if (label) {
+              title = `${label} - ${app.getName()}`;
+            } else {
+              title = `${app.getName()}`;
+            }
+            nativeWindow.setTitle(title);
+          }
+        });
+      },
+    });
+  }
+  return watcher;
 }

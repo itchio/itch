@@ -141,7 +141,7 @@ export const actions = wireActions({
   openWindow: action<{
     initialURL: string;
     role: ItchWindowRole;
-    modal: boolean;
+    preload?: boolean;
   }>(),
   windowClosed: action<{
     window: string;
@@ -151,6 +151,14 @@ export const actions = wireActions({
     nativeId: number;
     initialURL: string;
     role: ItchWindowRole;
+    preload?: boolean;
+  }>(),
+  windowAwakened: action<{
+    window: string;
+    initialURL: string;
+  }>(),
+  windowLulled: action<{
+    window: string;
   }>(),
 
   // setup
@@ -381,7 +389,10 @@ export const actions = wireActions({
   tabsChanged: action<{
     window: string;
   }>(),
-  tabsRestored: action<ItchAppTabs>(),
+  tabsRestored: action<{
+    window: string;
+    snapshot: ItchAppTabs;
+  }>(),
   tabDataFetched: action<{
     window: string;
 

@@ -15,6 +15,8 @@ import LoadingCircle from "renderer/basics/LoadingCircle";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
 import styled, * as styles from "renderer/styles";
+import { Space } from "common/helpers/space";
+import { withSpace } from "renderer/hocs/withSpace";
 
 const StripeDiv = styled.div`
   display: flex;
@@ -53,10 +55,10 @@ const StripeItem = styled.div`
 `;
 
 interface Props<Params, Res> {
+  space: Space;
   title: LocalizedString;
   href: string;
   params: Params;
-  sequence?: number;
   renderTitleExtras?: () => JSX.Element;
   map: (r: Res) => Game[];
 }
@@ -72,14 +74,14 @@ export default <Params, Res extends FetchRes>(
 ) => {
   const Call = butlerCaller(rc);
 
-  return class extends React.PureComponent<Props<Params, Res>> {
+  const stripe = class extends React.PureComponent<Props<Params, Res>> {
     render() {
-      const { params, sequence } = this.props;
+      const { params, space } = this.props;
 
       return (
         <Call
           params={{ ...(params as any), limit: stripeLimit }}
-          sequence={sequence}
+          sequence={space.sequence()}
           loadingHandled
           errorsHandled
           render={({ result, error, loading }) => (
@@ -161,6 +163,7 @@ export default <Params, Res extends FetchRes>(
       return <ViewAll href={this.props.href}>View all...</ViewAll>;
     }
   };
+  return withSpace(stripe);
 };
 
 function renderNoop(): JSX.Element {

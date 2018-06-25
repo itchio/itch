@@ -7,20 +7,37 @@ import reducer from "../reducer";
 
 import { arrayMove } from "react-sortable-hoc";
 
-const initialState = {
+const initialState: NavigationState = {
   initialURL: "",
-  page: "hub",
   openTabs: ["initial-tab"],
   loadingTabs: {},
   tab: "initial-tab",
-} as NavigationState;
+  isPreload: false,
+};
 
 export default reducer<NavigationState>(initialState, on => {
   on(actions.windowOpened, (state, action) => {
-    const { initialURL } = action.payload;
+    const { initialURL, preload } = action.payload;
     return {
       ...initialState,
       initialURL,
+      isPreload: preload,
+    };
+  });
+
+  on(actions.windowAwakened, (state, action) => {
+    const { initialURL } = action.payload;
+    return {
+      ...state,
+      initialURL,
+      isPreload: false,
+    };
+  });
+
+  on(actions.windowLulled, (state, action) => {
+    return {
+      ...state,
+      isPreload: true,
     };
   });
 
@@ -105,7 +122,7 @@ export default reducer<NavigationState>(initialState, on => {
   });
 
   on(actions.tabsRestored, (state, action) => {
-    const snapshot = action.payload;
+    const { snapshot } = action.payload;
 
     const tab = snapshot.current || state.tab;
     const openTabs = filter(
