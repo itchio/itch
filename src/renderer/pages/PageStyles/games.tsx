@@ -15,7 +15,7 @@ import StandardSaleRibbon from "renderer/pages/common/StandardSaleRibbon";
 const baseWidth = 215;
 const baseHeight = 170;
 
-const coverFactor = 1.1;
+const coverFactor = 0.9;
 export const coverWidth = baseWidth * coverFactor;
 export const coverHeight = baseHeight * coverFactor;
 
