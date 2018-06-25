@@ -1,19 +1,14 @@
+import { actions } from "common/actions";
+import urls from "common/constants/urls";
+import rootLogger from "common/logger";
+import { Store } from "common/types";
+import { isItchioURL } from "common/util/url";
 import { Watcher } from "common/util/watcher";
-
+import { shell } from "electron";
+import { modalWidgets } from "renderer/modal-widgets";
 import urlParser from "url";
 
-import rootLogger from "common/logger";
 const logger = rootLogger.child({ name: "reactors/url" });
-
-import urls from "common/constants/urls";
-
-import { shell } from "electron";
-
-import { actions } from "common/actions";
-import { Store } from "common/types";
-
-import { reportIssue } from "main/crash-reporter";
-import { isItchioURL } from "common/util/url";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.processUrlArguments, async (store, action) => {
@@ -70,14 +65,19 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.reportIssue, async (store, action) => {
-    // TODO: that's dirty, just make sure every time we call reportIssue, we have
-    // a non-null payload
-    const { log: issueLog } = action.payload || { log: null };
+    const { log } = action.payload;
 
-    reportIssue({
-      body: "Dear itch app team, ",
-      log: issueLog,
-    });
+    store.dispatch(
+      actions.openModal(
+        modalWidgets.reportIssue.make({
+          window: "root",
+          title: "Send feedback",
+          widgetParams: {
+            log,
+          },
+        })
+      )
+    );
   });
 }
 

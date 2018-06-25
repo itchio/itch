@@ -1,6 +1,4 @@
-import { shell, dialog } from "electron";
-import electron from "electron";
-const app = electron.app || electron.remote.app;
+import { shell, dialog, app } from "electron";
 
 import env from "common/env";
 
@@ -13,7 +11,7 @@ import { isNetworkError } from "main/net/errors";
 
 import { isCancelled } from "common/types";
 
-import { currentRuntime, runtimeProp } from "main/os/runtime";
+import { currentRuntime } from "main/os/runtime";
 import * as os from "main/os";
 import * as sf from "main/os/sf";
 
@@ -85,7 +83,7 @@ ${log}
 `;
   }
 
-  const platformEmoji = platformData[runtimeProp(currentRuntime())].emoji;
+  const platformEmoji = platformData[currentRuntime().platform].emoji;
   const query = querystring.stringify({
     title: `${platformEmoji} ${type} v${app.getVersion()}`,
     body: before + body,

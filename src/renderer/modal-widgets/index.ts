@@ -37,6 +37,9 @@ import TwoFactorInput, {
   TwoFactorInputParams,
   TwoFactorInputResponse,
 } from "./TwoFactorInput";
+import ReportIssue, {
+  ReportIssueParams,
+} from "renderer/modal-widgets/ReportIssue";
 
 interface TypedModalBase<Params> extends ModalBase {
   widgetParams: Params;
@@ -133,6 +136,7 @@ export const modalWidgets = wireWidgets({
     ScanInstallLocationsParams,
     ScanInstallLocationsResponse
   >(ScanInstallLocations),
+  reportIssue: widget<ReportIssueParams, void>(ReportIssue),
 
   // dummy widgets
 

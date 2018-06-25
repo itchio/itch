@@ -1,8 +1,8 @@
 import React from "react";
 import { InjectedIntl, injectIntl } from "react-intl";
+import { ModalWidgetProps } from "renderer/modal-widgets";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { T, TString } from "renderer/t";
-import { ModalWidgetProps } from "./index";
 
 class TwoFactorInput extends React.PureComponent<Props & DerivedProps> {
   refs: {
