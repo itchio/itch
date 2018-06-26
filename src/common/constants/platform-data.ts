@@ -1,6 +1,19 @@
 import { Architectures } from "common/butlerd/messages";
 
-const data = {
+interface PlatformData {
+  icon: string;
+  platform: string;
+  emoji: string;
+}
+
+interface PlatformDataMap {
+  windows: PlatformData;
+  linux: PlatformData;
+  osx: PlatformData;
+  [key: string]: PlatformData;
+}
+
+const data: PlatformDataMap = {
   windows: { icon: "windows8", platform: "windows", emoji: "🏁" },
   linux: { icon: "tux", platform: "linux", emoji: "🐧" },
   osx: { icon: "apple", platform: "osx", emoji: "🍎" },
@@ -8,13 +21,17 @@ const data = {
 export default data;
 
 export type PlatformHolder = {
-  platforms: { [K in keyof typeof data]?: Architectures };
+  platforms: {
+    windows: Architectures;
+    linux: Architectures;
+    osx: Architectures;
+  };
   type: "html" | any;
 };
 
 export function hasPlatforms(target: PlatformHolder): boolean {
   for (const key of Object.keys(data)) {
-    if (target.platforms[key]) {
+    if ((target.platforms as { [key: string]: Architectures })[key]) {
       return true;
     }
   }

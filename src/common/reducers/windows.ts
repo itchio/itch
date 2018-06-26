@@ -1,4 +1,4 @@
-import { WindowsState, IRootState, Action } from "../types";
+import { WindowsState, Action } from "../types";
 import windowReducer from "./window";
 import { actions } from "../actions";
 import { omit } from "underscore";
@@ -8,7 +8,7 @@ const initialState: WindowsState = {};
 const windowOpenedType = actions.windowOpened({} as any).type;
 const windowClosedType = actions.windowClosed({} as any).type;
 
-export default function(state: IRootState, action: Action<any>) {
+export default function(state: WindowsState, action: Action<any>) {
   if (typeof state === "undefined") {
     return initialState;
   }
@@ -46,7 +46,7 @@ export default function(state: IRootState, action: Action<any>) {
       }
     }
 
-    let newState = {};
+    let newState: WindowsState = {};
     for (const k of Object.keys(state)) {
       newState[k] = windowReducer(state[k], action);
     }

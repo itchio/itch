@@ -1,23 +1,17 @@
-import React from "react";
-
-import Icon from "renderer/basics/Icon";
-import Button from "renderer/basics/Button";
-import LoadingCircle from "renderer/basics/LoadingCircle";
-
-import { T } from "renderer/t";
-import styled from "renderer/styles";
-
-import {
-  connect,
-  Dispatchers,
-  actionCreatorsList,
-} from "renderer/hocs/connect";
-import { SetupOperation, IRootState } from "common/types";
-
-import { fileSize } from "common/format/filesize";
-import { downloadProgress } from "common/format/download-progress";
+import { actions } from "common/actions";
 import urls from "common/constants/urls";
+import { downloadProgress } from "common/format/download-progress";
+import { fileSize } from "common/format/filesize";
+import { Dispatch, RootState, SetupOperation } from "common/types";
+import React from "react";
+import Button from "renderer/basics/Button";
+import Icon from "renderer/basics/Icon";
 import Link from "renderer/basics/Link";
+import LoadingCircle from "renderer/basics/LoadingCircle";
+import { connect } from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import styled from "renderer/styles";
+import { T } from "renderer/t";
 
 const BlockingOperationDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -60,9 +54,9 @@ const Spacer = styled.div`
   min-width: 8px;
 `;
 
-class BlockingOperation extends React.PureComponent<Props & DerivedProps> {
+class BlockingOperation extends React.PureComponent<Props> {
   render() {
-    const { retrySetup, reportIssue, blockingOperation, windows } = this.props;
+    const { dispatch, blockingOperation, windows } = this.props;
 
     const { message, icon, progressInfo } = blockingOperation;
     const hasError = icon === "error";
@@ -110,7 +104,7 @@ class BlockingOperation extends React.PureComponent<Props & DerivedProps> {
                 discreet
                 icon="repeat"
                 label={T(["login.action.retry_setup"])}
-                onClick={() => retrySetup({})}
+                onClick={() => dispatch(actions.retrySetup({}))}
               />
               <Spacer />
               <Button
@@ -118,11 +112,13 @@ class BlockingOperation extends React.PureComponent<Props & DerivedProps> {
                 icon="bug"
                 label={T(["grid.item.report_problem"])}
                 onClick={() =>
-                  reportIssue({
-                    log: `Setup did not complete successfully:\n${
-                      blockingOperation.stack
-                    }`,
-                  })
+                  dispatch(
+                    actions.reportIssue({
+                      log: `Setup did not complete successfully:\n${
+                        blockingOperation.stack
+                      }`,
+                    })
+                  )
                 }
               />
             </div>
@@ -145,7 +141,8 @@ class BlockingOperation extends React.PureComponent<Props & DerivedProps> {
   }
 
   learnAboutAntivirus = () => {
-    this.props.openInExternalBrowser({ url: urls.windowsAntivirus });
+    const { dispatch } = this.props;
+    dispatch(actions.openInExternalBrowser({ url: urls.windowsAntivirus }));
   };
 }
 
@@ -154,20 +151,15 @@ class BlockingOperation extends React.PureComponent<Props & DerivedProps> {
 interface Props {
   blockingOperation: SetupOperation;
   windows?: boolean;
+
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList(
-  "retrySetup",
-  "openInExternalBrowser",
-  "reportIssue"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<Props>(
-  BlockingOperation,
-  {
-    actionCreators,
-    state: (rs: IRootState) => ({ windows: rs.system.windows }),
-  }
+export default withDispatch(
+  connect<Props>(
+    BlockingOperation,
+    {
+      state: (rs: RootState) => ({ windows: rs.system.windows }),
+    }
+  )
 );

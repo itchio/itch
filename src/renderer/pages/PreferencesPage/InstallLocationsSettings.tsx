@@ -3,17 +3,14 @@ import { actions } from "common/actions/index";
 import { call, messages } from "common/butlerd/index";
 import { InstallLocationSummary } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
-import { MenuTemplate, IRootState } from "common/types";
+import { Dispatch, RootState, MenuTemplate } from "common/types";
 import { rendererWindow, urlForInstallLocation } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
 import IconButton from "renderer/basics/IconButton";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { connect } from "renderer/hocs/connect";
 import watching, { Watcher } from "renderer/hocs/watching";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { findWhere, size } from "underscore";
@@ -154,6 +151,7 @@ class InstallLocationSettings extends React.Component<
   }
 
   render() {
+    const { dispatch } = this.props;
     return (
       <>
         <h2>{T(["preferences.install_locations"])}</h2>
@@ -164,14 +162,14 @@ class InstallLocationSettings extends React.Component<
             icon="plus"
             label={T(["preferences.install_location.add"])}
             onClick={() =>
-              this.props.addInstallLocation({ window: rendererWindow() })
+              dispatch(actions.addInstallLocation({ window: rendererWindow() }))
             }
           />
           <Spacer />
           <Button
             icon="repeat"
             label={T(["preferences.scan_install_locations"])}
-            onClick={() => this.props.scanInstallLocations({})}
+            onClick={() => dispatch(actions.scanInstallLocations({}))}
           />
         </ControlButtonsDiv>
       </>
@@ -294,39 +292,37 @@ class InstallLocationSettings extends React.Component<
       });
     }
 
-    // TODO: disable some of these
-    this.props.popupContextMenu({
-      window: rendererWindow(),
-      clientX: e.clientX,
-      clientY: e.clientY,
-      template,
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.popupContextMenu({
+        window: rendererWindow(),
+        clientX: e.clientX,
+        clientY: e.clientY,
+        template,
+      })
+    );
   };
 }
 
-interface Props {}
+interface Props {
+  dispatch: Dispatch;
+}
 
-const actionCreators = actionCreatorsList(
-  "popupContextMenu",
-  "updatePreferences",
-  "addInstallLocation",
-  "scanInstallLocations"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   defaultInstallLocation: string;
-};
+}
 
 interface State {
   installLocations: InstallLocationSummary[];
 }
 
-export default connect<Props>(
-  InstallLocationSettings,
-  {
-    actionCreators,
-    state: (rs: IRootState) => ({
-      defaultInstallLocation: rs.preferences.defaultInstallLocation,
-    }),
-  }
+export default withDispatch(
+  connect<Props>(
+    InstallLocationSettings,
+    {
+      state: (rs: RootState) => ({
+        defaultInstallLocation: rs.preferences.defaultInstallLocation,
+      }),
+    }
+  )
 );

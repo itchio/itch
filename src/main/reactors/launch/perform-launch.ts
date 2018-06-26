@@ -60,7 +60,7 @@ export async function performLaunch(
     prereqsModal = null;
   }
 
-  let powerSaveBlockerId = null;
+  let powerSaveBlockerId: number = null;
 
   let client: Client;
   let cancelled = false;

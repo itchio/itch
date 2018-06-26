@@ -4,7 +4,6 @@
     "jsx": "react",
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
-    "noImplicitAny": false,
     "skipLibCheck": true,
     "module": "commonjs",
     "esModuleInterop": true,

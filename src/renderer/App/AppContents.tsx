@@ -9,8 +9,8 @@ import React from "react";
 import Layout from "renderer/App/Layout";
 import Modals from "renderer/App/Modals";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
-import { withDispatch } from "renderer/hocs/withDispatch";
 import { actions } from "common/actions";
+import { hook } from "renderer/hocs/hook";
 
 class AppContents extends React.PureComponent<Props> {
   render() {
@@ -55,4 +55,4 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default withDispatch(AppContents);
+export default hook()(AppContents);

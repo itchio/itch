@@ -1,23 +1,17 @@
-import React from "react";
 import classNames from "classnames";
-
-import LoadingCircle from "renderer/basics/LoadingCircle";
-
-import electron from "electron";
-
-import { T } from "renderer/t";
 import { fileSize } from "common/format/filesize";
-import { ModalWidgetProps } from "./index";
-import styled from "renderer/styles";
 import { partitionForUser } from "common/util/partition-for-user";
-import { connect } from "renderer/hocs/connect";
+import electron from "electron";
+import React from "react";
+import LoadingCircle from "renderer/basics/LoadingCircle";
+import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
+import styled from "renderer/styles";
+import { T } from "renderer/t";
+import { ModalWidgetProps } from "./index";
 
-class ClearBrowsingData extends React.PureComponent<
-  Props & DerivedProps,
-  State
-> {
-  constructor(props: ClearBrowsingData["props"], context) {
+class ClearBrowsingData extends React.PureComponent<Props, State> {
+  constructor(props: ClearBrowsingData["props"], context: any) {
     super(props, context);
     this.state = {
       fetchedCacheSize: false,
@@ -177,12 +171,7 @@ export interface ClearBrowsingDataResponse {
 }
 
 interface Props
-  extends ModalWidgetProps<
-      ClearBrowsingDataParams,
-      ClearBrowsingDataResponse
-    > {}
-
-interface DerivedProps {
+  extends ModalWidgetProps<ClearBrowsingDataParams, ClearBrowsingDataResponse> {
   userId: number;
 }
 
@@ -194,11 +183,6 @@ interface State {
   clearCookies?: boolean;
 }
 
-export default connect<Props>(
-  ClearBrowsingData,
-  {
-    state: state => ({
-      userId: state.profile.profile.id,
-    }),
-  }
-);
+export default hook(map => ({
+  userId: map(rs => rs.profile.profile.id),
+}))(ClearBrowsingData);

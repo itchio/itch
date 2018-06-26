@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 import { Profile } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Space } from "common/helpers/space";
-import { IRootState } from "common/types";
+import { RootState, Dispatch } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import { partitionForUser } from "common/util/partition-for-user";
 import { getInjectURL } from "common/util/resources";
@@ -12,7 +12,7 @@ import { ExtendedWebContents } from "main/reactors/web-contents";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import { connect } from "renderer/hocs/connect";
-import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
@@ -275,9 +275,9 @@ export default withSpace(
         BrowserPageContents,
         {
           state: createStructuredSelector({
-            proxy: (rs: IRootState) => rs.system.proxy,
-            proxySource: (rs: IRootState) => rs.system.proxySource,
-            disableBrowser: (rs: IRootState) => rs.preferences.disableBrowser,
+            proxy: (rs: RootState) => rs.system.proxy,
+            proxySource: (rs: RootState) => rs.system.proxySource,
+            disableBrowser: (rs: RootState) => rs.preferences.disableBrowser,
           }),
         }
       )

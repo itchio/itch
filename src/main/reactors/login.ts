@@ -143,7 +143,7 @@ export default function(watcher: Watcher) {
 const YEAR_IN_SECONDS =
   365.25 /* days */ * 24 /* hours */ * 60 /* minutes */ * 60 /* seconds */;
 
-async function setCookie(profile: Profile, cookie: Map<string, string>) {
+async function setCookie(profile: Profile, cookie: { [key: string]: string }) {
   const partition = partitionForUser(String(profile.user.id));
   const session = require("electron").session.fromPartition(partition, {
     cache: false,

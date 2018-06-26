@@ -19,14 +19,12 @@ export interface Response {
   headers: Headers;
 }
 
-import { WriteStream } from "fs";
-
 interface RequestCallback {
   (res: Response): void;
 }
 
 export interface RequestOpts {
-  sink?: () => WriteStream;
+  sink?: () => NodeJS.WritableStream;
   cb?: RequestCallback;
   format?: "json" | null;
 }

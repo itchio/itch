@@ -1,6 +1,7 @@
+import { actions } from "common/actions";
 import { Download, GameUpdate } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { IRootState } from "common/types";
+import { Dispatch, RootState } from "common/types";
 import {
   getFinishedDownloads,
   getPendingDownloads,
@@ -10,12 +11,8 @@ import Button from "renderer/basics/Button";
 import EmptyState from "renderer/basics/EmptyState";
 import Link from "renderer/basics/Link";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
-import { withDispatch, Dispatch } from "renderer/hocs/withDispatch";
+import { connect } from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { withSpace } from "renderer/hocs/withSpace";
 import GameUpdateRow from "renderer/pages/DownloadsPage/GameUpdateRow";
 import Row from "renderer/pages/DownloadsPage/Row";
@@ -84,8 +81,7 @@ class DownloadsPage extends React.PureComponent<Props & DerivedProps> {
   }
 
   renderContents() {
-    const { items, finishedItems, updates } = this.props;
-    const { navigate } = this.props;
+    const { items, finishedItems, updates, dispatch } = this.props;
 
     const allEmpty =
       isEmpty(items) && isEmpty(finishedItems) && isEmpty(updates);
@@ -101,7 +97,9 @@ class DownloadsPage extends React.PureComponent<Props & DerivedProps> {
             buttonIcon="earth"
             buttonText={["status.downloads.find_games_button"]}
             buttonAction={() =>
-              navigate({ window: "root", url: "itch://featured" })
+              dispatch(
+                actions.navigate({ window: "root", url: "itch://featured" })
+              )
             }
           />
         </DownloadsContentDiv>
@@ -201,12 +199,12 @@ class DownloadsPage extends React.PureComponent<Props & DerivedProps> {
   }
 
   onTogglePause = () => {
-    const { downloadsPaused, setDownloadsPaused } = this.props;
-    setDownloadsPaused({ paused: !downloadsPaused });
+    const { downloadsPaused, dispatch } = this.props;
+    dispatch(actions.setDownloadsPaused({ paused: !downloadsPaused }));
   };
 
   renderRecentActivity(): JSX.Element {
-    const { finishedItems, clearFinishedDownloads } = this.props;
+    const { finishedItems, dispatch } = this.props;
 
     if (isEmpty(finishedItems)) {
       return null;
@@ -220,7 +218,7 @@ class DownloadsPage extends React.PureComponent<Props & DerivedProps> {
           </Title>
           <Link
             className="downloads-clear-all"
-            onClick={() => clearFinishedDownloads({})}
+            onClick={() => dispatch(actions.clearFinishedDownloads({}))}
           >
             {T(["status.downloads.clear_all_finished"])}
           </Link>
@@ -231,7 +229,8 @@ class DownloadsPage extends React.PureComponent<Props & DerivedProps> {
   }
 
   onUpdateAll = () => {
-    this.props.queueAllGameUpdates({});
+    const { dispatch } = this.props;
+    dispatch(actions.queueAllGameUpdates({}));
   };
 }
 
@@ -240,14 +239,7 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList(
-  "clearFinishedDownloads",
-  "navigate",
-  "queueAllGameUpdates",
-  "setDownloadsPaused"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   items: Download[];
   finishedItems: Download[];
   updates: {
@@ -256,7 +248,7 @@ type DerivedProps = Dispatchers<typeof actionCreators> & {
   updateCheckHappening: boolean;
   updateCheckProgress: number;
   downloadsPaused: boolean;
-};
+}
 
 export default withSpace(
   withDispatch(
@@ -264,14 +256,13 @@ export default withSpace(
       DownloadsPage,
       {
         state: createStructuredSelector({
-          items: (rs: IRootState) => getPendingDownloads(rs.downloads),
-          finishedItems: (rs: IRootState) => getFinishedDownloads(rs.downloads),
-          updates: (rs: IRootState) => rs.gameUpdates.updates,
-          updateCheckHappening: (rs: IRootState) => rs.gameUpdates.checking,
-          updateCheckProgress: (rs: IRootState) => rs.gameUpdates.progress,
-          downloadsPaused: (rs: IRootState) => rs.downloads.paused,
+          items: (rs: RootState) => getPendingDownloads(rs.downloads),
+          finishedItems: (rs: RootState) => getFinishedDownloads(rs.downloads),
+          updates: (rs: RootState) => rs.gameUpdates.updates,
+          updateCheckHappening: (rs: RootState) => rs.gameUpdates.checking,
+          updateCheckProgress: (rs: RootState) => rs.gameUpdates.progress,
+          downloadsPaused: (rs: RootState) => rs.downloads.paused,
         }),
-        actionCreators,
       }
     )
   )

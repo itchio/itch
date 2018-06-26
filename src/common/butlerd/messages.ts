@@ -113,7 +113,7 @@ export interface ProfileLoginWithPasswordResult {
   /** Information for the new profile, now remembered */
   profile: Profile;
   /** Profile cookie for website */
-  cookie: Map<string, string>;
+  cookie: { [key: string]: string };
 }
 
 /**
@@ -1498,7 +1498,7 @@ export interface Action {
   /** platform to restrict this action too */
   platform: Platform;
   /** localized action name */
-  locales: Map<string, ActionLocale>;
+  locales: { [key: string]: ActionLocale };
 }
 
 /**
@@ -2974,7 +2974,7 @@ export interface HTMLLaunchParams {
   /** Command-line arguments, to pass as `global.Itch.args` */
   args: string[];
   /** Environment variables, to pass as `global.Itch.env` */
-  env: Map<string, string>;
+  env: { [key: string]: string };
 }
 
 /**
@@ -2997,7 +2997,7 @@ export interface AllowSandboxSetupParams {
  */
 export interface PrereqsStartedNotification {
   /** A list of prereqs that need to be tended to */
-  tasks: Map<string, PrereqTask>;
+  tasks: { [key: string]: PrereqTask };
 }
 
 /**

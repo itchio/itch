@@ -26,7 +26,7 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 const macOs = os.platform() === "darwin";
 
 import {
-  IRootState,
+  RootState,
   Store,
   NativeWindowState,
   ItchWindowRole,
@@ -253,7 +253,7 @@ let secondaryWindowSeed = 1;
 export default function(watcher: Watcher) {
   let subWatcher: Watcher;
 
-  const refreshSelectors = (rs: IRootState) => {
+  const refreshSelectors = (rs: RootState) => {
     watcher.removeSub(subWatcher);
     subWatcher = makeSubWatcher(rs);
     watcher.addSub(subWatcher);
@@ -559,7 +559,7 @@ function hookNativeWindow(
     }
   });
 
-  nativeWindow.on("leave-full-screen", e => {
+  nativeWindow.on("leave-full-screen", (e: any) => {
     const ns = store.getState().windows[window].native;
     if (ns.fullscreen) {
       store.dispatch(
@@ -568,7 +568,7 @@ function hookNativeWindow(
     }
   });
 
-  nativeWindow.on("maximize", e => {
+  nativeWindow.on("maximize", (e: any) => {
     const ns = store.getState().windows[window].native;
     if (!ns.maximized) {
       store.dispatch(
@@ -577,7 +577,7 @@ function hookNativeWindow(
     }
   });
 
-  nativeWindow.on("unmaximize", e => {
+  nativeWindow.on("unmaximize", (e: any) => {
     const ns = store.getState().windows[window].native;
     if (ns.maximized) {
       store.dispatch(
@@ -641,7 +641,7 @@ function hookNativeWindow(
 }
 
 export function getNativeState(
-  rs: IRootState,
+  rs: RootState,
   window: string
 ): NativeWindowState {
   const w = rs.windows[window];
@@ -651,7 +651,7 @@ export function getNativeState(
   return null;
 }
 
-export function getNativeWindow(rs: IRootState, window: string): BrowserWindow {
+export function getNativeWindow(rs: RootState, window: string): BrowserWindow {
   const ns = getNativeState(rs, window);
   if (ns) {
     return BrowserWindow.fromId(ns.id);
@@ -659,14 +659,14 @@ export function getNativeWindow(rs: IRootState, window: string): BrowserWindow {
   return null;
 }
 
-function makeSubWatcher(rs: IRootState) {
+function makeSubWatcher(rs: RootState) {
   const watcher = new Watcher();
   for (const window of Object.keys(rs.windows)) {
     watcher.onStateChange({
       makeSelector: (store, schedule) => {
-        const getI18n = (rs: IRootState) => rs.i18n;
-        const getID = (rs: IRootState) => rs.windows[window].navigation.tab;
-        const getTabInstance = (rs: IRootState) =>
+        const getI18n = (rs: RootState) => rs.i18n;
+        const getID = (rs: RootState) => rs.windows[window].navigation.tab;
+        const getTabInstance = (rs: RootState) =>
           rs.windows[window].tabInstances;
 
         const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>

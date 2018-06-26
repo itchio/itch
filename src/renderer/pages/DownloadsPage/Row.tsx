@@ -1,47 +1,40 @@
-import React from "react";
 import classNames from "classnames";
+import { actions } from "common/actions";
+import { Download } from "common/butlerd/messages";
+import { downloadProgress } from "common/format/download-progress";
+import { formatError, getDownloadError } from "common/format/errors";
 import {
-  connect,
-  Dispatchers,
-  actionCreatorsList,
-} from "renderer/hocs/connect";
-
-import TimeAgo from "renderer/basics/TimeAgo";
-import UploadIcon from "renderer/basics/UploadIcon";
-import IconButton from "renderer/basics/IconButton";
-import Button from "renderer/basics/Button";
-import { HoverProps } from "renderer/hocs/withHover";
-import Cover from "renderer/basics/Cover";
-import MainAction from "renderer/basics/MainAction";
-
-import { ITask, IRootState } from "common/types";
-
-import styled, * as styles from "renderer/styles";
-import { css } from "renderer/styles";
-
-import { T } from "renderer/t";
+  formatOperation,
+  formatOutcome,
+  formatReason,
+} from "common/format/operation";
+import { formatUploadTitle } from "common/format/upload";
 import getGameStatus, {
   GameStatus,
   Operation,
   OperationType,
 } from "common/helpers/get-game-status";
-import {
-  formatReason,
-  formatOutcome,
-  formatOperation,
-} from "common/format/operation";
-import { formatUploadTitle } from "common/format/upload";
-import { Download } from "common/butlerd/messages";
-import LoadingCircle from "renderer/basics/LoadingCircle";
-import { lighten } from "polished";
-import { downloadProgress } from "common/format/download-progress";
-import { formatError, getDownloadError } from "common/format/errors";
+import { Dispatch, RootState, ITask } from "common/types";
 import { rendererWindow, urlForGame } from "common/util/navigation";
-import withHover from "renderer/hocs/withHover";
+import { lighten } from "polished";
+import React from "react";
+import Button from "renderer/basics/Button";
+import Cover from "renderer/basics/Cover";
+import IconButton from "renderer/basics/IconButton";
+import LoadingCircle from "renderer/basics/LoadingCircle";
+import MainAction from "renderer/basics/MainAction";
+import TimeAgo from "renderer/basics/TimeAgo";
+import UploadIcon from "renderer/basics/UploadIcon";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
+import { connect } from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import withHover, { HoverProps } from "renderer/hocs/withHover";
 import { modalWidgets } from "renderer/modal-widgets";
 import Chart from "renderer/pages/DownloadsPage/Chart";
 import { Title, TitleBox } from "renderer/pages/PageStyles/games";
+import * as styles from "renderer/styles";
+import styled, { css } from "renderer/styles";
+import { T } from "renderer/t";
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -178,40 +171,45 @@ class DownloadRow extends React.PureComponent<Props & DerivedProps> {
   }
 
   onCoverContextMenu = (ev: React.MouseEvent<any>) => {
-    const { item, openGameContextMenu } = this.props;
+    const { item, dispatch } = this.props;
     const { game } = item;
-    openGameContextMenu({
-      game,
-      window: rendererWindow(),
-      clientX: ev.clientX,
-      clientY: ev.pageY,
-    });
+    dispatch(
+      actions.openGameContextMenu({
+        game,
+        window: rendererWindow(),
+        clientX: ev.clientX,
+        clientY: ev.pageY,
+      })
+    );
   };
 
   onNavigate = (ev: React.MouseEvent<any>) => {
-    const { item, navigate } = this.props;
+    const { item, dispatch } = this.props;
     if (ev.shiftKey && ev.ctrlKey) {
-      const { openModal } = this.props;
-      openModal(
-        modalWidgets.exploreJson.make({
-          window: "root",
-          title: "Download data",
-          message: "",
-          widgetParams: {
-            data: item,
-          },
-        })
+      dispatch(
+        actions.openModal(
+          modalWidgets.exploreJson.make({
+            window: "root",
+            title: "Download data",
+            message: "",
+            widgetParams: {
+              data: item,
+            },
+          })
+        )
       );
       return;
     }
 
     const background = doesEventMeanBackground(ev);
     const { game } = item;
-    navigate({
-      window: rendererWindow(),
-      url: urlForGame(game.id),
-      background,
-    });
+    dispatch(
+      actions.navigate({
+        window: rendererWindow(),
+        url: urlForGame(game.id),
+        background,
+      })
+    );
   };
 
   render() {
@@ -255,19 +253,22 @@ class DownloadRow extends React.PureComponent<Props & DerivedProps> {
 
   onDiscard = () => {
     const { id } = this.props.item;
-    this.props.discardDownload({ id });
+    const { dispatch } = this.props;
+    dispatch(actions.discardDownload({ id }));
   };
 
   onPrioritize = () => {
     const { id } = this.props.item;
-    this.props.prioritizeDownload({ id });
+    const { dispatch } = this.props;
+    dispatch(actions.prioritizeDownload({ id }));
   };
 
   onShowError = (ev: React.MouseEvent<any>) => {
     ev.stopPropagation();
 
     const { id } = this.props.item;
-    this.props.showDownloadError({ id });
+    const { dispatch } = this.props;
+    dispatch(actions.showDownloadError({ id }));
   };
 
   controls() {
@@ -488,18 +489,10 @@ interface Props extends HoverProps {
   first?: boolean;
   finished?: boolean;
   item: Download;
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList(
-  "navigate",
-  "prioritizeDownload",
-  "showDownloadError",
-  "discardDownload",
-  "openGameContextMenu",
-  "openModal"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   status: GameStatus;
   speeds: number[];
 
@@ -507,23 +500,24 @@ type DerivedProps = Dispatchers<typeof actionCreators> & {
   tasksByGameId: {
     [gameId: string]: ITask[];
   };
-};
+}
 
 export default withHover(
-  connect<Props>(
-    DownloadRow,
-    {
-      state: (rs: IRootState, props: Props) => {
-        const game = props.item.game;
+  withDispatch(
+    connect<Props>(
+      DownloadRow,
+      {
+        state: (rs: RootState, props: Props) => {
+          const game = props.item.game;
 
-        return {
-          speeds: rs.downloads.speeds,
-          downloadsPaused: rs.downloads.paused,
-          tasksByGameId: rs.tasks.tasksByGameId,
-          status: getGameStatus(rs, game, props.item.caveId),
-        };
-      },
-      actionCreators,
-    }
+          return {
+            speeds: rs.downloads.speeds,
+            downloadsPaused: rs.downloads.paused,
+            tasksByGameId: rs.tasks.tasksByGameId,
+            status: getGameStatus(rs, game, props.item.caveId),
+          };
+        },
+      }
+    )
   )
 );

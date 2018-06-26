@@ -8,7 +8,7 @@ const levelColors = {
   30: "color:green;",
   20: "color:blue;",
   10: "color:grey;",
-};
+} as { [key: number]: string };
 
 function write(entry: LogEntry) {
   const { name, level, msg } = entry;

@@ -1,9 +1,9 @@
+import { actions } from "common/actions";
 import {
   ContextMenuState,
   Dispatch,
   IMenuItem,
   MenuTemplate,
-  IRootState,
 } from "common/types";
 import { rendererWindowState } from "common/util/navigation";
 import { lighten } from "polished";
@@ -14,18 +14,13 @@ import {
   MenuItem,
   SubMenu,
 } from "react-contextmenu";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { createSelector } from "reselect";
 
 const menuId = "itch_context_menu";
 
-const noop = () => null;
+const noop = () => null as any;
 
 interface TriggerEvent {
   preventDefault: () => void;
@@ -42,9 +37,9 @@ interface MenuComponent {
   };
 }
 
-interface TriggerComponent {
+type TriggerComponent = {
   handleContextClick: (ev: TriggerEvent) => void;
-}
+} & any;
 
 const ContextMenuHandlerDiv = styled.div`
   .react-contextmenu {
@@ -128,7 +123,7 @@ const ContextMenuHandlerDiv = styled.div`
   }
 `;
 
-class ContextMenuHandler extends React.PureComponent<DerivedProps> {
+class ContextMenuHandler extends React.PureComponent<Props> {
   trigger?: TriggerComponent;
   menu?: MenuComponent;
 
@@ -229,11 +224,11 @@ class ContextMenuHandler extends React.PureComponent<DerivedProps> {
     }
   }
 
-  componentWillReceiveProps(nextProps: DerivedProps) {
+  componentWillReceiveProps(nextProps: Props) {
     this.maybeOpen(nextProps);
   }
 
-  maybeOpen(props: DerivedProps) {
+  maybeOpen(props: Props) {
     if (!(this.trigger && this.menu)) {
       return;
     }
@@ -251,44 +246,35 @@ class ContextMenuHandler extends React.PureComponent<DerivedProps> {
 
   onHide = () => {
     this.setState({ open: false });
-    this.props.closeContextMenu({});
+    const { dispatch } = this.props;
+    dispatch(actions.closeContextMenu({}));
   };
 
   onShow = () => {
     this.setState({ open: true });
   };
 
-  gotTrigger = trigger => {
+  gotTrigger = (trigger: TriggerComponent) => {
     this.trigger = trigger;
     this.maybeOpen(this.props);
   };
 
-  gotMenu = menu => {
+  gotMenu = (menu: MenuComponent) => {
     this.menu = menu;
     this.maybeOpen(this.props);
   };
 }
 
-const actionCreators = actionCreatorsList("closeContextMenu");
+interface Props {
+  dispatch: Dispatch;
 
-type DerivedProps = Dispatchers<typeof actionCreators> & {
   open: boolean;
   data: ContextMenuState["data"];
   macos: boolean;
+}
 
-  dispatch: Dispatch;
-};
-
-export default connect<{}>(
-  ContextMenuHandler,
-  {
-    state: createSelector(
-      (rs: IRootState) => rendererWindowState(rs).contextMenu.open,
-      (rs: IRootState) => rendererWindowState(rs).contextMenu.data,
-      (rs: IRootState) => rs.system.macos,
-      (open, data, macos) => ({ open, data, macos })
-    ),
-    actionCreators,
-    dispatch: dispatch => ({ dispatch }),
-  }
-);
+export default hook(map => ({
+  open: map(rs => rendererWindowState(rs).contextMenu.open),
+  data: map(rs => rendererWindowState(rs).contextMenu.data),
+  macos: map(rs => rs.system.macos),
+}))(ContextMenuHandler);

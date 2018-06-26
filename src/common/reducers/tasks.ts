@@ -60,8 +60,11 @@ const baseReducer = reducer<TasksState>(initialState, on => {
   });
 });
 
-const selector = createStructuredSelector({
-  tasksByGameId: (state: TasksState) => groupBy(state.tasks, "gameId"),
+const selector = createStructuredSelector<
+  Partial<TasksState>,
+  Partial<TasksState>
+>({
+  tasksByGameId: state => groupBy(state.tasks, "gameId"),
 });
 
 export default derivedReducer(baseReducer, selector);

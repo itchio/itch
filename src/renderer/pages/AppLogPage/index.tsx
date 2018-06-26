@@ -1,18 +1,18 @@
-import React from "react";
-
-import styled, * as styles from "renderer/styles";
-import Link from "renderer/basics/Link";
-import IconButton from "renderer/basics/IconButton";
-import { T } from "renderer/t";
-import { showInExplorerString } from "common/format/show-in-explorer";
 import { actions } from "common/actions";
-import LoadingCircle from "renderer/basics/LoadingCircle";
-import ErrorState from "renderer/basics/ErrorState";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
-import Log from "renderer/pages/AppLogPage/Log";
+import { showInExplorerString } from "common/format/show-in-explorer";
 import { Space } from "common/helpers/space";
+import { Dispatch } from "common/types";
+import React from "react";
+import ErrorState from "renderer/basics/ErrorState";
+import IconButton from "renderer/basics/IconButton";
+import Link from "renderer/basics/Link";
+import LoadingCircle from "renderer/basics/LoadingCircle";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { withSpace } from "renderer/hocs/withSpace";
+import Log from "renderer/pages/AppLogPage/Log";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import styled, * as styles from "renderer/styles";
+import { T } from "renderer/t";
 
 const AppLogDiv = styled.div`
   ${styles.meat()};

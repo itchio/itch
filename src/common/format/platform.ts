@@ -11,7 +11,7 @@ const platforms = {
  * Formats a platform for humans to read.
  */
 export function formatPlatform(p: Platform): string {
-  return platforms[p] || p;
+  return (platforms as any)[p] || p;
 }
 
 export function formatArch(arch: string): string {

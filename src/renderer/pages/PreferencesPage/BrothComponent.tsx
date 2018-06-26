@@ -3,7 +3,7 @@ import { createStructuredSelector } from "reselect";
 import { connect } from "renderer/hocs/connect";
 
 import Icon from "renderer/basics/Icon";
-import { IRootState, PackageState } from "common/types";
+import { RootState, PackageState } from "common/types";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { downloadProgress } from "common/format/download-progress";
 
@@ -85,7 +85,7 @@ export default connect<Props>(
   BrothComponent,
   {
     state: createStructuredSelector({
-      pkg: (rs: IRootState, props: Props) => rs.broth.packages[props.name],
+      pkg: (rs: RootState, props: Props) => rs.broth.packages[props.name],
     }),
   }
 );

@@ -3,6 +3,7 @@ import { getCaveSummary } from "common/butlerd";
 import { Cave, Game, Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { formatUploadTitle } from "common/format/upload";
+import { Dispatch } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
@@ -11,11 +12,7 @@ import LastPlayed from "renderer/basics/LastPlayed";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import UploadIcon from "renderer/basics/UploadIcon";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
@@ -83,7 +80,7 @@ const FileSize = styled.div`
   margin-left: 8px;
 `;
 
-class ManageGame extends React.PureComponent<Props & DerivedProps> {
+class ManageGame extends React.PureComponent<Props> {
   render() {
     const params = this.props.modal.widgetParams;
     const { game, caves, allUploads, loadingUploads } = params;
@@ -202,19 +199,25 @@ class ManageGame extends React.PureComponent<Props & DerivedProps> {
     const uploadId = parseInt(ev.currentTarget.dataset.uploadId, 10);
     const params = this.props.modal.widgetParams;
     const { game, allUploads } = params;
+    const { dispatch } = this.props;
     const upload = find(allUploads, { id: uploadId });
-    this.props.closeModal({
-      window: rendererWindow(),
-      action: actions.queueGameInstall({ game, upload }),
-    });
+    dispatch(
+      actions.closeModal({
+        window: rendererWindow(),
+        action: actions.queueGameInstall({ game, upload }),
+      })
+    );
   };
 
   onManage = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = ev.currentTarget.dataset.caveId;
-    this.props.closeModal({
-      window: rendererWindow(),
-      action: actions.manageCave({ caveId }),
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.closeModal({
+        window: rendererWindow(),
+        action: actions.manageCave({ caveId }),
+      })
+    );
   };
 }
 
@@ -225,20 +228,11 @@ export interface ManageGameParams {
   loadingUploads: boolean;
 }
 
-interface Props extends ModalWidgetProps<ManageGameParams, void> {}
+interface Props extends ModalWidgetProps<ManageGameParams, void> {
+  dispatch: Dispatch;
+}
 
-const actionCreators = actionCreatorsList(
-  "closeModal",
-  "exploreCave",
-  "manageCave"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<Props>(
-  ManageGame,
-  { actionCreators }
-);
+export default withDispatch(ManageGame);
 
 function formatUpload(upload: Upload): JSX.Element {
   return (

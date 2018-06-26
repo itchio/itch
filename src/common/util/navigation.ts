@@ -4,7 +4,7 @@ import querystring from "querystring";
 import {
   TabInstance,
   TabPage,
-  IRootState,
+  RootState,
   WindowState,
   ExtendedWindow,
   ItchWindow,
@@ -67,11 +67,11 @@ export function rendererWindow(): string {
   return itchWindow().window;
 }
 
-export function rendererWindowState(rs: IRootState): WindowState {
+export function rendererWindowState(rs: RootState): WindowState {
   return rs.windows[rendererWindow()];
 }
 
-export function rendererNavigation(rs: IRootState): NavigationState {
+export function rendererNavigation(rs: RootState): NavigationState {
   return rendererWindowState(rs).navigation;
 }
 

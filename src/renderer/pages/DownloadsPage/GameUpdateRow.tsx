@@ -1,4 +1,5 @@
 import { GameUpdate } from "common/butlerd/messages";
+import { Dispatch } from "common/types";
 import { rendererWindow, urlForGame } from "common/util/navigation";
 import React from "react";
 import { HoverCover } from "renderer/basics/Cover";
@@ -6,13 +7,10 @@ import Filler from "renderer/basics/Filler";
 import Link from "renderer/basics/Link";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { actions } from "common/actions";
 
 const GameUpdateRowDiv = styled.div`
   flex-shrink: 0;
@@ -58,7 +56,7 @@ const VersionInfo = styled.div`
   color: ${props => props.theme.secondaryText};
 `;
 
-class GameUpdateRow extends React.PureComponent<Props & DerivedProps> {
+class GameUpdateRow extends React.PureComponent<Props> {
   render() {
     const { update } = this.props;
     const { game, upload, build } = update;
@@ -99,31 +97,27 @@ class GameUpdateRow extends React.PureComponent<Props & DerivedProps> {
   }
 
   onUpdate = () => {
-    const { update, queueGameUpdate } = this.props;
-    queueGameUpdate({ update });
+    const { update, dispatch } = this.props;
+    dispatch(actions.queueGameUpdate({ update }));
   };
 
   onNavigate = (e: React.MouseEvent<any>) => {
-    const { update, navigate } = this.props;
+    const { update, dispatch } = this.props;
     const { game } = update;
 
-    navigate({
-      window: rendererWindow(),
-      url: urlForGame(game.id),
-      background: doesEventMeanBackground(e),
-    });
+    dispatch(
+      actions.navigate({
+        window: rendererWindow(),
+        url: urlForGame(game.id),
+        background: doesEventMeanBackground(e),
+      })
+    );
   };
 }
 
 interface Props {
   update: GameUpdate;
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList("navigate", "queueGameUpdate");
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {};
-
-export default connect<Props>(
-  GameUpdateRow,
-  { actionCreators }
-);
+export default withDispatch(GameUpdateRow);

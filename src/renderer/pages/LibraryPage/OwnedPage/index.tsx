@@ -1,9 +1,9 @@
 import { messages } from "common/butlerd";
 import { GameClassification, Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { LocalizedString } from "common/types";
+import { LocalizedString, Dispatch } from "common/types";
 import React from "react";
-import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
 import FilterInput from "renderer/pages/common/FilterInput";

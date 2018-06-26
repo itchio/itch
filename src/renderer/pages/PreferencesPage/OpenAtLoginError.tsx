@@ -8,7 +8,7 @@ import Icon from "renderer/basics/Icon";
 
 import { T } from "renderer/t";
 
-import { IRootState, IOpenAtLoginError } from "common/types";
+import { RootState, IOpenAtLoginError } from "common/types";
 
 class OpenAtLoginError extends React.PureComponent<Props & DerivedProps> {
   render() {
@@ -61,7 +61,7 @@ export default connect<Props>(
   OpenAtLoginError,
   {
     state: createStructuredSelector({
-      openAtLoginError: (rs: IRootState) => rs.status.openAtLoginError,
+      openAtLoginError: (rs: RootState) => rs.status.openAtLoginError,
     }),
   }
 );

@@ -1,22 +1,21 @@
 import classNames from "classnames";
+import { actions } from "common/actions";
 import env from "common/env";
 import { Space } from "common/helpers/space";
-import { ExtendedWindow, IRootState, TabInstance } from "common/types";
+import { ExtendedWindow, RootState, TabInstance } from "common/types";
 import { rendererWindow, rendererWindowState } from "common/util/navigation";
 import React from "react";
 import { FiltersContainerDiv } from "renderer/basics/FiltersContainer";
 import IconButton from "renderer/basics/IconButton";
 import NewVersionAvailable from "renderer/basics/TitleBar/NewVersionAvailable";
 import UserMenu from "renderer/basics/TitleBar/UserMenu";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { connect } from "renderer/hocs/connect";
+import { Dispatch } from "common/types/index";
 import { modalWidgets } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { createStructuredSelector } from "reselect";
+import { withDispatch } from "renderer/hocs/withDispatch";
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
@@ -116,72 +115,73 @@ class TitleBar extends React.PureComponent<Props & DerivedProps> {
 
   onClick = (e: React.MouseEvent<any>) => {
     if (e.shiftKey && e.ctrlKey) {
-      const { openModal } = this.props;
-      openModal(
-        modalWidgets.secretSettings.make({
-          window: rendererWindow(),
-          title: "Secret options",
-          message: "",
-          widgetParams: {},
-        })
+      const { dispatch } = this.props;
+      dispatch(
+        actions.openModal(
+          modalWidgets.secretSettings.make({
+            window: rendererWindow(),
+            title: "Secret options",
+            message: "",
+            widgetParams: {},
+          })
+        )
       );
       return;
     }
 
-    const { navigate } = this.props;
-    navigate({ window: "root", url: "itch://featured" });
+    const { dispatch } = this.props;
+    dispatch(actions.navigate({ window: "root", url: "itch://featured" }));
   };
 
   preferencesClick = () => {
-    this.props.navigate({ window: "root", url: "itch://preferences" });
+    const { dispatch } = this.props;
+    dispatch(actions.navigate({ window: "root", url: "itch://preferences" }));
   };
 
   minimizeClick = () => {
-    this.props.minimizeWindow({ window: rendererWindow() });
+    const { dispatch } = this.props;
+    dispatch(actions.minimizeWindow({ window: rendererWindow() }));
   };
 
   maximizeRestoreClick = () => {
-    this.props.toggleMaximizeWindow({ window: rendererWindow() });
+    const { dispatch } = this.props;
+    dispatch(actions.toggleMaximizeWindow({ window: rendererWindow() }));
   };
 
   closeClick = () => {
-    this.props.hideWindow({ window: rendererWindow() });
+    const { dispatch } = this.props;
+    dispatch(actions.hideWindow({ window: rendererWindow() }));
   };
 }
 
 interface Props {
   tab: string;
   secondary?: boolean;
+
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList(
-  "navigate",
-  "hideWindow",
-  "minimizeWindow",
-  "toggleMaximizeWindow",
-  "openModal"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   tabInstance: TabInstance;
   maximized: boolean;
   focused: boolean;
   macos: boolean;
-};
+}
 
-export default connect<Props>(
-  TitleBar,
-  {
-    state: () =>
-      createStructuredSelector({
-        tabInstance: (rs: IRootState, props: Props) =>
-          rendererWindowState(rs).tabInstances[props.tab] || emptyObj,
-        maximized: (rs: IRootState) =>
-          rs.windows[rendererWindow()].native.maximized,
-        // TODO: fixme: focus by window
-        focused: (rs: IRootState) => true,
-        macos: (rs: IRootState) => rs.system.macos,
-      }),
-    actionCreators,
-  }
+export default withDispatch(
+  connect<Props>(
+    TitleBar,
+    {
+      state: () =>
+        createStructuredSelector<RootState, any, any>({
+          tabInstance: (rs: RootState, props: Props) =>
+            rendererWindowState(rs).tabInstances[props.tab] || emptyObj,
+          maximized: (rs: RootState) =>
+            rs.windows[rendererWindow()].native.maximized,
+          focused: (rs: RootState) =>
+            rs.windows[rendererWindow()].native.focused,
+          macos: (rs: RootState) => rs.system.macos,
+        }),
+    }
+  )
 );

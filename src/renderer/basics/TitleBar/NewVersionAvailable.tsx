@@ -1,13 +1,10 @@
-import { IRootState } from "common/types";
+import { Dispatch, RootState } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { connect } from "renderer/hocs/connect";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
+import { actions } from "common/actions";
 
 const Container = styled.div`
   align-self: stretch;
@@ -31,7 +28,7 @@ const Spacer = styled.div`
   width: 0.4em;
 `;
 
-class NewVersionAvailable extends React.PureComponent<DerivedProps> {
+class NewVersionAvailable extends React.PureComponent<Props & DerivedProps> {
   render() {
     const { available } = this.props;
     if (!available) {
@@ -48,23 +45,26 @@ class NewVersionAvailable extends React.PureComponent<DerivedProps> {
   }
 
   onClick = () => {
-    this.props.relaunchRequest({});
+    const { dispatch } = this.props;
+    dispatch(actions.relaunchRequest({}));
   };
 }
 
-const actionCreators = actionCreatorsList("relaunchRequest");
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface Props {
+  dispatch: Dispatch;
+}
+
+interface DerivedProps {
   available?: boolean;
-};
+}
 
 export default connect(
   NewVersionAvailable,
   {
-    state: (rs: IRootState): Partial<DerivedProps> => {
+    state: (rs: RootState): Partial<DerivedProps> => {
       const pkg = rs.broth.packages[rs.system.appName];
       const available = pkg && pkg.stage === "need-restart";
       return { available };
     },
-    actionCreators,
   }
 );

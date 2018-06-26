@@ -1,23 +1,18 @@
-import React from "react";
-import {
-  connect,
-  Dispatchers,
-  actionCreatorsList,
-} from "renderer/hocs/connect";
+import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { T } from "renderer/t";
-
-import SelectRow, { SelectOption } from "renderer/basics/SelectRow";
+import { Dispatch, RootState, LocaleInfo } from "common/types";
+import React from "react";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-
+import SelectRow, { SelectOption } from "renderer/basics/SelectRow";
+import { connect } from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import styled from "renderer/styles";
+import { T } from "renderer/t";
+import { createStructuredSelector } from "reselect";
 import Label from "./Label";
 
-import { LocaleInfo, IRootState } from "common/types";
-
-import styled from "renderer/styles";
-import { createStructuredSelector } from "reselect";
 const Spacer = styled.div`
   width: 8px;
   height: 2px;
@@ -25,7 +20,7 @@ const Spacer = styled.div`
 
 class LanguageSettings extends React.PureComponent<Props & DerivedProps> {
   render() {
-    const { queueLocaleDownload, locales, lang, sniffedLang } = this.props;
+    const { dispatch, locales, lang, sniffedLang } = this.props;
 
     const options: SelectOption[] = [
       {
@@ -67,7 +62,7 @@ class LanguageSettings extends React.PureComponent<Props & DerivedProps> {
                 icon="repeat"
                 onClick={e => {
                   e.preventDefault();
-                  queueLocaleDownload({ lang });
+                  dispatch(actions.queueLocaleDownload({ lang }));
                 }}
               />
             )}
@@ -85,38 +80,36 @@ class LanguageSettings extends React.PureComponent<Props & DerivedProps> {
   }
 
   onLanguageChange = (lang: string) => {
-    const { updatePreferences } = this.props;
+    const { dispatch } = this.props;
     if (lang === "__") {
       lang = null;
     }
 
-    updatePreferences({ lang });
+    dispatch(actions.updatePreferences({ lang }));
   };
 }
 
-interface Props {}
+interface Props {
+  dispatch: Dispatch;
+}
 
-const actionCreators = actionCreatorsList(
-  "queueLocaleDownload",
-  "updatePreferences"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   locales: LocaleInfo[];
   lang: string;
   sniffedLang: string;
-  downloading: IRootState["i18n"]["downloading"];
-};
+  downloading: RootState["i18n"]["downloading"];
+}
 
-export default connect<Props>(
-  LanguageSettings,
-  {
-    actionCreators,
-    state: createStructuredSelector({
-      locales: (rs: IRootState) => rs.i18n.locales,
-      lang: (rs: IRootState) => rs.i18n.lang,
-      sniffedLang: (rs: IRootState) => rs.system.sniffedLanguage,
-      downloading: (rs: IRootState) => rs.i18n.downloading,
-    }),
-  }
+export default withDispatch(
+  connect<Props>(
+    LanguageSettings,
+    {
+      state: createStructuredSelector({
+        locales: (rs: RootState) => rs.i18n.locales,
+        lang: (rs: RootState) => rs.i18n.lang,
+        sniffedLang: (rs: RootState) => rs.system.sniffedLanguage,
+        downloading: (rs: RootState) => rs.i18n.downloading,
+      }),
+    }
+  )
 );

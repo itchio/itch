@@ -1,21 +1,20 @@
 import classNames from "classnames";
+import { Profile } from "common/butlerd/messages";
 import { DATE_FORMAT, formatDate } from "common/format/datetime";
-import { IRootState } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import React from "react";
 import ReactHintFactory from "react-hint";
-import { InjectedIntl, injectIntl } from "react-intl";
+import { InjectedIntl } from "react-intl";
 import ContextMenuHandler from "renderer/App/Layout/ContextMenuHandler";
 import NonLocalIndicator from "renderer/App/Layout/NonLocalIndicator";
 import StatusBar from "renderer/App/Layout/StatusBar";
-import { connect } from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
+import { ProfileProvider } from "renderer/hocs/withProfile";
 import GateScene from "renderer/scenes/GateScene";
 import HubScene from "renderer/scenes/HubScene";
 import styled from "renderer/styles";
 import { TString } from "renderer/t";
-import { createStructuredSelector } from "reselect";
-import { ProfileProvider } from "renderer/hocs/withProfile";
-import { Profile } from "common/butlerd/messages";
+import { withIntl } from "renderer/hocs/withIntl";
 
 const ReactHint = ReactHintFactory(React);
 
@@ -149,14 +148,8 @@ interface DerivedProps {
   intl: InjectedIntl;
 }
 
-export default connect<Props>(
-  injectIntl(Layout),
-  {
-    state: createStructuredSelector({
-      maximized: (rs: IRootState) =>
-        rs.windows[rendererWindow()].native.maximized,
-      ready: (rs: IRootState) => rs.setup.done && rs.profile.profile,
-      profile: (rs: IRootState) => rs.profile.profile,
-    }),
-  }
-);
+export default hook(map => ({
+  maximized: map(rs => rs.windows[rendererWindow()].native.maximized),
+  ready: map(rs => rs.setup.done && rs.profile.profile),
+  profile: map(rs => rs.profile.profile),
+}))(withIntl(Layout));

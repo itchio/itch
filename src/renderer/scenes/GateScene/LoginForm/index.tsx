@@ -1,21 +1,16 @@
-import React from "react";
-
-import { T } from "renderer/t";
+import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import {
-  connect,
-  actionCreatorsList,
-  Dispatchers,
-} from "renderer/hocs/connect";
-
-import Link from "renderer/basics/Link";
-import Button from "renderer/basics/Button";
-
-import styled, * as styles from "renderer/styles";
-import { IRootState } from "common/types";
-import Icon from "renderer/basics/Icon";
 import { formatError } from "common/format/errors";
+import { Dispatch, RootState } from "common/types";
+import React from "react";
+import Button from "renderer/basics/Button";
+import Icon from "renderer/basics/Icon";
+import Link from "renderer/basics/Link";
+import { connect } from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { Links } from "renderer/scenes/GateScene/styles";
+import styled, * as styles from "renderer/styles";
+import { T } from "renderer/t";
 
 const ErrorDiv = styled.div`
   min-width: 500px;
@@ -34,7 +29,7 @@ const ErrorDiv = styled.div`
 
 class LoginForm extends React.PureComponent<Props & DerivedProps> {
   render() {
-    const { openInExternalBrowser, showSaved, lastUsername } = this.props;
+    const { dispatch, showSaved, lastUsername } = this.props;
 
     return (
       <LoginFormDiv>
@@ -74,13 +69,21 @@ class LoginForm extends React.PureComponent<Props & DerivedProps> {
         <Links>
           <Link
             label={T(["login.action.register"])}
-            onClick={() => openInExternalBrowser({ url: urls.accountRegister })}
+            onClick={() =>
+              dispatch(
+                actions.openInExternalBrowser({ url: urls.accountRegister })
+              )
+            }
           />
           <span>{" · "}</span>
           <Link
             label={T(["login.action.reset_password"])}
             onClick={() =>
-              openInExternalBrowser({ url: urls.accountForgotPassword })
+              dispatch(
+                actions.openInExternalBrowser({
+                  url: urls.accountForgotPassword,
+                })
+              )
             }
           />
           <span key="separator">{" · "}</span>
@@ -122,13 +125,16 @@ class LoginForm extends React.PureComponent<Props & DerivedProps> {
       return;
     }
 
-    this.props.loginWithPassword({
-      username: username.value,
-      password: password.value,
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.loginWithPassword({
+        username: username.value,
+        password: password.value,
+      })
+    );
   };
 
-  handleKeyDown = e => {
+  handleKeyDown = (e: React.KeyboardEvent<any>) => {
     if (e.key === "Enter") {
       this.handleSubmit();
     }
@@ -170,25 +176,23 @@ const LoginFormDiv = styled.div``;
 
 interface Props {
   showSaved: () => void;
+
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList(
-  "openInExternalBrowser",
-  "loginWithPassword"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   lastUsername?: string;
   error?: Error;
-};
+}
 
-export default connect<Props>(
-  LoginForm,
-  {
-    state: (rs: IRootState) => ({
-      lastUsername: rs.profile.login.lastUsername,
-      error: rs.profile.login.error,
-    }),
-    actionCreators,
-  }
+export default withDispatch(
+  connect<Props>(
+    LoginForm,
+    {
+      state: (rs: RootState) => ({
+        lastUsername: rs.profile.login.lastUsername,
+        error: rs.profile.login.error,
+      }),
+    }
+  )
 );

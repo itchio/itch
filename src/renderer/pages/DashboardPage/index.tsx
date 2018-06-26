@@ -1,9 +1,9 @@
 import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { LocalizedString } from "common/types";
+import { Dispatch, LocalizedString } from "common/types";
 import React from "react";
-import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
 import GameSeries from "renderer/pages/common/GameSeries";
@@ -16,8 +16,8 @@ import {
   SortsAndFilters,
   SortSpacer,
 } from "renderer/pages/common/SortsAndFilters";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import ProfileGameStats from "renderer/pages/DashboardPage/ProfileGameStats";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
 const ProfileGameSeries = GameSeries(messages.FetchProfileGames);
 

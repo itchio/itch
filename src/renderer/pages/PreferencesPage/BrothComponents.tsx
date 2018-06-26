@@ -1,18 +1,16 @@
-import {
-  connect,
-  Dispatchers,
-  actionCreatorsList,
-} from "renderer/hocs/connect";
+import { actions } from "common/actions";
+import { Dispatch, RootState } from "common/types";
 import React from "react";
-import { IRootState } from "common/types";
-import { createStructuredSelector } from "reselect";
 import Icon from "renderer/basics/Icon";
-import { T } from "renderer/t";
+import { connect } from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import BrothComponent from "renderer/pages/PreferencesPage/BrothComponent";
+import { T } from "renderer/t";
+import { createStructuredSelector } from "reselect";
 
-class BrothComponents extends React.Component<DerivedProps> {
+class BrothComponents extends React.Component<Props & DerivedProps> {
   render() {
-    const { packageNames } = this.props;
+    const { dispatch, packageNames } = this.props;
 
     return (
       <div className="section">
@@ -20,7 +18,7 @@ class BrothComponents extends React.Component<DerivedProps> {
         <span
           className="button"
           onClick={() => {
-            this.props.checkForComponentUpdates({});
+            dispatch(actions.checkForComponentUpdates({}));
           }}
           style={{
             marginLeft: "10px",
@@ -35,17 +33,21 @@ class BrothComponents extends React.Component<DerivedProps> {
   }
 }
 
-const actionCreators = actionCreatorsList("checkForComponentUpdates");
-type DerivedProps = Dispatchers<typeof actionCreators> & {
-  packageNames: string[];
-};
+interface Props {
+  dispatch: Dispatch;
+}
 
-export default connect(
-  BrothComponents,
-  {
-    state: createStructuredSelector({
-      packageNames: (rs: IRootState) => rs.broth.packageNames,
-    }),
-    actionCreators,
-  }
+interface DerivedProps {
+  packageNames: string[];
+}
+
+export default withDispatch(
+  connect<Props>(
+    BrothComponents,
+    {
+      state: createStructuredSelector({
+        packageNames: (rs: RootState) => rs.broth.packageNames,
+      }),
+    }
+  )
 );

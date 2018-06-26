@@ -4,8 +4,12 @@
 declare module "react-hint" {
   import React from "react";
 
-  class ReactHint extends React.PureComponent<any, any> {}
-  function ReactHintFactory(r: any): typeof ReactHint;
+  interface Props {
+    events?: boolean;
+    onRenderContent: (target: HTMLElement, content: any) => JSX.Element;
+  }
+
+  function ReactHintFactory(r: any): React.ComponentType<Props> {}
 
   export = ReactHintFactory;
 }

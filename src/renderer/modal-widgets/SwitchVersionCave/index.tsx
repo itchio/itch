@@ -1,25 +1,18 @@
-import React from "react";
-
 import { actions } from "common/actions";
-
-import { T } from "renderer/t";
-
-import Icon from "renderer/basics/Icon";
-
-import styled from "renderer/styles";
-import { lighten } from "polished";
 import { Build, Cave, Upload } from "common/butlerd/messages";
 import { DAY_MONTH_FORMAT, MONTH_YEAR_FORMAT } from "common/format/datetime";
-import { isEmpty } from "underscore";
+import { Dispatch } from "common/types";
 import { rendererWindow } from "common/util/navigation";
-import CustomDate from "renderer/modal-widgets/SwitchVersionCave/CustomDate";
-import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
-import {
-  connect,
-  Dispatchers,
-  actionCreatorsList,
-} from "renderer/hocs/connect";
+import { lighten } from "polished";
+import React from "react";
+import Icon from "renderer/basics/Icon";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { ModalWidgetProps } from "renderer/modal-widgets";
+import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
+import CustomDate from "renderer/modal-widgets/SwitchVersionCave/CustomDate";
+import styled from "renderer/styles";
+import { T } from "renderer/t";
+import { isEmpty } from "underscore";
 
 const BuildListDiv = styled.div`
   width: 100%;
@@ -88,7 +81,7 @@ function monthFor(b: Build): number {
   return date.getUTCFullYear() * 12 + date.getUTCMonth();
 }
 
-class SwitchVersionCave extends React.PureComponent<Props & DerivedProps> {
+class SwitchVersionCave extends React.PureComponent<Props> {
   render() {
     const { builds } = this.props.modal.widgetParams;
 
@@ -154,10 +147,13 @@ class SwitchVersionCave extends React.PureComponent<Props & DerivedProps> {
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     const index = parseInt(ev.currentTarget.dataset.index, 10);
     const res: SwitchCaveResponse = { index };
-    this.props.closeModal({
-      window: rendererWindow(),
-      action: actions.modalResponse(res),
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.closeModal({
+        window: rendererWindow(),
+        action: actions.modalResponse(res),
+      })
+    );
   };
 }
 
@@ -173,13 +169,8 @@ export interface SwitchCaveResponse {
 }
 
 interface Props
-  extends ModalWidgetProps<SwitchVersionCaveParams, SwitchCaveResponse> {}
+  extends ModalWidgetProps<SwitchVersionCaveParams, SwitchCaveResponse> {
+  dispatch: Dispatch;
+}
 
-const actionCreators = actionCreatorsList("closeModal");
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<Props>(
-  SwitchVersionCave,
-  { actionCreators }
-);
+export default withDispatch(SwitchVersionCave);

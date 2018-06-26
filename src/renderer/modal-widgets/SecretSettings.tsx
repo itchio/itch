@@ -1,14 +1,12 @@
 import { createRequest } from "butlerd";
+import { actions } from "common/actions";
 import { call, messages } from "common/butlerd";
-import { IRootState } from "common/types";
+import { Dispatch, RootState } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
 import { doAsync } from "renderer/helpers/doAsync";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { connect } from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { ModalWidgetProps, modalWidgets } from "./index";
@@ -110,20 +108,24 @@ class SecretSettings extends React.PureComponent<Props & DerivedProps> {
   };
 
   onReloadLocales = () => {
-    this.props.reloadLocales({});
+    const { dispatch } = this.props;
+    dispatch(actions.reloadLocales({}));
   };
 
   onViewAppState = async () => {
     const chromeStore = (await import("renderer/store")).default;
-    this.props.openModal(
-      modalWidgets.exploreJson.make({
-        window: "root",
-        title: "Redux app state",
-        widgetParams: {
-          data: chromeStore.getState(),
-        },
-        fullscreen: true,
-      })
+    const { dispatch } = this.props;
+    dispatch(
+      actions.openModal(
+        modalWidgets.exploreJson.make({
+          window: "root",
+          title: "Redux app state",
+          widgetParams: {
+            data: chromeStore.getState(),
+          },
+          fullscreen: true,
+        })
+      )
     );
   };
 
@@ -134,14 +136,17 @@ class SecretSettings extends React.PureComponent<Props & DerivedProps> {
     // FIXME: remove workaround once upgrading to electron 1.8.x
     const app = require("electron").remote.app as any;
     const data = app.getGPUFeatureStatus();
-    this.props.openModal(
-      modalWidgets.exploreJson.make({
-        window: "root",
-        title: "GPU feature status",
-        widgetParams: {
-          data,
-        },
-      })
+    const { dispatch } = this.props;
+    dispatch(
+      actions.openModal(
+        modalWidgets.exploreJson.make({
+          window: "root",
+          title: "GPU feature status",
+          widgetParams: {
+            data,
+          },
+        })
+      )
     );
   };
 
@@ -158,22 +163,25 @@ class SecretSettings extends React.PureComponent<Props & DerivedProps> {
         e = ee;
       }
 
-      this.props.openModal(
-        modalWidgets.showError.make({
-          window: "root",
-          title: "test butlerd internal error",
-          message: "This is a test butlerd error",
-          detail: "It's fun to snoop!",
-          widgetParams: {
-            rawError: e,
-            log: "no log",
-          },
-          buttons: [
-            {
-              label: ["prompt.action.continue"],
+      const { dispatch } = this.props;
+      dispatch(
+        actions.openModal(
+          modalWidgets.showError.make({
+            window: "root",
+            title: "test butlerd internal error",
+            message: "This is a test butlerd error",
+            detail: "It's fun to snoop!",
+            widgetParams: {
+              rawError: e,
+              log: "no log",
             },
-          ],
-        })
+            buttons: [
+              {
+                label: ["prompt.action.continue"],
+              },
+            ],
+          })
+        )
       );
     });
   };
@@ -185,18 +193,22 @@ class SecretSettings extends React.PureComponent<Props & DerivedProps> {
   };
 
   onOpenCrashy = () => {
-    this.props.navigate({ window: "root", url: "itch://crashy" });
-    this.props.closeModal({ window: "root" });
+    const { dispatch } = this.props;
+    dispatch(actions.navigate({ window: "root", url: "itch://crashy" }));
+    dispatch(actions.closeModal({ window: "root" }));
   };
 
   toggleReduxLogging = () => {
     const enabled = !this.props.status.reduxLoggingEnabled;
-    this.props.setReduxLoggingEnabled({
-      enabled,
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.setReduxLoggingEnabled({
+        enabled,
+      })
+    );
 
     if (enabled) {
-      this.props.openDevTools({ forApp: true });
+      dispatch(actions.openDevTools({ forApp: true }));
     }
   };
 }
@@ -205,28 +217,20 @@ export interface SecretSettingsParams {}
 
 interface Props extends ModalWidgetProps<SecretSettingsParams, void> {
   params: SecretSettingsParams;
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList(
-  "setReduxLoggingEnabled",
-  "openModal",
-  "closeModal",
-  "reloadLocales",
-  "openDevTools",
-  "navigate",
-  "openWindow"
-);
+interface DerivedProps {
+  status: RootState["status"];
+}
 
-type DerivedProps = Dispatchers<typeof actionCreators> & {
-  status: IRootState["status"];
-};
-
-export default connect<Props>(
-  SecretSettings,
-  {
-    state: (rs: IRootState) => ({
-      status: rs.status,
-    }),
-    actionCreators,
-  }
+export default withDispatch(
+  connect<Props>(
+    SecretSettings,
+    {
+      state: (rs: RootState) => ({
+        status: rs.status,
+      }),
+    }
+  )
 );

@@ -1,19 +1,12 @@
+import { RootState, SetupOperation } from "common/types";
 import React from "react";
-import {
-  connect,
-  actionCreatorsList,
-  Dispatchers,
-} from "renderer/hocs/connect";
-
 import Filler from "renderer/basics/Filler";
-
-import { SetupOperation, IRootState } from "common/types";
-
-import styled from "renderer/styles";
+import TitleBar from "renderer/basics/TitleBar";
+import { connect } from "renderer/hocs/connect";
 import BlockingOperation from "renderer/scenes/GateScene/BlockingOperation";
 import LoginScreen from "renderer/scenes/GateScene/LoginScreen";
 import LogoIndicator from "renderer/scenes/GateScene/LogoIndicator";
-import TitleBar from "renderer/basics/TitleBar";
+import styled from "renderer/styles";
 
 const GateDiv = styled.div`
   display: flex;
@@ -59,23 +52,16 @@ class GatePage extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {}
 
-const actionCreators = actionCreatorsList(
-  "loginWithPassword",
-  "useSavedLogin",
-  "forgetProfileRequest",
-  "retrySetup"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   stage: "setup" | "login";
   errors?: string[];
   blockingOperation?: SetupOperation;
-};
+}
 
 export default connect<Props>(
   GatePage,
   {
-    state: (rs: IRootState): Partial<DerivedProps> => {
+    state: (rs: RootState): Partial<DerivedProps> => {
       const { profile } = rs;
       const { login } = profile;
 
@@ -88,6 +74,5 @@ export default connect<Props>(
       }
       return { stage: "login", blockingOperation: login.blockingOperation };
     },
-    actionCreators,
   }
 );

@@ -1,7 +1,8 @@
 import urls from "common/constants/urls";
 import { Space } from "common/helpers/space";
+import { Dispatch } from "common/types";
 import React from "react";
-import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { withSpace } from "renderer/hocs/withSpace";
 
 class FeaturedPage extends React.PureComponent<Props> {
@@ -15,7 +16,7 @@ class FeaturedPage extends React.PureComponent<Props> {
       })
     );
 
-    return null;
+    return null as JSX.Element;
   }
 }
 

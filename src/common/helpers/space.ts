@@ -1,7 +1,7 @@
 import {
   LocalizedString,
   Store,
-  IRootState,
+  RootState,
   TabPage,
   TabData,
   TabInstance,
@@ -81,7 +81,7 @@ export class Space {
     return this.fromState(store.getState(), window, tab);
   }
 
-  static fromState(rs: IRootState, window: string, tab: string): Space {
+  static fromState(rs: RootState, window: string, tab: string): Space {
     return spaceFromInstance(tab, rs.windows[window].tabInstances[tab]);
   }
 
@@ -124,7 +124,7 @@ export class Space {
     return this._page.url;
   }
 
-  urlWithParams(newParams: Object): string {
+  urlWithParams(newParams: { [key: string]: any }): string {
     const params = new URLSearchParams(this._query);
     for (const k of Object.keys(newParams)) {
       const v = newParams[k];

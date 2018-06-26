@@ -1,12 +1,9 @@
 import React from "react";
-
-import { ThemeProvider, theme } from "renderer/styles";
 import { IntlProvider } from "react-intl";
-import { IRootState } from "common/types";
-import { connect } from "renderer/hocs/connect";
-import { createStructuredSelector } from "reselect";
-
 import Loadable from "react-loadable";
+import { hook } from "renderer/hocs/hook";
+import { theme, ThemeProvider } from "renderer/styles";
+
 const LoadableAppContents = Loadable({
   loader: () => import("./AppContents"),
   loading: (props: any) => {
@@ -30,8 +27,8 @@ const LoadableAppContents = Loadable({
   },
 });
 
-class App extends React.PureComponent<DerivedProps, State> {
-  constructor(props: App["props"], context) {
+class App extends React.PureComponent<Props, State> {
+  constructor(props: App["props"], context: any) {
     super(props, context);
     this.state = {
       localeVersion: 1,
@@ -55,7 +52,7 @@ class App extends React.PureComponent<DerivedProps, State> {
     this.updateMessages(this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: App["props"]) {
     if (
       nextProps.locale !== this.props.locale ||
       nextProps.messages !== this.props.messages ||
@@ -65,7 +62,7 @@ class App extends React.PureComponent<DerivedProps, State> {
     }
   }
 
-  updateMessages(nextProps: DerivedProps) {
+  updateMessages(nextProps: App["props"]) {
     this.setState({
       localeVersion: this.state.localeVersion + 1,
       locale: nextProps.locale,
@@ -77,6 +74,16 @@ class App extends React.PureComponent<DerivedProps, State> {
   }
 }
 
+interface Props {
+  locale: string;
+  messages: {
+    [id: string]: string;
+  };
+  fallbackMessages: {
+    [id: string]: string;
+  };
+}
+
 interface State {
   localeVersion: number;
   locale: string;
@@ -85,28 +92,13 @@ interface State {
   };
 }
 
-type DerivedProps = {
-  locale: string;
-  messages: {
-    [id: string]: string;
-  };
-  fallbackMessages: {
-    [id: string]: string;
-  };
-};
-
 const emptyObj = {};
 
-export default connect<{}>(
-  App,
-  {
-    state: createStructuredSelector({
-      locale: (rs: IRootState) => rs.i18n.lang,
-      messages: (rs: IRootState) => {
-        const { strings, lang } = rs.i18n;
-        return strings[lang] || strings[lang.substring(0, 2)] || emptyObj;
-      },
-      fallbackMessages: (rs: IRootState) => rs.i18n.strings.en || emptyObj,
-    }),
-  }
-);
+export default hook(map => ({
+  locale: map(rs => rs.i18n.lang),
+  messages: map(rs => {
+    const { strings, lang } = rs.i18n;
+    return strings[lang] || strings[lang.substring(0, 2)] || emptyObj;
+  }),
+  fallbackMessages: map(rs => rs.i18n.strings.en || emptyObj),
+}))(App);

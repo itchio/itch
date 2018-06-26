@@ -10,7 +10,7 @@ let printError = (msg: string) => {
   logger.error(msg);
 };
 
-const emptyArr = [];
+const emptyArr = [] as any[];
 
 function err(e: Error, action: Action<any>) {
   if (isCancelled(e)) {

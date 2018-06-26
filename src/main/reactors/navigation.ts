@@ -3,7 +3,7 @@ import { Watcher } from "common/util/watcher";
 
 import { createSelector } from "reselect";
 
-import { IRootState } from "common/types";
+import { RootState } from "common/types";
 
 import rootLogger from "common/logger";
 import { Space } from "common/helpers/space";
@@ -181,7 +181,7 @@ export default function(watcher: Watcher) {
 
   let subWatcher: Watcher;
 
-  const refreshSelectors = (rs: IRootState) => {
+  const refreshSelectors = (rs: RootState) => {
     watcher.removeSub(subWatcher);
     subWatcher = makeSubWatcher(rs);
     watcher.addSub(subWatcher);
@@ -196,13 +196,13 @@ export default function(watcher: Watcher) {
   });
 }
 
-function makeSubWatcher(rs: IRootState) {
+function makeSubWatcher(rs: RootState) {
   const watcher = new Watcher();
   for (const window of Object.keys(rs.windows)) {
     watcher.onStateChange({
       makeSelector: (store, schedule) =>
         createSelector(
-          (rs: IRootState) => rs.windows[window].navigation.tab,
+          (rs: RootState) => rs.windows[window].navigation.tab,
           tab => schedule.dispatch(actions.tabChanged({ window, tab }))
         ),
     });
@@ -210,9 +210,9 @@ function makeSubWatcher(rs: IRootState) {
     watcher.onStateChange({
       makeSelector: (store, schedule) =>
         createSelector(
-          (rs: IRootState) => rs.windows[window].navigation.openTabs,
-          (rs: IRootState) => rs.windows[window].tabInstances,
-          (rs: IRootState) => rs.windows[window].navigation.tab,
+          (rs: RootState) => rs.windows[window].navigation.openTabs,
+          (rs: RootState) => rs.windows[window].tabInstances,
+          (rs: RootState) => rs.windows[window].navigation.tab,
           (openTabs, tabInstances, tab) =>
             schedule.dispatch(actions.tabsChanged({ window }))
         ),

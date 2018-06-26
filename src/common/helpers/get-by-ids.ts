@@ -1,6 +1,6 @@
 import { size } from "underscore";
 
-const emptyArr = [];
+const emptyArr = [] as any[];
 
 interface RecordMap<T> {
   [key: string]: T;

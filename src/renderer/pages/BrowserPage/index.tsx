@@ -5,7 +5,7 @@ import BrowserMeat from "./BrowserPageContents";
 import { Space } from "common/helpers/space";
 
 class BrowserPage extends React.PureComponent<Props, State> {
-  constructor(props: Props, context) {
+  constructor(props: Props, context: any) {
     super(props, context);
     this.state = {
       active: props.visible || !props.space.isSleepy(),

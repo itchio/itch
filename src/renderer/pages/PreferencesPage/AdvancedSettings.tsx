@@ -1,27 +1,20 @@
+import { actions } from "common/actions";
+import { formatArch, formatPlatform } from "common/format/platform";
+import { Dispatch, RootState, SystemState } from "common/types";
+import { rendererWindow } from "common/util/navigation";
 import React from "react";
-import { T } from "renderer/t";
 import Icon from "renderer/basics/Icon";
+import { connect } from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import { T } from "renderer/t";
+import { createStructuredSelector } from "reselect";
+import BrothComponents from "./BrothComponents";
 import Checkbox from "./Checkbox";
 import ProxySettings from "./ProxySettings";
-import { formatArch, formatPlatform } from "common/format/platform";
-import {
-  actionCreatorsList,
-  Dispatchers,
-  connect,
-} from "renderer/hocs/connect";
-import { createStructuredSelector } from "reselect";
-import { IRootState, SystemState } from "common/types";
-import BrothComponents from "./BrothComponents";
-import { rendererWindow } from "common/util/navigation";
 
 class AdvancedSettings extends React.PureComponent<Props & DerivedProps> {
   render() {
-    const {
-      system,
-      clearBrowsingDataRequest,
-      navigate,
-      checkForGameUpdates,
-    } = this.props;
+    const { system, dispatch } = this.props;
 
     return (
       <>
@@ -40,7 +33,9 @@ class AdvancedSettings extends React.PureComponent<Props & DerivedProps> {
               className="link"
               onClick={e => {
                 e.preventDefault();
-                navigate({ window: "root", url: "itch://applog" });
+                dispatch(
+                  actions.navigate({ window: "root", url: "itch://applog" })
+                );
               }}
             >
               {T(["preferences.advanced.open_app_log"])}
@@ -51,8 +46,10 @@ class AdvancedSettings extends React.PureComponent<Props & DerivedProps> {
               className="link"
               onClick={e => {
                 e.preventDefault();
-                checkForGameUpdates({});
-                navigate({ window: "root", url: "itch://downloads" });
+                dispatch(actions.checkForGameUpdates({}));
+                dispatch(
+                  actions.navigate({ window: "root", url: "itch://downloads" })
+                );
               }}
             >
               {T(["preferences.advanced.check_game_updates"])}
@@ -64,18 +61,16 @@ class AdvancedSettings extends React.PureComponent<Props & DerivedProps> {
               className="link"
               onClick={e => {
                 e.preventDefault();
-                clearBrowsingDataRequest({
-                  window: rendererWindow(),
-                });
+                dispatch(
+                  actions.clearBrowsingDataRequest({
+                    window: rendererWindow(),
+                  })
+                );
               }}
             >
               {T(["preferences.advanced.clear_browsing_data"])}
             </span>
           </div>
-          <Checkbox
-            name="preferOptimizedPatches"
-            label={T(["preferences.advanced.prefer_optimized_patches"])}
-          />
           <Checkbox
             name="disableBrowser"
             label={T(["preferences.advanced.disable_browser"])}
@@ -90,25 +85,21 @@ class AdvancedSettings extends React.PureComponent<Props & DerivedProps> {
   }
 }
 
-interface Props {}
+interface Props {
+  dispatch: Dispatch;
+}
 
-const actionCreators = actionCreatorsList(
-  "checkForComponentUpdates",
-  "clearBrowsingDataRequest",
-  "navigate",
-  "checkForGameUpdates"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   system: SystemState;
-};
+}
 
-export default connect<Props>(
-  AdvancedSettings,
-  {
-    actionCreators,
-    state: createStructuredSelector({
-      system: (rs: IRootState) => rs.system,
-    }),
-  }
+export default withDispatch(
+  connect<Props>(
+    AdvancedSettings,
+    {
+      state: createStructuredSelector({
+        system: (rs: RootState) => rs.system,
+      }),
+    }
+  )
 );

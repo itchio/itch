@@ -1,30 +1,27 @@
 import classNames from "classnames";
+import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
 import {
   Access,
   GameStatus,
   OperationType,
 } from "common/helpers/get-game-status";
-import { LocalizedString } from "common/types";
+import { Dispatch, LocalizedString } from "common/types";
 import { actionForGame } from "common/util/action-for-game";
 import React from "react";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
-import { T } from "renderer/t";
 import Button from "renderer/basics/Button";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import styled from "renderer/styles";
+import { T } from "renderer/t";
 
 const NotCompatibleSpan = styled.span`
   flex-shrink: 0;
 `;
 
-class MainAction extends React.PureComponent<Props & DerivedProps> {
+class MainAction extends React.PureComponent<Props> {
   render() {
     const { wide } = this.props;
     const { cave, access, operation, compatible, update } = this.props.status;
@@ -155,35 +152,35 @@ class MainAction extends React.PureComponent<Props & DerivedProps> {
   onClick = (e: React.MouseEvent<any>) => {
     e.stopPropagation();
 
-    const { game, status } = this.props;
+    const { dispatch, game, status } = this.props;
     const { operation, update, cave, access } = status;
 
     if (e.shiftKey && e.ctrlKey) {
       if (cave) {
-        this.props.viewCaveDetails({ caveId: cave.id });
+        dispatch(actions.viewCaveDetails({ caveId: cave.id }));
       }
       return;
     }
 
     if (operation) {
       if (operation.type === OperationType.Download) {
-        this.props.navigate({ window: "root", url: "itch://downloads" });
+        dispatch(actions.navigate({ window: "root", url: "itch://downloads" }));
       } else if (operation.type === OperationType.Task) {
         if (operation.name === "launch") {
-          this.props.forceCloseGameRequest({ game });
+          dispatch(actions.forceCloseGameRequest({ game }));
         }
       }
     } else if (cave) {
       if (update) {
-        this.props.showGameUpdate({ update });
+        dispatch(actions.showGameUpdate({ update }));
       } else {
-        this.props.queueGame({ game });
+        dispatch(actions.queueGame({ game }));
       }
     } else {
       if (access === Access.None) {
-        this.props.initiatePurchase({ game });
+        dispatch(actions.initiatePurchase({ game }));
       } else {
-        this.props.queueGame({ game });
+        dispatch(actions.queueGame({ game }));
       }
     }
   };
@@ -196,20 +193,8 @@ interface Props {
   wide?: boolean;
   className?: string;
   iconOnly?: boolean;
+
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList(
-  "queueGame",
-  "showGameUpdate",
-  "initiatePurchase",
-  "forceCloseGameRequest",
-  "navigate",
-  "viewCaveDetails"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<Props>(
-  MainAction,
-  { actionCreators }
-);
+export default withDispatch(MainAction);

@@ -28,7 +28,7 @@ const Select = styled.select`
 class SelectRow extends React.PureComponent<Props & DerivedProps> {
   element: HTMLSelectElement;
 
-  constructor(props: SelectRow["props"], context) {
+  constructor(props: SelectRow["props"], context: any) {
     super(props, context);
   }
 

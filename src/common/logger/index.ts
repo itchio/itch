@@ -31,7 +31,7 @@ const levelNumbers = {
   warn: 40,
   info: 30,
   debug: 20,
-};
+} as { [key: string]: number };
 
 export const levels = {
   default: "USERLVL",
@@ -41,7 +41,7 @@ export const levels = {
   30: "INFO",
   20: "DEBUG",
   10: "TRACE",
-};
+} as { [key: number]: string; default: string };
 
 export interface LogEntry {
   time: number;

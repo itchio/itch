@@ -1,4 +1,4 @@
-import { IRootState, ITask, TaskName } from "../types/index";
+import { RootState, ITask, TaskName } from "../types/index";
 
 import { first, findWhere, size } from "underscore";
 import getByIds from "./get-by-ids";
@@ -90,11 +90,7 @@ export interface GameStatus {
   compatible: boolean;
 }
 
-function getGameStatus(
-  rs: IRootState,
-  game: Game,
-  caveId?: string
-): GameStatus {
+function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
   const { commons, tasks, downloads } = rs;
   const { profile } = rs.profile;
 
@@ -169,8 +165,8 @@ function rawGetGameStatus(
   download: Download,
   downloadProgress: DownloadProgress,
   update: GameUpdate,
-  isDownloadActive,
-  areDownloadsPaused
+  isDownloadActive: boolean,
+  areDownloadsPaused: boolean
 ): GameStatus {
   let access = Access.None;
   if (!(game.minPrice > 0)) {

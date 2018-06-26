@@ -1,4 +1,4 @@
-import { Store, IRootState, Action } from "common/types";
+import { Store, RootState, Action } from "common/types";
 
 import { each } from "underscore";
 
@@ -16,7 +16,7 @@ interface Schedule {
   (f: () => void): void;
   dispatch?: (a: Action<any>) => void;
 }
-type Selector = (rs: IRootState) => void;
+type Selector = (rs: RootState) => void;
 type SelectorMaker = (store: Store, schedule: Schedule) => Selector;
 
 /**
@@ -39,7 +39,7 @@ export class Watcher {
    * on every tick if the state has changed since the last tick
    */
   onStateChange({ makeSelector }: { makeSelector: SelectorMaker }) {
-    let oldRs: IRootState = null;
+    let oldRs: RootState = null;
     let selector: Selector;
 
     const actionName = "tick";

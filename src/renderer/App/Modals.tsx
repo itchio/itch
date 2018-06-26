@@ -4,10 +4,11 @@ import * as colors from "common/constants/colors";
 import { specToButton } from "common/helpers/spec-to-button";
 import {
   Action,
+  RootState,
   Modal,
   ModalButton,
   ModalButtonSpec,
-  IRootState,
+  Dispatch,
 } from "common/types";
 import { rendererWindow, rendererWindowState } from "common/util/navigation";
 import { stripUnit } from "polished";
@@ -25,18 +26,15 @@ import RowButton, {
   Tag,
 } from "renderer/basics/RowButton";
 import TimeAgo from "renderer/basics/TimeAgo";
-import { modalWidgets } from "renderer/modal-widgets";
+import { connect } from "renderer/hocs/connect";
+import watching, { Watcher } from "renderer/hocs/watching";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import Hoverable from "renderer/hocs/withHover";
+import { modalWidgets, ModalWidgetSpec } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
 import { T, TString } from "renderer/t";
 import { createStructuredSelector } from "reselect";
 import { filter, isEmpty, map } from "underscore";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
-import watching, { Watcher } from "renderer/hocs/watching";
-import Hoverable from "renderer/hocs/withHover";
 
 const HoverCover = Hoverable(Cover);
 
@@ -346,7 +344,7 @@ class Modals extends React.PureComponent<Props & DerivedProps, State> {
   }
 
   renderContent() {
-    const { modal, closeModal, intl } = this.props;
+    const { modal, dispatch, intl } = this.props;
 
     if (!modal) {
       return null;
@@ -372,9 +370,11 @@ class Modals extends React.PureComponent<Props & DerivedProps, State> {
             <IconButton
               icon="cross"
               onClick={() =>
-                closeModal({
-                  window: rendererWindow(),
-                })
+                dispatch(
+                  actions.closeModal({
+                    window: rendererWindow(),
+                  })
+                )
               }
             />
           )}
@@ -411,17 +411,19 @@ class Modals extends React.PureComponent<Props & DerivedProps, State> {
 
   onDebugClick = (e: React.MouseEvent<any>) => {
     if (e.shiftKey && e.ctrlKey) {
-      const { openModal } = this.props;
-      openModal(
-        modalWidgets.exploreJson.make({
-          window: "root",
-          title: "Modal payload",
-          message: "",
-          widgetParams: {
-            data: this.props.modal,
-          },
-          fullscreen: true,
-        })
+      const { dispatch } = this.props;
+      dispatch(
+        actions.openModal(
+          modalWidgets.exploreJson.make({
+            window: "root",
+            title: "Modal payload",
+            message: "",
+            widgetParams: {
+              data: this.props.modal,
+            },
+            fullscreen: true,
+          })
+        )
       );
       return;
     }
@@ -534,27 +536,32 @@ class Modals extends React.PureComponent<Props & DerivedProps, State> {
   }
 
   buttonOnClick(button: ModalButton): () => void {
-    const { closeModal } = this.props;
+    const { dispatch } = this.props;
     const { action } = button;
 
     let onClick: () => void;
     if (action === "widgetResponse") {
       onClick = () => {
         const action = actions.modalResponse(this.state.widgetPayload);
-        closeModal({ window: rendererWindow(), action });
+        dispatch(actions.closeModal({ window: rendererWindow(), action }));
       };
     } else {
       onClick = () =>
-        closeModal({
-          window: rendererWindow(),
-          action: action as Action<any>,
-        });
+        dispatch(
+          actions.closeModal({
+            window: rendererWindow(),
+            action: action as Action<any>,
+          })
+        );
     }
     return onClick;
   }
 
   renderWidget(widget: string, modal: Modal): JSX.Element {
-    const Component = modalWidgets[widget].component;
+    const modalWidgetMap = modalWidgets as {
+      [key: string]: ModalWidgetSpec<any, any>;
+    };
+    const Component = modalWidgetMap[widget].component;
     if (!Component) {
       return null;
     }
@@ -566,26 +573,26 @@ class Modals extends React.PureComponent<Props & DerivedProps, State> {
   };
 }
 
-interface Props {}
+interface Props {
+  dispatch: Dispatch;
+}
 
-const actionCreators = actionCreatorsList("openModal", "closeModal");
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   modal: Modal;
-
   intl: InjectedIntl;
-};
+}
 
 interface State {
   widgetPayload?: typeof actions.modalResponse.payload;
 }
 
-export default connect<Props>(
-  injectIntl(Modals),
-  {
-    state: createStructuredSelector({
-      modal: (rs: IRootState) => rendererWindowState(rs).modals[0],
-    }),
-    actionCreators,
-  }
+export default withDispatch(
+  connect<Props>(
+    injectIntl(Modals),
+    {
+      state: createStructuredSelector({
+        modal: (rs: RootState) => rendererWindowState(rs).modals[0],
+      }),
+    }
+  )
 );

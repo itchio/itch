@@ -6,7 +6,6 @@ import * as sf from "../os/sf";
 import { fileSize } from "common/format/filesize";
 import { Logger } from "common/logger";
 import { request } from "./request";
-import { WriteStream } from "fs";
 import { ProgressInfo } from "common/types";
 
 /**
@@ -33,7 +32,7 @@ export async function downloadToFile(
 
   let totalSize = 0;
 
-  let progressStream: WriteStream;
+  let progressStream: NodeJS.ReadWriteStream;
   await request(
     "get",
     url,

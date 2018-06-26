@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import { IRootState } from "common/types";
+import { RootState } from "common/types";
 
 import system from "./system";
 import setup from "./setup";
@@ -17,7 +17,7 @@ import broth from "./broth";
 import butlerd from "./butlerd";
 import windows from "./windows";
 
-const reducer = combineReducers<IRootState>({
+const reducer = combineReducers<RootState>({
   system,
   setup,
   profile,

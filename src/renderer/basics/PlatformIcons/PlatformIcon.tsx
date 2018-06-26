@@ -5,7 +5,7 @@ import platformData, { PlatformHolder } from "common/constants/platform-data";
 export default class PlatformIcon extends React.PureComponent<Props> {
   render() {
     const { target, field } = this.props;
-    if (!target.platforms || !target.platforms[field]) {
+    if (!target.platforms || !(target.platforms as any)[field]) {
       return null;
     }
 

@@ -1,6 +1,6 @@
 import { connect as reduxConnect } from "react-redux";
 
-import { IRootState, Dispatch } from "common/types";
+import { RootState, Dispatch } from "common/types";
 import { ActionCreator, dispatcher, actions } from "common/actions/index";
 
 type ActionCreators = {
@@ -12,7 +12,7 @@ export type Dispatchers<T extends ActionCreators> = {
 };
 
 interface StateMapper {
-  (rs: IRootState, props: any): any;
+  (rs: RootState, props: any): any;
 }
 
 interface DispatchMapper {

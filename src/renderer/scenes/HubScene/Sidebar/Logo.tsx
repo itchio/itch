@@ -1,16 +1,11 @@
+import classNames from "classnames";
+import { actions } from "common/actions";
+import { Dispatch, RootState } from "common/types";
 import React from "react";
+import { connect } from "renderer/hocs/connect";
+import { modalWidgets } from "renderer/modal-widgets/index";
 import styled from "renderer/styles";
 import { createStructuredSelector } from "reselect";
-import classNames from "classnames";
-
-import {
-  connect,
-  actionCreatorsList,
-  Dispatchers,
-} from "renderer/hocs/connect";
-
-import { IRootState } from "common/types";
-import { modalWidgets } from "renderer/modal-widgets/index";
 
 const LogoDiv = styled.div`
   text-align: center;
@@ -25,7 +20,7 @@ const LogoDiv = styled.div`
   }
 `;
 
-class Logo extends React.PureComponent<DerivedProps> {
+class Logo extends React.PureComponent<Props & DerivedProps> {
   render() {
     const { appVersion } = this.props;
 
@@ -43,35 +38,38 @@ class Logo extends React.PureComponent<DerivedProps> {
 
   onClick = (e: React.MouseEvent<any>) => {
     if (e.shiftKey && e.ctrlKey) {
-      const { openModal } = this.props;
-      openModal(
-        modalWidgets.secretSettings.make({
-          window: "root",
-          title: "Secret options",
-          message: "",
-          widgetParams: {},
-        })
+      const { dispatch } = this.props;
+      dispatch(
+        actions.openModal(
+          modalWidgets.secretSettings.make({
+            window: "root",
+            title: "Secret options",
+            message: "",
+            widgetParams: {},
+          })
+        )
       );
       return;
     }
 
-    const { navigate } = this.props;
-    navigate({ window: "root", url: "itch://featured" });
+    const { dispatch } = this.props;
+    dispatch(actions.navigate({ window: "root", url: "itch://featured" }));
   };
 }
 
-const actionCreators = actionCreatorsList("navigate", "openModal");
+interface Props {
+  dispatch: Dispatch;
+}
 
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   appVersion: string;
-};
+}
 
 export default connect(
   Logo,
   {
     state: createStructuredSelector({
-      appVersion: (rs: IRootState) => rs.system.appVersion,
+      appVersion: (rs: RootState) => rs.system.appVersion,
     }),
-    actionCreators,
   }
 );

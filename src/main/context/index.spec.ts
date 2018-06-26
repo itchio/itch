@@ -113,7 +113,7 @@ describe("Context", () => {
   it("Sub-context work", async () => {
     const c = new Context(store);
 
-    let subRef;
+    let subRef: Context;
     let canAbort = false;
     c.withSub(async sub => {
       subRef = sub;

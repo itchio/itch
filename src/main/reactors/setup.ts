@@ -26,7 +26,7 @@ async function syncInstallLocations(store: Store) {
       id: "appdata",
       path: appdataLocationPath(),
     },
-  };
+  } as { [key: string]: { id: string; path: string } };
 
   let numAdded = 0;
   if (!isEmpty(oldLocations)) {
@@ -62,7 +62,7 @@ let initialButlerdPromise = new ItchPromise((resolve, reject) => {
   initialButlerdResolve = resolve;
 });
 
-async function initialSetup(store: Store, { retry }) {
+async function initialSetup(store: Store, { retry }: { retry: boolean }) {
   try {
     store.dispatch(
       actions.setupStatus({

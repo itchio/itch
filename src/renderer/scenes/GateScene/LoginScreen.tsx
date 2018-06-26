@@ -1,27 +1,19 @@
-import React from "react";
-
-import {
-  actionCreatorsList,
-  Dispatchers,
-  connect,
-} from "renderer/hocs/connect";
-
-import { Profile } from "common/butlerd/messages";
-import { messages, call } from "common/butlerd";
-
-import { isEmpty } from "underscore";
-
-import RememberedProfiles from "./RememberedProfiles/index";
-import LoginForm from "./LoginForm";
-
-import watching, { Watcher } from "renderer/hocs/watching";
 import { actions } from "common/actions";
+import { call, messages } from "common/butlerd";
+import { Profile } from "common/butlerd/messages";
+import { Dispatch } from "common/types";
+import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { doAsync } from "renderer/helpers/doAsync";
+import watching, { Watcher } from "renderer/hocs/watching";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import { isEmpty } from "underscore";
+import LoginForm from "./LoginForm";
+import RememberedProfiles from "./RememberedProfiles/index";
 
 @watching
-class LoginScreen extends React.PureComponent<Props & DerivedProps, State> {
-  constructor(props: LoginScreen["props"], context) {
+class LoginScreen extends React.PureComponent<Props, State> {
+  constructor(props: LoginScreen["props"], context: any) {
     super(props, context);
     this.state = {
       loading: true,
@@ -77,11 +69,9 @@ class LoginScreen extends React.PureComponent<Props & DerivedProps, State> {
   };
 }
 
-interface Props {}
-
-const actionCreators = actionCreatorsList();
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
+interface Props {
+  dispatch: Dispatch;
+}
 
 interface State {
   loading: boolean;
@@ -89,7 +79,4 @@ interface State {
   profiles: Profile[];
 }
 
-export default connect<Props>(
-  LoginScreen,
-  { actionCreators }
-);
+export default withDispatch(LoginScreen);

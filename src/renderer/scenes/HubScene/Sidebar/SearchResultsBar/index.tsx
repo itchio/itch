@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { IRootState, SearchResults } from "common/types";
+import { RootState, SearchResults } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import { hasSearchResults } from "main/reactors/search/search-helpers";
 import React from "react";
@@ -57,7 +57,7 @@ class SearchResultsBar extends React.PureComponent<
   Props & DerivedProps,
   State
 > {
-  constructor(props: SearchResultsBar["props"], context) {
+  constructor(props: SearchResultsBar["props"], context: any) {
     super(props, context);
     this.state = {
       chosen: 0,
@@ -78,7 +78,7 @@ class SearchResultsBar extends React.PureComponent<
   }
 
   resultList: Element;
-  onResultList = el => {
+  onResultList = (el: Element) => {
     this.resultList = el;
   };
 
@@ -159,12 +159,12 @@ export default connect<Props>(
   SearchResultsBar,
   {
     state: createStructuredSelector({
-      open: (rs: IRootState) => rs.profile.search.open,
-      highlight: (rs: IRootState) => rs.profile.search.highlight,
-      query: (rs: IRootState) => rs.profile.search.query,
-      results: (rs: IRootState) => rs.profile.search.results,
-      example: (rs: IRootState) => rs.profile.search.example,
-      loading: (rs: IRootState) => rs.profile.search.loading,
+      open: (rs: RootState) => rs.profile.search.open,
+      highlight: (rs: RootState) => rs.profile.search.highlight,
+      query: (rs: RootState) => rs.profile.search.query,
+      results: (rs: RootState) => rs.profile.search.results,
+      example: (rs: RootState) => rs.profile.search.example,
+      loading: (rs: RootState) => rs.profile.search.loading,
     }),
     actionCreators,
   }

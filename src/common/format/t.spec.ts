@@ -11,9 +11,9 @@ describe("t", () => {
           "hello.there": "Bonjour, {name}",
         },
       },
-      queued: null,
-      downloading: null,
-      locales: null,
+      queued: null as any,
+      downloading: null as any,
+      locales: null as any,
     };
     assert.equal(t(i18n, ["hello.there", { name: "Brock" }]), "Bonjour, Brock");
   });
@@ -25,9 +25,9 @@ describe("t", () => {
           "hello.there": "Hi, {name}",
         },
       },
-      queued: null,
-      downloading: null,
-      locales: null,
+      queued: null as any,
+      downloading: null as any,
+      locales: null as any,
     };
     assert.equal(t(i18n, ["hello.there", { name: "Brock" }]), "Hi, Brock");
   });
@@ -37,9 +37,9 @@ describe("t", () => {
       strings: {
         en: {},
       },
-      queued: null,
-      downloading: null,
-      locales: null,
+      queued: null as any,
+      downloading: null as any,
+      locales: null as any,
     };
     assert.equal(
       t(i18n, ["hello.there", { name: "Brock", defaultValue: "Bye brock" }]),

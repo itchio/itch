@@ -1,5 +1,5 @@
 import { Profile } from "common/butlerd/messages";
-import { IRootState } from "common/types";
+import { RootState } from "common/types";
 import React from "react";
 import { connect } from "renderer/hocs/connect";
 import Meats from "renderer/scenes/HubScene/Meats";
@@ -38,7 +38,7 @@ export default connect<Props>(
   HubContent,
   {
     state: createStructuredSelector({
-      profile: (rs: IRootState) => rs.profile.profile,
+      profile: (rs: RootState) => rs.profile.profile,
     }),
   }
 );

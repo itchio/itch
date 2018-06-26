@@ -11,7 +11,6 @@ import * as sf from "../os/sf";
 import { dirname, join } from "path";
 import { createWriteStream } from "fs";
 import { Logger } from "common/logger";
-import { Stream } from "stream";
 import { ProgressInfo } from "common/types";
 
 interface UnzipOpts {
@@ -34,7 +33,11 @@ export async function unzip(opts: UnzipOpts) {
 
   let progressOffset = 0;
 
-  const extractEntry = async (entry: yauzl.Entry, err: Error, src: Stream) => {
+  const extractEntry = async (
+    entry: yauzl.Entry,
+    err: Error,
+    src: NodeJS.ReadableStream
+  ) => {
     if (err) {
       throw err;
     }

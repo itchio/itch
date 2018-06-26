@@ -7,7 +7,7 @@ import { createSelector } from "reselect";
 
 import { IRuntime, IMenuItem, MenuTemplate } from "common/types";
 
-import { IRootState } from "common/types";
+import { RootState } from "common/types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 import { actions } from "common/actions";
 import { getNativeState } from "./main-window";
@@ -17,9 +17,9 @@ export default function(watcher: Watcher, runtime: IRuntime) {
   watcher.onStateChange({
     makeSelector: (store, schedule) => {
       let templateSelector = createSelector(
-        (rs: IRootState) => rs.system.appVersion,
-        (rs: IRootState) => rs.profile.profile,
-        (rs: IRootState) => rs.preferences.enableTabs,
+        (rs: RootState) => rs.system.appVersion,
+        (rs: RootState) => rs.profile.profile,
+        (rs: RootState) => rs.preferences.enableTabs,
         (appVersion, credentials, enableTabs) => {
           return computeMenuTemplate(
             appVersion,
@@ -32,8 +32,8 @@ export default function(watcher: Watcher, runtime: IRuntime) {
 
       return createSelector(
         templateSelector,
-        (rs: IRootState) => rs.i18n,
-        (rs: IRootState) => getNativeState(rs, "root").id,
+        (rs: RootState) => rs.i18n,
+        (rs: RootState) => getNativeState(rs, "root").id,
         (template, i18n, mainWindowId) => {
           schedule.dispatch(actions.menuChanged({ template }));
           const fleshed = fleshOutTemplate("root", store, runtime, template);

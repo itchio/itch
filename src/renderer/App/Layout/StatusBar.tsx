@@ -1,12 +1,10 @@
 import classNames from "classnames";
-import { LocalizedString, IRootState } from "common/types";
+import { actions } from "common/actions";
+import { RootState, LocalizedString, Dispatch } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { connect } from "renderer/hocs/connect";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { createStructuredSelector } from "reselect";
@@ -73,13 +71,12 @@ const StatusBarDiv = styled.div`
  * Displays our current progress when checking for updates, etc.
  */
 class StatusBar extends React.PureComponent<Props & DerivedProps> {
-  constructor(props: Props & DerivedProps, context) {
+  constructor(props: Props & DerivedProps, context: any) {
     super(props, context);
   }
 
   render() {
-    const { statusMessages } = this.props;
-    const { dismissStatusMessage } = this.props;
+    const { statusMessages, dispatch } = this.props;
 
     let children: JSX.Element[] = [];
     let active = true;
@@ -87,7 +84,7 @@ class StatusBar extends React.PureComponent<Props & DerivedProps> {
     let callback = (): any => null;
 
     if (statusMessages.length > 0) {
-      callback = () => dismissStatusMessage({});
+      callback = () => dispatch(actions.dismissStatusMessage({}));
       children = [
         <Icon key="icon" icon="heart-filled" />,
         <span key="message">{T(statusMessages[0])}</span>,
@@ -115,20 +112,21 @@ class StatusBar extends React.PureComponent<Props & DerivedProps> {
   }
 }
 
-interface Props {}
+interface Props {
+  dispatch: Dispatch;
+}
 
-const actionCreators = actionCreatorsList("dismissStatusMessage");
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface DerivedProps {
   statusMessages: LocalizedString[];
-};
+}
 
-export default connect<Props>(
-  StatusBar,
-  {
-    state: createStructuredSelector({
-      statusMessages: (rs: IRootState) => rs.status.messages,
-    }),
-    actionCreators,
-  }
+export default withDispatch(
+  connect<Props>(
+    StatusBar,
+    {
+      state: createStructuredSelector({
+        statusMessages: (rs: RootState) => rs.status.messages,
+      }),
+    }
+  )
 );

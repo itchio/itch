@@ -1,17 +1,13 @@
-import React from "react";
-
-import { getInjectURL } from "common/util/resources";
-import {
-  connect,
-  Dispatchers,
-  actionCreatorsList,
-} from "renderer/hocs/connect";
-
-import styled from "renderer/styles";
-import LoadingCircle from "renderer/basics/LoadingCircle";
 import classNames from "classnames";
-import { modalWidgets, ModalWidgetProps } from "./index";
+import { Dispatch } from "common/types";
 import { rendererWindow } from "common/util/navigation";
+import { getInjectURL } from "common/util/resources";
+import React from "react";
+import LoadingCircle from "renderer/basics/LoadingCircle";
+import styled from "renderer/styles";
+import { ModalWidgetProps, modalWidgets } from "./index";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import { actions } from "common/actions";
 
 const WidgetDiv = styled.div`
   position: relative;
@@ -34,14 +30,11 @@ const WidgetDiv = styled.div`
   }
 `;
 
-class RecaptchaInput extends React.PureComponent<
-  RecaptchaInputProps & DerivedProps,
-  State
-> {
+class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
   webview: Electron.WebviewTag;
   checker: NodeJS.Timer;
 
-  constructor(props: RecaptchaInputProps & DerivedProps, context) {
+  constructor(props: RecaptchaInput["props"], context: any) {
     super(props, context);
     this.state = {
       loaded: false,
@@ -85,12 +78,15 @@ class RecaptchaInput extends React.PureComponent<
         false,
         (response: string | undefined) => {
           if (response) {
-            this.props.closeModal({
-              window: rendererWindow(),
-              action: modalWidgets.recaptchaInput.action({
-                recaptchaResponse: response,
-              }),
-            });
+            const { dispatch } = this.props;
+            dispatch(
+              actions.closeModal({
+                window: rendererWindow(),
+                action: modalWidgets.recaptchaInput.action({
+                  recaptchaResponse: response,
+                }),
+              })
+            );
           }
         }
       );
@@ -124,15 +120,7 @@ export interface RecaptchaInputResponse {
 interface RecaptchaInputProps
   extends ModalWidgetProps<RecaptchaInputParams, RecaptchaInputResponse> {
   params: RecaptchaInputParams;
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList("closeModal");
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<RecaptchaInputProps>(
-  RecaptchaInput,
-  {
-    actionCreators,
-  }
-);
+export default withDispatch(RecaptchaInput);

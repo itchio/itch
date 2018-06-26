@@ -2,7 +2,7 @@ import React from "react";
 import styled from "renderer/styles";
 
 import { Game } from "common/butlerd/messages";
-import { IRootState } from "common/types";
+import { RootState } from "common/types";
 import { createStructuredSelector } from "reselect";
 import getGameStatus, { GameStatus } from "common/helpers/get-game-status";
 import MainAction from "renderer/basics/MainAction";
@@ -73,7 +73,7 @@ const BrowserContextGame = withDispatch(
     _BrowserContextGame,
     {
       state: createStructuredSelector({
-        status: (rs: IRootState, props: Props) => getGameStatus(rs, props.game),
+        status: (rs: RootState, props: Props) => getGameStatus(rs, props.game),
       }),
     }
   )

@@ -12,8 +12,11 @@ import { Download } from "common/butlerd/messages";
 
 const SPEED_DATA_POINT_COUNT = 60;
 
-const selector = createStructuredSelector({
-  itemIdsByGameId: (state: DownloadsState) =>
+const selector = createStructuredSelector<
+  Partial<DownloadsState>,
+  Partial<DownloadsState>
+>({
+  itemIdsByGameId: state =>
     groupIdBy<Download>(state.items, i => String(i.game && i.game.id)),
 });
 
@@ -23,10 +26,10 @@ const baseInitialState: Partial<DownloadsState> = {
   progresses: {},
   paused: true,
 };
-const initialState: DownloadsState = {
+const initialState = {
   ...baseInitialState,
   ...selector(baseInitialState),
-};
+} as DownloadsState;
 
 const baseReducer = reducer<DownloadsState>(initialState, on => {
   on(actions.downloadsListed, (state, action) => {

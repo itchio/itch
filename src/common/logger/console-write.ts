@@ -10,15 +10,15 @@ const levelColors = {
   30: chalk.green,
   20: chalk.blue,
   10: chalk.grey,
-};
+} as { [key: number]: typeof chalk.red; default: typeof chalk.red };
 
-function asISODate(time) {
+function asISODate(time: any) {
   return new Date(time).toISOString();
 }
 
-function asColoredLevel(value) {
-  if (levelColors.hasOwnProperty(value.level)) {
-    return levelColors[value.level](levels[value.level]);
+function asColoredLevel(entry: LogEntry) {
+  if (levelColors.hasOwnProperty(entry.level)) {
+    return levelColors[entry.level](levels[entry.level]);
   } else {
     return levelColors.default(levels.default);
   }

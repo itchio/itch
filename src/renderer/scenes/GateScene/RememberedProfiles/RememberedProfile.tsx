@@ -1,24 +1,16 @@
-import React from "react";
-import {
-  connect,
-  Dispatchers,
-  actionCreatorsList,
-} from "renderer/hocs/connect";
-
-import TimeAgo from "renderer/basics/TimeAgo";
-import IconButton from "renderer/basics/IconButton";
-
-import defaultImages from "common/constants/default-images";
-
-import { Profile } from "common/butlerd/messages";
-
-import styled from "renderer/styles";
-
-import { T } from "renderer/t";
 import { actions } from "common/actions";
+import { Profile } from "common/butlerd/messages";
+import defaultImages from "common/constants/default-images";
+import React from "react";
+import IconButton from "renderer/basics/IconButton";
+import TimeAgo from "renderer/basics/TimeAgo";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import { modalWidgets } from "renderer/modal-widgets";
+import styled from "renderer/styles";
+import { T } from "renderer/t";
+import { Dispatch } from "common/types";
 
-class RememberedProfile extends React.PureComponent<Props & DerivedProps> {
+class RememberedProfile extends React.PureComponent<Props> {
   render() {
     const { profile } = this.props;
     const { user } = profile;
@@ -28,7 +20,8 @@ class RememberedProfile extends React.PureComponent<Props & DerivedProps> {
       <RememberedProfileDiv
         className="remembered-profile"
         onClick={() => {
-          this.props.useSavedLogin({ profile });
+          const { dispatch } = this.props;
+          dispatch(actions.useSavedLogin({ profile }));
         }}
       >
         <img className="avatar" src={coverUrl} />
@@ -56,42 +49,38 @@ class RememberedProfile extends React.PureComponent<Props & DerivedProps> {
 
   onForget = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    const { profile } = this.props;
+    const { profile, dispatch } = this.props;
     const { username } = profile.user;
 
-    this.props.openModal(
-      modalWidgets.naked.make({
-        window: "root",
-        title: ["prompt.forget_session.title"],
-        message: ["prompt.forget_session.message", { username }],
-        detail: ["prompt.forget_session.detail"],
-        buttons: [
-          {
-            id: "modal-forget-profile",
-            label: ["prompt.forget_session.action"],
-            action: actions.forgetProfile({ profile }),
-            icon: "cross",
-          },
-          "cancel",
-        ],
-        widgetParams: null,
-      })
+    dispatch(
+      actions.openModal(
+        modalWidgets.naked.make({
+          window: "root",
+          title: ["prompt.forget_session.title"],
+          message: ["prompt.forget_session.message", { username }],
+          detail: ["prompt.forget_session.detail"],
+          buttons: [
+            {
+              id: "modal-forget-profile",
+              label: ["prompt.forget_session.action"],
+              action: actions.forgetProfile({ profile }),
+              icon: "cross",
+            },
+            "cancel",
+          ],
+          widgetParams: null,
+        })
+      )
     );
   };
 }
 
 interface Props {
   profile: Profile;
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList("openModal", "useSavedLogin");
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<Props>(
-  RememberedProfile,
-  { actionCreators }
-);
+export default withDispatch(RememberedProfile);
 
 const RememberedProfileDiv = styled.div`
   flex-shrink: 0;

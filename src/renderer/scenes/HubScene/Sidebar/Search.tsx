@@ -14,7 +14,7 @@ import { actions } from "common/actions";
 
 import { injectIntl, InjectedIntl } from "react-intl";
 import { TString } from "renderer/t";
-import { IRootState } from "common/types";
+import { RootState } from "common/types";
 import classNames from "classnames";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import SearchResultsBar from "renderer/scenes/HubScene/Sidebar/SearchResultsBar";
@@ -162,7 +162,7 @@ class Search extends React.PureComponent<DerivedProps> {
     );
   }
 
-  gotInput = input => {
+  gotInput = (input: HTMLInputElement) => {
     this.input = input;
   };
 }
@@ -184,7 +184,7 @@ type DerivedProps = Dispatchers<typeof actionCreators> & {
 export default connect<{}>(
   injectIntl(Search),
   {
-    state: (rs: IRootState) => ({
+    state: (rs: RootState) => ({
       open: rs.profile.search.open,
       loading: rs.profile.search.loading,
     }),

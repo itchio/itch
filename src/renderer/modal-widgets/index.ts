@@ -59,11 +59,11 @@ export interface TypedModalUpdate<Params> extends TypedModalUpdateBase<Params> {
   __params: Params;
 }
 
-type ModalWidgetSpec<Params, Response> = {
+export type ModalWidgetSpec<Params, Response> = {
   params?: Params;
   response?: Response;
   key: string;
-  component: typeof React.PureComponent;
+  component: React.ComponentType<any>;
   action: (response: Response) => Action<ModalResponse>;
   make: (base: TypedModalBase<Params>) => TypedModal<Params, Response>;
   update: (update: TypedModalUpdateBase<Params>) => TypedModalUpdate<Params>;
@@ -79,7 +79,7 @@ interface ModalWidgets {
 }
 
 function widget<Params, Response>(
-  component
+  component: React.ComponentType<any>
 ): ModalWidgetSpec<Params, Response> {
   let spec: ModalWidgetSpec<Params, Response>;
   spec = {

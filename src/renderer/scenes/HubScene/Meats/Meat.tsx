@@ -70,7 +70,10 @@ class Meat extends React.PureComponent<Props, State> {
     };
   }
 
-  static getDerivedStateFromProps(props: Meat["props"], state: Meat["state"]) {
+  static getDerivedStateFromProps(
+    props: Meat["props"],
+    state: Meat["state"]
+  ): Meat["state"] {
     const url = props.space.url();
     if (url !== state.lastURL) {
       return {
@@ -84,7 +87,7 @@ class Meat extends React.PureComponent<Props, State> {
     return null;
   }
 
-  componentDidCatch(error, info) {
+  componentDidCatch(error: any, info: any) {
     this.setState({
       hasError: true,
       loading: false,

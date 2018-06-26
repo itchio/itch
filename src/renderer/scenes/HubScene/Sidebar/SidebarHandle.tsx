@@ -21,7 +21,7 @@ const HandleDiv = styled.div`
 `;
 
 class SidebarHandle extends React.PureComponent<Props & DerivedProps, State> {
-  constructor(props: SidebarHandle["props"], context) {
+  constructor(props: SidebarHandle["props"], context: any) {
     super(props, context);
     this.state = { isResizing: false };
   }

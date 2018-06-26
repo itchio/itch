@@ -8,17 +8,15 @@ import { Game } from "common/butlerd/messages";
 import React from "react";
 import Cover from "renderer/basics/Cover";
 import Link from "renderer/basics/Link";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { size } from "underscore";
 import Log from "../pages/AppLogPage/Log";
 import { ModalWidgetProps } from "./index";
+import { withDispatch } from "renderer/hocs/withDispatch";
+import { Dispatch } from "common/types";
+import { actions } from "common/actions";
 
 const StyledLog = styled(Log)`
   tbody {
@@ -103,7 +101,7 @@ const GameRow = styled.div`
   }
 `;
 
-class ShowError extends React.PureComponent<Props & DerivedProps, State> {
+class ShowError extends React.PureComponent<Props, State> {
   constructor(props: ShowError["props"], context: any) {
     super(props, context);
     this.state = {
@@ -195,12 +193,12 @@ class ShowError extends React.PureComponent<Props & DerivedProps, State> {
   }
 
   onClickGame = () => {
-    const { openInExternalBrowser } = this.props;
+    const { dispatch } = this.props;
     const { game } = this.props.modal.widgetParams;
     if (!game) {
       return;
     }
-    openInExternalBrowser({ url: game.url });
+    dispatch(actions.openInExternalBrowser({ url: game.url }));
   };
 
   onSendReportChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -217,17 +215,12 @@ export interface ShowErrorParams {
   forceDetails?: boolean;
 }
 
-interface Props extends ModalWidgetProps<ShowErrorParams, void> {}
+interface Props extends ModalWidgetProps<ShowErrorParams, void> {
+  dispatch: Dispatch;
+}
 
 interface State {
   sendReport: boolean;
 }
 
-const actionCreators = actionCreatorsList("openInExternalBrowser");
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<Props>(
-  ShowError,
-  { actionCreators }
-);
+export default withDispatch(ShowError);

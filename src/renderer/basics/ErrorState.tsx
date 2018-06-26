@@ -12,7 +12,7 @@ const ButlerErrorDiv = styled.div`
   }
 `;
 
-const ErrorState = ({ error }) => {
+const ErrorState = ({ error }: { error: Error }) => {
   if (!error) {
     return null;
   }

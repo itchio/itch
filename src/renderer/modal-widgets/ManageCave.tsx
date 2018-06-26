@@ -18,15 +18,12 @@ import RowButton, {
 import TimeAgo from "renderer/basics/TimeAgo";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import UploadIcon from "renderer/basics/UploadIcon";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { ModalWidgetProps } from "./index";
+import { Dispatch } from "common/types";
+import { hook } from "renderer/hocs/hook";
 
 const CaveItem = styled.div`
   padding: 4px;
@@ -103,7 +100,7 @@ const FileSize = styled.div`
   font-weight: normal;
 `;
 
-class ManageCave extends React.PureComponent<Props & DerivedProps> {
+class ManageCave extends React.PureComponent<Props> {
   render() {
     return <ModalWidgetDiv>{this.renderCave()}</ModalWidgetDiv>;
   }
@@ -210,31 +207,41 @@ class ManageCave extends React.PureComponent<Props & DerivedProps> {
 
   onSwitchVersion = (ev: React.MouseEvent<HTMLElement>) => {
     const cave = this.props.modal.widgetParams.cave;
-    this.props.closeModal({
-      window: rendererWindow(),
-      action: actions.switchVersionCaveRequest({ cave }),
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.closeModal({
+        window: rendererWindow(),
+        action: actions.switchVersionCaveRequest({ cave }),
+      })
+    );
   };
 
   onUninstall = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = this.props.modal.widgetParams.cave.id;
-    this.props.closeModal({
-      window: rendererWindow(),
-      action: actions.queueCaveUninstall({ caveId }),
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.closeModal({
+        window: rendererWindow(),
+        action: actions.queueCaveUninstall({ caveId }),
+      })
+    );
   };
 
   onReinstall = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = this.props.modal.widgetParams.cave.id;
-    this.props.closeModal({
-      window: rendererWindow(),
-      action: actions.queueCaveReinstall({ caveId }),
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.closeModal({
+        window: rendererWindow(),
+        action: actions.queueCaveReinstall({ caveId }),
+      })
+    );
   };
 
   onExplore = (ev: React.MouseEvent<HTMLElement>) => {
     const caveId = this.props.modal.widgetParams.cave.id;
-    this.props.exploreCave({ caveId });
+    const { dispatch } = this.props;
+    dispatch(actions.exploreCave({ caveId }));
   };
 }
 
@@ -242,20 +249,11 @@ export interface ManageCaveParams {
   cave: Cave;
 }
 
-interface Props extends ModalWidgetProps<ManageCaveParams, void> {}
+interface Props extends ModalWidgetProps<ManageCaveParams, void> {
+  dispatch: Dispatch;
+}
 
-const actionCreators = actionCreatorsList(
-  "closeModal",
-  "exploreCave",
-  "manageCave"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<Props>(
-  ManageCave,
-  { actionCreators }
-);
+export default hook()(ManageCave);
 
 function formatUpload(upload: Upload): JSX.Element {
   return (

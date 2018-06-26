@@ -1,14 +1,10 @@
+import { actions } from "common/actions";
+import { Dispatch } from "common/types";
 import React from "react";
-
+import Link from "renderer/basics/Link";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-
-import {
-  connect,
-  actionCreatorsList,
-  Dispatchers,
-} from "renderer/hocs/connect";
-import Link from "renderer/basics/Link";
 
 const DisabledBrowserContainer = styled.div`
   display: flex;
@@ -35,7 +31,7 @@ const Spacer = styled.div`
   width: 10px;
 `;
 
-class DisabledBrowser extends React.PureComponent<Props & DerivedProps> {
+class DisabledBrowser extends React.PureComponent<Props> {
   render() {
     return (
       <DisabledBrowserContainer>
@@ -49,19 +45,14 @@ class DisabledBrowser extends React.PureComponent<Props & DerivedProps> {
   }
 
   onReenable = () => {
-    this.props.updatePreferences({ disableBrowser: false });
+    const { dispatch } = this.props;
+    dispatch(actions.updatePreferences({ disableBrowser: false }));
   };
 }
 
 interface Props {
   url: string;
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList("updatePreferences");
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<Props>(
-  DisabledBrowser,
-  { actionCreators }
-);
+export default withDispatch(DisabledBrowser);

@@ -1,6 +1,6 @@
 import React from "react";
 import Vivus from "vivus";
-import { IRootState } from "common/types";
+import { RootState } from "common/types";
 import { connect } from "renderer/hocs/connect";
 import styled from "renderer/styles";
 
@@ -67,7 +67,7 @@ interface DerivedProps {
 export default connect<Props>(
   LogoIndicator,
   {
-    state: (rs: IRootState) => {
+    state: (rs: RootState) => {
       let progress: number;
       const { blockingOperation, done } = rs.setup;
       if (done) {

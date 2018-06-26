@@ -2,7 +2,7 @@ interface Shape {
   [key: string]: Shape | boolean;
 }
 
-export function fillShape(input: any, shape: Shape) {
+export function fillShape(input: any, shape: Shape): any {
   if (!input) {
     return input;
   }

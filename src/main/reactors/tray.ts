@@ -8,7 +8,7 @@ import { createSelector } from "reselect";
 import { actions } from "common/actions";
 import { getTray, rememberNotificationAction } from "./tray-persistent-state";
 
-import { Store, IRootState, I18nState, MenuTemplate } from "common/types";
+import { Store, RootState, I18nState, MenuTemplate } from "common/types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
 import { currentRuntime } from "main/os/runtime";
 import { memoize } from "common/util/lru-memoize";
@@ -65,7 +65,7 @@ export default function(watcher: Watcher) {
   watcher.onStateChange({
     makeSelector: (store, schedule) =>
       createSelector(
-        (rs: IRootState) => rs.i18n,
+        (rs: RootState) => rs.i18n,
         i18n => {
           schedule(() => refreshTray(store, i18n));
         }

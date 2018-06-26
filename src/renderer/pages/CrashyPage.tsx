@@ -6,7 +6,7 @@ export default class CrashyPage extends React.PureComponent<Props> {
     if (1 == 1) {
       throw new Error("Just testing error boundaries");
     }
-    return null;
+    return null as JSX.Element;
   }
 }
 

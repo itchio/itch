@@ -153,7 +153,7 @@ export default function(watcher: Watcher) {
 
     wc.on(
       "navigation-entry-commited" as any,
-      (event, url, inPage, replaceEntry) => {
+      (event: any, url: string, inPage: boolean, replaceEntry: boolean) => {
         logger.debug(`=================================`);
         logger.debug(
           `navigation entry committed: ${url}, inPage = ${inPage}, replaceEntry = ${replaceEntry}`

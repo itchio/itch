@@ -4,6 +4,7 @@ import { actions } from "common/actions";
 import rootLogger from "common/logger";
 import { messages, withLogger } from "common/butlerd/index";
 import { modalWidgets } from "renderer/modal-widgets";
+import { ManageGameParams } from "renderer/modal-widgets/ManageGame";
 const logger = rootLogger.child({ name: "manage-game" });
 const call = withLogger(logger);
 
@@ -15,7 +16,7 @@ export default function(watcher: Watcher) {
       filters: { gameId: game.id },
     })).items;
 
-    const widgetParams = {
+    const widgetParams: ManageGameParams = {
       game,
       caves,
       allUploads: [],

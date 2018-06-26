@@ -1,12 +1,12 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
-import { TabWeb } from "common/types";
+import { TabWeb, Dispatch } from "common/types";
 import { rendererWindow, transformUrl } from "common/util/navigation";
 import React from "react";
 import listensToClickOutside from "react-onclickoutside";
 import IconButton from "renderer/basics/IconButton";
-import { Dispatch, withDispatch } from "renderer/hocs/withDispatch";
+import { withDispatch } from "renderer/hocs/withDispatch";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
 import { withSpace } from "renderer/hocs/withSpace";

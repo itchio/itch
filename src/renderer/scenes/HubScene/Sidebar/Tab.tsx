@@ -13,7 +13,7 @@ import {
 import { size } from "underscore";
 
 import {
-  IRootState,
+  RootState,
   TabInstance,
   LocalizedString,
   DownloadsState,
@@ -171,11 +171,11 @@ const Tab = connect<Props>(
     state: (initialState, initialProps) => {
       let { tab } = initialProps;
 
-      return createStructuredSelector({
-        tabInstance: (rs: IRootState) =>
+      return createStructuredSelector<RootState, any>({
+        tabInstance: (rs: RootState) =>
           rendererWindowState(rs).tabInstances[tab],
-        loading: (rs: IRootState) => !!rendererNavigation(rs).loadingTabs[tab],
-        downloads: (rs: IRootState) =>
+        loading: (rs: RootState) => !!rendererNavigation(rs).loadingTabs[tab],
+        downloads: (rs: RootState) =>
           tab === "itch://downloads" && rs.downloads,
       });
     },

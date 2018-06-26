@@ -20,7 +20,7 @@ import {
 } from "common/butlerd/messages";
 import { IEndpoint } from "butlerd";
 import { modalWidgets } from "renderer/modal-widgets";
-export interface Store extends ReduxStore<IRootState> {}
+export interface Store extends ReduxStore<RootState> {}
 
 export interface Dispatch {
   (action: Action<any>): void;
@@ -63,7 +63,7 @@ export interface CollectionSet {
 /**
  * The entire application state, following the redux philosophy
  */
-export interface IRootState {
+export interface RootState {
   system: SystemState;
   setup: SetupState;
   profile: ProfileState;

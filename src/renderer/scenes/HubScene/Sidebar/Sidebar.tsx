@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { User } from "common/butlerd/messages";
-import { IRootState } from "common/types";
+import { RootState } from "common/types";
 import {
   rendererNavigation,
   rendererWindow,
@@ -80,7 +80,7 @@ const SortableList = SortableContainer((params: SortableContainerParams) => {
 });
 
 class Sidebar extends React.PureComponent<Props & DerivedProps, State> {
-  constructor(props: Sidebar["props"], context) {
+  constructor(props: Sidebar["props"], context: any) {
     super(props, context);
     this.state = {
       openTabs: props.openTabs,
@@ -231,17 +231,17 @@ export default connect<Props>(
   Sidebar,
   {
     state: createStructuredSelector({
-      appVersion: (rs: IRootState) => rs.system.appVersion,
-      sidebarWidth: (rs: IRootState) => rs.preferences.sidebarWidth || 240,
-      me: (rs: IRootState) => rs.profile.profile.user,
-      tab: (rs: IRootState) => rendererNavigation(rs).tab,
-      openTabs: (rs: IRootState) => rendererNavigation(rs).openTabs,
-      url: (rs: IRootState) => {
+      appVersion: (rs: RootState) => rs.system.appVersion,
+      sidebarWidth: (rs: RootState) => rs.preferences.sidebarWidth || 240,
+      me: (rs: RootState) => rs.profile.profile.user,
+      tab: (rs: RootState) => rendererNavigation(rs).tab,
+      openTabs: (rs: RootState) => rendererNavigation(rs).openTabs,
+      url: (rs: RootState) => {
         const ws = rendererWindowState(rs);
         const ti = ws.tabInstances[rendererNavigation(rs).tab];
         return ti.history[ti.currentIndex].url;
       },
-      enableTabs: (rs: IRootState) => rs.preferences.enableTabs,
+      enableTabs: (rs: RootState) => rs.preferences.enableTabs,
     }),
     actionCreators,
   }

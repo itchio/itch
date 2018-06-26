@@ -17,7 +17,7 @@ const levels = {
   "30": "info",
   "20": "debug",
   "10": "trace",
-};
+} as { [key: string]: string };
 
 const reverseLevels = {
   fatal: "60",
@@ -101,7 +101,7 @@ const LogTable = styled.table`
 const kMaxLines = 250;
 
 class Log extends React.PureComponent<Props, State> {
-  constructor(props: Log["props"], context) {
+  constructor(props: Log["props"], context: any) {
     super(props, context);
     this.state = {
       level: reverseLevels["info"],

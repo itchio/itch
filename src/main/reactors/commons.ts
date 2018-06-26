@@ -30,7 +30,7 @@ async function updateCommonsNowThrows(store: Store) {
     {}
   );
 
-  let locationSizes = {};
+  let locationSizes: { [key: string]: number } = {};
   if (!isEmpty(installLocations)) {
     for (const x of installLocations) {
       locationSizes[x.id] = x.sizeInfo.installedSize;
@@ -89,7 +89,7 @@ function push(store: Store, next: typeof actions.commonsUpdated.payload) {
 
   let hasDifferences = false;
   for (const k of Object.keys(next)) {
-    if (!isEqual(prev[k], next[k])) {
+    if (!isEqual((prev as any)[k], (next as any)[k])) {
       hasDifferences = true;
       break;
     }
