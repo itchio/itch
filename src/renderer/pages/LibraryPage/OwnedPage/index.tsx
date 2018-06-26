@@ -3,7 +3,7 @@ import { GameClassification, Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
 import { LocalizedString, Dispatch } from "common/types";
 import React from "react";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
 import FilterInput from "renderer/pages/common/FilterInput";
@@ -158,4 +158,4 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 }
 
-export default withSpace(withProfile(withDispatch(OwnedPage)));
+export default withSpace(withProfile(hook()(OwnedPage)));

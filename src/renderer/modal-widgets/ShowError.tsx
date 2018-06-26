@@ -14,7 +14,7 @@ import { T } from "renderer/t";
 import { size } from "underscore";
 import Log from "../pages/AppLogPage/Log";
 import { ModalWidgetProps } from "./index";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { Dispatch } from "common/types";
 import { actions } from "common/actions";
 
@@ -223,4 +223,4 @@ interface State {
   sendReport: boolean;
 }
 
-export default withDispatch(ShowError);
+export default hook()(ShowError);

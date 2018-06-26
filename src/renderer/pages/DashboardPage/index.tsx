@@ -3,7 +3,7 @@ import { Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
 import { Dispatch, LocalizedString } from "common/types";
 import React from "react";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
 import GameSeries from "renderer/pages/common/GameSeries";
@@ -115,4 +115,4 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 }
 
-export default withProfile(withSpace(withDispatch(DashboardPage)));
+export default withProfile(withSpace(hook()(DashboardPage)));

@@ -4,7 +4,7 @@ import defaultImages from "common/constants/default-images";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
 import TimeAgo from "renderer/basics/TimeAgo";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { modalWidgets } from "renderer/modal-widgets";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
@@ -80,7 +80,7 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default withDispatch(RememberedProfile);
+export default hook()(RememberedProfile);
 
 const RememberedProfileDiv = styled.div`
   flex-shrink: 0;

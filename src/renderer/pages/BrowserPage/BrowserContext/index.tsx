@@ -3,7 +3,7 @@ import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
 import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import BrowserContextGame from "./BrowserContextGame";
 
@@ -34,4 +34,4 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default withSpace(withDispatch(BrowserContext));
+export default withSpace(hook()(BrowserContext));

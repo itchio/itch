@@ -7,7 +7,7 @@ import Filler from "renderer/basics/Filler";
 import Link from "renderer/basics/Link";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { actions } from "common/actions";
@@ -120,4 +120,4 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default withDispatch(GameUpdateRow);
+export default hook()(GameUpdateRow);

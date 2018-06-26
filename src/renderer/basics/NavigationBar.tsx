@@ -1,15 +1,15 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
-import { TabWeb, Dispatch } from "common/types";
+import { Dispatch, TabWeb } from "common/types";
 import { rendererWindow, transformUrl } from "common/util/navigation";
 import React from "react";
 import listensToClickOutside from "react-onclickoutside";
 import IconButton from "renderer/basics/IconButton";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
+import { withSpace } from "renderer/hocs/withSpace";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
-import { withSpace } from "renderer/hocs/withSpace";
 
 const HTTPS_RE = /^https:\/\//;
 const ITCH_RE = /^itch:\/\//;
@@ -237,4 +237,4 @@ interface Props {
   showAddressBar?: boolean;
 }
 
-export default withSpace(withDispatch(listensToClickOutside(NavigationBar)));
+export default withSpace(listensToClickOutside(hook()(NavigationBar)));

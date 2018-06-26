@@ -6,7 +6,7 @@ import { rendererWindow } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { ModalWidgetProps } from "renderer/modal-widgets";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import CustomDate from "renderer/modal-widgets/SwitchVersionCave/CustomDate";
@@ -173,4 +173,4 @@ interface Props
   dispatch: Dispatch;
 }
 
-export default withDispatch(SwitchVersionCave);
+export default hook()(SwitchVersionCave);

@@ -9,7 +9,7 @@ import Button from "renderer/basics/Button";
 import Filler from "renderer/basics/Filler";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { doAsync } from "renderer/helpers/doAsync";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { ModalWidgetProps } from "renderer/modal-widgets";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import Label from "renderer/pages/PreferencesPage/Label";
@@ -556,4 +556,4 @@ interface State {
   errorMessage?: string;
 }
 
-export default withDispatch(ReportIssue);
+export default hook()(ReportIssue);

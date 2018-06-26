@@ -8,7 +8,7 @@ import { Dispatch } from "common/types";
 import React from "react";
 import Link from "renderer/basics/Link";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import GameSeries from "renderer/pages/common/GameSeries";
 import Page from "renderer/pages/common/Page";
@@ -91,4 +91,4 @@ interface Props extends MeatProps {
   space: Space;
 }
 
-export default withSpace(withDispatch(LocationPage));
+export default withSpace(hook()(LocationPage));

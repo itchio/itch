@@ -6,7 +6,7 @@ import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { doAsync } from "renderer/helpers/doAsync";
 import watching, { Watcher } from "renderer/hocs/watching";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { isEmpty } from "underscore";
 import LoginForm from "./LoginForm";
 import RememberedProfiles from "./RememberedProfiles/index";
@@ -79,4 +79,4 @@ interface State {
   profiles: Profile[];
 }
 
-export default withDispatch(LoginScreen);
+export default hook()(LoginScreen);

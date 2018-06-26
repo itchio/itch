@@ -13,9 +13,9 @@ import Button from "renderer/basics/Button";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { withDispatch } from "renderer/hocs/withDispatch";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
+import { hook } from "renderer/hocs/hook";
 
 const NotCompatibleSpan = styled.span`
   flex-shrink: 0;
@@ -197,4 +197,4 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default withDispatch(MainAction);
+export default hook()(MainAction);

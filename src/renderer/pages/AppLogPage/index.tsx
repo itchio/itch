@@ -7,7 +7,7 @@ import ErrorState from "renderer/basics/ErrorState";
 import IconButton from "renderer/basics/IconButton";
 import Link from "renderer/basics/Link";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import Log from "renderer/pages/AppLogPage/Log";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
@@ -132,4 +132,4 @@ interface State {
   log: string;
 }
 
-export default withSpace(withDispatch(AppLogPage));
+export default withSpace(hook()(AppLogPage));

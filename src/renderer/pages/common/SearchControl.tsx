@@ -1,7 +1,7 @@
 import React from "react";
 import { debounce } from "underscore";
 import { withSpace } from "renderer/hocs/withSpace";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import FilterInput from "renderer/pages/common/FilterInput";
 import { Dispatch } from "common/types";
 import { Space } from "common/helpers/space";
@@ -32,4 +32,4 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default withSpace(withDispatch(SearchControl));
+export default withSpace(hook()(SearchControl));

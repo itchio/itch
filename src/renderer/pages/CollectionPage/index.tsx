@@ -7,7 +7,7 @@ import { Dispatch, LocalizedString } from "common/types";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
 import FilterInput from "renderer/pages/common/FilterInput";
@@ -202,4 +202,4 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 }
 
-export default withProfile(withSpace(withDispatch(CollectionPage)));
+export default withProfile(withSpace(hook()(CollectionPage)));

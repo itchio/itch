@@ -2,7 +2,7 @@ import urls from "common/constants/urls";
 import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
 import React from "react";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 
 class FeaturedPage extends React.PureComponent<Props> {
@@ -25,4 +25,4 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default withSpace(withDispatch(FeaturedPage));
+export default withSpace(hook()(FeaturedPage));

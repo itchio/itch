@@ -12,7 +12,7 @@ import LastPlayed from "renderer/basics/LastPlayed";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import UploadIcon from "renderer/basics/UploadIcon";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
@@ -232,7 +232,7 @@ interface Props extends ModalWidgetProps<ManageGameParams, void> {
   dispatch: Dispatch;
 }
 
-export default withDispatch(ManageGame);
+export default hook()(ManageGame);
 
 function formatUpload(upload: Upload): JSX.Element {
   return (

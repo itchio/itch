@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { Dispatch } from "common/types";
 import React from "react";
 import Link from "renderer/basics/Link";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 
@@ -55,4 +55,4 @@ interface Props {
   dispatch: Dispatch;
 }
 
-export default withDispatch(DisabledBrowser);
+export default hook()(DisabledBrowser);

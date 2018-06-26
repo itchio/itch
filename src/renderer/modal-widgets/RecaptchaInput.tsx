@@ -1,13 +1,13 @@
 import classNames from "classnames";
+import { actions } from "common/actions";
 import { Dispatch } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import { getInjectURL } from "common/util/resources";
 import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { ModalWidgetProps, modalWidgets } from "./index";
-import { withDispatch } from "renderer/hocs/withDispatch";
-import { actions } from "common/actions";
 
 const WidgetDiv = styled.div`
   position: relative;
@@ -123,4 +123,4 @@ interface RecaptchaInputProps
   dispatch: Dispatch;
 }
 
-export default withDispatch(RecaptchaInput);
+export default hook()(RecaptchaInput);

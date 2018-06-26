@@ -5,7 +5,7 @@ import styled, * as styles from "renderer/styles";
 import AdvancedSettings from "./AdvancedSettings";
 import BehaviorSettings from "./BehaviorSettings";
 import LanguageSettings from "./LanguageSettings";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
@@ -147,4 +147,4 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 }
 
-export default withDispatch(withSpace(PreferencesPage));
+export default hook()(withSpace(PreferencesPage));

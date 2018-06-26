@@ -10,7 +10,7 @@ import ErrorState from "renderer/basics/ErrorState";
 import Filler from "renderer/basics/Filler";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
@@ -151,7 +151,7 @@ export default <Params, Res extends FetchRes<any>>(
     }
   };
 
-  return withDispatch(withSpace(c));
+  return hook()(withSpace(c));
 };
 
 function renderNoop(): JSX.Element {

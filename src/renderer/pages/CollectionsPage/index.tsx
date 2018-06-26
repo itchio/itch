@@ -14,7 +14,7 @@ import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import TimeAgo from "renderer/basics/TimeAgo";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
 import GameStripe from "renderer/pages/common/GameStripe";
@@ -153,4 +153,4 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 }
 
-export default withSpace(withProfile(withDispatch(CollectionsPage)));
+export default withSpace(withProfile(hook()(CollectionsPage)));
