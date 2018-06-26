@@ -1,16 +1,11 @@
-import React from "react";
-import { createStructuredSelector } from "reselect";
-import { connect } from "renderer/hocs/connect";
-
 import urls from "common/constants/urls";
-
+import { IOpenAtLoginError } from "common/types";
+import React from "react";
 import Icon from "renderer/basics/Icon";
-
+import { hook } from "renderer/hocs/hook";
 import { T } from "renderer/t";
 
-import { RootState, IOpenAtLoginError } from "common/types";
-
-class OpenAtLoginError extends React.PureComponent<Props & DerivedProps> {
+class OpenAtLoginError extends React.PureComponent<Props> {
   render() {
     const { openAtLoginError } = this.props;
 
@@ -51,17 +46,10 @@ class OpenAtLoginError extends React.PureComponent<Props & DerivedProps> {
   }
 }
 
-interface Props {}
-
-interface DerivedProps {
+interface Props {
   openAtLoginError: IOpenAtLoginError;
 }
 
-export default connect<Props>(
-  OpenAtLoginError,
-  {
-    state: createStructuredSelector({
-      openAtLoginError: (rs: RootState) => rs.status.openAtLoginError,
-    }),
-  }
-);
+export default hook(map => ({
+  openAtLoginError: map(rs => rs.status.openAtLoginError),
+}))(OpenAtLoginError);

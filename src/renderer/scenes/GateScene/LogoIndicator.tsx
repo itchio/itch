@@ -1,8 +1,7 @@
 import React from "react";
-import Vivus from "vivus";
-import { RootState } from "common/types";
-import { connect } from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
+import Vivus from "vivus";
 
 const appWhiteContour = require("static/images/logos/app-white-contour.svg");
 
@@ -23,7 +22,7 @@ const LogoIndicatorDiv = styled.div`
   }
 `;
 
-class LogoIndicator extends React.PureComponent<Props & DerivedProps> {
+class LogoIndicator extends React.PureComponent<Props> {
   vivus: Vivus;
   progress = 0;
 
@@ -58,28 +57,21 @@ class LogoIndicator extends React.PureComponent<Props & DerivedProps> {
   };
 }
 
-interface Props {}
-
-interface DerivedProps {
-  progress?: number;
+interface Props {
+  progress: number;
 }
 
-export default connect<Props>(
-  LogoIndicator,
-  {
-    state: (rs: RootState) => {
-      let progress: number;
-      const { blockingOperation, done } = rs.setup;
-      if (done) {
-        progress = 1.0;
+export default hook(map => ({
+  progress: map(rs => {
+    const { blockingOperation, done } = rs.setup;
+    if (done) {
+      return 1.0;
+    } else {
+      if (blockingOperation && blockingOperation.progressInfo) {
+        return blockingOperation.progressInfo.progress;
       } else {
-        if (blockingOperation && blockingOperation.progressInfo) {
-          progress = blockingOperation.progressInfo.progress;
-        } else {
-          progress = 0.0;
-        }
+        return 0.0;
       }
-      return { progress };
-    },
-  }
-);
+    }
+  }),
+}))(LogoIndicator);

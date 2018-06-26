@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import { Download, GameUpdate } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { Dispatch, RootState } from "common/types";
+import { Dispatch } from "common/types";
 import {
   getFinishedDownloads,
   getPendingDownloads,
@@ -11,8 +11,7 @@ import Button from "renderer/basics/Button";
 import EmptyState from "renderer/basics/EmptyState";
 import Link from "renderer/basics/Link";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import GameUpdateRow from "renderer/pages/DownloadsPage/GameUpdateRow";
 import Row from "renderer/pages/DownloadsPage/Row";
@@ -20,7 +19,6 @@ import { Title } from "renderer/pages/PageStyles/games";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { createStructuredSelector } from "reselect";
 import { first, isEmpty, map, rest, size } from "underscore";
 
 const DownloadsDiv = styled.div`
@@ -66,7 +64,7 @@ const DownloadsContentDiv = styled.div`
   }
 `;
 
-class DownloadsPage extends React.PureComponent<Props & DerivedProps> {
+class DownloadsPage extends React.PureComponent<Props> {
   componentDidMount() {
     const { dispatch, space } = this.props;
     dispatch(
@@ -237,9 +235,6 @@ class DownloadsPage extends React.PureComponent<Props & DerivedProps> {
 interface Props extends MeatProps {
   space: Space;
   dispatch: Dispatch;
-}
-
-interface DerivedProps {
   items: Download[];
   finishedItems: Download[];
   updates: {
@@ -251,19 +246,12 @@ interface DerivedProps {
 }
 
 export default withSpace(
-  withDispatch(
-    connect<Props>(
-      DownloadsPage,
-      {
-        state: createStructuredSelector({
-          items: (rs: RootState) => getPendingDownloads(rs.downloads),
-          finishedItems: (rs: RootState) => getFinishedDownloads(rs.downloads),
-          updates: (rs: RootState) => rs.gameUpdates.updates,
-          updateCheckHappening: (rs: RootState) => rs.gameUpdates.checking,
-          updateCheckProgress: (rs: RootState) => rs.gameUpdates.progress,
-          downloadsPaused: (rs: RootState) => rs.downloads.paused,
-        }),
-      }
-    )
-  )
+  hook(map => ({
+    items: map(rs => getPendingDownloads(rs.downloads)),
+    finishedItems: map(rs => getFinishedDownloads(rs.downloads)),
+    updates: map(rs => rs.gameUpdates.updates),
+    updateCheckHappening: map(rs => rs.gameUpdates.checking),
+    updateCheckProgress: map(rs => rs.gameUpdates.progress),
+    downloadsPaused: map(rs => rs.downloads.paused),
+  }))(DownloadsPage)
 );

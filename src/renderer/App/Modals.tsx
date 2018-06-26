@@ -4,7 +4,6 @@ import * as colors from "common/constants/colors";
 import { specToButton } from "common/helpers/spec-to-button";
 import {
   Action,
-  RootState,
   Modal,
   ModalButton,
   ModalButtonSpec,
@@ -13,7 +12,7 @@ import {
 import { rendererWindow, rendererWindowState } from "common/util/navigation";
 import { stripUnit } from "polished";
 import React from "react";
-import { InjectedIntl, injectIntl } from "react-intl";
+import { InjectedIntl } from "react-intl";
 import Button from "renderer/basics/Button";
 import Cover from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
@@ -26,14 +25,13 @@ import RowButton, {
   Tag,
 } from "renderer/basics/RowButton";
 import TimeAgo from "renderer/basics/TimeAgo";
-import { connect } from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
-import { withDispatch } from "renderer/hocs/withDispatch";
 import Hoverable from "renderer/hocs/withHover";
+import { withIntl } from "renderer/hocs/withIntl";
 import { modalWidgets, ModalWidgetSpec } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
 import { T, TString } from "renderer/t";
-import { createStructuredSelector } from "reselect";
 import { filter, isEmpty, map } from "underscore";
 
 const HoverCover = Hoverable(Cover);
@@ -291,7 +289,7 @@ const BigButtonsDiv = styled.div`
 `;
 
 @watching
-class Modals extends React.PureComponent<Props & DerivedProps, State> {
+class Modals extends React.PureComponent<Props, State> {
   constructor(props: Modals["props"], context: any) {
     super(props, context);
     this.state = {
@@ -300,7 +298,7 @@ class Modals extends React.PureComponent<Props & DerivedProps, State> {
   }
 
   subscribe(watcher: Watcher) {
-    watcher.on(actions.commandOk, async (store, action) => {
+    watcher.on(actions.commandOk, async () => {
       const { modal } = this.props;
       if (!modal) {
         return;
@@ -574,25 +572,15 @@ class Modals extends React.PureComponent<Props & DerivedProps, State> {
 }
 
 interface Props {
-  dispatch: Dispatch;
-}
-
-interface DerivedProps {
   modal: Modal;
   intl: InjectedIntl;
+  dispatch: Dispatch;
 }
 
 interface State {
   widgetPayload?: typeof actions.modalResponse.payload;
 }
 
-export default withDispatch(
-  connect<Props>(
-    injectIntl(Modals),
-    {
-      state: createStructuredSelector({
-        modal: (rs: RootState) => rendererWindowState(rs).modals[0],
-      }),
-    }
-  )
-);
+export default hook(map => ({
+  modal: map(rs => rendererWindowState(rs).modals[0]),
+}))(withIntl(Modals));

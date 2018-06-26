@@ -2,14 +2,12 @@ import { actions } from "common/actions";
 import { User } from "common/butlerd/messages";
 import defaultImages from "common/constants/default-images";
 import urls from "common/constants/urls";
-import { Dispatch, RootState } from "common/types";
+import { Dispatch } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import React from "react";
 import Filler from "renderer/basics/Filler";
-import { connect } from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import styled, * as styles from "renderer/styles";
-import { createStructuredSelector } from "reselect";
-import { withDispatch } from "renderer/hocs/withDispatch";
 
 const UserMenuDiv = styled.div`
   display: flex;
@@ -44,7 +42,7 @@ const UserMenuDiv = styled.div`
   }
 `;
 
-class UserMenu extends React.PureComponent<Props & DerivedProps> {
+class UserMenu extends React.PureComponent<Props> {
   render() {
     if (!this.props.me) {
       return null; // cf. #1405
@@ -143,20 +141,9 @@ class UserMenu extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   dispatch: Dispatch;
-}
-
-interface DerivedProps {
   me: User;
 }
 
-export default withDispatch(
-  connect<Props>(
-    UserMenu,
-    {
-      state: () =>
-        createStructuredSelector<RootState, any>({
-          me: (rs: RootState) => rs.profile.profile.user,
-        }),
-    }
-  )
-);
+export default hook(map => ({
+  me: map(rs => rs.profile.profile.user),
+}))(UserMenu);

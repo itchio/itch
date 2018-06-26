@@ -1,11 +1,10 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
-import { Dispatch, RootState } from "common/types";
+import { Dispatch } from "common/types";
 import React from "react";
-import { connect } from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import { modalWidgets } from "renderer/modal-widgets/index";
 import styled from "renderer/styles";
-import { createStructuredSelector } from "reselect";
 
 const LogoDiv = styled.div`
   text-align: center;
@@ -20,7 +19,7 @@ const LogoDiv = styled.div`
   }
 `;
 
-class Logo extends React.PureComponent<Props & DerivedProps> {
+class Logo extends React.PureComponent<Props> {
   render() {
     const { appVersion } = this.props;
 
@@ -59,17 +58,9 @@ class Logo extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   dispatch: Dispatch;
-}
-
-interface DerivedProps {
   appVersion: string;
 }
 
-export default connect(
-  Logo,
-  {
-    state: createStructuredSelector({
-      appVersion: (rs: RootState) => rs.system.appVersion,
-    }),
-  }
-);
+export default hook(map => ({
+  appVersion: map(rs => rs.system.appVersion),
+}))(Logo);

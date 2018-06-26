@@ -1,7 +1,8 @@
 import classNames from "classnames";
+import { actions } from "common/actions";
 import { Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { Dispatch, RootState, LoadingTabs, TabInstances } from "common/types";
+import { Dispatch, LoadingTabs, TabInstances } from "common/types";
 import {
   rendererNavigation,
   rendererWindow,
@@ -10,15 +11,12 @@ import {
 import React from "react";
 import { filtersContainerHeight } from "renderer/basics/FiltersContainer";
 import TitleBar from "renderer/basics/TitleBar";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { SpaceProvider } from "renderer/hocs/withSpace";
 import { modalWidgets } from "renderer/modal-widgets";
 import styled from "renderer/styles";
-import { createStructuredSelector } from "reselect";
 import { map } from "underscore";
 import Meat from "./Meat";
-import { actions } from "common/actions";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -47,7 +45,7 @@ const MeatTab = styled.div`
   }
 `;
 
-class Meats extends React.PureComponent<Props & DerivedProps> {
+class Meats extends React.PureComponent<Props> {
   render() {
     let {
       profile,
@@ -114,9 +112,7 @@ class Meats extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   dispatch: Dispatch;
-}
 
-interface DerivedProps {
   /** current tab shown */
   tab: string;
   openTabs: string[];
@@ -125,17 +121,10 @@ interface DerivedProps {
   profile: Profile;
 }
 
-export default withDispatch(
-  connect<Props>(
-    Meats,
-    {
-      state: createStructuredSelector({
-        profile: (rs: RootState) => rs.profile.profile,
-        tab: (rs: RootState) => rendererNavigation(rs).tab,
-        openTabs: (rs: RootState) => rendererNavigation(rs).openTabs,
-        tabInstances: (rs: RootState) => rendererWindowState(rs).tabInstances,
-        loadingTabs: (rs: RootState) => rendererNavigation(rs).loadingTabs,
-      }),
-    }
-  )
-);
+export default hook(map => ({
+  profile: map(rs => rs.profile.profile),
+  tab: map(rs => rendererNavigation(rs).tab),
+  openTabs: map(rs => rendererNavigation(rs).openTabs),
+  tabInstances: map(rs => rendererWindowState(rs).tabInstances),
+  loadingTabs: map(rs => rendererNavigation(rs).loadingTabs),
+}))(Meats);

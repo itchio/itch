@@ -1,9 +1,10 @@
 import { LocalizedString } from "common/types";
 import React from "react";
-import { InjectedIntl, injectIntl } from "react-intl";
+import { InjectedIntl } from "react-intl";
 import styled from "renderer/styles";
 import { TString } from "renderer/t";
 import { map } from "underscore";
+import { withIntl } from "renderer/hocs/withIntl";
 
 const SelectRowDiv = styled.div`
   display: inline-block;
@@ -25,7 +26,7 @@ const Select = styled.select`
 /**
  * A drop-down you can select from
  */
-class SelectRow extends React.PureComponent<Props & DerivedProps> {
+class SelectRow extends React.PureComponent<Props> {
   element: HTMLSelectElement;
 
   constructor(props: SelectRow["props"], context: any) {
@@ -83,10 +84,8 @@ interface Props {
   options: SelectOption[];
   value?: string;
   onChange?(value: string): void;
-}
 
-interface DerivedProps {
   intl: InjectedIntl;
 }
 
-export default injectIntl(SelectRow);
+export default withIntl(SelectRow);

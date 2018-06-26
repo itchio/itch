@@ -1,10 +1,10 @@
-import { Dispatch, RootState } from "common/types";
+import { actions } from "common/actions";
+import { Dispatch } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import { connect } from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { actions } from "common/actions";
 
 const Container = styled.div`
   align-self: stretch;
@@ -28,7 +28,7 @@ const Spacer = styled.div`
   width: 0.4em;
 `;
 
-class NewVersionAvailable extends React.PureComponent<Props & DerivedProps> {
+class NewVersionAvailable extends React.PureComponent<Props> {
   render() {
     const { available } = this.props;
     if (!available) {
@@ -52,19 +52,13 @@ class NewVersionAvailable extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   dispatch: Dispatch;
+
+  available: boolean;
 }
 
-interface DerivedProps {
-  available?: boolean;
-}
-
-export default connect(
-  NewVersionAvailable,
-  {
-    state: (rs: RootState): Partial<DerivedProps> => {
-      const pkg = rs.broth.packages[rs.system.appName];
-      const available = pkg && pkg.stage === "need-restart";
-      return { available };
-    },
-  }
-);
+export default hook(map => ({
+  available: map(rs => {
+    const pkg = rs.broth.packages[rs.system.appName];
+    return pkg && pkg.stage === "need-restart";
+  }),
+}))(NewVersionAvailable);

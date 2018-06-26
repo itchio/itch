@@ -1,23 +1,16 @@
-import React from "react";
-
-import { debounce } from "underscore";
-import styled, * as styles from "renderer/styles";
-
-import watching, { Watcher } from "renderer/hocs/watching";
-import {
-  connect,
-  actionCreatorsList,
-  Dispatchers,
-} from "renderer/hocs/connect";
-
-import { actions } from "common/actions";
-
-import { injectIntl, InjectedIntl } from "react-intl";
-import { TString } from "renderer/t";
-import { RootState } from "common/types";
 import classNames from "classnames";
+import { actions } from "common/actions";
+import React from "react";
+import { InjectedIntl } from "react-intl";
 import LoadingCircle from "renderer/basics/LoadingCircle";
+import { hook } from "renderer/hocs/hook";
+import watching, { Watcher } from "renderer/hocs/watching";
+import { withIntl } from "renderer/hocs/withIntl";
 import SearchResultsBar from "renderer/scenes/HubScene/Sidebar/SearchResultsBar";
+import styled, * as styles from "renderer/styles";
+import { TString } from "renderer/t";
+import { debounce } from "underscore";
+import { Dispatch } from "common/types";
 
 const SearchContainerContainer = styled.section`
   .relative-wrapper {
@@ -61,22 +54,22 @@ const SearchContainer = styled.div`
 `;
 
 @watching
-class Search extends React.PureComponent<DerivedProps> {
+class Search extends React.PureComponent<Props> {
   input: HTMLInputElement;
 
   trigger = debounce(() => {
     if (!this.input) {
       return;
     }
-    this.props.search({ query: this.input.value });
+    this.props.dispatch(actions.search({ query: this.input.value }));
   }, 100);
 
   onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    this.props.focusSearch({});
+    this.props.dispatch(actions.focusSearch({}));
   };
 
   onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    this.props.closeSearch({});
+    this.props.dispatch(actions.closeSearch({}));
   };
 
   onChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -91,10 +84,14 @@ class Search extends React.PureComponent<DerivedProps> {
     if (key === "Escape") {
       // default behavior is to clear - don't
     } else if (key === "ArrowDown") {
-      this.props.searchHighlightOffset({ offset: 1, relative: true });
+      this.props.dispatch(
+        actions.searchHighlightOffset({ offset: 1, relative: true })
+      );
       // default behavior is to jump to end of input - don't
     } else if (key === "ArrowUp") {
-      this.props.searchHighlightOffset({ offset: -1, relative: true });
+      this.props.dispatch(
+        actions.searchHighlightOffset({ offset: -1, relative: true })
+      );
       // default behavior is to jump to start of input - don't
     } else {
       passthrough = true;
@@ -127,7 +124,7 @@ class Search extends React.PureComponent<DerivedProps> {
   subscribe(watcher: Watcher) {
     watcher.on(actions.commandBack, async (store, action) => {
       if (this.input) {
-        this.props.closeSearch({});
+        this.props.dispatch(actions.closeSearch({}));
       }
     });
   }
@@ -167,27 +164,14 @@ class Search extends React.PureComponent<DerivedProps> {
   };
 }
 
-const actionCreators = actionCreatorsList(
-  "search",
-  "focusSearch",
-  "closeSearch",
-  "searchHighlightOffset"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface Props {
   open: boolean;
   loading: boolean;
-
+  dispatch: Dispatch;
   intl: InjectedIntl;
-};
+}
 
-export default connect<{}>(
-  injectIntl(Search),
-  {
-    state: (rs: RootState) => ({
-      open: rs.profile.search.open,
-      loading: rs.profile.search.loading,
-    }),
-    actionCreators,
-  }
-);
+export default hook(map => ({
+  open: map(rs => rs.profile.search.open),
+  loading: map(rs => rs.profile.search.loading),
+}))(withIntl(Search));

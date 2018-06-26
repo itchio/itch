@@ -1,12 +1,10 @@
-import React from "react";
-import { PreferencesState, RootState, Dispatch } from "common/types";
-
-import Label from "./Label";
-import { withDispatch } from "renderer/hocs/withDispatch";
 import { actions } from "common/actions";
-import { connect } from "renderer/hocs/connect";
+import { Dispatch, PreferencesState } from "common/types";
+import React from "react";
+import { hookWithProps } from "renderer/hocs/hook";
+import Label from "./Label";
 
-class Checkbox extends React.PureComponent<Props & DerivedProps> {
+class Checkbox extends React.PureComponent<Props> {
   render() {
     const { name, active, children, dispatch, label } = this.props;
 
@@ -34,19 +32,9 @@ interface Props {
   children?: any;
 
   dispatch: Dispatch;
+  active: boolean;
 }
 
-interface DerivedProps {
-  active?: boolean;
-}
-
-export default withDispatch(
-  connect<Props>(
-    Checkbox,
-    {
-      state: (rs: RootState, props: Props) => ({
-        active: rs.preferences[props.name],
-      }),
-    }
-  )
-);
+export default hookWithProps(Checkbox)(map => ({
+  active: map((rs, props) => rs.preferences[props.name]),
+}))(Checkbox);

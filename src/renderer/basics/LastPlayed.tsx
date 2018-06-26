@@ -4,7 +4,7 @@ import React from "react";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { T } from "renderer/t";
 
-class LastPlayed extends React.PureComponent<Props & DerivedProps> {
+class LastPlayed extends React.PureComponent<Props> {
   render() {
     const { game, cave, short = false } = this.props;
     const { lastTouchedAt = null } = cave || {};
@@ -48,5 +48,3 @@ interface Props {
   cave: CaveSummary;
   short?: boolean;
 }
-
-interface DerivedProps {}

@@ -23,7 +23,7 @@ class ChartGradient extends React.PureComponent<{}> {
   }
 }
 
-class Chart extends React.PureComponent<Props & DerivedProps> {
+class Chart extends React.PureComponent<Props> {
   render() {
     const { data } = this.props;
     let clipPathId = "clipPath" + Date.now();
@@ -78,10 +78,8 @@ class Chart extends React.PureComponent<Props & DerivedProps> {
   }
 }
 
-interface Props {
+interface Props extends DimensionsProps {
   data: number[];
 }
-
-interface DerivedProps extends DimensionsProps {}
 
 export default withDimensions(Chart);

@@ -1,13 +1,12 @@
-import React from "react";
-import { connect } from "renderer/hocs/connect";
-
 import urls from "common/constants/urls";
-
-import { T } from "renderer/t";
+import { ProxySource } from "common/types";
+import React from "react";
 import Icon from "renderer/basics/Icon";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
+import { T } from "renderer/t";
 
-class ProxySettings extends React.PureComponent<Props & DerivedProps> {
+class ProxySettings extends React.PureComponent<Props> {
   render() {
     const { proxy, proxySource } = this.props;
 
@@ -40,19 +39,12 @@ const ProxySettingsSpan = styled.span`
   }
 `;
 
-interface Props {}
-
-interface DerivedProps {
-  proxy?: string;
-  proxySource?: string;
+interface Props {
+  proxy: string;
+  proxySource: ProxySource;
 }
 
-export default connect<Props>(
-  ProxySettings,
-  {
-    state: state => ({
-      proxy: state.system.proxy,
-      proxySource: state.system.proxySource,
-    }),
-  }
-);
+export default hook(map => ({
+  proxy: map(rs => rs.system.proxy),
+  proxySource: map(rs => rs.system.proxySource),
+}))(ProxySettings);

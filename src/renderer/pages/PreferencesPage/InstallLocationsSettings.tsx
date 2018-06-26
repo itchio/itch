@@ -3,14 +3,13 @@ import { actions } from "common/actions/index";
 import { call, messages } from "common/butlerd/index";
 import { InstallLocationSummary } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
-import { Dispatch, RootState, MenuTemplate } from "common/types";
+import { Dispatch, MenuTemplate } from "common/types";
 import { rendererWindow, urlForInstallLocation } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
 import IconButton from "renderer/basics/IconButton";
-import { connect } from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
-import { withDispatch } from "renderer/hocs/withDispatch";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { findWhere, size } from "underscore";
@@ -121,10 +120,7 @@ const Spacer = styled.div`
 `;
 
 @watching
-class InstallLocationSettings extends React.Component<
-  Props & DerivedProps,
-  State
-> {
+class InstallLocationSettings extends React.Component<Props, State> {
   constructor(props: InstallLocationSettings["props"], context: any) {
     super(props, context);
     this.state = {
@@ -306,9 +302,6 @@ class InstallLocationSettings extends React.Component<
 
 interface Props {
   dispatch: Dispatch;
-}
-
-interface DerivedProps {
   defaultInstallLocation: string;
 }
 
@@ -316,13 +309,6 @@ interface State {
   installLocations: InstallLocationSummary[];
 }
 
-export default withDispatch(
-  connect<Props>(
-    InstallLocationSettings,
-    {
-      state: (rs: RootState) => ({
-        defaultInstallLocation: rs.preferences.defaultInstallLocation,
-      }),
-    }
-  )
-);
+export default hook(map => ({
+  defaultInstallLocation: map(rs => rs.preferences.defaultInstallLocation),
+}))(InstallLocationSettings);

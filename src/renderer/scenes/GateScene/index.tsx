@@ -1,8 +1,8 @@
-import { RootState, SetupOperation } from "common/types";
+import { SetupOperation } from "common/types";
 import React from "react";
 import Filler from "renderer/basics/Filler";
 import TitleBar from "renderer/basics/TitleBar";
-import { connect } from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import BlockingOperation from "renderer/scenes/GateScene/BlockingOperation";
 import LoginScreen from "renderer/scenes/GateScene/LoginScreen";
 import LogoIndicator from "renderer/scenes/GateScene/LogoIndicator";
@@ -24,7 +24,7 @@ const GateDiv = styled.div`
   }
 `;
 
-class GatePage extends React.PureComponent<Props & DerivedProps> {
+class GatePage extends React.PureComponent<Props> {
   username: HTMLInputElement;
   password: HTMLInputElement;
 
@@ -50,29 +50,19 @@ class GatePage extends React.PureComponent<Props & DerivedProps> {
   }
 }
 
-interface Props {}
-
-interface DerivedProps {
+interface Props {
   stage: "setup" | "login";
-  errors?: string[];
-  blockingOperation?: SetupOperation;
+  errors: string[];
+  blockingOperation: SetupOperation;
 }
 
-export default connect<Props>(
-  GatePage,
-  {
-    state: (rs: RootState): Partial<DerivedProps> => {
-      const { profile } = rs;
-      const { login } = profile;
-
-      if (!rs.setup.done) {
-        return {
-          stage: "setup",
-          errors: rs.setup.errors,
-          blockingOperation: rs.setup.blockingOperation,
-        };
-      }
-      return { stage: "login", blockingOperation: login.blockingOperation };
-    },
-  }
-);
+export default hook(map => ({
+  stage: map(rs => (rs.setup.done ? "login" : "setup")),
+  errors: map(rs => (rs.setup.done ? null : rs.setup.errors)),
+  blockingOperation: map(
+    rs =>
+      rs.setup.done
+        ? rs.profile.login.blockingOperation
+        : rs.setup.blockingOperation
+  ),
+}))(GatePage);

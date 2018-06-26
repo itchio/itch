@@ -1,13 +1,11 @@
-import React from "react";
-import { createStructuredSelector } from "reselect";
-import { connect } from "renderer/hocs/connect";
-
-import Icon from "renderer/basics/Icon";
-import { RootState, PackageState } from "common/types";
-import LoadingCircle from "renderer/basics/LoadingCircle";
 import { downloadProgress } from "common/format/download-progress";
+import { PackageState } from "common/types";
+import React from "react";
+import Icon from "renderer/basics/Icon";
+import LoadingCircle from "renderer/basics/LoadingCircle";
+import { hookWithProps } from "renderer/hocs/hook";
 
-class BrothComponent extends React.PureComponent<Props & DerivedProps> {
+class BrothComponent extends React.PureComponent<Props> {
   render() {
     const { name, pkg } = this.props;
 
@@ -75,17 +73,10 @@ class BrothComponent extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   name: string;
-}
 
-interface DerivedProps {
   pkg: PackageState;
 }
 
-export default connect<Props>(
-  BrothComponent,
-  {
-    state: createStructuredSelector({
-      pkg: (rs: RootState, props: Props) => rs.broth.packages[props.name],
-    }),
-  }
-);
+export default hookWithProps(BrothComponent)(map => ({
+  pkg: map((rs, props) => rs.broth.packages[props.name]),
+}))(BrothComponent);

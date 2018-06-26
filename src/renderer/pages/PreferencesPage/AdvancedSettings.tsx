@@ -1,18 +1,16 @@
 import { actions } from "common/actions";
 import { formatArch, formatPlatform } from "common/format/platform";
-import { Dispatch, RootState, SystemState } from "common/types";
+import { Dispatch, SystemState } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { T } from "renderer/t";
-import { createStructuredSelector } from "reselect";
 import BrothComponents from "./BrothComponents";
 import Checkbox from "./Checkbox";
 import ProxySettings from "./ProxySettings";
 
-class AdvancedSettings extends React.PureComponent<Props & DerivedProps> {
+class AdvancedSettings extends React.PureComponent<Props> {
   render() {
     const { system, dispatch } = this.props;
 
@@ -87,19 +85,10 @@ class AdvancedSettings extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   dispatch: Dispatch;
-}
 
-interface DerivedProps {
   system: SystemState;
 }
 
-export default withDispatch(
-  connect<Props>(
-    AdvancedSettings,
-    {
-      state: createStructuredSelector({
-        system: (rs: RootState) => rs.system,
-      }),
-    }
-  )
-);
+export default hook(map => ({
+  system: map(rs => rs.system),
+}))(AdvancedSettings);

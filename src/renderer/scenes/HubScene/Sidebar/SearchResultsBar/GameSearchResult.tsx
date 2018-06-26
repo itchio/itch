@@ -6,13 +6,10 @@ import React from "react";
 import Cover from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
 import { whenClickNavigates } from "renderer/helpers/whenClickNavigates";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import GenericSearchResult from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/GenericSearchResult";
 import styled, * as styles from "renderer/styles";
+import { Dispatch } from "common/types";
 
 const GameSearchResultDiv = styled.div`
   display: flex;
@@ -85,7 +82,7 @@ const ShortText = styled.span`
   white-space: normal;
 `;
 
-class GameSearchResult extends GenericSearchResult<Props & DerivedProps> {
+class GameSearchResult extends GenericSearchResult<Props> {
   render() {
     const { game, chosen } = this.props;
     const { title, stillCoverUrl, coverUrl } = game;
@@ -146,20 +143,25 @@ class GameSearchResult extends GenericSearchResult<Props & DerivedProps> {
         ev.preventDefault();
       }
 
-      const { game, navigate } = this.props;
-      navigate({
-        window: rendererWindow(),
-        url: urlForGame(game.id),
-        background,
-      });
+      const { game, dispatch } = this.props;
+      dispatch(
+        actions.navigate({
+          window: rendererWindow(),
+          url: urlForGame(game.id),
+          background,
+        })
+      );
     });
   };
 
   onMouseEnter = () => {
-    this.props.searchHighlightOffset({
-      offset: this.props.index,
-      relative: false,
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.searchHighlightOffset({
+        offset: this.props.index,
+        relative: false,
+      })
+    );
   };
 
   getNavigateAction() {
@@ -176,13 +178,7 @@ interface Props {
   chosen: boolean;
   active: boolean;
   index: number;
+  dispatch: Dispatch;
 }
 
-const actionCreators = actionCreatorsList("searchHighlightOffset", "navigate");
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
-
-export default connect<Props>(
-  GameSearchResult,
-  { actionCreators }
-);
+export default hook()(GameSearchResult);

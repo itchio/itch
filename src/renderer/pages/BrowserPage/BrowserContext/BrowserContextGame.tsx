@@ -1,18 +1,14 @@
-import React from "react";
-import styled from "renderer/styles";
-
-import { Game } from "common/butlerd/messages";
-import { RootState } from "common/types";
-import { createStructuredSelector } from "reselect";
-import getGameStatus, { GameStatus } from "common/helpers/get-game-status";
-import MainAction from "renderer/basics/MainAction";
-import { Dispatch } from "redux";
 import { actions } from "common/actions";
-import { withDispatch } from "renderer/hocs/withDispatch";
-import { connect } from "renderer/hocs/connect";
-import GameStats from "renderer/basics/GameStats";
+import { Game } from "common/butlerd/messages";
+import getGameStatus, { GameStatus } from "common/helpers/get-game-status";
+import React from "react";
+import { Dispatch } from "redux";
 import Filler from "renderer/basics/Filler";
+import GameStats from "renderer/basics/GameStats";
 import IconButton from "renderer/basics/IconButton";
+import MainAction from "renderer/basics/MainAction";
+import { hookWithProps } from "renderer/hocs/hook";
+import styled from "renderer/styles";
 
 const Spacer = styled.div`
   flex-basis: 10px;
@@ -32,7 +28,7 @@ const BrowserContextDiv = styled.div`
   align-items: center;
 `;
 
-class _BrowserContextGame extends React.PureComponent<Props & DerivedProps> {
+class BrowserContextGame extends React.PureComponent<Props> {
   render() {
     const { game, status } = this.props;
 
@@ -62,21 +58,10 @@ class _BrowserContextGame extends React.PureComponent<Props & DerivedProps> {
 interface Props {
   game: Game;
   dispatch: Dispatch<any>;
-}
 
-interface DerivedProps {
   status: GameStatus;
 }
 
-const BrowserContextGame = withDispatch(
-  connect<Props>(
-    _BrowserContextGame,
-    {
-      state: createStructuredSelector({
-        status: (rs: RootState, props: Props) => getGameStatus(rs, props.game),
-      }),
-    }
-  )
-);
-
-export default BrowserContextGame;
+export default hookWithProps(BrowserContextGame)(map => ({
+  status: map((rs, props) => getGameStatus(rs, props.game)),
+}))(BrowserContextGame);

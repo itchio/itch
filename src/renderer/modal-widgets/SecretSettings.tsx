@@ -5,8 +5,7 @@ import { Dispatch, RootState } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
 import { doAsync } from "renderer/helpers/doAsync";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { ModalWidgetProps, modalWidgets } from "./index";
@@ -33,7 +32,7 @@ const ControlsDiv = styled.div`
   }
 `;
 
-class SecretSettings extends React.PureComponent<Props & DerivedProps> {
+class SecretSettings extends React.PureComponent<Props> {
   render() {
     const { status } = this.props;
 
@@ -218,19 +217,10 @@ export interface SecretSettingsParams {}
 interface Props extends ModalWidgetProps<SecretSettingsParams, void> {
   params: SecretSettingsParams;
   dispatch: Dispatch;
-}
 
-interface DerivedProps {
   status: RootState["status"];
 }
 
-export default withDispatch(
-  connect<Props>(
-    SecretSettings,
-    {
-      state: (rs: RootState) => ({
-        status: rs.status,
-      }),
-    }
-  )
-);
+export default hook(map => ({
+  status: map(rs => rs.status),
+}))(SecretSettings);

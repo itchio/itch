@@ -14,7 +14,7 @@ import getGameStatus, {
   Operation,
   OperationType,
 } from "common/helpers/get-game-status";
-import { Dispatch, RootState, ITask } from "common/types";
+import { Dispatch, ITask } from "common/types";
 import { rendererWindow, urlForGame } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
@@ -26,8 +26,7 @@ import MainAction from "renderer/basics/MainAction";
 import TimeAgo from "renderer/basics/TimeAgo";
 import UploadIcon from "renderer/basics/UploadIcon";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hookWithProps } from "renderer/hocs/hook";
 import withHover, { HoverProps } from "renderer/hocs/withHover";
 import { modalWidgets } from "renderer/modal-widgets";
 import Chart from "renderer/pages/DownloadsPage/Chart";
@@ -164,8 +163,8 @@ const Controls = styled.div`
   padding-left: 8px;
 `;
 
-class DownloadRow extends React.PureComponent<Props & DerivedProps> {
-  constructor(props: Props & DerivedProps, context: any) {
+class DownloadRow extends React.PureComponent<Props> {
+  constructor(props: DownloadRow["props"], context: any) {
     super(props, context);
     this.state = {};
   }
@@ -490,9 +489,7 @@ interface Props extends HoverProps {
   finished?: boolean;
   item: Download;
   dispatch: Dispatch;
-}
 
-interface DerivedProps {
   status: GameStatus;
   speeds: number[];
 
@@ -503,21 +500,12 @@ interface DerivedProps {
 }
 
 export default withHover(
-  withDispatch(
-    connect<Props>(
-      DownloadRow,
-      {
-        state: (rs: RootState, props: Props) => {
-          const game = props.item.game;
-
-          return {
-            speeds: rs.downloads.speeds,
-            downloadsPaused: rs.downloads.paused,
-            tasksByGameId: rs.tasks.tasksByGameId,
-            status: getGameStatus(rs, game, props.item.caveId),
-          };
-        },
-      }
-    )
-  )
+  hookWithProps(DownloadRow)(map => ({
+    speeds: map(rs => rs.downloads.speeds),
+    downloadsPaused: map(rs => rs.downloads.paused),
+    tasksByGameId: map(rs => rs.tasks.tasksByGameId),
+    status: map((rs, props) =>
+      getGameStatus(rs, props.item.game, props.item.caveId)
+    ),
+  }))(DownloadRow)
 );

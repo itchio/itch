@@ -73,7 +73,7 @@ const ReactHintContainer = styled.div`
  * Top-level component in the app, decides which page to show
  * Also, subscribes to app store to synchronize its state
  */
-class Layout extends React.PureComponent<Props & DerivedProps> {
+class Layout extends React.PureComponent<Props> {
   render() {
     const { maximized } = this.props;
 
@@ -138,9 +138,7 @@ class Layout extends React.PureComponent<Props & DerivedProps> {
   }
 }
 
-interface Props {}
-
-interface DerivedProps {
+interface Props {
   ready: boolean;
   maximized: boolean;
   profile: Profile;
@@ -148,8 +146,10 @@ interface DerivedProps {
   intl: InjectedIntl;
 }
 
-export default hook(map => ({
-  maximized: map(rs => rs.windows[rendererWindow()].native.maximized),
-  ready: map(rs => rs.setup.done && rs.profile.profile),
-  profile: map(rs => rs.profile.profile),
-}))(withIntl(Layout));
+export default withIntl(
+  hook(map => ({
+    maximized: map(rs => rs.windows[rendererWindow()].native.maximized),
+    ready: map(rs => !!(rs.setup.done && rs.profile.profile)),
+    profile: map(rs => rs.profile.profile),
+  }))(Layout)
+);

@@ -1,38 +1,26 @@
-import React from "react";
-import { SortableElement } from "react-sortable-hoc";
-import { createStructuredSelector } from "reselect";
-
-import Item from "./Item";
-
-import {
-  connect,
-  actionCreatorsList,
-  Dispatchers,
-} from "renderer/hocs/connect";
-
-import { size } from "underscore";
-
-import {
-  RootState,
-  TabInstance,
-  LocalizedString,
-  DownloadsState,
-} from "common/types";
-
-import { injectIntl, InjectedIntl } from "react-intl";
+import { actions } from "common/actions";
+import { Game } from "common/butlerd/messages";
 import { formatDurationAsMessage } from "common/format/datetime";
 import { Space } from "common/helpers/space";
-import { Game } from "common/butlerd/messages";
+import {
+  Dispatch,
+  DownloadsState,
+  LocalizedString,
+  TabInstance,
+} from "common/types";
+import { rendererWindow, rendererWindowState } from "common/util/navigation";
 import {
   getActiveDownload,
   getPendingDownloads,
 } from "main/reactors/downloads/getters";
-import {
-  rendererWindowState,
-  rendererNavigation,
-  rendererWindow,
-} from "common/util/navigation";
+import React from "react";
+import { InjectedIntl } from "react-intl";
+import { SortableElement } from "react-sortable-hoc";
+import { hookWithProps } from "renderer/hocs/hook";
+import { withIntl } from "renderer/hocs/withIntl";
 import { modalWidgets } from "renderer/modal-widgets";
+import { size } from "underscore";
+import Item from "./Item";
 
 interface SortableHubSidebarItemProps {
   props: any & {
@@ -44,15 +32,15 @@ const SortableItem = SortableElement((props: SortableHubSidebarItemProps) => {
   return <Item {...props.props} />;
 });
 
-class TabBase extends React.PureComponent<Props & DerivedProps> {
+class Tab extends React.PureComponent<Props> {
   onClick = () => {
-    const { tab, focusTab } = this.props;
-    focusTab({ window: rendererWindow(), tab });
+    const { tab, dispatch } = this.props;
+    dispatch(actions.focusTab({ window: rendererWindow(), tab }));
   };
 
   onClose = () => {
-    const { tab, closeTab } = this.props;
-    closeTab({ window: rendererWindow(), tab });
+    const { tab, dispatch } = this.props;
+    dispatch(actions.closeTab({ window: rendererWindow(), tab }));
   };
 
   render() {
@@ -127,18 +115,20 @@ class TabBase extends React.PureComponent<Props & DerivedProps> {
   }
 
   onExplore = (tab: string) => {
-    const { tabInstance } = this.props;
+    const { dispatch, tabInstance } = this.props;
 
-    this.props.openModal(
-      modalWidgets.exploreJson.make({
-        window: rendererWindow(),
-        title: "Tab information",
-        message: "",
-        widgetParams: {
-          data: { tab, tabInstance },
-        },
-        fullscreen: true,
-      })
+    dispatch(
+      actions.openModal(
+        modalWidgets.exploreJson.make({
+          window: rendererWindow(),
+          title: "Tab information",
+          message: "",
+          widgetParams: {
+            data: { tab, tabInstance },
+          },
+          fullscreen: true,
+        })
+      )
     );
   };
 }
@@ -148,39 +138,23 @@ interface Props {
   index?: number;
   active: boolean;
   sortable?: boolean;
-}
 
-const actionCreators = actionCreatorsList(
-  "navigate",
-  "focusTab",
-  "closeTab",
-  "openModal"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
   tabInstance: TabInstance;
   loading: boolean;
-  downloads?: DownloadsState;
+  downloads: DownloadsState | null;
+  dispatch: Dispatch;
 
   intl: InjectedIntl;
-};
+}
 
-const Tab = connect<Props>(
-  injectIntl(TabBase),
-  {
-    state: (initialState, initialProps) => {
-      let { tab } = initialProps;
-
-      return createStructuredSelector<RootState, any>({
-        tabInstance: (rs: RootState) =>
-          rendererWindowState(rs).tabInstances[tab],
-        loading: (rs: RootState) => !!rendererNavigation(rs).loadingTabs[tab],
-        downloads: (rs: RootState) =>
-          tab === "itch://downloads" && rs.downloads,
-      });
-    },
-    actionCreators,
-  }
+export default withIntl(
+  hookWithProps(Tab)(map => ({
+    tabInstance: map((rs, p) => rendererWindowState(rs).tabInstances[p.tab]),
+    loading: map(
+      (rs, p) => !!rendererWindowState(rs).navigation.loadingTabs[p.tab]
+    ),
+    downloads: map(
+      (rs, p) => (p.tab === "itch://downloads" ? rs.downloads : null)
+    ),
+  }))(Tab)
 );
-
-export default Tab;

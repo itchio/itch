@@ -4,7 +4,7 @@ import { actionForGame } from "common/util/action-for-game";
 import React from "react";
 import { T } from "renderer/t";
 
-class TotalPlaytime extends React.PureComponent<Props & DerivedProps> {
+class TotalPlaytime extends React.PureComponent<Props> {
   render() {
     const { game, cave, short = false } = this.props;
     let { secondsRun = 0 } = (cave || {}) as CaveSummary;
@@ -41,5 +41,3 @@ interface Props {
   short?: boolean;
   secondsRun?: number;
 }
-
-interface DerivedProps {}

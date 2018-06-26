@@ -1,14 +1,12 @@
 import { actions } from "common/actions";
-import { Dispatch, RootState } from "common/types";
+import { Dispatch } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import BrothComponent from "renderer/pages/PreferencesPage/BrothComponent";
 import { T } from "renderer/t";
-import { createStructuredSelector } from "reselect";
 
-class BrothComponents extends React.Component<Props & DerivedProps> {
+class BrothComponents extends React.Component<Props> {
   render() {
     const { dispatch, packageNames } = this.props;
 
@@ -35,19 +33,10 @@ class BrothComponents extends React.Component<Props & DerivedProps> {
 
 interface Props {
   dispatch: Dispatch;
-}
 
-interface DerivedProps {
   packageNames: string[];
 }
 
-export default withDispatch(
-  connect<Props>(
-    BrothComponents,
-    {
-      state: createStructuredSelector({
-        packageNames: (rs: RootState) => rs.broth.packageNames,
-      }),
-    }
-  )
-);
+export default hook(map => ({
+  packageNames: map(rs => rs.broth.packageNames),
+}))(BrothComponents);

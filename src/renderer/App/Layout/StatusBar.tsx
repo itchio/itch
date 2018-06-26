@@ -1,13 +1,11 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
-import { RootState, LocalizedString, Dispatch } from "common/types";
+import { Dispatch, LocalizedString } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { createStructuredSelector } from "reselect";
 
 const StatusBarDiv = styled.div`
   position: fixed;
@@ -70,8 +68,8 @@ const StatusBarDiv = styled.div`
 /**
  * Displays our current progress when checking for updates, etc.
  */
-class StatusBar extends React.PureComponent<Props & DerivedProps> {
-  constructor(props: Props & DerivedProps, context: any) {
+class StatusBar extends React.PureComponent<Props> {
+  constructor(props: StatusBar["props"], context: any) {
     super(props, context);
   }
 
@@ -114,19 +112,9 @@ class StatusBar extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   dispatch: Dispatch;
-}
-
-interface DerivedProps {
   statusMessages: LocalizedString[];
 }
 
-export default withDispatch(
-  connect<Props>(
-    StatusBar,
-    {
-      state: createStructuredSelector({
-        statusMessages: (rs: RootState) => rs.status.messages,
-      }),
-    }
-  )
-);
+export default hook(map => ({
+  statusMessages: map(rs => rs.status.messages),
+}))(StatusBar);

@@ -2,20 +2,18 @@ import classNames from "classnames";
 import { actions } from "common/actions";
 import env from "common/env";
 import { Space } from "common/helpers/space";
-import { ExtendedWindow, RootState, TabInstance } from "common/types";
+import { ExtendedWindow, TabInstance } from "common/types";
+import { Dispatch } from "common/types/index";
 import { rendererWindow, rendererWindowState } from "common/util/navigation";
 import React from "react";
 import { FiltersContainerDiv } from "renderer/basics/FiltersContainer";
 import IconButton from "renderer/basics/IconButton";
 import NewVersionAvailable from "renderer/basics/TitleBar/NewVersionAvailable";
 import UserMenu from "renderer/basics/TitleBar/UserMenu";
-import { connect } from "renderer/hocs/connect";
-import { Dispatch } from "common/types/index";
+import { hookWithProps } from "renderer/hocs/hook";
 import { modalWidgets } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { createStructuredSelector } from "reselect";
-import { withDispatch } from "renderer/hocs/withDispatch";
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
@@ -47,7 +45,7 @@ const TitleDiv = styled.div`
 
 const emptyObj = {};
 
-class TitleBar extends React.PureComponent<Props & DerivedProps> {
+class TitleBar extends React.PureComponent<Props> {
   render() {
     const { tab, macos, focused, tabInstance } = this.props;
     const iw = (window as ExtendedWindow).itchWindow;
@@ -159,29 +157,17 @@ interface Props {
   secondary?: boolean;
 
   dispatch: Dispatch;
-}
-
-interface DerivedProps {
   tabInstance: TabInstance;
   maximized: boolean;
   focused: boolean;
   macos: boolean;
 }
 
-export default withDispatch(
-  connect<Props>(
-    TitleBar,
-    {
-      state: () =>
-        createStructuredSelector<RootState, any, any>({
-          tabInstance: (rs: RootState, props: Props) =>
-            rendererWindowState(rs).tabInstances[props.tab] || emptyObj,
-          maximized: (rs: RootState) =>
-            rs.windows[rendererWindow()].native.maximized,
-          focused: (rs: RootState) =>
-            rs.windows[rendererWindow()].native.focused,
-          macos: (rs: RootState) => rs.system.macos,
-        }),
-    }
-  )
-);
+export default hookWithProps(TitleBar)(map => ({
+  tabInstance: map(
+    (rs, props) => rendererWindowState(rs).tabInstances[props.tab] || emptyObj
+  ),
+  maximized: map((rs, props) => rs.windows[rendererWindow()].native.maximized),
+  focused: map((rs, props) => rs.windows[rendererWindow()].native.focused),
+  macos: map((rs, props) => rs.system.macos),
+}))(TitleBar);

@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { User } from "common/butlerd/messages";
-import { RootState } from "common/types";
 import {
   rendererNavigation,
   rendererWindow,
@@ -11,11 +10,7 @@ import { arrayMove, SortableContainer } from "react-sortable-hoc";
 import Filler from "renderer/basics/Filler";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import Logo from "renderer/scenes/HubScene/Sidebar/Logo";
 import Search from "renderer/scenes/HubScene/Sidebar/Search";
 import {
@@ -25,8 +20,9 @@ import {
 import Tab from "renderer/scenes/HubScene/Sidebar/Tab";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { createStructuredSelector } from "reselect";
 import { map } from "underscore";
+import { actions } from "common/actions";
+import { Dispatch } from "common/types";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -56,7 +52,7 @@ interface SortEndParams {
 
 interface SortableContainerParams {
   items: string[];
-  sidebarProps: Props & DerivedProps;
+  sidebarProps: Props;
 }
 
 const SortableListContainer = styled.div`
@@ -79,7 +75,7 @@ const SortableList = SortableContainer((params: SortableContainerParams) => {
   );
 });
 
-class Sidebar extends React.PureComponent<Props & DerivedProps, State> {
+class Sidebar extends React.PureComponent<Props, State> {
   constructor(props: Sidebar["props"], context: any) {
     super(props, context);
     this.state = {
@@ -88,15 +84,21 @@ class Sidebar extends React.PureComponent<Props & DerivedProps, State> {
   }
 
   closeAllTabs = () => {
-    this.props.closeAllTabs({
-      window: rendererWindow(),
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.closeAllTabs({
+        window: rendererWindow(),
+      })
+    );
   };
 
   newTab = () => {
-    this.props.newTab({
-      window: rendererWindow(),
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.newTab({
+        window: rendererWindow(),
+      })
+    );
   };
 
   onSortEnd = (params: SortEndParams) => {
@@ -104,11 +106,14 @@ class Sidebar extends React.PureComponent<Props & DerivedProps, State> {
     this.setState({
       openTabs: arrayMove(this.state.openTabs, oldIndex, newIndex),
     });
-    this.props.moveTab({
-      window: rendererWindow(),
-      before: oldIndex,
-      after: newIndex,
-    });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.moveTab({
+        window: rendererWindow(),
+        before: oldIndex,
+        after: newIndex,
+      })
+    );
   };
 
   render() {
@@ -193,56 +198,39 @@ class Sidebar extends React.PureComponent<Props & DerivedProps, State> {
     );
   }
 
-  componentWillReceiveProps(props: Props & DerivedProps) {
+  componentWillReceiveProps(props: Props) {
     this.setState({
       openTabs: props.openTabs,
     });
   }
 }
 
-interface Props {}
-
-const actionCreators = actionCreatorsList(
-  "navigate",
-  "closeAllTabs",
-  "moveTab",
-  "newTab",
-  "copyToClipboard",
-  "reportIssue",
-  "quit"
-);
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface Props {
   sidebarWidth: number;
   me: User;
 
   tab: string;
-  path: string;
   openTabs: string[];
   enableTabs: boolean;
   url: string;
-};
+
+  dispatch: Dispatch;
+}
 
 interface State {
   openTabs: string[];
 }
 
-export default connect<Props>(
-  Sidebar,
-  {
-    state: createStructuredSelector({
-      appVersion: (rs: RootState) => rs.system.appVersion,
-      sidebarWidth: (rs: RootState) => rs.preferences.sidebarWidth || 240,
-      me: (rs: RootState) => rs.profile.profile.user,
-      tab: (rs: RootState) => rendererNavigation(rs).tab,
-      openTabs: (rs: RootState) => rendererNavigation(rs).openTabs,
-      url: (rs: RootState) => {
-        const ws = rendererWindowState(rs);
-        const ti = ws.tabInstances[rendererNavigation(rs).tab];
-        return ti.history[ti.currentIndex].url;
-      },
-      enableTabs: (rs: RootState) => rs.preferences.enableTabs,
-    }),
-    actionCreators,
-  }
-);
+export default hook(map => ({
+  sidebarWidth: map(rs => rs.preferences.sidebarWidth || 240),
+  me: map(rs => rs.profile.profile.user),
+
+  tab: map(rs => rendererNavigation(rs).tab),
+  openTabs: map(rs => rendererNavigation(rs).openTabs),
+  enableTabs: map(rs => rs.preferences.enableTabs),
+  url: map(rs => {
+    const ws = rendererWindowState(rs);
+    const ti = ws.tabInstances[rendererNavigation(rs).tab];
+    return ti.history[ti.currentIndex].url;
+  }),
+}))(Sidebar);

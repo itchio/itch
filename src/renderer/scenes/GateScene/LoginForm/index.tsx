@@ -1,13 +1,12 @@
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { formatError } from "common/format/errors";
-import { Dispatch, RootState } from "common/types";
+import { Dispatch } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Icon from "renderer/basics/Icon";
 import Link from "renderer/basics/Link";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { Links } from "renderer/scenes/GateScene/styles";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
@@ -27,7 +26,7 @@ const ErrorDiv = styled.div`
   color: ${props => props.theme.error};
 `;
 
-class LoginForm extends React.PureComponent<Props & DerivedProps> {
+class LoginForm extends React.PureComponent<Props> {
   render() {
     const { dispatch, showSaved, lastUsername } = this.props;
 
@@ -178,21 +177,11 @@ interface Props {
   showSaved: () => void;
 
   dispatch: Dispatch;
+  lastUsername: string | null;
+  error: Error | null;
 }
 
-interface DerivedProps {
-  lastUsername?: string;
-  error?: Error;
-}
-
-export default withDispatch(
-  connect<Props>(
-    LoginForm,
-    {
-      state: (rs: RootState) => ({
-        lastUsername: rs.profile.login.lastUsername,
-        error: rs.profile.login.error,
-      }),
-    }
-  )
-);
+export default hook(map => ({
+  lastUsername: map(rs => rs.profile.login.lastUsername),
+  error: map(rs => rs.profile.login.error),
+}))(LoginForm);

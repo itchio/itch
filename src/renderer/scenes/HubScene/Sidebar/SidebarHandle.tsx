@@ -1,10 +1,7 @@
+import { actions } from "common/actions";
 import React from "react";
-import {
-  connect,
-  actionCreatorsList,
-  Dispatchers,
-} from "renderer/hocs/connect";
-
+import { hook } from "renderer/hocs/hook";
+import { Dispatch } from "common/types";
 import styled from "renderer/styles";
 
 const HandleDiv = styled.div`
@@ -20,7 +17,7 @@ const HandleDiv = styled.div`
   }
 `;
 
-class SidebarHandle extends React.PureComponent<Props & DerivedProps, State> {
+class SidebarHandle extends React.PureComponent<Props, State> {
   constructor(props: SidebarHandle["props"], context: any) {
     super(props, context);
     this.state = { isResizing: false };
@@ -54,26 +51,23 @@ class SidebarHandle extends React.PureComponent<Props & DerivedProps, State> {
     }
     e.preventDefault();
 
-    const { updatePreferences } = this.props;
+    const { dispatch } = this.props;
     const width = Math.max(200, Math.min(e.clientX, 500));
 
-    updatePreferences({
-      sidebarWidth: width,
-    });
+    dispatch(
+      actions.updatePreferences({
+        sidebarWidth: width,
+      })
+    );
   };
 }
 
-interface Props {}
-
-const actionCreators = actionCreatorsList("updatePreferences");
-
-type DerivedProps = Dispatchers<typeof actionCreators>;
+interface Props {
+  dispatch: Dispatch;
+}
 
 interface State {
   isResizing: boolean;
 }
 
-export default connect<Props>(
-  SidebarHandle,
-  { actionCreators }
-);
+export default hook()(SidebarHandle);

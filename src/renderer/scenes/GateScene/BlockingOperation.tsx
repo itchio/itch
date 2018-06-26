@@ -2,14 +2,13 @@ import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { downloadProgress } from "common/format/download-progress";
 import { fileSize } from "common/format/filesize";
-import { Dispatch, RootState, SetupOperation } from "common/types";
+import { Dispatch, SetupOperation } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Icon from "renderer/basics/Icon";
 import Link from "renderer/basics/Link";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 
@@ -150,16 +149,10 @@ class BlockingOperation extends React.PureComponent<Props> {
 
 interface Props {
   blockingOperation: SetupOperation;
-  windows?: boolean;
-
+  windows: boolean;
   dispatch: Dispatch;
 }
 
-export default withDispatch(
-  connect<Props>(
-    BlockingOperation,
-    {
-      state: (rs: RootState) => ({ windows: rs.system.windows }),
-    }
-  )
-);
+export default hook(map => ({
+  windows: map(rs => rs.system.windows),
+}))(BlockingOperation);

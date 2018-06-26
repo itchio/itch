@@ -8,17 +8,13 @@ import {
 } from "reselect";
 
 interface MakeSelectorFunc {
-  (s: Selector<RootState, any>): Selector<RootState, any>;
-  (s: Selector<RootState, any>): Selector<RootState, any>;
+  <Result>(s: Selector<RootState, Result>): Selector<RootState, Result>;
 }
 
 interface MakeParametricSelectorFunc<InputProps> {
-  (s: ParametricSelector<RootState, InputProps, any>): ParametricSelector<
-    RootState,
-    InputProps,
-    any
-  >;
-  (s: Selector<RootState, any>): Selector<RootState, any>;
+  <Result>(
+    s: ParametricSelector<RootState, InputProps, Result>
+  ): ParametricSelector<RootState, InputProps, Result>;
 }
 
 function identity<T>(t: T) {

@@ -1,10 +1,11 @@
 import React from "react";
-import { InjectedIntl, injectIntl } from "react-intl";
+import { InjectedIntl } from "react-intl";
+import { withIntl } from "renderer/hocs/withIntl";
 import { ModalWidgetProps } from "renderer/modal-widgets";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { T, TString } from "renderer/t";
 
-class TwoFactorInput extends React.PureComponent<Props & DerivedProps> {
+class TwoFactorInput extends React.PureComponent<Props> {
   refs: {
     totpInput?: HTMLInputElement;
   };
@@ -61,10 +62,8 @@ export interface TwoFactorInputResponse {
 interface Props
   extends ModalWidgetProps<TwoFactorInputParams, TwoFactorInputResponse> {
   params: TwoFactorInputParams;
-}
 
-interface DerivedProps {
   intl: InjectedIntl;
 }
 
-export default injectIntl(TwoFactorInput);
+export default withIntl(TwoFactorInput);

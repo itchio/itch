@@ -1,20 +1,15 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { RootState, SearchResults } from "common/types";
+import { Dispatch, SearchResults } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import { hasSearchResults } from "main/reactors/search/search-helpers";
 import React from "react";
-import {
-  actionCreatorsList,
-  connect,
-  Dispatchers,
-} from "renderer/hocs/connect";
+import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
 import GameSearchResult from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/GameSearchResult";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { createStructuredSelector } from "reselect";
 import { each, isEmpty } from "underscore";
 
 const ResultsContainer = styled.div`
@@ -53,10 +48,7 @@ const NoResults = styled.p`
 `;
 
 @watching
-class SearchResultsBar extends React.PureComponent<
-  Props & DerivedProps,
-  State
-> {
+class SearchResultsBar extends React.PureComponent<Props, State> {
   constructor(props: SearchResultsBar["props"], context: any) {
     super(props, context);
     this.state = {
@@ -83,11 +75,14 @@ class SearchResultsBar extends React.PureComponent<
   };
 
   onOpenAsTab = () => {
-    this.props.closeSearch({});
-    this.props.navigate({
-      window: rendererWindow(),
-      url: `${urls.itchio}?${encodeURIComponent(this.props.query)}`,
-    });
+    const { dispatch } = this.props;
+    dispatch(actions.closeSearch({}));
+    dispatch(
+      actions.navigate({
+        window: rendererWindow(),
+        url: `${urls.itchio}?${encodeURIComponent(this.props.query)}`,
+      })
+    );
   };
 
   subscribe(watcher: Watcher) {
@@ -138,34 +133,26 @@ class SearchResultsBar extends React.PureComponent<
   }
 }
 
-interface Props {}
-
-const actionCreators = actionCreatorsList("closeSearch", "navigate");
-
-type DerivedProps = Dispatchers<typeof actionCreators> & {
+interface Props {
   open: boolean;
   highlight: number;
   query: string;
   results: SearchResults;
   example: string;
   loading: boolean;
-};
+
+  dispatch: Dispatch;
+}
 
 interface State {
   chosen: number;
 }
 
-export default connect<Props>(
-  SearchResultsBar,
-  {
-    state: createStructuredSelector({
-      open: (rs: RootState) => rs.profile.search.open,
-      highlight: (rs: RootState) => rs.profile.search.highlight,
-      query: (rs: RootState) => rs.profile.search.query,
-      results: (rs: RootState) => rs.profile.search.results,
-      example: (rs: RootState) => rs.profile.search.example,
-      loading: (rs: RootState) => rs.profile.search.loading,
-    }),
-    actionCreators,
-  }
-);
+export default hook(map => ({
+  open: map(rs => rs.profile.search.open),
+  highlight: map(rs => rs.profile.search.highlight),
+  query: map(rs => rs.profile.search.query),
+  results: map(rs => rs.profile.search.results),
+  example: map(rs => rs.profile.search.example),
+  loading: map(rs => rs.profile.search.loading),
+}))(SearchResultsBar);

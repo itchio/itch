@@ -1,9 +1,8 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import { Profile } from "common/butlerd/messages";
-import urls from "common/constants/urls";
 import { Space } from "common/helpers/space";
-import { RootState, Dispatch } from "common/types";
+import { Dispatch, ProxySource } from "common/types";
 import { rendererWindow } from "common/util/navigation";
 import { partitionForUser } from "common/util/partition-for-user";
 import { getInjectURL } from "common/util/resources";
@@ -11,14 +10,13 @@ import { WebviewTag } from "electron";
 import { ExtendedWebContents } from "main/reactors/web-contents";
 import React from "react";
 import Icon from "renderer/basics/Icon";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
+import newTabItems from "renderer/pages/BrowserPage/newTabItems";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import { createStructuredSelector } from "reselect";
 import { debounce, map } from "underscore";
 import BrowserBar from "./BrowserBar";
 import BrowserContext from "./BrowserContext";
@@ -94,7 +92,7 @@ const Title = styled.h2`
   font-size: ${props => props.theme.fontSizes.huge};
 `;
 
-class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
+class BrowserPageContents extends React.PureComponent<Props> {
   initialURL: string;
 
   constructor(props: any, context: any) {
@@ -159,7 +157,7 @@ class BrowserPageContents extends React.PureComponent<Props & DerivedProps> {
     );
   }
 
-  componentDidUpdate(prevProps: Props & DerivedProps, prevState: any) {
+  componentDidUpdate(prevProps: Props, prevState: any) {
     if (!prevProps.disableBrowser && this.props.disableBrowser) {
       const { space, dispatch } = this.props;
       dispatch(space.makeFetch({ web: { loading: false } }));
@@ -260,56 +258,18 @@ interface Props extends MeatProps {
   dispatch: Dispatch;
 
   url: string;
-}
 
-interface DerivedProps {
-  proxy?: string;
-  proxySource?: string;
+  proxy: string;
+  proxySource: ProxySource;
   disableBrowser: boolean;
 }
 
 export default withSpace(
   withProfile(
-    withDispatch(
-      connect<Props>(
-        BrowserPageContents,
-        {
-          state: createStructuredSelector({
-            proxy: (rs: RootState) => rs.system.proxy,
-            proxySource: (rs: RootState) => rs.system.proxySource,
-            disableBrowser: (rs: RootState) => rs.preferences.disableBrowser,
-          }),
-        }
-      )
-    )
+    hook(map => ({
+      proxy: map(rs => rs.system.proxy),
+      proxySource: map(rs => rs.system.proxySource),
+      disableBrowser: map(rs => rs.preferences.disableBrowser),
+    }))(BrowserPageContents)
   )
 );
-
-// TODO: show recommended for you?
-const newTabItems = [
-  {
-    label: ["new_tab.twitter"],
-    icon: "twitter",
-    url: "https://twitter.com/search?q=itch.io&src=typd",
-  },
-  {
-    label: ["new_tab.random"],
-    icon: "shuffle",
-    url: urls.itchio + "/randomizer",
-  },
-  {
-    label: ["new_tab.on_sale"],
-    icon: "shopping_cart",
-    url: urls.itchio + "/games/on-sale",
-  },
-  {
-    label: ["new_tab.top_sellers"],
-    icon: "star",
-    url: urls.itchio + "/games/top-sellers",
-  },
-  {
-    label: ["new_tab.devlogs"],
-    icon: "fire",
-    url: urls.itchio + "/featured-games-feed?filter=devlogs",
-  },
-];

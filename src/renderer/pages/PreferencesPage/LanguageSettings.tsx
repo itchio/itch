@@ -1,16 +1,14 @@
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { Dispatch, RootState, LocaleInfo } from "common/types";
+import { Dispatch, LocaleInfo, RootState } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import SelectRow, { SelectOption } from "renderer/basics/SelectRow";
-import { connect } from "renderer/hocs/connect";
-import { withDispatch } from "renderer/hocs/withDispatch";
+import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { createStructuredSelector } from "reselect";
 import Label from "./Label";
 
 const Spacer = styled.div`
@@ -18,7 +16,7 @@ const Spacer = styled.div`
   height: 2px;
 `;
 
-class LanguageSettings extends React.PureComponent<Props & DerivedProps> {
+class LanguageSettings extends React.PureComponent<Props> {
   render() {
     const { dispatch, locales, lang, sniffedLang } = this.props;
 
@@ -91,25 +89,16 @@ class LanguageSettings extends React.PureComponent<Props & DerivedProps> {
 
 interface Props {
   dispatch: Dispatch;
-}
 
-interface DerivedProps {
   locales: LocaleInfo[];
   lang: string;
   sniffedLang: string;
   downloading: RootState["i18n"]["downloading"];
 }
 
-export default withDispatch(
-  connect<Props>(
-    LanguageSettings,
-    {
-      state: createStructuredSelector({
-        locales: (rs: RootState) => rs.i18n.locales,
-        lang: (rs: RootState) => rs.i18n.lang,
-        sniffedLang: (rs: RootState) => rs.system.sniffedLanguage,
-        downloading: (rs: RootState) => rs.i18n.downloading,
-      }),
-    }
-  )
-);
+export default hook(map => ({
+  locales: map(rs => rs.i18n.locales),
+  lang: map(rs => rs.i18n.lang),
+  sniffedLang: map(rs => rs.system.sniffedLanguage),
+  downloading: map(rs => rs.i18n.downloading),
+}))(LanguageSettings);

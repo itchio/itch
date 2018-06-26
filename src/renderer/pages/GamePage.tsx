@@ -5,6 +5,7 @@ import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { withDispatch } from "renderer/hocs/withDispatch";
 import { withSpace } from "renderer/hocs/withSpace";
+import FiltersContainer from "renderer/basics/FiltersContainer";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 
@@ -16,7 +17,8 @@ class GamePage extends React.PureComponent<Props> {
     return (
       <FetchGame
         params={{ gameId }}
-        render={() => null}
+        loadingHandled
+        render={({ loading }) => <FiltersContainer loading={loading} />}
         onResult={result => {
           if (result) {
             const { game } = result;
