@@ -1,3 +1,6 @@
+import { asRequestError } from "common/butlerd";
+import { Code } from "common/butlerd/messages";
+
 /**
  * Returns true if this is a network error
  */
@@ -8,7 +11,19 @@ export function isNetworkError(e: Error) {
   //   * we transform fetch's into err:: variants.
   // we coerce e.message into a string on the off chance that it's not defined
   // or not a string.
-  return e && ("" + e.message).indexOf("net::") === 0;
+  const isJavaScriptNetworkError = e && ("" + e.message).indexOf("net::") === 0;
+  if (isJavaScriptNetworkError) {
+    return true;
+  }
+
+  const re = asRequestError(e);
+  if (re) {
+    if (re.rpcError.code === Code.NetworkDisconnected) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export class RequestError extends Error {

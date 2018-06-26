@@ -17,6 +17,7 @@ import { isEmpty } from "underscore";
 import styled, * as styles from "renderer/styles";
 import { Space } from "common/helpers/space";
 import { withSpace } from "renderer/hocs/withSpace";
+import { isNetworkError } from "main/net/errors";
 
 const StripeDiv = styled.div`
   display: flex;
@@ -74,6 +75,13 @@ export default <Params, Res extends FetchRes<any>>(
 ) => {
   const Call = butlerCaller(rc);
 
+  const hasItems = (result: Res): boolean => {
+    if (!result) {
+      return false;
+    }
+    return !isEmpty(result.items);
+  };
+
   const stripe = class extends React.PureComponent<
     Props<Params, Res, Res["items"][0]>
   > {
@@ -88,7 +96,7 @@ export default <Params, Res extends FetchRes<any>>(
           errorsHandled
           render={({ result, error, loading }) => (
             <>
-              {this.renderTitle(loading, error)}
+              {this.renderTitle(loading, result, error)}
               <StripeDiv>
                 {this.renderViewAll()}
                 {this.renderItems(result)}
@@ -100,7 +108,7 @@ export default <Params, Res extends FetchRes<any>>(
       );
     }
 
-    renderTitle(loading: boolean, error: any): JSX.Element {
+    renderTitle(loading: boolean, result: Res, error: any): JSX.Element {
       const { href, title, renderTitleExtras = renderNoop } = this.props;
       return (
         <>
@@ -116,9 +124,20 @@ export default <Params, Res extends FetchRes<any>>(
               {renderTitleExtras()}
             </Title>
           </TitleBox>
-          <ErrorState error={error} />
+          {this.renderError(result, error)}
         </>
       );
+    }
+
+    renderError(result: Res, error: Error) {
+      if (!error) {
+        return null;
+      }
+
+      if (hasItems(result) && isNetworkError(error)) {
+        return null;
+      }
+      return <ErrorState error={error} />;
     }
 
     renderItems(result: Res): JSX.Element {

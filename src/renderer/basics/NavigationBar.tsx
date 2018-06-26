@@ -237,4 +237,5 @@ interface Props {
   showAddressBar?: boolean;
 }
 
-export default withSpace(listensToClickOutside(hook()(NavigationBar)));
+const intermediate = withSpace(listensToClickOutside(NavigationBar));
+export default hook()(intermediate);

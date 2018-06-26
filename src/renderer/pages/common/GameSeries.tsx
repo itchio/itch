@@ -19,6 +19,7 @@ import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import { isEmpty } from "underscore";
+import { isNetworkError } from "main/net/errors";
 
 interface FetchRes<Item> {
   items: Item[];
@@ -42,6 +43,13 @@ export default <Params, Res extends FetchRes<any>>(
   rc: IRequestCreator<Params, Res>
 ) => {
   const Call = butlerCaller(rc);
+
+  const hasItems = (result: Res): boolean => {
+    if (!result) {
+      return false;
+    }
+    return !isEmpty(result.items);
+  };
 
   const c = class extends React.PureComponent<
     Props<Params, Res, Res["items"][0]>
@@ -71,7 +79,7 @@ export default <Params, Res extends FetchRes<any>>(
                     {renderMainFilters ? renderMainFilters() : null}
                   </FiltersContainer>
                   {renderExtraFilters ? renderExtraFilters() : null}
-                  <ErrorState error={error} />
+                  {this.renderError(result, error)}
                   <ItemList>{this.renderItems(result)}</ItemList>
                 </>
               );
@@ -81,15 +89,22 @@ export default <Params, Res extends FetchRes<any>>(
       );
     }
 
-    renderItems(result: Res): JSX.Element {
-      if (!result) {
-        return this.renderEmpty();
+    renderError(result: Res, error: Error) {
+      if (!error) {
+        return null;
       }
 
-      const { items } = result;
-      if (isEmpty(items)) {
+      if (hasItems(result) && isNetworkError(error)) {
+        return null;
+      }
+      return <ErrorState error={error} />;
+    }
+
+    renderItems(result: Res): JSX.Element {
+      if (!hasItems(result)) {
         return this.renderEmpty();
       }
+      const { items } = result;
 
       const {
         getGame,
