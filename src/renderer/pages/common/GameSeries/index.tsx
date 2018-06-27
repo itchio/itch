@@ -20,13 +20,16 @@ import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import { isEmpty } from "underscore";
 import { isNetworkError } from "main/net/errors";
+import styled from "renderer/styles";
+import * as lodash from "lodash";
+import LoadingCircle from "renderer/basics/LoadingCircle";
 
 interface FetchRes<Item> {
   items: Item[];
   nextCursor?: string;
 }
 
-interface Props<Params, Res extends FetchRes<Item>, Item> {
+interface GenericProps<Params, Res extends FetchRes<Item>, Item> {
   label?: LocalizedString;
   params: Params;
   renderMainFilters?: () => JSX.Element;
@@ -38,6 +41,28 @@ interface Props<Params, Res extends FetchRes<Item>, Item> {
   dispatch: Dispatch;
   space: Space;
 }
+
+interface GenericState<Params> {
+  cursors: string[];
+  lastParams: Params;
+}
+
+const LoadMoreContainer = styled.div`
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const LoadMoreText = styled.div`
+  font-size: ${props => props.theme.fontSizes.huge};
+`;
+
+const limit = 15;
 
 export default <Params, Res extends FetchRes<any>>(
   rc: IRequestCreator<Params, Res>
@@ -51,40 +76,83 @@ export default <Params, Res extends FetchRes<any>>(
     return !isEmpty(result.items);
   };
 
-  const c = class extends React.PureComponent<
-    Props<Params, Res, Res["items"][0]>
-  > {
+  type Props = GenericProps<Params, Res, Res["items"][0]>;
+  type State = GenericState<Params>;
+
+  const c = class Series extends React.PureComponent<Props, State> {
+    constructor(props: Props, context: any) {
+      super(props, context);
+      this.state = {
+        cursors: [null],
+        lastParams: null,
+      };
+    }
+
+    static getDerivedStateFromProps(props: Props, state: State): State {
+      if (!lodash.isEqual(props.params, state.lastParams)) {
+        return {
+          cursors: [null],
+          lastParams: props.params,
+        };
+      }
+
+      return null;
+    }
+
     render() {
       const { label, params, dispatch, space } = this.props;
       const {
         renderMainFilters = renderNoop,
         renderExtraFilters = renderNoop,
       } = this.props;
+      const { cursors } = this.state;
 
       return (
         <Page>
-          <Call
-            loadingHandled
-            errorsHandled
-            params={params}
-            onResult={result => {
-              if (label) {
-                dispatch(space.makeFetch({ label }));
-              }
-            }}
-            render={({ result, loading, error }) => {
-              return (
-                <>
-                  <FiltersContainer loading={loading}>
-                    {renderMainFilters ? renderMainFilters() : null}
-                  </FiltersContainer>
-                  {renderExtraFilters ? renderExtraFilters() : null}
-                  {this.renderError(result, error)}
-                  <ItemList>{this.renderItems(result)}</ItemList>
-                </>
-              );
-            }}
-          />
+          <FiltersContainer loading={false}>
+            {renderMainFilters ? renderMainFilters() : null}
+          </FiltersContainer>
+          {renderExtraFilters ? renderExtraFilters() : null}
+          <ItemList>
+            {cursors.map((cursor, i) => (
+              <Call
+                errorsHandled
+                loadingHandled
+                params={{ ...(params as any), cursor, limit }}
+                onResult={result => {
+                  if (label) {
+                    dispatch(space.makeFetch({ label }));
+                  }
+                }}
+                render={({ result, loading, error }) => {
+                  return (
+                    <>
+                      {this.renderError(result, error)}
+                      {this.renderItems(result, loading)}
+                      {result &&
+                      result.nextCursor &&
+                      i === cursors.length - 1 ? (
+                        <LoadMoreContainer
+                          onClick={() =>
+                            this.setState({
+                              cursors: [...cursors, result.nextCursor],
+                            })
+                          }
+                        >
+                          <LoadMoreText>Load more...</LoadMoreText>
+                        </LoadMoreContainer>
+                      ) : null}
+                      {!hasItems(result) && loading ? (
+                        <LoadMoreContainer>
+                          <LoadingCircle progress={-1} />
+                        </LoadMoreContainer>
+                      ) : null}
+                    </>
+                  );
+                }}
+              />
+            ))}
+          </ItemList>
         </Page>
       );
     }
@@ -100,9 +168,13 @@ export default <Params, Res extends FetchRes<any>>(
       return <ErrorState error={error} />;
     }
 
-    renderItems(result: Res): JSX.Element {
+    renderItems(result: Res, loading: boolean): JSX.Element {
       if (!hasItems(result)) {
-        return this.renderEmpty();
+        if (loading) {
+          return null;
+        } else {
+          return this.renderEmpty();
+        }
       }
       const { items } = result;
 
