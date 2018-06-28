@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { Profile } from "common/butlerd/messages";
 import { DATE_FORMAT, formatDate } from "common/format/datetime";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import ReactHintFactory from "react-hint";
 import { InjectedIntl } from "react-intl";
@@ -148,7 +148,7 @@ interface Props {
 
 export default withIntl(
   hook(map => ({
-    maximized: map(rs => rs.windows[rendererWindow()].native.maximized),
+    maximized: map(rs => rs.winds[ambientWind()].native.maximized),
     ready: map(rs => !!(rs.setup.done && rs.profile.profile)),
     profile: map(rs => rs.profile.profile),
   }))(Layout)

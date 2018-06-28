@@ -1,11 +1,3 @@
-import browserWrite from "./browser-write";
-import consoleWrite from "./console-write";
-
-import fs from "fs";
-import path from "path";
-import stream from "logrotate-stream";
-const multi = require("multi-write-stream");
-
 function parseEnvLevel() {
   let l = process.env.ITCH_LOG_LEVEL;
   if (l) {
@@ -20,8 +12,7 @@ function parseEnvLevel() {
   return "info";
 }
 
-const LOG_LEVEL = parseEnvLevel() as Level;
-const NO_STDOUT = process.env.ITCH_NO_STDOUT === "1";
+export const LOG_LEVEL = parseEnvLevel() as Level;
 
 type Level = "silent" | "error" | "warn" | "info" | "debug";
 
@@ -129,82 +120,16 @@ export class Logger {
   }
 }
 
-export function makeLogger({
-  logPath,
-  customOut,
-}: {
+export interface MakeLoggerOpts {
   logPath?: string;
   customOut?: NodeJS.WritableStream;
-}): Logger {
-  if (process.type === "renderer") {
-    return new Logger({
-      write: browserWrite,
-      level: LOG_LEVEL,
-    });
-  } else {
-    let consoleOut: NodeJS.WritableStream;
-    let streamOutputs = [];
+}
 
-    if (!NO_STDOUT) {
-      consoleOut = process.stdout;
-    }
-
-    if (logPath) {
-      let hasDir = true;
-      try {
-        fs.mkdirSync(path.dirname(logPath));
-      } catch (err) {
-        if ((err as any).code === "EEXIST") {
-          // good
-        } else {
-          console.log(
-            `Could not create file sink: ${err.stack || err.message}`
-          );
-          hasDir = false;
-        }
-      }
-
-      if (hasDir) {
-        if (NO_STDOUT) {
-          consoleOut = fs.createWriteStream(logPath);
-        } else {
-          const file = stream({
-            file: logPath,
-            size: "2M",
-            keep: 5,
-          });
-          streamOutputs.push(file);
-        }
-      }
-    }
-
-    if (customOut) {
-      streamOutputs.push(customOut);
-    }
-
-    const outStream = multi(streamOutputs);
-
-    const logger = new Logger({
-      write: entry => {
-        outStream.write(JSON.stringify(entry));
-        outStream.write("\n");
-
-        if (consoleOut) {
-          consoleWrite(entry, consoleOut);
-        }
-      },
-      level: LOG_LEVEL,
-      close: () => {
-        try {
-          outStream.end();
-        } catch (err) {
-          console.log(`Could not close file sink: ${err.stack || err.message}`);
-        }
-      },
-    });
-    logger.customOut = customOut;
-    return logger;
-  }
+export let makeLogger: (opts: MakeLoggerOpts) => Logger;
+if (process.type === "renderer") {
+  makeLogger = require("./makelogger-renderer").makeLogger;
+} else {
+  makeLogger = require("./makelogger-main").makeLogger;
 }
 
 let defaultLogger: Logger;

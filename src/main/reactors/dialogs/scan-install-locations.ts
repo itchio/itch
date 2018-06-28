@@ -16,7 +16,7 @@ export default function(watcher: Watcher) {
 
     const openModal = actions.openModal(
       modalWidgets.scanInstallLocations.make({
-        window: "root",
+        wind: "root",
         title: ["preferences.scan_install_locations.title"],
         message: "",
         buttons: [
@@ -69,7 +69,7 @@ export default function(watcher: Watcher) {
               const res = await promisedModal(
                 store,
                 modalWidgets.naked.make({
-                  window: "root",
+                  wind: "root",
                   title: ["preferences.scan_install_locations.confirm_import"],
                   message: ["preferences.scan_install_locations.message"],
                   detail: names.map(n => `  * ${n}`).join("\n") + "\n",
@@ -111,7 +111,7 @@ export default function(watcher: Watcher) {
         );
       }
     } finally {
-      store.dispatch(actions.closeModal({ window: "root", id: modalId }));
+      store.dispatch(actions.closeModal({ wind: "root", id: modalId }));
     }
   });
 }

@@ -4,9 +4,9 @@ import { Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
 import { Dispatch, LoadingTabs, TabInstances } from "common/types";
 import {
-  rendererNavigation,
-  rendererWindow,
-  rendererWindowState,
+  ambientNavigation,
+  ambientWind,
+  ambientWindState,
 } from "common/util/navigation";
 import React from "react";
 import { filtersContainerHeight } from "renderer/basics/FiltersContainer";
@@ -96,7 +96,7 @@ class Meats extends React.PureComponent<Props> {
       dispatch(
         actions.openModal(
           modalWidgets.exploreJson.make({
-            window: rendererWindow(),
+            wind: ambientWind(),
             title: "Tab information",
             message: "",
             widgetParams: {
@@ -123,8 +123,8 @@ interface Props {
 
 export default hook(map => ({
   profile: map(rs => rs.profile.profile),
-  tab: map(rs => rendererNavigation(rs).tab),
-  openTabs: map(rs => rendererNavigation(rs).openTabs),
-  tabInstances: map(rs => rendererWindowState(rs).tabInstances),
-  loadingTabs: map(rs => rendererNavigation(rs).loadingTabs),
+  tab: map(rs => ambientNavigation(rs).tab),
+  openTabs: map(rs => ambientNavigation(rs).openTabs),
+  tabInstances: map(rs => ambientWindState(rs).tabInstances),
+  loadingTabs: map(rs => ambientNavigation(rs).loadingTabs),
 }))(Meats);

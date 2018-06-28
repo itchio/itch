@@ -25,7 +25,7 @@ import {
   TaskName,
   PackageState,
   SystemState,
-  ItchWindowRole,
+  WindRole,
 } from "../types/index";
 
 import {
@@ -119,7 +119,7 @@ export const actions = wireActions({
   openModal: action<TypedModal<any, any>>(),
   updateModalWidgetParams: action<TypedModalUpdate<any>>(),
   closeModal: action<{
-    window: string;
+    wind: string;
 
     /** id of the modal to close - if unspecified, close frontmost */
     id?: string;
@@ -128,7 +128,7 @@ export const actions = wireActions({
     action?: ModalAction;
   }>(),
   modalClosed: action<{
-    window: string;
+    wind: string;
 
     /** id of the modal that was just closed */
     id: string;
@@ -138,27 +138,27 @@ export const actions = wireActions({
   }>(),
   modalResponse: action<any>(),
 
-  openWindow: action<{
+  openWind: action<{
     initialURL: string;
-    role: ItchWindowRole;
+    role: WindRole;
     preload?: boolean;
   }>(),
-  windowClosed: action<{
-    window: string;
+  windClosed: action<{
+    wind: string;
   }>(),
-  windowOpened: action<{
-    window: string;
+  windOpened: action<{
+    wind: string;
     nativeId: number;
     initialURL: string;
-    role: ItchWindowRole;
+    role: WindRole;
     preload?: boolean;
   }>(),
-  windowAwakened: action<{
-    window: string;
+  windAwakened: action<{
+    wind: string;
     initialURL: string;
   }>(),
-  windowLulled: action<{
-    window: string;
+  windLulled: action<{
+    wind: string;
   }>(),
 
   // setup
@@ -252,29 +252,29 @@ export const actions = wireActions({
 
   // window events
 
-  windowDestroyed: action<{
-    window: string;
+  windDestroyed: action<{
+    wind: string;
   }>(),
-  windowFocusChanged: action<{
-    window: string;
+  windFocusChanged: action<{
+    wind: string;
 
     /** current state of focusedness */
     focused: boolean;
   }>(),
-  windowFullscreenChanged: action<{
-    window: string;
+  windFullscreenChanged: action<{
+    wind: string;
 
     /** current state of fullscreenedness */
     fullscreen: boolean;
   }>(),
-  windowMaximizedChanged: action<{
-    window: string;
+  windMaximizedChanged: action<{
+    wind: string;
 
     /** current state of fullscreenedness */
     maximized: boolean;
   }>(),
-  windowBoundsChanged: action<{
-    window: string;
+  windBoundsChanged: action<{
+    wind: string;
 
     bounds: {
       /** left border, in pixels */
@@ -287,86 +287,78 @@ export const actions = wireActions({
       height: number;
     };
   }>(),
-  focusWindow: action<{
-    window: string;
+  focusWind: action<{
+    wind: string;
 
     /** if set to true, toggle focus instead of always focusing */
     toggle?: boolean;
   }>(),
-  hideWindow: action<{
-    window: string;
+  hideWind: action<{
+    wind: string;
   }>(),
-  minimizeWindow: action<{
-    window: string;
+  minimizeWind: action<{
+    wind: string;
   }>(),
-  toggleMaximizeWindow: action<{
-    window: string;
+  toggleMaximizeWind: action<{
+    wind: string;
   }>(),
 
   // navigation
-  switchPage: action<{
-    /** window identifier */
-    window: string;
-
-    /** the page to switch to */
-    page: string;
-  }>(),
-
   openTab: action<IOpenTabPayload>(),
   newTab: action<{
-    window: string;
+    wind: string;
   }>(),
   navigate: action<INavigatePayload>(),
   focusTab: action<{
-    window: string;
+    wind: string;
 
     /** the id of the new tab */
     tab: string;
   }>(),
   focusNthTab: action<{
-    window: string;
+    wind: string;
 
     /** the index of the constant tab to focus (0-based) */
     index: number;
   }>(),
   moveTab: action<{
-    window: string;
+    wind: string;
 
-    /** old tab index (in transients) */
+    /** old tab index */
     before: number;
-    /** new tab index (in transients) */
+    /** new tab index */
     after: number;
   }>(),
   showNextTab: action<{
-    window: string;
+    wind: string;
   }>(),
   showPreviousTab: action<{
-    window: string;
+    wind: string;
   }>(),
 
   closeTab: action<{
-    window: string;
+    wind: string;
 
     /** id of tab to close */
     tab: string;
   }>(),
   closeCurrentTab: action<{
-    window: string;
+    wind: string;
   }>(),
   closeTabOrAuxWindow: action<{
-    window: string;
+    wind: string;
   }>(),
   closeAllTabs: action<{
-    window: string;
+    wind: string;
   }>(),
   closeOtherTabs: action<{
-    window: string;
+    wind: string;
 
     /** the only transient tab that'll be left */
     tab: string;
   }>(),
   closeTabsBelow: action<{
-    window: string;
+    wind: string;
 
     /** the tab after which all tabs will be closed */
     tab: string;
@@ -375,26 +367,26 @@ export const actions = wireActions({
   navigateTab: action<INavigateTabPayload>(),
   evolveTab: action<IEvolveTabPayload>(),
   tabReloaded: action<{
-    window: string;
+    wind: string;
 
     /** the tab that just reloaded */
     tab: string;
   }>(),
   tabChanged: action<{
-    window: string;
+    wind: string;
 
     /** the newly active tab */
     tab: string;
   }>(),
   tabsChanged: action<{
-    window: string;
+    wind: string;
   }>(),
   tabsRestored: action<{
-    window: string;
+    wind: string;
     snapshot: ItchAppTabs;
   }>(),
   tabDataFetched: action<{
-    window: string;
+    wind: string;
 
     /** tab for which we fetched data */
     tab: string;
@@ -406,7 +398,7 @@ export const actions = wireActions({
     shallow?: boolean;
   }>(),
   analyzePage: action<{
-    window: string;
+    wind: string;
 
     /** Which tab we're analyzing the page for */
     tab: string;
@@ -422,7 +414,7 @@ export const actions = wireActions({
     loading: boolean;
   }>(),
   tabGotWebContents: action<{
-    window: string;
+    wind: string;
 
     /** id of tab who just got a webcontents */
     tab: string;
@@ -430,7 +422,7 @@ export const actions = wireActions({
     webContentsId: number;
   }>(),
   tabLostWebContents: action<{
-    window: string;
+    wind: string;
 
     /** id of tab who just lost a webcontents */
     tab: string;
@@ -499,7 +491,7 @@ export const actions = wireActions({
     id: string;
   }>(),
   addInstallLocation: action<{
-    window: string;
+    wind: string;
   }>(),
   removeInstallLocation: action<{
     /** id of the install location to remove */
@@ -713,7 +705,7 @@ export const actions = wireActions({
   // search
 
   focusInPageSearch: action<{
-    window: string;
+    wind: string;
   }>(),
 
   focusSearch: action<{}>(),
@@ -746,7 +738,7 @@ export const actions = wireActions({
   updatePreferences: action<PreferencesState>(),
   preferencesLoaded: action<PreferencesState>(),
   clearBrowsingDataRequest: action<{
-    window: string;
+    wind: string;
   }>(),
   clearBrowsingData: action<{
     /** Whether to wipe cached images & files */
@@ -789,42 +781,42 @@ export const actions = wireActions({
   }>(),
   dismissStatusMessage: action<{}>(),
   commandMain: action<{
-    window: string;
+    wind: string;
   }>(),
   commandOk: action<{
-    window: string;
+    wind: string;
   }>(),
   commandBack: action<{
-    window: string;
+    wind: string;
   }>(),
   commandGoBack: action<{
-    window: string;
+    wind: string;
   }>(),
   commandGoForward: action<{
-    window: string;
+    wind: string;
   }>(),
   commandLocation: action<{
-    window: string;
+    wind: string;
   }>(),
   commandReload: action<{
-    window: string;
+    wind: string;
   }>(),
   commandStop: action<{
-    window: string;
+    wind: string;
   }>(),
   commandFocusLocation: action<{
-    window: string;
+    wind: string;
   }>(),
   tabGoBack: action<{
-    window: string;
+    wind: string;
     tab: string;
   }>(),
   tabGoForward: action<{
-    window: string;
+    wind: string;
     tab: string;
   }>(),
   tabStop: action<{
-    window: string;
+    wind: string;
     tab: string;
   }>(),
 
@@ -837,7 +829,7 @@ export const actions = wireActions({
     /** if true, should open dev tools for app, not the current tab */
     forApp: boolean;
 
-    window?: string;
+    wind?: string;
   }>(),
   reportIssue: action<{
     /** error log that should be included in the issue report */

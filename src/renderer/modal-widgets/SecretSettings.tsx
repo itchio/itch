@@ -117,7 +117,7 @@ class SecretSettings extends React.PureComponent<Props> {
     dispatch(
       actions.openModal(
         modalWidgets.exploreJson.make({
-          window: "root",
+          wind: "root",
           title: "Redux app state",
           widgetParams: {
             data: chromeStore.getState(),
@@ -139,7 +139,7 @@ class SecretSettings extends React.PureComponent<Props> {
     dispatch(
       actions.openModal(
         modalWidgets.exploreJson.make({
-          window: "root",
+          wind: "root",
           title: "GPU feature status",
           widgetParams: {
             data,
@@ -166,7 +166,7 @@ class SecretSettings extends React.PureComponent<Props> {
       dispatch(
         actions.openModal(
           modalWidgets.showError.make({
-            window: "root",
+            wind: "root",
             title: "test butlerd internal error",
             message: "This is a test butlerd error",
             detail: "It's fun to snoop!",
@@ -193,8 +193,8 @@ class SecretSettings extends React.PureComponent<Props> {
 
   onOpenCrashy = () => {
     const { dispatch } = this.props;
-    dispatch(actions.navigate({ window: "root", url: "itch://crashy" }));
-    dispatch(actions.closeModal({ window: "root" }));
+    dispatch(actions.navigate({ wind: "root", url: "itch://crashy" }));
+    dispatch(actions.closeModal({ wind: "root" }));
   };
 
   toggleReduxLogging = () => {

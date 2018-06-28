@@ -5,6 +5,7 @@ import { hook } from "renderer/hocs/hook";
 import FilterInput from "renderer/pages/common/FilterInput";
 import { Dispatch } from "common/types";
 import { Space } from "common/helpers/space";
+import { ambientWind } from "common/util/navigation";
 
 class SearchControl extends React.PureComponent<Props> {
   render(): JSX.Element {
@@ -20,6 +21,7 @@ class SearchControl extends React.PureComponent<Props> {
     const { dispatch, space } = this.props;
     dispatch(
       space.makeEvolve({
+        wind: ambientWind(),
         replace: true,
         url: space.urlWithParams({ search }),
       })

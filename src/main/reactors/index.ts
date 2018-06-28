@@ -2,7 +2,7 @@ import { Watcher } from "common/util/watcher";
 
 import preboot from "./preboot";
 import preferences from "./preferences";
-import mainWindow from "./main-window";
+import winds from "./winds";
 import locales from "./locales";
 import tray from "./tray";
 import menu from "./menu";
@@ -43,7 +43,7 @@ export default function getWatcher() {
 
   preboot(watcher);
   preferences(watcher);
-  mainWindow(watcher);
+  winds(watcher);
   locales(watcher);
   tray(watcher);
   menu(watcher, runtime);

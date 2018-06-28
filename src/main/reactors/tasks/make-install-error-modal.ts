@@ -60,7 +60,7 @@ export function makeInstallErrorModal(params: InstallErrorParams) {
   ];
 
   return modalWidgets.showError.make({
-    window: "root",
+    wind: "root",
     title: ["prompt.install_error.title"],
     message: t(i18n, formatError(e)),
     detail,

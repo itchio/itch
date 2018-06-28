@@ -6,6 +6,7 @@ import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import FiltersContainer from "renderer/basics/FiltersContainer";
+import { ambientWind } from "common/util/navigation";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 
@@ -25,6 +26,7 @@ class GamePage extends React.PureComponent<Props> {
             if (game) {
               dispatch(
                 space.makeEvolve({
+                  wind: ambientWind(),
                   url: game.url,
                   resource: `games/${gameId}`,
                   replace: true,

@@ -41,7 +41,7 @@ class Logo extends React.PureComponent<Props> {
       dispatch(
         actions.openModal(
           modalWidgets.secretSettings.make({
-            window: "root",
+            wind: "root",
             title: "Secret options",
             message: "",
             widgetParams: {},
@@ -52,7 +52,7 @@ class Logo extends React.PureComponent<Props> {
     }
 
     const { dispatch } = this.props;
-    dispatch(actions.navigate({ window: "root", url: "itch://featured" }));
+    dispatch(actions.navigate({ wind: "root", url: "itch://featured" }));
   };
 }
 

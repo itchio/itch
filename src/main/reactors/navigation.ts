@@ -1,18 +1,15 @@
 import { actions } from "common/actions";
+import { opensInWindow } from "common/constants/windows";
+import { Space } from "common/helpers/space";
+import rootLogger from "common/logger";
+import { RootState } from "common/types";
+import uuid from "common/util/uuid";
 import { Watcher } from "common/util/watcher";
-
+import { shell } from "electron";
+import { getNativeWindow } from "main/reactors/winds";
 import { createSelector } from "reselect";
 
-import { RootState } from "common/types";
-
-import rootLogger from "common/logger";
-import { Space } from "common/helpers/space";
-import { shell } from "electron";
-import uuid from "common/util/uuid";
 const logger = rootLogger.child({ name: "reactors/navigation" });
-
-import { opensInWindow } from "common/constants/windows";
-import { getNativeWindow } from "main/reactors/main-window";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.clearFilters, async (store, action) => {
@@ -26,21 +23,21 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.commandGoBack, async (store, action) => {
-    const { window } = action.payload;
-    const { tab } = store.getState().windows[window].navigation;
-    store.dispatch(actions.tabGoBack({ window, tab }));
+    const { wind } = action.payload;
+    const { tab } = store.getState().winds[wind].navigation;
+    store.dispatch(actions.tabGoBack({ wind, tab }));
   });
 
   watcher.on(actions.commandGoForward, async (store, action) => {
-    const { window } = action.payload;
-    const { tab } = store.getState().windows[window].navigation;
-    store.dispatch(actions.tabGoForward({ window, tab }));
+    const { wind } = action.payload;
+    const { tab } = store.getState().winds[wind].navigation;
+    store.dispatch(actions.tabGoForward({ wind, tab }));
   });
 
   watcher.on(actions.commandReload, async (store, action) => {
-    const { window } = action.payload;
-    const { tab } = store.getState().windows[window].navigation;
-    store.dispatch(actions.tabReloaded({ window, tab }));
+    const { wind } = action.payload;
+    const { tab } = store.getState().winds[wind].navigation;
+    store.dispatch(actions.tabReloaded({ wind, tab }));
   });
 
   watcher.on(actions.navigateTab, async (store, action) => {
@@ -60,12 +57,12 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.navigate, async (store, action) => {
-    const { url, resource, data, window, background, replace } = action.payload;
+    const { url, resource, data, wind, background, replace } = action.payload;
     logger.debug(`Navigating to ${url} ${background ? "(in background)" : ""}`);
 
-    if (window === "root" && opensInWindow[url]) {
+    if (wind === "root" && opensInWindow[url]) {
       store.dispatch(
-        actions.openWindow({
+        actions.openWind({
           initialURL: url,
           role: "secondary",
         })
@@ -87,7 +84,7 @@ export default function(watcher: Watcher) {
 
     const rs = store.getState();
     const { enableTabs } = rs.preferences;
-    if (enableTabs && window === "root") {
+    if (enableTabs && wind === "root") {
       const nativeWindow = getNativeWindow(rs, "root");
       if (nativeWindow && nativeWindow.isFocused()) {
         // let it navigate the open tab
@@ -95,7 +92,7 @@ export default function(watcher: Watcher) {
         // open a new tab!
         store.dispatch(
           actions.openTab({
-            window,
+            wind,
             tab: uuid(),
             url,
             resource,
@@ -104,8 +101,8 @@ export default function(watcher: Watcher) {
           })
         );
         store.dispatch(
-          actions.focusWindow({
-            window,
+          actions.focusWind({
+            wind,
           })
         );
         return;
@@ -113,7 +110,7 @@ export default function(watcher: Watcher) {
     }
 
     {
-      const { navigation } = rs.windows[window];
+      const { navigation } = rs.winds[wind];
       const tab = navigation.tab;
 
       // navigate the single tab
@@ -121,51 +118,51 @@ export default function(watcher: Watcher) {
         actions.evolveTab({
           tab,
           replace,
-          window,
+          wind,
           url,
           resource: resource ? resource : null,
           data,
         })
       );
       store.dispatch(
-        actions.focusWindow({
-          window,
+        actions.focusWind({
+          wind,
         })
       );
     }
   });
 
   watcher.on(actions.closeAllTabs, async (store, action) => {
-    const { window } = action.payload;
-    const { openTabs } = store.getState().windows[window].navigation;
+    const { wind } = action.payload;
+    const { openTabs } = store.getState().winds[wind].navigation;
 
     for (const tab of openTabs) {
-      store.dispatch(actions.closeTab({ window, tab }));
+      store.dispatch(actions.closeTab({ wind, tab }));
     }
   });
 
   watcher.on(actions.closeOtherTabs, async (store, action) => {
-    const { window } = action.payload;
+    const { wind } = action.payload;
     const safeTab = action.payload.tab;
-    const { openTabs } = store.getState().windows[window].navigation;
+    const { openTabs } = store.getState().winds[wind].navigation;
 
     for (const tab of openTabs) {
       if (tab !== safeTab) {
-        store.dispatch(actions.closeTab({ window, tab }));
+        store.dispatch(actions.closeTab({ wind, tab }));
       }
     }
   });
 
   watcher.on(actions.closeTabsBelow, async (store, action) => {
-    const { window } = action.payload;
+    const { wind } = action.payload;
     const markerTab = action.payload.tab;
-    const { openTabs } = store.getState().windows[window].navigation;
+    const { openTabs } = store.getState().winds[wind].navigation;
 
     // woo !
     let closing = false;
     for (const tab of openTabs) {
       if (closing) {
-        store.dispatch(actions.closeTab({ window, tab }));
+        store.dispatch(actions.closeTab({ wind, tab }));
       } else if (tab === markerTab) {
         // will start closing after this one
         closing = true;
@@ -174,9 +171,9 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.closeCurrentTab, async (store, action) => {
-    const { window } = action.payload;
-    const { tab } = store.getState().windows[window].navigation;
-    store.dispatch(actions.closeTab({ window, tab }));
+    const { wind } = action.payload;
+    const { tab } = store.getState().winds[wind].navigation;
+    store.dispatch(actions.closeTab({ wind, tab }));
   });
 
   let subWatcher: Watcher;
@@ -187,34 +184,34 @@ export default function(watcher: Watcher) {
     watcher.addSub(subWatcher);
   };
 
-  watcher.on(actions.windowOpened, async (store, action) => {
+  watcher.on(actions.windOpened, async (store, action) => {
     refreshSelectors(store.getState());
   });
 
-  watcher.on(actions.windowClosed, async (store, action) => {
+  watcher.on(actions.windClosed, async (store, action) => {
     refreshSelectors(store.getState());
   });
 }
 
 function makeSubWatcher(rs: RootState) {
   const watcher = new Watcher();
-  for (const window of Object.keys(rs.windows)) {
+  for (const wind of Object.keys(rs.winds)) {
     watcher.onStateChange({
       makeSelector: (store, schedule) =>
         createSelector(
-          (rs: RootState) => rs.windows[window].navigation.tab,
-          tab => schedule.dispatch(actions.tabChanged({ window, tab }))
+          (rs: RootState) => rs.winds[wind].navigation.tab,
+          tab => schedule.dispatch(actions.tabChanged({ wind, tab }))
         ),
     });
 
     watcher.onStateChange({
       makeSelector: (store, schedule) =>
         createSelector(
-          (rs: RootState) => rs.windows[window].navigation.openTabs,
-          (rs: RootState) => rs.windows[window].tabInstances,
-          (rs: RootState) => rs.windows[window].navigation.tab,
+          (rs: RootState) => rs.winds[wind].navigation.openTabs,
+          (rs: RootState) => rs.winds[wind].tabInstances,
+          (rs: RootState) => rs.winds[wind].navigation.tab,
           (openTabs, tabInstances, tab) =>
-            schedule.dispatch(actions.tabsChanged({ window }))
+            schedule.dispatch(actions.tabsChanged({ wind }))
         ),
     });
   }

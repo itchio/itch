@@ -16,7 +16,7 @@ const initialState: NavigationState = {
 };
 
 export default reducer<NavigationState>(initialState, on => {
-  on(actions.windowOpened, (state, action) => {
+  on(actions.windOpened, (state, action) => {
     const { initialURL, preload } = action.payload;
     return {
       ...initialState,
@@ -25,7 +25,7 @@ export default reducer<NavigationState>(initialState, on => {
     };
   });
 
-  on(actions.windowAwakened, (state, action) => {
+  on(actions.windAwakened, (state, action) => {
     const { initialURL } = action.payload;
     return {
       ...state,
@@ -34,7 +34,7 @@ export default reducer<NavigationState>(initialState, on => {
     };
   });
 
-  on(actions.windowLulled, (state, action) => {
+  on(actions.windLulled, (state, action) => {
     return {
       ...state,
       isPreload: true,

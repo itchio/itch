@@ -4,8 +4,8 @@ import { actions } from "common/actions";
 
 import { Store } from "common/types";
 
-async function applyTabOffset(store: Store, window: string, offset: number) {
-  const { tab, openTabs } = store.getState().windows[window].navigation;
+async function applyTabOffset(store: Store, wind: string, offset: number) {
+  const { tab, openTabs } = store.getState().winds[wind].navigation;
 
   const numTabs = openTabs.length;
   const index = openTabs.indexOf(tab);
@@ -14,32 +14,32 @@ async function applyTabOffset(store: Store, window: string, offset: number) {
   const newIndex = (index + offset + numTabs) % numTabs;
   const newTab = openTabs[newIndex];
 
-  store.dispatch(actions.focusTab({ window, tab: newTab }));
+  store.dispatch(actions.focusTab({ wind, tab: newTab }));
 }
 
 export default function(watcher: Watcher) {
   watcher.on(actions.newTab, async (store, action) => {
-    const { window } = action.payload;
-    store.dispatch(actions.navigate({ window, url: "itch://new-tab" }));
+    const { wind } = action.payload;
+    store.dispatch(actions.navigate({ wind, url: "itch://new-tab" }));
   });
 
   watcher.on(actions.focusNthTab, async (store, action) => {
-    const { window } = action.payload;
+    const { wind } = action.payload;
     const n = action.payload.index;
-    const { openTabs } = store.getState().windows[window].navigation;
+    const { openTabs } = store.getState().winds[wind].navigation;
     const tab = openTabs[n - 1];
     if (tab) {
-      store.dispatch(actions.focusTab({ window, tab }));
+      store.dispatch(actions.focusTab({ wind, tab }));
     }
   });
 
   watcher.on(actions.showPreviousTab, async (store, action) => {
-    const { window } = action.payload;
-    await applyTabOffset(store, window, -1);
+    const { wind } = action.payload;
+    await applyTabOffset(store, wind, -1);
   });
 
   watcher.on(actions.showNextTab, async (store, action) => {
-    const { window } = action.payload;
-    await applyTabOffset(store, window, 1);
+    const { wind } = action.payload;
+    await applyTabOffset(store, wind, 1);
   });
 }

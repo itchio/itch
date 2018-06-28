@@ -29,21 +29,21 @@ export function concatTemplates(
 
 export function newTabControls(
   store: Store,
-  window: string,
+  wind: string,
   tab: string
 ): MenuTemplate {
   return [
     {
       localizedLabel: ["menu.file.new_tab"],
       accelerator: "CmdOrCtrl+T",
-      action: actions.newTab({ window }),
+      action: actions.newTab({ wind }),
     },
   ];
 }
 
 export function closeTabControls(
   store: Store,
-  window: string,
+  wind: string,
   tab: string
 ): MenuTemplate {
   // TODO: disable some menu items if last transient tab
@@ -52,15 +52,15 @@ export function closeTabControls(
     {
       localizedLabel: ["menu.file.close_tab"],
       accelerator: "CmdOrCtrl+W",
-      action: actions.closeTab({ window, tab }),
+      action: actions.closeTab({ wind, tab }),
     },
     {
       localizedLabel: ["menu.file.close_other_tabs"],
-      action: actions.closeOtherTabs({ window, tab }),
+      action: actions.closeOtherTabs({ wind, tab }),
     },
     {
       localizedLabel: ["menu.file.close_tabs_below"],
-      action: actions.closeTabsBelow({ window, tab }),
+      action: actions.closeTabsBelow({ wind, tab }),
     },
   ];
 }

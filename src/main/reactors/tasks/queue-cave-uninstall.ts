@@ -34,7 +34,7 @@ export default function(watcher: Watcher) {
         const response = await promisedModal(
           store,
           modalWidgets.showError.make({
-            window: "root",
+            wind: "root",
             title: ["prompt.uninstall_error.title"],
             message: ["prompt.uninstall_error.message"],
             buttons: [

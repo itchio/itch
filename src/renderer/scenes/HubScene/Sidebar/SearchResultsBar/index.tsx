@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { Dispatch, SearchResults } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import { hasSearchResults } from "main/reactors/search/search-helpers";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
@@ -79,7 +79,7 @@ class SearchResultsBar extends React.PureComponent<Props, State> {
     dispatch(actions.closeSearch({}));
     dispatch(
       actions.navigate({
-        window: rendererWindow(),
+        wind: ambientWind(),
         url: `${urls.itchio}?${encodeURIComponent(this.props.query)}`,
       })
     );

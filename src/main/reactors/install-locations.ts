@@ -1,18 +1,14 @@
-import { Watcher } from "common/util/watcher";
-
-import * as explorer from "../os/explorer";
-
 import { actions } from "common/actions";
-
-import { dialog } from "electron";
-
-import { modalWidgets } from "renderer/modal-widgets";
 import { call, messages } from "common/butlerd";
-import { promisedModal } from "./modals";
 import { t } from "common/format/t";
 import { ItchPromise } from "common/util/itch-promise";
-import { getNativeWindow } from "./main-window";
 import { urlForInstallLocation } from "common/util/navigation";
+import { Watcher } from "common/util/watcher";
+import { dialog } from "electron";
+import * as explorer from "main/os/explorer";
+import { promisedModal } from "main/reactors/modals";
+import { getNativeWindow } from "main/reactors/winds";
+import { modalWidgets } from "renderer/modal-widgets";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
@@ -39,7 +35,7 @@ export default function(watcher: Watcher) {
       store.dispatch(
         actions.openModal(
           modalWidgets.naked.make({
-            window: "root",
+            wind: "root",
             title: ["prompt.install_location_not_empty.title"],
             message: ["prompt.install_location_not_empty.message"],
             detail: ["prompt.install_location_not_empty.detail"],
@@ -47,7 +43,7 @@ export default function(watcher: Watcher) {
               {
                 label: ["prompt.install_location_not_empty.show_contents"],
                 action: actions.navigate({
-                  window: "root",
+                  wind: "root",
                   url: urlForInstallLocation(installLocation.id),
                 }),
               },
@@ -64,7 +60,7 @@ export default function(watcher: Watcher) {
       const res = await promisedModal(
         store,
         modalWidgets.naked.make({
-          window: "root",
+          wind: "root",
           title: ["prompt.install_location_remove.title"],
           message: ["prompt.install_location_remove.message"],
           detail: [
@@ -95,9 +91,9 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.addInstallLocation, async (store, action) => {
-    const { window } = action.payload;
+    const { wind } = action.payload;
     const i18n = store.getState().i18n;
-    const nativeWindow = getNativeWindow(store.getState(), window);
+    const nativeWindow = getNativeWindow(store.getState(), wind);
     if (!nativeWindow) {
       return;
     }

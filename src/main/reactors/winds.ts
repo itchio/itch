@@ -25,12 +25,7 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = os.platform() === "darwin";
 
-import {
-  RootState,
-  Store,
-  NativeWindowState,
-  ItchWindowRole,
-} from "common/types";
+import { RootState, Store, NativeWindowState, WindRole } from "common/types";
 import { Space } from "common/helpers/space";
 import { openAppDevTools } from "./open-app-devtools";
 import { t } from "common/format/t";
@@ -39,8 +34,8 @@ import { stringify } from "querystring";
 import { opensInWindow } from "common/constants/windows";
 
 async function createRootWindow(store: Store) {
-  const window = "root";
-  const role: ItchWindowRole = "main";
+  const wind = "root";
+  const role: WindRole = "main";
   const userBounds = config.get(BOUNDS_CONFIG_KEY) || {};
   const bounds = {
     x: -1,
@@ -62,8 +57,8 @@ async function createRootWindow(store: Store) {
   };
   const nativeWindow = new BrowserWindow(opts);
   store.dispatch(
-    actions.windowOpened({
-      window,
+    actions.windOpened({
+      wind,
       role,
       nativeId: nativeWindow.id,
       initialURL: "itch://library",
@@ -129,7 +124,7 @@ async function createRootWindow(store: Store) {
     nativeWindow.hide();
   });
 
-  hookNativeWindow(store, window, nativeWindow);
+  hookNativeWindow(store, wind, nativeWindow);
 
   nativeWindow.on("maximize", (e: any) => {
     config.set(MAXIMIZED_CONFIG_KEY, true);
@@ -139,7 +134,7 @@ async function createRootWindow(store: Store) {
     config.set(MAXIMIZED_CONFIG_KEY, false);
   });
 
-  nativeWindow.loadURL(makeAppURL({ window, role }));
+  nativeWindow.loadURL(makeAppURL({ wind, role }));
 
   if (parseInt(process.env.DEVTOOLS || "0", 10) > 0) {
     await openAppDevTools(nativeWindow);
@@ -150,7 +145,7 @@ async function createRootWindow(store: Store) {
 
 function preloadWindow(store: Store) {
   store.dispatch(
-    actions.openWindow({
+    actions.openWind({
       initialURL: "itch://preload",
       role: "secondary",
       preload: true,
@@ -259,11 +254,11 @@ export default function(watcher: Watcher) {
     watcher.addSub(subWatcher);
   };
 
-  watcher.on(actions.windowOpened, async (store, action) => {
+  watcher.on(actions.windOpened, async (store, action) => {
     refreshSelectors(store.getState());
   });
 
-  watcher.on(actions.windowClosed, async (store, action) => {
+  watcher.on(actions.windClosed, async (store, action) => {
     refreshSelectors(store.getState());
   });
 
@@ -274,7 +269,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.preferencesLoaded, async (store, action) => {
     const hidden = action.payload.openAsHidden;
     if (!hidden) {
-      store.dispatch(actions.focusWindow({ window: "root" }));
+      store.dispatch(actions.focusWind({ wind: "root" }));
     }
 
     screen.on("display-added", () => ensureMainWindowInsideDisplay(store));
@@ -284,16 +279,16 @@ export default function(watcher: Watcher) {
     );
   });
 
-  watcher.on(actions.focusWindow, async (store, action) => {
-    const { window } = action.payload;
-    const nativeWindow = getNativeWindow(store.getState(), window);
+  watcher.on(actions.focusWind, async (store, action) => {
+    const { wind } = action.payload;
+    const nativeWindow = getNativeWindow(store.getState(), wind);
     const { toggle } = action.payload;
 
     if (nativeWindow) {
       if (toggle && nativeWindow.isVisible()) {
         nativeWindow.hide();
       } else {
-        if (window === "root") {
+        if (wind === "root") {
           nativeWindow.show();
           const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
           if (maximized && !macOs) {
@@ -308,15 +303,15 @@ export default function(watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.hideWindow, async (store, action) => {
+  watcher.on(actions.hideWind, async (store, action) => {
     hideWindow();
   });
 
-  watcher.on(actions.minimizeWindow, async (store, action) => {
+  watcher.on(actions.minimizeWind, async (store, action) => {
     minimizeWindow();
   });
 
-  watcher.on(actions.toggleMaximizeWindow, async (store, action) => {
+  watcher.on(actions.toggleMaximizeWind, async (store, action) => {
     toggleMaximizeWindow();
   });
 
@@ -324,18 +319,18 @@ export default function(watcher: Watcher) {
     exitFullScreen();
   });
 
-  watcher.on(actions.windowBoundsChanged, async (store, action) => {
-    const { window, bounds } = action.payload;
-    const nativeWindow = getNativeWindow(store.getState(), window);
+  watcher.on(actions.windBoundsChanged, async (store, action) => {
+    const { wind, bounds } = action.payload;
+    const nativeWindow = getNativeWindow(store.getState(), wind);
     if (nativeWindow.isMaximized()) {
       // don't store bounds when maximized
       return;
     }
 
-    if (window === "root") {
+    if (wind === "root") {
       config.set(BOUNDS_CONFIG_KEY, bounds);
     } else {
-      const navState = store.getState().windows[window].navigation;
+      const navState = store.getState().winds[wind].navigation;
       const { initialURL } = navState;
       const configKey = `${initialURL}-bounds`;
       config.set(configKey, bounds);
@@ -343,8 +338,8 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.closeTabOrAuxWindow, async (store, action) => {
-    const { window } = action.payload;
-    store.dispatch(actions.closeCurrentTab({ window }));
+    const { wind } = action.payload;
+    store.dispatch(actions.closeCurrentTab({ wind }));
   });
 
   watcher.on(actions.quitWhenMain, async (store, action) => {
@@ -364,29 +359,29 @@ export default function(watcher: Watcher) {
     app.exit(0);
   });
 
-  watcher.on(actions.openWindow, async (store, action) => {
+  watcher.on(actions.openWind, async (store, action) => {
     const { initialURL, preload } = action.payload;
     const rs = store.getState();
 
     if (opensInWindow[initialURL]) {
       // see if we already have a window with that initialURL
-      for (const window of Object.keys(rs.windows)) {
-        const windowState = rs.windows[window];
-        if (windowState.navigation.initialURL === initialURL) {
-          const nativeWin = getNativeWindow(rs, window);
+      for (const wind of Object.keys(rs.winds)) {
+        const windState = rs.winds[wind];
+        if (windState.navigation.initialURL === initialURL) {
+          const nativeWin = getNativeWindow(rs, wind);
           if (nativeWin) {
             nativeWin.show();
             nativeWin.focus();
 
             store.dispatch(
-              actions.windowAwakened({
+              actions.windAwakened({
                 initialURL,
-                window,
+                wind,
               })
             );
             store.dispatch(
               actions.navigate({
-                window,
+                wind,
                 url: initialURL,
               })
             );
@@ -399,28 +394,28 @@ export default function(watcher: Watcher) {
     if (!preload) {
       // do we have a preload available?
       let numPreload = 0;
-      for (const window of Object.keys(rs.windows)) {
-        const windowState = rs.windows[window];
+      for (const window of Object.keys(rs.winds)) {
+        const windowState = rs.winds[window];
         if (windowState.navigation.isPreload) {
           numPreload++;
         }
       }
 
-      for (const window of Object.keys(rs.windows)) {
-        const windowState = rs.windows[window];
+      for (const wind of Object.keys(rs.winds)) {
+        const windowState = rs.winds[wind];
         if (windowState.navigation.isPreload) {
-          const nativeWin = getNativeWindow(rs, window);
+          const nativeWin = getNativeWindow(rs, wind);
           if (nativeWin) {
             // yes we do! use that.
             store.dispatch(
-              actions.windowAwakened({
+              actions.windAwakened({
                 initialURL,
-                window,
+                wind,
               })
             );
             store.dispatch(
               actions.navigate({
-                window,
+                wind,
                 url: initialURL,
               })
             );
@@ -471,25 +466,25 @@ export default function(watcher: Watcher) {
     }
 
     const nativeWindow = new BrowserWindow(opts);
-    const window = `secondary-${secondaryWindowSeed++}`;
-    const role: ItchWindowRole = "secondary";
+    const wind = `secondary-${secondaryWindowSeed++}`;
+    const role: WindRole = "secondary";
     store.dispatch(
-      actions.windowOpened({
-        window,
+      actions.windOpened({
+        wind,
         role,
         nativeId: nativeWindow.id,
         initialURL: initialURL,
         preload,
       })
     );
-    nativeWindow.loadURL(makeAppURL({ window, role }));
-    hookNativeWindow(store, window, nativeWindow);
+    nativeWindow.loadURL(makeAppURL({ wind, role }));
+    hookNativeWindow(store, wind, nativeWindow);
   });
 }
 
 interface AppURLParams {
-  window: string;
-  role: ItchWindowRole;
+  wind: string;
+  role: WindRole;
 }
 
 function makeAppURL(params: AppURLParams): string {
@@ -539,50 +534,44 @@ function commonBrowserWindowOpts(): Partial<BrowserWindowConstructorOptions> {
 
 function hookNativeWindow(
   store: Store,
-  window: string,
+  wind: string,
   nativeWindow: BrowserWindow
 ) {
   nativeWindow.on("focus", (e: any) => {
-    store.dispatch(actions.windowFocusChanged({ window, focused: true }));
+    store.dispatch(actions.windFocusChanged({ wind, focused: true }));
   });
 
   nativeWindow.on("blur", (e: any) => {
-    store.dispatch(actions.windowFocusChanged({ window, focused: false }));
+    store.dispatch(actions.windFocusChanged({ wind, focused: false }));
   });
 
   nativeWindow.on("enter-full-screen", (e: any) => {
-    const ns = store.getState().windows[window].native;
+    const ns = store.getState().winds[wind].native;
     if (!ns.fullscreen) {
-      store.dispatch(
-        actions.windowFullscreenChanged({ window, fullscreen: true })
-      );
+      store.dispatch(actions.windFullscreenChanged({ wind, fullscreen: true }));
     }
   });
 
   nativeWindow.on("leave-full-screen", (e: any) => {
-    const ns = store.getState().windows[window].native;
+    const ns = store.getState().winds[wind].native;
     if (ns.fullscreen) {
       store.dispatch(
-        actions.windowFullscreenChanged({ window, fullscreen: false })
+        actions.windFullscreenChanged({ wind, fullscreen: false })
       );
     }
   });
 
   nativeWindow.on("maximize", (e: any) => {
-    const ns = store.getState().windows[window].native;
+    const ns = store.getState().winds[wind].native;
     if (!ns.maximized) {
-      store.dispatch(
-        actions.windowMaximizedChanged({ window, maximized: true })
-      );
+      store.dispatch(actions.windMaximizedChanged({ wind, maximized: true }));
     }
   });
 
   nativeWindow.on("unmaximize", (e: any) => {
-    const ns = store.getState().windows[window].native;
+    const ns = store.getState().winds[wind].native;
     if (ns.maximized) {
-      store.dispatch(
-        actions.windowMaximizedChanged({ window, maximized: false })
-      );
+      store.dispatch(actions.windMaximizedChanged({ wind, maximized: false }));
     }
   });
 
@@ -591,14 +580,14 @@ function hookNativeWindow(
       case "browser-backward":
         store.dispatch(
           actions.commandGoBack({
-            window,
+            wind,
           })
         );
         break;
       case "browser-forward":
         store.dispatch(
           actions.commandGoForward({
-            window,
+            wind,
           })
         );
         break;
@@ -612,9 +601,7 @@ function hookNativeWindow(
       return;
     }
     const windowBounds = nativeWindow.getBounds();
-    store.dispatch(
-      actions.windowBoundsChanged({ window, bounds: windowBounds })
-    );
+    store.dispatch(actions.windBoundsChanged({ wind, bounds: windowBounds }));
   }, 2000);
 
   nativeWindow.on("move", (e: any) => {
@@ -626,17 +613,17 @@ function hookNativeWindow(
   });
 
   nativeWindow.on("close", (e: any) => {
-    if (window !== "root") {
+    if (wind !== "root") {
       e.preventDefault();
       nativeWindow.hide();
-      store.dispatch(actions.windowLulled({ window }));
+      store.dispatch(actions.windLulled({ wind }));
     } else {
-      store.dispatch(actions.windowClosed({ window }));
+      store.dispatch(actions.windClosed({ wind }));
     }
   });
 
   nativeWindow.on("closed", (e: any) => {
-    store.dispatch(actions.windowClosed({ window }));
+    store.dispatch(actions.windClosed({ wind }));
   });
 }
 
@@ -644,7 +631,7 @@ export function getNativeState(
   rs: RootState,
   window: string
 ): NativeWindowState {
-  const w = rs.windows[window];
+  const w = rs.winds[window];
   if (w) {
     return w.native;
   }
@@ -661,13 +648,12 @@ export function getNativeWindow(rs: RootState, window: string): BrowserWindow {
 
 function makeSubWatcher(rs: RootState) {
   const watcher = new Watcher();
-  for (const window of Object.keys(rs.windows)) {
+  for (const window of Object.keys(rs.winds)) {
     watcher.onStateChange({
       makeSelector: (store, schedule) => {
         const getI18n = (rs: RootState) => rs.i18n;
-        const getID = (rs: RootState) => rs.windows[window].navigation.tab;
-        const getTabInstance = (rs: RootState) =>
-          rs.windows[window].tabInstances;
+        const getID = (rs: RootState) => rs.winds[window].navigation.tab;
+        const getTabInstance = (rs: RootState) => rs.winds[window].tabInstances;
 
         const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>
           Space.fromInstance(id, tabData[id])

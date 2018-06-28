@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import { Dispatch } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import { getInjectURL } from "common/util/resources";
 import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
@@ -81,7 +81,7 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
             const { dispatch } = this.props;
             dispatch(
               actions.closeModal({
-                window: rendererWindow(),
+                wind: ambientWind(),
                 action: modalWidgets.recaptchaInput.action({
                   recaptchaResponse: response,
                 }),

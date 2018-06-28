@@ -53,7 +53,7 @@ export async function performLaunch(
 
     store.dispatch(
       actions.closeModal({
-        window: "root",
+        wind: "root",
         id: prereqsModal.id,
       })
     );
@@ -92,7 +92,7 @@ export async function performLaunch(
         });
 
         client.on(messages.URLLaunch, async ({ url }) => {
-          store.dispatch(actions.navigate({ window: "root", url }));
+          store.dispatch(actions.navigate({ wind: "root", url }));
           return {};
         });
 
@@ -115,7 +115,7 @@ export async function performLaunch(
           }
 
           prereqsModal = modalWidgets.prereqsState.make({
-            window: "root",
+            wind: "root",
             title: ["grid.item.installing"],
             message: "",
             widgetParams: prereqsStateParams,
@@ -180,7 +180,7 @@ export async function performLaunch(
           const res = await promisedModal(
             store,
             modalWidgets.showError.make({
-              window: "root",
+              wind: "root",
               title: ["game.install.could_not_launch", { title }],
               message: [
                 "game.install.could_not_launch.message",
@@ -254,7 +254,7 @@ export async function performLaunch(
           const res = await promisedModal(
             store,
             modalWidgets.sandboxBlessing.make({
-              window: "root",
+              wind: "root",
               title: ["sandbox.setup.title"],
               message: messageString,
               detail: detailString,

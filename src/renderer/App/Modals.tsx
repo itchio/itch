@@ -9,7 +9,7 @@ import {
   ModalButtonSpec,
   Dispatch,
 } from "common/types";
-import { rendererWindow, rendererWindowState } from "common/util/navigation";
+import { ambientWind, ambientWindState } from "common/util/navigation";
 import { stripUnit } from "polished";
 import React from "react";
 import { InjectedIntl } from "react-intl";
@@ -370,7 +370,7 @@ class Modals extends React.PureComponent<Props, State> {
               onClick={() =>
                 dispatch(
                   actions.closeModal({
-                    window: rendererWindow(),
+                    wind: ambientWind(),
                   })
                 )
               }
@@ -413,7 +413,7 @@ class Modals extends React.PureComponent<Props, State> {
       dispatch(
         actions.openModal(
           modalWidgets.exploreJson.make({
-            window: "root",
+            wind: "root",
             title: "Modal payload",
             message: "",
             widgetParams: {
@@ -541,13 +541,13 @@ class Modals extends React.PureComponent<Props, State> {
     if (action === "widgetResponse") {
       onClick = () => {
         const action = actions.modalResponse(this.state.widgetPayload);
-        dispatch(actions.closeModal({ window: rendererWindow(), action }));
+        dispatch(actions.closeModal({ wind: ambientWind(), action }));
       };
     } else {
       onClick = () =>
         dispatch(
           actions.closeModal({
-            window: rendererWindow(),
+            wind: ambientWind(),
             action: action as Action<any>,
           })
         );
@@ -582,5 +582,5 @@ interface State {
 }
 
 export default hook(map => ({
-  modal: map(rs => rendererWindowState(rs).modals[0]),
+  modal: map(rs => ambientWindState(rs).modals[0]),
 }))(withIntl(Modals));

@@ -4,6 +4,7 @@ import { Dispatch } from "common/types";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
+import { ambientWind } from "common/util/navigation";
 
 class FeaturedPage extends React.PureComponent<Props> {
   render() {
@@ -11,6 +12,7 @@ class FeaturedPage extends React.PureComponent<Props> {
 
     dispatch(
       space.makeEvolve({
+        wind: ambientWind(),
         replace: true,
         url: urls.itchio,
       })

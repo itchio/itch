@@ -1,6 +1,6 @@
 import { GameUpdate } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
-import { rendererWindow, urlForGame } from "common/util/navigation";
+import { ambientWind, urlForGame } from "common/util/navigation";
 import React from "react";
 import { HoverCover } from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
@@ -107,7 +107,7 @@ class GameUpdateRow extends React.PureComponent<Props> {
 
     dispatch(
       actions.navigate({
-        window: rendererWindow(),
+        wind: ambientWind(),
         url: urlForGame(game.id),
         background: doesEventMeanBackground(e),
       })

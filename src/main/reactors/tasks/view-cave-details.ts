@@ -17,7 +17,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.openModal(
         modalWidgets.exploreJson.make({
-          window: "root",
+          wind: "root",
           title: `Cave details for ${cave.game ? cave.game.title : "?"}`,
           message: "Local cave data:",
           widgetParams: {

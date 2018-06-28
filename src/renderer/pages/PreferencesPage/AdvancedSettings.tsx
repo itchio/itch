@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import { formatArch, formatPlatform } from "common/format/platform";
 import { Dispatch, SystemState } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
@@ -32,7 +32,7 @@ class AdvancedSettings extends React.PureComponent<Props> {
               onClick={e => {
                 e.preventDefault();
                 dispatch(
-                  actions.navigate({ window: "root", url: "itch://applog" })
+                  actions.navigate({ wind: "root", url: "itch://applog" })
                 );
               }}
             >
@@ -46,7 +46,7 @@ class AdvancedSettings extends React.PureComponent<Props> {
                 e.preventDefault();
                 dispatch(actions.checkForGameUpdates({}));
                 dispatch(
-                  actions.navigate({ window: "root", url: "itch://downloads" })
+                  actions.navigate({ wind: "root", url: "itch://downloads" })
                 );
               }}
             >
@@ -61,7 +61,7 @@ class AdvancedSettings extends React.PureComponent<Props> {
                 e.preventDefault();
                 dispatch(
                   actions.clearBrowsingDataRequest({
-                    window: rendererWindow(),
+                    wind: ambientWind(),
                   })
                 );
               }}

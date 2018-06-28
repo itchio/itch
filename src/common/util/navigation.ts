@@ -5,9 +5,9 @@ import {
   TabInstance,
   TabPage,
   RootState,
-  WindowState,
+  WindState,
   ExtendedWindow,
-  ItchWindow,
+  WindSpec,
   NavigationState,
 } from "common/types";
 
@@ -56,23 +56,23 @@ export function currentPage(tabInstance: TabInstance): TabPage | null {
   return tabInstance.history[tabInstance.currentIndex];
 }
 
-export function itchWindow(): ItchWindow {
+export function windSpec(): WindSpec {
   if (process.type !== "renderer") {
-    throw new Error("itchWindow() can only be called from the renderer");
+    throw new Error("windSpec() can only be called from the renderer");
   }
-  return (window as ExtendedWindow).itchWindow;
+  return (window as ExtendedWindow).windSpec;
 }
 
-export function rendererWindow(): string {
-  return itchWindow().window;
+export function ambientWind(): string {
+  return windSpec().wind;
 }
 
-export function rendererWindowState(rs: RootState): WindowState {
-  return rs.windows[rendererWindow()];
+export function ambientWindState(rs: RootState): WindState {
+  return rs.winds[ambientWind()];
 }
 
-export function rendererNavigation(rs: RootState): NavigationState {
-  return rendererWindowState(rs).navigation;
+export function ambientNavigation(rs: RootState): NavigationState {
+  return ambientWindState(rs).navigation;
 }
 
 // build URLs

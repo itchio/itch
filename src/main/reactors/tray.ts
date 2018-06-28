@@ -32,8 +32,8 @@ const setTrayMenu = memoize(1, function(template: MenuTemplate, store: Store) {
 
 async function go(store: Store, url: string) {
   // TODO: should navigate focus the window anyway ?
-  store.dispatch(actions.focusWindow({ window: "root" }));
-  store.dispatch(actions.navigate({ window: "root", url }));
+  store.dispatch(actions.focusWind({ wind: "root" }));
+  store.dispatch(actions.navigate({ wind: "root", url }));
 }
 
 function refreshTray(store: Store, i18n: I18nState) {

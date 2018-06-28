@@ -13,7 +13,7 @@ export default function(watcher: Watcher) {
     if (getActiveDownload(downloads)) {
       store.dispatch(
         actions.navigate({
-          window: "root",
+          wind: "root",
           url: "itch://downloads",
           background: true,
         })

@@ -23,7 +23,7 @@ export default function(watcher: Watcher) {
     const { game } = action.payload;
     const template = gameControls(store, game);
 
-    const { window, clientX, clientY } = action.payload;
-    openMenu(store, template, { window, clientX, clientY });
+    const { wind, clientX, clientY } = action.payload;
+    openMenu(store, template, { wind, clientX, clientY });
   });
 }

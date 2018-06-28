@@ -55,7 +55,7 @@ class RememberedProfile extends React.PureComponent<Props> {
     dispatch(
       actions.openModal(
         modalWidgets.naked.make({
-          window: "root",
+          wind: "root",
           title: ["prompt.forget_session.title"],
           message: ["prompt.forget_session.message", { username }],
           detail: ["prompt.forget_session.detail"],

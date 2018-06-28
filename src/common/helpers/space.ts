@@ -14,7 +14,7 @@ import {
 import nodeURL, { format, URLSearchParams } from "url";
 import querystring from "querystring";
 
-import { currentPage, rendererWindow } from "../util/navigation";
+import { currentPage, ambientWind } from "../util/navigation";
 import { actions } from "common/actions";
 
 // Empty Object
@@ -82,7 +82,7 @@ export class Space {
   }
 
   static fromState(rs: RootState, window: string, tab: string): Space {
-    return spaceFromInstance(tab, rs.windows[window].tabInstances[tab]);
+    return spaceFromInstance(tab, rs.winds[window].tabInstances[tab]);
   }
 
   static fromInstance(tab: string, data: TabInstance): Space {
@@ -99,7 +99,7 @@ export class Space {
     >
   ): Action<IEvolveTabPayload> {
     return actions.evolveTab({
-      window: rendererWindow(),
+      wind: ambientWind(),
       tab: this.tab,
       ...payload,
     });
@@ -107,7 +107,7 @@ export class Space {
 
   makeFetch(data: TabData): Action<any> {
     return actions.tabDataFetched({
-      window: rendererWindow(),
+      wind: ambientWind(),
       tab: this.tab,
       data,
     });
@@ -115,7 +115,7 @@ export class Space {
 
   makeReload(): Action<any> {
     return actions.tabReloaded({
-      window: rendererWindow(),
+      wind: ambientWind(),
       tab: this.tab,
     });
   }

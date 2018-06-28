@@ -15,7 +15,7 @@ import commons from "./commons";
 import systemTasks from "./system-tasks";
 import broth from "./broth";
 import butlerd from "./butlerd";
-import windows from "./windows";
+import winds from "./winds";
 
 const reducer = combineReducers<RootState>({
   system,
@@ -32,6 +32,6 @@ const reducer = combineReducers<RootState>({
   systemTasks,
   broth,
   butlerd,
-  windows,
+  winds,
 });
 export default reducer;

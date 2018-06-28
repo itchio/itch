@@ -50,7 +50,7 @@ export default function(watcher: Watcher) {
           actions.notify({
             body: message,
             onClick: actions.navigate({
-              window: "root",
+              wind: "root",
               url: urlForGame(download.game.id),
             }),
           })

@@ -5,7 +5,7 @@ import {
   IMenuItem,
   MenuTemplate,
 } from "common/types";
-import { rendererWindowState } from "common/util/navigation";
+import { ambientWindState } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
 import {
@@ -274,7 +274,7 @@ interface Props {
 }
 
 export default hook(map => ({
-  open: map(rs => rendererWindowState(rs).contextMenu.open),
-  data: map(rs => rendererWindowState(rs).contextMenu.data),
+  open: map(rs => ambientWindState(rs).contextMenu.open),
+  data: map(rs => ambientWindState(rs).contextMenu.data),
   macos: map(rs => rs.system.macos),
 }))(ContextMenuHandler);

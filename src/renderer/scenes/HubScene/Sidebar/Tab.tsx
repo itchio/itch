@@ -8,7 +8,7 @@ import {
   LocalizedString,
   TabInstance,
 } from "common/types";
-import { rendererWindow, rendererWindowState } from "common/util/navigation";
+import { ambientWind, ambientWindState } from "common/util/navigation";
 import {
   getActiveDownload,
   getPendingDownloads,
@@ -35,12 +35,12 @@ const SortableItem = SortableElement((props: SortableHubSidebarItemProps) => {
 class Tab extends React.PureComponent<Props> {
   onClick = () => {
     const { tab, dispatch } = this.props;
-    dispatch(actions.focusTab({ window: rendererWindow(), tab }));
+    dispatch(actions.focusTab({ wind: ambientWind(), tab }));
   };
 
   onClose = () => {
     const { tab, dispatch } = this.props;
-    dispatch(actions.closeTab({ window: rendererWindow(), tab }));
+    dispatch(actions.closeTab({ wind: ambientWind(), tab }));
   };
 
   render() {
@@ -120,7 +120,7 @@ class Tab extends React.PureComponent<Props> {
     dispatch(
       actions.openModal(
         modalWidgets.exploreJson.make({
-          window: rendererWindow(),
+          wind: ambientWind(),
           title: "Tab information",
           message: "",
           widgetParams: {
@@ -149,9 +149,9 @@ interface Props {
 
 export default withIntl(
   hookWithProps(Tab)(map => ({
-    tabInstance: map((rs, p) => rendererWindowState(rs).tabInstances[p.tab]),
+    tabInstance: map((rs, p) => ambientWindState(rs).tabInstances[p.tab]),
     loading: map(
-      (rs, p) => !!rendererWindowState(rs).navigation.loadingTabs[p.tab]
+      (rs, p) => !!ambientWindState(rs).navigation.loadingTabs[p.tab]
     ),
     downloads: map(
       (rs, p) => (p.tab === "itch://downloads" ? rs.downloads : null)

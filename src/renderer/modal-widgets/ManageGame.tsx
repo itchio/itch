@@ -4,7 +4,7 @@ import { Cave, Game, Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { formatUploadTitle } from "common/format/upload";
 import { Dispatch } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Filler from "renderer/basics/Filler";
@@ -203,7 +203,7 @@ class ManageGame extends React.PureComponent<Props> {
     const upload = find(allUploads, { id: uploadId });
     dispatch(
       actions.closeModal({
-        window: rendererWindow(),
+        wind: ambientWind(),
         action: actions.queueGameInstall({ game, upload }),
       })
     );
@@ -214,7 +214,7 @@ class ManageGame extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({
-        window: rendererWindow(),
+        wind: ambientWind(),
         action: actions.manageCave({ caveId }),
       })
     );

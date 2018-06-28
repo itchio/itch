@@ -24,7 +24,7 @@ export default function(watcher: Watcher) {
 
     const openModal = actions.openModal(
       modalWidgets.manageCave.make({
-        window: "root",
+        wind: "root",
         title: `${game.title} - ${formatUploadTitle(upload)}`,
         message: "",
         widgetParams,

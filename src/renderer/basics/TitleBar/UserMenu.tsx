@@ -3,7 +3,7 @@ import { User } from "common/butlerd/messages";
 import defaultImages from "common/constants/default-images";
 import urls from "common/constants/urls";
 import { Dispatch } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Filler from "renderer/basics/Filler";
 import { hook } from "renderer/hocs/hook";
@@ -68,7 +68,7 @@ class UserMenu extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(
       actions.popupContextMenu({
-        window: rendererWindow(),
+        wind: ambientWind(),
         clientX: e.clientX,
         clientY: e.clientY,
         template: [
@@ -90,7 +90,7 @@ class UserMenu extends React.PureComponent<Props> {
             localizedLabel: ["sidebar.downloads"],
             id: "user-menu-downloads",
             action: actions.navigate({
-              window: "root",
+              wind: "root",
               url: "itch://downloads",
             }),
             accelerator: "CmdOrCtrl+J",
@@ -100,7 +100,7 @@ class UserMenu extends React.PureComponent<Props> {
             localizedLabel: ["sidebar.preferences"],
             id: "user-menu-preferences",
             action: actions.navigate({
-              window: "root",
+              wind: "root",
               url: "itch://preferences",
             }),
             accelerator: "CmdOrCtrl+,",
@@ -116,7 +116,7 @@ class UserMenu extends React.PureComponent<Props> {
           {
             icon: "lifebuoy",
             localizedLabel: ["menu.help.help"],
-            action: actions.navigate({ window: "root", url: urls.manual }),
+            action: actions.navigate({ wind: "root", url: urls.manual }),
           },
           {
             type: "separator",

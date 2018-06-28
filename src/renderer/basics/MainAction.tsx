@@ -164,7 +164,7 @@ class MainAction extends React.PureComponent<Props> {
 
     if (operation) {
       if (operation.type === OperationType.Download) {
-        dispatch(actions.navigate({ window: "root", url: "itch://downloads" }));
+        dispatch(actions.navigate({ wind: "root", url: "itch://downloads" }));
       } else if (operation.type === OperationType.Task) {
         if (operation.name === "launch") {
           dispatch(actions.forceCloseGameRequest({ game }));

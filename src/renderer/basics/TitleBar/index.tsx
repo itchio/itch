@@ -4,7 +4,7 @@ import env from "common/env";
 import { Space } from "common/helpers/space";
 import { ExtendedWindow, TabInstance } from "common/types";
 import { Dispatch } from "common/types/index";
-import { rendererWindow, rendererWindowState } from "common/util/navigation";
+import { ambientWind, ambientWindState } from "common/util/navigation";
 import React from "react";
 import { FiltersContainerDiv } from "renderer/basics/FiltersContainer";
 import IconButton from "renderer/basics/IconButton";
@@ -48,7 +48,7 @@ const emptyObj = {};
 class TitleBar extends React.PureComponent<Props> {
   render() {
     const { tab, macos, focused, tabInstance } = this.props;
-    const iw = (window as ExtendedWindow).itchWindow;
+    const iw = (window as ExtendedWindow).windSpec;
     const secondary = iw.role == "secondary";
 
     const sp = Space.fromInstance(tab, tabInstance);
@@ -92,7 +92,7 @@ class TitleBar extends React.PureComponent<Props> {
       return null;
     }
 
-    const iw = (window as ExtendedWindow).itchWindow;
+    const iw = (window as ExtendedWindow).windSpec;
     const secondary = iw.role == "secondary";
 
     return (
@@ -117,7 +117,7 @@ class TitleBar extends React.PureComponent<Props> {
       dispatch(
         actions.openModal(
           modalWidgets.secretSettings.make({
-            window: rendererWindow(),
+            wind: ambientWind(),
             title: "Secret options",
             message: "",
             widgetParams: {},
@@ -128,27 +128,27 @@ class TitleBar extends React.PureComponent<Props> {
     }
 
     const { dispatch } = this.props;
-    dispatch(actions.navigate({ window: "root", url: "itch://featured" }));
+    dispatch(actions.navigate({ wind: "root", url: "itch://featured" }));
   };
 
   preferencesClick = () => {
     const { dispatch } = this.props;
-    dispatch(actions.navigate({ window: "root", url: "itch://preferences" }));
+    dispatch(actions.navigate({ wind: "root", url: "itch://preferences" }));
   };
 
   minimizeClick = () => {
     const { dispatch } = this.props;
-    dispatch(actions.minimizeWindow({ window: rendererWindow() }));
+    dispatch(actions.minimizeWind({ wind: ambientWind() }));
   };
 
   maximizeRestoreClick = () => {
     const { dispatch } = this.props;
-    dispatch(actions.toggleMaximizeWindow({ window: rendererWindow() }));
+    dispatch(actions.toggleMaximizeWind({ wind: ambientWind() }));
   };
 
   closeClick = () => {
     const { dispatch } = this.props;
-    dispatch(actions.hideWindow({ window: rendererWindow() }));
+    dispatch(actions.hideWind({ wind: ambientWind() }));
   };
 }
 
@@ -165,9 +165,9 @@ interface Props {
 
 export default hookWithProps(TitleBar)(map => ({
   tabInstance: map(
-    (rs, props) => rendererWindowState(rs).tabInstances[props.tab] || emptyObj
+    (rs, props) => ambientWindState(rs).tabInstances[props.tab] || emptyObj
   ),
-  maximized: map((rs, props) => rs.windows[rendererWindow()].native.maximized),
-  focused: map((rs, props) => rs.windows[rendererWindow()].native.focused),
+  maximized: map((rs, props) => rs.winds[ambientWind()].native.maximized),
+  focused: map((rs, props) => rs.winds[ambientWind()].native.focused),
   macos: map((rs, props) => rs.system.macos),
 }))(TitleBar);

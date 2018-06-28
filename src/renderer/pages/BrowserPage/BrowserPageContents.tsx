@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 import { Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
 import { Dispatch, ProxySource } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import { partitionForUser } from "common/util/partition-for-user";
 import { getInjectURL } from "common/util/resources";
 import { WebviewTag } from "electron";
@@ -124,7 +124,7 @@ class BrowserPageContents extends React.PureComponent<Props> {
                       this.props.dispatch(
                         actions.evolveTab({
                           tab: space.tab,
-                          window: rendererWindow(),
+                          wind: ambientWind(),
                           url,
                           replace: true,
                         })
@@ -172,7 +172,7 @@ class BrowserPageContents extends React.PureComponent<Props> {
     const { dispatch, space } = this.props;
     dispatch(
       actions.tabLostWebContents({
-        window: rendererWindow(),
+        wind: ambientWind(),
         tab: space.tab,
       })
     );
@@ -238,7 +238,7 @@ class BrowserPageContents extends React.PureComponent<Props> {
       dispatch(
         actions.tabGotWebContents({
           tab: space.tab,
-          window: rendererWindow(),
+          wind: ambientWind(),
           webContentsId: wv.getWebContents().id,
         })
       );
