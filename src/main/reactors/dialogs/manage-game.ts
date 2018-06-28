@@ -25,7 +25,7 @@ export default function(watcher: Watcher) {
 
     const openModal = actions.openModal(
       modalWidgets.manageGame.make({
-        window: "root",
+        wind: "root",
         title: game.title,
         message: "",
         buttons: [

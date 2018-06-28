@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
 import { Dispatch, LocalizedString } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import EmptyState from "renderer/basics/EmptyState";
 import ErrorState from "renderer/basics/ErrorState";
@@ -253,7 +253,7 @@ export default <Params, Res extends FetchRes<any>>(
       const { clientX, clientY } = ev;
       this.props.dispatch(
         actions.openGameContextMenu({
-          window: rendererWindow(),
+          wind: ambientWind(),
           clientX,
           clientY,
           game,

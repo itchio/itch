@@ -53,7 +53,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.openModal(
         modalWidgets.naked.make({
-          window: "root",
+          wind: "root",
           title: ["prompt.self_update.title", { version }],
           message: ["prompt.self_update_ready.message", { restart }],
           buttons: [
@@ -63,7 +63,7 @@ export default function(watcher: Watcher) {
             },
             {
               label: ["prompt.self_update_ready.action.snooze"],
-              action: actions.closeModal({ window: "root" }),
+              action: actions.closeModal({ wind: "root" }),
             },
           ],
           widgetParams: null,

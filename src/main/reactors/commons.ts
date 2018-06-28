@@ -61,7 +61,7 @@ export default function(watcher: Watcher) {
     updateCommons(store);
   });
 
-  watcher.on(actions.windowFocusChanged, async (store, action) => {
+  watcher.on(actions.windFocusChanged, async (store, action) => {
     if (action.payload.focused) {
       updateCommons(store);
     }

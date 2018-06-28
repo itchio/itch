@@ -33,7 +33,7 @@ export default function(watcher: Watcher) {
 
 export async function saveTabs(store: Store) {
   const rs = store.getState();
-  const { navigation, tabInstances } = rs.windows["root"];
+  const { navigation, tabInstances } = rs.winds["root"];
   const { profile } = rs.profile;
   if (!profile) {
     return;
@@ -88,7 +88,7 @@ export async function restoreTabs(store: Store, profile: Profile) {
     if (validTabs.has(snapshot.current)) {
       store.dispatch(
         actions.tabsRestored({
-          window: "root",
+          wind: "root",
           snapshot,
         })
       );

@@ -36,7 +36,7 @@ import electron from "electron";
 import App from "renderer/App";
 import { actions } from "common/actions/index";
 import { ExtendedWindow } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 
 let appNode: Element | null;
 
@@ -77,8 +77,8 @@ if (process.platform === "darwin") {
 async function start() {
   const opts = parseQueryString(location.search.replace(/^\?/, ""));
   const extWindow = window as ExtendedWindow;
-  extWindow.itchWindow = {
-    window: String(opts.window),
+  extWindow.windSpec = {
+    wind: String(opts.wind),
     role: String(opts.role) as any,
   };
 
@@ -104,7 +104,7 @@ document.addEventListener("drop", event => {
   const urls = event.dataTransfer.getData("text/uri-list");
   if (urls) {
     urls.split("\n").forEach(url => {
-      store.dispatch(actions.navigate({ window: rendererWindow(), url }));
+      store.dispatch(actions.navigate({ wind: ambientWind(), url }));
     });
   }
 });

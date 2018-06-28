@@ -6,7 +6,7 @@ import { map } from "underscore";
 import { t } from "common/format/t";
 
 export function fleshOutTemplate(
-  window: string,
+  wind: string,
   store: Store,
   runtime: IRuntime,
   template: MenuTemplate
@@ -27,7 +27,7 @@ export function fleshOutTemplate(
     if (enabled && !node.click) {
       node.click = e => {
         const menuAction = convertMenuAction(
-          window,
+          wind,
           { localizedLabel, role },
           runtime
         );
@@ -48,7 +48,7 @@ export function fleshOutTemplate(
 }
 
 function convertMenuAction(
-  window: string,
+  wind: string,
   payload: IMenuItem,
   runtime: IRuntime
 ) {
@@ -64,21 +64,21 @@ function convertMenuAction(
 
   switch (labelString) {
     case "sidebar.new_tab":
-      return actions.newTab({ window });
+      return actions.newTab({ wind });
     case "menu.file.close_tab":
       return runtime.platform === "osx"
-        ? actions.closeTabOrAuxWindow({ window })
-        : actions.closeCurrentTab({ window });
+        ? actions.closeTabOrAuxWindow({ wind })
+        : actions.closeCurrentTab({ wind });
     case "menu.file.close_all_tabs":
-      return actions.closeAllTabs({ window });
+      return actions.closeAllTabs({ wind });
     case "menu.file.close_window":
-      return actions.hideWindow({ window });
+      return actions.hideWind({ wind });
     case "menu.file.quit":
-      return actions.quitWhenMain({ window });
+      return actions.quitWhenMain({ wind });
     case "menu.file.preferences":
-      return actions.navigate({ window, url: "itch://preferences" });
+      return actions.navigate({ wind, url: "itch://preferences" });
     case "menu.view.downloads":
-      return actions.navigate({ window, url: "itch://downloads" });
+      return actions.navigate({ wind, url: "itch://downloads" });
     case "menu.account.change_user":
       return actions.changeUser({});
     case "menu.help.view_terms":

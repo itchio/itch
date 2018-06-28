@@ -49,7 +49,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.viewCreatorProfile, async (store, action) => {
     const url = store.getState().profile.profile.user.url;
-    store.dispatch(actions.navigate({ window: "root", url }));
+    store.dispatch(actions.navigate({ wind: "root", url }));
   });
 
   watcher.on(actions.viewCommunityProfile, async (store, action) => {
@@ -58,7 +58,7 @@ export default function(watcher: Watcher) {
     const slug = /^[^.]+/.exec(host);
     store.dispatch(
       actions.navigate({
-        window: "root",
+        wind: "root",
         url: `${urls.itchio}/profile/${slug}`,
       })
     );
@@ -70,7 +70,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.openModal(
         modalWidgets.reportIssue.make({
-          window: "root",
+          wind: "root",
           title: "Send feedback",
           widgetParams: {
             log,
@@ -83,5 +83,5 @@ export default function(watcher: Watcher) {
 
 function handleItchioUrl(store: Store, uri: string) {
   logger.info(`Processing itchio uri (${uri})`);
-  store.dispatch(actions.navigate({ window: "root", url: uri }));
+  store.dispatch(actions.navigate({ wind: "root", url: uri }));
 }

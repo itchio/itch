@@ -4,7 +4,7 @@ import { Cave, Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { formatUploadTitle } from "common/format/upload";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Cover from "renderer/basics/Cover";
@@ -210,7 +210,7 @@ class ManageCave extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({
-        window: rendererWindow(),
+        wind: ambientWind(),
         action: actions.switchVersionCaveRequest({ cave }),
       })
     );
@@ -221,7 +221,7 @@ class ManageCave extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({
-        window: rendererWindow(),
+        wind: ambientWind(),
         action: actions.queueCaveUninstall({ caveId }),
       })
     );
@@ -232,7 +232,7 @@ class ManageCave extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({
-        window: rendererWindow(),
+        wind: ambientWind(),
         action: actions.queueCaveReinstall({ caveId }),
       })
     );

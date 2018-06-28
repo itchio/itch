@@ -96,7 +96,7 @@ class DownloadsPage extends React.PureComponent<Props> {
             buttonText={["status.downloads.find_games_button"]}
             buttonAction={() =>
               dispatch(
-                actions.navigate({ window: "root", url: "itch://featured" })
+                actions.navigate({ wind: "root", url: "itch://featured" })
               )
             }
           />

@@ -11,26 +11,26 @@ const initialState = {
 } as NativeWindowState;
 
 export default reducer<NativeWindowState>(initialState, on => {
-  on(actions.windowOpened, (state, action) => {
+  on(actions.windOpened, (state, action) => {
     const { nativeId } = action.payload;
     return { ...state, id: nativeId };
   });
 
-  on(actions.windowDestroyed, (state, action) => {
+  on(actions.windDestroyed, (state, action) => {
     return { ...state, id: null, focused: false };
   });
 
-  on(actions.windowFocusChanged, (state, action) => {
+  on(actions.windFocusChanged, (state, action) => {
     const { focused } = action.payload;
     return { ...state, focused };
   });
 
-  on(actions.windowFullscreenChanged, (state, action) => {
+  on(actions.windFullscreenChanged, (state, action) => {
     const { fullscreen } = action.payload;
     return { ...state, fullscreen };
   });
 
-  on(actions.windowMaximizedChanged, (state, action) => {
+  on(actions.windMaximizedChanged, (state, action) => {
     const { maximized } = action.payload;
     return { ...state, maximized };
   });

@@ -32,10 +32,10 @@ export function getTray(store: Store): Electron.Tray {
     tray = new Tray(iconPath);
     tray.setToolTip(env.appName);
     tray.on("click", () => {
-      store.dispatch(actions.focusWindow({ window: "root", toggle: true }));
+      store.dispatch(actions.focusWind({ wind: "root", toggle: true }));
     });
     tray.on("double-click", () => {
-      store.dispatch(actions.focusWindow({ window: "root" }));
+      store.dispatch(actions.focusWind({ wind: "root" }));
     });
     tray.on("balloon-click", () => {
       if (lastNotificationAction) {

@@ -100,7 +100,7 @@ class CollectionsPage extends React.PureComponent<Props> {
           buttonAction={() =>
             this.props.dispatch(
               actions.navigate({
-                window: "root",
+                wind: "root",
                 url: "itch://featured",
               })
             )

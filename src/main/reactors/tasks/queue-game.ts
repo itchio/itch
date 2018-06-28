@@ -47,7 +47,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.openModal(
         modalWidgets.naked.make({
-          window: "root",
+          wind: "root",
           title: ["prompt.launch.title", { title: game.title }],
           message: ["prompt.launch.message"],
           bigButtons: map(caves, cave => {
@@ -137,7 +137,7 @@ async function performInstallQueue({
         const modalRes = await promisedModal(
           store,
           modalWidgets.pickUpload.make({
-            window: "root",
+            wind: "root",
             title: ["pick_install_upload.title", { title }],
             message: ["pick_install_upload.message", { title }],
             coverUrl: game.coverUrl,
@@ -167,7 +167,7 @@ async function performInstallQueue({
         const modalRes = await promisedModal(
           store,
           modalWidgets.naked.make({
-            window: "root",
+            wind: "root",
             title: "Dragons be thar",
             message:
               "You've chosen to install an external upload. Those are supported poorly.",

@@ -1,9 +1,9 @@
 import classNames from "classnames";
 import { User } from "common/butlerd/messages";
 import {
-  rendererNavigation,
-  rendererWindow,
-  rendererWindowState,
+  ambientNavigation,
+  ambientWind,
+  ambientWindState,
 } from "common/util/navigation";
 import React from "react";
 import { arrayMove, SortableContainer } from "react-sortable-hoc";
@@ -87,7 +87,7 @@ class Sidebar extends React.PureComponent<Props, State> {
     const { dispatch } = this.props;
     dispatch(
       actions.closeAllTabs({
-        window: rendererWindow(),
+        wind: ambientWind(),
       })
     );
   };
@@ -96,7 +96,7 @@ class Sidebar extends React.PureComponent<Props, State> {
     const { dispatch } = this.props;
     dispatch(
       actions.newTab({
-        window: rendererWindow(),
+        wind: ambientWind(),
       })
     );
   };
@@ -109,7 +109,7 @@ class Sidebar extends React.PureComponent<Props, State> {
     const { dispatch } = this.props;
     dispatch(
       actions.moveTab({
-        window: rendererWindow(),
+        wind: ambientWind(),
         before: oldIndex,
         after: newIndex,
       })
@@ -225,12 +225,12 @@ export default hook(map => ({
   sidebarWidth: map(rs => rs.preferences.sidebarWidth || 240),
   me: map(rs => rs.profile.profile.user),
 
-  tab: map(rs => rendererNavigation(rs).tab),
-  openTabs: map(rs => rendererNavigation(rs).openTabs),
+  tab: map(rs => ambientNavigation(rs).tab),
+  openTabs: map(rs => ambientNavigation(rs).openTabs),
   enableTabs: map(rs => rs.preferences.enableTabs),
   url: map(rs => {
-    const ws = rendererWindowState(rs);
-    const ti = ws.tabInstances[rendererNavigation(rs).tab];
+    const ws = ambientWindState(rs);
+    const ti = ws.tabInstances[ambientNavigation(rs).tab];
     return ti.history[ti.currentIndex].url;
   }),
 }))(Sidebar);

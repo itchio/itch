@@ -4,7 +4,7 @@ import { call, messages } from "common/butlerd/index";
 import { InstallLocationSummary } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { Dispatch, MenuTemplate } from "common/types";
-import { rendererWindow, urlForInstallLocation } from "common/util/navigation";
+import { ambientWind, urlForInstallLocation } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
 import IconButton from "renderer/basics/IconButton";
@@ -158,7 +158,7 @@ class InstallLocationSettings extends React.Component<Props, State> {
             icon="plus"
             label={T(["preferences.install_location.add"])}
             onClick={() =>
-              dispatch(actions.addInstallLocation({ window: rendererWindow() }))
+              dispatch(actions.addInstallLocation({ wind: ambientWind() }))
             }
           />
           <Spacer />
@@ -266,7 +266,7 @@ class InstallLocationSettings extends React.Component<Props, State> {
     template.push({
       localizedLabel: ["preferences.install_location.navigate"],
       action: actions.navigate({
-        window: "root",
+        wind: "root",
         url: urlForInstallLocation(installLocation.id),
       }),
       id: "context--install-location-navigate",
@@ -291,7 +291,7 @@ class InstallLocationSettings extends React.Component<Props, State> {
     const { dispatch } = this.props;
     dispatch(
       actions.popupContextMenu({
-        window: rendererWindow(),
+        wind: ambientWind(),
         clientX: e.clientX,
         clientY: e.clientY,
         template,

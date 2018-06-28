@@ -38,7 +38,7 @@ export async function pickManifestAction(
   const response = await promisedModal(
     store,
     modalWidgets.pickManifestAction.make({
-      window: "root",
+      wind: "root",
       title: game.title,
       stillCoverUrl: game.stillCoverUrl,
       coverUrl: game.coverUrl,

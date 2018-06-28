@@ -9,7 +9,7 @@ export default function(watcher: Watcher) {
     store.dispatch(
       actions.openModal(
         modalWidgets.naked.make({
-          window: "root",
+          wind: "root",
           title: ["prompt.force_close_game.title"],
           message: ["prompt.force_close_game.message", { title: game.title }],
           buttons: [

@@ -5,9 +5,9 @@ import contextMenu from "./context-menu";
 import tabInstances from "./tab-instances";
 import navigation from "./navigation";
 import native from "./native";
-import { WindowState } from "../../types";
+import { WindState } from "../../types";
 
-export default combineReducers<WindowState>({
+export default combineReducers<WindState>({
   modals,
   contextMenu,
   tabInstances,

@@ -61,7 +61,7 @@ function merge(
 }
 
 export default reducer<TabInstances>(initialState, on => {
-  on(actions.windowOpened, (state, action) => {
+  on(actions.windOpened, (state, action) => {
     const { initialURL } = action.payload;
     return {
       ...state,

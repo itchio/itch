@@ -15,7 +15,7 @@ import getGameStatus, {
   OperationType,
 } from "common/helpers/get-game-status";
 import { Dispatch, ITask } from "common/types";
-import { rendererWindow, urlForGame } from "common/util/navigation";
+import { ambientWind, urlForGame } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
 import Button from "renderer/basics/Button";
@@ -175,7 +175,7 @@ class DownloadRow extends React.PureComponent<Props> {
     dispatch(
       actions.openGameContextMenu({
         game,
-        window: rendererWindow(),
+        wind: ambientWind(),
         clientX: ev.clientX,
         clientY: ev.pageY,
       })
@@ -188,7 +188,7 @@ class DownloadRow extends React.PureComponent<Props> {
       dispatch(
         actions.openModal(
           modalWidgets.exploreJson.make({
-            window: "root",
+            wind: "root",
             title: "Download data",
             message: "",
             widgetParams: {
@@ -204,7 +204,7 @@ class DownloadRow extends React.PureComponent<Props> {
     const { game } = item;
     dispatch(
       actions.navigate({
-        window: rendererWindow(),
+        wind: ambientWind(),
         url: urlForGame(game.id),
         background,
       })

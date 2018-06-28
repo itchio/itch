@@ -30,6 +30,6 @@ export default function(watcher: Watcher) {
     const loginPurchaseUrl = buildLoginAndReturnUrl(purchaseUrl);
 
     // TODO: open in another window eh, why not?
-    store.dispatch(actions.navigate({ window: "root", url: loginPurchaseUrl }));
+    store.dispatch(actions.navigate({ wind: "root", url: loginPurchaseUrl }));
   });
 }

@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { Build, Cave, Upload } from "common/butlerd/messages";
 import { DAY_MONTH_FORMAT, MONTH_YEAR_FORMAT } from "common/format/datetime";
 import { Dispatch } from "common/types";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
 import Icon from "renderer/basics/Icon";
@@ -150,7 +150,7 @@ class SwitchVersionCave extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({
-        window: rendererWindow(),
+        wind: ambientWind(),
         action: actions.modalResponse(res),
       })
     );

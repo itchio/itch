@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { fillShape } from "common/format/shape";
 import { Dispatch } from "common/types";
 import { getRootState } from "common/util/get-root-state";
-import { rendererWindow } from "common/util/navigation";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import Button from "renderer/basics/Button";
@@ -475,7 +475,7 @@ ${log}
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({
-        window: rendererWindow(),
+        wind: ambientWind(),
         id: this.props.modal.id,
       })
     );

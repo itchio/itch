@@ -67,7 +67,7 @@ export interface RootState {
   system: SystemState;
   setup: SetupState;
   profile: ProfileState;
-  windows: WindowsState;
+  winds: WindsState;
   i18n: I18nState;
   ui: UIState;
   preferences: PreferencesState;
@@ -173,7 +173,7 @@ export type ModalButtonSpec = ModalButton | "ok" | "cancel" | "nevermind";
 
 export interface ModalBase {
   /** window this modal belongs to */
-  window: string;
+  wind: string;
 
   /** generated identifier for this modal */
   id?: string;
@@ -309,11 +309,11 @@ export interface ProfileState {
   itchioUris: string[];
 }
 
-export interface WindowsState {
-  [windowId: string]: WindowState;
+export interface WindsState {
+  [wind: string]: WindState;
 }
 
-export interface WindowState {
+export interface WindState {
   navigation: NavigationState;
   modals: ModalsState;
   tabInstances: TabDataTypes.TabInstances;
@@ -652,7 +652,7 @@ export type MenuTemplate = IMenuItem[];
 
 export interface INavigatePayload {
   /** which window initiated the navigation */
-  window: string;
+  wind: string;
 
   /** the url to navigate to */
   url: string;
@@ -671,7 +671,7 @@ export interface INavigatePayload {
 }
 
 export interface IOpenTabPayload extends INavigatePayload {
-  window: string;
+  wind: string;
 
   /** the id of the new tab to open (generated) */
   tab?: string;
@@ -679,7 +679,7 @@ export interface IOpenTabPayload extends INavigatePayload {
 
 export interface IOpenContextMenuBase {
   /** which window to open the context menu for */
-  window: string;
+  wind: string;
 
   /** left coordinate, in pixels */
   clientX: number;
@@ -696,8 +696,8 @@ export interface ModalResponse {
 }
 
 interface IEvolveBasePayload {
-  /** which window we're talking about */
-  window: string;
+  /** which window the tab belongs to */
+  wind: string;
 
   /** the tab to evolve */
   tab: string;
@@ -732,15 +732,15 @@ export type TaskName =
 export type AutoUpdaterStart = () => Promise<boolean>;
 
 export interface ExtendedWindow extends Window {
-  itchWindow: ItchWindow;
+  windSpec: WindSpec;
 }
 
-export interface ItchWindow {
-  window: string;
-  role: ItchWindowRole;
+export interface WindSpec {
+  wind: string;
+  role: WindRole;
 }
 
-export type ItchWindowRole = "main" | "secondary";
+export type WindRole = "main" | "secondary";
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export type Subtract<T, K> = Omit<T, keyof K>;

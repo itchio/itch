@@ -18,7 +18,7 @@ const HubPageDiv = styled.div`
 
 class HubPage extends React.PureComponent {
   render() {
-    const iw = (window as ExtendedWindow).itchWindow;
+    const iw = (window as ExtendedWindow).windSpec;
 
     return (
       <HubPageDiv>

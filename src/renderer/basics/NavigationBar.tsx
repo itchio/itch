@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
 import { Dispatch, TabWeb } from "common/types";
-import { rendererWindow, transformUrl } from "common/util/navigation";
+import { ambientWind, transformUrl } from "common/util/navigation";
 import React from "react";
 import listensToClickOutside from "react-onclickoutside";
 import IconButton from "renderer/basics/IconButton";
@@ -76,23 +76,23 @@ class NavigationBar extends React.PureComponent<Props> {
   // event handlers
   goBack = () =>
     this.props.dispatch(
-      actions.tabGoBack({ window: rendererWindow(), tab: this.props.space.tab })
+      actions.tabGoBack({ wind: ambientWind(), tab: this.props.space.tab })
     );
   goForward = () =>
     this.props.dispatch(
       actions.tabGoForward({
-        window: rendererWindow(),
+        wind: ambientWind(),
         tab: this.props.space.tab,
       })
     );
   stop = () =>
     this.props.dispatch(
-      actions.tabStop({ window: rendererWindow(), tab: this.props.space.tab })
+      actions.tabStop({ wind: ambientWind(), tab: this.props.space.tab })
     );
   reload = () =>
     this.props.dispatch(
       actions.tabReloaded({
-        window: rendererWindow(),
+        wind: ambientWind(),
         tab: this.props.space.tab,
       })
     );
@@ -205,7 +205,7 @@ class NavigationBar extends React.PureComponent<Props> {
       const url = transformUrl(input);
 
       const { space, dispatch } = this.props;
-      dispatch(space.makeEvolve({ url, replace: false }));
+      dispatch(space.makeEvolve({ wind: ambientWind(), url, replace: false }));
       this.pushWeb({ editingAddress: false });
     } else if (e.key === "Escape") {
       this.pushWeb({ editingAddress: false });

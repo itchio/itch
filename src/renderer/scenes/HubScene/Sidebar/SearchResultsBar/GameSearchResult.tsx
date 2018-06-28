@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
-import { rendererWindow, urlForGame } from "common/util/navigation";
+import { ambientWind, urlForGame } from "common/util/navigation";
 import React from "react";
 import Cover from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
@@ -146,7 +146,7 @@ class GameSearchResult extends GenericSearchResult<Props> {
       const { game, dispatch } = this.props;
       dispatch(
         actions.navigate({
-          window: rendererWindow(),
+          wind: ambientWind(),
           url: urlForGame(game.id),
           background,
         })
@@ -167,7 +167,7 @@ class GameSearchResult extends GenericSearchResult<Props> {
   getNavigateAction() {
     const { game } = this.props;
     return actions.navigate({
-      window: rendererWindow(),
+      wind: ambientWind(),
       url: urlForGame(game.id),
     });
   }
