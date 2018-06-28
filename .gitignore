@@ -53,3 +53,6 @@ npm-debug.log
 
 # golang-specific stuff
 /gopath
+
+# webpack stuff
+compilation-stats.json

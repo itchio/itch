@@ -1,11 +1,5 @@
 // This file is the entry point for the main (browser) process
 
-let rt: any;
-if (process.env.ITCH_TIME_REQUIRE === "1") {
-  rt = require("require-times")([".js", ".ts", ".tsx"]);
-  rt.start();
-}
-
 import env from "common/env";
 import logger from "common/logger";
 
@@ -80,10 +74,6 @@ function main() {
     globalShortcut.register("Control+Alt+Backspace", function() {
       store.dispatch(actions.forceCloseLastGame({}));
     });
-
-    if (rt) {
-      rt.end();
-    }
 
     store.dispatch(actions.preboot({}));
 

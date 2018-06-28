@@ -64,7 +64,6 @@
     "redux": "^3.6.0",
     "redux-cli-logger": "^2.1.0",
     "redux-logger": "^2.6.1",
-    "require-times": "^1.1.0",
     "reselect": "^3.0.1",
     "rimraf": "^2.6.1",
     "semver": "^5.5.0",
