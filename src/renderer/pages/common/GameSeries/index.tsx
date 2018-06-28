@@ -23,6 +23,7 @@ import { isNetworkError } from "main/net/errors";
 import styled from "renderer/styles";
 import * as lodash from "lodash";
 import LoadingCircle from "renderer/basics/LoadingCircle";
+import { throttle } from "underscore";
 
 interface FetchRes<Item> {
   items: Item[];
@@ -113,7 +114,7 @@ export default <Params, Res extends FetchRes<any>>(
             {renderMainFilters ? renderMainFilters() : null}
           </FiltersContainer>
           {renderExtraFilters ? renderExtraFilters() : null}
-          <ItemList>
+          <ItemList onScroll={this.onScroll} innerRef={this.gotItemList}>
             {cursors.map((cursor, i) => (
               <Call
                 errorsHandled
@@ -133,6 +134,7 @@ export default <Params, Res extends FetchRes<any>>(
                       result.nextCursor &&
                       i === cursors.length - 1 ? (
                         <LoadMoreContainer
+                          innerRef={this.gotLoadMore}
                           onClick={() =>
                             this.setState({
                               cursors: [...cursors, result.nextCursor],
@@ -156,6 +158,32 @@ export default <Params, Res extends FetchRes<any>>(
         </Page>
       );
     }
+
+    itemList: HTMLElement;
+    gotItemList = (itemList: HTMLElement) => {
+      this.itemList = itemList;
+    };
+
+    onScroll = throttle(() => {
+      const { itemList } = this;
+      if (!itemList) {
+        return;
+      }
+
+      const { scrollTop, scrollHeight, clientHeight } = itemList;
+      const runwayLeft = scrollHeight - clientHeight - scrollTop;
+      const shouldLoadMore = runwayLeft < 1200;
+      const { loadMore } = this;
+      if (shouldLoadMore && loadMore) {
+        loadMore.click();
+      }
+    }, 100);
+
+    loadMore: HTMLElement;
+    gotLoadMore = (loadMore: HTMLDivElement) => {
+      this.loadMore = loadMore;
+      console.log(`updated loadMore: `, this.loadMore);
+    };
 
     renderError(result: Res, error: Error) {
       if (!error) {

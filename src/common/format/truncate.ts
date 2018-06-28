@@ -7,6 +7,9 @@ interface TruncateOpts {
  * opts.length.
  */
 export function truncate(input: string, opts: TruncateOpts): string {
+  if (!input) {
+    return input;
+  }
   if (input.length > opts.length) {
     return input.substr(0, opts.length - 3) + "...";
   }

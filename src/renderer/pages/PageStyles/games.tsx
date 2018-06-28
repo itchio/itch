@@ -7,6 +7,7 @@ import { Game } from "common/butlerd/messages";
 import Filler from "renderer/basics/Filler";
 import PlatformIcons from "renderer/basics/PlatformIcons";
 import StandardSaleRibbon from "renderer/pages/common/StandardSaleRibbon";
+import { truncate } from "common/format/truncate";
 
 //-----------------------------------
 // Cover
@@ -76,6 +77,7 @@ const DarkBox = styled.div`
 
 const DarkTitle = styled.div`
   ${styles.singleLine()};
+  flex-shrink: 0;
   font-size: ${props => props.theme.fontSizes.huge};
   font-weight: 200;
   padding: 0.3em 0;
@@ -101,7 +103,7 @@ export const StandardGameCover = ({
                 <DarkBox>
                   <DarkTitle>{game.title}</DarkTitle>
                   <p>
-                    <Desc>{game.shortText}</Desc>
+                    <Desc>{truncate(game.shortText, { length: 70 })}</Desc>
                   </p>
                   <Filler />
                   <PlatformIcons target={game} />
