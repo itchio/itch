@@ -1,5 +1,4 @@
 import { PrereqStatus } from "common/butlerd/messages";
-import { downloadProgress } from "common/format/download-progress";
 import { PrereqsStateParams, PrereqsStateResponse } from "common/modals/types";
 import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
@@ -8,6 +7,7 @@ import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { map } from "underscore";
 import { ModalWidgetProps } from "../../common/modals/index";
+import DownloadProgress from "renderer/basics/DownloadProgress";
 
 class PrereqsState extends React.PureComponent<Props> {
   render() {
@@ -37,9 +37,15 @@ class PrereqsState extends React.PureComponent<Props> {
                 <div className="prereqs-info">
                   <div className="task-name">{v.fullName}</div>
                   <div className="task-status">
-                    {v.status === "downloading" && v.progress
-                      ? downloadProgress({ eta: v.eta, bps: v.bps }, false)
-                      : T([`prereq.status.${v.status}`])}
+                    {v.status === "downloading" && v.progress ? (
+                      <DownloadProgress
+                        eta={v.eta}
+                        bps={v.bps}
+                        downloadsPaused={false}
+                      />
+                    ) : (
+                      T([`prereq.status.${v.status}`])
+                    )}
                   </div>
                 </div>
               </PrereqsRow>

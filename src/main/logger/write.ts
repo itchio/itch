@@ -1,28 +1,27 @@
 import { LogEntry, levels } from "common/logger";
-
-const chalkModule = require("chalk");
-const chalk = new chalkModule.constructor({ enabled: true });
+const termColor = require("term-color");
 
 const levelColors = {
-  default: chalk.white,
-  60: chalk.bgRed,
-  50: chalk.red,
-  40: chalk.yellow,
-  30: chalk.green,
-  20: chalk.blue,
-  10: chalk.grey,
-} as { [key: number]: typeof chalk.red; default: typeof chalk.red };
+  default: "white",
+  60: "bgRed",
+  50: "red",
+  40: "yellow",
+  30: "green",
+  20: "blue",
+  10: "grey",
+} as { [key: number]: string; default: string };
 
 function asISODate(time: any) {
   return new Date(time).toISOString();
 }
 
 function asColoredLevel(entry: LogEntry) {
-  if (levelColors.hasOwnProperty(entry.level)) {
-    return levelColors[entry.level](levels[entry.level]);
-  } else {
-    return levelColors.default(levels.default);
+  const formatter = termColor[levelColors[entry.level]];
+  const str = levels[entry.level];
+  if (formatter) {
+    return formatter(str);
   }
+  return str;
 }
 
 function write(entry: LogEntry, stream: NodeJS.WritableStream) {
@@ -33,7 +32,7 @@ function write(entry: LogEntry, stream: NodeJS.WritableStream) {
     line += "(" + entry.name + ") ";
   }
   if (entry.msg) {
-    line += chalk.cyan(entry.msg);
+    line += termColor.cyan(entry.msg);
   }
   line += "\n";
   stream.write(line);

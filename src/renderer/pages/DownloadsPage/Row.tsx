@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import { Download } from "common/butlerd/messages";
-import { downloadProgress } from "common/format/download-progress";
 import { formatError, getDownloadError } from "common/format/errors";
 import {
   formatOperation,
@@ -14,12 +13,14 @@ import getGameStatus, {
   Operation,
   OperationType,
 } from "common/helpers/get-game-status";
+import { modals } from "common/modals";
 import { Dispatch, ITask } from "common/types";
 import { ambientWind, urlForGame } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Cover from "renderer/basics/Cover";
+import DownloadProgress from "renderer/basics/DownloadProgress";
 import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import MainAction from "renderer/basics/MainAction";
@@ -28,7 +29,6 @@ import UploadIcon from "renderer/basics/UploadIcon";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
 import { hookWithProps } from "renderer/hocs/hook";
 import withHover, { HoverProps } from "renderer/hocs/withHover";
-import { modals } from "common/modals";
 import Chart from "renderer/pages/DownloadsPage/Chart";
 import { Title, TitleBox } from "renderer/pages/PageStyles/games";
 import * as styles from "renderer/styles";
@@ -365,7 +365,11 @@ class DownloadRow extends React.PureComponent<Props> {
             {!operation.paused && first && eta >= 0 && bps ? (
               <>
                 <Spacer />
-                {downloadProgress({ eta, bps }, operation.paused)}
+                <DownloadProgress
+                  eta={eta}
+                  bps={bps}
+                  downloadsPaused={operation.paused}
+                />
               </>
             ) : null}
           </>

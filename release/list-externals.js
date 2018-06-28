@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 
-console.log(__filename.split(/[\/\\]/).slice(-3).join("/"));
-process.exit(0);
-
 const $ = require("./common");
 
 async function main() {
   const ew = require("electron-webpack");
-  $.say(`Configuring...`);
-  const conf = await ew.getRendererConfiguration();
+  const rconf = await ew.getRendererConfiguration();
   $.say(`Renderer externals: `);
-  for (const ext of conf.externals) {
+  for (const ext of rconf.externals) {
+    console.log(` - ${ext}`);
+  }
+
+  const mconf = await ew.getMainConfiguration();
+  $.say(`Main externals: `);
+  for (const ext of mconf.externals) {
     console.log(` - ${ext}`);
   }
 }

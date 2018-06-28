@@ -1,8 +1,8 @@
 import { CaveSummary, Game } from "common/butlerd/messages";
-import { formatDuration } from "common/format/datetime";
 import { actionForGame } from "common/util/action-for-game";
 import React from "react";
 import { T } from "renderer/t";
+import FormattedDuration from "renderer/basics/FormattedDuration";
 
 class TotalPlaytime extends React.PureComponent<Props> {
   render() {
@@ -24,7 +24,9 @@ class TotalPlaytime extends React.PureComponent<Props> {
           {short ? null : (
             <label>{T([`usage_stats.has_${xed}_for_duration`])} </label>
           )}
-          <span className="total-playtime">{formatDuration(secondsRun)}</span>
+          <span className="total-playtime">
+            <FormattedDuration secs={secondsRun} />}
+          </span>
         </div>
       );
     }

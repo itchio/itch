@@ -1,14 +1,4 @@
-import React from "react";
-import { FormattedMessage } from "react-intl";
-
 import env from "../env";
-
-/**
- * Return an input suitable for t.T() for a duration.
- */
-export function formatDuration(secs: number): JSX.Element {
-  return <FormattedMessage {...formatDurationAsMessage(secs)} />;
-}
 
 interface FormattedDuration {
   id: string;

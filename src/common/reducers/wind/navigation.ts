@@ -4,8 +4,7 @@ import { NavigationState, TabDataSave } from "common/types";
 
 import { actions } from "common/actions";
 import reducer from "../reducer";
-
-import { arrayMove } from "react-sortable-hoc";
+import arrayMove from "array-move";
 
 const initialState: NavigationState = {
   initialURL: "",

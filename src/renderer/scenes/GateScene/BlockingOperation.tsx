@@ -1,6 +1,5 @@
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { downloadProgress } from "common/format/download-progress";
 import { fileSize } from "common/format/filesize";
 import { Dispatch, SetupOperation } from "common/types";
 import React from "react";
@@ -11,6 +10,7 @@ import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
+import DownloadProgress from "renderer/basics/DownloadProgress";
 
 const BlockingOperationDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -91,7 +91,7 @@ class BlockingOperation extends React.PureComponent<Props> {
             {bps !== 0 || eta !== 0 ? (
               <>
                 {" @ "}
-                {downloadProgress({ eta, bps }, false)}
+                <DownloadProgress eta={eta} bps={bps} downloadsPaused={false} />
               </>
             ) : null}
           </div>
