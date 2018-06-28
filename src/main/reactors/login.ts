@@ -8,7 +8,7 @@ import { partitionForUser } from "common/util/partition-for-user";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import urlParser from "url";
 import { promisedModal } from "./modals";
 import { restoreTabs, saveTabs } from "./tab-save";
@@ -42,7 +42,7 @@ export default function(watcher: Watcher) {
             async ({ recaptchaUrl }) => {
               const modalRes = await promisedModal(
                 store,
-                modalWidgets.recaptchaInput.make({
+                modals.recaptchaInput.make({
                   wind: "root",
                   title: "Captcha",
                   message: "",
@@ -65,7 +65,7 @@ export default function(watcher: Watcher) {
           client.on(messages.ProfileRequestTOTP, async () => {
             const modalRes = await promisedModal(
               store,
-              modalWidgets.twoFactorInput.make({
+              modals.twoFactorInput.make({
                 wind: "root",
                 title: ["login.two_factor.title"],
                 message: "",

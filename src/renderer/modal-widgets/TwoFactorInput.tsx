@@ -1,7 +1,11 @@
+import { ModalWidgetProps } from "common/modals";
+import {
+  TwoFactorInputParams,
+  TwoFactorInputResponse,
+} from "common/modals/types";
 import React from "react";
 import { InjectedIntl } from "react-intl";
 import { withIntl } from "renderer/hocs/withIntl";
-import { ModalWidgetProps } from "renderer/modal-widgets";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { T, TString } from "renderer/t";
 
@@ -48,15 +52,6 @@ class TwoFactorInput extends React.PureComponent<Props> {
       totpCode: totpInput.value,
     });
   };
-}
-
-export interface TwoFactorInputParams {
-  username: string;
-}
-
-export interface TwoFactorInputResponse {
-  /** two-factor authentication code entered */
-  totpCode?: string;
 }
 
 interface Props

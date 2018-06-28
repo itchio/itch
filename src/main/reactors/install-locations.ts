@@ -9,7 +9,7 @@ import { mcall } from "main/butlerd/mcall";
 import * as explorer from "main/os/explorer";
 import { promisedModal } from "main/reactors/modals";
 import { getNativeWindow } from "main/reactors/winds";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
@@ -35,7 +35,7 @@ export default function(watcher: Watcher) {
     if (installLocation.sizeInfo!.installedSize > 0) {
       store.dispatch(
         actions.openModal(
-          modalWidgets.naked.make({
+          modals.naked.make({
             wind: "root",
             title: ["prompt.install_location_not_empty.title"],
             message: ["prompt.install_location_not_empty.message"],
@@ -60,7 +60,7 @@ export default function(watcher: Watcher) {
     {
       const res = await promisedModal(
         store,
-        modalWidgets.naked.make({
+        modals.naked.make({
           wind: "root",
           title: ["prompt.install_location_remove.title"],
           message: ["prompt.install_location_remove.message"],

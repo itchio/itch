@@ -11,7 +11,7 @@ import { Code } from "common/butlerd/messages";
 import { formatError } from "common/format/errors";
 import { t } from "common/format/t";
 import { showInExplorerString } from "common/format/show-in-explorer";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueLaunch, async (store, action) => {
@@ -40,7 +40,7 @@ export default function(watcher: Watcher) {
               // oh we can do something about that.
               store.dispatch(
                 actions.openModal(
-                  modalWidgets.naked.make({
+                  modals.naked.make({
                     wind: "root",
                     title: ["game.install.could_not_launch", { title }],
                     coverUrl: game.coverUrl,
@@ -73,7 +73,7 @@ export default function(watcher: Watcher) {
 
         await promisedModal(
           store,
-          modalWidgets.showError.make({
+          modals.showError.make({
             wind: "root",
             title: ["game.install.could_not_launch", { title }],
             coverUrl: game.coverUrl,

@@ -1,5 +1,7 @@
 import { actions } from "common/actions";
 import { fillShape } from "common/format/shape";
+import { ModalWidgetProps } from "common/modals";
+import { ReportIssueParams, ReportIssueResponse } from "common/modals/types";
 import { Dispatch, PackagesState } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
@@ -9,7 +11,6 @@ import Filler from "renderer/basics/Filler";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
-import { ModalWidgetProps } from "renderer/modal-widgets";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import Label from "renderer/pages/PreferencesPage/Label";
 import styled, { css } from "renderer/styles";
@@ -537,11 +538,8 @@ ${log}
   };
 }
 
-export interface ReportIssueParams {
-  log?: string;
-}
-
-interface Props extends ModalWidgetProps<ReportIssueParams, void> {
+interface Props
+  extends ModalWidgetProps<ReportIssueParams, ReportIssueResponse> {
   dispatch: Dispatch;
   brothPackages: PackagesState;
 }

@@ -1,8 +1,9 @@
 import { actions } from "common/actions";
 import { getCaveSummary } from "common/butlerd";
-import { Cave, Game, Upload } from "common/butlerd/messages";
+import { Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { formatUploadTitle } from "common/format/upload";
+import { ManageGameParams, ManageGameResponse } from "common/modals/types";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
@@ -17,7 +18,7 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { each, filter, find, map, size } from "underscore";
-import { ModalWidgetProps } from "./index";
+import { ModalWidgetProps } from "../../common/modals/index";
 
 const CaveItemList = styled.div`
   margin: 8px 0;
@@ -221,14 +222,7 @@ class ManageGame extends React.PureComponent<Props> {
   };
 }
 
-export interface ManageGameParams {
-  game: Game;
-  caves: Cave[];
-  allUploads: Upload[];
-  loadingUploads: boolean;
-}
-
-interface Props extends ModalWidgetProps<ManageGameParams, void> {
+interface Props extends ModalWidgetProps<ManageGameParams, ManageGameResponse> {
   dispatch: Dispatch;
 }
 

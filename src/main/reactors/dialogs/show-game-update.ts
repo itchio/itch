@@ -4,7 +4,7 @@ import { map } from "underscore";
 import { Watcher } from "common/util/watcher";
 
 import { ModalButtonSpec } from "common/types";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import { makeUploadButton } from "main/reactors/make-upload-button";
 
 export default function(watcher: Watcher) {
@@ -36,7 +36,7 @@ export default function(watcher: Watcher) {
 
     store.dispatch(
       actions.openModal(
-        modalWidgets.naked.make({
+        modals.naked.make({
           wind: "root",
           title: dialogTitle,
           message: dialogMessage,

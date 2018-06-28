@@ -5,7 +5,7 @@ import { Store, ModalButtonSpec } from "common/types";
 import { promisedModal } from "../../reactors/modals";
 
 import { Game, Action } from "common/butlerd/messages";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 
 // TODO: support localized action names
 
@@ -27,7 +27,7 @@ export async function pickManifestAction(
 
     bigButtons.push({
       label: [`action.name.${action.name}`, { defaultValue: action.name }],
-      action: modalWidgets.pickManifestAction.action({ index }),
+      action: modals.pickManifestAction.action({ index }),
       icon,
       className: `action-${action.name}`,
     });
@@ -37,7 +37,7 @@ export async function pickManifestAction(
 
   const response = await promisedModal(
     store,
-    modalWidgets.pickManifestAction.make({
+    modals.pickManifestAction.make({
       wind: "root",
       title: game.title,
       stillCoverUrl: game.stillCoverUrl,

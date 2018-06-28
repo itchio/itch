@@ -1,22 +1,22 @@
 import classNames from "classnames";
+import { actions } from "common/actions";
 import {
   getErrorStack,
   getRpcErrorData,
   isInternalError,
 } from "common/butlerd";
-import { Game } from "common/butlerd/messages";
+import { ShowErrorParams, ShowErrorResponse } from "common/modals/types";
+import { Dispatch } from "common/types";
 import React from "react";
 import Cover from "renderer/basics/Cover";
 import Link from "renderer/basics/Link";
+import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { size } from "underscore";
+import { ModalWidgetProps } from "../../common/modals/index";
 import Log from "../pages/AppLogPage/Log";
-import { ModalWidgetProps } from "./index";
-import { hook } from "renderer/hocs/hook";
-import { Dispatch } from "common/types";
-import { actions } from "common/actions";
 
 const StyledLog = styled(Log)`
   tbody {
@@ -208,14 +208,7 @@ class ShowError extends React.PureComponent<Props, State> {
   };
 }
 
-export interface ShowErrorParams {
-  rawError: any;
-  game?: Game;
-  log: string;
-  forceDetails?: boolean;
-}
-
-interface Props extends ModalWidgetProps<ShowErrorParams, void> {
+interface Props extends ModalWidgetProps<ShowErrorParams, ShowErrorResponse> {
   dispatch: Dispatch;
 }
 

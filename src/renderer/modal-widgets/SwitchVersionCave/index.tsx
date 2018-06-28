@@ -1,13 +1,17 @@
 import { actions } from "common/actions";
-import { Build, Cave, Upload } from "common/butlerd/messages";
+import { Build } from "common/butlerd/messages";
 import { DAY_MONTH_FORMAT, MONTH_YEAR_FORMAT } from "common/format/datetime";
+import { ModalWidgetProps } from "common/modals";
+import {
+  SwitchVersionCaveParams,
+  SwitchVersionCaveResponse,
+} from "common/modals/types";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
-import { ModalWidgetProps } from "renderer/modal-widgets";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import CustomDate from "renderer/modal-widgets/SwitchVersionCave/CustomDate";
 import styled from "renderer/styles";
@@ -146,7 +150,7 @@ class SwitchVersionCave extends React.PureComponent<Props> {
 
   onClick = (ev: React.MouseEvent<HTMLDivElement>) => {
     const index = parseInt(ev.currentTarget.dataset.index, 10);
-    const res: SwitchCaveResponse = { index };
+    const res: SwitchVersionCaveResponse = { index };
     const { dispatch } = this.props;
     dispatch(
       actions.closeModal({
@@ -157,19 +161,8 @@ class SwitchVersionCave extends React.PureComponent<Props> {
   };
 }
 
-export interface SwitchVersionCaveParams {
-  cave: Cave;
-  upload: Upload;
-  builds: Build[];
-}
-
-export interface SwitchCaveResponse {
-  /** index of build to revert to (or negative to abort) */
-  index?: number;
-}
-
 interface Props
-  extends ModalWidgetProps<SwitchVersionCaveParams, SwitchCaveResponse> {
+  extends ModalWidgetProps<SwitchVersionCaveParams, SwitchVersionCaveResponse> {
   dispatch: Dispatch;
 }
 

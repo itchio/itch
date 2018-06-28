@@ -11,7 +11,7 @@ import IconButton from "renderer/basics/IconButton";
 import NewVersionAvailable from "renderer/basics/TitleBar/NewVersionAvailable";
 import UserMenu from "renderer/basics/TitleBar/UserMenu";
 import { hookWithProps } from "renderer/hocs/hook";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 
@@ -116,7 +116,7 @@ class TitleBar extends React.PureComponent<Props> {
       const { dispatch } = this.props;
       dispatch(
         actions.openModal(
-          modalWidgets.secretSettings.make({
+          modals.secretSettings.make({
             wind: ambientWind(),
             title: "Secret options",
             message: "",

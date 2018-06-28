@@ -2,12 +2,13 @@ import classNames from "classnames";
 import { actions } from "common/actions";
 import * as colors from "common/constants/colors";
 import { specToButton } from "common/helpers/spec-to-button";
+import { modals } from "common/modals";
 import {
   Action,
+  Dispatch,
   Modal,
   ModalButton,
   ModalButtonSpec,
-  Dispatch,
 } from "common/types";
 import { ambientWind, ambientWindState } from "common/util/navigation";
 import { stripUnit } from "polished";
@@ -29,7 +30,7 @@ import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
 import Hoverable from "renderer/hocs/withHover";
 import { withIntl } from "renderer/hocs/withIntl";
-import { modalWidgets, ModalWidgetSpec } from "renderer/modal-widgets";
+import { modalWidgets } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
 import { T, TString } from "renderer/t";
 import { filter, isEmpty, map } from "underscore";
@@ -412,7 +413,7 @@ class Modals extends React.PureComponent<Props, State> {
       const { dispatch } = this.props;
       dispatch(
         actions.openModal(
-          modalWidgets.exploreJson.make({
+          modals.exploreJson.make({
             wind: "root",
             title: "Modal payload",
             message: "",
@@ -556,10 +557,7 @@ class Modals extends React.PureComponent<Props, State> {
   }
 
   renderWidget(widget: string, modal: Modal): JSX.Element {
-    const modalWidgetMap = modalWidgets as {
-      [key: string]: ModalWidgetSpec<any, any>;
-    };
-    const Component = modalWidgetMap[widget].component;
+    const Component = modalWidgets[widget];
     if (!Component) {
       return null;
     }

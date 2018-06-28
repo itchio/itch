@@ -39,7 +39,7 @@ import {
   Cave,
 } from "common/butlerd/messages";
 import { IEndpoint } from "butlerd";
-import { TypedModal, TypedModalUpdate } from "renderer/modal-widgets";
+import { TypedModal, TypedModalUpdate } from "common/modals";
 import { LogEntry } from "common/logger";
 export interface ActionCreator<PayloadType> {
   payload: PayloadType;

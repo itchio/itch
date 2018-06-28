@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
@@ -16,7 +16,7 @@ export default function(watcher: Watcher) {
 
     store.dispatch(
       actions.openModal(
-        modalWidgets.naked.make({
+        modals.naked.make({
           wind: "root",
           title: "",
           message: ["prompt.uninstall.message", { title }],

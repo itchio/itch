@@ -3,7 +3,7 @@ import { call, SetupFunc } from "common/butlerd";
 import { mainLogger } from "main/logger";
 import { IRequestCreator } from "butlerd";
 
-if (process.type !== "main") {
+if (process.type !== "browser") {
   throw new Error(`mcall cannot be required from renderer process`);
 }
 

@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { messages } from "common/butlerd/index";
 import { formatUploadTitle } from "common/format/upload";
 import { Watcher } from "common/util/watcher";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import { mcall } from "main/butlerd/mcall";
 
 export default function(watcher: Watcher) {
@@ -20,7 +20,7 @@ export default function(watcher: Watcher) {
     const { game, upload } = cave;
 
     const openModal = actions.openModal(
-      modalWidgets.manageCave.make({
+      modals.manageCave.make({
         wind: "root",
         title: `${game.title} - ${formatUploadTitle(upload)}`,
         message: "",

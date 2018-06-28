@@ -2,14 +2,14 @@ import { Watcher } from "common/util/watcher";
 
 import { actions } from "common/actions";
 import { promisedModal } from "../modals";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.clearBrowsingDataRequest, async (store, action) => {
     const { wind } = action.payload;
     const response = await promisedModal(
       store,
-      modalWidgets.clearBrowsingData.make({
+      modals.clearBrowsingData.make({
         wind,
         title: ["preferences.advanced.clear_browsing_data"],
         message: "",

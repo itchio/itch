@@ -1,12 +1,13 @@
 import { PrereqStatus } from "common/butlerd/messages";
 import { downloadProgress } from "common/format/download-progress";
+import { PrereqsStateParams, PrereqsStateResponse } from "common/modals/types";
 import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { map } from "underscore";
-import { ModalWidgetProps } from "./index";
+import { ModalWidgetProps } from "../../common/modals/index";
 
 class PrereqsState extends React.PureComponent<Props> {
   render() {
@@ -74,22 +75,7 @@ const PrereqsRow = styled.li`
 
 // props
 
-export interface PrereqsStateParams {
-  gameTitle: string;
-  tasks: {
-    [prereqName: string]: TaskProgressState;
-  };
-}
-
-interface TaskProgressState {
-  order: number;
-  fullName: string;
-  status: PrereqStatus;
-  progress: number;
-  eta: number;
-  bps: number;
-}
-
-interface Props extends ModalWidgetProps<PrereqsStateParams, void> {}
+interface Props
+  extends ModalWidgetProps<PrereqsStateParams, PrereqsStateResponse> {}
 
 export default PrereqsState;

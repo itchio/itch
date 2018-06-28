@@ -1,45 +1,37 @@
 import { actions } from "common/actions/index";
 import {
+  ClearBrowsingDataParams,
+  ClearBrowsingDataResponse,
+  ExploreJsonParams,
+  ExploreJsonResponse,
+  ManageCaveParams,
+  ManageCaveResponse,
+  ManageGameParams,
+  ManageGameResponse,
+  PrereqsStateParams,
+  PrereqsStateResponse,
+  RecaptchaInputParams,
+  RecaptchaInputResponse,
+  SecretSettingsParams,
+  SecretSettingsResponse,
+  ShowErrorParams,
+  ShowErrorResponse,
+  SwitchVersionCaveParams,
+  SwitchVersionCaveResponse,
+  TwoFactorInputParams,
+  TwoFactorInputResponse,
+  ScanInstallLocationsParams,
+  ScanInstallLocationsResponse,
+  ReportIssueParams,
+} from "common/modals/types";
+import {
   Action,
   Modal,
   ModalBase,
-  ModalUpdate,
   ModalResponse,
+  ModalUpdate,
 } from "common/types";
 import uuid from "common/util/uuid";
-import React from "react";
-import ClearBrowsingData, {
-  ClearBrowsingDataParams,
-  ClearBrowsingDataResponse,
-} from "./ClearBrowsingData";
-import ExploreJson, {
-  ExploreJsonParams,
-  ExploreJsonResponse,
-} from "./ExploreJson";
-import ManageCave, { ManageCaveParams } from "./ManageCave";
-import ManageGame, { ManageGameParams } from "./ManageGame";
-import PrereqsState, { PrereqsStateParams } from "./PrereqsState";
-import RecaptchaInput, {
-  RecaptchaInputParams,
-  RecaptchaInputResponse,
-} from "./RecaptchaInput";
-import ScanInstallLocations, {
-  ScanInstallLocationsParams,
-  ScanInstallLocationsResponse,
-} from "./ScanInstallLocations";
-import SecretSettings, { SecretSettingsParams } from "./SecretSettings";
-import ShowError, { ShowErrorParams } from "./ShowError";
-import SwitchVersionCave, {
-  SwitchCaveResponse,
-  SwitchVersionCaveParams,
-} from "./SwitchVersionCave";
-import TwoFactorInput, {
-  TwoFactorInputParams,
-  TwoFactorInputResponse,
-} from "./TwoFactorInput";
-import ReportIssue, {
-  ReportIssueParams,
-} from "renderer/modal-widgets/ReportIssue";
 
 interface TypedModalBase<Params> extends ModalBase {
   widgetParams: Params;
@@ -63,7 +55,6 @@ export type ModalWidgetSpec<Params, Response> = {
   params?: Params;
   response?: Response;
   key: string;
-  component: React.ComponentType<any>;
   action: (response: Response) => Action<ModalResponse>;
   make: (base: TypedModalBase<Params>) => TypedModal<Params, Response>;
   update: (update: TypedModalUpdateBase<Params>) => TypedModalUpdate<Params>;
@@ -78,13 +69,10 @@ interface ModalWidgets {
   [key: string]: ModalWidgetSpec<any, any>;
 }
 
-function widget<Params, Response>(
-  component: React.ComponentType<any>
-): ModalWidgetSpec<Params, Response> {
+function widget<Params, Response>(): ModalWidgetSpec<Params, Response> {
   let spec: ModalWidgetSpec<Params, Response>;
   spec = {
     key: null,
-    component,
     action: payload => actions.modalResponse(payload),
     make: base => {
       return {
@@ -111,32 +99,28 @@ function wireWidgets<T extends ModalWidgets>(mws: T): T {
   return mws;
 }
 
-export const modalWidgets = wireWidgets({
-  clearBrowsingData: widget<ClearBrowsingDataParams, ClearBrowsingDataResponse>(
-    ClearBrowsingData
-  ),
-
-  exploreJson: widget<ExploreJsonParams, ExploreJsonResponse>(ExploreJson),
-
-  manageGame: widget<ManageGameParams, void>(ManageGame),
-  manageCave: widget<ManageCaveParams, void>(ManageCave),
-  prereqsState: widget<PrereqsStateParams, void>(PrereqsState),
-  recaptchaInput: widget<RecaptchaInputParams, RecaptchaInputResponse>(
-    RecaptchaInput
-  ),
-  switchVersionCave: widget<SwitchVersionCaveParams, SwitchCaveResponse>(
-    SwitchVersionCave
-  ),
-  secretSettings: widget<SecretSettingsParams, void>(SecretSettings),
-  showError: widget<ShowErrorParams, void>(ShowError),
-  twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(
-    TwoFactorInput
-  ),
+export const modals = wireWidgets({
+  clearBrowsingData: widget<
+    ClearBrowsingDataParams,
+    ClearBrowsingDataResponse
+  >(),
+  exploreJson: widget<ExploreJsonParams, ExploreJsonResponse>(),
+  manageGame: widget<ManageGameParams, ManageGameResponse>(),
+  manageCave: widget<ManageCaveParams, ManageCaveResponse>(),
+  prereqsState: widget<PrereqsStateParams, PrereqsStateResponse>(),
+  recaptchaInput: widget<RecaptchaInputParams, RecaptchaInputResponse>(),
+  switchVersionCave: widget<
+    SwitchVersionCaveParams,
+    SwitchVersionCaveResponse
+  >(),
+  secretSettings: widget<SecretSettingsParams, SecretSettingsResponse>(),
+  showError: widget<ShowErrorParams, ShowErrorResponse>(),
+  twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(),
   scanInstallLocations: widget<
     ScanInstallLocationsParams,
     ScanInstallLocationsResponse
-  >(ScanInstallLocations),
-  reportIssue: widget<ReportIssueParams, void>(ReportIssue),
+  >(),
+  reportIssue: widget<ReportIssueParams, void>(),
 
   // dummy widgets
 
@@ -146,7 +130,7 @@ export const modalWidgets = wireWidgets({
       /** manually picked upload for install */
       pickedUploadIndex?: number;
     }
-  >(null),
+  >(),
 
   pickManifestAction: widget<
     {},
@@ -154,7 +138,7 @@ export const modalWidgets = wireWidgets({
       /** index of the manifest action that was picked when launching a game */
       index: number;
     }
-  >(null),
+  >(),
 
   sandboxBlessing: widget<
     {},
@@ -162,9 +146,9 @@ export const modalWidgets = wireWidgets({
       /** whether or not to install the sandbox */
       sandboxBlessing?: boolean;
     }
-  >(null),
+  >(),
 
-  adminWipeBlessing: widget<{}, {}>(null),
+  adminWipeBlessing: widget<{}, {}>(),
 
-  naked: widget<null, void>(null),
+  naked: widget<null, void>(),
 });

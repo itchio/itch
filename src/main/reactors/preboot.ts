@@ -7,7 +7,7 @@ import { Watcher } from "common/util/watcher";
 import { app } from "electron";
 import { mainLogger } from "main/logger";
 import loadPreferences from "main/reactors/preboot/load-preferences";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import { applyProxySettings } from "../reactors/proxy";
 import { itchPlatform } from "common/os/platform";
 import { arch } from "main/os/arch";
@@ -65,7 +65,7 @@ export default function(watcher: Watcher) {
 
             store.dispatch(
               actions.openModal(
-                modalWidgets.naked.make({
+                modals.naked.make({
                   wind: "root",
                   title: `Certificate error: ${error}`,
                   message:

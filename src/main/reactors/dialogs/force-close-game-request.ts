@@ -1,6 +1,6 @@
 import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.forceCloseGameRequest, async (store, action) => {
@@ -8,7 +8,7 @@ export default function(watcher: Watcher) {
 
     store.dispatch(
       actions.openModal(
-        modalWidgets.naked.make({
+        modals.naked.make({
           wind: "root",
           title: ["prompt.force_close_game.title"],
           message: ["prompt.force_close_game.message", { title: game.title }],

@@ -1,5 +1,9 @@
 import classNames from "classnames";
 import { fileSize } from "common/format/filesize";
+import {
+  ClearBrowsingDataParams,
+  ClearBrowsingDataResponse,
+} from "common/modals/types";
 import { partitionForUser } from "common/util/partition-for-user";
 import electron from "electron";
 import React from "react";
@@ -8,7 +12,7 @@ import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { ModalWidgetProps } from "./index";
+import { ModalWidgetProps } from "../../common/modals/index";
 
 class ClearBrowsingData extends React.PureComponent<Props, State> {
   constructor(props: ClearBrowsingData["props"], context: any) {
@@ -160,15 +164,6 @@ const ClearBrowsingDataList = styled.div`
 `;
 
 // props
-
-export interface ClearBrowsingDataParams {}
-export interface ClearBrowsingDataResponse {
-  /** whether to clear cookies */
-  cookies?: boolean;
-
-  /** whether to clear cache */
-  cache?: boolean;
-}
 
 interface Props
   extends ModalWidgetProps<ClearBrowsingDataParams, ClearBrowsingDataResponse> {

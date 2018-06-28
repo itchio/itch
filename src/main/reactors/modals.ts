@@ -6,7 +6,7 @@ import { each, findWhere } from "underscore";
 import { Store, ModalResponse } from "common/types";
 
 import modalResolves from "./modals-persistent-state";
-import { TypedModal } from "renderer/modal-widgets";
+import { TypedModal } from "common/modals";
 import { ItchPromise } from "common/util/itch-promise";
 
 // look, so this probably breaks the spirit of redux, not denying it,

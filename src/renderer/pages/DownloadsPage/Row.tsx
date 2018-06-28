@@ -28,7 +28,7 @@ import UploadIcon from "renderer/basics/UploadIcon";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
 import { hookWithProps } from "renderer/hocs/hook";
 import withHover, { HoverProps } from "renderer/hocs/withHover";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import Chart from "renderer/pages/DownloadsPage/Chart";
 import { Title, TitleBox } from "renderer/pages/PageStyles/games";
 import * as styles from "renderer/styles";
@@ -187,7 +187,7 @@ class DownloadRow extends React.PureComponent<Props> {
     if (ev.shiftKey && ev.ctrlKey) {
       dispatch(
         actions.openModal(
-          modalWidgets.exploreJson.make({
+          modals.exploreJson.make({
             wind: "root",
             title: "Download data",
             message: "",

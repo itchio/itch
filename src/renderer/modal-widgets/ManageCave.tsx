@@ -1,9 +1,11 @@
 import { actions } from "common/actions";
 import { getCaveSummary } from "common/butlerd";
-import { Cave, Upload } from "common/butlerd/messages";
+import { Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { formatUploadTitle } from "common/format/upload";
+import { ManageCaveParams, ManageCaveResponse } from "common/modals/types";
+import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
@@ -18,12 +20,11 @@ import RowButton, {
 import TimeAgo from "renderer/basics/TimeAgo";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import UploadIcon from "renderer/basics/UploadIcon";
+import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { ModalWidgetProps } from "./index";
-import { Dispatch } from "common/types";
-import { hook } from "renderer/hocs/hook";
+import { ModalWidgetProps } from "../../common/modals/index";
 
 const CaveItem = styled.div`
   padding: 4px;
@@ -245,11 +246,7 @@ class ManageCave extends React.PureComponent<Props> {
   };
 }
 
-export interface ManageCaveParams {
-  cave: Cave;
-}
-
-interface Props extends ModalWidgetProps<ManageCaveParams, void> {
+interface Props extends ModalWidgetProps<ManageCaveParams, ManageCaveResponse> {
   dispatch: Dispatch;
 }
 

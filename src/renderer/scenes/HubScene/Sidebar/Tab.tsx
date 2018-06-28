@@ -18,7 +18,7 @@ import { InjectedIntl } from "react-intl";
 import { SortableElement } from "react-sortable-hoc";
 import { hookWithProps } from "renderer/hocs/hook";
 import { withIntl } from "renderer/hocs/withIntl";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import { size } from "underscore";
 import Item from "./Item";
 
@@ -119,7 +119,7 @@ class Tab extends React.PureComponent<Props> {
 
     dispatch(
       actions.openModal(
-        modalWidgets.exploreJson.make({
+        modals.exploreJson.make({
           wind: ambientWind(),
           title: "Tab information",
           message: "",

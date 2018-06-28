@@ -1,10 +1,10 @@
 import { actions } from "common/actions";
 import { messages } from "common/butlerd";
+import { modals } from "common/modals";
+import { ScanInstallLocationsParams } from "common/modals/types";
 import { Watcher } from "common/util/watcher";
-import { modalWidgets } from "renderer/modal-widgets";
-import { ScanInstallLocationsParams } from "renderer/modal-widgets/ScanInstallLocations";
-import { promisedModal } from "../modals";
 import { mcall } from "main/butlerd/mcall";
+import { promisedModal } from "../modals";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.scanInstallLocations, async (store, action) => {
@@ -15,7 +15,7 @@ export default function(watcher: Watcher) {
     };
 
     const openModal = actions.openModal(
-      modalWidgets.scanInstallLocations.make({
+      modals.scanInstallLocations.make({
         wind: "root",
         title: ["preferences.scan_install_locations.title"],
         message: "",
@@ -35,7 +35,7 @@ export default function(watcher: Watcher) {
     const update = () => {
       store.dispatch(
         actions.updateModalWidgetParams(
-          modalWidgets.scanInstallLocations.update({
+          modals.scanInstallLocations.update({
             id: modalId,
             widgetParams,
           })
@@ -68,7 +68,7 @@ export default function(watcher: Watcher) {
             async ({ params }) => {
               const res = await promisedModal(
                 store,
-                modalWidgets.naked.make({
+                modals.naked.make({
                   wind: "root",
                   title: ["preferences.scan_install_locations.confirm_import"],
                   message: ["preferences.scan_install_locations.message"],

@@ -1,4 +1,4 @@
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import { ModalButtonSpec, LocalizedString, Store, Action } from "common/types";
 import { asRequestError, messages } from "common/butlerd";
 import { t } from "common/format/t";
@@ -59,7 +59,7 @@ export function makeInstallErrorModal(params: InstallErrorParams) {
     "cancel",
   ];
 
-  return modalWidgets.showError.make({
+  return modals.showError.make({
     wind: "root",
     title: ["prompt.install_error.title"],
     message: t(i18n, formatError(e)),

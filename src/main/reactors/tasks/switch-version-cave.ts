@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import { promisedModal } from "../modals";
 import asTask from "./as-task";
 
@@ -24,7 +24,7 @@ export default function(watcher: Watcher) {
               async ({ cave, upload, builds }) => {
                 const response = await promisedModal(
                   store,
-                  modalWidgets.switchVersionCave.make({
+                  modals.switchVersionCave.make({
                     wind: "root",
                     title: ["prompt.revert.title", { title: cave.game.title }],
                     message: "",

@@ -1,6 +1,10 @@
 import { createRequest } from "butlerd";
 import { actions } from "common/actions";
 import { messages } from "common/butlerd";
+import {
+  SecretSettingsParams,
+  SecretSettingsResponse,
+} from "common/modals/types";
 import { Dispatch, RootState } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
@@ -9,7 +13,7 @@ import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
-import { ModalWidgetProps, modalWidgets } from "./index";
+import { ModalWidgetProps, modals } from "../../common/modals/index";
 
 const ControlsDiv = styled.div`
   display: flex;
@@ -117,7 +121,7 @@ class SecretSettings extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(
       actions.openModal(
-        modalWidgets.exploreJson.make({
+        modals.exploreJson.make({
           wind: "root",
           title: "Redux app state",
           widgetParams: {
@@ -139,7 +143,7 @@ class SecretSettings extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(
       actions.openModal(
-        modalWidgets.exploreJson.make({
+        modals.exploreJson.make({
           wind: "root",
           title: "GPU feature status",
           widgetParams: {
@@ -166,7 +170,7 @@ class SecretSettings extends React.PureComponent<Props> {
       const { dispatch } = this.props;
       dispatch(
         actions.openModal(
-          modalWidgets.showError.make({
+          modals.showError.make({
             wind: "root",
             title: "test butlerd internal error",
             message: "This is a test butlerd error",
@@ -213,9 +217,8 @@ class SecretSettings extends React.PureComponent<Props> {
   };
 }
 
-export interface SecretSettingsParams {}
-
-interface Props extends ModalWidgetProps<SecretSettingsParams, void> {
+interface Props
+  extends ModalWidgetProps<SecretSettingsParams, SecretSettingsResponse> {
   params: SecretSettingsParams;
   dispatch: Dispatch;
 

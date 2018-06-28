@@ -1,9 +1,10 @@
+import { ExploreJsonParams, ExploreJsonResponse } from "common/modals/types";
 import React from "react";
+import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
+import styled, * as styles from "renderer/styles";
+import { ModalWidgetProps } from "../../common/modals/index";
 
 const Inspector = require("react-json-inspector");
-import { ModalWidgetProps } from "./index";
-import styled, * as styles from "renderer/styles";
-import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 
 class ExploreJson extends React.PureComponent<Props> {
   render() {
@@ -34,12 +35,6 @@ const JSONTreeContainer = styled.div`
 `;
 
 // props
-
-export interface ExploreJsonParams {
-  data: any;
-}
-
-export interface ExploreJsonResponse {}
 
 interface Props
   extends ModalWidgetProps<ExploreJsonParams, ExploreJsonResponse> {}

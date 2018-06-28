@@ -5,7 +5,7 @@ import { isItchioURL } from "common/util/url";
 import { Watcher } from "common/util/watcher";
 import { shell } from "electron";
 import { mainLogger } from "main/logger";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import urlParser from "url";
 
 const logger = mainLogger.child(__filename);
@@ -69,7 +69,7 @@ export default function(watcher: Watcher) {
 
     store.dispatch(
       actions.openModal(
-        modalWidgets.reportIssue.make({
+        modals.reportIssue.make({
           wind: "root",
           title: "Send feedback",
           widgetParams: {

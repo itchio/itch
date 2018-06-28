@@ -5,7 +5,7 @@ import React from "react";
 import IconButton from "renderer/basics/IconButton";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { hook } from "renderer/hocs/hook";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { Dispatch } from "common/types";
@@ -54,7 +54,7 @@ class RememberedProfile extends React.PureComponent<Props> {
 
     dispatch(
       actions.openModal(
-        modalWidgets.naked.make({
+        modals.naked.make({
           wind: "root",
           title: ["prompt.forget_session.title"],
           message: ["prompt.forget_session.message", { username }],

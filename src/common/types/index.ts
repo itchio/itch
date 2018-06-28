@@ -19,7 +19,7 @@ import {
   Profile,
 } from "common/butlerd/messages";
 import { IEndpoint } from "butlerd";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 export interface Store extends ReduxStore<RootState> {}
 
 export interface Dispatch {
@@ -205,7 +205,7 @@ export interface ModalBase {
 
 export interface Modal extends ModalBase {
   /** name of modal widget to render */
-  widget?: keyof typeof modalWidgets;
+  widget?: keyof typeof modals;
 
   /** parameters to pass to React component */
   widgetParams?: {};

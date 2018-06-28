@@ -7,7 +7,7 @@ import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { makeUploadButton } from "main/reactors/make-upload-button";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import { isEmpty, map } from "underscore";
 import { promisedModal } from "../modals";
 import asTask from "./as-task";
@@ -42,7 +42,7 @@ export default function(watcher: Watcher) {
 
     store.dispatch(
       actions.openModal(
-        modalWidgets.naked.make({
+        modals.naked.make({
           wind: "root",
           title: ["prompt.launch.title", { title: game.title }],
           message: ["prompt.launch.message"],
@@ -133,7 +133,7 @@ async function performInstallQueue({
 
         const modalRes = await promisedModal(
           store,
-          modalWidgets.pickUpload.make({
+          modals.pickUpload.make({
             wind: "root",
             title: ["pick_install_upload.title", { title }],
             message: ["pick_install_upload.message", { title }],
@@ -142,7 +142,7 @@ async function performInstallQueue({
             bigButtons: map(uploads, (candidate, index) => {
               return {
                 ...makeUploadButton(candidate),
-                action: modalWidgets.pickUpload.action({
+                action: modals.pickUpload.action({
                   pickedUploadIndex: index,
                 }),
               };
@@ -163,7 +163,7 @@ async function performInstallQueue({
       client.on(messages.ExternalUploadsAreBad, async () => {
         const modalRes = await promisedModal(
           store,
-          modalWidgets.naked.make({
+          modals.naked.make({
             wind: "root",
             title: "Dragons be thar",
             message:

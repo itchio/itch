@@ -1,13 +1,14 @@
-import { Game } from "common/butlerd/messages";
+import {
+  ScanInstallLocationsParams,
+  ScanInstallLocationsResponse,
+} from "common/modals/types";
 import React from "react";
-import { ModalWidgetProps } from ".";
 import Cover from "renderer/basics/Cover";
-import { T } from "renderer/t";
-
 import LoadingCircle from "renderer/basics/LoadingCircle";
-
-import styled from "renderer/styles";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
+import styled from "renderer/styles";
+import { T } from "renderer/t";
+import { ModalWidgetProps } from "../../common/modals/index";
 
 const ContainerDiv = styled.div`
   display: flex;
@@ -55,13 +56,6 @@ class ScanInstallLocations extends React.PureComponent<Props> {
     );
   }
 }
-
-export interface ScanInstallLocationsParams {
-  progress: number;
-  game: Game;
-}
-
-export interface ScanInstallLocationsResponse {}
 
 interface Props
   extends ModalWidgetProps<

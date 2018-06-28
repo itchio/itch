@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { messages, callFromStore } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
 import { mainLogger } from "main/logger";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import { performUninstall } from "../downloads/perform-uninstall";
 import { promisedModal } from "../modals";
 import asTask from "./as-task";
@@ -29,7 +29,7 @@ export default function(watcher: Watcher) {
       onError: async (e, log) => {
         const response = await promisedModal(
           store,
-          modalWidgets.showError.make({
+          modals.showError.make({
             wind: "root",
             title: ["prompt.uninstall_error.title"],
             message: ["prompt.uninstall_error.message"],

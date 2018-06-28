@@ -9,7 +9,7 @@ import { ISM } from "main/broth/itch-setup";
 import { mainLogger } from "main/logger";
 import { manager } from "main/reactors/setup";
 import ospath from "path";
-import { modalWidgets } from "renderer/modal-widgets";
+import { modals } from "common/modals";
 import { delay } from "./delay";
 
 const logger = mainLogger.child(__filename);
@@ -51,7 +51,7 @@ export default function(watcher: Watcher) {
 
     store.dispatch(
       actions.openModal(
-        modalWidgets.naked.make({
+        modals.naked.make({
           wind: "root",
           title: ["prompt.self_update.title", { version }],
           message: ["prompt.self_update_ready.message", { restart }],

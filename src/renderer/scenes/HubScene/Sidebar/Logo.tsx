@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 import { Dispatch } from "common/types";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
-import { modalWidgets } from "renderer/modal-widgets/index";
+import { modals } from "common/modals/index";
 import styled from "renderer/styles";
 
 const LogoDiv = styled.div`
@@ -40,7 +40,7 @@ class Logo extends React.PureComponent<Props> {
       const { dispatch } = this.props;
       dispatch(
         actions.openModal(
-          modalWidgets.secretSettings.make({
+          modals.secretSettings.make({
             wind: "root",
             title: "Secret options",
             message: "",

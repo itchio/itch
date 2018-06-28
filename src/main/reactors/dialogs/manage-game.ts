@@ -1,10 +1,10 @@
 import { actions } from "common/actions";
 import { messages } from "common/butlerd/index";
+import { modals } from "common/modals";
+import { ManageGameParams } from "common/modals/types";
 import { Watcher } from "common/util/watcher";
-import { mainLogger } from "main/logger";
-import { modalWidgets } from "renderer/modal-widgets";
-import { ManageGameParams } from "renderer/modal-widgets/ManageGame";
 import { mcall } from "main/butlerd/mcall";
+import { mainLogger } from "main/logger";
 
 const logger = mainLogger.child(__filename);
 
@@ -24,7 +24,7 @@ export default function(watcher: Watcher) {
     };
 
     const openModal = actions.openModal(
-      modalWidgets.manageGame.make({
+      modals.manageGame.make({
         wind: "root",
         title: game.title,
         message: "",
@@ -54,7 +54,7 @@ export default function(watcher: Watcher) {
 
       store.dispatch(
         actions.updateModalWidgetParams(
-          modalWidgets.manageGame.update({
+          modals.manageGame.update({
             id: modalId,
             widgetParams,
           })

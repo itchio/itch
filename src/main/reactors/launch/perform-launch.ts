@@ -1,22 +1,18 @@
-import { actions } from "common/actions";
-
-import { Context } from "../../context";
-import { Logger } from "common/logger";
-
-import * as paths from "common/util/paths";
-
-import { Cancelled, LocalizedString } from "common/types";
-
-import { promisedModal } from "../modals";
-import { messages, setupClient } from "common/butlerd/index";
-import { shell, powerSaveBlocker } from "electron";
-import { Game, PrereqStatus, Cave } from "common/butlerd/messages";
-
-import { pickManifestAction } from "./pick-manifest-action";
-import { performHTMLLaunch } from "./perform-html-launch";
 import { Client } from "butlerd";
-import { TypedModal, modalWidgets } from "renderer/modal-widgets";
-import { PrereqsStateParams } from "renderer/modal-widgets/PrereqsState";
+import { actions } from "common/actions";
+import { messages, setupClient } from "common/butlerd/index";
+import { Cave, Game, PrereqStatus } from "common/butlerd/messages";
+import { Logger } from "common/logger";
+import { modals, TypedModal } from "common/modals";
+import { PrereqsStateParams } from "common/modals/types";
+import { Cancelled, LocalizedString } from "common/types";
+import * as paths from "common/util/paths";
+import { powerSaveBlocker, shell } from "electron";
+import { Context } from "../../context";
+import { promisedModal } from "../modals";
+import { performHTMLLaunch } from "./perform-html-launch";
+import { pickManifestAction } from "./pick-manifest-action";
+
 export async function performLaunch(
   ctx: Context,
   logger: Logger,
@@ -114,7 +110,7 @@ export async function performLaunch(
             };
           }
 
-          prereqsModal = modalWidgets.prereqsState.make({
+          prereqsModal = modals.prereqsState.make({
             wind: "root",
             title: ["grid.item.installing"],
             message: "",
@@ -156,7 +152,7 @@ export async function performLaunch(
 
             store.dispatch(
               actions.updateModalWidgetParams(
-                modalWidgets.prereqsState.update({
+                modals.prereqsState.update({
                   id: prereqsModal.id,
                   widgetParams: prereqsStateParams,
                 })
@@ -179,7 +175,7 @@ export async function performLaunch(
 
           const res = await promisedModal(
             store,
-            modalWidgets.showError.make({
+            modals.showError.make({
               wind: "root",
               title: ["game.install.could_not_launch", { title }],
               message: [
@@ -253,7 +249,7 @@ export async function performLaunch(
 
           const res = await promisedModal(
             store,
-            modalWidgets.sandboxBlessing.make({
+            modals.sandboxBlessing.make({
               wind: "root",
               title: ["sandbox.setup.title"],
               message: messageString,
@@ -262,7 +258,7 @@ export async function performLaunch(
               buttons: [
                 {
                   label: ["sandbox.setup.proceed"],
-                  action: modalWidgets.sandboxBlessing.action({
+                  action: modals.sandboxBlessing.action({
                     sandboxBlessing: true,
                   }),
                   icon: "security",

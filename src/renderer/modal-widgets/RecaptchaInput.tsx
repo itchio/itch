@@ -7,7 +7,11 @@ import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
-import { ModalWidgetProps, modalWidgets } from "./index";
+import { ModalWidgetProps, modals } from "../../common/modals/index";
+import {
+  RecaptchaInputParams,
+  RecaptchaInputResponse,
+} from "common/modals/types";
 
 const WidgetDiv = styled.div`
   position: relative;
@@ -82,7 +86,7 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
             dispatch(
               actions.closeModal({
                 wind: ambientWind(),
-                action: modalWidgets.recaptchaInput.action({
+                action: modals.recaptchaInput.action({
                   recaptchaResponse: response,
                 }),
               })
@@ -107,14 +111,6 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
 
 interface State {
   loaded: boolean;
-}
-
-export interface RecaptchaInputParams {
-  url: string;
-}
-
-export interface RecaptchaInputResponse {
-  recaptchaResponse: string;
 }
 
 interface RecaptchaInputProps
