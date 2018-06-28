@@ -10,9 +10,9 @@ import {
   ISM_Progress,
   ISM_Log,
 } from "main/broth/itch-setup";
-import rootLogger from "common/logger";
 import { actions } from "common/actions";
-const logger = rootLogger.child({ name: "self-package" });
+import { mainLogger } from "main/logger";
+const logger = mainLogger.child(__filename);
 
 export class SelfPackage implements PackageLike {
   private store: Store;

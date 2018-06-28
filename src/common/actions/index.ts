@@ -40,6 +40,7 @@ import {
 } from "common/butlerd/messages";
 import { IEndpoint } from "butlerd";
 import { TypedModal, TypedModalUpdate } from "renderer/modal-widgets";
+import { LogEntry } from "common/logger";
 export interface ActionCreator<PayloadType> {
   payload: PayloadType;
   (payload: PayloadType): Action<PayloadType>;
@@ -87,6 +88,9 @@ export const actions = wireActions({
   preboot: action<{}>(),
   boot: action<{}>(),
   tick: action<{}>(),
+  log: action<{
+    entry: LogEntry;
+  }>(),
   scheduleSystemTask: action<Partial<SystemTasksState>>(),
   systemAssessed: action<{
     system: SystemState;
@@ -631,10 +635,6 @@ export const actions = wireActions({
   uninstallEnded: action<{}>(),
   exploreCave: action<{
     /** id of the cave to explore */
-    caveId: string;
-  }>(),
-  probeCave: action<{
-    /** id of the cave to probe */
     caveId: string;
   }>(),
   recordGameInteraction: action<{}>(),

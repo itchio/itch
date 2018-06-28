@@ -1,26 +1,25 @@
-import { goos, goarch } from "./platform";
-import { request } from "../net/request/metal-request";
-import querystring from "querystring";
+import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import * as sf from "../os/sf";
+import { Logger } from "common/logger";
+import { PackageState, ProgressInfo, Store } from "common/types";
+import { MinimalContext } from "main/context";
+import { mainLogger } from "main/logger";
+import spawn from "main/os/spawn";
+import { dirname, join } from "path";
+import querystring from "querystring";
 import * as semver from "semver";
-
 import { promisify } from "util";
 import whichCallback from "which";
-const which = promisify(whichCallback);
-
-import rootLogger, { Logger } from "common/logger";
-import { Store, PackageState, ProgressInfo } from "common/types";
-import { join, dirname } from "path";
-import { readdir, mkdirp } from "../os/sf";
-import formulas, { FormulaSpec } from "./formulas";
 import { downloadToFile } from "../net";
-import { actions } from "common/actions";
+import { request } from "../net/request/metal-request";
+import * as sf from "../os/sf";
+import { mkdirp, readdir } from "../os/sf";
+import { delay } from "../reactors/delay";
+import formulas, { FormulaSpec } from "./formulas";
+import { goarch, goos } from "./platform";
 import { unzip } from "./unzip";
 
-import { delay } from "../reactors/delay";
-import spawn from "main/os/spawn";
-import { MinimalContext } from "main/context";
+const which = promisify(whichCallback);
 
 const sanityCheckTimeout = 10000;
 const platform = `${goos()}-${goarch()}`;
@@ -69,7 +68,7 @@ export class Package implements PackageLike {
       this.semverConstraint = this.formula.getSemverConstraint();
     }
     this.baseURL = `${urls.brothRepo}/${name}/${channel}`;
-    this.logger = rootLogger.child({ name: `broth :: ${name}` });
+    this.logger = mainLogger.childWithName(`broth :: ${name}:${channel}`);
     this.stage("idle");
   }
 
@@ -442,7 +441,7 @@ export class Package implements PackageLike {
   async isVersionValid(v: Version): Promise<boolean> {
     try {
       await Promise.race([
-        this.formula.sanityCheck(this.getVersionPrefix(v)),
+        this.formula.sanityCheck(this.logger, this.getVersionPrefix(v)),
         (async () => {
           await delay(sanityCheckTimeout);
           throw new Error("timed out");

@@ -1,4 +1,5 @@
-import { LogEntry, levels } from "./index";
+import { LogEntry, levels } from "common/logger";
+
 const chalkModule = require("chalk");
 const chalk = new chalkModule.constructor({ enabled: true });
 

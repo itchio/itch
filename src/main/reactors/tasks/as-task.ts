@@ -10,9 +10,10 @@ import {
 import { Context } from "../../context";
 import { actions } from "common/actions";
 
-import rootLogger, { Logger, makeLogger } from "common/logger";
+import { Logger } from "common/logger";
 import { getCurrentTasks } from "./as-task-persistent-state";
 import uuid from "common/util/uuid";
+import { makeLogger, mainLogger } from "main/logger";
 
 interface AsTaskOpts {
   store: Store;
@@ -67,22 +68,22 @@ async function asTask(opts: AsTaskOpts) {
   try {
     logger.close();
   } catch (e) {
-    rootLogger.warn(`Couldn't close logger: ${e.stack}`);
+    mainLogger.warn(`Couldn't close logger: ${e.stack}`);
   }
 
   if (err) {
     if (isCancelled(err)) {
-      rootLogger.warn(`Task ${name} cancelled`);
+      mainLogger.warn(`Task ${name} cancelled`);
       if (onCancel) {
         await onCancel();
       }
     } else if (isAborted(err)) {
-      rootLogger.warn(`Task ${name} aborted`);
+      mainLogger.warn(`Task ${name} aborted`);
       if (onCancel) {
         await onCancel();
       }
     } else {
-      rootLogger.warn(`Task ${name} threw: ${err.stack}`);
+      mainLogger.warn(`Task ${name} threw: ${err.stack}`);
       if (onError) {
         await onError(err, memlog ? memlog.toString() : "(No log)");
       }

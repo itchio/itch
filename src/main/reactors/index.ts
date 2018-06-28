@@ -35,11 +35,12 @@ import webContents from "./web-contents";
 import notifications from "./notifications";
 import clipboard from "./clipboard";
 
-import { currentRuntime } from "../os/runtime";
+import { Logger } from "common/logger";
+import { currentRuntime } from "common/os/runtime";
 const runtime = currentRuntime();
 
-export default function getWatcher() {
-  const watcher = new Watcher();
+export default function getWatcher(logger: Logger) {
+  const watcher = new Watcher(logger);
 
   preboot(watcher);
   preferences(watcher);

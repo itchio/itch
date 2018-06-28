@@ -1,27 +1,23 @@
-import { Watcher } from "common/util/watcher";
-
-import { join } from "path";
-import { readFile, writeFile, exists } from "../os/ifs";
-
-import { request } from "../net/request";
+import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { app } from "electron";
-
 import env from "common/env";
+import { I18nKeys, I18nResources, Store } from "common/types";
+import { getLocalePath, getLocalesConfigPath } from "common/util/resources";
+import { Watcher } from "common/util/watcher";
+import { app } from "electron";
+import { mainLogger } from "main/logger";
+import { join } from "path";
+import { request } from "../net/request";
+import { exists, readFile, writeFile } from "../os/ifs";
+
 const upgradesEnabled =
   (env.production && !env.integrationTests) ||
   process.env.DID_I_STUTTER === "1";
 
 const remoteDir = join(app.getPath("userData"), "locales");
-import { getLocalesConfigPath, getLocalePath } from "common/util/resources";
 const localesConfigPath = getLocalesConfigPath();
 
-import { Store, I18nResources, I18nKeys } from "common/types";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "locales" });
-
-import { actions } from "common/actions";
+const logger = mainLogger.child(__filename);
 
 function canonicalFileName(lang: string): string {
   return getLocalePath(`${lang}.json`);

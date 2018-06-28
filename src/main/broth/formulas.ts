@@ -4,11 +4,11 @@ import { makeButlerInstanceWithPrefix } from "common/butlerd/master-client";
 import env from "common/env";
 import spawn from "main/os/spawn";
 import { MinimalContext } from "../context";
-import rootLogger from "common/logger";
+import { Logger } from "common/logger";
 import ospath from "path";
 
 export interface FormulaSpec {
-  sanityCheck?: (versionPrefix: string) => Promise<void>;
+  sanityCheck?: (logger: Logger, versionPrefix: string) => Promise<void>;
   transformChannel?: (channel: string) => string;
   getSemverConstraint?: () => string | null;
 }
@@ -30,7 +30,7 @@ function describeFormula(name: string, formula: FormulaSpec) {
  * https://github.com/itchio/butler
  */
 describeFormula("butler", {
-  sanityCheck: async (versionPrefix: string) => {
+  sanityCheck: async (logger, versionPrefix) => {
     const instance = await makeButlerInstanceWithPrefix(versionPrefix);
     // we're awaiting it later, avoid 'unhandledRejection'
     instance.promise().catch(() => {});
@@ -43,7 +43,7 @@ describeFormula("butler", {
       await instance.promise();
     }
   },
-  transformChannel: (channel: string) => {
+  transformChannel: channel => {
     if (env.isCanary) {
       return `${channel}-head`;
     }
@@ -62,15 +62,15 @@ describeFormula("butler", {
  * https://github.com/itchio/itch-setup
  */
 describeFormula("itch-setup", {
-  sanityCheck: async (versionPrefix: string) => {
+  sanityCheck: async (logger, versionPrefix) => {
     await spawn({
       ctx: new MinimalContext(),
-      logger: rootLogger.child({ name: "itch-setup formula" }),
+      logger,
       command: ospath.join(versionPrefix, "itch-setup"),
       args: ["--version"],
     });
   },
-  transformChannel: (channel: string) => {
+  transformChannel: channel => {
     if (env.isCanary) {
       return `${channel}-head`;
     }

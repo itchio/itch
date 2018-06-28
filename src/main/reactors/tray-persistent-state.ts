@@ -1,9 +1,9 @@
 import { Store, Action } from "common/types";
 import { Tray } from "electron";
 import { getImagePath } from "common/util/resources";
-import * as os from "../os";
 import env from "common/env";
 import { actions } from "common/actions";
+import { release } from "os";
 
 let tray: Electron.Tray;
 
@@ -16,12 +16,12 @@ export function getTray(store: Store): Electron.Tray {
     // windows still displays a 16x16, whereas
     // some linux DEs don't know what to do with a @x2, etc.
     let suffix = "";
-    if (os.platform() !== "linux") {
+    if (process.platform !== "linux") {
       suffix = "-small";
     }
 
     let base = "white";
-    if (os.platform() === "win32" && !/^10\./.test(os.release())) {
+    if (process.platform === "win32" && !/^10\./.test(release())) {
       // windows older than 10 get the old colorful tray icon
       base = env.appName;
     }

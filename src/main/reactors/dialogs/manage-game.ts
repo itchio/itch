@@ -1,18 +1,18 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-
-import rootLogger from "common/logger";
-import { messages, withLogger } from "common/butlerd/index";
+import { messages } from "common/butlerd/index";
+import { Watcher } from "common/util/watcher";
+import { mainLogger } from "main/logger";
 import { modalWidgets } from "renderer/modal-widgets";
 import { ManageGameParams } from "renderer/modal-widgets/ManageGame";
-const logger = rootLogger.child({ name: "manage-game" });
-const call = withLogger(logger);
+import { mcall } from "main/butlerd/mcall";
+
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.manageGame, async (store, action) => {
     const { game } = action.payload;
 
-    const caves = (await call(messages.FetchCaves, {
+    const caves = (await mcall(messages.FetchCaves, {
       filters: { gameId: game.id },
     })).items;
 
@@ -42,7 +42,7 @@ export default function(watcher: Watcher) {
 
     try {
       try {
-        const { uploads } = await call(messages.GameFindUploads, { game });
+        const { uploads } = await mcall(messages.GameFindUploads, { game });
         widgetParams.allUploads = uploads;
       } catch (e) {
         console.log(`Could not fetch compatible uploads: ${e.stack}`);

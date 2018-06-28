@@ -1,27 +1,27 @@
 // This file is the entry point for the main (browser) process
 
 import env from "common/env";
-import logger from "common/logger";
 
 import { isItchioURL } from "common/util/url";
 
 import { actions } from "common/actions";
 import { app, protocol, globalShortcut } from "electron";
 
-logger.info(
-  `${env.appName}@${app.getVersion()} on electron@${
-    process.versions.electron
-  } in ${env.production ? "production" : "development"}`
-);
-
 import { loadPreferencesSync } from "main/reactors/preboot/load-preferences";
 import { Store } from "common/types";
+import { mainLogger } from "main/logger";
 
 const appUserModelId = "com.squirrel.itch.itch";
 
 // App lifecycle
 
-function main() {
+export function main() {
+  mainLogger.info(
+    `${env.appName}@${app.getVersion()} on electron@${
+      process.versions.electron
+    } in ${env.production ? "production" : "development"}`
+  );
+
   if (process.env.CAPSULE_LIBRARY_PATH) {
     // disable acceleration when captured by capsule
     app.disableHardwareAcceleration();
@@ -81,7 +81,7 @@ function main() {
       try {
         store.dispatch(actions.tick({}));
       } catch (e) {
-        logger.error(`While dispatching tick: ${e.stack}`);
+        mainLogger.error(`While dispatching tick: ${e.stack}`);
       }
     }, 1 * 1000 /* every second */);
   };
@@ -100,5 +100,3 @@ function main() {
     }
   });
 }
-
-main();

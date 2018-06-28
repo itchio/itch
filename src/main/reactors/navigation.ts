@@ -1,15 +1,15 @@
 import { actions } from "common/actions";
 import { opensInWindow } from "common/constants/windows";
 import { Space } from "common/helpers/space";
-import rootLogger from "common/logger";
 import { RootState } from "common/types";
 import uuid from "common/util/uuid";
 import { Watcher } from "common/util/watcher";
 import { shell } from "electron";
+import { mainLogger } from "main/logger";
 import { getNativeWindow } from "main/reactors/winds";
 import { createSelector } from "reselect";
 
-const logger = rootLogger.child({ name: "reactors/navigation" });
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.clearFilters, async (store, action) => {
@@ -194,7 +194,7 @@ export default function(watcher: Watcher) {
 }
 
 function makeSubWatcher(rs: RootState) {
-  const watcher = new Watcher();
+  const watcher = new Watcher(mainLogger);
   for (const wind of Object.keys(rs.winds)) {
     watcher.onStateChange({
       makeSelector: (store, schedule) =>

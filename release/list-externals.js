@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+console.log(__filename.split(/[\/\\]/).slice(-3).join("/"));
+process.exit(0);
+
 const $ = require("./common");
 
 async function main() {

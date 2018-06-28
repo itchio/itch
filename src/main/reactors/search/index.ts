@@ -1,12 +1,11 @@
-import { Watcher } from "common/util/watcher";
-
 import { actions } from "common/actions";
-import { call, messages } from "common/butlerd/index";
-import { mergeGames, mergeUsers } from "./search-helpers";
-
-import { filter, sortBy } from "underscore";
+import { messages } from "common/butlerd/index";
 import { SearchResults } from "common/types";
 import { isPlatformCompatible } from "common/util/is-platform-compatible";
+import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
+import { filter, sortBy } from "underscore";
+import { mergeGames, mergeUsers } from "./search-helpers";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.search, async (store, action) => {
@@ -35,7 +34,7 @@ export default function(watcher: Watcher) {
 
       let promises = [];
       promises.push(
-        call(messages.SearchGames, { profileId, query }, client => {
+        mcall(messages.SearchGames, { profileId, query }, client => {
           // TODO: give params directly to request handlers
           client.onNotification(messages.SearchGamesYield, ({ params }) => {
             let games = filter(params.games, g => isPlatformCompatible(g));
@@ -47,7 +46,7 @@ export default function(watcher: Watcher) {
         })
       );
       promises.push(
-        call(messages.SearchUsers, { profileId, query }, client => {
+        mcall(messages.SearchUsers, { profileId, query }, client => {
           client.onNotification(messages.SearchUsersYield, ({ params }) => {
             results = mergeUsers(results, params.users);
             dispatch();

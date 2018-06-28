@@ -1,12 +1,9 @@
 import { actions } from "common/actions";
+import { messages } from "common/butlerd";
+import { DownloadReason } from "common/butlerd/messages";
 import { Watcher } from "common/util/watcher";
 import { each } from "underscore";
-import { messages, withLogger } from "common/butlerd";
-
-import rootLogger from "common/logger";
-import { DownloadReason } from "common/butlerd/messages";
-const logger = rootLogger.child({ name: "game-updates" });
-const call = withLogger(logger);
+import { mcall } from "main/butlerd/mcall";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.gameUpdateAvailable, async (store, action) => {
@@ -24,7 +21,7 @@ export default function(watcher: Watcher) {
     const { update } = action.payload;
     const { game, upload, build } = update;
 
-    await call(messages.InstallQueue, {
+    await mcall(messages.InstallQueue, {
       caveId: update.itemId,
       game,
       upload,

@@ -7,7 +7,7 @@ if (env.integrationTests) {
 require("main/crash-reporter").mount();
 
 if (process.env.NODE_ENV !== "production") {
-  Error.stackTraceLimit = Infinity;
+  Error.stackTraceLimit = 2000;
 
   require("bluebird").config({
     longStackTraces: true,
@@ -16,4 +16,4 @@ if (process.env.NODE_ENV !== "production") {
   require("clarify");
 }
 
-require("../metal");
+require("main/main").main();

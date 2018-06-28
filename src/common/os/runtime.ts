@@ -1,5 +1,5 @@
-import { itchPlatform } from "./index";
 import { IRuntime } from "common/types";
+import { itchPlatform } from "common/os/platform";
 
 let cachedRuntime: IRuntime;
 

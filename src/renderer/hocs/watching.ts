@@ -2,6 +2,7 @@ import { Watcher } from "common/util/watcher";
 export { Watcher } from "common/util/watcher";
 
 import PropTypes from "prop-types";
+import { rendererLogger } from "renderer/logger";
 
 /**
  * watching is an ES2017 decorator that lets components subscribe
@@ -36,7 +37,7 @@ export default function(constructor: Function) {
       );
     }
 
-    this.watcher = new Watcher();
+    this.watcher = new Watcher(rendererLogger);
     this.context.store.watcher.addSub(this.watcher);
     constructor.prototype.subscribe.call(this, this.watcher);
 

@@ -2,24 +2,23 @@ if (process.type === "browser") {
   throw new Error("renderer store required from main");
 }
 
+import reducer from "common/reducers";
+import { ChromeStore } from "common/types";
+import route from "common/util/route";
+import shouldLogAction from "common/util/should-log-action";
+import { Watcher } from "common/util/watcher";
+import { electronEnhancer } from "ftl-redux-electron-store";
 import {
-  createStore,
   applyMiddleware,
   compose,
+  createStore,
   GenericStoreEnhancer,
   Middleware,
 } from "redux";
-import { electronEnhancer } from "ftl-redux-electron-store";
+import { rendererLogger } from "renderer/logger";
 const createLogger = require("redux-logger");
 
-import route from "common/util/route";
-import { Watcher } from "common/util/watcher";
-import reducer from "common/reducers";
-import shouldLogAction from "common/util/should-log-action";
-
-const watcher = new Watcher();
-
-import { ChromeStore } from "common/types";
+const watcher = new Watcher(rendererLogger);
 
 const filter = true;
 const middleware: Middleware[] = [];

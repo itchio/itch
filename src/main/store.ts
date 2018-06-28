@@ -19,6 +19,7 @@ import reducer from "common/reducers";
 import shouldLogAction from "common/util/should-log-action";
 
 import { Store } from "common/types";
+import { mainLogger } from "main/logger";
 
 const crashGetter = (store: MiddlewareAPI<any>) => (
   next: (action: any) => any
@@ -62,7 +63,7 @@ if (beChatty) {
   middleware.push(logger);
 }
 
-let watcher = getWatcher();
+let watcher = getWatcher(mainLogger);
 
 const enhancer = compose(
   electronEnhancer({

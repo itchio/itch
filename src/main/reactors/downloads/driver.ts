@@ -1,13 +1,12 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-import { messages, withLogger } from "common/butlerd";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "download-driver" });
-const call = withLogger(logger);
-
-import { state, Phase } from "./driver-persistent-state";
+import { messages } from "common/butlerd";
 import { Store } from "common/types";
+import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
+import { mainLogger } from "main/logger";
+import { Phase, state } from "./driver-persistent-state";
+
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   // we don't have to worry about login because we start out with paused downloads
@@ -29,7 +28,7 @@ export default function(watcher: Watcher) {
 }
 
 async function refreshDownloads(store: Store) {
-  const { downloads } = await call(messages.DownloadsList, {});
+  const { downloads } = await mcall(messages.DownloadsList, {});
   store.dispatch(actions.downloadsListed({ downloads }));
 }
 
@@ -57,7 +56,7 @@ async function driverPoll(store: Store) {
         state.setPhase(Phase.STARTING);
 
         try {
-          await call(messages.DownloadsDrive, {}, client => {
+          await mcall(messages.DownloadsDrive, {}, client => {
             state.registerClient(client);
 
             client.on(messages.DownloadsDriveStarted, async ({ download }) => {

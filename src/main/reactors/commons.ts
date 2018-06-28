@@ -1,16 +1,13 @@
-import { Watcher } from "common/util/watcher";
-import { Store } from "common/types";
-
-import { indexBy, isEmpty } from "underscore";
-import groupIdBy from "common/helpers/group-id-by";
-
 import { actions } from "common/actions";
-import { throttle, isEqual } from "underscore";
+import { messages } from "common/butlerd";
+import groupIdBy from "common/helpers/group-id-by";
+import { Store } from "common/types";
+import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
+import { mainLogger } from "main/logger";
+import { indexBy, isEmpty, isEqual, throttle } from "underscore";
 
-import rootLogger from "common/logger";
-import { messages, withLogger } from "common/butlerd";
-const logger = rootLogger.child({ name: "commons" });
-const call = withLogger(logger);
+const logger = mainLogger.child(__filename);
 
 async function updateCommonsNow(store: Store) {
   try {
@@ -25,7 +22,7 @@ async function updateCommonsNowThrows(store: Store) {
     return;
   }
 
-  const { caves, downloadKeys, installLocations } = await call(
+  const { caves, downloadKeys, installLocations } = await mcall(
     messages.FetchCommons,
     {}
   );

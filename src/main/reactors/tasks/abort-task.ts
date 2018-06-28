@@ -1,11 +1,9 @@
-import { Watcher } from "common/util/watcher";
-
 import { actions } from "common/actions";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "abort-task" });
-
+import { Watcher } from "common/util/watcher";
+import { mainLogger } from "main/logger";
 import { getCurrentTasks } from "./as-task-persistent-state";
+
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.abortTask, async (store, action) => {

@@ -2,24 +2,19 @@ import { Store, isCancelled, Action } from "common/types";
 
 import { Watcher } from "common/util/watcher";
 
-import rootLogger from "common/logger";
+import { Logger } from "common/logger";
 import { ItchPromise } from "common/util/itch-promise";
-const logger = rootLogger.child({ name: "route" });
-
-let printError = (msg: string) => {
-  logger.error(msg);
-};
 
 const emptyArr = [] as any[];
 
-function err(e: Error, action: Action<any>) {
+function err(logger: Logger, e: Error, action: Action<any>) {
   if (isCancelled(e)) {
     console.warn(`reactor for ${action.type} was cancelled`);
   } else {
-    printError(
-      `while reacting to ${(action || { type: "?" }).type}: ${e.stack || e}`
-    );
-    console.log(`Full error: `, JSON.stringify(e, null, 2));
+    const actionName = (action || { type: "?" }).type;
+    const errorStack = e.stack || e;
+    const msg = `while reacting to ${actionName}: ${errorStack}`;
+    logger.error(msg);
   }
 }
 
@@ -43,7 +38,7 @@ function route(watcher: Watcher, store: Store, action: Action<any>): void {
       }
       await ItchPromise.all(promises);
     })().catch(e => {
-      err(e, action);
+      err(watcher.logger, e, action);
     });
   }, 0);
   return;

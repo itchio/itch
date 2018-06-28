@@ -2,18 +2,17 @@ import { actions } from "common/actions";
 import { NET_PARTITION_NAME } from "common/constants/net";
 import env from "common/env";
 import { elapsed } from "common/format/datetime";
-import rootLogger from "common/logger";
-import { SystemState, ProxySource } from "common/types";
+import { ProxySource, SystemState } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { app } from "electron";
+import { mainLogger } from "main/logger";
 import loadPreferences from "main/reactors/preboot/load-preferences";
 import { modalWidgets } from "renderer/modal-widgets";
-import { MinimalContext } from "../context";
-import * as os from "../os";
 import { applyProxySettings } from "../reactors/proxy";
-import * as visualElements from "./preboot/visual-elements";
+import { itchPlatform } from "common/os/platform";
+import { arch } from "main/os/arch";
 
-const logger = rootLogger.child({ name: "preboot" });
+const logger = mainLogger.child(__filename);
 
 let testProxy = false;
 let proxyTested = false;
@@ -27,11 +26,11 @@ export default function(watcher: Watcher) {
       const system: SystemState = {
         appName: app.getName(),
         appVersion: app.getVersion().replace(/\-.*$/, ""),
-        platform: os.itchPlatform(),
-        arch: os.arch(),
-        macos: os.platform() === "darwin",
-        windows: os.platform() === "win32",
-        linux: os.platform() === "linux",
+        platform: itchPlatform(),
+        arch: arch(),
+        macos: process.platform === "darwin",
+        windows: process.platform === "win32",
+        linux: process.platform === "linux",
         sniffedLanguage: app.getLocale(),
         homePath: app.getPath("home"),
         userDataPath: app.getPath("userData"),
@@ -146,16 +145,6 @@ export default function(watcher: Watcher) {
             `Could not set app as default protocol client: ${e.stack ||
               e.message ||
               e}`
-          );
-        }
-      }
-
-      if (process.platform === "win32") {
-        try {
-          await visualElements.createIfNeeded(new MinimalContext());
-        } catch (e) {
-          logger.error(
-            `Could not run visualElements: ${e.stack || e.message || e}`
           );
         }
       }

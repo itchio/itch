@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { actions } from "common/actions/index";
-import { call, messages } from "common/butlerd/index";
+import { messages } from "common/butlerd/index";
 import { InstallLocationSummary } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { Dispatch, MenuTemplate } from "common/types";
@@ -8,6 +8,7 @@ import { ambientWind, urlForInstallLocation } from "common/util/navigation";
 import React from "react";
 import Button from "renderer/basics/Button";
 import IconButton from "renderer/basics/IconButton";
+import { rcall } from "renderer/butlerd/rcall";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
 import styled, * as styles from "renderer/styles";
@@ -139,7 +140,7 @@ class InstallLocationSettings extends React.Component<Props, State> {
   }
 
   async refresh() {
-    const res = await call(messages.InstallLocationsList, {});
+    const res = await rcall(messages.InstallLocationsList, {});
     if (res) {
       const { installLocations } = res;
       this.setState({ installLocations });

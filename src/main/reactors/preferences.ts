@@ -1,16 +1,13 @@
-import { Watcher } from "common/util/watcher";
-
-import { preferencesPath, mainLogPath } from "common/util/paths";
-import * as sf from "main/os/sf";
-
 import { actions } from "common/actions";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "preferences" });
-
-import { shell, session } from "electron";
 import { ItchPromise } from "common/util/itch-promise";
 import { partitionForUser } from "common/util/partition-for-user";
+import { mainLogPath, preferencesPath } from "common/util/paths";
+import { Watcher } from "common/util/watcher";
+import { session, shell } from "electron";
+import { mainLogger } from "main/logger";
+import * as sf from "main/os/sf";
+
+const logger = mainLogger.child(__filename);
 
 let saveAtomicInvocations = 0;
 

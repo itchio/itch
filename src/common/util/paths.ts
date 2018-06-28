@@ -5,8 +5,6 @@ const app = electron.app || electron.remote.app;
 import urls from "common/constants/urls";
 import urlParser from "url";
 
-import { makeLogger, Logger } from "common/logger";
-
 export function usersPath(): string {
   let usersPath = join(app.getPath("userData"), "users");
   if (urls.itchio !== urls.originalItchio) {
@@ -42,18 +40,6 @@ export function mainLogPath(): string {
 
 export function relaunchLogPath(): string {
   return join(app.getPath("userData"), "logs", "itch.relaunch.txt");
-}
-
-export function updaterLogPath(): string {
-  return join(app.getPath("userData"), "logs", "itch.updater.txt");
-}
-
-export function caveLogPath(caveId: string): string {
-  return join(app.getPath("userData"), "cave-logs", "cave-" + caveId + ".txt");
-}
-
-export function caveLogger(caveId: string): Logger {
-  return makeLogger({ logPath: caveLogPath(caveId) });
 }
 
 export function sanitize(file: string): string {

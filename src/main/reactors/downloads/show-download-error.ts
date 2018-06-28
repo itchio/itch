@@ -1,12 +1,12 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-import * as sf from "../../os/sf";
-
-import rootLogger from "common/logger";
-import { join } from "path";
 import { getDownloadError } from "common/format/errors";
+import { Watcher } from "common/util/watcher";
+import { mainLogger } from "main/logger";
+import { join } from "path";
+import * as sf from "../../os/sf";
 import { makeInstallErrorModal } from "../tasks/make-install-error-modal";
-const logger = rootLogger.child({ name: "show-download-error" });
+
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.showDownloadError, async (store, action) => {

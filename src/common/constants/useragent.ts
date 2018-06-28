@@ -1,12 +1,11 @@
 import { app, remote } from "electron";
-import * as os from "main/os";
 
 export let userAgent: () => string;
 
-if (os.processType() === "browser") {
+if (process.type === "browser") {
   userAgent = () =>
-    `itch/${app.getVersion()} (${os.platform()}; ` +
-    `Electron/${os.getVersion("electron")} Chrome/${os.getVersion("chrome")})`;
+    `itch/${app.getVersion()} (${process.platform}; ` +
+    `Electron/${process.versions.electron} Chrome/${process.versions.chrome})`;
 } else {
   let _cached = remote.require("./constants/useragent").userAgent();
   userAgent = () => _cached;

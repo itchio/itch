@@ -1,18 +1,14 @@
 import { actions } from "common/actions";
-import { messages, withLogger } from "common/butlerd";
-import rootLogger from "common/logger";
+import { messages } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
 import { modalWidgets } from "renderer/modal-widgets";
-
-const logger = rootLogger.child({ name: "request-cave-uninstall" });
-
-const call = withLogger(logger);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.requestCaveUninstall, async (store, action) => {
     const { caveId } = action.payload;
 
-    const { cave } = await call(messages.FetchCave, { caveId });
+    const { cave } = await mcall(messages.FetchCave, { caveId });
     const { game } = cave;
 
     // FIXME: i18n - plus, that's generally bad

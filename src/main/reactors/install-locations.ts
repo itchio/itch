@@ -1,10 +1,11 @@
 import { actions } from "common/actions";
-import { call, messages } from "common/butlerd";
+import { messages } from "common/butlerd";
 import { t } from "common/format/t";
 import { ItchPromise } from "common/util/itch-promise";
 import { urlForInstallLocation } from "common/util/navigation";
 import { Watcher } from "common/util/watcher";
 import { dialog } from "electron";
+import { mcall } from "main/butlerd/mcall";
 import * as explorer from "main/os/explorer";
 import { promisedModal } from "main/reactors/modals";
 import { getNativeWindow } from "main/reactors/winds";
@@ -24,7 +25,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.removeInstallLocation, async (store, action) => {
     const { id } = action.payload;
 
-    const { installLocation } = await call(messages.InstallLocationsGetByID, {
+    const { installLocation } = await mcall(messages.InstallLocationsGetByID, {
       id,
     });
     if (!installLocation) {
@@ -85,7 +86,7 @@ export default function(watcher: Watcher) {
         return;
       }
 
-      await call(messages.InstallLocationsRemove, { id });
+      await mcall(messages.InstallLocationsRemove, { id });
       store.dispatch(actions.installLocationsChanged({}));
     }
   });
@@ -119,14 +120,14 @@ export default function(watcher: Watcher) {
 
     const path = await promise;
     if (path) {
-      await call(messages.InstallLocationsAdd, { path });
+      await mcall(messages.InstallLocationsAdd, { path });
       store.dispatch(actions.installLocationsChanged({}));
     }
   });
 
   watcher.on(actions.browseInstallLocation, async (store, action) => {
     const { id } = action.payload;
-    const { installLocation } = await call(messages.InstallLocationsGetByID, {
+    const { installLocation } = await mcall(messages.InstallLocationsGetByID, {
       id,
     });
     if (installLocation) {

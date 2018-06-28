@@ -1,32 +1,29 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-import { messages, withLogger } from "common/butlerd";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "download-operations" });
-const call = withLogger(logger);
+import { messages } from "common/butlerd";
+import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.prioritizeDownload, async (store, action) => {
     const { id } = action.payload;
-    await call(messages.DownloadsPrioritize, { downloadId: id });
+    await mcall(messages.DownloadsPrioritize, { downloadId: id });
     store.dispatch(actions.refreshDownloads({}));
   });
 
   watcher.on(actions.discardDownload, async (store, action) => {
     const { id } = action.payload;
-    await call(messages.DownloadsDiscard, { downloadId: id });
+    await mcall(messages.DownloadsDiscard, { downloadId: id });
     store.dispatch(actions.refreshDownloads({}));
   });
 
   watcher.on(actions.retryDownload, async (store, action) => {
     const { id } = action.payload;
-    await call(messages.DownloadsRetry, { downloadId: id });
+    await mcall(messages.DownloadsRetry, { downloadId: id });
     store.dispatch(actions.refreshDownloads({}));
   });
 
   watcher.on(actions.clearFinishedDownloads, async (store, action) => {
-    await call(messages.DownloadsClearFinished, {});
+    await mcall(messages.DownloadsClearFinished, {});
     store.dispatch(actions.refreshDownloads({}));
   });
 }

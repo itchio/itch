@@ -86,9 +86,11 @@ export interface RootState {
 
 export interface BrothState {
   packageNames: string[];
-  packages: {
-    [key: string]: PackageState;
-  };
+  packages: PackagesState;
+}
+
+export interface PackagesState {
+  [key: string]: PackageState;
 }
 
 export interface ButlerdState {

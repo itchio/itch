@@ -1,16 +1,13 @@
-import * as os from "os";
+import { mainLogger } from "main/logger";
+import { execSync } from "child_process";
 
-export * from "./assert-presence";
-import env from "common/env";
-import { Platform } from "common/butlerd/messages";
-
-export function platform(): string {
-  return process.platform;
-}
-
-export function release(): string {
-  return os.release();
-}
+const logger = mainLogger.child(__filename);
+const WIN64_ARCHES = {
+  AMD64: true,
+  IA64: true,
+} as {
+  [key: string]: boolean;
+};
 
 export function arch(): string {
   switch (process.platform) {
@@ -22,70 +19,10 @@ export function arch(): string {
   return process.arch;
 }
 
-export function inBrowser(): boolean {
-  return processType() === "browser";
-}
-
-export function inRenderer(): boolean {
-  return processType() === "renderer";
-}
-
-export function processType(): string {
-  return process.type || "browser";
-}
-
-export type VersionKey = "electron" | "chrome";
-
-export function getVersion(key: VersionKey): string {
-  return process.versions[key];
-}
-
-/**
- * Get platform in the format used by the itch.io API
- */
-export function itchPlatform(): Platform {
-  switch (platform()) {
-    case "darwin":
-      return Platform.OSX;
-    case "win32":
-      return Platform.Windows;
-    case "linux":
-      return Platform.Linux;
-    default:
-      return Platform.Unknown;
-  }
-}
-
-export function cliArgs(): string[] {
-  return process.argv;
-}
-
-export function exit(exitCode: number) {
-  if (env.integrationTests) {
-    console.log(`this is the magic exit code: ${exitCode}`);
-  } else {
-    const electron = require("electron");
-    const app = electron.app || electron.remote.app;
-    app.exit(exitCode);
-  }
-}
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "arch" });
-
-import { execSync } from "child_process";
-
-const WIN64_ARCHES = {
-  AMD64: true,
-  IA64: true,
-} as {
-  [key: string]: boolean;
-};
-
 /**
  * Returns true if we're currently running on a 64-bit version of Windows
  */
-export function isWin64(): boolean {
+function isWin64(): boolean {
   // 64-bit exe on 64-bit windows: PROCESSOR_ARCHITECTURE has the original arch
   // 32-bit exe on 64-bit windows: PROCESSOR_ARCHITECTURE has x86, PROCESSOR_ARCHITEW6432 has the real one
   return (
@@ -101,7 +38,7 @@ let cachedIsLinux64: boolean;
 /**
  * Returns true if we're currently running on a 64-bit version of Linux
  */
-export function isLinux64(): boolean {
+function isLinux64(): boolean {
   if (!hasDeterminedLinux64) {
     cachedIsLinux64 = determineLinux64();
     hasDeterminedLinux64 = true;

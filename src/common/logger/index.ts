@@ -94,7 +94,15 @@ export class Logger {
     }
   }
 
-  child({ name }: { name: string }): Logger {
+  child(filename: string): Logger {
+    const name = filename
+      .split(/[\/\\]/)
+      .slice(-3)
+      .join("/");
+    return this.childWithName(name);
+  }
+
+  childWithName(name: string): Logger {
     const l = new Logger({
       write: this._write,
       close: this._close,
@@ -120,30 +128,8 @@ export class Logger {
   }
 }
 
-export interface MakeLoggerOpts {
-  logPath?: string;
-  customOut?: NodeJS.WritableStream;
-}
-
-export let makeLogger: (opts: MakeLoggerOpts) => Logger;
-if (process.type === "renderer") {
-  makeLogger = require("./makelogger-renderer").makeLogger;
-} else {
-  makeLogger = require("./makelogger-main").makeLogger;
-}
-
-let defaultLogger: Logger;
-if (process.type === "browser") {
-  const { mainLogPath } = require("common/util/paths");
-  defaultLogger = makeLogger({ logPath: mainLogPath() }); // log 'metal' process to file
-} else {
-  defaultLogger = makeLogger({}); // don't log browser process to file
-}
-
 export const devNull = new Logger({
   write: () => {
     /* muffin */
   },
 });
-
-export default defaultLogger;

@@ -1,18 +1,15 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-
-import rootLogger from "common/logger";
-import { messages, withLogger } from "common/butlerd/index";
+import { messages } from "common/butlerd/index";
 import { formatUploadTitle } from "common/format/upload";
+import { Watcher } from "common/util/watcher";
 import { modalWidgets } from "renderer/modal-widgets";
-const logger = rootLogger.child({ name: "manage-game" });
-const call = withLogger(logger);
+import { mcall } from "main/butlerd/mcall";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.manageCave, async (store, action) => {
     const { caveId } = action.payload;
 
-    const { cave } = await call(messages.FetchCave, {
+    const { cave } = await mcall(messages.FetchCave, {
       caveId,
     });
 

@@ -4,9 +4,8 @@ import { each } from "underscore";
 
 import debounce from "common/util/debounce";
 
-import rootLogger from "common/logger";
+import { Logger } from "common/logger";
 import { actions } from "common/actions/index";
-const logger = rootLogger.child({ name: "watcher" });
 
 interface IReactor<T> {
   (store: Store, action: Action<T>): Promise<void>;
@@ -23,13 +22,15 @@ type SelectorMaker = (store: Store, schedule: Schedule) => Selector;
  * Allows reacting to certain actions being dispatched
  */
 export class Watcher {
+  logger: Logger;
   reactors: {
     [key: string]: IReactor<any>[];
   };
 
   subs: Watcher[];
 
-  constructor() {
+  constructor(logger: Logger) {
+    this.logger = logger;
     this.reactors = {};
     this.subs = [];
   }
@@ -56,7 +57,7 @@ export class Watcher {
             try {
               f();
             } catch (e) {
-              logger.error(`In scheduled stateChange: ${e.stack}`);
+              this.logger.error(`In scheduled stateChange: ${e.stack}`);
             }
           });
         };
@@ -69,7 +70,7 @@ export class Watcher {
       try {
         selector(rs);
       } catch (e) {
-        logger.error(`In state selector: ${e.stack}`);
+        this.logger.error(`In state selector: ${e.stack}`);
       }
     });
   }

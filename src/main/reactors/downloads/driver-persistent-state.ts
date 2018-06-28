@@ -1,8 +1,8 @@
 import { Client } from "butlerd";
-
-import rootLogger from "common/logger";
 import { messages } from "common/butlerd";
-const logger = rootLogger.child({ name: "download-driver" });
+import { mainLogger } from "main/logger";
+
+const logger = mainLogger.child(__filename);
 
 export enum Phase {
   IDLE,

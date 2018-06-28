@@ -1,14 +1,14 @@
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import rootLogger from "common/logger";
 import { Store } from "common/types";
 import { isItchioURL } from "common/util/url";
 import { Watcher } from "common/util/watcher";
 import { shell } from "electron";
+import { mainLogger } from "main/logger";
 import { modalWidgets } from "renderer/modal-widgets";
 import urlParser from "url";
 
-const logger = rootLogger.child({ name: "reactors/url" });
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.processUrlArguments, async (store, action) => {

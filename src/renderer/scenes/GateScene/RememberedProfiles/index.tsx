@@ -1,17 +1,15 @@
-import React from "react";
-import { map } from "underscore";
+import { actions } from "common/actions";
+import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
-
+import React from "react";
 import Link from "renderer/basics/Link";
-
-import RememberedProfile from "./RememberedProfile";
+import { rcall } from "renderer/butlerd/rcall";
+import watching, { Watcher } from "renderer/hocs/watching";
+import { Links } from "renderer/scenes/GateScene/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-
-import watching, { Watcher } from "renderer/hocs/watching";
-import { actions } from "common/actions";
-import { messages, call } from "common/butlerd";
-import { Links } from "renderer/scenes/GateScene/styles";
+import { map } from "underscore";
+import RememberedProfile from "./RememberedProfile";
 
 const RememberedProfilesDiv = styled.div`
   animation: fade-in 0.2s;
@@ -43,7 +41,7 @@ class RememberedProfiles extends React.PureComponent<Props> {
   subscribe(watcher: Watcher) {
     watcher.on(actions.forgetProfile, async (store, action) => {
       const { profile } = action.payload;
-      await call(messages.ProfileForget, { profileId: profile.id });
+      await rcall(messages.ProfileForget, { profileId: profile.id });
       store.dispatch(actions.profilesUpdated({}));
     });
   }

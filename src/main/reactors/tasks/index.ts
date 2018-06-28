@@ -9,7 +9,6 @@ import queueCaveUninstall from "./queue-cave-uninstall";
 import exploreCave from "./explore-cave";
 import abortGame from "./abort-game";
 import switchVersionCave from "./switch-version-cave";
-import probeCave from "./probe-cave";
 import viewCaveDetails from "./view-cave-details";
 
 export default function(watcher: Watcher) {
@@ -21,6 +20,5 @@ export default function(watcher: Watcher) {
   exploreCave(watcher);
   abortGame(watcher);
   switchVersionCave(watcher);
-  probeCave(watcher);
   viewCaveDetails(watcher);
 }

@@ -54,7 +54,7 @@ export async function runItchSetup(
 
   await spawn({
     ctx: new MinimalContext(),
-    logger: logger.child({ name: "itch-setup upgrade" }),
+    logger: logger.child(__filename),
     command: ospath.join(prefix, "itch-setup"),
     args: ["--appname", env.appName, ...args],
     onToken: (tok: string) => {

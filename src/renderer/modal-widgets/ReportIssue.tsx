@@ -1,7 +1,6 @@
 import { actions } from "common/actions";
 import { fillShape } from "common/format/shape";
-import { Dispatch } from "common/types";
-import { getRootState } from "common/util/get-root-state";
+import { Dispatch, PackagesState } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
@@ -188,7 +187,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           output.osInfo = `Could not get info: ${e}`;
         }
 
-        output.broth = fillShape(getRootState().broth.packages, {
+        output.broth = fillShape(this.props.brothPackages, {
           "*": {
             stage: true,
             version: true,
@@ -544,6 +543,7 @@ export interface ReportIssueParams {
 
 interface Props extends ModalWidgetProps<ReportIssueParams, void> {
   dispatch: Dispatch;
+  brothPackages: PackagesState;
 }
 
 interface State {
@@ -556,4 +556,6 @@ interface State {
   errorMessage?: string;
 }
 
-export default hook()(ReportIssue);
+export default hook(map => ({
+  brothPackages: map(rs => rs.broth.packages),
+}))(ReportIssue);

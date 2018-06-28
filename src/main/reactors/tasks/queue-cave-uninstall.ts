@@ -1,21 +1,17 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "queue-cave-uninstall" });
-
-import { promisedModal } from "../modals";
-
-import asTask from "./as-task";
+import { messages, callFromStore } from "common/butlerd";
+import { Watcher } from "common/util/watcher";
+import { mainLogger } from "main/logger";
 import { modalWidgets } from "renderer/modal-widgets";
-
 import { performUninstall } from "../downloads/perform-uninstall";
+import { promisedModal } from "../modals";
+import asTask from "./as-task";
 
-import { withLogger, messages } from "common/butlerd";
-const call = withLogger(logger);
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueCaveUninstall, async (store, action) => {
+    const call = callFromStore(store, logger);
     const { caveId } = action.payload;
 
     // TODO: figure if we really need that. asTask wants a gameId
@@ -27,7 +23,7 @@ export default function(watcher: Watcher) {
       gameId: cave.game.id,
       store,
       work: async (ctx, logger) => {
-        await performUninstall(logger, caveId);
+        await performUninstall(store, logger, caveId);
         store.dispatch(actions.uninstallEnded({}));
       },
       onError: async (e, log) => {

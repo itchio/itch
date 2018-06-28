@@ -1,9 +1,10 @@
 import { createRequest } from "butlerd";
 import { actions } from "common/actions";
-import { call, messages } from "common/butlerd";
+import { messages } from "common/butlerd";
 import { Dispatch, RootState } from "common/types";
 import React from "react";
 import Button from "renderer/basics/Button";
+import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
@@ -157,7 +158,7 @@ class SecretSettings extends React.PureComponent<Props> {
     doAsync(async () => {
       let e: Error;
       try {
-        await call(FakeRequest, {});
+        await rcall(FakeRequest, {});
       } catch (ee) {
         e = ee;
       }
@@ -187,7 +188,7 @@ class SecretSettings extends React.PureComponent<Props> {
 
   onExpireAll = () => {
     doAsync(async () => {
-      await call(messages.FetchExpireAll, {});
+      await rcall(messages.FetchExpireAll, {});
     });
   };
 

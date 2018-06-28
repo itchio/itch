@@ -2,9 +2,6 @@ import { TabInstances, TabData, TabDataSave, TabInstance } from "common/types";
 import { actions } from "common/actions";
 import reducer from "../reducer";
 
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "reducers/tab-data" });
-
 import { omit, each, size } from "underscore";
 
 const initialState: TabInstances = {};
@@ -80,7 +77,6 @@ export default reducer<TabInstances>(initialState, on => {
     const oldInstance = state[tab];
     if (!oldInstance) {
       // ignore fresh data for closed tabs
-      logger.debug(`tabDataFetched, ignoring fresh data for ${tab}`);
       return state;
     }
 

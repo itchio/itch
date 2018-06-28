@@ -1,12 +1,12 @@
-import { classificationActions } from "common/constants/classification-actions";
 import {
   Game,
-  GameType,
   GameClassification,
+  GameType,
   Platform,
   Platforms,
 } from "common/butlerd/messages";
-import { currentRuntime } from "main/os/runtime";
+import { classificationActions } from "common/constants/classification-actions";
+import { currentRuntime } from "common/os/runtime";
 
 const runtime = currentRuntime();
 

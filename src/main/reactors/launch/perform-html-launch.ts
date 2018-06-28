@@ -5,7 +5,6 @@ import { BrowserWindow, shell } from "electron";
 
 import { getInjectPath } from "common/util/resources";
 import * as url from "common/util/url";
-import debugBrowserWindow from "common/util/debug-browser-window";
 
 import { Context } from "main/context";
 
@@ -77,7 +76,6 @@ export async function performHTMLLaunch(
 
   // open dev tools immediately if requested
   if (process.env.IMMEDIATE_NOSE_DIVE === "1") {
-    debugBrowserWindow(`game ${game.title}`, win);
     win.webContents.openDevTools({ mode: "detach" });
   }
   win.setMenu(null);

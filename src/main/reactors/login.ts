@@ -1,21 +1,19 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-
-import { promisedModal } from "./modals";
-import urls from "common/constants/urls";
-import urlParser from "url";
-
-import { messages, withLogger } from "common/butlerd/index";
+import { messages } from "common/butlerd/index";
 import { Profile } from "common/butlerd/messages";
-
-import rootLogger from "common/logger";
+import urls from "common/constants/urls";
 import { Store } from "common/types";
-import { restoreTabs, saveTabs } from "./tab-save";
 import { ItchPromise } from "common/util/itch-promise";
 import { partitionForUser } from "common/util/partition-for-user";
+import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
+import { mainLogger } from "main/logger";
 import { modalWidgets } from "renderer/modal-widgets";
-const logger = rootLogger.child({ name: "login" });
-const call = withLogger(logger);
+import urlParser from "url";
+import { promisedModal } from "./modals";
+import { restoreTabs, saveTabs } from "./tab-save";
+
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.loginWithPassword, async (store, action) => {
@@ -25,14 +23,14 @@ export default function(watcher: Watcher) {
     try {
       // integration tests for the integration test goddess
       if (username === "#api-key") {
-        const { profile } = await call(messages.ProfileLoginWithAPIKey, {
+        const { profile } = await mcall(messages.ProfileLoginWithAPIKey, {
           apiKey: password,
         });
         await loginSucceeded(store, profile);
         return;
       }
 
-      const { profile, cookie } = await call(
+      const { profile, cookie } = await mcall(
         messages.ProfileLoginWithPassword,
         {
           username,
@@ -118,7 +116,7 @@ export default function(watcher: Watcher) {
     store.dispatch(actions.attemptLogin({}));
 
     try {
-      const { profile } = await call(messages.ProfileUseSavedLogin, {
+      const { profile } = await mcall(messages.ProfileUseSavedLogin, {
         profileId: action.payload.profile.id,
       });
       await loginSucceeded(store, profile);

@@ -1,4 +1,5 @@
-import { LogEntry, levels } from "./index";
+import { levels, LogEntry, Logger, LOG_LEVEL } from "common/logger";
+import { actions } from "common/actions";
 
 const levelColors = {
   default: "color:black;",
@@ -27,3 +28,17 @@ function write(entry: LogEntry) {
 }
 
 export default write;
+
+import store from "renderer/store";
+
+function makeLogger(): Logger {
+  return new Logger({
+    write: (entry: LogEntry) => {
+      write(entry);
+      store.dispatch(actions.log({ entry }));
+    },
+    level: LOG_LEVEL,
+  });
+}
+
+export const rendererLogger = makeLogger();

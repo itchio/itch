@@ -1,13 +1,12 @@
-import fs from "fs";
-import { initialState } from "common/reducers/preferences";
-import { preferencesPath } from "common/util/paths";
-
-import rootLogger from "common/logger";
-import { Store, PreferencesState } from "common/types/index";
-const logger = rootLogger.child({ name: "load-preferences" });
-
 import { actions } from "common/actions";
 import { camelifyObject } from "common/format/camelify";
+import { initialState } from "common/reducers/preferences";
+import { PreferencesState, Store } from "common/types/index";
+import { preferencesPath } from "common/util/paths";
+import fs from "fs";
+import { mainLogger } from "main/logger";
+
+const logger = mainLogger.child(__filename);
 
 async function loadPreferences(store: Store) {
   const prefs = loadPreferencesSync();

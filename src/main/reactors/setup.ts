@@ -1,22 +1,21 @@
-import { Watcher } from "common/util/watcher";
-import { Store } from "common/types";
-
+import { Client } from "butlerd";
 import { actions } from "common/actions";
-
-import rootLogger from "common/logger";
-import { messages, withLogger } from "common/butlerd/index";
-import { indexBy, isEmpty } from "underscore";
+import { messages } from "common/butlerd/index";
+import { makeButlerInstance } from "common/butlerd/master-client";
+import { Store } from "common/types";
+import { ItchPromise } from "common/util/itch-promise";
 import { appdataLocationPath } from "common/util/paths";
+import { Watcher } from "common/util/watcher";
+import { indexBy, isEmpty } from "underscore";
 import { Manager } from "../broth/manager";
 import { delay } from "./delay";
-import { makeButlerInstance } from "common/butlerd/master-client";
-import { Client } from "butlerd";
-import { ItchPromise } from "common/util/itch-promise";
-const logger = rootLogger.child({ name: "setup" });
-const call = withLogger(logger);
+import { mcall } from "main/butlerd/mcall";
+import { mainLogger } from "main/logger";
+
+const logger = mainLogger.child(__filename);
 
 async function syncInstallLocations(store: Store) {
-  const { installLocations } = await call(messages.InstallLocationsList, {});
+  const { installLocations } = await mcall(messages.InstallLocationsList, {});
   const newLocationsById = indexBy(installLocations, "id");
 
   const rs = store.getState();
@@ -39,7 +38,7 @@ async function syncInstallLocations(store: Store) {
       } else {
         logger.debug(`Synchronizing ${id}...`);
         numAdded++;
-        await call(messages.InstallLocationsAdd, {
+        await mcall(messages.InstallLocationsAdd, {
           id,
           path: oldLoc.path,
         });
@@ -109,7 +108,7 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
 
 async function refreshButlerd(store: Store) {
   logger.info(`Refreshing butlerd! Spinning up new instance...`);
-  let instance = await makeButlerInstance();
+  let instance = await makeButlerInstance(store.getState());
   instance.promise().catch(e => {
     console.error(`butlerd instance threw:`);
     console.error(e.stack);

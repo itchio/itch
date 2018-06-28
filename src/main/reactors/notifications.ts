@@ -1,22 +1,20 @@
-import { Watcher } from "common/util/watcher";
-
-import { app, Notification, nativeImage } from "electron";
-import * as os from "../os";
-
 import { actions } from "common/actions";
 import env from "common/env";
-
+import { t } from "common/format/t";
+import { Watcher } from "common/util/watcher";
+import { app, nativeImage, Notification } from "electron";
+import { mainLogger } from "main/logger";
 import { delay } from "./delay";
 
-import rootLogger from "common/logger";
-import { t } from "common/format/t";
-const logger = rootLogger.child({ name: "notifications" });
+const logger = mainLogger.child(__filename);
 
 const AUTODISMISS_DELAY = 5000;
 
 // OSX already shows the app's icon
 const DEFAULT_ICON =
-  os.platform() === "darwin" ? null : `./static/images/tray/${env.appName}.png`;
+  process.platform === "darwin"
+    ? null
+    : `./static/images/tray/${env.appName}.png`;
 
 export default function(watcher: Watcher) {
   watcher.on(actions.bounce, async (store, action) => {

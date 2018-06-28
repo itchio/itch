@@ -1,6 +1,5 @@
 import { Watcher } from "common/util/watcher";
 
-import * as os from "../os";
 import { app, Menu } from "electron";
 
 import { createSelector } from "reselect";
@@ -10,8 +9,8 @@ import { getTray, rememberNotificationAction } from "./tray-persistent-state";
 
 import { Store, RootState, I18nState, MenuTemplate } from "common/types";
 import { fleshOutTemplate } from "./context-menu/flesh-out-template";
-import { currentRuntime } from "main/os/runtime";
 import { memoize } from "common/util/lru-memoize";
+import { currentRuntime } from "common/os/runtime";
 
 const setTrayMenu = memoize(1, function(template: MenuTemplate, store: Store) {
   const fleshedOut = fleshOutTemplate(
@@ -22,7 +21,7 @@ const setTrayMenu = memoize(1, function(template: MenuTemplate, store: Store) {
   );
   const menu = Menu.buildFromTemplate(fleshedOut);
 
-  if (os.platform() === "darwin") {
+  if (process.platform === "darwin") {
     // don't have a tray icon on macOS, we just live in the dock
     app.dock.setMenu(menu);
   } else {
@@ -51,7 +50,7 @@ function refreshTray(store: Store, i18n: I18nState) {
     },
   ];
 
-  if (os.platform() !== "darwin") {
+  if (process.platform !== "darwin") {
     menuTemplate.push({ type: "separator" });
     menuTemplate.push({
       localizedLabel: ["menu.file.quit"],

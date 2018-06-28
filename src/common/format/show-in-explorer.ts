@@ -1,17 +1,14 @@
-import { currentRuntime } from "main/os/runtime";
 import { LocalizedString } from "common/types";
 
-const runtime = currentRuntime();
-
 export function showInExplorerString(): LocalizedString {
-  switch (runtime.platform) {
+  switch (process.platform) {
     case "linux": {
       return ["grid.item.open_file_location.linux"];
     }
-    case "osx": {
+    case "darwin": {
       return ["grid.item.open_file_location.osx"];
     }
-    case "windows":
+    case "win32":
     default: {
       return ["grid.item.open_file_location.windows"];
     }

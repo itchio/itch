@@ -1,11 +1,17 @@
-import { Logger, MakeLoggerOpts, LOG_LEVEL } from "common/logger";
+import { Logger, LOG_LEVEL } from "common/logger";
 import fs from "fs";
 import stream from "logrotate-stream";
 import path from "path";
-import write from "./write-main";
+import write from "main/logger/write";
+import { mainLogPath } from "common/util/paths";
 
 const multi = require("multi-write-stream");
 const NO_STDOUT = process.env.ITCH_NO_STDOUT === "1";
+
+interface MakeLoggerOpts {
+  logPath?: string;
+  customOut?: NodeJS.WritableStream;
+}
 
 export function makeLogger({ logPath, customOut }: MakeLoggerOpts): Logger {
   let consoleOut: NodeJS.WritableStream;
@@ -69,3 +75,5 @@ export function makeLogger({ logPath, customOut }: MakeLoggerOpts): Logger {
   logger.customOut = customOut;
   return logger;
 }
+
+export const mainLogger = makeLogger({ logPath: mainLogPath() });

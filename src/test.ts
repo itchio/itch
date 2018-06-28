@@ -20,13 +20,14 @@ import { Store, Action } from "common/types";
 import reducer from "common/reducers";
 import { actions } from "common/actions";
 import { ItchPromise } from "common/util/itch-promise";
+import { Logger } from "common/logger";
 
 export class TestWatcher extends Watcher {
   store: Store;
   p: Promise<void> | null;
 
   constructor() {
-    super();
+    super(new Logger({ write: entry => {} }));
     this.store = createStore(reducer, {} as any) as Store;
     const storeDotDispatch = this.store.dispatch;
     this.store.dispatch = <A extends Action<any>>(action: A): A => {

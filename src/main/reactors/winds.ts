@@ -1,37 +1,35 @@
-import { Watcher } from "common/util/watcher";
-
-import { screen } from "electron";
-import { createSelector } from "reselect";
-import { format as formatUrl, UrlObject } from "url";
-import * as path from "path";
-
-import env from "common/env";
-
-import { darkMineShaft } from "common/constants/colors";
-import { app, BrowserWindow, BrowserWindowConstructorOptions } from "electron";
-import config from "common/util/config";
-import * as os from "../os";
-import { debounce } from "underscore";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "main-window" });
-
 import { actions } from "common/actions";
+import { darkMineShaft } from "common/constants/colors";
+import { opensInWindow } from "common/constants/windows";
+import env from "common/env";
+import { t } from "common/format/t";
+import { Space } from "common/helpers/space";
+import { NativeWindowState, RootState, Store, WindRole } from "common/types";
+import config from "common/util/config";
+import { getImagePath } from "common/util/resources";
+import { Watcher } from "common/util/watcher";
+import {
+  app,
+  BrowserWindow,
+  BrowserWindowConstructorOptions,
+  screen,
+} from "electron";
+import { mainLogger } from "main/logger";
+import * as path from "path";
+import { stringify } from "querystring";
+import { createSelector } from "reselect";
+import { debounce } from "underscore";
+import { format as formatUrl, UrlObject } from "url";
+import { openAppDevTools } from "./open-app-devtools";
+
+const logger = mainLogger.child(__filename);
 
 type AppCommand = "browser-backward" | "browser-forward";
 
 const BOUNDS_CONFIG_KEY = "main_window_bounds";
 const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
-const macOs = os.platform() === "darwin";
-
-import { RootState, Store, NativeWindowState, WindRole } from "common/types";
-import { Space } from "common/helpers/space";
-import { openAppDevTools } from "./open-app-devtools";
-import { t } from "common/format/t";
-import { getImagePath } from "common/util/resources";
-import { stringify } from "querystring";
-import { opensInWindow } from "common/constants/windows";
+const macOs = process.platform === "darwin";
 
 async function createRootWindow(store: Store) {
   const wind = "root";
@@ -65,7 +63,7 @@ async function createRootWindow(store: Store) {
     })
   );
 
-  if (os.platform() === "darwin") {
+  if (process.platform === "darwin") {
     try {
       app.dock.setIcon(getIconPath());
     } catch (err) {
@@ -647,7 +645,7 @@ export function getNativeWindow(rs: RootState, window: string): BrowserWindow {
 }
 
 function makeSubWatcher(rs: RootState) {
-  const watcher = new Watcher();
+  const watcher = new Watcher(mainLogger);
   for (const window of Object.keys(rs.winds)) {
     watcher.onStateChange({
       makeSelector: (store, schedule) => {

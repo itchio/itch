@@ -1,16 +1,14 @@
 import { actions } from "common/actions";
-import { Watcher } from "common/util/watcher";
-import nodeURL from "url";
-
-import { webContents, BrowserWindow } from "electron";
-
-import rootLogger from "common/logger";
-import { Store, TabWeb } from "common/types/index";
-const logger = rootLogger.child({ name: "web-contents" });
-
-import createContextMenu from "./web-contents-context-menu";
 import { Space } from "common/helpers/space";
+import { Store, TabWeb } from "common/types/index";
+import { Watcher } from "common/util/watcher";
+import { BrowserWindow, webContents } from "electron";
+import { mainLogger } from "main/logger";
+import nodeURL from "url";
 import { openAppDevTools } from "./open-app-devtools";
+import createContextMenu from "./web-contents-context-menu";
+
+const logger = mainLogger.child(__filename);
 
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
 const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";

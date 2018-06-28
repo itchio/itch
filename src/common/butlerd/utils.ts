@@ -1,49 +1,42 @@
-import { Cave, CaveSummary } from "./messages";
-import * as messages from "./messages";
-
-import { RequestError, IRequestCreator, Client } from "butlerd";
-
-import rootLogger, { Logger } from "../logger/index";
-const lazyDefaultLogger = rootLogger.child({ name: "butlerd" });
+import { Client, IRequestCreator, RequestError } from "butlerd";
+import { Logger } from "common/logger";
 import { MinimalContext } from "main/context/index";
-
-import { getRootState } from "common/util/get-root-state";
+import * as messages from "./messages";
+import { Cave, CaveSummary } from "./messages";
+import { RootState, Store } from "common/types";
 
 type WithCB<T> = (client: Client) => Promise<T>;
 
 export async function withButlerClient<T>(
-  parentLogger: Logger,
+  rs: RootState,
+  logger: Logger,
   cb: WithCB<T>
 ): Promise<T> {
-  const { endpoint } = getRootState().butlerd;
+  const { endpoint } = rs.butlerd;
   if (!endpoint) {
     throw new Error(`no butlerd endpoint yet`);
   }
   const client = new Client(endpoint);
   await client.connect();
-  setupLogging(client, parentLogger);
+  setupLogging(client, logger);
 
   let res: T;
   let err: Error;
   try {
     res = await cb(client);
   } catch (e) {
-    if (getRootState().system.quitting) {
-      // ignore butlerd error when quitting
-    } else {
-      console.error(`Caught butler error:`);
-      if (isInternalError(e)) {
-        const ed = getRpcErrorData(e);
-        if (ed) {
-          console.error(`butler version: ${ed.butlerVersion}`);
-          console.error(`Golang stack:\n${ed.stack}`);
-        }
-        console.error(`JavaScript stack: ${e.stack}`);
-      } else {
-        console.error(`${e.message}`);
+    console.error(`Caught butler error:`);
+    if (isInternalError(e)) {
+      const ed = getRpcErrorData(e);
+      if (ed) {
+        console.error(`butler version: ${ed.butlerVersion}`);
+        console.error(`Golang stack:\n${ed.stack}`);
       }
-      err = e;
+      console.error(`JavaScript stack: ${e.stack}`);
+    } else {
+      console.error(`${e.message}`);
     }
+    err = e;
   } finally {
     client.close();
   }
@@ -54,37 +47,26 @@ export async function withButlerClient<T>(
   return res;
 }
 
-type Call = <Params, Res>(
-  rc: IRequestCreator<Params, Res>,
-  params: Params,
-  setup?: (client: Client) => void
-) => Promise<Res>;
+export type SetupFunc = (client: Client) => void;
 
-export let call: Call;
+export function callFromStore(store: Store, logger: Logger) {
+  return async function<Params, Res>(
+    rc: IRequestCreator<Params, Res>,
+    params: Params,
+    setup?: SetupFunc
+  ): Promise<Res> {
+    return await call(store.getState(), logger, rc, params, setup);
+  };
+}
 
-call = async function<Params, Res>(
-  rc: IRequestCreator<Params, Res>,
-  params: Params,
-  setup?: (client: Client) => void
-): Promise<Res> {
-  return await callInternal(lazyDefaultLogger, rc, params, setup);
-};
-
-export const withLogger = (logger: Logger) => async <Params, Res>(
-  rc: IRequestCreator<Params, Res>,
-  params: Params,
-  setup?: (client: Client) => void
-): Promise<Res> => {
-  return await callInternal(logger, rc, params, setup);
-};
-
-async function callInternal<Params, Res>(
+export async function call<Params, Res>(
+  rs: RootState,
   logger: Logger,
   rc: IRequestCreator<Params, Res>,
   params: Params,
-  setup?: (client: Client) => void
+  setup?: SetupFunc
 ): Promise<Res> {
-  return await withButlerClient(logger, async client => {
+  return await withButlerClient(rs, logger, async client => {
     if (setup) {
       setup(client);
     }

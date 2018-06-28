@@ -1,10 +1,10 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
+import { messages } from "common/butlerd";
+import { Watcher } from "common/util/watcher";
 import { modalWidgets } from "renderer/modal-widgets";
-import { call, messages } from "common/butlerd";
-
-import { promisedModal } from "../modals";
 import { ScanInstallLocationsParams } from "renderer/modal-widgets/ScanInstallLocations";
+import { promisedModal } from "../modals";
+import { mcall } from "main/butlerd/mcall";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.scanInstallLocations, async (store, action) => {
@@ -44,7 +44,7 @@ export default function(watcher: Watcher) {
     };
 
     try {
-      const importRes = await call(
+      const importRes = await mcall(
         messages.InstallLocationsScan,
         {},
         client => {

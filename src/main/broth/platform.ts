@@ -1,8 +1,8 @@
-import { platform, arch } from "../os";
+import { arch } from "main/os/arch";
 
 /** platform in go format */
 export function goos(): string {
-  let result = platform();
+  let result = process.platform;
   if (result === "win32") {
     return "windows";
   }

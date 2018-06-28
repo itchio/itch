@@ -1,18 +1,14 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "queue-cave-reinstall" });
-
-import { withLogger, messages } from "common/butlerd";
+import { messages } from "common/butlerd";
+import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
 import { modalWidgets } from "renderer/modal-widgets";
-const call = withLogger(logger);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.viewCaveDetails, async (store, action) => {
     const { caveId } = action.payload;
 
-    const { cave } = await call(messages.FetchCave, { caveId });
+    const { cave } = await mcall(messages.FetchCave, { caveId });
 
     store.dispatch(
       actions.openModal(

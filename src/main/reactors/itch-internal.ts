@@ -1,15 +1,12 @@
-import { Watcher } from "common/util/watcher";
-
+import { actions } from "common/actions";
+import { partitionForUser } from "common/util/partition-for-user";
 import * as urlParser from "common/util/url";
+import { Watcher } from "common/util/watcher";
+import electron from "electron";
+import { mainLogger } from "main/logger";
 import querystring from "querystring";
 
-import electron from "electron";
-import { partitionForUser } from "common/util/partition-for-user";
-
-import { actions } from "common/actions";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "itch-internal" });
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.loginSucceeded, async (store, action) => {

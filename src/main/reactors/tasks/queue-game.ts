@@ -1,28 +1,24 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-
-import rootLogger, { Logger } from "common/logger";
-const logger = rootLogger.child({ name: "queue-game" });
-
-import asTask from "./as-task";
-
+import { callFromStore, messages } from "common/butlerd";
+import { Build, Game, Upload } from "common/butlerd/messages";
+import { Logger } from "common/logger";
 import { Store } from "common/types/index";
-import { Game, Upload, Build } from "common/butlerd/messages";
-
-import { map, isEmpty } from "underscore";
-import { modalWidgets } from "renderer/modal-widgets";
-
-import { withLogger, messages } from "common/butlerd";
-const call = withLogger(logger);
-
-import { promisedModal } from "../modals";
-import { makeInstallErrorModal } from "./make-install-error-modal";
+import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
+import { mainLogger } from "main/logger";
 import { makeUploadButton } from "main/reactors/make-upload-button";
+import { modalWidgets } from "renderer/modal-widgets";
+import { isEmpty, map } from "underscore";
+import { promisedModal } from "../modals";
+import asTask from "./as-task";
+import { makeInstallErrorModal } from "./make-install-error-modal";
+
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
     const { game } = action.payload;
-    const caves = (await call(messages.FetchCaves, {
+    const caves = (await mcall(messages.FetchCaves, {
       filters: { gameId: game.id },
     })).items;
 
@@ -121,7 +117,8 @@ async function performInstallQueue({
 }) {
   const installLocationId = defaultInstallLocation(store);
 
-  await withLogger(logger)(
+  const call = callFromStore(store, logger);
+  await call(
     messages.InstallQueue,
     {
       game,

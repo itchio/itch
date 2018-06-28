@@ -1,8 +1,7 @@
 import ospath from "path";
 import fs from "fs";
 import { app } from "electron";
-
-import logger from "common/logger";
+import { writeFile } from "main/os/sf";
 
 let configFile = ospath.join(app.getPath("userData"), "config.json");
 let data: any = {};
@@ -13,19 +12,19 @@ try {
   // We don't want that to be fatal
   if (e.code === "ENOENT") {
     // that's ok
-    logger.info("No config file, it's a fresh install!");
   } else {
-    logger.warn(`Could not read config: ${e}`);
+    console.warn(`Could not read config: ${e}`);
   }
 }
 
 const self = {
   save: function() {
-    try {
-      fs.writeFileSync(configFile, JSON.stringify(data), { encoding: "utf8" });
-    } catch (err) {
-      logger.warn(`Could not save config: ${err}`);
-    }
+    const promise = writeFile(configFile, JSON.stringify(data), {
+      encoding: "utf8",
+    });
+    promise.catch(err => {
+      console.warn(`Could not save config: ${err}`);
+    });
   },
 
   get: function(key: string): any {

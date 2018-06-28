@@ -1,19 +1,18 @@
-import { Watcher } from "common/util/watcher";
-
-import { actions } from "common/actions";
-import { manager } from "main/reactors/setup";
-import { Store } from "common/types";
-import { t } from "common/format/t";
-import ospath from "path";
 import childProcess from "child_process";
+import { actions } from "common/actions";
+import { t } from "common/format/t";
+import { Store } from "common/types";
 import { relaunchLogPath } from "common/util/paths";
+import { Watcher } from "common/util/watcher";
 import fs from "fs";
-
-import rootLogger from "common/logger";
-import { delay } from "./delay";
 import { ISM } from "main/broth/itch-setup";
+import { mainLogger } from "main/logger";
+import { manager } from "main/reactors/setup";
+import ospath from "path";
 import { modalWidgets } from "renderer/modal-widgets";
-const logger = rootLogger.child({ name: "self-update" });
+import { delay } from "./delay";
+
+const logger = mainLogger.child(__filename);
 
 // 2 hours, * 60 = minutes, * 60 = seconds, * 1000 = millis
 const UPDATE_INTERVAL = 2 * 60 * 60 * 1000;

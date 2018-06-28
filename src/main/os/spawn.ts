@@ -1,13 +1,13 @@
 import childProcess from "child_process";
+import { formatExitCode } from "common/format/exit-code";
+import { Logger } from "common/logger";
+import { ItchPromise } from "common/util/itch-promise";
+import { mainLogger } from "main/logger";
 import split2 from "split2";
 import stream from "stream";
-
-import rootLogger, { Logger } from "common/logger";
-const spawnLogger = rootLogger.child({ name: "spawn" });
-
 import { MinimalContext } from "../context";
-import { formatExitCode } from "common/format/exit-code";
-import { ItchPromise } from "common/util/itch-promise";
+
+const spawnLogger = mainLogger.child(__filename);
 
 interface SpawnOpts {
   /** Context this should run in */

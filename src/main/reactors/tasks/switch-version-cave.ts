@@ -1,16 +1,10 @@
-import { Watcher } from "common/util/watcher";
 import { actions } from "common/actions";
-
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "revert-cave" });
-
-import { promisedModal } from "../modals";
-
-import asTask from "./as-task";
+import { messages } from "common/butlerd";
+import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
 import { modalWidgets } from "renderer/modal-widgets";
-
-import { withLogger, messages } from "common/butlerd";
-const call = withLogger(logger);
+import { promisedModal } from "../modals";
+import asTask from "./as-task";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.switchVersionCaveRequest, async (store, action) => {
@@ -21,7 +15,7 @@ export default function(watcher: Watcher) {
       name: "install",
       gameId: cave.game.id,
       work: async (ctx, logger) => {
-        await call(
+        await mcall(
           messages.InstallVersionSwitchQueue,
           { caveId: cave.id },
           client => {

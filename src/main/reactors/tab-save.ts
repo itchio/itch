@@ -1,18 +1,14 @@
-import { map, filter } from "underscore";
-
-import { Watcher } from "common/util/watcher";
-
-import { TabDataSave, Store } from "common/types";
 import { actions } from "common/actions";
-
-import { Space } from "common/helpers/space";
+import { messages } from "common/butlerd/index";
 import { Profile } from "common/butlerd/messages";
+import { Space } from "common/helpers/space";
+import { Store, TabDataSave } from "common/types";
+import { Watcher } from "common/util/watcher";
+import { mcall } from "main/butlerd/mcall";
+import { mainLogger } from "main/logger";
+import { filter, map } from "underscore";
 
-import rootLogger from "common/logger";
-const logger = rootLogger.child({ name: "tab-save" });
-
-import { messages, withLogger } from "common/butlerd/index";
-const call = withLogger(logger);
+const logger = mainLogger.child(__filename);
 
 interface Snapshot {
   current: string;
@@ -56,7 +52,7 @@ export async function saveTabs(store: Store) {
 
   const snapshot: Snapshot = { current: tab, items };
 
-  await call(messages.ProfileDataPut, {
+  await mcall(messages.ProfileDataPut, {
     profileId,
     key: "@itch/tabs",
     value: JSON.stringify(snapshot),
@@ -66,7 +62,7 @@ export async function saveTabs(store: Store) {
 export async function restoreTabs(store: Store, profile: Profile) {
   const profileId = profile.id;
 
-  const { value, ok } = await call(messages.ProfileDataGet, {
+  const { value, ok } = await mcall(messages.ProfileDataGet, {
     profileId,
     key: "@itch/tabs",
   });

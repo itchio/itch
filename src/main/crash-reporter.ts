@@ -1,22 +1,16 @@
-import { shell, dialog, app } from "electron";
-
-import env from "common/env";
-
-import path from "path";
-import querystring from "querystring";
-
 import platformData from "common/constants/platform-data";
 import urls from "common/constants/urls";
-import { isNetworkError } from "main/net/errors";
-
-import { isCancelled } from "common/types";
-
-import { currentRuntime } from "main/os/runtime";
-import * as os from "main/os";
-import * as sf from "main/os/sf";
-
+import env from "common/env";
 import { t } from "common/format/t";
+import { currentRuntime } from "common/os/runtime";
+import { isCancelled } from "common/types";
 import { ItchPromise } from "common/util/itch-promise";
+import { app, dialog, shell } from "electron";
+import { isNetworkError } from "main/net/errors";
+import { exit } from "main/os/exit";
+import { writeFile } from "main/os/sf";
+import path from "path";
+import querystring from "querystring";
 
 enum ErrorType {
   UncaughtException,
@@ -54,10 +48,10 @@ async function writeCrashLog(e: Error) {
   let log = "";
   log += e.stack || e.message || e;
 
-  if (os.platform() === "win32") {
+  if (process.platform === "win32") {
     log = log.replace(/\n/g, "\r\n");
   }
-  await sf.writeFile(crashFile, log, { encoding: "utf8" });
+  await writeFile(crashFile, log, { encoding: "utf8" });
 
   return { log, crashFile };
 }
@@ -110,7 +104,7 @@ async function handle(type: ErrorType, e: Error) {
 
   if (env.integrationTests) {
     console.log(`Crash log written to ${res.crashFile}, bailing out`);
-    os.exit(1);
+    exit(1);
     return;
   }
 
@@ -163,7 +157,7 @@ async function handle(type: ErrorType, e: Error) {
     // ignore and continue
     return;
   }
-  os.exit(1);
+  exit(1);
 
   catching = false;
 }
@@ -187,7 +181,7 @@ function makeHandler(type: ErrorType) {
       })
       .then(() => {
         if (type === ErrorType.UncaughtException) {
-          os.exit(1);
+          exit(1);
         }
       });
   };

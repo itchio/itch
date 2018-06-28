@@ -1,10 +1,12 @@
 import React from "react";
 import { IRequestCreator, Client } from "butlerd";
 import { withButlerClient } from "common/butlerd";
-import rootLogger, { Logger } from "common/logger";
+import { Logger } from "common/logger";
 import * as lodash from "lodash";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import ErrorState from "renderer/basics/ErrorState";
+import { rendererLogger } from "renderer/logger";
+import store from "renderer/store";
 const debug = require("debug")("butlerd:caller");
 
 interface ButlerCallerProps<Params, Result> {
@@ -62,9 +64,9 @@ const butlerCaller = <Params, Result>(
         error: undefined,
         result: undefined,
       };
-      this.logger = rootLogger.child({
-        name: `butlerd/${getRequestName(method)}`,
-      });
+      this.logger = rendererLogger.childWithName(
+        `butlerd/${getRequestName(method)}`
+      );
     }
 
     componentDidMount() {
@@ -72,7 +74,8 @@ const butlerCaller = <Params, Result>(
         this.resolve = resolve;
       });
       this.clientPromise = new Promise((resolve, reject) => {
-        withButlerClient(this.logger, async client => {
+        // FIXME: this is really bad
+        withButlerClient(store.getState(), this.logger, async client => {
           resolve(client);
           await this.promise;
         }).catch(e => {

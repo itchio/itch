@@ -1,10 +1,14 @@
+import { callFromStore, messages } from "common/butlerd/index";
 import { Logger } from "common/logger";
+import { Store } from "common/types";
 
-import { messages, withLogger } from "common/butlerd/index";
-
-export async function performUninstall(parentLogger: Logger, caveId: string) {
-  const logger = parentLogger.child({ name: "uninstall" });
-  const call = withLogger(logger);
+export async function performUninstall(
+  store: Store,
+  parentLogger: Logger,
+  caveId: string
+) {
+  const logger = parentLogger.child(__filename);
+  const call = callFromStore(store, logger);
 
   await call(messages.UninstallPerform, { caveId }, client => {
     client.on(messages.TaskStarted, async ({ type, reason }) => {
