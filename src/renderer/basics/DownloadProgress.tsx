@@ -34,7 +34,7 @@ export default ({
     <span>
       {fileSize(bps)}
       {"/s — "}
-      {<FormattedDuration secs={eta} />}
+      <FormattedDuration secs={eta} />
     </span>
   );
 };

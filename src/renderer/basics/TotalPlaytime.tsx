@@ -25,7 +25,7 @@ class TotalPlaytime extends React.PureComponent<Props> {
             <label>{T([`usage_stats.has_${xed}_for_duration`])} </label>
           )}
           <span className="total-playtime">
-            <FormattedDuration secs={secondsRun} />}
+            <FormattedDuration secs={secondsRun} />
           </span>
         </div>
       );
