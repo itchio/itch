@@ -21,9 +21,9 @@ import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import { isEmpty } from "underscore";
 import { isNetworkError } from "main/net/errors";
 import styled from "renderer/styles";
-import * as lodash from "lodash";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { throttle } from "underscore";
+import equal from "react-fast-compare";
 
 interface FetchRes<Item> {
   items: Item[];
@@ -90,7 +90,7 @@ export default <Params, Res extends FetchRes<any>>(
     }
 
     static getDerivedStateFromProps(props: Props, state: State): State {
-      if (!lodash.isEqual(props.params, state.lastParams)) {
+      if (!equal(props.params, state.lastParams)) {
         return {
           cursors: [null],
           lastParams: props.params,

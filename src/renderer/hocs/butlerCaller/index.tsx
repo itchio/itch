@@ -2,11 +2,12 @@ import React from "react";
 import { IRequestCreator, Client } from "butlerd";
 import { withButlerClient } from "common/butlerd";
 import { Logger } from "common/logger";
-import * as lodash from "lodash";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import ErrorState from "renderer/basics/ErrorState";
 import { rendererLogger } from "renderer/logger";
 import store from "renderer/store";
+import equal from "react-fast-compare";
+
 const debug = require("debug")("butlerd:caller");
 
 interface ButlerCallerProps<Params, Result> {
@@ -171,7 +172,7 @@ const butlerCaller = <Params, Result>(
     }
 
     componentDidUpdate(prevProps: ButlerCallerProps<Params, Result>) {
-      if (!lodash.isEqual(prevProps.params, this.props.params)) {
+      if (!equal(prevProps.params, this.props.params)) {
         this.queueFetch();
         return;
       }
