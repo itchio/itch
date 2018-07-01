@@ -5,6 +5,7 @@ const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const HappyPack = require("happypack");
 const WebpackBuildNotifierPlugin = require("webpack-build-notifier");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 
 const path = require("path");
 const merge = require("webpack-merge");
@@ -22,6 +23,7 @@ module.exports = (env) => {
         "bindings"
       ],
       plugins: [
+        new CleanWebpackPlugin(["dist/main"]),
         new WebpackBuildNotifierPlugin({
           title: "itch (main)",
         }),
@@ -53,6 +55,7 @@ module.exports = (env) => {
         ]
       },
       plugins: [
+        new CleanWebpackPlugin(["dist/renderer"]),
         new HotModuleReplacementPlugin(),
         new WebpackBuildNotifierPlugin({
           title: "itch (renderer)",
