@@ -139,8 +139,8 @@
     "ws": "^5.2.1"
   },
   "scripts": {
-    "start": "cross-env ELECTRON_ARGS=\"[\\\".\\\", \\\"--inspect=9223\\\"]\" electron-webpack dev",
-    "compile": "electron-webpack --no-progress",
+    "start": "cross-env ELECTRON_ARGS=\"[\\\".\\\", \\\"--inspect=9223\\\"]\" electron-webpack dev --env.minify=false",
+    "compile": "electron-webpack compile --no-progress --env.minify=false",
     "precommit": "lint-staged && npm run ts-check",
     "postinstall": "electron-rebuild",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
