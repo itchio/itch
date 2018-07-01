@@ -1,17 +1,24 @@
 {
-  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
-    "jsx": "react",
-    "strictNullChecks": false,
-    "strictPropertyInitialization": false,
-    "skipLibCheck": true,
+    "target": "es2017",
     "module": "commonjs",
     "esModuleInterop": true,
+    "jsx": "react",
+    "skipLibCheck": true,
+
     "baseUrl": "src",
     "paths": {
       "common": ["common"],
       "renderer": ["renderer"],
       "main": ["main"]
-    }
+    },
+
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "noImplicitReturns": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+
+    "sourceMap": true
   }
 }

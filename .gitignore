@@ -55,4 +55,4 @@ npm-debug.log
 /gopath
 
 # webpack stuff
-compilation-stats.json
+stats.json

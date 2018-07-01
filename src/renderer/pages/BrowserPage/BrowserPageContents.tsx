@@ -95,7 +95,7 @@ const Title = styled.h2`
 class BrowserPageContents extends React.PureComponent<Props> {
   initialURL: string;
 
-  constructor(props: any, context: any) {
+  constructor(props: BrowserPageContents["props"], context: any) {
     super(props, context);
     this.initialURL = props.url;
   }
