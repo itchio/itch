@@ -40,7 +40,6 @@ class BrothComponent extends React.PureComponent<Props> {
     const { pkg } = this.props;
     const { progressInfo } = pkg;
     if (progressInfo) {
-      console.log("progressInfo = ", progressInfo);
       const { eta = 0, bps = 0 } = progressInfo;
       return (
         <>

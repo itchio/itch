@@ -144,12 +144,14 @@
     "uglify-es": "^3.3.9",
     "webpack": "^4.12.1",
     "webpack-build-notifier": "^0.1.28",
+    "webpack-log": "^1.2.0",
     "webpack-merge": "^4.1.3",
     "webpack-serve": "^1.0.4",
+    "webpack-serve-waitpage": "^1.0.0",
     "ws": "^5.2.1"
   },
   "scripts": {
-    "start": "cross-env ELECTRON_ARGS=\"[\\\".\\\", \\\"--inspect=9223\\\"]\" electron-webpack dev --env.minify=false",
+    "start": "node develop.js",
     "compile": "webpack --progress --mode production",
     "compile-profile": "webpack --mode production --reporter json > stats.json",
     "precommit": "lint-staged && npm run ts-check",

@@ -182,7 +182,6 @@ export default <Params, Res extends FetchRes<any>>(
     loadMore: HTMLElement;
     gotLoadMore = (loadMore: HTMLDivElement) => {
       this.loadMore = loadMore;
-      console.log(`updated loadMore: `, this.loadMore);
     };
 
     renderError(result: Res, error: Error) {

@@ -226,7 +226,6 @@ class NavigationBar extends React.PureComponent<Props> {
   }
 
   handleClickOutside = () => {
-    console.log(`clickOutside!`);
     this.addressBlur();
   };
 }

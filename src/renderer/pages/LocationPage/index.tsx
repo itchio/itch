@@ -14,6 +14,7 @@ import GameSeries from "renderer/pages/common/GameSeries";
 import Page from "renderer/pages/common/Page";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { T } from "renderer/t";
+import { SortSpacer } from "renderer/pages/common/SortsAndFilters";
 
 const InstallLocationsGetByID = butlerCaller(messages.InstallLocationsGetByID);
 const CaveGameSeries = GameSeries(messages.FetchCaves);
@@ -23,7 +24,6 @@ class LocationPage extends React.PureComponent<Props> {
     const { space, dispatch } = this.props;
 
     const installLocationId = space.firstPathElement();
-    console.log(`installLocationId = `, installLocationId);
 
     return (
       <Page>
@@ -45,6 +45,7 @@ class LocationPage extends React.PureComponent<Props> {
                 renderMainFilters={() => (
                   <>
                     {this.renderLocationInfo(result)}
+                    &nbsp; &nbsp;
                     <Link
                       label={T(showInExplorerString())}
                       onClick={e =>

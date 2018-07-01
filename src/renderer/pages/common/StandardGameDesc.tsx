@@ -27,9 +27,9 @@ const StandardGameDesc = ({
         {children}
       </Title>
     </a>
-    <p>{game.shortText}</p>
+    <div>{game.shortText}</div>
     <Filler />
-    <p>
+    <div>
       {renderClassification(game.classification)}
       <PlatformIcons target={game} before={() => <>&nbsp;&nbsp;</>} />
       {!game.userId ? null : (
@@ -61,7 +61,7 @@ const StandardGameDesc = ({
           }}
         />
       )}
-    </p>
+    </div>
   </TitleBox>
 );
 

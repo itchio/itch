@@ -1,5 +1,4 @@
-const { HotModuleReplacementPlugin } = require("webpack");
-
+const {NamedModulesPlugin} = require("webpack");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const HappyPack = require("happypack");
@@ -11,19 +10,20 @@ const path = require("path");
 const merge = require("webpack-merge");
 
 module.exports = (env) => {
+  const isProduction = env.mode === "production";
   return [
     merge.smart(getCommonConfig("main", env), {
       target: "electron-main",
       entry: {
-        main: "./src/main/index.ts",
-        "inject-game": "./src/main/inject/inject-game.ts",
-        "inject-captcha": "./src/main/inject/inject-captcha.ts",
+        main: ["./src/main/index.ts"],
+        "inject-game": ["./src/main/inject/inject-game.ts"],
+        "inject-captcha": ["./src/main/inject/inject-captcha.ts"],
       },
       externals: [
         "bindings"
       ],
       plugins: [
-        new CleanWebpackPlugin(["dist/main"]),
+        new CleanWebpackPlugin(["dist/main"], {verbose: false}),
         new WebpackBuildNotifierPlugin({
           title: "itch (main)",
         }),
@@ -32,7 +32,7 @@ module.exports = (env) => {
     merge.smart(getCommonConfig("renderer", env), {
       target: "electron-renderer",
       entry: {
-        renderer: "./src/renderer/index.tsx",
+        renderer: ["./src/renderer/index.tsx"],
       },
       externals: [
         "systeminformation",
@@ -55,8 +55,7 @@ module.exports = (env) => {
         ]
       },
       plugins: [
-        new CleanWebpackPlugin(["dist/renderer"]),
-        new HotModuleReplacementPlugin(),
+        new CleanWebpackPlugin(["dist/renderer"], {verbose: false}),
         new WebpackBuildNotifierPlugin({
           title: "itch (renderer)",
         }),
@@ -65,6 +64,7 @@ module.exports = (env) => {
           template: path.resolve(`./src/index.ejs`),
           minify: false,
         }),
+        new NamedModulesPlugin(),
       ]
     }),
   ]
