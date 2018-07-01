@@ -141,6 +141,7 @@
   "scripts": {
     "start": "cross-env ELECTRON_ARGS=\"[\\\".\\\", \\\"--inspect=9223\\\"]\" electron-webpack dev --env.minify=false",
     "compile": "electron-webpack compile --no-progress --env.minify=false",
+    "compile-profile": "electron-webpack compile --env.minify=false --profile --json > compilation-stats.json",
     "precommit": "lint-staged && npm run ts-check",
     "postinstall": "electron-rebuild",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
