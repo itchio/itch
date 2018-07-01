@@ -126,6 +126,10 @@ export class Logger {
       this._write({ time: Date.now(), level, msg, name: this._name });
     }
   }
+
+  write(entry: LogEntry) {
+    this._write(entry);
+  }
 }
 
 export const devNull = new Logger({

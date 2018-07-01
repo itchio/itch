@@ -160,6 +160,11 @@ export default function(watcher: Watcher) {
     }
   });
 
+  watcher.on(actions.log, async (store, action) => {
+    const { entry } = action.payload;
+    mainLogger.write(entry);
+  });
+
   watcher.on(actions.attemptLogin, async (store, action) => {
     if (!testProxy) {
       return;
