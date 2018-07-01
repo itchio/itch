@@ -62,12 +62,13 @@ async function main() {
 
   await new Promise((resolve, reject) => {
     const proc = childProcess.spawn(electronBinaryPath, [
-      ".", "--inspect=9223"
+      ".", "--inspect=9223", "--color"
     ], {
       env: {
         ...process.env,
         ELECTRON_WEBPACK_WDS_PORT: port,
-      }
+      },
+      stdio: ['ignore', 'inherit', 'inherit'],
     });
     log.info(`Should've started the app now...`);
 
