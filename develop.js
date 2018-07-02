@@ -33,6 +33,14 @@ async function main() {
 
   const server = await serve({
     config: rendererConfig,
+    add: (app, middleware, options) => {
+      app.use(WebpackServeWaitpage(options, {
+        title: "almost there...",
+        theme: "material"
+      }));
+      middleware.webpack();
+      middleware.content();
+    },
   });
   let portPromise = new Promise((resolve, reject) => {
     server.on("listening", ({server, options}) => {
