@@ -31,6 +31,8 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = process.platform === "darwin";
 
+const preloadEnabled = !env.integrationTests;
+
 async function createRootWindow(store: Store) {
   const wind = "root";
   const role: WindRole = "main";
@@ -142,6 +144,10 @@ async function createRootWindow(store: Store) {
 }
 
 function preloadWindow(store: Store) {
+  if (!preloadEnabled) {
+    return;
+  }
+
   store.dispatch(
     actions.openWind({
       initialURL: "itch://preload",
@@ -389,7 +395,7 @@ export default function(watcher: Watcher) {
       }
     }
 
-    if (!preload) {
+    if (!preload && preloadEnabled) {
       // do we have a preload available?
       let numPreload = 0;
       for (const window of Object.keys(rs.winds)) {
@@ -611,7 +617,7 @@ function hookNativeWindow(
   });
 
   nativeWindow.on("close", (e: any) => {
-    if (wind !== "root") {
+    if (wind !== "root" && preloadEnabled) {
       e.preventDefault();
       nativeWindow.hide();
       store.dispatch(actions.windLulled({ wind }));
