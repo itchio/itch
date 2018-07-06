@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { callFromStore, messages } from "common/butlerd";
+import { messages } from "common/butlerd";
 import { Build, Game, Upload } from "common/butlerd/messages";
 import { Logger } from "common/logger";
 import { Store } from "common/types/index";
@@ -117,8 +117,7 @@ async function performInstallQueue({
 }) {
   const installLocationId = defaultInstallLocation(store);
 
-  const call = callFromStore(store, logger);
-  await call(
+  await mcall(
     messages.InstallQueue,
     {
       game,
@@ -127,8 +126,8 @@ async function performInstallQueue({
       installLocationId,
       queueDownload: true,
     },
-    client => {
-      client.on(messages.PickUpload, async ({ uploads }) => {
+    convo => {
+      convo.on(messages.PickUpload, async ({ uploads }) => {
         const { title } = game;
 
         const modalRes = await promisedModal(
@@ -160,7 +159,7 @@ async function performInstallQueue({
         }
       });
 
-      client.on(messages.ExternalUploadsAreBad, async () => {
+      convo.on(messages.ExternalUploadsAreBad, async () => {
         const modalRes = await promisedModal(
           store,
           modals.naked.make({

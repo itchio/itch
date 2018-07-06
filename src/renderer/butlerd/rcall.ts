@@ -1,6 +1,6 @@
 import store from "renderer/store";
 import { call, SetupFunc } from "common/butlerd";
-import { IRequestCreator } from "butlerd";
+import { RequestCreator } from "butlerd";
 import { rendererLogger } from "renderer/logger";
 
 if (process.type !== "renderer") {
@@ -11,10 +11,9 @@ if (process.type !== "renderer") {
  * Perform a butlerd call from the renderer process
  */
 export async function rcall<Params, Res>(
-  rc: IRequestCreator<Params, Res>,
+  rc: RequestCreator<Params, Res>,
   params: Params,
   setup?: SetupFunc
 ): Promise<Res> {
-  const rs = store.getState();
-  return await call(rs, rendererLogger, rc, params, setup);
+  return await call(store, rc, params, setup);
 }

@@ -1,10 +1,13 @@
 import { actions } from "common/actions";
-import { NET_PARTITION_NAME } from "common/constants/net";
+import {
+  NET_PARTITION_NAME,
+  LOOPBACK_PARTITION_NAME,
+} from "common/constants/net";
 import env from "common/env";
 import { elapsed } from "common/format/datetime";
 import { ProxySource, SystemState } from "common/types";
 import { Watcher } from "common/util/watcher";
-import { app } from "electron";
+import { app, CertificateVerifyProcRequest } from "electron";
 import { mainLogger } from "main/logger";
 import loadPreferences from "main/reactors/preboot/load-preferences";
 import { modals } from "common/modals";

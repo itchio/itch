@@ -4,6 +4,7 @@ import urls from "common/constants/urls";
 import ospath from "path";
 import { userAgent } from "common/constants/useragent";
 import { RootState } from "common/types";
+import env from "common/env";
 
 export async function makeButlerInstance(rs: RootState): Promise<Instance> {
   const butlerPkg = rs.broth.packages["butler"];
@@ -24,15 +25,23 @@ export async function makeButlerInstance(rs: RootState): Promise<Instance> {
 export async function makeButlerInstanceWithPrefix(
   versionPrefix: string
 ): Promise<Instance> {
+  let args = [
+    "--dbpath",
+    butlerDbPath(),
+    "--address",
+    urls.itchio,
+    "--user-agent",
+    userAgent(),
+    "--destiny-pid",
+    `${process.pid}`,
+  ];
+
+  if (env.development) {
+    args = [...args, "--log"];
+  }
+
   return new Instance({
     butlerExecutable: ospath.join(versionPrefix, "butler"),
-    args: [
-      "--dbpath",
-      butlerDbPath(),
-      "--address",
-      urls.itchio,
-      "--user-agent",
-      userAgent(),
-    ],
+    args,
   });
 }

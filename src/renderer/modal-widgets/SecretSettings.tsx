@@ -91,6 +91,13 @@ class SecretSettings extends React.PureComponent<Props> {
           <Button
             className="control"
             primary={true}
+            icon="leaf"
+            onClick={this.onDoubleTwice}
+            label="Double twice"
+          />
+          <Button
+            className="control"
+            primary={true}
             icon="close"
             onClick={this.onExpireAll}
             label="Expire all data in local database"
@@ -187,6 +194,16 @@ class SecretSettings extends React.PureComponent<Props> {
           })
         )
       );
+    });
+  };
+
+  onDoubleTwice = () => {
+    doAsync(async () => {
+      await rcall(messages.TestDoubleTwice, { number: 7 }, client => {
+        client.on(messages.TestDouble, async ({ number }) => {
+          return { number: number * 2 };
+        });
+      });
     });
   };
 

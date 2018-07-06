@@ -1,4 +1,4 @@
-import { Client } from "butlerd";
+import { Client, Instance } from "butlerd";
 import { actions } from "common/actions";
 import { messages } from "common/butlerd/index";
 import { makeButlerInstance } from "common/butlerd/master-client";
@@ -106,6 +106,8 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
   }
 }
 
+let oldInstance: Instance;
+
 async function refreshButlerd(store: Store) {
   logger.info(`Refreshing butlerd! Spinning up new instance...`);
   let instance = await makeButlerInstance(store.getState());
@@ -116,19 +118,18 @@ async function refreshButlerd(store: Store) {
   });
   const endpoint = await instance.getEndpoint();
 
-  logger.info(`Connecting client...`);
-  const nextClient = new Client(endpoint);
-  await nextClient.connect();
-
-  if (masterClient) {
-    // instances exit gracefully when all clients have closed
-    logger.info(`Closing old master client...`);
-    masterClient.close();
-    masterClient = null;
+  if (oldInstance) {
+    // FIXME: how about a '/lifeline' endpoint which makes
+    // butler exit gracefully after all EventSources are closed ?
+    oldInstance.cancel();
   }
-  masterClient = nextClient;
-  logger.info(`Got new endpoint`);
+  oldInstance = instance;
+
   store.dispatch(actions.gotButlerdEndpoint({ endpoint }));
+
+  const client = new Client(endpoint);
+  const versionInfo = await client.call(messages.VersionGet, {});
+  logger.info(`Connected to butlerd ${JSON.stringify(versionInfo)}`);
   initialButlerdResolve();
 }
 

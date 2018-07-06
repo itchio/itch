@@ -1,14 +1,9 @@
 import React from "react";
-import { IRequestCreator, Client } from "butlerd";
-import { withButlerClient } from "common/butlerd";
-import { Logger } from "common/logger";
+import { RequestCreator, Client } from "butlerd";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import ErrorState from "renderer/basics/ErrorState";
-import { rendererLogger } from "renderer/logger";
-import store from "renderer/store";
 import equal from "react-fast-compare";
-
-const debug = require("debug")("butlerd:caller");
+import { rcall } from "renderer/butlerd/rcall";
 
 interface ButlerCallerProps<Params, Result> {
   params: Params;
@@ -41,18 +36,11 @@ interface ButlerCallerArgs<Params, Result> {
 let markSeed = 0;
 let callerSeed = 0;
 
-const butlerCaller = <Params, Result>(
-  method: IRequestCreator<Params, Result>
-) =>
+const butlerCaller = <Params, Result>(method: RequestCreator<Params, Result>) =>
   class extends React.PureComponent<
     ButlerCallerProps<Params, Result>,
     ButlerCallerState<Result>
   > {
-    clientPromise: Promise<Client>;
-    resolveClient: (client: Client) => void;
-    promise: Promise<void>;
-    resolve: () => void;
-    logger: Logger;
     id: number;
 
     static displayName = `ButlerCall(${method.name})`;
@@ -65,35 +53,13 @@ const butlerCaller = <Params, Result>(
         error: undefined,
         result: undefined,
       };
-      this.logger = rendererLogger.childWithName(
-        `butlerd/${getRequestName(method)}`
-      );
     }
 
     componentDidMount() {
-      this.promise = new Promise((resolve, reject) => {
-        this.resolve = resolve;
-      });
-      this.clientPromise = new Promise((resolve, reject) => {
-        // FIXME: this is really bad
-        withButlerClient(store.getState(), this.logger, async client => {
-          resolve(client);
-          await this.promise;
-        }).catch(e => {
-          reject(e);
-          this.setError(e);
-        });
-      });
       this.queueFetch();
     }
 
     private queueFetch = (additionalParams?: Object) => {
-      markSeed++;
-      let markPrefix = `butlerd-${markSeed}`;
-      let startMark = `${markPrefix}-start`;
-      let endMark = `${markPrefix}-end`;
-      let measureName = `⌘ ${getRequestName(method)}`;
-
       // cf. https://github.com/Microsoft/TypeScript/pull/13288
       let fullParams = this.props.params as any;
       if (additionalParams) {
@@ -106,14 +72,7 @@ const butlerCaller = <Params, Result>(
 
       (async () => {
         try {
-          performance.mark(startMark);
-          const client = await this.clientPromise;
-          debug("%s <- %o", getRequestName(method), fullParams);
-          const result = await client.call(method, fullParams);
-          debug("%s -> %o", getRequestName(method), result);
-          performance.mark(endMark);
-          performance.measure(`${measureName}`, startMark, endMark);
-
+          const result = await rcall(method, fullParams);
           this.setResult(result);
           if (!fullParams.fresh && (result as StaleResult).stale) {
             this.queueFetch({ fresh: true });
@@ -134,13 +93,6 @@ const butlerCaller = <Params, Result>(
     private setError = (e: any) => {
       this.setState({ error: e, loading: false });
     };
-
-    componentWillUnmount() {
-      if (this.resolve) {
-        this.resolve();
-        return;
-      }
-    }
 
     render() {
       const { error, loading, result } = this.state;
@@ -185,17 +137,3 @@ const butlerCaller = <Params, Result>(
   };
 
 export default butlerCaller;
-
-const fakeClient = {
-  generateID: () => 0,
-} as Client;
-
-const requestNameMap = new WeakMap<IRequestCreator<any, any>, string>();
-
-function getRequestName(rc: IRequestCreator<any, any>): string {
-  if (!requestNameMap.has(rc)) {
-    const name = rc({} as any)(fakeClient).method;
-    requestNameMap.set(rc, name);
-  }
-  return requestNameMap.get(rc);
-}

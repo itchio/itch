@@ -1,4 +1,4 @@
-import { IRequestCreator } from "butlerd";
+import { RequestCreator } from "butlerd";
 import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
@@ -66,7 +66,7 @@ const LoadMoreText = styled.div`
 const limit = 15;
 
 export default <Params, Res extends FetchRes<any>>(
-  rc: IRequestCreator<Params, Res>
+  rc: RequestCreator<Params, Res>
 ) => {
   const Call = butlerCaller(rc);
 

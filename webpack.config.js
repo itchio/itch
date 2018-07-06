@@ -14,13 +14,18 @@ module.exports = (env) => {
   return [
     merge.smart(getCommonConfig("main", env), {
       target: "electron-main",
+      resolve: {
+        mainFields: ["electron-main", "module", "main"]
+      },
       entry: {
         main: ["./src/main/index.ts"],
         "inject-game": ["./src/main/inject/inject-game.ts"],
         "inject-captcha": ["./src/main/inject/inject-captcha.ts"],
       },
       externals: [
-        "bindings"
+        "bindings",
+        "electron-fetch",
+        "eventsource"
       ],
       plugins: [
         new CleanWebpackPlugin(["dist/main"], {verbose: false}),
@@ -31,6 +36,9 @@ module.exports = (env) => {
     }),
     merge.smart(getCommonConfig("renderer", env), {
       target: "electron-renderer",
+      resolve: {
+        mainFields: ["browser", "module", "main"]
+      },
       entry: {
         renderer: ["./src/renderer/index.tsx"],
       },

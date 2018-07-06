@@ -38,7 +38,7 @@ import {
   DownloadProgress,
   Cave,
 } from "common/butlerd/messages";
-import { IEndpoint } from "butlerd";
+import { Endpoint } from "butlerd";
 import { TypedModal, TypedModalUpdate } from "common/modals";
 import { LogEntry } from "common/logger";
 export interface ActionCreator<PayloadType> {
@@ -192,7 +192,7 @@ export const actions = wireActions({
   relaunch: action<{}>(),
 
   gotButlerdEndpoint: action<{
-    endpoint: IEndpoint;
+    endpoint: Endpoint;
   }>(),
 
   setupStatus: action<{

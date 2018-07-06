@@ -13,6 +13,7 @@ import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
   screen,
+  session,
 } from "electron";
 import { mainLogger } from "main/logger";
 import * as path from "path";
@@ -21,6 +22,7 @@ import { createSelector } from "reselect";
 import { debounce } from "underscore";
 import { format as formatUrl, UrlObject } from "url";
 import { openAppDevTools } from "./open-app-devtools";
+import { LOOPBACK_PARTITION_NAME } from "common/constants/net";
 
 const logger = mainLogger.child(__filename);
 
@@ -48,7 +50,7 @@ async function createRootWindow(store: Store) {
   const center = bounds.x === -1 && bounds.y === -1;
 
   let opts: Electron.BrowserWindowConstructorOptions = {
-    ...commonBrowserWindowOpts(),
+    ...commonBrowserWindowOpts(store),
     title: app.getName(),
     width,
     height,
@@ -462,7 +464,7 @@ export default function(watcher: Watcher) {
     }
 
     const opts: BrowserWindowConstructorOptions = {
-      ...commonBrowserWindowOpts(),
+      ...commonBrowserWindowOpts(store),
       title: app.getName(),
     };
     if (preload) {
@@ -521,7 +523,13 @@ function getIconPath(): string {
   return getImagePath("window/" + env.appName + "/" + iconName + ".png");
 }
 
-function commonBrowserWindowOpts(): Partial<BrowserWindowConstructorOptions> {
+const nodeButlerdPartition = "__node-butlerd__";
+
+function commonBrowserWindowOpts(
+  store: Store
+): Partial<BrowserWindowConstructorOptions> {
+  const customSession = session.fromPartition(nodeButlerdPartition);
+
   return {
     icon: getIconPath(),
     autoHideMenuBar: true,
@@ -532,6 +540,7 @@ function commonBrowserWindowOpts(): Partial<BrowserWindowConstructorOptions> {
       affinity: "all-in-one",
       blinkFeatures: "ResizeObserver",
       webSecurity: env.development ? false : true,
+      session: customSession,
     },
   };
 }

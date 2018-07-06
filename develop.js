@@ -54,11 +54,11 @@ async function main() {
   {
     const info = stats.toJson();
     if (stats.hasErrors()) {
-      log.error("Main: ", info.errors);
+      log.error("Main: ", info.errors.join("\n\n"));
       process.exit(1);
     }
     if (stats.hasWarnings()) {
-      log.warn("Main: ", info.warnings);
+      log.warn("Main: ", info.warnings.join("\n\n"));
     }
     log.info(`Main built!`);
   }
@@ -70,7 +70,7 @@ async function main() {
 
   await new Promise((resolve, reject) => {
     const proc = childProcess.spawn(electronBinaryPath, [
-      ".", "--inspect=9223", "--color"
+      ".", "--inspect=9222", "--color"
     ], {
       env: {
         ...process.env,

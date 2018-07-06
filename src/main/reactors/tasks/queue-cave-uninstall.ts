@@ -1,29 +1,42 @@
 import { actions } from "common/actions";
-import { messages, callFromStore } from "common/butlerd";
+import { messages, hookLogging, hookProgress } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
 import { mainLogger } from "main/logger";
 import { modals } from "common/modals";
 import { performUninstall } from "../downloads/perform-uninstall";
 import { promisedModal } from "../modals";
 import asTask from "./as-task";
+import { mcall } from "main/butlerd/mcall";
 
 const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueCaveUninstall, async (store, action) => {
-    const call = callFromStore(store, logger);
     const { caveId } = action.payload;
 
     // TODO: figure if we really need that. asTask wants a gameId
     // but do we really need it? how used is asTask anyway?
-    const { cave } = await call(messages.FetchCave, { caveId });
+    const { cave } = await mcall(messages.FetchCave, { caveId });
 
     await asTask({
       name: "uninstall",
       gameId: cave.game.id,
       store,
       work: async (ctx, logger) => {
-        await performUninstall(store, logger, caveId);
+        await mcall(messages.UninstallPerform, { caveId }, convo => {
+          hookProgress(convo, ctx);
+          hookLogging(convo, logger.child(__filename));
+
+          convo.on(messages.TaskStarted, async ({ type, reason }) => {
+            logger.info(`Task ${type} started (for ${reason})`);
+          });
+
+          convo.on(messages.TaskSucceeded, async ({ type }) => {
+            logger.info(`Task ${type} succeeded`);
+          });
+        });
+        logger.info(`Uninstall successful`);
+
         store.dispatch(actions.uninstallEnded({}));
       },
       onError: async (e, log) => {

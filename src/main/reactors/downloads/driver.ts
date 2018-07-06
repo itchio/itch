@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import { messages, hookLogging } from "common/butlerd";
 import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
@@ -56,30 +56,29 @@ async function driverPoll(store: Store) {
         state.setPhase(Phase.STARTING);
 
         try {
-          await mcall(messages.DownloadsDrive, {}, client => {
-            state.registerClient(client);
+          await mcall(messages.DownloadsDrive, {}, convo => {
+            state.setPhase(Phase.RUNNING);
 
-            client.on(messages.DownloadsDriveStarted, async ({ download }) => {
+            hookLogging(convo, logger);
+
+            convo.on(messages.DownloadsDriveStarted, async ({ download }) => {
               await refreshDownloads(store);
             });
 
-            client.on(
-              messages.DownloadsDriveDiscarded,
-              async ({ download }) => {
-                await refreshDownloads(store);
-              }
-            );
-
-            client.on(messages.DownloadsDriveErrored, async ({ download }) => {
+            convo.on(messages.DownloadsDriveDiscarded, async ({ download }) => {
               await refreshDownloads(store);
             });
 
-            client.on(messages.DownloadsDriveFinished, async ({ download }) => {
+            convo.on(messages.DownloadsDriveErrored, async ({ download }) => {
+              await refreshDownloads(store);
+            });
+
+            convo.on(messages.DownloadsDriveFinished, async ({ download }) => {
               await refreshDownloads(store);
               store.dispatch(actions.downloadEnded({ download }));
             });
 
-            client.on(
+            convo.on(
               messages.DownloadsDriveProgress,
               async ({ download, progress, speedHistory }) => {
                 store.dispatch(

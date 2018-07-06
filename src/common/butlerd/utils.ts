@@ -1,29 +1,66 @@
-import { Client, IRequestCreator, RequestError } from "butlerd";
-import { Logger } from "common/logger";
+import { Client, RequestCreator, RequestError, Endpoint } from "butlerd";
+import { Logger, devNull } from "common/logger";
 import { MinimalContext } from "main/context/index";
 import * as messages from "./messages";
 import { Cave, CaveSummary } from "./messages";
 import { RootState, Store } from "common/types";
+import { Conversation } from "butlerd/lib/client";
+import { delay } from "main/reactors/delay";
+import { Watcher } from "common/util/watcher";
+import { actions } from "common/actions";
 
 type WithCB<T> = (client: Client) => Promise<T>;
 
-export async function withButlerClient<T>(
-  rs: RootState,
-  logger: Logger,
-  cb: WithCB<T>
-): Promise<T> {
-  const { endpoint } = rs.butlerd;
-  if (!endpoint) {
-    throw new Error(`no butlerd endpoint yet`);
-  }
-  const client = new Client(endpoint);
-  await client.connect();
-  setupLogging(client, logger);
+type ClientPromise = Promise<Client>;
 
-  let res: T;
-  let err: Error;
+var clientPromises = new WeakMap<Store, ClientPromise>();
+
+async function makeClient(store: Store): Promise<Client> {
+  while (true) {
+    const { endpoint } = store.getState().butlerd;
+    if (endpoint) {
+      const client = new Client(endpoint);
+      client.onWarning(msg => {
+        console.warn(`(butlerd) ${msg}`);
+      });
+      return client;
+    }
+
+    console.log(`Waiting for butlerd endpoint...`);
+    await delay(1000);
+  }
+}
+
+async function getClient(store: Store): Promise<Client> {
+  let p: ClientPromise;
+  if (clientPromises.has(store)) {
+    p = clientPromises.get(store);
+  } else {
+    p = makeClient(store);
+    clientPromises.set(store, p);
+  }
+
+  const client = await p;
+  if (client.endpoint !== store.getState().butlerd.endpoint) {
+    console.warn(`(butlerd) Endpoint changed, making fresh client`);
+    p = makeClient(store);
+    clientPromises.set(store, p);
+  }
+  return p;
+}
+
+export type SetupFunc = (convo: Conversation) => void;
+
+export async function call<Params, Res>(
+  store: Store,
+  rc: RequestCreator<Params, Res>,
+  params: Params,
+  setup?: SetupFunc
+): Promise<Res> {
+  const client = await getClient(store);
+
   try {
-    res = await cb(client);
+    return await client.call(rc, params, setup);
   } catch (e) {
     console.error(`Caught butler error:`);
     if (isInternalError(e)) {
@@ -36,77 +73,33 @@ export async function withButlerClient<T>(
     } else {
       console.error(`${e.message}`);
     }
-    err = e;
-  } finally {
-    client.close();
+    throw e;
   }
-
-  if (err) {
-    throw err;
-  }
-  return res;
 }
 
-export type SetupFunc = (client: Client) => void;
-
-export function callFromStore(store: Store, logger: Logger) {
-  return async function<Params, Res>(
-    rc: IRequestCreator<Params, Res>,
-    params: Params,
-    setup?: SetupFunc
-  ): Promise<Res> {
-    return await call(store.getState(), logger, rc, params, setup);
-  };
-}
-
-export async function call<Params, Res>(
-  rs: RootState,
-  logger: Logger,
-  rc: IRequestCreator<Params, Res>,
-  params: Params,
-  setup?: SetupFunc
-): Promise<Res> {
-  return await withButlerClient(rs, logger, async client => {
-    if (setup) {
-      setup(client);
-    }
-    return await client.call(rc, params);
-  });
-}
-
-export function setupClient(
-  client: Client,
-  parentLogger: Logger,
-  ctx: MinimalContext
-) {
-  client.onNotification(messages.Progress, ({ params }) => {
+export function hookProgress(convo: Conversation, ctx: MinimalContext) {
+  convo.onNotification(messages.Progress, ({ params }) => {
     ctx.emitProgress(params);
   });
-
-  setupLogging(client, parentLogger);
 }
 
-export function setupLogging(client: Client, logger: Logger) {
-  client.onWarning(msg => {
-    logger.warn(`(butlerd) ${msg}`);
-  });
-
-  client.onNotification(messages.Log, ({ params }) => {
-    switch (params.level) {
+export function hookLogging(convo: Conversation, logger: Logger) {
+  convo.on(messages.Log, async ({ level, message }) => {
+    switch (level) {
       case "debug":
-        logger.debug(params.message);
+        logger.debug(message);
         break;
       case "info":
-        logger.info(params.message);
+        logger.info(message);
         break;
       case "warning":
-        logger.warn(params.message);
+        logger.warn(message);
         break;
       case "error":
-        logger.error(params.message);
+        logger.error(message);
         break;
       default:
-        logger.info(`[${params.level}] ${params.message}`);
+        logger.info(`[${level}] ${message}`);
         break;
     }
   });
@@ -128,7 +121,6 @@ export function getErrorMessage(e: any): string {
   }
 
   // TODO: this is a good place to do i18n on butlerd error codes!
-
   let errorMessage = e.message;
   const re = e.rpcError;
   if (re) {

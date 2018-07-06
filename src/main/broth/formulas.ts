@@ -36,10 +36,9 @@ describeFormula("butler", {
     instance.promise().catch(() => {});
     try {
       const client = new Client(await instance.getEndpoint());
-      await client.connect();
       await client.call(messages.VersionGet, {});
-      client.close();
     } finally {
+      instance.cancel();
       await instance.promise();
     }
   },

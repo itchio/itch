@@ -1,5 +1,5 @@
 import React from "react";
-import { IRequestCreator } from "butlerd";
+import { RequestCreator } from "butlerd";
 import { Game } from "common/butlerd/messages";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { LocalizedString } from "common/types";
@@ -71,7 +71,7 @@ interface Props<Params, Res extends FetchRes<Item>, Item> {
 const stripeLimit = 12;
 
 export default <Params, Res extends FetchRes<any>>(
-  rc: IRequestCreator<Params, Res>
+  rc: RequestCreator<Params, Res>
 ) => {
   const Call = butlerCaller(rc);
 

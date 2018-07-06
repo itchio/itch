@@ -18,7 +18,7 @@ import {
   Platform,
   Profile,
 } from "common/butlerd/messages";
-import { IEndpoint } from "butlerd";
+import { Endpoint } from "butlerd";
 import { modals } from "common/modals";
 export interface Store extends ReduxStore<RootState> {}
 
@@ -94,7 +94,7 @@ export interface PackagesState {
 }
 
 export interface ButlerdState {
-  endpoint?: IEndpoint;
+  endpoint?: Endpoint;
 }
 
 export interface PackageState {

@@ -1,6 +1,6 @@
-import { Client } from "butlerd";
 import { messages } from "common/butlerd";
 import { mainLogger } from "main/logger";
+import { mcall } from "main/butlerd/mcall";
 
 const logger = mainLogger.child(__filename);
 
@@ -12,26 +12,17 @@ export enum Phase {
 }
 
 class State {
-  private client: Client;
   private phase: Phase;
 
   constructor() {
     this.phase = Phase.IDLE;
   }
 
-  registerClient(client: Client) {
-    this.client = client;
-    this.setPhase(Phase.RUNNING);
-  }
-
   async cancel() {
-    this.setPhase(Phase.CANCELLING);
-    await this.client.call(messages.DownloadsDriveCancel, {});
-    this.client = null;
-  }
-
-  getClient() {
-    return this.client;
+    if (this.phase === Phase.RUNNING) {
+      this.setPhase(Phase.CANCELLING);
+      await mcall(messages.DownloadsDriveCancel, {});
+    }
   }
 
   setPhase(phase: Phase) {
