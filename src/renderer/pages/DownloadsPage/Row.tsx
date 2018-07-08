@@ -75,13 +75,6 @@ const DownloadRowDiv = styled.div`
       text-overflow: ellipsis;
     }
 
-    .control--title {
-      padding: 0.1em 0;
-      padding-bottom: 0;
-      font-size: ${props => props.theme.fontSizes.larger};
-      font-weight: bold;
-    }
-
     .control--details,
     .control--status {
       font-size: ${props => props.theme.fontSizes.baseText};
@@ -391,7 +384,7 @@ class DownloadRow extends React.PureComponent<Props> {
     const { game } = this.props.item;
     return (
       <>
-        <TitleCompact>
+        <TitleCompact className="control--title">
           <a href={urlForGame(game.id)}>{game.title}</a>
         </TitleCompact>
         <Filler />

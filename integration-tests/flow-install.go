@@ -37,6 +37,7 @@ func installFlow(r *runner) {
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
 
 	r.logf("switching to downloads window")
+	must(r.click("#sidebar a[href='itch://downloads']"))
 	r.mustWaitForWindowQuantity(2)
 	r.mustSwitchToOtherWindow(mainWindowHandle)
 

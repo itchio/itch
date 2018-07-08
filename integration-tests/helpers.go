@@ -297,22 +297,21 @@ func (r *runner) mustCloseAllOtherWindows() {
 
 func (r *runner) mustSwitchToWindow(handle string) {
 	r.logf("Switching to window (%s)", handle)
-	_, err := r.driver.SwitchToWindow(handle)
-	must(err)
 
 	var currentWindowHandle string
 
 	success := r.driver.Wait(func(w gs.WebDriver) bool {
+		_, err := r.driver.SwitchToWindow(handle)
+		must(err)
+
 		res, err := w.WindowHandle()
 		if err != nil {
 			return false
 		}
 
 		currentWindowHandle = res.Handle
-		if res.Handle == handle {
-			return true
-		}
-		return false
+		isOnDesiredWindow := res.Handle == handle
+		return isOnDesiredWindow
 	}, TIMEOUT, SLEEP)
 
 	if !success {

@@ -14,6 +14,7 @@ import { performHTMLLaunch } from "./perform-html-launch";
 import { pickManifestAction } from "./pick-manifest-action";
 import { mcall } from "main/butlerd/mcall";
 import { itchSetupLock } from "main/broth/itch-setup";
+import { Conversation } from "butlerd/lib/client";
 
 export async function performLaunch(
   ctx: Context,
@@ -60,9 +61,8 @@ export async function performLaunch(
 
   let powerSaveBlockerId: number = null;
 
-  let client: Client;
   let cancelled = false;
-
+  let launchConvo: Conversation;
   await ctx.withStopper({
     work: async () => {
       try {
@@ -74,6 +74,7 @@ export async function performLaunch(
             sandbox: preferences.isolateApps,
           },
           convo => {
+            launchConvo = convo;
             hookLogging(convo, logger);
 
             convo.on(messages.PickManifestAction, async ({ actions }) => {
@@ -296,8 +297,8 @@ export async function performLaunch(
     stop: async () => {
       logger.debug(`Asked to stop, cancelling butler process`);
       cancelled = true;
-      if (client) {
-        await client.call(messages.LaunchCancel, {});
+      if (launchConvo) {
+        await launchConvo.cancel();
       }
     },
   });

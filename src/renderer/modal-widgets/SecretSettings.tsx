@@ -109,6 +109,13 @@ class SecretSettings extends React.PureComponent<Props> {
             onClick={this.onOpenCrashy}
             label="Open crashy tab"
           />
+          <Button
+            className="control"
+            primary={true}
+            icon="checkbox-checked"
+            onClick={this.onRestartButler}
+            label="Force butler restartd"
+          />
         </ControlsDiv>
       </ModalWidgetDiv>
     );
@@ -217,6 +224,19 @@ class SecretSettings extends React.PureComponent<Props> {
     const { dispatch } = this.props;
     dispatch(actions.navigate({ wind: "root", url: "itch://crashy" }));
     dispatch(actions.closeModal({ wind: "root" }));
+  };
+
+  onRestartButler = async () => {
+    const { dispatch } = this.props;
+    const chromeStore = (await import("renderer/store")).default;
+    const butlerState = chromeStore.getState().broth.packages["butler"];
+    dispatch(
+      actions.packageGotVersionPrefix({
+        name: "butler",
+        version: butlerState.version,
+        versionPrefix: butlerState.versionPrefix,
+      })
+    );
   };
 
   toggleReduxLogging = () => {
