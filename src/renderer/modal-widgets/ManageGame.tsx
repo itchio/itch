@@ -65,6 +65,7 @@ const Spacer = styled.div`
 const CaveItemActions = styled.div`
   display: flex;
   flex-direction: row;
+  margin-right: 8px;
 `;
 
 const Title = styled.div`
@@ -164,7 +165,7 @@ class ManageGame extends React.PureComponent<Props> {
           <CaveItemList>
             {map(uninstalledUploads, u => {
               return (
-                <CaveItem>
+                <CaveItem key={u.id}>
                   <CaveDetails>
                     <CaveDetailsRow>
                       <Title>{formatUpload(u)}</Title>

@@ -46,8 +46,8 @@ class DashboardPage extends React.PureComponent<Props> {
             <SortsAndFilters>
               <FilterGroup>
                 <SortOption sortBy="views" label="Views" />
-                <SortOption sortBy="views" label="Downloads" />
-                <SortOption sortBy="views" label="Purchases" />
+                <SortOption sortBy="downloads" label="Downloads" />
+                <SortOption sortBy="purchases" label="Purchases" />
               </FilterGroup>
               <FilterSpacer />
               {this.renderVisibilityFilter()}

@@ -39,7 +39,7 @@ export const SortOption = withSpace((props: SortOptionsProps) => {
     >
       <FilterOptionIcon
         className={classNames({ inactive: !active })}
-        icon={reverse ? "sort-amount-desc" : "sort-amount-asc"}
+        icon={active && reverse ? "sort-amount-desc" : "sort-amount-asc"}
       />
       {T(label)}
     </FilterOptionLink>

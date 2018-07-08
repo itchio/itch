@@ -7,6 +7,7 @@ import { messages } from "common/butlerd";
 import { isEmpty } from "underscore";
 import GameStripe from "renderer/pages/common/GameStripe";
 import { fileSize } from "common/format/filesize";
+import ItemList from "renderer/pages/common/ItemList";
 
 const ListInstallLocations = butlerCaller(messages.InstallLocationsList);
 const LocationStripe = GameStripe(messages.FetchCaves);
@@ -21,13 +22,29 @@ class LocationsPage extends React.PureComponent<Props> {
           render={({ loading, result }) => (
             <>
               <FiltersContainer loading={loading} />
-              {result && !isEmpty(result.installLocations)
-                ? result.installLocations.map(il => (
+              {result && !isEmpty(result.installLocations) ? (
+                <ItemList>
+                  {result.installLocations.map(il => (
                     <>
                       <LocationStripe
-                        title={`${il.path} (${fileSize(
-                          il.sizeInfo.installedSize
-                        )})`}
+                        title={`${il.path}`}
+                        renderTitleExtras={() => (
+                          <>
+                            <div
+                              style={{
+                                marginLeft: ".5em",
+                                border: "1px solid #333",
+                                borderRadius: "4px",
+                                fontSize: "60%",
+                                padding: "4px",
+                                color: "white",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {fileSize(il.sizeInfo.installedSize)}
+                            </div>
+                          </>
+                        )}
                         params={{
                           filters: {
                             installLocationId: il.id,
@@ -37,8 +54,9 @@ class LocationsPage extends React.PureComponent<Props> {
                         getGame={cave => cave.game}
                       />
                     </>
-                  ))
-                : null}
+                  ))}
+                </ItemList>
+              ) : null}
             </>
           )}
         />

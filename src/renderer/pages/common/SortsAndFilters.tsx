@@ -64,4 +64,5 @@ export const FilterOptionIcon = styled(Icon)`
 
 export const FilterSpacer = styled.div`
   width: 24px;
+  flex-shrink: 0;
 `;

@@ -30,10 +30,15 @@ import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
 import { hookWithProps } from "renderer/hocs/hook";
 import withHover, { HoverProps } from "renderer/hocs/withHover";
 import Chart from "renderer/pages/DownloadsPage/Chart";
-import { Title, TitleBox } from "renderer/pages/PageStyles/games";
+import { Title } from "renderer/pages/PageStyles/games";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
 import { T } from "renderer/t";
+
+const TitleCompact = styled(Title)`
+  font-size: ${props => props.theme.fontSizes.larger};
+  padding-bottom: 0.2em;
+`;
 
 const DownloadRowDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -43,11 +48,10 @@ const DownloadRowDiv = styled.div`
   transition: all 0.4s;
 
   background-color: ${props => props.theme.inputBackground};
-  padding: 10px;
-  margin: 10px 0;
+  margin: 14px 0;
 
   &.first {
-    padding-bottom: 14px;
+    padding-bottom: 4px;
   }
 
   &.has-operation {
@@ -72,7 +76,7 @@ const DownloadRowDiv = styled.div`
     }
 
     .control--title {
-      padding: 0.4em 0;
+      padding: 0.1em 0;
       padding-bottom: 0;
       font-size: ${props => props.theme.fontSizes.larger};
       font-weight: bold;
@@ -86,11 +90,12 @@ const DownloadRowDiv = styled.div`
       flex-direction: row;
       align-items: center;
 
-      padding: 0.4em 0;
+      padding: 0.1em 0;
+      padding-top: 0.4em;
     }
 
     .control--error {
-      padding: 0.4em 0;
+      padding: 0.1em 0;
       line-height: 1.4;
 
       max-width: 500px;
@@ -139,13 +144,16 @@ const Spacer = styled.div`
   min-width: 8px;
 `;
 
+const coverFactor = 1.2;
+
 const coverStyle = () => css`
   flex-shrink: 0;
-  width: ${105 * 1.4}px;
-  height: ${80 * 1.4}px;
+  width: ${105 * coverFactor}px;
+  height: ${80 * coverFactor}px;
   padding-bottom: 0;
 
   margin-right: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 `;
 
 const StyledCover = styled(Cover)`
@@ -161,6 +169,7 @@ const Controls = styled.div`
   flex-direction: row;
   align-items: center;
   padding-left: 8px;
+  padding-right: 8px;
 `;
 
 class DownloadRow extends React.PureComponent<Props> {
@@ -204,7 +213,7 @@ class DownloadRow extends React.PureComponent<Props> {
     const { game } = item;
     dispatch(
       actions.navigate({
-        wind: ambientWind(),
+        wind: "root",
         url: urlForGame(game.id),
         background,
       })
@@ -299,7 +308,7 @@ class DownloadRow extends React.PureComponent<Props> {
         ) : null}
         {showMainAction ? (
           <>
-            <MainAction game={item.game} status={status} />
+            <MainAction game={item.game} status={status} caveId={item.caveId} />
             <Spacer />
           </>
         ) : (
@@ -321,11 +330,11 @@ class DownloadRow extends React.PureComponent<Props> {
 
     if (finished) {
       return (
-        <TitleBox className="stats--control">
+        <div className="stats--control">
           {this.renderTitle()}
           {this.renderDetails()}
           {this.renderErrorOrTimestamp()}
-        </TitleBox>
+        </div>
       );
     }
 
@@ -347,7 +356,7 @@ class DownloadRow extends React.PureComponent<Props> {
     }
 
     return (
-      <TitleBox className="stats--control">
+      <div className="stats--control">
         {this.renderTitle()}
         {this.renderDetails()}
         <div className="progress">
@@ -374,7 +383,7 @@ class DownloadRow extends React.PureComponent<Props> {
             ) : null}
           </>
         </div>
-      </TitleBox>
+      </div>
     );
   }
 
@@ -382,9 +391,9 @@ class DownloadRow extends React.PureComponent<Props> {
     const { game } = this.props.item;
     return (
       <>
-        <Title>
+        <TitleCompact>
           <a href={urlForGame(game.id)}>{game.title}</a>
-        </Title>
+        </TitleCompact>
         <Filler />
       </>
     );

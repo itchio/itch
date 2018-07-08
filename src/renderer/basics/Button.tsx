@@ -14,7 +14,7 @@ const ButtonDiv = styled.div`
 
   font-size: ${props => props.theme.fontSizes.baseText};
   font-weight: normal;
-  padding: 4px 10px 3px 10px;
+  padding: 4px 10px;
 
   border: 1px solid;
   border-width: 4px 1px 1px 1px;
@@ -22,8 +22,8 @@ const ButtonDiv = styled.div`
 
   background-image: linear-gradient(
     10deg,
-    hsla(355, 50%, 37%, 1),
-    hsla(355, 50%, 50%, 1)
+    hsla(355, 40%, 21%, 1),
+    hsla(355, 40%, 32%, 1)
   );
   border-color: hsla(355, 40%, 44%, 1);
 
@@ -45,6 +45,12 @@ const ButtonDiv = styled.div`
 
   &.primary {
     font-weight: bold;
+    background-image: linear-gradient(
+      10deg,
+      hsla(355, 50%, 32%, 1),
+      hsla(355, 50%, 48%, 1)
+    );
+    border-color: hsla(355, 40%, 52%, 1);
   }
 
   &.discreet {

@@ -10,31 +10,23 @@ import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
-import FilterInput from "renderer/pages/common/FilterInput";
+import { FilterGroupGameClassification } from "renderer/pages/common/CommonFilters";
+import { FilterOption } from "renderer/pages/common/Filter";
 import GameSeries from "renderer/pages/common/GameSeries";
+import SearchControl from "renderer/pages/common/SearchControl";
+import { SortOption } from "renderer/pages/common/Sort";
 import {
   FilterGroup,
-  SortsAndFilters,
   FilterSpacer,
+  SortsAndFilters,
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import { debounce } from "underscore";
-import { SortOption } from "renderer/pages/common/Sort";
-import { FilterOption } from "renderer/pages/common/Filter";
-import { FilterGroupGameClassification } from "renderer/pages/common/CommonFilters";
 
 const FetchCollection = butlerCaller(messages.FetchCollection);
 const CollectionGameSeries = GameSeries(messages.FetchCollectionGames);
 
-class CollectionPage extends React.PureComponent<Props, State> {
-  constructor(props: CollectionPage["props"], context: any) {
-    super(props, context);
-    this.state = {
-      search: null,
-    };
-  }
-
+class CollectionPage extends React.PureComponent<Props> {
   render() {
     const { dispatch, space, profile } = this.props;
     const collectionId = space.firstPathNumber();
@@ -65,7 +57,7 @@ class CollectionPage extends React.PureComponent<Props, State> {
             collectionId,
             sortBy: space.queryParam("sortBy"),
             reverse: space.queryParam("sortDir") === "reverse",
-            search: this.state.search,
+            search: space.queryParam("search"),
             filters: {
               classification: space.queryParam(
                 "classification"
@@ -83,23 +75,12 @@ class CollectionPage extends React.PureComponent<Props, State> {
                 hintPosition="bottom"
                 onClick={this.popOutBrowser}
               />
-              {this.renderSearch(space)}
+              <SearchControl />
             </>
           )}
           renderExtraFilters={() => this.renderExtraFilters(space)}
         />
       </>
-    );
-  }
-
-  // TODO: dedup with OwnedPage
-  renderSearch(space: Space): JSX.Element {
-    const debouncedSetSearch = debounce(this.setSearch, 250);
-    return (
-      <FilterInput
-        placeholder="Filter..."
-        onChange={e => debouncedSetSearch(e.currentTarget.value)}
-      />
     );
   }
 

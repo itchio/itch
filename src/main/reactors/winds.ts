@@ -260,6 +260,14 @@ export default function(watcher: Watcher) {
     watcher.addSub(subWatcher);
   };
 
+  watcher.on(actions.openModal, async (store, action) => {
+    const { wind } = action.payload;
+    const nativeWind = getNativeWindow(store.getState(), wind);
+    if (nativeWind) {
+      nativeWind.focus();
+    }
+  });
+
   watcher.on(actions.windOpened, async (store, action) => {
     refreshSelectors(store.getState());
   });

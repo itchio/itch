@@ -36,6 +36,7 @@ interface GenericProps<Params, Res extends FetchRes<Item>, Item> {
   renderMainFilters?: () => JSX.Element;
   renderExtraFilters?: () => JSX.Element;
   getGame: (item: Item) => Game;
+  getKey?: (item: Item) => any;
   renderDescExtras?: (item: Item) => JSX.Element;
   renderItemExtras?: (item: Item) => JSX.Element;
 
@@ -120,6 +121,7 @@ export default <Params, Res extends FetchRes<any>>(
                 errorsHandled
                 loadingHandled
                 params={{ ...(params as any), cursor, limit }}
+                sequence={space.sequence()}
                 onResult={result => {
                   if (label) {
                     dispatch(space.makeFetch({ label }));
@@ -207,6 +209,7 @@ export default <Params, Res extends FetchRes<any>>(
 
       const {
         getGame,
+        getKey,
         renderItemExtras = renderNoop,
         renderDescExtras = renderNoop,
       } = this.props;
@@ -220,13 +223,15 @@ export default <Params, Res extends FetchRes<any>>(
             if (!game) {
               return null;
             }
-            if (doneSet.has(game.id)) {
+
+            const key = getKey ? getKey(item) : game.id;
+            if (doneSet.has(key)) {
               return null;
             }
-            doneSet.add(game.id);
+            doneSet.add(key);
             return (
               <Box
-                key={game.id}
+                key={key}
                 onContextMenu={ev => {
                   this.onBoxContextMenu(ev, game);
                 }}
@@ -238,6 +243,7 @@ export default <Params, Res extends FetchRes<any>>(
                     {renderDescExtras(item)}
                   </StandardGameDesc>
                   <Filler />
+                  <FilterSpacer />
                   {renderItemExtras(item)}
                   <FilterSpacer />
                 </BoxInner>

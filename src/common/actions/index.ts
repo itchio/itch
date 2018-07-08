@@ -602,6 +602,9 @@ export const actions = wireActions({
   queueGame: action<{
     /** the game we want to download */
     game: Game;
+
+    /** which cave to launch */
+    caveId?: string;
   }>(),
   queueGameInstall: action<{
     /** the game we want to install */

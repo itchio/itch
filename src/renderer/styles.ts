@@ -24,7 +24,7 @@ export const baseColors = {
 };
 
 export const uiColors = {
-  background: "#2d2b2b",
+  background: "#1d1d1d",
 
   border: "#404040",
   borderFocused: "#676767",
@@ -106,8 +106,8 @@ export const fontSizes = {
   modal: "18px",
   large: "16px",
   larger: "18px",
-  huge: "20px",
-  huger: "24px",
+  huge: "19px",
+  huger: "23px",
   enormous: "32px",
 };
 

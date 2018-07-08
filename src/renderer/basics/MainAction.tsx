@@ -188,6 +188,7 @@ class MainAction extends React.PureComponent<Props> {
 
 interface Props {
   game: Game;
+  caveId?: string;
   status: GameStatus;
 
   wide?: boolean;

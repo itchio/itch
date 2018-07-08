@@ -26,12 +26,9 @@ class InstalledPage extends React.PureComponent<Props> {
         label={["sidebar.installed"]}
         params={{ limit: 15, cursor: space.queryParam("cursor") }}
         getGame={cave => cave.game}
+        getKey={cave => cave.id}
         renderItemExtras={cave => <StandardMainAction game={cave.game} />}
-        renderMainFilters={() => (
-          <>
-            <SearchControl />
-          </>
-        )}
+        renderMainFilters={() => <SearchControl />}
         renderExtraFilters={() => (
           <SortsAndFilters>
             <FilterGroup>

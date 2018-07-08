@@ -1,6 +1,6 @@
 import { actions } from "common/actions";
 import { messages } from "common/butlerd";
-import { Build, Game, Upload } from "common/butlerd/messages";
+import { Build, Game, Upload, Cave } from "common/butlerd/messages";
 import { Logger } from "common/logger";
 import { Store } from "common/types/index";
 import { Watcher } from "common/util/watcher";
@@ -17,10 +17,19 @@ const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.queueGame, async (store, action) => {
-    const { game } = action.payload;
-    const caves = (await mcall(messages.FetchCaves, {
-      filters: { gameId: game.id },
-    })).items;
+    const { game, caveId } = action.payload;
+    let caves: Cave[];
+
+    if (caveId) {
+      const { cave } = await mcall(messages.FetchCave, { caveId });
+      if (cave) {
+        caves = [cave];
+      }
+    } else {
+      caves = (await mcall(messages.FetchCaves, {
+        filters: { gameId: game.id },
+      })).items;
+    }
 
     if (isEmpty(caves)) {
       logger.info(
