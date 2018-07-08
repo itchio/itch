@@ -117,49 +117,26 @@ class CollectionPage extends React.PureComponent<Props, State> {
   }
 
   renderSorts() {
-    return (
-      <SortGroup>
-        {this.renderSort("default", "Default")}
-        {this.renderSort("title", "Title")}
-      </SortGroup>
-    );
+    return <SortGroup>{this.renderSort("title", "Title")}</SortGroup>;
   }
 
   renderSort(sortBy: string, label: LocalizedString): JSX.Element {
-    return (
-      <SortOption
-        optionKey="sortBy"
-        optionValue={sortBy}
-        icon="sort-alpha-asc"
-        label={label}
-      />
-    );
+    return <SortOption optionKey="sortBy" optionValue={sortBy} label={label} />;
   }
 
   renderInstalledFilter() {
-    return (
-      <SortGroup>
-        {this.renderInstalled("", "All")}
-        {this.renderInstalled("true", "Installed")}
-      </SortGroup>
-    );
+    return <SortGroup>{this.renderInstalled("true", "Installed")}</SortGroup>;
   }
 
   renderInstalled(installed: string, label: LocalizedString) {
     return (
-      <SortOption
-        optionKey="installed"
-        optionValue={installed}
-        icon="checkmark"
-        label={label}
-      />
+      <SortOption optionKey="installed" optionValue={installed} label={label} />
     );
   }
 
   renderClassificationFilter() {
     return (
       <SortGroup>
-        {this.renderClassification("" as GameClassification, "All")}
         {this.renderClassification(GameClassification.Game, "Games")}
         {this.renderClassification(GameClassification.Tool, "Tools")}
         {this.renderClassification(GameClassification.Assets, "Game assets")}
@@ -177,7 +154,6 @@ class CollectionPage extends React.PureComponent<Props, State> {
       <SortOption
         optionKey="classification"
         optionValue={classification}
-        icon="star"
         label={label}
       />
     );

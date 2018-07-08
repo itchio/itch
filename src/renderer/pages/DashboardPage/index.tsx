@@ -67,7 +67,6 @@ class DashboardPage extends React.PureComponent<Props> {
   renderPaidStatusFilter(): JSX.Element {
     return (
       <SortGroup>
-        {this.renderPaidStatus("", "All")}
         {this.renderPaidStatus("free", "Free")}
         {this.renderPaidStatus("paid", "Paid")}
       </SortGroup>
@@ -79,7 +78,6 @@ class DashboardPage extends React.PureComponent<Props> {
       <SortOption
         optionKey="paidStatus"
         optionValue={paidStatus}
-        icon="coin"
         label={label}
       />
     );
@@ -89,7 +87,6 @@ class DashboardPage extends React.PureComponent<Props> {
     return (
       <>
         <SortGroup>
-          {this.renderVisibility("", "All")}
           {this.renderVisibility("published", "Published")}
           {this.renderVisibility("draft", "Draft")}
         </SortGroup>
@@ -102,7 +99,6 @@ class DashboardPage extends React.PureComponent<Props> {
       <SortOption
         optionKey="visibility"
         optionValue={visibility}
-        icon="earth"
         label={label}
       />
     );

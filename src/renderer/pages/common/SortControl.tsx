@@ -20,7 +20,6 @@ export default ({ sorts }: Props) => (
       return (
         <SortOption
           key={value}
-          icon="sort-alpha-asc"
           optionKey="sortBy"
           optionValue={value}
           label={label}

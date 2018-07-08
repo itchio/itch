@@ -134,12 +134,13 @@ export class Space {
         params.delete(k);
       }
     }
+    const queryString = params.toString();
     return format({
       protocol: this._protocol,
       hostname: this._hostname,
       pathname: this._pathname,
       slashes: true,
-      search: `?${params.toString()}`,
+      search: queryString == "" ? null : `?${queryString}`,
     });
   }
 

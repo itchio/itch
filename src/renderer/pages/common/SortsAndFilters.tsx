@@ -61,23 +61,28 @@ export const SortOptionIcon = styled(Icon)`
 
 interface SortOptionProps {
   space: Space;
-  icon: string;
   optionKey: string;
   optionValue: string;
   label: LocalizedString;
 }
 
 export const SortOption = withSpace((props: SortOptionProps) => {
-  const { space, icon, optionKey, optionValue, label } = props;
-  const href = space.urlWithParams({ [optionKey]: optionValue });
+  const { space, optionKey, optionValue, label } = props;
+  let href: string;
   const active = isSortActive(optionValue, space.queryParam(optionKey));
+  if (active) {
+    href = space.urlWithParams({ [optionKey]: undefined });
+  } else {
+    href = space.urlWithParams({ [optionKey]: optionValue });
+  }
   return (
     <SortOptionLink
       target="_replace"
       href={href}
       className={classNames({ active })}
     >
-      <SortOptionIcon icon={icon} />
+      {active ? <SortOptionIcon icon="checkmark" /> : null}
+
       {T(label)}
     </SortOptionLink>
   );
