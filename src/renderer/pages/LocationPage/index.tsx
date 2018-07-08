@@ -28,6 +28,8 @@ import Button from "renderer/basics/Button";
 import Label from "renderer/pages/PreferencesPage/Label";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { formatUploadTitle } from "common/format/upload";
+import TotalPlaytime from "renderer/basics/TotalPlaytime";
+import LastPlayed from "renderer/basics/LastPlayed";
 
 const InstallLocationsGetByID = butlerCaller(messages.InstallLocationsGetByID);
 const CaveGameSeries = GameSeries(messages.FetchCaves);
@@ -97,10 +99,18 @@ class LocationPage extends React.PureComponent<Props> {
                   <SortsAndFilters>
                     <FilterGroup>
                       <SortOption sortBy={"title"} label={"Title"} />
-                      <SortOption sortBy={"playTime"} label={"Play time"} />
                       <SortOption
                         sortBy={"lastTouched"}
                         label={"Last touched"}
+                      />
+                      <SortOption sortBy={"playTime"} label={"Play time"} />
+                      <SortOption
+                        sortBy={"installedSize"}
+                        label={"Size on disk"}
+                      />
+                      <SortOption
+                        sortBy={"installedAt"}
+                        label={"Install date"}
                       />
                     </FilterGroup>
                   </SortsAndFilters>
@@ -114,7 +124,13 @@ class LocationPage extends React.PureComponent<Props> {
                         game={cave.game}
                         caveId={cave.id}
                         render={status => (
-                          <GameStats game={cave.game} status={status} />
+                          <>
+                            <TotalPlaytime
+                              game={cave.game}
+                              cave={status.cave}
+                            />
+                            <LastPlayed game={cave.game} cave={status.cave} />
+                          </>
                         )}
                       />
                       <SizeDiv>

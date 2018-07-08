@@ -4,7 +4,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { messages } from "common/butlerd";
-import { isEmpty } from "underscore";
+import { isEmpty, sortBy, invert } from "underscore";
 import GameStripe from "renderer/pages/common/GameStripe";
 import { fileSize } from "common/format/filesize";
 import ItemList from "renderer/pages/common/ItemList";
@@ -24,7 +24,10 @@ class LocationsPage extends React.PureComponent<Props> {
               <FiltersContainer loading={loading} />
               {result && !isEmpty(result.installLocations) ? (
                 <ItemList>
-                  {result.installLocations.map(il => (
+                  {sortBy(
+                    result.installLocations,
+                    il => -il.sizeInfo.installedSize
+                  ).map(il => (
                     <>
                       <LocationStripe
                         title={`${il.path}`}

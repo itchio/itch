@@ -25,7 +25,7 @@ class MainAction extends React.PureComponent<Props> {
   render() {
     const { wide } = this.props;
     const { cave, access, operation, compatible, update } = this.props.status;
-
+    let translucent = false;
     let iconComponent: JSX.Element;
     let icon: string;
     let label: LocalizedString;
@@ -33,6 +33,7 @@ class MainAction extends React.PureComponent<Props> {
 
     if (operation) {
       const { type, progress } = operation;
+      translucent = true;
       if (operation.paused) {
         iconComponent = <Icon icon="stopwatch" />;
       } else if (!operation.active) {
@@ -140,6 +141,7 @@ class MainAction extends React.PureComponent<Props> {
         onClick={this.onClick}
         className={classNames(className, "main-action")}
         wide={wide}
+        translucent={translucent}
         discreet
         iconComponent={iconComponent}
         label={T(label)}

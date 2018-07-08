@@ -83,6 +83,11 @@ const ButtonDiv = styled.div`
     }
   }
 
+  &.translucent {
+    background: none !important;
+    border: none !important;
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -111,6 +116,7 @@ class Button extends React.PureComponent<Props, any> {
       hint,
       wide,
       disabled,
+      translucent,
       onClick,
       ...restProps
     } = this.props;
@@ -126,6 +132,7 @@ class Button extends React.PureComponent<Props, any> {
           wide,
           fat,
           disabled,
+          translucent,
         })}
         {...restProps}
       >
@@ -154,6 +161,7 @@ interface Props {
   fat?: boolean;
   disabled?: boolean;
   id?: string;
+  translucent?: boolean;
 }
 
 export default Button;
