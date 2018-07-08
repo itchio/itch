@@ -79,13 +79,13 @@ func installFlow(r *runner) {
 	r.mustCloseAllOtherWindows()
 
 	r.logf("making sure our installed game shows up")
-	var rowSelector = fmt.Sprintf(".meat-tab.visible .table--row[data-game-id='%d']", testGameID)
-	must(r.waitUntilTextExists(rowSelector+" .title--name", testGameName))
+	var rowSelector = fmt.Sprintf(".meat-tab.visible .gameseries--box[data-game-id='%d']", testGameID)
+	must(r.waitUntilTextExists(rowSelector+" .gamedesc--title", testGameName))
 
 	r.takeScreenshot("install location tab")
 
 	r.logf("open it again")
-	must(r.click(rowSelector + " .open-game-in-tab"))
+	must(r.click(rowSelector + " .gamedesc--titlelink"))
 	must(r.waitUntilTextExists(".title-bar-text", testGameName))
 
 	r.logf("uninstalling it")

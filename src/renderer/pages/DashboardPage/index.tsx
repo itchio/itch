@@ -34,6 +34,7 @@ class DashboardPage extends React.PureComponent<Props> {
             limit: 15,
             cursor: space.queryParam("cursor"),
             sortBy: space.queryParam("sortBy"),
+            reverse: space.queryParam("sortDir") === "reverse",
             search: space.queryParam("search"),
             filters: {
               visibility: space.queryParam("visibility"),
@@ -45,6 +46,7 @@ class DashboardPage extends React.PureComponent<Props> {
           renderExtraFilters={() => (
             <SortsAndFilters>
               <FilterGroup>
+                <SortOption sortBy="title" label="Title" />
                 <SortOption sortBy="views" label="Views" />
                 <SortOption sortBy="downloads" label="Downloads" />
                 <SortOption sortBy="purchases" label="Purchases" />

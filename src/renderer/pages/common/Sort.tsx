@@ -21,12 +21,17 @@ export const SortOption = withSpace((props: SortOptionsProps) => {
   let active = space.queryParam("sortBy") === sortBy;
   let reverse = space.queryParam("sortDir") === "reverse";
   let href: string;
+
+  let baseClass = `sortby--${sortBy}`;
   if (!active) {
+    baseClass = `${baseClass}--default`;
     href = space.urlWithParams({ sortBy, sortDir: "default" });
   } else {
     if (!reverse) {
+      baseClass = `${baseClass}--reverse`;
       href = space.urlWithParams({ sortBy, sortDir: "reverse" });
     } else {
+      baseClass = `${baseClass}--disable`;
       href = space.urlWithParams({ sortBy: undefined, sortDir: undefined });
     }
   }
@@ -35,7 +40,7 @@ export const SortOption = withSpace((props: SortOptionsProps) => {
     <FilterOptionLink
       target="_replace"
       href={href}
-      className={classNames({ active })}
+      className={classNames(baseClass, { active })}
     >
       <FilterOptionIcon
         className={classNames({ inactive: !active })}

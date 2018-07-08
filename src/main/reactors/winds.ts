@@ -33,7 +33,8 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = process.platform === "darwin";
 
-const preloadEnabled = !env.integrationTests;
+// const preloadEnabled = !env.integrationTests;
+const preloadEnabled = false;
 
 async function createRootWindow(store: Store) {
   const wind = "root";

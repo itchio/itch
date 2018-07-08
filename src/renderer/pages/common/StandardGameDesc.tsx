@@ -21,9 +21,9 @@ const StandardGameDesc = ({
   profile: Profile;
 }) => (
   <TitleBox>
-    <a href={urlForGame(game.id)}>
+    <a href={urlForGame(game.id)} className="gamedesc--titlelink">
       <Title>
-        {game.title}
+        <div className="gamedesc--title">{game.title}</div>
         {children}
       </Title>
     </a>

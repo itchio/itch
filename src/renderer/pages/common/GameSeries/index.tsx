@@ -115,7 +115,11 @@ export default <Params, Res extends FetchRes<any>>(
             {renderMainFilters ? renderMainFilters() : null}
           </FiltersContainer>
           {renderExtraFilters ? renderExtraFilters() : null}
-          <ItemList onScroll={this.onScroll} innerRef={this.gotItemList}>
+          <ItemList
+            className="gameseries--itemlist"
+            onScroll={this.onScroll}
+            innerRef={this.gotItemList}
+          >
             {cursors.map((cursor, i) => (
               <Call
                 errorsHandled
@@ -231,6 +235,8 @@ export default <Params, Res extends FetchRes<any>>(
             doneSet.add(key);
             return (
               <Box
+                className="gameseries--box"
+                data-game-id={game.id}
                 key={key}
                 onContextMenu={ev => {
                   this.onBoxContextMenu(ev, game);

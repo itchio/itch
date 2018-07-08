@@ -25,11 +25,14 @@ export const FilterOption = withSpace((props: FilterOptionProps) => {
   } else {
     href = space.urlWithParams({ [optionKey]: optionValue });
   }
+  const baseClass = `filter--${optionKey}-${optionValue}--${
+    active ? "disable" : "enable"
+  }`;
   return (
     <FilterOptionLink
       target="_replace"
       href={href}
-      className={classNames({ active })}
+      className={classNames(baseClass, { active })}
     >
       <FilterOptionIcon
         className={classNames({ inactive: !active })}
