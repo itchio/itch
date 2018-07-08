@@ -9,15 +9,15 @@ import { withSpace } from "renderer/hocs/withSpace";
 import GameSeries from "renderer/pages/common/GameSeries";
 import Page from "renderer/pages/common/Page";
 import SearchControl from "renderer/pages/common/SearchControl";
-import SortControl from "renderer/pages/common/SortControl";
 import {
-  SortGroup,
-  SortOption,
+  FilterGroup,
   SortsAndFilters,
-  SortSpacer,
+  FilterSpacer,
 } from "renderer/pages/common/SortsAndFilters";
 import ProfileGameStats from "renderer/pages/DashboardPage/ProfileGameStats";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { SortOption } from "renderer/pages/common/Sort";
+import { FilterOption } from "renderer/pages/common/Filter";
 
 const ProfileGameSeries = GameSeries(messages.FetchProfileGames);
 
@@ -44,17 +44,14 @@ class DashboardPage extends React.PureComponent<Props> {
           renderMainFilters={() => <SearchControl />}
           renderExtraFilters={() => (
             <SortsAndFilters>
-              <SortControl
-                sorts={[
-                  { value: "default", label: "Default" },
-                  { value: "views", label: "Views" },
-                  { value: "downloads", label: "Downloads" },
-                  { value: "purchases", label: "Purchases" },
-                ]}
-              />
-              <SortSpacer />
+              <FilterGroup>
+                <SortOption sortBy="views" label="Views" />
+                <SortOption sortBy="views" label="Downloads" />
+                <SortOption sortBy="views" label="Purchases" />
+              </FilterGroup>
+              <FilterSpacer />
               {this.renderVisibilityFilter()}
-              <SortSpacer />
+              <FilterSpacer />
               {this.renderPaidStatusFilter()}
             </SortsAndFilters>
           )}
@@ -66,16 +63,16 @@ class DashboardPage extends React.PureComponent<Props> {
 
   renderPaidStatusFilter(): JSX.Element {
     return (
-      <SortGroup>
+      <FilterGroup>
         {this.renderPaidStatus("free", "Free")}
         {this.renderPaidStatus("paid", "Paid")}
-      </SortGroup>
+      </FilterGroup>
     );
   }
 
   renderPaidStatus(paidStatus: string, label: LocalizedString): JSX.Element {
     return (
-      <SortOption
+      <FilterOption
         optionKey="paidStatus"
         optionValue={paidStatus}
         label={label}
@@ -86,17 +83,17 @@ class DashboardPage extends React.PureComponent<Props> {
   renderVisibilityFilter(): JSX.Element {
     return (
       <>
-        <SortGroup>
+        <FilterGroup>
           {this.renderVisibility("published", "Published")}
           {this.renderVisibility("draft", "Draft")}
-        </SortGroup>
+        </FilterGroup>
       </>
     );
   }
 
   renderVisibility(visibility: string, label: LocalizedString): JSX.Element {
     return (
-      <SortOption
+      <FilterOption
         optionKey="visibility"
         optionValue={visibility}
         label={label}

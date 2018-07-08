@@ -14,7 +14,7 @@ import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
-import { SortSpacer } from "renderer/pages/common/SortsAndFilters";
+import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
@@ -233,13 +233,13 @@ export default <Params, Res extends FetchRes<any>>(
               >
                 <BoxInner>
                   <StandardGameCover game={game} />
-                  <SortSpacer />
+                  <FilterSpacer />
                   <StandardGameDesc game={game}>
                     {renderDescExtras(item)}
                   </StandardGameDesc>
                   <Filler />
                   {renderItemExtras(item)}
-                  <SortSpacer />
+                  <FilterSpacer />
                 </BoxInner>
               </Box>
             );

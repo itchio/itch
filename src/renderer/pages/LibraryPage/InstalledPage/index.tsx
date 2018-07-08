@@ -7,9 +7,9 @@ import { withSpace } from "renderer/hocs/withSpace";
 import GameSeries from "renderer/pages/common/GameSeries";
 import SearchControl from "renderer/pages/common/SearchControl";
 import {
-  SortGroup,
-  SortOptionIcon,
-  SortOptionLink,
+  FilterGroup,
+  FilterOptionIcon,
+  FilterOptionLink,
   SortsAndFilters,
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
@@ -34,12 +34,12 @@ class InstalledPage extends React.PureComponent<Props> {
         )}
         renderExtraFilters={() => (
           <SortsAndFilters>
-            <SortGroup>
-              <SortOptionLink href="itch://locations">
-                <SortOptionIcon icon="cog" />
+            <FilterGroup>
+              <FilterOptionLink href="itch://locations">
+                <FilterOptionIcon icon="cog" />
                 Manage install locations
-              </SortOptionLink>
-            </SortGroup>
+              </FilterOptionLink>
+            </FilterGroup>
           </SortsAndFilters>
         )}
       />

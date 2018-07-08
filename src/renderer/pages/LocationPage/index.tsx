@@ -14,7 +14,7 @@ import GameSeries from "renderer/pages/common/GameSeries";
 import Page from "renderer/pages/common/Page";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { T } from "renderer/t";
-import { SortSpacer } from "renderer/pages/common/SortsAndFilters";
+import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 
 const InstallLocationsGetByID = butlerCaller(messages.InstallLocationsGetByID);
 const CaveGameSeries = GameSeries(messages.FetchCaves);

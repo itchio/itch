@@ -37,20 +37,6 @@ const GameStatsDiv = styled.div`
     }
   }
 
-  .total-playtime {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .total-playtime--platforms {
-    margin-left: 4px;
-  }
-
-  .total-playtime .icon {
-    margin: 0 3px;
-  }
-
   .total-playtime,
   .last-playthrough {
     font-size: ${props => props.theme.fontSizes.baseText};

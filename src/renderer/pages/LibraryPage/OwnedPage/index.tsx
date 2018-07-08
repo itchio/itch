@@ -9,14 +9,19 @@ import { withSpace } from "renderer/hocs/withSpace";
 import FilterInput from "renderer/pages/common/FilterInput";
 import GameSeries from "renderer/pages/common/GameSeries";
 import {
-  SortGroup,
-  SortOption,
+  FilterGroup,
   SortsAndFilters,
-  SortSpacer,
+  FilterSpacer,
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { debounce } from "underscore";
+import { FilterOption } from "renderer/pages/common/Filter";
+import { SortOption } from "renderer/pages/common/Sort";
+import {
+  FilterGroupGameClassification,
+  FilterGroupInstalled,
+} from "renderer/pages/common/CommonFilters";
 
 const OwnedSeries = GameSeries(messages.FetchProfileOwnedKeys);
 
@@ -38,6 +43,7 @@ class OwnedPage extends React.PureComponent<Props, State> {
           profileId: profile.id,
           limit: 15,
           sortBy: space.queryParam("sortBy"),
+          reverse: space.queryParam("sortDir") === "reverse",
           search: this.state.search,
           filters: {
             classification: space.queryParam(
@@ -71,60 +77,15 @@ class OwnedPage extends React.PureComponent<Props, State> {
   renderExtraFilters(): JSX.Element {
     return (
       <SortsAndFilters>
-        {this.renderSorts()}
-        <SortSpacer />
-        {this.renderInstalledFilter()}
-        <SortSpacer />
-        {this.renderClassificationFilter()}
+        <FilterGroup>
+          <SortOption sortBy={"acquiredAt"} label={"Acquired recently"} />
+          <SortOption sortBy={"title"} label={"Title"} />
+        </FilterGroup>
+        <FilterSpacer />
+        <FilterGroupInstalled />
+        <FilterSpacer />
+        <FilterGroupGameClassification />
       </SortsAndFilters>
-    );
-  }
-
-  renderSorts() {
-    return (
-      <SortGroup>
-        {this.renderSort("acquiredAt", "Acquired recently")}
-        {this.renderSort("title", "Title")}
-      </SortGroup>
-    );
-  }
-
-  renderSort(sortBy: string, label: LocalizedString): JSX.Element {
-    return <SortOption optionKey="sortBy" optionValue={sortBy} label={label} />;
-  }
-
-  renderInstalledFilter() {
-    return <SortGroup>{this.renderInstalled("true", "Installed")}</SortGroup>;
-  }
-
-  renderInstalled(installed: string, label: LocalizedString) {
-    return (
-      <SortOption optionKey="installed" optionValue={installed} label={label} />
-    );
-  }
-
-  renderClassificationFilter() {
-    return (
-      <SortGroup>
-        {this.renderClassification(GameClassification.Game, "Games")}
-        {this.renderClassification(GameClassification.Tool, "Tools")}
-        {this.renderClassification(GameClassification.Assets, "Game assets")}
-        {this.renderClassification(GameClassification.Comic, "Comic")}
-        {this.renderClassification(GameClassification.Book, "Book")}
-      </SortGroup>
-    );
-  }
-
-  renderClassification(
-    classification: GameClassification,
-    label: LocalizedString
-  ) {
-    return (
-      <SortOption
-        optionKey="classification"
-        optionValue={classification}
-        label={label}
-      />
     );
   }
 }

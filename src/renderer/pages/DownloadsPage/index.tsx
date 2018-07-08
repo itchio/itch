@@ -20,6 +20,7 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { first, isEmpty, map, rest, size } from "underscore";
+import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 
 const DownloadsDiv = styled.div`
   ${styles.meat()};
@@ -214,6 +215,7 @@ class DownloadsPage extends React.PureComponent<Props> {
           <Title className="finished-header">
             {T(["status.downloads.category.recent_activity"])}
           </Title>
+          <FilterSpacer />
           <Link
             className="downloads-clear-all"
             onClick={() => dispatch(actions.clearFinishedDownloads({}))}

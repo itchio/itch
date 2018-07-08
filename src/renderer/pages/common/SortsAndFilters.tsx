@@ -1,12 +1,6 @@
-import classNames from "classnames";
-import React from "react";
-import styled from "renderer/styles";
-import Icon from "renderer/basics/Icon";
 import { FiltersContainerDiv } from "renderer/basics/FiltersContainer";
-import { LocalizedString } from "common/types";
-import { T } from "renderer/t";
-import { Space } from "common/helpers/space";
-import { withSpace } from "renderer/hocs/withSpace";
+import Icon from "renderer/basics/Icon";
+import styled from "renderer/styles";
 
 export const SortsAndFilters = styled(FiltersContainerDiv)`
   display: flex;
@@ -18,22 +12,26 @@ export const SortsAndFilters = styled(FiltersContainerDiv)`
   font-weight: normal;
 `;
 
-export const SortGroup = styled.div`
+export const FilterGroup = styled.div`
   margin: 0.5em 0;
 `;
 
-const inactiveBg = `linear-gradient(to top,hsla(355, 43%, 25%, 1),hsla(355, 43%, 17%, 1))`;
-const activeBg = `linear-gradient(to top, hsla(355, 43%, 50%, 1), hsla(355, 43%, 37%, 1));`;
+// const inactiveBg = `linear-gradient(to top,hsla(355, 43%, 25%, 1),hsla(355, 43%, 17%, 1))`;
+// const activeBg = `linear-gradient(to top, hsla(355, 43%, 50%, 1), hsla(355, 43%, 37%, 1));`;
+const inactiveBg = `linear-gradient(to top,hsla(355, 43%, 17%, 1),hsla(355, 43%, 11%, 1))`;
+const activeBg = `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%, 22%, 1));`;
 const borderColor = `#843442`;
 const borderRadius = `4px`;
 
-export const SortOptionLink = styled.a`
+export const FilterOptionLink = styled.a`
   display: inline-block;
   background: ${inactiveBg};
   padding: 0.5em 1em;
   margin: 0;
   border: 1px solid ${borderColor};
   border-left: none;
+
+  transition: all 0.4s;
 
   &:first-child {
     border-radius: ${borderRadius} 0 0 ${borderRadius};
@@ -54,44 +52,16 @@ export const SortOptionLink = styled.a`
   }
 `;
 
-export const SortOptionIcon = styled(Icon)`
+export const FilterOptionIcon = styled(Icon)`
   margin-right: 0.5em;
   font-size: 80%;
+
+  opacity: 1;
+  &.inactive {
+    opacity: 0.2;
+  }
 `;
 
-interface SortOptionProps {
-  space: Space;
-  optionKey: string;
-  optionValue: string;
-  label: LocalizedString;
-}
-
-export const SortOption = withSpace((props: SortOptionProps) => {
-  const { space, optionKey, optionValue, label } = props;
-  let href: string;
-  const active = isSortActive(optionValue, space.queryParam(optionKey));
-  if (active) {
-    href = space.urlWithParams({ [optionKey]: undefined });
-  } else {
-    href = space.urlWithParams({ [optionKey]: optionValue });
-  }
-  return (
-    <SortOptionLink
-      target="_replace"
-      href={href}
-      className={classNames({ active })}
-    >
-      {active ? <SortOptionIcon icon="checkmark" /> : null}
-
-      {T(label)}
-    </SortOptionLink>
-  );
-});
-
-export const SortSpacer = styled.div`
+export const FilterSpacer = styled.div`
   width: 24px;
 `;
-
-function isSortActive(expected: string, actual: string): boolean {
-  return expected === actual;
-}

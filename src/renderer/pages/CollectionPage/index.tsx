@@ -13,14 +13,16 @@ import { withSpace } from "renderer/hocs/withSpace";
 import FilterInput from "renderer/pages/common/FilterInput";
 import GameSeries from "renderer/pages/common/GameSeries";
 import {
-  SortGroup,
-  SortOption,
+  FilterGroup,
   SortsAndFilters,
-  SortSpacer,
+  FilterSpacer,
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { debounce } from "underscore";
+import { SortOption } from "renderer/pages/common/Sort";
+import { FilterOption } from "renderer/pages/common/Filter";
+import { FilterGroupGameClassification } from "renderer/pages/common/CommonFilters";
 
 const FetchCollection = butlerCaller(messages.FetchCollection);
 const CollectionGameSeries = GameSeries(messages.FetchCollectionGames);
@@ -62,6 +64,7 @@ class CollectionPage extends React.PureComponent<Props, State> {
             profileId: profile.id,
             collectionId,
             sortBy: space.queryParam("sortBy"),
+            reverse: space.queryParam("sortDir") === "reverse",
             search: this.state.search,
             filters: {
               classification: space.queryParam(
@@ -107,43 +110,25 @@ class CollectionPage extends React.PureComponent<Props, State> {
   renderExtraFilters(space: Space): JSX.Element {
     return (
       <SortsAndFilters>
-        {this.renderSorts()}
-        <SortSpacer />
-        {this.renderInstalledFilter()}
-        <SortSpacer />
-        {this.renderClassificationFilter()}
+        <FilterGroup>
+          <SortOption sortBy="title" label="Title" />
+        </FilterGroup>
+        <FilterSpacer />
+        <FilterGroup>
+          <FilterOption
+            optionKey="installed"
+            optionValue="true"
+            label="Installed"
+          />
+        </FilterGroup>
+        <FilterSpacer />
+        <FilterGroupGameClassification />
       </SortsAndFilters>
     );
   }
 
-  renderSorts() {
-    return <SortGroup>{this.renderSort("title", "Title")}</SortGroup>;
-  }
-
-  renderSort(sortBy: string, label: LocalizedString): JSX.Element {
-    return <SortOption optionKey="sortBy" optionValue={sortBy} label={label} />;
-  }
-
-  renderInstalledFilter() {
-    return <SortGroup>{this.renderInstalled("true", "Installed")}</SortGroup>;
-  }
-
-  renderInstalled(installed: string, label: LocalizedString) {
-    return (
-      <SortOption optionKey="installed" optionValue={installed} label={label} />
-    );
-  }
-
   renderClassificationFilter() {
-    return (
-      <SortGroup>
-        {this.renderClassification(GameClassification.Game, "Games")}
-        {this.renderClassification(GameClassification.Tool, "Tools")}
-        {this.renderClassification(GameClassification.Assets, "Game assets")}
-        {this.renderClassification(GameClassification.Comic, "Comic")}
-        {this.renderClassification(GameClassification.Book, "Book")}
-      </SortGroup>
-    );
+    return <FilterGroup />;
   }
 
   renderClassification(
@@ -151,7 +136,7 @@ class CollectionPage extends React.PureComponent<Props, State> {
     label: LocalizedString
   ) {
     return (
-      <SortOption
+      <FilterOption
         optionKey="classification"
         optionValue={classification}
         label={label}

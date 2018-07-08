@@ -39,7 +39,7 @@ class AppContents extends React.PureComponent<Props> {
       const { dispatch } = this.props;
       dispatch(
         actions.navigate({
-          wind: ambientWind(),
+          wind: "root",
           url: href,
           background: doesEventMeanBackground(e),
           replace: link.target === "_replace",
