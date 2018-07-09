@@ -212,20 +212,23 @@ export class Package implements PackageLike {
 
     await mkdirp(this.getVersionsDir());
 
-    try {
-      await this.upgrade();
-    } catch (e) {
-      this.warn(`Could not run upgrade: ${e.stack}`);
-      this.info(`Seeing if we have everything we need offline...`);
-
-      const chosenVersion = await this.getChosenVersion();
-      if (chosenVersion && (await this.isVersionValid(chosenVersion))) {
+    const chosenVersion = await this.getChosenVersion();
+    if (chosenVersion) {
+      const isValid = await this.isVersionValid(chosenVersion);
+      if (isValid) {
         this.info(`${chosenVersion} is chosen and valid`);
         this.refreshPrefix(chosenVersion);
+        return;
       } else {
-        throw e;
+        this.info(
+          `${chosenVersion} is chosen but not valid, attempting install...`
+        );
       }
+    } else {
+      this.info(`No chosen version, attempting install...`);
     }
+
+    await this.upgrade();
   }
 
   getCurrentVersionPrefix(): string {

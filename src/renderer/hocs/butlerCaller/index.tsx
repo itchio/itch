@@ -4,6 +4,7 @@ import LoadingCircle from "renderer/basics/LoadingCircle";
 import ErrorState from "renderer/basics/ErrorState";
 import equal from "react-fast-compare";
 import { rcall } from "renderer/butlerd/rcall";
+import styled from "renderer/styles";
 
 interface ButlerCallerProps<Params, Result> {
   params: Params;
@@ -33,8 +34,14 @@ interface ButlerCallerArgs<Params, Result> {
   refresh: RefreshFunc;
 }
 
-let markSeed = 0;
 let callerSeed = 0;
+
+const LoadingStateDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+`;
 
 const butlerCaller = <Params, Result>(method: RequestCreator<Params, Result>) =>
   class extends React.PureComponent<
@@ -101,15 +108,9 @@ const butlerCaller = <Params, Result>(method: RequestCreator<Params, Result>) =>
       if (loading) {
         if (!loadingHandled) {
           return (
-            <div
-              style={{
-                margin: "20px auto",
-                width: "100%",
-                textAlign: "center",
-              }}
-            >
+            <LoadingStateDiv>
               <LoadingCircle progress={-1} wide />
-            </div>
+            </LoadingStateDiv>
           );
         }
       }

@@ -134,7 +134,7 @@ async function refreshButlerd(store: Store) {
 
   const client = new Client(endpoint);
   const versionInfo = await client.call(messages.VersionGet, {});
-  logger.info(`Connected to butlerd ${JSON.stringify(versionInfo)}`);
+  logger.info(`Connected to butlerd ${versionInfo.versionString}`);
   initialButlerdResolve();
 }
 
