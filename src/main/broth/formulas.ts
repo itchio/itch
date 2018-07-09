@@ -1,14 +1,18 @@
 import { Client } from "butlerd";
 import { messages } from "common/butlerd";
-import { makeButlerInstanceWithPrefix } from "common/butlerd/master-client";
+import { makeButlerInstance } from "common/butlerd/master-client";
 import env from "common/env";
-import spawn from "main/os/spawn";
-import { MinimalContext } from "../context";
 import { Logger } from "common/logger";
+import spawn from "main/os/spawn";
 import ospath from "path";
+import { MinimalContext } from "../context";
 
 export interface FormulaSpec {
-  sanityCheck?: (logger: Logger, versionPrefix: string) => Promise<void>;
+  sanityCheck?: (
+    ctx: MinimalContext,
+    logger: Logger,
+    versionPrefix: string
+  ) => Promise<void>;
   transformChannel?: (channel: string) => string;
   getSemverConstraint?: () => string | null;
 }
@@ -30,17 +34,13 @@ function describeFormula(name: string, formula: FormulaSpec) {
  * https://github.com/itchio/butler
  */
 describeFormula("butler", {
-  sanityCheck: async (logger, versionPrefix) => {
-    const instance = await makeButlerInstanceWithPrefix(versionPrefix);
+  sanityCheck: async (ctx, logger, versionPrefix) => {
+    const instance = await makeButlerInstance({ ctx, versionPrefix });
     // we're awaiting it later, avoid 'unhandledRejection'
     instance.promise().catch(() => {});
-    try {
-      const client = new Client(await instance.getEndpoint());
-      await client.call(messages.VersionGet, {});
-    } finally {
-      instance.cancel();
-      await instance.promise();
-    }
+
+    const client = new Client(await instance.getEndpoint());
+    await client.call(messages.VersionGet, {});
   },
   transformChannel: channel => {
     if (env.isCanary) {
@@ -61,9 +61,9 @@ describeFormula("butler", {
  * https://github.com/itchio/itch-setup
  */
 describeFormula("itch-setup", {
-  sanityCheck: async (logger, versionPrefix) => {
+  sanityCheck: async (ctx, logger, versionPrefix) => {
     await spawn({
-      ctx: new MinimalContext(),
+      ctx,
       logger,
       command: ospath.join(versionPrefix, "itch-setup"),
       args: ["--version"],

@@ -439,17 +439,29 @@ export class Package implements PackageLike {
   }
 
   async isVersionValid(v: Version): Promise<boolean> {
+    const ctx = new MinimalContext();
+    const { logger, formula } = this;
+    const { sanityCheck } = formula;
+    const versionPrefix = this.getVersionPrefix(v);
     try {
+      let t1 = Date.now();
       await Promise.race([
-        this.formula.sanityCheck(this.logger, this.getVersionPrefix(v)),
+        sanityCheck(ctx, logger, versionPrefix),
         (async () => {
           await delay(sanityCheckTimeout);
-          throw new Error("timed out");
+          let t2 = Date.now();
+          throw new Error(
+            `Sanity check timed out after ${(t2 - t1).toFixed()}ms`
+          );
         })(),
       ]);
     } catch (e) {
       this.warn(`Sanity check failed: ${e.message}`);
       return false;
+    } finally {
+      ctx.tryAbort().catch(e => {
+        this.warn(`While aborting validation context: ${e.stack}`);
+      });
     }
 
     return true;

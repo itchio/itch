@@ -5,26 +5,37 @@ import ospath from "path";
 import { userAgent } from "common/constants/useragent";
 import { RootState } from "common/types";
 import env from "common/env";
+import { MinimalContext } from "main/context";
 
-export async function makeButlerInstance(rs: RootState): Promise<Instance> {
-  const butlerPkg = rs.broth.packages["butler"];
-  if (!butlerPkg) {
-    throw new Error(
-      `Cannot make butler instance: package 'butler' not registered`
-    );
-  }
-
-  const versionPrefix = butlerPkg.versionPrefix;
-  if (!versionPrefix) {
-    throw new Error(`Cannot make butler instance: no version prefix`);
-  }
-
-  return makeButlerInstanceWithPrefix(versionPrefix);
+interface ButlerInstanceOpts {
+  rs?: RootState;
+  versionPrefix?: string;
+  ctx?: MinimalContext;
 }
 
-export async function makeButlerInstanceWithPrefix(
-  versionPrefix: string
+export async function makeButlerInstance(
+  opts: ButlerInstanceOpts
 ): Promise<Instance> {
+  let { versionPrefix } = opts;
+  if (!versionPrefix) {
+    const { rs } = opts;
+    if (!rs) {
+      throw new Error(`Either 'versionPrefix' or 'rs' need to be specified`);
+    }
+
+    const butlerPkg = rs.broth.packages["butler"];
+    if (!butlerPkg) {
+      throw new Error(
+        `Cannot make butler instance: package 'butler' not registered`
+      );
+    }
+
+    versionPrefix = butlerPkg.versionPrefix;
+    if (!versionPrefix) {
+      throw new Error(`Cannot make butler instance: no version prefix`);
+    }
+  }
+
   let args = [
     "--dbpath",
     butlerDbPath(),
@@ -40,8 +51,17 @@ export async function makeButlerInstanceWithPrefix(
     args = [...args, "--log"];
   }
 
-  return new Instance({
+  const instance = new Instance({
     butlerExecutable: ospath.join(versionPrefix, "butler"),
     args,
   });
+
+  const { ctx } = opts;
+  if (ctx) {
+    ctx.on("abort", () => {
+      instance.cancel();
+    });
+  }
+
+  return instance;
 }

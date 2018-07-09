@@ -110,7 +110,9 @@ let oldInstance: Instance;
 
 async function refreshButlerd(store: Store) {
   logger.info(`Refreshing butlerd! Spinning up new instance...`);
-  let instance = await makeButlerInstance(store.getState());
+  let instance = await makeButlerInstance({
+    rs: store.getState(),
+  });
   instance.promise().catch(e => {
     console.error(`butlerd instance threw:`);
     console.error(e.stack);
@@ -121,6 +123,7 @@ async function refreshButlerd(store: Store) {
   if (oldInstance) {
     // FIXME: how about a '/lifeline' endpoint which makes
     // butler exit gracefully after all EventSources are closed ?
+    // cf. https://github.com/itchio/itch/issues/1893
     oldInstance.cancel();
   }
   oldInstance = instance;
