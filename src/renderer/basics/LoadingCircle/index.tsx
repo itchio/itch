@@ -5,13 +5,22 @@ import styled, { keyframes } from "renderer/styles";
 import Circle from "renderer/basics/LoadingCircle/Circle";
 
 const turn = keyframes`
-  0% { transform: rotateZ(0deg); }
-  100% { transform: rotateZ(360deg); }
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
 `;
 
 const CircleContainer = styled.span`
   display: inline;
   margin-right: 8px;
+
+  animation: ${turn} 6s infinite linear;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &.bare {
     margin-right: 0;
@@ -20,8 +29,6 @@ const CircleContainer = styled.span`
   svg {
     width: 14px;
     height: 14px;
-    margin-bottom: -2px;
-    animation: ${turn} 6s infinite linear;
   }
 
   &.wide {

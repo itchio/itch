@@ -3,18 +3,6 @@ import React from "react";
 // shamelessly stolen, err, adapted, from https://github.com/react-component/progress
 
 export default class Circle extends React.PureComponent<Props> {
-  path: SVGPathElement;
-  prevTimeStamp: number;
-
-  componentDidUpdate() {
-    const now = Date.now();
-    this.path.style.transitionDuration = "0.3s, 0.3s";
-    if (this.prevTimeStamp && now - this.prevTimeStamp < 100) {
-      this.path.style.transitionDuration = "0s, 0s";
-    }
-    this.prevTimeStamp = Date.now();
-  }
-
   getPathStyles() {
     const { percent, strokeWidth, gapDegree = 0 } = this.props;
     const radius = 50 - strokeWidth / 2;
@@ -29,14 +17,10 @@ export default class Circle extends React.PureComponent<Props> {
     const trailPathStyle = {
       strokeDasharray: `${len - gapDegree}px ${len}px`,
       strokeDashoffset: `-${gapDegree / 2}px`,
-      transition:
-        "stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s",
     };
     const strokePathStyle = {
       strokeDasharray: `${(percent / 100) * (len - gapDegree)}px ${len}px`,
       strokeDashoffset: `-${gapDegree / 2}px`,
-      transition:
-        "stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s",
     };
     return { pathString, trailPathStyle, strokePathStyle };
   }
@@ -72,9 +56,6 @@ export default class Circle extends React.PureComponent<Props> {
           stroke={strokeColor}
           strokeWidth={strokeWidth}
           fillOpacity="0"
-          ref={path => {
-            this.path = path;
-          }}
           style={strokePathStyle}
         />
       </svg>
