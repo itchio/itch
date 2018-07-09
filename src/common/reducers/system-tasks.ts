@@ -3,9 +3,11 @@ import reducer from "./reducer";
 
 import { SystemTasksState } from "common/types";
 
+const seconds = 1000;
+
 const initialState = {
-  nextComponentsUpdateCheck: Date.now(),
-  nextGameUpdateCheck: Date.now(),
+  nextComponentsUpdateCheck: Date.now() + 15 * seconds,
+  nextGameUpdateCheck: Date.now() + 30 * seconds,
 } as SystemTasksState;
 
 export default reducer<SystemTasksState>(initialState, on => {

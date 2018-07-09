@@ -4,19 +4,31 @@ import DownloadProgress from "renderer/basics/DownloadProgress";
 import Icon from "renderer/basics/Icon";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hookWithProps } from "renderer/hocs/hook";
+import styled from "renderer/styles";
+
+const BrothComponentDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+`;
+
+const Spacer = styled.div`
+  width: 8px;
+`;
 
 class BrothComponent extends React.PureComponent<Props> {
   render() {
     const { name, pkg } = this.props;
 
     return (
-      <div className="section component">
+      <BrothComponentDiv className="section component">
         {this.renderIcon()}
-        &nbsp;
+        <Spacer />
         {name} @ {this.formatPackageVersion(pkg.version)}
-        &nbsp;
+        <Spacer />
         {this.renderProgress()}
-      </div>
+      </BrothComponentDiv>
     );
   }
 
@@ -43,7 +55,7 @@ class BrothComponent extends React.PureComponent<Props> {
       const { eta = 0, bps = 0 } = progressInfo;
       return (
         <>
-          &nbsp;
+          <Spacer />
           <LoadingCircle progress={progressInfo.progress} />
           <DownloadProgress eta={eta} bps={bps} downloadsPaused={false} />
         </>
@@ -53,7 +65,7 @@ class BrothComponent extends React.PureComponent<Props> {
     if (pkg.stage === "assess" || pkg.stage === "install") {
       return (
         <>
-          &nbsp;
+          <Spacer />
           <LoadingCircle progress={-1} />
         </>
       );
@@ -63,6 +75,10 @@ class BrothComponent extends React.PureComponent<Props> {
   }
 
   formatPackageVersion(v: string): string {
+    if (!v) {
+      return "∅";
+    }
+
     if (/[a-z0-9]/.test(v)) {
       return v.substr(0, 7);
     }

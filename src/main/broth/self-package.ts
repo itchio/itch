@@ -35,17 +35,23 @@ export class SelfPackage implements PackageLike {
   }
 
   async upgrade() {
-    await itchSetupLock.with(logger, "check for self-update", async () => {
-      const { store } = this;
-      const opts: RunItchSetupOpts = {
-        logger,
-        args: ["--upgrade"],
-        onMessage: this.onMessage,
-      };
+    try {
+      await itchSetupLock.with(logger, "check for self-update", async () => {
+        const { store } = this;
+        const opts: RunItchSetupOpts = {
+          logger,
+          args: ["--upgrade"],
+          onMessage: this.onMessage,
+        };
 
-      this.stage("assess");
-      await runItchSetup(store, opts);
-    });
+        this.stage("assess");
+        await runItchSetup(store, opts);
+      });
+    } finally {
+      if (this.store.getState().broth.packages[this.name].stage === "assess") {
+        this.stage("idle");
+      }
+    }
   }
 
   private onMessage = (msg: ISM) => {

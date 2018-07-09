@@ -1,4 +1,4 @@
-import { Package, PackageLike } from "./package";
+import { Package, PackageLike, EnsureOpts } from "./package";
 import { join } from "path";
 
 import { Store } from "common/types";
@@ -24,9 +24,9 @@ export class Manager {
     }
   }
 
-  async ensure() {
+  async ensure(opts: EnsureOpts) {
     for (const pkg of this.pkgs) {
-      await pkg.ensure();
+      await pkg.ensure(opts);
     }
   }
 

@@ -15,6 +15,7 @@ export interface FormulaSpec {
   ) => Promise<void>;
   transformChannel?: (channel: string) => string;
   getSemverConstraint?: () => string | null;
+  requiredAtStartup?: boolean;
 }
 
 interface Formulas {
@@ -54,6 +55,7 @@ describeFormula("butler", {
     }
     return "^13.1.0";
   },
+  requiredAtStartup: true,
 });
 
 /**

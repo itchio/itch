@@ -38,8 +38,13 @@ interface VersionsRes {
 
 var useLocals = (process.env.BROTH_USE_LOCAL || "").split(",");
 
+export interface EnsureOpts {
+  // Set to true if this is a startup ensure
+  startup?: boolean;
+}
+
 export interface PackageLike {
-  ensure(): Promise<void>;
+  ensure(opts: EnsureOpts): Promise<void>;
   upgrade(): Promise<void>;
 }
 
@@ -175,7 +180,12 @@ export class Package implements PackageLike {
     return useLocals.indexOf(this.name) !== -1;
   }
 
-  async ensure() {
+  async ensure(opts: EnsureOpts) {
+    if (opts.startup && !this.formula.requiredAtStartup) {
+      this.info(`Skipping (not required at startup)`);
+      return;
+    }
+
     if (this.shouldUseLocal()) {
       this.info(`Looking for local binary...`);
 

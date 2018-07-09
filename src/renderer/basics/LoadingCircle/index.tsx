@@ -26,13 +26,15 @@ const CircleContainer = styled.span`
     margin-right: 0;
   }
 
-  svg {
+  &,
+  & > svg {
     width: 14px;
     height: 14px;
   }
 
   &.wide {
-    svg {
+    &,
+    & > svg {
       width: 18px;
       height: 18px;
     }
