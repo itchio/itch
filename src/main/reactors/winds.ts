@@ -22,7 +22,6 @@ import { createSelector } from "reselect";
 import { debounce } from "underscore";
 import { format as formatUrl, UrlObject } from "url";
 import { openAppDevTools } from "./open-app-devtools";
-import { LOOPBACK_PARTITION_NAME } from "common/constants/net";
 
 const logger = mainLogger.child(__filename);
 
