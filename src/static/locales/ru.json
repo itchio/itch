@@ -485,7 +485,7 @@
     "prompt.revert.version": "версия {{version}}",
     "status.repairing_game": "{{title}} должно закончить обновление, чтобы иметь возможность запуститься",
     "status.downloads.no_active_downloads_subtext": "Тут будет список того, что вы скачали",
-    "status.downloads.find_games_button": "Давайте что-нибудь скачаем!",
+    "status.downloads.find_games_button": "Скачаем что-нибудь!",
     "grid.empty_state.leader": "Всё отфильтровалось...",
     "grid.empty_state.explanation": "Фильтр скрыл всё, что у нас есть",
     "grid.item.manage": "Управление",
