@@ -296,7 +296,7 @@
     "prompt.launch.message": "¿Cual deseas abrir?",
     "grid.hidden_count": "+ {{count}} artículos ocultos por filtros",
     "action.name.forums": "Foros",
-    "collection.empty": "Esta colección está vacía.",
+    "collection.empty": "No hay juegos en esta colección",
     "download.started": "Iniciada",
     "download.reason.install": "se instalará primero",
     "download.reason.update": "se actualizará a la última versión",
@@ -463,5 +463,7 @@
     "status.cancelled.message": "La operación se ha cancelado.",
     "status.uninstall.busy": "{{title}} no puede ser desinstalado porque se está ejecutando.",
     "setup.status.preparing": "Calentando...",
-    "setup.status.installing": "Descargando e instalando a {{speed}}"
+    "setup.status.installing": "Descargando e instalando a {{speed}}",
+    "prompt.discard_download.action.stop_download": "Detener descarga",
+    "prompt.dangerous_discard_download.message": "Parar esta descarga dejará {{title}} en un estado inconsistente."
 }
