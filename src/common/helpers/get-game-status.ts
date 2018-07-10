@@ -138,6 +138,8 @@ function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
     update = rs.gameUpdates.updates[cave.id];
   }
 
+  const profileId = profile.id;
+
   return realGetGameStatus(
     game,
     cave,
@@ -149,7 +151,8 @@ function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
     downloadProgress,
     update,
     isActiveDownload,
-    areDownloadsPaused
+    areDownloadsPaused,
+    profileId
   );
 }
 
@@ -166,26 +169,33 @@ function rawGetGameStatus(
   downloadProgress: DownloadProgress,
   update: GameUpdate,
   isDownloadActive: boolean,
-  areDownloadsPaused: boolean
+  areDownloadsPaused: boolean,
+  profileId: number
 ): GameStatus {
   let access = Access.None;
-  if (!(game.minPrice > 0)) {
-    if (game.canBeBought) {
-      access = Access.Pwyw;
-    } else {
-      access = Access.Free;
-    }
+
+  if (game.userId == profileId) {
+    access = Access.Edit;
   } else {
-    // game has minimum price
-    if (downloadKey) {
-      // we have download keys
-      access = Access.Key;
-    } else {
-      // we have no download keys
-      if (game.inPressSystem && pressUser) {
-        access = Access.Press;
+    const hasPrice = game.minPrice > 0;
+    if (!hasPrice) {
+      if (game.canBeBought) {
+        access = Access.Pwyw;
       } else {
-        // we have
+        access = Access.Free;
+      }
+    } else {
+      // game has minimum price
+      if (downloadKey) {
+        // we have download keys
+        access = Access.Key;
+      } else {
+        // we have no download keys
+        if (game.inPressSystem && pressUser) {
+          access = Access.Press;
+        } else {
+          // we have.. nothing
+        }
       }
     }
   }
