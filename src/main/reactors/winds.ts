@@ -80,51 +80,7 @@ async function createRootWindow(store: Store) {
   }
   ensureWindowInsideDisplay(nativeWindow);
 
-  nativeWindow.on("close", (e: any) => {
-    const prefs = store.getState().preferences || { closeToTray: true };
-
-    let { closeToTray } = prefs;
-    if (env.integrationTests) {
-      // always let app close in testing
-      closeToTray = false;
-    }
-
-    if (closeToTray) {
-      logger.debug("Close to tray enabled");
-    } else {
-      logger.debug("Close to tray disabled, quitting!");
-      process.nextTick(() => {
-        store.dispatch(actions.quit({}));
-      });
-      return;
-    }
-
-    if (!nativeWindow.isVisible()) {
-      logger.info("Main window hidden, letting it close");
-      return;
-    }
-
-    if (!prefs.gotMinimizeNotification) {
-      store.dispatch(
-        actions.updatePreferences({
-          gotMinimizeNotification: true,
-        })
-      );
-
-      const i18n = store.getState().i18n;
-      store.dispatch(
-        actions.notify({
-          title: t(i18n, ["notification.see_you_soon.title"]),
-          body: t(i18n, ["notification.see_you_soon.message"]),
-        })
-      );
-    }
-
-    // hide, never destroy
-    e.preventDefault();
-    logger.info("Hiding main window");
-    nativeWindow.hide();
-  });
+  nativeWindow.on("close", (e: any) => {});
 
   hookNativeWindow(store, wind, nativeWindow);
 
@@ -634,12 +590,58 @@ function hookNativeWindow(
   });
 
   nativeWindow.on("close", (e: any) => {
-    if (wind !== "root" && preloadEnabled) {
+    if (wind === "root") {
+      const prefs = store.getState().preferences || { closeToTray: true };
+
+      let { closeToTray } = prefs;
+      if (env.integrationTests) {
+        // always let app close in testing
+        closeToTray = false;
+      }
+
+      if (closeToTray) {
+        logger.debug("Close to tray enabled");
+      } else {
+        logger.debug("Close to tray disabled, quitting!");
+        process.nextTick(() => {
+          store.dispatch(actions.quit({}));
+        });
+        return;
+      }
+
+      if (!nativeWindow.isVisible()) {
+        logger.info("Main window hidden, letting it close");
+        return;
+      }
+
+      // hide, never destroy
       e.preventDefault();
+      logger.info("Hiding main window");
       nativeWindow.hide();
-      store.dispatch(actions.windLulled({ wind }));
+
+      if (!prefs.gotMinimizeNotification) {
+        store.dispatch(
+          actions.updatePreferences({
+            gotMinimizeNotification: true,
+          })
+        );
+
+        const i18n = store.getState().i18n;
+        store.dispatch(
+          actions.notify({
+            title: t(i18n, ["notification.see_you_soon.title"]),
+            body: t(i18n, ["notification.see_you_soon.message"]),
+          })
+        );
+      }
     } else {
-      store.dispatch(actions.windClosed({ wind }));
+      if (preloadEnabled) {
+        e.preventDefault();
+        nativeWindow.hide();
+        store.dispatch(actions.windLulled({ wind }));
+      } else {
+        store.dispatch(actions.windClosed({ wind }));
+      }
     }
   });
 
