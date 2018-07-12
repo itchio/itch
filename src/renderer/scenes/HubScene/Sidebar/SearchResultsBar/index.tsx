@@ -6,7 +6,9 @@ import { ambientWind } from "common/util/navigation";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
-import GameSearchResult from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/GameSearchResult";
+import GameSearchResult, {
+  SetSearchHighlightFunc,
+} from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/GameSearchResult";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { each, isEmpty } from "underscore";
@@ -112,6 +114,7 @@ class SearchResultsBar extends React.PureComponent<Props> {
             index={index}
             chosen={index === highlight}
             active={active}
+            setSearchHighlight={this.props.setSearchHighlight}
           />
         );
         index++;
@@ -131,6 +134,7 @@ interface Props {
   loading: boolean;
 
   dispatch: Dispatch;
+  setSearchHighlight: SetSearchHighlightFunc;
 }
 
 export default hook()(SearchResultsBar);

@@ -56,6 +56,13 @@ const SearchContainer = styled.div`
     left: 10px;
     font-size: inherit;
   }
+
+  .search-icon-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
 `;
 
 @watching
@@ -71,6 +78,7 @@ class Search extends React.PureComponent<Props, State> {
       games: [],
       example: pickExample(),
       query: "",
+      lastHighlightOffset: 0,
     };
   }
 
@@ -80,6 +88,10 @@ class Search extends React.PureComponent<Props, State> {
     }
     const { profileId } = this.props;
     const query = this.input.value;
+    if (query === this.state.query) {
+      return;
+    }
+
     this.setState({ query });
 
     if (query == "") {
@@ -133,8 +145,18 @@ class Search extends React.PureComponent<Props, State> {
       }
     }
 
-    this.setState({ highlight });
+    this.setState({ highlight, lastHighlightOffset: Date.now() });
   }
+
+  setSearchHighlight = (index: number) => {
+    let msSinceLastHighlightSet = Date.now() - this.state.lastHighlightOffset;
+    if (msSinceLastHighlightSet < 500) {
+      // ignore
+      return;
+    }
+
+    this.setState({ highlight: index });
+  };
 
   onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { key } = e;
@@ -220,7 +242,9 @@ class Search extends React.PureComponent<Props, State> {
             onFocus={this.onFocus}
           />
           {loading ? (
-            <LoadingCircle className="search-icon" progress={-1} />
+            <div className="search-icon search-icon-loading">
+              <LoadingCircle progress={-1} />
+            </div>
           ) : (
             <span className="icon icon-search search-icon" />
           )}
@@ -232,6 +256,7 @@ class Search extends React.PureComponent<Props, State> {
               open={this.state.open}
               query={this.state.query}
               highlight={this.state.highlight}
+              setSearchHighlight={this.setSearchHighlight}
             />
           </div>
         </SearchContainer>
@@ -257,6 +282,7 @@ interface State {
   games: Game[];
   example: string;
   query: string;
+  lastHighlightOffset: number;
 }
 
 function pickExample(): string {

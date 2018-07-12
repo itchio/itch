@@ -302,7 +302,7 @@ export const searchIcon = () => css`
   position: absolute;
   left: 10px;
   bottom: 50%;
-  transform: translateY(55%);
+  transform: translateY(50%);
   font-size: 14px;
   color: ${props => props.theme.secondaryText};
   pointer-events: none;

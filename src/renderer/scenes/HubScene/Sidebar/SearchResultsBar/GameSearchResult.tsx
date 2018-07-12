@@ -95,6 +95,7 @@ class GameSearchResult extends GenericSearchResult<Props> {
       <GameSearchResultDiv
         className={resultClasses}
         onMouseDown={this.onClick}
+        onMouseEnter={this.onEnter}
         data-game-id={game.id}
       >
         <SectionDiv>
@@ -123,6 +124,7 @@ class GameSearchResult extends GenericSearchResult<Props> {
             <div className="cover-container">
               <Cover
                 hover={false}
+                showGifMarker={false}
                 className="cover"
                 gameId={game.id}
                 coverUrl={coverUrl}
@@ -152,6 +154,10 @@ class GameSearchResult extends GenericSearchResult<Props> {
     });
   };
 
+  onEnter = (ev: React.MouseEvent<any>) => {
+    this.props.setSearchHighlight(this.props.index);
+  };
+
   getNavigateAction() {
     const { game } = this.props;
     return actions.navigate({
@@ -161,12 +167,15 @@ class GameSearchResult extends GenericSearchResult<Props> {
   }
 }
 
+export type SetSearchHighlightFunc = (index: number) => void;
+
 interface Props {
   game: Game;
   chosen: boolean;
   active: boolean;
   index: number;
   dispatch: Dispatch;
+  setSearchHighlight: SetSearchHighlightFunc;
 }
 
 export default hook()(GameSearchResult);
