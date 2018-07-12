@@ -9,8 +9,13 @@ import { withIntl } from "renderer/hocs/withIntl";
 import SearchResultsBar from "renderer/scenes/HubScene/Sidebar/SearchResultsBar";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
-import { debounce } from "underscore";
+import { debounce, size, sample } from "underscore";
 import { Dispatch } from "common/types";
+import { doAsync } from "renderer/helpers/doAsync";
+import { rcall } from "renderer/butlerd/rcall";
+import { messages } from "common/butlerd";
+import { Game } from "common/butlerd/messages";
+import searchExamples from "common/constants/search-examples";
 
 const SearchContainerContainer = styled.section`
   .relative-wrapper {
@@ -54,27 +59,82 @@ const SearchContainer = styled.div`
 `;
 
 @watching
-class Search extends React.PureComponent<Props> {
+class Search extends React.PureComponent<Props, State> {
   input: HTMLInputElement;
+
+  constructor(props: Search["props"], context: any) {
+    super(props, context);
+    this.state = {
+      open: false,
+      loading: false,
+      highlight: 0,
+      games: [],
+      example: pickExample(),
+      query: "",
+    };
+  }
 
   trigger = debounce(() => {
     if (!this.input) {
       return;
     }
-    this.props.dispatch(actions.search({ query: this.input.value }));
+    const { profileId } = this.props;
+    const query = this.input.value;
+    this.setState({ query });
+
+    if (query == "") {
+      this.setState({
+        games: [],
+        example: pickExample(),
+      });
+      return;
+    }
+
+    doAsync(async () => {
+      this.setState({ loading: true });
+      try {
+        const { games } = await rcall(messages.SearchGames, {
+          profileId,
+          query,
+        });
+        this.setState({ games });
+      } catch {
+        this.setState({ games: [] });
+      } finally {
+        this.setState({ loading: false, highlight: 0 });
+      }
+    });
   }, 100);
 
   onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    this.props.dispatch(actions.focusSearch({}));
+    this.setState({ open: true });
   };
 
   onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    this.props.dispatch(actions.closeSearch({}));
+    this.setState({ open: false });
   };
 
   onChange = (e: React.FormEvent<HTMLInputElement>) => {
     this.trigger();
   };
+
+  searchHighlightOffset(offset: number) {
+    let highlight = this.state.highlight + offset;
+    const numGames = size(this.state.games);
+
+    if (numGames == 0) {
+      highlight = 0;
+    } else {
+      if (highlight >= size(this.state.games)) {
+        highlight = size(this.state.games) - 1;
+      }
+      if (highlight < 0) {
+        highlight = 0;
+      }
+    }
+
+    this.setState({ highlight });
+  }
 
   onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { key } = e;
@@ -84,14 +144,10 @@ class Search extends React.PureComponent<Props> {
     if (key === "Escape") {
       // default behavior is to clear - don't
     } else if (key === "ArrowDown") {
-      this.props.dispatch(
-        actions.searchHighlightOffset({ offset: 1, relative: true })
-      );
+      this.searchHighlightOffset(1);
       // default behavior is to jump to end of input - don't
     } else if (key === "ArrowUp") {
-      this.props.dispatch(
-        actions.searchHighlightOffset({ offset: -1, relative: true })
-      );
+      this.searchHighlightOffset(-1);
       // default behavior is to jump to start of input - don't
     } else {
       passthrough = true;
@@ -124,13 +180,30 @@ class Search extends React.PureComponent<Props> {
   subscribe(watcher: Watcher) {
     watcher.on(actions.commandBack, async (store, action) => {
       if (this.input) {
-        this.props.dispatch(actions.closeSearch({}));
+        this.input.blur();
       }
+      this.setState({ open: false });
+    });
+
+    watcher.on(actions.focusSearch, async (store, action) => {
+      if (this.input) {
+        this.input.focus();
+        this.input.select();
+      }
+      this.setState({ open: true });
+    });
+
+    watcher.on(actions.closeSearch, async (store, action) => {
+      if (this.input) {
+        this.input.blur();
+      }
+      this.setState({ open: false });
     });
   }
 
   render() {
-    const { intl, open, loading } = this.props;
+    const { intl } = this.props;
+    const { loading, open } = this.state;
 
     return (
       <SearchContainerContainer>
@@ -152,7 +225,14 @@ class Search extends React.PureComponent<Props> {
             <span className="icon icon-search search-icon" />
           )}
           <div className="relative-wrapper">
-            <SearchResultsBar />
+            <SearchResultsBar
+              example={this.state.example}
+              games={this.state.games}
+              loading={this.state.loading}
+              open={this.state.open}
+              query={this.state.query}
+              highlight={this.state.highlight}
+            />
           </div>
         </SearchContainer>
       </SearchContainerContainer>
@@ -165,13 +245,24 @@ class Search extends React.PureComponent<Props> {
 }
 
 interface Props {
-  open: boolean;
-  loading: boolean;
+  profileId: number;
   dispatch: Dispatch;
   intl: InjectedIntl;
 }
 
+interface State {
+  highlight: number;
+  loading: boolean;
+  open: boolean;
+  games: Game[];
+  example: string;
+  query: string;
+}
+
+function pickExample(): string {
+  return sample(searchExamples);
+}
+
 export default hook(map => ({
-  open: map(rs => rs.profile.search.open),
-  loading: map(rs => rs.profile.search.loading),
+  profileId: map(rs => rs.profile.profile.id),
 }))(withIntl(Search));

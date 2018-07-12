@@ -20,6 +20,10 @@ function setupShortcuts(store: Store) {
   );
 
   // user shortcuts
+  combo.bindGlobal(["ctrl+shift+f", "command+shift+f"], () => {
+    store.dispatch(actions.focusSearch({}));
+  });
+
   combo.bindGlobal(["ctrl+f", "command+f"], () => {
     store.dispatch(actions.focusInPageSearch({ wind: ambientWind() }));
   });

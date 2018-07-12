@@ -4,27 +4,56 @@
 import { createRequest, createNotification } from "butlerd";
 
 /**
- * Params for Handshake
+ * Params for Meta.Authenticate
  */
-export interface HandshakeParams {
+export interface MetaAuthenticateParams {
   /** undocumented */
-  message: string;
+  secret: string;
 }
 
 /**
- * Result for Handshake
+ * Params for Version.Get
  */
-export interface HandshakeResult {
-  /** undocumented */
-  signature: string;
+export interface VersionGetParams {
+  // no fields
 }
 
 /**
- * undocumented
+ * Params for Network.SetSimulateOffline
  */
-export const Handshake = createRequest<HandshakeParams, HandshakeResult>(
-  "Handshake"
-);
+export interface NetworkSetSimulateOfflineParams {
+  /**
+   * If true, all operations after this point will behave
+   * as if there were no network connections
+   */
+  enabled: boolean;
+}
+
+/**
+ * Params for Network.SetBandwidthThrottle
+ */
+export interface NetworkSetBandwidthThrottleParams {
+  /** If true, will limit. If false, will clear any bandwidth throttles in place */
+  enabled: boolean;
+  /** The target bandwidth, in kbps */
+  rate: number;
+}
+
+/**
+ * Result for Meta.Authenticate
+ */
+export interface MetaAuthenticateResult {
+  /** undocumented */
+  ok: boolean;
+}
+
+/**
+ * When using TCP transport, must be the first message sent
+ */
+export const MetaAuthenticate = createRequest<
+  MetaAuthenticateParams,
+  MetaAuthenticateResult
+>("Meta.Authenticate");
 
 /**
  * Result for Version.Get
@@ -248,12 +277,12 @@ export const ProfileDataGet = createRequest<
  * Result for Search.Games
  */
 export interface SearchGamesResult {
-  // no fields
+  /** undocumented */
+  games: Game[];
 }
 
 /**
- * Searches for games. Returns data from the local
- * database and the API, via @@SearchGamesYieldNotification.
+ * Searches for games.
  */
 export const SearchGames = createRequest<SearchGamesParams, SearchGamesResult>(
   "Search.Games"
@@ -263,12 +292,12 @@ export const SearchGames = createRequest<SearchGamesParams, SearchGamesResult>(
  * Result for Search.Users
  */
 export interface SearchUsersResult {
-  // no fields
+  /** undocumented */
+  users: User[];
 }
 
 /**
- * Searches for users. Returns data from the local
- * database and the API, via @@SearchUsersYieldNotification.
+ * Searches for users.
  */
 export const SearchUsers = createRequest<SearchUsersParams, SearchUsersResult>(
   "Search.Users"
@@ -2132,34 +2161,6 @@ export interface Receipt {
 }
 
 /**
- * Params for Version.Get
- */
-export interface VersionGetParams {
-  // no fields
-}
-
-/**
- * Params for Network.SetSimulateOffline
- */
-export interface NetworkSetSimulateOfflineParams {
-  /**
-   * If true, all operations after this point will behave
-   * as if there were no network connections
-   */
-  enabled: boolean;
-}
-
-/**
- * Params for Network.SetBandwidthThrottle
- */
-export interface NetworkSetBandwidthThrottleParams {
-  /** If true, will limit. If false, will clear any bandwidth throttles in place */
-  enabled: boolean;
-  /** The target bandwidth, in kbps */
-  rate: number;
-}
-
-/**
  * Params for Profile.List
  */
 export interface ProfileListParams {
@@ -2246,21 +2247,6 @@ export interface SearchGamesParams {
   /** undocumented */
   query: string;
 }
-
-/**
- * Payload for SearchGamesYield
- */
-export interface SearchGamesYieldNotification {
-  /** undocumented */
-  games: Game[];
-}
-
-/**
- * Sent during @@SearchGamesParams
- */
-export const SearchGamesYield = createNotification<
-  SearchGamesYieldNotification
->("SearchGamesYield");
 
 /**
  * Params for Search.Users

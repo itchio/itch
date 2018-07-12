@@ -96,8 +96,6 @@ class GameSearchResult extends GenericSearchResult<Props> {
         className={resultClasses}
         onMouseDown={this.onClick}
         data-game-id={game.id}
-        ref="root"
-        onMouseEnter={this.onMouseEnter}
       >
         <SectionDiv>
           <TitleDiv>
@@ -152,16 +150,6 @@ class GameSearchResult extends GenericSearchResult<Props> {
         })
       );
     });
-  };
-
-  onMouseEnter = () => {
-    const { dispatch } = this.props;
-    dispatch(
-      actions.searchHighlightOffset({
-        offset: this.props.index,
-        relative: false,
-      })
-    );
   };
 
   getNavigateAction() {

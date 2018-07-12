@@ -12,7 +12,6 @@ import {
   ProgressInfo,
   IOpenTabPayload,
   GenerosityLevel,
-  SearchResults,
   PreferencesState,
   IOpenAtLoginError,
   LocalizedString,
@@ -711,30 +710,9 @@ export const actions = wireActions({
     wind: string;
   }>(),
 
+  searchFetched: action<{}>(),
   focusSearch: action<{}>(),
-  clearFilters: action<{}>(),
-  searchQueryChanged: action<{}>(),
-  search: action<{
-    /** the term to search for */
-    query: string;
-  }>(),
-  searchFetched: action<{
-    /** the term we searched for */
-    query: string;
-
-    /** the search results */
-    results: SearchResults;
-  }>(),
-  searchStarted: action<{}>(),
-  searchFinished: action<{}>(),
   closeSearch: action<{}>(),
-  searchHighlightOffset: action<{
-    /** search highlight offset */
-    offset: number;
-
-    /** true if should be added to current offset, false if absolute */
-    relative: boolean;
-  }>(),
 
   // preferences
 

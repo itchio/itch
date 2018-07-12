@@ -12,16 +12,6 @@ import { createSelector } from "reselect";
 const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
-  watcher.on(actions.clearFilters, async (store, action) => {
-    store.dispatch(
-      actions.updatePreferences({
-        onlyCompatibleGames: false,
-        onlyInstalledGames: false,
-        onlyOwnedGames: false,
-      })
-    );
-  });
-
   watcher.on(actions.commandGoBack, async (store, action) => {
     const { wind } = action.payload;
     const { tab } = store.getState().winds[wind].navigation;

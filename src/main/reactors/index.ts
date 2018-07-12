@@ -30,7 +30,6 @@ import downloads from "./downloads";
 import queueLaunch from "./queue-launch";
 import updater from "./updater";
 import gameUpdates from "./game-updates";
-import search from "./search";
 import webContents from "./web-contents";
 import notifications from "./notifications";
 import clipboard from "./clipboard";
@@ -72,7 +71,6 @@ export default function getWatcher(logger: Logger) {
   queueLaunch(watcher);
   updater(watcher);
   gameUpdates(watcher);
-  search(watcher);
   webContents(watcher);
   notifications(watcher);
   clipboard(watcher);

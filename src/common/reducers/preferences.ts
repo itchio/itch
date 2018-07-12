@@ -22,9 +22,6 @@ export const initialState = {
   preferOptimizedPatches: false,
   disableBrowser: false,
 
-  onlyCompatibleGames: true,
-  onlyOwnedGames: false,
-  onlyInstalledGames: false,
   layout: "grid",
   enableTabs: false,
 } as PreferencesState;

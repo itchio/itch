@@ -306,7 +306,6 @@ export interface ProfileState {
   /** collection freshness information */
   profile: Profile;
   login: ProfileLoginState;
-  search: ProfileSearchState;
 
   itchioUris: string[];
 }
@@ -364,41 +363,6 @@ export interface NavigationState {
 
 export interface LoadingTabs {
   [key: string]: boolean;
-}
-
-export interface SearchResults {
-  games?: {
-    ids: number[];
-    set: GameSet;
-  };
-
-  users?: {
-    ids: number[];
-    set: UserSet;
-  };
-}
-
-export interface ProfileSearchState {
-  /** search suggestion */
-  example: string;
-
-  /** query typed by user */
-  typedQuery: string;
-
-  /** query we're showing results for (lags behind typedQuery) */
-  query: string;
-
-  /** whether the search pane is displayed or not */
-  open: boolean;
-
-  /** whether we're currently fetching results or not */
-  loading: boolean;
-
-  /** search result currently highlighted */
-  highlight: number;
-
-  /** current search results for 'query' */
-  results: SearchResults;
 }
 
 export interface I18nResources {
@@ -511,15 +475,6 @@ export interface PreferencesState {
 
   /** if rediff'd patch is available, use it instead of original patch */
   preferOptimizedPatches?: boolean;
-
-  /** hide games that aren't compatible with this computer (in native views) */
-  onlyCompatibleGames?: boolean;
-
-  /** hide games that weren't purchased or claimed */
-  onlyOwnedGames?: boolean;
-
-  /** hide games that aren't currently installed */
-  onlyInstalledGames?: boolean;
 
   /** layout to use to show games */
   layout?: TabLayout;

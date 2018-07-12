@@ -1,9 +1,8 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
-import { Dispatch, SearchResults } from "common/types";
+import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
-import { hasSearchResults } from "main/reactors/search/search-helpers";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
@@ -11,6 +10,7 @@ import GameSearchResult from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { each, isEmpty } from "underscore";
+import { Game } from "common/butlerd/messages";
 
 const ResultsContainer = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -48,23 +48,16 @@ const NoResults = styled.p`
 `;
 
 @watching
-class SearchResultsBar extends React.PureComponent<Props, State> {
-  constructor(props: SearchResultsBar["props"], context: any) {
-    super(props, context);
-    this.state = {
-      chosen: 0,
-    };
-  }
-
+class SearchResultsBar extends React.PureComponent<Props> {
   render() {
-    const { open, results } = this.props;
+    const { open, games } = this.props;
     if (!open) {
       return null;
     }
 
     return (
       <ResultsContainer className={classNames("results-container", { open })}>
-        {this.resultsGrid(results)}
+        {this.resultsGrid(games)}
       </ResultsContainer>
     );
   }
@@ -93,13 +86,13 @@ class SearchResultsBar extends React.PureComponent<Props, State> {
     });
   }
 
-  resultsGrid(results: SearchResults) {
+  resultsGrid(games: Game[]) {
     const { highlight, query, example, loading } = this.props;
     const active = this.props.open;
 
     const items: React.ReactElement<any>[] = [];
 
-    if (!hasSearchResults(results)) {
+    if (isEmpty(games)) {
       items.push(
         <NoResults key="no-results">
           {loading
@@ -111,22 +104,18 @@ class SearchResultsBar extends React.PureComponent<Props, State> {
       );
     } else {
       let index = 0;
-      const { games } = results;
-      if (games && !isEmpty(games.ids)) {
-        each(games.ids, gameId => {
-          const game = games.set[gameId];
-          items.push(
-            <GameSearchResult
-              key={`game-${gameId}`}
-              game={game}
-              index={index}
-              chosen={index === highlight}
-              active={active}
-            />
-          );
-          index++;
-        });
-      }
+      each(games, game => {
+        items.push(
+          <GameSearchResult
+            key={`game-${game.id}`}
+            game={game}
+            index={index}
+            chosen={index === highlight}
+            active={active}
+          />
+        );
+        index++;
+      });
     }
 
     return <ResultList>{items}</ResultList>;
@@ -137,22 +126,11 @@ interface Props {
   open: boolean;
   highlight: number;
   query: string;
-  results: SearchResults;
+  games: Game[];
   example: string;
   loading: boolean;
 
   dispatch: Dispatch;
 }
 
-interface State {
-  chosen: number;
-}
-
-export default hook(map => ({
-  open: map(rs => rs.profile.search.open),
-  highlight: map(rs => rs.profile.search.highlight),
-  query: map(rs => rs.profile.search.query),
-  results: map(rs => rs.profile.search.results),
-  example: map(rs => rs.profile.search.example),
-  loading: map(rs => rs.profile.search.loading),
-}))(SearchResultsBar);
+export default hook()(SearchResultsBar);
