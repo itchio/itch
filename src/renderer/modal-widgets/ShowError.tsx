@@ -131,6 +131,7 @@ class ShowError extends React.PureComponent<Props, State> {
         <div className="cover-container">
           <Cover
             hover={false}
+            showGifMarker={false}
             stillCoverUrl={stillCoverUrl}
             coverUrl={coverUrl}
             gameId={id}
