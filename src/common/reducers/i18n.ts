@@ -3,6 +3,7 @@ import { actions } from "common/actions";
 import reducer from "./reducer";
 
 import { I18nState } from "common/types";
+import env from "common/env";
 
 const initialState = {
   lang: "en",
@@ -53,6 +54,11 @@ export default reducer<I18nState>(initialState, on => {
   });
 
   on(actions.languageChanged, (state, action) => {
+    if (env.integrationTests) {
+      // stay with 'en' in integration tests
+      return state;
+    }
+
     const { lang } = action.payload;
     return {
       ...state,
