@@ -39,6 +39,9 @@ const ResultList = styled.div`
   overflow-x: hidden;
   overflow-y: auto;
 
+  /* this scrolls, so we want it to have its own layer */
+  will-change: transform;
+
   flex-grow: 1;
 
   font-size: ${props => props.theme.fontSizes.baseText};
