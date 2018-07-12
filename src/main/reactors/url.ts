@@ -83,5 +83,6 @@ export default function(watcher: Watcher) {
 
 function handleItchioUrl(store: Store, uri: string) {
   logger.info(`Processing itchio uri (${uri})`);
-  store.dispatch(actions.navigate({ wind: "root", url: uri }));
+  let url = uri.replace(/^[^:]+:/, "itch:");
+  store.dispatch(actions.navigate({ wind: "root", url }));
 }
