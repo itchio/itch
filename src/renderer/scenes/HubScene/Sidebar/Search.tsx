@@ -9,13 +9,14 @@ import { withIntl } from "renderer/hocs/withIntl";
 import SearchResultsBar from "renderer/scenes/HubScene/Sidebar/SearchResultsBar";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
-import { debounce, size, sample } from "underscore";
+import { debounce, size, sample, isEmpty } from "underscore";
 import { Dispatch } from "common/types";
 import { doAsync } from "renderer/helpers/doAsync";
 import { rcall } from "renderer/butlerd/rcall";
 import { messages } from "common/butlerd";
 import { Game } from "common/butlerd/messages";
 import searchExamples from "common/constants/search-examples";
+import { urlForGame } from "common/util/navigation";
 
 const SearchContainerContainer = styled.section`
   .relative-wrapper {
@@ -62,6 +63,11 @@ const SearchContainer = styled.div`
     align-items: center;
     justify-content: center;
     height: 100%;
+    transition: opacity 0.2s;
+
+    &.enter-pending {
+      opacity: 0.5;
+    }
   }
 `;
 
@@ -79,6 +85,7 @@ class Search extends React.PureComponent<Props, State> {
       example: pickExample(),
       query: "",
       lastHighlightOffset: 0,
+      enterPending: false,
     };
   }
 
@@ -89,6 +96,7 @@ class Search extends React.PureComponent<Props, State> {
     const { profileId } = this.props;
     const query = this.input.value;
     if (query === this.state.query) {
+      this.setState({ loading: false });
       return;
     }
 
@@ -114,6 +122,21 @@ class Search extends React.PureComponent<Props, State> {
         this.setState({ games: [] });
       } finally {
         this.setState({ loading: false, highlight: 0 });
+        if (query == this.state.query && this.state.enterPending) {
+          this.setState({ enterPending: false, open: false });
+          if (this.input) {
+            this.input.blur();
+          }
+          if (!isEmpty(this.state.games)) {
+            const gameId = this.state.games[0].id;
+            this.props.dispatch(
+              actions.navigate({
+                wind: "root",
+                url: urlForGame(gameId),
+              })
+            );
+          }
+        }
       }
     });
   }, 100);
@@ -127,6 +150,7 @@ class Search extends React.PureComponent<Props, State> {
   };
 
   onChange = (e: React.FormEvent<HTMLInputElement>) => {
+    this.setState({ loading: true });
     this.trigger();
   };
 
@@ -193,6 +217,9 @@ class Search extends React.PureComponent<Props, State> {
     } else if (key === "ArrowUp") {
       return;
     } else if (key === "Enter") {
+      if (this.state.loading) {
+        this.setState({ enterPending: true });
+      }
       return;
     }
 
@@ -242,7 +269,11 @@ class Search extends React.PureComponent<Props, State> {
             onFocus={this.onFocus}
           />
           {loading ? (
-            <div className="search-icon search-icon-loading">
+            <div
+              className={classNames("search-icon search-icon-loading", {
+                "enter-pending": this.state.enterPending,
+              })}
+            >
               <LoadingCircle progress={-1} />
             </div>
           ) : (
@@ -283,6 +314,7 @@ interface State {
   example: string;
   query: string;
   lastHighlightOffset: number;
+  enterPending: boolean;
 }
 
 function pickExample(): string {

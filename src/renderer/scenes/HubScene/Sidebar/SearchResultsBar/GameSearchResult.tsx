@@ -173,6 +173,7 @@ interface Props {
   game: Game;
   chosen: boolean;
   active: boolean;
+  loading: boolean;
   index: number;
   dispatch: Dispatch;
   setSearchHighlight: SetSearchHighlightFunc;

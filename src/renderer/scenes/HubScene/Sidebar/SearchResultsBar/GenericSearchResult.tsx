@@ -7,6 +7,7 @@ import watching, { Watcher } from "renderer/hocs/watching";
 interface GenericSearchResultProps {
   chosen: boolean;
   active: boolean;
+  loading: boolean;
 }
 
 @watching
@@ -15,7 +16,7 @@ abstract class GenericSearchResult<
 > extends React.PureComponent<Props> {
   subscribe(watcher: Watcher) {
     watcher.on(actions.commandOk, async (store, action) => {
-      if (this.props.chosen && this.props.active) {
+      if (this.props.chosen && this.props.active && !this.props.loading) {
         store.dispatch(this.getNavigateAction());
         store.dispatch(actions.closeSearch({}));
       }

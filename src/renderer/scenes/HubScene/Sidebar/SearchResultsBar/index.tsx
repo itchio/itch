@@ -117,6 +117,7 @@ class SearchResultsBar extends React.PureComponent<Props> {
             index={index}
             chosen={index === highlight}
             active={active}
+            loading={loading}
             setSearchHighlight={this.props.setSearchHighlight}
           />
         );
