@@ -57,9 +57,8 @@ async function driverPoll(store: Store) {
 
         try {
           await mcall(messages.DownloadsDrive, {}, convo => {
-            state.setPhase(Phase.RUNNING);
-
             hookLogging(convo, logger);
+            state.registerConvo(convo);
 
             convo.on(messages.DownloadsDriveStarted, async ({ download }) => {
               await refreshDownloads(store);
