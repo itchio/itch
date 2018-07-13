@@ -181,11 +181,6 @@ export class Package implements PackageLike {
   }
 
   async ensure(opts: EnsureOpts) {
-    if (opts.startup && !this.formula.requiredAtStartup) {
-      this.info(`Skipping (not required at startup)`);
-      return;
-    }
-
     if (this.shouldUseLocal()) {
       this.info(`Looking for local binary...`);
 
@@ -226,6 +221,11 @@ export class Package implements PackageLike {
       }
     } else {
       this.info(`No chosen version, attempting install...`);
+    }
+
+    if (opts.startup && !this.formula.requiredAtStartup) {
+      this.info(`No valid version, but not required at startup. Skipping`);
+      return;
     }
 
     await this.upgrade();
