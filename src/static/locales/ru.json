@@ -540,5 +540,6 @@
     "status.downloads.pause_downloads": "Приостановить загрузки",
     "preferences.advanced.components": "Компоненты",
     "prompt.self_update_ready.short": "Доступна новая версия",
-    "prompt.revert.no_other_version": "Других версий нет."
+    "prompt.revert.no_other_version": "Других версий нет.",
+    "pick_update_upload.buttons.skip_update": "Не обновлять"
 }
