@@ -10,8 +10,7 @@ import { makeUploadButton } from "main/reactors/make-upload-button";
 export default function(watcher: Watcher) {
   watcher.on(actions.showGameUpdate, async (store, action) => {
     const { update } = action.payload;
-    const { game, upload } = update;
-    const uploads = [upload];
+    const { game } = update;
 
     const { title } = game;
 
@@ -21,9 +20,10 @@ export default function(watcher: Watcher) {
 
     const dialogButtons: ModalButtonSpec[] = [
       {
-        icon: "download",
-        label: ["pick_update_upload.buttons.update"],
-        action: actions.queueGameUpdate({ update }),
+        icon: "moon",
+        label: ["pick_update_upload.buttons.skip_update"],
+        action: actions.snoozeCave({ caveId: update.caveId }),
+        className: "secondary",
       },
       {
         icon: "play2",
@@ -41,11 +41,15 @@ export default function(watcher: Watcher) {
           title: dialogTitle,
           message: dialogMessage,
           detail: dialogDetail,
-          bigButtons: map(uploads, upload => {
+          bigButtons: map(update.choices, choice => {
             const spec: ModalButtonSpec = {
-              ...makeUploadButton(upload, { showSize: false }),
-              action: actions.queueGameUpdate({ update }),
+              ...makeUploadButton(choice.upload, { showSize: false }),
+              action: actions.queueGameUpdate({ update, choice }),
             };
+            spec.tags.push({
+              icon: choice.confidence > 0.5 ? "like" : "neutral",
+              label: ` ${(choice.confidence * 100).toFixed()}%`,
+            });
             return spec;
           }),
           buttons: dialogButtons,

@@ -27,7 +27,7 @@ export default reducer<GameUpdatesState>(initialState, on => {
       ...state,
       updates: {
         ...state.updates,
-        [update.itemId]: update,
+        [update.caveId]: update,
       },
     };
   });
@@ -37,7 +37,7 @@ export default reducer<GameUpdatesState>(initialState, on => {
 
     return {
       ...state,
-      updates: omit(state.updates, update.itemId),
+      updates: omit(state.updates, update.caveId),
     };
   });
 });

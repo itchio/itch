@@ -36,6 +36,7 @@ import {
   Download,
   DownloadProgress,
   Cave,
+  GameUpdateChoice,
 } from "common/butlerd/messages";
 import { Endpoint } from "butlerd";
 import { TypedModal, TypedModalUpdate } from "common/modals";
@@ -675,8 +676,14 @@ export const actions = wireActions({
   queueGameUpdate: action<{
     /** the actual update info */
     update: GameUpdate;
+    /** the choice we made */
+    choice: GameUpdateChoice;
   }>(),
   queueAllGameUpdates: action<{}>(),
+  snoozeCave: action<{
+    caveId: string;
+  }>(),
+
   switchVersionCaveRequest: action<{
     /** the cave to revert to a different build */
     cave: Cave;

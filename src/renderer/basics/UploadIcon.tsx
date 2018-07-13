@@ -6,6 +6,9 @@ import Icon from "./Icon";
 class UploadIcon extends React.PureComponent<Props> {
   render() {
     const { upload } = this.props;
+    if (!upload) {
+      return null;
+    }
     return <Icon icon={uploadIcon(upload)} hint={uploadTypeHint(upload)} />;
   }
 }

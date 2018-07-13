@@ -1,10 +1,6 @@
 import { actions } from "common/actions";
 import { messages } from "common/butlerd/index";
-import {
-  Cave,
-  CheckUpdateItem,
-  CheckUpdateResult,
-} from "common/butlerd/messages";
+import { Cave, CheckUpdateResult } from "common/butlerd/messages";
 import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
@@ -18,32 +14,6 @@ const SKIP_GAME_UPDATES = process.env.ITCH_SKIP_GAME_UPDATES === "1";
 // 30 minutes * 60 = seconds, * 1000 = millis
 const DELAY_BETWEEN_PASSES = 20 * 60 * 1000;
 const DELAY_BETWEEN_PASSES_WIGGLE = 10 * 60 * 1000;
-
-async function prepareUpdateItem(cave: Cave): Promise<CheckUpdateItem> {
-  if (!cave.game) {
-    throw new Error(`Cave ${cave.id} lacks game`);
-  }
-
-  const item: CheckUpdateItem = {
-    itemId: cave.id,
-    installedAt: cave.stats.installedAt,
-    game: cave.game,
-    upload: cave.upload,
-    build: cave.build,
-  };
-  return item;
-}
-
-async function performUpdateCheck(
-  store: Store,
-  items: CheckUpdateItem[]
-): Promise<CheckUpdateResult> {
-  return await mcall(messages.CheckUpdate, { items }, client => {
-    client.on(messages.GameUpdateAvailable, async ({ update }) => {
-      store.dispatch(actions.gameUpdateAvailable({ update }));
-    });
-  });
-}
 
 function sleepTime(): number {
   return DELAY_BETWEEN_PASSES + Math.random() * DELAY_BETWEEN_PASSES_WIGGLE;
@@ -100,36 +70,32 @@ export default function(watcher: Watcher) {
         })
       );
 
-      // FIXME: change butlerd's API for this
+      const res = await mcall(messages.CheckUpdate, {}, conversation => {
+        conversation.on(messages.GameUpdateAvailable, async ({ update }) => {
+          store.dispatch(actions.gameUpdateAvailable({ update }));
+        });
 
-      // TODO: let butler page through the caves instead,
-      // this is too much back and forth
-      // const { caves } = await mcall(messages.FetchCaves, {});
-      const caves: Cave[] = [];
-
-      if (isEmpty(caves)) {
-        return;
-      }
-
-      logger.info(`Checking updates for ${caves.length} games`);
-
-      let items: CheckUpdateItem[] = [];
-      for (const cave of caves) {
-        try {
-          items.push(await prepareUpdateItem(cave));
-        } catch (e) {
-          logger.error(
-            `Won't be able to check ${cave.id} for upgrade: ${e.stack}`
+        conversation.on(messages.Progress, async ({ progress }) => {
+          store.dispatch(
+            actions.gameUpdateCheckStatus({
+              checking: true,
+              progress,
+            })
           );
+        });
+      });
+
+      if (!isEmpty(res.updates)) {
+        for (const update of res.updates) {
+          store.dispatch(actions.gameUpdateAvailable({ update }));
         }
       }
 
-      try {
-        await performUpdateCheck(store, items);
-      } catch (e) {
-        logger.error(
-          `While performing ${items.length} update checks: ${e.stack}`
-        );
+      if (!isEmpty(res.warnings)) {
+        logger.warn(`Got warnings when checking for updates: `);
+        for (const w of res.warnings) {
+          logger.warn(w);
+        }
       }
     } finally {
       store.dispatch(
@@ -149,11 +115,9 @@ export default function(watcher: Watcher) {
 
     const { cave } = await mcall(messages.FetchCave, { caveId });
 
-    const item = await prepareUpdateItem(cave);
     let res: CheckUpdateResult;
-
     try {
-      res = await performUpdateCheck(store, [item]);
+      res = await mcall(messages.CheckUpdate, { caveIds: [caveId] });
     } catch (e) {
       logger.error(`While checking for game update: ${e.stack}`);
       if (!res) {
@@ -164,15 +128,27 @@ export default function(watcher: Watcher) {
       }
     }
 
-    if (noisy) {
-      dispatchUpdateNotification(store, item, res);
+    if (res && !isEmpty(res.updates)) {
+      for (const update of res.updates) {
+        store.dispatch(actions.gameUpdateAvailable({ update }));
+      }
     }
+
+    if (noisy) {
+      dispatchUpdateNotification(store, cave, res);
+    }
+  });
+
+  watcher.on(actions.snoozeCave, async (store, action) => {
+    const { caveId } = action.payload;
+
+    await mcall(messages.SnoozeCave, { caveId });
   });
 }
 
 function dispatchUpdateNotification(
   store: Store,
-  item: CheckUpdateItem,
+  cave: Cave,
   result: CheckUpdateResult
 ) {
   if (!result) {
@@ -194,13 +170,13 @@ function dispatchUpdateNotification(
   if (isEmpty(result.updates)) {
     store.dispatch(
       actions.statusMessage({
-        message: ["status.game_update.not_found", { title: item.game.title }],
+        message: ["status.game_update.not_found", { title: cave.game.title }],
       })
     );
   } else {
     store.dispatch(
       actions.statusMessage({
-        message: ["status.game_update.found", { title: item.game.title }],
+        message: ["status.game_update.found", { title: cave.game.title }],
       })
     );
   }

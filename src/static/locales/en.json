@@ -327,6 +327,7 @@
   "pick_update_upload.single.message": "You can choose to update now or later.",
   "pick_update_upload.single.detail":
     "Note: you can enable automatic updates in the Preferences tab",
+  "pick_update_upload.buttons.skip_update": "Skip update",
   "pick_update_upload.buttons.update": "Update now",
   "pick_update_upload.buttons.just_launch": "Just launch",
   "pick_update_upload.tags.demo": "demo",

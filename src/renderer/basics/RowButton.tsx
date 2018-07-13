@@ -19,6 +19,8 @@ const RowButtonDiv = styled.div`
   font-weight: bold;
   padding: 8px 16px;
 
+  margin: 8px 0;
+
   border: 1px solid;
   border-width: 4px 1px 1px 1px;
   border-radius: 4px;

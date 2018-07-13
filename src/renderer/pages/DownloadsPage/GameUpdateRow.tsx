@@ -59,7 +59,8 @@ const VersionInfo = styled.div`
 class GameUpdateRow extends React.PureComponent<Props> {
   render() {
     const { update } = this.props;
-    const { game, upload, build } = update;
+    const { game } = update;
+    const { upload, build } = update.choices[0];
 
     let updatedAt = build ? build.updatedAt : upload.updatedAt;
     let versionInfo = build
@@ -98,7 +99,7 @@ class GameUpdateRow extends React.PureComponent<Props> {
 
   onUpdate = () => {
     const { update, dispatch } = this.props;
-    dispatch(actions.queueGameUpdate({ update }));
+    dispatch(actions.showGameUpdate({ update }));
   };
 
   onNavigate = (e: React.MouseEvent<any>) => {

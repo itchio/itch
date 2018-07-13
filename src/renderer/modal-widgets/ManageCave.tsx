@@ -132,7 +132,7 @@ class ManageCave extends React.PureComponent<Props> {
               <Spacer />
               Published
               <Spacer />
-              <TimeAgo date={u.createdAt} />
+              {u ? <TimeAgo date={u.createdAt} /> : null}
               <SpacerLarge />
               <Icon icon="install" />
               <Spacer />
@@ -175,14 +175,23 @@ class ManageCave extends React.PureComponent<Props> {
               </BigButtonRow>
             </BigButtonContent>
           </RowButton>
+          <RowButton icon="repeat" onClick={this.onUpdateCheck}>
+            <BigButtonContent>
+              <BigButtonRow>{T(["grid.item.check_for_update"])}</BigButtonRow>
+            </BigButtonContent>
+          </RowButton>
 
-          {u.channelName == "" ? (
-            ""
-          ) : (
-            <RowButton icon="shuffle" onClick={this.onSwitchVersion}>
-              {T(["grid.item.revert_to_version"])}
-            </RowButton>
-          )}
+          {u ? (
+            <>
+              {u.channelName == "" ? (
+                ""
+              ) : (
+                <RowButton icon="shuffle" onClick={this.onSwitchVersion}>
+                  {T(["grid.item.revert_to_version"])}
+                </RowButton>
+              )}
+            </>
+          ) : null}
         </CaveItemBigActions>
         <CaveItemActions>
           <Button
@@ -235,6 +244,17 @@ class ManageCave extends React.PureComponent<Props> {
       actions.closeModal({
         wind: ambientWind(),
         action: actions.queueCaveReinstall({ caveId }),
+      })
+    );
+  };
+
+  onUpdateCheck = (ev: React.MouseEvent<HTMLElement>) => {
+    const caveId = this.props.modal.widgetParams.cave.id;
+    const { dispatch } = this.props;
+    dispatch(
+      actions.closeModal({
+        wind: ambientWind(),
+        action: actions.checkForGameUpdate({ caveId, noisy: true }),
       })
     );
   };
