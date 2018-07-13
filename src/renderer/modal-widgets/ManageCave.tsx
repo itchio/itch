@@ -3,7 +3,10 @@ import { getCaveSummary } from "common/butlerd";
 import { Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { showInExplorerString } from "common/format/show-in-explorer";
-import { formatUploadTitle } from "common/format/upload";
+import {
+  formatUploadTitle,
+  formatBuildVersionInfo,
+} from "common/format/upload";
 import { ManageCaveParams, ManageCaveResponse } from "common/modals/types";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
@@ -127,6 +130,26 @@ class ManageCave extends React.PureComponent<Props> {
             <CaveDetailsRow>
               <Title>{formatUpload(u)}</Title>
             </CaveDetailsRow>
+            {cave.build ? (
+              <>
+                <CaveDetailsRow className="smaller">
+                  <Icon icon="pin" />
+                  <Spacer />
+                  {formatBuildVersionInfo(cave.build)}
+                  <Spacer />
+                  <TimeAgo date={cave.build.createdAt} />
+                  <SpacerLarge />
+                  <Icon icon="checkmark" />
+                  <Spacer />
+                  Powered by&nbsp;<a
+                    target="_popout"
+                    href="https://itch.io/docs/butler/"
+                  >
+                    butler
+                  </a>
+                </CaveDetailsRow>
+              </>
+            ) : null}
             <CaveDetailsRow className="smaller">
               <Icon icon="tag" />
               <Spacer />

@@ -11,6 +11,7 @@ import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { actions } from "common/actions";
+import { formatBuildVersionInfo } from "common/format/upload";
 
 const GameUpdateRowDiv = styled.div`
   flex-shrink: 0;
@@ -63,11 +64,7 @@ class GameUpdateRow extends React.PureComponent<Props> {
     const { upload, build } = update.choices[0];
 
     let updatedAt = build ? build.updatedAt : upload.updatedAt;
-    let versionInfo = build
-      ? build.userVersion
-        ? `v${build.userVersion}`
-        : `#${build.version}`
-      : upload.displayName || upload.filename;
+    let versionInfo = formatBuildVersionInfo(build);
 
     return (
       <GameUpdateRowDiv>

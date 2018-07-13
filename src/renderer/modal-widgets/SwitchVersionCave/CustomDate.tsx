@@ -7,7 +7,7 @@ class CustomDate extends React.PureComponent<Props> {
   render() {
     const { intl, date, format = DATE_FORMAT } = this.props;
 
-    const dateObject = date;
+    const dateObject = new Date(date);
     if (!dateObject) {
       return null;
     }

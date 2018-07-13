@@ -37,14 +37,22 @@ class AppContents extends React.PureComponent<Props> {
       e.preventDefault();
       e.stopPropagation();
       const { dispatch } = this.props;
-      dispatch(
-        actions.navigate({
-          wind: "root",
-          url: href,
-          background: doesEventMeanBackground(e),
-          replace: link.target === "_replace",
-        })
-      );
+      if (link.target === "_popout") {
+        dispatch(
+          actions.openInExternalBrowser({
+            url: href,
+          })
+        );
+      } else {
+        dispatch(
+          actions.navigate({
+            wind: "root",
+            url: href,
+            background: doesEventMeanBackground(e),
+            replace: link.target === "_replace",
+          })
+        );
+      }
     } else {
       this.handleClickCapture(e, target.parentElement);
     }
