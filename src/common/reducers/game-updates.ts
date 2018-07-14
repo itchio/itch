@@ -40,4 +40,13 @@ export default reducer<GameUpdatesState>(initialState, on => {
       updates: omit(state.updates, update.caveId),
     };
   });
+
+  on(actions.snoozeCave, (state, action) => {
+    const { caveId } = action.payload;
+
+    return {
+      ...state,
+      updates: omit(state.updates, caveId),
+    };
+  });
 });
