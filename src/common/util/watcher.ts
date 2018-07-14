@@ -5,7 +5,7 @@ import { each } from "underscore";
 import debounce from "common/util/debounce";
 
 import { Logger } from "common/logger";
-import { actions } from "common/actions/index";
+import { actions } from "common/actions";
 
 interface IReactor<T> {
   (store: Store, action: Action<T>): Promise<void>;

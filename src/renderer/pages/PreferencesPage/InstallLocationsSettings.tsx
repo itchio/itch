@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import { actions } from "common/actions/index";
-import { messages } from "common/butlerd/index";
+import { actions } from "common/actions";
+import { messages } from "common/butlerd";
 import { InstallLocationSummary } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { Dispatch, MenuTemplate } from "common/types";

@@ -2,16 +2,16 @@ import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { Build, Game, Upload, Cave } from "common/butlerd/messages";
 import { Logger } from "common/logger";
-import { Store } from "common/types/index";
+import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { makeUploadButton } from "main/reactors/make-upload-button";
 import { modals } from "common/modals";
 import { isEmpty, map } from "underscore";
-import { promisedModal } from "../modals";
-import asTask from "./as-task";
-import { makeInstallErrorModal } from "./make-install-error-modal";
+import { promisedModal } from "main/reactors/modals";
+import asTask from "main/reactors/tasks/as-task";
+import { makeInstallErrorModal } from "main/reactors/tasks/make-install-error-modal";
 
 const logger = mainLogger.child(__filename);
 

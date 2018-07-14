@@ -1,6 +1,6 @@
 import { describe, it, assert } from "test";
 
-import { truncate } from "./truncate";
+import { truncate } from "common/format/truncate";
 
 describe("truncate", () => {
   it("truncate", () => {

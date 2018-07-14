@@ -7,7 +7,7 @@ import React from "react";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
-import { ModalWidgetProps, modals } from "../../common/modals/index";
+import { ModalWidgetProps, modals } from "common/modals";
 import {
   RecaptchaInputParams,
   RecaptchaInputResponse,

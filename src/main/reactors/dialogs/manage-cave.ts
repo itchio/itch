@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd/index";
+import { messages } from "common/butlerd";
 import { formatUploadTitle } from "common/format/upload";
 import { Watcher } from "common/util/watcher";
 import { modals } from "common/modals";

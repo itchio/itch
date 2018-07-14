@@ -4,7 +4,7 @@ import { Store, MenuTemplate, IOpenContextMenuBase } from "common/types";
 
 import { actions } from "common/actions";
 
-import { gameControls } from "./context-menu/build-template";
+import { gameControls } from "main/reactors/context-menu/build-template";
 
 function openMenu(
   store: Store,

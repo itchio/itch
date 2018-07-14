@@ -2,7 +2,7 @@ import { ExploreJsonParams, ExploreJsonResponse } from "common/modals/types";
 import React from "react";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled, * as styles from "renderer/styles";
-import { ModalWidgetProps } from "../../common/modals/index";
+import { ModalWidgetProps } from "common/modals";
 
 const Inspector = require("react-json-inspector");
 

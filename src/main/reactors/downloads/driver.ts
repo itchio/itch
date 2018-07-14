@@ -4,7 +4,7 @@ import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { Phase, state } from "./driver-persistent-state";
+import { Phase, state } from "main/reactors/downloads/driver-persistent-state";
 
 const logger = mainLogger.child(__filename);
 

@@ -1,6 +1,6 @@
 import { join } from "path";
 import * as url from "common/util/url";
-import registeredProtocols from "./itch-internal-persistent-state";
+import registeredProtocols from "main/reactors/launch/html/itch-internal-persistent-state";
 
 const WEBGAME_PROTOCOL = "itch-cave";
 

@@ -3,7 +3,7 @@ import { reject, omit, map, filter } from "underscore";
 import { NavigationState, TabDataSave } from "common/types";
 
 import { actions } from "common/actions";
-import reducer from "../reducer";
+import reducer from "common/reducers/reducer";
 import arrayMove from "array-move";
 
 const initialState: NavigationState = {

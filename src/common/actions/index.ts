@@ -25,7 +25,7 @@ import {
   PackageState,
   SystemState,
   WindRole,
-} from "../types/index";
+} from "common/types";
 
 import {
   Game,

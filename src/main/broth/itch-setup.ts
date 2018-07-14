@@ -1,5 +1,5 @@
 import ospath from "path";
-import spawn from "../os/spawn";
+import spawn from "main/os/spawn";
 import env from "common/env";
 import { MinimalContext } from "main/context";
 import { Store } from "common/types";

@@ -10,7 +10,7 @@ import { mainLogger } from "main/logger";
 import { manager } from "main/reactors/setup";
 import ospath from "path";
 import { modals } from "common/modals";
-import { delay } from "./delay";
+import { delay } from "main/reactors/delay";
 
 const logger = mainLogger.child(__filename);
 

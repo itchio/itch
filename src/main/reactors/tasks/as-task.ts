@@ -7,11 +7,11 @@ import {
   TaskName,
   isAborted,
 } from "common/types";
-import { Context } from "../../context";
+import { Context } from "main/context";
 import { actions } from "common/actions";
 
 import { Logger } from "common/logger";
-import { getCurrentTasks } from "./as-task-persistent-state";
+import { getCurrentTasks } from "main/reactors/tasks/as-task-persistent-state";
 import uuid from "common/util/uuid";
 import { makeLogger, mainLogger } from "main/logger";
 

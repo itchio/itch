@@ -9,7 +9,7 @@ import {
   RequestTimeout,
   RequestFormattingFailure,
   RequestParsingFailure,
-} from "../errors";
+} from "main/net/errors";
 
 import env from "common/env";
 

@@ -1,4 +1,4 @@
-import env from "../env";
+import env from "common/env";
 
 interface FormattedDuration {
   id: string;

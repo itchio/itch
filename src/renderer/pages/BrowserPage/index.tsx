@@ -1,7 +1,7 @@
 import React from "react";
 import { withSpace } from "renderer/hocs/withSpace";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import BrowserMeat from "./BrowserPageContents";
+import BrowserMeat from "renderer/pages/BrowserPage/BrowserPageContents";
 import { Space } from "common/helpers/space";
 
 class BrowserPage extends React.PureComponent<Props, State> {

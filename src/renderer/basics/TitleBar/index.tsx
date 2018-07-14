@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 import env from "common/env";
 import { Space } from "common/helpers/space";
 import { ExtendedWindow, TabInstance } from "common/types";
-import { Dispatch } from "common/types/index";
+import { Dispatch } from "common/types";
 import { ambientWind, ambientWindState } from "common/util/navigation";
 import React from "react";
 import { FiltersContainerDiv } from "renderer/basics/FiltersContainer";

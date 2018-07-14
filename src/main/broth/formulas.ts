@@ -1,11 +1,11 @@
 import { Client } from "butlerd";
 import { messages } from "common/butlerd";
-import { makeButlerInstance } from "common/butlerd/master-client";
+import { makeButlerInstance } from "common/butlerd/make-butler-instance";
 import env from "common/env";
 import { Logger } from "common/logger";
 import spawn from "main/os/spawn";
 import ospath from "path";
-import { MinimalContext } from "../context";
+import { MinimalContext } from "main/context";
 
 export interface FormulaSpec {
   sanityCheck?: (

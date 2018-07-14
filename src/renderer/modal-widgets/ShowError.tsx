@@ -15,8 +15,8 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { size } from "underscore";
-import { ModalWidgetProps } from "../../common/modals/index";
-import Log from "../pages/AppLogPage/Log";
+import { ModalWidgetProps } from "common/modals";
+import Log from "renderer/pages/AppLogPage/Log";
 
 const StyledLog = styled(Log)`
   tbody {

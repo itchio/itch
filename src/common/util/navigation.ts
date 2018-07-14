@@ -1,4 +1,4 @@
-import * as urlParser from "./url";
+import * as urlParser from "common/util/url";
 import querystring from "querystring";
 
 import {

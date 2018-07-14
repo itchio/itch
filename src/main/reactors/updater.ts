@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd/index";
+import { messages } from "common/butlerd";
 import { Cave, CheckUpdateResult } from "common/butlerd/messages";
 import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";

@@ -5,10 +5,13 @@ import { app, Menu } from "electron";
 import { createSelector } from "reselect";
 
 import { actions } from "common/actions";
-import { getTray, rememberNotificationAction } from "./tray-persistent-state";
+import {
+  getTray,
+  rememberNotificationAction,
+} from "main/reactors/tray-persistent-state";
 
 import { Store, RootState, I18nState, MenuTemplate } from "common/types";
-import { fleshOutTemplate } from "./context-menu/flesh-out-template";
+import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template";
 import { memoize } from "common/util/lru-memoize";
 import { currentRuntime } from "common/os/runtime";
 

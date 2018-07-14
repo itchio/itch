@@ -10,14 +10,14 @@ import querystring from "querystring";
 import * as semver from "semver";
 import { promisify } from "util";
 import whichCallback from "which";
-import { downloadToFile } from "../net";
-import { request } from "../net/request/metal-request";
-import * as sf from "../os/sf";
-import { mkdirp, readdir } from "../os/sf";
-import { delay } from "../reactors/delay";
-import formulas, { FormulaSpec } from "./formulas";
-import { goarch, goos } from "./platform";
-import { unzip } from "./unzip";
+import { downloadToFile } from "main/net";
+import { request } from "main/net/request/metal-request";
+import * as sf from "main/os/sf";
+import { mkdirp, readdir } from "main/os/sf";
+import { delay } from "main/reactors/delay";
+import formulas, { FormulaSpec } from "main/broth/formulas";
+import { goarch, goos } from "main/broth/platform";
+import { unzip } from "main/broth/unzip";
 
 const which = promisify(whichCallback);
 

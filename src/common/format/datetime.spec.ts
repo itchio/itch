@@ -5,7 +5,7 @@ import {
   formatDate,
   getFormatter,
   DATE_FORMAT,
-} from "./datetime";
+} from "common/format/datetime";
 
 describe("datetime", () => {
   it("seconds", () => {

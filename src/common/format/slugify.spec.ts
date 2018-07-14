@@ -1,6 +1,6 @@
 import { describe, it, assert } from "test";
 
-import { slugify } from "./slugify";
+import { slugify } from "common/format/slugify";
 
 describe("slugify", () => {
   it("slugify", () => {

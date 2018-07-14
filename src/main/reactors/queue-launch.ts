@@ -1,11 +1,11 @@
 import { actions } from "common/actions";
 
-import asTask from "./tasks/as-task";
+import asTask from "main/reactors/tasks/as-task";
 import { Watcher } from "common/util/watcher";
 
-import { promisedModal } from "./modals";
+import { promisedModal } from "main/reactors/modals";
 
-import { performLaunch } from "./launch/perform-launch";
+import { performLaunch } from "main/reactors/launch/perform-launch";
 import { isInternalError, asRequestError } from "common/butlerd";
 import { Code } from "common/butlerd/messages";
 import { formatError } from "common/format/errors";

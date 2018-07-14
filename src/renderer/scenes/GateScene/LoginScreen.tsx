@@ -9,8 +9,8 @@ import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
 import { isEmpty } from "underscore";
-import LoginForm from "./LoginForm";
-import RememberedProfiles from "./RememberedProfiles/index";
+import LoginForm from "renderer/scenes/GateScene/LoginForm";
+import RememberedProfiles from "renderer/scenes/GateScene/RememberedProfiles";
 
 @watching
 class LoginScreen extends React.PureComponent<Props, State> {

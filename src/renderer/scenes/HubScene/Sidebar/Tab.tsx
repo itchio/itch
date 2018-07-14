@@ -20,7 +20,7 @@ import { hookWithProps } from "renderer/hocs/hook";
 import { withIntl } from "renderer/hocs/withIntl";
 import { modals } from "common/modals";
 import { size } from "underscore";
-import Item from "./Item";
+import Item from "renderer/scenes/HubScene/Sidebar/Item";
 
 interface SortableHubSidebarItemProps {
   props: any & {

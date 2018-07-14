@@ -21,7 +21,7 @@ import { stringify } from "querystring";
 import { createSelector } from "reselect";
 import { debounce } from "underscore";
 import { format as formatUrl, UrlObject } from "url";
-import { openAppDevTools } from "./open-app-devtools";
+import { openAppDevTools } from "main/reactors/open-app-devtools";
 
 const logger = mainLogger.child(__filename);
 

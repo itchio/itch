@@ -16,7 +16,7 @@ import { SpaceProvider } from "renderer/hocs/withSpace";
 import { modals } from "common/modals";
 import styled from "renderer/styles";
 import { map } from "underscore";
-import Meat from "./Meat";
+import Meat from "renderer/scenes/HubScene/Meats/Meat";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};

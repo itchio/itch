@@ -5,8 +5,8 @@ import { groupBy, omit } from "underscore";
 import { TasksState } from "common/types";
 
 import { actions } from "common/actions";
-import derivedReducer from "./derived-reducer";
-import reducer from "./reducer";
+import derivedReducer from "common/reducers/derived-reducer";
+import reducer from "common/reducers/reducer";
 
 const initialState = {
   tasks: {},

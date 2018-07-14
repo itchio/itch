@@ -4,7 +4,7 @@ import { t } from "common/format/t";
 import { Watcher } from "common/util/watcher";
 import { app, nativeImage, Notification } from "electron";
 import { mainLogger } from "main/logger";
-import { delay } from "./delay";
+import { delay } from "main/reactors/delay";
 
 const logger = mainLogger.child(__filename);
 

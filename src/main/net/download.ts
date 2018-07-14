@@ -2,10 +2,10 @@ import { isEmpty } from "underscore";
 import { dirname } from "path";
 import progress from "progress-stream";
 
-import * as sf from "../os/sf";
+import * as sf from "main/os/sf";
 import { fileSize } from "common/format/filesize";
 import { Logger } from "common/logger";
-import { request } from "./request";
+import { request } from "main/net/request";
 import { ProgressInfo } from "common/types";
 
 /**

@@ -5,7 +5,7 @@ import { hook } from "renderer/hocs/hook";
 import { theme, ThemeProvider } from "renderer/styles";
 
 const LoadableAppContents = Loadable({
-  loader: () => import("./AppContents"),
+  loader: () => import("renderer/App/AppContents"),
   loading: (props: any) => {
     return (
       <div

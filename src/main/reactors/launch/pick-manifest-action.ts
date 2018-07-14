@@ -2,7 +2,7 @@ import defaultManifestIcons from "common/constants/default-manifest-icons";
 
 import { Store, ModalButtonSpec } from "common/types";
 
-import { promisedModal } from "../../reactors/modals";
+import { promisedModal } from "main/reactors/modals";
 
 import { Game, Action } from "common/butlerd/messages";
 import { modals } from "common/modals";

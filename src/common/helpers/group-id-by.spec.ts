@@ -1,6 +1,6 @@
 import { describe, it, assert } from "test";
 
-import groupIdBy from "./group-id-by";
+import groupIdBy from "common/helpers/group-id-by";
 import { indexBy } from "underscore";
 
 describe("group-id-by", () => {

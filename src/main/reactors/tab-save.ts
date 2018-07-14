@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd/index";
+import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
 import { Store, TabDataSave } from "common/types";

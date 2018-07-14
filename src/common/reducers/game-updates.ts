@@ -2,7 +2,7 @@ import { GameUpdatesState } from "common/types";
 import { omit } from "underscore";
 
 import { actions } from "common/actions";
-import reducer from "./reducer";
+import reducer from "common/reducers/reducer";
 
 const initialState = {
   updates: {},

@@ -1,4 +1,4 @@
-import { LocalizedString } from "./index";
+import { LocalizedString } from "common/types";
 
 export interface TabInstances {
   [key: string]: TabInstance;

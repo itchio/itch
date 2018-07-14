@@ -1,14 +1,14 @@
 import { Client, Instance } from "butlerd";
 import { actions } from "common/actions";
-import { messages } from "common/butlerd/index";
-import { makeButlerInstance } from "common/butlerd/master-client";
+import { messages } from "common/butlerd";
+import { makeButlerInstance } from "common/butlerd/make-butler-instance";
 import { Store } from "common/types";
 import { ItchPromise } from "common/util/itch-promise";
 import { appdataLocationPath } from "common/util/paths";
 import { Watcher } from "common/util/watcher";
 import { indexBy, isEmpty } from "underscore";
-import { Manager } from "../broth/manager";
-import { delay } from "./delay";
+import { Manager } from "main/broth/manager";
+import { delay } from "main/reactors/delay";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 

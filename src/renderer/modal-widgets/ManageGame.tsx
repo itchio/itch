@@ -18,7 +18,7 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { each, filter, find, map, size } from "underscore";
-import { ModalWidgetProps } from "../../common/modals/index";
+import { ModalWidgetProps } from "common/modals";
 
 const CaveItemList = styled.div`
   margin: 8px 0;

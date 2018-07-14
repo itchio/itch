@@ -1,6 +1,6 @@
 import { describe, it, assert } from "test";
 
-import { t } from "./t";
+import { t } from "common/format/t";
 
 describe("t", () => {
   it("formats a french string", () => {

@@ -24,6 +24,6 @@ export async function exists(file: string): Promise<boolean> {
   return true;
 }
 
-import * as sf from "../os/sf";
+import * as sf from "main/os/sf";
 import { ItchPromise } from "common/util/itch-promise";
 export const writeFile = sf.writeFile;

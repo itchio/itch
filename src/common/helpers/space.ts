@@ -9,12 +9,12 @@ import {
   Action,
   IEvolveTabPayload,
   Subtract,
-} from "../types/index";
+} from "common/types";
 
 import nodeURL, { format, URLSearchParams } from "url";
 import querystring from "querystring";
 
-import { currentPage, ambientWind } from "../util/navigation";
+import { currentPage, ambientWind } from "common/util/navigation";
 import { actions } from "common/actions";
 
 // Empty Object

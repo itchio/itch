@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import reducer from "./reducer";
+import reducer from "common/reducers/reducer";
 
 import { SystemState } from "common/types";
 

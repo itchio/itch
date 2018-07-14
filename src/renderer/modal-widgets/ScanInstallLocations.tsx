@@ -8,7 +8,7 @@ import LoadingCircle from "renderer/basics/LoadingCircle";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { ModalWidgetProps } from "../../common/modals/index";
+import { ModalWidgetProps } from "common/modals";
 
 const ContainerDiv = styled.div`
   display: flex;

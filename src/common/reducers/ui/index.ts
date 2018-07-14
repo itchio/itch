@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 
-import menu from "./menu";
+import menu from "common/reducers/ui/menu";
 
 import { Reducer } from "redux";
 

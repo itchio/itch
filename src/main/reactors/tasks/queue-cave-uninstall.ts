@@ -3,9 +3,9 @@ import { messages, hookLogging, hookProgress } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
 import { mainLogger } from "main/logger";
 import { modals } from "common/modals";
-import { performUninstall } from "../downloads/perform-uninstall";
-import { promisedModal } from "../modals";
-import asTask from "./as-task";
+import { performUninstall } from "main/reactors/downloads/perform-uninstall";
+import { promisedModal } from "main/reactors/modals";
+import asTask from "main/reactors/tasks/as-task";
 import { mcall } from "main/butlerd/mcall";
 
 const logger = mainLogger.child(__filename);

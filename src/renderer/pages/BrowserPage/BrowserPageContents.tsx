@@ -18,9 +18,9 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { debounce, map } from "underscore";
-import BrowserBar from "./BrowserBar";
-import BrowserContext from "./BrowserContext";
-import DisabledBrowser from "./DisabledBrowser";
+import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
+import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
+import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
 
 const BrowserPageDiv = styled.div`
   ${styles.meat()};

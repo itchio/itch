@@ -9,7 +9,7 @@ import SelectRow, { SelectOption } from "renderer/basics/SelectRow";
 import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import Label from "./Label";
+import Label from "renderer/pages/PreferencesPage/Label";
 
 const Spacer = styled.div`
   width: 8px;

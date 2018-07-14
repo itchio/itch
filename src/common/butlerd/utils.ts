@@ -1,8 +1,8 @@
 import { Client, RequestCreator, RequestError, Endpoint } from "butlerd";
 import { Logger, devNull } from "common/logger";
-import { MinimalContext } from "main/context/index";
-import * as messages from "./messages";
-import { Cave, CaveSummary } from "./messages";
+import { MinimalContext } from "main/context";
+import * as messages from "common/butlerd/messages";
+import { Cave, CaveSummary } from "common/butlerd/messages";
 import { RootState, Store } from "common/types";
 import { Conversation } from "butlerd/lib/client";
 import { delay } from "main/reactors/delay";

@@ -5,8 +5,8 @@ import groupIdBy from "common/helpers/group-id-by";
 
 import { DownloadsState } from "common/types";
 
-import reducer from "./reducer";
-import derivedReducer from "./derived-reducer";
+import reducer from "common/reducers/reducer";
+import derivedReducer from "common/reducers/derived-reducer";
 import { actions } from "common/actions";
 import { Download } from "common/butlerd/messages";
 

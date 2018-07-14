@@ -34,7 +34,7 @@ if (env.development) {
 
 import electron from "electron";
 import App from "renderer/App";
-import { actions } from "common/actions/index";
+import { actions } from "common/actions";
 import { ExtendedWindow } from "common/types";
 import { ambientWind } from "common/util/navigation";
 

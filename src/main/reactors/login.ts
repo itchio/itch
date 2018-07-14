@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd/index";
+import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Store } from "common/types";
@@ -10,8 +10,8 @@ import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { modals } from "common/modals";
 import urlParser from "url";
-import { promisedModal } from "./modals";
-import { restoreTabs, saveTabs } from "./tab-save";
+import { promisedModal } from "main/reactors/modals";
+import { restoreTabs, saveTabs } from "main/reactors/tab-save";
 
 const logger = mainLogger.child(__filename);
 

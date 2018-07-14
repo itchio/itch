@@ -7,7 +7,7 @@ const yauzlOpen = promisify(yauzl.open) as (
   options: yauzl.Options
 ) => Promise<yauzl.ZipFile>;
 
-import * as sf from "../os/sf";
+import * as sf from "main/os/sf";
 import { dirname, join } from "path";
 import { createWriteStream } from "fs";
 import { Logger } from "common/logger";

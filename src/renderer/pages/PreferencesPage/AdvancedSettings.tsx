@@ -6,9 +6,9 @@ import React from "react";
 import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
 import { T } from "renderer/t";
-import BrothComponents from "./BrothComponents";
-import Checkbox from "./Checkbox";
-import ProxySettings from "./ProxySettings";
+import BrothComponents from "renderer/pages/PreferencesPage/BrothComponents";
+import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
+import ProxySettings from "renderer/pages/PreferencesPage/ProxySettings";
 
 class AdvancedSettings extends React.PureComponent<Props> {
   render() {

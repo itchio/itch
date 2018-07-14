@@ -1,4 +1,4 @@
-import { Action } from "../types/index";
+import { Action } from "common/types";
 
 interface ActionCreator<Payload> {
   (payload: Payload): Action<Payload>;

@@ -1,8 +1,8 @@
 import React from "react";
 
-import Checkbox from "./Checkbox";
-import OpenAtLoginError from "./OpenAtLoginError";
-import ExperimentalMark from "./ExperimentalMark";
+import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
+import OpenAtLoginError from "renderer/pages/PreferencesPage/OpenAtLoginError";
+import ExperimentalMark from "renderer/pages/PreferencesPage/ExperimentalMark";
 
 import { T } from "renderer/t";
 import urls from "common/constants/urls";

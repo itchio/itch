@@ -8,9 +8,9 @@ import { createSelector } from "reselect";
 import { IRuntime, IMenuItem, MenuTemplate } from "common/types";
 
 import { RootState } from "common/types";
-import { fleshOutTemplate } from "./context-menu/flesh-out-template";
+import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template";
 import { actions } from "common/actions";
-import { getNativeState } from "./winds";
+import { getNativeState } from "main/reactors/winds";
 import { Profile } from "common/butlerd/messages";
 
 export default function(watcher: Watcher, runtime: IRuntime) {

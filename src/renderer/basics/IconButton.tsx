@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { LocalizedString } from "common/types";
 import React from "react";
 import styled, * as styles from "renderer/styles";
-import Icon from "./Icon";
+import Icon from "renderer/basics/Icon";
 
 const IconButtonDiv = styled.div`
   ${styles.clickable()};

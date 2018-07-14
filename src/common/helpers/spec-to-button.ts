@@ -1,4 +1,4 @@
-import { ModalButton, ModalButtonSpec } from "../types/index";
+import { ModalButton, ModalButtonSpec } from "common/types";
 
 interface DefaultButtons {
   [key: string]: ModalButton;

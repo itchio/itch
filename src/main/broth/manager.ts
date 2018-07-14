@@ -1,10 +1,10 @@
-import { Package, PackageLike, EnsureOpts } from "./package";
+import { Package, PackageLike, EnsureOpts } from "main/broth/package";
 import { join } from "path";
 
 import { Store } from "common/types";
 import { app } from "electron";
 import { actions } from "common/actions";
-import { SelfPackage } from "./self-package";
+import { SelfPackage } from "main/broth/self-package";
 import env from "common/env";
 
 const regularPackageNames = ["butler", "itch-setup"];

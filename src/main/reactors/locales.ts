@@ -7,8 +7,8 @@ import { Watcher } from "common/util/watcher";
 import { app } from "electron";
 import { mainLogger } from "main/logger";
 import { join } from "path";
-import { request } from "../net/request";
-import { exists, readFile, writeFile } from "../os/ifs";
+import { request } from "main/net/request";
+import { exists, readFile, writeFile } from "main/os/ifs";
 
 const upgradesEnabled =
   (env.production && !env.integrationTests) ||

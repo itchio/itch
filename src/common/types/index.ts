@@ -1,11 +1,11 @@
 import { Store as ReduxStore } from "redux";
 
-export * from "./errors";
-export * from "./net";
-export * from "./tab-data";
-import * as TabDataTypes from "./tab-data";
+export * from "common/types/errors";
+export * from "common/types/net";
+export * from "common/types/tab-data";
+import * as TabDataTypes from "common/types/tab-data";
 
-import { TabData } from "./tab-data";
+import { TabData } from "common/types/tab-data";
 import {
   GameUpdate,
   Game,

@@ -1,6 +1,6 @@
-import { WindsState, Action } from "../types";
-import windReducer from "./wind";
-import { actions } from "../actions";
+import { WindsState, Action } from "common/types";
+import windReducer from "common/reducers/wind";
+import { actions } from "common/actions";
 import { omit } from "underscore";
 
 const initialState: WindsState = {};

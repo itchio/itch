@@ -1,6 +1,6 @@
-import reducer from "../reducer";
+import reducer from "common/reducers/reducer";
 import { actions } from "common/actions";
-import { ContextMenuState } from "../../types/index";
+import { ContextMenuState } from "common/types";
 
 const initialState: ContextMenuState = {
   open: false,

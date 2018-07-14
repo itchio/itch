@@ -1,5 +1,5 @@
-import allInitial from "./all";
-import { RootState, Action } from "common/types/index";
+import allInitial from "common/reducers/all";
+import { RootState, Action } from "common/types";
 
 let all = allInitial;
 

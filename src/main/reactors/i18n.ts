@@ -2,7 +2,7 @@ import { Watcher } from "common/util/watcher";
 import { createSelector } from "reselect";
 
 import { RootState } from "common/types";
-import { actions } from "common/actions/index";
+import { actions } from "common/actions";
 
 const fallbackLang = "en";
 

@@ -5,7 +5,7 @@ import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
-import BrowserContextGame from "./BrowserContextGame";
+import BrowserContextGame from "renderer/pages/BrowserPage/BrowserContext/BrowserContextGame";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 

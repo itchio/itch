@@ -3,8 +3,8 @@ import { messages } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { modals } from "common/modals";
-import { promisedModal } from "../modals";
-import asTask from "./as-task";
+import { promisedModal } from "main/reactors/modals";
+import asTask from "main/reactors/tasks/as-task";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.switchVersionCaveRequest, async (store, action) => {

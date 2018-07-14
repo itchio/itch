@@ -1,4 +1,4 @@
-import { PackageLike } from "./package";
+import { PackageLike } from "main/broth/package";
 import { Store, PackageState } from "common/types";
 import {
   itchSetupLock,

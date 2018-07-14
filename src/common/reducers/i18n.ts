@@ -1,6 +1,6 @@
 import { omit } from "underscore";
 import { actions } from "common/actions";
-import reducer from "./reducer";
+import reducer from "common/reducers/reducer";
 
 import { I18nState } from "common/types";
 import env from "common/env";

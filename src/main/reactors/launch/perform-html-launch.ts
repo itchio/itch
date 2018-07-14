@@ -10,13 +10,16 @@ import { Context } from "main/context";
 
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
-import { registerProtocol, setupItchInternal } from "./html/itch-internal";
+import {
+  registerProtocol,
+  setupItchInternal,
+} from "main/reactors/launch/html/itch-internal";
 import {
   Game,
   HTMLLaunchParams,
   HTMLLaunchResult,
 } from "common/butlerd/messages";
-import { Logger } from "common/logger/index";
+import { Logger } from "common/logger";
 import { ItchPromise } from "common/util/itch-promise";
 
 interface HTMLLaunchOpts {

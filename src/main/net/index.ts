@@ -1,2 +1,2 @@
-export * from "./request";
-export * from "./download";
+export * from "main/net/request";
+export * from "main/net/download";

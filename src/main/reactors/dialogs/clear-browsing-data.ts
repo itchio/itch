@@ -1,7 +1,7 @@
 import { Watcher } from "common/util/watcher";
 
 import { actions } from "common/actions";
-import { promisedModal } from "../modals";
+import { promisedModal } from "main/reactors/modals";
 import { modals } from "common/modals";
 
 export default function(watcher: Watcher) {

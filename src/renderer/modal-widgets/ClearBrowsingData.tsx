@@ -12,7 +12,7 @@ import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import { ModalWidgetProps } from "../../common/modals/index";
+import { ModalWidgetProps } from "common/modals";
 
 class ClearBrowsingData extends React.PureComponent<Props, State> {
   constructor(props: ClearBrowsingData["props"], context: any) {

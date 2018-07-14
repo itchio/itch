@@ -1,6 +1,6 @@
 import { describe, it, assert } from "test";
 
-import { camelify, camelifyObject } from "./camelify";
+import { camelify, camelifyObject } from "common/format/camelify";
 
 describe("camelify", () => {
   it("camelify", () => {

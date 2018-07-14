@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import { Watcher } from "common/util/watcher";
 import { mainLogger } from "main/logger";
-import { getCurrentTasks } from "./as-task-persistent-state";
+import { getCurrentTasks } from "main/reactors/tasks/as-task-persistent-state";
 
 const logger = mainLogger.child(__filename);
 

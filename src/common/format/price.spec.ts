@@ -1,6 +1,6 @@
 import { describe, it, assert } from "test";
 
-import { formatPrice } from "./price";
+import { formatPrice } from "common/format/price";
 
 describe("price", () => {
   it("price", () => {

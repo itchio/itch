@@ -6,7 +6,7 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { map } from "underscore";
-import { ModalWidgetProps } from "../../common/modals/index";
+import { ModalWidgetProps } from "common/modals";
 import DownloadProgress from "renderer/basics/DownloadProgress";
 
 class PrereqsState extends React.PureComponent<Props> {

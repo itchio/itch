@@ -3,8 +3,8 @@ import { getDownloadError } from "common/format/errors";
 import { Watcher } from "common/util/watcher";
 import { mainLogger } from "main/logger";
 import { join } from "path";
-import * as sf from "../../os/sf";
-import { makeInstallErrorModal } from "../tasks/make-install-error-modal";
+import * as sf from "main/os/sf";
+import { makeInstallErrorModal } from "main/reactors/tasks/make-install-error-modal";
 
 const logger = mainLogger.child(__filename);
 

@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import reducer from "../reducer";
+import reducer from "common/reducers/reducer";
 import { Profile } from "common/butlerd/messages";
 
 const initialState = null as Profile;

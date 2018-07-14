@@ -5,7 +5,7 @@ import { each, findWhere } from "underscore";
 
 import { Store, ModalResponse } from "common/types";
 
-import modalResolves from "./modals-persistent-state";
+import modalResolves from "main/reactors/modals-persistent-state";
 import { TypedModal } from "common/modals";
 import { ItchPromise } from "common/util/itch-promise";
 

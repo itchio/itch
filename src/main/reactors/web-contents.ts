@@ -1,12 +1,12 @@
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
-import { Store, TabWeb } from "common/types/index";
+import { Store, TabWeb } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { BrowserWindow, webContents } from "electron";
 import { mainLogger } from "main/logger";
 import nodeURL from "url";
-import { openAppDevTools } from "./open-app-devtools";
-import createContextMenu from "./web-contents-context-menu";
+import { openAppDevTools } from "main/reactors/open-app-devtools";
+import createContextMenu from "main/reactors/web-contents-context-menu";
 
 const logger = mainLogger.child(__filename);
 

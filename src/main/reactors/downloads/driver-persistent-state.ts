@@ -1,7 +1,7 @@
 import { messages } from "common/butlerd";
 import { mainLogger } from "main/logger";
 import { mcall } from "main/butlerd/mcall";
-import { Conversation } from "../../../../node_modules/butlerd/lib/client";
+import { Conversation } from "butlerd/lib/client";
 
 const logger = mainLogger.child(__filename);
 

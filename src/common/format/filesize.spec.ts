@@ -1,6 +1,6 @@
 import { describe, it, assert } from "test";
 
-import { fileSize } from "./filesize";
+import { fileSize } from "common/format/filesize";
 
 describe("filesize", () => {
   it("fileSize", () => {

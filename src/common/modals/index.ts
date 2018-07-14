@@ -1,4 +1,4 @@
-import { actions } from "common/actions/index";
+import { actions } from "common/actions";
 import {
   ClearBrowsingDataParams,
   ClearBrowsingDataResponse,

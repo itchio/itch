@@ -1,4 +1,4 @@
-import { messages, hookLogging } from "common/butlerd/index";
+import { messages, hookLogging } from "common/butlerd";
 import { Logger } from "common/logger";
 import { Store } from "common/types";
 import { mcall } from "main/butlerd/mcall";

@@ -1,4 +1,4 @@
-import { LocalizedString } from "../types/index";
+import { LocalizedString } from "common/types";
 import { Operation, OperationType } from "common/helpers/get-game-status";
 import { DownloadReason } from "common/butlerd/messages";
 

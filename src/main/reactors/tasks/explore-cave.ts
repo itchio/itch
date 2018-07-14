@@ -3,7 +3,7 @@ import { messages } from "common/butlerd";
 import { Watcher } from "common/util/watcher";
 import fs from "fs";
 import { dirname } from "path";
-import * as explorer from "../../os/explorer";
+import * as explorer from "main/os/explorer";
 import { mcall } from "main/butlerd/mcall";
 
 export default function(watcher: Watcher) {

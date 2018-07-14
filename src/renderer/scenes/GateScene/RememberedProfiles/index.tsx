@@ -9,7 +9,7 @@ import { Links } from "renderer/scenes/GateScene/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { map } from "underscore";
-import RememberedProfile from "./RememberedProfile";
+import RememberedProfile from "renderer/scenes/GateScene/RememberedProfiles/RememberedProfile";
 
 const RememberedProfilesDiv = styled.div`
   animation: fade-in 0.2s;

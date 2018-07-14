@@ -5,7 +5,7 @@ import { ItchPromise } from "common/util/itch-promise";
 import { mainLogger } from "main/logger";
 import split2 from "split2";
 import stream from "stream";
-import { MinimalContext } from "../context";
+import { MinimalContext } from "main/context";
 
 const spawnLogger = mainLogger.child(__filename);
 

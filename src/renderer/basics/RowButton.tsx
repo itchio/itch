@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { lighten } from "polished";
 import React from "react";
 import styled, * as styles from "renderer/styles";
-import Icon from "./Icon";
+import Icon from "renderer/basics/Icon";
 
 const LargeIcon = styled(Icon)`
   font-size: 20px;

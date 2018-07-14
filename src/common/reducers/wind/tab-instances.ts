@@ -1,6 +1,6 @@
 import { TabInstances, TabData, TabDataSave, TabInstance } from "common/types";
 import { actions } from "common/actions";
-import reducer from "../reducer";
+import reducer from "common/reducers/reducer";
 
 import { omit, each, size } from "underscore";
 

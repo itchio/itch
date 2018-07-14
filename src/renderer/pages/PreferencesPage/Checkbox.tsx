@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { Dispatch, PreferencesState } from "common/types";
 import React from "react";
 import { hookWithProps } from "renderer/hocs/hook";
-import Label from "./Label";
+import Label from "renderer/pages/PreferencesPage/Label";
 
 class Checkbox extends React.PureComponent<Props> {
   render() {

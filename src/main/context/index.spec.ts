@@ -1,6 +1,6 @@
 import { describe, it, assert } from "test";
 
-import { Context } from "./index";
+import { Context } from "main/context";
 import { Store, isCancelled } from "common/types";
 import { ItchPromise } from "common/util/itch-promise";
 const store = {} as Store;

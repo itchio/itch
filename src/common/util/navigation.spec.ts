@@ -1,5 +1,5 @@
 import { describe, it, assert } from "test";
-import * as navigation from "./navigation";
+import * as navigation from "common/util/navigation";
 
 describe("navigation", () => {
   it("transformUrl", () => {

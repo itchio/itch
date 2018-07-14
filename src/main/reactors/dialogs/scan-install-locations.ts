@@ -4,7 +4,7 @@ import { modals } from "common/modals";
 import { ScanInstallLocationsParams } from "common/modals/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
-import { promisedModal } from "../modals";
+import { promisedModal } from "main/reactors/modals";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.scanInstallLocations, async (store, action) => {

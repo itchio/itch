@@ -1,7 +1,7 @@
-import { RootState, ITask, TaskName } from "../types/index";
+import { RootState, ITask, TaskName } from "common/types";
 
 import { first, findWhere, size } from "underscore";
-import getByIds from "./get-by-ids";
+import getByIds from "common/helpers/get-by-ids";
 import {
   getPendingForGame,
   getActiveDownload,

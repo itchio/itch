@@ -1,5 +1,5 @@
 import { describe, it, assert } from "test";
-import getByIds from "./get-by-ids";
+import getByIds from "common/helpers/get-by-ids";
 
 describe("get-by-ids", () => {
   it("gets records by IDs, being chill about null values", () => {

@@ -8,7 +8,7 @@ import { app, CertificateVerifyProcRequest } from "electron";
 import { mainLogger } from "main/logger";
 import loadPreferences from "main/reactors/preboot/load-preferences";
 import { modals } from "common/modals";
-import { applyProxySettings } from "../reactors/proxy";
+import { applyProxySettings } from "main/reactors/proxy";
 import { itchPlatform } from "common/os/platform";
 import { arch } from "main/os/arch";
 
