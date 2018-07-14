@@ -2,7 +2,7 @@ import { Instance } from "butlerd";
 import { butlerDbPath } from "common/util/paths";
 import urls from "common/constants/urls";
 import ospath from "path";
-import { userAgent } from "common/constants/useragent";
+import { butlerUserAgent } from "common/constants/useragent";
 import { RootState } from "common/types";
 import env from "common/env";
 import { MinimalContext } from "main/context";
@@ -42,7 +42,7 @@ export async function makeButlerInstance(
     "--address",
     urls.itchio,
     "--user-agent",
-    userAgent(),
+    butlerUserAgent(),
     "--destiny-pid",
     `${process.pid}`,
   ];
