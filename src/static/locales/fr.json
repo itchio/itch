@@ -513,5 +513,6 @@
     "grid.really_empty_state.leader": "Il n'y a rien ici...",
     "grid.item.running.prepare": "Préparation...",
     "login.status.finalizing_installation": "Finalisation de l'installation...",
-    "grid.really_empty_state.explanation": "... pour le moment !"
+    "grid.really_empty_state.explanation": "... pour le moment !",
+    "grid.item.queueing": "En attente..."
 }
