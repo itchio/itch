@@ -516,5 +516,6 @@
     "grid.really_empty_state.explanation": "... pour le moment !",
     "grid.item.queueing": "En attente...",
     "grid.item.running.clean": "Nettoyage...",
-    "preferences.install_location.disk_usage": "Utilisation du disque"
+    "preferences.install_location.disk_usage": "Utilisation du disque",
+    "preferences.install_location.size_used_by_games": "{{installedSize}} utilisé par les jeux"
 }
