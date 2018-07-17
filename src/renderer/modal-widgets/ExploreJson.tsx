@@ -30,7 +30,7 @@ const JSONTreeContainer = styled.div`
   }
 
   input[type="search"] {
-    ${styles.heavyInput()};
+    ${styles.heavyInput};
   }
 `;
 

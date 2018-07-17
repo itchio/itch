@@ -2,7 +2,7 @@ import React from "react";
 import styled, * as styles from "renderer/styles";
 
 const LinkSpan = styled.span`
-  ${styles.secondaryLink()};
+  ${styles.secondaryLink};
 
   transition: color 0.4s;
   flex-shrink: 0.1;

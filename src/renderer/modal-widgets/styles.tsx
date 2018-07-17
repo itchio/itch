@@ -8,7 +8,7 @@ export const ModalWidgetDiv = styled.div`
   input[type="number"],
   input[type="text"],
   input[type="password"] {
-    ${styles.heavyInput()};
+    ${styles.heavyInput};
     width: 100%;
   }
 

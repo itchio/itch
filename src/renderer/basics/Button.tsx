@@ -5,11 +5,11 @@ import Icon from "renderer/basics/Icon";
 import styled, * as styles from "renderer/styles";
 
 const Label = styled.div`
-  ${styles.singleLine()};
+  ${styles.singleLine};
 `;
 
 const ButtonDiv = styled.div`
-  ${styles.singleLine()};
+  ${styles.singleLine};
   transition: all 0.2s;
 
   font-size: ${props => props.theme.fontSizes.baseText};

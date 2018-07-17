@@ -159,7 +159,7 @@ const Form = styled.form`
   }
 
   input {
-    ${styles.heavyInput()};
+    ${styles.heavyInput};
     font-size: ${props => props.theme.fontSizes.large};
     width: 380px;
   }

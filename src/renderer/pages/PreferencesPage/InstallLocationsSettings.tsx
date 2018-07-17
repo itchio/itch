@@ -27,14 +27,14 @@ const LocationTable = styled.table`
     background: ${props => props.theme.explanation};
 
     &:first-child {
-      ${styles.prefChunk()};
+      ${styles.prefChunk};
     }
   }
 
   tr.default {
     td {
       &:first-child {
-        ${styles.prefChunkActive()};
+        ${styles.prefChunkActive};
       }
     }
   }
@@ -86,7 +86,7 @@ const LocationTable = styled.table`
     background: #555;
     padding: 2px 8px;
     position: relative;
-    ${styles.singleLine()};
+    ${styles.singleLine};
 
     &,
     .progress-inner {

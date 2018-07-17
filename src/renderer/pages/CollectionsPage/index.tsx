@@ -28,7 +28,7 @@ const FetchProfileCollections = butlerCaller(messages.FetchProfileCollections);
 const CollectionGameStripe = GameStripe(messages.FetchCollectionGames);
 
 const CollectionsDiv = styled.div`
-  ${styles.meat()};
+  ${styles.meat};
 `;
 
 const CollectionInfo = styled.div`

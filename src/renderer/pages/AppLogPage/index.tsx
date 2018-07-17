@@ -15,7 +15,7 @@ import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 
 const AppLogDiv = styled.div`
-  ${styles.meat()};
+  ${styles.meat};
 `;
 
 const Spacer = styled.div`

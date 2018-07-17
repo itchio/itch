@@ -18,7 +18,7 @@ const UnshrinkableIconButton = styled(IconButton)`
 `;
 
 const ItemHeading = styled.div`
-  ${styles.singleLine()};
+  ${styles.singleLine};
   padding: 0.2em 0;
 `;
 
@@ -86,7 +86,8 @@ const IconContainer = styled.div`
 `;
 
 const ProgressOuter = styled.div`
-  ${styles.progress()} width: 60px;
+  ${styles.progress};
+  width: 60px;
   height: 4px;
   margin: 4px 0 2px 10px;
 

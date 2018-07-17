@@ -9,10 +9,10 @@ const LabelEl = styled.label`
   display: flex;
   align-items: center;
 
-  ${styles.prefChunk()};
+  ${styles.prefChunk};
 
   &.active {
-    ${styles.prefChunkActive()};
+    ${styles.prefChunkActive};
   }
 
   input[type="checkbox"] {

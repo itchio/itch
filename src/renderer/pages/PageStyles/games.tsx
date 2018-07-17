@@ -76,7 +76,7 @@ const DarkBox = styled.div`
 `;
 
 const DarkTitle = styled.div`
-  ${styles.singleLine()};
+  ${styles.singleLine};
   flex-shrink: 0;
   font-size: ${props => props.theme.fontSizes.huge};
   font-weight: 200;

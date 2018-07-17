@@ -1,4 +1,4 @@
-import { lighten, transparentize } from "polished";
+import { lighten } from "polished";
 
 // colors
 
@@ -130,22 +130,29 @@ export const theme = {
 };
 
 export type Theme = typeof theme;
-export interface ThemeProps {
-  theme: Theme;
-}
 
-import * as styledComponents from "styled-components";
+import * as sc from "styled-components";
 import { ThemedStyledComponentsModule } from "styled-components";
 const {
   default: styled,
-  css,
+  css: baseCss,
   injectGlobal,
   keyframes,
   ThemeProvider,
-} = (styledComponents as any) as ThemedStyledComponentsModule<Theme>;
-// this tiny workaround brought to you by
-// this line in the styled-components typings:
-// export const ThemeProvider: ThemeProviderComponent<object>;
+} = sc as ThemedStyledComponentsModule<Theme>;
+
+// this workaround brought to you by.. some more styled-copmonents change
+export interface CorrectlyTypedThemedCssFunction<T> {
+  (
+    strings: TemplateStringsArray,
+    ...interpolations: sc.SimpleInterpolation[]
+  ): sc.InterpolationValue[];
+  <P>(
+    strings: TemplateStringsArray,
+    ...interpolations: sc.Interpolation<sc.ThemedOuterStyledProps<P, T>>[]
+  ): sc.FlattenInterpolation<sc.ThemedOuterStyledProps<P, T>>[];
+}
+const css = baseCss as CorrectlyTypedThemedCssFunction<Theme>;
 
 export default styled;
 export { css, injectGlobal, keyframes, ThemeProvider };
@@ -260,7 +267,7 @@ export const animations = {
 
 // mixins
 
-export const heavyInput = () => css`
+export const heavyInput = css`
   font-size: ${props => props.theme.fontSizes.baseText};
   padding: 12px 10px 9px 10px;
   margin: 8px 4px;
@@ -308,7 +315,7 @@ export const searchIcon = () => css`
   pointer-events: none;
 `;
 
-export const clickable = () => css`
+export const clickable = css`
   filter: brightness(90%);
 
   &:hover {
@@ -325,7 +332,7 @@ const downloadProgressColorOut = "rgba(165, 165, 165, 0.47)";
 const downloadProgressColorInA = "rgba(255, 255, 255, .1)";
 const downloadProgressColorInB = "rgba(255, 255, 255, .4)";
 
-export const progress = () => css`
+export const progress = css`
   position: relative;
   height: 3px;
   width: 100%;
@@ -350,7 +357,7 @@ export const progress = () => css`
   }
 `;
 
-export const horizontalScan = () => css`
+export const horizontalScan = css`
   background: -webkit-linear-gradient(
     left,
     ${props => props.theme.secondaryTextHover} 0%
@@ -363,14 +370,14 @@ export const horizontalScan = () => css`
   -webkit-text-fill-color: transparent;
 `;
 
-export const singleLine = () => css`
+export const singleLine = css`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
 `;
 
-export const secondaryLink = () => css`
+export const secondaryLink = css`
   color: ${props => props.theme.secondaryText};
   text-decoration: underline;
 
@@ -380,7 +387,7 @@ export const secondaryLink = () => css`
   }
 `;
 
-export const meat = () => css`
+export const meat = css`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -390,48 +397,16 @@ export const meat = () => css`
   color: ${props => props.theme.secondaryText};
 `;
 
-export const thumbnailStyle = () => css`
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
-`;
-
-export const hubItemStyle = () => css`
-  ${thumbnailStyle()} background: #232222;
-  border: 1px solid #191919;
-  transition: all 0.4s;
-`;
-
-export const defaultCoverBackground = () => css`
-  background-color: rgba(255, 255, 255, 0.05);
-`;
-
-export const accentTextShadow = () => css`
-  text-shadow: 1px 1px 1px ${props => props.theme.baseBackground};
-`;
-
-export const emptyMeat = () => css`
-  margin: 20px;
-  color: ${props => props.theme.secondaryText};
-  font-size: ${props => props.theme.fontSizes.large};
-`;
-
-export const prefChunk = () => css`
+export const prefChunk = css`
   border-left: 3px solid ${props => props.theme.prefBorder};
   transition: 0.2s border ease-in-out;
 `;
 
-export const prefChunkActive = () => css`
+export const prefChunkActive = css`
   border-left: 3px solid ${props => props.theme.accent};
 `;
 
-export const metaColors = (color: string) => css`
-  border: 1px solid ${transparentize(0.2, color)};
-  background: ${transparentize(0.8, color)};
-  color: ${color};
-`;
-
-export const boxy = () => css`
+export const boxy = css`
   border: 1px solid rgba(255, 255, 255, 0.05);
   background: ${props => props.theme.itemBackground};
   overflow: hidden;
