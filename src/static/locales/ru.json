@@ -541,5 +541,7 @@
     "preferences.advanced.components": "Компоненты",
     "prompt.self_update_ready.short": "Доступна новая версия",
     "prompt.revert.no_other_version": "Других версий нет.",
-    "pick_update_upload.buttons.skip_update": "Не обновлять"
+    "pick_update_upload.buttons.skip_update": "Не обновлять",
+    "grid.item.launch_title": "Запустить {{title}}",
+    "grid.item.open_title": "Открыть {{title}}"
 }
