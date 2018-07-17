@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "skipLibCheck": true,
+
+    "baseUrl": "src",
+    "paths": {
+      "common": ["common"],
+      "renderer": ["renderer"],
+      "main": ["main"]
+    },
+
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "noImplicitReturns": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+
+    "sourceMap": true
+  }
+}
