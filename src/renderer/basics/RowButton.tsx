@@ -9,11 +9,11 @@ const LargeIcon = styled(Icon)`
 `;
 
 const Label = styled.div`
-  ${styles.singleLine()};
+  ${styles.singleLine};
 `;
 
 const RowButtonDiv = styled.div`
-  ${styles.singleLine()};
+  ${styles.singleLine};
 
   font-size: ${props => props.theme.fontSizes.baseText};
   font-weight: bold;

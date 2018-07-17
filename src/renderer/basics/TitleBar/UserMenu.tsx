@@ -38,7 +38,7 @@ const UserMenuDiv = styled.div`
 
   span {
     flex-shrink: 1;
-    ${styles.singleLine()};
+    ${styles.singleLine};
   }
 `;
 

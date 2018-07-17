@@ -25,7 +25,7 @@ const NavigationBarDiv = styled.div`
 `;
 
 const browserAddressStyle = () => css`
-  ${styles.singleLine()};
+  ${styles.singleLine};
   font-size: 14px;
   height: 33px;
   line-height: 33px;

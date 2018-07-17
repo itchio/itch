@@ -4,7 +4,6 @@ import "!style-loader!css-loader!react-hint/css/index.css";
 import "!style-loader!css-loader!react-json-inspector/json-inspector.css";
 import "!style-loader!css-loader!react-tabs/style/react-tabs.css";
 import { Dispatch } from "common/types";
-import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Layout from "renderer/App/Layout";
 import Modals from "renderer/App/Modals";

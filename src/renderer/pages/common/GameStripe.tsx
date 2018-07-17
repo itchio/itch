@@ -50,7 +50,7 @@ const ViewAll = styled.a`
 `;
 
 const StripeItem = styled.div`
-  ${styles.boxy()};
+  ${styles.boxy};
   flex-shrink: 0;
   margin-right: 0.8em;
 `;

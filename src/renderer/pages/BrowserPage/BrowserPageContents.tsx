@@ -23,7 +23,7 @@ import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
 import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
 
 const BrowserPageDiv = styled.div`
-  ${styles.meat()};
+  ${styles.meat};
 `;
 
 const BrowserMain = styled.div`
@@ -72,7 +72,9 @@ const NewTabGrid = styled.div`
 `;
 
 const NewTabItem = styled.div`
-  ${styles.clickable()} width: auto;
+  ${styles.clickable};
+
+  width: auto;
   flex-grow: 1;
   padding: 30px 10px;
   display: flex;

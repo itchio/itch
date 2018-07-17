@@ -38,7 +38,7 @@ const Filler = styled.div`
 `;
 
 const TitleDiv = styled.div`
-  ${styles.singleLine()};
+  ${styles.singleLine};
 
   font-size: ${props => props.theme.fontSizes.large};
 `;

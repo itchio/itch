@@ -23,7 +23,7 @@ import { first, isEmpty, map, rest, size } from "underscore";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 
 const DownloadsDiv = styled.div`
-  ${styles.meat()};
+  ${styles.meat};
 `;
 
 const DownloadsContentDiv = styled.div`
@@ -56,7 +56,7 @@ const DownloadsContentDiv = styled.div`
 
     .clear {
       margin-left: 8px;
-      ${styles.clickable()};
+      ${styles.clickable};
     }
   }
 

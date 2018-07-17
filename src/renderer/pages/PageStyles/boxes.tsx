@@ -6,7 +6,7 @@ export const BaseBox = styled.div`
 `;
 
 export const Box = styled.div`
-  ${styles.boxy()};
+  ${styles.boxy};
   max-width: 1200px;
 
   margin: 1em auto;
@@ -14,7 +14,7 @@ export const Box = styled.div`
 `;
 
 export const BoxSingle = styled.div`
-  ${styles.boxy()};
+  ${styles.boxy};
 
   margin: 1em auto;
   line-height: 1.6;

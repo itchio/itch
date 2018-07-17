@@ -5,7 +5,7 @@ import Sidebar from "renderer/scenes/HubScene/Sidebar/Sidebar";
 import SidebarHandle from "renderer/scenes/HubScene/Sidebar/SidebarHandle";
 import styled from "renderer/styles";
 
-const HubPageDiv = styled.div`
+const HubSceneDiv = styled.div`
   overflow: hidden;
   position: absolute;
   top: 0;
@@ -16,12 +16,12 @@ const HubPageDiv = styled.div`
   flex-direction: row;
 `;
 
-class HubPage extends React.PureComponent {
+class HubScene extends React.PureComponent {
   render() {
     const iw = (window as ExtendedWindow).windSpec;
 
     return (
-      <HubPageDiv>
+      <HubSceneDiv>
         {iw.role == "main" ? (
           <>
             <Sidebar />
@@ -29,9 +29,9 @@ class HubPage extends React.PureComponent {
           </>
         ) : null}
         <HubContent />
-      </HubPageDiv>
+      </HubSceneDiv>
     );
   }
 }
 
-export default HubPage;
+export default HubScene;

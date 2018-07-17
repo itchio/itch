@@ -53,7 +53,7 @@ const SectionDiv = styled.div`
   align-items: stretch;
 
   overflow-x: hidden;
-  ${styles.singleLine()};
+  ${styles.singleLine};
   line-height: 1.4;
 `;
 
@@ -65,7 +65,7 @@ const TitleDiv = styled.div`
 
 const Title = styled.span`
   font-size: ${props => props.theme.fontSizes.smaller};
-  ${styles.singleLine()};
+  ${styles.singleLine};
 
   &.chosen {
     font-size: ${props => props.theme.fontSizes.larger};

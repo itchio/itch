@@ -101,7 +101,7 @@ const DownloadRowDiv = styled.div`
     }
 
     .progress {
-      ${styles.progress()};
+      ${styles.progress};
 
       position: absolute;
       left: 0;

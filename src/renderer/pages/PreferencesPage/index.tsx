@@ -11,7 +11,7 @@ import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
 
 const PreferencesDiv = styled.div`
-  ${styles.meat()};
+  ${styles.meat};
 `;
 
 const PreferencesContentDiv = styled.div`
