@@ -5,6 +5,7 @@ import React from "react";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import { ambientWind } from "common/util/navigation";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
 class FeaturedPage extends React.PureComponent<Props> {
   render() {
@@ -22,7 +23,7 @@ class FeaturedPage extends React.PureComponent<Props> {
   }
 }
 
-interface Props {
+interface Props extends MeatProps {
   space: Space;
   dispatch: Dispatch;
 }

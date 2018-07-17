@@ -1,27 +1,74 @@
+import Loadable from "react-loadable";
 import { Space } from "common/helpers/space";
 import React from "react";
 import Button from "renderer/basics/Button";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { withSpace } from "renderer/hocs/withSpace";
-import AppLogPage from "renderer/pages/AppLogPage";
-import BrowserPage from "renderer/pages/BrowserPage";
-import CollectionPage from "renderer/pages/CollectionPage";
-import CollectionsPage from "renderer/pages/CollectionsPage";
-import CrashyPage from "renderer/pages/CrashyPage";
-import DashboardPage from "renderer/pages/DashboardPage";
-import DownloadsPage from "renderer/pages/DownloadsPage";
-import FeaturedPage from "renderer/pages/FeaturedPage";
-import GamePage from "renderer/pages/GamePage";
-import LibraryPage from "renderer/pages/LibraryPage";
-import InstalledPage from "renderer/pages/LibraryPage/InstalledPage";
-import OwnedPage from "renderer/pages/LibraryPage/OwnedPage";
-import LocationsPage from "renderer/pages/LocationsPage";
-import LocationPage from "renderer/pages/LocationPage";
-import PreferencesPage from "renderer/pages/PreferencesPage";
+
+const CrashyPage = Loadable({
+  loader: () => import("renderer/pages/CrashyPage"),
+  loading: () => null,
+});
+const GamePage = Loadable({
+  loader: () => import("renderer/pages/GamePage"),
+  loading: () => null,
+});
+const FeaturedPage = Loadable({
+  loader: () => import("renderer/pages/FeaturedPage"),
+  loading: () => null,
+});
+const LibraryPage = Loadable({
+  loader: () => import("renderer/pages/LibraryPage"),
+  loading: () => null,
+});
+const OwnedPage = Loadable({
+  loader: () => import("renderer/pages/LibraryPage/OwnedPage"),
+  loading: () => null,
+});
+const InstalledPage = Loadable({
+  loader: () => import("renderer/pages/LibraryPage/InstalledPage"),
+  loading: () => null,
+});
+const LocationsPage = Loadable({
+  loader: () => import("renderer/pages/LocationsPage"),
+  loading: () => null,
+});
+const LocationPage = Loadable({
+  loader: () => import("renderer/pages/LocationPage"),
+  loading: () => null,
+});
+const BrowserPage = Loadable({
+  loader: () => import("renderer/pages/BrowserPage"),
+  loading: () => null,
+});
+const CollectionPage = Loadable({
+  loader: () => import("renderer/pages/CollectionPage"),
+  loading: () => null,
+});
+const CollectionsPage = Loadable({
+  loader: () => import("renderer/pages/CollectionsPage"),
+  loading: () => null,
+});
+const AppLogPage = Loadable({
+  loader: () => import("renderer/pages/AppLogPage"),
+  loading: () => null,
+});
+const DashboardPage = Loadable({
+  loader: () => import("renderer/pages/DashboardPage"),
+  loading: () => null,
+});
+const DownloadsPage = Loadable({
+  loader: () => import("renderer/pages/DownloadsPage"),
+  loading: () => null,
+});
+const PreferencesPage = Loadable({
+  loader: () => import("renderer/pages/PreferencesPage"),
+  loading: () => null,
+});
+
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import PreloadPage from "renderer/pages/PreloadPage";
 
 const ErrorDiv = styled.div`
   display: block;
@@ -209,8 +256,6 @@ class Meat extends React.PureComponent<Props, State> {
         return AppLogPage;
       case "crashy":
         return CrashyPage;
-      case "preload":
-        return PreloadPage;
       case "new-tab":
         return BrowserPage;
       default:

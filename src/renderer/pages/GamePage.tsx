@@ -7,6 +7,7 @@ import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import { ambientWind } from "common/util/navigation";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 
@@ -40,7 +41,7 @@ class GamePage extends React.PureComponent<Props> {
   }
 }
 
-interface Props {
+interface Props extends MeatProps {
   space: Space;
   dispatch: Dispatch;
 }
