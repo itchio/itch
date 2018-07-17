@@ -8,7 +8,7 @@ import LoginScreen from "renderer/scenes/GateScene/LoginScreen";
 import LogoIndicator from "renderer/scenes/GateScene/LogoIndicator";
 import styled from "renderer/styles";
 
-const GateDiv = styled.div`
+const GateSceneDiv = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -24,19 +24,19 @@ const GateDiv = styled.div`
   }
 `;
 
-class GatePage extends React.PureComponent<Props> {
+class GateScene extends React.PureComponent<Props> {
   username: HTMLInputElement;
   password: HTMLInputElement;
 
   render() {
     return (
-      <GateDiv>
+      <GateSceneDiv>
         <TitleBar tab="login" />
         <LogoIndicator />
         <Filler />
         <section className="crux">{this.renderChild()}</section>
         <Filler />
-      </GateDiv>
+      </GateSceneDiv>
     );
   }
 
@@ -65,4 +65,4 @@ export default hook(map => ({
         ? rs.profile.login.blockingOperation
         : rs.setup.blockingOperation
   ),
-}))(GatePage);
+}))(GateScene);

@@ -10,11 +10,19 @@ import NonLocalIndicator from "renderer/App/Layout/NonLocalIndicator";
 import StatusBar from "renderer/App/Layout/StatusBar";
 import { hook } from "renderer/hocs/hook";
 import { ProfileProvider } from "renderer/hocs/withProfile";
-import GateScene from "renderer/scenes/GateScene";
-import HubScene from "renderer/scenes/HubScene";
 import styled from "renderer/styles";
 import { TString } from "renderer/t";
 import { withIntl } from "renderer/hocs/withIntl";
+import Loadable from "react-loadable";
+
+const GateScene = Loadable({
+  loader: () => import("renderer/scenes/GateScene"),
+  loading: () => null,
+});
+const HubScene = Loadable({
+  loader: () => import("renderer/scenes/HubScene"),
+  loading: () => null,
+});
 
 const ReactHint = ReactHintFactory(React);
 
