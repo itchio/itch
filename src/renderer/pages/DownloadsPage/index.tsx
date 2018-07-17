@@ -161,8 +161,11 @@ class DownloadsPage extends React.PureComponent<Props> {
       <>
         <div className="section-bar">
           <Title className="finished-header">
-            {T(["status.downloads.updates_available"])} ({size(updates)})
+            <span>
+              {T(["status.downloads.updates_available"])} ({size(updates)})
+            </span>
           </Title>
+          <FilterSpacer />
           <Link
             label={T(["status.downloads.update_all"])}
             onClick={this.onUpdateAll}

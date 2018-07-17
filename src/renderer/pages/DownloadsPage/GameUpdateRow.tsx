@@ -2,7 +2,7 @@ import { GameUpdate } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
 import { ambientWind, urlForGame } from "common/util/navigation";
 import React from "react";
-import { HoverCover } from "renderer/basics/Cover";
+import Cover from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
 import Link from "renderer/basics/Link";
 import TimeAgo from "renderer/basics/TimeAgo";
@@ -69,18 +69,20 @@ class GameUpdateRow extends React.PureComponent<Props> {
     return (
       <GameUpdateRowDiv>
         <GameCover>
-          <HoverCover
+          <Cover
             gameId={game.id}
             coverUrl={game.coverUrl}
             stillCoverUrl={game.stillCoverUrl}
             showGifMarker={false}
             onClick={this.onNavigate}
+            hover={false}
           />
         </GameCover>
         <GameUpdateInfo>
           <GameTitle onClick={this.onNavigate}>{game.title}</GameTitle>
           <VersionInfo>
-            {versionInfo} — <StyledTimeAgo date={updatedAt} />
+            {versionInfo ? <>{versionInfo} — </> : null}
+            <StyledTimeAgo date={updatedAt} />
           </VersionInfo>
         </GameUpdateInfo>
         <Filler />
@@ -105,7 +107,7 @@ class GameUpdateRow extends React.PureComponent<Props> {
 
     dispatch(
       actions.navigate({
-        wind: ambientWind(),
+        wind: "root",
         url: urlForGame(game.id),
         background: doesEventMeanBackground(e),
       })

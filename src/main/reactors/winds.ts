@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { darkMineShaft } from "common/constants/colors";
+import { codGray } from "common/constants/colors";
 import { opensInWindow } from "common/constants/windows";
 import env from "common/env";
 import { t } from "common/format/t";
@@ -32,9 +32,6 @@ const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = process.platform === "darwin";
 
-// const preloadEnabled = !env.integrationTests;
-const preloadEnabled = false;
-
 async function createRootWindow(store: Store) {
   const wind = "root";
   const role: WindRole = "main";
@@ -55,7 +52,6 @@ async function createRootWindow(store: Store) {
     width,
     height,
     center,
-    show: false,
   };
   const nativeWindow = new BrowserWindow(opts);
   store.dispatch(
@@ -97,22 +93,6 @@ async function createRootWindow(store: Store) {
   if (parseInt(process.env.DEVTOOLS || "0", 10) > 0) {
     await openAppDevTools(nativeWindow);
   }
-
-  preloadWindow(store);
-}
-
-function preloadWindow(store: Store) {
-  if (!preloadEnabled) {
-    return;
-  }
-
-  store.dispatch(
-    actions.openWind({
-      initialURL: "itch://preload",
-      role: "secondary",
-      preload: true,
-    })
-  );
 }
 
 /**
@@ -300,8 +280,8 @@ export default function(watcher: Watcher) {
     if (wind === "root") {
       config.set(BOUNDS_CONFIG_KEY, bounds);
     } else {
-      const navState = store.getState().winds[wind].navigation;
-      const { initialURL } = navState;
+      const props = store.getState().winds[wind].properties;
+      const { initialURL } = props;
       const configKey = `${initialURL}-bounds`;
       config.set(configKey, bounds);
     }
@@ -330,97 +310,25 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.openWind, async (store, action) => {
-    const { initialURL, preload } = action.payload;
+    const { initialURL } = action.payload;
     const rs = store.getState();
 
     if (opensInWindow[initialURL]) {
       // see if we already have a window with that initialURL
       for (const wind of Object.keys(rs.winds)) {
         const windState = rs.winds[wind];
-        if (windState.navigation.initialURL === initialURL) {
+        if (windState.properties.initialURL === initialURL) {
           const nativeWin = getNativeWindow(rs, wind);
           if (nativeWin) {
             nativeWin.show();
             nativeWin.focus();
 
             store.dispatch(
-              actions.windAwakened({
-                initialURL,
-                wind,
-              })
-            );
-            store.dispatch(
               actions.navigate({
                 wind,
                 url: initialURL,
               })
             );
-            return;
-          }
-        }
-      }
-    }
-
-    if (!preload && preloadEnabled) {
-      // do we have a preload available?
-      let numPreload = 0;
-      for (const window of Object.keys(rs.winds)) {
-        const windowState = rs.winds[window];
-        if (windowState.navigation.isPreload) {
-          numPreload++;
-        }
-      }
-
-      for (const wind of Object.keys(rs.winds)) {
-        const windowState = rs.winds[wind];
-        if (windowState.navigation.isPreload) {
-          const nativeWin = getNativeWindow(rs, wind);
-          if (nativeWin) {
-            // yes we do! use that.
-            store.dispatch(
-              actions.windAwakened({
-                initialURL,
-                wind,
-              })
-            );
-            store.dispatch(
-              actions.navigate({
-                wind,
-                url: initialURL,
-              })
-            );
-
-            const configKey = `${initialURL}-bounds`;
-            const bounds = config.get(configKey);
-            if (bounds) {
-              nativeWin.setBounds(bounds);
-            } else {
-              nativeWin.center();
-            }
-
-            setTimeout(() => {
-              let opacity = 0;
-              nativeWin.setOpacity(opacity);
-              nativeWin.show();
-
-              let interval: NodeJS.Timer;
-              let cb = () => {
-                opacity += 0.1;
-
-                if (opacity >= 1.0) {
-                  opacity = 1.0;
-                  clearInterval(interval);
-                }
-                nativeWin.setOpacity(opacity);
-              };
-              interval = setInterval(cb, 16);
-            }, 250);
-
-            // if this was the last preload, preload another one
-            if (numPreload === 1) {
-              preloadWindow(store);
-            }
-
             return;
           }
         }
@@ -431,9 +339,6 @@ export default function(watcher: Watcher) {
       ...commonBrowserWindowOpts(store),
       title: app.getName(),
     };
-    if (preload) {
-      opts.show = false;
-    }
 
     const nativeWindow = new BrowserWindow(opts);
     const wind = `secondary-${secondaryWindowSeed++}`;
@@ -444,11 +349,51 @@ export default function(watcher: Watcher) {
         role,
         nativeId: nativeWindow.id,
         initialURL: initialURL,
-        preload,
       })
     );
+
+    const configKey = `${initialURL}-bounds`;
+    const bounds = config.get(configKey);
+    if (bounds) {
+      nativeWindow.setBounds(bounds);
+    } else {
+      nativeWindow.center();
+    }
+
     nativeWindow.loadURL(makeAppURL({ wind, role }));
     hookNativeWindow(store, wind, nativeWindow);
+  });
+
+  watcher.on(actions.logout, async (store, action) => {
+    const rs = store.getState();
+
+    let closeUnlessMain = (wind: string) => {
+      console.log(`considering whether to close ${wind}...`);
+      const ws = rs.winds[wind];
+      if (!ws) {
+        return;
+      }
+      const props = ws.properties;
+      if (!props) {
+        return;
+      }
+      if (props.role === "main") {
+        return;
+      }
+
+      const nw = getNativeWindow(rs, wind);
+      if (!nw) {
+        return;
+      }
+      if (nw.isDestroyed()) {
+        return;
+      }
+      nw.close();
+    };
+
+    for (const wind of Object.keys(rs.winds)) {
+      closeUnlessMain(wind);
+    }
   });
 }
 
@@ -497,7 +442,7 @@ function commonBrowserWindowOpts(
   return {
     icon: getIconPath(),
     autoHideMenuBar: true,
-    backgroundColor: darkMineShaft,
+    backgroundColor: codGray,
     titleBarStyle: "hidden",
     frame: false,
     webPreferences: {
@@ -635,13 +580,7 @@ function hookNativeWindow(
         );
       }
     } else {
-      if (preloadEnabled) {
-        e.preventDefault();
-        nativeWindow.hide();
-        store.dispatch(actions.windLulled({ wind }));
-      } else {
-        store.dispatch(actions.windClosed({ wind }));
-      }
+      store.dispatch(actions.windClosed({ wind }));
     }
   });
 
@@ -650,19 +589,16 @@ function hookNativeWindow(
   });
 }
 
-export function getNativeState(
-  rs: RootState,
-  window: string
-): NativeWindowState {
-  const w = rs.winds[window];
+export function getNativeState(rs: RootState, wind: string): NativeWindowState {
+  const w = rs.winds[wind];
   if (w) {
     return w.native;
   }
   return null;
 }
 
-export function getNativeWindow(rs: RootState, window: string): BrowserWindow {
-  const ns = getNativeState(rs, window);
+export function getNativeWindow(rs: RootState, wind: string): BrowserWindow {
+  const ns = getNativeState(rs, wind);
   if (ns) {
     return BrowserWindow.fromId(ns.id);
   }

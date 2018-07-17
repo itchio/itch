@@ -1,31 +1,8 @@
 import React from "react";
 import { IntlProvider } from "react-intl";
-import Loadable from "react-loadable";
 import { hook } from "renderer/hocs/hook";
 import { theme, ThemeProvider } from "renderer/styles";
-
-const LoadableAppContents = Loadable({
-  loader: () => import("renderer/App/AppContents"),
-  loading: (props: any) => {
-    return (
-      <div
-        style={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-          fontSize: "16px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {props.error ? <pre>{props.error.stack}</pre> : "Loading..."}
-      </div>
-    );
-  },
-});
+import AppContents from "renderer/App/AppContents";
 
 class App extends React.PureComponent<Props, State> {
   constructor(props: App["props"], context: any) {
@@ -42,7 +19,7 @@ class App extends React.PureComponent<Props, State> {
     return (
       <IntlProvider key={localeVersion} locale={locale} messages={messages}>
         <ThemeProvider theme={theme}>
-          <LoadableAppContents />
+          <AppContents />
         </ThemeProvider>
       </IntlProvider>
     );

@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "module": "commonjs",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "importHelpers": true,
     "esModuleInterop": true,
     "jsx": "react",
     "skipLibCheck": true,

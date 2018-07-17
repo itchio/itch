@@ -90,8 +90,8 @@ function getCommonConfig(type, env) {
       __filename: !isProduction,
     },
     output: {
-      filename: "[name].js",
-      chunkFilename: "[name].bundle.js",
+      filename: "[name].bundle.js",
+      chunkFilename: "[name].chunk.js",
       libraryTarget: "commonjs2",
       path: path.resolve(`./dist/${type}`),
     },
@@ -128,7 +128,8 @@ function getCommonConfig(type, env) {
             path: "ts-loader",
             query: { happyPackMode: true }
           }
-        ]
+        ],
+        verbose: false,
       }),
     ],
     optimization: {

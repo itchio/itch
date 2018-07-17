@@ -3,7 +3,7 @@ import { lighten } from "polished";
 // colors
 
 export const baseColors = {
-  codGray: "#1d1c1c",
+  codGray: "#151515",
   darkMineShaft: "#2e2b2c",
   lightMineShaft: "#383434",
   zambezi: "#5d5757",
@@ -34,8 +34,8 @@ export const uiColors = {
   boxShadow: "#1b1919",
 };
 
-const breadBackground = `hsla(0, 0%, 8%, 1)`;
-const itemBackground = "#1d1d1d";
+const breadBackground = `#141414`;
+const itemBackground = "#1e1e1e";
 
 export const colors = {
   accent: baseColors.carnation,
@@ -54,7 +54,7 @@ export const colors = {
   meatBackground: breadBackground,
   itemBackground,
 
-  baseBackground: baseColors.darkMineShaft,
+  baseBackground: baseColors.codGray,
   baseText: baseColors.ivory,
 
   inputBackground: uiColors.background,

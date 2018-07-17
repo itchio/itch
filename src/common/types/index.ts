@@ -320,6 +320,7 @@ export interface WindState {
   tabInstances: TabDataTypes.TabInstances;
   contextMenu: ContextMenuState;
   native: NativeWindowState;
+  properties: WindPropertiesState;
 }
 
 export interface NativeWindowState {
@@ -345,9 +346,6 @@ export interface ProfileLoginState {
 export type TabLayout = "grid" | "table";
 
 export interface NavigationState {
-  /** what the window was opened on */
-  initialURL: string;
-
   /** opened tabs */
   openTabs: string[];
 
@@ -356,9 +354,14 @@ export interface NavigationState {
 
   /** current tab id */
   tab: string;
+}
 
-  /** if true, window was preloaded, it is not used yet */
-  isPreload: boolean;
+export interface WindPropertiesState {
+  /** what the window was opened on */
+  initialURL: string;
+
+  /** the window's role */
+  role: WindRole;
 }
 
 export interface LoadingTabs {

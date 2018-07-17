@@ -7,39 +7,12 @@ import reducer from "common/reducers/reducer";
 import arrayMove from "array-move";
 
 const initialState: NavigationState = {
-  initialURL: "",
   openTabs: ["initial-tab"],
   loadingTabs: {},
   tab: "initial-tab",
-  isPreload: false,
 };
 
 export default reducer<NavigationState>(initialState, on => {
-  on(actions.windOpened, (state, action) => {
-    const { initialURL, preload } = action.payload;
-    return {
-      ...initialState,
-      initialURL,
-      isPreload: preload,
-    };
-  });
-
-  on(actions.windAwakened, (state, action) => {
-    const { initialURL } = action.payload;
-    return {
-      ...state,
-      initialURL,
-      isPreload: false,
-    };
-  });
-
-  on(actions.windLulled, (state, action) => {
-    return {
-      ...state,
-      isPreload: true,
-    };
-  });
-
   on(actions.tabLoading, (state, action) => {
     const { tab, loading } = action.payload;
     if (loading) {

@@ -2,7 +2,7 @@ import React from "react";
 import { RequestCreator } from "butlerd";
 import { Game } from "common/butlerd/messages";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { LocalizedString } from "common/types";
+import { LocalizedString, Dispatch } from "common/types";
 import {
   Title,
   TitleSpacer,
@@ -18,6 +18,9 @@ import styled, * as styles from "renderer/styles";
 import { Space } from "common/helpers/space";
 import { withSpace } from "renderer/hocs/withSpace";
 import { isNetworkError } from "main/net/errors";
+import { hook } from "renderer/hocs/hook";
+import { actions } from "common/actions";
+import { ambientWind } from "common/util/navigation";
 
 const StripeDiv = styled.div`
   display: flex;
@@ -60,6 +63,7 @@ interface FetchRes<Item> {
 }
 
 interface Props<Params, Res extends FetchRes<Item>, Item> {
+  dispatch: Dispatch;
   space: Space;
   title: LocalizedString;
   href: string;
@@ -150,7 +154,7 @@ export default <Params, Res extends FetchRes<any>>(
       }
 
       const doneSet = new Set<number>();
-      const { getGame } = this.props;
+      const { getGame, dispatch } = this.props;
       return (
         <>
           {result.items.map(item => {
@@ -160,7 +164,21 @@ export default <Params, Res extends FetchRes<any>>(
             }
             doneSet.add(game.id);
             return (
-              <StripeItem key={game.id}>
+              <StripeItem
+                key={game.id}
+                onContextMenu={ev => {
+                  const { clientX, clientY } = ev;
+                  const wind = ambientWind();
+                  dispatch(
+                    actions.openGameContextMenu({
+                      clientX,
+                      clientY,
+                      game,
+                      wind,
+                    })
+                  );
+                }}
+              >
                 <StandardGameCover game={game} showInfo />
               </StripeItem>
             );
@@ -185,7 +203,7 @@ export default <Params, Res extends FetchRes<any>>(
       return <ViewAll href={this.props.href}>View all...</ViewAll>;
     }
   };
-  return withSpace(stripe);
+  return withSpace(hook()(stripe));
 };
 
 function renderNoop(): JSX.Element {

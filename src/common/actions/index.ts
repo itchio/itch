@@ -145,7 +145,6 @@ export const actions = wireActions({
   openWind: action<{
     initialURL: string;
     role: WindRole;
-    preload?: boolean;
   }>(),
   windClosed: action<{
     wind: string;
@@ -155,14 +154,6 @@ export const actions = wireActions({
     nativeId: number;
     initialURL: string;
     role: WindRole;
-    preload?: boolean;
-  }>(),
-  windAwakened: action<{
-    wind: string;
-    initialURL: string;
-  }>(),
-  windLulled: action<{
-    wind: string;
   }>(),
 
   // setup

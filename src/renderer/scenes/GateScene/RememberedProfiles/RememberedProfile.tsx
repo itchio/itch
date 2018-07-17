@@ -6,7 +6,7 @@ import IconButton from "renderer/basics/IconButton";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { hook } from "renderer/hocs/hook";
 import { modals } from "common/modals";
-import styled from "renderer/styles";
+import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { Dispatch } from "common/types";
 
@@ -83,10 +83,10 @@ interface Props {
 export default hook()(RememberedProfile);
 
 const RememberedProfileDiv = styled.div`
+  ${styles.boxy};
   flex-shrink: 0;
   min-width: 380px;
   border-radius: 2px;
-  background: ${props => props.theme.sidebarBackground};
   display: flex;
   flex-direction: row;
   align-items: center;

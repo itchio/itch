@@ -113,7 +113,10 @@ export function gameControls(store: Store, game: Game): MenuTemplate {
       statusItems.push(itemForOperation(operation));
     } else {
       statusItems.push({
-        localizedLabel: [`grid.item.${mainAction}`],
+        localizedLabel: [
+          `grid.item.${mainAction}_title`,
+          { title: game.title },
+        ],
         action: actions.queueGame({ game }),
       });
     }
