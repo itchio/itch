@@ -2,11 +2,31 @@ import { asRequestError } from "common/butlerd/utils";
 import { LocalizedString } from "common/types";
 import { RequestError } from "butlerd";
 import { Download } from "common/butlerd/messages";
+import { first } from "underscore";
 
-export function formatError(e: Error): LocalizedString {
+export function formatError(
+  e: Error,
+  apiErrorPrefix?: string
+): LocalizedString {
   const re = asRequestError(e);
   if (re && re.rpcError) {
-    const { code, message } = re.rpcError;
+    const { code, data } = re.rpcError;
+    if (data && data.apiError && apiErrorPrefix) {
+      const { messages } = data.apiError;
+      const message = first(messages) as string;
+      if (message) {
+        const snakeCaseMessage = message.replace(/\s/g, "_").toLowerCase();
+        return [
+          `errors.api.${apiErrorPrefix}.${snakeCaseMessage}`,
+          {
+            defaultValue: `{message}`,
+            message,
+          },
+        ];
+      }
+    }
+
+    const { message } = re.rpcError;
     return [
       `butlerd.codes.${code}`,
       {

@@ -1303,22 +1303,6 @@ export interface LaunchResult {
 export const Launch = createRequest<LaunchParams, LaunchResult>("Launch");
 
 /**
- * Result for Launch.Cancel
- */
-export interface LaunchCancelResult {
-  /** undocumented */
-  didCancel: boolean;
-}
-
-/**
- * Close a running game or cancel launching it
- */
-export const LaunchCancel = createRequest<
-  LaunchCancelParams,
-  LaunchCancelResult
->("Launch.Cancel");
-
-/**
  * Result for PickManifestAction
  */
 export interface PickManifestActionResult {
@@ -1511,6 +1495,9 @@ export enum Code {
   NoLaunchCandidates = 5000,
   // There is no Internet connection
   NetworkDisconnected = 9000,
+  // API error
+  APIError = 12000,
+  // The database is busy
   DatabaseBusy = 16000,
 }
 
@@ -2903,13 +2890,6 @@ export interface LaunchParams {
   forcePrereqs?: boolean;
   /** Enable sandbox (regardless of manifest opt-in) */
   sandbox?: boolean;
-}
-
-/**
- * Params for Launch.Cancel
- */
-export interface LaunchCancelParams {
-  // no fields
 }
 
 /**

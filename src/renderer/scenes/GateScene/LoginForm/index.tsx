@@ -106,7 +106,7 @@ class LoginForm extends React.PureComponent<Props> {
       <ErrorDiv>
         <div className="header">
           <Icon icon="error" />
-          {T(formatError(err))}
+          {T(formatError(err, "login"))}
         </div>
       </ErrorDiv>
     );
