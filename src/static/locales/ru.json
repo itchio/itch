@@ -617,5 +617,6 @@
     "send_feedback.steps.your_message": "Ваше сообщение",
     "send_feedback.steps.system_info": "Системная информация",
     "sidebar.explore": "Исследовать",
-    "send_feedback.steps.send": "Отправить отзыв"
+    "send_feedback.steps.send": "Отправить отзыв",
+    "setup.action.browse": "Обзор"
 }
