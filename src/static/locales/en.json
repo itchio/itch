@@ -526,6 +526,7 @@
   "status.repairing_game":
     "{{title}} needs to finish updating before it can be opened",
   "status.cancelled.message": "The operation has been cancelled.",
+  "status.installing_game.cancelled": "Install for {{title}} cancelled!",
   "status.copied_to_clipboard": "Copied to clipboard!",
   "status.downloaded": "Click to restart & apply update!",
   "status.downloading": "Downloading update…",

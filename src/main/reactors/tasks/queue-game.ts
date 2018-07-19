@@ -104,7 +104,7 @@ async function queueInstall(
     onCancel: async () => {
       store.dispatch(
         actions.statusMessage({
-          message: `Install for ${game.title} cancelled!`,
+          message: ["status.installing_game.cancelled", { title: game.title }],
         })
       );
     },
