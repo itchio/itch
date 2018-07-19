@@ -273,7 +273,12 @@ export default <Params, Res extends FetchRes<any>>(
     }
 
     renderEmpty(): JSX.Element {
-      return <EmptyState bigText="Nothing to see here" icon="neutral" />;
+      return (
+        <EmptyState
+          bigText={["empty_state.nothing_to_see_here"]}
+          icon="neutral"
+        />
+      );
     }
   };
 
