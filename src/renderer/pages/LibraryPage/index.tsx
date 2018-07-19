@@ -7,6 +7,10 @@ import GameStripe from "renderer/pages/common/GameStripe";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { withSpace } from "renderer/hocs/withSpace";
+import { hook } from "renderer/hocs/hook";
+import { Dispatch } from "common/types";
+import { Space } from "common/helpers/space";
 
 const OwnedGameStripe = GameStripe(messages.FetchProfileOwnedKeys);
 const InstalledGameStripe = GameStripe(messages.FetchCaves);
@@ -36,10 +40,17 @@ class LibraryPage extends React.PureComponent<Props> {
       </Page>
     );
   }
+
+  componentDidMount() {
+    const { space, dispatch } = this.props;
+    dispatch(space.makeFetch({ label: ["sidebar.library"] }));
+  }
 }
 
 interface Props extends MeatProps {
   profile: Profile;
+  dispatch: Dispatch;
+  space: Space;
 }
 
-export default withProfile(LibraryPage);
+export default withProfile(withSpace(hook()(LibraryPage)));

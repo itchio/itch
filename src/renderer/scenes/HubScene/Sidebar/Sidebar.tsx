@@ -22,7 +22,7 @@ import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { map } from "underscore";
 import { actions } from "common/actions";
-import { Dispatch } from "common/types";
+import { Dispatch, LocalizedString } from "common/types";
 
 const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
@@ -167,32 +167,38 @@ class Sidebar extends React.PureComponent<Props, State> {
     return (
       <>
         <SidebarItems>
-          {this.renderLink("itch://featured", "earth", "Explore")}
-          {this.renderLink("itch://library", "heart-filled", "Library")}
-          {this.renderLink(
-            "itch://collections",
-            "video_collection",
-            "Collections"
-          )}
-          {this.renderLink("itch://dashboard", "archive", "Dashboard")}
+          {this.renderLink("itch://featured", "earth", ["sidebar.explore"])}
+          {this.renderLink("itch://library", "heart-filled", [
+            "sidebar.library",
+          ])}
+          {this.renderLink("itch://collections", "video_collection", [
+            "sidebar.collections",
+          ])}
+          {this.renderLink("itch://dashboard", "archive", [
+            "sidebar.dashboard",
+          ])}
         </SidebarItems>
         <div style={{ flexGrow: 1 }} />
         <SidebarItems>
-          {this.renderLink("itch://downloads", "download", "Downloads")}
-          {this.renderLink("itch://preferences", "cog", "Preferences")}
+          {this.renderLink("itch://downloads", "download", [
+            "sidebar.downloads",
+          ])}
+          {this.renderLink("itch://preferences", "cog", [
+            "sidebar.preferences",
+          ])}
         </SidebarItems>
       </>
     );
   }
 
-  renderLink(url: string, icon: string, label: string): JSX.Element {
+  renderLink(url: string, icon: string, label: LocalizedString): JSX.Element {
     return (
       <SidebarSection>
         <a
           href={url}
           className={classNames({ active: this.props.url.startsWith(url) })}
         >
-          <Icon icon={icon} /> {label}
+          <Icon icon={icon} /> {T(label)}
         </a>
       </SidebarSection>
     );
