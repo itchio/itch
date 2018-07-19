@@ -200,7 +200,9 @@ export default <Params, Res extends FetchRes<any>>(
     }
 
     renderViewAll(): JSX.Element {
-      return <ViewAll href={this.props.href}>View all...</ViewAll>;
+      return (
+        <ViewAll href={this.props.href}>{T(["game_stripe.view_all"])}</ViewAll>
+      );
     }
   };
   return withSpace(hook()(stripe));
