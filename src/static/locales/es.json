@@ -367,7 +367,7 @@
     "pick_update_upload.buttons.just_launch": "Sólo ejecutar",
     "prompt.install_error.title": "Ha ocurrido un error durante la instalación",
     "prompt.install_error.find_upload": "Al buscar una descarga: {{message}}",
-    "download.reason.revert": "para revertir a una versión anterior",
+    "download.reason.revert": "volver a una versión anterior",
     "download.reason.heal": "para verificar y reparar",
     "grid.criterion.search": "Buscar...",
     "grid.filters.options.compatible": "Compatible",
