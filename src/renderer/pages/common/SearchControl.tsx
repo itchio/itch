@@ -14,7 +14,7 @@ class SearchControl extends React.PureComponent<Props> {
   render(): JSX.Element {
     return (
       <FilterInput
-        placeholder={TString(this.props.intl, "Filter...")}
+        placeholder={TString(this.props.intl, ["grid.criterion.filter"])}
         onChange={e => this.setSearch(e.currentTarget.value)}
       />
     );

@@ -316,7 +316,9 @@ class ReportIssue extends React.PureComponent<Props, State> {
         </Tabs>
         <Filler />
         <Buttons>
-          <Button onClick={this.onBailOut}>Cancel</Button>
+          <Button onClick={this.onBailOut}>
+            {T(["prompt.action.cancel"])}
+          </Button>
           <Filler />
           <Button
             icon={"arrow-left"}

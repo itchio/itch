@@ -46,7 +46,7 @@ export const FilterGroupInstalled = () => {
         <FilterOption
           optionKey="installed"
           optionValue={"true"}
-          label="Installed"
+          label={["filter_by.games.status.installed"]}
         />
       </FilterGroup>
     </>
