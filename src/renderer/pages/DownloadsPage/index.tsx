@@ -22,6 +22,10 @@ import { T } from "renderer/t";
 import { first, isEmpty, map, rest, size } from "underscore";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 
+const PauseResumeButton = styled(Button)`
+  min-width: 210px;
+`;
+
 const DownloadsDiv = styled.div`
   ${styles.meat};
 `;
@@ -33,9 +37,7 @@ const DownloadsContentDiv = styled.div`
   position: relative;
 
   .global-controls {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+    float: right;
   }
 
   .section-bar {
@@ -187,13 +189,21 @@ class DownloadsPage extends React.PureComponent<Props> {
       <>
         <div className="global-controls">
           {this.props.downloadsPaused ? (
-            <Button discreet icon="triangle-right" onClick={this.onTogglePause}>
+            <PauseResumeButton
+              discreet
+              icon="triangle-right"
+              onClick={this.onTogglePause}
+            >
               {T(["status.downloads.resume_downloads"])}
-            </Button>
+            </PauseResumeButton>
           ) : (
-            <Button discreet icon="pause" onClick={this.onTogglePause}>
+            <PauseResumeButton
+              discreet
+              icon="pause"
+              onClick={this.onTogglePause}
+            >
               {T(["status.downloads.pause_downloads"])}
-            </Button>
+            </PauseResumeButton>
           )}
         </div>
       </>

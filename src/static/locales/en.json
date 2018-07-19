@@ -127,6 +127,8 @@
   "table.column.play_time": "Play time",
   "table.column.last_played": "Last played",
   "table.column.published": "Published",
+  "table.column.installed": "Installed",
+  "table.column.powered_by": "Powered by",
   "collection_grid.item.updated_at": "Last updated {{time_ago}}",
   "browser.popout": "Open page in external web browser",
   "browser.disabled": "The itch web browser is disabled",

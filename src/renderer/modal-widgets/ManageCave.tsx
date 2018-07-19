@@ -141,7 +141,7 @@ class ManageCave extends React.PureComponent<Props> {
                   <SpacerLarge />
                   <Icon icon="checkmark" />
                   <Spacer />
-                  Powered by&nbsp;<a
+                  {T(["table.column.powered_by"])}&nbsp;<a
                     target="_popout"
                     href="https://itch.io/docs/butler/"
                   >
@@ -153,13 +153,13 @@ class ManageCave extends React.PureComponent<Props> {
             <CaveDetailsRow className="smaller">
               <Icon icon="tag" />
               <Spacer />
-              Published
+              {T(["table.column.published"])}
               <Spacer />
               {u ? <TimeAgo date={u.createdAt} /> : null}
               <SpacerLarge />
               <Icon icon="install" />
               <Spacer />
-              Installed
+              {T(["table.column.installed"])}
               <Spacer />
               <TimeAgo date={cave.stats.installedAt} />
             </CaveDetailsRow>
