@@ -519,5 +519,6 @@
     "preferences.install_location.disk_usage": "Utilisation du disque",
     "preferences.install_location.size_used_by_games": "{{installedSize}} utilisé par les jeux",
     "preferences.scan_install_locations.items_imported": "{{numImportedItems}} éléments ont été importés avec succès",
-    "login.status.antivirus_warning": "Un logiciel antivirus pourrait interférer avec itch."
+    "login.status.antivirus_warning": "Un logiciel antivirus pourrait interférer avec itch.",
+    "preferences.scan_install_locations.import_items": "Importer {{numItems}} éléments"
 }
