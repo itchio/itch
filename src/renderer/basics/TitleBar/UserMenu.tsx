@@ -111,7 +111,7 @@ class UserMenu extends React.PureComponent<Props> {
           {
             icon: "bug",
             localizedLabel: ["menu.help.report_issue"],
-            action: actions.reportIssue({}),
+            action: actions.sendFeedback({}),
           },
           {
             icon: "lifebuoy",

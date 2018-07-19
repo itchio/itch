@@ -22,7 +22,7 @@ import {
   TwoFactorInputResponse,
   ScanInstallLocationsParams,
   ScanInstallLocationsResponse,
-  ReportIssueParams,
+  SendFeedbackParams,
 } from "common/modals/types";
 import {
   Action,
@@ -120,7 +120,7 @@ export const modals = wireWidgets({
     ScanInstallLocationsParams,
     ScanInstallLocationsResponse
   >(),
-  reportIssue: widget<ReportIssueParams, void>(),
+  sendFeedback: widget<SendFeedbackParams, void>(),
 
   // dummy widgets
 

@@ -638,5 +638,48 @@
   "install_locations.manage": "Manage install locations",
   "collection.info.updated": "Updated",
 
+  "send_feedback.title": "Send feedback",
+  "send_feedback.describe_issue": "Please describe what you were trying to do when the issue happened:",
+  "send_feedback.reminders.header": "A few reminders:",
+  "send_feedback.reminders.we_are_humans": "Whatever you write will be read by humans.",
+  "send_feedback.reminders.be_precise": "Be as precise as you can. We want to address the issue as much as you do!",
+  "send_feedback.reminders.include_reproduce_steps": "Include steps to reproduce the issue if you can.",
+  "send_feedback.reminders.mention_itchio_account": "Mention your itch.io account name and/or the page that was giving you trouble, if relevant.",
+  "send_feedback.reminders.thanks": "Thanks for sending us feedback!",
+  "send_feedback.questions.where_does_report_go": "Where does my report go?",
+
+  "send_feedback.consent.please_review": "Review the information below to make sure you're comfortable with it being sent:",
+  "send_feedback.consent.redacted": "redacted",
+  "send_feedback.consent.system_info_helps_us": "Having a rough idea of your setup often helps us identify the source of an issue.",
+  "send_feedback.consent.include_in_report": "Include this information in the report",
+
+  "send_feedback.send.secret_url": "A secret URL will be generated for your report.",
+  "send_feedback.send.secret_url.feature_list": "From that page, you will be able to:",
+  "send_feedback.send.secret_url.feature_list.view": "See everything we see about the report",
+  "send_feedback.send.secret_url.feature_list.delete": "Delete it if you decide to.",
+
+  "send_feedback.send.do_send": "Send report",
+  "send_feedback.send.dont_send": "Nevermind, take me out of here",
+
+  "send_feedback.send.sending": "Sending...",
+
+  "send_feedback.final_thanks": "Thank you for sending a report, it helps everyone!",
+
+  "send_feedback.success.intro": "Your report was sent successfully!",
+  "send_feedback.success.view_report": "View report",
+  "send_feedback.success.view_report.delete": "(You can delete it from this page)",
+  "send_feedback.success.thanks": "Thanks for your feedback",
+  "send_feedback.success.promise": "It will be reviewed as soon as we can, converted into an actionable issue, and hopefully fixed in a future release.",
+
+  "send_feedback.error.intro": "Sorry, we could not send your report.",
+
+  "send_feedback.nav.previous": "Previous",
+  "send_feedback.nav.next": "Next",
+  "send_feedback.nav.close": "Close",
+
+  "send_feedback.steps.your_message": "Your message",
+  "send_feedback.steps.system_info": "System information",
+  "send_feedback.steps.send": "Send report",
+
   "empty_state.nothing_to_see_here": "Nothing to see here"
 }

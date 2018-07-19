@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import { fillShape } from "common/format/shape";
 import { ModalWidgetProps } from "common/modals";
-import { ReportIssueParams, ReportIssueResponse } from "common/modals/types";
+import { SendFeedbackParams, SendFeedbackResponse } from "common/modals/types";
 import { Dispatch, PackagesState } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
@@ -14,6 +14,9 @@ import { hook } from "renderer/hocs/hook";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import Label from "renderer/pages/PreferencesPage/Label";
 import styled, { css } from "renderer/styles";
+import { InjectedIntl } from "react-intl";
+import { withIntl } from "renderer/hocs/withIntl";
+import { T } from "renderer/t";
 
 enum ReportStage {
   Filling,
@@ -85,7 +88,7 @@ const SystemBlock = styled.div`
   padding-left: 1em;
 `;
 
-const ReportIssueDiv = styled(ModalWidgetDiv)`
+const SendFeedbackDiv = styled(ModalWidgetDiv)`
   min-width: 800px;
   max-width: 800px;
   min-height: 600px;
@@ -223,66 +226,53 @@ class ReportIssue extends React.PureComponent<Props, State> {
     const { message, system, includeSystemInfo, tabIndex } = this.state;
 
     return (
-      <ReportIssueDiv>
+      <SendFeedbackDiv>
         <Tabs
           selectedIndex={tabIndex}
           onSelect={tabIndex => this.setState({ tabIndex })}
         >
           <TabList>
-            <Tab>Your message</Tab>
-            <Tab>System information</Tab>
-            <Tab>Send report</Tab>
+            <Tab>{T(["send_feedback.steps.your_message"])}</Tab>
+            <Tab>{T(["send_feedback.steps.system_info"])}</Tab>
+            <Tab>{T(["send_feedback.steps.send"])}</Tab>
           </TabList>
 
           <TabPanel>
-            <p>
-              Please describe what you were trying to do when the issue
-              happened:
-            </p>
+            <p>{T(["send_feedback.describe_issue"])}</p>
             <MessageArea
               autoFocus
               onChange={this.onMessageChange}
               value={message}
             />
-            <p>A few reminders:</p>
+            <p>{T(["send_feedback.reminders.header"])}</p>
             <p>
               <ul>
-                <li>Whatever you write will be read by humans.</li>
+                <li>{T(["send_feedback.reminders.we_are_humans"])}</li>
+                <li>{T(["send_feedback.reminders.be_precise"])}</li>
                 <li>
-                  Be as precise as you can. We want to address the issue as much
-                  as you do!
+                  {T(["send_feedback.reminders.include_reproduce_steps"])}
                 </li>
-                <li>Include steps to reproduce the issue if you can.</li>
-                <li>
-                  Mention your itch.io account name and/or the page that was
-                  giving you trouble, if relevant.
-                </li>
+                <li>{T(["send_feedback.reminders.mention_itchio_account"])}</li>
               </ul>
             </p>
-            <p>Thanks for sending us feedback!</p>
+            <p>{T(["send_feedback.reminders.thanks"])}</p>
             <p>
               <ExternalLink onClick={this.onLearnMore}>
-                Where does my report go?
+                {T(["send_feedback.questions.where_does_report_go"])}
               </ExternalLink>
             </p>
           </TabPanel>
 
           <TabPanel>
-            <p>
-              Review the information below to make sure you're comfortable with
-              it being sent:
-            </p>
+            <p>{T(["send_feedback.consent.please_review"])}</p>
             <InfoBlock>
               {includeSystemInfo ? (
                 <SystemInfo>{this.renderSystem(system)}</SystemInfo>
               ) : (
-                "(redacted)"
+                <span>({T(["send_feedback.consent.redacted"])})</span>
               )}
             </InfoBlock>
-            <p>
-              Having a rough idea of your setup often helps us identify the
-              source of an issue.
-            </p>
+            <p>{T(["send_feedback.consent.system_info_helps_us"])}</p>
             <OurLabel active={includeSystemInfo}>
               <input
                 type="checkbox"
@@ -291,17 +281,21 @@ class ReportIssue extends React.PureComponent<Props, State> {
                   this.setState({ includeSystemInfo: e.currentTarget.checked });
                 }}
               />
-              <span>Include this information in the report</span>
+              <span>{T(["send_feedback.consent.include_in_report"])}</span>
             </OurLabel>
           </TabPanel>
 
           <TabPanel>
-            <p>A secret URL will be generated for your report.</p>
-            <p>From that page, you will be able to:</p>
+            <p>{T(["send_feedback.send.secret_url"])}</p>
+            <p>{T(["send_feedback.send.secret_url.feature_list"])}</p>
             <p>
               <ul>
-                <li>See everything we see about the report</li>
-                <li>Delete it if you decide to.</li>
+                <li>
+                  {T(["send_feedback.send.secret_url.feature_list.view"])}
+                </li>
+                <li>
+                  {T(["send_feedback.send.secret_url.feature_list.delete"])}
+                </li>
               </ul>
             </p>
             <CallToAction>
@@ -311,13 +305,13 @@ class ReportIssue extends React.PureComponent<Props, State> {
                 wide
                 onClick={this.onSend}
               >
-                Send report
+                {T(["send_feedback.send.do_send"])}
               </BigButton>
               <ExternalLink onClick={this.onBailOut}>
-                Nevermind, take me out of here
+                {T(["send_feedback.send.dont_send"])}
               </ExternalLink>
             </CallToAction>
-            <p>Thank you for sending a report, it helps everyone!</p>
+            <p>{T(["send_feedback.final_thanks"])}</p>
           </TabPanel>
         </Tabs>
         <Filler />
@@ -329,53 +323,50 @@ class ReportIssue extends React.PureComponent<Props, State> {
             disabled={tabIndex <= 0}
             onClick={() => this.setState({ tabIndex: tabIndex - 1 })}
           >
-            Previous
+            {T(["send_feedback.nav.previous"])}
           </Button>
           <Button
             icon={"arrow-right"}
             disabled={tabIndex >= 2}
             onClick={() => this.setState({ tabIndex: tabIndex + 1 })}
           >
-            Next
+            {T(["send_feedback.nav.next"])}
           </Button>
         </Buttons>
-      </ReportIssueDiv>
+      </SendFeedbackDiv>
     );
   }
 
   renderUploading() {
     return (
-      <ReportIssueDiv>
+      <SendFeedbackDiv>
         <CallToAction>
           <LoadingCircle progress={-1} />
           <span>Sending...</span>
         </CallToAction>
-      </ReportIssueDiv>
+      </SendFeedbackDiv>
     );
   }
 
   renderDone() {
     return (
-      <ReportIssueDiv>
-        <p>Your report was sent successfully!</p>
+      <SendFeedbackDiv>
+        <p>{T(["send_feedback.success.intro"])}</p>
         <CallToAction>
           <BigButton icon="folder-open" wide fat onClick={this.onViewReport}>
-            View report
+            {T(["send_feedback.success.view_report"])}
           </BigButton>
-          <span>(You can delete it from this page)</span>
+          <span>{T(["send_feedback.success.view_report.delete"])}</span>
         </CallToAction>
-        <p>Thanks for your feedback.</p>
-        <p>
-          It will be reviewed as soon as we can, converted into an actionable
-          issue, and hopefully fixed in a future release.
-        </p>
+        <p>{T(["send_feedback.success.thanks"])}</p>
+        <p>{T(["send_feedback.success.promise"])}</p>
         <Filler />
         <Buttons>
           <Button icon={"cross"} onClick={this.onBailOut}>
-            Close
+            {T(["send_feedback.nav.close"])}
           </Button>
         </Buttons>
-      </ReportIssueDiv>
+      </SendFeedbackDiv>
     );
   }
 
@@ -383,16 +374,16 @@ class ReportIssue extends React.PureComponent<Props, State> {
     const { errorMessage } = this.state;
 
     return (
-      <ReportIssueDiv>
-        <p>Sorry, we could not send your report :(</p>
+      <SendFeedbackDiv>
+        <p>{T(["send_feedback.error.intro"])}</p>
         <InfoBlock>{errorMessage}</InfoBlock>
         <Filler />
         <Buttons>
           <Button icon={"cross"} onClick={this.onBailOut}>
-            Close
+            {T(["send_feedback.nav.close"])}
           </Button>
         </Buttons>
-      </ReportIssueDiv>
+      </SendFeedbackDiv>
     );
   }
 
@@ -539,7 +530,8 @@ ${log}
 }
 
 interface Props
-  extends ModalWidgetProps<ReportIssueParams, ReportIssueResponse> {
+  extends ModalWidgetProps<SendFeedbackParams, SendFeedbackResponse> {
+  intl: InjectedIntl;
   dispatch: Dispatch;
   brothPackages: PackagesState;
 }
@@ -554,6 +546,8 @@ interface State {
   errorMessage?: string;
 }
 
-export default hook(map => ({
-  brothPackages: map(rs => rs.broth.packages),
-}))(ReportIssue);
+export default withIntl(
+  hook(map => ({
+    brothPackages: map(rs => rs.broth.packages),
+  }))(ReportIssue)
+);

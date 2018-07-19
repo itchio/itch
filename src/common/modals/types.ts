@@ -42,11 +42,11 @@ export interface ScanInstallLocationsResponse {}
 
 //---------------------
 
-export interface ReportIssueParams {
+export interface SendFeedbackParams {
   log?: string;
 }
 
-export interface ReportIssueResponse {}
+export interface SendFeedbackResponse {}
 
 //---------------------
 

@@ -64,14 +64,14 @@ export default function(watcher: Watcher) {
     );
   });
 
-  watcher.on(actions.reportIssue, async (store, action) => {
+  watcher.on(actions.sendFeedback, async (store, action) => {
     const { log } = action.payload;
 
     store.dispatch(
       actions.openModal(
-        modals.reportIssue.make({
+        modals.sendFeedback.make({
           wind: "root",
-          title: "Send feedback",
+          title: ["send_feedback.title"],
           widgetParams: {
             log,
           },

@@ -810,7 +810,7 @@ export const actions = wireActions({
 
     wind?: string;
   }>(),
-  reportIssue: action<{
+  sendFeedback: action<{
     /** error log that should be included in the issue report */
     log?: string;
   }>(),

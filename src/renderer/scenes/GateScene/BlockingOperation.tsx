@@ -112,7 +112,7 @@ class BlockingOperation extends React.PureComponent<Props> {
                 label={T(["grid.item.report_problem"])}
                 onClick={() =>
                   dispatch(
-                    actions.reportIssue({
+                    actions.sendFeedback({
                       log: `Setup did not complete successfully:\n${
                         blockingOperation.stack
                       }`,

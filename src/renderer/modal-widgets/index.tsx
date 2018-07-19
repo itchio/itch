@@ -29,8 +29,8 @@ const RecaptchaInput = Loadable({
   loader: () => import("renderer/modal-widgets/RecaptchaInput"),
   loading: () => null,
 });
-const ReportIssue = Loadable({
-  loader: () => import("renderer/modal-widgets/ReportIssue"),
+const SendFeedback = Loadable({
+  loader: () => import("renderer/modal-widgets/SendFeedback"),
   loading: () => null,
 });
 const ScanInstallLocations = Loadable({
@@ -69,7 +69,7 @@ export const modalWidgets: ModalWidgetRegistry = {
   manageGame: ManageGame,
   prereqsState: PrereqsState,
   recaptchaInput: RecaptchaInput,
-  reportIssue: ReportIssue,
+  sendFeedback: SendFeedback,
   scanInstallLocations: ScanInstallLocations,
   secretSettings: SecretSettings,
   showError: ShowError,
