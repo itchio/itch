@@ -10,27 +10,27 @@ export const FilterGroupGameClassification = () => {
         <FilterOption
           optionKey="classification"
           optionValue={GameClassification.Game}
-          label="Games"
+          label={["filter_by.games.classification.games"]}
         />
         <FilterOption
           optionKey="classification"
           optionValue={GameClassification.Tool}
-          label="Tools"
+          label={["filter_by.games.classification.tools"]}
         />
         <FilterOption
           optionKey="classification"
           optionValue={GameClassification.Assets}
-          label="Game assets"
+          label={["filter_by.games.classification.assets"]}
         />
         <FilterOption
           optionKey="classification"
           optionValue={GameClassification.Comic}
-          label="Comic"
+          label={["filter_by.games.classification.comics"]}
         />
         <FilterOption
           optionKey="classification"
           optionValue={GameClassification.Book}
-          label="Book"
+          label={["filter_by.games.classification.books"]}
         />
       </FilterGroup>
     </>

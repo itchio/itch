@@ -92,36 +92,19 @@ class CollectionPage extends React.PureComponent<Props> {
     return (
       <SortsAndFilters>
         <FilterGroup>
-          <SortOption sortBy="title" label="Title" />
+          <SortOption sortBy="title" label={["sort_by.games.title"]} />
         </FilterGroup>
         <FilterSpacer />
         <FilterGroup>
           <FilterOption
             optionKey="installed"
             optionValue="true"
-            label="Installed"
+            label={["filter_by.games.status.installed"]}
           />
         </FilterGroup>
         <FilterSpacer />
         <FilterGroupGameClassification />
       </SortsAndFilters>
-    );
-  }
-
-  renderClassificationFilter() {
-    return <FilterGroup />;
-  }
-
-  renderClassification(
-    classification: GameClassification,
-    label: LocalizedString
-  ) {
-    return (
-      <FilterOption
-        optionKey="classification"
-        optionValue={classification}
-        label={label}
-      />
     );
   }
 

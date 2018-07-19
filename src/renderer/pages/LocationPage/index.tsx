@@ -95,19 +95,25 @@ class LocationPage extends React.PureComponent<Props> {
                 renderExtraFilters={() => (
                   <SortsAndFilters>
                     <FilterGroup>
-                      <SortOption sortBy={"title"} label={"Title"} />
+                      <SortOption
+                        sortBy={"title"}
+                        label={["sort_by.games.title"]}
+                      />
                       <SortOption
                         sortBy={"lastTouched"}
-                        label={"Last touched"}
+                        label={["sort_by.games.last_touched"]}
                       />
-                      <SortOption sortBy={"playTime"} label={"Play time"} />
+                      <SortOption
+                        sortBy={"playTime"}
+                        label={["sort_by.games.play_time"]}
+                      />
                       <SortOption
                         sortBy={"installedSize"}
-                        label={"Size on disk"}
+                        label={["sort_by.games.size_on_disk"]}
                       />
                       <SortOption
                         sortBy={"installedAt"}
-                        label={"Install date"}
+                        label={["sort_by.games.install_date"]}
                       />
                     </FilterGroup>
                   </SortsAndFilters>

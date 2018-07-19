@@ -47,10 +47,16 @@ class DashboardPage extends React.PureComponent<Props> {
           renderExtraFilters={() => (
             <SortsAndFilters>
               <FilterGroup>
-                <SortOption sortBy="title" label="Title" />
-                <SortOption sortBy="views" label="Views" />
-                <SortOption sortBy="downloads" label="Downloads" />
-                <SortOption sortBy="purchases" label="Purchases" />
+                <SortOption sortBy="title" label={["sort_by.games.title"]} />
+                <SortOption sortBy="views" label={["sort_by.games.views"]} />
+                <SortOption
+                  sortBy="downloads"
+                  label={["sort_by.games.downloads"]}
+                />
+                <SortOption
+                  sortBy="purchases"
+                  label={["sort_by.games.purchases"]}
+                />
               </FilterGroup>
               <FilterSpacer />
               {this.renderVisibilityFilter()}
@@ -72,19 +78,17 @@ class DashboardPage extends React.PureComponent<Props> {
   renderPaidStatusFilter(): JSX.Element {
     return (
       <FilterGroup>
-        {this.renderPaidStatus("free", "Free")}
-        {this.renderPaidStatus("paid", "Paid")}
+        <FilterOption
+          optionKey="paidStatus"
+          optionValue="free"
+          label={["filter_by.games.paid_status.free"]}
+        />
+        <FilterOption
+          optionKey="paidStatus"
+          optionValue="paid"
+          label={["filter_by.games.paid_status.paid"]}
+        />
       </FilterGroup>
-    );
-  }
-
-  renderPaidStatus(paidStatus: string, label: LocalizedString): JSX.Element {
-    return (
-      <FilterOption
-        optionKey="paidStatus"
-        optionValue={paidStatus}
-        label={label}
-      />
     );
   }
 
@@ -92,20 +96,18 @@ class DashboardPage extends React.PureComponent<Props> {
     return (
       <>
         <FilterGroup>
-          {this.renderVisibility("published", "Published")}
-          {this.renderVisibility("draft", "Draft")}
+          <FilterOption
+            optionKey="visibility"
+            optionValue="published"
+            label={["filter_by.games.visibility.published"]}
+          />
+          <FilterOption
+            optionKey="visibility"
+            optionValue="draft"
+            label={["filter_by.games.visibility.draft"]}
+          />
         </FilterGroup>
       </>
-    );
-  }
-
-  renderVisibility(visibility: string, label: LocalizedString): JSX.Element {
-    return (
-      <FilterOption
-        optionKey="visibility"
-        optionValue={visibility}
-        label={label}
-      />
     );
   }
 }

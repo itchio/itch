@@ -595,6 +595,31 @@
   "butlerd.codes.3000": "This title is packaged in a way that is not compatible with the itch.io app.",
   "butlerd.codes.5000": "Nothing that can be launched was found.",
   "butlerd.codes.9000": "There is no Internet connection.",
+
+  "sort_by.games.acquired_at": "Acquired recently",
+  "sort_by.games.title": "Title",
+  "sort_by.games.views": "Views",
+  "sort_by.games.downloads": "Downloads",
+  "sort_by.games.purchases": "Purchases",
+  "sort_by.games.play_time": "Play time",
+  "sort_by.games.last_touched": "Last touched",
+  "sort_by.games.size_on_disk": "Size on disk",
+  "sort_by.games.install_date": "Install date",
+
+  "filter_by.games.classification.games": "Games",
+  "filter_by.games.classification.tools": "Tools",
+  "filter_by.games.classification.assets": "Game assets",
+  "filter_by.games.classification.comics": "Comics",
+  "filter_by.games.classification.books": "Books",
+
+  "filter_by.games.status.installed": "Installed",
+
+  "filter_by.games.paid_status.free": "Free",
+  "filter_by.games.paid_status.paid": "Paid",
+
+  "filter_by.games.visibility.draft": "Draft",
+  "filter_by.games.visibility.published": "Published",
+
   "game_stripe.view_all": "View all...",
   "empty_state.nothing_to_see_here": "Nothing to see here"
 }

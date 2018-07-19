@@ -49,8 +49,11 @@ class OwnedPage extends React.PureComponent<Props> {
         renderExtraFilters={() => (
           <SortsAndFilters>
             <FilterGroup>
-              <SortOption sortBy={"acquiredAt"} label={"Acquired recently"} />
-              <SortOption sortBy={"title"} label={"Title"} />
+              <SortOption
+                sortBy={"acquiredAt"}
+                label={["sort_by.games.acquired_at"]}
+              />
+              <SortOption sortBy={"title"} label={["sort_by.games.title"]} />
             </FilterGroup>
             <FilterSpacer />
             <FilterGroupInstalled />
