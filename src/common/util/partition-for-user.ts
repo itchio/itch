@@ -4,3 +4,7 @@
 export function partitionForUser(userId: string): string {
   return `persist:itchio-${userId || "anonymous"}`;
 }
+
+export function partitionForApp(): string {
+  return `persist:itch-app`;
+}
