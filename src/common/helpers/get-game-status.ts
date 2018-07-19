@@ -211,7 +211,6 @@ function rawGetGameStatus(
       progress: task.progress,
       eta: task.eta,
       bps: task.bps,
-      stage: task.stage,
     };
   } else if (download) {
     let p = downloadProgress || {

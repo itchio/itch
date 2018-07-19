@@ -458,14 +458,6 @@ class DownloadRow extends React.PureComponent<Props> {
             before={T(["download.started"])}
             date={new Date(item.startedAt)}
           />
-          {op.stage ? (
-            <>
-              <Spacer />
-              {"—"}
-              <Spacer />
-              {op.stage}
-            </>
-          ) : null}
           {reasonText ? (
             <>
               <Spacer />
