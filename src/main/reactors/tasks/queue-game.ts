@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import { messages, hookLogging } from "common/butlerd";
 import { Build, Game, Upload, Cave } from "common/butlerd/messages";
 import { Logger } from "common/logger";
 import { Store } from "common/types";
@@ -136,6 +136,7 @@ async function performInstallQueue({
       queueDownload: true,
     },
     convo => {
+      hookLogging(convo, logger);
       convo.on(messages.PickUpload, async ({ uploads }) => {
         const { title } = game;
 
