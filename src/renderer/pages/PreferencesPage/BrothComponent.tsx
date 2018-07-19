@@ -57,6 +57,7 @@ class BrothComponent extends React.PureComponent<Props> {
         <>
           <Spacer />
           <LoadingCircle progress={progressInfo.progress} />
+          <Spacer />
           <DownloadProgress eta={eta} bps={bps} downloadsPaused={false} />
         </>
       );
