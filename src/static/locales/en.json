@@ -5,6 +5,7 @@
   "action.name.forums": "Forums",
   "label.experimental": "Experimental",
   "collection.empty": "There are no games in this collection",
+  "collection.item_count": "{{itemCount}} items",
   "collection.summary": "A collection of {{itemCount}} items",
   "collections.empty": "You currently have no collections",
   "collections.empty_sub":
@@ -632,6 +633,9 @@
   "log.level.info": "Info",
   "log.level.warning": "Warning",
   "log.level.error": "Error",
+
+  "install_locations.manage": "Manage install locations",
+  "collection.info.updated": "Updated",
 
   "empty_state.nothing_to_see_here": "Nothing to see here"
 }

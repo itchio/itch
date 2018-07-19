@@ -129,9 +129,14 @@ class CollectionsPage extends React.PureComponent<Props> {
               renderTitleExtras={() => (
                 <>
                   <CollectionInfoSpacer />
-                  <CollectionInfo>{coll.gamesCount} games</CollectionInfo>
                   <CollectionInfo>
-                    Updated
+                    {T([
+                      "collection.item_count",
+                      { itemCount: coll.gamesCount },
+                    ])}
+                  </CollectionInfo>
+                  <CollectionInfo>
+                    {T(["collection.info.updated"])}
                     <CollectionInfoSpacer />
                     <TimeAgo date={coll.updatedAt} />
                   </CollectionInfo>

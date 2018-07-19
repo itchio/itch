@@ -14,6 +14,7 @@ import {
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { T } from "renderer/t";
 
 const InstalledSeries = GameSeries(messages.FetchCaves);
 
@@ -34,7 +35,7 @@ class InstalledPage extends React.PureComponent<Props> {
             <FilterGroup>
               <FilterOptionLink href="itch://locations">
                 <FilterOptionIcon icon="cog" />
-                Manage install locations
+                {T(["install_locations.manage"])}
               </FilterOptionLink>
             </FilterGroup>
           </SortsAndFilters>
