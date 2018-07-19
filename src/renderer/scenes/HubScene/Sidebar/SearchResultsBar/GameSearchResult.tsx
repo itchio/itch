@@ -10,6 +10,7 @@ import { hook } from "renderer/hocs/hook";
 import GenericSearchResult from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/GenericSearchResult";
 import styled, * as styles from "renderer/styles";
 import { Dispatch } from "common/types";
+import { T } from "renderer/t";
 
 const GameSearchResultDiv = styled.div`
   display: flex;
@@ -108,7 +109,7 @@ class GameSearchResult extends GenericSearchResult<Props> {
               <ShortText>
                 {game.shortText && game.shortText !== ""
                   ? game.shortText
-                  : "No description"}
+                  : T(["search.results.game.no_description"])}
               </ShortText>
               {game.user ? (
                 <ShortText>

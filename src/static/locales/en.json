@@ -490,6 +490,7 @@
   "search.results.title": "Search results for '{{query}}'",
   "search.results.local": "Local",
   "search.results.games": "Games",
+  "search.results.game.no_description": "No description",
   "search.results.creators": "Creators",
   "search.empty.no_results": "No results found",
   "search.empty.tagline": "Need inspiration? Try searching for '{{example}}'",
