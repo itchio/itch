@@ -6,12 +6,15 @@ import FilterInput from "renderer/pages/common/FilterInput";
 import { Dispatch } from "common/types";
 import { Space } from "common/helpers/space";
 import { ambientWind } from "common/util/navigation";
+import { InjectedIntl } from "react-intl";
+import { withIntl } from "renderer/hocs/withIntl";
+import { TString } from "renderer/t";
 
 class SearchControl extends React.PureComponent<Props> {
   render(): JSX.Element {
     return (
       <FilterInput
-        placeholder="Filter..."
+        placeholder={TString(this.props.intl, "Filter...")}
         onChange={e => this.setSearch(e.currentTarget.value)}
       />
     );
@@ -32,6 +35,7 @@ class SearchControl extends React.PureComponent<Props> {
 interface Props {
   space: Space;
   dispatch: Dispatch;
+  intl: InjectedIntl;
 }
 
-export default withSpace(hook()(SearchControl));
+export default withSpace(withIntl(hook()(SearchControl)));
