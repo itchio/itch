@@ -13,13 +13,8 @@ import Button from "renderer/basics/Button";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { hook } from "renderer/hocs/hook";
-
-const NotCompatibleSpan = styled.span`
-  flex-shrink: 0;
-`;
 
 class MainAction extends React.PureComponent<Props> {
   render() {
@@ -107,9 +102,8 @@ class MainAction extends React.PureComponent<Props> {
           icon = "shopping_cart";
         }
       } else {
-        label = ["grid.item.not_compatible"];
-        icon = "neutral";
-        return <NotCompatibleSpan>{T(label)}</NotCompatibleSpan>;
+        label = ["grid.item.open_page"];
+        icon = "shopping_cart";
       }
     }
 
@@ -155,12 +149,17 @@ class MainAction extends React.PureComponent<Props> {
     e.stopPropagation();
 
     const { dispatch, game, status } = this.props;
-    const { operation, update, cave, access } = status;
+    const { operation, update, cave, access, compatible } = status;
 
     if (e.shiftKey && e.ctrlKey) {
       if (cave) {
         dispatch(actions.viewCaveDetails({ caveId: cave.id }));
       }
+      return;
+    }
+
+    if (!compatible) {
+      dispatch(actions.openInExternalBrowser({ url: game.url }));
       return;
     }
 

@@ -20,16 +20,13 @@ import {
   FilterGroup,
 } from "renderer/pages/common/SortsAndFilters";
 import { SortOption } from "renderer/pages/common/Sort";
-import GameStats from "renderer/basics/GameStats";
-import getGameStatus from "common/helpers/get-game-status";
 import GameStatusGetter from "renderer/basics/GameStatusGetter";
 import styled from "renderer/styles";
-import Button from "renderer/basics/Button";
-import Label from "renderer/pages/PreferencesPage/Label";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { formatUploadTitle } from "common/format/upload";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import LastPlayed from "renderer/basics/LastPlayed";
+import { truncate } from "common/format/truncate";
 
 const InstallLocationsGetByID = butlerCaller(messages.InstallLocationsGetByID);
 const CaveGameSeries = GameSeries(messages.FetchCaves);
@@ -119,7 +116,11 @@ class LocationPage extends React.PureComponent<Props> {
                   <>
                     <ExtrasDiv>
                       <FilterSpacer />
-                      <div>{formatUploadTitle(cave.upload)}</div>
+                      <div title={formatUploadTitle(cave.upload)}>
+                        {truncate(formatUploadTitle(cave.upload), {
+                          length: 20,
+                        })}
+                      </div>
                       <GameStatusGetter
                         game={cave.game}
                         caveId={cave.id}
