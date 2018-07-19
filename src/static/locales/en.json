@@ -294,6 +294,7 @@
   "preferences.scan_install_locations.no_items_found": "No additional items found in install locations",
   "preferences.scan_install_locations.title": "Scanning...",
   "preferences.behavior": "Behavior",
+  "preferences.behavior.enable_tabs": "Enable tabs",
   "preferences.behavior.close_to_tray": "Keep app in tray when closing window",
   "preferences.behavior.open_at_login": "Run itch when my computer starts",
   "preferences.behavior.open_as_hidden": "Open itch as hidden on startup",
@@ -623,5 +624,12 @@
   "filter_by.games.visibility.published": "Published",
 
   "game_stripe.view_all": "View all...",
+
+  "log.level": "Level",
+  "log.level.debug": "Debug",
+  "log.level.info": "Info",
+  "log.level.warning": "Warning",
+  "log.level.error": "Error",
+
   "empty_state.nothing_to_see_here": "Nothing to see here"
 }

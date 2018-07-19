@@ -5,6 +5,7 @@ import IconButton from "renderer/basics/IconButton";
 import SelectRow from "renderer/basics/SelectRow";
 import styled from "renderer/styles";
 import _ from "underscore";
+import { T } from "renderer/t";
 
 // time, module, message
 const numColumns = 3;
@@ -129,13 +130,14 @@ class Log extends React.PureComponent<Props, State> {
       <LogContainer className={className}>
         <LogControls>
           <label>
-            {"Level: "}
+            {T(["log.level"])}
+            {": "}
             <SelectRow
               options={[
-                { label: "Debug", value: reverseLevels["debug"] },
-                { label: "Info", value: reverseLevels["info"] },
-                { label: "Warning", value: reverseLevels["warn"] },
-                { label: "Error", value: reverseLevels["error"] },
+                { label: ["log.level.debug"], value: reverseLevels["debug"] },
+                { label: ["log.level.info"], value: reverseLevels["info"] },
+                { label: ["log.level.warning"], value: reverseLevels["warn"] },
+                { label: ["log.level.error"], value: reverseLevels["error"] },
               ]}
               value={this.state.level}
               onChange={this.onChangeLevel}
