@@ -465,5 +465,6 @@
     "setup.status.preparing": "Calentando...",
     "setup.status.installing": "Descargando e instalando a {{speed}}",
     "prompt.discard_download.action.stop_download": "Detener descarga",
-    "prompt.dangerous_discard_download.message": "Parar esta descarga dejará {{title}} en un estado inconsistente."
+    "prompt.dangerous_discard_download.message": "Parar esta descarga dejará {{title}} en un estado inconsistente.",
+    "docs.how_to_help": "¿Cómo puedo ayudar?"
 }
