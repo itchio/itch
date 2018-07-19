@@ -14,6 +14,7 @@ import {
   BrowserWindowConstructorOptions,
   screen,
   session,
+  Session,
 } from "electron";
 import { mainLogger } from "main/logger";
 import * as path from "path";
@@ -22,6 +23,8 @@ import { createSelector } from "reselect";
 import { debounce } from "underscore";
 import { format as formatUrl, UrlObject } from "url";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
+import { registerElectronSession } from "butlerd";
+import { partitionForApp } from "common/util/partition-for-user";
 
 const logger = mainLogger.child(__filename);
 
@@ -432,13 +435,9 @@ function getIconPath(): string {
   return getImagePath("window/" + env.appName + "/" + iconName + ".png");
 }
 
-const nodeButlerdPartition = "__node-butlerd__";
-
 function commonBrowserWindowOpts(
   store: Store
 ): Partial<BrowserWindowConstructorOptions> {
-  const customSession = session.fromPartition(nodeButlerdPartition);
-
   return {
     icon: getIconPath(),
     autoHideMenuBar: true,
@@ -449,9 +448,22 @@ function commonBrowserWindowOpts(
       affinity: "all-in-one",
       blinkFeatures: "ResizeObserver",
       webSecurity: env.development ? false : true,
-      session: customSession,
+      session: getAppSession(),
     },
   };
+}
+
+let _cachedAppSession: Session;
+
+function getAppSession(): Session {
+  if (!_cachedAppSession) {
+    _cachedAppSession = session.fromPartition(partitionForApp(), {
+      cache: true,
+    });
+    registerElectronSession(_cachedAppSession);
+  }
+
+  return _cachedAppSession;
 }
 
 function hookNativeWindow(
