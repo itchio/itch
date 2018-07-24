@@ -603,5 +603,6 @@
     "send_feedback.steps.your_message": "Съобщението Ви",
     "send_feedback.steps.system_info": "Системна информация",
     "send_feedback.steps.send": "Изпащане на отзива",
-    "empty_state.nothing_to_see_here": "Тук няма нищо"
+    "empty_state.nothing_to_see_here": "Тук няма нищо",
+    "setup.action.browse": "Разглеждане"
 }
