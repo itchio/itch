@@ -33,12 +33,19 @@ export default function(watcher: Watcher, runtime: IRuntime) {
       return createSelector(
         templateSelector,
         (rs: RootState) => rs.i18n,
-        (rs: RootState) => getNativeState(rs, "root").id,
-        (template, i18n, mainWindowId) => {
+        (rs: RootState) => {
+          let res = [];
+          for (const k of Object.keys(rs.winds)) {
+            res.push(rs.winds[k].native.id);
+          }
+          // this little trick is here for memoization! dumb, I know :)
+          return JSON.stringify(res);
+        },
+        (template, i18n, nativeIDsPayload) => {
           schedule.dispatch(actions.menuChanged({ template }));
           const fleshed = fleshOutTemplate("root", store, runtime, template);
           const menu = Menu.buildFromTemplate(fleshed);
-          setItchAppMenu(mainWindowId, runtime, menu);
+          setItchAppMenu(nativeIDsPayload, runtime, menu);
         }
       );
     },
@@ -314,17 +321,18 @@ function computeMenuTemplate(
 }
 
 function setItchAppMenu(
-  mainWindowId: number,
+  nativeIDsPayload: string,
   runtime: IRuntime,
   menu: Electron.Menu
 ) {
   if (runtime.platform === "osx") {
     Menu.setApplicationMenu(menu);
   } else {
-    if (mainWindowId) {
-      // we can't use setApplicationMenu on windows & linux because
-      // it'll set it for all windows (including launched games)
-      const win = BrowserWindow.fromId(mainWindowId);
+    // we can't use setApplicationMenu on windows & linux because
+    // it'll set it for all windows (including launched games)
+    const nativeIDs = JSON.parse(nativeIDsPayload) as number[];
+    for (const id of nativeIDs) {
+      const win = BrowserWindow.fromId(id);
       if (win) {
         win.setMenu(menu);
       }
