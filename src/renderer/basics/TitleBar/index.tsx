@@ -126,9 +126,6 @@ class TitleBar extends React.PureComponent<Props> {
       );
       return;
     }
-
-    const { dispatch } = this.props;
-    dispatch(actions.navigate({ wind: "root", url: "itch://featured" }));
   };
 
   preferencesClick = () => {
