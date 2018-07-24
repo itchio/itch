@@ -198,7 +198,7 @@ function computeMenuTemplate(
       submenu: [
         {
           localizedLabel: ["menu.file.close_window"],
-          accelerator: "Cmd+Alt+W",
+          accelerator: "Cmd+W",
         },
       ],
     },
