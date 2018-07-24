@@ -71,6 +71,7 @@ class TitleBar extends React.PureComponent<Props> {
           onClick={this.onClick}
         >
           <DraggableDivInner>
+            {secondary ? <Filler /> : null}
             <TitleDiv className="title-bar-text">{T(label)}</TitleDiv>
             <Filler />
           </DraggableDivInner>
