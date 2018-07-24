@@ -584,6 +584,7 @@
     "Welcome to the {{app_name}} installer! Grab a drink, pick an install location and proceed.",
   "setup.tooltip.location": "Click to change the install location",
   "setup.location.message": "Choose where the app should be installed",
+  "setup.action.browse": "Browse",
   "setup.action.install": "Install now",
   "setup.status.preparing": "Warming up...",
   "setup.status.progress": "{{percent}} done",
