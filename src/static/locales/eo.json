@@ -537,5 +537,6 @@
     "prompt.revert.no_other_version": "Ne estas alia disponebla versio.",
     "pick_update_upload.buttons.skip_update": "Eviti la ĝisdatigon",
     "grid.item.launch_title": "Lanĉi „{{title}}“",
-    "grid.item.open_title": "Malfermi „{{title}}“"
+    "grid.item.open_title": "Malfermi „{{title}}“",
+    "collection.item_count": "{{itemCount}} aĵoj"
 }
