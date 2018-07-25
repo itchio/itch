@@ -1,5 +1,5 @@
 import React from "react";
-import { RequestCreator, Client } from "butlerd";
+import { RequestCreator } from "butlerd";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import ErrorState from "renderer/basics/ErrorState";
 import equal from "react-fast-compare";
@@ -47,6 +47,7 @@ const butlerCaller = <Params, Result>(method: RequestCreator<Params, Result>) =>
     ButlerCallerState<Result>
   > {
     static displayName = `ButlerCall(${method.name})`;
+    fetchID = 0;
 
     constructor(props: any, context: any) {
       super(props, context);
@@ -72,14 +73,26 @@ const butlerCaller = <Params, Result>(method: RequestCreator<Params, Result>) =>
         loading: true,
       });
 
+      this.fetchID++;
+      let { fetchID } = this;
+
       (async () => {
         try {
           const result = await rcall(method, fullParams);
+          if (this.fetchID !== fetchID) {
+            // discard outdated result
+            return;
+          }
+
           this.setResult(result);
           if (!fullParams.fresh && (result as StaleResult).stale) {
             this.queueFetch({ fresh: true });
           }
         } catch (error) {
+          if (this.fetchID !== fetchID) {
+            // discard outdated result
+            return;
+          }
           this.setError(error);
         }
       })();
