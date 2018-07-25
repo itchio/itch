@@ -9,8 +9,6 @@ import { withProfile } from "renderer/hocs/withProfile";
 import { Title, TitleBox } from "renderer/pages/PageStyles/games";
 import { T } from "renderer/t";
 
-const FetchUser = butlerCaller(messages.FetchUser);
-
 const StandardGameDesc = ({
   game,
   children,
@@ -32,35 +30,6 @@ const StandardGameDesc = ({
     <div>
       {renderClassification(game.classification)}
       <PlatformIcons target={game} before={() => <>&nbsp;&nbsp;</>} />
-      {!game.userId ? null : (
-        <FetchUser
-          params={{ profileId: profile.id, userId: game.userId }}
-          render={({ result }) => {
-            if (!result || !result.user) {
-              return null;
-            }
-            const { user } = result;
-
-            return (
-              <>
-                &nbsp;&nbsp;by&nbsp;&nbsp;
-                <a href={user.url}>
-                  <img
-                    src={user.stillCoverUrl || user.coverUrl}
-                    style={{
-                      width: "1em",
-                      height: "1em",
-                      borderRadius: "4px",
-                      marginRight: ".5em",
-                    }}
-                  />
-                  {result.user.username}
-                </a>
-              </>
-            );
-          }}
-        />
-      )}
     </div>
   </TitleBox>
 );
