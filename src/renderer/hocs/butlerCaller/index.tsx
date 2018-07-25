@@ -34,8 +34,6 @@ interface ButlerCallerArgs<Params, Result> {
   refresh: RefreshFunc;
 }
 
-let callerSeed = 0;
-
 const LoadingStateDiv = styled.div`
   display: flex;
   align-items: center;
@@ -48,13 +46,10 @@ const butlerCaller = <Params, Result>(method: RequestCreator<Params, Result>) =>
     ButlerCallerProps<Params, Result>,
     ButlerCallerState<Result>
   > {
-    id: number;
-
     static displayName = `ButlerCall(${method.name})`;
 
     constructor(props: any, context: any) {
       super(props, context);
-      this.id = callerSeed++;
       this.state = {
         loading: true,
         error: undefined,
