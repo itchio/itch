@@ -28,6 +28,8 @@ const SidebarDiv = styled.div`
   background: ${props => props.theme.sidebarBackground};
   font-size: ${styles.fontSizes.sidebar};
 
+  animation: ${styles.animations.enterLeft} 0.2s;
+
   height: 100%;
   flex-grow: 0;
   flex-shrink: 0;

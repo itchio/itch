@@ -6,7 +6,10 @@ import { ExtendedWindow, TabInstance } from "common/types";
 import { Dispatch } from "common/types";
 import { ambientWind, ambientWindState } from "common/util/navigation";
 import React from "react";
-import { FiltersContainerDiv } from "renderer/basics/FiltersContainer";
+import {
+  FiltersContainerDiv,
+  filtersContainerHeight,
+} from "renderer/basics/FiltersContainer";
 import IconButton from "renderer/basics/IconButton";
 import NewVersionAvailable from "renderer/basics/TitleBar/NewVersionAvailable";
 import UserMenu from "renderer/basics/TitleBar/UserMenu";
@@ -26,6 +29,28 @@ const DraggableDiv = styled.div`
   }
 `;
 
+const Spacer = styled.div`
+  width: 8px;
+`;
+
+export const titleBarHeight = 40;
+
+const WindowButton = styled(IconButton)`
+  align-self: flex-start;
+  width: ${titleBarHeight * 1.1}px;
+  height: ${titleBarHeight * 0.8}px;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &.exit:hover {
+    background: rgba(174, 8, 7, 1);
+  }
+`;
+
 const DraggableDivInner = styled.div`
   flex: 1 1;
   display: flex;
@@ -35,6 +60,15 @@ const DraggableDivInner = styled.div`
 
 const Filler = styled.div`
   flex: 1 1;
+`;
+
+const TitleBarDiv = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: ${props => props.theme.sidebarBackground};
+  padding-left: 10px;
+  height: ${titleBarHeight}px;
 `;
 
 const TitleDiv = styled.div`
@@ -64,7 +98,7 @@ class TitleBar extends React.PureComponent<Props> {
     }
 
     return (
-      <FiltersContainerDiv className="title-bar">
+      <TitleBarDiv className="title-bar">
         <DraggableDiv
           id="title-draggable"
           className={classNames({ dimmed: !focused })}
@@ -82,8 +116,9 @@ class TitleBar extends React.PureComponent<Props> {
             <NewVersionAvailable />
           </>
         )}
+        <Spacer />
         {this.renderIcons()}
-      </FiltersContainerDiv>
+      </TitleBarDiv>
     );
   }
 
@@ -100,14 +135,14 @@ class TitleBar extends React.PureComponent<Props> {
       <>
         {secondary ? null : (
           <>
-            <IconButton icon="window-minimize" onClick={this.minimizeClick} />
-            <IconButton
+            <WindowButton icon="minus" onClick={this.minimizeClick} />
+            <WindowButton
               icon={maximized ? "window-restore" : "window-maximize"}
               onClick={this.maximizeRestoreClick}
             />
           </>
         )}
-        <IconButton icon="window-close" onClick={this.closeClick} />
+        <WindowButton className="exit" icon="cross" onClick={this.closeClick} />
       </>
     );
   }

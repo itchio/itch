@@ -242,6 +242,17 @@ export const animations = {
     }
   `,
 
+  enterTop: keyframes`
+    0% {
+      opacity: 0;
+      transform: translateY(-25%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+  `,
+
   enterBottom: keyframes`
     0% {
       opacity: 0;

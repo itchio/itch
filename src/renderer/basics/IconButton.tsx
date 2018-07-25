@@ -14,7 +14,6 @@ const IconButtonDiv = styled.div`
 
   width: 30px;
   height: 30px;
-  border-radius: 50%;
 
   &:hover {
     color: ${props => props.theme.secondaryTextHover};
@@ -26,6 +25,7 @@ const IconButtonDiv = styled.div`
   }
 
   &.emphasized {
+    border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }

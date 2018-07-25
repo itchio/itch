@@ -40,7 +40,7 @@ const LayoutContainer = styled.div`
   border-radius: 2px;
 
   &.maximized {
-    border-color: transparent;
+    border: none;
   }
 
   &,

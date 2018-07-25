@@ -23,6 +23,8 @@ const UserMenuDiv = styled.div`
     cursor: pointer;
   }
 
+  animation: ${styles.animations.enterTop} 0.2s;
+
   .icon {
     margin: 0;
     transition: all 0.2s;
