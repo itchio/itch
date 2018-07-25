@@ -6,8 +6,20 @@ import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import BrowserContextGame from "renderer/pages/BrowserPage/BrowserContext/BrowserContextGame";
+import styled, { animations } from "renderer/styles";
+import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
 
 const FetchGame = butlerCaller(messages.FetchGame);
+
+const BrowserContextContainer = styled.div`
+  height: ${browserContextHeight}px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  animation: ${animations.enterBottom} 0.2s;
+`;
 
 class BrowserContext extends React.PureComponent<Props> {
   render() {
@@ -15,13 +27,15 @@ class BrowserContext extends React.PureComponent<Props> {
     if (space.prefix === "games") {
       const gameId = space.numericId();
       return (
-        <FetchGame
-          params={{ gameId }}
-          sequence={space.sequence()}
-          render={({ result }) => {
-            return <BrowserContextGame game={result.game} />;
-          }}
-        />
+        <BrowserContextContainer>
+          <FetchGame
+            params={{ gameId }}
+            sequence={space.sequence()}
+            render={({ result }) => {
+              return <BrowserContextGame game={result.game} />;
+            }}
+          />
+        </BrowserContextContainer>
       );
     }
 

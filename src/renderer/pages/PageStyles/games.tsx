@@ -17,13 +17,13 @@ const baseWidth = 215;
 const baseHeight = 170;
 
 const coverFactor = 0.9;
-export const coverWidth = baseWidth * coverFactor;
-export const coverHeight = baseHeight * coverFactor;
+export const standardCoverWidth = baseWidth * coverFactor;
+export const standardCoverHeight = baseHeight * coverFactor;
 
 const CoverBox = styled.div`
   flex-shrink: 0;
-  width: ${coverWidth}px;
-  height: ${coverHeight}px;
+  width: ${standardCoverWidth}px;
+  height: ${standardCoverHeight}px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
   position: relative;
 
@@ -86,12 +86,14 @@ const DarkTitle = styled.div`
 export const StandardGameCover = ({
   game,
   showInfo,
+  className,
   ...restProps
 }: {
   game: Game;
   showInfo?: boolean;
+  className?: string;
 }) => (
-  <CoverBox {...restProps} className={classNames({ showInfo })}>
+  <CoverBox {...restProps} className={classNames(className, { showInfo })}>
     {game ? (
       <>
         <a href={urlForGame(game.id)}>

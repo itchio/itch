@@ -8,11 +8,24 @@ import GameStats from "renderer/basics/GameStats";
 import IconButton from "renderer/basics/IconButton";
 import MainAction from "renderer/basics/MainAction";
 import { hookWithProps } from "renderer/hocs/hook";
-import styled from "renderer/styles";
+import styled, { animations } from "renderer/styles";
+import {
+  StandardGameCover,
+  standardCoverHeight,
+  standardCoverWidth,
+} from "renderer/pages/PageStyles/games";
+import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
 
 const Spacer = styled.div`
-  flex-basis: 10px;
+  flex-basis: 16px;
   flex-shrink: 0;
+`;
+
+const coverFactor = browserContextHeight / standardCoverHeight;
+
+const SmallerGameCover = styled(StandardGameCover)`
+  width: ${standardCoverWidth * coverFactor}px;
+  height: ${standardCoverHeight * coverFactor}px;
 `;
 
 const BrowserContextDiv = styled.div`
@@ -22,7 +35,8 @@ const BrowserContextDiv = styled.div`
   justify-content: center;
   flex-direction: row;
 
-  padding: 10px;
+  padding: 8px 16px;
+  padding-left: 0;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.16);
   z-index: 50;
   align-items: center;
@@ -34,10 +48,12 @@ class BrowserContextGame extends React.PureComponent<Props> {
 
     return (
       <BrowserContextDiv>
-        <MainAction game={game} status={status} wide />
+        <SmallerGameCover game={game} showInfo={false} />
         <Spacer />
         <GameStats game={game} status={status} />
         <Filler />
+        <MainAction game={game} status={status} wide />
+        <Spacer />
         <IconButton
           className="manage-game"
           huge

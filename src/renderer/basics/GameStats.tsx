@@ -44,6 +44,10 @@ const GameStatsDiv = styled.div`
   }
 `;
 
+const GameTitle = styled.div`
+  font-weight: 700;
+`;
+
 class GameStats extends React.PureComponent<Props> {
   render() {
     const { game, status } = this.props;
@@ -55,6 +59,7 @@ class GameStats extends React.PureComponent<Props> {
     if (cave) {
       return (
         <GameStatsDiv>
+          <GameTitle>{game.title}</GameTitle>
           <TotalPlaytime game={game} cave={cave} />
           <LastPlayed game={game} cave={cave} />
         </GameStatsDiv>
@@ -69,9 +74,8 @@ class GameStats extends React.PureComponent<Props> {
       return (
         <GameStatsDiv>
           <div className="total-playtime">
+            <GameTitle>{game.title}</GameTitle>
             <div className="total-playtime--line game-summary">
-              {game.title}
-              {" — "}
               {T([`usage_stats.description.${classification}`])}
               {showPlatforms ? (
                 <span>

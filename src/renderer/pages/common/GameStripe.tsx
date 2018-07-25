@@ -8,7 +8,7 @@ import {
   TitleSpacer,
   StandardGameCover,
   TitleBox,
-  coverHeight,
+  standardCoverHeight,
 } from "renderer/pages/PageStyles/games";
 import ErrorState from "renderer/basics/ErrorState";
 import LoadingCircle from "renderer/basics/LoadingCircle";
@@ -30,7 +30,7 @@ const StripeDiv = styled.div`
   overflow: hidden;
   position: relative;
 
-  height: ${coverHeight + 2}px;
+  height: ${standardCoverHeight + 2}px;
 
   padding: 1.2em 0;
   margin-bottom: 32px;
