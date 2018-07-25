@@ -432,64 +432,67 @@ interface InstallLocation {
 
 export interface PreferencesState {
   /** is the app allowed to check for updates to itself? */
-  downloadSelfUpdates?: boolean;
+  downloadSelfUpdates: boolean;
 
   /** do not make any network requests */
-  offlineMode?: boolean;
+  offlineMode: boolean;
 
-  installLocations?: {
+  installLocations: {
     [key: string]: InstallLocation;
   };
 
   /** where to install games (doesn't change already-installed games) */
-  defaultInstallLocation?: string;
+  defaultInstallLocation: string;
 
-  sidebarWidth?: number;
+  sidebarWidth: number;
 
   /** use sandbox */
-  isolateApps?: boolean;
+  isolateApps: boolean;
 
   /** when closing window, keep running in tray */
-  closeToTray?: boolean;
+  closeToTray: boolean;
 
   /** notify when a download has been installed or updated */
-  readyNotification?: boolean;
+  readyNotification: boolean;
 
   /** show the advanced section of settings */
-  showAdvanced?: boolean;
+  showAdvanced: boolean;
 
   /** language picked by the user */
-  lang?: string;
+  lang: string;
 
   /** if true, user's already seen the 'minimize to tray' notification */
-  gotMinimizeNotification?: boolean;
+  gotMinimizeNotification: boolean;
 
   /** should the itch app start on os startup? */
-  openAtLogin?: boolean;
+  openAtLogin: boolean;
 
   /** when the itch app starts at login, should it be hidden? */
-  openAsHidden?: boolean;
+  openAsHidden: boolean;
 
   /** show consent dialog before applying any game updates */
-  manualGameUpdates?: boolean;
+  manualGameUpdates: boolean;
 
   /** prevent display sleep while playing */
-  preventDisplaySleep?: boolean;
+  preventDisplaySleep: boolean;
 
   /** if rediff'd patch is available, use it instead of original patch */
-  preferOptimizedPatches?: boolean;
+  preferOptimizedPatches: boolean;
 
   /** layout to use to show games */
-  layout?: TabLayout;
+  layout: TabLayout;
 
   /** disable all webviews */
-  disableBrowser?: boolean;
+  disableBrowser: boolean;
 
   /** disable GPU acceleration, see #809 */
-  disableHardwareAcceleration?: boolean;
+  disableHardwareAcceleration: boolean;
 
   /** enable tabs - if false, use simple interface */
-  enableTabs?: boolean;
+  enableTabs: boolean;
+
+  /** the last version of the app we've successfully run a setup of, see https://github.com/itchio/itch/issues/1997 */
+  lastSuccessfulSetupVersion: string;
 }
 
 export interface ITask {

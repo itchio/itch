@@ -95,10 +95,14 @@ export class Logger {
   }
 
   child(filename: string): Logger {
-    const name = filename
-      .split(/[\/\\]/)
-      .slice(-3)
-      .join("/");
+    let tokens = filename.split(/[\/\\]/);
+    tokens = tokens.slice(1);
+    tokens[0] = tokens[0].substring(0, 1);
+    for (let i = 1; i < tokens.length - 1; i++) {
+      tokens[i] = tokens[i].substring(0, 4);
+    }
+    let name = tokens.join("/");
+    name = name.replace(/\.[^.]+$/, "");
     return this.childWithName(name);
   }
 

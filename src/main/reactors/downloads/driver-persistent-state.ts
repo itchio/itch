@@ -1,6 +1,4 @@
-import { messages } from "common/butlerd";
 import { mainLogger } from "main/logger";
-import { mcall } from "main/butlerd/mcall";
 import { Conversation } from "butlerd/lib/client";
 
 const logger = mainLogger.child(__filename);
@@ -35,8 +33,17 @@ class State {
   }
 
   setPhase(phase: Phase) {
-    logger.info(`${Phase[this.phase]} => ${Phase[phase]}`);
+    logger.debug(`${Phase[this.phase]} => ${Phase[phase]}`);
     this.phase = phase;
+
+    switch (this.phase) {
+      case Phase.RUNNING:
+        logger.info(`Downloads started`);
+        break;
+      case Phase.IDLE:
+        logger.info(`Downloads stopped`);
+        break;
+    }
   }
 
   getPhase() {

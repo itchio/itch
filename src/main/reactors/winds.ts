@@ -4,9 +4,15 @@ import { opensInWindow } from "common/constants/windows";
 import env from "common/env";
 import { t } from "common/format/t";
 import { Space } from "common/helpers/space";
-import { NativeWindowState, RootState, Store, WindRole } from "common/types";
+import {
+  NativeWindowState,
+  RootState,
+  Store,
+  WindRole,
+  PreferencesState,
+} from "common/types";
 import config from "common/util/config";
-import { getImagePath } from "common/util/resources";
+import { getImagePath, getRendererFilePath } from "common/util/resources";
 import { Watcher } from "common/util/watcher";
 import {
   app,
@@ -416,7 +422,7 @@ function makeAppURL(params: AppURLParams): string {
     };
   } else {
     urlObject = {
-      pathname: path.resolve(__dirname, "..", "renderer", "index.html"),
+      pathname: getRendererFilePath("index.html"),
       protocol: "file",
       slashes: true,
     };
@@ -548,7 +554,9 @@ function hookNativeWindow(
 
   nativeWindow.on("close", (e: any) => {
     if (wind === "root") {
-      const prefs = store.getState().preferences || { closeToTray: true };
+      const prefs =
+        store.getState().preferences ||
+        ({ closeToTray: true } as PreferencesState);
 
       let { closeToTray } = prefs;
       if (env.integrationTests) {

@@ -63,7 +63,7 @@ export class Package implements PackageLike {
     this.name = name;
     this.formula = formulas[name];
     if (!this.formula) {
-      throw new Error(`No spec for formula: ${this.name}`);
+      throw new Error(`No spec for formula: (${this.name})`);
     }
     let channel = platform;
     if (this.formula.transformChannel) {
@@ -96,13 +96,13 @@ export class Package implements PackageLike {
   async getLatestVersion(): Promise<Version> {
     if (this.semverConstraint) {
       this.debug(
-        `Trying to satisfy semver constraint ${this.semverConstraint}`
+        `Trying to satisfy semver constraint (${this.semverConstraint})`
       );
       const url = this.buildURL(`/versions`);
-      this.debug(`GET ${url}`);
+      this.debug(`GET (${url})`);
       const res = await request("get", url, {});
       if (res.statusCode !== 200) {
-        throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
+        throw new Error(`got HTTP ${res.statusCode} while fetching (${url})`);
       }
 
       const versionsRes = res.body as VersionsRes;
@@ -119,20 +119,20 @@ export class Package implements PackageLike {
         if (semver.satisfies(v, this.semverConstraint)) {
           return v;
         } else {
-          this.debug(`Ignoring ${v}`);
+          this.debug(`Ignoring (${v})`);
         }
       }
 
       throw new Error(
-        `Could not find a version satisfying ${this.semverConstraint}`
+        `Could not find a version satisfying (${this.semverConstraint})`
       );
     } else {
       this.debug("No semver constraint, going with /LATEST");
       const url = this.buildURL(`/LATEST`);
-      this.debug(`GET ${url}`);
+      this.debug(`GET (${url})`);
       const res = await request("get", url, {});
       if (res.statusCode !== 200) {
-        throw new Error(`got HTTP ${res.statusCode} while fetching ${url}`);
+        throw new Error(`got HTTP ${res.statusCode} while fetching (${url})`);
       }
 
       const versionString = res.body.toString("utf8").trim();
@@ -185,7 +185,7 @@ export class Package implements PackageLike {
       this.info(`Looking for local binary...`);
 
       const executablePath = await which(this.name);
-      this.info(`Found at ${executablePath}`);
+      this.info(`Found at (${executablePath})`);
 
       const { err } = await spawn.exec({
         logger: this.logger,
@@ -211,12 +211,12 @@ export class Package implements PackageLike {
     if (chosenVersion) {
       const isValid = await this.isVersionValid(chosenVersion);
       if (isValid) {
-        this.info(`${chosenVersion} is chosen and valid`);
+        this.info(`(${chosenVersion}) is chosen and valid`);
         this.refreshPrefix(chosenVersion);
         return;
       } else {
         this.info(
-          `${chosenVersion} is chosen but not valid, attempting install...`
+          `(${chosenVersion}) is chosen but not valid, attempting install...`
         );
       }
     } else {
@@ -240,7 +240,7 @@ export class Package implements PackageLike {
     const oldVersionPrefix = this.getCurrentVersionPrefix();
 
     if (newVersionPrefix !== oldVersionPrefix) {
-      this.info(`Switching to ${version}`);
+      this.info(`Switching to (${version})`);
       this.store.dispatch(
         actions.packageGotVersionPrefix({
           name: this.name,
@@ -259,7 +259,7 @@ export class Package implements PackageLike {
     }
 
     if (this.upgradeLock) {
-      throw new Error(`package ${this.name} locked`);
+      throw new Error(`package (${this.name}) locked`);
     }
     try {
       this.upgradeLock = true;
@@ -303,10 +303,10 @@ export class Package implements PackageLike {
     } catch (e) {
       this.logger.warn(`While checking for latest version: ${e.stack}`);
       throw new Error(
-        `Could not retrieve latest version of ${this.name}: ${e.message}`
+        `Could not retrieve latest version of (${this.name}): ${e.message}`
       );
     }
-    this.info(`Latest is ${latestVersion}`);
+    this.info(`Latest is (${latestVersion})`);
 
     if (
       this.getVersionPrefix(latestVersion) === this.getCurrentVersionPrefix()
@@ -335,9 +335,9 @@ export class Package implements PackageLike {
       const archivePath = join(this.getDownloadsDir(), archiveName);
 
       this.stage("download");
-      this.info(`Downloading ${this.name}@${latestVersion}`);
-      this.info(`...from ${archiveUrl}`);
-      this.info(`...to ${archivePath}`);
+      this.info(`Downloading (${this.name})@(${latestVersion})`);
+      this.info(`...from (${archiveUrl})`);
+      this.info(`...to (${archivePath})`);
 
       await downloadToFile(
         info => {
@@ -415,7 +415,7 @@ export class Package implements PackageLike {
   }
 
   async writeChosenVersion(version: Version): Promise<void> {
-    this.info(`Marking ${version} as chosen version`);
+    this.info(`Marking (${version}) as chosen version`);
     await sf.writeFile(this.getChosenMarkerPath(), version, {
       encoding: "utf8",
     });
@@ -430,11 +430,11 @@ export class Package implements PackageLike {
         continue;
       }
 
-      this.info(`Removing obsolete version ${ov}`);
+      this.info(`Removing obsolete version (${ov})`);
       try {
         await sf.wipe(this.getVersionPrefix(ov));
       } catch (e) {
-        this.warn(`Could not remove version ${ov}: ${e}`);
+        this.warn(`Could not remove version (${ov}): ${e}`);
       }
     }
   }

@@ -3,7 +3,7 @@ import { Logger, devNull } from "common/logger";
 import { MinimalContext } from "main/context";
 import * as messages from "common/butlerd/messages";
 import { Cave, CaveSummary } from "common/butlerd/messages";
-import { RootState, Store } from "common/types";
+import { RootState, Store, isCancelled, isAborted } from "common/types";
 import { Conversation } from "butlerd/lib/client";
 import { delay } from "main/reactors/delay";
 import { Watcher } from "common/util/watcher";
@@ -62,16 +62,22 @@ export async function call<Params, Res>(
   try {
     return await client.call(rc, params, setup);
   } catch (e) {
-    console.error(`Caught butler error:`);
-    if (isInternalError(e)) {
-      const ed = getRpcErrorData(e);
-      if (ed) {
-        console.error(`butler version: ${ed.butlerVersion}`);
-        console.error(`Golang stack:\n${ed.stack}`);
-      }
-      console.error(`JavaScript stack: ${e.stack}`);
+    if (isCancelled(e)) {
+      // nvm
+    } else if (isAborted(e)) {
+      // nvm
     } else {
-      console.error(`${e.message}`);
+      console.error(`Caught butler error:`);
+      if (isInternalError(e)) {
+        const ed = getRpcErrorData(e);
+        if (ed) {
+          console.error(`butler version: ${ed.butlerVersion}`);
+          console.error(`Golang stack:\n${ed.stack}`);
+        }
+        console.error(`JavaScript stack: ${e.stack}`);
+      } else {
+        console.error(`${e.message}`);
+      }
     }
     throw e;
   }

@@ -714,7 +714,7 @@ export const actions = wireActions({
 
   // preferences
 
-  updatePreferences: action<PreferencesState>(),
+  updatePreferences: action<Partial<PreferencesState>>(),
   preferencesLoaded: action<PreferencesState>(),
   clearBrowsingDataRequest: action<{
     wind: string;

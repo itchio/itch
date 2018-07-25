@@ -1,6 +1,6 @@
 import { actions } from "common/actions";
 import { messages, hookLogging } from "common/butlerd";
-import { Store } from "common/types";
+import { Store, isCancelled } from "common/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
@@ -33,7 +33,7 @@ async function refreshDownloads(store: Store) {
 }
 
 async function driverPoll(store: Store) {
-  logger.info(`Download driver polling...`);
+  logger.debug(`Download driver polling...`);
 
   const rs = store.getState();
   if (!rs.setup.done) {
@@ -42,7 +42,7 @@ async function driverPoll(store: Store) {
 
   const { paused } = rs.downloads;
   if (paused) {
-    logger.info(`Paused... current phase: ${Phase[state.getPhase()]}`);
+    logger.debug(`Paused... current phase: ${Phase[state.getPhase()]}`);
     switch (state.getPhase()) {
       case Phase.RUNNING: {
         await state.cancel();
@@ -50,7 +50,7 @@ async function driverPoll(store: Store) {
       }
     }
   } else {
-    logger.info(`Not paused... current phase: ${Phase[state.getPhase()]}`);
+    logger.debug(`Not paused... current phase: ${Phase[state.getPhase()]}`);
     switch (state.getPhase()) {
       case Phase.IDLE: {
         state.setPhase(Phase.STARTING);
@@ -91,7 +91,11 @@ async function driverPoll(store: Store) {
             );
           });
         } catch (e) {
-          logger.error(`${e.stack}`);
+          if (isCancelled(e)) {
+            // ignore
+          } else {
+            logger.error(`${e.stack}`);
+          }
         } finally {
           state.setPhase(Phase.IDLE);
         }

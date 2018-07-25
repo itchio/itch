@@ -3,6 +3,7 @@ import { getAppPath } from "common/helpers/app";
 
 let absoluteAppPath = join(getAppPath(), "src");
 let absoluteMainDistPath = join(getAppPath(), "dist", "main");
+let absoluteRendererDistPath = join(getAppPath(), "dist", "renderer");
 
 /*
  * Resources are files shipped with the app, that are static
@@ -36,4 +37,8 @@ export function getInjectPath(name: InjectName) {
 
 export function getInjectURL(name: InjectName) {
   return `file://${getInjectPath(name)}`;
+}
+
+export function getRendererFilePath(name: string) {
+  return join(absoluteRendererDistPath, name);
 }

@@ -11,6 +11,8 @@ import { Manager } from "main/broth/manager";
 import { delay } from "main/reactors/delay";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
+import { app } from "electron";
+import env from "common/env";
 
 const logger = mainLogger.child(__filename);
 
@@ -73,9 +75,32 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
     if (!manager) {
       manager = new Manager(store);
     }
-    await manager.ensure({
-      startup: true,
-    });
+
+    const prefs = store.getState().preferences;
+    const setUpVersionOnceBefore =
+      app.getVersion() === prefs.lastSuccessfulSetupVersion;
+
+    if (env.development) {
+      logger.info(`In development, forcing full set-up`);
+      await manager.upgrade();
+    } else if (!setUpVersionOnceBefore) {
+      logger.info(
+        `Never set up ${app.getVersion()} successfully before, forcing full set-up`
+      );
+      await manager.upgrade();
+      store.dispatch(
+        actions.updatePreferences({
+          lastSuccessfulSetupVersion: app.getVersion(),
+        })
+      );
+    } else {
+      logger.info(
+        `Already set up ${app.getVersion()} once, doing quick set-up`
+      );
+      await manager.ensure({
+        startup: true,
+      });
+    }
 
     await Promise.race([
       initialButlerdPromise,

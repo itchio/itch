@@ -10,7 +10,6 @@ const path = require("path");
 const merge = require("webpack-merge");
 
 module.exports = (env) => {
-  const isProduction = env.mode === "production";
   return [
     merge.smart(getCommonConfig("main", env), {
       target: "electron-main",
@@ -84,10 +83,10 @@ function getCommonConfig(type, env) {
 
   return {
     mode,
-    devtool: "eval",
+    devtool: isProduction ? "source-map" : "eval",
     node: {
-      __dirname: !isProduction,
-      __filename: !isProduction,
+      __dirname: true,
+      __filename: true,
     },
     output: {
       filename: "[name].bundle.js",
@@ -130,7 +129,7 @@ function getCommonConfig(type, env) {
           }
         ],
         verbose: false,
-      }),
+      })
     ],
     optimization: {
       minimize: false,

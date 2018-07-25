@@ -44,7 +44,7 @@ export async function performHTMLLaunch(
     height = embed.height;
   }
 
-  logger.info(`performing HTML launch at resolution ${width}x${height}`);
+  logger.info(`Performing HTML launch at resolution ${width}x${height}`);
 
   const partition = `persist:gamesession_${game.id}`;
 
