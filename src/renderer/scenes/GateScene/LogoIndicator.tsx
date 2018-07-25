@@ -10,10 +10,14 @@ const LogoIndicatorDiv = styled.div`
 
   margin-top: 50px;
 
+  &,
   svg {
-    display: block;
     height: 170px;
     width: 430px;
+  }
+
+  svg {
+    display: block;
     overflow: hidden;
 
     path {
