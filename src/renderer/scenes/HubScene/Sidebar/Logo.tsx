@@ -5,6 +5,7 @@ import React from "react";
 import { hook } from "renderer/hocs/hook";
 import { modals } from "common/modals";
 import styled from "renderer/styles";
+import { ambientWind } from "common/util/navigation";
 
 const LogoDiv = styled.div`
   text-align: center;
@@ -24,12 +25,7 @@ class Logo extends React.PureComponent<Props> {
     const { appVersion } = this.props;
 
     return (
-      <LogoDiv
-        className={classNames("logo-div")}
-        onClick={this.onClick}
-        data-rh-at="bottom"
-        data-rh={`itch v${appVersion}`}
-      >
+      <LogoDiv className={classNames("logo-div")} onClick={this.onClick}>
         <img src={require("static/images/logos/app-white.svg")} />
       </LogoDiv>
     );
@@ -51,8 +47,16 @@ class Logo extends React.PureComponent<Props> {
       return;
     }
 
-    const { dispatch } = this.props;
-    dispatch(actions.navigate({ wind: "root", url: "itch://featured" }));
+    if (e.button === 0) {
+      const { dispatch } = this.props;
+      dispatch(
+        actions.openUserMenu({
+          wind: ambientWind(),
+          clientX: e.clientX,
+          clientY: e.clientY,
+        })
+      );
+    }
   };
 }
 

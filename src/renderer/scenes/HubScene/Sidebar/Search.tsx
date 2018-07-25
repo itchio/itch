@@ -28,9 +28,7 @@ const SearchContainerContainer = styled.section`
 const SearchContainer = styled.div`
   position: relative;
   padding: 0px 8px;
-  margin: 16px 0;
-  margin-left: 2px;
-  margin-left: 10px;
+  margin: 16px 10px;
   font-size: 14px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(0, 0, 0, 0.3);

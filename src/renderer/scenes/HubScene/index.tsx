@@ -2,7 +2,6 @@ import { ExtendedWindow } from "common/types";
 import React from "react";
 import HubContent from "renderer/scenes/HubScene/HubContent";
 import Sidebar from "renderer/scenes/HubScene/Sidebar/Sidebar";
-import SidebarHandle from "renderer/scenes/HubScene/Sidebar/SidebarHandle";
 import styled from "renderer/styles";
 
 const HubSceneDiv = styled.div`
@@ -22,12 +21,7 @@ class HubScene extends React.PureComponent {
 
     return (
       <HubSceneDiv>
-        {iw.role == "main" ? (
-          <>
-            <Sidebar />
-            <SidebarHandle />
-          </>
-        ) : null}
+        {iw.role == "main" ? <Sidebar /> : null}
         <HubContent />
       </HubSceneDiv>
     );

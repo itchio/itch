@@ -428,6 +428,7 @@ export const actions = wireActions({
       game: Game;
     }
   >(),
+  openUserMenu: action<IOpenContextMenuBase>(),
 
   viewCreatorProfile: action<{}>(),
   viewCommunityProfile: action<{}>(),

@@ -4,7 +4,10 @@ import { Store, MenuTemplate, IOpenContextMenuBase } from "common/types";
 
 import { actions } from "common/actions";
 
-import { gameControls } from "main/reactors/context-menu/build-template";
+import {
+  gameControls,
+  userMenu,
+} from "main/reactors/context-menu/build-template";
 
 function openMenu(
   store: Store,
@@ -23,6 +26,12 @@ export default function(watcher: Watcher) {
     const { game } = action.payload;
     const template = gameControls(store, game);
 
+    const { wind, clientX, clientY } = action.payload;
+    openMenu(store, template, { wind, clientX, clientY });
+  });
+
+  watcher.on(actions.openUserMenu, async (store, action) => {
+    const template = userMenu(store);
     const { wind, clientX, clientY } = action.payload;
     openMenu(store, template, { wind, clientX, clientY });
   });

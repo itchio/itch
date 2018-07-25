@@ -34,7 +34,7 @@ interface ButlerCallerArgs<Params, Result> {
   refresh: RefreshFunc;
 }
 
-const LoadingStateDiv = styled.div`
+export const LoadingStateDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;

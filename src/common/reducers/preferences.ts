@@ -10,7 +10,6 @@ export const initialState = {
   offlineMode: OFFLINE_MODE,
   installLocations: {},
   defaultInstallLocation: "appdata",
-  sidebarWidth: 240,
   isolateApps: false,
   closeToTray: true,
   readyNotification: true,

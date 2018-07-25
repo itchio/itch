@@ -25,6 +25,7 @@ import { actions } from "common/actions";
 import { Dispatch, LocalizedString } from "common/types";
 
 const SidebarDiv = styled.div`
+  width: 240px;
   background: ${props => props.theme.sidebarBackground};
   font-size: ${styles.fontSizes.sidebar};
 
@@ -119,10 +120,10 @@ class Sidebar extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const { sidebarWidth, enableTabs } = this.props;
+    const { enableTabs } = this.props;
 
     return (
-      <SidebarDiv id="sidebar" style={{ width: `${sidebarWidth}px` }}>
+      <SidebarDiv id="sidebar">
         <Logo />
 
         <Search />
@@ -214,7 +215,6 @@ class Sidebar extends React.PureComponent<Props, State> {
 }
 
 interface Props {
-  sidebarWidth: number;
   me: User;
 
   tab: string;
@@ -230,7 +230,6 @@ interface State {
 }
 
 export default hook(map => ({
-  sidebarWidth: map(rs => rs.preferences.sidebarWidth || 240),
   me: map(rs => rs.profile.profile.user),
 
   tab: map(rs => ambientNavigation(rs).tab),

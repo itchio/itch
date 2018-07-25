@@ -11,6 +11,7 @@ import { showInExplorerString } from "common/format/show-in-explorer";
 import { formatOperation } from "common/format/operation";
 import { Game } from "common/butlerd/messages";
 import { actionForGame } from "common/util/action-for-game";
+import urls from "common/constants/urls";
 
 export function concatTemplates(
   a: MenuTemplate,
@@ -185,4 +186,70 @@ export function gameControls(store: Store, game: Game): MenuTemplate {
   template = concatTemplates(statusItems, template);
 
   return template;
+}
+
+export function userMenu(store: Store): MenuTemplate {
+  return [
+    {
+      icon: "rocket",
+      localizedLabel: ["sidebar.view_creator_profile"],
+      action: actions.viewCreatorProfile({}),
+    },
+    {
+      icon: "fire",
+      localizedLabel: ["sidebar.view_community_profile"],
+      action: actions.viewCommunityProfile({}),
+    },
+    {
+      type: "separator",
+    },
+    {
+      icon: "download",
+      localizedLabel: ["sidebar.downloads"],
+      id: "user-menu-downloads",
+      action: actions.navigate({
+        wind: "root",
+        url: "itch://downloads",
+      }),
+      accelerator: "CmdOrCtrl+J",
+    },
+    {
+      icon: "cog",
+      localizedLabel: ["sidebar.preferences"],
+      id: "user-menu-preferences",
+      action: actions.navigate({
+        wind: "root",
+        url: "itch://preferences",
+      }),
+      accelerator: "CmdOrCtrl+,",
+    },
+    {
+      type: "separator",
+    },
+    {
+      icon: "bug",
+      localizedLabel: ["menu.help.report_issue"],
+      action: actions.sendFeedback({}),
+    },
+    {
+      icon: "lifebuoy",
+      localizedLabel: ["menu.help.help"],
+      action: actions.navigate({ wind: "root", url: urls.manual }),
+    },
+    {
+      type: "separator",
+    },
+    {
+      icon: "shuffle",
+      localizedLabel: ["menu.account.change_user"],
+      id: "user-menu-change-user",
+      action: actions.changeUser({}),
+    },
+    {
+      icon: "exit",
+      localizedLabel: ["menu.file.quit"],
+      action: actions.quit({}),
+      accelerator: "CmdOrCtrl+Q",
+    },
+  ];
 }

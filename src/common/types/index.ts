@@ -444,8 +444,6 @@ export interface PreferencesState {
   /** where to install games (doesn't change already-installed games) */
   defaultInstallLocation: string;
 
-  sidebarWidth: number;
-
   /** use sandbox */
   isolateApps: boolean;
 

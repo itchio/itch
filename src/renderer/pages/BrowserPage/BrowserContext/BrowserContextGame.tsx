@@ -8,7 +8,7 @@ import GameStats from "renderer/basics/GameStats";
 import IconButton from "renderer/basics/IconButton";
 import MainAction from "renderer/basics/MainAction";
 import { hookWithProps } from "renderer/hocs/hook";
-import styled, { animations } from "renderer/styles";
+import styled from "renderer/styles";
 import {
   StandardGameCover,
   standardCoverHeight,
