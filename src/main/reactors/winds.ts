@@ -451,7 +451,6 @@ function commonBrowserWindowOpts(
     frame: false,
     webPreferences: {
       affinity: "all-in-one",
-      blinkFeatures: "ResizeObserver",
       webSecurity: env.development ? false : true,
       session: getAppSession(),
     },

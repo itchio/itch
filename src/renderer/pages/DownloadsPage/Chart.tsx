@@ -1,6 +1,6 @@
 import React from "react";
-import withDimensions, { DimensionsProps } from "renderer/hocs/withDimensions";
 import styled from "renderer/styles";
+import ContainerDimensions from "react-container-dimensions";
 
 const ChartWrapper = styled.div`
   position: absolute;
@@ -25,6 +25,14 @@ class ChartGradient extends React.PureComponent<{}> {
 
 class Chart extends React.PureComponent<Props> {
   render() {
+    return (
+      <ChartWrapper>
+        <ContainerDimensions>{this.renderContent}</ContainerDimensions>
+      </ChartWrapper>
+    );
+  }
+
+  renderContent = ({ width, height }: { width: number; height: number }) => {
     const { data } = this.props;
     let clipPathId = "clipPath" + Date.now();
 
@@ -36,7 +44,6 @@ class Chart extends React.PureComponent<Props> {
     }
     max *= 1.1;
 
-    const { width, height } = this.props;
     const xs = width! / (data.length - 1);
     const ys = height! / max;
 
@@ -50,36 +57,34 @@ class Chart extends React.PureComponent<Props> {
     pathString += "Z";
 
     return (
-      <ChartWrapper innerRef={this.props.divRef}>
-        <svg
-          width={width}
-          height={height}
-          version="1.1"
-          viewBox={`0 0 ${width} ${height}`}
-        >
-          <defs>
-            <clipPath id={clipPathId}>
-              <rect width={width} height={height} x={0} y={0} />
-            </clipPath>
-            <ChartGradient />
-          </defs>
-          <g clipPath={`#${clipPathId}`}>
-            <path
-              d={pathString}
-              fill="url(#downloadGradient)"
-              height={height}
-              width={width}
-              stroke="none"
-            />
-          </g>
-        </svg>
-      </ChartWrapper>
+      <svg
+        width={width}
+        height={height}
+        version="1.1"
+        viewBox={`0 0 ${width} ${height}`}
+      >
+        <defs>
+          <clipPath id={clipPathId}>
+            <rect width={width} height={height} x={0} y={0} />
+          </clipPath>
+          <ChartGradient />
+        </defs>
+        <g clipPath={`#${clipPathId}`}>
+          <path
+            d={pathString}
+            fill="url(#downloadGradient)"
+            height={height}
+            width={width}
+            stroke="none"
+          />
+        </g>
+      </svg>
     );
-  }
+  };
 }
 
-interface Props extends DimensionsProps {
+interface Props {
   data: number[];
 }
 
-export default withDimensions(Chart);
+export default Chart;
