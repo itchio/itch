@@ -24,7 +24,6 @@ const LogoIndicatorDiv = styled.div`
 
 class LogoIndicator extends React.PureComponent<Props> {
   vivus: Vivus;
-  progress = 0;
 
   render() {
     return <LogoIndicatorDiv id="logo-indicator-div" innerRef={this.gotEl} />;
@@ -39,20 +38,19 @@ class LogoIndicator extends React.PureComponent<Props> {
         animTimingFunction: Vivus.EASE_OUT,
         onReady: vivus => {
           this.vivus = vivus;
-          this.vivus.setFrameProgress(0);
-          this.update(this.props);
+          this.update();
         },
       });
     }
   };
 
-  componentDidUpdate(props: LogoIndicator["props"]) {
-    this.update(props);
+  componentDidUpdate() {
+    this.update();
   }
 
-  update = (props: LogoIndicator["props"]) => {
+  update = () => {
     if (this.vivus) {
-      this.vivus.setFrameProgress(props.progress);
+      this.vivus.setFrameProgress(this.props.progress);
     }
   };
 }
