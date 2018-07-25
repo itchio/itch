@@ -23,7 +23,6 @@ import {
   Session,
 } from "electron";
 import { mainLogger } from "main/logger";
-import * as path from "path";
 import { stringify } from "querystring";
 import { createSelector } from "reselect";
 import { debounce } from "underscore";

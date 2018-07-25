@@ -3,7 +3,12 @@
 import { parse as parseQueryString } from "querystring";
 
 import env from "common/env";
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV === "production") {
+  // cf. https://electronjs.org/docs/tutorial/security
+  (window as any).eval = global.eval = function() {
+    throw new Error(`Sorry, this app does not support window.eval().`);
+  };
+} else {
   require("react-hot-loader/patch");
   require("bluebird").config({
     longStackTraces: true,
