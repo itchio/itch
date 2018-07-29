@@ -423,7 +423,7 @@
     "grid.item.status.installed": "已安装",
     "new_tab.devlogs": "开发者日志",
     "prompt.action.continue": "继续",
-    "download.reason.install": "安装",
+    "download.reason.install": "前往安装",
     "download.ongoing.install": "正在安装 {{title}}…",
     "download.ongoing.update": "正在更新 {{title}}…",
     "prompt.install_error.message": "安装失败。",
