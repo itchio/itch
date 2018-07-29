@@ -114,7 +114,7 @@ class SecretSettings extends React.PureComponent<Props> {
             primary={true}
             icon="checkbox-checked"
             onClick={this.onRestartButler}
-            label="Force butler restartd"
+            label="Force butlerd restart"
           />
         </ControlsDiv>
       </ModalWidgetDiv>

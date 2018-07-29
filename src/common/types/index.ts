@@ -94,6 +94,7 @@ export interface PackagesState {
 }
 
 export interface ButlerdState {
+  startedAt: number;
   endpoint?: Endpoint;
 }
 

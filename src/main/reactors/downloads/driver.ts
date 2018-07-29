@@ -21,7 +21,13 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.gotButlerdEndpoint, async (store, action) => {
-    state.setPhase(Phase.IDLE);
+    logger.debug(
+      `Downloads driver reacting to gotButlerdEndpoint, cancelling state...`
+    );
+    await state.cancel();
+    logger.debug(
+      `Downloads driver reacting to gotButlerdEndpoint, state is cancelled...`
+    );
     await driverPoll(store);
     await refreshDownloads(store);
   });
@@ -97,6 +103,7 @@ async function driverPoll(store: Store) {
             logger.error(`${e.stack}`);
           }
         } finally {
+          logger.debug(`Going back to idle after DownloadsDrive call`);
           state.setPhase(Phase.IDLE);
         }
 

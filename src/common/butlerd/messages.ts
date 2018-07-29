@@ -12,6 +12,28 @@ export interface MetaAuthenticateParams {
 }
 
 /**
+ * Params for Meta.Flow
+ */
+export interface MetaFlowParams {
+  // no fields
+}
+
+/**
+ * Payload for MetaFlowEstablished
+ */
+export interface MetaFlowEstablishedNotification {
+  /** The identifier of the daemon process for which the flow was established */
+  pid: number;
+}
+
+/**
+ * The first notification sent when @@MetaFlowParams is called.
+ */
+export const MetaFlowEstablished = createNotification<
+  MetaFlowEstablishedNotification
+>("MetaFlowEstablished");
+
+/**
  * Params for Version.Get
  */
 export interface VersionGetParams {
@@ -54,6 +76,30 @@ export const MetaAuthenticate = createRequest<
   MetaAuthenticateParams,
   MetaAuthenticateResult
 >("Meta.Authenticate");
+
+/**
+ * Result for Meta.Flow
+ */
+export interface MetaFlowResult {
+  // no fields
+}
+
+/**
+ * When called, defines the entire duration of the daemon's life.
+ *
+ * Cancelling that conversation (or closing the TCP connection) will
+ * shut down the daemon after all other requests have finished. This
+ * allows gracefully switching to another daemon.
+ *
+ * This conversation is also used to send all global notifications,
+ * regarding data that's fetched, network state, etc.
+ *
+ * Note that this call never returns - you have to cancel it when you're
+ * done with the daemon.
+ */
+export const MetaFlow = createRequest<MetaFlowParams, MetaFlowResult>(
+  "Meta.Flow"
+);
 
 /**
  * Result for Version.Get
@@ -2268,21 +2314,6 @@ export interface SearchUsersParams {
   /** undocumented */
   query: string;
 }
-
-/**
- * Payload for SearchUsersYield
- */
-export interface SearchUsersYieldNotification {
-  /** undocumented */
-  users: User[];
-}
-
-/**
- * Sent during @@SearchUsersParams when results are available
- */
-export const SearchUsersYield = createNotification<
-  SearchUsersYieldNotification
->("SearchUsersYield");
 
 /**
  * Params for Fetch.Game
