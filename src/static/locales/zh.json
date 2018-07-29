@@ -426,5 +426,7 @@
     "download.reason.install": "安装",
     "download.ongoing.install": "正在安装 {{title}}…",
     "download.ongoing.update": "正在更新 {{title}}…",
-    "prompt.install_error.message": "安装失败。"
+    "prompt.install_error.message": "安装失败。",
+    "collections.empty_sub": "浏览一些游戏并将它们添加到一个新的收藏夹吧！",
+    "docs.how_to_help": "需要什么帮助吗？"
 }
