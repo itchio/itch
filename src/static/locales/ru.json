@@ -351,7 +351,7 @@
     "prompt.install_error.title": "Произошла ошибка во время установки",
     "prompt.install_error.find_upload": "При поиске загрузки возникла проблема: {{message}}",
     "notification.download_installed": "{{title}} установлено!",
-    "notification.download_updated": "Обновление {{title}} завершено!",
+    "notification.download_updated": "Обновили {{title}}!",
     "preferences.behavior.ready_notification": "Уведомлять, когда что-нибудь установлено или обновлено",
     "preferences.behavior.open_at_login": "Запускаться при старте системы",
     "preferences.behavior.open_as_hidden": "Запускаться свёрнутым",
