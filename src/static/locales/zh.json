@@ -440,5 +440,10 @@
     "grid.empty_state.leader": "所有项目都被过滤掉了",
     "grid.item.not_compatible": "不兼容此平台",
     "grid.item.open_file_location.linux": "在资源管理器中显示",
-    "table.column.installed_size": "大小"
+    "table.column.installed_size": "大小",
+    "login.action.retry_setup": "重新尝试安装",
+    "menu.file.close_tabs_below": "关闭下方所有标签页",
+    "prompt.discard_download.detail": "您随时可以再次安装 {{title}} ，但您将丢失存档。",
+    "prompt.dangerous_discard_download.message": "停止下载将会导致 {{title}} 处于不正常状态。",
+    "prompt.dangerous_discard_download.detail": "在您下次打开 {{title}} 时我们会将其恢复至最新版本。"
 }
