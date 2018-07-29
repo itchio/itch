@@ -1,4 +1,3 @@
-import { Client } from "butlerd";
 import { actions } from "common/actions";
 import { messages, hookLogging } from "common/butlerd";
 import { Cave, Game, PrereqStatus } from "common/butlerd/messages";
@@ -13,7 +12,6 @@ import { promisedModal } from "main/reactors/modals";
 import { performHTMLLaunch } from "main/reactors/launch/perform-html-launch";
 import { pickManifestAction } from "main/reactors/launch/pick-manifest-action";
 import { mcall } from "main/butlerd/mcall";
-import { itchSetupLock } from "main/broth/itch-setup";
 import { Conversation } from "butlerd/lib/client";
 
 export async function performLaunch(
@@ -66,6 +64,7 @@ export async function performLaunch(
   await ctx.withStopper({
     work: async () => {
       try {
+        logger.info(`Calling mcall...`);
         await mcall(
           messages.Launch,
           {
@@ -287,6 +286,7 @@ export async function performLaunch(
             });
           }
         );
+        logger.info(`mcall resolved!`);
       } finally {
         closePrereqsModal();
         if (powerSaveBlockerId) {

@@ -47,7 +47,7 @@ export async function makeButlerInstance(
     `${process.pid}`,
   ];
 
-  if (env.development) {
+  if (env.development || process.env.BUTLERD_ENABLE_LOGGING) {
     args = [...args, "--log"];
   }
 

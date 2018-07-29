@@ -40,6 +40,9 @@ export function main() {
     app.enableMixedSandbox();
   }
 
+  // cf. https://github.com/itchio/itch/issues/2026
+  app.commandLine.appendSwitch("ignore-connections-limit", "127.0.0.1");
+
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
   }

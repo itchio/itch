@@ -1,7 +1,7 @@
 import btoa from "btoa";
 import querystring from "querystring";
 
-import { BrowserWindow, shell } from "electron";
+import { BrowserWindow, shell, session } from "electron";
 
 import { getInjectPath } from "common/util/resources";
 import * as url from "common/util/url";
@@ -47,6 +47,7 @@ export async function performHTMLLaunch(
   logger.info(`Performing HTML launch at resolution ${width}x${height}`);
 
   const partition = `persist:gamesession_${game.id}`;
+  const gameSession = session.fromPartition(partition, { cache: false });
 
   // TODO: show game icon as, well, the window's icon
   let win = new BrowserWindow({
@@ -68,7 +69,7 @@ export async function performHTMLLaunch(
       /* hook up a few keyboard shortcuts of our own */
       preload: noPreload ? null : getInjectPath("game"),
       /* stores cookies etc. in persistent session to save progress */
-      partition,
+      session: gameSession,
     },
   });
 
@@ -126,15 +127,18 @@ export async function performHTMLLaunch(
 
   win.loadURL(`itch-cave://game.itch/${indexPath}?${query}`, options);
 
+  logger.info(`Waiting for window to close or context to be aborted...`);
   await new ItchPromise((resolve, reject) => {
-    win.on("close", async () => {
-      win.webContents.session.clearCache(resolve);
+    win.on("closed", () => {
+      resolve();
     });
 
     ctx.on("abort", () => {
       win.close();
+      resolve();
     });
   });
+  logger.info(`HTML launch promise has resolved`);
 
   return {};
 }
