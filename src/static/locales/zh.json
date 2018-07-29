@@ -428,5 +428,17 @@
     "download.ongoing.update": "正在更新 {{title}}…",
     "prompt.install_error.message": "安装失败。",
     "collections.empty_sub": "浏览一些游戏并将它们添加到一个新的收藏夹吧！",
-    "docs.how_to_help": "需要什么帮助吗？"
+    "docs.how_to_help": "需要什么帮助吗？",
+    "download.ongoing.reinstall": "正在重新安装 {{title}}…",
+    "download.ongoing.heal": "正在修复 {{title}…",
+    "download.outcome.installed": "已安装",
+    "download.outcome.updated": "已更新到最新版本",
+    "download.outcome.reinstalled": "已重新安装",
+    "game.install.could_not_launch.message": "错误信息为： {{errorMessage}}",
+    "grid.criterion.filter_by": "过滤词：",
+    "grid.empty_state.explanation": "您的过滤器已隐藏掉此处所有项目",
+    "grid.empty_state.leader": "所有项目都被过滤掉了",
+    "grid.item.not_compatible": "不兼容此平台",
+    "grid.item.open_file_location.linux": "在资源管理器中显示",
+    "table.column.installed_size": "大小"
 }
