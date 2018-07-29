@@ -23,7 +23,14 @@ class State {
       this.setPhase(Phase.CANCELLING);
       const { convo } = this;
       this.convo = null;
-      await convo.cancel();
+      if (convo) {
+        logger.debug(`Cancelling downloads convo`);
+        convo.cancel();
+        this.setPhase(Phase.IDLE);
+      } else {
+        logger.debug(`Had no downloads convo`);
+        this.setPhase(Phase.IDLE);
+      }
     }
   }
 

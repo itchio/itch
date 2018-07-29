@@ -182,6 +182,9 @@ export const actions = wireActions({
   relaunchRequest: action<{}>(),
   relaunch: action<{}>(),
 
+  spinningUpButlerd: action<{
+    startedAt: number;
+  }>(),
   gotButlerdEndpoint: action<{
     endpoint: Endpoint;
   }>(),

@@ -62,11 +62,11 @@ export async function runItchSetup(
         const msg = JSON.parse(tok) as ISM;
         onMessage(msg);
       } catch (e) {
-        logger.info(`> ${tok}`);
+        logger.debug(`> ${tok}`);
       }
     },
     onErrToken: (tok: string) => {
-      logger.info(`> ${tok}`);
+      logger.debug(`> ${tok}`);
     },
   });
   return true;
