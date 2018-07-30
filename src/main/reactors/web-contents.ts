@@ -2,11 +2,12 @@ import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
 import { Store, TabWeb } from "common/types";
 import { Watcher } from "common/util/watcher";
-import { BrowserWindow, webContents } from "electron";
+import { BrowserWindow, BrowserView, webContents } from "electron";
 import { mainLogger } from "main/logger";
 import nodeURL from "url";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import createContextMenu from "main/reactors/web-contents-context-menu";
+import { partitionForUser } from "common/util/partition-for-user";
 
 const logger = mainLogger.child(__filename);
 
@@ -44,6 +45,61 @@ function withWebContents<T>(
 }
 
 export default function(watcher: Watcher) {
+  watcher.on(actions.tabGotWebContentsMetrics, async (store, action) => {
+    const { wind, tab, metrics } = action.payload;
+    logger.debug(`Got webContentsMetrics for tab ${tab}`);
+
+    logger.debug(`Metrics: ${JSON.stringify(metrics, null, 2)}`);
+
+    const rs = store.getState();
+    const ti = rs.winds[wind].tabInstances[tab];
+    const { web } = ti.data;
+    if (web && web.webContentsId) {
+      const wcid = web.webContentsId;
+      logger.debug(`Already owned by web contents ${wcid}, resizing...`);
+      const wc = webContents.fromId(wcid);
+      const bv = BrowserView.fromWebContents(wc);
+      bv.setBounds({
+        width: metrics.width,
+        height: metrics.height,
+        x: metrics.left,
+        y: metrics.top,
+      });
+    } else {
+      logger.debug(`Have no web contents yet, creating a webview...`);
+      const userId = rs.profile.profile.id;
+
+      const bv = new BrowserView({
+        webPreferences: {
+          nodeIntegration: false,
+          partition: partitionForUser(String(userId)),
+        },
+      });
+      bv.setBounds({
+        width: metrics.width,
+        height: metrics.height,
+        x: metrics.left,
+        y: metrics.top,
+      });
+
+      const ns = rs.winds[wind].native.id;
+      const bw = BrowserWindow.fromId(ns);
+      bw.setBrowserView(bv);
+
+      const url = ti.history[ti.currentIndex].url;
+      logger.debug(`Loading url '${url}'`);
+      bv.webContents.loadURL(url);
+
+      store.dispatch(
+        actions.tabGotWebContents({
+          wind,
+          tab,
+          webContentsId: bv.webContents.id,
+        })
+      );
+    }
+  });
+
   watcher.on(actions.tabGotWebContents, async (store, action) => {
     const { wind, tab, webContentsId } = action.payload;
     logger.debug(`Got webContents ${webContentsId} for tab ${tab}`);
@@ -163,6 +219,22 @@ export default function(watcher: Watcher) {
         logger.debug(`=================================`);
       }
     );
+  });
+
+  watcher.on(actions.tabLostWebContents, async (store, action) => {
+    const { wind, tab } = action.payload;
+
+    logger.debug(`Tab ${tab} lost web contents!`);
+
+    const rs = store.getState();
+    // hmm this smells like a race condition
+    const ti = rs.winds[wind].tabInstances[tab];
+    const wcid = ti.data.web.webContentsId;
+    const wc = webContents.fromId(wcid);
+    const bv = BrowserView.fromWebContents(wc);
+    bv.destroy();
+
+    logger.debug(``);
   });
 
   watcher.on(actions.analyzePage, async (store, action) => {

@@ -25,6 +25,7 @@ import {
   PackageState,
   SystemState,
   WindRole,
+  BrowserViewMetrics,
 } from "common/types";
 
 import {
@@ -416,8 +417,16 @@ export const actions = wireActions({
 
     /** id of tab who just got a webcontents */
     tab: string;
+
     /** electron id of webcontents */
     webContentsId: number;
+  }>(),
+  tabGotWebContentsMetrics: action<{
+    wind: string;
+
+    tab: string;
+
+    metrics: BrowserViewMetrics;
   }>(),
   tabLostWebContents: action<{
     wind: string;

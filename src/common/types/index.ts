@@ -700,6 +700,13 @@ export interface WindSpec {
   role: WindRole;
 }
 
+export interface BrowserViewMetrics {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
 export type WindRole = "main" | "secondary";
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
