@@ -5,6 +5,7 @@ import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
 import { Phase, state } from "main/reactors/downloads/driver-persistent-state";
+import { Conversation } from "../../../../node_modules/butlerd/lib/client";
 
 const logger = mainLogger.child(__filename);
 
@@ -60,11 +61,12 @@ async function driverPoll(store: Store) {
     switch (state.getPhase()) {
       case Phase.IDLE: {
         state.setPhase(Phase.STARTING);
-
+        let driveConvo: Conversation;
         try {
           await mcall(messages.DownloadsDrive, {}, convo => {
             hookLogging(convo, logger);
             state.registerConvo(convo);
+            driveConvo = convo;
 
             convo.on(messages.DownloadsDriveStarted, async ({ download }) => {
               await refreshDownloads(store);
@@ -103,8 +105,14 @@ async function driverPoll(store: Store) {
             logger.error(`${e.stack}`);
           }
         } finally {
-          logger.debug(`Going back to idle after DownloadsDrive call`);
-          state.setPhase(Phase.IDLE);
+          if (state.isConvoCurrent(driveConvo)) {
+            state.setPhase(Phase.IDLE);
+            logger.debug(`Going back to idle after Downloads.Drive call`);
+          } else {
+            logger.debug(
+              `A Downloads.Drive call finished, but another is already up.`
+            );
+          }
         }
 
         break;

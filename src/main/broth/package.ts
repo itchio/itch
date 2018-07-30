@@ -182,26 +182,7 @@ export class Package implements PackageLike {
 
   async ensure(opts: EnsureOpts) {
     if (this.shouldUseLocal()) {
-      this.info(`Looking for local binary...`);
-
-      const executablePath = await which(this.name);
-      this.info(`Found at (${executablePath})`);
-
-      const { err } = await spawn.exec({
-        logger: this.logger,
-        ctx: new MinimalContext(),
-        command: executablePath,
-        args: ["-V"],
-      });
-      const version = err;
-
-      this.store.dispatch(
-        actions.packageGotVersionPrefix({
-          name: this.name,
-          version,
-          versionPrefix: dirname(executablePath),
-        })
-      );
+      await this.ensureLocal();
       return;
     }
 
@@ -231,6 +212,29 @@ export class Package implements PackageLike {
     await this.upgrade();
   }
 
+  async ensureLocal() {
+    this.info(`Looking for local binary...`);
+
+    const executablePath = await which(this.name);
+    this.info(`Found at (${executablePath})`);
+
+    const { err } = await spawn.exec({
+      logger: this.logger,
+      ctx: new MinimalContext(),
+      command: executablePath,
+      args: ["-V"],
+    });
+    const version = err;
+
+    this.store.dispatch(
+      actions.packageGotVersionPrefix({
+        name: this.name,
+        version,
+        versionPrefix: dirname(executablePath),
+      })
+    );
+  }
+
   getCurrentVersionPrefix(): string {
     return this.store.getState().broth.packages[this.name].versionPrefix;
   }
@@ -254,7 +258,11 @@ export class Package implements PackageLike {
   upgradeLock = false;
   async upgrade() {
     if (this.shouldUseLocal()) {
-      this.info(`Using local, so, not upgrading.`);
+      if (!this.getCurrentVersionPrefix()) {
+        await this.ensureLocal();
+      } else {
+        this.info(`Using local, so, not upgrading.`);
+      }
       return;
     }
 

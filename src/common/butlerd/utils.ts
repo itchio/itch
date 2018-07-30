@@ -1,13 +1,11 @@
-import { Client, RequestCreator, RequestError, Endpoint } from "butlerd";
-import { Logger, devNull } from "common/logger";
+import { Client, RequestCreator, RequestError } from "butlerd";
+import { Logger } from "common/logger";
 import { MinimalContext } from "main/context";
 import * as messages from "common/butlerd/messages";
 import { Cave, CaveSummary } from "common/butlerd/messages";
-import { RootState, Store, isCancelled, isAborted } from "common/types";
+import { Store, isCancelled, isAborted } from "common/types";
 import { Conversation } from "butlerd/lib/client";
 import { delay } from "main/reactors/delay";
-import { Watcher } from "common/util/watcher";
-import { actions } from "common/actions";
 
 type WithCB<T> = (client: Client) => Promise<T>;
 
@@ -41,8 +39,13 @@ async function getClient(store: Store): Promise<Client> {
   }
 
   const client = await p;
-  if (client.endpoint !== store.getState().butlerd.endpoint) {
-    console.warn(`(butlerd) Endpoint changed, making fresh client`);
+  const currentEndpoint = store.getState().butlerd.endpoint;
+  if (client.endpoint !== currentEndpoint) {
+    console.warn(
+      `(butlerd) Endpoint changed (${client.endpoint.http.address} => ${
+        currentEndpoint.http.address
+      }), making fresh client`
+    );
     p = makeClient(store);
     clientPromises.set(store, p);
   }

@@ -66,6 +66,7 @@ let initialButlerdPromise = new ItchPromise((resolve, reject) => {
 
 async function initialSetup(store: Store, { retry }: { retry: boolean }) {
   try {
+    logger.info(`Setup starting...`);
     store.dispatch(
       actions.setupStatus({
         icon: "install",
@@ -84,6 +85,7 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
     if (env.development) {
       logger.info(`In development, forcing full set-up`);
       await manager.upgrade();
+      logger.debug(`Full setup starting...`);
     } else if (!setUpVersionOnceBefore) {
       logger.info(
         `Never set up ${app.getVersion()} successfully before, forcing full set-up`
@@ -103,6 +105,7 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
       });
     }
 
+    logger.debug(`Waiting for butler promise...`);
     await Promise.race([
       initialButlerdPromise,
       new ItchPromise((resolve, reject) => {
@@ -111,7 +114,9 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
         }, 5000);
       }),
     ]);
+    logger.debug(`Syncing install locations...`);
     await syncInstallLocations(store);
+    logger.debug(`Dispatching setup done!`);
     store.dispatch(actions.setupDone({}));
     logger.info(`Setup done`);
   } catch (e) {
@@ -146,40 +151,6 @@ let previousIncarnation: ButlerIncarnation;
 
 async function refreshButlerd(store: Store) {
   logger.info(`Refreshing butlerd!`);
-  if (previousIncarnation) {
-    let inc = previousIncarnation;
-    let beforeCancel = Date.now();
-    if (inc.convo) {
-      logger.info(
-        `Requesting graceful shutdown of butlerd instance ${inc.id}...`
-      );
-      inc.convo.cancel();
-    }
-
-    if (inc.instance) {
-      let interval: NodeJS.Timer;
-      let total: number;
-      let intervalMs = 250;
-      interval = setInterval(() => {
-        total += intervalMs;
-        let elapsed = Date.now() - beforeCancel;
-        if (inc.closed) {
-          logger.info(
-            `butlerd instance ${inc.id} exited! (under ${elapsed.toFixed()} ms)`
-          );
-          clearInterval(interval);
-        } else if (total > 5000) {
-          logger.warn(
-            `butlerd instance ${
-              inc.id
-            } still hasn't exited (after ${elapsed.toFixed()} ms), killing...`
-          );
-          clearInterval(interval);
-          inc.instance.cancel();
-        }
-      }, intervalMs);
-    }
-  }
 
   let id = butlerInstanceSeed++;
   logger.info(`Spinning up butlerd instance ${id}...`);
@@ -194,7 +165,6 @@ async function refreshButlerd(store: Store) {
     convo: null,
     closed: false,
   };
-  previousIncarnation = incarnation;
 
   instance
     .promise()
@@ -229,30 +199,69 @@ async function refreshButlerd(store: Store) {
   const client = new Client(endpoint);
   const flowEstablished = new Promise<Conversation>((resolve, reject) => {
     setTimeout(() => {
-      reject(new Error("Meta.Flow call timed out!"));
-    }, 1000);
+      reject(new Error(`Meta.Flow call timed out for butlerd instance ${id}!`));
+    }, 2000);
 
     client
       .call(messages.MetaFlow, {}, convo => {
-        resolve(convo);
-
         // TODO: listen for global notifications here
         convo.on(messages.MetaFlowEstablished, async () => {
-          logger.info(`Meta.Flow established!`);
+          logger.info(`Meta.Flow established for butlerd instance ${id}!`);
+          resolve(convo);
         });
       })
       .catch(reject);
   });
-
-  const convo = await flowEstablished;
-  incarnation.convo = convo;
+  incarnation.convo = await flowEstablished;
 
   const versionInfo = await client.call(messages.VersionGet, {});
   logger.info(
     `Now speaking with butlerd instance ${id}, version ${
       versionInfo.versionString
-    }`
+    }, endpoint ${endpoint.http.address}`
   );
+
+  if (previousIncarnation) {
+    let inc = previousIncarnation;
+    let beforeCancel = Date.now();
+    if (inc.convo) {
+      logger.info(
+        `Requesting graceful shutdown of butlerd instance ${inc.id}...`
+      );
+      inc.convo.cancel();
+    }
+
+    if (inc.instance) {
+      logger.debug(`Waiting for butlerd instance ${inc.id} to close...`);
+      let interval: NodeJS.Timer;
+      let total = 0;
+      let intervalMs = 250;
+      interval = setInterval(() => {
+        total += intervalMs;
+        let elapsed = Date.now() - beforeCancel;
+        logger.debug(
+          `Checking on butlerd instance ${inc.id}... closed? ${
+            inc.closed
+          }. total = ${total}`
+        );
+        if (inc.closed) {
+          logger.info(
+            `butlerd instance ${inc.id} exited! (under ${elapsed.toFixed()} ms)`
+          );
+          clearInterval(interval);
+        } else if (total > 5000) {
+          logger.warn(
+            `butlerd instance ${
+              inc.id
+            } still hasn't exited (after ${elapsed.toFixed()} ms), killing...`
+          );
+          clearInterval(interval);
+          inc.instance.cancel();
+        }
+      }, intervalMs);
+    }
+  }
+  previousIncarnation = incarnation;
 
   store.dispatch(actions.gotButlerdEndpoint({ endpoint }));
   initialButlerdResolve();
@@ -269,6 +278,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.packageGotVersionPrefix, async (store, action) => {
     const { name } = action.payload;
+    logger.debug(`Package (${name}) got version prefix`);
     if (name === "butler") {
       await refreshButlerd(store);
     }

@@ -31,12 +31,18 @@ class State {
         logger.debug(`Had no downloads convo`);
         this.setPhase(Phase.IDLE);
       }
+    } else {
+      logger.debug(`Not cancelling, current phase is ${this.phase}`);
     }
   }
 
   registerConvo(convo: Conversation) {
     this.convo = convo;
     this.setPhase(Phase.RUNNING);
+  }
+
+  isConvoCurrent(convo: Conversation) {
+    return this.convo === convo;
   }
 
   setPhase(phase: Phase) {
