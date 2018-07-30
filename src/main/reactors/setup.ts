@@ -234,29 +234,16 @@ async function refreshButlerd(store: Store) {
     if (inc.instance) {
       logger.debug(`Waiting for butlerd instance ${inc.id} to close...`);
       let interval: NodeJS.Timer;
-      let total = 0;
-      let intervalMs = 250;
+      let intervalMs = 1000;
       interval = setInterval(() => {
-        total += intervalMs;
         let elapsed = Date.now() - beforeCancel;
-        logger.debug(
-          `Checking on butlerd instance ${inc.id}... closed? ${
-            inc.closed
-          }. total = ${total}`
-        );
         if (inc.closed) {
           logger.info(
-            `butlerd instance ${inc.id} exited! (under ${elapsed.toFixed()} ms)`
-          );
-          clearInterval(interval);
-        } else if (total > 5000) {
-          logger.warn(
             `butlerd instance ${
               inc.id
-            } still hasn't exited (after ${elapsed.toFixed()} ms), killing...`
+            } exited! (${elapsed.toFixed()} ms after shutdown request)`
           );
           clearInterval(interval);
-          inc.instance.cancel();
         }
       }, intervalMs);
     }
