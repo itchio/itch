@@ -82,13 +82,16 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
     const setUpVersionOnceBefore =
       app.getVersion() === prefs.lastSuccessfulSetupVersion;
 
+    await manager.ensure({
+      startup: true,
+    });
+
     if (env.development) {
-      logger.info(`In development, forcing full set-up`);
+      logger.info(`In development, forcing components upgrade check`);
       await manager.upgrade();
-      logger.debug(`Full setup starting...`);
     } else if (!setUpVersionOnceBefore) {
       logger.info(
-        `Never set up ${app.getVersion()} successfully before, forcing full set-up`
+        `Never set up ${app.getVersion()} successfully before, forcing components upgrade check`
       );
       await manager.upgrade();
       store.dispatch(
@@ -98,11 +101,8 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
       );
     } else {
       logger.info(
-        `Already set up ${app.getVersion()} once, doing quick set-up`
+        `Already set up ${app.getVersion()} once, delaying components upgrade check`
       );
-      await manager.ensure({
-        startup: true,
-      });
     }
 
     logger.debug(`Waiting for butler promise...`);

@@ -258,11 +258,7 @@ export class Package implements PackageLike {
   upgradeLock = false;
   async upgrade() {
     if (this.shouldUseLocal()) {
-      if (!this.getCurrentVersionPrefix()) {
-        await this.ensureLocal();
-      } else {
-        this.info(`Using local, so, not upgrading.`);
-      }
+      this.info(`Using local, so, not upgrading.`);
       return;
     }
 
