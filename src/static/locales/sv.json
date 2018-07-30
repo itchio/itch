@@ -427,6 +427,6 @@
     "game.install.libraries_missing": "Några nödvändiga {{arch}} bibliotek saknas: {{libraries}}",
     "preferences.behavior.prevent_display_sleep": "Förhindra strömspararläge medan du spelar",
     "collection.summary": "En samling av {{artikelAntal}} artiklar",
-    "download.ongoing.install": "Installerar {{title}}...",
+    "download.ongoing.install": "Installerar {{title}}…",
     "download.outcome.installed": "installerad"
 }
