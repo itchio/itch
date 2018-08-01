@@ -76,7 +76,12 @@ export default function(watcher: Watcher) {
     const { enableTabs } = rs.preferences;
     if (enableTabs && wind === "root") {
       const nativeWindow = getNativeWindow(rs, "root");
-      if (nativeWindow && nativeWindow.isFocused()) {
+      if (
+        nativeWindow &&
+        nativeWindow.isFocused() &&
+        !background &&
+        url !== "itch://new-tab"
+      ) {
         // let it navigate the open tab
       } else {
         // open a new tab!
