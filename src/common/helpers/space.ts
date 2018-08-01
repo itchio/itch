@@ -262,6 +262,20 @@ export class Space {
     return false;
   }
 
+  history(): TabPage[] {
+    if (this._instance) {
+      return this._instance.history;
+    }
+    return [];
+  }
+
+  currentIndex(): number {
+    if (this._instance) {
+      return this._instance.currentIndex;
+    }
+    return 0;
+  }
+
   sequence(): number {
     return this._instance.sequence;
   }

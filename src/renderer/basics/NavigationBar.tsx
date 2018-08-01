@@ -10,6 +10,8 @@ import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
+import { modalWidgets } from "renderer/modal-widgets";
+import modals from "main/reactors/modals";
 
 const HTTPS_RE = /^https:\/\//;
 const ITCH_RE = /^itch:\/\//;
@@ -107,6 +109,30 @@ class NavigationBar extends React.PureComponent<Props> {
     this.props.dispatch(
       actions.tabGoBack({ wind: ambientWind(), tab: this.props.space.tab })
     );
+  showHistory = (ev: React.MouseEvent) => {
+    const { space } = this.props;
+    const history = space.history();
+    const currentIndex = space.currentIndex();
+    const { clientX, clientY } = ev;
+    this.props.dispatch(
+      actions.popupContextMenu({
+        clientX,
+        clientY,
+        wind: ambientWind(),
+        template: history.map((pg, index) => {
+          return {
+            localizedLabel: `${pg.url}`,
+            checked: index == currentIndex,
+            action: actions.tabGoToIndex({
+              wind: ambientWind(),
+              tab: space.tab,
+              index,
+            }),
+          };
+        }),
+      })
+    );
+  };
   goForward = () =>
     this.props.dispatch(
       actions.tabGoForward({
@@ -137,6 +163,7 @@ class NavigationBar extends React.PureComponent<Props> {
           icon="arrow-left"
           disabled={!canGoBack}
           onClick={this.goBack}
+          onContextMenu={this.showHistory}
         />
         <IconButton
           icon="arrow-right"

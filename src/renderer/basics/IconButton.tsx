@@ -79,6 +79,7 @@ interface Props {
   hintPosition?: "top" | "left" | "right" | "bottom";
 
   onClick?: React.MouseEventHandler<HTMLElement>;
+  onContextMenu?: React.MouseEventHandler<HTMLElement>;
   big?: boolean;
   huge?: boolean;
   emphasized?: boolean;

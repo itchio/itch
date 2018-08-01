@@ -86,6 +86,11 @@ const ContextMenuHandlerDiv = styled.div`
     padding-left: 8px;
   }
 
+  .react-contextmenu-item.react-contextmenu-item--checked {
+    text-decoration: underline;
+  }
+
+  .react-contextmenu-item.react-contextmenu-item--active,
   .react-contextmenu-item.react-contextmenu-item--active,
   .react-contextmenu-item.react-contextmenu-item--selected {
     cursor: pointer;
@@ -203,6 +208,9 @@ class ContextMenuHandler extends React.PureComponent<Props> {
             divider={divider}
             disabled={disabled}
             onClick={onClick}
+            attributes={{
+              className: item.checked ? `react-contextmenu-item--checked` : "",
+            }}
           >
             <span id={id}>
               {label}

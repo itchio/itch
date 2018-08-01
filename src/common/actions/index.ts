@@ -820,6 +820,12 @@ export const actions = wireActions({
     wind: string;
     tab: string;
   }>(),
+  tabGoToIndex: action<{
+    wind: string;
+    tab: string;
+
+    index: number;
+  }>(),
   tabStop: action<{
     wind: string;
     tab: string;
