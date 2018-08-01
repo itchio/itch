@@ -70,6 +70,9 @@ export default reducer<NavigationState>(initialState, on => {
 
   on(actions.closeTab, (state, action) => {
     const { tab, openTabs } = state;
+    if (openTabs.length <= 1) {
+      return state;
+    }
 
     const closeId = action.payload.tab || tab;
 

@@ -41,6 +41,10 @@ const BrowserPage = Loadable({
   loader: () => import("renderer/pages/BrowserPage"),
   loading: () => null,
 });
+const NewTabPage = Loadable({
+  loader: () => import("renderer/pages/NewTabPage"),
+  loading: () => null,
+});
 const CollectionPage = Loadable({
   loader: () => import("renderer/pages/CollectionPage"),
   loading: () => null,
@@ -257,7 +261,7 @@ class Meat extends React.PureComponent<Props, State> {
       case "crashy":
         return CrashyPage;
       case "new-tab":
-        return BrowserPage;
+        return NewTabPage;
       default:
         return null;
     }

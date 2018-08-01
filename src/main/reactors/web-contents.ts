@@ -276,6 +276,7 @@ export default function(watcher: Watcher) {
     logger.debug(`Tab ${tab} losing web contents!`);
 
     const rs = store.getState();
+    store.dispatch(actions.tabLostWebContents({ wind, tab }));
     const nw = getNativeWindow(rs, wind);
     nw.setBrowserView(null);
 

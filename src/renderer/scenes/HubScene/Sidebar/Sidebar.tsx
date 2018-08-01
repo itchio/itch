@@ -46,6 +46,10 @@ const SidebarItems = styled.div`
   flex-direction: column;
 
   overflow: hidden;
+
+  &.no-shrink {
+    flex-shrink: 0;
+  }
 `;
 
 interface SortEndParams {
@@ -129,6 +133,7 @@ class Sidebar extends React.PureComponent<Props, State> {
         <Search />
 
         {enableTabs ? this.renderTabs() : this.renderShortcuts()}
+        {this.renderShortcutsRest()}
       </SidebarDiv>
     );
   }
@@ -181,8 +186,15 @@ class Sidebar extends React.PureComponent<Props, State> {
             "sidebar.dashboard",
           ])}
         </SidebarItems>
+      </>
+    );
+  }
+
+  renderShortcutsRest(): JSX.Element {
+    return (
+      <>
         <div style={{ flexGrow: 1 }} />
-        <SidebarItems>
+        <SidebarItems className="no-shrink">
           {this.renderLink("itch://downloads", "download", [
             "sidebar.downloads",
           ])}

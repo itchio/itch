@@ -4,19 +4,16 @@ import { Space } from "common/helpers/space";
 import { Dispatch, ProxySource, BrowserViewMetrics } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
-import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
-import newTabItems from "renderer/pages/BrowserPage/newTabItems";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
-import { T } from "renderer/t";
 import { debounce, map } from "underscore";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
 import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
 import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
 import ContainerDimensions from "react-container-dimensions";
-import { remote, BrowserView } from "electron";
+import { remote } from "electron";
 const { webContents } = remote;
 
 const BrowserPageDiv = styled.div`
@@ -44,41 +41,6 @@ const BrowserViewShell = styled.div`
   background-repeat: no-repeat;
 `;
 
-const NewTabGrid = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: flex-start;
-  align-content: flex-start;
-  overflow-x: hidden;
-  overflow-y: auto;
-  flex: 1;
-`;
-
-const NewTabItem = styled.div`
-  ${styles.clickable};
-
-  width: auto;
-  flex-grow: 1;
-  padding: 30px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  .icon {
-    font-size: 70px;
-    margin-bottom: 25px;
-  }
-`;
-
-const Title = styled.h2`
-  flex-basis: 100%;
-  text-align: center;
-  padding: 20px 0;
-  font-size: ${props => props.theme.fontSizes.huge};
-`;
-
 class BrowserPageContents extends React.PureComponent<Props> {
   initialURL: string;
   mounted: boolean;
@@ -91,53 +53,23 @@ class BrowserPageContents extends React.PureComponent<Props> {
   render() {
     const { space, url, disableBrowser } = this.props;
     const fresh = !space.web().hadFirstLoad;
-    const newTab = space.internalPage() === "new-tab";
 
     return (
       <BrowserPageDiv>
         <BrowserBar />
         <BrowserMain>
-          {newTab ? (
-            <NewTabGrid>
-              <Title>{T(["new_tab.titles.buttons"])}</Title>
-
-              {map(newTabItems, item => {
-                const { label, icon, url } = item;
-
-                return (
-                  <NewTabItem
-                    key={url}
-                    onClick={() =>
-                      this.props.dispatch(
-                        actions.evolveTab({
-                          tab: space.tab,
-                          wind: ambientWind(),
-                          url,
-                          replace: true,
-                        })
-                      )
-                    }
-                  >
-                    <Icon icon={icon} />
-                    <span>{T(label)}</span>
-                  </NewTabItem>
-                );
-              })}
-            </NewTabGrid>
-          ) : (
-            <BrowserViewShell className={classNames({ fresh, newTab })}>
-              {disableBrowser ? (
-                <DisabledBrowser url={url} />
-              ) : (
-                <ContainerDimensions>
-                  {({ width, height, top, left }) => {
-                    this.setMetrics({ width, height, top, left });
-                    return <></>;
-                  }}
-                </ContainerDimensions>
-              )}
-            </BrowserViewShell>
-          )}
+          <BrowserViewShell className={classNames({ fresh })}>
+            {disableBrowser ? (
+              <DisabledBrowser url={url} />
+            ) : (
+              <ContainerDimensions>
+                {({ width, height, top, left }) => {
+                  this.setMetrics({ width, height, top, left });
+                  return <></>;
+                }}
+              </ContainerDimensions>
+            )}
+          </BrowserViewShell>
         </BrowserMain>
         <BrowserContext />
       </BrowserPageDiv>

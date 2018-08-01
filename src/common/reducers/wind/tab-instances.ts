@@ -209,6 +209,10 @@ export default reducer<TabInstances>(initialState, on => {
 
   on(actions.closeTab, (state, action) => {
     const { tab } = action.payload;
+    if (Object.keys(state).length <= 1) {
+      return state;
+    }
+
     return omit(state, tab);
   });
 
