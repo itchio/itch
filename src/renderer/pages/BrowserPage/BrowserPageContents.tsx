@@ -4,10 +4,7 @@ import { Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
 import { Dispatch, ProxySource } from "common/types";
 import { ambientWind } from "common/util/navigation";
-import { partitionForUser } from "common/util/partition-for-user";
-import { getInjectURL } from "common/util/resources";
-import { WebviewTag } from "electron";
-import { ExtendedWebContents } from "main/reactors/web-contents";
+import { WebviewTag, webFrame } from "electron";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
@@ -21,6 +18,17 @@ import { debounce, map } from "underscore";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
 import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
 import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
+import { frameNameForTab } from "common/util/frame-name-for-tab";
+
+const sandbox = [
+  "allow-forms",
+  "allow-modals",
+  "allow-pointer-lock",
+  "allow-popups",
+  "allow-presentation",
+  "allow-scripts",
+  "allow-same-origin",
+].join(" ");
 
 const BrowserPageDiv = styled.div`
   ${styles.meat};
@@ -31,6 +39,8 @@ const BrowserMain = styled.div`
   display: flex;
   flex-direction: row;
 `;
+
+let frameSeed = 0;
 
 const WebviewShell = styled.div`
   background: white;
@@ -43,17 +53,17 @@ const WebviewShell = styled.div`
   }
 
   &,
-  webview {
+  iframe {
     display: flex;
     flex: 1 1;
   }
 
-  webview {
+  iframe {
     margin-right: -1px;
   }
 
   &.newTab {
-    webview {
+    iframe {
       visibility: hidden;
     }
   }
@@ -96,16 +106,17 @@ const Title = styled.h2`
 
 class BrowserPageContents extends React.PureComponent<Props> {
   initialURL: string;
+  frameNumber: number;
 
   constructor(props: BrowserPageContents["props"], context: any) {
     super(props, context);
     this.initialURL = props.url;
+    this.frameNumber = frameSeed++;
   }
 
   render() {
-    const { space, url, profile, disableBrowser } = this.props;
+    const { space, url, disableBrowser } = this.props;
     const fresh = !space.web().webContentsId;
-    const partition = partitionForUser(String(profile.id));
     const newTab = space.internalPage() === "new-tab";
 
     return (
@@ -144,11 +155,15 @@ class BrowserPageContents extends React.PureComponent<Props> {
               {disableBrowser ? (
                 <DisabledBrowser url={url} />
               ) : (
-                <webview
-                  partition={partition}
-                  preload={getInjectURL("itchio")}
-                  ref={this.gotWebview}
+                <iframe
+                  ref={this.gotIframe}
                   src={this.initialURL}
+                  name={frameNameForTab(
+                    ambientWind() + "_" + this.frameNumber,
+                    space.tab
+                  )}
+                  sandbox={sandbox}
+                  allowFullScreen
                 />
               )}
             </WebviewShell>
@@ -181,36 +196,20 @@ class BrowserPageContents extends React.PureComponent<Props> {
   }
 
   scheduleUpdate = debounce(() => {
-    const wv = this._wv;
-    if (!wv) {
+    const ife = this._ife;
+    if (!ife) {
       return;
     }
 
-    const wc = wv.getWebContents() as ExtendedWebContents;
-    if (!wc) {
-      return;
-    }
-
-    const wvURL = wv.getURL();
+    const contentWindow = ife.contentWindow;
+    const wvURL = contentWindow.location.href;
     const newURL = this.props.url;
 
     if (wvURL === newURL) {
       return;
     }
 
-    let { history, currentIndex } = wc;
-    if (wv.canGoBack() && history[currentIndex - 1] === newURL) {
-      wv.goBack();
-      return;
-    }
-
-    if (wv.canGoForward() && history[currentIndex + 1] === newURL) {
-      wv.goForward();
-      return;
-    }
-
-    wv.clearHistory();
-    wv.loadURL(newURL);
+    ife.src = newURL;
   }, 500);
 
   /**
@@ -251,6 +250,31 @@ class BrowserPageContents extends React.PureComponent<Props> {
     wv.addEventListener("page-title-updated", ev => {
       dispatch(space.makeFetch({ label: ev.title }));
     });
+  };
+
+  private _ife: HTMLIFrameElement;
+  gotIframe = (ife: HTMLIFrameElement) => {
+    console.log(`Got iframe!`, ife);
+
+    if (!ife) {
+      return;
+    }
+
+    if (ife === this._ife) {
+      return;
+    }
+    this._ife = ife;
+
+    const { dispatch, space } = this.props;
+    const wf = webFrame.findFrameByName(ife.name);
+
+    dispatch(
+      actions.tabGotFrame({
+        wind: ambientWind(),
+        tab: space.tab,
+        routingId: wf.routingId,
+      })
+    );
   };
 }
 

@@ -605,6 +605,20 @@ function hookNativeWindow(
   nativeWindow.on("closed", (e: any) => {
     store.dispatch(actions.windClosed({ wind }));
   });
+
+  // FIXME: this is way too far-reaching
+  // cf. https://github.com/electron/electron/pull/573
+  nativeWindow.webContents.session.webRequest.onHeadersReceived(
+    (details, callback) => {
+      for (const k of Object.keys(details.responseHeaders)) {
+        if (/(x-frame-options|content-security-policy)/i.test(k)) {
+          // console.log(`Dropping ${k} for ${details.url}...`);
+          delete details.responseHeaders[k];
+        }
+      }
+      callback({ cancel: false, responseHeaders: details.responseHeaders });
+    }
+  );
 }
 
 export function getNativeState(rs: RootState, wind: string): NativeWindowState {

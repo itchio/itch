@@ -425,6 +425,20 @@ export const actions = wireActions({
     /** id of tab who just lost a webcontents */
     tab: string;
   }>(),
+  tabGotFrame: action<{
+    wind: string;
+
+    /** id of tab who just got a frame */
+    tab: string;
+
+    routingId: number;
+  }>(),
+  tabLostFrame: action<{
+    wind: string;
+
+    /** id of tab who just lost a frame */
+    tab: string;
+  }>(),
   openGameContextMenu: action<
     IOpenContextMenuBase & {
       /** game to open the context menu of */

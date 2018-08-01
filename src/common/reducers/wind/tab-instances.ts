@@ -280,4 +280,23 @@ export default reducer<TabInstances>(initialState, on => {
       },
     };
   });
+
+  on(actions.tabGotFrame, (state, action) => {
+    const { tab, routingId } = action.payload;
+    return {
+      ...state,
+      [tab]: {
+        ...state[tab],
+        routingId,
+      },
+    };
+  });
+
+  on(actions.tabLostFrame, (state, action) => {
+    const { tab } = action.payload;
+    return {
+      ...state,
+      [tab]: omit(state[tab], "routingId"),
+    };
+  });
 });

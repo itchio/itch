@@ -49,6 +49,8 @@ export interface TabInstance {
 
   /** number that increments when we reload a tab */
   sequence: number;
+
+  routingId?: number;
 }
 
 export interface TabData {
