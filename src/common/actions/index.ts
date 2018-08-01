@@ -448,6 +448,19 @@ export const actions = wireActions({
     /** id of tab who just lost a webcontents */
     tab: string;
   }>(),
+
+  openTabBackHistory: action<
+    IOpenContextMenuBase & {
+      tab: string;
+    }
+  >(),
+
+  openTabForwardHistory: action<
+    IOpenContextMenuBase & {
+      tab: string;
+    }
+  >(),
+
   openGameContextMenu: action<
     IOpenContextMenuBase & {
       /** game to open the context menu of */

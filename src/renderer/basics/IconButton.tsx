@@ -5,7 +5,9 @@ import styled, * as styles from "renderer/styles";
 import Icon from "renderer/basics/Icon";
 
 const IconButtonDiv = styled.div`
-  ${styles.clickable};
+  &:not(.disabled) {
+    ${styles.clickable};
+  }
 
   font-size: ${props => props.theme.fontSizes.baseText};
   display: flex;

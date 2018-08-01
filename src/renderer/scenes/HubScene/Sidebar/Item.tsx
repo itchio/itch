@@ -76,6 +76,7 @@ const IconContainer = styled.div`
   height: 16px;
   margin-right: 4px;
   text-align: center;
+  flex-shrink: 0;
 
   img {
     width: 14px;

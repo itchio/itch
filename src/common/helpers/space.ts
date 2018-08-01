@@ -77,12 +77,12 @@ export class Space {
     }
   }
 
-  static fromStore(store: Store, window: string, tab: string): Space {
-    return this.fromState(store.getState(), window, tab);
+  static fromStore(store: Store, wind: string, tab: string): Space {
+    return this.fromState(store.getState(), wind, tab);
   }
 
-  static fromState(rs: RootState, window: string, tab: string): Space {
-    return spaceFromInstance(tab, rs.winds[window].tabInstances[tab]);
+  static fromState(rs: RootState, wind: string, tab: string): Space {
+    return spaceFromInstance(tab, rs.winds[wind].tabInstances[tab]);
   }
 
   static fromInstance(tab: string, data: TabInstance): Space {

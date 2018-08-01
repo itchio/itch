@@ -31,17 +31,16 @@ const MeatContainer = styled.div`
 `;
 
 const MeatTab = styled.div`
-  display: flex;
   position: absolute;
   top: ${filtersContainerHeight}px;
   right: 0;
   left: 0;
   bottom: 0;
-  transform: translateY(-200%);
+  display: none;
   overflow: hidden;
 
   &.visible {
-    transform: translateY(0);
+    display: flex;
   }
 `;
 

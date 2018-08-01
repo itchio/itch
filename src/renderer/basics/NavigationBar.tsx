@@ -109,27 +109,13 @@ class NavigationBar extends React.PureComponent<Props> {
     this.props.dispatch(
       actions.tabGoBack({ wind: ambientWind(), tab: this.props.space.tab })
     );
-  showHistory = (ev: React.MouseEvent) => {
-    const { space } = this.props;
-    const history = space.history();
-    const currentIndex = space.currentIndex();
-    const { clientX, clientY } = ev;
+  showBackHistory = (ev: React.MouseEvent) => {
     this.props.dispatch(
-      actions.popupContextMenu({
-        clientX,
-        clientY,
+      actions.openTabBackHistory({
         wind: ambientWind(),
-        template: history.map((pg, index) => {
-          return {
-            localizedLabel: `${pg.url}`,
-            checked: index == currentIndex,
-            action: actions.tabGoToIndex({
-              wind: ambientWind(),
-              tab: space.tab,
-              index,
-            }),
-          };
-        }),
+        tab: this.props.space.tab,
+        clientX: ev.clientX,
+        clientY: ev.clientY,
       })
     );
   };
@@ -140,6 +126,16 @@ class NavigationBar extends React.PureComponent<Props> {
         tab: this.props.space.tab,
       })
     );
+  showForwardHistory = (ev: React.MouseEvent) => {
+    this.props.dispatch(
+      actions.openTabForwardHistory({
+        wind: ambientWind(),
+        tab: this.props.space.tab,
+        clientX: ev.clientX,
+        clientY: ev.clientY,
+      })
+    );
+  };
   stop = () =>
     this.props.dispatch(
       actions.tabStop({ wind: ambientWind(), tab: this.props.space.tab })
@@ -163,12 +159,13 @@ class NavigationBar extends React.PureComponent<Props> {
           icon="arrow-left"
           disabled={!canGoBack}
           onClick={this.goBack}
-          onContextMenu={this.showHistory}
+          onContextMenu={this.showBackHistory}
         />
         <IconButton
           icon="arrow-right"
           disabled={!canGoForward}
           onClick={this.goForward}
+          onContextMenu={this.showForwardHistory}
         />
         {this.renderAddressBar(space)}
       </NavigationBarDiv>

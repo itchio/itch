@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { actions } from "common/actions";
 import env from "common/env";
 import { Space } from "common/helpers/space";
@@ -6,10 +5,6 @@ import { ExtendedWindow, TabInstance } from "common/types";
 import { Dispatch } from "common/types";
 import { ambientWind, ambientWindState } from "common/util/navigation";
 import React from "react";
-import {
-  FiltersContainerDiv,
-  filtersContainerHeight,
-} from "renderer/basics/FiltersContainer";
 import IconButton from "renderer/basics/IconButton";
 import NewVersionAvailable from "renderer/basics/TitleBar/NewVersionAvailable";
 import UserMenu from "renderer/basics/TitleBar/UserMenu";
@@ -20,13 +15,10 @@ import { T } from "renderer/t";
 
 const DraggableDiv = styled.div`
   -webkit-app-region: drag;
+
   flex: 1 1;
   display: flex;
   align-self: stretch;
-
-  &.dimmed {
-    opacity: 0.2;
-  }
 `;
 
 const Spacer = styled.div`
@@ -81,7 +73,7 @@ const emptyObj = {};
 
 class TitleBar extends React.PureComponent<Props> {
   render() {
-    const { tab, macos, focused, tabInstance } = this.props;
+    const { tab, macos, tabInstance } = this.props;
     const iw = (window as ExtendedWindow).windSpec;
     const secondary = iw.role == "secondary";
 
@@ -99,11 +91,7 @@ class TitleBar extends React.PureComponent<Props> {
 
     return (
       <TitleBarDiv className="title-bar">
-        <DraggableDiv
-          id="title-draggable"
-          className={classNames({ dimmed: !focused })}
-          onClick={this.onClick}
-        >
+        <DraggableDiv id="title-draggable" onClick={this.onClick}>
           <DraggableDivInner>
             {secondary ? <Filler /> : null}
             <TitleDiv className="title-bar-text">{T(label)}</TitleDiv>

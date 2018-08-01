@@ -16,7 +16,7 @@ import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
 import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
 import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
 import ContainerDimensions from "react-container-dimensions";
-import { remote } from "electron";
+import { remote, BrowserView } from "electron";
 const { webContents } = remote;
 
 const BrowserPageDiv = styled.div`
@@ -38,12 +38,10 @@ const BrowserViewShell = styled.div`
   bottom: 0;
   left: 0;
 
-  &.fresh {
-    background-color: ${props => props.theme.sidebarBackground};
-    background-image: url("${require("static/images/logos/app-white.svg")}");
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-  }
+  background-color: ${props => props.theme.sidebarBackground};
+  background-image: url("${require("static/images/logos/app-white.svg")}");
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
 `;
 
 const NewTabGrid = styled.div`
@@ -92,7 +90,7 @@ class BrowserPageContents extends React.PureComponent<Props> {
 
   render() {
     const { space, url, disableBrowser } = this.props;
-    const fresh = !space.web().webContentsId;
+    const fresh = !space.web().hadFirstLoad;
     const newTab = space.internalPage() === "new-tab";
 
     return (
@@ -178,7 +176,7 @@ class BrowserPageContents extends React.PureComponent<Props> {
     wc.loadURL(newURL);
   }, 500);
 
-  setMetrics = debounce((metrics: BrowserViewMetrics) => {
+  setMetrics = (metrics: BrowserViewMetrics) => {
     if (!this.mounted) {
       return;
     }
@@ -191,7 +189,7 @@ class BrowserPageContents extends React.PureComponent<Props> {
         metrics,
       })
     );
-  }, 250);
+  };
 
   componentDidMount() {
     this.mounted = true;

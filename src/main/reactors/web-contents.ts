@@ -8,13 +8,12 @@ import nodeURL from "url";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import createContextMenu from "main/reactors/web-contents-context-menu";
 import { partitionForUser } from "common/util/partition-for-user";
-import { getNativeWindow } from "main/reactors/winds";
+import { getNativeWindow, getNativeState } from "main/reactors/winds";
 import { isEmpty } from "underscore";
 
 const logger = mainLogger.child(__filename);
 
 const SHOW_DEVTOOLS = parseInt(process.env.DEVTOOLS, 10) > 1;
-const DONT_SHOW_WEBVIEWS = process.env.ITCH_DONT_SHOW_WEBVIEWS === "1";
 
 export type ExtendedWebContents = Electron.WebContents & {
   history: string[];
@@ -46,16 +45,10 @@ function withWebContents<T>(
   return cb(wc as ExtendedWebContents);
 }
 
-let hiddenBrowserViews: { [key: number]: BrowserView } = {};
-
 async function hideBrowserView(store: Store, wind: string) {
   const rs = store.getState();
   const nw = getNativeWindow(rs, wind);
-  const bv = nw.getBrowserView();
-  if (bv) {
-    hiddenBrowserViews[bv.webContents.id] = bv;
-    nw.setBrowserView(null);
-  }
+  nw.setBrowserView(null);
 }
 
 async function showBrowserView(store: Store, wind: string) {
@@ -71,15 +64,10 @@ async function showBrowserView(store: Store, wind: string) {
   }
 
   const { tab } = ws.navigation;
-  const web = ws.tabInstances[tab].data.web;
-  if (web && web.webContentsId) {
+  const bv = getBrowserView(wind, tab);
+  if (bv) {
     const nw = getNativeWindow(rs, wind);
-    const wcid = web.webContentsId;
-    const bv = hiddenBrowserViews[wcid];
-    if (bv) {
-      nw.setBrowserView(bv);
-      delete hiddenBrowserViews[wcid];
-    }
+    nw.setBrowserView(bv);
   }
 }
 
@@ -109,23 +97,11 @@ export default function(watcher: Watcher) {
   watcher.on(actions.tabGotWebContentsMetrics, async (store, action) => {
     const { initialURL, wind, tab, metrics } = action.payload;
     const rs = store.getState();
-    const ti = rs.winds[wind].tabInstances[tab];
-    const { web } = ti.data;
-    if (web && web.webContentsId) {
-      const wcid = web.webContentsId;
-      const wc = webContents.fromId(wcid);
-      if (!wc) {
-        logger.warn(`Could not find webContents ${wcid}`);
-        return;
-      }
+    const bv = getBrowserView(wind, tab);
 
-      const bv = BrowserView.fromWebContents(wc);
-      if (!bv) {
-        logger.warn(`Could not find browserView for webContents ${wcid}`);
-        return;
-      }
-
-      if (rs.winds[wind].native.htmlFullscreen) {
+    if (bv) {
+      const ns = getNativeState(rs, wind);
+      if (ns.htmlFullscreen) {
         setBrowserViewFullscreen(store, wind);
       } else {
         bv.setBounds({
@@ -144,10 +120,7 @@ export default function(watcher: Watcher) {
           partition: partitionForUser(String(userId)),
         },
       });
-      if (!bv) {
-        logger.warn(`Could not instantiate browserview??`);
-        return;
-      }
+      setBrowserView(wind, tab, bv);
       bv.setBounds({
         width: metrics.width,
         height: metrics.height,
@@ -155,9 +128,8 @@ export default function(watcher: Watcher) {
         y: metrics.top,
       });
 
-      const ns = rs.winds[wind].native.id;
-      const bw = BrowserWindow.fromId(ns);
-      bw.setBrowserView(bv);
+      const nw = getNativeWindow(rs, wind);
+      nw.setBrowserView(bv);
 
       logger.debug(`Loading url '${initialURL}'`);
       bv.webContents.loadURL(initialURL);
@@ -219,10 +191,9 @@ export default function(watcher: Watcher) {
 
     wc.once("did-finish-load", () => {
       logger.debug(`did-finish-load (once)`);
-      if (DONT_SHOW_WEBVIEWS) {
-        return;
-      }
-
+      pushWeb({
+        hadFirstLoad: true,
+      });
       createContextMenu(wc, wind, store);
 
       if (SHOW_DEVTOOLS) {
@@ -302,25 +273,54 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.tabLosingWebContents, async (store, action) => {
     const { wind, tab } = action.payload;
-
     logger.debug(`Tab ${tab} losing web contents!`);
 
     const rs = store.getState();
-    // hmm this smells like a race condition
-    const ti = rs.winds[wind].tabInstances[tab];
-    const wcid = ti.data.web.webContentsId;
-    logger.debug(`Grabbing web contents from id ${wcid}`);
-    const wc = webContents.fromId(wcid);
-
     const nw = getNativeWindow(rs, wind);
     nw.setBrowserView(null);
 
-    logger.debug(`Grabbing browser view from web contents`);
-    const bv = BrowserView.fromWebContents(wc);
-    bv.destroy();
+    const bv = getBrowserView(wind, tab);
+    if (bv) {
+      bv.destroy();
+      forgetBrowserView(wind, tab);
+    }
+  });
 
-    logger.debug(`Destroyed browser view!`);
-    store.dispatch(actions.tabLostWebContents({ wind, tab }));
+  watcher.on(actions.focusTab, async (store, action) => {
+    const { wind, tab } = action.payload;
+    const rs = store.getState();
+    const nw = getNativeWindow(rs, wind);
+    const bv = getBrowserView(wind, tab);
+    if (!bv) {
+      logger.debug(`Switching to tab without browser view.`);
+      nw.setBrowserView(null);
+    } else {
+      logger.debug(
+        `Switching to tab with browser view. Destroyed? ${bv.isDestroyed()}`
+      );
+      if (bv.webContents) {
+        logger.debug(`Webcontents destroyed? ${bv.webContents.isDestroyed()}`);
+      } else {
+        logger.debug(`nil webcontents! ${bv.webContents}`);
+      }
+      nw.setBrowserView(bv);
+    }
+  });
+
+  watcher.on(actions.tabChanged, async (store, action) => {
+    const { wind, tab } = action.payload;
+    const rs = store.getState();
+    const nw = getNativeWindow(rs, wind);
+    const bv = getBrowserView(wind, tab);
+    if (!bv) {
+      logger.debug(`Switching to tab without browser view.`);
+      nw.setBrowserView(null);
+    } else {
+      logger.debug(
+        `Switching to tab with browser view. Destroyed? ${bv.isDestroyed()}`
+      );
+      nw.setBrowserView(bv);
+    }
   });
 
   watcher.on(actions.openModal, async (store, action) => {
@@ -462,4 +462,35 @@ function parseWellKnownUrl(url: string): WellKnownUrlResult {
   }
 
   return null;
+}
+
+/**
+ *
+ */
+
+const browserViews: {
+  [wind: string]: {
+    [tab: string]: BrowserView;
+  };
+} = {};
+
+function setBrowserView(wind: string, tab: string, bv: BrowserView) {
+  if (!(wind in browserViews)) {
+    browserViews[wind] = {};
+  }
+  browserViews[wind][tab] = bv;
+}
+
+function getBrowserView(wind: string, tab: string): BrowserView | null {
+  if (!(wind in browserViews)) {
+    return null;
+  }
+  return browserViews[wind][tab];
+}
+
+function forgetBrowserView(wind: string, tab: string) {
+  if (!(wind in browserViews)) {
+    return;
+  }
+  delete browserViews[wind][tab];
 }

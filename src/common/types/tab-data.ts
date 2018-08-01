@@ -7,6 +7,7 @@ export interface TabInstances {
 export interface TabWeb {
   /** numeric identifier of the electron web contents */
   webContentsId?: number;
+  hadFirstLoad?: boolean;
 
   favicon?: string;
   editingAddress?: boolean;
