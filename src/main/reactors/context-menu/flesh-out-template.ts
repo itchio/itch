@@ -73,7 +73,7 @@ function convertMenuAction(
       return actions.focusSearch({ wind });
     case "menu.file.focus_in_page_search":
       return actions.focusInPageSearch({ wind });
-    case "menu.file.reload":
+    case "menu.command.reload":
       return actions.commandReload({ wind });
     case "menu.command.main":
       return actions.commandMain({ wind });

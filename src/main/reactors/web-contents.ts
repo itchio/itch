@@ -372,9 +372,8 @@ export default function(watcher: Watcher) {
     });
   });
 
-  watcher.on(actions.commandReload, async (store, action) => {
-    const { wind } = action.payload;
-    const { tab } = store.getState().winds[wind].navigation;
+  watcher.on(actions.tabReloaded, async (store, action) => {
+    const { wind, tab } = action.payload;
     withWebContents(store, wind, tab, wc => {
       wc.reload();
     });
