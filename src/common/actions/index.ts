@@ -25,6 +25,7 @@ import {
   PackageState,
   SystemState,
   WindRole,
+  BrowserViewMetrics,
 } from "common/types";
 
 import {
@@ -265,6 +266,12 @@ export const actions = wireActions({
     /** current state of fullscreenedness */
     fullscreen: boolean;
   }>(),
+  windHtmlFullscreenChanged: action<{
+    wind: string;
+
+    /** current state of html-fullscreenedness */
+    htmlFullscreen: boolean;
+  }>(),
   windMaximizedChanged: action<{
     wind: string;
 
@@ -416,8 +423,24 @@ export const actions = wireActions({
 
     /** id of tab who just got a webcontents */
     tab: string;
+
     /** electron id of webcontents */
     webContentsId: number;
+  }>(),
+  tabGotWebContentsMetrics: action<{
+    wind: string;
+
+    tab: string;
+
+    metrics: BrowserViewMetrics;
+
+    initialURL: string;
+  }>(),
+  tabLosingWebContents: action<{
+    wind: string;
+
+    /** id of tab who just lost a webcontents */
+    tab: string;
   }>(),
   tabLostWebContents: action<{
     wind: string;
@@ -451,7 +474,9 @@ export const actions = wireActions({
       template: MenuTemplate;
     }
   >(),
-  closeContextMenu: action<{}>(),
+  closeContextMenu: action<{
+    wind: string;
+  }>(),
 
   checkForComponentUpdates: action<{}>(),
 
@@ -787,9 +812,6 @@ export const actions = wireActions({
   commandStop: action<{
     wind: string;
   }>(),
-  commandFocusLocation: action<{
-    wind: string;
-  }>(),
   tabGoBack: action<{
     wind: string;
     tab: string;
@@ -797,6 +819,12 @@ export const actions = wireActions({
   tabGoForward: action<{
     wind: string;
     tab: string;
+  }>(),
+  tabGoToIndex: action<{
+    wind: string;
+    tab: string;
+
+    index: number;
   }>(),
   tabStop: action<{
     wind: string;

@@ -63,6 +63,45 @@ function convertMenuAction(
   const labelString = localizedLabel ? localizedLabel[0] : null;
 
   switch (labelString) {
+    case "menu.file.show_next_tab":
+      return actions.showNextTab({ wind });
+    case "menu.file.show_previous_tab":
+      return actions.showPreviousTab({ wind });
+    case "menu.file.open_dev_tools":
+      return actions.openDevTools({ wind, forApp: true });
+    case "menu.file.focus_search":
+      return actions.focusSearch({ wind });
+    case "menu.file.focus_in_page_search":
+      return actions.focusInPageSearch({ wind });
+    case "menu.command.reload":
+      return actions.commandReload({ wind });
+    case "menu.command.main":
+      return actions.commandMain({ wind });
+    case "menu.command.location":
+      return actions.commandLocation({ wind });
+    case "menu.command.go_back":
+      return actions.commandGoBack({ wind });
+    case "menu.command.go_forward":
+      return actions.commandGoForward({ wind });
+    case "menu.file.focus_tab_1":
+      return actions.focusNthTab({ wind, index: 1 });
+    case "menu.file.focus_tab_2":
+      return actions.focusNthTab({ wind, index: 2 });
+    case "menu.file.focus_tab_3":
+      return actions.focusNthTab({ wind, index: 3 });
+    case "menu.file.focus_tab_4":
+      return actions.focusNthTab({ wind, index: 4 });
+    case "menu.file.focus_tab_5":
+      return actions.focusNthTab({ wind, index: 5 });
+    case "menu.file.focus_tab_6":
+      return actions.focusNthTab({ wind, index: 6 });
+    case "menu.file.focus_tab_7":
+      return actions.focusNthTab({ wind, index: 7 });
+    case "menu.file.focus_tab_8":
+      return actions.focusNthTab({ wind, index: 8 });
+    case "menu.file.focus_tab_9":
+      return actions.focusNthTab({ wind, index: 9 });
+
     case "sidebar.new_tab":
       return actions.newTab({ wind });
     case "menu.file.close_tab":

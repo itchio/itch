@@ -334,6 +334,9 @@ export interface NativeWindowState {
   /** true if window is fullscreen */
   fullscreen: boolean;
 
+  /** true if window is html-fullscreen */
+  htmlFullscreen: boolean;
+
   /** true if window is maximized */
   maximized: boolean;
 }
@@ -698,6 +701,13 @@ export interface ExtendedWindow extends Window {
 export interface WindSpec {
   wind: string;
   role: WindRole;
+}
+
+export interface BrowserViewMetrics {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
 }
 
 export type WindRole = "main" | "secondary";

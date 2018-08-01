@@ -2,11 +2,14 @@ import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
 import { Store, TabWeb } from "common/types";
 import { Watcher } from "common/util/watcher";
-import { BrowserWindow, webContents } from "electron";
+import { BrowserWindow, BrowserView, webContents } from "electron";
 import { mainLogger } from "main/logger";
 import nodeURL from "url";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import createContextMenu from "main/reactors/web-contents-context-menu";
+import { partitionForUser } from "common/util/partition-for-user";
+import { getNativeWindow } from "main/reactors/winds";
+import { isEmpty } from "underscore";
 
 const logger = mainLogger.child(__filename);
 
@@ -43,7 +46,132 @@ function withWebContents<T>(
   return cb(wc as ExtendedWebContents);
 }
 
+let hiddenBrowserViews: { [key: number]: BrowserView } = {};
+
+async function hideBrowserView(store: Store, wind: string) {
+  const rs = store.getState();
+  const nw = getNativeWindow(rs, wind);
+  const bv = nw.getBrowserView();
+  if (bv) {
+    hiddenBrowserViews[bv.webContents.id] = bv;
+    nw.setBrowserView(null);
+  }
+}
+
+async function showBrowserView(store: Store, wind: string) {
+  const rs = store.getState();
+  const ws = rs.winds[wind];
+  if (!isEmpty(ws.modals)) {
+    // don't show browser view again as long as there are modals
+    return;
+  }
+  if (ws.contextMenu && ws.contextMenu.open) {
+    // don't show browser view again as long as there are context menus
+    return;
+  }
+
+  const { tab } = ws.navigation;
+  const web = ws.tabInstances[tab].data.web;
+  if (web && web.webContentsId) {
+    const nw = getNativeWindow(rs, wind);
+    const wcid = web.webContentsId;
+    const bv = hiddenBrowserViews[wcid];
+    if (bv) {
+      nw.setBrowserView(bv);
+      delete hiddenBrowserViews[wcid];
+    }
+  }
+}
+
+function setBrowserViewFullscreen(store: Store, wind: string) {
+  const rs = store.getState();
+  const nw = getNativeWindow(rs, wind);
+  const bv = nw.getBrowserView();
+
+  const bounds = nw.getContentBounds();
+  bv.setBounds({
+    width: bounds.width,
+    height: bounds.height,
+    x: 0,
+    y: 0,
+  });
+}
+
 export default function(watcher: Watcher) {
+  watcher.on(actions.windHtmlFullscreenChanged, async (store, action) => {
+    const { wind, htmlFullscreen } = action.payload;
+
+    if (htmlFullscreen) {
+      setBrowserViewFullscreen(store, wind);
+    }
+  });
+
+  watcher.on(actions.tabGotWebContentsMetrics, async (store, action) => {
+    const { initialURL, wind, tab, metrics } = action.payload;
+    const rs = store.getState();
+    const ti = rs.winds[wind].tabInstances[tab];
+    const { web } = ti.data;
+    if (web && web.webContentsId) {
+      const wcid = web.webContentsId;
+      const wc = webContents.fromId(wcid);
+      if (!wc) {
+        logger.warn(`Could not find webContents ${wcid}`);
+        return;
+      }
+
+      const bv = BrowserView.fromWebContents(wc);
+      if (!bv) {
+        logger.warn(`Could not find browserView for webContents ${wcid}`);
+        return;
+      }
+
+      if (rs.winds[wind].native.htmlFullscreen) {
+        setBrowserViewFullscreen(store, wind);
+      } else {
+        bv.setBounds({
+          width: metrics.width,
+          height: metrics.height,
+          x: metrics.left,
+          y: metrics.top,
+        });
+      }
+    } else {
+      const userId = rs.profile.profile.id;
+
+      const bv = new BrowserView({
+        webPreferences: {
+          nodeIntegration: false,
+          partition: partitionForUser(String(userId)),
+        },
+      });
+      if (!bv) {
+        logger.warn(`Could not instantiate browserview??`);
+        return;
+      }
+      bv.setBounds({
+        width: metrics.width,
+        height: metrics.height,
+        x: metrics.left,
+        y: metrics.top,
+      });
+
+      const ns = rs.winds[wind].native.id;
+      const bw = BrowserWindow.fromId(ns);
+      bw.setBrowserView(bv);
+
+      logger.debug(`Loading url '${initialURL}'`);
+      bv.webContents.loadURL(initialURL);
+
+      store.dispatch(
+        actions.tabGotWebContents({
+          wind,
+          tab,
+          webContentsId: bv.webContents.id,
+        })
+      );
+    }
+  });
+
   watcher.on(actions.tabGotWebContents, async (store, action) => {
     const { wind, tab, webContentsId } = action.payload;
     logger.debug(`Got webContents ${webContentsId} for tab ${tab}`);
@@ -89,12 +217,6 @@ export default function(watcher: Watcher) {
       }
     };
 
-    logger.debug(`initial didNavigate with ${wc.getURL()}`);
-    didNavigate(wc.getURL(), true);
-
-    // FIXME: this used to be `dom-ready` but it doesn't seem to fire
-    // on webcontents for webview.
-
     wc.once("did-finish-load", () => {
       logger.debug(`did-finish-load (once)`);
       if (DONT_SHOW_WEBVIEWS) {
@@ -137,6 +259,19 @@ export default function(watcher: Watcher) {
     // FIXME: page-title-updated isn't documented, see https://github.com/electron/electron/issues/10040
     // also, with electron@1.7.5, it seems to not always fire. whereas webview's event does.
 
+    wc.on("page-title-updated" as any, (ev, title: string) => {
+      logger.debug(`Got page-title-updated! ${title}`);
+      store.dispatch(
+        actions.tabDataFetched({
+          wind,
+          tab,
+          data: {
+            label: title,
+          },
+        })
+      );
+    });
+
     wc.on("page-favicon-updated", (ev, favicons) => {
       pushWeb({ favicon: favicons[0] });
     });
@@ -165,6 +300,52 @@ export default function(watcher: Watcher) {
     );
   });
 
+  watcher.on(actions.tabLosingWebContents, async (store, action) => {
+    const { wind, tab } = action.payload;
+
+    logger.debug(`Tab ${tab} losing web contents!`);
+
+    const rs = store.getState();
+    // hmm this smells like a race condition
+    const ti = rs.winds[wind].tabInstances[tab];
+    const wcid = ti.data.web.webContentsId;
+    logger.debug(`Grabbing web contents from id ${wcid}`);
+    const wc = webContents.fromId(wcid);
+
+    const nw = getNativeWindow(rs, wind);
+    nw.setBrowserView(null);
+
+    logger.debug(`Grabbing browser view from web contents`);
+    const bv = BrowserView.fromWebContents(wc);
+    bv.destroy();
+
+    logger.debug(`Destroyed browser view!`);
+    store.dispatch(actions.tabLostWebContents({ wind, tab }));
+  });
+
+  watcher.on(actions.openModal, async (store, action) => {
+    const { wind } = action.payload;
+    await hideBrowserView(store, wind);
+  });
+
+  watcher.on(actions.modalClosed, async (store, action) => {
+    const { wind } = action.payload;
+    if (!isEmpty(store.getState().winds[wind].modals)) {
+      return;
+    }
+    await showBrowserView(store, wind);
+  });
+
+  watcher.on(actions.popupContextMenu, async (store, action) => {
+    const { wind } = action.payload;
+    await hideBrowserView(store, wind);
+  });
+
+  watcher.on(actions.closeContextMenu, async (store, action) => {
+    const { wind } = action.payload;
+    await showBrowserView(store, wind);
+  });
+
   watcher.on(actions.analyzePage, async (store, action) => {
     const { wind, tab, url } = action.payload;
     await withWebContents(store, wind, tab, async wc => {
@@ -191,9 +372,8 @@ export default function(watcher: Watcher) {
     });
   });
 
-  watcher.on(actions.commandReload, async (store, action) => {
-    const { wind } = action.payload;
-    const { tab } = store.getState().winds[wind].navigation;
+  watcher.on(actions.tabReloaded, async (store, action) => {
+    const { wind, tab } = action.payload;
     withWebContents(store, wind, tab, wc => {
       wc.reload();
     });

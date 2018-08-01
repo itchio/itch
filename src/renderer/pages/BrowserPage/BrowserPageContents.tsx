@@ -1,17 +1,11 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
-import { Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { Dispatch, ProxySource } from "common/types";
+import { Dispatch, ProxySource, BrowserViewMetrics } from "common/types";
 import { ambientWind } from "common/util/navigation";
-import { partitionForUser } from "common/util/partition-for-user";
-import { getInjectURL } from "common/util/resources";
-import { WebviewTag } from "electron";
-import { ExtendedWebContents } from "main/reactors/web-contents";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
-import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
 import newTabItems from "renderer/pages/BrowserPage/newTabItems";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
@@ -21,6 +15,9 @@ import { debounce, map } from "underscore";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
 import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
 import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
+import ContainerDimensions from "react-container-dimensions";
+import { remote } from "electron";
+const { webContents } = remote;
 
 const BrowserPageDiv = styled.div`
   ${styles.meat};
@@ -30,32 +27,22 @@ const BrowserMain = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: row;
+  position: relative;
 `;
 
-const WebviewShell = styled.div`
+const BrowserViewShell = styled.div`
   background: white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
   &.fresh {
     background-color: ${props => props.theme.sidebarBackground};
     background-image: url("${require("static/images/logos/app-white.svg")}");
     background-position: 50% 50%;
     background-repeat: no-repeat;
-  }
-
-  &,
-  webview {
-    display: flex;
-    flex: 1 1;
-  }
-
-  webview {
-    margin-right: -1px;
-  }
-
-  &.newTab {
-    webview {
-      visibility: hidden;
-    }
   }
 `;
 
@@ -96,6 +83,7 @@ const Title = styled.h2`
 
 class BrowserPageContents extends React.PureComponent<Props> {
   initialURL: string;
+  mounted: boolean;
 
   constructor(props: BrowserPageContents["props"], context: any) {
     super(props, context);
@@ -103,9 +91,8 @@ class BrowserPageContents extends React.PureComponent<Props> {
   }
 
   render() {
-    const { space, url, profile, disableBrowser } = this.props;
+    const { space, url, disableBrowser } = this.props;
     const fresh = !space.web().webContentsId;
-    const partition = partitionForUser(String(profile.id));
     const newTab = space.internalPage() === "new-tab";
 
     return (
@@ -140,18 +127,18 @@ class BrowserPageContents extends React.PureComponent<Props> {
               })}
             </NewTabGrid>
           ) : (
-            <WebviewShell className={classNames({ fresh, newTab })}>
+            <BrowserViewShell className={classNames({ fresh, newTab })}>
               {disableBrowser ? (
                 <DisabledBrowser url={url} />
               ) : (
-                <webview
-                  partition={partition}
-                  preload={getInjectURL("itchio")}
-                  ref={this.gotWebview}
-                  src={this.initialURL}
-                />
+                <ContainerDimensions>
+                  {({ width, height, top, left }) => {
+                    this.setMetrics({ width, height, top, left });
+                    return <></>;
+                  }}
+                </ContainerDimensions>
               )}
-            </WebviewShell>
+            </BrowserViewShell>
           )}
         </BrowserMain>
         <BrowserContext />
@@ -170,93 +157,60 @@ class BrowserPageContents extends React.PureComponent<Props> {
     }
   }
 
-  componentWillUnmount() {
-    const { dispatch, space } = this.props;
-    dispatch(
-      actions.tabLostWebContents({
-        wind: ambientWind(),
-        tab: space.tab,
-      })
-    );
-  }
-
   scheduleUpdate = debounce(() => {
-    const wv = this._wv;
-    if (!wv) {
+    const { space } = this.props;
+    const wcid = space.web().webContentsId;
+    if (!wcid) {
       return;
     }
 
-    const wc = wv.getWebContents() as ExtendedWebContents;
+    const wc = webContents.fromId(wcid);
     if (!wc) {
       return;
     }
 
-    const wvURL = wv.getURL();
+    const wvURL = wc.getURL();
     const newURL = this.props.url;
 
     if (wvURL === newURL) {
       return;
     }
-
-    let { history, currentIndex } = wc;
-    if (wv.canGoBack() && history[currentIndex - 1] === newURL) {
-      wv.goBack();
-      return;
-    }
-
-    if (wv.canGoForward() && history[currentIndex + 1] === newURL) {
-      wv.goForward();
-      return;
-    }
-
-    wv.clearHistory();
-    wv.loadURL(newURL);
+    wc.loadURL(newURL);
   }, 500);
 
-  /**
-   * Register our webcontents with the metal side so
-   * it can control it
-   */
-  private _wv: WebviewTag;
-  gotWebview = (wv: WebviewTag) => {
-    // react function refs get called with null sometimes
-    if (!wv) {
+  setMetrics = debounce((metrics: BrowserViewMetrics) => {
+    if (!this.mounted) {
       return;
     }
+    const { space, dispatch } = this.props;
+    dispatch(
+      actions.tabGotWebContentsMetrics({
+        wind: ambientWind(),
+        tab: space.tab,
+        initialURL: this.initialURL,
+        metrics,
+      })
+    );
+  }, 250);
 
-    if (wv === this._wv) {
-      return;
-    }
-    this._wv = wv;
+  componentDidMount() {
+    this.mounted = true;
+  }
 
-    if (wv.src !== this.props.url) {
-      wv.src = this.props.url;
-    }
-
+  componentWillUnmount() {
+    this.mounted = false;
     const { dispatch, space } = this.props;
-    dispatch(space.makeFetch({ web: { loading: true } }));
-
-    let onDomReady = () => {
-      dispatch(
-        actions.tabGotWebContents({
-          tab: space.tab,
-          wind: ambientWind(),
-          webContentsId: wv.getWebContents().id,
-        })
-      );
-      wv.removeEventListener("dom-ready", onDomReady);
-    };
-    wv.addEventListener("dom-ready", onDomReady);
-
-    wv.addEventListener("page-title-updated", ev => {
-      dispatch(space.makeFetch({ label: ev.title }));
-    });
-  };
+    dispatch(
+      actions.tabLosingWebContents({
+        wind: ambientWind(),
+        tab: space.tab,
+      })
+    );
+  }
 }
 
 interface Props extends MeatProps {
   space: Space;
-  profile: Profile;
   dispatch: Dispatch;
 
   url: string;
@@ -267,11 +221,9 @@ interface Props extends MeatProps {
 }
 
 export default withSpace(
-  withProfile(
-    hook(map => ({
-      proxy: map(rs => rs.system.proxy),
-      proxySource: map(rs => rs.system.proxySource),
-      disableBrowser: map(rs => rs.preferences.disableBrowser),
-    }))(BrowserPageContents)
-  )
+  hook(map => ({
+    proxy: map(rs => rs.system.proxy),
+    proxySource: map(rs => rs.system.proxySource),
+    disableBrowser: map(rs => rs.preferences.disableBrowser),
+  }))(BrowserPageContents)
 );

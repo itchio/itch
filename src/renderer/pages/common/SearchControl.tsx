@@ -24,7 +24,6 @@ class SearchControl extends React.PureComponent<Props> {
     const { dispatch, space } = this.props;
     dispatch(
       space.makeEvolve({
-        wind: ambientWind(),
         replace: true,
         url: space.urlWithParams({ search }),
       })

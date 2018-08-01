@@ -176,6 +176,23 @@ export default reducer<TabInstances>(initialState, on => {
     };
   });
 
+  on(actions.tabGoToIndex, (state, action) => {
+    const { tab, index } = action.payload;
+    const instance = state[tab];
+
+    if (index >= 0 && index < instance.history.length) {
+      return {
+        ...state,
+        [tab]: {
+          ...instance,
+          currentIndex: index,
+        },
+      };
+    }
+
+    return state;
+  });
+
   on(actions.focusTab, (state, action) => {
     const { tab } = action.payload;
     const oldInstance = state[tab];

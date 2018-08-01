@@ -5,7 +5,7 @@ import {
   IMenuItem,
   MenuTemplate,
 } from "common/types";
-import { ambientWindState } from "common/util/navigation";
+import { ambientWindState, ambientWind } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
 import {
@@ -86,6 +86,11 @@ const ContextMenuHandlerDiv = styled.div`
     padding-left: 8px;
   }
 
+  .react-contextmenu-item.react-contextmenu-item--checked {
+    text-decoration: underline;
+  }
+
+  .react-contextmenu-item.react-contextmenu-item--active,
   .react-contextmenu-item.react-contextmenu-item--active,
   .react-contextmenu-item.react-contextmenu-item--selected {
     cursor: pointer;
@@ -203,6 +208,9 @@ class ContextMenuHandler extends React.PureComponent<Props> {
             divider={divider}
             disabled={disabled}
             onClick={onClick}
+            attributes={{
+              className: item.checked ? `react-contextmenu-item--checked` : "",
+            }}
           >
             <span id={id}>
               {label}
@@ -247,7 +255,7 @@ class ContextMenuHandler extends React.PureComponent<Props> {
   onHide = () => {
     this.setState({ open: false });
     const { dispatch } = this.props;
-    dispatch(actions.closeContextMenu({}));
+    dispatch(actions.closeContextMenu({ wind: ambientWind() }));
   };
 
   onShow = () => {

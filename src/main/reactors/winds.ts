@@ -485,18 +485,23 @@ function hookNativeWindow(
 
   nativeWindow.on("enter-full-screen", (e: any) => {
     const ns = store.getState().winds[wind].native;
-    if (!ns.fullscreen) {
-      store.dispatch(actions.windFullscreenChanged({ wind, fullscreen: true }));
-    }
+    store.dispatch(actions.windFullscreenChanged({ wind, fullscreen: true }));
   });
 
   nativeWindow.on("leave-full-screen", (e: any) => {
     const ns = store.getState().winds[wind].native;
-    if (ns.fullscreen) {
-      store.dispatch(
-        actions.windFullscreenChanged({ wind, fullscreen: false })
-      );
-    }
+    store.dispatch(actions.windFullscreenChanged({ wind, fullscreen: false }));
+  });
+
+  nativeWindow.on("enter-html-full-screen", () => {
+    store.dispatch(
+      actions.windHtmlFullscreenChanged({ wind, htmlFullscreen: true })
+    );
+  });
+  nativeWindow.on("leave-html-full-screen", () => {
+    store.dispatch(
+      actions.windHtmlFullscreenChanged({ wind, htmlFullscreen: false })
+    );
   });
 
   nativeWindow.on("maximize", (e: any) => {

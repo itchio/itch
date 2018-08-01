@@ -274,6 +274,15 @@ export const animations = {
       border-image-width: 0 0 2px 0;
     }
   `,
+
+  lineSpinner: keyframes`
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  `,
 };
 
 // mixins

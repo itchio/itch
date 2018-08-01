@@ -10,7 +10,6 @@ import { IRuntime, IMenuItem, MenuTemplate } from "common/types";
 import { RootState } from "common/types";
 import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template";
 import { actions } from "common/actions";
-import { getNativeState } from "main/reactors/winds";
 import { Profile } from "common/butlerd/messages";
 
 export default function(watcher: Watcher, runtime: IRuntime) {
@@ -71,6 +70,135 @@ function computeMenuTemplate(
   enableTabs: boolean,
   runtime: IRuntime
 ) {
+  const hiddenTabShortcuts: IMenuItem[] = [
+    // next tab
+    {
+      localizedLabel: ["menu.file.show_next_tab"],
+      accelerator: "Ctrl+Tab",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.show_next_tab"],
+      accelerator: "Ctrl+PageDown",
+      visible: false,
+    },
+    // previous tab
+    {
+      localizedLabel: ["menu.file.show_previous_tab"],
+      accelerator: "Ctrl+PageUp",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.show_previous_tab"],
+      accelerator: "Ctrl+Shift+Tab",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_1"],
+      accelerator: "CmdOrCtrl+1",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_2"],
+      accelerator: "CmdOrCtrl+2",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_3"],
+      accelerator: "CmdOrCtrl+3",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_4"],
+      accelerator: "CmdOrCtrl+4",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_5"],
+      accelerator: "CmdOrCtrl+5",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_6"],
+      accelerator: "CmdOrCtrl+6",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_7"],
+      accelerator: "CmdOrCtrl+7",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_8"],
+      accelerator: "CmdOrCtrl+8",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_9"],
+      accelerator: "CmdOrCtrl+9",
+      visible: false,
+    },
+  ];
+  const hiddenGeneralShortcuts: IMenuItem[] = [
+    // devtools
+    {
+      localizedLabel: ["menu.file.open_dev_tools"],
+      accelerator: "Shift+F12",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.open_dev_tools"],
+      accelerator: "CmdOrCtrl+Shift+C",
+      visible: false,
+    },
+
+    {
+      localizedLabel: ["menu.file.focus_search"],
+      accelerator: "CmdOrCtrl+Shift+F",
+      visible: false,
+    },
+
+    {
+      localizedLabel: ["menu.file.focus_in_page_search"],
+      accelerator: "CmdOrCtrl+F",
+      visible: false,
+    },
+
+    // reload
+    {
+      localizedLabel: ["menu.command.reload"],
+      accelerator: "F5",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.command.reload"],
+      accelerator: "CmdOrCtrl+R",
+      visible: false,
+    },
+
+    // enter
+    {
+      localizedLabel: ["menu.command.main"],
+      accelerator: "CmdOrCtrl+Enter",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.command.location"],
+      accelerator: "CmdOrCtrl+L",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.command.go_back"],
+      accelerator: "Alt+Left",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.command.go_forward"],
+      accelerator: "Alt+Right",
+      visible: false,
+    },
+  ];
+
   const menus: AllTemplates = {
     mainMac: {
       // no need for a label, it'll always be app name
@@ -147,6 +275,8 @@ function computeMenuTemplate(
           localizedLabel: ["menu.file.quit"],
           accelerator: "CmdOrCtrl+Q",
         },
+        ...hiddenGeneralShortcuts,
+        ...hiddenTabShortcuts,
       ],
     },
 
@@ -165,6 +295,7 @@ function computeMenuTemplate(
           localizedLabel: ["menu.file.quit"],
           accelerator: "CmdOrCtrl+Q",
         },
+        ...hiddenGeneralShortcuts,
       ],
     },
 
@@ -190,6 +321,8 @@ function computeMenuTemplate(
           localizedLabel: ["menu.file.close_window"],
           accelerator: "Cmd+Alt+W",
         },
+        ...hiddenGeneralShortcuts,
+        ...hiddenTabShortcuts,
       ],
     },
 
@@ -200,6 +333,7 @@ function computeMenuTemplate(
           localizedLabel: ["menu.file.close_window"],
           accelerator: "Cmd+W",
         },
+        ...hiddenGeneralShortcuts,
       ],
     },
 

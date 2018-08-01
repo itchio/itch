@@ -13,7 +13,6 @@ class FeaturedPage extends React.PureComponent<Props> {
 
     dispatch(
       space.makeEvolve({
-        wind: ambientWind(),
         replace: true,
         url: urls.itchio,
       })
