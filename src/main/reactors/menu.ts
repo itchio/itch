@@ -10,7 +10,6 @@ import { IRuntime, IMenuItem, MenuTemplate } from "common/types";
 import { RootState } from "common/types";
 import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template";
 import { actions } from "common/actions";
-import { getNativeState } from "main/reactors/winds";
 import { Profile } from "common/butlerd/messages";
 
 export default function(watcher: Watcher, runtime: IRuntime) {
@@ -71,6 +70,29 @@ function computeMenuTemplate(
   enableTabs: boolean,
   runtime: IRuntime
 ) {
+  const hiddenTabShortcuts: IMenuItem[] = [
+    {
+      localizedLabel: ["menu.file.show_next_tab"],
+      accelerator: "Ctrl+Tab",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.show_next_tab"],
+      accelerator: "Ctrl+PageDown",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.show_previous_tab"],
+      accelerator: "Ctrl+PageUp",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.show_previous_tab"],
+      accelerator: "Ctrl+Shift+Tab",
+      visible: false,
+    },
+  ];
+
   const menus: AllTemplates = {
     mainMac: {
       // no need for a label, it'll always be app name
@@ -147,6 +169,7 @@ function computeMenuTemplate(
           localizedLabel: ["menu.file.quit"],
           accelerator: "CmdOrCtrl+Q",
         },
+        ...hiddenTabShortcuts,
       ],
     },
 

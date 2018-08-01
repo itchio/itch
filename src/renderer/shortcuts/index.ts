@@ -28,14 +28,6 @@ function setupShortcuts(store: Store) {
     store.dispatch(actions.focusInPageSearch({ wind: ambientWind() }));
   });
 
-  combo.bindGlobal(["ctrl+tab", "ctrl+pagedown"], () => {
-    store.dispatch(actions.showNextTab({ wind: ambientWind() }));
-  });
-
-  combo.bindGlobal(["ctrl+shift+tab", "ctrl+pageup"], () => {
-    store.dispatch(actions.showPreviousTab({ wind: ambientWind() }));
-  });
-
   combo.bindGlobal(["f5", "ctrl+r", "command+r"], () => {
     store.dispatch(actions.commandReload({ wind: ambientWind() }));
   });

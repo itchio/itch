@@ -63,6 +63,11 @@ function convertMenuAction(
   const labelString = localizedLabel ? localizedLabel[0] : null;
 
   switch (labelString) {
+    case "menu.file.show_next_tab":
+      return actions.showNextTab({ wind });
+    case "menu.file.show_previous_tab":
+      return actions.showPreviousTab({ wind });
+
     case "sidebar.new_tab":
       return actions.newTab({ wind });
     case "menu.file.close_tab":
