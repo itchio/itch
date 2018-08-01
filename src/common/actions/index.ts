@@ -812,9 +812,6 @@ export const actions = wireActions({
   commandStop: action<{
     wind: string;
   }>(),
-  commandFocusLocation: action<{
-    wind: string;
-  }>(),
   tabGoBack: action<{
     wind: string;
     tab: string;

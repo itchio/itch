@@ -21,9 +21,6 @@ import { Provider } from "react-redux";
 
 import store from "renderer/store";
 
-import setupShortcuts from "renderer/shortcuts";
-setupShortcuts(store);
-
 import * as globalStyles from "renderer/global-styles";
 globalStyles.inject();
 

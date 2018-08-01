@@ -34,7 +34,6 @@
     "clean-webpack-plugin": "^0.1.19",
     "colorgram": "^0.1.5",
     "colors": "^1.3.0",
-    "combokeys-ftl": "^2.4.4-npmgate1",
     "crc-32": "^1.2.0",
     "deep-assign": "^2.0.0",
     "deep-equal": "^1.0.1",
