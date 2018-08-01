@@ -22,39 +22,68 @@ const NavigationBarDiv = styled.div`
   padding-right: 4px;
 
   flex-grow: 1;
+  position: relative;
+
+  &.loading {
+    &::after {
+      position: absolute;
+      bottom: -6px;
+      content: " ";
+      width: 100%;
+      height: 2px;
+      background: ${props => props.theme.accent};
+      animation: ${styles.animations.lineSpinner} 2s ease-in-out infinite;
+    }
+  }
 `;
 
-const browserAddressStyle = () => css`
+const browserAddressSizing = css`
+  height: 28px;
+  line-height: 28px;
+  border-radius: 2px;
+`;
+
+const browserAddressStyle = css`
+  ${browserAddressSizing};
   ${styles.singleLine};
   font-size: 14px;
-  height: 33px;
-  line-height: 33px;
-  margin: 0 6px;
   text-shadow: 0 0 1px black;
-  padding: 0 8px;
-  flex-grow: 1;
+  padding: 0;
+  padding-left: 8px;
+  padding-right: 12px;
+  width: 100%;
+  color: #fdfdfd;
 
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
   box-shadow: none;
-
-  transition: all 0.4s;
 
   &:focus {
     outline: none;
+  }
+`;
+
+const AddressWrapper = styled.div`
+  ${browserAddressSizing};
+  margin: 0 6px;
+  transition: all 0.4s;
+  border: 1px solid transparent;
+  flex-grow: 1;
+
+  &.editing {
     border-color: rgba(255, 255, 255, 0.4);
   }
 `;
 
 const AddressInput = styled.input`
-  ${browserAddressStyle()};
+  ${browserAddressStyle};
 
   text-shadow: 0 0 1px transparent;
   color: white;
 `;
 
-const AddressSpan = styled.span`
-  ${browserAddressStyle()};
+const AddressDiv = styled.div`
+  ${browserAddressStyle};
 
   .security-theater-bit {
     color: rgb(138, 175, 115);
@@ -98,12 +127,12 @@ class NavigationBar extends React.PureComponent<Props> {
     );
 
   render() {
-    const { space } = this.props;
+    const { space, loading } = this.props;
     const canGoBack = space.canGoBack();
     const canGoForward = space.canGoForward();
 
     return (
-      <NavigationBarDiv>
+      <NavigationBarDiv className={classNames({ loading })}>
         <IconButton
           icon="arrow-left"
           disabled={!canGoBack}
@@ -136,24 +165,26 @@ class NavigationBar extends React.PureComponent<Props> {
         ) : (
           <IconButton icon="repeat" onClick={this.reload} />
         )}
-        {editingAddress ? (
-          <AddressInput
-            className="browser-address"
-            type="search"
-            innerRef={this.onBrowserAddress as any}
-            defaultValue={url}
-            onKeyUp={this.addressKeyUp}
-            onBlur={this.addressBlur}
-          />
-        ) : (
-          <AddressSpan
-            className={classNames("browser-address")}
-            innerRef={this.onBrowserAddress}
-            onClick={this.startEditingAddress}
-          >
-            {this.renderURL(url)}
-          </AddressSpan>
-        )}
+        <AddressWrapper className={classNames({ editing: editingAddress })}>
+          {editingAddress ? (
+            <AddressInput
+              className="browser-address"
+              type="search"
+              innerRef={this.onBrowserAddress as any}
+              defaultValue={url}
+              onKeyUp={this.addressKeyUp}
+              onBlur={this.addressBlur}
+            />
+          ) : (
+            <AddressDiv
+              className={classNames("browser-address")}
+              innerRef={this.onBrowserAddress}
+              onClick={this.startEditingAddress}
+            >
+              {this.renderURL(url)}
+            </AddressDiv>
+          )}
+        </AddressWrapper>
       </>
     );
   }
@@ -205,7 +236,7 @@ class NavigationBar extends React.PureComponent<Props> {
       const url = transformUrl(input);
 
       const { space, dispatch } = this.props;
-      dispatch(space.makeEvolve({ wind: ambientWind(), url, replace: false }));
+      dispatch(space.makeEvolve({ url, replace: false }));
       this.pushWeb({ editingAddress: false });
     } else if (e.key === "Escape") {
       this.pushWeb({ editingAddress: false });

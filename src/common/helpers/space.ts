@@ -94,7 +94,7 @@ export class Space {
       IEvolveTabPayload,
       {
         tab: string;
-        window: string;
+        wind: string;
       }
     >
   ): Action<IEvolveTabPayload> {

@@ -7,6 +7,7 @@ const initialState = {
   id: null,
   focused: false,
   fullscreen: false,
+  htmlFullscreen: false,
   maximized: false,
 } as NativeWindowState;
 
@@ -28,6 +29,11 @@ export default reducer<NativeWindowState>(initialState, on => {
   on(actions.windFullscreenChanged, (state, action) => {
     const { fullscreen } = action.payload;
     return { ...state, fullscreen };
+  });
+
+  on(actions.windHtmlFullscreenChanged, (state, action) => {
+    const { htmlFullscreen } = action.payload;
+    return { ...state, htmlFullscreen };
   });
 
   on(actions.windMaximizedChanged, (state, action) => {

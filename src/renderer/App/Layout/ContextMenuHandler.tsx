@@ -5,7 +5,7 @@ import {
   IMenuItem,
   MenuTemplate,
 } from "common/types";
-import { ambientWindState } from "common/util/navigation";
+import { ambientWindState, ambientWind } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
 import {
@@ -247,7 +247,7 @@ class ContextMenuHandler extends React.PureComponent<Props> {
   onHide = () => {
     this.setState({ open: false });
     const { dispatch } = this.props;
-    dispatch(actions.closeContextMenu({}));
+    dispatch(actions.closeContextMenu({ wind: ambientWind() }));
   };
 
   onShow = () => {

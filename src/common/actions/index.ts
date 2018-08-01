@@ -266,6 +266,12 @@ export const actions = wireActions({
     /** current state of fullscreenedness */
     fullscreen: boolean;
   }>(),
+  windHtmlFullscreenChanged: action<{
+    wind: string;
+
+    /** current state of html-fullscreenedness */
+    htmlFullscreen: boolean;
+  }>(),
   windMaximizedChanged: action<{
     wind: string;
 
@@ -427,6 +433,14 @@ export const actions = wireActions({
     tab: string;
 
     metrics: BrowserViewMetrics;
+
+    initialURL: string;
+  }>(),
+  tabLosingWebContents: action<{
+    wind: string;
+
+    /** id of tab who just lost a webcontents */
+    tab: string;
   }>(),
   tabLostWebContents: action<{
     wind: string;
@@ -460,7 +474,9 @@ export const actions = wireActions({
       template: MenuTemplate;
     }
   >(),
-  closeContextMenu: action<{}>(),
+  closeContextMenu: action<{
+    wind: string;
+  }>(),
 
   checkForComponentUpdates: action<{}>(),
 

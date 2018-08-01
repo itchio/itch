@@ -26,8 +26,12 @@ class GamePage extends React.PureComponent<Props> {
             const { game } = result;
             if (game) {
               dispatch(
+                space.makeFetch({
+                  label: game.title,
+                })
+              );
+              dispatch(
                 space.makeEvolve({
-                  wind: ambientWind(),
                   url: game.url,
                   resource: `games/${gameId}`,
                   replace: true,

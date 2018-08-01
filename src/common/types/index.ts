@@ -334,6 +334,9 @@ export interface NativeWindowState {
   /** true if window is fullscreen */
   fullscreen: boolean;
 
+  /** true if window is html-fullscreen */
+  htmlFullscreen: boolean;
+
   /** true if window is maximized */
   maximized: boolean;
 }

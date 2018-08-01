@@ -2,6 +2,7 @@ import { actions } from "common/actions";
 import reducer from "common/reducers/reducer";
 
 import { PreferencesState } from "common/types";
+import env from "common/env";
 
 const OFFLINE_MODE = process.env.OFFLINE_MODE === "1";
 
@@ -19,7 +20,7 @@ export const initialState = {
   manualGameUpdates: false,
   preventDisplaySleep: true,
   preferOptimizedPatches: false,
-  disableBrowser: false,
+  disableBrowser: env.integrationTests ? true : false,
 
   layout: "grid",
   enableTabs: false,

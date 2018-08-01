@@ -8,6 +8,7 @@ export const filtersContainerHeight = 40;
 export const FiltersContainerDiv = styled.section`
   display: flex;
   align-items: center;
+  padding-bottom: 2px;
   width: 100%;
   background: ${props => props.theme.sidebarBackground};
   box-shadow: 0 4px 8px -4px ${props => props.theme.sidebarBackground};
