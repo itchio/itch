@@ -93,6 +93,53 @@ function computeMenuTemplate(
       accelerator: "Ctrl+Shift+Tab",
       visible: false,
     },
+    {
+      localizedLabel: ["menu.file.focus_tab_1"],
+      accelerator: "CmdOrCtrl+1",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_2"],
+      accelerator: "CmdOrCtrl+2",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_3"],
+      accelerator: "CmdOrCtrl+3",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_4"],
+      accelerator: "CmdOrCtrl+4",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_5"],
+      accelerator: "CmdOrCtrl+5",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_6"],
+      accelerator: "CmdOrCtrl+6",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_7"],
+      accelerator: "CmdOrCtrl+7",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_8"],
+      accelerator: "CmdOrCtrl+8",
+      visible: false,
+    },
+    {
+      localizedLabel: ["menu.file.focus_tab_9"],
+      accelerator: "CmdOrCtrl+9",
+      visible: false,
+    },
+  ];
+  const hiddenGeneralShortcuts: IMenuItem[] = [
     // devtools
     {
       localizedLabel: ["menu.file.open_dev_tools"],
@@ -148,51 +195,6 @@ function computeMenuTemplate(
     {
       localizedLabel: ["menu.command.go_forward"],
       accelerator: "Alt+Right",
-      visible: false,
-    },
-    {
-      localizedLabel: ["menu.file.focus_tab_1"],
-      accelerator: "CmdOrCtrl+1",
-      visible: false,
-    },
-    {
-      localizedLabel: ["menu.file.focus_tab_2"],
-      accelerator: "CmdOrCtrl+2",
-      visible: false,
-    },
-    {
-      localizedLabel: ["menu.file.focus_tab_3"],
-      accelerator: "CmdOrCtrl+3",
-      visible: false,
-    },
-    {
-      localizedLabel: ["menu.file.focus_tab_4"],
-      accelerator: "CmdOrCtrl+4",
-      visible: false,
-    },
-    {
-      localizedLabel: ["menu.file.focus_tab_5"],
-      accelerator: "CmdOrCtrl+5",
-      visible: false,
-    },
-    {
-      localizedLabel: ["menu.file.focus_tab_6"],
-      accelerator: "CmdOrCtrl+6",
-      visible: false,
-    },
-    {
-      localizedLabel: ["menu.file.focus_tab_7"],
-      accelerator: "CmdOrCtrl+7",
-      visible: false,
-    },
-    {
-      localizedLabel: ["menu.file.focus_tab_8"],
-      accelerator: "CmdOrCtrl+8",
-      visible: false,
-    },
-    {
-      localizedLabel: ["menu.file.focus_tab_9"],
-      accelerator: "CmdOrCtrl+9",
       visible: false,
     },
   ];
@@ -273,6 +275,7 @@ function computeMenuTemplate(
           localizedLabel: ["menu.file.quit"],
           accelerator: "CmdOrCtrl+Q",
         },
+        ...hiddenGeneralShortcuts,
         ...hiddenTabShortcuts,
       ],
     },
@@ -292,6 +295,7 @@ function computeMenuTemplate(
           localizedLabel: ["menu.file.quit"],
           accelerator: "CmdOrCtrl+Q",
         },
+        ...hiddenGeneralShortcuts,
       ],
     },
 
@@ -317,6 +321,8 @@ function computeMenuTemplate(
           localizedLabel: ["menu.file.close_window"],
           accelerator: "Cmd+Alt+W",
         },
+        ...hiddenGeneralShortcuts,
+        ...hiddenTabShortcuts,
       ],
     },
 
@@ -327,6 +333,7 @@ function computeMenuTemplate(
           localizedLabel: ["menu.file.close_window"],
           accelerator: "Cmd+W",
         },
+        ...hiddenGeneralShortcuts,
       ],
     },
 
