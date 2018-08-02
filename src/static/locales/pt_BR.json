@@ -437,5 +437,7 @@
     "grid.really_empty_state.explanation": "...ainda!",
     "docs.how_to_help": "Como posso ajudar?",
     "dashboard.game_stats.views": "visualizações",
-    "download.outcome.updated": "atualizado para a ultima versão"
+    "download.outcome.updated": "atualizado para a ultima versão",
+    "dashboard.game_stats.downloads": "downloads",
+    "dashboard.game_stats.purchases": "compras"
 }
