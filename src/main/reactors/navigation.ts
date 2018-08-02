@@ -103,7 +103,7 @@ export default function(watcher: Watcher) {
     const { url, resource, data, wind, background, replace } = action.payload;
     logger.debug(`Navigating to ${url} ${background ? "(in background)" : ""}`);
 
-    if (wind === "root" && opensInWindow[url]) {
+    if (opensInWindow[url]) {
       store.dispatch(
         actions.openWind({
           initialURL: url,
@@ -126,8 +126,7 @@ export default function(watcher: Watcher) {
     }
 
     const rs = store.getState();
-    const { enableTabs } = rs.preferences;
-    if (enableTabs && wind === "root") {
+    if (hasMultipleTabs(rs, wind)) {
       const nativeWindow = getNativeWindow(rs, "root");
       if (
         nativeWindow &&
@@ -138,19 +137,15 @@ export default function(watcher: Watcher) {
         // let it navigate the open tab
       } else {
         // open a new tab!
+        const tab = uuid();
         store.dispatch(
-          actions.openTab({
+          actions.tabOpened({
             wind,
-            tab: uuid(),
+            tab,
             url,
             resource,
             background,
             data,
-          })
-        );
-        store.dispatch(
-          actions.focusWind({
-            wind,
           })
         );
         return;
@@ -180,12 +175,102 @@ export default function(watcher: Watcher) {
     }
   });
 
+  watcher.on(actions.closeTab, async (store, action) => {
+    const { wind, tab } = action.payload;
+    const rs = store.getState();
+    if (!hasMultipleTabs(rs, wind)) {
+      return;
+    }
+
+    let andFocus: string = null;
+
+    const nav = rs.winds[wind].navigation;
+    if (nav.openTabs.length === 1) {
+      logger.debug(`Closing last tab, replacing it with a new-tab`);
+      store.dispatch(actions.closeAllTabs({ wind }));
+      return;
+    }
+
+    if (nav.tab === tab) {
+      let tabIndex = nav.openTabs.indexOf(tab);
+      if (tabIndex === -1) {
+        logger.error(
+          `${tab} is not in the set of open tabs ${JSON.stringify(
+            nav.openTabs
+          )}`
+        );
+        return;
+      }
+
+      if (tabIndex + 1 < nav.openTabs.length) {
+        andFocus = nav.openTabs[tabIndex + 1];
+      } else if (tabIndex - 1 >= 0) {
+        andFocus = nav.openTabs[tabIndex - 1];
+      } else {
+        logger.error(
+          `Can't figure out which other tab to focus from ${JSON.stringify(
+            nav.openTabs
+          )} after closing ${tab}`
+        );
+        return;
+      }
+    }
+
+    store.dispatch(
+      actions.tabsClosed({
+        wind,
+        tabs: [tab],
+        andFocus,
+      })
+    );
+  });
+
   watcher.on(actions.closeAllTabs, async (store, action) => {
     const { wind } = action.payload;
-    const { openTabs } = store.getState().winds[wind].navigation;
+    const rs = store.getState();
+    if (!hasMultipleTabs(rs, wind)) {
+      return;
+    }
 
-    for (const tab of openTabs) {
-      store.dispatch(actions.closeTab({ wind, tab }));
+    const { openTabs } = rs.winds[wind].navigation;
+    const tab = uuid();
+    store.dispatch(
+      actions.tabOpened({
+        wind,
+        url: "itch://new-tab",
+        tab,
+      })
+    );
+    store.dispatch(
+      actions.tabsClosed({
+        wind,
+        tabs: openTabs,
+        andFocus: tab,
+      })
+    );
+  });
+
+  watcher.on(actions.tabsClosed, async (store, action) => {
+    const { wind, andFocus } = action.payload;
+    if (andFocus) {
+      store.dispatch(
+        actions.tabFocused({
+          wind,
+          tab: andFocus,
+        })
+      );
+    }
+  });
+
+  watcher.on(actions.tabOpened, async (store, action) => {
+    const { wind, tab, background } = action.payload;
+    if (!background) {
+      store.dispatch(
+        actions.tabFocused({
+          wind,
+          tab,
+        })
+      );
     }
   });
 
@@ -302,4 +387,8 @@ function makeHistoryTemplate(opts: MenuTemplateOpts): MenuTemplate {
     }
   }
   return template;
+}
+
+function hasMultipleTabs(rs: RootState, wind: string): boolean {
+  return rs.preferences.enableTabs && wind === "root";
 }

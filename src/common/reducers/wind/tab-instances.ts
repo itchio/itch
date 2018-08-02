@@ -193,7 +193,7 @@ export default reducer<TabInstances>(initialState, on => {
     return state;
   });
 
-  on(actions.focusTab, (state, action) => {
+  on(actions.tabFocused, (state, action) => {
     const { tab } = action.payload;
     const oldInstance = state[tab];
 
@@ -207,16 +207,12 @@ export default reducer<TabInstances>(initialState, on => {
     return state;
   });
 
-  on(actions.closeTab, (state, action) => {
-    const { tab } = action.payload;
-    if (Object.keys(state).length <= 1) {
-      return state;
-    }
-
-    return omit(state, tab);
+  on(actions.tabsClosed, (state, action) => {
+    const { tabs } = action.payload;
+    return omit(state, ...tabs);
   });
 
-  on(actions.openTab, (state, action) => {
+  on(actions.tabOpened, (state, action) => {
     const { tab, url, resource, data = emptyObj } = action.payload;
     if (!tab) {
       return state;

@@ -1,4 +1,4 @@
-import { reject, omit, map, filter } from "underscore";
+import { reject, omit, map, filter, difference } from "underscore";
 
 import { NavigationState, TabDataSave } from "common/types";
 
@@ -31,7 +31,7 @@ export default reducer<NavigationState>(initialState, on => {
     }
   });
 
-  on(actions.openTab, (state, action) => {
+  on(actions.tabOpened, (state, action) => {
     const { tab, background } = action.payload;
     if (!tab) {
       return state;
@@ -46,7 +46,7 @@ export default reducer<NavigationState>(initialState, on => {
     };
   });
 
-  on(actions.focusTab, (state, action) => {
+  on(actions.tabFocused, (state, action) => {
     const { tab } = action.payload;
 
     return {
@@ -68,31 +68,13 @@ export default reducer<NavigationState>(initialState, on => {
     };
   });
 
-  on(actions.closeTab, (state, action) => {
-    const { tab, openTabs } = state;
-    if (openTabs.length <= 1) {
-      return state;
-    }
-
-    const closeId = action.payload.tab || tab;
-
-    const index = openTabs.indexOf(tab);
-    const newOpenTabs = reject(openTabs, tabId => tabId === closeId);
-
-    let newId = tab;
-    if (tab === closeId) {
-      let nextIndex = index;
-      if (nextIndex >= newOpenTabs.length) {
-        nextIndex--;
-      }
-
-      newId = newOpenTabs[nextIndex];
-    }
-
+  on(actions.tabsClosed, (state, action) => {
+    const { tabs, andFocus } = action.payload;
     return {
       ...state,
-      tab: newId,
-      openTabs: newOpenTabs,
+      openTabs: difference(state.openTabs, tabs),
+      loadingTabs: omit(state.loadingTabs, ...tabs),
+      tab: andFocus ? andFocus : state.tab,
     };
   });
 

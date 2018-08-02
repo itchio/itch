@@ -14,7 +14,7 @@ async function applyTabOffset(store: Store, wind: string, offset: number) {
   const newIndex = (index + offset + numTabs) % numTabs;
   const newTab = openTabs[newIndex];
 
-  store.dispatch(actions.focusTab({ wind, tab: newTab }));
+  store.dispatch(actions.tabFocused({ wind, tab: newTab }));
 }
 
 export default function(watcher: Watcher) {
@@ -29,7 +29,7 @@ export default function(watcher: Watcher) {
     const { openTabs } = store.getState().winds[wind].navigation;
     const tab = openTabs[n - 1];
     if (tab) {
-      store.dispatch(actions.focusTab({ wind, tab }));
+      store.dispatch(actions.tabFocused({ wind, tab }));
     }
   });
 

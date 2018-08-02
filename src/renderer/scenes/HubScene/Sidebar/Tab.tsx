@@ -35,7 +35,7 @@ const SortableItem = SortableElement((props: SortableHubSidebarItemProps) => {
 class Tab extends React.PureComponent<Props> {
   onClick = () => {
     const { tab, dispatch } = this.props;
-    dispatch(actions.focusTab({ wind: ambientWind(), tab }));
+    dispatch(actions.tabFocused({ wind: ambientWind(), tab }));
   };
 
   onClose = () => {

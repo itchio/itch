@@ -309,12 +309,12 @@ export const actions = wireActions({
   }>(),
 
   // navigation
-  openTab: action<IOpenTabPayload>(),
+  tabOpened: action<IOpenTabPayload>(),
   newTab: action<{
     wind: string;
   }>(),
   navigate: action<INavigatePayload>(),
-  focusTab: action<{
+  tabFocused: action<{
     wind: string;
 
     /** the id of the new tab */
@@ -367,6 +367,13 @@ export const actions = wireActions({
 
     /** the tab after which all tabs will be closed */
     tab: string;
+  }>(),
+  tabsClosed: action<{
+    wind: string;
+
+    tabs: string[];
+
+    andFocus?: string;
   }>(),
 
   navigateTab: action<INavigateTabPayload>(),

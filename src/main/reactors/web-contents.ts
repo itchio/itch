@@ -120,7 +120,7 @@ export default function(watcher: Watcher) {
           partition: partitionForUser(String(userId)),
         },
       });
-      setBrowserView(wind, tab, bv);
+      storeBrowserView(wind, tab, bv);
       bv.setBounds({
         width: metrics.width,
         height: metrics.height,
@@ -291,7 +291,7 @@ export default function(watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.focusTab, async (store, action) => {
+  watcher.on(actions.tabFocused, async (store, action) => {
     const { wind, tab } = action.payload;
     const rs = store.getState();
     const nw = getNativeWindow(rs, wind);
@@ -479,7 +479,7 @@ const browserViews: {
   };
 } = {};
 
-function setBrowserView(wind: string, tab: string, bv: BrowserView) {
+function storeBrowserView(wind: string, tab: string, bv: BrowserView) {
   if (!(wind in browserViews)) {
     browserViews[wind] = {};
   }
