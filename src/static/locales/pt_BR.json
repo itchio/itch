@@ -435,5 +435,6 @@
     "grid.criterion.filter_by": "Filtrar por: ",
     "grid.really_empty_state.leader": "Não há nada aqui...",
     "grid.really_empty_state.explanation": "...ainda!",
-    "docs.how_to_help": "Como posso ajudar?"
+    "docs.how_to_help": "Como posso ajudar?",
+    "dashboard.game_stats.views": "visualizações"
 }
