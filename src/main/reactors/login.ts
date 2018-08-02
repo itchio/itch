@@ -134,7 +134,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.requestLogout, async (store, action) => {
     await saveTabs(store);
-    store.dispatch(actions.logout({}));
+    store.dispatch(actions.loggedOut({}));
   });
 }
 

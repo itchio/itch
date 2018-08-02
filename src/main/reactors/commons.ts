@@ -54,7 +54,7 @@ export default function(watcher: Watcher) {
     updateCommons(store);
   });
 
-  watcher.on(actions.logout, async (store, action) => {
+  watcher.on(actions.loggedOut, async (store, action) => {
     updateCommons(store);
   });
 

@@ -254,7 +254,7 @@ export default reducer<TabInstances>(initialState, on => {
     };
   });
 
-  on(actions.logout, (state, action) => {
+  on(actions.loggedOut, (state, action) => {
     return initialState;
   });
 

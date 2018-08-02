@@ -45,29 +45,53 @@ function withWebContents<T>(
   return cb(wc as ExtendedWebContents);
 }
 
-async function hideBrowserView(store: Store, wind: string) {
+function hideBrowserView(store: Store, wind: string) {
   const rs = store.getState();
   const nw = getNativeWindow(rs, wind);
   nw.setBrowserView(null);
 }
 
-async function showBrowserView(store: Store, wind: string) {
+function getBrowserViewToShow(store: Store, wind: string): BrowserView {
   const rs = store.getState();
+  const nw = getNativeWindow(rs, wind);
+
+  if (!rs.profile.profile) {
+    // don't show browser views if logged out
+    return null;
+  }
+
   const ws = rs.winds[wind];
   if (!isEmpty(ws.modals)) {
     // don't show browser view again as long as there are modals
-    return;
+    return null;
   }
   if (ws.contextMenu && ws.contextMenu.open) {
     // don't show browser view again as long as there are context menus
-    return;
+    return null;
   }
 
   const { tab } = ws.navigation;
+  return getBrowserView(wind, tab); // bv can be null here, that's ok
+}
+
+function showBrowserView(store: Store, wind: string) {
+  const rs = store.getState();
+  const nw = getNativeWindow(rs, wind);
+  nw.setBrowserView(getBrowserViewToShow(store, wind));
+}
+
+function destroyBrowserView(store: Store, wind: string, tab: string) {
+  const rs = store.getState();
   const bv = getBrowserView(wind, tab);
   if (bv) {
+    // avoid crashing, see
+    // https://github.com/electron/electron/issues/10096
     const nw = getNativeWindow(rs, wind);
-    nw.setBrowserView(bv);
+    if (nw.getBrowserView() == bv) {
+      nw.setBrowserView(null);
+    }
+    bv.destroy();
+    forgetBrowserView(wind, tab);
   }
 }
 
@@ -128,8 +152,7 @@ export default function(watcher: Watcher) {
         y: metrics.top,
       });
 
-      const nw = getNativeWindow(rs, wind);
-      nw.setBrowserView(bv);
+      showBrowserView(store, wind);
 
       logger.debug(`Loading url '${initialURL}'`);
       bv.webContents.loadURL(initialURL);
@@ -275,62 +298,17 @@ export default function(watcher: Watcher) {
     const { wind, tab } = action.payload;
     logger.debug(`Tab ${tab} losing web contents!`);
 
-    const rs = store.getState();
-    const isCurrentTab = tab === rs.winds[wind].navigation.tab;
-
-    store.dispatch(actions.tabLostWebContents({ wind, tab }));
-    const nw = getNativeWindow(rs, wind);
-    if (isCurrentTab) {
-      nw.setBrowserView(null);
-    }
-
-    const bv = getBrowserView(wind, tab);
-    if (bv) {
-      bv.destroy();
-      forgetBrowserView(wind, tab);
-    }
+    destroyBrowserView(store, wind, tab);
   });
 
   watcher.on(actions.tabFocused, async (store, action) => {
-    const { wind, tab } = action.payload;
-    const rs = store.getState();
-    const nw = getNativeWindow(rs, wind);
-    const bv = getBrowserView(wind, tab);
-    if (!bv) {
-      logger.debug(`Switching to tab without browser view.`);
-      nw.setBrowserView(null);
-    } else {
-      logger.debug(
-        `Switching to tab with browser view. Destroyed? ${bv.isDestroyed()}`
-      );
-      if (bv.webContents) {
-        logger.debug(`Webcontents destroyed? ${bv.webContents.isDestroyed()}`);
-      } else {
-        logger.debug(`nil webcontents! ${bv.webContents}`);
-      }
-      nw.setBrowserView(bv);
-    }
-  });
-
-  watcher.on(actions.tabChanged, async (store, action) => {
-    const { wind, tab } = action.payload;
-    const rs = store.getState();
-    const nw = getNativeWindow(rs, wind);
-    const bv = getBrowserView(wind, tab);
-    if (!bv) {
-      logger.debug(`Switching to tab without browser view.`);
-      nw.setBrowserView(null);
-    } else {
-      logger.debug(
-        `Switching to tab with browser view. Destroyed? ${bv.isDestroyed()}`
-      );
-      nw.setBrowserView(bv);
-    }
+    const { wind } = action.payload;
+    showBrowserView(store, wind);
   });
 
   watcher.on(actions.openModal, async (store, action) => {
     const { wind } = action.payload;
-    await hideBrowserView(store, wind);
+    hideBrowserView(store, wind);
   });
 
   watcher.on(actions.modalClosed, async (store, action) => {
@@ -338,17 +316,17 @@ export default function(watcher: Watcher) {
     if (!isEmpty(store.getState().winds[wind].modals)) {
       return;
     }
-    await showBrowserView(store, wind);
+    showBrowserView(store, wind);
   });
 
   watcher.on(actions.popupContextMenu, async (store, action) => {
     const { wind } = action.payload;
-    await hideBrowserView(store, wind);
+    hideBrowserView(store, wind);
   });
 
   watcher.on(actions.closeContextMenu, async (store, action) => {
     const { wind } = action.payload;
-    await showBrowserView(store, wind);
+    showBrowserView(store, wind);
   });
 
   watcher.on(actions.analyzePage, async (store, action) => {

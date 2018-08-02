@@ -372,7 +372,7 @@ export default function(watcher: Watcher) {
     hookNativeWindow(store, wind, nativeWindow);
   });
 
-  watcher.on(actions.logout, async (store, action) => {
+  watcher.on(actions.loggedOut, async (store, action) => {
     const rs = store.getState();
 
     let closeUnlessMain = (wind: string) => {

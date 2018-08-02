@@ -44,7 +44,7 @@ export default reducer<ProfileLoginState>(initialState, on => {
     return initialState;
   });
 
-  on(actions.logout, (state, action) => {
+  on(actions.loggedOut, (state, action) => {
     return initialState;
   });
 });

@@ -10,7 +10,7 @@ export default reducer<Profile>(initialState, on => {
     return profile;
   });
 
-  on(actions.logout, (state, action) => {
+  on(actions.loggedOut, (state, action) => {
     return initialState;
   });
 });

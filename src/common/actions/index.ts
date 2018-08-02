@@ -242,7 +242,7 @@ export const actions = wireActions({
 
   changeUser: action<{}>(),
   requestLogout: action<{}>(),
-  logout: action<{}>(),
+  loggedOut: action<{}>(),
 
   // onboarding
 

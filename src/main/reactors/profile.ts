@@ -21,7 +21,7 @@ export default function(watcher: Watcher) {
     }
   });
 
-  watcher.on(actions.logout, async (store, action) => {
+  watcher.on(actions.loggedOut, async (store, action) => {
     store.dispatch(actions.setDownloadsPaused({ paused: true }));
   });
 }
