@@ -1,7 +1,29 @@
 import urls from "common/constants/urls";
 
-// TODO: show recommended for you?
-const newTabItems = [
+export const newTabPrimaryItems = [
+  {
+    label: ["sidebar.explore"],
+    icon: "earth",
+    url: "itch://featured",
+  },
+  {
+    label: ["sidebar.library"],
+    icon: "heart-filled",
+    url: "itch://library",
+  },
+  {
+    label: ["sidebar.collections"],
+    icon: "video_collection",
+    url: "itch://collections",
+  },
+  {
+    label: ["sidebar.dashboard"],
+    icon: "archive",
+    url: "itch://dashboard",
+  },
+];
+
+export const newTabSecondaryItems = [
   {
     label: ["new_tab.twitter"],
     icon: "twitter",
@@ -28,4 +50,3 @@ const newTabItems = [
     url: urls.itchio + "/featured-games-feed?filter=devlogs",
   },
 ];
-export default newTabItems;

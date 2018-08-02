@@ -7,7 +7,10 @@ import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
-import newTabItems from "renderer/pages/BrowserPage/newTabItems";
+import {
+  newTabPrimaryItems,
+  newTabSecondaryItems,
+} from "renderer/pages/BrowserPage/newTabItems";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
@@ -18,10 +21,11 @@ const NewTabPageDiv = styled.div`
 `;
 
 const NewTabMain = styled.div`
-  flex-grow: 1;
   display: flex;
-  flex-direction: row;
-  position: relative;
+  flex-direction: column;
+  align-items: center;
+
+  overflow-y: auto;
 `;
 
 const NewTabGrid = styled.div`
@@ -31,9 +35,10 @@ const NewTabGrid = styled.div`
   justify-content: space-around;
   align-items: flex-start;
   align-content: flex-start;
-  overflow-x: hidden;
-  overflow-y: auto;
   flex: 1;
+
+  max-width: 960px;
+  margin-top: 40px;
 `;
 
 const NewTabItem = styled.a`
@@ -44,10 +49,15 @@ const NewTabItem = styled.a`
 
   width: auto;
   flex-grow: 1;
-  padding: 30px 10px;
+  padding: 20px 10px;
+  margin: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  min-width: 160px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 
   .icon {
     font-size: 70px;
@@ -69,9 +79,21 @@ class NewTabPage extends React.PureComponent<Props> {
         <BrowserBar />
         <NewTabMain>
           <NewTabGrid>
-            <Title>{T(["new_tab.titles.buttons"])}</Title>
+            {map(newTabPrimaryItems, item => {
+              const { label, icon, url } = item;
 
-            {map(newTabItems, item => {
+              return (
+                <NewTabItem key={url} href={url}>
+                  <Icon icon={icon} />
+                  <span>{T(label)}</span>
+                </NewTabItem>
+              );
+            })}
+          </NewTabGrid>
+
+          <NewTabGrid>
+            <Title>{T(["new_tab.titles.buttons"])}</Title>
+            {map(newTabSecondaryItems, item => {
               const { label, icon, url } = item;
 
               return (
