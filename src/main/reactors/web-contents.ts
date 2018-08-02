@@ -382,6 +382,19 @@ export default function(watcher: Watcher) {
         },
       })
     );
+
+    const nw = getNativeWindow(store.getState(), wind);
+    if (nw && nw.webContents) {
+      nw.webContents.focus();
+    }
+  });
+
+  watcher.on(actions.focusSearch, async (store, action) => {
+    const wind = "root";
+    const nw = getNativeWindow(store.getState(), wind);
+    if (nw && nw.webContents) {
+      nw.webContents.focus();
+    }
   });
 
   watcher.on(actions.commandBack, async (store, action) => {
