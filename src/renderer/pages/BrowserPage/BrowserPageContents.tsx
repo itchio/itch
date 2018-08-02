@@ -35,10 +35,12 @@ const BrowserViewShell = styled.div`
   bottom: 0;
   left: 0;
 
-  background-color: ${props => props.theme.sidebarBackground};
-  background-image: url("${require("static/images/logos/app-white.svg")}");
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
+  &.fresh {
+    background-color: ${props => props.theme.sidebarBackground};
+    background-image: url("${require("static/images/logos/app-white.svg")}");
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+  }
 `;
 
 class BrowserPageContents extends React.PureComponent<Props> {

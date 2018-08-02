@@ -14,6 +14,7 @@ import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 
 const DraggableDiv = styled.div`
+  ${styles.singleLine};
   -webkit-app-region: drag;
 
   flex: 1 1;
@@ -23,12 +24,14 @@ const DraggableDiv = styled.div`
 
 const Spacer = styled.div`
   width: 8px;
+  flex-shrink: 0;
 `;
 
 export const titleBarHeight = 40;
 
 const WindowButton = styled(IconButton)`
   align-self: flex-start;
+  flex-shrink: 0;
   width: ${titleBarHeight * 1.1}px;
   height: ${titleBarHeight * 0.8}px;
   opacity: 0.7;
@@ -48,6 +51,7 @@ const DraggableDivInner = styled.div`
   display: flex;
   align-self: center;
   align-items: center;
+  max-width: 100%;
 `;
 
 const Filler = styled.div`
