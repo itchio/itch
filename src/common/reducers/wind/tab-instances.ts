@@ -92,7 +92,7 @@ export default reducer<TabInstances>(initialState, on => {
   });
 
   on(actions.evolveTab, (state, action) => {
-    const { tab, data = emptyObj } = action.payload;
+    const { tab, onlyIfMatchingURL, data = emptyObj } = action.payload;
     let { url, resource, replace } = action.payload;
 
     const oldInstance = state[tab];
@@ -104,16 +104,19 @@ export default reducer<TabInstances>(initialState, on => {
     let { history, currentIndex } = oldInstance;
     if (history[currentIndex].url === url) {
       replace = true;
+    } else if (onlyIfMatchingURL) {
+      return state;
     }
 
     if (resource && /^collections\//.test(resource)) {
       url = `itch://${resource}`;
     }
 
-    if (!resource) {
+    if (!resource && replace) {
       // keep the resource in case it's not specified
       resource = history[currentIndex].resource;
     }
+
     if (replace) {
       history = [
         ...history.slice(0, currentIndex),
@@ -140,43 +143,7 @@ export default reducer<TabInstances>(initialState, on => {
     };
   });
 
-  on(actions.tabGoBack, (state, action) => {
-    const { tab } = action.payload;
-    const instance = state[tab];
-
-    if (instance.currentIndex <= 0) {
-      // we can't go back!
-      return state;
-    }
-
-    return {
-      ...state,
-      [tab]: {
-        ...instance,
-        currentIndex: instance.currentIndex - 1,
-      },
-    };
-  });
-
-  on(actions.tabGoForward, (state, action) => {
-    const { tab } = action.payload;
-    const instance = state[tab];
-
-    if (instance.currentIndex >= instance.history.length - 1) {
-      // we can't go forward!
-      return state;
-    }
-
-    return {
-      ...state,
-      [tab]: {
-        ...instance,
-        currentIndex: instance.currentIndex + 1,
-      },
-    };
-  });
-
-  on(actions.tabGoToIndex, (state, action) => {
+  on(actions.tabWentToIndex, (state, action) => {
     const { tab, index } = action.payload;
     const instance = state[tab];
 
@@ -227,9 +194,8 @@ export default reducer<TabInstances>(initialState, on => {
           },
         ],
         currentIndex: 0,
-        sleepy: true,
         sequence: 0,
-        data: { ...data },
+        data: { label: ["sidebar.loading"], ...data },
       },
     };
   });

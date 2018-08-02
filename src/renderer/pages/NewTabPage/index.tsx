@@ -36,6 +36,7 @@ const NewTabGrid = styled.div`
   align-items: flex-start;
   align-content: flex-start;
   flex: 1;
+  flex-shrink: 0;
 
   max-width: 960px;
   margin-top: 40px;

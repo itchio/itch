@@ -846,6 +846,14 @@ export const actions = wireActions({
 
     index: number;
   }>(),
+  tabWentToIndex: action<{
+    wind: string;
+    tab: string;
+
+    oldIndex: number;
+    index: number;
+    fromWebContents?: boolean;
+  }>(),
   tabStop: action<{
     wind: string;
     tab: string;

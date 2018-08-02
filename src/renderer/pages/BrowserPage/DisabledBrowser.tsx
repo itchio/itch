@@ -51,7 +51,6 @@ class DisabledBrowser extends React.PureComponent<Props> {
 }
 
 interface Props {
-  url: string;
   dispatch: Dispatch;
 }
 

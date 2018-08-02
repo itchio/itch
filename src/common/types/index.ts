@@ -678,6 +678,11 @@ interface IEvolveBasePayload {
 export interface IEvolveTabPayload extends IEvolveBasePayload {
   /** if false, that's a new history entry, if true it replaces the current one */
   replace: boolean;
+
+  /** if true, will only set resource if the url is what we think it is */
+  onlyIfMatchingURL?: boolean;
+
+  fromWebContents?: boolean;
 }
 
 export interface INavigateTabPayload extends IEvolveBasePayload {

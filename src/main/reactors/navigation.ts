@@ -271,6 +271,12 @@ export default function(watcher: Watcher) {
           tab,
         })
       );
+
+      const rs = store.getState();
+      const nw = getNativeWindow(rs, wind);
+      if (nw && nw.webContents) {
+        nw.webContents.focus();
+      }
     }
   });
 
