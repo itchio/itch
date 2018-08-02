@@ -176,7 +176,6 @@ function computeMenuTemplate(
       visible: false,
     },
 
-    // enter
     {
       localizedLabel: ["menu.command.main"],
       accelerator: "CmdOrCtrl+Enter",

@@ -10,6 +10,7 @@ import Modals from "renderer/App/Modals";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
 import { actions } from "common/actions";
 import { hook } from "renderer/hocs/hook";
+import { ambientWind } from "common/util/navigation";
 
 class AppContents extends React.PureComponent<Props> {
   render() {

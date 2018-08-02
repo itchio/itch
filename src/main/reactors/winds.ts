@@ -99,7 +99,7 @@ async function createRootWindow(store: Store) {
   nativeWindow.loadURL(makeAppURL({ wind, role }));
 
   if (parseInt(process.env.DEVTOOLS || "0", 10) > 0) {
-    await openAppDevTools(nativeWindow);
+    openAppDevTools(nativeWindow);
   }
 }
 
@@ -610,6 +610,19 @@ function hookNativeWindow(
   nativeWindow.on("closed", (e: any) => {
     store.dispatch(actions.windClosed({ wind }));
   });
+
+  nativeWindow.webContents.on(
+    "before-input-event",
+    (ev: Electron.Event, input: Electron.Input) => {
+      if (input.type === "keyUp") {
+        if (input.key === "Enter") {
+          store.dispatch(actions.commandOk({ wind }));
+        } else if (input.key === "Escape") {
+          store.dispatch(actions.commandBack({ wind }));
+        }
+      }
+    }
+  );
 }
 
 export function getNativeState(rs: RootState, wind: string): NativeWindowState {

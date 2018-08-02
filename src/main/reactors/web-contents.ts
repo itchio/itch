@@ -414,7 +414,7 @@ export default function(watcher: Watcher) {
   watcher.on(actions.openDevTools, async (store, action) => {
     const { wind, forApp } = action.payload;
     if (forApp) {
-      await openAppDevTools(BrowserWindow.getFocusedWindow());
+      openAppDevTools(BrowserWindow.getFocusedWindow());
     } else {
       const { tab } = store.getState().winds[wind].navigation;
       withWebContents(store, wind, tab, wc => {
