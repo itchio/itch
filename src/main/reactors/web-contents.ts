@@ -326,7 +326,7 @@ export default function(watcher: Watcher) {
           `For index ${oldIndex} => ${index}, clearing history and loading ${url}`
         );
         logger.debug(`(could go to offset? ${wc.canGoToOffset(offset)})`);
-        logger.debug(`(wcl = ${wc.history[wc.currentIndex + offset] === url})`);
+        logger.debug(`(wcl = ${wc.history[wc.currentIndex + offset]})`);
         logger.debug(`(url = ${url})`);
 
         if (offset == 1) {
@@ -450,6 +450,8 @@ async function hookWebContents(
   wc.on(
     "new-window",
     (ev, url, frameName, disposition, options, additionalFeatures) => {
+      ev.preventDefault();
+      logger.debug(`new-window fired for ${url}, navigating instead`);
       const background = disposition === "background-tab";
       store.dispatch(actions.navigate({ url, wind, background }));
     }
@@ -498,16 +500,40 @@ async function hookWebContents(
       previousHistorySize: wc.history.length,
     };
 
+    const space = Space.fromStore(store, wind, tab);
+
+    logger.debug(``);
+    logger.debug(``);
     logger.debug(`=================================`);
-    for (let i = 0; i < wc.history.length; i++) {
-      logger.debug(
-        `|${i === previousIndex ? "<" : " "}${
-          i === wc.currentIndex ? ">" : " "
-        } ${wc.history[i]}`
-      );
+    logger.debug(
+      `currentIndex ${wc.currentIndex} inPageIndex ${
+        wc.inPageIndex
+      } inPage ${inPage}`
+    );
+    if (wc.history.length === 0) {
+      logger.debug(`(The webcontents history are empty for some reason)`);
+    } else {
+      for (let i = 0; i < wc.history.length; i++) {
+        logger.debug(
+          `W|${i === previousIndex ? "<" : " "}${
+            i === wc.currentIndex ? ">" : " "
+          } ${wc.history[i]}`
+        );
+      }
     }
 
-    const space = Space.fromStore(store, wind, tab);
+    let printStateHistory = () => {
+      const space = Space.fromStore(store, wind, tab);
+      logger.debug(`---------------------------------`);
+      for (let i = 0; i < space.history().length; i++) {
+        const page = space.history()[i];
+        logger.debug(
+          `S| ${i === space.currentIndex() ? ">" : " "} ${page.url}`
+        );
+      }
+    };
+    printStateHistory();
+
     if (wc.getTitle() !== url && space.label() !== wc.getTitle()) {
       store.dispatch(
         actions.tabDataFetched({
@@ -518,17 +544,6 @@ async function hookWebContents(
           },
         })
       );
-    }
-
-    if (space.url() === url) {
-      logger.debug(`Already is the tab's url, cool!`);
-      return;
-    }
-
-    if (replaceEntry) {
-      logger.debug(`==> Replacing because chrome told us to`);
-      didNavigate(url, NavMode.Replace);
-      return;
     }
 
     let offset = wc.currentIndex - previousIndex;
@@ -542,12 +557,14 @@ async function hookWebContents(
       if (wc.history.length === 1) {
         logger.debug(`==> Replacing because only history item`);
         didNavigate(url, NavMode.Replace);
+        printStateHistory();
         return;
       }
 
       if (offset === 0) {
         logger.debug(`==> Replacing because offset is 0`);
         didNavigate(url, NavMode.Replace);
+        printStateHistory();
         return;
       }
 
@@ -561,36 +578,89 @@ async function hookWebContents(
           }`
         );
         didNavigate(url, NavMode.Replace);
+        printStateHistory();
         return;
       }
 
       didNavigate(url, NavMode.Append);
+      printStateHistory();
       return;
     }
 
     if (sizeOffset === 0) {
       logger.debug(`==> History stayed the same, offset = ${offset}`);
-      if (
-        offset === 1 &&
-        space.history()[space.currentIndex() + 1].url !== url
-      ) {
-        didNavigate(url, NavMode.Append);
-      } else {
+      if (offset === 1) {
+        logger.debug(`Went forward one, eh, is it an append?`);
+
+        const his = space.history();
+        let index = space.currentIndex() + offset;
+        if (his[space.currentIndex()].url === url) {
+          logger.debug(`The URLs match without any offset, nevermind that!`);
+          return;
+        } else if (index >= 0 && index < his.length && his[index].url === url) {
+          logger.debug(`If we apply the history offset, the URLs match`);
+          // fallthrough
+        } else {
+          logger.debug(`Why yes it is an append`);
+          didNavigate(url, NavMode.Append);
+          printStateHistory();
+          return;
+        }
+      } else if (offset === 0) {
+        if (replaceEntry) {
+          logger.debug(`Chrome tells us it's a replace!`);
+          if (inPage) {
+            logger.debug(`But it's inPage? So let's ignore it?`);
+          } else if (space.history()[space.currentIndex() - 1].url === url) {
+            logger.debug(
+              `But the previous url is also ${url}, so let's just ignore that.`
+            );
+          } else {
+            didNavigate(url, NavMode.Replace);
+          }
+          printStateHistory();
+          return;
+        } else {
+          logger.debug(
+            `So.. the history size didn't change, the offset is 0, and chrome tells us it's not a replace..`
+          );
+          logger.debug(`Doing nothing!`);
+          return;
+        }
+      }
+
+      let oldIndex = space.currentIndex();
+      let index = oldIndex + offset;
+      logger.debug(`Assuming in-history navigation (${oldIndex} => ${index})`);
+      const his = space.history();
+      if (index >= 0 && index < his.length && his[index].url === url) {
+        logger.debug(`The URLs do match!`);
         store.dispatch(
           actions.tabWentToIndex({
             wind,
             tab,
-            oldIndex: space.currentIndex(),
-            index: space.currentIndex() + offset,
+            oldIndex,
+            index,
             fromWebContents: true,
           })
         );
+      } else {
+        logger.debug(`Nope, the URLs don't match, nvm`);
       }
+      printStateHistory();
       return;
     }
 
-    previousIndex = wc.currentIndex;
-    previousHistorySize = wc.history.length;
+    logger.debug(
+      `So, the history shrunk. That means it must be a normal navigation.`
+    );
+    if (inPage) {
+      logger.debug(`Except it's in-page so nevermind.`);
+    } else {
+      didNavigate(url, NavMode.Append);
+      printStateHistory();
+    }
+    return;
   };
   wc.on("navigation-entry-commited" as any, commit);
 }
