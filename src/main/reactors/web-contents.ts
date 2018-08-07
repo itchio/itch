@@ -433,11 +433,7 @@ async function hookWebContents(
     pushWeb({ loading: false });
   });
 
-  // FIXME: page-title-updated isn't documented, see https://github.com/electron/electron/issues/10040
-  // also, with electron@1.7.5, it seems to not always fire. whereas webview's event does.
-
   wc.on("page-title-updated" as any, (ev, title: string) => {
-    logger.debug(`Got page-title-updated! ${title}`);
     store.dispatch(
       actions.tabDataFetched({
         wind,
@@ -519,11 +515,14 @@ async function hookWebContents(
 
   const commit = (
     event: any,
-    url: string,
-    inPage: boolean,
-    replaceEntry: boolean
+    url: string, // latest URL
+    inPage: boolean, // in-page navigation (HTML5 pushState/popState/replaceState)
+    replaceEntry: boolean // previous history entry was replaced
   ) => {
     if (wc.currentIndex < 0) {
+      // We get those spurious events after a "clear history & loadURL()"
+      // at this point `wc.history.length` is 0 anyway, so it's not like we
+      // can figure out much. They're followed by a meaningful event shortly after.
       logger.debug(
         `Ignoring navigation-entry-committed with negative currentIndex`
       );
@@ -537,13 +536,20 @@ async function hookWebContents(
     };
 
     const space = Space.fromStore(store, wind, tab);
-    const sh = space.history();
-    const stateHistoryURL = (index: number) => {
-      if (index >= 0 && index < sh.length) {
-        return sh[index].url;
+    const stateHistory = space.history();
+    const getStateURL = (index: number) => {
+      if (index >= 0 && index < stateHistory.length) {
+        return stateHistory[index].url;
       }
+      // The index passed to this function is sometimes computed
+      // from the current index + an offset, so it might be out
+      // of bounds.
+      // We always use it to find equal URLs,
+      // so it's okay to just return undefined in these cases
       return undefined;
     };
+    const stateIndex = space.currentIndex();
+    const stateURL = getStateURL(stateIndex);
 
     logger.debug("\n");
     logger.debug(`=================================`);
@@ -558,6 +564,10 @@ async function hookWebContents(
     printStateHistory();
 
     if (wc.getTitle() !== url && space.label() !== wc.getTitle()) {
+      // page-title-updated does not always fire, so a navigation (in-page or not)
+      // is a good place to check.
+      // we also check that the webContents' title is not its URL, which happens
+      // while it's currently loading a page.
       store.dispatch(
         actions.tabDataFetched({
           wind,
@@ -569,22 +579,32 @@ async function hookWebContents(
       );
     }
 
+    // The logic that follows may not make sense to the casual observer.
+    // Let's recap our assumptions:
+    //   - The Redux state (ie. Space.history(), Space.currentIndex(), etc.)
+    //     should always mirror Electron's navigation controller history.
+    //   - Navigation can occur in-page (in which case it's important to
+    //     call webContents.{goBack,goForward,goToOffset}), or it can be http-level
+    //     navigation (in which case Electron's navigation controller restarts the
+    //     renderer process anyway - because "just using Chrome's navigation controller"
+    //     apparently broke nodeIntegration (which we don't use for BrowserViews anyway...))
+    //   - Navigation can be triggered by the itch app (actions.tabGoBack is dispatched, etc.)
+    //     or by the webContents (window.history.go(-1), pushState, clicking on a link, etc.)
+    //   - We choose not to rely on events like `did-start-navigation` (Electron 3.x+),
+    //     `did-navigate`, `did-navigate-in-page` etc. to avoid race conditions
+
     let offset = wc.currentIndex - previousIndex;
     let sizeOffset = wc.history.length - previousHistorySize;
 
     if (sizeOffset === 1) {
-      logger.debug(
-        `==> History grew one, we navigated to a new page (offset = ${offset})`
-      );
+      logger.debug(`History grew one, offset is ${offset}`);
 
-      if (url === space.url()) {
-        logger.debug(`And state already has the right one, doing nothing!`);
-        printStateHistory();
-        return;
+      if (stateURL === url) {
+        logger.debug(`web and state point to same URL, doing nothing`);
       }
 
       if (offset === 0) {
-        logger.debug(`==> Replacing because offset is 0`);
+        logger.debug(`Replacing because offset is 0`);
         didNavigate(url, NavMode.Replace);
         printStateHistory();
         return;
@@ -594,47 +614,51 @@ async function hookWebContents(
       let previousWebURL = wc.history[wc.currentIndex - 1];
       if (currentURL && previousWebURL !== currentURL) {
         logger.debug(
-          `==> Replacing because previous web url \n${previousWebURL}\n is not current state url \n${currentURL}`
+          `Replacing because previous web url \n${previousWebURL}\n is not current state url \n${currentURL}`
         );
         didNavigate(url, NavMode.Replace);
         printStateHistory();
         return;
       }
 
+      logger.debug(`Assuming regular navigation happened`);
       didNavigate(url, NavMode.Append);
       printStateHistory();
       return;
     }
 
     if (sizeOffset === 0) {
-      logger.debug(`==> History stayed the same, offset = ${offset}`);
+      logger.debug(`History stayed the same size, offset is ${1}`);
       if (offset === 1) {
-        let index = space.currentIndex() + offset;
-        if (sh[space.currentIndex()].url === url) {
-          logger.debug(`The URLs match without any offset, nevermind that!`);
+        if (stateURL === url) {
+          logger.debug(`web and state point to same URL, doing nothing`);
           return;
-        } else if (index >= 0 && index < sh.length && sh[index].url === url) {
+        }
+
+        if (getStateURL(stateIndex + offset) === url) {
           logger.debug(`If we apply the history offset, the URLs match!`);
-          // fallthrough
+          // fallthrough to in-history navigation
         } else {
-          logger.debug(`Normal navigation happened`);
+          logger.debug(`Assuming normal navigation happened`);
           didNavigate(url, NavMode.Append);
           printStateHistory();
           return;
         }
       } else if (offset === 0) {
         if (replaceEntry) {
-          logger.debug(`Chrome tells us it's a replace!`);
-
           const index = space.currentIndex();
           if (inPage) {
-            if (stateHistoryURL(index - 1) === url) {
-              logger.debug(`inPage & previous is a dupe, ignoring`);
+            if (getStateURL(index - 1) === url) {
+              logger.debug(
+                `replaceEntry is true, but inPage & previous is a dupe, ignoring`
+              );
               return;
             }
 
-            if (stateHistoryURL(index + 1) === url) {
-              logger.debug(`inPage & next is a dupe, ignoring`);
+            if (getStateURL(index + 1) === url) {
+              logger.debug(
+                `replaceEntry is true, but inPage & next is a dupe, ignoring`
+              );
               return;
             }
           }
@@ -644,23 +668,22 @@ async function hookWebContents(
           printStateHistory();
           return;
         } else {
-          logger.debug(
-            `So.. the history size didn't change, the offset is 0, and chrome tells us it's not a replace..`
-          );
-          logger.debug(`Doing nothing!`);
+          logger.debug(`Not a replace, doing nothing.`);
           return;
         }
       }
 
-      if (space.url() === url) {
-        logger.debug(`webContents url is consistent with space url, cool!`);
+      if (stateURL === url) {
+        logger.debug(`web and state point to same URL, doing nothing`);
+        return;
       }
 
-      let oldIndex = space.currentIndex();
+      let oldIndex = stateIndex;
       let index = oldIndex + offset;
-      logger.debug(`Assuming in-history navigation (${oldIndex} => ${index})`);
-      if (stateHistoryURL(index) === url) {
-        logger.debug(`The URLs do match!`);
+      if (getStateURL(index) === url) {
+        logger.debug(
+          `Assuming in-history navigation (${oldIndex} => ${index})`
+        );
         store.dispatch(
           actions.tabWentToIndex({
             wind,
@@ -670,20 +693,20 @@ async function hookWebContents(
             fromWebContents: true,
           })
         );
+        printStateHistory();
+        return;
       } else {
-        logger.debug(`Nope, the URLs don't match, nvm`);
+        logger.debug(`We're not sure what happened, doing nothing`);
+        return;
       }
-      printStateHistory();
-      return;
     }
 
-    logger.debug(
-      `So, the history shrunk. That means it must be a normal navigation.`
-    );
+    logger.debug(`History shrunk ; usually means normal navigation.`);
 
-    if (url === space.url()) {
+    if (stateURL === url) {
       logger.debug(`Except the url is already good, nvm!`);
     } else {
+      logger.debug(`Assuming normal navigation happened`);
       didNavigate(url, NavMode.Append);
       printStateHistory();
     }

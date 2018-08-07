@@ -2924,31 +2924,6 @@ export interface LaunchParams {
 }
 
 /**
- * Payload for LaunchWindowShouldBeForeground
- */
-export interface LaunchWindowShouldBeForegroundNotification {
-  /**
-   * An HWND of the window that should be brought to front
-   * using SetForegrounWindow.
-   */
-  hwnd: number;
-}
-
-/**
- * Sent during @@LaunchParams, when attaching to a running
- * instance, instead of launching a new one.
- *
- * butlerd will also try to call SetForegroundWindow itself
- * but since it's not the foreground process, it'll just
- * be highlighted in the task bar.
- *
- * Windows only.
- */
-export const LaunchWindowShouldBeForeground = createNotification<
-  LaunchWindowShouldBeForegroundNotification
->("LaunchWindowShouldBeForeground");
-
-/**
  * Payload for LaunchRunning
  */
 export interface LaunchRunningNotification {

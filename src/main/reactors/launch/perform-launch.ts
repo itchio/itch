@@ -219,17 +219,6 @@ export async function performLaunch(
               closePrereqsModal();
             });
 
-            convo.on(
-              messages.LaunchWindowShouldBeForeground,
-              async ({ hwnd }) => {
-                try {
-                  require("asfw").SetForegroundWindow(hwnd);
-                } catch (e) {
-                  logger.warn(`Could not set foreground window: ${e.stack}`);
-                }
-              }
-            );
-
             convo.on(messages.LaunchRunning, async () => {
               logger.info("Now running!");
               ctx.emitProgress({ progress: 1, stage: "run" });
