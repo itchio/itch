@@ -142,8 +142,8 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
 interface ButlerIncarnation {
   id: number;
   instance: Instance;
-  convo: Conversation;
   closed: boolean;
+  client: Client;
 }
 
 let butlerInstanceSeed = 1;
@@ -162,8 +162,8 @@ async function refreshButlerd(store: Store) {
   let incarnation: ButlerIncarnation = {
     id,
     instance,
-    convo: null,
     closed: false,
+    client: null,
   };
 
   instance
@@ -196,9 +196,9 @@ async function refreshButlerd(store: Store) {
     `...for butlerd instance ${id} got endpoint ${endpoint.http.address}`
   );
 
-  const client = new Client(endpoint);
+  incarnation.client = new Client(endpoint);
 
-  const versionInfo = await client.call(messages.VersionGet, {});
+  const versionInfo = await incarnation.client.call(messages.VersionGet, {});
   logger.info(
     `Now speaking with butlerd instance ${id}, version ${
       versionInfo.versionString
@@ -206,8 +206,7 @@ async function refreshButlerd(store: Store) {
   );
 
   if (previousIncarnation) {
-    let client = new Client(await previousIncarnation.instance.getEndpoint());
-    await client.call(messages.MetaShutdown, {});
+    await previousIncarnation.client.call(messages.MetaShutdown, {});
   }
   previousIncarnation = incarnation;
 
