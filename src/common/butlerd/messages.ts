@@ -19,6 +19,13 @@ export interface MetaFlowParams {
 }
 
 /**
+ * Params for Meta.Shutdown
+ */
+export interface MetaShutdownParams {
+  // no fields
+}
+
+/**
  * Payload for MetaFlowEstablished
  */
 export interface MetaFlowEstablishedNotification {
@@ -100,6 +107,21 @@ export interface MetaFlowResult {
 export const MetaFlow = createRequest<MetaFlowParams, MetaFlowResult>(
   "Meta.Flow"
 );
+
+/**
+ * Result for Meta.Shutdown
+ */
+export interface MetaShutdownResult {
+  // no fields
+}
+
+/**
+ * When called, gracefully shutdown the butler daemon.
+ */
+export const MetaShutdown = createRequest<
+  MetaShutdownParams,
+  MetaShutdownResult
+>("Meta.Shutdown");
 
 /**
  * Result for Version.Get

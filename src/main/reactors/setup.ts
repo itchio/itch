@@ -142,8 +142,8 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
 interface ButlerIncarnation {
   id: number;
   instance: Instance;
-  convo: Conversation;
   closed: boolean;
+  client: Client;
 }
 
 let butlerInstanceSeed = 1;
@@ -162,8 +162,8 @@ async function refreshButlerd(store: Store) {
   let incarnation: ButlerIncarnation = {
     id,
     instance,
-    convo: null,
     closed: false,
+    client: null,
   };
 
   instance
@@ -196,25 +196,9 @@ async function refreshButlerd(store: Store) {
     `...for butlerd instance ${id} got endpoint ${endpoint.http.address}`
   );
 
-  const client = new Client(endpoint);
-  const flowEstablished = new Promise<Conversation>((resolve, reject) => {
-    setTimeout(() => {
-      reject(new Error(`Meta.Flow call timed out for butlerd instance ${id}!`));
-    }, 2000);
+  incarnation.client = new Client(endpoint);
 
-    client
-      .call(messages.MetaFlow, {}, convo => {
-        // TODO: listen for global notifications here
-        convo.on(messages.MetaFlowEstablished, async () => {
-          logger.info(`Meta.Flow established for butlerd instance ${id}!`);
-          resolve(convo);
-        });
-      })
-      .catch(reject);
-  });
-  incarnation.convo = await flowEstablished;
-
-  const versionInfo = await client.call(messages.VersionGet, {});
+  const versionInfo = await incarnation.client.call(messages.VersionGet, {});
   logger.info(
     `Now speaking with butlerd instance ${id}, version ${
       versionInfo.versionString
@@ -222,31 +206,7 @@ async function refreshButlerd(store: Store) {
   );
 
   if (previousIncarnation) {
-    let inc = previousIncarnation;
-    let beforeCancel = Date.now();
-    if (inc.convo) {
-      logger.info(
-        `Requesting graceful shutdown of butlerd instance ${inc.id}...`
-      );
-      inc.convo.cancel();
-    }
-
-    if (inc.instance) {
-      logger.debug(`Waiting for butlerd instance ${inc.id} to close...`);
-      let interval: NodeJS.Timer;
-      let intervalMs = 1000;
-      interval = setInterval(() => {
-        let elapsed = Date.now() - beforeCancel;
-        if (inc.closed) {
-          logger.info(
-            `butlerd instance ${
-              inc.id
-            } exited! (${elapsed.toFixed()} ms after shutdown request)`
-          );
-          clearInterval(interval);
-        }
-      }, intervalMs);
-    }
+    await previousIncarnation.client.call(messages.MetaShutdown, {});
   }
   previousIncarnation = incarnation;
 
