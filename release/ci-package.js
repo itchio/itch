@@ -125,7 +125,6 @@ async function ciPackage(args) {
   const windows = require("./package/windows");
 
   const electronPackager = bluebird.promisify(require("electron-packager"));
-  const electronRebuild = require("electron-rebuild-ftl").default;
 
   $.say("Packaging with binary release...");
   let wd = process.cwd();
@@ -144,14 +143,6 @@ async function ciPackage(args) {
     {
       afterCopy: [
         async (buildPath, electronVersion, platform, arch, callback) => {
-          $.say("Rebuilding native dependencies...");
-          try {
-            await electronRebuild(buildPath, electronVersion, arch, [], true);
-          } catch (err) {
-            $.say(`While building native deps:\n${err.stack}`);
-            callback(err);
-          }
-
           $.say("Cleaning modules...");
           try {
             await $.cd(buildPath, async function() {
@@ -176,7 +167,7 @@ async function ciPackage(args) {
       2,
     )}`,
   );
-  const appPaths = await $.measure("electron package + rebuild", async () => {
+  const appPaths = await $.measure("electron package", async () => {
     return await electronPackager(electronFinalOptions);
   });
   let buildPath = appPaths[0].replace(/\\/g, "/");
