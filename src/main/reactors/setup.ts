@@ -205,13 +205,13 @@ async function refreshButlerd(store: Store) {
     }, endpoint ${endpoint.http.address}`
   );
 
+  store.dispatch(actions.gotButlerdEndpoint({ endpoint }));
+  initialButlerdResolve();
+
   if (previousIncarnation) {
     await previousIncarnation.client.call(messages.MetaShutdown, {});
   }
   previousIncarnation = incarnation;
-
-  store.dispatch(actions.gotButlerdEndpoint({ endpoint }));
-  initialButlerdResolve();
 }
 
 export default function(watcher: Watcher) {
