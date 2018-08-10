@@ -612,5 +612,6 @@
     "send_feedback.steps.your_message": "Via mesaĝo",
     "send_feedback.steps.system_info": "Sistema informo",
     "send_feedback.steps.send": "Sendi la raporton",
-    "empty_state.nothing_to_see_here": "Ĉi tie estas nenio"
+    "empty_state.nothing_to_see_here": "Ĉi tie estas nenio",
+    "grid.item.install_title": "Instali „{{title}}“"
 }
