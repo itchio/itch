@@ -366,5 +366,6 @@
     "grid.item.revert_to_version": "Ripristina alla versione...",
     "grid.item.view_details": "Mostra i dettagli...",
     "table.column.name": "Nome",
-    "table.column.play_time": "Tempo di gioco"
+    "table.column.play_time": "Tempo di gioco",
+    "docs.how_to_help": "Come posso aiutare?"
 }
