@@ -463,5 +463,6 @@
     "collections.empty": "Du hast momentan keine Sammlungen",
     "download.reason.install": "zum installieren",
     "download.outcome.reinstalled": "neuinstalliert",
-    "game.install.could_not_launch.message": "Wir bekamen diese Nachricht: {{errorMessage}}"
+    "game.install.could_not_launch.message": "Wir bekamen diese Nachricht: {{errorMessage}}",
+    "docs.how_to_help": "Wie kann ich helfen?"
 }
