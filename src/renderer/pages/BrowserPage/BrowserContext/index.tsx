@@ -2,12 +2,12 @@ import { messages } from "common/butlerd";
 import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
 import React from "react";
-import butlerCaller, { LoadingStateDiv } from "renderer/hocs/butlerCaller";
+import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
 import BrowserContextGame from "renderer/pages/BrowserPage/BrowserContext/BrowserContextGame";
-import styled, { animations } from "renderer/styles";
+import styled from "renderer/styles";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 
@@ -17,8 +17,6 @@ const BrowserContextContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  animation: ${animations.enterBottom} 0.2s;
 `;
 
 class BrowserContext extends React.PureComponent<Props> {
