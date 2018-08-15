@@ -1,16 +1,38 @@
-import { Store } from "common/types";
+import { Store, WebviewScreenshot } from "common/types";
 import { getNativeWindow } from "main/reactors/winds";
-import { BrowserView } from "electron";
+import { BrowserView, ipcMain } from "electron";
 import { isEmpty } from "underscore";
 import {
   getBrowserView,
   forgetBrowserView,
+  browserViewToTab,
 } from "main/reactors/web-contents/browser-view-state";
 
 export function hideBrowserView(store: Store, wind: string) {
   const rs = store.getState();
   const nw = getNativeWindow(rs, wind);
-  nw.setBrowserView(null);
+
+  const bv = nw.getBrowserView();
+  if (bv) {
+    const tab = browserViewToTab(bv);
+    if (tab) {
+      bv.webContents.capturePage(img => {
+        const rw = getNativeWindow(rs, "root");
+
+        const payload: WebviewScreenshot = {
+          tab,
+          bitmap: img.toBitmap(),
+          size: img.getSize(),
+        };
+        rw.webContents.send(`made-webview-screenshot`, payload);
+        ipcMain.once(`received-webview-screenshot`, () => {
+          nw.setBrowserView(null);
+        });
+      });
+    } else {
+      nw.setBrowserView(null);
+    }
+  }
 }
 
 export function getBrowserViewToShow(store: Store, wind: string): BrowserView {
