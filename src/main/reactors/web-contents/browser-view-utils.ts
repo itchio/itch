@@ -1,12 +1,12 @@
 import { Store, WebviewScreenshot } from "common/types";
-import { getNativeWindow } from "main/reactors/winds";
-import { BrowserView, ipcMain } from "electron";
-import { isEmpty } from "underscore";
+import { BrowserView } from "electron";
 import {
-  getBrowserView,
-  forgetBrowserView,
   browserViewToTab,
+  forgetBrowserView,
+  getBrowserView,
 } from "main/reactors/web-contents/browser-view-state";
+import { getNativeWindow } from "main/reactors/winds";
+import { isEmpty } from "underscore";
 
 export function hideBrowserView(store: Store, wind: string) {
   const rs = store.getState();
@@ -16,18 +16,22 @@ export function hideBrowserView(store: Store, wind: string) {
   if (bv) {
     const tab = browserViewToTab(bv);
     if (tab) {
-      bv.webContents.capturePage(img => {
-        const rw = getNativeWindow(rs, "root");
-
-        const payload: WebviewScreenshot = {
-          tab,
-          bitmap: img.toBitmap(),
-          size: img.getSize(),
-        };
-        rw.webContents.send(`made-webview-screenshot`, payload);
-        ipcMain.once(`received-webview-screenshot`, () => {
+      setTimeout(() => {
+        try {
           nw.setBrowserView(null);
-        });
+        } catch (e) {
+          console.error(`While clearing browser view: ${e.stack}`);
+        }
+      }, 100);
+      bv.webContents.capturePage(img => {
+        sendScreenshot(
+          store,
+          wind,
+          tab,
+          img.toBitmap(),
+          img.getSize().width,
+          img.getSize().height
+        );
       });
     } else {
       nw.setBrowserView(null);
@@ -37,20 +41,22 @@ export function hideBrowserView(store: Store, wind: string) {
 
 export function getBrowserViewToShow(store: Store, wind: string): BrowserView {
   const rs = store.getState();
-  const nw = getNativeWindow(rs, wind);
 
   if (!rs.profile.profile) {
     // don't show browser views if logged out
+    console.log(`logged out, not showing`);
     return null;
   }
 
   const ws = rs.winds[wind];
   if (!isEmpty(ws.modals)) {
     // don't show browser view again as long as there are modals
+    console.log(`has modals, not showing`);
     return null;
   }
-  if (ws.contextMenu && ws.contextMenu.open) {
-    // don't show browser view again as long as there are context menus
+  if (rs.ui.search.open) {
+    // don't show browser view again as long as search is open
+    console.log(`search open, not showing`);
     return null;
   }
 
@@ -100,4 +106,22 @@ export function setBrowserViewFullscreen(store: Store, wind: string) {
     x: 0,
     y: 0,
   });
+}
+
+export function sendScreenshot(
+  store: Store,
+  wind: string,
+  tab: string,
+  buf: Buffer,
+  width: number,
+  height: number
+) {
+  const rs = store.getState();
+  const rw = getNativeWindow(rs, wind);
+  const payload: WebviewScreenshot = {
+    tab,
+    bitmap: buf,
+    size: { width, height },
+  };
+  rw.webContents.send(`made-webview-screenshot`, payload);
 }

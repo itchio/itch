@@ -164,16 +164,15 @@ class BrowserPage extends React.PureComponent<Props> {
       const data = new ImageData(arr, width, height);
       ctx.putImageData(data, 0, 0);
     }
-    // main sends us an asynchronous message, so it expects us
-    // to reply before going on with its regular business.
-    // hopefully this all happens very fast and we don't
-    // run into any nasty race conditions. in practice, it'll
-    // probably happen a few times.
-    ipcRenderer.send("received-webview-screenshot");
   };
 
   gotCanvas = (canvas: HTMLCanvasElement) => {
     this.canvas = canvas;
+    if (this.canvas) {
+      let ctx = canvas.getContext("2d");
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
   };
 
   componentWillUnmount() {

@@ -319,7 +319,6 @@ export interface WindState {
   navigation: NavigationState;
   modals: ModalsState;
   tabInstances: TabDataTypes.TabInstances;
-  contextMenu: ContextMenuState;
   native: NativeWindowState;
   properties: WindPropertiesState;
 }
@@ -413,17 +412,13 @@ export interface UIMenuState {
   template: MenuTemplate;
 }
 
-export interface ContextMenuState {
-  open: boolean;
-  data: {
-    template: MenuTemplate;
-    clientX: number;
-    clientY: number;
-  };
-}
-
 export interface UIState {
   menu: UIMenuState;
+  search: UISearchState;
+}
+
+export interface UISearchState {
+  open: boolean;
 }
 
 interface InstallLocation {

@@ -1,25 +1,25 @@
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
 import { Store, TabWeb } from "common/types";
+import { partitionForUser } from "common/util/partition-for-user";
 import { Watcher } from "common/util/watcher";
-import { BrowserWindow, BrowserView, webContents, session } from "electron";
+import { BrowserView, BrowserWindow, session, webContents } from "electron";
 import { mainLogger } from "main/logger";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
-import { partitionForUser } from "common/util/partition-for-user";
-import { getNativeWindow, getNativeState } from "main/reactors/winds";
-import { isEmpty } from "underscore";
-import {
-  setBrowserViewFullscreen,
-  showBrowserView,
-  destroyBrowserView,
-  hideBrowserView,
-} from "main/reactors/web-contents/browser-view-utils";
 import {
   getBrowserView,
   storeBrowserView,
 } from "main/reactors/web-contents/browser-view-state";
+import {
+  destroyBrowserView,
+  hideBrowserView,
+  setBrowserViewFullscreen,
+  showBrowserView,
+} from "main/reactors/web-contents/browser-view-utils";
 import { parseWellKnownUrl } from "main/reactors/web-contents/parse-well-known-url";
+import { getNativeState, getNativeWindow } from "main/reactors/winds";
+import { isEmpty } from "underscore";
 
 const logger = mainLogger.child(__filename);
 
@@ -142,6 +142,16 @@ export default function(watcher: Watcher) {
       return;
     }
     showBrowserView(store, wind);
+  });
+
+  watcher.on(actions.searchVisibilityChanged, async (store, action) => {
+    const { open } = action.payload;
+    const wind = "root";
+    if (open) {
+      hideBrowserView(store, wind);
+    } else {
+      showBrowserView(store, wind);
+    }
   });
 
   watcher.on(actions.analyzePage, async (store, action) => {

@@ -121,7 +121,8 @@ class Search extends React.PureComponent<Props, State> {
       } finally {
         this.setState({ loading: false, highlight: 0 });
         if (query == this.state.query && this.state.enterPending) {
-          this.setState({ enterPending: false, open: false });
+          this.setState({ enterPending: false });
+          this.setOpened(false);
           if (this.input) {
             this.input.blur();
           }
@@ -140,11 +141,11 @@ class Search extends React.PureComponent<Props, State> {
   }, 100);
 
   onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    this.setState({ open: true });
+    this.setOpened(true);
   };
 
   onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    this.setState({ open: false });
+    this.setOpened(false);
   };
 
   onChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -225,26 +226,26 @@ class Search extends React.PureComponent<Props, State> {
   };
 
   subscribe(watcher: Watcher) {
-    watcher.on(actions.commandBack, async (store, action) => {
-      if (this.input) {
-        this.input.blur();
-      }
-      this.setState({ open: false });
-    });
-
     watcher.on(actions.focusSearch, async (store, action) => {
       if (this.input) {
         this.input.focus();
         this.input.select();
       }
-      this.setState({ open: true });
+      this.setOpened(true);
+    });
+
+    watcher.on(actions.commandBack, async (store, action) => {
+      if (this.input) {
+        this.input.blur();
+      }
+      this.setOpened(false);
     });
 
     watcher.on(actions.closeSearch, async (store, action) => {
       if (this.input) {
         this.input.blur();
       }
-      this.setState({ open: false });
+      this.setOpened(false);
     });
   }
 
@@ -296,6 +297,12 @@ class Search extends React.PureComponent<Props, State> {
   gotInput = (input: HTMLInputElement) => {
     this.input = input;
   };
+
+  setOpened(open: boolean) {
+    this.setState({ open });
+    const { dispatch } = this.props;
+    dispatch(actions.searchVisibilityChanged({ open }));
+  }
 }
 
 interface Props {

@@ -761,6 +761,10 @@ export const actions = wireActions({
   focusSearch: action<{}>(),
   closeSearch: action<{}>(),
 
+  searchVisibilityChanged: action<{
+    open: boolean;
+  }>(),
+
   // preferences
 
   updatePreferences: action<Partial<PreferencesState>>(),
