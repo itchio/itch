@@ -64,11 +64,13 @@ export function showBrowserView(store: Store, wind: string) {
   const bv = getBrowserViewToShow(store, wind);
   const obv = nw.getBrowserView();
   let focusAfterSwitch = false;
-  if (obv != bv) {
+  if (bv && obv != bv) {
     focusAfterSwitch = true;
   }
   nw.setBrowserView(bv);
-  bv.webContents.focus();
+  if (focusAfterSwitch) {
+    bv.webContents.focus();
+  }
 }
 
 export function destroyBrowserView(store: Store, wind: string, tab: string) {
