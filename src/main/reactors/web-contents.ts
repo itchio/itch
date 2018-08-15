@@ -2,7 +2,7 @@ import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
 import { Store, TabWeb } from "common/types";
 import { Watcher } from "common/util/watcher";
-import { BrowserWindow, BrowserView, webContents } from "electron";
+import { BrowserWindow, BrowserView, webContents, session } from "electron";
 import { mainLogger } from "main/logger";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
@@ -82,11 +82,14 @@ export default function(watcher: Watcher) {
       }
     } else {
       const userId = rs.profile.profile.id;
+      const partition = partitionForUser(String(userId));
+      logger.info(`Using partition ${partition}`);
+      const customSession = session.fromPartition(partition, { cache: true });
 
       const bv = new BrowserView({
         webPreferences: {
           nodeIntegration: false,
-          partition: partitionForUser(String(userId)),
+          session: customSession,
         },
       });
       storeBrowserView(wind, tab, bv);
