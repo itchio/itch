@@ -362,7 +362,7 @@
     "prompt.install_error.find_upload": "Durante la ricerca di un download: {{message}}",
     "login.two_factor.enter_code": "Inserisci il codice indicato sul tuo autenticatore per accedere.",
     "preferences.notifications.ready_notification": "Avvisami quando uno scaricamento ha finito di aggiornare o installare",
-    "pick_update_upload.single.message": "Puoi scegliere di aggiornare adesso o più avanti",
+    "pick_update_upload.single.message": "Puoi scegliere di aggiornare adesso o più avanti.",
     "grid.item.revert_to_version": "Ripristina alla versione...",
     "grid.item.view_details": "Mostra i dettagli...",
     "table.column.name": "Nome",
