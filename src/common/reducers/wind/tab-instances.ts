@@ -3,6 +3,7 @@ import { actions } from "common/actions";
 import reducer from "common/reducers/reducer";
 
 import { omit, each, size } from "underscore";
+import deepEqual from "deep-equal";
 
 const initialState: TabInstances = {};
 
@@ -81,6 +82,9 @@ export default reducer<TabInstances>(initialState, on => {
     }
 
     let newData = merge(oldInstance.data, data, { shallow });
+    if (deepEqual(oldInstance.data, newData)) {
+      return state;
+    }
 
     return {
       ...state,
