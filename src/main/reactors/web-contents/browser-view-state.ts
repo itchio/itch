@@ -26,3 +26,16 @@ export function forgetBrowserView(wind: string, tab: string) {
   }
   delete browserViews[wind][tab];
 }
+
+export function browserViewToTab(bv: BrowserView): string {
+  for (const wind of Object.keys(browserViews)) {
+    const tabs = browserViews[wind];
+    for (const tab of Object.keys(tabs)) {
+      const tbv = browserViews[wind][tab];
+      if (tbv === bv) {
+        return tab;
+      }
+    }
+  }
+  return null;
+}
