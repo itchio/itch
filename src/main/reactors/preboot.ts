@@ -49,58 +49,6 @@ export default function(watcher: Watcher) {
       }
 
       try {
-        app.on(
-          "certificate-error",
-          (ev, webContents, url, error, certificate, callback) => {
-            // do not trust
-            callback(false);
-
-            logger.error(
-              `Certificate error: ${error} issued by ${
-                certificate.issuerName
-              } for ${certificate.subjectName}`
-            );
-
-            // TODO: that's super annoying as a modal.
-
-            store.dispatch(
-              actions.openModal(
-                modals.naked.make({
-                  wind: "root",
-                  title: `Certificate error: ${error}`,
-                  message:
-                    `There was an error with the certificate for ` +
-                    `\`${certificate.subjectName}\` issued by \`${
-                      certificate.issuerName
-                    }\`.\n\n` +
-                    `Please check your proxy configuration and try again.`,
-                  detail: `If you ignore this error, the rest of the app might not work correctly.`,
-                  buttons: [
-                    {
-                      label: "Ignore and continue",
-                      className: "secondary",
-                    },
-                    {
-                      label: ["menu.file.quit"],
-                      action: actions.quit({}),
-                    },
-                  ],
-                  widgetParams: null,
-                })
-              )
-            );
-          }
-        );
-        logger.debug(`Set up certificate error handler`);
-      } catch (e) {
-        logger.error(
-          `Could not set up certificate error handler: ${e.stack ||
-            e.message ||
-            e}`
-        );
-      }
-
-      try {
         const { session } = require("electron");
         const netSession = session.fromPartition(NET_PARTITION_NAME, {
           cache: false,

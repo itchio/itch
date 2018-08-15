@@ -83,7 +83,6 @@ export default function(watcher: Watcher) {
     } else {
       const userId = rs.profile.profile.id;
       const partition = partitionForUser(String(userId));
-      logger.info(`Using partition ${partition}`);
       const customSession = session.fromPartition(partition, { cache: true });
 
       const bv = new BrowserView({
@@ -387,6 +386,27 @@ async function hookWebContents(
     );
   };
   pushWeb({ webContentsId, loading: wc.isLoading() });
+
+  wc.on("certificate-error", (ev, url, error, certificate, cb) => {
+    cb(false);
+    logger.warn(
+      `Certificate error ${error} for ${url}, issued by ${
+        certificate.issuerName
+      } for ${certificate.subjectName}`
+    );
+  });
+
+  wc.on(
+    "did-fail-load",
+    (ev, errorCode, errorDescription, validatedURL, isMainFrame) => {
+      if (!isMainFrame) {
+        return;
+      }
+      logger.warn(
+        `Did fail load: ${errorCode}, ${errorDescription} for ${validatedURL}`
+      );
+    }
+  );
 
   wc.once("did-finish-load", () => {
     logger.debug(`did-finish-load (once)`);
