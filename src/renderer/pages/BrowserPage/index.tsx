@@ -121,8 +121,6 @@ class BrowserPage extends React.PureComponent<Props> {
         // the resolution we can work with.
         this.canvas.width = metrics.width;
         this.canvas.height = metrics.height;
-      } else {
-        console.log(`canvas already has proper size`);
       }
     }
     dispatch(
