@@ -114,10 +114,6 @@ function ensureWindowInsideDisplay(nativeWindow: Electron.BrowserWindow) {
   }
 
   const originalBounds = nativeWindow.getBounds();
-  logger.debug(
-    `Ensuring ${JSON.stringify(originalBounds)} is inside a display`
-  );
-
   const display = screen.getDisplayMatching(originalBounds);
   if (!display) {
     logger.warn(`No display found matching ${JSON.stringify(originalBounds)}`);
@@ -125,8 +121,6 @@ function ensureWindowInsideDisplay(nativeWindow: Electron.BrowserWindow) {
   }
 
   const displayBounds = display.bounds;
-  logger.debug(`Display bounds: ${JSON.stringify(displayBounds)}`);
-
   let bounds = originalBounds;
 
   const displayLeft = displayBounds.x;
@@ -150,7 +144,6 @@ function ensureWindowInsideDisplay(nativeWindow: Electron.BrowserWindow) {
   }
 
   if (bounds !== originalBounds) {
-    logger.debug(`New bounds: ${JSON.stringify(bounds)}`);
     nativeWindow.setBounds(bounds);
   }
 }
