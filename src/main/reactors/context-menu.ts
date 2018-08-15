@@ -1,6 +1,12 @@
 import { Watcher } from "common/util/watcher";
 
-import { Store, MenuTemplate, IOpenContextMenuBase } from "common/types";
+import {
+  Store,
+  MenuTemplate,
+  IOpenContextMenuBase,
+  MenuItem,
+  I18nState,
+} from "common/types";
 
 import { actions } from "common/actions";
 
@@ -8,6 +14,10 @@ import {
   gameControls,
   userMenu,
 } from "main/reactors/context-menu/build-template";
+import { getNativeWindow } from "main/reactors/winds";
+import { Menu, MenuItemConstructorOptions } from "electron";
+import { t } from "common/format/t";
+import i18n from "common/reducers/i18n";
 
 function openMenu(
   store: Store,
@@ -35,4 +45,48 @@ export default function(watcher: Watcher) {
     const { wind, clientX, clientY } = action.payload;
     openMenu(store, template, { wind, clientX, clientY });
   });
+
+  watcher.on(actions.popupContextMenu, async (store, action) => {
+    const rs = store.getState();
+    const { wind, template, clientX, clientY } = action.payload;
+    const nw = getNativeWindow(rs, wind);
+
+    const menu = Menu.buildFromTemplate(convertTemplate(store, template));
+    menu.popup({
+      window: nw,
+      x: clientX,
+      y: clientY,
+    });
+  });
+}
+
+function convertTemplate(
+  store: Store,
+  template: MenuItem[]
+): MenuItemConstructorOptions[] {
+  const rs = store.getState();
+  const { i18n } = rs;
+  const result: MenuItemConstructorOptions[] = [];
+  for (const item of template) {
+    const opts: MenuItemConstructorOptions = {};
+    if (item.localizedLabel) {
+      opts.label = t(i18n, item.localizedLabel);
+    }
+    if (item.action) {
+      opts.click = () => {
+        store.dispatch(item.action);
+      };
+    }
+    if (item.type) {
+      opts.type = item.type;
+    }
+    if (item.submenu) {
+      opts.submenu = convertTemplate(store, item.submenu);
+    }
+    if (item.accelerator) {
+      opts.accelerator = item.accelerator;
+    }
+    result.push(opts);
+  }
+  return result;
 }

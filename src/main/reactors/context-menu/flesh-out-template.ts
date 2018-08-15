@@ -1,6 +1,6 @@
 import urls from "common/constants/urls";
 import { actions } from "common/actions";
-import { Store, MenuTemplate, IRuntime, IMenuItem } from "common/types";
+import { Store, MenuTemplate, IRuntime, MenuItem } from "common/types";
 
 import { map } from "underscore";
 import { t } from "common/format/t";
@@ -13,7 +13,7 @@ export function fleshOutTemplate(
 ): Electron.MenuItemConstructorOptions[] {
   const { i18n } = store.getState();
 
-  const visitNode = (input: IMenuItem) => {
+  const visitNode = (input: MenuItem) => {
     const node = { ...input } as Electron.MenuItemConstructorOptions;
     if (node.type === "separator") {
       return node;
@@ -38,7 +38,7 @@ export function fleshOutTemplate(
     }
 
     if (node.submenu) {
-      node.submenu = map(node.submenu as IMenuItem[], visitNode);
+      node.submenu = map(node.submenu as MenuItem[], visitNode);
     }
 
     return node;
@@ -47,11 +47,7 @@ export function fleshOutTemplate(
   return map(template, visitNode);
 }
 
-function convertMenuAction(
-  wind: string,
-  payload: IMenuItem,
-  runtime: IRuntime
-) {
+function convertMenuAction(wind: string, payload: MenuItem, runtime: IRuntime) {
   const { role, localizedLabel } = payload;
 
   switch (role) {

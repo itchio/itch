@@ -71,8 +71,13 @@ const LocationTable = styled.table`
   }
 
   td.more-column {
-    min-width: 60px;
-    max-width: 60px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+
+    min-width: 120px;
+    max-width: 120px;
   }
 
   .progress-wrapper {
@@ -233,8 +238,13 @@ class InstallLocationSettings extends React.Component<Props, State> {
           </td>
           <td className="more-column">
             <IconButton
+              className={"navigate-button"}
+              icon="arrow-right"
+              data-id={id}
+              onClick={this.onNavigate}
+            />
+            <IconButton
               className={"more-actions-button"}
-              emphasized
               icon="more_vert"
               data-id={id}
               onClick={this.onMoreActions}
@@ -254,6 +264,20 @@ class InstallLocationSettings extends React.Component<Props, State> {
       </LocationTable>
     );
   }
+
+  onNavigate = (e: React.MouseEvent<any>) => {
+    e.preventDefault();
+    const { id } = e.currentTarget.dataset;
+    const installLocations = this.state.installLocations;
+    let installLocation = findWhere(installLocations, { id });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.navigate({
+        wind: "root",
+        url: urlForInstallLocation(installLocation.id),
+      })
+    );
+  };
 
   onMoreActions = (e: React.MouseEvent<any>) => {
     e.preventDefault();

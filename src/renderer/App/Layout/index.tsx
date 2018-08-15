@@ -5,7 +5,6 @@ import { ambientWind } from "common/util/navigation";
 import React from "react";
 import ReactHintFactory from "react-hint";
 import { InjectedIntl } from "react-intl";
-import ContextMenuHandler from "renderer/App/Layout/ContextMenuHandler";
 import NonLocalIndicator from "renderer/App/Layout/NonLocalIndicator";
 import StatusBar from "renderer/App/Layout/StatusBar";
 import { hook } from "renderer/hocs/hook";
@@ -85,7 +84,6 @@ class Layout extends React.PureComponent<Props> {
         <StatusBar />
         <ReactHintContainer>{this.renderReactHint()}</ReactHintContainer>
         <NonLocalIndicator />
-        <ContextMenuHandler />
       </LayoutContainer>
     );
   }

@@ -12,20 +12,18 @@ const initialState: ContextMenuState = {
 };
 
 export default reducer<ContextMenuState>(initialState, on => {
-  on(actions.popupContextMenu, (state, action) => {
-    const { clientX, clientY, template } = action.payload;
-
-    return {
-      ...state,
-      data: { clientX, clientY, template },
-      open: true,
-    };
-  });
-
-  on(actions.closeContextMenu, (state, action) => {
-    return {
-      ...state,
-      open: false,
-    };
-  });
+  // on(actions.popupContextMenu, (state, action) => {
+  //   const { clientX, clientY, template } = action.payload;
+  //   return {
+  //     ...state,
+  //     data: { clientX, clientY, template },
+  //     open: true,
+  //   };
+  // });
+  // on(actions.closeContextMenu, (state, action) => {
+  //   return {
+  //     ...state,
+  //     open: false,
+  //   };
+  // });
 });

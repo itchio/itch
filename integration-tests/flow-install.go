@@ -73,8 +73,7 @@ func installFlow(r *runner) {
 	r.mustSwitchToOtherWindow(mainWindowHandle)
 
 	r.logf("opening default install location in tab")
-	must(r.click(".meat-tab.visible .install-location-row.default .more-actions-button"))
-	must(r.click("#context--install-location-navigate"))
+	must(r.click(".meat-tab.visible .install-location-row.default .navigate-button"))
 
 	r.mustSwitchToWindow(mainWindowHandle)
 	r.mustCloseAllOtherWindows()

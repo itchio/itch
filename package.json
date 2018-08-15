@@ -50,7 +50,6 @@
     "polished": "^1.0.3",
     "progress-stream": "^2.0.0",
     "react": "^16.4.1",
-    "react-contextmenu": "^2.6.5",
     "react-dom": "^16.4.1",
     "react-fast-compare": "^2.0.1",
     "react-hint": "^3.1.0",

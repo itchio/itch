@@ -605,13 +605,13 @@ export interface IRuntime {
   platform: Platform;
 }
 
-export interface IMenuItem extends Electron.MenuItemConstructorOptions {
+export interface MenuItem extends Electron.MenuItemConstructorOptions {
   localizedLabel?: LocalizedString;
   action?: Action<any>;
-  submenu?: IMenuItem[];
+  submenu?: MenuItem[];
   id?: string;
 }
-export type MenuTemplate = IMenuItem[];
+export type MenuTemplate = MenuItem[];
 
 export interface INavigatePayload {
   /** which window initiated the navigation */

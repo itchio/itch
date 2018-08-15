@@ -5,7 +5,7 @@ import { Watcher } from "common/util/watcher";
 import { BrowserWindow, BrowserView, webContents } from "electron";
 import { mainLogger } from "main/logger";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
-import createContextMenu from "main/reactors/web-contents-context-menu";
+import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
 import { partitionForUser } from "common/util/partition-for-user";
 import { getNativeWindow, getNativeState } from "main/reactors/winds";
 import { isEmpty } from "underscore";
@@ -139,16 +139,6 @@ export default function(watcher: Watcher) {
     if (!isEmpty(store.getState().winds[wind].modals)) {
       return;
     }
-    showBrowserView(store, wind);
-  });
-
-  watcher.on(actions.popupContextMenu, async (store, action) => {
-    const { wind } = action.payload;
-    hideBrowserView(store, wind);
-  });
-
-  watcher.on(actions.closeContextMenu, async (store, action) => {
-    const { wind } = action.payload;
     showBrowserView(store, wind);
   });
 
@@ -400,7 +390,7 @@ async function hookWebContents(
     pushWeb({
       hadFirstLoad: true,
     });
-    createContextMenu(wc, wind, store);
+    hookWebContentsContextMenu(wc, wind, store);
 
     if (SHOW_DEVTOOLS) {
       wc.openDevTools({ mode: "detach" });

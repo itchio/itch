@@ -15,6 +15,7 @@ import {
   standardCoverWidth,
 } from "renderer/pages/PageStyles/games";
 import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
+import { ambientWind } from "common/util/navigation";
 
 const Spacer = styled.div`
   flex-basis: 16px;
@@ -47,7 +48,7 @@ class BrowserContextGame extends React.PureComponent<Props> {
     const { game, status } = this.props;
 
     return (
-      <BrowserContextDiv>
+      <BrowserContextDiv onContextMenu={this.onContextMenu}>
         <SmallerGameCover game={game} showInfo={false} />
         <Spacer />
         <GameStats game={game} status={status} />
@@ -64,6 +65,19 @@ class BrowserContextGame extends React.PureComponent<Props> {
       </BrowserContextDiv>
     );
   }
+
+  onContextMenu = (ev: React.MouseEvent<any>) => {
+    const { clientX, clientY } = ev;
+    const { game, dispatch } = this.props;
+    dispatch(
+      actions.openGameContextMenu({
+        wind: ambientWind(),
+        game,
+        clientX,
+        clientY,
+      })
+    );
+  };
 
   onManage = () => {
     const { game, dispatch } = this.props;

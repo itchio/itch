@@ -30,6 +30,7 @@ import { format as formatUrl, UrlObject } from "url";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import { registerElectronSession } from "butlerd";
 import { partitionForApp } from "common/util/partition-for-user";
+import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
 
 const logger = mainLogger.child(__filename);
 
@@ -475,6 +476,8 @@ function hookNativeWindow(
   wind: string,
   nativeWindow: BrowserWindow
 ) {
+  hookWebContentsContextMenu(nativeWindow.webContents, wind, store);
+
   nativeWindow.on("focus", (e: any) => {
     store.dispatch(actions.windFocusChanged({ wind, focused: true }));
   });

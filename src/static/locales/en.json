@@ -85,6 +85,7 @@
   "grid.item.download_java": "Download Java",
   "grid.item.finalize_installation": "Finalize install",
   "grid.item.install": "Install",
+  "grid.item.install_title": "Install {{title}}",
   "grid.item.review": "Review",
   "grid.item.queueing": "Queuing…",
   "grid.item.installing": "Installing…",

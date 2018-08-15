@@ -5,7 +5,7 @@ import { Menu } from "common/helpers/menu";
 
 import { createSelector } from "reselect";
 
-import { IRuntime, IMenuItem, MenuTemplate } from "common/types";
+import { IRuntime, MenuItem, MenuTemplate } from "common/types";
 
 import { RootState } from "common/types";
 import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template";
@@ -52,16 +52,16 @@ export default function(watcher: Watcher, runtime: IRuntime) {
 }
 
 interface AllTemplates {
-  mainMac: IMenuItem;
-  fileWithTabs: IMenuItem;
-  fileNoTabs: IMenuItem;
-  fileMacWithTabs: IMenuItem;
-  fileMacNoTabs: IMenuItem;
-  edit: IMenuItem;
-  view: IMenuItem;
-  accountLoggedOut: IMenuItem;
-  account: IMenuItem;
-  help: IMenuItem;
+  mainMac: MenuItem;
+  fileWithTabs: MenuItem;
+  fileNoTabs: MenuItem;
+  fileMacWithTabs: MenuItem;
+  fileMacNoTabs: MenuItem;
+  edit: MenuItem;
+  view: MenuItem;
+  accountLoggedOut: MenuItem;
+  account: MenuItem;
+  help: MenuItem;
 }
 
 function computeMenuTemplate(
@@ -70,7 +70,7 @@ function computeMenuTemplate(
   enableTabs: boolean,
   runtime: IRuntime
 ) {
-  const hiddenTabShortcuts: IMenuItem[] = [
+  const hiddenTabShortcuts: MenuItem[] = [
     // next tab
     {
       localizedLabel: ["menu.file.show_next_tab"],
@@ -139,7 +139,7 @@ function computeMenuTemplate(
       visible: false,
     },
   ];
-  const hiddenGeneralShortcuts: IMenuItem[] = [
+  const hiddenGeneralShortcuts: MenuItem[] = [
     // devtools
     {
       localizedLabel: ["menu.file.open_dev_tools"],

@@ -1,4 +1,4 @@
-import { MenuTemplate, IMenuItem, Store } from "common/types";
+import { MenuTemplate, MenuItem, Store } from "common/types";
 import { actions } from "common/actions";
 
 import { isEmpty } from "underscore";
@@ -76,7 +76,7 @@ export function gameControls(store: Store, game: Game): MenuTemplate {
 
   let statusItems: MenuTemplate = [];
 
-  const itemForOperation = (operation: Operation): IMenuItem => {
+  const itemForOperation = (operation: Operation): MenuItem => {
     const localizedLabel = formatOperation(operation);
     if (operation.name === "launch") {
       return {
@@ -89,7 +89,7 @@ export function gameControls(store: Store, game: Game): MenuTemplate {
         ],
       };
     } else {
-      const item: IMenuItem = {
+      const item: MenuItem = {
         localizedLabel,
         enabled: false,
       };
@@ -175,7 +175,7 @@ export function gameControls(store: Store, game: Game): MenuTemplate {
       } else {
         // we have any kind of access
         statusItems.push({
-          localizedLabel: ["grid.item.install"],
+          localizedLabel: ["grid.item.install_title", { title: game.title }],
           action: actions.queueGame({ game }),
         });
       }

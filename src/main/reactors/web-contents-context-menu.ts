@@ -7,7 +7,11 @@ import IntlMessageFormat from "intl-messageformat";
 
 const emptyObj: any = {};
 
-function create(wc: Electron.WebContents, wind: string, store: Store) {
+export function hookWebContentsContextMenu(
+  wc: Electron.WebContents,
+  wind: string,
+  store: Store
+) {
   const intl = {
     formatMessage: ({ id }: { id: string }, values = {}): string => {
       const { i18n } = store.getState();
@@ -109,8 +113,6 @@ function create(wc: Electron.WebContents, wind: string, store: Store) {
     }
   });
 }
-
-export default create;
 
 function delUnusedElements(menuTpl: Electron.MenuItemConstructorOptions[]) {
   let notDeletedPrevEl: Electron.MenuItemConstructorOptions;
