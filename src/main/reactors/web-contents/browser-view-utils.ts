@@ -61,7 +61,14 @@ export function getBrowserViewToShow(store: Store, wind: string): BrowserView {
 export function showBrowserView(store: Store, wind: string) {
   const rs = store.getState();
   const nw = getNativeWindow(rs, wind);
-  nw.setBrowserView(getBrowserViewToShow(store, wind));
+  const bv = getBrowserViewToShow(store, wind);
+  const obv = nw.getBrowserView();
+  let focusAfterSwitch = false;
+  if (obv != bv) {
+    focusAfterSwitch = true;
+  }
+  nw.setBrowserView(bv);
+  bv.webContents.focus();
 }
 
 export function destroyBrowserView(store: Store, wind: string, tab: string) {
