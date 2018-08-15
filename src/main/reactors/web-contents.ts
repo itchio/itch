@@ -398,14 +398,6 @@ async function hookWebContents(
   });
 
   wc.on("did-finish-load", () => {
-    logger.debug(
-      `did-finish-load (on), executing injected js and analyzing page`
-    );
-    wc.executeJavaScript(
-      `window.__itchInit && window.__itchInit(${JSON.stringify(tab)})`,
-      false
-    );
-
     store.dispatch(
       actions.analyzePage({
         wind,
