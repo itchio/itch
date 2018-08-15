@@ -149,12 +149,14 @@ class Sidebar extends React.PureComponent<Props, State> {
               icon="delete"
               id="sidebar-close-all-tabs"
               hint={["sidebar.close_all_tabs"]}
+              hintPosition="left"
               onClick={this.closeAllTabs}
             />
             <IconButton
               id="new-tab-icon"
               icon="plus"
               hint={["sidebar.new_tab"]}
+              hintPosition="left"
               onClick={this.newTab}
             />
           </SidebarSection>
