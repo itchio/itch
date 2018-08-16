@@ -31,6 +31,8 @@ const SidebarDiv = styled.div`
 
   animation: ${styles.animations.enterLeft} 0.2s;
 
+  padding-bottom: 8px;
+
   height: 100%;
   flex-grow: 0;
   flex-shrink: 0;
