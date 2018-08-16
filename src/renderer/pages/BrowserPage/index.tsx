@@ -5,7 +5,8 @@ import {
   Dispatch,
   ProxySource,
   BrowserViewMetrics,
-  WebviewScreenshot,
+  SetBrowserScreenshot,
+  ClearBrowserScreenshot,
 } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
@@ -137,13 +138,40 @@ class BrowserPage extends React.PureComponent<Props> {
     // This is sent asynchronously by the main process
     // when it's about to hide the BrowserView.
     ipcRenderer.addListener(
-      "made-webview-screenshot",
-      this.onMadeWebviewScreenshot
+      "set-browser-screenshot",
+      this.onSetBrowserScreenshot
+    );
+    ipcRenderer.addListener(
+      "clear-browser-screenshot",
+      this.onClearBrowserScreenshot
     );
     this.mounted = true;
   }
 
-  onMadeWebviewScreenshot = (ev: any, payload: WebviewScreenshot) => {
+  componentWillUnmount() {
+    this.mounted = false;
+    ipcRenderer.removeListener(
+      "set-browser-screenshot",
+      this.onSetBrowserScreenshot
+    );
+    ipcRenderer.removeListener(
+      "clear-browser-screenshot",
+      this.onClearBrowserScreenshot
+    );
+    const { dispatch, space } = this.props;
+    dispatch(
+      actions.tabLosingWebContents({
+        wind: ambientWind(),
+        tab: space.tab,
+      })
+    );
+  }
+
+  onSetBrowserScreenshot = (ev: any, payload: SetBrowserScreenshot) => {
+    if (payload.tab !== this.props.space.tab) {
+      return;
+    }
+
     if (this.canvas) {
       const ctx = this.canvas.getContext("2d");
       const { bitmap, size } = payload;
@@ -166,6 +194,17 @@ class BrowserPage extends React.PureComponent<Props> {
     }
   };
 
+  onClearBrowserScreenshot = (ev: any, payload: ClearBrowserScreenshot) => {
+    if (payload.tab !== this.props.space.tab) {
+      return;
+    }
+
+    if (this.canvas) {
+      // this clears the canvas to white. Yay HTML5!
+      this.canvas.width = this.canvas.width;
+    }
+  };
+
   gotCanvas = (canvas: HTMLCanvasElement) => {
     this.canvas = canvas;
     if (this.canvas) {
@@ -174,21 +213,6 @@ class BrowserPage extends React.PureComponent<Props> {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
   };
-
-  componentWillUnmount() {
-    this.mounted = false;
-    ipcRenderer.removeListener(
-      "made-webview-screenshot",
-      this.onMadeWebviewScreenshot
-    );
-    const { dispatch, space } = this.props;
-    dispatch(
-      actions.tabLosingWebContents({
-        wind: ambientWind(),
-        tab: space.tab,
-      })
-    );
-  }
 }
 
 interface Props extends MeatProps {

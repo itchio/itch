@@ -1,4 +1,8 @@
-import { Store, WebviewScreenshot } from "common/types";
+import {
+  Store,
+  SetBrowserScreenshot,
+  ClearBrowserScreenshot,
+} from "common/types";
 import { BrowserView } from "electron";
 import {
   browserViewToTab,
@@ -24,7 +28,7 @@ export function hideBrowserView(store: Store, wind: string) {
         }
       }, 100);
       bv.webContents.capturePage(img => {
-        sendScreenshot(
+        setScreenshot(
           store,
           wind,
           tab,
@@ -67,6 +71,9 @@ export function getBrowserViewToShow(store: Store, wind: string): BrowserView {
 export function showBrowserView(store: Store, wind: string) {
   const rs = store.getState();
   const nw = getNativeWindow(rs, wind);
+  const { tab } = rs.winds[wind].navigation;
+  clearScreenshot(store, wind, tab);
+
   const bv = getBrowserViewToShow(store, wind);
   const obv = nw.getBrowserView();
   let focusAfterSwitch = false;
@@ -108,7 +115,7 @@ export function setBrowserViewFullscreen(store: Store, wind: string) {
   });
 }
 
-export function sendScreenshot(
+function setScreenshot(
   store: Store,
   wind: string,
   tab: string,
@@ -118,10 +125,19 @@ export function sendScreenshot(
 ) {
   const rs = store.getState();
   const rw = getNativeWindow(rs, wind);
-  const payload: WebviewScreenshot = {
+  const payload: SetBrowserScreenshot = {
     tab,
     bitmap: buf,
     size: { width, height },
   };
-  rw.webContents.send(`made-webview-screenshot`, payload);
+  rw.webContents.send(`set-browser-screenshot`, payload);
+}
+
+function clearScreenshot(store: Store, wind: string, tab: string) {
+  const rs = store.getState();
+  const rw = getNativeWindow(rs, wind);
+  const payload: ClearBrowserScreenshot = {
+    tab,
+  };
+  rw.webContents.send(`clear-browser-screenshot`, payload);
 }

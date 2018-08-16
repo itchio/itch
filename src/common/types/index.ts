@@ -712,13 +712,17 @@ export interface BrowserViewMetrics {
 
 export type WindRole = "main" | "secondary";
 
-export interface WebviewScreenshot {
+export interface SetBrowserScreenshot {
   tab: string;
   bitmap: Uint8Array;
   size: {
     width: number;
     height: number;
   };
+}
+
+export interface ClearBrowserScreenshot {
+  tab: string;
 }
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
