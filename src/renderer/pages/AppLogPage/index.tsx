@@ -80,6 +80,12 @@ class AppLogPage extends React.PureComponent<Props, State> {
   }
 
   componentDidMount() {
+    const { space, dispatch } = this.props;
+    dispatch(
+      space.makeFetch({
+        label: ["sidebar.applog"],
+      })
+    );
     this.queueFetch();
   }
 
