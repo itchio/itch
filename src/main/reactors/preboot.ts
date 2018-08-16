@@ -4,10 +4,9 @@ import env from "common/env";
 import { elapsed } from "common/format/datetime";
 import { ProxySource, SystemState } from "common/types";
 import { Watcher } from "common/util/watcher";
-import { app, CertificateVerifyProcRequest } from "electron";
+import { app, session, protocol } from "electron";
 import { mainLogger } from "main/logger";
 import loadPreferences from "main/reactors/preboot/load-preferences";
-import { modals } from "common/modals";
 import { applyProxySettings } from "main/reactors/proxy";
 import { itchPlatform } from "common/os/platform";
 import { arch } from "main/os/arch";
@@ -49,7 +48,6 @@ export default function(watcher: Watcher) {
       }
 
       try {
-        const { session } = require("electron");
         const netSession = session.fromPartition(NET_PARTITION_NAME, {
           cache: false,
         });

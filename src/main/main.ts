@@ -46,7 +46,7 @@ export function main() {
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
   }
-  protocol.registerStandardSchemes(["itch-cave"]);
+  protocol.registerStandardSchemes(["itch-cave", "itch"]);
 
   let store: Store = require("main/store").default;
 

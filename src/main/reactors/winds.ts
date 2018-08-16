@@ -31,6 +31,7 @@ import { openAppDevTools } from "main/reactors/open-app-devtools";
 import { registerElectronSession } from "butlerd";
 import { partitionForApp } from "common/util/partition-for-user";
 import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
+import { registerItchProtocol } from "main/net/register-itch-protocol";
 
 const logger = mainLogger.child(__filename);
 
@@ -459,6 +460,9 @@ function getAppSession(): Session {
       cache: true,
     });
     registerElectronSession(_cachedAppSession);
+
+    // this works around https://github.com/itchio/itch/issues/2039
+    registerItchProtocol(_cachedAppSession);
   }
 
   return _cachedAppSession;

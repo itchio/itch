@@ -20,6 +20,7 @@ import {
 import { parseWellKnownUrl } from "main/reactors/web-contents/parse-well-known-url";
 import { getNativeState, getNativeWindow } from "main/reactors/winds";
 import { isEmpty } from "underscore";
+import { registerItchProtocol } from "main/net/register-itch-protocol";
 
 const logger = mainLogger.child(__filename);
 
@@ -84,6 +85,7 @@ export default function(watcher: Watcher) {
       const userId = rs.profile.profile.id;
       const partition = partitionForUser(String(userId));
       const customSession = session.fromPartition(partition, { cache: true });
+      registerItchProtocol(customSession);
 
       const bv = new BrowserView({
         webPreferences: {
