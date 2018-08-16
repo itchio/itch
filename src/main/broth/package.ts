@@ -10,7 +10,7 @@ import querystring from "querystring";
 import * as semver from "semver";
 import { promisify } from "util";
 import whichCallback from "which";
-import { downloadToFile } from "main/net";
+import { downloadToFile, downloadToFileWithRetry } from "main/net";
 import { request } from "main/net/request/metal-request";
 import * as sf from "main/os/sf";
 import { mkdirp, readdir } from "main/os/sf";
@@ -343,7 +343,7 @@ export class Package implements PackageLike {
       this.info(`...from (${archiveUrl})`);
       this.info(`...to (${archivePath})`);
 
-      await downloadToFile(
+      await downloadToFileWithRetry(
         info => {
           let newInfo = {
             ...info,
