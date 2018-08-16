@@ -60,6 +60,8 @@ const CoverInfo = styled.div`
   flex-direction: row;
   align-items: center;
 
+  pointer-events: none;
+
   line-height: 1.4;
 `;
 
