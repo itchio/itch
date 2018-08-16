@@ -100,10 +100,10 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.navigate, async (store, action) => {
-    const { url, resource, data, wind, background, replace } = action.payload;
+    let { url, resource, data, wind, background, replace } = action.payload;
     logger.debug(`Navigating to ${url} ${background ? "(in background)" : ""}`);
 
-    if (opensInWindow[url]) {
+    if (opensInWindow(url)) {
       store.dispatch(
         actions.openWind({
           initialURL: url,

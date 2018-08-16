@@ -1,6 +1,6 @@
 import { actions } from "common/actions";
 import { codGray } from "common/constants/colors";
-import { opensInWindow } from "common/constants/windows";
+import { opensInWindow, normalizeURL } from "common/constants/windows";
 import env from "common/env";
 import { t } from "common/format/t";
 import { Space } from "common/helpers/space";
@@ -313,10 +313,12 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.openWind, async (store, action) => {
-    const { initialURL } = action.payload;
+    let { initialURL } = action.payload;
     const rs = store.getState();
 
-    if (opensInWindow[initialURL]) {
+    initialURL = normalizeURL(initialURL);
+
+    if (opensInWindow(initialURL)) {
       // see if we already have a window with that initialURL
       for (const wind of Object.keys(rs.winds)) {
         const windState = rs.winds[wind];
@@ -325,13 +327,6 @@ export default function(watcher: Watcher) {
           if (nativeWin) {
             nativeWin.show();
             nativeWin.focus();
-
-            store.dispatch(
-              actions.navigate({
-                wind,
-                url: initialURL,
-              })
-            );
             return;
           }
         }
