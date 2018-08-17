@@ -10,6 +10,9 @@ import * as explorer from "main/os/explorer";
 import { promisedModal } from "main/reactors/modals";
 import { getNativeWindow } from "main/reactors/winds";
 import { modals } from "common/modals";
+import { mainLogger } from "main/logger";
+
+const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
@@ -24,6 +27,12 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.removeInstallLocation, async (store, action) => {
     const { id } = action.payload;
+
+    const { installLocations } = await mcall(messages.InstallLocationsList, {});
+    if (installLocations.length <= 1) {
+      // refuse to remove the last one
+      return;
+    }
 
     const { installLocation } = await mcall(messages.InstallLocationsGetByID, {
       id,
@@ -86,7 +95,26 @@ export default function(watcher: Watcher) {
         return;
       }
 
+      const prefs = store.getState().preferences;
+      if (prefs.defaultInstallLocation === id) {
+        let newDefaultID: string = null;
+        for (const loc of installLocations) {
+          if (loc.id !== id) {
+            newDefaultID = loc.id;
+          }
+        }
+
+        logger.info(
+          `Default install location ${id} is being deleted, switching to ${newDefaultID}`
+        );
+        store.dispatch(
+          actions.updatePreferences({
+            defaultInstallLocation: newDefaultID,
+          })
+        );
+      }
       await mcall(messages.InstallLocationsRemove, { id });
+
       store.dispatch(actions.installLocationsChanged({}));
     }
   });
