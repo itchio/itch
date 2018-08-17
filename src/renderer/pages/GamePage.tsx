@@ -26,7 +26,7 @@ class GamePage extends React.PureComponent<Props> {
             const { game } = result;
             if (game) {
               dispatch(
-                space.makeFetch({
+                space.makePageUpdate({
                   label: game.title,
                 })
               );

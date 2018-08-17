@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import { opensInWindow } from "common/constants/windows";
 import { Space } from "common/helpers/space";
-import { RootState, MenuTemplate } from "common/types";
+import { RootState, MenuTemplate, I18nState } from "common/types";
 import uuid from "common/util/uuid";
 import { Watcher } from "common/util/watcher";
 import { shell } from "electron";
@@ -9,6 +9,8 @@ import { mainLogger } from "main/logger";
 import { getNativeWindow } from "main/reactors/winds";
 import { createSelector } from "reselect";
 import { truncate } from "common/format/truncate";
+import { format } from "url";
+import { t } from "common/format/t";
 
 const logger = mainLogger.child(__filename);
 
@@ -47,6 +49,7 @@ export default function(watcher: Watcher) {
     }
 
     const template = makeHistoryTemplate({
+      i18n: store.getState().i18n,
       wind,
       space,
       startIndex,
@@ -72,6 +75,7 @@ export default function(watcher: Watcher) {
     }
 
     const template = makeHistoryTemplate({
+      i18n: store.getState().i18n,
       wind,
       space,
       startIndex,
@@ -100,7 +104,7 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.navigate, async (store, action) => {
-    let { url, resource, data, wind, background, replace } = action.payload;
+    let { url, resource, wind, background, replace } = action.payload;
     logger.debug(`Navigating to ${url} ${background ? "(in background)" : ""}`);
 
     if (opensInWindow(url)) {
@@ -117,7 +121,6 @@ export default function(watcher: Watcher) {
       history: [{ url, resource }],
       currentIndex: 0,
       sequence: 0,
-      data,
     });
     if (space.protocol() == "mailto:") {
       logger.debug(`Is mailto link, opening as external and skipping tab open`);
@@ -145,7 +148,6 @@ export default function(watcher: Watcher) {
             url,
             resource,
             background,
-            data,
           })
         );
         return;
@@ -163,8 +165,7 @@ export default function(watcher: Watcher) {
           replace,
           wind,
           url,
-          resource: resource ? resource : null,
-          data,
+          resource,
         })
       );
       store.dispatch(
@@ -358,6 +359,7 @@ function makeSubWatcher(rs: RootState) {
 }
 
 interface MenuTemplateOpts {
+  i18n: I18nState;
   wind: string;
   space: Space;
   /** first history item to show, inclusive */
@@ -369,14 +371,16 @@ interface MenuTemplateOpts {
 }
 
 function makeHistoryTemplate(opts: MenuTemplateOpts): MenuTemplate {
-  const { wind, space, startIndex, endIndex } = opts;
+  const { i18n, wind, space, startIndex, endIndex } = opts;
   const tab = space.tab;
   const history = space.history();
   const currentIndex = space.currentIndex();
 
   let processItem = (i: number) => {
+    let item = history[i];
+    let label = item.label ? t(i18n, item.label) : item.url;
     template.push({
-      localizedLabel: truncate(history[i].url, { length: 50 }),
+      localizedLabel: truncate(label, { length: 50 }),
       checked: i === currentIndex,
       action: actions.tabGoToIndex({ wind, tab, index: i }),
     });

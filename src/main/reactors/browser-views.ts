@@ -1,10 +1,11 @@
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
-import { Store, TabWeb } from "common/types";
+import { Store, TabPage } from "common/types";
 import { partitionForUser } from "common/util/partition-for-user";
 import { Watcher } from "common/util/watcher";
-import { BrowserView, BrowserWindow, session, webContents } from "electron";
+import { BrowserView, BrowserWindow, session, WebContents } from "electron";
 import { mainLogger } from "main/logger";
+import { registerItchProtocol } from "main/net/register-itch-protocol";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
 import {
@@ -20,7 +21,7 @@ import {
 import { parseWellKnownUrl } from "main/reactors/web-contents/parse-well-known-url";
 import { getNativeState, getNativeWindow } from "main/reactors/winds";
 import { isEmpty } from "underscore";
-import { registerItchProtocol } from "main/net/register-itch-protocol";
+import { ITCH_URL_RE } from "common/constants/urls";
 
 const logger = mainLogger.child(__filename);
 
@@ -41,20 +42,20 @@ function withWebContents<T>(
   tab: string,
   cb: WebContentsCallback<T>
 ): T | null {
-  const sp = Space.fromStore(store, wind, tab);
-
-  const { webContentsId } = sp.web();
-  if (!webContentsId) {
-    return null;
+  const bv = getBrowserView(wind, tab);
+  if (bv && bv.webContents && !bv.webContents.isDestroyed()) {
+    return cb(bv.webContents as ExtendedWebContents);
   }
-
-  const wc = webContents.fromId(webContentsId);
-  if (!wc || wc.isDestroyed()) {
-    return null;
-  }
-
-  return cb(wc as ExtendedWebContents);
+  return null;
 }
+
+function loadURL(wc: WebContents, url: string) {
+  if (ITCH_URL_RE.test(url)) {
+    return;
+  }
+  wc.loadURL(url);
+}
+
 export default function(watcher: Watcher) {
   watcher.on(actions.windHtmlFullscreenChanged, async (store, action) => {
     const { wind, htmlFullscreen } = action.payload;
@@ -104,20 +105,14 @@ export default function(watcher: Watcher) {
       showBrowserView(store, wind);
 
       logger.debug(`Loading url '${initialURL}'`);
-      bv.webContents.loadURL(initialURL);
-
-      store.dispatch(
-        actions.tabGotWebContents({
-          wind,
-          tab,
-          webContentsId: bv.webContents.id,
-        })
+      await hookWebContents(
+        store,
+        wind,
+        tab,
+        bv.webContents as ExtendedWebContents
       );
+      loadURL(bv.webContents, initialURL);
     }
-  });
-
-  watcher.on(actions.tabGotWebContents, async (store, action) => {
-    await hookWebContents(store, action.payload);
   });
 
   watcher.on(actions.tabLosingWebContents, async (store, action) => {
@@ -125,7 +120,6 @@ export default function(watcher: Watcher) {
     logger.debug(`Tab ${tab} losing web contents!`);
 
     destroyBrowserView(store, wind, tab);
-    store.dispatch(actions.tabLostWebContents({ wind, tab }));
   });
 
   watcher.on(actions.tabFocused, async (store, action) => {
@@ -334,7 +328,7 @@ export default function(watcher: Watcher) {
           wc.clearHistory();
         }
         logger.debug(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n`);
-        wc.loadURL(url);
+        loadURL(wc, url);
       }
     });
   });
@@ -351,7 +345,7 @@ export default function(watcher: Watcher) {
         logger.debug(
           `WebContents has\n--> ${webUrl}\ntab evolved to\n--> ${url}\nlet's load`
         );
-        wc.loadURL(url);
+        loadURL(wc, url);
       } else {
         logger.debug(
           `WebContents has\n--> ${webUrl}\ntab evolved to\n--> ${url}\nwe're good.`
@@ -363,29 +357,23 @@ export default function(watcher: Watcher) {
 
 async function hookWebContents(
   store: Store,
-  payload: typeof actions.tabGotWebContents["payload"]
+  wind: string,
+  tab: string,
+  wc: ExtendedWebContents
 ) {
-  const { wind, tab, webContentsId } = payload;
-  logger.debug(`Got webContents ${webContentsId} for tab ${tab}`);
-
-  const wc = webContents.fromId(webContentsId) as ExtendedWebContents;
-  if (!wc) {
-    logger.warn(`Couldn't get webContents for tab ${tab}`);
-    return;
-  }
-
-  let pushWeb = (web: Partial<TabWeb>) => {
+  let setLoading = (loading: boolean) => {
+    store.dispatch(actions.tabLoadingStateChanged({ wind, tab, loading }));
+  };
+  let pushPageUpdate = (page: Partial<TabPage>) => {
     store.dispatch(
-      actions.tabDataFetched({
+      actions.tabPageUpdate({
         wind,
         tab,
-        data: {
-          web,
-        },
+        page,
       })
     );
   };
-  pushWeb({ webContentsId, loading: wc.isLoading() });
+  setLoading(wc.isLoading());
 
   wc.on("certificate-error", (ev, url, error, certificate, cb) => {
     cb(false);
@@ -410,9 +398,6 @@ async function hookWebContents(
 
   wc.once("did-finish-load", () => {
     logger.debug(`did-finish-load (once)`);
-    pushWeb({
-      hadFirstLoad: true,
-    });
     hookWebContentsContextMenu(wc, wind, store);
 
     if (SHOW_DEVTOOLS) {
@@ -431,27 +416,23 @@ async function hookWebContents(
   });
 
   wc.on("did-start-loading", () => {
-    pushWeb({ loading: true });
+    setLoading(true);
   });
 
   wc.on("did-stop-loading", () => {
-    pushWeb({ loading: false });
+    setLoading(false);
   });
 
   wc.on("page-title-updated" as any, (ev, title: string) => {
-    store.dispatch(
-      actions.tabDataFetched({
-        wind,
-        tab,
-        data: {
-          label: title,
-        },
-      })
-    );
+    pushPageUpdate({
+      label: title,
+    });
   });
 
   wc.on("page-favicon-updated", (ev, favicons) => {
-    pushWeb({ favicon: favicons[0] });
+    pushPageUpdate({
+      favicon: favicons[0],
+    });
   });
 
   wc.on(
@@ -483,6 +464,7 @@ async function hookWebContents(
         wind,
         tab,
         url,
+        label: wc.getTitle(),
         resource,
         replace: navMode === NavMode.Replace,
         fromWebContents: true,
@@ -568,20 +550,21 @@ async function hookWebContents(
     printWebContentsHistory(previousIndex);
     printStateHistory();
 
-    if (wc.getTitle() !== url && space.label() !== wc.getTitle()) {
+    const wcTitle = wc.getTitle();
+    if (
+      wcTitle !== url &&
+      space.label() !== wc.getTitle() &&
+      !/^itch:/i.test(url)
+    ) {
       // page-title-updated does not always fire, so a navigation (in-page or not)
       // is a good place to check.
       // we also check that the webContents' title is not its URL, which happens
       // while it's currently loading a page.
-      store.dispatch(
-        actions.tabDataFetched({
-          wind,
-          tab,
-          data: {
-            label: wc.getTitle(),
-          },
-        })
-      );
+      logger.debug(`pushing webContents title ${wcTitle}`);
+      pushPageUpdate({
+        url,
+        label: wcTitle,
+      });
     }
 
     // The logic that follows may not make sense to the casual observer.

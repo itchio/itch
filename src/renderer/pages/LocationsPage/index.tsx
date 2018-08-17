@@ -8,6 +8,10 @@ import { isEmpty, sortBy, invert } from "underscore";
 import GameStripe from "renderer/pages/common/GameStripe";
 import { fileSize } from "common/format/filesize";
 import ItemList from "renderer/pages/common/ItemList";
+import { Dispatch } from "common/types";
+import { Space } from "common/helpers/space";
+import { withSpace } from "renderer/hocs/withSpace";
+import { hook } from "renderer/hocs/hook";
 
 const ListInstallLocations = butlerCaller(messages.InstallLocationsList);
 const LocationStripe = GameStripe(messages.FetchCaves);
@@ -66,8 +70,16 @@ class LocationsPage extends React.PureComponent<Props> {
       </Page>
     );
   }
+
+  componentDidMount() {
+    const { dispatch, space } = this.props;
+    dispatch(space.makePageUpdate({ label: ["install_locations.manage"] }));
+  }
 }
 
-interface Props extends MeatProps {}
+interface Props extends MeatProps {
+  dispatch: Dispatch;
+  space: Space;
+}
 
-export default LocationsPage;
+export default withSpace(hook()(LocationsPage));

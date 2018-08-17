@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
-import { Dispatch, TabWeb } from "common/types";
+import { Dispatch } from "common/types";
 import { ambientWind, transformUrl } from "common/util/navigation";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
@@ -309,11 +309,6 @@ class NavigationBar extends React.PureComponent<Props, State> {
   startEditingAddress = () => {
     this.setState({ editingAddress: true });
   };
-
-  pushWeb(web: Partial<TabWeb>) {
-    const { dispatch, space } = this.props;
-    dispatch(space.makeFetch({ web }));
-  }
 
   static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
     if (props.space.url() !== state.url) {

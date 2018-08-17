@@ -48,11 +48,11 @@ class Tab extends React.PureComponent<Props> {
     const { onExplore } = this;
 
     const space = Space.fromInstance(tab, tabInstance);
-    let loading = this.props.loading || space.web().loading;
+    let loading = space.isLoading();
 
     const url = space.url();
     const resource = space.resource();
-    const label = space.label();
+    const label = space.lazyLabel();
     let icon = space.icon();
     let count = 0;
     let progress: number = null;
@@ -140,7 +140,6 @@ interface Props {
   sortable?: boolean;
 
   tabInstance: TabInstance;
-  loading: boolean;
   downloads: DownloadsState | null;
   dispatch: Dispatch;
 
@@ -150,9 +149,6 @@ interface Props {
 export default withIntl(
   hookWithProps(Tab)(map => ({
     tabInstance: map((rs, p) => ambientWindState(rs).tabInstances[p.tab]),
-    loading: map(
-      (rs, p) => !!ambientWindState(rs).navigation.loadingTabs[p.tab]
-    ),
     downloads: map(
       (rs, p) => (p.tab === "itch://downloads" ? rs.downloads : null)
     ),

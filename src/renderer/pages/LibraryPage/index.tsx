@@ -43,7 +43,7 @@ class LibraryPage extends React.PureComponent<Props> {
 
   componentDidMount() {
     const { space, dispatch } = this.props;
-    dispatch(space.makeFetch({ label: ["sidebar.library"] }));
+    dispatch(space.makePageUpdate({ label: ["sidebar.library"] }));
   }
 }
 

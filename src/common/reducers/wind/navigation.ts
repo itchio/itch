@@ -8,29 +8,10 @@ import arrayMove from "array-move";
 
 const initialState: NavigationState = {
   openTabs: ["initial-tab"],
-  loadingTabs: {},
   tab: "initial-tab",
 };
 
 export default reducer<NavigationState>(initialState, on => {
-  on(actions.tabLoading, (state, action) => {
-    const { tab, loading } = action.payload;
-    if (loading) {
-      return {
-        ...state,
-        loadingTabs: {
-          ...state.loadingTabs,
-          [tab]: true,
-        },
-      };
-    } else {
-      return {
-        ...state,
-        loadingTabs: omit(state.loadingTabs, tab),
-      };
-    }
-  });
-
   on(actions.tabOpened, (state, action) => {
     const { tab, background } = action.payload;
     if (!tab) {
@@ -102,7 +83,6 @@ export default reducer<NavigationState>(initialState, on => {
     return {
       ...state,
       openTabs: difference(state.openTabs, tabs),
-      loadingTabs: omit(state.loadingTabs, ...tabs),
       tab: andFocus ? andFocus : state.tab,
     };
   });

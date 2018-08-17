@@ -128,7 +128,7 @@ export default <Params, Res extends FetchRes<any>>(
                 sequence={space.sequence()}
                 onResult={result => {
                   if (label) {
-                    dispatch(space.makeFetch({ label }));
+                    dispatch(space.makePageUpdate({ label }));
                   }
                 }}
                 render={({ result, loading, error }) => {

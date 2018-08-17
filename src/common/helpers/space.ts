@@ -3,9 +3,7 @@ import {
   Store,
   RootState,
   TabPage,
-  TabData,
   TabInstance,
-  TabWeb,
   Action,
   IEvolveTabPayload,
   Subtract,
@@ -34,7 +32,6 @@ export class Space {
   suffix: string;
   private _instance: TabInstance;
   private _page: TabPage;
-  private _data: TabData;
   private _protocol: string;
   private _hostname: string;
   private _pathname: string;
@@ -46,7 +43,6 @@ export class Space {
     let instance = instanceIn || eo;
 
     this._instance = instance;
-    this._data = instance.data || eo;
     this._page = currentPage(instance) || eo;
 
     const { resource, url } = this._page;
@@ -105,11 +101,19 @@ export class Space {
     });
   }
 
-  makeFetch(data: TabData): Action<any> {
-    return actions.tabDataFetched({
+  makeLoadingStateChanged(loading: boolean): Action<any> {
+    return actions.tabLoadingStateChanged({
       wind: ambientWind(),
       tab: this.tab,
-      data,
+      loading,
+    });
+  }
+
+  makePageUpdate(page: Partial<TabPage>): Action<any> {
+    return actions.tabPageUpdate({
+      wind: ambientWind(),
+      tab: this.tab,
+      page,
     });
   }
 
@@ -166,10 +170,6 @@ export class Space {
 
   stringId(): string {
     return this.suffix;
-  }
-
-  web(): TabWeb {
-    return this._data.web || eo;
   }
 
   icon(): string {
@@ -232,17 +232,40 @@ export class Space {
     return this._query || eo;
   }
 
+  page(): TabPage {
+    return this._page;
+  }
+
   label(): LocalizedString {
-    if (this._instance && this._instance.data && this._instance.data.label) {
-      return this._instance.data.label;
+    if (this._page && this._page.label) {
+      return this._page.label;
     }
 
-    let fallback = this._instance.savedLabel || "";
-    return fallback;
+    return "";
+  }
+
+  lazyLabel(): LocalizedString {
+    if (this._page && this._page.label) {
+      return this._page.label;
+    }
+
+    const ti = this._instance;
+    if (ti && ti.currentIndex > 0) {
+      const prevPage = ti.history[ti.currentIndex - 1];
+      if (prevPage && prevPage.label) {
+        return prevPage.label;
+      }
+    }
+
+    return "";
   }
 
   isSleepy(): boolean {
     return this._instance.sleepy;
+  }
+
+  isLoading(): boolean {
+    return this._instance.loading;
   }
 
   canGoBack(): boolean {

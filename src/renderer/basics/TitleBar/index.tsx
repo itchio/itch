@@ -82,7 +82,7 @@ class TitleBar extends React.PureComponent<Props> {
     const secondary = iw.role == "secondary";
 
     const sp = Space.fromInstance(tab, tabInstance);
-    let label = sp.label();
+    let label = sp.lazyLabel();
 
     const loggedIn = tab !== "login";
     if (!loggedIn) {

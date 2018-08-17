@@ -60,7 +60,7 @@ class CollectionsPage extends React.PureComponent<Props> {
           }}
           sequence={this.props.sequence}
           onResult={() => {
-            dispatch(space.makeFetch({ label: ["sidebar.collections"] }));
+            dispatch(space.makePageUpdate({ label: ["sidebar.collections"] }));
           }}
           loadingHandled
           errorsHandled

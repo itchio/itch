@@ -46,7 +46,7 @@ class CollectionPage extends React.PureComponent<Props> {
               const c = result.collection;
               label = `${c.title} (${c.gamesCount})`;
             }
-            dispatch(space.makeFetch({ label }));
+            dispatch(space.makePageUpdate({ label }));
           }}
         />
 

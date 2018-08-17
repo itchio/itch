@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { actions } from "common/actions";
 import { Profile } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
-import { Dispatch, LoadingTabs, TabInstances } from "common/types";
+import { Dispatch, TabInstances } from "common/types";
 import {
   ambientNavigation,
   ambientWind,
@@ -46,13 +46,7 @@ const MeatTab = styled.div`
 
 class Meats extends React.PureComponent<Props> {
   render() {
-    let {
-      profile,
-      openTabs,
-      tabInstances,
-      loadingTabs,
-      tab: currentId,
-    } = this.props;
+    let { profile, openTabs, tabInstances, tab: currentId } = this.props;
     if (!profile) {
       return null;
     }
@@ -64,7 +58,6 @@ class Meats extends React.PureComponent<Props> {
           const tabInstance = tabInstances[tab];
           const space = Space.fromInstance(tab, tabInstance);
           const visible = tab === currentId;
-          const loading = loadingTabs[tab];
           return (
             <SpaceProvider key={tab} value={space}>
               <MeatTab
@@ -74,11 +67,7 @@ class Meats extends React.PureComponent<Props> {
                 data-resource={space.resource()}
                 className={classNames("meat-tab", { visible })}
               >
-                <Meat
-                  visible={visible}
-                  sequence={tabInstance.sequence}
-                  loading={loading}
-                />
+                <Meat visible={visible} sequence={tabInstance.sequence} />
               </MeatTab>
             </SpaceProvider>
           );
@@ -116,7 +105,6 @@ interface Props {
   tab: string;
   openTabs: string[];
   tabInstances: TabInstances;
-  loadingTabs: LoadingTabs;
   profile: Profile;
 }
 
@@ -125,5 +113,4 @@ export default hook(map => ({
   tab: map(rs => ambientNavigation(rs).tab),
   openTabs: map(rs => ambientNavigation(rs).openTabs),
   tabInstances: map(rs => ambientWindState(rs).tabInstances),
-  loadingTabs: map(rs => ambientNavigation(rs).loadingTabs),
 }))(Meats);

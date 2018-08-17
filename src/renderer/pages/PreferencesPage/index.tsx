@@ -122,7 +122,7 @@ class PreferencesPage extends React.PureComponent<Props> {
   componentDidMount() {
     const { dispatch, space } = this.props;
     dispatch(
-      space.makeFetch({
+      space.makePageUpdate({
         label: ["sidebar.preferences"],
       })
     );

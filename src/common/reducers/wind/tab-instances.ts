@@ -1,13 +1,12 @@
-import { TabInstances, TabData, TabDataSave, TabInstance } from "common/types";
+import { TabInstances, TabDataSave, TabInstance } from "common/types";
 import { actions } from "common/actions";
 import reducer from "common/reducers/reducer";
 
 import { omit, each, size } from "underscore";
-import deepEqual from "deep-equal";
+import { ITCH_URL_RE } from "common/constants/urls";
 
 const initialState: TabInstances = {};
 
-const emptyObj = {} as any;
 const maxHistorySize = 50;
 
 function trimHistory(ti: TabInstance): TabInstance {
@@ -34,30 +33,6 @@ function trimHistory(ti: TabInstance): TabInstance {
   };
 }
 
-let deepFields = ["web"];
-
-function merge(
-  a: TabData,
-  b: TabData,
-  { shallow }: { shallow?: boolean }
-): TabData {
-  if (shallow) {
-    return { ...a, ...b };
-  }
-
-  const res = {
-    ...a,
-    ...b,
-  };
-  for (const df of deepFields) {
-    (res as any)[df] = {
-      ...((a as any)[df] || emptyObj),
-      ...((b as any)[df] || emptyObj),
-    };
-  }
-  return res;
-}
-
 export default reducer<TabInstances>(initialState, on => {
   on(actions.windOpened, (state, action) => {
     const { initialURL } = action.payload;
@@ -73,31 +48,35 @@ export default reducer<TabInstances>(initialState, on => {
     };
   });
 
-  on(actions.tabDataFetched, (state, action) => {
-    const { tab, data, shallow } = action.payload;
+  on(actions.tabPageUpdate, (state, action) => {
+    const { tab, page } = action.payload;
     const oldInstance = state[tab];
     if (!oldInstance) {
       // ignore fresh data for closed tabs
       return state;
     }
 
-    let newData = merge(oldInstance.data, data, { shallow });
-    if (deepEqual(oldInstance.data, newData)) {
+    let oldPage = oldInstance.history[oldInstance.currentIndex];
+    if (page.url && oldPage.url && page.url !== oldPage.url) {
+      // ignore page update for another URL
       return state;
     }
+
+    let newHistory = [...oldInstance.history];
+    newHistory[oldInstance.currentIndex] = { ...oldPage, ...page };
 
     return {
       ...state,
       [tab]: {
         ...omit(oldInstance, "sleepy"),
-        data: newData,
+        history: newHistory,
       },
     };
   });
 
   on(actions.evolveTab, (state, action) => {
-    const { tab, onlyIfMatchingURL, data = emptyObj } = action.payload;
-    let { url, resource, replace } = action.payload;
+    const { tab, onlyIfMatchingURL } = action.payload;
+    let { url, resource, label, replace } = action.payload;
 
     const oldInstance = state[tab];
     if (!oldInstance) {
@@ -121,23 +100,30 @@ export default reducer<TabInstances>(initialState, on => {
       resource = history[currentIndex].resource;
     }
 
+    if (!label && replace) {
+      label = history[currentIndex].label;
+    }
+
     if (replace) {
-      history = [
-        ...history.slice(0, currentIndex),
-        { url, resource },
-        ...history.slice(currentIndex + 1),
-      ];
+      history = [...history];
+      history[currentIndex] = {
+        ...history[currentIndex],
+        url,
+        resource: resource || history[currentIndex].resource,
+      };
     } else {
-      history = [...history.slice(0, currentIndex + 1), { url, resource }];
+      history = [
+        ...history.slice(0, currentIndex + 1),
+        { url, resource, label },
+      ];
       currentIndex = history.length - 1;
     }
 
     // merge old & new data
-    let newInstance = {
+    let newInstance: TabInstance = {
       ...oldInstance,
       history,
       currentIndex,
-      data: merge(oldInstance.data, data, { shallow: false }),
     };
     newInstance = trimHistory(newInstance);
 
@@ -164,6 +150,38 @@ export default reducer<TabInstances>(initialState, on => {
     return state;
   });
 
+  on(actions.tabLosingWebContents, (state, action) => {
+    const { tab } = action.payload;
+    const oldInstance = state[tab];
+
+    if (!oldInstance) {
+      return state;
+    }
+    return {
+      ...state,
+      [tab]: {
+        ...oldInstance,
+        loading: false,
+      },
+    };
+  });
+
+  on(actions.tabLoadingStateChanged, (state, action) => {
+    const { tab, loading } = action.payload;
+    const oldInstance = state[tab];
+
+    if (!oldInstance) {
+      return state;
+    }
+    return {
+      ...state,
+      [tab]: {
+        ...oldInstance,
+        loading,
+      },
+    };
+  });
+
   on(actions.tabFocused, (state, action) => {
     const { tab } = action.payload;
     const oldInstance = state[tab];
@@ -184,7 +202,7 @@ export default reducer<TabInstances>(initialState, on => {
   });
 
   on(actions.tabOpened, (state, action) => {
-    const { tab, url, resource, data = emptyObj } = action.payload;
+    const { tab, url, resource } = action.payload;
     if (!tab) {
       return state;
     }
@@ -195,31 +213,11 @@ export default reducer<TabInstances>(initialState, on => {
           {
             url,
             resource,
+            label: ["sidebar.loading"],
           },
         ],
         currentIndex: 0,
         sequence: 0,
-        data: { label: ["sidebar.loading"], ...data },
-      },
-    };
-  });
-
-  on(actions.tabLostWebContents, (state, action) => {
-    const { tab } = action.payload;
-    const oldInstance = state[tab];
-    if (!oldInstance) {
-      // ignore
-      return state;
-    }
-
-    return {
-      ...state,
-      [tab]: {
-        ...oldInstance,
-        data: {
-          ...oldInstance.data,
-          web: null,
-        },
       },
     };
   });
@@ -247,7 +245,6 @@ export default reducer<TabInstances>(initialState, on => {
         ...s,
         [tabSave.id]: trimHistory({
           ...data,
-          data: {},
           sleepy: true,
           sequence: 0,
         }),

@@ -39,13 +39,6 @@ const BrowserViewShell = styled.div`
   bottom: 0;
   left: 0;
 
-  &.fresh {
-    background-color: ${props => props.theme.sidebarBackground};
-    background-image: url("${require("static/images/logos/app-white.svg")}");
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-  }
-
   canvas {
     position: absolute;
     top: 0;
@@ -70,13 +63,12 @@ class BrowserPage extends React.PureComponent<Props> {
     if (space.isSleepy() && !visible) {
       return null;
     }
-    const fresh = !space.web().hadFirstLoad;
 
     return (
       <BrowserPageDiv>
         <BrowserBar />
         <BrowserMain>
-          <BrowserViewShell className={classNames({ fresh })}>
+          <BrowserViewShell>
             {disableBrowser ? (
               <DisabledBrowser />
             ) : (
@@ -100,7 +92,7 @@ class BrowserPage extends React.PureComponent<Props> {
   componentDidUpdate(prevProps: Props, prevState: any) {
     if (!prevProps.disableBrowser && this.props.disableBrowser) {
       const { space, dispatch } = this.props;
-      dispatch(space.makeFetch({ web: { loading: false } }));
+      dispatch(space.makeLoadingStateChanged(false));
     }
   }
 

@@ -17,7 +17,6 @@ import {
   LocalizedString,
   IOpenContextMenuBase,
   ModalResponse,
-  TabData,
   INavigatePayload,
   IEvolveTabPayload,
   INavigateTabPayload,
@@ -26,6 +25,7 @@ import {
   SystemState,
   WindRole,
   BrowserViewMetrics,
+  TabPage,
 } from "common/types";
 
 import {
@@ -397,17 +397,21 @@ export const actions = wireActions({
     wind: string;
     snapshot: ItchAppTabs;
   }>(),
-  tabDataFetched: action<{
+  tabPageUpdate: action<{
     wind: string;
 
     /** tab for which we fetched data */
     tab: string;
 
     /** the data we fetched */
-    data: TabData;
+    page: Partial<TabPage>;
+  }>(),
+  tabLoadingStateChanged: action<{
+    wind: string;
 
-    /** if true, shallow merge with previous state instead of deep merging */
-    shallow?: boolean;
+    tab: string;
+
+    loading: boolean;
   }>(),
   analyzePage: action<{
     wind: string;
@@ -417,22 +421,6 @@ export const actions = wireActions({
 
     /** The url we're supposed to analyze */
     url: string;
-  }>(),
-  tabLoading: action<{
-    /** id of tab whose loading status just chagned */
-    tab: string;
-
-    /** current loading state */
-    loading: boolean;
-  }>(),
-  tabGotWebContents: action<{
-    wind: string;
-
-    /** id of tab who just got a webcontents */
-    tab: string;
-
-    /** electron id of webcontents */
-    webContentsId: number;
   }>(),
   tabGotWebContentsMetrics: action<{
     wind: string;
@@ -444,12 +432,6 @@ export const actions = wireActions({
     initialURL: string;
   }>(),
   tabLosingWebContents: action<{
-    wind: string;
-
-    /** id of tab who just lost a webcontents */
-    tab: string;
-  }>(),
-  tabLostWebContents: action<{
     wind: string;
 
     /** id of tab who just lost a webcontents */

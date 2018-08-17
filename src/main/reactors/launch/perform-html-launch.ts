@@ -17,6 +17,7 @@ import {
 } from "common/butlerd/messages";
 import { Logger } from "common/logger";
 import { ItchPromise } from "common/util/itch-promise";
+import { registerItchCaveProtocol } from "main/reactors/launch/itch-cave-protocol";
 
 interface HTMLLaunchOpts {
   ctx: Context;
@@ -44,6 +45,8 @@ export async function performHTMLLaunch(
 
   const partition = `persist:gamesession_${game.id}`;
   const gameSession = session.fromPartition(partition, { cache: false });
+
+  await registerItchCaveProtocol(gameSession, rootFolder);
 
   // TODO: show game icon as, well, the window's icon
   let win = new BrowserWindow({

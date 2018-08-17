@@ -2,10 +2,7 @@ import { Store as ReduxStore } from "redux";
 
 export * from "common/types/errors";
 export * from "common/types/net";
-export * from "common/types/tab-data";
-import * as TabDataTypes from "common/types/tab-data";
 
-import { TabData } from "common/types/tab-data";
 import {
   GameUpdate,
   Game,
@@ -227,7 +224,7 @@ export interface ItchAppTabs {
   current: string;
 
   /** list of transient tabs when the snapshot was taken */
-  items: TabDataTypes.TabDataSave[];
+  items: TabDataSave[];
 }
 
 export type ProxySource = "os" | "env";
@@ -318,7 +315,7 @@ export interface WindsState {
 export interface WindState {
   navigation: NavigationState;
   modals: ModalsState;
-  tabInstances: TabDataTypes.TabInstances;
+  tabInstances: TabInstances;
   native: NativeWindowState;
   properties: WindPropertiesState;
 }
@@ -352,9 +349,6 @@ export interface NavigationState {
   /** opened tabs */
   openTabs: string[];
 
-  /** set to true when a tab is loading */
-  loadingTabs: LoadingTabs;
-
   /** current tab id */
   tab: string;
 }
@@ -365,10 +359,6 @@ export interface WindPropertiesState {
 
   /** the window's role */
   role: WindRole;
-}
-
-export interface LoadingTabs {
-  [key: string]: boolean;
 }
 
 export interface I18nResources {
@@ -618,9 +608,6 @@ export interface INavigatePayload {
   /** if we know this associates with a resource, let it be known here */
   resource?: string;
 
-  /** if we already have tab data, let it be here */
-  data?: TabDataTypes.TabData;
-
   /** whether to open a new tab in the background */
   background?: boolean;
 
@@ -666,8 +653,8 @@ interface IEvolveBasePayload {
   /** the new resource if any */
   resource?: string;
 
-  /** new tab data to add to the previous set */
-  data?: TabData;
+  /** the new label if any */
+  label?: LocalizedString;
 }
 
 export interface IEvolveTabPayload extends IEvolveBasePayload {
@@ -683,6 +670,68 @@ export interface IEvolveTabPayload extends IEvolveBasePayload {
 export interface INavigateTabPayload extends IEvolveBasePayload {
   /** whether to open in the background */
   background: boolean;
+}
+
+export interface TabInstances {
+  [key: string]: TabInstance;
+}
+
+export interface TabPage {
+  /**
+   * url of tab, something like:
+   *   - itch://collections/:id
+   *   - itch://games/:id
+   *   - itch://preferences
+   *   - https://google.com/
+   *   - https://leafo.itch.io/x-moon
+   */
+  url: string;
+
+  /**
+   * resource associated with tab, something like
+   *    - `games/:id`
+   */
+  resource?: string;
+
+  /**
+   * label/title for this page
+   */
+  label?: LocalizedString;
+
+  /**
+   * favicon for this page
+   */
+  favicon?: string;
+}
+
+export interface TabInstance {
+  /** pages visited in this tab */
+  history: TabPage[];
+
+  /** current index of history shown */
+  currentIndex: number;
+
+  loading?: boolean;
+
+  /** if sleepy, don't load until it's focused */
+  sleepy?: boolean;
+
+  /** label we had when saving the tab */
+  savedLabel?: LocalizedString;
+
+  /** number that increments when we reload a tab */
+  sequence: number;
+}
+
+export interface TabDataSave {
+  /** id of the tab */
+  id: string;
+
+  /** pages visited in this tab */
+  history: TabPage[];
+
+  /** current index of history shown */
+  currentIndex: number;
 }
 
 export type TaskName =

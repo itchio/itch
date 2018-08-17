@@ -63,7 +63,7 @@ class LocationPage extends React.PureComponent<Props> {
               return;
             }
             const loc = result.installLocation;
-            dispatch(space.makeFetch({ label: `${loc.path}` }));
+            dispatch(space.makePageUpdate({ label: `${loc.path}` }));
           }}
           loadingHandled
           render={({ result, loading }) => {
