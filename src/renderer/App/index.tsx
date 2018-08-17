@@ -25,7 +25,7 @@ class App extends React.PureComponent<Props, State> {
     );
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.updateMessages(this.props);
   }
 
