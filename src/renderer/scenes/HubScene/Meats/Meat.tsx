@@ -124,7 +124,7 @@ class Meat extends React.PureComponent<Props, State> {
   static getDerivedStateFromProps(
     props: Meat["props"],
     state: Meat["state"]
-  ): Meat["state"] {
+  ): Partial<Meat["state"]> {
     const url = props.space.url();
     if (url !== state.lastURL) {
       return {

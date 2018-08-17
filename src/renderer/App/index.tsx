@@ -37,7 +37,6 @@ class App extends React.PureComponent<Props, State> {
       props.fallbackMessages !== state.fallbackMessages
     ) {
       return {
-        ...state,
         locale: props.locale,
         localeMessages: props.localeMessages,
         fallbackMessages: props.fallbackMessages,
@@ -48,7 +47,7 @@ class App extends React.PureComponent<Props, State> {
         },
       };
     }
-    return state;
+    return null;
   }
 }
 

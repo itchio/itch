@@ -23,6 +23,7 @@ import { T } from "renderer/t";
 import { map } from "underscore";
 import { actions } from "common/actions";
 import { Dispatch, LocalizedString } from "common/types";
+import equal from "react-fast-compare";
 
 const SidebarDiv = styled.div`
   width: 240px;
@@ -223,10 +224,14 @@ class Sidebar extends React.PureComponent<Props, State> {
     );
   }
 
-  componentWillReceiveProps(props: Props) {
-    this.setState({
-      openTabs: props.openTabs,
-    });
+  static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
+    if (!equal(props.openTabs, state.openTabs)) {
+      return {
+        openTabs: props.openTabs,
+      };
+    }
+
+    return null;
   }
 }
 

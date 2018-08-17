@@ -315,15 +315,14 @@ class NavigationBar extends React.PureComponent<Props, State> {
     dispatch(space.makeFetch({ web }));
   }
 
-  static getDerivedStateFromProps(props: Props, state: State): State {
+  static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
     if (props.space.url() !== state.url) {
       return {
-        ...state,
         url: props.space.url(),
         editingAddress: false,
       };
     }
-    return state;
+    return null;
   }
 }
 
