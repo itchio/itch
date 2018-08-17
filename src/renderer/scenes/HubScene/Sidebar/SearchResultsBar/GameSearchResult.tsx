@@ -152,6 +152,7 @@ class GameSearchResult extends GenericSearchResult<Props> {
           background,
         })
       );
+      dispatch(actions.closeSearch({}));
     });
   };
 
