@@ -24,7 +24,6 @@ import tabSave from "main/reactors/tab-save";
 import commons from "main/reactors/commons";
 import purchases from "main/reactors/purchases";
 import url from "main/reactors/url";
-import itchInternal from "main/reactors/itch-internal";
 import tasks from "main/reactors/tasks";
 import downloads from "main/reactors/downloads";
 import queueLaunch from "main/reactors/queue-launch";
@@ -65,7 +64,6 @@ export default function getWatcher(logger: Logger) {
   commons(watcher);
   purchases(watcher);
   url(watcher);
-  itchInternal(watcher);
   tasks(watcher);
   downloads(watcher);
   queueLaunch(watcher);

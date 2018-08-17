@@ -11,10 +11,6 @@ import { Context } from "main/context";
 const noPreload = process.env.LEAVE_TWINY_ALONE === "1";
 
 import {
-  registerProtocol,
-  setupItchInternal,
-} from "main/reactors/launch/html/itch-internal";
-import {
   Game,
   HTMLLaunchParams,
   HTMLLaunchResult,
@@ -120,28 +116,6 @@ export async function performHTMLLaunch(
       }
     }
   );
-
-  await registerProtocol({ partition, fileRoot: rootFolder });
-
-  setupItchInternal({
-    session: win.webContents.session,
-    onRequest: details => {
-      let parsed = url.parse(details.url);
-      switch (parsed.pathname.replace(/^\//, "")) {
-        case "exit-fullscreen":
-          win.setFullScreen(false);
-          break;
-        case "toggle-fullscreen":
-          win.setFullScreen(!win.isFullScreen());
-          break;
-        case "open-devtools":
-          win.webContents.openDevTools({ mode: "detach" });
-          break;
-        default:
-          break;
-      }
-    },
-  });
 
   win.webContents.on("new-window", (ev: Event, url: string) => {
     ev.preventDefault();
