@@ -614,5 +614,6 @@
     "send_feedback.steps.send": "Sendi la raporton",
     "empty_state.nothing_to_see_here": "Ĉi tie estas nenio",
     "grid.item.install_title": "Instali „{{title}}“",
-    "browser.open_devtools": "Malfermi la ilojn de kreantoj"
+    "browser.open_devtools": "Malfermi la ilojn de kreantoj",
+    "prompt.action.back": "Reen"
 }
