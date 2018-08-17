@@ -7,10 +7,21 @@ class Image extends React.PureComponent<Props> {
     return <img {...restProps} onLoad={onLoadEnd} />;
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.src !== this.props.src) {
+  componentDidMount() {
+    this.props.onLoadStart();
+  }
+
+  componentDidUpdate(props: Props, state: any, snapshot: Props) {
+    if (snapshot && snapshot.src !== props.src) {
       this.props.onLoadStart();
     }
+  }
+
+  getSnapshotBeforeUpdate(prevProps: Props): Props {
+    if (prevProps.src !== this.props.src) {
+      return prevProps;
+    }
+    return null;
   }
 }
 
