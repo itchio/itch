@@ -22,6 +22,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
       clearCache: true,
       clearCookies: false,
     };
+    this.doUpdatePayload(this.state);
   }
 
   componentDidMount() {
@@ -44,17 +45,21 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
   }
 
   change(state: Partial<State>) {
-    const mergedState = {
+    const mergedState: State = {
       ...this.state,
       ...state,
     };
 
-    this.props.updatePayload({
-      cache: mergedState.clearCache,
-      cookies: mergedState.clearCookies,
-    });
-
     this.setState(mergedState);
+    this.doUpdatePayload(mergedState);
+  }
+
+  doUpdatePayload(state: State) {
+    const payloadUpdate = {
+      cache: state.clearCache,
+      cookies: state.clearCookies,
+    };
+    this.props.updatePayload(payloadUpdate);
   }
 
   toggleCache = () => {
