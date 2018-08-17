@@ -57,7 +57,7 @@ const extendedGlobal = global as ExtendedGlobal;
       "color: #fa5c5c"
     );
     if (!navigator.languages || !navigator.languages.length) {
-      console.log("Patching navigator.langauges...");
+      console.log("Patching navigator.languages...");
       Object.defineProperty(navigator, "languages", {
         value: [navigator.language, "en-US"],
         configurable: true,
