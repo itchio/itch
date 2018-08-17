@@ -1,39 +1,6 @@
 import querystring from "querystring";
 import urlParser from "url";
 
-// only load outside of electron
-const sendMessage = (action: string) => {
-  const url = `https://itch-internal/${action}`;
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", url);
-  xhr.send();
-};
-
-window.addEventListener("keydown", (e: KeyboardEvent) => {
-  switch (e.key) {
-    case "F11":
-      sendMessage("toggle-fullscreen");
-      break;
-    case "F":
-      if (!e.metaKey) {
-        return;
-      }
-      sendMessage("toggle-fullscreen");
-      break;
-    case "Escape":
-      sendMessage("exit-fullscreen");
-      break;
-    case "F12":
-      if (!e.shiftKey) {
-        return;
-      }
-      sendMessage("open-devtools");
-      break;
-    default:
-      break;
-  }
-});
-
 declare function atob(b64: string): string;
 
 interface Env {

@@ -89,6 +89,38 @@ export async function performHTMLLaunch(
   userAgent = userAgent.replace(/Electron\/[0-9.]+\s/, "");
   win.webContents.setUserAgent(userAgent);
 
+  const toggleFullscreen = () => {
+    win.setFullScreen(!win.isFullScreen());
+  };
+
+  win.webContents.on(
+    "before-input-event",
+    (ev: Electron.Event, input: Electron.Input) => {
+      if (input.type === "keyUp") {
+        switch (input.key) {
+          case "F11":
+            toggleFullscreen();
+            break;
+          case "F":
+            if (input.meta) {
+              toggleFullscreen();
+            }
+            break;
+          case "Escape":
+            if (win.isFullScreen()) {
+              win.setFullScreen(false);
+            }
+            break;
+          case "F12":
+            if (input.shift) {
+              win.webContents.openDevTools({ mode: "detach" });
+            }
+            break;
+        }
+      }
+    }
+  );
+
   await registerProtocol({ partition, fileRoot: rootFolder });
 
   setupItchInternal({
