@@ -156,9 +156,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
   }
 
   subscribe(w: Watcher) {
-    console.warn(`subscribing`);
     w.on(actions.focusLocationBar, async (store, action) => {
-      console.warn(`got focusLocationBar`, action.payload);
       const { wind, tab } = action.payload;
       if (wind !== ambientWind()) {
         return;
@@ -169,10 +167,14 @@ class NavigationBar extends React.PureComponent<Props, State> {
       this.setState({
         editingAddress: true,
       });
+
+      const { browserAddress } = this;
+      if (browserAddress && isHTMLInput(browserAddress)) {
+        browserAddress.select();
+      }
     });
 
     w.on(actions.blurLocationBar, async (store, action) => {
-      console.warn(`got blurLocationBar`);
       this.setState({ editingAddress: false });
     });
   }
@@ -292,6 +294,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
       dispatch(space.makeEvolve({ url, replace: false }));
       this.setState({ editingAddress: false });
     } else if (e.key === "Escape") {
+      e.preventDefault();
       this.setState({ editingAddress: false });
     }
   };

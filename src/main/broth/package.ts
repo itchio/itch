@@ -10,7 +10,7 @@ import querystring from "querystring";
 import * as semver from "semver";
 import { promisify } from "util";
 import whichCallback from "which";
-import { downloadToFile, downloadToFileWithRetry } from "main/net";
+import { downloadToFileWithRetry } from "main/net/download";
 import { request } from "main/net/request/metal-request";
 import * as sf from "main/os/sf";
 import { mkdirp, readdir } from "main/os/sf";
