@@ -606,5 +606,6 @@
     "empty_state.nothing_to_see_here": "Тук няма нищо",
     "setup.action.browse": "Разглеждане",
     "grid.item.install_title": "Инсталиране на „{{title}}“",
-    "browser.open_devtools": "Отваряне на инструментите за разработчици"
+    "browser.open_devtools": "Отваряне на инструментите за разработчици",
+    "prompt.action.back": "Назад"
 }
