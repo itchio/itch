@@ -133,6 +133,7 @@
   "table.column.powered_by": "Powered by",
   "collection_grid.item.updated_at": "Last updated {{time_ago}}",
   "browser.popout": "Open page in external web browser",
+  "browser.open_devtools": "Open developer tools",
   "browser.disabled": "The itch web browser is disabled",
   "browser.reenable": "Re-enable",
   "i18n.failed_downloading_locales":

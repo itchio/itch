@@ -858,10 +858,10 @@ export const actions = wireActions({
   }>(),
   openAppLog: action<{}>(),
   openDevTools: action<{
-    /** if true, should open dev tools for app, not the current tab */
-    forApp: boolean;
+    wind: string;
 
-    wind?: string;
+    /** if specified, opens devTools for a BrowserView, not the app */
+    tab?: string;
   }>(),
   sendFeedback: action<{
     /** error log that should be included in the issue report */

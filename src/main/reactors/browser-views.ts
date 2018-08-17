@@ -221,14 +221,14 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.openDevTools, async (store, action) => {
-    const { wind, forApp } = action.payload;
-    if (forApp) {
-      openAppDevTools(BrowserWindow.getFocusedWindow());
-    } else {
+    const { wind, tab } = action.payload;
+    if (tab) {
       const { tab } = store.getState().winds[wind].navigation;
       withWebContents(store, wind, tab, wc => {
         wc.openDevTools({ mode: "bottom" });
       });
+    } else {
+      openAppDevTools(BrowserWindow.getFocusedWindow());
     }
   });
 

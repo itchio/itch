@@ -64,7 +64,7 @@ function convertMenuAction(wind: string, payload: MenuItem, runtime: IRuntime) {
     case "menu.file.show_previous_tab":
       return actions.showPreviousTab({ wind });
     case "menu.file.open_dev_tools":
-      return actions.openDevTools({ wind, forApp: true });
+      return actions.openDevTools({ wind });
     case "menu.file.focus_search":
       return actions.focusSearch({ wind });
     case "menu.file.focus_in_page_search":

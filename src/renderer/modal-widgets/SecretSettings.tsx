@@ -249,7 +249,7 @@ class SecretSettings extends React.PureComponent<Props> {
     );
 
     if (enabled) {
-      dispatch(actions.openDevTools({ forApp: true }));
+      dispatch(actions.openDevTools({ wind: "root" }));
     }
   };
 }
