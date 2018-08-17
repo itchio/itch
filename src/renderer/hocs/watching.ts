@@ -28,8 +28,8 @@ export default function(constructor: Function) {
     }),
   };
 
-  const originalWillMount = constructor.prototype.componentWillMount;
-  constructor.prototype.componentWillMount = function() {
+  const originalDidMount = constructor.prototype.componentDidMount;
+  constructor.prototype.componentDidMount = function() {
     if (!this.context.store) {
       throw new Error(
         `Can't set up watching because no ` +
@@ -41,8 +41,8 @@ export default function(constructor: Function) {
     this.context.store.watcher.addSub(this.watcher);
     constructor.prototype.subscribe.call(this, this.watcher);
 
-    if (originalWillMount) {
-      originalWillMount.call(this);
+    if (originalDidMount) {
+      originalDidMount.call(this);
     }
   };
 

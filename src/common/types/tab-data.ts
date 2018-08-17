@@ -10,7 +10,6 @@ export interface TabWeb {
   hadFirstLoad?: boolean;
 
   favicon?: string;
-  editingAddress?: boolean;
   loading?: boolean;
 }
 

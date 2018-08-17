@@ -4,14 +4,12 @@ import { Space } from "common/helpers/space";
 import { Dispatch, TabWeb } from "common/types";
 import { ambientWind, transformUrl } from "common/util/navigation";
 import React from "react";
-import listensToClickOutside from "react-onclickoutside";
 import IconButton from "renderer/basics/IconButton";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
-import { modalWidgets } from "renderer/modal-widgets";
-import modals from "main/reactors/modals";
+import watching, { Watcher } from "renderer/hocs/watching";
 
 const HTTPS_RE = /^https:\/\//;
 const ITCH_RE = /^itch:\/\//;
@@ -100,7 +98,8 @@ function isHTMLInput(el: HTMLElement): el is HTMLInputElement {
   return el.tagName === "INPUT";
 }
 
-class NavigationBar extends React.PureComponent<Props> {
+@watching
+class NavigationBar extends React.PureComponent<Props, State> {
   fresh = true;
   browserAddress: HTMLInputElement | HTMLElement;
 
@@ -148,6 +147,36 @@ class NavigationBar extends React.PureComponent<Props> {
       })
     );
 
+  constructor(props: Props, context: any) {
+    super(props, context);
+    this.state = {
+      editingAddress: false,
+      url: null,
+    };
+  }
+
+  subscribe(w: Watcher) {
+    console.warn(`subscribing`);
+    w.on(actions.focusLocationBar, async (store, action) => {
+      console.warn(`got focusLocationBar`, action.payload);
+      const { wind, tab } = action.payload;
+      if (wind !== ambientWind()) {
+        return;
+      }
+      if (tab !== this.props.space.tab) {
+        return;
+      }
+      this.setState({
+        editingAddress: true,
+      });
+    });
+
+    w.on(actions.blurLocationBar, async (store, action) => {
+      console.warn(`got blurLocationBar`);
+      this.setState({ editingAddress: false });
+    });
+  }
+
   render() {
     const { space, loading } = this.props;
     const canGoBack = space.canGoBack();
@@ -180,7 +209,7 @@ class NavigationBar extends React.PureComponent<Props> {
       return null;
     }
 
-    let { editingAddress } = sp.web();
+    let { editingAddress } = this.state;
 
     return (
       <>
@@ -196,7 +225,7 @@ class NavigationBar extends React.PureComponent<Props> {
               type="search"
               innerRef={this.onBrowserAddress as any}
               defaultValue={url}
-              onKeyUp={this.addressKeyUp}
+              onKeyDown={this.addressKeyDown}
               onBlur={this.addressBlur}
             />
           ) : (
@@ -254,25 +283,28 @@ class NavigationBar extends React.PureComponent<Props> {
     }
   };
 
-  addressKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  addressKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const input = e.currentTarget.value;
       const url = transformUrl(input);
 
       const { space, dispatch } = this.props;
       dispatch(space.makeEvolve({ url, replace: false }));
-      this.pushWeb({ editingAddress: false });
+      this.setState({ editingAddress: false });
     } else if (e.key === "Escape") {
-      this.pushWeb({ editingAddress: false });
+      this.setState({ editingAddress: false });
+    }
+  };
+
+  addressBlur = () => {
+    const { browserAddress } = this;
+    if (browserAddress && isHTMLInput(browserAddress)) {
+      browserAddress.setSelectionRange(0, 0);
     }
   };
 
   startEditingAddress = () => {
-    this.pushWeb({ editingAddress: true });
-  };
-
-  addressBlur = () => {
-    this.pushWeb({ editingAddress: false });
+    this.setState({ editingAddress: true });
   };
 
   pushWeb(web: Partial<TabWeb>) {
@@ -280,9 +312,16 @@ class NavigationBar extends React.PureComponent<Props> {
     dispatch(space.makeFetch({ web }));
   }
 
-  handleClickOutside = () => {
-    this.addressBlur();
-  };
+  static getDerivedStateFromProps(props: Props, state: State): State {
+    if (props.space.url() !== state.url) {
+      return {
+        ...state,
+        url: props.space.url(),
+        editingAddress: false,
+      };
+    }
+    return state;
+  }
 }
 
 interface Props {
@@ -292,5 +331,10 @@ interface Props {
   showAddressBar?: boolean;
 }
 
-const intermediate = withSpace(listensToClickOutside(NavigationBar));
+interface State {
+  url: string;
+  editingAddress: boolean;
+}
+
+const intermediate = withSpace(NavigationBar);
 export default hook()(intermediate);

@@ -201,12 +201,9 @@ export default function(watcher: Watcher) {
     const { wind } = action.payload;
     const { tab } = store.getState().winds[wind].navigation;
     store.dispatch(
-      actions.tabDataFetched({
+      actions.focusLocationBar({
         wind,
         tab,
-        data: {
-          web: { editingAddress: true },
-        },
       })
     );
 
@@ -226,16 +223,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.commandBack, async (store, action) => {
     const { wind } = action.payload;
-    const { tab } = store.getState().winds[wind].navigation;
-    store.dispatch(
-      actions.tabDataFetched({
-        wind,
-        tab,
-        data: {
-          web: { editingAddress: false },
-        },
-      })
-    );
+    store.dispatch(actions.blurLocationBar({}));
   });
 
   watcher.on(actions.openDevTools, async (store, action) => {

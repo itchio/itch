@@ -761,6 +761,13 @@ export const actions = wireActions({
   focusSearch: action<{}>(),
   closeSearch: action<{}>(),
 
+  focusLocationBar: action<{
+    wind: string;
+    tab: string;
+  }>(),
+
+  blurLocationBar: action<{}>(),
+
   searchVisibilityChanged: action<{
     open: boolean;
   }>(),
