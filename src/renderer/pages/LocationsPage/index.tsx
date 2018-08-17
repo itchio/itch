@@ -21,7 +21,7 @@ class LocationsPage extends React.PureComponent<Props> {
     return (
       <Page>
         <ListInstallLocations
-          params={{}}
+          params={{ sequence: this.props.sequence }}
           loadingHandled
           render={({ loading, result }) => (
             <>
