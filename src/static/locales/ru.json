@@ -620,5 +620,6 @@
     "send_feedback.steps.send": "Отправить отзыв",
     "setup.action.browse": "Обзор",
     "grid.item.install_title": "Установить {{title}}",
-    "browser.open_devtools": "Открыть инструменты разработчика"
+    "browser.open_devtools": "Открыть инструменты разработчика",
+    "prompt.action.back": "Назад"
 }
