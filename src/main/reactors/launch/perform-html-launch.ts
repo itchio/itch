@@ -69,6 +69,8 @@ export async function performHTMLLaunch(
       preload: noPreload ? null : getInjectPath("game"),
       /* stores cookies etc. in persistent session to save progress */
       session: gameSession,
+      /* disable CORS to allow access to the itch.io API */
+      webSecurity: false,
     },
   });
 

@@ -1,5 +1,6 @@
 import querystring from "querystring";
 import urlParser from "url";
+import { webFrame } from "electron";
 
 declare function atob(b64: string): string;
 
@@ -44,6 +45,9 @@ const extendedGlobal = global as ExtendedGlobal;
     extendedGlobal.Itch = JSON.parse(jsonSource);
     console.log("Loaded itch environment!");
     console.dir(extendedGlobal.Itch);
+
+    console.log("Registering itch-cave scheme as privileged");
+    webFrame.registerURLSchemeAsPrivileged("itch-cave");
   } catch (e) {
     console.error("While loading itch environment: ", e);
   } finally {

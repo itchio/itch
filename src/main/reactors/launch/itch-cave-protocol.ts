@@ -1,23 +1,27 @@
-import { join } from "path";
+import { ItchPromise } from "common/util/itch-promise";
 import * as url from "common/util/url";
+import { Session } from "electron";
+import { createReadStream, statSync } from "fs";
+import { mainLogger } from "main/logger";
+import mime from "mime-types";
+import { join } from "path";
 
 const registeredSessions = new Set<Session>();
 const WEBGAME_PROTOCOL = "itch-cave";
 
-import { Session } from "electron";
-import { ItchPromise } from "common/util/itch-promise";
+const logger = mainLogger.child(__filename);
 
 export async function registerItchCaveProtocol(
-  caveSession: Session,
+  gameSession: Session,
   fileRoot: string
 ) {
-  if (registeredSessions.has(caveSession)) {
+  if (registeredSessions.has(gameSession)) {
     return;
   }
-  registeredSessions.add(caveSession);
+  registeredSessions.add(gameSession);
 
   await new ItchPromise((resolve, reject) => {
-    caveSession.protocol.registerFileProtocol(
+    gameSession.protocol.registerStreamProtocol(
       WEBGAME_PROTOCOL,
       (request, callback) => {
         const urlPath = url.parse(request.url).pathname;
@@ -25,7 +29,38 @@ export async function registerItchCaveProtocol(
         const rootlessPath = decodedPath.replace(/^\//, "");
         const filePath = join(fileRoot, rootlessPath);
 
-        callback(filePath);
+        try {
+          var stats = statSync(filePath);
+          var stream = createReadStream(filePath);
+          callback({
+            headers: {
+              server: "itch",
+              "content-type": mime.lookup(filePath),
+              "content-length": stats.size,
+              "access-control-allow-origin": "*",
+            },
+            statusCode: 200,
+            data: stream as any, // *sigh*
+          });
+        } catch (e) {
+          logger.warn(`while serving ${request.url}, got ${e.stack}`);
+          let statusCode = 400;
+          switch (e.code) {
+            case "ENOENT":
+              statusCode = 404;
+              break;
+            case "EPERM":
+              statusCode = 401;
+              break;
+          }
+
+          callback({
+            headers: {},
+            statusCode,
+            data: null,
+          });
+          return;
+        }
       },
       error => {
         if (error) {
@@ -38,7 +73,7 @@ export async function registerItchCaveProtocol(
   });
 
   const handled = await new ItchPromise((resolve, reject) => {
-    caveSession.protocol.isProtocolHandled(WEBGAME_PROTOCOL, result => {
+    gameSession.protocol.isProtocolHandled(WEBGAME_PROTOCOL, result => {
       resolve(result);
     });
   });
