@@ -22,9 +22,12 @@ export interface ShowErrorParams {
   game?: Game;
   log: string;
   forceDetails?: boolean;
+  showSendReport?: boolean;
 }
 
-export interface ShowErrorResponse {}
+export interface ShowErrorResponse {
+  sendReport: boolean;
+}
 
 //---------------------
 

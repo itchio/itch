@@ -6,7 +6,11 @@ import { Watcher } from "common/util/watcher";
 import { promisedModal } from "main/reactors/modals";
 
 import { performLaunch } from "main/reactors/launch/perform-launch";
-import { isInternalError, asRequestError } from "common/butlerd";
+import {
+  isInternalError,
+  asRequestError,
+  mergeLogAndError,
+} from "common/butlerd";
 import { Code } from "common/butlerd/messages";
 import { formatError } from "common/format/errors";
 import { t } from "common/format/t";
@@ -71,7 +75,7 @@ export default function(watcher: Watcher) {
           }
         }
 
-        await promisedModal(
+        const res = await promisedModal(
           store,
           modals.showError.make({
             wind: "root",
@@ -82,10 +86,17 @@ export default function(watcher: Watcher) {
             detail: isInternalError(e)
               ? ["game.install.could_not_launch.detail"]
               : null,
-            widgetParams: { rawError: e, log, game, forceDetails: true },
+            widgetParams: {
+              rawError: e,
+              log,
+              game,
+              forceDetails: true,
+              showSendReport: true,
+            },
             buttons: [
               {
                 label: ["prompt.action.ok"],
+                action: "widgetResponse",
               },
               {
                 label: showInExplorerString(),
@@ -96,6 +107,15 @@ export default function(watcher: Watcher) {
             ],
           })
         );
+
+        console.log(`showError had res:`, res);
+        if (res && res.sendReport) {
+          store.dispatch(
+            actions.sendFeedback({
+              log: mergeLogAndError(log, e),
+            })
+          );
+        }
       },
     });
   });

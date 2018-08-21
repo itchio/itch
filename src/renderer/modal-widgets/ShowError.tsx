@@ -81,7 +81,7 @@ const ReportLabel = styled.label`
   color: ${props => props.theme.secondaryText};
 
   &:not(.enabled) {
-    color: ${props => props.theme.ternaryText};
+    opacity: 0.8;
   }
 `;
 
@@ -104,10 +104,13 @@ const GameRow = styled.div`
 class ShowError extends React.PureComponent<Props, State> {
   constructor(props: ShowError["props"], context: any) {
     super(props, context);
+    const { showSendReport } = props.modal.widgetParams;
     this.state = {
-      // TODO: save to prefs
-      sendReport: true,
+      sendReport: showSendReport,
     };
+    props.updatePayload({
+      sendReport: this.state.sendReport,
+    });
   }
 
   render() {
@@ -143,7 +146,12 @@ class ShowError extends React.PureComponent<Props, State> {
   }
 
   renderErrorStuff() {
-    const { rawError, log, forceDetails } = this.props.modal.widgetParams;
+    const {
+      rawError,
+      log,
+      forceDetails,
+      showSendReport,
+    } = this.props.modal.widgetParams;
     const internal = isInternalError(rawError);
     if (!internal && !forceDetails) {
       return null;
@@ -181,14 +189,18 @@ class ShowError extends React.PureComponent<Props, State> {
             )}
           </details>
         </ContainerDiv>
-        <ReportLabel className={classNames({ enabled: this.state.sendReport })}>
-          <input
-            type="checkbox"
-            checked={this.state.sendReport}
-            onChange={this.onSendReportChange}
-          />
-          {T(["prompt.show_error.send_report"])}
-        </ReportLabel>
+        {showSendReport ? (
+          <ReportLabel
+            className={classNames({ enabled: this.state.sendReport })}
+          >
+            <input
+              type="checkbox"
+              checked={this.state.sendReport}
+              onChange={this.onSendReportChange}
+            />
+            {T(["prompt.show_error.send_report"])}
+          </ReportLabel>
+        ) : null}
       </ModalWidgetDiv>
     );
   }
@@ -203,8 +215,12 @@ class ShowError extends React.PureComponent<Props, State> {
   };
 
   onSendReportChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({
+    let state = {
       sendReport: ev.currentTarget.checked,
+    };
+    this.setState(state);
+    this.props.updatePayload({
+      sendReport: state.sendReport,
     });
   };
 }

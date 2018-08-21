@@ -175,6 +175,10 @@ export function getErrorStack(e: any): string {
   return errorStack;
 }
 
+export function mergeLogAndError(log: string, e: any): string {
+  return `${log}\n\nError stack:\n${getErrorStack(e)}\n`;
+}
+
 export function asRequestError(e: Error): RequestError {
   const re = e as RequestError;
   if (re.rpcError) {
