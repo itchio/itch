@@ -108,7 +108,6 @@ export default function(watcher: Watcher) {
           })
         );
 
-        console.log(`showError had res:`, res);
         if (res && res.sendReport) {
           store.dispatch(
             actions.sendFeedback({

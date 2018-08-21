@@ -1,9 +1,16 @@
 import { modals } from "common/modals";
 import { ModalButtonSpec, LocalizedString, Store, Action } from "common/types";
-import { asRequestError, messages } from "common/butlerd";
+import {
+  asRequestError,
+  messages,
+  mergeLogAndError,
+  isInternalError,
+} from "common/butlerd";
 import { t } from "common/format/t";
 import { formatError } from "common/format/errors";
 import { Game } from "common/butlerd/messages";
+import { promisedModal } from "main/reactors/modals";
+import { actions } from "common/actions";
 
 interface InstallErrorParams {
   store: Store;
@@ -14,7 +21,7 @@ interface InstallErrorParams {
   stopAction: () => Action<any>;
 }
 
-export function makeInstallErrorModal(params: InstallErrorParams) {
+export async function showInstallErrorModal(params: InstallErrorParams) {
   let buttons: ModalButtonSpec[] = [];
   let detail: LocalizedString;
   let shouldRetry = true;
@@ -54,17 +61,38 @@ export function makeInstallErrorModal(params: InstallErrorParams) {
     {
       label: ["grid.item.discard_download"],
       icon: "delete",
-      action: stopAction(),
+      action: "widgetResponse",
     },
     "cancel",
   ];
 
-  return modals.showError.make({
+  const allowReport = isInternalError(e);
+
+  const typedModal = modals.showError.make({
     wind: "root",
     title: ["prompt.install_error.title"],
     message: t(i18n, formatError(e)),
     detail,
-    widgetParams: { rawError: e, log, forceDetails, game },
+    widgetParams: {
+      rawError: e,
+      log,
+      forceDetails,
+      game,
+      showSendReport: allowReport,
+    },
     buttons,
   });
+
+  const res = await promisedModal(store, typedModal);
+
+  if (res) {
+    store.dispatch(stopAction());
+    if (allowReport && res.sendReport) {
+      store.dispatch(
+        actions.sendFeedback({
+          log: mergeLogAndError(log, e),
+        })
+      );
+    }
+  }
 }

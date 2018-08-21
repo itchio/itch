@@ -11,7 +11,7 @@ import { modals } from "common/modals";
 import { isEmpty, map } from "underscore";
 import { promisedModal } from "main/reactors/modals";
 import asTask from "main/reactors/tasks/as-task";
-import { makeInstallErrorModal } from "main/reactors/tasks/make-install-error-modal";
+import { showInstallErrorModal } from "main/reactors/tasks/show-install-error-modal";
 
 const logger = mainLogger.child(__filename);
 
@@ -88,18 +88,14 @@ async function queueInstall(
       await performInstallQueue({ store, logger, game, upload, build });
     },
     onError: async (e, log) => {
-      store.dispatch(
-        actions.openModal(
-          makeInstallErrorModal({
-            store,
-            e,
-            log,
-            game,
-            retryAction: () => actions.queueGameInstall({ game, upload }),
-            stopAction: () => null,
-          })
-        )
-      );
+      await showInstallErrorModal({
+        store,
+        e,
+        log,
+        game,
+        retryAction: () => actions.queueGameInstall({ game, upload }),
+        stopAction: () => null,
+      });
     },
     onCancel: async () => {
       store.dispatch(

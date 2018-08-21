@@ -4,7 +4,7 @@ import { Watcher } from "common/util/watcher";
 import { mainLogger } from "main/logger";
 import { join } from "path";
 import * as sf from "main/os/sf";
-import { makeInstallErrorModal } from "main/reactors/tasks/make-install-error-modal";
+import { showInstallErrorModal } from "main/reactors/tasks/show-install-error-modal";
 
 const logger = mainLogger.child(__filename);
 
@@ -29,17 +29,13 @@ export default function(watcher: Watcher) {
       logger.warn(`could not read log: ${e.stack}`);
     }
 
-    store.dispatch(
-      actions.openModal(
-        makeInstallErrorModal({
-          store,
-          e: getDownloadError(item),
-          log,
-          game: item.game,
-          retryAction: () => actions.retryDownload({ id }),
-          stopAction: () => actions.discardDownload({ id }),
-        })
-      )
-    );
+    await showInstallErrorModal({
+      store,
+      e: getDownloadError(item),
+      log,
+      game: item.game,
+      retryAction: () => actions.retryDownload({ id }),
+      stopAction: () => actions.discardDownload({ id }),
+    });
   });
 }

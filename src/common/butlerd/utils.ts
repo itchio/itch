@@ -1,11 +1,12 @@
 import { Client, RequestCreator, RequestError } from "butlerd";
-import { Logger } from "common/logger";
+import { Logger, levels, LogEntry } from "common/logger";
 import { MinimalContext } from "main/context";
 import * as messages from "common/butlerd/messages";
 import { Cave, CaveSummary } from "common/butlerd/messages";
 import { Store, isCancelled, isAborted } from "common/types";
 import { Conversation } from "butlerd/lib/client";
 import { delay } from "main/reactors/delay";
+import { formatDate, DATE_FORMAT } from "common/format/datetime";
 
 type WithCB<T> = (client: Client) => Promise<T>;
 
@@ -176,7 +177,33 @@ export function getErrorStack(e: any): string {
 }
 
 export function mergeLogAndError(log: string, e: any): string {
-  return `${log}\n\nError stack:\n${getErrorStack(e)}\n`;
+  let formattedLog = "";
+  if (log) {
+    let lines = log.split("\n");
+    for (let line of lines) {
+      line = line.trim();
+      let fallback = false;
+      try {
+        const obj = JSON.parse(line) as LogEntry;
+        if (obj.msg) {
+          let date = formatDate(new Date(obj.time), "en-US", DATE_FORMAT);
+          let level = levels[obj.level];
+          let { msg } = obj;
+          formattedLog += `${date} [${level}] ${msg}\n`;
+        } else {
+          fallback = true;
+        }
+      } catch (e) {
+        fallback = true;
+      }
+
+      if (fallback) {
+        formattedLog += `${line}\n`;
+      }
+    }
+  }
+
+  return `${formattedLog}\n\nError stack:\n${getErrorStack(e)}\n`;
 }
 
 export function asRequestError(e: Error): RequestError {
