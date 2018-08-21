@@ -1,16 +1,15 @@
 import { actions } from "common/actions";
 import { opensInWindow } from "common/constants/windows";
+import { t } from "common/format/t";
+import { truncate } from "common/format/truncate";
 import { Space } from "common/helpers/space";
-import { RootState, MenuTemplate, I18nState } from "common/types";
+import { I18nState, MenuTemplate, RootState } from "common/types";
 import uuid from "common/util/uuid";
 import { Watcher } from "common/util/watcher";
 import { shell } from "electron";
 import { mainLogger } from "main/logger";
 import { getNativeWindow } from "main/reactors/winds";
 import { createSelector } from "reselect";
-import { truncate } from "common/format/truncate";
-import { format } from "url";
-import { t } from "common/format/t";
 
 const logger = mainLogger.child(__filename);
 

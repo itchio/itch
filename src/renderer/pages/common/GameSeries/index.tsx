@@ -4,11 +4,14 @@ import { Game } from "common/butlerd/messages";
 import { Space } from "common/helpers/space";
 import { Dispatch, LocalizedString } from "common/types";
 import { ambientWind } from "common/util/navigation";
+import { isNetworkError } from "main/net/errors";
 import React from "react";
+import equal from "react-fast-compare";
 import EmptyState from "renderer/basics/EmptyState";
 import ErrorState from "renderer/basics/ErrorState";
 import Filler from "renderer/basics/Filler";
 import FiltersContainer from "renderer/basics/FiltersContainer";
+import LoadingCircle from "renderer/basics/LoadingCircle";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { withSpace } from "renderer/hocs/withSpace";
@@ -18,12 +21,8 @@ import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
-import { isEmpty } from "underscore";
-import { isNetworkError } from "main/net/errors";
 import styled from "renderer/styles";
-import LoadingCircle from "renderer/basics/LoadingCircle";
-import { throttle } from "underscore";
-import equal from "react-fast-compare";
+import { isEmpty, throttle } from "underscore";
 
 interface FetchRes<Item> {
   items: Item[];
@@ -81,7 +80,7 @@ export default <Params, Res extends FetchRes<any>>(
   type Props = GenericProps<Params, Res, Res["items"][0]>;
   type State = GenericState<Params>;
 
-  const c = class Series extends React.PureComponent<Props, State> {
+  class Series extends React.PureComponent<Props, State> {
     constructor(props: Props, context: any) {
       super(props, context);
       this.state = {
@@ -99,6 +98,18 @@ export default <Params, Res extends FetchRes<any>>(
       }
 
       return null;
+    }
+
+    componentDidUpdate(props: Props, state: State) {
+      if (
+        state.cursors &&
+        state.cursors.length === 1 &&
+        state.cursors[0] === null
+      ) {
+        if (this.itemList) {
+          this.itemList.scrollTop = 0;
+        }
+      }
     }
 
     render() {
@@ -280,9 +291,8 @@ export default <Params, Res extends FetchRes<any>>(
         />
       );
     }
-  };
-
-  return hook()(withSpace(c));
+  }
+  return hook()(withSpace(Series));
 };
 
 function renderNoop(): JSX.Element {

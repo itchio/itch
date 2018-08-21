@@ -1,26 +1,26 @@
-import React from "react";
 import { RequestCreator } from "butlerd";
+import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
-import butlerCaller from "renderer/hocs/butlerCaller";
-import { LocalizedString, Dispatch } from "common/types";
-import {
-  Title,
-  TitleSpacer,
-  StandardGameCover,
-  TitleBox,
-  standardCoverHeight,
-} from "renderer/pages/PageStyles/games";
+import { Space } from "common/helpers/space";
+import { Dispatch, LocalizedString } from "common/types";
+import { ambientWind } from "common/util/navigation";
+import { isNetworkError } from "main/net/errors";
+import React from "react";
 import ErrorState from "renderer/basics/ErrorState";
 import LoadingCircle from "renderer/basics/LoadingCircle";
+import butlerCaller from "renderer/hocs/butlerCaller";
+import { hook } from "renderer/hocs/hook";
+import { withSpace } from "renderer/hocs/withSpace";
+import {
+  standardCoverHeight,
+  StandardGameCover,
+  Title,
+  TitleBox,
+  TitleSpacer,
+} from "renderer/pages/PageStyles/games";
+import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
-import styled, * as styles from "renderer/styles";
-import { Space } from "common/helpers/space";
-import { withSpace } from "renderer/hocs/withSpace";
-import { isNetworkError } from "main/net/errors";
-import { hook } from "renderer/hocs/hook";
-import { actions } from "common/actions";
-import { ambientWind } from "common/util/navigation";
 
 const StripeDiv = styled.div`
   display: flex;
@@ -62,7 +62,7 @@ interface FetchRes<Item> {
   items: Item[];
 }
 
-interface Props<Params, Res extends FetchRes<Item>, Item> {
+interface GenericProps<Params, Res extends FetchRes<Item>, Item> {
   dispatch: Dispatch;
   space: Space;
   title: LocalizedString;
@@ -86,9 +86,9 @@ export default <Params, Res extends FetchRes<any>>(
     return !isEmpty(result.items);
   };
 
-  const stripe = class extends React.PureComponent<
-    Props<Params, Res, Res["items"][0]>
-  > {
+  type Props = GenericProps<Params, Res, Res["items"][0]>;
+
+  class Stripe extends React.PureComponent<Props> {
     render() {
       const { params, space } = this.props;
 
@@ -204,8 +204,8 @@ export default <Params, Res extends FetchRes<any>>(
         <ViewAll href={this.props.href}>{T(["game_stripe.view_all"])}</ViewAll>
       );
     }
-  };
-  return withSpace(hook()(stripe));
+  }
+  return withSpace(hook()(Stripe));
 };
 
 function renderNoop(): JSX.Element {

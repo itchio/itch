@@ -5,8 +5,13 @@ import ErrorState from "renderer/basics/ErrorState";
 import equal from "react-fast-compare";
 import { rcall } from "renderer/butlerd/rcall";
 import styled from "renderer/styles";
+import { ActionList, invalidators } from "renderer/butlerd/invalidators";
+import { Watcher } from "common/util/watcher";
+import { devNull } from "common/logger";
+import { storeShape } from "renderer/hocs/watching";
+import { debounce } from "underscore";
 
-interface ButlerCallerProps<Params, Result> {
+interface GenericProps<Params, Result> {
   params: Params;
   render: (args: ButlerCallerArgs<Params, Result>) => JSX.Element;
   errorsHandled?: boolean;
@@ -19,7 +24,7 @@ interface StaleResult {
   stale?: boolean;
 }
 
-interface ButlerCallerState<Result> {
+interface GenericState<Result> {
   loading: boolean;
   error: Error;
   result: Result;
@@ -41,26 +46,54 @@ export const LoadingStateDiv = styled.div`
   margin: 20px auto;
 `;
 
-const butlerCaller = <Params, Result>(method: RequestCreator<Params, Result>) =>
-  class extends React.PureComponent<
-    ButlerCallerProps<Params, Result>,
-    ButlerCallerState<Result>
-  > {
+const butlerCaller = <Params, Result>(
+  method: RequestCreator<Params, Result>
+) => {
+  type Props = GenericProps<Params, Result>;
+  type State = GenericState<Result>;
+
+  class Caller extends React.PureComponent<Props, State> {
     static displayName = `ButlerCall(${method.name})`;
     fetchID = 0;
+    invalidators: ActionList;
+    watcher: Watcher;
 
-    constructor(props: any, context: any) {
+    static contextTypes = {
+      store: storeShape,
+    };
+
+    constructor(props: Props, context: any) {
       super(props, context);
       this.state = {
         loading: true,
         error: undefined,
         result: undefined,
       };
+      this.invalidators = invalidators.get(method);
     }
 
     componentDidMount() {
       this.queueFetch();
+      if (this.invalidators) {
+        this.watcher = new Watcher(devNull);
+        this.context.store.watcher.addSub(this.watcher);
+        for (const invalidatingAction of this.invalidators) {
+          this.watcher.on(invalidatingAction, async (store, action) => {
+            this.invalidate();
+          });
+        }
+      }
     }
+
+    componentWillUnmount() {
+      if (this.watcher) {
+        this.context.store.watcher.removeSub(this.watcher);
+      }
+    }
+
+    invalidate = debounce(() => {
+      this.queueFetch();
+    }, 150);
 
     private queueFetch = (additionalParams?: Object) => {
       // cf. https://github.com/Microsoft/TypeScript/pull/13288
@@ -132,7 +165,7 @@ const butlerCaller = <Params, Result>(method: RequestCreator<Params, Result>) =>
       return render({ error, loading, result, refresh: this.queueFetch });
     }
 
-    componentDidUpdate(prevProps: ButlerCallerProps<Params, Result>) {
+    componentDidUpdate(prevProps: GenericProps<Params, Result>) {
       if (!equal(prevProps.params, this.props.params)) {
         this.queueFetch();
         return;
@@ -143,6 +176,8 @@ const butlerCaller = <Params, Result>(method: RequestCreator<Params, Result>) =>
         return;
       }
     }
-  };
+  }
+  return Caller;
+};
 
 export default butlerCaller;

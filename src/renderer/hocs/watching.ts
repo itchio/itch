@@ -4,6 +4,12 @@ export { Watcher } from "common/util/watcher";
 import PropTypes from "prop-types";
 import { rendererLogger } from "renderer/logger";
 
+export const storeShape = PropTypes.shape({
+  subscribe: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  getState: PropTypes.func.isRequired,
+});
+
 /**
  * watching is an ES2017 decorator that lets components subscribe
  * to actions, much like reactors. They have to define a `subscribe`
@@ -21,11 +27,7 @@ export default function(constructor: Function) {
   const origContextTypes = (constructor as any).contextTypes || {};
   (constructor as any).contextTypes = {
     ...origContextTypes,
-    store: PropTypes.shape({
-      subscribe: PropTypes.func.isRequired,
-      dispatch: PropTypes.func.isRequired,
-      getState: PropTypes.func.isRequired,
-    }),
+    store: storeShape,
   };
 
   const originalDidMount = constructor.prototype.componentDidMount;

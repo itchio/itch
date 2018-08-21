@@ -531,6 +531,8 @@ export const actions = wireActions({
   newItemsImported: action<{}>(),
   installLocationsChanged: action<{}>(),
 
+  ownedKeysFetched: action<{}>(),
+
   // tasks
 
   taskStarted: action<{

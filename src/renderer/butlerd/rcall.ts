@@ -1,7 +1,6 @@
-import store from "renderer/store";
-import { call, SetupFunc } from "common/butlerd";
 import { RequestCreator } from "butlerd";
-import { rendererLogger } from "renderer/logger";
+import { call, SetupFunc } from "common/butlerd";
+import store from "renderer/store";
 
 if (process.type !== "renderer") {
   throw new Error(`rcall cannot be required from main process`);

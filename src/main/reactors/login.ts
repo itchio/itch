@@ -175,6 +175,25 @@ async function setCookie(profile: Profile, cookie: { [key: string]: string }) {
 }
 
 async function loginSucceeded(store: Store, profile: Profile) {
-  await restoreTabs(store, profile);
+  try {
+    await restoreTabs(store, profile);
+  } catch (e) {
+    logger.warn(`Could not restore tabs: ${e.stack}`);
+  }
+
   store.dispatch(actions.loginSucceeded({ profile }));
+  try {
+    logger.info(`Fetching owned keys...`);
+    let t1 = Date.now();
+    await mcall(messages.FetchProfileOwnedKeys, {
+      profileId: profile.id,
+      fresh: true,
+      limit: 1,
+    });
+    let t2 = Date.now();
+    logger.info(`Fetched owned keys in ${(t2 - t1).toFixed()}ms`);
+    store.dispatch(actions.ownedKeysFetched({}));
+  } catch (e) {
+    logger.warn(`In initial owned keys fetch: ${e.stack}`);
+  }
 }
