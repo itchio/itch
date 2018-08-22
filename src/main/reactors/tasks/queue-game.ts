@@ -107,19 +107,41 @@ async function queueInstall(
   });
 }
 
+interface PerformInstallQueueOpts {
+  store: Store;
+  logger: Logger;
+  game: Game;
+  upload: Upload;
+  build: Build;
+}
+
 async function performInstallQueue({
   store,
   logger,
   game,
   upload,
   build,
-}: {
-  store: Store;
-  logger: Logger;
-  game: Game;
-  upload: Upload;
-  build: Build;
-}) {
+}: PerformInstallQueueOpts) {
+  await promisedModal(
+    store,
+    modals.planInstall.make({
+      wind: "root",
+      title: game.title,
+      widgetParams: {
+        gameId: game.id,
+      },
+      buttons: [],
+    })
+  );
+}
+
+async function oldPerformInstallQueue({
+  store,
+  logger,
+  game,
+  upload,
+  build,
+}: PerformInstallQueueOpts) {
   const installLocationId = defaultInstallLocation(store);
 
   await mcall(

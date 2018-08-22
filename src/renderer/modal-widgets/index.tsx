@@ -21,6 +21,10 @@ const ManageGame = Loadable({
   loader: () => import("renderer/modal-widgets/ManageGame"),
   loading: () => null,
 });
+const PlanInstall = Loadable({
+  loader: () => import("renderer/modal-widgets/PlanInstall"),
+  loading: () => null,
+});
 const PrereqsState = Loadable({
   loader: () => import("renderer/modal-widgets/PrereqsState"),
   loading: () => null,
@@ -67,6 +71,7 @@ export const modalWidgets: ModalWidgetRegistry = {
   exploreJson: ExploreJson,
   manageCave: ManageCave,
   manageGame: ManageGame,
+  planInstall: PlanInstall,
   prereqsState: PrereqsState,
   recaptchaInput: RecaptchaInput,
   sendFeedback: SendFeedback,

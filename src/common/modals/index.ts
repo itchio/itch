@@ -23,6 +23,8 @@ import {
   ScanInstallLocationsParams,
   ScanInstallLocationsResponse,
   SendFeedbackParams,
+  PlanInstallParams,
+  PlanInstallResponse,
 } from "common/modals/types";
 import {
   Action,
@@ -107,6 +109,7 @@ export const modals = wireWidgets({
   exploreJson: widget<ExploreJsonParams, ExploreJsonResponse>(),
   manageGame: widget<ManageGameParams, ManageGameResponse>(),
   manageCave: widget<ManageCaveParams, ManageCaveResponse>(),
+  planInstall: widget<PlanInstallParams, PlanInstallResponse>(),
   prereqsState: widget<PrereqsStateParams, PrereqsStateResponse>(),
   recaptchaInput: widget<RecaptchaInputParams, RecaptchaInputResponse>(),
   switchVersionCave: widget<

@@ -102,6 +102,14 @@ export interface ManageCaveResponse {}
 
 //---------------------
 
+export interface PlanInstallParams {
+  gameId: number;
+}
+
+export interface PlanInstallResponse {}
+
+//---------------------
+
 export interface ExploreJsonParams {
   data: any;
 }

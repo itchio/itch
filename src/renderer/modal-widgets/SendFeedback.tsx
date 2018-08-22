@@ -17,6 +17,7 @@ import styled, { css } from "renderer/styles";
 import { InjectedIntl } from "react-intl";
 import { withIntl } from "renderer/hocs/withIntl";
 import { T } from "renderer/t";
+import { ModalButtons } from "renderer/basics/modal-styles";
 
 enum ReportStage {
   Filling,
@@ -117,17 +118,6 @@ const ExternalLink = styled.div`
 
   &:after {
     content: " ↗";
-  }
-`;
-
-const Buttons = styled.div`
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-
-  & > * {
-    margin-left: 1em;
   }
 `;
 
@@ -315,7 +305,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           </TabPanel>
         </Tabs>
         <Filler />
-        <Buttons>
+        <ModalButtons>
           <Button onClick={this.onBailOut}>
             {T(["prompt.action.cancel"])}
           </Button>
@@ -334,7 +324,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           >
             {T(["send_feedback.nav.next"])}
           </Button>
-        </Buttons>
+        </ModalButtons>
       </SendFeedbackDiv>
     );
   }
@@ -363,11 +353,11 @@ class ReportIssue extends React.PureComponent<Props, State> {
         <p>{T(["send_feedback.success.thanks"])}</p>
         <p>{T(["send_feedback.success.promise"])}</p>
         <Filler />
-        <Buttons>
+        <ModalButtons>
           <Button icon={"cross"} onClick={this.onBailOut}>
             {T(["send_feedback.nav.close"])}
           </Button>
-        </Buttons>
+        </ModalButtons>
       </SendFeedbackDiv>
     );
   }
@@ -380,11 +370,11 @@ class ReportIssue extends React.PureComponent<Props, State> {
         <p>{T(["send_feedback.error.intro"])}</p>
         <InfoBlock>{errorMessage}</InfoBlock>
         <Filler />
-        <Buttons>
+        <ModalButtons>
           <Button icon={"cross"} onClick={this.onBailOut}>
             {T(["send_feedback.nav.close"])}
           </Button>
-        </Buttons>
+        </ModalButtons>
       </SendFeedbackDiv>
     );
   }
