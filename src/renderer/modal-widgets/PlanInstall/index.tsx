@@ -113,10 +113,11 @@ class PlanInstall extends React.PureComponent<Props, State> {
     const {
       game,
       uploads,
-      pickedUpload,
+      pickedUploadId,
       info,
       installLocations,
-      installLocation,
+      pickedInstallLocationId,
+      busy,
     } = this.state;
     return (
       <>
@@ -125,52 +126,81 @@ class PlanInstall extends React.PureComponent<Props, State> {
             <StandardGameCover game={game} />
             <FilterSpacer />
             <StandardGameDesc game={game} />
+            <FilterSpacer />
           </BoxInner>
         </Box>
-        <Select>
+        <Select onChange={this.onInstallLocationChange}>
           {installLocations.map(il => (
-            <option key={il.id} selected={il.id === installLocation.id}>
+            <option
+              key={il.id}
+              value={il.id}
+              selected={il.id === pickedInstallLocationId}
+            >
               {il.path} ({fileSize(il.sizeInfo.freeSize)} free)
             </option>
           ))}
         </Select>
-        <Select>
+
+        <Select onChange={this.onUploadChange}>
           {uploads.map(u => (
-            <option key={u.id} selected={u.id === pickedUpload.id}>
+            <option key={u.id} value={u.id} selected={u.id === pickedUploadId}>
               {formatUploadTitle(u)} ({fileSize(u.size)})
             </option>
           ))}
         </Select>
         <Filler />
-        {info ? (
+        {busy ? (
+          <LoadingCircle progress={-1} />
+        ) : (
           <>
-            <SizeTable>
-              <tr>
-                <td>Space needed</td>
-                <td>
-                  <Icon icon="download" />{" "}
-                  <strong>{fileSize(info.diskUsage.neededFreeSpace)}</strong>{" "}
-                  <i>{info.diskUsage.accuracy}</i>
-                </td>
-              </tr>
-              <tr>
-                <td>Available</td>
-                <td>
-                  <Icon icon="folder-open" />{" "}
-                  <strong>{fileSize(762 * 1024 * 1024)}</strong>
-                </td>
-              </tr>
-            </SizeTable>
+            {info ? (
+              <>
+                <SizeTable>
+                  <tr>
+                    <td>Space needed</td>
+                    <td>
+                      <Icon icon="download" />{" "}
+                      <strong>
+                        {fileSize(info.diskUsage.neededFreeSpace)}
+                      </strong>{" "}
+                      <i>{info.diskUsage.accuracy}</i>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Available</td>
+                    <td>
+                      <Icon icon="folder-open" />{" "}
+                      <strong>{fileSize(762 * 1024 * 1024)}</strong>
+                    </td>
+                  </tr>
+                </SizeTable>
+              </>
+            ) : null}
           </>
-        ) : null}
+        )}
         <Filler />
         <ModalButtons>
-          <Button>Install now</Button>
+          <Button disabled={busy}>Install now</Button>
         </ModalButtons>
       </>
     );
-    return "You may plan now.";
   }
+
+  onInstallLocationChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = ev.currentTarget.value;
+    this.setState({
+      pickedInstallLocationId: id,
+    });
+  };
+
+  onUploadChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = parseInt(ev.currentTarget.value, 10);
+    this.setState({
+      pickedUploadId: id,
+      busy: true,
+    });
+    this.pickUpload(id);
+  };
 
   renderFailed() {
     const { error } = this.state;
@@ -189,12 +219,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
           messages.InstallLocationsList,
           {}
         );
-        const installLocation = findWhere(installLocations, {
-          id: defaultInstallLocation,
-        });
         this.setState({
           installLocations,
-          installLocation,
+          pickedInstallLocationId: defaultInstallLocation,
         });
 
         const { gameId } = this.state;
@@ -203,8 +230,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
           stage: PlanStage.Planning,
           game: res.game,
           uploads: res.uploads,
-          pickedUpload: res.info ? res.info.upload : null,
+          pickedUploadId: res.info ? res.info.upload.id : null,
           info: res.info,
+          busy: false,
         });
       } catch (e) {
         this.setState({
@@ -227,13 +255,13 @@ interface State {
   busy: boolean;
   gameId: number;
   game?: Game;
-  pickedUpload?: Upload;
   uploads?: Upload[];
   info?: InstallPlanInfo;
   error?: Error;
-
   installLocations?: InstallLocationSummary[];
-  installLocation?: InstallLocationSummary;
+
+  pickedUploadId?: number;
+  pickedInstallLocationId?: string;
 }
 
 export default hook(map => ({
