@@ -392,6 +392,27 @@ export const FetchGame = createRequest<FetchGameParams, FetchGameResult>(
 );
 
 /**
+ * Result for Fetch.GameUploads
+ */
+export interface FetchGameUploadsResult {
+  /** List of uploads */
+  uploads: Upload[];
+  /**
+   * Marks that a request should be issued
+   * afterwards with 'Fresh' set
+   */
+  stale?: boolean;
+}
+
+/**
+ * Fetches uploads for an itch.io game
+ */
+export const FetchGameUploads = createRequest<
+  FetchGameUploadsParams,
+  FetchGameUploadsResult
+>("Fetch.GameUploads");
+
+/**
  * Result for Fetch.User
  */
 export interface FetchUserResult {
@@ -665,6 +686,8 @@ export interface CaveInstallInfo {
   installLocation: string;
   /** undocumented */
   installFolder: string;
+  /** undocumented */
+  pinned: boolean;
 }
 
 /**
@@ -818,6 +841,66 @@ export const ExternalUploadsAreBad = createRequest<
   ExternalUploadsAreBadParams,
   ExternalUploadsAreBadResult
 >("ExternalUploadsAreBad");
+
+/**
+ * Result for Install.Plan
+ */
+export interface InstallPlanResult {
+  /** undocumented */
+  game: Game;
+  /** undocumented */
+  uploads: Upload[];
+  /** undocumented */
+  info: InstallPlanInfo;
+}
+
+/**
+ * For modal-first install
+ */
+export const InstallPlan = createRequest<InstallPlanParams, InstallPlanResult>(
+  "Install.Plan"
+);
+
+/**
+ * undocumented
+ */
+export interface InstallPlanInfo {
+  /** undocumented */
+  upload: Upload;
+  /** undocumented */
+  build: Build;
+  /** undocumented */
+  type: string;
+  /** undocumented */
+  diskUsage: DiskUsageInfo;
+}
+
+/**
+ * undocumented
+ */
+export interface DiskUsageInfo {
+  /** undocumented */
+  finalDiskUsage: number;
+  /** undocumented */
+  neededFreeSpace: number;
+  /** undocumented */
+  accuracy: string;
+}
+
+/**
+ * Result for Caves.SetPinned
+ */
+export interface CavesSetPinnedResult {
+  // no fields
+}
+
+/**
+ * undocumented
+ */
+export const CavesSetPinned = createRequest<
+  CavesSetPinnedParams,
+  CavesSetPinnedResult
+>("Caves.SetPinned");
 
 /**
  * Result for Install.Perform
@@ -1818,6 +1901,8 @@ export interface Upload {
   channelName: string;
   /** Latest build for this upload, if it's a wharf-enabled upload */
   build: Build;
+  /** ID of the latest build for this upload, if it's a wharf-enabled upload */
+  buildId: number;
   /** Upload type: default, soundtrack, etc. */
   type: UploadType;
   /** Is this upload a pre-order placeholder? */
@@ -2348,6 +2433,18 @@ export interface FetchGameParams {
 }
 
 /**
+ * Params for Fetch.GameUploads
+ */
+export interface FetchGameUploadsParams {
+  /** Identifier of the game whose uploads we should look for */
+  gameId: number;
+  /** Only returns compatible uploads */
+  compatible: boolean;
+  /** Force an API request */
+  fresh?: boolean;
+}
+
+/**
  * Params for Fetch.User
  */
 export interface FetchUserParams {
@@ -2577,6 +2674,28 @@ export interface InstallQueueParams {
 export interface ExternalUploadsAreBadParams {
   /** undocumented */
   upload: Upload;
+}
+
+/**
+ * Params for Install.Plan
+ */
+export interface InstallPlanParams {
+  /** The ID of the game we're planning to install */
+  gameId: number;
+  /** The download session ID to use for this install plan */
+  downloadSessionId?: string;
+  /** undocumented */
+  uploadId?: number;
+}
+
+/**
+ * Params for Caves.SetPinned
+ */
+export interface CavesSetPinnedParams {
+  /** ID of the cave to pin/unpin */
+  caveId: string;
+  /** Pinned state the cave should have after this call */
+  pinned: boolean;
 }
 
 /**
