@@ -24,6 +24,8 @@ func installFlow(r *runner) {
 	must(r.waitUntilTextExists(mainActionSelector, "Install"))
 	must(r.click(mainActionSelector))
 
+	must(r.click("#modal-install-now"))
+
 	r.logf("launching it")
 	must(r.waitUntilTextExistsWithTimeout(mainActionSelector, "Launch", 30*time.Second))
 	must(r.click(mainActionSelector))

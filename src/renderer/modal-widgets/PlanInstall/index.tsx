@@ -242,7 +242,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
             icon="arrow-right"
             primary
             onClick={this.onInstall}
-            id={"modal--install-now"}
+            id={busy ? null : "modal-install-now"}
           >
             {T(["grid.item.install"])}
           </Button>
