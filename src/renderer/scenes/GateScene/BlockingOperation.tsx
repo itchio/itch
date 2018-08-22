@@ -100,14 +100,12 @@ class BlockingOperation extends React.PureComponent<Props> {
           <>
             <div className="error-actions">
               <Button
-                discreet
                 icon="repeat"
                 label={T(["login.action.retry_setup"])}
                 onClick={() => dispatch(actions.retrySetup({}))}
               />
               <Spacer />
               <Button
-                discreet
                 icon="bug"
                 label={T(["grid.item.report_problem"])}
                 onClick={() =>

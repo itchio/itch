@@ -17,7 +17,7 @@ import styled, { css } from "renderer/styles";
 import { InjectedIntl } from "react-intl";
 import { withIntl } from "renderer/hocs/withIntl";
 import { T } from "renderer/t";
-import { ModalButtons } from "renderer/basics/modal-styles";
+import { ModalButtons, ModalButtonSpacer } from "renderer/basics/modal-styles";
 
 enum ReportStage {
   Filling,
@@ -317,6 +317,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           >
             {T(["send_feedback.nav.previous"])}
           </Button>
+          <ModalButtonSpacer />
           <Button
             icon={"arrow-right"}
             disabled={tabIndex >= 2}

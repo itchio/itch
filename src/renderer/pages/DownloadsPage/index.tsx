@@ -190,18 +190,13 @@ class DownloadsPage extends React.PureComponent<Props> {
         <div className="global-controls">
           {this.props.downloadsPaused ? (
             <PauseResumeButton
-              discreet
               icon="triangle-right"
               onClick={this.onTogglePause}
             >
               {T(["status.downloads.resume_downloads"])}
             </PauseResumeButton>
           ) : (
-            <PauseResumeButton
-              discreet
-              icon="pause"
-              onClick={this.onTogglePause}
-            >
+            <PauseResumeButton icon="pause" onClick={this.onTogglePause}>
               {T(["status.downloads.pause_downloads"])}
             </PauseResumeButton>
           )}

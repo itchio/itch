@@ -161,6 +161,8 @@ export interface ModalButton {
   timeAgo?: {
     date: Date;
   };
+
+  left?: boolean;
 }
 
 export interface ModalButtonTag {

@@ -12,11 +12,13 @@ const DEFAULT_BUTTONS = {
     id: "modal-cancel",
     label: ["prompt.action.cancel"],
     className: "secondary",
+    left: true,
   },
   nevermind: {
     id: "modal-cancel",
     label: ["prompt.action.nevermind"],
     className: "secondary",
+    left: true,
   },
   ok: {
     id: "modal-ok",

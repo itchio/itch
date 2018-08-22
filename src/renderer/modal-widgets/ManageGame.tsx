@@ -82,6 +82,10 @@ const FileSize = styled.div`
   margin-left: 8px;
 `;
 
+const ManageGameDiv = styled(ModalWidgetDiv)`
+  min-width: 600px;
+`;
+
 class ManageGame extends React.PureComponent<Props> {
   render() {
     const params = this.props.modal.widgetParams;
@@ -100,7 +104,7 @@ class ManageGame extends React.PureComponent<Props> {
     );
 
     return (
-      <ModalWidgetDiv>
+      <ManageGameDiv>
         {size(caves) > 0 ? (
           <>
             <p>{T(["prompt.manage_game.installed_uploads"])}</p>
@@ -134,7 +138,6 @@ class ManageGame extends React.PureComponent<Props> {
                         className="manage-cave"
                         data-cave-id={cave.id}
                         icon="cog"
-                        discreet
                         primary
                         onClick={this.onManage}
                       >
@@ -181,7 +184,6 @@ class ManageGame extends React.PureComponent<Props> {
                     <Button
                       data-upload-id={u.id}
                       icon="install"
-                      discreet
                       primary
                       onClick={this.onInstall}
                     >
@@ -193,7 +195,7 @@ class ManageGame extends React.PureComponent<Props> {
             })}
           </CaveItemList>
         ) : null}
-      </ModalWidgetDiv>
+      </ManageGameDiv>
     );
   }
 

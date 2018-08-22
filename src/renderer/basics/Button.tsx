@@ -53,12 +53,6 @@ const ButtonDiv = styled.div`
     border-color: hsla(355, 40%, 52%, 1);
   }
 
-  &.discreet {
-    border-width: 1px;
-    border-radius: 2px;
-    box-shadow: none;
-  }
-
   &.fat {
     font-size: ${props => props.theme.fontSizes.huge};
     font-weight: bold;
@@ -108,7 +102,6 @@ class Button extends React.PureComponent<Props, any> {
     const {
       className,
       primary,
-      discreet,
       fat,
       icon,
       iconComponent,
@@ -128,7 +121,6 @@ class Button extends React.PureComponent<Props, any> {
         data-rh-at="top"
         className={classNames(className, {
           primary,
-          discreet,
           wide,
           fat,
           disabled,
@@ -156,7 +148,6 @@ interface Props {
   icon?: string;
   iconComponent?: JSX.Element;
   label?: JSX.Element | string;
-  discreet?: boolean;
   wide?: boolean;
   fat?: boolean;
   disabled?: boolean;

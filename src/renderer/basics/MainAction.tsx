@@ -136,7 +136,6 @@ class MainAction extends React.PureComponent<Props> {
         className={classNames(className, "main-action")}
         wide={wide}
         translucent={translucent}
-        discreet
         iconComponent={iconComponent}
         label={T(label)}
         primary={primary}

@@ -53,7 +53,6 @@ const ModalPortalDiv = styled.div`
   animation: ${styles.animations.fadeIn} 0.2s;
 
   .content {
-    min-width: 50%;
     max-width: 90%;
     max-height: 90%;
     overflow-y: auto;
@@ -510,26 +509,34 @@ class Modals extends React.PureComponent<Props, State> {
   }
 
   renderNormalButtons(buttons: ModalButtonSpec[]) {
+    let leftButtons = [];
+    let rightButtons = [];
+
+    let index = 0;
+    for (const buttonSpec of buttons) {
+      const button = specToButton(buttonSpec);
+      const { label, className = "", icon, id } = button;
+      let onClick = this.buttonOnClick(button);
+
+      let list = button.left ? leftButtons : rightButtons;
+      list.push(
+        <Button
+          id={id}
+          primary={className !== "secondary"}
+          key={index}
+          onClick={onClick}
+          icon={icon}
+          label={T(label)}
+        />
+      );
+      index++;
+    }
+
     return (
       <ButtonsDiv>
+        {leftButtons}
         <Filler />
-        {map(buttons, (buttonSpec, index) => {
-          const button = specToButton(buttonSpec);
-          const { label, className = "", icon, id } = button;
-          let onClick = this.buttonOnClick(button);
-
-          return (
-            <Button
-              id={id}
-              primary={className !== "secondary"}
-              discreet
-              key={index}
-              onClick={onClick}
-              icon={icon}
-              label={T(label)}
-            />
-          );
-        })}
+        {rightButtons}
       </ButtonsDiv>
     );
   }

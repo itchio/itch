@@ -4,6 +4,10 @@ import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 
 export default function(watcher: Watcher) {
+  watcher.on(actions.downloadQueued, async (store, action) => {
+    store.dispatch(actions.refreshDownloads({}));
+  });
+
   watcher.on(actions.prioritizeDownload, async (store, action) => {
     const { id } = action.payload;
     await mcall(messages.DownloadsPrioritize, { downloadId: id });

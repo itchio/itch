@@ -128,7 +128,7 @@ async function performInstallQueue({
       wind: "root",
       title: game.title,
       widgetParams: {
-        gameId: game.id,
+        game,
       },
       buttons: [],
     })

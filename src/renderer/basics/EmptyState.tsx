@@ -64,12 +64,7 @@ class EmptyState extends React.PureComponent<Props> {
           {buttonAction ? (
             <>
               <ButtonContainer>
-                <Button
-                  icon={buttonIcon}
-                  primary
-                  discreet
-                  onClick={buttonAction}
-                >
+                <Button icon={buttonIcon} primary onClick={buttonAction}>
                   {T(buttonText)}
                 </Button>
               </ButtonContainer>

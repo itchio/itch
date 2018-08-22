@@ -345,6 +345,7 @@
   "pick_update_upload.buttons.just_launch": "Just launch",
   "pick_update_upload.tags.demo": "demo",
   "prompt.action.cancel": "Cancel",
+  "prompt.action.back": "Back",
   "prompt.action.nevermind": "Nevermind",
   "prompt.action.close": "Close",
   "prompt.action.confirm_removal": "Proceed with removal",

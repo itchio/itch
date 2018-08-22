@@ -28,6 +28,8 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { ModalWidgetProps } from "common/modals";
+import { ModalButtons, ModalButtonSpacer } from "renderer/basics/modal-styles";
+import Filler from "renderer/basics/Filler";
 
 const CaveItem = styled.div`
   padding: 4px;
@@ -80,18 +82,6 @@ const CaveItemBigActions = styled.div`
   }
 `;
 
-const CaveItemActions = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  width: 100%;
-  margin-top: 10px;
-
-  & > * {
-    margin-right: 4px;
-  }
-`;
-
 const Title = styled.div`
   font-weight: bold;
 
@@ -104,9 +94,13 @@ const FileSize = styled.div`
   font-weight: normal;
 `;
 
+const ManageCaveDiv = styled(ModalWidgetDiv)`
+  min-width: 600px;
+`;
+
 class ManageCave extends React.PureComponent<Props> {
   render() {
-    return <ModalWidgetDiv>{this.renderCave()}</ModalWidgetDiv>;
+    return <ManageCaveDiv>{this.renderCave()}</ManageCaveDiv>;
   }
 
   renderCave(): JSX.Element {
@@ -216,24 +210,27 @@ class ManageCave extends React.PureComponent<Props> {
             </>
           ) : null}
         </CaveItemBigActions>
-        <CaveItemActions>
+        <ModalButtons>
+          <Button icon="arrow-left" onClick={this.onBack}>
+            {T(["prompt.action.back"])}
+          </Button>
+          <Filler />
           <Button
-            discreet
             icon="repeat"
             onClick={this.onReinstall}
             className="manage-reinstall"
           >
             {T(["prompt.uninstall.reinstall"])}
           </Button>
+          <ModalButtonSpacer />
           <Button
-            discreet
             icon="uninstall"
             onClick={this.onUninstall}
             className="manage-uninstall"
           >
             {T(["prompt.uninstall.uninstall"])}
           </Button>
-        </CaveItemActions>
+        </ModalButtons>
       </CaveItem>
     );
   }
@@ -245,6 +242,19 @@ class ManageCave extends React.PureComponent<Props> {
       actions.closeModal({
         wind: ambientWind(),
         action: actions.switchVersionCaveRequest({ cave }),
+      })
+    );
+  };
+
+  onBack = () => {
+    const { dispatch } = this.props;
+    const { wind, id } = this.props.modal;
+    const { game } = this.props.modal.widgetParams.cave;
+    dispatch(
+      actions.closeModal({
+        wind,
+        id,
+        action: actions.manageGame({ game }),
       })
     );
   };
