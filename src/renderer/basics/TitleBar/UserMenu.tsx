@@ -1,12 +1,12 @@
 import { actions } from "common/actions";
 import { User } from "common/butlerd/messages";
-import defaultImages from "common/constants/default-images";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Filler from "renderer/basics/Filler";
 import { hook } from "renderer/hocs/hook";
 import styled, * as styles from "renderer/styles";
+import { getUserCoverURL } from "common/constants/get-user-cover-url";
 
 const UserMenuDiv = styled.div`
   display: flex;
@@ -54,7 +54,8 @@ class UserMenu extends React.PureComponent<Props> {
 
   me() {
     const { me } = this.props;
-    const { coverUrl = defaultImages.avatar, username, displayName } = me;
+    const { username, displayName } = me;
+    const coverUrl = getUserCoverURL(me);
 
     return (
       <UserMenuDiv className="user-menu" onMouseDown={this.openMenu}>

@@ -1,6 +1,5 @@
 import { actions } from "common/actions";
 import { Profile } from "common/butlerd/messages";
-import defaultImages from "common/constants/default-images";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
 import TimeAgo from "renderer/basics/TimeAgo";
@@ -9,12 +8,14 @@ import { modals } from "common/modals";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { Dispatch } from "common/types";
+import { getUserCoverURL } from "common/constants/get-user-cover-url";
 
 class RememberedProfile extends React.PureComponent<Props> {
   render() {
     const { profile } = this.props;
     const { user } = profile;
-    const { username, displayName, coverUrl = defaultImages.avatar } = user;
+    const { username, displayName } = user;
+    const coverUrl = getUserCoverURL(user);
 
     return (
       <RememberedProfileDiv

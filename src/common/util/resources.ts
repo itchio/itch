@@ -19,6 +19,10 @@ export function getImagePath(path: string): string {
   return getPath(resourcePath);
 }
 
+export function getImageURL(path: string): string {
+  return `file://${getImagePath(path)}`;
+}
+
 export function getLocalePath(path: string): string {
   const resourcePath = "static/locales/" + path;
   return getPath(resourcePath);
