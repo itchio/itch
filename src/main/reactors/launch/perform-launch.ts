@@ -64,7 +64,6 @@ export async function performLaunch(
   await ctx.withStopper({
     work: async () => {
       try {
-        logger.info(`Calling mcall...`);
         await mcall(
           messages.Launch,
           {
