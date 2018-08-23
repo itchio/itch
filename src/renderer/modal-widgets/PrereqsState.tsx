@@ -8,6 +8,7 @@ import { T } from "renderer/t";
 import { map } from "underscore";
 import { ModalWidgetProps } from "common/modals";
 import DownloadProgress from "renderer/basics/DownloadProgress";
+import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 
 class PrereqsState extends React.PureComponent<Props> {
   render() {
@@ -34,6 +35,7 @@ class PrereqsState extends React.PureComponent<Props> {
             return (
               <PrereqsRow key={name} style={{ order: v.order }}>
                 <LoadingCircle progress={progress} />
+                <FilterSpacer />
                 <div className="prereqs-info">
                   <div className="task-name">{v.fullName}</div>
                   <div className="task-status">
