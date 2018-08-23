@@ -85,6 +85,7 @@ async function start() {
   };
 
   render(App);
+  store.dispatch(actions.rootWindowReady({}));
 
   if (module.hot) {
     module.hot.accept("renderer/App", () => {

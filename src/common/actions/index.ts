@@ -87,6 +87,8 @@ export const actions = wireActions({
   // system
 
   preboot: action<{}>(),
+  prebootDone: action<{}>(),
+  rootWindowReady: action<{}>(),
   boot: action<{}>(),
   tick: action<{}>(),
   log: action<{

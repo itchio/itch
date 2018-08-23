@@ -79,7 +79,6 @@ export default function(watcher: Watcher) {
         );
       }
 
-      store.dispatch(actions.boot({}));
       dispatchedBoot = true;
 
       if (env.production && env.appName === "itch") {
@@ -101,9 +100,7 @@ export default function(watcher: Watcher) {
       logger.info(`preboot ran in ${elapsed(t1, t2)}`);
     }
 
-    if (!dispatchedBoot) {
-      store.dispatch(actions.boot({}));
-    }
+    store.dispatch(actions.prebootDone({}));
   });
 
   watcher.on(actions.log, async (store, action) => {

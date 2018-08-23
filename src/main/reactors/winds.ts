@@ -34,6 +34,9 @@ import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-m
 import { registerItchProtocol } from "main/net/register-itch-protocol";
 
 const logger = mainLogger.child(__filename);
+let dispatchedBoot = false;
+let prebootDone = false;
+let rootWindowReady = false;
 
 type AppCommand = "browser-backward" | "browser-forward";
 
@@ -41,6 +44,22 @@ const BOUNDS_CONFIG_KEY = "main_window_bounds";
 const MAXIMIZED_CONFIG_KEY = "main_window_maximized";
 
 const macOs = process.platform === "darwin";
+
+function dispatchBootWhenReady(store: Store) {
+  if (dispatchedBoot) {
+    return;
+  }
+  if (!prebootDone) {
+    logger.debug(`Waiting on preboot to dispatch boot`);
+    return;
+  }
+  if (!rootWindowReady) {
+    logger.debug(`Waiting on root window to dispatch boot`);
+    return;
+  }
+  dispatchedBoot = true;
+  store.dispatch(actions.boot({}));
+}
 
 async function createRootWindow(store: Store) {
   const wind = "root";
@@ -213,6 +232,16 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.windClosed, async (store, action) => {
     refreshSelectors(store.getState());
+  });
+
+  watcher.on(actions.prebootDone, async (store, action) => {
+    prebootDone = true;
+    dispatchBootWhenReady(store);
+  });
+
+  watcher.on(actions.rootWindowReady, async (store, action) => {
+    rootWindowReady = true;
+    dispatchBootWhenReady(store);
   });
 
   watcher.on(actions.preboot, async (store, action) => {
