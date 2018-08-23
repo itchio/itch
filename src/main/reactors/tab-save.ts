@@ -15,7 +15,7 @@ interface Snapshot {
   items: TabDataSave[];
 }
 
-const tabAutoSaveThreshold = 10 * 1000; /* 10 seconds */
+const tabAutoSaveThreshold = 1 * 1000;
 
 export default function(watcher: Watcher) {
   watcher.onDebounced(
@@ -25,6 +25,10 @@ export default function(watcher: Watcher) {
       await saveTabs(store);
     }
   );
+
+  watcher.on(actions.requestLogout, async (store, action) => {
+    await saveTabs(store);
+  });
 }
 
 export async function saveTabs(store: Store) {
