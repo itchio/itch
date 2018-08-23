@@ -1,5 +1,5 @@
 import React from "react";
-import { FormattedTime } from "react-intl";
+import { FormattedTime, FormattedDate } from "react-intl";
 import Filler from "renderer/basics/Filler";
 import IconButton from "renderer/basics/IconButton";
 import SelectRow from "renderer/basics/SelectRow";
@@ -151,17 +151,48 @@ class Log extends React.PureComponent<Props, State> {
           <tbody ref={this.gotBody}>
             {entries.map((x, i) => {
               if (x.hasOwnProperty("msg")) {
-                // TODO: show date jumps
+                let jumpElement: JSX.Element;
+                let previousEntry = entries[i - 1];
+                if (x.time) {
+                  const currDate = new Date(x.time);
+                  const prevDate = previousEntry
+                    ? new Date(previousEntry.time)
+                    : null;
+                  if (
+                    !previousEntry ||
+                    !previousEntry.time ||
+                    currDate.getUTCDate() != prevDate.getUTCDate() ||
+                    currDate.getUTCMonth() != prevDate.getUTCMonth() ||
+                    currDate.getUTCFullYear() != currDate.getUTCFullYear()
+                  ) {
+                    jumpElement = (
+                      <tr key={`${i}-jump`}>
+                        <td colSpan={3}>
+                          <FormattedDate
+                            month="long"
+                            year="numeric"
+                            day="numeric"
+                            value={x.time}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  }
+                }
+
                 return (
-                  <tr key={i}>
-                    <td className="timecol">
-                      <FormattedTime value={x.time} />
-                    </td>
-                    <td className="modcol">
-                      {x.name ? <span>{x.name}</span> : null}
-                    </td>
-                    <td className={levels[x.level] + " msgcol"}>{x.msg}</td>
-                  </tr>
+                  <>
+                    {jumpElement}
+                    <tr key={i}>
+                      <td className="timecol">
+                        <FormattedTime value={x.time} />
+                      </td>
+                      <td className="modcol">
+                        {x.name ? <span>{x.name}</span> : null}
+                      </td>
+                      <td className={levels[x.level] + " msgcol"}>{x.msg}</td>
+                    </tr>
+                  </>
                 );
               } else {
                 return (
