@@ -1,8 +1,11 @@
 import React from "react";
+const Profiler = require("react").unstable_Profiler;
 import { IntlProvider } from "react-intl";
 import { hook } from "renderer/hocs/hook";
 import { theme, ThemeProvider } from "renderer/styles";
 import AppContents from "renderer/App/AppContents";
+
+const enableProfiling = process.env.ITCH_ENABLE_PROFILING === "1";
 
 class App extends React.PureComponent<Props, State> {
   constructor(props: App["props"], context: any) {
@@ -17,6 +20,26 @@ class App extends React.PureComponent<Props, State> {
   }
 
   render() {
+    if (enableProfiling) {
+      return (
+        <Profiler id="app" onRender={this.logProfile}>
+          {this.realRender()}
+        </Profiler>
+      );
+    } else {
+      return this.realRender();
+    }
+  }
+
+  logProfile = (id, phase, actualTime, baseTime, startTime, commitTime) => {
+    console.log(`${id}'s ${phase} phase:`);
+    console.log(`Actual time: ${actualTime}`);
+    console.log(`Base time: ${baseTime}`);
+    console.log(`Start time: ${startTime}`);
+    console.log(`Commit time: ${commitTime}`);
+  };
+
+  realRender() {
     const { localeVersion, locale, messages } = this.state;
     return (
       <IntlProvider key={localeVersion} locale={locale} messages={messages}>
