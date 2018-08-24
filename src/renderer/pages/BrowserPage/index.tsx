@@ -1,24 +1,27 @@
-import classNames from "classnames";
 import { actions } from "common/actions";
-import { Space } from "common/helpers/space";
 import {
+  BrowserViewMetrics,
+  ClearBrowserScreenshot,
   Dispatch,
   ProxySource,
-  BrowserViewMetrics,
   SetBrowserScreenshot,
-  ClearBrowserScreenshot,
 } from "common/types";
-import { ambientWind } from "common/util/navigation";
+import { ambientTab, ambientWind } from "common/util/navigation";
+import { ipcRenderer } from "electron";
 import React from "react";
-import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import styled, * as styles from "renderer/styles";
+import ContainerDimensions from "react-container-dimensions";
+import { hookWithProps } from "renderer/hocs/hook";
+import { withTab } from "renderer/hocs/withTab";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
 import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
 import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
-import ContainerDimensions from "react-container-dimensions";
-import { ipcRenderer } from "electron";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import styled, * as styles from "renderer/styles";
+import {
+  dispatchTabLoadingStateChanged,
+  dispatchTabGotWebContentsMetrics,
+  dispatchTabLosingWebContents,
+} from "renderer/hocs/tab-utils";
 
 const BrowserPageDiv = styled.div`
   ${styles.meat};
@@ -55,12 +58,12 @@ class BrowserPage extends React.PureComponent<Props> {
 
   constructor(props: BrowserPage["props"], context: any) {
     super(props, context);
-    this.initialURL = props.space.url();
+    this.initialURL = props.url;
   }
 
   render() {
-    const { space, disableBrowser, visible } = this.props;
-    if (space.isSleepy() && !visible) {
+    const { sleepy, disableBrowser, visible } = this.props;
+    if (sleepy && !visible) {
       return null;
     }
 
@@ -91,8 +94,7 @@ class BrowserPage extends React.PureComponent<Props> {
 
   componentDidUpdate(prevProps: Props, prevState: any) {
     if (!prevProps.disableBrowser && this.props.disableBrowser) {
-      const { space, dispatch } = this.props;
-      dispatch(space.makeLoadingStateChanged(false));
+      dispatchTabLoadingStateChanged(this.props, false);
     }
   }
 
@@ -100,7 +102,6 @@ class BrowserPage extends React.PureComponent<Props> {
     if (!this.mounted) {
       return;
     }
-    const { space, dispatch } = this.props;
     if (this.canvas) {
       // Setting canvas.{width,height} clears the canvas
       // to all white, so we only really want to do it if the
@@ -116,14 +117,10 @@ class BrowserPage extends React.PureComponent<Props> {
         this.canvas.height = metrics.height;
       }
     }
-    dispatch(
-      actions.tabGotWebContentsMetrics({
-        wind: ambientWind(),
-        tab: space.tab,
-        initialURL: this.initialURL,
-        metrics,
-      })
-    );
+    dispatchTabGotWebContentsMetrics(this.props, {
+      initialURL: this.initialURL,
+      metrics,
+    });
   };
 
   componentDidMount() {
@@ -150,17 +147,11 @@ class BrowserPage extends React.PureComponent<Props> {
       "clear-browser-screenshot",
       this.onClearBrowserScreenshot
     );
-    const { dispatch, space } = this.props;
-    dispatch(
-      actions.tabLosingWebContents({
-        wind: ambientWind(),
-        tab: space.tab,
-      })
-    );
+    dispatchTabLosingWebContents(this.props);
   }
 
   onSetBrowserScreenshot = (ev: any, payload: SetBrowserScreenshot) => {
-    if (payload.tab !== this.props.space.tab) {
+    if (payload.tab !== this.props.tab) {
       return;
     }
 
@@ -187,7 +178,7 @@ class BrowserPage extends React.PureComponent<Props> {
   };
 
   onClearBrowserScreenshot = (ev: any, payload: ClearBrowserScreenshot) => {
-    if (payload.tab !== this.props.space.tab) {
+    if (payload.tab !== this.props.tab) {
       return;
     }
 
@@ -208,16 +199,24 @@ class BrowserPage extends React.PureComponent<Props> {
 }
 
 interface Props extends MeatProps {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
+
+  url: string;
+  sleepy: boolean;
+  loading: boolean;
 
   proxy: string;
   proxySource: ProxySource;
   disableBrowser: boolean;
 }
 
-export default withSpace(
-  hook(map => ({
+export default withTab(
+  hookWithProps(BrowserPage)(map => ({
+    url: map((rs, props) => ambientTab(rs, props).location.url),
+    sleepy: map((rs, props) => ambientTab(rs, props).sleepy),
+    loading: map((rs, props) => ambientTab(rs, props).loading),
+
     proxy: map(rs => rs.system.proxy),
     proxySource: map(rs => rs.system.proxySource),
     disableBrowser: map(rs => rs.preferences.disableBrowser),

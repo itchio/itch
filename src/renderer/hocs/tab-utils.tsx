@@ -7,15 +7,55 @@ interface TabProps {
   tab: string;
 }
 
-export function dispatchTabEvolve(
+interface ScopeFields {
+  wind: string;
+  tab: string;
+}
+
+export function dispatchTabLoadingStateChanged(
+  props: TabProps,
+  loading: boolean
+) {
+  const { tab, dispatch } = props;
+  dispatch(
+    actions.tabLoadingStateChanged({
+      wind: ambientWind(),
+      tab,
+      loading,
+    })
+  );
+}
+
+export function dispatchTabGotWebContentsMetrics(
   props: TabProps,
   payload: Subtract<
-    EvolveTabPayload,
-    {
-      tab: string;
-      wind: string;
-    }
+    typeof actions.tabGotWebContentsMetrics["payload"],
+    ScopeFields
   >
+) {
+  const { tab, dispatch } = props;
+  dispatch(
+    actions.tabGotWebContentsMetrics({
+      wind: ambientWind(),
+      tab,
+      ...payload,
+    })
+  );
+}
+
+export function dispatchTabLosingWebContents(props: TabProps) {
+  const { tab, dispatch } = props;
+  dispatch(
+    actions.tabLosingWebContents({
+      wind: ambientWind(),
+      tab,
+    })
+  );
+}
+
+export function dispatchTabEvolve(
+  props: TabProps,
+  payload: Subtract<EvolveTabPayload, ScopeFields>
 ) {
   const { tab, dispatch } = props;
   dispatch(
@@ -83,13 +123,7 @@ export function dispatchTabGoBack(props: TabProps) {
 
 export function dispatchOpenTabBackHistory(
   props: TabProps,
-  payload: Subtract<
-    typeof actions.openTabBackHistory["payload"],
-    {
-      tab: string;
-      wind: string;
-    }
-  >
+  payload: Subtract<typeof actions.openTabBackHistory["payload"], ScopeFields>
 ) {
   const { tab, dispatch } = props;
   dispatch(
@@ -105,10 +139,7 @@ export function dispatchOpenTabForwardHistory(
   props: TabProps,
   payload: Subtract<
     typeof actions.openTabForwardHistory["payload"],
-    {
-      tab: string;
-      wind: string;
-    }
+    ScopeFields
   >
 ) {
   const { tab, dispatch } = props;
