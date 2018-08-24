@@ -14,7 +14,6 @@ export default function(state: WindsState, action: Action<any>) {
   }
 
   if (action) {
-    // woo that's a mouthful
     if (action.type === windOpenedType) {
       const { wind } = action.payload as typeof actions.windOpened["payload"];
 
@@ -43,10 +42,16 @@ export default function(state: WindsState, action: Action<any>) {
     }
 
     let newState: WindsState = {};
+    let changed = false;
     for (const k of Object.keys(state)) {
       newState[k] = windReducer(state[k], action);
+      if (state[k] !== newState[k]) {
+        changed = true;
+      }
     }
-    return newState;
+    if (changed) {
+      return newState;
+    }
   }
 
   return state;

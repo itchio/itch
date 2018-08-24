@@ -8,7 +8,7 @@ import fs from "fs";
 import { ISM } from "main/broth/itch-setup";
 import { mainLogger } from "main/logger";
 import { manager } from "main/reactors/setup";
-import ospath from "path";
+import ospath, { dirname } from "path";
 import { modals } from "common/modals";
 import { delay } from "main/reactors/delay";
 
@@ -95,13 +95,16 @@ export default function(watcher: Watcher) {
     ];
 
     const stdio: any[] = ["ignore", "ignore", "ignore"];
+    const logPath = relaunchLogPath();
     try {
-      fs.unlinkSync(relaunchLogPath());
+      fs.mkdirSync(dirname(logPath));
+    } catch (e) {}
+    try {
+      fs.unlinkSync(logPath);
     } catch (e) {}
 
     let out = -1;
     let err = -1;
-    const logPath = relaunchLogPath();
     try {
       if (fs.existsSync(logPath)) {
         fs.unlinkSync(logPath);

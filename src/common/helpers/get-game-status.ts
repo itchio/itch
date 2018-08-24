@@ -1,4 +1,4 @@
-import { RootState, ITask, TaskName } from "common/types";
+import { RootState, Task, TaskName } from "common/types";
 
 import { first, findWhere, size } from "underscore";
 import getByIds from "common/helpers/get-by-ids";
@@ -164,7 +164,7 @@ function rawGetGameStatus(
   numCaves: number,
   downloadKey: DownloadKeySummary,
   pressUser: boolean,
-  task: ITask,
+  task: Task,
   download: Download,
   downloadProgress: DownloadProgress,
   update: GameUpdate,

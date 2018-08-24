@@ -2,14 +2,28 @@ import classNames from "classnames";
 import { actions } from "common/actions";
 import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
-import { ambientWind, transformUrl } from "common/util/navigation";
+import {
+  ambientWind,
+  transformUrl,
+  ambientWindState,
+  ambientTab,
+} from "common/util/navigation";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
-import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
+import { hook, hookWithProps } from "renderer/hocs/hook";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
 import watching, { Watcher } from "renderer/hocs/watching";
+import { withTab } from "renderer/hocs/withTab";
+import {
+  dispatchTabEvolve,
+  dispatchTabReloaded,
+  dispatchTabStop,
+  dispatchOpenTabBackHistory,
+  dispatchTabGoBack,
+  dispatchOpenTabForwardHistory,
+  dispatchTabGoForward,
+} from "renderer/hocs/tab-utils";
 
 const HTTPS_RE = /^https:\/\//;
 const ITCH_RE = /^itch:\/\//;
@@ -104,48 +118,26 @@ class NavigationBar extends React.PureComponent<Props, State> {
   browserAddress: HTMLInputElement | HTMLElement;
 
   // event handlers
-  goBack = () =>
-    this.props.dispatch(
-      actions.tabGoBack({ wind: ambientWind(), tab: this.props.space.tab })
-    );
+  goBack = () => {
+    dispatchTabGoBack(this.props);
+  };
   showBackHistory = (ev: React.MouseEvent) => {
-    this.props.dispatch(
-      actions.openTabBackHistory({
-        wind: ambientWind(),
-        tab: this.props.space.tab,
-        clientX: ev.clientX,
-        clientY: ev.clientY,
-      })
-    );
+    const { clientX, clientY } = ev;
+    dispatchOpenTabBackHistory(this.props, { clientX, clientY });
   };
-  goForward = () =>
-    this.props.dispatch(
-      actions.tabGoForward({
-        wind: ambientWind(),
-        tab: this.props.space.tab,
-      })
-    );
+  goForward = () => {
+    dispatchTabGoForward(this.props);
+  };
   showForwardHistory = (ev: React.MouseEvent) => {
-    this.props.dispatch(
-      actions.openTabForwardHistory({
-        wind: ambientWind(),
-        tab: this.props.space.tab,
-        clientX: ev.clientX,
-        clientY: ev.clientY,
-      })
-    );
+    const { clientX, clientY } = ev;
+    dispatchOpenTabForwardHistory(this.props, { clientX, clientY });
   };
-  stop = () =>
-    this.props.dispatch(
-      actions.tabStop({ wind: ambientWind(), tab: this.props.space.tab })
-    );
-  reload = () =>
-    this.props.dispatch(
-      actions.tabReloaded({
-        wind: ambientWind(),
-        tab: this.props.space.tab,
-      })
-    );
+  stop = () => {
+    dispatchTabStop(this.props);
+  };
+  reload = () => {
+    dispatchTabReloaded(this.props);
+  };
 
   constructor(props: Props, context: any) {
     super(props, context);
@@ -161,7 +153,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
       if (wind !== ambientWind()) {
         return;
       }
-      if (tab !== this.props.space.tab) {
+      if (tab !== this.props.tab) {
         return;
       }
       this.setState({
@@ -180,9 +172,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const { space, loading } = this.props;
-    const canGoBack = space.canGoBack();
-    const canGoForward = space.canGoForward();
+    const { canGoBack, canGoForward, loading } = this.props;
 
     return (
       <NavigationBarDiv className={classNames({ loading })}>
@@ -198,14 +188,13 @@ class NavigationBar extends React.PureComponent<Props, State> {
           onClick={this.goForward}
           onContextMenu={this.showForwardHistory}
         />
-        {this.renderAddressBar(space)}
+        {this.renderAddressBar()}
       </NavigationBarDiv>
     );
   }
 
-  renderAddressBar(sp: Space) {
-    const { loading } = this.props;
-    const url = sp.url();
+  renderAddressBar() {
+    const { loading, url } = this.props;
 
     if (!this.props.showAddressBar) {
       return null;
@@ -273,8 +262,8 @@ class NavigationBar extends React.PureComponent<Props, State> {
       return;
     }
 
-    const { space } = this.props;
-    if (this.fresh && space.internalPage() === "new-tab") {
+    const { internalPage } = this.props;
+    if (this.fresh && internalPage === "new-tab") {
       this.fresh = false;
       this.startEditingAddress();
     }
@@ -290,8 +279,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
       const input = e.currentTarget.value;
       const url = transformUrl(input);
 
-      const { space, dispatch } = this.props;
-      dispatch(space.makeEvolve({ url, replace: false }));
+      dispatchTabEvolve(this.props, { url, replace: false });
       this.setState({ editingAddress: false });
     } else if (e.key === "Escape") {
       e.preventDefault();
@@ -311,9 +299,9 @@ class NavigationBar extends React.PureComponent<Props, State> {
   };
 
   static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
-    if (props.space.url() !== state.url) {
+    if (props.url !== state.url) {
       return {
-        url: props.space.url(),
+        url: props.url,
         editingAddress: false,
       };
     }
@@ -322,10 +310,15 @@ class NavigationBar extends React.PureComponent<Props, State> {
 }
 
 interface Props {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
   loading: boolean;
   showAddressBar?: boolean;
+
+  url: string;
+  internalPage: string;
+  canGoBack: string;
+  canGoForward: string;
 }
 
 interface State {
@@ -333,5 +326,13 @@ interface State {
   editingAddress: boolean;
 }
 
-const intermediate = withSpace(NavigationBar);
-export default hook()(intermediate);
+export default withTab(
+  hookWithProps(NavigationBar)(map => ({
+    url: map((rs, props) => ambientTab(rs, props).location.url),
+    internalPage: map(
+      (rs, props) => ambientTab(rs, props).location.internalPage
+    ),
+    canGoBack: map((rs, props) => ambientTab(rs, props).status.canGoBack),
+    canGoForward: map((rs, props) => ambientTab(rs, props).status.canGoForward),
+  }))(NavigationBar)
+);

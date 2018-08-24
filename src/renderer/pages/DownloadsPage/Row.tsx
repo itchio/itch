@@ -14,7 +14,7 @@ import getGameStatus, {
   OperationType,
 } from "common/helpers/get-game-status";
 import { modals } from "common/modals";
-import { Dispatch, ITask } from "common/types";
+import { Dispatch, Task } from "common/types";
 import { ambientWind, urlForGame } from "common/util/navigation";
 import { lighten } from "polished";
 import React from "react";
@@ -493,7 +493,7 @@ interface Props extends HoverProps {
 
   downloadsPaused: boolean;
   tasksByGameId: {
-    [gameId: string]: ITask[];
+    [gameId: string]: Task[];
   };
 }
 

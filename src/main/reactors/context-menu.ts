@@ -3,7 +3,7 @@ import { Watcher } from "common/util/watcher";
 import {
   Store,
   MenuTemplate,
-  IOpenContextMenuBase,
+  OpenContextMenuBase,
   MenuItem,
   I18nState,
 } from "common/types";
@@ -22,7 +22,7 @@ import i18n from "common/reducers/i18n";
 function openMenu(
   store: Store,
   template: MenuTemplate,
-  base: IOpenContextMenuBase
+  base: OpenContextMenuBase
 ) {
   if (template.length === 0) {
     // don't show empty context menus

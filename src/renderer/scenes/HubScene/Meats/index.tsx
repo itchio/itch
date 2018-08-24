@@ -17,6 +17,7 @@ import { modals } from "common/modals";
 import styled from "renderer/styles";
 import { map } from "underscore";
 import Meat from "renderer/scenes/HubScene/Meats/Meat";
+import { TabProvider } from "renderer/hocs/withTab";
 
 const MeatContainer = styled.div`
   background: ${props => props.theme.meatBackground};
@@ -60,15 +61,17 @@ class Meats extends React.PureComponent<Props> {
           const visible = tab === currentId;
           return (
             <SpaceProvider key={tab} value={space}>
-              <MeatTab
-                key={tab}
-                data-id={tab}
-                data-url={space.url()}
-                data-resource={space.resource()}
-                className={classNames("meat-tab", { visible })}
-              >
-                <Meat visible={visible} sequence={tabInstance.sequence} />
-              </MeatTab>
+              <TabProvider key={tab} value={tab}>
+                <MeatTab
+                  key={tab}
+                  data-id={tab}
+                  data-url={space.url()}
+                  data-resource={space.resource()}
+                  className={classNames("meat-tab", { visible })}
+                >
+                  <Meat visible={visible} sequence={tabInstance.sequence} />
+                </MeatTab>
+              </TabProvider>
             </SpaceProvider>
           );
         })}

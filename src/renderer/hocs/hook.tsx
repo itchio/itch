@@ -55,8 +55,9 @@ export function hookWithProps<InputProps>(
     }
   ) {
     const selectors = makeSelectors(identity);
+    // wowee, there sure is a bunch of type fuckery here
     return function<
-      Props extends InputProps & DerivedProps & DispatchProp<any>
+      Props /* extends InputProps & DerivedProps & DispatchProp<any> */
     >(
       component: React.ComponentType<Props>
     ): React.ComponentType<
@@ -64,7 +65,7 @@ export function hookWithProps<InputProps>(
     > {
       return connect(
         createStructuredSelector<RootState, InputProps, DerivedProps>(selectors)
-      )(component) as any;
+      )(component as any) as any;
     };
   };
 }

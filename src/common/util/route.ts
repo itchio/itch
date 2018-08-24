@@ -20,26 +20,22 @@ function err(logger: Logger, e: Error, action: Action<any>) {
 
 function route(watcher: Watcher, store: Store, action: Action<any>): void {
   setTimeout(() => {
-    (async () => {
-      let promises = [];
+    let promises = [];
 
-      for (const r of watcher.reactors[action.type] || emptyArr) {
+    for (const r of watcher.reactors[action.type] || emptyArr) {
+      promises.push(r(store, action));
+    }
+
+    for (const sub of watcher.subs) {
+      if (!sub) {
+        continue;
+      }
+
+      for (const r of sub.reactors[action.type] || emptyArr) {
         promises.push(r(store, action));
       }
-
-      for (const sub of watcher.subs) {
-        if (!sub) {
-          continue;
-        }
-
-        for (const r of sub.reactors[action.type] || emptyArr) {
-          promises.push(r(store, action));
-        }
-      }
-      await ItchPromise.all(promises);
-    })().catch(e => {
-      err(watcher.logger, e, action);
-    });
+    }
+    ItchPromise.all(promises).catch(e => err(watcher.logger, e, action));
   }, 0);
   return;
 }

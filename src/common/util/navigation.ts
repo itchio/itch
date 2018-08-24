@@ -75,6 +75,14 @@ export function ambientNavigation(rs: RootState): NavigationState {
   return ambientWindState(rs).navigation;
 }
 
+interface AmbientTabProps {
+  tab: string;
+}
+
+export function ambientTab(rs: RootState, props: AmbientTabProps): TabInstance {
+  return rs.winds[ambientWind()].tabInstances[props.tab];
+}
+
 // build URLs
 
 export function urlForGame(gameId: number) {

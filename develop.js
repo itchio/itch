@@ -69,8 +69,9 @@ async function main() {
   log.info(`...off content on localhost:${port}`);
 
   await new Promise((resolve, reject) => {
+    let inspectArg = process.env.ITCH_BREAK === "1" ? "inspect-brk" : "inspect";
     const proc = childProcess.spawn(electronBinaryPath, [
-      ".", "--inspect=9222", "--color"
+      ".", `--${inspectArg}=9222`, "--color"
     ], {
       env: {
         ...process.env,
