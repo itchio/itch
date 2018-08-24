@@ -1,25 +1,24 @@
-import { Space } from "common/helpers/space";
+import { actions } from "common/actions";
+import { Dispatch } from "common/types";
+import { ambientTab, ambientWind } from "common/util/navigation";
 import React from "react";
 import FiltersContainer from "renderer/basics/FiltersContainer";
-import { withSpace } from "renderer/hocs/withSpace";
 import IconButton from "renderer/basics/IconButton";
-import { Dispatch } from "common/types";
-import { hook } from "renderer/hocs/hook";
-import { actions } from "common/actions";
-import { ambientWind } from "common/util/navigation";
+import { hookWithProps } from "renderer/hocs/hook";
+import { withTab } from "renderer/hocs/withTab";
 
 class BrowserBar extends React.PureComponent<Props> {
   render() {
-    const { space } = this.props;
+    const { loading } = this.props;
     return (
-      <FiltersContainer loading={space.isLoading()}>
+      <FiltersContainer loading={loading}>
         <IconButton icon="more_vert" onClick={this.onMore} />
       </FiltersContainer>
     );
   }
 
   onMore = (ev: React.MouseEvent<HTMLElement>) => {
-    const { dispatch, space } = this.props;
+    const { dispatch, tab, url } = this.props;
     const { clientX, clientY } = ev;
     dispatch(
       actions.popupContextMenu({
@@ -30,7 +29,7 @@ class BrowserBar extends React.PureComponent<Props> {
           {
             localizedLabel: ["browser.popout"],
             action: actions.openInExternalBrowser({
-              url: space.url(),
+              url,
             }),
           },
           {
@@ -40,7 +39,7 @@ class BrowserBar extends React.PureComponent<Props> {
             localizedLabel: ["browser.open_devtools"],
             action: actions.openDevTools({
               wind: ambientWind(),
-              tab: space.tab,
+              tab,
             }),
           },
         ],
@@ -50,8 +49,16 @@ class BrowserBar extends React.PureComponent<Props> {
 }
 
 interface Props {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
+
+  url: string;
+  loading: boolean;
 }
 
-export default withSpace(hook()(BrowserBar));
+export default withTab(
+  hookWithProps(BrowserBar)(map => ({
+    url: map((rs, props) => ambientTab(rs, props).location.url),
+    loading: map((rs, props) => ambientTab(rs, props).loading),
+  }))(BrowserBar)
+);
