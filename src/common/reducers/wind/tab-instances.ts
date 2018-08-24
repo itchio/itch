@@ -3,7 +3,17 @@ import tabReducer, { trimHistory } from "common/reducers/wind/tab-instance";
 import { Action, TabDataSave, TabInstance, TabInstances } from "common/types";
 import { each, omit } from "underscore";
 
-const initialState: TabInstances = {};
+let initialState = (initialURL?: string): TabInstances => ({
+  ["initial-tab"]: tabReducer(
+    {
+      history: [{ url: initialURL ? initialURL : "itch://new-tab" }],
+      currentIndex: 0,
+      sleepy: true,
+      sequence: 0,
+    },
+    null
+  ),
+});
 
 const windOpenedType = actions.windOpened({} as any).type;
 const tabsRestoredType = actions.tabsRestored({} as any).type;
@@ -13,7 +23,7 @@ const loggedOutType = actions.loggedOut({} as any).type;
 
 export default function(state: TabInstances, action: Action<any>) {
   if (typeof state === "undefined") {
-    return initialState;
+    return initialState();
   }
 
   if (action) {
@@ -21,19 +31,7 @@ export default function(state: TabInstances, action: Action<any>) {
       const {
         initialURL,
       } = action.payload as typeof actions.windOpened["payload"];
-      let tabState = tabReducer(
-        {
-          history: [{ url: initialURL }],
-          currentIndex: 0,
-          sleepy: true,
-          sequence: 0,
-        },
-        null
-      );
-      let newState: TabInstances = {
-        ["initial-tab"]: tabState,
-      };
-      return newState;
+      return initialState(initialURL);
     }
 
     if (action.type === tabsRestoredType) {
@@ -84,7 +82,7 @@ export default function(state: TabInstances, action: Action<any>) {
     }
 
     if (action.type === loggedOutType) {
-      return {};
+      return initialState();
     }
 
     if (action.payload && action.payload.tab) {
