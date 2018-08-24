@@ -4,7 +4,7 @@ import env from "common/env";
 import { elapsed } from "common/format/datetime";
 import { ProxySource, SystemState } from "common/types";
 import { Watcher } from "common/util/watcher";
-import { app, session, protocol } from "electron";
+import { app, session, protocol, BrowserWindow } from "electron";
 import { mainLogger } from "main/logger";
 import loadPreferences from "main/reactors/preboot/load-preferences";
 import { applyProxySettings } from "main/reactors/proxy";
@@ -18,8 +18,6 @@ let proxyTested = false;
 
 export default function(watcher: Watcher) {
   watcher.on(actions.preboot, async (store, action) => {
-    let dispatchedBoot = false;
-
     let t1 = Date.now();
     try {
       const system: SystemState = {
@@ -79,8 +77,6 @@ export default function(watcher: Watcher) {
         );
       }
 
-      dispatchedBoot = true;
-
       if (env.production && env.appName === "itch") {
         try {
           app.setAsDefaultProtocolClient("itchio");
@@ -101,6 +97,16 @@ export default function(watcher: Watcher) {
     }
 
     store.dispatch(actions.prebootDone({}));
+
+    const devtoolsPath = process.env.ITCH_REACT_DEVTOOLS_PATH;
+    if (devtoolsPath) {
+      try {
+        logger.info(`Installing react devtools from ${devtoolsPath}`);
+        BrowserWindow.addDevToolsExtension(devtoolsPath);
+      } catch (e) {
+        logger.error(`While adding react devtools path: ${e.stack}`);
+      }
+    }
   });
 
   watcher.on(actions.log, async (store, action) => {
