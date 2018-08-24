@@ -7,7 +7,7 @@ import { Dispatch, LocalizedString } from "common/types";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { hook } from "renderer/hocs/hook";
+import { hook, hookWithProps } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withSpace } from "renderer/hocs/withSpace";
 import { FilterGroupGameClassification } from "renderer/pages/common/CommonFilters";
@@ -22,14 +22,24 @@ import {
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { withTab } from "renderer/hocs/withTab";
+import { ambientTab } from "common/util/navigation";
+import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 
 const FetchCollection = butlerCaller(messages.FetchCollection);
 const CollectionGameSeries = GameSeries(messages.FetchCollectionGames);
 
 class CollectionPage extends React.PureComponent<Props> {
   render() {
-    const { dispatch, space, profile } = this.props;
-    const collectionId = space.firstPathNumber();
+    const {
+      profile,
+      collectionId,
+      sortBy,
+      sortDir,
+      search,
+      filterClassification,
+      filterInstalled,
+    } = this.props;
 
     return (
       <>
@@ -46,7 +56,7 @@ class CollectionPage extends React.PureComponent<Props> {
               const c = result.collection;
               label = `${c.title} (${c.gamesCount})`;
             }
-            dispatch(space.makePageUpdate({ label }));
+            dispatchTabPageUpdate(this.props, { label });
           }}
         />
 
@@ -55,14 +65,12 @@ class CollectionPage extends React.PureComponent<Props> {
           params={{
             profileId: profile.id,
             collectionId,
-            sortBy: space.queryParam("sortBy"),
-            reverse: space.queryParam("sortDir") === "reverse",
-            search: space.queryParam("search"),
+            sortBy: sortBy,
+            reverse: sortDir === "reverse",
+            search: search,
             filters: {
-              classification: space.queryParam(
-                "classification"
-              ) as GameClassification,
-              installed: space.queryParam("installed") === "true",
+              classification: filterClassification,
+              installed: filterInstalled,
             },
           }}
           getGame={cg => cg.game}
@@ -78,17 +86,13 @@ class CollectionPage extends React.PureComponent<Props> {
               <SearchControl />
             </>
           )}
-          renderExtraFilters={() => this.renderExtraFilters(space)}
+          renderExtraFilters={this.renderExtraFilters}
         />
       </>
     );
   }
 
-  setSearch = (search: string) => {
-    this.setState({ search });
-  };
-
-  renderExtraFilters(space: Space): JSX.Element {
+  renderExtraFilters = (): JSX.Element => {
     return (
       <SortsAndFilters>
         <FilterGroup>
@@ -106,25 +110,42 @@ class CollectionPage extends React.PureComponent<Props> {
         <FilterGroupGameClassification />
       </SortsAndFilters>
     );
-  }
+  };
 
   popOutBrowser = () => {
-    const { dispatch, space } = this.props;
+    const { dispatch, collectionId } = this.props;
 
     // we don't know the slug, the website will redirect to the proper one
-    let url = `${urls.itchio}/c/${space.firstPathNumber()}/hello`;
+    let url = `${urls.itchio}/c/${collectionId}/hello`;
     dispatch(actions.openInExternalBrowser({ url }));
   };
 }
 
-interface State {
-  search: string;
-}
-
 interface Props extends MeatProps {
+  tab: string;
   profile: Profile;
-  space: Space;
   dispatch: Dispatch;
+
+  collectionId: number;
+  sortBy: string;
+  sortDir: string;
+  search: string;
+  filterClassification: GameClassification;
+  filterInstalled: boolean;
 }
 
-export default withProfile(withSpace(hook()(CollectionPage)));
+const hooked = hookWithProps(CollectionPage)(map => ({
+  collectionId: map(
+    (rs, props) => ambientTab(rs, props).location.firstPathNumber
+  ),
+  sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
+  sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
+  search: map((rs, props) => ambientTab(rs, props).location.query.search),
+  filterClassification: map(
+    (rs, props) => ambientTab(rs, props).location.query.classification
+  ),
+  filterInstalled: map(
+    (rs, props) => !!ambientTab(rs, props).location.query.installed
+  ),
+}))(CollectionPage);
+export default withProfile(withTab(hooked));
