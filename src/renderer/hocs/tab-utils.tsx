@@ -163,8 +163,14 @@ export function urlWithParams(url: string, params: QueryParams): string {
   const parsed = urlParser.parse(url);
   let finalParams = querystring.parse(parsed.query);
   for (const k of Object.keys(params)) {
-    finalParams[k] = params[k];
+    const v = params[k];
+    if (typeof v === "undefined") {
+      delete finalParams[k];
+    } else {
+      finalParams[k] = v;
+    }
   }
-  parsed.query = querystring.stringify(finalParams);
+  const query = querystring.stringify(finalParams);
+  parsed.search = query ? `?${query}` : "";
   return urlParser.format(parsed);
 }
