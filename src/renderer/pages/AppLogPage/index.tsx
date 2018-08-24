@@ -1,6 +1,5 @@
 import { actions } from "common/actions";
 import { showInExplorerString } from "common/format/show-in-explorer";
-import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
 import React from "react";
 import ErrorState from "renderer/basics/ErrorState";
@@ -8,11 +7,15 @@ import IconButton from "renderer/basics/IconButton";
 import Link from "renderer/basics/Link";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
+import { withTab } from "renderer/hocs/withTab";
 import Log from "renderer/pages/AppLogPage/Log";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
+import {
+  dispatchTabPageUpdate,
+  dispatchTabReloaded,
+} from "renderer/hocs/tab-utils";
 
 const AppLogDiv = styled.div`
   ${styles.meat};
@@ -80,12 +83,7 @@ class AppLogPage extends React.PureComponent<Props, State> {
   }
 
   componentDidMount() {
-    const { space, dispatch } = this.props;
-    dispatch(
-      space.makePageUpdate({
-        label: ["sidebar.applog"],
-      })
-    );
+    dispatchTabPageUpdate(this.props, { label: ["sidebar.applog"] });
     this.queueFetch();
   }
 
@@ -122,13 +120,12 @@ class AppLogPage extends React.PureComponent<Props, State> {
   };
 
   onReload = () => {
-    const { dispatch, space } = this.props;
-    dispatch(space.makeReload());
+    dispatchTabReloaded(this.props);
   };
 }
 
 interface Props extends MeatProps {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
 }
 
@@ -138,4 +135,4 @@ interface State {
   log: string;
 }
 
-export default withSpace(hook()(AppLogPage));
+export default withTab(hook()(AppLogPage));

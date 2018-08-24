@@ -27,6 +27,20 @@ export function dispatchTabEvolve(
   );
 }
 
+export function dispatchTabPageUpdate(
+  props: TabProps,
+  page: typeof actions.tabPageUpdate["payload"]["page"]
+) {
+  const { tab, dispatch } = props;
+  dispatch(
+    actions.tabPageUpdate({
+      wind: ambientWind(),
+      tab,
+      page,
+    })
+  );
+}
+
 export function dispatchTabReloaded(props: TabProps) {
   const { tab, dispatch } = props;
   dispatch(
