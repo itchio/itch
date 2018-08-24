@@ -3,52 +3,38 @@ import { messages } from "common/butlerd";
 import {
   FetchProfileCollectionsResult,
   Profile,
+  Collection,
 } from "common/butlerd/messages";
 import urls from "common/constants/urls";
-import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
-import { urlForCollection } from "common/util/navigation";
+import { ambientTab, urlForCollection } from "common/util/navigation";
 import React from "react";
 import EmptyState from "renderer/basics/EmptyState";
 import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import TimeAgo from "renderer/basics/TimeAgo";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { hook } from "renderer/hocs/hook";
+import { hookWithProps } from "renderer/hocs/hook";
+import { urlWithParams, dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withProfile } from "renderer/hocs/withProfile";
-import { withSpace } from "renderer/hocs/withSpace";
+import { withTab } from "renderer/hocs/withTab";
 import GameStripe from "renderer/pages/common/GameStripe";
 import ItemList from "renderer/pages/common/ItemList";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
+import CollectionPreview from "renderer/pages/CollectionsPage/CollectionPreview";
 
 const FetchProfileCollections = butlerCaller(messages.FetchProfileCollections);
-const CollectionGameStripe = GameStripe(messages.FetchCollectionGames);
 
 const CollectionsDiv = styled.div`
   ${styles.meat};
 `;
 
-const CollectionInfo = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  font-size: ${props => props.theme.fontSizes.baseText};
-  color: ${props => props.theme.ternaryText};
-  font-weight: 700;
-  margin: 0 0.5em;
-`;
-
-const CollectionInfoSpacer = styled.div`
-  width: 0.4em;
-`;
-
 class CollectionsPage extends React.PureComponent<Props> {
   render() {
-    const { profile, space, dispatch } = this.props;
+    const { profile, cursor, dispatch } = this.props;
 
     return (
       <CollectionsDiv>
@@ -56,12 +42,10 @@ class CollectionsPage extends React.PureComponent<Props> {
           params={{
             profileId: profile.id,
             limit: 6,
-            cursor: space.queryParam("cursor"),
+            cursor,
           }}
           sequence={this.props.sequence}
-          onResult={() => {
-            dispatch(space.makePageUpdate({ label: ["sidebar.collections"] }));
-          }}
+          onResult={this.setLabel}
           loadingHandled
           errorsHandled
           render={({ result, error, loading }) => {
@@ -82,6 +66,10 @@ class CollectionsPage extends React.PureComponent<Props> {
     );
   }
 
+  setLabel = () => {
+    dispatchTabPageUpdate(this.props, { label: ["sidebar.collections"] });
+  };
+
   renderCollections(result: FetchProfileCollectionsResult) {
     if (!result) {
       return null;
@@ -97,22 +85,15 @@ class CollectionsPage extends React.PureComponent<Props> {
           smallText={["collections.empty_sub"]}
           buttonIcon="earth"
           buttonText={["status.downloads.find_games_button"]}
-          buttonAction={() =>
-            this.props.dispatch(
-              actions.navigate({
-                wind: "root",
-                url: "itch://featured",
-              })
-            )
-          }
+          buttonAction={this.visitFeatured}
         />
       );
     }
 
     let nextPageURL = null;
     if (nextCursor) {
-      const { space } = this.props;
-      nextPageURL = space.urlWithParams({
+      const { url } = this.props;
+      nextPageURL = urlWithParams(url, {
         cursor: nextCursor,
       });
     }
@@ -120,42 +101,34 @@ class CollectionsPage extends React.PureComponent<Props> {
     return (
       <>
         {items.map(coll => (
-          // fixme sequence
-          <>
-            <CollectionGameStripe
-              title={coll.title}
-              href={urlForCollection(coll.id)}
-              params={{ profileId: profile.id, collectionId: coll.id }}
-              renderTitleExtras={() => (
-                <>
-                  <CollectionInfoSpacer />
-                  <CollectionInfo>
-                    {T([
-                      "collection.item_count",
-                      { itemCount: coll.gamesCount },
-                    ])}
-                  </CollectionInfo>
-                  <CollectionInfo>
-                    {T(["collection.info.updated"])}
-                    <CollectionInfoSpacer />
-                    <TimeAgo date={coll.updatedAt} />
-                  </CollectionInfo>
-                </>
-              )}
-              getGame={cg => cg.game}
-            />
-          </>
+          <CollectionPreview key={coll.id} coll={coll} profileId={profile.id} />
         ))}
         {nextCursor ? <a href={nextPageURL}>Next page</a> : null}
       </>
     );
   }
+
+  visitFeatured = () => {
+    this.props.dispatch(
+      actions.navigate({
+        wind: "root",
+        url: "itch://featured",
+      })
+    );
+  };
 }
 
 interface Props extends MeatProps {
-  space: Space;
+  tab: string;
   profile: Profile;
   dispatch: Dispatch;
+
+  url: string;
+  cursor: string;
 }
 
-export default withSpace(withProfile(hook()(CollectionsPage)));
+const hooked = hookWithProps(CollectionsPage)(map => ({
+  url: map((rs, props) => ambientTab(rs, props).location.url),
+  cursor: map((rs, props) => ambientTab(rs, props).location.query.cursor),
+}))(CollectionsPage);
+export default withTab(withProfile(hooked));

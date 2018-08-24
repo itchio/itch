@@ -1,6 +1,13 @@
-import { Subtract, EvolveTabPayload, Dispatch } from "common/types";
+import {
+  Subtract,
+  EvolveTabPayload,
+  Dispatch,
+  QueryParams,
+} from "common/types";
 import { actions } from "common/actions";
 import { ambientWind } from "common/util/navigation";
+import * as urlParser from "url";
+import * as querystring from "querystring";
 
 interface TabProps {
   dispatch: Dispatch;
@@ -150,4 +157,14 @@ export function dispatchOpenTabForwardHistory(
       ...payload,
     })
   );
+}
+
+export function urlWithParams(url: string, params: QueryParams): string {
+  const parsed = urlParser.parse(url);
+  let finalParams = querystring.parse(parsed.query);
+  for (const k of Object.keys(params)) {
+    finalParams[k] = params[k];
+  }
+  parsed.query = querystring.stringify(finalParams);
+  return urlParser.format(parsed);
 }
