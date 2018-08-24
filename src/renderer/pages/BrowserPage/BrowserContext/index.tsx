@@ -1,10 +1,10 @@
 import { messages } from "common/butlerd";
-import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
+import { ambientTab } from "common/util/navigation";
 import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
+import { hookWithProps } from "renderer/hocs/hook";
+import { withTab } from "renderer/hocs/withTab";
 import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
 import BrowserContextGame from "renderer/pages/BrowserPage/BrowserContext/BrowserContextGame";
 import styled from "renderer/styles";
@@ -21,29 +21,42 @@ const BrowserContextContainer = styled.div`
 
 class BrowserContext extends React.PureComponent<Props> {
   render() {
-    const { space } = this.props;
-    if (space.prefix === "games") {
-      const gameId = space.numericId();
-      return (
-        <BrowserContextContainer>
-          <FetchGame
-            params={{ gameId }}
-            sequence={space.sequence()}
-            render={({ result }) => {
-              return <BrowserContextGame game={result.game} />;
-            }}
-          />
-        </BrowserContextContainer>
-      );
+    const { gameId, sequence } = this.props;
+    if (!gameId) {
+      return null;
     }
 
-    return null;
+    return (
+      <BrowserContextContainer>
+        <FetchGame
+          params={{ gameId }}
+          sequence={sequence}
+          render={({ result }) => {
+            return <BrowserContextGame game={result.game} />;
+          }}
+        />
+      </BrowserContextContainer>
+    );
   }
 }
 
 interface Props {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
+
+  gameId: number;
+  sequence: number;
 }
 
-export default withSpace(hook()(BrowserContext));
+export default withTab(
+  hookWithProps(BrowserContext)(map => ({
+    sequence: map((props, rs) => ambientTab(props, rs).sequence),
+    gameId: map((props, rs) => {
+      const { resource } = ambientTab(props, rs);
+      if (resource && resource.prefix === "games") {
+        return resource.numericId;
+      }
+      return null;
+    }),
+  }))(BrowserContext)
+);

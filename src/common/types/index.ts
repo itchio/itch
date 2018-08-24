@@ -763,16 +763,16 @@ export interface QueryParams {
 
 export interface TabInstanceResource {
   /** for resource "games/3", "games" */
-  prefix: string;
+  prefix?: string;
 
   /** for resource "games/3", "3" */
-  suffix: string;
+  suffix?: string;
 
   /** for resource "games/3", "" */
-  numericId: number;
+  numericId?: number;
 
   /** the entire resource */
-  value: string;
+  value?: string;
 }
 
 export interface TabInstanceStatus {
