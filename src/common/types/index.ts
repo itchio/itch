@@ -484,7 +484,7 @@ export interface PreferencesState {
   lastSuccessfulSetupVersion: string;
 }
 
-export interface ITask {
+export interface Task {
   /** generated identifier */
   id: string;
 
@@ -507,16 +507,16 @@ export interface ITask {
 export interface TasksState {
   /** all tasks currently going on in the app (installs, uninstalls, etc.) */
   tasks: {
-    [key: string]: ITask;
+    [key: string]: Task;
   };
 
   /** same as tasks, grouped by gameId - there may be multiple for the same game */
   tasksByGameId: {
-    [gameId: string]: ITask[];
+    [gameId: string]: Task[];
   };
 
   /** all tasks finished and not cleared yet, since the app started */
-  finishedTasks: ITask[];
+  finishedTasks: Task[];
 }
 
 export interface DownloadsState {
@@ -546,7 +546,7 @@ type OpenAtLoginErrorCause = "no_desktop_file" | "error";
 /**
  * Something went wrong when applying
  */
-export interface IOpenAtLoginError {
+export interface OpenAtLoginError {
   /** why did applying the setting failed */
   cause: OpenAtLoginErrorCause;
 
@@ -556,7 +556,7 @@ export interface IOpenAtLoginError {
 
 export interface StatusState {
   messages: LocalizedString[];
-  openAtLoginError: IOpenAtLoginError;
+  openAtLoginError: OpenAtLoginError;
   reduxLoggingEnabled: boolean;
 }
 
@@ -584,11 +584,11 @@ export interface ProgressInfo {
   totalBytes?: number;
 }
 
-export interface IProgressListener {
+export interface ProgressListener {
   (info: ProgressInfo): void;
 }
 
-export interface IRuntime {
+export interface Runtime {
   platform: Platform;
 }
 
@@ -600,7 +600,7 @@ export interface MenuItem extends Electron.MenuItemConstructorOptions {
 }
 export type MenuTemplate = MenuItem[];
 
-export interface INavigatePayload {
+export interface NavigatePayload {
   /** which window initiated the navigation */
   wind: string;
 
@@ -617,14 +617,14 @@ export interface INavigatePayload {
   replace?: boolean;
 }
 
-export interface IOpenTabPayload extends INavigatePayload {
+export interface OpenTabPayload extends NavigatePayload {
   wind: string;
 
   /** the id of the new tab to open (generated) */
   tab?: string;
 }
 
-export interface IOpenContextMenuBase {
+export interface OpenContextMenuBase {
   /** which window to open the context menu for */
   wind: string;
 
@@ -635,14 +635,7 @@ export interface IOpenContextMenuBase {
   clientY: number;
 }
 
-export interface ModalResponse {
-  // FIXME: this is messy
-
-  /** recaptcha challenge response */
-  recaptchaResponse?: string;
-}
-
-interface IEvolveBasePayload {
+interface EvolveBasePayload {
   /** which window the tab belongs to */
   wind: string;
 
@@ -659,7 +652,7 @@ interface IEvolveBasePayload {
   label?: LocalizedString;
 }
 
-export interface IEvolveTabPayload extends IEvolveBasePayload {
+export interface EvolveTabPayload extends EvolveBasePayload {
   /** if false, that's a new history entry, if true it replaces the current one */
   replace: boolean;
 
@@ -669,7 +662,7 @@ export interface IEvolveTabPayload extends IEvolveBasePayload {
   fromWebContents?: boolean;
 }
 
-export interface INavigateTabPayload extends IEvolveBasePayload {
+export interface NavigateTabPayload extends EvolveBasePayload {
   /** whether to open in the background */
   background: boolean;
 }

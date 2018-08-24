@@ -1,47 +1,46 @@
+import { Endpoint } from "butlerd";
 import {
-  Dispatch,
-  Action,
-  SystemTasksState,
-  ProxySource,
-  CommonsState,
-  ModalAction,
-  ItchAppTabs,
-  MenuTemplate,
-  I18nResources,
-  I18nKeys,
-  ProgressInfo,
-  IOpenTabPayload,
-  GenerosityLevel,
-  PreferencesState,
-  IOpenAtLoginError,
-  LocalizedString,
-  IOpenContextMenuBase,
-  ModalResponse,
-  INavigatePayload,
-  IEvolveTabPayload,
-  INavigateTabPayload,
-  TaskName,
-  PackageState,
-  SystemState,
-  WindRole,
-  BrowserViewMetrics,
-  TabPage,
-} from "common/types";
-
-import {
-  Game,
-  Upload,
+  Cave,
   CleanDownloadsEntry,
-  GameUpdate,
-  Profile,
   Download,
   DownloadProgress,
-  Cave,
+  Game,
+  GameUpdate,
   GameUpdateChoice,
+  Profile,
+  Upload,
 } from "common/butlerd/messages";
-import { Endpoint } from "butlerd";
-import { TypedModal, TypedModalUpdate } from "common/modals";
 import { LogEntry } from "common/logger";
+import { TypedModal, TypedModalUpdate } from "common/modals";
+import {
+  Action,
+  BrowserViewMetrics,
+  CommonsState,
+  Dispatch,
+  EvolveTabPayload,
+  GenerosityLevel,
+  I18nKeys,
+  I18nResources,
+  ItchAppTabs,
+  LocalizedString,
+  MenuTemplate,
+  ModalAction,
+  NavigatePayload,
+  NavigateTabPayload,
+  OpenAtLoginError,
+  OpenContextMenuBase,
+  OpenTabPayload,
+  PackageState,
+  PreferencesState,
+  ProgressInfo,
+  ProxySource,
+  SystemState,
+  SystemTasksState,
+  TabPage,
+  TaskName,
+  WindRole,
+} from "common/types";
+
 export interface ActionCreator<PayloadType> {
   payload: PayloadType;
   (payload: PayloadType): Action<PayloadType>;
@@ -141,7 +140,7 @@ export const actions = wireActions({
     id: string;
 
     /** if there was a response, it's here */
-    response: ModalResponse | null;
+    response: any;
   }>(),
   modalResponse: action<any>(),
 
@@ -311,11 +310,11 @@ export const actions = wireActions({
   }>(),
 
   // navigation
-  tabOpened: action<IOpenTabPayload>(),
+  tabOpened: action<OpenTabPayload>(),
   newTab: action<{
     wind: string;
   }>(),
-  navigate: action<INavigatePayload>(),
+  navigate: action<NavigatePayload>(),
   tabFocused: action<{
     wind: string;
 
@@ -378,8 +377,8 @@ export const actions = wireActions({
     andFocus?: string;
   }>(),
 
-  navigateTab: action<INavigateTabPayload>(),
-  evolveTab: action<IEvolveTabPayload>(),
+  navigateTab: action<NavigateTabPayload>(),
+  evolveTab: action<EvolveTabPayload>(),
   tabReloaded: action<{
     wind: string;
 
@@ -441,24 +440,24 @@ export const actions = wireActions({
   }>(),
 
   openTabBackHistory: action<
-    IOpenContextMenuBase & {
+    OpenContextMenuBase & {
       tab: string;
     }
   >(),
 
   openTabForwardHistory: action<
-    IOpenContextMenuBase & {
+    OpenContextMenuBase & {
       tab: string;
     }
   >(),
 
   openGameContextMenu: action<
-    IOpenContextMenuBase & {
+    OpenContextMenuBase & {
       /** game to open the context menu of */
       game: Game;
     }
   >(),
-  openUserMenu: action<IOpenContextMenuBase>(),
+  openUserMenu: action<OpenContextMenuBase>(),
 
   viewCreatorProfile: action<{}>(),
   viewCommunityProfile: action<{}>(),
@@ -473,7 +472,7 @@ export const actions = wireActions({
   // context menus
 
   popupContextMenu: action<
-    IOpenContextMenuBase & {
+    OpenContextMenuBase & {
       /** contents of the context menu */
       template: MenuTemplate;
     }
@@ -772,7 +771,7 @@ export const actions = wireActions({
     /** Whether to wipe cookies (will log out user) */
     cookies: boolean;
   }>(),
-  openAtLoginError: action<IOpenAtLoginError>(),
+  openAtLoginError: action<OpenAtLoginError>(),
 
   // internal
 

@@ -1,9 +1,4 @@
-import {
-  Store,
-  ProgressInfo,
-  IProgressListener,
-  Cancelled,
-} from "common/types";
+import { Store, ProgressInfo, ProgressListener, Cancelled } from "common/types";
 
 import { EventEmitter } from "events";
 import { ItchPromise } from "common/util/itch-promise";
@@ -118,7 +113,7 @@ export class MinimalContext {
   }
 
   on(ev: "abort", listener: AbortListener): void;
-  on(ev: "progress", listener: IProgressListener): void;
+  on(ev: "progress", listener: ProgressListener): void;
   on(ev: string, listener: (data: any) => void): void;
 
   on(ev: string, listener: (data: any) => void): void {

@@ -1,6 +1,6 @@
 import urls from "common/constants/urls";
 import { actions } from "common/actions";
-import { Store, MenuTemplate, IRuntime, MenuItem } from "common/types";
+import { Store, MenuTemplate, Runtime, MenuItem } from "common/types";
 
 import { map } from "underscore";
 import { t } from "common/format/t";
@@ -8,7 +8,7 @@ import { t } from "common/format/t";
 export function fleshOutTemplate(
   wind: string,
   store: Store,
-  runtime: IRuntime,
+  runtime: Runtime,
   template: MenuTemplate
 ): Electron.MenuItemConstructorOptions[] {
   const { i18n } = store.getState();
@@ -47,7 +47,7 @@ export function fleshOutTemplate(
   return map(template, visitNode);
 }
 
-function convertMenuAction(wind: string, payload: MenuItem, runtime: IRuntime) {
+function convertMenuAction(wind: string, payload: MenuItem, runtime: Runtime) {
   const { role, localizedLabel } = payload;
 
   switch (role) {

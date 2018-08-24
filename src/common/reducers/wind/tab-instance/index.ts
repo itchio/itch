@@ -266,10 +266,9 @@ const baseReducer = reducer<TabInstance>(initialState, on => {
   });
 
   on(actions.tabReloaded, (state, action) => {
-    const { tab } = action.payload;
     return {
       ...state,
-      sequence: state[tab].sequence + 1,
+      sequence: state.sequence + 1,
     };
   });
 });

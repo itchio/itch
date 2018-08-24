@@ -5,7 +5,7 @@ import {
   TabPage,
   TabInstance,
   Action,
-  IEvolveTabPayload,
+  EvolveTabPayload,
   Subtract,
 } from "common/types";
 
@@ -87,13 +87,13 @@ export class Space {
 
   makeEvolve(
     payload: Subtract<
-      IEvolveTabPayload,
+      EvolveTabPayload,
       {
         tab: string;
         wind: string;
       }
     >
-  ): Action<IEvolveTabPayload> {
+  ): Action<EvolveTabPayload> {
     return actions.evolveTab({
       wind: ambientWind(),
       tab: this.tab,
