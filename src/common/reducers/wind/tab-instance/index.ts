@@ -1,7 +1,15 @@
 import { actions } from "common/actions";
+import derivedReducer from "common/reducers/derived-reducer";
 import reducer from "common/reducers/reducer";
-import { TabInstance } from "common/types";
+import {
+  TabInstance,
+  TabInstanceLocation,
+  TabInstanceResource,
+  TabInstanceStatus,
+  QueryParams,
+} from "common/types";
 import { omit, size } from "underscore";
+import * as urlParser from "url";
 
 const initialState: TabInstance = {
   history: [{ url: "itch://new-tab" }],
@@ -36,7 +44,81 @@ export function trimHistory(ti: TabInstance): TabInstance {
   };
 }
 
-export default reducer<TabInstance>(initialState, on => {
+function urlToLocation(url: string): TabInstanceLocation {
+  const parsedUrl = urlParser.parse(url);
+  const protocol = parsedUrl.protocol;
+  const pathname = parsedUrl.pathname;
+  const hostname = parsedUrl.hostname;
+  const query: QueryParams = {};
+  if (parsedUrl.query) {
+    for (const k of Object.keys(parsedUrl.query)) {
+      const v = parsedUrl.query[k];
+      if (Array.isArray(v)) {
+        query[k] = v[0];
+      } else {
+        query[k] = v;
+      }
+    }
+  }
+
+  let pathElements: string[] = [];
+  if (pathname) {
+    pathElements = pathname.replace(/^\//, "").split("/");
+  }
+  let internalPage: string;
+  let firstPathElement: string;
+  let firstPathNumber: number;
+  let isBrowser = true;
+  if (protocol === "itch:") {
+    internalPage = pathElements[0];
+    isBrowser = false;
+  }
+  firstPathElement = pathElements[0];
+  firstPathNumber = parseInt(pathElements[0], 10);
+
+  return {
+    url,
+    protocol,
+    pathname,
+    hostname,
+    query,
+    internalPage,
+    firstPathElement,
+    firstPathNumber,
+    isBrowser,
+  };
+}
+
+const selector = (state: TabInstance): TabInstance => {
+  if (typeof state !== "object") {
+    return state;
+  }
+
+  const { history, currentIndex } = state;
+  const page = history[currentIndex];
+  let location: TabInstanceLocation;
+  if (page) {
+    location = urlToLocation(page.url);
+  }
+  let resource: TabInstanceResource;
+  let status: TabInstanceStatus = {
+    canGoBack: currentIndex > 0,
+    canGoForward: currentIndex < history.length - 1,
+    favicon: page ? page.favicon : null,
+    icon: null, // TODO
+    label: null, // TODO
+    lazyLabel: null, // TODO
+  };
+
+  return {
+    ...state,
+    location,
+    resource,
+    status,
+  };
+};
+
+const baseReducer = reducer<TabInstance>(initialState, on => {
   on(actions.tabPageUpdate, (state, action) => {
     const { page } = action.payload;
 
@@ -161,3 +243,5 @@ export default reducer<TabInstance>(initialState, on => {
     };
   });
 });
+
+export default derivedReducer(baseReducer, selector);

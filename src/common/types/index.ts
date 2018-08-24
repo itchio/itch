@@ -713,6 +713,7 @@ export interface TabInstance {
   /** current index of history shown */
   currentIndex: number;
 
+  /** whether the tab is currently loading */
   loading?: boolean;
 
   /** if sleepy, don't load until it's focused */
@@ -723,6 +724,77 @@ export interface TabInstance {
 
   /** number that increments when we reload a tab */
   sequence: number;
+
+  /** derived properties related to the current URL */
+  location?: TabInstanceLocation;
+
+  /** derived properties related to the current resource */
+  resource?: TabInstanceResource;
+
+  /** derived properties related to history, etc. */
+  status?: TabInstanceStatus;
+}
+
+export interface TabInstanceLocation {
+  /** current URL of the tab */
+  url: string;
+
+  /** "https:", "itch:", etc. */
+  protocol: string;
+
+  /** "new-tab", "applog", etc. */
+  internalPage: string;
+
+  /** in "itch://games/3", "3" as string */
+  firstPathElement: string;
+
+  /** in "itch://games/3", 3 as number */
+  firstPathNumber: number;
+
+  /** in "itch://games/3", "games" */
+  hostname: string;
+
+  /** in "itch://games/3", "/3" */
+  pathname: string;
+
+  /** for "https://example.com?a=b&c=d", {"a":"b", "c":"d"} */
+  query: QueryParams;
+
+  /** should the the tab shown in a browser view? */
+  isBrowser: boolean;
+}
+
+export interface QueryParams {
+  [key: string]: string;
+}
+
+export interface TabInstanceResource {
+  /** for resource "games/3", "games" */
+  prefix: string;
+
+  /** for resource "games/3", "3" */
+  suffix: string;
+
+  /** for resource "games/3", "" */
+  numericId: number;
+
+  /** the entire resource */
+  value: string;
+}
+
+export interface TabInstanceStatus {
+  /** true if we can navigate back */
+  canGoBack: boolean;
+  /** true if we can navigate forward */
+  canGoForward: boolean;
+  /** current favicon of the tab */
+  favicon: string;
+  /** current icon of the tab */
+  icon?: string;
+  /** current label, maybe empty if we've just navigated */
+  label?: LocalizedString;
+  /** if we're loading a new page, this has the previous page's label */
+  lazyLabel?: LocalizedString;
 }
 
 export interface TabDataSave {
