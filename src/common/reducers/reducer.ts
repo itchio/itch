@@ -51,11 +51,13 @@ function reducer<State>(
       return initialState;
     }
 
-    const reducer = actionReducers[action.type];
-    if (reducer) {
-      return reducer(rs, action);
-    } else if (defaultReducer) {
-      return defaultReducer(rs, action);
+    if (action) {
+      const reducer = actionReducers[action.type];
+      if (reducer) {
+        return reducer(rs, action);
+      } else if (defaultReducer) {
+        return defaultReducer(rs, action);
+      }
     }
     return rs;
   };

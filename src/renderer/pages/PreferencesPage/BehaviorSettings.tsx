@@ -1,7 +1,7 @@
 import React from "react";
 
 import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
-import OpenAtLoginError from "renderer/pages/PreferencesPage/OpenAtLoginError";
+import OpenAtLoginErrorMessage from "renderer/pages/PreferencesPage/OpenAtLoginErrorMessage";
 import ExperimentalMark from "renderer/pages/PreferencesPage/ExperimentalMark";
 
 import { T } from "renderer/t";
@@ -38,7 +38,7 @@ class BehaviorSettings extends React.PureComponent<Props> {
             label={T(["preferences.behavior.open_at_login"])}
           />
 
-          <OpenAtLoginError />
+          <OpenAtLoginErrorMessage />
 
           <Checkbox
             name="openAsHidden"

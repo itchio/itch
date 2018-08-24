@@ -1,7 +1,6 @@
 import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
 import { formatDurationAsMessage } from "common/format/datetime";
-import { Space } from "common/helpers/space";
 import {
   Dispatch,
   DownloadsState,
@@ -47,13 +46,13 @@ class Tab extends React.PureComponent<Props> {
     const { tab, index, sortable, tabInstance, active } = this.props;
     const { onExplore } = this;
 
-    const space = Space.fromInstance(tab, tabInstance);
-    let loading = space.isLoading();
+    const { location, status } = tabInstance;
+    let loading = tabInstance.loading;
 
-    const url = space.url();
-    const resource = space.resource();
-    const label = space.lazyLabel();
-    let icon = space.icon();
+    const url = location.url;
+    const resource = tabInstance.resource ? tabInstance.resource.value : null;
+    const label = status.lazyLabel;
+    let icon = status.icon;
     let count = 0;
     let progress: number = null;
     let sublabel: LocalizedString = null;

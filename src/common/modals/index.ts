@@ -8,31 +8,25 @@ import {
   ManageCaveResponse,
   ManageGameParams,
   ManageGameResponse,
+  PlanInstallParams,
+  PlanInstallResponse,
   PrereqsStateParams,
   PrereqsStateResponse,
   RecaptchaInputParams,
   RecaptchaInputResponse,
+  ScanInstallLocationsParams,
+  ScanInstallLocationsResponse,
   SecretSettingsParams,
   SecretSettingsResponse,
+  SendFeedbackParams,
   ShowErrorParams,
   ShowErrorResponse,
   SwitchVersionCaveParams,
   SwitchVersionCaveResponse,
   TwoFactorInputParams,
   TwoFactorInputResponse,
-  ScanInstallLocationsParams,
-  ScanInstallLocationsResponse,
-  SendFeedbackParams,
-  PlanInstallParams,
-  PlanInstallResponse,
 } from "common/modals/types";
-import {
-  Action,
-  Modal,
-  ModalBase,
-  ModalResponse,
-  ModalUpdate,
-} from "common/types";
+import { Action, Modal, ModalBase, ModalUpdate } from "common/types";
 import uuid from "common/util/uuid";
 
 interface TypedModalBase<Params> extends ModalBase {
@@ -57,7 +51,7 @@ export type ModalWidgetSpec<Params, Response> = {
   params?: Params;
   response?: Response;
   key: string;
-  action: (response: Response) => Action<ModalResponse>;
+  action: (response: Response) => Action<any>;
   make: (base: TypedModalBase<Params>) => TypedModal<Params, Response>;
   update: (update: TypedModalUpdateBase<Params>) => TypedModalUpdate<Params>;
 };

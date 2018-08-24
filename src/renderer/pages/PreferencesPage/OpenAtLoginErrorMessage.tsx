@@ -1,11 +1,11 @@
 import urls from "common/constants/urls";
-import { IOpenAtLoginError } from "common/types";
+import { OpenAtLoginError } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
 import { T } from "renderer/t";
 
-class OpenAtLoginError extends React.PureComponent<Props> {
+class OpenAtLoginErrorMessage extends React.PureComponent<Props> {
   render() {
     const { openAtLoginError } = this.props;
 
@@ -47,9 +47,9 @@ class OpenAtLoginError extends React.PureComponent<Props> {
 }
 
 interface Props {
-  openAtLoginError: IOpenAtLoginError;
+  openAtLoginError: OpenAtLoginError;
 }
 
 export default hook(map => ({
   openAtLoginError: map(rs => rs.status.openAtLoginError),
-}))(OpenAtLoginError);
+}))(OpenAtLoginErrorMessage);

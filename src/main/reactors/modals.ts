@@ -3,7 +3,7 @@ import { actions } from "common/actions";
 
 import { each, findWhere } from "underscore";
 
-import { Store, ModalResponse } from "common/types";
+import { Store } from "common/types";
 
 import modalResolves from "main/reactors/modals-persistent-state";
 import { TypedModal } from "common/modals";
@@ -38,7 +38,7 @@ export default function(watcher: Watcher) {
       modal = findWhere(modals, { id });
     }
 
-    let response: ModalResponse = null;
+    let response: any = null;
     if (action) {
       if (Array.isArray(action)) {
         each(action, a => store.dispatch(a));

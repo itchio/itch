@@ -5,14 +5,14 @@ import { Menu } from "common/helpers/menu";
 
 import { createSelector } from "reselect";
 
-import { IRuntime, MenuItem, MenuTemplate } from "common/types";
+import { Runtime, MenuItem, MenuTemplate } from "common/types";
 
 import { RootState } from "common/types";
 import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template";
 import { actions } from "common/actions";
 import { Profile } from "common/butlerd/messages";
 
-export default function(watcher: Watcher, runtime: IRuntime) {
+export default function(watcher: Watcher, runtime: Runtime) {
   watcher.onStateChange({
     makeSelector: (store, schedule) => {
       let templateSelector = createSelector(
@@ -68,7 +68,7 @@ function computeMenuTemplate(
   appVersion: string,
   profile: Profile,
   enableTabs: boolean,
-  runtime: IRuntime
+  runtime: Runtime
 ) {
   const hiddenTabShortcuts: MenuItem[] = [
     // next tab
@@ -455,7 +455,7 @@ function computeMenuTemplate(
 
 function setItchAppMenu(
   nativeIDsPayload: string,
-  runtime: IRuntime,
+  runtime: Runtime,
   menu: Electron.Menu
 ) {
   if (runtime.platform === "osx") {
