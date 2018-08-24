@@ -173,30 +173,7 @@ export class Space {
   }
 
   icon(): string {
-    switch (this.internalPage()) {
-      case "featured":
-        return "itchio";
-      case "dashboard":
-        return "archive";
-      case "library":
-        return "heart-filled";
-      case "preferences":
-        return "cog";
-      case "downloads":
-        return "download";
-      case "collections":
-        return "video_collection";
-      case "games":
-        return "star";
-      case "locations":
-        return "folder-open";
-      case "new-tab":
-        return "star2";
-      case "applog":
-        return "bug";
-    }
-
-    return fallbackIcon;
+    return internalPageToIcon(this.internalPage());
   }
 
   isBrowser(): boolean {
@@ -305,3 +282,30 @@ export class Space {
 }
 
 const fallbackIcon = "moon";
+
+export function internalPageToIcon(internalPage: string): string {
+  switch (internalPage) {
+    case "featured":
+      return "itchio";
+    case "dashboard":
+      return "archive";
+    case "library":
+      return "heart-filled";
+    case "preferences":
+      return "cog";
+    case "downloads":
+      return "download";
+    case "collections":
+      return "video_collection";
+    case "games":
+      return "star";
+    case "locations":
+      return "folder-open";
+    case "new-tab":
+      return "star2";
+    case "applog":
+      return "bug";
+  }
+
+  return fallbackIcon;
+}

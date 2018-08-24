@@ -1,5 +1,4 @@
 import { actions } from "common/actions";
-import derivedReducer from "common/reducers/derived-reducer";
 import reducer from "common/reducers/reducer";
 import {
   TabInstance,
@@ -7,9 +6,13 @@ import {
   TabInstanceResource,
   TabInstanceStatus,
   QueryParams,
+  Action,
 } from "common/types";
 import { omit, size } from "underscore";
 import * as urlParser from "url";
+import * as querystring from "querystring";
+import equal from "react-fast-compare";
+import { internalPageToIcon } from "common/helpers/space";
 
 const initialState: TabInstance = {
   history: [{ url: "itch://new-tab" }],
@@ -50,14 +53,13 @@ function urlToLocation(url: string): TabInstanceLocation {
   const pathname = parsedUrl.pathname;
   const hostname = parsedUrl.hostname;
   const query: QueryParams = {};
-  if (parsedUrl.query) {
-    for (const k of Object.keys(parsedUrl.query)) {
-      const v = parsedUrl.query[k];
-      if (Array.isArray(v)) {
-        query[k] = v[0];
-      } else {
-        query[k] = v;
-      }
+  const parsedQuery = querystring.parse(parsedUrl.query);
+  for (const k of Object.keys(parsedQuery)) {
+    const v = parsedQuery[k];
+    if (Array.isArray(v)) {
+      query[k] = v[0];
+    } else {
+      query[k] = v;
     }
   }
 
@@ -96,11 +98,17 @@ const selector = (state: TabInstance): TabInstance => {
 
   const { history, currentIndex } = state;
   const page = history[currentIndex];
-  let location: TabInstanceLocation;
-  if (page) {
-    location = urlToLocation(page.url);
-  }
+  let location: TabInstanceLocation = page ? urlToLocation(page.url) : null;
   let resource: TabInstanceResource;
+  if (page && page.resource) {
+    let resourceElements = page.resource.split("/");
+    resource = {
+      prefix: resourceElements[0],
+      suffix: resourceElements[1],
+      numericId: parseInt(resourceElements[1], 10),
+      value: page.resource,
+    };
+  }
   let status: TabInstanceStatus = {
     canGoBack: currentIndex > 0,
     canGoForward: currentIndex < history.length - 1,
@@ -109,13 +117,35 @@ const selector = (state: TabInstance): TabInstance => {
     label: null, // TODO
     lazyLabel: null, // TODO
   };
+  if (location) {
+    status.icon = internalPageToIcon(location.internalPage);
+  }
+  if (page) {
+    status.label = page ? page.label : null;
+    if (status.label) {
+      status.lazyLabel = status.label;
+    } else {
+      status.lazyLabel = "";
+      if (currentIndex > 0) {
+        const prevPage = history[currentIndex - 1];
+        if (prevPage && prevPage.label) {
+          status.lazyLabel = prevPage.label;
+        }
+      }
+    }
+  }
 
-  return {
+  let newState = {
     ...state,
     location,
     resource,
     status,
   };
+
+  if (equal(state, newState)) {
+    return state;
+  }
+  return newState;
 };
 
 const baseReducer = reducer<TabInstance>(initialState, on => {
@@ -244,4 +274,8 @@ const baseReducer = reducer<TabInstance>(initialState, on => {
   });
 });
 
-export default derivedReducer(baseReducer, selector);
+export default function(state: TabInstance, action: Action<any>): TabInstance {
+  state = baseReducer(state, action);
+  state = selector(state);
+  return state;
+}
