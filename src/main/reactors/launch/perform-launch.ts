@@ -274,7 +274,6 @@ export async function performLaunch(
             });
           }
         );
-        logger.info(`mcall resolved!`);
       } finally {
         closePrereqsModal();
         if (powerSaveBlockerId) {
