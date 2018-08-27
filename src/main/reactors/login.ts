@@ -69,19 +69,6 @@ export default function(watcher: Watcher) {
                 wind: "root",
                 title: ["login.two_factor.title"],
                 message: "",
-                buttons: [
-                  {
-                    label: ["login.action.login"],
-                    action: "widgetResponse",
-                  },
-                  {
-                    label: ["login.two_factor.learn_more"],
-                    action: actions.openInExternalBrowser({
-                      url: urls.twoFactorHelp,
-                    }),
-                    className: "secondary",
-                  },
-                ],
                 widgetParams: {
                   username,
                 },

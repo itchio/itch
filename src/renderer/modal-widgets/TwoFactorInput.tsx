@@ -1,3 +1,4 @@
+import urls from "common/constants/urls";
 import { ModalWidgetProps } from "common/modals";
 import {
   TwoFactorInputParams,
@@ -8,16 +9,45 @@ import { InjectedIntl } from "react-intl";
 import { withIntl } from "renderer/hocs/withIntl";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { T, TString } from "renderer/t";
+import styled from "renderer/styles";
+import { hook } from "renderer/hocs/hook";
+import { Dispatch } from "common/types";
+import { actions } from "common/actions";
+import { ambientWind } from "common/util/navigation";
+import { ModalButtons } from "renderer/basics/modal-styles";
+import Button from "renderer/basics/Button";
 
-class TwoFactorInput extends React.PureComponent<Props> {
-  refs: {
-    totpInput?: HTMLInputElement;
-  };
+const CodeInput = styled.input`
+  font-size: 36px !important;
+  width: 6em !important;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.2em;
+`;
+
+const CodeInputContainer = styled.div`
+  width: 100%;
+  text-align: center;
+`;
+
+const CODE_LENGTH = 6;
+const CODE_MIN_LENGTH = CODE_LENGTH;
+const CODE_MAX_LENGTH = CODE_LENGTH;
+
+class TwoFactorInput extends React.PureComponent<Props, State> {
+  input?: HTMLInputElement;
+
+  constructor(props: Props, context: any) {
+    super(props, context);
+    this.state = {
+      valid: false,
+    };
+  }
 
   render() {
     const params = this.props.modal.widgetParams;
     const { username } = params;
-    const { intl } = this.props;
+    const { valid } = this.state;
 
     return (
       <ModalWidgetDiv>
@@ -27,30 +57,72 @@ class TwoFactorInput extends React.PureComponent<Props> {
 
         <p>{T(["login.two_factor.enter_code"])}</p>
 
-        <input
-          placeholder={TString(intl, [
-            "login.two_factor.verification_code_label",
-          ])}
-          ref="totpInput"
-          type="number"
-          onKeyDown={this.onChange}
-          onKeyUp={this.onChange}
-          onChange={this.onChange}
-          autoFocus={true}
-        />
+        <CodeInputContainer>
+          <CodeInput
+            innerRef={this.gotInput}
+            type="number"
+            minLength={CODE_MIN_LENGTH}
+            maxLength={CODE_MAX_LENGTH}
+            onKeyDown={this.onKeyDown}
+            onKeyUp={this.onChange}
+            onChange={this.onChange}
+            autoFocus
+          />
+        </CodeInputContainer>
+
+        <p>
+          <a target="_blank" href={urls.twoFactorHelp}>
+            {T(["login.two_factor.learn_more"])}
+          </a>
+        </p>
+
+        <ModalButtons>
+          <Button disabled={!valid} onClick={this.onContinue}>
+            {T(["prompt.action.continue"])}
+          </Button>
+        </ModalButtons>
       </ModalWidgetDiv>
     );
   }
 
+  gotInput = (input: HTMLInputElement) => {
+    this.input = input;
+  };
+
+  onKeyDown = (ev: React.KeyboardEvent<any>) => {
+    if (ev.key === "Enter") {
+      this.onContinue();
+    }
+  };
+
   onChange = () => {
-    const { totpInput } = this.refs;
-    if (!totpInput) {
+    const { input } = this;
+    this.setState({
+      valid: input.value.length === 6,
+    });
+
+    this.props.updatePayload({
+      totpCode: input.value,
+    });
+  };
+
+  onContinue = () => {
+    if (!this.state.valid) {
       return;
     }
 
-    this.props.updatePayload({
-      totpCode: totpInput.value,
-    });
+    const { input } = this;
+    const { dispatch } = this.props;
+    let response: TwoFactorInputResponse = {
+      totpCode: input.value,
+    };
+    dispatch(
+      actions.closeModal({
+        wind: ambientWind(),
+        id: this.props.modal.id,
+        action: actions.modalResponse(response),
+      })
+    );
   };
 }
 
@@ -59,6 +131,11 @@ interface Props
   params: TwoFactorInputParams;
 
   intl: InjectedIntl;
+  dispatch: Dispatch;
 }
 
-export default withIntl(TwoFactorInput);
+interface State {
+  valid: boolean;
+}
+
+export default withIntl(hook()(TwoFactorInput));
