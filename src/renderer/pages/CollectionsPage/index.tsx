@@ -3,28 +3,25 @@ import { messages } from "common/butlerd";
 import {
   FetchProfileCollectionsResult,
   Profile,
-  Collection,
 } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Dispatch } from "common/types";
-import { ambientTab, urlForCollection } from "common/util/navigation";
+import { ambientTab } from "common/util/navigation";
 import React from "react";
 import EmptyState from "renderer/basics/EmptyState";
 import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
-import TimeAgo from "renderer/basics/TimeAgo";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
-import { urlWithParams, dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
+import { dispatchTabPageUpdate, urlWithParams } from "renderer/hocs/tab-utils";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
-import GameStripe from "renderer/pages/common/GameStripe";
+import CollectionPreview from "renderer/pages/CollectionsPage/CollectionPreview";
 import ItemList from "renderer/pages/common/ItemList";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
-import CollectionPreview from "renderer/pages/CollectionsPage/CollectionPreview";
 
 const FetchProfileCollections = butlerCaller(messages.FetchProfileCollections);
 

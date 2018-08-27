@@ -164,7 +164,7 @@ export function urlWithParams(url: string, params: QueryParams): string {
   let finalParams = querystring.parse(parsed.query);
   for (const k of Object.keys(params)) {
     const v = params[k];
-    if (typeof v === "undefined") {
+    if (!v) {
       delete finalParams[k];
     } else {
       finalParams[k] = v;

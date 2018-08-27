@@ -1,9 +1,8 @@
 import { RequestCreator } from "butlerd";
 import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
-import { Space } from "common/helpers/space";
 import { Dispatch, LocalizedString } from "common/types";
-import { ambientWind } from "common/util/navigation";
+import { ambientTab, ambientWind } from "common/util/navigation";
 import { isNetworkError } from "main/net/errors";
 import React from "react";
 import equal from "react-fast-compare";
@@ -13,8 +12,9 @@ import Filler from "renderer/basics/Filler";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
+import { hookWithProps } from "renderer/hocs/hook";
+import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
+import { withTab } from "renderer/hocs/withTab";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
@@ -40,7 +40,9 @@ interface GenericProps<Params, Res extends FetchRes<Item>, Item> {
   renderItemExtras?: (item: Item) => JSX.Element;
 
   dispatch: Dispatch;
-  space: Space;
+  tab: string;
+
+  sequence: number;
 }
 
 interface GenericState<Params> {
@@ -113,7 +115,7 @@ export default <Params, Res extends FetchRes<any>>(
     }
 
     render() {
-      const { label, params, dispatch, space } = this.props;
+      const { label, params, sequence } = this.props;
       const {
         renderMainFilters = renderNoop,
         renderExtraFilters = renderNoop,
@@ -137,10 +139,10 @@ export default <Params, Res extends FetchRes<any>>(
                 errorsHandled
                 loadingHandled
                 params={{ ...(params as any), cursor, limit }}
-                sequence={space.sequence()}
+                sequence={sequence}
                 onResult={result => {
                   if (label) {
-                    dispatch(space.makePageUpdate({ label }));
+                    dispatchTabPageUpdate(this.props, { label });
                   }
                 }}
                 render={({ result, loading, error }) => {
@@ -293,7 +295,11 @@ export default <Params, Res extends FetchRes<any>>(
       );
     }
   }
-  return hook()(withSpace(Series));
+  return withTab(
+    hookWithProps(Series)(map => ({
+      sequence: map((rs, props) => ambientTab(rs, props).sequence),
+    }))(Series)
+  );
 };
 
 function renderNoop(): JSX.Element {

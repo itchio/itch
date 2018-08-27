@@ -1,16 +1,15 @@
 import { RequestCreator } from "butlerd";
 import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
-import { Space } from "common/helpers/space";
 import { Dispatch, LocalizedString } from "common/types";
-import { ambientWind } from "common/util/navigation";
+import { ambientTab, ambientWind } from "common/util/navigation";
 import { isNetworkError } from "main/net/errors";
 import React from "react";
 import ErrorState from "renderer/basics/ErrorState";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
+import { hookWithProps } from "renderer/hocs/hook";
+import { withTab } from "renderer/hocs/withTab";
 import {
   standardCoverHeight,
   StandardGameCover,
@@ -63,13 +62,16 @@ interface FetchRes<Item> {
 }
 
 interface GenericProps<Params, Res extends FetchRes<Item>, Item> {
-  dispatch: Dispatch;
-  space: Space;
   title: LocalizedString;
   href: string;
   params: Params;
   renderTitleExtras?: () => JSX.Element;
   getGame: (item: Item) => Game;
+
+  dispatch: Dispatch;
+  tab: string;
+
+  sequence: number;
 }
 
 const stripeLimit = 12;
@@ -90,12 +92,12 @@ export default <Params, Res extends FetchRes<any>>(
 
   class Stripe extends React.PureComponent<Props> {
     render() {
-      const { params, space } = this.props;
+      const { params, sequence } = this.props;
 
       return (
         <Call
           params={{ ...(params as any), limit: stripeLimit }}
-          sequence={space.sequence()}
+          sequence={sequence}
           loadingHandled
           errorsHandled
           render={({ result, error, loading }) => (
@@ -205,7 +207,11 @@ export default <Params, Res extends FetchRes<any>>(
       );
     }
   }
-  return withSpace(hook()(Stripe));
+  return withTab(
+    hookWithProps(Stripe)(map => ({
+      sequence: map((rs, props) => ambientTab(rs, props).sequence),
+    }))(Stripe)
+  );
 };
 
 function renderNoop(): JSX.Element {
