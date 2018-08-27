@@ -1,9 +1,14 @@
-import Loadable from "react-loadable";
-import { Space } from "common/helpers/space";
+import { Dispatch } from "common/types";
+import { ambientTab } from "common/util/navigation";
 import React from "react";
+import Loadable from "react-loadable";
 import Button from "renderer/basics/Button";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { withSpace } from "renderer/hocs/withSpace";
+import { hookWithProps } from "renderer/hocs/hook";
+import { withTab } from "renderer/hocs/withTab";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import styled from "renderer/styles";
+import { T } from "renderer/t";
 
 const CrashyPage = Loadable({
   loader: () => import("renderer/pages/CrashyPage"),
@@ -69,14 +74,6 @@ const PreferencesPage = Loadable({
   loader: () => import("renderer/pages/PreferencesPage"),
   loading: () => null,
 });
-
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import styled from "renderer/styles";
-import { T } from "renderer/t";
-import { withTab } from "renderer/hocs/withTab";
-import { ambientTab } from "common/util/navigation";
-import { hookWithProps } from "renderer/hocs/hook";
-import { Dispatch } from "common/types";
 
 const ErrorDiv = styled.div`
   display: block;

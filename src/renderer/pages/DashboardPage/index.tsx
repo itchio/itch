@@ -1,30 +1,37 @@
 import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
-import { Space } from "common/helpers/space";
-import { Dispatch, LocalizedString } from "common/types";
+import { Dispatch } from "common/types";
+import { ambientTab } from "common/util/navigation";
 import React from "react";
-import { hook } from "renderer/hocs/hook";
+import { hookWithProps } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
-import { withSpace } from "renderer/hocs/withSpace";
+import { withTab } from "renderer/hocs/withTab";
+import { FilterOption } from "renderer/pages/common/Filter";
 import GameSeries from "renderer/pages/common/GameSeries";
 import Page from "renderer/pages/common/Page";
 import SearchControl from "renderer/pages/common/SearchControl";
+import { SortOption } from "renderer/pages/common/Sort";
 import {
   FilterGroup,
-  SortsAndFilters,
   FilterSpacer,
+  SortsAndFilters,
 } from "renderer/pages/common/SortsAndFilters";
+import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import ProfileGameStats from "renderer/pages/DashboardPage/ProfileGameStats";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import { SortOption } from "renderer/pages/common/Sort";
-import { FilterOption } from "renderer/pages/common/Filter";
-import StandardMainAction from "renderer/pages/common/StandardMainAction";
 
 const ProfileGameSeries = GameSeries(messages.FetchProfileGames);
 
 class DashboardPage extends React.PureComponent<Props> {
   render() {
-    const { profile, space } = this.props;
+    const {
+      profile,
+      sortBy,
+      sortDir,
+      search,
+      visibility,
+      paidStatus,
+    } = this.props;
 
     return (
       <Page>
@@ -32,14 +39,12 @@ class DashboardPage extends React.PureComponent<Props> {
           label={["sidebar.dashboard"]}
           params={{
             profileId: profile.id,
-            limit: 15,
-            cursor: space.queryParam("cursor"),
-            sortBy: space.queryParam("sortBy"),
-            reverse: space.queryParam("sortDir") === "reverse",
-            search: space.queryParam("search"),
+            sortBy,
+            reverse: sortDir === "reverse",
+            search,
             filters: {
-              visibility: space.queryParam("visibility"),
-              paidStatus: space.queryParam("paidStatus"),
+              visibility,
+              paidStatus,
             },
           }}
           getGame={pg => pg.game}
@@ -114,8 +119,28 @@ class DashboardPage extends React.PureComponent<Props> {
 
 interface Props extends MeatProps {
   profile: Profile;
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
+
+  sortBy: string;
+  sortDir: string;
+  search: string;
+  visibility: string;
+  paidStatus: string;
 }
 
-export default withProfile(withSpace(hook()(DashboardPage)));
+export default withProfile(
+  withTab(
+    hookWithProps(DashboardPage)(map => ({
+      sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
+      sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
+      search: map((rs, props) => ambientTab(rs, props).location.query.search),
+      visibility: map(
+        (rs, props) => ambientTab(rs, props).location.query.visibility
+      ),
+      paidStatus: map(
+        (rs, props) => ambientTab(rs, props).location.query.paidStatus
+      ),
+    }))(DashboardPage)
+  )
+);

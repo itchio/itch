@@ -1,16 +1,16 @@
 import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
+import { Dispatch } from "common/types";
 import React from "react";
 import FiltersContainer from "renderer/basics/FiltersContainer";
+import { hook } from "renderer/hocs/hook";
+import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withProfile } from "renderer/hocs/withProfile";
+import { withTab } from "renderer/hocs/withTab";
 import GameStripe from "renderer/pages/common/GameStripe";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import { withSpace } from "renderer/hocs/withSpace";
-import { hook } from "renderer/hocs/hook";
-import { Dispatch } from "common/types";
-import { Space } from "common/helpers/space";
 
 const OwnedGameStripe = GameStripe(messages.FetchProfileOwnedKeys);
 const InstalledGameStripe = GameStripe(messages.FetchCaves);
@@ -42,15 +42,14 @@ class LibraryPage extends React.PureComponent<Props> {
   }
 
   componentDidMount() {
-    const { space, dispatch } = this.props;
-    dispatch(space.makePageUpdate({ label: ["sidebar.library"] }));
+    dispatchTabPageUpdate(this.props, { label: ["sidebar.library"] });
   }
 }
 
 interface Props extends MeatProps {
   profile: Profile;
   dispatch: Dispatch;
-  space: Space;
+  tab: string;
 }
 
-export default withProfile(withSpace(hook()(LibraryPage)));
+export default withProfile(withTab(hook()(LibraryPage)));

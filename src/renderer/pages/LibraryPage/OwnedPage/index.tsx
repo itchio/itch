@@ -39,7 +39,6 @@ class OwnedPage extends React.PureComponent<Props> {
         label={["sidebar.owned"]}
         params={{
           profileId: profile.id,
-          limit: 15,
           sortBy,
           reverse: sortDir === "reverse",
           search,
