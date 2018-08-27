@@ -4,6 +4,7 @@ import { actions } from "common/actions";
 import { Store } from "common/types";
 
 import IntlMessageFormat from "intl-messageformat";
+import env from "common/env";
 
 const emptyObj: any = {};
 
@@ -103,6 +104,22 @@ export function hookWebContentsContextMenu(
     // filter out leading/trailing separators
     // TODO: https://github.com/electron/electron/issues/5869
     menuTpl = delUnusedElements(menuTpl);
+
+    if (env.development) {
+      menuTpl.push({
+        id: "inspect",
+        label: intl.formatMessage({ id: "web.context_menu.inspect" }),
+        click() {
+          store.dispatch(
+            actions.inspect({
+              wind,
+              x: props.x,
+              y: props.y,
+            })
+          );
+        },
+      });
+    }
 
     if (menuTpl.length > 0) {
       const menu = (electron.Menu || electron.remote.Menu).buildFromTemplate(

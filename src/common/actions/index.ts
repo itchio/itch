@@ -866,6 +866,12 @@ export const actions = wireActions({
     /** if specified, opens devTools for a BrowserView, not the app */
     tab?: string;
   }>(),
+  inspect: action<{
+    wind: string;
+
+    x: number;
+    y: number;
+  }>(),
   sendFeedback: action<{
     /** error log that should be included in the issue report */
     log?: string;

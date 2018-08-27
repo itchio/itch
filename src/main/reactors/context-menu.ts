@@ -1,23 +1,18 @@
-import { Watcher } from "common/util/watcher";
-
+import { actions } from "common/actions";
+import { t } from "common/format/t";
 import {
-  Store,
+  MenuItem,
   MenuTemplate,
   OpenContextMenuBase,
-  MenuItem,
-  I18nState,
+  Store,
 } from "common/types";
-
-import { actions } from "common/actions";
-
+import { Watcher } from "common/util/watcher";
+import { Menu, MenuItemConstructorOptions } from "electron";
 import {
   gameControls,
   userMenu,
 } from "main/reactors/context-menu/build-template";
 import { getNativeWindow } from "main/reactors/winds";
-import { Menu, MenuItemConstructorOptions } from "electron";
-import { t } from "common/format/t";
-import i18n from "common/reducers/i18n";
 
 function openMenu(
   store: Store,

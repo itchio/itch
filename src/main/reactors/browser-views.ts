@@ -232,6 +232,24 @@ export default function(watcher: Watcher) {
     }
   });
 
+  watcher.on(actions.inspect, async (store, action) => {
+    const { wind, x, y } = action.payload;
+    const rs = store.getState();
+    const nw = getNativeWindow(rs, wind);
+    if (nw) {
+      const wc = nw.webContents;
+      if (wc && !wc.isDestroyed()) {
+        const dwc = wc.devToolsWebContents;
+        if (dwc) {
+          wc.devToolsWebContents.focus();
+        } else {
+          wc.openDevTools({ mode: "detach" });
+        }
+        wc.inspectElement(x, y);
+      }
+    }
+  });
+
   watcher.on(actions.tabGoBack, async (store, action) => {
     const { wind, tab } = action.payload;
     const rs = store.getState();
