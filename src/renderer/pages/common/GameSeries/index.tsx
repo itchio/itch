@@ -133,6 +133,7 @@ export default <Params, Res extends FetchRes<any>>(
           >
             {cursors.map((cursor, i) => (
               <Call
+                key={i}
                 errorsHandled
                 loadingHandled
                 params={{ ...(params as any), cursor, limit }}
