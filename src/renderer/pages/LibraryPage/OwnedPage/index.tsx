@@ -1,11 +1,10 @@
 import { messages } from "common/butlerd";
 import { GameClassification, Profile } from "common/butlerd/messages";
-import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
 import React from "react";
-import { hook } from "renderer/hocs/hook";
+import { hook, hookWithProps } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
-import { withSpace } from "renderer/hocs/withSpace";
+import { withTab } from "renderer/hocs/withTab";
 import {
   FilterGroupGameClassification,
   FilterGroupInstalled,
@@ -20,12 +19,20 @@ import {
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { ambientTab } from "common/util/navigation";
 
 const OwnedSeries = GameSeries(messages.FetchProfileOwnedKeys);
 
 class OwnedPage extends React.PureComponent<Props> {
   render() {
-    const { space, profile } = this.props;
+    const {
+      profile,
+      sortBy,
+      sortDir,
+      search,
+      classification,
+      installed,
+    } = this.props;
 
     return (
       <OwnedSeries
@@ -33,14 +40,12 @@ class OwnedPage extends React.PureComponent<Props> {
         params={{
           profileId: profile.id,
           limit: 15,
-          sortBy: space.queryParam("sortBy"),
-          reverse: space.queryParam("sortDir") === "reverse",
-          search: space.queryParam("search"),
+          sortBy,
+          reverse: sortDir === "reverse",
+          search,
           filters: {
-            classification: space.queryParam(
-              "classification"
-            ) as GameClassification,
-            installed: space.queryParam("installed") === "true",
+            classification,
+            installed,
           },
         }}
         getGame={dk => dk.game}
@@ -72,8 +77,30 @@ interface State {
 
 interface Props extends MeatProps {
   profile: Profile;
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
+
+  sortBy: string;
+  sortDir: string;
+  search: string;
+  classification: GameClassification;
+  installed: boolean;
 }
 
-export default withSpace(withProfile(hook()(OwnedPage)));
+export default withTab(
+  withProfile(
+    hookWithProps(OwnedPage)(map => ({
+      sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
+      sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
+      search: map((rs, props) => ambientTab(rs, props).location.query.search),
+      classification: map(
+        (rs, props) =>
+          ambientTab(rs, props).location.query
+            .classification as GameClassification
+      ),
+      installed: map(
+        (rs, props) => ambientTab(rs, props).location.query.installed === "true"
+      ),
+    }))(OwnedPage)
+  )
+);

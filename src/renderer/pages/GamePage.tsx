@@ -1,20 +1,22 @@
 import { messages } from "common/butlerd";
-import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
+import { ambientTab } from "common/util/navigation";
 import React from "react";
-import butlerCaller from "renderer/hocs/butlerCaller";
-import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
 import FiltersContainer from "renderer/basics/FiltersContainer";
-import { ambientWind } from "common/util/navigation";
+import butlerCaller from "renderer/hocs/butlerCaller";
+import { hookWithProps } from "renderer/hocs/hook";
+import {
+  dispatchTabEvolve,
+  dispatchTabPageUpdate,
+} from "renderer/hocs/tab-utils";
+import { withTab } from "renderer/hocs/withTab";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 
 class GamePage extends React.PureComponent<Props> {
   render() {
-    const { space, dispatch } = this.props;
-    const gameId = space.firstPathNumber();
+    const { gameId } = this.props;
 
     return (
       <FetchGame
@@ -25,18 +27,14 @@ class GamePage extends React.PureComponent<Props> {
           if (result) {
             const { game } = result;
             if (game) {
-              dispatch(
-                space.makePageUpdate({
-                  label: game.title,
-                })
-              );
-              dispatch(
-                space.makeEvolve({
-                  url: game.url,
-                  resource: `games/${gameId}`,
-                  replace: true,
-                })
-              );
+              dispatchTabPageUpdate(this.props, {
+                label: game.title,
+              });
+              dispatchTabEvolve(this.props, {
+                replace: true,
+                url: game.url,
+                resource: `games/${gameId}`,
+              });
             }
           }
         }}
@@ -46,8 +44,14 @@ class GamePage extends React.PureComponent<Props> {
 }
 
 interface Props extends MeatProps {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
+
+  gameId: number;
 }
 
-export default withSpace(hook()(GamePage));
+export default withTab(
+  hookWithProps(GamePage)(map => ({
+    gameId: map((rs, props) => ambientTab(rs, props).location.firstPathNumber),
+  }))(GamePage)
+);

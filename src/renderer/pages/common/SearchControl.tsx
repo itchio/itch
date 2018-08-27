@@ -1,14 +1,14 @@
-import React from "react";
-import { debounce } from "underscore";
-import { withSpace } from "renderer/hocs/withSpace";
-import { hook } from "renderer/hocs/hook";
-import FilterInput from "renderer/pages/common/FilterInput";
 import { Dispatch } from "common/types";
-import { Space } from "common/helpers/space";
-import { ambientWind } from "common/util/navigation";
+import { ambientTab } from "common/util/navigation";
+import React from "react";
 import { InjectedIntl } from "react-intl";
+import { hookWithProps } from "renderer/hocs/hook";
+import { dispatchTabEvolve, urlWithParams } from "renderer/hocs/tab-utils";
 import { withIntl } from "renderer/hocs/withIntl";
+import { withTab } from "renderer/hocs/withTab";
+import FilterInput from "renderer/pages/common/FilterInput";
 import { TString } from "renderer/t";
+import { debounce } from "underscore";
 
 class SearchControl extends React.PureComponent<Props> {
   render(): JSX.Element {
@@ -21,20 +21,26 @@ class SearchControl extends React.PureComponent<Props> {
   }
 
   setSearch = debounce((search: string) => {
-    const { dispatch, space } = this.props;
-    dispatch(
-      space.makeEvolve({
-        replace: true,
-        url: space.urlWithParams({ search }),
-      })
-    );
+    const { url } = this.props;
+    dispatchTabEvolve(this.props, {
+      replace: true,
+      url: urlWithParams(url, { search }),
+    });
   }, 250);
 }
 
 interface Props {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
   intl: InjectedIntl;
+
+  url: string;
 }
 
-export default withSpace(withIntl(hook()(SearchControl)));
+export default withTab(
+  withIntl(
+    hookWithProps(SearchControl)(map => ({
+      url: map((rs, props) => ambientTab(rs, props).location.url),
+    }))(SearchControl)
+  )
+);

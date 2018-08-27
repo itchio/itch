@@ -1,14 +1,14 @@
+import { Dispatch } from "common/types";
 import React from "react";
-import InstallLocationsSettings from "renderer/pages/PreferencesPage/InstallLocationsSettings";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import styled, * as styles from "renderer/styles";
+import { hook } from "renderer/hocs/hook";
+import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
+import { withTab } from "renderer/hocs/withTab";
 import AdvancedSettings from "renderer/pages/PreferencesPage/AdvancedSettings";
 import BehaviorSettings from "renderer/pages/PreferencesPage/BehaviorSettings";
+import InstallLocationsSettings from "renderer/pages/PreferencesPage/InstallLocationsSettings";
 import LanguageSettings from "renderer/pages/PreferencesPage/LanguageSettings";
-import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
-import { Space } from "common/helpers/space";
-import { Dispatch } from "common/types";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import styled, * as styles from "renderer/styles";
 
 const PreferencesDiv = styled.div`
   ${styles.meat};
@@ -120,12 +120,9 @@ const PreferencesContentDiv = styled.div`
 
 class PreferencesPage extends React.PureComponent<Props> {
   componentDidMount() {
-    const { dispatch, space } = this.props;
-    dispatch(
-      space.makePageUpdate({
-        label: ["sidebar.preferences"],
-      })
-    );
+    dispatchTabPageUpdate(this.props, {
+      label: ["sidebar.preferences"],
+    });
   }
 
   render() {
@@ -143,8 +140,8 @@ class PreferencesPage extends React.PureComponent<Props> {
 }
 
 interface Props extends MeatProps {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
 }
 
-export default hook()(withSpace(PreferencesPage));
+export default hook()(withTab(PreferencesPage));

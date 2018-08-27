@@ -3,30 +3,31 @@ import { messages } from "common/butlerd";
 import { InstallLocationsGetByIDResult } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { showInExplorerString } from "common/format/show-in-explorer";
-import { Space } from "common/helpers/space";
+import { truncate } from "common/format/truncate";
+import { formatUploadTitle } from "common/format/upload";
 import { Dispatch } from "common/types";
+import { ambientTab } from "common/util/navigation";
 import React from "react";
+import GameStatusGetter from "renderer/basics/GameStatusGetter";
+import LastPlayed from "renderer/basics/LastPlayed";
 import Link from "renderer/basics/Link";
+import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
+import { hookWithProps } from "renderer/hocs/hook";
+import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
+import { withTab } from "renderer/hocs/withTab";
 import GameSeries from "renderer/pages/common/GameSeries";
 import Page from "renderer/pages/common/Page";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import { T } from "renderer/t";
+import { SortOption } from "renderer/pages/common/Sort";
 import {
+  FilterGroup,
   FilterSpacer,
   SortsAndFilters,
-  FilterGroup,
 } from "renderer/pages/common/SortsAndFilters";
-import { SortOption } from "renderer/pages/common/Sort";
-import GameStatusGetter from "renderer/basics/GameStatusGetter";
-import styled from "renderer/styles";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
-import { formatUploadTitle } from "common/format/upload";
-import TotalPlaytime from "renderer/basics/TotalPlaytime";
-import LastPlayed from "renderer/basics/LastPlayed";
-import { truncate } from "common/format/truncate";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import styled from "renderer/styles";
+import { T } from "renderer/t";
 
 const InstallLocationsGetByID = butlerCaller(messages.InstallLocationsGetByID);
 const CaveGameSeries = GameSeries(messages.FetchCaves);
@@ -50,9 +51,7 @@ const SizeDiv = styled.div`
 
 class LocationPage extends React.PureComponent<Props> {
   render() {
-    const { space, dispatch } = this.props;
-
-    const installLocationId = space.firstPathElement();
+    const { sortBy, sortDir, installLocationId } = this.props;
 
     return (
       <Page>
@@ -63,7 +62,7 @@ class LocationPage extends React.PureComponent<Props> {
               return;
             }
             const loc = result.installLocation;
-            dispatch(space.makePageUpdate({ label: `${loc.path}` }));
+            dispatchTabPageUpdate(this.props, { label: `${loc.path}` });
           }}
           loadingHandled
           render={({ result, loading }) => {
@@ -71,8 +70,8 @@ class LocationPage extends React.PureComponent<Props> {
               <CaveGameSeries
                 params={{
                   filters: { installLocationId },
-                  sortBy: space.queryParam("sortBy"),
-                  reverse: space.queryParam("sortDir") === "reverse",
+                  sortBy,
+                  reverse: sortDir === "reverse",
                 }}
                 getGame={cave => cave.game}
                 getKey={cave => cave.id}
@@ -192,7 +191,19 @@ class LocationPage extends React.PureComponent<Props> {
 
 interface Props extends MeatProps {
   dispatch: Dispatch;
-  space: Space;
+  tab: string;
+
+  installLocationId: string;
+  sortBy: string;
+  sortDir: string;
 }
 
-export default withSpace(hook()(LocationPage));
+export default withTab(
+  hookWithProps(LocationPage)(map => ({
+    installLocationId: map(
+      (rs, props) => ambientTab(rs, props).location.firstPathElement
+    ),
+    sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
+    sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
+  }))(LocationPage)
+);

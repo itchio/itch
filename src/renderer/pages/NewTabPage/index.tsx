@@ -1,11 +1,9 @@
-import { actions } from "common/actions";
-import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
-import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
+import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
+import { withTab } from "renderer/hocs/withTab";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
 import {
   newTabPrimaryItems,
@@ -111,18 +109,15 @@ class NewTabPage extends React.PureComponent<Props> {
   }
 
   componentDidMount() {
-    const { dispatch, space } = this.props;
-    dispatch(
-      space.makePageUpdate({
-        label: ["sidebar.new_tab"],
-      })
-    );
+    dispatchTabPageUpdate(this.props, {
+      label: ["sidebar.new_tab"],
+    });
   }
 }
 
 interface Props extends MeatProps {
+  tab: string;
   dispatch: Dispatch;
-  space: Space;
 }
 
-export default withSpace(hook()(NewTabPage));
+export default withTab(hook()(NewTabPage));

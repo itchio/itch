@@ -73,6 +73,10 @@ const PreferencesPage = Loadable({
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
+import { withTab } from "renderer/hocs/withTab";
+import { ambientTab } from "common/util/navigation";
+import { hookWithProps } from "renderer/hocs/hook";
+import { Dispatch } from "common/types";
 
 const ErrorDiv = styled.div`
   display: block;
@@ -112,7 +116,7 @@ const ErrorSpacer = styled.div`
 `;
 
 class Meat extends React.PureComponent<Props, State> {
-  constructor(props: Meat["props"], context: any) {
+  constructor(props: Props, context: any) {
     super(props, context);
     this.state = {
       hasError: false,
@@ -121,18 +125,14 @@ class Meat extends React.PureComponent<Props, State> {
     };
   }
 
-  static getDerivedStateFromProps(
-    props: Meat["props"],
-    state: Meat["state"]
-  ): Partial<Meat["state"]> {
-    const url = props.space.url();
-    if (url !== state.lastURL) {
+  static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
+    if (props.url !== state.lastURL) {
       return {
         hasError: false,
         loading: false,
         error: null,
         info: null,
-        lastURL: url,
+        lastURL: props.url,
       };
     }
     return null;
@@ -151,9 +151,7 @@ class Meat extends React.PureComponent<Props, State> {
     if (this.state.hasError) {
       return this.renderError();
     }
-
-    const { space } = this.props;
-    const ConcreteMeat = this.getConcrete(space);
+    const ConcreteMeat = this.getConcrete();
 
     if (ConcreteMeat) {
       return (
@@ -162,7 +160,7 @@ class Meat extends React.PureComponent<Props, State> {
         </>
       );
     } else {
-      return <div>Invalid url: {JSON.stringify(space.url())}</div>;
+      return <div>Invalid url: {JSON.stringify(this.props.url)}</div>;
     }
   }
 
@@ -219,14 +217,15 @@ class Meat extends React.PureComponent<Props, State> {
     window.alert("Should open modal!");
   };
 
-  getConcrete(sp: Space): React.ComponentType<MeatProps> {
-    if (sp.isBrowser()) {
+  getConcrete(): React.ComponentType<MeatProps> {
+    const { isBrowser, internalPage, firstPathElement } = this.props;
+    if (isBrowser) {
       return BrowserPage;
     }
 
-    switch (sp.internalPage()) {
+    switch (internalPage) {
       case "library":
-        switch (sp.firstPathElement()) {
+        switch (firstPathElement) {
           case "owned":
             return OwnedPage;
           case "installed":
@@ -239,13 +238,13 @@ class Meat extends React.PureComponent<Props, State> {
       case "featured":
         return FeaturedPage;
       case "collections":
-        if (sp.firstPathElement()) {
+        if (firstPathElement) {
           return CollectionPage;
         } else {
           return CollectionsPage;
         }
       case "locations":
-        if (sp.firstPathElement()) {
+        if (firstPathElement) {
           return LocationPage;
         } else {
           return LocationsPage;
@@ -277,7 +276,24 @@ interface State {
 }
 
 interface Props extends MeatProps {
-  space: Space;
+  tab: string;
+  dispatch: Dispatch;
+
+  url: string;
+  isBrowser: boolean;
+  internalPage: string;
+  firstPathElement: string;
 }
 
-export default withSpace(Meat);
+export default withTab(
+  hookWithProps(Meat)(map => ({
+    url: map((rs, props) => ambientTab(rs, props).location.url),
+    isBrowser: map((rs, props) => ambientTab(rs, props).location.isBrowser),
+    internalPage: map(
+      (rs, props) => ambientTab(rs, props).location.internalPage
+    ),
+    firstPathElement: map(
+      (rs, props) => ambientTab(rs, props).location.firstPathElement
+    ),
+  }))(Meat)
+);

@@ -1,17 +1,17 @@
+import { messages } from "common/butlerd";
+import { fileSize } from "common/format/filesize";
+import { Dispatch } from "common/types";
 import React from "react";
-import Page from "renderer/pages/common/Page";
-import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { messages } from "common/butlerd";
-import { isEmpty, sortBy, invert } from "underscore";
-import GameStripe from "renderer/pages/common/GameStripe";
-import { fileSize } from "common/format/filesize";
-import ItemList from "renderer/pages/common/ItemList";
-import { Dispatch } from "common/types";
-import { Space } from "common/helpers/space";
-import { withSpace } from "renderer/hocs/withSpace";
 import { hook } from "renderer/hocs/hook";
+import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
+import { withTab } from "renderer/hocs/withTab";
+import GameStripe from "renderer/pages/common/GameStripe";
+import ItemList from "renderer/pages/common/ItemList";
+import Page from "renderer/pages/common/Page";
+import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { isEmpty, sortBy } from "underscore";
 
 const ListInstallLocations = butlerCaller(messages.InstallLocationsList);
 const LocationStripe = GameStripe(messages.FetchCaves);
@@ -72,14 +72,13 @@ class LocationsPage extends React.PureComponent<Props> {
   }
 
   componentDidMount() {
-    const { dispatch, space } = this.props;
-    dispatch(space.makePageUpdate({ label: ["install_locations.manage"] }));
+    dispatchTabPageUpdate(this.props, { label: ["install_locations.manage"] });
   }
 }
 
 interface Props extends MeatProps {
   dispatch: Dispatch;
-  space: Space;
+  tab: string;
 }
 
-export default withSpace(hook()(LocationsPage));
+export default withTab(hook()(LocationsPage));

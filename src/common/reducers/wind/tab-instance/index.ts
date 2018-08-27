@@ -72,7 +72,7 @@ function urlToLocation(url: string): TabInstanceLocation {
   let firstPathNumber: number;
   let isBrowser = true;
   if (protocol === "itch:") {
-    internalPage = pathElements[0];
+    internalPage = hostname;
     isBrowser = false;
   }
   firstPathElement = pathElements[0];

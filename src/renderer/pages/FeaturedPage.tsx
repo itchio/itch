@@ -1,30 +1,25 @@
 import urls from "common/constants/urls";
-import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
 import React from "react";
 import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
-import { ambientWind } from "common/util/navigation";
+import { dispatchTabEvolve } from "renderer/hocs/tab-utils";
+import { withTab } from "renderer/hocs/withTab";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 
 class FeaturedPage extends React.PureComponent<Props> {
   render() {
-    const { space, dispatch } = this.props;
-
-    dispatch(
-      space.makeEvolve({
-        replace: true,
-        url: urls.itchio,
-      })
-    );
+    dispatchTabEvolve(this.props, {
+      replace: true,
+      url: urls.itchio,
+    });
 
     return null as JSX.Element;
   }
 }
 
 interface Props extends MeatProps {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
 }
 
-export default withSpace(hook()(FeaturedPage));
+export default withTab(hook()(FeaturedPage));

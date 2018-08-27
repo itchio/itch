@@ -1,6 +1,5 @@
 import { actions } from "common/actions";
 import { Download, GameUpdate } from "common/butlerd/messages";
-import { Space } from "common/helpers/space";
 import { Dispatch } from "common/types";
 import {
   getFinishedDownloads,
@@ -12,7 +11,9 @@ import EmptyState from "renderer/basics/EmptyState";
 import Link from "renderer/basics/Link";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hook } from "renderer/hocs/hook";
-import { withSpace } from "renderer/hocs/withSpace";
+import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
+import { withTab } from "renderer/hocs/withTab";
+import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import GameUpdateRow from "renderer/pages/DownloadsPage/GameUpdateRow";
 import Row from "renderer/pages/DownloadsPage/Row";
 import { Title } from "renderer/pages/PageStyles/games";
@@ -20,7 +21,6 @@ import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { first, isEmpty, map, rest, size } from "underscore";
-import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 
 const PauseResumeButton = styled(Button)`
   min-width: 210px;
@@ -69,12 +69,9 @@ const DownloadsContentDiv = styled.div`
 
 class DownloadsPage extends React.PureComponent<Props> {
   componentDidMount() {
-    const { dispatch, space } = this.props;
-    dispatch(
-      space.makePageUpdate({
-        label: ["sidebar.downloads"],
-      })
-    );
+    dispatchTabPageUpdate(this.props, {
+      label: ["sidebar.downloads"],
+    });
   }
 
   render() {
@@ -147,7 +144,9 @@ class DownloadsPage extends React.PureComponent<Props> {
         <div className="section-bar">
           <Title>{T(["status.downloads.category.queued"])}</Title>
         </div>
-        {map(queuedItems, (item, i) => <Row key={item.id} item={item} />)}
+        {map(queuedItems, (item, i) => (
+          <Row key={item.id} item={item} />
+        ))}
       </>
     );
   }
@@ -179,7 +178,9 @@ class DownloadsPage extends React.PureComponent<Props> {
             </>
           ) : null}
         </div>
-        {map(updates, (update, k) => <GameUpdateRow key={k} update={update} />)}
+        {map(updates, (update, k) => (
+          <GameUpdateRow key={k} update={update} />
+        ))}
       </>
     );
   }
@@ -231,7 +232,9 @@ class DownloadsPage extends React.PureComponent<Props> {
             {T(["status.downloads.clear_all_finished"])}
           </Link>
         </div>
-        {map(finishedItems, item => <Row key={item.id} item={item} finished />)}
+        {map(finishedItems, item => (
+          <Row key={item.id} item={item} finished />
+        ))}
       </>
     );
   }
@@ -243,7 +246,7 @@ class DownloadsPage extends React.PureComponent<Props> {
 }
 
 interface Props extends MeatProps {
-  space: Space;
+  tab: string;
   dispatch: Dispatch;
   items: Download[];
   finishedItems: Download[];
@@ -255,7 +258,7 @@ interface Props extends MeatProps {
   downloadsPaused: boolean;
 }
 
-export default withSpace(
+export default withTab(
   hook(map => ({
     items: map(rs => getPendingDownloads(rs.downloads)),
     finishedItems: map(rs => getFinishedDownloads(rs.downloads)),
