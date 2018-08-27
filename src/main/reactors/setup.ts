@@ -2,18 +2,18 @@ import { Client, Instance } from "butlerd";
 import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { makeButlerInstance } from "common/butlerd/make-butler-instance";
+import env from "common/env";
 import { Store } from "common/types";
 import { ItchPromise } from "common/util/itch-promise";
 import { appdataLocationPath } from "common/util/paths";
 import { Watcher } from "common/util/watcher";
-import { indexBy, isEmpty } from "underscore";
+import { app } from "electron";
 import { Manager } from "main/broth/manager";
-import { delay } from "main/reactors/delay";
 import { mcall } from "main/butlerd/mcall";
 import { mainLogger } from "main/logger";
-import { app } from "electron";
-import env from "common/env";
-import { Conversation } from "../../../node_modules/butlerd/lib/client";
+import { mkdirp } from "main/os/sf";
+import { delay } from "main/reactors/delay";
+import { indexBy, isEmpty } from "underscore";
 
 const logger = mainLogger.child(__filename);
 
@@ -22,6 +22,7 @@ async function syncInstallLocations(store: Store) {
   const newLocationsById = indexBy(installLocations, "id");
 
   const rs = store.getState();
+  await mkdirp(appdataLocationPath());
   let oldLocations = {
     ...rs.preferences.installLocations,
     appdata: {
@@ -41,10 +42,14 @@ async function syncInstallLocations(store: Store) {
       } else {
         logger.debug(`Synchronizing ${id}...`);
         numAdded++;
-        await mcall(messages.InstallLocationsAdd, {
-          id,
-          path: oldLoc.path,
-        });
+        try {
+          await mcall(messages.InstallLocationsAdd, {
+            id,
+            path: oldLoc.path,
+          });
+        } catch (e) {
+          logger.warn(`Could not add ${oldLoc.path}: ${e.stack}`);
+        }
       }
     }
   }
