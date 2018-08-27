@@ -12,7 +12,6 @@ import React from "react";
 import { filtersContainerHeight } from "renderer/basics/FiltersContainer";
 import TitleBar from "renderer/basics/TitleBar";
 import { hook } from "renderer/hocs/hook";
-import { SpaceProvider } from "renderer/hocs/withSpace";
 import { modals } from "common/modals";
 import styled from "renderer/styles";
 import { map } from "underscore";
@@ -56,23 +55,20 @@ class Meats extends React.PureComponent<Props> {
       <MeatContainer onClick={this.onClick}>
         <TitleBar tab={currentId} />
         {map(openTabs, tab => {
-          const tabInstance = tabInstances[tab];
-          const space = Space.fromInstance(tab, tabInstance);
+          const ti = tabInstances[tab];
           const visible = tab === currentId;
           return (
-            <SpaceProvider key={tab} value={space}>
-              <TabProvider key={tab} value={tab}>
-                <MeatTab
-                  key={tab}
-                  data-id={tab}
-                  data-url={space.url()}
-                  data-resource={space.resource()}
-                  className={classNames("meat-tab", { visible })}
-                >
-                  <Meat visible={visible} sequence={tabInstance.sequence} />
-                </MeatTab>
-              </TabProvider>
-            </SpaceProvider>
+            <TabProvider key={tab} value={tab}>
+              <MeatTab
+                key={tab}
+                data-id={tab}
+                data-url={ti.location.url}
+                data-resource={ti.resource ? ti.resource.value : null}
+                className={classNames("meat-tab", { visible })}
+              >
+                <Meat visible={visible} sequence={ti.sequence} />
+              </MeatTab>
+            </TabProvider>
           );
         })}
       </MeatContainer>
