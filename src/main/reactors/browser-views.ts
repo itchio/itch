@@ -3,7 +3,13 @@ import { Space } from "common/helpers/space";
 import { Store, TabPage } from "common/types";
 import { partitionForUser } from "common/util/partition-for-user";
 import { Watcher } from "common/util/watcher";
-import { BrowserView, BrowserWindow, session, WebContents } from "electron";
+import {
+  BrowserView,
+  BrowserWindow,
+  session,
+  WebContents,
+  webContents,
+} from "electron";
 import { mainLogger } from "main/logger";
 import { registerItchProtocol } from "main/net/register-itch-protocol";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
@@ -233,20 +239,16 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.inspect, async (store, action) => {
-    const { wind, x, y } = action.payload;
-    const rs = store.getState();
-    const nw = getNativeWindow(rs, wind);
-    if (nw) {
-      const wc = nw.webContents;
-      if (wc && !wc.isDestroyed()) {
-        const dwc = wc.devToolsWebContents;
-        if (dwc) {
-          wc.devToolsWebContents.focus();
-        } else {
-          wc.openDevTools({ mode: "detach" });
-        }
-        wc.inspectElement(x, y);
+    const { webContentsId, x, y } = action.payload;
+    const wc = webContents.fromId(webContentsId);
+    if (wc && !wc.isDestroyed()) {
+      const dwc = wc.devToolsWebContents;
+      if (dwc) {
+        wc.devToolsWebContents.focus();
+      } else {
+        wc.openDevTools({ mode: "detach" });
       }
+      wc.inspectElement(x, y);
     }
   });
 

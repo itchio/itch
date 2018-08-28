@@ -112,7 +112,7 @@ export function hookWebContentsContextMenu(
         click() {
           store.dispatch(
             actions.inspect({
-              wind,
+              webContentsId: wc.id,
               x: props.x,
               y: props.y,
             })

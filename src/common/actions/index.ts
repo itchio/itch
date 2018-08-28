@@ -867,7 +867,7 @@ export const actions = wireActions({
     tab?: string;
   }>(),
   inspect: action<{
-    wind: string;
+    webContentsId: number;
 
     x: number;
     y: number;
