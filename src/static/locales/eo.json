@@ -615,5 +615,8 @@
     "empty_state.nothing_to_see_here": "Ĉi tie estas nenio",
     "grid.item.install_title": "Instali „{{title}}“",
     "browser.open_devtools": "Malfermi la ilojn de kreantoj",
-    "prompt.action.back": "Reen"
+    "prompt.action.back": "Reen",
+    "login.action.reveal_password": "Montri la pasvorton",
+    "login.action.hide_password": "Kaŝi la pasvorton",
+    "web.context_menu.inspect": "Inspekti"
 }

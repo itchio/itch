@@ -607,5 +607,8 @@
     "setup.action.browse": "Разглеждане",
     "grid.item.install_title": "Инсталиране на „{{title}}“",
     "browser.open_devtools": "Отваряне на инструментите за разработчици",
-    "prompt.action.back": "Назад"
+    "prompt.action.back": "Назад",
+    "login.action.reveal_password": "Показване на паролата",
+    "login.action.hide_password": "Скриване на паролата",
+    "web.context_menu.inspect": "Изследване"
 }
