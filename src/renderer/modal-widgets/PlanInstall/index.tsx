@@ -190,11 +190,11 @@ class PlanInstall extends React.PureComponent<Props, State> {
           <Button onClick={this.onCancel}>{T(["prompt.action.cancel"])}</Button>
           <Filler />
           <Button
-            disabled={busy}
+            disabled={!canInstall}
             icon="arrow-right"
             primary
             onClick={this.onInstall}
-            id={busy ? null : "modal-install-now"}
+            id={canInstall ? "modal-install-now" : null}
           >
             {T(["grid.item.install"])}
           </Button>
