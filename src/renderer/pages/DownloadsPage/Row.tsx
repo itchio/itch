@@ -172,6 +172,7 @@ class DownloadRow extends React.PureComponent<Props> {
   }
 
   onCoverContextMenu = (ev: React.MouseEvent<any>) => {
+    ev.preventDefault();
     const { item, dispatch } = this.props;
     const { game } = item;
     dispatch(

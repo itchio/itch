@@ -252,7 +252,9 @@ export default <Params, Res extends FetchRes<any>>(
                 className="gameseries--box"
                 data-game-id={game.id}
                 key={key}
+                // FIXME: this rerenders for no good reason
                 onContextMenu={ev => {
+                  ev.preventDefault();
                   this.onBoxContextMenu(ev, game);
                 }}
               >

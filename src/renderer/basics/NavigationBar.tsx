@@ -123,6 +123,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
   };
   showBackHistory = (ev: React.MouseEvent) => {
     const { clientX, clientY } = ev;
+    ev.preventDefault();
     dispatchOpenTabBackHistory(this.props, { clientX, clientY });
   };
   goForward = () => {
@@ -130,6 +131,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
   };
   showForwardHistory = (ev: React.MouseEvent) => {
     const { clientX, clientY } = ev;
+    ev.preventDefault();
     dispatchOpenTabForwardHistory(this.props, { clientX, clientY });
   };
   stop = () => {

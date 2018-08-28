@@ -67,6 +67,7 @@ class BrowserContextGame extends React.PureComponent<Props> {
   }
 
   onContextMenu = (ev: React.MouseEvent<any>) => {
+    ev.preventDefault();
     const { clientX, clientY } = ev;
     const { game, dispatch } = this.props;
     dispatch(

@@ -168,8 +168,10 @@ export default <Params, Res extends FetchRes<any>>(
             return (
               <StripeItem
                 key={game.id}
+                // FIXME: this re-renders for no good reason
                 onContextMenu={ev => {
                   const { clientX, clientY } = ev;
+                  ev.preventDefault();
                   const wind = ambientWind();
                   dispatch(
                     actions.openGameContextMenu({
