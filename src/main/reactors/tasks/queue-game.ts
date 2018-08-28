@@ -129,6 +129,7 @@ async function performInstallQueue({
       title: game.title,
       widgetParams: {
         game,
+        uploadId: upload ? upload.id : undefined,
       },
       buttons: [],
     })

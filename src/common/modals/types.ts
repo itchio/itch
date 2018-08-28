@@ -103,6 +103,7 @@ export interface ManageCaveResponse {}
 //---------------------
 
 export interface PlanInstallParams {
+  uploadId?: number;
   game: Game;
 }
 

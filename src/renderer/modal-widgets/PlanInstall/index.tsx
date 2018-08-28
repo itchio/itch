@@ -96,9 +96,7 @@ const Select = styled.select`
 `;
 
 enum PlanStage {
-  Initializing,
   Planning,
-  Failed,
 }
 
 class PlanInstall extends React.PureComponent<Props, State> {
@@ -106,10 +104,11 @@ class PlanInstall extends React.PureComponent<Props, State> {
     super(props, context);
     const { game } = props.modal.widgetParams;
     this.state = {
-      stage: PlanStage.Initializing,
+      stage: PlanStage.Planning,
       busy: true,
       game,
       gameId: game.id,
+      installLocations: [],
     };
   }
 
@@ -120,21 +119,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
   renderBody() {
     const { stage } = this.state;
     switch (stage) {
-      case PlanStage.Initializing:
-        return this.renderInitializing();
       case PlanStage.Planning:
         return this.renderPlanning();
-      case PlanStage.Failed:
-        return this.renderFailed();
     }
-  }
-
-  renderInitializing() {
-    return (
-      <LoadingStateDiv>
-        <LoadingCircle progress={-1} />
-      </LoadingStateDiv>
-    );
   }
 
   renderPlanning() {
@@ -142,18 +129,13 @@ class PlanInstall extends React.PureComponent<Props, State> {
       game,
       uploads,
       pickedUploadId,
-      info,
       installLocations,
       pickedInstallLocationId,
       busy,
+      error,
     } = this.state;
 
-    const installLocation = findWhere(installLocations, {
-      id: pickedInstallLocationId,
-    });
-    const requiredSpace = info ? info.diskUsage.neededFreeSpace : -1;
-    const freeSpace = installLocation.sizeInfo.freeSize;
-    const haveEnoughSpace = requiredSpace <= freeSpace;
+    let canInstall = !error && !busy;
     return (
       <>
         <WideBox>
@@ -198,41 +180,11 @@ class PlanInstall extends React.PureComponent<Props, State> {
         </SelectGroup>
 
         <Filler />
-        {busy ? (
-          <LoadingStateDiv>
-            <div>Computing space requirements...</div>
-            <FilterSpacer />
-            <LoadingCircle progress={-1} />
-          </LoadingStateDiv>
-        ) : (
-          <>
-            {info ? (
-              <>
-                <SizeTable>
-                  <tr>
-                    <td>Disk space required</td>
-                    <td>
-                      <strong>
-                        {requiredSpace > 0 ? fileSize(requiredSpace) : "?"}
-                      </strong>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Disk space available</td>
-                    <td className={classNames({ low: !haveEnoughSpace })}>
-                      <strong>{fileSize(freeSpace)}</strong>{" "}
-                      {haveEnoughSpace ? (
-                        <Icon icon="checkmark" />
-                      ) : (
-                        <Icon icon="warning" />
-                      )}
-                    </td>
-                  </tr>
-                </SizeTable>
-              </>
-            ) : null}
-          </>
-        )}
+        {busy
+          ? this.renderBusy()
+          : error
+            ? this.renderError()
+            : this.renderSizes()}
         <Filler />
         <ModalButtons>
           <Button onClick={this.onCancel}>{T(["prompt.action.cancel"])}</Button>
@@ -248,6 +200,61 @@ class PlanInstall extends React.PureComponent<Props, State> {
           </Button>
         </ModalButtons>
       </>
+    );
+  }
+
+  renderError() {
+    const { error } = this.state;
+    return <p>Something went wrong: {error.message}</p>;
+  }
+
+  renderBusy() {
+    return (
+      <LoadingStateDiv>
+        <div>Computing space requirements...</div>
+        <FilterSpacer />
+        <LoadingCircle progress={-1} />
+      </LoadingStateDiv>
+    );
+  }
+
+  renderSizes() {
+    const { info, pickedInstallLocationId, installLocations } = this.state;
+    if (!info) {
+      return null;
+    }
+
+    const installLocation = findWhere(installLocations, {
+      id: pickedInstallLocationId,
+    });
+    if (!installLocation) {
+      return null;
+    }
+
+    const requiredSpace = info ? info.diskUsage.neededFreeSpace : -1;
+    const freeSpace = installLocation.sizeInfo.freeSize;
+    const haveEnoughSpace = requiredSpace <= freeSpace;
+
+    return (
+      <SizeTable>
+        <tr>
+          <td>Disk space required</td>
+          <td>
+            <strong>{requiredSpace > 0 ? fileSize(requiredSpace) : "?"}</strong>
+          </td>
+        </tr>
+        <tr>
+          <td>Disk space available</td>
+          <td className={classNames({ low: !haveEnoughSpace })}>
+            <strong>{fileSize(freeSpace)}</strong>{" "}
+            {haveEnoughSpace ? (
+              <Icon icon="checkmark" />
+            ) : (
+              <Icon icon="warning" />
+            )}
+          </td>
+        </tr>
+      </SizeTable>
     );
   }
 
@@ -297,14 +304,10 @@ class PlanInstall extends React.PureComponent<Props, State> {
     });
   };
 
-  renderFailed() {
-    const { error } = this.state;
-    return `Something went wrong: ${error}`;
-  }
-
   componentDidMount() {
     this.loadInstallLocations();
-    this.pickUpload(0);
+    const { uploadId } = this.props.modal.widgetParams;
+    this.pickUpload(uploadId);
   }
 
   loadInstallLocations() {
@@ -334,10 +337,11 @@ class PlanInstall extends React.PureComponent<Props, State> {
           pickedUploadId: res.info ? res.info.upload.id : null,
           info: res.info,
           busy: false,
+          error: null,
         });
       } catch (e) {
         this.setState({
-          stage: PlanStage.Failed,
+          busy: false,
           error: e,
         });
       }
@@ -359,7 +363,7 @@ interface State {
   uploads?: Upload[];
   info?: InstallPlanInfo;
   error?: Error;
-  installLocations?: InstallLocationSummary[];
+  installLocations: InstallLocationSummary[];
 
   pickedUploadId?: number;
   pickedInstallLocationId?: string;
