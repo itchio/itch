@@ -621,5 +621,8 @@
     "setup.action.browse": "Обзор",
     "grid.item.install_title": "Установить {{title}}",
     "browser.open_devtools": "Открыть инструменты разработчика",
-    "prompt.action.back": "Назад"
+    "prompt.action.back": "Назад",
+    "login.action.reveal_password": "Показать пароль",
+    "login.action.hide_password": "Скрыть пароль",
+    "web.context_menu.inspect": "Просмотр кода"
 }
