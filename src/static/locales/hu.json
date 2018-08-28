@@ -112,5 +112,9 @@
     "sidebar.downloads": "Letöltések",
     "sidebar.empty": "Indulás!",
     "sidebar.preferences": "Beállítások",
-    "grid.item.download_java": "Java letöltése"
+    "grid.item.download_java": "Java letöltése",
+    "grid.item.report_problem": "Visszajelzés küldése",
+    "action.name.manual": "Felhasználói kézikönyv",
+    "action.name.editor": "Szerkesztő",
+    "action.name.forums": "Fórumok"
 }
