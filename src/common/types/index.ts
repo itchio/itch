@@ -525,11 +525,6 @@ export interface DownloadsState {
     [id: string]: Download;
   };
 
-  /** IDs of all the downloads we know about, grouped by the id of the game they're associated to */
-  itemIdsByGameId: {
-    [gameId: string]: string[];
-  };
-
   progresses: {
     [id: string]: DownloadProgress;
   };

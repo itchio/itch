@@ -1,37 +1,18 @@
-import { createStructuredSelector } from "reselect";
-
-import { map, indexBy } from "underscore";
-import groupIdBy from "common/helpers/group-id-by";
-
-import { DownloadsState } from "common/types";
-
-import reducer from "common/reducers/reducer";
-import derivedReducer from "common/reducers/derived-reducer";
 import { actions } from "common/actions";
-import { Download } from "common/butlerd/messages";
+import reducer from "common/reducers/reducer";
+import { DownloadsState } from "common/types";
+import { indexBy, map } from "underscore";
 
 const SPEED_DATA_POINT_COUNT = 60;
 
-const selector = createStructuredSelector<
-  Partial<DownloadsState>,
-  Partial<DownloadsState>
->({
-  itemIdsByGameId: state =>
-    groupIdBy<Download>(state.items, i => String(i.game && i.game.id)),
-});
-
-const baseInitialState: Partial<DownloadsState> = {
+const initialState: DownloadsState = {
   speeds: map(new Array(SPEED_DATA_POINT_COUNT), x => 0),
   items: {},
   progresses: {},
   paused: true,
 };
-const initialState = {
-  ...baseInitialState,
-  ...selector(baseInitialState),
-} as DownloadsState;
 
-const baseReducer = reducer<DownloadsState>(initialState, on => {
+export default reducer<DownloadsState>(initialState, on => {
   on(actions.downloadsListed, (state, action) => {
     const { downloads } = action.payload;
     return {
@@ -60,5 +41,3 @@ const baseReducer = reducer<DownloadsState>(initialState, on => {
     };
   });
 });
-
-export default derivedReducer(baseReducer, selector);
