@@ -135,7 +135,7 @@ const butlerCaller = <Params, Result>(
       if (this.props.onResult) {
         this.props.onResult(r);
       }
-      this.setState({ result: r, loading: false });
+      this.setState({ result: r, error: null, loading: false });
     };
 
     private setError = (e: any) => {

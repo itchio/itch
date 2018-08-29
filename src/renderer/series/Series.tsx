@@ -37,10 +37,13 @@ export interface BaseSeriesProps<Params, Item, Record> {
   renderExtraFilters?: () => JSX.Element;
 }
 
-interface GenericProps<Params, Item, Record>
+interface GenericProps<Params, Item, Record, ExtraProps>
   extends BaseSeriesProps<Params, Item, Record> {
   fallbackGetKey?: (r: Record) => any;
-  RecordComponent: React.ComponentType<RecordComponentProps<Item, Record, any>>;
+  RecordComponent: React.ComponentType<
+    RecordComponentProps<Item, Record, ExtraProps>
+  >;
+  extraProps: ExtraProps;
 
   dispatch: Dispatch;
   tab: string;
@@ -75,7 +78,7 @@ interface Snapshot {
 
 const limit = 15;
 
-export default function<Params, Res extends FetchRes<any>, Record>(
+export default function<Params, Res extends FetchRes<any>, Record, ExtraProps>(
   rc: RequestCreator<Params, Res>
 ) {
   const Call = butlerCaller(rc);
@@ -88,7 +91,7 @@ export default function<Params, Res extends FetchRes<any>, Record>(
   };
 
   type Item = Res["items"][0];
-  type Props = GenericProps<Params, Item, Record>;
+  type Props = GenericProps<Params, Item, Record, ExtraProps>;
   type State = GenericState<Params>;
 
   class Series extends React.PureComponent<Props, State> {
@@ -268,7 +271,13 @@ export default function<Params, Res extends FetchRes<any>, Record>(
       }
       const { items } = result;
 
-      const { fallbackGetKey, getKey, getRecord, RecordComponent } = this.props;
+      const {
+        fallbackGetKey,
+        getKey,
+        getRecord,
+        RecordComponent,
+        extraProps,
+      } = this.props;
 
       let doneSet = new Set<any>();
       return (
@@ -283,7 +292,14 @@ export default function<Params, Res extends FetchRes<any>, Record>(
               return null;
             }
             doneSet.add(key);
-            return <RecordComponent key={key} item={item} record={record} />;
+            return (
+              <RecordComponent
+                key={key}
+                item={item}
+                record={record}
+                {...extraProps}
+              />
+            );
           })}
         </>
       );

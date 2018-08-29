@@ -7,7 +7,6 @@ import { hookWithProps } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
 import { FilterOption } from "renderer/pages/common/Filter";
-import GameSeries from "renderer/pages/common/GameSeries";
 import Page from "renderer/pages/common/Page";
 import SearchControl from "renderer/pages/common/SearchControl";
 import { SortOption } from "renderer/pages/common/Sort";
@@ -19,8 +18,9 @@ import {
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import ProfileGameStats from "renderer/pages/DashboardPage/ProfileGameStats";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import makeGameSeries from "renderer/series/GameSeries";
 
-const ProfileGameSeries = GameSeries(messages.FetchProfileGames);
+const ProfileGameSeries = makeGameSeries(messages.FetchProfileGames);
 
 class DashboardPage extends React.PureComponent<Props> {
   render() {
@@ -47,7 +47,7 @@ class DashboardPage extends React.PureComponent<Props> {
               paidStatus,
             },
           }}
-          getGame={pg => pg.game}
+          getRecord={pg => pg.game}
           renderMainFilters={() => <SearchControl />}
           renderExtraFilters={() => (
             <SortsAndFilters>

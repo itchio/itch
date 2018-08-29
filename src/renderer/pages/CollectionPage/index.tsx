@@ -13,7 +13,6 @@ import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
 import { FilterGroupGameClassification } from "renderer/pages/common/CommonFilters";
 import { FilterOption } from "renderer/pages/common/Filter";
-import GameSeries from "renderer/pages/common/GameSeries";
 import SearchControl from "renderer/pages/common/SearchControl";
 import { SortOption } from "renderer/pages/common/Sort";
 import {
@@ -23,9 +22,10 @@ import {
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import makeGameSeries from "renderer/series/GameSeries";
 
 const FetchCollection = butlerCaller(messages.FetchCollection);
-const CollectionGameSeries = GameSeries(messages.FetchCollectionGames);
+const CollectionGameSeries = makeGameSeries(messages.FetchCollectionGames);
 
 class CollectionPage extends React.PureComponent<Props> {
   render() {
@@ -71,7 +71,7 @@ class CollectionPage extends React.PureComponent<Props> {
               installed: filterInstalled,
             },
           }}
-          getGame={cg => cg.game}
+          getRecord={cg => cg.game}
           renderItemExtras={cave => <StandardMainAction game={cave.game} />}
           renderMainFilters={() => (
             <>

@@ -5,35 +5,48 @@ import makeSeries, {
   FetchRes,
   RecordComponentProps,
   renderNoop,
-} from "renderer/pages/common/series/Series";
+} from "renderer/series/Series";
 import { RequestCreator } from "butlerd";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import Filler from "renderer/basics/Filler";
+import { createStructuredSelector } from "reselect";
 
-interface ExtraProps<Item> {
+interface GenericExtraProps<Item> {
   renderDescExtras?: (item: Item) => JSX.Element;
   renderItemExtras?: (item: Item) => JSX.Element;
 }
 
 interface GameSeriesProps<Params, Item>
   extends BaseSeriesProps<Params, Item, Game>,
-    ExtraProps<Item> {}
+    GenericExtraProps<Item> {}
 
 let fallbackGetKey = (g: Game) => g.id;
 
 export default function makeGameSeries<Params, Res extends FetchRes<any>>(
   rc: RequestCreator<Params, Res>
 ) {
-  const Series = makeSeries(rc);
-
+  type Record = Game;
   type Item = Res["items"][0];
+  type ExtraProps = GenericExtraProps<Item>;
+  const Series = makeSeries<Params, Res, Record, ExtraProps>(rc);
   type Props = GameSeriesProps<Params, Item>;
+
   class GameRecordComponent extends GenericGameRecordComponent<Item> {}
 
   class GameSeries extends React.PureComponent<Props> {
+    selector: (props: Props) => GenericExtraProps<Item>;
+
+    constructor(props: Props, context: any) {
+      super(props, context);
+      this.selector = createStructuredSelector({
+        renderDescExtras: props => props.renderDescExtras,
+        renderItemExtras: props => props.renderItemExtras,
+      });
+    }
+
     render() {
       const { props } = this;
       return (
@@ -41,6 +54,7 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
           {...props}
           fallbackGetKey={fallbackGetKey}
           RecordComponent={GameRecordComponent}
+          extraProps={this.selector(props)}
         />
       );
     }
@@ -49,7 +63,7 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
 }
 
 class GenericGameRecordComponent<Item> extends React.PureComponent<
-  RecordComponentProps<Item, Game, ExtraProps<Item>>
+  RecordComponentProps<Item, Game, GenericExtraProps<Item>>
 > {
   render() {
     const {

@@ -10,7 +10,6 @@ import {
   FilterGroupGameClassification,
   FilterGroupInstalled,
 } from "renderer/pages/common/CommonFilters";
-import GameSeries from "renderer/pages/common/series/GameSeries";
 import SearchControl from "renderer/pages/common/SearchControl";
 import { SortOption } from "renderer/pages/common/Sort";
 import {
@@ -20,8 +19,9 @@ import {
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import makeGameSeries from "renderer/series/GameSeries";
 
-const OwnedSeries = GameSeries(messages.FetchProfileOwnedKeys);
+const OwnedSeries = makeGameSeries(messages.FetchProfileOwnedKeys);
 
 class OwnedPage extends React.PureComponent<Props> {
   render() {

@@ -16,7 +16,6 @@ import butlerCaller from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
-import GameSeries from "renderer/pages/common/GameSeries";
 import Page from "renderer/pages/common/Page";
 import { SortOption } from "renderer/pages/common/Sort";
 import {
@@ -26,11 +25,12 @@ import {
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import makeGameSeries from "renderer/series/GameSeries";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 
 const InstallLocationsGetByID = butlerCaller(messages.InstallLocationsGetByID);
-const CaveGameSeries = GameSeries(messages.FetchCaves);
+const CaveGameSeries = makeGameSeries(messages.FetchCaves);
 
 const ExtrasDiv = styled.div`
   display: flex;
@@ -73,7 +73,7 @@ class LocationPage extends React.PureComponent<Props> {
                   sortBy,
                   reverse: sortDir === "reverse",
                 }}
-                getGame={cave => cave.game}
+                getRecord={cave => cave.game}
                 getKey={cave => cave.id}
                 renderMainFilters={() => (
                   <>

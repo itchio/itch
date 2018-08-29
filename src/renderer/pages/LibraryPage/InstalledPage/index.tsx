@@ -6,7 +6,6 @@ import React from "react";
 import { hookWithProps } from "renderer/hocs/hook";
 import { withTab } from "renderer/hocs/withTab";
 import { FilterGroupGameClassification } from "renderer/pages/common/CommonFilters";
-import GameSeries from "renderer/pages/common/GameSeries";
 import SearchControl from "renderer/pages/common/SearchControl";
 import { SortOption } from "renderer/pages/common/Sort";
 import {
@@ -18,9 +17,10 @@ import {
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import makeGameSeries from "renderer/series/GameSeries";
 import { T } from "renderer/t";
 
-const CaveGameSeries = GameSeries(messages.FetchCaves);
+const CaveGameSeries = makeGameSeries(messages.FetchCaves);
 
 class InstalledPage extends React.PureComponent<Props> {
   render() {
@@ -34,7 +34,7 @@ class InstalledPage extends React.PureComponent<Props> {
           reverse: sortDir === "reverse",
           filters: { classification },
         }}
-        getGame={cave => cave.game}
+        getRecord={cave => cave.game}
         getKey={cave => cave.id}
         renderItemExtras={cave => <StandardMainAction game={cave.game} />}
         renderMainFilters={() => <SearchControl />}
