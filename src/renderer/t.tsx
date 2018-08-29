@@ -1,3 +1,4 @@
+import IntlMessageFormat from "intl-messageformat";
 import React from "react";
 import { FormattedMessage, InjectedIntl } from "react-intl";
 
@@ -16,7 +17,15 @@ export function T(input: any): JSX.Element | string {
 
 export function TString(intl: InjectedIntl, input: any): string {
   if (Array.isArray(input)) {
-    return intl.formatMessage({ id: input[0] }, input[1]);
+    const id = input[0];
+    const valuesIn = input[1] || {};
+    const { defaultValue = "", ...values } = valuesIn;
+    if (intl.messages[id]) {
+      return intl.formatMessage({ id }, values);
+    } else {
+      const formatter = new IntlMessageFormat(defaultValue, intl.locale);
+      return formatter.format(values);
+    }
   } else {
     return input;
   }

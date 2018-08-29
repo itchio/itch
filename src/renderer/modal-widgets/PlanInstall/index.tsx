@@ -1,6 +1,7 @@
 import classNames from "classnames";
+import memory from "memory-streams";
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import { messages, hookLogging } from "common/butlerd";
 import {
   DownloadReason,
   Game,
@@ -10,7 +11,7 @@ import {
 } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { formatUploadTitle } from "common/format/upload";
-import { ModalWidgetProps } from "common/modals";
+import { ModalWidgetProps, modals } from "common/modals";
 import { PlanInstallParams, PlanInstallResponse } from "common/modals/types";
 import { Dispatch } from "common/types";
 import React from "react";
@@ -30,8 +31,14 @@ import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import styled from "renderer/styles";
-import { T } from "renderer/t";
+import { T, TString } from "renderer/t";
 import { findWhere } from "underscore";
+import { promisedModal } from "main/reactors/modals";
+import { ambientWind } from "common/util/navigation";
+import { makeLogger } from "main/logger";
+import { formatError } from "common/format/errors";
+import { withIntl } from "renderer/hocs/withIntl";
+import { InjectedIntl } from "react-intl";
 
 const logger = rendererLogger.child(__filename);
 
@@ -287,20 +294,48 @@ class PlanInstall extends React.PureComponent<Props, State> {
   onInstall = (ev: React.MouseEvent<HTMLElement>) => {
     this.close();
     doAsync(async () => {
+      const { dispatch } = this.props;
       const { game } = this.state;
       const { pickedInstallLocationId, pickedUploadId, uploads } = this.state;
       const upload = findWhere(uploads, { id: pickedUploadId });
       logger.info(`Queueing install for ${game.url}...`);
-      await rcall(messages.InstallQueue, {
-        reason: DownloadReason.Install,
-        installLocationId: pickedInstallLocationId,
-        game,
-        upload,
-        queueDownload: true,
-      });
-      logger.info(`Queued!`);
-      const { dispatch } = this.props;
-      dispatch(actions.downloadQueued({}));
+      const memlog = new memory.WritableStream();
+      const memlogger = makeLogger({ customOut: memlog });
+      try {
+        await rcall(
+          messages.InstallQueue,
+          {
+            reason: DownloadReason.Install,
+            installLocationId: pickedInstallLocationId,
+            game,
+            upload,
+            queueDownload: true,
+          },
+          convo => {
+            hookLogging(convo, memlogger);
+          }
+        );
+        memlogger.info(`Queued!`);
+        dispatch(actions.downloadQueued({}));
+      } catch (e) {
+        logger.error(`While queuing download: ${e.stack}`);
+        const { intl } = this.props;
+        dispatch(
+          actions.openModal(
+            modals.showError.make({
+              wind: ambientWind(),
+              title: ["prompt.install_error.title"],
+              message: TString(intl, formatError(e)),
+              widgetParams: {
+                game,
+                rawError: e,
+                log: memlog.toString(),
+              },
+              buttons: ["ok"],
+            })
+          )
+        );
+      }
     });
   };
 
@@ -353,6 +388,8 @@ interface Props
   extends ModalWidgetProps<PlanInstallParams, PlanInstallResponse> {
   defaultInstallLocation: string;
   dispatch: Dispatch;
+
+  intl: InjectedIntl;
 }
 
 interface State {
@@ -369,6 +406,8 @@ interface State {
   pickedInstallLocationId?: string;
 }
 
-export default hook(map => ({
-  defaultInstallLocation: map(rs => rs.preferences.defaultInstallLocation),
-}))(PlanInstall);
+export default withIntl(
+  hook(map => ({
+    defaultInstallLocation: map(rs => rs.preferences.defaultInstallLocation),
+  }))(PlanInstall)
+);
