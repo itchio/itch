@@ -6,11 +6,12 @@ import {
 } from "common/butlerd/messages";
 import urls from "common/constants/urls";
 import { Dispatch } from "common/types";
-import { ambientTab } from "common/util/navigation";
+import { ambientTab, ambientWind } from "common/util/navigation";
 import React from "react";
 import EmptyState from "renderer/basics/EmptyState";
 import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
+import IconButton from "renderer/basics/IconButton";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate, urlWithParams } from "renderer/hocs/tab-utils";
@@ -18,9 +19,10 @@ import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
 import CollectionPreview from "renderer/pages/CollectionsPage/CollectionPreview";
 import ItemList from "renderer/pages/common/ItemList";
+import SearchControl from "renderer/pages/common/SearchControl";
+import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
-import { T } from "renderer/t";
 import { isEmpty } from "underscore";
 
 const FetchProfileCollections = butlerCaller(messages.FetchProfileCollections);
@@ -49,9 +51,9 @@ class CollectionsPage extends React.PureComponent<Props> {
             return (
               <>
                 <FiltersContainer loading={loading}>
-                  <a href={urls.myCollections}>
-                    {T(["outlinks.manage_collections"])}
-                  </a>
+                  <SearchControl />
+                  <FilterSpacer />
+                  <IconButton icon="more_vert" onClick={this.onMore} />
                 </FiltersContainer>
                 <ErrorState error={error} />
                 <ItemList>{this.renderCollections(result)}</ItemList>
@@ -62,6 +64,27 @@ class CollectionsPage extends React.PureComponent<Props> {
       </CollectionsDiv>
     );
   }
+
+  onMore = (ev: React.MouseEvent<HTMLElement>) => {
+    const { dispatch, tab, url } = this.props;
+    const { clientX, clientY } = ev;
+    dispatch(
+      actions.popupContextMenu({
+        wind: ambientWind(),
+        clientX,
+        clientY,
+        template: [
+          {
+            localizedLabel: ["outlinks.manage_collections"],
+            action: actions.navigate({
+              wind: ambientWind(),
+              url: urls.myCollections,
+            }),
+          },
+        ],
+      })
+    );
+  };
 
   setLabel = () => {
     dispatchTabPageUpdate(this.props, { label: ["sidebar.collections"] });

@@ -1,8 +1,9 @@
 import { messages } from "common/butlerd";
 import { GameClassification, Profile } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
+import { ambientTab } from "common/util/navigation";
 import React from "react";
-import { hook, hookWithProps } from "renderer/hocs/hook";
+import { hookWithProps } from "renderer/hocs/hook";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
 import {
@@ -19,7 +20,6 @@ import {
 } from "renderer/pages/common/SortsAndFilters";
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import { ambientTab } from "common/util/navigation";
 
 const OwnedSeries = GameSeries(messages.FetchProfileOwnedKeys);
 

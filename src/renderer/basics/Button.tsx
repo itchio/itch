@@ -80,6 +80,7 @@ const ButtonDiv = styled.div`
   &.translucent {
     background: none !important;
     border: none !important;
+    box-shadow: none !important;
   }
 
   display: flex;

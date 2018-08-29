@@ -10,9 +10,6 @@ const StyledInput = styled.input`
   background: rgba(0, 0, 0, 0.3);
 `;
 
-interface Props {
-  placeholder?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-}
+interface Props extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 export default (props: Props) => <StyledInput type="search" {...props} />;

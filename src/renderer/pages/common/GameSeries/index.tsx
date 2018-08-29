@@ -2,7 +2,7 @@ import { RequestCreator } from "butlerd";
 import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
 import { Dispatch, LocalizedString } from "common/types";
-import { ambientTab, ambientWind } from "common/util/navigation";
+import { ambientTab, ambientWind, ambientPage } from "common/util/navigation";
 import { isNetworkError } from "main/net/errors";
 import React from "react";
 import equal from "react-fast-compare";
@@ -43,11 +43,14 @@ interface GenericProps<Params, Res extends FetchRes<Item>, Item> {
   tab: string;
 
   sequence: number;
+  restoredScrollTop: number;
 }
 
 interface GenericState<Params> {
   cursors: string[];
   lastParams: Params;
+  restoringScroll: boolean;
+  scrollTopTarget?: number;
 }
 
 const LoadMoreContainer = styled.div`
@@ -83,15 +86,41 @@ export default <Params, Res extends FetchRes<any>>(
   type State = GenericState<Params>;
 
   class Series extends React.PureComponent<Props, State> {
+    restoreScrollInterval: NodeJS.Timer;
+
     constructor(props: Props, context: any) {
       super(props, context);
       this.state = {
         cursors: [null],
         lastParams: null,
+        restoringScroll: !!props.restoredScrollTop,
+        scrollTopTarget: props.restoredScrollTop,
       };
+
+      if (props.restoredScrollTop) {
+        this.restoreScrollInterval = setInterval(() => {
+          if (this.itemList) {
+            this.itemList.scrollTop = props.restoredScrollTop;
+            const adjusted = this.itemList.scrollTop;
+            if (adjusted === props.restoredScrollTop) {
+              clearInterval(this.restoreScrollInterval);
+            }
+          }
+        }, 500);
+      }
     }
 
-    static getDerivedStateFromProps(props: Props, state: State): State {
+    componentWillUnmount() {
+      if (this.restoreScrollInterval) {
+        clearInterval(this.restoreScrollInterval);
+        this.restoreScrollInterval = null;
+      }
+    }
+
+    static getDerivedStateFromProps(
+      props: Props,
+      state: State
+    ): Partial<State> {
       if (!equal(props.params, state.lastParams)) {
         return {
           cursors: [null],
@@ -197,6 +226,8 @@ export default <Params, Res extends FetchRes<any>>(
       if (shouldLoadMore && loadMore) {
         loadMore.click();
       }
+
+      dispatchTabPageUpdate(this.props, { scrollTop });
     }, 100);
 
     loadMore: HTMLElement;
@@ -300,6 +331,9 @@ export default <Params, Res extends FetchRes<any>>(
   return withTab(
     hookWithProps(Series)(map => ({
       sequence: map((rs, props) => ambientTab(rs, props).sequence),
+      restoredScrollTop: map(
+        (rs, props) => ambientPage(rs, props).restoredScrollTop
+      ),
     }))(Series)
   );
 };

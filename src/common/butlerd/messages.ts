@@ -2511,6 +2511,12 @@ export interface FetchProfileCollectionsParams {
   profileId: number;
   /** Maximum number of collections to return at a time. */
   limit?: number;
+  /** When specified only shows collection titles that contain this string */
+  search?: string;
+  /** Criterion to sort by */
+  sortBy?: string;
+  /** undocumented */
+  reverse?: boolean;
   /** Used for pagination, if specified */
   cursor?: Cursor;
   /** If set, will force fresh data */

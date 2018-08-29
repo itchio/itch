@@ -692,6 +692,18 @@ export interface TabPage {
    * favicon for this page
    */
   favicon?: string;
+
+  /**
+   * current scroll value
+   */
+  scrollTop?: number;
+
+  /**
+   * restored scroll value. This only changes when navigating backward/forward
+   * through the history, and can be safely used by components to implement scroll
+   * history.
+   */
+  restoredScrollTop?: number;
 }
 
 export interface TabInstance {

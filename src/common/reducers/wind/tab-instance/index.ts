@@ -219,10 +219,20 @@ const baseReducer = reducer<TabInstance>(initialState, on => {
     const { index } = action.payload;
 
     if (index >= 0 && index < state.history.length) {
-      return {
+      let newState = {
         ...state,
         currentIndex: index,
       };
+      let newPage = newState.history[newState.currentIndex];
+      newState.history = [...newState.history];
+      newState.history[newState.currentIndex] = {
+        ...newPage,
+        restoredScrollTop: newPage.scrollTop,
+      };
+      // now I know what you're thinking "whoa hold on, that code above looks silly"
+      // well, we can't just assign `newState.history` without making it a new
+      // object - if we don't have reference equality, we have nothing.
+      return newState;
     }
 
     return state;

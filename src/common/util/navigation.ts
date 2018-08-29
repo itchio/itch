@@ -1,15 +1,14 @@
-import * as urlParser from "common/util/url";
-import querystring from "querystring";
-
 import {
+  ExtendedWindow,
+  NavigationState,
+  RootState,
   TabInstance,
   TabPage,
-  RootState,
-  WindState,
-  ExtendedWindow,
   WindSpec,
-  NavigationState,
+  WindState,
 } from "common/types";
+import * as urlParser from "common/util/url";
+import querystring from "querystring";
 
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {
@@ -81,6 +80,11 @@ interface AmbientTabProps {
 
 export function ambientTab(rs: RootState, props: AmbientTabProps): TabInstance {
   return rs.winds[ambientWind()].tabInstances[props.tab];
+}
+
+export function ambientPage(rs: RootState, props: AmbientTabProps): TabPage {
+  const ti = ambientTab(rs, props);
+  return ti.history[ti.currentIndex];
 }
 
 // build URLs

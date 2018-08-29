@@ -12,8 +12,10 @@ import { debounce } from "underscore";
 
 class SearchControl extends React.PureComponent<Props> {
   render(): JSX.Element {
+    const { defaultValue } = this.props;
     return (
       <FilterInput
+        defaultValue={defaultValue}
         placeholder={TString(this.props.intl, ["grid.criterion.filter"])}
         onChange={e => this.setSearch(e.currentTarget.value)}
       />
@@ -35,12 +37,16 @@ interface Props {
   intl: InjectedIntl;
 
   url: string;
+  defaultValue: string;
 }
 
 export default withTab(
   withIntl(
     hookWithProps(SearchControl)(map => ({
       url: map((rs, props) => ambientTab(rs, props).location.url),
+      defaultValue: map(
+        (rs, props) => ambientTab(rs, props).location.query.search
+      ),
     }))(SearchControl)
   )
 );
