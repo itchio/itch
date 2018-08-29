@@ -106,7 +106,7 @@ export default <Params, Res extends FetchRes<any>>(
               clearInterval(this.restoreScrollInterval);
             }
           }
-        }, 500);
+        }, 25);
       }
     }
 
