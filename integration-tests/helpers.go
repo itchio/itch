@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -272,6 +273,7 @@ func (r *runner) mustSwitchToOtherWindow(handle string) {
 		}
 	}
 	must(errors.Errorf("Tried to switch to window other than (%s) but only found: %s",
+		handle,
 		strings.Join(handles, ", "),
 	))
 }
@@ -322,6 +324,20 @@ func (r *runner) mustSwitchToWindow(handle string) {
 var badFileCharRe = regexp.MustCompile("[^A-Za-z0-9-.]")
 
 func (r *runner) takeScreenshot(name string) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go func() {
+		select {
+		case <-ctx.Done():
+			// good!
+		case <-time.After(5 * time.Second):
+			r.logf("=================================================")
+			r.logf("= It's been 5 seconds since we've started trying to take a screenshot.")
+			r.logf("= That's usually a bad sign....")
+			r.logf("=================================================")
+		}
+	}()
+
 	if !r.readyForScreenshot {
 		r.logf("Too early to take a screenshot, ignoring (%s)", name)
 		return nil
