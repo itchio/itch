@@ -10,7 +10,7 @@ import {
   FilterGroupGameClassification,
   FilterGroupInstalled,
 } from "renderer/pages/common/CommonFilters";
-import GameSeries from "renderer/pages/common/GameSeries";
+import GameSeries from "renderer/pages/common/series/GameSeries";
 import SearchControl from "renderer/pages/common/SearchControl";
 import { SortOption } from "renderer/pages/common/Sort";
 import {
@@ -47,7 +47,7 @@ class OwnedPage extends React.PureComponent<Props> {
             installed,
           },
         }}
-        getGame={dk => dk.game}
+        getRecord={dk => dk.game}
         renderItemExtras={cave => <StandardMainAction game={cave.game} />}
         renderMainFilters={() => <SearchControl />}
         renderExtraFilters={() => (
