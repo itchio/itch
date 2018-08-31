@@ -1,10 +1,11 @@
-import React from "react";
-import GameStripe from "renderer/pages/common/GameStripe";
 import { messages } from "common/butlerd";
+import { Collection, Profile } from "common/butlerd/messages";
 import { urlForCollection } from "common/util/navigation";
-import styled from "renderer/styles";
-import { Collection } from "common/butlerd/messages";
+import React from "react";
 import TimeAgo from "renderer/basics/TimeAgo";
+import { withProfile } from "renderer/hocs/withProfile";
+import GameStripe from "renderer/pages/common/GameStripe";
+import styled from "renderer/styles";
 import { T } from "renderer/t";
 
 const CollectionGameStripe = GameStripe(messages.FetchCollectionGames);
@@ -24,14 +25,14 @@ const CollectionInfoSpacer = styled.div`
   width: 0.4em;
 `;
 
-export default class CollectionPreview extends React.PureComponent<Props> {
+class CollectionPreview extends React.PureComponent<Props> {
   render() {
-    const { profileId, coll } = this.props;
+    const { profile, coll } = this.props;
     return (
       <CollectionGameStripe
         title={coll.title}
         href={urlForCollection(coll.id)}
-        params={{ profileId, collectionId: coll.id }}
+        params={{ profileId: profile.id, collectionId: coll.id }}
         renderTitleExtras={this.renderTitleExtras}
         getGame={cg => cg.game}
       />
@@ -56,7 +57,9 @@ export default class CollectionPreview extends React.PureComponent<Props> {
   };
 }
 
+export default withProfile(CollectionPreview);
+
 interface Props {
   coll: Collection;
-  profileId: number;
+  profile: Profile;
 }

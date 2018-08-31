@@ -3,7 +3,7 @@ import styled, * as styles from "renderer/styles";
 
 const StyledInput = styled.input`
   ${styles.searchInput()};
-  min-width: 25em;
+  width: 20em;
   padding-left: 10px;
   margin-left: 1.4em;
   border: 1px solid rgba(255, 255, 255, 0.1);

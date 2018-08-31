@@ -621,6 +621,9 @@
   "sort_by.games.size_on_disk": "Size on disk",
   "sort_by.games.install_date": "Install date",
 
+  "sort_by.collections.title": "Title",
+  "sort_by.collections.updated_at": "Updated",
+
   "filter_by.games.classification.games": "Games",
   "filter_by.games.classification.tools": "Tools",
   "filter_by.games.classification.assets": "Game assets",

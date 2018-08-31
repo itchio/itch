@@ -78,9 +78,12 @@ interface Snapshot {
 
 const limit = 15;
 
-export default function<Params, Res extends FetchRes<any>, Record, ExtraProps>(
-  rc: RequestCreator<Params, Res>
-) {
+export function makeSeries<
+  Params,
+  Res extends FetchRes<any>,
+  Record,
+  ExtraProps
+>(rc: RequestCreator<Params, Res>) {
   const Call = butlerCaller(rc);
 
   const hasItems = (result: Res): boolean => {
@@ -105,17 +108,19 @@ export default function<Params, Res extends FetchRes<any>, Record, ExtraProps>(
       };
 
       if (props.restoredScrollTop) {
+        console.log(`Aiming for scrollTop ${props.restoredScrollTop}`);
         this.restoreScrollInterval = setInterval(() => {
           if (this.itemList) {
             this.itemList.scrollTop = props.restoredScrollTop;
-            console.log(`adjusting to ${props.restoredScrollTop}`);
-            const adjusted = this.itemList.scrollTop;
-            console.log(`...went to ${adjusted}`);
-            if (adjusted === props.restoredScrollTop) {
+
+            const { scrollTop } = this.itemList;
+            if (scrollTop === props.restoredScrollTop) {
+              console.log(`Done adjusting, final scrollTop = ${scrollTop}`);
               clearInterval(this.restoreScrollInterval);
+              this.restoreScrollInterval = null;
             }
           }
-        }, 25);
+        }, 160);
       }
     }
 
@@ -153,6 +158,7 @@ export default function<Params, Res extends FetchRes<any>, Record, ExtraProps>(
       if (snapshot && snapshot.resetScroll && this.itemList) {
         console.log(`resetting scrollTop!`);
         this.itemList.scrollTop = 0;
+        dispatchTabPageUpdate(this.props, { scrollTop: 0 });
       }
     }
 
@@ -228,6 +234,8 @@ export default function<Params, Res extends FetchRes<any>, Record, ExtraProps>(
       this.itemList = itemList;
     };
 
+    lastScrollTop = 0;
+
     onScroll = throttle(() => {
       const { itemList } = this;
       if (!itemList) {
@@ -235,6 +243,15 @@ export default function<Params, Res extends FetchRes<any>, Record, ExtraProps>(
       }
 
       const { scrollTop, scrollHeight, clientHeight } = itemList;
+      if (scrollTop < this.lastScrollTop) {
+        if (this.restoreScrollInterval) {
+          console.log(`Cancelling scroll restore (scrolled up!)`);
+          clearInterval(this.restoreScrollInterval);
+          this.restoreScrollInterval = null;
+        }
+      }
+      this.lastScrollTop = scrollTop;
+
       const runwayLeft = scrollHeight - clientHeight - scrollTop;
       const shouldLoadMore = runwayLeft < 1200;
       const { loadMore } = this;

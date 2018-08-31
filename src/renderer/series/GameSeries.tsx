@@ -1,6 +1,7 @@
 import React from "react";
 import { Game } from "common/butlerd/messages";
-import makeSeries, {
+import {
+  makeSeries,
   BaseSeriesProps,
   FetchRes,
   RecordComponentProps,
