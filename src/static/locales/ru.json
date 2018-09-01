@@ -624,5 +624,7 @@
     "prompt.action.back": "Назад",
     "login.action.reveal_password": "Показать пароль",
     "login.action.hide_password": "Скрыть пароль",
-    "web.context_menu.inspect": "Просмотр кода"
+    "web.context_menu.inspect": "Просмотр кода",
+    "sort_by.collections.title": "Название",
+    "sort_by.collections.updated_at": "Обновлено"
 }
