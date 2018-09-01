@@ -618,5 +618,7 @@
     "prompt.action.back": "Reen",
     "login.action.reveal_password": "Montri la pasvorton",
     "login.action.hide_password": "Kaŝi la pasvorton",
-    "web.context_menu.inspect": "Inspekti"
+    "web.context_menu.inspect": "Inspekti",
+    "sort_by.collections.title": "Titolo",
+    "sort_by.collections.updated_at": "Lasta ĝisdatigo"
 }
