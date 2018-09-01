@@ -610,5 +610,7 @@
     "prompt.action.back": "Назад",
     "login.action.reveal_password": "Показване на паролата",
     "login.action.hide_password": "Скриване на паролата",
-    "web.context_menu.inspect": "Изследване"
+    "web.context_menu.inspect": "Изследване",
+    "sort_by.collections.title": "Заглавие",
+    "sort_by.collections.updated_at": "Последно обновяване"
 }
