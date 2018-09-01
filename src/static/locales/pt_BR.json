@@ -439,5 +439,6 @@
     "dashboard.game_stats.views": "visualizações",
     "download.outcome.updated": "atualizado para a ultima versão",
     "dashboard.game_stats.downloads": "downloads",
-    "dashboard.game_stats.purchases": "compras"
+    "dashboard.game_stats.purchases": "compras",
+    "download.ongoing.heal": "Reparando {{title}..."
 }
