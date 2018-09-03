@@ -23,6 +23,7 @@ import {
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import makeGameSeries from "renderer/series/GameSeries";
+import { _ } from "renderer/t";
 
 const FetchCollection = butlerCaller(messages.FetchCollection);
 const CollectionGameSeries = makeGameSeries(messages.FetchCollectionGames);
@@ -81,7 +82,7 @@ class CollectionPage extends React.PureComponent<Props> {
     <>
       <IconButton
         icon="redo"
-        hint={["browser.popout"]}
+        hint={_("browser.popout")}
         hintPosition="bottom"
         onClick={this.popOutBrowser}
       />
@@ -102,14 +103,14 @@ class CollectionPage extends React.PureComponent<Props> {
     return (
       <SortsAndFilters>
         <FilterGroup>
-          <SortOption sortBy="title" label={["sort_by.games.title"]} />
+          <SortOption sortBy="title" label={_("sort_by.games.title")} />
         </FilterGroup>
         <FilterSpacer />
         <FilterGroup>
           <FilterOption
             optionKey="installed"
             optionValue="true"
-            label={["filter_by.games.status.installed"]}
+            label={_("filter_by.games.status.installed")}
           />
         </FilterGroup>
         <FilterSpacer />

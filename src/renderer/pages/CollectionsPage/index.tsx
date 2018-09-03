@@ -19,6 +19,7 @@ import IconButton from "renderer/basics/IconButton";
 import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { SortOption } from "renderer/pages/common/Sort";
+import { _ } from "renderer/t";
 
 const ProfileCollectionsSeries = makeCollectionSeries(
   messages.FetchProfileCollections
@@ -34,7 +35,7 @@ class CollectionsPage extends React.PureComponent<Props> {
     return (
       <CollectionsDiv>
         <ProfileCollectionsSeries
-          label={["sidebar.collections"]}
+          label={_("sidebar.collections")}
           getRecord={this.getRecord}
           params={{
             profileId: profile.id,
@@ -65,10 +66,10 @@ class CollectionsPage extends React.PureComponent<Props> {
     return (
       <SortsAndFilters>
         <FilterGroup>
-          <SortOption sortBy={"title"} label={["sort_by.collections.title"]} />
+          <SortOption sortBy={"title"} label={_("sort_by.collections.title")} />
           <SortOption
             sortBy={"updatedAt"}
-            label={["sort_by.collections.updated_at"]}
+            label={_("sort_by.collections.updated_at")}
           />
         </FilterGroup>
       </SortsAndFilters>

@@ -8,7 +8,7 @@ import React from "react";
 import ErrorState from "renderer/basics/ErrorState";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { hookWithProps } from "renderer/hocs/hook";
+import { hookWithProps, hook } from "renderer/hocs/hook";
 import { withTab } from "renderer/hocs/withTab";
 import {
   standardCoverHeight,
@@ -168,7 +168,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
               return null;
             }
             doneSet.add(game.id);
-            return <StripeItem key={game.id} game={game} dispatch={dispatch} />;
+            return <StripeItem key={game.id} game={game} />;
           })}
         </>
       );
@@ -179,7 +179,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       return (
         <>
           {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(id => (
-            <StripeItem key={`empty-${id}`} dispatch={dispatch} />
+            <StripeItem key={`empty-${id}`} />
           ))}
         </>
       );
@@ -223,7 +223,7 @@ function renderNoop(): JSX.Element {
   return null;
 }
 
-class StripeItem extends React.PureComponent<{
+class BaseStripeItem extends React.PureComponent<{
   game?: Game;
   dispatch: Dispatch;
 }> {
@@ -254,3 +254,4 @@ class StripeItem extends React.PureComponent<{
     );
   };
 }
+const StripeItem = hook()(BaseStripeItem);

@@ -19,6 +19,7 @@ import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import ProfileGameStats from "renderer/pages/DashboardPage/ProfileGameStats";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import makeGameSeries from "renderer/series/GameSeries";
+import { _ } from "renderer/t";
 
 const ProfileGameSeries = makeGameSeries(messages.FetchProfileGames);
 
@@ -36,7 +37,7 @@ class DashboardPage extends React.PureComponent<Props> {
     return (
       <Page>
         <ProfileGameSeries
-          label={["sidebar.dashboard"]}
+          label={_("sidebar.dashboard")}
           params={{
             profileId: profile.id,
             sortBy,
@@ -61,10 +62,10 @@ class DashboardPage extends React.PureComponent<Props> {
   renderExtraFilters = () => (
     <SortsAndFilters>
       <FilterGroup>
-        <SortOption sortBy="title" label={["sort_by.games.title"]} />
-        <SortOption sortBy="views" label={["sort_by.games.views"]} />
-        <SortOption sortBy="downloads" label={["sort_by.games.downloads"]} />
-        <SortOption sortBy="purchases" label={["sort_by.games.purchases"]} />
+        <SortOption sortBy="title" label={_("sort_by.games.title")} />
+        <SortOption sortBy="views" label={_("sort_by.games.views")} />
+        <SortOption sortBy="downloads" label={_("sort_by.games.downloads")} />
+        <SortOption sortBy="purchases" label={_("sort_by.games.purchases")} />
       </FilterGroup>
       <FilterSpacer />
       {this.renderVisibilityFilter()}
@@ -85,12 +86,12 @@ class DashboardPage extends React.PureComponent<Props> {
         <FilterOption
           optionKey="paidStatus"
           optionValue="free"
-          label={["filter_by.games.paid_status.free"]}
+          label={_("filter_by.games.paid_status.free")}
         />
         <FilterOption
           optionKey="paidStatus"
           optionValue="paid"
-          label={["filter_by.games.paid_status.paid"]}
+          label={_("filter_by.games.paid_status.paid")}
         />
       </FilterGroup>
     );
@@ -103,12 +104,12 @@ class DashboardPage extends React.PureComponent<Props> {
           <FilterOption
             optionKey="visibility"
             optionValue="published"
-            label={["filter_by.games.visibility.published"]}
+            label={_("filter_by.games.visibility.published")}
           />
           <FilterOption
             optionKey="visibility"
             optionValue="draft"
-            label={["filter_by.games.visibility.draft"]}
+            label={_("filter_by.games.visibility.draft")}
           />
         </FilterGroup>
       </>

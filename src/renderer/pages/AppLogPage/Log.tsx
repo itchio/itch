@@ -99,7 +99,13 @@ const LogTable = styled.table`
   }
 `;
 
-const kMaxLines = 250;
+const maxLines = 250;
+const levelOptions = [
+  { label: ["log.level.debug"], value: reverseLevels["debug"] },
+  { label: ["log.level.info"], value: reverseLevels["info"] },
+  { label: ["log.level.warning"], value: reverseLevels["warn"] },
+  { label: ["log.level.error"], value: reverseLevels["error"] },
+];
 
 class Log extends React.PureComponent<Props, State> {
   constructor(props: Log["props"], context: any) {
@@ -124,7 +130,7 @@ class Log extends React.PureComponent<Props, State> {
       }
     });
     entries = _.filter(entries, x => (x.level ? x.level >= level : false));
-    entries = _.last(entries, kMaxLines);
+    entries = _.last(entries, maxLines);
 
     return (
       <LogContainer className={className}>
@@ -133,12 +139,7 @@ class Log extends React.PureComponent<Props, State> {
             {T(["log.level"])}
             {": "}
             <SelectRow
-              options={[
-                { label: ["log.level.debug"], value: reverseLevels["debug"] },
-                { label: ["log.level.info"], value: reverseLevels["info"] },
-                { label: ["log.level.warning"], value: reverseLevels["warn"] },
-                { label: ["log.level.error"], value: reverseLevels["error"] },
-              ]}
+              options={levelOptions}
               value={this.state.level}
               onChange={this.onChangeLevel}
             />

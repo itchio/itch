@@ -18,7 +18,7 @@ import {
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import makeGameSeries from "renderer/series/GameSeries";
-import { T } from "renderer/t";
+import { T, _ } from "renderer/t";
 
 const CaveGameSeries = makeGameSeries(messages.FetchCaves);
 
@@ -28,35 +28,43 @@ class InstalledPage extends React.PureComponent<Props> {
 
     return (
       <CaveGameSeries
-        label={["sidebar.installed"]}
+        label={_("sidebar.installed")}
         params={{
           sortBy,
           reverse: sortDir === "reverse",
           filters: { classification },
         }}
-        getRecord={cave => cave.game}
-        getKey={cave => cave.id}
-        renderItemExtras={cave => <StandardMainAction game={cave.game} />}
-        renderMainFilters={() => <SearchControl />}
-        renderExtraFilters={() => (
-          <SortsAndFilters>
-            <FilterGroup>
-              <SortOption sortBy="title" label={["sort_by.games.title"]} />
-            </FilterGroup>
-            <FilterSpacer />
-            <FilterGroupGameClassification />
-            <FilterSpacer />
-            <FilterGroup>
-              <FilterOptionLink href="itch://locations">
-                <FilterOptionIcon icon="cog" />
-                {T(["install_locations.manage"])}
-              </FilterOptionLink>
-            </FilterGroup>
-          </SortsAndFilters>
-        )}
+        getRecord={this.getRecord}
+        getKey={this.getKey}
+        renderItemExtras={this.renderItemExtras}
+        renderMainFilters={this.renderMainFilters}
+        renderExtraFilters={this.renderExtraFilters}
       />
     );
   }
+
+  getRecord = CaveGameSeries.getRecordCallback(cave => cave.game);
+  getKey = CaveGameSeries.getKeyCallback(cave => cave.id);
+  renderItemExtras = CaveGameSeries.renderItemExtrasCallback(cave => (
+    <StandardMainAction game={cave.game} />
+  ));
+  renderMainFilters = () => <SearchControl />;
+  renderExtraFilters = () => (
+    <SortsAndFilters>
+      <FilterGroup>
+        <SortOption sortBy="title" label={_("sort_by.games.title")} />
+      </FilterGroup>
+      <FilterSpacer />
+      <FilterGroupGameClassification />
+      <FilterSpacer />
+      <FilterGroup>
+        <FilterOptionLink href="itch://locations">
+          <FilterOptionIcon icon="cog" />
+          {T(["install_locations.manage"])}
+        </FilterOptionLink>
+      </FilterGroup>
+    </SortsAndFilters>
+  );
 }
 
 interface Props extends MeatProps {

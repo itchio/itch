@@ -64,6 +64,10 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
       return f;
     }
 
+    static getKeyCallback(f: (item: Item) => any) {
+      return f;
+    }
+
     static renderItemExtrasCallback(f: (item: Item) => JSX.Element) {
       return f;
     }
