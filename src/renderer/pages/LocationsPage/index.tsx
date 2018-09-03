@@ -7,14 +7,14 @@ import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
-import GameStripe from "renderer/pages/common/GameStripe";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { isEmpty, sortBy } from "underscore";
+import { makeGameStripe } from "renderer/pages/common/GameStripe";
 
 const ListInstallLocations = butlerCaller(messages.InstallLocationsList);
-const LocationStripe = GameStripe(messages.FetchCaves);
+const LocationStripe = makeGameStripe(messages.FetchCaves);
 
 class LocationsPage extends React.PureComponent<Props> {
   render() {

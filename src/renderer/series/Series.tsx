@@ -97,6 +97,156 @@ export function makeSeries<
   type Props = GenericProps<Params, Item, Record, ExtraProps>;
   type State = GenericState<Params>;
 
+  class NextPageButton extends React.PureComponent<{
+    cursor: string;
+    gotLoadMore: (el: HTMLElement) => void;
+    loadNextPage: (cursor: string) => void;
+  }> {
+    render() {
+      const { gotLoadMore } = this.props;
+      return (
+        <LoadMoreContainer innerRef={gotLoadMore} onClick={this.loadNextPage}>
+          <LoadMoreText>Load more...</LoadMoreText>
+        </LoadMoreContainer>
+      );
+    }
+
+    loadNextPage = () => {
+      const { cursor, loadNextPage } = this.props;
+      loadNextPage(cursor);
+    };
+  }
+
+  type PageProps = {
+    cursor: string;
+    limit: number;
+    isLast: boolean;
+    gotLoadMore?: (loadMore: HTMLElement) => void;
+    loadNextPage?: (cursor: string) => void;
+  } & Pick<
+    Props,
+    | "params"
+    | "sequence"
+    | "fallbackGetKey"
+    | "getKey"
+    | "getRecord"
+    | "RecordComponent"
+    | "extraProps"
+  >;
+
+  class SeriesPage extends React.PureComponent<PageProps> {
+    render() {
+      const { params, cursor, limit, sequence } = this.props;
+      return (
+        <Call
+          errorsHandled
+          loadingHandled
+          params={{ ...(params as any), cursor, limit }}
+          sequence={sequence}
+          render={this.renderCallContents}
+        />
+      );
+    }
+
+    renderCallContents = Call.renderCallback(({ result, loading, error }) => {
+      return (
+        <>
+          {this.renderError(result, error)}
+          {this.renderItems(result, loading)}
+          {this.renderNextPage(result, loading)}
+        </>
+      );
+    });
+
+    renderNextPage(result: Res, loading: boolean) {
+      const { gotLoadMore, loadNextPage, isLast } = this.props;
+
+      if (result && result.nextCursor && isLast) {
+        return (
+          <NextPageButton
+            cursor={result.nextCursor}
+            gotLoadMore={gotLoadMore}
+            loadNextPage={loadNextPage}
+          />
+        );
+      }
+
+      if (!hasItems(result) && loading) {
+        return (
+          <LoadMoreContainer>
+            <LoadingCircle progress={-1} />
+          </LoadMoreContainer>
+        );
+      }
+
+      return null;
+    }
+
+    renderError(result: Res, error: Error) {
+      if (!error) {
+        return null;
+      }
+
+      if (hasItems(result) && isNetworkError(error)) {
+        return null;
+      }
+      return <ErrorState error={error} />;
+    }
+
+    renderItems(result: Res, loading: boolean): JSX.Element {
+      if (!hasItems(result)) {
+        if (loading) {
+          return null;
+        } else {
+          return this.renderEmpty();
+        }
+      }
+      const { items } = result;
+
+      const {
+        fallbackGetKey,
+        getKey,
+        getRecord,
+        RecordComponent,
+        extraProps,
+      } = this.props;
+
+      let doneSet = new Set<any>();
+      return (
+        <>
+          {items.map(item => {
+            const record = getRecord(item);
+            if (!record) {
+              return null;
+            }
+            const key = getKey ? getKey(item) : fallbackGetKey(record);
+            if (doneSet.has(key)) {
+              return null;
+            }
+            doneSet.add(key);
+            return (
+              <RecordComponent
+                key={key}
+                item={item}
+                record={record}
+                {...extraProps}
+              />
+            );
+          })}
+        </>
+      );
+    }
+
+    renderEmpty(): JSX.Element {
+      return (
+        <EmptyState
+          bigText={["empty_state.nothing_to_see_here"]}
+          icon="neutral"
+        />
+      );
+    }
+  }
+
   class Series extends React.PureComponent<Props, State> {
     restoreScrollInterval: NodeJS.Timer;
 
@@ -170,10 +320,15 @@ export function makeSeries<
     }
 
     render() {
-      const { label, params, sequence } = this.props;
+      const { params, sequence } = this.props;
       const {
         renderMainFilters = renderNoop,
         renderExtraFilters = renderNoop,
+        fallbackGetKey,
+        getKey,
+        getRecord,
+        RecordComponent,
+        extraProps,
       } = this.props;
       const { cursors } = this.state;
 
@@ -189,39 +344,20 @@ export function makeSeries<
             innerRef={this.gotItemList}
           >
             {cursors.map((cursor, i) => (
-              <Call
+              <SeriesPage
                 key={i}
-                errorsHandled
-                loadingHandled
-                params={{ ...(params as any), cursor, limit }}
+                params={params}
+                cursor={cursor}
+                limit={limit}
                 sequence={sequence}
-                render={({ result, loading, error }) => {
-                  return (
-                    <>
-                      {this.renderError(result, error)}
-                      {this.renderItems(result, loading)}
-                      {result &&
-                      result.nextCursor &&
-                      i === cursors.length - 1 ? (
-                        <LoadMoreContainer
-                          innerRef={this.gotLoadMore}
-                          onClick={() =>
-                            this.setState({
-                              cursors: [...cursors, result.nextCursor],
-                            })
-                          }
-                        >
-                          <LoadMoreText>Load more...</LoadMoreText>
-                        </LoadMoreContainer>
-                      ) : null}
-                      {!hasItems(result) && loading ? (
-                        <LoadMoreContainer>
-                          <LoadingCircle progress={-1} />
-                        </LoadMoreContainer>
-                      ) : null}
-                    </>
-                  );
-                }}
+                isLast={i === cursors.length - 1}
+                gotLoadMore={this.gotLoadMore}
+                loadNextPage={this.loadNextPage}
+                fallbackGetKey={fallbackGetKey}
+                getKey={getKey}
+                getRecord={getRecord}
+                RecordComponent={RecordComponent}
+                extraProps={extraProps}
               />
             ))}
           </ItemList>
@@ -267,69 +403,11 @@ export function makeSeries<
       this.loadMore = loadMore;
     };
 
-    renderError(result: Res, error: Error) {
-      if (!error) {
-        return null;
-      }
-
-      if (hasItems(result) && isNetworkError(error)) {
-        return null;
-      }
-      return <ErrorState error={error} />;
-    }
-
-    renderItems(result: Res, loading: boolean): JSX.Element {
-      if (!hasItems(result)) {
-        if (loading) {
-          return null;
-        } else {
-          return this.renderEmpty();
-        }
-      }
-      const { items } = result;
-
-      const {
-        fallbackGetKey,
-        getKey,
-        getRecord,
-        RecordComponent,
-        extraProps,
-      } = this.props;
-
-      let doneSet = new Set<any>();
-      return (
-        <>
-          {items.map(item => {
-            const record = getRecord(item);
-            if (!record) {
-              return null;
-            }
-            const key = getKey ? getKey(item) : fallbackGetKey(record);
-            if (doneSet.has(key)) {
-              return null;
-            }
-            doneSet.add(key);
-            return (
-              <RecordComponent
-                key={key}
-                item={item}
-                record={record}
-                {...extraProps}
-              />
-            );
-          })}
-        </>
-      );
-    }
-
-    renderEmpty(): JSX.Element {
-      return (
-        <EmptyState
-          bigText={["empty_state.nothing_to_see_here"]}
-          icon="neutral"
-        />
-      );
-    }
+    loadNextPage = (cursor: string) => {
+      this.setState(state => ({
+        cursors: [...state.cursors, cursor],
+      }));
+    };
   }
   return withTab(
     hookWithProps(Series)(map => ({

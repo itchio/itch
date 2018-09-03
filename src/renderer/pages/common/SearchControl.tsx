@@ -17,10 +17,14 @@ class SearchControl extends React.PureComponent<Props> {
       <FilterInput
         defaultValue={defaultValue}
         placeholder={TString(this.props.intl, ["grid.criterion.filter"])}
-        onChange={e => this.setSearch(e.currentTarget.value)}
+        onChange={this.onSearchChange}
       />
     );
   }
+
+  onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setSearch(e.currentTarget.value);
+  };
 
   setSearch = debounce((search: string) => {
     const { url } = this.props;

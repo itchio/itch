@@ -50,6 +50,14 @@ export default function makeCollectionSeries<Params, Res extends FetchRes<any>>(
         />
       );
     }
+
+    static getRecordCallback(f: (item: Item) => Record) {
+      return f;
+    }
+
+    static renderItemExtrasCallback(f: (item: Item) => JSX.Element) {
+      return f;
+    }
   }
   return CollectionSeries;
 }

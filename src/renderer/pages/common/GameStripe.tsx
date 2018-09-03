@@ -51,7 +51,7 @@ const ViewAll = styled.a`
   z-index: 4;
 `;
 
-const StripeItem = styled.div`
+const StripeItemDiv = styled.div`
   ${styles.boxy};
   flex-shrink: 0;
   margin-right: 0.8em;
@@ -61,7 +61,7 @@ interface FetchRes<Item> {
   items: Item[];
 }
 
-interface GenericProps<Params, Res extends FetchRes<Item>, Item> {
+interface GenericProps<Params, Item> {
   title: LocalizedString;
   href: string;
   params: Params;
@@ -76,10 +76,11 @@ interface GenericProps<Params, Res extends FetchRes<Item>, Item> {
 
 const stripeLimit = 12;
 
-export default <Params, Res extends FetchRes<any>>(
+export function makeGameStripe<Params, Res extends FetchRes<any>>(
   rc: RequestCreator<Params, Res>
-) => {
+) {
   const Call = butlerCaller(rc);
+  type Item = Res["items"][0];
 
   const hasItems = (result: Res): boolean => {
     if (!result) {
@@ -88,7 +89,7 @@ export default <Params, Res extends FetchRes<any>>(
     return !isEmpty(result.items);
   };
 
-  type Props = GenericProps<Params, Res, Res["items"][0]>;
+  type Props = GenericProps<Params, Item>;
 
   class Stripe extends React.PureComponent<Props> {
     render() {
@@ -100,19 +101,21 @@ export default <Params, Res extends FetchRes<any>>(
           sequence={sequence}
           loadingHandled
           errorsHandled
-          render={({ result, error, loading }) => (
-            <>
-              {this.renderTitle(loading, result, error)}
-              <StripeDiv>
-                {this.renderViewAll()}
-                {this.renderItems(result)}
-                {this.renderEmpty()}
-              </StripeDiv>
-            </>
-          )}
+          render={this.renderCallContents}
         />
       );
     }
+
+    renderCallContents = Call.renderCallback(({ result, error, loading }) => (
+      <>
+        {this.renderTitle(loading, result, error)}
+        <StripeDiv>
+          {this.renderViewAll()}
+          {this.renderItems(result)}
+          {this.renderEmpty()}
+        </StripeDiv>
+      </>
+    ));
 
     renderTitle(loading: boolean, result: Res, error: any): JSX.Element {
       const { href, title, renderTitleExtras = renderNoop } = this.props;
@@ -165,39 +168,18 @@ export default <Params, Res extends FetchRes<any>>(
               return null;
             }
             doneSet.add(game.id);
-            return (
-              <StripeItem
-                key={game.id}
-                // FIXME: this re-renders for no good reason
-                onContextMenu={ev => {
-                  const { clientX, clientY } = ev;
-                  ev.preventDefault();
-                  const wind = ambientWind();
-                  dispatch(
-                    actions.openGameContextMenu({
-                      clientX,
-                      clientY,
-                      game,
-                      wind,
-                    })
-                  );
-                }}
-              >
-                <StandardGameCover game={game} showInfo />
-              </StripeItem>
-            );
+            return <StripeItem key={game.id} game={game} dispatch={dispatch} />;
           })}
         </>
       );
     }
 
     renderEmpty(): JSX.Element {
+      const { dispatch } = this.props;
       return (
         <>
           {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(id => (
-            <StripeItem key={`empty-${id}`}>
-              <StandardGameCover game={null} />
-            </StripeItem>
+            <StripeItem key={`empty-${id}`} dispatch={dispatch} />
           ))}
         </>
       );
@@ -209,13 +191,66 @@ export default <Params, Res extends FetchRes<any>>(
       );
     }
   }
-  return withTab(
+  let result = withTab(
     hookWithProps(Stripe)(map => ({
       sequence: map((rs, props) => ambientTab(rs, props).sequence),
     }))(Stripe)
   );
-};
+  type ResultType = typeof result;
+  function identity<T>(t: T) {
+    return t;
+  }
+  let augmentedResult: ResultType & {
+    getGameCallback?(f: (item: Item) => Game): (item: Item) => Game;
+  } = result;
+  augmentedResult.getGameCallback = identity;
+  return augmentedResult;
+}
+
+export function makeStripeCallbacks<Params, Res extends FetchRes<any>>(
+  rc: RequestCreator<Params, Res>
+) {
+  type Item = Res["items"][0];
+
+  return {
+    getGame(f: (item: Item) => Game) {
+      return f;
+    },
+  };
+}
 
 function renderNoop(): JSX.Element {
   return null;
+}
+
+class StripeItem extends React.PureComponent<{
+  game?: Game;
+  dispatch: Dispatch;
+}> {
+  render() {
+    const { game } = this.props;
+    return (
+      <StripeItemDiv onContextMenu={this.onContextMenu}>
+        <StandardGameCover game={game} showInfo />
+      </StripeItemDiv>
+    );
+  }
+
+  onContextMenu = ev => {
+    const { game, dispatch } = this.props;
+    if (!game) {
+      return;
+    }
+    const { clientX, clientY } = ev;
+    ev.preventDefault();
+    const wind = ambientWind();
+    dispatch(
+      actions.openGameContextMenu({
+        clientX,
+        clientY,
+        game,
+        wind,
+      })
+    );
+  };
 }

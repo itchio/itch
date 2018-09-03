@@ -4,11 +4,11 @@ import { urlForCollection } from "common/util/navigation";
 import React from "react";
 import TimeAgo from "renderer/basics/TimeAgo";
 import { withProfile } from "renderer/hocs/withProfile";
-import GameStripe from "renderer/pages/common/GameStripe";
+import { makeGameStripe } from "renderer/pages/common/GameStripe";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 
-const CollectionGameStripe = GameStripe(messages.FetchCollectionGames);
+const CollectionGameStripe = makeGameStripe(messages.FetchCollectionGames);
 
 const CollectionInfo = styled.div`
   display: flex;
@@ -34,10 +34,12 @@ class CollectionPreview extends React.PureComponent<Props> {
         href={urlForCollection(coll.id)}
         params={{ profileId: profile.id, collectionId: coll.id }}
         renderTitleExtras={this.renderTitleExtras}
-        getGame={cg => cg.game}
+        getGame={this.getGame}
       />
     );
   }
+
+  getGame = CollectionGameStripe.getGameCallback(cg => cg.game);
 
   renderTitleExtras = () => {
     const { coll } = this.props;

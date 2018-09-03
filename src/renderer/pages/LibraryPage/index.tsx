@@ -7,13 +7,13 @@ import { hook } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withProfile } from "renderer/hocs/withProfile";
 import { withTab } from "renderer/hocs/withTab";
-import GameStripe from "renderer/pages/common/GameStripe";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { makeGameStripe } from "renderer/pages/common/GameStripe";
 
-const OwnedGameStripe = GameStripe(messages.FetchProfileOwnedKeys);
-const InstalledGameStripe = GameStripe(messages.FetchCaves);
+const OwnedGameStripe = makeGameStripe(messages.FetchProfileOwnedKeys);
+const InstalledGameStripe = makeGameStripe(messages.FetchCaves);
 
 class LibraryPage extends React.PureComponent<Props> {
   render() {

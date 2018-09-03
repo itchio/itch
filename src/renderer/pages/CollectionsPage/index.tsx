@@ -35,7 +35,7 @@ class CollectionsPage extends React.PureComponent<Props> {
       <CollectionsDiv>
         <ProfileCollectionsSeries
           label={["sidebar.collections"]}
-          getRecord={c => c}
+          getRecord={this.getRecord}
           params={{
             profileId: profile.id,
             sortBy,
@@ -48,6 +48,8 @@ class CollectionsPage extends React.PureComponent<Props> {
       </CollectionsDiv>
     );
   }
+
+  getRecord = ProfileCollectionsSeries.getRecordCallback(c => c);
 
   renderMainFilters = () => {
     return (
