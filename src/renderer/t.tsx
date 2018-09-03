@@ -1,6 +1,8 @@
 import IntlMessageFormat from "intl-messageformat";
 import React from "react";
 import { FormattedMessage, InjectedIntl } from "react-intl";
+import { LocalizedString } from "common/types";
+import { memoize } from "common/util/lru-memoize";
 
 export function T(input: any): JSX.Element | string {
   if (Array.isArray(input)) {
@@ -30,3 +32,13 @@ export function TString(intl: InjectedIntl, input: any): string {
     return input;
   }
 }
+
+interface I18nVariables {
+  [key: string]: string | number;
+  defaultValue?: string;
+}
+
+export let _ = (key: string, variables?: I18nVariables): LocalizedString => {
+  return [key, variables];
+};
+_ = memoize(10000, _);

@@ -20,6 +20,7 @@ import {
 import StandardMainAction from "renderer/pages/common/StandardMainAction";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import makeGameSeries from "renderer/series/GameSeries";
+import { _ } from "renderer/t";
 
 const OwnedSeries = makeGameSeries(messages.FetchProfileOwnedKeys);
 
@@ -36,7 +37,7 @@ class OwnedPage extends React.PureComponent<Props> {
 
     return (
       <OwnedSeries
-        label={["sidebar.owned"]}
+        label={_("sidebar.owned")}
         params={{
           profileId: profile.id,
           sortBy,
@@ -47,27 +48,34 @@ class OwnedPage extends React.PureComponent<Props> {
             installed,
           },
         }}
-        getRecord={dk => dk.game}
-        renderItemExtras={cave => <StandardMainAction game={cave.game} />}
-        renderMainFilters={() => <SearchControl />}
-        renderExtraFilters={() => (
-          <SortsAndFilters>
-            <FilterGroup>
-              <SortOption
-                sortBy={"acquiredAt"}
-                label={["sort_by.games.acquired_at"]}
-              />
-              <SortOption sortBy={"title"} label={["sort_by.games.title"]} />
-            </FilterGroup>
-            <FilterSpacer />
-            <FilterGroupInstalled />
-            <FilterSpacer />
-            <FilterGroupGameClassification />
-          </SortsAndFilters>
-        )}
+        getRecord={this.getRecord}
+        renderItemExtras={this.renderItemExtras}
+        renderMainFilters={this.renderMainFilters}
+        renderExtraFilters={this.renderExtraFilters}
       />
     );
   }
+
+  getRecord = OwnedSeries.getRecordCallback(dk => dk.game);
+  renderItemExtras = OwnedSeries.renderItemExtrasCallback(cave => (
+    <StandardMainAction game={cave.game} />
+  ));
+  renderMainFilters = () => <SearchControl />;
+  renderExtraFilters = () => (
+    <SortsAndFilters>
+      <FilterGroup>
+        <SortOption
+          sortBy={"acquiredAt"}
+          label={_("sort_by.games.acquired_at")}
+        />
+        <SortOption sortBy={"title"} label={_("sort_by.games.title")} />
+      </FilterGroup>
+      <FilterSpacer />
+      <FilterGroupInstalled />
+      <FilterSpacer />
+      <FilterGroupGameClassification />
+    </SortsAndFilters>
+  );
 }
 
 interface State {
