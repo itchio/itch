@@ -6,7 +6,7 @@ import { Dispatch } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import React from "react";
 import IconButton from "renderer/basics/IconButton";
-import butlerCaller from "renderer/hocs/butlerCaller";
+import butlerCaller, { renderNoop } from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withProfile } from "renderer/hocs/withProfile";
@@ -47,15 +47,8 @@ class CollectionPage extends React.PureComponent<Props> {
             collectionId,
           }}
           loadingHandled
-          render={() => null}
-          onResult={result => {
-            let label = "Collection not found";
-            if (result && result.collection) {
-              const c = result.collection;
-              label = `${c.title} (${c.gamesCount})`;
-            }
-            dispatchTabPageUpdate(this.props, { label });
-          }}
+          render={renderNoop}
+          onResult={this.onFetchedCollection}
         />
 
         <CollectionGameSeries
@@ -71,24 +64,39 @@ class CollectionPage extends React.PureComponent<Props> {
               installed: filterInstalled,
             },
           }}
-          getRecord={cg => cg.game}
-          renderItemExtras={cave => <StandardMainAction game={cave.game} />}
-          renderMainFilters={() => (
-            <>
-              <IconButton
-                icon="redo"
-                hint={["browser.popout"]}
-                hintPosition="bottom"
-                onClick={this.popOutBrowser}
-              />
-              <SearchControl />
-            </>
-          )}
+          getRecord={this.getRecord}
+          renderItemExtras={this.renderItemExtras}
+          renderMainFilters={this.renderMainFilters}
           renderExtraFilters={this.renderExtraFilters}
         />
       </>
     );
   }
+
+  getRecord = CollectionGameSeries.getRecordCallback(cg => cg.game);
+  renderItemExtras = CollectionGameSeries.renderItemExtrasCallback(cave => (
+    <StandardMainAction game={cave.game} />
+  ));
+  renderMainFilters = () => (
+    <>
+      <IconButton
+        icon="redo"
+        hint={["browser.popout"]}
+        hintPosition="bottom"
+        onClick={this.popOutBrowser}
+      />
+      <SearchControl />
+    </>
+  );
+
+  onFetchedCollection = FetchCollection.onResultCallback(result => {
+    let label = "Collection not found";
+    if (result && result.collection) {
+      const c = result.collection;
+      label = `${c.title} (${c.gamesCount})`;
+    }
+    dispatchTabPageUpdate(this.props, { label });
+  });
 
   renderExtraFilters = (): JSX.Element => {
     return (

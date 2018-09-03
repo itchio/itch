@@ -8,7 +8,7 @@ import EmptyState from "renderer/basics/EmptyState";
 import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import butlerCaller from "renderer/hocs/butlerCaller";
+import butlerCaller, { renderNoop } from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
@@ -339,8 +339,4 @@ export function makeSeries<
       ),
     }))(Series)
   );
-}
-
-export function renderNoop(): JSX.Element {
-  return null;
 }

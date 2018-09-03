@@ -30,10 +30,14 @@ interface GenericState<Result> {
   result: Result;
 }
 
-export interface ButlerCallerArgs<Params, Result> {
+interface ButlerCallerArgs<Params, Result> {
   loading: boolean;
   error: Error;
   result: Result;
+}
+
+export function renderNoop(): JSX.Element {
+  return null;
 }
 
 export const LoadingStateDiv = styled.div`
@@ -177,6 +181,10 @@ const butlerCaller = <Params, Result>(
     static renderCallback(
       f: (args: ButlerCallerArgs<Params, Result>) => JSX.Element
     ) {
+      return f;
+    }
+
+    static onResultCallback(f: (result: Result) => void) {
       return f;
     }
   }

@@ -5,7 +5,6 @@ import {
   BaseSeriesProps,
   FetchRes,
   RecordComponentProps,
-  renderNoop,
 } from "renderer/series/Series";
 import { RequestCreator } from "butlerd";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
@@ -14,6 +13,7 @@ import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import Filler from "renderer/basics/Filler";
 import { createStructuredSelector } from "reselect";
+import { renderNoop } from "renderer/hocs/butlerCaller";
 
 interface GenericExtraProps<Item> {
   renderDescExtras?: (item: Item) => JSX.Element;
@@ -58,6 +58,14 @@ export default function makeGameSeries<Params, Res extends FetchRes<any>>(
           extraProps={this.selector(props)}
         />
       );
+    }
+
+    static getRecordCallback(f: (item: Item) => Record) {
+      return f;
+    }
+
+    static renderItemExtrasCallback(f: (item: Item) => JSX.Element) {
+      return f;
     }
   }
   return GameSeries;
