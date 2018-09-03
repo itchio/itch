@@ -133,6 +133,7 @@
     "prettier": "^1.14.2",
     "react-container-dimensions": "^1.4.1",
     "react-hot-loader": "^3.0.0-beta.6",
+    "react-lint": "^1.0.0",
     "recursive-copy": "^2.0.9",
     "style-loader": "^0.21.0",
     "ts-loader": "^4.5.0",
@@ -159,7 +160,8 @@
     "integration-tests": "node release/ci-integration-tests.js",
     "upload-coverage": "codecov -f ./coverage/lcov.info",
     "i18n": "node release/ci-i18n-check.js",
-    "ts-check": "tsc --noEmit --skipLibCheck"
+    "ts-check": "tsc --noEmit --skipLibCheck",
+    "react-lint": "react-lint ./src/renderer/index.tsx"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
