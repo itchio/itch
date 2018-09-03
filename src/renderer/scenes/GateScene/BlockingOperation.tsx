@@ -102,21 +102,13 @@ class BlockingOperation extends React.PureComponent<Props> {
               <Button
                 icon="repeat"
                 label={T(["login.action.retry_setup"])}
-                onClick={() => dispatch(actions.retrySetup({}))}
+                onClick={this.onRetrySetup}
               />
               <Spacer />
               <Button
                 icon="bug"
                 label={T(["grid.item.report_problem"])}
-                onClick={() =>
-                  dispatch(
-                    actions.sendFeedback({
-                      log: `Setup did not complete successfully:\n${
-                        blockingOperation.stack
-                      }`,
-                    })
-                  )
-                }
+                onClick={this.sendBlockingOperationFeedback}
               />
             </div>
             {windows ? (
@@ -136,6 +128,20 @@ class BlockingOperation extends React.PureComponent<Props> {
       </BlockingOperationDiv>
     );
   }
+
+  sendBlockingOperationFeedback = () => {
+    const { dispatch, blockingOperation } = this.props;
+    dispatch(
+      actions.sendFeedback({
+        log: `Setup did not complete successfully:\n${blockingOperation.stack}`,
+      })
+    );
+  };
+
+  onRetrySetup = () => {
+    const { dispatch } = this.props;
+    dispatch(actions.retrySetup({}));
+  };
 
   learnAboutAntivirus = () => {
     const { dispatch } = this.props;

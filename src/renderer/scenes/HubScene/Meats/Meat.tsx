@@ -171,15 +171,7 @@ class Meat extends React.PureComponent<Props, State> {
         </ErrorHeader>
 
         <ErrorButtons>
-          <Button
-            icon="repeat"
-            onClick={() => {
-              this.setState({ loading: true });
-              setTimeout(() => {
-                this.setState({ hasError: false, loading: false });
-              }, 400);
-            }}
-          >
+          <Button icon="repeat" onClick={this.reloadMeat}>
             {this.state.loading ? <LoadingCircle progress={-1} /> : "Reload"}
           </Button>
           <ErrorSpacer />
@@ -207,6 +199,13 @@ class Meat extends React.PureComponent<Props, State> {
         </details>
       </ErrorDiv>
     );
+  };
+
+  reloadMeat = () => {
+    this.setState({ loading: true });
+    setTimeout(() => {
+      this.setState({ hasError: false, loading: false });
+    }, 400);
   };
 
   onReportIssue = () => {

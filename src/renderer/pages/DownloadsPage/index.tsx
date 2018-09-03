@@ -94,11 +94,7 @@ class DownloadsPage extends React.PureComponent<Props> {
             smallText={["status.downloads.no_active_downloads_subtext"]}
             buttonIcon="earth"
             buttonText={["status.downloads.find_games_button"]}
-            buttonAction={() =>
-              dispatch(
-                actions.navigate({ wind: "root", url: "itch://featured" })
-              )
-            }
+            buttonAction={this.visitFeatured}
           />
         </DownloadsContentDiv>
       );
@@ -117,6 +113,11 @@ class DownloadsPage extends React.PureComponent<Props> {
       </DownloadsContentDiv>
     );
   }
+
+  visitFeatured = () => {
+    const { dispatch } = this.props;
+    dispatch(actions.navigate({ wind: "root", url: "itch://featured" }));
+  };
 
   renderFirstItem(firstItem: Download): JSX.Element {
     if (!firstItem) {
@@ -227,7 +228,7 @@ class DownloadsPage extends React.PureComponent<Props> {
           <FilterSpacer />
           <Link
             className="downloads-clear-all"
-            onClick={() => dispatch(actions.clearFinishedDownloads({}))}
+            onClick={this.clearFinishedDownloads}
           >
             {T(["status.downloads.clear_all_finished"])}
           </Link>
@@ -238,6 +239,11 @@ class DownloadsPage extends React.PureComponent<Props> {
       </>
     );
   }
+
+  clearFinishedDownloads = () => {
+    const { dispatch } = this.props;
+    dispatch(actions.clearFinishedDownloads({}));
+  };
 
   onUpdateAll = () => {
     const { dispatch } = this.props;

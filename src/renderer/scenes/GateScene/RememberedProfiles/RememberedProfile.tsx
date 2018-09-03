@@ -20,10 +20,7 @@ class RememberedProfile extends React.PureComponent<Props> {
     return (
       <RememberedProfileDiv
         className="remembered-profile"
-        onClick={() => {
-          const { dispatch } = this.props;
-          dispatch(actions.useSavedLogin({ profile }));
-        }}
+        onClick={this.useThisProfile}
       >
         <img className="avatar" src={coverUrl} />
         <div className="rest">
@@ -47,6 +44,11 @@ class RememberedProfile extends React.PureComponent<Props> {
       </RememberedProfileDiv>
     );
   }
+
+  useThisProfile = () => {
+    const { dispatch, profile } = this.props;
+    dispatch(actions.useSavedLogin({ profile }));
+  };
 
   onForget = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();

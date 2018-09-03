@@ -22,25 +22,31 @@ class GamePage extends React.PureComponent<Props> {
       <FetchGame
         params={{ gameId }}
         loadingHandled
-        render={({ loading }) => <FiltersContainer loading={loading} />}
-        onResult={result => {
-          if (result) {
-            const { game } = result;
-            if (game) {
-              dispatchTabPageUpdate(this.props, {
-                label: game.title,
-              });
-              dispatchTabEvolve(this.props, {
-                replace: true,
-                url: game.url,
-                resource: `games/${gameId}`,
-              });
-            }
-          }
-        }}
+        render={this.renderFetchContents}
+        onResult={this.onResult}
       />
     );
   }
+
+  renderFetchContents = FetchGame.renderCallback(({ loading }) => (
+    <FiltersContainer loading={loading} />
+  ));
+
+  onResult = FetchGame.onResultCallback(result => {
+    if (result) {
+      const { game } = result;
+      if (game) {
+        dispatchTabPageUpdate(this.props, {
+          label: game.title,
+        });
+        dispatchTabEvolve(this.props, {
+          replace: true,
+          url: game.url,
+          resource: `games/${game.id}`,
+        });
+      }
+    }
+  });
 }
 
 interface Props extends MeatProps {
