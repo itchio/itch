@@ -163,20 +163,28 @@ class InstallLocationSettings extends React.Component<Props, State> {
           <Button
             icon="plus"
             label={T(["preferences.install_location.add"])}
-            onClick={() =>
-              dispatch(actions.addInstallLocation({ wind: ambientWind() }))
-            }
+            onClick={this.addInstallLocation}
           />
           <Spacer />
           <Button
             icon="repeat"
             label={T(["preferences.scan_install_locations"])}
-            onClick={() => dispatch(actions.scanInstallLocations({}))}
+            onClick={this.scanInstallLocations}
           />
         </ControlButtonsDiv>
       </>
     );
   }
+
+  addInstallLocation = () => {
+    const { dispatch } = this.props;
+    dispatch(actions.addInstallLocation({ wind: ambientWind() }));
+  };
+
+  scanInstallLocations = () => {
+    const { dispatch } = this.props;
+    dispatch(actions.scanInstallLocations({}));
+  };
 
   installLocationTable() {
     const { installLocations } = this.state;

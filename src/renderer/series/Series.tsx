@@ -16,6 +16,7 @@ import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import styled from "renderer/styles";
 import { isEmpty, throttle } from "underscore";
+import { _ } from "renderer/t";
 
 export interface FetchRes<Item> {
   items: Item[];
@@ -240,7 +241,7 @@ export function makeSeries<
     renderEmpty(): JSX.Element {
       return (
         <EmptyState
-          bigText={["empty_state.nothing_to_see_here"]}
+          bigText={_("empty_state.nothing_to_see_here")}
           icon="neutral"
         />
       );

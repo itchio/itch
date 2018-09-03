@@ -11,6 +11,7 @@ import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { makeGameStripe } from "renderer/pages/common/GameStripe";
+import { _ } from "renderer/t";
 
 const OwnedGameStripe = makeGameStripe(messages.FetchProfileOwnedKeys);
 const InstalledGameStripe = makeGameStripe(messages.FetchCaves);
@@ -25,13 +26,13 @@ class LibraryPage extends React.PureComponent<Props> {
 
         <ItemList>
           <OwnedGameStripe
-            title={["sidebar.owned"]}
+            title={_("sidebar.owned")}
             href="itch://library/owned"
             params={{ profileId: profile.id }}
             getGame={this.ownedGetGame}
           />
           <InstalledGameStripe
-            title={["sidebar.installed"]}
+            title={_("sidebar.installed")}
             href="itch://library/installed"
             params={{ sortBy: "lastTouched" }}
             getGame={this.installedGetGame}

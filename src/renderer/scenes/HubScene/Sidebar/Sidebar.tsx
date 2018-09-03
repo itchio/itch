@@ -19,7 +19,7 @@ import {
 } from "renderer/scenes/HubScene/Sidebar/styles";
 import Tab from "renderer/scenes/HubScene/Sidebar/Tab";
 import styled, * as styles from "renderer/styles";
-import { T } from "renderer/t";
+import { T, _ } from "renderer/t";
 import { map } from "underscore";
 import { actions } from "common/actions";
 import { Dispatch, LocalizedString } from "common/types";
@@ -151,14 +151,14 @@ class Sidebar extends React.PureComponent<Props, State> {
             <IconButton
               icon="delete"
               id="sidebar-close-all-tabs"
-              hint={["sidebar.close_all_tabs"]}
+              hint={_("sidebar.close_all_tabs")}
               hintPosition="left"
               onClick={this.closeAllTabs}
             />
             <IconButton
               id="new-tab-icon"
               icon="plus"
-              hint={["sidebar.new_tab"]}
+              hint={_("sidebar.new_tab")}
               hintPosition="left"
               onClick={this.newTab}
             />

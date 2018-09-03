@@ -23,9 +23,9 @@ class AdvancedSettings extends React.PureComponent<Props> {
             <Icon icon="security" /> {formatPlatform(system.platform)}{" "}
             {formatArch(system.arch)}
           </div>
-          <p>
+          <div className="section">
             <ProxySettings />
-          </p>
+          </div>
           <div className="section">
             <span className="link" onClick={this.openAppLog}>
               {T(["preferences.advanced.open_app_log"])}

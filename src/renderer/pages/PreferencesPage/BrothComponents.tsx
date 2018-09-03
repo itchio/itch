@@ -8,16 +8,14 @@ import { T } from "renderer/t";
 
 class BrothComponents extends React.Component<Props> {
   render() {
-    const { dispatch, packageNames } = this.props;
+    const { packageNames } = this.props;
 
     return (
       <div className="section">
         <Icon icon="list" /> {T(["preferences.advanced.components"])}
         <span
           className="button"
-          onClick={() => {
-            dispatch(actions.checkForComponentUpdates({}));
-          }}
+          onClick={this.checkForUpdates}
           style={{
             marginLeft: "10px",
             borderBottom: "1px solid",
@@ -25,10 +23,17 @@ class BrothComponents extends React.Component<Props> {
         >
           {T(["menu.help.check_for_update"])}
         </span>
-        {packageNames.map(name => <BrothComponent name={name} />)}
+        {packageNames.map(name => (
+          <BrothComponent name={name} />
+        ))}
       </div>
     );
   }
+
+  checkForUpdates = () => {
+    const { dispatch } = this.props;
+    dispatch(actions.checkForComponentUpdates({}));
+  };
 }
 
 interface Props {

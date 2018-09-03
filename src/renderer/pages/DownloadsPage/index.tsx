@@ -19,7 +19,7 @@ import Row from "renderer/pages/DownloadsPage/Row";
 import { Title } from "renderer/pages/PageStyles/games";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
-import { T } from "renderer/t";
+import { T, _ } from "renderer/t";
 import { first, isEmpty, map, rest, size } from "underscore";
 
 const PauseResumeButton = styled(Button)`
@@ -90,10 +90,10 @@ class DownloadsPage extends React.PureComponent<Props> {
           <EmptyState
             className="no-active-downloads"
             icon="download"
-            bigText={["status.downloads.no_active_downloads"]}
-            smallText={["status.downloads.no_active_downloads_subtext"]}
+            bigText={_("status.downloads.no_active_downloads")}
+            smallText={_("status.downloads.no_active_downloads_subtext")}
             buttonIcon="earth"
-            buttonText={["status.downloads.find_games_button"]}
+            buttonText={_("status.downloads.find_games_button")}
             buttonAction={this.visitFeatured}
           />
         </DownloadsContentDiv>

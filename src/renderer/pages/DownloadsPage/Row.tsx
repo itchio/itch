@@ -33,7 +33,7 @@ import Chart from "renderer/pages/DownloadsPage/Chart";
 import { Title } from "renderer/pages/PageStyles/games";
 import * as styles from "renderer/styles";
 import styled, { css } from "renderer/styles";
-import { T } from "renderer/t";
+import { T, _ } from "renderer/t";
 
 const TitleCompact = styled(Title)`
   font-size: ${props => props.theme.fontSizes.larger};
@@ -295,7 +295,7 @@ class DownloadRow extends React.PureComponent<Props> {
         {showPrioritize ? (
           <IconButton
             big
-            hint={["grid.item.prioritize_download"]}
+            hint={_("grid.item.prioritize_download")}
             icon="caret-up"
             onClick={this.onPrioritize}
           />
@@ -309,7 +309,7 @@ class DownloadRow extends React.PureComponent<Props> {
           <IconButton
             big
             hintPosition="left"
-            hint={["grid.item.discard_download"]}
+            hint={_("grid.item.discard_download")}
             icon="cross"
             onClick={this.onDiscard}
           />
