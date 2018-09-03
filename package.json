@@ -134,6 +134,7 @@
     "react-container-dimensions": "^1.4.1",
     "react-hot-loader": "^3.0.0-beta.6",
     "react-lint": "^1.0.0",
+    "react-lint-service": "^1.0.0",
     "recursive-copy": "^2.0.9",
     "style-loader": "^0.21.0",
     "ts-loader": "^4.5.0",

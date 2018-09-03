@@ -35,11 +35,5 @@
     "markers": ["FIXME", "TODO", "XXX"],
     "folderExclude": ["node_modules"]
   },
-  "typescript.preferences.importModuleSpecifier": "non-relative",
-  "triggerTaskOnSave.tasks": {
-    "react-lint": [
-      "**/*.tsx"
-    ]
-  },
-  "triggerTaskOnSave.restart": true
+  "typescript.preferences.importModuleSpecifier": "non-relative"
 }

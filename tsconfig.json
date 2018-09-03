@@ -21,6 +21,11 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
 
-    "sourceMap": true
+    "sourceMap": true,
+    "plugins": [
+      {
+        "name": "react-lint-service",
+      }
+    ]
   }
 }
