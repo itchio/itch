@@ -366,16 +366,7 @@ class Modals extends React.PureComponent<Props, State> {
           </span>
           <Filler />
           {modal.unclosable ? null : (
-            <IconButton
-              icon="cross"
-              onClick={() =>
-                dispatch(
-                  actions.closeModal({
-                    wind: ambientWind(),
-                  })
-                )
-              }
-            />
+            <IconButton icon="cross" onClick={this.onCloseModal} />
           )}
         </HeaderDiv>
 
@@ -407,6 +398,15 @@ class Modals extends React.PureComponent<Props, State> {
       </ModalsDiv>
     );
   }
+
+  onCloseModal = () => {
+    const { dispatch } = this.props;
+    dispatch(
+      actions.closeModal({
+        wind: ambientWind(),
+      })
+    );
+  };
 
   onDebugClick = (e: React.MouseEvent<any>) => {
     if (e.shiftKey && e.ctrlKey) {

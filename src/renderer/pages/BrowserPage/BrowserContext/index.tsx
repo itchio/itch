@@ -31,13 +31,15 @@ class BrowserContext extends React.PureComponent<Props> {
         <FetchGame
           params={{ gameId }}
           sequence={sequence}
-          render={({ result }) => {
-            return <BrowserContextGame game={result.game} />;
-          }}
+          render={this.renderFetchContents}
         />
       </BrowserContextContainer>
     );
   }
+
+  renderFetchContents = FetchGame.renderCallback(({ result }) => {
+    return <BrowserContextGame game={result.game} />;
+  });
 }
 
 interface Props {

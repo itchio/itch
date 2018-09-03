@@ -217,10 +217,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
 
     return (
       <SendFeedbackDiv>
-        <Tabs
-          selectedIndex={tabIndex}
-          onSelect={tabIndex => this.setState({ tabIndex })}
-        >
+        <Tabs selectedIndex={tabIndex} onSelect={this.onTabSelected}>
           <TabList>
             <Tab>{T(["send_feedback.steps.your_message"])}</Tab>
             <Tab>{T(["send_feedback.steps.system_info"])}</Tab>
@@ -267,9 +264,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
               <input
                 type="checkbox"
                 checked={includeSystemInfo}
-                onChange={e => {
-                  this.setState({ includeSystemInfo: e.currentTarget.checked });
-                }}
+                onChange={this.onIncludeSystemInfo}
               />
               <span>{T(["send_feedback.consent.include_in_report"])}</span>
             </OurLabel>
@@ -313,7 +308,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           <Button
             icon={"arrow-left"}
             disabled={tabIndex <= 0}
-            onClick={() => this.setState({ tabIndex: tabIndex - 1 })}
+            onClick={this.onGoBack}
           >
             {T(["send_feedback.nav.previous"])}
           </Button>
@@ -321,7 +316,7 @@ class ReportIssue extends React.PureComponent<Props, State> {
           <Button
             icon={"arrow-right"}
             disabled={tabIndex >= 2}
-            onClick={() => this.setState({ tabIndex: tabIndex + 1 })}
+            onClick={this.onGoForward}
           >
             {T(["send_feedback.nav.next"])}
           </Button>
@@ -329,6 +324,14 @@ class ReportIssue extends React.PureComponent<Props, State> {
       </SendFeedbackDiv>
     );
   }
+
+  onTabSelected = tabIndex => this.setState({ tabIndex });
+  onGoBack = () => this.setState(state => ({ tabIndex: state.tabIndex - 1 }));
+  onGoForward = () =>
+    this.setState(state => ({ tabIndex: state.tabIndex + 1 }));
+  onIncludeSystemInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ includeSystemInfo: e.currentTarget.checked });
+  };
 
   renderUploading() {
     return (

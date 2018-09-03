@@ -30,13 +30,10 @@ interface GenericState<Result> {
   result: Result;
 }
 
-type RefreshFunc = () => void;
-
-interface ButlerCallerArgs<Params, Result> {
+export interface ButlerCallerArgs<Params, Result> {
   loading: boolean;
   error: Error;
   result: Result;
-  refresh: RefreshFunc;
 }
 
 export const LoadingStateDiv = styled.div`
@@ -162,7 +159,7 @@ const butlerCaller = <Params, Result>(
         }
       }
 
-      return render({ error, loading, result, refresh: this.queueFetch });
+      return render({ error, loading, result });
     }
 
     componentDidUpdate(prevProps: GenericProps<Params, Result>) {
@@ -175,6 +172,12 @@ const butlerCaller = <Params, Result>(
         this.queueFetch({ fresh: true });
         return;
       }
+    }
+
+    static renderCallback(
+      f: (args: ButlerCallerArgs<Params, Result>) => JSX.Element
+    ) {
+      return f;
     }
   }
   return Caller;

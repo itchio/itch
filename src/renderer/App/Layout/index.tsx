@@ -102,40 +102,37 @@ class Layout extends React.PureComponent<Props> {
   }
 
   renderReactHint(): JSX.Element {
-    const { intl } = this.props;
-    return (
-      <ReactHint
-        events
-        onRenderContent={(target, content) => {
-          let { rh } = target.dataset;
-          if (!rh) {
-            return null;
-          }
-
-          const firstChar = rh[0];
-          if (firstChar === "[" || firstChar === "{" || firstChar === `"`) {
-            try {
-              const obj = JSON.parse(rh);
-              if (Array.isArray(obj)) {
-                rh = TString(intl, obj);
-              } else if (obj.hasOwnProperty("date")) {
-                rh = formatDate(new Date(obj.date), intl.locale, DATE_FORMAT);
-              } else {
-                rh = obj;
-              }
-            } catch (e) {
-              // muffin
-            }
-          }
-          if (!rh) {
-            return null;
-          }
-
-          return <div className="react-hint__content">{rh}</div>;
-        }}
-      />
-    );
+    return <ReactHint events onRenderContent={this.renderReactHintContent} />;
   }
+
+  renderReactHintContent = (target, content) => {
+    const { intl } = this.props;
+    let { rh } = target.dataset;
+    if (!rh) {
+      return null;
+    }
+
+    const firstChar = rh[0];
+    if (firstChar === "[" || firstChar === "{" || firstChar === `"`) {
+      try {
+        const obj = JSON.parse(rh);
+        if (Array.isArray(obj)) {
+          rh = TString(intl, obj);
+        } else if (obj.hasOwnProperty("date")) {
+          rh = formatDate(new Date(obj.date), intl.locale, DATE_FORMAT);
+        } else {
+          rh = obj;
+        }
+      } catch (e) {
+        // muffin
+      }
+    }
+    if (!rh) {
+      return null;
+    }
+
+    return <div className="react-hint__content">{rh}</div>;
+  };
 }
 
 interface Props {

@@ -58,7 +58,7 @@
       "command": "npm",
       "isShellCommand": true,
       "args": ["run", "react-lint"],
-      "showOutput": "always",
+      "showOutput": "never",
       "problemMatcher": {
         "owner": "react-lint",
         "fileLocation": ["relative", "${workspaceRoot}"],
@@ -67,7 +67,7 @@
           "file": 1,
           "line": 2,
           "column": 3,
-          "message": 4,
+          "message": 4
         }
       }
     }
