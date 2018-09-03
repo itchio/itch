@@ -113,22 +113,12 @@ class LoginForm extends React.PureComponent<Props, State> {
         <Links>
           <Link
             label={T(["login.action.register"])}
-            onClick={() =>
-              dispatch(
-                actions.openInExternalBrowser({ url: urls.accountRegister })
-              )
-            }
+            onClick={this.openRegisterPage}
           />
           <span>{" · "}</span>
           <Link
             label={T(["login.action.reset_password"])}
-            onClick={() =>
-              dispatch(
-                actions.openInExternalBrowser({
-                  url: urls.accountForgotPassword,
-                })
-              )
-            }
+            onClick={this.openPasswordResetPage}
           />
           <span key="separator">{" · "}</span>
           <Link
@@ -140,6 +130,20 @@ class LoginForm extends React.PureComponent<Props, State> {
       </LoginFormDiv>
     );
   }
+
+  openRegisterPage = () => {
+    const { dispatch } = this.props;
+    dispatch(actions.openInExternalBrowser({ url: urls.accountRegister }));
+  };
+
+  openPasswordResetPage = () => {
+    const { dispatch } = this.props;
+    dispatch(
+      actions.openInExternalBrowser({
+        url: urls.accountForgotPassword,
+      })
+    );
+  };
 
   togglePasswordReveal = (ev: React.MouseEvent<HTMLElement>) => {
     ev.preventDefault();

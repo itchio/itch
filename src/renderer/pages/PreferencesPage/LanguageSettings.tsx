@@ -56,13 +56,7 @@ class LanguageSettings extends React.PureComponent<Props> {
             {downloading ? (
               <LoadingCircle progress={-1} />
             ) : (
-              <IconButton
-                icon="repeat"
-                onClick={e => {
-                  e.preventDefault();
-                  dispatch(actions.queueLocaleDownload({ lang }));
-                }}
-              />
+              <IconButton icon="repeat" onClick={this.queueLocaleDownload} />
             )}
           </Label>
         </div>
@@ -76,6 +70,12 @@ class LanguageSettings extends React.PureComponent<Props> {
       </>
     );
   }
+
+  queueLocaleDownload = (e: React.MouseEvent<any>) => {
+    const { dispatch, lang } = this.props;
+    e.preventDefault();
+    dispatch(actions.queueLocaleDownload({ lang }));
+  };
 
   onLanguageChange = (lang: string) => {
     const { dispatch } = this.props;

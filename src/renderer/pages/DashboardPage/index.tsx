@@ -47,38 +47,37 @@ class DashboardPage extends React.PureComponent<Props> {
               paidStatus,
             },
           }}
-          getRecord={pg => pg.game}
-          renderMainFilters={() => <SearchControl />}
-          renderExtraFilters={() => (
-            <SortsAndFilters>
-              <FilterGroup>
-                <SortOption sortBy="title" label={["sort_by.games.title"]} />
-                <SortOption sortBy="views" label={["sort_by.games.views"]} />
-                <SortOption
-                  sortBy="downloads"
-                  label={["sort_by.games.downloads"]}
-                />
-                <SortOption
-                  sortBy="purchases"
-                  label={["sort_by.games.purchases"]}
-                />
-              </FilterGroup>
-              <FilterSpacer />
-              {this.renderVisibilityFilter()}
-              <FilterSpacer />
-              {this.renderPaidStatusFilter()}
-            </SortsAndFilters>
-          )}
-          renderItemExtras={pg => (
-            <>
-              <ProfileGameStats pg={pg} />
-              <StandardMainAction game={pg.game} />
-            </>
-          )}
+          getRecord={this.getRecord}
+          renderMainFilters={this.renderMainFilters}
+          renderExtraFilters={this.renderExtraFilters}
+          renderItemExtras={this.renderItemExtras}
         />
       </Page>
     );
   }
+
+  getRecord = ProfileGameSeries.getRecordCallback(pg => pg.game);
+  renderMainFilters = () => <SearchControl />;
+  renderExtraFilters = () => (
+    <SortsAndFilters>
+      <FilterGroup>
+        <SortOption sortBy="title" label={["sort_by.games.title"]} />
+        <SortOption sortBy="views" label={["sort_by.games.views"]} />
+        <SortOption sortBy="downloads" label={["sort_by.games.downloads"]} />
+        <SortOption sortBy="purchases" label={["sort_by.games.purchases"]} />
+      </FilterGroup>
+      <FilterSpacer />
+      {this.renderVisibilityFilter()}
+      <FilterSpacer />
+      {this.renderPaidStatusFilter()}
+    </SortsAndFilters>
+  );
+  renderItemExtras = ProfileGameSeries.renderItemExtrasCallback(pg => (
+    <>
+      <ProfileGameStats pg={pg} />
+      <StandardMainAction game={pg.game} />
+    </>
+  ));
 
   renderPaidStatusFilter(): JSX.Element {
     return (

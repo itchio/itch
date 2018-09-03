@@ -5,10 +5,10 @@ import { ambientWind } from "common/util/navigation";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import { hook } from "renderer/hocs/hook";
-import { T } from "renderer/t";
 import BrothComponents from "renderer/pages/PreferencesPage/BrothComponents";
 import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
 import ProxySettings from "renderer/pages/PreferencesPage/ProxySettings";
+import { T } from "renderer/t";
 
 class AdvancedSettings extends React.PureComponent<Props> {
   render() {
@@ -27,29 +27,12 @@ class AdvancedSettings extends React.PureComponent<Props> {
             <ProxySettings />
           </p>
           <div className="section">
-            <span
-              className="link"
-              onClick={e => {
-                e.preventDefault();
-                dispatch(
-                  actions.navigate({ wind: "root", url: "itch://applog" })
-                );
-              }}
-            >
+            <span className="link" onClick={this.openAppLog}>
               {T(["preferences.advanced.open_app_log"])}
             </span>
           </div>
           <div className="section">
-            <span
-              className="link"
-              onClick={e => {
-                e.preventDefault();
-                dispatch(actions.checkForGameUpdates({}));
-                dispatch(
-                  actions.navigate({ wind: "root", url: "itch://downloads" })
-                );
-              }}
-            >
+            <span className="link" onClick={this.checkForGameUpdates}>
               {T(["preferences.advanced.check_game_updates"])}
             </span>
           </div>
@@ -57,14 +40,7 @@ class AdvancedSettings extends React.PureComponent<Props> {
             <span
               id="clear-browsing-data-link"
               className="link"
-              onClick={e => {
-                e.preventDefault();
-                dispatch(
-                  actions.clearBrowsingDataRequest({
-                    wind: ambientWind(),
-                  })
-                );
-              }}
+              onClick={this.clearBrowsingData}
             >
               {T(["preferences.advanced.clear_browsing_data"])}
             </span>
@@ -81,6 +57,29 @@ class AdvancedSettings extends React.PureComponent<Props> {
       </>
     );
   }
+
+  checkForGameUpdates = (e: React.MouseEvent<any>) => {
+    const { dispatch } = this.props;
+    e.preventDefault();
+    dispatch(actions.checkForGameUpdates({}));
+    dispatch(actions.navigate({ wind: "root", url: "itch://downloads" }));
+  };
+
+  openAppLog = (e: React.MouseEvent<any>) => {
+    const { dispatch } = this.props;
+    e.preventDefault();
+    dispatch(actions.navigate({ wind: "root", url: "itch://applog" }));
+  };
+
+  clearBrowsingData = (e: React.MouseEvent<any>) => {
+    const { dispatch } = this.props;
+    e.preventDefault();
+    dispatch(
+      actions.clearBrowsingDataRequest({
+        wind: ambientWind(),
+      })
+    );
+  };
 }
 
 interface Props {

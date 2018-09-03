@@ -10,20 +10,17 @@ class Checkbox extends React.PureComponent<Props> {
 
     return (
       <Label active={active}>
-        <input
-          type="checkbox"
-          checked={active}
-          onChange={e => {
-            dispatch(
-              actions.updatePreferences({ [name]: e.currentTarget.checked })
-            );
-          }}
-        />
+        <input type="checkbox" checked={active} onChange={this.onChange} />
         <span> {label} </span>
         {children}
       </Label>
     );
   }
+
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { dispatch } = this.props;
+    dispatch(actions.updatePreferences({ [name]: e.currentTarget.checked }));
+  };
 }
 
 interface Props {

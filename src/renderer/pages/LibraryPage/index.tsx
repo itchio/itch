@@ -28,18 +28,21 @@ class LibraryPage extends React.PureComponent<Props> {
             title={["sidebar.owned"]}
             href="itch://library/owned"
             params={{ profileId: profile.id }}
-            getGame={x => x.game}
+            getGame={this.ownedGetGame}
           />
           <InstalledGameStripe
             title={["sidebar.installed"]}
             href="itch://library/installed"
             params={{ sortBy: "lastTouched" }}
-            getGame={x => x.game}
+            getGame={this.installedGetGame}
           />
         </ItemList>
       </Page>
     );
   }
+
+  ownedGetGame = OwnedGameStripe.getGameCallback(x => x.game);
+  installedGetGame = InstalledGameStripe.getGameCallback(x => x.game);
 
   componentDidMount() {
     dispatchTabPageUpdate(this.props, { label: ["sidebar.library"] });
