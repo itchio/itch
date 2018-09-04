@@ -90,18 +90,20 @@ export const StandardGameCover = ({
   showInfo,
   className,
   children,
+  showGifMarker = true,
   ...restProps
 }: {
   game: Game;
   showInfo?: boolean;
   className?: string;
+  showGifMarker?: boolean;
   children?: JSX.Element | JSX.Element[];
 }) => (
   <CoverBox {...restProps} className={classNames(className, { showInfo })}>
     {game ? (
       <>
         <a href={urlForGame(game.id)}>
-          <GameCover game={game} showGifMarker={!showInfo} />
+          <GameCover game={game} showGifMarker={!showInfo && showGifMarker} />
           <StandardSaleRibbon game={game} />
           {showInfo ? (
             <>

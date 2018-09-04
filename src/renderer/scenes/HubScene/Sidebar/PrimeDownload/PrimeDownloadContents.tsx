@@ -44,6 +44,7 @@ const PrimeDownloadDiv = styled.div`
 const Overlay = styled.div`
   background: rgba(0, 0, 0, 0.8);
   position: absolute;
+  pointer-events: none;
 
   left: 0;
   right: 0;
@@ -74,7 +75,7 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
         onClick={this.onMainClick}
         onContextMenu={this.onContextMenu}
       >
-        <GameCover game={game}>
+        <GameCover game={game} showGifMarker={false}>
           <Overlay>
             <GameTitle title={game.title} />
             {this.renderProgress()}
