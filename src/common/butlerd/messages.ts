@@ -2728,6 +2728,11 @@ export interface InstallCancelParams {
 export interface UninstallPerformParams {
   /** The cave to uninstall */
   caveId: string;
+  /**
+   * If true, don't attempt to run any uninstallers, just
+   * remove the DB record and burn the install folder to the ground.
+   */
+  hard?: boolean;
 }
 
 /**

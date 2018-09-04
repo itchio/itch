@@ -61,6 +61,14 @@ export default function(watcher: Watcher) {
           // modal was closed
           return;
         }
+
+        logger.info(`Should remove entry anyway, performing hard uninstall`);
+        try {
+          await mcall(messages.UninstallPerform, { caveId, hard: true });
+          store.dispatch(actions.uninstallEnded({}));
+        } catch (e) {
+          logger.error(`Well, even hard uninstall didn't work: ${e.stack}`);
+        }
       },
     });
   });
