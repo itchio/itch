@@ -25,6 +25,7 @@ export default function(watcher: Watcher) {
     asTask({
       name: "launch",
       gameId: game.id,
+      caveId: cave.id,
       store,
       work: async (ctx, logger) => {
         await performLaunch(ctx, logger, cave, game);

@@ -17,7 +17,7 @@ export default function(watcher: Watcher) {
               label: ["prompt.action.force_close"],
               id: "modal-force-close",
               action: actions.forceCloseGame({ gameId: game.id }),
-              icon: "cross",
+              icon: "stop",
             },
             "nevermind",
           ],

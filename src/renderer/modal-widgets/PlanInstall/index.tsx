@@ -298,7 +298,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
       const { game } = this.state;
       const { pickedInstallLocationId, pickedUploadId, uploads } = this.state;
       const upload = findWhere(uploads, { id: pickedUploadId });
-      logger.info(`Queueing install for ${game.url}...`);
+      logger.info(`Queuing install for ${game.url}...`);
       const memlog = new memory.WritableStream();
       const memlogger = makeLogger({ customOut: memlog });
       try {

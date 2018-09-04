@@ -20,7 +20,7 @@ import { lighten } from "polished";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Cover from "renderer/basics/Cover";
-import DownloadProgress from "renderer/basics/DownloadProgress";
+import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import MainAction from "renderer/basics/MainAction";
@@ -300,20 +300,19 @@ class DownloadRow extends React.PureComponent<Props> {
             onClick={this.onPrioritize}
           />
         ) : null}
+        <IconButton
+          big
+          hintPosition="left"
+          hint={_("grid.item.discard_download")}
+          icon="cross"
+          onClick={this.onDiscard}
+        />
         {showMainAction ? (
           <>
             <MainAction game={item.game} status={status} caveId={item.caveId} />
             <Spacer />
           </>
-        ) : (
-          <IconButton
-            big
-            hintPosition="left"
-            hint={_("grid.item.discard_download")}
-            icon="cross"
-            onClick={this.onDiscard}
-          />
-        )}
+        ) : null}
       </Controls>
     );
   }
@@ -368,7 +367,7 @@ class DownloadRow extends React.PureComponent<Props> {
             {!operation.paused && first && eta >= 0 && bps ? (
               <>
                 <Spacer />
-                <DownloadProgress
+                <DownloadProgressSpan
                   eta={eta}
                   bps={bps}
                   downloadsPaused={operation.paused}
@@ -493,16 +492,12 @@ interface Props extends HoverProps {
   speeds: number[];
 
   downloadsPaused: boolean;
-  tasksByGameId: {
-    [gameId: string]: Task[];
-  };
 }
 
 export default withHover(
   hookWithProps(DownloadRow)(map => ({
     speeds: map(rs => rs.downloads.speeds),
     downloadsPaused: map(rs => rs.downloads.paused),
-    tasksByGameId: map(rs => rs.tasks.tasksByGameId),
     status: map((rs, props) =>
       getGameStatus(rs, props.item.game, props.item.caveId)
     ),

@@ -36,6 +36,8 @@ const NavigationBarDiv = styled.div`
   padding-right: 4px;
 
   flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
   position: relative;
 
   &.loading {

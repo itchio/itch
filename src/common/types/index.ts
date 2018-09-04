@@ -494,8 +494,11 @@ export interface Task {
   /** progress in the [0, 1] interval */
   progress: number;
 
-  /** id of the game this task is for (which game we're installing, etc.) */
+  /** id of the game this task is for (which game we're launching, etc.) */
   gameId: number;
+
+  /** id of the cave this task is for */
+  caveId: string;
 
   /** bytes per second at which task is being processed, if applicable */
   bps?: number;
@@ -808,12 +811,7 @@ export interface TabDataSave {
   currentIndex: number;
 }
 
-export type TaskName =
-  | "install-queue"
-  | "install"
-  | "uninstall"
-  | "configure"
-  | "launch";
+export type TaskName = "install-queue" | "install" | "uninstall" | "launch";
 
 export type AutoUpdaterStart = () => Promise<boolean>;
 

@@ -10,6 +10,7 @@ export const FiltersContainerDiv = styled.section`
   align-items: center;
   padding-bottom: 2px;
   width: 100%;
+  overflow: hidden;
   background: ${props => props.theme.sidebarBackground};
   box-shadow: 0 4px 8px -4px ${props => props.theme.sidebarBackground};
   flex-shrink: 0;

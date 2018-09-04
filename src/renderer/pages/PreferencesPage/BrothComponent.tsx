@@ -1,6 +1,6 @@
 import { PackageState } from "common/types";
 import React from "react";
-import DownloadProgress from "renderer/basics/DownloadProgress";
+import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import Icon from "renderer/basics/Icon";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { hookWithProps } from "renderer/hocs/hook";
@@ -58,7 +58,7 @@ class BrothComponent extends React.PureComponent<Props> {
           <Spacer />
           <LoadingCircle progress={progressInfo.progress} />
           <Spacer />
-          <DownloadProgress eta={eta} bps={bps} downloadsPaused={false} />
+          <DownloadProgressSpan eta={eta} bps={bps} downloadsPaused={false} />
         </>
       );
     }

@@ -89,11 +89,13 @@ export const StandardGameCover = ({
   game,
   showInfo,
   className,
+  children,
   ...restProps
 }: {
   game: Game;
   showInfo?: boolean;
   className?: string;
+  children?: JSX.Element | JSX.Element[];
 }) => (
   <CoverBox {...restProps} className={classNames(className, { showInfo })}>
     {game ? (
@@ -118,6 +120,7 @@ export const StandardGameCover = ({
         </a>
       </>
     ) : null}
+    {children}
   </CoverBox>
 );
 

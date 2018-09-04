@@ -21,6 +21,7 @@ export default function(watcher: Watcher) {
     await asTask({
       name: "uninstall",
       gameId: cave.game.id,
+      caveId,
       store,
       work: async (ctx, logger) => {
         await mcall(messages.UninstallPerform, { caveId }, convo => {

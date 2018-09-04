@@ -14,6 +14,8 @@ const IconButtonDiv = styled.div`
   align-items: center;
   justify-content: center;
 
+  flex-shrink: 0;
+
   width: 30px;
   height: 30px;
 
@@ -43,6 +45,12 @@ const IconButtonDiv = styled.div`
     width: 48px;
     height: 48px;
   }
+
+  &.enormous {
+    font-size: ${props => props.theme.fontSizes.enormous};
+    width: 48px;
+    height: 48px;
+  }
 `;
 
 class IconButton extends React.PureComponent<Props> {
@@ -51,6 +59,7 @@ class IconButton extends React.PureComponent<Props> {
       className,
       big,
       huge,
+      enormous,
       emphasized,
       disabled,
       icon,
@@ -61,7 +70,13 @@ class IconButton extends React.PureComponent<Props> {
 
     return (
       <IconButtonDiv
-        className={classNames(className, { disabled, big, huge, emphasized })}
+        className={classNames(className, {
+          disabled,
+          big,
+          huge,
+          enormous,
+          emphasized,
+        })}
         data-rh={hint ? JSON.stringify(hint) : null}
         data-rh-at={hintPosition}
         {...restProps}
@@ -85,6 +100,7 @@ interface Props {
   onContextMenu?: React.MouseEventHandler<HTMLElement>;
   big?: boolean;
   huge?: boolean;
+  enormous?: boolean;
   emphasized?: boolean;
 }
 

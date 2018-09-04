@@ -19,6 +19,7 @@ interface AsTaskOpts {
   store: Store;
   name: TaskName;
   gameId: number;
+  caveId: string;
 
   /** Where the task actually performs its duty */
   work: (ctx: Context, logger: Logger) => Promise<void>;
@@ -32,7 +33,7 @@ interface AsTaskOpts {
 async function asTask(opts: AsTaskOpts) {
   const id = uuid();
 
-  const { store, name, gameId } = opts;
+  const { store, name, gameId, caveId } = opts;
 
   const memlog = new memory.WritableStream();
   const logger = makeLogger({ customOut: memlog });
@@ -42,6 +43,7 @@ async function asTask(opts: AsTaskOpts) {
       id,
       name,
       gameId,
+      caveId,
       startedAt: Date.now(),
     })
   );

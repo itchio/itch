@@ -7,7 +7,7 @@ import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { map } from "underscore";
 import { ModalWidgetProps } from "common/modals";
-import DownloadProgress from "renderer/basics/DownloadProgress";
+import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 
 class PrereqsState extends React.PureComponent<Props> {
@@ -40,7 +40,7 @@ class PrereqsState extends React.PureComponent<Props> {
                   <div className="task-name">{v.fullName}</div>
                   <div className="task-status">
                     {v.status === "downloading" && v.progress ? (
-                      <DownloadProgress
+                      <DownloadProgressSpan
                         eta={v.eta}
                         bps={v.bps}
                         downloadsPaused={false}

@@ -34,14 +34,22 @@ const CircleContainer = styled.span`
       height: 18px;
     }
   }
+
+  &.huge {
+    &,
+    & > svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
 `;
 
 class LoadingCircle extends React.PureComponent<LoadingCircleProps> {
   render() {
-    const { className, progress, bare, wide } = this.props;
+    const { className, progress, bare, wide, huge } = this.props;
 
     return (
-      <CircleContainer className={classNames(className, { bare, wide })}>
+      <CircleContainer className={classNames(className, { bare, wide, huge })}>
         <Circle
           percent={progress > 0 ? progress * 100.0 : 100 / 3}
           trailWidth={3}
@@ -61,4 +69,5 @@ interface LoadingCircleProps {
   progress: number;
   bare?: boolean;
   wide?: boolean;
+  huge?: boolean;
 }

@@ -2,7 +2,7 @@ import React from "react";
 import styled, * as styles from "renderer/styles";
 
 const StyledInput = styled.input`
-  ${styles.searchInput()};
+  ${styles.searchInput};
   width: 20em;
   padding-left: 10px;
   margin-left: 1.4em;

@@ -310,7 +310,7 @@ export const heavyInput = css`
   }
 `;
 
-export const searchInput = () => css`
+export const searchInput = css`
   color: ${props => props.theme.secondaryTextHover};
 
   ::-webkit-input-placeholder {
@@ -325,7 +325,7 @@ export const searchInput = () => css`
   font-size: 14px;
 `;
 
-export const searchIcon = () => css`
+export const searchIcon = css`
   position: absolute;
   left: 10px;
   bottom: 50%;

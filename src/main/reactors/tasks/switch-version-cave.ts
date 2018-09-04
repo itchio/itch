@@ -14,6 +14,7 @@ export default function(watcher: Watcher) {
       store,
       name: "install",
       gameId: cave.game.id,
+      caveId: cave.id,
       work: async (ctx, logger) => {
         await mcall(
           messages.InstallVersionSwitchQueue,

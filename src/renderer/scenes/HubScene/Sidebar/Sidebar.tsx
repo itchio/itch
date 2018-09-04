@@ -24,6 +24,7 @@ import { map } from "underscore";
 import { actions } from "common/actions";
 import { Dispatch, LocalizedString } from "common/types";
 import equal from "react-fast-compare";
+import PrimeDownload from "renderer/scenes/HubScene/Sidebar/PrimeDownload";
 
 const SidebarDiv = styled.div`
   width: 240px;
@@ -199,6 +200,7 @@ class Sidebar extends React.PureComponent<Props, State> {
     return (
       <>
         <div style={{ flexGrow: 1 }} />
+        <PrimeDownload />
         <SidebarItems className="no-shrink">
           {this.renderLink("itch://downloads", "download", [
             "sidebar.downloads",

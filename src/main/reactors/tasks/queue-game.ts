@@ -83,6 +83,7 @@ async function queueInstall(
   await asTask({
     name: "install-queue",
     gameId: game.id,
+    caveId: null,
     store,
     work: async (ctx, logger) => {
       await performInstallQueue({ store, logger, game, upload, build });

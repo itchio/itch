@@ -237,6 +237,8 @@ class SecretSettings extends React.PureComponent<Props> {
         versionPrefix: butlerState.versionPrefix,
       })
     );
+    dispatch(actions.closeModal({ wind: "root" }));
+    dispatch(actions.statusMessage({ message: "Butler restarted!" }));
   };
 
   toggleReduxLogging = () => {

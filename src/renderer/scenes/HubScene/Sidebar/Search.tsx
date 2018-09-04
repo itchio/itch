@@ -39,7 +39,7 @@ const SearchContainer = styled.div`
   }
 
   input[type="search"] {
-    ${styles.searchInput()} // mixin!
+    ${styles.searchInput} // mixin!
     width: 100%;
     margin-left: 4px;
     height: 32px;
@@ -51,7 +51,7 @@ const SearchContainer = styled.div`
   }
 
   .search-icon {
-    ${styles.searchIcon()};
+    ${styles.searchIcon};
     left: 10px;
     font-size: inherit;
   }
@@ -104,6 +104,7 @@ class Search extends React.PureComponent<Props, State> {
       this.setState({
         games: [],
         example: pickExample(),
+        loading: false,
       });
       return;
     }
