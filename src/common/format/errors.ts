@@ -1,7 +1,7 @@
 import { asRequestError } from "common/butlerd/utils";
 import { LocalizedString } from "common/types";
 import { RequestError } from "butlerd";
-import { Download } from "common/butlerd/messages";
+import { Download, InstallPlanInfo } from "common/butlerd/messages";
 import { first } from "underscore";
 
 export function formatError(
@@ -39,6 +39,26 @@ export function formatError(
 }
 
 export function getDownloadError(item: Download): RequestError {
+  return getButlerdErrorFromTuple(item);
+}
+
+export function getInstallPlanInfoError(item: InstallPlanInfo): RequestError {
+  return getButlerdErrorFromTuple(item);
+}
+
+interface ButlerdErrorTuple {
+  error: string;
+  errorMessage: string;
+  errorCode: number;
+}
+
+export function getButlerdErrorFromTuple(
+  item: ButlerdErrorTuple
+): RequestError {
+  if (!item.errorMessage) {
+    return null;
+  }
+
   let rawError = new Error(item.errorMessage) as RequestError;
   rawError.stack = item.error;
   rawError.rpcError = {
