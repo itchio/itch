@@ -25,6 +25,7 @@ const EnormousIcon = styled(Icon)`
 
 const GameCover = styled(StandardGameCover)`
   position: relative;
+  pointer-events: none;
 
   overflow: hidden;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
@@ -44,7 +45,6 @@ const PrimeDownloadDiv = styled.div`
 const Overlay = styled.div`
   background: rgba(0, 0, 0, 0.8);
   position: absolute;
-  pointer-events: none;
 
   left: 0;
   right: 0;

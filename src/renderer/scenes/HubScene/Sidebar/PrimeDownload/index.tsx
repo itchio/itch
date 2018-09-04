@@ -1,16 +1,13 @@
-import { first } from "underscore";
 import { messages } from "common/butlerd";
 import { Download, DownloadProgress } from "common/butlerd/messages";
-import { Dispatch, DownloadsState, Task } from "common/types";
-import {
-  getActiveDownload,
-  getFinishedDownloads,
-} from "main/reactors/downloads/getters";
+import { Dispatch, Task } from "common/types";
+import { getActiveDownload } from "main/reactors/downloads/getters";
 import { getActiveTask } from "main/reactors/tasks/getters";
 import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import PrimeDownloadContents from "renderer/scenes/HubScene/Sidebar/PrimeDownload/PrimeDownloadContents";
+import { first } from "underscore";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 const FetchCaves = butlerCaller(messages.FetchCaves);
