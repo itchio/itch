@@ -6,7 +6,7 @@ import Label from "renderer/pages/PreferencesPage/Label";
 
 class Checkbox extends React.PureComponent<Props> {
   render() {
-    const { name, active, children, dispatch, label } = this.props;
+    const { active, children, label } = this.props;
 
     return (
       <Label active={active}>
@@ -18,7 +18,7 @@ class Checkbox extends React.PureComponent<Props> {
   }
 
   onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { dispatch } = this.props;
+    const { name, dispatch } = this.props;
     dispatch(actions.updatePreferences({ [name]: e.currentTarget.checked }));
   };
 }
