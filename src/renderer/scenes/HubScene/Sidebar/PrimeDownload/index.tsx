@@ -97,7 +97,6 @@ interface Props {
   dispatch: Dispatch;
   download: Download;
   progress: DownloadProgress;
-  downloadsPaused: boolean;
 }
 
 export default hook(map => ({
