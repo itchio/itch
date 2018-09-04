@@ -1,7 +1,6 @@
 import classNames from "classnames";
-import memory from "memory-streams";
 import { actions } from "common/actions";
-import { messages, hookLogging } from "common/butlerd";
+import { hookLogging, messages } from "common/butlerd";
 import {
   DownloadReason,
   Game,
@@ -9,12 +8,17 @@ import {
   InstallPlanInfo,
   Upload,
 } from "common/butlerd/messages";
+import { formatError } from "common/format/errors";
 import { fileSize } from "common/format/filesize";
 import { formatUploadTitle } from "common/format/upload";
-import { ModalWidgetProps, modals } from "common/modals";
+import { modals, ModalWidgetProps } from "common/modals";
 import { PlanInstallParams, PlanInstallResponse } from "common/modals/types";
 import { Dispatch } from "common/types";
+import { ambientWind } from "common/util/navigation";
+import { makeLogger } from "main/logger";
+import memory from "memory-streams";
 import React from "react";
+import { InjectedIntl } from "react-intl";
 import Button from "renderer/basics/Button";
 import Filler from "renderer/basics/Filler";
 import Icon from "renderer/basics/Icon";
@@ -24,6 +28,7 @@ import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
+import { withIntl } from "renderer/hocs/withIntl";
 import { rendererLogger } from "renderer/logger";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
@@ -33,12 +38,6 @@ import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import styled from "renderer/styles";
 import { T, TString } from "renderer/t";
 import { findWhere } from "underscore";
-import { promisedModal } from "main/reactors/modals";
-import { ambientWind } from "common/util/navigation";
-import { makeLogger } from "main/logger";
-import { formatError } from "common/format/errors";
-import { withIntl } from "renderer/hocs/withIntl";
-import { InjectedIntl } from "react-intl";
 
 const logger = rendererLogger.child(__filename);
 
@@ -313,6 +312,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
           },
           convo => {
             hookLogging(convo, memlogger);
+            convo.on(messages.ExternalUploadsAreBad, async () => {
+              return { whatever: true };
+            });
           }
         );
         memlogger.info(`Queued!`);
