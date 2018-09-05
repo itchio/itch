@@ -48,19 +48,16 @@ export function getBrowserViewToShow(store: Store, wind: string): BrowserView {
 
   if (!rs.profile.profile) {
     // don't show browser views if logged out
-    console.log(`logged out, not showing`);
     return null;
   }
 
   const ws = rs.winds[wind];
   if (!isEmpty(ws.modals)) {
     // don't show browser view again as long as there are modals
-    console.log(`has modals, not showing`);
     return null;
   }
   if (rs.ui.search.open) {
     // don't show browser view again as long as search is open
-    console.log(`search open, not showing`);
     return null;
   }
 
