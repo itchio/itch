@@ -64,23 +64,33 @@ export function hookWebContentsContextMenu(
     ];
 
     if (props.linkURL && props.mediaType === "none") {
-      menuTpl = [
-        {
-          type: "separator",
-        },
-        {
-          id: "openInNewTab",
-          label: intl.formatMessage({ id: "web.context_menu.open_in_new_tab" }),
-          click() {
-            store.dispatch(
-              actions.navigate({
-                wind,
-                url: props.linkURL,
-                background: true,
-              })
-            );
+      menuTpl = [];
+      if (store.getState().preferences.enableTabs) {
+        menuTpl = [
+          ...menuTpl,
+          {
+            type: "separator",
           },
-        },
+          {
+            id: "openInNewTab",
+            label: intl.formatMessage({
+              id: "web.context_menu.open_in_new_tab",
+            }),
+            click() {
+              store.dispatch(
+                actions.navigate({
+                  wind,
+                  url: props.linkURL,
+                  background: true,
+                })
+              );
+            },
+          },
+        ];
+      }
+
+      menuTpl = [
+        ...menuTpl,
         {
           type: "separator",
         },
