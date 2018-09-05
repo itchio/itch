@@ -25,6 +25,8 @@ import {
   SwitchVersionCaveResponse,
   TwoFactorInputParams,
   TwoFactorInputResponse,
+  ConfirmQuitParams,
+  ConfirmQuitResponse,
 } from "common/modals/types";
 import { Action, Modal, ModalBase, ModalUpdate } from "common/types";
 import uuid from "common/util/uuid";
@@ -148,4 +150,6 @@ export const modals = wireWidgets({
   adminWipeBlessing: widget<{}, {}>(),
 
   naked: widget<null, void>(),
+
+  confirmQuit: widget<ConfirmQuitParams, ConfirmQuitResponse>(),
 });

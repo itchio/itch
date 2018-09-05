@@ -32,6 +32,9 @@ import { registerElectronSession } from "butlerd";
 import { partitionForApp } from "common/util/partition-for-user";
 import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
 import { registerItchProtocol } from "main/net/register-itch-protocol";
+import { promisedModal } from "main/reactors/modals";
+import { modals } from "common/modals";
+import { Game } from "common/butlerd/messages";
 
 const logger = mainLogger.child(__filename);
 let dispatchedBoot = false;
@@ -338,6 +341,44 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.quit, async (store, action) => {
+    const { tasks } = store.getState().tasks;
+    let runningGameIds: number[] = [];
+    for (const taskId of Object.keys(tasks)) {
+      const task = tasks[taskId];
+      if (task.name === "launch") {
+        runningGameIds.push(task.gameId);
+      }
+    }
+
+    if (runningGameIds.length > 0) {
+      const res = await promisedModal(
+        store,
+        modals.confirmQuit.make({
+          wind: "root",
+          title: ["prompt.confirm_quit.title"],
+          message: ["prompt.confirm_quit.message"],
+          buttons: [
+            {
+              label: ["prompt.action.quit_and_close_all"],
+              action: actions.modalResponse({}),
+            },
+            "cancel",
+          ],
+          widgetParams: {
+            gameIds: runningGameIds,
+          },
+        })
+      );
+
+      if (!res) {
+        return;
+      }
+    }
+
+    store.dispatch(actions.performQuit({}));
+  });
+
+  watcher.on(actions.performQuit, async (store, action) => {
     app.exit(0);
   });
 

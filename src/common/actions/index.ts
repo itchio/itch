@@ -482,6 +482,7 @@ export const actions = wireActions({
   checkForComponentUpdates: action<{}>(),
 
   quit: action<{}>(),
+  performQuit: action<{}>(),
   quitWhenMain: action<{}>(),
 
   // locales

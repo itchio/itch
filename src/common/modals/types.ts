@@ -140,3 +140,10 @@ export interface ClearBrowsingDataResponse {
   /** whether to clear cache */
   cache?: boolean;
 }
+
+//---------------------
+
+export interface ConfirmQuitParams {
+  gameIds: number[];
+}
+export interface ConfirmQuitResponse {}

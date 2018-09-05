@@ -53,6 +53,10 @@ const TwoFactorInput = Loadable({
   loader: () => import("renderer/modal-widgets/TwoFactorInput"),
   loading: () => null,
 });
+const ConfirmQuit = Loadable({
+  loader: () => import("renderer/modal-widgets/ConfirmQuit"),
+  loading: () => null,
+});
 
 type ModalRegistry = typeof modals;
 
@@ -79,6 +83,7 @@ export const modalWidgets: ModalWidgetRegistry = {
   secretSettings: SecretSettings,
   showError: ShowError,
   twoFactorInput: TwoFactorInput,
+  confirmQuit: ConfirmQuit,
 
   // dummies
   adminWipeBlessing: null,
