@@ -824,27 +824,7 @@ export interface WindSpec {
   role: WindRole;
 }
 
-export interface BrowserViewMetrics {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-}
-
 export type WindRole = "main" | "secondary";
-
-export interface SetBrowserScreenshot {
-  tab: string;
-  bitmap: Uint8Array;
-  size: {
-    width: number;
-    height: number;
-  };
-}
-
-export interface ClearBrowserScreenshot {
-  tab: string;
-}
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export type Subtract<T, K> = Omit<T, keyof K>;

@@ -1,6 +1,9 @@
 import { Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
-import { formatUploadTitleFancy } from "common/format/upload";
+import {
+  formatUploadTitleFancy,
+  formatUploadTitle,
+} from "common/format/upload";
 import { css } from "emotion";
 import React from "react";
 import { SelectComponents } from "react-select/lib/components";
@@ -21,7 +24,7 @@ const UploadValueContents = (props: { upload: Upload }) => {
     <SelectValueDiv>
       <UploadIcon upload={u} />
       <div className="spacer" />
-      <div className="title" title={formatUploadTitleFancy(u)}>
+      <div className="title" title={formatUploadTitle(u)}>
         {formatUploadTitleFancy(u)}
       </div>
       <div className="spacer" />

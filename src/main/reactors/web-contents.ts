@@ -1,33 +1,19 @@
 import { actions } from "common/actions";
+import { ITCH_URL_RE } from "common/constants/urls";
 import { Space } from "common/helpers/space";
 import { Store, TabPage } from "common/types";
-import { partitionForUser } from "common/util/partition-for-user";
 import { Watcher } from "common/util/watcher";
-import {
-  BrowserView,
-  BrowserWindow,
-  session,
-  WebContents,
-  webContents,
-} from "electron";
+import { BrowserWindow, WebContents, webContents } from "electron";
 import { mainLogger } from "main/logger";
-import { registerItchProtocol } from "main/net/register-itch-protocol";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
-import {
-  getBrowserView,
-  storeBrowserView,
-} from "main/reactors/web-contents/browser-view-state";
-import {
-  destroyBrowserView,
-  hideBrowserView,
-  setBrowserViewFullscreen,
-  showBrowserView,
-} from "main/reactors/web-contents/browser-view-utils";
 import { parseWellKnownUrl } from "main/reactors/web-contents/parse-well-known-url";
-import { getNativeState, getNativeWindow } from "main/reactors/winds";
-import { isEmpty } from "underscore";
-import { ITCH_URL_RE } from "common/constants/urls";
+import {
+  forgetWebContents,
+  getWebContents,
+  storeWebContents,
+} from "main/reactors/web-contents/web-contents-state";
+import { getNativeWindow } from "main/reactors/winds";
 
 const logger = mainLogger.child(__filename);
 
@@ -48,9 +34,9 @@ function withWebContents<T>(
   tab: string,
   cb: WebContentsCallback<T>
 ): T | null {
-  const bv = getBrowserView(wind, tab);
-  if (bv && bv.webContents && !bv.webContents.isDestroyed()) {
-    return cb(bv.webContents as ExtendedWebContents);
+  const wc = getWebContents(wind, tab);
+  if (wc && !wc.isDestroyed()) {
+    return cb(wc as ExtendedWebContents);
   }
   return null;
 }
@@ -67,93 +53,28 @@ export default function(watcher: Watcher) {
     const { wind, htmlFullscreen } = action.payload;
 
     if (htmlFullscreen) {
-      setBrowserViewFullscreen(store, wind);
+      logger.warn(`fullscreen: reimplement`);
     }
   });
 
-  watcher.on(actions.tabGotWebContentsMetrics, async (store, action) => {
-    const { initialURL, wind, tab, metrics } = action.payload;
+  watcher.on(actions.tabGotWebContents, async (store, action) => {
+    const { wind, tab, webContentsId } = action.payload;
     const rs = store.getState();
-    const bv = getBrowserView(wind, tab);
+    const initialURL = rs.winds[wind].tabInstances[tab].location.url;
 
-    if (bv) {
-      const ns = getNativeState(rs, wind);
-      if (ns.htmlFullscreen) {
-        setBrowserViewFullscreen(store, wind);
-      } else {
-        bv.setBounds({
-          width: metrics.width,
-          height: metrics.height,
-          x: metrics.left,
-          y: metrics.top,
-        });
-      }
-    } else {
-      const userId = rs.profile.profile.id;
-      const partition = partitionForUser(String(userId));
-      const customSession = session.fromPartition(partition, { cache: true });
-      registerItchProtocol(customSession);
+    const wc = webContents.fromId(webContentsId);
+    storeWebContents(wind, tab, wc);
 
-      const bv = new BrowserView({
-        webPreferences: {
-          nodeIntegration: false,
-          session: customSession,
-        },
-      });
-      storeBrowserView(wind, tab, bv);
-      bv.setBounds({
-        width: metrics.width,
-        height: metrics.height,
-        x: metrics.left,
-        y: metrics.top,
-      });
-
-      showBrowserView(store, wind);
-
-      logger.debug(`Loading url '${initialURL}'`);
-      await hookWebContents(
-        store,
-        wind,
-        tab,
-        bv.webContents as ExtendedWebContents
-      );
-      loadURL(bv.webContents, initialURL);
-    }
+    logger.debug(`Loading url '${initialURL}'`);
+    await hookWebContents(store, wind, tab, wc as ExtendedWebContents);
+    loadURL(wc, initialURL);
   });
 
   watcher.on(actions.tabLosingWebContents, async (store, action) => {
     const { wind, tab } = action.payload;
     logger.debug(`Tab ${tab} losing web contents!`);
 
-    destroyBrowserView(store, wind, tab);
-  });
-
-  watcher.on(actions.tabFocused, async (store, action) => {
-    const { wind } = action.payload;
-    showBrowserView(store, wind);
-  });
-
-  watcher.on(actions.openModal, async (store, action) => {
-    const { wind } = action.payload;
-    hideBrowserView(store, wind);
-  });
-
-  watcher.on(actions.modalClosed, async (store, action) => {
-    const { wind } = action.payload;
-    if (!isEmpty(store.getState().winds[wind].modals)) {
-      return;
-    }
-    showBrowserView(store, wind);
-  });
-
-  watcher.on(actions.searchVisibilityChanged, async (store, action) => {
-    const { open } = action.payload;
-    const wind = "root";
-    if (open) {
-      hideBrowserView(store, wind);
-    } else {
-      showBrowserView(store, wind);
-    }
+    forgetWebContents(wind, tab);
   });
 
   watcher.on(actions.analyzePage, async (store, action) => {
@@ -595,7 +516,7 @@ async function hookWebContents(
     //     call webContents.{goBack,goForward,goToOffset}), or it can be http-level
     //     navigation (in which case Electron's navigation controller restarts the
     //     renderer process anyway - because "just using Chrome's navigation controller"
-    //     apparently broke nodeIntegration (which we don't use for BrowserViews anyway...))
+    //     apparently broke nodeIntegration (which we don't use for web tabs anyway...))
     //   - Navigation can be triggered by the itch app (actions.tabGoBack is dispatched, etc.)
     //     or by the webContents (window.history.go(-1), pushState, clicking on a link, etc.)
     //   - We choose not to rely on events like `did-start-navigation` (Electron 3.x+),

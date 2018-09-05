@@ -1,20 +1,22 @@
-import { app, remote } from "electron";
+import * as electron from "electron";
+const app = electron.app || electron.remote.app;
 
-export let userAgent: () => string;
-export let butlerUserAgent: () => string;
+let _cachedUserAgent: string;
+export function userAgent() {
+  if (!_cachedUserAgent) {
+    _cachedUserAgent =
+      `itch/${app.getVersion()} (${process.platform}; ` +
+      `Electron/${process.versions.electron} Chrome/${
+        process.versions.chrome
+      })`;
+  }
+  return _cachedUserAgent;
+}
 
-if (process.type === "browser") {
-  userAgent = () =>
-    `itch/${app.getVersion()} (${process.platform}; ` +
-    `Electron/${process.versions.electron} Chrome/${process.versions.chrome})`;
-
-  butlerUserAgent = () => `itch/${app.getVersion()} (${process.platform})`;
-} else {
-  let remoteModule = remote.require("./constants/useragent");
-
-  let _cachedUserAgent = remoteModule.userAgent();
-  userAgent = () => _cachedUserAgent;
-
-  let _cachedButlerUserAgent = remoteModule.butlerUserAgent();
-  butlerUserAgent = () => _cachedButlerUserAgent;
+let _cachedButlerUserAgent: string;
+export function butlerUserAgent() {
+  if (!_cachedButlerUserAgent) {
+    _cachedButlerUserAgent = `itch/${app.getVersion()} (${process.platform})`;
+  }
+  return _cachedButlerUserAgent;
 }

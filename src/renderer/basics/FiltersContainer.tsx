@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React from "react";
 import NavigationBar from "renderer/basics/NavigationBar";
-import styled from "renderer/styles";
+import styled, { animations } from "renderer/styles";
 
 export const filtersContainerHeight = 40;
 
@@ -17,6 +17,22 @@ export const FiltersContainerDiv = styled.section`
   padding-left: 10px;
   padding-right: 10px;
   height: ${filtersContainerHeight}px;
+
+  border-bottom: 2px solid transparent;
+
+  position: relative;
+
+  &.loading {
+    &::after {
+      position: absolute;
+      bottom: 0px;
+      content: " ";
+      width: 100%;
+      height: 2px;
+      background: ${props => props.theme.accent};
+      animation: ${animations.lineSpinner} 2s ease-in-out infinite;
+    }
+  }
 `;
 
 class FiltersContainer extends React.PureComponent<Props> {

@@ -50,6 +50,20 @@ export function dispatchTabGotWebContentsMetrics(
   );
 }
 
+export function dispatchTabGotWebContents(
+  props: TabProps,
+  webContentsId: number
+) {
+  const { tab, dispatch } = props;
+  dispatch(
+    actions.tabGotWebContents({
+      wind: ambientWind(),
+      tab,
+      webContentsId,
+    })
+  );
+}
+
 export function dispatchTabLosingWebContents(props: TabProps) {
   const { tab, dispatch } = props;
   dispatch(

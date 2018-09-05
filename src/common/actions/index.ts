@@ -14,7 +14,6 @@ import { LogEntry } from "common/logger";
 import { TypedModal, TypedModalUpdate } from "common/modals";
 import {
   Action,
-  BrowserViewMetrics,
   CommonsState,
   Dispatch,
   EvolveTabPayload,
@@ -423,19 +422,18 @@ export const actions = wireActions({
     /** The url we're supposed to analyze */
     url: string;
   }>(),
-  tabGotWebContentsMetrics: action<{
+  tabGotWebContents: action<{
     wind: string;
 
+    /** id of tab that just got a webcontents */
     tab: string;
 
-    metrics: BrowserViewMetrics;
-
-    initialURL: string;
+    webContentsId: number;
   }>(),
   tabLosingWebContents: action<{
     wind: string;
 
-    /** id of tab who just lost a webcontents */
+    /** id of tab that just lost a webcontents */
     tab: string;
   }>(),
 
@@ -866,7 +864,7 @@ export const actions = wireActions({
   openDevTools: action<{
     wind: string;
 
-    /** if specified, opens devTools for a BrowserView, not the app */
+    /** if specified, opens devTools for a tab, not the app */
     tab?: string;
   }>(),
   inspect: action<{

@@ -29,7 +29,7 @@ import downloads from "main/reactors/downloads";
 import queueLaunch from "main/reactors/queue-launch";
 import updater from "main/reactors/updater";
 import gameUpdates from "main/reactors/game-updates";
-import browserViews from "main/reactors/browser-views";
+import webContents from "main/reactors/web-contents";
 import notifications from "main/reactors/notifications";
 import clipboard from "main/reactors/clipboard";
 
@@ -69,7 +69,7 @@ export default function getWatcher(logger: Logger) {
   queueLaunch(watcher);
   updater(watcher);
   gameUpdates(watcher);
-  browserViews(watcher);
+  webContents(watcher);
   notifications(watcher);
   clipboard(watcher);
 

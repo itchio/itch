@@ -12,6 +12,8 @@ import { modals } from "common/modals";
 import urlParser from "url";
 import { promisedModal } from "main/reactors/modals";
 import { restoreTabs, saveTabs } from "main/reactors/tab-save";
+import { registerItchProtocol } from "main/net/register-itch-protocol";
+import { session } from "electron";
 
 const logger = mainLogger.child(__filename);
 
@@ -162,6 +164,15 @@ async function setCookie(profile: Profile, cookie: { [key: string]: string }) {
 }
 
 async function loginSucceeded(store: Store, profile: Profile) {
+  try {
+    const userId = profile.id;
+    const partition = partitionForUser(String(userId));
+    const customSession = session.fromPartition(partition, { cache: true });
+    registerItchProtocol(customSession);
+  } catch (e) {
+    logger.warn(`Could not register itch protocol for session: ${e.stack}`);
+  }
+
   try {
     await restoreTabs(store, profile);
   } catch (e) {
