@@ -35,9 +35,21 @@ import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
-import styled from "renderer/styles";
+import styled, { theme } from "renderer/styles";
 import { T, TString } from "renderer/t";
 import { findWhere } from "underscore";
+import { Select } from "renderer/basics/Select";
+import { SelectComponents } from "react-select/lib/components";
+import UploadIcon from "renderer/basics/UploadIcon";
+import { Tag } from "renderer/basics/RowButton";
+import { css } from "emotion";
+import { OptionProps } from "react-select/lib/components/Option";
+import { SingleValueProps } from "react-select/lib/components/SingleValue";
+import { UploadOption, uploadSelectComponents } from "./upload-select";
+import {
+  InstallLocationOption,
+  installLocationSelectComponents,
+} from "renderer/modal-widgets/PlanInstall/install-location-select";
 
 const logger = rendererLogger.child(__filename);
 
@@ -108,7 +120,7 @@ const SelectHeader = styled.h3`
   width: 150px;
 `;
 
-const Select = styled.select`
+const StyledSelect = styled.select`
   flex-grow: 1;
   padding: 0.4em;
   border: 1px solid ${props => props.theme.filterBorder};
@@ -160,6 +172,33 @@ class PlanInstall extends React.PureComponent<Props, State> {
     } = this.state;
 
     let canInstall = !error && !busy;
+    let locationOptions = installLocations.map(il => {
+      let val: InstallLocationOption = {
+        label: `${il.path} (${fileSize(il.sizeInfo.freeSize)} free)`,
+        value: il.id,
+        location: il,
+      };
+      return val;
+    });
+    let locationValue = findWhere(locationOptions, {
+      value: pickedInstallLocationId,
+    });
+
+    let uploadOptions = [];
+    if (uploads) {
+      uploadOptions = uploads.map(u => {
+        let val: UploadOption = {
+          label: `${formatUploadTitle(u)} ${
+            u.size > 0 ? fileSize(u.size) : ""
+          }`,
+          value: u.id,
+          upload: u,
+        };
+        return val;
+      });
+    }
+    let uploadValue = findWhere(uploadOptions, { value: pickedUploadId });
+
     return (
       <>
         <WideBox>
@@ -172,36 +211,24 @@ class PlanInstall extends React.PureComponent<Props, State> {
         </WideBox>
         <SelectGroup>
           <SelectHeader>Install</SelectHeader>
-          <Select onChange={this.onUploadChange} disabled={!uploads}>
-            {uploads ? (
-              uploads.map(u => (
-                <option
-                  key={u.id}
-                  value={u.id}
-                  selected={u.id === pickedUploadId}
-                >
-                  {formatUploadTitle(u)}{" "}
-                  {u.size > 0 ? <>({fileSize(u.size)})</> : null}
-                </option>
-              ))
-            ) : (
-              <option disabled>...</option>
-            )}
-          </Select>
+          <Select
+            onChange={this.onUploadChange}
+            value={uploadValue}
+            isLoading={!uploads}
+            options={uploadOptions}
+            isSearchable={false}
+            components={uploadSelectComponents}
+          />
         </SelectGroup>
         <SelectGroup>
           <SelectHeader>To location</SelectHeader>
-          <Select onChange={this.onInstallLocationChange}>
-            {installLocations.map(il => (
-              <option
-                key={il.id}
-                value={il.id}
-                selected={il.id === pickedInstallLocationId}
-              >
-                {il.path} ({fileSize(il.sizeInfo.freeSize)} free)
-              </option>
-            ))}
-          </Select>
+          <Select
+            onChange={this.onInstallLocationChange}
+            value={locationValue}
+            options={locationOptions}
+            isSearchable={false}
+            components={installLocationSelectComponents}
+          />
         </SelectGroup>
 
         <Filler />
@@ -315,15 +342,14 @@ class PlanInstall extends React.PureComponent<Props, State> {
     );
   }
 
-  onInstallLocationChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = ev.currentTarget.value;
+  onInstallLocationChange = (item: InstallLocationOption) => {
     this.setState({
-      pickedInstallLocationId: id,
+      pickedInstallLocationId: item.value,
     });
   };
 
-  onUploadChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = parseInt(ev.currentTarget.value, 10);
+  onUploadChange = (item: UploadOption) => {
+    const id = item.value;
     this.setState({
       pickedUploadId: id,
       busy: true,

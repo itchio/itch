@@ -58,6 +58,8 @@ export const colors = {
   baseText: baseColors.ivory,
 
   inputBackground: uiColors.background,
+  inputFocusedBackground: lighten(0.1, uiColors.background),
+  inputSelectedBackground: lighten(0.2, uiColors.background),
   inputText: "#d4cece",
   inputPlaceholder: baseColors.silverChalice,
 
