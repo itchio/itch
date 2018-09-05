@@ -32,6 +32,7 @@ import gameUpdates from "main/reactors/game-updates";
 import webContents from "main/reactors/web-contents";
 import notifications from "main/reactors/notifications";
 import clipboard from "main/reactors/clipboard";
+import importOnStartup from "main/reactors/import-on-startup";
 
 import { Logger } from "common/logger";
 import { currentRuntime } from "common/os/runtime";
@@ -72,6 +73,7 @@ export default function getWatcher(logger: Logger) {
   webContents(watcher);
   notifications(watcher);
   clipboard(watcher);
+  importOnStartup(watcher);
 
   watcher.validate();
   return watcher;

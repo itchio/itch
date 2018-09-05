@@ -42,6 +42,10 @@ export function relaunchLogPath(): string {
   return join(app.getPath("userData"), "logs", "itch.relaunch.txt");
 }
 
+export function legacyMarketPath(): string {
+  return join(app.getPath("userData"), "marketdb");
+}
+
 export function sanitize(file: string): string {
   const sane = file.replace(/[^a-zA-Z0-9_ -]/g, "").replace(/[\s]+/, " ");
   if (sane.length > 0) {

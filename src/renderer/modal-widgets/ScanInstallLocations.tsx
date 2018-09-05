@@ -9,6 +9,7 @@ import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { ModalWidgetProps } from "common/modals";
+import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 
 const ContainerDiv = styled.div`
   display: flex;
@@ -38,6 +39,7 @@ class ScanInstallLocations extends React.PureComponent<Props> {
         <ContainerDiv>
           <SectionDiv>
             <LoadingCircle wide progress={progress} />
+            <FilterSpacer />
             {T(["preferences.scan_install_locations.looking_for_games"])}
           </SectionDiv>
           <SectionDiv>

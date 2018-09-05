@@ -5,6 +5,7 @@ import { ScanInstallLocationsParams } from "common/modals/types";
 import { Watcher } from "common/util/watcher";
 import { mcall } from "main/butlerd/mcall";
 import { promisedModal } from "main/reactors/modals";
+import { legacyMarketPath } from "common/util/paths";
 
 export default function(watcher: Watcher) {
   watcher.on(actions.scanInstallLocations, async (store, action) => {
@@ -46,26 +47,25 @@ export default function(watcher: Watcher) {
     try {
       const importRes = await mcall(
         messages.InstallLocationsScan,
-        {},
-        client => {
-          client.onNotification(messages.Progress, async ({ params }) => {
+        {
+          legacyMarketPath: legacyMarketPath(),
+        },
+        convo => {
+          convo.on(messages.Progress, async ({ progress }) => {
             // TODO: relay ETA too?
-            widgetParams.progress = params.progress;
+            widgetParams.progress = progress;
             update();
           });
 
-          client.onNotification(
-            messages.InstallLocationsScanYield,
-            async ({ params }) => {
-              names.push(params.game.title);
-              widgetParams.game = params.game;
-              update();
-            }
-          );
+          convo.on(messages.InstallLocationsScanYield, async ({ game }) => {
+            names.push(game.title);
+            widgetParams.game = game;
+            update();
+          });
 
-          client.onRequest(
+          convo.on(
             messages.InstallLocationsScanConfirmImport,
-            async ({ params }) => {
+            async ({ numItems }) => {
               const res = await promisedModal(
                 store,
                 modals.naked.make({
@@ -78,7 +78,7 @@ export default function(watcher: Watcher) {
                     {
                       label: [
                         "preferences.scan_install_locations.import_items",
-                        { numItems: params.numItems },
+                        { numItems },
                       ],
                       icon: "install",
                       action: actions.modalResponse({}),
