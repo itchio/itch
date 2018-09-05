@@ -33,23 +33,6 @@ export function dispatchTabLoadingStateChanged(
   );
 }
 
-export function dispatchTabGotWebContentsMetrics(
-  props: TabProps,
-  payload: Subtract<
-    typeof actions.tabGotWebContentsMetrics["payload"],
-    ScopeFields
-  >
-) {
-  const { tab, dispatch } = props;
-  dispatch(
-    actions.tabGotWebContentsMetrics({
-      wind: ambientWind(),
-      tab,
-      ...payload,
-    })
-  );
-}
-
 export function dispatchTabGotWebContents(
   props: TabProps,
   webContentsId: number
