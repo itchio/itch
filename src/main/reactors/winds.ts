@@ -1,17 +1,20 @@
+import { registerElectronSession } from "butlerd";
 import { actions } from "common/actions";
 import { codGray } from "common/constants/colors";
-import { opensInWindow, normalizeURL } from "common/constants/windows";
+import { normalizeURL, opensInWindow } from "common/constants/windows";
 import env from "common/env";
 import { t } from "common/format/t";
 import { Space } from "common/helpers/space";
+import { modals } from "common/modals";
 import {
   NativeWindowState,
+  PreferencesState,
   RootState,
   Store,
   WindRole,
-  PreferencesState,
 } from "common/types";
 import config from "common/util/config";
+import { partitionForApp } from "common/util/partition-for-user";
 import { getImagePath, getRendererFilePath } from "common/util/resources";
 import { Watcher } from "common/util/watcher";
 import {
@@ -23,18 +26,14 @@ import {
   Session,
 } from "electron";
 import { mainLogger } from "main/logger";
+import { registerItchProtocol } from "main/net/register-itch-protocol";
+import { promisedModal } from "main/reactors/modals";
+import { openAppDevTools } from "main/reactors/open-app-devtools";
+import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
 import { stringify } from "querystring";
 import { createSelector } from "reselect";
 import { debounce } from "underscore";
 import { format as formatUrl, UrlObject } from "url";
-import { openAppDevTools } from "main/reactors/open-app-devtools";
-import { registerElectronSession } from "butlerd";
-import { partitionForApp } from "common/util/partition-for-user";
-import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
-import { registerItchProtocol } from "main/net/register-itch-protocol";
-import { promisedModal } from "main/reactors/modals";
-import { modals } from "common/modals";
-import { Game } from "common/butlerd/messages";
 
 const logger = mainLogger.child(__filename);
 let dispatchedBoot = false;
@@ -512,14 +511,14 @@ function commonBrowserWindowOpts(
     webPreferences: {
       affinity: "all-in-one",
       webSecurity: env.development ? false : true,
-      session: getAppSession(),
+      session: getAppSession(store),
     },
   };
 }
 
 let _cachedAppSession: Session;
 
-function getAppSession(): Session {
+function getAppSession(store: Store): Session {
   if (!_cachedAppSession) {
     _cachedAppSession = session.fromPartition(partitionForApp(), {
       cache: true,
@@ -527,7 +526,7 @@ function getAppSession(): Session {
     registerElectronSession(_cachedAppSession);
 
     // this works around https://github.com/itchio/itch/issues/2039
-    registerItchProtocol(_cachedAppSession);
+    registerItchProtocol(store, _cachedAppSession);
   }
 
   return _cachedAppSession;

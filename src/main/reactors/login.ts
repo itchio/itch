@@ -168,7 +168,7 @@ async function loginSucceeded(store: Store, profile: Profile) {
     const userId = profile.id;
     const partition = partitionForUser(String(userId));
     const customSession = session.fromPartition(partition, { cache: true });
-    registerItchProtocol(customSession);
+    registerItchProtocol(store, customSession);
   } catch (e) {
     logger.warn(`Could not register itch protocol for session: ${e.stack}`);
   }

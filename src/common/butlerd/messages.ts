@@ -377,10 +377,7 @@ export const SearchUsers = createRequest<SearchUsersParams, SearchUsersResult>(
 export interface FetchGameResult {
   /** Game info */
   game: Game;
-  /**
-   * Marks that a request should be issued
-   * afterwards with 'Fresh' set
-   */
+  /** Marks that a request should be issued afterwards with 'Fresh' set */
   stale?: boolean;
 }
 
@@ -390,6 +387,24 @@ export interface FetchGameResult {
 export const FetchGame = createRequest<FetchGameParams, FetchGameResult>(
   "Fetch.Game"
 );
+
+/**
+ * Result for Fetch.DownloadKey
+ */
+export interface FetchDownloadKeyResult {
+  /** undocumented */
+  downloadKey: DownloadKey;
+  /** Marks that a request should be issued afterwards with 'Fresh' set */
+  stale?: boolean;
+}
+
+/**
+ * Fetches a download key
+ */
+export const FetchDownloadKey = createRequest<
+  FetchDownloadKeyParams,
+  FetchDownloadKeyResult
+>("Fetch.DownloadKey");
 
 /**
  * Result for Fetch.GameUploads
@@ -2454,6 +2469,18 @@ export interface FetchGameParams {
   gameId: number;
   /** Force an API request */
   fresh?: boolean;
+}
+
+/**
+ * Params for Fetch.DownloadKey
+ */
+export interface FetchDownloadKeyParams {
+  /** undocumented */
+  downloadKeyId: number;
+  /** undocumented */
+  profileId: number;
+  /** undocumented */
+  fresh: boolean;
 }
 
 /**

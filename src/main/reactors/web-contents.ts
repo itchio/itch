@@ -152,7 +152,7 @@ export default function(watcher: Watcher) {
     if (tab) {
       const { tab } = store.getState().winds[wind].navigation;
       withWebContents(store, wind, tab, wc => {
-        wc.openDevTools({ mode: "bottom" });
+        wc.openDevTools({ mode: "detach" });
       });
     } else {
       openAppDevTools(BrowserWindow.getFocusedWindow());
