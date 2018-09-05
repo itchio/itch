@@ -687,6 +687,18 @@ function hookNativeWindow(
       }
     }
   );
+
+  nativeWindow.webContents.on(
+    "new-window",
+    (ev, url, frameName, disposition, options, additionalFeatures) => {
+      ev.preventDefault();
+      logger.debug(
+        `new-window fired for ${url}, navigating instead (in wind ${wind})`
+      );
+      const background = disposition === "background-tab";
+      store.dispatch(actions.navigate({ url, wind, background }));
+    }
+  );
 }
 
 export function getNativeState(rs: RootState, wind: string): NativeWindowState {
