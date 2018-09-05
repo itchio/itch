@@ -8,7 +8,7 @@ import {
   InstallPlanInfo,
   Upload,
 } from "common/butlerd/messages";
-import { formatError } from "common/format/errors";
+import { formatError, getInstallPlanInfoError } from "common/format/errors";
 import { fileSize } from "common/format/filesize";
 import { formatUploadTitle } from "common/format/upload";
 import { modals, ModalWidgetProps } from "common/modals";
@@ -40,6 +40,24 @@ import { T, TString } from "renderer/t";
 import { findWhere } from "underscore";
 
 const logger = rendererLogger.child(__filename);
+
+const ErrorContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ErrorButtons = styled.div`
+  flex-shrink: 0;
+`;
+
+const ErrorParagraph = styled.div`
+  flex-grow: 1;
+  line-height: 1.4;
+  margin-right: 1em;
+  color: ${props => props.theme.error};
+  font-size: ${props => props.theme.fontSizes.baseText};
+`;
 
 const WideBox = styled(Box)`
   width: 100%;
@@ -162,7 +180,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
                   value={u.id}
                   selected={u.id === pickedUploadId}
                 >
-                  {formatUploadTitle(u)} ({fileSize(u.size)})
+                  {formatUploadTitle(u)}{" "}
+                  {u.size > 0 ? <>({fileSize(u.size)})</> : null}
                 </option>
               ))
             ) : (
@@ -211,8 +230,40 @@ class PlanInstall extends React.PureComponent<Props, State> {
 
   renderError() {
     const { error } = this.state;
-    return <p>Something went wrong: {error.message}</p>;
+    return (
+      <ErrorContainer>
+        <ErrorParagraph>
+          <Icon icon="error" /> {T(formatError(error))}
+        </ErrorParagraph>
+        <ErrorButtons>
+          <Button
+            label={T(["grid.item.view_details"])}
+            onClick={this.onShowError}
+          />
+        </ErrorButtons>
+      </ErrorContainer>
+    );
   }
+
+  onShowError = () => {
+    const { dispatch, intl } = this.props;
+    const { game, error, log } = this.state;
+    dispatch(
+      actions.openModal(
+        modals.showError.make({
+          wind: ambientWind(),
+          title: ["prompt.install_error.title"],
+          message: TString(intl, formatError(error)),
+          widgetParams: {
+            game,
+            rawError: error,
+            log,
+          },
+          buttons: ["ok"],
+        })
+      )
+    );
+  };
 
   renderBusy() {
     return (
@@ -366,7 +417,15 @@ class PlanInstall extends React.PureComponent<Props, State> {
     doAsync(async () => {
       try {
         const { gameId } = this.state;
-        const res = await rcall(messages.InstallPlan, { gameId, uploadId });
+        const memlog = new memory.WritableStream();
+        const memlogger = makeLogger({ customOut: memlog });
+        const res = await rcall(
+          messages.InstallPlan,
+          { gameId, uploadId },
+          convo => {
+            hookLogging(convo, memlogger);
+          }
+        );
         this.setState({
           stage: PlanStage.Planning,
           game: res.game,
@@ -374,7 +433,11 @@ class PlanInstall extends React.PureComponent<Props, State> {
           pickedUploadId: res.info ? res.info.upload.id : null,
           info: res.info,
           busy: false,
-          error: null,
+          error:
+            res.info && res.info.error
+              ? getInstallPlanInfoError(res.info)
+              : null,
+          log: memlog.toString(),
         });
       } catch (e) {
         this.setState({
@@ -402,6 +465,7 @@ interface State {
   uploads?: Upload[];
   info?: InstallPlanInfo;
   error?: Error;
+  log?: string;
   installLocations: InstallLocationSummary[];
 
   pickedUploadId?: number;

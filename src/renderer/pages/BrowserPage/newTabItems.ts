@@ -47,6 +47,6 @@ export const newTabSecondaryItems = [
   {
     label: ["new_tab.devlogs"],
     icon: "fire",
-    url: urls.itchio + "/featured-games-feed?filter=devlogs",
+    url: urls.itchio + "/devlogs",
   },
 ];
