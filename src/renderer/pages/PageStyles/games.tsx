@@ -110,9 +110,7 @@ export const StandardGameCover = ({
               <CoverInfo className="cover-hover">
                 <DarkBox>
                   <DarkTitle>{game.title}</DarkTitle>
-                  <p>
-                    <Desc>{truncate(game.shortText, { length: 70 })}</Desc>
-                  </p>
+                  <Desc>{truncate(game.shortText, { length: 70 })}</Desc>
                   <Filler />
                   <PlatformIcons target={game} />
                 </DarkBox>

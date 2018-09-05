@@ -1,22 +1,17 @@
-import { messages } from "common/butlerd";
-import { Game, GameClassification, Profile } from "common/butlerd/messages";
+import { Game, GameClassification } from "common/butlerd/messages";
 import { urlForGame } from "common/util/navigation";
 import React from "react";
 import Filler from "renderer/basics/Filler";
 import PlatformIcons from "renderer/basics/PlatformIcons";
-import butlerCaller from "renderer/hocs/butlerCaller";
-import { withProfile } from "renderer/hocs/withProfile";
 import { Title, TitleBox } from "renderer/pages/PageStyles/games";
 import { T } from "renderer/t";
 
 const StandardGameDesc = ({
   game,
   children,
-  profile,
 }: {
   game: Game;
   children?: any;
-  profile: Profile;
 }) => (
   <TitleBox>
     <a href={urlForGame(game.id)} className="gamedesc--titlelink">
@@ -34,7 +29,7 @@ const StandardGameDesc = ({
   </TitleBox>
 );
 
-export default withProfile(StandardGameDesc);
+export default StandardGameDesc;
 
 function renderClassification(classification: GameClassification) {
   let label = [`usage_stats.description.${classification}`];
