@@ -9,7 +9,7 @@ const EmptyStateDiv = styled.div`
   color: ${props => props.theme.secondaryText};
   width: 100%;
   text-align: center;
-  margin: 150px 0;
+  margin: 60px 0;
 
   .leader {
     display: inline-block;

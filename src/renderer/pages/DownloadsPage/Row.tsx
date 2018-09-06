@@ -300,6 +300,12 @@ class DownloadRow extends React.PureComponent<Props> {
             onClick={this.onPrioritize}
           />
         ) : null}
+        {showMainAction ? (
+          <>
+            <MainAction game={item.game} status={status} caveId={item.caveId} />
+            <Spacer />
+          </>
+        ) : null}
         <IconButton
           big
           hintPosition="left"
@@ -307,12 +313,6 @@ class DownloadRow extends React.PureComponent<Props> {
           icon="cross"
           onClick={this.onDiscard}
         />
-        {showMainAction ? (
-          <>
-            <MainAction game={item.game} status={status} caveId={item.caveId} />
-            <Spacer />
-          </>
-        ) : null}
       </Controls>
     );
   }
