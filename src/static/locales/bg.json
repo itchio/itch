@@ -612,5 +612,8 @@
     "login.action.hide_password": "Скриване на паролата",
     "web.context_menu.inspect": "Изследване",
     "sort_by.collections.title": "Заглавие",
-    "sort_by.collections.updated_at": "Последно обновяване"
+    "sort_by.collections.updated_at": "Последно обновяване",
+    "prompt.confirm_quit.title": "Наистина ли искате да излезете?",
+    "prompt.confirm_quit.message": "Всички работещи игри и приложения ще бъдат затворени.",
+    "prompt.action.quit_and_close_all": "Изход и затваряне на всичко"
 }
