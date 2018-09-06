@@ -24,7 +24,7 @@ const CaveGameSeries = makeGameSeries(messages.FetchCaves);
 
 class InstalledPage extends React.PureComponent<Props> {
   render() {
-    const { sortBy, sortDir, classification } = this.props;
+    const { search, sortBy, sortDir, classification } = this.props;
 
     return (
       <CaveGameSeries
@@ -33,6 +33,7 @@ class InstalledPage extends React.PureComponent<Props> {
           sortBy,
           reverse: sortDir === "reverse",
           filters: { classification },
+          search,
         }}
         getRecord={this.getRecord}
         getKey={this.getKey}
@@ -73,6 +74,7 @@ interface Props extends MeatProps {
 
   sortBy: string;
   sortDir: string;
+  search: string;
   classification: GameClassification;
 }
 
@@ -80,6 +82,7 @@ export default withTab(
   hookWithProps(InstalledPage)(map => ({
     sortBy: map((rs, props) => ambientTab(rs, props).location.query.sortBy),
     sortDir: map((rs, props) => ambientTab(rs, props).location.query.sortDir),
+    search: map((rs, props) => ambientTab(rs, props).location.query.search),
     classification: map(
       (rs, props) =>
         ambientTab(rs, props).location.query
