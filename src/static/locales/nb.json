@@ -426,7 +426,7 @@
     "grid.criterion.filter_by": "Filtrer på: ",
     "grid.empty_state.leader": "Alt er filtrert bort...",
     "grid.empty_state.explanation": "Filtrene dine skjuler alt her",
-    "grid.item.discard_download": "Stopp nedlasting",
+    "grid.item.discard_download": "Fjern nedlasting",
     "grid.item.update": "Oppdater",
     "grid.item.not_compatible": "Ikke tilgjengelig på denne plattformen",
     "grid.item.open_file_location.windows": "Åpne mappe i utforsker",
@@ -473,5 +473,15 @@
     "web.context_menu.paste": "Lim inn",
     "web.context_menu.open_in_new_tab": "Åpne i ny fane",
     "web.context_menu.copy_link": "Kopier lenke",
-    "install_location.property.size_on_disk": "{{size}} på disk"
+    "install_location.property.size_on_disk": "{{size}} på disk",
+    "collection.item_count": "{{itemCount}} elementer",
+    "collections.empty": "Du har for øyeblikket ingen samlinger",
+    "collections.empty_sub": "Søk etter noen spill og legg dem til en ny samling!",
+    "docs.how_to_help": "Hvordan kan jeg hjelpe?",
+    "dashboard.game_stats.views": "visninger",
+    "dashboard.game_stats.downloads": "nedlastinger",
+    "dashboard.game_stats.purchases": "kjøp",
+    "duration.seconds": "{{x}} sekunder",
+    "grid.item_count": "{{count}} elementer",
+    "grid.item.install_title": "Installer {{title}}"
 }
