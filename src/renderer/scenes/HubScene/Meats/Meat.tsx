@@ -9,6 +9,9 @@ import { withTab } from "renderer/hocs/withTab";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
+import FiltersContainer from "renderer/basics/FiltersContainer";
+import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
+import Page from "renderer/pages/common/Page";
 
 const CrashyPage = Loadable({
   loader: () => import("renderer/pages/CrashyPage"),
@@ -16,6 +19,10 @@ const CrashyPage = Loadable({
 });
 const GamePage = Loadable({
   loader: () => import("renderer/pages/GamePage"),
+  loading: () => null,
+});
+const InstallPage = Loadable({
+  loader: () => import("renderer/pages/InstallPage"),
   loading: () => null,
 });
 const FeaturedPage = Loadable({
@@ -157,7 +164,12 @@ class Meat extends React.PureComponent<Props, State> {
         </>
       );
     } else {
-      return <div>Invalid url: {JSON.stringify(this.props.url)}</div>;
+      return (
+        <Page>
+          <BrowserBar />
+          <div>Invalid url: {JSON.stringify(this.props.url)}</div>
+        </Page>
+      );
     }
   }
 
@@ -231,6 +243,8 @@ class Meat extends React.PureComponent<Props, State> {
         }
       case "games":
         return GamePage;
+      case "install":
+        return InstallPage;
       case "featured":
         return FeaturedPage;
       case "collections":

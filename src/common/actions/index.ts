@@ -638,7 +638,7 @@ export const actions = wireActions({
     game: Game;
 
     /** the upload we picked */
-    upload: Upload;
+    uploadId?: number;
   }>(),
   queueLaunch: action<{ cave: Cave }>(),
   launchEnded: action<{}>(),

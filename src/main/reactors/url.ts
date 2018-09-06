@@ -7,6 +7,11 @@ import { shell } from "electron";
 import { mainLogger } from "main/logger";
 import { modals } from "common/modals";
 import urlParser from "url";
+import querystring from "querystring";
+import { doAsync } from "renderer/helpers/doAsync";
+import { queueInstall } from "main/reactors/tasks/queue-game";
+import { mcall } from "main/butlerd/mcall";
+import { messages } from "common/butlerd";
 
 const logger = mainLogger.child(__filename);
 
@@ -81,8 +86,25 @@ export default function(watcher: Watcher) {
   });
 }
 
-function handleItchioUrl(store: Store, uri: string) {
+/**
+ * Returns true if it was an action URL
+ */
+export function handleItchioUrl(store: Store, uri: string): boolean {
   logger.info(`Processing itchio uri (${uri})`);
   let url = uri.replace(/^[^:]+:/, "itch:");
+  const parsedURL = urlParser.parse(url);
+  if (parsedURL.hostname === "install") {
+    doAsync(async () => {
+      const queryParams = querystring.parse(parsedURL.query);
+      const gameId = parseInt(queryParams["game_id"] as string, 10);
+      const uploadId = parseInt(queryParams["upload_id"] as string, 10);
+      logger.info(`Should queue install because of URL: ${url}`);
+      const { game } = await mcall(messages.FetchGame, { gameId });
+      await queueInstall(store, game, uploadId);
+    });
+    return true;
+  }
+
   store.dispatch(actions.navigate({ wind: "root", url }));
+  return false;
 }

@@ -5,6 +5,10 @@ import { doAsync } from "renderer/helpers/doAsync";
 import { messages } from "common/butlerd";
 import { Store } from "common/types";
 import { actions } from "common/actions";
+import urlParser from "url";
+import querystring from "querystring";
+import { queueInstall } from "main/reactors/tasks/queue-game";
+import { handleItchioUrl } from "main/reactors/url";
 
 const logger = mainLogger.child(__filename);
 
@@ -28,6 +32,20 @@ export function registerItchProtocol(store: Store, ses: Session) {
         }
       }
     );
+
+    ses.webRequest.onBeforeRequest((details, callback) => {
+      const { url } = details;
+      let handled = false;
+      try {
+        const parsedURL = urlParser.parse(url);
+        if (parsedURL.protocol === "itch:") {
+          handled = handleItchioUrl(store, url);
+        }
+      } catch (e) {
+        logger.warn(`In beforeRequest handler: ${e.stack}`);
+      }
+      callback({ cancel: handled });
+    });
 
     ses.webRequest.onHeadersReceived((details, callback) => {
       callback({});

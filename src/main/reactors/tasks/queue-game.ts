@@ -69,16 +69,15 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.queueGameInstall, async (store, action) => {
-    const { game, upload } = action.payload;
-    await queueInstall(store, game, upload);
+    const { game, uploadId } = action.payload;
+    await queueInstall(store, game, uploadId);
   });
 }
 
-async function queueInstall(
+export async function queueInstall(
   store: Store,
   game: Game,
-  upload?: Upload,
-  build?: Build
+  uploadId?: number
 ) {
   await asTask({
     name: "install-queue",
@@ -86,7 +85,7 @@ async function queueInstall(
     caveId: null,
     store,
     work: async (ctx, logger) => {
-      await performInstallQueue({ store, logger, game, upload, build });
+      await performInstallQueue({ store, game, uploadId });
     },
     onError: async (e, log) => {
       await showInstallErrorModal({
@@ -94,7 +93,7 @@ async function queueInstall(
         e,
         log,
         game,
-        retryAction: () => actions.queueGameInstall({ game, upload }),
+        retryAction: () => actions.queueGameInstall({ game, uploadId }),
         stopAction: () => null,
       });
     },
@@ -110,18 +109,14 @@ async function queueInstall(
 
 interface PerformInstallQueueOpts {
   store: Store;
-  logger: Logger;
   game: Game;
-  upload: Upload;
-  build: Build;
+  uploadId?: number;
 }
 
 async function performInstallQueue({
   store,
-  logger,
   game,
-  upload,
-  build,
+  uploadId,
 }: PerformInstallQueueOpts) {
   await promisedModal(
     store,
@@ -130,101 +125,9 @@ async function performInstallQueue({
       title: game.title,
       widgetParams: {
         game,
-        uploadId: upload ? upload.id : undefined,
+        uploadId,
       },
       buttons: [],
     })
   );
-}
-
-async function oldPerformInstallQueue({
-  store,
-  logger,
-  game,
-  upload,
-  build,
-}: PerformInstallQueueOpts) {
-  const installLocationId = defaultInstallLocation(store);
-
-  await mcall(
-    messages.InstallQueue,
-    {
-      game,
-      upload,
-      build,
-      installLocationId,
-      queueDownload: true,
-    },
-    convo => {
-      hookLogging(convo, logger);
-      convo.on(messages.PickUpload, async ({ uploads }) => {
-        const { title } = game;
-
-        const modalRes = await promisedModal(
-          store,
-          modals.pickUpload.make({
-            wind: "root",
-            title: ["pick_install_upload.title", { title }],
-            message: ["pick_install_upload.message", { title }],
-            coverUrl: game.coverUrl,
-            stillCoverUrl: game.stillCoverUrl,
-            bigButtons: map(uploads, (candidate, index) => {
-              return {
-                ...makeUploadButton(candidate),
-                action: modals.pickUpload.action({
-                  pickedUploadIndex: index,
-                }),
-              };
-            }),
-            buttons: ["cancel"],
-            widgetParams: {},
-          })
-        );
-
-        if (modalRes) {
-          return { index: modalRes.pickedUploadIndex };
-        } else {
-          // that tells butler to abort
-          return { index: -1 };
-        }
-      });
-
-      convo.on(messages.ExternalUploadsAreBad, async () => {
-        const modalRes = await promisedModal(
-          store,
-          modals.naked.make({
-            wind: "root",
-            title: "Dragons be thar",
-            message:
-              "You've chosen to install an external upload. Those are supported poorly.",
-            detail:
-              "There's a chance it won't install at all.\n\nAlso, we won't be able to check for updates.",
-            bigButtons: [
-              {
-                label: "Install it anyway",
-                tags: [{ label: "Consequences be damned" }],
-                icon: "fire",
-                action: actions.modalResponse({}),
-              },
-              "nevermind",
-            ],
-            widgetParams: null,
-          })
-        );
-
-        if (!modalRes) {
-          return { whatever: false };
-        }
-
-        // ahh damn.
-        return { whatever: true };
-      });
-    }
-  );
-  store.dispatch(actions.downloadQueued({}));
-}
-
-function defaultInstallLocation(store: Store) {
-  const { defaultInstallLocation } = store.getState().preferences;
-  return defaultInstallLocation;
 }
