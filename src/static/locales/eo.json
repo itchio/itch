@@ -45,7 +45,7 @@
     "menu.file.close_window": "Fermi la fenestron",
     "menu.file.file": "Dosiero",
     "menu.file.preferences": "Agordoj…",
-    "menu.file.quit": "Foriri",
+    "menu.file.quit": "Ĉesi",
     "menu.help.check_for_update": "Kontroli ĉu estas ĝisdatigoj",
     "menu.help.help": "Helpejo",
     "menu.help.release_notes": "Eldonaj Notoj",
@@ -182,7 +182,7 @@
     "new_tab.titles.input": "...aŭ",
     "new_tab.top_sellers": "Plejaj vendistoj",
     "new_tab.twitter": "Populara en Twitter",
-    "notification.see_you_soon.message": "itch nun funkcias en la fono. Uzu la menuon por forigi ĝin komplete.",
+    "notification.see_you_soon.message": "itch nun funkcias en la fono. Uzu la menuon por ĉesigi ĝin komplete.",
     "notification.see_you_soon.title": "Ĝis baldaŭ!",
     "preferences.security": "Sekureco & privateco",
     "preferences.security.sandbox.title": "Ebligi itch.io sandbox",
@@ -620,5 +620,8 @@
     "login.action.hide_password": "Kaŝi la pasvorton",
     "web.context_menu.inspect": "Inspekti",
     "sort_by.collections.title": "Titolo",
-    "sort_by.collections.updated_at": "Lasta ĝisdatigo"
+    "sort_by.collections.updated_at": "Lasta ĝisdatigo",
+    "prompt.confirm_quit.title": "Ĉu vi certe volas ĉesigi la programon?",
+    "prompt.confirm_quit.message": "Ĉiuj plenumiĝantaj ludoj kaj programoj estos haltigitaj.",
+    "prompt.action.quit_and_close_all": "Ĉesi kaj fermi ĉion"
 }
