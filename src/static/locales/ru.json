@@ -626,5 +626,8 @@
     "login.action.hide_password": "Скрыть пароль",
     "web.context_menu.inspect": "Просмотр кода",
     "sort_by.collections.title": "Название",
-    "sort_by.collections.updated_at": "Обновлено"
+    "sort_by.collections.updated_at": "Обновлено",
+    "prompt.confirm_quit.title": "Вы уверены что хотите выйти?",
+    "prompt.confirm_quit.message": "Все запущенные игры будут закрыты.",
+    "prompt.action.quit_and_close_all": "Выйти и закрыть всё"
 }
