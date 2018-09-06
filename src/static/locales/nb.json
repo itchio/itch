@@ -483,5 +483,8 @@
     "dashboard.game_stats.purchases": "kjøp",
     "duration.seconds": "{{x}} sekunder",
     "grid.item_count": "{{count}} elementer",
-    "grid.item.install_title": "Installer {{title}}"
+    "grid.item.install_title": "Installer {{title}}",
+    "grid.item.queueing": "Legger i kø …",
+    "grid.item.launch_title": "Start {{title}}",
+    "grid.item.open_page": "Åpne side"
 }
