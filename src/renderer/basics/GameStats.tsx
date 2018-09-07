@@ -48,6 +48,10 @@ const GameTitle = styled.div`
   font-weight: 700;
 `;
 
+const SpacedPlatformIcons = styled(PlatformIcons)`
+  margin-left: 4px;
+`;
+
 class GameStats extends React.PureComponent<Props> {
   render() {
     const { game, status } = this.props;
@@ -84,7 +88,7 @@ class GameStats extends React.PureComponent<Props> {
                     "usage_stats.description.platforms",
                     {
                       platforms: (
-                        <PlatformIcons
+                        <SpacedPlatformIcons
                           className="total-playtime--platforms"
                           target={game}
                         />

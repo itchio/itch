@@ -17,11 +17,12 @@ import { ModalWidgetProps, modals } from "common/modals";
 
 const ControlsDiv = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
+  flex-flow: row wrap;
+  max-width: 600px;
 
   .control {
-    margin: 12px 0;
+    margin: 8px;
   }
 
   label {

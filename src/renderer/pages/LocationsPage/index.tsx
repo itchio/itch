@@ -10,14 +10,20 @@ import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import LocationSummary from "renderer/pages/LocationsPage/LocationSummary";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
-import { isEmpty, sortBy } from "underscore";
+import { isEmpty, size, sortBy } from "underscore";
 import {
   SortsAndFilters,
   FilterGroup,
   FilterOptionLink,
   FilterOptionIcon,
+  FilterSpacer,
+  FilterOptionButton,
 } from "renderer/pages/common/SortsAndFilters";
-import { T } from "renderer/t";
+import { T, _ } from "renderer/t";
+import Button from "renderer/basics/Button";
+import { actions } from "common/actions";
+import { ambientWind } from "common/util/navigation";
+import { InstallLocationsListResult } from "common/butlerd/messages";
 
 const ListInstallLocations = butlerCaller(messages.InstallLocationsList);
 
@@ -45,20 +51,46 @@ class LocationsPage extends React.PureComponent<Props> {
               {T(["preferences.scan_install_locations"])}
             </FilterOptionLink>
           </FilterGroup>
+          <FilterSpacer />
+          <FilterGroup>
+            <FilterOptionButton onClick={this.onAddLocation}>
+              <FilterOptionIcon icon="plus" />
+              {T(["preferences.install_location.add"])}
+            </FilterOptionButton>
+          </FilterGroup>
         </SortsAndFilters>
-        {result && !isEmpty(result.installLocations) ? (
-          <ItemList>
-            {sortBy(
-              result.installLocations,
-              location => -location.sizeInfo.installedSize
-            ).map(location => (
-              <LocationSummary key={location.id} location={location} />
-            ))}
-          </ItemList>
-        ) : null}
+        {this.renderList(result)}
       </>
     )
   );
+
+  renderList = (result: InstallLocationsListResult) => {
+    if (!result || isEmpty(result.installLocations)) {
+      return null;
+    }
+    const locations = result.installLocations;
+    const numLocations = size(locations);
+
+    return (
+      <ItemList>
+        {sortBy(
+          result.installLocations,
+          location => -location.sizeInfo.installedSize
+        ).map(location => (
+          <LocationSummary
+            key={location.id}
+            location={location}
+            numLocations={numLocations}
+          />
+        ))}
+      </ItemList>
+    );
+  };
+
+  onAddLocation = (ev: React.MouseEvent<any>) => {
+    const { dispatch } = this.props;
+    dispatch(actions.addInstallLocation({ wind: ambientWind() }));
+  };
 
   componentDidMount() {
     dispatchTabPageUpdate(this.props, { label: ["install_locations.manage"] });

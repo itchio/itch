@@ -1,30 +1,23 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import { hookLogging, messages } from "common/butlerd";
 import { t } from "common/format/t";
+import { modals } from "common/modals";
 import { ItchPromise } from "common/util/itch-promise";
-import { urlForInstallLocation } from "common/util/navigation";
 import { Watcher } from "common/util/watcher";
 import { dialog } from "electron";
 import { mcall } from "main/butlerd/mcall";
+import { mainLogger, makeLogger } from "main/logger";
 import * as explorer from "main/os/explorer";
 import { promisedModal } from "main/reactors/modals";
 import { getNativeWindow } from "main/reactors/winds";
-import { modals } from "common/modals";
-import { mainLogger } from "main/logger";
+import memory from "memory-streams";
+import { _ } from "renderer/t";
+import { formatError } from "common/format/errors";
+import { format } from "url";
 
 const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
-  watcher.on(actions.makeInstallLocationDefault, async (store, action) => {
-    const { id } = action.payload;
-    store.dispatch(
-      actions.updatePreferences({
-        defaultInstallLocation: id,
-      })
-    );
-    store.dispatch(actions.installLocationsChanged({}));
-  });
-
   watcher.on(actions.removeInstallLocation, async (store, action) => {
     const { id } = action.payload;
 
@@ -38,31 +31,6 @@ export default function(watcher: Watcher) {
       id,
     });
     if (!installLocation) {
-      return;
-    }
-
-    if (installLocation.sizeInfo!.installedSize > 0) {
-      store.dispatch(
-        actions.openModal(
-          modals.naked.make({
-            wind: "root",
-            title: ["prompt.install_location_not_empty.title"],
-            message: ["prompt.install_location_not_empty.message"],
-            detail: ["prompt.install_location_not_empty.detail"],
-            buttons: [
-              {
-                label: ["prompt.install_location_not_empty.show_contents"],
-                action: actions.navigate({
-                  wind: "root",
-                  url: urlForInstallLocation(installLocation.id),
-                }),
-              },
-              "cancel",
-            ],
-            widgetParams: null,
-          })
-        )
-      );
       return;
     }
 
@@ -95,27 +63,30 @@ export default function(watcher: Watcher) {
         return;
       }
 
-      const prefs = store.getState().preferences;
-      if (prefs.defaultInstallLocation === id) {
-        let newDefaultID: string = null;
-        for (const loc of installLocations) {
-          if (loc.id !== id) {
-            newDefaultID = loc.id;
-          }
-        }
-
-        logger.info(
-          `Default install location ${id} is being deleted, switching to ${newDefaultID}`
-        );
+      const memlog = new memory.WritableStream();
+      try {
+        const logger = makeLogger({ customOut: memlog });
+        await mcall(messages.InstallLocationsRemove, { id }, convo => {
+          hookLogging(convo, logger);
+        });
+        store.dispatch(actions.installLocationsChanged({}));
+      } catch (e) {
         store.dispatch(
-          actions.updatePreferences({
-            defaultInstallLocation: newDefaultID,
-          })
+          actions.openModal(
+            modals.showError.make({
+              wind: "root",
+              title: _("prompt.show_error.generic_message"),
+              message: t(store.getState().i18n, formatError(e)),
+              widgetParams: {
+                rawError: e,
+                log: memlog.toString(),
+                forceDetails: true,
+              },
+              buttons: ["ok"],
+            })
+          )
         );
       }
-      await mcall(messages.InstallLocationsRemove, { id });
-
-      store.dispatch(actions.installLocationsChanged({}));
     }
   });
 
@@ -148,8 +119,11 @@ export default function(watcher: Watcher) {
 
     const path = await promise;
     if (path) {
-      await mcall(messages.InstallLocationsAdd, { path });
+      await mcall(messages.InstallLocationsAdd, { path }, convo => {
+        hookLogging(convo, logger);
+      });
       store.dispatch(actions.installLocationsChanged({}));
+      store.dispatch(actions.silentlyScanInstallLocations({}));
     }
   });
 

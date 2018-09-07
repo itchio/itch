@@ -21,8 +21,8 @@ import React from "react";
 import { InjectedIntl } from "react-intl";
 import Button from "renderer/basics/Button";
 import Filler from "renderer/basics/Filler";
+import Floater from "renderer/basics/Floater";
 import Icon from "renderer/basics/Icon";
-import LoadingCircle from "renderer/basics/LoadingCircle";
 import { ModalButtons } from "renderer/basics/modal-styles";
 import { Select } from "renderer/basics/Select";
 import { rcall } from "renderer/butlerd/rcall";
@@ -41,11 +41,15 @@ import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import styled from "renderer/styles";
-import { T, TString } from "renderer/t";
+import { T, TString, _ } from "renderer/t";
 import { findWhere } from "underscore";
 import { UploadOption, uploadSelectComponents } from "./upload-select";
 
 const logger = rendererLogger.child(__filename);
+
+const DiskSpaceIcon = styled(Icon)`
+  margin-left: 8px;
+`;
 
 const ErrorContainer = styled.div`
   display: flex;
@@ -78,6 +82,10 @@ const SizeTable = styled.table`
       color: ${props => props.theme.error};
     }
 
+    &.desc {
+      color: ${props => props.theme.secondaryText};
+    }
+
     strong {
       font-weight: bold;
     }
@@ -96,8 +104,6 @@ const PlanInstallDiv = styled(ModalWidgetDiv)`
   max-height: 500px;
   display: flex;
   flex-direction: column;
-
-  font-size: ${props => props.theme.fontSizes.larger};
 `;
 
 const SelectGroup = styled.div`
@@ -204,7 +210,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
           </BoxInner>
         </WideBox>
         <SelectGroup>
-          <SelectHeader>Install</SelectHeader>
+          <SelectHeader>{T(_("plan_install.select_upload"))}</SelectHeader>
           <Select
             onChange={this.onUploadChange}
             value={uploadValue}
@@ -215,7 +221,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
           />
         </SelectGroup>
         <SelectGroup>
-          <SelectHeader>To location</SelectHeader>
+          <SelectHeader>
+            {T(_("plan_install.select_install_location"))}
+          </SelectHeader>
           <Select
             onChange={this.onInstallLocationChange}
             value={locationValue}
@@ -237,7 +245,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
           <Filler />
           <Button
             disabled={!canInstall}
-            icon="arrow-right"
+            icon="install"
             primary
             onClick={this.onInstall}
             id={canInstall ? "modal-install-now" : null}
@@ -289,9 +297,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
   renderBusy() {
     return (
       <LoadingStateDiv>
-        <div>Computing space requirements...</div>
+        {T(_("plan_install.computing_space_requirements"))}
         <FilterSpacer />
-        <LoadingCircle progress={-1} />
+        <Floater />
       </LoadingStateDiv>
     );
   }
@@ -316,19 +324,19 @@ class PlanInstall extends React.PureComponent<Props, State> {
     return (
       <SizeTable>
         <tr>
-          <td>Disk space required</td>
+          <td className="desc">{T(_("plan_install.disk_space_required"))}</td>
           <td>
             <strong>{requiredSpace > 0 ? fileSize(requiredSpace) : "?"}</strong>
           </td>
         </tr>
         <tr>
-          <td>Disk space available</td>
+          <td className="desc">{T(_("plan_install.disk_space_available"))}</td>
           <td className={classNames({ low: !haveEnoughSpace })}>
-            <strong>{fileSize(freeSpace)}</strong>{" "}
+            <strong>{fileSize(freeSpace)}</strong>
             {haveEnoughSpace ? (
-              <Icon icon="checkmark" />
+              <DiskSpaceIcon icon="checkmark" />
             ) : (
-              <Icon icon="warning" />
+              <DiskSpaceIcon icon="warning" />
             )}
           </td>
         </tr>
@@ -340,6 +348,12 @@ class PlanInstall extends React.PureComponent<Props, State> {
     this.setState({
       pickedInstallLocationId: item.value,
     });
+    const { dispatch } = this.props;
+    dispatch(
+      actions.updatePreferences({
+        defaultInstallLocation: item.value,
+      })
+    );
   };
 
   onUploadChange = (item: UploadOption) => {
@@ -425,10 +439,16 @@ class PlanInstall extends React.PureComponent<Props, State> {
         messages.InstallLocationsList,
         {}
       );
+
+      const defaultRecord = findWhere(installLocations, {
+        id: defaultInstallLocation,
+      });
       this.setState({
         stage: PlanStage.Planning,
         installLocations,
-        pickedInstallLocationId: defaultInstallLocation,
+        pickedInstallLocationId: defaultRecord
+          ? defaultRecord.id
+          : installLocations[0].id,
       });
     });
   }

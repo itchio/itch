@@ -830,6 +830,8 @@ export interface InstallQueueResult {
   installFolder: string;
   /** undocumented */
   stagingFolder: string;
+  /** undocumented */
+  installLocationId: string;
 }
 
 /**
@@ -1673,6 +1675,8 @@ export enum Code {
   APIError = 12000,
   // The database is busy
   DatabaseBusy = 16000,
+  // An install location could not be removed because it has active downloads
+  CantRemoveLocationBecauseOfActiveDownloads = 18000,
 }
 
 /**

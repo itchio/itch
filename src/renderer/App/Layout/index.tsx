@@ -85,7 +85,7 @@ class Layout extends React.PureComponent<Props> {
     return (
       <LayoutContainer className={classNames({ maximized, focused })}>
         {this.main()}
-        <StatusBar />
+        {ambientWind() === "root" ? <StatusBar /> : null}
         <ReactHintContainer>{this.renderReactHint()}</ReactHintContainer>
         <NonLocalIndicator />
       </LayoutContainer>

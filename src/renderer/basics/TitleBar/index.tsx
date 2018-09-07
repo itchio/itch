@@ -146,7 +146,7 @@ class TitleBar extends React.PureComponent<Props> {
         actions.openModal(
           modals.secretSettings.make({
             wind: ambientWind(),
-            title: "Secret options",
+            title: "Secret settings",
             message: "",
             widgetParams: {},
           })

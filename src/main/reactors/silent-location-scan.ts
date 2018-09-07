@@ -9,6 +9,10 @@ const logger = mainLogger.child(__filename);
 
 export default function(watcher: Watcher) {
   watcher.on(actions.setupDone, async (store, action) => {
+    store.dispatch(actions.silentlyScanInstallLocations({}));
+  });
+
+  watcher.on(actions.silentlyScanInstallLocations, async (store, action) => {
     logger.info(`Scanning install locations for items...`);
     await mcall(
       messages.InstallLocationsScan,
@@ -30,5 +34,6 @@ export default function(watcher: Watcher) {
       }
     );
     logger.info(`Scan complete.`);
+    store.dispatch(actions.newItemsImported({}));
   });
 }

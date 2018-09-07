@@ -273,8 +273,7 @@
     "The itch.io sandbox will try to prevent games you download from doing harmful things or stealing sensitive data. While it's not a complete safety guarantee, running games in the itch.io sandbox is much safer.",
   "preferences.install_location.add": "Add location",
   "preferences.install_location.delete":
-    "Remove this install location and uninstall its contents",
-  "preferences.install_location.delete_short": "Remove",
+    "Remove this install location",
   "preferences.install_location.free_space": "Free space",
   "preferences.install_location.navigate":
     "View the contents of this location",
@@ -289,6 +288,7 @@
   "preferences.install_location.used_space": "Used space",
   "preferences.install_location.disk_usage": "Disk usage",
   "preferences.install_location.size_used_by_games": "{{installedSize}} used by games",
+  "preferences.install_location.empty": "Empty",
   "preferences.install_location.free_of_total": "{{freeSize}} free of {{totalSize}}",
   "preferences.install_locations": "Install locations",
   "preferences.scan_install_locations": "Scan install locations for games",
@@ -376,6 +376,7 @@
     "Stopping this download will leave {{title}} in an inconsistent state.",
   "prompt.dangerous_discard_download.detail":
     "We'll restore {{title}} to the latest version the next time you try to use it.",
+  "prompt.show_error.generic_message": "Something went wrong",
   "prompt.show_error.details_for_nerds": "Details for nerds",
   "prompt.show_error.details_for_nerds.event_log": "Event log",
   "prompt.show_error.details_for_nerds.stack_trace": "Stack trace",
@@ -406,15 +407,8 @@
     "Are you sure you want to remove '{{username}}' from your saved sessions?",
   "prompt.forget_session.title": "Forget session",
   "prompt.install_location_add.title": "Pick a new install location",
-  "prompt.install_location_not_empty.detail":
-    "It needs to be done manually for the time being.",
-  "prompt.install_location_not_empty.message":
-    "Install locations can only be removed when all their contents has been uninstalled.",
-  "prompt.install_location_not_empty.show_contents": "Show contents",
-  "prompt.install_location_not_empty.title":
-    "This install location is not empty",
   "prompt.install_location_remove.detail":
-    "Any items installed at {{location}} will be uninstalled.",
+    "Any items installed at {{location}} will no longer be managed by the app.",
   "prompt.install_location_remove.message":
     "Are you sure you want to remove this location?",
   "prompt.install_location_remove.title": "Removing an install location",
@@ -569,7 +563,7 @@
   "status.uptodate": "Your itch is up-to-date!",
   "usage_stats.description.assets": "A collection of assets",
   "usage_stats.description.book": "A book",
-  "usage_stats.description.bought_time_ago": "Bought {{time_ago}}",
+  "usage_stats.description.bought_time_ago": "Acquired {{time_ago}}",
   "usage_stats.description.comic": "A comic",
   "usage_stats.description.free_download": "Free download",
   "usage_stats.description.game": "A game",
@@ -695,6 +689,13 @@
   "send_feedback.steps.your_message": "Your message",
   "send_feedback.steps.system_info": "System information",
   "send_feedback.steps.send": "Send report",
+
+  "plan_install.computing_space_requirements": "Computing space requirements",
+  "plan_install.select_upload": "Install",
+  "plan_install.select_install_location": "To location",
+
+  "plan_install.disk_space_required": "Disk space required",
+  "plan_install.disk_space_available": "Disk space available",
 
   "empty_state.nothing_to_see_here": "Nothing to see here"
 }

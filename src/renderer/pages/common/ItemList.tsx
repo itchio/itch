@@ -5,6 +5,8 @@ export default styled.div`
   overflow-y: auto;
   padding: 0 12px;
 
+  user-select: none;
+
   /* this scrolls, so we want it to have its own layer */
   will-change: transform;
 `;

@@ -19,6 +19,7 @@ import styled from "renderer/styles";
 import { T } from "renderer/t";
 import { each, filter, find, map, size } from "underscore";
 import { ModalWidgetProps } from "common/modals";
+import Floater from "renderer/basics/Floater";
 
 const CaveItemList = styled.div`
   margin: 8px 0;
@@ -159,7 +160,7 @@ class ManageGame extends React.PureComponent<Props> {
         ) : (
           <p>
             {loadingUploads ? (
-              <LoadingCircle progress={0} />
+              <Floater />
             ) : (
               T(["prompt.manage_game.no_other_uploads"])
             )}

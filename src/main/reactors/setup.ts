@@ -21,43 +21,48 @@ async function syncInstallLocations(store: Store) {
   const { installLocations } = await mcall(messages.InstallLocationsList, {});
   const newLocationsById = indexBy(installLocations, "id");
 
-  const rs = store.getState();
-  await mkdirp(appdataLocationPath());
-  let oldLocations = {
-    ...rs.preferences.installLocations,
-    appdata: {
-      id: "appdata",
-      path: appdataLocationPath(),
-    },
-  } as { [key: string]: { id: string; path: string } };
+  const { preferences } = store.getState();
+  if (!preferences.importedOldInstallLocations) {
+    await mkdirp(appdataLocationPath());
+    let oldLocations = {
+      ...preferences.installLocations,
+      appdata: {
+        id: "appdata",
+        path: appdataLocationPath(),
+      },
+    } as { [key: string]: { id: string; path: string } };
 
-  let numAdded = 0;
-  if (!isEmpty(oldLocations)) {
-    for (const id of Object.keys(oldLocations)) {
-      logger.debug(`Checking install location ${id}...`);
-      const oldLoc = oldLocations[id];
-      const newLoc = newLocationsById[id];
-      if (newLoc) {
-        logger.debug(`Has on butler side too!`);
-      } else {
-        logger.debug(`Synchronizing ${id}...`);
-        numAdded++;
-        try {
-          await mcall(messages.InstallLocationsAdd, {
-            id,
-            path: oldLoc.path,
-          });
-        } catch (e) {
-          logger.warn(`Could not add ${oldLoc.path}: ${e.stack}`);
+    let numAdded = 0;
+    if (!isEmpty(oldLocations)) {
+      for (const id of Object.keys(oldLocations)) {
+        logger.debug(`Checking install location ${id}...`);
+        const oldLoc = oldLocations[id];
+        const newLoc = newLocationsById[id];
+        if (newLoc) {
+          logger.debug(`Has on butler side too!`);
+        } else {
+          logger.debug(`Synchronizing ${id}...`);
+          numAdded++;
+          try {
+            await mcall(messages.InstallLocationsAdd, {
+              id,
+              path: oldLoc.path,
+            });
+          } catch (e) {
+            logger.warn(`Could not add ${oldLoc.path}: ${e.stack}`);
+          }
         }
       }
     }
-  }
 
-  if (numAdded > 0) {
-    logger.info(`Registered ${numAdded} install locations with butler`);
-  } else {
-    logger.info(`All install locations synchronized with butler`);
+    if (numAdded > 0) {
+      logger.info(`Registered ${numAdded} install locations with butler`);
+    } else {
+      logger.info(`All install locations synchronized with butler`);
+    }
+    store.dispatch(
+      actions.updatePreferences({ importedOldInstallLocations: true })
+    );
   }
 }
 

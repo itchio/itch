@@ -20,6 +20,7 @@ import {
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
+import Floater from "renderer/basics/Floater";
 
 const StripeDiv = styled.div`
   display: flex;
@@ -33,6 +34,17 @@ const StripeDiv = styled.div`
 
   padding: 1.2em 0;
   margin-bottom: 32px;
+`;
+
+const FloaterContainer = styled.div`
+  background: ${props => props.theme.breadBackground};
+  opacity: 0.7;
+  padding: 4px;
+
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  z-index: 20;
 `;
 
 const ViewAll = styled.a`
@@ -110,6 +122,11 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       <>
         {this.renderTitle(loading, result, error)}
         <StripeDiv>
+          {loading ? (
+            <FloaterContainer>
+              <Floater />
+            </FloaterContainer>
+          ) : null}
           {this.renderViewAll()}
           {this.renderItems(result)}
           {this.renderEmpty()}
@@ -124,12 +141,6 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
           <TitleBox>
             <Title>
               <a href={href}>{T(title)}</a>
-              {loading ? (
-                <>
-                  <TitleSpacer />
-                  <LoadingCircle progress={-1} />
-                </>
-              ) : null}
               {renderTitleExtras()}
             </Title>
           </TitleBox>

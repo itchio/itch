@@ -83,6 +83,10 @@ export default function(watcher: Watcher) {
   watcher.on(actions.ownedKeysFetched, async (store, action) => {
     updateCommons(store);
   });
+
+  watcher.on(actions.installLocationsChanged, async (store, action) => {
+    updateCommons(store);
+  });
 }
 
 function push(store: Store, next: typeof actions.commonsUpdated.payload) {

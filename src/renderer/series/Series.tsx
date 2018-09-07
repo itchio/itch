@@ -7,7 +7,7 @@ import equal from "react-fast-compare";
 import EmptyState from "renderer/basics/EmptyState";
 import ErrorState from "renderer/basics/ErrorState";
 import FiltersContainer from "renderer/basics/FiltersContainer";
-import LoadingCircle from "renderer/basics/LoadingCircle";
+import Floater from "renderer/basics/Floater";
 import butlerCaller, { renderNoop } from "renderer/hocs/butlerCaller";
 import { hookWithProps } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
@@ -15,8 +15,8 @@ import { withTab } from "renderer/hocs/withTab";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
 import styled from "renderer/styles";
-import { isEmpty, throttle } from "underscore";
 import { _ } from "renderer/t";
+import { isEmpty, throttle } from "underscore";
 
 export interface FetchRes<Item> {
   items: Item[];
@@ -175,7 +175,7 @@ export function makeSeries<
       if (!hasItems(result) && loading) {
         return (
           <LoadMoreContainer>
-            <LoadingCircle progress={-1} />
+            <Floater />
           </LoadMoreContainer>
         );
       }

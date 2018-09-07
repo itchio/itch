@@ -428,11 +428,16 @@ export interface PreferencesState {
   /** do not make any network requests */
   offlineMode: boolean;
 
+  /**
+   * DEPRECATED: this is just an import from <v23 itch.
+   */
   installLocations: {
-    [key: string]: InstallLocation;
+    [id: string]: string;
   };
 
-  /** where to install games (doesn't change already-installed games) */
+  /**
+   * where to install games by default
+   */
   defaultInstallLocation: string;
 
   /** use sandbox */
@@ -482,6 +487,9 @@ export interface PreferencesState {
 
   /** the last version of the app we've successfully run a setup of, see https://github.com/itchio/itch/issues/1997 */
   lastSuccessfulSetupVersion: string;
+
+  /** whether or not we've already imported appdata as an install location */
+  importedOldInstallLocations: boolean;
 }
 
 export interface Task {

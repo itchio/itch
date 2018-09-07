@@ -21,8 +21,6 @@ export const initialState = {
   preventDisplaySleep: true,
   preferOptimizedPatches: false,
   disableBrowser: env.integrationTests ? true : false,
-
-  layout: "grid",
   enableTabs: false,
 } as PreferencesState;
 

@@ -1,14 +1,14 @@
-import React from "react";
 import { RequestCreator } from "butlerd";
-import LoadingCircle from "renderer/basics/LoadingCircle";
-import ErrorState from "renderer/basics/ErrorState";
-import equal from "react-fast-compare";
-import { rcall } from "renderer/butlerd/rcall";
-import styled from "renderer/styles";
-import { ActionList, invalidators } from "renderer/butlerd/invalidators";
-import { Watcher } from "common/util/watcher";
 import { devNull } from "common/logger";
+import { Watcher } from "common/util/watcher";
+import React from "react";
+import equal from "react-fast-compare";
+import ErrorState from "renderer/basics/ErrorState";
+import Floater from "renderer/basics/Floater";
+import { ActionList, invalidators } from "renderer/butlerd/invalidators";
+import { rcall } from "renderer/butlerd/rcall";
 import { storeShape } from "renderer/hocs/watching";
+import styled from "renderer/styles";
 import { debounce } from "underscore";
 
 interface GenericProps<Params, Result> {
@@ -151,7 +151,7 @@ const butlerCaller = <Params, Result>(
         if (!loadingHandled) {
           return (
             <LoadingStateDiv>
-              <LoadingCircle progress={-1} wide />
+              <Floater />
             </LoadingStateDiv>
           );
         }

@@ -5,7 +5,6 @@ import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
 import AdvancedSettings from "renderer/pages/PreferencesPage/AdvancedSettings";
 import BehaviorSettings from "renderer/pages/PreferencesPage/BehaviorSettings";
-import InstallLocationsSettings from "renderer/pages/PreferencesPage/InstallLocationsSettings";
 import LanguageSettings from "renderer/pages/PreferencesPage/LanguageSettings";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
@@ -130,7 +129,6 @@ class PreferencesPage extends React.PureComponent<Props> {
       <PreferencesDiv>
         <PreferencesContentDiv>
           <LanguageSettings />
-          <InstallLocationsSettings />
           <BehaviorSettings />
           <AdvancedSettings />
         </PreferencesContentDiv>

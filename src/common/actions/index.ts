@@ -202,6 +202,7 @@ export const actions = wireActions({
     progress: ProgressInfo;
   }>(),
   setupDone: action<{}>(),
+  silentlyScanInstallLocations: action<{}>(),
   retrySetup: action<{}>(),
 
   // login

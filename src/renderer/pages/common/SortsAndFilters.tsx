@@ -1,6 +1,6 @@
 import { FiltersContainerDiv } from "renderer/basics/FiltersContainer";
 import Icon from "renderer/basics/Icon";
-import styled from "renderer/styles";
+import styled, { css } from "renderer/styles";
 
 export const SortsAndFilters = styled(FiltersContainerDiv)`
   display: flex;
@@ -23,14 +23,14 @@ const activeBg = `linear-gradient(to top, hsla(355, 43%, 33%, 1), hsla(355, 43%,
 const borderColor = `#843442`;
 const borderRadius = `4px`;
 
-export const FilterOptionLink = styled.a`
+const optionButtonLike = css`
   display: inline-block;
   background: ${inactiveBg};
   padding: 0.5em 1em;
   margin: 0;
   border: 1px solid ${borderColor};
   border-left: none;
-
+  color: ${props => props.theme.baseText};
   transition: all 0.4s;
 
   &:first-child {
@@ -50,6 +50,18 @@ export const FilterOptionLink = styled.a`
     background: ${activeBg};
     color: ${props => props.theme.baseText};
   }
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const FilterOptionLink = styled.a`
+  ${optionButtonLike};
+`;
+
+export const FilterOptionButton = styled.div`
+  ${optionButtonLike};
 `;
 
 export const FilterOptionIcon = styled(Icon)`

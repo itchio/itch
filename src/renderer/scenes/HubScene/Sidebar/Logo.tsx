@@ -38,7 +38,7 @@ class Logo extends React.PureComponent<Props> {
         actions.openModal(
           modals.secretSettings.make({
             wind: "root",
-            title: "Secret options",
+            title: "Secret settings",
             message: "",
             widgetParams: {},
           })
