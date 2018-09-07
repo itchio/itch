@@ -78,15 +78,11 @@ func installFlow(r *runner) {
 	r.logf("opening install locations")
 	must(r.click("#manage-install-locations"))
 
+	r.takeScreenshot("install location tab")
+
 	r.logf("making sure our installed game shows up")
 	var rowSelector = fmt.Sprintf(".meat-tab.visible .stripe--item[data-game-id='%d']", testGameID)
 	must(r.click(rowSelector))
-
-	r.takeScreenshot("install location tab")
-
-	r.logf("open it again")
-	must(r.click(rowSelector + " .gamedesc--titlelink"))
-	must(r.waitUntilTextExists(".title-bar-text", testGameName))
 
 	r.logf("uninstalling it")
 	must(r.waitUntilTextExists(mainActionSelector, "Launch"))
