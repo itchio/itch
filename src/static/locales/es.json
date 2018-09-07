@@ -507,5 +507,10 @@
     "grid.empty_state.explanation": "Tus filtros están ocultando todo aquí",
     "grid.really_empty_state.leader": "No hay nada aquí...",
     "grid.really_empty_state.explanation": "...aún!",
-    "grid.item.install_title": "Instalar {{título}}"
+    "grid.item.install_title": "Instalar {{título}}",
+    "grid.item.launch_title": "Ejecutar {{title}}",
+    "grid.item.open_page": "Abrir página",
+    "grid.item.not_available": "No disponible",
+    "grid.item.open_title": "Abrir {{title}}",
+    "table.column.installed": "Instalado"
 }
