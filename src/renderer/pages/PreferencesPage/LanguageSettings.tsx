@@ -2,31 +2,35 @@ import { actions } from "common/actions";
 import urls from "common/constants/urls";
 import { Dispatch, LocaleInfo, RootState } from "common/types";
 import React from "react";
+import Floater from "renderer/basics/Floater";
 import Icon from "renderer/basics/Icon";
 import IconButton from "renderer/basics/IconButton";
-import LoadingCircle from "renderer/basics/LoadingCircle";
-import SelectRow, { SelectOption } from "renderer/basics/SelectRow";
+import SimpleSelect, { BaseOptionType } from "renderer/basics/SimpleSelect";
 import { hook } from "renderer/hocs/hook";
+import Label from "renderer/pages/PreferencesPage/Label";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
-import Label from "renderer/pages/PreferencesPage/Label";
+import { findWhere } from "underscore";
 
 const Spacer = styled.div`
   width: 8px;
   height: 2px;
 `;
 
+const LanguageSelect = styled(SimpleSelect)`
+  flex-grow: 0;
+  flex-basis: 300px;
+`;
+
 class LanguageSettings extends React.PureComponent<Props> {
   render() {
     const { dispatch, locales, lang, sniffedLang } = this.props;
 
-    const options: SelectOption[] = [
-      {
-        label: ["preferences.language.auto", { language: sniffedLang }],
-        value: "__",
-      },
-      ...locales,
-    ];
+    let autoLang: BaseOptionType = {
+      label: ["preferences.language.auto", { language: sniffedLang }],
+      value: "__",
+    };
+    const options: BaseOptionType[] = [autoLang, ...locales];
 
     let translateUrl = `${urls.itchTranslationPlatform}/projects/itch/itch`;
     const english = /^en/.test(lang);
@@ -48,13 +52,13 @@ class LanguageSettings extends React.PureComponent<Props> {
           <Label active>
             <Icon icon="earth" />
             <Spacer />
-            <SelectRow
+            <LanguageSelect
               onChange={this.onLanguageChange}
               options={options}
-              value={lang || "__"}
+              value={findWhere(options, { value: lang }) || autoLang}
             />
             {downloading ? (
-              <LoadingCircle progress={-1} />
+              <Floater />
             ) : (
               <IconButton icon="repeat" onClick={this.queueLocaleDownload} />
             )}
@@ -77,12 +81,15 @@ class LanguageSettings extends React.PureComponent<Props> {
     dispatch(actions.queueLocaleDownload({ lang }));
   };
 
-  onLanguageChange = (lang: string) => {
+  onLanguageChange = (value: BaseOptionType) => {
     const { dispatch } = this.props;
+    if (!value) {
+      return;
+    }
+    let lang = value.value;
     if (lang === "__") {
       lang = null;
     }
-
     dispatch(actions.updatePreferences({ lang }));
   };
 }
