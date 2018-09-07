@@ -503,5 +503,6 @@
     "dashboard.game_stats.purchases": "compras",
     "duration.seconds": "{{x}} segundos",
     "grid.criterion.filter_by": "Filtrar por: ",
-    "grid.item_count": "{{count}} artículos"
+    "grid.item_count": "{{count}} artículos",
+    "grid.empty_state.explanation": "Tus filtros están ocultando todo aquí"
 }
