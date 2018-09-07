@@ -6,21 +6,19 @@ import { ambientTab, ambientWind } from "common/util/navigation";
 import { isNetworkError } from "main/net/errors";
 import React from "react";
 import ErrorState from "renderer/basics/ErrorState";
-import LoadingCircle from "renderer/basics/LoadingCircle";
+import Floater from "renderer/basics/Floater";
 import butlerCaller from "renderer/hocs/butlerCaller";
-import { hookWithProps, hook } from "renderer/hocs/hook";
+import { hook, hookWithProps } from "renderer/hocs/hook";
 import { withTab } from "renderer/hocs/withTab";
 import {
   standardCoverHeight,
   StandardGameCover,
   Title,
   TitleBox,
-  TitleSpacer,
 } from "renderer/pages/PageStyles/games";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
-import Floater from "renderer/basics/Floater";
 
 const StripeDiv = styled.div`
   display: flex;

@@ -1,8 +1,7 @@
 import { Watcher } from "common/util/watcher";
 
 import { app, Menu } from "electron";
-
-import { createSelector } from "reselect";
+const logger = mainLogger.child(__filename);
 
 import { actions } from "common/actions";
 import {
@@ -14,6 +13,9 @@ import { Store, RootState, I18nState, MenuTemplate } from "common/types";
 import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template";
 import { memoize } from "common/util/lru-memoize";
 import { currentRuntime } from "common/os/runtime";
+import { mainLogger } from "main/logger";
+import { mcall } from "main/butlerd/mcall";
+import { messages } from "common/butlerd";
 
 const setTrayMenu = memoize(1, function(template: MenuTemplate, store: Store) {
   const fleshedOut = fleshOutTemplate(
@@ -33,49 +35,92 @@ const setTrayMenu = memoize(1, function(template: MenuTemplate, store: Store) {
 });
 
 async function go(store: Store, url: string) {
-  // TODO: should navigate focus the window anyway ?
-  store.dispatch(actions.focusWind({ wind: "root" }));
   store.dispatch(actions.navigate({ wind: "root", url }));
 }
 
-function refreshTray(store: Store, i18n: I18nState) {
-  // TODO: make the tray a lot more useful? that'd be good.
-  // (like: make it display recent stuff / maybe the last few tabs)
+async function refreshTray(store: Store) {
+  const rs = store.getState();
 
-  const menuTemplate: MenuTemplate = [
+  let menuTemplate: MenuTemplate = [];
+
+  let append = (addition: MenuTemplate) => {
+    if (menuTemplate.length > 0) {
+      menuTemplate = [...menuTemplate, { type: "separator" }, ...addition];
+    } else {
+      menuTemplate = [...menuTemplate, ...addition];
+    }
+  };
+
+  if (rs.setup.done) {
+    try {
+      const { items } = await mcall(messages.FetchCaves, {
+        limit: 5,
+        sortBy: "lastTouched",
+      });
+      let caveItems: MenuTemplate = [];
+      for (const cave of items) {
+        caveItems.push({
+          localizedLabel: cave.game.title,
+          click: () => store.dispatch(actions.queueLaunch({ cave })),
+        });
+      }
+      append(caveItems);
+    } catch (e) {
+      logger.warn(`Could not fetch caves: ${e.stack}`);
+    }
+  }
+
+  append([
     {
-      localizedLabel: ["sidebar.owned"],
+      localizedLabel: ["sidebar.explore"],
+      click: () => go(store, "itch://featured"),
+    },
+    {
+      localizedLabel: ["sidebar.library"],
       click: () => go(store, "itch://library"),
     },
     {
-      localizedLabel: ["sidebar.dashboard"],
-      click: () => go(store, "itch://dashboard"),
+      localizedLabel: ["sidebar.collections"],
+      click: () => go(store, "itch://collections"),
     },
-  ];
+  ]);
+
+  append([
+    {
+      localizedLabel: ["sidebar.preferences"],
+      click: () => go(store, "itch://preferences"),
+    },
+  ]);
 
   if (process.platform !== "darwin") {
-    menuTemplate.push({ type: "separator" });
-    menuTemplate.push({
-      localizedLabel: ["menu.file.quit"],
-      click: () => store.dispatch(actions.quit({})),
-    });
+    append([
+      {
+        localizedLabel: ["menu.file.quit"],
+        click: () => store.dispatch(actions.quit({})),
+      },
+    ]);
   }
   setTrayMenu(menuTemplate, store);
 }
 
 export default function(watcher: Watcher) {
-  watcher.onStateChange({
-    makeSelector: (store, schedule) =>
-      createSelector(
-        (rs: RootState) => rs.i18n,
-        i18n => {
-          schedule(() => refreshTray(store, i18n));
-        }
-      ),
-  });
-
   watcher.on(actions.notify, async (store, action) => {
     const { onClick } = action.payload;
     rememberNotificationAction(onClick);
   });
+
+  async function scheduleRefreshTray(store, action: any) {
+    try {
+      await refreshTray(store);
+    } catch (e) {
+      logger.error(`Could not refresh tray: ${e.stack}`);
+    }
+  }
+
+  watcher.on(actions.setupDone, scheduleRefreshTray);
+  watcher.on(actions.newItemsImported, scheduleRefreshTray);
+  watcher.on(actions.downloadEnded, scheduleRefreshTray);
+  watcher.on(actions.uninstallEnded, scheduleRefreshTray);
+  watcher.on(actions.launchEnded, scheduleRefreshTray);
+  watcher.on(actions.installLocationsChanged, scheduleRefreshTray);
 }

@@ -29,6 +29,16 @@ const CompactLastPlayed = styled(LastPlayed)`
 
 type Kind = "download" | "task" | "recent";
 
+const TitleBlock = styled.div`
+  flex-shrink: 0;
+  height: 40px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+`;
+
 const EnormousIcon = styled(Icon)`
   font-size: ${props => props.theme.fontSizes.enormous};
 `;
@@ -64,7 +74,7 @@ const Overlay = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 `;
 
 const ProgressContainer = styled.div`
@@ -87,7 +97,9 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
       >
         <GameCover game={game} showGifMarker={false}>
           <Overlay>
-            <GameTitle title={game.title} />
+            <TitleBlock>
+              <GameTitle title={game.title} />
+            </TitleBlock>
             {this.renderProgress()}
           </Overlay>
         </GameCover>
@@ -133,7 +145,7 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
           <ProgressContainer>
             <EnormousIcon icon={taskIcon(taskName)} />
           </ProgressContainer>
-          <span>{T(formatTask(taskName))}</span>
+          <TitleBlock>{T(formatTask(taskName))}</TitleBlock>
         </>
       );
     }
@@ -144,7 +156,7 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
           <ProgressContainer>
             <EnormousIcon icon="stopwatch" />
           </ProgressContainer>
-          <span>{T(["grid.item.queued"])}</span>
+          <TitleBlock>{T(["grid.item.queued"])}</TitleBlock>
         </>
       );
     }
@@ -159,12 +171,16 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
           )}
         </ProgressContainer>
         {caveId ? (
-          <FetchCave params={{ caveId }} render={this.renderLastPlayed} />
+          <TitleBlock>
+            <FetchCave params={{ caveId }} render={this.renderLastPlayed} />
+          </TitleBlock>
         ) : (
-          <DownloadProgressSpan
-            {...progress}
-            downloadsPaused={downloadsPaused}
-          />
+          <TitleBlock>
+            <DownloadProgressSpan
+              {...progress}
+              downloadsPaused={downloadsPaused}
+            />
+          </TitleBlock>
         )}
       </>
     );
