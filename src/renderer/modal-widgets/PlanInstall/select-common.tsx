@@ -3,7 +3,7 @@ import { singleLine } from "renderer/styles";
 
 export const SelectValueDiv = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-flow: row wrap;
   align-items: center;
 
   .spacer {

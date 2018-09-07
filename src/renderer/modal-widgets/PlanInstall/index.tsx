@@ -24,17 +24,12 @@ import Filler from "renderer/basics/Filler";
 import Floater from "renderer/basics/Floater";
 import Icon from "renderer/basics/Icon";
 import { ModalButtons } from "renderer/basics/modal-styles";
-import { Select } from "renderer/basics/Select";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { withIntl } from "renderer/hocs/withIntl";
 import { rendererLogger } from "renderer/logger";
-import {
-  InstallLocationOption,
-  installLocationSelectComponents,
-} from "renderer/modal-widgets/PlanInstall/install-location-select";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
@@ -43,7 +38,13 @@ import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import styled from "renderer/styles";
 import { T, TString, _ } from "renderer/t";
 import { findWhere } from "underscore";
-import { UploadOption, uploadSelectComponents } from "./upload-select";
+import SimpleSelect from "renderer/basics/SimpleSelect";
+import UploadOptionComponent, {
+  UploadOption,
+} from "renderer/modal-widgets/PlanInstall/UploadOptionComponent";
+import InstallLocationOptionComponent, {
+  InstallLocationOption,
+} from "renderer/modal-widgets/PlanInstall/InstallLocationOptionComponent";
 
 const logger = rendererLogger.child(__filename);
 
@@ -211,25 +212,23 @@ class PlanInstall extends React.PureComponent<Props, State> {
         </WideBox>
         <SelectGroup>
           <SelectHeader>{T(_("plan_install.select_upload"))}</SelectHeader>
-          <Select
+          <SimpleSelect
             onChange={this.onUploadChange}
             value={uploadValue}
-            isLoading={!uploads}
             options={uploadOptions}
-            isSearchable={false}
-            components={uploadSelectComponents}
+            OptionComponent={UploadOptionComponent}
+            isLoading={busy}
           />
         </SelectGroup>
         <SelectGroup>
           <SelectHeader>
             {T(_("plan_install.select_install_location"))}
           </SelectHeader>
-          <Select
+          <SimpleSelect
             onChange={this.onInstallLocationChange}
             value={locationValue}
             options={locationOptions}
-            isSearchable={false}
-            components={installLocationSelectComponents}
+            OptionComponent={InstallLocationOptionComponent}
           />
         </SelectGroup>
 
