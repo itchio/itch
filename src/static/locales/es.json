@@ -502,5 +502,6 @@
     "dashboard.game_stats.views": "vistas",
     "dashboard.game_stats.purchases": "compras",
     "duration.seconds": "{{x}} segundos",
-    "grid.criterion.filter_by": "Filtrar por: "
+    "grid.criterion.filter_by": "Filtrar por: ",
+    "grid.item_count": "{{count}} artículos"
 }
