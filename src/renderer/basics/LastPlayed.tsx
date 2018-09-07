@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { CaveSummary, Game } from "common/butlerd/messages";
 import { actionForGame } from "common/util/action-for-game";
 import React from "react";
@@ -6,7 +7,7 @@ import { T } from "renderer/t";
 
 class LastPlayed extends React.PureComponent<Props> {
   render() {
-    const { game, cave, short = false } = this.props;
+    const { game, cave, short = false, className } = this.props;
     const { lastTouchedAt = null } = cave || {};
 
     const classification = game.classification || "game";
@@ -19,7 +20,7 @@ class LastPlayed extends React.PureComponent<Props> {
           : "used";
 
     return (
-      <div className="last-playthrough">
+      <div className={classNames("last-playthrough", className)}>
         {lastTouchedAt ? (
           <label>
             {short ? (
@@ -47,4 +48,5 @@ interface Props {
   game: Game;
   cave: CaveSummary;
   short?: boolean;
+  className?: string;
 }

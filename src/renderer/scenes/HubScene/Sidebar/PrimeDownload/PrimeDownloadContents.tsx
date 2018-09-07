@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import { messages, getCaveSummary } from "common/butlerd";
 import { Game } from "common/butlerd/messages";
 import { formatTask, taskIcon } from "common/format/operation";
 import { Dispatch, ProgressInfo, TaskName } from "common/types";
@@ -16,6 +16,16 @@ import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import { GameTitle } from "renderer/scenes/HubScene/Sidebar/PrimeDownload/GameTitle";
 import styled, { clickable } from "renderer/styles";
 import { T } from "renderer/t";
+import LastPlayed from "renderer/basics/LastPlayed";
+import butlerCaller from "renderer/hocs/butlerCaller";
+
+const FetchCave = butlerCaller(messages.FetchCave);
+
+const CompactLastPlayed = styled(LastPlayed)`
+  max-width: 90%;
+  text-align: center;
+  line-height: 1.2;
+`;
 
 type Kind = "download" | "task" | "recent";
 
@@ -116,7 +126,7 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
   };
 
   renderProgress(): JSX.Element {
-    const { progress, downloadsPaused, caveId, taskName } = this.props;
+    const { progress, downloadsPaused, caveId, taskName, game } = this.props;
     if (taskName) {
       return (
         <>
@@ -149,7 +159,7 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
           )}
         </ProgressContainer>
         {caveId ? (
-          <span>{T(["grid.item.status.installed"])}</span>
+          <FetchCave params={{ caveId }} render={this.renderLastPlayed} />
         ) : (
           <DownloadProgressSpan
             {...progress}
@@ -159,6 +169,15 @@ class PrimeDownloadContents extends React.PureComponent<Props> {
       </>
     );
   }
+
+  renderLastPlayed = FetchCave.renderCallback(({ result }) => {
+    if (result && result.cave) {
+      const { cave } = result;
+      const { game } = this.props;
+      return <CompactLastPlayed cave={getCaveSummary(cave)} game={game} />;
+    }
+    return null;
+  });
 
   onContextMenu = (ev: React.MouseEvent<any>) => {
     ev.preventDefault();
