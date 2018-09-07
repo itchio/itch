@@ -522,5 +522,6 @@
     "menu.file.close_tabs_below": "Cerrar las siguentes pestañas",
     "new_tab.devlogs": "Registros del desarrollador",
     "preferences.scan_install_locations": "Buscar juegos en las carpetas de instalación",
-    "preferences.scan_install_locations.confirm_import": "Confirmar importación"
+    "preferences.scan_install_locations.confirm_import": "Confirmar importación",
+    "preferences.scan_install_locations.no_items_found": "Ningún artículo adicional fue encontrado en las carpetas de instalación"
 }
