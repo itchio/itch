@@ -521,5 +521,6 @@
     "login.status.antivirus_warning": "Tu software antivirus puede interferir con itch.",
     "menu.file.close_tabs_below": "Cerrar las siguentes pestañas",
     "new_tab.devlogs": "Registros del desarrollador",
-    "preferences.scan_install_locations": "Buscar juegos en las carpetas de instalación"
+    "preferences.scan_install_locations": "Buscar juegos en las carpetas de instalación",
+    "preferences.scan_install_locations.confirm_import": "Confirmar importación"
 }
