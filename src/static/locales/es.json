@@ -548,5 +548,5 @@
     "status.reinstall.busy": "{{title}} no puede ser reinstalado porque se está ejecutando.",
     "setup.window.title": "Instalación de {{app_name}}",
     "setup.window.welcome": "¡Bienvenido al instalador de {{app_name}}! Busca algo para tomar, elige una carpeta de instalación y continúa.",
-    "setup.tooltip.location": "Haz clic para cambiar la ubicación de la instalación."
+    "setup.tooltip.location": "Haz clic para cambiar la carpeta de instalación"
 }
