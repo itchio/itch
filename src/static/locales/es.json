@@ -554,5 +554,18 @@
     "setup.status.progress": "{{percent}} terminado",
     "setup.status.done": "¡Todo listo!",
     "setup.status.notification": "No hubo problemas con la instalación, ¡{{app_name}} se está iniciando!",
-    "web.context_menu.open_in_new_tab": "Abrir en pestaña nueva"
+    "web.context_menu.open_in_new_tab": "Abrir en pestaña nueva",
+    "web.context_menu.inspect": "Inspeccionar",
+    "install_location.property.size_on_disk": "{{size}} en disco",
+    "butlerd.codes.404": "La carpeta de instalación desapareció",
+    "butlerd.codes.2001": "No se encontraron subidas compatibles para este título",
+    "butlerd.codes.3000": "Este título está empaquetado en una forma que no es compatible con la aplicación de itch.io.",
+    "butlerd.codes.5000": "No se ha encontrado nada que pueda ser ejecutado.",
+    "butlerd.codes.9000": "No hay conexión a internet.",
+    "sort_by.games.acquired_at": "Adquirido recientemente",
+    "sort_by.games.title": "Título",
+    "sort_by.games.views": "Vistas",
+    "sort_by.games.downloads": "Descargas",
+    "sort_by.games.purchases": "Compras",
+    "sort_by.games.play_time": "Tiempo de juego"
 }
