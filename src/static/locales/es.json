@@ -494,5 +494,6 @@
     "prompt.uninstall_error.message_permissions": "No se pudieron eliminar algunos archivos de {{title}}. ¿Quieres intentarlo de nuevo como administrador?",
     "search.results.game.no_description": "Sin descripción",
     "sidebar.applog": "Registro de la aplicación",
-    "sidebar.explore": "Explorar"
+    "sidebar.explore": "Explorar",
+    "dashboard.game_stats.downloads": "descargas"
 }
