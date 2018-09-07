@@ -534,5 +534,11 @@
     "prompt.manage_game.title": "Gestionar {{title}}",
     "prompt.manage_game.available_uploads": "Estos artículos también están disponibles:",
     "prompt.manage_game.no_other_uploads": "No hay más artículos disponibles actualmente.",
-    "prompt.uninstall_error.message": "La desinstalación falló. ¿Eliminar la entrada de todas maneras?"
+    "prompt.uninstall_error.message": "La desinstalación falló. ¿Eliminar la entrada de todas maneras?",
+    "sidebar.library": "Biblioteca",
+    "status.repairing_game": "{{title}} necesita terminar de actualizarse antes de poder ser abierto",
+    "status.installing_game.cancelled": "¡La instalación de {{title}} ha sido cancelada!",
+    "status.downloads.category.recent_activity": "Actividad reciente",
+    "status.downloads.updates_available": "Actualizaciones disponibles",
+    "status.downloads.update_all": "Actualizar todo"
 }
