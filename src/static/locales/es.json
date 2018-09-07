@@ -519,5 +519,6 @@
     "login.action.reveal_password": "Revelar clave",
     "login.action.hide_password": "Esconder clave",
     "login.status.antivirus_warning": "Tu software antivirus puede interferir con itch.",
-    "menu.file.close_tabs_below": "Cerrar las siguentes pestañas"
+    "menu.file.close_tabs_below": "Cerrar las siguentes pestañas",
+    "new_tab.devlogs": "Registros del desarrollador"
 }
