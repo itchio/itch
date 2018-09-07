@@ -518,5 +518,6 @@
     "browser.disabled": "El navegador de itch está deshabilitado",
     "login.action.reveal_password": "Revelar clave",
     "login.action.hide_password": "Esconder clave",
-    "login.status.antivirus_warning": "Tu software antivirus puede interferir con itch."
+    "login.status.antivirus_warning": "Tu software antivirus puede interferir con itch.",
+    "menu.file.close_tabs_below": "Cerrar las siguentes pestañas"
 }
