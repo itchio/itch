@@ -485,6 +485,8 @@ export const actions = wireActions({
 
   checkForComponentUpdates: action<{}>(),
 
+  beforeQuit: action<{}>(),
+  cancelQuit: action<{}>(),
   quit: action<{}>(),
   performQuit: action<{}>(),
   quitWhenMain: action<{}>(),
