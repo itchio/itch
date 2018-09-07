@@ -533,5 +533,6 @@
     "prompt.blessing.detail": "Continúa solo si confías en el autor.",
     "prompt.manage_game.title": "Gestionar {{title}}",
     "prompt.manage_game.available_uploads": "Estos artículos también están disponibles:",
-    "prompt.manage_game.no_other_uploads": "No hay más artículos disponibles actualmente."
+    "prompt.manage_game.no_other_uploads": "No hay más artículos disponibles actualmente.",
+    "prompt.uninstall_error.message": "La desinstalación falló. ¿Eliminar la entrada de todas maneras?"
 }
