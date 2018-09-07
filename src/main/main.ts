@@ -78,6 +78,18 @@ export function main() {
       store.dispatch(actions.forceCloseLastGame({}));
     });
 
+    // Emitted when the application is activated. Various actions can trigger
+    // this event, such as launching the application for the first time,
+    // attempting to re-launch the application when it's already running, or
+    // clicking on the application's dock or taskbar icon.
+    app.on("activate", () => {
+      store.dispatch(actions.focusWind({ wind: "root" }));
+    });
+
+    app.on("before-quit", () => {
+      store.dispatch(actions.beforeQuit({}));
+    });
+
     store.dispatch(actions.preboot({}));
 
     setInterval(() => {

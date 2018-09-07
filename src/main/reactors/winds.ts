@@ -370,6 +370,7 @@ export default function(watcher: Watcher) {
       );
 
       if (!res) {
+        store.dispatch(actions.cancelQuit({}));
         return;
       }
     }
@@ -663,11 +664,17 @@ function hookNativeWindow(
       }
 
       // hide, never destroy
-      e.preventDefault();
+      if (store.getState().system.quitting) {
+        process.nextTick(() => {
+          store.dispatch(actions.quit({}));
+        });
+      } else {
+        e.preventDefault();
+      }
       logger.info("Hiding main window");
       nativeWindow.hide();
 
-      if (!prefs.gotMinimizeNotification) {
+      if (!prefs.gotMinimizeNotification && !store.getState().system.macos) {
         store.dispatch(
           actions.updatePreferences({
             gotMinimizeNotification: true,
