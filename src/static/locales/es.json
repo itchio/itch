@@ -585,5 +585,19 @@
     "filter_by.games.visibility.published": "Publicado",
     "game_stripe.view_all": "Ver todo...",
     "log.level": "Nivel",
-    "log.level.debug": "Depuración"
+    "log.level.debug": "Depuración",
+    "log.level.info": "Info",
+    "log.level.warning": "Advertencia",
+    "log.level.error": "Error",
+    "install_locations.manage": "Gestionar carpetas de instalación",
+    "collection.info.updated": "Actualizada",
+    "send_feedback.title": "Enviar sugerencias",
+    "send_feedback.describe_issue": "Por favor describe que estabas tratando de hacer cuando ocurrió el problema:",
+    "send_feedback.reminders.header": "Algunos recordatorios:",
+    "send_feedback.reminders.we_are_humans": "Recuerda que lo que escribas será leído por humanos.",
+    "send_feedback.reminders.be_precise": "Sé lo mas preciso que puedas. ¡Queremos resolver el problema tanto como tú!",
+    "send_feedback.reminders.include_reproduce_steps": "Si puedes, incluye pasos para reproducir el problema.",
+    "send_feedback.reminders.mention_itchio_account": "Menciona tu cuenta de itch.io y/o la página que te estaba ocasionando problemas, si es relevante.",
+    "send_feedback.reminders.thanks": "¡Gracias por enviarnos tu comentario!",
+    "send_feedback.questions.where_does_report_go": "¿Adonde va mi reporte?"
 }
