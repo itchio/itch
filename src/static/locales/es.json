@@ -530,5 +530,8 @@
     "prompt.action.back": "Atrás",
     "prompt.show_error.generic_message": "Algo malo ha sucedido",
     "prompt.blessing.message": "Se necesitan permisos de Administrador para gestionar {{title}}",
-    "prompt.blessing.detail": "Continúa solo si confías en el autor."
+    "prompt.blessing.detail": "Continúa solo si confías en el autor.",
+    "prompt.manage_game.title": "Gestionar {{title}}",
+    "prompt.manage_game.available_uploads": "Estos artículos también están disponibles:",
+    "prompt.manage_game.no_other_uploads": "No hay más artículos disponibles actualmente."
 }
