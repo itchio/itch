@@ -551,5 +551,7 @@
     "setup.tooltip.location": "Haz clic para cambiar la carpeta de instalación",
     "setup.location.message": "Elige dónde instalar la aplicación",
     "setup.action.browse": "Explorar",
-    "setup.status.progress": "{{percent}} terminado"
+    "setup.status.progress": "{{percent}} terminado",
+    "setup.status.done": "¡Todo listo!",
+    "setup.status.notification": "No hubo problemas con la instalación, ¡{{app_name}} se está iniciando!"
 }
