@@ -500,5 +500,6 @@
     "collection.item_count": "{{itemCount}} artículos ",
     "download.ongoing.install": "Instalando {{title}}…",
     "dashboard.game_stats.views": "vistas",
-    "dashboard.game_stats.purchases": "compras"
+    "dashboard.game_stats.purchases": "compras",
+    "duration.seconds": "{{x}} segundos"
 }
