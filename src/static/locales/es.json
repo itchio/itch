@@ -77,7 +77,7 @@
     "preferences.install_location.delete": "Borrar esta carpeta y desinstalar los contenidos",
     "preferences.install_location.empty": "Vacío",
     "preferences.install_location.free_space": "Espacio disponible",
-    "preferences.install_location.is_default": "Los nuevos artículos se instalarán en esta carpeta por defecto",
+    "preferences.install_location.is_default": "Los nuevos artículos se instalarán por defecto en esta carpeta.",
     "preferences.install_location.item_count": "# de artículos",
     "preferences.install_location.make_default": "Seleccionar como la carpeta de instalación por defecto",
     "preferences.install_location.name": "Nombre",
