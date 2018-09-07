@@ -263,7 +263,7 @@
     "status.downloads.no_active_downloads": "No hay descargas activas",
     "status.downloads.unknown_size": "Desconocido",
     "status.game_update.check_failed": "No se pudo comprobar si hay actualizaciones: {{err}}",
-    "status.game_update.found": "¡Nueva versión de {{title}} encontrada! Descargando...",
+    "status.game_update.found": "¡Nueva versión de {{title}} encontrada!",
     "status.game_update.not_found": "{{title}} está al día.",
     "status.history.click_to_expand": "Clic para expandir el historial.",
     "status.history.no_active_items": "No hay artículos en el historial que requieran tu atención.",
