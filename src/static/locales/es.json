@@ -544,5 +544,6 @@
     "status.downloads.no_active_downloads_subtext": "Las cosas que instales o descargues se mostrarán aquí",
     "status.downloads.find_games_button": "¡Descarga algo!",
     "status.downloads.resume_downloads": "Resumir descargas",
-    "status.downloads.pause_downloads": "Pausar descargas"
+    "status.downloads.pause_downloads": "Pausar descargas",
+    "status.reinstall.busy": "{{title}} no puede ser reinstalado porque se está ejecutando."
 }
