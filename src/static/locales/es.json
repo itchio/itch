@@ -553,5 +553,6 @@
     "setup.action.browse": "Explorar",
     "setup.status.progress": "{{percent}} terminado",
     "setup.status.done": "¡Todo listo!",
-    "setup.status.notification": "No hubo problemas con la instalación, ¡{{app_name}} se está iniciando!"
+    "setup.status.notification": "No hubo problemas con la instalación, ¡{{app_name}} se está iniciando!",
+    "web.context_menu.open_in_new_tab": "Abrir en pestaña nueva"
 }
