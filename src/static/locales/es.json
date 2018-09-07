@@ -545,5 +545,7 @@
     "status.downloads.find_games_button": "¡Descarga algo!",
     "status.downloads.resume_downloads": "Resumir descargas",
     "status.downloads.pause_downloads": "Pausar descargas",
-    "status.reinstall.busy": "{{title}} no puede ser reinstalado porque se está ejecutando."
+    "status.reinstall.busy": "{{title}} no puede ser reinstalado porque se está ejecutando.",
+    "setup.window.title": "Instalación de {{app_name}}",
+    "setup.window.welcome": "¡Bienvenido al instalador de {{app_name}}! Busca algo para tomar, elige una carpeta de instalación y continúa."
 }
