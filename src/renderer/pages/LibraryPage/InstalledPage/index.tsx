@@ -59,7 +59,7 @@ class InstalledPage extends React.PureComponent<Props> {
       <FilterGroupGameClassification />
       <FilterSpacer />
       <FilterGroup>
-        <FilterOptionLink href="itch://locations">
+        <FilterOptionLink id="manage-install-locations" href="itch://locations">
           <FilterOptionIcon icon="cog" />
           {T(["install_locations.manage"])}
         </FilterOptionLink>

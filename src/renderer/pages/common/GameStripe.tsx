@@ -84,6 +84,7 @@ interface GenericProps<Params, Item> {
   tab: string;
 
   sequence: number;
+  linkId?: string; // useful for integration tests
 }
 
 const stripeLimit = 12;
@@ -135,12 +136,19 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
     ));
 
     renderTitle(loading: boolean, result: Res, error: any): JSX.Element {
-      const { href, title, renderTitleExtras = renderNoop } = this.props;
+      const {
+        linkId,
+        href,
+        title,
+        renderTitleExtras = renderNoop,
+      } = this.props;
       return (
         <>
           <TitleBox>
             <Title>
-              <a href={href}>{T(title)}</a>
+              <a id={linkId} href={href}>
+                {T(title)}
+              </a>
               {renderTitleExtras()}
             </Title>
           </TitleBox>

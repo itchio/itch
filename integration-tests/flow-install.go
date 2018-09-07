@@ -69,16 +69,14 @@ func installFlow(r *runner) {
 	r.logf("closing downloads window")
 	r.mustCloseAllOtherWindows()
 
-	r.logf("opening preferences")
-	must(r.click("#sidebar a[href='itch://preferences']"))
-	r.mustWaitForWindowQuantity(2)
-	r.mustSwitchToOtherWindow(mainWindowHandle)
+	r.logf("opening library")
+	must(r.click("#sidebar a[href='itch://library']"))
 
-	r.logf("opening default install location in tab")
-	must(r.click(".meat-tab.visible .install-location-row.default .navigate-button"))
+	r.logf("opening installed items")
+	must(r.click("#library-installed"))
 
-	r.mustSwitchToWindow(mainWindowHandle)
-	r.mustCloseAllOtherWindows()
+	r.logf("opening install locations")
+	must(r.click("#manage-install-locations"))
 
 	r.logf("making sure our installed game shows up")
 	var rowSelector = fmt.Sprintf(".meat-tab.visible .gameseries--box[data-game-id='%d']", testGameID)

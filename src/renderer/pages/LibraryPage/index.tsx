@@ -30,12 +30,14 @@ class LibraryPage extends React.PureComponent<Props> {
             href="itch://library/owned"
             params={{ profileId: profile.id }}
             getGame={this.ownedGetGame}
+            linkId="library-owned"
           />
           <InstalledGameStripe
             title={_("sidebar.installed")}
             href="itch://library/installed"
             params={{ sortBy: "lastTouched" }}
             getGame={this.installedGetGame}
+            linkId="library-installed"
           />
         </ItemList>
       </Page>
