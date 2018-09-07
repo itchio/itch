@@ -391,7 +391,7 @@
     "prompt.revert.message": "Volver del build {{buildId}} al build: ",
     "prompt.revert.action.revert": "Revertir",
     "sidebar.loading": "Cargando...",
-    "status.game_update.busy": "{{title}} no puede ser actualizado porque está ejecutándose",
+    "status.game_update.busy": "{{title}} no puede actualizarse porque se está ejecutando.",
     "status.healing": "Reparando instalación...",
     "setup.action.install": "Instalar ahora",
     "setup.error_dialog.title": "Algo salió mal",
