@@ -112,7 +112,7 @@ export const fontSizes = {
   larger: "18px",
   huge: "19px",
   huger: "23px",
-  enormous: "32px",
+  enormous: "30px",
 };
 
 export const borderRadii = {
