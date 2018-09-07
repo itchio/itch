@@ -523,5 +523,11 @@
     "new_tab.devlogs": "Registros del desarrollador",
     "preferences.scan_install_locations": "Buscar juegos en las carpetas de instalación",
     "preferences.scan_install_locations.confirm_import": "Confirmar importación",
-    "preferences.scan_install_locations.no_items_found": "Ningún artículo adicional fue encontrado en las carpetas de instalación"
+    "preferences.scan_install_locations.no_items_found": "No se han encontrado otros artículos en las carpetas de instalación",
+    "prompt.confirm_quit.title": "¿Estás seguro/a que quieres salir?",
+    "prompt.confirm_quit.message": "Todos los juegos y aplicaciones serán cerrados.",
+    "prompt.action.quit_and_close_all": "Salir y cerrar todo",
+    "prompt.action.back": "Atrás",
+    "prompt.show_error.generic_message": "Algo malo ha sucedido",
+    "prompt.blessing.message": "Se necesitan permisos de Administrador para gestionar {{title}}"
 }
