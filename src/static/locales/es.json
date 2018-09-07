@@ -496,5 +496,8 @@
     "sidebar.applog": "Registro de la aplicación",
     "sidebar.explore": "Explorar",
     "dashboard.game_stats.downloads": "descargas",
-    "preferences.install_location.navigate": "Ver los contenidos de esta carpeta"
+    "preferences.install_location.navigate": "Ver los contenidos de esta carpeta",
+    "collection.item_count": "{{itemCount}} artículos ",
+    "download.ongoing.install": "Instalando {{title}}…",
+    "dashboard.game_stats.views": "vistas"
 }
