@@ -515,5 +515,7 @@
     "table.column.installed": "Instalado",
     "table.column.powered_by": "Provisto por",
     "browser.open_devtools": "Abrir herramientas de desarrollo",
-    "browser.disabled": "El navegador de itch está deshabilitado"
+    "browser.disabled": "El navegador de itch está deshabilitado",
+    "login.action.reveal_password": "Revelar clave",
+    "login.action.hide_password": "Esconder clave"
 }
