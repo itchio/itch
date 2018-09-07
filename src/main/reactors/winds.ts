@@ -432,8 +432,6 @@ export default function(watcher: Watcher) {
     const bounds = config.get(configKey);
     if (bounds) {
       nativeWindow.setBounds(bounds);
-    } else {
-      nativeWindow.center();
     }
 
     nativeWindow.loadURL(makeAppURL({ wind, role }));
