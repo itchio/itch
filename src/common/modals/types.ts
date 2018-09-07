@@ -36,15 +36,6 @@ export interface SecretSettingsResponse {}
 
 //---------------------
 
-export interface ScanInstallLocationsParams {
-  progress: number;
-  game: Game;
-}
-
-export interface ScanInstallLocationsResponse {}
-
-//---------------------
-
 export interface SendFeedbackParams {
   log?: string;
 }

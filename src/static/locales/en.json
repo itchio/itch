@@ -274,6 +274,7 @@
   "preferences.install_location.add": "Add location",
   "preferences.install_location.delete":
     "Remove this install location and uninstall its contents",
+  "preferences.install_location.delete_short": "Remove",
   "preferences.install_location.free_space": "Free space",
   "preferences.install_location.navigate":
     "View the contents of this location",

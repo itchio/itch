@@ -147,6 +147,9 @@ export const actions = wireActions({
     initialURL: string;
     role: WindRole;
   }>(),
+  closeWind: action<{
+    wind: string;
+  }>(),
   windClosed: action<{
     wind: string;
   }>(),

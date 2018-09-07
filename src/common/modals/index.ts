@@ -14,8 +14,6 @@ import {
   PrereqsStateResponse,
   RecaptchaInputParams,
   RecaptchaInputResponse,
-  ScanInstallLocationsParams,
-  ScanInstallLocationsResponse,
   SecretSettingsParams,
   SecretSettingsResponse,
   SendFeedbackParams,
@@ -115,10 +113,6 @@ export const modals = wireWidgets({
   secretSettings: widget<SecretSettingsParams, SecretSettingsResponse>(),
   showError: widget<ShowErrorParams, ShowErrorResponse>(),
   twoFactorInput: widget<TwoFactorInputParams, TwoFactorInputResponse>(),
-  scanInstallLocations: widget<
-    ScanInstallLocationsParams,
-    ScanInstallLocationsResponse
-  >(),
   sendFeedback: widget<SendFeedbackParams, void>(),
 
   // dummy widgets

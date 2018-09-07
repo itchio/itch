@@ -1,10 +1,19 @@
-const whitelist: { [key: string]: boolean } = {
-  "itch://downloads": true,
-  "itch://preferences": true,
-  "itch://applog": true,
+export interface WindowInitialParams {
+  width?: number;
+  height?: number;
+}
+
+const whitelist: { [key: string]: WindowInitialParams } = {
+  "itch://downloads": {},
+  "itch://preferences": {},
+  "itch://applog": {},
+  "itch://scan-install-locations": {
+    width: 700,
+    height: 500,
+  },
 };
 
-export function opensInWindow(url: string) {
+export function opensInWindow(url: string): WindowInitialParams {
   return whitelist[normalizeURL(url)];
 }
 

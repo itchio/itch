@@ -36,13 +36,11 @@ class LocationPage extends React.PureComponent<Props> {
     dispatchTabPageUpdate(this.props, { label: `${loc.path}` });
   });
 
-  renderCallContents = InstallLocationsGetByID.renderCallback(
-    ({ result, loading }) => {
-      return (
-        <LocationContents location={result ? result.installLocation : null} />
-      );
-    }
-  );
+  renderCallContents = InstallLocationsGetByID.renderCallback(({ result }) => {
+    return (
+      <LocationContents location={result ? result.installLocation : null} />
+    );
+  });
 }
 
 interface Props extends MeatProps {

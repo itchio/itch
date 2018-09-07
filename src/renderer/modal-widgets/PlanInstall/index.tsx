@@ -24,32 +24,26 @@ import Filler from "renderer/basics/Filler";
 import Icon from "renderer/basics/Icon";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { ModalButtons } from "renderer/basics/modal-styles";
+import { Select } from "renderer/basics/Select";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { withIntl } from "renderer/hocs/withIntl";
 import { rendererLogger } from "renderer/logger";
+import {
+  InstallLocationOption,
+  installLocationSelectComponents,
+} from "renderer/modal-widgets/PlanInstall/install-location-select";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { StandardGameCover } from "renderer/pages/PageStyles/games";
-import styled, { theme } from "renderer/styles";
+import styled from "renderer/styles";
 import { T, TString } from "renderer/t";
 import { findWhere } from "underscore";
-import { Select } from "renderer/basics/Select";
-import { SelectComponents } from "react-select/lib/components";
-import UploadIcon from "renderer/basics/UploadIcon";
-import { Tag } from "renderer/basics/RowButton";
-import { css } from "emotion";
-import { OptionProps } from "react-select/lib/components/Option";
-import { SingleValueProps } from "react-select/lib/components/SingleValue";
 import { UploadOption, uploadSelectComponents } from "./upload-select";
-import {
-  InstallLocationOption,
-  installLocationSelectComponents,
-} from "renderer/modal-widgets/PlanInstall/install-location-select";
 
 const logger = rendererLogger.child(__filename);
 

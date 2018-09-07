@@ -98,6 +98,8 @@ export const colors = {
 
   priceNormal: "#70f1c9",
   priceSale: "#ffd700",
+
+  windowBorder: baseColors.lightMineShaft,
 };
 
 export const fontSizes = {
@@ -432,4 +434,9 @@ export const boxy = css`
   border: 1px solid rgba(255, 255, 255, 0.05);
   background: ${props => props.theme.itemBackground};
   overflow: hidden;
+`;
+
+export const windowBorder = css`
+  border: 1px solid ${props => props.theme.windowBorder};
+  border-radius: 2px;
 `;

@@ -12,22 +12,31 @@ const StandardGameDesc = ({
 }: {
   game: Game;
   children?: any;
-}) => (
-  <TitleBox>
-    <a href={urlForGame(game.id)} className="gamedesc--titlelink">
-      <Title>
-        <div className="gamedesc--title">{game.title}</div>
-        {children}
-      </Title>
-    </a>
-    <div>{game.shortText}</div>
-    <Filler />
-    <div>
-      {renderClassification(game.classification)}
-      <PlatformIcons target={game} before={() => <>&nbsp;&nbsp;</>} />
-    </div>
-  </TitleBox>
-);
+}) => {
+  if (!game) {
+    return (
+      <TitleBox>
+        <Title />
+      </TitleBox>
+    );
+  }
+  return (
+    <TitleBox>
+      <a href={urlForGame(game.id)} className="gamedesc--titlelink">
+        <Title>
+          <div className="gamedesc--title">{game.title}</div>
+          {children}
+        </Title>
+      </a>
+      <div>{game.shortText}</div>
+      <Filler />
+      <div>
+        {renderClassification(game.classification)}
+        <PlatformIcons target={game} before={() => <>&nbsp;&nbsp;</>} />
+      </div>
+    </TitleBox>
+  );
+};
 
 export default StandardGameDesc;
 

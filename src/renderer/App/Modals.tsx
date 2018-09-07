@@ -75,9 +75,8 @@ const ModalPortalDiv = styled.div`
     }
 
     padding: 0px;
+    ${styles.windowBorder};
     background-color: ${colors.codGray};
-    border: 1px solid ${colors.lightMineShaft};
-    border-radius: 2px;
     box-shadow: 0 0 32px black;
     z-index: 200;
   }

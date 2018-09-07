@@ -37,10 +37,6 @@ const SendFeedback = Loadable({
   loader: () => import("renderer/modal-widgets/SendFeedback"),
   loading: () => null,
 });
-const ScanInstallLocations = Loadable({
-  loader: () => import("renderer/modal-widgets/ScanInstallLocations"),
-  loading: () => null,
-});
 const SecretSettings = Loadable({
   loader: () => import("renderer/modal-widgets/SecretSettings"),
   loading: () => null,
@@ -79,7 +75,6 @@ export const modalWidgets: ModalWidgetRegistry = {
   prereqsState: PrereqsState,
   recaptchaInput: RecaptchaInput,
   sendFeedback: SendFeedback,
-  scanInstallLocations: ScanInstallLocations,
   secretSettings: SecretSettings,
   showError: ShowError,
   twoFactorInput: TwoFactorInput,

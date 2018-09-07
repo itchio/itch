@@ -9,7 +9,7 @@ import NonLocalIndicator from "renderer/App/Layout/NonLocalIndicator";
 import StatusBar from "renderer/App/Layout/StatusBar";
 import { hook } from "renderer/hocs/hook";
 import { ProfileProvider } from "renderer/hocs/withProfile";
-import styled from "renderer/styles";
+import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
 import { withIntl } from "renderer/hocs/withIntl";
 import Loadable from "react-loadable";
@@ -35,6 +35,10 @@ const LayoutContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+
+  &:not(.maximized) {
+    ${styles.windowBorder};
+  }
 
   &,
   input {
@@ -76,10 +80,10 @@ const ReactHintContainer = styled.div`
  */
 class Layout extends React.PureComponent<Props> {
   render() {
-    const { maximized } = this.props;
+    const { maximized, focused } = this.props;
 
     return (
-      <LayoutContainer className={classNames({ maximized })}>
+      <LayoutContainer className={classNames({ maximized, focused })}>
         {this.main()}
         <StatusBar />
         <ReactHintContainer>{this.renderReactHint()}</ReactHintContainer>
@@ -138,6 +142,7 @@ class Layout extends React.PureComponent<Props> {
 interface Props {
   ready: boolean;
   maximized: boolean;
+  focused: boolean;
   profile: Profile;
 
   intl: InjectedIntl;
@@ -146,6 +151,7 @@ interface Props {
 export default withIntl(
   hook(map => ({
     maximized: map(rs => rs.winds[ambientWind()].native.maximized),
+    focused: map(rs => rs.winds[ambientWind()].native.focused),
     ready: map(rs => !!(rs.setup.done && rs.profile.profile)),
     profile: map(rs => rs.profile.profile),
   }))(Layout)

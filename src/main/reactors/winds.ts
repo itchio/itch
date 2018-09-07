@@ -387,7 +387,8 @@ export default function(watcher: Watcher) {
 
     initialURL = normalizeURL(initialURL);
 
-    if (opensInWindow(initialURL)) {
+    const secondaryWindowParams = opensInWindow(initialURL);
+    if (secondaryWindowParams) {
       // see if we already have a window with that initialURL
       for (const wind of Object.keys(rs.winds)) {
         const windState = rs.winds[wind];
@@ -402,9 +403,17 @@ export default function(watcher: Watcher) {
       }
     }
 
+    let width = 800;
+    let height = 600;
+    if (secondaryWindowParams) {
+      width = secondaryWindowParams.width || width;
+      height = secondaryWindowParams.height || height;
+    }
     const opts: BrowserWindowConstructorOptions = {
       ...commonBrowserWindowOpts(store),
       title: app.getName(),
+      width,
+      height,
     };
 
     const nativeWindow = new BrowserWindow(opts);
@@ -429,6 +438,15 @@ export default function(watcher: Watcher) {
 
     nativeWindow.loadURL(makeAppURL({ wind, role }));
     hookNativeWindow(store, wind, nativeWindow);
+  });
+
+  watcher.on(actions.closeWind, async (store, action) => {
+    const { wind } = action.payload;
+    const rs = store.getState();
+    const nw = getNativeWindow(rs, wind);
+    if (nw) {
+      nw.close();
+    }
   });
 
   watcher.on(actions.loggedOut, async (store, action) => {

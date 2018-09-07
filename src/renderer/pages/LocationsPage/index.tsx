@@ -11,6 +11,13 @@ import Page from "renderer/pages/common/Page";
 import LocationSummary from "renderer/pages/LocationsPage/LocationSummary";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { isEmpty, sortBy } from "underscore";
+import {
+  SortsAndFilters,
+  FilterGroup,
+  FilterOptionLink,
+  FilterOptionIcon,
+} from "renderer/pages/common/SortsAndFilters";
+import { T } from "renderer/t";
 
 const ListInstallLocations = butlerCaller(messages.InstallLocationsList);
 
@@ -31,6 +38,14 @@ class LocationsPage extends React.PureComponent<Props> {
     ({ loading, result }) => (
       <>
         <FiltersContainer loading={loading} />
+        <SortsAndFilters>
+          <FilterGroup>
+            <FilterOptionLink href="itch://scan-install-locations">
+              <FilterOptionIcon icon="search" />
+              {T(["preferences.scan_install_locations"])}
+            </FilterOptionLink>
+          </FilterGroup>
+        </SortsAndFilters>
         {result && !isEmpty(result.installLocations) ? (
           <ItemList>
             {sortBy(

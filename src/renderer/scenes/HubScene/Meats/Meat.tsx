@@ -81,6 +81,10 @@ const PreferencesPage = Loadable({
   loader: () => import("renderer/pages/PreferencesPage"),
   loading: () => null,
 });
+const ScanInstallLocationsPage = Loadable({
+  loader: () => import("renderer/pages/ScanInstallLocationsPage"),
+  loading: () => null,
+});
 
 const ErrorDiv = styled.div`
   display: block;
@@ -271,6 +275,8 @@ class Meat extends React.PureComponent<Props, State> {
         return CrashyPage;
       case "new-tab":
         return NewTabPage;
+      case "scan-install-locations":
+        return ScanInstallLocationsPage;
       default:
         return null;
     }
