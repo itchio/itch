@@ -512,5 +512,7 @@
     "grid.item.open_page": "Abrir página",
     "grid.item.not_available": "No disponible",
     "grid.item.open_title": "Abrir {{title}}",
-    "table.column.installed": "Instalado"
+    "table.column.installed": "Instalado",
+    "table.column.powered_by": "Provisto por",
+    "browser.open_devtools": "Abrir herramientas de desarrollo"
 }
