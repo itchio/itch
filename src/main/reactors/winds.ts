@@ -658,11 +658,6 @@ function hookNativeWindow(
         return;
       }
 
-      if (!nativeWindow.isVisible()) {
-        logger.info("Main window hidden, letting it close");
-        return;
-      }
-
       // hide, never destroy
       if (store.getState().system.quitting) {
         process.nextTick(() => {
