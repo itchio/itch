@@ -222,9 +222,9 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.openModal, async (store, action) => {
     const { wind } = action.payload;
-    const nativeWind = getNativeWindow(store.getState(), wind);
-    if (nativeWind) {
-      nativeWind.focus();
+    const nativeWin = getNativeWindow(store.getState(), wind);
+    if (nativeWin) {
+      nativeWin.show();
     }
   });
 
