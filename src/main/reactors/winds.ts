@@ -637,21 +637,28 @@ function hookNativeWindow(
   });
 
   nativeWindow.on("close", (e: any) => {
+    const rs = store.getState();
     if (wind === "root") {
       const prefs =
-        store.getState().preferences ||
-        ({ closeToTray: true } as PreferencesState);
+        rs.preferences || ({ closeToTray: true } as PreferencesState);
 
       let { closeToTray } = prefs;
+      if (rs.system.macos) {
+        closeToTray = true;
+      }
       if (env.integrationTests) {
         // always let app close in testing
         closeToTray = false;
       }
 
+      if (store.getState().system.quitting) {
+        logger.debug("On window.close: quitting, letting it close");
+        return;
+      }
       if (closeToTray) {
-        logger.debug("Close to tray enabled");
+        logger.debug("On window.close: close to tray enabled");
       } else {
-        logger.debug("Close to tray disabled, quitting!");
+        logger.debug("On window.close: close to tray disabled, quitting!");
         process.nextTick(() => {
           store.dispatch(actions.quit({}));
         });
@@ -659,14 +666,7 @@ function hookNativeWindow(
       }
 
       // hide, never destroy
-      if (store.getState().system.quitting) {
-        process.nextTick(() => {
-          store.dispatch(actions.quit({}));
-        });
-      } else {
-        e.preventDefault();
-      }
-      logger.info("Hiding main window");
+      e.preventDefault();
       nativeWindow.hide();
 
       if (!prefs.gotMinimizeNotification && !store.getState().system.macos) {

@@ -23,7 +23,7 @@ export default reducer<SystemState>(initialState, on => {
     };
   });
 
-  on(actions.beforeQuit, (state, action) => {
+  on(actions.quit, (state, action) => {
     return {
       ...state,
       quitting: true,
@@ -34,13 +34,6 @@ export default reducer<SystemState>(initialState, on => {
     return {
       ...state,
       quitting: false,
-    };
-  });
-
-  on(actions.quit, (state, action) => {
-    return {
-      ...state,
-      quitting: true,
     };
   });
 });
