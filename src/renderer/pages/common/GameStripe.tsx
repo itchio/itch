@@ -247,15 +247,16 @@ function renderNoop(): JSX.Element {
   return null;
 }
 
-class BaseStripeItem extends React.PureComponent<{
-  game?: Game;
-  className?: string;
-  dispatch: Dispatch;
-}> {
+class BaseStripeItem extends React.PureComponent<
+  {
+    game?: Game;
+    dispatch: Dispatch;
+  } & React.HTMLAttributes<HTMLDivElement>
+> {
   render() {
-    const { game, className } = this.props;
+    const { game, ...restProps } = this.props;
     return (
-      <StripeItemDiv onContextMenu={this.onContextMenu} className={className}>
+      <StripeItemDiv onContextMenu={this.onContextMenu} {...restProps}>
         <StandardGameCover game={game} showInfo />
       </StripeItemDiv>
     );
