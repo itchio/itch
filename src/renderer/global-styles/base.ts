@@ -41,6 +41,10 @@ export default css`
     margin-bottom: -4px;
   }
 
+  img {
+    user-drag: none;
+  }
+
   a {
     color: ${theme.accent};
 
