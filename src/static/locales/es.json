@@ -550,5 +550,6 @@
     "setup.window.welcome": "¡Bienvenido al instalador de {{app_name}}! Busca algo para tomar, elige una carpeta de instalación y continúa.",
     "setup.tooltip.location": "Haz clic para cambiar la carpeta de instalación",
     "setup.location.message": "Elige dónde instalar la aplicación",
-    "setup.action.browse": "Explorar"
+    "setup.action.browse": "Explorar",
+    "setup.status.progress": "{{percent}} terminado"
 }
