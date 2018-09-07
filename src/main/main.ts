@@ -86,8 +86,9 @@ export function main() {
       store.dispatch(actions.focusWind({ wind: "root" }));
     });
 
-    app.on("before-quit", () => {
-      store.dispatch(actions.beforeQuit({}));
+    app.on("before-quit", e => {
+      e.preventDefault();
+      store.dispatch(actions.quit({}));
     });
 
     store.dispatch(actions.preboot({}));
