@@ -176,7 +176,7 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
       }
 
       const doneSet = new Set<number>();
-      const { getGame, dispatch } = this.props;
+      const { getGame } = this.props;
       return (
         <>
           {result.items.map(item => {
@@ -185,7 +185,14 @@ export function makeGameStripe<Params, Res extends FetchRes<any>>(
               return null;
             }
             doneSet.add(game.id);
-            return <StripeItem key={game.id} game={game} />;
+            return (
+              <StripeItem
+                key={game.id}
+                className="stripe--item"
+                data-game-id={game.id}
+                game={game}
+              />
+            );
           })}
         </>
       );
@@ -242,12 +249,13 @@ function renderNoop(): JSX.Element {
 
 class BaseStripeItem extends React.PureComponent<{
   game?: Game;
+  className?: string;
   dispatch: Dispatch;
 }> {
   render() {
-    const { game } = this.props;
+    const { game, className } = this.props;
     return (
-      <StripeItemDiv onContextMenu={this.onContextMenu}>
+      <StripeItemDiv onContextMenu={this.onContextMenu} className={className}>
         <StandardGameCover game={game} showInfo />
       </StripeItemDiv>
     );
