@@ -504,5 +504,7 @@
     "duration.seconds": "{{x}} segundos",
     "grid.criterion.filter_by": "Filtrar por: ",
     "grid.item_count": "{{count}} artículos",
-    "grid.empty_state.explanation": "Tus filtros están ocultando todo aquí"
+    "grid.empty_state.explanation": "Tus filtros están ocultando todo aquí",
+    "grid.really_empty_state.leader": "No hay nada aquí...",
+    "grid.really_empty_state.explanation": "...aún!"
 }
