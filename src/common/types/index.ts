@@ -278,6 +278,9 @@ export interface SystemState {
 
   /** true if we're about to quit */
   quitting?: boolean;
+
+  /** true if we're currently scanning install locations */
+  locationScanProgress?: number | null;
 }
 
 export interface SystemTasksState {

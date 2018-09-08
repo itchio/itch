@@ -12,6 +12,7 @@ import Page from "renderer/pages/common/Page";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import { makeGameStripe } from "renderer/pages/common/GameStripe";
 import { _ } from "renderer/t";
+import ScanningIndicator from "renderer/pages/common/ScanningIndicator";
 
 const OwnedGameStripe = makeGameStripe(messages.FetchProfileOwnedKeys);
 const InstalledGameStripe = makeGameStripe(messages.FetchCaves);
@@ -37,6 +38,7 @@ class LibraryPage extends React.PureComponent<Props> {
             href="itch://library/installed"
             params={{ sortBy: "lastTouched" }}
             getGame={this.installedGetGame}
+            renderTitleExtras={this.installedTitleExtras}
             linkId="library-installed"
           />
         </ItemList>
@@ -46,6 +48,10 @@ class LibraryPage extends React.PureComponent<Props> {
 
   ownedGetGame = OwnedGameStripe.getGameCallback(x => x.game);
   installedGetGame = InstalledGameStripe.getGameCallback(x => x.game);
+
+  installedTitleExtras = () => {
+    return <ScanningIndicator />;
+  };
 
   componentDidMount() {
     dispatchTabPageUpdate(this.props, { label: ["sidebar.library"] });

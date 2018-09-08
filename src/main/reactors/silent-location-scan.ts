@@ -13,27 +13,34 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.silentlyScanInstallLocations, async (store, action) => {
-    logger.info(`Scanning install locations for items...`);
-    await mcall(
-      messages.InstallLocationsScan,
-      {
-        legacyMarketPath: legacyMarketPath(),
-      },
-      convo => {
-        hookLogging(convo, logger);
-        convo.on(messages.InstallLocationsScanYield, async ({ game }) => {
-          logger.info(`Found ${game.title} - ${game.url}`);
-        });
-        convo.on(
-          messages.InstallLocationsScanConfirmImport,
-          async ({ numItems }) => {
-            logger.info(`In total, found ${numItems} items.`);
-            return { confirm: true };
-          }
-        );
-      }
-    );
-    logger.info(`Scan complete.`);
-    store.dispatch(actions.newItemsImported({}));
+    try {
+      logger.info(`Scanning install locations for items...`);
+      await mcall(
+        messages.InstallLocationsScan,
+        {
+          legacyMarketPath: legacyMarketPath(),
+        },
+        convo => {
+          hookLogging(convo, logger);
+          convo.on(messages.Progress, async ({ progress }) => {
+            store.dispatch(actions.locationScanProgress({ progress }));
+          });
+          convo.on(messages.InstallLocationsScanYield, async ({ game }) => {
+            logger.info(`Found ${game.title} - ${game.url}`);
+          });
+          convo.on(
+            messages.InstallLocationsScanConfirmImport,
+            async ({ numItems }) => {
+              logger.info(`In total, found ${numItems} items.`);
+              return { confirm: true };
+            }
+          );
+        }
+      );
+      logger.info(`Scan complete.`);
+      store.dispatch(actions.newItemsImported({}));
+    } finally {
+      store.dispatch(actions.locationScanDone({}));
+    }
   });
 }

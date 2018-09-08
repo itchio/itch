@@ -24,7 +24,10 @@ const borderColor = `#843442`;
 const borderRadius = `4px`;
 
 const optionButtonLike = css`
-  display: inline-block;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+
   background: ${inactiveBg};
   padding: 0.5em 1em;
   margin: 0;
@@ -58,6 +61,11 @@ const optionButtonLike = css`
 
 export const FilterOptionLink = styled.a`
   ${optionButtonLike};
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.4;
+  }
 `;
 
 export const FilterOptionButton = styled.div`

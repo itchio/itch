@@ -3,7 +3,9 @@ import reducer from "common/reducers/reducer";
 
 import { SystemState } from "common/types";
 
-const initialState = {} as SystemState;
+const initialState = {
+  locationScanProgress: null,
+} as SystemState;
 
 export default reducer<SystemState>(initialState, on => {
   on(actions.systemAssessed, (state, action) => {
@@ -34,6 +36,28 @@ export default reducer<SystemState>(initialState, on => {
     return {
       ...state,
       quitting: false,
+    };
+  });
+
+  on(actions.silentlyScanInstallLocations, (state, action) => {
+    return {
+      ...state,
+      locationScanProgress: 0,
+    };
+  });
+
+  on(actions.locationScanProgress, (state, action) => {
+    const { progress } = action.payload;
+    return {
+      ...state,
+      locationScanProgress: progress,
+    };
+  });
+
+  on(actions.locationScanDone, (state, action) => {
+    return {
+      ...state,
+      locationScanProgress: null,
     };
   });
 });

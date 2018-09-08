@@ -203,6 +203,10 @@ export const actions = wireActions({
   }>(),
   setupDone: action<{}>(),
   silentlyScanInstallLocations: action<{}>(),
+  locationScanProgress: action<{
+    progress: number;
+  }>(),
+  locationScanDone: action<{}>(),
   retrySetup: action<{}>(),
 
   // login

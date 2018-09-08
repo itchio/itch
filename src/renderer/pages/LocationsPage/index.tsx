@@ -1,5 +1,9 @@
+import classNames from "classnames";
+import { actions } from "common/actions";
 import { messages } from "common/butlerd";
+import { InstallLocationsListResult } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import butlerCaller from "renderer/hocs/butlerCaller";
@@ -8,24 +12,26 @@ import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
 import ItemList from "renderer/pages/common/ItemList";
 import Page from "renderer/pages/common/Page";
+import {
+  FilterGroup,
+  FilterOptionButton,
+  FilterOptionIcon,
+  FilterOptionLink,
+  FilterSpacer,
+  SortsAndFilters,
+} from "renderer/pages/common/SortsAndFilters";
 import LocationSummary from "renderer/pages/LocationsPage/LocationSummary";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
+import { T } from "renderer/t";
 import { isEmpty, size, sortBy } from "underscore";
-import {
-  SortsAndFilters,
-  FilterGroup,
-  FilterOptionLink,
-  FilterOptionIcon,
-  FilterSpacer,
-  FilterOptionButton,
-} from "renderer/pages/common/SortsAndFilters";
-import { T, _ } from "renderer/t";
-import Button from "renderer/basics/Button";
-import { actions } from "common/actions";
-import { ambientWind } from "common/util/navigation";
-import { InstallLocationsListResult } from "common/butlerd/messages";
+import LoadingCircle from "renderer/basics/LoadingCircle";
+import styled from "renderer/styles";
 
 const ListInstallLocations = butlerCaller(messages.InstallLocationsList);
+
+const Spacer = styled.div`
+  width: 8px;
+`;
 
 class LocationsPage extends React.PureComponent<Props> {
   render() {
@@ -41,27 +47,39 @@ class LocationsPage extends React.PureComponent<Props> {
   }
 
   renderCallContents = ListInstallLocations.renderCallback(
-    ({ loading, result }) => (
-      <>
-        <FiltersContainer loading={loading} />
-        <SortsAndFilters>
-          <FilterGroup>
-            <FilterOptionLink href="itch://scan-install-locations">
-              <FilterOptionIcon icon="search" />
-              {T(["preferences.scan_install_locations"])}
-            </FilterOptionLink>
-          </FilterGroup>
-          <FilterSpacer />
-          <FilterGroup>
-            <FilterOptionButton onClick={this.onAddLocation}>
-              <FilterOptionIcon icon="plus" />
-              {T(["preferences.install_location.add"])}
-            </FilterOptionButton>
-          </FilterGroup>
-        </SortsAndFilters>
-        {this.renderList(result)}
-      </>
-    )
+    ({ loading, result }) => {
+      const { scanningLocations, locationScanProgress } = this.props;
+      return (
+        <>
+          <FiltersContainer loading={loading} />
+          <SortsAndFilters>
+            <FilterGroup>
+              <FilterOptionLink
+                href="itch://scan-install-locations"
+                className={classNames({ disabled: scanningLocations })}
+              >
+                <FilterOptionIcon icon="search" />
+                {T(["preferences.scan_install_locations"])}
+                {scanningLocations ? (
+                  <>
+                    <Spacer />
+                    <LoadingCircle progress={locationScanProgress} />
+                  </>
+                ) : null}
+              </FilterOptionLink>
+            </FilterGroup>
+            <FilterSpacer />
+            <FilterGroup>
+              <FilterOptionButton onClick={this.onAddLocation}>
+                <FilterOptionIcon icon="plus" />
+                {T(["preferences.install_location.add"])}
+              </FilterOptionButton>
+            </FilterGroup>
+          </SortsAndFilters>
+          {this.renderList(result)}
+        </>
+      );
+    }
   );
 
   renderList = (result: InstallLocationsListResult) => {
@@ -100,6 +118,13 @@ class LocationsPage extends React.PureComponent<Props> {
 interface Props extends MeatProps {
   dispatch: Dispatch;
   tab: string;
+  scanningLocations: boolean;
+  locationScanProgress: number;
 }
 
-export default withTab(hook()(LocationsPage));
+export default withTab(
+  hook(map => ({
+    scanningLocations: map(rs => rs.system.locationScanProgress !== null),
+    locationScanProgress: map(rs => rs.system.locationScanProgress),
+  }))(LocationsPage)
+);
