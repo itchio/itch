@@ -10,15 +10,13 @@ import Floater from "renderer/basics/Floater";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { hook, hookWithProps } from "renderer/hocs/hook";
 import { withTab } from "renderer/hocs/withTab";
-import {
-  standardCoverHeight,
-  StandardGameCover,
-  Title,
-  TitleBox,
-} from "renderer/pages/PageStyles/games";
+import { Title, TitleBox } from "renderer/pages/PageStyles/games";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isEmpty } from "underscore";
+import StandardGameCover, {
+  standardCoverHeight,
+} from "renderer/pages/common/StandardGameCover";
 
 const StripeDiv = styled.div`
   display: flex;
@@ -247,37 +245,17 @@ function renderNoop(): JSX.Element {
   return null;
 }
 
-class BaseStripeItem extends React.PureComponent<
+class StripeItem extends React.PureComponent<
   {
     game?: Game;
-    dispatch: Dispatch;
   } & React.HTMLAttributes<HTMLDivElement>
 > {
   render() {
     const { game, ...restProps } = this.props;
     return (
-      <StripeItemDiv onContextMenu={this.onContextMenu} {...restProps}>
+      <StripeItemDiv {...restProps}>
         <StandardGameCover game={game} showInfo />
       </StripeItemDiv>
     );
   }
-
-  onContextMenu = ev => {
-    const { game, dispatch } = this.props;
-    if (!game) {
-      return;
-    }
-    const { clientX, clientY } = ev;
-    ev.preventDefault();
-    const wind = ambientWind();
-    dispatch(
-      actions.openGameContextMenu({
-        clientX,
-        clientY,
-        game,
-        wind,
-      })
-    );
-  };
 }
-const StripeItem = hook()(BaseStripeItem);

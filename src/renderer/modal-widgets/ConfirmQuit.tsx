@@ -4,11 +4,11 @@ import { ConfirmQuitParams, ConfirmQuitResponse } from "common/modals/types";
 import React from "react";
 import butlerCaller from "renderer/hocs/butlerCaller";
 import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
-import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
-import { map } from "underscore";
-import { BoxInner, Box } from "renderer/pages/PageStyles/boxes";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
-import { StandardGameCover } from "renderer/pages/PageStyles/games";
+import StandardGameCover from "renderer/pages/common/StandardGameCover";
+import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
+import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
+import { map } from "underscore";
 
 const FetchGame = butlerCaller(messages.FetchGame);
 

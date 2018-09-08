@@ -5,6 +5,8 @@ import { Store } from "common/types";
 
 import IntlMessageFormat from "intl-messageformat";
 import env from "common/env";
+import { _ } from "renderer/t";
+import { t } from "common/format/t";
 
 const emptyObj: any = {};
 
@@ -13,19 +15,8 @@ export function hookWebContentsContextMenu(
   wind: string,
   store: Store
 ) {
-  const intl = {
-    formatMessage: ({ id }: { id: string }, values = {}): string => {
-      const { i18n } = store.getState();
-      const strings =
-        i18n.strings[i18n.lang] ||
-        i18n.strings[i18n.lang.substring(0, 2)] ||
-        emptyObj;
-      const msg = new IntlMessageFormat(strings[id], i18n.lang);
-      return msg.format(values);
-    },
-  };
-
   wc.on("context-menu", (e, props) => {
+    const { i18n } = store.getState();
     const editFlags = props.editFlags;
     const hasText = props.selectionText.trim().length > 0;
     const can = (type: string) =>
@@ -37,7 +28,7 @@ export function hookWebContentsContextMenu(
       },
       {
         id: "cut",
-        label: intl.formatMessage({ id: "web.context_menu.cut" }),
+        label: t(i18n, _("web.context_menu.cut")),
         // needed because of macOS limitation:
         // https://github.com/electron/electron/issues/5860
         role: can("Cut") ? "cut" : null,
@@ -46,14 +37,14 @@ export function hookWebContentsContextMenu(
       },
       {
         id: "copy",
-        label: intl.formatMessage({ id: "web.context_menu.copy" }),
+        label: t(i18n, _("web.context_menu.copy")),
         role: can("Copy") ? "copy" : null,
         enabled: can("Copy"),
         visible: props.isEditable || hasText,
       },
       {
         id: "paste",
-        label: intl.formatMessage({ id: "web.context_menu.paste" }),
+        label: t(i18n, _("web.context_menu.paste")),
         role: editFlags.canPaste ? "paste" : null,
         enabled: editFlags.canPaste,
         visible: props.isEditable,
@@ -73,9 +64,7 @@ export function hookWebContentsContextMenu(
           },
           {
             id: "openInNewTab",
-            label: intl.formatMessage({
-              id: "web.context_menu.open_in_new_tab",
-            }),
+            label: t(i18n, _("web.context_menu.open_in_new_tab")),
             click() {
               store.dispatch(
                 actions.navigate({
@@ -96,7 +85,7 @@ export function hookWebContentsContextMenu(
         },
         {
           id: "copyLink",
-          label: intl.formatMessage({ id: "web.context_menu.copy_link" }),
+          label: t(i18n, _("web.context_menu.copy_link")),
           click() {
             if (process.platform === "darwin") {
               electron.clipboard.writeBookmark(props.linkText, props.linkURL);
@@ -118,7 +107,7 @@ export function hookWebContentsContextMenu(
     if (env.development) {
       menuTpl.push({
         id: "inspect",
-        label: intl.formatMessage({ id: "web.context_menu.inspect" }),
+        label: t(i18n, _("web.context_menu.inspect")),
         click() {
           store.dispatch(
             actions.inspect({

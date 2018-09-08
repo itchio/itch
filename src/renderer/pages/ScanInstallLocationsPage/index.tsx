@@ -1,13 +1,15 @@
-import memory from "memory-streams";
 import { actions } from "common/actions";
 import { hookLogging, messages } from "common/butlerd";
 import { Game } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import { legacyMarketPath } from "common/util/paths";
+import { makeLogger } from "main/logger";
+import memory from "memory-streams";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Filler from "renderer/basics/Filler";
+import Link from "renderer/basics/Link";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { ModalButtons } from "renderer/basics/modal-styles";
 import { rcall } from "renderer/butlerd/rcall";
@@ -16,22 +18,18 @@ import { hook } from "renderer/hocs/hook";
 import { dispatchTabPageUpdate } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
 import { rendererLogger } from "renderer/logger";
+import Log from "renderer/pages/AppLogPage/Log";
 import Page from "renderer/pages/common/Page";
 import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
+import StandardGameCover, {
+  standardCoverHeight,
+  standardCoverWidth,
+} from "renderer/pages/common/StandardGameCover";
 import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
 import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
-import {
-  StandardGameCover,
-  Title,
-  standardCoverWidth,
-  standardCoverHeight,
-} from "renderer/pages/PageStyles/games";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
-import { makeLogger } from "main/logger";
-import Log from "renderer/pages/AppLogPage/Log";
-import Link from "renderer/basics/Link";
 
 enum Stage {
   Scanning,

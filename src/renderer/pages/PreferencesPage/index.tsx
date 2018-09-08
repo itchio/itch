@@ -8,6 +8,7 @@ import BehaviorSettings from "renderer/pages/PreferencesPage/BehaviorSettings";
 import LanguageSettings from "renderer/pages/PreferencesPage/LanguageSettings";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
+import InstallLocationSettings from "renderer/pages/PreferencesPage/InstallLocationSettings";
 
 const PreferencesDiv = styled.div`
   ${styles.meat};
@@ -129,6 +130,7 @@ class PreferencesPage extends React.PureComponent<Props> {
       <PreferencesDiv>
         <PreferencesContentDiv>
           <LanguageSettings />
+          <InstallLocationSettings />
           <BehaviorSettings />
           <AdvancedSettings />
         </PreferencesContentDiv>

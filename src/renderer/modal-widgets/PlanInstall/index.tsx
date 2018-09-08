@@ -24,27 +24,27 @@ import Filler from "renderer/basics/Filler";
 import Floater from "renderer/basics/Floater";
 import Icon from "renderer/basics/Icon";
 import { ModalButtons } from "renderer/basics/modal-styles";
+import SimpleSelect from "renderer/basics/SimpleSelect";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
 import { withIntl } from "renderer/hocs/withIntl";
 import { rendererLogger } from "renderer/logger";
-import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
-import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
-import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
-import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
-import { StandardGameCover } from "renderer/pages/PageStyles/games";
-import styled from "renderer/styles";
-import { T, TString, _ } from "renderer/t";
-import { findWhere } from "underscore";
-import SimpleSelect from "renderer/basics/SimpleSelect";
-import UploadOptionComponent, {
-  UploadOption,
-} from "renderer/modal-widgets/PlanInstall/UploadOptionComponent";
 import InstallLocationOptionComponent, {
   InstallLocationOption,
 } from "renderer/modal-widgets/PlanInstall/InstallLocationOptionComponent";
+import UploadOptionComponent, {
+  UploadOption,
+} from "renderer/modal-widgets/PlanInstall/UploadOptionComponent";
+import { ModalWidgetDiv } from "renderer/modal-widgets/styles";
+import { FilterSpacer } from "renderer/pages/common/SortsAndFilters";
+import StandardGameCover from "renderer/pages/common/StandardGameCover";
+import StandardGameDesc from "renderer/pages/common/StandardGameDesc";
+import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
+import styled from "renderer/styles";
+import { T, TString, _ } from "renderer/t";
+import { findWhere } from "underscore";
 
 const logger = rendererLogger.child(__filename);
 

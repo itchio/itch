@@ -12,12 +12,12 @@ import LoadingCircle from "renderer/basics/LoadingCircle";
 import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
-import { StandardGameCover } from "renderer/pages/PageStyles/games";
 import { GameTitle } from "renderer/scenes/HubScene/Sidebar/PrimeDownload/GameTitle";
 import styled, { clickable } from "renderer/styles";
 import { T } from "renderer/t";
 import LastPlayed from "renderer/basics/LastPlayed";
 import butlerCaller from "renderer/hocs/butlerCaller";
+import StandardGameCover from "renderer/pages/common/StandardGameCover";
 
 const FetchCave = butlerCaller(messages.FetchCave);
 

@@ -1,6 +1,7 @@
 import { actions } from "common/actions";
 import { Game } from "common/butlerd/messages";
 import getGameStatus, { GameStatus } from "common/helpers/get-game-status";
+import { ambientWind } from "common/util/navigation";
 import React from "react";
 import { Dispatch } from "redux";
 import Filler from "renderer/basics/Filler";
@@ -8,14 +9,12 @@ import GameStats from "renderer/basics/GameStats";
 import IconButton from "renderer/basics/IconButton";
 import MainAction from "renderer/basics/MainAction";
 import { hookWithProps } from "renderer/hocs/hook";
-import styled from "renderer/styles";
-import {
-  StandardGameCover,
+import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
+import StandardGameCover, {
   standardCoverHeight,
   standardCoverWidth,
-} from "renderer/pages/PageStyles/games";
-import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
-import { ambientWind } from "common/util/navigation";
+} from "renderer/pages/common/StandardGameCover";
+import styled from "renderer/styles";
 
 const Spacer = styled.div`
   flex-basis: 16px;
