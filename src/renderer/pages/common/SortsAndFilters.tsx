@@ -5,7 +5,7 @@ import styled, { css } from "renderer/styles";
 export const SortsAndFilters = styled(FiltersContainerDiv)`
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   height: auto;
 
   padding: 0.4em 0.6em;
@@ -14,6 +14,8 @@ export const SortsAndFilters = styled(FiltersContainerDiv)`
 
 export const FilterGroup = styled.div`
   margin: 0.5em 0;
+  display: flex;
+  flex-flow: row wrap;
 `;
 
 // const inactiveBg = `linear-gradient(to top,hsla(355, 43%, 25%, 1),hsla(355, 43%, 17%, 1))`;
