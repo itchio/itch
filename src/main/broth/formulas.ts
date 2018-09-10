@@ -78,7 +78,10 @@ describeFormula("itch-setup", {
     return channel;
   },
   getSemverConstraint: () => {
-    return null;
+    if (env.isCanary) {
+      return null;
+    }
+    return "^1.8.0";
   },
 });
 
