@@ -437,5 +437,12 @@
     "download.outcome.reinstalled": "ominstallerad",
     "download.outcome.reverted": "ändrad till annan version",
     "download.outcome.healed": "kontrollerad och lagad",
-    "game.install.could_not_launch.message": "Meddelandet vi fick var: {{errorMessage}}"
+    "game.install.could_not_launch.message": "Meddelandet vi fick var: {{errorMessage}}",
+    "grid.empty_state.leader": "Allting är bortfiltrerat...",
+    "grid.empty_state.explanation": "Dina filter döljer allting här",
+    "grid.really_empty_state.leader": "Det är ingenting här...",
+    "grid.really_empty_state.explanation": "...än!",
+    "prompt.uninstall_error.message": "Avinstalleringen misslyckades, Vill du ta bort objektet ändå?",
+    "prompt.uninstall_error.action_permissions": "Ta bort som administratör",
+    "prompt.install_error.message": "Installationen misslyckades"
 }
