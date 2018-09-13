@@ -430,5 +430,7 @@
     "download.ongoing.install": "Installerar {{title}}…",
     "download.outcome.installed": "installerad",
     "collections.empty": "Du har för närvarande inga samlingar",
-    "download.ongoing.update": "Uppdaterar {{title}}..."
+    "download.ongoing.update": "Uppdaterar {{title}}...",
+    "download.ongoing.reinstall": "Ominstallerar {{title}}…",
+    "download.ongoing.heal": "Reparerar {{title}}…"
 }
