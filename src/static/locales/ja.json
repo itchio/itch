@@ -299,7 +299,7 @@
     "prompt.self_update.action.dismiss": "拒否します",
     "prompt.self_update.detail": "{{notes}}\n\n:date:  {{pubDate}}に公開されました。",
     "download.started": "開始済み",
-    "download.reason.install": "まずインストール",
+    "download.reason.install": "インストールするには",
     "prompt.self_update.message.linux": "手動でダウンロードするか、Linuxのパッケージマネジャーを使ってアップグレードする必要があります。詳しくはサイトまで。",
     "prompt.self_update.message.osx": "「今すぐダウンロード」を選んで自動インストールするか、ウェブサイトに掲載されている手順でインストールしてください。",
     "prompt.self_update.message.windows": "「今すぐダウンロード」を選んで自動インストールするか、ウェブサイトに掲載されている手順でインストールしてください。",
