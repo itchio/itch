@@ -436,5 +436,6 @@
     "download.outcome.updated": "uppdaterad till senaste versionen",
     "download.outcome.reinstalled": "ominstallerad",
     "download.outcome.reverted": "ändrad till annan version",
-    "download.outcome.healed": "kontrollerad och lagad"
+    "download.outcome.healed": "kontrollerad och lagad",
+    "game.install.could_not_launch.message": "Meddelandet vi fick var: {{errorMessage}}"
 }
