@@ -354,5 +354,8 @@
     "pick_update_upload.single.message": "アップデートは今でも後でもできます。",
     "pick_update_upload.buttons.update": "今すぐアップデートする",
     "pick_update_upload.tags.demo": "デモ",
-    "download.reason.revert": "他のバージョンに切り替える"
+    "download.reason.revert": "他のバージョンに切り替える",
+    "collection.summary": "コレクションに {{itemCount}} 個のアイテム",
+    "collections.empty": "現在コレクションはありません",
+    "collections.empty_sub": "ゲームを見つけてアイテムを新しいコレクションに追加する"
 }
