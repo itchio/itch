@@ -432,5 +432,8 @@
     "collections.empty": "Du har för närvarande inga samlingar",
     "download.ongoing.update": "Uppdaterar {{title}}...",
     "download.ongoing.reinstall": "Ominstallerar {{title}}…",
-    "download.ongoing.heal": "Reparerar {{title}}…"
+    "download.ongoing.heal": "Reparerar {{title}}…",
+    "download.outcome.updated": "uppdaterad till senaste versionen",
+    "download.outcome.reinstalled": "ominstallerad",
+    "download.outcome.reverted": "ändrad till annan version"
 }
