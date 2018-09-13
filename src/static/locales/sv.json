@@ -435,5 +435,6 @@
     "download.ongoing.heal": "Reparerar {{title}}…",
     "download.outcome.updated": "uppdaterad till senaste versionen",
     "download.outcome.reinstalled": "ominstallerad",
-    "download.outcome.reverted": "ändrad till annan version"
+    "download.outcome.reverted": "ändrad till annan version",
+    "download.outcome.healed": "kontrollerad och lagad"
 }
