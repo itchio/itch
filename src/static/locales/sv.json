@@ -429,5 +429,6 @@
     "collection.summary": "En samling av {{artikelAntal}} artiklar",
     "download.ongoing.install": "Installerar {{title}}…",
     "download.outcome.installed": "installerad",
-    "collections.empty": "Du har för närvarande inga samlingar"
+    "collections.empty": "Du har för närvarande inga samlingar",
+    "download.ongoing.update": "Uppdaterar {{title}}..."
 }
