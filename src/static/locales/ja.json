@@ -363,5 +363,6 @@
     "grid.item.view_details": "詳細を表示",
     "grid.item.open_file_location.windows": "エクスプローラーでフォルダを開く",
     "login.two_factor.enter_code": "ログインを続行するには、認証アプリに表示されているコードを入力してください。",
-    "login.two_factor.verification_code_label": "認証コード"
+    "login.two_factor.verification_code_label": "認証コード",
+    "duration.seconds": "{{x}}秒"
 }
