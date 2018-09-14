@@ -359,5 +359,6 @@
     "collections.empty": "現在コレクションはありません",
     "collections.empty_sub": "ゲームを見つけてアイテムを新しいコレクションに追加する",
     "grid.item.advanced": "詳細",
-    "grid.item.revert_to_version": "他のバージョンに切り替える"
+    "grid.item.revert_to_version": "他のバージョンに切り替える",
+    "grid.item.view_details": "詳細を表示"
 }
