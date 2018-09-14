@@ -2,7 +2,6 @@ import React from "react";
 
 import Checkbox from "renderer/pages/PreferencesPage/Checkbox";
 import OpenAtLoginErrorMessage from "renderer/pages/PreferencesPage/OpenAtLoginErrorMessage";
-import ExperimentalMark from "renderer/pages/PreferencesPage/ExperimentalMark";
 
 import { T } from "renderer/t";
 import urls from "common/constants/urls";
@@ -16,9 +15,7 @@ class BehaviorSettings extends React.PureComponent<Props> {
           <Checkbox
             name="isolateApps"
             label={T(["preferences.security.sandbox.title"])}
-          >
-            <ExperimentalMark />
-          </Checkbox>
+          />
         </div>
 
         <p className="explanation">
