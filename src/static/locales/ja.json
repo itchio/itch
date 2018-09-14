@@ -357,5 +357,7 @@
     "download.reason.revert": "他のバージョンに切り替える",
     "collection.summary": "コレクションに {{itemCount}} 個のアイテム",
     "collections.empty": "現在コレクションはありません",
-    "collections.empty_sub": "ゲームを見つけてアイテムを新しいコレクションに追加する"
+    "collections.empty_sub": "ゲームを見つけてアイテムを新しいコレクションに追加する",
+    "grid.item.advanced": "詳細",
+    "grid.item.revert_to_version": "他のバージョンに切り替える"
 }
