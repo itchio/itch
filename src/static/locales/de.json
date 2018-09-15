@@ -464,7 +464,7 @@
     "download.reason.install": "zum installieren",
     "download.outcome.reinstalled": "neuinstalliert",
     "game.install.could_not_launch.message": "Wir bekamen diese Nachricht: {{errorMessage}}",
-    "docs.how_to_help": "\nWie kann ich helfen?",
+    "docs.how_to_help": "Wie kann ich helfen?",
     "collection.item_count": "{{itemCount}} Artikel",
     "download.ongoing.revert": "Wechsle {{title}} auf eine andere Version",
     "download.outcome.healed": "überprüft und repariert",
