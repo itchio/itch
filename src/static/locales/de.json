@@ -352,7 +352,7 @@
     "login.two_factor.learn_more": "Lies mehr über Zwei-Faktor-Authentisierung",
     "notification.download_installed": "{{title}} wurde installiert!",
     "notification.download_updated": "{{title}} wurde aktualisiert!",
-    "notification.download_reverted": "{{title}} wurde auf {{version}} zurückgesetzt!",
+    "notification.download_reverted": "{{title}} wurde zu {{version}} gewechselt!",
     "notification.download_healed": "{{title}} verifiziert und repariert!",
     "preferences.behavior.open_at_login": "itch ausführen, wenn mein Computer startet",
     "preferences.behavior.open_as_hidden": "itch beim Start im Hintergrund ausführen",
