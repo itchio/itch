@@ -448,7 +448,7 @@
     "download.ongoing.reinstall": "Neuinstallation von {{Titel}}...",
     "download.ongoing.heal": "Repariere {{title}}...",
     "grid.item.not_compatible": "Nicht für diese Plattform verfügbar",
-    "grid.item.uninstall_request": "Deinstallieren oder neu installieren...",
+    "grid.item.uninstall_request": "Neu- oder deinstallieren",
     "table.column.installed_size": "Größe",
     "login.action.retry_setup": "Installation wiederholen",
     "menu.file.close_other_tabs": "Andere Tabs schließen",
