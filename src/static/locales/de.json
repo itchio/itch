@@ -467,5 +467,7 @@
     "docs.how_to_help": "\nWie kann ich helfen?",
     "collection.item_count": "{{itemCount}} Artikel",
     "download.ongoing.revert": "Wechsle {{title}} auf eine andere Version",
-    "download.outcome.healed": "überprüft und repariert"
+    "download.outcome.healed": "überprüft und repariert",
+    "grid.empty_state.leader": "Keine Ergebnisse übrig...",
+    "grid.empty_state.explanation": "Alles herausgefiltert"
 }
