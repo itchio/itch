@@ -392,7 +392,7 @@
     "grid.item.verify_integrity": "Integrität prüfen",
     "grid.item.revert_to_version": "Zurücksetzen auf Version...",
     "grid.item.view_details": "Details anzeigen...",
-    "prompt.revert.title": "Auf diesen Build zurücksetzen",
+    "prompt.revert.title": "Ändere {{title}} auf eine andere Version",
     "prompt.revert.message": "Zurücksetzen von Build {{buildId}} auf Build:",
     "prompt.revert.action.revert": "Zurücksetzen",
     "status.reverting": "Setzt zurück auf {{buildId}}...",
@@ -469,5 +469,7 @@
     "download.ongoing.revert": "Wechsle {{title}} auf eine andere Version",
     "download.outcome.healed": "überprüft und repariert",
     "grid.empty_state.leader": "Keine Ergebnisse übrig...",
-    "grid.empty_state.explanation": "Alles herausgefiltert"
+    "grid.empty_state.explanation": "Alles herausgefiltert",
+    "collections.empty_sub": "Suche nach Spielen und füge sie einer neuen Sammlung hinzu!",
+    "download.outcome.reverted": "Die Version wurde geändert"
 }
