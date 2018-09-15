@@ -475,5 +475,6 @@
     "dashboard.game_stats.downloads": "Downloads",
     "duration.seconds": "{{x}} Sekunden",
     "grid.criterion.filter_by": "Filtern nach: ",
-    "grid.item_count": "{{count}} Elemente"
+    "grid.item_count": "{{count}} Elemente",
+    "grid.item.open_title": "Öffne {{title}}"
 }
