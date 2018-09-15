@@ -472,5 +472,8 @@
     "grid.empty_state.explanation": "Alles herausgefiltert",
     "collections.empty_sub": "Suche nach Spielen und füge sie einer neuen Sammlung hinzu!",
     "download.outcome.reverted": "Die Version wurde geändert",
-    "dashboard.game_stats.downloads": "Downloads"
+    "dashboard.game_stats.downloads": "Downloads",
+    "duration.seconds": "{{x}} Sekunden",
+    "grid.criterion.filter_by": "Filtern nach: ",
+    "grid.item_count": "{{count}} Elemente"
 }
