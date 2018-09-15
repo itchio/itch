@@ -471,5 +471,6 @@
     "grid.empty_state.leader": "Keine Ergebnisse übrig...",
     "grid.empty_state.explanation": "Alles herausgefiltert",
     "collections.empty_sub": "Suche nach Spielen und füge sie einer neuen Sammlung hinzu!",
-    "download.outcome.reverted": "Die Version wurde geändert"
+    "download.outcome.reverted": "Die Version wurde geändert",
+    "dashboard.game_stats.downloads": "Downloads"
 }
