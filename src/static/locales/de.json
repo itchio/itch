@@ -458,7 +458,7 @@
     "prompt.blessing.message": "Zum Verwalten von {{title}} werden Admin-Rechte benötigt",
     "prompt.uninstall_error.message_permissions": "Einige Dateien von {{title}} konnten nicht gelöscht werden. Als Admin erneut versuchen?",
     "prompt.uninstall_error.action_permissions": "Als Admin entfernen",
-    "prompt.install_error.message": "Die Installation ist fehlgeschlagen",
+    "prompt.install_error.message": "Die Installation ist fehlgeschlagen.",
     "status.cancelled.message": "Der Vorgang wurde abgebrochen.",
     "collections.empty": "Du hast momentan keine Sammlungen",
     "download.reason.install": "zum installieren",
