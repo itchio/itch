@@ -86,5 +86,6 @@
     "grid.filters.options.owned": "Придбані",
     "grid.filters.options.no_results": "Нічого не знайдено",
     "grid.item.verify_integrity": "Перевірити цілісність",
-    "action.name.editor": "Редактор"
+    "action.name.editor": "Редактор",
+    "action.name.manual": "Посібник користувача"
 }
