@@ -10,6 +10,12 @@ import {
 import * as urlParser from "common/util/url";
 import querystring from "querystring";
 
+const wellKnownProtocols = ["http:", "https:", "itch:"];
+
+function isWellKnownProtocol(protocol: string): boolean {
+  return wellKnownProtocols.indexOf(protocol) !== -1;
+}
+
 export function transformUrl(original: string): string {
   if (/^about:/.test(original)) {
     return original;
@@ -32,7 +38,7 @@ export function transformUrl(original: string): string {
 
   // add http: if needed
   let parsed = urlParser.parse(req);
-  if (!parsed.hostname || !parsed.protocol) {
+  if (!isWellKnownProtocol(parsed.protocol)) {
     req = "http://" + original;
     parsed = urlParser.parse(req);
     if (!parsed.hostname) {
