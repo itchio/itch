@@ -93,5 +93,6 @@
     "desktop.shortcut.comment": "Легко встановлюйте та грайте ігри з itch.io",
     "docs.learn_more": "Дізнатися більше",
     "download.started": "Розпочато",
-    "download.reason.install": "для встановлення"
+    "download.reason.install": "для встановлення",
+    "download.reason.update": "оновити до останньої версії"
 }
