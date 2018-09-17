@@ -1,3 +1,4 @@
+import { userAgent } from "common/constants/useragent";
 import { Dispatch, ProxySource } from "common/types";
 import { ambientTab } from "common/util/navigation";
 import { partitionForUser } from "common/util/partition-for-user";
@@ -5,9 +6,9 @@ import { WebviewTag } from "electron";
 import React from "react";
 import { hookWithProps } from "renderer/hocs/hook";
 import {
+  dispatchTabGotWebContents,
   dispatchTabLoadingStateChanged,
   dispatchTabLosingWebContents,
-  dispatchTabGotWebContents,
 } from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
@@ -15,8 +16,6 @@ import BrowserContext from "renderer/pages/BrowserPage/BrowserContext";
 import DisabledBrowser from "renderer/pages/BrowserPage/DisabledBrowser";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
-import { userAgent } from "common/constants/useragent";
-import { getImagePath } from "common/util/resources";
 
 const BrowserPageDiv = styled.div`
   ${styles.meat};
@@ -30,14 +29,12 @@ const BrowserMain = styled.div`
 `;
 
 const WebviewShell = styled.div`
-  background: white;
+  background-color: ${props => props.theme.breadBackground};
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-
-  background-color: ${props => props.theme.breadBackground};
 
   webview {
     position: absolute;
@@ -45,6 +42,7 @@ const WebviewShell = styled.div`
     right: 0;
     bottom: 0;
     left: 0;
+    background: white;
   }
 `;
 
