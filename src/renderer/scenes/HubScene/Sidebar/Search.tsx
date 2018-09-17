@@ -1,22 +1,22 @@
 import classNames from "classnames";
 import { actions } from "common/actions";
+import { messages } from "common/butlerd";
+import { Game } from "common/butlerd/messages";
+import searchExamples from "common/constants/search-examples";
+import { Dispatch } from "common/types";
+import { urlForGame } from "common/util/navigation";
 import React from "react";
 import { InjectedIntl } from "react-intl";
-import LoadingCircle from "renderer/basics/LoadingCircle";
+import Floater from "renderer/basics/Floater";
+import { rcall } from "renderer/butlerd/rcall";
+import { doAsync } from "renderer/helpers/doAsync";
 import { hook } from "renderer/hocs/hook";
 import watching, { Watcher } from "renderer/hocs/watching";
 import { withIntl } from "renderer/hocs/withIntl";
 import SearchResultsBar from "renderer/scenes/HubScene/Sidebar/SearchResultsBar";
 import styled, * as styles from "renderer/styles";
 import { TString } from "renderer/t";
-import { debounce, size, sample, isEmpty } from "underscore";
-import { Dispatch } from "common/types";
-import { doAsync } from "renderer/helpers/doAsync";
-import { rcall } from "renderer/butlerd/rcall";
-import { messages } from "common/butlerd";
-import { Game } from "common/butlerd/messages";
-import searchExamples from "common/constants/search-examples";
-import { urlForGame } from "common/util/navigation";
+import { debounce, isEmpty, sample, size } from "underscore";
 
 const SearchContainerContainer = styled.section`
   .relative-wrapper {
@@ -52,7 +52,6 @@ const SearchContainer = styled.div`
 
   .search-icon {
     ${styles.searchIcon};
-    left: 10px;
     font-size: inherit;
   }
 
@@ -62,6 +61,7 @@ const SearchContainer = styled.div`
     justify-content: center;
     height: 100%;
     transition: opacity 0.2s;
+    left: 8px;
 
     &.enter-pending {
       opacity: 0.5;
@@ -274,7 +274,7 @@ class Search extends React.PureComponent<Props, State> {
                 "enter-pending": this.state.enterPending,
               })}
             >
-              <LoadingCircle progress={-1} />
+              <Floater tiny />
             </div>
           ) : (
             <span className="icon icon-search search-icon" />
