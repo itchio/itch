@@ -85,5 +85,15 @@
     "grid.filters.options.installed": "Встановлені",
     "grid.filters.options.owned": "Придбані",
     "grid.filters.options.no_results": "Нічого не знайдено",
-    "grid.item.verify_integrity": "Перевірити цілісність"
+    "grid.item.verify_integrity": "Перевірити цілісність",
+    "action.name.editor": "Редактор",
+    "action.name.manual": "Посібник користувача",
+    "collection.summary": "Коллекція {{itemCount}} предметів",
+    "collections.empty": "У вас немає жодної колекції",
+    "desktop.shortcut.comment": "Легко встановлюйте та грайте ігри з itch.io",
+    "docs.learn_more": "Дізнатися більше",
+    "download.started": "Розпочато",
+    "download.reason.install": "для встановлення",
+    "download.reason.update": "оновити до останньої версії",
+    "grid.item.uninstalling": "Видаляється..."
 }

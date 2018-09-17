@@ -299,7 +299,7 @@
     "prompt.self_update.action.dismiss": "拒否します",
     "prompt.self_update.detail": "{{notes}}\n\n:date:  {{pubDate}}に公開されました。",
     "download.started": "開始済み",
-    "download.reason.install": "まずインストール",
+    "download.reason.install": "インストールするには",
     "prompt.self_update.message.linux": "手動でダウンロードするか、Linuxのパッケージマネジャーを使ってアップグレードする必要があります。詳しくはサイトまで。",
     "prompt.self_update.message.osx": "「今すぐダウンロード」を選んで自動インストールするか、ウェブサイトに掲載されている手順でインストールしてください。",
     "prompt.self_update.message.windows": "「今すぐダウンロード」を選んで自動インストールするか、ウェブサイトに掲載されている手順でインストールしてください。",
@@ -357,5 +357,12 @@
     "download.reason.revert": "他のバージョンに切り替える",
     "collection.summary": "コレクションに {{itemCount}} 個のアイテム",
     "collections.empty": "現在コレクションはありません",
-    "collections.empty_sub": "ゲームを見つけてアイテムを新しいコレクションに追加する"
+    "collections.empty_sub": "ゲームを見つけてアイテムを新しいコレクションに追加する",
+    "grid.item.advanced": "詳細",
+    "grid.item.revert_to_version": "他のバージョンに切り替える",
+    "grid.item.view_details": "詳細を表示",
+    "grid.item.open_file_location.windows": "エクスプローラーでフォルダを開く",
+    "login.two_factor.enter_code": "ログインを続行するには、認証アプリに表示されているコードを入力してください。",
+    "login.two_factor.verification_code_label": "認証コード",
+    "duration.seconds": "{{x}}秒"
 }
