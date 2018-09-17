@@ -88,5 +88,7 @@
     "grid.item.verify_integrity": "Перевірити цілісність",
     "action.name.editor": "Редактор",
     "action.name.manual": "Посібник користувача",
-    "collection.summary": "Коллекція {{itemCount}} предметів"
+    "collection.summary": "Коллекція {{itemCount}} предметів",
+    "collections.empty": "У вас немає жодної колекції",
+    "desktop.shortcut.comment": "Легко встановлюйте та грайте ігри з itch.io"
 }
