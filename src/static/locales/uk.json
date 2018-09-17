@@ -91,5 +91,6 @@
     "collection.summary": "Коллекція {{itemCount}} предметів",
     "collections.empty": "У вас немає жодної колекції",
     "desktop.shortcut.comment": "Легко встановлюйте та грайте ігри з itch.io",
-    "docs.learn_more": "Дізнатися більше"
+    "docs.learn_more": "Дізнатися більше",
+    "download.started": "Розпочато"
 }
