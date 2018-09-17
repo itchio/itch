@@ -8,7 +8,7 @@ import {
   GameUpdate,
   GameUpdateChoice,
   Profile,
-  Upload,
+  InstallLocationSummary,
 } from "common/butlerd/messages";
 import { LogEntry } from "common/logger";
 import { TypedModal, TypedModalUpdate } from "common/modals";

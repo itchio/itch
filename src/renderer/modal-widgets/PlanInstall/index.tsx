@@ -29,10 +29,12 @@ import { rcall } from "renderer/butlerd/rcall";
 import { doAsync } from "renderer/helpers/doAsync";
 import { LoadingStateDiv } from "renderer/hocs/butlerCaller";
 import { hook } from "renderer/hocs/hook";
+import watching, { Watcher } from "renderer/hocs/watching";
 import { withIntl } from "renderer/hocs/withIntl";
 import { rendererLogger } from "renderer/logger";
 import InstallLocationOptionComponent, {
   InstallLocationOption,
+  InstallLocationOptionAdd,
 } from "renderer/modal-widgets/PlanInstall/InstallLocationOptionComponent";
 import UploadOptionComponent, {
   UploadOption,
@@ -136,6 +138,7 @@ enum PlanStage {
   Planning,
 }
 
+@watching
 class PlanInstall extends React.PureComponent<Props, State> {
   constructor(props: Props, context: any) {
     super(props, context);
@@ -147,6 +150,12 @@ class PlanInstall extends React.PureComponent<Props, State> {
       gameId: game.id,
       installLocations: [],
     };
+  }
+
+  subscribe(watcher: Watcher) {
+    watcher.on(actions.installLocationsChanged, async () => {
+      this.loadInstallLocations();
+    });
   }
 
   render() {
@@ -180,6 +189,11 @@ class PlanInstall extends React.PureComponent<Props, State> {
         location: il,
       };
       return val;
+    });
+    locationOptions.push({
+      label: _("preferences.install_location.add"),
+      value: InstallLocationOptionAdd,
+      location: null,
     });
     let locationValue = findWhere(locationOptions, {
       value: pickedInstallLocationId,
@@ -344,6 +358,12 @@ class PlanInstall extends React.PureComponent<Props, State> {
   }
 
   onInstallLocationChange = (item: InstallLocationOption) => {
+    if (item.value === InstallLocationOptionAdd) {
+      const { dispatch } = this.props;
+      dispatch(actions.addInstallLocation({ wind: ambientWind() }));
+      return;
+    }
+
     this.setState({
       pickedInstallLocationId: item.value,
     });
@@ -396,9 +416,6 @@ class PlanInstall extends React.PureComponent<Props, State> {
           },
           convo => {
             hookLogging(convo, memlogger);
-            convo.on(messages.ExternalUploadsAreBad, async () => {
-              return { whatever: true };
-            });
           }
         );
         memlogger.info(`Queued!`);
