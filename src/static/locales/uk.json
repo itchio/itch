@@ -94,5 +94,6 @@
     "docs.learn_more": "Дізнатися більше",
     "download.started": "Розпочато",
     "download.reason.install": "для встановлення",
-    "download.reason.update": "оновити до останньої версії"
+    "download.reason.update": "оновити до останньої версії",
+    "grid.item.uninstalling": "Видаляється..."
 }
