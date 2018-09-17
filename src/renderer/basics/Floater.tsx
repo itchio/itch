@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React from "react";
 import styled, { keyframes } from "renderer/styles";
 
@@ -20,6 +21,7 @@ const offset = duration / numDrops;
 const FloaterDiv = styled.div`
   width: 30px;
   height: 10px;
+
   display: flex;
   flex-flow: row;
   align-items: center;
@@ -34,6 +36,16 @@ const FloaterDiv = styled.div`
     animation: ${floaterKeyframes} ${duration}s infinite ease-in-out alternate;
   }
 
+  &.tiny {
+    width: 20px;
+    height: 8px;
+
+    div {
+      width: 6px;
+      height: 3px;
+    }
+  }
+
   div:nth-child(1) {
     animation-delay: -${offset * 2}s;
   }
@@ -43,9 +55,10 @@ const FloaterDiv = styled.div`
   }
 `;
 
-export default function Floater(props: {}) {
+export default function Floater(props: { tiny?: boolean }) {
+  const { tiny } = props;
   return (
-    <FloaterDiv>
+    <FloaterDiv className={classNames({ tiny })}>
       <div />
       <div />
       <div />

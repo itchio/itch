@@ -18,8 +18,6 @@ export const FiltersContainerDiv = styled.section`
   padding-right: 10px;
   height: ${filtersContainerHeight}px;
 
-  border-bottom: 2px solid transparent;
-
   position: relative;
 
   &.loading {
