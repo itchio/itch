@@ -437,5 +437,6 @@
     "grid.empty_state.explanation": "Twoje ustawienia filtrów spowodowały ukrycie wszystkich wyników",
     "grid.item.discard_download": "Zatrzymaj pobieranie",
     "grid.item.not_compatible": "Niedostępne dla tej platformy",
-    "collections.empty": "Aktualnie nie posiadasz żadnych kolekcji"
+    "collections.empty": "Aktualnie nie posiadasz żadnych kolekcji",
+    "collection.item_count": "{{itemCount}} przedmiotów"
 }
