@@ -87,5 +87,6 @@
     "grid.filters.options.no_results": "Нічого не знайдено",
     "grid.item.verify_integrity": "Перевірити цілісність",
     "action.name.editor": "Редактор",
-    "action.name.manual": "Посібник користувача"
+    "action.name.manual": "Посібник користувача",
+    "collection.summary": "Коллекція {{itemCount}} предметів"
 }
