@@ -92,5 +92,6 @@
     "collections.empty": "У вас немає жодної колекції",
     "desktop.shortcut.comment": "Легко встановлюйте та грайте ігри з itch.io",
     "docs.learn_more": "Дізнатися більше",
-    "download.started": "Розпочато"
+    "download.started": "Розпочато",
+    "download.reason.install": "для встановлення"
 }
