@@ -119,9 +119,18 @@ export default function(watcher: Watcher) {
 
     const path = await promise;
     if (path) {
-      await mcall(messages.InstallLocationsAdd, { path }, convo => {
-        hookLogging(convo, logger);
-      });
+      const { installLocation } = await mcall(
+        messages.InstallLocationsAdd,
+        { path },
+        convo => {
+          hookLogging(convo, logger);
+        }
+      );
+      store.dispatch(
+        actions.updatePreferences({
+          defaultInstallLocation: installLocation.id,
+        })
+      );
       store.dispatch(actions.installLocationsChanged({}));
       store.dispatch(actions.silentlyScanInstallLocations({}));
     }

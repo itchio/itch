@@ -1,30 +1,35 @@
 import { InstallLocationSummary } from "common/butlerd/messages";
+import { fileSize } from "common/format/filesize";
+import { LocalizedString } from "common/types";
 import React from "react";
 import Icon from "renderer/basics/Icon";
 import { OptionComponentProps } from "renderer/basics/SimpleSelect/DefaultOptionComponent";
 import { SelectValueDiv } from "renderer/modal-widgets/PlanInstall/select-common";
-import LocationSizeBar from "renderer/pages/LocationsPage/LocationSizeBar";
-import styled from "renderer/styles";
-import { fileSize } from "common/format/filesize";
+import { T } from "renderer/t";
+
+export const InstallLocationOptionAdd = "_add";
 
 export interface InstallLocationOption {
   value: string;
-  label: string;
+  label: LocalizedString;
   location: InstallLocationSummary;
 }
-
-const Break = styled.div`
-  flex-basis: 100%;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  margin-top: 8px;
-`;
 
 export default function InstallLocationOptionComponent(
   props: OptionComponentProps<InstallLocationOption>
 ) {
   const l = props.option.location;
+  if (!l) {
+    return (
+      <SelectValueDiv>
+        <Icon icon="plus" />
+        <div className="spacer" />
+        <div className="title">{T(props.option.label)}</div>
+        <div className="spacer" />
+      </SelectValueDiv>
+    );
+  }
+
   return (
     <SelectValueDiv>
       <Icon icon="folder-open" />

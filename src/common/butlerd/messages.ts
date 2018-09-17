@@ -844,22 +844,6 @@ export const InstallQueue = createRequest<
 >("Install.Queue");
 
 /**
- * Result for ExternalUploadsAreBad
- */
-export interface ExternalUploadsAreBadResult {
-  /** If true, will proceed with install anyway. Otherwise aborts. */
-  whatever: boolean;
-}
-
-/**
- * Sent during @@InstallQueueParams.
- */
-export const ExternalUploadsAreBad = createRequest<
-  ExternalUploadsAreBadParams,
-  ExternalUploadsAreBadResult
->("ExternalUploadsAreBad");
-
-/**
  * Result for Install.Plan
  */
 export interface InstallPlanResult {
@@ -1056,7 +1040,8 @@ export const InstallLocationsList = createRequest<
  * Result for Install.Locations.Add
  */
 export interface InstallLocationsAddResult {
-  // no fields
+  /** undocumented */
+  installLocation: InstallLocationSummary;
 }
 
 /**
@@ -1905,9 +1890,9 @@ export interface Sale {
    */
   rate: number;
   /** Timestamp the sale started at */
-  startDate: string;
+  startDate: Date;
   /** Timestamp the sale ends at */
-  endDate: string;
+  endDate: Date;
 }
 
 /**
@@ -2727,14 +2712,6 @@ export interface InstallQueueParams {
    * See @@DownloadsDriveParams.
    */
   queueDownload?: boolean;
-}
-
-/**
- * Params for ExternalUploadsAreBad
- */
-export interface ExternalUploadsAreBadParams {
-  /** undocumented */
-  upload: Upload;
 }
 
 /**
