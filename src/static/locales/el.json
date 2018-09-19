@@ -134,5 +134,6 @@
     "table.column.name": "Όνομα",
     "grid.item.donate": "Φιλοδώρημα στον δημιουργό",
     "grid.item.donate_again": "Φιλοδώρημα στον δημιουργό ξανά!",
-    "action.name.play": "Παίξε τώρα"
+    "action.name.play": "Παίξε τώρα",
+    "action.name.editor": "Επιμελητής"
 }
