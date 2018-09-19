@@ -165,5 +165,6 @@
     "duration.minute": "ένα λεπτό ή λιγότερο",
     "duration.minutes": "{{x}} λεπτά",
     "duration.seconds": "{{x}} δευτερόλεπτα",
-    "game.install.could_not_launch.missing_jre": "Απαιτεί Java το οποίο δεν βρέθηκε στο σύστημα σας."
+    "game.install.could_not_launch.missing_jre": "Απαιτεί Java το οποίο δεν βρέθηκε στο σύστημα σας.",
+    "game.install.no_uploads_available.detail": "Πιθανόν να μην είναι συμβατό ακόμα με την πλατφόρμα σας ή την εφαρμογή itch!"
 }
