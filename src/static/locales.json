@@ -17,6 +17,7 @@
     { "value": "fr", "label": "Français" },
     { "value": "ga", "label": "Gaeilge" },
     { "value": "he", "label": "עברית" },
+    { "value": "hi", "label": "हिन्दी" },
     { "value": "hu", "label": "Magyar" },
     { "value": "in", "label": "Bahasa Indonesia" },
     { "value": "it", "label": "Italiano" },
