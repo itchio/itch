@@ -107,7 +107,7 @@
     "prompt.no_compatible_version.detail": "Μήπως η {{classification}} δεν είναι συμβατή ακόμα;",
     "prompt.no_compatible_version.message": "Δεν βρήκαμε έκδοση του {{title}} για το {{platform}}.",
     "prompt.no_compatible_version.title": "{{title}} στο {{platform}}",
-    "prompt.payments_disabled.detail": "Ίσως μπορείς να βρείς άλλον τρόπο για να βοηθήσεις τον προγραμματιστή.",
+    "prompt.payments_disabled.detail": "Ίσως μπορείς να βρείς άλλον τρόπο για να βοηθήσεις τον προγραμματιστή;",
     "prompt.payments_disabled.message": "Δυστυχώς, ο προγραμματιστής του {{title}} δεν δέχεται πληρωμές γι' αυτόν τον τίτλο.",
     "prompt.payments_disabled.open_web_page": "Άνοιγμα σελίδα περιήγησης",
     "prompt.payments_disabled.title": "Πληρωμές απενεργοποιημένες",
