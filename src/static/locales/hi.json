@@ -17,5 +17,18 @@
     "action.name.editor": "एडीटर",
     "action.name.forums": "फोरम",
     "label.experimental": "प्रयोगात्मक",
-    "collection.empty": "इस संग्रह में कोई गेम नहीं है"
+    "collection.empty": "इस संग्रह में कोई गेम नहीं है",
+    "collection.item_count": "{{आइटमगिन्ती}} आइटमस",
+    "collection.summary": "{{आइटमगिन्ती}} आइटमस का एक संग्रह",
+    "collections.empty": "आपके पास कोई संग्रह नहीं है",
+    "collections.empty_sub": "कुछ गेम के लिए ब्राउज़ करें और उन्हें एक नए संग्रह में जोड़ें!",
+    "desktop.shortcut.comment": "itch.io से आसानी से गेम्स इंस्टॉल करें और खेले",
+    "docs.learn_more": "और जानें",
+    "docs.how_to_help": "मैं कैसे मदद कर सकता हूँ?",
+    "download.started": "शुरू हो गया है",
+    "download.reason.install": "इंस्टॉल करने के लिए",
+    "download.reason.update": "नये संस्करण मै अद्यतन करने के लिए",
+    "download.reason.reinstall": "वापस इंस्टॉल करने के लिए",
+    "download.reason.revert": "दूसरे संस्करण में स्विच करने के लिए",
+    "download.reason.heal": "जांचना करने और मरम्मत करने के लिए"
 }
