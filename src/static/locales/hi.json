@@ -9,5 +9,13 @@
     "grid.item.retry": "इसे फिर से डाउनलोड / इंस्टॉल / लॉन्च करने कि कोशिश करें",
     "grid.item.running": "रनिंग…",
     "grid.item.uninstall": "अनइंस्टॉल",
-    "grid.item.uninstalling": "अनइंस्टॉल हो रहा है…"
+    "grid.item.uninstalling": "अनइंस्टॉल हो रहा है…",
+    "grid.item.purchase_or_donate": "इसे खरीदे या दान करें",
+    "grid.item.buy_now": "अभी खरीदें",
+    "action.name.play": "अभी खेलें",
+    "action.name.manual": "कैसे उपयोग करे",
+    "action.name.editor": "एडीटर",
+    "action.name.forums": "फोरम",
+    "label.experimental": "प्रयोगात्मक",
+    "collection.empty": "इस संग्रह में कोई गेम नहीं है"
 }
