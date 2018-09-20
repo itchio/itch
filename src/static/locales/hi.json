@@ -1,1 +1,13 @@
-{}
+{
+    "grid.item.downloading": "डाउनलोड चल रहा है…",
+    "grid.item.install": "इंस्टॉल करें",
+    "grid.item.installing": "इंस्टॉल हो रहा है.…",
+    "grid.item.launch": "लांच",
+    "grid.item.probe": "समस्या की जांच करें",
+    "grid.item.queued": "कतार मे है",
+    "grid.item.report_problem": "अपनी प्रतिक्रिया दे",
+    "grid.item.retry": "इसे फिर से डाउनलोड / इंस्टॉल / लॉन्च करने कि कोशिश करें",
+    "grid.item.running": "रनिंग…",
+    "grid.item.uninstall": "अनइंस्टॉल",
+    "grid.item.uninstalling": "अनइंस्टॉल हो रहा है…"
+}
