@@ -477,5 +477,12 @@
     "preferences.install_location.size_used_by_games": "游戏占用 {{installedSize}} ",
     "preferences.install_location.disk_usage": "磁盘已用",
     "preferences.install_location.navigate": "查看此位置的内容",
-    "menu.file.close_other_tabs": "关闭其他标签页"
+    "menu.file.close_other_tabs": "关闭其它标签页",
+    "prereq.status.pending": "正在准备...",
+    "login.status.antivirus_warning": "安全软件有可能干扰Itch的运行。",
+    "login.status.finalizing_installation": "正在完成安装...",
+    "browser.reenable": "重新启用",
+    "browser.disabled": "Itch内部浏览器已被禁用",
+    "table.column.installed": "已安装",
+    "grid.item.manage": "管理"
 }
