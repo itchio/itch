@@ -6,14 +6,14 @@ export function formatUploadTitle(u: Upload): string {
 
 function clean(s: string) {
   return s
-    .replace(/\.[^\.]+$/, "")
+    .replace(/\.[a-zA-Z0-9]+$/, "")
     .replace(/[_-]/g, " ")
     .replace(/\s+/, " ");
 }
 
 export function formatUploadTitleFancy(u: Upload): string {
   if (u.displayName) {
-    return clean(u.displayName);
+    return u.displayName;
   }
   if (u.filename) {
     return clean(u.filename);
