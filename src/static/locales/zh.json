@@ -373,7 +373,7 @@
     "grid.filters.options.owned": "已拥有",
     "grid.filters.options.no_results": "未发现结果",
     "grid.item.verify_integrity": "验证完整性",
-    "grid.item.revert_to_version": "还原到某一版本...",
+    "grid.item.revert_to_version": "切换到其他版本...",
     "table.column.name": "名称",
     "table.column.play_time": "游戏时间",
     "table.column.last_played": "上次游戏时间",
@@ -488,5 +488,6 @@
     "grid.item.uninstall_request": "卸载或重新安装...",
     "grid.item.running.clean": "正在清理...",
     "grid.item.running.prepare": "准备中...",
-    "grid.item.open_file_location.osx": "在Finder中显示"
+    "grid.item.open_file_location.osx": "在Finder中显示",
+    "grid.item.open_file_location.windows": "在资源管理器中打开所在目录"
 }
