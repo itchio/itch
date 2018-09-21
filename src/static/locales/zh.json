@@ -446,5 +446,7 @@
     "prompt.discard_download.detail": "您随时可以再次安装 {{title}} ，但您将丢失存档。",
     "prompt.dangerous_discard_download.message": "停止下载将会导致 {{title}} 处于不正常状态。",
     "prompt.dangerous_discard_download.detail": "在您下次打开 {{title}} 时我们会将其恢复至最新版本。",
-    "collections.empty": "您目前没有收藏内容"
+    "collections.empty": "您目前没有收藏内容",
+    "prompt.launch.message": "你想打开哪一个？",
+    "prompt.launch.title": "启动 {{title}}"
 }
