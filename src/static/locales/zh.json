@@ -179,7 +179,7 @@
     "login.messages.welcome_back-halloween": "谁敢扰我的睡？",
     "menu.file.new_tab": "新标签页",
     "game.install.could_not_launch.missing_jre": "需要安装Java才可运行。",
-    "download.reason.revert": "还原到较早版本",
+    "download.reason.revert": "切换至其他版本",
     "download.reason.reinstall": "重新安装",
     "grid.hidden_count": "+ {{count}} 项被过滤器隐藏了",
     "menu.file.close_tab": "关闭标签页",
