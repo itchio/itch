@@ -394,7 +394,7 @@
     "prompt.clear_browsing_data.category.cookies": "Cookies",
     "prompt.clear_browsing_data.cookies_info": "这将使你从所有使用itch应用登陆过的网站注销。",
     "prompt.clear_browsing_data.notification": "浏览数据已清除！",
-    "prompt.revert.title": "恢复到指定版本",
+    "prompt.revert.title": "切换 {{title}} 至其他版本",
     "prompt.revert.message": "从版本 {{buildId}} 恢复到此版本：",
     "prompt.revert.action.revert": "恢复",
     "sidebar.loading": "正在加载...",
@@ -510,5 +510,10 @@
     "prompt.uninstall_error.message": "卸载失败，是否移除全部文件？",
     "prompt.revert.version": "版本 {{version}}",
     "prompt.manage_game.installed_uploads": "您已经安装了这些：",
-    "prompt.manage_game.title": "管理 {{title}}"
+    "prompt.manage_game.title": "管理 {{title}}",
+    "status.repairing_game": "{{title}} 需要更新完成后才能启动",
+    "status.cancelled.message": "操作已被取消。",
+    "status.downloads.category.recent_activity": "最近活动",
+    "status.downloads.no_active_downloads_subtext": "您已安装或已下载的项目会显示在这里",
+    "install_location.property.size_on_disk": "占用硬盘空间 {{size}} "
 }
