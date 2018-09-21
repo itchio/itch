@@ -508,5 +508,7 @@
     "prompt.uninstall_error.action_permissions": "以管理员权限删除",
     "prompt.uninstall_error.message_permissions": "{{title}}的一些文件不能被删除，是否以管理员身份重试？",
     "prompt.uninstall_error.message": "卸载失败，是否移除全部文件？",
-    "prompt.revert.version": "版本 {{version}}"
+    "prompt.revert.version": "版本 {{version}}",
+    "prompt.manage_game.installed_uploads": "您已经安装了这些：",
+    "prompt.manage_game.title": "管理 {{title}}"
 }
