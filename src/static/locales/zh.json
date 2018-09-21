@@ -505,5 +505,8 @@
     "download.outcome.reverted": "已改为另一版本",
     "download.ongoing.revert": "将{{title}}更换为另一版本…",
     "collection.summary": "有{{itemCount}}个项目的收藏夹",
-    "prompt.uninstall_error.action_permissions": "以管理员权限删除"
+    "prompt.uninstall_error.action_permissions": "以管理员权限删除",
+    "prompt.uninstall_error.message_permissions": "{{title}}的一些文件不能被删除，是否以管理员身份重试？",
+    "prompt.uninstall_error.message": "卸载失败，是否移除全部文件？",
+    "prompt.revert.version": "版本 {{version}}"
 }
