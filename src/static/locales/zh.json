@@ -484,5 +484,6 @@
     "browser.reenable": "重新启用",
     "browser.disabled": "Itch内部浏览器已被禁用",
     "table.column.installed": "已安装",
-    "grid.item.manage": "管理"
+    "grid.item.manage": "管理",
+    "grid.item.uninstall_request": "卸载或重新安装…"
 }
