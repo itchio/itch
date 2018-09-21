@@ -450,5 +450,5 @@
     "prompt.launch.message": "你想打开哪一个？",
     "prompt.launch.title": "启动 {{title}}",
     "prompt.blessing.message": "需要管理员权限来管理 {{title}}",
-    "prompt.blessing.detail": "只有当你信任作者时，你才应该继续。"
+    "prompt.blessing.detail": "只有您信任此作者时，才能继续下去。"
 }
