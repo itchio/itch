@@ -106,7 +106,7 @@
     "prompt.install_location_remove.detail": "所有在 {{location}} 里面的项目将被卸载。",
     "prompt.install_location_remove.message": "你确定要删除这个路径吗？",
     "prompt.install_location_remove.title": "删除一个安装路径",
-    "prompt.last_remaining_install_location.content": "这是最后一个安装路径，删除此路径前请先添加一个其他路径。",
+    "prompt.last_remaining_install_location.content": "这是最后一个安装路径，删除此路径前请先添加一个其它路径。",
     "prompt.last_remaining_install_location.title": "不能删除安装路径",
     "prompt.logout_confirm": "您确定要注销吗?",
     "prompt.no_compatible_version.detail": "也许尚未兼容 {{classification}} ？",
@@ -449,5 +449,6 @@
     "collections.empty": "您目前没有收藏内容",
     "prompt.launch.message": "你想打开哪一个？",
     "prompt.launch.title": "启动 {{title}}",
-    "prompt.blessing.message": "需要管理员权限来管理 {{title}}"
+    "prompt.blessing.message": "需要管理员权限来管理 {{title}}",
+    "prompt.blessing.detail": "只有当你信任作者时，你才应该继续。"
 }
