@@ -456,5 +456,6 @@
     "prompt.show_error.details_for_nerds.event_log": "事件日志",
     "prompt.show_error.details_for_nerds": "更多技术信息",
     "prompt.discard_download.action.continue_download": "继续下载",
-    "prompt.discard_download.action.stop_download": "停止下载"
+    "prompt.discard_download.action.stop_download": "停止下载",
+    "prompt.discard_download.message": "停止下载 {{title}} ？"
 }
