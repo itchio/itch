@@ -450,5 +450,11 @@
     "prompt.launch.message": "你想打开哪一个？",
     "prompt.launch.title": "启动 {{title}}",
     "prompt.blessing.message": "需要管理员权限来管理 {{title}}",
-    "prompt.blessing.detail": "只有您信任此作者时，才能继续下去。"
+    "prompt.blessing.detail": "只有您信任此作者时，才能继续下去。",
+    "prompt.show_error.send_report": "发送错误报告来帮助解决此问题",
+    "prompt.show_error.details_for_nerds.stack_trace": "跟踪栈信息",
+    "prompt.show_error.details_for_nerds.event_log": "事件日志",
+    "prompt.show_error.details_for_nerds": "更多技术信息",
+    "prompt.discard_download.action.continue_download": "继续下载",
+    "prompt.discard_download.action.stop_download": "停止下载"
 }
