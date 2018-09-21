@@ -503,5 +503,6 @@
     "dashboard.game_stats.downloads": "下载",
     "download.outcome.healed": "已确认完成修复",
     "download.outcome.reverted": "已改为另一版本",
-    "download.ongoing.revert": "将{{title}}更换为另一版本…"
+    "download.ongoing.revert": "将{{title}}更换为另一版本…",
+    "collection.summary": "有{{itemCount}}个项目的收藏夹"
 }
