@@ -135,10 +135,9 @@ class ManageCave extends React.PureComponent<Props> {
                   <SpacerLarge />
                   <Icon icon="checkmark" />
                   <Spacer />
-                  {T(["table.column.powered_by"])}&nbsp;<a
-                    target="_popout"
-                    href="https://itch.io/docs/butler/"
-                  >
+                  {T(["table.column.powered_by"])}
+                  &nbsp;
+                  <a target="_popout" href="https://itch.io/docs/butler/">
                     butler
                   </a>
                 </CaveDetailsRow>
@@ -287,7 +286,7 @@ class ManageCave extends React.PureComponent<Props> {
     dispatch(
       actions.closeModal({
         wind: ambientWind(),
-        action: actions.checkForGameUpdate({ caveId, noisy: true }),
+        action: actions.checkForGameUpdate({ caveId }),
       })
     );
   };
