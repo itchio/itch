@@ -1,14 +1,12 @@
-import { Session } from "electron";
-import { mainLogger } from "main/logger";
-import { mcall } from "main/butlerd/mcall";
-import { doAsync } from "renderer/helpers/doAsync";
+import { actions } from "common/actions";
 import { messages } from "common/butlerd";
 import { Store } from "common/types";
-import { actions } from "common/actions";
-import urlParser from "url";
-import querystring from "querystring";
-import { queueInstall } from "main/reactors/tasks/queue-game";
+import { Session } from "electron";
+import { mcall } from "main/butlerd/mcall";
+import { mainLogger } from "main/logger";
 import { handleItchioUrl } from "main/reactors/url";
+import { doAsync } from "renderer/helpers/doAsync";
+import urlParser from "url";
 
 const logger = mainLogger.child(__filename);
 
