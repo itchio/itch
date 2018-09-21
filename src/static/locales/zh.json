@@ -485,5 +485,8 @@
     "browser.disabled": "Itch内部浏览器已被禁用",
     "table.column.installed": "已安装",
     "grid.item.manage": "管理",
-    "grid.item.uninstall_request": "卸载或重新安装…"
+    "grid.item.uninstall_request": "卸载或重新安装...",
+    "grid.item.running.clean": "正在清理...",
+    "grid.item.running.prepare": "准备中...",
+    "grid.item.open_file_location.osx": "在Finder中显示"
 }
