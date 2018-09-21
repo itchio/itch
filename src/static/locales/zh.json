@@ -476,5 +476,6 @@
     "preferences.install_location.free_of_total": " {{totalSize}} 中有 {{freeSize}} 空闲",
     "preferences.install_location.size_used_by_games": "游戏占用 {{installedSize}} ",
     "preferences.install_location.disk_usage": "磁盘已用",
-    "preferences.install_location.navigate": "查看此位置的内容"
+    "preferences.install_location.navigate": "查看此位置的内容",
+    "menu.file.close_other_tabs": "关闭其他标签页"
 }
