@@ -476,5 +476,9 @@
     "duration.seconds": "{{x}} Sekunden",
     "grid.criterion.filter_by": "Filtern nach: ",
     "grid.item_count": "{{count}} Elemente",
-    "grid.item.open_title": "Öffne {{title}}"
+    "grid.item.open_title": "Öffne {{title}}",
+    "dashboard.game_stats.views": "Aufrufe",
+    "dashboard.game_stats.purchases": "Käufe",
+    "grid.really_empty_state.leader": "Hier ist nichts...",
+    "grid.item.queueing": "Eingereiht..."
 }
