@@ -480,5 +480,6 @@
     "dashboard.game_stats.views": "Aufrufe",
     "dashboard.game_stats.purchases": "Käufe",
     "grid.really_empty_state.leader": "Hier ist nichts...",
-    "grid.item.queueing": "Eingereiht..."
+    "grid.item.queueing": "Eingereiht...",
+    "grid.item.launch_title": "{{title}} starten"
 }
