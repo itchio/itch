@@ -108,16 +108,21 @@ export default function(watcher: Watcher) {
   });
 
   watcher.on(actions.checkForGameUpdate, async (store, action) => {
-    const { caveId, noisy = false } = action.payload;
-    if (noisy) {
-      logger.info(`Looking for updates for cave ${caveId}`);
-    }
-
+    const { caveId } = action.payload;
+    logger.info(`Looking for updates for cave ${caveId}`);
     const { cave } = await mcall(messages.FetchCave, { caveId });
 
     let res: CheckUpdateResult;
     try {
-      res = await mcall(messages.CheckUpdate, { caveIds: [caveId] });
+      // cf. https://github.com/itchio/itch/issues/2128
+      await mcall(messages.CavesSetPinned, {
+        caveId,
+        pinned: false,
+      });
+      res = await mcall(messages.CheckUpdate, {
+        caveIds: [caveId],
+        verbose: true,
+      });
     } catch (e) {
       logger.error(`While checking for game update: ${e.stack}`);
       if (!res) {
@@ -134,9 +139,7 @@ export default function(watcher: Watcher) {
       }
     }
 
-    if (noisy) {
-      dispatchUpdateNotification(store, cave, res);
-    }
+    dispatchUpdateNotification(store, cave, res);
   });
 
   watcher.on(actions.snoozeCave, async (store, action) => {

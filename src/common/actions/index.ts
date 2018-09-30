@@ -691,9 +691,6 @@ export const actions = wireActions({
   checkForGameUpdate: action<{
     /** which cave to check for an update */
     caveId: string;
-
-    /** display a notification if the game is up-to-date. otherwise, stay silent */
-    noisy: boolean;
   }>(),
   gameUpdateCheckStatus: action<{
     /** whether we're currently checking */

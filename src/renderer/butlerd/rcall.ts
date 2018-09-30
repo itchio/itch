@@ -11,7 +11,7 @@ if (process.type !== "renderer") {
  */
 export async function rcall<Params, Res>(
   rc: RequestCreator<Params, Res>,
-  params: Params,
+  params: {} & Params,
   setup?: SetupFunc
 ): Promise<Res> {
   return await call(store, rc, params, setup);

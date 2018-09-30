@@ -144,28 +144,35 @@ function ensureWindowInsideDisplay(nativeWindow: Electron.BrowserWindow) {
 
   const displayBounds = display.bounds;
   let bounds = originalBounds;
+  logger.debug(`original bounds: ${JSON.stringify(originalBounds)}`);
+  logger.debug(` display bounds: ${JSON.stringify(displayBounds)}`);
 
   const displayLeft = displayBounds.x;
   if (bounds.x < displayLeft) {
+    logger.debug(`overlapped left`);
     bounds = { ...bounds, x: displayLeft };
   }
 
   const displayTop = displayBounds.y;
   if (bounds.y < displayTop) {
+    logger.debug(`overlapped top`);
     bounds = { ...bounds, y: displayTop };
   }
 
   const displayRight = displayBounds.width + displayBounds.x;
   if (bounds.x + bounds.width > displayRight) {
+    logger.debug(`overlapped right`);
     bounds = { ...bounds, x: displayRight - bounds.width };
   }
 
   const displayBottom = displayBounds.height + displayBounds.y;
   if (bounds.y + bounds.height > displayBottom) {
+    logger.debug(`overlapped bottom`);
     bounds = { ...bounds, y: displayBottom - bounds.height };
   }
 
   if (bounds !== originalBounds) {
+    logger.debug(`final bounds: ${JSON.stringify(bounds)}`);
     nativeWindow.setBounds(bounds);
   }
 }
@@ -273,7 +280,10 @@ export default function(watcher: Watcher) {
         nativeWindow.hide();
       } else {
         if (wind === "root") {
-          nativeWindow.show();
+          if (!nativeWindow.isVisible() || nativeWindow.isMinimized()) {
+            nativeWindow.show();
+          }
+          nativeWindow.focus();
           const maximized = config.get(MAXIMIZED_CONFIG_KEY) || false;
           if (maximized && !macOs) {
             nativeWindow.maximize();

@@ -15,7 +15,7 @@ propose changes to this document in a pull request.
 * You can create an issue [here](https://github.com/itchio/itch/issues/new),
 but before doing that please read the notes below and include as many details as
 possible with your report. If you can, please include:
-  * The version of itch you are using (find out in the Help menu)
+  * The version of itch you are using (you can find this in the "Advanced" section of the Preferences menu)
   * The operating system you are using and version
   * If applicable, what you were doing when the issue arose and what you
   expected to happen

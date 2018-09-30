@@ -1654,6 +1654,8 @@ export enum Code {
   UnsupportedHost = 3001,
   // Nothing that can be launched was found
   NoLaunchCandidates = 5000,
+  // Java Runtime Environment is required to launch this title.
+  JavaRuntimeNeeded = 6000,
   // There is no Internet connection
   NetworkDisconnected = 9000,
   // API error
@@ -2468,8 +2470,8 @@ export interface FetchDownloadKeyParams {
   downloadKeyId: number;
   /** undocumented */
   profileId: number;
-  /** undocumented */
-  fresh: boolean;
+  /** Force an API request */
+  fresh?: boolean;
 }
 
 /**
@@ -3031,9 +3033,9 @@ export interface DownloadsDiscardParams {
  */
 export interface CheckUpdateParams {
   /** If specified, will only look for updates to these caves */
-  caveIds: string[];
+  caveIds?: string[];
   /** If specified, will log information even when we have no warnings/errors */
-  verbose: boolean;
+  verbose?: boolean;
 }
 
 /**
