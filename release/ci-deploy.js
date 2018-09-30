@@ -34,7 +34,7 @@ async function ciDeploy() {
     butlerChannel = `${os}-${arch}`;
     const butlerTarget = `fasterthanlime/${$.appName()}`;
     $.say(`Pushing ${os}-${arch} to itch.io...`);
-    let butlerCmd = `./butler push ${artifactPath} ${butlerTarget}:${butlerChannel} --userversion=${$.buildVersion()}`;
+    let butlerCmd = `./butler push ${artifactPath} ${butlerTarget}:${butlerChannel} --userversion=${$.buildVersion()} --no-auto-wrap`;
     $(await $.sh(butlerCmd));
   }
 }
