@@ -1,15 +1,11 @@
 
-const serve = require("webpack-serve");
+const WebpackDevServer = require("webpack-dev-server");
 const webpack = require("webpack");
 const [mainConfig, rendererConfig] = require("./webpack.config.js")({mode: "development"});
 const childProcess = require("child_process");
-const WebpackServeWaitpage = require("webpack-serve-waitpage")
 
 const weblog = require("webpack-log");
 const log = weblog({name: "develop"});
-
-// I am way too angry to comment on this at the moment
-process.env.WHC_TARGET = "electron-renderer";
 
 async function main() {
   process.on("unhandledRejection", (e) => {
@@ -29,24 +25,25 @@ async function main() {
         resolve(stats);
       }
     });
-  })
-
-  const server = await serve({
-    config: rendererConfig,
-    add: (app, middleware, options) => {
-      app.use(WebpackServeWaitpage(options, {
-        title: "almost there...",
-        theme: "material"
-      }));
-      middleware.webpack();
-      middleware.content();
-    },
   });
-  let portPromise = new Promise((resolve, reject) => {
-    server.on("listening", ({server, options}) => {
-      log.info("Renderer listening...");
-      resolve(options.port);
-    })
+
+  rendererConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+  const devServerOptions = Object.assign({}, rendererConfig.devServer, {
+    stats: {
+      colors: true,
+    }
+  });
+  WebpackDevServer.addDevServerEntrypoints(rendererConfig, devServerOptions);
+
+  const rendererCompiler = webpack(rendererConfig);
+  const server = new WebpackDevServer(rendererCompiler, devServerOptions);
+  const serverPromise = new Promise((resolve, reject) => {
+    let port = 9000;
+    try {
+      server.listen(port, "127.0.0.1", resolve(port));
+    } catch (e) {
+      reject(e);
+    }
   })
 
   log.info(`Main building...`);
@@ -63,9 +60,11 @@ async function main() {
     log.info(`Main built!`);
   }
 
+  log.info(`Renderer building...`)
+
   const electronBinaryPath = require("electron")
   log.info(`Will start app with ${electronBinaryPath}`);
-  const port = await portPromise;
+  const port = await serverPromise;
   log.info(`...off content on localhost:${port}`);
 
   await new Promise((resolve, reject) => {

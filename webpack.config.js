@@ -72,7 +72,12 @@ module.exports = (env) => {
           minify: false,
         }),
         new NamedModulesPlugin(),
-      ]
+      ],
+      devServer: {
+        hot: true,
+        host: "localhost",
+        contentBase: __dirname,
+      },
     }),
   ]
 };
