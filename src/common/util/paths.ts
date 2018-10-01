@@ -23,7 +23,12 @@ export function preferencesPath(): string {
 }
 
 export function butlerDbPath(): string {
-  return join(app.getPath("userData"), "db", "butler.db");
+  let dbName = "butler.db";
+  if (process.env.WHEN_IN_ROME) {
+    const parsed = urlParser.parse(urls.itchio);
+    dbName = `butler-${parsed.host.replace(/^[A_Za-z\._\-]/g, "_")}.db`;
+  }
+  return join(app.getPath("userData"), "db", dbName);
 }
 
 export function prereqsPath(): string {
