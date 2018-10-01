@@ -172,11 +172,25 @@ async function ciPackage(args) {
   });
   let buildPath = appPaths[0].replace(/\\/g, "/");
 
+	if (os === "linux") {
+		// see https://github.com/itchio/itch/issues/2121
+		$.say(`Adding libgconf library...`);
+		const debArch = (arch === "386" ? "i386" : "amd64");
+		const baseURL = `https://dl.itch.ovh/libgconf-2-4-bin`;
+		const fileName = `libgconf-2.so.4`;
+		const fileURL = `${baseURL}/${debArch}/${fileName}`;
+		const dest = `${buildPath}/${fileName}`;
+		$.say(`Downloading (${fileURL})`);
+		$.say(`  to (${dest})`);
+		$(await $.sh(`curl -f -L ${fileURL} -o ${dest}`));
+		$(await $.sh(`chmod +x ${dest}`));
+	}
+
   $.say(`Built app is in ${buildPath}`);
 
   if (process.env.CI) {
     if ($.hasTag()) {
-      $.say(`We're on CI and we have a tag, signing app...`)
+      $.say(`We're on CI and we have a tag, signing app...`);
       switch (os) {
         case "windows":
           await windows.sign(arch, buildPath);

@@ -73,5 +73,22 @@
     "grid.filters.options.no_results": "कोई परिणाम नहीं मिला",
     "grid.item_count": "{{count}} आइटमस",
     "grid.hidden_count": "+ फिल्टर द्वारा {{count}} आइटम छुपाए गए हैं",
-    "grid.clear_filters": "फ़िल्टरस हटाएं"
+    "grid.clear_filters": "फ़िल्टरस हटाएं",
+    "grid.empty_state.leader": "सब कुछ फ़िल्टर हो गया है...",
+    "grid.empty_state.explanation": "आपके फ़िल्टर यहां सबकुछ छुपा रहे हैं",
+    "grid.really_empty_state.leader": "यहाँ कुछ भी नहीं है...",
+    "grid.really_empty_state.explanation": "... अभी तक!",
+    "grid.item.buy_now_again": "एक अतिरिक्त कॉपी खरीदें",
+    "grid.item.prioritize_download": "प्राथमिकता दे",
+    "grid.item.discard_download": "डाउनलोड को छोड़ दें",
+    "grid.item.check_for_update": "अपडेट के लिये जांचें",
+    "grid.item.developer": "डेवलपर",
+    "grid.item.advanced": "उन्नत...",
+    "grid.item.download_java": "JAVA डाउनलोड करें",
+    "grid.item.finalize_installation": "इंस्टॉल को अंतिम रूप दें",
+    "grid.item.install_title": "{{title}} इंस्टॉल करें",
+    "grid.item.review": "समीक्षा करे",
+    "grid.item.queueing": "क्यूइंग …",
+    "grid.item.update": "अद्यतन करें",
+    "grid.item.launch_title": "{{title}} लॉन्च करें"
 }
