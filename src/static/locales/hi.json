@@ -90,5 +90,17 @@
     "grid.item.review": "समीक्षा करे",
     "grid.item.queueing": "क्यूइंग …",
     "grid.item.update": "अद्यतन करें",
-    "grid.item.launch_title": "{{title}} लॉन्च करें"
+    "grid.item.launch_title": "{{title}} लॉन्च करें",
+    "grid.item.launch_demo": "लॉन्च डेमो",
+    "grid.item.share": "शेयर",
+    "grid.item.open_page": "पेज को खोले",
+    "grid.item.not_compatible": "इस मंच पर उपलब्ध नहीं है",
+    "grid.item.not_available": "अनुपलब्ध",
+    "grid.item.open": "खोले",
+    "grid.item.open_title": "{{title}} को खोले",
+    "grid.item.open_demo": "डेमो खोले",
+    "grid.item.open_debug_log": "लॉग्स को देखें...",
+    "grid.item.verify_integrity": "अखंडता की पुष्टि करें",
+    "grid.item.revert_to_version": "दूसरे संस्करण पर स्विच करें ...",
+    "grid.item.view_details": "विवरण देखें..."
 }
