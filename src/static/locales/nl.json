@@ -297,5 +297,6 @@
     "grid.item.launch_title": "Start {{title}}",
     "grid.item.open_page": "Open pagina",
     "grid.item.not_compatible": "Niet beschikbaar op dit platform",
-    "grid.item.not_available": "Niet beschikbaar"
+    "grid.item.not_available": "Niet beschikbaar",
+    "grid.item.open_title": "Open {{title}}"
 }
