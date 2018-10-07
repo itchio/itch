@@ -290,5 +290,12 @@
     "pick_update_upload.detail": "We vragen dit omdat je tijdens het installeren een handmatige selectie hebt gemaakt.",
     "prompt.clear_browsing_data.category.cookies": "Cookies",
     "prompt.clear_browsing_data.cookies_info": "Dit zal je uitloggen van alle websites waar je via de itch-app bij ingelogd bent.",
-    "game.install.could_not_launch.message": "De melding die we kregen was: {{errorMessage}}"
+    "game.install.could_not_launch.message": "De melding die we kregen was: {{errorMessage}}",
+    "collection.item_count": "{{itemCount}} artikelen",
+    "grid.item.install_title": "Installeer {{title}}",
+    "grid.item.queueing": "In de wachtrij…",
+    "grid.item.launch_title": "Start {{title}}",
+    "grid.item.open_page": "Open pagina",
+    "grid.item.not_compatible": "Niet beschikbaar op dit platform",
+    "grid.item.not_available": "Niet beschikbaar"
 }
