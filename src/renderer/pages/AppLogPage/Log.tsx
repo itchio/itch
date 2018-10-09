@@ -6,6 +6,7 @@ import SelectRow from "renderer/basics/SelectRow";
 import styled from "renderer/styles";
 import _ from "underscore";
 import { T } from "renderer/t";
+import Button from "renderer/basics/Button";
 
 // time, module, message
 const numColumns = 3;
@@ -99,23 +100,25 @@ const LogTable = styled.table`
   }
 `;
 
-const maxLines = 250;
 const levelOptions = [
   { label: ["log.level.debug"], value: reverseLevels["debug"] },
   { label: ["log.level.info"], value: reverseLevels["info"] },
   { label: ["log.level.warning"], value: reverseLevels["warn"] },
   { label: ["log.level.error"], value: reverseLevels["error"] },
 ];
+const linesPerPage = 250;
 
 class Log extends React.PureComponent<Props, State> {
   constructor(props: Log["props"], context: any) {
     super(props, context);
     this.state = {
       level: reverseLevels["info"],
+      maxLines: linesPerPage,
     };
   }
 
   render() {
+    const { maxLines } = this.state;
     let level = parseInt(this.state.level, 10);
     const { log, className, extraControls } = this.props;
     let lines = log.split("\n");
@@ -130,6 +133,7 @@ class Log extends React.PureComponent<Props, State> {
       }
     });
     entries = _.filter(entries, x => (x.level ? x.level >= level : false));
+    let hasMore = _.size(entries) > maxLines;
     entries = _.last(entries, maxLines);
 
     return (
@@ -150,6 +154,11 @@ class Log extends React.PureComponent<Props, State> {
         </LogControls>
         <LogTable>
           <tbody ref={this.gotBody}>
+            {hasMore ? (
+              <div style={{ margin: "20px" }}>
+                <Button onClick={this.onLoadMore} label="Load more..." />
+              </div>
+            ) : null}
             {entries.map((x, i) => {
               if (x.hasOwnProperty("msg")) {
                 let jumpElement: JSX.Element;
@@ -209,9 +218,11 @@ class Log extends React.PureComponent<Props, State> {
     );
   }
 
-  componentDidUpdate() {
-    this.scrollDown();
-  }
+  onLoadMore = () => {
+    this.setState(state => ({
+      maxLines: state.maxLines + linesPerPage,
+    }));
+  };
 
   tbody: HTMLElement;
 
@@ -228,6 +239,14 @@ class Log extends React.PureComponent<Props, State> {
     this.tbody.scrollTop = this.tbody.scrollHeight;
   }
 
+  scrollTop() {
+    if (!this.tbody) {
+      return;
+    }
+
+    this.tbody.scrollTop = 0;
+  }
+
   onChangeLevel = (value: string) => {
     this.setState({ level: value });
   };
@@ -241,6 +260,7 @@ export default Log;
 
 interface State {
   level: string;
+  maxLines: number;
 }
 
 interface Props {
