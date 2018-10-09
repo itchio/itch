@@ -1,21 +1,25 @@
 import { actions } from "common/actions";
 import { showInExplorerString } from "common/format/show-in-explorer";
 import { Dispatch } from "common/types";
+import { ambientTab, ambientWind } from "common/util/navigation";
 import React from "react";
 import ErrorState from "renderer/basics/ErrorState";
 import IconButton from "renderer/basics/IconButton";
 import Link from "renderer/basics/Link";
 import LoadingCircle from "renderer/basics/LoadingCircle";
-import { hook } from "renderer/hocs/hook";
+import { hookWithProps } from "renderer/hocs/hook";
+import {
+  dispatchTabPageUpdate,
+  dispatchTabReloaded,
+  dispatchTabEvolve,
+  urlWithParams,
+} from "renderer/hocs/tab-utils";
 import { withTab } from "renderer/hocs/withTab";
 import Log from "renderer/pages/AppLogPage/Log";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
-import {
-  dispatchTabPageUpdate,
-  dispatchTabReloaded,
-} from "renderer/hocs/tab-utils";
+import watching, { Watcher } from "renderer/hocs/watching";
 
 const AppLogDiv = styled.div`
   ${styles.meat};
@@ -40,6 +44,7 @@ const ControlsDiv = styled.div`
   align-items: center;
 `;
 
+@watching
 class AppLogPage extends React.PureComponent<Props, State> {
   constructor(props: AppLogPage["props"], context: any) {
     super(props, context);
@@ -48,6 +53,34 @@ class AppLogPage extends React.PureComponent<Props, State> {
       loading: true,
       error: null,
     };
+  }
+
+  subscribe(watcher: Watcher) {
+    watcher.on(actions.openLogFileRequest, async () => {
+      try {
+        const electron = require("electron").remote;
+        const { dialog, BrowserWindow } = electron;
+        dialog.showOpenDialog(
+          BrowserWindow.getFocusedWindow(),
+          {
+            title: "Open log file",
+          },
+          (filePaths: string[]) => {
+            if (filePaths && filePaths.length > 0) {
+              const filePath = filePaths[0];
+              console.log(`Opening external log`, filePath);
+              const { url } = this.props;
+              dispatchTabEvolve(this.props, {
+                replace: true,
+                url: urlWithParams(url, { file: filePath }),
+              });
+            }
+          }
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    });
   }
 
   render() {
@@ -64,6 +97,7 @@ class AppLogPage extends React.PureComponent<Props, State> {
                 <ControlsDiv>
                   <Spacer />
                   <Link
+                    onContextMenu={this.onContextMenu}
                     onClick={this.onOpenAppLog}
                     label={T(showInExplorerString())}
                   />
@@ -82,13 +116,36 @@ class AppLogPage extends React.PureComponent<Props, State> {
     );
   }
 
+  onContextMenu = (ev: React.MouseEvent) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const { dispatch } = this.props;
+    const { clientX, clientY } = ev;
+    dispatch(
+      actions.popupContextMenu({
+        clientX,
+        clientY,
+        template: [
+          {
+            localizedLabel: "Open file...",
+            action: actions.openLogFileRequest({}),
+          },
+        ],
+        wind: ambientWind(),
+      })
+    );
+  };
+
   componentDidMount() {
     dispatchTabPageUpdate(this.props, { label: ["sidebar.applog"] });
     this.queueFetch();
   }
 
   componentDidUpdate(prevProps: AppLogPage["props"]) {
-    if (prevProps.sequence != this.props.sequence) {
+    if (
+      prevProps.sequence != this.props.sequence ||
+      prevProps.file !== this.props.file
+    ) {
       this.queueFetch();
     }
   }
@@ -109,8 +166,14 @@ class AppLogPage extends React.PureComponent<Props, State> {
     const { promisify } = await import("common/util/itch-promise");
     const readFile = promisify(fs.readFile);
 
-    const { mainLogPath } = await import("common/util/paths");
-    const log = await readFile(mainLogPath(), { encoding: "utf8" });
+    let filePath = this.props.file;
+    if (filePath) {
+      console.log(`Reading external log`, filePath);
+    } else {
+      const { mainLogPath } = await import("common/util/paths");
+      filePath = mainLogPath();
+    }
+    const log = await readFile(filePath, { encoding: "utf8" });
     this.setState({ log, error: null });
   };
 
@@ -127,6 +190,8 @@ class AppLogPage extends React.PureComponent<Props, State> {
 interface Props extends MeatProps {
   tab: string;
   dispatch: Dispatch;
+  url: string;
+  file?: string;
 }
 
 interface State {
@@ -135,4 +200,9 @@ interface State {
   log: string;
 }
 
-export default withTab(hook()(AppLogPage));
+export default withTab(
+  hookWithProps(AppLogPage)(map => ({
+    url: map((rs, props) => ambientTab(rs, props).location.url),
+    file: map((rs, props) => ambientTab(rs, props).location.query.file),
+  }))(AppLogPage)
+);

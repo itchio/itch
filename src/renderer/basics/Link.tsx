@@ -27,6 +27,7 @@ export default Link;
 
 class Props {
   onClick?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
+  onContextMenu?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
   label?: JSX.Element | string;
   children?: string | JSX.Element | (string | JSX.Element)[];
   className?: string;

@@ -10,6 +10,8 @@ import loadPreferences from "main/reactors/preboot/load-preferences";
 import { applyProxySettings } from "main/reactors/proxy";
 import { itchPlatform } from "common/os/platform";
 import { arch } from "main/os/arch";
+import * as path from "path";
+import * as fs from "fs";
 
 const logger = mainLogger.child(__filename);
 
@@ -98,10 +100,35 @@ export default function(watcher: Watcher) {
 
     store.dispatch(actions.prebootDone({}));
 
-    const devtoolsPath = process.env.ITCH_REACT_DEVTOOLS_PATH;
+    let devtoolsPath = process.env.ITCH_REACT_DEVTOOLS_PATH;
+    if (!devtoolsPath && env.development) {
+      let reactDevtoolsId = "fmkadmapgofadopljbjfkapdkoienihi";
+      let devtoolsFolder = path.join(
+        app.getPath("home"),
+        "AppData",
+        "Local",
+        "Google",
+        "Chrome",
+        "User Data",
+        "Default",
+        "Extensions",
+        reactDevtoolsId
+      );
+      try {
+        const files = fs.readdirSync(devtoolsFolder);
+        let version = files[0];
+        if (version) {
+          devtoolsPath = path.join(devtoolsFolder, version);
+          logger.info(`Found React devtools at ${devtoolsPath}`);
+        }
+      } catch (e) {
+        logger.warn(`Could not find react devtools at ${devtoolsFolder}: ${e}`);
+      }
+    }
+
     if (devtoolsPath) {
       try {
-        logger.info(`Installing react devtools from ${devtoolsPath}`);
+        logger.info(`Adding react devtools from ${devtoolsPath}`);
         BrowserWindow.addDevToolsExtension(devtoolsPath);
       } catch (e) {
         logger.error(`While adding react devtools path: ${e.stack}`);

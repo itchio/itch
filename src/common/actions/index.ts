@@ -869,6 +869,7 @@ export const actions = wireActions({
     url: string;
   }>(),
   openAppLog: action<{}>(),
+  openLogFileRequest: action<{}>(),
   openDevTools: action<{
     wind: string;
 
