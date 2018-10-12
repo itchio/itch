@@ -175,7 +175,7 @@
     "duration.minute": "een minuut of minder",
     "duration.minutes": "{{x}} minuten",
     "game.install.could_not_launch": "Er bevind zich een fout tijdens het opstarten van {{title}}",
-    "game.install.could_not_launch.detail": "Zijn laatste woorden waren: {{error}}",
+    "game.install.could_not_launch.detail": "Ons een rapport sturen is de beste manier om dit probleem zo spoedig mogelijk opgelost te krijgen!",
     "game.install.could_not_launch.missing_jre": "Het is Java nodig, wat niet is gevonden op uw systeem.",
     "game.install.no_executables_found": "Geen uitvoerbare bestanden gevonden",
     "game.install.no_uploads_available.detail": "Mischien is het nog niet compatibel met uw platform of met de itch app!",
