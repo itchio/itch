@@ -56,7 +56,7 @@
     "grid.item.open_demo": "Demoyu aç",
     "grid.item.open_debug_log": "Debug kayıtlarını aç",
     "grid.item.show_local_files": "Lokal dosyaları göster",
-    "grid.item.donate": "Yapımcıya tip ver",
+    "grid.item.donate": "Yapımcıya bağış yap",
     "grid.item.donate_again": "Yapımcıya tekrar tip ver!",
     "grid.item.downloads_paused": "İndirmeler durduruldu",
     "grid.item.version": "Versiyon {{version}}",
