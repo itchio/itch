@@ -626,5 +626,8 @@
     "prompt.action.back": "Retour",
     "web.context_menu.inspect": "Inspecter",
     "sort_by.collections.title": "Titre",
-    "sort_by.collections.updated_at": "Mis à jour"
+    "sort_by.collections.updated_at": "Mis à jour",
+    "prompt.confirm_quit.title": "Êtes-vous sûr de vouloir quitter ?",
+    "prompt.confirm_quit.message": "Tous les jeux et applications en cours vont être fermés.",
+    "prompt.action.quit_and_close_all": "Quitter et tout fermer"
 }
