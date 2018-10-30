@@ -619,5 +619,12 @@
     "send_feedback.steps.send": "Envoyer le rapport",
     "empty_state.nothing_to_see_here": "Rien à voir par ici",
     "setup.action.browse": "Parcourir",
-    "login.action.reveal_password": "Afficher le mot de passe"
+    "login.action.reveal_password": "Afficher le mot de passe",
+    "grid.item.install_title": "Installer {{title}}",
+    "browser.open_devtools": "Ouvrir les outils de développement",
+    "login.action.hide_password": "Cacher le mot de passe",
+    "prompt.action.back": "Retour",
+    "web.context_menu.inspect": "Inspecter",
+    "sort_by.collections.title": "Titre",
+    "sort_by.collections.updated_at": "Mis à jour"
 }
