@@ -10,6 +10,14 @@ import TimeAgo from "renderer/basics/TimeAgo";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
+import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
+import {
+  standardCoverHeight,
+  standardCoverWidth,
+} from "renderer/pages/common/StandardGameCover";
+
+const coverFactor = browserContextHeight / standardCoverHeight;
+const smallerCoverWidth = coverFactor * standardCoverWidth;
 
 const GameStatsDiv = styled.div`
   display: flex;
@@ -19,6 +27,7 @@ const GameStatsDiv = styled.div`
   line-height: 1.8;
   flex-shrink: 0;
   justify-content: flex-end;
+  max-width: calc(100% - ${smallerCoverWidth + 16 + 160 + 16 + 48}px);
 
   div {
     margin-right: 12px;
@@ -46,6 +55,7 @@ const GameStatsDiv = styled.div`
 
 const GameTitle = styled.div`
   font-weight: 700;
+  line-height: 120%;
 `;
 
 const SpacedPlatformIcons = styled(PlatformIcons)`
