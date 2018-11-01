@@ -10,6 +10,14 @@ import TimeAgo from "renderer/basics/TimeAgo";
 import TotalPlaytime from "renderer/basics/TotalPlaytime";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
+import { browserContextHeight } from "renderer/pages/BrowserPage/BrowserContext/BrowserContextConstants";
+import {
+  standardCoverHeight,
+  standardCoverWidth,
+} from "renderer/pages/common/StandardGameCover";
+
+const coverFactor = browserContextHeight / standardCoverHeight;
+const smallerCoverWidth = coverFactor * standardCoverWidth;
 
 const GameStatsDiv = styled.div`
   display: flex;
@@ -18,6 +26,7 @@ const GameStatsDiv = styled.div`
   color: ${props => props.theme.secondaryText};
   line-height: 1.8;
   justify-content: flex-end;
+  max-width: calc(100% - ${smallerCoverWidth + 16 + 160 + 16 + 48}px);
 
   div {
     margin-right: 12px;
@@ -36,6 +45,12 @@ const GameStatsDiv = styled.div`
     }
   }
 
+  .total-playtime--line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .total-playtime,
   .last-playthrough {
     font-size: ${props => props.theme.fontSizes.baseText};
@@ -45,6 +60,12 @@ const GameStatsDiv = styled.div`
 
 const GameTitle = styled.div`
   font-weight: 700;
+  line-height: 120%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
 `;
 
 const SpacedPlatformIcons = styled(PlatformIcons)`
