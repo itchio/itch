@@ -402,5 +402,7 @@
     "grid.item.status.installed": "Installato",
     "table.column.installed_size": "Dimensioni",
     "browser.disabled": "Il browser web di itch è stato disattivato",
-    "grid.item.open_file_location.osx": "Mostra in Finder"
+    "grid.item.open_file_location.osx": "Mostra in Finder",
+    "grid.item.open_file_location.windows": "Apri la cartella in esplora file",
+    "grid.item.open_file_location.linux": "Mostra nel file manager"
 }
