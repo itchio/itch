@@ -117,7 +117,7 @@
     "preferences.install_location.browse_linux": "Ouvrir l'emplacement d'installation dans le gestionnaire de fichiers",
     "preferences.install_location.browse_osx": "Révéler cet emplacement dans le Finder",
     "preferences.install_location.compute_size": "Calculer la taille totale de ce dossier",
-    "preferences.install_location.delete": "Supprimer ce dossier d'installation et désinstaller son contenu",
+    "preferences.install_location.delete": "Supprimer ce dossier d'installation",
     "preferences.install_location.empty": "Vide",
     "preferences.install_location.free_space": "Espace disponible",
     "preferences.install_location.is_default": "Toute nouvelle installation sera entreposée ici par défaut.",
