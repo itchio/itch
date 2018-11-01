@@ -24,6 +24,8 @@ const Spacer = styled.div`
 const coverFactor = browserContextHeight / standardCoverHeight;
 
 const SmallerGameCover = styled(StandardGameCover)`
+  flex-shrink: 0;
+
   width: ${standardCoverWidth * coverFactor}px;
   height: ${standardCoverHeight * coverFactor}px;
 `;

@@ -17,7 +17,6 @@ const GameStatsDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.baseText};
   color: ${props => props.theme.secondaryText};
   line-height: 1.8;
-  flex-shrink: 0;
   justify-content: flex-end;
 
   div {
