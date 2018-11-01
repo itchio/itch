@@ -363,7 +363,7 @@
     "login.two_factor.enter_code": "Inserisci il codice indicato sul tuo autenticatore per accedere.",
     "preferences.notifications.ready_notification": "Avvisami quando uno scaricamento ha finito di aggiornare o installare",
     "pick_update_upload.single.message": "Puoi scegliere di aggiornare adesso o più avanti.",
-    "grid.item.revert_to_version": "Ripristina alla versione...",
+    "grid.item.revert_to_version": "Passa ad un'altra versione...",
     "grid.item.view_details": "Mostra i dettagli...",
     "table.column.name": "Nome",
     "table.column.play_time": "Tempo di gioco",
@@ -401,5 +401,6 @@
     "grid.item.manage": "Gestisci",
     "grid.item.status.installed": "Installato",
     "table.column.installed_size": "Dimensioni",
-    "browser.disabled": "Il browser web di itch è stato disattivato"
+    "browser.disabled": "Il browser web di itch è stato disattivato",
+    "grid.item.open_file_location.osx": "Mostra in Finder"
 }
