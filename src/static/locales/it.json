@@ -28,7 +28,7 @@
     "login.status.dependency_install": "Sto installando la dipendenza {{name}} {{version}}",
     "login.status.login": "Accesso in corso…",
     "login.status.setup_failure": "C'è stato un problema durante la configurazione: {{error}}",
-    "menu.account.account": "Conto",
+    "menu.account.account": "Account",
     "menu.account.change_user": "Cambia utente…",
     "menu.account.not_logged_in": "Accesso non effettuato",
     "menu.danger_zone.danger_zone": "Zona pericolosa",
@@ -40,7 +40,7 @@
     "menu.edit.paste": "Incolla",
     "menu.edit.select_all": "Seleziona tutto",
     "menu.file.close_window": "Chiudi finestra",
-    "menu.file.file": "Archivio",
+    "menu.file.file": "File",
     "menu.file.preferences": "Impostazioni...",
     "menu.file.quit": "Esci",
     "menu.help.check_for_update": "Controlla aggiornamenti",
@@ -386,5 +386,14 @@
     "grid.item.verify_integrity": "Verifica dell'integrità",
     "collection_grid.item.updated_at": "Ultimo aggiornamento {{time_ago}}",
     "prereq.status.ready": "Pronto per l'installazione",
-    "prereq.status.installing": "Installazione... (può richiedere qualche minuto)"
+    "prereq.status.installing": "Installazione... (può richiedere qualche minuto)",
+    "grid.criterion.search": "Cerca...",
+    "grid.filters.options.owned": "Posseduto",
+    "grid.item.not_compatible": "Non disponibile su questa piattaforma",
+    "table.column.last_played": "Ultimo avvio",
+    "table.column.published": "Pubblicato",
+    "prereq.explanation": "Alcuni pacchetti di dati devono essere installati affinché {{title}} venga eseguito correttamente.",
+    "prereq.status.extracting": "Estrazione...",
+    "prereq.status.done": "Fatto!",
+    "menu.file.close_tabs_below": "Chiudi le schede in basso"
 }
