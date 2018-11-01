@@ -46,6 +46,12 @@ const GameStatsDiv = styled.div`
     }
   }
 
+  .total-playtime--line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .total-playtime,
   .last-playthrough {
     font-size: ${props => props.theme.fontSizes.baseText};
@@ -56,6 +62,11 @@ const GameStatsDiv = styled.div`
 const GameTitle = styled.div`
   font-weight: 700;
   line-height: 120%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
 `;
 
 const SpacedPlatformIcons = styled(PlatformIcons)`
