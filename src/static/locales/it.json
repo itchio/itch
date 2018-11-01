@@ -378,5 +378,13 @@
     "download.outcome.reinstalled": "reinstallato",
     "download.outcome.reverted": "passato ad un altra versione",
     "download.outcome.healed": "verificato e riparato",
-    "collection.item_count": "{{itemCount}} elementi"
+    "collection.item_count": "{{itemCount}} elementi",
+    "game.install.could_not_launch.missing_jre": "Richiede Java che non risulta essere presente nel tuo sistema",
+    "grid.filters.options.compatible": "Compatible",
+    "grid.filters.options.installed": "Installato",
+    "grid.filters.options.no_results": "Nessun risultato trovato",
+    "grid.item.verify_integrity": "Verifica dell'integrità",
+    "collection_grid.item.updated_at": "Ultimo aggiornamento {{time_ago}}",
+    "prereq.status.ready": "Pronto per l'installazione",
+    "prereq.status.installing": "Installazione... (può richiedere qualche minuto)"
 }
