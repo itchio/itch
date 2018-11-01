@@ -166,7 +166,7 @@
     "grid.item.share": "Condividi",
     "grid.item.open": "Apri",
     "grid.item.open_demo": "Apri la demo",
-    "grid.item.open_debug_log": "Apri registro di debug",
+    "grid.item.open_debug_log": "Apri registro di debug...",
     "grid.item.show_local_files": "Mostra file locali",
     "grid.item.downloads_paused": "Download in pausa",
     "grid.item.version": "Versione {{version}}",
@@ -328,8 +328,8 @@
     "action.name.play": "Gioca Ora",
     "download.reason.install": "per la prima installazione",
     "grid.criterion.only_compatible": "Solo compatibili",
-    "grid.item.donate": "Supporta l'autore",
-    "grid.item.donate_again": "Supporta nuovamente l'autore!",
+    "grid.item.donate": "Sostieni l'autore",
+    "grid.item.donate_again": "Sostieni nuovamente l'autore!",
     "menu.file.new_tab": "Nuova scheda",
     "menu.file.close_tab": "Chiudi scheda",
     "menu.file.close_all_tabs": "Chiudi tutte le schede",
@@ -395,5 +395,11 @@
     "prereq.explanation": "Alcuni pacchetti di dati devono essere installati affinché {{title}} venga eseguito correttamente.",
     "prereq.status.extracting": "Estrazione...",
     "prereq.status.done": "Fatto!",
-    "menu.file.close_tabs_below": "Chiudi le schede in basso"
+    "menu.file.close_tabs_below": "Chiudi le schede in basso",
+    "grid.item.advanced": "Avanzate...",
+    "grid.item.uninstall_request": "Disinstalla o reinstalla...",
+    "grid.item.manage": "Gestisci",
+    "grid.item.status.installed": "Installato",
+    "table.column.installed_size": "Dimensioni",
+    "browser.disabled": "Il browser web di itch è stato disattivato"
 }
