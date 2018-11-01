@@ -377,5 +377,6 @@
     "download.outcome.updated": "aggiornato all'ultima versione",
     "download.outcome.reinstalled": "reinstallato",
     "download.outcome.reverted": "passato ad un altra versione",
-    "download.outcome.healed": "verificato e riparato"
+    "download.outcome.healed": "verificato e riparato",
+    "collection.item_count": "{{itemCount}} elementi"
 }
