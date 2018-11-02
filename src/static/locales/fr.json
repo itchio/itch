@@ -117,7 +117,7 @@
     "preferences.install_location.browse_linux": "Ouvrir l'emplacement d'installation dans le gestionnaire de fichiers",
     "preferences.install_location.browse_osx": "Révéler cet emplacement dans le Finder",
     "preferences.install_location.compute_size": "Calculer la taille totale de ce dossier",
-    "preferences.install_location.delete": "Supprimer ce dossier d'installation et désinstaller son contenu",
+    "preferences.install_location.delete": "Supprimer ce dossier d'installation",
     "preferences.install_location.empty": "Vide",
     "preferences.install_location.free_space": "Espace disponible",
     "preferences.install_location.is_default": "Toute nouvelle installation sera entreposée ici par défaut.",
@@ -254,7 +254,7 @@
     "status.uptodate": "Votre itch est à jour !",
     "usage_stats.description.assets": "Une collection de ressources",
     "usage_stats.description.book": "Un livre",
-    "usage_stats.description.bought_time_ago": "Acheté {{time_ago}}",
+    "usage_stats.description.bought_time_ago": "Acquis {{time_ago}}",
     "usage_stats.description.comic": "Une bande dessinée",
     "usage_stats.description.free_download": "Téléchargement gratuit",
     "usage_stats.description.game": "Un jeu",
@@ -629,5 +629,7 @@
     "sort_by.collections.updated_at": "Mis à jour",
     "prompt.confirm_quit.title": "Êtes-vous sûr de vouloir quitter ?",
     "prompt.confirm_quit.message": "Tous les jeux et applications en cours vont être fermés.",
-    "prompt.action.quit_and_close_all": "Quitter et tout fermer"
+    "prompt.action.quit_and_close_all": "Quitter et tout fermer",
+    "plan_install.select_upload": "Installer",
+    "plan_install.disk_space_available": "Espace disque disponible"
 }

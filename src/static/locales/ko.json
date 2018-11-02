@@ -161,5 +161,6 @@
     "game.install.could_not_launch": "{{title}} 실행 중에 에러가 발생했습니다.",
     "game.install.visit_web_page": "웹사이트 방문",
     "grid.item.not_compatible": "이 플랫폼에서는 사용할 수 없습니다",
-    "grid.item.revert_to_version": "다른 버전으로 전환..."
+    "grid.item.revert_to_version": "다른 버전으로 전환...",
+    "prompt.logout_detail": "다운로드하고 있던 것들은 다시 로그인하기 전까지 일시 중지됩니다."
 }
