@@ -12,6 +12,7 @@ import IconButton from "renderer/basics/IconButton";
 
 import styled, * as styles from "renderer/styles";
 import { darken } from "polished";
+import { isSecretClick } from "common/helpers/secret-click";
 
 const UnshrinkableIconButton = styled(IconButton)`
   flex-shrink: 0;
@@ -115,7 +116,7 @@ const Bubble = styled.span`
 
 class Item extends React.PureComponent<Props> {
   onClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (e.shiftKey && e.ctrlKey) {
+    if (isSecretClick(e)) {
       const { onExplore, tab } = this.props;
       if (onExplore) {
         onExplore(tab);

@@ -15,6 +15,7 @@ import IconButton from "renderer/basics/IconButton";
 import LoadingCircle from "renderer/basics/LoadingCircle";
 import { T } from "renderer/t";
 import { hook } from "renderer/hocs/hook";
+import { isSecretClick } from "common/helpers/secret-click";
 
 class MainAction extends React.PureComponent<Props> {
   render() {
@@ -150,7 +151,7 @@ class MainAction extends React.PureComponent<Props> {
     const { dispatch, game, status } = this.props;
     const { operation, update, cave, access, compatible } = status;
 
-    if (e.shiftKey && e.ctrlKey) {
+    if (isSecretClick(e)) {
       if (cave) {
         dispatch(actions.viewCaveDetails({ caveId: cave.id }));
       }

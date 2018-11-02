@@ -34,6 +34,7 @@ import { modalWidgets } from "renderer/modal-widgets";
 import styled, * as styles from "renderer/styles";
 import { T, TString } from "renderer/t";
 import { filter, isEmpty, map } from "underscore";
+import { isSecretClick } from "common/helpers/secret-click";
 
 const HoverCover = Hoverable(Cover);
 
@@ -408,7 +409,7 @@ class Modals extends React.PureComponent<Props, State> {
   };
 
   onDebugClick = (e: React.MouseEvent<any>) => {
-    if (e.shiftKey && e.ctrlKey) {
+    if (isSecretClick(e)) {
       const { dispatch } = this.props;
       dispatch(
         actions.openModal(

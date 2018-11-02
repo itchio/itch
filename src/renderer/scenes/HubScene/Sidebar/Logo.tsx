@@ -6,6 +6,7 @@ import { hook } from "renderer/hocs/hook";
 import { modals } from "common/modals";
 import styled from "renderer/styles";
 import { ambientWind } from "common/util/navigation";
+import { isSecretClick } from "common/helpers/secret-click";
 
 const LogoDiv = styled.div`
   text-align: center;
@@ -32,7 +33,7 @@ class Logo extends React.PureComponent<Props> {
   }
 
   onClick = (e: React.MouseEvent<any>) => {
-    if (e.shiftKey && e.ctrlKey) {
+    if (isSecretClick(e)) {
       const { dispatch } = this.props;
       dispatch(
         actions.openModal(

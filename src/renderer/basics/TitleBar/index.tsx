@@ -12,6 +12,7 @@ import { hookWithProps } from "renderer/hocs/hook";
 import { modals } from "common/modals";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
+import { isSecretClick } from "common/helpers/secret-click";
 
 const DraggableDiv = styled.div`
   ${styles.singleLine};
@@ -140,7 +141,7 @@ class TitleBar extends React.PureComponent<Props> {
   }
 
   onClick = (e: React.MouseEvent<any>) => {
-    if (e.shiftKey && e.ctrlKey) {
+    if (isSecretClick(e)) {
       const { dispatch } = this.props;
       dispatch(
         actions.openModal(
