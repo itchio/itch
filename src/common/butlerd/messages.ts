@@ -1462,6 +1462,26 @@ export interface LaunchResult {
 export const Launch = createRequest<LaunchParams, LaunchResult>("Launch");
 
 /**
+ * Result for AcceptLicense
+ */
+export interface AcceptLicenseResult {
+  /**
+   * true if the user accepts the terms of the license, false otherwise.
+   * Note that false will cancel the launch.
+   */
+  accept: boolean;
+}
+
+/**
+ * Sent during @@LaunchParams if the game/application comes with a service license
+ * agreement (at the time of this writing, this only happens if it was installed from a DMG file).
+ */
+export const AcceptLicense = createRequest<
+  AcceptLicenseParams,
+  AcceptLicenseResult
+>("AcceptLicense");
+
+/**
  * Result for PickManifestAction
  */
 export interface PickManifestActionResult {
@@ -3137,6 +3157,17 @@ export interface LaunchExitedNotification {
 export const LaunchExited = createNotification<LaunchExitedNotification>(
   "LaunchExited"
 );
+
+/**
+ * Params for AcceptLicense
+ */
+export interface AcceptLicenseParams {
+  /**
+   * The full text of the license agreement, in its default
+   * language, which is usually English.
+   */
+  text: string;
+}
 
 /**
  * Params for PickManifestAction
