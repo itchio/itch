@@ -203,7 +203,7 @@ async function refreshButlerd(store: Store) {
   logger.info(`...waiting for endpoint from butlerd instance ${id}...`);
   const endpoint = await instance.getEndpoint();
   logger.info(
-    `...for butlerd instance ${id} got endpoint ${endpoint.http.address}`
+    `...for butlerd instance ${id} got endpoint ${endpoint.tcp.address}`
   );
 
   incarnation.client = new Client(endpoint);
@@ -212,7 +212,7 @@ async function refreshButlerd(store: Store) {
   logger.info(
     `Now speaking with butlerd instance ${id}, version ${
       versionInfo.versionString
-    }, endpoint ${endpoint.http.address}`
+    }, endpoint ${endpoint.tcp.address}`
   );
 
   store.dispatch(actions.gotButlerdEndpoint({ endpoint }));

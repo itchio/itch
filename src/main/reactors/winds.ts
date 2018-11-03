@@ -1,4 +1,3 @@
-import { registerElectronSession } from "butlerd";
 import { actions } from "common/actions";
 import { codGray } from "common/constants/colors";
 import { normalizeURL, opensInWindow } from "common/constants/windows";
@@ -550,7 +549,6 @@ function getAppSession(store: Store): Session {
     _cachedAppSession = session.fromPartition(partitionForApp(), {
       cache: true,
     });
-    registerElectronSession(_cachedAppSession);
 
     // this works around https://github.com/itchio/itch/issues/2039
     registerItchProtocol(store, _cachedAppSession);

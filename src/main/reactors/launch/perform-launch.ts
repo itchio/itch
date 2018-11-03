@@ -12,7 +12,7 @@ import { promisedModal } from "main/reactors/modals";
 import { performHTMLLaunch } from "main/reactors/launch/perform-html-launch";
 import { pickManifestAction } from "main/reactors/launch/pick-manifest-action";
 import { mcall } from "main/butlerd/mcall";
-import { Conversation } from "butlerd/lib/client";
+import { Conversation } from "butlerd";
 
 export async function performLaunch(
   ctx: Context,
