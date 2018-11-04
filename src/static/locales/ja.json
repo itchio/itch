@@ -366,5 +366,12 @@
     "login.two_factor.verification_code_label": "認証コード",
     "duration.seconds": "{{x}}秒",
     "preferences.behavior.open_at_login": "コンピューターの起動時にitchも起動する",
-    "preferences.proxy_server_address": "HTTPSプロキシ"
+    "preferences.proxy_server_address": "HTTPSプロキシ",
+    "download.ongoing.revert": "{{title}}を別のバージョンに切り替え中…",
+    "download.ongoing.heal": "{{title}}を修復中…",
+    "download.outcome.installed": "インストール済み",
+    "download.outcome.updated": "最新版にアップデート済み",
+    "download.outcome.reinstalled": "再インストール済み",
+    "download.outcome.reverted": "別バージョンに切り替え済み",
+    "download.outcome.healed": "検証と修理済み"
 }
