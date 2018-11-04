@@ -373,5 +373,10 @@
     "download.outcome.updated": "最新版にアップデート済み",
     "download.outcome.reinstalled": "再インストール済み",
     "download.outcome.reverted": "別バージョンに切り替え済み",
-    "download.outcome.healed": "検証と修理済み"
+    "download.outcome.healed": "検証と修理済み",
+    "prompt.clear_browsing_data.category.cookies": "クッキー",
+    "setup.action.install": "今すぐインストールします",
+    "setup.status.done": "完了！",
+    "setup.error_dialog.title": "問題がありました",
+    "web.context_menu.copy": "コピー"
 }
