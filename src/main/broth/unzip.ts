@@ -47,7 +47,6 @@ export async function unzip(opts: UnzipOpts) {
 
     await sf.mkdirp(dirname(entryPath));
     const dst = createWriteStream(entryPath);
-    dst.destroy(new Error("test error"));
     const progressStream = progress({
       length: entry.uncompressedSize,
       time: 100,

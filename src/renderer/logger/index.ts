@@ -1,4 +1,4 @@
-import { levels, LogEntry, Logger, LOG_LEVEL } from "common/logger";
+import { levels, LogEntry, Logger, LogSink, multiSink } from "common/logger";
 import { actions } from "common/actions";
 
 const levelColors = {
@@ -11,34 +11,30 @@ const levelColors = {
   10: "color:grey;",
 } as { [key: number]: string };
 
-function write(entry: LogEntry) {
-  const { name, level, msg } = entry;
-  console.log(
-    "%c " +
-      levels[level] +
-      " %c" +
-      (name ? "(" + name + ")" : "") +
-      ":" +
-      " %c" +
-      msg,
-    levelColors[level],
-    "color:black;",
-    "color:44e;"
-  );
-}
-
-export default write;
+const consoleSink: LogSink = {
+  write(entry: LogEntry) {
+    const { name, level, msg } = entry;
+    console.log(
+      "%c " +
+        levels[level] +
+        " %c" +
+        (name ? "(" + name + ")" : "") +
+        ":" +
+        " %c" +
+        msg,
+      levelColors[level],
+      "color:black;",
+      "color:44e;"
+    );
+  },
+};
 
 import store from "renderer/store";
 
-function makeLogger(): Logger {
-  return new Logger({
-    write: (entry: LogEntry) => {
-      write(entry);
-      store.dispatch(actions.log({ entry }));
-    },
-    level: LOG_LEVEL,
-  });
-}
+const remoteSink: LogSink = {
+  write(entry: LogEntry) {
+    store.dispatch(actions.log({ entry }));
+  },
+};
 
-export const rendererLogger = makeLogger();
+export const rendererLogger = new Logger(multiSink(consoleSink, remoteSink));

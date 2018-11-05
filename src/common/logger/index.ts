@@ -1,20 +1,4 @@
-function parseEnvLevel() {
-  let l = process.env.ITCH_LOG_LEVEL;
-  if (l) {
-    const validLevels = ["silent", "error", "warn", "info", "debug"];
-    if (validLevels.indexOf(l) !== -1) {
-      return l;
-    }
-    console.warn(
-      `Ignoring ITCH_LOG_LEVEL=${l}, expected one of: ${validLevels.join(", ")}`
-    );
-  }
-  return "info";
-}
-
-export const LOG_LEVEL = parseEnvLevel() as Level;
-
-type Level = "silent" | "error" | "warn" | "info" | "debug";
+import memory from "memory-streams";
 
 const levelNumbers = {
   silent: 100,
@@ -41,34 +25,17 @@ export interface LogEntry {
   name?: string;
 }
 
-type Write = (entry: LogEntry) => void;
-type Close = () => void;
+export interface LogSink {
+  write(entry: LogEntry);
+}
 
 export class Logger {
-  private _name: string;
-  private _write: Write;
-  private _close: Close;
-  private _level: Level;
-  private _levelNumber: number;
-  private closed: boolean;
-  customOut?: any;
+  private name: string;
+  public sink: LogSink;
 
-  constructor({
-    write,
-    close,
-    name = undefined,
-    level = "info",
-  }: {
-    write: Write;
-    close?: Close;
-    name?: string;
-    level?: Level;
-  }) {
-    this._name = name;
-    this._write = write;
-    this._close = close;
-    this._level = level;
-    this._levelNumber = levelNumbers[level];
+  constructor(sink: LogSink, name?: string) {
+    this.name = name;
+    this.sink = sink;
   }
 
   debug(msg: string) {
@@ -87,13 +54,6 @@ export class Logger {
     this.log(levelNumbers.error, msg);
   }
 
-  close() {
-    this.closed = true;
-    if (this._close) {
-      this._close();
-    }
-  }
-
   child(filename: string): Logger {
     let tokens = filename.split(/[\/\\]/);
     tokens = tokens.slice(1);
@@ -107,37 +67,60 @@ export class Logger {
   }
 
   childWithName(name: string): Logger {
-    const l = new Logger({
-      write: this._write,
-      close: this._close,
-      level: this._level,
-      name,
-    });
+    const l = new Logger(this.sink, name);
     return l;
   }
 
-  setLevel(level: Level) {
-    this._level = level;
-    this._levelNumber = levelNumbers[level];
-  }
-
   private log(level: number, msg: string) {
-    if (this.closed) {
-      return;
-    }
-
-    if (level >= this._levelNumber) {
-      this._write({ time: Date.now(), level, msg, name: this._name });
-    }
-  }
-
-  write(entry: LogEntry) {
-    this._write(entry);
+    this.sink.write({ time: Date.now(), level, msg, name: this.name });
   }
 }
 
-export const devNull = new Logger({
-  write: () => {
+export const devNull = {
+  write: (entry: LogEntry) => {
     /* muffin */
   },
-});
+};
+
+export function multiSink(...sinks: LogSink[]) {
+  return {
+    write(entry: LogEntry) {
+      for (const sink of sinks) {
+        sink.write(entry);
+      }
+    },
+  };
+}
+
+export const streamSink = (stream: NodeJS.WritableStream): LogSink => {
+  return {
+    write(entry: LogEntry) {
+      stream.write(JSON.stringify(entry));
+      stream.write("\n");
+    },
+  };
+};
+
+export class RecordingLogger extends Logger {
+  public memlog: memory.WritableStream;
+  closed = false;
+
+  constructor(parent: Logger, name: string) {
+    super(parent.sink, name); // boo down with constructors
+    this.memlog = new memory.WritableStream();
+    this.sink = multiSink(parent.sink, streamSink(this.memlog));
+  }
+
+  getLog() {
+    return this.memlog.toString();
+  }
+
+  destroy() {
+    this.sink = devNull;
+    this.memlog.destroy();
+  }
+}
+
+export const recordingLogger = (parent: Logger, name: string): Logger => {
+  return new RecordingLogger(parent, name);
+};

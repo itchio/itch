@@ -13,7 +13,6 @@ import { getNativeWindow } from "main/reactors/winds";
 import memory from "memory-streams";
 import { _ } from "renderer/t";
 import { formatError } from "common/format/errors";
-import { format } from "url";
 
 const logger = mainLogger.child(__filename);
 

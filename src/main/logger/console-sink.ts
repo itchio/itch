@@ -1,4 +1,4 @@
-import { LogEntry, levels } from "common/logger";
+import { LogEntry, levels, LogSink } from "common/logger";
 const termColor = require("term-color");
 
 const levelColors = {
@@ -24,18 +24,18 @@ function asColoredLevel(entry: LogEntry) {
   return str;
 }
 
-function write(entry: LogEntry, stream: NodeJS.WritableStream) {
-  let line =
-    asISODate(entry.time).split(/T|Z/)[1] + " " + asColoredLevel(entry);
-  line += " ";
-  if (entry.name) {
-    line += "(" + entry.name + ") ";
-  }
-  if (entry.msg) {
-    line += termColor.cyan(entry.msg);
-  }
-  line += "\n";
-  stream.write(line);
-}
-
-export default write;
+export const consoleSink: LogSink = {
+  write(entry: LogEntry) {
+    let line =
+      asISODate(entry.time).split(/T|Z/)[1] + " " + asColoredLevel(entry);
+    line += " ";
+    if (entry.name) {
+      line += "(" + entry.name + ") ";
+    }
+    if (entry.msg) {
+      line += termColor.cyan(entry.msg);
+    }
+    line += "\n";
+    process.stdout.write(line);
+  },
+};
