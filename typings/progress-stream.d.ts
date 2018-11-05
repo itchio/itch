@@ -4,6 +4,7 @@
 declare module "progress-stream" {
   interface ProgressStream extends NodeJS.ReadWriteStream {
     on(ev: "progress", cb: (info: ProgressInfo) => void): ProgressStream;
+    on(ev: "error", cb: (err: Error) => void);
   }
 
   interface ProgressStreamOpts {
