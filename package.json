@@ -28,7 +28,7 @@
     "@types/lru-cache": "^4.1.1",
     "array-move": "^1.0.0",
     "btoa": "^1.2.1",
-    "butlerd": "^11.1.0",
+    "butlerd": "^11.2.0",
     "classnames": "^2.2.6",
     "clean-webpack-plugin": "^0.1.19",
     "colorgram": "^0.1.5",
