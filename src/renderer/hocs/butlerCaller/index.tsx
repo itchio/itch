@@ -1,5 +1,5 @@
 import { RequestCreator } from "butlerd";
-import { devNull } from "common/logger";
+import { devNull, Logger } from "common/logger";
 import { Watcher } from "common/util/watcher";
 import React from "react";
 import equal from "react-fast-compare";
@@ -76,7 +76,7 @@ const butlerCaller = <Params, Result>(
     componentDidMount() {
       this.queueFetch();
       if (this.invalidators) {
-        this.watcher = new Watcher(devNull);
+        this.watcher = new Watcher(new Logger(devNull));
         this.context.store.watcher.addSub(this.watcher);
         for (const invalidatingAction of this.invalidators) {
           this.watcher.on(invalidatingAction, async (store, action) => {

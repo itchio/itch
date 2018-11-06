@@ -14,8 +14,9 @@ import { mainLogger } from "main/logger";
 import { mkdirp } from "main/os/sf";
 import { delay } from "main/reactors/delay";
 import { indexBy, isEmpty } from "underscore";
+import { recordingLogger } from "common/logger";
 
-const logger = mainLogger.child(__filename);
+const logger = recordingLogger(mainLogger, "setup");
 
 async function syncInstallLocations(store: Store) {
   const { installLocations } = await mcall(messages.InstallLocationsList, {});
@@ -68,7 +69,6 @@ async function syncInstallLocations(store: Store) {
 
 export let manager: Manager;
 
-let masterClient: Client;
 let initialButlerdResolve: (value?: any) => void;
 let initialButlerdPromise = new ItchPromise((resolve, reject) => {
   initialButlerdResolve = resolve;
@@ -144,6 +144,7 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
         icon: "error",
         message: ["login.status.setup_failure", { error: e.message || "" + e }],
         stack: e.stack,
+        log: logger.getLog(),
       })
     );
   }

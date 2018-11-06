@@ -137,7 +137,7 @@ class BlockingOperation extends React.PureComponent<Props> {
     const { dispatch, blockingOperation } = this.props;
     dispatch(
       actions.sendFeedback({
-        log: `Setup did not complete successfully:\n${blockingOperation.stack}`,
+        log: blockingOperation.log,
       })
     );
   };

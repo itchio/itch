@@ -1,8 +1,9 @@
 import spawn from "main/os/spawn";
 import { Context } from "main/context";
 
-import { devNull } from "common/logger";
+import { devNull, RecordingLogger } from "common/logger";
 import { formatExitCode } from "common/format/exit-code";
+import { mainLogger } from "main/logger";
 
 interface AssertPresenceResult {
   code: number;
@@ -33,7 +34,7 @@ export async function assertPresence(
       stderr += "\n" + tok;
     },
     opts: extraOpts,
-    logger: devNull,
+    logger: new RecordingLogger(mainLogger, "assert-presence"),
     ctx,
   };
 

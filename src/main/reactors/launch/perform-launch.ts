@@ -1,7 +1,7 @@
 import { actions } from "common/actions";
 import { messages, hookLogging } from "common/butlerd";
 import { Cave, Game, PrereqStatus } from "common/butlerd/messages";
-import { Logger } from "common/logger";
+import { Logger, RecordingLogger } from "common/logger";
 import { modals, TypedModal } from "common/modals";
 import { PrereqsStateParams } from "common/modals/types";
 import { Cancelled, LocalizedString } from "common/types";
@@ -16,7 +16,7 @@ import { Conversation } from "butlerd";
 
 export async function performLaunch(
   ctx: Context,
-  logger: Logger,
+  logger: RecordingLogger,
   cave: Cave,
   game: Game
 ) {
@@ -175,10 +175,7 @@ export async function performLaunch(
               let errorMessage = error;
               errorMessage = errorMessage.split("\n")[0];
 
-              let log = "(empty)\n";
-              if (logger.customOut && logger.customOut.toString) {
-                log = logger.customOut.toString();
-              }
+              let log = logger.getLog();
 
               const res = await promisedModal(
                 store,

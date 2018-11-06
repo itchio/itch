@@ -92,6 +92,7 @@ export async function unzip(opts: UnzipOpts) {
      *
      ***************************************************************************/
     src.pipe(progressStream).pipe(dst);
+    dst.destroy(new Error("This is a test error")); // FIXME: debug
     await new Promise((_resolve, _reject) => {
       let timeout = setTimeout(() => {
         logger.warn(

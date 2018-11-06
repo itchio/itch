@@ -6,13 +6,13 @@ import { ItchPromise } from "common/util/itch-promise";
 import { Watcher } from "common/util/watcher";
 import { dialog } from "electron";
 import { mcall } from "main/butlerd/mcall";
-import { mainLogger, makeLogger } from "main/logger";
+import { mainLogger } from "main/logger";
 import * as explorer from "main/os/explorer";
 import { promisedModal } from "main/reactors/modals";
 import { getNativeWindow } from "main/reactors/winds";
-import memory from "memory-streams";
 import { _ } from "renderer/t";
 import { formatError } from "common/format/errors";
+import { recordingLogger } from "common/logger";
 
 const logger = mainLogger.child(__filename);
 
@@ -62,9 +62,8 @@ export default function(watcher: Watcher) {
         return;
       }
 
-      const memlog = new memory.WritableStream();
+      const logger = recordingLogger(mainLogger);
       try {
-        const logger = makeLogger({ customOut: memlog });
         await mcall(messages.InstallLocationsRemove, { id }, convo => {
           hookLogging(convo, logger);
         });
@@ -78,7 +77,7 @@ export default function(watcher: Watcher) {
               message: t(store.getState().i18n, formatError(e)),
               widgetParams: {
                 rawError: e,
-                log: memlog.toString(),
+                log: logger.getLog(),
                 forceDetails: true,
               },
               buttons: ["ok"],

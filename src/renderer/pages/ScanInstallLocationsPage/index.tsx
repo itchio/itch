@@ -4,8 +4,6 @@ import { Game } from "common/butlerd/messages";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
 import { legacyMarketPath } from "common/util/paths";
-import { makeLogger } from "main/logger";
-import memory from "memory-streams";
 import React from "react";
 import Button from "renderer/basics/Button";
 import Filler from "renderer/basics/Filler";
@@ -30,6 +28,7 @@ import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
 import { T, _ } from "renderer/t";
+import { recordingLogger } from "common/logger";
 
 enum Stage {
   Scanning,
@@ -99,12 +98,11 @@ const SectionDiv = styled.div`
   justify-content: center;
 `;
 
-const logger = rendererLogger.child(__filename);
+const parentLogger = rendererLogger.child(__filename);
 
 class ScanInstallLocations extends React.PureComponent<Props, State> {
   resolve: (val?: any) => void;
   reject: (e: Error) => void;
-  memlog = new memory.WritableStream();
 
   constructor(props: Props, context: any) {
     super(props, context);
@@ -127,13 +125,13 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
 
     doAsync(async () => {
       let didImport = false;
+      const logger = recordingLogger(rendererLogger);
       try {
-        const memlogger = makeLogger({ customOut: this.memlog });
         const { numImportedItems } = await rcall(
           messages.InstallLocationsScan,
           { legacyMarketPath: legacyMarketPath() },
           convo => {
-            hookLogging(convo, memlogger);
+            hookLogging(convo, logger);
             convo.on(messages.Progress, async ({ progress }) => {
               this.setState({ progress });
             });
@@ -166,7 +164,7 @@ class ScanInstallLocations extends React.PureComponent<Props, State> {
         );
         this.setState({ numItems: numImportedItems });
       } finally {
-        this.setState({ stage: Stage.Done, log: this.memlog.toString() });
+        this.setState({ stage: Stage.Done, log: logger.getLog() });
         const { dispatch } = this.props;
         dispatch(actions.newItemsImported({}));
         if (didImport) {

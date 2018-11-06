@@ -72,7 +72,11 @@ export class Logger {
   }
 
   private log(level: number, msg: string) {
-    this.sink.write({ time: Date.now(), level, msg, name: this.name });
+    this.write({ time: Date.now(), level, msg, name: this.name });
+  }
+
+  write(entry: LogEntry) {
+    this.sink.write(entry);
   }
 }
 
@@ -105,13 +109,16 @@ export class RecordingLogger extends Logger {
   public memlog: memory.WritableStream;
   closed = false;
 
-  constructor(parent: Logger, name: string) {
-    super(parent.sink, name); // boo down with constructors
+  constructor(parent: Logger, name?: string) {
+    super(parent.sink, name); // boo! down with constructors
     this.memlog = new memory.WritableStream();
     this.sink = multiSink(parent.sink, streamSink(this.memlog));
   }
 
-  getLog() {
+  /**
+   * Returns all log messages as a string
+   */
+  getLog(): string {
     return this.memlog.toString();
   }
 
@@ -121,6 +128,9 @@ export class RecordingLogger extends Logger {
   }
 }
 
-export const recordingLogger = (parent: Logger, name: string): Logger => {
+export const recordingLogger = (
+  parent: Logger,
+  name?: string
+): RecordingLogger => {
   return new RecordingLogger(parent, name);
 };

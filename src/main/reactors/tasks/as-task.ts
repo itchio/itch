@@ -1,5 +1,3 @@
-import memory from "memory-streams";
-
 import {
   Store,
   ProgressInfo,
@@ -10,10 +8,10 @@ import {
 import { Context } from "main/context";
 import { actions } from "common/actions";
 
-import { Logger } from "common/logger";
+import { Logger, recordingLogger, RecordingLogger } from "common/logger";
 import { getCurrentTasks } from "main/reactors/tasks/as-task-persistent-state";
 import uuid from "common/util/uuid";
-import { makeLogger, mainLogger } from "main/logger";
+import { mainLogger } from "main/logger";
 
 interface AsTaskOpts {
   store: Store;
@@ -22,7 +20,7 @@ interface AsTaskOpts {
   caveId: string;
 
   /** Where the task actually performs its duty */
-  work: (ctx: Context, logger: Logger) => Promise<void>;
+  work: (ctx: Context, logger: RecordingLogger) => Promise<void>;
 
   /** Called with the thrown error & the logs so far if set */
   onError?: (error: Error, log: string) => Promise<void>;
@@ -35,8 +33,7 @@ async function asTask(opts: AsTaskOpts) {
 
   const { store, name, gameId, caveId } = opts;
 
-  const memlog = new memory.WritableStream();
-  const logger = makeLogger({ customOut: memlog });
+  const logger = recordingLogger(mainLogger);
 
   store.dispatch(
     actions.taskStarted({
@@ -67,11 +64,6 @@ async function asTask(opts: AsTaskOpts) {
   }
 
   delete getCurrentTasks()[id];
-  try {
-    logger.close();
-  } catch (e) {
-    mainLogger.warn(`Couldn't close logger: ${e.stack}`);
-  }
 
   if (err) {
     if (isCancelled(err)) {
@@ -87,7 +79,7 @@ async function asTask(opts: AsTaskOpts) {
     } else {
       mainLogger.warn(`Task ${name} threw: ${err.stack}`);
       if (onError) {
-        await onError(err, memlog ? memlog.toString() : "(No log)");
+        await onError(err, logger.getLog());
       }
     }
   }

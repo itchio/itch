@@ -15,8 +15,6 @@ import { modals, ModalWidgetProps } from "common/modals";
 import { PlanInstallParams, PlanInstallResponse } from "common/modals/types";
 import { Dispatch } from "common/types";
 import { ambientWind } from "common/util/navigation";
-import { makeLogger } from "main/logger";
-import memory from "memory-streams";
 import React from "react";
 import { InjectedIntl } from "react-intl";
 import Button from "renderer/basics/Button";
@@ -47,6 +45,7 @@ import { Box, BoxInner } from "renderer/pages/PageStyles/boxes";
 import styled from "renderer/styles";
 import { T, TString, _ } from "renderer/t";
 import { findWhere } from "underscore";
+import { recordingLogger } from "common/logger";
 
 const logger = rendererLogger.child(__filename);
 
@@ -401,9 +400,8 @@ class PlanInstall extends React.PureComponent<Props, State> {
       const { game } = this.state;
       const { pickedInstallLocationId, pickedUploadId, uploads } = this.state;
       const upload = findWhere(uploads, { id: pickedUploadId });
+      const logger = recordingLogger(rendererLogger);
       logger.info(`Queuing install for ${game.url}...`);
-      const memlog = new memory.WritableStream();
-      const memlogger = makeLogger({ customOut: memlog });
       try {
         await rcall(
           messages.InstallQueue,
@@ -415,10 +413,10 @@ class PlanInstall extends React.PureComponent<Props, State> {
             queueDownload: true,
           },
           convo => {
-            hookLogging(convo, memlogger);
+            hookLogging(convo, logger);
           }
         );
-        memlogger.info(`Queued!`);
+        logger.info(`Queued!`);
         dispatch(actions.downloadQueued({}));
       } catch (e) {
         logger.error(`While queuing download: ${e.stack}`);
@@ -432,7 +430,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
               widgetParams: {
                 game,
                 rawError: e,
-                log: memlog.toString(),
+                log: logger.getLog(),
               },
               buttons: ["ok"],
             })
@@ -473,13 +471,12 @@ class PlanInstall extends React.PureComponent<Props, State> {
     doAsync(async () => {
       try {
         const { gameId } = this.state;
-        const memlog = new memory.WritableStream();
-        const memlogger = makeLogger({ customOut: memlog });
+        const logger = recordingLogger(rendererLogger);
         const res = await rcall(
           messages.InstallPlan,
           { gameId, uploadId },
           convo => {
-            hookLogging(convo, memlogger);
+            hookLogging(convo, logger);
           }
         );
         this.setState({
@@ -493,7 +490,7 @@ class PlanInstall extends React.PureComponent<Props, State> {
             res.info && res.info.error
               ? getInstallPlanInfoError(res.info)
               : null,
-          log: memlog.toString(),
+          log: logger.getLog(),
         });
       } catch (e) {
         this.setState({

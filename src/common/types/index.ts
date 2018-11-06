@@ -295,6 +295,7 @@ export interface SetupOperation {
   message: LocalizedString;
   icon: string;
   stack?: string;
+  log?: string;
   stage?: string;
   progressInfo?: ProgressInfo;
 }
