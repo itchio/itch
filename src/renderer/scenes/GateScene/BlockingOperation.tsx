@@ -11,6 +11,8 @@ import { hook } from "renderer/hocs/hook";
 import styled from "renderer/styles";
 import { T } from "renderer/t";
 import DownloadProgressSpan from "renderer/basics/DownloadProgressSpan";
+import { modals } from "common/modals";
+import { ambientWind } from "common/util/navigation";
 
 const BlockingOperationDiv = styled.div`
   font-size: ${props => props.theme.fontSizes.large};
@@ -111,8 +113,8 @@ class BlockingOperation extends React.PureComponent<Props> {
               <Spacer />
               <Button
                 icon="bug"
-                label={T(["grid.item.report_problem"])}
-                onClick={this.sendBlockingOperationFeedback}
+                label={T(["grid.item.open_debug_log"])}
+                onClick={this.viewBlockingOperationLog}
               />
             </div>
             {windows ? (
@@ -133,12 +135,23 @@ class BlockingOperation extends React.PureComponent<Props> {
     );
   }
 
-  sendBlockingOperationFeedback = () => {
+  viewBlockingOperationLog = () => {
     const { dispatch, blockingOperation } = this.props;
     dispatch(
-      actions.sendFeedback({
-        log: blockingOperation.log,
-      })
+      actions.openModal(
+        modals.showError.make({
+          wind: ambientWind(),
+          title: "Setup",
+          message: ["login.status.setup_failure", { error: "" }],
+          widgetParams: {
+            rawError: blockingOperation.rawError,
+            log: blockingOperation.log,
+            forceDetails: true,
+            showSendReport: true,
+          },
+          buttons: ["ok"],
+        })
+      )
     );
   };
 

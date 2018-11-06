@@ -196,7 +196,7 @@ export const actions = wireActions({
   setupStatus: action<{
     icon: string;
     message: LocalizedString;
-    stack?: string;
+    rawError?: Error;
     log?: string;
   }>(),
   setupOperationProgress: action<{

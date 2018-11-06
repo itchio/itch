@@ -16,7 +16,7 @@ import { delay } from "main/reactors/delay";
 import { indexBy, isEmpty } from "underscore";
 import { recordingLogger } from "common/logger";
 
-const logger = recordingLogger(mainLogger, "setup");
+const logger = recordingLogger(mainLogger, "🔧 setup");
 
 async function syncInstallLocations(store: Store) {
   const { installLocations } = await mcall(messages.InstallLocationsList, {});
@@ -85,6 +85,7 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
     );
 
     if (!manager) {
+      logger.info(`Creating broth manager`);
       manager = new Manager(store);
     }
 
@@ -92,18 +93,20 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
     const setUpVersionOnceBefore =
       app.getVersion() === prefs.lastSuccessfulSetupVersion;
 
+    logger.info(`Ensuring broth dependencies, for startup`);
     await manager.ensure({
       startup: true,
+      logger,
     });
 
     if (env.development) {
       logger.info(`In development, forcing components upgrade check`);
-      await manager.upgrade();
+      await manager.upgrade({ logger });
     } else if (!setUpVersionOnceBefore) {
       logger.info(
         `Never set up ${app.getVersion()} successfully before, forcing components upgrade check`
       );
-      await manager.upgrade();
+      await manager.upgrade({ logger });
       store.dispatch(
         actions.updatePreferences({
           lastSuccessfulSetupVersion: app.getVersion(),
@@ -143,7 +146,7 @@ async function initialSetup(store: Store, { retry }: { retry: boolean }) {
       actions.setupStatus({
         icon: "error",
         message: ["login.status.setup_failure", { error: e.message || "" + e }],
-        stack: e.stack,
+        rawError: e,
         log: logger.getLog(),
       })
     );

@@ -37,7 +37,7 @@ export default function(watcher: Watcher) {
 
   watcher.on(actions.checkForComponentUpdates, async (store, action) => {
     rescheduleComponentsUpdate(store);
-    await manager.upgrade();
+    await manager.upgrade({ logger: mainLogger });
   });
 
   watcher.on(actions.relaunchRequest, async (store, action) => {

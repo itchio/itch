@@ -294,7 +294,7 @@ export interface SystemTasksState {
 export interface SetupOperation {
   message: LocalizedString;
   icon: string;
-  stack?: string;
+  rawError?: Error;
   log?: string;
   stage?: string;
   progressInfo?: ProgressInfo;

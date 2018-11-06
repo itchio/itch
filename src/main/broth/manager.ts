@@ -1,4 +1,9 @@
-import { Package, PackageLike, EnsureOpts } from "main/broth/package";
+import {
+  Package,
+  PackageLike,
+  EnsureOpts,
+  UpgradeOpts,
+} from "main/broth/package";
 import { join } from "path";
 
 import { Store } from "common/types";
@@ -30,9 +35,9 @@ export class Manager {
     }
   }
 
-  async upgrade() {
+  async upgrade(opts: UpgradeOpts) {
     for (const pkg of this.pkgs) {
-      await pkg.upgrade();
+      await pkg.upgrade(opts);
     }
   }
 }

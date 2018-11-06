@@ -3,7 +3,6 @@ import urls from "common/constants/urls";
 import { Logger } from "common/logger";
 import { PackageState, ProgressInfo, Store } from "common/types";
 import { MinimalContext } from "main/context";
-import { mainLogger } from "main/logger";
 import spawn from "main/os/spawn";
 import { dirname, join } from "path";
 import querystring from "querystring";
@@ -41,11 +40,17 @@ var useLocals = (process.env.BROTH_USE_LOCAL || "").split(",");
 export interface EnsureOpts {
   // Set to true if this is a startup ensure
   startup?: boolean;
+
+  logger: Logger;
+}
+
+export interface UpgradeOpts {
+  logger: Logger;
 }
 
 export interface PackageLike {
   ensure(opts: EnsureOpts): Promise<void>;
-  upgrade(): Promise<void>;
+  upgrade(opts: UpgradeOpts): Promise<void>;
 }
 
 export class Package implements PackageLike {
@@ -53,8 +58,8 @@ export class Package implements PackageLike {
   private formula: FormulaSpec;
   private prefix: string;
   private name: string;
+  private channel: string;
   private baseURL: string;
-  private logger: Logger;
   private semverConstraint: string;
 
   constructor(store: Store, prefix: string, name: string) {
@@ -69,11 +74,11 @@ export class Package implements PackageLike {
     if (this.formula.transformChannel) {
       channel = this.formula.transformChannel(channel);
     }
+    this.channel = channel;
     if (this.formula.getSemverConstraint) {
       this.semverConstraint = this.formula.getSemverConstraint();
     }
     this.baseURL = `${urls.brothRepo}/${name}/${channel}`;
-    this.logger = mainLogger.childWithName(`broth :: ${name}:${channel}`);
     this.stage("idle");
   }
 
@@ -93,13 +98,13 @@ export class Package implements PackageLike {
   }
 
   /** fetch latest version number from repo */
-  async getLatestVersion(): Promise<Version> {
+  async getLatestVersion(logger: Logger): Promise<Version> {
     if (this.semverConstraint) {
-      this.debug(
+      logger.debug(
         `Trying to satisfy semver constraint (${this.semverConstraint})`
       );
       const url = this.buildURL(`/versions`);
-      this.debug(`GET (${url})`);
+      logger.debug(`GET (${url})`);
       const res = await request("get", url, {});
       if (res.statusCode !== 200) {
         throw new Error(`got HTTP ${res.statusCode} while fetching (${url})`);
@@ -119,7 +124,7 @@ export class Package implements PackageLike {
         if (semver.satisfies(v, this.semverConstraint)) {
           return v;
         } else {
-          this.debug(`Ignoring (${v})`);
+          logger.debug(`Ignoring (${v})`);
         }
       }
 
@@ -127,9 +132,9 @@ export class Package implements PackageLike {
         `Could not find a version satisfying (${this.semverConstraint})`
       );
     } else {
-      this.debug("No semver constraint, going with /LATEST");
+      logger.debug("No semver constraint, going with /LATEST");
       const url = this.buildURL(`/LATEST`);
-      this.debug(`GET (${url})`);
+      logger.debug(`GET (${url})`);
       const res = await request("get", url, {});
       if (res.statusCode !== 200) {
         throw new Error(`got HTTP ${res.statusCode} while fetching (${url})`);
@@ -164,25 +169,14 @@ export class Package implements PackageLike {
     return join(this.getVersionPrefix(version), ".installed");
   }
 
-  info(msg: string) {
-    this.logger.info(msg);
-  }
-
-  warn(msg: string) {
-    this.logger.warn(msg);
-  }
-
-  debug(msg: string) {
-    this.logger.debug(msg);
-  }
-
   shouldUseLocal(): boolean {
     return useLocals.indexOf(this.name) !== -1;
   }
 
   async ensure(opts: EnsureOpts) {
+    const logger = this.makeLogger(opts.logger);
     if (this.shouldUseLocal()) {
-      await this.ensureLocal();
+      await this.ensureLocal(logger);
       return;
     }
 
@@ -190,36 +184,36 @@ export class Package implements PackageLike {
 
     const chosenVersion = await this.getChosenVersion();
     if (chosenVersion) {
-      const isValid = await this.isVersionValid(chosenVersion);
+      const isValid = await this.isVersionValid(logger, chosenVersion);
       if (isValid) {
-        this.info(`(${chosenVersion}) is chosen and valid`);
-        this.refreshPrefix(chosenVersion);
+        logger.info(`(${chosenVersion}) is chosen and valid`);
+        this.refreshPrefix(logger, chosenVersion);
         return;
       } else {
-        this.info(
+        logger.info(
           `(${chosenVersion}) is chosen but not valid, attempting install...`
         );
       }
     } else {
-      this.info(`No chosen version, attempting install...`);
+      logger.info(`No chosen version, attempting install...`);
     }
 
     if (opts.startup && !this.formula.requiredAtStartup) {
-      this.info(`No valid version, but not required at startup. Skipping`);
+      logger.info(`No valid version, but not required at startup. Skipping`);
       return;
     }
 
-    await this.upgrade();
+    await this.upgrade({ logger: opts.logger });
   }
 
-  async ensureLocal() {
-    this.info(`Looking for local binary...`);
+  async ensureLocal(logger) {
+    logger.info(`Looking for local binary...`);
 
     const executablePath = await which(this.name);
-    this.info(`Found at (${executablePath})`);
+    logger.info(`Found at (${executablePath})`);
 
     const { err } = await spawn.exec({
-      logger: this.logger,
+      logger,
       ctx: new MinimalContext(),
       command: executablePath,
       args: ["-V"],
@@ -239,12 +233,12 @@ export class Package implements PackageLike {
     return this.store.getState().broth.packages[this.name].versionPrefix;
   }
 
-  refreshPrefix(version: Version) {
+  refreshPrefix(logger: Logger, version: Version) {
     const newVersionPrefix = this.getVersionPrefix(version);
     const oldVersionPrefix = this.getCurrentVersionPrefix();
 
     if (newVersionPrefix !== oldVersionPrefix) {
-      this.info(`Switching to (${version})`);
+      logger.info(`Switching to (${version})`);
       this.store.dispatch(
         actions.packageGotVersionPrefix({
           name: this.name,
@@ -256,9 +250,10 @@ export class Package implements PackageLike {
   }
 
   upgradeLock = false;
-  async upgrade() {
+  async upgrade(opts: UpgradeOpts) {
+    const logger = this.makeLogger(opts.logger);
     if (this.shouldUseLocal()) {
-      this.info(`Using local, so, not upgrading.`);
+      logger.info(`Using local, so, not upgrading.`);
       return;
     }
 
@@ -268,7 +263,7 @@ export class Package implements PackageLike {
     try {
       this.upgradeLock = true;
       this.stage("assess");
-      await this.doUpgrade();
+      await this.doUpgrade(logger);
     } finally {
       this.upgradeLock = false;
       this.stage("idle");
@@ -276,13 +271,13 @@ export class Package implements PackageLike {
       try {
         await sf.wipe(this.getDownloadsDir());
       } catch (e) {
-        this.warn(`While cleaning downloads dir: ${e.stack}`);
+        logger.warn(`While cleaning downloads dir: ${e.stack}`);
       }
 
       try {
-        await this.cleanOldVersions();
+        await this.cleanOldVersions(logger);
       } catch (e) {
-        this.warn(`While cleaning old versions: ${e.stack}`);
+        logger.warn(`While cleaning old versions: ${e.stack}`);
       }
     }
   }
@@ -300,26 +295,26 @@ export class Package implements PackageLike {
     );
   }
 
-  private async doUpgrade() {
+  private async doUpgrade(logger: Logger) {
     let latestVersion: Version;
     try {
-      latestVersion = await this.getLatestVersion();
+      latestVersion = await this.getLatestVersion(logger);
     } catch (e) {
-      this.logger.warn(`While checking for latest version: ${e.stack}`);
+      logger.warn(`While checking for latest version: ${e.stack}`);
       throw new Error(
         `Could not retrieve latest version of (${this.name}): ${e.message}`
       );
     }
-    this.info(`Latest is (${latestVersion})`);
+    logger.info(`Latest is (${latestVersion})`);
 
     if (
       this.getVersionPrefix(latestVersion) === this.getCurrentVersionPrefix()
     ) {
-      this.info(`Already the active version, nothing to do`);
+      logger.info(`Already the active version, nothing to do`);
       return;
     }
 
-    if (await this.isVersionValid(latestVersion)) {
+    if (await this.isVersionValid(logger, latestVersion)) {
       // do nothing
     } else {
       this.store.dispatch(
@@ -339,9 +334,9 @@ export class Package implements PackageLike {
       const archivePath = join(this.getDownloadsDir(), archiveName);
 
       this.stage("download");
-      this.info(`Downloading (${this.name})@(${latestVersion})`);
-      this.info(`...from (${archiveUrl})`);
-      this.info(`...to (${archivePath})`);
+      logger.info(`Downloading (${this.name})@(${latestVersion})`);
+      logger.info(`...from (${archiveUrl})`);
+      logger.info(`...to (${archivePath})`);
 
       await downloadToFileWithRetry(
         info => {
@@ -351,20 +346,20 @@ export class Package implements PackageLike {
           };
           this.emitProgress(newInfo);
         },
-        this.logger,
+        logger,
         archiveUrl,
         archivePath
       );
 
       this.stage("install");
-      this.info(`Extracting...`);
+      logger.info(`Extracting...`);
 
       const versionPrefix = this.getVersionPrefix(latestVersion);
       await sf.wipe(versionPrefix);
       await unzip({
         archivePath,
         destination: versionPrefix,
-        logger: this.logger,
+        logger,
         onProgress: info => {
           let newInfo = {
             ...info,
@@ -375,17 +370,17 @@ export class Package implements PackageLike {
       });
       await this.writeInstallMarker(latestVersion);
 
-      this.info(`Validating...`);
-      if (!(await this.isVersionValid(latestVersion))) {
+      logger.info(`Validating...`);
+      if (!(await this.isVersionValid(logger, latestVersion))) {
         throw new Error(
           `Could not validate version ${latestVersion} of ${this.name}`
         );
       }
     }
 
-    this.info(`Validated!`);
-    await this.writeChosenVersion(latestVersion);
-    this.refreshPrefix(latestVersion);
+    logger.info(`Validated!`);
+    await this.writeChosenVersion(logger, latestVersion);
+    this.refreshPrefix(logger, latestVersion);
   }
 
   async hasInstallMarker(version: Version): Promise<boolean> {
@@ -418,15 +413,15 @@ export class Package implements PackageLike {
     return null;
   }
 
-  async writeChosenVersion(version: Version): Promise<void> {
-    this.info(`Marking (${version}) as chosen version`);
+  async writeChosenVersion(logger: Logger, version: Version): Promise<void> {
+    logger.info(`Marking (${version}) as chosen version`);
     await sf.writeFile(this.getChosenMarkerPath(), version, {
       encoding: "utf8",
     });
   }
 
-  async cleanOldVersions() {
-    const presentVersions = await this.getPresentVersions();
+  async cleanOldVersions(logger: Logger) {
+    const presentVersions = await this.getPresentVersions(logger);
     const chosenVersion = await this.getChosenVersion();
 
     for (const ov of presentVersions) {
@@ -434,16 +429,16 @@ export class Package implements PackageLike {
         continue;
       }
 
-      this.info(`Removing obsolete version (${ov})`);
+      logger.info(`Removing obsolete version (${ov})`);
       try {
         await sf.wipe(this.getVersionPrefix(ov));
       } catch (e) {
-        this.warn(`Could not remove version (${ov}): ${e}`);
+        logger.warn(`Could not remove version (${ov}): ${e}`);
       }
     }
   }
 
-  async getPresentVersions(): Promise<Version[]> {
+  async getPresentVersions(logger: Logger): Promise<Version[]> {
     let presentVersions: Version[] = [];
     let subdirs = await readdir(this.getVersionsDir());
     for (const subdir of subdirs) {
@@ -451,13 +446,13 @@ export class Package implements PackageLike {
       presentVersions.push(version);
     }
 
-    this.debug(`Present versions: ${presentVersions.join(", ")}`);
+    logger.debug(`Present versions: ${presentVersions.join(", ")}`);
     return presentVersions;
   }
 
-  async isVersionValid(v: Version): Promise<boolean> {
+  async isVersionValid(logger: Logger, v: Version): Promise<boolean> {
     const ctx = new MinimalContext();
-    const { logger, formula } = this;
+    const { formula } = this;
     const { sanityCheck } = formula;
     const versionPrefix = this.getVersionPrefix(v);
     try {
@@ -473,14 +468,18 @@ export class Package implements PackageLike {
         })(),
       ]);
     } catch (e) {
-      this.warn(`Sanity check failed: ${e.message}`);
+      logger.warn(`Sanity check failed: ${e.message}`);
       return false;
     } finally {
       ctx.tryAbort().catch(e => {
-        this.warn(`While aborting validation context: ${e.stack}`);
+        logger.warn(`While aborting validation context: ${e.stack}`);
       });
     }
 
     return true;
+  }
+
+  private makeLogger(parentLogger: Logger): Logger {
+    return parentLogger.childWithName(`📦 ${this.name}`);
   }
 }

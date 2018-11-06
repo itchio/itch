@@ -1,4 +1,4 @@
-import { PackageLike } from "main/broth/package";
+import { PackageLike, UpgradeOpts, EnsureOpts } from "main/broth/package";
 import { Store, PackageState } from "common/types";
 import {
   itchSetupLock,
@@ -11,8 +11,7 @@ import {
   ISM_Log,
 } from "main/broth/itch-setup";
 import { actions } from "common/actions";
-import { mainLogger } from "main/logger";
-const logger = mainLogger.child(__filename);
+import { Logger } from "common/logger";
 
 export class SelfPackage implements PackageLike {
   private store: Store;
@@ -23,7 +22,7 @@ export class SelfPackage implements PackageLike {
     this.name = name;
   }
 
-  async ensure() {
+  async ensure(opts: EnsureOpts) {
     const rs = this.store.getState();
     this.store.dispatch(
       actions.packageGotVersionPrefix({
@@ -34,14 +33,18 @@ export class SelfPackage implements PackageLike {
     );
   }
 
-  async upgrade() {
+  async upgrade(opts: UpgradeOpts) {
+    const logger = this.makeLogger(opts.logger);
+
     try {
       await itchSetupLock.with(logger, "check for self-update", async () => {
         const { store } = this;
         const opts: RunItchSetupOpts = {
           logger,
           args: ["--upgrade"],
-          onMessage: this.onMessage,
+          onMessage: (msg: ISM) => {
+            this.onMessage(logger, msg);
+          },
         };
 
         this.stage("assess");
@@ -54,7 +57,7 @@ export class SelfPackage implements PackageLike {
     }
   }
 
-  private onMessage = (msg: ISM) => {
+  private onMessage(logger: Logger, msg: ISM) {
     if (msg.type === "no-update-available") {
       this.stage("idle");
     } else if (msg.type === "installing-update") {
@@ -81,11 +84,15 @@ export class SelfPackage implements PackageLike {
       );
     } else if (msg.type === "log") {
       const pp = msg.payload as ISM_Log;
-      logger.info(`[itch-setup] ${pp.message}`);
+      logger.info(`> ${pp.message}`);
     }
-  };
+  }
 
   private stage(stage: PackageState["stage"]) {
     this.store.dispatch(actions.packageStage({ name: this.name, stage }));
+  }
+
+  makeLogger(parentLogger: Logger): Logger {
+    return parentLogger.childWithName(`📦 self`);
   }
 }
