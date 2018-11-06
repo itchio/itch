@@ -211,6 +211,9 @@ async function refreshButlerd(store: Store) {
   );
 
   incarnation.client = new Client(endpoint);
+  incarnation.client.onWarning(msg => {
+    logger.warn(`(butlerd) ${msg}`);
+  });
 
   const versionInfo = await incarnation.client.call(messages.VersionGet, {});
   logger.info(

@@ -13,40 +13,42 @@ type ClientPromise = Promise<Client>;
 
 var clientPromises = new WeakMap<Store, ClientPromise>();
 
-async function makeClient(store: Store): Promise<Client> {
+async function makeClient(store: Store, parentLogger: Logger): Promise<Client> {
+  const logger = parentLogger.childWithName("butlerd/make-client");
+
   while (true) {
     const { endpoint } = store.getState().butlerd;
     if (endpoint) {
       const client = new Client(endpoint);
       client.onWarning(msg => {
-        console.warn(`(butlerd) ${msg}`);
+        logger.warn(`(butlerd) ${msg}`);
       });
       return client;
     }
 
-    console.log(`Waiting for butlerd endpoint...`);
+    logger.info(`Waiting for butlerd endpoint...`);
     await delay(1000);
   }
 }
 
-async function getClient(store: Store): Promise<Client> {
+async function getClient(store: Store, parentLogger: Logger): Promise<Client> {
   let p: ClientPromise;
   if (clientPromises.has(store)) {
     p = clientPromises.get(store);
   } else {
-    p = makeClient(store);
+    p = makeClient(store, parentLogger);
     clientPromises.set(store, p);
   }
 
   const client = await p;
   const currentEndpoint = store.getState().butlerd.endpoint;
   if (client.endpoint !== currentEndpoint) {
-    console.warn(
+    parentLogger.warn(
       `(butlerd) Endpoint changed (${client.endpoint.tcp.address} => ${
         currentEndpoint.tcp.address
       }), making fresh client`
     );
-    p = makeClient(store);
+    p = makeClient(store, parentLogger);
     clientPromises.set(store, p);
   }
   return p;
@@ -56,13 +58,15 @@ export type SetupFunc = (convo: Conversation) => void;
 
 export async function call<Params, Res>(
   store: Store,
+  logger: Logger,
   rc: RequestCreator<Params, Res>,
   params: Params,
   setup?: SetupFunc
 ): Promise<Res> {
-  const client = await getClient(store);
+  const client = await getClient(store, logger);
 
   try {
+    logger.debug(`🙏 ${rc({} as any)(client).method}`);
     return await client.call(rc, params, setup);
   } catch (e) {
     if (isCancelled(e)) {
@@ -70,16 +74,16 @@ export async function call<Params, Res>(
     } else if (isAborted(e)) {
       // nvm
     } else {
-      console.error(`Caught butler error:`);
+      logger.error(`Caught butler error:`);
       if (isInternalError(e)) {
         const ed = getRpcErrorData(e);
         if (ed) {
-          console.error(`butler version: ${ed.butlerVersion}`);
-          console.error(`Golang stack:\n${ed.stack}`);
+          logger.error(`butler version: ${ed.butlerVersion}`);
+          logger.error(`Golang stack:\n${ed.stack}`);
         }
-        console.error(`JavaScript stack: ${e.stack}`);
+        logger.error(`JavaScript stack: ${e.stack}`);
       } else {
-        console.error(`${e.message}`);
+        logger.error(`${e.message}`);
       }
     }
     throw e;

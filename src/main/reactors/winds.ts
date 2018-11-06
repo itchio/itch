@@ -143,8 +143,6 @@ function ensureWindowInsideDisplay(nativeWindow: Electron.BrowserWindow) {
 
   const displayBounds = display.bounds;
   let bounds = originalBounds;
-  logger.debug(`original bounds: ${JSON.stringify(originalBounds)}`);
-  logger.debug(` display bounds: ${JSON.stringify(displayBounds)}`);
 
   const displayLeft = displayBounds.x;
   if (bounds.x < displayLeft) {

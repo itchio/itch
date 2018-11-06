@@ -1,5 +1,5 @@
 import { actions } from "common/actions";
-import { messages } from "common/butlerd";
+import { messages, hookLogging } from "common/butlerd";
 import { Cave, CheckUpdateResult } from "common/butlerd/messages";
 import { Store } from "common/types";
 import { Watcher } from "common/util/watcher";
@@ -70,12 +70,14 @@ export default function(watcher: Watcher) {
         })
       );
 
-      const res = await mcall(messages.CheckUpdate, {}, conversation => {
-        conversation.on(messages.GameUpdateAvailable, async ({ update }) => {
+      const res = await mcall(messages.CheckUpdate, {}, convo => {
+        hookLogging(convo, logger);
+
+        convo.on(messages.GameUpdateAvailable, async ({ update }) => {
           store.dispatch(actions.gameUpdateAvailable({ update }));
         });
 
-        conversation.on(messages.Progress, async ({ progress }) => {
+        convo.on(messages.Progress, async ({ progress }) => {
           store.dispatch(
             actions.gameUpdateCheckStatus({
               checking: true,

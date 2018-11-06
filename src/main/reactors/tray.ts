@@ -2,6 +2,7 @@ import { Watcher } from "common/util/watcher";
 
 import { app, Menu } from "electron";
 const logger = mainLogger.child(__filename);
+import * as _ from "underscore";
 
 import { actions } from "common/actions";
 import {
@@ -57,14 +58,16 @@ async function refreshTray(store: Store) {
         limit: 5,
         sortBy: "lastTouched",
       });
-      let caveItems: MenuTemplate = [];
-      for (const cave of items) {
-        caveItems.push({
-          localizedLabel: cave.game.title,
-          click: () => store.dispatch(actions.queueLaunch({ cave })),
-        });
+      if (!_.isEmpty(items)) {
+        let caveItems: MenuTemplate = [];
+        for (const cave of items) {
+          caveItems.push({
+            localizedLabel: cave.game.title,
+            click: () => store.dispatch(actions.queueLaunch({ cave })),
+          });
+        }
+        append(caveItems);
       }
-      append(caveItems);
     } catch (e) {
       logger.warn(`Could not fetch caves: ${e.stack}`);
     }

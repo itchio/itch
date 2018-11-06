@@ -11,6 +11,9 @@ import { exit } from "main/os/exit";
 import { writeFile } from "main/os/sf";
 import path from "path";
 import querystring from "querystring";
+import { mainLogger } from "main/logger";
+
+const logger = mainLogger.child(__filename);
 
 enum ErrorType {
   UncaughtException,
@@ -92,18 +95,20 @@ ${log}
 
 async function handle(type: ErrorType, e: Error) {
   if (catching) {
-    console.log(`While catching: ${e.stack || e}`);
+    logger.error(`While catching: ${e.stack || e}`);
     return;
   }
   catching = true;
 
-  console.log(`crash-reporter reporting: ${errorTypeString(type)}: ${e.stack}`);
+  logger.error(
+    `crash-reporter reporting: ${errorTypeString(type)}: ${e.stack}`
+  );
   let res = await writeCrashLog(e);
   let log = res.log;
   let crashFile = res.crashFile;
 
   if (env.integrationTests) {
-    console.log(`Crash log written to ${res.crashFile}, bailing out`);
+    logger.error(`Crash log written to ${res.crashFile}, bailing out`);
     exit(1);
     return;
   }
@@ -165,19 +170,19 @@ async function handle(type: ErrorType, e: Error) {
 function makeHandler(type: ErrorType) {
   return (e: Error) => {
     if (isNetworkError(e)) {
-      console.error(`Uncaught network error: ${e.stack}`);
+      logger.warn(`Uncaught network error: ${e.stack}`);
       return;
     }
 
     if (isCancelled(e)) {
-      console.error(`Something was cancelled: ${e.stack}`);
+      logger.info(`Something was cancelled: ${e.stack}`);
       return;
     }
 
     handle(type, e)
       .catch(e2 => {
         // well, we tried.
-        console.log(`Error in crash-reporter (${type})\n${e2.stack}`);
+        logger.error(`Error in crash-reporter (${type})\n${e2.stack}`);
       })
       .then(() => {
         if (type === ErrorType.UncaughtException) {

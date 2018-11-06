@@ -3,12 +3,12 @@ import { mainLogPath } from "common/util/paths";
 import stream from "logrotate-stream";
 import { consoleSink } from "main/logger/console-sink";
 import path from "path";
-import * as fs from "fs";
+import * as mkdirp from "mkdirp";
 
 export function getLogStream(): NodeJS.WritableStream {
   const logPath = mainLogPath();
   try {
-    fs.mkdirSync(path.dirname(logPath));
+    mkdirp.sync(path.dirname(logPath));
   } catch (err) {
     if ((err as any).code === "EEXIST") {
       // good
