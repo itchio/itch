@@ -8,10 +8,13 @@ import { hookWithProps } from "renderer/hocs/hook";
 import { withTab } from "renderer/hocs/withTab";
 import { MeatProps } from "renderer/scenes/HubScene/Meats/types";
 import styled from "renderer/styles";
-import { T } from "renderer/t";
+import { T, _ } from "renderer/t";
 import FiltersContainer from "renderer/basics/FiltersContainer";
 import BrowserBar from "renderer/pages/BrowserPage/BrowserBar";
 import Page from "renderer/pages/common/Page";
+import { actions } from "common/actions";
+import { modals } from "common/modals";
+import { formatError } from "common/format/errors";
 
 const CrashyPage = Loadable({
   loader: () => import("renderer/pages/CrashyPage"),
@@ -225,8 +228,19 @@ class Meat extends React.PureComponent<Props, State> {
   };
 
   onReportIssue = () => {
-    // TODO: open window with issue reporting
-    window.alert("Should open modal!");
+    const { dispatch } = this.props;
+    const e = this.state.error;
+    dispatch(
+      actions.openModal(
+        modals.sendFeedback.make({
+          wind: "root",
+          title: _("prompt.show_error.generic_message"),
+          widgetParams: {
+            log: `While rendering ${this.props.url}, caught:\n${e.stack}`,
+          },
+        })
+      )
+    );
   };
 
   getConcrete(): React.ComponentType<MeatProps> {

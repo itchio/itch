@@ -27,7 +27,6 @@ const SaleMiniLabel = styled.div`
   font-weight: bold;
 `;
 
-// TODO: preload sales in butlerd
 export default ({ game }: { game: Game }) => (
   <>
     {game.sale ? (

@@ -149,11 +149,7 @@ class SecretSettings extends React.PureComponent<Props> {
   };
 
   onGPUFeatureStatus = () => {
-    // sic.: the typings are wrong, they have
-    // `getGpuFeatureStatus` but the correct casing is
-    // `getGPUFeatureStatus`. See https://github.com/electron/electron/issues/10788
-    // FIXME: remove workaround once upgrading to electron 1.8.x
-    const app = require("electron").remote.app as any;
+    const app = require("electron").remote.app;
     const data = app.getGPUFeatureStatus();
     const { dispatch } = this.props;
     dispatch(
