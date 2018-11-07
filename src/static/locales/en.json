@@ -414,6 +414,9 @@
   "prompt.install_location_remove.title": "Removing an install location",
   "prompt.launch.title": "Launch {{title}}",
   "prompt.launch.message": "Which do you want to open?",
+  "prompt.sla.title": "Software License Agreement",
+  "prompt.sla.message": "To use this software, you need to accept the terms of this license agreement:",
+  "prompt.sla.accept": "Accept terms",
   "prompt.blessing.message":
     "Administrator privileges are required for managing {{title}}",
   "prompt.blessing.detail": "Proceed only if you trust the author.",

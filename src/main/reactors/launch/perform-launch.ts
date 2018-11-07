@@ -80,6 +80,31 @@ export async function performLaunch(
               return { index };
             });
 
+            convo.on(messages.AcceptLicense, async ({ text }) => {
+              const res = await promisedModal(
+                store,
+                modals.naked.make({
+                  wind: "root",
+                  title: ["prompt.sla.title"],
+                  message: ["prompt.sla.message"],
+                  detail: text,
+                  widgetParams: {} as any,
+                  buttons: [
+                    {
+                      label: ["prompt.sla.accept"],
+                      action: actions.modalResponse({}),
+                    },
+                    "cancel",
+                  ],
+                })
+              );
+
+              if (res) {
+                return { accept: true };
+              }
+              return { accept: false };
+            });
+
             convo.on(messages.HTMLLaunch, async params => {
               return await performHTMLLaunch({
                 ctx,

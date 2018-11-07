@@ -53,7 +53,7 @@ describeFormula("butler", {
     if (env.isCanary) {
       return null;
     }
-    return "^15.0.0";
+    return "^15.0.1";
   },
   requiredAtStartup: true,
 });
