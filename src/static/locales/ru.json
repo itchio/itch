@@ -635,5 +635,8 @@
     "plan_install.select_upload": "Установить",
     "plan_install.select_install_location": "В папку",
     "plan_install.disk_space_required": "Необходимо дискового пространства",
-    "plan_install.disk_space_available": "Свободно дискового пространства"
+    "plan_install.disk_space_available": "Свободно дискового пространства",
+    "prompt.sla.title": "Лицензионное соглашение",
+    "prompt.sla.message": "Чтобы использовать данное ПО, необходимо принять условия лицензионного соглашения:",
+    "prompt.sla.accept": "Принять"
 }
