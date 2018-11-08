@@ -629,5 +629,8 @@
     "plan_install.select_install_location": "Al loko",
     "plan_install.disk_space_required": "Necesa diskospaco",
     "plan_install.disk_space_available": "Disponebla diskospaco",
-    "prompt.show_error.generic_message": "Io fuŝis"
+    "prompt.show_error.generic_message": "Io fuŝis",
+    "prompt.sla.title": "Interkonsento pri uzado",
+    "prompt.sla.message": "Por uzi ĉi tion programon, vi devas akcepti la kondiĉojn de la jenan interkonsenton pri uzado:",
+    "prompt.sla.accept": "Akcepti"
 }
