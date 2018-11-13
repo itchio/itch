@@ -162,5 +162,14 @@
     "game.install.visit_web_page": "웹사이트 방문",
     "grid.item.not_compatible": "이 플랫폼에서는 사용할 수 없습니다",
     "grid.item.revert_to_version": "다른 버전으로 전환...",
-    "prompt.logout_detail": "다운로드하고 있던 것들은 다시 로그인하기 전까지 일시 중지됩니다."
+    "prompt.logout_detail": "다운로드하고 있던 것들은 다시 로그인하기 전까지 일시 중지됩니다.",
+    "action.name.editor": "편집기",
+    "label.experimental": "실험적",
+    "collection.summary": "{{itemCount}} 개 항목의 컬렉션",
+    "download.reason.install": "설치",
+    "download.reason.revert": "다른 버전으로 변경",
+    "download.ongoing.install": "{{title}} 설치 중...",
+    "grid.item.running.clean": "정리 중...",
+    "grid.item.uninstall_request": "제거 및 재설치...",
+    "grid.item.manage": "관리"
 }
