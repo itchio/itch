@@ -13,7 +13,7 @@
     "grid.item.running": "",
     "login.action.login": "Log in",
     "login.action.register": "가입하기",
-    "login.action.reset_password": "",
+    "login.action.reset_password": "비밀번호 찾기",
     "login.field.password": "Password",
     "login.field.username": "",
     "login.status.dependency_check": "",
@@ -171,5 +171,8 @@
     "download.ongoing.install": "{{title}} 설치 중...",
     "grid.item.running.clean": "정리 중...",
     "grid.item.uninstall_request": "제거 및 재설치...",
-    "grid.item.manage": "관리"
+    "grid.item.manage": "관리",
+    "grid.item.version": "버전 {{version}}",
+    "table.column.name": "이름",
+    "table.column.installed_size": "크기"
 }
