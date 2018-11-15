@@ -485,5 +485,9 @@
     "grid.item.open_page": "Seite öffnen",
     "grid.item.not_available": "Nicht verfügbar",
     "grid.item.install_title": "{{title}} installieren",
-    "grid.item.manage": "Verwalten"
+    "grid.item.manage": "Verwalten",
+    "prompt.confirm_quit.title": "Willst du wirklich beenden?",
+    "prompt.confirm_quit.message": "Alle ausgeführten Spiele und Programme werden geschlossen.",
+    "prompt.action.quit_and_close_all": " Beenden und alles schließen",
+    "prompt.action.back": "Zurück\n"
 }
