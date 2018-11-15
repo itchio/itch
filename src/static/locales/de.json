@@ -484,5 +484,6 @@
     "grid.item.launch_title": "{{title}} starten",
     "grid.item.open_page": "Seite öffnen",
     "grid.item.not_available": "Nicht verfügbar",
-    "grid.item.install_title": "{{title}} installieren"
+    "grid.item.install_title": "{{title}} installieren",
+    "grid.item.manage": "Verwalten"
 }
