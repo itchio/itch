@@ -158,7 +158,7 @@
     "prompt.install_location_not_empty.message": "Les emplacements d'installation peuvent être supprimés seulement si tout leur contenu a précédemment été désinstallé.",
     "prompt.install_location_not_empty.show_contents": "Afficher le contenu",
     "prompt.install_location_not_empty.title": "Cet emplacement n'est pas vide",
-    "prompt.install_location_remove.detail": "Tous les éléments installés dans {{location}} seront désinstallés.",
+    "prompt.install_location_remove.detail": "Les éléments installés dans {{location}} ne seront plus gérés par l'application.",
     "prompt.install_location_remove.message": "Êtes-vous sûr(e) de vouloir supprimer ce dossier d'installation ?",
     "prompt.install_location_remove.title": "Suppression d'un dossier d'installation",
     "prompt.last_remaining_install_location.content": "Cet emplacement d'installation est le dernier restant. Il ne peut être supprimé tant qu'un autre n'aura pas été ajouté.",
@@ -631,5 +631,8 @@
     "prompt.confirm_quit.message": "Tous les jeux et applications en cours vont être fermés.",
     "prompt.action.quit_and_close_all": "Quitter et tout fermer",
     "plan_install.select_upload": "Installer",
-    "plan_install.disk_space_available": "Espace disque disponible"
+    "plan_install.disk_space_available": "Espace disque disponible",
+    "prompt.show_error.generic_message": "Une erreur est survenue",
+    "plan_install.select_install_location": "Dans le dossier",
+    "plan_install.disk_space_required": "Espace disque nécessaire"
 }
