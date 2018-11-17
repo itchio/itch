@@ -175,5 +175,6 @@
     "grid.item.version": "버전 {{version}}",
     "table.column.name": "이름",
     "table.column.installed_size": "크기",
-    "action.name.play": "바로 시작"
+    "action.name.play": "바로 시작",
+    "docs.learn_more": "더 알아보기"
 }
