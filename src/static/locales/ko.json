@@ -174,5 +174,6 @@
     "grid.item.manage": "관리",
     "grid.item.version": "버전 {{version}}",
     "table.column.name": "이름",
-    "table.column.installed_size": "크기"
+    "table.column.installed_size": "크기",
+    "action.name.play": "바로 시작"
 }
