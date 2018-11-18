@@ -489,5 +489,6 @@
     "menu.file.close_tabs_below": "Zamknij zakładki poniżej",
     "web.context_menu.cut": "Wytnij",
     "web.context_menu.copy": "Kopiuj",
-    "web.context_menu.paste": "Wklej"
+    "web.context_menu.paste": "Wklej",
+    "download.reason.install": "zainstalować"
 }
