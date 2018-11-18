@@ -476,5 +476,6 @@
     "status.downloads.updates_available": "Aktualizacje dostępne",
     "status.downloads.update_all": "Aktualizuj wszystko",
     "install_location.property.size_on_disk": "{{size}} na dysku",
-    "butlerd.codes.9000": "Brak połączenia z internetem."
+    "butlerd.codes.9000": "Brak połączenia z internetem.",
+    "grid.item.open_file_location.osx": "Pokaż w Wyszukiwarce"
 }
