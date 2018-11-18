@@ -481,5 +481,8 @@
     "grid.item.status.installed": "Zainstalowane",
     "prompt.action.continue": "Kontynuuj",
     "prompt.uninstall_error.title": "Błąd deinstalacji",
-    "web.context_menu.open_in_new_tab": "Otwórz w nowej karcie"
+    "web.context_menu.open_in_new_tab": "Otwórz w nowej karcie",
+    "login.action.retry_setup": "Ponów instalację",
+    "new_tab.devlogs": "Logi dewelopera",
+    "prompt.uninstall_error.message": "Odinstalowywanie nie powiodło się. Usunąć pozycję? "
 }
