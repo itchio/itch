@@ -92,7 +92,7 @@
     "new_tab.twitter": "Popularne na Twitterze",
     "notification.see_you_soon.message": "itch działa teraz w tle. Użyj menu, by zamknąć aplikację.",
     "notification.see_you_soon.title": "Do zobaczenia wkrótce!",
-    "onboarding.caved.prealpha_reminder": "Pamiętaj, że projekt jest jeszcze we wczesnej fazie rozwoju!",
+    "onboarding.caved.prealpha_reminder": "Pamiętaj, że projekt jest jeszcze we wczesnej fazie rozwoju",
     "onboarding.caved.title_pick": "Ciesz się wyborem",
     "onboarding.caved.troubleshoot_advice": "Jeśli coś się popsuje, kliknij {{report}} by to zgłosić lub {{probe}} by dowiedzieć się więcej o problemie.",
     "onboarding.caved.usage": "Z łatwością pobieraj, instaluj i uruchamiaj gry.",
@@ -446,5 +446,8 @@
     "dashboard.game_stats.downloads": "Pobrania",
     "dashboard.game_stats.purchases": "Sprzedano",
     "duration.seconds": "{{x}} sekund(y)",
-    "grid.item_count": "{{count}} przedmiot(ów)"
+    "grid.item_count": "{{count}} przedmiot(ów)",
+    "grid.criterion.search": "Wyszukaj...",
+    "grid.item.install_title": "Zainstaluj {{title}}",
+    "web.context_menu.copy_link": "Kopiuj link"
 }
