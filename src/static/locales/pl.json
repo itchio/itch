@@ -441,5 +441,8 @@
     "collection.item_count": "{{itemCount}} przedmiotów",
     "collections.empty_sub": "Przeglądaj gry i dodawaj je do nowych kolekcji!",
     "download.ongoing.install": "Instalowanie {{title}}…",
-    "docs.how_to_help": "Jak mogę pomóc?"
+    "docs.how_to_help": "Jak mogę pomóc?",
+    "dashboard.game_stats.views": "Wyświetlenia",
+    "dashboard.game_stats.downloads": "Pobrania",
+    "dashboard.game_stats.purchases": "Sprzedano"
 }
