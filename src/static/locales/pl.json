@@ -444,5 +444,7 @@
     "docs.how_to_help": "Jak mogę pomóc?",
     "dashboard.game_stats.views": "Wyświetlenia",
     "dashboard.game_stats.downloads": "Pobrania",
-    "dashboard.game_stats.purchases": "Sprzedano"
+    "dashboard.game_stats.purchases": "Sprzedano",
+    "duration.seconds": "{{x}} sekund(y)",
+    "grid.item_count": "{{count}} przedmiot(ów)"
 }
