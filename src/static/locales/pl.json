@@ -104,7 +104,7 @@
     "onboarding.dashboard.mission_statement": "Poczyniliśmy wszelkie starania, by uczynić to jak najwygodniejszym.",
     "onboarding.dashboard.selling_points": "Szybki start i jak najmniej przeszkód.",
     "onboarding.dashboard.welcome_home": "Witaj w domu",
-    "onboarding.owned.batteries_included": "Specjalnie dla Ciebie wybraliśmy kilka kolekcji gier, w które będziesz mógł zagrać!",
+    "onboarding.owned.batteries_included": "Specjalnie dla Ciebie wybraliśmy kilka kolekcji gier, w które będziesz mógł zagrać.",
     "onboarding.owned.navigation_hint": "Kliknij dowolny przycisk po lewej by przejść do innej sekcji aplikacji",
     "onboarding.owned.reassuring_comment": "Twoja biblioteka jest póki co pusta, ale bez obaw!",
     "onboarding.owned.title_warm_welcome": "Hurra!",
@@ -477,5 +477,9 @@
     "status.downloads.update_all": "Aktualizuj wszystko",
     "install_location.property.size_on_disk": "{{size}} na dysku",
     "butlerd.codes.9000": "Brak połączenia z internetem.",
-    "grid.item.open_file_location.osx": "Pokaż w Wyszukiwarce"
+    "grid.item.open_file_location.osx": "Pokaż w Wyszukiwarce",
+    "grid.item.status.installed": "Zainstalowane",
+    "prompt.action.continue": "Kontynuuj",
+    "prompt.uninstall_error.title": "Błąd deinstalacji",
+    "web.context_menu.open_in_new_tab": "Otwórz w nowej karcie"
 }
