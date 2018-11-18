@@ -486,5 +486,8 @@
     "new_tab.devlogs": "Logi dewelopera",
     "prompt.uninstall_error.message": "Odinstalowywanie nie powiodło się. Usunąć pozycję? ",
     "menu.file.close_other_tabs": "Zamknij inne karty",
-    "menu.file.close_tabs_below": "Zamknij zakładki poniżej"
+    "menu.file.close_tabs_below": "Zamknij zakładki poniżej",
+    "web.context_menu.cut": "Wytnij",
+    "web.context_menu.copy": "Kopiuj",
+    "web.context_menu.paste": "Wklej"
 }
