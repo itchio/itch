@@ -514,7 +514,7 @@
     "grid.item.running.prepare": "Préparation...",
     "login.status.finalizing_installation": "Finalisation de l'installation…",
     "grid.really_empty_state.explanation": "... pour le moment !",
-    "grid.item.queueing": "En file d'attente ...",
+    "grid.item.queueing": "En file d'attente…",
     "grid.item.running.clean": "Nettoyage...",
     "preferences.install_location.disk_usage": "Utilisation du disque",
     "preferences.install_location.size_used_by_games": "{{installedSize}} utilisé par les jeux",
@@ -634,5 +634,6 @@
     "plan_install.disk_space_available": "Espace disque disponible",
     "prompt.show_error.generic_message": "Une erreur est survenue",
     "plan_install.select_install_location": "Dans le dossier",
-    "plan_install.disk_space_required": "Espace disque nécessaire"
+    "plan_install.disk_space_required": "Espace disque nécessaire",
+    "prompt.sla.title": "Accord de Licence Logicielle"
 }
