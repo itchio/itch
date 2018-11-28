@@ -102,5 +102,15 @@
     "grid.item.open_debug_log": "लॉग्स को देखें...",
     "grid.item.verify_integrity": "अखंडता की पुष्टि करें",
     "grid.item.revert_to_version": "दूसरे संस्करण पर स्विच करें ...",
-    "grid.item.view_details": "विवरण देखें..."
+    "grid.item.view_details": "विवरण देखें...",
+    "grid.item.open_file_location.windows": "एक्सप्लोरर में फ़ोल्डर खोलें",
+    "grid.item.open_file_location.linux": "फ़ाइल मैनेजर में दिखाएं",
+    "grid.item.open_file_location.osx": "फ़ाइंडर में दिखाएँ",
+    "grid.item.donate": "निर्माता को टिप दें",
+    "grid.item.donate_again": "निर्माता फिर से टिप दें!",
+    "grid.item.downloads_paused": "डाउनलोड रुका है",
+    "grid.item.running.prepare": "तैयार कर रहे हैं…",
+    "grid.item.running.clean": "सफाई हो रहा है…",
+    "grid.item.uninstall_request": "अनइंस्टॉल करें या पुनः इंस्टॉल करें …",
+    "grid.item.manage": "मेनेज करें"
 }
