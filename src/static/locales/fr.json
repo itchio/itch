@@ -635,5 +635,6 @@
     "prompt.show_error.generic_message": "Une erreur est survenue",
     "plan_install.select_install_location": "Dans le dossier",
     "plan_install.disk_space_required": "Espace disque nécessaire",
-    "prompt.sla.title": "Accord de Licence Logicielle"
+    "prompt.sla.title": "Accord de Licence Logicielle",
+    "prompt.sla.accept": "Accepter les conditions d'utilisation"
 }
