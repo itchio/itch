@@ -132,5 +132,6 @@
     "grid.item.view_details": "Докладніше...",
     "grid.item.donate": "Підтримати розробника",
     "grid.item.donate_again": "Підтримати розробника ще раз!",
-    "grid.item.downloads_paused": "Завантаження призупинено"
+    "grid.item.downloads_paused": "Завантаження призупинено",
+    "grid.item.prioritize_download": "Підвищити пріоритет"
 }
