@@ -96,5 +96,6 @@
     "download.reason.install": "для встановлення",
     "download.reason.update": "оновити до останньої версії",
     "grid.item.uninstalling": "Видаляється...",
-    "grid.item.buy_now": "Придбати зараз"
+    "grid.item.buy_now": "Придбати зараз",
+    "action.name.play": "Грати"
 }
