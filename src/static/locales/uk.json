@@ -133,5 +133,9 @@
     "grid.item.donate": "Підтримати розробника",
     "grid.item.donate_again": "Підтримати розробника ще раз!",
     "grid.item.downloads_paused": "Завантаження призупинено",
-    "grid.item.prioritize_download": "Підвищити пріоритет"
+    "grid.item.prioritize_download": "Підвищити пріоритет",
+    "grid.item.discard_download": "Відмінити завантаження",
+    "grid.item.developer": "Розробник",
+    "grid.item.queueing": "Очікування черги...",
+    "grid.item.not_compatible": "Відсутній для даної платформи"
 }
