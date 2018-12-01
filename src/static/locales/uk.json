@@ -97,5 +97,20 @@
     "download.reason.update": "оновити до останньої версії",
     "grid.item.uninstalling": "Видаляється...",
     "grid.item.buy_now": "Придбати зараз",
-    "action.name.play": "Грати"
+    "action.name.play": "Грати",
+    "collections.empty_sub": "Перегляньте кілька ігор та додайте їх до нової колекції!",
+    "download.reason.revert": "перейти на іншу версію",
+    "download.reason.heal": "перевірити і виправити",
+    "download.ongoing.install": "Встановлення {{title}}…",
+    "download.ongoing.update": "Оновлення {{title}}…",
+    "download.ongoing.reinstall": "Повторне встановлення {{title}}…",
+    "download.outcome.installed": "встановлено",
+    "download.outcome.updated": "оновлено до останньої версії",
+    "download.outcome.reinstalled": "перевстановлено",
+    "duration.hours": "{{x}} годин",
+    "duration.minute": "хвилина або менше",
+    "duration.minutes": "{{x}} хвилин",
+    "duration.seconds": "{{x}} секунд",
+    "game.install.could_not_launch.message": "Повідомлення що ми отримали:",
+    "game.install.could_not_launch.detail": "Відправте нам звіт - найкращий спосіб переконатися, що це буде виправлено!"
 }
