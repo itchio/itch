@@ -489,5 +489,6 @@
     "prompt.confirm_quit.title": "Willst du wirklich beenden?",
     "prompt.confirm_quit.message": "Alle ausgeführten Spiele und Programme werden geschlossen.",
     "prompt.action.quit_and_close_all": " Beenden und alles schließen",
-    "prompt.action.back": "Zurück\n"
+    "prompt.action.back": "Zurück\n",
+    "grid.item.discard_download": "Download abbrechen"
 }
