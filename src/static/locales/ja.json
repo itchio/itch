@@ -384,5 +384,7 @@
     "send_feedback.consent.include_in_report": "この情報をレポートに含める",
     "collection.item_count": "{{itemCount}}個のアイテム",
     "send_feedback.send.sending": "送信中…",
-    "plan_install.disk_space_available": "使用可能なディスクスペース"
+    "plan_install.disk_space_available": "使用可能なディスクスペース",
+    "docs.how_to_help": "助けが必要ですか？",
+    "dashboard.game_stats.views": "視聴回数"
 }
