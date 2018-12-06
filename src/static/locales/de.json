@@ -514,5 +514,10 @@
     "prompt.launch.title": "Starte {{title}}",
     "prompt.launch.message": "Was willst du öffnen?",
     "prompt.manage_game.title": "Verwalte {{title}}",
-    "prompt.revert.version": "Version {{version}}"
+    "prompt.revert.version": "Version {{version}}",
+    "prompt.revert.no_other_version": "Keine andere Version verfügbar.\n",
+    "prompt.self_update_ready.short": "Neue Version verfügbar\n",
+    "search.results.game.no_description": "Keine Beschreibung",
+    "sidebar.explore": " Erkunden",
+    "sidebar.library": " Bibliothek"
 }
