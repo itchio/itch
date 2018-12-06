@@ -513,5 +513,6 @@
     "preferences.advanced.check_game_updates": "Nach Spiel-Updates suchen",
     "prompt.launch.title": "Starte {{title}}",
     "prompt.launch.message": "Was willst du öffnen?",
-    "prompt.manage_game.title": "Verwalte {{title}}"
+    "prompt.manage_game.title": "Verwalte {{title}}",
+    "prompt.revert.version": "Version {{version}}"
 }
