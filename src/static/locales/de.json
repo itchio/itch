@@ -370,7 +370,7 @@
     "download.reason.heal": "zum Verifizieren und Reparieren",
     "game.install.could_not_launch.detail": "Seine letzten Worte waren: {{error}}",
     "grid.item.advanced": "Erweitert...",
-    "prompt.install_error.title": "Während der Installation ist ein Fehler aufgetreten:",
+    "prompt.install_error.title": "Während der Installation ist ein Fehler aufgetreten",
     "prompt.install_error.find_upload": "Während der Suche nach einem Download: {{message}}",
     "sidebar.aw_snap": "Ups!",
     "usage_stats.description.physical_game": "Ein physisches Spiel",
@@ -390,7 +390,7 @@
     "setup.error_dialog.title": "Etwas ist fehlgeschlagen",
     "setup.window.welcome": "Willkommen beim {{app_name}} Installer! Schnapp dir ein Getränk, wähle ein Installationsverzeichnis und fahre fort.",
     "grid.item.verify_integrity": "Integrität prüfen",
-    "grid.item.revert_to_version": "Zurücksetzen auf Version...",
+    "grid.item.revert_to_version": "Wechseln auf eine andere Version...",
     "grid.item.view_details": "Details anzeigen...",
     "prompt.revert.title": "Ändere {{title}} auf eine andere Version",
     "prompt.revert.message": "Zurücksetzen von Build {{buildId}} auf Build:",
@@ -490,5 +490,14 @@
     "prompt.confirm_quit.message": "Alle ausgeführten Spiele und Programme werden geschlossen.",
     "prompt.action.quit_and_close_all": " Beenden und alles schließen",
     "prompt.action.back": "Zurück\n",
-    "grid.item.discard_download": "Download abbrechen"
+    "grid.item.discard_download": "Download abbrechen",
+    "table.column.installed": "Installiert",
+    "table.column.powered_by": "Unterstützt durch {{name}}",
+    "login.action.hide_password": "Passwort verstecken",
+    "login.status.antivirus_warning": "Antivirus Programme könnten Itch behindern",
+    "prereq.status.pending": "Vorbereiten...",
+    "preferences.scan_install_locations": "Durchsuche Installationsverzeichnis nach Spielen",
+    "preferences.behavior.enable_tabs": "Aktiviere Tabs",
+    "preferences.advanced.prefer_optimized_patches": "Bevorzuge optimierte Patches",
+    "pick_update_upload.buttons.skip_update": "Aktualisierung überspringen"
 }
