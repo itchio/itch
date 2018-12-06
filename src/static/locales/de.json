@@ -499,5 +499,16 @@
     "preferences.scan_install_locations": "Durchsuche Installationsverzeichnis nach Spielen",
     "preferences.behavior.enable_tabs": "Aktiviere Tabs",
     "preferences.advanced.prefer_optimized_patches": "Bevorzuge optimierte Patches",
-    "pick_update_upload.buttons.skip_update": "Aktualisierung überspringen"
+    "pick_update_upload.buttons.skip_update": "Aktualisierung überspringen",
+    "browser.reenable": "Wieder aktivieren",
+    "login.action.reveal_password": "Passwort anzeigen",
+    "login.status.finalizing_installation": "Installation wird abgeschlossen...",
+    "preferences.install_location.navigate": "Den Inhalt dieses Ortes anzeigen",
+    "preferences.install_location.size_used_by_games": "{{installedSize}} Speicherbedarf der Spiele",
+    "preferences.install_location.free_of_total": "{{freeSize}} von {{totalSize}} frei",
+    "preferences.scan_install_locations.import_items": "{{numItems}} Elemente importieren",
+    "preferences.scan_install_locations.items_imported": "{{numImportedItems}} Elemente wurden erfolgreich importiert",
+    "preferences.scan_install_locations.message": "Folgende Elemente können importiert werden:",
+    "preferences.scan_install_locations.no_items_found": "Keine weiteren Elemente im Installationsverzeichnis gefunden",
+    "preferences.advanced.check_game_updates": "Nach Spiel-Updates suchen"
 }
