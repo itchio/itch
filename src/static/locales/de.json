@@ -510,5 +510,8 @@
     "preferences.scan_install_locations.items_imported": "{{numImportedItems}} Elemente wurden erfolgreich importiert",
     "preferences.scan_install_locations.message": "Folgende Elemente können importiert werden:",
     "preferences.scan_install_locations.no_items_found": "Keine weiteren Elemente im Installationsverzeichnis gefunden",
-    "preferences.advanced.check_game_updates": "Nach Spiel-Updates suchen"
+    "preferences.advanced.check_game_updates": "Nach Spiel-Updates suchen",
+    "prompt.launch.title": "Starte {{title}}",
+    "prompt.launch.message": "Was willst du öffnen?",
+    "prompt.manage_game.title": "Verwalte {{title}}"
 }
