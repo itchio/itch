@@ -390,5 +390,6 @@
     "dashboard.game_stats.downloads": "ダウンロード",
     "dashboard.game_stats.purchases": "購入したアイテム",
     "game.install.could_not_launch.message": "エラーメッセージ:{{errorMessage}}",
-    "grid.criterion.filter_by": "絞り込み："
+    "grid.criterion.filter_by": "絞り込み：",
+    "grid.filters.options.owned": "所有"
 }
