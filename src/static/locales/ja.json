@@ -386,5 +386,9 @@
     "send_feedback.send.sending": "送信中…",
     "plan_install.disk_space_available": "使用可能なディスクスペース",
     "docs.how_to_help": "助けが必要ですか？",
-    "dashboard.game_stats.views": "視聴回数"
+    "dashboard.game_stats.views": "視聴回数",
+    "dashboard.game_stats.downloads": "ダウンロード",
+    "dashboard.game_stats.purchases": "購入したアイテム",
+    "game.install.could_not_launch.message": "エラーメッセージ:{{errorMessage}}",
+    "grid.criterion.filter_by": "絞り込み："
 }
