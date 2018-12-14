@@ -601,5 +601,11 @@
     "plan_install.disk_space_available": "可用磁盘空间",
     "empty_state.nothing_to_see_here": "这里空空如也",
     "collection.item_count": "{{itemCount}} 个项目",
-    "dashboard.game_stats.views": "浏览数"
+    "dashboard.game_stats.views": "浏览数",
+    "table.column.powered_by": "提供方：",
+    "prompt.sla.title": "软件许可协议",
+    "prompt.sla.message": "使用此软件必须接受此软件许可协议",
+    "prompt.sla.accept": "接受协议",
+    "sidebar.library": "游戏库",
+    "status.installing_game.cancelled": "{{title}} 已取消安装"
 }
