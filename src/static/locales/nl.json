@@ -224,7 +224,7 @@
     "login.remembered_session.last_connected": "Laatst verbonden",
     "login.two_factor.title": "Twee-stap verificatie",
     "login.two_factor.as_user": "Inloggen als {{username}}",
-    "login.two_factor.enter_code": "Vul alstublieft de code die u op uw authenticator ziet om verder te gaan met inloggen",
+    "login.two_factor.enter_code": "Vul de code op uw authenticator in om verder te gaan met inloggen.",
     "login.two_factor.verification_code_label": "Verificatie code",
     "login.two_factor.learn_more": "Lees meer over twee-stap verificatie",
     "grid.criterion.search": "Zoeken...",
@@ -239,7 +239,7 @@
     "collection_grid.item.updated_at": "Laatst geupdate {{time_ago}}",
     "prereq.explanation": "Er moeten een aantal pakketten geïnstalleerd worden voordat {{title}} correct kan werken.",
     "prereq.status.downloading": "Downloaden…",
-    "prereq.status.extracting": "Uitpakken...",
+    "prereq.status.extracting": "Uitpakken…",
     "prereq.status.ready": "Gereed voor installatie",
     "prereq.status.installing": "Installeren… (Dit kan enkele minuten duren)",
     "prereq.status.done": "Klaar!",
@@ -250,7 +250,7 @@
     "toast.actions.learn_more": "Leer meer",
     "toast.actions.report": "Stuur feedback om itch te helpen verbeteren",
     "new_tab.titles.buttons": "Probeer dit eens:",
-    "new_tab.random": "Bekijk iets willekeurigs",
+    "new_tab.random": "Willekeurige spellen",
     "new_tab.titles.browser_placeholder": "Vul een webadres in",
     "new_tab.top_sellers": "Best verkocht",
     "new_tab.twitter": "Populair op Twitter",
@@ -299,5 +299,7 @@
     "grid.item.not_compatible": "Niet beschikbaar op dit platform",
     "grid.item.not_available": "Niet beschikbaar",
     "grid.item.open_title": "Open {{title}}",
-    "grid.item.open_file_location.windows": "Open de map in verkenner"
+    "grid.item.open_file_location.windows": "Open de map in verkenner",
+    "menu.file.close_other_tabs": "Andere tabbladen sluiten",
+    "menu.file.close_tabs_below": "Onderstaande tabbladen sluiten"
 }
