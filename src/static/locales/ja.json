@@ -357,7 +357,7 @@
     "download.reason.revert": "他のバージョンに切り替える",
     "collection.summary": "コレクションに {{itemCount}} 個のアイテム",
     "collections.empty": "現在コレクションはありません",
-    "collections.empty_sub": "ゲームを見つけてアイテムを新しいコレクションに追加する",
+    "collections.empty_sub": "ゲームを探してコレクションに追加しましょう！",
     "grid.item.advanced": "詳細",
     "grid.item.revert_to_version": "他のバージョンに切り替える",
     "grid.item.view_details": "詳細を表示",
@@ -378,5 +378,18 @@
     "setup.action.install": "今すぐインストールします",
     "setup.status.done": "完了！",
     "setup.error_dialog.title": "問題がありました",
-    "web.context_menu.copy": "コピー"
+    "web.context_menu.copy": "コピー",
+    "grid.filters.options.installed": "インストール済み",
+    "grid.item_count": "{{count}}個",
+    "send_feedback.consent.include_in_report": "この情報をレポートに含める",
+    "collection.item_count": "{{itemCount}}個のアイテム",
+    "send_feedback.send.sending": "送信中…",
+    "plan_install.disk_space_available": "使用可能なディスクスペース",
+    "docs.how_to_help": "助けが必要ですか？",
+    "dashboard.game_stats.views": "視聴回数",
+    "dashboard.game_stats.downloads": "ダウンロード",
+    "dashboard.game_stats.purchases": "購入したアイテム",
+    "game.install.could_not_launch.message": "エラーメッセージ:{{errorMessage}}",
+    "grid.criterion.filter_by": "絞り込み：",
+    "grid.filters.options.owned": "所有"
 }

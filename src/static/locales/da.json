@@ -206,7 +206,7 @@
     "prompt.self_update_ready.action.restart": "Genstart nu",
     "prompt.self_update_ready.action.snooze": "Udsæt",
     "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Udgivet {{pubDate}}.",
-    "prompt.self_update_ready.message": "Vælg \"Genstart nu\" for at nyde fordelene ved opdateringen med det samme.\n\nHvis du ikke gør det, vil opdateringen være klar og aktiv næste gang du genstarter programmet",
+    "prompt.self_update_ready.message": "Vælg \"Genstart nu\" for at få opdateringen med det samme.\n\nHvis du ikke gør det, vil opdateringen være klar og aktiv næste gang du genstarter programmet",
     "prompt.self_update_ready.title": "En opdatering er hentet og installéret",
     "prompt.uninstall.cancel": "Annullér",
     "prompt.uninstall.message": "Er du sikker på at du vil afinstallére {{title}}?",
@@ -287,5 +287,6 @@
     "grid.item.update": "Opdater",
     "game.install.could_not_launch.missing_jre": "Der kræves en Java version der ikke blev fundet på dit system",
     "grid.criterion.search": "Søg...",
-    "grid.criterion.only_compatible": "Kun kompatible"
+    "grid.criterion.only_compatible": "Kun kompatible",
+    "action.name.editor": "Redaktør / Editor"
 }

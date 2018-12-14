@@ -622,5 +622,8 @@
     "plan_install.select_upload": "Инсталиране",
     "plan_install.select_install_location": "В папка",
     "plan_install.disk_space_required": "Необходимо дисково пространство",
-    "plan_install.disk_space_available": "Свободно дисково пространство"
+    "plan_install.disk_space_available": "Свободно дисково пространство",
+    "prompt.sla.title": "Лицензионно споразумение",
+    "prompt.sla.message": "За да използвате този софтуер, трябва да приемете условията на това лицензионно споразумение:",
+    "prompt.sla.accept": "Приемане"
 }
