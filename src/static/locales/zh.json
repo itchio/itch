@@ -599,5 +599,7 @@
     "plan_install.select_upload": "安装",
     "plan_install.disk_space_required": "需要磁盘空间",
     "plan_install.disk_space_available": "可用磁盘空间",
-    "empty_state.nothing_to_see_here": "这里空空如也"
+    "empty_state.nothing_to_see_here": "这里空空如也",
+    "collection.item_count": "{{itemCount}} 个项目",
+    "dashboard.game_stats.views": "浏览数"
 }
