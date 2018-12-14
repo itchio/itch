@@ -81,7 +81,7 @@
     "preferences.install_location.path": "路径",
     "preferences.install_location.stop_size_computation": "停止计算文件夹大小",
     "preferences.install_location.used_space": "已使用空间",
-    "preferences.install_locations": "下载路径",
+    "preferences.install_locations": "安装路径",
     "preferences.language": "语言",
     "preferences.language.auto": "系统语言 ({{language}})",
     "preferences.language.get_involved": "帮助将 {{name}} 翻译成你的语言!",
