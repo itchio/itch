@@ -36,7 +36,7 @@
     "menu.edit.edit": "Bewerken",
     "menu.edit.paste": "Plakken",
     "menu.edit.select_all": "Alles selecteren",
-    "menu.file.close_window": "Sluit scherm",
+    "menu.file.close_window": "Sluit venster",
     "menu.file.file": "Bestand",
     "menu.file.preferences": "Voorkeuren…",
     "menu.file.quit": "Sluiten",
@@ -196,9 +196,9 @@
     "login.action.show_form": "Log in als iemand anders",
     "login.messages.welcome_back-halloween": "Wie durft mijn dutje te verstoren?",
     "grid.item.open_demo": "Start demo",
-    "menu.file.new_tab": "Nieuwe Tab",
-    "menu.file.close_tab": "Tab Sluiten",
-    "menu.file.close_all_tabs": "Alle Tabs Sluiten",
+    "menu.file.new_tab": "Nieuw tabblad",
+    "menu.file.close_tab": "Tabblad sluiten",
+    "menu.file.close_all_tabs": "Alle tabbladen sluiten",
     "menu.help.about": "Over",
     "menu.view.downloads": "Downloads",
     "menu.view.history": "Geschiedenis",
@@ -298,5 +298,6 @@
     "grid.item.open_page": "Open pagina",
     "grid.item.not_compatible": "Niet beschikbaar op dit platform",
     "grid.item.not_available": "Niet beschikbaar",
-    "grid.item.open_title": "Open {{title}}"
+    "grid.item.open_title": "Open {{title}}",
+    "grid.item.open_file_location.windows": "Open de map in verkenner"
 }
