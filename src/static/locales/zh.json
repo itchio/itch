@@ -122,7 +122,7 @@
     "sidebar.broken": "故障",
     "sidebar.dashboard": "我的作品",
     "sidebar.getting_started": "起步",
-    "sidebar.installed": "已安装",
+    "sidebar.installed": "已安装的项目",
     "sidebar.owned": "已拥有",
     "status.checking": "正在检查更新…",
     "status.downloaded": "单击以重启并应用更新！",
@@ -607,5 +607,11 @@
     "prompt.sla.message": "使用此软件必须接受此软件许可协议",
     "prompt.sla.accept": "接受协议",
     "sidebar.library": "游戏库",
-    "status.installing_game.cancelled": "{{title}} 已取消安装"
+    "status.installing_game.cancelled": "{{title}} 已取消安装",
+    "butlerd.codes.3000": "上传文件的打包方式与 itch.io 应用不兼容。",
+    "sort_by.collections.updated_at": "已更新",
+    "send_feedback.reminders.include_reproduce_steps": "请尽可能描述重现问题的步骤。",
+    "send_feedback.reminders.mention_itchio_account": "必要时，请提供你的 itch.io 用户名和/或出现问题的页面。",
+    "plan_install.computing_space_requirements": "正在计算所需空间",
+    "plan_install.select_install_location": "目标位置"
 }
