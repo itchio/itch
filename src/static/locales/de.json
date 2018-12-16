@@ -519,5 +519,6 @@
     "prompt.self_update_ready.short": "Neue Version verfügbar\n",
     "search.results.game.no_description": "Keine Beschreibung",
     "sidebar.explore": " Erkunden",
-    "sidebar.library": " Bibliothek"
+    "sidebar.library": " Bibliothek",
+    "prompt.manage_game.installed_uploads": "Folgendes ist Installiert:"
 }
