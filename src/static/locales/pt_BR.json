@@ -456,5 +456,6 @@
     "preferences.scan_install_locations.looking_for_games": "Procurando por jogos...",
     "preferences.scan_install_locations.message": "Os seguintes itens podem ser importados:",
     "preferences.advanced.prefer_optimized_patches": "Preferir arquivos adicionais otimizados",
-    "preferences.advanced.disable_hardware_acceleration": "Desative acelerador de hardware (resolve alguns erros no Linux)"
+    "preferences.advanced.disable_hardware_acceleration": "Desative acelerador de hardware (resolve alguns erros no Linux)",
+    "grid.item.install_title": "Instalar {{title}}"
 }
