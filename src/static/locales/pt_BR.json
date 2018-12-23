@@ -468,5 +468,6 @@
     "grid.item.open_title": "Abrir {{title}}",
     "table.column.installed": "Instalado",
     "table.column.last_played": "Jogado pela ultima vez",
-    "sandbox.setup.title": "itch.io modo sandbox"
+    "sandbox.setup.title": "itch.io modo sandbox",
+    "sandbox.setup.windows.detail": "Depois de clicar em 'Prosseguir', uma janela pode aparecer pedindo sua aprovação. Isto vai adicionar um usuário chamado 'itch-player' para separar seus jogos do resto do sistema."
 }
