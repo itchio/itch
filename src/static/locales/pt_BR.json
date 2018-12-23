@@ -457,5 +457,10 @@
     "preferences.scan_install_locations.message": "Os seguintes itens podem ser importados:",
     "preferences.advanced.prefer_optimized_patches": "Preferir arquivos adicionais otimizados",
     "preferences.advanced.disable_hardware_acceleration": "Desative acelerador de hardware (resolve alguns erros no Linux)",
-    "grid.item.install_title": "Instalar {{title}}"
+    "grid.item.install_title": "Instalar {{title}}",
+    "grid.item.launch_title": "Iniciar {{title}}",
+    "browser.open_devtools": "Abrir ferramentas do desenvolvedor",
+    "login.action.reveal_password": "Revelar senha",
+    "login.action.hide_password": "Esconder senha",
+    "login.status.antivirus_warning": "O seu Anti-Virus pode interferir com o itch."
 }
