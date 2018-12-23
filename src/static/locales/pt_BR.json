@@ -467,5 +467,6 @@
     "grid.item.not_available": "Indisponível",
     "grid.item.open_title": "Abrir {{title}}",
     "table.column.installed": "Instalado",
-    "table.column.last_played": "Jogado pela ultima vez"
+    "table.column.last_played": "Jogado pela ultima vez",
+    "sandbox.setup.title": "itch.io modo sandbox"
 }
