@@ -462,5 +462,9 @@
     "browser.open_devtools": "Abrir ferramentas do desenvolvedor",
     "login.action.reveal_password": "Revelar senha",
     "login.action.hide_password": "Esconder senha",
-    "login.status.antivirus_warning": "O seu Anti-Virus pode interferir com o itch."
+    "login.status.antivirus_warning": "O seu Anti-Virus pode interferir com o itch.",
+    "grid.item.open_page": "Abrir página",
+    "grid.item.not_available": "Indisponível",
+    "grid.item.open_title": "Abrir {{title}}",
+    "table.column.installed": "Instalado"
 }
