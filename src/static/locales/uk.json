@@ -138,5 +138,16 @@
     "grid.item.developer": "Розробник",
     "grid.item.queueing": "Очікування черги...",
     "grid.item.not_compatible": "Відсутній для даної платформи",
-    "grid.item.check_for_update": "Перевірити наявність оновлення"
+    "grid.item.check_for_update": "Перевірити наявність оновлення",
+    "docs.how_to_help": "Чим я можу допомогти?",
+    "download.ongoing.revert": "Змінюємо {{title}} на іншу версію",
+    "grid.criterion.filter_by": "Фільтрувати за:",
+    "grid.item.install_title": "Встановити {{title}}",
+    "grid.item.launch_title": "Запустити {{title}}",
+    "grid.item.open_page": "Відкрити сторінку",
+    "grid.item.not_available": "Недоступно",
+    "grid.item.open_title": "Відкрити {{title}}",
+    "grid.item.revert_to_version": "Змінити на іншу версію",
+    "grid.item.open_file_location.windows": "Відкрити папку в провіднику",
+    "grid.item.open_file_location.linux": "Показати у файловому менеджері"
 }
