@@ -153,5 +153,6 @@
     "download.outcome.healed": "перевірено та відновлено",
     "game.install.could_not_launch.missing_jre": "Необхідна Java, яка не встановлена у вашій системі.",
     "grid.criterion.only_compatible": "Тільки сумісні",
-    "grid.really_empty_state.leader": "Тут нічого немає..."
+    "grid.really_empty_state.leader": "Тут нічого немає...",
+    "duration.hour": "годину"
 }
