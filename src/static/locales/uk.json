@@ -137,5 +137,6 @@
     "grid.item.discard_download": "Відмінити завантаження",
     "grid.item.developer": "Розробник",
     "grid.item.queueing": "Очікування черги...",
-    "grid.item.not_compatible": "Відсутній для даної платформи"
+    "grid.item.not_compatible": "Відсутній для даної платформи",
+    "grid.item.check_for_update": "Перевірити наявність оновлення"
 }
