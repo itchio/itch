@@ -149,5 +149,9 @@
     "grid.item.open_title": "Відкрити {{title}}",
     "grid.item.revert_to_version": "Змінити на іншу версію",
     "grid.item.open_file_location.windows": "Відкрити папку в провіднику",
-    "grid.item.open_file_location.linux": "Показати у файловому менеджері"
+    "grid.item.open_file_location.linux": "Показати у файловому менеджері",
+    "download.outcome.healed": "перевірено та відновлено",
+    "game.install.could_not_launch.missing_jre": "Необхідна Java, яка не встановлена у вашій системі.",
+    "grid.criterion.only_compatible": "Тільки сумісні",
+    "grid.really_empty_state.leader": "Тут нічого немає..."
 }
