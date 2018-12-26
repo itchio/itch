@@ -117,5 +117,7 @@
     "action.name.manual": "Felhasználói kézikönyv",
     "action.name.editor": "Szerkesztő",
     "action.name.forums": "Fórumok",
-    "docs.learn_more": "Tudj meg többet"
+    "docs.learn_more": "Tudj meg többet",
+    "label.experimental": "Kísérleti",
+    "collection.summary": "{{itemCount}} darabos kollekció"
 }
