@@ -8,7 +8,7 @@
     "grid.item.installing": "Telepítés...",
     "grid.item.launch": "Indítás",
     "grid.item.not_platform_compatible": "Nem elérhető {{platform}} -on",
-    "grid.item.queued": "Sorba tesz...",
+    "grid.item.queued": "Sorban",
     "grid.item.running": "Fut…",
     "login.action.login": "Bejelentkezés",
     "login.action.register": "Regisztrálás",
@@ -29,7 +29,7 @@
     "menu.edit.select_all": "Összes kiválasztása",
     "menu.file.close_window": "Ablak bezárása",
     "menu.file.file": "",
-    "menu.file.preferences": "Beallítások",
+    "menu.file.preferences": "Beallítások...",
     "menu.file.quit": "Kilépés",
     "menu.help.check_for_update": "Frissítések keresése",
     "menu.help.help": "Segítség",
@@ -116,5 +116,6 @@
     "grid.item.report_problem": "Visszajelzés küldése",
     "action.name.manual": "Felhasználói kézikönyv",
     "action.name.editor": "Szerkesztő",
-    "action.name.forums": "Fórumok"
+    "action.name.forums": "Fórumok",
+    "docs.learn_more": "Tudj meg többet"
 }
