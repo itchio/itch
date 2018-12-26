@@ -119,5 +119,9 @@
     "action.name.forums": "Fórumok",
     "docs.learn_more": "Tudj meg többet",
     "label.experimental": "Kísérleti",
-    "collection.summary": "{{itemCount}} darabos kollekció"
+    "collection.summary": "{{itemCount}} darabos kollekció",
+    "collection.item_count": "{{itemCount}} elem",
+    "collections.empty": "Jelenleg nincs gyüjteményed",
+    "docs.how_to_help": "Hogyan segíthetek?",
+    "download.reason.reinstall": "újratelepítés"
 }
