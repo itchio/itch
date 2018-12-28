@@ -490,5 +490,6 @@
     "web.context_menu.cut": "Wytnij",
     "web.context_menu.copy": "Kopiuj",
     "web.context_menu.paste": "Wklej",
-    "download.reason.install": "zainstalować"
+    "download.reason.install": "zainstalować",
+    "grid.item.launch_title": "Uruchom {{title}}"
 }
