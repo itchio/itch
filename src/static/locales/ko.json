@@ -180,5 +180,6 @@
     "grid.item.uninstalling": "제거중...",
     "collections.empty": "가지고 있는 컬렉션이 없습니다",
     "status.downloads.no_active_downloads": "대기열이 비어있음",
-    "status.downloads.pause_downloads": "다운로드 일시 정지"
+    "status.downloads.pause_downloads": "다운로드 일시 정지",
+    "login.action.show_saved_logins": "저장된 계정"
 }
