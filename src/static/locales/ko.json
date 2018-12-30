@@ -181,5 +181,8 @@
     "collections.empty": "가지고 있는 컬렉션이 없습니다",
     "status.downloads.no_active_downloads": "대기열이 비어있음",
     "status.downloads.pause_downloads": "다운로드 일시 정지",
-    "login.action.show_saved_logins": "저장된 계정"
+    "login.action.show_saved_logins": "저장된 계정",
+    "collection.item_count": "{{itemCount}}개",
+    "collections.empty_sub": "게임을 둘러보고 새 컬렉션에 추가하세요!",
+    "desktop.shortcut.comment": "itch.io를 설치하고 간편하게 게임을 실행하세요"
 }
