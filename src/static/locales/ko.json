@@ -204,5 +204,6 @@
     "duration.seconds": "{{x}}초",
     "game.install.could_not_launch.message": "오류 메시지는 다음과 같습니다: {{errorMessage}}",
     "game.install.could_not_launch.detail": "보고서를 보내주는 것이 문제를 해결하는 가장 좋은 방법입니다!",
-    "game.install.libraries_missing": "{{arch}} 라이브러리 중 일부가 누락되었습니다: {{libraries}}"
+    "game.install.libraries_missing": "{{arch}} 라이브러리 중 일부가 누락되었습니다: {{libraries}}",
+    "game.install.could_not_launch.missing_jre": "컴퓨터에 Java가 설치되어 있지 않습니다."
 }
