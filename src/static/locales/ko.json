@@ -10,7 +10,7 @@
     "grid.item.launch": "실행",
     "grid.item.not_platform_compatible": "{{platform}}에서는 사용할 수 없습니다.",
     "grid.item.queued": "대기 중",
-    "grid.item.running": "실행 중...",
+    "grid.item.running": "실행 중…",
     "login.action.login": "Log in",
     "login.action.register": "가입하기",
     "login.action.reset_password": "비밀번호 찾기",
@@ -184,5 +184,17 @@
     "login.action.show_saved_logins": "저장된 계정",
     "collection.item_count": "{{itemCount}}개",
     "collections.empty_sub": "게임을 둘러보고 새 컬렉션에 추가하세요!",
-    "desktop.shortcut.comment": "itch.io를 설치하고 간편하게 게임을 실행하세요"
+    "desktop.shortcut.comment": "itch.io 게임들을 쉽게 설치하고 즐기세요",
+    "docs.how_to_help": "무엇을 도와드릴까요?",
+    "download.ongoing.heal": "{{title}} 복구 중...",
+    "download.outcome.installed": "설치됨",
+    "download.outcome.updated": "최신 버전으로 업데이트 됨",
+    "download.outcome.reinstalled": "재설치됨",
+    "download.outcome.reverted": "다른 버전으로 변경됨",
+    "download.outcome.healed": "검증 및 복구됨",
+    "dashboard.game_stats.views": "조회수",
+    "dashboard.game_stats.downloads": "다운로드 수",
+    "dashboard.game_stats.purchases": "구입 수",
+    "duration.minute": "1분 이내",
+    "game.install.no_executables_found": "실행 파일을 찾을 수 없음"
 }
