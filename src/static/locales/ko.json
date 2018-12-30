@@ -186,7 +186,7 @@
     "collections.empty_sub": "게임을 둘러보고 새 컬렉션에 추가하세요!",
     "desktop.shortcut.comment": "itch.io 게임들을 쉽게 설치하고 즐기세요",
     "docs.how_to_help": "무엇을 도와드릴까요?",
-    "download.ongoing.heal": "{{title}} 복구 중...",
+    "download.ongoing.heal": "{{title}} 복구 중…",
     "download.outcome.installed": "설치됨",
     "download.outcome.updated": "최신 버전으로 업데이트 됨",
     "download.outcome.reinstalled": "재설치됨",
@@ -198,12 +198,13 @@
     "duration.minute": "1분 이내",
     "game.install.no_executables_found": "실행 파일을 찾을 수 없음",
     "download.started": "다운로드가 시작됨",
-    "download.ongoing.update": "{{title}} 업데이트 중...",
-    "download.ongoing.reinstall": "{{title}} 재설치 중...",
-    "download.ongoing.revert": "{{title}} 을(를) 다른 버전으로 변경하는 중...",
+    "download.ongoing.update": "{{title}} 업데이트 중…",
+    "download.ongoing.reinstall": "{{title}} 재설치 중…",
+    "download.ongoing.revert": "{{title}}을(를) 다른 버전으로 변경하는 중…",
     "duration.seconds": "{{x}}초",
     "game.install.could_not_launch.message": "오류 메시지는 다음과 같습니다: {{errorMessage}}",
     "game.install.could_not_launch.detail": "보고서를 보내주는 것이 문제를 해결하는 가장 좋은 방법입니다!",
     "game.install.libraries_missing": "{{arch}} 라이브러리 중 일부가 누락되었습니다: {{libraries}}",
-    "game.install.could_not_launch.missing_jre": "컴퓨터에 Java가 설치되어 있지 않습니다."
+    "game.install.could_not_launch.missing_jre": "컴퓨터에 Java가 설치되어 있지 않습니다.",
+    "game.install.no_html_index_found": "HTML 인덱스 파일이 없음"
 }
