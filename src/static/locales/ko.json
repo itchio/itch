@@ -207,5 +207,5 @@
     "game.install.libraries_missing": "{{arch}} 라이브러리 중 일부가 누락되었습니다: {{libraries}}",
     "game.install.could_not_launch.missing_jre": "컴퓨터에 Java가 설치되어 있지 않습니다.",
     "game.install.no_html_index_found": "HTML 인덱스 파일이 없음",
-    "game.install.no_uploads_available.detail": "현재 플랫폼이나 itch 앱과 호환되지 않을 수도 있습니다!"
+    "game.install.no_uploads_available.detail": "현재 플렛폼이나 itch 앱과 호환되지 않을 수도 있겠네요!"
 }
