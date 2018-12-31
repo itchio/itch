@@ -228,5 +228,7 @@
     "grid.item.launch_title": "{{title}} 실행",
     "grid.item.open_page": "페이지 열기",
     "grid.item.not_available": "사용할 수 없음",
-    "grid.item.open_title": "{{title}} 열기"
+    "grid.item.open_title": "{{title}} 열기",
+    "grid.item.open_file_location.windows": "탐색기에서 폴더 열기",
+    "grid.item.open_file_location.osx": "파인더에서 보기"
 }
