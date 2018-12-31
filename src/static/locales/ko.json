@@ -267,5 +267,6 @@
     "toast.actions.reload": "새로고침",
     "new_tab.random": "무작위 게임",
     "notification.purchase_complete.just_donated": "{{title}} 기부 완료!",
-    "notification.purchase_complete.thanks_for_support": "지원해 주셔서 감사합니다!"
+    "notification.purchase_complete.thanks_for_support": "지원해 주셔서 감사합니다!",
+    "notification.download_reverted": "{{title}} 이(가) {{version}} (으)로 전환되었습니다!"
 }
