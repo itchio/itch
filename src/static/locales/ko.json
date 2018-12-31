@@ -40,8 +40,8 @@
     "menu.help.release_notes": "릴리즈 노트",
     "menu.help.report_issue": "피드백 전달",
     "menu.help.search_issue": "이슈 검색",
-    "menu.help.view_license": "라이센스 보기",
-    "menu.help.view_terms": "",
+    "menu.help.view_license": "라이선스 보기",
+    "menu.help.view_terms": "itch.io 약관 보기",
     "onboarding.caved.prealpha_reminder": "",
     "onboarding.caved.title_pick": "",
     "onboarding.caved.troubleshoot_advice": "",
@@ -260,5 +260,10 @@
     "menu.file.new_tab": "새로운 탭",
     "menu.file.close_tab": "탭 닫기",
     "menu.file.close_all_tabs": "모든 탭 닫기",
-    "menu.file.close_other_tabs": "다른 탭 닫기"
+    "menu.file.close_other_tabs": "다른 탭 닫기",
+    "moment.now": "지금",
+    "toast.title": "이런!",
+    "toast.call_to_action": "계속 진행하시려면, 새로고침하시거나 다른 페이지로 가주세요.",
+    "toast.actions.reload": "새로고침",
+    "new_tab.random": "무작위 게임"
 }
