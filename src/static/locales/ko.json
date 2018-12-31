@@ -230,5 +230,7 @@
     "grid.item.not_available": "사용할 수 없음",
     "grid.item.open_title": "{{title}} 열기",
     "grid.item.open_file_location.windows": "탐색기에서 폴더 열기",
-    "grid.item.open_file_location.osx": "파인더에서 보기"
+    "grid.item.open_file_location.osx": "파인더에서 보기",
+    "grid.item.open_file_location.linux": "파일 관리자에서 보기",
+    "grid.item.running.prepare": "준비 중..."
 }
