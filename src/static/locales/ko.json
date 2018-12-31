@@ -21,7 +21,7 @@
     "login.status.login": "로그인 중…",
     "login.status.setup_failure": "문제가 발생했습니다.: {{error}}",
     "menu.account.account": "계정",
-    "menu.account.change_user": "사용자 변경...",
+    "menu.account.change_user": "사용자 변경…",
     "menu.account.not_logged_in": "로그인하지 않음",
     "menu.danger_zone.danger_zone": "",
     "menu.danger_zone.dont_use": "",
@@ -267,5 +267,5 @@
     "toast.actions.reload": "새로고침",
     "new_tab.random": "무작위 게임",
     "notification.purchase_complete.just_donated": "{{title}} 기부 완료!",
-    "notification.purchase_complete.thanks_for_support": "지원해 주셔서 감사합니다.!"
+    "notification.purchase_complete.thanks_for_support": "지원해 주셔서 감사합니다!"
 }
