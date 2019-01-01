@@ -73,9 +73,9 @@
     "prompt.crash_reporter.open_crash_log": "충돌 로그 열기",
     "prompt.crash_reporter.report_issue": "피드백 보내기",
     "prompt.last_remaining_install_location.content": "현재 설정된 유일한 설치 위치입니다. 다른 위치를 추가하지 않으면 삭제할 수 없습니다.",
-    "prompt.logout_confirm": "로그아웃 하시겠습니까?",
+    "prompt.logout_confirm": "정말로 로그아웃 하시겠습니까?",
     "prompt.no_compatible_version.detail": "",
-    "prompt.no_compatible_version.message": "",
+    "prompt.no_compatible_version.message": "{{{platform}}용 {{title}}의 버전을 찾을 수 없습니다.",
     "prompt.no_compatible_version.title": "{{title}} on {{platform}}",
     "prompt.url_install.credit": "A {{classification}} by {{username}}",
     "prompt.url_install.message": "",
@@ -377,5 +377,11 @@
     "prompt.install_location_add.title": "새로운 설치 위치 선택하기",
     "prompt.install_location_remove.message": "이 위치를 정말 제거하시겠습니까?",
     "prompt.install_location_remove.title": "모든 설치 위치 제거",
-    "prompt.last_remaining_install_location.title": "설치 위치를 제거할 수 없음"
+    "prompt.last_remaining_install_location.title": "설치 위치를 제거할 수 없음",
+    "prompt.manage_game.title": "{{title}} 설정",
+    "prompt.manage_game.installed_uploads": "해당 요소들이 설치되어 있습니다:",
+    "prompt.manage_game.available_uploads": "이 요소들도 사용할 수 있습니다:",
+    "prompt.manage_game.no_other_uploads": "현재 다른 요소는 사용할 수 없습니다.",
+    "prompt.install_error.title": "설치 중 오류 발생",
+    "prompt.packaging_policy.open_web_page": "{{title}} 웹페이지 열기"
 }
