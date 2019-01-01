@@ -383,5 +383,6 @@
     "prompt.manage_game.available_uploads": "이 요소들도 사용할 수 있습니다:",
     "prompt.manage_game.no_other_uploads": "현재 다른 요소는 사용할 수 없습니다.",
     "prompt.install_error.title": "설치 중 오류 발생",
-    "prompt.packaging_policy.open_web_page": "{{title}} 웹페이지 열기"
+    "prompt.packaging_policy.open_web_page": "{{title}} 웹페이지 열기",
+    "prompt.logout_title": "로그아웃"
 }
