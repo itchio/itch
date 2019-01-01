@@ -372,5 +372,10 @@
     "prompt.deb_policy.detail": "itch는 포터블 버전의 리눅스 프로그램만 설치할 수 있습니다.",
     "prompt.deb_policy.message": "{{title}}은(는) .deb 형식의 패키지를 사용하며, 리패키징되기 전까지는 itch와 설치할 수 없습니다.",
     "prompt.deb_policy.title": "APT 패키지 미지원",
-    "prompt.forget_session.action": "세션 잊어버리기"
+    "prompt.forget_session.action": "세션 잊어버리기",
+    "prompt.forget_session.detail": "언제든지 다시 추가할 수 있습니다.",
+    "prompt.install_location_add.title": "새로운 설치 위치 선택하기",
+    "prompt.install_location_remove.message": "이 위치를 정말 제거하시겠습니까?",
+    "prompt.install_location_remove.title": "모든 설치 위치 제거",
+    "prompt.last_remaining_install_location.title": "설치 위치를 제거할 수 없음"
 }
