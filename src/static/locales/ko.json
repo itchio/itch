@@ -389,5 +389,13 @@
     "prompt.payments_disabled.detail": "그들을 도와줄 다른 방법을 찾을 수 있지 않을까요?",
     "prompt.payments_disabled.message": "안타깝게도 {{title}} 개발자는 결제를 허용하지 않았습니다.",
     "prompt.payments_disabled.open_web_page": "웹사이트 열기",
-    "prompt.payments_disabled.title": "결제 불가능"
+    "prompt.payments_disabled.title": "결제 비활성화됨",
+    "prompt.revert.title": "{{title}}을(를) 다른 버전으로 변경하기",
+    "prompt.revert.version": "버전 {{version}}",
+    "prompt.revert.no_other_version": "다른 버전을 찾을 수 없습니다.",
+    "prompt.self_update_ready.short": "새 버전 사용가능",
+    "prompt.uninstall_error.message": "제거에 실패했습니다. 어쨌든 목록에서 삭제할까요?",
+    "prompt.uninstall_error.message_permissions": "{{title}}에서 몇몇 파일을 삭제할 수 없습니다. 관리자 권한으로 다시 시도해보시겠습니까?",
+    "prompt.uninstall_error.action_permissions": "관리자 권한으로 제거",
+    "prompt.install_error.message": "설치에 실패했습니다."
 }
