@@ -78,8 +78,8 @@
     "prompt.no_compatible_version.message": "{{{platform}}용 {{title}}의 버전을 찾을 수 없습니다.",
     "prompt.no_compatible_version.title": "{{title}} on {{platform}}",
     "prompt.url_install.credit": "A {{classification}} by {{username}}",
-    "prompt.url_install.message": "",
-    "prompt.url_install.title": "",
+    "prompt.url_install.message": "{{title}}을(를) 설치하시겠습니까?",
+    "prompt.url_install.title": "설치 요청",
     "sidebar.broken": "작동하지 않음",
     "sidebar.dashboard": "내 작품",
     "sidebar.getting_started": "지금 시작하기",
@@ -596,5 +596,7 @@
     "plan_install.select_install_location": "위치",
     "plan_install.disk_space_required": "디스크 사용량 부족함",
     "plan_install.disk_space_available": "디스크 사용량 충분함",
-    "empty_state.nothing_to_see_here": "여기에는 아무것도 없음"
+    "empty_state.nothing_to_see_here": "여기에는 아무것도 없음",
+    "prompt.uninstall.reinstall": "다시 설치하기",
+    "prompt.uninstall.uninstall": "지금 제거하기"
 }
