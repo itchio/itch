@@ -440,5 +440,6 @@
     "grid.filters.options.no_results": "Δεν βρέθηκαν αποτελέσματα",
     "game.install.no_executables_found": "Δεν βρέθηκε κανένα εκτελέσιμο",
     "dashboard.game_stats.views": "προβολές",
-    "dashboard.game_stats.purchases": "αγορές"
+    "dashboard.game_stats.purchases": "αγορές",
+    "duration.hour": "μια ώρα"
 }
