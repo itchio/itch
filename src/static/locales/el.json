@@ -11,7 +11,7 @@
     "grid.item.not_platform_compatible": "Δεν είναι διαθέσιμο σε {{platform}}",
     "grid.item.probe": "Κοίταξε στον κατάλογο(log) συμβάντων του αντικειμένου για να βρείς τι προκάλεσε το σφάλμα (Για προχωρημένους)",
     "grid.item.purchase_or_donate": "Αγόρασε το αντικείμενο ή δώρισε χρήματα",
-    "grid.item.queued": "Στην ουρά",
+    "grid.item.queued": "Σε ουρά",
     "grid.item.report_problem": "Ανέφερε ως προβληματικό (Ανοίγει στον browser)",
     "grid.item.retry": "Δοκίμασε να κατεβάσεις / εγκαταστήσεις / τρέξεις το αντικείμενο ξανά",
     "grid.item.running": "Σε λειτουργία…\n",
@@ -438,5 +438,7 @@
     "grid.clear_filters": "Εκκαθάριση φίλτρων",
     "grid.item_count": "{{count}} αντικείμενα",
     "grid.filters.options.no_results": "Δεν βρέθηκαν αποτελέσματα",
-    "game.install.no_executables_found": "Δεν βρέθηκε κανένα εκτελέσιμο"
+    "game.install.no_executables_found": "Δεν βρέθηκε κανένα εκτελέσιμο",
+    "dashboard.game_stats.views": "προβολές",
+    "dashboard.game_stats.purchases": "αγορές"
 }
