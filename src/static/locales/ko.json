@@ -73,7 +73,7 @@
     "prompt.crash_reporter.open_crash_log": "충돌 로그 열기",
     "prompt.crash_reporter.report_issue": "피드백 보내기",
     "prompt.last_remaining_install_location.content": "현재 설정된 유일한 설치 위치입니다. 다른 위치를 추가하지 않으면 삭제할 수 없습니다.",
-    "prompt.logout_confirm": "",
+    "prompt.logout_confirm": "로그아웃 하시겠습니까?",
     "prompt.no_compatible_version.detail": "",
     "prompt.no_compatible_version.message": "",
     "prompt.no_compatible_version.title": "{{title}} on {{platform}}",
