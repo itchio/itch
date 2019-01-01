@@ -397,5 +397,18 @@
     "prompt.uninstall_error.message": "제거에 실패했습니다. 어쨌든 목록에서 삭제할까요?",
     "prompt.uninstall_error.message_permissions": "{{title}}에서 몇몇 파일을 삭제할 수 없습니다. 관리자 권한으로 다시 시도해보시겠습니까?",
     "prompt.uninstall_error.action_permissions": "관리자 권한으로 제거",
-    "prompt.install_error.message": "설치에 실패했습니다."
+    "prompt.install_error.message": "설치에 실패했습니다.",
+    "prompt.self_update.action.dismiss": "무시하기",
+    "prompt.self_update.action.download": "지금 다운로드",
+    "prompt.self_update.action.view": "브라우저에서 열기",
+    "prompt.self_update.message.osx": "자동으로 설치하려면 '지금 다운로드'를 선택하거나, 더 알아보기 위해 웹사이트에 방문하세요.",
+    "prompt.self_update.message.windows": "자동으로 설치하려면 '지금 다운로드'를 선택하거나, 더 알아보기 위해 웹사이트에 방문하세요.",
+    "prompt.self_update.title": "itch v{{version}} 다운로드 가능",
+    "prompt.self_update_ready.action.restart": "지금 재시작",
+    "prompt.self_update_ready.action.snooze": "보류",
+    "prompt.self_update_ready.message": "지금 즉시 업데이트하려면 {{restart}}\n\n선택하지 않으면, 다음에 앱이 시작할 때 업데이트됩니다.",
+    "prompt.self_update_ready.title": "업데이트 다운로드 및 설치 완료",
+    "prompt.uninstall_error.title": "제거 오류",
+    "prompt.uninstall.cancel": "취소",
+    "prompt.uninstall.message": "{{title}}을(를) 제거하시겠습니까?"
 }
