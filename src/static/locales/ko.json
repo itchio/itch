@@ -14,7 +14,7 @@
     "login.action.login": "Log in",
     "login.action.register": "가입하기",
     "login.action.reset_password": "비밀번호 찾기",
-    "login.field.password": "Password",
+    "login.field.password": "비밀번호",
     "login.field.username": "아이디 또는 이메일",
     "login.status.dependency_check": "모든 것이 제대로 작동하는 지 확인 중입니다…",
     "login.status.dependency_install": "구성요소 {{{name}} {{version}} 설치 중",
