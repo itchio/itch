@@ -441,5 +441,6 @@
     "game.install.no_executables_found": "Δεν βρέθηκε κανένα εκτελέσιμο",
     "dashboard.game_stats.views": "προβολές",
     "dashboard.game_stats.purchases": "αγορές",
-    "duration.hour": "μια ώρα"
+    "duration.hour": "μια ώρα",
+    "collection.item_count": "{{itemCount}} ανιτκείμενα"
 }
