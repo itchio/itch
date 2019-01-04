@@ -539,7 +539,7 @@
     "sort_by.games.size_on_disk": "크기",
     "sort_by.games.install_date": "설치 날짜",
     "sort_by.collections.title": "이름",
-    "sort_by.collections.updated_at": "업데이트됨",
+    "sort_by.collections.updated_at": "업데이트",
     "filter_by.games.classification.games": "게임",
     "filter_by.games.classification.tools": "도구",
     "filter_by.games.classification.assets": "게임 에셋",
