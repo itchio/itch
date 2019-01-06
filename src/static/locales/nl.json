@@ -301,5 +301,6 @@
     "grid.item.open_title": "Open {{title}}",
     "grid.item.open_file_location.windows": "Open de map in verkenner",
     "menu.file.close_other_tabs": "Andere tabbladen sluiten",
-    "menu.file.close_tabs_below": "Onderstaande tabbladen sluiten"
+    "menu.file.close_tabs_below": "Onderstaande tabbladen sluiten",
+    "collections.empty": "Je hebt momenteel geen verzamelingen"
 }
