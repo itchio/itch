@@ -426,5 +426,14 @@
     "prereq.status.downloading": "Scaricamento…",
     "download.ongoing.update": "Aggiornamento di {{title}}...",
     "download.ongoing.reinstall": "Reinstallazione di {{title}}",
-    "download.ongoing.revert": "Passaggio di {{title}} ad un altra versione in corso..."
+    "download.ongoing.revert": "Passaggio di {{title}} ad un altra versione in corso...",
+    "duration.seconds": "{{x}} secondi",
+    "game.install.could_not_launch.message": "Il messaggio che abbiamo ricevuto era: {{errorMessage}}",
+    "grid.criterion.filter_by": "Filtra per: ",
+    "grid.really_empty_state.leader": "Qui non c'è nulla...",
+    "grid.really_empty_state.explanation": "...ancora!",
+    "grid.item.queueing": "In coda...",
+    "grid.item.launch_title": "Avvia {{titolo}}",
+    "grid.item.open_title": "Apri {{titolo}}",
+    "menu.file.close_other_tabs": "Chiudi le altre schede"
 }
