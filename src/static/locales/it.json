@@ -435,5 +435,6 @@
     "grid.item.queueing": "In coda...",
     "grid.item.launch_title": "Avvia {{titolo}}",
     "grid.item.open_title": "Apri {{titolo}}",
-    "menu.file.close_other_tabs": "Chiudi le altre schede"
+    "menu.file.close_other_tabs": "Chiudi le altre schede",
+    "preferences.behavior.prevent_display_sleep": "Impedisci la disattivazione dello schermo mentre sei in gioco"
 }
