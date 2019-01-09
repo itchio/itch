@@ -423,5 +423,7 @@
     "login.status.finalizing_installation": "Completamento dell'installazione ...",
     "login.status.antivirus_warning": "Il programma antivirus può interferire con itch",
     "prereq.status.pending": "Preparazione…",
-    "prereq.status.downloading": "Scaricamento…"
+    "prereq.status.downloading": "Scaricamento…",
+    "download.ongoing.update": "Aggiornamento di {{title}}...",
+    "download.ongoing.reinstall": "Reinstallazione di {{title}}"
 }
