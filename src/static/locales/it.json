@@ -425,5 +425,6 @@
     "prereq.status.pending": "Preparazione…",
     "prereq.status.downloading": "Scaricamento…",
     "download.ongoing.update": "Aggiornamento di {{title}}...",
-    "download.ongoing.reinstall": "Reinstallazione di {{title}}"
+    "download.ongoing.reinstall": "Reinstallazione di {{title}}",
+    "download.ongoing.revert": "Passaggio di {{title}} ad un altra versione in corso..."
 }
