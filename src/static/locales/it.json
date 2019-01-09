@@ -457,5 +457,6 @@
     "web.context_menu.copy": "Copia",
     "web.context_menu.paste": "Incolla",
     "web.context_menu.open_in_new_tab": "Apri in una nuova scheda",
-    "web.context_menu.copy_link": "Copia il collegamento"
+    "web.context_menu.copy_link": "Copia il collegamento",
+    "prompt.install_error.message": "L'installazione è fallita."
 }
