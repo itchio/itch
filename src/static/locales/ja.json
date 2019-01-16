@@ -397,5 +397,12 @@
     "prompt.launch.message": "どれを開きますか？",
     "sidebar.library": "ライブラリ",
     "status.downloads.category.recent_activity": "最近のアクティビティ",
-    "status.downloads.updates_available": "アップデートが利用できます"
+    "status.downloads.updates_available": "アップデートが利用できます",
+    "grid.item.running.prepare": "準備中…",
+    "grid.item.running.clean": "クリーンアップ中…",
+    "grid.item.uninstall_request": "アンインストールまたは再インストールする",
+    "grid.item.status.installed": "インストール済み",
+    "browser.reenable": "再度有効にする",
+    "prereq.status.installing": "インストール中... (これには数分かかる場合があります)",
+    "prompt.sla.title": "ソフトウェア使用許諾契約書"
 }
