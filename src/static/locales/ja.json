@@ -391,5 +391,11 @@
     "dashboard.game_stats.purchases": "購入したアイテム",
     "game.install.could_not_launch.message": "エラーメッセージ:{{errorMessage}}",
     "grid.criterion.filter_by": "絞り込み：",
-    "grid.filters.options.owned": "所有"
+    "grid.filters.options.owned": "所有",
+    "grid.item.download_java": "Javaをダウンロードする",
+    "prompt.launch.title": "{{title}} を起動",
+    "prompt.launch.message": "どれを開きますか？",
+    "sidebar.library": "ライブラリ",
+    "status.downloads.category.recent_activity": "最近のアクティビティ",
+    "status.downloads.updates_available": "アップデートが利用できます"
 }
