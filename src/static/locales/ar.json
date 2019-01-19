@@ -154,5 +154,7 @@
     "grid.item.donate_again": "بقشيش للمطور مجدداً!",
     "grid.item.downloads_paused": "إيقاف مؤقت للتحميل",
     "grid.item.uninstall_request": "إلغاء التثبيت أو إعادة التثبيت",
-    "label.experimental": "تجريبي"
+    "label.experimental": "تجريبي",
+    "action.name.play": "العب الآن",
+    "action.name.manual": "دليل المستخدم"
 }
