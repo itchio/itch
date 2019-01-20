@@ -69,7 +69,7 @@
     "grid.item.probe": "Виявити причину невдачi",
     "prompt.url_install.credit": "{{classification}} за {{username}}",
     "web.context_menu.copy_link": "Копіювати посилання",
-    "grid.item.downloading": "Завантажується...",
+    "grid.item.downloading": "Завантаження...",
     "action.name.forums": "Форуми",
     "label.experimental": "Експерементальний",
     "collection.empty": "Ігри в цій колекції відсутні",
@@ -154,5 +154,7 @@
     "game.install.could_not_launch.missing_jre": "Необхідна Java, яка не встановлена у вашій системі.",
     "grid.criterion.only_compatible": "Тільки сумісні",
     "grid.really_empty_state.leader": "Тут нічого немає...",
-    "duration.hour": "годину"
+    "duration.hour": "годину",
+    "dashboard.game_stats.views": "перегляди",
+    "dashboard.game_stats.downloads": "завантаження"
 }
