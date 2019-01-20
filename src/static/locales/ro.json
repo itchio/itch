@@ -305,5 +305,7 @@
     "usage_stats.last_used_time_ago": "Ultima utilizare {{time_ago}}",
     "usage_stats.never_opened": "Nedeschis",
     "usage_stats.never_played": "nu l-ai jucat încă",
-    "usage_stats.never_used": "Nefolosit"
+    "usage_stats.never_used": "Nefolosit",
+    "collection.item_count": "{{itemCount}} articole",
+    "collection.summary": "O colecție de {{itemCount}} articole"
 }
