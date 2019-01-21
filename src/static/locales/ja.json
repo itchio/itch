@@ -404,5 +404,8 @@
     "grid.item.status.installed": "インストール済み",
     "browser.reenable": "再度有効にする",
     "prereq.status.installing": "インストール中... (これには数分かかる場合があります)",
-    "prompt.sla.title": "ソフトウェア使用許諾契約書"
+    "prompt.sla.title": "ソフトウェア使用許諾契約書",
+    "grid.empty_state.leader": "一致する結果が見つかりません",
+    "grid.item.not_compatible": "このプラットフォームには対応していません",
+    "grid.item.open_file_location.osx": "ファインダーで表示"
 }
