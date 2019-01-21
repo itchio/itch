@@ -197,7 +197,7 @@
     "status.offline_mode.active": "オフラインモード中です",
     "status.offline_mode.inactive": "オフラインモードを実行する",
     "usage_stats.description.book": "書籍",
-    "usage_stats.description.bought_time_ago": "{{time_ago}} に買った",
+    "usage_stats.description.bought_time_ago": "{{time_ago}} に購入",
     "usage_stats.description.comic": "コミック",
     "usage_stats.description.free_download": "無料ダウンロード",
     "usage_stats.description.game_mod": "ゲーム用MOD",
@@ -225,7 +225,7 @@
     "moment.now": "今",
     "new_tab.community": "コミュニティ",
     "new_tab.on_sale": "セール中",
-    "new_tab.random": "ランダムのゲームを見る",
+    "new_tab.random": "ランダムでゲームを表示",
     "new_tab.titles.browser_placeholder": "サイトのURLを入力してください",
     "new_tab.titles.input": "…もしくは",
     "new_tab.twitter": "Twitterで話題",
@@ -423,5 +423,10 @@
     "preferences.install_location.free_of_total": "{{totalSize}}中の{{freeSize}}が利用可能",
     "preferences.scan_install_locations": "ゲームのインストール先をスキャンする",
     "preferences.behavior.enable_tabs": "タブを有効化する",
-    "install_locations.manage": "インストール先を管理する"
+    "install_locations.manage": "インストール先を管理する",
+    "preferences.install_location.disk_usage": "ディスクの使用状況",
+    "sidebar.loading": "ロード中...",
+    "status.game_update.busy": "{{title}} は実行中のため更新できません",
+    "status.uninstall.busy": "{{title}} は実行中のためアンインストールできません",
+    "status.reinstall.busy": "{{title}} は実行中のため再インストールできません"
 }
