@@ -403,7 +403,7 @@
     "grid.item.uninstall_request": "アンインストールまたは再インストールする",
     "grid.item.status.installed": "インストール済み",
     "browser.reenable": "再度有効にする",
-    "prereq.status.installing": "インストール中... (これには数分かかる場合があります)",
+    "prereq.status.installing": "インストール中... (数分かかる場合があります)",
     "prompt.sla.title": "ソフトウェア使用許諾契約書",
     "grid.empty_state.leader": "一致する結果が見つかりません",
     "grid.item.not_compatible": "このプラットフォームには対応していません",
@@ -413,5 +413,6 @@
     "table.column.play_time": "プレイ時間",
     "login.two_factor.title": "２段階認証",
     "login.two_factor.as_user": "{{username}}としてログイン中",
-    "prereq.status.downloading": "ダウンロード中..."
+    "prereq.status.downloading": "ダウンロード中...",
+    "prereq.status.done": "完了しました！"
 }
