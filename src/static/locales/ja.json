@@ -407,5 +407,6 @@
     "prompt.sla.title": "ソフトウェア使用許諾契約書",
     "grid.empty_state.leader": "一致する結果が見つかりません",
     "grid.item.not_compatible": "このプラットフォームには対応していません",
-    "grid.item.open_file_location.osx": "ファインダーで表示"
+    "grid.item.open_file_location.osx": "ファインダーで表示",
+    "grid.empty_state.explanation": "フィルターにより全て隠されています"
 }
