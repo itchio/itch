@@ -414,5 +414,6 @@
     "login.two_factor.title": "２段階認証",
     "login.two_factor.as_user": "{{username}}としてログイン中",
     "prereq.status.downloading": "ダウンロード中...",
-    "prereq.status.done": "完了しました！"
+    "prereq.status.done": "完了しました！",
+    "menu.file.close_other_tabs": "他のタブを閉じる"
 }
