@@ -386,9 +386,9 @@
     "send_feedback.send.sending": "送信中…",
     "plan_install.disk_space_available": "使用可能なディスクスペース",
     "docs.how_to_help": "助けが必要ですか？",
-    "dashboard.game_stats.views": "視聴回数",
-    "dashboard.game_stats.downloads": "ダウンロード",
-    "dashboard.game_stats.purchases": "購入したアイテム",
+    "dashboard.game_stats.views": "アクセス数",
+    "dashboard.game_stats.downloads": "ダウンロード数",
+    "dashboard.game_stats.purchases": "購入された数",
     "game.install.could_not_launch.message": "エラーメッセージ:{{errorMessage}}",
     "grid.criterion.filter_by": "絞り込み：",
     "grid.filters.options.owned": "所有",
@@ -428,5 +428,10 @@
     "sidebar.loading": "ロード中...",
     "status.game_update.busy": "{{title}} は実行中のため更新できません",
     "status.uninstall.busy": "{{title}} は実行中のためアンインストールできません",
-    "status.reinstall.busy": "{{title}} は実行中のため再インストールできません"
+    "status.reinstall.busy": "{{title}} は実行中のため再インストールできません",
+    "browser.open_devtools": "開発者ツールを開く",
+    "send_feedback.success.promise": "できるだけ早めに検証して、何らかの対処ができるようにいたします。今後のリリースにて修正されるように動力します。",
+    "send_feedback.nav.next": "次へ",
+    "send_feedback.nav.close": "閉じる",
+    "plan_install.select_install_location": "インストール先"
 }
