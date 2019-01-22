@@ -441,5 +441,6 @@
     "table.column.published": "リリース済み",
     "empty_state.nothing_to_see_here": "ここには何もありません。",
     "preferences.scan_install_locations.no_items_found": "指定したインストール先では新しいアイテムが見つかりません。",
-    "plan_install.computing_space_requirements": "必要なディスクスペースを計算する"
+    "plan_install.computing_space_requirements": "必要なディスクスペースを計算する",
+    "plan_install.select_upload": "インストール"
 }
