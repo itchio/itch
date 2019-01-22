@@ -433,5 +433,8 @@
     "send_feedback.success.promise": "できるだけ早めに検証して、何らかの対処ができるようにいたします。今後のリリースにて修正されるように動力します。",
     "send_feedback.nav.next": "次へ",
     "send_feedback.nav.close": "閉じる",
-    "plan_install.select_install_location": "インストール先"
+    "plan_install.select_install_location": "インストール先",
+    "send_feedback.steps.your_message": "あなたのメッセージ",
+    "send_feedback.steps.system_info": "システム情報",
+    "send_feedback.steps.send": "レポートを送信"
 }
