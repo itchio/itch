@@ -436,5 +436,6 @@
     "plan_install.select_install_location": "インストール先",
     "send_feedback.steps.your_message": "あなたのメッセージ",
     "send_feedback.steps.system_info": "システム情報",
-    "send_feedback.steps.send": "レポートを送信"
+    "send_feedback.steps.send": "レポートを送信",
+    "plan_install.disk_space_required": "必要なディスクスペース"
 }
