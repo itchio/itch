@@ -118,7 +118,7 @@
     "prompt.last_remaining_install_location.content": "これは最後のインストール先です、新しいインストール先を追加するまで削除することは出来ません。",
     "prompt.last_remaining_install_location.title": "このインストール先は削除出来ません",
     "prompt.logout_confirm": "本当にログアウトしてもよろしいですか?",
-    "prompt.no_compatible_version.detail": "多分この{{classification}}はまだこのゲームに対応していないと思われます。",
+    "prompt.no_compatible_version.detail": "{{classification}}はまだこのゲームに対応していない可能性があります。",
     "prompt.no_compatible_version.message": "{{platform}}版の{{title}}は見つかりませんでした。",
     "prompt.no_compatible_version.title": "{{platform}}版{{title}}",
     "prompt.packaging_policy.learn_more": "もっと詳しく",
@@ -214,7 +214,7 @@
     "grid.item.check_for_update": "アップデートの確認をする",
     "grid.criterion.filtered_by": "“{{term}}” にフィルターされました。",
     "game.install.no_html_index_found": "index.htmlファイルが見つかりませんでした",
-    "game.install.no_uploads_available.detail": "このゲームはあなたのプラットフォーム、またはitchのバージョンに対応していないと思われます。",
+    "game.install.no_uploads_available.detail": "このゲームは使用中のプラットフォーム、またはitchのバージョンに対応していない可能性があります。",
     "grid.item.developer": "開発元",
     "grid.item.donate": "作者に寄付する",
     "grid.item.donate_again": "再度作者に寄付する！",
@@ -262,7 +262,7 @@
     "duration.minute": "1分以内",
     "duration.hour": "1時間",
     "download.reason.update": "最新の状態にアップデート",
-    "game.install.could_not_launch.detail": "以下のエラーが発生しました。\n{{error}}",
+    "game.install.could_not_launch.detail": "不具合を解決するための最良の方法は私たちにレポートを送信することです。",
     "menu.help.about": "itchとは",
     "toast.title": "クラッシュしました！",
     "toast.message": "予期せぬ問題が発生しました。",
@@ -339,7 +339,7 @@
     "sidebar.dashboard_subtitle": "開閉したもの",
     "sidebar.press": "プレスハブ",
     "menu.file.new_tab": "新規タブ",
-    "grid.item.update": "アップデートする",
+    "grid.item.update": "更新",
     "game.install.could_not_launch.missing_jre": "必要のJavaはこのコンピュータに見つかりませんでした。",
     "game.install.libraries_missing": "必要の{{arch}}のライブラリはありません： {{libraries}}",
     "grid.criterion.search": "検索...",
@@ -437,5 +437,6 @@
     "send_feedback.steps.your_message": "あなたのメッセージ",
     "send_feedback.steps.system_info": "システム情報",
     "send_feedback.steps.send": "レポートを送信",
-    "plan_install.disk_space_required": "必要なディスクスペース"
+    "plan_install.disk_space_required": "必要なディスクスペース",
+    "table.column.published": "リリース済み"
 }
