@@ -438,5 +438,6 @@
     "send_feedback.steps.system_info": "システム情報",
     "send_feedback.steps.send": "レポートを送信",
     "plan_install.disk_space_required": "必要なディスクスペース",
-    "table.column.published": "リリース済み"
+    "table.column.published": "リリース済み",
+    "empty_state.nothing_to_see_here": "ここには何もありません"
 }
