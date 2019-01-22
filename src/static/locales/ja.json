@@ -191,7 +191,7 @@
     "status.downloads.download_error": "ダウンロードエラー",
     "status.downloads.unknown_size": "サイズ不明",
     "status.game_update.check_failed": "アップデートの確認が出来ません: {{err}}",
-    "status.game_update.found": "{{title}} の新しいバージョンを見つけました！ダウンロード中…",
+    "status.game_update.found": "{{title}} の新しいバージョンを見つけました！",
     "status.game_update.not_found": "{{title}} は最新版です。",
     "status.history.no_active_items": "対応が必要なアイテムは履歴にありません。",
     "status.offline_mode.active": "オフラインモード中です",
@@ -442,5 +442,8 @@
     "empty_state.nothing_to_see_here": "ここには何もありません。",
     "preferences.scan_install_locations.no_items_found": "指定したインストール先では新しいアイテムが見つかりません。",
     "plan_install.computing_space_requirements": "必要なディスクスペースを計算する",
-    "plan_install.select_upload": "インストール"
+    "plan_install.select_upload": "インストール",
+    "preferences.behavior.manual_game_updates": "アップデートする前に確認する",
+    "status.downloads.resume_downloads": "ダウンロードを再開する",
+    "status.downloads.pause_downloads": "ダウンロードを一時停止する"
 }
