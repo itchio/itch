@@ -472,5 +472,8 @@
     "grid.really_empty_state.explanation": "...まだ！",
     "table.column.installed_size": "サイズ",
     "preferences.behavior.prevent_display_sleep": "プレイ中にディスプレイがスリープしないようにする",
-    "prompt.action.back": "戻る"
+    "prompt.action.back": "戻る",
+    "preferences.behavior.open_as_hidden": "スタートアップ時にitchをバックグラウンドで起動する",
+    "pick_update_upload.single.title": "{{title}} の新しいバージョンが利用できます",
+    "web.context_menu.paste": "貼り付け"
 }
