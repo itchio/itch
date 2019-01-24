@@ -468,5 +468,7 @@
     "prompt.install_error.find_upload": "ダウンロードを検索する間：{{message}}",
     "status.downloads.no_active_downloads_subtext": "インストール、またはダウンロードしたものはこちらに表示されます",
     "setup.status.installing": "{{speed}}の速度でダウンロードとインストール中",
-    "sort_by.games.downloads": "ダウンロード数"
+    "sort_by.games.downloads": "ダウンロード数",
+    "grid.really_empty_state.explanation": "...まだ！",
+    "table.column.installed_size": "サイズ"
 }
