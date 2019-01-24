@@ -636,5 +636,7 @@
     "plan_install.select_install_location": "Dans le dossier",
     "plan_install.disk_space_required": "Espace disque nécessaire",
     "prompt.sla.title": "Accord de Licence Logicielle",
-    "prompt.sla.accept": "Accepter les conditions d'utilisation"
+    "prompt.sla.accept": "Accepter les conditions d'utilisation",
+    "prompt.sla.message": "Pour utiliser ce logiciel, vous devez accepter la licence suivante :",
+    "plan_install.computing_space_requirements": "Calcul de l'espace nécessaire"
 }
