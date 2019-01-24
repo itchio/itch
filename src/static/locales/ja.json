@@ -480,5 +480,9 @@
     "pick_update_upload.buttons.skip_update": "更新をスキップ",
     "pick_update_upload.buttons.just_launch": "他のファイルを起動",
     "prompt.revert.no_other_version": "これ以外のバージョンがありません。",
-    "filter_by.games.visibility.draft": "ドラフト"
+    "filter_by.games.visibility.draft": "ドラフト",
+    "status.downloads.update_all": "すべて更新する",
+    "sort_by.games.purchases": "購入回数",
+    "filter_by.games.visibility.published": "公開済み",
+    "game_stripe.view_all": "すべて見る…"
 }
