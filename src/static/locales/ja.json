@@ -470,5 +470,7 @@
     "setup.status.installing": "{{speed}}の速度でダウンロードとインストール中",
     "sort_by.games.downloads": "ダウンロード数",
     "grid.really_empty_state.explanation": "...まだ！",
-    "table.column.installed_size": "サイズ"
+    "table.column.installed_size": "サイズ",
+    "preferences.behavior.prevent_display_sleep": "プレイ中にディスプレイをスリープしない",
+    "prompt.action.back": "戻る"
 }
