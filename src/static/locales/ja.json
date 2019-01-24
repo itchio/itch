@@ -521,5 +521,7 @@
     "send_feedback.reminders.we_are_humans": "送信されたレポートはすべてスタッフが確認します。",
     "send_feedback.reminders.be_precise": "できるだけ具体的な症状を述べてください。私たちも同じく原因を突き留めたいと思います！",
     "send_feedback.consent.please_review": "こちらの情報を送信しても問題がないようにご確認ください：",
-    "send_feedback.nav.previous": "前へ"
+    "send_feedback.nav.previous": "前へ",
+    "login.action.retry_setup": "セットアップをやり直す",
+    "send_feedback.describe_issue": "問題が発生したときの状況を説明してください:"
 }
