@@ -525,5 +525,6 @@
     "login.action.retry_setup": "セットアップをやり直す",
     "send_feedback.describe_issue": "問題が発生したときの状況を説明してください:",
     "sidebar.applog": "アプリケーションログ",
-    "setup.location.message": "アプリのインストール先を選択して下さい"
+    "setup.location.message": "アプリのインストール先を選択して下さい",
+    "login.action.reveal_password": "パスワード表示"
 }
