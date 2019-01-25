@@ -528,5 +528,6 @@
     "setup.location.message": "アプリのインストール先を選択して下さい",
     "login.action.reveal_password": "パスワードを表示",
     "login.action.hide_password": "パスワードを非表示",
-    "login.two_factor.learn_more": "２段階認証について読む"
+    "login.two_factor.learn_more": "２段階認証について読む",
+    "login.status.antivirus_warning": "アンチウィルスソフトが干渉している可能性があります。"
 }
