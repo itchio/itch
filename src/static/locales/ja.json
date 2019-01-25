@@ -550,5 +550,16 @@
     "prompt.confirm_quit.title": "終了してもよろしいですか？",
     "preferences.proxy_server_source.direct": "ダイレクト（プロキシなし）",
     "prompt.confirm_quit.message": "すべての起動中のゲームとアプリケーションが終了されます。",
-    "prompt.clear_browsing_data.notification": "ブラウザのデータを削除しました！"
+    "prompt.clear_browsing_data.notification": "ブラウザのデータを削除しました！",
+    "prompt.action.quit_and_close_all": "すべて閉じて終了する",
+    "prompt.action.nevermind": "無視する",
+    "prompt.dangerous_discard_download.detail": "次回起動時に {{title}} は最新版に戻ります",
+    "prompt.show_error.generic_message": "エラーが発生しました",
+    "prompt.show_error.details_for_nerds": "マニア向けの詳細",
+    "prompt.show_error.details_for_nerds.event_log": "イベントログ",
+    "prompt.show_error.send_report": "この問題の解決に貢献するためレポートを送信する",
+    "prompt.blessing.message": "{{title}} を操作するには管理者権限が必要です",
+    "prompt.blessing.detail": "作者を信頼して実行",
+    "prompt.manage_game.available_uploads": "これらのアイテムも入手できます:",
+    "prompt.manage_game.no_other_uploads": "他のアイテムは現在入手不可です。"
 }
