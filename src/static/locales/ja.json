@@ -542,5 +542,6 @@
     "notification.download_reverted": "{{title}}を{{version}}に切り替えました！",
     "preferences.scan_install_locations.items_imported": "無事に{{numImportedItems}} 個のアイテムが追加されました",
     "preferences.scan_install_locations.looking_for_games": "ゲームを検索中……",
-    "preferences.scan_install_locations.message": "以下のアイテムが追加できます："
+    "preferences.scan_install_locations.message": "以下のアイテムが追加できます：",
+    "preferences.scan_install_locations.title": "スキャン中…"
 }
