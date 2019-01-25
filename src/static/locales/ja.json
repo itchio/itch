@@ -563,5 +563,6 @@
     "prompt.manage_game.available_uploads": "これらのアイテムも入手できます:",
     "prompt.manage_game.no_other_uploads": "他のアイテムはありません。",
     "prompt.sla.message": "このソフトウェアを使うためには、この使用許諾契約の条項に同意する必要があります:",
-    "prompt.sla.accept": "同意する"
+    "prompt.sla.accept": "同意する",
+    "prompt.manage_game.title": "{{title}} を編集"
 }
