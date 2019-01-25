@@ -545,5 +545,6 @@
     "preferences.scan_install_locations.message": "以下のアイテムが追加できます：",
     "preferences.scan_install_locations.title": "スキャン中…",
     "preferences.behavior.open_at_login.error": "以下の理由で自動起動の設定が出来ません : {{cause}}",
-    "preferences.behavior.open_at_login.causes.no_desktop_file": ".desktopファイルが見つかりません。システムパッケージより導入されていない場合は当たり前のことです。詳しくは {{linux_install_page}} を見てください。"
+    "preferences.behavior.open_at_login.causes.no_desktop_file": ".desktopファイルが見つかりません。システムパッケージより導入されていない場合は当たり前のことです。詳しくは {{linux_install_page}} を見てください。",
+    "preferences.advanced.prefer_optimized_patches": "最適化パッチを優先"
 }
