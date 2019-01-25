@@ -622,5 +622,6 @@
     "send_feedback.final_thanks": "レポートを送っていただきありがとうございます。大変助かります！",
     "send_feedback.send.do_send": "レポートを送信",
     "send_feedback.success.view_report": "レポートを見る",
-    "send_feedback.success.view_report.delete": "(このページから削除することが出来ます)"
+    "send_feedback.success.view_report.delete": "(このページから削除することが出来ます)",
+    "send_feedback.error.intro": "申し訳ありません、レポートの送信に失敗しました。"
 }
