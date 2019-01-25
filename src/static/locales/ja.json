@@ -490,7 +490,7 @@
     "login.status.finalizing_installation": "インストールを確定中…",
     "preferences.advanced.components": "コンポーネント",
     "preferences.advanced.check_game_updates": "ゲームのアップデートを確認する",
-    "preferences.advanced.clear_browsing_data": "ブラウザのデータを削除する",
+    "preferences.advanced.clear_browsing_data": "閲覧データの削除",
     "preferences.advanced.disable_browser": "ウェブブラウザを無効化する",
     "preferences.advanced.disable_hardware_acceleration": "ハードウェアアクセラレータを無効化する（Linuxでのクラッシュ不具合が解決する可能性あり）",
     "prompt.discard_download.detail": "いつでも{{title}}を再インストールできますが、最初からまたやり直すことになります。",
@@ -620,5 +620,7 @@
     "send_feedback.send.secret_url.feature_list.delete": "必要ならレポートを削除できる。",
     "butlerd.codes.3000": "このタイトルはitch.ioアプリと互換性のない仕様でパッケージ化されています。",
     "send_feedback.final_thanks": "レポートを送っていただきありがとうございます。大変助かります！",
-    "send_feedback.send.do_send": "レポートを送信"
+    "send_feedback.send.do_send": "レポートを送信",
+    "send_feedback.success.view_report": "レポートを見る",
+    "send_feedback.success.view_report.delete": "(このページから削除することが出来ます)"
 }
