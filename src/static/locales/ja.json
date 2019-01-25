@@ -138,7 +138,7 @@
     "prompt.url_install.message": "{{title}}をインストールしますか?",
     "prompt.url_install.title": "インストールの要求",
     "search.empty.no_results": "何も見つかりませんでした",
-    "search.empty.tagline": "思い当たりありませんか？「{{example}}」を検索しては如何でしょうか",
+    "search.empty.tagline": "何を検索したらいいでしょう？　例えば「{{example}}」を入力してみましょう",
     "search.placeholder": "検索",
     "sidebar.broken": "休止中",
     "sidebar.dashboard": "自分の製作したゲーム",
@@ -353,7 +353,7 @@
     "preferences.notifications.ready_notification": "インストールまたはアップデートが完了したら通知する",
     "pick_update_upload.single.message": "アップデートは今でも後でもできます。",
     "pick_update_upload.buttons.update": "今すぐアップデートする",
-    "pick_update_upload.tags.demo": "デモ",
+    "pick_update_upload.tags.demo": "体験版",
     "download.reason.revert": "他のバージョンに切り替える",
     "collection.summary": "コレクションに {{itemCount}} 個のアイテム",
     "collections.empty": "現在コレクションはありません",
@@ -509,7 +509,7 @@
     "sort_by.games.size_on_disk": "ディスク使用量",
     "sort_by.games.install_date": "インストール日付",
     "sort_by.collections.title": "タイトル",
-    "sort_by.collections.updated_at": "最終更新",
+    "sort_by.collections.updated_at": "更新日時",
     "filter_by.games.classification.games": "ゲーム",
     "filter_by.games.classification.tools": "ツール",
     "filter_by.games.classification.assets": "ゲーム素材",
@@ -549,5 +549,6 @@
     "preferences.advanced.prefer_optimized_patches": "最適化パッチを優先する",
     "prompt.confirm_quit.title": "終了してもよろしいですか？",
     "preferences.proxy_server_source.direct": "ダイレクト（プロキシなし）",
-    "prompt.confirm_quit.message": "すべての起動中のゲームとアプリケーションが終了されます"
+    "prompt.confirm_quit.message": "すべての起動中のゲームとアプリケーションが終了されます。",
+    "prompt.clear_browsing_data.notification": "ブラウザのデータを削除しました！"
 }
