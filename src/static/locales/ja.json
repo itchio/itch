@@ -530,5 +530,13 @@
     "login.action.hide_password": "パスワードを非表示",
     "login.two_factor.learn_more": "２段階認証について読む",
     "login.status.antivirus_warning": "アンチウィルスソフトが干渉している可能性があります。",
-    "prereq.explanation": "{{title}}を正常に実行するためには、いくつかパッケージをインストールする必要があります。"
+    "prereq.explanation": "{{title}}を正常に実行するには、いくつかパッケージをインストールする必要があります。",
+    "prereq.status.pending": "準備中…",
+    "prereq.status.extracting": "展開中...",
+    "prereq.status.ready": "インストール準備完了",
+    "menu.file.close_tabs_below": "下のタブをすべて閉じる",
+    "new_tab.devlogs": "開発者ログ",
+    "notification.download_healed": "{{title}}の整合性確認と修復が完了しました！",
+    "preferences.scan_install_locations.confirm_import": "インポートを確認",
+    "preferences.scan_install_locations.import_items": "{{numItems}} 個 のアイテムを追加"
 }
