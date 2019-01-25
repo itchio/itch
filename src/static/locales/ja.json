@@ -619,5 +619,6 @@
     "send_feedback.send.secret_url.feature_list.view": "私たちが拝見しているのと同じようにレポートが確認できる",
     "send_feedback.send.secret_url.feature_list.delete": "必要ならレポートを削除できる。",
     "butlerd.codes.3000": "このタイトルはitch.ioアプリと互換性のない仕様でパッケージ化されています",
-    "send_feedback.final_thanks": "レポートを送っていただきありがとうございます、大変助かります！"
+    "send_feedback.final_thanks": "レポートを送っていただきありがとうございます、大変助かります！",
+    "send_feedback.send.do_send": "レポートを送信"
 }
