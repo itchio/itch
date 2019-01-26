@@ -528,7 +528,7 @@
     "prompt.confirm_quit.message": "Todos los juegos y aplicaciones serán cerrados.",
     "prompt.action.quit_and_close_all": "Salir y cerrar todo",
     "prompt.action.back": "Atrás",
-    "prompt.show_error.generic_message": "Algo malo ha sucedido",
+    "prompt.show_error.generic_message": "Algo salió mal",
     "prompt.blessing.message": "Se necesitan permisos de Administrador para gestionar {{title}}",
     "prompt.blessing.detail": "Continúa solo si confías en el autor.",
     "prompt.manage_game.title": "Gestionar {{title}}",
