@@ -499,5 +499,5 @@
     "prompt.confirm_quit.message": "Kaikki käynnissäolevat pelit ja sovellukset suljetaan.",
     "prompt.action.quit_and_close_all": "Lopeta ja sulje kaikki",
     "prompt.action.back": "Takaisin",
-    "prompt.discard_download.message": "Oletko varma että haluat keskeyttää latauksen {{title}}?"
+    "prompt.discard_download.message": "Oletko varma että haluat keskeyttää {{title}} latauksen?"
 }
