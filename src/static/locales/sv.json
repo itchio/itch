@@ -445,5 +445,6 @@
     "prompt.uninstall_error.message": "Avinstalleringen misslyckades, Vill du ta bort objektet ändå?",
     "prompt.uninstall_error.action_permissions": "Ta bort som administratör",
     "prompt.install_error.message": "Installationen misslyckades",
-    "collection.item_count": "{{itemCount}} föremål"
+    "collection.item_count": "{{itemCount}} föremål",
+    "docs.how_to_help": "Hur kan jag hjälpa till?"
 }
