@@ -618,5 +618,6 @@
     "plan_install.select_install_location": "Kohteeseen",
     "plan_install.disk_space_required": "Vaadittu levytila",
     "plan_install.disk_space_available": "Levytilaa käytettävissä",
-    "empty_state.nothing_to_see_here": "Ei mitään nähtävää"
+    "empty_state.nothing_to_see_here": "Ei mitään nähtävää",
+    "table.column.powered_by": "Voimanlähteenä"
 }
