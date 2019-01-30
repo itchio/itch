@@ -533,5 +533,8 @@
     "sidebar.applog": "Ohjelmaloki",
     "sidebar.explore": "Tutkaile",
     "sidebar.library": "Kirjasto",
-    "status.repairing_game": "{{title}} päivittäminen tulee saattaa loppuun ennen kuin se voidaan avata"
+    "status.repairing_game": "Kohteen {{title}} päivittäminen tulee saattaa loppuun ennen kuin se voidaan avata",
+    "status.downloads.no_active_downloads_subtext": "Kohteet jotka asennat tai lataat ilmestyvät tänne",
+    "sort_by.games.acquired_at": "Hankittu äskettäin",
+    "send_feedback.send.sending": "Lähetetään..."
 }
