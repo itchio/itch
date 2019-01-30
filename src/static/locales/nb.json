@@ -517,5 +517,6 @@
     "grid.item.running.clean": "Rydder opp...",
     "grid.item.manage": "Tilpass",
     "login.status.finalizing_installation": "Fullfører installasjon...",
-    "preferences.install_location.disk_usage": "Diskforbruk"
+    "preferences.install_location.disk_usage": "Diskforbruk",
+    "table.column.powered_by": "Drevet av"
 }
