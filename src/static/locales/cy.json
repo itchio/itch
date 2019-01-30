@@ -80,5 +80,10 @@
     "grid.item.install_title": "Lawrlwytho {{title}}",
     "grid.item.share": "Rhannu",
     "grid.item.open": "Agor",
-    "grid.item.open_title": "Agor {{title}}"
+    "grid.item.open_title": "Agor {{title}}",
+    "grid.item.installing": "Gosodi...",
+    "dashboard.game_stats.downloads": "lawrlwythiadau ",
+    "grid.item.open_page": "Agor wefan",
+    "sidebar.explore": "Archwilio",
+    "sidebar.library": "Llyfrgell"
 }
