@@ -471,5 +471,16 @@
     "login.action.reveal_password": "Näytä salasana",
     "login.status.antivirus_warning": "Virustentorjuntaohjelmisto voi haitata itchin toimintaa.",
     "preferences.scan_install_locations.no_items_found": "Asennuskohteista ei löytynyt enempää kohteita",
-    "preferences.scan_install_locations.title": "Skannataan..."
+    "preferences.scan_install_locations.title": "Skannataan...",
+    "prereq.status.pending": "Valmistellaan...",
+    "menu.file.close_other_tabs": "Sulje muut välilehdet",
+    "preferences.install_location.disk_usage": "Levynkäyttö",
+    "preferences.scan_install_locations.confirm_import": "Vahvista tuonti",
+    "preferences.scan_install_locations.message": "Seuraavat kohteet voidaan tuoda:",
+    "preferences.behavior.enable_tabs": "Ota välilehdet käyttöön",
+    "preferences.advanced.components": "Osat",
+    "preferences.advanced.check_game_updates": "Tarkista pelipäivitykset",
+    "preferences.advanced.prefer_optimized_patches": "Suosi optimoituja korjaustiedostoja",
+    "preferences.advanced.disable_browser": "Kytke verkkoselain pois päältä",
+    "preferences.advanced.disable_hardware_acceleration": "Kytke laitteistokiihdytys pois päältä (ratkaisee joitakin kaatumisia Linux:issa)"
 }
