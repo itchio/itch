@@ -522,5 +522,5 @@
     "prompt.manage_game.available_uploads": "Lisäksi nämä kohteet ovat saatavilla:",
     "prompt.manage_game.no_other_uploads": "Lisäkohteita ei tällä hetkellä saatavilla.",
     "prompt.revert.version": "versio {{version}}",
-    "prompt.revert.no_other_version": "Muuta versiota ei ole saatavilla."
+    "prompt.revert.no_other_version": "Muita versiota ei ole saatavilla."
 }
