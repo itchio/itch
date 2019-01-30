@@ -449,5 +449,18 @@
     "grid.item.queueing": "Laitetaan jonoon…",
     "grid.item.launch_title": "Avaa {{title}}",
     "grid.item.open_page": "Avaa sivu",
-    "login.status.finalizing_installation": "Viimeistellään asennusta…"
+    "login.status.finalizing_installation": "Viimeistellään asennusta…",
+    "grid.item.not_compatible": "Ei saatavilla tälle alustalle",
+    "grid.item.not_available": "Ei saatavilla",
+    "grid.item.open_title": "Avaa {{title}}",
+    "grid.item.open_file_location.windows": "Avaa kansio selaimessa",
+    "grid.item.open_file_location.linux": "Näytä tiedostonhallinnassa",
+    "grid.item.running.prepare": "Valmistellaan...",
+    "grid.item.uninstall_request": "Poista tai asenna uudelleen...",
+    "grid.item.manage": "Hallinnoi",
+    "grid.item.status.installed": "Asennettu",
+    "table.column.installed_size": "Koko",
+    "table.column.installed": "Asennettu",
+    "browser.open_devtools": "Avaa kehittäjätyökalut",
+    "login.action.hide_password": "Piilota salasana"
 }
