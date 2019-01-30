@@ -462,5 +462,12 @@
     "table.column.installed_size": "Koko",
     "table.column.installed": "Asennettu",
     "browser.open_devtools": "Avaa kehittäjätyökalut",
-    "login.action.hide_password": "Piilota salasana"
+    "login.action.hide_password": "Piilota salasana",
+    "grid.item.open_file_location.osx": "Näytä Finderissä",
+    "grid.item.running.clean": "Siivotaan...",
+    "browser.disabled": "Itchin verkkoselain ei ole käytössä",
+    "browser.reenable": "Ota uudelleen käyttöön",
+    "login.action.retry_setup": "Yritä asennusta uudelleen",
+    "login.action.reveal_password": "Näytä salasana",
+    "login.status.antivirus_warning": "Antivirusohjelmisto voi haitata itchin toimintaa."
 }
