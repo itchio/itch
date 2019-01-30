@@ -2,7 +2,7 @@
     "errors.api.login.password_must_be_provided": "Ddylai cyfrinair gael ei ddarparu",
     "grid.item.buy_now": "Prynnwch nawr",
     "grid.item.cancel_download": "Canslo lawrlwythiad",
-    "grid.item.downloading": "Lawrlwytho...",
+    "grid.item.downloading": "Lawrlwytho…",
     "grid.item.launch": "Dechreuwch",
     "grid.item.not_platform_compatible": "Ddim ar gael ar {{platform}}",
     "login.action.login": "Mewngofnodi",
@@ -73,5 +73,12 @@
     "game.install.could_not_launch.detail": "Ei eiriau olaf oedd: {{error}}",
     "game.install.no_uploads_available.detail": "Efallai nad yw'n cyd-fynd â eich llwyfan neu gyda'r app itch eto!",
     "game.install.try_again": "Triwch eto",
-    "grid.criterion.filter": "Hidlo..."
+    "grid.criterion.filter": "Hidlo...",
+    "collection.item_count": "{{itemCount}} eitem",
+    "grid.item.prioritize_download": "Flaenoriaethu",
+    "grid.item.developer": "Datblygwr",
+    "grid.item.install_title": "Lawrlwytho {{title}}",
+    "grid.item.share": "Rhannu",
+    "grid.item.open": "Agor",
+    "grid.item.open_title": "Agor {{title}}"
 }
