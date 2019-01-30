@@ -327,7 +327,7 @@
     "status.offline_mode.inactive": "Klikk for å aktivere frakoblet modus",
     "usage_stats.description.assets": "En samling av ressurser",
     "usage_stats.description.game_mod": "En spilltilpasning",
-    "usage_stats.description.platforms": "for {{platforms}}",
+    "usage_stats.description.platforms": "til {{platforms}}",
     "action.name.editor": "Tekstverktøy",
     "menu.file.new_tab": "Ny fane",
     "preferences.security": "Sikkerhet & personvern",
@@ -514,9 +514,9 @@
     "prompt.launch.title": "Start {{title}}",
     "grid.really_empty_state.leader": "Det er ingenting her...",
     "grid.really_empty_state.explanation": "...ennå!",
-    "grid.item.running.clean": "Rydder opp...",
+    "grid.item.running.clean": "Rydder opp …",
     "grid.item.manage": "Tilpass",
-    "login.status.finalizing_installation": "Fullfører installasjon...",
+    "login.status.finalizing_installation": "Fullfører installasjon …",
     "preferences.install_location.disk_usage": "Diskforbruk",
     "table.column.powered_by": "Drevet av"
 }
