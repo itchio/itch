@@ -459,5 +459,6 @@
     "web.context_menu.open_in_new_tab": "Apri in una nuova scheda",
     "web.context_menu.copy_link": "Copia il collegamento",
     "prompt.install_error.message": "L'installazione è fallita.",
-    "dashboard.game_stats.downloads": "download"
+    "dashboard.game_stats.downloads": "download",
+    "grid.item_count": "{{count}} elementi"
 }
