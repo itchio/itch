@@ -518,5 +518,9 @@
     "prompt.blessing.message": "Järjestelmänvalvojan oikeudet vaaditaan {{title}}:n hallintaan",
     "prompt.blessing.detail": "Jatka vain mikäli luotat tekijään.",
     "prompt.manage_game.title": "Hallitse kohdetta {{title}}",
-    "prompt.manage_game.installed_uploads": "Seuraavat kohteet on asennettu:"
+    "prompt.manage_game.installed_uploads": "Seuraavat kohteet on asennettu:",
+    "prompt.manage_game.available_uploads": "Lisäksi nämä kohteet ovat saatavilla:",
+    "prompt.manage_game.no_other_uploads": "Lisäkohteita ei tällä hetkellä saatavilla.",
+    "prompt.revert.version": "versio {{version}}",
+    "prompt.revert.no_other_version": "Muuta versiota ei ole saatavilla."
 }
