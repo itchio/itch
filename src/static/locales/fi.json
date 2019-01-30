@@ -515,5 +515,7 @@
     "prompt.show_error.details_for_nerds.stack_trace": "Ryppään jäljitys",
     "prompt.launch.title": "Käynnistä {{title}}",
     "prompt.launch.message": "Minkä haluat avata?",
-    "prompt.blessing.message": "Järjestelmänvalvojan oikeudet vaaditaan {{title}}:n hallintaan"
+    "prompt.blessing.message": "Järjestelmänvalvojan oikeudet vaaditaan {{title}}:n hallintaan",
+    "prompt.blessing.detail": "Jatka vain mikäli luotat tekijään.",
+    "prompt.manage_game.title": "Hallitse {{title}}"
 }
