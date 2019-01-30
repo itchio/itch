@@ -509,5 +509,11 @@
     "prompt.show_error.send_report": "Lähetä raportti auttaaksesi ongelmanratkaisua",
     "prompt.sla.title": "Ohjelmistolisenssisopimus",
     "prompt.sla.message": "Käyttääksesi tätä ohjelmaa, sinun tulee hyväksyä tämän lisenssisopimuksen ehdot:",
-    "prompt.sla.accept": "Hyväksy ehdot"
+    "prompt.sla.accept": "Hyväksy ehdot",
+    "prompt.show_error.details_for_nerds": "Yksityiskohdat nörteille",
+    "prompt.show_error.details_for_nerds.event_log": "Tapahtumaloki",
+    "prompt.show_error.details_for_nerds.stack_trace": "Ryppään jäljitys",
+    "prompt.launch.title": "Käynnistä {{title}}",
+    "prompt.launch.message": "Minkä haluat avata?",
+    "prompt.blessing.message": "Järjestelmänvalvojan oikeudet vaaditaan hallintaan {{title}}"
 }
