@@ -469,5 +469,7 @@
     "browser.reenable": "Ota uudelleen käyttöön",
     "login.action.retry_setup": "Yritä asennusta uudelleen",
     "login.action.reveal_password": "Näytä salasana",
-    "login.status.antivirus_warning": "Antivirusohjelmisto voi haitata itchin toimintaa."
+    "login.status.antivirus_warning": "Virustentorjuntaohjelmisto voi haitata itchin toimintaa.",
+    "preferences.scan_install_locations.no_items_found": "Asennuskohteista ei löytynyt enempää kohteita",
+    "preferences.scan_install_locations.title": "Skannataan..."
 }
