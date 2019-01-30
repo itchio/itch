@@ -482,5 +482,14 @@
     "preferences.advanced.check_game_updates": "Tarkista pelipäivitykset",
     "preferences.advanced.prefer_optimized_patches": "Suosi optimoituja korjaustiedostoja",
     "preferences.advanced.disable_browser": "Kytke verkkoselain pois päältä",
-    "preferences.advanced.disable_hardware_acceleration": "Kytke laitteistokiihdytys pois päältä (ratkaisee joitakin kaatumisia Linux:issa)"
+    "preferences.advanced.disable_hardware_acceleration": "Kytke laitteistokiihdytys pois päältä (ratkaisee joitakin kaatumisia Linux:issa)",
+    "menu.file.close_tabs_below": "Sulje allaolevat välilehdet",
+    "new_tab.devlogs": "Kehittäjälokit",
+    "preferences.install_location.navigate": "Näytä sijainnin sisältö",
+    "preferences.install_location.size_used_by_games": "{{installedSize}} pelien käytössä",
+    "preferences.install_location.free_of_total": "{{freeSize}} / {{totalSize}} vapaana",
+    "preferences.scan_install_locations": "Skannaa pelejä asennussijainneista",
+    "preferences.scan_install_locations.import_items": "Tuo {{numItems}} kohdetta",
+    "preferences.scan_install_locations.items_imported": "{{numImportedItems}} kohdetta tuotiin onnistuneesti",
+    "preferences.scan_install_locations.looking_for_games": "Etsitään pelejä..."
 }
