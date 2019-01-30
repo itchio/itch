@@ -511,5 +511,11 @@
     "prompt.show_error.details_for_nerds": "Detaljer for nerder",
     "prompt.show_error.details_for_nerds.event_log": "Hendelseslogg",
     "prompt.show_error.send_report": "Send en rapport for å løse dette problemet",
-    "prompt.launch.title": "Start {{title}}"
+    "prompt.launch.title": "Start {{title}}",
+    "grid.really_empty_state.leader": "Det er ingenting her...",
+    "grid.really_empty_state.explanation": "...ennå!",
+    "grid.item.running.clean": "Rydder opp...",
+    "grid.item.manage": "Tilpass",
+    "login.status.finalizing_installation": "Fullfører installasjon...",
+    "preferences.install_location.disk_usage": "Diskforbruk"
 }
