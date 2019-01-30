@@ -338,7 +338,7 @@
     "status.downloads.no_active_downloads": "没有正在进行的下载",
     "status.downloads.unknown_size": "未知",
     "status.game_update.check_failed": "无法检查更新：{{err}}",
-    "status.game_update.found": "找到 {{title} 的新版本！",
+    "status.game_update.found": "找到 {{title}} 的新版本！",
     "status.game_update.not_found": "{{title}} 已是最新版本。",
     "status.history.click_to_expand": "点击以展开历史。",
     "status.offline_mode.inactive": "点击以开启离线模式",
