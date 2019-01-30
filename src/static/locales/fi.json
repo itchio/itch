@@ -503,5 +503,11 @@
     "prompt.discard_download.detail": "Voit asentaa {{title}} uudelleen milloin vain, mutta lataus alkaa alusta.",
     "prompt.discard_download.action.stop_download": "Pysäytä lataus",
     "prompt.discard_download.action.continue_download": "Jatka latausta",
-    "prompt.dangerous_discard_download.message": "Tämän latauksen keskeyttäminen {{title}} aiheuttaa epäyhtenäisen tilan."
+    "prompt.dangerous_discard_download.message": "Tämän latauksen keskeyttäminen jättää kohteen {{title}} epäyhtenäiseen tilaan.",
+    "prompt.dangerous_discard_download.detail": "Palautamme kohteen {{title}} viimeisimpään versioon kun yrität käyttää sitä seuraavan kerran.",
+    "prompt.show_error.generic_message": "Jotain meni väärin",
+    "prompt.show_error.send_report": "Lähetä raportti auttaaksesi ongelmanratkaisua",
+    "prompt.sla.title": "Ohjelmistolisenssisopimus",
+    "prompt.sla.message": "Käyttääksesi tätä ohjelmaa, sinun tulee hyväksyä tämän lisenssisopimuksen ehdot:",
+    "prompt.sla.accept": "Hyväksy ehdot"
 }
