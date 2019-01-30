@@ -517,5 +517,6 @@
     "prompt.launch.message": "Minkä haluat avata?",
     "prompt.blessing.message": "Järjestelmänvalvojan oikeudet vaaditaan {{title}}:n hallintaan",
     "prompt.blessing.detail": "Jatka vain mikäli luotat tekijään.",
-    "prompt.manage_game.title": "Hallitse {{title}}"
+    "prompt.manage_game.title": "Hallitse kohdetta {{title}}",
+    "prompt.manage_game.installed_uploads": "Seuraavat kohteet on asennettu:"
 }
