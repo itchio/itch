@@ -176,5 +176,6 @@
     "prompt.action.nevermind": "Tant se val",
     "sidebar.aw_snap": "Ondia!",
     "table.column.name": "Nom",
-    "table.column.installed_size": "Mida"
+    "table.column.installed_size": "Mida",
+    "menu.file.close_all_tabs": "Tanca totes les pestanyes"
 }
