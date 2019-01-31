@@ -146,5 +146,13 @@
     "download.ongoing.heal": "S'està reparant {{title}…",
     "game.install.could_not_launch": "S'ha produït un error en executar {{title}}",
     "game.install.could_not_launch.message": "El missatge obtingut ha estat: {{errorMessage}}",
-    "grid.item.probe": "Examina la causa de l'error"
+    "grid.item.probe": "Examina la causa de l'error",
+    "download.outcome.installed": "instal·lat",
+    "download.outcome.updated": "actualitzat a la darrera versió",
+    "duration.hour": "una hora",
+    "duration.hours": "{{x}} hores",
+    "duration.minute": "un minut o menys",
+    "duration.minutes": "{{x}} minuts",
+    "duration.seconds": "{{x}} segons",
+    "game.install.could_not_launch.detail": "Enviar-nos un informe és la millor manera d'assegurar-se que es resolgui!"
 }
