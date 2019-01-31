@@ -154,5 +154,21 @@
     "duration.minute": "un minut o menys",
     "duration.minutes": "{{x}} minuts",
     "duration.seconds": "{{x}} segons",
-    "game.install.could_not_launch.detail": "Enviar-nos un informe és la millor manera d'assegurar-se que es resolgui!"
+    "game.install.could_not_launch.detail": "Enviar-nos-en un informe és la millor manera d'assegurar-vos que es resolgui!",
+    "game.install.could_not_launch.missing_jre": "Necessita el Java, que no s'ha trobat al vostre sistema.",
+    "grid.criterion.filter": "Filtra...",
+    "grid.item.advanced": "Avançat...",
+    "grid.item.download_java": "Descarrega el Java",
+    "grid.item.verify_integrity": "Verifica'n la integritat",
+    "grid.item.revert_to_version": "Canvia a una altra versió...",
+    "grid.item.view_details": "Mostra'n els detalls...",
+    "grid.item.downloads_paused": "Descàrregues pausades",
+    "table.column.play_time": "Temps de joc",
+    "table.column.last_played": "Jugat per darrera vegada",
+    "menu.file.close_tab": "Tanca la pestanya",
+    "menu.file.close_other_tabs": "Tanca les altres pestanyes",
+    "menu.file.close_tabs_below": "Tanca les pestanyes de sota",
+    "new_tab.devlogs": "Registres del desenvolupador",
+    "prompt.clear_browsing_data.category.cookies": "Galetes",
+    "prompt.uninstall_error.message": "La desinstal·lació ha fallat. Voleu eliminar l'entrada igualment?"
 }
