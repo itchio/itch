@@ -145,5 +145,6 @@
     "download.ongoing.revert": "S'està canviant {{title}} a una altra versió…",
     "download.ongoing.heal": "S'està reparant {{title}…",
     "game.install.could_not_launch": "S'ha produït un error en executar {{title}}",
-    "game.install.could_not_launch.message": "El missatge obtingut ha estat: {{errorMessage}}"
+    "game.install.could_not_launch.message": "El missatge obtingut ha estat: {{errorMessage}}",
+    "grid.item.probe": "Examina la causa de l'error"
 }
