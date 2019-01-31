@@ -170,5 +170,9 @@
     "menu.file.close_tabs_below": "Tanca les pestanyes de sota",
     "new_tab.devlogs": "Registres del desenvolupador",
     "prompt.clear_browsing_data.category.cookies": "Galetes",
-    "prompt.uninstall_error.message": "La desinstal·lació ha fallat. Voleu eliminar l'entrada igualment?"
+    "prompt.uninstall_error.message": "La desinstal·lació ha fallat. Voleu eliminar l'entrada igualment?",
+    "game.install.no_executables_found": "No s'han trobat executables",
+    "table.column.powered_by": "Fet amb",
+    "prompt.action.nevermind": "Tant se val",
+    "sidebar.aw_snap": "Ondia!"
 }
