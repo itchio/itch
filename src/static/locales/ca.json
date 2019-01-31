@@ -174,5 +174,7 @@
     "game.install.no_executables_found": "No s'han trobat executables",
     "table.column.powered_by": "Fet amb",
     "prompt.action.nevermind": "Tant se val",
-    "sidebar.aw_snap": "Ondia!"
+    "sidebar.aw_snap": "Ondia!",
+    "table.column.name": "Nom",
+    "table.column.installed_size": "Mida"
 }
