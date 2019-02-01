@@ -366,7 +366,7 @@
     "toast.call_to_action": "For at fortsætte, genindlæs eller skift siden.",
     "toast.actions.reload": "Genindlæs",
     "new_tab.devlogs": "Udviklerlogs",
-    "grid.filters.options.compatible": "Kompatibel ",
+    "grid.filters.options.compatible": "Kompatible",
     "grid.filters.options.installed": "Installeret",
     "grid.item.prioritize_download": "Prioritér",
     "grid.item.review": "Anmeldelse",
@@ -609,5 +609,6 @@
     "plan_install.select_install_location": "Til lokation",
     "plan_install.disk_space_required": "Nødvendig diskplads",
     "plan_install.disk_space_available": "Tilgængelig diskplads",
-    "empty_state.nothing_to_see_here": "Intet at se her"
+    "empty_state.nothing_to_see_here": "Intet at se her",
+    "preferences.behavior": "Opførsel"
 }
