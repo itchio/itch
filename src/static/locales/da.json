@@ -610,5 +610,14 @@
     "plan_install.disk_space_required": "Nødvendig diskplads",
     "plan_install.disk_space_available": "Tilgængelig diskplads",
     "empty_state.nothing_to_see_here": "Intet at se her",
-    "preferences.behavior": "Opførsel"
+    "preferences.behavior": "Opførsel",
+    "prompt.uninstall_error.title": "Afinstallationsfejl",
+    "sidebar.close_all_tabs": "Luk alle faneblade",
+    "setup.location.message": "Vælg hvor programmet skal installeres",
+    "setup.action.install": "Installer nu",
+    "setup.status.preparing": "Varmer op…",
+    "setup.status.progress": "{{percent}} færdig",
+    "setup.status.done": "Færdig!",
+    "setup.status.notification": "Installationen gik godt, {{app_name}} starter nu!",
+    "setup.error_dialog.title": "Noget gik galt"
 }
