@@ -394,5 +394,6 @@
     "toast.actions.report": "Send feedback for at hjælpe med at forbedre itch",
     "toast.no_info_available": "Ingen information tilgængelig",
     "new_tab.titles.buttons": "Prøv en af disse:",
-    "notification.purchase_complete.just_bought": "Du har købt {{title}}!"
+    "notification.purchase_complete.just_bought": "Du har købt {{title}}!",
+    "grid.item.download_java": "Hent Java"
 }
