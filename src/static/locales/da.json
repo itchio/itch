@@ -394,6 +394,15 @@
     "toast.actions.report": "Send feedback for at hjælpe med at forbedre itch",
     "toast.no_info_available": "Ingen information tilgængelig",
     "new_tab.titles.buttons": "Prøv en af disse:",
-    "notification.purchase_complete.just_bought": "Du har købt {{title}}!",
-    "grid.item.download_java": "Hent Java"
+    "notification.purchase_complete.just_bought": "Du har lige købt {{title}}!",
+    "grid.item.download_java": "Hent Java",
+    "notification.purchase_complete.just_donated": "Du har lige doneret til {{title}}!",
+    "notification.purchase_complete.may_install_now": "Du kan nu installere det når som helst!",
+    "notification.purchase_complete.thanks_for_support": "Tak for din støtte!",
+    "notification.download_installed": "{{title}} blev installeret!",
+    "notification.download_updated": "{{title}} blev opdateret!",
+    "notification.download_reverted": "{{title}} blev ændret til {{version}}!",
+    "notification.download_healed": "{{title}} bekræftet og repareret!",
+    "outlinks.manage_collections": "Administrer samlinger",
+    "sandbox.setup.title": "itch.io-sandkasseopsætning"
 }
