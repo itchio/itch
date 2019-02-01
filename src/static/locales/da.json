@@ -282,7 +282,7 @@
     "action.name.manual": "Brugermanual",
     "action.name.forums": "Diskussioner",
     "grid.item.view_details": "Se detaljer...",
-    "grid.item.revert_to_version": "Rul tilbage til version...",
+    "grid.item.revert_to_version": "Skift til en anden version",
     "grid.item.verify_integrity": "Verificer integritet",
     "grid.item.update": "Opdater",
     "game.install.could_not_launch.missing_jre": "Der kræves en version af Java der ikke var fundet på dit system.",
@@ -619,5 +619,7 @@
     "setup.status.progress": "{{percent}} færdig",
     "setup.status.done": "Færdig!",
     "setup.status.notification": "Installationen gik godt, {{app_name}} starter nu!",
-    "setup.error_dialog.title": "Noget gik galt"
+    "setup.error_dialog.title": "Noget gik galt",
+    "web.context_menu.cut": "Klip",
+    "install_location.property.size_on_disk": "{{size}} på disk"
 }
