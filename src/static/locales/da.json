@@ -408,5 +408,6 @@
     "outlinks.open_dashboard": "Åben dashboard",
     "sandbox.setup.proceed": "Fortsæt",
     "sandbox.setup.windows.message": "For at køre spil i itch.io-sandkassen skal en engangsopsætningsprocedure køres som Administrator.",
-    "sandbox.setup.windows.detail": "Efter at du har trykket 'Fortsæt', vil en prompt om tilladelse poppe op. Den vil tilføje en `itch-player`-konto for at adskille dine spil fra resten af dit system."
+    "sandbox.setup.windows.detail": "Efter at du har trykket 'Fortsæt', vil en prompt om tilladelse poppe op. Den vil tilføje en `itch-player`-konto for at adskille dine spil fra resten af dit system.",
+    "sandbox.setup.linux.message": "For at køre spil i itch.io sandkassen skal et opsætnings script køres som root."
 }
