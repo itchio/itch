@@ -409,5 +409,6 @@
     "sandbox.setup.proceed": "Fortsæt",
     "sandbox.setup.windows.message": "For at køre spil i itch.io-sandkassen skal en engangsopsætningsprocedure køres som Administrator.",
     "sandbox.setup.windows.detail": "Efter at du har trykket 'Fortsæt', vil en prompt om tilladelse poppe op. Den vil tilføje en `itch-player`-konto for at adskille dine spil fra resten af dit system.",
-    "sandbox.setup.linux.message": "For at køre spil i itch.io-sandkassen, skal et opsætningsscript køres som root."
+    "sandbox.setup.linux.message": "For at køre spil i itch.io-sandkassen, skal et opsætningsscript køres som root.",
+    "sandbox.setup.linux.detail": "Efter at du har trykket 'Fortsæt' vil en prompt poppe op og spørge om dit kodeord. Det er kun nødvendig når sandkassen bliver brugt første gang eller når den er opdateret. Dit kodeord bliver aldrig gemt."
 }
