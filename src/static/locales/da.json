@@ -407,5 +407,5 @@
     "sandbox.setup.title": "itch.io-sandkasseopsætning",
     "outlinks.open_dashboard": "Åben dashboard",
     "sandbox.setup.proceed": "Fortsæt",
-    "sandbox.setup.windows.message": "For at køre spil i itch.io sandkassen skal en engangs opsætnings procedure køres som Administrator."
+    "sandbox.setup.windows.message": "For at køre spil i itch.io-sandkassen skal en engangsopsætningsprocedure køres som Administrator."
 }
