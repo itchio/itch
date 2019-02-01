@@ -313,5 +313,9 @@
     "download.outcome.healed": "verificeret og repareret",
     "dashboard.game_stats.views": "visninger",
     "dashboard.game_stats.downloads": "hentninger",
-    "dashboard.game_stats.purchases": "køb"
+    "dashboard.game_stats.purchases": "køb",
+    "docs.how_to_help": "Hvordan kan jeg hjælpe?",
+    "duration.seconds": "{{x}} sekunder",
+    "game.install.could_not_launch.message": "Beskeden vi fik var: {{errorMessage}}",
+    "game.install.could_not_launch.detail": "Den bedste måde at få noget fixet er ved at sende os en raport"
 }
