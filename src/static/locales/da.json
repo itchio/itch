@@ -365,5 +365,16 @@
     "toast.title": "Det var li' godt grow!",
     "toast.call_to_action": "For at fortsætte, genindlæs eller skift siden.",
     "toast.actions.reload": "Genindlæs",
-    "new_tab.devlogs": "Udviklerlogs"
+    "new_tab.devlogs": "Udviklerlogs",
+    "grid.filters.options.compatible": "Kompatibel ",
+    "grid.filters.options.installed": "Installeret",
+    "grid.item.prioritize_download": "Prioriter ",
+    "grid.item.review": "Anmeldelse",
+    "grid.item.not_compatible": "Ikke tilgængelig på denne platform",
+    "grid.item.status.installed": "Installeret",
+    "table.column.installed_size": "Størrelse",
+    "table.column.play_time": "Spilletid",
+    "table.column.last_played": "Sidst spillet",
+    "table.column.published": "Udgivet",
+    "collection_grid.item.updated_at": "Sidst opdateret {{time_ago}}"
 }
