@@ -556,5 +556,9 @@
     "status.downloads.find_games_button": "Lade Etwas herunter!",
     "setup.action.browse": "Durchsuchen",
     "web.context_menu.inspect": "Untersuchen",
-    "butlerd.codes.2001": "Für diesen Titel wurden keine kompatiblen Uploads gefunden"
+    "butlerd.codes.2001": "Für diesen Titel wurden keine kompatiblen Uploads gefunden",
+    "status.downloads.resume_downloads": "Downloads fortsetzen",
+    "status.downloads.pause_downloads": "Downloads pausieren",
+    "butlerd.codes.404": "Der Installationsordner ist verschwunden",
+    "butlerd.codes.3000": "Dieser Titel ist auf eine Art komprimiert, welche nicht kompatibel ist mit der itch.io App."
 }
