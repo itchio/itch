@@ -629,5 +629,6 @@
     "plan_install.select_install_location": "Nach Ordner",
     "plan_install.disk_space_required": "Speicherplatz benötigt",
     "plan_install.disk_space_available": "Speicherplatz verfügbar",
-    "empty_state.nothing_to_see_here": "Hier gibt es nichts zu sehen"
+    "empty_state.nothing_to_see_here": "Hier gibt es nichts zu sehen",
+    "butlerd.codes.5000": "Es wurde nichts gefunden, was gestartet werden kann."
 }
