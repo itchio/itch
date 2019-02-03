@@ -548,5 +548,5 @@
     "prompt.sla.title": "Software Lizenzvereinbarung",
     "prompt.sla.message": "Um die Software benutzten zu können musst du den folgenden Lizenzvereinbarungen zustimmen:",
     "prompt.sla.accept": "Stimme zu",
-    "status.repairing_game": "{{title}} muss aktualisiert werden bevor du weiter machen kannst."
+    "status.repairing_game": "{{title}} muss fertig updaten bevor du weiter machen kannst."
 }
