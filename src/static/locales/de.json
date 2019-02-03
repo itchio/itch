@@ -549,5 +549,8 @@
     "prompt.sla.message": "Um die Software benutzten zu können musst du den folgenden Lizenzvereinbarungen zustimmen:",
     "prompt.sla.accept": "Stimme zu",
     "status.repairing_game": "{{title}} muss fertig updaten bevor du weiter machen kannst.",
-    "status.installing_game.cancelled": " Installation für {{title}} abgebrochen!"
+    "status.installing_game.cancelled": "Installation von {{title}} abgebrochen!",
+    "status.downloads.updates_available": "Updates verfügbar",
+    "status.downloads.update_all": "Alle aktualisieren",
+    "status.downloads.no_active_downloads_subtext": "Heruntergeladene und Installierte Dinge werden hier angezeigt."
 }
