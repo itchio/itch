@@ -214,7 +214,7 @@
     "search.open_as_tab": "In neuem Tab öffnen",
     "search.placeholder": "Suche",
     "new_tab.twitter": "Beliebt auf Twitter",
-    "usage_stats.description.bought_time_ago": "Gekauft {{time_ago}}",
+    "usage_stats.description.bought_time_ago": "Erhalten {{time_ago}}",
     "install_location.empty": "In diesem Verzeichnis ist zurzeit nichts installiert",
     "grid.item.open_debug_log": "Logs anzeigen...",
     "menu.view.history": "Verlauf",
@@ -553,5 +553,8 @@
     "status.downloads.updates_available": "Updates verfügbar",
     "status.downloads.update_all": "Alle aktualisieren",
     "status.downloads.no_active_downloads_subtext": "Heruntergeladene und Installierte Dinge werden hier angezeigt.",
-    "status.downloads.find_games_button": "Lade etwas herunter!"
+    "status.downloads.find_games_button": "Lade Etwas herunter!",
+    "setup.action.browse": "Durchsuchen",
+    "web.context_menu.inspect": "Untersuchen",
+    "butlerd.codes.2001": "Für diesen Titel wurden keine kompatiblen Uploads gefunden"
 }
