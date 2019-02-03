@@ -544,5 +544,6 @@
     "prompt.show_error.send_report": "Sende einen Fehlerbericht um beim Lösen des Problems zu helfen",
     "preferences.advanced.disable_hardware_acceleration": "Hardwarebeschleunigung deaktivieren (behebt einige Abstürze unter Linux)",
     "prompt.action.nevermind": "Lieber nicht",
-    "prompt.discard_download.action.stop_download": "Download abbrechen"
+    "prompt.discard_download.action.stop_download": "Download abbrechen",
+    "prompt.sla.title": "Software Lizenzvereinbarung"
 }
