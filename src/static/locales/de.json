@@ -524,5 +524,6 @@
     "prompt.manage_game.available_uploads": "Diese Elemente sind auch verfügbar:",
     "prompt.manage_game.no_other_uploads": "Keine weiteren Elemente sind verfügbar.",
     "sidebar.applog": "Applikationenslog",
-    "grid.really_empty_state.explanation": "... noch nichts!"
+    "grid.really_empty_state.explanation": "... noch nichts!",
+    "grid.item.running.prepare": "Bereite vor..."
 }
