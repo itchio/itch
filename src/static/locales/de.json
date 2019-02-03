@@ -552,5 +552,6 @@
     "status.installing_game.cancelled": "Installation von {{title}} abgebrochen!",
     "status.downloads.updates_available": "Updates verfügbar",
     "status.downloads.update_all": "Alle aktualisieren",
-    "status.downloads.no_active_downloads_subtext": "Heruntergeladene und Installierte Dinge werden hier angezeigt."
+    "status.downloads.no_active_downloads_subtext": "Heruntergeladene und Installierte Dinge werden hier angezeigt.",
+    "status.downloads.find_games_button": "Lade etwas herunter!"
 }
