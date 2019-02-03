@@ -541,7 +541,7 @@
     "prompt.show_error.details_for_nerds.event_log": "Ereignis Log",
     "preferences.advanced.components": "Komponenten",
     "preferences.advanced.disable_browser": "Webbrowser deaktivieren",
-    "prompt.show_error.send_report": "Sende einen Bericht um beim Lösen des Problems zu helfen",
+    "prompt.show_error.send_report": "Sende einen Fehlerbericht um beim Lösen des Problems zu helfen",
     "preferences.advanced.disable_hardware_acceleration": "Hardwarebeschleunigung deaktivieren (behebt einige Abstürze unter Linux)",
     "prompt.action.nevermind": "Lieber nicht",
     "prompt.discard_download.action.stop_download": "Download abbrechen"
