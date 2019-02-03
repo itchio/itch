@@ -538,5 +538,8 @@
     "prompt.show_error.details_for_nerds": "Details für Nerds",
     "prompt.show_error.details_for_nerds.stack_trace": "Stack Trace",
     "preferences.scan_install_locations.title": "Scanne...",
-    "prompt.show_error.details_for_nerds.event_log": "Ereignis Log"
+    "prompt.show_error.details_for_nerds.event_log": "Ereignis Log",
+    "preferences.advanced.components": "Komponenten",
+    "preferences.advanced.disable_browser": "Webbrowser deaktivieren",
+    "prompt.show_error.send_report": "Sende einen Bericht um beim Lösen des Problems zu helfen"
 }
