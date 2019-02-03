@@ -536,5 +536,7 @@
     "prompt.dangerous_discard_download.message": "Das Stoppen des Downloads hinterlässt {{title}} in einem unvollständigen Zustand.",
     "prompt.show_error.generic_message": "Irgendwas ist schief gelaufen",
     "prompt.show_error.details_for_nerds": "Details für Nerds",
-    "prompt.show_error.details_for_nerds.stack_trace": "Stack Trace"
+    "prompt.show_error.details_for_nerds.stack_trace": "Stack Trace",
+    "preferences.scan_install_locations.title": "Scanne...",
+    "prompt.show_error.details_for_nerds.event_log": "Ereignis Log"
 }
