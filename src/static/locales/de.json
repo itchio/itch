@@ -545,5 +545,6 @@
     "preferences.advanced.disable_hardware_acceleration": "Hardwarebeschleunigung deaktivieren (behebt einige Abstürze unter Linux)",
     "prompt.action.nevermind": "Lieber nicht",
     "prompt.discard_download.action.stop_download": "Download abbrechen",
-    "prompt.sla.title": "Software Lizenzvereinbarung"
+    "prompt.sla.title": "Software Lizenzvereinbarung",
+    "prompt.sla.message": "Um die Software benutzten zu können müssen den folgenden Lizenz-Vereinbarungen zugestimmt werden:"
 }
