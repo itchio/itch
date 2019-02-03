@@ -546,5 +546,5 @@
     "prompt.action.nevermind": "Lieber nicht",
     "prompt.discard_download.action.stop_download": "Download abbrechen",
     "prompt.sla.title": "Software Lizenzvereinbarung",
-    "prompt.sla.message": "Um die Software benutzten zu können müssen den folgenden Lizenz-Vereinbarungen zugestimmt werden:"
+    "prompt.sla.message": "Um die Software benutzten zu können musst du den folgenden Lizenzvereinbarungen zustimmen:"
 }
