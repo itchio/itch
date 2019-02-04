@@ -308,5 +308,8 @@
     "usage_stats.never_used": "Nefolosit",
     "collection.item_count": "{{itemCount}} articole",
     "collection.summary": "O colecție de {{itemCount}} articole",
-    "collections.empty": "Nu ai nici o colecție în prezent"
+    "collections.empty": "Nu ai nici o colecție în prezent",
+    "collections.empty_sub": "Găsește jocuri și adaugă-le la o colecție nouă!",
+    "docs.how_to_help": "Cum te pot ajuta?",
+    "download.started": "Început"
 }
