@@ -307,5 +307,6 @@
     "usage_stats.never_played": "nu l-ai jucat încă",
     "usage_stats.never_used": "Nefolosit",
     "collection.item_count": "{{itemCount}} articole",
-    "collection.summary": "O colecție de {{itemCount}} articole"
+    "collection.summary": "O colecție de {{itemCount}} articole",
+    "collections.empty": "Nu aveți nicio colecție în prezent"
 }
