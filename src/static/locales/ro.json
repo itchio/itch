@@ -380,5 +380,5 @@
     "login.action.hide_password": "Ascunde parola",
     "login.status.finalizing_installation": "Se finalizează instalarea...",
     "login.status.antivirus_warning": "Antivirusul poate interfera cu itch",
-    "login.two_factor.as_user": "Se conectează ca {{username}}"
+    "login.two_factor.as_user": "Conectare ca {{username}}"
 }
