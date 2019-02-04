@@ -523,5 +523,5 @@
     "install_location.property.size_on_disk": "{{size}} din stocare",
     "butlerd.codes.404": "Folderul pentru instalare a dispărut",
     "butlerd.codes.2001": "Nu s-au găsit încărcări compatibile pentru acest titlu",
-    "butlerd.codes.3000": "Acest titlu a fost împachetat într-un mod care nu este compatibil aplicația itch.io."
+    "butlerd.codes.3000": "Acest titlu a fost împachetat într-un mod care nu este compatibil cu aplicația itch.io."
 }
