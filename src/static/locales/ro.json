@@ -485,5 +485,7 @@
     "sidebar.applog": "Jurnalul aplicației",
     "sidebar.explore": "Descoperă",
     "sidebar.library": "Bibliotecă",
-    "sidebar.view_community_profile": "Profilul comunității"
+    "sidebar.view_community_profile": "Profilul comunității",
+    "status.repairing_game": "Mai întâi este nevoie ca actualizările pentru {{title}} să fie încheiate pentru a putea fi deschis",
+    "status.cancelled.message": "Această operație a fost anulată."
 }
