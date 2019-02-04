@@ -349,5 +349,7 @@
     "grid.item.launch_title": "Lansează {{title}}",
     "grid.item.open_page": "Vezi pagina",
     "grid.item.not_compatible": "Indisponibil pe această platformă",
-    "grid.item.discard_download": "Renunță la descărcare"
+    "grid.item.discard_download": "Renunță la descărcare",
+    "grid.item.advanced": "Avansat...",
+    "grid.item.download_java": "Descarcă Java"
 }
