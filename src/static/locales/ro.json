@@ -320,7 +320,7 @@
     "download.ongoing.reinstall": "Se reinstalează{{title}}...",
     "download.ongoing.revert": "Se schimbă versiunea pentru {{title}}",
     "download.ongoing.heal": "Se repară {{title}}...",
-    "game.install.could_not_launch.missing_jre": "Are nevoie de Java, care nu este instalat pe acest sistem.",
+    "game.install.could_not_launch.missing_jre": "Are nevoie de Java, care nu a fost găsit pe sistemul tău.",
     "download.outcome.installed": "instalat",
     "download.outcome.updated": "actualizat la ultima versiune",
     "download.outcome.reinstalled": "reinstalat",
