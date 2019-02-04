@@ -338,5 +338,15 @@
     "grid.filters.options.installed": "Instalat",
     "grid.filters.options.owned": "Cumpărat",
     "grid.filters.options.no_results": "Nu s-au găsit rezultate",
-    "grid.item_count": "{{count}} articole"
+    "grid.item_count": "{{count}} articole",
+    "grid.empty_state.leader": "Nimic nu corespunde filtrelor selectate...",
+    "grid.empty_state.explanation": "Filtrele tale ascund totul aici",
+    "grid.really_empty_state.leader": "Nu este nimic aici...",
+    "grid.really_empty_state.explanation": "...încă!",
+    "grid.item.install_title": "Instalează {{title}}",
+    "grid.item.queueing": "Se pune în coadă...",
+    "grid.item.update": "Actualizează",
+    "grid.item.launch_title": "Lansează {{title}}",
+    "grid.item.open_page": "Vezi pagina",
+    "grid.item.not_compatible": "Indisponibil pe această platformă"
 }
