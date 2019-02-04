@@ -484,5 +484,6 @@
     "sidebar.loading": "Se încarcă...",
     "sidebar.applog": "Jurnalul aplicației",
     "sidebar.explore": "Descoperă",
-    "sidebar.library": "Bibliotecă"
+    "sidebar.library": "Bibliotecă",
+    "sidebar.view_community_profile": "Vezi profilul comunității"
 }
