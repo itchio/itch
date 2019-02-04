@@ -338,5 +338,5 @@
     "grid.filters.options.installed": "Instalat",
     "grid.filters.options.owned": "Cumpărat",
     "grid.filters.options.no_results": "Nu s-au găsit rezultate",
-    "grid.item_count": "{{count}} produse"
+    "grid.item_count": "{{count}} articole"
 }
