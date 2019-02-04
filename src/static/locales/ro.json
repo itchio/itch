@@ -330,5 +330,13 @@
     "dashboard.game_stats.downloads": "descărcări",
     "dashboard.game_stats.purchases": "achiziții",
     "duration.seconds": "{{x}} secunde",
-    "game.install.could_not_launch.message": "A apărut următoarea eroare: {{errorMessage}}"
+    "game.install.could_not_launch.message": "A apărut următoarea eroare: {{errorMessage}}",
+    "game.install.libraries_missing": "Unele biblioteci {{arch}} lipsesc: {{libraries}}",
+    "grid.criterion.search": "Caută...",
+    "grid.criterion.filter_by": "Filtrează după:",
+    "grid.filters.options.compatible": "Compatibil",
+    "grid.filters.options.installed": "Instalat",
+    "grid.filters.options.owned": "Cumpărat",
+    "grid.filters.options.no_results": "Nu s-au găsit rezultate",
+    "grid.item_count": "{{count}} produse"
 }
