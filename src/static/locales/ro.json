@@ -538,5 +538,6 @@
     "filter_by.games.classification.books": "Cărți",
     "filter_by.games.status.installed": "Instalate",
     "filter_by.games.paid_status.free": "Gratis",
-    "filter_by.games.paid_status.paid": "Pe bani"
+    "filter_by.games.paid_status.paid": "Pe bani",
+    "filter_by.games.visibility.draft": "Ciornă"
 }
