@@ -469,5 +469,5 @@
     "prompt.manage_game.installed_uploads": "Următoarele articole sunt instalate:",
     "prompt.manage_game.available_uploads": "Aceste articole sunt disponibile de asemenea: ",
     "prompt.manage_game.no_other_uploads": "Nu mai sunt alte articole disponibile.",
-    "prompt.install_error.title": "Eroare în timpul instalării"
+    "prompt.install_error.title": "S-a produs o eroare în timpul instalării"
 }
