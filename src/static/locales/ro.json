@@ -487,5 +487,15 @@
     "sidebar.library": "Bibliotecă",
     "sidebar.view_community_profile": "Profilul comunității",
     "status.repairing_game": "Mai întâi este nevoie ca actualizările pentru {{title}} să fie încheiate pentru a putea fi deschis",
-    "status.cancelled.message": "Operația a fost anulată."
+    "status.cancelled.message": "Operația a fost anulată.",
+    "status.installing_game.cancelled": "Instalarea {{title}} a fost anulată!",
+    "status.copied_to_clipboard": "Copiat în clipboard!",
+    "status.downloads.category.recent_activity": "Activitate recentă",
+    "status.downloads.clear_all_finished": "Golește lista",
+    "status.downloads.updates_available": "Sunt disponibile actualizări",
+    "status.downloads.update_all": "Actualizează tot",
+    "status.downloads.clear_finished": "Șterge",
+    "status.downloads.no_active_downloads_subtext": "Lucrurile care le instalezi sau descarci vor apărea aici",
+    "status.downloads.find_games_button": "Descarcă ceva!",
+    "status.downloads.resume_downloads": "Continuă descărcările"
 }
