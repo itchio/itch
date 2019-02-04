@@ -231,7 +231,7 @@
     "prompt.self_update_ready.action.restart": "Redeschide acum",
     "collection.empty": "Această colecţie nu conţine nici un joc",
     "download.reason.install": "pentru prima instalare",
-    "download.reason.update": "pentru actualizare",
+    "download.reason.update": "actualizarea la ultima versiune",
     "grid.clear_filters": "Scoate filtrele",
     "grid.item.prioritize_download": "Descarcă cu prioritate",
     "grid.item.downloads_paused": "Descărcările sunt oprite",
