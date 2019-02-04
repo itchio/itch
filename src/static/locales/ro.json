@@ -81,7 +81,7 @@
     "prompt.install_location_not_empty.message": "Locaţiile de instalare nu pot fi şterse până nu se dezintalează tot ce conţin.",
     "prompt.install_location_not_empty.show_contents": "Arată conţinutul",
     "prompt.install_location_not_empty.title": "Această locaţie de instalare are conţinut",
-    "prompt.install_location_remove.detail": "Tot ce este instalat în {{location}} va fi dezinstalat.",
+    "prompt.install_location_remove.detail": "Tot ce este instalat în {{location}} nu va mai fi administrat de aplicație.",
     "prompt.install_location_remove.message": "Sigur vrei să ştergi această locaţie?",
     "prompt.install_location_remove.title": "Şterge o locaţie de instalare",
     "prompt.last_remaining_install_location.content": "Aceasta este ultima locaţie de instalare rămasă. Nu poate fi ştearsă până nu se adaugă alta.",
