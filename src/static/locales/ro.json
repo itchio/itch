@@ -425,5 +425,5 @@
     "preferences.advanced.clear_browsing_data": "Șterge datele de navigare",
     "preferences.advanced.prefer_optimized_patches": "Preferă actualizări optimizate",
     "preferences.advanced.disable_browser": "Dezactivează browserul web",
-    "preferences.advanced.disable_hardware_acceleration": "Dezactivează accelerarea pe hardware (rezolvă unele probleme pe Linux)"
+    "preferences.advanced.disable_hardware_acceleration": "Dezactivează accelerarea hardware (rezolvă unele probleme pe Linux)"
 }
