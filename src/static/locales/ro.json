@@ -320,5 +320,15 @@
     "download.ongoing.reinstall": "Se reinstalează{{title}}...",
     "download.ongoing.revert": "Se schimbă versiunea pentru {{title}}",
     "download.ongoing.heal": "Se repară {{title}}...",
-    "game.install.could_not_launch.missing_jre": "Are nevoie de Java, care nu este instalat pe acest sistem."
+    "game.install.could_not_launch.missing_jre": "Are nevoie de Java, care nu este instalat pe acest sistem.",
+    "download.outcome.installed": "instalat",
+    "download.outcome.updated": "actualizat la ultima versiune",
+    "download.outcome.reinstalled": "reinstalat",
+    "download.outcome.reverted": "comutat la o altă versiune",
+    "download.outcome.healed": "verificat și reparat",
+    "dashboard.game_stats.views": "vizualizări",
+    "dashboard.game_stats.downloads": "descărcări",
+    "dashboard.game_stats.purchases": "achiziții",
+    "duration.seconds": "{{x}} secunde",
+    "game.install.could_not_launch.message": "A apărut următoarea eroare: {{errorMessage}}"
 }
