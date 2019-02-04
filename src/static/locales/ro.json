@@ -444,5 +444,15 @@
     "prompt.discard_download.detail": "Vei putea instala {{title}} din nou oricând, dar procesul va porni de la zero.",
     "prompt.discard_download.action.stop_download": "Oprește descărcarea",
     "prompt.discard_download.action.continue_download": "Continuă descărcarea",
-    "prompt.dangerous_discard_download.message": "Oprirea acestei descărcări va lăsa {{title}} într-o stare incoerentă."
+    "prompt.dangerous_discard_download.message": "Oprirea acestei descărcări va lăsa {{title}} într-o stare incoerentă.",
+    "prompt.dangerous_discard_download.detail": "Vom restabili {{title}} la cea mai nouă versiune data următoare când îl vei rula.",
+    "prompt.show_error.generic_message": "Ceva nu a mers bine",
+    "prompt.show_error.details_for_nerds": "Detalii pentru cunoscători",
+    "prompt.show_error.details_for_nerds.event_log": "Evenimente",
+    "prompt.show_error.details_for_nerds.stack_trace": "Stiva",
+    "prompt.show_error.send_report": "Trimite un raport pentru a ajuta la remedierea problemei",
+    "prompt.clear_browsing_data.clear": "Șterge datele",
+    "prompt.clear_browsing_data.category.cache": "Imagini și fișiere în cache",
+    "prompt.clear_browsing_data.retrieving_cache_size": "Se obține mărimea cache-ului…",
+    "prompt.clear_browsing_data.cache_size_used": "Memoria cache folosește {{size}} din spațiul de stocare"
 }
