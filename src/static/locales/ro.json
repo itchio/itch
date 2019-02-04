@@ -55,7 +55,7 @@
     "preferences.install_location.add": "Adaugă locaţie",
     "preferences.install_location.browse": "Deschide locaţia de instalare",
     "preferences.install_location.compute_size": "Calculează spaţiul ocupat pe disc",
-    "preferences.install_location.delete": "Şterge această locaţie de instalare şi dezinstalează ce conţine",
+    "preferences.install_location.delete": "Şterge această locaţie de instalare",
     "preferences.install_location.free_space": "Spaţiu liber",
     "preferences.install_location.path": "Locaţie",
     "preferences.install_location.used_space": "Spaţiu folosit",
