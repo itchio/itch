@@ -457,5 +457,17 @@
     "prompt.clear_browsing_data.cache_size_used": "Memoria cache folosește în prezent {{size}} din spațiul de stocare",
     "prompt.clear_browsing_data.category.cookies": "Cookies",
     "prompt.clear_browsing_data.cookies_info": "Vei fi deconectat de pe toate site-urile pe care te-ai conectat din aplicația itch.",
-    "prompt.clear_browsing_data.notification": "Datele de navigare au fost șterse!"
+    "prompt.clear_browsing_data.notification": "Datele de navigare au fost șterse!",
+    "prompt.launch.title": "Lansează {{title}}",
+    "prompt.launch.message": "Ce dorești să deschizi?",
+    "prompt.sla.title": "Acord de licență software",
+    "prompt.sla.message": "Pentru a folosi acest software, trebuie să accepți termenii din acest acord de licență:",
+    "prompt.sla.accept": "Acceptă termenii",
+    "prompt.blessing.message": "Ai nevoie de drepturi de administrator pentru a administra {{title}}",
+    "prompt.blessing.detail": "Continuă doar dacă ai încredere în autor.",
+    "prompt.manage_game.title": "Administrează {{title}}",
+    "prompt.manage_game.installed_uploads": "Următoarele articole sunt instalate:",
+    "prompt.manage_game.available_uploads": "Aceste articole sunt disponibile de asemenea: ",
+    "prompt.manage_game.no_other_uploads": "Nu mai sunt alte articole disponibile.",
+    "prompt.install_error.title": "Eroare în timpul instalării"
 }
