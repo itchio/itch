@@ -444,5 +444,5 @@
     "prompt.discard_download.detail": "Vei putea instala {{title}} din nou oricând, dar procesul va porni de la zero.",
     "prompt.discard_download.action.stop_download": "Oprește descărcarea",
     "prompt.discard_download.action.continue_download": "Continuă descărcarea",
-    "prompt.dangerous_discard_download.message": "Oprirea acestei descărcări va lăsa {{title}} într-o stare inconsistentă."
+    "prompt.dangerous_discard_download.message": "Oprirea acestei descărcări va lăsa {{title}} într-o stare incoerentă."
 }
