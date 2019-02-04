@@ -314,5 +314,11 @@
     "download.started": "Început",
     "download.reason.reinstall": "reinstalare",
     "download.reason.revert": "schimbarea versiunii",
-    "download.reason.heal": "verificarea și repararea datelor"
+    "download.reason.heal": "verificarea și repararea datelor",
+    "download.ongoing.install": "Se instalează {{title}}...",
+    "download.ongoing.update": "Se actualizează {{title}}...",
+    "download.ongoing.reinstall": "Se reinstalează{{title}}...",
+    "download.ongoing.revert": "Se schimbă versiunea pentru {{title}}",
+    "download.ongoing.heal": "Se repară {{title}}...",
+    "game.install.could_not_launch.missing_jre": "Are nevoie de Java, care nu este instalat pe acest sistem."
 }
