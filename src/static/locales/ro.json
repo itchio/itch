@@ -540,5 +540,13 @@
     "filter_by.games.paid_status.free": "Gratis",
     "filter_by.games.paid_status.paid": "Pe bani",
     "filter_by.games.visibility.draft": "Ciorne",
-    "filter_by.games.visibility.published": "Publicate"
+    "filter_by.games.visibility.published": "Publicate",
+    "game_stripe.view_all": "Vezi tot…",
+    "log.level": "Nivel",
+    "log.level.debug": "Depanare",
+    "log.level.info": "Informații",
+    "log.level.warning": "Avertizări",
+    "log.level.error": "Erori",
+    "install_locations.manage": "Administrează locațiile de instalare",
+    "collection.info.updated": "Actualizat"
 }
