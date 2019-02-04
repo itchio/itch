@@ -454,5 +454,5 @@
     "prompt.clear_browsing_data.clear": "Șterge datele",
     "prompt.clear_browsing_data.category.cache": "Imagini și fișiere în cache",
     "prompt.clear_browsing_data.retrieving_cache_size": "Se obține mărimea cache-ului…",
-    "prompt.clear_browsing_data.cache_size_used": "Memoria cache folosește {{size}} din spațiul de stocare"
+    "prompt.clear_browsing_data.cache_size_used": "Memoria cache folosește în prezent {{size}} din spațiul de stocare"
 }
