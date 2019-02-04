@@ -523,5 +523,20 @@
     "install_location.property.size_on_disk": "{{size}} din stocare",
     "butlerd.codes.404": "Folderul pentru instalare a dispărut",
     "butlerd.codes.2001": "Nu s-au găsit încărcări compatibile pentru acest titlu",
-    "butlerd.codes.3000": "Acest titlu a fost împachetat într-un mod care nu este compatibil cu aplicația itch.io."
+    "butlerd.codes.3000": "Acest titlu a fost împachetat într-un mod care nu este compatibil cu aplicația itch.io.",
+    "butlerd.codes.5000": "Nu s-a găsit nimic ce poate fi lansat.",
+    "butlerd.codes.9000": "Nu există conexiune la internet.",
+    "sort_by.games.title": "Titlu",
+    "sort_by.games.views": "Vizualizări",
+    "sort_by.games.size_on_disk": "Mărime pe disc",
+    "sort_by.games.install_date": "Data instalării",
+    "sort_by.collections.title": "Titlu",
+    "sort_by.collections.updated_at": "Actualizat",
+    "filter_by.games.classification.tools": "Instrumente",
+    "filter_by.games.classification.assets": "Resurse pentru jocuri",
+    "filter_by.games.classification.comics": "Benzi desenate",
+    "filter_by.games.classification.books": "Cărți",
+    "filter_by.games.status.installed": "Instalate",
+    "filter_by.games.paid_status.free": "Gratis",
+    "filter_by.games.paid_status.paid": "Plătit"
 }
