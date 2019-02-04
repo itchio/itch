@@ -308,5 +308,5 @@
     "usage_stats.never_used": "Nefolosit",
     "collection.item_count": "{{itemCount}} articole",
     "collection.summary": "O colecție de {{itemCount}} articole",
-    "collections.empty": "Nu aveți nicio colecție în prezent"
+    "collections.empty": "Nu ai nici o colecție în prezent"
 }
