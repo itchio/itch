@@ -287,7 +287,7 @@
     "status.history.no_active_items": "Nici un eveniment din istoric nu necesită atenţie.",
     "usage_stats.description.assets": "O colecţie de resurse",
     "usage_stats.description.book": "O carte",
-    "usage_stats.description.bought_time_ago": "Cumpărat(ă) {{time_ago}}",
+    "usage_stats.description.bought_time_ago": "Achiziționat(ă) {{time_ago}}",
     "usage_stats.description.comic": "O bandă desenată",
     "usage_stats.description.free_download": "Gratis",
     "usage_stats.description.game": "Un joc",
