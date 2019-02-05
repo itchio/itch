@@ -314,7 +314,7 @@
     "download.started": "Început",
     "download.reason.reinstall": "reinstalare",
     "download.reason.revert": "comutare la o altă versiune",
-    "download.reason.heal": "verificarea și repararea datelor",
+    "download.reason.heal": "verificarea și repararea",
     "download.ongoing.install": "Se instalează {{title}}…",
     "download.ongoing.update": "Se actualizează {{title}}…",
     "download.ongoing.reinstall": "Se reinstalează {{title}}…",
