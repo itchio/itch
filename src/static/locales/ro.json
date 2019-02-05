@@ -592,5 +592,15 @@
     "login.two_factor.learn_more": "Află mai multe despre autentificarea în doi factori",
     "menu.file.new_tab": "Filă nouă",
     "menu.file.close_other_tabs": "închide celelalte file",
-    "menu.file.close_tabs_below": "Închide filele de mai jos"
+    "menu.file.close_tabs_below": "Închide filele de mai jos",
+    "preferences.behavior.enable_tabs": "Activează utilizarea filelor",
+    "pick_update_upload.single.detail": "Notă: poți activa actualizările automate în fila Preferințe",
+    "prompt.self_update.detail": "{{notes}}\n\n:date: Publicat la {{pubDate}}.",
+    "prompt.self_update_ready.detail": "{{notes}}\n\n:date: Publicat la {{pubDate}}.",
+    "search.open_as_tab": "Deschide ca filă",
+    "sidebar.close_all_tabs": "Închide toate filele",
+    "sidebar.category.tabs": "File",
+    "sidebar.new_tab": "Filă nouă",
+    "status.downloads.category.queued": "Descărcări în coadă",
+    "setup.action.browse": "Caută"
 }
