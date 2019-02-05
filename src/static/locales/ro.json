@@ -314,7 +314,7 @@
     "download.started": "Început",
     "download.reason.reinstall": "reinstalare",
     "download.reason.revert": "comutare la o altă versiune",
-    "download.reason.heal": "verificarea și repararea",
+    "download.reason.heal": "verificare și reparare",
     "download.ongoing.install": "Se instalează {{title}}…",
     "download.ongoing.update": "Se actualizează {{title}}…",
     "download.ongoing.reinstall": "Se reinstalează {{title}}…",
@@ -586,5 +586,6 @@
     "plan_install.disk_space_required": "Spațiu de stocare necesar",
     "plan_install.disk_space_available": "Spațiu de stocare disponibil",
     "empty_state.nothing_to_see_here": "Nimic de văzut aici",
-    "prompt.no_compatible_version.detail": "Poate că această {{classification}} nu este compatibilă încă?"
+    "prompt.no_compatible_version.detail": "Poate că această {{classification}} nu este compatibilă încă?",
+    "table.column.powered_by": "Motorizat de"
 }
