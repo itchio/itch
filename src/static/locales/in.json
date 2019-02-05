@@ -418,5 +418,6 @@
     "game.install.libraries_missing": "Beberapa pustaka {{arch}} yang dibutuhkan tidak ditemukan: {{libraries}}",
     "preferences.behavior.prevent_display_sleep": "Cegah layar untuk tidur selama bermain",
     "download.ongoing.revert": "Mengubah {{title}} ke versi lain...",
-    "download.ongoing.heal": "Memperbaiki {{title}}..."
+    "download.ongoing.heal": "Memperbaiki {{title}}...",
+    "collections.empty": "Saat ini anda tidak memiliki koleksi"
 }
