@@ -313,7 +313,7 @@
     "docs.how_to_help": "Cum te pot ajuta?",
     "download.started": "Început",
     "download.reason.reinstall": "reinstalare",
-    "download.reason.revert": "comutarea la o altă versiune",
+    "download.reason.revert": "comutare la o altă versiune",
     "download.reason.heal": "verificarea și repararea datelor",
     "download.ongoing.install": "Se instalează {{title}}…",
     "download.ongoing.update": "Se actualizează {{title}}…",
