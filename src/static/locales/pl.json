@@ -215,7 +215,7 @@
     "sidebar.getting_started": "Pierwsze kroki",
     "sidebar.history": "Historia",
     "sidebar.history_subtitle": "Oto, co się wydarzyło ostatnio",
-    "sidebar.installed": "Zainstalowane",
+    "sidebar.installed": "Zainstalowane elementy",
     "sidebar.log_out": "Wyloguj",
     "sidebar.new_tab": "Nowa karta",
     "sidebar.owned": "Biblioteka",
@@ -287,7 +287,7 @@
     "grid.item.download_java": "Pobierz oprogramowanie Java",
     "grid.item.advanced": "Zaawansowane...",
     "download.started": "Rozpoczęto",
-    "download.reason.revert": "- powrót do wcześniejszej wersji",
+    "download.reason.revert": "aby przejść do innej wersji",
     "game.install.could_not_launch.detail": "Wysłanie nam raportu błędu to najlepszy sposób, by upewnić się, że zostanie on naprawiony!",
     "game.install.could_not_launch.missing_jre": "Wymaga oprogramowania Java, którego nie znaleziono w twoim systemie.",
     "grid.item.review": "Dodaj recencję",
@@ -352,7 +352,7 @@
     "prompt.clear_browsing_data.clear": "Wyczyść dane",
     "prompt.clear_browsing_data.category.cookies": "Ciasteczka",
     "prompt.clear_browsing_data.notification": "Dane przeglądania zostały wyczyszczone!",
-    "prompt.install_error.title": "Podczas instalacji wystąpił błąd:",
+    "prompt.install_error.title": "Podczas instalacji wystąpił błąd",
     "search.results.games": "Gry",
     "search.results.creators": "Twórcy",
     "sidebar.aw_snap": "O kurczę!",
@@ -498,5 +498,6 @@
     "grid.item.open_page": "Otwórz stronę",
     "grid.item.not_available": "Niedostępne",
     "grid.item.open_title": "Otwórz {{title}}",
-    "grid.item.open_file_location.windows": "Otwórz lokalizację pliku"
+    "grid.item.open_file_location.windows": "Otwórz lokalizację pliku",
+    "grid.item.open_file_location.linux": "Pokaż w menedżerze plików"
 }
