@@ -433,7 +433,7 @@
     "grid.filters.options.compatible": "Kompatybilne",
     "grid.filters.options.installed": "Zainstalowane",
     "grid.filters.options.owned": "Posiadane",
-    "grid.empty_state.leader": "Wszystkie wyniki zostały ukryte zgodnie z ustawieniami filtrów",
+    "grid.empty_state.leader": "Wszystkie wyniki zostały ukryte zgodnie z ustawieniami filtrów...",
     "grid.empty_state.explanation": "Twoje ustawienia filtrów spowodowały ukrycie wszystkich wyników",
     "grid.item.discard_download": "Anuluj pobieranie",
     "grid.item.not_compatible": "Niedostępne dla tej platformy",
