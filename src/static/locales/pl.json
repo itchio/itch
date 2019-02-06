@@ -429,7 +429,7 @@
     "download.outcome.reverted": "Zmieniono wersję",
     "download.outcome.healed": "naprawiono i zweryfikowano",
     "game.install.could_not_launch.message": "Otrzymana przez nas wiadomość brzmi: {{errorMessage}}",
-    "grid.criterion.filter_by": "Filtruj według:",
+    "grid.criterion.filter_by": "Filtruj według: ",
     "grid.filters.options.compatible": "Kompatybilne",
     "grid.filters.options.installed": "Zainstalowane",
     "grid.filters.options.owned": "Posiadane",
