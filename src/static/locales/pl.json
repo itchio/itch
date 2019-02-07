@@ -499,5 +499,10 @@
     "grid.item.not_available": "Niedostępne",
     "grid.item.open_title": "Otwórz {{title}}",
     "grid.item.open_file_location.windows": "Otwórz lokalizację pliku",
-    "grid.item.open_file_location.linux": "Pokaż w menedżerze plików"
+    "grid.item.open_file_location.linux": "Pokaż w menedżerze plików",
+    "grid.item.uninstall_request": "Odinstaluj lub zainstaluj ponownie...",
+    "browser.reenable": "Włącz ponownie",
+    "login.status.antivirus_warning": "Oprogramowanie antywirusowe może przeszkadzać w działaniu aplikacji \"itch\".",
+    "preferences.install_location.navigate": "Przeglądaj zawartość z tej lokalizacji",
+    "preferences.scan_install_locations": "Skanuj lokalizacje instalacji gier"
 }
