@@ -607,5 +607,5 @@
     "sort_by.games.acquired_at": "Achiziții recente",
     "sort_by.games.play_time": "Timp de joc",
     "sort_by.games.last_touched": "Interacțiuni recente",
-    "grid.item.open_debug_log": "Vezi înregistrări..."
+    "grid.item.open_debug_log": "Vezi jurnalul..."
 }
