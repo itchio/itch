@@ -575,5 +575,10 @@
     "sort_by.games.install_date": "Data instalacji",
     "sort_by.collections.title": "Tytuł",
     "sort_by.collections.updated_at": "Zaktualizowano",
-    "filter_by.games.classification.assets": "Zasoby do gier"
+    "filter_by.games.classification.assets": "Zasoby do gier",
+    "filter_by.games.classification.games": "Gry",
+    "filter_by.games.classification.tools": "Narzędzia",
+    "filter_by.games.classification.comics": "Komiksy",
+    "filter_by.games.classification.books": "Książki",
+    "filter_by.games.status.installed": "Zainstalowane"
 }
