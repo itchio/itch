@@ -607,5 +607,11 @@
     "send_feedback.consent.system_info_helps_us": "Posiadanie przybliżonej informacji o twojej konfiguracji często pomaga nam zidentyfikować źródło problemu.",
     "send_feedback.consent.include_in_report": "Dołącz te informacje do zgłoszenia",
     "send_feedback.send.secret_url": "Niejawny adres URL zostanie wygenerowany dla twojego zgłoszenia.",
-    "send_feedback.send.secret_url.feature_list": "Z tej strony, będziesz mieć możliwość:"
+    "send_feedback.send.secret_url.feature_list": "Z tej strony, będziesz mieć możliwość:",
+    "send_feedback.send.secret_url.feature_list.view": "Zobacz wszystko, co widzimy na temat zgłoszenia",
+    "send_feedback.send.secret_url.feature_list.delete": "Usuń go, jeśli chcesz.",
+    "send_feedback.send.do_send": "Prześlij zgłoszenie",
+    "send_feedback.send.dont_send": "Nieważne, zabierz mnie stąd",
+    "send_feedback.send.sending": "Wysyłanie...",
+    "send_feedback.final_thanks": "Dzięki za przesłanie zgłoszenia, pomagasz wszystkim!"
 }
