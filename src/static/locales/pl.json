@@ -516,5 +516,9 @@
     "preferences.scan_install_locations.import_items": "Importuj {{numItems}} pozycji",
     "preferences.scan_install_locations.items_imported": "{{numImportedItems}} pozycji zostało zaimportowanych pomyślnie",
     "preferences.scan_install_locations.looking_for_games": "Szukanie gier...",
-    "preferences.scan_install_locations.message": "Następujące pozycje mogą zostać zaimportowane:"
+    "preferences.scan_install_locations.message": "Następujące pozycje mogą zostać zaimportowane:",
+    "preferences.scan_install_locations.no_items_found": "W lokalizacjach instalacji nie znaleziono żadnych dodatkowych elementów",
+    "preferences.scan_install_locations.title": "Skanowanie...",
+    "preferences.behavior.enable_tabs": "Włącz karty",
+    "preferences.advanced.components": "Elementy"
 }
