@@ -504,12 +504,14 @@
     "browser.reenable": "Włącz ponownie",
     "login.status.antivirus_warning": "Oprogramowanie antywirusowe może przeszkadzać w działaniu aplikacji \"itch\".",
     "preferences.install_location.navigate": "Przeglądaj zawartość z tej lokalizacji",
-    "preferences.scan_install_locations": "Skanuj lokalizacje instalacji gier",
+    "preferences.scan_install_locations": "Skanuj lokalizacje zainstalowanych gier",
     "table.column.installed": "Zainstalowano",
     "browser.open_devtools": "Otwórz narzędzia deweloperskie",
     "login.action.reveal_password": "Pokaż hasło",
     "login.action.hide_password": "Ukryj hasło",
     "prereq.status.pending": "Przygotowywanie...",
     "preferences.install_location.size_used_by_games": "{{instaledSize}} wykorzystane przez gry",
-    "preferences.install_location.free_of_total": "{{freeSize}} wolnych z {{totalSize}} dostępnych"
+    "preferences.install_location.free_of_total": "{{freeSize}} wolnych z {{totalSize}} dostępnych",
+    "preferences.scan_install_locations.confirm_import": "Potwierdź import",
+    "preferences.scan_install_locations.import_items": "Importuj {{numItems}} pozycji"
 }
