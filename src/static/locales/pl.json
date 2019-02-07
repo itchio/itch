@@ -571,5 +571,8 @@
     "sort_by.games.purchases": "Zakupy",
     "sort_by.games.play_time": "Czas gry",
     "sort_by.games.last_touched": "Ostatnio użyty",
-    "sort_by.games.size_on_disk": "Rozmiar na dysku"
+    "sort_by.games.size_on_disk": "Rozmiar na dysku",
+    "sort_by.games.install_date": "Data instalacji",
+    "sort_by.collections.title": "Tytuł",
+    "sort_by.collections.updated_at": "Data aktualizacji"
 }
