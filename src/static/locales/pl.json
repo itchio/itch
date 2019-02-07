@@ -581,6 +581,7 @@
     "filter_by.games.classification.comics": "Komiksy",
     "filter_by.games.classification.books": "Książki",
     "filter_by.games.status.installed": "Zainstalowane",
-    "filter_by.games.paid_status.free": "Bezpłatne",
-    "filter_by.games.paid_status.paid": "Płatne"
+    "filter_by.games.paid_status.free": "Darmowe",
+    "filter_by.games.paid_status.paid": "Płatne",
+    "send_feedback.describe_issue": "Opisz swoje działania, kiedy wystąpił problem:"
 }
