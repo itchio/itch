@@ -607,5 +607,10 @@
     "sort_by.games.acquired_at": "Achiziții recente",
     "sort_by.games.play_time": "Timp de joc",
     "sort_by.games.last_touched": "Interacțiuni recente",
-    "grid.item.open_debug_log": "Vezi jurnalul..."
+    "grid.item.open_debug_log": "Vezi jurnalul...",
+    "sort_by.games.downloads": "Descărcări",
+    "sort_by.games.purchases": "Achiziții",
+    "filter_by.games.classification.games": "Jocuri",
+    "send_feedback.title": "Trimite un comentariu",
+    "plan_install.select_upload": "Instalează"
 }
