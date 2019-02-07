@@ -515,5 +515,6 @@
     "preferences.scan_install_locations.confirm_import": "Potwierdź import",
     "preferences.scan_install_locations.import_items": "Importuj {{numItems}} pozycji",
     "preferences.scan_install_locations.items_imported": "{{numImportedItems}} pozycji zostało zaimportowanych pomyślnie",
-    "preferences.scan_install_locations.looking_for_games": "Szukanie gier..."
+    "preferences.scan_install_locations.looking_for_games": "Szukanie gier...",
+    "preferences.scan_install_locations.message": "Następujące elementy mogą zostać zaimportowane:"
 }
