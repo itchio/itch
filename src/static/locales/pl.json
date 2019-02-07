@@ -615,5 +615,21 @@
     "send_feedback.send.sending": "Wysyłanie...",
     "send_feedback.final_thanks": "Dziękujemy za przesłanie zgłoszenia, pomagasz wszystkim!",
     "plan_install.disk_space_required": "Wymagana przestrzeń dyskowa",
-    "plan_install.disk_space_available": "Dostępna przestrzeń dyskowa"
+    "plan_install.disk_space_available": "Dostępna przestrzeń dyskowa",
+    "send_feedback.success.intro": "Twoje zgłoszenie zostało wysłane pomyślnie!",
+    "send_feedback.success.view_report": "Wyświetl zgłoszenie",
+    "send_feedback.success.view_report.delete": "(Możesz usunąć je z tego linku)",
+    "send_feedback.success.thanks": "Dziękujemy za zgłoszenie",
+    "send_feedback.success.promise": "Rozważymy to tak szybko, jak to będzie możliwe, zamienimy w zadanie do wykonania i mamy nadzieję, że naprawimy problem w nowej wersji.",
+    "send_feedback.error.intro": "Niestety, nie możemy wysłać Twojego zgłoszenia.",
+    "send_feedback.nav.previous": "Poprzednie",
+    "send_feedback.nav.next": "Następne",
+    "send_feedback.nav.close": "Zamknij",
+    "send_feedback.steps.your_message": "Twoja wiadomość",
+    "send_feedback.steps.system_info": "Informacje o systemie",
+    "send_feedback.steps.send": "Wyślij zgłoszenie",
+    "plan_install.computing_space_requirements": "Obliczanie wymagań dotyczących przestrzeni dyskowej",
+    "plan_install.select_upload": "Zainstaluj",
+    "plan_install.select_install_location": "Do lokalizacji",
+    "empty_state.nothing_to_see_here": "Nic tu nie ma"
 }
