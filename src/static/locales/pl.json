@@ -513,5 +513,6 @@
     "preferences.install_location.size_used_by_games": "{{instaledSize}} wykorzystane przez gry",
     "preferences.install_location.free_of_total": "{{freeSize}} wolnych z {{totalSize}} dostępnych",
     "preferences.scan_install_locations.confirm_import": "Potwierdź import",
-    "preferences.scan_install_locations.import_items": "Importuj {{numItems}} pozycji"
+    "preferences.scan_install_locations.import_items": "Importuj {{numItems}} pozycji",
+    "preferences.scan_install_locations.items_imported": "{{numImportedItems}} elementów zostało zaimportowanych pomyślnie"
 }
