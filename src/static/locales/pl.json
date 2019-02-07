@@ -606,5 +606,6 @@
     "send_feedback.consent.redacted": "zredagowane",
     "send_feedback.consent.system_info_helps_us": "Posiadanie przybliżonej informacji o twojej konfiguracji często pomaga nam zidentyfikować źródło problemu.",
     "send_feedback.consent.include_in_report": "Dołącz te informacje do zgłoszenia",
-    "send_feedback.send.secret_url": "Tajny adres URL zostanie wygenerowany dla twojego zgłoszenia."
+    "send_feedback.send.secret_url": "Niejawny adres URL zostanie wygenerowany dla twojego zgłoszenia.",
+    "send_feedback.send.secret_url.feature_list": "Z tej strony, będziesz mieć możliwość:"
 }
