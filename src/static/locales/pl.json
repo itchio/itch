@@ -554,5 +554,22 @@
     "status.repairing_game": "{{title}} musi zakończyć aktualizację, zanim będzie można ją uruchomić",
     "status.installing_game.cancelled": "Instalacja {{title}} została anulowana!",
     "status.downloads.no_active_downloads_subtext": "Pozycje, które zainstalujesz lub pobierzesz, pojawią się tutaj",
-    "table.column.powered_by": "Dostępne dzięki"
+    "table.column.powered_by": "Dostępne dzięki",
+    "status.downloads.find_games_button": "Pobierz coś!",
+    "status.downloads.resume_downloads": "Wznów pobieranie",
+    "status.downloads.pause_downloads": "Wstrzymaj pobieranie",
+    "setup.action.browse": "Przeglądaj",
+    "web.context_menu.inspect": "Sprawdź",
+    "butlerd.codes.404": "Folder instalacji zniknął",
+    "butlerd.codes.2001": "Nie znaleziono zgodnych plików dla tego tytułu",
+    "butlerd.codes.3000": "Ten tytuł jest utworzony w sposób niezgodny z aplikacją itch.io.",
+    "butlerd.codes.5000": "Nie znaleziono niczego, co można by uruchomić.",
+    "sort_by.games.acquired_at": "Nabyte niedawno",
+    "sort_by.games.title": "Tytuł",
+    "sort_by.games.views": "Wyświetlenia",
+    "sort_by.games.downloads": "Pobierania",
+    "sort_by.games.purchases": "Zakupy",
+    "sort_by.games.play_time": "Czas gry",
+    "sort_by.games.last_touched": "Ostatnio użyty",
+    "sort_by.games.size_on_disk": "Rozmiar dysku"
 }
