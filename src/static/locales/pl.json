@@ -596,5 +596,6 @@
     "collection.info.updated": "Zaktualizowano",
     "send_feedback.title": "Prześlij opinię",
     "send_feedback.reminders.header": "Kilka wskazówek:",
-    "send_feedback.reminders.we_are_humans": "To, co napiszesz, zostanie przeczytane przez ludzi."
+    "send_feedback.reminders.we_are_humans": "To, co napiszesz, zostanie przeczytane przez ludzi.",
+    "send_feedback.reminders.be_precise": "Bądź tak dokładny, jak tylko potrafisz. Chcemy rozwiązać ten problem tak samo jak Ty!"
 }
