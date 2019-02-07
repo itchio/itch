@@ -531,5 +531,18 @@
     "prompt.action.quit_and_close_all": "Wyjdź i zamknij wszystkie",
     "prompt.action.back": "Wstecz",
     "prompt.action.nevermind": "Nieważne",
-    "prompt.discard_download.detail": "W dowolnym momencie możesz ponownie zainstalować {{title}}, ale zacznie się ona od początku."
+    "prompt.discard_download.detail": "W dowolnym momencie możesz ponownie zainstalować {{title}}, ale zacznie się ona od początku.",
+    "prompt.dangerous_discard_download.message": "Zatrzymanie tego pobierania spowoduje, że {{title}} stanie się niespójna.",
+    "prompt.dangerous_discard_download.detail": "Przywrócimy {{title}} do najnowszej wersji następnym razem, gdy spróbujesz jej użyć.",
+    "prompt.show_error.generic_message": "Coś poszło nie tak",
+    "prompt.show_error.details_for_nerds.stack_trace": "Ślad stosu",
+    "prompt.show_error.send_report": "Wyślij raport, aby pomóc rozwiązać ten problem",
+    "prompt.launch.message": "Które chcesz otworzyć?",
+    "prompt.sla.title": "Umowa licencyjna na oprogramowanie",
+    "prompt.sla.message": "Aby korzystać z tego oprogramowania, musisz zaakceptować warunki tej umowy licencyjnej:",
+    "prompt.sla.accept": "Akceptuję warunki",
+    "prompt.blessing.detail": "Kontynuuj, tylko jeśli ufasz autorowi.",
+    "prompt.manage_game.installed_uploads": "Zainstalowane są następujące elementy:",
+    "prompt.manage_game.available_uploads": "Te pozycje są również dostępne:",
+    "prompt.manage_game.no_other_uploads": "Obecnie nie są dostępne żadne inne przedmioty."
 }
