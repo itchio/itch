@@ -531,5 +531,5 @@
     "prompt.action.quit_and_close_all": "Wyjdź i zamknij wszystkie",
     "prompt.action.back": "Wstecz",
     "prompt.action.nevermind": "Nieważne",
-    "prompt.discard_download.detail": "W dowolnym momencie możesz ponownie zainstalować {{title}}, ale zacznie się ono od początku."
+    "prompt.discard_download.detail": "W dowolnym momencie możesz ponownie zainstalować {{title}}, ale zacznie się ona od początku."
 }
