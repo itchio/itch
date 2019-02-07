@@ -597,5 +597,7 @@
     "send_feedback.title": "Prześlij opinię",
     "send_feedback.reminders.header": "Kilka wskazówek:",
     "send_feedback.reminders.we_are_humans": "To, co napiszesz, zostanie przeczytane przez ludzi.",
-    "send_feedback.reminders.be_precise": "Sprecyzuj wypowiedź, jak tylko potrafisz. Chcemy rozwiązać ten problem tak samo jak Ty!"
+    "send_feedback.reminders.be_precise": "Sprecyzuj wypowiedź, jak tylko potrafisz. Chcemy rozwiązać ten problem tak samo jak Ty!",
+    "send_feedback.reminders.include_reproduce_steps": "Jeśli to możliwe, dołącz do opisu sekwencję czynności, aby odtworzyć problem.",
+    "send_feedback.reminders.mention_itchio_account": "Wymień nazwę swojego konta itch.io i / lub stronę, która powodowała problemy, jeśli to konieczne."
 }
