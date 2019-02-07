@@ -605,5 +605,5 @@
     "send_feedback.consent.please_review": "Sprawdź poniższe informacje, aby upewnić się, że nie masz nic przeciwko ich wysłaniu:",
     "send_feedback.consent.redacted": "zredagowane",
     "send_feedback.consent.system_info_helps_us": "Posiadanie przybliżonej informacji o twojej konfiguracji często pomaga nam zidentyfikować źródło problemu.",
-    "send_feedback.consent.include_in_report": "Dodaj te informacje do zgłoszenia"
+    "send_feedback.consent.include_in_report": "Dołącz te informacje do zgłoszenia"
 }
