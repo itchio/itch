@@ -520,5 +520,16 @@
     "preferences.scan_install_locations.no_items_found": "W lokalizacjach instalacji nie znaleziono żadnych dodatkowych elementów",
     "preferences.scan_install_locations.title": "Skanowanie...",
     "preferences.behavior.enable_tabs": "Włącz karty",
-    "preferences.advanced.components": "Komponenty"
+    "preferences.advanced.components": "Komponenty",
+    "preferences.advanced.check_game_updates": "Sprawdź aktualizacje gry",
+    "preferences.advanced.prefer_optimized_patches": "Preferuj zoptymalizowane poprawki",
+    "preferences.advanced.disable_browser": "Wyłącz przeglądarkę internetową",
+    "preferences.advanced.disable_hardware_acceleration": "Wyłącz przyspieszanie sprzętowe (rozwiązuje niektóre awarie w systemie Linux)",
+    "pick_update_upload.buttons.skip_update": "Pomiń aktualizację",
+    "prompt.confirm_quit.title": "Czy na pewno chcesz zakończyć?",
+    "prompt.confirm_quit.message": "Wszystkie uruchomione gry i aplikacje zostaną zamknięte.",
+    "prompt.action.quit_and_close_all": "Wyjdź i zamknij wszystkie",
+    "prompt.action.back": "Wstecz",
+    "prompt.action.nevermind": "Nieważne",
+    "prompt.discard_download.detail": "W dowolnym momencie możesz ponownie zainstalować {{title}}, ale zacznie się ono od początku."
 }
