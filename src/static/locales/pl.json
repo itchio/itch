@@ -544,5 +544,5 @@
     "prompt.blessing.detail": "Kontynuuj, tylko jeśli ufasz autorowi.",
     "prompt.manage_game.installed_uploads": "Zainstalowane są następujące elementy:",
     "prompt.manage_game.available_uploads": "Te pozycje są również dostępne:",
-    "prompt.manage_game.no_other_uploads": "Obecnie nie są dostępne żadne inne przedmioty."
+    "prompt.manage_game.no_other_uploads": "Obecnie nie są dostępne żadne inne pozycje."
 }
