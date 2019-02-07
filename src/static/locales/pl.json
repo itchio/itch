@@ -574,5 +574,6 @@
     "sort_by.games.size_on_disk": "Rozmiar na dysku",
     "sort_by.games.install_date": "Data instalacji",
     "sort_by.collections.title": "Tytuł",
-    "sort_by.collections.updated_at": "Data aktualizacji"
+    "sort_by.collections.updated_at": "Zaktualizowano",
+    "filter_by.games.classification.assets": "Zasoby do gier"
 }
