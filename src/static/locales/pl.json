@@ -553,5 +553,6 @@
     "sidebar.library": "Biblioteka",
     "status.repairing_game": "{{title}} musi zakończyć aktualizację, zanim będzie można ją uruchomić",
     "status.installing_game.cancelled": "Instalacja {{title}} została anulowana!",
-    "status.downloads.no_active_downloads_subtext": "Rzeczy, które zainstalujesz lub pobierzesz, pojawią się tutaj"
+    "status.downloads.no_active_downloads_subtext": "Pozycje, które zainstalujesz lub pobierzesz, pojawią się tutaj",
+    "table.column.powered_by": "Dostępne dzięki"
 }
