@@ -410,7 +410,9 @@ class PlanInstall extends React.PureComponent<Props, State> {
             installLocationId: pickedInstallLocationId,
             game,
             upload,
+            build: upload.build,
             queueDownload: true,
+            fastQueue: true,
           },
           convo => {
             hookLogging(convo, logger);
