@@ -12,6 +12,7 @@ export default function(watcher: Watcher) {
       caveId,
       reason: DownloadReason.Reinstall,
       queueDownload: true,
+      fastQueue: true,
     });
     store.dispatch(actions.downloadQueued({}));
   });

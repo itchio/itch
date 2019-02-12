@@ -35,6 +35,7 @@ export default function(watcher: Watcher) {
       build,
       reason: DownloadReason.Update,
       queueDownload: true,
+      fastQueue: true,
     });
     store.dispatch(actions.downloadQueued({}));
   });

@@ -2749,7 +2749,7 @@ export interface InstallQueueParams {
    */
   queueDownload?: boolean;
   /** Don't run install prepare (assume we can just run it at perform time) */
-  fastQueue: boolean;
+  fastQueue?: boolean;
 }
 
 /**
