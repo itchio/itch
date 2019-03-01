@@ -77,8 +77,6 @@ const TitleDiv = styled.div`
 
 const emptyObj = {};
 
-let iconSide = "right";
-
 class TitleBar extends React.PureComponent<Props> {
   protected iconSide = this.props.linux ? theme.button_layout : "right";
 
