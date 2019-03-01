@@ -77,16 +77,15 @@ const TitleDiv = styled.div`
 
 const emptyObj = {};
 
+let iconSide = "right";
+
 class TitleBar extends React.PureComponent<Props> {
+  protected iconSide = this.props.linux ? theme.button_layout : "right";
+
   render() {
     const { tab, macos, tabInstance, linux } = this.props;
     const iw = (window as ExtendedWindow).windSpec;
     const secondary = iw.role == "secondary";
-    let iconSide = "right";
-    if (linux) {
-      iconSide = theme.button_layout;
-      console.log(theme);
-    }
 
     const sp = Space.fromInstance(tab, tabInstance);
     let label = sp.lazyLabel();
@@ -102,7 +101,7 @@ class TitleBar extends React.PureComponent<Props> {
 
     return (
       <TitleBarDiv className="title-bar">
-        {iconSide === "left" && (
+        {this.iconSide === "left" && (
           <>
             {this.renderIcons()}
             <Spacer />
@@ -121,7 +120,7 @@ class TitleBar extends React.PureComponent<Props> {
             <NewVersionAvailable />
           </>
         )}
-        {iconSide !== "left" && (
+        {this.iconSide !== "left" && (
           <>
             <Spacer />
             {this.renderIcons()}
