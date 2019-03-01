@@ -283,5 +283,4 @@ export default hookWithProps(TitleBar)(map => ({
   macos: map((rs, props) => rs.system.macos),
   windows: map((rs, props) => rs.system.windows),
   linux: map((rs, props) => rs.system.linux),
-  buttons: map((rs, props) => ({ layout: theme.button_layout })),
 }))(TitleBar);
