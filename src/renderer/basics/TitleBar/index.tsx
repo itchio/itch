@@ -13,6 +13,7 @@ import { modals } from "common/modals";
 import styled, * as styles from "renderer/styles";
 import { T } from "renderer/t";
 import { isSecretClick } from "common/helpers/secret-click";
+import { theme } from "@jakejarrett/gtk-theme";
 
 const DraggableDiv = styled.div`
   ${styles.singleLine};
@@ -78,9 +79,14 @@ const emptyObj = {};
 
 class TitleBar extends React.PureComponent<Props> {
   render() {
-    const { tab, macos, tabInstance } = this.props;
+    const { tab, macos, tabInstance, linux } = this.props;
     const iw = (window as ExtendedWindow).windSpec;
     const secondary = iw.role == "secondary";
+    let iconSide = "right";
+    if (linux) {
+      iconSide = theme.button_layout;
+      console.log(theme);
+    }
 
     const sp = Space.fromInstance(tab, tabInstance);
     let label = sp.lazyLabel();
@@ -96,6 +102,12 @@ class TitleBar extends React.PureComponent<Props> {
 
     return (
       <TitleBarDiv className="title-bar">
+        {iconSide === "left" && (
+          <>
+            {this.renderIcons()}
+            <Spacer />
+          </>
+        )}
         <DraggableDiv id="title-draggable" onClick={this.onClick}>
           <DraggableDivInner>
             {secondary ? <Filler /> : null}
@@ -109,21 +121,34 @@ class TitleBar extends React.PureComponent<Props> {
             <NewVersionAvailable />
           </>
         )}
-        <Spacer />
-        {this.renderIcons()}
+        {iconSide !== "left" && (
+          <>
+            <Spacer />
+            {this.renderIcons()}
+          </>
+        )}
       </TitleBarDiv>
     );
   }
 
   renderIcons() {
-    const { macos, maximized } = this.props;
-    if (macos) {
-      return null;
-    }
-
+    const { maximized, linux, windows } = this.props;
+    let toRender = null;
     const iw = (window as ExtendedWindow).windSpec;
     const secondary = iw.role == "secondary";
 
+    if (windows) {
+      toRender = this.renderWindowsIcons(secondary, maximized);
+    }
+
+    if (linux) {
+      toRender = this.renderGtkIcons(maximized);
+    }
+
+    return toRender;
+  }
+
+  private renderWindowsIcons(secondary, maximized) {
     return (
       <>
         {secondary ? null : (
@@ -136,6 +161,58 @@ class TitleBar extends React.PureComponent<Props> {
           </>
         )}
         <WindowButton className="exit" icon="cross" onClick={this.closeClick} />
+      </>
+    );
+  }
+
+  /**
+   * Determine the button we should render
+   *
+   * @param icon {string} - Icon we're rendering
+   * @param maximized - Whether or not it is maximized.
+   */
+  private convertGtkToItchButton(icon: GtkButtonType, maximized: boolean) {
+    switch (icon) {
+      case "close": {
+        return {
+          className: "exit",
+          icon: "cross",
+          onClick: this.closeClick,
+        };
+      }
+
+      case "minimize": {
+        return {
+          icon: "minus",
+          onClick: this.minimizeClick,
+        };
+      }
+
+      case "maximize": {
+        return {
+          icon: maximized ? "window-restore" : "window-maximize",
+          onClick: this.maximizeRestoreClick,
+        };
+      }
+    }
+  }
+
+  /**
+   * Grabs what icons to render from GTK and then renders the appropriate icons
+   */
+  private renderGtkIcons(maximized) {
+    const { gtk_decoration_layout } = theme;
+    let supported = gtk_decoration_layout.split(",");
+    supported = supported.filter(button => button.indexOf(":") === -1);
+
+    return (
+      <>
+        {supported.map(buttonType => (
+          <WindowButton
+            {...this.convertGtkToItchButton(buttonType, maximized)}
+            key={buttonType}
+          />
+        ))}
       </>
     );
   }
@@ -178,6 +255,13 @@ class TitleBar extends React.PureComponent<Props> {
   };
 }
 
+interface GtkButtons {
+  layout: "right" | "left";
+  supported: string[];
+}
+
+type GtkButtonType = "minimize" | "maximize" | "close";
+
 interface Props {
   tab: string;
   secondary?: boolean;
@@ -187,6 +271,10 @@ interface Props {
   maximized: boolean;
   focused: boolean;
   macos: boolean;
+  linux: boolean;
+  windows: boolean;
+
+  buttons: GtkButtons;
 }
 
 export default hookWithProps(TitleBar)(map => ({
@@ -196,4 +284,7 @@ export default hookWithProps(TitleBar)(map => ({
   maximized: map((rs, props) => rs.winds[ambientWind()].native.maximized),
   focused: map((rs, props) => rs.winds[ambientWind()].native.focused),
   macos: map((rs, props) => rs.system.macos),
+  windows: map((rs, props) => rs.system.windows),
+  linux: map((rs, props) => rs.system.linux),
+  buttons: map((rs, props) => ({ layout: theme.button_layout })),
 }))(TitleBar);

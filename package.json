@@ -24,6 +24,7 @@
   "main": "dist/main/main.bundle.js",
   "license": "MIT",
   "dependencies": {
+    "@jakejarrett/gtk-theme": "^1.1.3",
     "@types/emojione": "^2.2.2",
     "@types/lru-cache": "^4.1.1",
     "array-move": "^1.0.0",
