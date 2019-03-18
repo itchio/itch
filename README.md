@@ -28,6 +28,21 @@ If you'd like to develop the app instead, read the [Getting Started][developing]
 
 [developing]: https://itch.io/docs/itch/developing/getting-started.html
 
+## About itch-setup
+
+[itch-setup](https://github.com/itchio/itch-setup) is the installer program for the itch app.
+
+It's a Go executable that runs on Windows, macOS and Linux, and downloads the latest
+version of the app directly from <https://itch.io>.
+
+Although itch-setup is normally served from <https://itch.io/app>, the canonical
+source to download it (e.g. for packaging purposes), is the following download server:
+
+  * <https://broth.itch.ovh/>
+
+broth is maintained by itch.io employees, and serves various packages related to the
+itch app.
+
 ## License
 
 itch is released under the MIT License, see the [LICENSE][] file for details.
