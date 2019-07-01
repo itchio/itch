@@ -120,7 +120,7 @@
     "clarify": "^2.1.0",
     "codecov": "^3.0.2",
     "cross-env": "^5.2.0",
-    "css-loader": "^0.28.11",
+    "css-loader": "^3.0.0",
     "electron": "^2.0.8",
     "file-loader": "^1.1.11",
     "happypack": "^5.0.0",

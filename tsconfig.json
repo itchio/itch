@@ -23,9 +23,7 @@
 
     "sourceMap": true,
     "plugins": [
-      {
-        "name": "react-lint-service",
-      }
+        { "name": "react-lint-service" }
     ]
   }
 }
