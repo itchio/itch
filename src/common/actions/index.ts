@@ -74,11 +74,11 @@ interface MirrorInput {
 type MirrorOutput<T> = { [key in keyof T]: T[key] };
 
 function wireActions<T extends MirrorInput>(input: T): MirrorOutput<T> {
-  const res: MirrorOutput<T> = {} as any;
+  const res = {} as any;
   for (const k of Object.keys(input)) {
-    res[k] = input[k](k) as any;
+    res[k] = input[k](k);
   }
-  return res;
+  return res as MirrorOutput<T>;
 }
 
 export const actions = wireActions({

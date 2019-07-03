@@ -12,5 +12,7 @@ export const TabConsumer = spaceContext.Consumer;
 export const withTab = <P extends TabContextProps>(
   Component: React.ComponentType<P>
 ) => (props: Subtract<P, TabContextProps>) => (
-  <TabConsumer>{tab => <Component {...props} tab={tab} />}</TabConsumer>
+  <TabConsumer>
+    {tab => <Component {...((props as unknown) as P)} tab={tab} />}
+  </TabConsumer>
 );

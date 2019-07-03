@@ -143,7 +143,7 @@ export const modals = wireWidgets({
 
   adminWipeBlessing: widget<{}, {}>(),
 
-  naked: widget<null, void>(),
+  naked: widget<{}, {}>(),
 
   confirmQuit: widget<ConfirmQuitParams, ConfirmQuitResponse>(),
 });

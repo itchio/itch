@@ -12,16 +12,14 @@ export interface HoverProps {
   onMouseLeave?: React.EventHandler<React.MouseEvent<any>>;
 }
 
-function withHover<P extends HoverProps>(
-  Component: React.ComponentType<P>
-): React.ComponentType<Subtract<P, HoverProps>> {
-  return class extends React.PureComponent<
-    Subtract<P, HoverProps>,
-    HoverState
-  > {
+function withHover<ChildProps extends HoverProps>(
+  Component: React.ComponentType<ChildProps>
+) {
+  type Props = Subtract<ChildProps, HoverProps>;
+  return class extends React.PureComponent<Props, HoverState> {
     static displayName = `Hoverable(${getDisplayName(Component)})`;
 
-    constructor(props: Subtract<P, HoverProps>, context: any) {
+    constructor(props: Props, context: any) {
       super(props, context);
       this.state = {
         hover: false,
@@ -37,13 +35,12 @@ function withHover<P extends HoverProps>(
     };
 
     render() {
-      const restProps = this.props;
       return (
         <Component
+          {...((this.props as unknown) as ChildProps)}
           hover={this.state.hover}
           onMouseEnter={this.onMouseEnter}
           onMouseLeave={this.onMouseLeave}
-          {...restProps}
         />
       );
     }

@@ -14,6 +14,6 @@ export const withProfile = <P extends ProfileContextProps>(
   Component: React.ComponentType<P>
 ) => (props: Subtract<P, ProfileContextProps>) => (
   <ProfileConsumer>
-    {profile => <Component {...props} profile={profile} />}
+    {profile => <Component {...((props as unknown) as P)} profile={profile} />}
   </ProfileConsumer>
 );
