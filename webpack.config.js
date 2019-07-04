@@ -1,6 +1,5 @@
 const {NamedModulesPlugin} = require("webpack");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const HappyPack = require("happypack");
 const WebpackBuildNotifierPlugin = require("webpack-build-notifier");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -123,7 +122,6 @@ function getCommonConfig(type, env) {
       ]
     },
     plugins: [
-      new HardSourceWebpackPlugin(),
       new HappyPack({
         id: "ts",
         threads: 4,

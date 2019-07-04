@@ -536,6 +536,7 @@ function commonBrowserWindowOpts(
       affinity: "all-in-one",
       webSecurity: env.development ? false : true,
       nodeIntegration: true,
+      webviewTag: true,
       session: getAppSession(store),
     },
   };
