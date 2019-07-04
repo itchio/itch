@@ -19,6 +19,7 @@ npm-debug.log
 *.map
 *.tmp.txt
 /butler
+*.exe
 
 # capsule stuff
 /*.mp4
