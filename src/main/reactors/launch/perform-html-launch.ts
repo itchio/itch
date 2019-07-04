@@ -83,7 +83,7 @@ export async function performHTMLLaunch(
   if (process.env.IMMEDIATE_NOSE_DIVE === "1") {
     win.webContents.openDevTools({ mode: "detach" });
   }
-  win.setMenu(null);
+  win.removeMenu();
 
   // strip 'Electron' from user agent so some web games stop being confused
   let userAgent = win.webContents.getUserAgent();
