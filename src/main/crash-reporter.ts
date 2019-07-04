@@ -150,9 +150,7 @@ async function handle(type: ErrorType, e: Error) {
     ]),
   };
 
-  const response = await new ItchPromise((resolve, reject) =>
-    dialog.showMessageBox(dialogOpts, resolve)
-  );
+  const response = (await dialog.showMessageBox(dialogOpts)).response;
 
   if (response === 0) {
     reportIssue({ log });
