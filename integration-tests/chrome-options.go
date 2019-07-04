@@ -10,31 +10,61 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (r *runner) SetupChromeOptions(co gs.ChromeOptions) error {
+type ChromeOptions struct {
+	Binary string
+	Args   []string
+}
+
+func (opts *ChromeOptions) AddArg(arg string) {
+	opts.Args = append(opts.Args, arg)
+}
+
+func (opts *ChromeOptions) Apply(caps *gs.Capabilities) {
+	if opts.Binary == "" {
+		panic("binary can't be empty")
+	}
+	co := gs.NewChromeOptions()
+	co.SetBinary(opts.Binary)
+	co.SetArgs(opts.Args)
+	caps.SetChromeOptions(co)
+}
+
+func (r *runner) GetChromeOptions() (*ChromeOptions, error) {
+	opts := &ChromeOptions{
+		Binary: "",
+		Args: []string{
+			// cf. https://bugs.chromium.org/p/chromedriver/issues/detail?id=2489
+			"--no-sandbox",
+			"--disable-dev-shm-usage",
+			// cf. https://bugs.chromium.org/p/chromedriver/issues/detail?id=2489#c20
+			"--remote-debugging-port=9222",
+		},
+	}
+
 	binaryPath := os.Getenv("ITCH_INTEGRATION_BINARY_PATH")
 	if binaryPath != "" {
 		absoluteBinaryPath, err := filepath.Abs(binaryPath)
 		if err != nil {
 			r.logf("Had problems making binary path absolute:")
-			return err
+			return nil, err
 		}
 
 		r.logf("Testing packaged app at %s", absoluteBinaryPath)
 		_, err = os.Stat(absoluteBinaryPath)
 		if err != nil {
 			r.logf("Had problems checking that binary path exists:")
-			return err
+			return nil, err
 		}
 
-		co.SetBinary(absoluteBinaryPath)
-		return nil
+		opts.Binary = absoluteBinaryPath
+		return opts, nil
 	}
 
 	if binaryPath == "" {
 		r.logf("$ITCH_INTEGRATION_BINARY_PATH is not set.")
 		if os.Getenv("CI") != "" {
 			r.logf("...and we're on CI, so there's a configuration error. Bailing out.")
-			return errors.Errorf("On CI, $ITCH_INTEGRATION_BINARY_PATH must be set to test the packaged application.")
+			return nil, errors.Errorf("On CI, $ITCH_INTEGRATION_BINARY_PATH must be set to test the packaged application.")
 		}
 		r.logf("Assuming dev version")
 	}
@@ -44,7 +74,7 @@ func (r *runner) SetupChromeOptions(co gs.ChromeOptions) error {
 
 	binaryPathBytes, err := exec.Command("node", "-e", "console.log(require('electron'))").Output()
 	if err != nil {
-		return errors.WithMessage(err, "while trying to get the path to electron's binary")
+		return nil, errors.WithMessage(err, "while trying to get the path to electron's binary")
 	}
 	binaryPath = strings.TrimSpace(string(binaryPathBytes))
 
@@ -54,17 +84,15 @@ func (r *runner) SetupChromeOptions(co gs.ChromeOptions) error {
 	}
 	r.logf("via: %s", relativeBinaryPath)
 
-	co.SetBinary(binaryPath)
-	co.SetArgs([]string{
-		"app=" + appPath,
-	})
+	opts.Binary = binaryPath
+	opts.AddArg("app=" + appPath)
 
 	r.logf("But first, let's bundle all that javascript...")
 	err = r.bundle()
 	if err != nil {
-		return errors.WithMessage(err, "while bundling")
+		return nil, errors.WithMessage(err, "while bundling")
 	}
 	r.logf("✓ Everything is bundled!")
 
-	return nil
+	return opts, nil
 }

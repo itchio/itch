@@ -14,6 +14,7 @@ import (
 
 	gs "github.com/fasterthanlime/go-selenium"
 	"github.com/hpcloud/tail"
+	"github.com/logrusorgru/aurora"
 	"github.com/onsi/gocleanup"
 	"github.com/pkg/errors"
 )
@@ -29,6 +30,7 @@ type CleanupFunc func()
 
 type runner struct {
 	cwd                string
+	chromeLogger       *log.Logger
 	logger             *log.Logger
 	errLogger          *log.Logger
 	chromeDriverExe    string
@@ -40,12 +42,16 @@ type runner struct {
 	readyForScreenshot bool
 }
 
+func (r *runner) chromelogf(format string, args ...interface{}) {
+	r.chromeLogger.Println(aurora.Sprintf(aurora.Green(format), args...))
+}
+
 func (r *runner) logf(format string, args ...interface{}) {
-	r.logger.Printf(format, args...)
+	r.logger.Println(aurora.Sprintf(aurora.Blue(format), args...))
 }
 
 func (r *runner) errf(format string, args ...interface{}) {
-	r.errLogger.Printf(format, args...)
+	r.errLogger.Println(aurora.Sprintf(aurora.Red(format), args...))
 }
 
 func main() {
@@ -85,9 +91,10 @@ func doMain() error {
 	}
 
 	r = &runner{
-		prefix:    "tmp",
-		logger:    log.New(os.Stdout, "• ", log.Ltime|log.Lmicroseconds),
-		errLogger: log.New(os.Stderr, "❌ ", log.Ltime|log.Lmicroseconds),
+		prefix:       "tmp",
+		logger:       log.New(os.Stdout, "• ", log.Ltime|log.Lmicroseconds),
+		chromeLogger: log.New(os.Stdout, "[chrome] ", log.Ltime|log.Lmicroseconds),
+		errLogger:    log.New(os.Stderr, "❌ ", log.Ltime|log.Lmicroseconds),
 	}
 	must(os.RemoveAll(r.prefix))
 	must(os.RemoveAll("screenshots"))
@@ -106,7 +113,7 @@ func doMain() error {
 	chromeDriverPort := 9515
 	chromeDriverLogPath := filepath.Join(cwd, "chrome-driver.log.txt")
 	chromeDriverCtx, chromeDriverCancel := context.WithCancel(context.Background())
-	r.chromeDriverCmd = exec.CommandContext(chromeDriverCtx, r.chromeDriverExe, fmt.Sprintf("--port=%d", chromeDriverPort), fmt.Sprintf("--log-path=%s", chromeDriverLogPath))
+	r.chromeDriverCmd = exec.CommandContext(chromeDriverCtx, r.chromeDriverExe, fmt.Sprintf("--port=%d", chromeDriverPort), fmt.Sprintf("--log-path=%s", chromeDriverLogPath), "--verbose")
 	cdoutR, cdoutW, err := os.Pipe()
 	must(err)
 	r.chromeDriverCmd.Stdout = cdoutW
@@ -120,7 +127,7 @@ func doMain() error {
 	go func() {
 		s := bufio.NewScanner(cdoutR)
 		for s.Scan() {
-			r.logf("[chromedriver] %s", s.Text())
+			r.chromelogf("%s", s.Text())
 			if strings.Contains(s.Text(), "Only local connections are allowed") {
 				close(chromeDriverStartupChan)
 			}
@@ -199,13 +206,13 @@ func doMain() error {
 	// Create capabilities, driver etc.
 	capabilities := gs.Capabilities{}
 	capabilities.SetBrowser(gs.ChromeBrowser())
-	co := capabilities.ChromeOptions()
 
-	err = r.SetupChromeOptions(co)
+	chromeOpts, err := r.GetChromeOptions()
 	if err != nil {
 		return err
 	}
-	capabilities.SetChromeOptions(co)
+	log.Printf("Got chrome options: %#v", chromeOpts)
+	chromeOpts.Apply(&capabilities)
 
 	driver, err := gs.NewSeleniumWebDriver(fmt.Sprintf("http://127.0.0.1:%d", chromeDriverPort), capabilities)
 	if err != nil {
@@ -232,9 +239,6 @@ func doMain() error {
 		}
 
 		r.logf("Session %s created in %v", sessRes.SessionID, time.Since(beforeCreateTime))
-
-		r.logf("Sleeping some time before the screenshot...")
-		time.Sleep(5 * time.Second)
 
 		r.readyForScreenshot = true
 

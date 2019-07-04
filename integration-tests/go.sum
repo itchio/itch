@@ -2,8 +2,12 @@ github.com/fasterthanlime/go-selenium v0.1.0 h1:rmCPLc5A7D9FW4VjAORptpfl5V1yeKzN
 github.com/fasterthanlime/go-selenium v0.1.0/go.mod h1:zn2yL+qxRhfMZ7dKcdlWNduflgxZHj9i2Ih3qd3mDKQ=
 github.com/fasterthanlime/go-selenium v0.1.1-0.20180614144419-1da511db778f h1:LUhhfrJR98DEl8AQbNIa1O0OVy0/v2MP6nw/lqYKcIk=
 github.com/fasterthanlime/go-selenium v0.1.1-0.20180614144419-1da511db778f/go.mod h1:zn2yL+qxRhfMZ7dKcdlWNduflgxZHj9i2Ih3qd3mDKQ=
+github.com/fasterthanlime/go-selenium v0.1.1-0.20190704213309-4e4dc141dc64 h1:YfzNjf7WpFTI3X/vZpbFL7pe9hVqYbobRDwZP/OxBlg=
+github.com/fasterthanlime/go-selenium v0.1.1-0.20190704213309-4e4dc141dc64/go.mod h1:Hh/f4/5sGAs+qAR5l5+AD+cYfq+AskIBsxJodsL6uPw=
 github.com/hpcloud/tail v1.0.0 h1:nfCOvKYfkgYP8hkirhJocXT2+zOD8yUNjXaWfTlyFKI=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
+github.com/logrusorgru/aurora v0.0.0-20190428105938-cea283e61946 h1:z+WaKrgu3kCpcdnbK9YG+JThpOCd1nU5jO5ToVmSlR4=
+github.com/logrusorgru/aurora v0.0.0-20190428105938-cea283e61946/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/onsi/gocleanup v0.0.0-20140331211545-c1a5478700b5 h1:uuhPqmc+m7Nj7btxZEjdEUv+uFoBHNf2Tk/E7gGM+kY=
 github.com/onsi/gocleanup v0.0.0-20140331211545-c1a5478700b5/go.mod h1:tHaogb+iP6wJXwCqVUlmxYuJb4XDyEKxxs3E4DvMBK0=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
