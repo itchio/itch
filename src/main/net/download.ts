@@ -9,6 +9,7 @@ import { request } from "main/net/request";
 import { ProgressInfo } from "common/types";
 import { WriteStream } from "fs";
 import { delay } from "main/reactors/delay";
+import { isArray } from "util";
 
 interface HTTPError extends Error {
   httpStatusCode: number;
@@ -71,9 +72,13 @@ export async function downloadToFile(
             throw e;
           }
 
-          const contentLengthHeader = res.headers["content-length"];
-          if (!isEmpty(contentLengthHeader)) {
-            totalSize = parseInt(contentLengthHeader[0], 10);
+          let contentLengthHeader: any = res.headers["content-length"];
+          if (isArray(contentLengthHeader)) {
+            contentLengthHeader = contentLengthHeader[0];
+          }
+          if (contentLengthHeader) {
+            let contentLength: number = parseInt(contentLengthHeader, 10);
+            totalSize = contentLength;
           }
         },
       }
