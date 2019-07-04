@@ -36,6 +36,8 @@ export function main() {
     }
   }
 
+  app.allowRendererProcessReuse = true;
+
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
   }
