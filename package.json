@@ -152,7 +152,7 @@
     "start": "node develop.js",
     "compile": "webpack-command --progress --mode production",
     "compile-profile": "webpack-command --mode production --reporter json > stats.json",
-    "test": "cross-env TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
+    "test": "cross-env NODE_ENV=test TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
     "single-test": "mocha -r ts-node/register -r tsconfig-paths/register",
     "integration-tests": "node release/ci-integration-tests.js",
     "upload-coverage": "codecov -f ./coverage/lcov.info",

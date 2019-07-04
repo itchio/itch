@@ -3,8 +3,10 @@ import { RootState, Action } from "common/types";
 
 let all = allInitial;
 
-if (module.hot) {
-  module.hot.accept("./all", () => {
+let extModule = module as (typeof module & { hot?: { accept?: any } });
+
+if (extModule.hot) {
+  extModule.hot.accept("./all", () => {
     console.log(`Refreshing reducers...`);
     all = require("./all").default;
   });
