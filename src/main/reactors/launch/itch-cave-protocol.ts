@@ -1,7 +1,7 @@
 import { ItchPromise } from "common/util/itch-promise";
 import * as url from "common/util/url";
 import { Session } from "electron";
-import { createReadStream, statSync } from "fs";
+import { createReadStream, statSync } from "original-fs";
 import { mainLogger } from "main/logger";
 import mime from "mime-types";
 import { join } from "path";
