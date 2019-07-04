@@ -153,7 +153,6 @@
     "start": "node develop.js",
     "compile": "webpack-command --progress --mode production",
     "compile-profile": "webpack-command --mode production --reporter json > stats.json",
-    "precommit": "lint-staged",
     "test": "cross-env TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
     "single-test": "mocha -r ts-node/register -r tsconfig-paths/register",
     "integration-tests": "node release/ci-integration-tests.js",
@@ -228,6 +227,11 @@
         "./src/renderer/inject/inject-game.ts",
         "./src/renderer/inject/inject-captcha.ts"
       ]
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
     }
   }
 }
