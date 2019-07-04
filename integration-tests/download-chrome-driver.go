@@ -39,9 +39,8 @@ func downloadChromeDriver(r *runner) error {
 		if currentVersion == chromeDriverVersionString {
 			r.logf("Good version found, keeping it: %s", currentVersion)
 			return nil
-		} else {
-			r.logf("Found (%s) but expected (%s)", currentVersion, chromeDriverVersion)
 		}
+		r.logf("Found (%s) but expected (%s)", currentVersion, chromeDriverVersion)
 	} else {
 		r.logf("No chrome driver version found")
 	}
@@ -120,10 +119,10 @@ func downloadChromeDriver(r *runner) error {
 	return nil
 }
 
-// chromedriver 2.34 supports Chrome 61-63
-// electron 2.0.2 ships with Chrome 61
-const chromeDriverVersion = "2.34"
-const chromeDriverVersionString = "ChromeDriver 2.34.522913 (36222509aa6e819815938cbf2709b4849735537c)"
+// electron 6.0.0-beta.12 ships with Chromium 76.0.3809.54
+// we need ChromeDriver 76.0.3809.25
+const chromeDriverVersion = "76.0.3809.25"
+const chromeDriverVersionString = "ChromeDriver 76.0.3809.25 (a0c95f440512e06df1c9c206f2d79cc20be18bb1-refs/branch-heads/3809@{#271})"
 
 func chromeDriverURL(r *runner) string {
 	tag := chromeDriverVersion

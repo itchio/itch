@@ -231,13 +231,16 @@ func doMain() error {
 			return errors.WithStack(err)
 		}
 
-		r.logf("Session %s created in %s", time.Since(beforeCreateTime), sessRes.SessionID)
+		r.logf("Session %s created in %v", sessRes.SessionID, time.Since(beforeCreateTime))
+
+		r.logf("Sleeping some time before the screenshot...")
+		time.Sleep(5 * time.Second)
+
 		r.readyForScreenshot = true
 
 		err = r.takeScreenshot("initial")
 		if err != nil {
-			r.readyForScreenshot = false
-			return errors.WithStack(err)
+			panic(errors.WithStack(err))
 		}
 		return nil
 	}
