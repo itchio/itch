@@ -29,7 +29,7 @@ import { registerItchProtocol } from "main/net/register-itch-protocol";
 import { promisedModal } from "main/reactors/modals";
 import { openAppDevTools } from "main/reactors/open-app-devtools";
 import { hookWebContentsContextMenu } from "main/reactors/web-contents-context-menu";
-import { stringify } from "querystring";
+import { stringify, ParsedUrlQueryInput } from "querystring";
 import { createSelector } from "reselect";
 import { debounce } from "underscore";
 import { format as formatUrl, UrlObject } from "url";
@@ -488,7 +488,7 @@ export default function(watcher: Watcher) {
   });
 }
 
-interface AppURLParams {
+interface AppURLParams extends ParsedUrlQueryInput {
   wind: string;
   role: WindRole;
 }
@@ -535,6 +535,7 @@ function commonBrowserWindowOpts(
     webPreferences: {
       affinity: "all-in-one",
       webSecurity: env.development ? false : true,
+      nodeIntegration: true,
       session: getAppSession(store),
     },
   };
@@ -750,23 +751,29 @@ function makeSubWatcher(rs: RootState) {
         const getID = (rs: RootState) => rs.winds[window].navigation.tab;
         const getTabInstance = (rs: RootState) => rs.winds[window].tabInstances;
 
-        const getSpace = createSelector(getID, getTabInstance, (id, tabData) =>
-          Space.fromInstance(id, tabData[id])
+        const getSpace = createSelector(
+          getID,
+          getTabInstance,
+          (id, tabData) => Space.fromInstance(id, tabData[id])
         );
 
-        return createSelector(getI18n, getSpace, (i18n, sp) => {
-          const nativeWindow = getNativeWindow(store.getState(), window);
-          if (nativeWindow && !nativeWindow.isDestroyed()) {
-            const label = t(i18n, sp.label());
-            let title: string;
-            if (label) {
-              title = `${label} - ${app.getName()}`;
-            } else {
-              title = `${app.getName()}`;
+        return createSelector(
+          getI18n,
+          getSpace,
+          (i18n, sp) => {
+            const nativeWindow = getNativeWindow(store.getState(), window);
+            if (nativeWindow && !nativeWindow.isDestroyed()) {
+              const label = t(i18n, sp.label());
+              let title: string;
+              if (label) {
+                title = `${label} - ${app.getName()}`;
+              } else {
+                title = `${app.getName()}`;
+              }
+              nativeWindow.setTitle(title);
             }
-            nativeWindow.setTitle(title);
           }
-        });
+        );
       },
     });
   }

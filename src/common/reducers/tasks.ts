@@ -67,4 +67,4 @@ const selector = createStructuredSelector<
   tasksByGameId: state => groupBy(state.tasks, "gameId"),
 });
 
-export default derivedReducer(baseReducer, selector);
+export default derivedReducer<TasksState>(baseReducer, selector);

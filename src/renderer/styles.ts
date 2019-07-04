@@ -139,27 +139,14 @@ import * as sc from "styled-components";
 import { ThemedStyledComponentsModule } from "styled-components";
 const {
   default: styled,
-  css: baseCss,
-  injectGlobal,
+  css,
   keyframes,
+  createGlobalStyle,
   ThemeProvider,
 } = sc as ThemedStyledComponentsModule<Theme>;
 
-// this workaround brought to you by.. some more styled-copmonents change
-export interface CorrectlyTypedThemedCssFunction<T> {
-  (
-    strings: TemplateStringsArray,
-    ...interpolations: sc.SimpleInterpolation[]
-  ): sc.InterpolationValue[];
-  <P>(
-    strings: TemplateStringsArray,
-    ...interpolations: sc.Interpolation<sc.ThemedOuterStyledProps<P, T>>[]
-  ): sc.FlattenInterpolation<sc.ThemedOuterStyledProps<P, T>>[];
-}
-const css = baseCss as CorrectlyTypedThemedCssFunction<Theme>;
-
 export default styled;
-export { css, injectGlobal, keyframes, ThemeProvider };
+export { css, keyframes, createGlobalStyle, ThemeProvider };
 
 // animations
 

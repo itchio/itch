@@ -76,7 +76,7 @@ class OptionWrapper extends React.PureComponent<
   el: HTMLElement;
 
   render() {
-    return <OptionWrapperDiv {...this.props} innerRef={this.gotEl} />;
+    return <OptionWrapperDiv {...this.props} ref={this.gotEl} />;
   }
 
   gotEl = (el: HTMLElement) => {

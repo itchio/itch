@@ -6,7 +6,6 @@ import {
   createStore,
   applyMiddleware,
   compose,
-  GenericStoreEnhancer,
   Middleware,
   MiddlewareAPI,
 } from "redux";
@@ -65,17 +64,21 @@ if (beChatty) {
 
 let watcher = getWatcher(mainLogger);
 
-const enhancer = compose(
+const initialState = {} as any;
+const enhancers = [
   electronEnhancer({
     postDispatchCallback: (action: any) => {
       route(watcher, store, action);
     },
   }),
-  applyMiddleware(...middleware)
-) as GenericStoreEnhancer;
+  applyMiddleware(...middleware),
+];
 
-const initialState = {} as any;
-const store = createStore(reducer, initialState, enhancer) as Store;
+const store = createStore(
+  reducer,
+  initialState,
+  compose(...enhancers)
+) as Store;
 
 if (module.hot) {
   module.hot.accept("main/reactors", () => {

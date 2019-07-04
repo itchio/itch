@@ -21,9 +21,6 @@ import { Provider } from "react-redux";
 
 import store from "renderer/store";
 
-import * as globalStyles from "renderer/global-styles";
-globalStyles.inject();
-
 let AppContainer: React.ComponentClass<{}>;
 if (env.development) {
   try {
@@ -97,11 +94,6 @@ async function start() {
 
 start();
 
-// disallow navigating by dragging a link over the app's window, cf.
-// https://stackoverflow.com/questions/31670803/prevent-electron-app-from-redirecting-when-dragdropping-items-in-window
-document.addEventListener("dragover", event => {
-  event.preventDefault();
-});
 document.addEventListener("drop", event => {
   event.preventDefault();
   const urls = event.dataTransfer.getData("text/uri-list");

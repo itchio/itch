@@ -106,7 +106,7 @@ export function makeSeries<
     render() {
       const { gotLoadMore } = this.props;
       return (
-        <LoadMoreContainer innerRef={gotLoadMore} onClick={this.loadNextPage}>
+        <LoadMoreContainer ref={gotLoadMore} onClick={this.loadNextPage}>
           <LoadMoreText>Load more...</LoadMoreText>
         </LoadMoreContainer>
       );
@@ -249,7 +249,7 @@ export function makeSeries<
   }
 
   class Series extends React.PureComponent<Props, State> {
-    restoreScrollInterval: NodeJS.Timer;
+    restoreScrollInterval: number;
 
     constructor(props: Props, context: any) {
       super(props, context);
@@ -342,7 +342,7 @@ export function makeSeries<
           <ItemList
             className="series--itemlist"
             onScroll={this.onScroll}
-            innerRef={this.gotItemList}
+            ref={this.gotItemList}
           >
             {cursors.map((cursor, i) => (
               <SeriesPage

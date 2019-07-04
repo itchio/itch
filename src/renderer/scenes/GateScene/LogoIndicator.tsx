@@ -30,7 +30,7 @@ class LogoIndicator extends React.PureComponent<Props> {
   vivus: Vivus;
 
   render() {
-    return <LogoIndicatorDiv id="logo-indicator-div" innerRef={this.gotEl} />;
+    return <LogoIndicatorDiv id="logo-indicator-div" ref={this.gotEl} />;
   }
 
   gotEl = (el: HTMLDivElement) => {

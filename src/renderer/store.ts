@@ -8,15 +8,9 @@ import route from "common/util/route";
 import shouldLogAction from "common/util/should-log-action";
 import { Watcher } from "common/util/watcher";
 import { electronEnhancer } from "ftl-redux-electron-store";
-import {
-  applyMiddleware,
-  compose,
-  createStore,
-  GenericStoreEnhancer,
-  Middleware,
-} from "redux";
+import { applyMiddleware, compose, createStore, Middleware } from "redux";
 import { rendererLogger } from "renderer/logger";
-const createLogger = require("redux-logger");
+const { createLogger } = require("redux-logger");
 
 const watcher = new Watcher(rendererLogger);
 
@@ -34,24 +28,22 @@ const logger = createLogger({
 });
 middleware.push(logger);
 
-const ee = electronEnhancer({
-  filter,
-  postDispatchCallback: (action: any) => {
-    route(watcher, store, action);
-  },
-}) as GenericStoreEnhancer;
-
-const em = applyMiddleware(...middleware);
-
-let enhancer: GenericStoreEnhancer;
-
-enhancer = compose(
-  ee,
-  em
-) as GenericStoreEnhancer;
+const enhancers = [
+  electronEnhancer({
+    filter,
+    postDispatchCallback: (action: any) => {
+      route(watcher, store, action);
+    },
+  }),
+  applyMiddleware(...middleware),
+];
 
 const initialState = {} as any;
-const store = createStore(reducer, initialState, enhancer) as ChromeStore;
+const store = createStore(
+  reducer,
+  initialState,
+  compose(...enhancers)
+) as ChromeStore;
 
 store.watcher = watcher;
 

@@ -1,11 +1,17 @@
 import React from "react";
-import { connect, DispatchProp } from "react-redux";
+import {
+  connect,
+  DispatchProp,
+  Matching,
+  InferableComponentEnhancerWithProps,
+} from "react-redux";
 import { RootState, Subtract } from "common/types";
 import {
   createStructuredSelector,
   Selector,
   ParametricSelector,
 } from "reselect";
+import { AnyAction } from "redux";
 
 interface MakeSelectorFunc {
   <Result>(s: Selector<RootState, Result>): Selector<RootState, Result>;
@@ -21,23 +27,16 @@ function identity<T>(t: T) {
   return t;
 }
 
-export function hook<DerivedProps>(
+export function hook<DerivedProps = {}>(
   makeSelectors?: (
     f: MakeSelectorFunc
   ) => { [K in keyof DerivedProps]: Selector<RootState, DerivedProps[K]> }
-) {
+): InferableComponentEnhancerWithProps<DerivedProps & DispatchProp<any>, {}> {
   if (!makeSelectors) {
     return connect();
   }
-
   const selectors = makeSelectors(identity);
-  return function<Props extends DerivedProps & DispatchProp<any>>(
-    component: React.ComponentType<Props>
-  ) {
-    return connect(
-      createStructuredSelector<RootState, DerivedProps>(selectors)
-    )(component);
-  };
+  return connect(createStructuredSelector<RootState, DerivedProps>(selectors));
 }
 
 export function hookWithProps<InputProps>(
@@ -51,7 +50,7 @@ export function hookWithProps<InputProps>(
         RootState,
         InputProps,
         DerivedProps[K]
-      >
+      >;
     }
   ) {
     const selectors = makeSelectors(identity);

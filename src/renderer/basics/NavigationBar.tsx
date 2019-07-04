@@ -218,7 +218,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
             <AddressInput
               className="browser-address"
               type="search"
-              innerRef={this.onBrowserAddress as any}
+              ref={this.onBrowserAddress as any}
               defaultValue={url}
               onKeyDown={this.addressKeyDown}
               onBlur={this.addressBlur}
@@ -226,7 +226,7 @@ class NavigationBar extends React.PureComponent<Props, State> {
           ) : (
             <AddressDiv
               className={classNames("browser-address")}
-              innerRef={this.onBrowserAddress}
+              ref={this.onBrowserAddress}
               onClick={this.startEditingAddress}
             >
               {this.renderURL(url)}

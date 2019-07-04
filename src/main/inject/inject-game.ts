@@ -45,9 +45,6 @@ const extendedGlobal = global as ExtendedGlobal;
     extendedGlobal.Itch = JSON.parse(jsonSource);
     console.log("Loaded itch environment!");
     console.dir(extendedGlobal.Itch);
-
-    console.log("Registering itch-cave scheme as privileged");
-    webFrame.registerURLSchemeAsPrivileged("itch-cave");
   } catch (e) {
     console.error("While loading itch environment: ", e);
   } finally {

@@ -59,7 +59,7 @@ class TwoFactorInput extends React.PureComponent<Props, State> {
 
         <CodeInputContainer>
           <CodeInput
-            innerRef={this.gotInput}
+            ref={this.gotInput}
             type="number"
             minLength={CODE_MIN_LENGTH}
             maxLength={CODE_MAX_LENGTH}

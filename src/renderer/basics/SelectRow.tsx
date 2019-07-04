@@ -51,11 +51,7 @@ class SelectRow extends React.PureComponent<Props> {
 
     return (
       <SelectRowDiv>
-        <Select
-          innerRef={this.gotElement}
-          value={value}
-          onChange={this.onChange}
-        >
+        <Select ref={this.gotElement} value={value} onChange={this.onChange}>
           {optionTags}
         </Select>
       </SelectRowDiv>

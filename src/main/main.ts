@@ -36,23 +36,42 @@ export function main() {
     }
   }
 
-  if (env.production) {
-    app.enableMixedSandbox();
-  }
-
-  // cf. https://github.com/itchio/itch/issues/2026
-  app.commandLine.appendSwitch("ignore-connections-limit", "127.0.0.1");
-
   if (process.env.ITCH_IGNORE_CERTIFICATE_ERRORS === "1") {
     app.commandLine.appendSwitch("ignore-certificate-errors");
   }
-  protocol.registerStandardSchemes(["itch-cave", "itch"]);
+  protocol.registerSchemesAsPrivileged([
+    {
+      scheme: "itch-cave",
+      privileges: {
+        standard: true,
+        secure: true,
+        bypassCSP: true,
+        supportFetchAPI: true,
+        corsEnabled: true,
+      },
+    },
+    {
+      scheme: "itch",
+      privileges: {
+        standard: true,
+        secure: true,
+        bypassCSP: true,
+        supportFetchAPI: true,
+        corsEnabled: true,
+      },
+    },
+  ]);
 
   let store: Store = require("main/store").default;
 
   let onReady = () => {
     if (!env.integrationTests) {
-      const shouldQuit = app.makeSingleInstance((argv, cwd) => {
+      const singleInstanceLockAcquired = app.requestSingleInstanceLock();
+      if (!singleInstanceLockAcquired) {
+        app.exit(0);
+        return;
+      }
+      app.on("second-instance", (event, argv, cwd) => {
         // we only get inside this callback when another instance
         // is launched - so this executes in the context of the main instance
         store.dispatch(
@@ -62,10 +81,6 @@ export function main() {
         );
         store.dispatch(actions.focusWind({ wind: "root" }));
       });
-      if (shouldQuit) {
-        app.exit(0);
-        return;
-      }
     }
 
     store.dispatch(

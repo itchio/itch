@@ -10,12 +10,13 @@ import Modals from "renderer/App/Modals";
 import { doesEventMeanBackground } from "renderer/helpers/whenClickNavigates";
 import { actions } from "common/actions";
 import { hook } from "renderer/hocs/hook";
-import { ambientWind } from "common/util/navigation";
+import GlobalStyles from "renderer/global-styles";
 
 class AppContents extends React.PureComponent<Props> {
   render() {
     return (
       <div onClickCapture={this.onClickCapture}>
+        <GlobalStyles />
         <Layout />
         <Modals />
       </div>

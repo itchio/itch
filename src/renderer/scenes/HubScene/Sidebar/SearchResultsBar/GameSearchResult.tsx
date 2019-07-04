@@ -7,10 +7,11 @@ import Cover from "renderer/basics/Cover";
 import Filler from "renderer/basics/Filler";
 import { whenClickNavigates } from "renderer/helpers/whenClickNavigates";
 import { hook } from "renderer/hocs/hook";
-import GenericSearchResult from "renderer/scenes/HubScene/Sidebar/SearchResultsBar/GenericSearchResult";
 import styled, * as styles from "renderer/styles";
 import { Dispatch } from "common/types";
 import { T } from "renderer/t";
+import watching, { Watcher } from "renderer/hocs/watching";
+import { findDOMNode } from "react-dom";
 
 const GameSearchResultDiv = styled.div`
   display: flex;
@@ -83,7 +84,26 @@ const ShortText = styled.span`
   white-space: normal;
 `;
 
-class GameSearchResult extends GenericSearchResult<Props> {
+@watching
+class GameSearchResult extends React.PureComponent<Props> {
+  subscribe(watcher: Watcher) {
+    watcher.on(actions.commandOk, async (store, action) => {
+      if (this.props.chosen && this.props.active && !this.props.loading) {
+        store.dispatch(this.getNavigateAction());
+        store.dispatch(actions.closeSearch({}));
+      }
+    });
+  }
+
+  componentDidUpdate() {
+    if (this.props.chosen) {
+      const node = findDOMNode(this);
+      if (node) {
+        (node as any).scrollIntoViewIfNeeded();
+      }
+    }
+  }
+
   render() {
     const { game, chosen } = this.props;
     const { title, stillCoverUrl, coverUrl } = game;

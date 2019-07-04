@@ -7,9 +7,9 @@ import ErrorState from "renderer/basics/ErrorState";
 import Floater from "renderer/basics/Floater";
 import { ActionList, invalidators } from "renderer/butlerd/invalidators";
 import { rcall } from "renderer/butlerd/rcall";
-import { storeShape } from "renderer/hocs/watching";
 import styled from "renderer/styles";
 import { debounce } from "underscore";
+import { ReactReduxContext } from "react-redux";
 
 interface GenericProps<Params, Result> {
   params: Params;
@@ -53,15 +53,13 @@ const butlerCaller = <Params, Result>(
   type Props = GenericProps<Params, Result>;
   type State = GenericState<Result>;
 
-  class Caller extends React.PureComponent<Props, State> {
+  type CallerProps = Props & { __store?: { watcher: Watcher } };
+
+  class Caller extends React.PureComponent<CallerProps, State> {
     static displayName = `ButlerCall(${method.name})`;
     fetchID = 0;
     invalidators: ActionList;
     watcher: Watcher;
-
-    static contextTypes = {
-      store: storeShape,
-    };
 
     constructor(props: Props, context: any) {
       super(props, context);
@@ -77,7 +75,7 @@ const butlerCaller = <Params, Result>(
       this.queueFetch();
       if (this.invalidators) {
         this.watcher = new Watcher(new Logger(devNull));
-        this.context.store.watcher.addSub(this.watcher);
+        this.props.__store.watcher.addSub(this.watcher);
         for (const invalidatingAction of this.invalidators) {
           this.watcher.on(invalidatingAction, async (store, action) => {
             this.invalidate();
@@ -88,7 +86,7 @@ const butlerCaller = <Params, Result>(
 
     componentWillUnmount() {
       if (this.watcher) {
-        this.context.store.watcher.removeSub(this.watcher);
+        this.props.__store.watcher.removeSub(this.watcher);
       }
     }
 
@@ -177,6 +175,16 @@ const butlerCaller = <Params, Result>(
         return;
       }
     }
+  }
+
+  class Wrapper extends React.PureComponent<Props, State> {
+    render() {
+      return (
+        <ReactReduxContext.Consumer>
+          {({ store }) => <Caller {...this.props} __store={store as any} />}
+        </ReactReduxContext.Consumer>
+      );
+    }
 
     static renderCallback(
       f: (args: ButlerCallerArgs<Params, Result>) => JSX.Element
@@ -188,7 +196,8 @@ const butlerCaller = <Params, Result>(
       return f;
     }
   }
-  return Caller;
+
+  return Wrapper;
 };
 
 export default butlerCaller;
