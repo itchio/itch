@@ -72,20 +72,6 @@ compile:
     paths:
       - prefix.tar
 
-# 32-bit linux portable builds
-package-linux-386:
-  stage: package
-  tags:
-    - linux
-  script:
-    - release/ci-package.js linux 386
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - packages
-  dependencies:
-    - compile
-
 # 64-bit linux portable builds
 package-linux-amd64:
   stage: package

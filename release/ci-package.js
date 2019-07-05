@@ -118,7 +118,7 @@ async function ciPackage(args) {
   $(await $.sh("mkdir -p packages"));
 
   $.say("Installing electron packaging tools...");
-  packages = ["electron-packager@9.0.0"];
+  packages = ["electron-packager@14.0.1"];
   $(await $.npm(`install --no-save ${packages.join(" ")}`));
 
   const darwin = require("./package/darwin");
