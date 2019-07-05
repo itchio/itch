@@ -140,7 +140,6 @@ deploy-itchio:
   script:
     - release/ci-deploy.js
   dependencies:
-    - package-linux-386
     - package-linux-amd64
     - package-darwin-amd64
     - package-windows-386
