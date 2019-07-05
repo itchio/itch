@@ -19,6 +19,7 @@ import { ModalWidgetProps } from "common/modals";
 import Log from "renderer/pages/AppLogPage/Log";
 
 const StyledLog = styled(Log)`
+  table,
   tbody {
     min-height: 180px;
   }
