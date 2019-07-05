@@ -1,6 +1,6 @@
 import { Watcher } from "common/util/watcher";
 
-import { app, Menu } from "electron";
+import { app } from "electron";
 const logger = mainLogger.child(__filename);
 import * as _ from "underscore";
 
@@ -10,13 +10,14 @@ import {
   rememberNotificationAction,
 } from "main/reactors/tray-persistent-state";
 
-import { Store, RootState, I18nState, MenuTemplate } from "common/types";
+import { Store, MenuTemplate } from "common/types";
 import { fleshOutTemplate } from "main/reactors/context-menu/flesh-out-template";
 import { memoize } from "common/util/lru-memoize";
 import { currentRuntime } from "common/os/runtime";
 import { mainLogger } from "main/logger";
 import { mcall } from "main/butlerd/mcall";
 import { messages } from "common/butlerd";
+import { Menu } from "common/helpers/menu";
 
 const setTrayMenu = memoize(1, function(template: MenuTemplate, store: Store) {
   const fleshedOut = fleshOutTemplate(

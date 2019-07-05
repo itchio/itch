@@ -200,7 +200,7 @@ function computeMenuTemplate(
 
   const menus: AllTemplates = {
     mainMac: {
-      // no need for a label, it'll always be app name
+      role: "appMenu",
       submenu: [
         {
           role: "about",
