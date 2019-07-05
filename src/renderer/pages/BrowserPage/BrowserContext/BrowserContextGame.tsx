@@ -37,8 +37,7 @@ const BrowserContextDiv = styled.div`
   justify-content: center;
   flex-direction: row;
 
-  padding: 8px 16px;
-  padding-left: 0;
+  padding-right: 16px;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.16);
   z-index: 50;
   align-items: center;
