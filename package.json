@@ -127,7 +127,7 @@
     "node-loader": "^0.6.0",
     "prettier": "^1.18.2",
     "react-container-dimensions": "^1.4.1",
-    "react-hot-loader": "^4.12.3",
+    "react-hot-loader": "^4.12.14",
     "react-lint": "^3.3.0",
     "react-lint-service": "^1.1.0",
     "recursive-copy": "^2.0.10",
