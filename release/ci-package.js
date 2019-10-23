@@ -92,7 +92,7 @@ async function ciPackage(args) {
       platform: "darwin",
       arch: "x64",
       icon: icnsPath,
-      appBundleId: "io." + appName + ".mac",
+      appBundleId: $.appBundleId(),
       appCategoryType: "public.app-category.games",
       protocols: [
         {
@@ -104,10 +104,6 @@ async function ciPackage(args) {
           schemes: [appName],
         },
       ],
-    }),
-    "linux-ia32": Object.assign({}, electronSharedOptions, {
-      platform: "linux",
-      arch: "ia32",
     }),
     "linux-x64": Object.assign({}, electronSharedOptions, {
       platform: "linux",

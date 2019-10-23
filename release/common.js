@@ -16,4 +16,6 @@ $.hasTag = function () {
   return !!process.env.CI_BUILD_TAG;
 }
 
+$.appBundleId = () => `io.${$.appName()}.mac`;
+
 module.exports = $;
