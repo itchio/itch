@@ -185,21 +185,17 @@ async function ciPackage(args) {
   $.say(`Built app is in ${buildPath}`);
 
   if (process.env.CI) {
-    if ($.hasTag()) {
-      $.say(`We're on CI and we have a tag, signing app...`);
-      switch (os) {
-        case "windows":
-          await windows.sign(arch, buildPath);
-          break;
-        case "darwin":
-          await darwin.sign(arch, buildPath);
-          break;
-        case "linux":
-          // tl;dr code-signing on Linux isn't a thing
-          break;
-      }
-    } else {
-      $.say(`We're on CI, but we don't have a build tag, not signing app.`)
+    $.say(`We're on CI, signing app...`);
+    switch (os) {
+      case "windows":
+        await windows.sign(arch, buildPath);
+        break;
+      case "darwin":
+        await darwin.sign(arch, buildPath);
+        break;
+      case "linux":
+        // tl;dr code-signing on Linux isn't a thing
+        break;
     }
   } else {
     $.say(`Not on CI, not signing app`)
