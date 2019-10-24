@@ -119,9 +119,8 @@ func downloadChromeDriver(r *runner) error {
 	return nil
 }
 
-// electron 6.0.0-beta.12 ships with Chromium 76.0.3809.54
-const electronVersion = "6.0.0-beta.12"
-const chromeDriverVersionString = "ChromeDriver 76.0.3809.54 (4662caa00739620414c48fe1389aebf79b77bd27-refs/branch-heads/3809@{#718})"
+const electronVersion = "7.0.0"
+const chromeDriverVersionString = "ChromeDriver 78.0.3905.1 (c26947c5f17eccf78e199253792030657457c687-refs/heads/master@{#703739})"
 
 func chromeDriverURL(r *runner) string {
 	suffix := ""
