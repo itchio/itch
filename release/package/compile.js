@@ -1,16 +1,11 @@
-#!/usr/bin/env node
+const $ = require("../common");
 
-// compile itch for production environemnts
-
-const $ = require("./common");
-const humanize = require("humanize-plus");
-
-async function main() {
+module.exports.compile = async () => {
   $.say(`Preparing to compile ${$.appName()} ${$.buildVersion()}`);
 
   await $.showVersions(["npm", "node"]);
 
-  $(await $.npm("install"));
+  $(await $.npm("ci"));
 
   $.say("Wiping prefix...");
   $(await $.sh("rm -rf prefix"));
@@ -35,12 +30,4 @@ async function main() {
   pkg.version = $.buildVersion();
   const pkgContents = JSON.stringify(pkg, null, 2);
   await $.writeFile(`prefix/package.json`, pkgContents);
-
-  $.say("Compressing prefix...");
-  $(await $.sh("tar cf prefix.tar prefix"));
-
-  const stats = await $.lstat("prefix.tar");
-  $.say(`prefix.tar is ${humanize.fileSize(stats.size)}`);
 }
-
-main();

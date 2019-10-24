@@ -4,7 +4,7 @@
 
 const ospath = require("path");
 const $ = require("./common");
-const bluebird = require("bluebird");
+const { compile } = require("./package/compile");
 
 async function ciPackage(args) {
   if (args.length !== 2) {
@@ -29,20 +29,9 @@ async function ciPackage(args) {
     throw new Error(msg);
   }
 
+  await compile();
+
   $.say(`Packaging ${$.appName()} for ${os}-${arch}`);
-
-  $.say("Installing dependencies...");
-  $(await $.npm(`install`));
-
-  $.say("Decompressing prefix...");
-  $(await $.sh("rm -rf prefix"));
-  $(await $.sh("tar xf prefix.tar"));
-
-  $.say("Installing production modules...");
-  await $.showVersions(["npm", "node"]);
-  await $.cd("prefix", async () => {
-    $(await $.npm("install --production"));
-  });
 
   const electronVersion = JSON.parse(
     await $.readFile("package.json"),
@@ -57,7 +46,6 @@ async function ciPackage(args) {
   var iconsPath = ospath.join("release", "images", appName + "-icons");
   var icoPath = ospath.join(iconsPath, "itch.ico");
   var icnsPath = ospath.join(iconsPath, "itch.icns");
-  var installerGifPath = "release/images/installer.gif";
 
   const electronSharedOptions = {
     dir: "prefix",
@@ -65,7 +53,7 @@ async function ciPackage(args) {
     electronVersion,
     appVersion,
     asar: true,
-    prune: false, // we do it ourselves
+    prune: true,
     overwrite: true,
     out: outDir,
   };
@@ -113,14 +101,10 @@ async function ciPackage(args) {
 
   $(await $.sh("mkdir -p packages"));
 
-  $.say("Installing electron packaging tools...");
-  packages = ["electron-packager@14.0.1"];
-  $(await $.npm(`install --no-save ${packages.join(" ")}`));
-
   const darwin = require("./package/darwin");
   const windows = require("./package/windows");
 
-  const electronPackager = bluebird.promisify(require("electron-packager"));
+  const electronPackager = require("electron-packager");
 
   $.say("Packaging with binary release...");
   let wd = process.cwd();

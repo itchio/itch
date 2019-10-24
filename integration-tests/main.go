@@ -23,7 +23,6 @@ const stampFormat = "15:04:05.999"
 
 const testAccountName = "itch-test-account"
 
-var testAccountPassword = os.Getenv("ITCH_TEST_ACCOUNT_PASSWORD")
 var testAccountAPIKey = os.Getenv("ITCH_TEST_ACCOUNT_API_KEY")
 
 type CleanupFunc func()

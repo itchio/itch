@@ -60,18 +60,6 @@ i18n-check:
   except:
     - tags
 
-# Compile javascript & css
-compile:
-  stage: build
-  tags:
-    - linux
-  script:
-    - release/ci-compile.js
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - prefix.tar
-
 # 64-bit linux portable builds
 package-linux-amd64:
   stage: package
@@ -83,8 +71,6 @@ package-linux-amd64:
     expire_in: 1 week
     paths:
       - packages
-  dependencies:
-    - compile
 
 # macOS .zip
 package-darwin-amd64:
@@ -97,8 +83,6 @@ package-darwin-amd64:
     expire_in: 1 week
     paths:
       - packages
-  dependencies:
-    - compile
 
 # windows 32-bit build
 package-windows-386:
@@ -112,8 +96,6 @@ package-windows-386:
     expire_in: 1 week
     paths:
       - packages
-  dependencies:
-    - compile
 
 # windows 64-bit build
 package-windows-amd64:
@@ -127,8 +109,6 @@ package-windows-amd64:
     expire_in: 1 week
     paths:
       - packages
-  dependencies:
-    - compile
 
 deploy-itchio:
   stage: deploy
