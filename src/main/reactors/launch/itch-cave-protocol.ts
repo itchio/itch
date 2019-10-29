@@ -31,16 +31,20 @@ export async function registerItchCaveProtocol(
 
         try {
           var stats = statSync(filePath);
+          let headers = {
+            server: "itch",
+            "content-length": `${stats.size}`,
+            "access-control-allow-origin": "*",
+          };
+          let contentType = mime.lookup(filePath);
+          if (contentType) {
+            headers["content-type"] = contentType;
+          }
           var stream = createReadStream(filePath);
           callback({
-            headers: {
-              server: "itch",
-              "content-type": mime.lookup(filePath),
-              "content-length": stats.size,
-              "access-control-allow-origin": "*",
-            },
+            headers,
             statusCode: 200,
-            data: stream as any, // *sigh*
+            data: stream,
           });
         } catch (e) {
           logger.warn(`while serving ${request.url}, got ${e.stack}`);
@@ -72,12 +76,9 @@ export async function registerItchCaveProtocol(
     );
   });
 
-  const handled = await new ItchPromise((resolve, reject) => {
-    gameSession.protocol.isProtocolHandled(WEBGAME_PROTOCOL, result => {
-      resolve(result);
-    });
-  });
-
+  const handled = await gameSession.protocol.isProtocolHandled(
+    WEBGAME_PROTOCOL
+  );
   if (!handled) {
     throw new Error(`could not register custom protocol ${WEBGAME_PROTOCOL}`);
   }

@@ -36,7 +36,7 @@ class ClearBrowsingData extends React.PureComponent<Props, State> {
       { cache: true }
     );
 
-    ourSession.getCacheSize(cacheSize => {
+    ourSession.getCacheSize().then(cacheSize => {
       this.setState({
         fetchedCacheSize: true,
         cacheSize,

@@ -104,19 +104,9 @@ export default function(watcher: Watcher) {
         | "createDirectory")[],
     };
 
-    const promise = new ItchPromise<string>((resolve, reject) => {
-      const callback = (response: string[]) => {
-        if (!response) {
-          return resolve();
-        }
-
-        return resolve(response[0]);
-      };
-      dialog.showOpenDialog(nativeWindow, dialogOpts, callback);
-    });
-
-    const path = await promise;
-    if (path) {
+    const openRes = await dialog.showOpenDialog(nativeWindow, dialogOpts);
+    if (openRes.filePaths.length > 0) {
+      let path = openRes.filePaths[0];
       const { installLocation } = await mcall(
         messages.InstallLocationsAdd,
         { path },

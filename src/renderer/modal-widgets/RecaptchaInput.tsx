@@ -77,10 +77,9 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
     });
 
     this.checker = setInterval(() => {
-      this.webview.executeJavaScript(
-        `window.captchaResponse`,
-        false,
-        (response: string | undefined) => {
+      this.webview
+        .executeJavaScript(`window.captchaResponse`, false)
+        .then((response: string | undefined) => {
           if (response) {
             const { dispatch } = this.props;
             dispatch(
@@ -92,8 +91,10 @@ class RecaptchaInput extends React.PureComponent<RecaptchaInputProps, State> {
               })
             );
           }
-        }
-      );
+        })
+        .catch(e => {
+          console.error(e);
+        });
     }, 500);
   };
 

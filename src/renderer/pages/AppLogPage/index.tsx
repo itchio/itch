@@ -60,23 +60,21 @@ class AppLogPage extends React.PureComponent<Props, State> {
       try {
         const electron = require("electron").remote;
         const { dialog, BrowserWindow } = electron;
-        dialog.showOpenDialog(
+        const { filePaths } = await dialog.showOpenDialog(
           BrowserWindow.getFocusedWindow(),
           {
             title: "Open log file",
-          },
-          (filePaths: string[]) => {
-            if (filePaths && filePaths.length > 0) {
-              const filePath = filePaths[0];
-              console.log(`Opening external log`, filePath);
-              const { url } = this.props;
-              dispatchTabEvolve(this.props, {
-                replace: true,
-                url: urlWithParams(url, { file: filePath }),
-              });
-            }
           }
         );
+        if (filePaths && filePaths.length > 0) {
+          const filePath = filePaths[0];
+          console.log(`Opening external log`, filePath);
+          const { url } = this.props;
+          dispatchTabEvolve(this.props, {
+            replace: true,
+            url: urlWithParams(url, { file: filePath }),
+          });
+        }
       } catch (e) {
         console.error(e);
       }

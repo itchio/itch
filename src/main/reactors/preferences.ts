@@ -33,27 +33,18 @@ export default function(watcher: Watcher) {
 
     if (action.payload.cache) {
       logger.debug(`clearing cache for ${partition}`);
-      promises.push(
-        new ItchPromise((resolve, reject) => {
-          ourSession.clearCache(resolve);
-        })
-      );
+      promises.push(ourSession.clearCache());
     }
 
     if (action.payload.cookies) {
       logger.debug(`clearing cookies for ${partition}`);
       promises.push(
-        new ItchPromise((resolve, reject) => {
-          ourSession.clearStorageData(
-            {
-              storages: ["cookies"],
-              // for all origins
-              origin: null,
-              // look chromium just clear everything thanks
-              quotas: ["temporary", "persistent", "syncable"],
-            },
-            resolve
-          );
+        ourSession.clearStorageData({
+          storages: ["cookies"],
+          // for all origins
+          origin: null,
+          // look chromium just clear everything thanks
+          quotas: ["temporary", "persistent", "syncable"],
         })
       );
     }

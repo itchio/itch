@@ -12,13 +12,6 @@ export function getAppPath(): string {
   return app.getAppPath();
 }
 
-export function getPath(s: string): string {
-  if (!app) {
-    return `<path ${s}>`;
-  }
-  return app.getPath(s);
-}
-
 export function getVersion(): string {
   if (!app) {
     return `<test version>`;

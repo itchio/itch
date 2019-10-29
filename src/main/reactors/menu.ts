@@ -226,7 +226,7 @@ function computeMenuTemplate(
           role: "hide",
         },
         {
-          role: "hideothers",
+          role: "hideOthers",
         },
         {
           role: "unhide",
@@ -358,7 +358,7 @@ function computeMenuTemplate(
         {
           localizedLabel: ["menu.edit.select_all"],
           accelerator: "CmdOrCtrl+A",
-          role: "selectall",
+          role: "selectAll",
         },
       ],
     },
