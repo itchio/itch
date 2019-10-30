@@ -20,7 +20,7 @@ import { isSecretClick } from "common/helpers/secret-click";
 class MainAction extends React.PureComponent<Props> {
   render() {
     const { wide } = this.props;
-    const { cave, access, operation, compatible, update } = this.props.status;
+    const { cave, access, operation, update } = this.props.status;
     let translucent = false;
     let iconComponent: JSX.Element;
     let icon: string;
@@ -86,24 +86,19 @@ class MainAction extends React.PureComponent<Props> {
         primary = true;
       }
     } else {
-      if (compatible) {
-        if (access === Access.Demo || access === Access.Press) {
-          label = ["grid.item.review"];
-          icon = "install";
-        } else if (
-          access === Access.Pwyw ||
-          access === Access.Free ||
-          access === Access.Key ||
-          access === Access.Edit
-        ) {
-          label = ["grid.item.install"];
-          icon = "install";
-        } else {
-          label = ["grid.item.buy_now"];
-          icon = "shopping_cart";
-        }
+      if (access === Access.Demo || access === Access.Press) {
+        label = ["grid.item.review"];
+        icon = "install";
+      } else if (
+        access === Access.Pwyw ||
+        access === Access.Free ||
+        access === Access.Key ||
+        access === Access.Edit
+      ) {
+        label = ["grid.item.install"];
+        icon = "install";
       } else {
-        label = ["grid.item.open_page"];
+        label = ["grid.item.buy_now"];
         icon = "shopping_cart";
       }
     }
@@ -149,17 +144,12 @@ class MainAction extends React.PureComponent<Props> {
     e.stopPropagation();
 
     const { dispatch, game, status } = this.props;
-    const { operation, update, cave, access, compatible } = status;
+    const { operation, update, cave, access } = status;
 
     if (isSecretClick(e)) {
       if (cave) {
         dispatch(actions.viewCaveDetails({ caveId: cave.id }));
       }
-      return;
-    }
-
-    if (!compatible) {
-      dispatch(actions.openInExternalBrowser({ url: game.url }));
       return;
     }
 

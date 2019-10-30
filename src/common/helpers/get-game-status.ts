@@ -6,7 +6,6 @@ import {
   getPendingForGame,
   getActiveDownload,
 } from "main/reactors/downloads/getters";
-import { isPlatformCompatible } from "common/util/is-platform-compatible";
 import { memoize } from "common/util/lru-memoize";
 import {
   Game,
@@ -87,7 +86,6 @@ export interface GameStatus {
   access: Access;
   operation: Operation;
   update: GameUpdate;
-  compatible: boolean;
 }
 
 function getGameStatus(rs: RootState, game: Game, caveId?: string): GameStatus {
@@ -232,7 +230,6 @@ function rawGetGameStatus(
     };
   }
 
-  const compatible = isPlatformCompatible(game);
   return {
     cave,
     numCaves,
@@ -240,7 +237,6 @@ function rawGetGameStatus(
     access,
     operation,
     update,
-    compatible,
   };
 }
 const realGetGameStatus = memoize(300, rawGetGameStatus);
