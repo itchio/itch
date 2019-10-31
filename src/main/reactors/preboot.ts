@@ -90,6 +90,17 @@ export default function(watcher: Watcher) {
               e}`
           );
         }
+      } else if (env.appName === "kitch") {
+        try {
+          app.setAsDefaultProtocolClient("kitchio");
+          app.setAsDefaultProtocolClient("kitch");
+        } catch (e) {
+          logger.error(
+            `Could not set app as default protocol client: ${e.stack ||
+              e.message ||
+              e}`
+          );
+        }
       }
     } catch (e) {
       throw e;

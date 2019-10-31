@@ -763,6 +763,9 @@ export interface TabInstanceLocation {
   /** in "itch://games/3", "3" as string */
   firstPathElement: string;
 
+  /** in "itch://caves/:caveId/launch", "launch" as string */
+  secondPathElement: string;
+
   /** in "itch://games/3", 3 as number */
   firstPathNumber: number;
 

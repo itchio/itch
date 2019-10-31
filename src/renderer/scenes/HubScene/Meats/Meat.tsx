@@ -20,6 +20,10 @@ const CrashyPage = Loadable({
   loader: () => import("renderer/pages/CrashyPage"),
   loading: () => null,
 });
+const CavePage = Loadable({
+  loader: () => import("renderer/pages/CavePage"),
+  loading: () => null,
+});
 const GamePage = Loadable({
   loader: () => import("renderer/pages/GamePage"),
   loading: () => null,
@@ -261,6 +265,8 @@ class Meat extends React.PureComponent<Props, State> {
         }
       case "games":
         return GamePage;
+      case "caves":
+        return CavePage;
       case "install":
         return InstallPage;
       case "featured":
