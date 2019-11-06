@@ -6,54 +6,6 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://127.0.0.1:* https://dale.itch.ovh; style-src 'unsafe-inline'; img-src 'self' https://img.itch.zone https://weblate.itch.ovh">
   <% } %>
   <title>itch</title>
-
-  <style>
-  body.loading {
-    overflow: hidden;
-
-    width: 100%;
-    height: 100%;
-    border: 1px solid #383434; /* lightMineShaft */
-    border-radius: 2px;
-  }
-
-  @keyframes bolt-load {
-    from {
-      transform: translateX(-100%);
-    }
-    to {
-      transform: translateX(100%);
-    }
-  }
-
-  #bolt {
-    height: 2px;
-    position: absolute;
-    left: -100%;
-    right: -100%;
-    top: 40px;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0));
-    animation-name: bolt-load;
-    animation-duration: 3s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-  }
-
-  #draggable {
-    background-color: #141414;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 40px;
-    -webkit-app-region: drag;
-  }
-  </style>
 </head>
-<body class="loading">
-  <div id="app">
-    <div id="draggable"></div>
-    <div id="bolt"></div>
-  </div>
-</body>
+<body></body>
 </html>

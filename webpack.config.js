@@ -22,7 +22,6 @@ module.exports = (env) => {
       },
       externals: [
         "bindings",
-        "electron-fetch",
         "eventsource"
       ],
       plugins: [
