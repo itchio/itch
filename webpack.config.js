@@ -66,8 +66,9 @@ module.exports = env => {
       ],
       devServer: {
         hot: true,
-        host: "hmr",
         contentBase: __dirname,
+        host: "localhost:9000",
+        disableHostCheck: true,
       },
     }),
   ];

@@ -177,21 +177,6 @@ async function onReady() {
       });
   });
 
-  rendererSession.protocol.interceptHttpProtocol("http", (req, cb) => {
-    mainLogger.info(`Intercepted [${req.method}] ${req.url}`);
-
-    if (req.url.startsWith("http://hmr/")) {
-      let port = process.env.ELECTRON_WEBPACK_WDS_PORT;
-      let url = req.url.replace("http://hmr/", `http://localhost:${port}/`);
-      mainLogger.warn(`Transforming to ${url}`);
-      cb({
-        url,
-      });
-    } else {
-      cb(null);
-    }
-  });
-
   // rendererSession.protocol.registerHttpProtocol("itch", (req, cb) => {
   //   mainLogger.warn(`http request url: ${req.url}`);
   //   let port = process.env.ELECTRON_WEBPACK_WDS_PORT;

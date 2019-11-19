@@ -33,7 +33,9 @@ async function main() {
   const devServerOptions = Object.assign({}, rendererConfig.devServer, {
     stats: {
       colors: true,
-    }
+    },
+    sockHost: "localhost",
+    sockPort: "9000",
   });
   WebpackDevServer.addDevServerEntrypoints(rendererConfig, devServerOptions);
 

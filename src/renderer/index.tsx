@@ -1,10 +1,18 @@
-async function main() {
-  document.write(`Hello from renderer`);
+import dump from "common/util/dump";
 
-  console.log("about to do a forbidden fetch");
+async function main() {
+  let el = document.createElement("pre");
+  document.body.appendChild(el);
+
+  let write = (s: string) {
+    el.innerText += `${s}\n`;
+  }
+  write(`Hello from renderer`);
+
+  write("about to do a forbidden fetch...");
   let res = await fetch("itch://api/cool");
   let payload = await res.json();
-  console.log(`payload = `, payload);
+  write(`payload = ${dump(payload)}`);
 }
 
 main().catch(e => {
