@@ -68,6 +68,7 @@ module.exports = env => {
         hot: true,
         contentBase: __dirname,
         disableHostCheck: true,
+        publicPath: "/assets/",
       },
     }),
   ];
@@ -85,8 +86,8 @@ function getCommonConfig(type, env) {
     output: {
       filename: "[name].bundle.js",
       chunkFilename: "[name].chunk.js",
-      path: path.resolve(`./dist/${type}`),
-      publicPath: "/",
+      path: path.resolve(`./dist/${type}/assets`),
+      publicPath: "/assets/",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js"],

@@ -21,7 +21,7 @@
       "email": "leafo@itch.io"
     }
   ],
-  "main": "dist/main/main.bundle.js",
+  "main": "dist/main/assets/main.bundle.js",
   "license": "MIT",
   "dependencies": {
     "@types/emojione": "^2.2.5",

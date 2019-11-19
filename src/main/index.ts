@@ -65,6 +65,10 @@ async function main() {
     },
   ]);
 
+  // 🎃🎃🎃
+  // see https://github.com/electron/electron/issues/20127
+  app.allowRendererProcessReuse = true;
+
   app.on("ready", () =>
     onReady().catch(e => {
       dialog.showErrorBox("Fatal error", e.stack);
@@ -136,7 +140,11 @@ async function onReady() {
         };
         break;
       }
-      case "app": {
+      default: {
+        if (elements.length == 0 || elements[0] != "assets") {
+          elements = ["assets", "index.html"];
+        }
+
         if (env.development) {
           let port = process.env.ELECTRON_WEBPACK_WDS_PORT;
           const upstream = `http://localhost:${port}/${elements.join("/")}`;
@@ -154,10 +162,6 @@ async function onReady() {
             data: res,
           };
         } else {
-          if (elements.length == 0) {
-            elements = ["index.html"];
-          }
-
           mainLogger.info(`elements = ${dump(elements)}`);
           let fsPath = filepath.join(getRendererDistPath(), ...elements);
           mainLogger.info(`fsPath = ${fsPath}`);
@@ -229,6 +233,7 @@ async function onReady() {
     height: 720,
     webPreferences: {
       session: rendererSession,
+      webviewTag: true,
     },
   });
   win.loadURL(makeAppURL());
