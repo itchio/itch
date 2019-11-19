@@ -8,6 +8,8 @@ const weblog = require("webpack-log");
 const log = weblog({name: "develop"});
 
 async function main() {
+  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1";
+
   process.on("unhandledRejection", (e) => {
     log.error(`Unhandled rejection `, e.stack || e);
     process.exit(1);

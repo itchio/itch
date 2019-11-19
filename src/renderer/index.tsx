@@ -1,10 +1,13 @@
-import env from "common/env";
-
 async function main() {
-  document.write(`Hello from ${env.appName} renderer`);
+  document.write(`Hello from renderer`);
+
+  console.log("about to do a forbidden fetch");
+  let res = await fetch("itch://api/cool");
+  let payload = await res.json();
+  console.log(`payload = `, payload);
 }
 
 main().catch(e => {
-  console.error("Fatal error", e);
-  alert(`Fatal error: ${e.stack}`);
+  console.error("Fatal renderer error", e.stack);
+  alert(`Fatal renderer error: ${e.stack}`);
 });

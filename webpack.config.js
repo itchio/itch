@@ -1,6 +1,5 @@
-const {NamedModulesPlugin} = require("webpack");
+const { NamedModulesPlugin } = require("webpack");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-const HappyPack = require("happypack");
 const WebpackBuildNotifierPlugin = require("webpack-build-notifier");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
@@ -8,22 +7,24 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const path = require("path");
 const merge = require("webpack-merge");
 
-module.exports = (env) => {
+module.exports = env => {
   return [
     merge.smart(getCommonConfig("main", env), {
       target: "electron-main",
       resolve: {
-        mainFields: ["electron-main", "module", "main"]
+        mainFields: ["electron-main", "module", "main"],
+      },
+      output: {
+        libraryTarget: "commonjs2",
+      },
+      node: {
+        __dirname: true,
+        __filename: true,
       },
       entry: {
-        main: ["./src/main/index.ts"],
-        "inject-game": ["./src/main/inject/inject-game.ts"],
-        "inject-captcha": ["./src/main/inject/inject-captcha.ts"],
+        main: ["./src/main/entry.ts", "./src/main/index.ts"],
       },
-      externals: [
-        "bindings",
-        "eventsource"
-      ],
+      externals: ["bindings", "eventsource"],
       plugins: [
         new CleanWebpackPlugin(),
         new WebpackBuildNotifierPlugin({
@@ -32,32 +33,24 @@ module.exports = (env) => {
       ],
     }),
     merge.smart(getCommonConfig("renderer", env), {
-      target: "electron-renderer",
+      target: "web",
       resolve: {
-        mainFields: ["browser", "module", "main"]
+        mainFields: ["browser", "module", "main"],
       },
       entry: {
         renderer: ["./src/renderer/index.tsx"],
       },
-      externals: [
-        "systeminformation",
-      ],
       module: {
         rules: [
           {
             test: /\.(png|svg|woff|woff2)$/,
-            use: [
-              { loader: "file-loader" },
-            ],
+            use: [{ loader: "file-loader" }],
           },
           {
             test: /\.css$/,
-            use: [
-              { loader: "style-loader" },
-              { loader: "css-loader" },
-            ],
-          }
-        ]
+            use: [{ loader: "style-loader" }, { loader: "css-loader" }],
+          },
+        ],
       },
       plugins: [
         new CleanWebpackPlugin(),
@@ -73,11 +66,11 @@ module.exports = (env) => {
       ],
       devServer: {
         hot: true,
-        host: "localhost",
+        host: "hmr",
         contentBase: __dirname,
       },
     }),
-  ]
+  ];
 };
 
 function getCommonConfig(type, env) {
@@ -86,22 +79,17 @@ function getCommonConfig(type, env) {
 
   return {
     mode,
-    devtool: isProduction ? "source-map" : "eval",
-    node: {
-      __dirname: true,
-      __filename: true,
-    },
+    // N.B.: anything else is broken, so, don't bother
+    // also, yes, we need the separate entry point to install source map support
+    devtool: "source-map",
     output: {
       filename: "[name].bundle.js",
       chunkFilename: "[name].chunk.js",
-      libraryTarget: "commonjs2",
       path: path.resolve(`./dist/${type}`),
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js"],
-      plugins: [
-        new TsconfigPathsPlugin({})
-      ],
+      plugins: [new TsconfigPathsPlugin({})],
     },
     module: {
       rules: [
@@ -109,33 +97,23 @@ function getCommonConfig(type, env) {
           test: /\.tsx?$/,
           exclude: "/node_modules/",
           use: [
-            { loader: "happypack/loader?id=ts" },
-          ]
-        },
-        {
-          test: /\.node$/,
-          use: [
-            { loader: "node-loader" },
+            { loader: "cache-loader" },
+            { loader: "thread-loader" },
+            {
+              loader: "ts-loader",
+              options: {
+                happyPackMode: true,
+              },
+            },
           ],
-        }
-      ]
+        },
+      ],
     },
-    plugins: [
-      new HappyPack({
-        id: "ts",
-        threads: 4,
-        loaders: [
-          {
-            path: "ts-loader",
-            query: { happyPackMode: true }
-          }
-        ],
-        verbose: false,
-      })
-    ],
     optimization: {
+      // N.B: minifiers break production code all the dang time, resist the urge
+      // to enable them.
       minimize: false,
       minimizer: [],
     },
-  }
+  };
 }

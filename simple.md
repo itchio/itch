@@ -3,6 +3,10 @@
 
 Simplify itch's codebase greatly.
 
+## Webpack
+
+Boo.
+
 ## Browser
 
 The browser part of the app will be removed completely.
