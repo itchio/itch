@@ -1,3 +1,6 @@
 {
-  "plugins": [["transform-node-env-inline"]]
+  "plugins": [
+    "transform-node-env-inline",
+    "react-hot-loader/babel"
+  ]
 }

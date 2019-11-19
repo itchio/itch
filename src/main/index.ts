@@ -158,7 +158,7 @@ async function onReady() {
           );
           return {
             statusCode: res.statusCode,
-            headers: res.headers,
+            headers: { ...res.headers, "cache-control": "no-cache" },
             data: res,
           };
         } else {

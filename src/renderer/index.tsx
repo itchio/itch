@@ -1,43 +1,43 @@
-import dump from "common/util/dump";
+import React from "react";
+import ReactDOM from "react-dom";
+import GlobalStyles from "renderer/global-styles";
+import { hot } from "react-hot-loader/root";
 
-async function main() {
-  let wv = document.createElement("webview");
-  wv.style.width = "800px";
-  wv.style.height = "600px";
-  wv.src = "https://itch.io";
-  document.body.appendChild(wv);
+import styled, { ThemeProvider, theme } from "./styles";
+import { Webview } from "renderer/webview";
+import { Sidebar } from "renderer/sidebar";
 
-  let back = document.createElement("span");
-  back.innerText = "[ back ]";
-  back.onclick = () => { wv.goBack() };
-  document.body.appendChild(back);
+const AppDiv = styled.div`
+  background: ${props => props.theme.baseBackground};
+  display: flex;
+  flex-direction: row;
 
-  let forward = document.createElement("span");
-  forward.innerText = "[ forward] ";
-  forward.onclick = () => { wv.goForward() };
-  document.body.appendChild(forward);
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow: hidden;
+`;
 
-  let el = document.createElement("pre");
-  document.body.appendChild(el);
+const MainDiv = styled.div`
+  flex-grow: 1;
+`;
 
-  let write = (s: string) {
-    el.innerHTML += `${s}\n`;
-  }
-  write(`href = ${document.location.href}`);
-
-  write("about to do a forbidden fetch...");
-  let res = await fetch("itch://api/cool");
-  let payload = await res.json();
-  write(`payload = ${dump(payload)}`);
-
-  for (let i = 0; i < 150; i++) {
-    write(`here's <a href="itch://games/3">item ${i}</a>`);
-  }
-}
+const App = hot(() => {
+  return (
+    <ThemeProvider theme={theme}>
+      <AppDiv>
+        <GlobalStyles />
+        <Sidebar />
+        <MainDiv style={{ flexGrow: 1 }}>
+          <Webview />
+        </MainDiv>
+      </AppDiv>
+    </ThemeProvider>
+  );
+});
 
 document.addEventListener("DOMContentLoaded", () => {
-  main().catch(e => {
-    console.error("Fatal renderer error", e.stack);
-    alert(`Fatal renderer error: ${e.stack}`);
-  });
+  ReactDOM.render(<App />, document.querySelector("#app"));
 });

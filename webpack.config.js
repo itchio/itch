@@ -22,7 +22,11 @@ module.exports = env => {
         __filename: true,
       },
       entry: {
-        main: ["./src/main/entry.ts", "./src/main/index.ts"],
+        main: [
+          "react-hot-loader/patch",
+          "./src/main/entry.ts",
+          "./src/main/index.ts",
+        ],
       },
       externals: ["bindings", "eventsource"],
       plugins: [

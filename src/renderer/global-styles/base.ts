@@ -1,27 +1,4 @@
 import { css, theme } from "renderer/styles";
-import env from "common/env";
-
-const testDisables = () => {
-  if (!env.integrationTests) {
-    return css``;
-  }
-
-  return css`
-    * {
-      transition-property: none !important;
-      -o-transition-property: none !important;
-      -moz-transition-property: none !important;
-      -ms-transition-property: none !important;
-      -webkit-transition-property: none !important;
-
-      animation: none !important;
-      -o-animation: none !important;
-      -moz-animation: none !important;
-      -ms-animation: none !important;
-      -webkit-animation: none !important;
-    }
-  `;
-};
 
 export default css`
   html,
@@ -61,6 +38,4 @@ export default css`
       }
     }
   }
-
-  ${testDisables()};
 `;
