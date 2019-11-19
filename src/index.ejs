@@ -5,7 +5,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <% if (process.env.NODE_ENV === "production") { %>
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self' http://127.0.0.1:* https://dale.itch.ovh; style-src 'unsafe-inline'; img-src 'self' https://img.itch.zone https://weblate.itch.ovh">
+    content="default-src 'self' itch://* https://dale.itch.ovh; style-src 'unsafe-inline'; img-src 'self' https://img.itch.zone https://weblate.itch.ovh">
   <% } %>
   <title>itch</title>
 </head>

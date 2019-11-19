@@ -67,7 +67,6 @@ module.exports = env => {
       devServer: {
         hot: true,
         contentBase: __dirname,
-        host: "localhost:9000",
         disableHostCheck: true,
       },
     }),
@@ -87,6 +86,7 @@ function getCommonConfig(type, env) {
       filename: "[name].bundle.js",
       chunkFilename: "[name].chunk.js",
       path: path.resolve(`./dist/${type}`),
+      publicPath: "/",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js"],

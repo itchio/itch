@@ -1,4 +1,10 @@
+import { Readable } from "stream";
+import * as fs from "fs";
+import * as filepath from "path";
+import * as ws from "ws";
+import * as http from "http";
 import { Client, Endpoint, Instance } from "butlerd";
+
 import { messages } from "common/butlerd";
 import urls from "common/constants/urls";
 import { butlerUserAgent } from "common/constants/useragent";
@@ -7,11 +13,9 @@ import { butlerDbPath } from "common/util/paths";
 import { app, BrowserWindow, dialog, session, protocol } from "electron";
 import { mainLogger } from "main/logger";
 import dump from "common/util/dump";
-import { Readable } from "stream";
 
-import * as ws from "ws";
-import * as http from "http";
-import { Logger } from "common/logger";
+import { getRendererDistPath } from "common/util/resources";
+import { contentType } from "mime-types";
 
 interface MainState {
   butler: ButlerState;
@@ -114,9 +118,7 @@ async function onReady() {
       .map(s => s.replace(/\/$/g, ""))
       .filter(s => s.length > 0)
       .join("/");
-    console.log(`route`, route);
     let elements = route.split("/");
-    console.log(`elements`, elements);
 
     let firstEl = elements[0];
     elements = elements.slice(1);
@@ -135,17 +137,62 @@ async function onReady() {
         break;
       }
       case "app": {
-        let port = process.env.ELECTRON_WEBPACK_WDS_PORT;
-        let res = await new Promise<http.IncomingMessage>((resolve, reject) => {
-          http.get(`http://localhost:${port}/${elements.join("/")}`, res => {
-            resolve(res);
+        if (env.development) {
+          let port = process.env.ELECTRON_WEBPACK_WDS_PORT;
+          const upstream = `http://localhost:${port}/${elements.join("/")}`;
+          mainLogger.info(`upstream = ${upstream}`);
+          let res = await new Promise<http.IncomingMessage>(
+            (resolve, reject) => {
+              http.get(upstream, res => {
+                resolve(res);
+              });
+            }
+          );
+          return {
+            statusCode: res.statusCode,
+            headers: res.headers,
+            data: res,
+          };
+        } else {
+          if (elements.length == 0) {
+            elements = ["index.html"];
+          }
+
+          mainLogger.info(`elements = ${dump(elements)}`);
+          let fsPath = filepath.join(getRendererDistPath(), ...elements);
+          mainLogger.info(`fsPath = ${fsPath}`);
+
+          let contentType = "application/octet-stream";
+          let lowerPath = fsPath.toLowerCase();
+          if (lowerPath.endsWith(".js")) {
+            contentType = "text/javascript; charset=UTF-8";
+          } else if (lowerPath.endsWith(".html")) {
+            contentType = "text/html; charset=UTF-8";
+          }
+          let content = await new Promise<Buffer>((resolve, reject) => {
+            fs.readFile(
+              fsPath,
+              { encoding: null /* binary */ },
+              (err, data) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  resolve(data);
+                }
+              }
+            );
           });
-        });
-        return {
-          statusCode: res.statusCode,
-          headers: res.headers,
-          data: res,
-        };
+
+          return {
+            statusCode: 200,
+            headers: {
+              server: env.appName,
+              "content-length": `${content.length}`,
+              "content-type": contentType,
+            },
+            data: asReadable(content),
+          };
+        }
         break;
       }
     }
@@ -153,8 +200,7 @@ async function onReady() {
     throw new Error(`Unhandled route: ${route}`);
   }
 
-  function asReadable(payload: string): Readable {
-    const { Readable } = require("stream");
+  function asReadable(payload: string | Buffer): Readable {
     const data = new Readable();
     data.push(payload);
     data.push(null);
@@ -177,22 +223,6 @@ async function onReady() {
       });
   });
 
-  // rendererSession.protocol.registerHttpProtocol("itch", (req, cb) => {
-  //   mainLogger.warn(`http request url: ${req.url}`);
-  //   let port = process.env.ELECTRON_WEBPACK_WDS_PORT;
-  //   let transformed;
-  //   if (/api\//.test(req.url)) {
-  //     transformed = req.url.replace("itch://", `itch-internal://`);
-  //   } else {
-  //     transformed = req.url.replace("itch://", `http://localhost:${port}/`);
-  //   }
-  //   mainLogger.warn(`     transformed: ${transformed}`);
-
-  //   cb({
-  //     url: transformed,
-  //   });
-  // });
-
   let win = new BrowserWindow({
     title: env.appName,
     width: 1280,
@@ -204,7 +234,7 @@ async function onReady() {
   win.loadURL(makeAppURL());
   win.show();
 
-  if (env.development) {
+  if (env.development || process.env.DEVTOOLS === "1") {
     win.webContents.openDevTools({
       mode: "detach",
     });

@@ -35,14 +35,18 @@ export function getLocalesConfigPath(): string {
 
 type InjectName = "itchio" | "game" | "captcha";
 
-export function getInjectPath(name: InjectName) {
+export function getInjectPath(name: InjectName): string {
   return join(absoluteMainDistPath, `inject-${name}.bundle.js`);
 }
 
-export function getInjectURL(name: InjectName) {
+export function getInjectURL(name: InjectName): string {
   return `file://${getInjectPath(name)}`;
 }
 
-export function getRendererFilePath(name: string) {
+export function getRendererFilePath(name: string): string {
   return join(absoluteRendererDistPath, name);
+}
+
+export function getRendererDistPath(): string {
+  return absoluteRendererDistPath;
 }
