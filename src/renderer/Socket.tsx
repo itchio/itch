@@ -29,7 +29,7 @@ export class Socket {
   }
 
   private process(msg: String) {
-    console.log(`Should process ${msg}`, msg);
+    console.log("Should process", msg);
   }
 
   send<T>(p: Packet<T>) {

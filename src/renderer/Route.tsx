@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
-import dump from "common/util/dump";
 import { App } from "renderer/App";
 import { GamePage } from "renderer/pages/GamePage";
 import styled from "renderer/styles";
 import { Socket } from "renderer/Socket";
 import { packets } from "packets";
+
+const RouteContentsDiv = styled.div`
+  background: ${props => props.theme.breadBackground};
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
 
 const ErrorDiv = styled.div`
   background: black;
@@ -38,8 +47,8 @@ export const RouteContents = (props: { elements: string[] }) => {
 };
 
 export const Route = () => {
-  const [socket, setSocket] = useState<Socket>(null);
-  const [error, setError] = useState<String>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [error, setError] = useState<String | null>(null);
 
   useEffect(() => {
     if (socket) {
@@ -54,7 +63,7 @@ export const Route = () => {
         console.log(`Finding out websocket address`);
         let res = await fetch("itch://api/websocket-address");
         let payload = await res.json();
-        address = payload.address;
+        address = payload.address as string;
         sessionStorage.setItem(SESSION_WS_KEY, address);
       } else {
         console.log(`Using cached websocket address`);
@@ -75,7 +84,11 @@ export const Route = () => {
     let elements = [location.host, location.pathname.replace(/^\//, "")].filter(
       s => s.length > 0
     );
-    return <RouteContents elements={elements} />;
+    return (
+      <RouteContentsDiv>
+        <RouteContents elements={elements} />
+      </RouteContentsDiv>
+    );
   } else {
     if (error) {
       return (

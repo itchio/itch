@@ -2,11 +2,12 @@ import React from "react";
 import styled from "renderer/styles";
 import IconButton from "renderer/basics/IconButton";
 
-const WebviewDiv = styled.div`
+const WebviewContainer = styled.div`
   width: 100%;
   height: 100%;
 
   webview {
+    background: white;
     width: 100%;
     height: 100%;
   }
@@ -65,9 +66,9 @@ export const Navigation = () => {
 
 export const Webview = () => {
   return (
-    <WebviewDiv>
+    <WebviewContainer>
       <Navigation />
       <webview src="itch://games/3" />
-    </WebviewDiv>
+    </WebviewContainer>
   );
 };
