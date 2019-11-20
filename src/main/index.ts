@@ -10,11 +10,21 @@ import urls from "common/constants/urls";
 import { butlerUserAgent } from "common/constants/useragent";
 import env from "common/env";
 import { butlerDbPath } from "common/util/paths";
-import { app, BrowserWindow, dialog, session, protocol } from "electron";
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  session,
+  protocol,
+  ipcMain,
+} from "electron";
 import { mainLogger } from "main/logger";
 import dump from "common/util/dump";
 
-import { getRendererDistPath } from "common/util/resources";
+import {
+  getRendererDistPath,
+  getRendererFilePath,
+} from "common/util/resources";
 import { contentType } from "mime-types";
 
 interface MainState {
@@ -55,14 +65,6 @@ async function main() {
         standard: true,
       },
     },
-    {
-      scheme: "itch-internal",
-      privileges: {
-        supportFetchAPI: true,
-        secure: true,
-        standard: true,
-      },
-    },
   ]);
 
   // 🎃🎃🎃
@@ -80,9 +82,17 @@ async function main() {
 async function onReady() {
   await startButler();
 
+  ipcMain.on("testing", ev => {
+    console.log(`Received testing event!`, ev);
+  });
+
   const wss = new ws.Server({
     host: "localhost",
     port: 0,
+    verifyClient: info => {
+      let protocol = new URL(info.origin).protocol;
+      return protocol == "itch:";
+    },
   });
   await new Promise((resolve, reject) => {
     wss.on("listening", resolve);
@@ -90,8 +100,13 @@ async function onReady() {
   });
   mainLogger.info(`wss address = ${dump(wss.address())}`);
   mainLogger.info(`process versions: ${dump(process.versions)}`);
-  wss.on("connection", () => {
-    mainLogger.info(`New websocket connection`);
+  wss.on("connection", (socket, req) => {
+    socket.on("message", msg => {
+      mainLogger.warn(`Client message: ${msg}`);
+    });
+    socket.on("close", () => {
+      mainLogger.warn(`Client going away...`);
+    });
   });
 
   let rendererSession = session.defaultSession;
@@ -101,6 +116,7 @@ async function onReady() {
     elements: string[]
   ): Promise<Object> {
     return {
+      websocket: wss.address(),
       message: "hello from main process API",
       url: req.url,
       elements,
@@ -231,13 +247,14 @@ async function onReady() {
     title: env.appName,
     width: 1280,
     height: 720,
-    autoHideMenuBar: true,
     webPreferences: {
       session: rendererSession,
       webviewTag: true,
     },
   });
-  win.loadURL(makeAppURL());
+  win.setMenu(null);
+  win.setMenuBarVisibility(false);
+  win.loadURL("itch://app");
   win.show();
 
   if (env.development || process.env.DEVTOOLS === "1") {
@@ -273,17 +290,6 @@ async function startButler() {
     instance,
     endpoint,
   };
-}
-
-function makeAppURL(): string {
-  return `itch://app`;
-
-  // if (env.development) {
-  //   let port = process.env.ELECTRON_WEBPACK_WDS_PORT;
-  //   return `http://localhost:${port}`;
-  // } else {
-  //   return `file:///${getRendererFilePath("index.html")}`;
-  // }
 }
 
 main().catch(e => {

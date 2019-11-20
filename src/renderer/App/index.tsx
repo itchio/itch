@@ -21,6 +21,17 @@ const MainDiv = styled.div`
 `;
 
 export const App = () => {
+  fetch("itch://api/cool")
+    .then(res => res.json())
+    .then(res => {
+      console.log("Cool!", res);
+      let wsUrl = `ws://${res.websocket.address}:${res.websocket.port}`;
+      let ws = new WebSocket(wsUrl);
+      ws.onopen = () => {
+        ws.send("hello from renderer");
+      };
+    });
+
   return (
     <AppDiv
       onClickCapture={ev => {

@@ -21,7 +21,6 @@ const LogoImg = styled.img`
 
 const SidebarElement = styled.a`
   width: 100%;
-  border: 1px solid yellow;
   text-align: left;
   padding: 20px 10px;
 
@@ -35,7 +34,6 @@ const SidebarElement = styled.a`
 
   text-decoration: none;
   font-size: 18px;
-  /* font-weight: bold; */
 
   .icon {
     display: inline-block;
