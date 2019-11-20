@@ -22,14 +22,21 @@ export class Socket {
   }
 
   constructor(ws: WebSocket) {
+    this.ws = ws;
     this.listeners = {};
     ws.onmessage = msg => {
       this.process(msg.data as string);
     };
   }
 
-  private process(msg: String) {
-    console.log("Should process", msg);
+  private process(msg: string) {
+    let packet = JSON.parse(msg) as Packet<any>;
+    let listeners = this.listeners[packet.type];
+    if (listeners) {
+      for (const l of listeners) {
+        l(packet.payload);
+      }
+    }
   }
 
   send<T>(p: Packet<T>) {

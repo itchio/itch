@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "renderer/styles";
 import Icon from "renderer/basics/Icon";
+import { SocketContext } from "renderer/Route";
 
 const SidebarDiv = styled.div`
   flex-basis: 240px;

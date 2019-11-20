@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "renderer/styles";
 import { Sidebar } from "renderer/App/Sidebar";
 import { Webview } from "renderer/App/Webview";
+import { SocketContext } from "renderer/Route";
+import { packets } from "packets";
 
 const AppDiv = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -21,12 +23,21 @@ const MainDiv = styled.div`
 `;
 
 export const App = () => {
+  const socket = useContext(SocketContext);
+
   return (
     <AppDiv
       onClickCapture={ev => {
         const target = ev.target as HTMLElement;
         if (target.tagName == "A") {
           ev.preventDefault();
+          if (socket) {
+            socket.send(
+              packets.navigate({
+                href: (target as HTMLLinkElement).href,
+              })
+            );
+          }
         }
       }}
     >

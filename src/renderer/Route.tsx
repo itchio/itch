@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import { App } from "renderer/App";
 import { GamePage } from "renderer/pages/GamePage";
 import styled from "renderer/styles";
 import { Socket } from "renderer/Socket";
 import { packets } from "packets";
+
+export const SocketContext = createContext<Socket | null>(null);
 
 const RouteContentsDiv = styled.div`
   background: ${props => props.theme.breadBackground};
@@ -85,9 +87,11 @@ export const Route = () => {
       s => s.length > 0
     );
     return (
-      <RouteContentsDiv>
-        <RouteContents elements={elements} />
-      </RouteContentsDiv>
+      <SocketContext.Provider value={socket}>
+        <RouteContentsDiv>
+          <RouteContents elements={elements} />
+        </RouteContentsDiv>
+      </SocketContext.Provider>
     );
   } else {
     if (error) {

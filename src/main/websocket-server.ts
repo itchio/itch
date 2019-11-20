@@ -2,7 +2,7 @@ import WebSocket from "ws";
 import { mainLogger } from "main/logger";
 import dump from "common/util/dump";
 import { Packet, packets } from "packets";
-import { MainState } from "main";
+import { MainState, broadcastPacket } from "main";
 
 let logger = mainLogger.childWithName("ws");
 
@@ -36,7 +36,14 @@ export async function startWebsocketServer(mainState: MainState) {
   wss.on("connection", (socket, req) => {
     state.sockets = [...state.sockets, socket];
     socket.on("message", msg => {
-      logger.warn(`Client message: ${msg}`);
+      let packet = JSON.parse(msg as string) as Packet<any>;
+      logger.warn(`Client message: ${dump(packet)}`);
+
+      switch (packet.type) {
+        case "navigate":
+          broadcastPacket(packet);
+          break;
+      }
     });
     socket.on("close", () => {
       state.sockets = state.sockets.filter(x => x !== socket);
