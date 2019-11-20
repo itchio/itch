@@ -1,21 +1,29 @@
 // actions but not really
 
-interface Packet<PayloadType> {
+export interface Packet<PayloadType> {
   type: string;
   payload: PayloadType;
 }
 
 export const packets = wirePackets({
+  tick: packet<{ time: number }>(),
+
+  navigate: packet<{
+    href: string;
+  }>(),
+
   hello: packet<{
     locationHref: string;
   }>(),
-  bye: packet<{ time: number }>(),
 });
 
-type PacketCreator<PayloadType> = (payload: PayloadType) => Packet<PayloadType>;
+export interface PacketCreator<PayloadType> {
+  (payload: PayloadType): Packet<PayloadType>;
+  __type: string;
+}
 
 function packet<PayloadType>(): PacketCreator<PayloadType> {
-  // that's a lie, but it makes typing work
+  // N.B: that's a lie, but a useful one.
   return ((type: string) => (payload: PayloadType): Packet<PayloadType> => {
     return {
       type,
@@ -34,6 +42,7 @@ function wirePackets<T extends MirrorInput>(input: T): MirrorOutput<T> {
   const res = {} as any;
   for (const k of Object.keys(input)) {
     res[k] = input[k](k);
+    res[k].__type = k;
   }
   return res as MirrorOutput<T>;
 }

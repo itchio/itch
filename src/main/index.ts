@@ -1,32 +1,26 @@
-import { Readable } from "stream";
-import * as fs from "fs";
-import * as filepath from "path";
-import * as ws from "ws";
-import * as http from "http";
 import { Client, Endpoint, Instance } from "butlerd";
-
 import { messages } from "common/butlerd";
 import urls from "common/constants/urls";
 import { butlerUserAgent } from "common/constants/useragent";
 import env from "common/env";
+import dump from "common/util/dump";
 import { butlerDbPath } from "common/util/paths";
+import { getRendererDistPath } from "common/util/resources";
 import {
   app,
   BrowserWindow,
   dialog,
-  session,
-  protocol,
   ipcMain,
+  protocol,
+  session,
 } from "electron";
+import * as fs from "fs";
+import * as http from "http";
 import { mainLogger } from "main/logger";
-import dump from "common/util/dump";
-
-import {
-  getRendererDistPath,
-  getRendererFilePath,
-} from "common/util/resources";
-import { contentType } from "mime-types";
-import { packets } from "packets";
+import * as filepath from "path";
+import { Readable } from "stream";
+import WebSocket from "ws";
+import { Packet, packets } from "packets";
 
 interface MainState {
   butler: ButlerState;
@@ -87,7 +81,7 @@ async function onReady() {
     console.log(`Received testing event!`, ev);
   });
 
-  const wss = new ws.Server({
+  const wss = new WebSocket.Server({
     host: "localhost",
     port: 0,
     verifyClient: info => {
@@ -101,14 +95,33 @@ async function onReady() {
   });
   mainLogger.info(`wss address = ${dump(wss.address())}`);
   mainLogger.info(`process versions: ${dump(process.versions)}`);
+
+  let sockets: WebSocket[] = [];
   wss.on("connection", (socket, req) => {
+    sockets = [...sockets, socket];
     socket.on("message", msg => {
       mainLogger.warn(`Client message: ${msg}`);
     });
     socket.on("close", () => {
+      sockets = sockets.filter(x => x !== socket);
       mainLogger.warn(`Client going away...`);
     });
   });
+
+  let broadcast = <T>(p: Packet<T>) => {
+    let serialized = JSON.stringify(p);
+    for (const s of sockets) {
+      s.send(serialized);
+    }
+  };
+
+  setInterval(() => {
+    broadcast(
+      packets.tick({
+        time: Date.now(),
+      })
+    );
+  }, 1000);
 
   let rendererSession = session.defaultSession;
 
@@ -116,7 +129,7 @@ async function onReady() {
     req: Electron.HandlerRequest,
     elements: string[]
   ): Promise<Object> {
-    let waddr = wss.address() as ws.AddressInfo;
+    let waddr = wss.address() as WebSocket.AddressInfo;
     let address = `ws://${waddr.address}:${waddr.port}`;
 
     return {
@@ -245,11 +258,6 @@ async function onReady() {
         });
       });
   });
-
-  let b = packets.bye({ time: Date.now() });
-  console.log(`=============================`);
-  console.log(`b = `, b);
-  console.log(`=============================`);
 
   let win = new BrowserWindow({
     title: env.appName,

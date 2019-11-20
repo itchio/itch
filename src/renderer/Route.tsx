@@ -3,6 +3,8 @@ import dump from "common/util/dump";
 import { App } from "renderer/App";
 import { GamePage } from "renderer/pages/GamePage";
 import styled from "renderer/styles";
+import { Socket } from "renderer/Socket";
+import { packets } from "packets";
 
 const ErrorDiv = styled.div`
   background: black;
@@ -36,7 +38,7 @@ export const RouteContents = (props: { elements: string[] }) => {
 };
 
 export const Route = () => {
-  const [socket, setSocket] = useState<WebSocket>(null);
+  const [socket, setSocket] = useState<Socket>(null);
   const [error, setError] = useState<String>(null);
 
   useEffect(() => {
@@ -58,11 +60,11 @@ export const Route = () => {
         console.log(`Using cached websocket address`);
       }
 
-      let socket = new WebSocket(address);
-      socket.onopen = () => {
-        socket.send("hello from Route");
-        setSocket(socket);
-      };
+      let socket = await Socket.connect(address);
+      socket.listen(packets.tick, ({ time }) => {
+        console.log("tick! time = ", time);
+      });
+      setSocket(socket);
     })().catch(e => {
       console.error(e.stack);
       setError(e.stack);
