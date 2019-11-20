@@ -231,6 +231,7 @@ async function onReady() {
     title: env.appName,
     width: 1280,
     height: 720,
+    autoHideMenuBar: true,
     webPreferences: {
       session: rendererSession,
       webviewTag: true,

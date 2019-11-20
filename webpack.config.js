@@ -40,6 +40,9 @@ module.exports = env => {
       target: "web",
       resolve: {
         mainFields: ["browser", "module", "main"],
+        alias: {
+          "react-dom": "@hot-loader/react-dom",
+        },
       },
       entry: {
         renderer: ["./src/renderer/index.tsx"],

@@ -25,7 +25,7 @@ const CavePage = Loadable({
   loading: () => null,
 });
 const GamePage = Loadable({
-  loader: () => import("renderer/pages/GamePage"),
+  loader: () => import("renderer/pages/GamePage-old"),
   loading: () => null,
 });
 const InstallPage = Loadable({

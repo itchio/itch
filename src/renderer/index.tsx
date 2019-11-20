@@ -1,39 +1,20 @@
+import "!style-loader!css-loader!./fonts/icomoon/style.css";
+
 import React from "react";
 import ReactDOM from "react-dom";
 import GlobalStyles from "renderer/global-styles";
 import { hot } from "react-hot-loader/root";
 
 import styled, { ThemeProvider, theme } from "./styles";
-import { Webview } from "renderer/webview";
-import { Sidebar } from "renderer/sidebar";
-
-const AppDiv = styled.div`
-  background: ${props => props.theme.baseBackground};
-  display: flex;
-  flex-direction: row;
-
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  overflow: hidden;
-`;
-
-const MainDiv = styled.div`
-  flex-grow: 1;
-`;
+import { Route } from "renderer/Route";
 
 const App = hot(() => {
   return (
     <ThemeProvider theme={theme}>
-      <AppDiv>
+      <React.Fragment>
         <GlobalStyles />
-        <Sidebar />
-        <MainDiv style={{ flexGrow: 1 }}>
-          <Webview />
-        </MainDiv>
-      </AppDiv>
+        <Route />
+      </React.Fragment>
     </ThemeProvider>
   );
 });

@@ -24,6 +24,7 @@
   "main": "dist/main/assets/main.bundle.js",
   "license": "MIT",
   "dependencies": {
+    "@hot-loader/react-dom": "^16.11.0",
     "@types/emojione": "^2.2.5",
     "@types/lru-cache": "^5.1.0",
     "@types/styled-components": "^4.1.16",

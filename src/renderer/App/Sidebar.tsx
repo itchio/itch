@@ -2,6 +2,8 @@ import React from "react";
 import styled from "renderer/styles";
 
 const SidebarDiv = styled.div`
+  padding: 20px;
+
   flex-basis: 300px;
   background: ${props => props.theme.sidebarBackground};
 

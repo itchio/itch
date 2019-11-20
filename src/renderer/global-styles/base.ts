@@ -26,8 +26,8 @@ export default css`
     color: ${theme.accent};
 
     &[href^="itch:"] {
-      color: ${theme.baseText};
-      text-decoration: none;
+      /* color: ${theme.baseText};
+      text-decoration: none; */
 
       &:hover {
         cursor: pointer;
