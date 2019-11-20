@@ -22,6 +22,10 @@ export default css`
     user-drag: none;
   }
 
+  code {
+    font-family: monospace;
+  }
+
   a {
     color: ${theme.accent};
 

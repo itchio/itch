@@ -22,7 +22,14 @@ const MainDiv = styled.div`
 
 export const App = () => {
   return (
-    <AppDiv>
+    <AppDiv
+      onClickCapture={ev => {
+        const target = ev.target as HTMLElement;
+        if (target.tagName == "A") {
+          ev.preventDefault();
+        }
+      }}
+    >
       <Sidebar />
       <MainDiv>
         <Webview />

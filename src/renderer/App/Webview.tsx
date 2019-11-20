@@ -16,6 +16,21 @@ const NavDiv = styled.div`
   color: ${props => props.theme.baseText};
 
   display: flex;
+  flex-direction: column;
+`;
+
+const TitleBar = styled.div`
+  font-size: 16px;
+
+  height: 36px;
+  line-height: 36px;
+  vertical-align: middle;
+
+  padding: 0 10px;
+`;
+
+const Controls = styled.div`
+  display: flex;
   flex-direction: row;
   align-items: flex-start;
   padding: 10px;
@@ -37,10 +52,13 @@ const AddressBar = styled.div`
 export const Navigation = () => {
   return (
     <NavDiv>
-      <IconButton icon="arrow-left" />
-      <IconButton icon="arrow-right" />
-      <IconButton icon="repeat" />
-      <AddressBar>Address</AddressBar>
+      <TitleBar>Page title goes here</TitleBar>
+      <Controls>
+        <IconButton icon="arrow-left" />
+        <IconButton icon="arrow-right" />
+        <IconButton icon="repeat" />
+        <AddressBar>Address</AddressBar>
+      </Controls>
     </NavDiv>
   );
 };
