@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "renderer/styles";
 import { Sidebar } from "renderer/App/Sidebar";
 import { Webview } from "renderer/App/Webview";
@@ -21,17 +21,6 @@ const MainDiv = styled.div`
 `;
 
 export const App = () => {
-  fetch("itch://api/cool")
-    .then(res => res.json())
-    .then(res => {
-      console.log("Cool!", res);
-      let wsUrl = `ws://${res.websocket.address}:${res.websocket.port}`;
-      let ws = new WebSocket(wsUrl);
-      ws.onopen = () => {
-        ws.send("hello from renderer");
-      };
-    });
-
   return (
     <AppDiv
       onClickCapture={ev => {

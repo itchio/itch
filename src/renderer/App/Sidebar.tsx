@@ -34,6 +34,7 @@ const SidebarElement = styled.a`
 
   text-decoration: none;
   font-size: 18px;
+  font-weight: lighter;
 
   .icon {
     display: inline-block;
