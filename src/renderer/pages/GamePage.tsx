@@ -11,10 +11,7 @@ export const GamePage = (props: { gameId: number }) => {
     <Container>
       <p>Should show game {props.gameId}</p>
       <p>
-        Navigate to <a href="itch://games/5">game 5</a>
-      </p>
-      <p>
-        Navigate to <a href="itch://games/12">game 12</a>
+        Back to library: <a href="itch://library">Library</a>
       </p>
     </Container>
   );

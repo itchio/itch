@@ -37,7 +37,7 @@ const FeaturedPage = Loadable({
   loading: () => null,
 });
 const LibraryPage = Loadable({
-  loader: () => import("renderer/pages/LibraryPage"),
+  loader: () => import("renderer/pages/LibraryPage/index-old"),
   loading: () => null,
 });
 const OwnedPage = Loadable({

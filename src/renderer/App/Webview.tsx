@@ -10,7 +10,6 @@ const WebviewContainer = styled.div`
   height: 100%;
 
   webview {
-    background: white;
     width: 100%;
     height: 100%;
   }
@@ -38,6 +37,8 @@ const Controls = styled.div`
   flex-direction: row;
   align-items: flex-start;
   padding: 10px;
+
+  border-bottom: 2px solid yellow;
 `;
 
 const AddressBar = styled.div`
@@ -57,21 +58,21 @@ interface NavigationProps {
   viewRef: React.RefObject<WebviewTag>;
   url: string;
   title: string;
+  loading: boolean;
 }
 
 export const Navigation = (props: NavigationProps) => {
-  let withWebview = (f: (wv: WebviewTag) => void) => (...args: any[]) {
+  const { title, url, loading } = props;
+  let withWebview = (f: (wv: WebviewTag) => void) => (...args: any[]) => {
     if (props.viewRef.current) {
       f(props.viewRef.current);
     }
   };
 
-  const {title, url} = props;
-
   return (
     <NavDiv>
       <TitleBar>{title}</TitleBar>
-      <Controls>
+      <Controls style={{ borderColor: loading ? "red" : "transparent" }}>
         <IconButton
           onClick={withWebview(wv => wv.goBack())}
           icon="arrow-left"
@@ -92,17 +93,24 @@ export const Webview = () => {
   const viewRef = useRef<WebviewTag>(null);
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const wv = viewRef.current;
     if (wv) {
-      wv.addEventListener("load-commit", (ev) => {
+      wv.addEventListener("load-commit", ev => {
         if (ev.isMainFrame) {
           setUrl(ev.url);
         }
       });
-      wv.addEventListener("page-title-updated", (ev) => {
+      wv.addEventListener("page-title-updated", ev => {
         setTitle(ev.title);
+      });
+      wv.addEventListener("did-start-loading", ev => {
+        setLoading(true);
+      });
+      wv.addEventListener("did-stop-loading", ev => {
+        setLoading(false);
       });
     }
   }, [viewRef]);
@@ -121,7 +129,7 @@ export const Webview = () => {
 
   return (
     <WebviewContainer>
-      <Navigation viewRef={viewRef} title={title} url={url} />
+      <Navigation viewRef={viewRef} title={title} url={url} loading={loading} />
       <webview src="itch://games/3" ref={viewRef} />
     </WebviewContainer>
   );

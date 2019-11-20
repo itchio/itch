@@ -4,6 +4,7 @@ import { GamePage } from "renderer/pages/GamePage";
 import styled from "renderer/styles";
 import { Socket } from "renderer/Socket";
 import { packets } from "packets";
+import { LibraryPage } from "renderer/pages/LibraryPage";
 
 export const SocketContext = createContext<Socket | null>(null);
 
@@ -31,6 +32,11 @@ export const RouteContents = (props: { elements: string[] }) => {
   switch (elements[0]) {
     case "app":
       return <App />;
+    case "featured":
+      location.replace("https://itch.io/");
+      return <div />;
+    case "library":
+      return <LibraryPage />;
     case "games":
       const gameId = parseInt(elements[1], 10);
       return <GamePage gameId={gameId} />;
