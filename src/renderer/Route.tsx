@@ -37,24 +37,36 @@ export const RouteContents = (props: { elements: string[] }) => {
 
 export const Route = () => {
   const [socket, setSocket] = useState<WebSocket>(null);
+  const [error, setError] = useState<String>(null);
 
   useEffect(() => {
     if (socket) {
       return;
     }
 
-    fetch("itch://api/ws")
-      .then(res => res.json())
-      .then(res => {
-        console.log("Got ws address!", res);
-        let { address, port } = res.websocket;
-        let wsUrl = `ws://${address}:${port}`;
-        let ws = new WebSocket(wsUrl);
-        ws.onopen = () => {
-          ws.send("hello from Route");
-          setSocket(ws);
-        };
-      });
+    (async () => {
+      const SESSION_WS_KEY = "internal-websocket";
+
+      let address = sessionStorage.getItem(SESSION_WS_KEY);
+      if (!address) {
+        console.log(`Finding out websocket address`);
+        let res = await fetch("itch://api/websocket-address");
+        let payload = await res.json();
+        address = payload.address;
+        sessionStorage.setItem(SESSION_WS_KEY, address);
+      } else {
+        console.log(`Using cached websocket address`);
+      }
+
+      let socket = new WebSocket(address);
+      socket.onopen = () => {
+        socket.send("hello from Route");
+        setSocket(socket);
+      };
+    })().catch(e => {
+      console.error(e.stack);
+      setError(e.stack);
+    });
   });
 
   if (socket) {
@@ -63,6 +75,15 @@ export const Route = () => {
     );
     return <RouteContents elements={elements} />;
   } else {
-    return <div />;
+    if (error) {
+      return (
+        <pre>
+          Something went wrong:
+          {error}
+        </pre>
+      );
+    } else {
+      return <div />;
+    }
   }
 };

@@ -26,6 +26,7 @@ import {
   getRendererFilePath,
 } from "common/util/resources";
 import { contentType } from "mime-types";
+import { packets } from "packets";
 
 interface MainState {
   butler: ButlerState;
@@ -115,9 +116,11 @@ async function onReady() {
     req: Electron.HandlerRequest,
     elements: string[]
   ): Promise<Object> {
+    let waddr = wss.address() as ws.AddressInfo;
+    let address = `ws://${waddr.address}:${waddr.port}`;
+
     return {
-      websocket: wss.address(),
-      message: "hello from main process API",
+      address,
       url: req.url,
       elements,
     };
@@ -242,6 +245,11 @@ async function onReady() {
         });
       });
   });
+
+  let b = packets.bye({ time: Date.now() });
+  console.log(`=============================`);
+  console.log(`b = `, b);
+  console.log(`=============================`);
 
   let win = new BrowserWindow({
     title: env.appName,
