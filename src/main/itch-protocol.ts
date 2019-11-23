@@ -126,6 +126,8 @@ export async function registerItchProtocol(mainState: MainState) {
             contentType = "text/javascript; charset=UTF-8";
           } else if (lowerPath.endsWith(".html")) {
             contentType = "text/html; charset=UTF-8";
+          } else if (lowerPath.endsWith(".svg")) {
+            contentType = "image/svg+xml";
           }
           let content = await new Promise<Buffer>((resolve, reject) => {
             fs.readFile(
