@@ -26,7 +26,6 @@ function convertHeaders(
         break;
     }
   }
-  console.log(`output headers = `, dump(output));
   return output;
 }
 
@@ -66,7 +65,6 @@ export async function registerItchProtocol(mainState: MainState) {
     logger.info(`[${req.method}] ${req.url}`);
     for (const k of Object.keys(req.headers)) {
       const v = req.headers[k];
-      logger.info(`Header ${k}: ${v}`);
     }
     let url = new URL(req.url);
 
@@ -99,7 +97,6 @@ export async function registerItchProtocol(mainState: MainState) {
         if (env.development) {
           let port = process.env.ELECTRON_WEBPACK_WDS_PORT;
           const upstream = `http://localhost:${port}/${elements.join("/")}`;
-          logger.info(`upstream = ${upstream}`);
           let res = await new Promise<http.IncomingMessage>(
             (resolve, reject) => {
               http.get(upstream, res => {

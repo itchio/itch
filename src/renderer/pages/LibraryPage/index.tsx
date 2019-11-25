@@ -1,7 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
-import styled from "renderer/styles";
-import { SocketContext } from "renderer/Route";
 import { messages } from "common/butlerd";
+import React from "react";
+import styled from "renderer/styles";
+import { useButlerd } from "renderer/use-butlerd";
 
 const Container = styled.div`
   padding: 20px;
@@ -9,25 +9,14 @@ const Container = styled.div`
 `;
 
 export const LibraryPage = (props: {}) => {
-  const socket = useContext(SocketContext);
-  const [version, setVersion] = useState("??");
-
-  useEffect(() => {
-    if (!socket) {
-      return;
-    }
-
-    console.log("Got socket, oh yes");
-    (async () => {
-      const res = await socket.call(messages.VersionGet, {});
-      console.log("res = ", res);
-      setVersion(res.versionString);
-    })();
-  }, [socket]);
+  const version = useButlerd(messages.VersionGet, {});
 
   return (
     <Container>
-      <p>Here's your library! We're using butler {version}</p>
+      <p>
+        Here's your library! We're using butler{" "}
+        {version.loading ? "..." : version.result!.versionString}
+      </p>
       <p>
         Navigate to <a href="itch://games/5">game 5</a>
       </p>
