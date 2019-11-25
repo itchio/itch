@@ -74,7 +74,7 @@ async function main() {
   await new Promise((resolve, reject) => {
     let inspectArg = process.env.ITCH_BREAK === "1" ? "inspect-brk" : "inspect";
     const proc = childProcess.spawn(electronBinaryPath, [
-      ".", `--${inspectArg}=9222`, "--color"
+      ".", `--${inspectArg}=9222`, "--color", "--no-sandbox" /* on Linux, sandboxing requires a SUID helper and it's a hassle */
     ], {
       env: {
         ...process.env,

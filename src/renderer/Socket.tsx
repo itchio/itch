@@ -1,4 +1,5 @@
 import { packets, Packet, PacketCreator } from "packets";
+import { RequestError, RequestCreator } from "butlerd/lib/support";
 
 type PacketKey = keyof typeof packets;
 type Listener<Payload> = (payload: Payload) => void;
@@ -11,6 +12,13 @@ export class Socket {
       [key in PacketKey]: Listener<any>[];
     }
   >;
+  private idSeed: number;
+  private outboundRequests: {
+    [key: number]: {
+      resolve: (payload: any) => void;
+      reject: (e: Error) => any;
+    };
+  };
 
   static async connect(address: string): Promise<Socket> {
     let socket = new WebSocket(address);
@@ -23,7 +31,9 @@ export class Socket {
 
   constructor(ws: WebSocket) {
     this.ws = ws;
+    this.idSeed = 1;
     this.listeners = {};
+    this.outboundRequests = {};
     ws.onmessage = msg => {
       this.process(msg.data as string);
     };
@@ -31,6 +41,22 @@ export class Socket {
 
   private process(msg: string) {
     let packet = JSON.parse(msg) as Packet<any>;
+    if (packet.type === "butlerResponse") {
+      let {
+        response,
+      } = packet.payload as typeof packets.butlerResponse.__payload;
+
+      if (typeof response.id === "number") {
+        let outbound = this.outboundRequests[response.id];
+        delete this.outboundRequests[response.id];
+        if (response.error) {
+          outbound.reject(new RequestError(response.error));
+        } else {
+          outbound.resolve(response.result);
+        }
+      }
+    }
+
     let listeners = this.listeners[packet.type];
     if (listeners) {
       for (const l of listeners) {
@@ -53,5 +79,25 @@ export class Socket {
       this.listeners[type] = this.listeners[type].filter(x => x !== listener);
     };
     return cancel;
+  }
+
+  generateID(): number {
+    let res = this.idSeed;
+    this.idSeed++;
+    return res;
+  }
+
+  async call<T, U>(creator: RequestCreator<T, U>, params: T): Promise<U> {
+    let request = creator(params)(this);
+
+    this.send(
+      packets.butlerRequest({
+        request,
+      })
+    );
+
+    return new Promise((resolve, reject) => {
+      this.outboundRequests[request.id];
+    });
   }
 }

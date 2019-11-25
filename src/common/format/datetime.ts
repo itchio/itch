@@ -1,5 +1,3 @@
-import env from "common/env";
-
 interface FormattedDuration {
   id: string;
   values?: {
@@ -72,11 +70,6 @@ export function getFormatter(
     let stripped = locale.replace(/-.*$/, "");
     if (stripped !== locale) {
       locales = [locale, stripped];
-    }
-    if (env.integrationTests || env.unitTests) {
-      // use UTC for tests, keep using guessed locale for
-      // development/production environments.
-      (format.options as any).timeZone = "UTC";
     }
     formatter = new Intl.DateTimeFormat(locales, format.options);
     cacheByLocale.set(locale, formatter);

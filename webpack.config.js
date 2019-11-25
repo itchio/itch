@@ -28,7 +28,6 @@ module.exports = env => {
           "./src/main/index.ts",
         ],
       },
-      externals: ["bindings", "eventsource"],
       plugins: [
         new CleanWebpackPlugin(),
         new WebpackBuildNotifierPlugin({
@@ -100,6 +99,7 @@ function getCommonConfig(type, env) {
       extensions: [".ts", ".tsx", ".js"],
       plugins: [new TsconfigPathsPlugin({})],
     },
+    externals: ["child_process", "net", "ws"],
     module: {
       rules: [
         {

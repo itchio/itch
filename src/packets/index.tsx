@@ -1,3 +1,5 @@
+import { IRequest, IResult } from "butlerd";
+
 // actions but not really
 
 export interface Packet<PayloadType> {
@@ -15,10 +17,19 @@ export const packets = wirePackets({
   hello: packet<{
     locationHref: string;
   }>(),
+
+  butlerRequest: packet<{
+    request: IRequest<any, any>;
+  }>(),
+
+  butlerResponse: packet<{
+    response: IResult<any>;
+  }>(),
 });
 
 export interface PacketCreator<PayloadType> {
   (payload: PayloadType): Packet<PayloadType>;
+  __payload: PayloadType;
   __type: string;
 }
 

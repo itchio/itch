@@ -31,7 +31,7 @@
     "@types/ws": "^6.0.3",
     "array-move": "^2.1.0",
     "btoa": "^1.2.1",
-    "butlerd": "^11.3.0",
+    "butlerd": "^12.1.0",
     "classnames": "^2.2.6",
     "clean-webpack-plugin": "^3.0.0",
     "colorgram": "^0.1.5",
