@@ -17,6 +17,9 @@ export const LibraryPage = () => {
         <Container>
           <p>Here's your library! We're using butler {versionString}</p>
           <p>
+            Navigate to <a href="itch://games/3">game 3</a>
+          </p>
+          <p>
             Navigate to <a href="itch://games/5">game 5</a>
           </p>
           <p>

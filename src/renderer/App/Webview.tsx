@@ -154,7 +154,7 @@ export const Webview = () => {
   return (
     <WebviewContainer>
       <Navigation viewRef={viewRef} title={title} url={url} loading={loading} />
-      <webview src="itch://games/3" ref={viewRef} />
+      <webview src="itch://library" ref={viewRef} />
     </WebviewContainer>
   );
 };

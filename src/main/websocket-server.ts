@@ -3,7 +3,7 @@ import { mainLogger } from "main/logger";
 import dump from "common/util/dump";
 import { Packet, packets } from "packets";
 import { MainState, broadcastPacket } from "main";
-import { Client, IDGenerator, IResult } from "butlerd";
+import { Client, IDGenerator, IResult, RequestError } from "butlerd";
 
 let logger = mainLogger.childWithName("ws");
 
@@ -67,6 +67,17 @@ export async function startWebsocketServer(mainState: MainState) {
                 let result: IResult<any> = {
                   id: request.id,
                   result: originalResult,
+                };
+                reply(
+                  packets.butlerResult({
+                    result,
+                  })
+                );
+              })
+              .catch((error: RequestError) => {
+                let result: IResult<any> = {
+                  id: request.id,
+                  error: error.rpcError,
                 };
                 reply(
                   packets.butlerResult({
