@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 
 import styled, { keyframes } from "renderer/styles";
-import Circle from "renderer/basics/LoadingCircle/Circle";
+import { Circle } from "renderer/basics/LoadingCircle/Circle";
 
 const turn = keyframes`
   0% {
@@ -44,26 +44,6 @@ const CircleContainer = styled.span`
   }
 `;
 
-class LoadingCircle extends React.PureComponent<LoadingCircleProps> {
-  render() {
-    const { className, progress, bare, wide, huge } = this.props;
-
-    return (
-      <CircleContainer className={classNames(className, { bare, wide, huge })}>
-        <Circle
-          percent={progress > 0 ? progress * 100.0 : 100 / 3}
-          trailWidth={3}
-          trailColor="#e0e0e2"
-          strokeWidth={15}
-          strokeColor="white"
-        />
-      </CircleContainer>
-    );
-  }
-}
-
-export default LoadingCircle;
-
 interface LoadingCircleProps {
   className?: string;
   progress: number;
@@ -71,3 +51,19 @@ interface LoadingCircleProps {
   wide?: boolean;
   huge?: boolean;
 }
+
+export const LoadingCircle = (props: LoadingCircleProps) => {
+  const { className, progress, bare, wide, huge } = props;
+
+  return (
+    <CircleContainer className={classNames(className, { bare, wide, huge })}>
+      <Circle
+        percent={progress > 0 ? progress * 100.0 : 100 / 3}
+        trailWidth={3}
+        trailColor="#e0e0e2"
+        strokeWidth={15}
+        strokeColor="white"
+      />
+    </CircleContainer>
+  );
+};

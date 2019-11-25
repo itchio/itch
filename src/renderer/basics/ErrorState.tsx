@@ -12,7 +12,11 @@ const ButlerErrorDiv = styled.div`
   }
 `;
 
-const ErrorState = ({ error }: { error: Error }) => {
+interface ErrorStateProps {
+  error: Error;
+}
+
+export const ErrorState = ({ error }: ErrorStateProps) => {
   if (!error) {
     return null;
   }
@@ -27,5 +31,3 @@ const ErrorState = ({ error }: { error: Error }) => {
     </ButlerErrorDiv>
   );
 };
-
-export default ErrorState;

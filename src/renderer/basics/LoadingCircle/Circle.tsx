@@ -2,9 +2,22 @@ import React from "react";
 
 // shamelessly stolen, err, adapted, from https://github.com/react-component/progress
 
-export default class Circle extends React.PureComponent<Props> {
-  getPathStyles() {
-    const { percent, strokeWidth, gapDegree = 0 } = this.props;
+interface CircleProps {
+  percent: number;
+  gapDegree?: number;
+  trailWidth: number;
+  trailColor: string;
+  trailPathStyle?: React.CSSProperties;
+  strokeWidth: number;
+  strokeColor: string;
+  strokeLinecap?: "inherit" | "butt" | "round" | "square";
+  strokePathStyle?: React.CSSProperties;
+  style?: React.CSSProperties;
+}
+
+export const Circle = (props: CircleProps) => {
+  let getPathStyles = () => {
+    const { percent, strokeWidth, gapDegree = 0 } = props;
     const radius = 50 - strokeWidth / 2;
     let beginPositionX = 0;
     let beginPositionY = -radius;
@@ -23,55 +36,36 @@ export default class Circle extends React.PureComponent<Props> {
       strokeDashoffset: `-${gapDegree / 2}px`,
     };
     return { pathString, trailPathStyle, strokePathStyle };
-  }
+  };
 
-  render() {
-    const {
-      strokeWidth,
-      trailWidth,
-      strokeColor,
-      trailColor,
-      strokeLinecap,
-      style,
-    } = this.props;
-    const {
-      pathString,
-      trailPathStyle,
-      strokePathStyle,
-    } = this.getPathStyles();
-    return (
-      <svg className="circle" viewBox="0 0 100 100" style={style}>
-        <path
-          className={`circle-trail`}
-          d={pathString}
-          stroke={trailColor}
-          strokeWidth={trailWidth || strokeWidth}
-          fillOpacity="0"
-          style={trailPathStyle}
-        />
-        <path
-          className={`circle-path`}
-          d={pathString}
-          strokeLinecap={strokeLinecap}
-          stroke={strokeColor}
-          strokeWidth={strokeWidth}
-          fillOpacity="0"
-          style={strokePathStyle}
-        />
-      </svg>
-    );
-  }
-}
-
-interface Props {
-  percent: number;
-  gapDegree?: number;
-  trailWidth: number;
-  trailColor: string;
-  trailPathStyle?: React.CSSProperties;
-  strokeWidth: number;
-  strokeColor: string;
-  strokeLinecap?: "inherit" | "butt" | "round" | "square";
-  strokePathStyle?: React.CSSProperties;
-  style?: React.CSSProperties;
-}
+  const {
+    strokeWidth,
+    trailWidth,
+    strokeColor,
+    trailColor,
+    strokeLinecap,
+    style,
+  } = props;
+  const { pathString, trailPathStyle, strokePathStyle } = getPathStyles();
+  return (
+    <svg className="circle" viewBox="0 0 100 100" style={style}>
+      <path
+        className={`circle-trail`}
+        d={pathString}
+        stroke={trailColor}
+        strokeWidth={trailWidth || strokeWidth}
+        fillOpacity="0"
+        style={trailPathStyle}
+      />
+      <path
+        className={`circle-path`}
+        d={pathString}
+        strokeLinecap={strokeLinecap}
+        stroke={strokeColor}
+        strokeWidth={strokeWidth}
+        fillOpacity="0"
+        style={strokePathStyle}
+      />
+    </svg>
+  );
+};
