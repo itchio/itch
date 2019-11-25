@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useEffect, useState } from "react";
-import styled from "renderer/styles";
+import styled, { animations } from "renderer/styles";
 import IconButton from "renderer/basics/IconButton";
 import { SocketContext } from "renderer/Route";
 import { packets } from "packets";
@@ -37,8 +37,31 @@ const Controls = styled.div`
   flex-direction: row;
   align-items: flex-start;
   padding: 10px;
+  position: relative;
+  overflow: hidden;
 
-  border-bottom: 2px solid yellow;
+  .loader-inner {
+    position: absolute;
+    height: 2px;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+  }
+
+  &.loading {
+    .loader-inner {
+      background: repeating-linear-gradient(
+        to right,
+        transparent 0%,
+        transparent 30%,
+        ${props => props.theme.accent} 30%,
+        ${props => props.theme.accent} 70%,
+        transparent 70%,
+        transparent 100%
+      );
+      animation: ${animations.horizontalIndeterminate} 2.4s ease-in-out infinite;
+    }
+  }
 `;
 
 const AddressBar = styled.div`
@@ -72,7 +95,7 @@ export const Navigation = (props: NavigationProps) => {
   return (
     <NavDiv>
       <TitleBar>{title}</TitleBar>
-      <Controls style={{ borderColor: loading ? "red" : "transparent" }}>
+      <Controls className={loading ? "loading" : ""}>
         <IconButton
           onClick={withWebview(wv => wv.goBack())}
           icon="arrow-left"
@@ -83,6 +106,7 @@ export const Navigation = (props: NavigationProps) => {
         />
         <IconButton onClick={withWebview(wv => wv.reload())} icon="repeat" />
         <AddressBar>{url}</AddressBar>
+        <div className="loader-inner"></div>
       </Controls>
     </NavDiv>
   );
