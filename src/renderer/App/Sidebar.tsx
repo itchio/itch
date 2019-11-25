@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 import styled from "renderer/styles";
-import Icon from "renderer/basics/Icon";
-import { SocketContext } from "renderer/Route";
+import { SocketContext, ProfileContext } from "renderer/Route";
+import { packets } from "packets";
+import { IconButton } from "renderer/basics/IconButton";
+import { Icon } from "renderer/basics/Icon";
 
 const SidebarDiv = styled.div`
   flex-basis: 240px;
@@ -49,10 +51,32 @@ const Spacer = styled.div`
 `;
 
 export const Sidebar = () => {
+  let profile = useContext(ProfileContext);
+  let socket = useContext(SocketContext);
+
   return (
     <SidebarDiv>
       <LogoImg src={require("static/images/logos/app-white.svg")} />
-      <SidebarElement href="itch://featured">
+      {profile ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          {profile.user.displayName || profile.user.username}
+          &nbsp;
+          <IconButton
+            icon="exit"
+            // FIXME: figure out why TypeScript doesn't complain about passing a null payload
+            onClick={() => socket!.send(packets.setProfile, {})}
+          />
+        </div>
+      ) : (
+        "no profile"
+      )}
+      <SidebarElement href="https://itch.io">
         <Icon icon="earth" /> Explore
       </SidebarElement>
       <SidebarElement href="itch://library">

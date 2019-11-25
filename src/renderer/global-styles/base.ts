@@ -1,9 +1,14 @@
 import { css, theme } from "renderer/styles";
 
 export default css`
+  * {
+    box-sizing: border-box;
+  }
+
   html,
   body {
     margin: 0;
+
     padding: 0;
     height: 100%;
     overflow: hidden;

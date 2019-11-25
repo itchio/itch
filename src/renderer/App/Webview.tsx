@@ -1,17 +1,21 @@
 import React, { useContext, useRef, useEffect, useState } from "react";
 import styled, { animations } from "renderer/styles";
-import IconButton from "renderer/basics/IconButton";
 import { SocketContext } from "renderer/Route";
 import { packets } from "packets";
 import { WebviewTag } from "electron";
+import { IconButton } from "renderer/basics/IconButton";
 
 const WebviewContainer = styled.div`
   width: 100%;
   height: 100%;
 
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+
   webview {
     width: 100%;
-    height: 100%;
+    flex-grow: 1;
   }
 `;
 
@@ -106,6 +110,7 @@ export const Navigation = (props: NavigationProps) => {
         />
         <IconButton onClick={withWebview(wv => wv.reload())} icon="repeat" />
         <AddressBar>{url}</AddressBar>
+        <IconButton onClick={withWebview(wv => wv.openDevTools())} icon="cog" />
         <div className="loader-inner"></div>
       </Controls>
     </NavDiv>
@@ -118,10 +123,14 @@ export const Webview = () => {
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
+  const [path, setPath] = useState("");
 
   useEffect(() => {
     const wv = viewRef.current;
     if (wv) {
+      wv.addEventListener("will-navigate", ev => {
+        setUrl(ev.url);
+      });
       wv.addEventListener("load-commit", ev => {
         if (ev.isMainFrame) {
           setUrl(ev.url);
@@ -134,6 +143,11 @@ export const Webview = () => {
         setLoading(true);
       });
       wv.addEventListener("did-stop-loading", ev => {
+        wv.executeJavaScript(
+          `
+          (document.querySelector("meta[name='itch:path']") || {content: ""}).content
+        `
+        ).then(setPath);
         setLoading(false);
       });
     }
@@ -155,6 +169,13 @@ export const Webview = () => {
     <WebviewContainer>
       <Navigation viewRef={viewRef} title={title} url={url} loading={loading} />
       <webview src="itch://library" ref={viewRef} />
+      {path && (
+        <p
+          style={{ padding: "20px", fontFamily: "monospace", fontSize: "24px" }}
+        >
+          path = {path}
+        </p>
+      )}
     </WebviewContainer>
   );
 };

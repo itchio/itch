@@ -2,11 +2,13 @@ import React, { useState, useEffect, createContext } from "react";
 import { App } from "renderer/App";
 import { GamePage } from "renderer/pages/GamePage";
 import styled from "renderer/styles";
-import { Socket } from "renderer/Socket";
+import { Socket, Cancel } from "renderer/Socket";
 import { packets } from "packets";
 import { LibraryPage } from "renderer/pages/LibraryPage";
+import { Profile } from "common/butlerd/messages";
 
-export const SocketContext = createContext<Socket | null>(null);
+export const SocketContext = createContext<Socket | undefined>(undefined);
+export const ProfileContext = createContext<Profile | undefined>(undefined);
 
 const RouteContentsDiv = styled.div`
   background: ${props => props.theme.breadBackground};
@@ -16,6 +18,7 @@ const RouteContentsDiv = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
+  overflow-y: auto;
 `;
 
 const ErrorDiv = styled.div`
@@ -47,7 +50,7 @@ export const RouteContents = (props: { elements: string[] }) => {
             Page not found: <code>itch://{elements.join("/")}</code>
           </p>
           <p>
-            <a href="itch://app">Go back to home</a>
+            <a href="itch://library">Go back to home</a>
           </p>
         </ErrorDiv>
       );
@@ -55,8 +58,9 @@ export const RouteContents = (props: { elements: string[] }) => {
 };
 
 export const Route = () => {
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [error, setError] = useState<String | null>(null);
+  const [socket, setSocket] = useState<Socket | undefined>(undefined);
+  const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const [error, setError] = useState<String | undefined>(undefined);
 
   useEffect(() => {
     if (socket) {
@@ -88,15 +92,41 @@ export const Route = () => {
     });
   });
 
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    let cancels: Cancel[] = [];
+    cancels.push(
+      socket.listen(packets.getProfileResult, ({ profile }) => {
+        setProfile(profile);
+      })
+    );
+    cancels.push(
+      socket.listen(packets.setProfile, ({ profile }) => {
+        setProfile(profile);
+      })
+    );
+    socket.send(packets.getProfile, {});
+    return () => {
+      for (let c of cancels) {
+        c();
+      }
+    };
+  }, [socket]);
+
   if (socket) {
     let elements = [location.host, location.pathname.replace(/^\//, "")].filter(
       s => s.length > 0
     );
     return (
       <SocketContext.Provider value={socket}>
-        <RouteContentsDiv>
-          <RouteContents elements={elements} />
-        </RouteContentsDiv>
+        <ProfileContext.Provider value={profile}>
+          <RouteContentsDiv>
+            <RouteContents elements={elements} />
+          </RouteContentsDiv>
+        </ProfileContext.Provider>
       </SocketContext.Provider>
     );
   } else {

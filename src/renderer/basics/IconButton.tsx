@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { LocalizedString } from "common/types";
 import React from "react";
 import styled, * as styles from "renderer/styles";
-import Icon from "renderer/basics/Icon";
+import { Icon } from "renderer/basics/Icon";
 
 const IconButtonDiv = styled.div`
   &:not(.disabled) {
@@ -53,40 +53,6 @@ const IconButtonDiv = styled.div`
   }
 `;
 
-class IconButton extends React.PureComponent<Props> {
-  render() {
-    const {
-      className,
-      big,
-      huge,
-      enormous,
-      emphasized,
-      disabled,
-      icon,
-      hint,
-      hintPosition = "top",
-      ...restProps
-    } = this.props;
-
-    return (
-      <IconButtonDiv
-        className={classNames(className, {
-          disabled,
-          big,
-          huge,
-          enormous,
-          emphasized,
-        })}
-        data-rh={hint ? JSON.stringify(hint) : null}
-        data-rh-at={hintPosition}
-        {...restProps}
-      >
-        {typeof icon === "string" ? <Icon icon={icon} /> : icon}
-      </IconButtonDiv>
-    );
-  }
-}
-
 interface Props {
   icon: string | JSX.Element;
   disabled?: boolean;
@@ -104,4 +70,34 @@ interface Props {
   emphasized?: boolean;
 }
 
-export default IconButton;
+export const IconButton = (props: Props) => {
+  const {
+    className,
+    big,
+    huge,
+    enormous,
+    emphasized,
+    disabled,
+    icon,
+    hint,
+    hintPosition = "top",
+    ...restProps
+  } = props;
+
+  return (
+    <IconButtonDiv
+      className={classNames(className, {
+        disabled,
+        big,
+        huge,
+        enormous,
+        emphasized,
+      })}
+      data-rh={hint ? JSON.stringify(hint) : null}
+      data-rh-at={hintPosition}
+      {...restProps}
+    >
+      {typeof icon === "string" ? <Icon icon={icon} /> : icon}
+    </IconButtonDiv>
+  );
+};

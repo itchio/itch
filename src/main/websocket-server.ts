@@ -1,7 +1,7 @@
 import WebSocket from "ws";
 import { mainLogger } from "main/logger";
 import dump from "common/util/dump";
-import { Packet, packets } from "packets";
+import { Packet, packets, PacketCreator } from "packets";
 import { MainState, broadcastPacket } from "main";
 import { Client, IDGenerator, IResult, RequestError } from "butlerd";
 
@@ -40,54 +40,89 @@ export async function startWebsocketServer(mainState: MainState) {
     };
 
     state.sockets = [...state.sockets, socket];
+
+    let handlers: {
+      [key: string]: (t: any, p: Packet<any>) => void;
+    } = {};
+
+    let on = <T>(pc: PacketCreator<T>, f: (t: T, p: Packet<T>) => void) => {
+      handlers[pc.__type] = f;
+    };
+
+    on(packets.navigate, (payload, packet) => {
+      broadcastPacket(packet);
+    });
+
+    on(packets.setProfile, (payload, packet) => {
+      broadcastPacket(packet);
+      mainState.profile = payload.profile;
+    });
+    on(packets.getProfile, () => {
+      const { profile } = mainState;
+      reply(packets.getProfileResult({ profile }));
+    });
+
+    on(packets.butlerRequest, payload => {
+      let { request } = payload;
+
+      if (!mainState.butler) {
+        let result: IResult<any> = {
+          id: request.id,
+          error: {
+            code: 999,
+            message: "butler is offline",
+          },
+        };
+        reply(
+          packets.butlerResult({
+            result,
+          })
+        );
+        return;
+      }
+
+      const client = new Client(mainState.butler.endpoint);
+      client
+        .call(
+          (params: any) => (gen: IDGenerator) => ({
+            ...request,
+            id: gen.generateID(),
+          }),
+          request.params
+        )
+        .then(originalResult => {
+          let result: IResult<any> = {
+            id: request.id,
+            result: originalResult,
+          };
+          reply(
+            packets.butlerResult({
+              result,
+            })
+          );
+        })
+        .catch((error: RequestError) => {
+          let result: IResult<any> = {
+            id: request.id,
+            error: error.rpcError,
+          };
+          reply(
+            packets.butlerResult({
+              result,
+            })
+          );
+        });
+    });
+
     socket.on("message", msg => {
       let packet = JSON.parse(msg as string) as Packet<any>;
-      logger.warn(`Client message: ${dump(packet)}`);
 
-      switch (packet.type) {
-        case "navigate": {
-          broadcastPacket(packet);
-          break;
-        }
-        case "butlerRequest": {
-          if (mainState.butler) {
-            const client = new Client(mainState.butler.endpoint);
-            let {
-              request,
-            } = packet.payload as typeof packets.butlerRequest.__payload;
-            client
-              .call(
-                (params: any) => (gen: IDGenerator) => ({
-                  ...request,
-                  id: gen.generateID(),
-                }),
-                request.params
-              )
-              .then(originalResult => {
-                let result: IResult<any> = {
-                  id: request.id,
-                  result: originalResult,
-                };
-                reply(
-                  packets.butlerResult({
-                    result,
-                  })
-                );
-              })
-              .catch((error: RequestError) => {
-                let result: IResult<any> = {
-                  id: request.id,
-                  error: error.rpcError,
-                };
-                reply(
-                  packets.butlerResult({
-                    result,
-                  })
-                );
-              });
-          }
-          break;
-        }
+      let handler = handlers[packet.type];
+      if (handler) {
+        logger.info(`Client message: ${dump(packet)}`);
+        handler(packet.payload, packet);
+      } else {
+        logger.warn(`Unhandled client message: ${dump(packet)}`);
       }
     });
     socket.on("close", () => {

@@ -1,4 +1,5 @@
 import { IRequest, IResult } from "butlerd";
+import { Profile } from "common/butlerd/messages";
 
 // actions but not really
 
@@ -9,6 +10,15 @@ export interface Packet<PayloadType> {
 
 export const packets = wirePackets({
   tick: packet<{ time: number }>(),
+
+  // TODO: find a better way, this seems tedious.
+  getProfile: packet<{}>(),
+  getProfileResult: packet<{
+    profile?: Profile;
+  }>(),
+  setProfile: packet<{
+    profile?: Profile;
+  }>(),
 
   navigate: packet<{
     href: string;

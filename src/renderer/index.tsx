@@ -1,11 +1,11 @@
 import "!style-loader!css-loader!./fonts/icomoon/style.css";
 
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import GlobalStyles from "renderer/global-styles";
 import { hot } from "react-hot-loader/root";
 
-import styled, { ThemeProvider, theme } from "./styles";
+import { ThemeProvider, theme } from "./styles";
 import { Route } from "renderer/Route";
 
 const App = hot(() => {

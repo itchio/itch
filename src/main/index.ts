@@ -5,11 +5,12 @@ import { ButlerState, startButler } from "main/start-butler";
 import { startWebsocketServer, WebSocketState } from "main/websocket-server";
 import { Packet } from "packets";
 import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
-import { Logger } from "common/logger";
+import { Profile } from "common/butlerd/messages";
 
 export interface MainState {
   butler?: ButlerState;
   websocket?: WebSocketState;
+  profile?: Profile;
 }
 
 let mainState: MainState = {};

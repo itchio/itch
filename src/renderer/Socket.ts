@@ -3,7 +3,7 @@ import { RequestError, RequestCreator } from "butlerd/lib/support";
 
 type PacketKey = keyof typeof packets;
 type Listener<Payload> = (payload: Payload) => void;
-type Cancel = () => void;
+export type Cancel = () => void;
 
 export class Socket {
   private ws: WebSocket;
@@ -65,8 +65,11 @@ export class Socket {
     }
   }
 
-  send<T>(p: Packet<T>) {
-    this.ws.send(JSON.stringify(p));
+  send<T>(pc: PacketCreator<T>, payload: T) {
+    if (payload === null) {
+      throw new Error(`null payload for ${pc.__type} - that's illegal`);
+    }
+    this.ws.send(JSON.stringify(pc(payload)));
   }
 
   listen<T>(packet: PacketCreator<T>, listener: Listener<T>): Cancel {
@@ -90,11 +93,7 @@ export class Socket {
   async call<T, U>(creator: RequestCreator<T, U>, params: T): Promise<U> {
     let request = creator(params)(this);
 
-    this.send(
-      packets.butlerRequest({
-        request,
-      })
-    );
+    this.send(packets.butlerRequest, { request });
 
     return new Promise((resolve, reject) => {
       this.outboundRequests[request.id] = { resolve, reject };
