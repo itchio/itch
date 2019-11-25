@@ -3,6 +3,7 @@ import { mainLogger } from "main/logger";
 import dump from "common/util/dump";
 import { Packet, packets } from "packets";
 import { MainState, broadcastPacket } from "main";
+import { Client, IDGenerator, IResult } from "butlerd";
 
 let logger = mainLogger.childWithName("ws");
 
@@ -34,18 +35,53 @@ export async function startWebsocketServer(mainState: MainState) {
   logger.info(`Address: ${dump(wss.address())}`);
 
   wss.on("connection", (socket, req) => {
+    let reply = (payload: any) => {
+      socket.send(JSON.stringify(payload));
+    };
+
     state.sockets = [...state.sockets, socket];
     socket.on("message", msg => {
       let packet = JSON.parse(msg as string) as Packet<any>;
       logger.warn(`Client message: ${dump(packet)}`);
 
       switch (packet.type) {
-        case "navigate":
+        case "navigate": {
           broadcastPacket(packet);
           break;
+        }
+        case "butlerRequest": {
+          if (mainState.butler) {
+            const client = new Client(mainState.butler.endpoint);
+            let {
+              request,
+            } = packet.payload as typeof packets.butlerRequest.__payload;
+            client
+              .call(
+                (params: any) => (gen: IDGenerator) => ({
+                  ...request,
+                  id: gen.generateID(),
+                }),
+                request.params
+              )
+              .then(originalResult => {
+                let result: IResult<any> = {
+                  id: request.id,
+                  result: originalResult,
+                };
+                reply(
+                  packets.butlerResult({
+                    result,
+                  })
+                );
+              });
+          }
+          break;
+        }
       }
     });
     socket.on("close", () => {
+      // TODO: cancel all outbound butlerd requests
+
       state.sockets = state.sockets.filter(x => x !== socket);
       logger.warn(`Client going away...`);
     });
@@ -57,12 +93,4 @@ export async function startWebsocketServer(mainState: MainState) {
       s.send(serialized);
     }
   };
-
-  setInterval(() => {
-    broadcast(
-      packets.tick({
-        time: Date.now(),
-      })
-    );
-  }, 1000);
 }

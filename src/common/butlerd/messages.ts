@@ -910,10 +910,28 @@ export const CavesSetPinned = createRequest<
 >("Caves.SetPinned");
 
 /**
+ * Result for Install.CreateShortcut
+ */
+export interface InstallCreateShortcutResult {
+  // no fields
+}
+
+/**
+ * Create a shortcut for an existing cave .
+ */
+export const InstallCreateShortcut = createRequest<
+  InstallCreateShortcutParams,
+  InstallCreateShortcutResult
+>("Install.CreateShortcut");
+
+/**
  * Result for Install.Perform
  */
 export interface InstallPerformResult {
-  // no fields
+  /** undocumented */
+  caveId: string;
+  /** undocumented */
+  events: InstallEvent[];
 }
 
 /**
@@ -926,6 +944,130 @@ export const InstallPerform = createRequest<
   InstallPerformParams,
   InstallPerformResult
 >("Install.Perform");
+
+/**
+ * undocumented
+ */
+export interface InstallEvent {
+  /** undocumented */
+  type: InstallEventType;
+  /** undocumented */
+  timestamp: Date;
+  /** undocumented */
+  heal: HealInstallEvent;
+  /** undocumented */
+  install: InstallInstallEvent;
+  /** undocumented */
+  upgrade: UpgradeInstallEvent;
+  /** undocumented */
+  ghostBusting: GhostBustingInstallEvent;
+  /** undocumented */
+  patching: PatchingInstallEvent;
+  /** undocumented */
+  problem: ProblemInstallEvent;
+  /** undocumented */
+  fallback: FallbackInstallEvent;
+}
+
+/**
+ * undocumented
+ */
+export enum InstallEventType {
+  // Started for the first time or resumed after a pause
+  // or butler exit or whatever
+  InstallEventResume = "resume",
+  // Stopped explicitly (pausing downloads), can't rely
+  // on this being present because BRÜTAL PÖWER LÖSS will
+  // not announce itself 🔥
+  InstallEventStop = "stop",
+  // Regular install from archive or naked file
+  InstallEventInstall = "install",
+  // Reverting to previous version or re-installing
+  // wharf-powered upload
+  InstallEventHeal = "heal",
+  // Applying one or more wharf patches
+  InstallEventUpgrade = "upgrade",
+  // Applying a single wharf patch
+  InstallEventPatching = "patching",
+  // Cleaning up ghost files
+  InstallEventGhostBusting = "ghostBusting",
+  // Any kind of step failing
+  InstallEventProblem = "problem",
+  // Any operation we do as a result of another one failing,
+  // but in a case where we're still expecting a favorable
+  // outcome eventually.
+  InstallEventFallback = "fallback",
+}
+
+/**
+ * undocumented
+ */
+export interface InstallInstallEvent {
+  /** undocumented */
+  manager: string;
+}
+
+/**
+ * undocumented
+ */
+export interface HealInstallEvent {
+  /** undocumented */
+  totalCorrupted: number;
+  /** undocumented */
+  appliedCaseFixes: boolean;
+}
+
+/**
+ * undocumented
+ */
+export interface UpgradeInstallEvent {
+  /** undocumented */
+  numPatches: number;
+}
+
+/**
+ * undocumented
+ */
+export interface ProblemInstallEvent {
+  /** Short error */
+  error: string;
+  /** Longer error */
+  errorStack: string;
+}
+
+/**
+ * undocumented
+ */
+export interface FallbackInstallEvent {
+  /** Name of the operation we were trying to do */
+  attempted: string;
+  /** Problem encountered while trying "attempted" */
+  problem: ProblemInstallEvent;
+  /** Name of the operation we're falling back to */
+  nowTrying: string;
+}
+
+/**
+ * undocumented
+ */
+export interface PatchingInstallEvent {
+  /** Build we patched to */
+  buildID: number;
+  /** "default" or "optimized" (for the +bsdiff variant) */
+  subtype: string;
+}
+
+/**
+ * undocumented
+ */
+export interface GhostBustingInstallEvent {
+  /** Operation that requested the ghost busting (install, upgrade, heal) */
+  operation: string;
+  /** Number of ghost files found */
+  found: number;
+  /** Number of ghost files removed */
+  removed: number;
+}
 
 /**
  * Result for Install.Cancel
@@ -1474,7 +1616,7 @@ export interface AcceptLicenseResult {
 
 /**
  * Sent during @@LaunchParams if the game/application comes with a service license
- * agreement (at the time of this writing, this only happens if it was installed from a DMG file).
+ * agreement.
  */
 export const AcceptLicense = createRequest<
   AcceptLicenseParams,
@@ -1684,62 +1826,6 @@ export enum Code {
   DatabaseBusy = 16000,
   // An install location could not be removed because it has active downloads
   CantRemoveLocationBecauseOfActiveDownloads = 18000,
-}
-
-/**
- * A Manifest describes prerequisites (dependencies) and actions that
- * can be taken while launching a game.
- */
-export interface Manifest {
-  /** Actions are a list of options to give the user when launching a game. */
-  actions: Action[];
-  /**
-   * Prereqs describe libraries or frameworks that must be installed
-   * prior to launching a game
-   */
-  prereqs: Prereq[];
-}
-
-/**
- * An Action is a choice for the user to pick when launching a game.
- *
- * see https://itch.io/docs/itch/integrating/manifest.html
- */
-export interface Action {
-  /** human-readable or standard name */
-  name: string;
-  /** file path (relative to manifest or absolute), URL, etc. */
-  path: string;
-  /** icon name (see static/fonts/icomoon/demo.html, don't include `icon-` prefix) */
-  icon: string;
-  /** command-line arguments */
-  args: string[];
-  /** sandbox opt-in */
-  sandbox: boolean;
-  /** requested API scope */
-  scope: string;
-  /** don't redirect stdout/stderr, open in new console window */
-  console: boolean;
-  /** platform to restrict this action too */
-  platform: Platform;
-  /** localized action name */
-  locales: { [key: string]: ActionLocale };
-}
-
-/**
- * undocumented
- */
-export interface Prereq {
-  /** A prerequisite to be installed, see <https://itch.io/docs/itch/integrating/prereqs/> for the full list. */
-  name: string;
-}
-
-/**
- * undocumented
- */
-export interface ActionLocale {
-  /** A localized action name */
-  name: string;
 }
 
 /**
@@ -2262,6 +2348,8 @@ export enum Flavor {
   HTML = "html",
   // FlavorLove denotes a love package
   Love = "love",
+  // Microsoft installer packages
+  MSI = "msi",
 }
 
 /**
@@ -2772,6 +2860,14 @@ export interface CavesSetPinnedParams {
   caveId: string;
   /** Pinned state the cave should have after this call */
   pinned: boolean;
+}
+
+/**
+ * Params for Install.CreateShortcut
+ */
+export interface InstallCreateShortcutParams {
+  /** undocumented */
+  caveId: string;
 }
 
 /**

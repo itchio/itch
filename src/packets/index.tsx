@@ -22,8 +22,8 @@ export const packets = wirePackets({
     request: IRequest<any, any>;
   }>(),
 
-  butlerResponse: packet<{
-    response: IResult<any>;
+  butlerResult: packet<{
+    result: IResult<any>;
   }>(),
 });
 

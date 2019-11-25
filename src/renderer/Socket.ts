@@ -41,10 +41,10 @@ export class Socket {
 
   private process(msg: string) {
     let packet = JSON.parse(msg) as Packet<any>;
-    if (packet.type === "butlerResponse") {
+    if (packet.type === "butlerResult") {
       let {
-        response,
-      } = packet.payload as typeof packets.butlerResponse.__payload;
+        result: response,
+      } = packet.payload as typeof packets.butlerResult.__payload;
 
       if (typeof response.id === "number") {
         let outbound = this.outboundRequests[response.id];
@@ -97,7 +97,7 @@ export class Socket {
     );
 
     return new Promise((resolve, reject) => {
-      this.outboundRequests[request.id];
+      this.outboundRequests[request.id] = { resolve, reject };
     });
   }
 }

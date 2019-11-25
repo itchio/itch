@@ -27,7 +27,7 @@ export const LibraryPage = (props: {}) => {
 
   return (
     <Container>
-      <p>Here's your library! We're using butler ${version}</p>
+      <p>Here's your library! We're using butler {version}</p>
       <p>
         Navigate to <a href="itch://games/5">game 5</a>
       </p>
