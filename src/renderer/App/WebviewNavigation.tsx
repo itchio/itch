@@ -95,7 +95,7 @@ export const WebviewNavigation = (props: Props) => {
           icon="arrow-right"
         />
         <IconButton onClick={withWebview(wv => wv.reload())} icon="repeat" />
-        <AddressBar>{url}</AddressBar>
+        <AddressBar>{/^about:/.test(url) ? "" : url}</AddressBar>
         <IconButton onClick={withWebview(wv => wv.openDevTools())} icon="cog" />
         <div className="loader-inner"></div>
       </Controls>

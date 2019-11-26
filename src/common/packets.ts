@@ -31,7 +31,8 @@ export const packets = wirePackets({
   }>(),
 
   navigate: packet<{
-    href: string;
+    // URL to open in in-app browser
+    url: string;
   }>(),
 
   hello: packet<{

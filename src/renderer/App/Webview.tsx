@@ -46,6 +46,8 @@ export const Webview = () => {
       setUrl(ev.url);
     });
     wv.addEventListener("did-navigate", ev => {
+      console.log(`did navigate`, ev.url);
+
       const wc = wv.getWebContents() as ExtendedWebContents;
       if (/^about:blank/.test(ev.url)) {
         console.log(`initial load, restoring history`);
@@ -88,18 +90,27 @@ export const Webview = () => {
       setLoading(true);
     });
     wv.addEventListener("did-stop-loading", ev => {
-      wv.executeJavaScript(
-        `
+      setLoading(false);
+
+      const matches = /^itch:\/\/(.*)$/.exec(wv.getURL());
+      if (matches) {
+        setPath(matches[1]);
+      } else {
+        wv.executeJavaScript(
+          `
           (document.querySelector("meta[name='itch:path']") || {content: ""}).content
         `
-      ).then(setPath);
-      setLoading(false);
+        ).then(path => {
+          console.log(`scraped path: `, path);
+          setPath(path);
+        });
+      }
     });
   }, [viewRef, socket]);
 
   useEffect(() => {
     if (socket) {
-      return socket.listen(packets.navigate, ({ href }) => {
+      return socket.listen(packets.navigate, ({ url: href }) => {
         let wv = viewRef.current;
         if (wv) {
           wv.loadURL(href);

@@ -78,9 +78,5 @@ export const WebviewActionBar = (props: Props) => {
     );
   }
 
-  return (
-    <Container>
-      path = {path}, matches = {dump(matches)}
-    </Container>
-  );
+  return <></>;
 };

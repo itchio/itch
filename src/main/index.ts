@@ -89,7 +89,7 @@ async function onReady() {
     console.log(`prevented ${url} navigation, broadcasting instead`);
     broadcastPacket(
       packets.navigate({
-        href: url,
+        url,
       })
     );
   });
