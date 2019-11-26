@@ -2,6 +2,7 @@ import { WebviewTag } from "electron";
 import React, { useState } from "react";
 import styled, { animations } from "renderer/styles";
 import { IconButton } from "renderer/basics/IconButton";
+import { ExtendedWebContents } from "main/reactors/web-contents";
 
 const NavDiv = styled.div`
   color: ${props => props.theme.baseText};
@@ -103,12 +104,30 @@ export const WebviewNavigation = (props: Props) => {
       <TitleBar>{title}</TitleBar>
       <Controls className={loading ? "loading" : ""}>
         <IconButton
-          onClick={withWebview(wv => wv.goBack())}
+          onClick={withWebview(wv => {
+            var wc = wv.getWebContents() as ExtendedWebContents;
+            console.log(
+              `going back, currently ${wc.currentIndex}, history `,
+              wc.history
+            );
+            if (wc.currentIndex > 0) {
+              wv.goToIndex(wc.currentIndex - 1);
+            }
+          })}
           disabled={!props.canGoBack}
           icon="arrow-left"
         />
         <IconButton
-          onClick={withWebview(wv => wv.goForward())}
+          onClick={withWebview(wv => {
+            var wc = wv.getWebContents() as ExtendedWebContents;
+            console.log(
+              `going forward, currently ${wc.currentIndex}, history `,
+              wc.history
+            );
+            if (wc.currentIndex < wc.history.length-1) {
+              wv.goToIndex(wc.currentIndex + 1);
+            }
+          }}
           disabled={!props.canGoForward}
           icon="arrow-right"
         />
