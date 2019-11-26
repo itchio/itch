@@ -39,6 +39,7 @@ export const App = () => {
             <ul>
               {profiles.map(profile => (
                 <li
+                  key={profile.id}
                   style={{
                     padding: "30px",
                     fontSize: "24px",
@@ -59,20 +60,7 @@ export const App = () => {
   }
 
   return (
-    <AppDiv
-      // TODO: use will-navigate instead
-      onClickCapture={ev => {
-        const target = ev.target as HTMLElement;
-        if (target.tagName == "A") {
-          ev.preventDefault();
-          if (socket) {
-            socket.send(packets.navigate, {
-              href: (target as HTMLLinkElement).href,
-            });
-          }
-        }
-      }}
-    >
+    <AppDiv>
       <Sidebar />
       <MainDiv>
         <Webview />

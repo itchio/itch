@@ -108,6 +108,7 @@ export const Route = () => {
         setProfile(profile);
       })
     );
+    // TODO: better one-off requests
     socket.send(packets.getProfile, {});
     return () => {
       for (let c of cancels) {

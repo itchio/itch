@@ -3,7 +3,7 @@ import { app, BrowserWindow, dialog, protocol, session } from "electron";
 import { mainLogger } from "main/logger";
 import { ButlerState, startButler } from "main/start-butler";
 import { startWebsocketServer, WebSocketState } from "main/websocket-server";
-import { Packet } from "common/packets";
+import { Packet, packets } from "common/packets";
 import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
 import { Profile } from "common/butlerd/messages";
 
@@ -84,6 +84,15 @@ async function onReady() {
   win.setMenu(null);
   win.setMenuBarVisibility(false);
   win.loadURL("itch://app");
+  win.webContents.addListener("will-navigate", (ev, url) => {
+    ev.preventDefault();
+    console.log(`prevented ${url} navigation, broadcasting instead`);
+    broadcastPacket(
+      packets.navigate({
+        href: url,
+      })
+    );
+  });
   win.show();
 
   if (env.development || process.env.DEVTOOLS === "1") {
