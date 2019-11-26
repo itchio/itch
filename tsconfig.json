@@ -1,26 +1,27 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "moduleResolution": "node",
-    "module": "esnext",
-    "importHelpers": true,
-    "esModuleInterop": true,
-    "jsx": "react",
-    "skipLibCheck": true,
+    "compilerOptions": {
+        "target": "es2017",
+        "moduleResolution": "node",
+        "module": "esnext",
+        "importHelpers": true,
+        "esModuleInterop": true,
+        "jsx": "react",
+        "skipLibCheck": true,
+        "baseUrl": "src",
+        "paths": {
+            "common": ["common"],
+            "renderer": ["renderer"],
+            "main": ["main"]
+        },
 
-    "baseUrl": "src",
-    "paths": {
-      "common": ["common"],
-      "renderer": ["renderer"],
-      "main": ["main"]
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+        "noImplicitReturns": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+
+        "sourceMap": true
     },
 
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "noImplicitReturns": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-
-    "sourceMap": true
-  }
+    "include": ["src/**/*"],
 }

@@ -1834,6 +1834,67 @@ export enum Code {
 export type Cursor = string;
 
 /**
+ * A Manifest describes prerequisites (dependencies) and actions that
+ * can be taken while launching a game.
+ */
+export interface Manifest {
+  /** Actions are a list of options to give the user when launching a game. */
+  actions: Actions;
+  /**
+   * Prereqs describe libraries or frameworks that must be installed
+   * prior to launching a game
+   */
+  prereqs: Prereq[];
+}
+
+/**
+ * undocumented
+ */
+export type Actions = Action[];
+
+/**
+ * An Action is a choice for the user to pick when launching a game.
+ *
+ * see https://itch.io/docs/itch/integrating/manifest.html
+ */
+export interface Action {
+  /** human-readable or standard name */
+  name: string;
+  /** file path (relative to manifest or absolute), URL, etc. */
+  path: string;
+  /** icon name (see static/fonts/icomoon/demo.html, don't include `icon-` prefix) */
+  icon: string;
+  /** command-line arguments */
+  args: string[];
+  /** sandbox opt-in */
+  sandbox: boolean;
+  /** requested API scope */
+  scope: string;
+  /** don't redirect stdout/stderr, open in new console window */
+  console: boolean;
+  /** platform to restrict this action to */
+  platform: Platform;
+  /** localized action name */
+  locales: { [key: string]: ActionLocale };
+}
+
+/**
+ * undocumented
+ */
+export interface Prereq {
+  /** A prerequisite to be installed, see <https://itch.io/docs/itch/integrating/prereqs/> for the full list. */
+  name: string;
+}
+
+/**
+ * undocumented
+ */
+export interface ActionLocale {
+  /** A localized action name */
+  name: string;
+}
+
+/**
  * User represents an itch.io account, with basic profile info
  */
 export interface User {
@@ -2449,6 +2510,11 @@ export interface Runtime {
   /** undocumented */
   is64: boolean;
 }
+
+/**
+ * undocumented
+ */
+export type Runtimes = Runtime[];
 
 /**
  * A Receipt describes what was installed to a specific folder.

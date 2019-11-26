@@ -15,7 +15,11 @@ export function usersPath(): string {
 
 export function fsFriendlyHost(url: string): string {
   const parsed = urlParser.parse(url);
-  return parsed.host.replace(/[^a-zA-Z0-9\.]/g, "-");
+  if (parsed.host) {
+    return parsed.host.replace(/[^a-zA-Z0-9\.]/g, "-");
+  } else {
+    return "no-host";
+  }
 }
 
 export function preferencesPath(): string {
@@ -25,8 +29,7 @@ export function preferencesPath(): string {
 export function butlerDbPath(): string {
   let dbName = "butler.db";
   if (process.env.WHEN_IN_ROME) {
-    const parsed = urlParser.parse(urls.itchio);
-    dbName = `butler-${parsed.host.replace(/^[A_Za-z\._\-]/g, "_")}.db`;
+    dbName = `butler-${fsFriendlyHost(urls.itchio)}.db`;
   }
   return join(app.getPath("userData"), "db", dbName);
 }

@@ -64,9 +64,6 @@ export async function registerItchProtocol(mainState: MainState) {
     req: Electron.HandlerRequest
   ): Promise<Electron.StreamProtocolResponse> {
     logger.info(`[${req.method}] ${req.url}`);
-    for (const k of Object.keys(req.headers)) {
-      const v = req.headers[k];
-    }
     let url = new URL(req.url);
 
     let route = [url.hostname, url.pathname.replace(/^\//, "")]
@@ -77,7 +74,6 @@ export async function registerItchProtocol(mainState: MainState) {
     let firstEl = elements[0];
     elements = elements.slice(1);
 
-    let error;
     switch (firstEl) {
       case "api": {
         let payload = await handleAPIRequest(req, elements);
@@ -88,7 +84,6 @@ export async function registerItchProtocol(mainState: MainState) {
           },
           data: asReadable(JSON.stringify(payload)),
         };
-        break;
       }
       default: {
         if (elements.length == 0 || elements[0] != "assets") {
@@ -118,7 +113,7 @@ export async function registerItchProtocol(mainState: MainState) {
           let fsPath = filepath.join(getRendererDistPath(), ...elements);
           logger.info(`fsPath = ${fsPath}`);
 
-          let contentType = mime.lookup(fsPath);
+          let contentType = mime.lookup(fsPath) || "application/octet-stream";
           let content = await new Promise<Buffer>((resolve, reject) => {
             fs.readFile(
               fsPath,
@@ -146,8 +141,6 @@ export async function registerItchProtocol(mainState: MainState) {
         break;
       }
     }
-
-    throw new Error(`Unhandled route: ${route}`);
   }
 
   function asReadable(payload: string | Buffer): Readable {

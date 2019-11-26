@@ -89,9 +89,11 @@ async function onReady() {
   win.webContents.addListener("will-navigate", (ev, url) => {
     ev.preventDefault();
     console.log(`prevented ${url} navigation, broadcasting instead`);
-    broadcastPacket(packets.navigate, {
-      url,
-    });
+    broadcastPacket(
+      packets.navigate({
+        url,
+      })
+    );
   });
   win.show();
 
