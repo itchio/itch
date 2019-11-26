@@ -1,9 +1,8 @@
 import { messages } from "common/butlerd";
 import React from "react";
-import { Container } from "renderer/basics/Container";
-import { Call } from "renderer/use-butlerd";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import styled from "renderer/styles";
+import { Call } from "renderer/use-butlerd";
 
 interface Props {
   gameId: number;

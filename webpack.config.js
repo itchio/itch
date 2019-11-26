@@ -2,6 +2,7 @@ const { NamedModulesPlugin } = require("webpack");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const WebpackBuildNotifierPlugin = require("webpack-build-notifier");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 const path = require("path");
@@ -107,7 +108,12 @@ function getCommonConfig(type, env) {
           exclude: "/node_modules/",
           use: [
             { loader: "cache-loader" },
-            { loader: "thread-loader" },
+            {
+              loader: "thread-loader",
+              options: {
+                poolTimeout: Infinity,
+              },
+            },
             {
               loader: "ts-loader",
               options: {
@@ -118,6 +124,11 @@ function getCommonConfig(type, env) {
         },
       ],
     },
+    plugins: [
+      new ForkTsCheckerWebpackPlugin({
+        checkSyntacticErrors: true,
+      }),
+    ],
     optimization: {
       // N.B: minifiers break production code all the dang time, resist the urge
       // to enable them.

@@ -1,6 +1,7 @@
 import { IRequest, IResult } from "butlerd";
 import { Profile } from "common/butlerd/messages";
-import { WebviewHistory } from "main";
+import { WebviewState } from "main";
+import { QueryRequest, QueryResult } from "common/queries";
 
 // actions but not really
 
@@ -10,47 +11,21 @@ export interface Packet<PayloadType> {
 }
 
 export const packets = wirePackets({
-  tick: packet<{ time: number }>(),
-
-  // TODO: find a better way, this seems tedious.
-  getProfile: packet<{}>(),
-  getProfileResult: packet<{
-    profile?: Profile;
-  }>(),
-  setProfile: packet<{
-    profile?: Profile;
-  }>(),
-
-  // TODO: find a better way also
-  getWebviewHistory: packet<{}>(),
-  getWebviewHistoryResult: packet<{
-    webviewHistory: WebviewHistory;
-  }>(),
-  setWebviewHistory: packet<{
-    webviewHistory: WebviewHistory;
-  }>(),
-
-  // TODO: find a better way still
-  launchGame: packet<{
-    gameId: number;
-  }>(),
-
   navigate: packet<{
     // URL to open in in-app browser
     url: string;
   }>(),
 
-  hello: packet<{
-    locationHref: string;
-  }>(),
+  // global events
+  profileChanged: packet<{ profile: Profile }>(),
 
-  butlerRequest: packet<{
-    request: IRequest<any, any>;
-  }>(),
+  // queries
+  qreq: packet<QueryRequest<any>>(),
+  qres: packet<QueryResult<any>>(),
 
-  butlerResult: packet<{
-    result: IResult<any>;
-  }>(),
+  // butlerd requests
+  breq: packet<IRequest<any, any>>(),
+  bres: packet<IResult<any>>(),
 });
 
 export interface PacketCreator<PayloadType> {
@@ -60,13 +35,8 @@ export interface PacketCreator<PayloadType> {
 }
 
 function packet<PayloadType>(): PacketCreator<PayloadType> {
-  // N.B: that's a lie, but a useful one.
-  return ((type: string) => (payload: PayloadType): Packet<PayloadType> => {
-    return {
-      type,
-      payload,
-    };
-  }) as any;
+  // that's a lie, we're tricking the type system
+  return null as any;
 }
 
 interface MirrorInput {
@@ -77,9 +47,12 @@ type MirrorOutput<T> = { [key in keyof T]: T[key] };
 
 function wirePackets<T extends MirrorInput>(input: T): MirrorOutput<T> {
   const res = {} as any;
-  for (const k of Object.keys(input)) {
-    res[k] = input[k](k);
-    res[k].__type = k;
+  for (const type of Object.keys(input)) {
+    res[type] = (payload: any) => ({
+      payload,
+      type,
+    });
+    res[type].__type = type;
   }
   return res as MirrorOutput<T>;
 }

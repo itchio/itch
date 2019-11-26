@@ -120,14 +120,10 @@ export const WebviewNavigation = (props: Props) => {
         <IconButton
           onClick={withWebview(wv => {
             var wc = wv.getWebContents() as ExtendedWebContents;
-            console.log(
-              `going forward, currently ${wc.currentIndex}, history `,
-              wc.history
-            );
-            if (wc.currentIndex < wc.history.length-1) {
+            if (wc.currentIndex < wc.history.length - 1) {
               wv.goToIndex(wc.currentIndex + 1);
             }
-          }}
+          })}
           disabled={!props.canGoForward}
           icon="arrow-right"
         />

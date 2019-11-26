@@ -3,7 +3,7 @@ import { app, BrowserWindow, dialog, protocol, session } from "electron";
 import { mainLogger } from "main/logger";
 import { ButlerState, startButler } from "main/start-butler";
 import { startWebsocketServer, WebSocketState } from "main/websocket-server";
-import { Packet, packets } from "common/packets";
+import { Packet, packets, PacketCreator } from "common/packets";
 import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
 import { Profile } from "common/butlerd/messages";
 
@@ -11,22 +11,24 @@ export interface MainState {
   butler?: ButlerState;
   websocket?: WebSocketState;
   profile?: Profile;
-  webviewHistory: WebviewHistory;
+  webview: WebviewState;
 }
 
-export interface WebviewHistory {
+export interface WebviewState {
   history: string[];
   currentIndex: number;
 }
 
 let mainState: MainState = {
-  webviewHistory: {
+  webview: {
     history: ["itch://library"],
     currentIndex: 0,
   },
 };
 
-export function broadcastPacket<T>(p: Packet<T>) {
+export function broadcastPacket<T>(pc: PacketCreator<T>, payload: T) {
+  let p = pc(payload);
+
   let ws = mainState.websocket;
   if (ws) {
     let serialized = JSON.stringify(p);
