@@ -30,6 +30,7 @@ const TYPES_THAT_ARE_FORBIDDEN_TO_LISTEN = (() => {
   for (const pc of [packets.breq, packets.bres, packets.qreq, packets.qres]) {
     map[pc.__type] = true;
   }
+  return map;
 })();
 
 export class Socket {
@@ -100,7 +101,8 @@ export class Socket {
     if (payload === null) {
       throw new Error(`null payload for ${pc.__type} - that's illegal`);
     }
-    this.ws.send(JSON.stringify(pc(payload)));
+    let msg = pc(payload);
+    this.ws.send(JSON.stringify(msg));
   }
 
   listen<T>(packet: PacketCreator<T>, listener: Listener<T>): Cancel {
@@ -142,6 +144,11 @@ export class Socket {
   async query<Result>(
     qc: QueryCreator<void, Result>,
     params?: void
+  ): Promise<Result>;
+
+  async query<Params, Result>(
+    qc: QueryCreator<Params, Result>,
+    params: Params
   ): Promise<Result>;
 
   async query<Params, Result>(

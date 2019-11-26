@@ -6,7 +6,7 @@ export const queries = wireQueries({
   setWebviewState: query<{ state: WebviewState }, void>(),
 
   getProfile: query<void, { profile: Profile }>(),
-  setProfile: query<{ profile: Profile }, void>(),
+  setProfile: query<{ profile?: Profile }, void>(),
 
   launchGame: query<{ gameId: number }, void>(),
 });

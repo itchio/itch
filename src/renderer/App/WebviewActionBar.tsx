@@ -6,6 +6,8 @@ import { messages } from "common/butlerd";
 import { Button } from "renderer/basics/Button";
 import { SocketContext, useSocket } from "renderer/Route";
 import { packets } from "common/packets";
+import { useAsyncCallback } from "react-async-hook";
+import { queries } from "common/queries";
 
 const Container = styled.div`
   display: flex;
@@ -38,8 +40,49 @@ interface Props {
   path: string;
 }
 
-export const WebviewActionBar = (props: Props) => {
+const WebviewGameActionBar = (props: { gameId: number }) => {
   const socket = useSocket();
+  const { gameId } = props;
+
+  let launchGame = useAsyncCallback(async (gameId: number) => {
+    await socket!.query(queries.launchGame, { gameId });
+  });
+
+  const cavesReq = useButlerd(messages.FetchCaves, { filters: { gameId } });
+  let caves = cavesReq.state === "success" && (cavesReq.result.items || []);
+
+  return (
+    <Container>
+      <Call
+        rc={messages.FetchGame}
+        params={{ gameId }}
+        render={({ game }) => (
+          <>
+            <Cover src={game.stillCoverUrl || game.coverUrl} />
+            <Info>
+              <span>{game.title}</span>
+              {caves && <span>Found {caves.length} caves</span>}
+            </Info>
+            <Filler />
+            {caves &&
+              (caves.length > 0 ? (
+                <Button
+                  label="Launch"
+                  wide
+                  disabled={launchGame.loading}
+                  onClick={() => launchGame.execute(gameId)}
+                />
+              ) : (
+                <Button label="Install" wide onClick={() => alert("stub!")} />
+              ))}
+          </>
+        )}
+      />
+    </Container>
+  );
+};
+
+export const WebviewActionBar = (props: Props) => {
   const { path } = props;
   if (!path) {
     return <></>;
@@ -48,37 +91,7 @@ export const WebviewActionBar = (props: Props) => {
   const matches = /^games\/([0-9]+)$/.exec(path);
   if (matches) {
     const gameId = parseInt(matches[1], 10);
-    const cavesReq = useButlerd(messages.FetchCaves, { filters: { gameId } });
-    let caves = cavesReq.state === "success" && (cavesReq.result.items || []);
-
-    return (
-      <Container>
-        <Call
-          rc={messages.FetchGame}
-          params={{ gameId }}
-          render={({ game }) => (
-            <>
-              <Cover src={game.stillCoverUrl || game.coverUrl} />
-              <Info>
-                <span>{game.title}</span>
-                {caves && <span>Found {caves.length} caves</span>}
-              </Info>
-              <Filler />
-              {caves &&
-                (caves.length > 0 ? (
-                  <Button
-                    label="Launch"
-                    wide
-                    onClick={() => socket!.send(packets.launchGame, { gameId })}
-                  />
-                ) : (
-                  <Button label="Install" wide onClick={() => alert("stub!")} />
-                ))}
-            </>
-          )}
-        />
-      </Container>
-    );
+    return <WebviewGameActionBar gameId={gameId} />;
   }
 
   return <></>;

@@ -4,6 +4,7 @@ import { useState, useContext, useEffect, RefForwardingComponent } from "react";
 import { SocketContext, useSocket } from "renderer/Route";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { ErrorState } from "renderer/basics/ErrorState";
+import styled from "renderer/styles";
 
 export type ButlerdState<U> =
   | ButlerdLoadingState
@@ -55,6 +56,13 @@ export function useButlerd<T, U>(
   return state;
 }
 
+const CircleContainer = styled.div`
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const Call = <T, U>(props: {
   rc: RequestCreator<T, U>;
   params: T;
@@ -64,7 +72,11 @@ export const Call = <T, U>(props: {
 
   switch (req.state) {
     case "loading":
-      return <LoadingCircle progress={-1} />;
+      return (
+        <CircleContainer>
+          <LoadingCircle progress={0.3} />
+        </CircleContainer>
+      );
     case "error":
       return <ErrorState error={req.error} />;
     case "success":

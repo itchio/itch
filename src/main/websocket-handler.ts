@@ -5,6 +5,7 @@ import { MainState, broadcastPacket } from "main";
 import { Client, IResult, IDGenerator, RequestError } from "butlerd";
 import { messages } from "common/butlerd";
 import { prereqsPath } from "common/util/paths";
+import dump from "common/util/dump";
 
 export class WebsocketContext {
   constructor(private socket: WebSocket) {}
@@ -76,6 +77,8 @@ export class WebsocketHandler {
     });
 
     onPacket(packets.qreq, (cx, req) => {
+      console.debug(`got qreq: ${dump(req)}`);
+
       let handler = this.queryHandlers[req.method];
       if (!handler) {
         cx.reply(packets.qres, {
@@ -143,12 +146,12 @@ export class WebsocketHandler {
   }
 
   handle(cx: WebsocketContext, message: string) {
-    let payload = JSON.parse(message) as Packet<any>;
-    let ph = this.packetHandlers[payload.type];
+    let msg = JSON.parse(message) as Packet<any>;
+    let ph = this.packetHandlers[msg.type];
     if (!ph) {
-      console.warn(`Unhandled renderer packet: [[${payload}]]`);
+      console.warn(`Unhandled renderer packet: [[${msg}]]`);
       return;
     }
-    ph(cx, payload);
+    ph(cx, msg.payload);
   }
 }

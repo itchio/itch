@@ -2,6 +2,7 @@ import { WebviewTag } from "electron";
 import React, { useState } from "react";
 import styled, { animations } from "renderer/styles";
 import { IconButton } from "renderer/basics/IconButton";
+import { ExtendedWebContents } from "renderer/App/Webview";
 
 const NavDiv = styled.div`
   color: ${props => props.theme.baseText};

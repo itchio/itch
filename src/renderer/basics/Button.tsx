@@ -111,6 +111,7 @@ interface Props {
   disabled?: boolean;
   id?: string;
   translucent?: boolean;
+  children?: JSX.Element;
 }
 
 export const Button = (props: Props) => {

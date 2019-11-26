@@ -6,6 +6,9 @@ import { WebviewNavigation } from "renderer/App/WebviewNavigation";
 import { SocketContext, useSocket } from "renderer/Route";
 import styled from "renderer/styles";
 import { Cancel } from "renderer/Socket";
+import { useAsyncCallback } from "react-async-hook";
+import { WebviewState } from "main";
+import { queries } from "common/queries";
 
 const WebviewContainer = styled.div`
   width: 100%;
@@ -21,7 +24,7 @@ const WebviewContainer = styled.div`
   }
 `;
 
-type ExtendedWebContents = WebContents & {
+export type ExtendedWebContents = WebContents & {
   history: string[];
   currentIndex: number;
 };
@@ -35,6 +38,10 @@ export const Webview = () => {
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [path, setPath] = useState("");
+
+  let setWebviewHistory = useAsyncCallback(async (state: WebviewState) => {
+    await socket!.query(queries.setWebviewState, { state });
+  });
 
   useEffect(() => {
     const wv = viewRef.current;
@@ -51,11 +58,9 @@ export const Webview = () => {
 
       const wc = wv.getWebContents() as ExtendedWebContents;
       console.log(`index ${wc.currentIndex}, history `, wc.history);
-      socket.send(packets.setWebviewHistory, {
-        webviewHistory: {
-          history: wc.history,
-          currentIndex: wc.currentIndex,
-        },
+      setWebviewHistory.execute({
+        history: wc.history,
+        currentIndex: wc.currentIndex,
       });
       setUrl(url);
       setCanGoBack(wc.canGoBack());
@@ -67,20 +72,19 @@ export const Webview = () => {
       if (/^about:blank/.test(ev.url)) {
         console.log(`initial load, restoring history`);
 
-        // TODO: find better way
-        socket.send(packets.getWebviewHistory, {});
-        let cancel: Cancel;
-        cancel = socket.listen(
-          packets.getWebviewHistoryResult,
-          ({ webviewHistory }) => {
-            cancel();
-            const { history, currentIndex } = webviewHistory;
+        (async () => {
+          try {
+            let { state } = await socket.query(queries.getWebviewState);
+            const { history, currentIndex } = state;
             console.log(`restoring index ${currentIndex}, history `, history);
             const wc = wv.getWebContents() as ExtendedWebContents;
             wc.history = history;
             wc.goToIndex(currentIndex);
+          } catch (e) {
+            console.error(e);
+            alert(`Something went very wrong:\n\n${e.stack}`);
           }
-        );
+        })();
       } else {
         didNavigate(ev.url);
       }

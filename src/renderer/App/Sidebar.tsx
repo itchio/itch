@@ -9,6 +9,8 @@ import {
 import { packets } from "common/packets";
 import { IconButton } from "renderer/basics/IconButton";
 import { Icon } from "renderer/basics/Icon";
+import { useAsyncCallback } from "react-async-hook";
+import { queries } from "common/queries";
 
 const SidebarDiv = styled.div`
   flex-basis: 240px;
@@ -59,6 +61,10 @@ export const Sidebar = () => {
   let profile = useProfile();
   let socket = useSocket();
 
+  let logout = useAsyncCallback(async () => {
+    await socket!.query(queries.setProfile, {});
+  });
+
   return (
     <SidebarDiv>
       <LogoImg src={require("static/images/logos/app-white.svg")} />
@@ -91,11 +97,7 @@ export const Sidebar = () => {
         >
           {profile.user.displayName || profile.user.username}
           &nbsp;
-          <IconButton
-            icon="exit"
-            // FIXME: figure out why TypeScript doesn't complain about passing a null payload
-            onClick={() => socket!.send(packets.setProfile, {})}
-          />
+          <IconButton icon="exit" onClick={logout.execute} />
         </div>
       ) : (
         "no profile"

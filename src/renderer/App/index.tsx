@@ -6,7 +6,7 @@ import { Webview } from "renderer/App/Webview";
 import { useProfile, useSocket } from "renderer/Route";
 import styled from "renderer/styles";
 import { Call } from "renderer/use-butlerd";
-import { useAsyncCallback } from "react-async-hook";
+import { useAsyncCallback, useAsync } from "react-async-hook";
 import { queries } from "common/queries";
 
 const AppDiv = styled.div`
@@ -30,6 +30,10 @@ export const App = () => {
   let socket = useSocket();
   let profile = useProfile();
 
+  let login = useAsyncCallback(async profile => {
+    await socket!.query(queries.setProfile, { profile });
+  });
+
   if (!profile) {
     return (
       <Call
@@ -48,10 +52,7 @@ export const App = () => {
                     border: "1px solid #ccc",
                     borderRadius: "4px",
                   }}
-                  onClick={useAsyncCallback(
-                    async () =>
-                      await socket!.query(queries.setProfile, { profile })
-                  )}
+                  onClick={() => login.execute(profile)}
                 >
                   {profile.user.displayName || profile.user.username}
                 </li>
