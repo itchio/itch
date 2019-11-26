@@ -4,8 +4,10 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { App } from "renderer/App";
 import { GamePage } from "renderer/pages/GamePage";
 import { LibraryPage } from "renderer/pages/LibraryPage";
-import { Cancel, Socket } from "renderer/Socket";
+import { Cancel, Socket, useListen } from "renderer/Socket";
+import { useAsync } from "react-async-hook";
 import styled from "renderer/styles";
+import { queries } from "../common/queries";
 
 export const SocketContext = createContext<Socket | undefined>(undefined);
 export const ProfileContext = createContext<Profile | undefined>(undefined);
@@ -65,12 +67,12 @@ export const Route = () => {
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [error, setError] = useState<String | undefined>(undefined);
 
-  useEffect(() => {
+  useAsync(async () => {
     if (socket) {
       return;
     }
 
-    (async () => {
+    try {
       const SESSION_WS_KEY = "internal-websocket";
 
       let address = sessionStorage.getItem(SESSION_WS_KEY);
@@ -85,39 +87,23 @@ export const Route = () => {
       }
 
       let socket = await Socket.connect(address);
-      socket.listen(packets.tick, ({ time }) => {
-        console.log("tick! time = ", time);
-      });
       setSocket(socket);
-    })().catch(e => {
+    } catch (e) {
       console.error(e.stack);
       setError(e.stack);
-    });
-  });
+    }
+  }, []);
 
-  useEffect(() => {
+  useListen(socket, packets.profileChanged, ({ profile }) =>
+    setProfile(profile)
+  );
+
+  useAsync(async () => {
     if (!socket) {
       return;
     }
-
-    let cancels: Cancel[] = [];
-    cancels.push(
-      socket.listen(packets.getProfileResult, ({ profile }) => {
-        setProfile(profile);
-      })
-    );
-    cancels.push(
-      socket.listen(packets.setProfile, ({ profile }) => {
-        setProfile(profile);
-      })
-    );
-    // TODO: better one-off requests
-    socket.send(packets.getProfile, {});
-    return () => {
-      for (let c of cancels) {
-        c();
-      }
-    };
+    const { profile } = await socket.query(queries.getProfile);
+    setProfile(profile);
   }, [socket]);
 
   if (socket) {

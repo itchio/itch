@@ -6,6 +6,8 @@ import { Webview } from "renderer/App/Webview";
 import { useProfile, useSocket } from "renderer/Route";
 import styled from "renderer/styles";
 import { Call } from "renderer/use-butlerd";
+import { useAsyncCallback } from "react-async-hook";
+import { queries } from "common/queries";
 
 const AppDiv = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -46,7 +48,10 @@ export const App = () => {
                     border: "1px solid #ccc",
                     borderRadius: "4px",
                   }}
-                  onClick={() => socket!.send(packets.setProfile, { profile })}
+                  onClick={useAsyncCallback(
+                    async () =>
+                      await socket!.query(queries.setProfile, { profile })
+                  )}
                 >
                   {profile.user.displayName || profile.user.username}
                 </li>

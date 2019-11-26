@@ -46,6 +46,7 @@
     "node-emoji": "^1.10.0",
     "polished": "^3.4.1",
     "react": "^16.8.6",
+    "react-async-hook": "^3.6.1",
     "react-dom": "^16.8.6",
     "react-hint": "^3.2.0",
     "react-intl": "^2.9.0",

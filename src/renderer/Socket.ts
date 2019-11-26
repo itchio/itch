@@ -1,6 +1,7 @@
 import { packets, Packet, PacketCreator } from "common/packets";
 import { RequestError, RequestCreator } from "butlerd/lib/support";
 import { QueryCreator, QueryRequest } from "common/queries";
+import { useEffect } from "react";
 
 type PacketKey = keyof typeof packets;
 type Listener<Payload> = (payload: Payload) => void;
@@ -9,6 +10,19 @@ export type Cancel = () => void;
 interface Outbound<Result> {
   resolve: (result: Result) => void;
   reject: (error: Error) => void;
+}
+
+export function useListen<T>(
+  socket: Socket | undefined,
+  pc: PacketCreator<T>,
+  cb: (payload: T) => void
+) {
+  useEffect(() => {
+    if (socket) {
+      return socket.listen(pc, cb);
+    }
+    return undefined;
+  }, [socket]);
 }
 
 const TYPES_THAT_ARE_FORBIDDEN_TO_LISTEN = (() => {
@@ -124,6 +138,11 @@ export class Socket {
       this.outboundCalls[request.id] = { resolve, reject };
     });
   }
+
+  async query<Result>(
+    qc: QueryCreator<void, Result>,
+    params?: void
+  ): Promise<Result>;
 
   async query<Params, Result>(
     qc: QueryCreator<Params, Result>,
