@@ -45,10 +45,25 @@ export const Webview = () => {
     wv.addEventListener("will-navigate", ev => {
       setUrl(ev.url);
     });
-    wv.addEventListener("did-navigate", ev => {
-      console.log(`did navigate`, ev.url);
+
+    let didNavigate = (url: string) => {
+      console.log(`navigated to`, url);
 
       const wc = wv.getWebContents() as ExtendedWebContents;
+      console.log(`index ${wc.currentIndex}, history `, wc.history);
+      socket.send(packets.setWebviewHistory, {
+        webviewHistory: {
+          history: wc.history,
+          currentIndex: wc.currentIndex,
+        },
+      });
+      setUrl(url);
+      setCanGoBack(wc.canGoBack());
+      setCanGoForward(wc.canGoForward());
+    };
+
+    wv.addEventListener("did-navigate", ev => {
+      console.log("did-navigate");
       if (/^about:blank/.test(ev.url)) {
         console.log(`initial load, restoring history`);
 
@@ -61,23 +76,20 @@ export const Webview = () => {
             cancel();
             const { history, currentIndex } = webviewHistory;
             console.log(`restoring index ${currentIndex}, history `, history);
+            const wc = wv.getWebContents() as ExtendedWebContents;
             wc.history = history;
             wc.goToIndex(currentIndex);
           }
         );
       } else {
-        console.log(`index ${wc.currentIndex}, history `, wc.history);
-        socket.send(packets.setWebviewHistory, {
-          webviewHistory: {
-            history: wc.history,
-            currentIndex: wc.currentIndex,
-          },
-        });
-        setUrl(ev.url);
-        setCanGoBack(wc.canGoBack());
-        setCanGoForward(wc.canGoForward());
+        didNavigate(ev.url);
       }
     });
+    wv.addEventListener("did-navigate-in-page", ev => {
+      console.log("did-navigate-in-page");
+      didNavigate(ev.url);
+    });
+
     wv.addEventListener("load-commit", ev => {
       if (ev.isMainFrame) {
         setUrl(ev.url);

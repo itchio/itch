@@ -1,5 +1,5 @@
 import { WebviewTag } from "electron";
-import React from "react";
+import React, { useState } from "react";
 import styled, { animations } from "renderer/styles";
 import { IconButton } from "renderer/basics/IconButton";
 
@@ -63,6 +63,21 @@ const AddressBar = styled.div`
 
   flex-grow: 1;
   max-width: 600px;
+
+  input {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    line-height: 100%;
+    background: transparent;
+    border: none;
+  }
+
+  &,
+  input {
+    font-size: 14px;
+    color: ${props => props.theme.baseText};
+  }
 `;
 
 interface Props {
@@ -75,6 +90,7 @@ interface Props {
 }
 
 export const WebviewNavigation = (props: Props) => {
+  const [editing, setEditing] = useState(false);
   const { title, url, loading } = props;
   let withWebview = (f: (wv: WebviewTag) => void) => (...args: any[]) => {
     if (props.viewRef.current) {
@@ -88,14 +104,40 @@ export const WebviewNavigation = (props: Props) => {
       <Controls className={loading ? "loading" : ""}>
         <IconButton
           onClick={withWebview(wv => wv.goBack())}
+          disabled={!props.canGoBack}
           icon="arrow-left"
         />
         <IconButton
           onClick={withWebview(wv => wv.goForward())}
+          disabled={!props.canGoForward}
           icon="arrow-right"
         />
         <IconButton onClick={withWebview(wv => wv.reload())} icon="repeat" />
-        <AddressBar>{/^about:/.test(url) ? "" : url}</AddressBar>
+        <AddressBar onClick={() => setEditing(true)}>
+          {editing ? (
+            <input
+              autoFocus
+              defaultValue={url}
+              onBlur={() => setEditing(false)}
+              onKeyPress={ev => {
+                if (ev.key === "Enter") {
+                  let url = ev.currentTarget.value;
+                  console.log(`navigating to`, url);
+                  if (props.viewRef.current) {
+                    props.viewRef.current.loadURL(url);
+                  }
+                  setEditing(false);
+                } else {
+                  console.log(ev.key);
+                }
+              }}
+            ></input>
+          ) : /^about:/.test(url) ? (
+            ""
+          ) : (
+            url
+          )}
+        </AddressBar>
         <IconButton onClick={withWebview(wv => wv.openDevTools())} icon="cog" />
         <div className="loader-inner"></div>
       </Controls>
