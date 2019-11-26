@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "renderer/styles";
 import dump from "common/util/dump";
-import { Call } from "renderer/use-butlerd";
+import { Call, useButlerd } from "renderer/use-butlerd";
 import { messages } from "common/butlerd";
 import { Button } from "renderer/basics/Button";
+import { SocketContext, useSocket } from "renderer/Route";
+import { packets } from "common/packets";
 
 const Container = styled.div`
   display: flex;
@@ -37,6 +39,7 @@ interface Props {
 }
 
 export const WebviewActionBar = (props: Props) => {
+  const socket = useSocket();
   const { path } = props;
   if (!path) {
     return <></>;
@@ -45,6 +48,9 @@ export const WebviewActionBar = (props: Props) => {
   const matches = /^games\/([0-9]+)$/.exec(path);
   if (matches) {
     const gameId = parseInt(matches[1], 10);
+    const cavesReq = useButlerd(messages.FetchCaves, { filters: { gameId } });
+    let caves = cavesReq.state === "success" && (cavesReq.result.items || []);
+
     return (
       <Container>
         <Call
@@ -55,22 +61,19 @@ export const WebviewActionBar = (props: Props) => {
               <Cover src={game.stillCoverUrl || game.coverUrl} />
               <Info>
                 <span>{game.title}</span>
-                <Call
-                  rc={messages.FetchCaves}
-                  params={{
-                    filters: {
-                      gameId: game.id,
-                    },
-                  }}
-                  render={({ items }) => {
-                    return (
-                      <span>Found {items ? items.length : "no"} caves</span>
-                    );
-                  }}
-                />
+                {caves && <span>Found {caves.length} caves</span>}
               </Info>
               <Filler />
-              <Button label="Launch ?" wide onClick={() => alert("stub!")} />
+              {caves &&
+                (caves.length > 0 ? (
+                  <Button
+                    label="Launch"
+                    wide
+                    onClick={() => socket!.send(packets.launchGame, { gameId })}
+                  />
+                ) : (
+                  <Button label="Install" wide onClick={() => alert("stub!")} />
+                ))}
             </>
           )}
         />

@@ -30,6 +30,11 @@ export const packets = wirePackets({
     webviewHistory: WebviewHistory;
   }>(),
 
+  // TODO: find a better way still
+  launchGame: packet<{
+    gameId: number;
+  }>(),
+
   navigate: packet<{
     // URL to open in in-app browser
     url: string;

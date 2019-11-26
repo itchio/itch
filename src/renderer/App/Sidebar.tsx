@@ -1,6 +1,11 @@
 import React, { useContext } from "react";
 import styled from "renderer/styles";
-import { SocketContext, ProfileContext } from "renderer/Route";
+import {
+  SocketContext,
+  ProfileContext,
+  useProfile,
+  useSocket,
+} from "renderer/Route";
 import { packets } from "common/packets";
 import { IconButton } from "renderer/basics/IconButton";
 import { Icon } from "renderer/basics/Icon";
@@ -51,8 +56,8 @@ const Spacer = styled.div`
 `;
 
 export const Sidebar = () => {
-  let profile = useContext(ProfileContext);
-  let socket = useContext(SocketContext);
+  let profile = useProfile();
+  let socket = useSocket();
 
   return (
     <SidebarDiv>

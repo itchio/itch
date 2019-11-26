@@ -1,14 +1,17 @@
-import React, { useState, useEffect, createContext } from "react";
+import { Profile } from "common/butlerd/messages";
+import { packets } from "common/packets";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { App } from "renderer/App";
 import { GamePage } from "renderer/pages/GamePage";
-import styled from "renderer/styles";
-import { Socket, Cancel } from "renderer/Socket";
-import { packets } from "common/packets";
 import { LibraryPage } from "renderer/pages/LibraryPage";
-import { Profile } from "common/butlerd/messages";
+import { Cancel, Socket } from "renderer/Socket";
+import styled from "renderer/styles";
 
 export const SocketContext = createContext<Socket | undefined>(undefined);
 export const ProfileContext = createContext<Profile | undefined>(undefined);
+
+export const useSocket = () => useContext(SocketContext);
+export const useProfile = () => useContext(ProfileContext);
 
 const RouteContentsDiv = styled.div`
   background: ${props => props.theme.breadBackground};

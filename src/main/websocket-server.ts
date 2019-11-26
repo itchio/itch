@@ -4,6 +4,8 @@ import dump from "common/util/dump";
 import { Packet, packets, PacketCreator } from "common/packets";
 import { MainState, broadcastPacket } from "main";
 import { Client, IDGenerator, IResult, RequestError } from "butlerd";
+import { messages } from "common/butlerd";
+import { prereqsPath } from "common/util/paths";
 
 let logger = mainLogger.childWithName("ws");
 
@@ -68,6 +70,25 @@ export async function startWebsocketServer(mainState: MainState) {
     on(packets.getWebviewHistory, () => {
       const { webviewHistory } = mainState;
       reply(packets.getWebviewHistoryResult({ webviewHistory }));
+    });
+
+    on(packets.launchGame, ({ gameId }) => {
+      (async () => {
+        let client = new Client(mainState.butler!.endpoint);
+        const { items } = await client.call(messages.FetchCaves, {
+          filters: { gameId },
+        });
+        if (!items || items.length == 0) {
+          console.warn(`No caves, can't launch game`);
+        }
+        // FIXME: multiple caves
+        const cave = items[0];
+        await client.call(messages.Launch, {
+          caveId: cave.id,
+          prereqsDir: prereqsPath(),
+          // TODO: sandbox preferences
+        });
+      })();
     });
 
     on(packets.butlerRequest, payload => {

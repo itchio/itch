@@ -1,7 +1,7 @@
 import React from "react";
 import { RequestCreator } from "butlerd/lib/support";
 import { useState, useContext, useEffect, RefForwardingComponent } from "react";
-import { SocketContext } from "renderer/Route";
+import { SocketContext, useSocket } from "renderer/Route";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { ErrorState } from "renderer/basics/ErrorState";
 
@@ -29,7 +29,7 @@ export function useButlerd<T, U>(
   params: T
 ): ButlerdState<U> {
   const [state, setState] = useState<ButlerdState<U>>({ state: "loading" });
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
 
   useEffect(() => {
     if (!socket) {

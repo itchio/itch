@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
-import styled from "renderer/styles";
+import { messages } from "common/butlerd";
+import { packets } from "common/packets";
+import React from "react";
 import { Sidebar } from "renderer/App/Sidebar";
 import { Webview } from "renderer/App/Webview";
-import { SocketContext, ProfileContext } from "renderer/Route";
-import { packets } from "common/packets";
+import { useProfile, useSocket } from "renderer/Route";
+import styled from "renderer/styles";
 import { Call } from "renderer/use-butlerd";
-import { messages } from "common/butlerd";
-import dump from "common/util/dump";
 
 const AppDiv = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -26,8 +25,8 @@ const MainDiv = styled.div`
 `;
 
 export const App = () => {
-  let socket = useContext(SocketContext);
-  let profile = useContext(ProfileContext);
+  let socket = useSocket();
+  let profile = useProfile();
 
   if (!profile) {
     return (

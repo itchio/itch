@@ -3,7 +3,7 @@ import { packets } from "common/packets";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { WebviewActionBar } from "renderer/App/WebviewActionBar";
 import { WebviewNavigation } from "renderer/App/WebviewNavigation";
-import { SocketContext } from "renderer/Route";
+import { SocketContext, useSocket } from "renderer/Route";
 import styled from "renderer/styles";
 import { Cancel } from "renderer/Socket";
 
@@ -27,7 +27,7 @@ type ExtendedWebContents = WebContents & {
 };
 
 export const Webview = () => {
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
   const viewRef = useRef<WebviewTag>(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
