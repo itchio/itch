@@ -3,7 +3,7 @@ import styled from "renderer/styles";
 import { Sidebar } from "renderer/App/Sidebar";
 import { Webview } from "renderer/App/Webview";
 import { SocketContext, ProfileContext } from "renderer/Route";
-import { packets } from "packets";
+import { packets } from "common/packets";
 import { Call } from "renderer/use-butlerd";
 import { messages } from "common/butlerd";
 import dump from "common/util/dump";

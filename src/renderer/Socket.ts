@@ -1,4 +1,4 @@
-import { packets, Packet, PacketCreator } from "packets";
+import { packets, Packet, PacketCreator } from "common/packets";
 import { RequestError, RequestCreator } from "butlerd/lib/support";
 
 type PacketKey = keyof typeof packets;

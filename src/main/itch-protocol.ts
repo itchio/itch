@@ -5,6 +5,7 @@ import * as fs from "fs";
 import * as http from "http";
 import * as filepath from "path";
 import dump from "common/util/dump";
+import mime from "mime-types";
 import { getRendererDistPath } from "common/util/resources";
 import { session, protocol } from "electron";
 import { Readable } from "stream";
@@ -117,15 +118,7 @@ export async function registerItchProtocol(mainState: MainState) {
           let fsPath = filepath.join(getRendererDistPath(), ...elements);
           logger.info(`fsPath = ${fsPath}`);
 
-          let contentType = "application/octet-stream";
-          let lowerPath = fsPath.toLowerCase();
-          if (lowerPath.endsWith(".js")) {
-            contentType = "text/javascript; charset=UTF-8";
-          } else if (lowerPath.endsWith(".html")) {
-            contentType = "text/html; charset=UTF-8";
-          } else if (lowerPath.endsWith(".svg")) {
-            contentType = "image/svg+xml";
-          }
+          let contentType = mime.lookup(fsPath);
           let content = await new Promise<Buffer>((resolve, reject) => {
             fs.readFile(
               fsPath,

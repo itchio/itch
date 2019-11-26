@@ -1,5 +1,6 @@
 import { IRequest, IResult } from "butlerd";
 import { Profile } from "common/butlerd/messages";
+import { WebviewHistory } from "main";
 
 // actions but not really
 
@@ -18,6 +19,15 @@ export const packets = wirePackets({
   }>(),
   setProfile: packet<{
     profile?: Profile;
+  }>(),
+
+  // TODO: find a better way also
+  getWebviewHistory: packet<{}>(),
+  getWebviewHistoryResult: packet<{
+    webviewHistory: WebviewHistory;
+  }>(),
+  setWebviewHistory: packet<{
+    webviewHistory: WebviewHistory;
   }>(),
 
   navigate: packet<{

@@ -1,7 +1,7 @@
 import WebSocket from "ws";
 import { mainLogger } from "main/logger";
 import dump from "common/util/dump";
-import { Packet, packets, PacketCreator } from "packets";
+import { Packet, packets, PacketCreator } from "common/packets";
 import { MainState, broadcastPacket } from "main";
 import { Client, IDGenerator, IResult, RequestError } from "butlerd";
 
@@ -60,6 +60,14 @@ export async function startWebsocketServer(mainState: MainState) {
     on(packets.getProfile, () => {
       const { profile } = mainState;
       reply(packets.getProfileResult({ profile }));
+    });
+
+    on(packets.setWebviewHistory, payload => {
+      mainState.webviewHistory = payload.webviewHistory;
+    });
+    on(packets.getWebviewHistory, () => {
+      const { webviewHistory } = mainState;
+      reply(packets.getWebviewHistoryResult({ webviewHistory }));
     });
 
     on(packets.butlerRequest, payload => {

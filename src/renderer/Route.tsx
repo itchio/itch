@@ -3,7 +3,7 @@ import { App } from "renderer/App";
 import { GamePage } from "renderer/pages/GamePage";
 import styled from "renderer/styles";
 import { Socket, Cancel } from "renderer/Socket";
-import { packets } from "packets";
+import { packets } from "common/packets";
 import { LibraryPage } from "renderer/pages/LibraryPage";
 import { Profile } from "common/butlerd/messages";
 

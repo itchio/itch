@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import styled from "renderer/styles";
 import { SocketContext, ProfileContext } from "renderer/Route";
-import { packets } from "packets";
+import { packets } from "common/packets";
 import { IconButton } from "renderer/basics/IconButton";
 import { Icon } from "renderer/basics/Icon";
 
@@ -57,25 +57,6 @@ export const Sidebar = () => {
   return (
     <SidebarDiv>
       <LogoImg src={require("static/images/logos/app-white.svg")} />
-      {profile ? (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          {profile.user.displayName || profile.user.username}
-          &nbsp;
-          <IconButton
-            icon="exit"
-            // FIXME: figure out why TypeScript doesn't complain about passing a null payload
-            onClick={() => socket!.send(packets.setProfile, {})}
-          />
-        </div>
-      ) : (
-        "no profile"
-      )}
       <SidebarElement href="https://itch.io">
         <Icon icon="earth" /> Explore
       </SidebarElement>
@@ -95,6 +76,25 @@ export const Sidebar = () => {
       <SidebarElement href="itch://preferences">
         <Icon icon="cog" /> Preferences
       </SidebarElement>
+      {profile ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          {profile.user.displayName || profile.user.username}
+          &nbsp;
+          <IconButton
+            icon="exit"
+            // FIXME: figure out why TypeScript doesn't complain about passing a null payload
+            onClick={() => socket!.send(packets.setProfile, {})}
+          />
+        </div>
+      ) : (
+        "no profile"
+      )}
     </SidebarDiv>
   );
 };

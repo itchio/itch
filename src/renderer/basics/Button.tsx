@@ -1,14 +1,14 @@
 import classNames from "classnames";
 import { LocalizedString } from "common/types";
 import React from "react";
-import Icon from "renderer/basics/Icon";
+import { Icon } from "renderer/basics/Icon";
 import styled, * as styles from "renderer/styles";
 
 const Label = styled.div`
   ${styles.singleLine};
 `;
 
-const ButtonDiv = styled.div`
+const Container = styled.div`
   ${styles.singleLine};
   transition: all 0.2s;
 
@@ -98,49 +98,6 @@ const Spacer = styled.div`
   }
 `;
 
-class Button extends React.PureComponent<Props, any> {
-  render() {
-    const {
-      className,
-      primary,
-      fat,
-      icon,
-      iconComponent,
-      label,
-      hint,
-      wide,
-      disabled,
-      translucent,
-      onClick,
-      ...restProps
-    } = this.props;
-
-    return (
-      <ButtonDiv
-        onClick={disabled ? null : onClick}
-        data-rh={hint ? JSON.stringify(hint) : null}
-        data-rh-at="top"
-        className={classNames(className, {
-          primary,
-          wide,
-          fat,
-          disabled,
-          translucent,
-        })}
-        {...restProps}
-      >
-        {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
-        {iconComponent || icon ? (
-          <Spacer className={classNames({ wide })} />
-        ) : null}
-        {icon && label ? " " : null}
-        {label ? <Label>{label}</Label> : null}
-        {this.props.children}
-      </ButtonDiv>
-    );
-  }
-}
-
 interface Props {
   className?: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
@@ -156,4 +113,43 @@ interface Props {
   translucent?: boolean;
 }
 
-export default Button;
+export const Button = (props: Props) => {
+  const {
+    className,
+    primary,
+    fat,
+    icon,
+    iconComponent,
+    label,
+    hint,
+    wide,
+    disabled,
+    translucent,
+    onClick,
+    ...restProps
+  } = props;
+
+  return (
+    <Container
+      onClick={disabled ? undefined : onClick}
+      data-rh={hint ? JSON.stringify(hint) : null}
+      data-rh-at="top"
+      className={classNames(className, {
+        primary,
+        wide,
+        fat,
+        disabled,
+        translucent,
+      })}
+      {...restProps}
+    >
+      {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
+      {iconComponent || icon ? (
+        <Spacer className={classNames({ wide })} />
+      ) : null}
+      {icon && label ? " " : null}
+      {label ? <Label>{label}</Label> : null}
+      {props.children}
+    </Container>
+  );
+};
