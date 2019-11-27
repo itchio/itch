@@ -1,17 +1,34 @@
+import { Profile } from "common/butlerd/messages";
 import env from "common/env";
-import { app, BrowserWindow, dialog, protocol, session } from "electron";
+import { PacketCreator, packets } from "common/packets";
+import { app, BrowserWindow, dialog, session } from "electron";
+import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
 import { mainLogger } from "main/logger";
 import { ButlerState, startButler } from "main/start-butler";
 import { startWebsocketServer, WebSocketState } from "main/websocket-server";
-import { Packet, packets, PacketCreator } from "common/packets";
-import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
-import { Profile } from "common/butlerd/messages";
+import { PreferencesState, loadPreferences } from "main/load-preferences";
+import { CurrentLocale, LocaleStrings } from "common/locales";
+
+export interface LocalesConfig {
+  locales: {
+    value: string;
+    label: string;
+  }[];
+}
 
 export interface MainState {
   butler?: ButlerState;
   websocket?: WebSocketState;
   profile?: Profile;
   webview: WebviewState;
+  preferences?: PreferencesState;
+  localesConfig?: LocalesConfig;
+  localeState?: LocaleState;
+}
+
+export interface LocaleState {
+  englishStrings: LocaleStrings;
+  current: CurrentLocale;
 }
 
 export interface WebviewState {
@@ -59,6 +76,7 @@ async function main() {
       app.on("ready", resolve);
     })
   );
+  promises.push(loadPreferences(mainState));
   promises.push(startButler(mainState));
   promises.push(startWebsocketServer(mainState));
   await Promise.all(promises);

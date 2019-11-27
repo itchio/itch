@@ -55,6 +55,12 @@ export class WebsocketHandler {
       mainState.webview = params.state;
     });
 
+    onQuery(queries.getCurrentLocale, async params => {
+      return {
+        currentLocale: mainState.localeState!.current,
+      };
+    });
+
     onQuery(queries.launchGame, async ({ gameId }) => {
       let client = new Client(mainState.butler!.endpoint);
       const { items } = await client.call(messages.FetchCaves, {

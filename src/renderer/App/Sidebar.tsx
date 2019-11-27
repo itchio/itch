@@ -1,16 +1,12 @@
-import React, { useContext } from "react";
-import styled from "renderer/styles";
-import {
-  SocketContext,
-  ProfileContext,
-  useProfile,
-  useSocket,
-} from "renderer/Route";
-import { packets } from "common/packets";
-import { IconButton } from "renderer/basics/IconButton";
-import { Icon } from "renderer/basics/Icon";
-import { useAsyncCallback } from "react-async-hook";
 import { queries } from "common/queries";
+import React from "react";
+import { useAsyncCallback } from "react-async-hook";
+import { Icon } from "renderer/basics/Icon";
+import { IconButton } from "renderer/basics/IconButton";
+import { useProfile, useSocket } from "renderer/Route";
+import styled from "renderer/styles";
+import { T, _ } from "renderer/t";
+import { FormattedMessage } from "react-intl";
 
 const SidebarDiv = styled.div`
   flex-basis: 240px;
@@ -87,6 +83,7 @@ export const Sidebar = () => {
       <SidebarElement href="itch://preferences">
         <Icon icon="cog" /> Preferences
       </SidebarElement>
+      <FormattedMessage id="toast.title" />
       {profile ? (
         <div
           style={{

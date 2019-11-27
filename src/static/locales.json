@@ -35,6 +35,6 @@
     { "value": "sv", "label": "Svenska" },
     { "value": "tr", "label": "Türkçe" },
     { "value": "uk", "label": "Українська" },
-    { "value": "zh", "label": "中文" },
+    { "value": "zh", "label": "中文" }
   ]
 }

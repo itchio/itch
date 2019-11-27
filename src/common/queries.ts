@@ -1,5 +1,6 @@
 import { WebviewState } from "main";
 import { Profile } from "common/butlerd/messages";
+import { CurrentLocale } from "common/locales";
 
 export const queries = wireQueries({
   getWebviewState: query<void, { state: WebviewState }>(),
@@ -7,6 +8,8 @@ export const queries = wireQueries({
 
   getProfile: query<void, { profile: Profile }>(),
   setProfile: query<{ profile?: Profile }, void>(),
+
+  getCurrentLocale: query<void, { currentLocale: CurrentLocale }>(),
 
   launchGame: query<{ gameId: number }, void>(),
 });

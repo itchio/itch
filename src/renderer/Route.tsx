@@ -1,3 +1,4 @@
+import { IntlProvider } from "react-intl";
 import { Profile } from "common/butlerd/messages";
 import { packets } from "common/packets";
 import React, { createContext, useContext, useEffect, useState } from "react";
@@ -8,6 +9,8 @@ import { Cancel, Socket, useListen } from "renderer/Socket";
 import { useAsync } from "react-async-hook";
 import styled from "renderer/styles";
 import { queries } from "../common/queries";
+import { LocaleState } from "main";
+import { CurrentLocale } from "common/locales";
 
 export const SocketContext = createContext<Socket | undefined>(undefined);
 export const ProfileContext = createContext<Profile | undefined>(undefined);
@@ -63,6 +66,10 @@ export const RouteContents = (props: { elements: string[] }) => {
 };
 
 export const Route = () => {
+  const [currentLocale, setCurrentLocale] = useState<CurrentLocale>({
+    lang: "en",
+    strings: {},
+  });
   const [socket, setSocket] = useState<Socket | undefined>(undefined);
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [error, setError] = useState<String | undefined>(undefined);
@@ -96,23 +103,34 @@ export const Route = () => {
   );
 
   useAsync(async () => {
-    if (!socket) {
-      return;
+    if (socket) {
+      const { profile } = await socket.query(queries.getProfile);
+      setProfile(profile);
     }
-    const { profile } = await socket.query(queries.getProfile);
-    setProfile(profile);
   }, [socket]);
 
-  if (socket) {
+  useAsync(async () => {
+    if (socket) {
+      const { currentLocale } = await socket.query(queries.getCurrentLocale);
+      setCurrentLocale(currentLocale);
+    }
+  }, [socket]);
+
+  if (socket && Object.keys(currentLocale.strings).length > 0) {
     let elements = [location.host, location.pathname.replace(/^\//, "")].filter(
       s => s.length > 0
     );
     return (
       <SocketContext.Provider value={socket}>
         <ProfileContext.Provider value={profile}>
-          <RouteContentsDiv>
-            <RouteContents elements={elements} />
-          </RouteContentsDiv>
+          <IntlProvider
+            locale={currentLocale.lang}
+            messages={currentLocale.strings}
+          >
+            <RouteContentsDiv>
+              <RouteContents elements={elements} />
+            </RouteContentsDiv>
+          </IntlProvider>
         </ProfileContext.Provider>
       </SocketContext.Provider>
     );
