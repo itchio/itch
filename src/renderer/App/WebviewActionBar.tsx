@@ -9,6 +9,7 @@ import { packets } from "common/packets";
 import { useAsyncCallback } from "react-async-hook";
 import { queries } from "common/queries";
 import { Modal } from "renderer/basics/Modal";
+import { FormattedMessage } from "react-intl";
 
 const Container = styled.div`
   display: flex;
@@ -70,14 +71,14 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
             {caves &&
               (caves.length > 0 ? (
                 <Button
-                  label="Launch"
+                  label={<FormattedMessage id="grid.item.launch" />}
                   wide
                   disabled={launchGame.loading}
                   onClick={() => launchGame.execute(gameId)}
                 />
               ) : (
                 <Button
-                  label="Install"
+                  label={<FormattedMessage id="grid.item.install" />}
                   wide
                   onClick={() => setInstalling(true)}
                 />

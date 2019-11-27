@@ -109,9 +109,7 @@ export async function registerItchProtocol(mainState: MainState) {
             data: res,
           };
         } else {
-          logger.info(`elements = ${dump(elements)}`);
           let fsPath = filepath.join(getRendererDistPath(), ...elements);
-          logger.info(`fsPath = ${fsPath}`);
 
           let contentType = mime.lookup(fsPath) || "application/octet-stream";
           let content = await new Promise<Buffer>((resolve, reject) => {

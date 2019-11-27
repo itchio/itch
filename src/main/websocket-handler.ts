@@ -1,10 +1,11 @@
-import WebSocket from "ws";
-import { Packet, PacketCreator, packets } from "common/packets";
-import { QueryCreator, queries } from "common/queries";
-import { MainState, broadcastPacket } from "main";
-import { Client, IResult, IDGenerator, RequestError } from "butlerd";
+import { Client, IDGenerator, IResult, RequestError } from "butlerd";
 import { messages } from "common/butlerd";
+import { Packet, PacketCreator, packets } from "common/packets";
+import { queries, QueryCreator } from "common/queries";
 import { prereqsPath } from "common/util/paths";
+import { broadcastPacket, MainState } from "main";
+import WebSocket from "ws";
+import { loadLocale, setPreferences } from "main/load-preferences";
 import dump from "common/util/dump";
 
 export class WebsocketContext {
@@ -60,6 +61,14 @@ export class WebsocketHandler {
         currentLocale: mainState.localeState!.current,
       };
     });
+    onQuery(queries.switchLanguage, async params => {
+      const { lang } = params;
+      await loadLocale(mainState, lang);
+      broadcastPacket(packets.currentLocaleChanged, {
+        currentLocale: mainState.localeState!.current,
+      });
+      await setPreferences(mainState, { lang });
+    });
 
     onQuery(queries.launchGame, async ({ gameId }) => {
       let client = new Client(mainState.butler!.endpoint);
@@ -85,6 +94,7 @@ export class WebsocketHandler {
     onPacket(packets.qreq, (cx, req) => {
       let handler = this.queryHandlers[req.method];
       if (!handler) {
+        console.warn(`Unhandled query: ${dump(req)}`);
         cx.reply(packets.qres, {
           state: "error",
           id: req.id,

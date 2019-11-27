@@ -10,6 +10,7 @@ export const queries = wireQueries({
   setProfile: query<{ profile?: Profile }, void>(),
 
   getCurrentLocale: query<void, { currentLocale: CurrentLocale }>(),
+  switchLanguage: query<{ lang: string }, void>(),
 
   launchGame: query<{ gameId: number }, void>(),
 });

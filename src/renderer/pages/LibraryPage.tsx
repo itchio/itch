@@ -6,6 +6,7 @@ import { ErrorState } from "renderer/basics/ErrorState";
 import { ProfileContext } from "renderer/Route";
 import styled from "renderer/styles";
 import { Call } from "renderer/use-butlerd";
+import { FormattedMessage } from "react-intl";
 
 let ratio = 0.7;
 
@@ -50,7 +51,9 @@ export const LibraryPage = () => {
 
   return (
     <Container>
-      <h2>Installed items</h2>
+      <h2>
+        <FormattedMessage id="sidebar.installed" />
+      </h2>
       <Call
         rc={messages.FetchCaves}
         params={{ limit: 15 }}
@@ -59,7 +62,9 @@ export const LibraryPage = () => {
         )}
       />
 
-      <h2>Owned items</h2>
+      <h2>
+        <FormattedMessage id="sidebar.owned" />
+      </h2>
       <Call
         rc={messages.FetchProfileOwnedKeys}
         params={{ profileId: profile.id, limit: 15 }}

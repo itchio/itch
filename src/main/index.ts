@@ -8,6 +8,8 @@ import { ButlerState, startButler } from "main/start-butler";
 import { startWebsocketServer, WebSocketState } from "main/websocket-server";
 import { PreferencesState, loadPreferences } from "main/load-preferences";
 import { CurrentLocale, LocaleStrings } from "common/locales";
+import { colors } from "common/colors";
+import { Logger } from "common/logger";
 
 export interface LocalesConfig {
   locales: {
@@ -96,6 +98,8 @@ async function onReady() {
     title: env.appName,
     width: 1280,
     height: 720,
+    backgroundColor: colors.baseBackground,
+    show: false,
     webPreferences: {
       session: rendererSession,
       webviewTag: true,
@@ -103,7 +107,6 @@ async function onReady() {
   });
   win.setMenu(null);
   win.setMenuBarVisibility(false);
-  win.loadURL("itch://app");
   win.webContents.addListener("will-navigate", (ev, url) => {
     ev.preventDefault();
     console.log(`prevented ${url} navigation, broadcasting instead`);
@@ -111,6 +114,8 @@ async function onReady() {
       url,
     });
   });
+  await win.loadURL("itch://app");
+  mainLogger.info(`BrowserWindow loaded, showing`);
   win.show();
 
   if (env.development || process.env.DEVTOOLS === "1") {

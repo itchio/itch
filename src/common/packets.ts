@@ -2,6 +2,7 @@ import { IRequest, IResult } from "butlerd";
 import { Profile } from "common/butlerd/messages";
 import { WebviewState } from "main";
 import { QueryRequest, QueryResult } from "common/queries";
+import { CurrentLocale } from "common/locales";
 
 // actions but not really
 
@@ -18,6 +19,7 @@ export const packets = wirePackets({
 
   // global events
   profileChanged: packet<{ profile: Profile }>(),
+  currentLocaleChanged: packet<{ currentLocale: CurrentLocale }>(),
 
   // queries
   qreq: packet<QueryRequest<any>>(),

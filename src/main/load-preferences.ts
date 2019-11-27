@@ -1,6 +1,6 @@
 import { MainState, LocalesConfig } from "main";
 import { preferencesPath } from "common/util/paths";
-import { readJSONFile } from "main/fs";
+import { readJSONFile, writeJSONFile } from "main/fs";
 import { getLocalePath, getLocalesConfigPath } from "common/util/resources";
 import { LocaleStrings } from "common/locales";
 import { mainLogger } from "main/logger";
@@ -89,7 +89,7 @@ export async function loadPreferences(mainState: MainState) {
   await loadLocale(mainState, preferences.lang);
 }
 
-async function loadLocale(mainState: MainState, lang: string) {
+export async function loadLocale(mainState: MainState, lang: string) {
   if (!mainState.localeState) {
     throw new Error(`loadLocale called before mainState.localeState is set`);
   }
@@ -106,7 +106,7 @@ async function loadLocale(mainState: MainState, lang: string) {
   }
 
   let strings: LocaleStrings = await readJSONFile(
-    getLocalePath(`${normalizeLang}.json`)
+    getLocalePath(`${normalizedLang}.json`)
   );
   logger.info(
     `Loaded ${
@@ -117,4 +117,20 @@ async function loadLocale(mainState: MainState, lang: string) {
     lang: normalizedLang,
     strings,
   };
+}
+
+export async function setPreferences(
+  mainState: MainState,
+  values: Partial<PreferencesState>
+) {
+  if (!mainState.preferences) {
+    throw new Error(`setPreferences called before preferences were loaded`);
+  }
+
+  mainState.preferences = {
+    ...mainState.preferences,
+    ...values,
+  };
+
+  await writeJSONFile(preferencesPath(), mainState.preferences);
 }

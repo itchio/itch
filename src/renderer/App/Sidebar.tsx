@@ -54,7 +54,7 @@ const Spacer = styled.div`
   flex-grow: 1;
 `;
 
-type PopoverName = "preferences" | null;
+type PopoverName = "preferences" | "downloads" | null;
 
 export const Sidebar = () => {
   const [popover, setPopover] = useState<PopoverName>(null);
@@ -69,25 +69,25 @@ export const Sidebar = () => {
     <SidebarDiv>
       <LogoImg src={require("static/images/logos/app-white.svg")} />
       <SidebarElement href="https://itch.io">
-        <Icon icon="earth" /> Explore
+        <Icon icon="earth" /> <FormattedMessage id={"sidebar.explore"} />
       </SidebarElement>
       <SidebarElement href="itch://library">
-        <Icon icon="heart-filled" /> Library
+        <Icon icon="heart-filled" /> <FormattedMessage id={"sidebar.library"} />
       </SidebarElement>
       <SidebarElement href="itch://collections">
-        <Icon icon="video_collection" /> Collections
+        <Icon icon="video_collection" />{" "}
+        <FormattedMessage id={"sidebar.collections"} />
       </SidebarElement>
       <SidebarElement href="itch://dashboard">
-        <Icon icon="archive" /> Dashboard
+        <Icon icon="archive" /> <FormattedMessage id={"sidebar.dashboard"} />
       </SidebarElement>
       <Spacer />
-      <SidebarElement href="itch://downloads">
-        <Icon icon="download" /> Downloads
+      <SidebarElement onClick={() => setPopover("downloads")}>
+        <Icon icon="download" /> <FormattedMessage id={"sidebar.downloads"} />
       </SidebarElement>
       <SidebarElement onClick={() => setPopover("preferences")}>
-        <Icon icon="cog" /> Preferences
+        <Icon icon="cog" /> <FormattedMessage id={"sidebar.preferences"} />
       </SidebarElement>
-      <FormattedMessage id="toast.title" />
       {profile ? (
         <div
           style={{
@@ -109,6 +109,13 @@ export const Sidebar = () => {
 };
 
 const Popover = (props: { name: PopoverName; onClose: () => void }) => {
+  const socket = useSocket();
+  const switchLanguage = useAsyncCallback(async lang => {
+    if (socket) {
+      socket.query(queries.switchLanguage, { lang });
+    }
+  });
+
   const { name, onClose } = props;
   switch (name) {
     case "preferences":
@@ -117,7 +124,26 @@ const Popover = (props: { name: PopoverName; onClose: () => void }) => {
           onClose={onClose}
           title={<FormattedMessage id="sidebar.preferences" />}
         >
-          Have some prefs!
+          <p>Have some prefs!</p>
+          <p>
+            <button onClick={() => switchLanguage.execute("fr")}>
+              Switch to French
+            </button>
+          </p>
+          <p>
+            <button onClick={() => switchLanguage.execute("en")}>
+              Switch to English
+            </button>
+          </p>
+        </Modal>
+      );
+    case "downloads":
+      return (
+        <Modal
+          onClose={onClose}
+          title={<FormattedMessage id="sidebar.downloads" />}
+        >
+          <p>Your downloads go here</p>
         </Modal>
       );
     case null:

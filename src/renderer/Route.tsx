@@ -11,6 +11,16 @@ import styled from "renderer/styles";
 import { queries } from "../common/queries";
 import { LocaleState } from "main";
 import { CurrentLocale } from "common/locales";
+import { networkConnections } from "systeminformation";
+
+let firstMeaningfulRender = true;
+let log = (...args: any[]) => {
+  let d = new Date();
+  console.log(
+    `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds()}`,
+    ...args
+  );
+};
 
 export const SocketContext = createContext<Socket | undefined>(undefined);
 export const ProfileContext = createContext<Profile | undefined>(undefined);
@@ -84,13 +94,19 @@ export const Route = () => {
 
       let address = sessionStorage.getItem(SESSION_WS_KEY);
       if (!address) {
+        log(`Fetching websocket addres...`);
         let res = await fetch("itch://api/websocket-address");
+        log(`Fetching websocket addres...done`);
         let payload = await res.json();
         address = payload.address as string;
         sessionStorage.setItem(SESSION_WS_KEY, address);
       }
 
+      log(`Connecting to WebSocket...`);
+      let t1 = Date.now();
       let socket = await Socket.connect(address);
+      let t2 = Date.now();
+      log(`Connecting to WebSocket...done (took ${t2 - t1} ms)`);
       setSocket(socket);
     } catch (e) {
       console.error(e.stack);
@@ -104,19 +120,35 @@ export const Route = () => {
 
   useAsync(async () => {
     if (socket) {
+      log(`Getting profile...`);
       const { profile } = await socket.query(queries.getProfile);
+      log(`Getting profile...done`);
       setProfile(profile);
+    } else {
+      log(`Not getting current profile yet`);
     }
   }, [socket]);
 
+  useListen(socket, packets.currentLocaleChanged, ({ currentLocale }) => {
+    setCurrentLocale(currentLocale);
+  });
+
   useAsync(async () => {
     if (socket) {
+      log(`Getting current locale...`);
       const { currentLocale } = await socket.query(queries.getCurrentLocale);
       setCurrentLocale(currentLocale);
+      log(`Getting current locale...done`);
+    } else {
+      log(`Not getting current locale yet`);
     }
   }, [socket]);
 
   if (socket && Object.keys(currentLocale.strings).length > 0) {
+    if (firstMeaningfulRender) {
+      firstMeaningfulRender = false;
+      log(`First meaningful render!`);
+    }
     let elements = [location.host, location.pathname.replace(/^\//, "")].filter(
       s => s.length > 0
     );
@@ -143,7 +175,7 @@ export const Route = () => {
         </pre>
       );
     } else {
-      return <div />;
+      return <div>Loading...</div>;
     }
   }
 };

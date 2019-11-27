@@ -1,14 +1,13 @@
-import { WebContents, WebviewTag } from "electron";
 import { packets } from "common/packets";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { queries } from "common/queries";
+import { WebContents, WebviewTag } from "electron";
+import { WebviewState } from "main";
+import React, { useEffect, useRef, useState } from "react";
+import { useAsyncCallback } from "react-async-hook";
 import { WebviewActionBar } from "renderer/App/WebviewActionBar";
 import { WebviewNavigation } from "renderer/App/WebviewNavigation";
-import { SocketContext, useSocket } from "renderer/Route";
+import { useSocket } from "renderer/Route";
 import styled from "renderer/styles";
-import { Cancel } from "renderer/Socket";
-import { useAsyncCallback } from "react-async-hook";
-import { WebviewState } from "main";
-import { queries } from "common/queries";
 
 const WebviewContainer = styled.div`
   width: 100%;

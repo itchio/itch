@@ -1,106 +1,13 @@
-import { lighten } from "polished";
-
-// colors
-
-export const baseColors = {
-  codGray: "#151515",
-  darkMineShaft: "#2e2b2c",
-  lightMineShaft: "#383434",
-  zambezi: "#5d5757",
-  silverChalice: "#a0a0a0",
-  swissCoffee: "#dad2d2",
-  ivory: "#fffff0",
-
-  flushMahogany: "#d14343",
-  mintJulep: "#efeebf",
-  gossip: "#b9e8a1",
-
-  shamrock: "#24c091",
-  amber: "#ffc200",
-  heliotrope: "#c17dff",
-
-  carnation: "#fa5c5c",
-  vividTangerine: "#ff8080",
-};
-
-export const uiColors = {
-  background: "#1d1d1d",
-
-  border: "#404040",
-  borderFocused: "#676767",
-
-  // FIXME: no pure blacks
-  textShadow: "#000000",
-  boxShadow: "#1b1919",
-};
-
-const breadBackground = `#141414`;
-const itemBackground = "#1e1e1e";
-
-export const colors = {
-  accent: baseColors.carnation,
-  lightAccent: baseColors.vividTangerine,
-
-  error: baseColors.flushMahogany,
-  warning: baseColors.mintJulep,
-  success: baseColors.gossip,
-
-  buy: baseColors.shamrock,
-  sale: "#34a0f2",
-  bundle: baseColors.heliotrope,
-
-  explanation: itemBackground,
-
-  meatBackground: breadBackground,
-  itemBackground,
-
-  baseBackground: baseColors.codGray,
-  baseText: baseColors.ivory,
-
-  inputBackground: uiColors.background,
-  inputFocusedBackground: lighten(0.1, uiColors.background),
-  inputSelectedBackground: lighten(0.2, uiColors.background),
-  inputText: "#d4cece",
-  inputPlaceholder: baseColors.silverChalice,
-
-  inputBorder: uiColors.border,
-  inputBorderFocused: uiColors.borderFocused,
-
-  inputTextShadow: uiColors.textShadow,
-  inputBoxShadow: uiColors.boxShadow,
-  inputBoxShadowFocused: "#1b1919",
-
-  sidebarBackground: breadBackground,
-  sidebarBorder: lighten(0.03, breadBackground),
-  sidebarEntryFocusedBackground: lighten(0.05, breadBackground),
-
-  dropdownBackground: lighten(0.15, baseColors.codGray),
-
-  secondaryText: lighten(0.1, baseColors.silverChalice),
-  secondaryTextHover: baseColors.ivory,
-
-  ternaryText: baseColors.zambezi,
-
-  breadBackground,
-  breadBoxShadow: "#171717",
-
-  filterBackground: "#4a4848",
-  filterBorder: "#333",
-
-  filterTagBorder: "#777575",
-  filterTagBackground: "#5f5c5c",
-  filterTagText: "#e0dfdf",
-
-  tooltipBackground: baseColors.swissCoffee,
-  tooltipText: baseColors.codGray,
-
-  prefBorder: baseColors.zambezi,
-
-  priceNormal: "#70f1c9",
-  priceSale: "#ffd700",
-
-  windowBorder: baseColors.lightMineShaft,
-};
+import * as sc from "styled-components";
+import { ThemedStyledComponentsModule } from "styled-components";
+import { colors, baseColors } from "common/colors";
+const {
+  default: styled,
+  css,
+  keyframes,
+  createGlobalStyle,
+  ThemeProvider,
+} = sc as ThemedStyledComponentsModule<Theme>;
 
 export const fontSizes = {
   small: "12px",
@@ -134,16 +41,6 @@ export const theme = {
 };
 
 export type Theme = typeof theme;
-
-import * as sc from "styled-components";
-import { ThemedStyledComponentsModule } from "styled-components";
-const {
-  default: styled,
-  css,
-  keyframes,
-  createGlobalStyle,
-  ThemeProvider,
-} = sc as ThemedStyledComponentsModule<Theme>;
 
 export default styled;
 export { css, keyframes, createGlobalStyle, ThemeProvider };
