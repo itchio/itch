@@ -94,6 +94,20 @@ async function onReady() {
   let rendererSession = session.defaultSession;
   await registerItchProtocol(mainState);
 
+  mainLogger.info(`Setting proxy rules...`);
+  let beforeProxy = Date.now();
+  rendererSession
+    .setProxy({
+      pacScript: null as any,
+      proxyRules: null as any,
+      proxyBypassRules: "<local>",
+    })
+    .then(() => {
+      mainLogger.info(
+        `Proxy rules were set. Took ${Date.now() - beforeProxy} ms.`
+      );
+    });
+
   let win = new BrowserWindow({
     title: env.appName,
     width: 1280,
