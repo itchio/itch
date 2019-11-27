@@ -1,12 +1,12 @@
 import { queries } from "common/queries";
-import React from "react";
+import React, { useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
+import { FormattedMessage } from "react-intl";
 import { Icon } from "renderer/basics/Icon";
 import { IconButton } from "renderer/basics/IconButton";
+import { Modal } from "renderer/basics/Modal";
 import { useProfile, useSocket } from "renderer/Route";
 import styled from "renderer/styles";
-import { T, _ } from "renderer/t";
-import { FormattedMessage } from "react-intl";
 
 const SidebarDiv = styled.div`
   flex-basis: 240px;
@@ -36,6 +36,7 @@ const SidebarElement = styled.a`
   &:hover {
     background: ${props => props.theme.sidebarEntryFocusedBackground};
     color: ${props => props.theme.baseText};
+    cursor: pointer;
   }
 
   text-decoration: none;
@@ -53,7 +54,10 @@ const Spacer = styled.div`
   flex-grow: 1;
 `;
 
+type PopoverName = "preferences" | null;
+
 export const Sidebar = () => {
+  const [popover, setPopover] = useState<PopoverName>(null);
   let profile = useProfile();
   let socket = useSocket();
 
@@ -80,7 +84,7 @@ export const Sidebar = () => {
       <SidebarElement href="itch://downloads">
         <Icon icon="download" /> Downloads
       </SidebarElement>
-      <SidebarElement href="itch://preferences">
+      <SidebarElement onClick={() => setPopover("preferences")}>
         <Icon icon="cog" /> Preferences
       </SidebarElement>
       <FormattedMessage id="toast.title" />
@@ -99,6 +103,24 @@ export const Sidebar = () => {
       ) : (
         "no profile"
       )}
+      <Popover name={popover} onClose={() => setPopover(null)} />
     </SidebarDiv>
   );
+};
+
+const Popover = (props: { name: PopoverName; onClose: () => void }) => {
+  const { name, onClose } = props;
+  switch (name) {
+    case "preferences":
+      return (
+        <Modal
+          onClose={onClose}
+          title={<FormattedMessage id="sidebar.preferences" />}
+        >
+          Have some prefs!
+        </Modal>
+      );
+    case null:
+      return null;
+  }
 };

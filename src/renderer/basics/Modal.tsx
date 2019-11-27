@@ -56,8 +56,8 @@ const Filler = styled.div`
 `;
 
 export const Modal = (props: {
-  title?: string;
-  children?: JSX.Element | JSX.Element[];
+  title?: string | JSX.Element;
+  children?: JSX.Element | JSX.Element[] | string;
   onClose: () => void;
 }) => {
   const { title, children, onClose } = props;
