@@ -93,9 +93,16 @@ interface Props {
 export const WebviewNavigation = (props: Props) => {
   const [editing, setEditing] = useState(false);
   const { title, url, loading } = props;
-  let withWebview = (f: (wv: WebviewTag) => void) => (...args: any[]) => {
-    if (props.viewRef.current) {
-      f(props.viewRef.current);
+
+  let withWebview = (f: (wv: WebviewTag, wc: ExtendedWebContents) => void) => {
+    let wv = props.viewRef.current;
+    if (wv) {
+      try {
+        const wc = wv.getWebContents() as ExtendedWebContents;
+        f(wv, wc);
+      } catch (e) {
+        console.warn(e);
+      }
     }
   };
 
@@ -104,30 +111,31 @@ export const WebviewNavigation = (props: Props) => {
       <TitleBar>{title}</TitleBar>
       <Controls className={loading ? "loading" : ""}>
         <IconButton
-          onClick={withWebview(wv => {
-            var wc = wv.getWebContents() as ExtendedWebContents;
-            console.log(
-              `going back, currently ${wc.currentIndex}, history `,
-              wc.history
-            );
-            if (wc.currentIndex > 0) {
-              wv.goToIndex(wc.currentIndex - 1);
-            }
-          })}
+          onClick={() =>
+            withWebview((wv, wc) => {
+              if (wc.currentIndex > 0) {
+                wv.goToIndex(wc.currentIndex - 1);
+              }
+            })
+          }
           disabled={!props.canGoBack}
           icon="arrow-left"
         />
         <IconButton
-          onClick={withWebview(wv => {
-            var wc = wv.getWebContents() as ExtendedWebContents;
-            if (wc.currentIndex < wc.history.length - 1) {
-              wv.goToIndex(wc.currentIndex + 1);
-            }
-          })}
+          onClick={() =>
+            withWebview((wv, wc) => {
+              if (wc.currentIndex < wc.history.length - 1) {
+                wc.goToIndex(wc.currentIndex + 1);
+              }
+            })
+          }
           disabled={!props.canGoForward}
           icon="arrow-right"
         />
-        <IconButton onClick={withWebview(wv => wv.reload())} icon="repeat" />
+        <IconButton
+          onClick={() => withWebview(wv => wv.reload())}
+          icon="repeat"
+        />
         <AddressBar onClick={() => setEditing(true)}>
           {editing ? (
             <input
@@ -137,7 +145,6 @@ export const WebviewNavigation = (props: Props) => {
               onKeyPress={ev => {
                 if (ev.key === "Enter") {
                   let url = ev.currentTarget.value;
-                  console.log(`navigating to`, url);
                   if (props.viewRef.current) {
                     props.viewRef.current.loadURL(url);
                   }
@@ -153,7 +160,10 @@ export const WebviewNavigation = (props: Props) => {
             url
           )}
         </AddressBar>
-        <IconButton onClick={withWebview(wv => wv.openDevTools())} icon="cog" />
+        <IconButton
+          onClick={() => withWebview(wv => wv.openDevTools())}
+          icon="cog"
+        />
         <div className="loader-inner"></div>
       </Controls>
     </NavDiv>

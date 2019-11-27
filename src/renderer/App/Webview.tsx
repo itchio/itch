@@ -54,10 +54,7 @@ export const Webview = () => {
     });
 
     let didNavigate = (url: string) => {
-      console.log(`navigated to`, url);
-
       const wc = wv.getWebContents() as ExtendedWebContents;
-      console.log(`index ${wc.currentIndex}, history `, wc.history);
       setWebviewHistory.execute({
         history: wc.history,
         currentIndex: wc.currentIndex,
@@ -68,21 +65,17 @@ export const Webview = () => {
     };
 
     wv.addEventListener("did-navigate", ev => {
-      console.log("did-navigate");
       if (/^about:blank/.test(ev.url)) {
-        console.log(`initial load, restoring history`);
-
         (async () => {
           try {
             let { state } = await socket.query(queries.getWebviewState);
             const { history, currentIndex } = state;
-            console.log(`restoring index ${currentIndex}, history `, history);
             const wc = wv.getWebContents() as ExtendedWebContents;
             wc.history = history;
             wc.goToIndex(currentIndex);
           } catch (e) {
             console.error(e);
-            alert(`Something went very wrong:\n\n${e.stack}`);
+            // alert(`Something went very wrong:\n\n${e.stack}`);
           }
         })();
       } else {
@@ -90,7 +83,6 @@ export const Webview = () => {
       }
     });
     wv.addEventListener("did-navigate-in-page", ev => {
-      console.log("did-navigate-in-page");
       didNavigate(ev.url);
     });
 
@@ -117,7 +109,6 @@ export const Webview = () => {
           (document.querySelector("meta[name='itch:path']") || {content: ""}).content
         `
         ).then(path => {
-          console.log(`scraped path: `, path);
           setPath(path);
         });
       }

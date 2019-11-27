@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import styled from "renderer/styles";
 import dump from "common/util/dump";
 import { Call, useButlerd } from "renderer/use-butlerd";
@@ -8,6 +8,7 @@ import { SocketContext, useSocket } from "renderer/Route";
 import { packets } from "common/packets";
 import { useAsyncCallback } from "react-async-hook";
 import { queries } from "common/queries";
+import { Modal } from "renderer/basics/Modal";
 
 const Container = styled.div`
   display: flex;
@@ -42,6 +43,8 @@ interface Props {
 
 const WebviewGameActionBar = (props: { gameId: number }) => {
   const socket = useSocket();
+  let [installing, setInstalling] = useState(false);
+
   const { gameId } = props;
 
   let launchGame = useAsyncCallback(async (gameId: number) => {
@@ -73,11 +76,32 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
                   onClick={() => launchGame.execute(gameId)}
                 />
               ) : (
-                <Button label="Install" wide onClick={() => alert("stub!")} />
+                <Button
+                  label="Install"
+                  wide
+                  onClick={() => setInstalling(true)}
+                />
               ))}
           </>
         )}
       />
+      {installing && (
+        <Modal title="Install some stuff?" onClose={() => setInstalling(false)}>
+          <p>Okay you do the work now:</p>
+          <Call
+            rc={messages.InstallPlan}
+            params={{ gameId }}
+            render={result => {
+              return (
+                <>
+                  <pre>info {dump(result.info)}</pre>
+                  <pre>uploads {dump(result.uploads)}</pre>
+                </>
+              );
+            }}
+          />
+        </Modal>
+      )}
     </Container>
   );
 };

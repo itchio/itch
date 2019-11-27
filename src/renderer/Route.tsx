@@ -77,13 +77,10 @@ export const Route = () => {
 
       let address = sessionStorage.getItem(SESSION_WS_KEY);
       if (!address) {
-        console.log(`Finding out websocket address`);
         let res = await fetch("itch://api/websocket-address");
         let payload = await res.json();
         address = payload.address as string;
         sessionStorage.setItem(SESSION_WS_KEY, address);
-      } else {
-        console.log(`Using cached websocket address`);
       }
 
       let socket = await Socket.connect(address);

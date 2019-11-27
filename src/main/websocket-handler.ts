@@ -77,8 +77,6 @@ export class WebsocketHandler {
     });
 
     onPacket(packets.qreq, (cx, req) => {
-      console.debug(`got qreq: ${dump(req)}`);
-
       let handler = this.queryHandlers[req.method];
       if (!handler) {
         cx.reply(packets.qres, {
