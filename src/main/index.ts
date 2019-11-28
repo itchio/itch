@@ -1,15 +1,14 @@
 import { Profile } from "common/butlerd/messages";
+import { colors } from "common/colors";
 import env from "common/env";
+import { CurrentLocale, LocaleStrings } from "common/locales";
 import { PacketCreator, packets } from "common/packets";
 import { app, BrowserWindow, dialog, session } from "electron";
 import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
+import { loadPreferences, PreferencesState } from "main/load-preferences";
 import { mainLogger } from "main/logger";
 import { ButlerState, startButler } from "main/start-butler";
 import { startWebsocketServer, WebSocketState } from "main/websocket-server";
-import { PreferencesState, loadPreferences } from "main/load-preferences";
-import { CurrentLocale, LocaleStrings } from "common/locales";
-import { colors } from "common/colors";
-import { Logger } from "common/logger";
 
 export interface LocalesConfig {
   locales: {

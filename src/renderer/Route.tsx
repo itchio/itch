@@ -1,17 +1,15 @@
-import { IntlProvider } from "react-intl";
 import { Profile } from "common/butlerd/messages";
+import { CurrentLocale } from "common/locales";
 import { packets } from "common/packets";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { useAsync } from "react-async-hook";
+import { IntlProvider } from "react-intl";
 import { App } from "renderer/App";
 import { GamePage } from "renderer/pages/GamePage";
 import { LibraryPage } from "renderer/pages/LibraryPage";
-import { Cancel, Socket, useListen } from "renderer/Socket";
-import { useAsync } from "react-async-hook";
+import { Socket, useListen } from "renderer/Socket";
 import styled from "renderer/styles";
 import { queries } from "../common/queries";
-import { LocaleState } from "main";
-import { CurrentLocale } from "common/locales";
-import { networkConnections } from "systeminformation";
 
 let firstMeaningfulRender = true;
 let log = (...args: any[]) => {

@@ -48,6 +48,8 @@ export async function registerItchProtocol(mainState: MainState) {
     req: Electron.HandlerRequest,
     elements: string[]
   ): Promise<Object> {
+    console.log(`elements = ${dump(elements)}`);
+
     let ws = mainState.websocket;
     if (!ws) {
       throw new Error(`WebSocket not initialized yet! (this is a bug)`);
@@ -55,8 +57,7 @@ export async function registerItchProtocol(mainState: MainState) {
 
     return {
       address: ws.address,
-      url: req.url,
-      elements,
+      secret: ws.secret,
     };
   }
 
