@@ -1,4 +1,4 @@
-import { IRequest, IResult } from "butlerd";
+import { Request, RpcResult } from "butlerd";
 import { Profile } from "common/butlerd/messages";
 import { OngoingLaunch } from "common/launches";
 import { CurrentLocale } from "common/locales";
@@ -28,8 +28,8 @@ export const packets = wirePackets({
   qres: packet<QueryResult<any>>(),
 
   // butlerd requests
-  breq: packet<IRequest<any, any>>(),
-  bres: packet<IResult<any>>(),
+  breq: packet<Request<any, any>>(),
+  bres: packet<RpcResult<any>>(),
 });
 
 export interface PacketCreator<PayloadType> {

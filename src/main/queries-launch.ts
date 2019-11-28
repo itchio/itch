@@ -76,13 +76,12 @@ export function registerQueriesLaunch(mainState: MainState, onQuery: OnQuery) {
         },
         convo => {
           hookLogging(convo, logger);
-          convo.onNotification(messages.PrereqsStarted, ({ params }) => {
+          convo.onNotification(messages.PrereqsStarted, ({ tasks }) => {
             logger.info(`Handling prereqs...`);
-            // TODO: figure out why params is optional for INotification ?
-            logger.info(`Prereqs tasks: ${dump(params!.tasks)}`);
+            logger.info(`Prereqs tasks: ${dump(tasks)}`);
           });
           convo.onNotification(messages.PrereqsTaskState, () => {});
-          convo.on(messages.PrereqsFailed, async params => {
+          convo.onRequest(messages.PrereqsFailed, async params => {
             logger.info(`Prereqs failed: ${dump(params)}`);
             // TODO: allow continuing
             return { continue: false };

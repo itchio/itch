@@ -43,7 +43,7 @@ export async function startButler(mainState: MainState) {
 }
 
 export function hookLogging(convo: Conversation, logger: Logger) {
-  convo.on(messages.Log, async ({ level, message }) => {
+  convo.onNotification(messages.Log, async ({ level, message }) => {
     switch (level) {
       case "debug":
         logger.debug(message);

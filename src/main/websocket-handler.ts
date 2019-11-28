@@ -1,13 +1,11 @@
-import { Client, IDGenerator, IResult, RequestError } from "butlerd";
-import { messages } from "common/butlerd";
+import { Client, IDGenerator, RequestError, RpcResult } from "butlerd";
 import { Packet, PacketCreator, packets } from "common/packets";
 import { queries, QueryCreator } from "common/queries";
-import { prereqsPath } from "common/util/paths";
-import { broadcastPacket, MainState } from "main";
-import WebSocket from "ws";
-import { loadLocale, setPreferences } from "main/load-preferences";
 import dump from "common/util/dump";
+import { broadcastPacket, MainState } from "main";
+import { loadLocale, setPreferences } from "main/load-preferences";
 import { registerQueriesLaunch } from "main/queries-launch";
+import WebSocket from "ws";
 
 export class WebsocketContext {
   constructor(private socket: WebSocket) {}
@@ -107,7 +105,8 @@ export class WebsocketHandler {
 
     onPacket(packets.breq, (cx, request) => {
       if (!mainState.butler) {
-        let result: IResult<any> = {
+        let result: RpcResult<any> = {
+          jsonrpc: "2.0",
           id: request.id,
           error: {
             code: 999,
@@ -119,23 +118,26 @@ export class WebsocketHandler {
       }
 
       const client = new Client(mainState.butler.endpoint);
+      const rc = Object.assign(
+        (params: any) => (gen: IDGenerator) => ({
+          ...request,
+          id: gen.generateID(),
+        }),
+        { __method: request.method }
+      );
       client
-        .call(
-          (params: any) => (gen: IDGenerator) => ({
-            ...request,
-            id: gen.generateID(),
-          }),
-          request.params
-        )
+        .call(rc, request.params)
         .then(originalResult => {
-          let result: IResult<any> = {
+          let result: RpcResult<any> = {
+            jsonrpc: "2.0",
             id: request.id,
             result: originalResult,
           };
           cx.reply(packets.bres, result);
         })
         .catch((error: RequestError) => {
-          let result: IResult<any> = {
+          let result: RpcResult<any> = {
+            jsonrpc: "2.0",
             id: request.id,
             error: error.rpcError,
           };
