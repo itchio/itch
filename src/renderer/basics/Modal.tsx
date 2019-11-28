@@ -16,6 +16,8 @@ const ModalShroud = styled.div`
   justify-content: center;
 
   animation: ${animations.fadeIn} 0.4s;
+
+  z-index: 10;
 `;
 
 const ModalContents = styled.div`
