@@ -8,6 +8,7 @@ import { WebviewActionBar } from "renderer/App/WebviewActionBar";
 import { WebviewNavigation } from "renderer/App/WebviewNavigation";
 import { useSocket } from "renderer/Route";
 import styled from "renderer/styles";
+import { useListen } from "renderer/Socket";
 
 const WebviewContainer = styled.div`
   width: 100%;
@@ -39,12 +40,12 @@ export const Webview = () => {
   const [path, setPath] = useState("");
 
   let setWebviewHistory = useAsyncCallback(async (state: WebviewState) => {
-    await socket!.query(queries.setWebviewState, { state });
+    await socket.query(queries.setWebviewState, { state });
   });
 
   useEffect(() => {
     const wv = viewRef.current;
-    if (!wv || !socket) {
+    if (!wv) {
       return;
     }
 
@@ -114,17 +115,12 @@ export const Webview = () => {
     });
   }, [viewRef, socket]);
 
-  useEffect(() => {
-    if (socket) {
-      return socket.listen(packets.navigate, ({ url: href }) => {
-        let wv = viewRef.current;
-        if (wv) {
-          wv.loadURL(href);
-        }
-      });
+  useListen(socket, packets.navigate, ({ url: href }) => {
+    let wv = viewRef.current;
+    if (wv) {
+      wv.loadURL(href);
     }
-    return undefined;
-  }, [socket]);
+  });
 
   return (
     <WebviewContainer>

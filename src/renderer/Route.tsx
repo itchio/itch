@@ -1,9 +1,7 @@
 import { Profile } from "common/butlerd/messages";
-import { CurrentLocale } from "common/locales";
 import { packets } from "common/packets";
 import React, { createContext, useContext, useState } from "react";
 import { useAsync } from "react-async-hook";
-import { IntlProvider } from "react-intl";
 import { App } from "renderer/App";
 import { GamePage } from "renderer/pages/GamePage";
 import { LibraryPage } from "renderer/pages/LibraryPage";
@@ -20,9 +18,9 @@ let log = (...args: any[]) => {
   );
 };
 
-// TODO: do all that in renderer/index instead! so that the first
-// meaningful render always has a socketa, and the context has to be non-null
-export const SocketContext = createContext<Socket | undefined>(undefined);
+// n.b.: cheating the type system here, in practice the SocketContext always
+// has a non-null socket, see index.tsx
+export const SocketContext = createContext<Socket>(null as any);
 export const ProfileContext = createContext<Profile | undefined>(undefined);
 
 export const useSocket = () => useContext(SocketContext);
@@ -76,106 +74,37 @@ export const RouteContents = (props: { elements: string[] }) => {
 };
 
 export const Route = () => {
-  const [currentLocale, setCurrentLocale] = useState<CurrentLocale>({
-    lang: "en",
-    strings: {},
-  });
-  const [socket, setSocket] = useState<Socket | undefined>(undefined);
+  const socket = useSocket();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
-  const [error, setError] = useState<String | undefined>(undefined);
-
-  useAsync(async () => {
-    if (socket) {
-      return;
-    }
-
-    try {
-      const SESSION_WS_KEY = "internal-websocket";
-
-      let address = sessionStorage.getItem(SESSION_WS_KEY);
-      if (!address) {
-        log(`Fetching websocket addres...`);
-        let res = await fetch("itch://api/websocket-address");
-        log(`Fetching websocket addres...done`);
-        let payload = await res.json();
-        address = payload.address as string;
-        sessionStorage.setItem(SESSION_WS_KEY, address);
-      }
-
-      log(`Connecting to WebSocket...`);
-      let t1 = Date.now();
-      let socket = await Socket.connect(address);
-      let t2 = Date.now();
-      log(`Connecting to WebSocket...done (took ${t2 - t1} ms)`);
-      setSocket(socket);
-    } catch (e) {
-      console.error(e.stack);
-      setError(e.stack);
-    }
-  }, []);
 
   useListen(socket, packets.profileChanged, ({ profile }) =>
     setProfile(profile)
   );
 
   useAsync(async () => {
-    if (socket) {
-      log(`Getting profile...`);
-      const { profile } = await socket.query(queries.getProfile);
-      log(`Getting profile...done`);
-      setProfile(profile);
-    } else {
-      log(`Not getting current profile yet`);
-    }
+    const { profile } = await socket.query(queries.getProfile);
+    setProfile(profile);
   }, [socket]);
 
-  useListen(socket, packets.currentLocaleChanged, ({ currentLocale }) => {
-    setCurrentLocale(currentLocale);
-  });
+  if (firstMeaningfulRender) {
+    firstMeaningfulRender = false;
+    log(`First meaningful render!`);
+  }
+  let elements = [location.host, location.pathname.replace(/^\//, "")].filter(
+    s => s.length > 0
+  );
 
-  useAsync(async () => {
-    if (socket) {
-      log(`Getting current locale...`);
-      const { currentLocale } = await socket.query(queries.getCurrentLocale);
-      setCurrentLocale(currentLocale);
-      log(`Getting current locale...done`);
-    } else {
-      log(`Not getting current locale yet`);
-    }
-  }, [socket]);
-
-  if (socket && Object.keys(currentLocale.strings).length > 0) {
-    if (firstMeaningfulRender) {
-      firstMeaningfulRender = false;
-      log(`First meaningful render!`);
-    }
-    let elements = [location.host, location.pathname.replace(/^\//, "")].filter(
-      s => s.length > 0
-    );
+  if (profile || elements[0] === "app") {
     return (
       <SocketContext.Provider value={socket}>
         <ProfileContext.Provider value={profile}>
-          <IntlProvider
-            locale={currentLocale.lang}
-            messages={currentLocale.strings}
-          >
-            <RouteContentsDiv>
-              <RouteContents elements={elements} />
-            </RouteContentsDiv>
-          </IntlProvider>
+          <RouteContentsDiv>
+            <RouteContents elements={elements} />
+          </RouteContentsDiv>
         </ProfileContext.Provider>
       </SocketContext.Provider>
     );
   } else {
-    if (error) {
-      return (
-        <pre>
-          Something went wrong:
-          {error}
-        </pre>
-      );
-    } else {
-      return <div>Loading...</div>;
-    }
+    return <div>...</div>;
   }
 };

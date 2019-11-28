@@ -62,7 +62,7 @@ export const Sidebar = () => {
   let socket = useSocket();
 
   let logout = useAsyncCallback(async () => {
-    await socket!.query(queries.setProfile, {});
+    await socket.query(queries.setProfile, {});
   });
 
   return (
@@ -111,9 +111,7 @@ export const Sidebar = () => {
 const Popover = (props: { name: PopoverName; onClose: () => void }) => {
   const socket = useSocket();
   const switchLanguage = useAsyncCallback(async lang => {
-    if (socket) {
-      socket.query(queries.switchLanguage, { lang });
-    }
+    socket.query(queries.switchLanguage, { lang });
   });
 
   const { name, onClose } = props;

@@ -17,6 +17,7 @@ export interface ButlerState {
 export async function startButler(mainState: MainState) {
   logger.info("Starting daemon...");
   const instance = new Instance({
+    // TODO: use bundled butler in production, don't rely on %PATH% ever
     butlerExecutable: "butler",
     args: [
       "--dbpath",

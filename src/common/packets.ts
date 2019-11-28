@@ -1,10 +1,8 @@
 import { IRequest, IResult } from "butlerd";
 import { Profile } from "common/butlerd/messages";
-import { WebviewState } from "main";
-import { QueryRequest, QueryResult } from "common/queries";
-import { CurrentLocale } from "common/locales";
-import { string } from "prop-types";
 import { OngoingLaunch } from "common/launches";
+import { CurrentLocale } from "common/locales";
+import { QueryRequest, QueryResult } from "common/queries";
 
 // actions but not really
 

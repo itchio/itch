@@ -49,7 +49,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
   const { gameId } = props;
 
   let launchGame = useAsyncCallback(async (gameId: number) => {
-    await socket!.query(queries.launchGame, { gameId });
+    await socket.query(queries.launchGame, { gameId });
   });
 
   const cavesReq = useButlerd(messages.FetchCaves, { filters: { gameId } });

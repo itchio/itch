@@ -31,7 +31,7 @@ export const App = () => {
   let profile = useProfile();
 
   let login = useAsyncCallback(async profile => {
-    await socket!.query(queries.setProfile, { profile });
+    await socket.query(queries.setProfile, { profile });
   });
 
   if (!profile) {

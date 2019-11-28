@@ -84,6 +84,10 @@ module.exports = env => {
 function getCommonConfig(type, env) {
   const isProduction = env.mode === "production";
   const mode = isProduction ? "production" : "development";
+  let plugins = [];
+  if (!isProduction) {
+    plugins.push(new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }));
+  }
 
   return {
     mode,
@@ -120,6 +124,6 @@ function getCommonConfig(type, env) {
       minimize: false,
       minimizer: [],
     },
-    plugins: [new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true })],
+    plugins,
   };
 }

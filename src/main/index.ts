@@ -62,11 +62,11 @@ export function broadcastPacket<T>(pc: PacketCreator<T>, payload: T) {
 }
 
 async function main() {
-  mainLogger.info(
-    `${env.appName}@${app.getVersion()} on electron@${
-      process.versions.electron
-    } in ${env.production ? "production" : "development"}`
-  );
+  {
+    let appInfo = `${env.appName}@${app.getVersion()}`;
+    let electronInfo = `electron@${process.versions.electron}`;
+    mainLogger.info(`${appInfo} on ${electronInfo} in ${env.name}`);
+  }
 
   prepareItchProtocol();
 

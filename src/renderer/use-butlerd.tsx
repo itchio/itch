@@ -1,9 +1,8 @@
-import React from "react";
 import { RequestCreator } from "butlerd/lib/support";
-import { useState, useContext, useEffect, RefForwardingComponent } from "react";
-import { SocketContext, useSocket } from "renderer/Route";
-import { LoadingCircle } from "renderer/basics/LoadingCircle";
+import React, { useEffect, useState } from "react";
 import { ErrorState } from "renderer/basics/ErrorState";
+import { LoadingCircle } from "renderer/basics/LoadingCircle";
+import { useSocket } from "renderer/Route";
 import styled from "renderer/styles";
 
 export type ButlerdState<U> =
