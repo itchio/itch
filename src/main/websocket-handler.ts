@@ -7,6 +7,7 @@ import { broadcastPacket, MainState } from "main";
 import WebSocket from "ws";
 import { loadLocale, setPreferences } from "main/load-preferences";
 import dump from "common/util/dump";
+import { registerQueriesLaunch } from "main/queries-launch";
 
 export class WebsocketContext {
   constructor(private socket: WebSocket) {}
@@ -16,8 +17,14 @@ export class WebsocketContext {
   }
 }
 
-type PacketHandler<T> = (cx: WebsocketContext, payload: T) => void;
-type QueryHandler<Params, Result> = (params: Params) => Promise<Result>;
+export type PacketHandler<T> = (cx: WebsocketContext, payload: T) => void;
+export type QueryHandler<Params, Result> = (params: Params) => Promise<Result>;
+
+export type OnPacket = <T>(pc: PacketCreator<T>, f: PacketHandler<T>) => void;
+export type OnQuery = <Params, Result>(
+  qc: QueryCreator<Params, Result>,
+  f: QueryHandler<Params, Result>
+) => void;
 
 export class WebsocketHandler {
   packetHandlers: {
@@ -29,14 +36,11 @@ export class WebsocketHandler {
   } = {};
 
   constructor(mainState: MainState) {
-    let onPacket = <T>(pc: PacketCreator<T>, f: PacketHandler<T>) => {
+    let onPacket: OnPacket = (pc, f) => {
       this.packetHandlers[pc.__type] = f;
     };
 
-    let onQuery = <Params, Result>(
-      qc: QueryCreator<Params, Result>,
-      f: QueryHandler<Params, Result>
-    ) => {
+    let onQuery: OnQuery = (qc, f) => {
       this.queryHandlers[qc.__method] = f;
     };
 
@@ -70,26 +74,7 @@ export class WebsocketHandler {
       await setPreferences(mainState, { lang });
     });
 
-    onQuery(queries.launchGame, async ({ gameId }) => {
-      let client = new Client(mainState.butler!.endpoint);
-      const { items } = await client.call(messages.FetchCaves, {
-        filters: { gameId },
-      });
-      if (!items || items.length == 0) {
-        console.warn(`No caves, can't launch game`);
-      }
-      if (items.length > 1) {
-        // FIXME: handle multiple caves
-        throw new Error(`multiple caves present, not sure what to do`);
-      }
-
-      const cave = items[0];
-      await client.call(messages.Launch, {
-        caveId: cave.id,
-        prereqsDir: prereqsPath(),
-        // TODO: sandbox preferences
-      });
-    });
+    registerQueriesLaunch(mainState, onQuery);
 
     onPacket(packets.qreq, (cx, req) => {
       let handler = this.queryHandlers[req.method];

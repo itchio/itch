@@ -11,7 +11,7 @@ if (process.type === "browser" || !process.type) {
   };
 }
 
-function v4() {
+export function uuid() {
   const rnds = rng();
 
   // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
@@ -20,8 +20,6 @@ function v4() {
 
   return bytesToUuid(rnds);
 }
-
-export default v4;
 
 /**
  * Convert array of 16 byte values to UUID string format of the form:

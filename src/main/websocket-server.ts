@@ -1,5 +1,5 @@
 import dump from "common/util/dump";
-import uuid from "common/util/uuid";
+import { uuid } from "common/util/uuid";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import { WebsocketContext, WebsocketHandler } from "main/websocket-handler";

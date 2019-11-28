@@ -93,8 +93,8 @@ function getCommonConfig(type, env) {
     output: {
       filename: "[name].bundle.js",
       chunkFilename: "[name].chunk.js",
-      path: path.resolve(`./dist/${type}/assets`),
-      publicPath: "/assets/",
+      path: path.resolve(`./dist/${mode}/${type}/assets`),
+      publicPath: "itch://app/assets/",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js"],

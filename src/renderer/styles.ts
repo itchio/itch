@@ -184,7 +184,6 @@ export const heavyInput = css`
   background-color: rgba(0, 0, 0, 0.4);
   color: ${props => props.theme.inputText};
 
-  text-shadow: 0 0 2px ${props => props.theme.inputTextShadow};
   transition: all 0.4s;
 
   &::-webkit-input-placeholder {

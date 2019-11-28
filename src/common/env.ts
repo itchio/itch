@@ -14,6 +14,7 @@ export default {
   appName: isCanary ? "kitch" : "itch",
   integrationTests: !!process.env.ITCH_INTEGRATION_TESTS,
   unitTests: false,
+  name: envName,
   development: envName === "development",
   production: envName === "production",
 };

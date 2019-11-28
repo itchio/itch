@@ -12,6 +12,16 @@ import { Readable } from "stream";
 
 let logger = mainLogger.childWithName("itch-protocol");
 
+class HTTPError extends Error {
+  constructor(
+    public statusCode: number,
+    public headers: { [key: string]: string },
+    public data: string
+  ) {
+    super(`HTTP ${statusCode}`);
+  }
+}
+
 function convertHeaders(
   input: http.IncomingHttpHeaders
 ): Record<string, string> {
@@ -38,6 +48,7 @@ export function prepareItchProtocol() {
         supportFetchAPI: true,
         secure: true,
         standard: true,
+        corsEnabled: true,
       },
     },
   ]);
@@ -45,9 +56,33 @@ export function prepareItchProtocol() {
 
 export async function registerItchProtocol(mainState: MainState) {
   async function handleAPIRequest(
-    req: Electron.HandlerRequest,
+    req: Electron.Request,
     elements: string[]
   ): Promise<Object> {
+    let forbiddenCause: string | null = null;
+    let originKey = Object.keys(req.headers).find(
+      x => x.toLowerCase() == "origin"
+    );
+    if (originKey) {
+      let origin = req.headers[originKey]!;
+      if (!origin.startsWith("itch:")) {
+        forbiddenCause = `Forbidden origin ${origin}`;
+      }
+    } else {
+      forbiddenCause = `Missing origin`;
+    }
+
+    if (forbiddenCause) {
+      throw new HTTPError(
+        403,
+        {
+          "content-type": "text/plain",
+          "access-control-allow-origin": "*",
+        },
+        forbiddenCause
+      );
+    }
+
     console.log(`elements = ${dump(elements)}`);
 
     let ws = mainState.websocket;
@@ -62,7 +97,7 @@ export async function registerItchProtocol(mainState: MainState) {
   }
 
   async function handleRequest(
-    req: Electron.HandlerRequest
+    req: Electron.Request
   ): Promise<Electron.StreamProtocolResponse> {
     logger.info(`[${req.method}] ${req.url}`);
     let url = new URL(req.url);
@@ -77,14 +112,34 @@ export async function registerItchProtocol(mainState: MainState) {
 
     switch (firstEl) {
       case "api": {
-        let payload = await handleAPIRequest(req, elements);
-        return {
-          statusCode: 200,
-          headers: {
-            "content-type": "application/json",
-          },
-          data: asReadable(JSON.stringify(payload)),
-        };
+        try {
+          let payload = await handleAPIRequest(req, elements);
+          return {
+            statusCode: 200,
+            headers: {
+              "content-type": "application/json",
+              "access-control-allow-origin": "*",
+            },
+            data: asReadable(JSON.stringify(payload)),
+          };
+        } catch (e) {
+          if (e instanceof HTTPError) {
+            return {
+              statusCode: e.statusCode,
+              headers: e.headers,
+              data: asReadable(e.data),
+            };
+          } else {
+            return {
+              statusCode: 500,
+              headers: {
+                "content-type": "text/plain",
+                "access-control-allow-origin": "*",
+              },
+              data: asReadable(`Internal error: ${e.stack}`),
+            };
+          }
+        }
       }
       default: {
         if (elements.length == 0 || elements[0] != "assets") {
@@ -113,6 +168,8 @@ export async function registerItchProtocol(mainState: MainState) {
           let fsPath = filepath.join(getRendererDistPath(), ...elements);
 
           let contentType = mime.lookup(fsPath) || "application/octet-stream";
+          // TODO: electron 7.1.2 fixed stream protocols, we can return
+          // a `createReadStream` now
           let content = await new Promise<Buffer>((resolve, reject) => {
             fs.readFile(
               fsPath,

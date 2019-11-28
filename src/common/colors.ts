@@ -27,8 +27,6 @@ export const uiColors = {
   border: "#404040",
   borderFocused: "#676767",
 
-  // FIXME: no pure blacks
-  textShadow: "#000000",
   boxShadow: "#1b1919",
 };
 
@@ -64,7 +62,6 @@ export const colors = {
   inputBorder: uiColors.border,
   inputBorderFocused: uiColors.borderFocused,
 
-  inputTextShadow: uiColors.textShadow,
   inputBoxShadow: uiColors.boxShadow,
   inputBoxShadowFocused: "#1b1919",
 

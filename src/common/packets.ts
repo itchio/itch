@@ -3,6 +3,8 @@ import { Profile } from "common/butlerd/messages";
 import { WebviewState } from "main";
 import { QueryRequest, QueryResult } from "common/queries";
 import { CurrentLocale } from "common/locales";
+import { string } from "prop-types";
+import { OngoingLaunch } from "common/launches";
 
 // actions but not really
 
@@ -20,6 +22,8 @@ export const packets = wirePackets({
   // global events
   profileChanged: packet<{ profile: Profile }>(),
   currentLocaleChanged: packet<{ currentLocale: CurrentLocale }>(),
+  launchChanged: packet<{ launchId: string; launch: OngoingLaunch }>(),
+  launchEnded: packet<{ launchId: string }>(),
 
   // queries
   qreq: packet<QueryRequest<any>>(),

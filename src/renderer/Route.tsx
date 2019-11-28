@@ -20,6 +20,8 @@ let log = (...args: any[]) => {
   );
 };
 
+// TODO: do all that in renderer/index instead! so that the first
+// meaningful render always has a socketa, and the context has to be non-null
 export const SocketContext = createContext<Socket | undefined>(undefined);
 export const ProfileContext = createContext<Profile | undefined>(undefined);
 

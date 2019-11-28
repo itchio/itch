@@ -1,10 +1,11 @@
-import { Client, Instance, Endpoint } from "butlerd";
+import { Client, Instance, Endpoint, Conversation } from "butlerd";
 import { messages } from "common/butlerd";
 import urls from "common/constants/urls";
 import { butlerUserAgent } from "common/constants/useragent";
 import { butlerDbPath } from "common/util/paths";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
+import { Logger } from "common/logger";
 
 let logger = mainLogger.childWithName("butler");
 
@@ -38,4 +39,26 @@ export async function startButler(mainState: MainState) {
     instance,
     endpoint,
   };
+}
+
+export function hookLogging(convo: Conversation, logger: Logger) {
+  convo.on(messages.Log, async ({ level, message }) => {
+    switch (level) {
+      case "debug":
+        logger.debug(message);
+        break;
+      case "info":
+        logger.info(message);
+        break;
+      case "warning":
+        logger.warn(message);
+        break;
+      case "error":
+        logger.error(message);
+        break;
+      default:
+        logger.info(`[${level}] ${message}`);
+        break;
+    }
+  });
 }

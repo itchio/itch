@@ -1,6 +1,7 @@
 import { Profile } from "common/butlerd/messages";
 import { colors } from "common/colors";
 import env from "common/env";
+import { OngoingLaunches } from "common/launches";
 import { CurrentLocale, LocaleStrings } from "common/locales";
 import { PacketCreator, packets } from "common/packets";
 import { app, BrowserWindow, dialog, session } from "electron";
@@ -25,6 +26,7 @@ export interface MainState {
   preferences?: PreferencesState;
   localesConfig?: LocalesConfig;
   localeState?: LocaleState;
+  ongoingLaunches: OngoingLaunches;
 }
 
 export interface LocaleState {
@@ -42,6 +44,7 @@ let mainState: MainState = {
     history: ["itch://library"],
     currentIndex: 0,
   },
+  ongoingLaunches: {},
 };
 
 export function broadcastPacket<T>(pc: PacketCreator<T>, payload: T) {

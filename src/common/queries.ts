@@ -1,6 +1,7 @@
 import { WebviewState } from "main";
 import { Profile } from "common/butlerd/messages";
 import { CurrentLocale } from "common/locales";
+import { OngoingLaunch } from "common/launches";
 
 export const queries = wireQueries({
   getWebviewState: query<void, { state: WebviewState }>(),
@@ -13,6 +14,10 @@ export const queries = wireQueries({
   switchLanguage: query<{ lang: string }, void>(),
 
   launchGame: query<{ gameId: number }, void>(),
+  getOngoingLaunchesForGame: query<
+    { gameId: number },
+    { launches: OngoingLaunch[] }
+  >(),
 });
 
 export interface QueryRequest<Params> {
