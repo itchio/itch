@@ -72,19 +72,6 @@ export const LibraryPage = () => {
           <GameGrid items={items} getGame={key => key.game} />
         )}
       />
-
-      <p>
-        Navigate to <a href="itch://games/3">game 3</a>
-      </p>
-      <p>
-        Navigate to <a href="itch://games/5">game 5</a>
-      </p>
-      <p>
-        Navigate to <a href="itch://games/12">game 12</a>
-      </p>
-      <p>
-        Navigate to <a href="https://itch.io">the itch homepage</a>
-      </p>
     </Container>
   );
 };
