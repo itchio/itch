@@ -168,8 +168,9 @@ export async function registerItchProtocol(mainState: MainState) {
           let fsPath = filepath.join(getRendererDistPath(), ...elements);
 
           let contentType = mime.lookup(fsPath) || "application/octet-stream";
-          // TODO: electron 7.1.2 fixed stream protocols, we can return
-          // a `createReadStream` now
+          // N.B: electron 7.1.2 release notes says custom stream handlers
+          // should work now, but it doesn't appear to be the case, so
+          // `createReadStream` is out of the question for now. Ah well.
           let content = await new Promise<Buffer>((resolve, reject) => {
             fs.readFile(
               fsPath,
