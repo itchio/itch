@@ -4,6 +4,9 @@
 
 import { createRequest, createNotification } from "butlerd/lib/support";
 
+// Type alias for RFC3339-nano date strings
+export type RFCDate = string;
+
 /**
  * Params for Meta.Authenticate
  */
@@ -202,7 +205,7 @@ export interface Profile {
   /** itch.io user ID, doubling as profile ID */
   id: number;
   /** Timestamp the user last connected at (to the client) */
-  lastConnected: Date;
+  lastConnected: RFCDate;
   /** User information */
   user: User;
 }
@@ -651,7 +654,7 @@ export interface DownloadKeySummary {
   /** Identifier of the game to which this download key grants access */
   gameId: number;
   /** Date this key was created at (often coincides with purchase time) */
-  createdAt: Date;
+  createdAt: RFCDate;
 }
 
 /**
@@ -663,7 +666,7 @@ export interface CaveSummary {
   /** undocumented */
   gameId: number;
   /** undocumented */
-  lastTouchedAt: Date;
+  lastTouchedAt: RFCDate;
   /** undocumented */
   secondsRun: number;
   /** undocumented */
@@ -697,9 +700,9 @@ export interface Cave {
  */
 export interface CaveStats {
   /** Time the cave was first installed */
-  installedAt: Date;
+  installedAt: RFCDate;
   /** undocumented */
-  lastTouchedAt: Date;
+  lastTouchedAt: RFCDate;
   /** undocumented */
   secondsRun: number;
 }
@@ -975,7 +978,7 @@ export interface InstallEvent {
   /** undocumented */
   type: InstallEventType;
   /** undocumented */
-  timestamp: Date;
+  timestamp: RFCDate;
   /** undocumented */
   heal: HealInstallEvent;
   /** undocumented */
@@ -1520,9 +1523,9 @@ export interface Download {
   /** undocumented */
   build: Build;
   /** undocumented */
-  startedAt: Date;
+  startedAt: RFCDate;
   /** undocumented */
-  finishedAt: Date;
+  finishedAt: RFCDate;
   /** undocumented */
   stagingFolder: string;
 }
@@ -1975,9 +1978,9 @@ export interface Game {
   /** Non-gif cover url, only set if main cover url is a GIF */
   stillCoverUrl: string;
   /** Date the game was created */
-  createdAt: Date;
+  createdAt: RFCDate;
   /** Date the game was published, empty if not currently published */
-  publishedAt: Date;
+  publishedAt: RFCDate;
   /** Price in cents of a dollar */
   minPrice: number;
   /** Are payments accepted? */
@@ -2098,9 +2101,9 @@ export interface Sale {
    */
   rate: number;
   /** Timestamp the sale started at */
-  startDate: Date;
+  startDate: RFCDate;
   /** Timestamp the sale ends at */
-  endDate: Date;
+  endDate: RFCDate;
 }
 
 /**
@@ -2136,9 +2139,9 @@ export interface Upload {
   /** Platforms this upload is compatible with */
   platforms: Platforms;
   /** Date this upload was created at */
-  createdAt: Date;
+  createdAt: RFCDate;
   /** Date this upload was last updated at (order changed, display name set, etc.) */
-  updatedAt: Date;
+  updatedAt: RFCDate;
 }
 
 /**
@@ -2198,9 +2201,9 @@ export interface Collection {
   /** Human-friendly title for collection, for example `Couch coop games` */
   title: string;
   /** Date this collection was created at */
-  createdAt: Date;
+  createdAt: RFCDate;
   /** Date this collection was last updated at (item added, title set, etc.) */
-  updatedAt: Date;
+  updatedAt: RFCDate;
   /**
    * Number of games in the collection. This might not be accurate
    * as some games might not be accessible to whoever is asking (project
@@ -2230,9 +2233,9 @@ export interface CollectionGame {
   /** undocumented */
   position: number;
   /** undocumented */
-  createdAt: Date;
+  createdAt: RFCDate;
   /** undocumented */
-  updatedAt: Date;
+  updatedAt: RFCDate;
   /** undocumented */
   blurb: string;
   /** undocumented */
@@ -2252,9 +2255,9 @@ export interface DownloadKey {
   /** Game to which this download key grants access */
   game: Game;
   /** Date this key was created at (often coincides with purchase time) */
-  createdAt: Date;
+  createdAt: RFCDate;
   /** Date this key was last updated at */
-  updatedAt: Date;
+  updatedAt: RFCDate;
   /** Identifier of the itch.io user to which this key belongs */
   ownerId: number;
 }
@@ -2288,9 +2291,9 @@ export interface Build {
   /** User who pushed the build */
   user: User;
   /** Timestamp the build was created at */
-  createdAt: Date;
+  createdAt: RFCDate;
   /** Timestamp the build was last updated at */
-  updatedAt: Date;
+  updatedAt: RFCDate;
 }
 
 /**
@@ -2328,9 +2331,9 @@ export interface BuildFile {
   /** Subtype of this build file, usually indicates compression */
   subType: BuildFileSubType;
   /** Date this build file was created at */
-  createdAt: Date;
+  createdAt: RFCDate;
   /** Date this build file was last updated at */
-  updatedAt: Date;
+  updatedAt: RFCDate;
 }
 
 /**
