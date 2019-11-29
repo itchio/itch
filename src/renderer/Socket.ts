@@ -13,16 +13,13 @@ interface Outbound<Result> {
 }
 
 export function useListen<T>(
-  socket: Socket | undefined,
+  socket: Socket,
   pc: PacketCreator<T>,
   cb: (payload: T) => void
 ) {
   useEffect(() => {
-    if (socket) {
-      return socket.listen(pc, cb);
-    }
-    return undefined;
-  }, [socket]);
+    return socket.listen(pc, cb);
+  }, []);
 }
 
 const TYPES_THAT_ARE_FORBIDDEN_TO_LISTEN = (() => {

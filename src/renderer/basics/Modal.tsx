@@ -1,6 +1,7 @@
 import React from "react";
-import styled, { animations } from "renderer/styles";
 import { IconButton } from "renderer/basics/IconButton";
+import { JSXChild, JSXChildren } from "renderer/basics/jsx-types";
+import styled, { animations } from "renderer/styles";
 
 const ModalShroud = styled.div`
   position: fixed;
@@ -58,8 +59,8 @@ const Filler = styled.div`
 `;
 
 export const Modal = (props: {
-  title?: string | JSX.Element;
-  children?: (JSX.Element | string)[] | JSX.Element | string;
+  title?: JSXChild;
+  children?: JSXChildren;
   onClose: () => void;
 }) => {
   const { title, children, onClose } = props;

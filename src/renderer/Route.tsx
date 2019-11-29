@@ -96,13 +96,11 @@ export const Route = () => {
 
   if (profile || elements[0] === "app") {
     return (
-      <SocketContext.Provider value={socket}>
-        <ProfileContext.Provider value={profile}>
-          <RouteContentsDiv>
-            <RouteContents elements={elements} />
-          </RouteContentsDiv>
-        </ProfileContext.Provider>
-      </SocketContext.Provider>
+      <ProfileContext.Provider value={profile}>
+        <RouteContentsDiv>
+          <RouteContents elements={elements} />
+        </RouteContentsDiv>
+      </ProfileContext.Provider>
     );
   } else {
     return <div>...</div>;

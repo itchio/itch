@@ -8,6 +8,7 @@ import styled from "renderer/styles";
 import { Call } from "renderer/use-butlerd";
 import { useAsyncCallback, useAsync } from "react-async-hook";
 import { queries } from "common/queries";
+import { Gate } from "renderer/Gate";
 
 const AppDiv = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -35,33 +36,7 @@ export const App = () => {
   });
 
   if (!profile) {
-    return (
-      <Call
-        rc={messages.ProfileList}
-        params={{}}
-        render={({ profiles }) => {
-          return (
-            <ul>
-              {profiles.map(profile => (
-                <li
-                  key={profile.id}
-                  style={{
-                    padding: "30px",
-                    fontSize: "24px",
-                    margin: "30px",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                  }}
-                  onClick={() => login.execute(profile)}
-                >
-                  {profile.user.displayName || profile.user.username}
-                </li>
-              ))}
-            </ul>
-          );
-        }}
-      />
-    );
+    return <Gate />;
   }
 
   return (

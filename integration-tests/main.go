@@ -23,7 +23,8 @@ const stampFormat = "15:04:05.999"
 
 const testAccountName = "itch-test-account"
 
-var testAccountAPIKey = os.Getenv("ITCH_TEST_ACCOUNT_API_KEY")
+var testAccountAPIKeyEnvVar = "ITCH_TEST_ACCOUNT_API_KEY"
+var testAccountAPIKey = os.Getenv(testAccountAPIKeyEnvVar)
 
 type CleanupFunc func()
 
@@ -86,7 +87,7 @@ func doMain() error {
 	bootTime := time.Now()
 
 	if testAccountAPIKey == "" {
-		return errors.New("API key not given via environment, stopping here")
+		return errors.Errorf("$%s not set, stopping here", testAccountAPIKeyEnvVar)
 	}
 
 	r = &runner{

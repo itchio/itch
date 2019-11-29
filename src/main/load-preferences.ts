@@ -66,7 +66,27 @@ function normalizeLang(mainState: MainState, lang: string): string {
 }
 
 export async function loadPreferences(mainState: MainState) {
-  let preferences: PreferencesState = await readJSONFile(preferencesPath());
+  let preferences: PreferencesState;
+  try {
+    preferences = await readJSONFile(preferencesPath());
+  } catch (e) {
+    logger.info(`No preferences, using defaults`);
+    preferences = {
+      lang: "en",
+      gotMinimizeNotification: false,
+      disableHardwareAcceleration: false,
+      layout: "table",
+      defaultInstallLocation: "appdata",
+      isolateApps: false,
+      closeToTray: true,
+      readyNotification: true,
+      showAdvanced: false,
+      openAtLogin: false,
+      openAsHidden: false,
+      manualGameUpdates: false,
+      preventDisplaySleep: true,
+    };
+  }
   let localesConfig: LocalesConfig = await readJSONFile(getLocalesConfigPath());
 
   let englishStrings: LocaleStrings = await readJSONFile(

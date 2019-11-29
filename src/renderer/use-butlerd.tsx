@@ -32,10 +32,6 @@ export function useButlerd<T, U>(
   const socket = useSocket();
 
   useEffect(() => {
-    if (!socket) {
-      return;
-    }
-
     socket
       .call(rc, params)
       .then(result => {
@@ -50,7 +46,7 @@ export function useButlerd<T, U>(
           error,
         });
       });
-  }, [socket]);
+  }, []);
 
   return state;
 }

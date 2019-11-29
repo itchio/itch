@@ -113,7 +113,7 @@ export const Webview = () => {
         });
       }
     });
-  }, [viewRef, socket]);
+  }, [viewRef]);
 
   useListen(socket, packets.navigate, ({ url: href }) => {
     let wv = viewRef.current;

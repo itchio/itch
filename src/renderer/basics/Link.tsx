@@ -1,5 +1,6 @@
 import React from "react";
 import styled, * as styles from "renderer/styles";
+import { JSXChildren, JSXChild } from "renderer/basics/jsx-types";
 
 const LinkSpan = styled.span`
   ${styles.secondaryLink};
@@ -10,25 +11,21 @@ const LinkSpan = styled.span`
   text-overflow: ellipsis;
 `;
 
-class Link extends React.PureComponent<Props> {
-  render() {
-    const { label, children, ...restProps } = this.props;
-
-    return (
-      <LinkSpan {...restProps}>
-        {label}
-        {children}
-      </LinkSpan>
-    );
-  }
-}
-
-export default Link;
-
-class Props {
+interface Props {
   onClick?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
   onContextMenu?: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
-  label?: JSX.Element | string;
-  children?: string | JSX.Element | (string | JSX.Element)[];
+  label?: JSXChild;
+  children?: JSXChildren;
   className?: string;
 }
+
+export const Link = (props: Props) => {
+  const { label, children, ...restProps } = props;
+
+  return (
+    <LinkSpan {...restProps}>
+      {label}
+      {children}
+    </LinkSpan>
+  );
+};

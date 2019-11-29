@@ -119,7 +119,7 @@ func downloadChromeDriver(r *runner) error {
 	return nil
 }
 
-const electronVersion = "7.0.0"
+const electronVersion = "7.1.2"
 const chromeDriverVersionString = "ChromeDriver 78.0.3905.1 (c26947c5f17eccf78e199253792030657457c687-refs/heads/master@{#703739})"
 
 func chromeDriverURL(r *runner) string {

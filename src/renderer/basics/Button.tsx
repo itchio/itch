@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { LocalizedString } from "common/types";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
+import { JSXChild, JSXChildren } from "renderer/basics/jsx-types";
 import styled, * as styles from "renderer/styles";
 
 const Label = styled.div`
@@ -105,13 +106,13 @@ interface Props {
   hint?: LocalizedString;
   icon?: string;
   iconComponent?: JSX.Element;
-  label?: JSX.Element | string;
+  label?: JSXChild;
   wide?: boolean;
   fat?: boolean;
   disabled?: boolean;
   id?: string;
   translucent?: boolean;
-  children?: JSX.Element;
+  children?: JSXChildren;
 }
 
 export const Button = (props: Props) => {

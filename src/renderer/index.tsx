@@ -1,28 +1,61 @@
 import "!style-loader!css-loader!./fonts/icomoon/style.css";
+import "!style-loader!css-loader!./fonts/lato/latofonts-custom.css";
+
 import { packets } from "common/packets";
 import { queries } from "common/queries";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { hot } from "react-hot-loader/root";
 import { IntlProvider } from "react-intl";
 import GlobalStyles from "renderer/global-styles";
 import { Route, SocketContext } from "renderer/Route";
-import { Socket } from "renderer/Socket";
+import { Socket, useListen } from "renderer/Socket";
 import { theme, ThemeProvider } from "./styles";
 
 const AppBase = hot(() => {
-  return (
-    <ThemeProvider theme={theme}>
-      <React.Fragment>
-        <GlobalStyles />
-        <Route />
-      </React.Fragment>
-    </ThemeProvider>
-  );
-});
+  let [socket, setSocket] = useState();
+  let [currentLocale, setCurrentLocale] = useState();
 
-document.addEventListener("DOMContentLoaded", () => {
-  ReactDOM.render(<AppBase />, document.querySelector("#app"));
+  useEffect(() => {
+    establishSocketConnection()
+      .then(socket => {
+        socket.listen(packets.currentLocaleChanged, params => {
+          console.log(`Locale changed!`);
+          setCurrentLocale(params.currentLocale);
+        });
+
+        socket
+          .query(queries.getCurrentLocale)
+          .then(({ currentLocale }) => setCurrentLocale(currentLocale))
+          .catch(e => {
+            alert(`While fetching current locale:\n\n${e.stack}`);
+          });
+        setSocket(socket);
+      })
+      .catch(e => {
+        alert(`While establishing websocket connection:\n\n${e.stack}`);
+      });
+  }, []);
+
+  if (!(socket && currentLocale)) {
+    return <div>...</div>;
+  }
+
+  return (
+    <SocketContext.Provider value={socket}>
+      <IntlProvider
+        locale={currentLocale.lang}
+        messages={currentLocale.strings}
+      >
+        <ThemeProvider theme={theme}>
+          <React.Fragment>
+            <GlobalStyles />
+            <Route />
+          </React.Fragment>
+        </ThemeProvider>
+      </IntlProvider>
+    </SocketContext.Provider>
+  );
 });
 
 function log(...args: any[]) {
@@ -54,46 +87,7 @@ async function establishSocketConnection(): Promise<Socket> {
   return socket;
 }
 
-async function main() {
-  // wait for DOM to be loaded
-  let domPromise = new Promise((resolve, reject) => {
-    document.addEventListener("DOMContentLoaded", () => resolve());
-  });
-
-  // establish WebSocket connection
-  let socket = await establishSocketConnection();
-  log(`Got socket`);
-
-  let { currentLocale } = await socket.query(queries.getCurrentLocale);
-  log(`Got current locale`);
-
-  await domPromise;
-  log(`DOM content loaded`);
-
+document.addEventListener("DOMContentLoaded", () => {
   const appContainer = document.querySelector("#app");
-
-  let render = () => {
-    ReactDOM.render(
-      <SocketContext.Provider value={socket}>
-        <IntlProvider
-          locale={currentLocale.lang}
-          messages={currentLocale.strings}
-        >
-          <AppBase />
-        </IntlProvider>
-      </SocketContext.Provider>,
-      appContainer
-    );
-  };
-
-  log(`First render!`);
-  render();
-
-  socket.listen(packets.currentLocaleChanged, params => {
-    currentLocale = params.currentLocale;
-    log(`Local switched, re-rendering`);
-    render();
-  });
-}
-
-main().catch(e => alert(`Something went very wrong: ${e.stack ? e.stack : e}`));
+  ReactDOM.render(<AppBase />, appContainer);
+});
