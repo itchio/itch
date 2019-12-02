@@ -1,14 +1,19 @@
 import React from "react";
 import styled from "renderer/styles";
+import { getRpcErrorData, asRequestError } from "common/butlerd";
+import { setFlagsFromString } from "v8";
 
-const ButlerErrorDiv = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 2em 0;
 
   .spacer {
     width: 8px;
+  }
+
+  abbr {
+    text-decoration: none;
   }
 `;
 
@@ -22,12 +27,27 @@ export const ErrorState = ({ error }: ErrorStateProps) => {
   }
 
   return (
-    <ButlerErrorDiv>
+    <Container className="error-state">
       <span className="icon icon-error" />
       <div className="spacer" />
       <abbr title={error && error.stack ? error.stack : String(error)}>
-        {String(error)}
+        {formatError(error)}
       </abbr>
-    </ButlerErrorDiv>
+    </Container>
   );
+};
+
+let formatError = (e: Error): string => {
+  console.log(`formatting`, e, Object.keys(e));
+
+  let requestError = asRequestError(e);
+  if (requestError) {
+    const e = requestError.rpcError;
+    if (e.data.apiError && e.data.apiError.messages) {
+      return e.data.apiError.messages.join(", ");
+    }
+    return e.message;
+  } else {
+    return String(e);
+  }
 };

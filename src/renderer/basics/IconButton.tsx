@@ -24,8 +24,8 @@ const IconButtonDiv = styled.div`
   }
 
   &.disabled {
-    opacity: 0.2;
-    pointer: disabled;
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 
   &.emphasized {

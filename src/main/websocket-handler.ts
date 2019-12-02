@@ -6,6 +6,7 @@ import { broadcastPacket, MainState } from "main";
 import { loadLocale, setPreferences } from "main/load-preferences";
 import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
+import { shell } from "electron";
 
 export class WebsocketContext {
   constructor(private socket: WebSocket) {}
@@ -70,6 +71,10 @@ export class WebsocketHandler {
         currentLocale: mainState.localeState!.current,
       });
       await setPreferences(mainState, { lang });
+    });
+
+    onQuery(queries.openExternalURL, async ({ url }) => {
+      shell.openExternal(url);
     });
 
     registerQueriesLaunch(mainState, onQuery);

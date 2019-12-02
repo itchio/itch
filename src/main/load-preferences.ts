@@ -89,8 +89,8 @@ export async function loadPreferences(mainState: MainState) {
   }
   let localesConfig: LocalesConfig = await readJSONFile(getLocalesConfigPath());
 
-  let englishStrings: LocaleStrings = await readJSONFile(
-    getLocalePath(`en.json`)
+  let englishStrings: LocaleStrings = processLocaleStrings(
+    await readJSONFile(getLocalePath(`en.json`))
   );
   logger.info(
     `Loaded ${Object.keys(englishStrings).length} strings for English locale`
@@ -109,6 +109,14 @@ export async function loadPreferences(mainState: MainState) {
   await loadLocale(mainState, preferences.lang);
 }
 
+function processLocaleStrings(input: LocaleStrings): LocaleStrings {
+  let output: LocaleStrings = {};
+  for (const k of Object.keys(input)) {
+    output[k] = input[k].replace("{{", "{").replace("}}", "}");
+  }
+  return output;
+}
+
 export async function loadLocale(mainState: MainState, lang: string) {
   if (!mainState.localeState) {
     throw new Error(`loadLocale called before mainState.localeState is set`);
@@ -125,8 +133,8 @@ export async function loadLocale(mainState: MainState, lang: string) {
     return;
   }
 
-  let strings: LocaleStrings = await readJSONFile(
-    getLocalePath(`${normalizedLang}.json`)
+  let strings: LocaleStrings = processLocaleStrings(
+    await readJSONFile(getLocalePath(`${normalizedLang}.json`))
   );
   logger.info(
     `Loaded ${

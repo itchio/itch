@@ -1,27 +1,20 @@
 import { messages } from "common/butlerd";
-import { Profile, ProfileLoginWithAPIKey } from "common/butlerd/messages";
-import React, { useState, useEffect, useRef } from "react";
+import { Profile } from "common/butlerd/messages";
+import React, { useEffect, useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
-import { useSocket } from "renderer/Route";
-import styled, { animations, boxy } from "renderer/styles";
-import { Button } from "renderer/basics/Button";
 import { FormattedMessage } from "react-intl";
 import { IconButton } from "renderer/basics/IconButton";
 import { Link } from "renderer/basics/Link";
 import { TimeAgo } from "renderer/basics/TimeAgo";
+import { Form, FormStage } from "renderer/Gate/Form";
+import { ListContainer } from "renderer/Gate/ListContainer";
+import { useSocket } from "renderer/Route";
+import styled, { boxy } from "renderer/styles";
+import { Button } from "renderer/basics/Button";
 
 export const Links = styled.div`
   margin: 1em 0;
   text-align: center;
-`;
-
-const ListContainer = styled.div`
-  animation: ${animations.fadeIn} 0.2s;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-y: auto;
 `;
 
 const GateContainer = styled.div`
@@ -32,12 +25,26 @@ const GateContainer = styled.div`
   height: 100%;
 `;
 
-type PageName = "list" | "form";
+export type GateState = GateList | GateForm;
+
+export interface GateList {
+  type: "list";
+}
+
+export interface GateForm {
+  type: "form";
+  stage: FormStage;
+}
 
 export const Gate = (props: {}) => {
   const socket = useSocket();
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState<PageName>("form");
+  const [state, setState] = useState<GateState>({
+    type: "form",
+    stage: {
+      type: "need-username",
+    },
+  });
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
   let fetchProfiles = (purpose: "first-time" | "refresh") => {
@@ -45,9 +52,9 @@ export const Gate = (props: {}) => {
       setProfiles(profiles);
       if (purpose == "first-time") {
         setLoading(false);
-        if (profiles.length > 0) {
-          setPage("list");
-        }
+        // if (profiles.length > 0) {
+        //   setState({ type: "list" });
+        // }
       }
     });
   };
@@ -61,17 +68,21 @@ export const Gate = (props: {}) => {
     return <div>Loading...</div>;
   }
 
-  switch (page) {
+  switch (state.type) {
     case "form":
       return (
         <GateContainer>
-          <Form showList={() => setPage("list")} />
+          <Form
+            setState={setState}
+            stage={state.stage}
+            hasSavedProfiles={profiles.length > 0}
+          />
         </GateContainer>
       );
     case "list":
       return (
         <GateContainer>
-          <List showForm={() => setPage("form")} profiles={profiles} />
+          <List setState={setState} profiles={profiles} />
         </GateContainer>
       );
     default:
@@ -80,7 +91,7 @@ export const Gate = (props: {}) => {
 };
 
 interface ListProps {
-  showForm: () => void;
+  setState: (state: GateState) => void;
   profiles: Profile[];
 }
 
@@ -102,9 +113,12 @@ export const List = (props: ListProps) => {
       ))}
 
       <Links>
-        <Link
+        <Button
+          secondary
           label={<FormattedMessage id="login.action.show_form" />}
-          onClick={props.showForm}
+          onClick={() =>
+            props.setState({ type: "form", stage: { type: "need-username" } })
+          }
         />
       </Links>
     </ListContainer>
@@ -215,44 +229,5 @@ export const Item = (props: ItemProps) => {
         />
       </span>
     </ItemDiv>
-  );
-};
-
-interface FormProps {
-  showList: () => void;
-}
-
-export const Form = (props: FormProps) => {
-  const socket = useSocket();
-  const usernameRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-
-  const login = useAsyncCallback(async () => {
-    try {
-      console.log(`Attempting password login...`);
-      await socket.call(messages.ProfileLoginWithPassword, {
-        username: usernameRef.current!.value,
-        password: passwordRef.current!.value,
-      });
-      console.log(`Attempting password login...done`);
-    } catch (e) {
-      console.error(`While doing login password`, e.stack);
-    }
-  });
-
-  return (
-    <ListContainer>
-      <label>
-        Username
-        <input ref={usernameRef} />
-      </label>
-      <label>
-        Password
-        <input type="password" ref={passwordRef} />
-      </label>
-      <Button disabled={login.loading} onClick={login.execute}>
-        <FormattedMessage id="login.action.login" />
-      </Button>
-    </ListContainer>
   );
 };

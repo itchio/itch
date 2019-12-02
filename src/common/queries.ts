@@ -18,6 +18,8 @@ export const queries = wireQueries({
     { gameId: number },
     { launches: OngoingLaunch[] }
   >(),
+
+  openExternalURL: query<{ url: string }, void>(),
 });
 
 export interface QueryRequest<Params> {

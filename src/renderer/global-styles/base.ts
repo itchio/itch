@@ -14,8 +14,11 @@ export default css`
     overflow: hidden;
     user-select: none;
 
-    font-family: LatoWeb, sans-serif;
     color: ${theme.baseText};
+  }
+
+  html, body, button {
+    font-family: LatoWeb, sans-serif;
   }
 
   img.emojione {
