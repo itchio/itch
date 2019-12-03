@@ -4,10 +4,14 @@ import React from "react";
 import styled, * as styles from "renderer/styles";
 import { Icon } from "renderer/basics/Icon";
 
-const IconButtonDiv = styled.div`
+const IconButtonDiv = styled.button`
   &:not(.disabled) {
     ${styles.clickable};
   }
+
+  background: none;
+  border: none;
+  color: inherit;
 
   font-size: ${props => props.theme.fontSizes.baseText};
   display: flex;

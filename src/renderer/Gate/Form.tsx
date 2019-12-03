@@ -47,9 +47,6 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  width: 600px;
-
-  align-self: center;
   align-items: flex-start;
 `;
 

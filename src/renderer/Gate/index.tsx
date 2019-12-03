@@ -5,11 +5,16 @@ import { Form, FormStage } from "renderer/Gate/Form";
 import { useSocket } from "renderer/Route";
 import styled from "renderer/styles";
 import { List } from "renderer/Gate/List";
+import { useAsyncCallback } from "react-async-hook";
 
 const GateContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: stretch;
+
+  width: 600px;
+  margin: 0 auto;
 
   height: 100%;
 `;
@@ -36,6 +41,13 @@ export const Gate = (props: {}) => {
   });
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
+  const forgetProfile = useAsyncCallback(async (profileId: number) => {
+    // TODO: add confirmation first
+    alert("TODO: confirm before forget profile");
+    socket.call(messages.ProfileForget, { profileId });
+    fetchProfiles("refresh");
+  });
+
   let fetchProfiles = (purpose: "first-time" | "refresh") => {
     socket.call(messages.ProfileList, {}).then(({ profiles }) => {
       setProfiles(profiles);
@@ -43,6 +55,15 @@ export const Gate = (props: {}) => {
         setLoading(false);
         if (profiles.length > 0) {
           setState({ type: "list" });
+        }
+      } else if (purpose === "refresh") {
+        if (profiles.length == 0) {
+          setState({
+            type: "form",
+            stage: {
+              type: "need-username",
+            },
+          });
         }
       }
     });
@@ -71,7 +92,11 @@ export const Gate = (props: {}) => {
     case "list":
       return (
         <GateContainer>
-          <List setState={setState} profiles={profiles} />
+          <List
+            setState={setState}
+            forgetProfile={forgetProfile.execute}
+            profiles={profiles}
+          />
         </GateContainer>
       );
     default:

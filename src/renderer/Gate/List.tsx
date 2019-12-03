@@ -1,5 +1,7 @@
+import classNames from "classnames";
 import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
+import { delay } from "common/delay";
 import { queries } from "common/queries";
 import React from "react";
 import { useAsyncCallback, UseAsyncReturn } from "react-async-hook";
@@ -8,12 +10,9 @@ import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { TimeAgo } from "renderer/basics/TimeAgo";
 import { GateState } from "renderer/Gate";
-import { ListContainer } from "renderer/Gate/ListContainer";
 import { useSocket } from "renderer/Route";
-import { boxy } from "renderer/styles";
 import styled from "styled-components";
-import classNames from "classnames";
-import { delay } from "common/delay";
+import { animations, boxy } from "renderer/styles";
 
 const Buttons = styled.div`
   display: flex;
@@ -24,17 +23,25 @@ const Buttons = styled.div`
   padding: 2em 0;
 `;
 
+export const ListContainer = styled.div`
+  animation: ${animations.fadeIn} 0.2s;
+
+  padding: 1em 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: auto;
+`;
+
 interface ListProps {
   setState: (state: GateState) => void;
+  forgetProfile: (profileId: number) => void;
   profiles: Profile[];
 }
 
 export const List = (props: ListProps) => {
   const socket = useSocket();
-  const forgetProfile = useAsyncCallback(async (profileId: number) => {
-    // TODO: add confirmation first
-    socket.call(messages.ProfileForget, { profileId });
-  });
 
   const login = useAsyncCallback(async (profile: Profile) => {
     try {
@@ -66,7 +73,7 @@ export const List = (props: ListProps) => {
           disabled={loading}
           key={profile.user.id}
           profile={profile}
-          forgetProfile={forgetProfile.execute}
+          forgetProfile={props.forgetProfile}
           login={login}
         />
       ))}
@@ -74,7 +81,7 @@ export const List = (props: ListProps) => {
       <Buttons>
         <Button
           secondary
-          loading={loading}
+          disabled={loading}
           label={<FormattedMessage id="login.action.show_form" />}
           onClick={() =>
             props.setState({ type: "form", stage: { type: "need-username" } })
@@ -86,27 +93,23 @@ export const List = (props: ListProps) => {
 };
 
 const ItemDiv = styled.div`
-  ${boxy};
+  ${boxy}
+
   flex-shrink: 0;
-  min-width: 380px;
   border-radius: 2px;
   display: flex;
   flex-direction: row;
   align-items: center;
   margin: 8px 4px;
-
-  &.disabled {
-    cursor: not-allowed;
-    opacity: 0.4;
-  }
+  padding-right: 1em;
 
   .avatar {
     filter: grayscale(100%);
 
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     border-radius: 2px;
-    margin-right: 4px;
+    margin-right: 1em;
   }
 
   &:hover .avatar {
@@ -139,14 +142,17 @@ const ItemDiv = styled.div`
 
   box-shadow: 0 0 4px ${props => props.theme.sidebarBackground};
 
-  &:hover {
-    box-shadow: 0 0 8px ${props => props.theme.sidebarBackground};
-    cursor: pointer;
-  }
-
   &:active {
     filter: brightness(70%);
   }
+
+  button {
+    margin-left: 1em;
+  }
+`;
+
+const Filler = styled.div`
+  flex-grow: 1;
 `;
 
 interface ItemProps {
@@ -162,10 +168,7 @@ export const Item = (props: ItemProps) => {
   const displayName = profile.user.displayName || profile.user.username;
 
   return (
-    <ItemDiv
-      className={classNames("remembered-profile", { disabled })}
-      onClick={() => !disabled && props.login.execute(profile)}
-    >
+    <ItemDiv className={classNames("remembered-profile", { disabled })}>
       <img className="avatar" src={coverUrl} />
       <div className="rest">
         <p className="username">{displayName}</p>
@@ -178,13 +181,20 @@ export const Item = (props: ItemProps) => {
       <span
         data-rh-at="left"
         data-rh={JSON.stringify(["prompt.forget_session.action"])}
-      >
-        <IconButton
-          icon="cross"
-          className="forget-profile"
-          onClick={() => props.forgetProfile(profile.id)}
-        />
-      </span>
+      ></span>
+      <Filler />
+      <IconButton
+        icon="cross"
+        className="forget-profile"
+        disabled={disabled}
+        onClick={() => props.forgetProfile(profile.id)}
+      />
+      <Button
+        onClick={() => !disabled && props.login.execute(profile)}
+        loading={props.login.loading}
+        disabled={disabled}
+        label={<FormattedMessage id="login.action.login" />}
+      ></Button>
     </ItemDiv>
   );
 };
