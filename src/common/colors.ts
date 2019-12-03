@@ -11,6 +11,7 @@ export const baseColors = {
 
   flushMahogany: "#d14343",
   mintJulep: "#efeebf",
+  yellow: "#d1c842",
   gossip: "#b9e8a1",
 
   shamrock: "#24c091",
@@ -37,8 +38,7 @@ export const colors = {
   accent: baseColors.carnation,
   lightAccent: baseColors.vividTangerine,
 
-  error: baseColors.flushMahogany,
-  warning: baseColors.mintJulep,
+  warning: baseColors.yellow,
   success: baseColors.gossip,
 
   buy: baseColors.shamrock,
@@ -52,6 +52,7 @@ export const colors = {
 
   baseBackground: baseColors.codGray,
   baseText: baseColors.ivory,
+  darkText: baseColors.codGray,
 
   inputBackground: uiColors.background,
   inputFocusedBackground: lighten(0.1, uiColors.background),

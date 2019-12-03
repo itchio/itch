@@ -1,19 +1,17 @@
+import classNames from "classnames";
+import { messages } from "common/butlerd";
+import { queries } from "common/queries";
 import React, { useRef, useState } from "react";
+import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
+import { ErrorState } from "renderer/basics/ErrorState";
+import { IconButton } from "renderer/basics/IconButton";
 import { LargeTextInput } from "renderer/basics/TextInput";
 import { GateState } from "renderer/Gate";
-import styled, { animations } from "renderer/styles";
-import { useAsyncCallback } from "react-async-hook";
 import { useSocket } from "renderer/Route";
-import { queries } from "common/queries";
-import { IconButton } from "renderer/basics/IconButton";
-import classNames from "classnames";
-import { ProfileForget } from "common/butlerd/messages";
-import { LoadingCircle } from "renderer/basics/LoadingCircle";
-import { messages } from "common/butlerd";
-import dump from "common/util/dump";
-import { ErrorState } from "renderer/basics/ErrorState";
+import styled, { animations } from "renderer/styles";
+import { delay } from "common/delay";
 
 export type FormStage = NeedUsername | NeedPassword | NeedTOTP | NeedCaptcha;
 
@@ -24,6 +22,9 @@ export interface NeedUsername {
 export interface NeedPassword {
   type: "need-password";
   username: string;
+  error?: Error;
+
+  backState: GateState;
 }
 
 export interface NeedTOTP {
@@ -93,8 +94,11 @@ const Username = styled.div`
   color: ${props => props.theme.secondaryText};
 `;
 
-const ErrorDiv = styled.div`
-  margin-bottom: 2em;
+const FormErrorState = styled(ErrorState)`
+  margin-bottom: 0;
+  &.shown {
+    margin-bottom: 2em;
+  }
 
   .header {
     text-align: center;
@@ -103,8 +107,6 @@ const ErrorDiv = styled.div`
   .icon {
     margin-right: 8px;
   }
-
-  color: ${props => props.theme.error};
 `;
 
 const PasswordContainer = styled.div`
@@ -130,8 +132,7 @@ const RevealButton = styled(IconButton)`
 `;
 
 export const Form = (props: FormProps<FormStage>) => {
-  const { stage, setState } = props;
-  switch (stage.type) {
+  switch (props.stage.type) {
     case "need-username":
       // n.b: TypeScript doesn't understand what we're doing here, ah well.
       return <FormNeedUsername {...(props as FormProps<NeedUsername>)} />;
@@ -160,6 +161,10 @@ export const FormNeedUsername = (props: FormProps<NeedUsername>) => {
         stage: {
           type: "need-password",
           username: usernameRef.current.value,
+          backState: {
+            type: "form",
+            stage: props.stage,
+          },
         },
       });
     }
@@ -218,22 +223,39 @@ export const FormNeedPassword = (props: FormProps<NeedPassword>) => {
     setPasswordShown(!passwordShown);
   };
 
-  let onForget = useAsyncCallback(async () => {
+  let onForgotPassword = useAsyncCallback(async () => {
     await socket.query(queries.openExternalURL, {
       url: "https://itch.io/user/forgot-password",
     });
   });
 
   let onLogin = useAsyncCallback(async () => {
+    const { error: _, ...stage } = props.stage;
+    props.setState({
+      type: "form",
+      stage,
+    });
+
     if (!passwordRef.current) {
       return;
     }
 
-    await socket.call(messages.ProfileLoginWithPassword, {
-      username: props.stage.username,
-      password: passwordRef.current.value,
-    });
+    try {
+      const { profile, cookie } = await socket.call(
+        messages.ProfileLoginWithPassword,
+        {
+          username: props.stage.username,
+          password: passwordRef.current.value,
+        }
+      );
+      await socket.query(queries.setProfile, { profile });
+    } catch (e) {
+      await delay(500);
+      throw e;
+    }
   });
+
+  const error = onLogin.error || props.stage.error;
 
   return (
     <FormContainer>
@@ -242,20 +264,13 @@ export const FormNeedPassword = (props: FormProps<NeedPassword>) => {
           secondary
           icon="arrow-left"
           label={<FormattedMessage id="prompt.action.back" />}
-          onClick={() =>
-            props.setState({
-              type: "form",
-              stage: {
-                type: "need-username",
-              },
-            })
-          }
+          onClick={() => props.setState(props.stage.backState)}
         />
         <Filler />
         <Button
           secondary
           label={<FormattedMessage id="login.action.reset_password" />}
-          onClick={onForget.execute}
+          onClick={onForgotPassword.execute}
         />
       </Buttons>
       <Label>
@@ -288,11 +303,7 @@ export const FormNeedPassword = (props: FormProps<NeedPassword>) => {
           />
         </PasswordContainer>
       </Label>
-      {onLogin.error ? (
-        <ErrorDiv>
-          <ErrorState error={onLogin.error} />
-        </ErrorDiv>
-      ) : null}
+      <FormErrorState error={error} />
       <Buttons>
         <Username>
           <FormattedMessage

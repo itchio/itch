@@ -1,9 +1,29 @@
-import React from "react";
+import { asRequestError } from "common/butlerd";
+import React, { useState, useEffect } from "react";
 import styled from "renderer/styles";
-import { getRpcErrorData, asRequestError } from "common/butlerd";
-import { setFlagsFromString } from "v8";
+import classNames from "classnames";
 
 const Container = styled.div`
+  overflow: hidden;
+  transition: all 0.2s ease-out;
+  height: 0;
+
+  align-self: stretch;
+  background: ${props => props.theme.warning};
+  border-radius: 2px;
+  color: ${props => props.theme.darkText};
+
+  padding-left: 1.4em;
+  padding-right: 1.4em;
+  opacity: 0;
+
+  &.shown {
+    padding-top: 1.4em;
+    padding-bottom: 1.4em;
+    height: 2em;
+    opacity: 1;
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -18,28 +38,48 @@ const Container = styled.div`
 `;
 
 interface ErrorStateProps {
-  error: Error;
+  error?: Error;
+  className?: string;
 }
 
-export const ErrorState = ({ error }: ErrorStateProps) => {
-  if (!error) {
-    return null;
-  }
+export const ErrorState = (props: ErrorStateProps) => {
+  const [error, setError] = useState<Error | null>(null);
+  const [shown, setShown] = useState(false);
+
+  const propError = props.error;
+
+  useEffect(() => {
+    if (propError && error != propError) {
+      if (propError) {
+        setError(propError);
+      }
+    }
+
+    setTimeout(() => {
+      // use `props` directly to avoid hiding after we
+      // already got an error back
+      setShown(!!props.error);
+    }, 125);
+  }, [error, propError]);
 
   return (
-    <Container className="error-state">
-      <span className="icon icon-error" />
-      <div className="spacer" />
-      <abbr title={error && error.stack ? error.stack : String(error)}>
-        {formatError(error)}
-      </abbr>
+    <Container
+      className={classNames("error-state", props.className, { shown })}
+    >
+      {error ? (
+        <>
+          <span className="icon icon-error" />
+          <div className="spacer" />
+          <abbr title={error && error.stack ? error.stack : String(error)}>
+            {formatError(error)}
+          </abbr>
+        </>
+      ) : null}
     </Container>
   );
 };
 
 let formatError = (e: Error): string => {
-  console.log(`formatting`, e, Object.keys(e));
-
   let requestError = asRequestError(e);
   if (requestError) {
     const e = requestError.rpcError;
