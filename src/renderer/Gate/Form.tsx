@@ -381,6 +381,7 @@ const TOTPModal = (props: { state: TOTPState }) => {
         </span>
         <LargeTextInput
           ref={inputRef}
+          autoFocus
           onKeyPress={ev => {
             if (ev.key === "Enter") {
               login.execute();
