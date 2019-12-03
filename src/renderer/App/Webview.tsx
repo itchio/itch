@@ -6,9 +6,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
 import { WebviewActionBar } from "renderer/App/WebviewActionBar";
 import { WebviewNavigation } from "renderer/App/WebviewNavigation";
-import { useSocket } from "renderer/Route";
+import { useSocket, useProfile } from "renderer/Route";
 import styled from "renderer/styles";
 import { useListen } from "renderer/Socket";
+import { partitionForUser } from "common/util/partitions";
 
 const WebviewContainer = styled.div`
   width: 100%;
@@ -31,6 +32,7 @@ export type ExtendedWebContents = WebContents & {
 
 export const Webview = () => {
   const socket = useSocket();
+  const profile = useProfile();
   const viewRef = useRef<WebviewTag>(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
@@ -132,7 +134,11 @@ export const Webview = () => {
         canGoBack={canGoBack}
         canGoForward={canGoForward}
       />
-      <webview src="about://blank" ref={viewRef} />
+      <webview
+        src="about://blank"
+        partition={partitionForUser(profile!.user.id)}
+        ref={viewRef}
+      />
       <WebviewActionBar path={path} />
     </WebviewContainer>
   );

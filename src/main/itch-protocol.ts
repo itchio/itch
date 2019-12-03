@@ -1,13 +1,13 @@
-import { MainState } from "main";
-import { mainLogger } from "main/logger";
 import env from "common/env";
+import dump from "common/util/dump";
+import { getRendererDistPath } from "common/util/resources";
+import { protocol, session } from "electron";
 import * as fs from "fs";
 import * as http from "http";
-import * as filepath from "path";
-import dump from "common/util/dump";
+import { MainState } from "main";
+import { mainLogger } from "main/logger";
 import mime from "mime-types";
-import { getRendererDistPath } from "common/util/resources";
-import { session, protocol } from "electron";
+import * as filepath from "path";
 import { Readable } from "stream";
 
 let logger = mainLogger.childWithName("itch-protocol");
@@ -54,7 +54,40 @@ export function prepareItchProtocol() {
   ]);
 }
 
-export async function registerItchProtocol(mainState: MainState) {
+let partitionsRegistered: {
+  [key: string]: boolean;
+} = {};
+
+export async function registerItchProtocol(
+  mainState: MainState,
+  partition: string
+) {
+  if (partitionsRegistered[partition]) {
+    logger.info(`Already registered itch: for partition ${partition}`);
+    return;
+  }
+
+  logger.info(`Registering itch: for partition ${partition}`);
+
+  let handler = getItchProtocolHandler(mainState);
+  let ses = session.fromPartition(partition);
+  ses.protocol.registerStreamProtocol("itch", handler);
+  partitionsRegistered[partition] = true;
+}
+
+type ProtocolHandler = (
+  req: Electron.Request,
+  cb: (stream: Electron.StreamProtocolResponse) => void
+) => void;
+let protocolHandler: undefined | ProtocolHandler;
+
+export function getItchProtocolHandler(mainState: MainState): ProtocolHandler {
+  if (protocolHandler) {
+    logger.info(`Using cached protocol handler`);
+    return protocolHandler;
+  }
+  logger.info(`Building protocol handler`);
+
   async function handleAPIRequest(
     req: Electron.Request,
     elements: string[]
@@ -207,7 +240,7 @@ export async function registerItchProtocol(mainState: MainState) {
     return data;
   }
 
-  session.defaultSession.protocol.registerStreamProtocol("itch", (req, cb) => {
+  protocolHandler = (req, cb) => {
     handleRequest(req)
       .then(res => {
         cb(res);
@@ -221,5 +254,6 @@ export async function registerItchProtocol(mainState: MainState) {
           data: asReadable(e.stack),
         });
       });
-  });
+  };
+  return protocolHandler;
 }

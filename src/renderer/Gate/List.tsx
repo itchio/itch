@@ -142,10 +142,6 @@ const ItemDiv = styled.div`
 
   box-shadow: 0 0 4px ${props => props.theme.sidebarBackground};
 
-  &:active {
-    filter: brightness(70%);
-  }
-
   button {
     margin-left: 1em;
   }

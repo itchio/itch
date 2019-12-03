@@ -23,6 +23,10 @@ const IconButtonDiv = styled.button`
   width: 30px;
   height: 30px;
 
+  &:focus {
+    outline: none;
+  }
+
   &:hover {
     color: ${props => props.theme.secondaryTextHover};
   }

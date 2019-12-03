@@ -10,6 +10,7 @@ import { loadPreferences, PreferencesState } from "main/load-preferences";
 import { mainLogger } from "main/logger";
 import { ButlerState, startButler } from "main/start-butler";
 import { startWebsocketServer, WebSocketState } from "main/websocket-server";
+import { partitionForApp } from "common/util/partitions";
 
 export interface LocalesConfig {
   locales: {
@@ -93,8 +94,9 @@ async function main() {
 }
 
 async function onReady() {
-  let rendererSession = session.defaultSession;
-  await registerItchProtocol(mainState);
+  const partition = partitionForApp();
+  await registerItchProtocol(mainState, partition);
+  let rendererSession = session.fromPartition(partition);
 
   mainLogger.info(`Setting proxy rules...`);
   let beforeProxy = Date.now();

@@ -2,11 +2,14 @@ import { Client, IDGenerator, RequestError, RpcResult } from "butlerd";
 import { Packet, PacketCreator, packets } from "common/packets";
 import { queries, QueryCreator } from "common/queries";
 import dump from "common/util/dump";
+import { shell } from "electron";
 import { broadcastPacket, MainState } from "main";
+import { setCookie } from "main/cookie";
+import { registerItchProtocol } from "main/itch-protocol";
 import { loadLocale, setPreferences } from "main/load-preferences";
 import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
-import { shell } from "electron";
+import { partitionForUser } from "common/util/partitions";
 
 export class WebsocketContext {
   constructor(private socket: WebSocket) {}
@@ -47,7 +50,13 @@ export class WebsocketHandler {
       return { profile: mainState.profile };
     });
     onQuery(queries.setProfile, async params => {
-      const { profile } = params;
+      const { profile, cookie } = params;
+      if (profile) {
+        registerItchProtocol(mainState, partitionForUser(profile.user.id));
+        if (cookie) {
+          await setCookie(profile, cookie);
+        }
+      }
       mainState.profile = profile;
       broadcastPacket(packets.profileChanged, { profile });
     });
