@@ -106,7 +106,9 @@ export async function loadPreferences(mainState: MainState) {
     },
   };
 
-  await loadLocale(mainState, preferences.lang);
+  if (preferences.lang) {
+    await loadLocale(mainState, preferences.lang);
+  }
 }
 
 function processLocaleStrings(input: LocaleStrings): LocaleStrings {
