@@ -21,6 +21,7 @@ import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
 import { partitionForUser } from "common/util/partitions";
 import { mainLogger } from "main/logger";
+import { startDrivingDownloads } from "main/drive-downloads";
 
 const logger = mainLogger.childWithName("websocket-handler");
 
@@ -80,6 +81,7 @@ export class WebsocketHandler {
     onQuery(queries.setProfile, async params => {
       const { profile, cookie } = params;
       if (profile) {
+        startDrivingDownloads(mainState);
         registerItchProtocol(mainState, partitionForUser(profile.user.id));
         if (cookie) {
           await setCookie(profile, cookie);

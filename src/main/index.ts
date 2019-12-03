@@ -11,6 +11,7 @@ import { mainLogger } from "main/logger";
 import { ButlerState, startButler } from "main/start-butler";
 import { startWebsocketServer, WebSocketState } from "main/websocket-server";
 import { partitionForApp } from "common/util/partitions";
+import { DownloadsState } from "main/drive-downloads";
 
 export interface LocalesConfig {
   locales: {
@@ -28,6 +29,7 @@ export interface MainState {
   localesConfig?: LocalesConfig;
   localeState?: LocaleState;
   ongoingLaunches: OngoingLaunches;
+  downloads?: DownloadsState;
 }
 
 export interface LocaleState {

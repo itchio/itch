@@ -92,7 +92,7 @@ export const Modal = (props: {
 };
 
 // TODO: dedup with Gate/Form.tsx
-const Buttons = styled.div`
+export const Buttons = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;

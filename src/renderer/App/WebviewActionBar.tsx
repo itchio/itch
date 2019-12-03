@@ -10,6 +10,7 @@ import { useAsyncCallback } from "react-async-hook";
 import { queries } from "common/queries";
 import { Modal } from "renderer/basics/Modal";
 import { FormattedMessage } from "react-intl";
+import { InstallModal } from "renderer/App/InstallModal";
 
 const Container = styled.div`
   display: flex;
@@ -83,26 +84,12 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
                   onClick={() => setInstalling(true)}
                 />
               ))}
+            {installing ? (
+              <InstallModal game={game} onClose={() => setInstalling(false)} />
+            ) : null}
           </>
         )}
       />
-      {installing && (
-        <Modal title="Install some stuff?" onClose={() => setInstalling(false)}>
-          <p>Okay you do the work now:</p>
-          <Call
-            rc={messages.InstallPlan}
-            params={{ gameId }}
-            render={result => {
-              return (
-                <>
-                  <pre>info {dump(result.info)}</pre>
-                  <pre>uploads {dump(result.uploads)}</pre>
-                </>
-              );
-            }}
-          />
-        </Modal>
-      )}
     </Container>
   );
 };

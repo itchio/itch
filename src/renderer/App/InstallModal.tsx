@@ -1,0 +1,163 @@
+import { Modal, Buttons } from "renderer/basics/Modal";
+import React, { useEffect, useState } from "react";
+import { Call } from "renderer/use-butlerd";
+import { messages } from "common/butlerd";
+import dump from "common/util/dump";
+import styled from "renderer/styles";
+import { UploadTitle } from "renderer/basics/upload";
+import { fileSize } from "common/format/filesize";
+import { useSocket } from "renderer/Route";
+import { Upload, Game } from "common/butlerd/messages";
+import { Button } from "renderer/basics/Button";
+import { FormattedMessage } from "react-intl";
+import { LoadingCircle } from "renderer/basics/LoadingCircle";
+import { useAsyncCallback } from "react-async-hook";
+import { ErrorState } from "renderer/basics/ErrorState";
+
+interface Props {
+  onClose: () => void;
+  game: Game;
+}
+
+const CaveItemList = styled.div`
+  min-width: 600px;
+  margin: 8px 0;
+`;
+
+const CaveItem = styled.div`
+  margin: 12px 4px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: ${props => props.theme.itemBackground};
+  border-radius: 2px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const CaveDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const CaveDetailsRow = styled.div`
+  padding: 6px 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .platform-icons {
+    margin-left: 8px;
+  }
+
+  &.smaller {
+    font-size: 90%;
+  }
+`;
+
+const Spacer = styled.div`
+  height: 1px;
+  width: 8px;
+`;
+
+const Filler = styled.div`
+  flex-grow: 1;
+`;
+
+const CaveItemActions = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-right: 8px;
+`;
+
+const Title = styled.div`
+  margin-left: 8px;
+  font-weight: bold;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const FileSize = styled.div`
+  color: ${props => props.theme.secondaryText};
+  margin-left: 8px;
+`;
+
+export const InstallModal = (props: Props) => {
+  const socket = useSocket();
+  const [uploadId, setUploadId] = useState<number | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [uploads, setUploads] = useState<Upload[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { info, uploads } = await socket.call(messages.InstallPlan, {
+          gameId: props.game.id,
+        });
+
+        setUploads(uploads);
+        setLoading(false);
+      } catch (e) {
+        alert(e.stack);
+      }
+    })();
+  }, [uploadId]);
+
+  const queueInstall = useAsyncCallback(async (upload: Upload) => {
+    const locsRes = await socket.call(messages.InstallLocationsList, {});
+
+    await socket.call(messages.InstallQueue, {
+      game: props.game,
+      upload: upload,
+      build: upload.build,
+      queueDownload: true,
+      installLocationId: locsRes.installLocations[0].id,
+    });
+    props.onClose();
+  });
+
+  return (
+    <Modal title="Install some stuff?" onClose={props.onClose}>
+      <>
+        {loading ? <LoadingCircle progress={0.3} wide /> : undefined}
+        <CaveItemList>
+          {uploads.map(u => (
+            <CaveItem>
+              <CaveDetails>
+                <CaveDetailsRow>
+                  <Title>
+                    <UploadTitle upload={u} />
+                  </Title>
+                </CaveDetailsRow>
+                <CaveDetailsRow className="smaller">
+                  {u.size > 0 ? <FileSize>{fileSize(u.size)}</FileSize> : null}
+                </CaveDetailsRow>
+              </CaveDetails>
+              <Filler />
+              <CaveItemActions>
+                <Button
+                  icon="install"
+                  onClick={() => queueInstall.execute(u)}
+                  label={<FormattedMessage id="grid.item.install" />}
+                />
+              </CaveItemActions>
+            </CaveItem>
+          ))}
+          <ErrorState error={queueInstall.error} />
+        </CaveItemList>
+      </>
+      <Buttons>
+        <Filler />
+        <Button
+          secondary
+          label={<FormattedMessage id="prompt.action.cancel" />}
+          onClick={props.onClose}
+        />
+      </Buttons>
+    </Modal>
+  );
+};
