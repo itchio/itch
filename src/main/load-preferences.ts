@@ -112,7 +112,7 @@ export async function loadPreferences(mainState: MainState) {
 function processLocaleStrings(input: LocaleStrings): LocaleStrings {
   let output: LocaleStrings = {};
   for (const k of Object.keys(input)) {
-    output[k] = input[k].replace("{{", "{").replace("}}", "}");
+    output[k] = input[k].replace(/{{/g, "{").replace(/}}/g, "}");
   }
   return output;
 }

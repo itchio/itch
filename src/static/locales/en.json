@@ -405,7 +405,7 @@
   "prompt.forget_session.action": "Forget session",
   "prompt.forget_session.detail": "You can always add it back later.",
   "prompt.forget_session.message":
-    "Are you sure you want to remove '{{username}}' from your saved sessions?",
+    "Are you sure you want to remove {{username}} from your saved sessions?",
   "prompt.forget_session.title": "Forget session",
   "prompt.install_location_add.title": "Pick a new install location",
   "prompt.install_location_remove.detail":

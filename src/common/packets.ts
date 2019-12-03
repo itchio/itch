@@ -1,4 +1,4 @@
-import { Request, RpcResult } from "butlerd";
+import { Request, RpcResult, Notification } from "butlerd";
 import { Profile } from "common/butlerd/messages";
 import { OngoingLaunch } from "common/launches";
 import { CurrentLocale } from "common/locales";
@@ -24,13 +24,24 @@ export const packets = wirePackets({
   launchEnded: packet<{ launchId: string }>(),
 
   // queries
-  qreq: packet<QueryRequest<any>>(),
-  qres: packet<QueryResult<any>>(),
+  queryRequest: packet<QueryRequest<any>>(),
+  queryResult: packet<QueryResult<any>>(),
 
   // butlerd requests
-  breq: packet<Request<any, any>>(),
-  bres: packet<RpcResult<any>>(),
+  butlerCancel: packet<{ conv: string }>(),
+  butlerRequest: packet<{
+    conv: string;
+    req: Request<any, any>;
+    handled?: ButlerHandled;
+  }>(),
+  butlerResult: packet<{ conv: string; res: RpcResult<any> }>(),
+  butlerNotification: packet<{ conv: string; notif: Notification<any> }>(),
 });
+
+export type ButlerHandled = {
+  notifications?: string[];
+  requests?: string[];
+};
 
 export interface PacketCreator<PayloadType> {
   (payload: PayloadType): Packet<PayloadType>;

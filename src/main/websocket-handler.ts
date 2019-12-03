@@ -1,4 +1,14 @@
-import { Client, IDGenerator, RequestError, RpcResult } from "butlerd";
+import {
+  Client,
+  IDGenerator,
+  RequestError,
+  RpcResult,
+  Conversation,
+  RequestCreator,
+  NotificationCreator,
+  Request,
+  RpcError,
+} from "butlerd";
 import { Packet, PacketCreator, packets } from "common/packets";
 import { queries, QueryCreator } from "common/queries";
 import dump from "common/util/dump";
@@ -10,6 +20,9 @@ import { loadLocale, setPreferences } from "main/load-preferences";
 import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
 import { partitionForUser } from "common/util/partitions";
+import { mainLogger } from "main/logger";
+
+const logger = mainLogger.childWithName("websocket-handler");
 
 export class WebsocketContext {
   constructor(private socket: WebSocket) {}
@@ -28,6 +41,17 @@ export type OnQuery = <Params, Result>(
   f: QueryHandler<Params, Result>
 ) => void;
 
+type Inbound = {
+  resolve: (payload: any) => void;
+  reject: (e: RpcError) => void;
+};
+
+type OngoingConversation = {
+  conv: Conversation;
+  idSeed: number;
+  inbound: { [id: number]: Inbound };
+};
+
 export class WebsocketHandler {
   packetHandlers: {
     [type: string]: PacketHandler<any>;
@@ -35,6 +59,10 @@ export class WebsocketHandler {
 
   queryHandlers: {
     [method: string]: QueryHandler<any, any>;
+  } = {};
+
+  ongoingConversations: {
+    [id: string]: OngoingConversation;
   } = {};
 
   constructor(mainState: MainState) {
@@ -88,11 +116,11 @@ export class WebsocketHandler {
 
     registerQueriesLaunch(mainState, onQuery);
 
-    onPacket(packets.qreq, (cx, req) => {
+    onPacket(packets.queryRequest, (cx, req) => {
       let handler = this.queryHandlers[req.method];
       if (!handler) {
         console.warn(`Unhandled query: ${dump(req)}`);
-        cx.reply(packets.qres, {
+        cx.reply(packets.queryResult, {
           state: "error",
           id: req.id,
           error: new Error(`Unhandled query ${req.method}`),
@@ -102,14 +130,14 @@ export class WebsocketHandler {
 
       handler(req.params)
         .then(result => {
-          cx.reply(packets.qres, {
+          cx.reply(packets.queryResult, {
             state: "success",
             id: req.id,
             result,
           });
         })
         .catch(error => {
-          cx.reply(packets.qres, {
+          cx.reply(packets.queryResult, {
             state: "error",
             id: req.id,
             error,
@@ -117,45 +145,146 @@ export class WebsocketHandler {
         });
     });
 
-    onPacket(packets.breq, (cx, request) => {
-      if (!mainState.butler) {
-        let result: RpcResult<any> = {
-          jsonrpc: "2.0",
-          id: request.id,
-          error: {
-            code: 999,
-            message: "butler is offline",
-          },
-        };
-        cx.reply(packets.bres, result);
+    onPacket(packets.butlerCancel, (cx, request) => {
+      this.cancelConversation(request.conv);
+    });
+
+    onPacket(packets.butlerResult, (cx, payload) => {
+      let ongoing = this.ongoingConversations[payload.conv];
+      if (!ongoing) {
+        logger.warn(
+          `Got butler result for unknown conversation ${payload.conv}`
+        );
         return;
       }
 
-      const client = new Client(mainState.butler.endpoint);
+      if (typeof payload.res.id !== "number") {
+        // drop notifications
+        return;
+      }
+
+      let inbound = ongoing.inbound[payload.res.id];
+      if (!inbound) {
+        logger.warn(`Got butler result for unknown inbound ${payload.res.id}`);
+        return;
+      }
+      delete ongoing.inbound[payload.res.id];
+
+      if (payload.res.error) {
+        inbound.reject(payload.res.error);
+      } else {
+        console.log(
+          `Resolving inbound with payload.res.result, payload being: ${dump(
+            payload
+          )}`
+        );
+        inbound.resolve(payload.res.result);
+      }
+    });
+
+    onPacket(packets.butlerRequest, (cx, payload) => {
+      if (!mainState.butler) {
+        let result: RpcResult<any> = {
+          jsonrpc: "2.0",
+          id: payload.req.id,
+          error: {
+            code: -32603,
+            message: "butler is offline",
+          },
+        };
+        cx.reply(packets.butlerResult, {
+          conv: payload.conv,
+          res: result,
+        });
+        return;
+      }
+
+      const req = payload.req;
       const rc = Object.assign(
         (params: any) => (gen: IDGenerator) => ({
-          ...request,
+          ...req,
           id: gen.generateID(),
         }),
-        { __method: request.method }
+        { __method: req.method }
       );
-      client
-        .call(rc, request.params)
+
+      let ongoing = this.ongoingConversations[payload.conv];
+      let call: Promise<any>;
+
+      if (ongoing) {
+        call = ongoing.conv.call(rc, req.params);
+      } else {
+        let client = new Client(mainState.butler.endpoint);
+        call = client.call(rc, req.params, conv => {
+          ongoing = { conv, inbound: {}, idSeed: 1 };
+          this.ongoingConversations[payload.conv] = ongoing;
+          if (payload.handled) {
+            if (payload.handled.notifications) {
+              for (const method of payload.handled.notifications) {
+                let nc = { __method: method } as NotificationCreator<any>;
+                conv.onNotification(nc, notif => {
+                  cx.reply(packets.butlerNotification, {
+                    conv: payload.conv,
+                    notif,
+                  });
+                });
+              }
+            }
+
+            if (payload.handled.requests) {
+              for (const method of payload.handled.requests) {
+                let rc = { __method: method } as RequestCreator<any, any>;
+                conv.onRequest(rc, async params => {
+                  let id = ongoing.idSeed;
+                  ongoing.idSeed++;
+
+                  let req: Request<any, any> = {
+                    id,
+                    method,
+                    params,
+                  };
+                  cx.reply(packets.butlerRequest, {
+                    conv: payload.conv,
+                    req,
+                  });
+
+                  return await new Promise((resolve, reject) => {
+                    ongoing.inbound[id] = { resolve, reject };
+                  });
+                });
+              }
+            }
+          }
+        });
+      }
+
+      call
         .then(originalResult => {
           let result: RpcResult<any> = {
             jsonrpc: "2.0",
-            id: request.id,
+            id: req.id,
             result: originalResult,
           };
-          cx.reply(packets.bres, result);
+          cx.reply(packets.butlerResult, {
+            conv: payload.conv,
+            res: result,
+          });
         })
         .catch((error: RequestError) => {
+          let rpcError = error.rpcError || {
+            code: -32603,
+            message: error.stack || error.message,
+          };
+
           let result: RpcResult<any> = {
             jsonrpc: "2.0",
-            id: request.id,
-            error: error.rpcError,
+            id: req.id,
+            error: rpcError,
           };
-          cx.reply(packets.bres, result);
+          cx.reply(packets.butlerResult, {
+            conv: payload.conv,
+            res: result,
+          });
         });
     });
   }
@@ -168,5 +297,14 @@ export class WebsocketHandler {
       return;
     }
     ph(cx, msg.payload);
+  }
+
+  private cancelConversation(convID: string) {
+    let ongoing = this.ongoingConversations[convID];
+    if (!ongoing) {
+      return;
+    }
+    ongoing.conv.cancel();
+    delete this.ongoingConversations[convID];
   }
 }

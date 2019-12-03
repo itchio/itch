@@ -1,9 +1,11 @@
 import { asRequestError } from "common/butlerd";
 import React, { useState, useEffect } from "react";
-import styled from "renderer/styles";
+import styled, { singleLine } from "renderer/styles";
 import classNames from "classnames";
 
 const Container = styled.div`
+  ${singleLine};
+
   overflow: hidden;
   transition: all 0.2s ease-out;
   height: 0;

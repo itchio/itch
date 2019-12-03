@@ -36,7 +36,7 @@ export const ListContainer = styled.div`
 
 interface ListProps {
   setState: (state: GateState) => void;
-  forgetProfile: (profileId: number) => void;
+  forgetProfile: (profile: Profile) => void;
   profiles: Profile[];
 }
 
@@ -153,7 +153,7 @@ const Filler = styled.div`
 
 interface ItemProps {
   profile: Profile;
-  forgetProfile: (profileId: number) => void;
+  forgetProfile: (profile: Profile) => void;
   login: UseAsyncReturn<void, [Profile]>;
   disabled?: boolean;
 }
@@ -183,7 +183,7 @@ export const Item = (props: ItemProps) => {
         icon="cross"
         className="forget-profile"
         disabled={disabled}
-        onClick={() => props.forgetProfile(profile.id)}
+        onClick={() => props.forgetProfile(profile)}
       />
       <Button
         onClick={() => !disabled && props.login.execute(profile)}

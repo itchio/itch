@@ -1,7 +1,16 @@
-import { packets, Packet, PacketCreator } from "common/packets";
-import { RequestError, RequestCreator } from "butlerd/lib/support";
+import {
+  NotificationCreator,
+  RequestCreator,
+  RequestError,
+  RpcResult,
+  Request,
+  Notification,
+} from "butlerd/lib/support";
+import { ButlerHandled, Packet, PacketCreator, packets } from "common/packets";
 import { QueryCreator, QueryRequest } from "common/queries";
+import { uuid } from "common/util/uuid";
 import { useEffect } from "react";
+import { Code } from "common/butlerd/messages";
 
 type PacketKey = keyof typeof packets;
 type Listener<Payload> = (payload: Payload) => void;
@@ -24,11 +33,205 @@ export function useListen<T>(
 
 const TYPES_THAT_ARE_FORBIDDEN_TO_LISTEN = (() => {
   let map = [];
-  for (const pc of [packets.breq, packets.bres, packets.qreq, packets.qres]) {
+  for (const pc of [
+    packets.butlerRequest,
+    packets.butlerResult,
+    packets.butlerNotification,
+    packets.queryRequest,
+    packets.queryResult,
+  ]) {
     map[pc.__type] = true;
   }
   return map;
 })();
+
+type RequestHandler<Params, Result> = (params: Params) => Promise<Result>;
+type NotificationHandler<Params> = (params: Params) => void;
+
+/**
+ * Handles conversations with butler, over websocket
+ */
+export class Conversation {
+  private cancelled = false;
+  private idSeed = 1;
+  private outboundCalls: { [key: number]: Outbound<any> } = {};
+
+  requestHandlers?: {
+    [method: string]: RequestHandler<any, any> | undefined;
+  };
+  notificationHandlers?: {
+    [method: string]: NotificationHandler<any> | undefined;
+  };
+
+  constructor(private socket: Socket, private id: string) {}
+
+  onRequest<Params, Result>(
+    rc: RequestCreator<Params, Result>,
+    f: RequestHandler<Params, Result>
+  ) {
+    if (!this.requestHandlers) {
+      this.requestHandlers = {};
+    }
+    this.requestHandlers[rc.__method] = f;
+  }
+
+  onNotification<Params>(
+    nc: NotificationCreator<Params>,
+    f: NotificationHandler<Params>
+  ) {
+    if (!this.notificationHandlers) {
+      this.notificationHandlers = {};
+    }
+    this.notificationHandlers[nc.__method] = f;
+  }
+
+  handled(): ButlerHandled | undefined {
+    let requests = this.requestHandlers
+      ? Object.keys(this.requestHandlers)
+      : undefined;
+    let notifications = this.notificationHandlers
+      ? Object.keys(this.notificationHandlers)
+      : undefined;
+    if (requests || notifications) {
+      return { requests, notifications };
+    } else {
+      return undefined;
+    }
+  }
+
+  generateID(): number {
+    let res = this.idSeed;
+    this.idSeed++;
+    return res;
+  }
+
+  async call<Params, Result>(
+    rc: RequestCreator<Params, Result>,
+    params: Params
+  ): Promise<Result> {
+    return await this.internalCall(rc, params);
+  }
+
+  private async internalCall<Params, Result>(
+    rc: RequestCreator<Params, Result>,
+    params: Params,
+    handled?: ButlerHandled
+  ): Promise<Result> {
+    let request = rc(params)(this);
+    this.socket.send(packets.butlerRequest, {
+      conv: this.id,
+      handled: this.handled(),
+      req: request,
+    });
+
+    return new Promise((resolve, reject) => {
+      this.outboundCalls[request.id] = { resolve, reject };
+    });
+  }
+
+  private getRequestHandler(
+    method: string
+  ): RequestHandler<any, any> | undefined {
+    if (!this.requestHandlers) {
+      return undefined;
+    }
+    return this.requestHandlers[method];
+  }
+
+  private getNotificationHandler(
+    method: string
+  ): NotificationHandler<any> | undefined {
+    if (!this.notificationHandlers) {
+      return undefined;
+    }
+    return this.notificationHandlers[method];
+  }
+
+  processNotification(notif: Notification<any>) {
+    let handler = this.getNotificationHandler(notif.method);
+    if (handler) {
+      handler(notif.method);
+    }
+  }
+
+  processRequest(request: Request<any, any>) {
+    console.log(`Processing request `, request);
+
+    let handler = this.getRequestHandler(request.method);
+    if (!handler) {
+      console.warn(`Unhandled server-side request: `, request);
+      return;
+    }
+    (async () => {
+      try {
+        console.log(`Running handler...`);
+        const result = await handler(request.params);
+        console.log(`Got result: `, result);
+        this.socket.send(packets.butlerResult, {
+          conv: this.id,
+          res: {
+            jsonrpc: "2.0",
+            id: request.id,
+            result,
+          },
+        });
+      } catch (e) {
+        console.log(`Got error: `, e);
+        this.socket.send(packets.butlerResult, {
+          conv: this.id,
+          res: {
+            jsonrpc: "2.0",
+            id: request.id,
+            error: {
+              code: -32603,
+              message: e.message,
+              data: {
+                stack: e.stack,
+              },
+            },
+          },
+        });
+      }
+    })();
+  }
+
+  processResult(result: RpcResult<any>) {
+    if (typeof result.id !== "number") {
+      return;
+    }
+
+    let outbound = this.outboundCalls[result.id];
+    if (!outbound) {
+      return;
+    }
+
+    delete this.outboundCalls[result.id];
+    if (result.error) {
+      outbound.reject(new RequestError(result.error));
+    } else {
+      outbound.resolve(result.result);
+    }
+  }
+
+  cancel() {
+    if (this.cancelled) {
+      return;
+    }
+    this.cancelled = true;
+
+    for (const id of Object.keys(this.outboundCalls)) {
+      const outbound = this.outboundCalls[id];
+      outbound.reject(
+        new RequestError({
+          code: Code.OperationCancelled,
+          message: "Cancelled",
+        })
+      );
+    }
+    this.socket.send(packets.butlerCancel, { conv: this.id });
+    this.outboundCalls = {};
+  }
+}
 
 export class Socket {
   private ws: WebSocket;
@@ -38,7 +241,9 @@ export class Socket {
     }
   > = {};
   private idSeed = 1;
-  private outboundCalls: { [key: number]: Outbound<any> } = {};
+  private conversations: {
+    [id: string]: Conversation;
+  } = {};
   private outboundQueries: { [key: number]: Outbound<any> } = {};
 
   static async connect(address: string): Promise<Socket> {
@@ -60,21 +265,32 @@ export class Socket {
   private process(msg: string) {
     let packet = JSON.parse(msg) as Packet<any>;
 
-    if (packet.type === packets.bres.__type) {
-      let response = packet.payload as typeof packets.bres.__payload;
-      if (typeof response.id === "number") {
-        let outbound = this.outboundCalls[response.id];
-        delete this.outboundCalls[response.id];
-        if (outbound) {
-          if (response.error) {
-            outbound.reject(new RequestError(response.error));
-          } else {
-            outbound.resolve(response.result);
-          }
-        }
+    if (packet.type === packets.butlerResult.__type) {
+      let payload = packet.payload as typeof packets.butlerResult.__payload;
+      let conv = this.conversations[payload.conv];
+      if (!conv) {
+        // just drop it
+        return;
       }
-    } else if (packet.type === packets.qres.__type) {
-      let response = packet.payload as typeof packets.qres.__payload;
+      conv.processResult(payload.res);
+    } else if (packet.type === packets.butlerNotification.__type) {
+      let payload = packet.payload as typeof packets.butlerNotification.__payload;
+      let conv = this.conversations[payload.conv];
+      if (!conv) {
+        // just drop it
+        return;
+      }
+      conv.processNotification(payload.notif);
+    } else if (packet.type === packets.butlerRequest.__type) {
+      let payload = packet.payload as typeof packets.butlerRequest.__payload;
+      let conv = this.conversations[payload.conv];
+      if (!conv) {
+        // just drop it
+        return;
+      }
+      conv.processRequest(payload.req);
+    } else if (packet.type === packets.queryResult.__type) {
+      let response = packet.payload as typeof packets.queryResult.__payload;
       let outbound = this.outboundQueries[response.id];
       delete this.outboundQueries[response.id];
       if (outbound) {
@@ -128,14 +344,21 @@ export class Socket {
 
   async call<Params, Result>(
     rc: RequestCreator<Params, Result>,
-    params: Params
+    params: Params,
+    setup?: SetupFunc
   ): Promise<Result> {
-    let request = rc(params)(this);
-    this.send(packets.breq, request);
-
-    return new Promise((resolve, reject) => {
-      this.outboundCalls[request.id] = { resolve, reject };
-    });
+    let convID = uuid();
+    let conv = new Conversation(this, convID);
+    if (setup) {
+      setup(conv);
+    }
+    this.conversations[convID] = conv;
+    try {
+      return await conv.call(rc, params);
+    } finally {
+      // no need to cancel it
+      delete this.conversations[convID];
+    }
   }
 
   async query<Result>(
@@ -157,10 +380,12 @@ export class Socket {
       method: qc.__method,
       params,
     };
-    this.send(packets.qreq, query);
+    this.send(packets.queryRequest, query);
 
     return new Promise((resolve, reject) => {
       this.outboundQueries[query.id] = { resolve, reject };
     });
   }
 }
+
+export type SetupFunc = (conv: Conversation) => void;

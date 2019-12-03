@@ -6,6 +6,9 @@ import { useSocket } from "renderer/Route";
 import styled from "renderer/styles";
 import { List } from "renderer/Gate/List";
 import { useAsyncCallback } from "react-async-hook";
+import { Deferred } from "renderer/deferred";
+import { ConfirmModal } from "renderer/basics/Modal";
+import { FormattedMessage } from "react-intl";
 
 const GateContainer = styled.div`
   display: flex;
@@ -30,6 +33,8 @@ export interface GateForm {
   stage: FormStage;
 }
 
+type ForgetConfirm = Deferred<void, void> & { profile: Profile };
+
 export const Gate = (props: {}) => {
   const socket = useSocket();
   const [loading, setLoading] = useState(true);
@@ -40,33 +45,50 @@ export const Gate = (props: {}) => {
     },
   });
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [forgetConfirm, setForgetConfirm] = useState<ForgetConfirm | null>(
+    null
+  );
 
-  const forgetProfile = useAsyncCallback(async (profileId: number) => {
-    // TODO: add confirmation first
-    alert("TODO: confirm before forget profile");
-    socket.call(messages.ProfileForget, { profileId });
+  const forgetProfile = useAsyncCallback(async (profile: Profile) => {
+    try {
+      await new Promise((resolve, reject) => {
+        setForgetConfirm({ resolve, reject, profile });
+      });
+    } catch (e) {
+      console.log(`Forget confirm was cancelled`);
+      return;
+    } finally {
+      setForgetConfirm(null);
+    }
+
+    await socket.call(messages.ProfileForget, { profileId: profile.id });
     fetchProfiles("refresh");
   });
 
   let fetchProfiles = (purpose: "first-time" | "refresh") => {
-    socket.call(messages.ProfileList, {}).then(({ profiles }) => {
-      setProfiles(profiles);
-      if (purpose == "first-time") {
-        setLoading(false);
-        if (profiles.length > 0) {
-          setState({ type: "list" });
+    (async () => {
+      try {
+        const { profiles } = await socket.call(messages.ProfileList, {});
+        setProfiles(profiles);
+        if (purpose == "first-time") {
+          setLoading(false);
+          if (profiles.length > 0) {
+            setState({ type: "list" });
+          }
+        } else if (purpose === "refresh") {
+          if (profiles.length == 0) {
+            setState({
+              type: "form",
+              stage: {
+                type: "need-username",
+              },
+            });
+          }
         }
-      } else if (purpose === "refresh") {
-        if (profiles.length == 0) {
-          setState({
-            type: "form",
-            stage: {
-              type: "need-username",
-            },
-          });
-        }
+      } catch (e) {
+        alert("Something went very wrong: " + e.stack);
       }
-    });
+    })();
   };
 
   useEffect(() => {
@@ -78,6 +100,8 @@ export const Gate = (props: {}) => {
     return <div>Loading...</div>;
   }
 
+  // TODO: figure out where ForgetConfirm fits in all of this, not loving having
+  // it only next to <List/>
   switch (state.type) {
     case "form":
       return (
@@ -92,6 +116,21 @@ export const Gate = (props: {}) => {
     case "list":
       return (
         <GateContainer>
+          {forgetConfirm ? (
+            <ConfirmModal
+              onCancel={forgetConfirm.reject}
+              onConfirm={forgetConfirm.resolve}
+              confirmLabel={
+                <FormattedMessage id="prompt.forget_session.action" />
+              }
+              question={
+                <FormattedMessage
+                  id="prompt.forget_session.message"
+                  values={{ username: forgetConfirm.profile.user.username }}
+                />
+              }
+            />
+          ) : null}
           <List
             setState={setState}
             forgetProfile={forgetProfile.execute}

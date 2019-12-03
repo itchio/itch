@@ -12,6 +12,10 @@ import { GateState } from "renderer/Gate";
 import { useSocket } from "renderer/Route";
 import styled, { animations } from "renderer/styles";
 import { delay } from "common/delay";
+import { ProfileRequestTOTPResult, Code } from "common/butlerd/messages";
+import { Modal } from "renderer/basics/Modal";
+import { RequestError } from "butlerd/lib/support";
+import { Deferred } from "renderer/deferred";
 
 export type FormStage = NeedUsername | NeedPassword | NeedTOTP | NeedCaptcha;
 
@@ -140,7 +144,7 @@ export const Form = (props: FormProps<FormStage>) => {
   }
 };
 
-export const FormNeedUsername = (props: FormProps<NeedUsername>) => {
+const FormNeedUsername = (props: FormProps<NeedUsername>) => {
   const socket = useSocket();
   const usernameRef = useRef<HTMLInputElement>(null);
   const [username, setUsername] = useState("");
@@ -210,11 +214,14 @@ export const FormNeedUsername = (props: FormProps<NeedUsername>) => {
   );
 };
 
-export const FormNeedPassword = (props: FormProps<NeedPassword>) => {
+type TOTPState = Deferred<ProfileRequestTOTPResult, void>;
+
+const FormNeedPassword = (props: FormProps<NeedPassword>) => {
   const socket = useSocket();
   const passwordRef = useRef<HTMLInputElement>(null);
   const [password, setPassword] = useState("");
   const [passwordShown, setPasswordShown] = useState(false);
+  const [totpState, setTOTPState] = useState<TOTPState | null>(null);
 
   let togglePasswordVisibility = () => {
     setPasswordShown(!passwordShown);
@@ -237,16 +244,41 @@ export const FormNeedPassword = (props: FormProps<NeedPassword>) => {
       return;
     }
 
+    let cancelled = false;
     try {
       const { profile, cookie } = await socket.call(
         messages.ProfileLoginWithPassword,
         {
           username: props.stage.username,
           password: passwordRef.current.value,
+        },
+        convo => {
+          convo.onRequest(messages.ProfileRequestTOTP, async params => {
+            console.log(`Doing TOTP...`);
+            try {
+              return await new Promise((resolve, reject) => {
+                setTOTPState({ resolve, reject });
+              });
+            } catch (e) {
+              cancelled = true;
+              throw new Error("cancelled at TOTP stage");
+            } finally {
+              setTOTPState(null);
+            }
+          });
+
+          convo.onRequest(messages.ProfileRequestCaptcha, async params => {
+            console.log(`Doing Captcha...`);
+            return { recaptchaResponse: "wrong" };
+          });
         }
       );
-      await socket.query(queries.setProfile, { profile });
+      await socket.query(queries.setProfile, { profile, cookie });
     } catch (e) {
+      if (cancelled) {
+        return;
+      }
+
       await delay(500);
       throw e;
     }
@@ -316,6 +348,54 @@ export const FormNeedPassword = (props: FormProps<NeedPassword>) => {
           label={<FormattedMessage id="login.action.login" />}
         />
       </Buttons>
+      {totpState ? <TOTPModal state={totpState} /> : null}
     </FormContainer>
+  );
+};
+
+const TOTPModal = (props: { state: TOTPState }) => {
+  const { state } = props;
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const login = useAsyncCallback(async () => {
+    if (!inputRef.current) {
+      return;
+    }
+
+    state.resolve({
+      code: inputRef.current.value,
+    });
+  });
+
+  return (
+    <Modal
+      title={<FormattedMessage id="login.two_factor.title" />}
+      onClose={() => state.reject()}
+    >
+      <p>
+        <FormattedMessage id="login.two_factor.enter_code" />
+      </p>
+      <Label>
+        <span>
+          <FormattedMessage id="login.two_factor.verification_code_label" />
+        </span>
+        <LargeTextInput
+          ref={inputRef}
+          onKeyPress={ev => {
+            if (ev.key === "Enter") {
+              login.execute();
+            }
+          }}
+        />
+      </Label>
+      <Buttons>
+        <Button
+          loading={login.loading}
+          label={<FormattedMessage id="login.action.login" />}
+          onClick={login.execute}
+        />
+        <Filler />
+      </Buttons>
+    </Modal>
   );
 };
