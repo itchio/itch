@@ -3,62 +3,62 @@
 
 @font-face {
     font-family: 'LatoWeb';
-    src: url('assets/lato-regular.woff2') format('woff2'); /* Modern Browsers */
+    src: url('assets/lato-regular.woff2') format('woff2'); 
     font-weight: 400;
     font-style: normal;
 }
 
-@font-face {
+/* @font-face {
     font-family: 'LatoWeb';
-    src: url('assets/lato-italic.woff2') format('woff2'); /* Modern Browsers */
+    src: url('assets/lato-italic.woff2') format('woff2'); 
     font-weight: 400;
     font-style: italic;
-}
+} */
 
 /* Lighter weight */
 
 @font-face {
     font-family: 'LatoWeb';
-    src: url('assets/lato-light.woff2') format('woff2'); /* Modern Browsers */
+    src: url('assets/lato-light.woff2') format('woff2'); 
     font-weight: 200;
     font-style: normal;
 }
 
-@font-face {
+/* @font-face {
     font-family: 'LatoWeb';
-    src: url('assets/lato-lightitalic.woff2') format('woff2'); /* Modern Browsers */
+    src: url('assets/lato-lightitalic.woff2') format('woff2'); 
     font-weight: 200;
     font-style: italic;
-}
+} */
 
 /* Bold weight */
 
 @font-face {
     font-family: 'LatoWeb';
-    src: url('assets/lato-bold.woff2') format('woff2'); /* Modern Browsers */
+    src: url('assets/lato-bold.woff2') format('woff2'); 
     font-weight: 700;
     font-style: normal;
 }
 
-@font-face {
+/* @font-face {
     font-family: 'LatoWeb';
-    src: url('assets/lato-bolditalic.woff2') format('woff2'); /* Modern Browsers */
+    src: url('assets/lato-bolditalic.woff2') format('woff2'); 
     font-weight: 700;
     font-style: italic;
-}
+} */
 
 /* Bolder weight */
 
-@font-face {
+/* @font-face {
     font-family: 'LatoWeb';
-    src: url('assets/lato-heavy.woff2') format('woff2'); /* Modern Browsers */
+    src: url('assets/lato-heavy.woff2') format('woff2'); 
     font-weight: 800;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'LatoWeb';
-    src: url('assets/lato-heavyitalic.woff2') format('woff2'); /* Modern Browsers */
+    src: url('assets/lato-heavyitalic.woff2') format('woff2'); 
     font-weight: 800;
     font-style: italic;
-}
+} */
