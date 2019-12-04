@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
-        "target": "es2017",
+        "target": "esnext",
         "moduleResolution": "node",
+        "noEmit": true,
         "module": "esnext",
         "importHelpers": true,
         "esModuleInterop": true,
@@ -13,6 +14,7 @@
             "renderer": ["renderer"],
             "main": ["main"]
         },
+        "isolatedModules": true,
 
         "strictNullChecks": true,
         "strictPropertyInitialization": true,

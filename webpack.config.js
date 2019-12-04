@@ -1,8 +1,7 @@
-const { NamedModulesPlugin } = require("webpack");
+const { NamedModulesPlugin, BannerPlugin } = require("webpack");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const WebpackBuildNotifierPlugin = require("webpack-build-notifier");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 const path = require("path");
@@ -25,12 +24,15 @@ module.exports = env => {
       entry: {
         main: [
           "react-hot-loader/patch",
-          "./src/main/entry.ts",
           "./src/main/index.ts",
         ],
       },
       plugins: [
         new CleanWebpackPlugin(),
+        new BannerPlugin({
+          banner: `require("source-map-support").install()`,
+          raw: true,
+        }),
         new WebpackBuildNotifierPlugin({
           title: "itch (main)",
         }),
@@ -85,9 +87,6 @@ function getCommonConfig(type, env) {
   const isProduction = env.mode === "production";
   const mode = isProduction ? "production" : "development";
   let plugins = [];
-  if (!isProduction) {
-    plugins.push(new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }));
-  }
 
   return {
     mode,
@@ -109,12 +108,13 @@ function getCommonConfig(type, env) {
       rules: [
         {
           test: /\.tsx?$/,
+          loader: "babel-loader",
           exclude: "/node_modules/",
-          use: [
-            { loader: "cache-loader" },
-            { loader: "thread-loader" },
-            { loader: "ts-loader", options: { happyPackMode: true } },
-          ],
+        },
+        {
+          test: "/.js$/",
+          use: ["source-map-loader"],
+          enforce: "pre",
         },
       ],
     },
