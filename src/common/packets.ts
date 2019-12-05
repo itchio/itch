@@ -22,6 +22,7 @@ export const packets = wirePackets({
   currentLocaleChanged: packet<{ currentLocale: CurrentLocale }>(),
   launchChanged: packet<{ launchId: string; launch: OngoingLaunch }>(),
   launchEnded: packet<{ launchId: string }>(),
+  maximizedChanged: packet<{ maximized: boolean }>(),
 
   // queries
   queryRequest: packet<QueryRequest<any>>(),

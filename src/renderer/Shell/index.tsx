@@ -1,14 +1,16 @@
 import React from "react";
-import { Sidebar } from "renderer/Shell/Sidebar";
+import { Sidebar } from "renderer/Shell/Topbar";
 import { Webview } from "renderer/Shell/Webview";
 const Gate = React.lazy(() => import("renderer/Gate"));
 import styled from "renderer/styles";
 import { useProfile } from "renderer/contexts";
 
 const ShellDiv = styled.div`
+  border: 1px solid rgb(56, 52, 52);
+
   background: ${props => props.theme.baseBackground};
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
   position: absolute;
   top: 0;
@@ -22,7 +24,7 @@ const MainDiv = styled.div`
   flex-grow: 1;
 `;
 
-export const App = () => {
+export const Shell = () => {
   let profile = useProfile();
 
   if (!profile) {
@@ -39,4 +41,4 @@ export const App = () => {
   );
 };
 
-export default App;
+export default Shell;

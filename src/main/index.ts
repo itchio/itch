@@ -31,6 +31,7 @@ export interface MainState {
   localeState?: LocaleState;
   ongoingLaunches: OngoingLaunches;
   downloads?: DownloadsState;
+  browserWindow?: BrowserWindow;
 }
 
 export interface LocaleState {
@@ -121,12 +122,20 @@ async function onReady() {
     title: env.appName,
     width: 1280,
     height: 720,
+    frame: false,
     backgroundColor: colors.baseBackground,
     show: false,
     webPreferences: {
       session: rendererSession,
       webviewTag: true,
     },
+  });
+  mainState.browserWindow = win;
+  win.on("maximize", () => {
+    broadcastPacket(packets.maximizedChanged, { maximized: true });
+  });
+  win.on("restore", () => {
+    broadcastPacket(packets.maximizedChanged, { maximized: false });
   });
   win.setMenu(null);
   win.setMenuBarVisibility(false);

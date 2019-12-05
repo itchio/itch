@@ -162,7 +162,7 @@ export const Button = (props: Props) => {
       onClick={disabled || loading ? undefined : onClick}
       data-rh={hint ? JSON.stringify(hint) : null}
       data-rh-at="top"
-      className={classNames(className, {
+      className={classNames("button", className, {
         primary,
         secondary,
         wide,

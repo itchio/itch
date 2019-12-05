@@ -76,6 +76,40 @@ export class WebsocketHandler {
       this.queryHandlers[qc.__method] = f;
     };
 
+    onQuery(queries.minimize, async () => {
+      let win = mainState.browserWindow;
+      if (win) {
+        win.minimize();
+      }
+    });
+
+    onQuery(queries.toggleMaximized, async () => {
+      let win = mainState.browserWindow;
+      if (win) {
+        if (win.isMaximized()) {
+          win.unmaximize();
+        } else {
+          win.maximize();
+        }
+      }
+    });
+
+    onQuery(queries.close, async () => {
+      let win = mainState.browserWindow;
+      if (win) {
+        win.close();
+      }
+    });
+
+    onQuery(queries.isMaximized, async () => {
+      let maximized = false;
+      let win = mainState.browserWindow;
+      if (win) {
+        maximized = win.isMaximized();
+      }
+      return { maximized };
+    });
+
     onQuery(queries.getProfile, async () => {
       return { profile: mainState.profile };
     });

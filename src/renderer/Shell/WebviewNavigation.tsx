@@ -4,18 +4,15 @@ import styled, { animations } from "renderer/styles";
 import { IconButton } from "renderer/basics/IconButton";
 import { ExtendedWebContents } from "renderer/Shell/Webview";
 
-const NavDiv = styled.div`
-  color: ${props => props.theme.baseText};
-
-  display: flex;
-  flex-direction: column;
+const Filler = styled.div`
+  flex-grow: 1;
 `;
 
-const Controls = styled.div`
+const NavDiv = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  padding: 10px;
+  align-items: center;
+  padding: 2px;
   position: relative;
   overflow: hidden;
 
@@ -43,44 +40,6 @@ const Controls = styled.div`
   }
 `;
 
-const TitleBar = styled.div`
-  font-size: 16px;
-
-  height: 36px;
-  line-height: 36px;
-  vertical-align: middle;
-
-  padding: 0 10px;
-`;
-
-const AddressBar = styled.div`
-  border: 1px solid ${props => props.theme.inputBorder};
-  padding: 0 10px;
-
-  border-radius: 2px;
-  height: 36px;
-  line-height: 36px;
-  vertical-align: middle;
-
-  flex-grow: 1;
-  max-width: 600px;
-
-  input {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    line-height: 100%;
-    background: transparent;
-    border: none;
-  }
-
-  &,
-  input {
-    font-size: 14px;
-    color: ${props => props.theme.baseText};
-  }
-`;
-
 interface Props {
   viewRef: React.RefObject<WebviewTag>;
   url: string;
@@ -90,8 +49,12 @@ interface Props {
   canGoForward: boolean;
 }
 
+const Title = styled.div`
+  font-size: ${props => props.theme.fontSizes.larger};
+  padding-left: 1em;
+`;
+
 export const WebviewNavigation = (props: Props) => {
-  const [editing, setEditing] = useState(false);
   const { title, url, loading } = props;
 
   let withWebview = (f: (wv: WebviewTag, wc: ExtendedWebContents) => void) => {
@@ -107,65 +70,40 @@ export const WebviewNavigation = (props: Props) => {
   };
 
   return (
-    <NavDiv>
-      <TitleBar>{title}</TitleBar>
-      <Controls className={loading ? "loading" : ""}>
-        <IconButton
-          onClick={() =>
-            withWebview((wv, wc) => {
-              if (wc.currentIndex > 0) {
-                wv.goToIndex(wc.currentIndex - 1);
-              }
-            })
-          }
-          disabled={!props.canGoBack}
-          icon="arrow-left"
-        />
-        <IconButton
-          onClick={() =>
-            withWebview((wv, wc) => {
-              if (wc.currentIndex < wc.history.length - 1) {
-                wc.goToIndex(wc.currentIndex + 1);
-              }
-            })
-          }
-          disabled={!props.canGoForward}
-          icon="arrow-right"
-        />
-        <IconButton
-          onClick={() => withWebview(wv => wv.reload())}
-          icon="repeat"
-        />
-        <AddressBar onClick={() => setEditing(true)}>
-          {editing ? (
-            <input
-              autoFocus
-              defaultValue={url}
-              onBlur={() => setEditing(false)}
-              onKeyPress={ev => {
-                if (ev.key === "Enter") {
-                  let url = ev.currentTarget.value;
-                  if (props.viewRef.current) {
-                    props.viewRef.current.loadURL(url);
-                  }
-                  setEditing(false);
-                } else {
-                  console.log(ev.key);
-                }
-              }}
-            ></input>
-          ) : /^about:/.test(url) ? (
-            ""
-          ) : (
-            url
-          )}
-        </AddressBar>
-        <IconButton
-          onClick={() => withWebview(wv => wv.openDevTools())}
-          icon="cog"
-        />
-        <div className="loader-inner"></div>
-      </Controls>
+    <NavDiv className={loading ? "loading" : ""}>
+      <IconButton
+        onClick={() =>
+          withWebview((wv, wc) => {
+            if (wc.currentIndex > 0) {
+              wv.goToIndex(wc.currentIndex - 1);
+            }
+          })
+        }
+        disabled={!props.canGoBack}
+        icon="arrow-left"
+      />
+      <IconButton
+        onClick={() =>
+          withWebview((wv, wc) => {
+            if (wc.currentIndex < wc.history.length - 1) {
+              wc.goToIndex(wc.currentIndex + 1);
+            }
+          })
+        }
+        disabled={!props.canGoForward}
+        icon="arrow-right"
+      />
+      <IconButton
+        onClick={() => withWebview(wv => wv.reload())}
+        icon="repeat"
+      />
+      <Title>{title}</Title>
+      <Filler />
+      <IconButton
+        onClick={() => withWebview(wv => wv.openDevTools())}
+        icon="bug"
+      />
+      <div className="loader-inner"></div>
     </NavDiv>
   );
 };

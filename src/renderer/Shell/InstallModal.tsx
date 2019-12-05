@@ -124,7 +124,7 @@ export const InstallModal = (props: Props) => {
         {loading ? <LoadingCircle progress={0.3} wide /> : undefined}
         <CaveItemList>
           {uploads.map(u => (
-            <CaveItem>
+            <CaveItem key={u.id}>
               <CaveDetails>
                 <CaveDetailsRow>
                   <Title>

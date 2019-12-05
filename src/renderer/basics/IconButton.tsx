@@ -20,8 +20,8 @@ const IconButtonDiv = styled.button`
 
   flex-shrink: 0;
 
-  width: 30px;
-  height: 30px;
+  width: 45px;
+  height: 45px;
 
   &:focus {
     outline: none;

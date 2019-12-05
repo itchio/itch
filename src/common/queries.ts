@@ -4,6 +4,11 @@ import { CurrentLocale } from "common/locales";
 import { OngoingLaunch } from "common/launches";
 
 export const queries = wireQueries({
+  minimize: query<void, void>(),
+  toggleMaximized: query<void, void>(),
+  isMaximized: query<void, { maximized: boolean }>(),
+  close: query<void, void>(),
+
   getWebviewState: query<void, { state: WebviewState }>(),
   setWebviewState: query<{ state: WebviewState }, void>(),
 

@@ -15,6 +15,9 @@ const Container = styled.div`
   align-items: center;
 
   margin-right: 25px;
+
+  min-height: 100px;
+  border-top: 1px solid ${props => props.theme.inputBorder};
 `;
 
 const Cover = styled.img`
@@ -92,19 +95,25 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
   );
 };
 
+const WebviewEmptyActionBar = () => {
+  return (
+    <Container>
+      <div style={{ marginLeft: "2em" }}>Real empty in there</div>
+    </Container>
+  );
+};
+
 export const WebviewActionBar = (props: Props) => {
   const { path } = props;
-  if (!path) {
-    return <></>;
+  if (path) {
+    const matches = /^games\/([0-9]+)$/.exec(path);
+    if (matches) {
+      const gameId = parseInt(matches[1], 10);
+      return <WebviewGameActionBar gameId={gameId} />;
+    }
   }
 
-  const matches = /^games\/([0-9]+)$/.exec(path);
-  if (matches) {
-    const gameId = parseInt(matches[1], 10);
-    return <WebviewGameActionBar gameId={gameId} />;
-  }
-
-  return <></>;
+  return <WebviewEmptyActionBar />;
 };
 
 export default WebviewActionBar;
