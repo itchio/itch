@@ -101,16 +101,20 @@ function getCommonConfig(type, env) {
       path: path.resolve(`./dist/${mode}/${type}/assets`),
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js"],
+      extensions: [".ts", ".tsx", ".js", ".jsx"],
+      modules: ["node_modules"],
       plugins: [new TsconfigPathsPlugin({})],
     },
     externals: ["child_process", "net", "ws"],
     module: {
       rules: [
         {
-          test: /\.tsx?$/,
+          test: /\.(j|t)s(x)?$/,
           loader: "babel-loader",
-          exclude: "/node_modules/",
+          options: {
+            cacheDirectory: true,
+            babelrc: true,
+          }
         },
         {
           test: "/.js$/",
