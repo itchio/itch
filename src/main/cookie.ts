@@ -14,9 +14,7 @@ export async function setCookie(
   cookie: Record<string, string>
 ) {
   const partition = partitionForUser(profile.user.id);
-  const session = require("electron").session.fromPartition(partition, {
-    cache: false,
-  });
+  const session = require("electron").session.fromPartition(partition);
 
   for (const name of Object.keys(cookie)) {
     const value = cookie[name];

@@ -226,6 +226,8 @@ export function getItchProtocolHandler(mainState: MainState): ProtocolHandler {
               server: env.appName,
               "content-length": `${content.length}`,
               "content-type": contentType,
+              "access-control-allow-origin": "*",
+              "cache-control": "public, max-age=31536000",
             },
             data: asReadable(content),
           };

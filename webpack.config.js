@@ -22,10 +22,7 @@ module.exports = env => {
         __filename: true,
       },
       entry: {
-        main: [
-          "react-hot-loader/patch",
-          "./src/main/index.ts",
-        ],
+        main: ["react-hot-loader/patch", "./src/main/index.ts"],
       },
       plugins: [
         new CleanWebpackPlugin(),
@@ -45,6 +42,11 @@ module.exports = env => {
         alias: {
           "react-dom": "@hot-loader/react-dom",
         },
+      },
+      output: {
+        filename: "[name].[contenthash].bundle.js",
+        chunkFilename: "[name].[contenthash].chunk.js",
+        publicPath: "itch://app/assets/",
       },
       entry: {
         renderer: ["./src/renderer/index.tsx"],
@@ -97,7 +99,6 @@ function getCommonConfig(type, env) {
       filename: "[name].bundle.js",
       chunkFilename: "[name].chunk.js",
       path: path.resolve(`./dist/${mode}/${type}/assets`),
-      publicPath: "itch://app/assets/",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js"],
