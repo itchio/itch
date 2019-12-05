@@ -79,6 +79,7 @@
     "@types/chai-as-promised": "^7.1.0",
     "@types/classnames": "^2.2.9",
     "@types/clone": "^0.1.30",
+    "@types/lodash.sortby": "^4.7.6",
     "@types/logrotate-stream": "^0.2.29",
     "@types/mime-types": "^2.1.0",
     "@types/mocha": "^5.2.7",

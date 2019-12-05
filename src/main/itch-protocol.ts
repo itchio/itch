@@ -116,17 +116,19 @@ export function getItchProtocolHandler(mainState: MainState): ProtocolHandler {
       );
     }
 
-    console.log(`elements = ${dump(elements)}`);
+    if (elements.length === 1 && elements[0] === "websocket-address") {
+      let ws = mainState.websocket;
+      if (!ws) {
+        throw new Error(`WebSocket not initialized yet! (this is a bug)`);
+      }
 
-    let ws = mainState.websocket;
-    if (!ws) {
-      throw new Error(`WebSocket not initialized yet! (this is a bug)`);
+      return {
+        address: ws.address,
+        secret: ws.secret,
+      };
     }
 
-    return {
-      address: ws.address,
-      secret: ws.secret,
-    };
+    throw new HTTPError(404, {}, "API route not found");
   }
 
   async function handleRequest(

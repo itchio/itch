@@ -12,6 +12,7 @@ import { ButlerState, startButler } from "main/start-butler";
 import { startWebsocketServer, WebSocketState } from "main/websocket-server";
 import { partitionForApp } from "common/util/partitions";
 import { DownloadsState } from "main/drive-downloads";
+import { attemptAutoLogin } from "main/profile";
 
 export interface LocalesConfig {
   locales: {
@@ -87,7 +88,9 @@ async function main() {
   promises.push(startButler(mainState));
   promises.push(startWebsocketServer(mainState));
   await Promise.all(promises);
-  mainLogger.info(`butler & websocket started, app is ready`);
+  mainLogger.info(`butler & websocket started`);
+
+  await attemptAutoLogin(mainState);
 
   onReady().catch(e => {
     dialog.showErrorBox("Fatal error", e.stack);

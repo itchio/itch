@@ -54,5 +54,7 @@ async function driveDownloads(mainState: MainState) {
     });
   } catch (e) {
     logger.warn(`Downloads drive error ${e.stack}`);
+  } finally {
+    mainState.downloads = undefined;
   }
 }
