@@ -44,7 +44,7 @@ module.exports = env => {
         },
       },
       output: {
-        filename: "[name].[contenthash].bundle.js",
+        filename: "[name].[hash].bundle.js",
         chunkFilename: "[name].[contenthash].chunk.js",
         publicPath: "itch://app/assets/",
       },
