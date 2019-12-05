@@ -59,7 +59,7 @@ const Container = styled.button`
   min-height: 38px;
   min-width: 7em;
 
-  ${buttonColors("hsla(355,40%,22%,1)")}
+  ${buttonColors("#a83737")}
 
   &.secondary {
     ${buttonColors("hsl(214, 32%, 16%)")}

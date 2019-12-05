@@ -29,6 +29,9 @@ export const uiColors = {
   borderFocused: "#676767",
 
   boxShadow: "#1b1919",
+
+  // new!
+  buttonColor: "#a83737",
 };
 
 const breadBackground = `#141414`;
