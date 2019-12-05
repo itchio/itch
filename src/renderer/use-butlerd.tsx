@@ -2,8 +2,8 @@ import { RequestCreator } from "butlerd/lib/support";
 import React, { useEffect, useState } from "react";
 import { ErrorState } from "renderer/basics/ErrorState";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
-import { useSocket } from "renderer/Route";
 import styled from "renderer/styles";
+import { useSocket } from "renderer/contexts";
 
 export type ButlerdState<U> =
   | ButlerdLoadingState

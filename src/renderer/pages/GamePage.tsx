@@ -30,3 +30,5 @@ export const GamePage = ({ gameId }: Props) => {
     </CenterCenter>
   );
 };
+
+export default GamePage;

@@ -4,12 +4,14 @@ import { WebContents, WebviewTag } from "electron";
 import { WebviewState } from "main";
 import React, { useEffect, useRef, useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
-import { WebviewActionBar } from "renderer/App/WebviewActionBar";
+const WebviewActionBar = React.lazy(() =>
+  import("renderer/App/WebviewActionBar")
+);
 import { WebviewNavigation } from "renderer/App/WebviewNavigation";
-import { useSocket, useProfile } from "renderer/Route";
 import styled from "renderer/styles";
 import { useListen } from "renderer/Socket";
 import { partitionForUser } from "common/util/partitions";
+import { useSocket, useProfile } from "renderer/contexts";
 
 const WebviewContainer = styled.div`
   width: 100%;

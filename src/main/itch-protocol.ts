@@ -134,7 +134,7 @@ export function getItchProtocolHandler(mainState: MainState): ProtocolHandler {
   async function handleRequest(
     req: Electron.Request
   ): Promise<Electron.StreamProtocolResponse> {
-    logger.info(`[${req.method}] ${req.url}`);
+    logger.debug(`[${req.method}] ${req.url}`);
     let url = new URL(req.url);
 
     let route = [url.hostname, url.pathname.replace(/^\//, "")]

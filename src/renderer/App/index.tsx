@@ -1,14 +1,9 @@
-import { messages } from "common/butlerd";
-import { packets } from "common/packets";
 import React from "react";
 import { Sidebar } from "renderer/App/Sidebar";
 import { Webview } from "renderer/App/Webview";
-import { useProfile, useSocket } from "renderer/Route";
+const Gate = React.lazy(() => import("renderer/Gate"));
 import styled from "renderer/styles";
-import { Call } from "renderer/use-butlerd";
-import { useAsyncCallback, useAsync } from "react-async-hook";
-import { queries } from "common/queries";
-import { Gate } from "renderer/Gate";
+import { useProfile } from "renderer/contexts";
 
 const AppDiv = styled.div`
   background: ${props => props.theme.baseBackground};
@@ -28,12 +23,7 @@ const MainDiv = styled.div`
 `;
 
 export const App = () => {
-  let socket = useSocket();
   let profile = useProfile();
-
-  let login = useAsyncCallback(async profile => {
-    await socket.query(queries.setProfile, { profile });
-  });
 
   if (!profile) {
     return <Gate />;
@@ -48,3 +38,5 @@ export const App = () => {
     </AppDiv>
   );
 };
+
+export default App;

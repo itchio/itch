@@ -92,7 +92,7 @@ function getCommonConfig(type, env) {
     mode,
     // N.B.: anything else is broken, so, don't bother
     // also, yes, we need the separate entry point to install source map support
-    devtool: "source-map",
+    devtool: isProduction ? undefined : "cheap-module-eval-source-map",
     output: {
       filename: "[name].bundle.js",
       chunkFilename: "[name].chunk.js",

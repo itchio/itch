@@ -80,7 +80,7 @@ export async function startWebsocketServer(mainState: MainState) {
       // TODO: cancel all outbound butlerd requests
       // TODO: cancel all queries, if at all possible ?
       state.sockets = state.sockets.filter(x => x !== socket);
-      logger.warn(`Client going away...`);
+      logger.debug(`Client going away...`);
     });
   });
 }

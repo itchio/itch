@@ -3,10 +3,10 @@ import { Game } from "common/butlerd/messages";
 import React, { useContext } from "react";
 import { Container } from "renderer/basics/Container";
 import { ErrorState } from "renderer/basics/ErrorState";
-import { ProfileContext } from "renderer/Route";
 import styled from "renderer/styles";
 import { Call } from "renderer/use-butlerd";
 import { FormattedMessage } from "react-intl";
+import { useProfile } from "renderer/contexts";
 
 let ratio = 0.7;
 
@@ -40,7 +40,7 @@ const GameGrid = function<T>(props: { items: T[]; getGame: (t: T) => Game }) {
 };
 
 export const LibraryPage = () => {
-  const profile = useContext(ProfileContext);
+  const profile = useProfile();
   if (!profile) {
     return (
       <ErrorState
@@ -75,3 +75,5 @@ export const LibraryPage = () => {
     </Container>
   );
 };
+
+export default LibraryPage;

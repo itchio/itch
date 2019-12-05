@@ -2,13 +2,13 @@ import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
 import React, { useEffect, useState } from "react";
 import { Form, FormStage } from "renderer/Gate/Form";
-import { useSocket } from "renderer/Route";
 import styled from "renderer/styles";
 import { List } from "renderer/Gate/List";
 import { useAsyncCallback } from "react-async-hook";
 import { Deferred } from "renderer/deferred";
 import { ConfirmModal } from "renderer/basics/Modal";
 import { FormattedMessage } from "react-intl";
+import { useSocket } from "renderer/contexts";
 
 const GateContainer = styled.div`
   display: flex;
@@ -142,3 +142,5 @@ export const Gate = (props: {}) => {
       return <div>Unknown page</div>;
   }
 };
+
+export default Gate;

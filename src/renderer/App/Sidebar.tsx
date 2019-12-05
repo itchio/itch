@@ -5,8 +5,8 @@ import { FormattedMessage } from "react-intl";
 import { Icon } from "renderer/basics/Icon";
 import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
-import { useProfile, useSocket } from "renderer/Route";
 import styled from "renderer/styles";
+import { useProfile, useSocket } from "renderer/contexts";
 
 const SidebarDiv = styled.div`
   flex-basis: 240px;

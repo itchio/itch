@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 
-import styled, { keyframes } from "renderer/styles";
+import styled, { keyframes, animations } from "renderer/styles";
 import { Circle } from "renderer/basics/LoadingCircle/Circle";
 
 const turn = keyframes`
@@ -66,4 +66,12 @@ export const LoadingCircle = (props: LoadingCircleProps) => {
       />
     </CircleContainer>
   );
+};
+
+const SpinningCircle = styled(LoadingCircle)`
+  animation: ${animations.spinner} infinite 2s;
+`;
+
+export const Spinner = () => {
+  return <SpinningCircle progress={0.3} wide />;
 };

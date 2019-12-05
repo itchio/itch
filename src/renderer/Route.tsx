@@ -1,13 +1,15 @@
 import { Profile } from "common/butlerd/messages";
 import { packets } from "common/packets";
-import React, { createContext, useContext, useState } from "react";
+import React, { useState } from "react";
 import { useAsync } from "react-async-hook";
-import { App } from "renderer/App";
-import { GamePage } from "renderer/pages/GamePage";
-import { LibraryPage } from "renderer/pages/LibraryPage";
-import { Socket, useListen } from "renderer/Socket";
+import { ProfileContext, useSocket } from "renderer/contexts";
+import { useListen } from "renderer/Socket";
 import styled from "renderer/styles";
 import { queries } from "../common/queries";
+
+const App = React.lazy(() => import("renderer/App"));
+const LibraryPage = React.lazy(() => import("renderer/pages/LibraryPage"));
+const GamePage = React.lazy(() => import("renderer/pages/GamePage"));
 
 let firstMeaningfulRender = true;
 let log = (...args: any[]) => {
@@ -17,14 +19,6 @@ let log = (...args: any[]) => {
     ...args
   );
 };
-
-// n.b.: cheating the type system here, in practice the SocketContext always
-// has a non-null socket, see index.tsx
-export const SocketContext = createContext<Socket>(null as any);
-export const ProfileContext = createContext<Profile | undefined>(undefined);
-
-export const useSocket = () => useContext(SocketContext);
-export const useProfile = () => useContext(ProfileContext);
 
 const RouteContentsDiv = styled.div`
   background: ${props => props.theme.breadBackground};

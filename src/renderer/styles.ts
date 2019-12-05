@@ -171,6 +171,16 @@ export const animations = {
       transform: translateX(100%);
     }
   `,
+
+  spinner: keyframes`
+    0% {
+      transform: rotateX(0);
+    }
+
+    100% {
+      transform: rotateX(360deg);
+    }
+  `,
 };
 
 // mixins

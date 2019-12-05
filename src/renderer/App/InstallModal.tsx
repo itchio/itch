@@ -1,18 +1,16 @@
-import { Modal, Buttons } from "renderer/basics/Modal";
-import React, { useEffect, useState } from "react";
-import { Call } from "renderer/use-butlerd";
 import { messages } from "common/butlerd";
-import dump from "common/util/dump";
-import styled from "renderer/styles";
-import { UploadTitle } from "renderer/basics/upload";
+import { Game, Upload } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
-import { useSocket } from "renderer/Route";
-import { Upload, Game } from "common/butlerd/messages";
-import { Button } from "renderer/basics/Button";
-import { FormattedMessage } from "react-intl";
-import { LoadingCircle } from "renderer/basics/LoadingCircle";
+import React, { useEffect, useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
+import { FormattedMessage } from "react-intl";
+import { Button } from "renderer/basics/Button";
 import { ErrorState } from "renderer/basics/ErrorState";
+import { LoadingCircle } from "renderer/basics/LoadingCircle";
+import { Buttons, Modal } from "renderer/basics/Modal";
+import { UploadTitle } from "renderer/basics/upload";
+import styled from "renderer/styles";
+import { useSocket } from "renderer/contexts";
 
 interface Props {
   onClose: () => void;

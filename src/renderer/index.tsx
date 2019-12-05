@@ -1,16 +1,17 @@
 import "!style-loader!css-loader!./fonts/icomoon/style.css";
 import "!style-loader!css-loader!./fonts/lato/latofonts-custom.css";
-
 import { packets } from "common/packets";
 import { queries } from "common/queries";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import ReactDOM from "react-dom";
 import { hot } from "react-hot-loader/root";
 import { IntlProvider } from "react-intl";
 import GlobalStyles from "renderer/global-styles";
-import { Route, SocketContext } from "renderer/Route";
-import { Socket, useListen } from "renderer/Socket";
+import { Route } from "renderer/Route";
+import { Socket } from "renderer/Socket";
 import { theme, ThemeProvider } from "./styles";
+import { SocketContext } from "renderer/contexts";
+import { Spinner } from "renderer/basics/LoadingCircle";
 
 const AppBase = hot(() => {
   let [socket, setSocket] = useState();
@@ -42,19 +43,21 @@ const AppBase = hot(() => {
   }
 
   return (
-    <SocketContext.Provider value={socket}>
-      <IntlProvider
-        locale={currentLocale.lang}
-        messages={currentLocale.strings}
-      >
-        <ThemeProvider theme={theme}>
-          <React.Fragment>
-            <GlobalStyles />
-            <Route />
-          </React.Fragment>
-        </ThemeProvider>
-      </IntlProvider>
-    </SocketContext.Provider>
+    <Suspense fallback={<Spinner />}>
+      <SocketContext.Provider value={socket}>
+        <IntlProvider
+          locale={currentLocale.lang}
+          messages={currentLocale.strings}
+        >
+          <ThemeProvider theme={theme}>
+            <React.Fragment>
+              <GlobalStyles />
+              <Route />
+            </React.Fragment>
+          </ThemeProvider>
+        </IntlProvider>
+      </SocketContext.Provider>
+    </Suspense>
   );
 });
 

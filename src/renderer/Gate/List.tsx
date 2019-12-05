@@ -10,9 +10,9 @@ import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { TimeAgo } from "renderer/basics/TimeAgo";
 import { GateState } from "renderer/Gate";
-import { useSocket } from "renderer/Route";
 import styled from "styled-components";
 import { animations, boxy } from "renderer/styles";
+import { useSocket } from "renderer/contexts";
 
 const Buttons = styled.div`
   display: flex;
