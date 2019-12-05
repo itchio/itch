@@ -7,7 +7,7 @@ import { useListen } from "renderer/Socket";
 import styled from "renderer/styles";
 import { queries } from "../common/queries";
 
-const App = React.lazy(() => import("renderer/App"));
+const App = React.lazy(() => import("renderer/Shell"));
 const LibraryPage = React.lazy(() => import("renderer/pages/LibraryPage"));
 const GamePage = React.lazy(() => import("renderer/pages/GamePage"));
 

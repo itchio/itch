@@ -5,9 +5,9 @@ import { WebviewState } from "main";
 import React, { useEffect, useRef, useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
 const WebviewActionBar = React.lazy(() =>
-  import("renderer/App/WebviewActionBar")
+  import("renderer/Shell/WebviewActionBar")
 );
-import { WebviewNavigation } from "renderer/App/WebviewNavigation";
+import { WebviewNavigation } from "renderer/Shell/WebviewNavigation";
 import styled from "renderer/styles";
 import { useListen } from "renderer/Socket";
 import { partitionForUser } from "common/util/partitions";

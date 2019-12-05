@@ -1,11 +1,11 @@
 import React from "react";
-import { Sidebar } from "renderer/App/Sidebar";
-import { Webview } from "renderer/App/Webview";
+import { Sidebar } from "renderer/Shell/Sidebar";
+import { Webview } from "renderer/Shell/Webview";
 const Gate = React.lazy(() => import("renderer/Gate"));
 import styled from "renderer/styles";
 import { useProfile } from "renderer/contexts";
 
-const AppDiv = styled.div`
+const ShellDiv = styled.div`
   background: ${props => props.theme.baseBackground};
   display: flex;
   flex-direction: row;
@@ -30,12 +30,12 @@ export const App = () => {
   }
 
   return (
-    <AppDiv>
+    <ShellDiv>
       <Sidebar />
       <MainDiv>
         <Webview />
       </MainDiv>
-    </AppDiv>
+    </ShellDiv>
   );
 };
 

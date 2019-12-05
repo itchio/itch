@@ -4,9 +4,11 @@ import base from "renderer/global-styles/base";
 import scroll from "renderer/global-styles/scroll";
 import hint from "renderer/global-styles/hint";
 
-export default createGlobalStyle`
+const GlobalStyles = createGlobalStyle`
     ${reset}
     ${base}
     ${scroll}
     ${hint}
 `;
+
+export default GlobalStyles;

@@ -3,7 +3,7 @@ import { queries } from "common/queries";
 import React, { useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
-import { InstallModal } from "renderer/App/InstallModal";
+import { InstallModal } from "renderer/Shell/InstallModal";
 import { Button } from "renderer/basics/Button";
 import { useSocket } from "renderer/contexts";
 import styled from "renderer/styles";
@@ -13,7 +13,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-right: 15px;
+
+  margin-right: 25px;
 `;
 
 const Cover = styled.img`
@@ -69,6 +70,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
             {caves &&
               (caves.length > 0 ? (
                 <Button
+                  icon="play2"
                   label={<FormattedMessage id="grid.item.launch" />}
                   disabled={launchGame.loading}
                   onClick={() => launchGame.execute(gameId)}
