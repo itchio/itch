@@ -19,19 +19,15 @@ const Label = styled.div`
 `;
 
 const buttonColors = (bg: string) => {
-  const border = lighten(0.1, bg);
-
   return css`
     background-color: ${bg};
-    border-color: ${border};
 
     &:hover {
-      border-color: ${lighten(0.1, border)};
+      background-color: ${lighten(0.1, bg)};
     }
 
     &:focus {
       outline: none;
-      border-color: ${lighten(0.2, border)};
     }
 
     &:active {
@@ -50,19 +46,29 @@ const Container = styled.button`
   font-weight: normal;
   padding: 12px 16px;
 
-  border: 1px solid;
+  border: 1px solid transparent;
   border-radius: 2px;
-
-  box-shadow: 0 1px 3px ${props => props.theme.inputBoxShadow};
 
   color: ${props => props.theme.baseText};
   min-height: 38px;
   min-width: 7em;
 
+  cursor: pointer;
+
   ${buttonColors("#a83737")}
 
   &.secondary {
-    ${buttonColors("hsl(214, 32%, 16%)")}
+    background: none;
+    border: 1px solid #555;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #5a5a5a;
+    }
+
+    &:active {
+      border: 1px solid #5f5f5f;
+    }
   }
 
   &.primary {
@@ -87,7 +93,7 @@ const Container = styled.button`
   }
 
   &.disabled {
-    opacity: 0.4;
+    opacity: 0.7;
     &:hover {
       cursor: not-allowed;
     }
@@ -102,10 +108,6 @@ const Container = styled.button`
 const Spacer = styled.div`
   min-width: 0.8em;
   flex-shrink: 0;
-
-  &.wide {
-    min-width: 1.6em;
-  }
 `;
 
 const LoadingContainer = styled.div`

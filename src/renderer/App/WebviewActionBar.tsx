@@ -70,14 +70,13 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
               (caves.length > 0 ? (
                 <Button
                   label={<FormattedMessage id="grid.item.launch" />}
-                  wide
                   disabled={launchGame.loading}
                   onClick={() => launchGame.execute(gameId)}
                 />
               ) : (
                 <Button
+                  icon="install"
                   label={<FormattedMessage id="grid.item.install" />}
-                  wide
                   onClick={() => setInstalling(true)}
                 />
               ))}

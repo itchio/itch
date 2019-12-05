@@ -111,6 +111,10 @@ const FormErrorState = styled(ErrorState)`
 
 const PasswordContainer = styled.div`
   position: relative;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
 `;
 
 const RevealButton = styled(IconButton)`
@@ -128,6 +132,26 @@ const RevealButton = styled(IconButton)`
     .icon {
       color: ${props => props.theme.accent} !important;
     }
+  }
+`;
+
+const SegmentedGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-self: stretch;
+  align-items: stretch;
+  justify-content: stretch;
+
+  *:first-child {
+    flex-grow: 1;
+
+    border-radius: 4px 0 0 4px;
+    border-right: none !important;
+  }
+
+  *:last-child {
+    border-radius: 0 4px 4px 0;
+    border-left: none !important;
   }
 `;
 
@@ -190,6 +214,8 @@ const FormNeedUsername = (props: FormProps<NeedUsername>) => {
       </Buttons>
       <Label>
         <FormattedMessage id="login.field.username" />
+      </Label>
+      <SegmentedGroup>
         <LargeTextInput
           ref={usernameRef}
           autoFocus
@@ -201,14 +227,13 @@ const FormNeedUsername = (props: FormProps<NeedUsername>) => {
           }}
           onChange={ev => setUsername(ev.currentTarget.value)}
         />
-      </Label>
-      <Buttons>
         <Button
           disabled={username == ""}
+          secondary={username == ""}
           onClick={onNext}
           label={<FormattedMessage id="prompt.action.next" />}
         />
-      </Buttons>
+      </SegmentedGroup>
     </FormContainer>
   );
 };
@@ -302,20 +327,13 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
         />
       </Buttons>
       <Label>
-        <FormattedMessage id="login.field.password" />
-
+        <FormattedMessage
+          id="login.field.password_for"
+          values={{ username: props.stage.username }}
+        />
+      </Label>
+      <SegmentedGroup>
         <PasswordContainer className="input-wrapper">
-          <RevealButton
-            onMouseDown={togglePasswordVisibility}
-            icon={passwordShown ? "visibility" : "visibility_off"}
-            hint={
-              passwordShown
-                ? ["login.action.hide_password"]
-                : ["login.action.reveal_password"]
-            }
-            className={classNames({ passwordShown })}
-            hintPosition="top"
-          />
           <LargeTextInput
             type={passwordShown ? "text" : "password"}
             disabled={onLogin.loading}
@@ -329,24 +347,27 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
             }}
             onChange={ev => setPassword(ev.currentTarget.value)}
           />
-        </PasswordContainer>
-      </Label>
-      <FormErrorState error={error} />
-      <Buttons>
-        <Username>
-          <FormattedMessage
-            id="login.two_factor.as_user"
-            values={{ username: props.stage.username }}
+          <RevealButton
+            onMouseDown={togglePasswordVisibility}
+            icon={passwordShown ? "visibility" : "visibility_off"}
+            hint={
+              passwordShown
+                ? ["login.action.hide_password"]
+                : ["login.action.reveal_password"]
+            }
+            className={classNames({ passwordShown })}
+            hintPosition="top"
           />
-        </Username>
-        <Filler />
+        </PasswordContainer>
         <Button
           disabled={password == ""}
+          secondary={password == ""}
           loading={onLogin.loading}
           onClick={onLogin.execute}
           label={<FormattedMessage id="login.action.login" />}
         />
-      </Buttons>
+      </SegmentedGroup>
+      <FormErrorState error={error} />
       {totpState ? <TOTPModal state={totpState} /> : null}
     </FormContainer>
   );

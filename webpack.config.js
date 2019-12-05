@@ -122,7 +122,7 @@ function getCommonConfig(type, env) {
     optimization: {
       // N.B: minifiers break production code all the dang time, resist the urge
       // to enable them.
-      minimize: true,
+      minimize: isProduction,
     },
     plugins,
   };

@@ -13,7 +13,7 @@ const IconButtonDiv = styled.button`
   border: none;
   color: inherit;
 
-  font-size: ${props => props.theme.fontSizes.baseText};
+  font-size: ${props => props.theme.fontSizes.larger};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,7 +94,7 @@ export const IconButton = (props: Props) => {
 
   return (
     <IconButtonDiv
-      className={classNames(className, {
+      className={classNames("icon-button", className, {
         disabled,
         big,
         huge,

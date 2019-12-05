@@ -14,6 +14,13 @@ import styled from "styled-components";
 import { animations, boxy } from "renderer/styles";
 import { useSocket } from "renderer/contexts";
 
+const ListLogo = styled.img`
+  width: 180px;
+  height: auto;
+  margin-bottom: 30px;
+  align-self: center;
+`;
+
 const Buttons = styled.div`
   display: flex;
   flex-direction: row;
@@ -26,11 +33,12 @@ const Buttons = styled.div`
 export const ListContainer = styled.div`
   animation: ${animations.fadeIn} 0.2s;
 
-  padding: 1em 0;
+  padding: 1em;
 
   display: flex;
   flex-direction: column;
   align-items: stretch;
+
   overflow-y: auto;
 `;
 
@@ -68,6 +76,7 @@ export const List = (props: ListProps) => {
 
   return (
     <ListContainer>
+      <ListLogo src={require("static/images/logos/app-white.svg")} />
       {props.profiles.map(profile => (
         <Item
           disabled={loading}
@@ -79,6 +88,7 @@ export const List = (props: ListProps) => {
       ))}
 
       <Buttons>
+        <Filler />
         <Button
           secondary
           disabled={loading}
@@ -93,27 +103,24 @@ export const List = (props: ListProps) => {
 };
 
 const ItemDiv = styled.div`
-  ${boxy}
+  background: #222;
+  overflow: visible;
 
   flex-shrink: 0;
-  border-radius: 2px;
+  border-radius: 4px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 8px 4px;
-  padding-right: 1em;
+  margin: 20px 0;
 
   .avatar {
-    filter: grayscale(100%);
-
-    width: 72px;
-    height: 72px;
-    border-radius: 2px;
+    width: 70px;
+    height: 70px;
+    margin: -5px;
     margin-right: 1em;
-  }
+    border-radius: 50%;
 
-  &:hover .avatar {
-    filter: grayscale(0%);
+    box-shadow: 0 0 10px #222;
   }
 
   p {
@@ -140,10 +147,15 @@ const ItemDiv = styled.div`
     font-size: 14px;
   }
 
-  box-shadow: 0 0 4px ${props => props.theme.sidebarBackground};
-
   button {
     margin-left: 1em;
+    align-self: stretch;
+
+    border-radius: 0 2px 2px 0;
+
+    &.icon-button {
+      align-self: center;
+    }
   }
 `;
 
@@ -180,7 +192,7 @@ export const Item = (props: ItemProps) => {
       ></span>
       <Filler />
       <IconButton
-        icon="cross"
+        icon="more_vert"
         className="forget-profile"
         disabled={disabled}
         onClick={() => props.forgetProfile(profile)}
