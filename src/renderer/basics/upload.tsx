@@ -12,24 +12,16 @@ interface Props {
 }
 
 export const UploadTitle = (props: Props) => {
+  const { upload } = props;
+
   return (
     <>
-      <UploadIcon upload={props.upload} />
+      <Icon icon={uploadIcon(upload)} hint={uploadTypeHint(upload)} />
       <Spacer />
-      {formatUploadTitle(props.upload)}
+      {formatUploadTitle(upload)}
     </>
   );
 };
-
-export const UploadIcon = (props: Props) => {
-  const { upload } = props;
-  if (!upload) {
-    return null;
-  }
-  return <Icon icon={uploadIcon(upload)} hint={uploadTypeHint(upload)} />;
-};
-
-export default UploadIcon;
 
 export function formatUploadTitle(u: Upload): string {
   return u ? u.displayName || u.filename : "?";

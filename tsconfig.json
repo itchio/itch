@@ -1,29 +1,30 @@
 {
-    "compilerOptions": {
-        "target": "esnext",
-        "moduleResolution": "node",
-        "noEmit": true,
-        "module": "esnext",
-        "importHelpers": true,
-        "esModuleInterop": true,
-        "jsx": "react",
-        "skipLibCheck": true,
-        "baseUrl": "src",
-        "paths": {
-            "common": ["common"],
-            "renderer": ["renderer"],
-            "main": ["main"]
-        },
-        "isolatedModules": true,
+  "compilerOptions": {
+    "target": "esnext",
+    "moduleResolution": "node",
+    "module": "esnext",
 
-        "strictNullChecks": true,
-        "strictPropertyInitialization": true,
-        "noImplicitReturns": true,
-        "allowSyntheticDefaultImports": true,
-        "experimentalDecorators": true,
+    "strict": true,
 
-        "sourceMap": true
-    },
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
 
-    "include": ["src/**/*"],
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+
+    "noImplicitReturns": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+
+    "baseUrl": "src",
+    "paths": {
+      "common": ["common"],
+      "renderer": ["renderer"],
+      "main": ["main"]
+    }
+  },
+
+  "include": ["src/**/*"]
 }

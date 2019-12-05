@@ -18,7 +18,7 @@ const Label = styled.div`
   }
 `;
 
-const buttonColors = bg => {
+const buttonColors = (bg: string) => {
   const border = lighten(0.1, bg);
 
   return css`

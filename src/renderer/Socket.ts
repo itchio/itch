@@ -32,7 +32,7 @@ export function useListen<T>(
 }
 
 const TYPES_THAT_ARE_FORBIDDEN_TO_LISTEN = (() => {
-  let map = [];
+  let map: { [key: string]: true } = {};
   for (const pc of [
     packets.butlerRequest,
     packets.butlerResult,
@@ -220,7 +220,7 @@ export class Conversation {
     this.cancelled = true;
 
     for (const id of Object.keys(this.outboundCalls)) {
-      const outbound = this.outboundCalls[id];
+      const outbound = this.outboundCalls[Number(id)];
       outbound.reject(
         new RequestError({
           code: Code.OperationCancelled,
@@ -235,11 +235,9 @@ export class Conversation {
 
 export class Socket {
   private ws: WebSocket;
-  private listeners: Partial<
-    {
-      [key in PacketKey]: Listener<any>[];
-    }
-  > = {};
+  private listeners: {
+    [type: string]: Listener<any>[];
+  } = {};
   private idSeed = 1;
   private conversations: {
     [id: string]: Conversation;

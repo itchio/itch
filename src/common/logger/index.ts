@@ -26,7 +26,7 @@ export interface LogEntry {
 }
 
 export interface LogSink {
-  write(entry: LogEntry);
+  write(entry: LogEntry): void;
 }
 
 export class Logger {

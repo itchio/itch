@@ -25,7 +25,7 @@ class HTTPError extends Error {
 function convertHeaders(
   input: http.IncomingHttpHeaders
 ): Record<string, string> {
-  let output = {};
+  let output: Record<string, string> = {};
   for (const k of Object.keys(input)) {
     const v = input[k];
     switch (typeof v) {

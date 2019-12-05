@@ -80,7 +80,7 @@ async function main() {
   let promises: Promise<void>[] = [];
   promises.push(
     new Promise((resolve, reject) => {
-      app.on("ready", resolve);
+      app.on("ready", () => resolve());
     })
   );
   promises.push(loadPreferences(mainState));

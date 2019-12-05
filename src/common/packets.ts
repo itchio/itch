@@ -18,7 +18,7 @@ export const packets = wirePackets({
   }>(),
 
   // global events
-  profileChanged: packet<{ profile: Profile }>(),
+  profileChanged: packet<{ profile?: Profile }>(),
   currentLocaleChanged: packet<{ currentLocale: CurrentLocale }>(),
   launchChanged: packet<{ launchId: string; launch: OngoingLaunch }>(),
   launchEnded: packet<{ launchId: string }>(),
