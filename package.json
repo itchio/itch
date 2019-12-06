@@ -39,7 +39,6 @@
     "intl-messageformat": "^4.4.0",
     "logrotate-stream": "^0.2.5",
     "marked-extra": "^0.2.6",
-    "memory-streams": "^0.1.2",
     "mime-types": "^2.1.24",
     "multi-write-stream": "^2.0.1",
     "node-emoji": "^1.10.0",

@@ -1,5 +1,3 @@
-import memory from "memory-streams";
-
 const levelNumbers = {
   silent: 100,
   error: 50,
@@ -106,25 +104,36 @@ export const streamSink = (stream: NodeJS.WritableStream): LogSink => {
 };
 
 export class RecordingLogger extends Logger {
-  public memlog: memory.WritableStream;
+  private stringSink: StringSink;
   closed = false;
 
   constructor(parent: Logger, name?: string) {
-    super(parent.sink, name); // boo! down with constructors
-    this.memlog = new memory.WritableStream();
-    this.sink = multiSink(parent.sink, streamSink(this.memlog));
+    super(parent.sink, name);
+    this.stringSink = new StringSink();
+    this.sink = multiSink(parent.sink, this.stringSink);
   }
 
   /**
    * Returns all log messages as a string
    */
   getLog(): string {
-    return this.memlog.toString();
+    return this.stringSink.toString();
   }
 
   destroy() {
     this.sink = devNull;
-    this.memlog.destroy();
+  }
+}
+
+class StringSink implements LogSink {
+  private buffer = "";
+
+  write(entry: LogEntry) {
+    this.buffer += `${JSON.stringify(entry)}\n`;
+  }
+
+  toString(): string {
+    return this.buffer;
   }
 }
 

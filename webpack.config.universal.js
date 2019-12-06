@@ -1,4 +1,4 @@
-const { NamedModulesPlugin, BannerPlugin } = require("webpack");
+const { NamedModulesPlugin, DefinePlugin, BannerPlugin } = require("webpack");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const WebpackBuildNotifierPlugin = require("webpack-build-notifier");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -8,6 +8,8 @@ const path = require("path");
 const merge = require("webpack-merge");
 
 module.exports = env => {
+  const isProduction = env.mode === "production";
+
   return [
     merge.smart(getCommonConfig("main", env), {
       target: "electron-main",
@@ -22,10 +24,14 @@ module.exports = env => {
         __filename: true,
       },
       entry: {
-        main: ["react-hot-loader/patch", "./src/main/index.ts"],
+        main: ["./src/main/index.ts"],
       },
       plugins: [
         new CleanWebpackPlugin(),
+        new DefinePlugin({
+          // yes, the "main process" in electron is called "browser"
+          "process.type": JSON.stringify("browser"),
+        }),
         new BannerPlugin({
           banner: `require("source-map-support").install()`,
           raw: true,
@@ -40,7 +46,7 @@ module.exports = env => {
       resolve: {
         mainFields: ["browser", "module", "main"],
         alias: {
-          "react-dom": "@hot-loader/react-dom",
+          ...(isProduction ? {} : {"react-dom": "@hot-loader/react-dom"}),
         },
       },
       output: {
@@ -49,7 +55,7 @@ module.exports = env => {
         publicPath: "itch://app/assets/",
       },
       entry: {
-        renderer: ["./src/renderer/index.tsx"],
+        renderer: ["react-hot-loader/patch", "./src/renderer/index.tsx"],
       },
       module: {
         rules: [
@@ -65,6 +71,9 @@ module.exports = env => {
       },
       plugins: [
         new CleanWebpackPlugin(),
+        new DefinePlugin({
+          "process.type": JSON.stringify("renderer"),
+        }),
         new WebpackBuildNotifierPlugin({
           title: "itch (renderer)",
         }),
@@ -113,7 +122,33 @@ function getCommonConfig(type, env) {
           loader: "babel-loader",
           options: {
             cacheDirectory: true,
-            babelrc: true,
+            babelrc: false,
+            presets: [
+              "@babel/react",
+              "@babel/typescript",
+              [
+                "@babel/env",
+                {
+                  targets: {
+                    electron: "7.1.2",
+                  },
+                },
+              ],
+            ],
+            plugins: [
+              "@babel/proposal-class-properties",
+              "@babel/proposal-object-rest-spread",
+              ...(isProduction ? [] : ["react-hot-loader/babel"]),
+              [
+                "babel-plugin-styled-components",
+                {
+                  displayName: false,
+                  pure: false,
+                  minify: false,
+                  transpileTemplateLiterals: false,
+                },
+              ],
+            ],
           },
         },
         {
