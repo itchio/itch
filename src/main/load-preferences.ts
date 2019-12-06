@@ -50,8 +50,8 @@ export interface PreferencesState {
 
 export type TabLayout = "grid" | "table";
 
-function normalizeLang(mainState: MainState, lang: string): string {
-  let list = mainState.localesConfig ? mainState.localesConfig.locales : [];
+function normalizeLang(ms: MainState, lang: string): string {
+  let list = ms.localesConfig ? ms.localesConfig.locales : [];
 
   if (list.find(x => x.value == lang)) {
     return lang;
@@ -65,7 +65,7 @@ function normalizeLang(mainState: MainState, lang: string): string {
   return "en";
 }
 
-export async function loadPreferences(mainState: MainState) {
+export async function loadPreferences(ms: MainState) {
   let preferences: PreferencesState;
   try {
     preferences = await readJSONFile(preferencesPath());
@@ -96,9 +96,9 @@ export async function loadPreferences(mainState: MainState) {
     `Loaded ${Object.keys(englishStrings).length} strings for English locale`
   );
 
-  mainState.preferences = preferences;
-  mainState.localesConfig = localesConfig;
-  mainState.localeState = {
+  ms.preferences = preferences;
+  ms.localesConfig = localesConfig;
+  ms.localeState = {
     englishStrings,
     current: {
       lang: "en",
@@ -107,7 +107,7 @@ export async function loadPreferences(mainState: MainState) {
   };
 
   if (preferences.lang) {
-    await loadLocale(mainState, preferences.lang);
+    await loadLocale(ms, preferences.lang);
   }
 }
 
@@ -119,16 +119,16 @@ function processLocaleStrings(input: LocaleStrings): LocaleStrings {
   return output;
 }
 
-export async function loadLocale(mainState: MainState, lang: string) {
-  if (!mainState.localeState) {
-    throw new Error(`loadLocale called before mainState.localeState is set`);
+export async function loadLocale(ms: MainState, lang: string) {
+  if (!ms.localeState) {
+    throw new Error(`loadLocale called before MainState.localeState is set`);
   }
 
-  let normalizedLang = normalizeLang(mainState, lang);
+  let normalizedLang = normalizeLang(ms, lang);
   if (normalizedLang == "en") {
     logger.info(`Unknown lang ${lang}, not loading`);
-    let { englishStrings } = mainState.localeState;
-    mainState.localeState.current = {
+    let { englishStrings } = ms.localeState;
+    ms.localeState.current = {
       lang: "en",
       strings: englishStrings,
     };
@@ -143,24 +143,24 @@ export async function loadLocale(mainState: MainState, lang: string) {
       Object.keys(strings).length
     } strings from ${normalizedLang} for ${lang}`
   );
-  mainState.localeState.current = {
+  ms.localeState.current = {
     lang: normalizedLang,
     strings,
   };
 }
 
 export async function setPreferences(
-  mainState: MainState,
+  ms: MainState,
   values: Partial<PreferencesState>
 ) {
-  if (!mainState.preferences) {
+  if (!ms.preferences) {
     throw new Error(`setPreferences called before preferences were loaded`);
   }
 
-  mainState.preferences = {
-    ...mainState.preferences,
+  ms.preferences = {
+    ...ms.preferences,
     ...values,
   };
 
-  await writeJSONFile(preferencesPath(), mainState.preferences);
+  await writeJSONFile(preferencesPath(), ms.preferences);
 }

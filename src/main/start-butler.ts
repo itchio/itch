@@ -1,7 +1,7 @@
 import { Client, Instance, Endpoint, Conversation } from "butlerd";
 import { messages } from "common/butlerd";
-import urls from "common/constants/urls";
-import { butlerUserAgent } from "common/constants/useragent";
+import urls from "main/constants/urls";
+import { butlerUserAgent } from "main/constants/useragent";
 import { butlerDbPath } from "common/util/paths";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
@@ -14,7 +14,7 @@ export interface ButlerState {
   endpoint: Endpoint;
 }
 
-export async function startButler(mainState: MainState) {
+export async function startButler(ms: MainState) {
   logger.info("Starting daemon...");
   const instance = new Instance({
     // TODO: use bundled butler in production, don't rely on %PATH% ever
@@ -36,7 +36,7 @@ export async function startButler(mainState: MainState) {
   const res = await client.call(messages.VersionGet, {});
   logger.info(`Using butler ${res.versionString}`);
 
-  mainState.butler = {
+  ms.butler = {
     instance,
     endpoint,
   };

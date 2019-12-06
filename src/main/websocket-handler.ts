@@ -1,36 +1,68 @@
 import {
   Client,
-  IDGenerator,
-  RequestError,
-  RpcResult,
   Conversation,
-  RequestCreator,
+  IDGenerator,
   NotificationCreator,
   Request,
+  RequestCreator,
+  RequestError,
   RpcError,
+  RpcResult,
 } from "butlerd";
+import { Download } from "common/butlerd/messages";
 import { Packet, PacketCreator, packets } from "common/packets";
 import { queries, QueryCreator } from "common/queries";
 import dump from "common/util/dump";
 import { shell } from "electron";
-import { broadcastPacket, MainState } from "main";
-import { setCookie } from "main/cookie";
-import { registerItchProtocol } from "main/itch-protocol";
+import { filter } from "lodash";
+import { MainState } from "main";
+import { envSettings } from "main/constants/env-settings";
 import { loadLocale, setPreferences } from "main/load-preferences";
+import { mainLogger } from "main/logger";
+import { setProfile } from "main/profile";
 import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
-import { partitionForUser } from "common/util/partitions";
-import { mainLogger } from "main/logger";
-import { startDrivingDownloads } from "main/drive-downloads";
-import { setProfile } from "main/profile";
 
 const logger = mainLogger.childWithName("websocket-handler");
+
+export function broadcastPacket<T>(
+  ms: MainState,
+  pc: PacketCreator<T>,
+  payload: T
+) {
+  const msg = pc(payload);
+  if (envSettings.verboseWebSocket) {
+    logger.debug(`*- ${dump(msg)}`);
+  }
+  const text = JSON.stringify(msg);
+
+  let ws = ms.websocket;
+  if (ws) {
+    for (const cx of ws.sockets) {
+      cx.sendText(text);
+    }
+  } else {
+    mainLogger.warn(`Can't broadcast yet, websocket isn't up`);
+  }
+}
 
 export class WebsocketContext {
   constructor(private socket: WebSocket) {}
 
-  reply<T>(pc: PacketCreator<T>, payload: T) {
-    this.socket.send(JSON.stringify(pc(payload)));
+  reply<T>(pc: PacketCreator<T>, payload: T, silent?: boolean) {
+    let msg = pc(payload);
+    if (!silent && envSettings.verboseWebSocket) {
+      logger.debug(`<- ${dump(msg)}`);
+    }
+    this.sendObject(msg);
+  }
+
+  sendObject(msg: Object) {
+    this.sendText(JSON.stringify(msg));
+  }
+
+  sendText(text: string) {
+    this.socket.send(text);
   }
 }
 
@@ -67,7 +99,7 @@ export class WebsocketHandler {
     [id: string]: OngoingConversation;
   } = {};
 
-  constructor(mainState: MainState) {
+  constructor(ms: MainState) {
     let onPacket: OnPacket = (pc, f) => {
       this.packetHandlers[pc.__type] = f;
     };
@@ -77,14 +109,14 @@ export class WebsocketHandler {
     };
 
     onQuery(queries.minimize, async () => {
-      let win = mainState.browserWindow;
+      let win = ms.browserWindow;
       if (win) {
         win.minimize();
       }
     });
 
     onQuery(queries.toggleMaximized, async () => {
-      let win = mainState.browserWindow;
+      let win = ms.browserWindow;
       if (win) {
         if (win.isMaximized()) {
           win.unmaximize();
@@ -95,7 +127,7 @@ export class WebsocketHandler {
     });
 
     onQuery(queries.close, async () => {
-      let win = mainState.browserWindow;
+      let win = ms.browserWindow;
       if (win) {
         win.close();
       }
@@ -103,46 +135,55 @@ export class WebsocketHandler {
 
     onQuery(queries.isMaximized, async () => {
       let maximized = false;
-      let win = mainState.browserWindow;
+      let win = ms.browserWindow;
       if (win) {
         maximized = win.isMaximized();
       }
       return { maximized };
     });
 
+    onQuery(queries.getDownloadsForGame, async ({ gameId }) => {
+      let downloads: Download[] = [];
+      if (ms.downloads) {
+        downloads = filter(ms.downloads, d => d.game && d.game.id === gameId);
+      }
+
+      return { downloads };
+    });
+
     onQuery(queries.getProfile, async () => {
-      return { profile: mainState.profile };
+      return { profile: ms.profile };
     });
     onQuery(queries.setProfile, async params => {
-      await setProfile(mainState, params);
+      await setProfile(ms, params);
     });
 
     onQuery(queries.getWebviewState, async () => {
-      return { state: mainState.webview };
+      return { state: ms.webview };
     });
     onQuery(queries.setWebviewState, async params => {
-      mainState.webview = params.state;
+      ms.webview = params.state;
     });
 
     onQuery(queries.getCurrentLocale, async params => {
       return {
-        currentLocale: mainState.localeState!.current,
+        currentLocale: ms.localeState!.current,
       };
     });
     onQuery(queries.switchLanguage, async params => {
       const { lang } = params;
-      await loadLocale(mainState, lang);
-      broadcastPacket(packets.currentLocaleChanged, {
-        currentLocale: mainState.localeState!.current,
+      await loadLocale(ms, lang);
+      broadcastPacket(ms, packets.currentLocaleChanged, {
+        currentLocale: ms.localeState!.current,
       });
-      await setPreferences(mainState, { lang });
+      await setPreferences(ms, { lang });
     });
 
     onQuery(queries.openExternalURL, async ({ url }) => {
       shell.openExternal(url);
     });
 
-    registerQueriesLaunch(mainState, onQuery);
+    registerQueriesLaunch(ms, onQuery);
 
     onPacket(packets.queryRequest, (cx, req) => {
       let handler = this.queryHandlers[req.method];
@@ -211,7 +252,7 @@ export class WebsocketHandler {
     });
 
     onPacket(packets.butlerRequest, (cx, payload) => {
-      if (!mainState.butler) {
+      if (!ms.butler) {
         let result: RpcResult<any> = {
           jsonrpc: "2.0",
           id: payload.req.id,
@@ -242,7 +283,7 @@ export class WebsocketHandler {
       if (ongoing) {
         call = ongoing.conv.call(rc, req.params);
       } else {
-        let client = new Client(mainState.butler.endpoint);
+        let client = new Client(ms.butler.endpoint);
         call = client.call(rc, req.params, conv => {
           ongoing = { conv, inbound: {}, idSeed: 1 };
           this.ongoingConversations[payload.conv] = ongoing;
@@ -319,6 +360,10 @@ export class WebsocketHandler {
 
   handle(cx: WebsocketContext, message: string) {
     let msg = JSON.parse(message) as Packet<any>;
+    if (envSettings.verboseWebSocket) {
+      logger.debug(`-> ${dump(msg)}`);
+    }
+
     let ph = this.packetHandlers[msg.type];
     if (!ph) {
       console.warn(`Unhandled renderer packet: [[${msg}]]`);

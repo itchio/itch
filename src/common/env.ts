@@ -1,18 +1,16 @@
-const isDev = () => require("electron-is-dev");
 import { app, remote } from "electron";
+import { envSettings } from "main/constants/env-settings";
 
 let realApp = app || (remote && remote.app) || { name: "itch" };
 const isCanary = realApp.name === "kitch";
-
-const envName =
-  process.env.NODE_ENV || (isDev() ? "development" : "production");
-process.env[["NODE", "ENV"].join("_")] = envName;
+const isProduction = process.env.NODE_ENV === "production";
+const envName = isProduction ? "production" : "development";
 
 export default {
   isCanary,
   channel: isCanary ? "canary" : "stable",
   appName: isCanary ? "kitch" : "itch",
-  integrationTests: !!process.env.ITCH_INTEGRATION_TESTS,
+  integrationTests: envSettings.integrationTests,
   unitTests: false,
   name: envName,
   development: envName === "development",

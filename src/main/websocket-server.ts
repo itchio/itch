@@ -2,7 +2,10 @@ import dump from "common/util/dump";
 import { uuid } from "common/util/uuid";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
-import { WebsocketContext, WebsocketHandler } from "main/websocket-handler";
+import {
+  WebsocketContext as WebSocketContext,
+  WebsocketHandler,
+} from "main/websocket-handler";
 import WebSocket from "ws";
 import * as http from "http";
 
@@ -11,10 +14,10 @@ let logger = mainLogger.childWithName("ws");
 export interface WebSocketState {
   address: string;
   secret: string;
-  sockets: WebSocket[];
+  sockets: WebSocketContext[];
 }
 
-export async function startWebsocketServer(mainState: MainState) {
+export async function startWebSocketServer(ms: MainState) {
   const wss = new WebSocket.Server({
     host: "localhost",
     port: 0,
@@ -22,7 +25,7 @@ export async function startWebsocketServer(mainState: MainState) {
       origin: string;
       req: http.IncomingMessage;
     }): boolean => {
-      if (!mainState.websocket) {
+      if (!ms.websocket) {
         logger.warn(
           `WebSocket connection before websocket state was set, dropping`
         );
@@ -43,7 +46,7 @@ export async function startWebsocketServer(mainState: MainState) {
         return false;
       }
 
-      if (secret != mainState.websocket.secret) {
+      if (secret != ms.websocket.secret) {
         logger.warn(`WebSocket connection with invalid secret, dropping`);
         return false;
       }
@@ -65,21 +68,21 @@ export async function startWebsocketServer(mainState: MainState) {
     secret,
     sockets: [],
   };
-  mainState.websocket = state;
+  ms.websocket = state;
   logger.info(`Address: ${dump(wss.address())}`);
 
-  let handler = new WebsocketHandler(mainState);
+  let handler = new WebsocketHandler(ms);
 
   wss.on("connection", (socket, req) => {
-    state.sockets = [...state.sockets, socket];
-    let cx = new WebsocketContext(socket);
+    let cx = new WebSocketContext(socket);
+    state.sockets = [...state.sockets, cx];
 
     socket.on("message", message => handler.handle(cx, message as string));
 
     socket.on("close", () => {
       // TODO: cancel all outbound butlerd requests
       // TODO: cancel all queries, if at all possible ?
-      state.sockets = state.sockets.filter(x => x !== socket);
+      state.sockets = state.sockets.filter(x => x !== cx);
       logger.debug(`Client going away...`);
     });
   });

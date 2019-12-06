@@ -2,8 +2,8 @@ import { Client } from "butlerd";
 import { messages } from "common/butlerd";
 import { queries } from "common/queries";
 import { prereqsPath } from "common/util/paths";
-import { MainState, broadcastPacket } from "main";
-import { OnQuery } from "main/websocket-handler";
+import { MainState } from "main";
+import { OnQuery, broadcastPacket } from "main/websocket-handler";
 import { hookLogging } from "main/start-butler";
 import { mainLogger } from "main/logger";
 import {
@@ -19,16 +19,16 @@ import dump from "common/util/dump";
 
 const logger = mainLogger.childWithName("queries-launch");
 
-export function registerQueriesLaunch(mainState: MainState, onQuery: OnQuery) {
+export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
   onQuery(queries.launchGame, async ({ gameId }) => {
-    if (!mainState.butler) {
+    if (!ms.butler) {
       throw new Error(`butler is offline`);
     }
-    if (!mainState.preferences) {
+    if (!ms.preferences) {
       throw new Error(`preferences not loaded yet`);
     }
 
-    let client = new Client(mainState.butler.endpoint);
+    let client = new Client(ms.butler.endpoint);
     const { items } = await client.call(messages.FetchCaves, {
       filters: { gameId },
     });
@@ -51,8 +51,8 @@ export function registerQueriesLaunch(mainState: MainState, onQuery: OnQuery) {
     };
 
     let updateLaunch = (launch: OngoingLaunch) => {
-      mainState.ongoingLaunches[launchId] = launch;
-      broadcastPacket(packets.launchChanged, {
+      ms.ongoingLaunches[launchId] = launch;
+      broadcastPacket(ms, packets.launchChanged, {
         launchId,
         launch,
       });
@@ -72,7 +72,7 @@ export function registerQueriesLaunch(mainState: MainState, onQuery: OnQuery) {
         {
           caveId: cave.id,
           prereqsDir: prereqsPath(),
-          sandbox: mainState.preferences.isolateApps,
+          sandbox: ms.preferences.isolateApps,
         },
         convo => {
           hookLogging(convo, logger);
@@ -110,8 +110,8 @@ export function registerQueriesLaunch(mainState: MainState, onQuery: OnQuery) {
         }
       );
     } finally {
-      delete mainState.ongoingLaunches[launchId];
-      broadcastPacket(packets.launchEnded, { launchId });
+      delete ms.ongoingLaunches[launchId];
+      broadcastPacket(ms, packets.launchEnded, { launchId });
     }
   });
 }

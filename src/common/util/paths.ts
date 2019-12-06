@@ -2,8 +2,9 @@ import { join } from "path";
 import electron from "electron";
 const app = electron.app || electron.remote.app;
 
-import urls from "common/constants/urls";
+import urls from "main/constants/urls";
 import urlParser from "url";
+import { envSettings } from "main/constants/env-settings";
 
 export function usersPath(): string {
   let usersPath = join(app.getPath("userData"), "users");
@@ -28,7 +29,7 @@ export function preferencesPath(): string {
 
 export function butlerDbPath(): string {
   let dbName = "butler.db";
-  if (process.env.WHEN_IN_ROME) {
+  if (envSettings.customItchServer) {
     dbName = `butler-${fsFriendlyHost(urls.itchio)}.db`;
   }
   return join(app.getPath("userData"), "db", dbName);

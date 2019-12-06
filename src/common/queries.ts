@@ -1,5 +1,5 @@
 import { WebviewState } from "main";
-import { Profile } from "common/butlerd/messages";
+import { Profile, Download } from "common/butlerd/messages";
 import { CurrentLocale } from "common/locales";
 import { OngoingLaunch } from "common/launches";
 
@@ -17,6 +17,8 @@ export const queries = wireQueries({
     { profile?: Profile; cookie?: Record<string, string> },
     void
   >(),
+
+  getDownloadsForGame: query<{ gameId: number }, { downloads: Download[] }>(),
 
   getCurrentLocale: query<void, { currentLocale: CurrentLocale }>(),
   switchLanguage: query<{ lang: string }, void>(),

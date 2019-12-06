@@ -1,5 +1,5 @@
 import { Request, RpcResult, Notification } from "butlerd";
-import { Profile } from "common/butlerd/messages";
+import { Profile, Download, NetworkStatus } from "common/butlerd/messages";
 import { OngoingLaunch } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { QueryRequest, QueryResult } from "common/queries";
@@ -23,6 +23,12 @@ export const packets = wirePackets({
   launchChanged: packet<{ launchId: string; launch: OngoingLaunch }>(),
   launchEnded: packet<{ launchId: string }>(),
   maximizedChanged: packet<{ maximized: boolean }>(),
+
+  // download events
+  downloadStarted: packet<{ download: Download }>(),
+  downloadChanged: packet<{ download: Download }>(),
+  downloadCleared: packet<{ download: Download }>(),
+  networkStatusChanged: packet<{ status: NetworkStatus }>(),
 
   // queries
   queryRequest: packet<QueryRequest<any>>(),

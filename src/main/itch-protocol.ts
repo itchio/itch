@@ -58,10 +58,7 @@ let partitionsRegistered: {
   [key: string]: boolean;
 } = {};
 
-export async function registerItchProtocol(
-  mainState: MainState,
-  partition: string
-) {
+export async function registerItchProtocol(ms: MainState, partition: string) {
   if (partitionsRegistered[partition]) {
     logger.info(`Already registered itch: for partition ${partition}`);
     return;
@@ -69,7 +66,7 @@ export async function registerItchProtocol(
 
   logger.info(`Registering itch: for partition ${partition}`);
 
-  let handler = getItchProtocolHandler(mainState);
+  let handler = getItchProtocolHandler(ms);
   let ses = session.fromPartition(partition);
   ses.protocol.registerStreamProtocol("itch", handler);
   partitionsRegistered[partition] = true;
@@ -81,7 +78,7 @@ type ProtocolHandler = (
 ) => void;
 let protocolHandler: undefined | ProtocolHandler;
 
-export function getItchProtocolHandler(mainState: MainState): ProtocolHandler {
+export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
   if (protocolHandler) {
     logger.info(`Using cached protocol handler`);
     return protocolHandler;
@@ -117,7 +114,7 @@ export function getItchProtocolHandler(mainState: MainState): ProtocolHandler {
     }
 
     if (elements.length === 1 && elements[0] === "websocket-address") {
-      let ws = mainState.websocket;
+      let ws = ms.websocket;
       if (!ws) {
         throw new Error(`WebSocket not initialized yet! (this is a bug)`);
       }
@@ -182,6 +179,7 @@ export function getItchProtocolHandler(mainState: MainState): ProtocolHandler {
         }
 
         if (env.development) {
+          // not listed in env-settings because it's an internal webpack thing
           let port = process.env.ELECTRON_WEBPACK_WDS_PORT;
           const upstream = `http://localhost:${port}/${elements.join("/")}`;
           let res = await new Promise<http.IncomingMessage>(

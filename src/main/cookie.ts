@@ -1,5 +1,5 @@
 import { Profile } from "common/butlerd/messages";
-import urls from "common/constants/urls";
+import urls from "main/constants/urls";
 import * as url from "url";
 import { mainLogger } from "main/logger";
 import { partitionForUser } from "common/util/partitions";

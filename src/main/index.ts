@@ -3,16 +3,18 @@ import { colors } from "common/colors";
 import env from "common/env";
 import { OngoingLaunches } from "common/launches";
 import { CurrentLocale, LocaleStrings } from "common/locales";
-import { PacketCreator, packets } from "common/packets";
+import { packets } from "common/packets";
+import { partitionForApp } from "common/util/partitions";
 import { app, BrowserWindow, dialog, session } from "electron";
+import { envSettings } from "main/constants/env-settings";
+import { DownloadsState } from "main/drive-downloads";
 import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
 import { loadPreferences, PreferencesState } from "main/load-preferences";
 import { mainLogger } from "main/logger";
-import { ButlerState, startButler } from "main/start-butler";
-import { startWebsocketServer, WebSocketState } from "main/websocket-server";
-import { partitionForApp } from "common/util/partitions";
-import { DownloadsState } from "main/drive-downloads";
 import { attemptAutoLogin } from "main/profile";
+import { ButlerState, startButler } from "main/start-butler";
+import { broadcastPacket } from "main/websocket-handler";
+import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 
 export interface LocalesConfig {
   locales: {
@@ -44,27 +46,13 @@ export interface WebviewState {
   currentIndex: number;
 }
 
-let mainState: MainState = {
+const ms: MainState = {
   webview: {
     history: ["itch://library"],
     currentIndex: 0,
   },
   ongoingLaunches: {},
 };
-
-export function broadcastPacket<T>(pc: PacketCreator<T>, payload: T) {
-  let p = pc(payload);
-
-  let ws = mainState.websocket;
-  if (ws) {
-    let serialized = JSON.stringify(p);
-    for (const s of ws.sockets) {
-      s.send(serialized);
-    }
-  } else {
-    mainLogger.warn(`Can't broadcast yet, websocket isn't up`);
-  }
-}
 
 async function main() {
   {
@@ -85,13 +73,13 @@ async function main() {
       app.on("ready", () => resolve());
     })
   );
-  promises.push(loadPreferences(mainState));
-  promises.push(startButler(mainState));
-  promises.push(startWebsocketServer(mainState));
+  promises.push(loadPreferences(ms));
+  promises.push(startButler(ms));
+  promises.push(startWebSocketServer(ms));
   await Promise.all(promises);
   mainLogger.info(`butler & websocket started`);
 
-  await attemptAutoLogin(mainState);
+  await attemptAutoLogin(ms);
 
   onReady().catch(e => {
     dialog.showErrorBox("Fatal error", e.stack);
@@ -101,7 +89,7 @@ async function main() {
 
 async function onReady() {
   const partition = partitionForApp();
-  await registerItchProtocol(mainState, partition);
+  await registerItchProtocol(ms, partition);
   let rendererSession = session.fromPartition(partition);
 
   mainLogger.info(`Setting proxy rules...`);
@@ -130,19 +118,19 @@ async function onReady() {
       webviewTag: true,
     },
   });
-  mainState.browserWindow = win;
+  ms.browserWindow = win;
   win.on("maximize", () => {
-    broadcastPacket(packets.maximizedChanged, { maximized: true });
+    broadcastPacket(ms, packets.maximizedChanged, { maximized: true });
   });
   win.on("restore", () => {
-    broadcastPacket(packets.maximizedChanged, { maximized: false });
+    broadcastPacket(ms, packets.maximizedChanged, { maximized: false });
   });
   win.setMenu(null);
   win.setMenuBarVisibility(false);
   win.webContents.addListener("will-navigate", (ev, url) => {
     ev.preventDefault();
     console.log(`prevented ${url} navigation, broadcasting instead`);
-    broadcastPacket(packets.navigate, {
+    broadcastPacket(ms, packets.navigate, {
       url,
     });
   });
@@ -150,7 +138,7 @@ async function onReady() {
   mainLogger.info(`BrowserWindow loaded, showing`);
   win.show();
 
-  if (env.development || process.env.DEVTOOLS === "1") {
+  if (env.development || envSettings.devtools) {
     win.webContents.openDevTools({
       mode: "detach",
     });

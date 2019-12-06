@@ -2,24 +2,24 @@ import { Client } from "butlerd";
 import { messages } from "common/butlerd";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
-import dump from "common/util/dump";
 import { partitionForUser } from "common/util/partitions";
 import { sortBy } from "lodash";
-import { broadcastPacket, MainState } from "main";
+import { MainState } from "main";
 import { setCookie } from "main/cookie";
 import { startDrivingDownloads } from "main/drive-downloads";
 import { registerItchProtocol } from "main/itch-protocol";
 import { mainLogger } from "main/logger";
 import { hookLogging } from "main/start-butler";
+import { broadcastPacket } from "main/websocket-handler";
 
 const logger = mainLogger.childWithName("profile");
 
-export async function attemptAutoLogin(mainState: MainState) {
-  if (!mainState.butler) {
+export async function attemptAutoLogin(ms: MainState) {
+  if (!ms.butler) {
     throw new Error("attempted auto login before butler was ready");
   }
 
-  const client = new Client(mainState.butler.endpoint);
+  const client = new Client(ms.butler.endpoint);
 
   let { profiles } = await client.call(messages.ProfileList, {});
   if (profiles) {
@@ -42,7 +42,7 @@ export async function attemptAutoLogin(mainState: MainState) {
           },
           convo => hookLogging(convo, logger)
         );
-        await setProfile(mainState, { profile });
+        await setProfile(ms, { profile });
       } catch (e) {
         logger.warn(`Auto login failed: ${e.stack}`);
       }
@@ -51,17 +51,17 @@ export async function attemptAutoLogin(mainState: MainState) {
 }
 
 export async function setProfile(
-  mainState: MainState,
+  ms: MainState,
   params: typeof queries.setProfile.__params
 ) {
   const { profile, cookie } = params;
   if (profile) {
-    startDrivingDownloads(mainState);
-    registerItchProtocol(mainState, partitionForUser(profile.user.id));
+    startDrivingDownloads(ms);
+    registerItchProtocol(ms, partitionForUser(profile.user.id));
     if (cookie) {
       await setCookie(profile, cookie);
     }
   }
-  mainState.profile = profile;
-  broadcastPacket(packets.profileChanged, { profile });
+  ms.profile = profile;
+  broadcastPacket(ms, packets.profileChanged, { profile });
 }
