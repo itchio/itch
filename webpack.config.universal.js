@@ -114,7 +114,7 @@ function getCommonConfig(type, env) {
           options: {
             cacheDirectory: true,
             babelrc: true,
-          }
+          },
         },
         {
           test: "/.js$/",

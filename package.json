@@ -65,7 +65,6 @@
     "tmp": "^0.1.0",
     "triangulr": "^1.0.3",
     "vivus": "^0.4.4",
-    "webpack-command": "^0.4.2",
     "which": "^1.3.1"
   },
   "devDependencies": {
@@ -130,6 +129,7 @@
     "uglify-es": "^3.3.9",
     "webpack": "^4.35.2",
     "webpack-build-notifier": "^1.0.3",
+    "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.7.2",
     "webpack-log": "^2.0.0",
     "webpack-merge": "^4.2.1",
@@ -137,8 +137,8 @@
   },
   "scripts": {
     "start": "node develop.js",
-    "compile": "webpack-command --progress --mode production",
-    "compile-profile": "webpack-command --mode production --reporter json > stats.json",
+    "compile": "webpack-cli --config webpack.config.prod.js",
+    "compile-profile": "webpack-cli --config webpack.config.prod.js --profile --json > stats.json",
     "test": "cross-env NODE_ENV=test TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register -r tsconfig-paths/register ./src/**/*.spec.ts",
     "single-test": "mocha -r ts-node/register -r tsconfig-paths/register",
     "integration-tests": "node release/ci-integration-tests.js",
@@ -152,60 +152,6 @@
       "prettier --trailing-comma es5 --write",
       "git add"
     ]
-  },
-  "electronWebpack": {
-    "whiteListedModules": [
-      "react",
-      "react-dom",
-      "react-intl",
-      "react-tabs",
-      "intl-messageformat",
-      "color-convert",
-      "create-react-class",
-      "marked-extra",
-      "underscore",
-      "debug",
-      "react-onclickoutside",
-      "color-name",
-      "fast-memoize",
-      "intl-relativeformat",
-      "react-contextmenu",
-      "combokeys-ftl",
-      "md5-o-matic",
-      "react-sortable-hoc",
-      "intl-format-cache",
-      "react-loadable",
-      "styled-components",
-      "polished",
-      "node-emoji",
-      "btoa",
-      "classnames",
-      "colorgram",
-      "colors",
-      "react-hint",
-      "reselect",
-      "tinycolor2",
-      "triangulr",
-      "vivus",
-      "through2",
-      "readable-stream",
-      "multi-write-stream",
-      "electron-is-dev",
-      "split2",
-      "log-rotate",
-      "butlerd",
-      "querystring"
-    ],
-    "renderer": {
-      "webpackConfig": "custom.webpack.additions.js"
-    },
-    "main": {
-      "webpackConfig": "custom.webpack.additions.js",
-      "extraEntries": [
-        "./src/renderer/inject/inject-game.ts",
-        "./src/renderer/inject/inject-captcha.ts"
-      ]
-    }
   },
   "husky": {
     "hooks": {

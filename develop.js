@@ -1,7 +1,7 @@
 
 const WebpackDevServer = require("webpack-dev-server");
 const webpack = require("webpack");
-const [mainConfig, rendererConfig] = require("./webpack.config.js")({mode: "development"});
+const [mainConfig, rendererConfig] = require("./webpack.config.dev.js");
 const childProcess = require("child_process");
 
 const weblog = require("webpack-log");
