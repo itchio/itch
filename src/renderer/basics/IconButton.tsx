@@ -1,19 +1,28 @@
 import classNames from "classnames";
-import { LocalizedString } from "common/types";
 import React from "react";
-import styled, * as styles from "renderer/styles";
 import { Icon } from "renderer/basics/Icon";
+import { fontSizes } from "renderer/theme";
+import styled from "styled-components";
 
-const IconButtonDiv = styled.button`
+const StyledButton = styled.button`
   &:not(.disabled) {
-    ${styles.clickable};
+    cursor: pointer;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &:active {
+      opacity: 0.8;
+    }
   }
 
   background: none;
   border: none;
   color: inherit;
 
-  font-size: ${props => props.theme.fontSizes.larger};
+  font-size: ${fontSizes.large};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,37 +36,9 @@ const IconButtonDiv = styled.button`
     outline: none;
   }
 
-  &:hover {
-    color: ${props => props.theme.secondaryTextHover};
-  }
-
   &.disabled {
     opacity: 0.4;
     cursor: not-allowed;
-  }
-
-  &.emphasized {
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  &.big {
-    font-size: ${props => props.theme.fontSizes.huge};
-    width: 36px;
-    height: 36px;
-  }
-
-  &.huge {
-    font-size: ${props => props.theme.fontSizes.huger};
-    width: 48px;
-    height: 48px;
-  }
-
-  &.enormous {
-    font-size: ${props => props.theme.fontSizes.enormous};
-    width: 48px;
-    height: 48px;
   }
 `;
 
@@ -66,46 +47,21 @@ interface Props {
   disabled?: boolean;
   className?: string;
   id?: string;
-  hint?: LocalizedString;
-  hintPosition?: "top" | "left" | "right" | "bottom";
 
   onClick?: React.MouseEventHandler<HTMLElement>;
   onMouseDown?: React.MouseEventHandler<HTMLElement>;
   onContextMenu?: React.MouseEventHandler<HTMLElement>;
-  big?: boolean;
-  huge?: boolean;
-  enormous?: boolean;
-  emphasized?: boolean;
 }
 
 export const IconButton = (props: Props) => {
-  const {
-    className,
-    big,
-    huge,
-    enormous,
-    emphasized,
-    disabled,
-    icon,
-    hint,
-    hintPosition = "top",
-    ...restProps
-  } = props;
+  const { className, icon, ...restProps } = props;
 
   return (
-    <IconButtonDiv
-      className={classNames("icon-button", className, {
-        disabled,
-        big,
-        huge,
-        enormous,
-        emphasized,
-      })}
-      data-rh={hint ? JSON.stringify(hint) : null}
-      data-rh-at={hintPosition}
+    <StyledButton
+      className={classNames("icon-button", className)}
       {...restProps}
     >
       {typeof icon === "string" ? <Icon icon={icon} /> : icon}
-    </IconButtonDiv>
+    </StyledButton>
   );
 };

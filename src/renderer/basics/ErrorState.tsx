@@ -1,19 +1,20 @@
 import { asRequestError } from "common/butlerd";
 import React, { useState, useEffect } from "react";
-import styled, { singleLine } from "renderer/styles";
 import classNames from "classnames";
+import styled from "styled-components";
+import { mixins } from "renderer/theme";
 
 const Container = styled.div`
-  ${singleLine};
+  ${mixins.singleLine};
 
   overflow: hidden;
   transition: all 0.2s ease-out;
   height: 0;
 
   align-self: stretch;
-  background: ${props => props.theme.warning};
   border-radius: 2px;
-  color: ${props => props.theme.darkText};
+  background-color: ${p => p.theme.colors.errorBg};
+  color: ${p => p.theme.colors.errorText};
 
   padding-left: 1.4em;
   padding-right: 1.4em;

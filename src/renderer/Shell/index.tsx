@@ -2,13 +2,13 @@ import React from "react";
 import { Sidebar } from "renderer/Shell/Topbar";
 import { Webview } from "renderer/Shell/Webview";
 const Gate = React.lazy(() => import("renderer/Gate"));
-import styled from "renderer/styles";
 import { useProfile } from "renderer/contexts";
+import styled from "styled-components";
 
 const ShellDiv = styled.div`
-  border: 1px solid rgb(56, 52, 52);
+  border: 1px solid ${p => p.theme.colors.shellBorder};
+  background: ${p => p.theme.colors.shellBg};
 
-  background: ${props => props.theme.baseBackground};
   display: flex;
   flex-direction: column;
 

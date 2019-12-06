@@ -1,4 +1,4 @@
-import { css } from "renderer/styles";
+import { css } from "styled-components";
 
 export default css`
   /**

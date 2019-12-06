@@ -1,8 +1,9 @@
 import React from "react";
 import classNames from "classnames";
 
-import styled, { keyframes, animations } from "renderer/styles";
+import styled, { keyframes } from "styled-components";
 import { Circle } from "renderer/basics/LoadingCircle/Circle";
+import { animations } from "renderer/theme";
 
 const turn = keyframes`
   0% {

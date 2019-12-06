@@ -13,8 +13,9 @@ import { Modal } from "renderer/basics/Modal";
 import { LargeTextInput } from "renderer/basics/TextInput";
 import { Deferred } from "renderer/deferred";
 import { GateState } from "renderer/Gate";
-import styled, { animations } from "renderer/styles";
+import { animations, fontSizes } from "renderer/theme";
 import { useSocket } from "renderer/contexts";
+import styled from "styled-components";
 
 export type FormStage = NeedUsername | NeedPassword | NeedTOTP | NeedCaptcha;
 
@@ -58,7 +59,7 @@ const Label = styled.label`
   flex-direction: column;
   margin-top: 2em;
   margin-bottom: 1em;
-  font-size: ${props => props.theme.fontSizes.larger};
+  font-size: ${fontSizes.large};
   align-self: stretch;
 
   input,
@@ -86,12 +87,6 @@ const Buttons = styled.div`
 
 const Filler = styled.div`
   flex-grow: 1;
-`;
-
-const Username = styled.div`
-  margin: 0.5em 0;
-  font-size: ${props => props.theme.fontSizes.large};
-  color: ${props => props.theme.secondaryText};
 `;
 
 const FormErrorState = styled(ErrorState)`
@@ -125,12 +120,12 @@ const RevealButton = styled(IconButton)`
   font-size: 20px;
 
   .icon {
-    color: ${props => props.theme.ternaryText} !important;
+    color: ${p => p.theme.colors.text3} !important;
   }
 
   &.passwordShown {
     .icon {
-      color: ${props => props.theme.accent} !important;
+      color: ${p => p.theme.colors.text2} !important;
     }
   }
 `;
@@ -350,13 +345,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
           <RevealButton
             onMouseDown={togglePasswordVisibility}
             icon={passwordShown ? "visibility" : "visibility_off"}
-            hint={
-              passwordShown
-                ? ["login.action.hide_password"]
-                : ["login.action.reveal_password"]
-            }
             className={classNames({ passwordShown })}
-            hintPosition="top"
           />
         </PasswordContainer>
         <Button

@@ -1,8 +1,9 @@
 import { WebviewTag } from "electron";
-import React, { useState } from "react";
-import styled, { animations } from "renderer/styles";
+import React from "react";
 import { IconButton } from "renderer/basics/IconButton";
 import { ExtendedWebContents } from "renderer/Shell/Webview";
+import { animations, fontSizes } from "renderer/theme";
+import styled from "styled-components";
 
 const Filler = styled.div`
   flex-grow: 1;
@@ -30,8 +31,8 @@ const NavDiv = styled.div`
         to right,
         transparent 0%,
         transparent 30%,
-        ${props => props.theme.accent} 30%,
-        ${props => props.theme.accent} 70%,
+        ${p => p.theme.colors.accent} 30%,
+        ${p => p.theme.colors.accent} 70%,
         transparent 70%,
         transparent 100%
       );
@@ -50,7 +51,7 @@ interface Props {
 }
 
 const Title = styled.div`
-  font-size: ${props => props.theme.fontSizes.larger};
+  font-size: ${fontSizes.large};
   padding-left: 1em;
 `;
 

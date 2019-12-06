@@ -1,14 +1,14 @@
 import { messages } from "common/butlerd";
 import React from "react";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
-import styled from "renderer/styles";
 import { Call } from "renderer/use-butlerd";
+import styled from "styled-components";
 
 interface Props {
   gameId: number;
 }
 
-const CenterCenter = styled.div`
+const CenterHV = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,7 +18,7 @@ const CenterCenter = styled.div`
 
 export const GamePage = ({ gameId }: Props) => {
   return (
-    <CenterCenter>
+    <CenterHV>
       <Call
         rc={messages.FetchGame}
         params={{ gameId }}
@@ -27,7 +27,7 @@ export const GamePage = ({ gameId }: Props) => {
           return <LoadingCircle progress={0.3} huge />;
         }}
       />
-    </CenterCenter>
+    </CenterHV>
   );
 };
 

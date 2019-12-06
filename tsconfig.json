@@ -23,8 +23,9 @@
       "common": ["common"],
       "renderer": ["renderer"],
       "main": ["main"]
-    }
+    },
+    "typeRoots": ["./typings"]
   },
 
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "typings/**/*"]
 }

@@ -1,16 +1,17 @@
-import styled from "renderer/styles";
+import styled from "styled-components";
+import { fontSizes } from "renderer/theme";
 
 export const TextInput = styled.input`
   transition: all ease-out 0.1s;
 
-  background: ${props => props.theme.inputBackground};
-  color: ${props => props.theme.baseText};
-  border: 1px solid ${props => props.theme.inputBorder};
+  background-color: ${p => p.theme.colors.inputBg};
+  color: ${p => p.theme.colors.inputText};
+  border: 1px solid ${p => p.theme.colors.inputBorder};
   padding: 0.4em;
 
   &:focus {
     outline: none;
-    border: 1px solid ${props => props.theme.inputBorderFocused};
+    border: 1px solid ${p => p.theme.colors.inputBorderFocus};
   }
 
   &:disabled {
@@ -20,6 +21,6 @@ export const TextInput = styled.input`
 `;
 
 export const LargeTextInput = styled(TextInput)`
-  font-size: ${props => props.theme.fontSizes.large};
+  font-size: ${fontSizes.large};
   padding: 0.8em;
 `;

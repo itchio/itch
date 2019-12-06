@@ -1,12 +1,12 @@
 import { messages } from "common/butlerd";
 import { Game } from "common/butlerd/messages";
-import React, { useContext } from "react";
+import React from "react";
+import { FormattedMessage } from "react-intl";
 import { Container } from "renderer/basics/Container";
 import { ErrorState } from "renderer/basics/ErrorState";
-import styled from "renderer/styles";
-import { Call } from "renderer/use-butlerd";
-import { FormattedMessage } from "react-intl";
 import { useProfile } from "renderer/contexts";
+import { Call } from "renderer/use-butlerd";
+import styled from "styled-components";
 
 let ratio = 0.7;
 

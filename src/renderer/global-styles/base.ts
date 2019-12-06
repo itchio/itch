@@ -1,4 +1,4 @@
-import { css, theme } from "renderer/styles";
+import { css } from "styled-components";
 
 export default css`
   * {
@@ -14,10 +14,12 @@ export default css`
     overflow: hidden;
     user-select: none;
 
-    color: ${theme.baseText};
+    color: ${p => p.theme.colors.text1};
   }
 
-  html, body, button {
+  html,
+  body,
+  button {
     font-family: LatoWeb, sans-serif;
   }
 
@@ -35,12 +37,9 @@ export default css`
   }
 
   a {
-    color: ${theme.accent};
+    color: ${p => p.theme.colors.accent};
 
     &[href^="itch:"] {
-      /* color: ${theme.baseText};
-      text-decoration: none; */
-
       &:hover {
         cursor: pointer;
       }

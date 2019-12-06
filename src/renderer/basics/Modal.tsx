@@ -1,10 +1,11 @@
 import React from "react";
 import { IconButton } from "renderer/basics/IconButton";
 import { JSXChild, JSXChildren } from "renderer/basics/jsx-types";
-import styled, { animations } from "renderer/styles";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import classNames from "classnames";
+import styled from "styled-components";
+import { animations, fontSizes } from "renderer/theme";
 
 const ModalShroud = styled.div`
   position: fixed;
@@ -25,8 +26,8 @@ const ModalShroud = styled.div`
 `;
 
 const ModalContents = styled.div`
-  background: ${props => props.theme.meatBackground};
-  border: 1px solid ${props => props.theme.windowBorder};
+  background: ${p => p.theme.colors.shellBg};
+  border: 1px solid ${p => p.theme.colors.shellBorder};
 
   min-width: 400px;
 
@@ -42,13 +43,11 @@ const ModalTitle = styled.div`
   flex-direction: row;
   align-items: center;
 
-  background: ${props => props.theme.baseBackground};
-  font-size: ${props => props.theme.fontSizes.larger};
+  font-size: ${fontSizes.large};
   font-weight: bold;
 
   &.present {
     padding: 15px;
-    border-bottom: 1px solid ${props => props.theme.filterBorder};
     margin-bottom: 10px;
   }
 `;

@@ -1,5 +1,4 @@
 import { Profile } from "common/butlerd/messages";
-import { colors } from "common/colors";
 import env from "common/env";
 import { OngoingLaunches } from "common/launches";
 import { CurrentLocale, LocaleStrings } from "common/locales";
@@ -15,6 +14,7 @@ import { attemptAutoLogin } from "main/profile";
 import { ButlerState, startButler } from "main/start-butler";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
+import { shellBgDefault } from "renderer/theme";
 
 export interface LocalesConfig {
   locales: {
@@ -111,7 +111,7 @@ async function onReady() {
     width: 1280,
     height: 720,
     frame: false,
-    backgroundColor: colors.baseBackground,
+    backgroundColor: shellBgDefault,
     show: false,
     webPreferences: {
       session: rendererSession,

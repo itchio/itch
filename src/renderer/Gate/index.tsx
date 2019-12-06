@@ -1,14 +1,14 @@
 import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
 import React, { useEffect, useState } from "react";
-import { Form, FormStage } from "renderer/Gate/Form";
-import styled from "renderer/styles";
-import { List } from "renderer/Gate/List";
 import { useAsyncCallback } from "react-async-hook";
-import { Deferred } from "renderer/deferred";
-import { ConfirmModal } from "renderer/basics/Modal";
 import { FormattedMessage } from "react-intl";
+import { ConfirmModal } from "renderer/basics/Modal";
 import { useSocket } from "renderer/contexts";
+import { Deferred } from "renderer/deferred";
+import { Form, FormStage } from "renderer/Gate/Form";
+import { List } from "renderer/Gate/List";
+import styled from "styled-components";
 
 const GateContainer = styled.div`
   display: flex;

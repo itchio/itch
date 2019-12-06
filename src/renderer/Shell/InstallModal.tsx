@@ -9,8 +9,8 @@ import { ErrorState } from "renderer/basics/ErrorState";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { Buttons, Modal } from "renderer/basics/Modal";
 import { UploadTitle } from "renderer/basics/upload";
-import styled from "renderer/styles";
 import { useSocket } from "renderer/contexts";
+import styled from "styled-components";
 
 interface Props {
   onClose: () => void;
@@ -25,8 +25,6 @@ const CaveItemList = styled.div`
 const CaveItem = styled.div`
   margin: 12px 4px;
   padding: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: ${props => props.theme.itemBackground};
   border-radius: 2px;
 
   display: flex;
@@ -80,7 +78,7 @@ const Title = styled.div`
 `;
 
 const FileSize = styled.div`
-  color: ${props => props.theme.secondaryText};
+  color: ${p => p.theme.colors.text2};
   margin-left: 8px;
 `;
 

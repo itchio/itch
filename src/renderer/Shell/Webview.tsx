@@ -8,10 +8,10 @@ const WebviewActionBar = React.lazy(() =>
   import("renderer/Shell/WebviewActionBar")
 );
 import { WebviewNavigation } from "renderer/Shell/WebviewNavigation";
-import styled from "renderer/styles";
 import { useListen } from "renderer/Socket";
 import { partitionForUser } from "common/util/partitions";
 import { useSocket, useProfile } from "renderer/contexts";
+import styled from "styled-components";
 
 const WebviewContainer = styled.div`
   width: 100%;

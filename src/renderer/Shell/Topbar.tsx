@@ -7,9 +7,9 @@ import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
 import { useProfile, useSocket } from "renderer/contexts";
 import { ProfileButton } from "renderer/Shell/ProfileButton";
-import styled from "renderer/styles";
 import { useListen } from "renderer/Socket";
 import { packets } from "common/packets";
+import styled from "styled-components";
 
 const Logo = styled.img`
   width: auto;
@@ -20,10 +20,6 @@ const Logo = styled.img`
 `;
 
 const TopbarDiv = styled.div`
-  background: ${props => props.theme.sidebarBackground};
-
-  border-right: 2px solid ${props => props.theme.sidebarBorder};
-
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -66,7 +62,6 @@ export const Sidebar = () => {
     (async () => {
       try {
         const { maximized } = await socket.query(queries.isMaximized);
-        console.log(`initial got `, maximized);
         setMaximized(maximized);
       } catch (e) {
         // ignore
@@ -75,7 +70,6 @@ export const Sidebar = () => {
   }, []);
 
   useListen(socket, packets.maximizedChanged, ({ maximized }) => {
-    console.log(`just got `, maximized);
     setMaximized(maximized);
   });
 

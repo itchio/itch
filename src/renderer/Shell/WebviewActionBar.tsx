@@ -6,8 +6,8 @@ import { FormattedMessage } from "react-intl";
 import { InstallModal } from "renderer/Shell/InstallModal";
 import { Button } from "renderer/basics/Button";
 import { useSocket } from "renderer/contexts";
-import styled from "renderer/styles";
 import { Call, useButlerd } from "renderer/use-butlerd";
+import styled from "styled-components";
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Container = styled.div`
   margin-right: 25px;
 
   min-height: 100px;
-  border-top: 1px solid ${props => props.theme.inputBorder};
+  border-top: 1px solid ${props => props.theme.colors.shellBorder};
 `;
 
 const Cover = styled.img`

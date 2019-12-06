@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useAsync } from "react-async-hook";
 import { ProfileContext, useSocket } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
-import styled from "renderer/styles";
+import styled from "styled-components";
 import { queries } from "../common/queries";
 
 const App = React.lazy(() => import("renderer/Shell"));
@@ -21,7 +21,7 @@ let log = (...args: any[]) => {
 };
 
 const RouteContentsDiv = styled.div`
-  background: ${props => props.theme.breadBackground};
+  background: ${p => p.theme.colors.shellBg};
 
   position: absolute;
   top: 0;

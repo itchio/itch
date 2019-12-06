@@ -9,10 +9,10 @@ import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { TimeAgo } from "renderer/basics/TimeAgo";
-import { GateState } from "renderer/Gate";
-import styled from "styled-components";
-import { animations, boxy } from "renderer/styles";
 import { useSocket } from "renderer/contexts";
+import { GateState } from "renderer/Gate";
+import { animations, fontSizes } from "renderer/theme";
+import styled from "styled-components";
 
 const ListLogo = styled.img`
   width: 180px;
@@ -136,14 +136,14 @@ const ItemDiv = styled.div`
   }
 
   .username {
-    color: ${props => props.theme.baseText};
-    font-size: ${props => props.theme.fontSizes.huge};
+    color: ${p => p.theme.colors.text1};
+    font-size: ${fontSizes.enormous};
     font-weight: bold;
     padding: 4px 0;
   }
 
   .last-connected {
-    color: ${props => props.theme.secondaryText};
+    color: ${p => p.theme.colors.text2};
     font-size: 14px;
   }
 
