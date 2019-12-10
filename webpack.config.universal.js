@@ -142,10 +142,10 @@ function getCommonConfig(type, env) {
               [
                 "babel-plugin-styled-components",
                 {
-                  displayName: false,
-                  pure: false,
-                  minify: false,
-                  transpileTemplateLiterals: false,
+                  displayName: !isProduction,
+                  pure: isProduction,
+                  minify: isProduction,
+                  transpileTemplateLiterals: isProduction,
                 },
               ],
             ],
