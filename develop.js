@@ -31,11 +31,9 @@ async function main() {
 
   rendererConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
   const devServerOptions = Object.assign({}, rendererConfig.devServer, {
-    stats: {
-      colors: true,
-    },
     sockHost: "localhost",
     sockPort: "9000",
+    noInfo: true,
   });
   WebpackDevServer.addDevServerEntrypoints(rendererConfig, devServerOptions);
 

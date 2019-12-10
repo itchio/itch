@@ -1,5 +1,5 @@
 import { Client } from "butlerd";
-import { messages } from "common/butlerd";
+import { messages, isRequestCancelled } from "common/butlerd";
 import dump from "common/util/dump";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
@@ -27,7 +27,9 @@ async function driveDownloads(ms: MainState) {
     ms.downloads = {};
     const client = new Client(ms.butler!.endpoint);
     const initialState = await client.call(messages.DownloadsList, {});
-    logger.info(`initial state: ${dump(initialState)}`);
+    for (const download of initialState.downloads) {
+      ms.downloads[download.id] = download;
+    }
 
     await client.call(messages.DownloadsDrive, {}, convo => {
       hookLogging(convo, logger);
@@ -89,7 +91,11 @@ async function driveDownloads(ms: MainState) {
       );
     });
   } catch (e) {
-    logger.warn(`Downloads drive error ${e.stack}`);
+    if (isRequestCancelled(e)) {
+      // alright then
+    } else {
+      logger.warn(`Downloads drive error ${e.stack}`);
+    }
   } finally {
     ms.downloads = undefined;
   }

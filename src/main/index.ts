@@ -16,6 +16,8 @@ import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
 
+let logger = mainLogger.childWithName("main");
+
 export interface LocalesConfig {
   locales: {
     value: string;
@@ -24,6 +26,7 @@ export interface LocalesConfig {
 }
 
 export interface MainState {
+  startedAt: number;
   butler?: ButlerState;
   websocket?: WebSocketState;
   profile?: Profile;
@@ -47,6 +50,7 @@ export interface WebviewState {
 }
 
 const ms: MainState = {
+  startedAt: Date.now(),
   webview: {
     history: ["itch://library"],
     currentIndex: 0,
@@ -58,7 +62,7 @@ async function main() {
   {
     let appInfo = `${env.appName}@${app.getVersion()}`;
     let electronInfo = `electron@${process.versions.electron}`;
-    mainLogger.info(`${appInfo} on ${electronInfo} in ${env.name}`);
+    logger.info(`${appInfo} on ${electronInfo} in ${env.name}`);
   }
 
   prepareItchProtocol();
@@ -77,7 +81,7 @@ async function main() {
   promises.push(startButler(ms));
   promises.push(startWebSocketServer(ms));
   await Promise.all(promises);
-  mainLogger.info(`butler & websocket started`);
+  logger.debug(`butler & websocket started`);
 
   await attemptAutoLogin(ms);
 
@@ -92,7 +96,7 @@ async function onReady() {
   await registerItchProtocol(ms, partition);
   let rendererSession = session.fromPartition(partition);
 
-  mainLogger.info(`Setting proxy rules...`);
+  logger.debug(`Setting proxy rules...`);
   let beforeProxy = Date.now();
   rendererSession
     .setProxy({
@@ -101,7 +105,7 @@ async function onReady() {
       proxyBypassRules: "<local>",
     })
     .then(() => {
-      mainLogger.info(
+      logger.debug(
         `Proxy rules were set. Took ${Date.now() - beforeProxy} ms.`
       );
     });
@@ -129,13 +133,14 @@ async function onReady() {
   win.setMenuBarVisibility(false);
   win.webContents.addListener("will-navigate", (ev, url) => {
     ev.preventDefault();
-    console.log(`prevented ${url} navigation, broadcasting instead`);
     broadcastPacket(ms, packets.navigate, {
       url,
     });
   });
+  logger.debug(`Loading main browser window...`);
   await win.loadURL("itch://app");
-  mainLogger.info(`BrowserWindow loaded, showing`);
+  let elapsed = (Date.now() - ms.startedAt).toFixed();
+  logger.info(`BrowserWindow loaded, showing (${elapsed}ms after startup)`);
   win.show();
 
   if (env.development || envSettings.devtools) {

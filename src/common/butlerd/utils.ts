@@ -1,5 +1,5 @@
 import { levels, LogEntry } from "common/logger";
-import { Cave, CaveSummary } from "common/butlerd/messages";
+import { Cave, CaveSummary, Code } from "common/butlerd/messages";
 import { formatDate, DATE_FORMAT } from "common/format/datetime";
 import { RequestError } from "butlerd/lib/support";
 
@@ -108,4 +108,12 @@ export function getRpcErrorData(e: Error): RequestError["rpcError"]["data"] {
     return re.rpcError.data;
   }
   return null;
+}
+
+export function isRequestCancelled(e: Error): boolean {
+  let re = asRequestError(e);
+  if (re && re.rpcError && re.rpcError.code === Code.OperationCancelled) {
+    return true;
+  }
+  return false;
 }

@@ -1,4 +1,5 @@
 import { LogEntry, levels, LogSink } from "common/logger";
+import { envSettings } from "main/constants/env-settings";
 const termColor = require("term-color");
 
 const levelColors = {
@@ -26,6 +27,10 @@ function asColoredLevel(entry: LogEntry) {
 
 export const consoleSink: LogSink = {
   write(entry: LogEntry) {
+    if (entry.level < envSettings.logLevel) {
+      return;
+    }
+
     let line =
       asISODate(entry.time).split(/T|Z/)[1] + " " + asColoredLevel(entry);
     line += " ";

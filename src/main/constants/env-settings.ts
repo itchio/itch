@@ -1,3 +1,5 @@
+import { levelNumbers } from "common/logger";
+
 export const envSettings = {
   // booleans
   verboseWebSocket: process.env.ITCH_VERBOSE_WS === "1",
@@ -6,4 +8,5 @@ export const envSettings = {
 
   // strings
   customItchServer: process.env.WHEN_IN_ROME,
+  logLevel: levelNumbers[process.env.ITCH_LOG_LEVEL || "info"],
 };

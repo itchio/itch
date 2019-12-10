@@ -1,4 +1,4 @@
-const levelNumbers = {
+export const levelNumbers = {
   silent: 100,
   error: 50,
   warn: 40,

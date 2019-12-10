@@ -69,7 +69,7 @@ export async function startWebSocketServer(ms: MainState) {
     sockets: [],
   };
   ms.websocket = state;
-  logger.info(`Address: ${dump(wss.address())}`);
+  logger.debug(`WebSocket address: ${dump(wss.address())}`);
 
   let handler = new WebsocketHandler(ms);
 

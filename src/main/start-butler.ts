@@ -15,7 +15,6 @@ export interface ButlerState {
 }
 
 export async function startButler(ms: MainState) {
-  logger.info("Starting daemon...");
   const instance = new Instance({
     // TODO: use bundled butler in production, don't rely on %PATH% ever
     butlerExecutable: "butler",
@@ -29,6 +28,7 @@ export async function startButler(ms: MainState) {
       "--destiny-pid",
       `${process.pid}`,
     ],
+    log: msg => logger.info(msg),
   });
   let endpoint = await instance.getEndpoint();
 
