@@ -1,11 +1,15 @@
 import { Client, Instance, Endpoint, Conversation } from "butlerd";
 import { messages } from "common/butlerd";
+import which from "which";
+import * as path from "path";
 import urls from "main/constants/urls";
 import { butlerUserAgent } from "main/constants/useragent";
 import { butlerDbPath } from "common/util/paths";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import { Logger } from "common/logger";
+import { app } from "electron";
+import { envSettings } from "main/constants/env-settings";
 
 let logger = mainLogger.childWithName("butler");
 
@@ -14,10 +18,31 @@ export interface ButlerState {
   endpoint: Endpoint;
 }
 
+function exeName(base: string): string {
+  if (process.platform === "win32") {
+    return `${base}.exe`;
+  }
+  return base;
+}
+
 export async function startButler(ms: MainState) {
+  let butlerExecutable;
+  if (envSettings.localButler) {
+    logger.info(`===================================================`);
+    logger.info(`Using local copy of butler - happy development!`);
+    logger.info(`===================================================`);
+    butlerExecutable = which.sync("butler");
+  } else {
+    butlerExecutable = path.join(
+      app.getAppPath(),
+      "deps",
+      "butler",
+      exeName("butler")
+    );
+  }
+
   const instance = new Instance({
-    // TODO: use bundled butler in production, don't rely on %PATH% ever
-    butlerExecutable: "butler",
+    butlerExecutable,
     args: [
       "--dbpath",
       butlerDbPath(),
@@ -28,13 +53,13 @@ export async function startButler(ms: MainState) {
       "--destiny-pid",
       `${process.pid}`,
     ],
-    log: msg => logger.info(msg),
+    log: msg => logger.debug(msg),
   });
   let endpoint = await instance.getEndpoint();
 
   const client = new Client(endpoint);
   const res = await client.call(messages.VersionGet, {});
-  logger.info(`Using butler ${res.versionString}`);
+  logger.info(`butler version: ${res.versionString}`);
 
   ms.butler = {
     instance,

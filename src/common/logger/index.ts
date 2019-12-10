@@ -1,3 +1,5 @@
+import { string } from "prop-types";
+
 export const levelNumbers = {
   silent: 100,
   error: 50,
@@ -27,11 +29,11 @@ export interface LogSink {
   write(entry: LogEntry): void;
 }
 
-export class Logger {
+export class BaseLogger<S extends LogSink> {
   private name?: string;
-  public sink: LogSink;
+  public sink: S;
 
-  constructor(sink: LogSink, name?: string) {
+  constructor(sink: S, name?: string) {
     this.name = name;
     this.sink = sink;
   }
@@ -52,6 +54,10 @@ export class Logger {
     this.log(levelNumbers.error, msg);
   }
 
+  private log(level: number, msg: string) {
+    this.write({ time: Date.now(), level, msg, name: this.name });
+  }
+
   child(filename: string): Logger {
     let tokens = filename.split(/[\/\\]/);
     tokens = tokens.slice(1);
@@ -65,12 +71,7 @@ export class Logger {
   }
 
   childWithName(name: string): Logger {
-    const l = new Logger(this.sink, name);
-    return l;
-  }
-
-  private log(level: number, msg: string) {
-    this.write({ time: Date.now(), level, msg, name: this.name });
+    return new Logger(this.sink, name);
   }
 
   write(entry: LogEntry) {
@@ -78,7 +79,13 @@ export class Logger {
   }
 }
 
-export const devNull = {
+export class Logger extends BaseLogger<LogSink> {
+  constructor(sink: LogSink, name?: string) {
+    super(sink, name);
+  }
+}
+
+export const devNull: LogSink = {
   write: (entry: LogEntry) => {
     /* muffin */
   },
@@ -105,12 +112,13 @@ export const streamSink = (stream: NodeJS.WritableStream): LogSink => {
 
 export class RecordingLogger extends Logger {
   private stringSink: StringSink;
-  closed = false;
 
   constructor(parent: Logger, name?: string) {
-    super(parent.sink, name);
-    this.stringSink = new StringSink();
-    this.sink = multiSink(parent.sink, this.stringSink);
+    let stringSink = new StringSink();
+    let sink = multiSink(parent.sink, stringSink);
+
+    super(sink, name);
+    this.stringSink = stringSink;
   }
 
   /**
@@ -119,9 +127,18 @@ export class RecordingLogger extends Logger {
   getLog(): string {
     return this.stringSink.toString();
   }
+}
 
-  destroy() {
-    this.sink = devNull;
+export class MemoryLogger extends BaseLogger<StringSink> {
+  constructor(name?: string) {
+    super(new StringSink(), name);
+  }
+
+  /**
+   * Returns all log messages as a string
+   */
+  getLog(): string {
+    return this.sink.toString();
   }
 }
 

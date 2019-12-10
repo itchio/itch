@@ -30,6 +30,7 @@ npm-debug.log
 .nyc_output
 
 # build+packaging temp files (CI)
+/deps
 /build
 /cache
 /stage*

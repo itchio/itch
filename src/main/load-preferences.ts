@@ -92,8 +92,8 @@ export async function loadPreferences(ms: MainState) {
   let englishStrings: LocaleStrings = processLocaleStrings(
     await readJSONFile(getLocalePath(`en.json`))
   );
-  logger.info(
-    `Loaded ${Object.keys(englishStrings).length} strings for English locale`
+  logger.debug(
+    `Loaded ${Object.keys(englishStrings).length} strings for base locale (en)`
   );
 
   ms.preferences = preferences;
@@ -126,7 +126,7 @@ export async function loadLocale(ms: MainState, lang: string) {
 
   let normalizedLang = normalizeLang(ms, lang);
   if (normalizedLang == "en") {
-    logger.info(`Unknown lang ${lang}, not loading`);
+    logger.warn(`Unknown lang ${lang}, returning English strings`);
     let { englishStrings } = ms.localeState;
     ms.localeState.current = {
       lang: "en",
@@ -141,7 +141,7 @@ export async function loadLocale(ms: MainState, lang: string) {
   logger.info(
     `Loaded ${
       Object.keys(strings).length
-    } strings from ${normalizedLang} for ${lang}`
+    } strings from (${normalizedLang}) for (${lang}) locale`
   );
   ms.localeState.current = {
     lang: normalizedLang,

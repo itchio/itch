@@ -152,6 +152,10 @@
       "git add"
     ]
   },
+  "butler": {
+    "development": "ef0bbb42aa3fc752d85ecb95cc4dd1e909c11089",
+    "production": ""
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"

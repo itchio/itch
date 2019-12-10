@@ -1,20 +1,19 @@
-
 const WebpackDevServer = require("webpack-dev-server");
 const webpack = require("webpack");
 const [mainConfig, rendererConfig] = require("./webpack.config.dev.js");
 const childProcess = require("child_process");
 
 const weblog = require("webpack-log");
-const log = weblog({name: "develop"});
+const log = weblog({ name: "develop" });
 
 async function main() {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "1";
 
-  process.on("unhandledRejection", (e) => {
+  process.on("unhandledRejection", e => {
     log.error(`Unhandled rejection `, e.stack || e);
     process.exit(1);
   });
-  process.on("uncaughtException", (e) => {
+  process.on("uncaughtException", e => {
     log.error(`Uncaught exception `, e.stack || e);
     process.exit(1);
   });
@@ -44,11 +43,16 @@ async function main() {
     try {
       server.listen(port, "127.0.0.1", resolve(port));
     } catch (e) {
+      log.warn(`Looks like the dev server failed to start`);
+      log.warn(
+        `If something's already listening on port ${port} - is it another copy of the app?`
+      );
+      log.warn(`node.js instances on Windows tend to not exit cleanly`);
+      log.warn(`so don't be afraid to try "taskkill /F /IM node.exe"`);
       reject(e);
     }
-  })
+  });
 
-  log.info(`Main building...`);
   const stats = await mainPromise;
   {
     const info = stats.toJson();
@@ -59,36 +63,58 @@ async function main() {
     if (stats.hasWarnings()) {
       log.warn("Main: ", info.warnings.join("\n\n"));
     }
-    log.info(`Main built!`);
   }
 
-  log.info(`Renderer building...`)
+  await ensureButler();
 
-  const electronBinaryPath = require("electron")
-  log.info(`Will start app with ${electronBinaryPath}`);
+  const electronBinaryPath = require("electron");
   const port = await serverPromise;
-  log.info(`...off content on localhost:${port}`);
 
   await new Promise((resolve, reject) => {
     let inspectArg = process.env.ITCH_BREAK === "1" ? "inspect-brk" : "inspect";
-    const proc = childProcess.spawn(electronBinaryPath, [
-      ".", "--dev", `--${inspectArg}=9222`, "--color", "--no-sandbox" /* on Linux, sandboxing requires a SUID helper and it's a hassle */
-    ], {
-      env: {
-        ...process.env,
-        ELECTRON_WEBPACK_WDS_PORT: port,
-      },
-      stdio: ['ignore', 'inherit', 'inherit'],
-    });
-    log.info(`Should've started the app now...`);
+    const proc = childProcess.spawn(
+      electronBinaryPath,
+      [
+        ".",
+        "--dev",
+        `--${inspectArg}=9222`,
+        "--color",
+        "--no-sandbox" /* on Linux, sandboxing requires a SUID helper and it's a hassle */,
+      ],
+      {
+        env: {
+          ...process.env,
+          ELECTRON_WEBPACK_WDS_PORT: port,
+        },
+        stdio: ["ignore", "inherit", "inherit"],
+      }
+    );
 
     proc.on("close", () => {
       log.info(`App closed`);
       server.close();
       resolve();
-    })
+    });
 
-    proc.on("error", (e) => reject(e))
+    proc.on("error", e => reject(e));
+  });
+}
+
+// TODO: re-use logic for `release/` scripts, for
+// integration tests, etc.
+// Maybe have it as a small Go utility?
+async function ensureButler() {
+  await new Promise((resolve, reject) => {
+    childProcess.exec(
+      "go run ./install-deps --manifest package.json --dir . --development",
+      (err, stdout, stderr) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      }
+    );
   });
 }
 

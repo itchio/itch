@@ -60,11 +60,11 @@ let partitionsRegistered: {
 
 export async function registerItchProtocol(ms: MainState, partition: string) {
   if (partitionsRegistered[partition]) {
-    logger.info(`Already registered itch: for partition ${partition}`);
+    logger.debug(`Already registered itch: for partition ${partition}`);
     return;
   }
 
-  logger.info(`Registering itch: for partition ${partition}`);
+  logger.debug(`Registering itch: for partition ${partition}`);
 
   let handler = getItchProtocolHandler(ms);
   let ses = session.fromPartition(partition);
@@ -80,10 +80,10 @@ let protocolHandler: undefined | ProtocolHandler;
 
 export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
   if (protocolHandler) {
-    logger.info(`Using cached protocol handler`);
+    logger.debug(`Using cached protocol handler`);
     return protocolHandler;
   }
-  logger.info(`Building protocol handler`);
+  logger.debug(`Building protocol handler`);
 
   async function handleAPIRequest(
     req: Electron.Request,

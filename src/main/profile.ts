@@ -11,6 +11,7 @@ import { registerItchProtocol } from "main/itch-protocol";
 import { mainLogger } from "main/logger";
 import { hookLogging } from "main/start-butler";
 import { broadcastPacket } from "main/websocket-handler";
+import { MemoryLogger } from "common/logger";
 
 const logger = mainLogger.childWithName("profile");
 
@@ -23,7 +24,7 @@ export async function attemptAutoLogin(ms: MainState) {
 
   let { profiles } = await client.call(messages.ProfileList, {});
   if (profiles) {
-    logger.info(`${profiles.length} remembered profiles`);
+    logger.debug(`${profiles.length} remembered profiles`);
 
     // most recent first
     profiles = sortBy(profiles, p => -+new Date(p.lastConnected));
@@ -34,17 +35,20 @@ export async function attemptAutoLogin(ms: MainState) {
         `Attempting auto-login for ${autoProfile.user.username} (user ${autoProfile.user.id})`
       );
 
+      let memlogger = new MemoryLogger();
       try {
         const { profile } = await client.call(
           messages.ProfileUseSavedLogin,
           {
             profileId: profiles[0].id,
           },
-          convo => hookLogging(convo, logger)
+          convo => hookLogging(convo, memlogger)
         );
         await setProfile(ms, { profile });
       } catch (e) {
-        logger.warn(`Auto login failed: ${e.stack}`);
+        logger.warn(
+          `Auto login failed: ${e.stack}, log =\n${memlogger.getLog()}`
+        );
       }
     }
   }
