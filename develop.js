@@ -53,6 +53,7 @@ async function main() {
     }
   });
 
+  log.info(`Compiling...`);
   const stats = await mainPromise;
   {
     const info = stats.toJson();
@@ -70,6 +71,7 @@ async function main() {
   const electronBinaryPath = require("electron");
   const port = await serverPromise;
 
+  log.info(`Starting app...`);
   await new Promise((resolve, reject) => {
     let inspectArg = process.env.ITCH_BREAK === "1" ? "inspect-brk" : "inspect";
     const proc = childProcess.spawn(

@@ -1,11 +1,10 @@
 import { Client } from "butlerd";
-import { messages, isRequestCancelled } from "common/butlerd";
-import dump from "common/util/dump";
+import { isCancelled, messages } from "common/butlerd";
+import { Download } from "common/butlerd/messages";
+import { packets } from "common/packets";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import { hookLogging } from "main/start-butler";
-import { Download } from "common/butlerd/messages";
-import { packets } from "common/packets";
 import { broadcastPacket } from "main/websocket-handler";
 
 const logger = mainLogger.childWithName("drive-downloads");
@@ -91,7 +90,7 @@ async function driveDownloads(ms: MainState) {
       );
     });
   } catch (e) {
-    if (isRequestCancelled(e)) {
+    if (isCancelled(e)) {
       // alright then
     } else {
       logger.warn(`Downloads drive error ${e.stack}`);

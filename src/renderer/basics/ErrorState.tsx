@@ -1,8 +1,8 @@
-import { asRequestError } from "common/butlerd";
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import styled from "styled-components";
 import { mixins } from "renderer/theme";
+import { asRequestError } from "butlerd/lib/support";
 
 const Container = styled.div`
   ${mixins.singleLine};
@@ -86,7 +86,7 @@ let formatError = (e: Error): string => {
   let requestError = asRequestError(e);
   if (requestError) {
     const e = requestError.rpcError;
-    if (e.data.apiError && e.data.apiError.messages) {
+    if (e.data && e.data.apiError && e.data.apiError.messages) {
       return e.data.apiError.messages.join(", ");
     }
     return e.message;
