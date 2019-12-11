@@ -1,5 +1,6 @@
 import "!style-loader!css-loader!./fonts/icomoon/style.css";
 import "!style-loader!css-loader!./fonts/lato/latofonts-custom.css";
+import "tippy.js/dist/tippy.css";
 
 import { packets } from "common/packets";
 import { queries } from "common/queries";
@@ -10,9 +11,16 @@ import { Spinner } from "renderer/basics/LoadingCircle";
 import { SocketContext } from "renderer/contexts";
 import { Route } from "renderer/Route";
 import { theme } from "renderer/theme";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider, StyleSheetManager } from "styled-components";
 import { Socket } from "renderer/Socket";
 import GlobalStyles from "renderer/global-styles";
+
+// whilst we wait for styled-components@5 typings
+const ExtendedStyleSheetManager = (StyleSheetManager as any) as React.ComponentClass<{
+  stylisOptions?: {
+    prefix?: boolean;
+  };
+}>;
 
 export const App = hot(() => {
   let [socket, setSocket] = useState();
@@ -50,12 +58,14 @@ export const App = hot(() => {
           locale={currentLocale.lang}
           messages={currentLocale.strings}
         >
-          <ThemeProvider theme={theme}>
-            <React.Fragment>
-              <GlobalStyles />
-              <Route />
-            </React.Fragment>
-          </ThemeProvider>
+          <ExtendedStyleSheetManager stylisOptions={{ prefix: false }}>
+            <ThemeProvider theme={theme}>
+              <React.Fragment>
+                <GlobalStyles />
+                <Route />
+              </React.Fragment>
+            </ThemeProvider>
+          </ExtendedStyleSheetManager>
         </IntlProvider>
       </SocketContext.Provider>
     </Suspense>

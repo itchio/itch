@@ -90,8 +90,11 @@ const Filler = styled.div`
 `;
 
 const FormErrorState = styled(ErrorState)`
+  margin-top: 0;
   margin-bottom: 0;
+
   &.shown {
+    margin-top: 2em;
     margin-bottom: 2em;
   }
 
@@ -212,6 +215,7 @@ const FormNeedUsername = (props: FormProps<NeedUsername>) => {
       </Label>
       <SegmentedGroup>
         <LargeTextInput
+          id="login-username"
           ref={usernameRef}
           autoFocus
           onKeyPress={ev => {
@@ -223,6 +227,7 @@ const FormNeedUsername = (props: FormProps<NeedUsername>) => {
           onChange={ev => setUsername(ev.currentTarget.value)}
         />
         <Button
+          id="login-next"
           disabled={username == ""}
           secondary={username == ""}
           onClick={onNext}
@@ -330,6 +335,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
       <SegmentedGroup>
         <PasswordContainer className="input-wrapper">
           <LargeTextInput
+            id="login-password"
             type={passwordShown ? "text" : "password"}
             disabled={onLogin.loading}
             ref={passwordRef}
@@ -349,6 +355,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
           />
         </PasswordContainer>
         <Button
+          id="login-proceed"
           disabled={password == ""}
           secondary={password == ""}
           loading={onLogin.loading}

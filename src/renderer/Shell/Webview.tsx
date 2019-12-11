@@ -137,6 +137,7 @@ export const Webview = () => {
         canGoForward={canGoForward}
       />
       <webview
+        onFocus={onWebviewFocus}
         src="about://blank"
         partition={partitionForUser(profile!.user.id)}
         ref={viewRef}
@@ -145,3 +146,13 @@ export const Webview = () => {
     </WebviewContainer>
   );
 };
+
+function onWebviewFocus() {
+  // When clicking on a webview, no "click" event is generated,
+  // so packages like "react-click-outside-listener" don't work.
+  //
+  // However, when clicking on a webview, a "focus" event is generated
+  // for the webview, so we can send a synthetic click to the body
+  // and.. tada! "outside click" listeners work again.
+  document.body.click();
+}

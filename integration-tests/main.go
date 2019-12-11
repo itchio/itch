@@ -134,19 +134,6 @@ func doMain() error {
 		}
 	}()
 
-	var logWatches []*logWatch
-
-	makeLogWatch := func(re *regexp.Regexp) *logWatch {
-		lw := &logWatch{
-			re: re,
-			c:  make(chan bool, 1),
-		}
-		logWatches = append(logWatches, lw)
-		return lw
-	}
-
-	setupWatch := makeLogWatch(regexp.MustCompile("Setup done"))
-
 	go func() {
 		logger := log.New(os.Stdout, "★ ", 0)
 
@@ -158,14 +145,6 @@ func doMain() error {
 		must(err)
 
 		for line := range t.Lines {
-			for i, lw := range logWatches {
-				if lw.re.MatchString(line.Text) {
-					lw.c <- true
-					copy(logWatches[i:], logWatches[i+1:])
-					logWatches[len(logWatches)-1] = nil
-					logWatches = logWatches[:len(logWatches)-1]
-				}
-			}
 			logger.Print(line.Text)
 		}
 	}()
@@ -182,7 +161,10 @@ func doMain() error {
 
 	r.cleanup = func() {
 		r.logf("deleting session")
-		r.driver.DeleteSession()
+		_, err := r.driver.DeleteSession()
+		if err != nil {
+			r.logf("could not delete session: %+s", err)
+		}
 
 		r.logf("cancelling chrome-driver context...")
 		chromeDriverCancel()
@@ -266,8 +248,6 @@ func doMain() error {
 		gocleanup.Exit(1)
 	}
 
-	r.logf("Waiting for setup to be done...")
-	must(setupWatch.WaitWithTimeout(60 * time.Second))
 	r.testStart = time.Now()
 
 	allFlows(r)

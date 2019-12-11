@@ -25,6 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "@hot-loader/react-dom": "^16.11.0",
+    "@tippy.js/react": "^3.1.1",
     "@types/emojione": "^2.2.5",
     "@types/lru-cache": "^5.1.0",
     "@types/styled-components": "^4.1.16",
@@ -45,6 +46,7 @@
     "polished": "^3.4.1",
     "react": "^16.12.0",
     "react-async-hook": "^3.6.1",
+    "react-click-outside-listener": "^2.0.0",
     "react-dom": "^16.8.6",
     "react-hint": "^3.2.0",
     "react-intl": "^3.7.0",

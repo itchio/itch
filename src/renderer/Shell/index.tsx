@@ -1,5 +1,5 @@
 import React from "react";
-import { Sidebar } from "renderer/Shell/Topbar";
+import { Topbar } from "renderer/Shell/Topbar";
 import { Webview } from "renderer/Shell/Webview";
 const Gate = React.lazy(() => import("renderer/Gate"));
 import { useProfile } from "renderer/contexts";
@@ -33,7 +33,7 @@ export const Shell = () => {
 
   return (
     <ShellDiv>
-      <Sidebar />
+      <Topbar />
       <MainDiv>
         <Webview />
       </MainDiv>

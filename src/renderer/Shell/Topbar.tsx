@@ -40,7 +40,7 @@ const DraggableFiller = styled.div`
 
 type PopoverName = "preferences" | "downloads" | null;
 
-export const Sidebar = () => {
+export const Topbar = () => {
   const socket = useSocket();
   const [maximized, setMaximized] = useState(false);
   const [popover, setPopover] = useState<PopoverName>(null);
@@ -88,8 +88,10 @@ export const Sidebar = () => {
       />
       <DraggableFiller />
       <IconButton icon="download" onClick={() => setPopover("downloads")} />
-      <IconButton icon="cog" onClick={() => setPopover("preferences")} />
-      <ProfileButton profile={profile} />
+      <ProfileButton
+        profile={profile}
+        openPreferences={() => setPopover("preferences")}
+      />
       <IconButton icon="window-minimize" onClick={minimize.execute} />
       <IconButton
         icon={maximized ? "window-restore" : "window-maximize"}

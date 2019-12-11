@@ -137,7 +137,7 @@ const ItemDiv = styled.div`
 
   .username {
     color: ${p => p.theme.colors.text1};
-    font-size: ${fontSizes.enormous};
+    font-size: ${fontSizes.large};
     font-weight: bold;
     padding: 4px 0;
   }
