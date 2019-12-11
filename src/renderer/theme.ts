@@ -2,7 +2,7 @@ import { DefaultTheme, keyframes, css } from "styled-components";
 import { lighten, darken } from "polished";
 
 export const fontSizes = {
-  small: "12px",
+  small: "13px",
   normal: "15px",
   large: "18px",
   enormous: "30px",
@@ -16,7 +16,7 @@ export const theme: DefaultTheme = {
     shellBorder: "#323232",
 
     text1: "#fafafa",
-    text2: "#a8a8a8",
+    text2: "#b8b8b8",
     text3: "#818181",
 
     errorBg: "#f2ee77",

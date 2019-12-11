@@ -11,15 +11,6 @@ const App = React.lazy(() => import("renderer/Shell"));
 const LibraryPage = React.lazy(() => import("renderer/pages/LibraryPage"));
 const GamePage = React.lazy(() => import("renderer/pages/GamePage"));
 
-let firstMeaningfulRender = true;
-let log = (...args: any[]) => {
-  let d = new Date();
-  console.log(
-    `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds()}`,
-    ...args
-  );
-};
-
 const RouteContentsDiv = styled.div`
   background: ${p => p.theme.colors.shellBg};
 
@@ -80,10 +71,6 @@ export const Route = () => {
     setProfile(profile);
   }, [socket]);
 
-  if (firstMeaningfulRender) {
-    firstMeaningfulRender = false;
-    log(`First meaningful render!`);
-  }
   let elements = [location.host, location.pathname.replace(/^\//, "")].filter(
     s => s.length > 0
   );

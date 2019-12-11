@@ -85,10 +85,10 @@ export const Topbar = () => {
             icon="heart-filled"
             label={<FormattedMessage id={"sidebar.library"} />}
           />
-          <DownloadsButton />
         </>
       )}
       <DraggableFiller />
+      {profile && <DownloadsButton />}
       <IconButton icon="window-minimize" onClick={minimize.execute} />
       <IconButton
         icon={maximized ? "window-restore" : "window-maximize"}

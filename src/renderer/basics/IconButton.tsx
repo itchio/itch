@@ -23,15 +23,15 @@ const StyledButton = styled.button`
   border: none;
   color: inherit;
 
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.normal};
   display: flex;
   align-items: center;
   justify-content: center;
 
   flex-shrink: 0;
 
-  width: 45px;
-  height: 45px;
+  width: 42px;
+  height: 42px;
 
   &:focus {
     outline: none;

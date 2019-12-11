@@ -1,11 +1,12 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  padding: 20px;
+  padding: 0 20px;
   line-height: 1.6;
 
   h2 {
     font-size: 24px;
     font-weight: bold;
+    padding: 1em 0.5em;
   }
 `;

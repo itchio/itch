@@ -192,6 +192,7 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
 
           let headers = convertHeaders(res.headers);
           headers["cache-control"] = "no-cache";
+          headers["access-control-allow-origin"] = "*";
           return {
             statusCode: res.statusCode,
             headers,
