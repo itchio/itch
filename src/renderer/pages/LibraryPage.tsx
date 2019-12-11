@@ -10,6 +10,7 @@ import styled from "styled-components";
 import { fontSizes, mixins } from "renderer/theme";
 import { Icon } from "renderer/basics/Icon";
 import { Collection } from "common/butlerd/messages";
+import classNames from "classnames";
 
 const LibraryLayout = styled.div`
   display: flex;
@@ -39,10 +40,11 @@ const LibraryLayout = styled.div`
       font-size: ${fontSizes.small};
       font-weight: bold;
 
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .item {
+      cursor: pointer;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -78,7 +80,11 @@ const LibraryLayout = styled.div`
       }
 
       &:hover {
-        background: rgba(255, 255, 255, 0.07);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      &.active {
+        background: #7b3232;
       }
     }
   }
@@ -93,7 +99,62 @@ const LibraryLayout = styled.div`
   }
 `;
 
+type ViewTarget =
+  | ViewTargetInstalled
+  | ViewTargetOwned
+  | ViewTargetDashboard
+  | ViewTargetCollection;
+
+interface ViewTargetInstalled {
+  type: "installed";
+}
+
+interface ViewTargetOwned {
+  type: "owned";
+}
+
+interface ViewTargetDashboard {
+  type: "dashboard";
+}
+
+interface ViewTargetCollection {
+  type: "collection";
+  collection: Collection;
+}
+
+interface ItemProps {
+  className: string;
+  onClick: React.MouseEventHandler<HTMLDivElement>;
+}
+
+function makeItemProps(
+  currentTarget: ViewTarget,
+  setTarget: (vt: ViewTarget) => void
+): (itemTarget: ViewTarget) => ItemProps {
+  return (itemTarget: ViewTarget) => {
+    let active = true;
+
+    let a = currentTarget as Record<string, any>;
+    let b = itemTarget as Record<string, any>;
+
+    for (const k of Object.keys(b)) {
+      if (a[k] !== b[k]) {
+        active = false;
+        break;
+      }
+    }
+
+    return {
+      className: classNames("item", { active }),
+      onClick: () => setTarget(itemTarget),
+    };
+  };
+}
+
 export const LibraryPage = () => {
+  const [target, setTarget] = useState<ViewTarget>({ type: "installed" });
+  let iprops = makeItemProps(target, setTarget);
+
   const profile = useProfile();
   if (!profile) {
     return (
@@ -113,52 +174,123 @@ export const LibraryPage = () => {
         <div className="heading">
           <FormattedMessage id="sidebar.category.basics" />
         </div>
-        <div className="item">
+        <div {...iprops({ type: "installed" })}>
           <Icon icon="install" />
-          Installed items
+          <FormattedMessage id="sidebar.installed" />
         </div>
-        <div className="item">
+        <div {...iprops({ type: "owned" })}>
           <Icon icon="heart-filled" />
-          Owned items
+          <FormattedMessage id="sidebar.owned" />
         </div>
-        <div className="item">
+        <div {...iprops({ type: "dashboard" })}>
           <Icon icon="rocket" />
-          Dashboard
+          <FormattedMessage id="sidebar.dashboard" />
         </div>
         <div className="separator" />
         <div className="heading">
           <FormattedMessage id="sidebar.collections" />
         </div>
-        <CollectionList />
+        <CollectionList target={target} setTarget={setTarget} />
       </div>
       <Container className="main">
-        <h2>
-          <FormattedMessage id="sidebar.installed" />
-        </h2>
-        <Call
-          rc={messages.FetchCaves}
-          params={{ limit: 15 }}
-          render={({ items }) => (
-            <GameGrid items={items} getGame={cave => cave.game} />
-          )}
-        />
-
-        <h2>
-          <FormattedMessage id="sidebar.owned" />
-        </h2>
-        <Call
-          rc={messages.FetchProfileOwnedKeys}
-          params={{ profileId: profile.id, limit: 15 }}
-          render={({ items }) => (
-            <GameGrid items={items} getGame={key => key.game} />
-          )}
-        />
+        <ViewContents target={target} />
       </Container>
     </LibraryLayout>
   );
 };
 
-const CollectionList = (props: {}) => {
+const ViewContents = (props: { target: ViewTarget }) => {
+  const { target } = props;
+
+  switch (target.type) {
+    case "installed":
+      return <ViewInstalled />;
+    case "owned":
+      return <ViewOwned />;
+    case "dashboard":
+      return <ViewDashboard />;
+    case "collection":
+      return <ViewCollection collection={target.collection} />;
+  }
+};
+
+const ViewInstalled = () => {
+  return (
+    <Container className="main">
+      <h2>
+        <FormattedMessage id="sidebar.installed" />
+      </h2>
+      <Call
+        rc={messages.FetchCaves}
+        params={{ limit: 15 }}
+        render={({ items }) => (
+          <GameGrid items={items} getGame={cave => cave.game} />
+        )}
+      />
+    </Container>
+  );
+};
+
+const ViewOwned = () => {
+  const profile = useProfile();
+  return (
+    <>
+      <h2>
+        <FormattedMessage id="sidebar.owned" />
+      </h2>
+      <Call
+        rc={messages.FetchProfileOwnedKeys}
+        params={{ profileId: profile!.id, limit: 15 }}
+        render={({ items }) => (
+          <GameGrid items={items} getGame={key => key.game} />
+        )}
+      />
+    </>
+  );
+};
+
+const ViewDashboard = () => {
+  const profile = useProfile();
+  return (
+    <>
+      <h2>
+        <FormattedMessage id="sidebar.dashboard" />
+      </h2>
+      <Call
+        rc={messages.FetchProfileGames}
+        params={{ profileId: profile!.id, limit: 15 }}
+        render={({ items }) => (
+          <GameGrid items={items} getGame={key => key.game} />
+        )}
+      />
+    </>
+  );
+};
+
+const ViewCollection = (props: { collection: Collection }) => {
+  const c = props.collection;
+
+  const profile = useProfile();
+  return (
+    <>
+      <h2>{c.title}</h2>
+      <Call
+        rc={messages.FetchCollectionGames}
+        params={{ profileId: profile!.id, collectionId: c.id }}
+        render={({ items }) => (
+          <GameGrid items={items} getGame={key => key.game} />
+        )}
+      />
+    </>
+  );
+};
+
+const CollectionList = (props: {
+  target: ViewTarget;
+  setTarget: (vt: ViewTarget) => void;
+}) => {
+  const iprops = makeItemProps(props.target, props.setTarget);
+
   const profile = useProfile();
   const socket = useSocket();
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -178,7 +310,7 @@ const CollectionList = (props: {}) => {
     <>
       {collections.map(c => {
         return (
-          <div className="item" key={c.id}>
+          <div key={c.id} {...iprops({ type: "collection", collection: c })}>
             <Icon icon="tag" />
             <span className="title">{c.title}</span>
             {c.gamesCount && <span className="count">{c.gamesCount}</span>}

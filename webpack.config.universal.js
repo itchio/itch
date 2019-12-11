@@ -53,6 +53,7 @@ module.exports = env => {
         filename: "[name].[hash].bundle.js",
         chunkFilename: "[name].[contenthash].chunk.js",
         publicPath: "itch://app/assets/",
+        crossOriginLoading: "anonymous",
       },
       entry: {
         renderer: ["react-hot-loader/patch", "./src/renderer/index.tsx"],

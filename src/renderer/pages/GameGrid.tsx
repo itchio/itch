@@ -5,17 +5,20 @@ import { IconButton } from "renderer/basics/IconButton";
 import { mixins } from "renderer/theme";
 import styled from "styled-components";
 
+let coverBorder = 1;
+let coverWidth = 300;
+let coverHeight = 215;
 let ratio = 0.9;
 
 const GameGridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, ${300 * ratio}px);
+  grid-template-columns: repeat(
+    auto-fill,
+    ${coverWidth * ratio + coverBorder * 2}px
+  );
   grid-row-gap: 2em;
   grid-column-gap: 1em;
   justify-content: space-evenly;
-
-  /* display: flex;
-  flex-wrap: wrap; */
 
   .item {
     background: #202020;
@@ -23,8 +26,12 @@ const GameGridContainer = styled.div`
     border-radius: 4px;
 
     .cover {
-      width: ${300 * ratio}px;
-      height: ${215 * ratio}px;
+      width: ${coverWidth * ratio}px;
+      height: ${coverHeight * ratio}px;
+
+      &.missing {
+        background-image: linear-gradient(12deg, #121212 0%, #191919 100%);
+      }
     }
 
     .title {
@@ -61,10 +68,14 @@ export const GameGrid = function<T>(props: {
         {items.map(getGame).map(game => (
           <div className="item" key={game.id}>
             <a href={`itch://games/${game.id}`}>
-              <img
-                className="cover"
-                src={game.stillCoverUrl || game.coverUrl}
-              />
+              {game.stillCoverUrl || game.coverUrl ? (
+                <img
+                  className="cover"
+                  src={game.stillCoverUrl || game.coverUrl}
+                />
+              ) : (
+                <div className="cover missing" />
+              )}
             </a>
             <div className="title">{game.title}</div>
             <div className="buttons">
