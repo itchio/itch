@@ -7,7 +7,7 @@ import { queries } from "common/queries";
 import React, { Suspense, useEffect, useState } from "react";
 import { hot } from "react-hot-loader/root";
 import { IntlProvider } from "react-intl";
-import { Spinner } from "renderer/basics/LoadingCircle";
+import { Spinner, FullScreenSpinner } from "renderer/basics/LoadingCircle";
 import { SocketContext } from "renderer/contexts";
 import { Route } from "renderer/Route";
 import { theme } from "renderer/theme";
@@ -52,7 +52,7 @@ export const App = hot(() => {
   }
 
   return (
-    <Suspense fallback={<Spinner />}>
+    <Suspense fallback={<FullScreenSpinner />}>
       <SocketContext.Provider value={socket}>
         <IntlProvider
           locale={currentLocale.lang}

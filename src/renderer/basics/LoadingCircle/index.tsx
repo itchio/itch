@@ -74,5 +74,23 @@ const SpinningCircle = styled(LoadingCircle)`
 `;
 
 export const Spinner = () => {
-  return <SpinningCircle progress={0.3} wide />;
+  return <SpinningCircle className="spinner" progress={0.3} wide />;
+};
+
+const FullScreenSpinnerContainer = styled.div`
+  min-height: 200px;
+
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const FullScreenSpinner = () => {
+  return (
+    <FullScreenSpinnerContainer>
+      <SpinningCircle className="spinner" progress={0.3} wide />
+    </FullScreenSpinnerContainer>
+  );
 };

@@ -9,8 +9,15 @@ import { Call } from "renderer/use-butlerd";
 import styled from "styled-components";
 import { fontSizes, mixins } from "renderer/theme";
 import { Icon } from "renderer/basics/Icon";
-import { Collection } from "common/butlerd/messages";
+import {
+  Collection,
+  FetchCollectionGamesParams,
+  CollectionGame,
+  FetchProfileCollectionsParams,
+  DownloadKey,
+} from "common/butlerd/messages";
 import classNames from "classnames";
+import { Spinner } from "renderer/basics/LoadingCircle";
 
 const LibraryLayout = styled.div`
   display: flex;
@@ -91,9 +98,35 @@ const LibraryLayout = styled.div`
 
   .main {
     flex-grow: 1;
+
+    h2 {
+      font-size: ${fontSizes.large};
+
+      position: sticky;
+      top: 0;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      background: ${p => p.theme.colors.shellBg};
+      border-bottom: 1px solid ${p => p.theme.colors.shellBorder};
+      z-index: 2;
+      margin-bottom: 1em;
+
+      .filler {
+        flex-grow: 1;
+      }
+
+      .spinner {
+        margin-left: 1em;
+      }
+    }
   }
 
-  & > .main,
+  & > .main {
+    overflow-y: scroll;
+  }
+
   & > .sidebar {
     overflow-y: auto;
   }
@@ -233,6 +266,30 @@ const ViewInstalled = () => {
 
 const ViewOwned = () => {
   const profile = useProfile();
+  const socket = useSocket();
+  let [loading, setLoading] = useState(true);
+  let [items, setItems] = useState<DownloadKey[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        let params: FetchProfileCollectionsParams = {
+          profileId: profile!.id,
+        };
+
+        let res = await socket.call(messages.FetchProfileOwnedKeys, params);
+        setItems(res.items);
+
+        params.fresh = true;
+        res = await socket.call(messages.FetchProfileOwnedKeys, params);
+        setItems(res.items);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
   return (
     <>
       <h2>
@@ -268,19 +325,41 @@ const ViewDashboard = () => {
 };
 
 const ViewCollection = (props: { collection: Collection }) => {
+  const socket = useSocket();
+  let [loading, setLoading] = useState(true);
+  let [items, setItems] = useState<CollectionGame[]>([]);
+
   const c = props.collection;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        let params: FetchCollectionGamesParams = {
+          profileId: profile!.id,
+          collectionId: c.id,
+          limit: 200,
+        };
+
+        let res = await socket.call(messages.FetchCollectionGames, params);
+        setItems(res.items);
+
+        params.fresh = true;
+        res = await socket.call(messages.FetchCollectionGames, params);
+        setItems(res.items);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [props.collection.id]);
 
   const profile = useProfile();
   return (
     <>
-      <h2>{c.title}</h2>
-      <Call
-        rc={messages.FetchCollectionGames}
-        params={{ profileId: profile!.id, collectionId: c.id }}
-        render={({ items }) => (
-          <GameGrid items={items} getGame={key => key.game} />
-        )}
-      />
+      <h2>
+        {c.title} {loading && <Spinner />}
+      </h2>
+      <GameGrid items={items} getGame={key => key.game} />
     </>
   );
 };

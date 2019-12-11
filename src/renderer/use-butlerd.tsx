@@ -32,6 +32,7 @@ export function useButlerd<T, U>(
   const socket = useSocket();
 
   useEffect(() => {
+    setState({ state: "loading" });
     socket
       .call(rc, params)
       .then(result => {
