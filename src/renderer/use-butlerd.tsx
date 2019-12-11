@@ -46,7 +46,7 @@ export function useButlerd<T, U>(
           error,
         });
       });
-  }, []);
+  }, [JSON.stringify(params)]);
 
   return state;
 }

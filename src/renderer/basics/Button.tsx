@@ -109,49 +109,52 @@ interface Props {
   secondary?: boolean;
 }
 
-export const Button = (props: Props) => {
-  const {
-    className,
-    primary,
-    big: big,
-    icon,
-    iconComponent,
-    label,
-    wide,
-    secondary,
-    disabled,
-    translucent,
-    loading,
-    onClick,
-    ...restProps
-  } = props;
+export const Button = React.forwardRef(
+  (props: Props, ref: React.Ref<HTMLButtonElement>) => {
+    const {
+      className,
+      primary,
+      big: big,
+      icon,
+      iconComponent,
+      label,
+      wide,
+      secondary,
+      disabled,
+      translucent,
+      loading,
+      onClick,
+      ...restProps
+    } = props;
 
-  return (
-    <Container
-      onClick={disabled || loading ? undefined : onClick}
-      className={classNames("button", className, {
-        primary,
-        secondary,
-        wide,
-        big,
-        disabled,
-        translucent,
-      })}
-      {...restProps}
-    >
-      {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
-      {iconComponent || icon ? (
-        <Spacer className={classNames({ wide })} />
-      ) : null}
-      {icon && label ? " " : null}
-      {label ? (
-        <Label className={classNames({ loading })}>{label}</Label>
-      ) : null}
-      {loading ? (
-        <LoadingContainer>
-          <LoadingCircle wide={wide} progress={0.3} />
-        </LoadingContainer>
-      ) : null}
-    </Container>
-  );
-};
+    return (
+      <Container
+        ref={ref}
+        onClick={disabled || loading ? undefined : onClick}
+        className={classNames("button", className, {
+          primary,
+          secondary,
+          wide,
+          big,
+          disabled,
+          translucent,
+        })}
+        {...restProps}
+      >
+        {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}
+        {iconComponent || icon ? (
+          <Spacer className={classNames({ wide })} />
+        ) : null}
+        {icon && label ? " " : null}
+        {label ? (
+          <Label className={classNames({ loading })}>{label}</Label>
+        ) : null}
+        {loading ? (
+          <LoadingContainer>
+            <LoadingCircle wide={wide} progress={0.3} />
+          </LoadingContainer>
+        ) : null}
+      </Container>
+    );
+  }
+);

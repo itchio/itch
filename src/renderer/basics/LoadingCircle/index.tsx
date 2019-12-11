@@ -70,7 +70,7 @@ export const LoadingCircle = (props: LoadingCircleProps) => {
 };
 
 const SpinningCircle = styled(LoadingCircle)`
-  animation: ${animations.spinner} infinite 2s;
+  animation: ${animations.spinner} linear infinite 2s;
 `;
 
 export const Spinner = () => {

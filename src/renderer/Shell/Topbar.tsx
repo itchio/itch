@@ -10,14 +10,7 @@ import { ProfileButton } from "renderer/Shell/ProfileButton";
 import { useListen } from "renderer/Socket";
 import { packets } from "common/packets";
 import styled from "styled-components";
-
-const Logo = styled.img`
-  width: auto;
-  height: 25px;
-  margin: 10px 0;
-  margin-left: 15px;
-  margin-right: 35px;
-`;
+import { DownloadsButton } from "renderer/Shell/DownloadsButton";
 
 const TopbarDiv = styled.div`
   display: flex;
@@ -29,6 +22,7 @@ const TopbarDiv = styled.div`
     margin-right: 1em;
 
     border-radius: 0 0 4px 4px;
+    border-top: none;
   }
 `;
 
@@ -75,29 +69,32 @@ export const Topbar = () => {
 
   return (
     <TopbarDiv>
-      <Logo src={require("static/images/logos/app-white.svg")} />
-      <Button
-        onClick={() => (location.href = "https://itch.io")}
-        icon="earth"
-        label={<FormattedMessage id={"sidebar.explore"} />}
-      />
-      <Button
-        onClick={() => (location.href = "itch://library")}
-        icon="heart-filled"
-        label={<FormattedMessage id={"sidebar.library"} />}
-      />
+      {profile && (
+        <>
+          <ProfileButton
+            profile={profile}
+            openPreferences={() => setPopover("preferences")}
+          />
+          <Button
+            onClick={() => (location.href = "https://itch.io")}
+            icon="earth"
+            label={<FormattedMessage id={"sidebar.explore"} />}
+          />
+          <Button
+            onClick={() => (location.href = "itch://library")}
+            icon="heart-filled"
+            label={<FormattedMessage id={"sidebar.library"} />}
+          />
+          <DownloadsButton />
+        </>
+      )}
       <DraggableFiller />
-      <IconButton icon="download" onClick={() => setPopover("downloads")} />
-      <ProfileButton
-        profile={profile}
-        openPreferences={() => setPopover("preferences")}
-      />
       <IconButton icon="window-minimize" onClick={minimize.execute} />
       <IconButton
         icon={maximized ? "window-restore" : "window-maximize"}
         onClick={toggleMaximized.execute}
       />
-      <IconButton icon="close" onClick={close.execute} />
+      <IconButton icon="cross" onClick={close.execute} />
       <Popover name={popover} onClose={() => setPopover(null)} />
     </TopbarDiv>
   );

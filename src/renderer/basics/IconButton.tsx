@@ -3,6 +3,7 @@ import React from "react";
 import { Icon } from "renderer/basics/Icon";
 import { fontSizes } from "renderer/theme";
 import styled from "styled-components";
+import { LoadingCircle, Spinner } from "renderer/basics/LoadingCircle";
 
 const StyledButton = styled.button`
   &:not(.disabled) {
@@ -45,6 +46,7 @@ const StyledButton = styled.button`
 interface Props {
   icon: string | JSX.Element;
   disabled?: boolean;
+  loading?: boolean;
   className?: string;
   id?: string;
 
@@ -53,15 +55,24 @@ interface Props {
   onContextMenu?: React.MouseEventHandler<HTMLElement>;
 }
 
-export const IconButton = (props: Props) => {
-  const { className, icon, ...restProps } = props;
+export const IconButton = React.forwardRef(
+  (props: Props, ref: React.Ref<HTMLButtonElement>) => {
+    const { className, loading, icon, ...restProps } = props;
 
-  return (
-    <StyledButton
-      className={classNames("icon-button", className)}
-      {...restProps}
-    >
-      {typeof icon === "string" ? <Icon icon={icon} /> : icon}
-    </StyledButton>
-  );
-};
+    return (
+      <StyledButton
+        ref={ref}
+        className={classNames("icon-button", className)}
+        {...restProps}
+      >
+        {loading ? (
+          <Spinner />
+        ) : typeof icon === "string" ? (
+          <Icon icon={icon} />
+        ) : (
+          icon
+        )}
+      </StyledButton>
+    );
+  }
+);

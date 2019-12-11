@@ -23,8 +23,8 @@ const CaveItemList = styled.div`
 `;
 
 const CaveItem = styled.div`
-  margin: 12px 4px;
-  padding: 4px;
+  margin: 12px 0;
+  padding: 4px 0;
   border-radius: 2px;
 
   display: flex;
@@ -65,7 +65,7 @@ const Filler = styled.div`
 const CaveItemActions = styled.div`
   display: flex;
   flex-direction: row;
-  margin-right: 8px;
+  margin-right: 0;
 `;
 
 const Title = styled.div`

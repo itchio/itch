@@ -28,7 +28,12 @@ export const Shell = () => {
   let profile = useProfile();
 
   if (!profile) {
-    return <Gate />;
+    return (
+      <ShellDiv>
+        <Topbar />
+        <Gate />
+      </ShellDiv>
+    );
   }
 
   return (

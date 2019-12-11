@@ -268,6 +268,19 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
       return;
     }
 
+    if (props.stage.username === "#api-key") {
+      // for integration tests
+      try {
+        const { profile } = await socket.call(messages.ProfileLoginWithAPIKey, {
+          apiKey: passwordRef.current.value,
+        });
+
+        await socket.query(queries.setProfile, { profile });
+      } finally {
+        return;
+      }
+    }
+
     let cancelled = false;
     try {
       const { profile, cookie } = await socket.call(

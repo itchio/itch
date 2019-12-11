@@ -9,13 +9,7 @@ import { useAsyncCallback } from "react-async-hook";
 import { queries } from "common/queries";
 import { FormattedMessage } from "react-intl";
 import { useOutsideClickListener } from "react-click-outside-listener";
-
-const MenuTippy = styled(Tippy)`
-  .tippy-content {
-    margin: 0;
-    padding: 0;
-  }
-`;
+import { MenuTippy, MenuContents } from "renderer/basics/Menu";
 
 const ProfileButtonDiv = styled.div`
   display: flex;
@@ -51,7 +45,7 @@ export const ProfileButton = (props: Props) => {
   const coref = useOutsideClickListener(() => {
     setShown(false);
   });
-  const toggleMenu = () => {
+  const toggle = () => {
     setShown(!shown);
   };
 
@@ -64,8 +58,7 @@ export const ProfileButton = (props: Props) => {
       <ProfileButtonDiv
         ref={coref}
         className={classNames("user-menu", { shown })}
-        onClick={toggleMenu}
-        onContextMenu={toggleMenu}
+        onClick={toggle}
       >
         <img src={profile.user.stillCoverUrl || profile.user.coverUrl} />
         {profile.user.displayName || profile.user.username}
@@ -73,24 +66,6 @@ export const ProfileButton = (props: Props) => {
     </MenuTippy>
   );
 };
-
-const MenuContents = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-
-  button {
-    margin-right: 0 !important;
-    justify-content: flex-start;
-    background: none;
-    border: none;
-    text-align: left;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-  }
-`;
 
 const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
   const socket = useSocket();

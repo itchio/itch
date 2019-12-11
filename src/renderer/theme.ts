@@ -20,7 +20,7 @@ export const theme: DefaultTheme = {
     text3: "#818181",
 
     errorBg: "#f2ee77",
-    errorText: "#fafafa",
+    errorText: "#323232",
 
     button1Bg: "#a83737",
     button1BgHover: lighten(0.1, "#a83737"),
@@ -31,8 +31,8 @@ export const theme: DefaultTheme = {
     button2Bg: "transparent",
     button2BgHover: "rgba(255, 255, 255, .2)",
     button2BgActive: "rgba(255, 255, 255, .1)",
-    button2Border: "#818181",
-    button2Text: "#a8a8a8",
+    button2Border: "#515151",
+    button2Text: "#d8d8d8",
 
     inputBg: "#1d1d1d",
     inputText: "#a8a8a8",
@@ -172,11 +172,11 @@ export const animations = {
 
   spinner: keyframes`
     0% {
-      transform: rotateX(0);
+      transform: rotateZ(0);
     }
 
     100% {
-      transform: rotateX(360deg);
+      transform: rotateZ(360deg);
     }
   `,
 };
