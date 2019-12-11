@@ -22,6 +22,7 @@ import { Spinner } from "renderer/basics/LoadingCircle";
 const LibraryLayout = styled.div`
   display: flex;
   flex-direction: row;
+  min-height: 100%;
   max-height: 100%;
 
   .sidebar {
