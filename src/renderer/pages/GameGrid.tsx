@@ -1,9 +1,14 @@
-import { Game } from "common/butlerd/messages";
-import React from "react";
+import { Game, GameRecord } from "common/butlerd/messages";
+import React, { useState } from "react";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { mixins } from "renderer/theme";
 import styled from "styled-components";
+import { useAsyncCallback } from "react-async-hook";
+import { useSocket } from "renderer/contexts";
+import { messages } from "common/butlerd";
+import { queries } from "common/queries";
+import { InstallModal } from "renderer/Shell/InstallModal";
 
 let coverBorder = 1;
 let coverWidth = 300;
@@ -57,38 +62,100 @@ const GameGridContainer = styled.div`
   }
 `;
 
-export const GameGrid = function<T>(props: {
-  items: T[];
-  getGame: (t: T) => Game;
-}) {
-  const { items, getGame } = props;
+const findGameId = (el: HTMLElement): number | undefined => {
+  if (el.dataset.gameId) {
+    return Number(el.dataset.gameId);
+  }
+
+  if (el.parentElement) {
+    return findGameId(el.parentElement);
+  }
+  return undefined;
+};
+
+export const GameGrid = function(props: { records: GameRecord[] }) {
+  const socket = useSocket();
+  const [gameBeingInstalled, setGameBeingInstalled] = useState<
+    Game | undefined
+  >();
+
+  const launch = useAsyncCallback(async function(
+    ev: React.MouseEvent<HTMLButtonElement>
+  ) {
+    const gameId = findGameId(ev.currentTarget);
+    if (!gameId) {
+      return;
+    }
+    await socket.query(queries.launchGame, { gameId });
+  });
+
+  const install = useAsyncCallback(async function(
+    ev: React.MouseEvent<HTMLButtonElement>
+  ) {
+    const gameId = findGameId(ev.currentTarget);
+    if (!gameId) {
+      return;
+    }
+
+    const { game } = await socket.call(messages.FetchGame, { gameId });
+    setGameBeingInstalled(game);
+  });
+
+  const purchase = useAsyncCallback(async function(
+    ev: React.MouseEvent<HTMLButtonElement>
+  ) {
+    const gameId = findGameId(ev.currentTarget);
+    if (!gameId) {
+      return;
+    }
+
+    try {
+      const { game } = await socket.callWithRefresh(messages.FetchGame, {
+        gameId,
+      });
+      if (game) {
+        location.href = `${game.url}/purchase`;
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+  });
+
+  const { records } = props;
   return (
     <>
+      {gameBeingInstalled && (
+        <InstallModal
+          game={gameBeingInstalled}
+          onClose={() => setGameBeingInstalled(undefined)}
+        />
+      )}
+
       <GameGridContainer>
-        {items.map(getGame).map(game => (
-          <div className="item" key={game.id}>
+        {records.map(game => (
+          <div className="item" key={game.id} data-game-id={game.id}>
             <a href={`itch://games/${game.id}`}>
-              {game.stillCoverUrl || game.coverUrl ? (
-                <img
-                  className="cover"
-                  src={game.stillCoverUrl || game.coverUrl}
-                />
+              {game.cover ? (
+                <img className="cover" src={game.cover} />
               ) : (
                 <div className="cover missing" />
               )}
             </a>
             <div className="title">{game.title}</div>
             <div className="buttons">
-              <Button icon="install" label="Install" />
+              {game.installed_at ? (
+                <Button icon="play2" label="Launch" onClick={launch.execute} />
+              ) : (
+                <Button
+                  icon="install"
+                  label="Install"
+                  onClick={install.execute}
+                />
+              )}
               <div className="filler" />
-              <IconButton
-                icon="heart-filled"
-                onClick={() => (location.href = `${game.url}/purchase`)}
-              />
-              <IconButton
-                icon="share"
-                onClick={() => (location.href = `${game.url}/purchase`)}
-              />
+              {game.owned ? null : (
+                <IconButton icon="heart-filled" onClick={purchase.execute} />
+              )}
             </div>
           </div>
         ))}

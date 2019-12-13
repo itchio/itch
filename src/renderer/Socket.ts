@@ -359,6 +359,18 @@ export class Socket {
     }
   }
 
+  async callWithRefresh<
+    Params extends { fresh?: boolean },
+    Result extends { stale?: boolean }
+  >(rc: RequestCreator<Params, Result>, params: Params): Promise<Result> {
+    const res = await this.call(rc, params);
+    if (res.stale) {
+      return await this.call(rc, { ...params, fresh: true });
+    } else {
+      return res;
+    }
+  }
+
   async query<Result>(
     qc: QueryCreator<void, Result>,
     params?: void

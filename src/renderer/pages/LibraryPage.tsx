@@ -15,9 +15,13 @@ import {
   CollectionGame,
   FetchProfileCollectionsParams,
   DownloadKey,
+  GameRecordsSource,
+  GameRecord,
+  FetchGameRecordsParams,
 } from "common/butlerd/messages";
 import classNames from "classnames";
 import { Spinner } from "renderer/basics/LoadingCircle";
+import { ProfileButton } from "renderer/Shell/ProfileButton";
 
 const LibraryLayout = styled.div`
   display: flex;
@@ -133,26 +137,22 @@ const LibraryLayout = styled.div`
   }
 `;
 
-type ViewTarget =
-  | ViewTargetInstalled
-  | ViewTargetOwned
-  | ViewTargetDashboard
-  | ViewTargetCollection;
+type Source = SourceInstalled | SourceOwned | SourceProfile | SourceCollection;
 
-interface ViewTargetInstalled {
-  type: "installed";
+interface SourceInstalled {
+  source: GameRecordsSource.Installed;
 }
 
-interface ViewTargetOwned {
-  type: "owned";
+interface SourceOwned {
+  source: GameRecordsSource.Owned;
 }
 
-interface ViewTargetDashboard {
-  type: "dashboard";
+interface SourceProfile {
+  source: GameRecordsSource.Profile;
 }
 
-interface ViewTargetCollection {
-  type: "collection";
+interface SourceCollection {
+  source: GameRecordsSource.Collection;
   collection: Collection;
 }
 
@@ -162,14 +162,14 @@ interface ItemProps {
 }
 
 function makeItemProps(
-  currentTarget: ViewTarget,
-  setTarget: (vt: ViewTarget) => void
-): (itemTarget: ViewTarget) => ItemProps {
-  return (itemTarget: ViewTarget) => {
+  currentSource: Source,
+  setSource: (vt: Source) => void
+): (itemSource: Source) => ItemProps {
+  return (itemSource: Source) => {
     let active = true;
 
-    let a = currentTarget as Record<string, any>;
-    let b = itemTarget as Record<string, any>;
+    let a = currentSource as Record<string, any>;
+    let b = itemSource as Record<string, any>;
 
     for (const k of Object.keys(b)) {
       if (a[k] !== b[k]) {
@@ -180,14 +180,16 @@ function makeItemProps(
 
     return {
       className: classNames("item", { active }),
-      onClick: () => setTarget(itemTarget),
+      onClick: () => setSource(itemSource),
     };
   };
 }
 
 export const LibraryPage = () => {
-  const [target, setTarget] = useState<ViewTarget>({ type: "installed" });
-  let iprops = makeItemProps(target, setTarget);
+  const [source, setSource] = useState<Source>({
+    source: GameRecordsSource.Installed,
+  });
+  let iprops = makeItemProps(source, setSource);
 
   const profile = useProfile();
   if (!profile) {
@@ -208,15 +210,15 @@ export const LibraryPage = () => {
         <div className="heading">
           <FormattedMessage id="sidebar.category.basics" />
         </div>
-        <div {...iprops({ type: "installed" })}>
+        <div {...iprops({ source: GameRecordsSource.Installed })}>
           <Icon icon="install" />
           <FormattedMessage id="sidebar.installed" />
         </div>
-        <div {...iprops({ type: "owned" })}>
+        <div {...iprops({ source: GameRecordsSource.Owned })}>
           <Icon icon="heart-filled" />
           <FormattedMessage id="sidebar.owned" />
         </div>
-        <div {...iprops({ type: "dashboard" })}>
+        <div {...iprops({ source: GameRecordsSource.Profile })}>
           <Icon icon="rocket" />
           <FormattedMessage id="sidebar.dashboard" />
         </div>
@@ -224,152 +226,83 @@ export const LibraryPage = () => {
         <div className="heading">
           <FormattedMessage id="sidebar.collections" />
         </div>
-        <CollectionList target={target} setTarget={setTarget} />
+        <CollectionList source={source} setSource={setSource} />
       </div>
       <Container className="main">
-        <ViewContents target={target} />
+        <ViewContents source={source} />
       </Container>
     </LibraryLayout>
   );
 };
 
-const ViewContents = (props: { target: ViewTarget }) => {
-  const { target } = props;
+const ViewContents = (props: { source: Source }) => {
+  const { source } = props;
 
-  switch (target.type) {
-    case "installed":
-      return <ViewInstalled />;
-    case "owned":
-      return <ViewOwned />;
-    case "dashboard":
-      return <ViewDashboard />;
-    case "collection":
-      return <ViewCollection collection={target.collection} />;
+  const profile = useProfile();
+  const socket = useSocket();
+  let [loading, setLoading] = useState(true);
+  let [records, setRecords] = useState<GameRecord[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        // TODO: pagination
+
+        setLoading(true);
+        let params: FetchGameRecordsParams = {
+          profileId: profile!.id,
+          source: props.source.source,
+          limit: 200,
+          collectionId:
+            source.source === GameRecordsSource.Collection
+              ? source.collection.id
+              : undefined,
+        };
+
+        let res = await socket.call(messages.FetchGameRecords, params);
+        setRecords(res.records);
+
+        if (res.stale) {
+          params.fresh = true;
+          res = await socket.call(messages.FetchGameRecords, params);
+          setRecords(res.records);
+        }
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [JSON.stringify(source)]);
+
+  return (
+    <>
+      <h2>
+        <ViewTitle source={source} />
+        {loading && <Spinner />}
+      </h2>
+      <GameGrid records={records} />
+    </>
+  );
+};
+
+const ViewTitle = (props: { source: Source }) => {
+  const { source } = props;
+  switch (source.source) {
+    case GameRecordsSource.Installed:
+      return <FormattedMessage id="sidebar.installed" />;
+    case GameRecordsSource.Owned:
+      return <FormattedMessage id="sidebar.owned" />;
+    case GameRecordsSource.Profile:
+      return <FormattedMessage id="sidebar.dashboard" />;
+    case GameRecordsSource.Collection:
+      return <>source.collection.title</>;
   }
 };
 
-const ViewInstalled = () => {
-  return (
-    <Container className="main">
-      <h2>
-        <FormattedMessage id="sidebar.installed" />
-      </h2>
-      <Call
-        rc={messages.FetchCaves}
-        params={{ limit: 15 }}
-        render={({ items }) => (
-          <GameGrid items={items} getGame={cave => cave.game} />
-        )}
-      />
-    </Container>
-  );
-};
-
-const ViewOwned = () => {
-  const profile = useProfile();
-  const socket = useSocket();
-  let [loading, setLoading] = useState(true);
-  let [items, setItems] = useState<DownloadKey[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        let params: FetchProfileCollectionsParams = {
-          profileId: profile!.id,
-        };
-
-        let res = await socket.call(messages.FetchProfileOwnedKeys, params);
-        setItems(res.items);
-
-        params.fresh = true;
-        res = await socket.call(messages.FetchProfileOwnedKeys, params);
-        setItems(res.items);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  return (
-    <>
-      <h2>
-        <FormattedMessage id="sidebar.owned" />
-      </h2>
-      <Call
-        rc={messages.FetchProfileOwnedKeys}
-        params={{ profileId: profile!.id, limit: 15 }}
-        render={({ items }) => (
-          <GameGrid items={items} getGame={key => key.game} />
-        )}
-      />
-    </>
-  );
-};
-
-const ViewDashboard = () => {
-  const profile = useProfile();
-  return (
-    <>
-      <h2>
-        <FormattedMessage id="sidebar.dashboard" />
-      </h2>
-      <Call
-        rc={messages.FetchProfileGames}
-        params={{ profileId: profile!.id, limit: 15 }}
-        render={({ items }) => (
-          <GameGrid items={items} getGame={key => key.game} />
-        )}
-      />
-    </>
-  );
-};
-
-const ViewCollection = (props: { collection: Collection }) => {
-  const socket = useSocket();
-  let [loading, setLoading] = useState(true);
-  let [items, setItems] = useState<CollectionGame[]>([]);
-
-  const c = props.collection;
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        let params: FetchCollectionGamesParams = {
-          profileId: profile!.id,
-          collectionId: c.id,
-          limit: 200,
-        };
-
-        let res = await socket.call(messages.FetchCollectionGames, params);
-        setItems(res.items);
-
-        params.fresh = true;
-        res = await socket.call(messages.FetchCollectionGames, params);
-        setItems(res.items);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [props.collection.id]);
-
-  const profile = useProfile();
-  return (
-    <>
-      <h2>
-        {c.title} {loading && <Spinner />}
-      </h2>
-      <GameGrid items={items} getGame={key => key.game} />
-    </>
-  );
-};
-
 const CollectionList = (props: {
-  target: ViewTarget;
-  setTarget: (vt: ViewTarget) => void;
+  source: Source;
+  setSource: (vt: Source) => void;
 }) => {
-  const iprops = makeItemProps(props.target, props.setTarget);
+  const iprops = makeItemProps(props.source, props.setSource);
 
   const profile = useProfile();
   const socket = useSocket();
@@ -390,7 +323,10 @@ const CollectionList = (props: {
     <>
       {collections.map(c => {
         return (
-          <div key={c.id} {...iprops({ type: "collection", collection: c })}>
+          <div
+            key={c.id}
+            {...iprops({ source: GameRecordsSource.Collection, collection: c })}
+          >
             <Icon icon="tag" />
             <span className="title">{c.title}</span>
             {c.gamesCount && <span className="count">{c.gamesCount}</span>}
