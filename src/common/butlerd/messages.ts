@@ -399,6 +399,67 @@ export const FetchGame = createRequest<
 >("Fetch.Game");
 
 /**
+ * undocumented
+ */
+export interface GameRecord {
+  /** Game ID */
+  id: number;
+  /** Game title */
+  title: string;
+  /** Game cover */
+  cover: string;
+  /** True if owned */
+  owned: boolean;
+  /** Non-nil if installed (has caves) */
+  installed_at: RFCDate;
+}
+
+/**
+ * undocumented
+ */
+export enum GameRecordsSource {
+  // Games for which the profile has a download key
+  Owned = "owned",
+  // Games for which a cave exists (regardless of the profile)
+  Installed = "installed",
+  // Games authored by profile, or for whom profile is an admin of
+  Profile = "profile",
+  // Games from a collection
+  Collection = "collection",
+}
+
+/**
+ * undocumented
+ */
+export interface GameRecordsFilters {
+  /** undocumented */
+  classification: GameClassification;
+  /** undocumented */
+  installed: boolean;
+  /** undocumented */
+  owned: boolean;
+}
+
+/**
+ * Result for Fetch.GameRecords
+ */
+export interface FetchGameRecordsResult {
+  /** All the records that were fetched */
+  records: GameRecord[];
+  /** Marks that a request should be issued afterwards with 'Fresh' set */
+  stale?: boolean;
+}
+
+/**
+ * Fetches game records - owned, installed, in collection,
+ * with search, etc. Includes download key info, cave info, etc.
+ */
+export const FetchGameRecords = createRequest<
+  FetchGameRecordsParams,
+  FetchGameRecordsResult
+>("Fetch.GameRecords");
+
+/**
  * Result for Fetch.DownloadKey
  */
 export interface FetchDownloadKeyResult {
@@ -2689,6 +2750,32 @@ export interface FetchGameParams {
 }
 
 /**
+ * Params for Fetch.GameRecords
+ */
+export interface FetchGameRecordsParams {
+  /** Profile to use to fetch game */
+  profileId: number;
+  /** Source from which to fetch games */
+  source: GameRecordsSource;
+  /** Collection ID, required if `Source` is "collection" */
+  collectionId?: number;
+  /** Maximum number of games to return at a time */
+  limit?: number;
+  /** Games to skip */
+  offset?: number;
+  /** When specified only shows game titles that contain this string */
+  search?: string;
+  /** Criterion to sort by */
+  sortBy?: string;
+  /** Filters */
+  filters?: GameRecordsFilters;
+  /** undocumented */
+  reverse?: boolean;
+  /** If set, will force fresh data */
+  fresh?: boolean;
+}
+
+/**
  * Params for Fetch.DownloadKey
  */
 export interface FetchDownloadKeyParams {
@@ -2819,7 +2906,7 @@ export interface FetchProfileGamesParams {
 export interface FetchProfileOwnedKeysParams {
   /** Profile to use to fetch game */
   profileId: number;
-  /** Maximum number of collections to return at a time. */
+  /** Maximum number of owned keys to return at a time. */
   limit?: number;
   /** When specified only shows game titles that contain this string */
   search?: string;

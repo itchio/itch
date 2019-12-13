@@ -106,6 +106,11 @@ async function main() {
 // integration tests, etc.
 // Maybe have it as a small Go utility?
 async function ensureButler() {
+  if (process.env.LOCAL_BUTLER === "1") {
+    console.log(`Using local butler, so, not downloading...`);
+    return;
+  }
+
   await new Promise((resolve, reject) => {
     childProcess.exec(
       "go run ./install-deps --manifest package.json --dir . --development",
