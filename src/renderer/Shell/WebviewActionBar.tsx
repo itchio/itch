@@ -95,14 +95,6 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
   );
 };
 
-const WebviewEmptyActionBar = () => {
-  return (
-    <Container>
-      <div style={{ marginLeft: "2em" }}>Real empty in there</div>
-    </Container>
-  );
-};
-
 export const WebviewActionBar = (props: Props) => {
   const { path } = props;
   if (path) {
@@ -113,7 +105,7 @@ export const WebviewActionBar = (props: Props) => {
     }
   }
 
-  return <WebviewEmptyActionBar />;
+  return null;
 };
 
 export default WebviewActionBar;
