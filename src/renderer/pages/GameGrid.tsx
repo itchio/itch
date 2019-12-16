@@ -1,5 +1,5 @@
 import { messages } from "common/butlerd";
-import { Game, GameRecord, UninstallPerform } from "common/butlerd/messages";
+import { Game, GameRecord } from "common/butlerd/messages";
 import { queries } from "common/queries";
 import React, { useState } from "react";
 import { useAsyncCallback } from "react-async-hook";

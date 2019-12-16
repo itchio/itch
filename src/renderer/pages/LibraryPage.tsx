@@ -238,6 +238,7 @@ const ViewContents = (props: { source: Source }) => {
   let [records, setRecords] = useState<GameRecord[]>([]);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
         // TODO: pagination
@@ -254,17 +255,27 @@ const ViewContents = (props: { source: Source }) => {
         };
 
         let res = await socket.call(messages.FetchGameRecords, params);
+        if (cancelled) {
+          return;
+        }
         setRecords(res.records);
 
         if (res.stale) {
           params.fresh = true;
           res = await socket.call(messages.FetchGameRecords, params);
+          if (cancelled) {
+            return;
+          }
           setRecords(res.records);
         }
       } finally {
         setLoading(false);
       }
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [JSON.stringify(source)]);
 
   return (
