@@ -1,27 +1,21 @@
+import classNames from "classnames";
 import { messages } from "common/butlerd";
+import {
+  Collection,
+  FetchGameRecordsParams,
+  GameRecord,
+  GameRecordsSource,
+} from "common/butlerd/messages";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Container } from "renderer/basics/Container";
 import { ErrorState } from "renderer/basics/ErrorState";
+import { Icon } from "renderer/basics/Icon";
+import { Spinner } from "renderer/basics/LoadingCircle";
 import { useProfile, useSocket } from "renderer/contexts";
 import { GameGrid } from "renderer/pages/GameGrid";
-import { Call } from "renderer/use-butlerd";
-import styled from "styled-components";
 import { fontSizes, mixins } from "renderer/theme";
-import { Icon } from "renderer/basics/Icon";
-import {
-  Collection,
-  FetchCollectionGamesParams,
-  CollectionGame,
-  FetchProfileCollectionsParams,
-  DownloadKey,
-  GameRecordsSource,
-  GameRecord,
-  FetchGameRecordsParams,
-} from "common/butlerd/messages";
-import classNames from "classnames";
-import { Spinner } from "renderer/basics/LoadingCircle";
-import { ProfileButton } from "renderer/Shell/ProfileButton";
+import styled from "styled-components";
 
 const LibraryLayout = styled.div`
   display: flex;
@@ -294,7 +288,7 @@ const ViewTitle = (props: { source: Source }) => {
     case GameRecordsSource.Profile:
       return <FormattedMessage id="sidebar.dashboard" />;
     case GameRecordsSource.Collection:
-      return <>source.collection.title</>;
+      return <>{source.collection.title}</>;
   }
 };
 
@@ -310,10 +304,13 @@ const CollectionList = (props: {
 
   useEffect(() => {
     (async () => {
-      let { items } = await socket.call(messages.FetchProfileCollections, {
-        profileId: profile!.id,
-        sortBy: "updatedAt",
-      });
+      let { items } = await socket.callWithRefresh(
+        messages.FetchProfileCollections,
+        {
+          profileId: profile!.id,
+          sortBy: "updatedAt",
+        }
+      );
       console.log(items);
       setCollections(items);
     })();

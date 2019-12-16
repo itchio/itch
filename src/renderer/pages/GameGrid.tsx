@@ -27,7 +27,7 @@ const GameGridContainer = styled.div`
   grid-column-gap: 1em;
   justify-content: space-evenly;
 
-  .item {
+  & > .item {
     background: #202020;
     border: 1px solid #333;
     border-radius: 4px;
@@ -41,7 +41,7 @@ const GameGridContainer = styled.div`
       }
     }
 
-    .title {
+    & > .title {
       padding: 4px 8px;
       ${mixins.singleLine};
     }
@@ -57,8 +57,8 @@ const GameGridContainer = styled.div`
       }
     }
 
-    .title,
-    .buttons {
+    & > .title,
+    & > .buttons {
       padding-left: 12px;
     }
   }
@@ -144,13 +144,10 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
 
   let makeButton = (game: GameRecord, icon: boolean): JSX.Element => {
     if (icon) {
-      return (
-        <IconButton ref={coref(1)} icon="install" onClick={install.execute} />
-      );
+      return <IconButton icon="install" onClick={install.execute} />;
     } else {
       return (
         <Button
-          ref={coref(1)}
           icon="install"
           label="Install"
           loading={game.id == gameIdLoading}
@@ -183,6 +180,8 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
                   placement="top"
                   content={
                     <InstallModalContents
+                      coref={coref}
+                      corefStart={0}
                       game={gameBeingInstalled}
                       onClose={() => setGameBeingInstalled(undefined)}
                     />
@@ -201,6 +200,8 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
                     placement="right"
                     content={
                       <InstallModalContents
+                        coref={coref}
+                        corefStart={0}
                         game={gameBeingInstalled}
                         onClose={() => setGameBeingInstalled(undefined)}
                       />

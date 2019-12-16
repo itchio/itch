@@ -25,6 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "@hot-loader/react-dom": "^16.11.0",
+    "@seznam/compose-react-refs": "^1.0.4",
     "@tippy.js/react": "^3.1.1",
     "@types/emojione": "^2.2.5",
     "@types/lru-cache": "^5.1.0",

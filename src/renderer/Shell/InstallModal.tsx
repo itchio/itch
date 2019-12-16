@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { messages } from "common/butlerd";
 import {
   FetchGameUploadsParams,
@@ -27,6 +26,14 @@ const InstallMenuContents = styled(MenuContents)`
   overflow: hidden;
   border-radius: 4px;
 
+  .no-uploads {
+    font-size: ${fontSizes.normal};
+    background: ${p => p.theme.colors.errorBg};
+    color: ${p => p.theme.colors.errorText};
+
+    padding: 1em;
+  }
+
   .header {
     box-shadow: 0 0 40px ${p => p.theme.colors.shellBg};
 
@@ -42,18 +49,18 @@ const InstallMenuContents = styled(MenuContents)`
     font-weight: bold;
 
     padding: 0.6em 1.2em;
+
+    & > .icon {
+      margin-right: 0.5em;
+    }
   }
 
   .spinner {
     margin: 10px auto;
   }
 
-  .isOther {
-    color: ${p => p.theme.colors.text2};
-  }
-
   width: 350px;
-  max-height: 250px;
+  max-height: 320px;
   min-height: 3em;
 
   .list {
@@ -62,6 +69,19 @@ const InstallMenuContents = styled(MenuContents)`
     display: flex;
     flex-direction: column;
     align-items: stretch;
+
+    .heading {
+      text-align: center;
+    }
+
+    .heading,
+    .show-hidden {
+      font-size: ${fontSizes.small};
+      font-weight: bold;
+      color: ${p => p.theme.colors.text2};
+
+      padding: 0.5em;
+    }
   }
 
   .filler {
@@ -92,6 +112,8 @@ const UploadInfo = styled.div`
 `;
 
 interface Props {
+  coref: any;
+  corefStart: number;
   game: Game;
   onClose: () => void;
 }
@@ -111,9 +133,9 @@ export const InstallModal = (props: Props) => {
 
 export const InstallModalContents = (props: Props) => {
   const socket = useSocket();
-  const [uploadId, setUploadId] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [uploads, setUploads] = useState<AvailableUploads | null>(null);
+  const { coref, corefStart } = props;
 
   useEffect(() => {
     (async () => {
@@ -147,11 +169,11 @@ export const InstallModalContents = (props: Props) => {
         alert(e.stack);
       }
     })();
-  }, [uploadId]);
+  }, []);
 
-  const ref = useRef<HTMLDivElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    pokeTippy(ref);
+    pokeTippy(divRef);
   });
 
   const queueInstall = useAsyncCallback(async (upload: Upload) => {
@@ -167,18 +189,21 @@ export const InstallModalContents = (props: Props) => {
     props.onClose();
   });
 
+  const [showOthers, setShowOthers] = useState(false);
+
   const hasUploads =
     uploads && (uploads.compatible.length > 0 || uploads.others.length > 0);
 
   return (
     <>
-      <InstallMenuContents ref={ref}>
+      <InstallMenuContents ref={coref(corefStart)}>
+        <div ref={divRef} />
         {loading ? (
           <Spinner />
         ) : uploads && hasUploads ? (
           <>
             <div className="header">
-              <Icon icon="download" />
+              <Icon icon="install" />
               <span className="title">{props.game.title}</span>
             </div>
             <div className="list">
@@ -186,20 +211,32 @@ export const InstallModalContents = (props: Props) => {
                 items={uploads.compatible}
                 queueInstall={queueInstall}
               />
-              {uploads.others.length > 0 && (
-                <>
-                  <UploadGroup
-                    isOther
-                    items={uploads.others}
-                    queueInstall={queueInstall}
+              {uploads.others.length > 0 &&
+                (showOthers ? (
+                  <>
+                    <div className="heading">Additional downloads</div>
+                    <UploadGroup
+                      isOther
+                      items={uploads.others}
+                      queueInstall={queueInstall}
+                    />
+                  </>
+                ) : (
+                  <Button
+                    className="show-hidden"
+                    ref={coref(corefStart + 1)}
+                    onClick={ev => {
+                      setShowOthers(true);
+                    }}
+                    icon="plus"
+                    label="Show hidden"
                   />
-                </>
-              )}
+                ))}
             </div>
           </>
         ) : (
           <>
-            <p>
+            <p className="no-uploads">
               <FormattedMessage id="butlerd.codes.2001" />
             </p>
             <Button
@@ -276,7 +313,6 @@ const UploadGroup = (props: {
             boundary="viewport"
           >
             <Button
-              className={classNames({ isOther })}
               key={u.id}
               onClick={() => queueInstall.execute(u)}
               label={
@@ -284,17 +320,10 @@ const UploadGroup = (props: {
                   showIcon={false}
                   upload={u}
                   after={
-                    isOther ? (
-                      <>
-                        <div className="filler" />
-                        <Icon icon="unchecked" />
-                      </>
-                    ) : (
-                      <>
-                        <div className="filler" />
-                        <Icon icon="checked" />
-                      </>
-                    )
+                    <>
+                      <div className="filler" />
+                      <Icon icon="unchecked" />
+                    </>
                   }
                 />
               }
