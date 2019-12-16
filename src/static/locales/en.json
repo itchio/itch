@@ -702,5 +702,18 @@
   "plan_install.disk_space_required": "Disk space required",
   "plan_install.disk_space_available": "Disk space available",
 
+  "upload_type.flash": "Adobe Flash",
+  "upload_type.unity": "Unity Embed",
+  "upload_type.java": "Java applet",
+  "upload_type.html": "HTML5",
+  "upload_type.soundtrack": "Soundtrack",
+  "upload_type.book": "Book",
+  "upload_type.video": "Video",
+  "upload_type.documentation": "Documentation",
+  "upload_type.mod": "Mod",
+  "upload_type.audio_assets": "Audio Assets",
+  "upload_type.sourcecode": "Source code",
+  "upload_type.other": "Other",
+
   "empty_state.nothing_to_see_here": "Nothing to see here"
 }

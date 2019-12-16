@@ -2,24 +2,46 @@ import { Build, Upload, UploadType } from "common/butlerd/messages";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
 import styled from "styled-components";
+import { mixins } from "renderer/theme";
+import { JSXChildren } from "renderer/basics/jsx-types";
 
-const Spacer = styled.div`
-  width: 1em;
+const UploadTitleDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .spacer {
+    width: 1em;
+    flex-shrink: 0;
+  }
+
+  .title {
+    ${mixins.singleLine};
+  }
 `;
 
 interface Props {
+  before?: JSXChildren;
+  after?: JSXChildren;
+  showIcon?: boolean;
   upload: Upload;
 }
 
 export const UploadTitle = (props: Props) => {
-  const { upload } = props;
+  const { upload, before, after, showIcon = true } = props;
 
   return (
-    <>
-      <Icon icon={uploadIcon(upload)} hint={uploadTypeHint(upload)} />
-      <Spacer />
-      {formatUploadTitle(upload)}
-    </>
+    <UploadTitleDiv>
+      {before}
+      {showIcon === true ? (
+        <>
+          <Icon icon={uploadIcon(upload)} hint={uploadTypeHint(upload)} />
+          <div className="spacer" />
+        </>
+      ) : null}
+      <div className="title">{formatUploadTitle(upload)}</div>
+      {after}
+    </UploadTitleDiv>
   );
 };
 
@@ -55,7 +77,7 @@ export function formatBuildVersionInfo(b: Build): string | undefined {
   return `#${b.version}`;
 }
 
-const uploadIcons = {
+export const uploadIcons = {
   [UploadType.Default]: "gamepad",
 
   [UploadType.Flash]: "neutral",

@@ -22,10 +22,7 @@ export const TimeAgo = (props: Props) => {
   // ourselves now? If so, do we want to? Using hooks maybe?
   // TODO: review react-hint usage
   return (
-    <span
-      className={`time-ago ${className}`}
-      data-rh={JSON.stringify({ date: dateString })}
-    >
+    <span className={`time-ago ${className}`} title={dateString}>
       {before ? <>{before} </> : null}
       <FormattedRelativeTime
         unit={unit}

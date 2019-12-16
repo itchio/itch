@@ -96,7 +96,7 @@ const LibraryLayout = styled.div`
       }
 
       &.active {
-        background: #7b3232;
+        background: ${p => p.theme.colors.activeBg};
       }
     }
   }

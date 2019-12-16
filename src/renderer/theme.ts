@@ -15,6 +15,8 @@ export const theme: DefaultTheme = {
     shellBg: shellBgDefault,
     shellBorder: "#323232",
 
+    activeBg: "#7b3232",
+
     text1: "#fafafa",
     text2: "#b8b8b8",
     text3: "#818181",

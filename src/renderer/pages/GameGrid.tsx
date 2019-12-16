@@ -1,21 +1,20 @@
-import { Game, GameRecord } from "common/butlerd/messages";
+import { messages } from "common/butlerd";
+import { Game, GameRecord, UninstallPerform } from "common/butlerd/messages";
+import { queries } from "common/queries";
 import React, { useState } from "react";
+import { useAsyncCallback } from "react-async-hook";
+import { useOutsideClickListener } from "react-click-outside-listener";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
+import { MenuTippy } from "renderer/basics/Menu";
+import { useSocket } from "renderer/contexts";
+import { InstallModalContents } from "renderer/Shell/InstallModal";
 import { mixins } from "renderer/theme";
 import styled from "styled-components";
-import { useAsyncCallback } from "react-async-hook";
-import { useSocket } from "renderer/contexts";
-import { messages } from "common/butlerd";
-import { queries } from "common/queries";
-import { InstallModal } from "renderer/Shell/InstallModal";
-import Tippy from "@tippy.js/react";
-import { CONNREFUSED } from "dns";
-import { useOutsideClickListener } from "react-click-outside-listener";
 
 let coverBorder = 1;
-let coverWidth = 300;
-let coverHeight = 215;
+const coverWidth = 300;
+const coverHeight = 215;
 let ratio = 0.9;
 
 const GameGridContainer = styled.div`
@@ -78,9 +77,7 @@ const findGameId = (el: HTMLElement): number | undefined => {
 
 export const GameGrid = function(props: { records: GameRecord[] }) {
   const socket = useSocket();
-  const [gameIdLoading, setGameIdLoading] = useState<
-    number | undefined
-  >();
+  const [gameIdLoading, setGameIdLoading] = useState<number | undefined>();
   const [gameBeingInstalled, setGameBeingInstalled] = useState<
     Game | undefined
   >();
@@ -134,16 +131,39 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
     }
   });
 
+  const uninstall = useAsyncCallback(async function(
+    ev: React.MouseEvent<HTMLButtonElement>
+  ) {
+    const gameId = findGameId(ev.currentTarget);
+    if (!gameId) {
+      return;
+    }
+
+    alert("stub!");
+  });
+
+  let makeButton = (game: GameRecord, icon: boolean): JSX.Element => {
+    if (icon) {
+      return (
+        <IconButton ref={coref(1)} icon="install" onClick={install.execute} />
+      );
+    } else {
+      return (
+        <Button
+          ref={coref(1)}
+          icon="install"
+          label="Install"
+          loading={game.id == gameIdLoading}
+          onClick={install.execute}
+          secondary={game.id == gameBeingInstalled?.id}
+        />
+      );
+    }
+  };
+
   const { records } = props;
   return (
     <>
-      {/* {gameBeingInstalled && (
-        <InstallModal
-          game={gameBeingInstalled}
-          onClose={() => setGameBeingInstalled(undefined)}
-        />
-      )} */}
-
       <GameGridContainer>
         {records.map(game => (
           <div className="item" key={game.id} data-game-id={game.id}>
@@ -158,18 +178,42 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
             <div className="buttons">
               {game.installed_at ? (
                 <Button icon="play2" label="Launch" onClick={launch.execute} />
+              ) : gameBeingInstalled?.id == game.id ? (
+                <MenuTippy
+                  placement="top"
+                  content={
+                    <InstallModalContents
+                      game={gameBeingInstalled}
+                      onClose={() => setGameBeingInstalled(undefined)}
+                    />
+                  }
+                  interactive
+                  visible
+                >
+                  {makeButton(game, false)}
+                </MenuTippy>
               ) : (
-                <Tippy placement="top-start" content={<div ref={coref(0)}><p>I'm being installed!</p><p>No, for real!</p><br/><p>Some of those upload names are pretty long, too</p></div>} interactive visible={gameBeingInstalled?.id == game.id}>
-                <Button
-                ref={coref(1)}
-                  icon="install"
-                  label="Install"
-                  loading={game.id == gameIdLoading}
-                  onClick={install.execute}
-                  secondary={game.id == gameBeingInstalled?.id}
-                />
-                </Tippy>
+                makeButton(game, false)
               )}
+              {game.installed_at ? (
+                gameBeingInstalled?.id == game.id ? (
+                  <MenuTippy
+                    placement="right"
+                    content={
+                      <InstallModalContents
+                        game={gameBeingInstalled}
+                        onClose={() => setGameBeingInstalled(undefined)}
+                      />
+                    }
+                    interactive
+                    visible
+                  >
+                    {makeButton(game, true)}
+                  </MenuTippy>
+                ) : (
+                  makeButton(game, true)
+                )
+              ) : null}
               <div className="filler" />
               {game.owned ? null : (
                 <IconButton icon="heart-filled" onClick={purchase.execute} />

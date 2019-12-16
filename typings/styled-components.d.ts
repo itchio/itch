@@ -10,6 +10,9 @@ declare module "styled-components" {
       /** Main window border */
       shellBorder: string;
 
+      /** Active filters, popover headers */
+      activeBg: string;
+
       /** Primary text */
       text1: string;
       /** Secondary text */

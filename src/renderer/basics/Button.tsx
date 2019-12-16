@@ -147,7 +147,9 @@ export const Button = React.forwardRef(
         ) : null}
         {icon && label ? " " : null}
         {label ? (
-          <Label className={classNames({ loading })}>{label}</Label>
+          <Label className={classNames("button-label", { loading })}>
+            {label}
+          </Label>
         ) : null}
         {loading ? (
           <LoadingContainer>
