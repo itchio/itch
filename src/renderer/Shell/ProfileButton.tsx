@@ -1,15 +1,14 @@
-import Tippy from "@tippy.js/react";
-import { Profile } from "common/butlerd/messages";
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Button } from "renderer/basics/Button";
 import classNames from "classnames";
-import { useSocket } from "renderer/contexts";
-import { useAsyncCallback } from "react-async-hook";
+import { Profile } from "common/butlerd/messages";
 import { queries } from "common/queries";
+import React, { useState } from "react";
+import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
-import { useOutsideClickListener } from "react-click-outside-listener";
-import { MenuTippy, MenuContents } from "renderer/basics/Menu";
+import { Button } from "renderer/basics/Button";
+import { MenuContents, MenuTippy } from "renderer/basics/Menu";
+import { useSocket } from "renderer/contexts";
+import styled from "styled-components";
+import { useClickOutside } from "renderer/basics/useClickOutside";
 
 const ProfileButtonDiv = styled.div`
   display: flex;
@@ -42,7 +41,7 @@ export const ProfileButton = (props: Props) => {
   }
 
   const [shown, setShown] = useState(false);
-  const coref = useOutsideClickListener(() => {
+  const coref = useClickOutside(() => {
     setShown(false);
   });
   const toggle = () => {
@@ -56,7 +55,7 @@ export const ProfileButton = (props: Props) => {
       interactive
     >
       <ProfileButtonDiv
-        ref={coref}
+        ref={coref("profile-button")}
         className={classNames("user-menu", { shown })}
         onClick={toggle}
       >

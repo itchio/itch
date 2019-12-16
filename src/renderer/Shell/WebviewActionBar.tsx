@@ -1,17 +1,17 @@
 import { messages } from "common/butlerd";
 import { queries } from "common/queries";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
-import { InstallModalContents } from "renderer/Shell/InstallModal";
 import { Button } from "renderer/basics/Button";
 import { useSocket } from "renderer/contexts";
-import { Call, useButlerd } from "renderer/use-butlerd";
+import { InstallModalContents } from "renderer/Shell/InstallModal";
+import { useButlerd } from "renderer/use-butlerd";
 import styled from "styled-components";
-import { IconButton } from "../basics/IconButton";
-import { useOutsideClickListener } from "react-click-outside-listener";
-import { MenuTippy } from "../basics/Menu";
 import { Game } from "../../common/butlerd/messages";
+import { IconButton } from "../basics/IconButton";
+import { MenuTippy } from "../basics/Menu";
+import { useClickOutside } from "renderer/basics/useClickOutside";
 
 const Container = styled.div`
   display: flex;
@@ -67,7 +67,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
     })();
   }, [gameId]);
 
-  const coref = useOutsideClickListener(() => {
+  const coref = useClickOutside(() => {
     setInstalling(false);
   });
 
@@ -87,7 +87,10 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
       <MenuTippy
         placement="top"
         content={
-          <InstallModalContents coref={coref} corefStart={1} game={game} />
+          <InstallModalContents
+            ref={coref("install-modal-contents")}
+            game={game}
+          />
         }
         interactive
         visible={installing}
@@ -116,7 +119,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
             />
             {makeInstallModal(
               <IconButton
-                ref={coref(0)}
+                ref={coref("install-icon")}
                 icon="install"
                 onClick={ev => {
                   setInstalling(!installing);
@@ -127,7 +130,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
         ) : (
           makeInstallModal(
             <Button
-              ref={coref(0)}
+              ref={coref("install-button")}
               icon="install"
               label={<FormattedMessage id="grid.item.install" />}
               onClick={() => setInstalling(true)}

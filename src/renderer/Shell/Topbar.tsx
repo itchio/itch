@@ -88,7 +88,10 @@ export const Topbar = () => {
         </>
       )}
       {profile && <DownloadsButton />}
-      <DraggableFiller />
+      <DraggableFiller
+        onClick={() => console.log("draggable filler click")}
+        onClickCapture={() => console.log("draggable filler click capture")}
+      />
       <IconButton icon="window-minimize" onClick={minimize.execute} />
       <IconButton
         icon={maximized ? "window-restore" : "window-maximize"}

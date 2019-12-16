@@ -3,7 +3,6 @@ import { Game, GameRecord } from "common/butlerd/messages";
 import { queries } from "common/queries";
 import React, { useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
-import { useOutsideClickListener } from "react-click-outside-listener";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { MenuTippy } from "renderer/basics/Menu";
@@ -11,6 +10,7 @@ import { useSocket } from "renderer/contexts";
 import { InstallModalContents } from "renderer/Shell/InstallModal";
 import { mixins } from "renderer/theme";
 import styled from "styled-components";
+import { useClickOutside } from "renderer/basics/useClickOutside";
 
 let coverBorder = 1;
 const coverWidth = 300;
@@ -81,7 +81,7 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
   const [gameBeingInstalled, setGameBeingInstalled] = useState<
     Game | undefined
   >();
-  const coref = useOutsideClickListener(() => {
+  const coref = useClickOutside(() => {
     setGameBeingInstalled(undefined);
   });
 
@@ -180,10 +180,8 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
                   placement="top"
                   content={
                     <InstallModalContents
-                      coref={coref}
-                      corefStart={0}
+                      ref={coref("install-modal-contents")}
                       game={gameBeingInstalled}
-                      onClose={() => setGameBeingInstalled(undefined)}
                     />
                   }
                   interactive
@@ -200,10 +198,8 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
                     placement="right"
                     content={
                       <InstallModalContents
-                        coref={coref}
-                        corefStart={0}
+                        ref={coref("install-modal-contents")}
                         game={gameBeingInstalled}
-                        onClose={() => setGameBeingInstalled(undefined)}
                       />
                     }
                     interactive

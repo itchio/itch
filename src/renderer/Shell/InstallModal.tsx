@@ -21,6 +21,7 @@ import { useSocket } from "renderer/contexts";
 import { pokeTippy } from "renderer/poke-tippy";
 import { fontSizes } from "renderer/theme";
 import styled from "styled-components";
+import { SetterMaker } from "renderer/basics/useClickOutside";
 
 const InstallMenuContents = styled(MenuContents)`
   overflow: hidden;
@@ -113,8 +114,6 @@ const UploadInfo = styled.div`
 `;
 
 interface Props {
-  coref: any;
-  corefStart: number;
   game: Game;
 }
 
@@ -137,128 +136,133 @@ export const InstallModal = (props: ModalProps) => {
   );
 };
 
-export const InstallModalContents = (props: Props) => {
-  const socket = useSocket();
-  const [loading, setLoading] = useState(true);
-  const [uploads, setUploads] = useState<AvailableUploads | null>(null);
-  const { coref, corefStart } = props;
+export const InstallModalContents = React.forwardRef(
+  (props: Props, ref: any) => {
+    const socket = useSocket();
+    const [loading, setLoading] = useState(true);
+    const [uploads, setUploads] = useState<AvailableUploads | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      const fguParams: FetchGameUploadsParams = {
-        gameId: props.game.id,
-        compatible: false,
-      };
+    useEffect(() => {
+      (async () => {
+        const fguParams: FetchGameUploadsParams = {
+          gameId: props.game.id,
+          compatible: false,
+        };
 
-      try {
-        const resAll = await socket.call(messages.FetchGameUploads, {
-          ...fguParams,
-          fresh: true,
-        });
+        try {
+          const resAll = await socket.call(messages.FetchGameUploads, {
+            ...fguParams,
+            fresh: true,
+          });
 
-        const resCompat = await socket.call(messages.FetchGameUploads, {
-          ...fguParams,
-          compatible: true,
-        });
+          const resCompat = await socket.call(messages.FetchGameUploads, {
+            ...fguParams,
+            compatible: true,
+          });
 
-        const compatMap: Record<number, boolean> = {};
-        for (const u of resCompat.uploads) {
-          compatMap[u.id] = true;
+          const compatMap: Record<number, boolean> = {};
+          for (const u of resCompat.uploads) {
+            compatMap[u.id] = true;
+          }
+          setUploads({
+            compatible: resCompat.uploads,
+            others: resAll.uploads.filter(u => !compatMap[u.id]),
+          });
+
+          setLoading(false);
+        } catch (e) {
+          alert(e.stack);
         }
-        setUploads({
-          compatible: resCompat.uploads,
-          others: resAll.uploads.filter(u => !compatMap[u.id]),
-        });
+      })();
+    }, []);
 
-        setLoading(false);
-      } catch (e) {
-        alert(e.stack);
-      }
-    })();
-  }, []);
-
-  const divRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    pokeTippy(divRef);
-  });
-
-  const queueInstall = useAsyncCallback(async (upload: Upload) => {
-    const locsRes = await socket.call(messages.InstallLocationsList, {});
-
-    await socket.call(messages.InstallQueue, {
-      game: props.game,
-      upload: upload,
-      build: upload.build,
-      queueDownload: true,
-      installLocationId: locsRes.installLocations[0].id,
+    const divRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+      pokeTippy(divRef);
     });
-  });
 
-  const [showOthers, setShowOthers] = useState(false);
+    const queueInstall = useAsyncCallback(async (upload: Upload) => {
+      const locsRes = await socket.call(messages.InstallLocationsList, {});
 
-  const hasUploads =
-    uploads && (uploads.compatible.length > 0 || uploads.others.length > 0);
+      await socket.call(messages.InstallQueue, {
+        game: props.game,
+        upload: upload,
+        build: upload.build,
+        queueDownload: true,
+        installLocationId: locsRes.installLocations[0].id,
+      });
+    });
 
-  return (
-    <>
-      <InstallMenuContents ref={coref(corefStart)}>
-        <div ref={divRef} />
-        {loading ? (
-          <Spinner />
-        ) : uploads && hasUploads ? (
-          <>
-            <div className="header">
-              <Icon icon="install" />
-              <span className="title">{props.game.title}</span>
-            </div>
-            <div className="list">
-              <UploadGroup
-                items={uploads.compatible}
-                queueInstall={queueInstall}
-              />
-              {uploads.others.length > 0 &&
-                (showOthers ? (
-                  <>
-                    <div className="heading" ref={coref(corefStart + 1)}>
-                      Additional downloads
-                    </div>
-                    <UploadGroup
-                      isOther
-                      items={uploads.others}
-                      queueInstall={queueInstall}
+    const [showOthers, setShowOthers] = useState(false);
+
+    const hasUploads =
+      uploads && (uploads.compatible.length > 0 || uploads.others.length > 0);
+
+    return (
+      <>
+        <InstallMenuContents ref={ref}>
+          <div ref={divRef} />
+          {loading ? (
+            <Spinner />
+          ) : uploads && hasUploads ? (
+            <>
+              <div className="header">
+                <Icon icon="install" />
+                <span className="title">{props.game.title}</span>
+              </div>
+              <div className="list">
+                <UploadGroup
+                  items={uploads.compatible}
+                  queueInstall={queueInstall}
+                />
+                {uploads.others.length > 0 &&
+                  (showOthers ? (
+                    <>
+                      <Button
+                        className="show-hidden"
+                        onClick={ev => {
+                          setShowOthers(false);
+                        }}
+                        icon="minus"
+                        label="Hide other downloads"
+                      />
+                      <UploadGroup
+                        isOther
+                        items={uploads.others}
+                        queueInstall={queueInstall}
+                      />
+                    </>
+                  ) : (
+                    <Button
+                      className="show-hidden"
+                      onClick={ev => {
+                        setShowOthers(true);
+                      }}
+                      icon="plus"
+                      label="Show other downloads"
                     />
-                  </>
-                ) : (
-                  <Button
-                    className="show-hidden"
-                    ref={coref(corefStart + 1)}
-                    onClick={ev => {
-                      setShowOthers(true);
-                    }}
-                    icon="plus"
-                    label="Show hidden"
-                  />
-                ))}
-            </div>
-          </>
-        ) : (
-          <>
-            <p className="no-uploads">
-              <FormattedMessage id="butlerd.codes.2001" />
-            </p>
-            <Button
-              icon="earth"
-              label={<FormattedMessage id="grid.item.open_page" />}
-              onClick={() => (location.href = props.game.url)}
-            />
-          </>
-        )}
+                  ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="no-uploads">
+                <FormattedMessage id="butlerd.codes.2001" />
+              </p>
+              <Button
+                icon="earth"
+                label={<FormattedMessage id="grid.item.open_page" />}
+                onClick={() => (location.href = props.game.url)}
+              />
+            </>
+          )}
 
-        <ErrorState error={queueInstall.error} />
-      </InstallMenuContents>
-    </>
-  );
-};
+          <ErrorState error={queueInstall.error} />
+        </InstallMenuContents>
+      </>
+    );
+  }
+);
 
 function hasPlatforms(u: Upload): boolean {
   return (

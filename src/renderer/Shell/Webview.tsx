@@ -154,5 +154,6 @@ function onWebviewFocus() {
   // However, when clicking on a webview, a "focus" event is generated
   // for the webview, so we can send a synthetic click to the body
   // and.. tada! "outside click" listeners work again.
-  document.body.click();
+  // document.body.click();
+  document.dispatchEvent(new Event("click-outside"));
 }

@@ -1,23 +1,23 @@
 import { messages } from "common/butlerd";
-import { Download, DownloadsDiscard } from "common/butlerd/messages";
+import { Download } from "common/butlerd/messages";
 import { queries } from "common/queries";
 import React, { useEffect, useState } from "react";
-import { useAsyncCallback, useAsync } from "react-async-hook";
-import { useOutsideClickListener } from "react-click-outside-listener";
+import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
-import { MenuTippy, MenuContents } from "renderer/basics/Menu";
+import { LoadingCircle } from "renderer/basics/LoadingCircle";
+import { MenuContents, MenuTippy } from "renderer/basics/Menu";
+import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { fontSizes } from "renderer/theme";
 import styled from "styled-components";
-import { LoadingCircle } from "renderer/basics/LoadingCircle";
 
 interface Props {}
 
 export const DownloadsButton = (props: Props) => {
   const [shown, setShown] = useState(false);
-  const coref = useOutsideClickListener(() => {
+  const coref = useClickOutside(() => {
     setShown(false);
   });
   const toggle = () => {
@@ -26,13 +26,13 @@ export const DownloadsButton = (props: Props) => {
 
   return (
     <MenuTippy
-      content={<DownloadsContents ref={coref(0)} />}
+      content={<DownloadsContents ref={coref("downloads-content")} />}
       visible={shown}
       maxWidth={600}
       interactive
     >
       <Button
-        ref={coref(1)}
+        ref={coref("downloads-button")}
         onClick={toggle}
         icon="download"
         secondary={shown}
