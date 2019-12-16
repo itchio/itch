@@ -3,7 +3,6 @@ import React from "react";
 import { Icon } from "renderer/basics/Icon";
 import styled from "styled-components";
 import { mixins } from "renderer/theme";
-import { JSXChildren } from "renderer/basics/jsx-types";
 
 const UploadTitleDiv = styled.div`
   display: flex;
@@ -21,8 +20,8 @@ const UploadTitleDiv = styled.div`
 `;
 
 interface Props {
-  before?: JSXChildren;
-  after?: JSXChildren;
+  before?: React.ReactNode;
+  after?: React.ReactNode;
   showIcon?: boolean;
   upload: Upload;
 }

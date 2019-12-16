@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
-import { JSXChild } from "renderer/basics/jsx-types";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
 import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
@@ -98,8 +97,8 @@ interface Props {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   primary?: boolean;
   icon?: string;
-  iconComponent?: JSX.Element;
-  label?: JSXChild;
+  iconComponent?: React.ReactNode;
+  label?: React.ReactNode;
   wide?: boolean;
   big?: boolean;
   disabled?: boolean;

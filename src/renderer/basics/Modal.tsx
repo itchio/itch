@@ -1,6 +1,5 @@
 import React from "react";
 import { IconButton } from "renderer/basics/IconButton";
-import { JSXChild, JSXChildren } from "renderer/basics/jsx-types";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import classNames from "classnames";
@@ -66,8 +65,8 @@ const Filler = styled.div`
 `;
 
 export const Modal = (props: {
-  title?: JSXChild;
-  children?: JSXChildren;
+  title?: React.ReactNode;
+  children?: React.ReactNode;
   onClose?: () => void;
 }) => {
   const { title, children, onClose } = props;
@@ -107,11 +106,11 @@ export const Buttons = styled.div`
 `;
 
 export const ConfirmModal = (props: {
-  question: JSXChild;
-  cancelLabel?: JSXChild;
+  question: React.ReactNode;
+  cancelLabel?: React.ReactNode;
   onCancel: (...args: any[]) => void;
 
-  confirmLabel?: JSXChild;
+  confirmLabel?: React.ReactNode;
   onConfirm: (...args: any[]) => void;
 }) => {
   const { question, cancelLabel, onCancel, confirmLabel, onConfirm } = props;

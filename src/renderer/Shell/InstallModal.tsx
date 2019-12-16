@@ -104,6 +104,7 @@ const UploadInfo = styled.div`
     padding: 0.4em 0.8em;
 
     &.warning {
+      font-size: ${fontSizes.small};
       background: ${p => p.theme.colors.errorBg};
       color: ${p => p.theme.colors.errorText};
       border-radius: 0 0 4px 4px;
@@ -115,6 +116,9 @@ interface Props {
   coref: any;
   corefStart: number;
   game: Game;
+}
+
+interface ModalProps extends Props {
   onClose: () => void;
 }
 
@@ -123,10 +127,12 @@ interface AvailableUploads {
   others: Upload[];
 }
 
-export const InstallModal = (props: Props) => {
+export const InstallModal = (props: ModalProps) => {
+  const { onClose, ...restProps } = props;
+
   return (
-    <Modal title="Install some stuff?" onClose={props.onClose}>
-      <InstallModalContents {...props} />
+    <Modal title="Install some stuff?" onClose={onClose}>
+      <InstallModalContents {...restProps} />
     </Modal>
   );
 };
@@ -186,7 +192,6 @@ export const InstallModalContents = (props: Props) => {
       queueDownload: true,
       installLocationId: locsRes.installLocations[0].id,
     });
-    props.onClose();
   });
 
   const [showOthers, setShowOthers] = useState(false);
@@ -214,7 +219,9 @@ export const InstallModalContents = (props: Props) => {
               {uploads.others.length > 0 &&
                 (showOthers ? (
                   <>
-                    <div className="heading">Additional downloads</div>
+                    <div className="heading" ref={coref(corefStart + 1)}>
+                      Additional downloads
+                    </div>
                     <UploadGroup
                       isOther
                       items={uploads.others}
@@ -271,65 +278,63 @@ const UploadGroup = (props: {
   return (
     <>
       {items.map(u => (
-        <>
-          <MenuTippy
-            placement="right-start"
-            interactive
-            content={
-              <UploadInfo>
-                {u.size || hasPlatforms(u) ? (
+        <MenuTippy
+          key={u.id}
+          placement="right-start"
+          interactive
+          content={
+            <UploadInfo>
+              {u.size || hasPlatforms(u) ? (
+                <p>
+                  <Icon icon="download" /> {fileSize(u.size)} download{" "}
+                  {u.platforms.linux && <Icon icon="tux" />}
+                  {u.platforms.windows && <Icon icon="windows8" />}
+                  {u.platforms.osx && <Icon icon="apple" />}
+                  {u.type === UploadType.HTML && <Icon icon="html5" />}
+                </p>
+              ) : null}
+              {u.type !== "default" && u.type !== "other" && (
+                <p>
+                  <Icon icon={uploadIcons[u.type]} />{" "}
+                  <FormattedMessage id={`upload_type.${u.type}`} />
+                </p>
+              )}
+              {u.demo && <p>Demo</p>}
+              {u.build ? (
+                <>
                   <p>
-                    <Icon icon="download" /> {fileSize(u.size)} download{" "}
-                    {u.platforms.linux && <Icon icon="tux" />}
-                    {u.platforms.windows && <Icon icon="windows8" />}
-                    {u.platforms.osx && <Icon icon="apple" />}
-                    {u.type === UploadType.HTML && <Icon icon="html5" />}
+                    Version {u.build.userVersion || u.build.version} &mdash;{" "}
+                    <TimeAgo date={u.build.createdAt} />
                   </p>
-                ) : null}
-                {u.type !== "default" && u.type !== "other" && (
-                  <p>
-                    <Icon icon={uploadIcons[u.type]} />{" "}
-                    <FormattedMessage id={`upload_type.${u.type}`} />
-                  </p>
-                )}
-                {u.demo && <p>Demo</p>}
-                {u.build ? (
+                </>
+              ) : (
+                <p>
+                  Updated <TimeAgo date={u.updatedAt} />
+                </p>
+              )}
+              {isOther ? (
+                <p className="warning">This upload may be incompatible.</p>
+              ) : null}
+            </UploadInfo>
+          }
+          boundary="viewport"
+        >
+          <Button
+            onClick={() => queueInstall.execute(u)}
+            label={
+              <UploadTitle
+                showIcon={false}
+                upload={u}
+                after={
                   <>
-                    <p>
-                      Version {u.build.userVersion || u.build.version} &mdash;{" "}
-                      <TimeAgo date={u.build.createdAt} />
-                    </p>
+                    <div className="filler" />
+                    <Icon icon="unchecked" />
                   </>
-                ) : (
-                  <p>
-                    Updated <TimeAgo date={u.updatedAt} />
-                  </p>
-                )}
-                {isOther ? (
-                  <p className="warning">This upload may be incompatible.</p>
-                ) : null}
-              </UploadInfo>
+                }
+              />
             }
-            boundary="viewport"
-          >
-            <Button
-              key={u.id}
-              onClick={() => queueInstall.execute(u)}
-              label={
-                <UploadTitle
-                  showIcon={false}
-                  upload={u}
-                  after={
-                    <>
-                      <div className="filler" />
-                      <Icon icon="unchecked" />
-                    </>
-                  }
-                />
-              }
-            />
-          </MenuTippy>
-        </>
+          />
+        </MenuTippy>
       ))}
     </>
   );

@@ -13,7 +13,7 @@ export function pokeTippy(ref: React.RefObject<HTMLElement>) {
 
   let el: TippifiedHTMLElement | null = ref.current as TippifiedHTMLElement;
   while (el) {
-    if (el._tippy) {
+    if (el._tippy && el._tippy.popperInstance) {
       try {
         el._tippy.popperInstance.update();
       } catch (e) {
