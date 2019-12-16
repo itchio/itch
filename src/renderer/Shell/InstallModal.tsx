@@ -1,8 +1,8 @@
 import { messages } from "common/butlerd";
-import { Game, Upload } from "common/butlerd/messages";
+import { Game, Upload, FetchGameUploadsParams } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import React, { useEffect, useState } from "react";
-import { useAsyncCallback } from "react-async-hook";
+import { useAsyncCallback, UseAsyncReturn } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { ErrorState } from "renderer/basics/ErrorState";
@@ -13,8 +13,8 @@ import { useSocket } from "renderer/contexts";
 import styled from "styled-components";
 
 interface Props {
-  onClose: () => void;
   game: Game;
+  onClose: () => void;
 }
 
 const CaveItemList = styled.div`
@@ -82,20 +82,52 @@ const FileSize = styled.div`
   margin-left: 8px;
 `;
 
+interface AvailableUploads {
+  compatible: Upload[];
+  others: Upload[];
+}
+
 export const InstallModal = (props: Props) => {
+  return (
+    <Modal title="Install some stuff?" onClose={props.onClose}>
+      <InstallModalContents {...props} />
+    </Modal>
+  );
+};
+
+export const InstallModalContents = (props: Props) => {
   const socket = useSocket();
   const [uploadId, setUploadId] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(true);
-  const [uploads, setUploads] = useState<Upload[]>([]);
+  const [uploads, setUploads] = useState<AvailableUploads | null>(null);
 
   useEffect(() => {
     (async () => {
+      const fguParams: FetchGameUploadsParams = {
+        gameId: props.game.id,
+        compatible: false,
+      };
+
       try {
-        const { info, uploads } = await socket.call(messages.InstallPlan, {
-          gameId: props.game.id,
+        const resAll = await socket.call(messages.FetchGameUploads, {
+          ...fguParams,
+          fresh: true,
         });
 
-        setUploads(uploads);
+        const resCompat = await socket.call(messages.FetchGameUploads, {
+          ...fguParams,
+          compatible: true,
+        });
+
+        const compatMap: Record<number, boolean> = {};
+        for (const u of resCompat.uploads) {
+          compatMap[u.id] = true;
+        }
+        setUploads({
+          compatible: resCompat.uploads,
+          others: resAll.uploads.filter(u => !compatMap[u.id]),
+        });
+
         setLoading(false);
       } catch (e) {
         alert(e.stack);
@@ -121,28 +153,23 @@ export const InstallModal = (props: Props) => {
       <>
         {loading ? <LoadingCircle progress={0.3} wide /> : undefined}
         <CaveItemList>
-          {uploads.map(u => (
-            <CaveItem key={u.id}>
-              <CaveDetails>
-                <CaveDetailsRow>
-                  <Title>
-                    <UploadTitle upload={u} />
-                  </Title>
-                </CaveDetailsRow>
-                <CaveDetailsRow className="smaller">
-                  {u.size > 0 ? <FileSize>{fileSize(u.size)}</FileSize> : null}
-                </CaveDetailsRow>
-              </CaveDetails>
-              <Filler />
-              <CaveItemActions>
-                <Button
-                  icon="install"
-                  onClick={() => queueInstall.execute(u)}
-                  label={<FormattedMessage id="grid.item.install" />}
-                />
-              </CaveItemActions>
-            </CaveItem>
-          ))}
+          {uploads && (
+            <>
+              <UploadGroup
+                items={uploads.compatible}
+                queueInstall={queueInstall}
+              />
+              {uploads.others.length > 0 && (
+                <>
+                  <hr />
+                  <UploadGroup
+                    items={uploads.others}
+                    queueInstall={queueInstall}
+                  />
+                </>
+              )}
+            </>
+          )}
           <ErrorState error={queueInstall.error} />
         </CaveItemList>
       </>
@@ -155,5 +182,38 @@ export const InstallModal = (props: Props) => {
         />
       </Buttons>
     </Modal>
+  );
+};
+
+const UploadGroup = (props: {
+  items: Upload[];
+  queueInstall: UseAsyncReturn<void, [Upload]>;
+}) => {
+  const { items, queueInstall } = props;
+  return (
+    <>
+      {items.map(u => (
+        <CaveItem key={u.id}>
+          <CaveDetails>
+            <CaveDetailsRow>
+              <Title>
+                <UploadTitle upload={u} />
+              </Title>
+            </CaveDetailsRow>
+            <CaveDetailsRow className="smaller">
+              {u.size > 0 ? <FileSize>{fileSize(u.size)}</FileSize> : null}
+            </CaveDetailsRow>
+          </CaveDetails>
+          <Filler />
+          <CaveItemActions>
+            <Button
+              icon="install"
+              onClick={() => queueInstall.execute(u)}
+              label={<FormattedMessage id="grid.item.install" />}
+            />
+          </CaveItemActions>
+        </CaveItem>
+      ))}
+    </>
   );
 };

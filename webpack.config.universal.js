@@ -139,6 +139,7 @@ function getCommonConfig(type, env) {
             plugins: [
               "@babel/proposal-class-properties",
               "@babel/proposal-object-rest-spread",
+              "@babel/plugin-proposal-optional-chaining",
               ...(isProduction ? [] : ["react-hot-loader/babel"]),
               [
                 "babel-plugin-styled-components",

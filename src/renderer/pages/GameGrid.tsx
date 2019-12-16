@@ -9,6 +9,9 @@ import { useSocket } from "renderer/contexts";
 import { messages } from "common/butlerd";
 import { queries } from "common/queries";
 import { InstallModal } from "renderer/Shell/InstallModal";
+import Tippy from "@tippy.js/react";
+import { CONNREFUSED } from "dns";
+import { useOutsideClickListener } from "react-click-outside-listener";
 
 let coverBorder = 1;
 let coverWidth = 300;
@@ -75,9 +78,15 @@ const findGameId = (el: HTMLElement): number | undefined => {
 
 export const GameGrid = function(props: { records: GameRecord[] }) {
   const socket = useSocket();
+  const [gameIdLoading, setGameIdLoading] = useState<
+    number | undefined
+  >();
   const [gameBeingInstalled, setGameBeingInstalled] = useState<
     Game | undefined
   >();
+  const coref = useOutsideClickListener(() => {
+    setGameBeingInstalled(undefined);
+  });
 
   const launch = useAsyncCallback(async function(
     ev: React.MouseEvent<HTMLButtonElement>
@@ -96,9 +105,13 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
     if (!gameId) {
       return;
     }
-
-    const { game } = await socket.call(messages.FetchGame, { gameId });
-    setGameBeingInstalled(game);
+    try {
+      setGameIdLoading(gameId);
+      const { game } = await socket.call(messages.FetchGame, { gameId });
+      setGameBeingInstalled(game);
+    } finally {
+      setGameIdLoading(undefined);
+    }
   });
 
   const purchase = useAsyncCallback(async function(
@@ -124,12 +137,12 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
   const { records } = props;
   return (
     <>
-      {gameBeingInstalled && (
+      {/* {gameBeingInstalled && (
         <InstallModal
           game={gameBeingInstalled}
           onClose={() => setGameBeingInstalled(undefined)}
         />
-      )}
+      )} */}
 
       <GameGridContainer>
         {records.map(game => (
@@ -146,11 +159,16 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
               {game.installed_at ? (
                 <Button icon="play2" label="Launch" onClick={launch.execute} />
               ) : (
+                <Tippy placement="top-start" content={<div ref={coref(0)}><p>I'm being installed!</p><p>No, for real!</p><br/><p>Some of those upload names are pretty long, too</p></div>} interactive visible={gameBeingInstalled?.id == game.id}>
                 <Button
+                ref={coref(1)}
                   icon="install"
                   label="Install"
+                  loading={game.id == gameIdLoading}
                   onClick={install.execute}
+                  secondary={game.id == gameBeingInstalled?.id}
                 />
+                </Tippy>
               )}
               <div className="filler" />
               {game.owned ? null : (
