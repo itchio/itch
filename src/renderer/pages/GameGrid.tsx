@@ -1,7 +1,7 @@
 import { messages } from "common/butlerd";
-import { Game, GameRecord } from "common/butlerd/messages";
+import { Game, GameRecord, Download } from "common/butlerd/messages";
 import { queries } from "common/queries";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAsyncCallback } from "react-async-hook";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
@@ -11,6 +11,11 @@ import { InstallModalContents } from "renderer/Shell/InstallModal";
 import { mixins } from "renderer/theme";
 import styled from "styled-components";
 import { useClickOutside } from "renderer/basics/useClickOutside";
+import { useListen } from "renderer/Socket";
+import { packets } from "common/packets";
+import _ from "lodash";
+import { DownloadWithProgress } from "main/drive-downloads";
+import { LoadingCircle } from "renderer/basics/LoadingCircle";
 
 let coverBorder = 1;
 const coverWidth = 300;
@@ -75,8 +80,19 @@ const findGameId = (el: HTMLElement): number | undefined => {
   return undefined;
 };
 
+interface Downloads {
+  [gameId: number]: DownloadWithProgress;
+}
+
 export const GameGrid = function(props: { records: GameRecord[] }) {
   const socket = useSocket();
+
+  const [downloads, setDownloads] = useState<Downloads>({});
+  const mergeDownloads = (fresh: Downloads) => {
+    console.log(`Merging `, fresh);
+    setDownloads({ ...downloads, ...fresh });
+  };
+
   const [gameIdLoading, setGameIdLoading] = useState<number | undefined>();
   const [gameBeingInstalled, setGameBeingInstalled] = useState<
     Game | undefined
@@ -142,6 +158,22 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
     alert("stub!");
   });
 
+  useEffect(() => {
+    (async () => {
+      const { downloads } = await socket.query(queries.getDownloads);
+      mergeDownloads(_.keyBy(downloads, d => d.game.id));
+    })().catch(e => console.warn(e));
+  }, []);
+
+  let downloadChanged = ({ download }: { download: Download }) => {
+    mergeDownloads({ [download.game.id]: download });
+  };
+  useListen(socket, packets.downloadStarted, downloadChanged);
+  useListen(socket, packets.downloadChanged, downloadChanged);
+  useListen(socket, packets.downloadCleared, ({ download }) => {
+    setDownloads(_.omit(downloads, download.game.id));
+  });
+
   let makeButton = (game: GameRecord, icon: boolean): JSX.Element => {
     if (icon) {
       return <IconButton icon="install" onClick={install.execute} />;
@@ -162,62 +194,84 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
   return (
     <>
       <GameGridContainer>
-        {records.map(game => (
-          <div className="item" key={game.id} data-game-id={game.id}>
-            <a href={`itch://games/${game.id}`}>
-              {game.cover ? (
-                <img className="cover" src={game.cover} />
+        {records.map(game => {
+          const dl = downloads[game.id];
+          return (
+            <div className="item" key={game.id} data-game-id={game.id}>
+              <a href={`itch://games/${game.id}`}>
+                {game.cover ? (
+                  <img className="cover" src={game.cover} />
+                ) : (
+                  <div className="cover missing" />
+                )}
+              </a>
+              {dl ? (
+                dl.progress ? (
+                  <p>
+                    {dl.progress.stage} &mdash; {dl.progress.bps} bps &mdash;{" "}
+                    {dl.progress.eta} ETA
+                    <LoadingCircle progress={dl.progress.progress} />
+                  </p>
+                ) : (
+                  <span>Download complete</span>
+                )
               ) : (
-                <div className="cover missing" />
+                <span>No download</span>
               )}
-            </a>
-            <div className="title">{game.title}</div>
-            <div className="buttons">
-              {game.installed_at ? (
-                <Button icon="play2" label="Launch" onClick={launch.execute} />
-              ) : gameBeingInstalled?.id == game.id ? (
-                <MenuTippy
-                  placement="top"
-                  content={
-                    <InstallModalContents
-                      ref={coref("install-modal-contents")}
-                      game={gameBeingInstalled}
-                    />
-                  }
-                  interactive
-                  visible
-                >
-                  {makeButton(game, false)}
-                </MenuTippy>
-              ) : (
-                makeButton(game, false)
-              )}
-              {game.installed_at ? (
-                gameBeingInstalled?.id == game.id ? (
+              <div className="title">{game.title}</div>
+              <div className="buttons">
+                {game.installed_at ? (
+                  <Button
+                    icon="play2"
+                    label="Launch"
+                    onClick={launch.execute}
+                  />
+                ) : gameBeingInstalled?.id == game.id ? (
                   <MenuTippy
-                    placement="right"
+                    placement="top"
                     content={
                       <InstallModalContents
                         ref={coref("install-modal-contents")}
+                        coref={coref}
                         game={gameBeingInstalled}
                       />
                     }
                     interactive
                     visible
                   >
-                    {makeButton(game, true)}
+                    {makeButton(game, false)}
                   </MenuTippy>
                 ) : (
-                  makeButton(game, true)
-                )
-              ) : null}
-              <div className="filler" />
-              {game.owned ? null : (
-                <IconButton icon="heart-filled" onClick={purchase.execute} />
-              )}
+                  makeButton(game, false)
+                )}
+                {game.installed_at ? (
+                  gameBeingInstalled?.id == game.id ? (
+                    <MenuTippy
+                      placement="right"
+                      content={
+                        <InstallModalContents
+                          ref={coref("install-modal-contents")}
+                          coref={coref}
+                          game={gameBeingInstalled}
+                        />
+                      }
+                      interactive
+                      visible
+                    >
+                      {makeButton(game, true)}
+                    </MenuTippy>
+                  ) : (
+                    makeButton(game, true)
+                  )
+                ) : null}
+                <div className="filler" />
+                {game.owned ? null : (
+                  <IconButton icon="heart-filled" onClick={purchase.execute} />
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </GameGridContainer>
     </>
   );

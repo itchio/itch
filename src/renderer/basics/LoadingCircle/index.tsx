@@ -17,7 +17,6 @@ const turn = keyframes`
 const CircleContainer = styled.span`
   display: inline;
 
-  animation: ${turn} 6s infinite linear;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -5,13 +5,13 @@ interface Refs {
 }
 type UseRefsReturn = {
   refs: Refs;
-  makeSet: SetterMaker;
+  makeSet: ClickOutsideRefer;
 };
 type OnClick = () => void;
 type Setter = (el: HTMLElement | null) => void;
-export type SetterMaker = (name: string) => Setter;
+export type ClickOutsideRefer = (name: string) => Setter;
 
-export function useClickOutside(onClick: OnClick): SetterMaker {
+export function useClickOutside(onClick: OnClick): ClickOutsideRefer {
   const refs = useRefs();
 
   useEffect(() => {

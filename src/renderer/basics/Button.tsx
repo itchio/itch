@@ -103,6 +103,7 @@ interface Props {
   big?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  autoFocus?: boolean;
   id?: string;
   translucent?: boolean;
   secondary?: boolean;

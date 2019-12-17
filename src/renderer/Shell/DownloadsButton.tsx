@@ -12,6 +12,7 @@ import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { fontSizes } from "renderer/theme";
 import styled from "styled-components";
+import { DownloadWithProgress } from "main/drive-downloads";
 
 interface Props {}
 
@@ -26,7 +27,9 @@ export const DownloadsButton = (props: Props) => {
 
   return (
     <MenuTippy
-      content={<DownloadsContents ref={coref("downloads-content")} />}
+      content={
+        <DownloadsContents ref={coref("downloads-content")} onClose={toggle} />
+      }
       visible={shown}
       maxWidth={600}
       interactive
@@ -88,14 +91,14 @@ const DownloadContentsDiv = styled.div`
 `;
 
 export const DownloadsContents = React.forwardRef(
-  (props: {}, ref: React.Ref<HTMLDivElement>) => {
+  (props: { onClose: () => void }, ref: React.Ref<HTMLDivElement>) => {
     const socket = useSocket();
-    const [downloads, setDownloads] = useState<Download[]>([]);
+    const [downloads, setDownloads] = useState<DownloadWithProgress[]>([]);
 
     useEffect(() => {
       let interval = setInterval(() => {
         (async () => {
-          const { downloads } = await socket.call(messages.DownloadsList, {});
+          const { downloads } = await socket.query(queries.getDownloads);
           setDownloads(downloads);
         })();
       }, 1000);
@@ -113,7 +116,9 @@ export const DownloadsContents = React.forwardRef(
         ) : (
           <>
             {downloads.map(d => {
-              return <DownloadItem key={d.id} download={d} />;
+              return (
+                <DownloadItem key={d.id} download={d} onClose={props.onClose} />
+              );
             })}
             <MenuContents>
               <Button
@@ -131,7 +136,10 @@ export const DownloadsContents = React.forwardRef(
   }
 );
 
-const DownloadItem = (props: { download: Download }) => {
+const DownloadItem = (props: {
+  download: DownloadWithProgress;
+  onClose: () => void;
+}) => {
   const socket = useSocket();
   const d = props.download;
 
@@ -141,7 +149,7 @@ const DownloadItem = (props: { download: Download }) => {
 
   return (
     <div className="row">
-      <a href={`itch://games/${d.game.id}`}>
+      <a href={`itch://games/${d.game.id}`} onClick={props.onClose}>
         <img
           className="thumbnail"
           src={d.game.stillCoverUrl || d.game.coverUrl}
@@ -150,21 +158,22 @@ const DownloadItem = (props: { download: Download }) => {
         <div className="filler" />
       </a>
 
-      {d.finishedAt ? (
-        <IconButton
-          icon="play2"
-          onClick={() => play.execute(d.game.id)}
-          loading={play.loading}
-        />
-      ) : (
-        <IconButton icon={<LoadingCircle progress={0.3} />} />
-      )}
       <MenuTippy
         content={<DownloadsMenu download={d} />}
         interactive
         placement="right-start"
       >
-        <IconButton icon="triangle-right" />
+        {d.finishedAt ? (
+          <IconButton
+            icon="play2"
+            onClick={() => play.execute(d.game.id)}
+            loading={play.loading}
+          />
+        ) : (
+          <IconButton
+            icon={<LoadingCircle progress={d.progress?.progress ?? 1} />}
+          />
+        )}
       </MenuTippy>
     </div>
   );

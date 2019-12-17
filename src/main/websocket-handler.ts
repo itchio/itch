@@ -14,7 +14,6 @@ import { Packet, PacketCreator, packets } from "common/packets";
 import { queries, QueryCreator } from "common/queries";
 import dump from "common/util/dump";
 import { shell } from "electron";
-import { filter } from "lodash";
 import { MainState } from "main";
 import { envSettings } from "main/constants/env-settings";
 import { loadLocale, setPreferences } from "main/load-preferences";
@@ -22,6 +21,7 @@ import { mainLogger } from "main/logger";
 import { setProfile } from "main/profile";
 import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
+import _ from "lodash";
 
 const logger = mainLogger.childWithName("websocket-handler");
 
@@ -142,10 +142,18 @@ export class WebsocketHandler {
       return { maximized };
     });
 
+    onQuery(queries.getDownloads, async () => {
+      let downloads: Download[] = [];
+      if (ms.downloads) {
+        downloads = _.filter(ms.downloads, () => true);
+      }
+      return { downloads };
+    });
+
     onQuery(queries.getDownloadsForGame, async ({ gameId }) => {
       let downloads: Download[] = [];
       if (ms.downloads) {
-        downloads = filter(ms.downloads, d => d.game && d.game.id === gameId);
+        downloads = _.filter(ms.downloads, d => d.game && d.game.id === gameId);
       }
 
       return { downloads };

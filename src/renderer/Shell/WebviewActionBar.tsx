@@ -89,6 +89,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
         content={
           <InstallModalContents
             ref={coref("install-modal-contents")}
+            coref={coref}
             game={game}
           />
         }

@@ -1,7 +1,8 @@
-import { WebviewState } from "main";
-import { Profile, Download } from "common/butlerd/messages";
-import { CurrentLocale } from "common/locales";
+import { Profile } from "common/butlerd/messages";
 import { OngoingLaunch } from "common/launches";
+import { CurrentLocale } from "common/locales";
+import { WebviewState } from "main";
+import { DownloadWithProgress } from "main/drive-downloads";
 
 export const queries = wireQueries({
   minimize: query<void, void>(),
@@ -18,7 +19,11 @@ export const queries = wireQueries({
     void
   >(),
 
-  getDownloadsForGame: query<{ gameId: number }, { downloads: Download[] }>(),
+  getDownloads: query<void, { downloads: DownloadWithProgress[] }>(),
+  getDownloadsForGame: query<
+    { gameId: number },
+    { downloads: DownloadWithProgress[] }
+  >(),
 
   getCurrentLocale: query<void, { currentLocale: CurrentLocale }>(),
   switchLanguage: query<{ lang: string }, void>(),

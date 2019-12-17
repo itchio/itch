@@ -1,6 +1,6 @@
 import { Client } from "butlerd";
 import { isCancelled, messages } from "common/butlerd";
-import { Download } from "common/butlerd/messages";
+import { Download, DownloadProgress } from "common/butlerd/messages";
 import { packets } from "common/packets";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
@@ -9,8 +9,12 @@ import { broadcastPacket } from "main/websocket-handler";
 
 const logger = mainLogger.childWithName("drive-downloads");
 
+export interface DownloadWithProgress extends Download {
+  progress?: DownloadProgress;
+}
+
 export interface DownloadsState {
-  [key: string]: Download;
+  [key: string]: DownloadWithProgress;
 }
 
 export function startDrivingDownloads(ms: MainState) {
@@ -38,18 +42,31 @@ async function driveDownloads(ms: MainState) {
           convo.cancel();
           return;
         }
-        ms.downloads[download.id] = download;
-        broadcastPacket(ms, packets.downloadStarted, { download });
+        let dwp = {
+          ...download,
+          progress: {
+            progress: 0.0,
+            bps: 0,
+            eta: 0,
+            stage: "prepare",
+          },
+        };
+        ms.downloads[download.id] = dwp;
+        broadcastPacket(ms, packets.downloadStarted, { download: dwp });
       });
 
-      convo.onNotification(messages.DownloadsDriveProgress, ({ download }) => {
-        if (!ms.downloads) {
-          convo.cancel();
-          return;
+      convo.onNotification(
+        messages.DownloadsDriveProgress,
+        ({ download, progress }) => {
+          if (!ms.downloads) {
+            convo.cancel();
+            return;
+          }
+          let dwp = { ...download, progress };
+          ms.downloads[download.id] = dwp;
+          broadcastPacket(ms, packets.downloadChanged, { download: dwp });
         }
-        ms.downloads[download.id] = download;
-        broadcastPacket(ms, packets.downloadChanged, { download });
-      });
+      );
 
       convo.onNotification(messages.DownloadsDriveFinished, ({ download }) => {
         if (!ms.downloads) {

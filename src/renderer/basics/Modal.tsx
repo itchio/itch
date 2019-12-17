@@ -64,30 +64,37 @@ const Filler = styled.div`
   flex-grow: 1;
 `;
 
-export const Modal = (props: {
-  title?: React.ReactNode;
-  children?: React.ReactNode;
-  onClose?: () => void;
-}) => {
-  const { title, children, onClose } = props;
+export const Modal = React.forwardRef(
+  (
+    props: {
+      title?: React.ReactNode;
+      children?: React.ReactNode;
+      onClose?: () => void;
+    },
+    ref: any
+  ) => {
+    const { title, children, onClose } = props;
 
-  return (
-    <ModalShroud>
-      <ModalContents>
-        <ModalTitle
-          className={classNames({ present: !!props.title || !!props.onClose })}
-        >
-          {title}
-          <Filler />
-          {onClose ? (
-            <IconButton icon="cross" onClick={() => onClose()}></IconButton>
-          ) : null}
-        </ModalTitle>
-        <ModalBody>{children}</ModalBody>
-      </ModalContents>
-    </ModalShroud>
-  );
-};
+    return (
+      <ModalShroud ref={ref}>
+        <ModalContents>
+          <ModalTitle
+            className={classNames({
+              present: !!props.title || !!props.onClose,
+            })}
+          >
+            {title}
+            <Filler />
+            {onClose ? (
+              <IconButton icon="cross" onClick={() => onClose()}></IconButton>
+            ) : null}
+          </ModalTitle>
+          <ModalBody>{children}</ModalBody>
+        </ModalContents>
+      </ModalShroud>
+    );
+  }
+);
 
 // TODO: dedup with Gate/Form.tsx
 export const Buttons = styled.div`
