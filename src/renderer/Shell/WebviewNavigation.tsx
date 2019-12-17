@@ -51,7 +51,7 @@ interface Props {
 }
 
 const Title = styled.div`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.normal};
   padding-left: 1em;
 `;
 

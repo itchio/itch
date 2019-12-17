@@ -1,20 +1,14 @@
-import React from "react";
 import classNames from "classnames";
-
-import styled, { keyframes } from "styled-components";
+import React, { useEffect, useState } from "react";
 import { Circle } from "renderer/basics/LoadingCircle/Circle";
 import { animations } from "renderer/theme";
-
-const turn = keyframes`
-  0% {
-    transform: rotateZ(0deg);
-  }
-  100% {
-    transform: rotateZ(360deg);
-  }
-`;
+import styled from "styled-components";
 
 const CircleContainer = styled.span`
+  &.spinning {
+    animation: ${animations.spinner} linear infinite 2s;
+  }
+
   display: inline;
 
   display: flex;
@@ -55,10 +49,31 @@ interface LoadingCircleProps {
 export const LoadingCircle = (props: LoadingCircleProps) => {
   const { className, progress, bare, wide, huge } = props;
 
+  const percent = progress > 0 ? progress * 100.0 : 100 / 3;
+  const [shownPercent, setShownPercent] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    interval = setInterval(() => {
+      if (Math.abs(shownPercent - percent) < 1) {
+        clearInterval(interval);
+      }
+      setShownPercent(percent * 0.5 + shownPercent * 0.5);
+    }, 100);
+    return () => clearInterval(interval);
+  }, [percent]);
+
   return (
-    <CircleContainer className={classNames(className, { bare, wide, huge })}>
+    <CircleContainer
+      className={classNames(className, {
+        bare,
+        wide,
+        huge,
+        spinning: !(progress > 0),
+      })}
+    >
       <Circle
-        percent={progress > 0 ? progress * 100.0 : 100 / 3}
+        percent={shownPercent}
         trailWidth={3}
         trailColor="#e0e0e2"
         strokeWidth={15}

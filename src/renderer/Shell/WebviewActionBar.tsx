@@ -21,7 +21,7 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
 
-  margin-right: 25px;
+  margin-right: 35px;
 
   min-height: 100px;
   border-top: 1px solid ${props => props.theme.colors.shellBorder};
@@ -45,6 +45,10 @@ const Info = styled.div`
 
 const Filler = styled.div`
   flex-grow: 1;
+`;
+
+const Spacer = styled.div`
+  flex-basis: 10px;
 `;
 
 interface Props {
@@ -145,12 +149,6 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
       <Filler />
       {!_.isEmpty(caves) ? (
         <>
-          <Button
-            icon="play2"
-            label={<FormattedMessage id="grid.item.launch" />}
-            disabled={launchGame.loading}
-            onClick={() => launchGame.execute(gameId)}
-          />
           {makeInstallModal(
             <IconButton
               ref={coref("install-icon")}
@@ -160,6 +158,13 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
               }}
             />
           )}
+          <Spacer />
+          <Button
+            icon="play2"
+            label={<FormattedMessage id="grid.item.launch" />}
+            disabled={launchGame.loading}
+            onClick={() => launchGame.execute(gameId)}
+          />
         </>
       ) : (
         makeInstallModal(

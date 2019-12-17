@@ -26,6 +26,9 @@ import { ClickOutsideRefer } from "renderer/basics/useClickOutside";
 import { queries } from "common/queries";
 import { DownloadWithProgress } from "main/drive-downloads";
 import _ from "lodash";
+import { useListen } from "renderer/Socket";
+import { packets } from "common/packets";
+import { formatDurationAsMessage } from "common/format/datetime";
 
 const InstallMenuContents = styled(MenuContents)`
   overflow: hidden;
@@ -102,7 +105,7 @@ const UploadInfo = styled.div`
   }
 
   padding: 0.2em 0;
-  min-width: 200px;
+  width: 350px;
 
   p {
     line-height: 1.6;
@@ -139,15 +142,25 @@ interface CavesByUpload {
   [uploadId: number]: Cave | undefined;
 }
 
+interface Queued {
+  [uploadId: number]: boolean;
+}
+
 export const InstallModalContents = React.forwardRef(
   (props: Props, ref: any) => {
     const socket = useSocket();
     const [uninstalling, setUninstalling] = useState<Cave | null>(null);
     const [loading, setLoading] = useState(true);
-    const [downloadsByUpload, setDownloadsByUpload] = useState<
-      DownloadsByUpload
-    >({});
-    const [cavesByUpload, setCavesByUpload] = useState<CavesByUpload>({});
+    const [queued, setQueued] = useState<Queued>({});
+
+    const [downloads, setDownloads] = useState<DownloadsByUpload>({});
+    const mergeDownloads = (fresh: DownloadsByUpload) => {
+      setDownloads({ ...downloads, ...fresh });
+    };
+    const [caves, setCaves] = useState<CavesByUpload>({});
+    const mergeCaves = (fresh: CavesByUpload) => {
+      setCaves({ ...caves, ...fresh });
+    };
     const [uploads, setUploads] = useState<AvailableUploads | null>(null);
 
     useEffect(() => {
@@ -155,14 +168,14 @@ export const InstallModalContents = React.forwardRef(
         const { downloads } = await socket.query(queries.getDownloadsForGame, {
           gameId: props.game.id,
         });
-        setDownloadsByUpload(_.keyBy(downloads, x => x.upload.id));
+        setDownloads(_.keyBy(downloads, x => x.upload.id));
 
         const { items } = await socket.call(messages.FetchCaves, {
           filters: {
             gameId: props.game.id,
           },
         });
-        setCavesByUpload(_.keyBy(items, x => x.upload.id));
+        setCaves(_.keyBy(items, x => x.upload.id));
 
         const fguParams: FetchGameUploadsParams = {
           gameId: props.game.id,
@@ -196,38 +209,65 @@ export const InstallModalContents = React.forwardRef(
       })();
     }, []);
 
+    useListen(socket, packets.downloadStarted, ({ download }) => {
+      mergeDownloads({ [download.upload.id]: download });
+      setQueued(_.omit(queued, download.upload.id));
+    });
+    useListen(socket, packets.downloadChanged, ({ download }) => {
+      mergeDownloads({ [download.upload.id]: download });
+    });
+    useListen(socket, packets.downloadCleared, ({ download }) => {
+      setDownloads(_.omit(downloads, download.upload.id));
+    });
+    useListen(socket, packets.gameInstalled, ({ cave }) => {
+      mergeCaves({ [cave.upload.id]: cave });
+    });
+    useListen(socket, packets.gameUninstalled, ({ uploadId }) => {
+      setCaves(_.omit(caves, uploadId));
+    });
+
     const divRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
       pokeTippy(divRef);
     });
 
     const toggleInstalled = useAsyncCallback(async (upload: Upload) => {
-      const { items } = await socket.call(messages.FetchCaves, {
-        filters: {
-          gameId: props.game.id,
-        },
-      });
-      const existingCave = _.find<Cave>(items, x => x.upload.id === upload.id);
-      if (existingCave) {
-        // in this case, uninstall, but confirm first
-        setUninstalling(existingCave);
-        return;
+      try {
+        setQueued({ ...queued, [upload.id]: true });
+
+        const { items } = await socket.call(messages.FetchCaves, {
+          filters: {
+            gameId: props.game.id,
+          },
+        });
+        const existingCave = _.find<Cave>(
+          items,
+          x => x.upload.id === upload.id
+        );
+        if (existingCave) {
+          setQueued(_.omit(queued, upload.id));
+
+          // in this case, uninstall, but confirm first
+          setUninstalling(existingCave);
+          return;
+        }
+
+        const locsRes = await socket.call(messages.InstallLocationsList, {});
+
+        await socket.call(messages.InstallQueue, {
+          game: props.game,
+          upload: upload,
+          queueDownload: true,
+          installLocationId: locsRes.installLocations[0].id,
+        });
+      } catch (e) {
+        setQueued(_.omit(queued, upload.id));
       }
-
-      const locsRes = await socket.call(messages.InstallLocationsList, {});
-
-      await socket.call(messages.InstallQueue, {
-        game: props.game,
-        upload: upload,
-        build: upload.build,
-        queueDownload: true,
-        installLocationId: locsRes.installLocations[0].id,
-      });
     });
 
     const uninstall = useAsyncCallback(async (cave: Cave) => {
       setUninstalling(null);
-      setDownloadsByUpload(_.omit(downloadsByUpload, cave.upload.id));
+      setDownloads(_.omit(downloads, cave.upload.id));
       await socket.query(queries.uninstallGame, { cave });
     });
 
@@ -239,11 +279,7 @@ export const InstallModalContents = React.forwardRef(
     return (
       <>
         {uninstalling ? (
-          <Modal
-            ref={props.coref("uninstall-modal")}
-            title="Uninstall item?"
-            onClose={() => setUninstalling(null)}
-          >
+          <Modal ref={props.coref("uninstall-modal")}>
             <p>Are you sure you want to uninstalling this?</p>
             <Buttons>
               <Button
@@ -275,8 +311,9 @@ export const InstallModalContents = React.forwardRef(
               </div>
               <div className="list">
                 <UploadGroup
-                  cavesByUpload={cavesByUpload}
-                  downloadsByUpload={downloadsByUpload}
+                  queued={queued}
+                  cavesByUpload={caves}
+                  downloadsByUpload={downloads}
                   items={uploads.compatible}
                   toggleInstalled={toggleInstalled}
                 />
@@ -292,8 +329,9 @@ export const InstallModalContents = React.forwardRef(
                         label="Hide other downloads"
                       />
                       <UploadGroup
-                        cavesByUpload={cavesByUpload}
-                        downloadsByUpload={downloadsByUpload}
+                        queued={queued}
+                        cavesByUpload={caves}
+                        downloadsByUpload={downloads}
                         isOther
                         items={uploads.others}
                         toggleInstalled={toggleInstalled}
@@ -343,6 +381,7 @@ function hasPlatforms(u: Upload): boolean {
 const UploadGroup = (props: {
   isOther?: boolean;
   items: Upload[];
+  queued: Queued;
   toggleInstalled: UseAsyncReturn<void, [Upload]>;
   downloadsByUpload: DownloadsByUpload;
   cavesByUpload: CavesByUpload;
@@ -353,6 +392,7 @@ const UploadGroup = (props: {
       {items.map(u => {
         let dl: DownloadWithProgress | undefined =
           props.downloadsByUpload[u.id];
+        const isQueued = props.queued[u.id];
         if (dl && dl.finishedAt) {
           dl = undefined;
         }
@@ -364,6 +404,15 @@ const UploadGroup = (props: {
             interactive
             content={
               <UploadInfo>
+                {dl && dl.progress ? (
+                  <p>
+                    {(dl.progress.progress * 100).toFixed()}% &mdash;{" "}
+                    {fileSize(dl.progress.bps)} / s &mdash;{" "}
+                    <FormattedMessage
+                      {...formatDurationAsMessage(dl.progress.eta)}
+                    />
+                  </p>
+                ) : null}
                 {u.size || hasPlatforms(u) ? (
                   <p>
                     <Icon icon="download" /> {fileSize ? fileSize(u.size) : ""}{" "}
@@ -408,16 +457,16 @@ const UploadGroup = (props: {
                   after={
                     <>
                       <div className="filler" />
-                      {dl ? (
+                      {dl || isQueued ? (
                         <>
                           <LoadingCircle
-                            progress={dl.progress?.progress ?? 0}
+                            progress={dl?.progress?.progress ?? 0}
                           />{" "}
                         </>
                       ) : (
                         <Icon
                           icon={
-                            props.cavesByUpload[u.id] ? "checked" : "unchecked"
+                            props.cavesByUpload[u.id] ? "checked" : "install"
                           }
                         />
                       )}

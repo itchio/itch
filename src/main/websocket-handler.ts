@@ -231,6 +231,7 @@ export class WebsocketHandler {
           });
         })
         .catch(error => {
+          console.warn(`Failed query: ${dump(req)}\n\nStack = ${error.stack}`);
           cx.reply(packets.queryResult, {
             state: "error",
             id: req.id,

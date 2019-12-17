@@ -75,20 +75,20 @@ export const Modal = React.forwardRef(
   ) => {
     const { title, children, onClose } = props;
 
+    const hasTitle = !!props.title || !!props.onClose;
+
     return (
       <ModalShroud ref={ref}>
         <ModalContents>
-          <ModalTitle
-            className={classNames({
-              present: !!props.title || !!props.onClose,
-            })}
-          >
-            {title}
-            <Filler />
-            {onClose ? (
-              <IconButton icon="cross" onClick={() => onClose()}></IconButton>
-            ) : null}
-          </ModalTitle>
+          {hasTitle ? (
+            <ModalTitle>
+              {title}
+              <Filler />
+              {onClose ? (
+                <IconButton icon="cross" onClick={() => onClose()}></IconButton>
+              ) : null}
+            </ModalTitle>
+          ) : null}
           <ModalBody>{children}</ModalBody>
         </ModalContents>
       </ModalShroud>

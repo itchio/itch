@@ -55,7 +55,7 @@ const LibraryLayout = styled.div`
       flex-direction: row;
       align-items: center;
 
-      padding: 1.2em 0.4em;
+      padding: 1em 0.4em;
       font-size: ${fontSizes.normal};
 
       .title {
@@ -284,7 +284,7 @@ const ViewContents = (props: { source: Source }) => {
         <ViewTitle source={source} />
         {loading && <Spinner />}
       </h2>
-      <GameGrid records={records} />
+      <GameGrid records={records} setRecords={setRecords} />
     </>
   );
 };

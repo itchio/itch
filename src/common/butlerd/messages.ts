@@ -411,7 +411,7 @@ export interface GameRecord {
   /** True if owned */
   owned: boolean;
   /** Non-nil if installed (has caves) */
-  installed_at: RFCDate;
+  installedAt: RFCDate;
 }
 
 /**

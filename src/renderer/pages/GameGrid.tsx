@@ -1,21 +1,23 @@
 import { messages } from "common/butlerd";
-import { Game, GameRecord, Download } from "common/butlerd/messages";
+import { Download, Game, GameRecord } from "common/butlerd/messages";
+import { formatDurationAsMessage } from "common/format/datetime";
+import { fileSize } from "common/format/filesize";
+import { packets } from "common/packets";
 import { queries } from "common/queries";
-import React, { useState, useEffect } from "react";
+import _ from "lodash";
+import { DownloadWithProgress } from "main/drive-downloads";
+import React, { useEffect, useState } from "react";
 import { useAsyncCallback } from "react-async-hook";
+import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { MenuTippy } from "renderer/basics/Menu";
+import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { InstallModalContents } from "renderer/Shell/InstallModal";
-import { mixins } from "renderer/theme";
-import styled from "styled-components";
-import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useListen } from "renderer/Socket";
-import { packets } from "common/packets";
-import _ from "lodash";
-import { DownloadWithProgress } from "main/drive-downloads";
-import { LoadingCircle } from "renderer/basics/LoadingCircle";
+import { fontSizes, mixins } from "renderer/theme";
+import styled from "styled-components";
 
 let coverBorder = 1;
 const coverWidth = 300;
@@ -37,17 +39,41 @@ const GameGridContainer = styled.div`
     border: 1px solid #333;
     border-radius: 4px;
 
-    .cover {
+    .cover-container {
+      position: relative;
       width: ${coverWidth * ratio}px;
       height: ${coverHeight * ratio}px;
 
-      &.missing {
-        background-image: linear-gradient(12deg, #121212 0%, #191919 100%);
+      & > .download-overlay {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: ${p => p.theme.colors.text2};
+        font-size: ${fontSizes.small};
+      }
+
+      & > .cover {
+        width: 100%;
+        height: 100%;
+
+        &.missing {
+          background-image: linear-gradient(12deg, #121212 0%, #191919 100%);
+        }
       }
     }
 
     & > .title {
       padding: 4px 8px;
+      padding-top: 14px;
+      font-size: ${fontSizes.small};
       ${mixins.singleLine};
     }
 
@@ -84,12 +110,16 @@ interface Downloads {
   [gameId: number]: DownloadWithProgress;
 }
 
-export const GameGrid = function(props: { records: GameRecord[] }) {
+interface Props {
+  records: GameRecord[];
+  setRecords: React.Dispatch<React.SetStateAction<GameRecord[]>>;
+}
+
+export const GameGrid = function(props: Props) {
   const socket = useSocket();
 
   const [downloads, setDownloads] = useState<Downloads>({});
   const mergeDownloads = (fresh: Downloads) => {
-    console.log(`Merging `, fresh);
     setDownloads({ ...downloads, ...fresh });
   };
 
@@ -174,6 +204,27 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
     setDownloads(_.omit(downloads, download.game.id));
   });
 
+  useListen(socket, packets.gameInstalled, ({ cave }) => {
+    updateRecord(props, {
+      id: cave.game.id,
+      installedAt: new Date().toISOString(),
+    });
+  });
+  useListen(socket, packets.gameUninstalled, ({ gameId }) => {
+    (async () => {
+      const { items } = await socket.call(messages.FetchCaves, {
+        filters: { gameId },
+      });
+
+      if (_.isEmpty(items)) {
+        updateRecord(props, {
+          id: gameId,
+          installedAt: undefined,
+        });
+      }
+    })().catch(e => console.warn(e));
+  });
+
   let makeButton = (game: GameRecord, icon: boolean): JSX.Element => {
     if (icon) {
       return <IconButton icon="install" onClick={install.execute} />;
@@ -190,37 +241,43 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
     }
   };
 
-  const { records } = props;
   return (
     <>
       <GameGridContainer>
-        {records.map(game => {
+        {props.records.map(game => {
           const dl = downloads[game.id];
           return (
             <div className="item" key={game.id} data-game-id={game.id}>
               <a href={`itch://games/${game.id}`}>
-                {game.cover ? (
-                  <img className="cover" src={game.cover} />
-                ) : (
-                  <div className="cover missing" />
-                )}
+                <div className="cover-container">
+                  {dl ? (
+                    dl.progress ? (
+                      <div
+                        className="download-overlay"
+                        style={{
+                          background: `linear-gradient(to right, rgba(0, 0, 0, .7) 0%, rgba(0, 0, 0, .7) ${dl
+                            .progress.progress * 100}%, rgba(0, 0, 0, .9) ${dl
+                            .progress.progress *
+                            100}%, rgba(0, 0, 0, .9) 100%)`,
+                        }}
+                      >
+                        {fileSize(dl.progress.bps)} bps &mdash;{" "}
+                        <FormattedMessage
+                          {...formatDurationAsMessage(dl.progress.eta)}
+                        />{" "}
+                      </div>
+                    ) : null
+                  ) : null}
+                  {game.cover ? (
+                    <img className="cover" src={game.cover} />
+                  ) : (
+                    <div className="cover missing" />
+                  )}
+                </div>
               </a>
-              {dl ? (
-                dl.progress ? (
-                  <p>
-                    {dl.progress.stage} &mdash; {dl.progress.bps} bps &mdash;{" "}
-                    {dl.progress.eta} ETA
-                    <LoadingCircle progress={dl.progress.progress} />
-                  </p>
-                ) : (
-                  <span>Download complete</span>
-                )
-              ) : (
-                <span>No download</span>
-              )}
               <div className="title">{game.title}</div>
               <div className="buttons">
-                {game.installed_at ? (
+                {game.installedAt ? (
                   <Button
                     icon="play2"
                     label="Launch"
@@ -244,7 +301,7 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
                 ) : (
                   makeButton(game, false)
                 )}
-                {game.installed_at ? (
+                {game.installedAt ? (
                   gameBeingInstalled?.id == game.id ? (
                     <MenuTippy
                       placement="right"
@@ -275,4 +332,20 @@ export const GameGrid = function(props: { records: GameRecord[] }) {
       </GameGridContainer>
     </>
   );
+};
+
+const updateRecord = (
+  props: Props,
+  fresh: Partial<GameRecord> & { id: number }
+) => {
+  props.setRecords(records => {
+    let recIndex = _.findIndex(records, x => x.id === fresh.id);
+    if (recIndex !== -1) {
+      let newRecords = [...records];
+      newRecords[recIndex] = { ...newRecords[recIndex], ...fresh };
+      return newRecords;
+    } else {
+      return records;
+    }
+  });
 };

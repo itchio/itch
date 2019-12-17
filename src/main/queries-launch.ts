@@ -16,6 +16,7 @@ import {
 import { uuid } from "common/util/uuid";
 import { packets } from "common/packets";
 import dump from "common/util/dump";
+import { shell } from "electron";
 
 const logger = mainLogger.childWithName("queries-launch");
 
@@ -85,6 +86,10 @@ export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
             logger.info(`Prereqs failed: ${dump(params)}`);
             // TODO: allow continuing
             return { continue: false };
+          });
+          convo.onRequest(messages.ShellLaunch, async params => {
+            shell.openItem(params.itemPath);
+            return {};
           });
           convo.onNotification(messages.PrereqsEnded, () => {
             logger.info(`Handling prereqs...done`);

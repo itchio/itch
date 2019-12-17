@@ -158,7 +158,7 @@
     ]
   },
   "butler": {
-    "development": "a9ebc010b2d8bed9cd1c2158c8d2a371490b2f76",
+    "development": "8819ab8f041a88153722afb0ea7b33ed3cbb83d4",
     "production": ""
   },
   "husky": {
