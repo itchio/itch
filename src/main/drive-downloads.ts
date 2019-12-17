@@ -75,6 +75,18 @@ async function driveDownloads(ms: MainState) {
         }
         ms.downloads[download.id] = download;
         broadcastPacket(ms, packets.downloadChanged, { download });
+
+        (async () => {
+          if (!download.caveId) {
+            return;
+          }
+          const { cave } = await convo.call(messages.FetchCave, {
+            caveId: download.caveId,
+          });
+          broadcastPacket(ms, packets.gameInstalled, { cave });
+        })().catch(e => {
+          console.warn("While fetching cave after download finished", e.stack);
+        });
       });
 
       convo.onNotification(messages.DownloadsDriveErrored, ({ download }) => {

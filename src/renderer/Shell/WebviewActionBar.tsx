@@ -8,10 +8,13 @@ import { useSocket } from "renderer/contexts";
 import { InstallModalContents } from "renderer/Shell/InstallModal";
 import { useButlerd } from "renderer/use-butlerd";
 import styled from "styled-components";
-import { Game } from "../../common/butlerd/messages";
+import { Game, Cave } from "../../common/butlerd/messages";
 import { IconButton } from "../basics/IconButton";
 import { MenuTippy } from "../basics/Menu";
 import { useClickOutside } from "renderer/basics/useClickOutside";
+import _ from "lodash";
+import { useListen } from "renderer/Socket";
+import { packets } from "common/packets";
 
 const Container = styled.div`
   display: flex;
@@ -48,12 +51,21 @@ interface Props {
   path: string;
 }
 
+interface CavesForGame {
+  [caveId: string]: Cave;
+}
+
 const WebviewGameActionBar = (props: { gameId: number }) => {
   const socket = useSocket();
   const { gameId } = props;
   const [installing, setInstalling] = useState(false);
   const [game, setGame] = useState<Game | null>(null);
+  const [caves, setCaves] = useState<CavesForGame>({});
+  const mergeCaves = (fresh: CavesForGame) => {
+    setCaves({ ...caves, ...fresh });
+  };
 
+  // fetch game info
   useEffect(() => {
     (async () => {
       try {
@@ -67,6 +79,31 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
     })();
   }, [gameId]);
 
+  // fetch caves
+  useEffect(() => {
+    setCaves({});
+
+    (async () => {
+      try {
+        const { items } = await socket.call(messages.FetchCaves, {
+          filters: {
+            gameId: props.gameId,
+          },
+        });
+        setCaves(_.keyBy(items, "id"));
+      } catch (e) {
+        console.warn(e);
+      }
+    })();
+  }, [gameId]);
+
+  useListen(socket, packets.gameInstalled, ({ cave }) => {
+    mergeCaves({ [cave.id]: cave });
+  });
+  useListen(socket, packets.gameUninstalled, ({ caveId }) => {
+    setCaves(_.omit(caves, caveId));
+  });
+
   const coref = useClickOutside(() => {
     setInstalling(false);
   });
@@ -74,9 +111,6 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
   let launchGame = useAsyncCallback(async (gameId: number) => {
     await socket.query(queries.launchGame, { gameId });
   });
-
-  const cavesReq = useButlerd(messages.FetchCaves, { filters: { gameId } });
-  let caves = cavesReq.state === "success" && (cavesReq.result.items || []);
 
   if (!game) {
     return null;
@@ -109,35 +143,34 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
         {caves && <span>Found {caves.length} caves</span>}
       </Info>
       <Filler />
-      {caves &&
-        (caves.length > 0 ? (
-          <>
-            <Button
-              icon="play2"
-              label={<FormattedMessage id="grid.item.launch" />}
-              disabled={launchGame.loading}
-              onClick={() => launchGame.execute(gameId)}
-            />
-            {makeInstallModal(
-              <IconButton
-                ref={coref("install-icon")}
-                icon="install"
-                onClick={ev => {
-                  setInstalling(!installing);
-                }}
-              />
-            )}
-          </>
-        ) : (
-          makeInstallModal(
-            <Button
-              ref={coref("install-button")}
+      {!_.isEmpty(caves) ? (
+        <>
+          <Button
+            icon="play2"
+            label={<FormattedMessage id="grid.item.launch" />}
+            disabled={launchGame.loading}
+            onClick={() => launchGame.execute(gameId)}
+          />
+          {makeInstallModal(
+            <IconButton
+              ref={coref("install-icon")}
               icon="install"
-              label={<FormattedMessage id="grid.item.install" />}
-              onClick={() => setInstalling(true)}
+              onClick={ev => {
+                setInstalling(!installing);
+              }}
             />
-          )
-        ))}
+          )}
+        </>
+      ) : (
+        makeInstallModal(
+          <Button
+            ref={coref("install-button")}
+            icon="install"
+            label={<FormattedMessage id="grid.item.install" />}
+            onClick={() => setInstalling(!installing)}
+          />
+        )
+      )}
     </Container>
   );
 };

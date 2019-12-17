@@ -1,4 +1,4 @@
-import { Profile } from "common/butlerd/messages";
+import { Profile, Cave } from "common/butlerd/messages";
 import { OngoingLaunch } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { WebviewState } from "main";
@@ -29,6 +29,8 @@ export const queries = wireQueries({
   switchLanguage: query<{ lang: string }, void>(),
 
   launchGame: query<{ gameId: number }, void>(),
+  uninstallGame: query<{ cave: Cave }, void>(),
+
   getOngoingLaunchesForGame: query<
     { gameId: number },
     { launches: OngoingLaunch[] }

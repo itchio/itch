@@ -96,13 +96,11 @@ export const DownloadsContents = React.forwardRef(
     const [downloads, setDownloads] = useState<DownloadWithProgress[]>([]);
 
     useEffect(() => {
-      let interval = setInterval(() => {
-        (async () => {
-          const { downloads } = await socket.query(queries.getDownloads);
-          setDownloads(downloads);
-        })();
-      }, 1000);
-      return () => clearInterval(interval);
+      // TODO: listen for more download events
+      (async () => {
+        const { downloads } = await socket.query(queries.getDownloads);
+        setDownloads(downloads);
+      })();
     }, []);
 
     const clearAll = useAsyncCallback(async () => {

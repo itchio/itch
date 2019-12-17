@@ -1,5 +1,12 @@
 import { Request, RpcResult, Notification } from "butlerd";
-import { Profile, Download, NetworkStatus } from "common/butlerd/messages";
+import {
+  Profile,
+  Download,
+  NetworkStatus,
+  Cave,
+  Game,
+  Upload,
+} from "common/butlerd/messages";
 import { OngoingLaunch } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { QueryRequest, QueryResult } from "common/queries";
@@ -29,6 +36,14 @@ export const packets = wirePackets({
   downloadChanged: packet<{ download: Download }>(),
   downloadCleared: packet<{ download: Download }>(),
   networkStatusChanged: packet<{ status: NetworkStatus }>(),
+
+  // install events
+  gameInstalled: packet<{ cave: Cave }>(),
+  gameUninstalled: packet<{
+    caveId: string;
+    gameId: number;
+    uploadId: number;
+  }>(),
 
   // queries
   queryRequest: packet<QueryRequest<any>>(),

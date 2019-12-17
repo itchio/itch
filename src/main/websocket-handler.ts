@@ -22,6 +22,7 @@ import { setProfile } from "main/profile";
 import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
 import _ from "lodash";
+import { messages } from "common/butlerd";
 
 const logger = mainLogger.childWithName("websocket-handler");
 
@@ -192,6 +193,22 @@ export class WebsocketHandler {
     });
 
     registerQueriesLaunch(ms, onQuery);
+
+    onQuery(queries.uninstallGame, async ({ cave }) => {
+      if (!ms.butler) {
+        throw new Error("butler is offline");
+      }
+
+      let client = new Client(ms.butler.endpoint);
+      await client.call(messages.UninstallPerform, {
+        caveId: cave.id,
+      });
+      broadcastPacket(ms, packets.gameUninstalled, {
+        caveId: cave.id,
+        uploadId: cave.upload.id,
+        gameId: cave.game.id,
+      });
+    });
 
     onPacket(packets.queryRequest, (cx, req) => {
       let handler = this.queryHandlers[req.method];

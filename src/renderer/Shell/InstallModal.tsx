@@ -211,6 +211,7 @@ export const InstallModalContents = React.forwardRef(
       if (existingCave) {
         // in this case, uninstall, but confirm first
         setUninstalling(existingCave);
+        return;
       }
 
       const locsRes = await socket.call(messages.InstallLocationsList, {});
@@ -226,8 +227,8 @@ export const InstallModalContents = React.forwardRef(
 
     const uninstall = useAsyncCallback(async (cave: Cave) => {
       setUninstalling(null);
-      await socket.call(messages.UninstallPerform, { caveId: cave.id });
       setDownloadsByUpload(_.omit(downloadsByUpload, cave.upload.id));
+      await socket.query(queries.uninstallGame, { cave });
     });
 
     const [showOthers, setShowOthers] = useState(false);
@@ -365,8 +366,8 @@ const UploadGroup = (props: {
               <UploadInfo>
                 {u.size || hasPlatforms(u) ? (
                   <p>
-                    <Icon icon="download" /> {fileSize(u.size)} download{" "}
-                    {u.platforms.linux && <Icon icon="tux" />}
+                    <Icon icon="download" /> {fileSize ? fileSize(u.size) : ""}{" "}
+                    download {u.platforms.linux && <Icon icon="tux" />}
                     {u.platforms.windows && <Icon icon="windows8" />}
                     {u.platforms.osx && <Icon icon="apple" />}
                     {u.type === UploadType.HTML && <Icon icon="html5" />}
