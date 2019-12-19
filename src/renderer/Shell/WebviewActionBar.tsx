@@ -123,12 +123,13 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
   let makeInstallModal = (children: React.ReactElement<any>): JSX.Element => {
     return (
       <MenuTippy
-        placement="top"
+        placement="top-end"
         content={
           <InstallModalContents
             ref={coref("install-modal-contents")}
             coref={coref}
             game={game}
+            onClose={() => setInstalling(false)}
           />
         }
         interactive

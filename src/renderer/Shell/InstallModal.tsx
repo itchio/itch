@@ -45,8 +45,8 @@ const InstallMenuContents = styled(MenuContents)`
   .header {
     box-shadow: 0 0 40px ${p => p.theme.colors.shellBg};
 
-    background: #d8d8d8;
-    color: black;
+    background: #404040; /* TODO: theme */
+    color: ${p => p.theme.colors.text2};
 
     display: flex;
     flex-direction: row;
@@ -119,9 +119,6 @@ const UploadInfo = styled.div`
 interface Props {
   game: Game;
   coref: ClickOutsideRefer;
-}
-
-interface ModalProps extends Props {
   onClose: () => void;
 }
 
@@ -265,6 +262,7 @@ export const InstallModalContents = React.forwardRef(
           return;
         }
 
+        props.onClose();
         const locsRes = await socket.call(messages.InstallLocationsList, {});
 
         await socket.call(messages.InstallQueue, {
