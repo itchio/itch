@@ -25,6 +25,8 @@ export const queries = wireQueries({
     { downloads: DownloadWithProgress[] }
   >(),
 
+  openDevTools: query<void, void>(),
+
   getCurrentLocale: query<void, { currentLocale: CurrentLocale }>(),
   switchLanguage: query<{ lang: string }, void>(),
 

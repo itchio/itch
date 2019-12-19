@@ -210,6 +210,14 @@ export class WebsocketHandler {
       });
     });
 
+    onQuery(queries.openDevTools, async () => {
+      if (!ms.browserWindow) {
+        throw new Error("browser window doesn't exist");
+      }
+
+      ms.browserWindow.webContents.openDevTools({ mode: "detach" });
+    });
+
     onPacket(packets.queryRequest, (cx, req) => {
       let handler = this.queryHandlers[req.method];
       if (!handler) {

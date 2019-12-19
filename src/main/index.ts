@@ -15,6 +15,8 @@ import { ButlerState, startButler } from "main/start-butler";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
+import { setupShortcuts } from "main/setup-shortcuts";
+import dump from "common/util/dump";
 
 let logger = mainLogger.childWithName("main");
 
@@ -65,7 +67,20 @@ async function main() {
     logger.info(`${appInfo} on ${electronInfo} in ${env.name}`);
   }
 
+  if (envSettings.dumpEnvSettings) {
+    const logger = mainLogger.childWithName("env-settings");
+    logger.info(`full env settings:\n${dump(envSettings)}`);
+  }
+
   prepareItchProtocol();
+
+  app.on("web-contents-created", (ev, wc) => {
+    console.log(`Web contents created, id ${wc.id}`);
+    console.log(`Host web contents, id ${wc.hostWebContents?.id}`);
+    if (wc.hostWebContents?.id == ms.browserWindow?.webContents?.id) {
+      setupShortcuts(ms, wc);
+    }
+  });
 
   // 🎃🎃🎃
   // see https://github.com/electron/electron/issues/20127
@@ -123,6 +138,8 @@ async function onReady() {
     },
   });
   ms.browserWindow = win;
+  setupShortcuts(ms, win.webContents);
+
   win.on("maximize", () => {
     broadcastPacket(ms, packets.maximizedChanged, { maximized: true });
   });
@@ -143,7 +160,7 @@ async function onReady() {
   logger.info(`BrowserWindow loaded, showing (${elapsed}ms after startup)`);
   win.show();
 
-  if (env.development || envSettings.devtools) {
+  if (envSettings.devtools) {
     win.webContents.openDevTools({
       mode: "detach",
     });

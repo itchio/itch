@@ -1,9 +1,13 @@
 import { levelNumbers } from "common/logger";
+import { mainLogger } from "main/logger";
+import dump from "common/util/dump";
 
 export const envSettings = {
   //-----------------------
   // booleans
   //-----------------------
+
+  dumpEnvSettings: process.env.DUMP_ENV_SETTINGS === "1",
 
   // Use copy of butler in $PATH - use when developing
   // new butlerd functionality concurrently wih itch
@@ -17,6 +21,9 @@ export const envSettings = {
 
   // This is set when running integration tests
   integrationTests: process.env.ITCH_INTEGRATION_TESTS === "1",
+
+  // This prints combinations like "Ctrl+Shift+C" that were pressed
+  logInputs: process.env.ITCH_LOG_INPUTS === "1",
 
   //-----------------------
   // strings
