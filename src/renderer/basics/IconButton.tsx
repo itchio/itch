@@ -1,12 +1,17 @@
 import classNames from "classnames";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
+import { Spinner } from "renderer/basics/LoadingCircle";
 import { fontSizes } from "renderer/theme";
 import styled from "styled-components";
-import { LoadingCircle, Spinner } from "renderer/basics/LoadingCircle";
 
 const StyledButton = styled.button`
-  &:not(.disabled) {
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled) {
     cursor: pointer;
     opacity: 0.7;
 
@@ -35,11 +40,6 @@ const StyledButton = styled.button`
 
   &:focus {
     outline: none;
-  }
-
-  &.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
   }
 `;
 
