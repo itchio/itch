@@ -4,7 +4,7 @@ import { OngoingLaunches } from "common/launches";
 import { CurrentLocale, LocaleStrings } from "common/locales";
 import { packets } from "common/packets";
 import { partitionForApp } from "common/util/partitions";
-import { app, BrowserWindow, dialog, session } from "electron";
+import { app, BrowserWindow, dialog, session, shell } from "electron";
 import { envSettings } from "main/constants/env-settings";
 import { DownloadsState } from "main/drive-downloads";
 import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
@@ -75,9 +75,10 @@ async function main() {
   prepareItchProtocol();
 
   app.on("web-contents-created", (ev, wc) => {
-    console.log(`Web contents created, id ${wc.id}`);
-    console.log(`Host web contents, id ${wc.hostWebContents?.id}`);
     if (wc.hostWebContents?.id == ms.browserWindow?.webContents?.id) {
+      // this means it's the webview webcontents.
+      // other webcontents are created, for devtools for example,
+      // but those have no host webcontents.
       setupShortcuts(ms, wc);
     }
   });
@@ -159,6 +160,11 @@ async function onReady() {
   let elapsed = (Date.now() - ms.startedAt).toFixed();
   logger.info(`BrowserWindow loaded, showing (${elapsed}ms after startup)`);
   win.show();
+
+  win.webContents.on("new-window", (ev, url, frameName, disposition) => {
+    ev.preventDefault();
+    shell.openExternal(url);
+  });
 
   if (envSettings.devtools) {
     win.webContents.openDevTools({
