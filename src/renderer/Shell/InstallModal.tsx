@@ -78,17 +78,13 @@ const InstallMenuContents = styled(MenuContents)`
     flex-direction: column;
     align-items: stretch;
 
-    .heading {
-      text-align: center;
-    }
-
-    .heading,
-    .show-hidden {
+    .category {
       font-size: ${fontSizes.small};
       font-weight: bold;
       color: ${p => p.theme.colors.text2};
 
-      padding: 0.5em;
+      padding: 0.4em;
+      padding-left: 0.8em;
     }
   }
 
@@ -131,6 +127,7 @@ interface ModalProps extends Props {
 
 interface AvailableUploads {
   compatible: Upload[];
+  local: Upload[];
   others: Upload[];
 }
 
@@ -193,13 +190,29 @@ export const InstallModalContents = React.forwardRef(
             compatible: true,
           });
 
-          const compatMap: Record<number, boolean> = {};
-          for (const u of resCompat.uploads) {
-            compatMap[u.id] = true;
-          }
+          const caves = (
+            await socket.call(messages.FetchCaves, {
+              filters: {
+                gameId: props.game.id,
+              },
+            })
+          ).items;
+
+          const compatible = resCompat.uploads;
+
+          const compatMap = _.keyBy(compatible, u => u.id);
+          const others = _.filter(resAll.uploads, u => !compatMap[u.id]);
+
+          const allMap = _.keyBy(resAll.uploads, u => u.id);
+          const local = _.filter(
+            _.map(caves, c => c.upload),
+            u => !allMap[u.id]
+          );
+
           setUploads({
-            compatible: resCompat.uploads,
-            others: resAll.uploads.filter(u => !compatMap[u.id]),
+            compatible,
+            local,
+            others,
           });
 
           setLoading(false);
@@ -274,7 +287,12 @@ export const InstallModalContents = React.forwardRef(
     const [showOthers, setShowOthers] = useState(false);
 
     const hasUploads =
-      uploads && (uploads.compatible.length > 0 || uploads.others.length > 0);
+      uploads &&
+      !(
+        _.isEmpty(uploads.compatible) &&
+        _.isEmpty(uploads.local) &&
+        _.isEmpty(uploads.others)
+      );
 
     return (
       <>
@@ -317,11 +335,27 @@ export const InstallModalContents = React.forwardRef(
                   items={uploads.compatible}
                   toggleInstalled={toggleInstalled}
                 />
-                {uploads.others.length > 0 &&
+                {!_.isEmpty(uploads.local) && (
+                  <>
+                    <Button
+                      className="category"
+                      icon="folder-open"
+                      label="Local downloads"
+                    />
+                    <UploadGroup
+                      queued={queued}
+                      cavesByUpload={caves}
+                      downloadsByUpload={downloads}
+                      items={uploads.local}
+                      toggleInstalled={toggleInstalled}
+                    />
+                  </>
+                )}
+                {!_.isEmpty(uploads.others) &&
                   (showOthers ? (
                     <>
                       <Button
-                        className="show-hidden"
+                        className="category"
                         onClick={ev => {
                           setShowOthers(false);
                         }}
@@ -339,7 +373,7 @@ export const InstallModalContents = React.forwardRef(
                     </>
                   ) : (
                     <Button
-                      className="show-hidden"
+                      className="category"
                       onClick={ev => {
                         setShowOthers(true);
                       }}
