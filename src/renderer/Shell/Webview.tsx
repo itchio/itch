@@ -12,6 +12,7 @@ import { useListen } from "renderer/Socket";
 import { partitionForUser } from "common/util/partitions";
 import { useSocket, useProfile } from "renderer/contexts";
 import styled from "styled-components";
+import { ExtendedWebContents } from "common/extended-web-contents";
 
 const WebviewContainer = styled.div`
   width: 100%;
@@ -26,11 +27,6 @@ const WebviewContainer = styled.div`
     flex-grow: 1;
   }
 `;
-
-export type ExtendedWebContents = WebContents & {
-  history: string[];
-  currentIndex: number;
-};
 
 export const Webview = () => {
   const socket = useSocket();

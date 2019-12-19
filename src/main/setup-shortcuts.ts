@@ -3,6 +3,7 @@ import { MainState } from "main";
 import { envSettings } from "main/constants/env-settings";
 import { mainLogger } from "main/logger";
 import dump from "common/util/dump";
+import { ExtendedWebContents } from "common/extended-web-contents";
 
 const logger = mainLogger.childWithName("shortcuts");
 
@@ -20,18 +21,19 @@ function inputToString(input: Electron.Input): string {
   if (input.shift) {
     tokens.push("Shift");
   }
-  tokens.push(input.key.toLowerCase());
-  return tokens.join("+");
+  tokens.push(input.key);
+  return tokens.join("+").toLowerCase();
 }
 
-function inputMatches(spec: string, inputString: string): boolean {
+function inputMatches(specIn: string, inputString: string): boolean {
+  let spec = specIn.toLowerCase();
   if (spec === inputString) {
     return true;
   }
-  if (spec.replace("CmdOrCtrl", "Ctrl") === inputString) {
+  if (spec.replace("cmdorctrl", "ctrl") === inputString) {
     return true;
   }
-  if (spec.replace("CmdOrCtrl", "Cmd") === inputString) {
+  if (spec.replace("cmdorctrl", "cmd") === inputString) {
     return true;
   }
   return false;
@@ -39,29 +41,65 @@ function inputMatches(spec: string, inputString: string): boolean {
 
 type Action = (ms: MainState) => Promise<void>;
 
-type Shortcut = [string, Action];
+type Shortcut = [string[], Action];
 
 type Shortcuts = Shortcut[];
 
 const shortcuts: Shortcuts = [
-  ["CmdOrCtrl+Shift+c", openDevTools],
-  ["CmdOrCtrl+Alt+Shift+c", openWebviewDevTools],
+  [
+    ["CmdOrCtrl+Shift+C"],
+    async ms => openOrFocusDevTools(ms.browserWindow?.webContents),
+  ],
+  [
+    ["CmdOrCtrl+Alt+Shift+C"],
+    async ms => openOrFocusDevTools(getWebviewWebContents(ms)),
+  ],
+  [["F5", "CmdOrCtrl+R"], async ms => getWebviewWebContents(ms)?.reload()],
+  [
+    ["CmdOrCtrl+F5", "CmdOrCtrl+Shift+R"],
+    async ms => getWebviewWebContents(ms)?.reloadIgnoringCache(),
+  ],
+  [["Alt+ArrowLeft"], async ms => webContentsGoBack(getWebviewWebContents(ms))],
+  [
+    ["Alt+ArrowRight"],
+    async ms => webContentsGoForward(getWebviewWebContents(ms)),
+  ],
 ];
 
-async function openDevTools(ms: MainState) {
-  const wc = ms.browserWindow?.webContents;
+function getWebviewWebContents(ms: MainState): WebContents | undefined {
+  let winId = ms.browserWindow?.webContents?.id;
+  for (const wc of webContents.getAllWebContents()) {
+    if (wc.hostWebContents?.id == winId) {
+      return wc;
+    }
+  }
+  return undefined;
+}
+
+function openOrFocusDevTools(wc: WebContents | undefined) {
   wc?.openDevTools({ mode: "detach" });
   wc?.devToolsWebContents?.focus();
 }
 
-async function openWebviewDevTools(ms: MainState) {
-  let winId = ms.browserWindow?.webContents?.id;
-  for (const wc of webContents.getAllWebContents()) {
-    if (wc.hostWebContents?.id == winId) {
-      wc.openDevTools({ mode: "detach" });
-      wc.devToolsWebContents?.focus();
-      return;
-    }
+function webContentsGoBack(wc: WebContents | undefined) {
+  if (!wc) {
+    return;
+  }
+  let ewc = wc as ExtendedWebContents;
+  let newIndex = ewc.currentIndex - 1;
+  if (newIndex >= 0) {
+    wc.goToIndex(newIndex);
+  }
+}
+
+function webContentsGoForward(wc: WebContents | undefined) {
+  if (!wc) {
+    return;
+  }
+  let ewc = wc as ExtendedWebContents;
+  let newIndex = ewc.currentIndex + 1;
+  if (newIndex < ewc.history.length) {
+    wc.goToIndex(newIndex);
   }
 }
 
@@ -80,13 +118,16 @@ export function setupShortcuts(ms: MainState, wc: WebContents) {
       }
 
       for (const shortcut of shortcuts) {
-        let [spec, action] = shortcut;
-        if (inputMatches(spec, inputString)) {
-          ev.preventDefault();
-          action(ms).catch(e => {
-            logger.warn(`Error in shortcut ${shortcut[0]}: ${e.stack}`);
-          });
-          return;
+        let [specs, action] = shortcut;
+        for (const spec of specs) {
+          if (inputMatches(spec, inputString)) {
+            ev.preventDefault();
+            logger.info(`Triggering shortcut ${shortcut[0]}`);
+            action(ms).catch(e => {
+              logger.warn(`Error in shortcut ${shortcut[0]}: ${e.stack}`);
+            });
+            return;
+          }
         }
       }
     } catch (e) {

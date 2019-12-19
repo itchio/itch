@@ -1,9 +1,12 @@
 import { WebviewTag } from "electron";
-import React from "react";
+import React, { useState } from "react";
 import { IconButton } from "renderer/basics/IconButton";
-import { ExtendedWebContents } from "renderer/Shell/Webview";
 import { animations, fontSizes } from "renderer/theme";
 import styled from "styled-components";
+import { ExtendedWebContents } from "common/extended-web-contents";
+import { MenuTippy, MenuContents } from "renderer/basics/Menu";
+import { Button } from "renderer/basics/Button";
+import { useClickOutside } from "renderer/basics/useClickOutside";
 
 const Filler = styled.div`
   flex-grow: 1;
@@ -57,6 +60,8 @@ const Title = styled.div`
 
 export const WebviewNavigation = (props: Props) => {
   const { title, url, loading } = props;
+  const [showMenu, setShowMenu] = useState(false);
+  const coref = useClickOutside(() => setShowMenu(false));
 
   let withWebview = (f: (wv: WebviewTag, wc: ExtendedWebContents) => void) => {
     let wv = props.viewRef.current;
@@ -94,16 +99,52 @@ export const WebviewNavigation = (props: Props) => {
         disabled={!props.canGoForward}
         icon="arrow-right"
       />
-      <IconButton
-        onClick={() => withWebview(wv => wv.reload())}
-        icon="repeat"
-      />
+      {loading ? (
+        <IconButton onClick={() => withWebview(wv => wv.stop())} icon="cross" />
+      ) : (
+        <IconButton
+          onClick={() => withWebview(wv => wv.reload())}
+          icon="repeat"
+        />
+      )}
       <Title>{title}</Title>
       <Filler />
-      <IconButton
-        onClick={() => withWebview(wv => wv.openDevTools())}
-        icon="bug"
-      />
+      <MenuTippy
+        placement="bottom"
+        interactive
+        visible={showMenu}
+        appendTo={document.body}
+        content={
+          <MenuContents ref={coref("menu-contents")}>
+            {
+              <Button
+                disabled={/itch:/.test(url)}
+                onClick={() =>
+                  withWebview(wv => {
+                    window.open(wv.getURL());
+                  })
+                }
+                label="Open page in external browser"
+              />
+            }
+            <Button
+              onClick={() =>
+                withWebview((wv, wc) => {
+                  wc.openDevTools({ mode: "detach" });
+                  wc.devToolsWebContents?.focus();
+                })
+              }
+              label="Open dev tools"
+            />
+          </MenuContents>
+        }
+      >
+        <IconButton
+          ref={coref("menu-button")}
+          icon="more_vert"
+          onClick={() => setShowMenu(!showMenu)}
+        />
+      </MenuTippy>
       <div className="loader-inner"></div>
     </NavDiv>
   );
