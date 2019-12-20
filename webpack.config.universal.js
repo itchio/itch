@@ -115,7 +115,7 @@ function getCommonConfig(type, env) {
       modules: ["node_modules"],
       plugins: [new TsconfigPathsPlugin({})],
     },
-    externals: ["child_process", "net", "ws"],
+    externals: ["child_process", "net", "ws", "electron-devtools-installer"],
     module: {
       rules: [
         {

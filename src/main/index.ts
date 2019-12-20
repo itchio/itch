@@ -72,6 +72,16 @@ async function main() {
     logger.info(`full env settings:\n${dump(envSettings)}`);
   }
 
+  if (env.development) {
+    const {
+      default: installExtension,
+      REACT_DEVELOPER_TOOLS,
+    } = require("electron-devtools-installer");
+    installExtension(REACT_DEVELOPER_TOOLS)
+      .then((name: string) => logger.info(`Added Extension:  ${name}`))
+      .catch((err: Error) => console.log("An error occurred: ", err));
+  }
+
   prepareItchProtocol();
 
   app.on("web-contents-created", (ev, wc) => {
