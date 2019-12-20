@@ -1,25 +1,17 @@
 import { messages } from "common/butlerd";
 import { Download, Game, GameRecord } from "common/butlerd/messages";
-import { formatDurationAsMessage } from "common/format/datetime";
-import { fileSize } from "common/format/filesize";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
 import { DownloadWithProgress } from "main/drive-downloads";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useAsyncCallback } from "react-async-hook";
-import { FormattedMessage } from "react-intl";
-import { Button } from "renderer/basics/Button";
-import { IconButton } from "renderer/basics/IconButton";
-import { MenuTippy } from "renderer/basics/Menu";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
-import { InstallModalContents } from "renderer/Shell/InstallModal";
+import { GameGridItem } from "renderer/pages/GameGridItem";
 import { useListen } from "renderer/Socket";
 import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
-import { ProgressBar } from "renderer/pages/ProgressBar";
-import classNames from "classnames";
 
 let coverBorder = 1;
 const coverWidth = 300;
@@ -136,10 +128,12 @@ export const GameGrid = function(props: Props) {
     setDownloads({ ...downloads, ...fresh });
   };
 
-  const [gameIdLoading, setGameIdLoading] = useState<number | undefined>();
   const [gameBeingInstalled, setGameBeingInstalled] = useState<
     Game | undefined
   >();
+  const stopInstall = useMemo(() => {
+    return () => setGameBeingInstalled(undefined);
+  }, [setGameBeingInstalled]);
   const coref = useClickOutside(() => {
     setGameBeingInstalled(undefined);
   });
@@ -159,15 +153,12 @@ export const GameGrid = function(props: Props) {
   ) {
     const gameId = findGameId(ev.currentTarget);
     if (!gameId) {
+      console.warn(`no game id found for `, ev.currentTarget);
       return;
     }
-    try {
-      setGameIdLoading(gameId);
-      const { game } = await socket.call(messages.FetchGame, { gameId });
-      setGameBeingInstalled(game);
-    } finally {
-      setGameIdLoading(undefined);
-    }
+
+    const { game } = await socket.call(messages.FetchGame, { gameId });
+    setGameBeingInstalled(game);
   });
 
   const purchase = useAsyncCallback(async function(
@@ -175,6 +166,7 @@ export const GameGrid = function(props: Props) {
   ) {
     const gameId = findGameId(ev.currentTarget);
     if (!gameId) {
+      console.warn(`no game id found for `, ev.currentTarget);
       return;
     }
 
@@ -188,17 +180,6 @@ export const GameGrid = function(props: Props) {
     } catch (e) {
       console.warn(e);
     }
-  });
-
-  const uninstall = useAsyncCallback(async function(
-    ev: React.MouseEvent<HTMLButtonElement>
-  ) {
-    const gameId = findGameId(ev.currentTarget);
-    if (!gameId) {
-      return;
-    }
-
-    alert("stub!");
   });
 
   useEffect(() => {
@@ -238,116 +219,23 @@ export const GameGrid = function(props: Props) {
     })().catch(e => console.warn(e));
   });
 
-  let makeButton = (game: GameRecord, icon: boolean): JSX.Element => {
-    if (icon) {
-      return <IconButton icon="install" onClick={install.execute} />;
-    } else {
-      return (
-        <Button
-          icon="install"
-          label="Install"
-          onClick={install.execute}
-          secondary
-        />
-      );
-    }
-  };
-
   return (
     <>
       <GameGridContainer>
         {props.records.map(game => {
           const dl = downloads[game.id];
-
           return (
-            <div
-              className={classNames("item", { installed: !!game.installedAt })}
+            <GameGridItem
               key={game.id}
-              data-game-id={game.id}
-            >
-              <a href={`itch://games/${game.id}`}>
-                <div className="cover-container">
-                  {dl && !dl.finishedAt ? (
-                    <div className="download-overlay">
-                      {dl.progress ? (
-                        <>
-                          <ProgressBar progress={dl.progress.progress} />
-                          <div>
-                            {fileSize(dl.progress.bps)} / s &mdash;{" "}
-                            <FormattedMessage
-                              {...formatDurationAsMessage(dl.progress.eta)}
-                            />{" "}
-                          </div>
-                        </>
-                      ) : (
-                        "Queued"
-                      )}
-                    </div>
-                  ) : game.installedAt ? null : null}
-                  {game.cover ? (
-                    <img className="cover" src={game.cover} />
-                  ) : (
-                    <div className="cover missing" />
-                  )}
-                </div>
-              </a>
-              <div className="title">{game.title}</div>
-              <div className="buttons">
-                <div className="filler" />
-                {game.owned ? null : (
-                  <IconButton icon="heart-filled" onClick={purchase.execute} />
-                )}
-
-                {game.installedAt ? (
-                  gameBeingInstalled?.id == game.id ? (
-                    <MenuTippy
-                      placement="left-end"
-                      appendTo={document.body}
-                      content={
-                        <InstallModalContents
-                          ref={coref("install-modal-contents")}
-                          coref={coref}
-                          game={gameBeingInstalled}
-                          onClose={() => setGameBeingInstalled(undefined)}
-                        />
-                      }
-                      interactive
-                      visible
-                    >
-                      {makeButton(game, true)}
-                    </MenuTippy>
-                  ) : (
-                    makeButton(game, true)
-                  )
-                ) : null}
-                {game.installedAt ? (
-                  <Button
-                    icon="play2"
-                    label="Launch"
-                    onClick={launch.execute}
-                  />
-                ) : gameBeingInstalled?.id == game.id ? (
-                  <MenuTippy
-                    placement="left-end"
-                    appendTo={document.body}
-                    content={
-                      <InstallModalContents
-                        ref={coref("install-modal-contents")}
-                        coref={coref}
-                        game={gameBeingInstalled}
-                        onClose={() => setGameBeingInstalled(undefined)}
-                      />
-                    }
-                    interactive
-                    visible
-                  >
-                    {makeButton(game, false)}
-                  </MenuTippy>
-                ) : (
-                  makeButton(game, false)
-                )}
-              </div>
-            </div>
+              game={game}
+              dl={dl}
+              coref={coref}
+              install={install}
+              launch={launch}
+              purchase={purchase}
+              stopInstall={stopInstall}
+              gameBeingInstalled={gameBeingInstalled}
+            />
           );
         })}
       </GameGridContainer>
