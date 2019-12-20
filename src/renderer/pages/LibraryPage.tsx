@@ -322,7 +322,6 @@ const CollectionList = (props: {
           sortBy: "updatedAt",
         }
       );
-      console.log(items);
       setCollections(items);
     })();
   }, []);

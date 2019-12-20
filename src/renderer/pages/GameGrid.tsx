@@ -12,6 +12,7 @@ import { GameGridItem } from "renderer/pages/GameGridItem";
 import { useListen } from "renderer/Socket";
 import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
+import { useAsyncCb } from "renderer/use-async-cb";
 
 let coverBorder = 1;
 const coverWidth = 300;
@@ -138,49 +139,52 @@ export const GameGrid = function(props: Props) {
     setGameBeingInstalled(undefined);
   });
 
-  const launch = useAsyncCallback(async function(
-    ev: React.MouseEvent<HTMLButtonElement>
-  ) {
-    const gameId = findGameId(ev.currentTarget);
-    if (!gameId) {
-      return;
-    }
-    await socket.query(queries.launchGame, { gameId });
-  });
-
-  const install = useAsyncCallback(async function(
-    ev: React.MouseEvent<HTMLButtonElement>
-  ) {
-    const gameId = findGameId(ev.currentTarget);
-    if (!gameId) {
-      console.warn(`no game id found for `, ev.currentTarget);
-      return;
-    }
-
-    const { game } = await socket.call(messages.FetchGame, { gameId });
-    setGameBeingInstalled(game);
-  });
-
-  const purchase = useAsyncCallback(async function(
-    ev: React.MouseEvent<HTMLButtonElement>
-  ) {
-    const gameId = findGameId(ev.currentTarget);
-    if (!gameId) {
-      console.warn(`no game id found for `, ev.currentTarget);
-      return;
-    }
-
-    try {
-      const { game } = await socket.callWithRefresh(messages.FetchGame, {
-        gameId,
-      });
-      if (game) {
-        location.href = `${game.url}/purchase`;
+  const [launch] = useAsyncCb(
+    async function(ev: React.MouseEvent<HTMLButtonElement>) {
+      const gameId = findGameId(ev.currentTarget);
+      if (!gameId) {
+        return;
       }
-    } catch (e) {
-      console.warn(e);
-    }
-  });
+      await socket.query(queries.launchGame, { gameId });
+    },
+    [socket]
+  );
+
+  const [install] = useAsyncCb(
+    async function(ev: React.MouseEvent<HTMLButtonElement>) {
+      const gameId = findGameId(ev.currentTarget);
+      if (!gameId) {
+        console.warn(`no game id found for `, ev.currentTarget);
+        return;
+      }
+
+      const { game } = await socket.call(messages.FetchGame, { gameId });
+      setGameBeingInstalled(game);
+    },
+    [socket]
+  );
+
+  const [purchase] = useAsyncCb(
+    async function(ev: React.MouseEvent<HTMLButtonElement>) {
+      const gameId = findGameId(ev.currentTarget);
+      if (!gameId) {
+        console.warn(`no game id found for `, ev.currentTarget);
+        return;
+      }
+
+      try {
+        const { game } = await socket.callWithRefresh(messages.FetchGame, {
+          gameId,
+        });
+        if (game) {
+          location.href = `${game.url}/purchase`;
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+    },
+    [socket]
+  );
 
   useEffect(() => {
     (async () => {
@@ -224,6 +228,10 @@ export const GameGrid = function(props: Props) {
       <GameGridContainer>
         {props.records.map(game => {
           const dl = downloads[game.id];
+          // N.B: we have to be extremely careful what we pass here.
+          // GameGridItem is a memo'd component, so if we don't want to
+          // re-render the whole grid, we need to not change props for all
+          // items at once
           return (
             <GameGridItem
               key={game.id}
@@ -234,7 +242,11 @@ export const GameGrid = function(props: Props) {
               launch={launch}
               purchase={purchase}
               stopInstall={stopInstall}
-              gameBeingInstalled={gameBeingInstalled}
+              gameBeingInstalled={
+                gameBeingInstalled?.id == game.id
+                  ? gameBeingInstalled
+                  : undefined
+              }
             />
           );
         })}

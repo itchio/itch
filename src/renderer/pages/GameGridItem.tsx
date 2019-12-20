@@ -4,7 +4,6 @@ import { formatDurationAsMessage } from "common/format/datetime";
 import { fileSize } from "common/format/filesize";
 import { DownloadWithProgress } from "main/drive-downloads";
 import React from "react";
-import { UseAsyncReturn } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { Icon } from "renderer/basics/Icon";
@@ -14,22 +13,20 @@ import { ClickOutsideRefer } from "renderer/basics/useClickOutside";
 import { ProgressBar } from "renderer/pages/ProgressBar";
 import { InstallModalContents } from "renderer/Shell/InstallModal";
 
-type OnLaunch = UseAsyncReturn<void, [React.MouseEvent<HTMLButtonElement>]>;
-type OnInstall = UseAsyncReturn<void, [React.MouseEvent<HTMLButtonElement>]>;
-type OnPurchase = UseAsyncReturn<void, [React.MouseEvent<HTMLButtonElement>]>;
+type ClickHandler = (ev: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
 
 interface Props {
   coref: ClickOutsideRefer;
   game: GameRecord;
-  launch: OnLaunch;
-  install: OnInstall;
-  purchase: OnPurchase;
+  launch: ClickHandler;
+  install: ClickHandler;
+  purchase: ClickHandler;
   dl?: DownloadWithProgress;
   stopInstall: () => void;
   gameBeingInstalled?: Game;
 }
 
-export const GameGridItem = (props: Props) => {
+export const GameGridItem = React.memo((props: Props) => {
   const {
     coref,
     game,
@@ -37,8 +34,8 @@ export const GameGridItem = (props: Props) => {
     install,
     purchase,
     launch,
-    gameBeingInstalled,
     stopInstall,
+    gameBeingInstalled,
   } = props;
 
   let wrapInTippyIfNeeded = (content: JSX.Element): JSX.Element => {
@@ -84,19 +81,19 @@ export const GameGridItem = (props: Props) => {
       <div className="buttons">
         <div className="filler" />
         {game.owned ? null : (
-          <IconButton icon="heart-filled" onClick={purchase.execute} />
+          <IconButton icon="heart-filled" onClick={purchase} />
         )}
 
         {wrapInTippyIfNeeded(
           <InstallButton icon={!!game.installedAt} install={install} />
         )}
         {game.installedAt && (
-          <Button icon="play2" label="Launch" onClick={launch.execute} />
+          <Button icon="play2" label="Launch" onClick={launch} />
         )}
       </div>
     </div>
   );
-};
+});
 
 const DownloadOverlay = (props: { dl?: DownloadWithProgress }) => {
   const { dl } = props;
@@ -123,18 +120,18 @@ const DownloadOverlay = (props: { dl?: DownloadWithProgress }) => {
 };
 
 const InstallButton = React.forwardRef(
-  (props: { icon: boolean; install: OnInstall }, ref: any) => {
+  (props: { icon: boolean; install: ClickHandler }, ref: any) => {
     const { icon, install } = props;
 
     if (icon) {
-      return <IconButton ref={ref} icon="install" onClick={install.execute} />;
+      return <IconButton ref={ref} icon="install" onClick={install} />;
     } else {
       return (
         <Button
           ref={ref}
           icon="install"
           label="Install"
-          onClick={install.execute}
+          onClick={install}
           secondary
         />
       );
