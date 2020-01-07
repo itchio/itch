@@ -145,11 +145,8 @@ export const Webview = () => {
 
 function onWebviewFocus() {
   // When clicking on a webview, no "click" event is generated,
-  // so packages like "react-click-outside-listener" don't work.
+  // so we generate our own.
   //
-  // However, when clicking on a webview, a "focus" event is generated
-  // for the webview, so we can send a synthetic click to the body
-  // and.. tada! "outside click" listeners work again.
-  // document.body.click();
+  // See `useClickOutside`
   document.dispatchEvent(new Event("click-outside"));
 }

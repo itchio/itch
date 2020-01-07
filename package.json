@@ -47,7 +47,6 @@
     "polished": "^3.4.1",
     "react": "^16.12.0",
     "react-async-hook": "^3.6.1",
-    "react-click-outside-listener": "^2.0.0",
     "react-dom": "^16.8.6",
     "react-hint": "^3.2.0",
     "react-intl": "^3.7.0",
@@ -150,6 +149,7 @@
     "upload-coverage": "codecov -f ./coverage/lcov.info",
     "i18n": "node release/ci-i18n-check.js",
     "ts-check": "tsc --noEmit --skipLibCheck",
+    "ts-watch": "tsc --noEmit --skipLibCheck --watch",
     "react-lint": "react-lint ./src/renderer/index.tsx"
   },
   "lint-staged": {

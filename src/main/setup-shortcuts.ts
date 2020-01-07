@@ -54,6 +54,11 @@ const shortcuts: Shortcuts = [
     ["CmdOrCtrl+Alt+Shift+C"],
     async ms => openOrFocusDevTools(getWebviewWebContents(ms)),
   ],
+  [["CmdOrCtrl+Q"], async ms => ms.browserWindow?.close()],
+  [
+    ["Shift+F5"],
+    async ms => ms.browserWindow?.webContents?.reloadIgnoringCache(),
+  ],
   [["F5", "CmdOrCtrl+R"], async ms => getWebviewWebContents(ms)?.reload()],
   [
     ["CmdOrCtrl+F5", "CmdOrCtrl+Shift+R"],

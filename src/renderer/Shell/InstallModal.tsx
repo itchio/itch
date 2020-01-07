@@ -29,6 +29,8 @@ import _ from "lodash";
 import { useListen } from "renderer/Socket";
 import { packets } from "common/packets";
 import { formatDurationAsMessage } from "common/format/datetime";
+import { IconButton } from "renderer/basics/IconButton";
+import { useSingleton } from "@tippy.js/react";
 
 const InstallMenuContents = styled(MenuContents)`
   overflow: hidden;
@@ -93,12 +95,8 @@ const InstallMenuContents = styled(MenuContents)`
   }
 `;
 
-const UploadInfo = styled.div`
+const UploadInfoDiv = styled.div`
   font-size: ${fontSizes.normal};
-
-  .icon {
-    padding: 0.4em;
-  }
 
   padding: 0.2em 0;
   width: 350px;
@@ -106,6 +104,10 @@ const UploadInfo = styled.div`
   p {
     line-height: 1.6;
     padding: 0.4em 0.8em;
+
+    & > .icon {
+      padding: 0.4em;
+    }
 
     &.warning {
       font-size: ${fontSizes.small};
@@ -276,8 +278,18 @@ export const InstallModalContents = React.forwardRef(
       }
     });
 
+    const launch = useAsyncCallback(async (caveId: string) => {
+      props.onClose();
+
+      await socket.query(queries.launchGame, {
+        gameId: props.game.id,
+        caveId,
+      });
+    });
+
     const uninstall = useAsyncCallback(async (cave: Cave) => {
       setUninstalling(null);
+      props.onClose();
       setDownloads(_.omit(downloads, cave.upload.id));
       await socket.query(queries.uninstallGame, { cave });
     });
@@ -296,7 +308,12 @@ export const InstallModalContents = React.forwardRef(
       <>
         {uninstalling ? (
           <Modal ref={props.coref("uninstall-modal")}>
-            <p>Are you sure you want to uninstalling this?</p>
+            <p>
+              <FormattedMessage
+                id="prompt.uninstall.message"
+                values={{ title: props.game.title }}
+              />
+            </p>
             <Buttons>
               <Button
                 secondary
@@ -332,6 +349,7 @@ export const InstallModalContents = React.forwardRef(
                   downloadsByUpload={downloads}
                   items={uploads.compatible}
                   toggleInstalled={toggleInstalled}
+                  launch={launch}
                 />
                 {!_.isEmpty(uploads.local) && (
                   <>
@@ -415,10 +433,12 @@ const UploadGroup = (props: {
   items: Upload[];
   queued: Queued;
   toggleInstalled: UseAsyncReturn<void, [Upload]>;
+  launch: UseAsyncReturn<void, [string]>;
   downloadsByUpload: DownloadsByUpload;
   cavesByUpload: CavesByUpload;
 }) => {
-  const { items, toggleInstalled, isOther } = props;
+  const { items, toggleInstalled, launch, isOther } = props;
+
   return (
     <>
       {items.map(u => {
@@ -428,14 +448,16 @@ const UploadGroup = (props: {
         if (dl && dl.finishedAt) {
           dl = undefined;
         }
+        let cave = props.cavesByUpload[u.id];
 
         return (
           <MenuTippy
             key={u.id}
             placement="right-start"
             interactive
+            trigger="click"
             content={
-              <UploadInfo>
+              <UploadInfoDiv>
                 {dl && dl.progress ? (
                   <p>
                     {(dl.progress.progress * 100).toFixed()}% &mdash;{" "}
@@ -473,15 +495,61 @@ const UploadGroup = (props: {
                     Updated <TimeAgo date={u.updatedAt} />
                   </p>
                 )}
-                {isOther ? (
+                {cave ? (
+                  <>
+                    <p>
+                      Installed <TimeAgo date={cave.stats.installedAt} />{" "}
+                      &mdash; {fileSize(cave.installInfo.installedSize)} on disk
+                    </p>
+                    <p>
+                      Last played <TimeAgo date={cave.stats.lastTouchedAt} />{" "}
+                      &mdash; Total{" "}
+                      <FormattedMessage
+                        {...formatDurationAsMessage(cave.stats.secondsRun)}
+                      />
+                    </p>
+                  </>
+                ) : null}
+                {isOther && !cave && !dl ? (
                   <p className="warning">This upload may be incompatible.</p>
                 ) : null}
-              </UploadInfo>
+                <div className="button-group">
+                  {cave ? (
+                    <>
+                      <IconButton
+                        icon="play2"
+                        onClick={() => {
+                          if (cave) {
+                            launch.execute(cave.id);
+                          }
+                        }}
+                      />
+                      <IconButton
+                        icon="folder-open"
+                        onClick={() => console.log("stub")}
+                      />
+                      <IconButton
+                        icon="uninstall"
+                        onClick={() => toggleInstalled.execute(u)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      {dl ? null : (
+                        <IconButton
+                          icon="install"
+                          onClick={() => toggleInstalled.execute(u)}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
+              </UploadInfoDiv>
             }
             boundary="viewport"
           >
             <Button
-              onClick={() => toggleInstalled.execute(u)}
+              // onClick={() => toggleInstalled.execute(u)}
               label={
                 <UploadTitle
                   showIcon={false}
@@ -496,11 +564,7 @@ const UploadGroup = (props: {
                           />{" "}
                         </>
                       ) : (
-                        <Icon
-                          icon={
-                            props.cavesByUpload[u.id] ? "checked" : "install"
-                          }
-                        />
+                        <Icon icon={cave ? "checked" : "install"} />
                       )}
                     </>
                   }

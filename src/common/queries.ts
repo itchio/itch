@@ -30,7 +30,7 @@ export const queries = wireQueries({
   getCurrentLocale: query<void, { currentLocale: CurrentLocale }>(),
   switchLanguage: query<{ lang: string }, void>(),
 
-  launchGame: query<{ gameId: number }, void>(),
+  launchGame: query<{ gameId: number; caveId?: string }, void>(),
   uninstallGame: query<{ cave: Cave }, void>(),
 
   getOngoingLaunchesForGame: query<

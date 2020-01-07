@@ -84,12 +84,12 @@ export const GameGridItem = React.memo((props: Props) => {
           <IconButton icon="heart-filled" onClick={purchase} />
         )}
 
-        {wrapInTippyIfNeeded(
-          <InstallButton icon={!!game.installedAt} install={install} />
-        )}
-        {game.installedAt && (
-          <Button icon="play2" label="Launch" onClick={launch} />
-        )}
+        <InstallButton
+          icon={!!game.installedAt}
+          install={install}
+          wrapper={wrapInTippyIfNeeded}
+        />
+        {game.installedAt && <Button label="Launch" onClick={launch} />}
       </div>
     </div>
   );
@@ -120,13 +120,20 @@ const DownloadOverlay = (props: { dl?: DownloadWithProgress }) => {
 };
 
 const InstallButton = React.forwardRef(
-  (props: { icon: boolean; install: ClickHandler }, ref: any) => {
-    const { icon, install } = props;
+  (
+    props: {
+      icon: boolean;
+      install: ClickHandler;
+      wrapper: (el: JSX.Element) => JSX.Element;
+    },
+    ref: any
+  ) => {
+    const { icon, install, wrapper } = props;
 
     if (icon) {
-      return <IconButton ref={ref} icon="install" onClick={install} />;
+      return wrapper(<IconButton ref={ref} icon="install" onClick={install} />);
     } else {
-      return (
+      return wrapper(
         <Button
           ref={ref}
           icon="install"

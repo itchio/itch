@@ -32,10 +32,6 @@ const GameGridContainer = styled.div`
   & > .item {
     background: #202020;
     border: 1px solid #252525;
-    &.installed {
-      border: 1px solid #323232;
-      box-shadow: 0 0 20px #323232;
-    }
     border-radius: 4px;
 
     .cover-container {

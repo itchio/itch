@@ -15,7 +15,7 @@ export const MenuContents = styled.div`
   flex-direction: column;
   align-items: stretch;
 
-  button {
+  button:not(.icon-button) {
     flex-shrink: 0;
     margin-right: 0 !important;
     justify-content: flex-start;
@@ -29,6 +29,23 @@ export const MenuContents = styled.div`
 
     &:hover {
       background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .button-group {
+    padding: 8px;
+    align-self: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+
+    .button {
+      margin-right: 1em;
+
+      &:last-child {
+        margin-right: 0;
+      }
     }
   }
 `;
