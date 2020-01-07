@@ -1,5 +1,5 @@
 import { Profile, Cave } from "common/butlerd/messages";
-import { OngoingLaunch } from "common/launches";
+import { OngoingLaunch, OngoingLaunches } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { WebviewState } from "main";
 import { DownloadWithProgress } from "main/drive-downloads";
@@ -37,6 +37,8 @@ export const queries = wireQueries({
     { gameId: number },
     { launches: OngoingLaunch[] }
   >(),
+
+  getOngoingLaunches: query<void, { launches: OngoingLaunches }>(),
 
   openExternalURL: query<{ url: string }, void>(),
 });

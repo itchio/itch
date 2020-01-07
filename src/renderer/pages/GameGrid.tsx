@@ -1,18 +1,18 @@
 import { messages } from "common/butlerd";
 import { Download, Game, GameRecord } from "common/butlerd/messages";
+import { OngoingLaunches } from "common/launches";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
 import { DownloadWithProgress } from "main/drive-downloads";
-import React, { useEffect, useState, useMemo } from "react";
-import { useAsyncCallback } from "react-async-hook";
+import React, { useEffect, useMemo, useState } from "react";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { GameGridItem } from "renderer/pages/GameGridItem";
 import { useListen } from "renderer/Socket";
-import { fontSizes, mixins } from "renderer/theme";
-import styled from "styled-components";
+import { fontSizes, mixins, animations } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
+import styled from "styled-components";
 
 let coverBorder = 1;
 const coverWidth = 300;
@@ -40,6 +40,8 @@ const GameGridContainer = styled.div`
       height: ${coverHeight * ratio}px;
 
       & > .download-overlay {
+        animation: ${animations.fadeIn} 0.2s ease-out;
+
         position: absolute;
         left: 0;
         right: 0;
@@ -189,6 +191,21 @@ export const GameGrid = function(props: Props) {
     })().catch(e => console.warn(e));
   }, []);
 
+  const [launches, setLaunches] = useState<OngoingLaunches>({});
+
+  useEffect(() => {
+    async () => {
+      const { launches } = await socket.query(queries.getOngoingLaunches);
+      setLaunches(launches);
+    };
+  }, []);
+  useListen(socket, packets.launchChanged, ({ launchId, launch }) => {
+    setLaunches(old => ({ ...old, [launchId]: launch }));
+  });
+  useListen(socket, packets.launchEnded, ({ launchId }) => {
+    setLaunches(old => _.omit(old, launchId));
+  });
+
   let downloadChanged = ({ download }: { download: Download }) => {
     mergeDownloads({ [download.game.id]: download });
   };
@@ -219,6 +236,8 @@ export const GameGrid = function(props: Props) {
     })().catch(e => console.warn(e));
   });
 
+  const launchesByGameId = _.keyBy(launches, l => l.gameId);
+
   return (
     <>
       <GameGridContainer>
@@ -243,6 +262,7 @@ export const GameGrid = function(props: Props) {
                   ? gameBeingInstalled
                   : undefined
               }
+              beingLaunched={!!launchesByGameId[game.id]}
             />
           );
         })}

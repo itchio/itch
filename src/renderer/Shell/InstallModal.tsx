@@ -1,36 +1,34 @@
 import { messages } from "common/butlerd";
 import {
+  Cave,
   FetchGameUploadsParams,
   Game,
   Upload,
   UploadType,
-  Cave,
 } from "common/butlerd/messages";
+import { formatDurationAsMessage } from "common/format/datetime";
 import { fileSize } from "common/format/filesize";
+import { packets } from "common/packets";
+import { queries } from "common/queries";
+import _ from "lodash";
+import { DownloadWithProgress } from "main/drive-downloads";
 import React, { useEffect, useRef, useState } from "react";
 import { useAsyncCallback, UseAsyncReturn } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
-import { ErrorState } from "renderer/basics/ErrorState";
 import { Icon } from "renderer/basics/Icon";
-import { Spinner, LoadingCircle } from "renderer/basics/LoadingCircle";
+import { IconButton } from "renderer/basics/IconButton";
+import { LoadingCircle, Spinner } from "renderer/basics/LoadingCircle";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
-import { Modal, Buttons } from "renderer/basics/Modal";
 import { TimeAgo } from "renderer/basics/TimeAgo";
 import { uploadIcons, UploadTitle } from "renderer/basics/upload";
+import { ClickOutsideRefer } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { pokeTippy } from "renderer/poke-tippy";
-import { fontSizes } from "renderer/theme";
-import styled from "styled-components";
-import { ClickOutsideRefer } from "renderer/basics/useClickOutside";
-import { queries } from "common/queries";
-import { DownloadWithProgress } from "main/drive-downloads";
-import _ from "lodash";
 import { useListen } from "renderer/Socket";
-import { packets } from "common/packets";
-import { formatDurationAsMessage } from "common/format/datetime";
-import { IconButton } from "renderer/basics/IconButton";
-import { useSingleton } from "@tippy.js/react";
+import { fontSizes } from "renderer/theme";
+import { useAsyncCb } from "renderer/use-async-cb";
+import styled from "styled-components";
 
 const InstallMenuContents = styled(MenuContents)`
   overflow: hidden;
@@ -110,10 +108,7 @@ const UploadInfoDiv = styled.div`
     }
 
     &.warning {
-      font-size: ${fontSizes.small};
-      background: ${p => p.theme.colors.errorBg};
-      color: ${p => p.theme.colors.errorText};
-      border-radius: 0 0 4px 4px;
+      color: ${p => p.theme.colors.errorBg};
     }
   }
 `;
@@ -145,7 +140,7 @@ interface Queued {
 export const InstallModalContents = React.forwardRef(
   (props: Props, ref: any) => {
     const socket = useSocket();
-    const [uninstalling, setUninstalling] = useState<Cave | null>(null);
+    const [fetchNumber, setFetchNumber] = useState(0);
     const [loading, setLoading] = useState(true);
     const [queued, setQueued] = useState<Queued>({});
 
@@ -219,7 +214,7 @@ export const InstallModalContents = React.forwardRef(
           alert(e.stack);
         }
       })();
-    }, []);
+    }, [fetchNumber]);
 
     useListen(socket, packets.downloadStarted, ({ download }) => {
       mergeDownloads({ [download.upload.id]: download });
@@ -234,8 +229,8 @@ export const InstallModalContents = React.forwardRef(
     useListen(socket, packets.gameInstalled, ({ cave }) => {
       mergeCaves({ [cave.upload.id]: cave });
     });
-    useListen(socket, packets.gameUninstalled, ({ uploadId }) => {
-      setCaves(_.omit(caves, uploadId));
+    useListen(socket, packets.gameUninstalled, () => {
+      setFetchNumber(n => n + 1);
     });
 
     const divRef = useRef<HTMLDivElement>(null);
@@ -243,40 +238,52 @@ export const InstallModalContents = React.forwardRef(
       pokeTippy(divRef);
     });
 
-    const toggleInstalled = useAsyncCallback(async (upload: Upload) => {
-      try {
-        setQueued({ ...queued, [upload.id]: true });
+    const [install] = useAsyncCb(
+      async (upload: Upload) => {
+        try {
+          setQueued({ ...queued, [upload.id]: true });
+          const locsRes = await socket.call(messages.InstallLocationsList, {});
 
-        const { items } = await socket.call(messages.FetchCaves, {
-          filters: {
-            gameId: props.game.id,
-          },
-        });
-        const existingCave = _.find<Cave>(
-          items,
-          x => x.upload.id === upload.id
-        );
-        if (existingCave) {
+          await socket.call(messages.InstallQueue, {
+            game: props.game,
+            upload: upload,
+            queueDownload: true,
+            installLocationId: locsRes.installLocations[0].id,
+          });
+          props.onClose();
+        } catch (e) {
           setQueued(_.omit(queued, upload.id));
-
-          // in this case, uninstall, but confirm first
-          setUninstalling(existingCave);
-          return;
         }
+      },
+      [socket]
+    );
 
-        props.onClose();
-        const locsRes = await socket.call(messages.InstallLocationsList, {});
+    const [uninstall] = useAsyncCb(
+      async (upload: Upload) => {
+        try {
+          setQueued({ ...queued, [upload.id]: true });
+          const { items } = await socket.call(messages.FetchCaves, {
+            filters: {
+              gameId: props.game.id,
+            },
+          });
+          const existingCave = _.find<Cave>(
+            items,
+            x => x.upload.id === upload.id
+          );
+          if (existingCave) {
+            setQueued(_.omit(queued, upload.id));
 
-        await socket.call(messages.InstallQueue, {
-          game: props.game,
-          upload: upload,
-          queueDownload: true,
-          installLocationId: locsRes.installLocations[0].id,
-        });
-      } catch (e) {
-        setQueued(_.omit(queued, upload.id));
-      }
-    });
+            // in this case, uninstall, but confirm first
+            await socket.query(queries.uninstallGame, { cave: existingCave });
+            props.onClose();
+          }
+        } catch (e) {
+          setQueued(_.omit(queued, upload.id));
+        }
+      },
+      [socket]
+    );
 
     const launch = useAsyncCallback(async (caveId: string) => {
       props.onClose();
@@ -285,13 +292,6 @@ export const InstallModalContents = React.forwardRef(
         gameId: props.game.id,
         caveId,
       });
-    });
-
-    const uninstall = useAsyncCallback(async (cave: Cave) => {
-      setUninstalling(null);
-      props.onClose();
-      setDownloads(_.omit(downloads, cave.upload.id));
-      await socket.query(queries.uninstallGame, { cave });
     });
 
     const [showOthers, setShowOthers] = useState(false);
@@ -306,32 +306,6 @@ export const InstallModalContents = React.forwardRef(
 
     return (
       <>
-        {uninstalling ? (
-          <Modal ref={props.coref("uninstall-modal")}>
-            <p>
-              <FormattedMessage
-                id="prompt.uninstall.message"
-                values={{ title: props.game.title }}
-              />
-            </p>
-            <Buttons>
-              <Button
-                secondary
-                label="Cancel"
-                onClick={() => setUninstalling(null)}
-              />
-              <Button
-                autoFocus
-                label="Uninstall"
-                icon="uninstall"
-                onClick={() => {
-                  console.log("Uninstall clicked!");
-                  uninstall.execute(uninstalling);
-                }}
-              ></Button>
-            </Buttons>
-          </Modal>
-        ) : null}
         <InstallMenuContents ref={ref}>
           <div ref={divRef} />
           {loading ? (
@@ -348,8 +322,9 @@ export const InstallModalContents = React.forwardRef(
                   cavesByUpload={caves}
                   downloadsByUpload={downloads}
                   items={uploads.compatible}
-                  toggleInstalled={toggleInstalled}
                   launch={launch}
+                  install={install}
+                  uninstall={uninstall}
                 />
                 {!_.isEmpty(uploads.local) && (
                   <>
@@ -363,7 +338,9 @@ export const InstallModalContents = React.forwardRef(
                       cavesByUpload={caves}
                       downloadsByUpload={downloads}
                       items={uploads.local}
-                      toggleInstalled={toggleInstalled}
+                      launch={launch}
+                      install={install}
+                      uninstall={uninstall}
                     />
                   </>
                 )}
@@ -384,7 +361,9 @@ export const InstallModalContents = React.forwardRef(
                         downloadsByUpload={downloads}
                         isOther
                         items={uploads.others}
-                        toggleInstalled={toggleInstalled}
+                        install={install}
+                        uninstall={uninstall}
+                        launch={launch}
                       />
                     </>
                   ) : (
@@ -411,8 +390,6 @@ export const InstallModalContents = React.forwardRef(
               />
             </>
           )}
-
-          <ErrorState error={toggleInstalled.error} />
         </InstallMenuContents>
       </>
     );
@@ -432,12 +409,13 @@ const UploadGroup = (props: {
   isOther?: boolean;
   items: Upload[];
   queued: Queued;
-  toggleInstalled: UseAsyncReturn<void, [Upload]>;
   launch: UseAsyncReturn<void, [string]>;
+  install: (upload: Upload) => Promise<void>;
+  uninstall: (upload: Upload) => Promise<void>;
   downloadsByUpload: DownloadsByUpload;
   cavesByUpload: CavesByUpload;
 }) => {
-  const { items, toggleInstalled, launch, isOther } = props;
+  const { items, install, uninstall, launch, isOther } = props;
 
   return (
     <>
@@ -501,13 +479,19 @@ const UploadGroup = (props: {
                       Installed <TimeAgo date={cave.stats.installedAt} />{" "}
                       &mdash; {fileSize(cave.installInfo.installedSize)} on disk
                     </p>
-                    <p>
-                      Last played <TimeAgo date={cave.stats.lastTouchedAt} />{" "}
-                      &mdash; Total{" "}
-                      <FormattedMessage
-                        {...formatDurationAsMessage(cave.stats.secondsRun)}
-                      />
-                    </p>
+                    {cave.stats.lastTouchedAt ? (
+                      <p>
+                        Last played <TimeAgo date={cave.stats.lastTouchedAt} />
+                      </p>
+                    ) : null}
+                    {cave.stats.secondsRun ? (
+                      <p>
+                        Total{" "}
+                        <FormattedMessage
+                          {...formatDurationAsMessage(cave.stats.secondsRun)}
+                        />
+                      </p>
+                    ) : null}
                   </>
                 ) : null}
                 {isOther && !cave && !dl ? (
@@ -530,15 +514,19 @@ const UploadGroup = (props: {
                       />
                       <IconButton
                         icon="uninstall"
-                        onClick={() => toggleInstalled.execute(u)}
+                        onClick={() => uninstall(u)}
+                        disabled={isQueued}
                       />
                     </>
                   ) : (
                     <>
                       {dl ? null : (
-                        <IconButton
+                        <Button
+                          className="real-button"
                           icon="install"
-                          onClick={() => toggleInstalled.execute(u)}
+                          label={<FormattedMessage id="grid.item.install" />}
+                          onClick={() => install(u)}
+                          disabled={isQueued}
                         />
                       )}
                     </>

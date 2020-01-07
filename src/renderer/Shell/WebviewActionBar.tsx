@@ -145,7 +145,6 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
       <Cover src={game.stillCoverUrl || game.coverUrl} />
       <Info>
         <span>{game.title}</span>
-        {caves && <span>Found {caves.length} caves</span>}
       </Info>
       <Filler />
       {!_.isEmpty(caves) ? (

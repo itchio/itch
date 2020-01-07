@@ -24,6 +24,7 @@ interface Props {
   dl?: DownloadWithProgress;
   stopInstall: () => void;
   gameBeingInstalled?: Game;
+  beingLaunched?: boolean;
 }
 
 export const GameGridItem = React.memo((props: Props) => {
@@ -39,7 +40,7 @@ export const GameGridItem = React.memo((props: Props) => {
   } = props;
 
   let wrapInTippyIfNeeded = (content: JSX.Element): JSX.Element => {
-    if (gameBeingInstalled?.id == game.id) {
+    if (gameBeingInstalled) {
       return (
         <MenuTippy
           placement="left-end"
@@ -89,7 +90,13 @@ export const GameGridItem = React.memo((props: Props) => {
           install={install}
           wrapper={wrapInTippyIfNeeded}
         />
-        {game.installedAt && <Button label="Launch" onClick={launch} />}
+        {game.installedAt && (
+          <Button
+            label="Launch"
+            disabled={props.beingLaunched}
+            onClick={launch}
+          />
+        )}
       </div>
     </div>
   );
@@ -107,10 +114,12 @@ const DownloadOverlay = (props: { dl?: DownloadWithProgress }) => {
       {progress ? (
         <>
           <ProgressBar progress={progress.progress} />
-          <div>
-            {fileSize(progress.bps)} / s &mdash;{" "}
-            <FormattedMessage {...formatDurationAsMessage(progress.eta)} />{" "}
-          </div>
+          {progress.bps > 0 || progress.eta > 0 ? (
+            <div>
+              {fileSize(progress.bps)} / s &mdash;{" "}
+              <FormattedMessage {...formatDurationAsMessage(progress.eta)} />{" "}
+            </div>
+          ) : null}
         </>
       ) : (
         <Icon icon="stopwatch" />

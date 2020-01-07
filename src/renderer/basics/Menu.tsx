@@ -15,7 +15,7 @@ export const MenuContents = styled.div`
   flex-direction: column;
   align-items: stretch;
 
-  button:not(.icon-button) {
+  button:not(.icon-button):not(.real-button) {
     flex-shrink: 0;
     margin-right: 0 !important;
     justify-content: flex-start;

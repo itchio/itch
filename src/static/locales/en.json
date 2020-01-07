@@ -711,6 +711,7 @@
   "upload_type.video": "Video",
   "upload_type.documentation": "Documentation",
   "upload_type.mod": "Mod",
+  "upload_type.graphical_assets": "Graphical Assets",
   "upload_type.audio_assets": "Audio Assets",
   "upload_type.sourcecode": "Source code",
   "upload_type.other": "Other",
