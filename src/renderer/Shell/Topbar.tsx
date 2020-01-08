@@ -1,16 +1,16 @@
+import { packets } from "common/packets";
 import { queries } from "common/queries";
-import React, { useState, useEffect } from "react";
-import { useAsyncCallback } from "react-async-hook";
+import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
 import { useProfile, useSocket } from "renderer/contexts";
+import { DownloadsButton } from "renderer/Shell/DownloadsButton";
 import { ProfileButton } from "renderer/Shell/ProfileButton";
 import { useListen } from "renderer/Socket";
-import { packets } from "common/packets";
+import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
-import { DownloadsButton } from "renderer/Shell/DownloadsButton";
 
 const TopbarDiv = styled.div`
   display: flex;
@@ -40,17 +40,17 @@ export const Topbar = () => {
   const [popover, setPopover] = useState<PopoverName>(null);
   let profile = useProfile();
 
-  let close = useAsyncCallback(async () => {
+  let [close] = useAsyncCb(async () => {
     await socket.query(queries.close);
-  });
+  }, [socket]);
 
-  let minimize = useAsyncCallback(async () => {
+  let [minimize] = useAsyncCb(async () => {
     await socket.query(queries.minimize);
-  });
+  }, [socket]);
 
-  let toggleMaximized = useAsyncCallback(async () => {
+  let [toggleMaximized] = useAsyncCb(async () => {
     await socket.query(queries.toggleMaximized);
-  });
+  }, [socket]);
 
   useEffect(() => {
     (async () => {
@@ -92,12 +92,12 @@ export const Topbar = () => {
         onClick={() => console.log("draggable filler click")}
         onClickCapture={() => console.log("draggable filler click capture")}
       />
-      <IconButton icon="window-minimize" onClick={minimize.execute} />
+      <IconButton icon="window-minimize" onClick={minimize} />
       <IconButton
         icon={maximized ? "window-restore" : "window-maximize"}
-        onClick={toggleMaximized.execute}
+        onClick={toggleMaximized}
       />
-      <IconButton icon="cross" onClick={close.execute} />
+      <IconButton icon="cross" onClick={close} />
       <Popover name={popover} onClose={() => setPopover(null)} />
     </TopbarDiv>
   );
@@ -105,9 +105,12 @@ export const Topbar = () => {
 
 const Popover = (props: { name: PopoverName; onClose: () => void }) => {
   const socket = useSocket();
-  const switchLanguage = useAsyncCallback(async lang => {
-    socket.query(queries.switchLanguage, { lang });
-  });
+  const [switchLanguage] = useAsyncCb(
+    async lang => {
+      socket.query(queries.switchLanguage, { lang });
+    },
+    [socket]
+  );
 
   const { name, onClose } = props;
   switch (name) {
@@ -119,12 +122,12 @@ const Popover = (props: { name: PopoverName; onClose: () => void }) => {
         >
           <p>Have some prefs!</p>
           <p>
-            <button onClick={() => switchLanguage.execute("fr")}>
+            <button onClick={() => switchLanguage("fr")}>
               Switch to French
             </button>
           </p>
           <p>
-            <button onClick={() => switchLanguage.execute("en")}>
+            <button onClick={() => switchLanguage("en")}>
               Switch to English
             </button>
           </p>
