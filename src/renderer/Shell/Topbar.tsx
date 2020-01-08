@@ -68,7 +68,7 @@ export const Topbar = () => {
   });
 
   return (
-    <TopbarDiv>
+    <TopbarDiv className="topbar">
       {profile && (
         <>
           <ProfileButton
@@ -76,11 +76,15 @@ export const Topbar = () => {
             openPreferences={() => setPopover("preferences")}
           />
           <Button
+            className="item"
+            data-target="explore"
             onClick={() => (location.href = "https://itch.io")}
             icon="earth"
             label={<FormattedMessage id={"sidebar.explore"} />}
           />
           <Button
+            className="item"
+            data-target="library"
             onClick={() => (location.href = "itch://library")}
             icon="heart-filled"
             label={<FormattedMessage id={"sidebar.library"} />}

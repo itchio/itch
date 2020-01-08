@@ -40,6 +40,9 @@ type runner struct {
 	cleanup            CleanupFunc
 	testStart          time.Time
 	readyForScreenshot bool
+
+	mainWindow    string
+	webviewWindow string
 }
 
 func (r *runner) chromelogf(format string, args ...interface{}) {
@@ -228,6 +231,9 @@ func doMain() error {
 		if err != nil {
 			panic(errors.WithStack(err))
 		}
+
+		r.mainWindow = r.mustGetCurrentWindow()
+
 		return nil
 	}
 

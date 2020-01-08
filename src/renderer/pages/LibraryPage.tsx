@@ -173,6 +173,7 @@ function makeItemProps(
     }
 
     return {
+      "data-source": itemSource.source,
       className: classNames("item", { active }),
       onClick: () => setSource(itemSource),
     };

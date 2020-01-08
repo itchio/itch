@@ -7,6 +7,8 @@ github.com/fasterthanlime/go-selenium v0.1.1-0.20180614144419-1da511db778f h1:LU
 github.com/fasterthanlime/go-selenium v0.1.1-0.20180614144419-1da511db778f/go.mod h1:zn2yL+qxRhfMZ7dKcdlWNduflgxZHj9i2Ih3qd3mDKQ=
 github.com/fasterthanlime/go-selenium v0.1.1-0.20190704213309-4e4dc141dc64 h1:YfzNjf7WpFTI3X/vZpbFL7pe9hVqYbobRDwZP/OxBlg=
 github.com/fasterthanlime/go-selenium v0.1.1-0.20190704213309-4e4dc141dc64/go.mod h1:Hh/f4/5sGAs+qAR5l5+AD+cYfq+AskIBsxJodsL6uPw=
+github.com/fasterthanlime/go-selenium v0.2.0 h1:CU2jkEdx27YBkrHzHXrFjYnMDnEK03kIqyoNq9IigWY=
+github.com/fasterthanlime/go-selenium v0.2.0/go.mod h1:Hh/f4/5sGAs+qAR5l5+AD+cYfq+AskIBsxJodsL6uPw=
 github.com/hpcloud/tail v1.0.0 h1:nfCOvKYfkgYP8hkirhJocXT2+zOD8yUNjXaWfTlyFKI=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/itchio/headway v0.0.0-20190702175331-a4c65c5306de/go.mod h1:Iif+7HeesRB0PvTYf0gOIFX8lj0za0SUsWryENQYt1E=
