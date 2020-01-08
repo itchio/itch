@@ -6,7 +6,7 @@ import {
   GameRecord,
   GameRecordsSource,
 } from "common/butlerd/messages";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import { Container } from "renderer/basics/Container";
 import { ErrorState } from "renderer/basics/ErrorState";
@@ -195,6 +195,14 @@ export const LibraryPage = () => {
     );
   }
 
+  const mainRef = useRef<HTMLDivElement>(null);
+  const scrollToTop = useCallback(() => {
+    mainRef.current?.scrollTo({
+      top: 0,
+      behavior: "auto",
+    });
+  }, [mainRef]);
+
   return (
     <LibraryLayout>
       <div className="sidebar">
@@ -223,14 +231,14 @@ export const LibraryPage = () => {
         </div>
         <CollectionList source={source} setSource={setSource} />
       </div>
-      <Container className="main">
-        <ViewContents source={source} />
+      <Container className="main" ref={mainRef}>
+        <ViewContents source={source} scrollToTop={scrollToTop} />
       </Container>
     </LibraryLayout>
   );
 };
 
-const ViewContents = (props: { source: Source }) => {
+const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
   const { source } = props;
 
   const profile = useProfile();
@@ -259,6 +267,7 @@ const ViewContents = (props: { source: Source }) => {
         if (cancelled) {
           return;
         }
+        props.scrollToTop();
         setRecords(res.records);
 
         if (res.stale) {
@@ -277,7 +286,7 @@ const ViewContents = (props: { source: Source }) => {
     return () => {
       cancelled = true;
     };
-  }, [JSON.stringify(source)]);
+  }, [JSON.stringify(source), props.scrollToTop]);
 
   return (
     <>

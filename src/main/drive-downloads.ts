@@ -1,6 +1,5 @@
 import { Client } from "butlerd";
 import { isCancelled, messages } from "common/butlerd";
-import { Download, DownloadProgress } from "common/butlerd/messages";
 import { packets } from "common/packets";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
@@ -8,14 +7,6 @@ import { hookLogging } from "main/start-butler";
 import { broadcastPacket } from "main/websocket-handler";
 
 const logger = mainLogger.childWithName("drive-downloads");
-
-export interface DownloadWithProgress extends Download {
-  progress?: DownloadProgress;
-}
-
-export interface DownloadsState {
-  [key: string]: DownloadWithProgress;
-}
 
 export function startDrivingDownloads(ms: MainState) {
   if (ms.downloads) {

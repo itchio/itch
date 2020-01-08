@@ -1,7 +1,6 @@
 import { messages } from "common/butlerd";
 import { Download } from "common/butlerd/messages";
 import { queries } from "common/queries";
-import { DownloadWithProgress } from "main/drive-downloads";
 import React, { useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
@@ -13,6 +12,9 @@ import { useSocket } from "renderer/contexts";
 import { fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { useDownloads } from "renderer/use-downloads";
+import _ from "lodash";
+import { DownloadWithProgress } from "common/downloads";
 
 interface Props {}
 
@@ -93,15 +95,8 @@ const DownloadContentsDiv = styled.div`
 export const DownloadsContents = React.forwardRef(
   (props: { onClose: () => void }, ref: React.Ref<HTMLDivElement>) => {
     const socket = useSocket();
-    const [downloads, setDownloads] = useState<DownloadWithProgress[]>([]);
-
-    useEffect(() => {
-      // TODO: listen for more download events
-      (async () => {
-        const { downloads } = await socket.query(queries.getDownloads);
-        setDownloads(downloads);
-      })();
-    }, []);
+    const downloads = useDownloads();
+    const sortedDownloads = _.sortBy(downloads, d => d.position);
 
     const [clearAll, clearAllLoading] = useAsyncCb(async () => {
       await socket.call(messages.DownloadsClearFinished, {});
@@ -109,11 +104,11 @@ export const DownloadsContents = React.forwardRef(
 
     return (
       <DownloadContentsDiv ref={ref}>
-        {downloads.length === 0 ? (
+        {_.isEmpty(downloads) ? (
           <div className="empty-state">No downloads</div>
         ) : (
           <>
-            {downloads.map(d => {
+            {sortedDownloads.map(d => {
               return (
                 <DownloadItem key={d.id} download={d} onClose={props.onClose} />
               );

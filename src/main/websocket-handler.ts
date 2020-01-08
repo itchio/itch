@@ -23,6 +23,7 @@ import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
 import _ from "lodash";
 import { messages } from "common/butlerd";
+import { filterObject } from "common/filter-object";
 
 const logger = mainLogger.childWithName("websocket-handler");
 
@@ -144,20 +145,13 @@ export class WebsocketHandler {
     });
 
     onQuery(queries.getDownloads, async () => {
-      let downloads: Download[] = [];
-      if (ms.downloads) {
-        downloads = _.filter(ms.downloads, () => true);
-      }
-      return { downloads };
+      return { downloads: ms.downloads ?? {} };
     });
 
     onQuery(queries.getDownloadsForGame, async ({ gameId }) => {
-      let downloads: Download[] = [];
-      if (ms.downloads) {
-        downloads = _.filter(ms.downloads, d => d.game && d.game.id === gameId);
-      }
-
-      return { downloads };
+      return {
+        downloads: filterObject(ms.downloads ?? {}, d => d.game?.id === gameId),
+      };
     });
 
     onQuery(queries.getProfile, async () => {

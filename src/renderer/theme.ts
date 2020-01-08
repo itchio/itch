@@ -30,9 +30,9 @@ export const theme: DefaultTheme = {
     button1Border: "transparent",
     button1Text: "#fafafa",
 
-    button2Bg: "transparent",
-    button2BgHover: "rgba(255, 255, 255, .2)",
-    button2BgActive: "rgba(255, 255, 255, .1)",
+    button2Bg: "#2a2a2a",
+    button2BgHover: "#3a3a3a",
+    button2BgActive: "#383838",
     button2Border: "#515151",
     button2Text: "#d8d8d8",
 

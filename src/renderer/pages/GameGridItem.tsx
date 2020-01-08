@@ -2,7 +2,6 @@ import classNames from "classnames";
 import { Game, GameRecord } from "common/butlerd/messages";
 import { formatDurationAsMessage } from "common/format/datetime";
 import { fileSize } from "common/format/filesize";
-import { DownloadWithProgress } from "main/drive-downloads";
 import React from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
@@ -12,6 +11,7 @@ import { MenuTippy } from "renderer/basics/Menu";
 import { ClickOutsideRefer } from "renderer/basics/useClickOutside";
 import { ProgressBar } from "renderer/pages/ProgressBar";
 import { InstallModalContents } from "renderer/Shell/InstallModal";
+import { DownloadWithProgress } from "common/downloads";
 
 type ClickHandler = (ev: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
 

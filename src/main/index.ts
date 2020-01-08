@@ -3,20 +3,20 @@ import env from "common/env";
 import { OngoingLaunches } from "common/launches";
 import { CurrentLocale, LocaleStrings } from "common/locales";
 import { packets } from "common/packets";
+import dump from "common/util/dump";
 import { partitionForApp } from "common/util/partitions";
 import { app, BrowserWindow, dialog, session, shell } from "electron";
 import { envSettings } from "main/constants/env-settings";
-import { DownloadsState } from "main/drive-downloads";
 import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
 import { loadPreferences, PreferencesState } from "main/load-preferences";
 import { mainLogger } from "main/logger";
 import { attemptAutoLogin } from "main/profile";
+import { setupShortcuts } from "main/setup-shortcuts";
 import { ButlerState, startButler } from "main/start-butler";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
-import { setupShortcuts } from "main/setup-shortcuts";
-import dump from "common/util/dump";
+import { DownloadsState } from "common/downloads";
 
 let logger = mainLogger.childWithName("main");
 

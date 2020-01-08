@@ -1,8 +1,8 @@
-import { Profile, Cave } from "common/butlerd/messages";
+import { Cave, Profile } from "common/butlerd/messages";
 import { OngoingLaunch, OngoingLaunches } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { WebviewState } from "main";
-import { DownloadWithProgress } from "main/drive-downloads";
+import { DownloadsState } from "common/downloads";
 
 export const queries = wireQueries({
   minimize: query<void, void>(),
@@ -19,10 +19,10 @@ export const queries = wireQueries({
     void
   >(),
 
-  getDownloads: query<void, { downloads: DownloadWithProgress[] }>(),
+  getDownloads: query<void, { downloads: DownloadsState }>(),
   getDownloadsForGame: query<
     { gameId: number },
-    { downloads: DownloadWithProgress[] }
+    { downloads: DownloadsState }
   >(),
 
   openDevTools: query<void, void>(),

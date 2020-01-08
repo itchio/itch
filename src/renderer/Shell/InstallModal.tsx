@@ -11,7 +11,6 @@ import { fileSize } from "common/format/filesize";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
-import { DownloadWithProgress } from "main/drive-downloads";
 import React, { useEffect, useRef, useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
@@ -28,6 +27,7 @@ import { useListen } from "renderer/Socket";
 import { fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { DownloadWithProgress } from "common/downloads";
 
 const InstallMenuContents = styled(MenuContents)`
   overflow: hidden;

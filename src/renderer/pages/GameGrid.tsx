@@ -1,18 +1,19 @@
 import { messages } from "common/butlerd";
 import { Download, Game, GameRecord } from "common/butlerd/messages";
-import { OngoingLaunches } from "common/launches";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
-import { DownloadWithProgress } from "main/drive-downloads";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { GameGridItem } from "renderer/pages/GameGridItem";
 import { useListen } from "renderer/Socket";
-import { fontSizes, mixins, animations } from "renderer/theme";
+import { animations, fontSizes, mixins } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
+import { useLaunches } from "renderer/use-launches";
 import styled from "styled-components";
+import { DownloadWithProgress } from "common/downloads";
+import { useDownloads } from "renderer/use-downloads";
 
 let coverBorder = 1;
 const coverWidth = 300;
@@ -77,7 +78,7 @@ const GameGridContainer = styled.div`
     & > .title {
       padding: 4px 8px;
       padding-top: 14px;
-      font-size: ${fontSizes.small};
+      font-size: ${fontSizes.normal};
       ${mixins.singleLine};
     }
 
@@ -110,22 +111,13 @@ const findGameId = (el: HTMLElement): number | undefined => {
   return undefined;
 };
 
-interface Downloads {
-  [gameId: number]: DownloadWithProgress;
-}
-
 interface Props {
   records: GameRecord[];
   setRecords: React.Dispatch<React.SetStateAction<GameRecord[]>>;
 }
 
-export const GameGrid = function(props: Props) {
+export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
   const socket = useSocket();
-
-  const [downloads, setDownloads] = useState<Downloads>({});
-  const mergeDownloads = (fresh: Downloads) => {
-    setDownloads({ ...downloads, ...fresh });
-  };
 
   const [gameBeingInstalled, setGameBeingInstalled] = useState<
     Game | undefined
@@ -184,41 +176,13 @@ export const GameGrid = function(props: Props) {
     [socket]
   );
 
-  useEffect(() => {
-    (async () => {
-      const { downloads } = await socket.query(queries.getDownloads);
-      mergeDownloads(_.keyBy(downloads, d => d.game.id));
-    })().catch(e => console.warn(e));
-  }, []);
-
-  const [launches, setLaunches] = useState<OngoingLaunches>({});
-
-  useEffect(() => {
-    async () => {
-      const { launches } = await socket.query(queries.getOngoingLaunches);
-      setLaunches(launches);
-    };
-  }, []);
-  useListen(socket, packets.launchChanged, ({ launchId, launch }) => {
-    setLaunches(old => ({ ...old, [launchId]: launch }));
-  });
-  useListen(socket, packets.launchEnded, ({ launchId }) => {
-    setLaunches(old => _.omit(old, launchId));
-  });
-
-  let downloadChanged = ({ download }: { download: Download }) => {
-    mergeDownloads({ [download.game.id]: download });
-  };
-  useListen(socket, packets.downloadStarted, downloadChanged);
-  useListen(socket, packets.downloadChanged, downloadChanged);
-  useListen(socket, packets.downloadCleared, ({ download }) => {
-    setDownloads(_.omit(downloads, download.game.id));
-  });
+  const downloads = useDownloads();
+  const launchesByGameId = _.keyBy(useLaunches(), l => l.gameId);
 
   useListen(socket, packets.gameInstalled, ({ cave }) => {
     updateRecord(props, {
       id: cave.game.id,
-      installedAt: new Date().toISOString(),
+      installedAt: cave.stats.installedAt,
     });
   });
   useListen(socket, packets.gameUninstalled, ({ gameId }) => {
@@ -236,13 +200,11 @@ export const GameGrid = function(props: Props) {
     })().catch(e => console.warn(e));
   });
 
-  const launchesByGameId = _.keyBy(launches, l => l.gameId);
-
   return (
     <>
-      <GameGridContainer>
+      <GameGridContainer ref={ref}>
         {props.records.map(game => {
-          const dl = downloads[game.id];
+          const dl = _.find(downloads, d => d.game?.id == game.id);
           // N.B: we have to be extremely careful what we pass here.
           // GameGridItem is a memo'd component, so if we don't want to
           // re-render the whole grid, we need to not change props for all
@@ -269,7 +231,7 @@ export const GameGrid = function(props: Props) {
       </GameGridContainer>
     </>
   );
-};
+});
 
 const updateRecord = (
   props: Props,
