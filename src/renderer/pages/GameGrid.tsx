@@ -1,19 +1,18 @@
 import { messages } from "common/butlerd";
-import { Download, Game, GameRecord } from "common/butlerd/messages";
+import { Game, GameRecord } from "common/butlerd/messages";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { GameGridItem } from "renderer/pages/GameGridItem";
 import { useListen } from "renderer/Socket";
 import { animations, fontSizes, mixins } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
+import { useDownloads } from "renderer/use-downloads";
 import { useLaunches } from "renderer/use-launches";
 import styled from "styled-components";
-import { DownloadWithProgress } from "common/downloads";
-import { useDownloads } from "renderer/use-downloads";
 
 let coverBorder = 1;
 const coverWidth = 300;

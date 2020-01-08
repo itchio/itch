@@ -16,6 +16,8 @@ import { useProfile, useSocket } from "renderer/contexts";
 import { GameGrid } from "renderer/pages/GameGrid";
 import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
+import { IconButton } from "renderer/basics/IconButton";
+import { GameList } from "renderer/pages/GameList";
 
 const LibraryLayout = styled.div`
   display: flex;
@@ -240,6 +242,7 @@ export const LibraryPage = () => {
 
 const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
   const { source } = props;
+  const [layout, setLayout] = useState<"grid" | "list">("grid");
 
   const profile = useProfile();
   const socket = useSocket();
@@ -293,11 +296,45 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
       <h2>
         <ViewTitle source={source} />
         {loading && <Spinner />}
+        <Filler />
+        <span>Sort by</span>
+        <select>
+          <option value="one">one</option>
+          <option value="two">two</option>
+          <option value="three">thre</option>
+        </select>
+        <LayoutButton
+          icon="grid"
+          className={classNames({ active: layout === "grid" })}
+          onClick={() => setLayout("grid")}
+        />
+        <LayoutButton
+          icon="list"
+          className={classNames({ active: layout === "list" })}
+          onClick={() => setLayout("list")}
+        />
       </h2>
-      <GameGrid records={records} setRecords={setRecords} />
+      {layout === "grid" ? (
+        <GameGrid records={records} setRecords={setRecords} />
+      ) : (
+        <GameList records={records} setRecords={setRecords} />
+      )}
     </>
   );
 };
+
+const LayoutButton = styled(IconButton)`
+  border: 1px solid transparent;
+  border-radius: 2;
+
+  &.active {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+`;
+
+const Filler = styled.div`
+  flex-grow: 1;
+`;
 
 const ViewTitle = (props: { source: Source }) => {
   const { source } = props;
