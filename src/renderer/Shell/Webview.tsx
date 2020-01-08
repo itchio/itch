@@ -1,18 +1,18 @@
+import { ExtendedWebContents } from "common/extended-web-contents";
 import { packets } from "common/packets";
 import { queries } from "common/queries";
-import { WebContents, WebviewTag } from "electron";
+import { partitionForUser } from "common/util/partitions";
+import { WebviewTag } from "electron";
 import { WebviewState } from "main";
 import React, { useEffect, useRef, useState } from "react";
-import { useAsyncCallback } from "react-async-hook";
+import { useProfile, useSocket } from "renderer/contexts";
+import { WebviewNavigation } from "renderer/Shell/WebviewNavigation";
+import { useListen } from "renderer/Socket";
+import { useAsyncCb } from "renderer/use-async-cb";
+import styled from "styled-components";
 const WebviewActionBar = React.lazy(() =>
   import("renderer/Shell/WebviewActionBar")
 );
-import { WebviewNavigation } from "renderer/Shell/WebviewNavigation";
-import { useListen } from "renderer/Socket";
-import { partitionForUser } from "common/util/partitions";
-import { useSocket, useProfile } from "renderer/contexts";
-import styled from "styled-components";
-import { ExtendedWebContents } from "common/extended-web-contents";
 
 const WebviewContainer = styled.div`
   width: 100%;
@@ -39,9 +39,12 @@ export const Webview = () => {
   const [loading, setLoading] = useState(false);
   const [path, setPath] = useState("");
 
-  let setWebviewHistory = useAsyncCallback(async (state: WebviewState) => {
-    await socket.query(queries.setWebviewState, { state });
-  });
+  let [setWebviewHistory] = useAsyncCb(
+    async (state: WebviewState) => {
+      await socket.query(queries.setWebviewState, { state });
+    },
+    [socket]
+  );
 
   useEffect(() => {
     const wv = viewRef.current;
@@ -55,7 +58,7 @@ export const Webview = () => {
 
     let didNavigate = (url: string) => {
       const wc = wv.getWebContents() as ExtendedWebContents;
-      setWebviewHistory.execute({
+      setWebviewHistory({
         history: wc.history,
         currentIndex: wc.currentIndex,
       });

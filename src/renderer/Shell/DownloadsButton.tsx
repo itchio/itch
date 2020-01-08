@@ -1,8 +1,8 @@
 import { messages } from "common/butlerd";
 import { Download } from "common/butlerd/messages";
 import { queries } from "common/queries";
+import { DownloadWithProgress } from "main/drive-downloads";
 import React, { useEffect, useState } from "react";
-import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
@@ -11,8 +11,8 @@ import { MenuContents, MenuTippy } from "renderer/basics/Menu";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { fontSizes } from "renderer/theme";
+import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
-import { DownloadWithProgress } from "main/drive-downloads";
 
 interface Props {}
 
@@ -103,9 +103,9 @@ export const DownloadsContents = React.forwardRef(
       })();
     }, []);
 
-    const clearAll = useAsyncCallback(async () => {
+    const [clearAll, clearAllLoading] = useAsyncCb(async () => {
       await socket.call(messages.DownloadsClearFinished, {});
-    });
+    }, [socket]);
 
     return (
       <DownloadContentsDiv ref={ref}>
@@ -123,8 +123,8 @@ export const DownloadsContents = React.forwardRef(
                 label={
                   <FormattedMessage id="status.downloads.clear_all_finished" />
                 }
-                onClick={clearAll.execute}
-                loading={clearAll.loading}
+                onClick={clearAll}
+                loading={clearAllLoading}
               />
             </MenuContents>
           </>
@@ -141,9 +141,12 @@ const DownloadItem = (props: {
   const socket = useSocket();
   const d = props.download;
 
-  const play = useAsyncCallback(async (gameId: number) => {
-    await socket.query(queries.launchGame, { gameId });
-  });
+  const [play, playLoading] = useAsyncCb(
+    async (gameId: number) => {
+      await socket.query(queries.launchGame, { gameId });
+    },
+    [socket]
+  );
 
   return (
     <div className="row">
@@ -164,8 +167,8 @@ const DownloadItem = (props: {
         {d.finishedAt ? (
           <IconButton
             icon="play2"
-            onClick={() => play.execute(d.game.id)}
-            loading={play.loading}
+            onClick={() => play(d.game.id)}
+            loading={playLoading}
           />
         ) : (
           <IconButton
@@ -181,24 +184,24 @@ const DownloadsMenu = (props: { download: Download }) => {
   const d = props.download;
 
   const socket = useSocket();
-  const uninstall = useAsyncCallback(async () => {
+  const [uninstall, uninstallLoading] = useAsyncCb(async () => {
     await socket.call(messages.UninstallPerform, {
       caveId: d.caveId,
     });
-  });
-  const discard = useAsyncCallback(async () => {
+  }, [socket, d]);
+  const [discard, discardLoading] = useAsyncCb(async () => {
     await socket.call(messages.DownloadsDiscard, {
       downloadId: d.id,
     });
-  });
+  }, [socket, d]);
 
   return (
     <MenuContents>
       <Button
         icon="cross"
         label={<FormattedMessage id="grid.item.discard_download" />}
-        onClick={discard.execute}
-        loading={discard.loading}
+        onClick={discard}
+        loading={discardLoading}
       />
       <Button
         icon="earth"
@@ -208,8 +211,8 @@ const DownloadsMenu = (props: { download: Download }) => {
       <Button
         icon="uninstall"
         label={<FormattedMessage id="grid.item.uninstall" />}
-        onClick={uninstall.execute}
-        loading={uninstall.loading}
+        onClick={uninstall}
+        loading={uninstallLoading}
       />
     </MenuContents>
   );

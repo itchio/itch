@@ -4,7 +4,6 @@ import { Profile } from "common/butlerd/messages";
 import { delay } from "common/delay";
 import { queries } from "common/queries";
 import React from "react";
-import { useAsyncCallback, UseAsyncReturn } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
@@ -12,6 +11,7 @@ import { TimeAgo } from "renderer/basics/TimeAgo";
 import { useSocket } from "renderer/contexts";
 import { GateState } from "renderer/Gate";
 import { animations, fontSizes } from "renderer/theme";
+import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 
 const ListLogo = styled.img`
@@ -51,39 +51,41 @@ interface ListProps {
 export const List = (props: ListProps) => {
   const socket = useSocket();
 
-  const login = useAsyncCallback(async (profile: Profile) => {
-    try {
-      const res = await socket.call(messages.ProfileUseSavedLogin, {
-        profileId: profile.id,
-      });
-      await socket.query(queries.setProfile, { profile: res.profile });
-    } catch (e) {
-      await delay(500);
+  const [login, loginLoading] = useAsyncCb(
+    async (profile: Profile) => {
+      try {
+        const res = await socket.call(messages.ProfileUseSavedLogin, {
+          profileId: profile.id,
+        });
+        await socket.query(queries.setProfile, { profile: res.profile });
+      } catch (e) {
+        await delay(500);
 
-      props.setState({
-        type: "form",
-        stage: {
-          type: "need-password",
-          username: profile.user.username,
-          error: e,
-          backState: { type: "list" },
-        },
-      });
-    }
-  });
-
-  const loading = login.loading;
+        props.setState({
+          type: "form",
+          stage: {
+            type: "need-password",
+            username: profile.user.username,
+            error: e,
+            backState: { type: "list" },
+          },
+        });
+      }
+    },
+    [socket]
+  );
 
   return (
     <ListContainer>
       <ListLogo src={require("static/images/logos/app-white.svg")} />
       {props.profiles.map(profile => (
         <Item
-          disabled={loading}
+          disabled={loginLoading}
           key={profile.user.id}
           profile={profile}
           forgetProfile={props.forgetProfile}
           login={login}
+          loginLoading={loginLoading}
         />
       ))}
 
@@ -91,7 +93,7 @@ export const List = (props: ListProps) => {
         <Filler />
         <Button
           secondary
-          disabled={loading}
+          disabled={loginLoading}
           label={<FormattedMessage id="login.action.show_form" />}
           onClick={() =>
             props.setState({ type: "form", stage: { type: "need-username" } })
@@ -166,7 +168,8 @@ const Filler = styled.div`
 interface ItemProps {
   profile: Profile;
   forgetProfile: (profile: Profile) => void;
-  login: UseAsyncReturn<void, [Profile]>;
+  login: (profile: Profile) => Promise<void>;
+  loginLoading: boolean;
   disabled?: boolean;
 }
 
@@ -198,8 +201,8 @@ export const Item = (props: ItemProps) => {
         onClick={() => props.forgetProfile(profile)}
       />
       <Button
-        onClick={() => !disabled && props.login.execute(profile)}
-        loading={props.login.loading}
+        onClick={() => !disabled && props.login(profile)}
+        loading={props.loginLoading}
         disabled={disabled}
         label={<FormattedMessage id="login.action.login" />}
       ></Button>

@@ -2,13 +2,13 @@ import classNames from "classnames";
 import { Profile } from "common/butlerd/messages";
 import { queries } from "common/queries";
 import React, { useState } from "react";
-import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
-import { useSocket } from "renderer/contexts";
-import styled from "styled-components";
 import { useClickOutside } from "renderer/basics/useClickOutside";
+import { useSocket } from "renderer/contexts";
+import { useAsyncCb } from "renderer/use-async-cb";
+import styled from "styled-components";
 
 const ProfileButtonDiv = styled.div`
   display: flex;
@@ -69,9 +69,9 @@ export const ProfileButton = (props: Props) => {
 const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
   const socket = useSocket();
 
-  const logout = useAsyncCallback(async () => {
+  const [logout, logoutLoading] = useAsyncCb(async () => {
     await socket.query(queries.setProfile, {});
-  });
+  }, [socket]);
 
   return (
     <MenuContents>
@@ -84,10 +84,10 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
         }}
       />
       <Button
-        loading={logout.loading}
+        loading={logoutLoading}
         icon="exit"
         label={<FormattedMessage id="prompt.logout_action" />}
-        onClick={logout.execute}
+        onClick={logout}
       />
     </MenuContents>
   );

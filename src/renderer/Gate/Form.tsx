@@ -4,17 +4,17 @@ import { ProfileRequestTOTPResult } from "common/butlerd/messages";
 import { delay } from "common/delay";
 import { queries } from "common/queries";
 import React, { useRef, useState } from "react";
-import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { ErrorState } from "renderer/basics/ErrorState";
 import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
 import { LargeTextInput } from "renderer/basics/TextInput";
+import { useSocket } from "renderer/contexts";
 import { Deferred } from "renderer/deferred";
 import { GateState } from "renderer/Gate";
 import { animations, fontSizes } from "renderer/theme";
-import { useSocket } from "renderer/contexts";
+import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 
 export type FormStage = NeedUsername | NeedPassword | NeedTOTP | NeedCaptcha;
@@ -170,11 +170,11 @@ const FormNeedUsername = (props: FormProps<NeedUsername>) => {
   const usernameRef = useRef<HTMLInputElement>(null);
   const [username, setUsername] = useState("");
 
-  const openRegisterPage = useAsyncCallback(async () => {
+  const [openRegisterPage] = useAsyncCb(async () => {
     await socket.query(queries.openExternalURL, {
       url: "https://itch.io/register",
     });
-  });
+  }, [socket]);
 
   let onNext = () => {
     if (usernameRef.current) {
@@ -207,7 +207,7 @@ const FormNeedUsername = (props: FormProps<NeedUsername>) => {
         <Button
           secondary
           label={<FormattedMessage id="login.action.register" />}
-          onClick={openRegisterPage.execute}
+          onClick={openRegisterPage}
         />
       </Buttons>
       <Label>
@@ -251,13 +251,13 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
     setPasswordShown(!passwordShown);
   };
 
-  let onForgotPassword = useAsyncCallback(async () => {
+  let [onForgotPassword] = useAsyncCb(async () => {
     await socket.query(queries.openExternalURL, {
       url: "https://itch.io/user/forgot-password",
     });
-  });
+  }, [socket]);
 
-  let onLogin = useAsyncCallback(async () => {
+  let [onLogin, onLoginLoading, onLoginError] = useAsyncCb(async () => {
     const { error: _, ...stage } = props.stage;
     props.setState({
       type: "form",
@@ -317,9 +317,9 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
       await delay(500);
       throw e;
     }
-  });
+  }, [socket]);
 
-  const error = onLogin.error || props.stage.error;
+  const error = onLoginError || props.stage.error;
 
   return (
     <FormContainer>
@@ -334,7 +334,7 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
         <Button
           secondary
           label={<FormattedMessage id="login.action.reset_password" />}
-          onClick={onForgotPassword.execute}
+          onClick={onForgotPassword}
         />
       </Buttons>
       <Label>
@@ -348,13 +348,13 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
           <LargeTextInput
             id="login-password"
             type={passwordShown ? "text" : "password"}
-            disabled={onLogin.loading}
+            disabled={onLoginLoading}
             ref={passwordRef}
             autoFocus
             onKeyPress={ev => {
               setPassword(ev.currentTarget.value);
               if (ev.key === "Enter") {
-                onLogin.execute();
+                onLogin();
               }
             }}
             onChange={ev => setPassword(ev.currentTarget.value)}
@@ -369,8 +369,8 @@ const FormNeedPassword = (props: FormProps<NeedPassword>) => {
           id="login-proceed"
           disabled={password == ""}
           secondary={password == ""}
-          loading={onLogin.loading}
-          onClick={onLogin.execute}
+          loading={onLoginLoading}
+          onClick={onLogin}
           label={<FormattedMessage id="login.action.login" />}
         />
       </SegmentedGroup>
@@ -384,7 +384,7 @@ const TOTPModal = (props: { state: TOTPState }) => {
   const { state } = props;
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const login = useAsyncCallback(async () => {
+  const [login, loginLoading] = useAsyncCb(async () => {
     if (!inputRef.current) {
       return;
     }
@@ -392,7 +392,7 @@ const TOTPModal = (props: { state: TOTPState }) => {
     state.resolve({
       code: inputRef.current.value,
     });
-  });
+  }, [inputRef, state]);
 
   return (
     <Modal
@@ -411,16 +411,16 @@ const TOTPModal = (props: { state: TOTPState }) => {
           autoFocus
           onKeyPress={ev => {
             if (ev.key === "Enter") {
-              login.execute();
+              login();
             }
           }}
         />
       </Label>
       <Buttons>
         <Button
-          loading={login.loading}
+          loading={loginLoading}
           label={<FormattedMessage id="login.action.login" />}
-          onClick={login.execute}
+          onClick={login}
         />
         <Filler />
       </Buttons>

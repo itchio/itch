@@ -1,7 +1,6 @@
 import { Profile } from "common/butlerd/messages";
 import { packets } from "common/packets";
-import React, { useState } from "react";
-import { useAsync } from "react-async-hook";
+import React, { useEffect, useState } from "react";
 import { ProfileContext, useSocket } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
 import styled from "styled-components";
@@ -66,9 +65,11 @@ export const Route = () => {
     setProfile(profile)
   );
 
-  useAsync(async () => {
-    const { profile } = await socket.query(queries.getProfile);
-    setProfile(profile);
+  useEffect(() => {
+    (async () => {
+      const { profile } = await socket.query(queries.getProfile);
+      setProfile(profile);
+    })().catch(e => console.warn(e));
   }, [socket]);
 
   let elements = [location.host, location.pathname.replace(/^\//, "")].filter(

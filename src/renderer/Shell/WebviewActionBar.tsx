@@ -1,20 +1,19 @@
 import { messages } from "common/butlerd";
+import { packets } from "common/packets";
 import { queries } from "common/queries";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
+import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { InstallModalContents } from "renderer/Shell/InstallModal";
-import { useButlerd } from "renderer/use-butlerd";
+import { useListen } from "renderer/Socket";
+import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
-import { Game, Cave } from "../../common/butlerd/messages";
+import { Cave, Game } from "../../common/butlerd/messages";
 import { IconButton } from "../basics/IconButton";
 import { MenuTippy } from "../basics/Menu";
-import { useClickOutside } from "renderer/basics/useClickOutside";
-import _ from "lodash";
-import { useListen } from "renderer/Socket";
-import { packets } from "common/packets";
 
 const Container = styled.div`
   display: flex;
@@ -112,9 +111,12 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
     setInstalling(false);
   });
 
-  let launchGame = useAsyncCallback(async (gameId: number) => {
-    await socket.query(queries.launchGame, { gameId });
-  });
+  const [launchGame, launchGameLoading] = useAsyncCb(
+    async (gameId: number) => {
+      await socket.query(queries.launchGame, { gameId });
+    },
+    [socket]
+  );
 
   if (!game) {
     return null;
@@ -162,8 +164,8 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
           <Button
             icon="play2"
             label={<FormattedMessage id="grid.item.launch" />}
-            disabled={launchGame.loading}
-            onClick={() => launchGame.execute(gameId)}
+            disabled={launchGameLoading}
+            onClick={() => launchGame(gameId)}
           />
         </>
       ) : (

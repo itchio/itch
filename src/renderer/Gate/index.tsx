@@ -1,13 +1,13 @@
 import { messages } from "common/butlerd";
 import { Profile } from "common/butlerd/messages";
 import React, { useEffect, useState } from "react";
-import { useAsyncCallback } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { ConfirmModal } from "renderer/basics/Modal";
 import { useSocket } from "renderer/contexts";
 import { Deferred } from "renderer/deferred";
 import { Form, FormStage } from "renderer/Gate/Form";
 import { List } from "renderer/Gate/List";
+import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 
 const GateContainer = styled.div`
@@ -49,21 +49,24 @@ export const Gate = (props: {}) => {
     null
   );
 
-  const forgetProfile = useAsyncCallback(async (profile: Profile) => {
-    try {
-      await new Promise((resolve, reject) => {
-        setForgetConfirm({ resolve, reject, profile });
-      });
-    } catch (e) {
-      console.log(`Forget confirm was cancelled`);
-      return;
-    } finally {
-      setForgetConfirm(null);
-    }
+  const [forgetProfile] = useAsyncCb(
+    async (profile: Profile) => {
+      try {
+        await new Promise((resolve, reject) => {
+          setForgetConfirm({ resolve, reject, profile });
+        });
+      } catch (e) {
+        console.log(`Forget confirm was cancelled`);
+        return;
+      } finally {
+        setForgetConfirm(null);
+      }
 
-    await socket.call(messages.ProfileForget, { profileId: profile.id });
-    fetchProfiles("refresh");
-  });
+      await socket.call(messages.ProfileForget, { profileId: profile.id });
+      fetchProfiles("refresh");
+    },
+    [socket]
+  );
 
   let fetchProfiles = (purpose: "first-time" | "refresh") => {
     (async () => {
@@ -133,7 +136,7 @@ export const Gate = (props: {}) => {
           ) : null}
           <List
             setState={setState}
-            forgetProfile={forgetProfile.execute}
+            forgetProfile={forgetProfile}
             profiles={profiles}
           />
         </GateContainer>

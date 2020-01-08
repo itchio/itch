@@ -13,7 +13,6 @@ import { queries } from "common/queries";
 import _ from "lodash";
 import { DownloadWithProgress } from "main/drive-downloads";
 import React, { useEffect, useRef, useState } from "react";
-import { useAsyncCallback, UseAsyncReturn } from "react-async-hook";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { Icon } from "renderer/basics/Icon";
@@ -285,14 +284,17 @@ export const InstallModalContents = React.forwardRef(
       [socket]
     );
 
-    const launch = useAsyncCallback(async (caveId: string) => {
-      props.onClose();
+    const [launch] = useAsyncCb(
+      async (caveId: string) => {
+        props.onClose();
 
-      await socket.query(queries.launchGame, {
-        gameId: props.game.id,
-        caveId,
-      });
-    });
+        await socket.query(queries.launchGame, {
+          gameId: props.game.id,
+          caveId,
+        });
+      },
+      [socket, props.game.id]
+    );
 
     const [showOthers, setShowOthers] = useState(false);
 
@@ -409,7 +411,7 @@ const UploadGroup = (props: {
   isOther?: boolean;
   items: Upload[];
   queued: Queued;
-  launch: UseAsyncReturn<void, [string]>;
+  launch: (caveId: string) => Promise<void>;
   install: (upload: Upload) => Promise<void>;
   uninstall: (upload: Upload) => Promise<void>;
   downloadsByUpload: DownloadsByUpload;
@@ -504,7 +506,7 @@ const UploadGroup = (props: {
                         icon="play2"
                         onClick={() => {
                           if (cave) {
-                            launch.execute(cave.id);
+                            launch(cave.id);
                           }
                         }}
                       />
