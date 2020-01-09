@@ -14,7 +14,8 @@ export interface Option<T> {
 }
 
 export interface Props<T> {
-  prefix: LocalizedString;
+  prefix?: React.ReactNode;
+  empty?: React.ReactNode;
   onChange: (values: T[]) => void;
   values: T[];
   options: readonly Option<T>[];
@@ -33,6 +34,14 @@ export const MultiDropdown = function<T>(props: Props<T>) {
       boundary="viewport"
       content={
         <MenuContents ref={coref("menu-contents")}>
+          <Button
+            disabled={_.isEmpty(props.values)}
+            onClick={() => {
+              props.onChange([]);
+              setOpen(false);
+            }}
+            label={<DropdownItem>Clear filters</DropdownItem>}
+          />
           {props.options.map(({ value, label }) => {
             return (
               <Button
@@ -42,6 +51,7 @@ export const MultiDropdown = function<T>(props: Props<T>) {
                   } else {
                     props.onChange([...props.values, value]);
                   }
+                  setOpen(false);
                 }}
                 label={
                   <DropdownItem>
@@ -59,16 +69,6 @@ export const MultiDropdown = function<T>(props: Props<T>) {
               />
             );
           })}
-          <Button
-            onClick={() => props.onChange([])}
-            label={
-              <DropdownItem>
-                {/* <Icon icon="cross" />
-                <div className="spacer" /> */}
-                Clear filters
-              </DropdownItem>
-            }
-          />
         </MenuContents>
       }
     >
@@ -78,9 +78,9 @@ export const MultiDropdown = function<T>(props: Props<T>) {
         onClick={() => setOpen(open => !open)}
         label={
           <DropdownItem>
-            {message(props.prefix)}
+            {props.prefix}
             {_.isEmpty(props.values)
-              ? "Any"
+              ? props.empty ?? "Empty"
               : props.values.map((v, i) => {
                   let opt = _.find(props.options, o => o.value === v);
                   return (

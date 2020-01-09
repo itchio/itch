@@ -39,7 +39,7 @@ export interface Option<T> {
 
 export interface Props<T> {
   groupPosition?: "start" | "middle" | "end";
-  prefix?: LocalizedString;
+  prefix?: React.ReactNode;
   onChange: (value: T) => void;
   value: T;
   renderValue?: (value: T) => React.ReactNode;
@@ -108,7 +108,7 @@ export const Dropdown = function<T>(props: Props<T>) {
         onClick={() => setOpen(open => !open)}
         label={
           <DropdownItem>
-            {props.prefix ? <>{message(props.prefix)} </> : null}
+            {props.prefix}
             {props.renderValue
               ? props.renderValue(props.value)
               : message(activeOption.label)}

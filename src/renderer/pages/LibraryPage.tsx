@@ -5,6 +5,7 @@ import {
   FetchGameRecordsParams,
   GameRecord,
   GameRecordsSource,
+  GameClassification,
 } from "common/butlerd/messages";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { FormattedMessage } from "react-intl";
@@ -248,8 +249,8 @@ const originalSorts = {
   [GameRecordsSource.Owned]: [
     {
       value: "default",
-      label: "Default",
-      directions: ["Recent first", "Recent last"],
+      label: "Acquisition date",
+      directions: ["Recent first", "Oldest first"],
     },
     {
       value: "title",
@@ -260,7 +261,7 @@ const originalSorts = {
   [GameRecordsSource.Profile]: [
     {
       value: "default",
-      label: "Default",
+      label: "Title",
       directions: ["Alphabetical", "Reverse alphabetical"],
     },
     {
@@ -282,8 +283,8 @@ const originalSorts = {
   [GameRecordsSource.Collection]: [
     {
       value: "default",
-      label: "Default",
-      directions: ["Collection order", "Reverse collection order"],
+      label: "Collection order",
+      directions: ["Default", "Reversed"],
     },
     {
       value: "title",
@@ -294,8 +295,8 @@ const originalSorts = {
   [GameRecordsSource.Installed]: [
     {
       value: "default",
-      label: "Default",
-      directions: ["Recent first", "Recent last"],
+      label: "Recency",
+      directions: ["Recent first", "Oldest first"],
     },
     {
       value: "installedSize",
@@ -340,6 +341,9 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
   const [layout, setLayout] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<SortBy>("default");
   const [filterBy, setFilterBy] = useState<string[]>([]);
+  const [classification, setClassification] = useState<
+    GameClassification | "any"
+  >("any");
   const [reverse, setReverse] = useState(false);
 
   useEffect(() => {
@@ -425,7 +429,8 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
         <Filler />
         <Spacer />
         <MultiDropdown
-          prefix={{ id: "grid.criterion.filter_by" }}
+          prefix={<PrefixIcon icon="filter" />}
+          empty={"No filters"}
           onChange={filterBy => setFilterBy(filterBy)}
           options={[
             { value: "installed", label: "Installed" },
@@ -436,7 +441,7 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
         <Spacer />
         <Dropdown
           groupPosition="start"
-          prefix={{ id: "grid.criterion.sort_by" }}
+          prefix={<PrefixIcon icon="arrange2" />}
           value={sortBy}
           options={sorts[source.source]}
           onChange={s => {
@@ -482,6 +487,10 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
     </>
   );
 };
+
+const PrefixIcon = styled(Icon)`
+  margin-right: 1em;
+`;
 
 const Filler = styled.div`
   flex-grow: 1;
