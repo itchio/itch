@@ -18,6 +18,10 @@ import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
 import { IconButton } from "renderer/basics/IconButton";
 import { GameList } from "renderer/pages/GameList";
+import { Dropdown } from "renderer/Dropdown";
+import _ from "lodash";
+import { LocalizedString } from "common/types";
+import { MultiDropdown } from "renderer/basics/MultiDropdown";
 
 const LibraryLayout = styled.div`
   display: flex;
@@ -101,7 +105,7 @@ const LibraryLayout = styled.div`
     flex-grow: 1;
 
     h2 {
-      font-size: ${fontSizes.large};
+      font-size: ${fontSizes.enormous};
 
       position: sticky;
       top: 0;
@@ -240,14 +244,114 @@ export const LibraryPage = () => {
   );
 };
 
+const originalSorts = {
+  [GameRecordsSource.Owned]: [
+    {
+      value: "default",
+      label: "Default",
+      directions: ["Recent first", "Recent last"],
+    },
+    {
+      value: "title",
+      label: "Title",
+      directions: ["Alphabetical", "Reverse alphabetical"],
+    },
+  ] as const,
+  [GameRecordsSource.Profile]: [
+    {
+      value: "default",
+      label: "Default",
+      directions: ["Alphabetical", "Reverse alphabetical"],
+    },
+    {
+      value: "views",
+      label: "Views",
+      directions: ["Most views first", "Least views first"],
+    },
+    {
+      value: "downloads",
+      label: "Downloads",
+      directions: ["Most downloads first", "Least views first"],
+    },
+    {
+      value: "purchases",
+      label: "Purchases",
+      directions: ["Most purchases first", "Least purchases first"],
+    },
+  ] as const,
+  [GameRecordsSource.Collection]: [
+    {
+      value: "default",
+      label: "Default",
+      directions: ["Collection order", "Reverse collection order"],
+    },
+    {
+      value: "title",
+      label: "Title",
+      directions: ["Alphabetical", "Reverse alphabetical"],
+    },
+  ] as const,
+  [GameRecordsSource.Installed]: [
+    {
+      value: "default",
+      label: "Default",
+      directions: ["Recent first", "Recent last"],
+    },
+    {
+      value: "installedSize",
+      label: "Installed size",
+      directions: ["Biggest first", "Smallest first"],
+    },
+    {
+      value: "title",
+      label: "Title",
+      directions: ["Alphabetical", "Reverse alphabetical"],
+    },
+    {
+      value: "playTime",
+      label: "Play time",
+      directions: ["Most played first", "Least played first"],
+    },
+  ] as const,
+};
+
+type SortBy =
+  | typeof originalSorts[GameRecordsSource.Owned][number]["value"]
+  | typeof originalSorts[GameRecordsSource.Profile][number]["value"]
+  | typeof originalSorts[GameRecordsSource.Collection][number]["value"]
+  | typeof originalSorts[GameRecordsSource.Installed][number]["value"];
+
+const sorts = (originalSorts as any) as {
+  [key in GameRecordsSource]: {
+    value: SortBy;
+    label: LocalizedString;
+    directions: [LocalizedString, LocalizedString];
+  }[];
+};
+
 const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
   const { source } = props;
-  const [layout, setLayout] = useState<"grid" | "list">("grid");
 
   const profile = useProfile();
   const socket = useSocket();
   let [loading, setLoading] = useState(true);
   let [records, setRecords] = useState<GameRecord[]>([]);
+
+  const [layout, setLayout] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState<SortBy>("default");
+  const [filterBy, setFilterBy] = useState<string[]>([]);
+  const [reverse, setReverse] = useState(false);
+
+  useEffect(() => {
+    if (
+      !_.includes(
+        _.map(sorts[source.source], s => s.value),
+        sortBy
+      )
+    ) {
+      setSortBy("default");
+    }
+  }, [source.source]);
 
   useEffect(() => {
     let cancelled = false;
@@ -264,9 +368,23 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
             source.source === GameRecordsSource.Collection
               ? source.collection.id
               : undefined,
+          sortBy: sortBy === "default" ? undefined : sortBy,
+          filters: {
+            installed: _.includes(filterBy, "installed"),
+            owned: _.includes(filterBy, "owned"),
+          },
+          reverse,
         };
 
-        let res = await socket.call(messages.FetchGameRecords, params);
+        let res = await socket.call(
+          messages.FetchGameRecords,
+          params,
+          convo => {
+            convo.onNotification(messages.Log, params => {
+              console.log(params.message);
+            });
+          }
+        );
         if (cancelled) {
           return;
         }
@@ -289,7 +407,15 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
     return () => {
       cancelled = true;
     };
-  }, [JSON.stringify(source), props.scrollToTop]);
+  }, [
+    JSON.stringify(source),
+    JSON.stringify(filterBy),
+    sortBy,
+    reverse,
+    props.scrollToTop,
+  ]);
+
+  let currentSort = _.find(sorts[source.source], s => s.value === sortBy);
 
   return (
     <>
@@ -297,21 +423,55 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
         <ViewTitle source={source} />
         {loading && <Spinner />}
         <Filler />
-        <span>Sort by</span>
-        <select>
-          <option value="one">one</option>
-          <option value="two">two</option>
-          <option value="three">thre</option>
-        </select>
-        <LayoutButton
-          icon="grid"
-          className={classNames({ active: layout === "grid" })}
-          onClick={() => setLayout("grid")}
+        <Spacer />
+        <MultiDropdown
+          prefix={{ id: "grid.criterion.filter_by" }}
+          onChange={filterBy => setFilterBy(filterBy)}
+          options={[
+            { value: "installed", label: "Installed" },
+            { value: "owned", label: "Owned" },
+          ]}
+          values={filterBy}
         />
-        <LayoutButton
-          icon="list"
-          className={classNames({ active: layout === "list" })}
-          onClick={() => setLayout("list")}
+        <Spacer />
+        <Dropdown
+          groupPosition="start"
+          prefix={{ id: "grid.criterion.sort_by" }}
+          value={sortBy}
+          options={sorts[source.source]}
+          onChange={s => {
+            setSortBy(s);
+            setReverse(false);
+          }}
+        />
+        <Dropdown
+          groupPosition="end"
+          onChange={val => setReverse(val === "true")}
+          options={[
+            { value: "false", label: currentSort?.directions[0] ?? "Normal" },
+            { value: "true", label: currentSort?.directions[1] ?? "Reversed" },
+          ]}
+          value={reverse ? "true" : "false"}
+          renderValue={value =>
+            _.find(sorts[source.source], s => s.value === sortBy)?.directions[
+              value === "true" ? 1 : 0
+            ]
+          }
+        />
+        <Spacer />
+        <Dropdown
+          onChange={layout => setLayout(layout)}
+          options={
+            [
+              { value: "grid", label: "Grid" },
+              { value: "list", label: "List" },
+            ] as {
+              value: "grid" | "list";
+              label: LocalizedString;
+            }[]
+          }
+          value={layout}
+          renderValue={value => <Icon icon={value} />}
         />
       </h2>
       {layout === "grid" ? (
@@ -323,17 +483,13 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
   );
 };
 
-const LayoutButton = styled(IconButton)`
-  border: 1px solid transparent;
-  border-radius: 2;
-
-  &.active {
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-`;
-
 const Filler = styled.div`
   flex-grow: 1;
+`;
+
+const Spacer = styled.div`
+  flex-shrink: 0;
+  flex-basis: 0.5em;
 `;
 
 const ViewTitle = (props: { source: Source }) => {

@@ -5,10 +5,11 @@ export const fontSizes = {
   small: "13px",
   normal: "15px",
   large: "18px",
-  enormous: "30px",
+  enormous: "24px",
 };
 
 export const shellBgDefault = "#151515";
+export const buttonBorderRadius = 2;
 
 export const theme: DefaultTheme = {
   colors: {

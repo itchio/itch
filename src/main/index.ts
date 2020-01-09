@@ -154,7 +154,7 @@ async function onReady() {
   win.on("maximize", () => {
     broadcastPacket(ms, packets.maximizedChanged, { maximized: true });
   });
-  win.on("restore", () => {
+  win.on("unmaximize", () => {
     broadcastPacket(ms, packets.maximizedChanged, { maximized: false });
   });
   win.setMenu(null);

@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React from "react";
 import { Icon } from "renderer/basics/Icon";
 import { LoadingCircle } from "renderer/basics/LoadingCircle";
-import { fontSizes, mixins } from "renderer/theme";
+import { fontSizes, mixins, buttonBorderRadius } from "renderer/theme";
 import styled from "styled-components";
 
 const Label = styled.div`
@@ -25,7 +25,7 @@ const Container = styled.button`
   font-weight: normal;
   padding: 12px 16px;
 
-  border-radius: 2px;
+  border-radius: ${buttonBorderRadius}px;
 
   min-height: 38px;
   min-width: 7em;

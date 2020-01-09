@@ -433,11 +433,11 @@ export enum GameRecordsSource {
  */
 export interface GameRecordsFilters {
   /** undocumented */
-  classification: GameClassification;
+  classification?: GameClassification;
   /** undocumented */
-  installed: boolean;
+  installed?: boolean;
   /** undocumented */
-  owned: boolean;
+  owned?: boolean;
 }
 
 /**

@@ -34,7 +34,7 @@ export const UploadTitle = (props: Props) => {
       {before}
       {showIcon === true ? (
         <>
-          <Icon icon={uploadIcon(upload)} hint={uploadTypeHint(upload)} />
+          <Icon icon={uploadIcon(upload)} />
           <div className="spacer" />
         </>
       ) : null}
