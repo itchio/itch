@@ -3,30 +3,30 @@ import { messages } from "common/butlerd";
 import {
   Collection,
   FetchGameRecordsParams,
+  GameClassification,
   GameRecord,
   GameRecordsSource,
-  GameClassification,
 } from "common/butlerd/messages";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import { LocalizedString } from "common/types";
+import _ from "lodash";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormattedMessage } from "react-intl";
-import { Container } from "renderer/basics/Container";
 import { ErrorState } from "renderer/basics/ErrorState";
 import { Icon } from "renderer/basics/Icon";
 import { Spinner } from "renderer/basics/LoadingCircle";
+import { MultiDropdown } from "renderer/basics/MultiDropdown";
 import { useProfile, useSocket } from "renderer/contexts";
+import { Dropdown } from "renderer/Dropdown";
 import { GameGrid } from "renderer/pages/GameGrid";
+import { GameList } from "renderer/pages/GameList";
 import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
-import { IconButton } from "renderer/basics/IconButton";
-import { GameList } from "renderer/pages/GameList";
-import { Dropdown } from "renderer/Dropdown";
-import _ from "lodash";
-import { LocalizedString } from "common/types";
-import { MultiDropdown } from "renderer/basics/MultiDropdown";
 
 const LibraryLayout = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: stretch;
+
   min-height: 100%;
   max-height: 100%;
 
@@ -35,6 +35,7 @@ const LibraryLayout = styled.div`
     font-size: ${fontSizes.large};
     background: rgba(255, 255, 255, 0.05);
     border-right: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
 
     display: flex;
     flex-direction: column;
@@ -103,34 +104,11 @@ const LibraryLayout = styled.div`
   }
 
   .main {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+
     flex-grow: 1;
-
-    h2 {
-      font-size: ${fontSizes.enormous};
-
-      position: sticky;
-      top: 0;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-
-      background: ${p => p.theme.colors.shellBg};
-      border-bottom: 1px solid ${p => p.theme.colors.shellBorder};
-      z-index: 2;
-      margin-bottom: 1em;
-
-      .filler {
-        flex-grow: 1;
-      }
-
-      .spinner {
-        margin-left: 1em;
-      }
-    }
-  }
-
-  & > .main {
-    overflow-y: scroll;
   }
 
   & > .sidebar {
@@ -238,9 +216,9 @@ export const LibraryPage = () => {
         </div>
         <CollectionList source={source} setSource={setSource} />
       </div>
-      <Container className="main" ref={mainRef}>
-        <ViewContents source={source} scrollToTop={scrollToTop} />
-      </Container>
+      <div className="main" ref={mainRef}>
+        <Viewport source={source} scrollToTop={scrollToTop} />
+      </div>
     </LibraryLayout>
   );
 };
@@ -330,7 +308,7 @@ const sorts = (originalSorts as any) as {
   }[];
 };
 
-const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
+const Viewport = (props: { source: Source; scrollToTop: () => void }) => {
   const { source } = props;
 
   const profile = useProfile();
@@ -376,6 +354,8 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
           filters: {
             installed: _.includes(filterBy, "installed"),
             owned: _.includes(filterBy, "owned"),
+            classification:
+              classification === "any" ? undefined : classification,
           },
           reverse,
         };
@@ -423,7 +403,7 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
 
   return (
     <>
-      <h2>
+      <ViewHeader>
         <ViewTitle source={source} />
         {loading && <Spinner />}
         <Filler />
@@ -478,12 +458,14 @@ const ViewContents = (props: { source: Source; scrollToTop: () => void }) => {
           value={layout}
           renderValue={value => <Icon icon={value} />}
         />
-      </h2>
-      {layout === "grid" ? (
-        <GameGrid records={records} setRecords={setRecords} />
-      ) : (
-        <GameList records={records} setRecords={setRecords} />
-      )}
+      </ViewHeader>
+      <ViewBody>
+        {layout === "grid" ? (
+          <GameGrid records={records} setRecords={setRecords} />
+        ) : (
+          <GameList records={records} setRecords={setRecords} />
+        )}
+      </ViewBody>
     </>
   );
 };
@@ -499,6 +481,34 @@ const Filler = styled.div`
 const Spacer = styled.div`
   flex-shrink: 0;
   flex-basis: 0.5em;
+`;
+
+const ViewBody = styled.div`
+  overflow-y: auto;
+  flex-grow: 1;
+`;
+
+const ViewHeader = styled.div`
+  font-size: ${fontSizes.enormous};
+
+  flex-shrink: 0;
+
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  background: ${p => p.theme.colors.shellBg};
+  border-bottom: 1px solid ${p => p.theme.colors.shellBorder};
+  z-index: 2;
+
+  .filler {
+    flex-grow: 1;
+  }
+
+  .spinner {
+    margin-left: 1em;
+  }
 `;
 
 const ViewTitle = (props: { source: Source }) => {

@@ -45,6 +45,7 @@ export const MultiDropdown = function<T>(props: Props<T>) {
           {props.options.map(({ value, label }) => {
             return (
               <Button
+                key={`${value}`}
                 onClick={() => {
                   if (_.includes(props.values, value)) {
                     props.onChange(_.filter(props.values, v => v !== value));

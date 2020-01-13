@@ -29,6 +29,8 @@ const GameGridContainer = styled.div`
   grid-column-gap: 1em;
   justify-content: space-evenly;
 
+  padding: 40px 20px;
+
   & > .item {
     background: #202020;
     border: 1px solid #252525;
