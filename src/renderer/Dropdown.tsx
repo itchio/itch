@@ -76,6 +76,7 @@ export const Dropdown = function<T>(props: Props<T>) {
           {props.options.map(({ value, label }) => {
             return (
               <Button
+                key={`${value}`}
                 onClick={() => {
                   props.onChange(value);
                   setOpen(false);

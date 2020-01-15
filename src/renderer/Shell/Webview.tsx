@@ -118,12 +118,17 @@ export const Webview = () => {
     });
   }, [viewRef]);
 
-  useListen(socket, packets.navigate, ({ url: href }) => {
-    let wv = viewRef.current;
-    if (wv) {
-      wv.loadURL(href);
-    }
-  });
+  useListen(
+    socket,
+    packets.navigate,
+    ({ url: href }) => {
+      let wv = viewRef.current;
+      if (wv) {
+        wv.loadURL(href);
+      }
+    },
+    []
+  );
 
   return (
     <WebviewContainer>

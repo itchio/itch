@@ -61,8 +61,11 @@ export const Route = () => {
   const socket = useSocket();
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
 
-  useListen(socket, packets.profileChanged, ({ profile }) =>
-    setProfile(profile)
+  useListen(
+    socket,
+    packets.profileChanged,
+    ({ profile }) => setProfile(profile),
+    []
   );
 
   useEffect(() => {

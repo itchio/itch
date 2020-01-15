@@ -100,12 +100,22 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
     })();
   }, [gameId]);
 
-  useListen(socket, packets.gameInstalled, ({ cave }) => {
-    mergeCaves({ [cave.id]: cave });
-  });
-  useListen(socket, packets.gameUninstalled, ({ caveId }) => {
-    setCaves(_.omit(caves, caveId));
-  });
+  useListen(
+    socket,
+    packets.gameInstalled,
+    ({ cave }) => {
+      mergeCaves({ [cave.id]: cave });
+    },
+    []
+  );
+  useListen(
+    socket,
+    packets.gameUninstalled,
+    ({ caveId }) => {
+      setCaves(_.omit(caves, caveId));
+    },
+    []
+  );
 
   const coref = useClickOutside(() => {
     setInstalling(false);
@@ -162,7 +172,6 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
           )}
           <Spacer />
           <Button
-            icon="play2"
             label={<FormattedMessage id="grid.item.launch" />}
             disabled={launchGameLoading}
             onClick={() => launchGame(gameId)}

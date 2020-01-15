@@ -478,6 +478,35 @@ export const FetchDownloadKey = createRequest<
 >("Fetch.DownloadKey");
 
 /**
+ * undocumented
+ */
+export interface FetchDownloadKeysFilter {
+  /** Return only download keys for given game */
+  gameId?: number;
+}
+
+/**
+ * Result for Fetch.DownloadKeys
+ */
+export interface FetchDownloadKeysResult {
+  /** All the download keys found in the local DB. */
+  items: DownloadKey[];
+  /**
+   * Whether the information was fetched from a stale cache,
+   * and could warrant a refresh if online.
+   */
+  stale: boolean;
+}
+
+/**
+ * Fetches multiple download keys
+ */
+export const FetchDownloadKeys = createRequest<
+  FetchDownloadKeysParams,
+  FetchDownloadKeysResult
+>("Fetch.DownloadKeys");
+
+/**
  * Result for Fetch.GameUploads
  */
 export interface FetchGameUploadsResult {
@@ -2783,6 +2812,18 @@ export interface FetchDownloadKeyParams {
   downloadKeyId: number;
   /** undocumented */
   profileId: number;
+  /** Force an API request */
+  fresh?: boolean;
+}
+
+/**
+ * Params for Fetch.DownloadKeys
+ */
+export interface FetchDownloadKeysParams {
+  /** undocumented */
+  profileId: number;
+  /** Filter results */
+  filters?: FetchDownloadKeysFilter;
   /** Force an API request */
   fresh?: boolean;
 }

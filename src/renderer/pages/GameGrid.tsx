@@ -180,26 +180,36 @@ export const GameGrid = React.forwardRef(function(props: Props, ref: any) {
   const downloads = useDownloads();
   const launchesByGameId = _.keyBy(useLaunches(), l => l.gameId);
 
-  useListen(socket, packets.gameInstalled, ({ cave }) => {
-    updateRecord(props, {
-      id: cave.game.id,
-      installedAt: cave.stats.installedAt,
-    });
-  });
-  useListen(socket, packets.gameUninstalled, ({ gameId }) => {
-    (async () => {
-      const { items } = await socket.call(messages.FetchCaves, {
-        filters: { gameId },
+  useListen(
+    socket,
+    packets.gameInstalled,
+    ({ cave }) => {
+      updateRecord(props, {
+        id: cave.game.id,
+        installedAt: cave.stats.installedAt,
       });
-
-      if (_.isEmpty(items)) {
-        updateRecord(props, {
-          id: gameId,
-          installedAt: undefined,
+    },
+    []
+  );
+  useListen(
+    socket,
+    packets.gameUninstalled,
+    ({ gameId }) => {
+      (async () => {
+        const { items } = await socket.call(messages.FetchCaves, {
+          filters: { gameId },
         });
-      }
-    })().catch(e => console.warn(e));
-  });
+
+        if (_.isEmpty(items)) {
+          updateRecord(props, {
+            id: gameId,
+            installedAt: undefined,
+          });
+        }
+      })().catch(e => console.warn(e));
+    },
+    []
+  );
 
   return (
     <>

@@ -92,7 +92,7 @@ export const GameGridItem = React.memo((props: Props) => {
         />
         {game.installedAt && (
           <Button
-            label="Launch"
+            label={<FormattedMessage id="grid.item.launch" />}
             disabled={props.beingLaunched}
             onClick={launch}
           />
@@ -146,7 +146,7 @@ const InstallButton = React.forwardRef(
         <Button
           ref={ref}
           icon="install"
-          label="Install"
+          label={<FormattedMessage id="grid.item.install" />}
           onClick={install}
           secondary
         />

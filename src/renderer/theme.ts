@@ -6,6 +6,7 @@ export const fontSizes = {
   normal: "15px",
   large: "18px",
   enormous: "24px",
+  excessive: "32px",
 };
 
 export const shellBgDefault = "#151515";

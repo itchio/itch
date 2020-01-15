@@ -24,11 +24,12 @@ interface Outbound<Result> {
 export function useListen<T>(
   socket: Socket,
   pc: PacketCreator<T>,
-  cb: (payload: T) => void
+  cb: (payload: T) => void,
+  deps: React.DependencyList
 ) {
   useEffect(() => {
     return socket.listen(pc, cb);
-  }, []);
+  }, deps);
 }
 
 const TYPES_THAT_ARE_FORBIDDEN_TO_LISTEN = (() => {

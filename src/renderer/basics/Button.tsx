@@ -22,6 +22,10 @@ const Container = styled.button`
   transition: ease-out 0.1s;
 
   font-size: ${fontSizes.normal};
+  &.wide {
+    font-size: ${fontSizes.large};
+  }
+
   font-weight: normal;
   padding: 12px 16px;
 
@@ -29,6 +33,10 @@ const Container = styled.button`
 
   min-height: 38px;
   min-width: 7em;
+  &.wide {
+    min-height: 52px;
+    min-width: 9em;
+  }
 
   cursor: pointer;
 

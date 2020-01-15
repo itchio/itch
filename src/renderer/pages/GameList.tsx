@@ -1,12 +1,11 @@
 import classNames from "classnames";
-import { messages } from "common/butlerd";
-import { Game, GameRecord } from "common/butlerd/messages";
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import { Button } from "renderer/basics/Button";
-import { TimeAgo } from "renderer/basics/TimeAgo";
-import { useSocket } from "renderer/contexts";
+import { GameRecord } from "common/butlerd/messages";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { GameListDetail } from "renderer/pages/GameListDetail";
 import { fontSizes, mixins } from "renderer/theme";
-import { useAsyncCb } from "renderer/use-async-cb";
+import { useDownloads } from "renderer/use-downloads";
+import { useGame } from "renderer/use-game";
+import { useLaunches } from "renderer/use-launches";
 import styled from "styled-components";
 
 interface Props {
@@ -17,6 +16,8 @@ interface Props {
 const coverWidth = 300;
 const coverHeight = 215;
 const ratio = 0.6;
+
+const wide1 = 1400;
 
 const GameListDiv = styled.div`
   height: 100%;
@@ -42,7 +43,7 @@ const GameListDiv = styled.div`
 
   .detail {
     flex-grow: 1;
-    max-width: 960px;
+    /* max-width: 960px; */
     overflow-y: auto;
 
     display: flex;
@@ -55,6 +56,11 @@ const GameListDiv = styled.div`
 
     h3 {
       font-size: ${fontSizes.enormous};
+
+      @media (min-width: ${wide1}px) {
+        font-size: ${fontSizes.excessive};
+        font-weight: bold;
+      }
     }
 
     .header {
@@ -62,7 +68,7 @@ const GameListDiv = styled.div`
       flex-direction: row;
       justify-content: space-between;
 
-      .cover {
+      .cover-section {
         flex-shrink: 0;
 
         display: flex;
@@ -70,11 +76,22 @@ const GameListDiv = styled.div`
         align-items: flex-end;
       }
 
-      .cover {
+      .cover-section .controls {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .cover-section {
         .placeholder,
         img {
           width: ${coverWidth * ratio}px;
           height: ${coverHeight * ratio}px;
+
+          @media (min-width: ${wide1}px) {
+            width: ${coverWidth}px;
+            height: ${coverHeight}px;
+          }
 
           margin-left: 10px;
           margin-bottom: 20px;
@@ -99,6 +116,17 @@ const GameListDiv = styled.div`
 
         &.secondary {
           color: ${p => p.theme.colors.text2};
+        }
+      }
+
+      .download {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        color: ${p => p.theme.colors.text2};
+
+        .progress-bar {
+          margin-left: 10px;
         }
       }
     }
@@ -137,16 +165,6 @@ const GameListDiv = styled.div`
   a {
     text-decoration: none;
   }
-
-  .controls {
-    flex-basis: 200px;
-  }
-`;
-
-const CompactButton = styled(Button)`
-  padding: 4px 1em;
-  min-width: initial;
-  min-height: initial;
 `;
 
 const findGameId = (el: HTMLElement): number | undefined => {
@@ -172,10 +190,10 @@ const findIndex = (el: HTMLElement): number | undefined => {
 };
 
 export const GameList = (props: Props) => {
-  const socket = useSocket();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const currentItem: GameRecord | null = props.records[currentIndex];
-  const [currentGame, setCurrentGame] = useState<Game | null>(null);
+  const currentRecord: GameRecord | null = props.records[currentIndex];
+  const launches = useLaunches();
+  const downloads = useDownloads();
 
   const listRef = useRef<HTMLDivElement | null>(null);
 
@@ -185,49 +203,7 @@ export const GameList = (props: Props) => {
     }
   }, [props.records.length]);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      if (!currentItem) {
-        setCurrentGame(null);
-        return;
-      }
-
-      try {
-        {
-          const { game } = await socket.call(messages.FetchGame, {
-            gameId: currentItem.id,
-          });
-          if (cancelled) {
-            return;
-          }
-          setCurrentGame(game);
-        }
-
-        {
-          const { game } = await socket.callWithRefresh(messages.FetchGame, {
-            gameId: currentItem.id,
-          });
-          if (cancelled) {
-            return;
-          }
-          setCurrentGame(game);
-        }
-      } catch (e) {
-        setCurrentGame(null);
-      }
-    })().catch(e => console.warn(e));
-    return () => {
-      cancelled = true;
-    };
-  }, [currentItem]);
-
-  const [install] = useAsyncCb(
-    async (game: Game) => {
-      console.log("stub");
-    },
-    [socket]
-  );
+  const game = useGame(currentRecord?.id);
 
   const rowClick = useCallback((ev: React.MouseEvent<HTMLElement>) => {
     const index = findIndex(ev.currentTarget);
@@ -295,45 +271,7 @@ export const GameList = (props: Props) => {
       </div>
 
       <div className="detail">
-        {currentItem && currentGame ? (
-          <>
-            <div className="header">
-              <div className="info">
-                <h3>{currentGame.title}</h3>
-                <p className="short-text">{currentGame.shortText}</p>
-                <p className="secondary">
-                  {currentItem.installedAt ? (
-                    <>
-                      Installed <TimeAgo date={currentItem.installedAt} />
-                    </>
-                  ) : (
-                    "Not installed"
-                  )}
-                </p>
-                <p className="secondary">
-                  {currentItem.owned ? <>Owned.</> : "Not owned"}
-                </p>
-              </div>
-              <div className="cover">
-                <a href={currentGame.url ?? `itch://games/${currentGame.id}`}>
-                  {currentGame.stillCoverUrl ?? currentGame.coverUrl ? (
-                    <img
-                      src={currentGame.stillCoverUrl ?? currentGame.coverUrl}
-                    />
-                  ) : (
-                    <div className="placeholder" />
-                  )}
-                </a>
-                <Button
-                  icon="install"
-                  label="Install"
-                  onClick={() => install(currentGame)}
-                  secondary
-                />
-              </div>
-            </div>
-          </>
-        ) : null}
+        <GameListDetail game={game} launches={launches} downloads={downloads} />
       </div>
     </GameListDiv>
   );

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import classNames from "classnames";
 
 const bgDark = "#555";
 const bgLite = "#eee";
@@ -26,15 +27,16 @@ const ProgressBarDiv = styled.div`
 
 interface Props {
   progress: number;
+  className?: string;
 }
 
 export const ProgressBar = (props: Props) => {
+  const { className } = props;
+  const progress = Math.max(0, Math.min(props.progress, 1.0));
+
   return (
-    <ProgressBarDiv className="progress-bar outer">
-      <div
-        className="inner"
-        style={{ right: `${100 * (1 - props.progress)}%` }}
-      />
+    <ProgressBarDiv className={classNames("progress-bar", "outer", className)}>
+      <div className="inner" style={{ right: `${100 * (1 - progress)}%` }} />
     </ProgressBarDiv>
   );
 };

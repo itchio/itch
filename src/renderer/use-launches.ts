@@ -30,12 +30,22 @@ export function useLaunches(filter: LaunchFilter = noFilter): OngoingLaunches {
       mergeLaunches(launches);
     };
   }, []);
-  useListen(socket, packets.launchChanged, ({ launchId, launch }) => {
-    mergeLaunches({ [launchId]: launch });
-  });
-  useListen(socket, packets.launchEnded, ({ launchId }) => {
-    setLaunches(old => (old[launchId] ? _.omit(old, launchId) : old));
-  });
+  useListen(
+    socket,
+    packets.launchChanged,
+    ({ launchId, launch }) => {
+      mergeLaunches({ [launchId]: launch });
+    },
+    []
+  );
+  useListen(
+    socket,
+    packets.launchEnded,
+    ({ launchId }) => {
+      setLaunches(old => (old[launchId] ? _.omit(old, launchId) : old));
+    },
+    []
+  );
 
   return launches;
 }

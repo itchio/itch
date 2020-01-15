@@ -63,9 +63,14 @@ export const Topbar = () => {
     })();
   }, []);
 
-  useListen(socket, packets.maximizedChanged, ({ maximized }) => {
-    setMaximized(maximized);
-  });
+  useListen(
+    socket,
+    packets.maximizedChanged,
+    ({ maximized }) => {
+      setMaximized(maximized);
+    },
+    []
+  );
 
   return (
     <TopbarDiv className="topbar">

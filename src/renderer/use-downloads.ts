@@ -1,13 +1,13 @@
+import { Download } from "common/butlerd/messages";
 import { DownloadsState, DownloadWithProgress } from "common/downloads";
 import { filterObject } from "common/filter-object";
+import { packets } from "common/packets";
 import { queries } from "common/queries";
+import _ from "lodash";
 import { useState } from "react";
 import { useSocket } from "renderer/contexts";
-import { useAsync } from "renderer/use-async";
-import { Download } from "common/butlerd/messages";
 import { useListen } from "renderer/Socket";
-import { packets } from "common/packets";
-import _ from "lodash";
+import { useAsync } from "renderer/use-async";
 
 export type DownloadFilter = (dl: DownloadWithProgress) => boolean;
 
@@ -33,11 +33,16 @@ export function useDownloads(
   let downloadChanged = ({ download }: { download: Download }) => {
     mergeDownloads({ [download.id]: download });
   };
-  useListen(socket, packets.downloadStarted, downloadChanged);
-  useListen(socket, packets.downloadChanged, downloadChanged);
-  useListen(socket, packets.downloadCleared, ({ download }) => {
-    setDownloads(old => _.omit(old, download.id));
-  });
+  useListen(socket, packets.downloadStarted, downloadChanged, []);
+  useListen(socket, packets.downloadChanged, downloadChanged, []);
+  useListen(
+    socket,
+    packets.downloadCleared,
+    ({ download }) => {
+      setDownloads(old => _.omit(old, download.id));
+    },
+    []
+  );
 
   return downloads;
 }

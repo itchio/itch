@@ -215,22 +215,47 @@ export const InstallModalContents = React.forwardRef(
       })();
     }, [fetchNumber]);
 
-    useListen(socket, packets.downloadStarted, ({ download }) => {
-      mergeDownloads({ [download.upload.id]: download });
-      setQueued(_.omit(queued, download.upload.id));
-    });
-    useListen(socket, packets.downloadChanged, ({ download }) => {
-      mergeDownloads({ [download.upload.id]: download });
-    });
-    useListen(socket, packets.downloadCleared, ({ download }) => {
-      setDownloads(_.omit(downloads, download.upload.id));
-    });
-    useListen(socket, packets.gameInstalled, ({ cave }) => {
-      mergeCaves({ [cave.upload.id]: cave });
-    });
-    useListen(socket, packets.gameUninstalled, () => {
-      setFetchNumber(n => n + 1);
-    });
+    useListen(
+      socket,
+      packets.downloadStarted,
+      ({ download }) => {
+        mergeDownloads({ [download.upload.id]: download });
+        setQueued(_.omit(queued, download.upload.id));
+      },
+      []
+    );
+    useListen(
+      socket,
+      packets.downloadChanged,
+      ({ download }) => {
+        mergeDownloads({ [download.upload.id]: download });
+      },
+      []
+    );
+    useListen(
+      socket,
+      packets.downloadCleared,
+      ({ download }) => {
+        setDownloads(_.omit(downloads, download.upload.id));
+      },
+      []
+    );
+    useListen(
+      socket,
+      packets.gameInstalled,
+      ({ cave }) => {
+        mergeCaves({ [cave.upload.id]: cave });
+      },
+      []
+    );
+    useListen(
+      socket,
+      packets.gameUninstalled,
+      () => {
+        setFetchNumber(n => n + 1);
+      },
+      []
+    );
 
     const divRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -355,7 +380,9 @@ export const InstallModalContents = React.forwardRef(
                           setShowOthers(false);
                         }}
                         icon="minus"
-                        label="Hide other downloads"
+                        label={
+                          <FormattedMessage id="install_modal.hide_other_downloads" />
+                        }
                       />
                       <UploadGroup
                         queued={queued}
@@ -375,7 +402,9 @@ export const InstallModalContents = React.forwardRef(
                         setShowOthers(true);
                       }}
                       icon="plus"
-                      label="Show other downloads"
+                      label={
+                        <FormattedMessage id="install_modal.show_other_downloads" />
+                      }
                     />
                   ))}
               </div>
@@ -428,7 +457,8 @@ const UploadGroup = (props: {
         if (dl && dl.finishedAt) {
           dl = undefined;
         }
-        let cave = props.cavesByUpload[u.id];
+        const cave = props.cavesByUpload[u.id];
+        const showDownload = !cave;
 
         return (
           <MenuTippy
@@ -447,48 +477,33 @@ const UploadGroup = (props: {
                     />
                   </p>
                 ) : null}
-                {u.size || hasPlatforms(u) ? (
-                  <p>
-                    <Icon icon="download" /> {fileSize ? fileSize(u.size) : ""}{" "}
-                    download {u.platforms.linux && <Icon icon="tux" />}
-                    {u.platforms.windows && <Icon icon="windows8" />}
-                    {u.platforms.osx && <Icon icon="apple" />}
-                    {u.type === UploadType.HTML && <Icon icon="html5" />}
-                  </p>
-                ) : null}
-                {u.type !== "default" && u.type !== "other" && (
-                  <p>
-                    <Icon icon={uploadIcons[u.type]} />{" "}
-                    <FormattedMessage id={`upload_type.${u.type}`} />
-                  </p>
-                )}
-                {u.demo && <p>Demo</p>}
-                {u.build ? (
-                  <>
-                    <p>
-                      Version {u.build.userVersion || u.build.version} &mdash;{" "}
-                      <TimeAgo date={u.build.createdAt} />
-                    </p>
-                  </>
-                ) : (
-                  <p>
-                    Updated <TimeAgo date={u.updatedAt} />
-                  </p>
-                )}
+                {showDownload ? <DownloadInfo upload={u} /> : null}
                 {cave ? (
                   <>
                     <p>
-                      Installed <TimeAgo date={cave.stats.installedAt} />{" "}
-                      &mdash; {fileSize(cave.installInfo.installedSize)} on disk
+                      <FormattedMessage id="grid.filters.options.installed" />{" "}
+                      <TimeAgo date={cave.stats.installedAt} /> &mdash;{" "}
+                      {fileSize(cave.installInfo.installedSize)} on disk
                     </p>
                     {cave.stats.lastTouchedAt ? (
                       <p>
-                        Last played <TimeAgo date={cave.stats.lastTouchedAt} />
+                        <FormattedMessage
+                          id="usage_stats.last_played_time_ago"
+                          values={{
+                            time_ago: (
+                              <TimeAgo date={cave.stats.lastTouchedAt} />
+                            ),
+                          }}
+                        />
                       </p>
-                    ) : null}
+                    ) : (
+                      <p>
+                        <FormattedMessage id="usage_stats.never_played" />
+                      </p>
+                    )}
                     {cave.stats.secondsRun ? (
                       <p>
-                        Total{" "}
+                        <FormattedMessage id="usage_stats.has_played_for_duration" />{" "}
                         <FormattedMessage
                           {...formatDurationAsMessage(cave.stats.secondsRun)}
                         />
@@ -497,7 +512,9 @@ const UploadGroup = (props: {
                   </>
                 ) : null}
                 {isOther && !cave && !dl ? (
-                  <p className="warning">This upload may be incompatible.</p>
+                  <p className="warning">
+                    <FormattedMessage id="install_modal.incompatible_warning" />
+                  </p>
                 ) : null}
                 <div className="button-group">
                   {cave ? (
@@ -539,7 +556,6 @@ const UploadGroup = (props: {
             boundary="viewport"
           >
             <Button
-              // onClick={() => toggleInstalled.execute(u)}
               label={
                 <UploadTitle
                   showIcon={false}
@@ -564,6 +580,45 @@ const UploadGroup = (props: {
           </MenuTippy>
         );
       })}
+    </>
+  );
+};
+
+const DownloadInfo = (props: { upload: Upload }) => {
+  const u = props.upload;
+  const showPlatforms = u.size || hasPlatforms(u);
+
+  return (
+    <>
+      {showPlatforms ? (
+        <p>
+          <Icon icon="download" /> {fileSize ? fileSize(u.size) : ""}{" "}
+          {u.platforms.linux && <Icon icon="tux" />}
+          {u.platforms.windows && <Icon icon="windows8" />}
+          {u.platforms.osx && <Icon icon="apple" />}
+          {u.type === UploadType.HTML && <Icon icon="html5" />}
+        </p>
+      ) : null}
+      {u.type !== "default" && u.type !== "other" && (
+        <p>
+          <Icon icon={uploadIcons[u.type]} />{" "}
+          <FormattedMessage id={`upload_type.${u.type}`} />
+        </p>
+      )}
+      {u.demo && <p>Demo</p>}
+      {u.build ? (
+        <>
+          <p>
+            Version {u.build.userVersion || u.build.version} &mdash;{" "}
+            <TimeAgo date={u.build.createdAt} />
+          </p>
+        </>
+      ) : (
+        <p>
+          <FormattedMessage id="upload_stats.last_update" />{" "}
+          <TimeAgo date={u.updatedAt} />
+        </p>
+      )}
     </>
   );
 };

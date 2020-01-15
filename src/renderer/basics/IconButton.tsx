@@ -38,6 +38,12 @@ const StyledButton = styled.button`
   width: 42px;
   height: 42px;
 
+  &.wide {
+    font-size: ${fontSizes.large};
+    width: 56px;
+    height: 56px;
+  }
+
   &:focus {
     outline: none;
   }
@@ -48,6 +54,7 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   className?: string;
+  wide?: boolean;
   id?: string;
 
   onClick?: React.MouseEventHandler<HTMLElement>;
@@ -57,12 +64,12 @@ interface Props {
 
 export const IconButton = React.forwardRef(
   (props: Props, ref: React.Ref<HTMLButtonElement>) => {
-    const { className, loading, icon, ...restProps } = props;
+    const { className, loading, icon, wide, ...restProps } = props;
 
     return (
       <StyledButton
         ref={ref}
-        className={classNames("icon-button", className)}
+        className={classNames("icon-button", className, { wide })}
         {...restProps}
       >
         {loading ? (
