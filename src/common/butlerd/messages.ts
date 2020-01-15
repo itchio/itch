@@ -716,6 +716,23 @@ export const FetchProfileOwnedKeys = createRequest<
 >("Fetch.ProfileOwnedKeys");
 
 /**
+ * Result for Fetch.ScrapedScreenshots
+ */
+export interface FetchScrapedScreenshotsResult {
+  /** The returned screenshots */
+  screenshots: string[];
+}
+
+/**
+ * A bad endpoint you probably shouldn't rely on, if I'm quite honest.
+ * Please don't use it?
+ */
+export const FetchScrapedScreenshots = createRequest<
+  FetchScrapedScreenshotsParams,
+  FetchScrapedScreenshotsResult
+>("Fetch.ScrapedScreenshots");
+
+/**
  * Result for Fetch.Commons
  */
 export interface FetchCommonsResult {
@@ -2822,6 +2839,10 @@ export interface FetchDownloadKeyParams {
 export interface FetchDownloadKeysParams {
   /** undocumented */
   profileId: number;
+  /** Number of items to skip */
+  offset?: number;
+  /** Max number of results per page (default = 5) */
+  limit?: number;
   /** Filter results */
   filters?: FetchDownloadKeysFilter;
   /** Force an API request */
@@ -2961,6 +2982,14 @@ export interface FetchProfileOwnedKeysParams {
   cursor?: Cursor;
   /** If set, will force fresh data */
   fresh?: boolean;
+}
+
+/**
+ * Params for Fetch.ScrapedScreenshots
+ */
+export interface FetchScrapedScreenshotsParams {
+  /** The game for which to grab screenshots */
+  gameId: number;
 }
 
 /**

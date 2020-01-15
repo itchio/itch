@@ -31,7 +31,6 @@ const GameListDiv = styled.div`
     background: rgba(255, 255, 255, 0.05);
     flex-basis: 300px;
     flex-shrink: 0;
-    margin-right: 1em;
     overflow-y: scroll;
 
     padding: 12px 0;
@@ -43,16 +42,19 @@ const GameListDiv = styled.div`
 
   .detail {
     flex-grow: 1;
-    /* max-width: 960px; */
     overflow-y: auto;
 
     display: flex;
     flex-direction: column;
     align-items: stretch;
 
-    padding-top: 25px;
-    padding-right: 25px;
-    padding-left: 15px;
+    padding: 25px;
+
+    @media (min-width: ${wide1}px) {
+      padding: 40px;
+    }
+
+    position: relative;
 
     h3 {
       font-size: ${fontSizes.enormous};
@@ -61,6 +63,21 @@ const GameListDiv = styled.div`
         font-size: ${fontSizes.excessive};
         font-weight: bold;
       }
+    }
+
+    .detail-background {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background-size: cover;
+      background-position: 50% 50%;
+      z-index: 0;
+    }
+
+    .detail-content {
+      z-index: 1;
     }
 
     .header {
@@ -127,6 +144,37 @@ const GameListDiv = styled.div`
 
         .progress-bar {
           margin-left: 10px;
+        }
+      }
+    }
+
+    .screenshots {
+      margin-top: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      overflow-x: hidden;
+      box-shadow: inset 0 0 20px black;
+
+      img {
+        border-radius: 2px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 20px 0 #121212;
+
+        max-height: 220px;
+        @media (min-width: ${wide1}px) {
+          max-height: 300px;
+        }
+        margin-right: 20px;
+
+        /* &:first-child {
+          max-height: 400px;
+        } */
+
+        &:last-child {
+          margin-right: 0;
         }
       }
     }
