@@ -188,6 +188,9 @@ func doMain() error {
 
 	gocleanup.Register(r.cleanup)
 
+	// Work around https://bugs.chromium.org/p/chromium/issues/detail?id=264818
+	os.Setenv("MESA_GLSL_CACHE_DISABLE", "true")
+
 	// Create capabilities, driver etc.
 	capabilities := gs.Capabilities{}
 	capabilities.SetBrowser(gs.ChromeBrowser())
