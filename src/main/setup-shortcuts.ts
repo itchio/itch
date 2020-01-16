@@ -51,7 +51,7 @@ const shortcuts: Shortcuts = [
     async ms => openOrFocusDevTools(ms.browserWindow?.webContents),
   ],
   [
-    ["CmdOrCtrl+Alt+Shift+C"],
+    ["CmdOrCtrl+Alt+Shift+C", "CmdOrCtrl+Shift+I"],
     async ms => openOrFocusDevTools(getWebviewWebContents(ms)),
   ],
   [["CmdOrCtrl+Q"], async ms => ms.browserWindow?.close()],

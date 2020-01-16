@@ -420,6 +420,7 @@ const Viewport = (props: { source: Source; scrollToTop: () => void }) => {
         />
         <Spacer />
         <Dropdown
+          name="sort-field"
           groupPosition="start"
           prefix={<PrefixIcon icon="arrange2" />}
           value={sortBy}
@@ -430,6 +431,7 @@ const Viewport = (props: { source: Source; scrollToTop: () => void }) => {
           }}
         />
         <Dropdown
+          name="sort-direction"
           groupPosition="end"
           onChange={val => setReverse(val === "true")}
           options={[
@@ -445,6 +447,7 @@ const Viewport = (props: { source: Source; scrollToTop: () => void }) => {
         />
         <Spacer />
         <Dropdown
+          name="layout"
           onChange={layout => setLayout(layout)}
           options={
             [

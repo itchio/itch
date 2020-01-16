@@ -44,6 +44,7 @@ export interface Props<T> {
   value: T;
   renderValue?: (value: T) => React.ReactNode;
   options: readonly Option<T>[];
+  name?: string;
 }
 
 export const DropdownItem = styled.div`
@@ -72,11 +73,17 @@ export const Dropdown = function<T>(props: Props<T>) {
       appendTo={document.body}
       boundary="viewport"
       content={
-        <MenuContents ref={coref("menu-contents")}>
+        <MenuContents
+          className={"dropdown-options"}
+          data-name={props.name}
+          ref={coref("menu-contents")}
+        >
           {props.options.map(({ value, label }) => {
             return (
               <Button
                 key={`${value}`}
+                className={"dropdown-option"}
+                data-value={`${value}`}
                 onClick={() => {
                   props.onChange(value);
                   setOpen(false);
@@ -102,8 +109,10 @@ export const Dropdown = function<T>(props: Props<T>) {
     >
       <DropdownButton
         className={classNames(
+          "dropdown",
           props.groupPosition ? `group-${props.groupPosition}` : null
         )}
+        data-name={props.name}
         secondary
         ref={coref("button")}
         onClick={() => setOpen(open => !open)}
