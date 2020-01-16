@@ -104,8 +104,12 @@ export function multiSink(...sinks: LogSink[]) {
 export const streamSink = (stream: NodeJS.WritableStream): LogSink => {
   return {
     write(entry: LogEntry) {
-      stream.write(JSON.stringify(entry));
-      stream.write("\n");
+      try {
+        stream.write(JSON.stringify(entry));
+        stream.write("\n");
+      } catch (e) {
+        console.warn(`Could not write log entry: ${e.stack}`);
+      }
     },
   };
 };
