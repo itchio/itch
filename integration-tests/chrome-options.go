@@ -36,7 +36,6 @@ func (r *runner) GetChromeOptions() (*ChromeOptions, error) {
 			// cf. https://bugs.chromium.org/p/chromedriver/issues/detail?id=2489
 			"--no-sandbox",
 			"--disable-dev-shm-usage",
-			"--disable-ipv6",
 			// cf. https://bugs.chromium.org/p/chromedriver/issues/detail?id=2489#c20
 			"--remote-debugging-port=9222",
 		},
