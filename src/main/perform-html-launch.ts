@@ -1,14 +1,14 @@
-import btoa from "btoa";
 import {
   Game,
   HTMLLaunchParams,
   HTMLLaunchResult,
 } from "common/butlerd/messages";
 import { Logger } from "common/logger";
-import { BrowserWindow, session, shell } from "electron";
-import querystring from "querystring";
-import { registerItchCaveProtocol } from "main/itch-cave-protocol";
+import { app, BrowserWindow, session, shell } from "electron";
 import { envSettings } from "main/constants/env-settings";
+import { writeFile } from "main/fs";
+import { registerItchCaveProtocol } from "main/itch-cave-protocol";
+import { join } from "path";
 
 interface HTMLLaunchOpts {
   game: Game;
@@ -39,6 +39,11 @@ export async function performHTMLLaunch(
 
   registerItchCaveProtocol(gameSession, rootFolder);
 
+  const injectPath = join(app.getPath("temp"), `game_${game.id}_inject.js`);
+  const itchObject = { env, args };
+  await writeFile(injectPath, generateInject(itchObject), "utf8");
+  logger.info(`Wrote inject file to (${injectPath})`);
+
   // TODO: show game icon as, well, the window's icon
   let win = new BrowserWindow({
     title: game?.title,
@@ -47,85 +52,75 @@ export async function performHTMLLaunch(
     center: true,
     show: true,
 
-    /* used to be black, but that didn't work for everything */
+    // used to be black, but that didn't work for everything
     backgroundColor: "#fff",
 
-    /* the width x height we give is content size, window will be slightly larger */
+    // the width x height we give is content size, window will be slightly larger
     useContentSize: true,
 
     webPreferences: {
-      /* don't let web code control the OS */
+      // don't let web code control the OS
       nodeIntegration: false,
-      /* stores cookies etc. in persistent session to save progress */
+      // stores cookies etc. in persistent session to save progress
       session: gameSession,
-      /* disable CORS to allow access to the itch.io API */
+      // disable CORS to allow access to the itch.io API
       webSecurity: false,
+      // execute some javascript *before* the game, to set up the environment
+      // object, etc.
+      preload: injectPath,
     },
   });
 
-  const itchObject = {
-    env,
-    args,
-  };
-
   // open dev tools immediately if requested
+  let wc = win.webContents;
   if (envSettings.gameDevtools) {
-    win.webContents.openDevTools({ mode: "detach" });
+    wc.openDevTools({ mode: "detach" });
   }
   win.removeMenu();
 
   // strip 'Electron' from user agent so some web games stop being confused
-  let userAgent = win.webContents.getUserAgent();
-  userAgent = userAgent.replace(/Electron\/[0-9.]+\s/, "");
-  win.webContents.setUserAgent(userAgent);
+  wc.userAgent = wc.userAgent.replace(/Electron\/[0-9.]+\s/, "");
 
   const toggleFullscreen = () => {
     win.setFullScreen(!win.isFullScreen());
   };
 
-  win.webContents.on(
-    "before-input-event",
-    (ev: Electron.Event, input: Electron.Input) => {
-      if (input.type === "keyUp") {
-        switch (input.key) {
-          case "F11":
+  wc.on("before-input-event", (ev: Electron.Event, input: Electron.Input) => {
+    if (input.type === "keyUp") {
+      switch (input.key) {
+        case "F11":
+          toggleFullscreen();
+          break;
+        case "F":
+          if (input.meta) {
             toggleFullscreen();
-            break;
-          case "F":
-            if (input.meta) {
-              toggleFullscreen();
-            }
-            break;
-          case "Escape":
-            if (win.isFullScreen()) {
-              win.setFullScreen(false);
-            }
-            break;
-          case "F12":
-            if (input.shift) {
-              win.webContents.openDevTools({ mode: "detach" });
-            }
-            break;
-        }
+          }
+          break;
+        case "Escape":
+          if (win.isFullScreen()) {
+            win.setFullScreen(false);
+          }
+          break;
+        case "F12":
+          if (input.shift) {
+            wc.openDevTools({ mode: "detach" });
+          }
+          break;
       }
     }
-  );
+  });
 
-  win.webContents.on("new-window", (ev: Event, url: string) => {
+  wc.on("new-window", (ev: Event, url: string) => {
     ev.preventDefault();
     shell.openExternal(url);
   });
-
-  // nasty hack to pass in the itchObject
-  const itchObjectBase64 = btoa(JSON.stringify(itchObject));
-  const query = querystring.stringify({ itchObject: itchObjectBase64 });
 
   // don't use the HTTP cache, we already have everything on disk!
   const options = {
     extraHeaders: "pragma: no-cache\n",
   };
 
-  win.loadURL(`itch-cave://game.itch/${indexPath}?${query}`, options);
+  win.loadURL(`itch-cave://game.itch/${indexPath}`, options);
 
   logger.info(`Waiting for window to close or context to be aborted...`);
   await new Promise((resolve, reject) => {
@@ -141,4 +136,33 @@ export async function performHTMLLaunch(
   logger.info(`HTML launch promise has resolved`);
 
   return {};
+}
+
+function generateInject(itchObject: Object): string {
+  return `(function() {
+      try {
+        console.log(
+          "%c ========== Loading itch app HTML5 environment ===========",
+          "color: #fa5c5c"
+        );
+        if (!navigator.languages || !navigator.languages.length) {
+          console.log("Patching navigator.languages...");
+          Object.defineProperty(navigator, "languages", {
+            value: [navigator.language, "en-US"],
+            configurable: true,
+          });
+        }
+
+        window.Itch = ${JSON.stringify(itchObject)};
+        console.log("Loaded itch environment!");
+        console.dir(window.Itch);
+      } catch (e) {
+        console.error("While loading itch environment: ", e);
+      } finally {
+        console.log(
+          "%c =========================================================",
+          "color: #fa5c5c"
+        );
+      }
+    })();`;
 }

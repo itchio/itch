@@ -1,4 +1,4 @@
-import { protocol, Session } from "electron";
+import { Session } from "electron";
 import {
   asReadable,
   asyncToSyncProtocolHandler,
