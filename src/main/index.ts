@@ -7,7 +7,10 @@ import dump from "common/util/dump";
 import { partitionForApp } from "common/util/partitions";
 import { app, BrowserWindow, dialog, session, shell } from "electron";
 import { envSettings } from "main/constants/env-settings";
-import { prepareItchProtocol, registerItchProtocol } from "main/itch-protocol";
+import {
+  registerSchemesAsPrivileged,
+  registerItchProtocol,
+} from "main/itch-protocol";
 import { loadPreferences, PreferencesState } from "main/load-preferences";
 import { mainLogger } from "main/logger";
 import { attemptAutoLogin } from "main/profile";
@@ -17,6 +20,7 @@ import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
 import { DownloadsState } from "common/downloads";
+import { prepareItchCaveProtocol } from "main/itch-cave-protocol";
 
 let logger = mainLogger.childWithName("main");
 
@@ -82,7 +86,7 @@ async function main() {
       .catch((err: Error) => console.log("An error occurred: ", err));
   }
 
-  prepareItchProtocol();
+  registerSchemesAsPrivileged();
 
   app.on("web-contents-created", (ev, wc) => {
     if (wc.hostWebContents?.id == ms.browserWindow?.webContents?.id) {

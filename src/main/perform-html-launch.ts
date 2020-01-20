@@ -7,6 +7,8 @@ import {
 import { Logger } from "common/logger";
 import { BrowserWindow, session, shell } from "electron";
 import querystring from "querystring";
+import { registerItchCaveProtocol } from "main/itch-cave-protocol";
+import { envSettings } from "main/constants/env-settings";
 
 interface HTMLLaunchOpts {
   game: Game;
@@ -35,7 +37,7 @@ export async function performHTMLLaunch(
   const partition = `persist:gamesession_${game.id}`;
   const gameSession = session.fromPartition(partition, { cache: false });
 
-  // await registerItchCaveProtocol(gameSession, rootFolder);
+  registerItchCaveProtocol(gameSession, rootFolder);
 
   // TODO: show game icon as, well, the window's icon
   let win = new BrowserWindow({
@@ -67,7 +69,7 @@ export async function performHTMLLaunch(
   };
 
   // open dev tools immediately if requested
-  if (process.env.IMMEDIATE_NOSE_DIVE === "1") {
+  if (envSettings.gameDevtools) {
     win.webContents.openDevTools({ mode: "detach" });
   }
   win.removeMenu();

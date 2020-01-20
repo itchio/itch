@@ -1,5 +1,4 @@
 import env from "common/env";
-import dump from "common/util/dump";
 import { getRendererDistPath } from "common/util/resources";
 import { protocol, session } from "electron";
 import * as fs from "fs";
@@ -12,7 +11,7 @@ import { Readable } from "stream";
 
 let logger = mainLogger.childWithName("itch-protocol");
 
-class HTTPError extends Error {
+export class HTTPError extends Error {
   constructor(
     public statusCode: number,
     public headers: { [key: string]: string },
@@ -40,10 +39,19 @@ function convertHeaders(
   return output;
 }
 
-export function prepareItchProtocol() {
+export function registerSchemesAsPrivileged() {
   protocol.registerSchemesAsPrivileged([
     {
       scheme: "itch",
+      privileges: {
+        supportFetchAPI: true,
+        secure: true,
+        standard: true,
+        corsEnabled: true,
+      },
+    },
+    {
+      scheme: "itch-cave",
       privileges: {
         supportFetchAPI: true,
         secure: true,
@@ -205,19 +213,7 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
           // N.B: electron 7.1.2 release notes says custom stream handlers
           // should work now, but it doesn't appear to be the case, so
           // `createReadStream` is out of the question for now. Ah well.
-          let content = await new Promise<Buffer>((resolve, reject) => {
-            fs.readFile(
-              fsPath,
-              { encoding: null /* binary */ },
-              (err, data) => {
-                if (err) {
-                  reject(err);
-                } else {
-                  resolve(data);
-                }
-              }
-            );
-          });
+          let content = await readFileAsBuffer(fsPath);
 
           return {
             statusCode: 200,
@@ -236,21 +232,7 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
     }
   }
 
-  protocolHandler = (req, cb) => {
-    handleRequest(req)
-      .then(res => {
-        cb(res);
-      })
-      .catch(e => {
-        cb({
-          statusCode: 500,
-          headers: {
-            "content-type": "text/plain",
-          },
-          data: asReadable(e.stack),
-        });
-      });
-  };
+  protocolHandler = asyncToSyncProtocolHandler(handleRequest);
   return protocolHandler;
 }
 
@@ -259,4 +241,52 @@ export function asReadable(payload: string | Buffer): Readable {
   data.push(payload);
   data.push(null);
   return data;
+}
+
+export async function readFileAsBuffer(fsPath: string): Promise<Buffer> {
+  return new Promise<Buffer>((resolve, reject) => {
+    fs.readFile(fsPath, { encoding: null /* binary */ }, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+export type SyncProtocolHandler = (
+  req: Electron.Request,
+  cb: (res: Electron.StreamProtocolResponse) => void
+) => void;
+export type AsyncProtocolHandler = (
+  req: Electron.Request
+) => Promise<Electron.StreamProtocolResponse>;
+
+export function asyncToSyncProtocolHandler(
+  aph: AsyncProtocolHandler
+): SyncProtocolHandler {
+  return (req, cb) => {
+    aph(req)
+      .then(cb)
+      .catch(e => {
+        if (e instanceof HTTPError) {
+          cb({
+            statusCode: e.statusCode,
+            headers: e.headers,
+            data: asReadable(e.data),
+          });
+          return;
+        } else {
+          cb({
+            statusCode: 500,
+            headers: {
+              "content-type": "text/plain",
+            },
+            data: asReadable(e.stack),
+          });
+          return;
+        }
+      });
+  };
 }

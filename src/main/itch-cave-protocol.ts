@@ -1,17 +1,18 @@
-import * as url from "url";
-import { Session } from "electron";
-import { createReadStream, statSync } from "original-fs";
-import { mainLogger } from "main/logger";
+import { protocol, Session } from "electron";
+import {
+  asReadable,
+  asyncToSyncProtocolHandler,
+  HTTPError,
+  readFileAsBuffer,
+} from "main/itch-protocol";
 import mime from "mime-types";
 import { join } from "path";
-import { asReadable } from "main/itch-protocol";
+import * as url from "url";
 
 const registeredSessions = new Set<Session>();
 const WEBGAME_PROTOCOL = "itch-cave";
 
-const logger = mainLogger.child(__filename);
-
-export async function registerItchCaveProtocol(
+export function registerItchCaveProtocol(
   gameSession: Session,
   fileRoot: string
 ) {
@@ -20,74 +21,31 @@ export async function registerItchCaveProtocol(
   }
   registeredSessions.add(gameSession);
 
-  await new Promise((resolve, reject) => {
-    gameSession.protocol.registerStreamProtocol(
-      WEBGAME_PROTOCOL,
-      (request, callback) => {
-        const urlPath = url.parse(request.url).pathname;
-        if (!urlPath) {
-          callback({
-            statusCode: 404,
-            data: asReadable("Not found"),
-          });
-          return;
-        }
-        const decodedPath = decodeURI(urlPath);
-        const rootlessPath = decodedPath.replace(/^\//, "");
-        const filePath = join(fileRoot, rootlessPath);
+  let asyncHandler = async (
+    request: Electron.Request
+  ): Promise<Electron.StreamProtocolResponse> => {
+    const urlPath = url.parse(request.url).pathname;
+    if (!urlPath) {
+      throw new HTTPError(404, {}, "Not found");
+    }
+    const decodedPath = decodeURI(urlPath);
+    const rootlessPath = decodedPath.replace(/^\//, "");
+    const fsPath = join(fileRoot, rootlessPath);
+    const contentType = mime.lookup(fsPath) || "application/octet-stream";
 
-        try {
-          var stats = statSync(filePath);
-          let headers: Record<string, string> = {
-            server: "itch",
-            "content-length": `${stats.size}`,
-            "access-control-allow-origin": "*",
-          };
-          let contentType = mime.lookup(filePath);
-          if (contentType) {
-            headers["content-type"] = contentType;
-          }
-          var stream = createReadStream(filePath);
-          callback({
-            headers,
-            statusCode: 200,
-            data: stream,
-          });
-          return;
-        } catch (e) {
-          logger.warn(`while serving ${request.url}, got ${e.stack}`);
-          let statusCode = 400;
-          switch (e.code) {
-            case "ENOENT":
-              statusCode = 404;
-              break;
-            case "EPERM":
-              statusCode = 401;
-              break;
-          }
-
-          callback({
-            headers: {},
-            statusCode,
-            data: null,
-          });
-          return;
-        }
+    const content = await readFileAsBuffer(fsPath);
+    return {
+      headers: {
+        server: "itch",
+        "content-length": `${content.length}`,
+        "content-type": contentType,
+        "access-control-allow-origin": "*",
       },
-      error => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      }
-    );
-  });
+      statusCode: 200,
+      data: asReadable(content),
+    };
+  };
+  let syncHandler = asyncToSyncProtocolHandler(asyncHandler);
 
-  const handled = await gameSession.protocol.isProtocolHandled(
-    WEBGAME_PROTOCOL
-  );
-  if (!handled) {
-    throw new Error(`could not register custom protocol ${WEBGAME_PROTOCOL}`);
-  }
+  gameSession.protocol.registerStreamProtocol(WEBGAME_PROTOCOL, syncHandler);
 }

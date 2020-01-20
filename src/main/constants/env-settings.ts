@@ -19,6 +19,9 @@ export const envSettings = {
   // Open devtools on startup (for shell BrowserWindow)
   devtools: process.env.DEVTOOLS === "1",
 
+  // Open devtools on HTML5 game startup (for game BrowserWindow)
+  gameDevtools: process.env.IMMEDIATE_NOSE_DIVE === "1",
+
   // This is set when running integration tests
   integrationTests: process.env.ITCH_INTEGRATION_TESTS === "1",
 
