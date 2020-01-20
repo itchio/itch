@@ -163,15 +163,11 @@ const GameListDiv = styled.div`
         border: 1px solid rgba(0, 0, 0, 0.2);
         box-shadow: 0 0 20px 0 #121212;
 
-        max-height: 220px;
+        max-height: 180px;
         @media (min-width: ${wide1}px) {
-          max-height: 300px;
+          max-height: 220px;
         }
         margin-right: 20px;
-
-        /* &:first-child {
-          max-height: 400px;
-        } */
 
         &:last-child {
           margin-right: 0;

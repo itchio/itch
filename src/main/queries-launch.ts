@@ -17,6 +17,7 @@ import { uuid } from "common/util/uuid";
 import { packets } from "common/packets";
 import dump from "common/util/dump";
 import { shell } from "electron";
+import { performHTMLLaunch } from "main/perform-html-launch";
 
 const logger = mainLogger.childWithName("queries-launch");
 
@@ -86,6 +87,19 @@ export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
             logger.info(`Prereqs failed: ${dump(params)}`);
             // TODO: allow continuing
             return { continue: false };
+          });
+          convo.onRequest(messages.HTMLLaunch, async params => {
+            await performHTMLLaunch({
+              game: cave.game,
+              logger,
+              params,
+              onAbort: h => {
+                logger.warn(
+                  `queries-launch / performHTMLLaunch / onAbort: stub`
+                );
+              },
+            });
+            return {};
           });
           convo.onRequest(messages.ShellLaunch, async params => {
             shell.openItem(params.itemPath);

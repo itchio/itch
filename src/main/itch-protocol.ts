@@ -236,13 +236,6 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
     }
   }
 
-  function asReadable(payload: string | Buffer): Readable {
-    const data = new Readable();
-    data.push(payload);
-    data.push(null);
-    return data;
-  }
-
   protocolHandler = (req, cb) => {
     handleRequest(req)
       .then(res => {
@@ -259,4 +252,11 @@ export function getItchProtocolHandler(ms: MainState): ProtocolHandler {
       });
   };
   return protocolHandler;
+}
+
+export function asReadable(payload: string | Buffer): Readable {
+  const data = new Readable();
+  data.push(payload);
+  data.push(null);
+  return data;
 }
