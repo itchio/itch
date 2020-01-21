@@ -2,6 +2,7 @@ import { ModalCreator, ModalPayload } from "common/modals";
 import { BrowserWindow, session } from "electron";
 import { MainState } from "main";
 import { partitionForApp } from "common/util/partitions";
+import { shellBgDefault } from "renderer/theme";
 
 export async function showModal<Params, Result>(
   ms: MainState,
@@ -12,6 +13,10 @@ export async function showModal<Params, Result>(
     parent: ms.browserWindow,
     title: "Pick cave",
     modal: true,
+    width: 500,
+    height: 420,
+    backgroundColor: shellBgDefault,
+    show: false,
     webPreferences: {
       session: session.fromPartition(partitionForApp()),
     },
@@ -26,7 +31,8 @@ export async function showModal<Params, Result>(
 
   let urlParams = new URLSearchParams();
   urlParams.set("payload", JSON.stringify(payload));
-  modal.loadURL(`itch://modal?${urlParams}`);
+  await modal.loadURL(`itch://modal?${urlParams}`);
+  modal.show();
 
   try {
     return await new Promise((resolve, reject) => {
