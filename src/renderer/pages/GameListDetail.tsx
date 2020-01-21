@@ -1,5 +1,6 @@
 import { Game } from "common/butlerd/messages";
 import { DownloadsState } from "common/downloads";
+import { fileSize } from "common/format/filesize";
 import { gameCover } from "common/game-cover";
 import { OngoingLaunches } from "common/launches";
 import { queries } from "common/queries";
@@ -13,13 +14,11 @@ import { MenuTippy } from "renderer/basics/Menu";
 import { TimeAgo } from "renderer/basics/TimeAgo";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
+import { ProgressBar } from "renderer/pages/ProgressBar";
 import { InstallModalContents } from "renderer/Shell/InstallModal";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useCaves } from "renderer/use-caves";
 import { useDownloadKeys } from "renderer/use-download-keys";
-import { fileSize } from "common/format/filesize";
-import { ProgressBar } from "renderer/pages/ProgressBar";
-import { messages } from "common/butlerd";
 
 interface Props {
   game?: Game;
@@ -34,37 +33,6 @@ export const GameListDetail = (props: Props) => {
   }
 
   const socket = useSocket();
-
-  const [screenshots, setScreenshots] = useState<string[]>([]);
-  const backgroundImage = _.find(screenshots, s => !/\.gif/i.test(s));
-
-  useEffect(() => {
-    setScreenshots([]);
-    if (!game) {
-      return;
-    }
-    let cancelled = false;
-
-    (async () => {
-      const { screenshots } = await socket.call(
-        messages.FetchScrapedScreenshots,
-        {
-          gameId: game.id,
-        }
-      );
-      if (cancelled) {
-        return;
-      }
-      setScreenshots(screenshots);
-    })().catch(e => {
-      setScreenshots([]);
-      console.warn(e);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [game?.id]);
 
   const caves = useCaves({ gameId: game.id });
   const lastCave = _.last(_.sortBy(caves, c => c.stats.lastTouchedAt));
@@ -104,14 +72,6 @@ export const GameListDetail = (props: Props) => {
 
   return (
     <>
-      <div
-        className="detail-background"
-        style={{
-          backgroundImage: `linear-gradient(135deg, rgba(0, 0, 0, .9), rgba(0, 0, 0, .7))${
-            backgroundImage ? `, url(${backgroundImage})` : ""
-          }`,
-        }}
-      ></div>
       <div className="detail-content">
         <div className="header">
           <div className="info">
@@ -194,11 +154,6 @@ export const GameListDetail = (props: Props) => {
               ) : null}
             </div>
           </div>
-        </div>
-        <div className="screenshots">
-          {screenshots.map((src, i) => {
-            return <img key={src} src={src} />;
-          })}
         </div>
       </div>
     </>

@@ -30,6 +30,9 @@ export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
     if (!ms.preferences) {
       throw new Error(`preferences not loaded yet`);
     }
+    if (!ms.browserWindow) {
+      throw new Error(`no browser window yet`);
+    }
 
     let client = new Client(ms.butler.endpoint);
     let { items } = await client.call(messages.FetchCaves, {

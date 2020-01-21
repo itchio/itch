@@ -1,4 +1,5 @@
 import { Profile } from "common/butlerd/messages";
+import { DownloadsState } from "common/downloads";
 import env from "common/env";
 import { OngoingLaunches } from "common/launches";
 import { CurrentLocale, LocaleStrings } from "common/locales";
@@ -8,8 +9,8 @@ import { partitionForApp } from "common/util/partitions";
 import { app, BrowserWindow, dialog, session, shell } from "electron";
 import { envSettings } from "main/constants/env-settings";
 import {
-  registerSchemesAsPrivileged,
   registerItchProtocol,
+  registerSchemesAsPrivileged,
 } from "main/itch-protocol";
 import { loadPreferences, PreferencesState } from "main/load-preferences";
 import { mainLogger } from "main/logger";
@@ -19,8 +20,6 @@ import { ButlerState, startButler } from "main/start-butler";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
-import { DownloadsState } from "common/downloads";
-import { prepareItchCaveProtocol } from "main/itch-cave-protocol";
 
 let logger = mainLogger.childWithName("main");
 
