@@ -1,23 +1,24 @@
 import { Client } from "butlerd";
 import { messages } from "common/butlerd";
-import { queries } from "common/queries";
-import { prereqsPath } from "common/util/paths";
-import { MainState } from "main";
-import { OnQuery, broadcastPacket } from "main/websocket-handler";
-import { hookLogging } from "main/start-butler";
-import { mainLogger } from "main/logger";
 import {
+  OngoingLaunch,
   OngoingLaunchBase,
+  OngoingLaunchExiting,
   OngoingLaunchPreparing,
   OngoingLaunchRunning,
-  OngoingLaunch,
-  OngoingLaunchExiting,
 } from "common/launches";
-import { uuid } from "common/util/uuid";
 import { packets } from "common/packets";
+import { queries } from "common/queries";
 import dump from "common/util/dump";
-import { shell } from "electron";
+import { prereqsPath } from "common/util/paths";
+import { uuid } from "common/util/uuid";
+import { dialog, shell } from "electron";
+import { MainState } from "main";
+import { mainLogger } from "main/logger";
 import { performHTMLLaunch } from "main/perform-html-launch";
+import { hookLogging } from "main/start-butler";
+import { broadcastPacket, OnQuery } from "main/websocket-handler";
+import { formatUploadTitle } from "renderer/basics/upload";
 
 const logger = mainLogger.childWithName("queries-launch");
 
@@ -31,15 +32,25 @@ export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
     }
 
     let client = new Client(ms.butler.endpoint);
-    const { items } = await client.call(messages.FetchCaves, {
+    let { items } = await client.call(messages.FetchCaves, {
       filters: { gameId },
     });
     if (!items || items.length == 0) {
-      console.warn(`No caves, can't launch game`);
+      logger.warn(`No caves, can't launch game`);
+      return;
     }
     if (items.length > 1) {
-      // FIXME: handle multiple caves
-      throw new Error(`multiple caves present, not sure what to do`);
+      let { response } = await dialog.showMessageBox(ms.browserWindow, {
+        type: "question",
+        buttons: [...items.map(c => formatUploadTitle(c.upload)), "Cancel"],
+        message: "Which file do you want to launch?",
+        cancelId: items.length,
+      });
+      if (response >= 0 && response < items.length) {
+        items = [items[response]];
+      } else {
+        logger.warn(`Launch cancelled at cave selection phase`);
+      }
     }
 
     const cave = items[0];
