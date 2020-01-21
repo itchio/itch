@@ -41,6 +41,10 @@ export const queries = wireQueries({
   getOngoingLaunches: query<void, { launches: OngoingLaunches }>(),
 
   openExternalURL: query<{ url: string }, void>(),
+
+  // this is a query because we need to make sure the main process
+  // has received the modal result *before* the modal closes
+  modalResult: query<{ id: string; result: any }, {}>(),
 });
 
 export interface QueryRequest<Params> {

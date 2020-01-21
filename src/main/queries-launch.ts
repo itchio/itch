@@ -12,13 +12,16 @@ import { queries } from "common/queries";
 import dump from "common/util/dump";
 import { prereqsPath } from "common/util/paths";
 import { uuid } from "common/util/uuid";
-import { dialog, shell } from "electron";
+import { dialog, shell, BrowserWindow, session } from "electron";
 import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import { performHTMLLaunch } from "main/perform-html-launch";
 import { hookLogging } from "main/start-butler";
 import { broadcastPacket, OnQuery } from "main/websocket-handler";
 import { formatUploadTitle } from "renderer/basics/upload";
+import { partitionForApp } from "common/util/partitions";
+import { showModal } from "main/show-modal";
+import { modals } from "common/modals";
 
 const logger = mainLogger.childWithName("queries-launch");
 
@@ -43,17 +46,14 @@ export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
       return;
     }
     if (items.length > 1) {
-      let { response } = await dialog.showMessageBox(ms.browserWindow, {
-        type: "question",
-        buttons: [...items.map(c => formatUploadTitle(c.upload)), "Cancel"],
-        message: "Which file do you want to launch?",
-        cancelId: items.length,
+      const res = await showModal(ms, modals.pickCave, {
+        items,
       });
-      if (response >= 0 && response < items.length) {
-        items = [items[response]];
-      } else {
+      if (!res) {
         logger.warn(`Launch cancelled at cave selection phase`);
+        return;
       }
+      items = [items[res.index]];
     }
 
     const cave = items[0];

@@ -10,6 +10,7 @@ import {
 import { OngoingLaunch } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { QueryRequest, QueryResult } from "common/queries";
+import { string } from "prop-types";
 
 // actions but not really
 

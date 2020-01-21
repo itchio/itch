@@ -20,6 +20,7 @@ import { ButlerState, startButler } from "main/start-butler";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
+import { ModalsState } from "common/modals";
 
 let logger = mainLogger.childWithName("main");
 
@@ -42,6 +43,7 @@ export interface MainState {
   ongoingLaunches: OngoingLaunches;
   downloads?: DownloadsState;
   browserWindow?: BrowserWindow;
+  modals: ModalsState;
 }
 
 export interface LocaleState {
@@ -61,6 +63,7 @@ const ms: MainState = {
     currentIndex: 0,
   },
   ongoingLaunches: {},
+  modals: {},
 };
 
 async function main() {

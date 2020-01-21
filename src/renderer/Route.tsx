@@ -5,6 +5,8 @@ import { ProfileContext, useSocket } from "renderer/contexts";
 import { useListen } from "renderer/Socket";
 import styled from "styled-components";
 import { queries } from "../common/queries";
+import { PickCaveModal } from "renderer/modals/PickCaveModal";
+import { ModalRouter } from "renderer/modals/ModalRouter";
 
 const App = React.lazy(() => import("renderer/Shell"));
 const LibraryPage = React.lazy(() => import("renderer/pages/LibraryPage"));
@@ -35,6 +37,8 @@ export const RouteContents = (props: { elements: string[] }) => {
   switch (elements[0]) {
     case "app":
       return <App />;
+    case "modal":
+      return <ModalRouter />;
     case "featured":
       location.replace("https://itch.io/");
       return <div />;

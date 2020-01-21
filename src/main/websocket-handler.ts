@@ -9,7 +9,8 @@ import {
   RpcError,
   RpcResult,
 } from "butlerd";
-import { Download } from "common/butlerd/messages";
+import { messages } from "common/butlerd";
+import { filterObject } from "common/filter-object";
 import { Packet, PacketCreator, packets } from "common/packets";
 import { queries, QueryCreator } from "common/queries";
 import dump from "common/util/dump";
@@ -21,9 +22,6 @@ import { mainLogger } from "main/logger";
 import { setProfile } from "main/profile";
 import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
-import _ from "lodash";
-import { messages } from "common/butlerd";
-import { filterObject } from "common/filter-object";
 
 const logger = mainLogger.childWithName("websocket-handler");
 
@@ -212,10 +210,16 @@ export class WebsocketHandler {
       ms.browserWindow.webContents.openDevTools({ mode: "detach" });
     });
 
+    onQuery(queries.modalResult, async req => {
+      logger.info(`Got modal result for ${req.id}: ${dump(req.result)}`);
+      ms.modals[req.id]?.onResult(req.result);
+      return {};
+    });
+
     onPacket(packets.queryRequest, (cx, req) => {
       let handler = this.queryHandlers[req.method];
       if (!handler) {
-        console.warn(`Unhandled query: ${dump(req)}`);
+        logger.warn(`Unhandled query: ${dump(req)}`);
         cx.reply(packets.queryResult, {
           state: "error",
           id: req.id,
@@ -233,7 +237,7 @@ export class WebsocketHandler {
           });
         })
         .catch(error => {
-          console.warn(`Failed query: ${dump(req)}\n\nStack = ${error.stack}`);
+          logger.warn(`Failed query: ${dump(req)}\n\nStack = ${error.stack}`);
           cx.reply(packets.queryResult, {
             state: "error",
             id: req.id,
@@ -270,7 +274,7 @@ export class WebsocketHandler {
       if (payload.res.error) {
         inbound.reject(payload.res.error);
       } else {
-        console.log(
+        logger.info(
           `Resolving inbound with payload.res.result, payload being: ${dump(
             payload
           )}`
@@ -394,7 +398,7 @@ export class WebsocketHandler {
 
     let ph = this.packetHandlers[msg.type];
     if (!ph) {
-      console.warn(`Unhandled renderer packet: [[${msg}]]`);
+      logger.warn(`Unhandled renderer packet: [[${msg}]]`);
       return;
     }
     ph(cx, msg.payload);
