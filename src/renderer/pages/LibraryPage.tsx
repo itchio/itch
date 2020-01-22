@@ -492,7 +492,7 @@ const ViewBody = styled.div`
 `;
 
 const ViewHeader = styled.div`
-  font-size: ${fontSizes.enormous};
+  font-size: ${fontSizes.large};
   font-weight: 800;
 
   flex-shrink: 0;

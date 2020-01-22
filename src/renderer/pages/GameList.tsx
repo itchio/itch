@@ -58,6 +58,7 @@ const GameListDiv = styled.div`
 
     h3 {
       font-size: ${fontSizes.enormous};
+      font-weight: 800;
 
       @media (min-width: ${wide1}px) {
         font-size: ${fontSizes.excessive};
