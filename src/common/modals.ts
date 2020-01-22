@@ -1,18 +1,32 @@
 import { Cave } from "common/butlerd/messages";
 
+interface Dimensions {
+  width: number;
+  height: number;
+}
+
+interface CustomOptions {
+  dimensions?: Dimensions;
+}
+
 export const modals = wireModals({
-  pickCave: modal<{ items: Cave[] }, { index: number }>(),
+  pickCave: modal<{ items: Cave[] }, { index: number }>({
+    dimensions: { width: 520, height: 380 },
+  }),
 });
 
-function modal<Params, Result>(): ModalCreator<Params, Result> {
+function modal<Params, Result>(
+  customizer: CustomOptions
+): ModalCreator<Params, Result> {
   // that's a lie, we're tricking the type system
-  return null as any;
+  return customizer as any;
 }
 
 export interface ModalCreator<Params, Result> {
   __kind: string;
   __params: Params;
   __result: Result;
+  __customOptions: CustomOptions;
 }
 
 interface MirrorInput {
@@ -24,8 +38,10 @@ type MirrorOutput<T> = { [key in keyof T]: T[key] };
 function wireModals<T extends MirrorInput>(input: T): MirrorOutput<T> {
   const res = {} as any;
   for (const k of Object.keys(input)) {
+    let __customOptions = input[k];
     res[k] = {
       __kind: k,
+      __customOptions,
     };
   }
   return res as MirrorOutput<T>;

@@ -41,6 +41,9 @@ export interface MainState {
   localesConfig?: LocalesConfig;
   localeState?: LocaleState;
   ongoingLaunches: OngoingLaunches;
+  preparingLaunches: {
+    [gameId: string]: boolean;
+  };
   downloads?: DownloadsState;
   browserWindow?: BrowserWindow;
   modals: ModalsState;
@@ -63,6 +66,7 @@ const ms: MainState = {
     currentIndex: 0,
   },
   ongoingLaunches: {},
+  preparingLaunches: {},
   modals: {},
 };
 

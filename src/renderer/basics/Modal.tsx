@@ -24,7 +24,7 @@ const ModalShroud = styled.div`
   z-index: 10;
 `;
 
-const ModalContents = styled.div`
+export const ModalContents = styled.div`
   background: ${p => p.theme.colors.shellBg};
   border: 1px solid ${p => p.theme.colors.shellBorder};
 
@@ -37,7 +37,7 @@ const ModalContents = styled.div`
   }
 `;
 
-const ModalTitle = styled.div`
+export const ModalTitle = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -45,13 +45,11 @@ const ModalTitle = styled.div`
   font-size: ${fontSizes.large};
   font-weight: bold;
 
-  &.present {
-    padding: 15px;
-    margin-bottom: 10px;
-  }
+  padding: 15px;
+  margin-bottom: 10px;
 `;
 
-const ModalBody = styled.div`
+export const ModalBody = styled.div`
   padding: 15px;
 
   max-width: 80vw;

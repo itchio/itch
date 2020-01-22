@@ -45,7 +45,7 @@ type Shortcut = [string[], Action];
 
 type Shortcuts = Shortcut[];
 
-const shortcuts: Shortcuts = [
+const mainWindowShortcuts: Shortcuts = [
   [
     ["CmdOrCtrl+Shift+C"],
     async ms => openOrFocusDevTools(ms.browserWindow?.webContents),
@@ -81,7 +81,7 @@ function getWebviewWebContents(ms: MainState): WebContents | undefined {
   return undefined;
 }
 
-function openOrFocusDevTools(wc: WebContents | undefined) {
+export function openOrFocusDevTools(wc: WebContents | undefined) {
   wc?.openDevTools({ mode: "detach" });
   wc?.devToolsWebContents?.focus();
 }
@@ -108,7 +108,11 @@ function webContentsGoForward(wc: WebContents | undefined) {
   }
 }
 
-export function setupShortcuts(ms: MainState, wc: WebContents) {
+export function setupCustomShortcuts(
+  ms: MainState,
+  wc: WebContents,
+  shortcuts: Shortcuts
+) {
   logger.info(`Setting up shortcuts for webContents ${wc.id}`);
 
   wc.on("before-input-event", (ev, input) => {
@@ -141,4 +145,8 @@ export function setupShortcuts(ms: MainState, wc: WebContents) {
     }
     // muffin
   });
+}
+
+export function setupShortcuts(ms: MainState, wc: WebContents) {
+  setupCustomShortcuts(ms, wc, mainWindowShortcuts);
 }

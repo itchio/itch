@@ -126,7 +126,7 @@ export async function loadLocale(ms: MainState, lang: string) {
 
   let normalizedLang = normalizeLang(ms, lang);
   if (normalizedLang == "en") {
-    logger.warn(`Unknown lang ${lang}, returning English strings`);
+    logger.info(`Returning English strings for lang ${normalizedLang}`);
     let { englishStrings } = ms.localeState;
     ms.localeState.current = {
       lang: "en",
