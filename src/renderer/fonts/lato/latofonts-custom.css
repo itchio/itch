@@ -49,14 +49,14 @@
 
 /* Bolder weight */
 
-/* @font-face {
+@font-face {
     font-family: 'LatoWeb';
     src: url('assets/lato-heavy.woff2') format('woff2'); 
     font-weight: 800;
     font-style: normal;
 }
 
-@font-face {
+/* @font-face {
     font-family: 'LatoWeb';
     src: url('assets/lato-heavyitalic.woff2') format('woff2'); 
     font-weight: 800;
