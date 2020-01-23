@@ -4,6 +4,7 @@ import React from "react";
 import { useSocket } from "renderer/contexts";
 import { PickCaveModal } from "renderer/modals/PickCaveModal";
 import { queries } from "common/queries";
+import { PreferencesModal } from "renderer/modals/PreferencesModal";
 
 export interface ModalProps<Params, Result> {
   params: Params;
@@ -50,6 +51,8 @@ export const ModalRouter = () => {
   switch (kind) {
     case modals.pickCave.__kind:
       return <PickCaveModal {...props} />;
+    case modals.preferences.__kind:
+      return <PreferencesModal {...props} />;
     default:
       return <div></div>;
   }

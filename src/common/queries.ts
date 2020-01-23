@@ -3,6 +3,7 @@ import { OngoingLaunch, OngoingLaunches } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { WebviewState } from "main";
 import { DownloadsState } from "common/downloads";
+import { ModalCreator } from "common/modals";
 
 export const queries = wireQueries({
   minimize: query<void, void>(),
@@ -29,6 +30,8 @@ export const queries = wireQueries({
 
   getCurrentLocale: query<void, { currentLocale: CurrentLocale }>(),
   switchLanguage: query<{ lang: string }, void>(),
+
+  showModal: query<{ mc: ModalCreator<any, any>; params: any }, any>(),
 
   launchGame: query<{ gameId: number; caveId?: string }, void>(),
   uninstallGame: query<{ cave: Cave }, void>(),

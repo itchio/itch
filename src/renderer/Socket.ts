@@ -7,10 +7,11 @@ import {
   Notification,
 } from "butlerd/lib/support";
 import { ButlerHandled, Packet, PacketCreator, packets } from "common/packets";
-import { QueryCreator, QueryRequest } from "common/queries";
+import { QueryCreator, QueryRequest, queries } from "common/queries";
 import { uuid } from "common/util/uuid";
 import { useEffect } from "react";
 import { Code } from "common/butlerd/messages";
+import { ModalCreator } from "common/modals";
 
 type PacketKey = keyof typeof packets;
 type Listener<Payload> = (payload: Payload) => void;
@@ -396,6 +397,13 @@ export class Socket {
     return new Promise((resolve, reject) => {
       this.outboundQueries[query.id] = { resolve, reject };
     });
+  }
+
+  async showModal<Params, Result>(
+    mc: ModalCreator<Params, Result>,
+    params: Params
+  ): Promise<Result> {
+    return await this.query(queries.showModal, { mc, params });
   }
 }
 

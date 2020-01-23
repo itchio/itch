@@ -13,6 +13,9 @@ export const modals = wireModals({
   pickCave: modal<{ items: Cave[] }, { index: number }>({
     dimensions: { width: 520, height: 380 },
   }),
+  preferences: modal<{}, {}>({
+    dimensions: { width: 600, height: 600 },
+  }),
 });
 
 function modal<Params, Result>(

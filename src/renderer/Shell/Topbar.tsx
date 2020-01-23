@@ -11,6 +11,7 @@ import { ProfileButton } from "renderer/Shell/ProfileButton";
 import { useListen } from "renderer/Socket";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { modals } from "common/modals";
 
 const TopbarDiv = styled.div`
   display: flex;
@@ -78,7 +79,11 @@ export const Topbar = () => {
         <>
           <ProfileButton
             profile={profile}
-            openPreferences={() => setPopover("preferences")}
+            openPreferences={() =>
+              socket
+                .showModal(modals.preferences, {})
+                .catch(e => console.warn(e.stack))
+            }
           />
           <Button
             className="item"

@@ -22,6 +22,7 @@ import { mainLogger } from "main/logger";
 import { setProfile } from "main/profile";
 import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
+import { showModal } from "main/show-modal";
 
 const logger = mainLogger.childWithName("websocket-handler");
 
@@ -208,6 +209,10 @@ export class WebsocketHandler {
       }
 
       ms.browserWindow.webContents.openDevTools({ mode: "detach" });
+    });
+
+    onQuery(queries.showModal, async req => {
+      return await showModal(ms, req.mc, req.params);
     });
 
     onQuery(queries.modalResult, async req => {
