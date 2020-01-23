@@ -10,7 +10,7 @@ import { IconButton } from "renderer/basics/IconButton";
 import { MenuTippy } from "renderer/basics/Menu";
 import { ClickOutsideRefer } from "renderer/basics/useClickOutside";
 import { ProgressBar } from "renderer/pages/ProgressBar";
-import { InstallModalContents } from "renderer/Shell/InstallModal";
+import { InstallModalContents } from "renderer/Shell/InstallPopover";
 import { DownloadWithProgress } from "common/downloads";
 
 type ClickHandler = (ev: React.MouseEvent<HTMLButtonElement>) => Promise<void>;

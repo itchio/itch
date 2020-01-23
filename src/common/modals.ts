@@ -1,4 +1,10 @@
-import { Cave } from "common/butlerd/messages";
+import {
+  Cave,
+  PickManifestActionParams,
+  PickManifestActionResult,
+  Action,
+  Game,
+} from "common/butlerd/messages";
 
 interface Dimensions {
   width: number;
@@ -11,6 +17,12 @@ interface CustomOptions {
 
 export const modals = wireModals({
   pickCave: modal<{ items: Cave[] }, { index: number }>({
+    dimensions: { width: 520, height: 380 },
+  }),
+  pickManifestAction: modal<
+    { game: Game; actions: Action[] },
+    { index: number }
+  >({
     dimensions: { width: 520, height: 380 },
   }),
   preferences: modal<{}, {}>({

@@ -15,7 +15,7 @@ import { TimeAgo } from "renderer/basics/TimeAgo";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { ProgressBar } from "renderer/pages/ProgressBar";
-import { InstallModalContents } from "renderer/Shell/InstallModal";
+import { InstallModalContents } from "renderer/Shell/InstallPopover";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useCaves } from "renderer/use-caves";
 import { useDownloadKeys } from "renderer/use-download-keys";

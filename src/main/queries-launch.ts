@@ -20,11 +20,13 @@ import { performHTMLLaunch } from "main/perform-html-launch";
 import { showModal } from "main/show-modal";
 import { hookLogging } from "main/start-butler";
 import { broadcastPacket, OnQuery } from "main/websocket-handler";
+import { Cave } from "common/butlerd/messages";
 
 const logger = mainLogger.childWithName("queries-launch");
 
 export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
-  onQuery(queries.launchGame, async ({ gameId }) => {
+  onQuery(queries.launchGame, async params => {
+    const { gameId } = params;
     if (ms.preparingLaunches[gameId]) {
       logger.warn(`Already launching ${gameId}, ignoring...`);
       return;
@@ -32,14 +34,19 @@ export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
 
     try {
       ms.preparingLaunches[gameId] = true;
-      launchGame(ms, gameId);
+      launchGame(ms, params);
     } finally {
       delete ms.preparingLaunches[gameId];
     }
   });
 }
 
-async function launchGame(ms: MainState, gameId: number) {
+async function launchGame(
+  ms: MainState,
+  params: typeof queries.launchGame.__params
+) {
+  const { gameId, caveId } = params;
+
   if (!ms.butler) {
     throw new Error(`butler is offline`);
   }
@@ -51,9 +58,20 @@ async function launchGame(ms: MainState, gameId: number) {
   }
 
   let client = new Client(ms.butler.endpoint);
-  let { items } = await client.call(messages.FetchCaves, {
-    filters: { gameId },
-  });
+  let items: Cave[] = [];
+
+  if (caveId) {
+    let { cave } = await client.call(messages.FetchCave, { caveId });
+    if (cave) {
+      items = [cave];
+    }
+  } else {
+    items = (
+      await client.call(messages.FetchCaves, {
+        filters: { gameId },
+      })
+    ).items;
+  }
   if (!items || items.length == 0) {
     logger.warn(`No caves, can't launch game`);
     return;
@@ -115,6 +133,18 @@ async function launchGame(ms: MainState, gameId: number) {
           // TODO: allow continuing
           return { continue: false };
         });
+        convo.onRequest(messages.PickManifestAction, async params => {
+          const { actions } = params;
+          const res = await showModal(ms, modals.pickManifestAction, {
+            actions,
+            game: cave.game,
+          });
+          if (!res) {
+            logger.warn(`Launch cancelled at action selection phase`);
+            return { index: -1 };
+          }
+          return { index: res.index };
+        });
         convo.onRequest(messages.HTMLLaunch, async params => {
           await performHTMLLaunch({
             game: cave.game,
@@ -124,6 +154,10 @@ async function launchGame(ms: MainState, gameId: number) {
               logger.warn(`queries-launch / performHTMLLaunch / onAbort: stub`);
             },
           });
+          return {};
+        });
+        convo.onRequest(messages.URLLaunch, async params => {
+          shell.openExternal(params.url);
           return {};
         });
         convo.onRequest(messages.ShellLaunch, async params => {

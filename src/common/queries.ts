@@ -34,6 +34,7 @@ export const queries = wireQueries({
   showModal: query<{ mc: ModalCreator<any, any>; params: any }, any>(),
 
   launchGame: query<{ gameId: number; caveId?: string }, void>(),
+  exploreCave: query<{ caveId: string }, void>(),
   uninstallGame: query<{ cave: Cave }, void>(),
 
   getOngoingLaunchesForGame: query<

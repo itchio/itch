@@ -15,6 +15,7 @@ import styled from "styled-components";
 import { useDownloads } from "renderer/use-downloads";
 import _ from "lodash";
 import { DownloadWithProgress } from "common/downloads";
+import { gameCover } from "common/game-cover";
 
 interface Props {}
 
@@ -81,9 +82,13 @@ const DownloadContentsDiv = styled.div`
   }
 
   .thumbnail {
+    width: 61px;
     height: 48px;
-    width: auto;
     margin-right: 1em;
+
+    &.placeholder {
+      background: rgba(0, 0, 0, 0.3);
+    }
   }
 
   .empty-state {
@@ -143,13 +148,15 @@ const DownloadItem = (props: {
     [socket]
   );
 
+  let coverUrl = gameCover(d.game);
   return (
     <div className="row">
       <a href={`itch://games/${d.game.id}`} onClick={props.onClose}>
-        <img
-          className="thumbnail"
-          src={d.game.stillCoverUrl || d.game.coverUrl}
-        />
+        {coverUrl ? (
+          <img className="thumbnail" src={coverUrl} />
+        ) : (
+          <div className="thumbnail placeholder" />
+        )}
         <span>{d.game.title}</span>
         <div className="filler" />
       </a>

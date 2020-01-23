@@ -187,6 +187,19 @@ export class WebsocketHandler {
 
     registerQueriesLaunch(ms, onQuery);
 
+    onQuery(queries.exploreCave, async ({ caveId }) => {
+      if (!ms.butler) {
+        throw new Error("butler is offline");
+      }
+      let client = new Client(ms.butler.endpoint);
+      let { cave } = await client.call(messages.FetchCave, { caveId });
+      if (!cave) {
+        logger.warn(`Cave ${caveId} not found`);
+        return;
+      }
+      shell.showItemInFolder(cave.installInfo.installFolder);
+    });
+
     onQuery(queries.uninstallGame, async ({ cave }) => {
       if (!ms.butler) {
         throw new Error("butler is offline");

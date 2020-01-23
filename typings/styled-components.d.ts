@@ -58,6 +58,8 @@ declare module "styled-components" {
       inputBorder: string;
       /** Input field border (on focus) */
       inputBorderFocus: string;
+      /** Popover header background */
+      popoverHeaderBg: string;
     };
   }
 }

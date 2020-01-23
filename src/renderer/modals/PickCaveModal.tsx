@@ -31,8 +31,9 @@ const CaveItem = styled.div`
       margin-bottom: 0.4em;
     }
 
-    .icon {
-      margin-right: 0.4em;
+    .spacer {
+      display: inline-block;
+      width: 0.4em;
     }
   }
 
@@ -64,12 +65,18 @@ export const PickCaveModal = modalWidget(modals.pickCave, props => {
           {items.map((cave, index) => {
             let icon = uploadIcon(cave.upload);
             return (
-              <CaveItem key={cave.id} onClick={() => onResult({ index })}>
+              <CaveItem key={cave.id}>
                 <div className="details">
                   <div className="title">{formatUploadTitle(cave.upload)}</div>
-                  <div>
-                    {icon ? <Icon icon={icon} /> : null}
+                  <div className="upload-info">
+                    {icon ? (
+                      <>
+                        <Icon icon={icon} />
+                        <div className="spacer" />
+                      </>
+                    ) : null}
                     {fileSize(cave.installInfo.installedSize)}
+                    {" — "}
                     <FormattedMessage
                       id="usage_stats.last_used_time_ago"
                       values={{

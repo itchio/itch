@@ -44,7 +44,7 @@ const InstallMenuContents = styled(MenuContents)`
   .header {
     box-shadow: 0 0 40px ${p => p.theme.colors.shellBg};
 
-    background: #404040; /* TODO: theme */
+    background: ${p => p.theme.colors.popoverHeaderBg};
     color: ${p => p.theme.colors.text2};
 
     display: flex;
@@ -321,6 +321,14 @@ export const InstallModalContents = React.forwardRef(
       [socket, props.game.id]
     );
 
+    const [explore] = useAsyncCb(
+      async (caveId: string) => {
+        props.onClose();
+        await socket.query(queries.exploreCave, { caveId });
+      },
+      [socket]
+    );
+
     const [showOthers, setShowOthers] = useState(false);
 
     const hasUploads =
@@ -350,6 +358,7 @@ export const InstallModalContents = React.forwardRef(
                   downloadsByUpload={downloads}
                   items={uploads.compatible}
                   launch={launch}
+                  explore={explore}
                   install={install}
                   uninstall={uninstall}
                 />
@@ -365,6 +374,7 @@ export const InstallModalContents = React.forwardRef(
                       cavesByUpload={caves}
                       downloadsByUpload={downloads}
                       items={uploads.local}
+                      explore={explore}
                       launch={launch}
                       install={install}
                       uninstall={uninstall}
@@ -441,12 +451,13 @@ const UploadGroup = (props: {
   items: Upload[];
   queued: Queued;
   launch: (caveId: string) => Promise<void>;
+  explore: (caveId: string) => Promise<void>;
   install: (upload: Upload) => Promise<void>;
   uninstall: (upload: Upload) => Promise<void>;
   downloadsByUpload: DownloadsByUpload;
   cavesByUpload: CavesByUpload;
 }) => {
-  const { items, install, uninstall, launch, isOther } = props;
+  const { items, install, uninstall, launch, explore, isOther } = props;
 
   return (
     <>
@@ -529,7 +540,7 @@ const UploadGroup = (props: {
                       />
                       <IconButton
                         icon="folder-open"
-                        onClick={() => console.log("stub")}
+                        onClick={() => explore(cave.id)}
                       />
                       <IconButton
                         icon="uninstall"

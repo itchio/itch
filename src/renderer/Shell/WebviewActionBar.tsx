@@ -7,7 +7,7 @@ import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
-import { InstallModalContents } from "renderer/Shell/InstallModal";
+import { InstallModalContents } from "renderer/Shell/InstallPopover";
 import { useListen } from "renderer/Socket";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";

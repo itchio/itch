@@ -43,6 +43,8 @@ export const theme: DefaultTheme = {
     inputBorder: "#404040",
     inputBorderFocus: "#494949",
 
+    popoverHeaderBg: "#404040",
+
     accent: "#d14343",
   },
 };
