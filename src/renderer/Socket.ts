@@ -12,8 +12,8 @@ import { uuid } from "common/util/uuid";
 import { useEffect } from "react";
 import { Code } from "common/butlerd/messages";
 import { ModalCreator } from "common/modals";
+import { delay } from "common/delay";
 
-type PacketKey = keyof typeof packets;
 type Listener<Payload> = (payload: Payload) => void;
 export type Cancel = () => void;
 
@@ -235,7 +235,43 @@ export class Conversation {
   }
 }
 
+const CONNECT_TIMEOUT = 3000;
+
+async function connectOnce(address: string): Promise<WebSocket> {
+  let ws = new WebSocket(address);
+  return await new Promise((resolve, reject) => {
+    ws.onopen = () => resolve(ws);
+    ws.onerror = reject;
+    setTimeout(
+      () => reject(new Error("WebSocket connection time out")),
+      CONNECT_TIMEOUT
+    );
+  });
+}
+
+async function connect(address: string): Promise<WebSocket> {
+  const maxTries = 3;
+  const sleepDuration = 500;
+  for (let numTry = 1; ; numTry++) {
+    try {
+      return await connectOnce(address);
+    } catch (e) {
+      console.warn(`WebSocket connection attempt ${numTry} failed: `);
+      console.warn(e.stack);
+    }
+    if (numTry >= maxTries) {
+      console.warn(`Giving up on WebSocket connection`);
+      break;
+    }
+
+    console.warn(`Sleeping ${sleepDuration}ms and retrying`);
+    await delay(sleepDuration);
+  }
+  throw new Error(`Could not reconnect to WebSocket`);
+}
+
 export class Socket {
+  private address: string;
   private ws: WebSocket;
   private listeners: {
     [type: string]: Listener<any>[];
@@ -247,18 +283,33 @@ export class Socket {
   private outboundQueries: { [key: number]: Outbound<any> } = {};
 
   static async connect(address: string): Promise<Socket> {
-    let socket = new WebSocket(address);
-    await new Promise((resolve, reject) => {
-      socket.onopen = resolve;
-      socket.onerror = reject;
-    });
-    return new Socket(socket);
+    return new Socket(address, await connect(address));
   }
 
-  constructor(ws: WebSocket) {
+  constructor(address: string, ws: WebSocket) {
+    (window as any).__socket = this;
+    this.address = address;
     this.ws = ws;
-    ws.onmessage = msg => {
+    this.initSocket();
+  }
+
+  private initSocket() {
+    this.ws.onmessage = msg => {
       this.process(msg.data as string);
+    };
+    this.ws.onclose = () => {
+      console.log(`Socket connection lost, reconnecting...`);
+      connect(this.address)
+        .then(ws => {
+          console.log(`Reconnected!`);
+          this.ws = ws;
+          this.initSocket();
+        })
+        .catch(e => {
+          alert(
+            `The itch app encountered a problem in its internal communication system.\n\n${e.stack}`
+          );
+        });
     };
   }
 
