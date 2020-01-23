@@ -48,12 +48,12 @@ export function broadcastPacket<T>(
 }
 
 export class WebsocketContext {
-  constructor(private socket: WebSocket) {}
+  constructor(public socket: WebSocket, public uid: string) {}
 
   reply<T>(pc: PacketCreator<T>, payload: T, silent?: boolean) {
     let msg = pc(payload);
     if (!silent && envSettings.verboseWebSocket) {
-      logger.debug(`<- ${dump(msg)}`);
+      logger.debug(`<- ${this.uid} ${dump(msg)}`);
     }
     this.sendObject(msg);
   }
@@ -186,6 +186,22 @@ export class WebsocketHandler {
     });
 
     registerQueriesLaunch(ms, onQuery);
+
+    onQuery(queries.getPreferences, async () => {
+      const { preferences } = ms;
+      if (!preferences) {
+        throw new Error("preferences not loaded yet");
+      }
+      return { preferences };
+    });
+
+    onQuery(queries.updatePreferences, async ({ preferences }) => {
+      const oldPreferences = ms.preferences;
+      if (!oldPreferences) {
+        throw new Error("preferences not loaded yet");
+      }
+      setPreferences(ms, preferences);
+    });
 
     onQuery(queries.exploreCave, async ({ caveId }) => {
       if (!ms.butler) {
@@ -411,7 +427,7 @@ export class WebsocketHandler {
   handle(cx: WebsocketContext, message: string) {
     let msg = JSON.parse(message) as Packet<any>;
     if (envSettings.verboseWebSocket) {
-      logger.debug(`-> ${dump(msg)}`);
+      logger.debug(`-> ${cx.uid} ${dump(msg)}`);
     }
 
     let ph = this.packetHandlers[msg.type];

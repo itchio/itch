@@ -4,7 +4,12 @@ import { CurrentLocale } from "common/locales";
 import { WebviewState } from "main";
 import { DownloadsState } from "common/downloads";
 import { ModalCreator } from "common/modals";
+import { PreferencesState } from "common/preferences";
 
+/**
+ * Queries are asynchronous calls made from a renderer process
+ * to the main process.
+ */
 export const queries = wireQueries({
   minimize: query<void, void>(),
   toggleMaximized: query<void, void>(),
@@ -19,6 +24,9 @@ export const queries = wireQueries({
     { profile?: Profile; cookie?: Record<string, string> },
     void
   >(),
+
+  getPreferences: query<void, { preferences: PreferencesState }>(),
+  updatePreferences: query<{ preferences: Partial<PreferencesState> }, void>(),
 
   getDownloads: query<void, { downloads: DownloadsState }>(),
   getDownloadsForGame: query<
@@ -46,8 +54,8 @@ export const queries = wireQueries({
 
   openExternalURL: query<{ url: string }, void>(),
 
-  // this is a query because we need to make sure the main process
-  // has received the modal result *before* the modal closes
+  // this is a query (and not a packet) because we need to make sure the main
+  // process has received the modal result *before* the modal closes
   modalResult: query<{ id: string; result: any }, {}>(),
 });
 

@@ -34,7 +34,7 @@ export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
 
     try {
       ms.preparingLaunches[gameId] = true;
-      launchGame(ms, params);
+      await launchGame(ms, params);
     } finally {
       delete ms.preparingLaunches[gameId];
     }

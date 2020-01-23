@@ -12,7 +12,7 @@ import {
   registerItchProtocol,
   registerSchemesAsPrivileged,
 } from "main/itch-protocol";
-import { loadPreferences, PreferencesState } from "main/load-preferences";
+import { loadPreferences } from "main/load-preferences";
 import { mainLogger } from "main/logger";
 import { attemptAutoLogin } from "main/profile";
 import { setupShortcuts } from "main/setup-shortcuts";
@@ -21,6 +21,7 @@ import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
 import { ModalsState } from "common/modals";
+import { PreferencesState } from "common/preferences";
 
 let logger = mainLogger.childWithName("main");
 

@@ -85,5 +85,21 @@ async function establishSocketConnection(): Promise<Socket> {
     sessionStorage.setItem(SESSION_WS_KEY, address);
   }
 
+  const uid = generateSessionID();
+  console.log(`WebSocket session ID:`, uid);
+
+  let u = new URL(address);
+  u.searchParams.set("uid", uid);
+  address = u.toString();
+  console.log(`Connecting to address ${address}`);
+
   return await Socket.connect(address);
+}
+
+function generateSessionID(): string {
+  let res = "";
+  for (let i = 0; i < 20; i++) {
+    res += String.fromCharCode(Math.floor(Math.random() * 26) + 97);
+  }
+  return res;
 }

@@ -1,24 +1,27 @@
-import { Request, RpcResult, Notification } from "butlerd";
+import { Notification, Request, RpcResult } from "butlerd";
 import {
-  Profile,
+  Cave,
   Download,
   NetworkStatus,
-  Cave,
-  Game,
-  Upload,
+  Profile,
 } from "common/butlerd/messages";
 import { OngoingLaunch } from "common/launches";
 import { CurrentLocale } from "common/locales";
 import { QueryRequest, QueryResult } from "common/queries";
-import { string } from "prop-types";
-
-// actions but not really
+import { PreferencesState } from "common/preferences";
 
 export interface Packet<PayloadType> {
   type: string;
   payload: PayloadType;
 }
 
+/**
+ * Packets can be sent between the main process and renderer processes,
+ * usually one-on-one, but main can send separate copies of the same packet
+ * to all renderers.
+ *
+ * They generally correspond to events.
+ */
 export const packets = wirePackets({
   navigate: packet<{
     // URL to open in in-app browser
@@ -31,6 +34,7 @@ export const packets = wirePackets({
   launchChanged: packet<{ launchId: string; launch: OngoingLaunch }>(),
   launchEnded: packet<{ launchId: string }>(),
   maximizedChanged: packet<{ maximized: boolean }>(),
+  preferencesUpdated: packet<{ preferences: Partial<PreferencesState> }>(),
 
   // download events
   downloadStarted: packet<{ download: Download }>(),

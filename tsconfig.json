@@ -17,12 +17,14 @@
     "noImplicitReturns": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
 
     "baseUrl": "src",
     "paths": {
       "common": ["common"],
       "renderer": ["renderer"],
-      "main": ["main"]
+      "main": ["main"],
+      "static": ["static"],
     },
     "typeRoots": ["./typings"]
   },

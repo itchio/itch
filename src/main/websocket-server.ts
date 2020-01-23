@@ -15,6 +15,9 @@ export interface WebSocketState {
   address: string;
   secret: string;
   sockets: WebSocketContext[];
+  deadSockets: {
+    [uid: string]: WebSocketContext;
+  };
 }
 
 export async function startWebSocketServer(ms: MainState) {
@@ -39,7 +42,7 @@ export async function startWebSocketServer(ms: MainState) {
       }
 
       // n.b: `info.req.url` is something like `/?secret=XXX`
-      let url = new URL(`http://example.org${info.req.url || "/"}`);
+      let url = new URL("foo://bar" + info.req.url);
       let secret = url.searchParams.get("secret");
       if (!secret) {
         logger.warn(`WebSocket connection with missing secret, dropping`);
@@ -67,6 +70,7 @@ export async function startWebSocketServer(ms: MainState) {
     address: `ws://${waddr.address}:${waddr.port}?${waddrParams}`,
     secret,
     sockets: [],
+    deadSockets: {},
   };
   ms.websocket = state;
   logger.debug(`WebSocket address: ${dump(wss.address())}`);
@@ -74,7 +78,26 @@ export async function startWebSocketServer(ms: MainState) {
   let handler = new WebsocketHandler(ms);
 
   wss.on("connection", (socket, req) => {
-    let cx = new WebSocketContext(socket);
+    let url = new URL("foo://bar" + req.url);
+    let uid = url.searchParams.get("uid");
+    if (!uid) {
+      logger.warn(`Dropping WebSocket connection (missing UID)`);
+      socket.close();
+      return;
+    }
+
+    let cx: WebSocketContext;
+
+    let phoenix = state.deadSockets[uid];
+    if (phoenix) {
+      logger.debug(`Client re-joined (UID ${uid})`);
+      delete state.deadSockets[uid];
+      cx = phoenix;
+      cx.socket = socket;
+    } else {
+      cx = new WebSocketContext(socket, uid);
+      logger.debug(`Client joined (UID ${cx.uid})`);
+    }
     state.sockets = [...state.sockets, cx];
 
     socket.on("message", message => handler.handle(cx, message as string));
@@ -83,7 +106,8 @@ export async function startWebSocketServer(ms: MainState) {
       // TODO: cancel all outbound butlerd requests
       // TODO: cancel all queries, if at all possible ?
       state.sockets = state.sockets.filter(x => x !== cx);
-      logger.debug(`Client going away...`);
+      state.deadSockets[cx.uid] = cx;
+      logger.debug(`Client going away... (UID ${cx.uid})`);
     });
   });
 }

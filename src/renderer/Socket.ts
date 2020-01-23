@@ -241,9 +241,10 @@ async function connectOnce(address: string): Promise<WebSocket> {
   let ws = new WebSocket(address);
   return await new Promise((resolve, reject) => {
     ws.onopen = () => resolve(ws);
-    ws.onerror = reject;
+    ws.onerror = (ev: Event) =>
+      reject(new Error(`WebSocket error (no error code available)`));
     setTimeout(
-      () => reject(new Error("WebSocket connection time out")),
+      () => reject(new Error("WebSocket connection timeout")),
       CONNECT_TIMEOUT
     );
   });
@@ -273,6 +274,7 @@ async function connect(address: string): Promise<WebSocket> {
 export class Socket {
   private address: string;
   private ws: WebSocket;
+  private wsPromise: Promise<WebSocket>;
   private listeners: {
     [type: string]: Listener<any>[];
   } = {};
@@ -290,6 +292,7 @@ export class Socket {
     (window as any).__socket = this;
     this.address = address;
     this.ws = ws;
+    this.wsPromise = new Promise(resolve => resolve(ws));
     this.initSocket();
   }
 
@@ -299,17 +302,20 @@ export class Socket {
     };
     this.ws.onclose = () => {
       console.log(`Socket connection lost, reconnecting...`);
-      connect(this.address)
-        .then(ws => {
-          console.log(`Reconnected!`);
-          this.ws = ws;
-          this.initSocket();
-        })
-        .catch(e => {
-          alert(
-            `The itch app encountered a problem in its internal communication system.\n\n${e.stack}`
-          );
-        });
+      this.wsPromise = new Promise(resolve => {
+        connect(this.address)
+          .then(ws => {
+            console.log(`Reconnected!`);
+            this.ws = ws;
+            this.initSocket();
+            resolve(ws);
+          })
+          .catch(e => {
+            alert(
+              `The itch app encountered a problem in its internal communication system.\n\n${e.stack}`
+            );
+          });
+      });
     };
   }
 
@@ -366,7 +372,23 @@ export class Socket {
       throw new Error(`null payload for ${pc.__type} - that's illegal`);
     }
     let msg = pc(payload);
-    this.ws.send(JSON.stringify(msg));
+
+    (async () => {
+      const maxTries = 5;
+      for (let numTry = 1; ; numTry++) {
+        try {
+          const ws = await this.wsPromise;
+          ws.send(JSON.stringify(msg));
+          return;
+        } catch (e) {
+          if (numTry >= maxTries) {
+            throw new Error(
+              `Could not send WebSocket message after ${maxTries} tries:\n${e.stack}`
+            );
+          }
+        }
+      }
+    })().catch(e => console.warn(e.stack));
   }
 
   listen<T>(packet: PacketCreator<T>, listener: Listener<T>): Cancel {

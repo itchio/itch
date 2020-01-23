@@ -8,7 +8,12 @@ import { message } from "renderer/basics/Message";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import styled from "styled-components";
 import classNames from "classnames";
-import { buttonBorderRadius } from "renderer/theme";
+import { buttonBorderRadius, mixins } from "renderer/theme";
+
+const DropdownContents = styled(MenuContents)`
+  max-height: 80vh;
+  overflow-y: auto;
+`;
 
 export const DropdownButton = styled(Button)`
   padding: 0 12px;
@@ -52,8 +57,22 @@ export const DropdownItem = styled.div`
   align-items: center;
 
   > .spacer {
-    min-width: 10px;
+    flex-basis: 10px;
     flex-shrink: 0;
+  }
+
+  > .icon.hidden {
+    visibility: hidden;
+  }
+
+  > .filler {
+    flex-basis: 10px;
+    flex-shrink: 0;
+    flex-grow: 1;
+  }
+
+  > .label {
+    ${mixins.singleLine};
   }
 `;
 
@@ -73,7 +92,7 @@ export const Dropdown = function<T>(props: Props<T>) {
       appendTo={document.body}
       boundary="viewport"
       content={
-        <MenuContents
+        <DropdownContents
           className={"dropdown-options"}
           data-name={props.name}
           ref={coref("menu-contents")}
@@ -90,21 +109,18 @@ export const Dropdown = function<T>(props: Props<T>) {
                 }}
                 label={
                   <DropdownItem>
+                    <span className="label">{message(label)}</span>
+                    <div className="filler" />
                     <Icon
-                      icon={
-                        props.value === value
-                          ? "radio-checked"
-                          : "radio-unchecked"
-                      }
+                      className={classNames({ hidden: props.value !== value })}
+                      icon={"checkmark"}
                     />
-                    <div className="spacer" />
-                    {message(label)}
                   </DropdownItem>
                 }
               />
             );
           })}
-        </MenuContents>
+        </DropdownContents>
       }
     >
       <DropdownButton
