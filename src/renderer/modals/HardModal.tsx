@@ -63,11 +63,12 @@ interface Props {
   title?: React.ReactNode;
   content?: React.ReactNode;
   buttons?: React.ReactNode;
+  className?: string;
 }
 
 export const HardModal = (props: Props) => {
   return (
-    <HardModalDiv>
+    <HardModalDiv className={props.className}>
       <HardModalTitleDiv>
         <h3>{props.title}</h3>
         <IconButton icon="cross" onClick={() => window.close()} />

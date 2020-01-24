@@ -80,7 +80,12 @@ const Container = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;
+
   justify-content: center;
+
+  &.lefty {
+    justify-content: flex-start;
+  }
 `;
 
 const Spacer = styled.div`
@@ -102,6 +107,7 @@ const LoadingContainer = styled.div`
 
 interface Props {
   className?: string;
+  style?: React.CSSProperties;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   primary?: boolean;
   icon?: string;
@@ -115,12 +121,14 @@ interface Props {
   id?: string;
   translucent?: boolean;
   secondary?: boolean;
+  lefty?: boolean;
 }
 
 export const Button = React.forwardRef(
   (props: Props, ref: React.Ref<HTMLButtonElement>) => {
     const {
       className,
+      style,
       primary,
       big: big,
       icon,
@@ -128,6 +136,7 @@ export const Button = React.forwardRef(
       label,
       wide,
       secondary,
+      lefty,
       disabled,
       translucent,
       loading,
@@ -145,8 +154,10 @@ export const Button = React.forwardRef(
           wide,
           big,
           disabled,
+          lefty,
           translucent,
         })}
+        style={style}
         {...restProps}
       >
         {iconComponent ? iconComponent : icon ? <Icon icon={icon} /> : null}

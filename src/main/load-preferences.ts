@@ -83,11 +83,11 @@ export async function loadLocale(ms: MainState, lang: string) {
   if (!ms.localeState) {
     throw new Error(`loadLocale called before MainState.localeState is set`);
   }
+  let { englishStrings } = ms.localeState;
 
   let normalizedLang = normalizeLang(ms, lang);
   if (normalizedLang == "en") {
     logger.info(`Returning English strings for lang ${normalizedLang}`);
-    let { englishStrings } = ms.localeState;
     ms.localeState.current = {
       lang: "en",
       strings: englishStrings,
@@ -105,7 +105,10 @@ export async function loadLocale(ms: MainState, lang: string) {
   );
   ms.localeState.current = {
     lang: normalizedLang,
-    strings,
+    strings: {
+      ...englishStrings,
+      ...strings,
+    },
   };
 }
 

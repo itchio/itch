@@ -1,17 +1,16 @@
 import { LocalizedString } from "common/types";
 import _ from "lodash";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { Button } from "renderer/basics/Button";
 import { Icon } from "renderer/basics/Icon";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
-import { message } from "renderer/basics/Message";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import styled from "styled-components";
 import classNames from "classnames";
 import { buttonBorderRadius, mixins } from "renderer/theme";
 
 const DropdownContents = styled(MenuContents)`
-  max-height: 80vh;
+  max-height: 400px;
   overflow-y: auto;
 `;
 
@@ -38,18 +37,21 @@ export const DropdownButton = styled(Button)`
 `;
 
 export interface Option<T> {
-  label: LocalizedString;
+  label: React.ReactNode;
   value: T;
 }
 
 export interface Props<T> {
   groupPosition?: "start" | "middle" | "end";
   prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
   onChange: (value: T) => void;
   value: T;
   renderValue?: (value: T) => React.ReactNode;
   options: readonly Option<T>[];
   name?: string;
+  className?: string;
+  width?: number;
 }
 
 export const DropdownItem = styled.div`
@@ -61,8 +63,12 @@ export const DropdownItem = styled.div`
     flex-shrink: 0;
   }
 
-  > .icon.hidden {
-    visibility: hidden;
+  > .icon {
+    flex-shrink: 0;
+
+    &.hidden {
+      visibility: hidden;
+    }
   }
 
   > .filler {
@@ -72,27 +78,39 @@ export const DropdownItem = styled.div`
   }
 
   > .label {
-    ${mixins.singleLine};
+    flex-grow: 1;
   }
 `;
 
 export const Dropdown = function<T>(props: Props<T>) {
   let activeOption = _.find(props.options, o => o.value == props.value);
   if (!activeOption) {
-    return <div>Option not found {props.value}</div>;
+    activeOption = props.options[0];
   }
   const [open, setOpen] = useState(false);
   const coref = useClickOutside(() => setOpen(false));
+
+  let currentRef = useRef<HTMLButtonElement | null>(null);
+  useLayoutEffect(() => {
+    console.log(`currentRef.current = `, currentRef.current);
+    currentRef.current?.scrollIntoView({
+      behavior: "auto",
+      block: "center",
+    });
+  });
 
   return (
     <MenuTippy
       visible={open}
       interactive
-      placement="bottom-end"
+      placement="bottom"
       appendTo={document.body}
       boundary="viewport"
+      animateFill
+      maxWidth={props.width}
       content={
         <DropdownContents
+          style={{ width: props.width ?? 180 }}
           className={"dropdown-options"}
           data-name={props.name}
           ref={coref("menu-contents")}
@@ -107,9 +125,10 @@ export const Dropdown = function<T>(props: Props<T>) {
                   props.onChange(value);
                   setOpen(false);
                 }}
+                ref={open && props.value === value ? currentRef : null}
                 label={
                   <DropdownItem>
-                    <span className="label">{message(label)}</span>
+                    <span className="label">{label}</span>
                     <div className="filler" />
                     <Icon
                       className={classNames({ hidden: props.value !== value })}
@@ -124,10 +143,13 @@ export const Dropdown = function<T>(props: Props<T>) {
       }
     >
       <DropdownButton
+        lefty
         className={classNames(
           "dropdown",
+          props.className,
           props.groupPosition ? `group-${props.groupPosition}` : null
         )}
+        style={{ width: props.width ?? "initial" }}
         data-name={props.name}
         secondary
         ref={coref("button")}
@@ -137,7 +159,8 @@ export const Dropdown = function<T>(props: Props<T>) {
             {props.prefix}
             {props.renderValue
               ? props.renderValue(props.value)
-              : message(activeOption.label)}
+              : activeOption.label}
+            {props.suffix}
           </DropdownItem>
         }
       />

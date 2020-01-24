@@ -19,6 +19,7 @@ export interface Props<T> {
   onChange: (values: T[]) => void;
   values: T[];
   options: readonly Option<T>[];
+  width?: number;
 }
 
 export const MultiDropdown = function<T>(props: Props<T>) {
@@ -33,7 +34,10 @@ export const MultiDropdown = function<T>(props: Props<T>) {
       appendTo={document.body}
       boundary="viewport"
       content={
-        <MenuContents ref={coref("menu-contents")}>
+        <MenuContents
+          ref={coref("menu-contents")}
+          style={{ width: props.width ?? 180 }}
+        >
           <Button
             disabled={_.isEmpty(props.values)}
             onClick={() => {
