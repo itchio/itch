@@ -1,23 +1,25 @@
-import * as pkgInfo from "../../../package.json";
-import { modalWidget } from "renderer/modals/ModalRouter";
-import { modals } from "common/modals";
-import { HardModal } from "renderer/modals/HardModal";
-import React, { useCallback, useState, useEffect } from "react";
-import { usePreferences } from "renderer/use-preferences";
-import { Dropdown } from "renderer/Dropdown";
-import { useAsyncCb } from "renderer/use-async-cb";
-import { useSocket } from "renderer/contexts";
-import { queries } from "common/queries";
-import locales from "static/locales.json";
-import { FormattedMessage } from "react-intl";
-import styled from "styled-components";
-import { fontSizes } from "renderer/theme";
-import { Icon } from "renderer/basics/Icon";
-import classNames from "classnames";
-import { PreferencesState } from "common/preferences";
-import { Button } from "renderer/basics/Button";
 import { messages } from "common/butlerd";
+import { InstallLocationSummary } from "common/butlerd/messages";
+import { fileSize } from "common/format/filesize";
+import { modals } from "common/modals";
+import { PreferencesState } from "common/preferences";
+import { queries } from "common/queries";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
+import { FormattedMessage } from "react-intl";
+import { Button } from "renderer/basics/Button";
+import { Icon } from "renderer/basics/Icon";
+import { useSocket } from "renderer/contexts";
+import { Dropdown } from "renderer/Dropdown";
+import { HardModal } from "renderer/modals/HardModal";
+import { modalWidget } from "renderer/modals/ModalRouter";
+import { fontSizes } from "renderer/theme";
 import { useAsync } from "renderer/use-async";
+import { useAsyncCb } from "renderer/use-async-cb";
+import { usePreferences } from "renderer/use-preferences";
+import locales from "static/locales.json";
+import styled from "styled-components";
+import * as pkgInfo from "../../../package.json";
 
 const HardPrefModal = styled(HardModal)`
   .pref-section {
@@ -26,6 +28,17 @@ const HardPrefModal = styled(HardModal)`
     align-items: center;
 
     padding: 10px 20px;
+
+    &.collapse-top {
+      padding-top: 0;
+    }
+    &.collapse-bottom {
+      padding-bottom: 0;
+    }
+
+    .secondary {
+      color: ${p => p.theme.colors.text2};
+    }
   }
 
   .checkbox-row {
@@ -55,7 +68,7 @@ const HardPrefModal = styled(HardModal)`
   }
 `;
 
-const LanguagesIcon = styled(Icon)`
+const SpacedIcon = styled(Icon)`
   font-size: 120%;
   margin-right: 0.6em;
 `;
@@ -71,11 +84,35 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
   const socket = useSocket();
   const preferences = usePreferences();
 
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    let interval = setInterval(() => {
+      setTick(t => t + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  });
+
   const [butlerVersion, setButlerVersion] = useState("...");
   useAsync(async () => {
     let { versionString } = await socket.call(messages.VersionGet, {});
     setButlerVersion(versionString);
   }, []);
+
+  const [defaultInstallLocation, setDefaultInstallLocation] = useState<
+    InstallLocationSummary | undefined
+  >(undefined);
+  useAsync(async () => {
+    let { installLocations } = await socket.call(
+      messages.InstallLocationsList,
+      {}
+    );
+    setDefaultInstallLocation(
+      _.find(
+        installLocations,
+        il => il.id == preferences?.defaultInstallLocation
+      )
+    );
+  }, [preferences, tick]);
 
   const [onLang] = useAsyncCb(async (lang: string) => {
     await socket.query(queries.switchLanguage, {
@@ -99,8 +136,10 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
           updatePreferences({ [prop]: !active });
         }}
       >
-        <Icon className="checkbox" icon={active ? "checked" : "unchecked"} />
-        <div className="spacer" />
+        <SpacedIcon
+          className="checkbox"
+          icon={active ? "checked" : "unchecked"}
+        />
         <FormattedMessage id={msg} />
       </div>
     );
@@ -118,7 +157,7 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
             <Dropdown
               renderValue={option => (
                 <>
-                  <LanguagesIcon icon="earth" /> {option.label}
+                  <SpacedIcon icon="earth" /> {option.label}
                 </>
               )}
               className="lang-dropdown"
@@ -139,6 +178,29 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
               value={preferences?.lang || "en"}
             />
           </div>
+          <PreferencesTitle>
+            <FormattedMessage id="preferences.install_locations" />
+          </PreferencesTitle>
+          <div className="pref-section">
+            <SpacedIcon icon="folder-open" />{" "}
+            {defaultInstallLocation ? (
+              <span>
+                {defaultInstallLocation.path}{" "}
+                <span className="secondary">
+                  (
+                  <FormattedMessage id="preferences.install_location.free_space" />
+                  : {fileSize(defaultInstallLocation.sizeInfo.freeSize)})
+                </span>
+              </span>
+            ) : null}
+            <span></span>
+          </div>
+          <div className="pref-section collapse-top button-row">
+            <Button
+              label={<FormattedMessage id="install_locations.manage" />}
+            />
+          </div>
+
           <PreferencesTitle>
             <FormattedMessage id="preferences.security" />
           </PreferencesTitle>
