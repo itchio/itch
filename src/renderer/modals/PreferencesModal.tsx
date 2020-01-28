@@ -2,24 +2,25 @@ import { messages } from "common/butlerd";
 import { InstallLocationSummary } from "common/butlerd/messages";
 import { fileSize } from "common/format/filesize";
 import { modals } from "common/modals";
+import packageInfo from "common/package-info";
 import { PreferencesState } from "common/preferences";
 import { queries } from "common/queries";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { Icon } from "renderer/basics/Icon";
 import { useSocket } from "renderer/contexts";
 import { Dropdown } from "renderer/Dropdown";
 import { HardModal } from "renderer/modals/HardModal";
 import { modalWidget } from "renderer/modals/ModalRouter";
+import { ProgressBar } from "renderer/pages/ProgressBar";
 import { fontSizes } from "renderer/theme";
 import { useAsync } from "renderer/use-async";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { usePreferences } from "renderer/use-preferences";
 import locales from "static/locales.json";
 import styled from "styled-components";
-import * as pkgInfo from "../../../package.json";
 
 const HardPrefModal = styled(HardModal)`
   .pref-section {
@@ -38,6 +39,7 @@ const HardPrefModal = styled(HardModal)`
 
     .secondary {
       color: ${p => p.theme.colors.text2};
+      font-size: ${fontSizes.small};
     }
   }
 
@@ -66,6 +68,10 @@ const HardPrefModal = styled(HardModal)`
       }
     }
   }
+`;
+
+const StyledProgressBar = styled(ProgressBar)`
+  margin-right: 10px;
 `;
 
 const SpacedIcon = styled(Icon)`
@@ -98,15 +104,13 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
     setButlerVersion(versionString);
   }, []);
 
-  const [defaultInstallLocation, setDefaultInstallLocation] = useState<
-    InstallLocationSummary | undefined
-  >(undefined);
+  const [loc, setLoc] = useState<InstallLocationSummary | undefined>(undefined);
   useAsync(async () => {
     let { installLocations } = await socket.call(
       messages.InstallLocationsList,
       {}
     );
-    setDefaultInstallLocation(
+    setLoc(
       _.find(
         installLocations,
         il => il.id == preferences?.defaultInstallLocation
@@ -126,6 +130,11 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
     },
     []
   );
+
+  let intl = useIntl();
+  useEffect(() => {
+    document.title = intl.formatMessage({ id: "sidebar.preferences" });
+  });
 
   let checkbox = (msg: string, prop: keyof PreferencesState) => {
     let active = preferences ? !!preferences[prop] : false;
@@ -181,20 +190,29 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
           <PreferencesTitle>
             <FormattedMessage id="preferences.install_locations" />
           </PreferencesTitle>
-          <div className="pref-section">
-            <SpacedIcon icon="folder-open" />{" "}
-            {defaultInstallLocation ? (
-              <span>
-                {defaultInstallLocation.path}{" "}
+          {loc ? (
+            <>
+              <div className="pref-section">
+                <SpacedIcon icon="folder-open" />
+                {loc.path}
+              </div>
+              <div className="pref-section">
+                <StyledProgressBar
+                  progress={1 - loc.sizeInfo.freeSize / loc.sizeInfo.totalSize}
+                />
                 <span className="secondary">
-                  (
-                  <FormattedMessage id="preferences.install_location.free_space" />
-                  : {fileSize(defaultInstallLocation.sizeInfo.freeSize)})
+                  <FormattedMessage
+                    id="preferences.install_location.free_of_total"
+                    values={{
+                      freeSize: fileSize(loc.sizeInfo.freeSize),
+                      totalSize: fileSize(loc.sizeInfo.totalSize),
+                    }}
+                  />
                 </span>
-              </span>
-            ) : null}
-            <span></span>
-          </div>
+              </div>
+            </>
+          ) : null}
+          <span></span>
           <div className="pref-section collapse-top button-row">
             <Button
               label={<FormattedMessage id="install_locations.manage" />}
@@ -230,7 +248,7 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
             <FormattedMessage id="preferences.advanced" />
           </PreferencesTitle>
           <div className="pref-section version-row">
-            <Icon icon="arrow-right" /> itch {pkgInfo.version}
+            <Icon icon="arrow-right" /> itch {packageInfo.version}
           </div>
           <div className="pref-section version-row">
             <Icon icon="arrow-right" /> butler {butlerVersion}

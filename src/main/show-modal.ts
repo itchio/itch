@@ -11,16 +11,29 @@ import {
   setupCustomShortcuts,
   openOrFocusDevTools,
 } from "main/setup-shortcuts";
+import _ from "lodash";
+import { mainLogger } from "main/logger";
+
+const logger = mainLogger.childWithName("show-modal");
 
 export async function showModal<Params, Result>(
   ms: MainState,
   mc: ModalCreator<Params, Result>,
   params: Params
 ): Promise<Result | undefined> {
+  let customOpts = mc.__customOptions;
+  let kind = mc.__kind;
+  let existing = _.find(ms.modals, m => m.mc.__kind == kind);
+  if (customOpts.singleton && existing) {
+    logger.info(`Modal kind ${kind} is singleton, focusing existing one`);
+    existing.browserWindow.focus();
+    return;
+  }
+
   let opts: BrowserWindowConstructorOptions = {
-    parent: ms.browserWindow,
-    width: 500,
-    height: 420,
+    parent: customOpts.detached ? undefined : ms.browserWindow,
+    width: customOpts.dimensions?.width ?? 500,
+    height: customOpts.dimensions?.height ?? 420,
     backgroundColor: shellBgDefault,
     useContentSize: true,
     frame: false,
@@ -29,10 +42,6 @@ export async function showModal<Params, Result>(
       session: session.fromPartition(partitionForApp()),
     },
   };
-  if (mc.__customOptions.dimensions) {
-    opts.width = mc.__customOptions.dimensions.width;
-    opts.height = mc.__customOptions.dimensions.height;
-  }
   let modal = new BrowserWindow(opts);
   modal.setMenu(null);
 
@@ -56,7 +65,7 @@ export async function showModal<Params, Result>(
   try {
     return await new Promise((resolve, reject) => {
       modal.addListener("close", () => resolve(undefined));
-      ms.modals[modal.id] = { onResult: resolve };
+      ms.modals[modal.id] = { onResult: resolve, mc, browserWindow: modal };
     });
   } finally {
     delete ms.modals[modal.id];

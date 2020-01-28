@@ -9,8 +9,6 @@ const CircleContainer = styled.span`
     animation: ${animations.spinner} linear infinite 2s;
   }
 
-  display: inline;
-
   display: flex;
   align-items: center;
   justify-content: center;

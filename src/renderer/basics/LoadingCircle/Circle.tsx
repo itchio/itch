@@ -1,4 +1,5 @@
 import React from "react";
+import classNames from "classnames";
 
 // shamelessly stolen, err, adapted, from https://github.com/react-component/progress
 
@@ -13,6 +14,7 @@ interface CircleProps {
   strokeLinecap?: "inherit" | "butt" | "round" | "square";
   strokePathStyle?: React.CSSProperties;
   style?: React.CSSProperties;
+  className?: string;
 }
 
 export const Circle = (props: CircleProps) => {
@@ -45,10 +47,15 @@ export const Circle = (props: CircleProps) => {
     trailColor,
     strokeLinecap,
     style,
+    className,
   } = props;
   const { pathString, trailPathStyle, strokePathStyle } = getPathStyles();
   return (
-    <svg className="circle" viewBox="0 0 100 100" style={style}>
+    <svg
+      className={classNames("circle", className)}
+      viewBox="0 0 100 100"
+      style={style}
+    >
       <path
         className={`circle-trail`}
         d={pathString}

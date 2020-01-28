@@ -1,10 +1,9 @@
 import React from "react";
-import { IconButton } from "renderer/basics/IconButton";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
-import classNames from "classnames";
-import styled from "styled-components";
+import { IconButton } from "renderer/basics/IconButton";
 import { animations, fontSizes } from "renderer/theme";
+import styled from "styled-components";
 
 const ModalShroud = styled.div`
   position: fixed;

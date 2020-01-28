@@ -5,6 +5,7 @@ import {
   Action,
   Game,
 } from "common/butlerd/messages";
+import { BrowserWindow } from "electron";
 
 interface Dimensions {
   width: number;
@@ -12,6 +13,8 @@ interface Dimensions {
 }
 
 interface CustomOptions {
+  singleton?: boolean;
+  detached?: boolean;
   dimensions?: Dimensions;
 }
 
@@ -26,6 +29,8 @@ export const modals = wireModals({
     dimensions: { width: 520, height: 380 },
   }),
   preferences: modal<{}, {}>({
+    singleton: true,
+    detached: true,
     dimensions: { width: 600, height: 600 },
   }),
 });
@@ -67,6 +72,8 @@ export interface ModalsState {
 }
 
 export interface ModalState {
+  mc: ModalCreator<any, any>;
+  browserWindow: BrowserWindow;
   onResult: (result: any) => void;
 }
 

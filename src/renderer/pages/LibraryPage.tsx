@@ -21,6 +21,7 @@ import { GameGrid } from "renderer/pages/GameGrid";
 import { GameList } from "renderer/pages/GameList";
 import { fontSizes, mixins } from "renderer/theme";
 import styled from "styled-components";
+import { Ellipsis } from "renderer/basics/Ellipsis";
 
 const LibraryLayout = styled.div`
   display: flex;
@@ -405,7 +406,7 @@ const Viewport = (props: { source: Source; scrollToTop: () => void }) => {
     <>
       <ViewHeader>
         <ViewTitle source={source} />
-        {loading && <Spinner />}
+        {loading && <Ellipsis />}
         <Filler />
         <Spacer />
         <MultiDropdown
