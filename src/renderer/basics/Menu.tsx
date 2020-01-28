@@ -50,3 +50,9 @@ export const MenuContents = styled.div`
     }
   }
 `;
+
+export const Separator = styled.div`
+  height: 1px;
+  margin: 5px 0;
+  background: rgba(255, 255, 255, 0.1);
+`;
