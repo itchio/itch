@@ -45,6 +45,10 @@ export const Topbar = () => {
     await socket.query(queries.close);
   }, [socket]);
 
+  let [preferences] = useAsyncCb(async () => {
+    await socket.showModal(modals.preferences, {});
+  }, [socket]);
+
   let [minimize] = useAsyncCb(async () => {
     await socket.query(queries.minimize);
   }, [socket]);
@@ -106,6 +110,7 @@ export const Topbar = () => {
         onClick={() => console.log("draggable filler click")}
         onClickCapture={() => console.log("draggable filler click capture")}
       />
+      <IconButton icon="cog" onClick={preferences} />
       <IconButton icon="window-minimize" onClick={minimize} />
       <IconButton
         icon={maximized ? "window-restore" : "window-maximize"}
