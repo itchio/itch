@@ -52,7 +52,7 @@ export interface Props<T> {
   suffix?: React.ReactNode;
   onChange: (value: T) => void;
   value: T;
-  renderValue?: (value: T) => React.ReactNode;
+  renderValue?: (value: Option<T>) => React.ReactNode;
   options: readonly Option<T>[];
   name?: string;
   className?: string;
@@ -215,7 +215,7 @@ export const Dropdown = function<T>(props: Props<T>) {
           <DropdownItem>
             {props.prefix}
             {props.renderValue
-              ? props.renderValue(props.value)
+              ? props.renderValue(shownOption)
               : shownOption?.label}
             {props.suffix}
           </DropdownItem>

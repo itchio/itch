@@ -1,7 +1,8 @@
+import * as pkgInfo from "../../../package.json";
 import { modalWidget } from "renderer/modals/ModalRouter";
 import { modals } from "common/modals";
 import { HardModal } from "renderer/modals/HardModal";
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { usePreferences } from "renderer/use-preferences";
 import { Dropdown } from "renderer/Dropdown";
 import { useAsyncCb } from "renderer/use-async-cb";
@@ -14,6 +15,9 @@ import { fontSizes } from "renderer/theme";
 import { Icon } from "renderer/basics/Icon";
 import classNames from "classnames";
 import { PreferencesState } from "common/preferences";
+import { Button } from "renderer/basics/Button";
+import { messages } from "common/butlerd";
+import { useAsync } from "renderer/use-async";
 
 const HardPrefModal = styled(HardModal)`
   .pref-section {
@@ -21,19 +25,39 @@ const HardPrefModal = styled(HardModal)`
     flex-direction: row;
     align-items: center;
 
-    .spacer {
-      flex-basis: 10px;
-      flex-shrink: 0;
-    }
-
-    border-left: 2px solid #444;
     padding: 10px 20px;
-    background: #222;
+  }
 
-    &.active {
-      border-color: ${p => p.theme.colors.accent};
+  .checkbox-row {
+    cursor: pointer;
+
+    > .checkbox {
+      margin-right: 15px;
     }
   }
+
+  .version-row {
+    .icon {
+      margin-right: 10px;
+    }
+  }
+
+  .button-row {
+    margin: 20px 0;
+
+    .button {
+      margin-right: 10px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+`;
+
+const LanguagesIcon = styled(Icon)`
+  font-size: 120%;
+  margin-right: 0.6em;
 `;
 
 const PreferencesTitle = styled.div`
@@ -46,6 +70,12 @@ const PreferencesTitle = styled.div`
 export const PreferencesModal = modalWidget(modals.preferences, props => {
   const socket = useSocket();
   const preferences = usePreferences();
+
+  const [butlerVersion, setButlerVersion] = useState("...");
+  useAsync(async () => {
+    let { versionString } = await socket.call(messages.VersionGet, {});
+    setButlerVersion(versionString);
+  }, []);
 
   const [onLang] = useAsyncCb(async (lang: string) => {
     await socket.query(queries.switchLanguage, {
@@ -64,12 +94,12 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
     let active = preferences ? !!preferences[prop] : false;
     return (
       <div
-        className={classNames("pref-section", { active })}
+        className="pref-section checkbox-row"
         onClick={() => {
           updatePreferences({ [prop]: !active });
         }}
       >
-        <input type="checkbox" checked={active} />
+        <Icon className="checkbox" icon={active ? "checked" : "unchecked"} />
         <div className="spacer" />
         <FormattedMessage id={msg} />
       </div>
@@ -85,9 +115,12 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
             <FormattedMessage id="preferences.language" />
           </PreferencesTitle>
           <div className="pref-section">
-            <Icon icon="earth" />
-            <div className="spacer" />
             <Dropdown
+              renderValue={option => (
+                <>
+                  <LanguagesIcon icon="earth" /> {option.label}
+                </>
+              )}
               className="lang-dropdown"
               width={320}
               onChange={lang => onLang(lang)}
@@ -110,7 +143,55 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
             <FormattedMessage id="preferences.security" />
           </PreferencesTitle>
           {checkbox("preferences.security.sandbox.title", "isolateApps")}
-          <pre>{JSON.stringify(preferences, null, 2)}</pre>
+          <PreferencesTitle>
+            <FormattedMessage id="preferences.behavior" />
+          </PreferencesTitle>
+          {checkbox("preferences.behavior.open_at_login", "openAtLogin")}
+          {checkbox("preferences.behavior.open_as_hidden", "openAsHidden")}
+          {checkbox("preferences.behavior.close_to_tray", "closeToTray")}
+          {checkbox(
+            "preferences.behavior.manual_game_updates",
+            "manualGameUpdates"
+          )}
+          {checkbox(
+            "preferences.behavior.prevent_display_sleep",
+            "preventDisplaySleep"
+          )}
+          <PreferencesTitle>
+            <FormattedMessage id="preferences.notifications" />
+          </PreferencesTitle>
+          {checkbox(
+            "preferences.notifications.ready_notification",
+            "readyNotification"
+          )}
+          <PreferencesTitle>
+            <FormattedMessage id="preferences.advanced" />
+          </PreferencesTitle>
+          <div className="pref-section version-row">
+            <Icon icon="arrow-right" /> itch {pkgInfo.version}
+          </div>
+          <div className="pref-section version-row">
+            <Icon icon="arrow-right" /> butler {butlerVersion}
+          </div>
+          <div className="pref-section button-row">
+            <Button
+              icon="book"
+              label={
+                <FormattedMessage id="preferences.advanced.open_app_log" />
+              }
+            />
+            <Button
+              icon="delete"
+              label={
+                <FormattedMessage id="preferences.advanced.clear_browsing_data" />
+              }
+            />
+            <div style={{ flexGrow: 1 }} />
+          </div>
+          {checkbox(
+            "preferences.advanced.disable_hardware_acceleration",
+            "disableHardwareAcceleration"
+          )}
         </>
       }
     />

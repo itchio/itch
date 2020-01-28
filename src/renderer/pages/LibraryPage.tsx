@@ -439,9 +439,9 @@ const Viewport = (props: { source: Source; scrollToTop: () => void }) => {
             { value: "true", label: currentSort?.directions[1] ?? "Reversed" },
           ]}
           value={reverse ? "true" : "false"}
-          renderValue={value =>
+          renderValue={option =>
             _.find(sorts[source.source], s => s.value === sortBy)?.directions[
-              value === "true" ? 1 : 0
+              option.value === "true" ? 1 : 0
             ]
           }
         />
@@ -459,7 +459,7 @@ const Viewport = (props: { source: Source; scrollToTop: () => void }) => {
             }[]
           }
           value={layout}
-          renderValue={value => <Icon icon={value} />}
+          renderValue={option => <Icon icon={option.value} />}
         />
       </ViewHeader>
       <ViewBody>
