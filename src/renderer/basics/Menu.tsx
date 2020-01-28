@@ -27,7 +27,8 @@ export const MenuContents = styled.div`
       width: 100%;
     }
 
-    &:hover {
+    &:hover,
+    &:focus {
       background: rgba(255, 255, 255, 0.1);
     }
   }

@@ -1,13 +1,18 @@
-import { LocalizedString } from "common/types";
+import classNames from "classnames";
 import _ from "lodash";
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
 import { Button } from "renderer/basics/Button";
 import { Icon } from "renderer/basics/Icon";
 import { MenuContents, MenuTippy } from "renderer/basics/Menu";
 import { useClickOutside } from "renderer/basics/useClickOutside";
+import { buttonBorderRadius } from "renderer/theme";
 import styled from "styled-components";
-import classNames from "classnames";
-import { buttonBorderRadius, mixins } from "renderer/theme";
 
 const DropdownContents = styled(MenuContents)`
   max-height: 400px;
@@ -83,21 +88,50 @@ export const DropdownItem = styled.div`
 `;
 
 export const Dropdown = function<T>(props: Props<T>) {
-  let activeOption = _.find(props.options, o => o.value == props.value);
-  if (!activeOption) {
-    activeOption = props.options[0];
-  }
+  const [currentValue, setCurrentValue] = useState<T>(props.value);
+  useEffect(() => {
+    setCurrentValue(props.value);
+  }, [props.value]);
+
+  let activeOption =
+    _.find(props.options, o => o.value === props.value) ?? props.options[0];
+  let shownOption =
+    _.find(props.options, o => o.value === currentValue) ?? props.options[0];
+
   const [open, setOpen] = useState(false);
   const coref = useClickOutside(() => setOpen(false));
 
   let currentRef = useRef<HTMLButtonElement | null>(null);
   useLayoutEffect(() => {
-    console.log(`currentRef.current = `, currentRef.current);
     currentRef.current?.scrollIntoView({
       behavior: "auto",
       block: "center",
     });
+    currentRef.current?.focus();
   });
+
+  let keyDown = useCallback(
+    (ev: React.KeyboardEvent<HTMLDivElement>) => {
+      let valueIndex = _.findIndex(
+        props.options,
+        o => o.value === currentValue
+      );
+
+      if (ev.key === "ArrowDown") {
+        let nextIndex = Math.min(valueIndex + 1, props.options.length - 1);
+        let nextValue = props.options[nextIndex].value;
+        setCurrentValue(nextValue);
+        ev.preventDefault();
+      } else if (ev.key === "ArrowUp") {
+        let nextIndex = Math.max(valueIndex - 1, 0);
+        let nextValue = props.options[nextIndex].value;
+        setCurrentValue(nextValue);
+        ev.preventDefault();
+      }
+      console.log(`keyboard event: `, ev);
+    },
+    [currentValue]
+  );
 
   return (
     <MenuTippy
@@ -106,7 +140,6 @@ export const Dropdown = function<T>(props: Props<T>) {
       placement="bottom"
       appendTo={document.body}
       boundary="viewport"
-      animateFill
       maxWidth={props.width}
       content={
         <DropdownContents
@@ -114,18 +147,21 @@ export const Dropdown = function<T>(props: Props<T>) {
           className={"dropdown-options"}
           data-name={props.name}
           ref={coref("menu-contents")}
+          onKeyDown={keyDown}
         >
           {props.options.map(({ value, label }) => {
             return (
               <Button
                 key={`${value}`}
-                className={"dropdown-option"}
+                className={classNames("dropdown-option", {
+                  highlighted: currentValue == value,
+                })}
                 data-value={`${value}`}
                 onClick={() => {
                   props.onChange(value);
                   setOpen(false);
                 }}
-                ref={open && props.value === value ? currentRef : null}
+                ref={open && currentValue === value ? currentRef : null}
                 label={
                   <DropdownItem>
                     <span className="label">{label}</span>
@@ -159,7 +195,7 @@ export const Dropdown = function<T>(props: Props<T>) {
             {props.prefix}
             {props.renderValue
               ? props.renderValue(props.value)
-              : activeOption.label}
+              : shownOption?.label}
             {props.suffix}
           </DropdownItem>
         }

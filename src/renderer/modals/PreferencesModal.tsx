@@ -12,6 +12,8 @@ import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
 import { fontSizes } from "renderer/theme";
 import { Icon } from "renderer/basics/Icon";
+import classNames from "classnames";
+import { PreferencesState } from "common/preferences";
 
 const HardPrefModal = styled(HardModal)`
   .pref-section {
@@ -22,6 +24,14 @@ const HardPrefModal = styled(HardModal)`
     .spacer {
       flex-basis: 10px;
       flex-shrink: 0;
+    }
+
+    border-left: 2px solid #444;
+    padding: 10px 20px;
+    background: #222;
+
+    &.active {
+      border-color: ${p => p.theme.colors.accent};
     }
   }
 `;
@@ -42,6 +52,29 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
       lang,
     });
   }, []);
+
+  const [updatePreferences] = useAsyncCb(
+    async (preferences: Partial<PreferencesState>) => {
+      await socket.query(queries.updatePreferences, { preferences });
+    },
+    []
+  );
+
+  let checkbox = (msg: string, prop: keyof PreferencesState) => {
+    let active = preferences ? !!preferences[prop] : false;
+    return (
+      <div
+        className={classNames("pref-section", { active })}
+        onClick={() => {
+          updatePreferences({ [prop]: !active });
+        }}
+      >
+        <input type="checkbox" checked={active} />
+        <div className="spacer" />
+        <FormattedMessage id={msg} />
+      </div>
+    );
+  };
 
   return (
     <HardPrefModal
@@ -73,6 +106,10 @@ export const PreferencesModal = modalWidget(modals.preferences, props => {
               value={preferences?.lang || "en"}
             />
           </div>
+          <PreferencesTitle>
+            <FormattedMessage id="preferences.security" />
+          </PreferencesTitle>
+          {checkbox("preferences.security.sandbox.title", "isolateApps")}
           <pre>{JSON.stringify(preferences, null, 2)}</pre>
         </>
       }
