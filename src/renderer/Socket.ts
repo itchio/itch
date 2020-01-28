@@ -251,8 +251,8 @@ async function connectOnce(address: string): Promise<WebSocket> {
 }
 
 async function connect(address: string): Promise<WebSocket> {
-  const maxTries = 3;
-  const sleepDuration = 500;
+  const maxTries = 500;
+  const sleepDuration = 1000;
   for (let numTry = 1; ; numTry++) {
     try {
       return await connectOnce(address);
