@@ -4,7 +4,7 @@ import { queries } from "common/queries";
 import React, { useState } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
-import { MenuContents, MenuTippy } from "renderer/basics/Menu";
+import { MenuContents, MenuTippy, Separator } from "renderer/basics/Menu";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
 import { useAsyncCb } from "renderer/use-async-cb";
@@ -73,6 +73,10 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
     await socket.query(queries.setProfile, {});
   }, [socket]);
 
+  const [exit] = useAsyncCb(async () => {
+    await socket.query(queries.exit);
+  }, [socket]);
+
   return (
     <MenuContents>
       <Button
@@ -85,9 +89,15 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
       />
       <Button
         loading={logoutLoading}
-        icon="exit"
-        label={<FormattedMessage id="prompt.logout_action" />}
+        icon="users"
+        label={<FormattedMessage id="menu.account.change_user" />}
         onClick={logout}
+      />
+      <Separator />
+      <Button
+        icon="exit"
+        label={<FormattedMessage id="menu.file.quit" />}
+        onClick={exit}
       />
     </MenuContents>
   );
