@@ -19,6 +19,8 @@ export const queries = wireQueries({
   getWebviewState: query<void, { state: WebviewState }>(),
   setWebviewState: query<{ state: WebviewState }, void>(),
 
+  exit: query<void, void>(),
+
   getProfile: query<void, { profile: Profile }>(),
   setProfile: query<
     { profile?: Profile; cookie?: Record<string, string> },

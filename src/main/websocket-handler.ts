@@ -14,7 +14,7 @@ import { filterObject } from "common/filter-object";
 import { Packet, PacketCreator, packets } from "common/packets";
 import { queries, QueryCreator } from "common/queries";
 import dump from "common/util/dump";
-import { shell } from "electron";
+import { shell, app } from "electron";
 import { MainState } from "main";
 import { envSettings } from "main/constants/env-settings";
 import { loadLocale, setPreferences } from "main/load-preferences";
@@ -248,6 +248,11 @@ export class WebsocketHandler {
       logger.info(`Got modal result for ${req.id}: ${dump(req.result)}`);
       ms.modals[req.id]?.onResult(req.result);
       return {};
+    });
+
+    onQuery(queries.exit, async req => {
+      // TODO: check for running games
+      app.exit(0);
     });
 
     onPacket(packets.queryRequest, (cx, req) => {
