@@ -93,8 +93,6 @@ export const Dropdown = function<T>(props: Props<T>) {
     setCurrentValue(props.value);
   }, [props.value]);
 
-  let activeOption =
-    _.find(props.options, o => o.value === props.value) ?? props.options[0];
   let shownOption =
     _.find(props.options, o => o.value === currentValue) ?? props.options[0];
 
@@ -105,7 +103,7 @@ export const Dropdown = function<T>(props: Props<T>) {
   useLayoutEffect(() => {
     currentRef.current?.scrollIntoView({
       behavior: "auto",
-      block: "center",
+      block: "nearest",
     });
     currentRef.current?.focus();
   });
@@ -127,8 +125,31 @@ export const Dropdown = function<T>(props: Props<T>) {
         let nextValue = props.options[nextIndex].value;
         setCurrentValue(nextValue);
         ev.preventDefault();
+      } else if (ev.key === "Escape") {
+        setCurrentValue(props.value);
+        setOpen(false);
+        ev.preventDefault();
+      } else if (/[a-z]/.test(ev.key)) {
+        let prefix = ev.key;
+
+        let labelStartsWith = (o: Option<T>, prefix: string): boolean => {
+          let label = typeof o.label === "string" ? o.label : `${o.value}`;
+          return label.toLowerCase().startsWith(prefix);
+        };
+        let nextValue =
+          _.find(props.options, (o, index) => {
+            if (index <= valueIndex) {
+              return false;
+            }
+            return labelStartsWith(o, prefix);
+          }) ??
+          _.find(props.options, (o, index) => {
+            return labelStartsWith(o, prefix);
+          });
+        if (nextValue) {
+          setCurrentValue(nextValue.value);
+        }
       }
-      console.log(`keyboard event: `, ev);
     },
     [currentValue]
   );
