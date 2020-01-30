@@ -1,12 +1,15 @@
 import { MainState, LocalesConfig } from "main";
 import { preferencesPath } from "common/util/paths";
-import { readJSONFile, writeJSONFile } from "main/fs";
+import { readJSONFile, writeJSONFile, symlink } from "main/fs";
 import { getLocalePath, getLocalesConfigPath } from "common/util/resources";
 import { LocaleStrings } from "common/locales";
 import { mainLogger } from "main/logger";
 import { PreferencesState } from "common/preferences";
 import { broadcastPacket } from "main/websocket-handler";
 import { packets } from "common/packets";
+import { app } from "electron";
+import { join } from "path";
+import { unlink } from "main/fs";
 
 let logger = mainLogger.childWithName("load-preferences");
 
@@ -127,4 +130,61 @@ export async function setPreferences(
 
   await writeJSONFile(preferencesPath(), ms.preferences);
   broadcastPacket(ms, packets.preferencesUpdated, { preferences: values });
+
+  if (
+    typeof values.openAtLogin !== "undefined" ||
+    typeof values.openAsHidden !== "undefined"
+  ) {
+    await setOpenAtLogin(ms.preferences);
+  }
+}
+
+async function setOpenAtLogin(prefs: PreferencesState) {
+  const { openAsHidden, openAtLogin } = prefs;
+
+  if (process.platform === "linux") {
+    await setOpenAtLoginLinux(prefs);
+  } else {
+    app.setLoginItemSettings({
+      openAsHidden,
+      openAtLogin,
+    });
+  }
+}
+
+function xdgDataHome(): string {
+  return (
+    process.env.XDG_DATA_HOME ?? join(app.getPath("home"), ".local", "share")
+  );
+}
+
+function xdgConfigHome(): string {
+  return process.env.XDG_CONFIG_HOME ?? join(app.getPath("home"), ".config");
+}
+
+function xdgApplicationsDir(): string {
+  return join(xdgDataHome(), "applications");
+}
+
+function xdgAutoStartDir(): string {
+  return join(xdgConfigHome(), "autostart");
+}
+
+function desktopFileName(): string {
+  return `io.itch.${app.name}.desktop`;
+}
+
+async function setOpenAtLoginLinux(prefs: PreferencesState) {
+  const appPath = join(xdgApplicationsDir(), desktopFileName());
+  const autoPath = join(xdgAutoStartDir(), desktopFileName());
+
+  logger.debug(`Open at login paths:`);
+  logger.debug(`(${autoPath}) => (${appPath})`);
+
+  await unlink(autoPath).catch(e => {
+    logger.debug(`While unlinking: ${e}`);
+  });
+  if (prefs.openAtLogin) {
+    await symlink(appPath, autoPath);
+  }
 }
