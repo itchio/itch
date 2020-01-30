@@ -4,6 +4,8 @@ import { envSettings } from "main/constants/env-settings";
 import { mainLogger } from "main/logger";
 import dump from "common/util/dump";
 import { ExtendedWebContents } from "common/extended-web-contents";
+import { showModal } from "main/show-modal";
+import { modals } from "common/modals";
 
 const logger = mainLogger.childWithName("shortcuts");
 
@@ -68,6 +70,12 @@ const mainWindowShortcuts: Shortcuts = [
   [
     ["Alt+ArrowRight"],
     async ms => webContentsGoForward(getWebviewWebContents(ms)),
+  ],
+  [
+    ["CmdOrCtrl+,"],
+    async ms => {
+      await showModal(ms, modals.preferences, {});
+    },
   ],
 ];
 
