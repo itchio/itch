@@ -20,8 +20,8 @@ module.exports = env => {
         libraryTarget: "commonjs2",
       },
       node: {
-        __dirname: true,
-        __filename: true,
+        __dirname: false,
+        __filename: false,
       },
       entry: {
         main: ["./src/main/index.ts"],
@@ -60,10 +60,6 @@ module.exports = env => {
       },
       module: {
         rules: [
-          {
-            test: /\.(png|svg|woff|woff2)$/,
-            use: [{ loader: "file-loader" }],
-          },
           {
             test: /\.css$/,
             use: [{ loader: "style-loader" }, { loader: "css-loader" }],
@@ -118,6 +114,10 @@ function getCommonConfig(type, env) {
     externals: ["child_process", "net", "ws", "electron-devtools-installer"],
     module: {
       rules: [
+        {
+          test: /\.(png|svg|woff|woff2)$/,
+          use: [{ loader: "file-loader" }],
+        },
         {
           test: /\.(j|t)s(x)?$/,
           loader: "babel-loader",

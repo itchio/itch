@@ -6,13 +6,21 @@ import { CurrentLocale, LocaleStrings } from "common/locales";
 import { packets } from "common/packets";
 import dump from "common/util/dump";
 import { partitionForApp } from "common/util/partitions";
-import { app, BrowserWindow, dialog, session, shell } from "electron";
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  session,
+  shell,
+  Tray,
+  Menu,
+} from "electron";
 import { envSettings } from "main/constants/env-settings";
 import {
   registerItchProtocol,
   registerSchemesAsPrivileged,
 } from "main/itch-protocol";
-import { loadPreferences } from "main/preferences";
+import { loadPreferences, wasOpenedAsHidden } from "main/preferences";
 import { mainLogger } from "main/logger";
 import { attemptAutoLogin } from "main/profile";
 import { setupShortcuts } from "main/setup-shortcuts";
@@ -22,6 +30,10 @@ import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
 import { ModalsState } from "common/modals";
 import { PreferencesState } from "common/preferences";
+import { join } from "path";
+
+const kitchTrayImage = require("static/images/tray/kitch.png");
+const itchTrayImage = require("static/images/tray/itch.png");
 
 let logger = mainLogger.childWithName("main");
 
@@ -133,6 +145,52 @@ async function onReady() {
   await registerItchProtocol(ms, partition);
   let rendererSession = session.fromPartition(partition);
 
+  let tray = new Tray(
+    join(__dirname, app.name === "kitch" ? kitchTrayImage : itchTrayImage)
+  );
+  tray.on("click", ev => {
+    logger.info(`Tray clicked`);
+    ev.preventDefault();
+    let bw = ms.browserWindow;
+    if (!bw) {
+      return;
+    }
+    if (bw.isVisible()) {
+      logger.info(`Hiding (because of tray click)`);
+      bw.hide();
+    } else {
+      logger.info(`Showing (because of tray click)`);
+      bw.show();
+      bw.focus();
+    }
+  });
+  tray.on("right-click", ev => {
+    logger.info(`Tray right-clicked`);
+    tray.popUpContextMenu();
+  });
+  let template: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: "Quit",
+      click: () => ms.browserWindow?.close(),
+    },
+  ];
+  if (process.platform === "linux") {
+    template = [
+      {
+        label: "Show",
+        click: () => {
+          ms.browserWindow?.show();
+          ms.browserWindow?.focus();
+        },
+      },
+      {
+        type: "separator",
+      },
+      ...template,
+    ];
+  }
+  tray.setContextMenu(Menu.buildFromTemplate(template));
+
   logger.debug(`Setting proxy rules...`);
   let beforeProxy = Date.now();
   rendererSession
@@ -179,12 +237,28 @@ async function onReady() {
   logger.debug(`Loading main browser window...`);
   await win.loadURL("itch://app");
   let elapsed = (Date.now() - ms.startedAt).toFixed();
-  logger.info(`BrowserWindow loaded, showing (${elapsed}ms after startup)`);
-  win.show();
+  logger.info(`Main window loaded (${elapsed}ms after startup)`);
+  if (wasOpenedAsHidden(ms)) {
+    logger.info(`Keeping hidden (was autostarted + openAsHidden is set)`);
+  } else {
+    win.show();
+  }
 
   win.webContents.on("new-window", (ev, url, frameName, disposition) => {
     ev.preventDefault();
     shell.openExternal(url);
+  });
+
+  win.on("close", ev => {
+    if (ms.preferences?.closeToTray) {
+      if (win.isVisible()) {
+        logger.info(`Closing to tray...`);
+        ev.preventDefault();
+        win.hide();
+      } else {
+        logger.info(`Closing for real`);
+      }
+    }
   });
 
   if (envSettings.devtools) {

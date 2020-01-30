@@ -1,6 +1,13 @@
 import { MainState, LocalesConfig } from "main";
 import { preferencesPath } from "common/util/paths";
-import { readJSONFile, writeJSONFile, symlink } from "main/fs";
+import {
+  readJSONFile,
+  writeJSONFile,
+  symlink,
+  readFile,
+  exists,
+  writeFile,
+} from "main/fs";
 import { getLocalePath, getLocalesConfigPath } from "common/util/resources";
 import { LocaleStrings } from "common/locales";
 import { mainLogger } from "main/logger";
@@ -10,6 +17,9 @@ import { packets } from "common/packets";
 import { app } from "electron";
 import { join } from "path";
 import { unlink } from "main/fs";
+import _ from "lodash";
+
+const wasOpenedAtLoginFlag = "--wasOpenedAtLogin";
 
 let logger = mainLogger.childWithName("load-preferences");
 
@@ -135,7 +145,11 @@ export async function setPreferences(
     typeof values.openAtLogin !== "undefined" ||
     typeof values.openAsHidden !== "undefined"
   ) {
-    await setOpenAtLogin(ms.preferences);
+    try {
+      await setOpenAtLogin(ms.preferences);
+    } catch (e) {
+      logger.warn(`While applying autostart preferences:${e.stack}`);
+    }
   }
 }
 
@@ -181,10 +195,45 @@ async function setOpenAtLoginLinux(prefs: PreferencesState) {
   logger.debug(`Open at login paths:`);
   logger.debug(`(${autoPath}) => (${appPath})`);
 
-  await unlink(autoPath).catch(e => {
-    logger.debug(`While unlinking: ${e}`);
-  });
-  if (prefs.openAtLogin) {
-    await symlink(appPath, autoPath);
+  if (!prefs.openAtLogin) {
+    logger.info(`Disabling autostart...`);
+    if (await exists(autoPath)) {
+      logger.info(`Removing (${autoPath})`);
+      await unlink(autoPath);
+    } else {
+      logger.info(`Already disabled, (${autoPath}) does not exist`);
+    }
+    return;
   }
+
+  logger.info(`Enabling autostart`);
+  if (await exists(autoPath)) {
+    logger.info(`Removing (${autoPath})`);
+    await unlink(autoPath);
+  }
+
+  const desktopContents = await readFile(appPath, "utf8");
+  const lines = desktopContents.split("\n");
+  const execIndex = _.findIndex(lines, l => l.startsWith("Exec="));
+  if (execIndex === -1) {
+    throw new Error(`.desktop file does not contain "Exec=" line`);
+  }
+  lines[execIndex] = `${lines[execIndex]} ${wasOpenedAtLoginFlag}`;
+  const newDesktopContents = lines.join("\n");
+  logger.info(`Writing (${autoPath})`);
+  await writeFile(autoPath, newDesktopContents, "utf8");
+}
+
+export function wasOpenedAsHidden(ms: MainState): boolean {
+  if (process.platform === "linux") {
+    if (!_.includes(process.argv, wasOpenedAtLoginFlag)) {
+      return false;
+    }
+  } else {
+    if (!app.getLoginItemSettings().wasOpenedAtLogin) {
+      return false;
+    }
+  }
+  let openAsHidden = ms.preferences?.openAsHidden ?? false;
+  return openAsHidden;
 }
