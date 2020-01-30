@@ -67,3 +67,9 @@ export async function unlink(path: string): Promise<void> {
     });
   });
 }
+
+export async function exists(path: string): Promise<boolean> {
+  return await new Promise((resolve, reject) => {
+    fs.exists(path, resolve);
+  });
+}
