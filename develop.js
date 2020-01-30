@@ -54,7 +54,7 @@ async function main() {
   });
 
   log.info(`Compiling...`);
-  const stats = await mainPromise;
+  const [stats] = await Promise.all([mainPromise], ensureButler());
   {
     const info = stats.toJson();
     if (stats.hasErrors()) {
@@ -65,8 +65,6 @@ async function main() {
       log.warn("Main: ", info.warnings.join("\n\n"));
     }
   }
-
-  await ensureButler();
 
   const electronBinaryPath = require("electron");
   const port = await serverPromise;
@@ -107,21 +105,26 @@ async function main() {
 // Maybe have it as a small Go utility?
 async function ensureButler() {
   if (process.env.LOCAL_BUTLER === "1") {
-    console.log(`Using local butler, so, not downloading...`);
+    log.info(`Using local butler, so, not downloading...`);
     return;
   }
 
+  await run("go build", {cwd: "./install-deps"});
+  await run(
+    "install-deps/install-deps --manifest package.json --dir . --development"
+  );
+}
+
+async function run(command, options) {
+  log.info(`$ ${command}`);
   await new Promise((resolve, reject) => {
-    childProcess.exec(
-      "go run ./install-deps --manifest package.json --dir . --development",
-      (err, stdout, stderr) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
+    childProcess.exec(command, options, (err, stdout, stderr) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
       }
-    );
+    });
   });
 }
 
