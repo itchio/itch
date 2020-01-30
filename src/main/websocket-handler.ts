@@ -17,7 +17,7 @@ import dump from "common/util/dump";
 import { shell, app } from "electron";
 import { MainState } from "main";
 import { envSettings } from "main/constants/env-settings";
-import { loadLocale, setPreferences } from "main/load-preferences";
+import { loadLocale, setPreferences } from "main/preferences";
 import { mainLogger } from "main/logger";
 import { setProfile } from "main/profile";
 import { registerQueriesLaunch } from "main/queries-launch";

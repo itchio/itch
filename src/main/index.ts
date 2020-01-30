@@ -12,7 +12,7 @@ import {
   registerItchProtocol,
   registerSchemesAsPrivileged,
 } from "main/itch-protocol";
-import { loadPreferences } from "main/load-preferences";
+import { loadPreferences } from "main/preferences";
 import { mainLogger } from "main/logger";
 import { attemptAutoLogin } from "main/profile";
 import { setupShortcuts } from "main/setup-shortcuts";
