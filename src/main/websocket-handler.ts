@@ -23,6 +23,7 @@ import { setProfile } from "main/profile";
 import { registerQueriesLaunch } from "main/queries-launch";
 import WebSocket from "ws";
 import { showModal } from "main/show-modal";
+import { triggerTrayMenuUpdate } from "main/tray";
 
 const logger = mainLogger.childWithName("websocket-handler");
 
@@ -178,6 +179,7 @@ export class WebsocketHandler {
       broadcastPacket(ms, packets.currentLocaleChanged, {
         currentLocale: ms.localeState!.current,
       });
+      triggerTrayMenuUpdate(ms);
       await setPreferences(ms, { lang });
     });
 
@@ -230,6 +232,7 @@ export class WebsocketHandler {
         uploadId: cave.upload.id,
         gameId: cave.game.id,
       });
+      triggerTrayMenuUpdate(ms);
     });
 
     onQuery(queries.openDevTools, async () => {

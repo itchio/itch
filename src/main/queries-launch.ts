@@ -21,27 +21,34 @@ import { showModal } from "main/show-modal";
 import { hookLogging } from "main/start-butler";
 import { broadcastPacket, OnQuery } from "main/websocket-handler";
 import { Cave } from "common/butlerd/messages";
+import { triggerTrayMenuUpdate } from "main/tray";
 
 const logger = mainLogger.childWithName("queries-launch");
 
 export function registerQueriesLaunch(ms: MainState, onQuery: OnQuery) {
-  onQuery(queries.launchGame, async params => {
-    const { gameId } = params;
-    if (ms.preparingLaunches[gameId]) {
-      logger.warn(`Already launching ${gameId}, ignoring...`);
-      return;
-    }
-
-    try {
-      ms.preparingLaunches[gameId] = true;
-      await launchGame(ms, params);
-    } finally {
-      delete ms.preparingLaunches[gameId];
-    }
-  });
+  onQuery(queries.launchGame, async params => launchGame(ms, params));
 }
 
-async function launchGame(
+export async function launchGame(
+  ms: MainState,
+  params: typeof queries.launchGame.__params
+) {
+  const { gameId } = params;
+  if (ms.preparingLaunches[gameId]) {
+    logger.warn(`Already launching ${gameId}, ignoring...`);
+    return;
+  }
+
+  try {
+    ms.preparingLaunches[gameId] = true;
+    await launchGameInner(ms, params);
+  } finally {
+    delete ms.preparingLaunches[gameId];
+    triggerTrayMenuUpdate(ms);
+  }
+}
+
+async function launchGameInner(
   ms: MainState,
   params: typeof queries.launchGame.__params
 ) {
@@ -168,6 +175,7 @@ async function launchGame(
           logger.info(`Handling prereqs...done`);
         });
         convo.onNotification(messages.LaunchRunning, () => {
+          triggerTrayMenuUpdate(ms);
           {
             let running: OngoingLaunchRunning = {
               stage: "running",

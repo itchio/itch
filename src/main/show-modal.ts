@@ -26,7 +26,7 @@ export async function showModal<Params, Result>(
   let existing = _.find(ms.modals, m => m.mc.__kind == kind);
   if (customOpts.singleton && existing) {
     logger.info(`Modal kind ${kind} is singleton, focusing existing one`);
-    existing.browserWindow.focus();
+    existing.browserWindow.show();
     return;
   }
 

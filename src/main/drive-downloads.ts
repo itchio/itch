@@ -5,6 +5,7 @@ import { MainState } from "main";
 import { mainLogger } from "main/logger";
 import { hookLogging } from "main/start-butler";
 import { broadcastPacket } from "main/websocket-handler";
+import { triggerTrayMenuUpdate } from "main/tray";
 
 const logger = mainLogger.childWithName("drive-downloads");
 
@@ -66,6 +67,7 @@ async function driveDownloads(ms: MainState) {
         }
         ms.downloads[download.id] = download;
         broadcastPacket(ms, packets.downloadChanged, { download });
+        triggerTrayMenuUpdate(ms);
 
         (async () => {
           if (!download.caveId) {

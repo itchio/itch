@@ -31,9 +31,7 @@ import { shellBgDefault } from "renderer/theme";
 import { ModalsState } from "common/modals";
 import { PreferencesState } from "common/preferences";
 import { join } from "path";
-
-const kitchTrayImage = require("static/images/tray/kitch.png");
-const itchTrayImage = require("static/images/tray/itch.png");
+import { initTray } from "main/tray";
 
 let logger = mainLogger.childWithName("main");
 
@@ -59,6 +57,7 @@ export interface MainState {
   };
   downloads?: DownloadsState;
   browserWindow?: BrowserWindow;
+  tray?: Tray;
   modals: ModalsState;
 }
 
@@ -145,52 +144,6 @@ async function onReady() {
   await registerItchProtocol(ms, partition);
   let rendererSession = session.fromPartition(partition);
 
-  let tray = new Tray(
-    join(__dirname, app.name === "kitch" ? kitchTrayImage : itchTrayImage)
-  );
-  tray.on("click", ev => {
-    logger.info(`Tray clicked`);
-    ev.preventDefault();
-    let bw = ms.browserWindow;
-    if (!bw) {
-      return;
-    }
-    if (bw.isVisible()) {
-      logger.info(`Hiding (because of tray click)`);
-      bw.hide();
-    } else {
-      logger.info(`Showing (because of tray click)`);
-      bw.show();
-      bw.focus();
-    }
-  });
-  tray.on("right-click", ev => {
-    logger.info(`Tray right-clicked`);
-    tray.popUpContextMenu();
-  });
-  let template: Electron.MenuItemConstructorOptions[] = [
-    {
-      label: "Quit",
-      click: () => ms.browserWindow?.close(),
-    },
-  ];
-  if (process.platform === "linux") {
-    template = [
-      {
-        label: "Show",
-        click: () => {
-          ms.browserWindow?.show();
-          ms.browserWindow?.focus();
-        },
-      },
-      {
-        type: "separator",
-      },
-      ...template,
-    ];
-  }
-  tray.setContextMenu(Menu.buildFromTemplate(template));
-
   logger.debug(`Setting proxy rules...`);
   let beforeProxy = Date.now();
   rendererSession
@@ -204,6 +157,8 @@ async function onReady() {
         `Proxy rules were set. Took ${Date.now() - beforeProxy} ms.`
       );
     });
+
+  initTray(ms);
 
   let win = new BrowserWindow({
     title: env.appName,
