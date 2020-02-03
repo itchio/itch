@@ -5,10 +5,6 @@ import _ from "lodash";
 
 const emptyObj = {};
 
-/**
- * Returns the input if it's a string, or a localized message if
- * the input is in the form [i18nKeys, {i18nValue1: foo, i18nValue2: bar}?]
- */
 export function formatMessage(
   ms: MainState,
   template: {
