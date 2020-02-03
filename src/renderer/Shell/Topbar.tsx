@@ -12,6 +12,7 @@ import { useListen } from "renderer/Socket";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import { modals } from "common/modals";
+import { SearchButton } from "renderer/Shell/SearchButton";
 
 const TopbarDiv = styled.div`
   display: flex;
@@ -106,6 +107,7 @@ export const Topbar = () => {
         </>
       )}
       {profile && <DownloadsButton />}
+      {profile && <SearchButton />}
       <DraggableFiller
         onClick={() => console.log("draggable filler click")}
         onClickCapture={() => console.log("draggable filler click capture")}

@@ -35,6 +35,7 @@ export const packets = wirePackets({
   launchEnded: packet<{ launchId: string }>(),
   maximizedChanged: packet<{ maximized: boolean }>(),
   preferencesUpdated: packet<{ preferences: Partial<PreferencesState> }>(),
+  openSearch: packet<{}>(),
 
   // download events
   downloadStarted: packet<{ download: Download }>(),

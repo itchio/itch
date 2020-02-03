@@ -6,6 +6,8 @@ import dump from "common/util/dump";
 import { ExtendedWebContents } from "common/extended-web-contents";
 import { showModal } from "main/show-modal";
 import { modals } from "common/modals";
+import { broadcastPacket } from "main/websocket-handler";
+import { packets } from "common/packets";
 
 const logger = mainLogger.childWithName("shortcuts");
 
@@ -75,6 +77,12 @@ const mainWindowShortcuts: Shortcuts = [
     ["CmdOrCtrl+,"],
     async ms => {
       await showModal(ms, modals.preferences, {});
+    },
+  ],
+  [
+    ["CmdOrCtrl+F"],
+    async ms => {
+      await broadcastPacket(ms, packets.openSearch, {});
     },
   ],
 ];

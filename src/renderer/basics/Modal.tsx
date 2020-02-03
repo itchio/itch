@@ -64,6 +64,7 @@ const Filler = styled.div`
 export const Modal = React.forwardRef(
   (
     props: {
+      className?: string;
       title?: React.ReactNode;
       children?: React.ReactNode;
       onClose?: () => void;
@@ -76,7 +77,7 @@ export const Modal = React.forwardRef(
 
     return (
       <ModalShroud ref={ref}>
-        <ModalContents>
+        <ModalContents className={props.className}>
           {hasTitle ? (
             <ModalTitle>
               {title}
