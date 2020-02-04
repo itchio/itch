@@ -1,5 +1,4 @@
 import { messages } from "common/butlerd";
-import { packets } from "common/packets";
 import { queries } from "common/queries";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -7,9 +6,9 @@ import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { useClickOutside } from "renderer/basics/useClickOutside";
 import { useSocket } from "renderer/contexts";
-import { InstallModalContents } from "renderer/Shell/InstallPopover";
-import { useListen } from "renderer/Socket";
+import { InstallPopoverContents } from "renderer/Shell/InstallPopover";
 import { useAsyncCb } from "renderer/use-async-cb";
+import { useCaves } from "renderer/use-caves";
 import styled from "styled-components";
 import { Cave, Game } from "../../common/butlerd/messages";
 import { IconButton } from "../basics/IconButton";
@@ -63,10 +62,8 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
   const { gameId } = props;
   const [installing, setInstalling] = useState(false);
   const [game, setGame] = useState<Game | null>(null);
-  const [caves, setCaves] = useState<CavesForGame>({});
-  const mergeCaves = (fresh: CavesForGame) => {
-    setCaves({ ...caves, ...fresh });
-  };
+
+  const caves = useCaves({ gameId });
 
   // fetch game info
   useEffect(() => {
@@ -81,41 +78,6 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
       }
     })();
   }, [gameId]);
-
-  // fetch caves
-  useEffect(() => {
-    setCaves({});
-
-    (async () => {
-      try {
-        const { items } = await socket.call(messages.FetchCaves, {
-          filters: {
-            gameId: props.gameId,
-          },
-        });
-        setCaves(_.keyBy(items, "id"));
-      } catch (e) {
-        console.warn(e);
-      }
-    })();
-  }, [gameId]);
-
-  useListen(
-    socket,
-    packets.gameInstalled,
-    ({ cave }) => {
-      mergeCaves({ [cave.id]: cave });
-    },
-    []
-  );
-  useListen(
-    socket,
-    packets.gameUninstalled,
-    ({ caveId }) => {
-      setCaves(_.omit(caves, caveId));
-    },
-    []
-  );
 
   const coref = useClickOutside(() => {
     setInstalling(false);
@@ -137,7 +99,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
       <MenuTippy
         placement="top-end"
         content={
-          <InstallModalContents
+          <InstallPopoverContents
             ref={coref("install-modal-contents")}
             coref={coref}
             game={game}

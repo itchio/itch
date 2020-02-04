@@ -51,6 +51,9 @@ const WebviewContainer = styled.div`
       transform: scale(0.8);
       color: ${p => p.theme.colors.text2};
 
+      width: 10vw;
+      text-align: center;
+
       &:hover {
         transform: scale(1);
         color: ${p => p.theme.colors.text1};
@@ -67,10 +70,6 @@ const WebviewContainer = styled.div`
 
   border: 1px solid ${p => p.theme.colors.shellBg};
   box-shadow: 0 0 30px black;
-
-  .webview-container {
-    margin: 10px;
-  }
 
   &,
   .webview-container,

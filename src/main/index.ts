@@ -28,10 +28,11 @@ import { ButlerState, startButler } from "main/start-butler";
 import { broadcastPacket } from "main/websocket-handler";
 import { startWebSocketServer, WebSocketState } from "main/websocket-server";
 import { shellBgDefault } from "renderer/theme";
-import { ModalsState } from "common/modals";
+import { ModalsState, modals } from "common/modals";
 import { PreferencesState } from "common/preferences";
 import { join } from "path";
 import { initTray } from "main/tray";
+import { showModal } from "main/show-modal";
 
 let logger = mainLogger.childWithName("main");
 
@@ -112,6 +113,30 @@ async function main() {
       // other webcontents are created, for devtools for example,
       // but those have no host webcontents.
       setupShortcuts(ms, wc);
+
+      wc.on("will-navigate", (ev, urlText) => {
+        let url = new URL(urlText);
+        if (url.protocol === "itch:" && url.hostname === "install") {
+          ev.preventDefault();
+
+          let gameId = parseInt(url.searchParams.get("game_id")!, 10);
+          let uploadId =
+            parseInt(url.searchParams.get("upload_id")!, 10) || undefined;
+          let buildId =
+            parseInt(url.searchParams.get("build_id")!, 10) || undefined;
+
+          showModal(ms, modals.install, {
+            gameId,
+            uploadId,
+            buildId,
+          }).catch(e => console.warn(e.stack));
+          return;
+        }
+      });
+    } else {
+      wc.on("will-navigate", (ev, url) => {
+        shell.openExternal(url);
+      });
     }
   });
 

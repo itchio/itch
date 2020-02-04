@@ -147,7 +147,7 @@ const EllipsisContainer = styled.div`
   align-items: center;
 `;
 
-export const InstallModalContents = React.forwardRef(
+export const InstallPopoverContents = React.forwardRef(
   (props: Props, ref: any) => {
     const socket = useSocket();
     const [fetchNumber, setFetchNumber] = useState(0);
@@ -156,11 +156,11 @@ export const InstallModalContents = React.forwardRef(
 
     const [downloads, setDownloads] = useState<DownloadsByUpload>({});
     const mergeDownloads = (fresh: DownloadsByUpload) => {
-      setDownloads({ ...downloads, ...fresh });
+      setDownloads(downloads => ({ ...downloads, ...fresh }));
     };
     const [caves, setCaves] = useState<CavesByUpload>({});
     const mergeCaves = (fresh: CavesByUpload) => {
-      setCaves({ ...caves, ...fresh });
+      setCaves(caves => ({ ...caves, ...fresh }));
     };
     const [uploads, setUploads] = useState<AvailableUploads | null>(null);
 
@@ -283,6 +283,7 @@ export const InstallModalContents = React.forwardRef(
             game: props.game,
             upload: upload,
             queueDownload: true,
+            fastQueue: true,
             installLocationId: locsRes.installLocations[0].id,
           });
           props.onClose();
@@ -408,6 +409,7 @@ export const InstallModalContents = React.forwardRef(
                         }
                       />
                       <UploadGroup
+                        explore={explore}
                         queued={queued}
                         cavesByUpload={caves}
                         downloadsByUpload={downloads}

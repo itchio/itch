@@ -76,13 +76,19 @@ export const PickCaveModal = modalWidget(modals.pickCave, props => {
                       </>
                     ) : null}
                     {fileSize(cave.installInfo.installedSize)}
-                    {" — "}
-                    <FormattedMessage
-                      id="usage_stats.last_used_time_ago"
-                      values={{
-                        time_ago: <TimeAgo date={cave.stats.lastTouchedAt} />,
-                      }}
-                    />
+                    {cave.stats.lastTouchedAt ? (
+                      <>
+                        {" — "}
+                        <FormattedMessage
+                          id="usage_stats.last_used_time_ago"
+                          values={{
+                            time_ago: (
+                              <TimeAgo date={cave.stats.lastTouchedAt} />
+                            ),
+                          }}
+                        />
+                      </>
+                    ) : null}
                   </div>
                 </div>
                 <div className="filler"></div>

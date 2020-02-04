@@ -10,6 +10,7 @@ import { WebviewNavigation } from "renderer/Shell/WebviewNavigation";
 import { useListen } from "renderer/Socket";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { modals } from "common/modals";
 const WebviewActionBar = React.lazy(() =>
   import("renderer/Shell/WebviewActionBar")
 );
@@ -155,6 +156,7 @@ export const Webview = (props: WebviewProps) => {
         src={props.url}
         partition={partitionForUser(profile!.user.id)}
         ref={viewRef}
+        webpreferences="nativeWindowOpen"
       />
       <WebviewActionBar path={path} />
     </WebviewContainer>

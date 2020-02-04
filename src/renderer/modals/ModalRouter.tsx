@@ -6,6 +6,7 @@ import { PickCaveModal } from "renderer/modals/PickCaveModal";
 import { queries } from "common/queries";
 import { PreferencesModal } from "renderer/modals/PreferencesModal";
 import { PickManifestActionModal } from "renderer/modals/PickManifestActionModal";
+import { InstallModal } from "renderer/modals/InstallModal";
 
 export interface ModalProps<Params, Result> {
   params: Params;
@@ -56,6 +57,8 @@ export const ModalRouter = () => {
       return <PickManifestActionModal {...props} />;
     case modals.preferences.__kind:
       return <PreferencesModal {...props} />;
+    case modals.install.__kind:
+      return <InstallModal {...props} />;
     default:
       return <div></div>;
   }
