@@ -2,7 +2,7 @@ import { messages } from "common/butlerd";
 import { Game } from "common/butlerd/messages";
 import { gameCover } from "common/game-cover";
 import { packets } from "common/packets";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { Ellipsis } from "renderer/basics/Ellipsis";
@@ -13,6 +13,23 @@ import { useProfile, useSocket } from "renderer/contexts";
 import { fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
+import { useListen } from "renderer/Socket";
+import _ from "lodash";
+
+const SearchModalContainer = styled(Modal)`
+  width: 60vw;
+  max-width: 960px;
+
+  .modal-body {
+    padding: 0;
+    overflow: hidden;
+    height: 60vh;
+    max-height: 600px;
+
+    display: flex;
+    flex-direction: column;
+  }
+`;
 
 const SearchTopBar = styled.div`
   width: 100%;
@@ -64,10 +81,11 @@ const SearchResults = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  flex-grow: 1;
+  flex-shrink: 1;
 
   width: 100%;
-  height: 40vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 let coverWidth = 290;
@@ -122,37 +140,68 @@ const SearchBottomBar = styled.div`
   height: 60px;
 `;
 
-const SearchModalContainer = styled(Modal)`
-  width: 60vw;
-  max-width: 960px;
-
-  .modal-body {
-    padding: 0;
-    overflow: hidden;
-  }
+const SearchInstruction = styled.div`
+  align-self: center;
+  justify-self: center;
 `;
+
+const Filler = styled.div`
+  flex-grow: 1;
+`;
+
+type State = "initial" | "results" | "no-results";
 
 export const SearchModal = (props: { onClose: () => void }) => {
   const socket = useSocket();
   const profile = useProfile();
   const { onClose } = props;
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [state, setState] = useState<State>("initial");
+  const [loading, setLoading] = useState(false);
+  const [current, setCurrent] = useState(0);
   const [results, setResults] = useState<Game[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+  useListen(
+    socket,
+    packets.openSearch,
+    () => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    },
+    []
+  );
+
   useEffect(() => {
+    let cancelled = false;
+
     (async () => {
       if (debouncedSearchTerm.length < 2) {
+        if (cancelled) {
+          return;
+        }
+
+        setCurrent(0);
         setResults([]);
+        setState("initial");
         return;
       }
 
+      setLoading(true);
       const { games } = await socket.call(messages.SearchGames, {
         profileId: profile!.id,
         query: debouncedSearchTerm,
       });
+      if (cancelled) {
+        return;
+      }
+
+      setCurrent(0);
       setResults(games);
+      setLoading(false);
+      setState(_.isEmpty(games) ? "no-results" : "results");
     })().catch(e => console.warn(e.stack));
   }, [debouncedSearchTerm]);
 
@@ -181,41 +230,73 @@ export const SearchModal = (props: { onClose: () => void }) => {
 
   const intl = useIntl();
 
+  const renderSearchResults = () => {
+    switch (state) {
+      case "initial":
+        return (
+          <>
+            <Filler />
+            <SearchInstruction>
+              <FormattedMessage id="search.empty.tagline" />
+            </SearchInstruction>
+            <Filler />
+          </>
+        );
+      case "no-results":
+        return (
+          <>
+            <Filler />
+            <SearchInstruction>
+              <FormattedMessage id="search.empty.no_results" />
+            </SearchInstruction>
+            <Filler />
+          </>
+        );
+      case "results":
+        return (
+          <>
+            {results.map(game => {
+              return (
+                <SearchResult key={`${game.id}`}>
+                  <img className="cover" src={gameCover(game)} />
+                  <div className="text-section">
+                    <div className="title">{game.title}</div>
+                    <div className="short-text">{game.shortText}</div>
+                  </div>
+                </SearchResult>
+              );
+            })}
+          </>
+        );
+    }
+  };
+
   return (
-    <SearchModalContainer closeOnClickOutside>
+    <SearchModalContainer easyClose hideTitleBar onClose={props.onClose}>
       <SearchTopBar>
         <SearchInputContainer>
           <SearchInput
             placeholder={intl.formatMessage({ id: "search.placeholder" })}
-            type="search"
+            ref={inputRef}
+            type="text"
             onChange={onChange}
             onKeyDown={onKeyDown}
             autoFocus
           />
-          <Ellipsis />
+          {loading && <Ellipsis />}
         </SearchInputContainer>
         <SearchExit icon="cross" wide onClick={onClose} />
       </SearchTopBar>
-      <SearchResults>
-        {results.map(game => {
-          return (
-            <SearchResult key={`${game.id}`}>
-              <img className="cover" src={gameCover(game)} />
-              <div className="text-section">
-                <div className="title">{game.title}</div>
-                <div className="short-text">{game.shortText}</div>
-              </div>
-            </SearchResult>
-          );
-        })}
-      </SearchResults>
-      <SearchBottomBar>
-        <Button
-          secondary
-          label={<FormattedMessage id="game_stripe.view_all" />}
-          onClick={onViewAll}
-        />
-      </SearchBottomBar>
+      <SearchResults>{renderSearchResults()}</SearchResults>
+      {state === "results" && (
+        <SearchBottomBar>
+          <Button
+            secondary
+            label={<FormattedMessage id="game_stripe.view_all" />}
+            onClick={onViewAll}
+          />
+        </SearchBottomBar>
+      )}
     </SearchModalContainer>
   );
 };

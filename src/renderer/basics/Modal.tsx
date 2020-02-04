@@ -66,25 +66,41 @@ interface ModalProps {
   className?: string;
   title?: React.ReactNode;
   children?: React.ReactNode;
-  closeOnClickOutside?: boolean;
+  easyClose?: boolean;
   onClose?: () => void;
+  hideTitleBar?: boolean;
 }
 
 export const Modal = React.forwardRef((props: ModalProps, ref: any) => {
-  const { title, children, onClose, closeOnClickOutside } = props;
+  const { title, children, onClose, easyClose, hideTitleBar } = props;
 
-  const hasTitle = !!props.title || !!props.onClose;
+  const hasTitle = (!!props.title || !!props.onClose) && !hideTitleBar;
   const onShroudClick = useCallback(() => {
-    if (closeOnClickOutside) {
+    if (easyClose) {
       if (props.onClose) {
         props.onClose();
       }
     }
-  }, [closeOnClickOutside]);
+  }, [easyClose]);
+
+  const onShroudKeyDown = useCallback(
+    (ev: React.KeyboardEvent<any>) => {
+      if (ev.key === "Escape" && easyClose) {
+        if (props.onClose) {
+          props.onClose;
+        }
+      }
+    },
+    [easyClose]
+  );
+
+  const onContentClick = useCallback((ev: React.MouseEvent<any>) => {
+    ev.stopPropagation();
+  }, []);
 
   return (
-    <ModalShroud ref={ref} onClick={onShroudClick}>
-      <ModalContents className={props.className}>
+    <ModalShroud ref={ref} onClick={onShroudClick} onKeyDown={onShroudKeyDown}>
+      <ModalContents className={props.className} onClick={onContentClick}>
         {hasTitle ? (
           <ModalTitle>
             {title}
