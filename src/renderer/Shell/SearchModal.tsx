@@ -10,11 +10,12 @@ import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
 import { useDebounce } from "renderer/basics/useDebounce";
 import { useProfile, useSocket } from "renderer/contexts";
-import { fontSizes } from "renderer/theme";
+import { fontSizes, mixins } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import { useListen } from "renderer/Socket";
 import _ from "lodash";
+import { searchExamples } from "common/constants/search-examples";
 
 const SearchModalContainer = styled(Modal)`
   width: 60vw;
@@ -37,25 +38,20 @@ const SearchTopBar = styled.div`
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
-
-  padding: 10px;
-  padding-right: 0;
-`;
-
-const SearchExit = styled(IconButton)`
-  flex-shrink: 0;
 `;
 
 const SearchInputContainer = styled.div`
   flex-grow: 1;
 
-  border: 2px solid ${p => p.theme.colors.inputBorder};
+  border: none;
+  border-bottom: 2px solid ${p => p.theme.colors.inputBorder};
   &:focus {
     border-color: ${p => p.theme.colors.inputBorderFocus};
   }
+
   background: ${p => p.theme.colors.inputBg};
   color: ${p => p.theme.colors.text1};
-  padding: 10px 5px;
+  padding: 15px 15px;
 
   position: relative;
 
@@ -97,9 +93,13 @@ const SearchResult = styled.div`
   flex-direction: row;
   align-items: center;
 
-  img.cover {
+  .cover {
     width: ${coverWidth * ratio}px;
     height: ${coverHeight * ratio}px;
+    background-size: cover;
+    background-position: 50% 50%;
+    flex-shrink: 0;
+
     margin-right: 10px;
   }
 
@@ -116,6 +116,8 @@ const SearchResult = styled.div`
     display: flex;
     flex-direction: column;
     line-height: 1.4;
+    flex-shrink: 1;
+    ${mixins.singleLine};
 
     .title {
       font-weight: 900;
@@ -126,6 +128,7 @@ const SearchResult = styled.div`
       font-weight: normal;
       font-size: ${fontSizes.normal};
       color: ${p => p.theme.colors.text2};
+      ${mixins.singleLine};
     }
   }
 `;
@@ -159,6 +162,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<State>("initial");
   const [loading, setLoading] = useState(false);
+  const [example, setExample] = useState(_.sample(searchExamples));
   const [current, setCurrent] = useState(0);
   const [results, setResults] = useState<Game[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -186,6 +190,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
         setCurrent(0);
         setResults([]);
         setState("initial");
+        setExample(_.sample(searchExamples));
         return;
       }
 
@@ -237,7 +242,10 @@ export const SearchModal = (props: { onClose: () => void }) => {
           <>
             <Filler />
             <SearchInstruction>
-              <FormattedMessage id="search.empty.tagline" />
+              <FormattedMessage
+                id="search.empty.tagline"
+                values={{ example }}
+              />
             </SearchInstruction>
             <Filler />
           </>
@@ -258,7 +266,10 @@ export const SearchModal = (props: { onClose: () => void }) => {
             {results.map(game => {
               return (
                 <SearchResult key={`${game.id}`}>
-                  <img className="cover" src={gameCover(game)} />
+                  <div
+                    className="cover"
+                    style={{ backgroundImage: `url(${gameCover(game)})` }}
+                  />
                   <div className="text-section">
                     <div className="title">{game.title}</div>
                     <div className="short-text">{game.shortText}</div>
@@ -285,7 +296,6 @@ export const SearchModal = (props: { onClose: () => void }) => {
           />
           {loading && <Ellipsis />}
         </SearchInputContainer>
-        <SearchExit icon="cross" wide onClick={onClose} />
       </SearchTopBar>
       <SearchResults>{renderSearchResults()}</SearchResults>
       {state === "results" && (
