@@ -233,6 +233,15 @@ export const SearchModal = (props: { onClose: () => void }) => {
     socket.send(packets.navigate, { url: url.toString() });
   }, [debouncedSearchTerm, onClose]);
 
+  const [openGame] = useAsyncCb(
+    async (game: Game) => {
+      props.onClose();
+      let url = `itch://games/${game.id}`;
+      await socket.send(packets.navigate, { url });
+    },
+    [socket]
+  );
+
   const intl = useIntl();
 
   const renderSearchResults = () => {
@@ -265,7 +274,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
           <>
             {results.map(game => {
               return (
-                <SearchResult key={`${game.id}`}>
+                <SearchResult key={`${game.id}`} onClick={() => openGame(game)}>
                   <div
                     className="cover"
                     style={{ backgroundImage: `url(${gameCover(game)})` }}
