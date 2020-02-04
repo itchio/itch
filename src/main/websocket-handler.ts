@@ -258,6 +258,10 @@ export class WebsocketHandler {
       app.exit(0);
     });
 
+    onPacket(packets.navigate, (cx, req) => {
+      broadcastPacket(ms, packets.navigate, req);
+    });
+
     onPacket(packets.queryRequest, (cx, req) => {
       let handler = this.queryHandlers[req.method];
       if (!handler) {

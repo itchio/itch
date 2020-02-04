@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { FormattedMessage } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { IconButton } from "renderer/basics/IconButton";
 import { animations, fontSizes } from "renderer/theme";
 import styled from "styled-components";
+import { close } from "inspector";
 
 const ModalShroud = styled.div`
   position: fixed;
@@ -61,38 +62,43 @@ const Filler = styled.div`
   flex-grow: 1;
 `;
 
-export const Modal = React.forwardRef(
-  (
-    props: {
-      className?: string;
-      title?: React.ReactNode;
-      children?: React.ReactNode;
-      onClose?: () => void;
-    },
-    ref: any
-  ) => {
-    const { title, children, onClose } = props;
+interface ModalProps {
+  className?: string;
+  title?: React.ReactNode;
+  children?: React.ReactNode;
+  closeOnClickOutside?: boolean;
+  onClose?: () => void;
+}
 
-    const hasTitle = !!props.title || !!props.onClose;
+export const Modal = React.forwardRef((props: ModalProps, ref: any) => {
+  const { title, children, onClose, closeOnClickOutside } = props;
 
-    return (
-      <ModalShroud ref={ref}>
-        <ModalContents className={props.className}>
-          {hasTitle ? (
-            <ModalTitle>
-              {title}
-              <Filler />
-              {onClose ? (
-                <IconButton icon="cross" onClick={() => onClose()}></IconButton>
-              ) : null}
-            </ModalTitle>
-          ) : null}
-          <ModalBody>{children}</ModalBody>
-        </ModalContents>
-      </ModalShroud>
-    );
-  }
-);
+  const hasTitle = !!props.title || !!props.onClose;
+  const onShroudClick = useCallback(() => {
+    if (closeOnClickOutside) {
+      if (props.onClose) {
+        props.onClose();
+      }
+    }
+  }, [closeOnClickOutside]);
+
+  return (
+    <ModalShroud ref={ref} onClick={onShroudClick}>
+      <ModalContents className={props.className}>
+        {hasTitle ? (
+          <ModalTitle>
+            {title}
+            <Filler />
+            {onClose ? (
+              <IconButton icon="cross" onClick={() => onClose()}></IconButton>
+            ) : null}
+          </ModalTitle>
+        ) : null}
+        <ModalBody className="modal-body">{children}</ModalBody>
+      </ModalContents>
+    </ModalShroud>
+  );
+});
 
 // TODO: dedup with Gate/Form.tsx
 export const Buttons = styled.div`

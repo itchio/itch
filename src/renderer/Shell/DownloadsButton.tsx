@@ -43,6 +43,7 @@ export const DownloadsButton = (props: Props) => {
         icon="download"
         secondary={shown}
         label={<FormattedMessage id={"sidebar.downloads"} />}
+        className="topbar-item"
       />
     </MenuTippy>
   );

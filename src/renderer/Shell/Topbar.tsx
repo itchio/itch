@@ -19,7 +19,7 @@ const TopbarDiv = styled.div`
   flex-direction: row;
   align-items: center;
 
-  button.button {
+  button.topbar-item {
     align-self: stretch;
     margin-right: 1em;
 
@@ -91,14 +91,14 @@ export const Topbar = () => {
             }
           />
           <Button
-            className="item"
+            className="topbar-item"
             data-target="explore"
             onClick={() => (location.href = "https://itch.io")}
             icon="earth"
             label={<FormattedMessage id={"sidebar.explore"} />}
           />
           <Button
-            className="item"
+            className="topbar-item"
             data-target="library"
             onClick={() => (location.href = "itch://library")}
             icon="heart-filled"

@@ -69,7 +69,7 @@ const EllipsisDiv = styled.div`
 
 export const Ellipsis = () => {
   return (
-    <EllipsisDiv>
+    <EllipsisDiv className="ellipsis">
       <div></div>
       <div></div>
       <div></div>
