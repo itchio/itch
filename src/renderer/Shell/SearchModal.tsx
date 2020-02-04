@@ -225,18 +225,30 @@ export const SearchModal = (props: { onClose: () => void }) => {
         setCurrent(0);
       }
     })().catch(e => console.warn(e.stack));
+
+    return () => {
+      cancelled = true;
+    };
   }, [debouncedSearchTerm]);
 
-  const [onChange] = useAsyncCb(
-    async (ev: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = useCallback(
+    (ev: React.ChangeEvent<HTMLInputElement>) => {
       setSearchTerm(ev.currentTarget.value);
     },
     [socket, profile]
   );
 
+  const openGame = useCallback(
+    (game: Game) => {
+      props.onClose();
+      let url = `itch://games/${game.id}`;
+      socket.send(packets.navigate, { url });
+    },
+    [socket]
+  );
+
   const onKeyDown = useCallback(
     (ev: React.KeyboardEvent<HTMLInputElement>) => {
-      console.log(ev.key);
       if (ev.key === "Escape") {
         ev.preventDefault();
         onClose();
@@ -261,6 +273,14 @@ export const SearchModal = (props: { onClose: () => void }) => {
           }
         });
         return;
+      } else if (ev.key === "Enter") {
+        if (current !== null) {
+          let game = results[current];
+          if (game) {
+            openGame(game);
+          }
+        }
+        return;
       }
     },
     [onClose, _.size(results)]
@@ -274,15 +294,6 @@ export const SearchModal = (props: { onClose: () => void }) => {
     url.searchParams.set("q", debouncedSearchTerm);
     socket.send(packets.navigate, { url: url.toString() });
   }, [debouncedSearchTerm, onClose]);
-
-  const [openGame] = useAsyncCb(
-    async (game: Game) => {
-      props.onClose();
-      let url = `itch://games/${game.id}`;
-      await socket.send(packets.navigate, { url });
-    },
-    [socket]
-  );
 
   const intl = useIntl();
 

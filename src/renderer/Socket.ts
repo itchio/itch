@@ -367,7 +367,7 @@ export class Socket {
     }
   }
 
-  send<T>(pc: PacketCreator<T>, payload: T) {
+  send<T>(pc: PacketCreator<T>, payload: T): void {
     if (payload === null) {
       throw new Error(`null payload for ${pc.__type} - that's illegal`);
     }
