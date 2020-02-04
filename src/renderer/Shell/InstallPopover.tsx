@@ -28,6 +28,7 @@ import { fontSizes } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
 import { DownloadWithProgress } from "common/downloads";
+import { Ellipsis } from "renderer/basics/Ellipsis";
 
 const InstallMenuContents = styled(MenuContents)`
   overflow: hidden;
@@ -135,6 +136,16 @@ interface CavesByUpload {
 interface Queued {
   [uploadId: number]: boolean;
 }
+
+const EllipsisContainer = styled.div`
+  justify-self: stretch;
+  align-self: stretch;
+  flex-grow: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 export const InstallModalContents = React.forwardRef(
   (props: Props, ref: any) => {
@@ -344,7 +355,9 @@ export const InstallModalContents = React.forwardRef(
         <InstallMenuContents ref={ref}>
           <div ref={divRef} />
           {loading ? (
-            <Spinner />
+            <EllipsisContainer>
+              <Ellipsis />
+            </EllipsisContainer>
           ) : uploads && hasUploads ? (
             <>
               <div className="header">
