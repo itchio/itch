@@ -18,6 +18,8 @@ const WebviewContainer = styled.div`
   width: 100%;
   height: 100%;
 
+  background: ${p => p.theme.colors.shellBg};
+
   display: flex;
   flex-direction: column;
   justify-content: stretch;
@@ -28,13 +30,17 @@ const WebviewContainer = styled.div`
   }
 `;
 
-export const Webview = () => {
+export interface WebviewProps {
+  url: string;
+}
+
+export const Webview = (props: WebviewProps) => {
   const socket = useSocket();
   const profile = useProfile();
   const viewRef = useRef<WebviewTag>(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(props.url);
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [path, setPath] = useState("");
@@ -124,14 +130,18 @@ export const Webview = () => {
     ({ url: href }) => {
       let wv = viewRef.current;
       if (wv) {
-        wv.loadURL(href);
+        try {
+          wv.loadURL(href);
+        } catch (e) {
+          console.warn(e.stack);
+        }
       }
     },
     []
   );
 
   return (
-    <WebviewContainer>
+    <WebviewContainer className="webview-container">
       <WebviewNavigation
         viewRef={viewRef}
         title={title}
@@ -142,7 +152,7 @@ export const Webview = () => {
       />
       <webview
         onFocus={onWebviewFocus}
-        src="about://blank"
+        src={props.url}
         partition={partitionForUser(profile!.user.id)}
         ref={viewRef}
       />

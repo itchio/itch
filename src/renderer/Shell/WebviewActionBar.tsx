@@ -22,12 +22,12 @@ const Container = styled.div`
 
   margin-right: 35px;
 
-  min-height: 100px;
+  min-height: 80px;
   border-top: 1px solid ${props => props.theme.colors.shellBorder};
 `;
 
 const Cover = styled.img`
-  height: 100px;
+  height: 80px;
 `;
 
 const Info = styled.div`

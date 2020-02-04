@@ -14,18 +14,18 @@ const ProfileButtonDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 0 10px;
+  padding: 0 10px;
+  padding-right: 20px;
 
   align-self: stretch;
-  padding: 0 1em;
 
   cursor: pointer;
 
   img {
-    border-radius: 50%;
-    height: 2em;
+    border-radius: 4px;
+    height: 1.5em;
     width: auto;
-    margin-right: 1em;
+    margin-right: 15px;
   }
 `;
 
@@ -89,7 +89,7 @@ const ProfileMenu = (props: Props & { setShown: (shown: boolean) => void }) => {
       />
       <Button
         loading={logoutLoading}
-        icon="users"
+        icon="swap_horiz"
         label={<FormattedMessage id="menu.account.change_user" />}
         onClick={logout}
       />

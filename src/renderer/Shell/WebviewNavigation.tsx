@@ -86,7 +86,7 @@ export const WebviewNavigation = (props: Props) => {
           })
         }
         disabled={!props.canGoBack}
-        icon="arrow-left"
+        icon="chevron-left"
       />
       <IconButton
         onClick={() =>
@@ -97,7 +97,7 @@ export const WebviewNavigation = (props: Props) => {
           })
         }
         disabled={!props.canGoForward}
-        icon="arrow-right"
+        icon="chevron-right"
       />
       {loading ? (
         <IconButton onClick={() => withWebview(wv => wv.stop())} icon="cross" />

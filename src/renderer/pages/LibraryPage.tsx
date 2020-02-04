@@ -34,8 +34,6 @@ const LibraryLayout = styled.div`
   .sidebar {
     width: 280px;
     font-size: ${fontSizes.large};
-    background: rgba(255, 255, 255, 0.05);
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
     flex-shrink: 0;
 
     display: flex;
@@ -43,19 +41,18 @@ const LibraryLayout = styled.div`
     align-items: stretch;
     justify-content: flex-start;
 
+    padding-top: 1em;
+
     .separator {
       height: 2px;
       width: 100%;
-      background: rgba(255, 255, 255, 0.2);
     }
 
     .heading {
       padding: 1.4em;
       text-transform: uppercase;
       font-size: ${fontSizes.small};
-      font-weight: bold;
-
-      background: rgba(255, 255, 255, 0.05);
+      font-weight: 900;
     }
 
     .item {
@@ -65,7 +62,9 @@ const LibraryLayout = styled.div`
       align-items: center;
 
       padding: 1em 0.4em;
+
       font-size: ${fontSizes.normal};
+      color: ${p => p.theme.colors.text3};
 
       .title {
         ${mixins.singleLine};
@@ -95,11 +94,11 @@ const LibraryLayout = styled.div`
       }
 
       &:hover {
-        background: rgba(255, 255, 255, 0.04);
+        color: ${p => p.theme.colors.text2};
       }
 
       &.active {
-        background: ${p => p.theme.colors.activeBg};
+        color: ${p => p.theme.colors.text1};
       }
     }
   }
@@ -181,30 +180,39 @@ export const LibraryPage = () => {
     );
   }
 
-  const mainRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const scrollToTop = useCallback(() => {
-    mainRef.current?.scrollTo({
+    bodyRef.current?.scrollTo({
       top: 0,
       behavior: "auto",
     });
-  }, [mainRef]);
+  }, [bodyRef]);
 
   return (
     <LibraryLayout>
       <div className="sidebar">
+        <div
+          className="item"
+          onClick={() => {
+            location.href = "https://itch.io";
+          }}
+        >
+          <Icon icon="itchio" />
+          <FormattedMessage id="sidebar.explore" />
+        </div>
         <div className="heading">
-          <FormattedMessage id="sidebar.category.basics" />
+          <FormattedMessage id="sidebar.library" />
         </div>
         <div {...iprops({ source: GameRecordsSource.Installed })}>
           <Icon icon="install" />
           <FormattedMessage id="sidebar.installed" />
         </div>
         <div {...iprops({ source: GameRecordsSource.Owned })}>
-          <Icon icon="heart-filled" />
+          <Icon icon="book" />
           <FormattedMessage id="sidebar.owned" />
         </div>
         <div {...iprops({ source: GameRecordsSource.Profile })}>
-          <Icon icon="rocket" />
+          <Icon icon="pencil" />
           <FormattedMessage id="sidebar.dashboard" />
         </div>
         <div className="separator" />
@@ -213,8 +221,8 @@ export const LibraryPage = () => {
         </div>
         <CollectionList source={source} setSource={setSource} />
       </div>
-      <div className="main" ref={mainRef}>
-        <Viewport source={source} scrollToTop={scrollToTop} />
+      <div className="main">
+        <Viewport ref={bodyRef} source={source} scrollToTop={scrollToTop} />
       </div>
     </LibraryLayout>
   );
@@ -305,170 +313,175 @@ const sorts = (originalSorts as any) as {
   }[];
 };
 
-const Viewport = (props: { source: Source; scrollToTop: () => void }) => {
-  const { source } = props;
+const Viewport = React.forwardRef(
+  (props: { source: Source; scrollToTop: () => void }, ref: any) => {
+    const { source } = props;
 
-  const profile = useProfile();
-  const socket = useSocket();
-  let [loading, setLoading] = useState(true);
-  let [records, setRecords] = useState<GameRecord[]>([]);
+    const profile = useProfile();
+    const socket = useSocket();
+    let [loading, setLoading] = useState(true);
+    let [records, setRecords] = useState<GameRecord[]>([]);
 
-  const [layout, setLayout] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState<SortBy>("default");
-  const [filterBy, setFilterBy] = useState<string[]>([]);
-  const [classification, setClassification] = useState<
-    GameClassification | "any"
-  >("any");
-  const [reverse, setReverse] = useState(false);
+    const [layout, setLayout] = useState<"grid" | "list">("grid");
+    const [sortBy, setSortBy] = useState<SortBy>("default");
+    const [filterBy, setFilterBy] = useState<string[]>([]);
+    const [classification, setClassification] = useState<
+      GameClassification | "any"
+    >("any");
+    const [reverse, setReverse] = useState(false);
 
-  useEffect(() => {
-    if (
-      !_.includes(
-        _.map(sorts[source.source], s => s.value),
-        sortBy
-      )
-    ) {
-      setSortBy("default");
-    }
-  }, [source.source]);
+    useEffect(() => {
+      if (
+        !_.includes(
+          _.map(sorts[source.source], s => s.value),
+          sortBy
+        )
+      ) {
+        setSortBy("default");
+      }
+    }, [source.source]);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        // TODO: pagination
+    useEffect(() => {
+      let cancelled = false;
+      (async () => {
+        try {
+          // TODO: pagination
 
-        setLoading(true);
-        let params: FetchGameRecordsParams = {
-          profileId: profile!.id,
-          source: props.source.source,
-          limit: 200,
-          collectionId:
-            source.source === GameRecordsSource.Collection
-              ? source.collection.id
-              : undefined,
-          sortBy: sortBy === "default" ? undefined : sortBy,
-          filters: {
-            installed: _.includes(filterBy, "installed"),
-            owned: _.includes(filterBy, "owned"),
-            classification:
-              classification === "any" ? undefined : classification,
-          },
-          reverse,
-        };
+          setLoading(true);
+          let params: FetchGameRecordsParams = {
+            profileId: profile!.id,
+            source: props.source.source,
+            limit: 200,
+            collectionId:
+              source.source === GameRecordsSource.Collection
+                ? source.collection.id
+                : undefined,
+            sortBy: sortBy === "default" ? undefined : sortBy,
+            filters: {
+              installed: _.includes(filterBy, "installed"),
+              owned: _.includes(filterBy, "owned"),
+              classification:
+                classification === "any" ? undefined : classification,
+            },
+            reverse,
+          };
 
-        let res = await socket.call(
-          messages.FetchGameRecords,
-          params,
-          convo => {
-            convo.onNotification(messages.Log, params => {
-              console.log(params.message);
-            });
-          }
-        );
-        if (cancelled) {
-          return;
-        }
-        props.scrollToTop();
-        setRecords(res.records);
-
-        if (res.stale) {
-          params.fresh = true;
-          res = await socket.call(messages.FetchGameRecords, params);
+          let res = await socket.call(
+            messages.FetchGameRecords,
+            params,
+            convo => {
+              convo.onNotification(messages.Log, params => {
+                console.log(params.message);
+              });
+            }
+          );
           if (cancelled) {
             return;
           }
+          props.scrollToTop();
           setRecords(res.records);
+
+          if (res.stale) {
+            params.fresh = true;
+            res = await socket.call(messages.FetchGameRecords, params);
+            if (cancelled) {
+              return;
+            }
+            setRecords(res.records);
+          }
+        } finally {
+          setLoading(false);
         }
-      } finally {
-        setLoading(false);
-      }
-    })();
+      })();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    JSON.stringify(source),
-    JSON.stringify(filterBy),
-    sortBy,
-    reverse,
-    props.scrollToTop,
-  ]);
+      return () => {
+        cancelled = true;
+      };
+    }, [
+      JSON.stringify(source),
+      JSON.stringify(filterBy),
+      sortBy,
+      reverse,
+      props.scrollToTop,
+    ]);
 
-  let currentSort = _.find(sorts[source.source], s => s.value === sortBy);
+    let currentSort = _.find(sorts[source.source], s => s.value === sortBy);
 
-  return (
-    <>
-      <ViewHeader>
-        <ViewTitle source={source} />
-        {loading && <Ellipsis />}
-        <Filler />
-        <Spacer />
-        <MultiDropdown
-          prefix={<PrefixIcon icon="filter" />}
-          empty={"No filters"}
-          onChange={filterBy => setFilterBy(filterBy)}
-          options={[
-            { value: "installed", label: "Installed" },
-            { value: "owned", label: "Owned" },
-          ]}
-          values={filterBy}
-        />
-        <Spacer />
-        <Dropdown
-          name="sort-field"
-          groupPosition="start"
-          prefix={<PrefixIcon icon="arrange2" />}
-          value={sortBy}
-          options={sorts[source.source]}
-          onChange={s => {
-            setSortBy(s);
-            setReverse(false);
-          }}
-        />
-        <Dropdown
-          name="sort-direction"
-          groupPosition="end"
-          onChange={val => setReverse(val === "true")}
-          options={[
-            { value: "false", label: currentSort?.directions[0] ?? "Normal" },
-            { value: "true", label: currentSort?.directions[1] ?? "Reversed" },
-          ]}
-          value={reverse ? "true" : "false"}
-          renderValue={option =>
-            _.find(sorts[source.source], s => s.value === sortBy)?.directions[
-              option.value === "true" ? 1 : 0
-            ]
-          }
-        />
-        <Spacer />
-        <Dropdown
-          name="layout"
-          onChange={layout => setLayout(layout)}
-          options={
-            [
-              { value: "grid", label: "Grid" },
-              { value: "list", label: "List" },
-            ] as {
-              value: "grid" | "list";
-              label: LocalizedString;
-            }[]
-          }
-          value={layout}
-          renderValue={option => <Icon icon={option.value} />}
-        />
-      </ViewHeader>
-      <ViewBody>
-        {layout === "grid" ? (
-          <GameGrid records={records} setRecords={setRecords} />
-        ) : (
-          <GameList records={records} setRecords={setRecords} />
-        )}
-      </ViewBody>
-    </>
-  );
-};
+    return (
+      <>
+        <ViewHeader>
+          <ViewTitle source={source} />
+          {loading && <Ellipsis />}
+          <Filler />
+          <Spacer />
+          <MultiDropdown
+            prefix={<PrefixIcon icon="filter" />}
+            empty={"No filters"}
+            onChange={filterBy => setFilterBy(filterBy)}
+            options={[
+              { value: "installed", label: "Installed" },
+              { value: "owned", label: "Owned" },
+            ]}
+            values={filterBy}
+          />
+          <Spacer />
+          <Dropdown
+            name="sort-field"
+            groupPosition="start"
+            prefix={<PrefixIcon icon="arrange2" />}
+            value={sortBy}
+            options={sorts[source.source]}
+            onChange={s => {
+              setSortBy(s);
+              setReverse(false);
+            }}
+          />
+          <Dropdown
+            name="sort-direction"
+            groupPosition="end"
+            onChange={val => setReverse(val === "true")}
+            options={[
+              { value: "false", label: currentSort?.directions[0] ?? "Normal" },
+              {
+                value: "true",
+                label: currentSort?.directions[1] ?? "Reversed",
+              },
+            ]}
+            value={reverse ? "true" : "false"}
+            renderValue={option =>
+              _.find(sorts[source.source], s => s.value === sortBy)?.directions[
+                option.value === "true" ? 1 : 0
+              ]
+            }
+          />
+          <Spacer />
+          <Dropdown
+            name="layout"
+            onChange={layout => setLayout(layout)}
+            options={
+              [
+                { value: "grid", label: "Grid" },
+                { value: "list", label: "List" },
+              ] as {
+                value: "grid" | "list";
+                label: LocalizedString;
+              }[]
+            }
+            value={layout}
+            renderValue={option => <Icon icon={option.value} />}
+          />
+        </ViewHeader>
+        <ViewBody ref={ref}>
+          {layout === "grid" ? (
+            <GameGrid records={records} setRecords={setRecords} />
+          ) : (
+            <GameList records={records} setRecords={setRecords} />
+          )}
+        </ViewBody>
+      </>
+    );
+  }
+);
 
 const PrefixIcon = styled(Icon)`
   margin-right: 1em;
@@ -500,7 +513,6 @@ const ViewHeader = styled.div`
   align-items: center;
 
   background: ${p => p.theme.colors.shellBg};
-  border-bottom: 1px solid ${p => p.theme.colors.shellBorder};
   z-index: 2;
 
   .filler {
@@ -559,7 +571,9 @@ const CollectionList = (props: {
           >
             <Icon icon="tag" />
             <span className="title">{c.title}</span>
-            {c.gamesCount && <span className="count">{c.gamesCount}</span>}
+            {c.gamesCount > 0 ? (
+              <span className="count">{c.gamesCount}</span>
+            ) : null}
           </div>
         );
       })}

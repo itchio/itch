@@ -2,7 +2,7 @@ import { css } from "styled-components";
 
 export default css`
   ::-webkit-scrollbar {
-    width: 12px;
+    width: 4px;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -13,7 +13,7 @@ export default css`
 
   ::-webkit-scrollbar-track {
     border-radius: 2px;
-    background: #443e3e;
-    border: 1px solid #484848;
+    /* background: #332e2e; */
+    background: transparent;
   }
 `;

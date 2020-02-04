@@ -283,7 +283,7 @@ export const SearchModal = (props: { onClose: () => void }) => {
         return;
       }
     },
-    [onClose, _.size(results)]
+    [onClose, _.size(results), current]
   );
 
   console.log("current", current);

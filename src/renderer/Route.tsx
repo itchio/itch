@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { queries } from "../common/queries";
 import { PickCaveModal } from "renderer/modals/PickCaveModal";
 import { ModalRouter } from "renderer/modals/ModalRouter";
+import { fontSizes } from "renderer/theme";
 
 const App = React.lazy(() => import("renderer/Shell"));
 const LibraryPage = React.lazy(() => import("renderer/pages/LibraryPage"));
@@ -24,12 +25,9 @@ const RouteContentsDiv = styled.div`
 `;
 
 const ErrorDiv = styled.div`
-  background: black;
-  padding: 4px;
-  color: red;
-  font-weight: bold;
-  font-size: 30px;
-  border: 2px solid;
+  padding: 30px;
+  font-size: ${fontSizes.large};
+  line-height: 1.6;
 `;
 
 export const RouteContents = (props: { elements: string[] }) => {
@@ -42,8 +40,6 @@ export const RouteContents = (props: { elements: string[] }) => {
     case "featured":
       location.replace("https://itch.io/");
       return <div />;
-    case "library":
-      return <LibraryPage />;
     case "games":
       const gameId = parseInt(elements[1], 10);
       return <GamePage gameId={gameId} />;
@@ -54,7 +50,7 @@ export const RouteContents = (props: { elements: string[] }) => {
             Page not found: <code>itch://{elements.join("/")}</code>
           </p>
           <p>
-            <a href="itch://library">Go back to home</a>
+            <a href="https://itch.io">Go back</a>
           </p>
         </ErrorDiv>
       );

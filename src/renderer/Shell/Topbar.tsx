@@ -23,9 +23,13 @@ const TopbarDiv = styled.div`
     align-self: stretch;
     margin-right: 1em;
 
-    border-radius: 0 0 4px 4px;
-    border-top: none;
+    border: none;
+    border: 1px solid #444;
+
+    background: none;
   }
+
+  padding-bottom: 10px;
 `;
 
 const DraggableFiller = styled.div`
@@ -89,20 +93,6 @@ export const Topbar = () => {
                 .showModal(modals.preferences, {})
                 .catch(e => console.warn(e.stack))
             }
-          />
-          <Button
-            className="topbar-item"
-            data-target="explore"
-            onClick={() => (location.href = "https://itch.io")}
-            icon="earth"
-            label={<FormattedMessage id={"sidebar.explore"} />}
-          />
-          <Button
-            className="topbar-item"
-            data-target="library"
-            onClick={() => (location.href = "itch://library")}
-            icon="heart-filled"
-            label={<FormattedMessage id={"sidebar.library"} />}
           />
         </>
       )}
