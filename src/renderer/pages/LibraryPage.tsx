@@ -192,10 +192,6 @@ export const LibraryPage = () => {
   return (
     <LibraryLayout>
       <div className="sidebar">
-        <div className="item">
-          <Icon icon="search" />
-          Search
-        </div>
         <div className="heading">
           <FormattedMessage id="sidebar.category.basics" />
         </div>
