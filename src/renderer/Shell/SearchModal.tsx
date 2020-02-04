@@ -1,21 +1,21 @@
 import { messages } from "common/butlerd";
 import { Game } from "common/butlerd/messages";
+import { searchExamples } from "common/constants/search-examples";
 import { gameCover } from "common/game-cover";
 import { packets } from "common/packets";
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import _ from "lodash";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Button } from "renderer/basics/Button";
 import { Ellipsis } from "renderer/basics/Ellipsis";
-import { IconButton } from "renderer/basics/IconButton";
 import { Modal } from "renderer/basics/Modal";
 import { useDebounce } from "renderer/basics/useDebounce";
 import { useProfile, useSocket } from "renderer/contexts";
+import { useListen } from "renderer/Socket";
 import { fontSizes, mixins } from "renderer/theme";
 import { useAsyncCb } from "renderer/use-async-cb";
 import styled from "styled-components";
-import { useListen } from "renderer/Socket";
-import _ from "lodash";
-import { searchExamples } from "common/constants/search-examples";
+import classNames from "classnames";
 
 const SearchModalContainer = styled(Modal)`
   width: 60vw;
@@ -108,7 +108,8 @@ const SearchResult = styled.div`
     margin-bottom: 0;
   }
 
-  &:hover {
+  &:hover,
+  &.current {
     background: rgba(255, 255, 255, 0.1);
   }
 
@@ -160,13 +161,23 @@ export const SearchModal = (props: { onClose: () => void }) => {
   const { onClose } = props;
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const currentRef = useRef<HTMLDivElement>(null);
+
   const [state, setState] = useState<State>("initial");
   const [loading, setLoading] = useState(false);
   const [example, setExample] = useState(_.sample(searchExamples));
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState<number | null>(null);
   const [results, setResults] = useState<Game[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    currentRef.current?.scrollIntoView({
+      behavior: "auto",
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [currentRef.current]);
 
   useListen(
     socket,
@@ -206,7 +217,13 @@ export const SearchModal = (props: { onClose: () => void }) => {
       setCurrent(0);
       setResults(games);
       setLoading(false);
-      setState(_.isEmpty(games) ? "no-results" : "results");
+      if (_.isEmpty(games)) {
+        setState("no-results");
+        setCurrent(null);
+      } else {
+        setState("results");
+        setCurrent(0);
+      }
     })().catch(e => console.warn(e.stack));
   }, [debouncedSearchTerm]);
 
@@ -219,12 +236,37 @@ export const SearchModal = (props: { onClose: () => void }) => {
 
   const onKeyDown = useCallback(
     (ev: React.KeyboardEvent<HTMLInputElement>) => {
+      console.log(ev.key);
       if (ev.key === "Escape") {
+        ev.preventDefault();
         onClose();
+        return;
+      } else if (ev.key === "ArrowDown") {
+        ev.preventDefault();
+        setCurrent(current => {
+          if (current === null || current >= _.size(results) - 1) {
+            return current;
+          } else {
+            return current + 1;
+          }
+        });
+        return;
+      } else if (ev.key === "ArrowUp") {
+        ev.preventDefault();
+        setCurrent(current => {
+          if (current === null || current <= 0) {
+            return current;
+          } else {
+            return current - 1;
+          }
+        });
+        return;
       }
     },
-    [onClose]
+    [onClose, _.size(results)]
   );
+
+  console.log("current", current);
 
   const onViewAll = useCallback(() => {
     onClose();
@@ -272,9 +314,15 @@ export const SearchModal = (props: { onClose: () => void }) => {
       case "results":
         return (
           <>
-            {results.map(game => {
+            {results.map((game, i) => {
+              let isCurrent = i === current;
               return (
-                <SearchResult key={`${game.id}`} onClick={() => openGame(game)}>
+                <SearchResult
+                  className={classNames({ current: isCurrent })}
+                  key={`${game.id}`}
+                  onClick={() => openGame(game)}
+                  ref={isCurrent ? currentRef : undefined}
+                >
                   <div
                     className="cover"
                     style={{ backgroundImage: `url(${gameCover(game)})` }}
