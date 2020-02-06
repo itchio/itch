@@ -12,7 +12,7 @@ import {
 import { messages } from "common/butlerd";
 import { filterObject } from "common/filter-object";
 import { Packet, PacketCreator, packets } from "common/packets";
-import { queries, QueryCreator } from "common/queries";
+import { queries, QueryCreator, ErrorObject } from "common/queries";
 import dump from "common/util/dump";
 import { shell, app } from "electron";
 import { MainState } from "main";
@@ -269,7 +269,7 @@ export class WebsocketHandler {
         cx.reply(packets.queryResult, {
           state: "error",
           id: req.id,
-          error: new Error(`Unhandled query ${req.method}`),
+          error: objectifyError(new Error(`Unhandled query ${req.method}`)),
         });
         return;
       }
@@ -287,7 +287,7 @@ export class WebsocketHandler {
           cx.reply(packets.queryResult, {
             state: "error",
             id: req.id,
-            error,
+            error: objectifyError(error),
           });
         });
     });
@@ -458,4 +458,13 @@ export class WebsocketHandler {
     ongoing.conv.cancel();
     delete this.ongoingConversations[convID];
   }
+}
+
+function objectifyError(e: Error): ErrorObject {
+  const { message, stack } = e;
+  return {
+    message,
+    stack: stack?.toString(),
+    side: "main",
+  };
 }

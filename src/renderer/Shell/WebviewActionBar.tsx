@@ -13,6 +13,7 @@ import styled from "styled-components";
 import { Cave, Game } from "../../common/butlerd/messages";
 import { IconButton } from "../basics/IconButton";
 import { MenuTippy } from "../basics/Menu";
+import { LaunchButtonBase, LaunchButton } from "renderer/basics/LaunchButton";
 
 const Container = styled.div`
   display: flex;
@@ -134,12 +135,7 @@ const WebviewGameActionBar = (props: { gameId: number }) => {
             />
           )}
           <Spacer />
-          <Button
-            className="launch-button"
-            label={<FormattedMessage id="grid.item.launch" />}
-            disabled={launchGameLoading}
-            onClick={() => launchGame(gameId)}
-          />
+          <LaunchButton game={game} />
         </>
       ) : (
         makeInstallModal(

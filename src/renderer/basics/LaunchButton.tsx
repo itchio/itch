@@ -33,20 +33,22 @@ export const LaunchButtonBase = (props: LowLevelProps) => {
   }, [beingLaunched, launch, forceClose, game]);
 
   return (
-    <Button
-      className={classNames(
-        beingLaunched ? "force-close-button" : "launch-button",
-        className
-      )}
-      label={
-        <FormattedMessage
-          id={beingLaunched ? "grid.item.running" : "grid.item.launch"}
-        />
-      }
-      secondary={beingLaunched}
-      onClick={click}
-      {...rest}
-    />
+    <>
+      <Button
+        className={classNames(
+          beingLaunched ? "force-close-button" : "launch-button",
+          className
+        )}
+        label={
+          <FormattedMessage
+            id={beingLaunched ? "grid.item.running" : "grid.item.launch"}
+          />
+        }
+        secondary={beingLaunched}
+        onClick={click}
+        {...rest}
+      />
+    </>
   );
 };
 
@@ -54,7 +56,8 @@ export const LaunchButton = (props: HighLevelProps) => {
   const { game } = props;
 
   const socket = useSocket();
-  const launches = useLaunches(l => l.gameId === game.id);
+  const launches = useLaunches({ gameId: game.id });
+
   const currentLaunchId = _.first(_.keys(launches));
 
   const [launch] = useAsyncCb(
@@ -75,7 +78,7 @@ export const LaunchButton = (props: HighLevelProps) => {
         launchId: currentLaunchId,
       });
     },
-    [socket, game.id]
+    [socket, game.id, currentLaunchId]
   );
 
   return (

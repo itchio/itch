@@ -352,7 +352,12 @@ export class Socket {
       delete this.outboundQueries[response.id];
       if (outbound) {
         if (response.state === "error") {
-          outbound.reject(response.error);
+          outbound.reject(
+            new Error(
+              `butler-side error: ${response.error.stack ??
+                response.error.message}`
+            )
+          );
         } else {
           outbound.resolve(response.result);
         }

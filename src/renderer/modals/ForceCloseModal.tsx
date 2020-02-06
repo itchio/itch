@@ -14,6 +14,7 @@ export const ForceCloseModal = modalWidget(modals.forceClose, props => {
 
   const socket = useSocket();
   const [forceClose] = useAsyncCb(async () => {
+    window.close();
     await socket.query(queries.cancelLaunch, {
       launchId,
       reason: "User clicked force close button in modal",
@@ -26,7 +27,10 @@ export const ForceCloseModal = modalWidget(modals.forceClose, props => {
       content={
         <>
           <p>
-            <FormattedMessage id="prompt.force_close_game.message" />
+            <FormattedMessage
+              id="prompt.force_close_game.message"
+              values={{ title: game.title }}
+            />
           </p>
           <SimpleGameRow game={game} />
         </>

@@ -19,6 +19,7 @@ import { InstallPopoverContents } from "renderer/Shell/InstallPopover";
 import { useAsyncCb } from "renderer/use-async-cb";
 import { useCaves } from "renderer/use-caves";
 import { useDownloadKeys } from "renderer/use-download-keys";
+import { LaunchButton } from "renderer/basics/LaunchButton";
 
 interface Props {
   game?: Game;
@@ -144,14 +145,7 @@ export const GameListDetail = (props: Props) => {
                   />
                 )}
               </MenuTippy>
-              {lastCave ? (
-                <Button
-                  wide
-                  label={<FormattedMessage id="grid.item.launch" />}
-                  onClick={launch}
-                  disabled={!!lastLaunch}
-                />
-              ) : null}
+              {lastCave ? <LaunchButton wide game={game} /> : null}
             </div>
           </div>
         </div>

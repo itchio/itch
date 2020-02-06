@@ -71,6 +71,9 @@ async function launchGameInner(
   let client = new Client(ms.butler.endpoint);
   let items: Cave[] = [];
 
+  type OnAbort = () => void;
+  let onAbort: OnAbort[] = [];
+
   if (caveId) {
     let { cave } = await client.call(messages.FetchCave, { caveId });
     if (cave) {
@@ -169,7 +172,7 @@ async function launchGameInner(
             logger,
             params,
             onAbort: h => {
-              logger.warn(`queries-launch / performHTMLLaunch / onAbort: stub`);
+              onAbort.push(h);
             },
           });
           return {};
@@ -210,5 +213,8 @@ async function launchGameInner(
     delete ms.launchControllers[launchId];
     delete ms.ongoingLaunches[launchId];
     broadcastPacket(ms, packets.launchEnded, { launchId });
+    for (const h of onAbort) {
+      h();
+    }
   }
 }

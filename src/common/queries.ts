@@ -78,7 +78,13 @@ interface QueryResultSuccess<Result> {
 interface QueryResultError {
   state: "error";
   id: number;
-  error: Error;
+  error: ErrorObject;
+}
+
+export interface ErrorObject {
+  message: string;
+  stack?: string;
+  side: "main";
 }
 
 export interface QueryCreator<Params, Result> {
